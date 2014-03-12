@@ -10,6 +10,7 @@
 #pragma hdrstop
 
 #include "MinosVer.h"   // updated by SubWCRev
+#include "GitVer.h"
 
 #include "RCVersion.h"
 #include "GJVThreads.h"
@@ -69,7 +70,8 @@ __fastcall TAboutBox::TAboutBox( TComponent *Owner, bool onStartup )
 #endif
    Version->Caption = "Version " + RCVersion.FileVersion + ( Beta ? " BETA" : "" );
    Copyright->Caption = RCVersion.LegalCopyright;
-   Comments->Caption = ( Beta ? "Beta version - use at your own risk!\r\n\r\n\r\n" : "" ) + RCVersion.Comments;
+   String caption = String("Git SHA1 ") + GITVER + "\r\n\r\n";
+   Comments->Caption = caption + ( Beta ? "\r\nBeta version - use at your own risk!\r\n\r\n\r\n" : "" ) + RCVersion.Comments;
 
    if ( !FileExists( ".\\Configuration\\MinosConfig.ini" ) /*|| !onStartup || checkServerReady()*/ )
    {

@@ -22,7 +22,7 @@ object AboutBox: TAboutBox
     Top = 0
     Width = 487
     Height = 321
-    ActivePage = AutoStartTabSheet
+    ActivePage = AboutTabSheet
     Align = alClient
     TabOrder = 0
     object AboutTabSheet: TTabSheet
@@ -116,13 +116,15 @@ object AboutBox: TAboutBox
           IsControl = True
         end
         object WebLabel: TLabel
-          Left = 163
+          Left = 0
           Top = 260
-          Width = 131
+          Width = 474
           Height = 13
           Cursor = crHandPoint
-          Anchors = [akLeft, akTop, akBottom]
-          Caption = 'http://minos.berlios.de'
+          Alignment = taCenter
+          Anchors = [akTop, akBottom]
+          AutoSize = False
+          Caption = 'http://sourceforge.net/projects/minos/'
           OnClick = WebLabelClick
         end
       end
