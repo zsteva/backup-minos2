@@ -115,10 +115,15 @@
 <!-- 14.004 12/10/13 G4CLA - added superleague -->
 <!-- 14.005 21/10/13 G4CLA - tweak UKAC power output words-->
 <!-- 14.006 12/12/13 G4CLA - tweak UKAC power output words-->
+<!-- 14.007 08/02/14 G4CLA - moved 2nd backpckers to sunday of 2nd weekend in June-->
+<!-- 14.008 07/03/14 G4CLA - changes 50m meeting place to 80km VMP -->
 <calendar>
-<version>14.006 12/12/2013</version>
+<version>14.008 07/03/2014</version>
+<icalurl>http://www.rsgbcc.org/icals/2014vhf.ics</icalurl>
+<googleurl>https://www.google.com/calendar/embed?src=l22560fc8m1d8knkkr01oudl50%40group.calendar.google.com&amp;ctz=Europe/London</googleurl>
 <notes_list>12/10/13: reduced entry time to 14 days for 4m Cumulatives </notes_list>
 <notes_list>23/11/13: 432MHz AFS start time and duration changed</notes_list>
+<notes_list>08/02/14: 2nd 144MHz Backpackers moved to 15th June</notes_list>
 <mult_type>
 <name>M1</name>
 <description>Post Codes and Countries</description>
@@ -437,7 +442,7 @@ This is an Affiliated Societies contest and is open to both individual entrants 
 
 The results from the 6m, 2m and 70cm Affiliated Society contests contribute to the AFS Super League. http://www.rsgbcc.org/hf/rules/2013/AFS-SuperLeague2013-2014.shtml
 
-a. All members of the team must operate from within 50 miles of the normal meeting place of the society and must be within the UK. No station may represent more than one society. No operator is allowed to use more than one callsign during the contest. In the case of national societies, each team must define a separate meeting place , and each team member must operate within 50 miles of that designated meeting place.
+a. All members of the team must operate from within 80Km of the Virtual Meeting Place of the society and must be within the UK. No station may represent more than one society. No operator is allowed to use more than one callsign during the contest. In the case of national societies, each team must define a separate virtual meeting place , and each team member must operate within 80Km of that designated meeting place. See http://www.rsgbcc.org/hf/afsinfo.shtml for more information.
 
 b. QSOs with other members of your team will count for points.
 
@@ -1184,7 +1189,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 </contest_series>
 <contest_series>
 <name>overallukac</name>
-<description>UKAC Club Championship</description>
+<description>UKAC Overall Results</description>
 <contest_list>4mukac</contest_list>
 <contest_list>6mukac</contest_list>
 <contest_list>2mukac</contest_list>
@@ -1394,7 +1399,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
        <id_list>
                 <name>160m</name>
                 <id>clubcalls</id>
-                <resultName>Club Calls</resultName>
+                <resultName>Club Calls (1.8MHz AFS)</resultName>
                 <year>-1</year>
                 <normaliseby></normaliseby>
                 <collate_type>superleague</collate_type>
@@ -1919,7 +1924,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
   </scoring>
   <special_rules_list>S5</special_rules_list>
   <band_list>70</band_list>
-  <entry_date>14 days after each activity period</entry_date>
+  <entry_date>13 days after each activity period</entry_date>
   <resultsFormatUsed>4mcum</resultsFormatUsed>
 <club_contest>no</club_contest>
 <autocerts>yes</autocerts>
@@ -2579,7 +2584,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
   <short_description>2nd 144MHz Backpackers</short_description>
   <time_list>
     <month_list>Jun</month_list>
-    <start_day>7</start_day>
+    <start_day>6+1</start_day>
     <start_week>2</start_week>
     <start_time>0900</start_time>
     <time_type>GMT</time_type>
