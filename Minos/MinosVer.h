@@ -19,4 +19,4 @@
 #define MINOSVERSIONBUILD "1.5.9.0"
 #define MINOSRCVERSION "1.5.9.0\0"
 
-#define BETA_VERSION
+// #define BETA_VERSION
