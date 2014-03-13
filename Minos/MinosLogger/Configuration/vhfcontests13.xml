@@ -133,8 +133,10 @@
 <!-- 13.021 14/08/13 G4CLA - only include UK stations in stndard VHF champs -->
 <!-- 13.022 15/08/13 G4CLA - added VHF NFD MS Section to results and centenary points and sweepers sections -->
 <!-- 13.023 13/11/13 G4CLA - added SCC allowed-->
+<!-- 13.023 22/01/14 G4CLA - Section names wrong in seriesorder or xmas series results -->
+<!-- 13.024 24/01/14 G4CLA - icollage xmas fun open section by callsign-->
 <calendar>
-<version>13.022 15/08/2013</version>
+<version>13.024 24/01/2014</version>
 <icalurl>http://www.rsgbcc.org/icals/2013vhf.ics</icalurl>
 <googleurl>https://www.google.com/calendar/embed?src=2puobjml9pkpdvavmj0hf8ac1g%40group.calendar.google.com&amp;ctz=Europe/London</googleurl>
 <notes_list>05/11/12: Changed duration and start time of 2m and 70cms AFS contests</notes_list>
@@ -1481,7 +1483,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
        <id_list>
                 <name>160m</name>
                 <id>clubcalls</id>
-                <resultName>Club Calls</resultName>
+                <resultName>Club Calls (1.8MHz AFS)</resultName>
                 <year>0</year>
                 <normaliseby></normaliseby>
                 <collate_type>superleague</collate_type>
@@ -1618,7 +1620,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <seriesResult>
         <name>Christmas Cumulatives Overall Results</name>
         <ctl>overallxmas</ctl>
-		<order>O,SF</order>
+		<order>Section O,Section SF</order>
         <ScoresCount>4</ScoresCount>
         <id_list>
                 <name>50MHz</name>
@@ -1632,6 +1634,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date=0 and band="50 MHz" and Section="O" </filter>
                         <scorefield>normalisedScore</scorefield>
                         <table>Entries</table>
+						<collateby>callsign</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section SF</name>
@@ -1654,6 +1657,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date=0 and band="70 MHz" and Section="O" </filter>
                         <scorefield>normalisedScore</scorefield>
                         <table>Entries</table>
+						<collateby>callsign</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section SF</name>
@@ -1676,6 +1680,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date=0 and band="144 MHz" and Section="O" </filter>
                         <scorefield>normalisedScore</scorefield>
                         <table>Entries</table>
+						<collateby>callsign</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section SF</name>
@@ -1698,6 +1703,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date=0 and band="432 MHz" and Section="O" </filter>
                         <scorefield>normalisedScore</scorefield>
                         <table>Entries</table>
+						<collateby>callsign</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section SF</name>
@@ -2927,6 +2933,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <mult>M4</mult>
 <entry_date>16 days after the last activity period</entry_date>
 <override>0</override>
+<club_contest>no</club_contest>
 <resultsFormatUsed>xmasfun</resultsFormatUsed>
 <autocerts>yes</autocerts>
 </contest>
