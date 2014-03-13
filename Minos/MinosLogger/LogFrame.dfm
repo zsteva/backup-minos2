@@ -328,7 +328,7 @@ object SingleLogFrame: TSingleLogFrame
               Height = 31
               Align = alClient
               Style = csDropDownList
-              ItemHeight = 23
+              ItemHeight = 0
               TabOrder = 0
               TabStop = False
             end
@@ -350,6 +350,9 @@ object SingleLogFrame: TSingleLogFrame
             Height = 155
             ExplicitWidth = 624
             ExplicitHeight = 155
+            inherited MatchXferButton: TBitBtn
+              OnClick = GJVQSOLogFrame1MatchXferButtonClick
+            end
             inherited BandMapPanel: TPanel
               inherited AutoBandmapTune: TCheckBox
                 OnClick = AutoBandmapTuneClick
@@ -357,9 +360,6 @@ object SingleLogFrame: TSingleLogFrame
               inherited AutoBandmapTime: TCheckBox
                 OnClick = AutoBandmapTimeClick
               end
-            end
-            inherited MatchXferButton: TBitBtn
-              OnClick = GJVQSOLogFrame1MatchXferButtonClick
             end
             inherited CallsignEdit: TLabeledEdit
               EditLabel.ExplicitLeft = 4

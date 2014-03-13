@@ -636,6 +636,10 @@ object LogContainer: TLogContainer
     end
     object Help1: TMenuItem
       Caption = 'Help'
+      object Copyversliontoclipboard1: TMenuItem
+        Caption = 'Copy verslion to clipboard'
+        OnClick = Copyversliontoclipboard1Click
+      end
       object About1: TMenuItem
         Action = HelpAboutAction
       end

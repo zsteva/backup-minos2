@@ -9,7 +9,9 @@
 #include "logger_pch.h"
 #pragma hdrstop
 #include <tlhelp32.h>
+#include <vcl\Clipbrd.hpp>
 
+#include "gitver.h"
 #include "LogEvents.h"
 #include "LoggerContest.h"
 
@@ -1313,4 +1315,14 @@ void __fastcall TLogContainer::ReportAutofillActionExecute(TObject */*Sender*/)
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TLogContainer::Copyversliontoclipboard1Click(TObject */*Sender*/)
+{
+   TMyRCVersion RCVersion;
+   RCVersion.initialise();
+   String Version = AnsiString ( RCVersion.FileVersion ).c_str();
+   String v = String ( "Minos Version " ) + ( Version + " Git SHA1 " + GITVER ).c_str();
+   Clipboard()->SetTextBuf ( v.c_str() );
+}
+//---------------------------------------------------------------------------
 

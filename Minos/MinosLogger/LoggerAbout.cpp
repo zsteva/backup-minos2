@@ -9,7 +9,7 @@
 #include "logger_pch.h"
 #pragma hdrstop
 
-#include "MinosVer.h"   // updated by SubWCRev
+#include "MinosVer.h"
 #include "GitVer.h"
 
 #include "RCVersion.h"

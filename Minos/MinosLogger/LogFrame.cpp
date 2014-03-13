@@ -1670,8 +1670,6 @@ void __fastcall TSingleLogFrame::LogMonitorQSOTreeGetHint(
       std::string dtgstr = lct->time.getDate(DTGFULL) + lct->time.getTime(DTGLOG);
       TDateTime check = CanonicalToTDT( dtgstr.c_str() );
 
-      TDateTime diff = check - start;
-
       // we now need to go through all contests and work it out for each
       ContestScore cs(contest, TDateTime::CurrentDateTime());
       std::string buff = cs.disp();
