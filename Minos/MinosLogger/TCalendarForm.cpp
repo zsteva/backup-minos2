@@ -57,7 +57,7 @@ class CalendarYear
       CalType type;
       virtual String getPath();
       virtual String getURL();
-      virtual String getProvisionalURL();
+//      virtual String getProvisionalURL();
 };
 class VHFCalendarYear : public CalendarYear
 {
@@ -67,6 +67,17 @@ class VHFCalendarYear : public CalendarYear
       {
 
       }
+};
+class CTYCalendarYear : public CalendarYear
+{
+      virtual String getSite();
+   public:
+      CTYCalendarYear ( ) : CalendarYear ( ectVHFOther, 0 )
+      {
+
+      }
+      virtual String getPath();
+      virtual String getURL();
 };
 //---------------------------------------------------------------------------
 String CalendarYear::getPath()
@@ -87,12 +98,13 @@ String CalendarYear::getURL()
    return url;
 
 }
-String CalendarYear::getProvisionalURL()
+/*String CalendarYear::getProvisionalURL()
 {
    String url = getSite() + calString[type] + yearString() + "-prov.xml";
    return url;
 
 }
+*/
 //---------------------------------------------------------------------------
 String VHFCalendarYear::getSite()
 {
@@ -123,6 +135,26 @@ bool CalendarYear::downloadFile(TIdHTTP *IdHTTP1, bool showError)
       }
    }
    return false;
+}
+//---------------------------------------------------------------------------
+String CTYCalendarYear::getSite()
+{
+   return "http://www.country-files.com/cty/cty.dat";
+}
+String CTYCalendarYear::getPath()
+{
+   char appFName[ 255 ];
+   int nLen = 0;
+   nLen = ::GetModuleFileName( HInstance, appFName, 255 );
+   appFName[ nLen ] = '\0';
+
+   String fpath = ExtractFilePath( appFName );
+   String p = fpath + "\\Configuration\\" + "cty.dat";
+   return p;
+}
+String CTYCalendarYear::getURL()
+{
+   return getSite();
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -241,7 +273,8 @@ void __fastcall TCalendarForm::GetCalendarButtonClick( TObject *Sender )
       VHFCalendarYear y(i);
       y.downloadFile(IdHTTP1, false);
    }
-
+   CTYCalendarYear cty;
+   cty.downloadFile(IdHTTP1, false);
    FormShow( Sender );
 }
 //---------------------------------------------------------------------------
