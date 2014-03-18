@@ -11,7 +11,6 @@
 
 #ifndef MAX_BLOCK_LENGTH
 #define MAX_BLOCK_LENGTH 1024
-#define MIN_BLOCK_LENGTH 128
 #endif
 #ifndef CW_BLOCK_LENGTH
 #define CW_BLOCK_LENGTH 256
@@ -28,9 +27,8 @@ class SoundSystem
       int cfgrate;
 
    public:
-	  volatile int inputDone;
-	  volatile int outputDone;
-	  volatile long samplesremaining;
+      volatile int done;
+      volatile long samplesremaining;
       volatile long now;
       volatile int sbactive;
 
@@ -45,12 +43,9 @@ class SoundSystem
       virtual bool initialise( std::string &errmess ) = 0;
       virtual void terminate() = 0;
       virtual int setRate() = 0;
-      virtual bool startMicPassThrough() = 0;
-      virtual bool stopMicPassThrough() = 0;
 
       virtual bool startDMA( bool play, const std::string &fname ) = 0;
-	  virtual void stopDMAin() = 0;
-	  virtual void stopDMAout() = 0;
+      virtual void stopDMA() = 0;
 
 };
 
@@ -72,7 +67,6 @@ class WindowsSoundSystem: public SoundSystem
 
       volatile long samplesOutput;
 
-      int writePassthrough( WAVEHDR * inhdr );
       int writeAudio( int deadSamples = 0 );
       static unsigned __stdcall OutputThread( LPVOID lpThreadParameter );
       void OutputThread();
@@ -84,7 +78,7 @@ class WindowsSoundSystem: public SoundSystem
       int waveInCurrentBlock;
 
       HANDLE hInputThread;
-	  HANDLE hInputThreadCloseEvent;
+      HANDLE hInputThreadCloseEvent;
 
       volatile long samplesInput;
 
@@ -94,8 +88,6 @@ class WindowsSoundSystem: public SoundSystem
       void InputThread();
 
       //====================================================
-      bool passthroughin;
-      bool passthroughout;
 
       void allocateBlocks( WAVEHDR **blocks, int size, int count );
       void freeBlocks();
@@ -118,13 +110,9 @@ class WindowsSoundSystem: public SoundSystem
       bool startInput( std::string fname );
       bool startOutput();
       virtual void terminate();
-	  virtual int setRate();
-
-      virtual bool startMicPassThrough();
-      virtual bool stopMicPassThrough();
+      virtual int setRate();
 
       virtual bool startDMA( bool play, const std::string &fname );
-	  virtual void stopDMAin();
-	  virtual void stopDMAout();
+      virtual void stopDMA();
 };
 #endif

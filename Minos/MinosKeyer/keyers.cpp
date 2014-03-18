@@ -668,8 +668,8 @@ bool voiceKeyer::docommand( const KeyerCtrl &dvp_ctrl )
          {
             sbDriver::getSbDriver() ->stopall();
             KeyerAction::currentAction.freeAll();
-			currentKeyer->stopMicPassThrough();
-			break;
+            SetCurrentMixerSet( emsPassThroughNoPTT );
+            break;
          }
 
       case eKEYER_PLAY:      /* transmit file */
@@ -905,11 +905,11 @@ bool voiceKeyer::sendCW( const char *message, int speed, int tone )
 }
 bool voiceKeyer::startMicPassThrough()
 {
-   return sbDriver::getSbDriver() ->startMicPassThrough();
+   return false;
 }
 bool voiceKeyer::stopMicPassThrough()
 {
-   return sbDriver::getSbDriver() ->stopMicPassThrough();
+   return false;
 }
 //==============================================================================
 //==============================================================================
@@ -1070,26 +1070,28 @@ void ToneAction::LxChanged( int /*line*/, bool state )
    disableInterrupts guard;
    KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
 
-   sbDriver::getSbDriver() ->stopDMAout();
+   sbDriver::getSbDriver() ->stopDMA();
    sbDriver::getSbDriver() ->CW_ACTIVE = false;
    if ( currentKeyer )
       currentKeyer->ptt( 0 );
+   SetCurrentMixerSet( emsPassThroughNoPTT );
    deleteAtTick = true;
 }
 void ToneAction::pttChanged( bool state )
 {
    if ( sblog )
    {
-	  trace( "ToneAction::pttChanged(" + makeStr( state ) + ")" );
+      trace( "ToneAction::pttChanged(" + makeStr( state ) + ")" );
    }
    // PTT pressed, so kill tone
    disableInterrupts guard;
    KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
 
-   sbDriver::getSbDriver() ->stopDMAout();
+   sbDriver::getSbDriver() ->stopDMA();
    sbDriver::getSbDriver() ->CW_ACTIVE = false;
    if ( currentKeyer )
-	  currentKeyer->ptt( 0 );
+      currentKeyer->ptt( 0 );
+   SetCurrentMixerSet( emsPassThroughNoPTT );
    deleteAtTick = true;
 }
 void ToneAction::queueFinished()
@@ -1122,21 +1124,25 @@ void ToneAction::timeOut()
          actionState = etasStopTone;
          if ( nTone == 1 )
          {
-			currentKeyer->startTone1();
-		 }
-		 else
-		 {
-						currentKeyer->startTone2();
-		 }
-		 break;
+            SetCurrentMixerSet( emsReplayT1 );
+            currentKeyer->startTone1();
+         }
+         else
+         {
+            SetCurrentMixerSet( emsReplayT2 );
+            currentKeyer->startTone2();
+         }
+         break;
 
-	  case etasStopTone:
-		 sbDriver::getSbDriver() ->stopDMAout();
-		 sbDriver::getSbDriver() ->CW_ACTIVE = false;
-		 if ( currentKeyer )
-			currentKeyer->ptt( 0 );
-		 deleteAtTick = true;
-		 break;
+      case etasStopTone:
+         sbDriver::getSbDriver() ->stopDMA();
+         sbDriver::getSbDriver() ->CW_ACTIVE = false;
+         if ( currentKeyer )
+            currentKeyer->ptt( 0 );
+         SetCurrentMixerSet( emsPassThroughNoPTT );
+         deleteAtTick = true;
+         ;
+         break;
 
    }
 }
@@ -1182,7 +1188,7 @@ InitialPTTAction::~InitialPTTAction()
 }
 void InitialPTTAction::getActionState( std::string &s )
 {
-   s = "PTT";
+   s = "Initial PTT";
 }
 void InitialPTTAction::LxChanged( int /*line*/, bool /*state*/ )
 {}
@@ -1223,20 +1229,21 @@ void InitialPTTAction::timeOut()
          if ( currentKeyer )
          {
             currentKeyer->ptt( 1 );
-			currentKeyer->startMicPassThrough();
-		 }
-		 actionState = einitPTTStart;
-		 // This is where a real PTT initiated voice from microphone to rig commences
-		 // It won't time out.
-		 break;
+            SetCurrentMixerSet( emsPassThroughPTT );
+            currentKeyer->startMicPassThrough();
+         }
+         actionState = einitPTTStart;
+         // This is where a real PTT initiated voice from microphone to rig commences
+         // It won't time out.
+         break;
 
-	  case einitPTTStart:
-		 {
-			if ( currTick - lastTick <= 1 )
-			{
-			   actionState = einitPTTFlickRelease;
-			   actionTime = 1;
-			   break;				// debounce, or "flick" PTT
+      case einitPTTStart:
+         {
+            if ( currTick - lastTick <= 1 )
+            {
+               actionState = einitPTTFlickRelease;
+               actionTime = 1;
+               break;				// debounce, or "flick" PTT
             }
             actionState = einitPTTRelease;
             timeOut();
@@ -1258,11 +1265,8 @@ void InitialPTTAction::timeOut()
       case einitPTTRelease:
          if ( currentKeyer->kconf.enablePip )
          {
-			if ( !getNextAction() )
-			{
-			   currentKeyer->stopMicPassThrough();
-			   new PipAction();
-			}
+            if ( !getNextAction() )
+               new PipAction();
             deleteAtTick = true;
          }
          actionState = einitPTTEnd;
@@ -1270,9 +1274,9 @@ void InitialPTTAction::timeOut()
          break;
 
       case einitPTTEnd:
-		 currentKeyer->ptt( 0 );	// if we got here then no "next" so kill ptt
-		 currentKeyer->stopMicPassThrough();
-		 deleteAtTick = true;
+         currentKeyer->ptt( 0 );	// if we got here then no "next" so kill ptt
+         SetCurrentMixerSet( emsPassThroughNoPTT );
+         deleteAtTick = true;
          break;
 
       default:
@@ -1349,7 +1353,8 @@ void InterruptingPTTAction::timeOut()
             if ( currentKeyer->pttState )
             {
                currentKeyer->ptt( 1 );
-			   // This is where we tail end a file play with a normal transmission
+               SetCurrentMixerSet( emsPassThroughPTT );
+               // This is where we tail end a file play with a normal transmission
                currentKeyer->startMicPassThrough();
 
                actionState = einterPTTDoPip;   	// do a pip
@@ -1376,7 +1381,8 @@ void InterruptingPTTAction::timeOut()
 
       case einterPTTQuickRelease:
          currentKeyer->ptt( 0 );	// if we got here then no "next" so kill ptt
-		 deleteAtTick = true;
+         SetCurrentMixerSet( emsPassThroughNoPTT );
+         deleteAtTick = true;
          break;
 
       default:
@@ -1451,7 +1457,7 @@ void PlayAction::pttChanged( bool state )
       disableInterrupts guard;
       KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
 
-	  sbDriver::getSbDriver() ->stopDMAout();
+      sbDriver::getSbDriver() ->stopDMA();
       sbDriver::getSbDriver() ->CW_ACTIVE = false;
       //      currentKeyer->ptt( 0 );
       // start a PTT action, but don't pip unless it is "long"
@@ -1505,7 +1511,8 @@ void PlayAction::timeOut()
       case epasPlayFile:
          {
             // state 2 play file
-			actionState = epasEndPlayFile;
+            SetCurrentMixerSet( emsReplay );
+            actionState = epasEndPlayFile;
             ActionStateString = "Play";
 
             pipStartDelaySamples = ( currentKeyer->kconf.pipStartDelay * sbDriver::getSbDriver() ->rate ) / 1000;
@@ -1537,11 +1544,12 @@ void PlayAction::timeOut()
          else
          */
          {
-			sbDriver::getSbDriver() ->stopDMAout();
+            sbDriver::getSbDriver() ->stopDMA();
             sbDriver::getSbDriver() ->CW_ACTIVE = false;
             if ( currentKeyer )
                currentKeyer->ptt( 0 );
-		 }
+            SetCurrentMixerSet( emsPassThroughNoPTT );
+         }
          if ( !testMode && currentKeyer->kconf.enableAutoRepeat && currentKeyer->kconf.autoRepeatDelay && !sbn && !CW )
          {
             new PlayAction( fileName, false, currentKeyer->kconf.startDelay, currentKeyer->kconf.autoRepeatDelay, false, false );
@@ -1614,29 +1622,31 @@ void PipAction::timeOut()
    actionTime = -1;
    switch ( actionState )
    {
-      case epipasInitial: //-1
+      case epipasInitial:
          // start up the pip tone
          actionTime = ( currentKeyer->kconf.pipStartDelay / TIMER_INTERVAL );	// 55ms/tick, 18.4ticks/sec
          if ( actionTime < 1 )
-			actionTime = 1;
-		 actionState = epipasPip;
-		 break;
+            actionTime = 1;
+         actionState = epipasPip;
+         break;
 
-	  case epipasPip:  //0
-		 sbDriver::getSbDriver() ->play = true;
-		 sbDriver::getSbDriver() ->recording = false;
-		 sbDriver::getSbDriver() ->dofile( DOFILE_PIP );
-		 actionState = epipasEndPip;
-		 actionTime = 1000 / TIMER_INTERVAL;	// safety net! 1 sec to first interrupt
-		 break;
+      case epipasPip:
+         SetCurrentMixerSet( emsReplayPip );
+         sbDriver::getSbDriver() ->play = true;
+         sbDriver::getSbDriver() ->recording = false;
+         sbDriver::getSbDriver() ->dofile( DOFILE_PIP );
+         actionState = epipasEndPip;
+         actionTime = 1000 / TIMER_INTERVAL;	// safety net! 1 sec to first interrupt
+         break;
 
-	  case epipasEndPip:  //1
-		 deleteAtTick = true;
-		 sbDriver::getSbDriver() ->stopDMAout();
-		 sbDriver::getSbDriver() ->CW_ACTIVE = false;
-		 if ( currentKeyer )
-			currentKeyer->ptt( 0 );
-		 break;
+      case epipasEndPip:
+         deleteAtTick = true;
+         sbDriver::getSbDriver() ->stopDMA();
+         sbDriver::getSbDriver() ->CW_ACTIVE = false;
+         if ( currentKeyer )
+            currentKeyer->ptt( 0 );
+         SetCurrentMixerSet( emsPassThroughNoPTT );
+         break;
 
    }
 }
@@ -1731,7 +1741,8 @@ void RecordAction::timeOut()
 
       case erasStartRec:
          // start recording
-		 actionState = erasStopRec;
+         SetCurrentMixerSet( emsVoiceRecord );
+         actionState = erasStopRec;
          sbDriver::getSbDriver() ->record_file( fileName );
          actionTime = 1000 / TIMER_INTERVAL;			// safety net to first interrupt
          break;
@@ -1745,7 +1756,8 @@ void RecordAction::timeOut()
          break;
 
       case erasRecFinished:                            // queue finished should bring us here
-		 deleteAtTick = true;
+         SetCurrentMixerSet( emsPassThroughNoPTT );
+         deleteAtTick = true;
          break;
    }
 }

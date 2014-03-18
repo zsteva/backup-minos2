@@ -39,7 +39,7 @@ SoundSystem *SoundSystem::createSoundSystem()
    return new WindowsSoundSystem();
 }
 //==============================================================================
-SoundSystem::SoundSystem() : cfgrate( -1 ), inputDone(true), outputDone(true)
+SoundSystem::SoundSystem() : cfgrate( -1 )
 {}
 SoundSystem::~SoundSystem()
 {}
@@ -50,33 +50,32 @@ static void CALLBACK waveOutProc(
    HWAVEOUT /*hWaveOut*/,
    UINT uMsg,
    DWORD dwInstance,        // "this" for soundsystem object
-   DWORD dwParam1,          // wParam - pointer to WAVEHDR for completed buffer
+   DWORD /*dwParam1*/,          // wParam - pointer to WAVEHDR for completed buffer
    DWORD /*dwParam2*/       // lParam - reserved
 )
 {
    if ( sbintrlog )
    {
-	  char * type = 0;
-	  if ( uMsg == WOM_DONE )
-		 type = "WOM_DONE";
-	  else
-		 if ( uMsg == WOM_OPEN )
-			type = "WOM_OPEN";
-		 else
-			if ( uMsg == WOM_CLOSE )
-			   type = "WOM_CLOSE";
-			else
-			   type = "<unknown>";
+      char * type = 0;
+      if ( uMsg == WOM_DONE )
+         type = "WOM_DONE";
+      else
+         if ( uMsg == WOM_OPEN )
+            type = "WOM_OPEN";
+         else
+            if ( uMsg == WOM_CLOSE )
+               type = "WOM_CLOSE";
+            else
+               type = "<unknown>";
 
-	  WAVEHDR *current = ( WAVEHDR * ) dwParam1;
-	  trace( std::string("waveOutProc : ") + type + " " + makeStr((unsigned long)current));
+      trace( "waveOutProc : " + makeStr( type ) );
    }
    /*
    * ignore calls that occur due to opening and closing the
    * device.
    */
    if ( uMsg != WOM_DONE )
-	  return ;
+      return ;
    WindowsSoundSystem *wss = ( WindowsSoundSystem * ) dwInstance;
 
    EnterCriticalSection( &waveCriticalSection );
@@ -95,34 +94,26 @@ static void CALLBACK waveInProc(
 {
    if ( sbintrlog )
    {
-	  char * type = 0;
-	  if ( uMsg == WIM_DATA )
-		 type = "WIM_DATA";
-	  else
-		 if ( uMsg == WIM_OPEN )
-			type = "WIM_OPEN";
-		 else
-			if ( uMsg == WIM_CLOSE )
-			   type = "WIM_CLOSE";
-			else
-			   type = "<unknown>";
+      char * type = 0;
+      if ( uMsg == WIM_DATA )
+         type = "WIM_DATA";
+      else
+         if ( uMsg == WIM_OPEN )
+            type = "WIM_OPEN";
+         else
+            if ( uMsg == WIM_CLOSE )
+               type = "WIM_CLOSE";
+            else
+               type = "<unknown>";
 
-	  WAVEHDR *current = ( WAVEHDR * ) dwParam1;
-	  if ( current && uMsg == WIM_DATA )
-	  {
-/*
-// flags for dwFlags field of WAVEHDR
-#define WHDR_DONE       0x00000001  // done bit
-#define WHDR_PREPARED   0x00000002  // set if this header has been prepared
-#define WHDR_BEGINLOOP  0x00000004  // loop start block
-#define WHDR_ENDLOOP    0x00000008  // loop end block
-#define WHDR_INQUEUE    0x00000010  // reserved for driver
-*/
-		 trace( std::string("waveInProc : ") + type + " " + makeStr( current->dwFlags ) + " " + makeStr( current->dwBytesRecorded ) + " " + makeStr((unsigned long)current) );
-	  }
-	  else
-	  {
-		 trace( std::string("waveInProc : ") + type + " " + makeStr((unsigned long)current) );
+      WAVEHDR *current = ( WAVEHDR * ) dwParam1;
+      if ( current && uMsg == WIM_DATA )
+      {
+         trace( "waveInProc : " + makeStr( type ) + " " + makeStr( current->dwFlags ) + " " + makeStr( current->dwBytesRecorded ) );
+      }
+      else
+      {
+         trace( "waveInProc : " + makeStr( type ) );
       }
    }
    /*
@@ -143,8 +134,7 @@ static void CALLBACK waveInProc(
 //==============================================================================
 WindowsSoundSystem::WindowsSoundSystem() : SoundSystem(),
       sampleRate( 0 ), hWaveIn( 0 ), hInputThread( 0 ), hWaveOut( 0 ), hOutputThread( 0 ),
-      waveInActive( false ), waveOutActive( false ), wt( 0 ),
-      passthroughin(false), passthroughout(false)
+      waveInActive( false ), waveOutActive( false ), wt( 0 )
 {
    InitializeCriticalSection( &waveCriticalSection );
 
@@ -160,8 +150,7 @@ WindowsSoundSystem::WindowsSoundSystem() : SoundSystem(),
 }
 WindowsSoundSystem::~WindowsSoundSystem()
 {
-   stopDMAin();
-   stopDMAout();
+   stopDMA();
    freeBlocks();
    DeleteCriticalSection( &waveCriticalSection );
 }
@@ -178,44 +167,42 @@ int WindowsSoundSystem::setRate()
 
 }
 
-void WindowsSoundSystem::stopDMAin()
+void WindowsSoundSystem::stopDMA()
 {
-   trace( "WindowsSoundSystem::stopDMAin" );
-	trace("inputDone = true in stopDMAin");
-   inputDone = true;
-   if ( hWaveIn && waveInActive )
-   {
-	  waveInActive = false;
-	  waveInReset( hWaveIn );
-	  if ( wt )
-	  {
-		 wt->Terminate();
-		 wt = 0;
-	  }
-   }
-   passthroughin = false;
-   if ( sbDriver::getSbDriver() ->WinVUInCallback )
-	  sbDriver::getSbDriver() ->WinVUInCallback( 0 );
-}
-
-void WindowsSoundSystem::stopDMAout()
-{
-   trace( "WindowsSoundSystem::stopDMAout" );
-	trace("outputDone = true in stopDMAout");
-   outputDone = true;
+   trace( "WindowsSoundSystem::stopDMA" );
+   done = true;
    samplesremaining = 0;
    samplesOutput = samples;
 
    if ( hWaveOut && waveOutActive )
    {
-	  waveOutActive = false;
-	  waveOutReset( hWaveOut );
+      waveOutActive = false;
+      waveOutReset( hWaveOut );
    }
-   passthroughout = false;
-   if ( sbDriver::getSbDriver() ->WinVUOutCallback )
-	  sbDriver::getSbDriver() ->WinVUOutCallback( 0 );
-}
+   if ( hWaveIn && waveInActive )
+   {
+      if ( sblog )
+      {
+         trace( "waveInReset in stopDMA" );
+      }
+      waveInActive = false;
+      waveInReset( hWaveIn );
+      if ( wt )
+      {
+         wt->Terminate();
+         wt = 0;
+      }
+      if ( sblog )
+      {
+         trace( "waveInReset in stopDMA finished" );
+      }
+   }
 
+   if ( sbDriver::getSbDriver() ->WinVUInCallback )
+      sbDriver::getSbDriver() ->WinVUInCallback( 0 );
+   if ( sbDriver::getSbDriver() ->WinVUOutCallback )
+      sbDriver::getSbDriver() ->WinVUOutCallback( 0 );
+}
 //=============================================================================
 void WindowsSoundSystem::allocateBlocks( WAVEHDR** waveBlocks, int size, int count )
 {
@@ -227,7 +214,7 @@ void WindowsSoundSystem::allocateBlocks( WAVEHDR** waveBlocks, int size, int cou
    // allocate memory for the entire set in one go
 
    if ( ( buffer = ( unsigned char* ) HeapAlloc(
-					  GetProcessHeap(),
+                      GetProcessHeap(),
                       HEAP_ZERO_MEMORY,
                       totalBufferSize
                    ) ) == NULL )
@@ -261,7 +248,7 @@ void WindowsSoundSystem::freeBlocks()
 void WindowsSoundSystem::InputThread()
 {
    hWaveInEvent = CreateEvent(
-					 NULL,     // no security attributes
+                     NULL,     // no security attributes
                      FALSE,     // auto reset event
                      FALSE,      // not-signalled
                      NULL );  // no name
@@ -311,25 +298,14 @@ void WindowsSoundSystem::InputThread()
       if ( dwWait == WAIT_OBJECT_0 + 1 )     // Wave event
       {
          // here we have to empty buffers, etc
-		 disableInterrupts guard;
-		 KeyerAction * sba = KeyerAction::getCurrentAction();
-		 if (passthroughin)
-		 {
-			 if (getPTT())
-			 {
-				 if ( sba )
-					sba->interruptOK();	// so as we do not time it out immediately
-			 }
-		 }
-		 else
-		 {
-			 if ( sba )
-				sba->interruptOK();	// so as we do not time it out immediately
-		 }
+         disableInterrupts guard;
+         KeyerAction * sba = KeyerAction::getCurrentAction();
+         if ( sba /*&& samplesremaining > 0*/ )
+            sba->interruptOK();	// so as we do not time it out immediately
 
          readAudio();
 
-	  }
+      }
    }
 
 }
@@ -383,30 +359,11 @@ void WindowsSoundSystem::OutputThread()
       }
       if ( dwWait == WAIT_OBJECT_0 + 1 )     // Wave event
       {
-		 // here we have to fill buffers, etc
-		 disableInterrupts guard;
-      KeyerAction * sba = KeyerAction::getCurrentAction();
-         std::string act;
-         if (sba)
-         {
-            sba->getActionState(act);
-         }
-         
-		 if (passthroughout)
-		 {
-			EnterCriticalSection( &waveCriticalSection );
-			waveOutFreeBlockCount++;
-			LeaveCriticalSection( &waveCriticalSection );
-			if ( sba )
-			{
-			   // We keep going until all buffers are returned...
-			   if ( waveOutFreeBlockCount == BLOCK_COUNT )
-				  sba->queueFinished();
-			}
-			continue;
-		 }
+         // here we have to fill buffers, etc
+         disableInterrupts guard;
 
-		 if ( sba && ( samplesOutput <= samples || sba->pipStartDelaySamples || sba->tailWithPip ) )
+         KeyerAction * sba = KeyerAction::getCurrentAction();
+         if ( sba && ( samplesOutput <= samples || sba->pipStartDelaySamples || sba->tailWithPip ) )
          {
             // once all finished, this leaves a bit of time for the buffers to be
             // returned
@@ -419,7 +376,7 @@ void WindowsSoundSystem::OutputThread()
             samplesOutput += curBlockLength;
          }
 
-         if ( !outputDone && !wadone )
+         if ( !done && !wadone )
          {
             if ( sba && sba->pipStartDelaySamples > 0 )
             {
@@ -473,12 +430,10 @@ void WindowsSoundSystem::OutputThread()
 }
 bool WindowsSoundSystem::startInput( std::string fname )
 {
-   if (!passthroughin)
-   {
-      wt = new WriterThread( true );
-      wt->openFile( fname );
-      wt->Resume();
-   }
+   wt = new WriterThread( true );
+   wt->openFile( fname );
+   wt->Resume();
+
    if ( !hWaveIn )
    {
       // warning WAVEFORMATEX settings imply the audio quality
@@ -613,32 +568,21 @@ void WindowsSoundSystem::addNextInBuffer()
       waveInUnprepareHeader( hWaveIn, current, sizeof( WAVEHDR ) );
    }
 
-   if ( !inputDone )
+   if ( !done )
    {
-	  current->dwBufferLength = curBlockLength * 2;
+      current->dwBufferLength = curBlockLength * 2;
       current->dwBytesRecorded = 0;
 
-	  MMRESULT res = waveInPrepareHeader( hWaveIn, current, sizeof( WAVEHDR ) );
-	  if ( res  != MMSYSERR_NOERROR )
-	  {
-		 if ( sblog )
-		 {
-			trace( std::string("waveInPrepareHeader failed ") + makeStr(res) + " " + makeStr((unsigned long)current)  );
-			return ;
-		 }
-	  }
-	  memset( current->lpData, 0, current->dwBufferLength ); // clear buffer down
-	  res = waveInAddBuffer( hWaveIn, current, sizeof( WAVEHDR ));
-	  if ( res  != MMSYSERR_NOERROR )
-	  {
-		 if ( sblog )
-		 {
-			trace( std::string("waveInAddBuffer failed ") + makeStr(res) + " " + makeStr((unsigned long)current)  );
-			return ;
-		 }
-	  }
-	  trace( std::string("waveInAddBuffer OK ") + makeStr((unsigned long)current)  );
-	  // Don't common up, save critical sections
+      waveInPrepareHeader( hWaveIn, current, sizeof( WAVEHDR ) );
+      if ( waveInAddBuffer( hWaveIn, current, sizeof( WAVEHDR ) ) != MMSYSERR_NOERROR )
+      {
+         if ( sblog )
+         {
+            trace( "waveInAddBuffer failed " );
+            return ;
+         }
+      }
+      // Don't common up, save critical sections
       EnterCriticalSection( &waveCriticalSection );
       waveInFreeBlockCount--;
       waveInCurrentBlock++;
@@ -685,38 +629,6 @@ void WindowsSoundSystem::readAudio()
                wt->RecordBlock++;
                SetEvent( wt->ReleaseWriteEvent );
             }
-            else if (passthroughin)
-            {
-               // kick off output if required
-               if (!passthroughout)
-               {
-                 waveOutActive = true;
-                 waveOutFreeBlockCount = BLOCK_COUNT;
-                 waveOutCurrentBlock = 0;
-                 samplesOutput = 0;
-                 passthroughout = true;
-                if ( sblog )
-                {
-                  trace("outputDone = false in readAudio");
-                }
-                 outputDone = false;
-                 if ( !startOutput() )
-                 {
-                   if ( sblog )
-                   {
-                     trace( "Start output failed" );
-                   }
-                   return;
-                 }
-                 if ( sblog )
-                 {
-                   trace( "Start output OK" );
-                 }
-               }
-               // And write to output
-               writePassthrough(current);
-            }
-
 
             pttype *q = ( pttype * ) ( current->lpData );
 
@@ -743,7 +655,7 @@ void WindowsSoundSystem::readAudio()
       {
          if ( sblog )
          {
-			trace( "All input buffers now returned" );
+            trace( "All buffers now returned" );
          }
          sba->queueFinished();
       }
@@ -752,48 +664,6 @@ void WindowsSoundSystem::readAudio()
    sbDriver::getSbDriver() ->WinVUInCallback( maxvol * shortmult );
 }
 //=============================================================================
-int WindowsSoundSystem::writePassthrough( WAVEHDR * inhdr )
-{
-   WAVEHDR * current = &waveOutBlocks[ waveOutCurrentBlock ];
-   /*
-   * first make sure the header we're going to use is unprepared
-   */
-   if ( current->dwFlags & WHDR_PREPARED )
-   {
-      pttype * q = ( pttype * ) ( current->lpData );
-      pttype maxvol = 0;
-
-      // determine max for VU meter
-	  for ( unsigned int i = 0; i < current->dwBufferLength / 2; i++ )
-      {
-         int sample = abs( *q++ );
-         if ( sample > maxvol )
-            maxvol = sample;
-      }
-
-      if ( !outputDone )
-		 sbDriver::getSbDriver() ->WinVUOutCallback( maxvol * shortmult );
-
-      waveOutUnprepareHeader( hWaveOut, current, sizeof( WAVEHDR ) );
-   }
-   else
-   {
-      sbDriver::getSbDriver() ->WinVUOutCallback( 0 );
-   }
-   current->dwBufferLength = inhdr->dwBufferLength;
-   memcpy( current->lpData, inhdr->lpData, current->dwBufferLength );
-
-   waveOutPrepareHeader( hWaveOut, current, sizeof( WAVEHDR ) );
-   waveOutWrite( hWaveOut, current, sizeof( WAVEHDR ) );
-
-   EnterCriticalSection( &waveCriticalSection );
-   waveOutFreeBlockCount--;
-   waveOutCurrentBlock++;
-   waveOutCurrentBlock %= BLOCK_COUNT;
-   LeaveCriticalSection( &waveCriticalSection );
-
-   return 1;
-}
 int WindowsSoundSystem::writeAudio( int deadSamples )
 {
    int samplesWritten = 0;
@@ -804,7 +674,7 @@ int WindowsSoundSystem::writeAudio( int deadSamples )
    if ( current->dwFlags & WHDR_PREPARED )
    {
       pttype * q = ( pttype * ) ( current->lpData );
-	  pttype maxvol = 0;
+      pttype maxvol = 0;
 
       // determine max for VU meter
       if ( !deadSamples )
@@ -818,7 +688,7 @@ int WindowsSoundSystem::writeAudio( int deadSamples )
       }
       else
          maxvol = 0;
-	  if ( !outputDone )
+      if ( !done )
          sbDriver::getSbDriver() ->WinVUOutCallback( maxvol * shortmult );
 
       waveOutUnprepareHeader( hWaveOut, current, sizeof( WAVEHDR ) );
@@ -839,7 +709,7 @@ int WindowsSoundSystem::writeAudio( int deadSamples )
       {
          current->dwBufferLength = curBlockLength * 2;
       }
-	  memcpy( current->lpData, ( ( char * ) dataptr ) + now, current->dwBufferLength );
+      memcpy( current->lpData, ( ( char * ) dataptr ) + now, current->dwBufferLength );
       samplesremaining -= current->dwBufferLength / 2;
       now += current->dwBufferLength;
    }
@@ -881,31 +751,31 @@ bool WindowsSoundSystem::startDMA( bool play, const std::string &fname )
       {
          trace( "Starting output" );
       }
-	  if ( !startOutput() )
-	  {
-		 if ( sblog )
-		 {
-			trace( "Start output failed" );
-		 }
-		 return false;
-	  }
-	  if ( sblog )
-	  {
-		 trace( "Start output OK" );
-	  }
-	  // and now we have to start writing the file to the wave
+      if ( !startOutput() )
+      {
+         if ( sblog )
+         {
+            trace( "Start output failed" );
+         }
+         return false;
+      }
+      if ( sblog )
+      {
+         trace( "Start output OK" );
+      }
+      // and now we have to start writing the file to the wave
       // buffers
       waveOutActive = true;
       waveOutFreeBlockCount = BLOCK_COUNT;
       waveOutCurrentBlock = 0;
       samplesOutput = 0;
 
-	  for ( int i = 0; i < BLOCK_COUNT; i++ )
+      for ( int i = 0; i < BLOCK_COUNT; i++ )
          writeAudio();
       // and the output thread should pick it up from here...
       if ( sblog )
       {
-		 trace( "BLOCK_COUNT output buffers written in startDMA" );
+         trace( "All buffers written" );
       }
    }
    else
@@ -913,8 +783,8 @@ bool WindowsSoundSystem::startDMA( bool play, const std::string &fname )
 
       if ( !startInput( fname ) )
          return false;
-	  // and now we have to start giving buffers to the system
-	  waveInFreeBlockCount = BLOCK_COUNT;
+      // and now we have to start giving buffers to the system
+      waveInFreeBlockCount = BLOCK_COUNT;
       waveInCurrentBlock = 0;
       samplesInput = 0;
 
@@ -932,45 +802,6 @@ bool WindowsSoundSystem::startDMA( bool play, const std::string &fname )
          return false;
       }
    }
-   return true;
-}
-bool WindowsSoundSystem::startMicPassThrough()
-{
-   passthroughin = true;
-   passthroughout = false;
-
-trace("inputDone = false in startMicPassThrough");
-   inputDone = false;
-   sbactive = true;
-
-  if ( !startInput( "" ) )
-         return false;
-
-  waveInFreeBlockCount = BLOCK_COUNT;
-  waveInCurrentBlock = 0;
-  samplesInput = 0;
-
-   for ( int i = 0; i < BLOCK_COUNT; i++ )
-      addNextInBuffer();
-
-   waveInActive = true;
-   if ( waveInStart( hWaveIn ) != MMSYSERR_NOERROR )
-   {
-      waveInActive = false;
-      if ( sblog )
-      {
-         trace( "waveInStart failed " );
-      }
-      return false;
-   }
-   return true;
-}
-bool WindowsSoundSystem::stopMicPassThrough()
-{
-   passthroughin = false;
-   passthroughout = false;
-trace("inputDone = true in stopMicPassThrough");
-   inputDone = true;
    return true;
 }
 

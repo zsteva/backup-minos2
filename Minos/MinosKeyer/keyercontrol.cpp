@@ -83,7 +83,7 @@ void __fastcall TKeyControlForm::CMOutputLevel( TMessage &Message )
 }
 //---------------------------------------------------------------------------
 __fastcall TKeyControlForm::TKeyControlForm( TComponent* Owner )
-      : TForm( Owner ), saveResize( false ), inTrackChange(false)
+      : TForm( Owner ), saveResize( false )
 {
    enableTrace( ".\\TraceLog\\MinosKeyer" );
    SetPriorityClass( GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS );  // Win2K and Above only!
@@ -202,7 +202,7 @@ void __fastcall TKeyControlForm::LineTimerTimer( TObject */*Sender*/ )
          recording = false;
       }
    KeyerServer::publishCommand( recind->Caption.c_str() );
-   //eMixerSets m = GetCurrentMixerSet();
+   eMixerSets m = GetCurrentMixerSet();
 
    std::string astate;
    getActionState( astate );
@@ -211,9 +211,9 @@ void __fastcall TKeyControlForm::LineTimerTimer( TObject */*Sender*/ )
 
    std::string kstatus;
    if ( getKeyerStatus( kstatus ) )
-	  Caption = ( /*msets[ m ] ) + " : " +*/ astate + " : " + kstatus).c_str();
+      Caption = String( msets[ m ] ) + " : " + astate.c_str() + " : " + kstatus.c_str();
    else
-	  Caption = /*String( msets[ m ] ) + " : " +*/ astate.c_str();
+      Caption = String( msets[ m ] ) + " : " + astate.c_str();
 
    static String old;
 
@@ -237,74 +237,212 @@ static std::string hexVal( DWORD d )
 }
 void __fastcall TKeyControlForm::MMMixControlChange( TMessage & /*Message*/ )
 {
-   if (!inTrackChange)
+   VKMixer * vkm = VKMixer::GetInputVKMixer();
+   if ( vkm )
    {
-      VKMixer * vkm = VKMixer::GetInputVKMixer();
-      if ( vkm )
+      DWORD micrec;
+      if ( vkm->GetMicRecVolume( micrec ) )
       {
-         DWORD micrec;
-         if ( vkm->GetMicRecVolume( micrec ) )
-         {
-            MicRecTrackBar->Visible = true;
-   //         Label9->Visible = true;
-            MicRecTrackBar->Position = 0xFFFF - micrec;
-   //         Label9->Caption = String( micrec );
-         }
-         else
-         {
-            MicRecTrackBar->Visible = false;
-   //         Label9->Visible = false;
-         }
-
+         MicRecTrackBar->Visible = true;
+         Label9->Visible = true;
+         MicRecTrackBar->Position = 0xFFFF - micrec;
+         Label9->Caption = String( micrec );
       }
-      vkm = VKMixer::GetOutputVKMixer();
-      if ( vkm )
+      else
       {
-
-         DWORD master;
-         if ( vkm->GetMasterVolume( master ) )
-         {
-            OutputTrackBar->Visible = true;
-    //        Label12->Visible = true;
-            OutputTrackBar->Position = 0xFFFF - master;
-    //        Label12->Caption = String( master );
-         }
-         else
-         {
-            OutputTrackBar->Visible = false;
-    //        Label12->Visible = false;
-         }
-
-
+         MicRecTrackBar->Visible = false;
+         Label9->Visible = false;
       }
-    }
+
+
+      DWORD rec;
+      if ( vkm->GetRecVolume( rec ) )
+      {
+         RecordTrackBar->Visible = true;
+         Label10->Visible = true;
+         RecordTrackBar->Position = 0xFFFF - rec;
+         Label10->Caption = String( rec );
+      }
+      else
+      {
+         RecordTrackBar->Visible = false;
+         Label10->Visible = false;
+      }
+
+      /*
+      DWORD muxId;
+      std::string sInputName;
+      if (vkm->GetMuxInput(muxId, sInputName))
+      {
+         MUXSelection->Visible = true;
+         MUXSelection->Caption = (sInputName + " " + hexVal(muxId)).c_str();
+      }
+      else
+      {
+         MUXSelection->Visible = false;
+      }
+      */
+   }
+   vkm = VKMixer::GetOutputVKMixer();
+   if ( vkm )
+   {
+      DWORD micout;
+      if ( vkm->GetMicOutVolume( micout ) )
+      {
+         MicOutTrackBar->Visible = true;
+         Label11->Visible = true;
+         MicOutTrackBar->Position = 0xFFFF - micout;
+         Label11->Caption = String( micout );
+      }
+      else
+      {
+         MicOutTrackBar->Visible = false;
+         Label11->Visible = false;
+      }
+
+      DWORD waveout;
+      if ( vkm->GetWaveOutVolume( waveout ) )
+      {
+         WaveOutTrackBar->Visible = true;
+         Label16->Visible = true;
+         WaveOutTrackBar->Position = 0xFFFF - waveout;
+         Label16->Caption = String( waveout );
+      }
+      else
+      {
+         WaveOutTrackBar->Visible = false;
+         Label16->Visible = false;
+      }
+
+      DWORD master;
+      if ( vkm->GetMasterVolume( master ) )
+      {
+         OutputTrackBar->Visible = true;
+         Label12->Visible = true;
+         OutputTrackBar->Position = 0xFFFF - master;
+         Label12->Caption = String( master );
+      }
+      else
+      {
+         OutputTrackBar->Visible = false;
+         Label12->Visible = false;
+      }
+
+      bool micoutmute;
+      if ( vkm->GetMicOutMute( micoutmute ) )
+      {
+         MicOutMute->Visible = true;
+         MicOutMute->Checked = micoutmute;
+      }
+      else
+      {
+         MicOutMute->Visible = false;
+      }
+
+      bool waveoutmute;
+      if ( vkm->GetWaveOutMute( waveoutmute ) )
+      {
+         WaveOutMute->Visible = true;
+         WaveOutMute->Checked = waveoutmute;
+      }
+      else
+      {
+         WaveOutMute->Visible = false;
+      }
+
+      bool mastermute;
+      if ( vkm->GetMasterMute( mastermute ) )
+      {
+         MasterMute->Visible = true;
+         MasterMute->Checked = mastermute;
+      }
+      else
+      {
+         MasterMute->Visible = false;
+      }
+
+   }
+   SetBaseMixerLevels();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TKeyControlForm::MicRecTrackBarChange( TObject */*Sender*/ )
 {
-   inTrackChange = true;
    VKMixer * vkm = VKMixer::GetInputVKMixer();
    if ( vkm )
    {
-      DWORD mic = 0xFFFF - MicRecTrackBar->Position;
-      vkm->SetMicRecVolume( mic );
+      DWORD mic;
+      if ( vkm->GetMicRecVolume( mic ) )
+      {
+         mic = 0xFFFF - MicRecTrackBar->Position;
+         vkm->SetMicRecVolume( mic );
+         SetBaseMixerLevels();
+      }
    }
-//   inTrackChange = false;
 }
 //---------------------------------------------------------------------------
-
-
-void __fastcall TKeyControlForm::OutputTrackBarChange( TObject */*Sender*/ )
+void __fastcall TKeyControlForm::MicOutTrackBarChange( TObject */*Sender*/ )
 {
-   inTrackChange = true;
+   VKMixer * vkm = VKMixer::GetInputVKMixer();
+   if ( vkm )
+   {
+      DWORD mic;
+      if ( vkm->GetMicOutVolume( mic ) )
+      {
+         mic = 0xFFFF - MicOutTrackBar->Position;
+         vkm->SetMicOutVolume( mic );
+         SetBaseMixerLevels();
+      }
+   }
+}
+
+//---------------------------------------------------------------------------
+void __fastcall TKeyControlForm::WaveOutTrackBarChange( TObject */*Sender*/ )
+{
    VKMixer * vkm = VKMixer::GetOutputVKMixer();
    if ( vkm )
    {
-      DWORD master = 0xFFFF - OutputTrackBar->Position;
-      vkm->SetMasterVolume( master );
+      DWORD rec;
+      if ( vkm->GetWaveOutVolume( rec ) )
+      {
+         rec = 0xFFFF - WaveOutTrackBar->Position;
+         vkm->SetWaveOutVolume( rec );
+         SetBaseMixerLevels();
+      }
    }
-//   inTrackChange = false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TKeyControlForm::RecordTrackBarChange( TObject */*Sender*/ )
+{
+   VKMixer * vkm = VKMixer::GetOutputVKMixer();
+   if ( vkm )
+   {
+      DWORD rec;
+      if ( vkm->GetRecVolume( rec ) )
+      {
+         rec = 0xFFFF - RecordTrackBar->Position;
+         vkm->SetRecVolume( rec );
+         SetBaseMixerLevels();
+      }
+   }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TKeyControlForm::OutputTrackBarChange( TObject */*Sender*/ )
+{
+   VKMixer * vkm = VKMixer::GetOutputVKMixer();
+   if ( vkm )
+   {
+      DWORD master;
+      if ( vkm->GetMasterVolume( master ) )
+      {
+         master = 0xFFFF - OutputTrackBar->Position;
+         vkm->SetMasterVolume( master );
+         SetBaseMixerLevels();
+      }
+   }
+
 }
 //---------------------------------------------------------------------------
 
@@ -715,12 +853,6 @@ void TKeyControlForm::populateOutputMixer()
       MMMixControlChange( msg );
       SaveMixerSettings( ".\\OutputMixerSettings.xml" );
    }
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TKeyControlForm::LevelTimerTimer(TObject */*Sender*/)
-{
-   inTrackChange = false;
 }
 //---------------------------------------------------------------------------
 

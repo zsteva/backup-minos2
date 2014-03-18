@@ -50,6 +50,34 @@ Although allowing complicated setups is what allows funny things,
 like sidetone recording?
 */ 
 //==============================================================================
+// Volume settings required in different situations.
+// To be applied to the relevant MixerSet for the current
+// situation
+
+enum eMixerSets {emsUnloaded, emsPassThroughNoPTT, emsPassThroughPTT,
+                 emsReplay, emsReplayPip, emsReplayT1, emsReplayT2,
+                 emsVoiceRecord,
+                 emsCWTransmit, emsCWPassThrough,
+                 emsMaxMixerSet};
+class _DLL_CLASS MixerSet
+{
+   public:
+      MixerSet( bool MicOutMute, bool MasterMute )
+            : MicOutMute( MicOutMute ), MasterMute( MasterMute )
+      {}
+      // we need a line setting, stereo volume + mute
+      bool MicOutMute;
+      bool MasterMute;
+};
+
+// All the line setting/type stuff should be in a differnt module.
+// Mapping from VK functionality to mixer lines and controls
+extern MixerSet * _DLL_FUNCTION GetMixerSets();
+extern eMixerSets _DLL_FUNCTION GetCurrentMixerSet();
+extern void _DLL_FUNCTION SetCurrentMixerSet( eMixerSets cms );
+extern void _DLL_FUNCTION SetBaseMixerLevels();
+
+//==============================================================================
 class _DLL_CLASS MixerLineSetting
 {
       // Control IDs for the various controls, and the route to them
@@ -185,11 +213,26 @@ class _DLL_CLASS VKMixer
       bool GetMicRecVolume( DWORD & );
       void SetMicRecVolume( DWORD );  // use zero to drive mute if present?
 
+      bool GetRecVolume( DWORD & );
+      void SetRecVolume( DWORD );
+
+      bool GetMicOutVolume( DWORD & );
+	  void SetMicOutVolume( DWORD );
+      bool GetMicOutMute( bool & );
+      void SetMicOutMute( bool );
+
       int SetMuxInput( std::string sInputName );
       bool GetMuxInput( DWORD &, std::string &sInputName );
 
       bool GetMasterVolume( DWORD & );
       void SetMasterVolume( DWORD );
+      bool GetMasterMute( bool & );
+      void SetMasterMute( bool );
+
+      bool GetWaveOutVolume( DWORD & );
+      void SetWaveOutVolume( DWORD );
+      bool GetWaveOutMute( bool & );
+      void SetWaveOutMute( bool );
 
       ~VKMixer();
       virtual void SaveMixerSettings( TiXmlDocument & );
