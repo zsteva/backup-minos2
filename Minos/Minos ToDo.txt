@@ -1,18 +1,17 @@
 Modify www.goodey.org.uk
 Set up www.g0gjv.org.uk/minos 
 ==================================================================
-Convert versioning to Git, include hash as for adjsql
-==================================================================
-Move project to SourceForge, and convert to Git
-==================================================================
 Change band combo to a text box/label
+==================================================================
+Multi band logs
+run/S&P switching
 ==================================================================
 Try a proper locator map
 Scaleable; change granularity with scale; IO/IO80/IO80ST
 Colour loc squares on map for number of contacts
 Able to select by country?
 How do we get a usable map? Or can we leverage google and embed the map?
-If we don't have a map is a splatter diagm still meaningul?
+If we don't have a map is a splatter diagram still meaningul?
 Or can we get a crude "loc squares" map 
 ==================================================================
 Changes to do
