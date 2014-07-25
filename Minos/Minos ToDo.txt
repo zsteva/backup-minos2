@@ -1,3 +1,5 @@
+Display of operating time within the contest; may need to make the "1 hour" configurable
+==================================================================
 Modify www.goodey.org.uk
 Set up www.g0gjv.org.uk/minos 
 ==================================================================
