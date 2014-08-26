@@ -437,7 +437,7 @@ object LogContainer: TLogContainer
     end
     object ReportAutofillAction: TAction
       Category = 'Tools'
-      Caption = 'Signall Report AutoFill'
+      Caption = 'Signal Report AutoFill'
       OnExecute = ReportAutofillActionExecute
     end
   end
@@ -631,13 +631,12 @@ object LogContainer: TLogContainer
       end
       object ReportAutofill: TMenuItem
         Action = ReportAutofillAction
-        Caption = 'Signal Report AutoFill'
       end
     end
     object Help1: TMenuItem
       Caption = 'Help'
       object Copyversliontoclipboard1: TMenuItem
-        Caption = 'Copy verslion to clipboard'
+        Caption = 'Copy version to clipboard'
         OnClick = Copyversliontoclipboard1Click
       end
       object About1: TMenuItem
