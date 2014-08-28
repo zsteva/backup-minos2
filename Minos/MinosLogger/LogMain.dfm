@@ -465,6 +465,7 @@ object LogContainer: TLogContainer
     Top = 136
   end
   object TabPopup: TPopupMenu
+    OwnerDraw = True
     Left = 64
     Top = 72
     object CloseContest1: TMenuItem
@@ -527,10 +528,11 @@ object LogContainer: TLogContainer
   end
   object MainMenu1: TMainMenu
     AutoHotkeys = maManual
+    OwnerDraw = True
     Left = 16
     Top = 32
     object File1: TMenuItem
-      Caption = 'File'
+      Caption = 'File '
       OnClick = File1Click
       object Open1: TMenuItem
         Action = FileOpen1

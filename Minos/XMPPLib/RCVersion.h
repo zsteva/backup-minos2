@@ -81,6 +81,9 @@ class TMyRCVersion
       __property String Release = {write = setValue, read = GetRelease};
       __property String SpecialBuild = {write = setValue, read = GetSpecialBuild};
       __property HINSTANCE Instance = {write = SetInstance};
+
+      int getOSVersion(std::string &sos);
+
 };
 //---------------------------------------------------------------------------
 #endif

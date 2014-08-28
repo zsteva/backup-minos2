@@ -55,7 +55,17 @@ void __fastcall TLogContainer::FormShow( TObject */*Sender*/ )
 {
    if ( TContestApp::getContestApp() )
    {
-      MinosParameters::getMinosParameters() ->applyFontChange(this);
+      TMyRCVersion RCVersion;
+      std::string sos;
+      int ios = RCVersion.getOSVersion(sos);
+      trace(sos);
+
+      if (ios > 6000)
+      {
+         Screen->MenuFont->Assign( TContestApp::getContestApp()->sysfont );
+      }
+      MinosParameters::getMinosParameters() ->applyFontChange(this, false);
+      InvalidateRect(NULL, NULL, true);
    }
    StartupTimer->Enabled = true;
 
@@ -1299,8 +1309,17 @@ void __fastcall TLogContainer::FontEdit1BeforeExecute(TObject */*Sender*/)
 //---------------------------------------------------------------------------
 void TLogContainer::FontChanged_Event ( MinosEventBase & /*Event*/ )
 {
-   MinosParameters::getMinosParameters() ->applyFontChange(this);
+   TMyRCVersion RCVersion;
+   std::string sos;
+   int ios = RCVersion.getOSVersion(sos);
+
+   if (ios > 6000)
+   {
+      Screen->MenuFont->Assign( TContestApp::getContestApp()->sysfont );
+   }
+   MinosParameters::getMinosParameters() ->applyFontChange(this, false);
    StatusBar1Resize(this);
+   InvalidateRect(NULL, NULL, true);
 }
 
 void __fastcall TLogContainer::ReportAutofillActionExecute(TObject */*Sender*/)

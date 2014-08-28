@@ -652,12 +652,15 @@ void TContestApp::mshowMessage( String mess, TComponent* Owner )
 {
    mShowMessage( mess, Owner );
 }
-void TContestApp::applyFontChange(TWinControl *t)
+void TContestApp::applyFontChange(TWinControl *t, bool scale )
 {
    TForm *form = dynamic_cast<TForm *>(t);
    if (form)
    {
-      form->ScaleBy( sysfont->Size, form->Font->Size );
+      if (scale)
+      {
+         form->ScaleBy( sysfont->Size, form->Font->Size );
+      }
       form->Font->Assign( sysfont );
    }
    else
@@ -665,7 +668,10 @@ void TContestApp::applyFontChange(TWinControl *t)
       TFrame *frame = dynamic_cast<TFrame *>(t);
       if (frame)
       {
-         frame->ScaleBy( sysfont->Size, frame->Font->Size );
+         if (scale)
+         {
+            frame->ScaleBy( sysfont->Size, frame->Font->Size );
+         }
          frame->Font->Assign( sysfont );
       }
    }

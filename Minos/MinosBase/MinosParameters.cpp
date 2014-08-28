@@ -99,7 +99,7 @@ std::vector<BaseContestLog *> MinosParametersAdapter::getContestList()
    std::vector<BaseContestLog *> logList;
    return logList;
 }
-void MinosParametersAdapter::applyFontChange(TWinControl */*t*/)
+void MinosParametersAdapter::applyFontChange(TWinControl */*t*/, bool /*scale*/)
 {
 }
 TFont *MinosParametersAdapter::getSysFont()
