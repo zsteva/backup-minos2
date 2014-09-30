@@ -222,6 +222,7 @@ object SingleLogFrame: TSingleLogFrame
           OnGetHint = LogMonitorQSOTreeGetHint
           OnKeyDown = LogMonitorQSOTreeKeyDown
           OnMouseDown = LogMonitorQSOTreeMouseDown
+          ExplicitLeft = 3
           ExplicitWidth = 469
           ExplicitHeight = 216
         end
@@ -306,7 +307,7 @@ object SingleLogFrame: TSingleLogFrame
               Height = 31
               Align = alClient
               Style = csDropDownList
-              ItemHeight = 0
+              ItemHeight = 23
               TabOrder = 0
               TabStop = False
             end

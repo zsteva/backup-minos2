@@ -60,10 +60,6 @@ void __fastcall TLogContainer::FormShow( TObject */*Sender*/ )
       int ios = RCVersion.getOSVersion(sos);
       trace(sos);
 
-      if (ios > 6000)
-      {
-         Screen->MenuFont->Assign( TContestApp::getContestApp()->sysfont );
-      }
       MinosParameters::getMinosParameters() ->applyFontChange(this, false);
       InvalidateRect(NULL, NULL, true);
    }
@@ -1313,10 +1309,6 @@ void TLogContainer::FontChanged_Event ( MinosEventBase & /*Event*/ )
    std::string sos;
    int ios = RCVersion.getOSVersion(sos);
 
-   if (ios > 6000)
-   {
-      Screen->MenuFont->Assign( TContestApp::getContestApp()->sysfont );
-   }
    MinosParameters::getMinosParameters() ->applyFontChange(this, false);
    StatusBar1Resize(this);
    InvalidateRect(NULL, NULL, true);

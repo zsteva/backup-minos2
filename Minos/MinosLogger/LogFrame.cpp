@@ -128,7 +128,7 @@ __fastcall TSingleLogFrame::TSingleLogFrame( TComponent* Owner, BaseContestLog *
       int temp = -1;
       String key = "LogColumnWidth0";
       MinosParameters::getMinosParameters() ->getDisplayColumnWidth( key.c_str(), temp, -1 );
-      MinosParameters::getMinosParameters() ->mshowMessage( String( "LogColumnWidth0 is " ) + String(temp) );
+      //MinosParameters::getMinosParameters() ->mshowMessage( String( "LogColumnWidth0 is " ) + String(temp) );
    }
    showMatchHeaders();
 
@@ -138,7 +138,7 @@ __fastcall TSingleLogFrame::TSingleLogFrame( TComponent* Owner, BaseContestLog *
       int temp = -1;
       String key = "LogColumnWidth0";
       MinosParameters::getMinosParameters() ->getDisplayColumnWidth( key.c_str(), temp, -1 );
-      MinosParameters::getMinosParameters() ->mshowMessage( String( "LogColumnWidth0 is " ) + String(temp) );
+      //MinosParameters::getMinosParameters() ->mshowMessage( String( "LogColumnWidth0 is " ) + String(temp) );
    }
    OnShowTimer->Enabled = true;
 }

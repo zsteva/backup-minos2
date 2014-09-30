@@ -24,6 +24,7 @@
 
 double bigClockCorr = 0;
 TContestApp *TContestApp::contestApp = 0;
+int inFontChange = 0;
 
 TContestApp *TContestApp::getContestApp()
 {
@@ -577,15 +578,17 @@ void TContestApp::getDisplayColumnWidth( const std::string &key, int &val, int d
 }
 void TContestApp::setDisplayColumnWidth( const std::string &key, int val )
 {
-   if ( val < 0 )
+   if (inFontChange <= 0)
    {
-      displayBundle.setStringProfile( key.c_str(), 0 );
+      if ( val < 0 )
+      {
+         displayBundle.setStringProfile( key.c_str(), 0 );
+      }
+      else
+      {
+         displayBundle.setIntProfile( key.c_str(), val );
+      }
    }
-   else
-   {
-      displayBundle.setIntProfile( key.c_str(), val );
-   }
-
 }
 void TContestApp::getBoolDisplayProfile( int enumkey, bool &value )
 {
@@ -654,27 +657,29 @@ void TContestApp::mshowMessage( String mess, TComponent* Owner )
 }
 void TContestApp::applyFontChange(TWinControl *t, bool scale )
 {
+	inFontChange++;
    TForm *form = dynamic_cast<TForm *>(t);
    if (form)
    {
-      if (scale)
-      {
-         form->ScaleBy( sysfont->Size, form->Font->Size );
-      }
-      form->Font->Assign( sysfont );
+	  if (scale)
+	  {
+		 form->ScaleBy( sysfont->Size, form->Font->Size );
+	  }
+	  form->Font->Assign( sysfont );
    }
    else
    {
-      TFrame *frame = dynamic_cast<TFrame *>(t);
-      if (frame)
-      {
-         if (scale)
-         {
-            frame->ScaleBy( sysfont->Size, frame->Font->Size );
-         }
-         frame->Font->Assign( sysfont );
-      }
+	  TFrame *frame = dynamic_cast<TFrame *>(t);
+	  if (frame)
+	  {
+		 if (scale)
+		 {
+			frame->ScaleBy( sysfont->Size, frame->Font->Size );
+		 }
+		 frame->Font->Assign( sysfont );
+	  }
    }
+	inFontChange--;
 }
 TFont *TContestApp::getSysFont()
 {
