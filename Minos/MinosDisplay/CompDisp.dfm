@@ -10,13 +10,15 @@ object CompFrame: TCompFrame
     Width = 320
     Height = 240
     Align = alClient
+    Colors.UnfocusedColor = clMedGray
     Header.AutoSizeIndex = 0
     Header.DefaultHeight = 17
+    Header.Height = 17
     Header.MainColumn = -1
     Header.ParentFont = True
     TabOrder = 0
-    TreeOptions.AutoOptions = [toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes]
-    TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning]
+    TreeOptions.AutoOptions = [toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes, toAutoChangeScale]
+    TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning, toNodeHeightResize]
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowHorzGridLines, toShowVertGridLines, toThemeAware, toUseBlendedImages, toFullVertGridLines]
     OnGetText = CompGridGetText
     OnGetNodeDataSize = CompGridGetNodeDataSize

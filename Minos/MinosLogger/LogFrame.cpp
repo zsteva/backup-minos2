@@ -124,10 +124,22 @@ __fastcall TSingleLogFrame::TSingleLogFrame( TComponent* Owner, BaseContestLog *
 
    WLogAreaSplitter->Restore();
 
+   {
+      int temp = -1;
+      String key = "LogColumnWidth0";
+      MinosParameters::getMinosParameters() ->getDisplayColumnWidth( key.c_str(), temp, -1 );
+      MinosParameters::getMinosParameters() ->mshowMessage( String( "LogColumnWidth0 is " ) + String(temp) );
+   }
    showMatchHeaders();
 
    MinosParameters::getMinosParameters() ->applyFontChange(this);
 
+   {
+      int temp = -1;
+      String key = "LogColumnWidth0";
+      MinosParameters::getMinosParameters() ->getDisplayColumnWidth( key.c_str(), temp, -1 );
+      MinosParameters::getMinosParameters() ->mshowMessage( String( "LogColumnWidth0 is " ) + String(temp) );
+   }
    OnShowTimer->Enabled = true;
 }
 //---------------------------------------------------------------------------
@@ -1422,6 +1434,7 @@ void __fastcall TSingleLogFrame::PublishTimerTimer( TObject */*Sender*/ )
 void __fastcall TSingleLogFrame::OnShowTimerTimer( TObject */*Sender*/ )
 {
    OnShowTimer->Enabled = false;
+   ParentFont = true;
    MultDispFrame->setContest( contest );
    doNextContactDetailsOnLeftClick( this );
    MinosLoggerEvents::SendShowOperators();

@@ -312,7 +312,7 @@ BaseContestLog * TLogContainer::addSlot( TContestEntryDetails *ced, const std::s
          f->Name = String( "LogFrame" ) + namegen++;
          f->Parent = t;
          f->Align = alClient;
-         f->ParentFont = true;
+//         f->ParentFont = true;     // moved to TSingleLogFrame::OnShowTimerTimer or we get "no parent control"
          f->TabStop = false;
 
          f->logColumnsChanged = true;  // also causes show QSOs

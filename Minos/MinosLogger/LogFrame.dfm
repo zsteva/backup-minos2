@@ -102,48 +102,26 @@ object SingleLogFrame: TSingleLogFrame
             TabStop = False
             ExplicitWidth = 310
             ExplicitHeight = 106
-            inherited CountriesTab: TTabSheet
-              ExplicitLeft = 4
-              ExplicitTop = 4
-              ExplicitWidth = 248
-              ExplicitHeight = 182
-            end
             inherited DistrictTab: TTabSheet
-              ExplicitLeft = 4
-              ExplicitTop = 4
-              ExplicitWidth = 248
-              ExplicitHeight = 182
               inherited DistrictMultTree: TVirtualStringTree
                 TabStop = False
               end
             end
             inherited LocatorsTab: TTabSheet
-              ExplicitLeft = 4
-              ExplicitTop = 4
-              ExplicitWidth = 248
-              ExplicitHeight = 182
-              inherited LocatorMultTree: TVirtualStringTree
-                TabStop = False
-              end
-            end
-            inherited StatsTab: TTabSheet
               ExplicitWidth = 202
               ExplicitHeight = 98
-              inherited StatsDispFrame: TStatsDispFrame
+              inherited LocatorMultTree: TVirtualStringTree
                 Width = 202
                 Height = 98
                 TabStop = False
                 ExplicitWidth = 202
                 ExplicitHeight = 98
-                inherited SLabel1: TLabel
-                  Width = 202
-                  Height = 44
-                end
+              end
+            end
+            inherited StatsTab: TTabSheet
+              inherited StatsDispFrame: TStatsDispFrame
+                TabStop = False
                 inherited Panel1: TPanel
-                  Top = 44
-                  Width = 202
-                  ExplicitTop = 44
-                  ExplicitWidth = 202
                   inherited P1Edit: TLabeledEdit
                     TabStop = False
                     EditLabel.ExplicitTop = -1
@@ -451,8 +429,10 @@ object SingleLogFrame: TSingleLogFrame
           Hint = 'Matching archive entries'
           Align = alClient
           BevelKind = bkFlat
+          Colors.UnfocusedColor = clMedGray
           Header.AutoSizeIndex = 0
           Header.DefaultHeight = 17
+          Header.Height = 17
           Header.MainColumn = -1
           Header.Options = [hoColumnResize, hoDrag]
           Header.ParentFont = True
@@ -461,6 +441,8 @@ object SingleLogFrame: TSingleLogFrame
           ShowHint = True
           TabOrder = 0
           TabStop = False
+          TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoSpanColumns, toAutoTristateTracking, toAutoDeleteMovedNodes, toAutoChangeScale]
+          TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning, toNodeHeightResize]
           TreeOptions.SelectionOptions = [toFullRowSelect]
           OnDblClick = ArchiveMatchTreeDblClick
           OnEnter = ArchiveMatchTreeEnter
@@ -500,8 +482,10 @@ object SingleLogFrame: TSingleLogFrame
           Hint = 'Matching QSOs in current contest'
           Align = alClient
           BevelKind = bkFlat
+          Colors.UnfocusedColor = clMedGray
           Header.AutoSizeIndex = 0
           Header.DefaultHeight = 17
+          Header.Height = 17
           Header.MainColumn = -1
           Header.Options = [hoColumnResize, hoDrag]
           Header.ParentFont = True
@@ -510,8 +494,8 @@ object SingleLogFrame: TSingleLogFrame
           ShowHint = True
           TabOrder = 0
           TabStop = False
-          TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoSpanColumns, toAutoTristateTracking, toAutoDeleteMovedNodes]
-          TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning]
+          TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoSpanColumns, toAutoTristateTracking, toAutoDeleteMovedNodes, toAutoChangeScale]
+          TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning, toNodeHeightResize]
           TreeOptions.SelectionOptions = [toFullRowSelect]
           OnBeforeItemErase = ThisMatchTreeBeforeItemErase
           OnDblClick = ThisMatchTreeDblClick
@@ -538,8 +522,10 @@ object SingleLogFrame: TSingleLogFrame
             Hint = 'Matching QSOs in any other loaded contests'
             Align = alClient
             BevelKind = bkFlat
+            Colors.UnfocusedColor = clMedGray
             Header.AutoSizeIndex = 0
             Header.DefaultHeight = 17
+            Header.Height = 17
             Header.MainColumn = -1
             Header.Options = [hoColumnResize, hoDrag]
             Header.ParentFont = True
@@ -548,8 +534,8 @@ object SingleLogFrame: TSingleLogFrame
             ShowHint = True
             TabOrder = 0
             TabStop = False
-            TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoSpanColumns, toAutoTristateTracking, toAutoDeleteMovedNodes]
-            TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning]
+            TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoSpanColumns, toAutoTristateTracking, toAutoDeleteMovedNodes, toAutoChangeScale]
+            TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning, toNodeHeightResize]
             TreeOptions.SelectionOptions = [toFullRowSelect]
             OnDblClick = OtherMatchTreeDblClick
             OnEnter = OtherMatchTreeEnter

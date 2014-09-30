@@ -24,6 +24,7 @@ object QSOEditDlg: TQSOEditDlg
     Width = 631
     Height = 256
     Align = alClient
+    Colors.UnfocusedColor = clMedGray
     Header.AutoSizeIndex = 0
     Header.DefaultHeight = 17
     Header.Font.Charset = DEFAULT_CHARSET
@@ -31,10 +32,12 @@ object QSOEditDlg: TQSOEditDlg
     Header.Font.Height = -11
     Header.Font.Name = 'Verdana'
     Header.Font.Style = []
+    Header.Height = 17
     Header.MainColumn = -1
     Header.Options = [hoColumnResize, hoDrag]
     TabOrder = 0
     TabStop = False
+    TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toNodeHeightResize, toEditOnClick]
     OnBeforeItemErase = QSOHistoryTreeBeforeItemErase
     OnGetText = QSOHistoryTreeGetText
     OnGetNodeDataSize = QSOHistoryTreeGetNodeDataSize
@@ -49,6 +52,7 @@ object QSOEditDlg: TQSOEditDlg
     Height = 190
     Align = alBottom
     TabOrder = 1
+    TabStop = True
     ExplicitTop = 256
     ExplicitWidth = 631
     ExplicitHeight = 190
@@ -57,46 +61,44 @@ object QSOEditDlg: TQSOEditDlg
       Height = 190
       ExplicitWidth = 631
       ExplicitHeight = 190
-      inherited ModeComboBoxGJV: TComboBox [5]
+      inherited SerRXEdit: TLabeledEdit [5]
       end
-      inherited CommentsEdit: TLabeledEdit [6]
+      inherited MainOpComboBox: TComboBox [6]
       end
-      inherited QTHEdit: TLabeledEdit [7]
+      inherited NonScoreCheckBox: TCheckBox [8]
       end
-      inherited GJVOKButton: TButton [8]
-        OnClick = GJVQSOEditFrame1GJVOKButtonClick
+      inherited GJVForceButton: TButton [9]
+        OnClick = GJVQSOEditFrame1GJVForceButtonClick
       end
-      inherited CatchupButton: TButton [9]
+      inherited GJVCancelButton: TButton [10]
+        OnClick = GJVQSOEditFrame1GJVCancelButtonClick
       end
-      inherited SecondOpComboBox: TComboBox [10]
+      inherited ModeButton: TButton [11]
       end
-      inherited RSTRXEdit: TLabeledEdit [11]
+      inherited CallsignEdit: TLabeledEdit [12]
       end
-      inherited SerTXEdit: TLabeledEdit [12]
-      end
-      inherited RSTTXEdit: TLabeledEdit [13]
+      inherited FirstUnfilledButton: TButton [13]
       end
       inherited LocEdit: TLabeledEdit [14]
       end
-      inherited SerRXEdit: TLabeledEdit [15]
+      inherited RSTTXEdit: TLabeledEdit [15]
       end
-      inherited MainOpComboBox: TComboBox [16]
+      inherited SerTXEdit: TLabeledEdit [16]
       end
-      inherited DeletedCheckBox: TCheckBox [17]
+      inherited RSTRXEdit: TLabeledEdit [17]
       end
-      inherited NonScoreCheckBox: TCheckBox [18]
+      inherited SecondOpComboBox: TComboBox [18]
       end
-      inherited GJVForceButton: TButton [19]
-        OnClick = GJVQSOEditFrame1GJVForceButtonClick
+      inherited CatchupButton: TButton [19]
       end
-      inherited GJVCancelButton: TButton [20]
-        OnClick = GJVQSOEditFrame1GJVCancelButtonClick
+      inherited GJVOKButton: TButton [20]
+        OnClick = GJVQSOEditFrame1GJVOKButtonClick
       end
-      inherited ModeButton: TButton [21]
+      inherited QTHEdit: TLabeledEdit [21]
       end
-      inherited CallsignEdit: TLabeledEdit [22]
+      inherited CommentsEdit: TLabeledEdit [22]
       end
-      inherited FirstUnfilledButton: TButton [23]
+      inherited ModeComboBoxGJV: TComboBox [23]
       end
     end
     inherited ROFieldTimer: TTimer

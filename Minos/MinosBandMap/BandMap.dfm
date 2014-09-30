@@ -19,28 +19,28 @@ object BandMapForm: TBandMapForm
   object Label1: TLabel
     Left = 8
     Top = 512
-    Width = 51
+    Width = 59
     Height = 13
     Caption = 'Frequency'
   end
   object FreqLabel: TLabel
     Left = 96
     Top = 512
-    Width = 47
+    Width = 55
     Height = 13
     Caption = 'FreqLabel'
   end
   object Label3: TLabel
     Left = 8
     Top = 568
-    Width = 46
+    Width = 54
     Height = 13
     Caption = 'Log entry'
   end
   object LogLabel: TLabel
     Left = 96
     Top = 568
-    Width = 42
+    Width = 50
     Height = 13
     Caption = 'LogLabel'
   end
@@ -49,6 +49,7 @@ object BandMapForm: TBandMapForm
     Top = 8
     Width = 449
     Height = 473
+    Colors.UnfocusedColor = clMedGray
     Header.AutoSizeIndex = -1
     Header.DefaultHeight = 17
     Header.Font.Charset = DEFAULT_CHARSET
@@ -56,10 +57,11 @@ object BandMapForm: TBandMapForm
     Header.Font.Height = -11
     Header.Font.Name = 'MS Sans Serif'
     Header.Font.Style = []
+    Header.Height = 17
     Header.Options = [hoColumnResize, hoDrag, hoVisible]
     TabOrder = 0
-    TreeOptions.AutoOptions = [toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes, toDisableAutoscrollOnEdit]
-    TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning]
+    TreeOptions.AutoOptions = [toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes, toAutoChangeScale, toDisableAutoscrollOnEdit]
+    TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning, toNodeHeightResize]
     TreeOptions.PaintOptions = [toHideFocusRect, toShowButtons, toShowDropmark, toShowHorzGridLines, toShowVertGridLines, toThemeAware, toUseBlendedImages]
     TreeOptions.SelectionOptions = [toExtendedFocus, toFullRowSelect, toCenterScrollIntoView]
     OnGetText = BMTreeGetText

@@ -93,13 +93,16 @@ object MonitorMain: TMonitorMain
       Height = 359
       Align = alClient
       AutoExpandDelay = 100
+      Colors.UnfocusedColor = clMedGray
       Header.AutoSizeIndex = -1
       Header.DefaultHeight = 17
+      Header.Height = 17
       Header.Options = [hoColumnResize, hoDrag]
       Header.ParentFont = True
       TabOrder = 0
       TabStop = False
-      TreeOptions.AutoOptions = [toAutoExpand, toAutoTristateTracking, toAutoDeleteMovedNodes]
+      TreeOptions.AutoOptions = [toAutoExpand, toAutoTristateTracking, toAutoDeleteMovedNodes, toAutoChangeScale]
+      TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toNodeHeightResize, toEditOnClick]
       OnDblClick = MonitorTreeDblClick
       OnGetText = MonitorTreeGetText
       OnGetNodeDataSize = MonitorTreeGetNodeDataSize

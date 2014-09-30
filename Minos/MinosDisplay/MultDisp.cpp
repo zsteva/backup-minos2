@@ -409,7 +409,12 @@ void __fastcall TMultDispFrame::LocatorMultTreeGetText(
    TVSTTextType /*TextType*/, WideString &CellText )
 {
    if ( Node->States.Contains( vsHasChildren ) )
-      CellText = ct->locs.llist[ Node->Index ] ->loc;
+   {
+      if (ct->locs.llist.size() > Node->Index)
+      {
+         CellText = ct->locs.llist[ Node->Index ] ->loc;
+      }
+   }
    else
    {
       String dispLine;

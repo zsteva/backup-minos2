@@ -39,7 +39,7 @@ object MultDispFrame: TMultDispFrame
     Top = 0
     Width = 296
     Height = 190
-    ActivePage = StatsTab
+    ActivePage = LocatorsTab
     Align = alClient
     MultiLine = True
     TabOrder = 0
@@ -52,15 +52,17 @@ object MultDispFrame: TMultDispFrame
         Width = 248
         Height = 182
         Align = alClient
+        Colors.UnfocusedColor = clMedGray
         Header.AutoSizeIndex = 0
         Header.DefaultHeight = 17
+        Header.Height = 17
         Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDblClickResize, hoDrag]
         Header.ParentFont = True
         TabOrder = 0
         TabStop = False
-        TreeOptions.AutoOptions = [toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes]
-        TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning]
+        TreeOptions.AutoOptions = [toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes, toAutoChangeScale]
+        TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning, toNodeHeightResize]
         TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toThemeAware, toUseBlendedImages]
         TreeOptions.SelectionOptions = [toCenterScrollIntoView]
         OnGetText = CountryMultTreeGetText
@@ -80,14 +82,16 @@ object MultDispFrame: TMultDispFrame
         Width = 248
         Height = 182
         Align = alClient
+        Colors.UnfocusedColor = clMedGray
         Header.AutoSizeIndex = 0
         Header.DefaultHeight = 17
+        Header.Height = 17
         Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDblClickResize, hoDrag]
         Header.ParentFont = True
         TabOrder = 0
-        TreeOptions.AutoOptions = [toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes]
-        TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning]
+        TreeOptions.AutoOptions = [toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes, toAutoChangeScale]
+        TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning, toNodeHeightResize]
         TreeOptions.PaintOptions = [toHideFocusRect, toShowButtons, toShowDropmark, toThemeAware, toUseBlendedImages]
         TreeOptions.SelectionOptions = [toCenterScrollIntoView]
         OnGetText = DistrictMultTreeGetText
@@ -107,6 +111,7 @@ object MultDispFrame: TMultDispFrame
         Width = 248
         Height = 182
         Align = alClient
+        Colors.UnfocusedColor = clMedGray
         Header.AutoSizeIndex = 0
         Header.DefaultHeight = 17
         Header.Font.Charset = DEFAULT_CHARSET
@@ -114,10 +119,12 @@ object MultDispFrame: TMultDispFrame
         Header.Font.Height = -11
         Header.Font.Name = 'Verdana'
         Header.Font.Style = []
+        Header.Height = 17
         Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDrag]
         TabOrder = 0
-        TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes, toDisableAutoscrollOnFocus]
+        TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes, toDisableAutoscrollOnFocus, toAutoChangeScale]
+        TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toNodeHeightResize, toEditOnClick]
         TreeOptions.SelectionOptions = [toCenterScrollIntoView]
         OnGetText = LocatorMultTreeGetText
         OnGetNodeDataSize = LocatorMultTreeGetNodeDataSize
@@ -143,8 +150,6 @@ object MultDispFrame: TMultDispFrame
         inherited SLabel1: TLabel
           Width = 248
           Height = 128
-          ExplicitWidth = 248
-          ExplicitHeight = 130
         end
         inherited Panel1: TPanel
           Top = 128
@@ -161,12 +166,14 @@ object MultDispFrame: TMultDispFrame
             EditLabel.ExplicitLeft = 8
             EditLabel.ExplicitTop = 7
             EditLabel.ExplicitWidth = 47
+            ExplicitTop = 23
           end
           inherited P2Edit: TLabeledEdit
             Top = 22
             EditLabel.ExplicitLeft = 79
             EditLabel.ExplicitTop = 6
             EditLabel.ExplicitWidth = 47
+            ExplicitTop = 22
           end
         end
       end
