@@ -307,7 +307,7 @@ object SingleLogFrame: TSingleLogFrame
               Height = 31
               Align = alClient
               Style = csDropDownList
-              ItemHeight = 23
+              ItemHeight = 0
               TabOrder = 0
               TabStop = False
             end

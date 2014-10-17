@@ -45,14 +45,14 @@ object ContestEntryDetails: TContestEntryDetails
   end
   object Label1: TLabel
     Left = 492
-    Top = 238
+    Top = 233
     Width = 81
     Height = 13
     Caption = 'Main Operator'
   end
   object Label2: TLabel
     Left = 492
-    Top = 291
+    Top = 283
     Width = 97
     Height = 13
     Caption = 'Second Operator'
@@ -153,9 +153,9 @@ object ContestEntryDetails: TContestEntryDetails
   end
   object MultGroupBox: TGroupBox
     Left = 434
-    Top = 364
+    Top = 330
     Width = 249
-    Height = 146
+    Height = 180
     Caption = 'Multipliers and Exchange'
     TabOrder = 17
     object DXCCMult: TCheckBox
@@ -165,6 +165,7 @@ object ContestEntryDetails: TContestEntryDetails
       Height = 17
       Caption = 'DXCC Multiplier'
       TabOrder = 0
+      OnClick = DXCCMultClick
     end
     object LocatorMult: TCheckBox
       Left = 16
@@ -173,10 +174,11 @@ object ContestEntryDetails: TContestEntryDetails
       Height = 17
       Caption = 'Locator Multiplier'
       TabOrder = 1
+      OnClick = LocatorMultClick
     end
     object ExchangeComboBox: TComboBox
       Left = 16
-      Top = 117
+      Top = 150
       Width = 230
       Height = 21
       Style = csDropDownList
@@ -197,6 +199,7 @@ object ContestEntryDetails: TContestEntryDetails
       Height = 17
       Caption = 'UK Locs only (M5, M6)'
       TabOrder = 3
+      OnClick = GLocMultClick
     end
     object NonGCtryMult: TCheckBox
       Left = 16
@@ -205,6 +208,16 @@ object ContestEntryDetails: TContestEntryDetails
       Height = 17
       Caption = 'Non UK Countries Only (M6)'
       TabOrder = 4
+      OnClick = NonGCtryMultClick
+    end
+    object M7LocatorMults: TCheckBox
+      Left = 16
+      Top = 112
+      Width = 201
+      Height = 17
+      Caption = 'All locs; UK locs x2 (M7)'
+      TabOrder = 5
+      OnClick = M7LocatorMultsClick
     end
   end
   object OptionsGroupBox: TGroupBox
@@ -484,7 +497,7 @@ object ContestEntryDetails: TContestEntryDetails
   end
   object MainOpComboBox: TComboBox
     Left = 492
-    Top = 261
+    Top = 256
     Width = 145
     Height = 21
     CharCase = ecUpperCase
@@ -493,7 +506,7 @@ object ContestEntryDetails: TContestEntryDetails
   end
   object SecondOpComboBox: TComboBox
     Left = 492
-    Top = 316
+    Top = 303
     Width = 145
     Height = 21
     CharCase = ecUpperCase

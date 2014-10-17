@@ -1,3 +1,14 @@
+==================================================================
+Double click tab to bring up details - no "OnDblClick" so complicated
+Tab drag would be nice as well
+Button(?) on details for export
+==================================================================
+Time offset to a contest (Bob Offer's problem))
+==================================================================
+Recognition of dry squares by country - whole of UK initially...
+==================================================================
+M7
+==================================================================
 Display of operating time within the contest; may need to make the "1 hour" configurable
 ==================================================================
 Modify www.goodey.org.uk
@@ -18,8 +29,9 @@ Or can we get a crude "loc squares" map
 ==================================================================
 Changes to do
 
+G4DDN - editing of archive list leads to crash
 Odd crashes in lists; do I have a stack trace in the logs? Although that was on Grahams's laptop.
-
+                                   
 QT conversion - then others MIGHT be willing to play as well. And it would achieve good refactoring (which will then rot)
 
 Locator map
@@ -34,50 +46,11 @@ And HF? How do we go about cabrillo export in general?
 ==================================================================
 Disable F keys configurably (to allow voice keyer to run as well)
 ==================================================================
-DPI awareness for Vista and Win7
-
-This site is telling it better then I can.
-http://www.rw-designer.com/DPI-aware
-Look for:  Not DPI aware - Vista mode
- 
-And this is the MickeySoft guide to DPI aware applications
-which they encourage people to write as they encourage users
-to change the DPI to get bigger fonts on high-res screens.
-http://msdn.microsoft.com/en-us/library/dd464660(v=vs.85).aspx
-
-HMODULE hUser32 = LoadLibrary(_T("user32.dll"));
-typedef BOOL (*SetProcessDPIAwareFunc)();
-SetProcessDPIAwareFunc setDPIAware = (SetProcessDPIAwareFunc)GetProcAddress(hUser32, "SetProcessDPIAware");
-if (setDPIAware)
-    setDPIAware();
-FreeLibrary(hUser32);
-
 ==================================================================
-> how does one change the font on a menu
-
-I believe the only way You can do that is by owner drawing it.
-The default font name and size is controlled by the system.
-
-Set OwnerDraw = true;
-and then respond to the OnMesureItem and the OnDrawItem events
-on each menu item. p.s. they can all use the same event.
-
-But be aware of potential scaling problems, so test Your work
-on a machine with extra large font eg. 144DPI, thats what I use
-and believe me I've seen a lot of poor work.
-Some don't scale up the font and others have forgotten to respond
-to the OnMesureItem even which result in letters to big for the
-items.
-
- ==================================================================
-G4DDN - editing of archive list leads to crash
 ==================================================================
-MessageBox doesn't get the font change - QSOFrame 1083 (QSO has changed)
-especially needs this.
-done - Font change lost in edit frame!
+==================================================================
 ==================================================================
 Sanity check of splitter positions - all I'm doing is screwing it up further; check on release version
-
  ==================================================================
 Would be very nice to get column sorting going everywhere - but we need a clear reset.
 ==================================================================
@@ -92,15 +65,12 @@ Need to break up single latlong field into deg/mins/secs
 Plus EW and NS check boxes - but allow negative degrees, or E/W/N/S texts
 On exit logic has to change as latlong will normally take several steps to complete
 ==================================================================
-Menus fonts - but these are under the control of Windows
-fly by hints fonts
 ==================================================================
 Better header text for loc/distance in country and district display
 Double click on contest in Vista default directory says "already open"?
 ==================================================================
 ?? Have profile flags to say "don't display if at default"/"don't (re)write default key/value"
 ?? Indicate default/non default in editor
-Add calendar URLs and years as global INI options
 allow tab between keys in editor! Maybe redo as an editable string grid?
 ==================================================================
 Make sure use of MinosLogger.ini is documented! Will be VERY useful
@@ -109,7 +79,7 @@ e.g.
 [Default]
 Log Directory=c:\temp
 ===========================================================================
-Facility to defeat fly by hints? Maybe us status bar instead (which is where they will be on Qt)?
+Facility to defeat fly by hints? Maybe use status bar instead (which is where they will be on Qt)?
 ===========================================================================
 Rethink logSequence and nextBlock; nextBlock is a hangover from the "old" logger.
 We should just need to use logSequence, and maintain a "max" value for it.
@@ -159,8 +129,6 @@ e.       retained
 
 Since I have been using Minos in the Xmas cumulatives I have noticed that each time you save an entry it defaults to the \minos\logs folder, rather than retaining the default of the last one used. (I file submitted logs elsewhere).
 ===========================================================================
-Make URLs for years configurable; make a new year just a config change!
-
 //================================================================
 Bugs, etc to fix
 =================
@@ -175,10 +143,6 @@ Insert before/insert after; "easy" enough to do, but what needs doing to all fol
 //==================================================================
 *****************  Documentation for networking  *******************
 //==================================================================
-Use RSGB addresses for calendar; slide calendars looked for based on current date (don't get before previous november?)
-
-Make calendar URLs configurable (somewhere - registry? Probably not! But need an editor for them - button on TCalendarForm?)
-
 Can we make "old" contests read only? i.e. if "after time" by some amount then make them RO unless overridden? Lose the RO check box!
 
 ?? free floating crib sheet

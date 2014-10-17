@@ -43,7 +43,7 @@ void ScreenContact::initialise( BaseContestLog *ct )
    screenQSOValid = false;
    newCtry = false;
    newDistrict = false;
-   newLoc = false ;
+   newLoc = 0 ;
    op1 = "" ;
    op2 = "" ;
 

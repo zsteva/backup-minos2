@@ -365,6 +365,56 @@ void DisplayContestContact::checkContact( )
          }
       }
 
+      int oldMultCount = multCount;
+      if ( ls )
+      {
+         bool UKcall = cs.isUK();
+         LocCount * npt = ls->map ( numbers );
+         if ( npt )
+         {
+            if (!npt->UKMultGiven && UKcall)
+            {
+               npt->UKMultGiven = true;
+               if (npt->UKLocCount + npt->nonUKLocCount == 0)
+               {
+                  // hasn't been worked at all
+                  clp->nlocs++;
+                  multCount += clp->UKloc_multiplier;
+               }
+               else
+               {
+                  // has already been worked - must have been non-uk, so that
+                  // bit of the mult has already happened.
+                  multCount += clp->UKloc_multiplier - clp->NonUKloc_multiplier;
+               }
+
+            }
+
+            if ( npt->UKLocCount + npt->nonUKLocCount == 0 )
+            {
+               clp->nlocs++;
+               if ( clp->UKloc_mult && UKcall)
+               {
+                  npt->UKMultGiven = true;
+                  multCount += clp->UKloc_multiplier;
+               }
+               if (clp->NonUKloc_mult && !UKcall )
+               {
+                  multCount += clp->NonUKloc_multiplier;
+               }
+            }
+            if (UKcall)
+            {
+               npt->UKLocCount++;
+            }
+            else
+            {
+               npt->nonUKLocCount++;
+            }
+         }
+      }
+      newLoc = multCount - oldMultCount;
+/*
       if ( ls )
       {
          LocCount * npt = ls->map( numbers );
@@ -391,6 +441,7 @@ void DisplayContestContact::checkContact( )
             }
          }
       }
+*/
    }
 }
 

@@ -720,7 +720,8 @@ bool CountrySynonymList::procLine( char **a )
    return true;
 }
 //======================================================================
-LocList::LocList( void )
+LocList::LocList( void )//:nlocs(0)
+
 {}
 LocList::~LocList()
 {
@@ -765,8 +766,9 @@ void LocSquare::clear( void )
    for ( i = 0; i < 10; i++ )
       for ( j = 0; j < 10; j++ )
       {
-         numbers[ i ][ j ].valid = 0;
-         numbers[ i ][ j ].invalid = 0;
+         numbers[ i ][ j ].UKMultGiven = false;
+         numbers[ i ][ j ].UKLocCount = 0;
+         numbers[ i ][ j ].nonUKLocCount = 0;
       }
 }
 

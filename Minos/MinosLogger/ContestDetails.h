@@ -74,6 +74,7 @@ class TContestEntryDetails : public TForm
    TCheckBox *GLocMult;
 	TLabeledEdit *AntOffsetEdit;
    TCheckBox *NonGCtryMult;
+   TCheckBox *M7LocatorMults;
       void __fastcall OKButtonClick( TObject *Sender );
       void __fastcall CancelButtonClick( TObject *Sender );
       void __fastcall FormShow( TObject *Sender );
@@ -87,6 +88,11 @@ class TContestEntryDetails : public TForm
    void __fastcall StartDateButtonClick(TObject *Sender);
    void __fastcall CallsignEditExit(TObject *Sender);
    void __fastcall ProtectedOptionClick(TObject *Sender);
+   void __fastcall DXCCMultClick(TObject *Sender);
+   void __fastcall NonGCtryMultClick(TObject *Sender);
+   void __fastcall LocatorMultClick(TObject *Sender);
+   void __fastcall GLocMultClick(TObject *Sender);
+   void __fastcall M7LocatorMultsClick(TObject *Sender);
    private:   	// User declarations
 //      TCalendarForm *CalendarDlg;
       LoggerContestLog * contest;

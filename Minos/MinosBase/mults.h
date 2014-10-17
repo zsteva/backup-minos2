@@ -127,9 +127,10 @@ class CountrySynonym
 class LocCount
 {
    public:
-      unsigned short valid;
-      unsigned short invalid;
-      LocCount():valid(0), invalid(0){}
+      unsigned short UKLocCount;
+      unsigned short nonUKLocCount;
+      bool UKMultGiven;
+      LocCount():UKLocCount(0), nonUKLocCount(0), UKMultGiven(false){}
 };
 class LocSquare
 {
@@ -161,6 +162,7 @@ typedef LocSquareList::iterator LocSquareIterator;
 class LocList
 {
    public:
+//      int nlocs;
       LocSquareList llist;
       LocList( void );
       virtual ~LocList();

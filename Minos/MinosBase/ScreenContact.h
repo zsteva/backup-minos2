@@ -55,7 +55,7 @@ class ScreenContact
       bool screenQSOValid;
       bool newCtry;
       bool newDistrict;
-      bool newLoc;
+      int newLoc;
 
       DistrictEntry * districtMult;
       CountryEntry * ctryMult;

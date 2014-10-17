@@ -28,7 +28,9 @@ BaseContestLog::BaseContestLog( void ) :
       allowLoc8( false ), allowLoc4 ( false ),
       RSTField( true ), serialField( true ), locatorField( true ), QTHField( true ),
       otherExchange( false ), countryMult( false ), nonGCountryMult( false ),
-      districtMult( false ), locMult( false ), GLocMult(false), scoreMode( PPKM ),
+      districtMult( false ), locMult( false ), GLocMult(false),
+      M7Mults(false), NonUKloc_mult(false), NonUKloc_multiplier(0), UKloc_mult(false), UKloc_multiplier(0),
+      scoreMode( PPKM ),
       powerWatts( true ), maxSerial( 0 ),
       contestScore( 0 ), ndistrict( 0 ), nctry( 0 ), nlocs( 0 ),
       validationPoint( 0 ),
@@ -127,6 +129,9 @@ void BaseContestLog::clearDirty()
    locMult.clearDirty();
    GLocMult.clearDirty();
    districtMult.clearDirty();
+
+   M7Mults.clearDirty();
+
    powerWatts.clearDirty();
    scoreMode.clearDirty();
    DTGStart.clearDirty();
@@ -158,6 +163,9 @@ void BaseContestLog::setDirty()
    locMult.setDirty();
    GLocMult.setDirty();
    districtMult.setDirty();
+
+   M7Mults.setDirty();
+
    powerWatts.setDirty();
    scoreMode.setDirty();
    DTGStart.setDirty();
@@ -629,7 +637,7 @@ void BaseContestLog::scanContest( void )
       nct->multCount = 0;
       nct->newDistrict = false;
       nct->newCtry = false;
-      nct->newLoc = false;
+      nct->newLoc = 0;
       nct->checkContact( );   // in scanContest
 
 //      nct->baddtg = false;
@@ -721,7 +729,7 @@ void BaseContestLog::getScoresTo(ContestScore &cs, TDateTime limit)
          }
          cs.nctry += nct->newCtry?1:0;
          cs.ndistrict += nct->newDistrict?1:0;
-         cs.nlocs += nct->newLoc?1:0;
+         cs.nlocs += nct->newLoc;
          cs.nqsos++;
       }
    }
@@ -990,6 +998,38 @@ void BaseContestLog::processMinosStanza( const std::string &methodName, MinosTes
       mt->getStructArgMemberValue( "QTHReq", otherExchange );
       mt->getStructArgMemberValue( "AllowLoc4", allowLoc4 );
       mt->getStructArgMemberValue( "AllowLoc8", allowLoc8 );
+
+      if (mt->getStructArgMemberValue( "M7Mults", M7Mults))
+      {
+         NonUKloc_mult = true;
+         NonUKloc_multiplier = 1;
+         UKloc_mult = true;
+         UKloc_multiplier = 2;
+      }
+      else
+      {
+         if (locMult.getValue())
+         {
+            UKloc_multiplier = 1;
+            UKloc_mult = true;
+         }
+         else
+         {
+            UKloc_multiplier = 0;
+            UKloc_mult = false;
+         }
+         if (GLocMult.getValue())
+         {
+            NonUKloc_multiplier = 0;
+            NonUKloc_mult = false;
+         }
+         else
+         {
+            NonUKloc_multiplier = 1;
+            NonUKloc_mult = true;
+         }
+      }
+
    }
    else
       if ( methodName == "MinosLogMode" )

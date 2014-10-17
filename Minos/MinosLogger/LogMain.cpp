@@ -304,6 +304,7 @@ BaseContestLog * TLogContainer::addSlot( TContestEntryDetails *ced, const std::s
          String baseFname = ExtractFileName( contest->cfileName.c_str() );
          t->Caption = baseFname;
 
+
          TSingleLogFrame *f = new TSingleLogFrame( this, contest );
          f->Name = String( "LogFrame" ) + namegen++;
          f->Parent = t;

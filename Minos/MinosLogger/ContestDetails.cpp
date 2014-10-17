@@ -243,6 +243,8 @@ void TContestEntryDetails::setDetails(  )
       }
    DXCCMult->Checked = contest->countryMult.getValue() ;
    NonGCtryMult->Checked = contest->nonGCountryMult.getValue() ;
+
+   M7LocatorMults->Checked = contest->M7Mults.getValue();
    LocatorMult->Checked = contest->locMult.getValue() ;
    GLocMult->Checked = contest->GLocMult.getValue();
 
@@ -338,6 +340,13 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
       contest->locMult.setValue( false );
       contest->GLocMult.setValue( false );
       contest->nonGCountryMult.setValue( false );
+
+      contest->M7Mults.setValue(false);
+
+      contest->UKloc_mult = false;
+      contest->NonUKloc_mult = false;
+      contest->UKloc_multiplier = 0;
+      contest->NonUKloc_multiplier = 0;
    }
    else if ( ic.mults == "M2" )
    {
@@ -347,6 +356,13 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
       contest->locMult.setValue( true );
       contest->GLocMult.setValue( false );
       contest->nonGCountryMult.setValue( false );
+
+      contest->M7Mults.setValue(false);
+
+      contest->UKloc_mult = true;
+      contest->NonUKloc_mult = true;
+      contest->UKloc_multiplier = 1;
+      contest->NonUKloc_multiplier = 1;
    }
    else if ( ic.mults == "M3" )
    {
@@ -356,6 +372,13 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
       contest->locMult.setValue( true );
       contest->GLocMult.setValue( false );
       contest->nonGCountryMult.setValue( false );
+
+      contest->M7Mults.setValue(false);
+
+      contest->UKloc_mult = true;
+      contest->NonUKloc_mult = true;
+      contest->UKloc_multiplier = 1;
+      contest->NonUKloc_multiplier = 1;
    }
    else if ( ic.mults == "M4" )
    {
@@ -365,6 +388,13 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
       contest->locMult.setValue( true );
       contest->GLocMult.setValue( false );
       contest->nonGCountryMult.setValue( false );
+
+      contest->M7Mults.setValue(false);
+
+      contest->UKloc_mult = true;
+      contest->NonUKloc_mult = true;
+      contest->UKloc_multiplier = 1;
+      contest->NonUKloc_multiplier = 1;
    }
    else if ( ic.mults == "M5" )
    {
@@ -374,15 +404,45 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
       contest->locMult.setValue( true );
       contest->GLocMult.setValue( true );
       contest->nonGCountryMult.setValue( false );
+
+      contest->M7Mults.setValue(false);
+
+      contest->UKloc_mult = true;
+      contest->NonUKloc_mult = false;
+      contest->UKloc_multiplier = 1;
+      contest->NonUKloc_multiplier = 0;
    }
    else if ( ic.mults == "M6" )
    {
-      // G Locs only
+      // G Locs only  + DXCC
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
       contest->locMult.setValue( true );
       contest->GLocMult.setValue( true );
       contest->nonGCountryMult.setValue( true );
+
+      contest->M7Mults.setValue(false);
+
+      contest->UKloc_mult = true;
+      contest->NonUKloc_mult = false;
+      contest->UKloc_multiplier = 1;
+      contest->NonUKloc_multiplier = 0;
+   }
+   else if ( ic.mults == "M7" )
+   {
+      // Modified M5; non UK 1 mult, UK 2 mults
+      contest->districtMult.setValue( false );
+      contest->countryMult.setValue( false );
+      contest->locMult.setValue( true );
+      contest->GLocMult.setValue( true );
+      contest->nonGCountryMult.setValue( false );
+
+      contest->M7Mults.setValue(true);
+
+      contest->UKloc_mult = true;
+      contest->NonUKloc_mult = true;
+      contest->UKloc_multiplier = 2;
+      contest->NonUKloc_multiplier = 1;
    }
    else
    {
@@ -391,6 +451,13 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
       contest->locMult.setValue( false );
       contest->GLocMult.setValue( false );
       contest->nonGCountryMult.setValue( false );
+
+      contest->M7Mults.setValue(false);
+
+      contest->UKloc_mult = false;
+      contest->NonUKloc_mult = false;
+      contest->UKloc_multiplier = 0;
+      contest->NonUKloc_multiplier = 0;
    }
    /*
       ExchangeComboBox:
@@ -419,6 +486,8 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
 
    LocatorMult->Checked = contest->locMult.getValue() ;
    GLocMult->Checked = contest->GLocMult.getValue() ;
+   M7LocatorMults->Checked = contest->M7Mults.getValue() ;
+
 
    RSTField->Checked = true ;
    SerialField->Checked = true ;
@@ -512,12 +581,28 @@ TWinControl * TContestEntryDetails::getDetails( )
    contest->countryMult.setValue( DXCCMult->Checked );   // bool
    contest->nonGCountryMult.setValue( NonGCtryMult->Checked );   // bool
 
-   if (NonGCtryMult->Checked)
+   if (contest->GLocMult.getValue() || contest->M7Mults.getValue())
    {
       LocatorMult->Checked = true;
    }
    contest->locMult.setValue( LocatorMult->Checked ) ;   // bool
    contest->GLocMult.setValue( GLocMult->Checked ) ;   // bool
+   contest->M7Mults.setValue( M7LocatorMults->Checked ) ;   // bool
+   if (contest->GLocMult.getValue())
+   {
+      contest->UKloc_mult = true;
+      contest->NonUKloc_mult = false;
+      contest->UKloc_multiplier = 1;
+      contest->NonUKloc_multiplier = 0;
+
+   }
+   if (contest->M7Mults.getValue())
+   {
+      contest->UKloc_mult = true;
+      contest->NonUKloc_mult = true;
+      contest->UKloc_multiplier = 2;
+      contest->NonUKloc_multiplier = 1;
+   }
 
    if (ProtectedOption->Checked && contest->isProtected() && contest->isProtectedSuppressed())
    {
@@ -897,4 +982,52 @@ void TContestEntryDetails::enableControls()
    SecondOpComboBox->Enabled = !protectedChecked;
    AntOffsetEdit->Enabled = !protectedChecked;
 }
+
+void __fastcall TContestEntryDetails::DXCCMultClick(TObject */*Sender*/)
+{
+   if (DXCCMult->Checked)
+   {
+      NonGCtryMult->Checked = false;
+   }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TContestEntryDetails::NonGCtryMultClick(TObject */*Sender*/)
+{
+   if (NonGCtryMult->Checked)
+   {
+      DXCCMult->Checked = false;
+   }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TContestEntryDetails::LocatorMultClick(TObject */*Sender*/)
+{
+   if (!LocatorMult->Checked)
+   {
+      GLocMult->Checked = false;
+      M7LocatorMults->Checked = false;
+   }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TContestEntryDetails::GLocMultClick(TObject */*Sender*/)
+{
+   if (GLocMult->Checked)
+   {
+      LocatorMult->Checked = true;
+      M7LocatorMults->Checked = false;
+   }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TContestEntryDetails::M7LocatorMultsClick(TObject */*Sender*/)
+{
+   if (M7LocatorMults->Checked)
+   {
+      LocatorMult->Checked = true;
+      GLocMult->Checked = false;
+   }
+}
+//---------------------------------------------------------------------------
 

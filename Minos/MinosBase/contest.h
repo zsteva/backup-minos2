@@ -136,6 +136,9 @@ class BaseContestLog
       MinosItem<bool> locMult;
       MinosItem<bool> GLocMult;
       MinosItem<bool> districtMult;
+
+      MinosItem<bool> M7Mults;
+
       MinosItem<bool> powerWatts;
       MinosItem<SCOREMODE> scoreMode;
       MinosItem<std::string> DTGStart;
@@ -218,8 +221,11 @@ class BaseContestLog
       dupsheet DupSheet;
       int nextScan;
 
-      // Mult stuff
-
+      bool NonUKloc_mult;
+      int NonUKloc_multiplier;
+      bool UKloc_mult;
+      int UKloc_multiplier;
+      
       int nctry;
       int ndistrict;
       int nlocs;

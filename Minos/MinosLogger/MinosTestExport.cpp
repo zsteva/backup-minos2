@@ -109,6 +109,9 @@ void MinosTestExport::exportContest( HANDLE expfd )
    ct->allowLoc4.addIfDirty( st, "AllowLoc4", dirty );
    ct->allowLoc8.addIfDirty( st, "AllowLoc8", dirty );
 
+
+   ct->M7Mults.addIfDirty( st, "M7Mults", dirty );
+
    if ( dirty )
    {
       sendRequest( expfd, "MinosLogContest", st );
