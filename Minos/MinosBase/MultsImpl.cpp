@@ -720,7 +720,7 @@ bool CountrySynonymList::procLine( char **a )
    return true;
 }
 //======================================================================
-LocList::LocList( void )//:nlocs(0)
+LocList::LocList( void )
 
 {}
 LocList::~LocList()

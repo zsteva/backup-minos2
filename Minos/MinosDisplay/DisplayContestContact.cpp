@@ -372,43 +372,34 @@ void DisplayContestContact::checkContact( )
          LocCount * npt = ls->map ( numbers );
          if ( npt )
          {
-            if (!npt->UKMultGiven && UKcall)
-            {
-               npt->UKMultGiven = true;
-               if (npt->UKLocCount + npt->nonUKLocCount == 0)
-               {
-                  // hasn't been worked at all
-                  clp->nlocs++;
-                  multCount += clp->UKloc_multiplier;
-               }
-               else
-               {
-                  // has already been worked - must have been non-uk, so that
-                  // bit of the mult has already happened.
-                  multCount += clp->UKloc_multiplier - clp->NonUKloc_multiplier;
-               }
-
-            }
-
-            if ( npt->UKLocCount + npt->nonUKLocCount == 0 )
-            {
-               clp->nlocs++;
-               if ( clp->UKloc_mult && UKcall)
-               {
-                  npt->UKMultGiven = true;
-                  multCount += clp->UKloc_multiplier;
-               }
-               if (clp->NonUKloc_mult && !UKcall )
-               {
-                  multCount += clp->NonUKloc_multiplier;
-               }
-            }
             if (UKcall)
             {
+               if (!npt->UKMultGiven)
+               {
+                  npt->UKMultGiven = true;
+                  if (npt->UKLocCount + npt->nonUKLocCount == 0)
+                  {
+                     // hasn't been worked at all
+                     clp->nlocs += clp->UKloc_multiplier;
+                     multCount += clp->UKloc_multiplier;
+                  }
+                  else
+                  {
+                     // has already been worked - must have been non-uk, so that
+                     // bit of the mult has already happened.
+                     clp->nlocs += clp->UKloc_multiplier - clp->NonUKloc_multiplier;
+                     multCount += clp->UKloc_multiplier - clp->NonUKloc_multiplier;
+                  }
+               }
                npt->UKLocCount++;
             }
             else
             {
+               if ( npt->UKLocCount + npt->nonUKLocCount == 0 )
+               {
+                  clp->nlocs += clp->NonUKloc_multiplier;
+                  multCount += clp->NonUKloc_multiplier;
+               }
                npt->nonUKLocCount++;
             }
          }

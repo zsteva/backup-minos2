@@ -162,7 +162,6 @@ typedef LocSquareList::iterator LocSquareIterator;
 class LocList
 {
    public:
-//      int nlocs;
       LocSquareList llist;
       LocList( void );
       virtual ~LocList();
