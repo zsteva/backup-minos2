@@ -7,7 +7,7 @@ Time offset to a contest (Bob Offer's problem))
 ==================================================================
 Recognition of dry squares by country - whole of UK initially...
 ==================================================================
-M7
+M7 - done bar more testing
 ==================================================================
 Display of operating time within the contest; may need to make the "1 hour" configurable
 ==================================================================
