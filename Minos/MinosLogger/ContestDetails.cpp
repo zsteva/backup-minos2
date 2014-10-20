@@ -581,13 +581,15 @@ TWinControl * TContestEntryDetails::getDetails( )
    contest->countryMult.setValue( DXCCMult->Checked );   // bool
    contest->nonGCountryMult.setValue( NonGCtryMult->Checked );   // bool
 
-   if (contest->GLocMult.getValue() || contest->M7Mults.getValue())
+   if (GLocMult->Checked || M7LocatorMults->Checked)
    {
       LocatorMult->Checked = true;
    }
+
    contest->locMult.setValue( LocatorMult->Checked ) ;   // bool
    contest->GLocMult.setValue( GLocMult->Checked ) ;   // bool
    contest->M7Mults.setValue( M7LocatorMults->Checked ) ;   // bool
+
    if (contest->GLocMult.getValue())
    {
       contest->UKloc_mult = true;
@@ -596,14 +598,30 @@ TWinControl * TContestEntryDetails::getDetails( )
       contest->NonUKloc_multiplier = 0;
 
    }
-   if (contest->M7Mults.getValue())
+   else if (contest->M7Mults.getValue())
    {
       contest->UKloc_mult = true;
       contest->NonUKloc_mult = true;
       contest->UKloc_multiplier = 2;
       contest->NonUKloc_multiplier = 1;
    }
-
+   else
+   {
+      if (contest->locMult.getValue())
+      {
+         contest->UKloc_mult = true;
+         contest->NonUKloc_mult = true;
+         contest->UKloc_multiplier = 1;
+         contest->NonUKloc_multiplier = 1;
+      }
+      else
+      {
+         contest->UKloc_mult = false;
+         contest->NonUKloc_mult = false;
+         contest->UKloc_multiplier = 0;
+         contest->NonUKloc_multiplier = 0;
+      }
+   }
    if (ProtectedOption->Checked && contest->isProtected() && contest->isProtectedSuppressed())
    {
       contest->setProtectedSuppressed(false);

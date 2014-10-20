@@ -60,7 +60,9 @@ void DisplayContestContact::copyFromArg( ScreenContact &cct )
    op1.setValue( cct.op1 );
    op2.setValue( cct.op2 );
 
-   newLoc = cct.newLoc;
+   locCount = cct.locCount;
+   newGLoc = cct.newGLoc;
+   newNonGLoc = cct.newNonGLoc;
    newDistrict = cct.newDistrict;
    newCtry = cct.newCtry;
 
@@ -377,6 +379,7 @@ void DisplayContestContact::checkContact( )
                if (!npt->UKMultGiven)
                {
                   npt->UKMultGiven = true;
+                  newGLoc = true;
                   if (npt->UKLocCount + npt->nonUKLocCount == 0)
                   {
                      // hasn't been worked at all
@@ -400,11 +403,15 @@ void DisplayContestContact::checkContact( )
                   clp->nlocs += clp->NonUKloc_multiplier;
                   multCount += clp->NonUKloc_multiplier;
                }
+               if (npt->nonUKLocCount == 0)
+               {
+                  newNonGLoc = true;
+               }
                npt->nonUKLocCount++;
             }
          }
       }
-      newLoc = multCount - oldMultCount;
+      locCount = multCount - oldMultCount;
 /*
       if ( ls )
       {

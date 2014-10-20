@@ -637,7 +637,9 @@ void BaseContestLog::scanContest( void )
       nct->multCount = 0;
       nct->newDistrict = false;
       nct->newCtry = false;
-      nct->newLoc = 0;
+      nct->locCount = 0;
+      nct->newGLoc = false;
+      nct->newNonGLoc = false;
       nct->checkContact( );   // in scanContest
 
 //      nct->baddtg = false;
@@ -659,6 +661,8 @@ void BaseContestLog::getScoresTo(ContestScore &cs, TDateTime limit)
    cs.nctry = 0;
    cs.ndistrict = 0;
    cs.nlocs = 0;
+   cs.nGlocs = 0;
+   cs.nonGlocs = 0;
    cs.nqsos = 0;
    cs.contestScore = 0;
 
@@ -729,8 +733,17 @@ void BaseContestLog::getScoresTo(ContestScore &cs, TDateTime limit)
          }
          cs.nctry += nct->newCtry?1:0;
          cs.ndistrict += nct->newDistrict?1:0;
-         cs.nlocs += nct->newLoc;
+         cs.nlocs += nct->locCount;
          cs.nqsos++;
+
+         if (nct->newGLoc)
+         {
+            cs.nGlocs++;
+         }
+         else if ((nct->newNonGLoc))
+         {
+            cs.nonGlocs++;
+         }
       }
    }
    cs.nmults = 0;
@@ -999,7 +1012,7 @@ void BaseContestLog::processMinosStanza( const std::string &methodName, MinosTes
       mt->getStructArgMemberValue( "AllowLoc4", allowLoc4 );
       mt->getStructArgMemberValue( "AllowLoc8", allowLoc8 );
 
-      if (mt->getStructArgMemberValue( "M7Mults", M7Mults))
+      if (mt->getStructArgMemberValue( "M7Mults", M7Mults) && M7Mults.getValue())
       {
          NonUKloc_mult = true;
          NonUKloc_multiplier = 1;
@@ -1012,21 +1025,23 @@ void BaseContestLog::processMinosStanza( const std::string &methodName, MinosTes
          {
             UKloc_multiplier = 1;
             UKloc_mult = true;
+            if (GLocMult.getValue())
+            {
+               NonUKloc_multiplier = 0;
+               NonUKloc_mult = false;
+            }
+            else
+            {
+               NonUKloc_multiplier = 1;
+               NonUKloc_mult = true;
+            }
          }
          else
          {
             UKloc_multiplier = 0;
             UKloc_mult = false;
-         }
-         if (GLocMult.getValue())
-         {
             NonUKloc_multiplier = 0;
             NonUKloc_mult = false;
-         }
-         else
-         {
-            NonUKloc_multiplier = 1;
-            NonUKloc_mult = true;
          }
       }
 
@@ -1166,9 +1181,9 @@ ContestScore::ContestScore(BaseContestLog *ct, TDateTime limit)
 }
 std::string ContestScore::disp()
 {
-   std::string buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:%c%d districts%c:%c%d locators%c = %ld" )
+   std::string buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:%c%d districts%c:%c%d(%d/%d) locators%c = %ld" )
             %nqsos % contestScore % brcc1 % nctry % brcc2 % brcc3 % ndistrict %
-            brcc4 % brloc1 % nlocs % brloc2 % totalScore ).str();
+            brcc4 % brloc1 % nlocs % nGlocs % nonGlocs % brloc2 % totalScore ).str();
 
    return buff;
 }

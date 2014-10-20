@@ -125,7 +125,7 @@ void ContestContact::getPrintFileText( std::string &sdest, short maxlen )
          if ( clp->districtMult.getValue() && newDistrict )
             catmult( multbuff, districtMult->districtCode );
 
-         if ( clp->locMult.getValue() && newLoc > 0 )
+         if ( clp->locMult.getValue() && locCount > 0 )
          {
             catmult( multbuff, loc.loc.getValue(), 4 );
          }
@@ -342,7 +342,7 @@ void ContestContact::getReg1TestText( std::string &sdest )
       sdest += 'N';
    sdest += ';';
 
-   if (  clp->locMult.getValue() && newLoc > 0 )
+   if (  clp->locMult.getValue() && locCount > 0 )
       sdest += 'N';
    sdest += ';';
 

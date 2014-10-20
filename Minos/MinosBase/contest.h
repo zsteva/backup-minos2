@@ -335,6 +335,8 @@ class ContestScore
       int nctry;
       int ndistrict;
       int nlocs;
+      int nGlocs;
+      int nonGlocs;
       int nmults;
       int totalScore;
 

@@ -55,7 +55,9 @@ class ScreenContact
       bool screenQSOValid;
       bool newCtry;
       bool newDistrict;
-      int newLoc;
+      int locCount;  // was newLocs, now is mult from locs
+      bool newGLoc;
+      bool newNonGLoc;
 
       DistrictEntry * districtMult;
       CountryEntry * ctryMult;

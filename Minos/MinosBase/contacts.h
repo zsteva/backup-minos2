@@ -114,7 +114,10 @@ class BaseContact
       bool QSOValid;
       bool newDistrict;
       bool newCtry;
-      int newLoc;
+      
+      int locCount;  // was newLocs, now is mult from locs
+      bool newGLoc;
+      bool newNonGLoc;
 
       DistrictEntry * districtMult;
       CountryEntry * ctryMult;

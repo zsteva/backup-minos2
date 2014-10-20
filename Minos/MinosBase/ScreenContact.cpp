@@ -43,7 +43,9 @@ void ScreenContact::initialise( BaseContestLog *ct )
    screenQSOValid = false;
    newCtry = false;
    newDistrict = false;
-   newLoc = 0 ;
+   locCount = 0 ;
+   newGLoc = false ;
+   newNonGLoc = false ;
    op1 = "" ;
    op2 = "" ;
 
@@ -87,7 +89,9 @@ void ScreenContact::copyFromArg( BaseContact &cct )
    op1 = cct.op1.getValue();
    op2 = cct.op2.getValue();
 
-   newLoc = cct.newLoc;
+   locCount = cct.locCount;
+   newGLoc = cct.newGLoc;
+   newNonGLoc = cct.newNonGLoc;
    newDistrict = cct.newDistrict;
    newCtry = cct.newCtry;
 
@@ -129,7 +133,9 @@ void ScreenContact::copyFromArg( ScreenContact &cct )
    op1 = cct.op1;
    op2 = cct.op2;
 
-   newLoc = cct.newLoc;
+   locCount = cct.locCount;
+   newGLoc = cct.newGLoc;
+   newNonGLoc = cct.newNonGLoc;
    newDistrict = cct.newDistrict;
    newCtry = cct.newCtry;
 
