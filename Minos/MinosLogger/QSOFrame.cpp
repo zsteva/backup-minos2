@@ -1024,6 +1024,30 @@ void TGJVEditFrame::contactValid( void )
 
    vcct->checkScreenContact( );  // TGJVEditFrame::contactValid, check multiplier, don't log it yet!
 
+   if (vcct->ctryMult)
+   {
+
+   // and look up in squares list for country
+   // look for square against main prefix in LocSquares.ini
+
+      std::string sloc = vcct->loc.loc.getValue().substr(0, 4);
+      if (sloc.size())
+      {
+         bool LocOK;
+
+         std::string prefix = vcct->ctryMult->basePrefix;
+         TContestApp::getContestApp() ->locsBundle.openSection(prefix);
+         if (TContestApp::getContestApp() ->locsBundle.isSectionPresent() )
+         {
+            TContestApp::getContestApp() ->locsBundle.getBoolProfile( sloc.c_str(), LocOK, false );
+            if (!LocOK)
+            {
+               lgTraceerr( ERR_15 );
+               locIl->tIfValid = false;
+            }
+         }
+      }
+   }
    if ( contest->districtMult.getValue() && !vcct->screenQSOValid )
    {
       // no district when required

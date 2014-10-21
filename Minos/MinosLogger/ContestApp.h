@@ -65,6 +65,7 @@ class TContestApp : public MinosParameters
       SettingsBundle loggerBundle;     // startup defaults - INI files, sections, etc
       SettingsBundle preloadBundle;    // contests to be preloaded
       SettingsBundle displayBundle;    // display settings - or is this an op preference
+      SettingsBundle locsBundle;       // Country valid locators
 
       TFont *sysfont;
       ContestSlotList contestSlotList;

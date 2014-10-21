@@ -17,9 +17,9 @@ object MinosShowMessage: TMinosShowMessage
   TextHeight = 25
   object Button1: TButton
     Left = 264
-    Top = 256
+    Top = 240
     Width = 75
-    Height = 25
+    Height = 41
     Cancel = True
     Caption = 'OK'
     Default = True

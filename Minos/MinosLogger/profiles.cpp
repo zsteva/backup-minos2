@@ -650,6 +650,7 @@ BundleFile::BundleFile( PROFILES p )  //: iniFile( 0 )
 		 entries.push_back( ProfileEntry( elpEntryFile, "EntryFile", ".\\Configuration\\Entry.ini", "Entry settings file", "File containing entry settings", false ) );
 		 entries.push_back( ProfileEntry( elpStationFile, "StationFile", ".\\Configuration\\Station.ini", "Station settings file", "File containing station settings", false ) );
 		 entries.push_back( ProfileEntry( elpQTHFile, "QTHFile", ".\\Configuration\\QTH.ini", "QTH settings file", "File containing QTH settings", false ) );
+		 entries.push_back( ProfileEntry( elpLocsFile, "LocsFile", ".\\Configuration\\LocSquares.ini", "Country locators file", "File containing valid locators for countries", false ) );
 
 		 entries.push_back( ProfileEntry( elpDisplayFile, "DisplayFile", ".\\Configuration\\Display.ini", "Display settings file", "File containing saved display settings", false ) );
 		 entries.push_back( ProfileEntry( elpDisplaySection, "DisplaySection", "Default", "Display file section", "Section to use in display file", false ) );
@@ -794,6 +795,21 @@ void SettingsBundle::openSection( const std::string &psect )
       currsection = psect;
    else
       currsection = noneBundle;
+}
+
+bool SettingsBundle::isSectionPresent()
+{
+   std::vector<IniSectionPtr>::iterator thisSect = std::find_if( bundleFile->iniFile->sections.begin(), bundleFile->iniFile->sections.end(), INISectionCmp( currsection ) );
+   if ( thisSect == bundleFile->iniFile->sections.end() )
+   {
+      return false;
+   }
+
+   if ( ( *thisSect ) ->entries.size() == 0)
+   {
+      return false;
+   }
+   return true;
 }
 
 void SettingsBundle::closeProfile()

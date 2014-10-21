@@ -70,6 +70,7 @@ class SettingsBundle
       std::string getSection();
       bool dupSection( const std::string &sname );
       bool newSection( const std::string &sname );
+      bool isSectionPresent();
 
       void closeProfile( void );
 

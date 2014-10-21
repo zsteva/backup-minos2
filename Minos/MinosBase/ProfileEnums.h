@@ -15,6 +15,7 @@ enum LOGGERPROFILE {
    elpDisplayFile, elpDisplaySection,
    elpOperatorFile, elpOperatorSection,
    elpListDirectory, elpLogDirectory,
+   elpLocsFile,
    elpEntryFile,
    elpStationFile, elpQTHFile,
    elpFontName, elpFontSize, elpFontBold, elpFontItalic,
@@ -41,5 +42,5 @@ enum QTHPROFILE {eqpLocator, eqpDistrict, eqpLocation, eqpStationQTH1, eqpStatio
 enum STATIONPROFILE {espPower, espTransmitter, espReceiver, espAntenna, espAGL, espOffset};
 
 enum PROFILES {epLOGGERPROFILE, epPRELOADPROFILE, epDISPLAYPROFILE,
-			   epENTRYPROFILE, epQTHPROFILE, epSTATIONPROFILE};
+			   epENTRYPROFILE, epQTHPROFILE, epSTATIONPROFILE, epLOCSQUARESPROFILE};
 #endif

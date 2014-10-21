@@ -147,6 +147,7 @@ bool TContestApp::initialise()
    BundleFile::bundleFiles[ epENTRYPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epENTRYPROFILE ) );
    BundleFile::bundleFiles[ epQTHPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epQTHPROFILE ) );
    BundleFile::bundleFiles[ epSTATIONPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epSTATIONPROFILE ) );
+   BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epLOCSQUARESPROFILE ) );
 
    //----------------------------------
    BundleFile::bundleFiles[ epLOGGERPROFILE ] ->openProfile( ".\\Configuration\\MinosLogger.ini", "Logger Defaults" );
@@ -189,6 +190,13 @@ bool TContestApp::initialise()
    std::string stationfile;
    loggerBundle.getStringProfile( elpStationFile, stationfile );
    BundleFile::bundleFiles[ epSTATIONPROFILE ] ->openProfile( stationfile, "Station details" );
+   //----------------------------------
+
+   std::string locsfile;
+   loggerBundle.getStringProfile( elpLocsFile, locsfile );
+   BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] ->openProfile( locsfile, "Valid locator squares" );
+
+   locsBundle.setProfile( BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] );
    //----------------------------------
 
    std::string temp;

@@ -31,7 +31,7 @@ ErrEntry errDefs[] =
       ErrEntry( 1, "!!! Duplicate Callsign !!!" ),   //ERR_12
       ErrEntry( 8, "Invalid Callsign!" ),         //ERR_13
       ErrEntry( 10, "No RX Serial Number" ),      //ERR_14
-      ErrEntry( 10, "" ),   //ERR_15
+      ErrEntry( 15, "Locator probably not within country." ),   //ERR_15
       ErrEntry( 10, "" ),     //ERR_16
       ErrEntry( 10, "" ),   //ERR_17
       ErrEntry( 20, "No Locator" ),             //ERR_18
