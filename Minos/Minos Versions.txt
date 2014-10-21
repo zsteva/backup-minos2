@@ -1,5 +1,6 @@
 1.5.9
 M7
+Warn when loc is outside country
 ==================================================================
 1.5.8 17/12/2013
 Windows closedown closes full system

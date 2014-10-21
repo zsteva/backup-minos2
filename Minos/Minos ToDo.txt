@@ -5,16 +5,16 @@ Button(?) on details for export
 ==================================================================
 Time offset to a contest (Bob Offer's problem))
 ==================================================================
-Recognition of dry squares by country - whole of UK initially...
-==================================================================
-M7
-==================================================================
 Display of operating time within the contest; may need to make the "1 hour" configurable
+==================================================================
+Change band combo to a text box/label
+==================================================================
+Started - code done, lists started Recognition of dry squares by country - whole of UK initially...
+==================================================================
+done M7
 ==================================================================
 Modify www.goodey.org.uk
 Set up www.g0gjv.org.uk/minos 
-==================================================================
-Change band combo to a text box/label
 ==================================================================
 Multi band logs
 run/S&P switching
@@ -54,8 +54,8 @@ Sanity check of splitter positions - all I'm doing is screwing it up further; ch
  ==================================================================
 Would be very nice to get column sorting going everywhere - but we need a clear reset.
 ==================================================================
-various places we have getline into a 256 byte buffer. This for one
-kills Steve's generated CSL files. Others are probably OK 
+various places we have getline into a 256 byte buffer. Fixed for lists
+still needed for mults
 ==================================================================
 We want an option(options?) to control visibility in a KML export
 ==================================================================
