@@ -7,11 +7,6 @@ Time offset to a contest (Bob Offer's problem))
 ==================================================================
 Display of operating time within the contest; may need to make the "1 hour" configurable
 ==================================================================
-<<<<<<< HEAD
-Change band combo to a text box/label
-=======
-M7 - done bar more testing
->>>>>>> cf03d6933f21a617dd3b79c141f377c6802590c4
 ==================================================================
 Started - code done, lists started Recognition of dry squares by country - whole of UK initially...
 ==================================================================
