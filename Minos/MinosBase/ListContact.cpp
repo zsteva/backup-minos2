@@ -72,7 +72,7 @@ std::string ListContact::getField( int ACol, const BaseContestLog *const curcon 
             double lon = 0.0;
             double lat = 0.0;
             int brg;
-            double dist;
+            double dist = 0.0;
 
             if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
             {
