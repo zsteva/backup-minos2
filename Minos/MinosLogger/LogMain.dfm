@@ -38,6 +38,7 @@ object LogContainer: TLogContainer
     OnDrawTab = ContestPageControlDrawTab
     OnMouseDown = ContestPageControlMouseDown
     OnMouseMove = ContestPageControlMouseMove
+    ExplicitTop = -6
   end
   object StatusBar1: TStatusBar
     Left = 0
@@ -465,7 +466,6 @@ object LogContainer: TLogContainer
     Top = 136
   end
   object TabPopup: TPopupMenu
-    OwnerDraw = True
     Left = 64
     Top = 72
     object CloseContest1: TMenuItem
@@ -528,7 +528,6 @@ object LogContainer: TLogContainer
   end
   object MainMenu1: TMainMenu
     AutoHotkeys = maManual
-    OwnerDraw = True
     Left = 16
     Top = 32
     object File1: TMenuItem
