@@ -241,6 +241,7 @@ UK QTH Locators plus non-UK countries. The multiplier is the sum of the number o
         <Columns Title = "Ant" Field="ant" Align = "center" img="tower.gif" ></Columns>
         <Columns Title = "Equipment" Field="equipment" Align = "center" img="tx.gif" ></Columns>
         <Columns Title = "Comments" Field="SoapBox" Align = "left" img="soapbox.gif" ></Columns>
+        <Columns Title = "Operators" Field="Operators" Align = "left" Sections= "O,6O" ></Columns>
 </ColumnFormat>
 <ColumnFormat>
         <name>vhfnorm</name>

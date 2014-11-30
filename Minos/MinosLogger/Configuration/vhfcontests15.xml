@@ -102,9 +102,12 @@
 <!-- 15.002 09/10/14 G4CLA - M5 changed to M7 for UKACs changed super league years-->
 <!-- 15.003 10/10/14 G4CLA - for 2015 SHF UKAC overal scores will be calculated irrespective of sections -->
 <!-- 15.004 29/10/14 G4CLA - 13cms UKAC times -->
+<!-- 15.005 16/11/14 G4CLA - add ical and calendar-->
+<!-- 15.006 26/11/14 G4CLA - added operators to 50MHz AFS results -->
 <calendar>
-<version>15.004 29/10/2014</version>
-<icalurl></icalurl>
+<version>15.006 26/11/2014</version>
+<icalurl>http://www.rsgbcc.org/icals/vhf15.ics</icalurl>
+<googleurl>https://www.google.com/calendar/embed?src=pvb6brrneu19vj15qfg78nuumc%40group.calendar.google.com&amp;ctz=Europe/London</googleurl>
 <mult_type>
 <name>M1</name>
 <description>Post Codes and Countries</description>
@@ -203,6 +206,7 @@ All large square locators count as multipliers;  A locator in which a UK station
         <Columns Title = "Ant" Field="ant" Align = "center" img="tower.gif" ></Columns>
         <Columns Title = "Equipment" Field="equipment" Align = "center" img="tx.gif" ></Columns>
         <Columns Title = "Comments" Field="SoapBox" Align = "left" img="soapbox.gif" ></Columns>
+        <Columns Title = "Operators" Field="Operators" Align = "left" Sections= "O,6O" ></Columns>
 </ColumnFormat>
 <ColumnFormat>
         <name>vhfnorm</name>
@@ -1047,7 +1051,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
     <month_list>Jun</month_list>
     <month_list>Jul</month_list>
     <start_day>2</start_day>
-    <start_week>2</start_week>
+    <start_week>4</start_week>
     <start_time>2130</start_time>
     <time_type>local</time_type>
     <duration>2</duration>
@@ -1063,7 +1067,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
     <month_list>Nov</month_list>
     <start_day>2</start_day>
     <time_type>local</time_type>
-    <start_week>2</start_week>
+    <start_week>4</start_week>
     <start_time>2030</start_time>
     <duration>2</duration>
   </time_list>
