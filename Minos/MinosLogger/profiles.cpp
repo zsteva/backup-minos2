@@ -607,6 +607,7 @@ bool INIFile::writePrivateProfileString( const char *Section,
          ( *this_entry ) ->setValue( Buffer );
       }
    }
+   writeINIFile();
 
    return true;
 }
@@ -1071,8 +1072,10 @@ void SettingsBundle::clearProfileSection( )
 {
    // clear the content AND the section header
    if ( bundleFile )
+   {
       bundleFile->iniFile->writePrivateProfileString( currsection.c_str(), 0, 0 );
-
+      currsection = noneBundle;
+   }
 }
 void SettingsBundle::flushProfile( void )
 {
