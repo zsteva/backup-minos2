@@ -365,7 +365,8 @@ bool Calendar::parseFile( const std::string &fname )
                      try
                      {
                         ic.start = TDateTime( curYear, sm, istartDate );
-                        ic.start += atoi( ( *tl ).startTime.c_str() ) / 2400.0;
+                        int s = atoi(( *tl ).startTime.substr(0, 2).c_str()) * 60 + atoi(( *tl ).startTime.substr(2, 2).c_str());
+                        ic.start +=  s / 1440.0;
                         ic.duration = ( *tl ).duration;
                         ic.finish = ic.start + atof( ic.duration.c_str() ) / 24;
 
@@ -462,7 +463,6 @@ bool Calendar::parseFile( const std::string &fname )
                      timeType = ( *tl ).timeType;
                   }
 
-
                   std::string startday1 = startDay;
                   std::string startday2;
                   int istartday1, istartday2;
@@ -518,7 +518,17 @@ bool Calendar::parseFile( const std::string &fname )
                   try
                   {
                      ic.start = TDateTime( curYear, sm, istartDate );
-                     ic.start += atoi( startTime.c_str() ) / 2400.0;
+
+                     if (startTime == "2130")
+                     {
+                        String temp = ic.start.FormatString( "dd/mm/yyyy hh:mm" );
+                     }
+
+                     int s = atoi(startTime.substr(0, 2).c_str()) * 60 + atoi(startTime.substr(2, 2).c_str());
+                     ic.start +=  s / 1440.0;
+
+                     String temp2 = ic.start.FormatString( "dd/mm/yyyy hh:mm" );
+
                      ic.duration = duration;
                      ic.finish = ic.start + atof( ic.duration.c_str() ) / 24;
                      if ( timeType == "local" )
@@ -526,6 +536,9 @@ bool Calendar::parseFile( const std::string &fname )
                         ic.start = localToUTC( ic.start );
                         ic.finish = localToUTC( ic.finish );
                      }
+
+                     String temp3 = ic.start.FormatString( "dd/mm/yyyy hh:mm" );
+
                   }
                   catch ( Exception & e )
                   {
