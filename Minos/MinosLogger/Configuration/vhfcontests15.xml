@@ -104,8 +104,11 @@
 <!-- 15.004 29/10/14 G4CLA - 13cms UKAC times -->
 <!-- 15.005 16/11/14 G4CLA - add ical and calendar-->
 <!-- 15.006 26/11/14 G4CLA - added operators to 50MHz AFS results -->
+<!-- 15.007 12/12/14 G4CLA - change to <collateby>operators for VHF Champs SF and LP sections (same as HF) - not check this works ! -->
+<!-- 15.008 16/01/15 G4CLA - Correct sections for xmas fun overall results collate xmas fun open section by callsign -->
+<!-- 15.009 21/01/15 G4CLA - Only include the 144 and 50mhz afs contest in this years SL and 432 afs in last years AFS-->
 <calendar>
-<version>15.006 26/11/2014</version>
+<version>15.009 21/01/2015</version>
 <icalurl>http://www.rsgbcc.org/icals/vhf15.ics</icalurl>
 <googleurl>https://www.google.com/calendar/embed?src=pvb6brrneu19vj15qfg78nuumc%40group.calendar.google.com&amp;ctz=Europe/London</googleurl>
 <mult_type>
@@ -479,7 +482,7 @@ This contest runs concurrently with a backpackers contest. Stations entering the
 <description>Cumulative contest</description>
 <long_description>
 Scores will be normalised for each band/session as follows. 
-Score for each band/session = (Score achieved x 1000) divded by (Band/session leader score).
+Score for each band/session = (Score achieved x 1000) divided by (Band/session leader score).
 For cumulative contests the overall score will normally be calculated from the best 3 normalised session scores 
 It is impossible for you to determine your best sessions without knowing everyone else's scores, so please submit your logs and scores from all sessions in which you were active and allow the adjudicator to calculate your best sessions.
 
@@ -600,13 +603,13 @@ Maximum output Power 25W at the TX.
 <special_rule>
 <name>AFS Super League 2015-16</name>
 <description>AFS Super League</description>
-<long_description>http://www.rsgbcc.org/hf/rules/2014/AFS-SuperLeague2015-2016.shtml
+<long_description>http://www.rsgbcc.org/hf/rules/2015/rSL-thisandnext.shtml
 </long_description>
 </special_rule>
 <special_rule>
 <name>AFS Super League 2014-15</name>
 <description>AFS Super League</description>
-<long_description>http://www.rsgbcc.org/hf/rules/2013/AFS-SuperLeague2014-2015.shtml
+<long_description>http://www.rsgbcc.org/hf/rules/2015/rSL-lastandthis.shtml
 </long_description>
 </special_rule>
 <section>
@@ -1183,23 +1186,24 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <name>AFSsuperleague1516</name>
 <description>AFS Super League 2015-16</description>
 <highlight>#CCFF66</highlight>
-<contest_list>afs432MHz</contest_list>
 <contest_list>afs144MHz</contest_list>
 <contest_list>2nd50MHz</contest_list>
+<contest_list>afs432MHz</contest_list>
 <special_rules_list>AFS Super League 2015-16</special_rules_list>
 </contest_series>
 <contest_series>
 <name>AFSsuperleague1415</name>
 <description>AFS Super League 2014-15</description>
-<contest_list>afs432MHz</contest_list>
+<highlight>#CCFF66</highlight>
 <contest_list>afs144MHz</contest_list>
 <contest_list>2nd50MHz</contest_list>
+<contest_list>afs432MHz</contest_list>
 <special_rules_list>AFS Super League 2014-15</special_rules_list>
 </contest_series>
 <contest_series>
 <name>cwchamp</name>
 <description>VHF CW Championship</description>
-<highlight>#FFcccc</highlight>
+<highlight>#FFcc00</highlight>
 <contest_list>144marconi</contest_list>
 <contest_list>cw50MHz</contest_list>
 <contest_list>cw70MHz</contest_list>
@@ -1268,6 +1272,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date!=0 and (Section="SF" or Section="6S")</filter>
                         <scorefield>totalScore</scorefield>
                         <table>Entries</table>
+                        <collateby>operators</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section LP</name>
@@ -1276,6 +1281,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date!=0 and (Section="SF" or Section="6S") and VHFLP=1</filter>
                         <scorefield>totalScore</scorefield>
                         <table>Entries</table>
+                        <collateby>operators</collateby>
                 </collate_list>
 </seriesCollate>
 <seriesCollate>
@@ -1333,6 +1339,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date!=0 and Section="SF"  and (`call` like "M%" or `call` like "2%" or `call` like "G%")</filter>
                         <scorefield>totalScore</scorefield>
                         <table>Entries</table>
+                        <collateby>operators</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section LP</name>
@@ -1341,6 +1348,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date!=0 and Section="SF" and VHFLP=1 and (`call` like "M%" or `call` like "2%" or `call` like "G%")</filter>
                         <scorefield>totalScore</scorefield>
                         <table>Entries</table>
+                        <collateby>operators</collateby>
                 </collate_list>
 </seriesCollate>
 <seriesCollate>
@@ -1634,7 +1642,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <seriesResult>
         <name>Christmas Cumulatives Overall Results</name>
         <ctl>overallxmas</ctl>
-		<order>O,SF</order>
+		<order>Section O,Section SF</order>
         <ScoresCount>4</ScoresCount>
         <id_list>
                 <name>50MHz</name>
@@ -1648,6 +1656,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date=0 and band="50 MHz" and Section="O" </filter>
                         <scorefield>normalisedScore</scorefield>
                         <table>Entries</table>
+                        <collateby>callsign</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section SF</name>
@@ -1670,6 +1679,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date=0 and band="70 MHz" and Section="O" </filter>
                         <scorefield>normalisedScore</scorefield>
                         <table>Entries</table>
+                        <collateby>callsign</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section SF</name>
@@ -1692,6 +1702,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date=0 and band="144 MHz" and Section="O" </filter>
                         <scorefield>normalisedScore</scorefield>
                         <table>Entries</table>
+                        <collateby>callsign</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section SF</name>
@@ -1714,6 +1725,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date=0 and band="432 MHz" and Section="O" </filter>
                         <scorefield>normalisedScore</scorefield>
                         <table>Entries</table>
+                        <collateby>callsign</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section SF</name>

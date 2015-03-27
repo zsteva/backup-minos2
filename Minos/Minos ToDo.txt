@@ -1,3 +1,22 @@
+I see what you mean!
+
+I'll have a look when I can.
+
+Mike G0GJV
+
+> Hi Mike,
+> 
+> I meant to send this to you last month!
+> 
+> When using Minos on the 2320MHz UKAC (SHF) the time of the start is
+> wrong when picked up from the contest website.  I was going to attach
+> a screen shot but I don't seem to have any application on here that
+> I can cut and paste it into!
+> 
+> See you on the next 2m event...
+> 
+> 73, Mike,
+> G8CUL/M0CUL
 ==================================================================
 Double click tab to bring up details - no "OnDblClick" so complicated
 Tab drag would be nice as well

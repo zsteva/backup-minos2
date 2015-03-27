@@ -123,8 +123,9 @@
 <!-- 14.012 06/08/14 G4CLA - use UK1000 for 4m trophy-->
 <!-- 14.013 03/09/14 G4CLA - added vhf4mukac -->
 <!-- 14.014 26/11/14 G4CLA - added operators to 50MHz AFS results -->
+<!-- 14.015 16/01/15 G4CLA - Correct sections for xmas fun overall results collate xmas fun open section by callsign-->
 <calendar>
-<version>14.014 26/11/2014</version>
+<version>14.015 16/01/2014</version>
 <icalurl>http://www.rsgbcc.org/icals/2014vhf.ics</icalurl>
 <googleurl>https://www.google.com/calendar/embed?src=l22560fc8m1d8knkkr01oudl50%40group.calendar.google.com&amp;ctz=Europe/London</googleurl>
 <notes_list>12/10/13: reduced entry time to 14 days for 4m Cumulatives </notes_list>
@@ -502,7 +503,7 @@ This contest runs concurrently with a backpackers contest. Stations entering the
 <description>Cumulative contest</description>
 <long_description>
 Scores will be normalised for each band/session as follows. 
-Score for each band/session = (Score achieved x 1000) divded by (Band/session leader score).
+Score for each band/session = (Score achieved x 1000) divided by (Band/session leader score).
 For cumulative contests the overall score will normally be calculated from the best 3 normalised session scores 
 It is impossible for you to determine your best sessions without knowing everyone else's scores, so please submit your logs and scores from all sessions in which you were active and allow the adjudicator to calculate your best sessions.
 
@@ -1640,7 +1641,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <seriesResult>
         <name>Christmas Cumulatives Overall Results</name>
         <ctl>overallxmas</ctl>
-		<order>O,SF</order>
+		<order>Section O,Section SF</order>
         <ScoresCount>4</ScoresCount>
         <id_list>
                 <name>50MHz</name>
@@ -1654,6 +1655,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date=0 and band="50 MHz" and Section="O" </filter>
                         <scorefield>normalisedScore</scorefield>
                         <table>Entries</table>
+                        <collateby>callsign</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section SF</name>
@@ -1676,6 +1678,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date=0 and band="70 MHz" and Section="O" </filter>
                         <scorefield>normalisedScore</scorefield>
                         <table>Entries</table>
+                        <collateby>callsign</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section SF</name>
@@ -1698,6 +1701,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date=0 and band="144 MHz" and Section="O" </filter>
                         <scorefield>normalisedScore</scorefield>
                         <table>Entries</table>
+                        <collateby>callsign</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section SF</name>
@@ -1720,6 +1724,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <filter>date=0 and band="432 MHz" and Section="O" </filter>
                         <scorefield>normalisedScore</scorefield>
                         <table>Entries</table>
+                        <collateby>callsign</collateby>
                 </collate_list>
                 <collate_list>
                         <name>Section SF</name>
