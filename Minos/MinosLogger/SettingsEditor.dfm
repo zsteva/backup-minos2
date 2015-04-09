@@ -2,7 +2,7 @@ object SettingsEditDlg: TSettingsEditDlg
   Left = 355
   Top = 164
   Caption = 'Settings Editor'
-  ClientHeight = 516
+  ClientHeight = 309
   ClientWidth = 736
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,12 +17,13 @@ object SettingsEditDlg: TSettingsEditDlg
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 475
+    Top = 268
     Width = 736
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitTop = 475
     DesignSize = (
       736
       41)
@@ -81,26 +82,29 @@ object SettingsEditDlg: TSettingsEditDlg
     Left = 0
     Top = 0
     Width = 736
-    Height = 475
+    Height = 268
     Align = alClient
     TabOrder = 1
+    ExplicitHeight = 475
     object SectionsList: TListBox
       Left = 1
       Top = 1
       Width = 184
-      Height = 473
+      Height = 266
       Align = alLeft
       ItemHeight = 13
       TabOrder = 0
       OnClick = SectionsListClick
+      ExplicitHeight = 473
     end
     object OptionsScrollBox: TScrollBox
       Left = 185
       Top = 1
       Width = 550
-      Height = 473
+      Height = 266
       Align = alClient
       TabOrder = 1
+      ExplicitHeight = 473
     end
   end
 end

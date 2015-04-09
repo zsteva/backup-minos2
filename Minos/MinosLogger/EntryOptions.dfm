@@ -2,7 +2,7 @@ object EntryOptionsForm: TEntryOptionsForm
   Left = 86
   Top = 169
   Caption = 'Produce Contest Entry/Export File'
-  ClientHeight = 547
+  ClientHeight = 455
   ClientWidth = 579
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,24 +19,25 @@ object EntryOptionsForm: TEntryOptionsForm
     Left = 0
     Top = 0
     Width = 410
-    Height = 547
+    Height = 455
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 547
   end
   object Panel1: TPanel
     Left = 410
     Top = 0
     Width = 169
-    Height = 547
+    Height = 455
     Align = alRight
-    Caption = 'Panel1'
     TabOrder = 1
+    ExplicitHeight = 547
     DesignSize = (
       169
-      547)
+      455)
     object CloseButton: TButton
       Left = 54
-      Top = 380
+      Top = 372
       Width = 75
       Height = 25
       Anchors = [akRight, akBottom]
@@ -44,10 +45,11 @@ object EntryOptionsForm: TEntryOptionsForm
       Default = True
       TabOrder = 0
       OnClick = CloseButtonClick
+      ExplicitTop = 486
     end
     object CancelButton: TButton
       Left = 54
-      Top = 452
+      Top = 416
       Width = 75
       Height = 25
       Anchors = [akRight, akBottom]
@@ -55,12 +57,13 @@ object EntryOptionsForm: TEntryOptionsForm
       Caption = 'Cancel'
       TabOrder = 1
       OnClick = CancelButtonClick
+      ExplicitTop = 530
     end
     object EntryGroup: TRadioGroup
       Left = 25
       Top = 32
       Width = 144
-      Height = 313
+      Height = 209
       Anchors = [akTop, akRight]
       Caption = 'File Format'
       ItemIndex = 0

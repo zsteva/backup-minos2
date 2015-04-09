@@ -2,7 +2,7 @@ object CalendarForm: TCalendarForm
   Left = 0
   Top = 0
   Caption = 'Select Contest from VHF Calendar'
-  ClientHeight = 550
+  ClientHeight = 334
   ClientWidth = 748
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,27 +19,29 @@ object CalendarForm: TCalendarForm
     Left = 0
     Top = 0
     Width = 748
-    Height = 509
+    Height = 293
     Align = alClient
     FixedCols = 0
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect, goThumbTracking]
     TabOrder = 0
     OnDblClick = CalendarGridDblClick
+    ExplicitHeight = 509
   end
   object Panel1: TPanel
     Left = 0
-    Top = 509
+    Top = 293
     Width = 748
     Height = 41
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 509
     DesignSize = (
       748
       41)
     object CalendarVersionLabel: TLabel
       Left = 292
       Top = 14
-      Width = 125
+      Width = 124
       Height = 13
       Caption = 'CalendarVersionLabel'
     end
