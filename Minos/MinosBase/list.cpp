@@ -65,7 +65,7 @@ bool ContactList::initialise( const std::string &fn, int slotno )
 }
 bool ContactList::cslLoad( void )
 {
-   int nextBlock = 0;
+   int lineno = 0;
 
    ListContact *rct = 0;
    TEMPBUFF( buff, 256 );
@@ -106,7 +106,7 @@ bool ContactList::cslLoad( void )
             parts.push_back("");
          }
 
-         if ( ++nextBlock == 1 && parts[0].size() == 0 && parts[1].size() == 0 )
+         if ( ++lineno == 1 && parts[0].size() == 0 && parts[1].size() == 0 )
          {
             name = parts[ 2 ];              // first line of file gives the list name
          }
