@@ -1,22 +1,3 @@
-I see what you mean!
-
-I'll have a look when I can.
-
-Mike G0GJV
-
-> Hi Mike,
-> 
-> I meant to send this to you last month!
-> 
-> When using Minos on the 2320MHz UKAC (SHF) the time of the start is
-> wrong when picked up from the contest website.  I was going to attach
-> a screen shot but I don't seem to have any application on here that
-> I can cut and paste it into!
-> 
-> See you on the next 2m event...
-> 
-> 73, Mike,
-> G8CUL/M0CUL
 ==================================================================
 Double click tab to bring up details - no "OnDblClick" so complicated
 Tab drag would be nice as well
@@ -27,12 +8,8 @@ Time offset to a contest (Bob Offer's problem))
 Display of operating time within the contest; may need to make the "1 hour" configurable
 ==================================================================
 ==================================================================
-Started - code done, lists started Recognition of dry squares by country - whole of UK initially...
 ==================================================================
-done M7
 ==================================================================
-Modify www.goodey.org.uk
-Set up www.g0gjv.org.uk/minos 
 ==================================================================
 Multi band logs
 run/S&P switching
