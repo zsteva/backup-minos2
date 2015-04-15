@@ -8,7 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #define MINOSVERSIONMAJ 1
 #define MINOSVERSIONMIN 5
-#define MINOSINCREMENT 9
+#define MINOSINCREMENT 10
 #define MINOSVERSION "1.5"
 #define MINOSFILEDESCRIPTION "Minos\0"
 #define MINOSINTERNALNAME "Minos\0"
@@ -16,7 +16,7 @@
 
 #define MINOSBUILD "0"
 #define MINOSBUILDNO 0
-#define MINOSVERSIONBUILD "1.5.9.0"
-#define MINOSRCVERSION "1.5.9.0\0"
+#define MINOSVERSIONBUILD "1.5.10.0"
+#define MINOSRCVERSION "1.5.10.0\0"
 
 // #define BETA_VERSION
