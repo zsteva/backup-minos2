@@ -107,8 +107,9 @@
 <!-- 15.007 12/12/14 G4CLA - change to <collateby>operators for VHF Champs SF and LP sections (same as HF) - not check this works ! -->
 <!-- 15.008 16/01/15 G4CLA - Correct sections for xmas fun overall results collate xmas fun open section by callsign -->
 <!-- 15.009 21/01/15 G4CLA - Only include the 144 and 50mhz afs contest in this years SL and 432 afs in last years AFS-->
+<!-- 15.010 29/04/15 G4CLA - There were 2 vhfnorm column desriptions !-->
 <calendar>
-<version>15.009 21/01/2015</version>
+<version>15.010 29/04/2015</version>
 <icalurl>http://www.rsgbcc.org/icals/vhf15.ics</icalurl>
 <googleurl>https://www.google.com/calendar/embed?src=pvb6brrneu19vj15qfg78nuumc%40group.calendar.google.com&amp;ctz=Europe/London</googleurl>
 <mult_type>
@@ -218,7 +219,7 @@ All large square locators count as multipliers;  A locator in which a UK station
         <Columns Title = "Group" Field="clubName" Align = "center" Sections= "O,6O" ></Columns>
         <Columns Index="true" Title = "Callsign" Field ="call" Align = "left" ></Columns>
         <Columns Title = "Loc" Field ="locator" Align = "center" ></Columns>
-        <Columns Title = "QSOS" Field = "Qs" Align = "right" ></Columns>
+        <Columns Title = "QSOs" Field = "Qs" Align = "right" ></Columns>
         <Columns Title = "Score" Field="score" Align = "right" ></Columns>
         <Columns Title = "Norm" Field="normalisedScore" Align = "right" ></Columns>
         <Columns Title = "ODX" Field="ODXCall" Align = "center" ></Columns>
@@ -293,24 +294,6 @@ All large square locators count as multipliers;  A locator in which a UK station
         <Columns Title = "Loc" Field ="locator" Align = "center" ></Columns>
         <Columns Title = "QSOS" Field = "Qs" Align = "right" ></Columns>
         <Columns Title = "Score" Field="score" Align = "right" ></Columns>
-        <Columns Title = "ODX" Field="ODXCall" Align = "center" ></Columns>
-        <Columns Title = "Kms" Field="ODXKms" Align = "center" ></Columns>
-        <Columns Title = "Power" Field="power" Align = "center" ></Columns>
-        <Columns Title = "Group" Field="clubName" Align = "center" Sections= "O"></Columns>
-        <Columns Title = "Operators" Field="Operators" Align = "left" Sections= "O" ></Columns>
-        <Columns Title = "Ant" Field="ant" Align = "center"  img="tower.gif" ></Columns>
-        <Columns Title = "Equipment" Field="equipment" Align = "center" img="tx.gif" ></Columns>
-        <Columns Title = "Comments" Field="SoapBox" Align = "left" img="soapbox.gif" ></Columns>
-</ColumnFormat>
-<ColumnFormat>
-        <name>vhfnorm</name>
-        <Columns Title = "Certificate Winner" Nocolumn="true" Merge="right" Field="cert" img="cert.gif" ></Columns>
-        <Columns Title = "Pos___" Field="position" Merge="left" Align="right" ></Columns>
-        <Columns Index="true" Title = "Callsign" Field ="call" Align = "left" ></Columns>
-        <Columns Title = "Loc" Field ="locator" Align = "center" ></Columns>
-        <Columns Title = "QSOS" Field = "Qs" Align = "right" ></Columns>
-        <Columns Title = "Score" Field="score" Align = "right" ></Columns>
-        <Columns Title = "Norm" Field="normalisedScore" Align = "right" ></Columns>
         <Columns Title = "ODX" Field="ODXCall" Align = "center" ></Columns>
         <Columns Title = "Kms" Field="ODXKms" Align = "center" ></Columns>
         <Columns Title = "Power" Field="power" Align = "center" ></Columns>
