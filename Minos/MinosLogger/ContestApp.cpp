@@ -474,7 +474,7 @@ void TContestApp::removeList( ContactList * p )
 }
 void TContestApp::writeContestList()
 {
-   preloadBundle.clearProfileSection( );
+   preloadBundle.clearProfileSection( false );
    for ( unsigned int i = 0; i < contestSlotList.size(); i++ )
    {
       ContestSlot *cs = contestSlotList[ i ];

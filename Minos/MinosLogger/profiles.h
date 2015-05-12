@@ -98,8 +98,8 @@ class SettingsBundle
       void getIntProfile( int enumkey, MinosItem<int> &value );
       void setIntProfile( int enumkey, int value );
 
-      void flushProfile( void );
-      void clearProfileSection( );
+      void flushProfile( );
+      void clearProfileSection(bool clearCurr );
 
       std::vector<std::string> getProfileEntries( );
       std::vector<int> getBundleEntries( );

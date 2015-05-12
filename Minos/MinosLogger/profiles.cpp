@@ -1068,13 +1068,16 @@ std::vector<std::string> SettingsBundle::getSections( )
    }
    return slist;
 }
-void SettingsBundle::clearProfileSection( )
+void SettingsBundle::clearProfileSection( bool clearCurr)
 {
    // clear the content AND the section header
    if ( bundleFile )
    {
       bundleFile->iniFile->writePrivateProfileString( currsection.c_str(), 0, 0 );
-      currsection = noneBundle;
+      if (clearCurr)
+      {
+         currsection = noneBundle;
+      }
    }
 }
 void SettingsBundle::flushProfile( void )

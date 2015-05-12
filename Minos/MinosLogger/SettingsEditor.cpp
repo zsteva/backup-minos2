@@ -106,7 +106,7 @@ void __fastcall TSettingsEditDlg::DeleteButtonClick( TObject */*Sender*/ )
    else
       if ( MinosParameters::getMinosParameters() ->yesNoMessage( this, "Are you sure you want to delete the current section?" ) )
       {
-         bundle->clearProfileSection();
+         bundle->clearProfileSection( true );
          showSections();
          showDetails();
       }
