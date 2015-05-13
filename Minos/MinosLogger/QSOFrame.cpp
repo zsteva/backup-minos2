@@ -607,7 +607,7 @@ bool TGJVEditFrame::dlgForced()
       }
       else
       {
-         if ( MessageBox( Handle, "Country not in CTY.DAT. Leave for now?", "Force log contact", MB_ICONQUESTION | MB_OKCANCEL ) == mbOK )
+         if ( mShowYesNoMessage( this, "Country not in CTY.DAT. Leave for now?") )
          {
             tryagain = false;
             screenContact.contactFlags &= ~COUNTRY_FORCED;
@@ -1082,33 +1082,32 @@ bool TGJVEditFrame::checkLogEntry(bool checkDTG)
    BaseContact *sct = selectedContact ;
    if ( sct->ne( screenContact, checkDTG ) )
    {
-      int mresp = IDYES;
+      bool mresp = true;
 
       // Dont check with op if not entered, and e.g. ESC pressed
       // Also allows for partial saving when in Uri mode
       if ( !( screenContact.contactFlags & TO_BE_ENTERED ) && !catchup )
       {
-         mresp = MessageBox( Handle,
+         mresp = mShowYesNoMessage( this,
                              "This Contact has changed: Shall I log the changes?\n"
                              "\n"
                              "Yes         - Log as shown\n"
-                             "No          - Discard changes",
-                             "Minos Logger", MB_ICONQUESTION | MB_YESNO );
+                             "No          - Discard changes"
+                              );
       }
-      if ( mresp == IDYES )
+      if ( mresp )
       {
          //Yes - log and continue
          logScreenEntry( );
          retval = true;
       }
       else
-         if ( mresp == IDNO )
-         {
-            //Cancel - Discard changes, continue action
-            screenContact.copyFromArg( *selectedContact );  // we have to ACTUALLY revert, as the action may not conmplete
-            showScreenEntry();
-            retval = false;	// stay where we are
-         }
+      {
+         //Cancel - Discard changes, continue action
+         screenContact.copyFromArg( *selectedContact );  // we have to ACTUALLY revert, as the action may not conmplete
+         showScreenEntry();
+         retval = false;	// stay where we are
+      }
    }
    return retval;
 }

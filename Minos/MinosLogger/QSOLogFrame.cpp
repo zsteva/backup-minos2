@@ -142,12 +142,11 @@ void TGJVQSOLogFrame::logCurrentContact( )
    if ( ctno > contest->maxSerial + 1 )
    {
 
-      if ( MessageBox( Handle, "Serial sent is too high - should I create the missing contacts?",
-                       "Minos Logger", MB_ICONQUESTION | MB_OKCANCEL ) == IDOK )
+      if ( mShowYesNoMessage( this, "Serial sent is too high - should I create the missing contacts?") )
       {
          int orflag = 0;
 
-         if ( MessageBox( Handle, "Do you want to enter these contacts later?", "Minos Logger", MB_ICONQUESTION | MB_YESNO ) == IDYES )
+         if ( mShowYesNoMessage( this, "Do you want to enter these contacts later?" ) )
          {
             orflag = TO_BE_ENTERED;
          }
