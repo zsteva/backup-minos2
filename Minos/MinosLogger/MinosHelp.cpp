@@ -8,7 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 
-#include <vcl.h>
+#include "logger_pch.h"
 #pragma hdrstop
 
 #include "MinosHelp.h" 
@@ -26,3 +26,9 @@ void __fastcall TMinosHelpForm::CloseButtonClick( TObject */*Sender*/ )
    ModalResult = mrOk;
 }
 //---------------------------------------------------------------------------
+void __fastcall TMinosHelpForm::FormShow(TObject *Sender)
+{
+   MinosParameters::getMinosParameters() ->applyFontChange(this);
+}
+//---------------------------------------------------------------------------
+

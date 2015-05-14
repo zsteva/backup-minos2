@@ -24,6 +24,7 @@ class TMinosHelpForm : public TForm
       TButton *CloseButton;
       TMemo *HelpMemo;
       void __fastcall CloseButtonClick( TObject *Sender );
+   void __fastcall FormShow(TObject *Sender);
    private: 	// User declarations
    public: 		// User declarations
       __fastcall TMinosHelpForm( TComponent* Owner );
