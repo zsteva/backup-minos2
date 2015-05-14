@@ -761,6 +761,24 @@ void __fastcall TContestEntryDetails::FormShow( TObject * /*Sender*/ )
 {
    MinosParameters::getMinosParameters() ->applyFontChange(this);
 
+   if (Height > Screen->Height * 0.75)
+   {
+      Height = Screen->Height * 0.75;
+   }
+   if (Width > Screen->Width * 0.75)
+   {
+      Width = Screen->Width * 0.75;
+   }
+
+   if (Top + Height > Screen->Height )
+   {
+      Top = (Screen->Height - Height)/2;
+   }
+
+   if (Left + Width > Screen->Width )
+   {
+      Left = (Screen->Width - Width)/2;
+   }
    QTHBundleFrame->initialise( "QTH", &contest->QTHBundle, &contest->QTHBundleName );
    StationBundleFrame->initialise( "Station", &contest->stationBundle, &contest->stationBundleName );
    EntryBundleFrame->initialise( "Entry", &contest->entryBundle, &contest->entryBundleName );
