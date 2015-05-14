@@ -156,7 +156,7 @@ object ContestEntryDetails: TContestEntryDetails
       Items.Strings = (
         'Commenced Kilometer'
         'Point per QSO')
-      TabOrder = 15
+      TabOrder = 19
     end
     object MultGroupBox: TGroupBox
       Left = 434
@@ -164,7 +164,7 @@ object ContestEntryDetails: TContestEntryDetails
       Width = 249
       Height = 180
       Caption = 'Multipliers and Exchange'
-      TabOrder = 17
+      TabOrder = 21
       object DXCCMult: TCheckBox
         Left = 16
         Top = 28
@@ -180,7 +180,7 @@ object ContestEntryDetails: TContestEntryDetails
         Width = 193
         Height = 17
         Caption = 'Locator Multiplier'
-        TabOrder = 1
+        TabOrder = 2
         OnClick = LocatorMultClick
       end
       object ExchangeComboBox: TComboBox
@@ -191,7 +191,7 @@ object ContestEntryDetails: TContestEntryDetails
         Style = csDropDownList
         ItemHeight = 13
         ItemIndex = 0
-        TabOrder = 2
+        TabOrder = 5
         Text = 'No Exchange Required'
         Items.Strings = (
           'No Exchange Required'
@@ -214,7 +214,7 @@ object ContestEntryDetails: TContestEntryDetails
         Width = 201
         Height = 17
         Caption = 'Non UK Countries Only (M6)'
-        TabOrder = 4
+        TabOrder = 1
         OnClick = NonGCtryMultClick
       end
       object M7LocatorMults: TCheckBox
@@ -223,7 +223,7 @@ object ContestEntryDetails: TContestEntryDetails
         Width = 201
         Height = 17
         Caption = 'All locs; UK locs x2 (M7)'
-        TabOrder = 5
+        TabOrder = 4
         OnClick = M7LocatorMultsClick
       end
     end
@@ -233,7 +233,7 @@ object ContestEntryDetails: TContestEntryDetails
       Width = 225
       Height = 57
       Caption = 'Options'
-      TabOrder = 18
+      TabOrder = 22
       object ProtectedOption: TCheckBox
         Left = 6
         Top = 25
@@ -250,7 +250,7 @@ object ContestEntryDetails: TContestEntryDetails
       Width = 187
       Height = 105
       Caption = 'Optional Fields'
-      TabOrder = 19
+      TabOrder = 23
       Visible = False
       object RSTField: TCheckBox
         Left = 8
@@ -428,7 +428,7 @@ object ContestEntryDetails: TContestEntryDetails
       Width = 74
       Height = 21
       ItemHeight = 13
-      TabOrder = 11
+      TabOrder = 13
     end
     object EndTimeCombo: TComboBox
       Left = 337
@@ -436,7 +436,7 @@ object ContestEntryDetails: TContestEntryDetails
       Width = 74
       Height = 21
       ItemHeight = 13
-      TabOrder = 12
+      TabOrder = 16
     end
     object LocatorGroupBox: TGroupBox
       Left = 241
@@ -444,7 +444,7 @@ object ContestEntryDetails: TContestEntryDetails
       Width = 187
       Height = 82
       Caption = 'Locator Length'
-      TabOrder = 16
+      TabOrder = 20
       object AllowLoc8CB: TCheckBox
         Left = 10
         Top = 52
@@ -470,7 +470,7 @@ object ContestEntryDetails: TContestEntryDetails
       EditLabel.Width = 59
       EditLabel.Height = 13
       EditLabel.Caption = 'Start Date'
-      TabOrder = 20
+      TabOrder = 11
       OnKeyPress = DateEditKeyPress
     end
     object EndDateEdit: TLabeledEdit
@@ -481,7 +481,7 @@ object ContestEntryDetails: TContestEntryDetails
       EditLabel.Width = 52
       EditLabel.Height = 13
       EditLabel.Caption = 'End Date'
-      TabOrder = 21
+      TabOrder = 14
       OnKeyPress = DateEditKeyPress
     end
     object StartDateButton: TButton
@@ -490,7 +490,7 @@ object ContestEntryDetails: TContestEntryDetails
       Width = 21
       Height = 20
       Caption = '...'
-      TabOrder = 22
+      TabOrder = 12
       OnClick = StartDateButtonClick
     end
     object EndDateButton: TButton
@@ -499,7 +499,7 @@ object ContestEntryDetails: TContestEntryDetails
       Width = 21
       Height = 20
       Caption = '...'
-      TabOrder = 23
+      TabOrder = 15
       OnClick = EndDateButtonClick
     end
     object MainOpComboBox: TComboBox
@@ -509,7 +509,7 @@ object ContestEntryDetails: TContestEntryDetails
       Height = 21
       CharCase = ecUpperCase
       ItemHeight = 13
-      TabOrder = 13
+      TabOrder = 17
     end
     object SecondOpComboBox: TComboBox
       Left = 492
@@ -518,7 +518,7 @@ object ContestEntryDetails: TContestEntryDetails
       Height = 21
       CharCase = ecUpperCase
       ItemHeight = 13
-      TabOrder = 14
+      TabOrder = 18
     end
     object AntOffsetEdit: TLabeledEdit
       Left = 130
