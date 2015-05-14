@@ -79,6 +79,17 @@ class CTYCalendarYear : public CalendarYear
       virtual String getPath();
       virtual String getURL();
 };
+class LocSquaresCalendarYear : public CalendarYear
+{
+      virtual String getSite();
+   public:
+      LocSquaresCalendarYear ( ) : CalendarYear ( ectVHFOther, 0 )
+      {
+
+      }
+      virtual String getPath();
+      virtual String getURL();
+};
 //---------------------------------------------------------------------------
 String CalendarYear::getPath()
 {
@@ -157,6 +168,25 @@ String CTYCalendarYear::getURL()
    return getSite();
 }
 //---------------------------------------------------------------------------
+String LocSquaresCalendarYear::getSite()
+{
+   return "http://www.g0gjv.org.uk/LocSquares.ini";
+}
+String LocSquaresCalendarYear::getPath()
+{
+   char appFName[ 255 ];
+   int nLen = 0;
+   nLen = ::GetModuleFileName( HInstance, appFName, 255 );
+   appFName[ nLen ] = '\0';
+
+   String fpath = ExtractFilePath( appFName );
+   String p = fpath + "\\Configuration\\" + "LocSquares.ini";
+   return p;
+}
+String LocSquaresCalendarYear::getURL()
+{
+   return getSite();
+}
 //---------------------------------------------------------------------------
 __fastcall TCalendarForm::TCalendarForm( TComponent* Owner )
       : TForm( Owner ), vhf(2011)
@@ -275,6 +305,8 @@ void __fastcall TCalendarForm::GetCalendarButtonClick( TObject *Sender )
    }
    CTYCalendarYear cty;
    cty.downloadFile(IdHTTP1, false);
+   LocSquaresCalendarYear locsq;
+   locsq.downloadFile(IdHTTP1, false);
    FormShow( Sender );
 }
 //---------------------------------------------------------------------------

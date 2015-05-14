@@ -1,15 +1,22 @@
 ==================================================================
+==================================================================
+==================================================================
+==================================================================
+==================================================================
+==================================================================
+==================================================================
+==================================================================
+==================================================================
 Double click tab to bring up details - no "OnDblClick" so complicated
+==================================================================
 Tab drag would be nice as well
+==================================================================
 Button(?) on details for export
 ==================================================================
-Time offset to a contest (Bob Offer's problem))
+Time offset to a contest (Bob Offer's problem)) - to be applied post contest
+not a a clock offset
 ==================================================================
 Display of operating time within the contest; may need to make the "1 hour" configurable
-==================================================================
-==================================================================
-==================================================================
-==================================================================
 ==================================================================
 Multi band logs
 run/S&P switching
@@ -29,30 +36,18 @@ Odd crashes in lists; do I have a stack trace in the logs? Although that was on 
                                    
 QT conversion - then others MIGHT be willing to play as well. And it would achieve good refactoring (which will then rot)
 
-Locator map
 Control key map tables to allow reassignment
 Rig control - Omnirig is probably adequate
 Rotator control (don't think Omnirig does this, may need own code?)
 Voice keyer, calling freqs, etc
 Can we eliminate the voice keyer whistle? I think it is system/hardware, not software
+Disable F keys configurably (to allow voice keyer to run as well) (Qt?)
+Sanity check of splitter positions - all I'm doing is screwing it up further; check on release version
+We want an option(options?) to control visibility in a KML export
+Better header text for loc/distance in country and district display
 
 And eventually, get back into networking
 And HF? How do we go about cabrillo export in general?
-==================================================================
-Disable F keys configurably (to allow voice keyer to run as well)
-==================================================================
-==================================================================
-==================================================================
-==================================================================
-==================================================================
-Sanity check of splitter positions - all I'm doing is screwing it up further; check on release version
- ==================================================================
-Would be very nice to get column sorting going everywhere - but we need a clear reset.
-==================================================================
-various places we have getline into a 256 byte buffer. Fixed for lists
-still needed for mults
-==================================================================
-We want an option(options?) to control visibility in a KML export
 ==================================================================
 Break lat/long up into multiple edits (YMC)
 allow decimal lat/long             
@@ -60,9 +55,8 @@ Need to break up single latlong field into deg/mins/secs
 Plus EW and NS check boxes - but allow negative degrees, or E/W/N/S texts
 On exit logic has to change as latlong will normally take several steps to complete
 ==================================================================
-==================================================================
-Better header text for loc/distance in country and district display
 Double click on contest in Vista default directory says "already open"?
+Well, it will if it is in the pre-load list!
 ==================================================================
 ?? Have profile flags to say "don't display if at default"/"don't (re)write default key/value"
 ?? Indicate default/non default in editor
@@ -97,33 +91,6 @@ We DEFINITELY need a colour choice dialog...
 	match Xfer and match xfer selected
 	And probably others...
 	
-===========================================================================
-Thanks for the new version Mike
-
-Here is my first pass; obviously I will not start on documentation until (at least) we have a stable version.
-
-Ken
-
-
-4.      The sticky panel settings have a number of problems:
-
-a.      Stats panel only consistent once ‘activated’ for a given open contest (may be intentional?)
-
-b.      Stats settings not retained across close/re-open
-
-c.      Worked/unworked sub-panel positioning not consistent; tick boxes are (maybe don’t want them to be?)
-
-d.      Width of CSL panel consistent across contests; width of internal columns not retained. Appears to be same on ‘other’ panel.
-
-e.       retained
-
-
-5.      (Correct - it applies to all relevant stats tabs)On the stats/locators panel, ‘unworked only’ doesn’t seem to do anything (this is not new on this version). Did it ever do anything (I think I remember that it did once)? If it only applies to districts then the tick box should be hidden for locators.
-
-===========================================================================
-
-Since I have been using Minos in the Xmas cumulatives I have noticed that each time you save an entry it defaults to the \minos\logs folder, rather than retaining the default of the last one used. (I file submitted logs elsewhere).
-===========================================================================
 //================================================================
 Bugs, etc to fix
 =================
@@ -133,15 +100,9 @@ Sticky splitters in monitor and chat
 
 Auto copy MinosLines on compilation
 
-Insert before/insert after; "easy" enough to do, but what needs doing to all following? Do we need bulk increment of serial numbers? Or do we want a multi-select that allows such things?
-
 //==================================================================
 *****************  Documentation for networking  *******************
 //==================================================================
-Can we make "old" contests read only? i.e. if "after time" by some amount then make them RO unless overridden? Lose the RO check box!
-
-?? free floating crib sheet
-
 SysMenu - bring main window back to screen centre
 
 fly-by hints for headers
