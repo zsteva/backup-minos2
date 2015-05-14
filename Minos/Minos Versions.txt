@@ -1,3 +1,15 @@
+==================================================================
+1.5.11
+Fix bug from 1.5.10 - new contests didn't get loaded on Minos reload
+LocSquares.ini included in files that get downloaded with calendars 
+==================================================================
+1.5.10
+Experimental.
+Corrections in LocSquares.ini
+Deleting a section in settings didn't always work
+SHF UKAC - non :00 start time for a contest didn't work
+Try to shape dialogs better for small screens (e.g. tablets)
+==================================================================
 1.5.9
 M7
 Warn when loc is outside country
