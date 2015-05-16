@@ -38,7 +38,6 @@ object LogContainer: TLogContainer
     OnDrawTab = ContestPageControlDrawTab
     OnMouseDown = ContestPageControlMouseDown
     OnMouseMove = ContestPageControlMouseMove
-    ExplicitTop = -6
   end
   object StatusBar1: TStatusBar
     Left = 0
@@ -662,5 +661,10 @@ object LogContainer: TLogContainer
     OnDeactivate = ApplicationEvents1Deactivate
     Left = 88
     Top = 136
+  end
+  object SaveDialog1: TSaveDialog
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofNoChangeDir, ofPathMustExist, ofEnableSizing]
+    Left = 24
+    Top = 184
   end
 end

@@ -145,6 +145,7 @@ class TLogContainer : public TForm
    TMenuItem *ReportAutofill;
    TAction *ReportAutofillAction;
    TMenuItem *Copyversliontoclipboard1;
+   TSaveDialog *SaveDialog1;
       void __fastcall FormShow( TObject *Sender );
       void __fastcall FormClose( TObject *Sender, TCloseAction &Action );
       void __fastcall HelpAboutActionExecute( TObject *Sender );

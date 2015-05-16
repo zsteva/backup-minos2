@@ -664,16 +664,16 @@ void __fastcall TLogContainer::FileNewActionExecute( TObject */*Sender*/ )
       }
       suggestedfName += ".Minos";
 
-      OpenDialog1->Title = "Save new contest as";
-      OpenDialog1->InitialDir = InitialDir;
-      OpenDialog1->DefaultExt = "Minos";
-      OpenDialog1->Filter = "Minos contest files (*.Minos)|*.Minos|All Files (*.*)|*.*" ;
-      OpenDialog1->FileName = suggestedfName;
+      SaveDialog1->Title = "Save new contest as";
+      SaveDialog1->InitialDir = InitialDir;
+      SaveDialog1->DefaultExt = "Minos";
+      SaveDialog1->Filter = "Minos contest files (*.Minos)|*.Minos|All Files (*.*)|*.*" ;
+      SaveDialog1->FileName = suggestedfName;
 
       closeSlot(ContestPageControl->ActivePage, false );
-      if ( OpenDialog1->Execute() )
+      if ( SaveDialog1->Execute() )
       {
-         suggestedfName = OpenDialog1->FileName;
+         suggestedfName = SaveDialog1->FileName;
          if ( !RenameFile( initName, suggestedfName ) )
          {
             ShowMessage( String( "Failed to rename " ) + initName + " as " + suggestedfName );
