@@ -108,8 +108,9 @@
 <!-- 15.008 16/01/15 G4CLA - Correct sections for xmas fun overall results collate xmas fun open section by callsign -->
 <!-- 15.009 21/01/15 G4CLA - Only include the 144 and 50mhz afs contest in this years SL and 432 afs in last years AFS-->
 <!-- 15.010 29/04/15 G4CLA - There were 2 vhfnorm column desriptions !-->
+<!-- 15.011 27/07/15 G4CLA - add logscount for UKAC -->
 <calendar>
-<version>15.010 29/04/2015</version>
+<version>15.011 27/07/2015</version>
 <icalurl>http://www.rsgbcc.org/icals/vhf15.ics</icalurl>
 <googleurl>https://www.google.com/calendar/embed?src=pvb6brrneu19vj15qfg78nuumc%40group.calendar.google.com&amp;ctz=Europe/London</googleurl>
 <mult_type>
@@ -515,7 +516,7 @@ Certificates will be awarded to the overall winners and runners-up in each secti
 <long_description>
 a.        The individual entries by a club's members to the UK activity contests which take place on each Tuesday in every month all count towards a society's overall score for the year for each UKAC. To maximise the club score, it's important for the club contest organiser to get as many members to come on for as many sessions as possible. A rolling club listing will be maintained on the Contest Committee web site www.rsgbcc.org/vhf/results for each band.
 
-b.        Stations enter the UKAC contests in the normal way, but need to include an AFS (affiliated society) name in the cover sheet of their entry. Entries to all sections of the UKAC count towards the overall club score which is the simple sum of the normalised scores of each team member operating that month. 
+b.        Stations enter the UKAC contests in the normal way, but need to choose an AFS (affiliated society) name when uploading their log. Entries to all sections of the UKAC count towards the overall club score which is the simple sum of the normalised scores of each team member operating that month. 
 
 c.        Stations who enter on behalf of an affiliated society must be members of the affiliated society, but not necessarily RSGB members themselves.
 
@@ -1303,6 +1304,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 				<filter>date=0 </filter>
 				<scorefield>total3</scorefield>
 				<table>Entries</table>
+	    		<showentrycount>yes</showentrycount>
 		</collate_list>
 </seriesCollate>
 <seriesCollate>
