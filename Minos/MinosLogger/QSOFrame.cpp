@@ -656,7 +656,9 @@ bool TGJVEditFrame::dlgForced()
       NonScoreCheckBox->Checked = screenContact.contactFlags & NON_SCORING;
       DeletedCheckBox->Checked = screenContact.contactFlags & DONT_PRINT;
       if ( screenContact.contactFlags & NON_SCORING )
+      {
          screenContact.multCount = 0;
+      }
 
       // if no dtg then autofill dtg
 

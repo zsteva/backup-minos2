@@ -60,6 +60,7 @@ MinosConnection::io_send ( const char *data, size_t len )
 int
 MinosConnection::io_recv ( char *buffer, size_t buf_len, int timeout )
 {
+#warning should we poll the socket here rather than select, just to be consistent?
    fd_set fds;
    struct timeval tv, *tvptr;
    int len;

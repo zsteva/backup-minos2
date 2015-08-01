@@ -336,7 +336,7 @@ void DisplayContestContact::checkContact( )
       TEMPBUFF( letters, 3 );
       TEMPBUFF( numbers, 3 );
 
-      std::string sloc = loc.loc.getValue();
+      std::string sloc = loc.loc.getValue().substr(0, 4);
       letters[ 0 ] = sloc[ 0 ];
       letters[ 1 ] = sloc[ 1 ];
       letters[ 2 ] = 0;
@@ -374,6 +374,25 @@ void DisplayContestContact::checkContact( )
          LocCount * npt = ls->map ( numbers );
          if ( npt )
          {
+            if (clp->UKACBonus.getValue() && npt->UKLocCount + npt->nonUKLocCount == 0)
+            {
+               std::map<std::string, int>::iterator l = clp->locBonuses.find(sloc);
+               if (l != clp->locBonuses.end())
+               {
+                  clp->bonus = l->second;
+               }
+               else if (!UKcall)
+               {
+                  clp->bonus = clp->nonukLocBonus;
+               }
+               else
+               {
+                  clp->bonus = clp->ukLocBonus;
+               }
+               bonus += clp->bonus;
+               clp->nbonus = true;
+               newBonus = true;
+            }
             if (UKcall)
             {
                if (!npt->UKMultGiven)
@@ -412,34 +431,6 @@ void DisplayContestContact::checkContact( )
          }
       }
       locCount = multCount - oldMultCount;
-/*
-      if ( ls )
-      {
-         LocCount * npt = ls->map( numbers );
-         if ( npt )
-         {
-            if ( QSOValid )
-            {
-               if (!clp->GLocMult.getValue() || cs.isUK())
-               {
-                  if ( ( npt->valid ) ++ == 0 )
-                  {
-                     clp->nlocs++;
-                     if ( clp->locMult.getValue() )
-                     {
-                        multCount++;
-                     }
-                     newLoc = true;
-                  }
-               }
-               else
-               {
-                  ( npt->invalid ) ++ ;
-               }
-            }
-         }
-      }
-*/
    }
 }
 

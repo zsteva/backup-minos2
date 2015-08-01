@@ -119,6 +119,9 @@ class BaseContact
       bool newGLoc;
       bool newNonGLoc;
 
+      int bonus;
+      bool newBonus;
+
       DistrictEntry * districtMult;
       CountryEntry * ctryMult;
       virtual void makestrings( bool serialFields ) const;

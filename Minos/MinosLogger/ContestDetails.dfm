@@ -246,16 +246,16 @@ object ContestEntryDetails: TContestEntryDetails
     end
     object FieldsGroupBox: TGroupBox
       Left = 241
-      Top = 405
+      Top = 453
       Width = 187
-      Height = 105
+      Height = 68
       Caption = 'Optional Fields'
       TabOrder = 23
       Visible = False
       object RSTField: TCheckBox
         Left = 8
         Top = 19
-        Width = 97
+        Width = 81
         Height = 17
         Caption = 'RST'
         Checked = True
@@ -264,9 +264,9 @@ object ContestEntryDetails: TContestEntryDetails
         Visible = False
       end
       object SerialField: TCheckBox
-        Left = 8
-        Top = 39
-        Width = 97
+        Left = 122
+        Top = 19
+        Width = 55
         Height = 17
         Caption = 'Serial'
         Checked = True
@@ -276,8 +276,8 @@ object ContestEntryDetails: TContestEntryDetails
       end
       object LocatorField: TCheckBox
         Left = 8
-        Top = 60
-        Width = 97
+        Top = 42
+        Width = 81
         Height = 17
         Caption = 'Locator'
         Checked = True
@@ -286,9 +286,9 @@ object ContestEntryDetails: TContestEntryDetails
         Visible = False
       end
       object QTHField: TCheckBox
-        Left = 8
-        Top = 81
-        Width = 97
+        Left = 122
+        Top = 42
+        Width = 55
         Height = 17
         Caption = 'QTH'
         Checked = True
@@ -531,6 +531,27 @@ object ContestEntryDetails: TContestEntryDetails
       LabelPosition = lpLeft
       LabelSpacing = 10
       TabOrder = 24
+    end
+    object GroupBox1: TGroupBox
+      Left = 241
+      Top = 405
+      Width = 187
+      Height = 43
+      Caption = 'Bonus Scheme'
+      TabOrder = 25
+      object BonusComboBox: TComboBox
+        Left = 8
+        Top = 17
+        Width = 169
+        Height = 21
+        ItemHeight = 13
+        ItemIndex = 0
+        TabOrder = 0
+        Text = 'None'
+        Items.Strings = (
+          'None'
+          'UKAC Bonuses')
+      end
     end
   end
 end

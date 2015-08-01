@@ -245,6 +245,10 @@ void TContestEntryDetails::setDetails(  )
    NonGCtryMult->Checked = contest->nonGCountryMult.getValue() ;
 
    M7LocatorMults->Checked = contest->M7Mults.getValue();
+
+   bool UKACBonus = contest->UKACBonus.getValue();
+   BonusComboBox->ItemIndex = UKACBonus?1:0;
+
    LocatorMult->Checked = contest->locMult.getValue() ;
    GLocMult->Checked = contest->GLocMult.getValue();
 
@@ -488,6 +492,9 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
    GLocMult->Checked = contest->GLocMult.getValue() ;
    M7LocatorMults->Checked = contest->M7Mults.getValue() ;
 
+   bool UKACBonus = contest->UKACBonus.getValue();
+   BonusComboBox->ItemIndex = UKACBonus?1:0;
+
 
    RSTField->Checked = true ;
    SerialField->Checked = true ;
@@ -589,6 +596,7 @@ TWinControl * TContestEntryDetails::getDetails( )
    contest->locMult.setValue( LocatorMult->Checked ) ;   // bool
    contest->GLocMult.setValue( GLocMult->Checked ) ;   // bool
    contest->M7Mults.setValue( M7LocatorMults->Checked ) ;   // bool
+   contest->UKACBonus.setValue(BonusComboBox->ItemIndex == 1);
 
    if (contest->GLocMult.getValue())
    {

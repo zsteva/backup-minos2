@@ -8,7 +8,9 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 #include "minos_pch.h"
-#pragma hdrstop 
+#pragma hdrstop
+//#include <sys/socket.h>
+//#include <poll.h>
 //---------------------------------------------------------------------------
 
 #pragma package(smart_init)
@@ -225,6 +227,137 @@ void MinosListener::processSockets( void )
 {
    try
    {
+      int nsocks = i_array.size();
+      std::auto_ptr<WSAPOLLFD> fds(new WSAPOLLFD [nsocks]);
+
+      {
+         CsGuard g;
+         int n = 0;
+         for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++, n++ )
+         {
+            if ( ( *i ) && ( *i ) ->getSocket() != INVALID_SOCKET )
+            {
+               fds.get()[n].fd = ( *i ) ->getSocket();
+               fds.get()[n].events = POLLIN;
+               fds.get()[n].revents = 0;
+            }
+            else
+            {
+               fds.get()[n].fd = -1;
+               fds.get()[n].events = 0;
+               fds.get()[n].revents = 0;
+            }
+         }
+      }
+      int nevents = WSAPoll( fds.get(), nsocks, 50 );   // 50 ms timeout
+
+      if (nevents < 0)
+      {
+         // timeout
+         for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
+         {
+            try
+            {
+               if ( ( *i ) )
+               {
+                  ( *i ) ->sendKeepAlive();
+               }
+            }
+            catch ( ... )
+            {
+               logMessage( "process_sockets", "Unknown Exception in sendKeepAlive" );
+               closeApp = true;
+               break;
+            }
+         }
+         return ;
+      }
+      if (nevents == 0)
+      {
+         return;
+      }
+      if (closeApp)
+      {
+         return;
+      }
+
+      /*
+              Check for each of the sockets which could have fired for read
+      */
+      bool clearup = false;
+      int n = 0;
+      for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++, n++ )
+      {
+         if ( ( *i ) && (fds.get()[n].revents & POLLIN != 0) )
+         {
+            try
+            {
+               MinosSocket * ip = ( *i );
+               ip ->process();  // This may add an element...  in which case the iterator is screwed
+               if ( ip->newConnection )
+               {
+                  ip->newConnection = false;
+                  break;
+               }
+            }
+            catch ( Exception & e )
+            {
+               logMessage( "process_sockets", std::string( "Exception processing socket : " ) + e.Message.c_str() );
+               closeApp = true;
+               break;
+            }
+            catch ( ... )
+            {
+               logMessage( "process_sockets", "Unknown Exception processing socket" );
+               closeApp = true;
+               break;
+            }
+         }
+      }
+      for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
+      {
+         try
+         {
+            if ( ( *i ) ->remove
+               )
+            {
+               // process says to finish off
+               logMessage( "process_sockets", std::string( "deleting socket : " ) + ( *i ) ->getIdentity() );
+               delete ( *i );
+               *i = 0;
+               clearup = true;
+            }
+         }
+         catch ( Exception & e )
+         {
+            logMessage( "process_sockets", std::string( "Exception tidying socket : " ) + e.Message.c_str() );
+            closeApp = true;
+            break;
+         }
+         catch ( ... )
+         {
+            logMessage( "process_sockets", "Unknown Exception tidying socket" );
+            closeApp = true;
+            break;
+         }
+      }
+      if ( clearup )
+      {
+         i_array.erase( std::remove_if( i_array.begin(), i_array.end(), nosock ), i_array.end() );
+      }
+   }
+   catch ( Exception & e )
+   {
+      logMessage( "process_sockets", std::string( "Exception while processing: " ) + e.Message.c_str() );
+      closeApp = true;
+   }
+}
+#ifdef RUBBISH
+void MinosListener::processSockets( void )
+{
+#warning change server over to socket polling - no 64 connection limit!
+   try
+   {
       int ready_cnt = 0;
 
       fd_set in_socks;
@@ -354,6 +487,7 @@ void MinosListener::processSockets( void )
       closeApp = true;
    }
 }
+#endif
 void MinosListener::clearSockets()
 {
    GJV_scoped_lock lck;

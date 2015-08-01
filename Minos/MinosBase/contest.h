@@ -139,6 +139,8 @@ class BaseContestLog
 
       MinosItem<bool> M7Mults;
 
+      MinosItem<bool> UKACBonus;
+
       MinosItem<bool> powerWatts;
       MinosItem<SCOREMODE> scoreMode;
       MinosItem<std::string> DTGStart;
@@ -229,6 +231,14 @@ class BaseContestLog
       int nctry;
       int ndistrict;
       int nlocs;
+
+      int nbonus;
+      int bonus;
+
+      int multsAsBonuses;
+      std::map<std::string, int> locBonuses;
+      int ukLocBonus;
+      int nonukLocBonus;
 
       int *districtWorked;
       int *countryWorked;
@@ -328,6 +338,8 @@ class ContestScore
       char brcc4;
       char brloc1;
       char brloc2;
+      char brbonus1;
+      char brbonus2;
 
       std::string name;
       int nqsos;
@@ -338,6 +350,8 @@ class ContestScore
       int nGlocs;
       int nonGlocs;
       int nmults;
+      int bonus;
+      int nbonus;
       int totalScore;
 
       ContestScore(BaseContestLog *, TDateTime limit);

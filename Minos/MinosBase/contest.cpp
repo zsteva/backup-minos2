@@ -7,10 +7,11 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
-#pragma hdrstop 
+#pragma hdrstop
+#include <inifiles.hpp>
 /*
 #include "latlong.h"
- 
+
 #include "MatchContact.h"
 #include "MinosTestImport.h"
 */
@@ -30,6 +31,7 @@ BaseContestLog::BaseContestLog( void ) :
       otherExchange( false ), countryMult( false ), nonGCountryMult( false ),
       districtMult( false ), locMult( false ), GLocMult(false),
       M7Mults(false), NonUKloc_mult(false), NonUKloc_multiplier(0), UKloc_mult(false), UKloc_multiplier(0),
+      UKACBonus(false),
       scoreMode( PPKM ),
       powerWatts( true ), maxSerial( 0 ),
       contestScore( 0 ), ndistrict( 0 ), nctry( 0 ), nlocs( 0 ),
@@ -39,7 +41,8 @@ BaseContestLog::BaseContestLog( void ) :
       mycall( "" ),
       QSO1( 0 ), QSO2( 0 ), QSO1p( 0 ), QSO2p( 0 ),
       kms1( 0 ), kms2( 0 ), kms1p( 0 ), kms2p( 0 ),
-      mults1( 0 ), mults2( 0 ), mults1p( 0 ), mults2p( 0 )
+      mults1( 0 ), mults2( 0 ), mults1p( 0 ), mults2p( 0 ),
+      bonus(0), nbonus(0)
 {
    bearingOffset.setValue(0);
    mode.setValue( "J3E" );
@@ -55,6 +58,63 @@ BaseContestLog::BaseContestLog( void ) :
    for ( i = 0; i < nc; i++ )
       districtWorked[ i ] = 0;
 
+   try
+   {
+   //std::map<std::string, int> locBonuses;
+
+   // Load the loc bonuses from control\M8.ini
+
+   /*
+[M8]
+UK=1500
+NONUK=500
+JO00=1000
+JO01=1000
+JO02=1000
+JO03=1000
+IO90=1000
+IO91=1000
+IO92=1000
+IO93=1000
+IO80=1000
+IO81=1000
+IO82=1000
+IO83=1000
+
+
+   */
+   // General non-UK
+
+   // General UK
+
+   // Specific squares
+      multsAsBonuses = 0;
+
+      std::auto_ptr <TIniFile> m8Ini ( new TIniFile ( "Configuration\\UKACBonus.ini" ) );
+      std::auto_ptr<TStrings > ukacStrings(new TStringList());
+      m8Ini->ReadSectionValues("UKACBonus", ukacStrings.get());
+      for (int i = 0; i < ukacStrings->Count; i++)
+      {
+         String name = ukacStrings->Names[i].Trim().UpperCase();
+         String value = ukacStrings->Values[name].Trim();
+         if (name == "UK")
+         {
+            ukLocBonus = value.ToIntDef(1500);
+         }
+         else if (name == "NONUK")
+         {
+            nonukLocBonus = value.ToIntDef(500);
+         }
+         else
+         {
+            locBonuses[std::string(AnsiString(name).c_str())] = value.ToIntDef(1000);
+         }
+      }
+   }
+   catch(...)
+   {
+
+   }
 }
 BaseContestLog::~BaseContestLog()
 {
@@ -131,6 +191,7 @@ void BaseContestLog::clearDirty()
    districtMult.clearDirty();
 
    M7Mults.clearDirty();
+   UKACBonus.clearDirty();
 
    powerWatts.clearDirty();
    scoreMode.clearDirty();
@@ -165,6 +226,7 @@ void BaseContestLog::setDirty()
    districtMult.setDirty();
 
    M7Mults.setDirty();
+   UKACBonus.setDirty();
 
    powerWatts.setDirty();
    scoreMode.setDirty();
@@ -640,6 +702,8 @@ void BaseContestLog::scanContest( void )
       nct->locCount = 0;
       nct->newGLoc = false;
       nct->newNonGLoc = false;
+      nct->bonus = 0;
+      nct->newBonus = false;
       nct->checkContact( );   // in scanContest
 
 //      nct->baddtg = false;
@@ -665,6 +729,8 @@ void BaseContestLog::getScoresTo(ContestScore &cs, TDateTime limit)
    cs.nonGlocs = 0;
    cs.nqsos = 0;
    cs.contestScore = 0;
+   cs.bonus = 0;
+   cs.nbonus = 0;
 
    int nextScan = -1;
 
@@ -736,6 +802,9 @@ void BaseContestLog::getScoresTo(ContestScore &cs, TDateTime limit)
          cs.nlocs += nct->locCount;
          cs.nqsos++;
 
+         cs.bonus += nct->bonus;
+         cs.nbonus += nct->newBonus;
+
          if (nct->newGLoc)
          {
             cs.nGlocs++;
@@ -761,6 +830,10 @@ void BaseContestLog::getScoresTo(ContestScore &cs, TDateTime limit)
    {
       cs.brloc1 = cs.brloc2 = ' ';
       cs.nmults += cs.nlocs;
+   }
+   if (UKACBonus.getValue())
+   {
+      cs.brbonus1 = cs.brbonus2 = ' ';
    }
    cs.nmults = std::max(cs.nmults, 1);
 
@@ -1012,6 +1085,7 @@ void BaseContestLog::processMinosStanza( const std::string &methodName, MinosTes
       mt->getStructArgMemberValue( "AllowLoc4", allowLoc4 );
       mt->getStructArgMemberValue( "AllowLoc8", allowLoc8 );
 
+      mt->getStructArgMemberValue( "UKACBonus", UKACBonus );
       if (mt->getStructArgMemberValue( "M7Mults", M7Mults) && M7Mults.getValue())
       {
          NonUKloc_mult = true;
@@ -1175,15 +1249,19 @@ ContestScore::ContestScore(BaseContestLog *ct, TDateTime limit)
    brcc4 = ')';
    brloc1 = '(';
    brloc2 = ')';
+   brbonus1 = '(';
+   brbonus2 = ')';
 
    ct->getScoresTo(*this, limit);
    name = ct->publishedName;
 }
 std::string ContestScore::disp()
 {
-   std::string buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:%c%d districts%c:%c%d(%d/%d) locators%c = %ld" )
+   std::string buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:%c%d districts%c:%c%d(%d/%d) locators%c %cbonuses %d(%d)%c = %ld" )
             %nqsos % contestScore % brcc1 % nctry % brcc2 % brcc3 % ndistrict %
-            brcc4 % brloc1 % nlocs % nGlocs % nonGlocs % brloc2 % totalScore ).str();
+            brcc4 % brloc1 % nlocs % nGlocs % nonGlocs % brloc2
+            % brbonus1 % bonus % nbonus % brbonus2
+            % totalScore ).str();
 
    return buff;
 }

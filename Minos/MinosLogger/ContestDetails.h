@@ -76,6 +76,8 @@ class TContestEntryDetails : public TForm
    TCheckBox *NonGCtryMult;
    TCheckBox *M7LocatorMults;
    TScrollBox *ScrollBox1;
+   TGroupBox *GroupBox1;
+   TComboBox *BonusComboBox;
       void __fastcall OKButtonClick( TObject *Sender );
       void __fastcall CancelButtonClick( TObject *Sender );
       void __fastcall FormShow( TObject *Sender );

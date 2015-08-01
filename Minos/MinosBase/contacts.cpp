@@ -28,7 +28,8 @@ BaseContact::BaseContact( BaseContestLog * contest, bool time_now ) :
       bearing( -1 ),
       districtMult( 0 ), ctryMult( 0 ),
       QSOValid( false ),
-      locCount( 0 ), newGLoc(false), newNonGLoc(false), newDistrict( false ), newCtry( false )
+      locCount( 0 ), newGLoc(false), newNonGLoc(false), newDistrict( false ), newCtry( false ),
+      bonus(0), newBonus(false)
 {
 }
 BaseContact::BaseContact( const BaseContact &ct )

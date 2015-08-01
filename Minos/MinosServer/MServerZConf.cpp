@@ -226,6 +226,7 @@ void TZConf::runThread()
    // and now we go and sit on a select on all the notify sockets
    // but also remember to beacon occasionally...
 
+#warning convert server zconf to use socket polling
    while ( !closeApp )
    {
       fd_set readset;

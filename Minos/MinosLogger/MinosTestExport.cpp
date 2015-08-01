@@ -111,6 +111,7 @@ void MinosTestExport::exportContest( HANDLE expfd )
 
 
    ct->M7Mults.addIfDirty( st, "M7Mults", dirty );
+   ct->UKACBonus.addIfDirty( st, "UKACBonus", dirty );
 
    if ( dirty )
    {
