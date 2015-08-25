@@ -282,6 +282,16 @@ void __fastcall TGJVEditFrame::EditControlExit( TObject */*Sender*/ )
    MinosLoggerEvents::SendShowErrorList();
    MinosLoggerEvents::SendReportOverstrike(overstrike, contest); // Why?
 
+   if (screenContact.cs.valRes == ERR_DUPCS)
+   {
+      CallsignEdit->Color = clRed;
+   }
+   else
+   {
+      CallsignEdit->Color = clWindow;
+   }
+   CallsignEdit->Repaint();
+
    // make sure the mode button shows the correct "flip" value
    if (ModeComboBoxGJV->Text == "A1A")
    {
@@ -341,6 +351,10 @@ void __fastcall TGJVEditFrame::EditKeyDown( TObject */*Sender*/, WORD &Key,
       ed->SelStart = ed->SelStart - len ;
 
       Key = 0;
+   }
+   if (ed == CallsignEdit)
+   {
+      CallsignEdit->Color = clWindow;
    }
 }
 //---------------------------------------------------------------------------
