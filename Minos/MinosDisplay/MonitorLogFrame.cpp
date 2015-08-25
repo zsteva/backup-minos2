@@ -111,8 +111,10 @@ void __fastcall TLogMonitorFrame::QSOTreePaintText( TBaseVirtualTree */*Sender*/
                TargetCanvas->Font->Color = multhighlight;
             break;
          case egLoc:
-            if ( contest->locMult.getValue() && ct->locCount > 0 )
+            if ( (contest->locMult.getValue() && ct->locCount > 0) || (contest->UKACBonus.getValue() && ct->bonus > 0))
+            {
                TargetCanvas->Font->Color = multhighlight;
+            }
             break;
       }
    }

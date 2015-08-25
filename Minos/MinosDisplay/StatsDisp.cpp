@@ -107,17 +107,17 @@ void TStatsDispFrame::reInitialise()
          buff = lbuff ;
       }
 
-      std::string lbuff = ( boost::format( "Last %d Mins: %d QSO %ld pts %d mults\r\n(Previous %d; %ld; %d)"
-                                           "\nLast %d Mins: %d QSO %ld pts %d mults\r\n(Previous %d; %ld; %d )" )
+      std::string lbuff = ( boost::format( "Last %d Mins: %d QSO %ld pts %d mults %d bonus\r\n(Previous %d; %ld; %d; %d)"
+                                           "\nLast %d Mins: %d QSO %ld pts %d mults %d bonus\r\n(Previous %d; %ld; %d; %d )" )
    #ifndef MAX_DISPLAY_TEST
-                            % sp1 % ct->QSO1 % ct->kms1 % ct->mults1
-                            % ct->QSO1p % ct->kms1p % ct->mults1p
-                            % sp2 % ct->QSO2 % ct->kms2 % ct->mults2
-                            % ct->QSO2p % ct->kms2p % ct->mults2p
+                            % sp1 % ct->QSO1 % ct->kms1 % ct->mults1 % ct->bonus1
+                            % ct->QSO1p % ct->kms1p % ct->mults1p % ct->bonus1p
+                            % sp2 % ct->QSO2 % ct->kms2 % ct->mults2 % ct->bonus2
+                            % ct->QSO2p % ct->kms2p % ct->mults2p % ct->bonus2p
    #else
 
-                            % 999 % 1999 % 999999L % 999 % 1999 % 999999L % 999
-                            % 999 % 1999 % 999999L % 999 % 1999 % 999999L % 999
+                            % 999 % 1999 % 999999L % 999 % 1999 % 999999L % 999 % 999999
+                            % 999 % 1999 % 999999L % 999 % 1999 % 999999L % 999 % 999999
    #endif
                           ).str();
       SLabel1->Caption = String( ( buff + "\r\n\r\n" + lbuff ).c_str() );

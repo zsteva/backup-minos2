@@ -66,6 +66,8 @@ class ScreenContact
       int contactScore;
       int bearing;
       char multCount;
+      int bonus;
+      bool newBonus;
 };
 
 #endif

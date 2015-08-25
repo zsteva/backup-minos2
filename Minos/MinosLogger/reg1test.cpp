@@ -160,7 +160,7 @@ bool reg1test::exportTest( HANDLE expfd )
 
    linelist[ ( int ) CQSOP ] = reg1testLine( "CQSOP", makeStr( ct->contestScore ) ); /*, "Claimed no. of QSO points"*/
    linelist[ ( int ) CWWLs ] = reg1testLine( "CWWLs", makeStr( nlocs ) + ";0;1" ); /*, "Claimed no. of WWLs;Bonus per new WWL;WWL multiplier"*/
-   linelist[ ( int ) CWWLB ] = reg1testLine( "CWWLB", "0" ); /*, "Claimed no. of WWL bonus points"*/
+   linelist[ ( int ) CWWLB ] = reg1testLine( "CWWLB", makeStr ( ct->bonus) ); /*, "Claimed no. of WWL bonus points"*/
    linelist[ ( int ) CExcs ] = reg1testLine( "CExcs", makeStr( ndistrict ) + ";0;1" ); /*, "Claimed no. of exchanges; Bonus for each new exchange; Exchange Multiplier"*/
    linelist[ ( int ) CExcB ] = reg1testLine( "CExcB", "0" ); /*, "Claimed no. of exchange bonus points"*/
    linelist[ ( int ) CDXCs ] = reg1testLine( "CDXCs", makeStr( nctry ) + ";0;1" ); /*, "Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier"*/

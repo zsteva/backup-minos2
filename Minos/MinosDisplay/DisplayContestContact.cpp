@@ -56,6 +56,8 @@ void DisplayContestContact::copyFromArg( ScreenContact &cct )
    ctryMult = cct.ctryMult;
    multCount = cct.multCount;
    forcedMult.setValue( cct.forcedMult );
+   bonus = cct.bonus;
+   newBonus = cct.newBonus;
 
    op1.setValue( cct.op1 );
    op2.setValue( cct.op2 );
@@ -374,24 +376,36 @@ void DisplayContestContact::checkContact( )
          LocCount * npt = ls->map ( numbers );
          if ( npt )
          {
-            if (clp->UKACBonus.getValue() && npt->UKLocCount + npt->nonUKLocCount == 0)
+            if (clp->UKACBonus.getValue())
             {
-               std::map<std::string, int>::iterator l = clp->locBonuses.find(sloc);
-               if (l != clp->locBonuses.end())
+               if (npt->UKLocCount == 0 ||  npt->nonUKLocCount == 0)
                {
-                  clp->bonus = l->second;
+                  clp->bonus = 0;
+                  std::map<std::string, int>::iterator l = clp->locBonuses.find(sloc);
+                  if (npt->UKLocCount == 0 &&  npt->nonUKLocCount == 0 && l != clp->locBonuses.end())
+                  {
+                     // specific bonus for square allocated
+                     clp->bonus = l->second;
+                  }
+                  else if (!UKcall && npt->UKLocCount == 0 &&  npt->nonUKLocCount == 0)
+                  {
+                     clp->bonus = clp->nonukLocBonus;
+                  }
+                  else if (UKcall && npt->UKLocCount == 0)
+                  {
+                     if ( npt->nonUKLocCount == 0)
+                     {
+                        clp->bonus = clp->ukLocBonus;
+                     }
+                     else
+                     {
+                        clp->bonus = clp->ukLocBonus - clp->nonukLocBonus;
+                     }
+                  }
+                  bonus += clp->bonus;
+                  clp->nbonus = true;
+                  newBonus = true;
                }
-               else if (!UKcall)
-               {
-                  clp->bonus = clp->nonukLocBonus;
-               }
-               else
-               {
-                  clp->bonus = clp->ukLocBonus;
-               }
-               bonus += clp->bonus;
-               clp->nbonus = true;
-               newBonus = true;
             }
             if (UKcall)
             {

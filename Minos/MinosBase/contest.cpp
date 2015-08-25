@@ -42,6 +42,7 @@ BaseContestLog::BaseContestLog( void ) :
       QSO1( 0 ), QSO2( 0 ), QSO1p( 0 ), QSO2p( 0 ),
       kms1( 0 ), kms2( 0 ), kms1p( 0 ), kms2p( 0 ),
       mults1( 0 ), mults2( 0 ), mults1p( 0 ), mults2p( 0 ),
+      bonus1( 0 ), bonus2( 0 ), bonus1p( 0 ), bonus2p( 0 ),
       bonus(0), nbonus(0)
 {
    bearingOffset.setValue(0);
@@ -476,6 +477,7 @@ bool BaseContestLog::updateStat( BaseContact *cct )
       QSO1++;
       kms1 += thisscore;
       mults1 += cct->multCount;
+      bonus1 += cct->bonus;
       acted = true;
    }
    else
@@ -486,6 +488,7 @@ bool BaseContestLog::updateStat( BaseContact *cct )
          QSO1p++;
          kms1p += thisscore;
          mults1p += cct->multCount;
+         bonus1p += cct->bonus;
          acted = true;
       }
 
@@ -496,6 +499,7 @@ bool BaseContestLog::updateStat( BaseContact *cct )
       QSO2++;
       kms2 += thisscore;
       mults2 += cct->multCount;
+      bonus2 += cct->bonus;
       acted = true;
    }
    else
@@ -506,6 +510,7 @@ bool BaseContestLog::updateStat( BaseContact *cct )
          QSO2p++;
          kms2p += thisscore;
          mults2p += cct->multCount;
+         bonus2p += cct->bonus;
          acted = true;
       }
 
@@ -525,6 +530,10 @@ void BaseContestLog::updateStats( void )
    QSO2p = 0;
    kms2p = 0;
    mults2p = 0;
+   bonus1 = 0;
+   bonus1p = 0;
+   bonus2 = 0;
+   bonus2p = 0;
    for ( int i = getContactCount() - 1; i >= 0; i-- )
    {
       if ( !updateStat( ctList[ i ] ) )
@@ -837,7 +846,7 @@ void BaseContestLog::getScoresTo(ContestScore &cs, TDateTime limit)
    }
    cs.nmults = std::max(cs.nmults, 1);
 
-   cs.totalScore = cs.contestScore*cs.nmults;
+   cs.totalScore = (cs.contestScore + cs.bonus)*cs.nmults;
 
 }
 //============================================================

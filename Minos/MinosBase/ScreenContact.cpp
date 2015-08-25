@@ -56,6 +56,8 @@ void ScreenContact::initialise( BaseContestLog *ct )
    bearing = 0;
 
    multCount = 0;
+   bonus = 0;
+   newBonus = false;
 
 }
 void ScreenContact::copyFromArg( BaseContact &cct )
@@ -85,6 +87,8 @@ void ScreenContact::copyFromArg( BaseContact &cct )
    ctryMult = cct.ctryMult;
    multCount = cct.multCount;
    forcedMult = cct.forcedMult.getValue();
+   bonus = cct.bonus;
+   newBonus = cct.newBonus;
 
    op1 = cct.op1.getValue();
    op2 = cct.op2.getValue();
@@ -130,6 +134,9 @@ void ScreenContact::copyFromArg( ScreenContact &cct )
    ctryMult = cct.ctryMult;
    multCount = cct.multCount;
    forcedMult = cct.forcedMult;
+   bonus = cct.bonus;
+   newBonus = cct.newBonus;
+
    op1 = cct.op1;
    op2 = cct.op2;
 

@@ -658,6 +658,7 @@ bool TGJVEditFrame::dlgForced()
       if ( screenContact.contactFlags & NON_SCORING )
       {
          screenContact.multCount = 0;
+         screenContact.bonus = 0;
       }
 
       // if no dtg then autofill dtg
