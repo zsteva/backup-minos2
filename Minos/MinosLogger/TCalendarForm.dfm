@@ -25,7 +25,6 @@ object CalendarForm: TCalendarForm
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect, goThumbTracking]
     TabOrder = 0
     OnDblClick = CalendarGridDblClick
-    ExplicitHeight = 509
   end
   object Panel1: TPanel
     Left = 0
@@ -34,7 +33,8 @@ object CalendarForm: TCalendarForm
     Height = 41
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 509
+    ExplicitLeft = -176
+    ExplicitTop = 0
     DesignSize = (
       748
       41)
@@ -110,9 +110,9 @@ object CalendarForm: TCalendarForm
     ProxyParams.BasicAuthentication = False
     ProxyParams.ProxyPort = 0
     Request.ContentLength = -1
-    Request.Accept = 'text/html, */*'
+    Request.Accept = 'text/html;*/*'
     Request.BasicAuthentication = False
-    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    Request.UserAgent = 'Mozilla/4.0 (compatible;Minos)'
     HTTPOptions = [hoForceEncodeParams]
     Left = 40
     Top = 464
