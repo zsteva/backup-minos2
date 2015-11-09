@@ -20,7 +20,6 @@ copy ..\MinosLogger\Configuration\district.syn Configuration
 copy ..\MinosLogger\Configuration\prefix.syn Configuration
 copy ..\MinosLogger\Configuration\bandlist.xml Configuration
 copy ..\MinosLogger\Configuration\LocSquares.ini Configuration
-copy ..\MinosLogger\Configuration\UKACBonus.ini Configuration
 
 copy %SystemRoot%\system32\cc3280mt.dll
 REM copy "C:\Program Files\CodeGear\RAD Studio\5.0\bin"\IndyCore100.bpl

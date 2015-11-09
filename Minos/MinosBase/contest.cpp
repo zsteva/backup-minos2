@@ -59,6 +59,7 @@ BaseContestLog::BaseContestLog( void ) :
    for ( i = 0; i < nc; i++ )
       districtWorked[ i ] = 0;
 
+#ifdef UKAC_BONUSES
    try
    {
    //std::map<std::string, int> locBonuses;
@@ -116,6 +117,7 @@ IO83=1000
    {
 
    }
+   #endif
 }
 BaseContestLog::~BaseContestLog()
 {
@@ -1271,12 +1273,18 @@ ContestScore::ContestScore(BaseContestLog *ct, TDateTime limit)
 }
 std::string ContestScore::disp()
 {
+/*
    std::string buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:%c%d districts%c:%c%d(%d/%d) locators%c %cbonuses %d(%d)%c = %ld" )
             %nqsos % contestScore % brcc1 % nctry % brcc2 % brcc3 % ndistrict %
             brcc4 % brloc1 % nlocs % nGlocs % nonGlocs % brloc2
             % brbonus1 % bonus % nbonus % brbonus2
             % totalScore ).str();
-
+  */
+   std::string buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:%c%d districts%c:%c%d(%d/%d) locators%c = %ld" )
+            %nqsos % contestScore % brcc1 % nctry % brcc2 % brcc3 % ndistrict %
+            brcc4 % brloc1 % nlocs % nGlocs % nonGlocs % brloc2
+//            % brbonus1 % bonus % nbonus % brbonus2
+            % totalScore ).str();
    return buff;
 }
 //====================================================================
