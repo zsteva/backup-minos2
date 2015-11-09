@@ -776,11 +776,12 @@ void BaseContestLog::getScoresTo(ContestScore &cs, TDateTime limit)
 
       if ( nct->contactFlags.getValue() & ( NON_SCORING | DONT_PRINT | LOCAL_COMMENT | COMMENT_ONLY | TO_BE_ENTERED ) )
       {
+         //trace(std::string("flags ") + nct->cs.fullCall.getValue() + " " + nct->serials.getValue());
          continue;
       }
-//      if (nct->cs.valRes == ERR_DUPCS)
       if (nct->cs.valRes != CS_OK)
       {
+         //trace(std::string("bad callsign ") + nct->cs.fullCall.getValue() + " " + nct->serials.getValue());
          continue;
       }
 
@@ -822,6 +823,10 @@ void BaseContestLog::getScoresTo(ContestScore &cs, TDateTime limit)
          {
             cs.nonGlocs++;
          }
+      }
+      else
+      {
+         trace(std::string("neg score ") + nct->cs.fullCall.getValue() + " " + nct->serials.getValue());
       }
    }
    cs.nmults = 0;

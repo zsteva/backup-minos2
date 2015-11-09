@@ -644,7 +644,12 @@ std::string DisplayContestContact::getField( int ACol, const BaseContestLog *con
             break;
          case egComments:
             {
-               res = comments.getValue();
+               res.clear();
+               if (cf & TO_BE_ENTERED)
+               {
+                  res = "UNFILLED CONTACT ";
+               }
+               res += comments.getValue();
             }
             break;
       }
