@@ -108,9 +108,10 @@
 <!-- 15.008 16/01/15 G4CLA - Correct sections for xmas fun overall results collate xmas fun open section by callsign -->
 <!-- 15.009 21/01/15 G4CLA - Only include the 144 and 50mhz afs contest in this years SL and 432 afs in last years AFS-->
 <!-- 15.010 29/04/15 G4CLA - There were 2 vhfnorm column desriptions !-->
-<!-- 15.011 27/07/15 G4CLA - add logscount for UKAC -->
+<!-- 15.011 27/07/15 G4CLA - add logscount for UKAC  add club names for vhfmults results-->
+<!-- 15.012 26/10/15 G4CLA - add adjudicator info -->
 <calendar>
-<version>15.011 27/07/2015</version>
+<version>15.012 26/10/2015</version>
 <icalurl>http://www.rsgbcc.org/icals/vhf15.ics</icalurl>
 <googleurl>https://www.google.com/calendar/embed?src=pvb6brrneu19vj15qfg78nuumc%40group.calendar.google.com&amp;ctz=Europe/London</googleurl>
 <mult_type>
@@ -272,7 +273,7 @@ All large square locators count as multipliers;  A locator in which a UK station
         <name>vhfmults</name>
         <Columns Title = "Certificate Winner" Nocolumn="true" Merge="right" Field="cert" img="cert.gif" ></Columns>
         <Columns Title = "Pos___" Field="position" Merge="left" Align="right" ></Columns>
-        <Columns Title = "Group" Field="clubName" Align = "center" Sections= "O,6O,A" ></Columns>
+        <Columns Title = "Group" Field="clubName" Align = "center" Sections= "O,6O,A,SO" ></Columns>
         <Columns Index="true" Title = "Callsign" Field ="call" Align = "left" ></Columns>
         <Columns Title = "Loc" Field ="locator" Align = "center" ></Columns>
         <Columns Title = "QSOS" Field = "Qs" Align = "right" ></Columns>
@@ -692,7 +693,7 @@ Only one antenna may be used at any one time. If you do not use a rotatable ante
 <long_description> Single Operators not located at a fixed station address as defined in the SF section.
 Stations entering in this section must use the /P, /A or /M  callsign suffix as appropriate.
 </long_description>
-<collate>callsign</collate>
+<collate>clubName</collate>
 <certfields>call</certfields>
 </section>
 <section>
@@ -1883,6 +1884,22 @@ When applied to the VHF Championship, if a station enters some contests with hig
                 </collate_list>
         </id_list>
 </seriesResult>
+<adjudicators>
+<G4CLA name="Pete" email="g4cla@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/edited/peteg4cla.jpg" />
+<G4WFR name="Richard" email="g4wfr@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/g4wfr.jpg" />
+<G0FCT name="Ian" email="g0fct@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/edited/iang0fct.jpg" />
+<GW3SQX name="Ed" email="gw3sqx@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/gw3sqx2013.jpg" />
+<G4LMW name="Rob" email="g4lmw@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/g4lmw.jpg" />
+<G3WRR name="Quin" email="g3wrr@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/g3wrr.JPG" />
+<M0BOX name="Simone" email="m0box@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/M0BOX.jpg" />
+<G3UFY name="Steve" email="g3ufy@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/g3ufy.JPG" />
+<G4BVY name="Roger" email="g4bvy@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/edited/Rogerg4bvy.jpg" />
+<G4MEM name="Mark" email="g4mem@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/g4mem.jpg" />
+<G3XDY name="John" email="g3xdy@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/g3xdy.jpg" />
+<G4CZB name="John" email="g4czb@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/g4czb.jpg" />
+<G7RAU name="Dave" email="g7rau@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/G7RAU.jpg" />
+<G3VYI name="Mike" email="g3vyi@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/g3vyi.JPG" />
+</adjudicators>
 <contest>
 <name>VHFNFDReg</name>
 <description>VHF NFD Registration</description>
@@ -1941,6 +1958,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
   <resultsFormatUsed>4mcum</resultsFormatUsed>
 <club_contest>no</club_contest>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G4CLA" />
 </contest>
 <contest>
   <name>afs432MHz</name>
@@ -1967,6 +1985,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <resultsFormatUsed>vhfafs</resultsFormatUsed>
 <clubdistance>50m</clubdistance>
 </contest>
+<adjudicator callsign="GW3SQX" />
 <contest>
   <name>1st70MHz</name>
   <description>First 70MHz Contest</description>
@@ -1986,6 +2005,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
   <band_list>70</band_list>
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfnomults</resultsFormatUsed>
+<adjudicator callsign="G4BVY" />
 </contest>
 <contest>
   <name>cw50MHz</name>
@@ -2007,6 +2027,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <award_list>A certificate will be awarded each year to the station achieving the best overall score in the three RSGB VHF CW contests -- 4m, 6m and 2m</award_list>
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfnomults</resultsFormatUsed>
+<adjudicator callsign="G4BVY" />
 </contest>
 <contest>
   <name>cw70MHz</name>
@@ -2030,6 +2051,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <award_list>A certificate will be awarded each year to the station achieving the best overall score in the three RSGB VHF CW contests -- 4m, 6m and 2m</award_list>
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
+<adjudicator callsign="G3WRR" />
 </contest>
 <contest>
   <name>2nd70MHz</name>
@@ -2051,6 +2073,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfnomults</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G4CLA" />
 </contest>
 <contest>
   <name>1st50MHz</name>
@@ -2072,6 +2095,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
   <mult>M3</mult>
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
+<adjudicator callsign="G3WRR" />
 </contest>
 <contest>
   <name>mayuhf</name>
@@ -2107,6 +2131,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <autocerts>yes</autocerts>
 <club_contest>yes</club_contest>
 <SCCAllowed>Yes</SCCAllowed>
+<adjudicator callsign="GW3SQX" />
 </contest>
 <contest>
   <name>octuhf</name>
@@ -2144,6 +2169,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <autocerts>yes</autocerts>
 <club_contest>yes</club_contest>
 <SCCAllowed>Yes</SCCAllowed>
+<adjudicator callsign="GW3SQX" />
 </contest>
 <contest>
   <name>70cmstrophy</name>
@@ -2168,6 +2194,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>group</resultsFormatUsed>
 <SCCAllowed>Yes</SCCAllowed>
+<adjudicator callsign="GW3SQX" />
 </contest>
 <contest>
   <name>uhftrophy</name>
@@ -2195,6 +2222,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <resultsFormatUsed>multiband2</resultsFormatUsed>
 <autocerts>yes</autocerts>
 <SCCAllowed>Yes</SCCAllowed>
+<adjudicator callsign="GW3SQX" />
 </contest>
 <contest>
   <name>3cmstrophy</name>
@@ -2219,6 +2247,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
 <SCCAllowed>Yes</SCCAllowed>
+<adjudicator callsign="GW3SQX" />
 </contest>
 <contest>
   <name>2nd50MHz</name>
@@ -2244,6 +2273,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <resultsFormatUsed>vhfafsmults</resultsFormatUsed>
 <clubdistance>50m</clubdistance>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G7RAU" />
 </contest>
 <contest>
   <name>2mukac</name>
@@ -2285,6 +2315,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <club_contest>afs</club_contest>
 <resultsFormatUsed>vhfukac</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G0FCT" />
 </contest>
 <contest>
   <name>70cmsukac</name>
@@ -2323,6 +2354,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <club_contest>afs</club_contest>
 <resultsFormatUsed>vhfukac</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G0FCT" />
 </contest>
 <contest>
   <name>uhfukac</name>
@@ -2360,6 +2392,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <club_contest>afs</club_contest>
 <resultsFormatUsed>vhfukac</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G4WFR" />
 </contest>
 <contest>
   <name>shfukac</name> 
@@ -2398,6 +2431,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <club_contest>afs</club_contest>
 <resultsFormatUsed>shfukac</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G3XDY" />
 </contest>
 <contest>
   <name>6mukac</name>
@@ -2434,6 +2468,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>7 days after each activity period</entry_date>
 <club_contest>afs</club_contest>
 <resultsFormatUsed>vhfukac</resultsFormatUsed>
+<adjudicator callsign="G4BVY" />
 </contest>
 <contest>
   <name>4mukac</name>
@@ -2472,6 +2507,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <club_contest>afs</club_contest>
 <resultsFormatUsed>vhf4mukac</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G4WFR" />
 </contest>
 <contest>
 <name>VHFNFD</name>
@@ -2514,6 +2550,10 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <club_contest>nfd</club_contest>
 <resultsFormatUsed>vhfnfdres</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G0FCT" />
+<adjudicator callsign="G7RAU" />
+<adjudicator callsign="G4BVY" />
+<adjudicator callsign="G4WFR" />
 </contest>
 <contest>
 <name>mar144432</name>
@@ -2539,6 +2579,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>multiband2</resultsFormatUsed>
 <SCCAllowed>Yes</SCCAllowed>
+<adjudicator callsign="G4BVY" />
 </contest>
 <contest>
 <name>may144</name>
@@ -2565,6 +2606,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
 <autocerts>yes</autocerts>
 <SCCAllowed>Yes</SCCAllowed>
+<adjudicator callsign="G4CLA" />
 </contest>
 <contest>
   <name>144backpack1</name>
@@ -2590,6 +2632,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G4WFR" />
 </contest>
 <contest>
   <name>144backpack2</name>
@@ -2615,6 +2658,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G4WFR" />
 </contest>
 <contest>
   <name>144backpack3</name>
@@ -2640,6 +2684,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G4WFR" />
 </contest>
 <contest>
   <name>144backpack4</name>
@@ -2665,6 +2710,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G4WFR" />
 </contest>
 <contest>
   <name>144backpack5</name>
@@ -2690,6 +2736,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G4WFR" />
 </contest>
 <contest>
 <name>lp144</name>
@@ -2716,6 +2763,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G4CLA" />
 </contest>
 <contest>
 <name>lp432</name>
@@ -2742,6 +2790,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G4CLA" />
 </contest>
 <contest>
 <name>70trophy</name>
@@ -2767,6 +2816,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <award_list>4 Metre Cup is awarded to the highest scoring Single Operator entry</award_list>
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfmultsuk</resultsFormatUsed>
+<adjudicator callsign="G4BVY" />
 </contest>
 <contest>
 <name>50trophy</name>
@@ -2798,6 +2848,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>16 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
 <SCCAllowed>Yes</SCCAllowed>
+<adjudicator callsign="G7RAU" />
 </contest>
 <contest>
 <name>144trophy</name>
@@ -2828,6 +2879,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <resultsFormatUsed>group</resultsFormatUsed>
 <autocerts>yes</autocerts>
 <SCCAllowed>Yes</SCCAllowed>
+<adjudicator callsign="G4BVY" />
 </contest>
 <contest>
 <name>144marconi</name>
@@ -2856,6 +2908,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <resultsFormatUsed>group</resultsFormatUsed>
 <autocerts>yes</autocerts>
 <SCCAllowed>Yes</SCCAllowed>
+<adjudicator callsign="G3VYI" />
 </contest>
 <contest>
   <name>afs144MHz</name>
@@ -2882,6 +2935,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <resultsFormatUsed>vhfafs</resultsFormatUsed>
 <clubdistance>50m</clubdistance>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G4BVY" />
 </contest>
 <contest>
 <name>xmasfun</name>
@@ -2913,5 +2967,6 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <override>0</override>
 <resultsFormatUsed>xmasfun</resultsFormatUsed>
 <autocerts>yes</autocerts>
+<adjudicator callsign="G7RAU" />
 </contest>
 </calendar>

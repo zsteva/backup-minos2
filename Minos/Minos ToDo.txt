@@ -1,3 +1,18 @@
+Bonuses
+- get real bonus file
+- agree with Pete how it will be presented in xml calendar and in results xml
+- output bonus in EDI file
+*yes show new bonuses in log display
+*yes add bonus to total score. before applying mults (?)
+*yes bonus on stats panel 
+- bonus column in log (maybe not, we don't have a mults column - maybe we should)
+- add bonus file to calendar downloads (adj and minos)
+==================================================================    
+*yes cty.dat not downloading - 406 error (adjsql as well)
+==================================================================    
+I have recently started using Minos for VHF/UHF contests and am finding it very useful and well laid out.  There is one suggestion I have for a future improvement which was a feature of the previous software that I used.  It is - when a 'new' callsign is entered it would be useful if a match on a full callsign (a dupe) gave rise to the callsign field being highlighted as such, perhaps showing a red background or a thick red border.  This would be helpful as the operator is likely to be focussing on the fields to be typed in, rather than shifting his/her attention to a different area of the screen.  I shall continue to use Minos in future VHF/UHF contests and hope to work you on at least one of them.  
+
+73 de Dave, M5DWI
 ==================================================================
 ==================================================================
 ==================================================================
@@ -6,7 +21,15 @@
 ==================================================================
 ==================================================================
 ==================================================================
-==================================================================
+Google My Maps now accepts CSV files as input and these are probably
+more flexible and useful than KML,  It would be nice if Minos was
+able to export QSOs as CSVs, including lat/lon so they can be both
+easily imported into My Maps and also easily edited and maybe analysed
+by spreadsheet
+==============================================================================
+> I was also going to raise an issue regarding catch up mode and ask if it is
+> possible to make the archive files active when working in catch up mode.
+//==============================================================================
 Double click tab to bring up details - no "OnDblClick" so complicated
 ==================================================================
 Tab drag would be nice as well
