@@ -13,7 +13,7 @@
 #pragma hdrstop
 #include "GJVThreads.h" 
 //---------------------------------------------------------------------------
-USEFORM( "testrmain.cpp", TestRigMain );
+USEFORM("testrmain.cpp", TestRigMain);
 //---------------------------------------------------------------------------
 WINAPI WinMain( HINSTANCE, HINSTANCE, LPSTR, int )
 {
@@ -21,8 +21,8 @@ WINAPI WinMain( HINSTANCE, HINSTANCE, LPSTR, int )
    try
    {
       Application->Initialize();
-      Application->CreateForm( __classid( TTestRigMain ), &TestRigMain );
-      Application->Run();
+      Application->CreateForm(__classid(TTestRigMain), &TestRigMain);
+       Application->Run();
    }
    catch ( Exception & exception )
    {

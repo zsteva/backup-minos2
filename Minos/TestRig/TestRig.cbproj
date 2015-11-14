@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>{4b2e7cc1-5f29-4d7a-a3d2-3ac771c08014}</ProjectGuid>
@@ -20,44 +20,44 @@
     <CfgParent>Base</CfgParent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Base)'!=''">
-    <DCC_Optimize>false</DCC_Optimize>
     <OutputExt>exe</OutputExt>
-    <ILINK_IntermediateOutputPath>obj</ILINK_IntermediateOutputPath>
+    <DCC_Optimize>false</DCC_Optimize>
     <DCC_CBuilderOutput>JPHNE</DCC_CBuilderOutput>
+    <ILINK_IntermediateOutputPath>obj</ILINK_IntermediateOutputPath>
     <BCC_OutputDir>obj\</BCC_OutputDir>
-    <DynamicRTL>true</DynamicRTL>
     <ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
-    <BCC_InlineFunctionExpansion>false</BCC_InlineFunctionExpansion>
+    <DynamicRTL>true</DynamicRTL>
     <BRCC_OutputDir>obj\</BRCC_OutputDir>
+    <BCC_InlineFunctionExpansion>false</BCC_InlineFunctionExpansion>
     <OptPCH>"vcl.h"="vcl1.h"</OptPCH>
-    <BCC_UseRegisterVariables>None</BCC_UseRegisterVariables>
     <ILINK_AppType>Windows</ILINK_AppType>
-    <BCC_GenerateWindowsApp>true</BCC_GenerateWindowsApp>
-    <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
+    <BCC_UseRegisterVariables>None</BCC_UseRegisterVariables>
     <UsePackages>true</UsePackages>
+    <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
+    <BCC_GenerateWindowsApp>true</BCC_GenerateWindowsApp>
     <FinalOutputDir>.</FinalOutputDir>
-    <BCC_ExtendedErrorInfo>true</BCC_ExtendedErrorInfo>
-    <TASM_AdditionalSwitches> /w2 obj\</TASM_AdditionalSwitches>
     <PackageImports>vcl.bpi;rtl.bpi;vclx.bpi;dbrtl.bpi;vcldb.bpi;vclib.bpi;vclactnband.bpi;vcldbx.bpi;VTV.bpi;GJVControls.bpi;GJVAudio.bpi</PackageImports>
+    <TASM_AdditionalSwitches> /w2 obj\</TASM_AdditionalSwitches>
+    <BCC_ExtendedErrorInfo>true</BCC_ExtendedErrorInfo>
     <DCC_UnitSearchPath>.\;$(BDS)\lib;$(BDS)\lib\obj</DCC_UnitSearchPath>
-    <BCC_GenerateMultithreaded>true</BCC_GenerateMultithreaded>
     <BRCC_UserSuppliedOptions> ..\MinosLogger;..\XMPPLib;..\iksemel\src;$(BDS)\Projects;$(BDS)\include;$(BDS)\include\vcl;..\iksemel\include;C:\hamlib\include;C:\vcl\sndvcl\xtrackkbar;$(BDS)\include\dinkumware</BRCC_UserSuppliedOptions>
-    <BCC_PCHCache>true</BCC_PCHCache>
-    <DCC_DcuOutput>obj\</DCC_DcuOutput>
+    <BCC_GenerateMultithreaded>true</BCC_GenerateMultithreaded>
     <IncludePath>$(TINYXML)\include</IncludePath>
-    <AllPackageLibs>vcl.lib;rtl.lib;GJVAudio.lib</AllPackageLibs>
-    <BCC_IncludePath>..\MinosLogger;..\XMPPLib;..\iksemel\src;$(BDS)\include;$(BDS)\include\vcl;..\iksemel\include;$(HAMLIB)\include;$(GJVVCL)\xtrackkbar;$(BDS)\include\dinkumware;..\minosdisplay;..\minosbase;$(BOOST)\include</BCC_IncludePath>
-    <TASM_IncludePath>..\MinosLogger;..\XMPPLib;..\iksemel\src;$(BDS)\Projects;$(BDS)\include;$(BDS)\include\vcl;..\iksemel\include;C:\hamlib\include;C:\vcl\sndvcl\xtrackkbar;$(BDS)\include\dinkumware</TASM_IncludePath>
-    <BRCC_IncludePath>..\MinosLogger;..\XMPPLib;..\iksemel\src;$(BDS)\include;$(BDS)\include\vcl;..\iksemel\include;C:\hamlib\include;C:\vcl\xtrackkbar;$(BDS)\include\dinkumware;..\minosdisplay;..\minosbase;C:\Boost\include</BRCC_IncludePath>
+    <DCC_DcuOutput>obj\</DCC_DcuOutput>
+    <BCC_PCHCache>true</BCC_PCHCache>
     <DCC_IncludePath>.\;$(BDS)\lib;$(BDS)\lib\obj</DCC_IncludePath>
-    <BCC_DisableOptimizations>true</BCC_DisableOptimizations>
-    <BCC_InternalDefines>NO_STRICT</BCC_InternalDefines>
+    <BRCC_IncludePath>..\MinosLogger;..\XMPPLib;..\iksemel\src;$(BDS)\include;$(BDS)\include\vcl;..\iksemel\include;C:\hamlib\include;C:\vcl\xtrackkbar;$(BDS)\include\dinkumware;..\minosdisplay;..\minosbase;C:\Boost\include</BRCC_IncludePath>
+    <TASM_IncludePath>..\MinosLogger;..\XMPPLib;..\iksemel\src;$(BDS)\Projects;$(BDS)\include;$(BDS)\include\vcl;..\iksemel\include;C:\hamlib\include;C:\vcl\sndvcl\xtrackkbar;$(BDS)\include\dinkumware</TASM_IncludePath>
+    <BCC_IncludePath>..\MinosLogger;..\XMPPLib;..\iksemel\src;$(BDS)\include;$(BDS)\include\vcl;..\iksemel\include;$(HAMLIB)\include;$(GJVVCL)\xtrackkbar;$(BDS)\include\dinkumware;..\minosdisplay;..\minosbase;$(BOOST)\include</BCC_IncludePath>
+    <AllPackageLibs>vcl.lib;rtl.lib;GJVAudio.lib</AllPackageLibs>
     <ILINK_LibraryPath>..\MinosLogger;..\XMPPLib;..\iksemel\src;$(BDS)\lib\obj;$(BDS)\lib;$(BOOST)\lib</ILINK_LibraryPath>
-    <BCC_Defines>HAVE_CONFIG_H</BCC_Defines>
-    <DCC_ObjOutput>obj\</DCC_ObjOutput>
-    <BRCC_Defines>_DEBUG;HAVE_CONFIG_H</BRCC_Defines>
-    <TASM_Defines>_DEBUG HAVE_CONFIG_H</TASM_Defines>
+    <BCC_InternalDefines>NO_STRICT</BCC_InternalDefines>
+    <BCC_DisableOptimizations>true</BCC_DisableOptimizations>
     <Multithreaded>true</Multithreaded>
+    <TASM_Defines>_DEBUG HAVE_CONFIG_H</TASM_Defines>
+    <BRCC_Defines>_DEBUG;HAVE_CONFIG_H</BRCC_Defines>
+    <DCC_ObjOutput>obj\</DCC_ObjOutput>
+    <BCC_Defines>HAVE_CONFIG_H</BCC_Defines>
     <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
     <DCC_SymbolReferenceInfo>2</DCC_SymbolReferenceInfo>
   </PropertyGroup>
@@ -73,8 +73,8 @@
     <TASM_Debugging>Full</TASM_Debugging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Cfg_2)'!=''">
-    <BCC_OptimizeForSpeed>true</BCC_OptimizeForSpeed>
     <DCC_Optimize>true</DCC_Optimize>
+    <BCC_OptimizeForSpeed>true</BCC_OptimizeForSpeed>
     <BCC_InlineFunctionExpansion>true</BCC_InlineFunctionExpansion>
     <BCC_UseRegisterVariables>Always</BCC_UseRegisterVariables>
     <DCC_DebugInformation>false</DCC_DebugInformation>
@@ -93,7 +93,7 @@
   <Import Project="$(MSBuildBinPath)\Borland.Cpp.Targets" />
   <ItemGroup>
     <ResFiles Include="..\MinosVer.RES">
-      <BuildOrder>6</BuildOrder>
+      <BuildOrder>5</BuildOrder>
     </ResFiles>
     <ResFiles Include="TestRig.res">
       <BuildOrder>0</BuildOrder>
@@ -105,13 +105,13 @@
       <Form>TestRigMain</Form>
       <BuildOrder>2</BuildOrder>
     </CppCompile>
-    <LibFiles Include="..\XMPPLib\XMPPClientLib.lib">
-      <BuildOrder>5</BuildOrder>
+    <LibFiles Include="..\..\..\hamlib\lib\bcb\libhamlib.lib">
+      <BuildOrder>6</BuildOrder>
     </LibFiles>
-    <LibFiles Include="..\XMPPLib\XMPPLib.lib">
+    <LibFiles Include="..\XMPPLib\XMPPClientLib.lib">
       <BuildOrder>4</BuildOrder>
     </LibFiles>
-    <LibFiles Include="C:\hamlib\lib\bcb\libhamlib.lib">
+    <LibFiles Include="..\XMPPLib\XMPPLib.lib">
       <BuildOrder>3</BuildOrder>
     </LibFiles>
     <FormResources Include="testrmain.dfm" />
