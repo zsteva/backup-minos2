@@ -259,6 +259,21 @@ void TGJVQSOLogFrame::doGJVEditChange( TObject *Sender )
       {
          // clear the error list
          contest->DupSheet.clearCurDup();	// as edited, no longer a dup(?)
+
+         if ( ( current == CallsignEdit ))
+         {
+            valid( cmCheckValid ); // make sure all single and cross field
+
+            if (screenContact.cs.valRes == ERR_DUPCS)
+            {
+               CallsignEdit->Color = clRed;
+            }
+            else
+            {
+               CallsignEdit->Color = clWindow;
+            }
+            CallsignEdit->Repaint();
+         }
       }
       if ( current == LocEdit || Sender == LocEdit )
       {

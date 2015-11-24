@@ -281,7 +281,7 @@ void __fastcall TGJVEditFrame::EditControlExit( TObject */*Sender*/ )
    }
    MinosLoggerEvents::SendShowErrorList();
    MinosLoggerEvents::SendReportOverstrike(overstrike, contest); // Why?
-
+ /*
    if (screenContact.cs.valRes == ERR_DUPCS)
    {
       CallsignEdit->Color = clRed;
@@ -291,7 +291,8 @@ void __fastcall TGJVEditFrame::EditControlExit( TObject */*Sender*/ )
       CallsignEdit->Color = clWindow;
    }
    CallsignEdit->Repaint();
-
+   */
+   
    // make sure the mode button shows the correct "flip" value
    if (ModeComboBoxGJV->Text == "A1A")
    {

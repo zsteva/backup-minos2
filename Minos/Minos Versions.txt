@@ -2,6 +2,9 @@
 1.5.11
 Fix bug from 1.5.10 - new contests didn't get loaded on Minos reload
 LocSquares.ini included in files that get downloaded with calendars 
+Callsign gets red background if it is a duplicate
+Bonuses added - and removed again
+Unfilled contacts flagged in display
 ==================================================================
 1.5.10
 Experimental.
