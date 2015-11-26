@@ -35,8 +35,8 @@ copy %SystemRoot%\system32\vcljpg100.bpl
 copy %SystemRoot%\system32\vclactnband100.bpl
 copy %SystemRoot%\system32\dbrtl100.bpl
 
-copy "C:\Documents and Settings\All Users\Documents\RAD Studio\5.0\BPL"\GJVControls.bpl
-copy "C:\Documents and Settings\All Users\Documents\RAD Studio\5.0\BPL"\VTV.bpl
+copy "C:\Users\Public\Documents\RAD Studio\5.0\BPL"\GJVControls.bpl
+copy "C:\Users\Public\Documents\RAD Studio\5.0\BPL"\VTV.bpl
 
 echo Only continue if you want all the networking components as well
 pause
