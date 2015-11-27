@@ -1,0 +1,235 @@
+/*====================================================================================
+    This file is part of AdjQt, the QT based version of the RSGB
+    contest adjudication software.
+    
+    AdjQt and its predecessor AdjSQL are Copyright 1992 - 2016 Mike Goodey G0GJV 
+ 
+    AdjQt is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    AdjQt is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with AdjQt in file gpl.txt.  If not, see <http://www.gnu.org/licenses/>.
+    
+======================================================================================*/
+
+#include "base_pch.h"
+
+#include "tinyxml.h"
+#include "tinyutils.h"
+#include "BandList.h"
+
+//---------------------------------------------------------------------------
+
+void BandInfo::setType ( const std::string &t )
+{
+    type = strupr ( t );
+}
+std::string BandInfo::getType()
+{
+    return type;
+}
+
+
+BandList::BandList()
+{
+}
+BandList::~BandList()
+{
+}
+/*static*/
+BandList &BandList::getBandList()
+{
+    static BandList blist;
+    static bool loaded = false;
+    if ( !loaded )
+    {
+        blist.parseFile ( "control\\bandlist.xml" ) ;
+        loaded = true;
+    }
+    return blist;
+}
+//---------------------------------------------------------------------------
+bool BandList::parseFile (const QString &fname )
+{
+    QFile file( fname );
+
+    if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
+    {
+//        mShowMessage ( "Cannot open " + fname, 0 );
+        return false;
+    }
+
+    QByteArray total = file.readAll();
+
+    std::string buffer = QString( total ).toStdString();
+    std::string buffer2;
+
+    size_t dtdPos = buffer.find ( "<!DOCTYPE" );
+    if ( dtdPos != std::string::npos )
+    {
+        buffer2 = buffer.substr ( 0, dtdPos );
+
+        size_t dtdEndPos = buffer.find ( "]>" );
+        if ( dtdEndPos == std::string::npos )
+        {
+            return false;
+        }
+        buffer2 += buffer.substr ( dtdEndPos + 2, buffer.size() - dtdEndPos - 2 );
+    }
+    else
+    {
+        buffer2 = buffer;
+    }
+
+    TiXmlBase::SetCondenseWhiteSpace ( false );
+    TiXmlDocument xdoc;
+    xdoc.Parse ( buffer2.c_str() );
+    TiXmlElement *tix = xdoc.RootElement();
+    if ( !tix || !checkElementName ( tix, "Bandlist" ) )
+    {
+        return false;
+    }
+    for ( TiXmlElement * e = tix->FirstChildElement(); e; e = e->NextSiblingElement() )
+    {
+        if ( checkElementName ( e, "Band" ) )
+        {
+            if ( !parseBand ( e ) )     // at the moment it always returns true
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool BandList::parseBand ( TiXmlElement * e )
+{
+    // we know we are on a band; get the attributes we want
+    BandInfo band;
+
+    band.setType ( getAttribute ( e, "type" ) );
+
+    std::string unit = getAttribute ( e, "unit" );
+    std::string temp = getAttribute ( e, "flow" );
+    band.flow = atoi ( temp.c_str() );
+    temp = getAttribute ( e, "fhigh" );
+    band.fhigh = atoi ( temp.c_str() );
+    if ( unit == "K" )
+    {
+        band.flow *= 1000.0;
+        band.fhigh *= 1000.0;
+    }
+    else
+        if ( unit == "M" )
+        {
+            band.flow *= 1000000.0;
+            band.fhigh *= 1000000.0;
+        }
+        else
+            if ( unit == "G" )
+            {
+                band.flow *= 1000000000.0;
+                band.fhigh *= 1000000000.0;
+            }
+
+    band.wlen = getAttribute ( e, "wlen" );
+    band.uk = getAttribute ( e, "UK" );
+    band.reg1test = getAttribute ( e, "Reg1Test" );
+    band.adif = getAttribute ( e, "ADIF" );
+    band.cabrillo = getAttribute ( e, "Cabrillo" );
+
+    bandList.push_back ( band );
+
+    return true;
+}
+bool BandList::findBand ( const std::string &psfreq, BandInfo &bi )
+{
+    std::string sfreq = psfreq;
+    if ( trim ( sfreq ).size() == 0 )
+    {
+        return false;
+    }
+    if ( sfreq == "1,2 GHz" )
+    {
+        sfreq = "1,3 GHz";
+    }
+    int ifreq = atoi ( sfreq.c_str() );
+    double dhffreq = ifreq * 1000.0;
+    double dvhffreq = dhffreq * 1000.0;
+    double dmwvfreq = dvhffreq * 1000.0;
+
+    for ( unsigned int i = 0; i < bandList.size(); i++ )
+    {
+        if ( stricmp ( sfreq, bandList[ i ].uk ) == 0
+             || stricmp ( sfreq, bandList[ i ].wlen ) == 0
+             || stricmp ( sfreq, bandList[ i ].adif ) == 0
+             || stricmp ( sfreq, bandList[ i ].cabrillo ) == 0
+             || stricmp ( sfreq, bandList[ i ].reg1test ) == 0
+           )
+        {
+            bi = bandList[ i ];
+            return true;
+        }
+    }
+    for ( unsigned int i = 0; i < bandList.size(); i++ )
+    {
+        std::string bandType = bandList[ i ].getType();
+        double bfhigh = bandList[ i ].fhigh;
+        double bflow = bandList[ i ].flow;
+
+        if ( bandType == "HF" )
+        {
+            if ( dhffreq <= bfhigh && dhffreq >= bflow )
+            {
+                bi = bandList[ i ];
+                return true;
+            }
+        }
+        else
+            if ( bandType == "VHF" )
+            {
+                if ( dvhffreq <= bfhigh && dvhffreq >= bflow )
+                {
+                    bi = bandList[ i ];
+                    return true;
+                }
+            }
+            else
+                if ( bandType == "MWAVE" )
+                {
+                    if ( dmwvfreq <= bfhigh && dmwvfreq >= bflow )
+                    {
+                        bi = bandList[ i ];
+                        return true;
+                    }
+                    if ( dvhffreq <= bfhigh && dvhffreq >= bflow )
+                    {
+                        bi = bandList[ i ];
+                        return true;
+                    }
+                }
+    }
+    for ( unsigned int i = 0; i < bandList.size(); i++ )
+    {
+        // find in string isn't a massively good idea! But we are doing it after everything else has failed
+        if ( bandList[ i ].uk.find ( sfreq ) != std::string::npos
+             || bandList[ i ].uk.find ( sfreq ) != std::string::npos
+             || bandList[ i ].adif.find ( sfreq ) != std::string::npos
+             || bandList[ i ].cabrillo.find ( sfreq ) != std::string::npos
+             || bandList[ i ].reg1test.find ( sfreq ) != std::string::npos
+           )
+        {
+            bi = bandList[ i ];
+            return true;
+        }
+    }
+    return false;
+}
+
