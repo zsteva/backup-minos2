@@ -16,6 +16,7 @@ void dispatchResponse( RPCDispatcher *RPCDisp, XStanza *xs )
       RPCDisp->dispatchResponse( xs );
    }
 }
+/*
 TiXmlElement *findNode( TiXmlElement *node, const std::string &name )
 {
    for ( TiXmlElement * e = node->FirstChildElement(); e; e = e->NextSiblingElement() )
@@ -28,6 +29,8 @@ TiXmlElement *findNode( TiXmlElement *node, const std::string &name )
    }
    return 0;
 }
+*/
+/*
 std::string getNodeValue( TiXmlElement *node, const std::string &name )
 {
    std::string res;
@@ -46,7 +49,7 @@ std::string getNodeValue( TiXmlElement *node, const std::string &name )
    }
    return res;
 }
-
+*/
 /*
 <?xml version='1.0'?>
 <stream:stream xmlns:stream='http://etherx.jabber.org/streams' xmlns='jabber:client' to='localhost' version='1.0'>*/ 

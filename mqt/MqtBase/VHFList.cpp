@@ -9,7 +9,7 @@
 #include "base_pch.h"
 
 #include "VHFList.h"
-
+/*
 std::string strupr( const std::string &s )
 {
    std::string s2;
@@ -20,7 +20,7 @@ std::string strupr( const std::string &s )
    //s = s2;
    return s2;
 }
-
+*/
 int curYear = 0;
 
 const char *monthTable[ 12 ] =
@@ -61,15 +61,7 @@ int getMonth( const std::string &m )
 }
 int getDayOfWeek(QDateTime dtg )
 {
-   int dw = dtg.date().dayOfWeek();    // Sunday is 1, Saturday is 7
-
-   // We want Monday == 1, Sunday as 7
-
-   dw--;
-   if ( dw == 0 )
-   {
-      dw = 7;
-   }
+   int dw = dtg.date().dayOfWeek();    // Monday is 1, Sunday is 7
    return dw;
 }
 int getDate( int month, int day, int week )
@@ -88,8 +80,8 @@ int getDate( int month, int day, int week )
    // return the date of the month/day/week
 
 
-   QDate startMonth( curYear, month, 1 );
-   int dw = startMonth.dayOfWeek();
+   QDateTime startMonth( QDate(curYear, month, 1 ));
+   int dw = getDayOfWeek ( startMonth ) - 1;   // make it 0 based
 
    // So now we need to go through
    int wcount = 1;   // start in first week
@@ -134,7 +126,7 @@ bool Calendar::parseFile( const QString &fname )
 
     if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
     {
-        return "NULL""";
+        return false;
     }
 
     QByteArray total = file.readAll();

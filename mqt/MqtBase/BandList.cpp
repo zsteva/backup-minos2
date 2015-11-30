@@ -233,3 +233,16 @@ bool BandList::findBand ( const std::string &psfreq, BandInfo &bi )
     return false;
 }
 
+
+bool BandList::findBand(int freq, BandInfo &bi)
+{
+   for (std::vector<BandInfo>::iterator i = bandList.begin(); i != bandList.end(); i++)
+   {
+      if ((*i).flow <= freq && (*i).fhigh >= freq)
+      {
+         bi = (*i);
+         return true;
+      }
+   }
+   return false;
+}

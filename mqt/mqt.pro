@@ -4,4 +4,5 @@ SUBDIRS += \
     TinyXML \
     XMPPLib \
     XMPPClientLib \
-    MqtBase
+    MqtBase \
+    RPCTest
