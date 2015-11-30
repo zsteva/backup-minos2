@@ -73,8 +73,9 @@ bool MinosParametersAdapter::yesNoMessage(QWidget * /*Owner*/, QString /*mess*/ 
 {
    return false;
 }
-void MinosParametersAdapter::mshowMessage( QString /*mess*/, QWidget* /*Owner*/ )
+void MinosParametersAdapter::mshowMessage( QString mess, QWidget* Owner )
 {
+    ::mShowMessage( mess, Owner );
 }
 BaseContestLog * MinosParametersAdapter::getCurrentContest()
 {

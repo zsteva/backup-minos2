@@ -49,6 +49,7 @@ private Q_SLOTS:
     void testDates2009();
     void testBST();
 
+    void testMults();
 };
 
 RPCTestTest::RPCTestTest()
@@ -616,6 +617,53 @@ void RPCTestTest::testBST()
    }
 
 }
+
+void RPCTestTest::testMults()
+{
+    MinosParametersAdapter mp;
+
+    MultLists *m = MultLists::getMultLists();
+
+    std::ofstream os("c:\\temp\\multlist.txt");
+
+    for (int i = 0; i < m->getCtryListSize(); i++)
+    {
+        CountryEntry *ce = m->getCtryListAt( i );
+        os << ce->basePrefix + " " + ce->realName << std::endl;
+    }
+/*
+    os << "================== country entries ========================" << std::endl;
+    for (MultList < CountryEntry * >::iterator i = m->ctryList.begin(); i != m->ctryList.end(); i++)
+    {
+       os << (*i)->basePrefix + " " + (*i)->realName << std::endl;
+    }
+    os << (String("================== country synonyms ") + String(m->ctrySynList.size()).c_str() + "========================").c_str() << std::endl;
+    for (MultList < CountrySynonym * >::iterator i = m->ctrySynList.begin(); i != m->ctrySynList.end(); i++)
+    {
+       std::string temp1 = (*i)->synPrefix;
+    //      CountryEntry * country = *((*i)->country);
+       CountryEntry * country = (*i)->country;
+       std::string temp2 = country->basePrefix;
+       os << (temp1 + " : " + temp2) << std::endl;
+    }
+    os << "================== district entries ========================" << std::endl;
+    for (MultList < DistrictEntry * >::iterator i = m->distList.begin(); i != m->distList.end(); i++)
+    {
+       os << (*i)->districtCode << std::endl;
+    }
+    os << "================== district synonyms ========================" << std::endl;
+    for (MultList < DistrictSynonym * >::iterator i = m->distSynList.begin(); i != m->distSynList.end(); i++)
+    {
+       os << ((*i)->synonym + " : " + ((*i)->district)->districtCode) << std::endl;
+    }
+    os << "================== Glist ========================" << std::endl;
+    for (MultList < GlistEntry * >::iterator i = m->glist.begin(); i != m->glist.end(); i++)
+    {
+       os << ((*i)->synPrefix + " : " + (*i)->dupPrefix) << std::endl;
+    }
+*/
+}
+
 QTEST_MAIN(RPCTestTest)
 
 #include "tst_rpctesttest.moc"
