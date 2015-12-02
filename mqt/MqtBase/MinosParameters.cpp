@@ -69,11 +69,11 @@ bool MinosParametersAdapter::getAllowLoc8()
 {
    return false;
 }
-bool MinosParametersAdapter::yesNoMessage(QWidget * /*Owner*/, QString /*mess*/ )
+bool MinosParametersAdapter::yesNoMessage(QWidget * /*Owner*/, const QString & /*mess*/ )
 {
    return false;
 }
-void MinosParametersAdapter::mshowMessage( QString mess, QWidget* Owner )
+void MinosParametersAdapter::mshowMessage( const QString &mess, QWidget* Owner )
 {
     ::mShowMessage( mess, Owner );
 }

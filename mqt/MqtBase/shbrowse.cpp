@@ -22,9 +22,9 @@ int _stdcall change_dir_callback( HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lp
    return 0;
 }
 */
-bool SimpleBrowseDirectory(std::string &Dest,
+bool SimpleBrowseDirectory(QString &Dest,
                                        QWidget * const AParent,
-                                       const std::string &Title )
+                                       const QString &Title )
 {
 #ifdef RUBBISH
    LPMALLOC g_pMalloc;

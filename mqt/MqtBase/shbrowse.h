@@ -11,6 +11,6 @@
 #ifndef shbrowseH
  #define shbrowseH 
 //---------------------------------------------------------------------------
-extern bool SimpleBrowseDirectory( std::string &Dest, QWidget* const
-         AParent, const std::string &Title );
+extern bool SimpleBrowseDirectory(QString &Dest, QWidget* const
+         AParent, const QString &Title );
 #endif

@@ -216,8 +216,8 @@ class BaseContestLog
       double cosodn ;            /* cos of odn */
       double sinodn ;            /* sin of odn */
 
-      std::string cfileName;
-      std::string publishedName;
+      QString cfileName;
+      QString publishedName;
 
       // duplicate sheet
 
@@ -301,8 +301,8 @@ class BaseContestLog
       // general
 
       void validateLoc( void );
-      void getMatchText( BaseContact *, std::string &, const BaseContestLog *const ct ) const;
-      void getMatchField( BaseContact *pct, int col, std::string &disp, const BaseContestLog *const ct ) const;
+      void getMatchText(BaseContact *, QString &, const BaseContestLog *const ct ) const;
+      void getMatchField( BaseContact *pct, int col, QString &disp, const BaseContestLog *const ct ) const;
       void scanContest( void );
       void setScore( std::string & );
       bool isCurDup( BaseContact *) const;
@@ -344,7 +344,7 @@ class ContestScore
       char brbonus1;
       char brbonus2;
 
-      std::string name;
+      QString name;
       int nqsos;
       int contestScore;
       int nctry;

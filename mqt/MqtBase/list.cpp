@@ -26,18 +26,18 @@ bool ContactList::initialise( int sno )
    return true;
 }
 
-bool ContactList::initialise( const std::string &fn, int slotno )
+bool ContactList::initialise(const QString &fn, int slotno )
 {
 
    if ( !initialise( slotno ) )
       return false;
-   if ( MinosParameters::getMinosParameters() ->isListOpen( fn.c_str() ) )
+   if ( MinosParameters::getMinosParameters() ->isListOpen( fn ) )
       return false;
 
    // open the List file
 
    cfileName = fn;
-   QString ext = ExtractFileExt( fn.c_str() );
+   QString ext = ExtractFileExt( fn );
 
    if ( ext.compare( ".csl", Qt::CaseInsensitive ) == 0 )
    {
@@ -65,16 +65,16 @@ bool ContactList::cslLoad( void )
 
    ListContact *rct = 0;
 
-   std::ifstream istr( cfileName.c_str() ); // should close when it goes out of scope
+   std::ifstream istr( cfileName.toStdString().c_str() ); // should close when it goes out of scope
    if ( !istr )
    {
       std::string lerr/* = lastError()*/;
-	  std::string emess = "Failed to open ContactList file " + cfileName + " : " + lerr;
-	  MinosParameters::getMinosParameters() ->mshowMessage( emess.c_str() );
+      QString emess = "Failed to open ContactList file " + cfileName;// + " : " + lerr;
+      MinosParameters::getMinosParameters() ->mshowMessage( emess );
 	  return false;
    }
-   QString fn = ExtractFileName( cfileName.c_str() );
-   name = fn.toStdString();
+   QString fn = ExtractFileName( cfileName );
+   name = fn;
 
    std::string sbuff;
 
@@ -103,7 +103,7 @@ bool ContactList::cslLoad( void )
 
          if ( ++lineno == 1 && parts[0].size() == 0 && parts[1].size() == 0 )
          {
-            name = parts[ 2 ];              // first line of file gives the list name
+            name = parts[ 2 ].c_str();              // first line of file gives the list name
          }
          else
          {
@@ -127,7 +127,7 @@ bool ContactList::cslLoad( void )
          if (!errMessShown)
          {
             errMessShown = true;
-            QString err = ("Errors in " + cfileName).c_str() ;
+            QString err = ("Errors in " + cfileName) ;
             trace(err);
             err += (QString("; see ") + getTraceFileName() + " for details.");
             MinosParameters::getMinosParameters() ->mshowMessage(err);
@@ -147,17 +147,17 @@ void ContactList::freeAll()
 	  delete ( *i );
    ctList.clear();
 }
-void ContactList::getMatchText( ListContact *, std::string &disp, const BaseContestLog *const /*ct*/ ) const
+void ContactList::getMatchText(ListContact *, QString &disp, const BaseContestLog *const /*ct*/ ) const
 {
    disp = "N/A";
 }
-void ContactList::getMatchField( ListContact *pct, int col, std::string &disp, const BaseContestLog *const ct ) const
+void ContactList::getMatchField(ListContact *pct, int col, QString &disp, const BaseContestLog *const ct ) const
 {
-   std::string temp;
+   QString temp;
    if ( pct )
       temp = pct->getField( col, ct );
 
-   disp = trim( temp );
+   disp = temp.trimmed();
 }
 ListContact *ContactList::pcontactAt( unsigned int i )
 {

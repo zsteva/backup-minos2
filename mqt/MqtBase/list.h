@@ -31,16 +31,16 @@ class ContactList
       bool cslLoadContacts();
       void freeAll();
    public:
-      std::string cfileName;
-      std::string name;
+      QString cfileName;
+      QString name;
 
       ListList ctList;
       ContactList();
       ~ContactList();
       bool initialise( int slotno );
-      bool initialise( const std::string &, int slotno );
-      void getMatchText( ListContact *, std::string &, const BaseContestLog *const ct ) const;
-      void getMatchField( ListContact *pct, int col, std::string &disp, const BaseContestLog *const ct ) const;
+      bool initialise( const QString &, int slotno );
+      void getMatchText( ListContact *, QString &, const BaseContestLog *const ct ) const;
+      void getMatchField( ListContact *pct, int col, QString &disp, const BaseContestLog *const ct ) const;
       int getContactCount( void )
       {
          return ctList.size();

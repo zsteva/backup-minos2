@@ -173,7 +173,7 @@ CountryEntry *findCtryPrefix( const callsign &cs )
    ctryMult = ( csyn ) ? ( csyn->country ) : 0;
    return ctryMult;
 }
-void BaseContact::getText( std::string &dest, const BaseContestLog * const curcon ) const
+void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) const
 {
    ContactBuffs::brgbuff[ 0 ] = 0;
    ContactBuffs::scorebuff[ 0 ] = 0;
@@ -257,7 +257,7 @@ void BaseContact::getText( std::string &dest, const BaseContestLog * const curco
 
    next = placestr( ContactBuffs::buff, ContactBuffs::buff2, next + 1, 90 );
 
-   dest = trimr( ContactBuffs::buff );
+   dest = QString( ContactBuffs::buff ).trimmed();
 }
 
 void BaseContact::makestrings( bool sf ) const

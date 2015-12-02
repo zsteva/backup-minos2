@@ -10,12 +10,12 @@
 
 //#include "..\MinosDisplay\TreeUtils.h"
 
-std::string ListContact::getField( int ACol, const BaseContestLog *const curcon ) const
+QString ListContact::getField( int ACol, const BaseContestLog *const curcon ) const
 {
    // only used to get fields for main log display
    std::string res;
    if ( !curcon )
-      return res;
+      return res.c_str();
 
    switch ( ACol )
    {
@@ -90,6 +90,6 @@ std::string ListContact::getField( int ACol, const BaseContestLog *const curcon 
          }
          break;
    }
-   return res;
+   return res.c_str();
 }
 

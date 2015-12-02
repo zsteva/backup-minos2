@@ -19,7 +19,7 @@ void trace( const QString & mess )
    mLogFile.log( mess );
    //   std::cout << mess.c_str() << std::endl;
 }
-void trace( char *mess )
+void trace( const char *mess )
 {
    mLogFile.log( mess );
    //   std::cout << mess << std::endl;

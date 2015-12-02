@@ -49,8 +49,8 @@ class MinosParameters
       virtual void setStatsPeriod2( int ) = 0;
       virtual bool getAllowLoc4() = 0;
       virtual bool getAllowLoc8() = 0;
-      virtual bool yesNoMessage( QWidget* Owner, QString mess ) = 0;
-      virtual void mshowMessage( QString mess, QWidget* Owner = 0 ) = 0;
+      virtual bool yesNoMessage( QWidget* Owner, const QString &mess ) = 0;
+      virtual void mshowMessage( const QString &mess, QWidget* Owner = 0 ) = 0;
       virtual BaseContestLog *getCurrentContest() = 0;
       virtual bool insertList( ContactList *p, unsigned int sno ) = 0;
       virtual bool isContestOpen( const QString fn ) = 0;
@@ -78,8 +78,8 @@ class MinosParametersAdapter : public MinosParameters
       virtual void setStatsPeriod2( int ) override;
       virtual bool getAllowLoc4() override;
       virtual bool getAllowLoc8() override;
-      virtual bool yesNoMessage( QWidget* Owner, QString mess ) override;
-      virtual void mshowMessage( QString mess, QWidget* Owner = 0 ) override;
+      virtual bool yesNoMessage( QWidget* Owner, const QString &mess ) override;
+      virtual void mshowMessage(const QString &mess, QWidget* Owner = 0 ) override;
       virtual BaseContestLog *getCurrentContest() override;
       virtual bool insertList( ContactList *p, unsigned int sno ) override;
       virtual bool isContestOpen( const QString fn ) override;

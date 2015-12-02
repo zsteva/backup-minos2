@@ -22,7 +22,7 @@ MatchLogContact::MatchLogContact( BaseContestLog *ct, BaseContact *lc )
 MatchLogContact::~MatchLogContact()
 {}
 
-void MatchLogContact::getText( std::string &dest, BaseContestLog *const ct ) const
+void MatchLogContact::getText(QString &dest, BaseContestLog *const ct ) const
 {
    BaseContestLog * clp = matchedContest;
    clp->getMatchText( matchedContact, dest, ct );
@@ -115,7 +115,7 @@ MatchListContact::MatchListContact( ContactList *ct, ListContact *lc )
 MatchListContact::~MatchListContact()
 {}
 
-void MatchListContact::getText( std::string &dest, BaseContestLog *const ct ) const
+void MatchListContact::getText( QString &dest, BaseContestLog *const ct ) const
 {
    ContactList * clp = matchedList;
    clp->getMatchText( matchedListContact, dest, ct );

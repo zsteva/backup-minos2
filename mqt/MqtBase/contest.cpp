@@ -85,7 +85,7 @@ IO83=1000
    // Specific squares
       multsAsBonuses = 0;
 
-      std::auto_ptr <TIniFile> m8Ini ( new TIniFile ( "Configuration\\UKACBonus.ini" ) );
+      std::auto_ptr <TIniFile> m8Ini ( new TIniFile ( "Configuration/UKACBonus.ini" ) );
       std::auto_ptr<TStrings > ukacStrings(new TStringList());
       m8Ini->ReadSectionValues("UKACBonus", ukacStrings.get());
       for (int i = 0; i < ukacStrings->Count; i++)
@@ -387,34 +387,34 @@ int BaseContestLog::CalcNearest( const std::string &scalcloc )
    }
    return mindist;
 }
-void BaseContestLog::getMatchText( BaseContact *pct, std::string &disp, const BaseContestLog *const ct ) const
+void BaseContestLog::getMatchText( BaseContact *pct, QString &disp, const BaseContestLog *const ct ) const
 {
    if ( DupSheet.isCurDup( pct ) )
    {
       disp = "DUPLICATE OF ";
    }
-   std::string temp;
+   QString temp;
    pct->getText( temp, ct );
    disp += temp;
 
-   disp = trim( disp );
+   disp = disp.trimmed();
 }
 bool BaseContestLog::isCurDup( BaseContact *pct) const
 {
    return pct && DupSheet.isCurDup( pct );
 }
-void BaseContestLog::getMatchField( BaseContact *pct, int col, std::string &disp, const BaseContestLog *const ct ) const
+void BaseContestLog::getMatchField(BaseContact *pct, int col, QString &disp, const BaseContestLog *const ct ) const
 {
    if ( col ==0 && isCurDup( pct ) )
    {
       disp = "DUP OF";
       return ;
    }
-   std::string temp;
+   QString temp;
    if ( pct )
       temp = pct->getField( col, ct );
 
-   disp = trim( temp );
+   disp = temp.trimmed();
 }
 bool BaseContestLog::updateStat( BaseContact *cct )
 {

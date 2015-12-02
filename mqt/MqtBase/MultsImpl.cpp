@@ -66,7 +66,7 @@ GlistList::~GlistList()
 {}
 void GlistList::load( void )
 {
-   loadEntries( ".\\Configuration\\prefix.SYN", "prefix synonyms file" );
+   loadEntries( "./Configuration/prefix.SYN", "prefix synonyms file" );
 }
 bool GlistList::procLine( char **a )
 {
@@ -208,7 +208,7 @@ int DistrictList::slen( bool longver )
 }
 void DistrictList::load( void )
 {
-   loadEntries( ".\\Configuration\\district.CTL", "District Control File" );
+   loadEntries( "./Configuration/district.CTL", "District Control File" );
 
    for ( unsigned int i = 0; i < size(); i++ )
    {
@@ -246,7 +246,7 @@ DistrictSynonymList::~DistrictSynonymList()
 
 void DistrictSynonymList::load( void )
 {
-   loadEntries( ".\\Configuration\\district.SYN", "District Synonym File" );
+   loadEntries( "./Configuration/district.SYN", "District Synonym File" );
 }
 bool DistrictSynonymList::procLine( char **a )
 {
@@ -531,7 +531,7 @@ void CountryList::load( void )
    TContestApp::getContestApp() ->displayBundle.getBoolProfile( edpShowContinentSA, contlist[ 4 ].allow );
    TContestApp::getContestApp() ->displayBundle.getBoolProfile( edpShowContinentNA, contlist[ 5 ].allow );
    */
-   loadEntries( ".\\Configuration\\cty.dat", "CT9 Country File" );
+   loadEntries( "./Configuration/cty.dat", "CT9 Country File" );
 
    for ( unsigned int i = 0; i < size(); i++ )
       at( i ) ->listOffset = i;
@@ -708,7 +708,7 @@ CountrySynonymList::~CountrySynonymList()
 }
 void CountrySynonymList::load( void )
 {
-   loadEntries( ".\\Configuration\\cty.SYN", "Country Synonym File" );
+   loadEntries( "./Configuration/cty.SYN", "Country Synonym File" );
 }
 bool CountrySynonymList::procLine( char **a )
 {
@@ -807,7 +807,7 @@ bool MultListsImpl::loadMultFiles( void )
    distSynList.load();
    glist.load();
    /*
-   std::ofstream os("c:\\temp\\multlist.txt");
+   std::ofstream os("c:/temp/multlist.txt");
 
    os << "================== country entries ========================" << std::endl;
    for (MultList < CountryEntry * >::iterator i = m->ctryList.begin(); i != m->ctryList.end(); i++)

@@ -16,10 +16,11 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QFile>
-#include <QSettings>
-#include <QTextStream>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QSettings>
+#include <QSharedMemory>
+#include <QTextStream>
 #include <QThread>
 #include <QSemaphore>
 #include <QTcpSocket>

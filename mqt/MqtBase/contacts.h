@@ -126,11 +126,11 @@ class BaseContact
       DistrictEntry * districtMult;
       CountryEntry * ctryMult;
       virtual void makestrings( bool serialFields ) const;
-      virtual void getText( std::string &dest, const BaseContestLog * const curcon ) const;
+      virtual void getText(QString &dest, const BaseContestLog * const curcon ) const;
       char multCount;
 
       // silly implementations that are needed to keep things isolated
-      virtual std::string getField( int /*ACol*/, const BaseContestLog * const /*curcon*/ ) const
+      virtual QString getField( int /*ACol*/, const BaseContestLog * const /*curcon*/ ) const
       {
          return "no field";
       }

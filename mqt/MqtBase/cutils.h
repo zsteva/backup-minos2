@@ -66,5 +66,24 @@ class writer
       writer( boost::shared_ptr<QFile> f );
       ~writer();
 };
+bool FileExists( const QString& Name );
+bool DirectoryExists(const QString &path );
+QString GetCurrentDir();
+void SetCurrentDir( const QString &dir );
 
+QString ExtractFileDir( const QString &fname );
+QString ExtractFilePath(const QString &fname );
+QString ExtractFileName(const QString &fname );
+QString ExtractFileExt(const QString &fname );
+bool FileAccessible(const QString &fname);
+bool StaticDirectoryExists ( const QString & Name );
+bool StaticForceDirectories (const QString &Dir );
+bool StaticDirectoryCreate (const QString & Path , QWidget *Owner);
+
+bool CreateDir( const QString &s );
+
+extern int toInt ( const std::string &s, int def = 0 );
+extern double toDouble ( const std::string &s, double def = 0.0 );
+extern int toInt ( const QString &s, int def = 0 );
+extern double toDouble ( const QString &s, double def = 0.0 );
 #endif

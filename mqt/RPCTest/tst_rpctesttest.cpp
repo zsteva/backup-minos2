@@ -454,13 +454,13 @@ void RPCTestTest::analyseResponseTest( XStanza *xs )
 void RPCTestTest::testParse()
 {
    BandList blist;
-   bool loaded = blist.parseFile( "C:\\Projects\\sfMinos\\Minos\\MinosLogger\\Configuration\\bandlist.xml" );
+   bool loaded = blist.parseFile( "C:/Projects/sfMinos/Minos/MinosLogger/Configuration/bandlist.xml" );
    QVERIFY( true == loaded );
 }
 void RPCTestTest::testBands()
 {
    BandList blist;
-   bool loaded = blist.parseFile( "C:\\Projects\\sfMinos\\Minos\\MinosLogger\\Configuration\\bandlist.xml" );
+   bool loaded = blist.parseFile( "C:/Projects/sfMinos/Minos/MinosLogger/Configuration/bandlist.xml" );
    QVERIFY( true == loaded );
 
    BandInfo b;
@@ -513,13 +513,13 @@ void RPCTestTest::testDates()
 void RPCTestTest::testCalendarParse()
 {
    Calendar vhf(2008);
-   bool loaded = vhf.parseFile( "C:\\Projects\\adjudge\\adjsql\\vhfcontests.xml" );
+   bool loaded = vhf.parseFile( "C:/Projects/adjudge/adjsql/vhfcontests.xml" );
    QVERIFY( true == loaded );
 }
 void RPCTestTest::testContests()
 {
    Calendar vhf(2008);
-   bool loaded = vhf.parseFile( "C:\\Projects\\adjudge\\adjsql\\vhfcontests.xml" );
+   bool loaded = vhf.parseFile( "C:/Projects/adjudge/adjsql/vhfcontests.xml" );
    QVERIFY( true == loaded );
 
    int nc = vhf.contests.size();
@@ -571,13 +571,13 @@ void RPCTestTest::testDates2009()
 void RPCTestTest::testParse2009()
 {
    Calendar vhf(2009);
-   bool loaded = vhf.parseFile( "C:\\Projects\\adjudge\\adjsql\\vhfcontests09.xml" );
+   bool loaded = vhf.parseFile( "C:/Projects/adjudge/adjsql/vhfcontests09.xml" );
    QVERIFY( true == loaded );
 }
 void RPCTestTest::testContests2009()
 {
    Calendar vhf(2009);
-   bool loaded = vhf.parseFile( "C:\\Projects\\adjudge\\adjsql\\vhfcontests09.xml" );
+   bool loaded = vhf.parseFile( "C:/Projects/adjudge/adjsql/vhfcontests09.xml" );
    QVERIFY( true == loaded );
 
    int nc = vhf.contests.size();
@@ -624,7 +624,7 @@ void RPCTestTest::testMults()
 
     MultLists *m = MultLists::getMultLists();
 
-    std::ofstream os("c:\\temp\\multlist.txt");
+    std::ofstream os("c:/temp/multlist.txt");
 
     for (int i = 0; i < m->getCtryListSize(); i++)
     {

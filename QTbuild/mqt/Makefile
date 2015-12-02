@@ -28,7 +28,8 @@ SUBTARGETS    =  \
 		sub-XMPPLib \
 		sub-XMPPClientLib \
 		sub-MqtBase \
-		sub-RPCTest
+		sub-RPCTest \
+		sub-MqtLogger
 
 
 sub-TinyXML-qmake_all:  FORCE
@@ -156,6 +157,31 @@ sub-RPCTest-install_subtargets: FORCE
 sub-RPCTest-uninstall_subtargets: FORCE
 	@test -d RPCTest/ || mkdir -p RPCTest/
 	cd RPCTest/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/RPCTest/RPCTest.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile uninstall
+sub-MqtLogger-qmake_all:  FORCE
+	@test -d MqtLogger/ || mkdir -p MqtLogger/
+	cd MqtLogger/ && $(QMAKE) C:/Projects/sfMinos/mqt/MqtLogger/MqtLogger.pro -spec win32-g++ CONFIG+=debug -o Makefile
+	cd MqtLogger/ && $(MAKE) -f Makefile qmake_all
+sub-MqtLogger: FORCE
+	@test -d MqtLogger/ || mkdir -p MqtLogger/
+	cd MqtLogger/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtLogger/MqtLogger.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile
+sub-MqtLogger-make_first: FORCE
+	@test -d MqtLogger/ || mkdir -p MqtLogger/
+	cd MqtLogger/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtLogger/MqtLogger.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile 
+sub-MqtLogger-all: FORCE
+	@test -d MqtLogger/ || mkdir -p MqtLogger/
+	cd MqtLogger/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtLogger/MqtLogger.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile all
+sub-MqtLogger-clean: FORCE
+	@test -d MqtLogger/ || mkdir -p MqtLogger/
+	cd MqtLogger/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtLogger/MqtLogger.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile clean
+sub-MqtLogger-distclean: FORCE
+	@test -d MqtLogger/ || mkdir -p MqtLogger/
+	cd MqtLogger/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtLogger/MqtLogger.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile distclean
+sub-MqtLogger-install_subtargets: FORCE
+	@test -d MqtLogger/ || mkdir -p MqtLogger/
+	cd MqtLogger/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtLogger/MqtLogger.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile install
+sub-MqtLogger-uninstall_subtargets: FORCE
+	@test -d MqtLogger/ || mkdir -p MqtLogger/
+	cd MqtLogger/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtLogger/MqtLogger.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile uninstall
 
 Makefile: ../../mqt/mqt.pro ../../../../Qt/5.5/mingw492_32/mkspecs/win32-g++/qmake.conf ../../../../Qt/5.5/mingw492_32/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.5/mingw492_32/mkspecs/qdevice.pri \
@@ -373,15 +399,15 @@ Makefile: ../../mqt/mqt.pro ../../../../Qt/5.5/mingw492_32/mkspecs/win32-g++/qma
 qmake: FORCE
 	@$(QMAKE) -spec win32-g++ CONFIG+=debug -o Makefile ../../mqt/mqt.pro
 
-qmake_all: sub-TinyXML-qmake_all sub-XMPPLib-qmake_all sub-XMPPClientLib-qmake_all sub-MqtBase-qmake_all sub-RPCTest-qmake_all FORCE
+qmake_all: sub-TinyXML-qmake_all sub-XMPPLib-qmake_all sub-XMPPClientLib-qmake_all sub-MqtBase-qmake_all sub-RPCTest-qmake_all sub-MqtLogger-qmake_all FORCE
 
-make_first: sub-TinyXML-make_first sub-XMPPLib-make_first sub-XMPPClientLib-make_first sub-MqtBase-make_first sub-RPCTest-make_first  FORCE
-all: sub-TinyXML-all sub-XMPPLib-all sub-XMPPClientLib-all sub-MqtBase-all sub-RPCTest-all  FORCE
-clean: sub-TinyXML-clean sub-XMPPLib-clean sub-XMPPClientLib-clean sub-MqtBase-clean sub-RPCTest-clean  FORCE
-distclean: sub-TinyXML-distclean sub-XMPPLib-distclean sub-XMPPClientLib-distclean sub-MqtBase-distclean sub-RPCTest-distclean  FORCE
+make_first: sub-TinyXML-make_first sub-XMPPLib-make_first sub-XMPPClientLib-make_first sub-MqtBase-make_first sub-RPCTest-make_first sub-MqtLogger-make_first  FORCE
+all: sub-TinyXML-all sub-XMPPLib-all sub-XMPPClientLib-all sub-MqtBase-all sub-RPCTest-all sub-MqtLogger-all  FORCE
+clean: sub-TinyXML-clean sub-XMPPLib-clean sub-XMPPClientLib-clean sub-MqtBase-clean sub-RPCTest-clean sub-MqtLogger-clean  FORCE
+distclean: sub-TinyXML-distclean sub-XMPPLib-distclean sub-XMPPClientLib-distclean sub-MqtBase-distclean sub-RPCTest-distclean sub-MqtLogger-distclean  FORCE
 	-$(DEL_FILE) Makefile
-install_subtargets: sub-TinyXML-install_subtargets sub-XMPPLib-install_subtargets sub-XMPPClientLib-install_subtargets sub-MqtBase-install_subtargets sub-RPCTest-install_subtargets FORCE
-uninstall_subtargets: sub-TinyXML-uninstall_subtargets sub-XMPPLib-uninstall_subtargets sub-XMPPClientLib-uninstall_subtargets sub-MqtBase-uninstall_subtargets sub-RPCTest-uninstall_subtargets FORCE
+install_subtargets: sub-TinyXML-install_subtargets sub-XMPPLib-install_subtargets sub-XMPPClientLib-install_subtargets sub-MqtBase-install_subtargets sub-RPCTest-install_subtargets sub-MqtLogger-install_subtargets FORCE
+uninstall_subtargets: sub-TinyXML-uninstall_subtargets sub-XMPPLib-uninstall_subtargets sub-XMPPClientLib-uninstall_subtargets sub-MqtBase-uninstall_subtargets sub-RPCTest-uninstall_subtargets sub-MqtLogger-uninstall_subtargets FORCE
 
 sub-TinyXML-debug:
 	@test -d TinyXML/ || mkdir -p TinyXML/
@@ -398,7 +424,10 @@ sub-MqtBase-debug:
 sub-RPCTest-debug:
 	@test -d RPCTest/ || mkdir -p RPCTest/
 	cd RPCTest/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/RPCTest/RPCTest.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile debug
-debug: sub-TinyXML-debug sub-XMPPLib-debug sub-XMPPClientLib-debug sub-MqtBase-debug sub-RPCTest-debug
+sub-MqtLogger-debug:
+	@test -d MqtLogger/ || mkdir -p MqtLogger/
+	cd MqtLogger/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtLogger/MqtLogger.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile debug
+debug: sub-TinyXML-debug sub-XMPPLib-debug sub-XMPPClientLib-debug sub-MqtBase-debug sub-RPCTest-debug sub-MqtLogger-debug
 
 sub-TinyXML-release:
 	@test -d TinyXML/ || mkdir -p TinyXML/
@@ -415,7 +444,10 @@ sub-MqtBase-release:
 sub-RPCTest-release:
 	@test -d RPCTest/ || mkdir -p RPCTest/
 	cd RPCTest/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/RPCTest/RPCTest.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile release
-release: sub-TinyXML-release sub-XMPPLib-release sub-XMPPClientLib-release sub-MqtBase-release sub-RPCTest-release
+sub-MqtLogger-release:
+	@test -d MqtLogger/ || mkdir -p MqtLogger/
+	cd MqtLogger/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtLogger/MqtLogger.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile release
+release: sub-TinyXML-release sub-XMPPLib-release sub-XMPPClientLib-release sub-MqtBase-release sub-RPCTest-release sub-MqtLogger-release
 
 sub-TinyXML-check:
 	@test -d TinyXML/ || mkdir -p TinyXML/
@@ -432,7 +464,10 @@ sub-MqtBase-check:
 sub-RPCTest-check:
 	@test -d RPCTest/ || mkdir -p RPCTest/
 	cd RPCTest/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/RPCTest/RPCTest.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile check
-check: sub-TinyXML-check sub-XMPPLib-check sub-XMPPClientLib-check sub-MqtBase-check sub-RPCTest-check
+sub-MqtLogger-check:
+	@test -d MqtLogger/ || mkdir -p MqtLogger/
+	cd MqtLogger/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtLogger/MqtLogger.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile check
+check: sub-TinyXML-check sub-XMPPLib-check sub-XMPPClientLib-check sub-MqtBase-check sub-RPCTest-check sub-MqtLogger-check
 install:install_subtargets  FORCE
 
 uninstall: uninstall_subtargets FORCE

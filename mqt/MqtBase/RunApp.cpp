@@ -23,13 +23,13 @@ bool baseRunApp( const std::string &commandLine, const std::string &params, cons
    appFName[ nLen ] = '\0';
 
    String fname = ExtractFilePath( appFName );
-   fname += "TraceLog\\Runapp_";
+   fname += "TraceLog/Runapp_";
    String progname = ExtractFileName( commandLine.c_str() );
    progname = progname.SubString( 1, progname.Pos( "." ) - 1 );
    std::string outFileName = ( fname + progname + ".log" ).c_str() ;
 
    // use the system defined TEMP directory
-   std::string inFileName = "%TEMP%\\NullInput.txt";
+   std::string inFileName = "%TEMP%/NullInput.txt";
    char cline[ 1024 ];
    DWORD cnt = ExpandEnvironmentStrings( inFileName.c_str(), cline, 1023 );
    if ( !cnt )

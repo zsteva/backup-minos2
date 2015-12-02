@@ -1,0 +1,118 @@
+#-------------------------------------------------
+#
+# Project created by QtCreator 2015-11-30T19:20:34
+#
+#-------------------------------------------------
+
+QT       += core gui
+QT       += widgets
+QT       += network
+
+TARGET = MqtLogger
+TEMPLATE = app
+
+VERSION=0.0.0.1
+
+DEFINES += VERSION=\\\"$$VERSION\\\"
+
+
+CONFIG += c++14
+
+QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
+
+DEFINES += TIXML_USE_STL
+
+INCLUDEPATH += C:\Projects\boost\boost_1_59_0
+
+SOURCES += main.cpp \
+    tlogcontainer.cpp \
+    contestdetails.cpp \
+    ContestApp.cpp \
+    LoggerContacts.cpp \
+    LoggerContest.cpp \
+    profiles.cpp \
+    tsinglelogframe.cpp \
+    tentryoptionsform.cpp \
+    MatchThread.cpp \
+    AdifImport.cpp \
+    enqdlg.cpp \
+    MinosTestExport.cpp \
+    reg1test.cpp \
+    PrintFile.cpp \
+    tbundleframe.cpp
+
+HEADERS  += \
+    tlogcontainer.h \
+    contestdetails.h \
+    logger_pch.h \
+    ContestApp.h \
+    LoggerContacts.h \
+    LoggerContest.h \
+    profiles.h \
+    tsinglelogframe.h \
+    tentryoptionsform.h \
+    MatchThread.h \
+    AdifImport.h \
+    enqdlg.h \
+    MinosTestExport.h \
+    reg1test.h \
+    printfile.h \
+    tbundleframe.h
+
+FORMS    += tlogcontainer.ui \
+    contestdetails.ui \
+    tsinglelogframe.ui \
+    tentryoptionsform.ui \
+    tbundleframe.ui
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase
+else:unix: LIBS += -L$$OUT_PWD/../MqtBase/ -lMqtBase
+
+INCLUDEPATH += $$PWD/../MqtBase
+DEPENDPATH += $$PWD/../MqtBase
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MqtBase/release/libMqtBase.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MqtBase/debug/libMqtBase.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MqtBase/release/MqtBase.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MqtBase/debug/MqtBase.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../MqtBase/libMqtBase.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../XMPPClientLib/release/ -lXMPPClientLib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../XMPPClientLib/debug/ -lXMPPClientLib
+else:unix: LIBS += -L$$OUT_PWD/../XMPPClientLib/ -lXMPPClientLib
+
+INCLUDEPATH += $$PWD/../XMPPClientLib
+DEPENDPATH += $$PWD/../XMPPClientLib
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPClientLib/release/libXMPPClientLib.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPClientLib/debug/libXMPPClientLib.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPClientLib/release/XMPPClientLib.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPClientLib/debug/XMPPClientLib.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../XMPPClientLib/libXMPPClientLib.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../XMPPLib/release/ -lXMPPLib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../XMPPLib/debug/ -lXMPPLib
+else:unix: LIBS += -L$$OUT_PWD/../XMPPLib/ -lXMPPLib
+
+INCLUDEPATH += $$PWD/../XMPPLib
+DEPENDPATH += $$PWD/../XMPPLib
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPLib/release/libXMPPLib.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPLib/debug/libXMPPLib.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPLib/release/XMPPLib.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPLib/debug/XMPPLib.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../XMPPLib/libXMPPLib.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../TinyXML/release/ -lTinyXML
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../TinyXML/debug/ -lTinyXML
+else:unix: LIBS += -L$$OUT_PWD/../TinyXML/ -lTinyXML
+
+INCLUDEPATH += $$PWD/../TinyXML
+DEPENDPATH += $$PWD/../TinyXML
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../TinyXML/release/libTinyXML.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../TinyXML/debug/libTinyXML.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../TinyXML/release/TinyXML.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../TinyXML/debug/TinyXML.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../TinyXML/libTinyXML.a

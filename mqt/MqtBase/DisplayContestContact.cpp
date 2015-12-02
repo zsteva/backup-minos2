@@ -444,12 +444,12 @@ void DisplayContestContact::checkContact( )
    }
 }
 
-std::string DisplayContestContact::getField( int ACol, const BaseContestLog *const curcon ) const
+QString DisplayContestContact::getField( int ACol, const BaseContestLog *const curcon ) const
 {
    // only used to get fields for main log display
    std::string res;
    if ( !curcon )
-      return res;
+      return res.c_str();
 
    BaseContestLog * clp = contest;
 
@@ -642,7 +642,7 @@ std::string DisplayContestContact::getField( int ACol, const BaseContestLog *con
             break;
       }
    }
-   return res;
+   return res.c_str()   ;
 }
 void DisplayContestContact::processMinosStanza( const std::string &methodName, MinosTestImport * const mt )
 {

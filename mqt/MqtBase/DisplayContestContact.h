@@ -56,7 +56,7 @@ class DisplayContestContact: public BaseContact
 
       virtual void copyFromArg( ScreenContact & );
 
-      virtual std::string getField( int ACol, const BaseContestLog * const curcon ) const;
+      virtual QString getField( int ACol, const BaseContestLog * const curcon ) const override;
       virtual void processMinosStanza( const std::string &methodName, MinosTestImport * const mt );
 
 };

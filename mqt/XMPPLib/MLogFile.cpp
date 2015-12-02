@@ -11,66 +11,6 @@
 #include "XMPP_pch.h"
 
 
-bool CreateDir(const QString &s )
-{
-    QDir dir( s );
-    if ( !dir.exists() )
-    {
-        dir.mkpath( "." );
-    }
-    return dir.exists();
-}
-bool FileExists(const QString &path )
-{
-    QFileInfo checkFile( path );
-    // check if file exists and if yes: Is it really a file and no directory?
-    if ( checkFile.exists() && checkFile.isFile() )
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-bool DirectoryExists( const QString &path )
-{
-    QFileInfo checkFile( path );
-    // check if file exists and if yes: Is it really a file and no directory?
-    if ( checkFile.exists() && checkFile.isDir() )
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-QString GetCurrentDir()
-{
-    QDir dir( "." );
-    return dir.absolutePath();
-}
-QString ExtractFileDir(const QString &fname )
-{
-    QFileInfo finf( fname );
-    QString p = finf.dir().canonicalPath();
-    return p;
-}
-QString ExtractFilePath( const QString &fname )
-{
-    return ExtractFileDir( fname );
-}
-QString ExtractFileName(const QString &fname )
-{
-    QFileInfo finf( fname );
-    return finf.fileName();
-}
-QString ExtractFileExt( const QString &fname )
-{
-    QFileInfo finf( fname );
-    return ( "." + finf.completeSuffix() );
-}
 //---------------------------------------------------------------------------
 static std::ofstream &getLogFile( QString name )
 {
