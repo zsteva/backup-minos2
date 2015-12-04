@@ -45,8 +45,6 @@ enum ExportType {EREG1TEST, EADIF, EG0GJV, EMINOS, EKML, EPRINTFILE };
 
 #define TEMPBUFF(a, b) char a[(b)]
 
-extern std::string trim( const std::string & );
-
 // control block for repeated actions on contest contacts
 class GJVParams
 {
@@ -71,9 +69,9 @@ class MinosItem
       itemtype val;
       itemtype operator = ( const itemtype& ); // make it inaccessible
 
-      std::string miTrim(const std::string & s)
+      QString miTrim(const QString & s)
       {
-         return trim(s);
+         return s.trimmed();
       }
       int miTrim(const int & s)
       {
@@ -135,7 +133,7 @@ class MinosItem
       virtual ~MinosItem()
       {}
 
-      void addIfDirty( RPCParamStruct *st, const std::string &stName, bool &d ) const
+      void addIfDirty( RPCParamStruct *st, const QString &stName, bool &d ) const
       {
          d |= isDirty();
          if ( isDirty() )
@@ -149,8 +147,8 @@ enum DTG {DTGLOG, DTGDISP, DTGReg1Test, DTGFULL, DTGPRINT, DTGACCURATE};
 class dtg
 {
    private:
-      MinosItem<std::string> sdate;
-      MinosItem<std::string> stime;
+      MinosItem<QString> sdate;
+      MinosItem<QString> stime;
 
       bool baddtg;
    public:
@@ -159,19 +157,19 @@ class dtg
       static QDateTime getRawUTC( );
       static QDateTime getCorrectedUTC( );
 
-      std::string getDate( DTG, bool &d ) const;
-      std::string getDate( DTG ) const;
-      std::string getTime( DTG, bool &d ) const;
-      std::string getTime( DTG ) const;
-      bool getDtg( time_t &, bool &d ) const;
-      bool getDtg( time_t & ) const;
-      void setDate( const std::string &, DTG );
-      void setTime( const std::string &, DTG );
-      void setDtg( time_t );
+      QString getDate( DTG, bool &d ) const;
+      QString getDate( DTG ) const;
+      QString getTime( DTG, bool &d ) const;
+      QString getTime( DTG ) const;
+      bool getDtg(QDateTime &, bool &d ) const;
+      bool getDtg( QDateTime & ) const;
+      void setDate( const QString &, DTG );
+      void setTime( const QString &, DTG );
+//      void setDtg( time_t );
 
-      std::string getIsoDTG( bool &d ) const;
-      std::string getIsoDTG( ) const;
-      void setIsoDTG( const std::string & );
+      QString getIsoDTG( bool &d ) const;
+      QString getIsoDTG( ) const;
+      void setIsoDTG( const QString & );
 
       void setValue( const dtg &d )
       {
@@ -220,18 +218,18 @@ class callsign
 	#define NUMBITLENGTH 4
 	#define TRAILBITLENGTH 3
    public:
-      MinosItem<std::string> fullCall; // full call
+      MinosItem<QString> fullCall; // full call
       // eg for <pe/f0ctt/mm> (g0gjv/p) [F6CTT/RVI/P]
-      std::string prefix; // <pe> (g) [/RVI]country of location
-      std::string prefix2;  // <f> (g) [F]country of issue
-      std::string number; // <0> (0) [6]numeric part
-      std::string body;  // <ctt> (gjv) [CTT]main body
-      std::string suffix; // <mm> (p) [P]trailer
+      QString prefix; // <pe> (g) [/RVI]country of location
+      QString prefix2;  // <f> (g) [F]country of issue
+      QString number; // <0> (0) [6]numeric part
+      QString body;  // <ctt> (gjv) [CTT]main body
+      QString suffix; // <mm> (p) [P]trailer
 
       char valRes;   // current validation result
 
       callsign( );
-      callsign( const std::string &orig );
+      callsign( const QString &orig );
       ~callsign();
 
       char validate( );
@@ -241,7 +239,7 @@ class callsign
 class locator
 {
    public:
-      MinosItem<std::string> loc;	// allowing for Microwave locs
+      MinosItem<QString> loc;	// allowing for Microwave locs
 
       mutable char valRes;
 

@@ -13,18 +13,18 @@ extern void sendAction( XStanza *a );      // which might not be the one in XMPP
 
 //---------------------------------------------------------------------------
 
-std::map <std::string, MinosRPCServer *> &getServerMethodMap()
+std::map <QString, MinosRPCServer *> &getServerMethodMap()
 {
-   static std::map <std::string, MinosRPCServer *> serverMethodMap;
+   static std::map <QString, MinosRPCServer *> serverMethodMap;
    return serverMethodMap;
 }
-std::map <std::string, MinosRPCClient *> &getClientMethodMap()
+std::map <QString, MinosRPCClient *> &getClientMethodMap()
 {
-   static std::map <std::string, MinosRPCClient *> clientMethodMap;
+   static std::map <QString, MinosRPCClient *> clientMethodMap;
    return clientMethodMap;
 }
 //==============================================================================
-MinosRPCObj::MinosRPCObj( const std::string &methodName, TRPCFunctor *cb )
+MinosRPCObj::MinosRPCObj( const QString &methodName, TRPCFunctor *cb )
       : methodName( methodName ), callback( cb )
 {}
 MinosRPCObj::~MinosRPCObj()
@@ -37,13 +37,13 @@ void MinosRPCObj::clearCallArgs()
 }
 /*static*/ void MinosRPCObj::clearRPCObjects()
 {
-   for ( std::map <std::string, MinosRPCServer *>::iterator i = getServerMethodMap().begin(); i != getServerMethodMap().end(); i++ )
+   for ( std::map <QString, MinosRPCServer *>::iterator i = getServerMethodMap().begin(); i != getServerMethodMap().end(); i++ )
    {
       delete ( *i ).second->callback;
       delete ( *i ).second;
    }
    getServerMethodMap().clear();
-   for ( std::map <std::string, MinosRPCClient *>::iterator i = getClientMethodMap().begin(); i != getClientMethodMap().end(); i++ )
+   for ( std::map <QString, MinosRPCClient *>::iterator i = getClientMethodMap().begin(); i != getClientMethodMap().end(); i++ )
    {
       delete ( *i ).second->callback;
       delete ( *i ).second;
@@ -53,30 +53,30 @@ void MinosRPCObj::clearCallArgs()
 
 /*static*/ void MinosRPCObj::addObj(  MinosRPCClient *mro )
 {
-   getClientMethodMap().insert( std::pair <std::string, MinosRPCClient *>( mro->methodName, mro ) );
+   getClientMethodMap().insert( std::pair <QString, MinosRPCClient *>( mro->methodName, mro ) );
 }
 /*static*/ void MinosRPCObj::addObj(  MinosRPCServer *mro )
 {
-   getServerMethodMap().insert( std::pair <std::string, MinosRPCServer *>( mro->methodName, mro ) );
+   getServerMethodMap().insert( std::pair <QString, MinosRPCServer *>( mro->methodName, mro ) );
 }
 
-/*static*/ MinosRPCClient *MinosRPCObj::makeClientObj(  std::string call )
+/*static*/ MinosRPCClient *MinosRPCObj::makeClientObj(  QString call )
 {
-   std::map <std::string, MinosRPCClient *>::iterator mo = getClientMethodMap().find( call );
+   std::map <QString, MinosRPCClient *>::iterator mo = getClientMethodMap().find( call );
    if ( mo != getClientMethodMap().end() )
       return ( *mo ).second->makeObj();
    return 0;
 }
 
-/*static*/ MinosRPCServer *MinosRPCObj::makeServerObj(  std::string call )
+/*static*/ MinosRPCServer *MinosRPCObj::makeServerObj(  QString call )
 {
-   std::map <std::string, MinosRPCServer *>::iterator mo = getServerMethodMap().find( call );
+   std::map <QString, MinosRPCServer *>::iterator mo = getServerMethodMap().find( call );
    if ( mo != getServerMethodMap().end() )
       return ( *mo ).second->makeObj();
    return 0;
 }
 //==============================================================================
-void MinosRPCClient::queueCall( std::string to )
+void MinosRPCClient::queueCall( QString to )
 {
    RPCRequest * m = new RPCRequest( to, methodName );
    m->setNextId();      // only happens if no Id already
@@ -86,14 +86,14 @@ void MinosRPCClient::queueCall( std::string to )
 }
 //==============================================================================
 // server...
-void MinosRPCServer::queueResponse( std::string to )
+void MinosRPCServer::queueResponse( QString to )
 {
    RPCResponse * m = new RPCResponse( to, id, methodName );
    m->args = callArgs.args;     // copy vector of pointers
    sendAction( m );
    delete m;
 }
-void MinosRPCServer::queueErrorResponse( std::string to )
+void MinosRPCServer::queueErrorResponse( QString to )
 {
    RPCResponse * m = new RPCResponse( to, id, methodName );
    sendAction( m );

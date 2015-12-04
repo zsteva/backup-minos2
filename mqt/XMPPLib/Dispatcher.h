@@ -23,8 +23,8 @@ class RPCDispatcher
 
 };
 extern bool analyseNode( RPCDispatcher *user_data, TiXmlElement *e );
-extern bool analyseNode( RPCDispatcher *user_data, std::string UTF8XML );
-TiXmlElement *findNode( TiXmlElement *node, const std::string &name );
-std::string getNodeValue( TiXmlElement *node, const std::string &name );
-std::string getAttribute( TiXmlElement *tix, const char *attname );
+extern bool analyseNode( RPCDispatcher *user_data, TIXML_STRING UTF8XML );
+TiXmlElement *findNode( TiXmlElement *node, const QString &name );
+QString getNodeValue( TiXmlElement *node, const QString &name );
+QString getAttribute(TiXmlElement *tix, const QString &attname );
 #endif

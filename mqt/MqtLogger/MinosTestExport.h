@@ -22,7 +22,7 @@ class MinosTestExport
 
       int stanzaCount;
       void makeHeader( RPCParamStruct * st, unsigned long ts );
-      void sendRequest( boost::shared_ptr<QFile> expfd, const std::string &cmd, RPCParamStruct *st );
+      void sendRequest( boost::shared_ptr<QFile> expfd, const QString &cmd, RPCParamStruct *st );
       void exportMode( boost::shared_ptr<QFile> expfd );
       void exportContest(boost::shared_ptr<QFile> expfd );
       void exportQTH( boost::shared_ptr<QFile> expfd );

@@ -8,12 +8,12 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
-bool checkFileOK( std::ifstream &istr, const std::string &fname, const std::string &fmess )
+bool checkFileOK( std::ifstream &istr, const QString &fname, const QString &fmess )
 {
    if ( !istr )
    {
-      std::string ebuff = ( boost::format( "Failed to open %s (%s)" ) % fmess % fname ).str();
-      char *emess = _strerror( ebuff.c_str() );
+      QString ebuff = QString( "Failed to open %1 (%2)" ).arg(fmess).arg(fname );
+      char *emess = _strerror( ebuff.toStdString().c_str() );
       MinosParameters::getMinosParameters() ->mshowMessage( emess );
       return false;
    }
@@ -31,11 +31,11 @@ void clearBuffer( void )
 static const char *noeditstr = "\r\n!!BINARY FILE DO NOT EDIT!!\r\n";
 const int noeditlength = 32;
 
-void strtobuf( const std::string &str )
+void strtobuf( const QString &str )
 {
    buffpt += strcpysp( &diskBuffer[ buffpt ], str, str.length() ) + 1;
 }
-void strtobuf( const MinosItem<std::string> &str )
+void strtobuf( const MinosItem<QString> &str )
 {
    strtobuf( str.getValue() );
 }
@@ -60,7 +60,7 @@ void opyn( const MinosItem<bool> &b )
    opyn( b.getValue() );
 }
 
-void buftostr( std::string &str )
+void buftostr( QString &str )
 {
    int i;
    str = "";
@@ -71,136 +71,66 @@ void buftostr( std::string &str )
    }
    buffpt += len + 1;   // step past null terminator
 }
-void buftostr( MinosItem<std::string> &str )
+void buftostr( MinosItem<QString> &str )
 {
-   std::string temp;
+   QString temp;
    buftostr( temp );
    str.setInitialValue( temp );
 }
 bool inyn()
 {
-   std::string temp;
+   QString temp;
    buftostr( temp );
-   if ( temp.size() && toupper( temp[ 0 ] ) == 'Y' )
+   if ( temp.size() && temp[ 0 ].toUpper() == 'Y' )
       return true;
 
    return false;
 }
-/*
-void *mymemcpy(void *dest, const void *src, size_t n)
+int strcpysp( QString &s1, const QString &s2, int maxlen )
 {
-	void *vret = memcpy(dest, src, n);
-   ((char *)dest)[n] = 0;
-   return vret;
+    s1 = s2.trimmed().left(maxlen);
+    return s1.size();
 }
- 
-char *mystrncpy(char *s1, const char *s2, int maxlen)
+int strcpysp( char *s1, const QString &s2, int maxlen )
 {
-	char *ret = strncpy(s1, s2, maxlen);
-   s1[maxlen] = 0;
-   return ret;
-}
-*/
-int strcpysp( std::string &s1, const std::string &ss2, int maxlen )
-{
-   char * temp = new char[ maxlen + 1 ];
-   int ret = strcpysp( temp, ss2, maxlen );
-   s1 = temp;
-   delete [] temp;
-   return ret;
-}
-int strcpysp( char *s1, const std::string &ss2, int maxlen )
-{
-   int i = 0;
-   const char *s2 = ss2.c_str();
+    QString ss2 = s2.trimmed().left(maxlen);
 
-   if ( ss2.length() )
-   {
-      for ( i = 0; i < maxlen && s2[ i ]; i++ )
-      {}
-
-      // step past leading spaces
-
-      while ( ( i > 0 ) && ( *s2 == ' ' ) )
-      {
-         i--;
-         s2++;
-      }
-
-      // step back past trailing spaces
-      while ( ( i > 0 ) && ( ( s2[ i - 1 ] == 0 ) || ( s2[ i - 1 ] == ' ' ) ) )
-      {
-         i--;
-      }
-
-      if ( i > 0 )
-      {
-         memcpy( s1, s2, i );
-      }
-      else
-      {
-         i = 0;
-      }
-   }
-   s1[ i ] = 0;
-
-   return i;
+    strcpy(s1, ss2.toLatin1());
+    return strlen(s1);
 }
 
 //============================================================
 
-int strcmpsp( const std::string &s1, const std::string &s2 )
+int strcmpsp( const QString &s1, const QString &s2 )
 {
-   TEMPBUFF( sp1, 256 );
-   TEMPBUFF( sp2, 256 );
+    QString sp1;
+    QString sp2;
 
    strcpysp( sp1, s1, 255 );
    strcpysp( sp2, s2, 255 );
 
-   return strcmp( sp1, sp2 );
+   return sp1.compare(sp2, Qt::CaseSensitive );
 }
 //============================================================
-int stricmpsp( const std::string &s1, const std::string &s2 )
+int stricmpsp( const QString &s1, const QString &s2 )
 {
-   TEMPBUFF( sp1, 256 );
-   TEMPBUFF( sp2, 256 );
+   QString sp1;
+   QString sp2;
 
    strcpysp( sp1, s1, 255 );
    strcpysp( sp2, s2, 255 );
 
-   return stricmp( sp1, sp2 );
+   return sp1.compare(sp2, Qt::CaseInsensitive );
 }
 //============================================================
 
-int placestr( char *buff, const std::string &str, int start, int len )
+int placestr( QString &buff, const QString &str, int start, int len )
 {
    // if len is -ve, it means to R justify
-   int i = 0;
-   int j = 0;
 
-   if ( len > 0 )
-   {
-      for ( j = start; j < start + len; j++ )
-      {
-         buff[ j ] = ( str.length() == 0 || str[ i ] == 0 ) ? ' ' : str[ i++ ];
-      }
-   }
-   else
-   {
-      len = -len;
-      char *buff2 = new char[ 256 ];
-      i = strcpysp( buff2, str.c_str(), len );	// strip spaces, return length
-      if ( i > 0 )
-      {
-         j = len - i;
-         if ( j < 0 )
-            j = 0;
-
-         memcpy( &buff[ start + j ], buff2, i );
-      }
-      delete [] buff2;
-   }
-   return start + len;
+   buff = buff.left(start);
+   buff = QString("%1%2                                                                ").arg(buff).arg(str, -len).left(start + abs(len)) ;
+   return start + abs(len);
 }
 //      int scnt = parseLine( buffer, '=', a, 2, 0, sep2seen );
 //#warning I want to rewrite parseLine to use strings...
@@ -242,26 +172,25 @@ writer::writer( boost::shared_ptr<QFile> f ) :  /*lbuff( diskBuffer ),*/ expfd( 
 {}
 writer::~writer()
 {}
-/*
-void writer::lwrite( void )
+void writer::lwrite( const QString &s )
 {
-   lwrite(lbuff);
- 
+    lwrite(s.toStdString().c_str());
 }
-*/
+
 void writer::lwrite( const char *b )
 {
-   std::string l = std::string( b ) + "\r\n";
-   int ret = expfd->write(l.c_str(), l.size());
-   if ( ret != (int)l.size() )
+   QString l = QString( b ) + "\r\n";
+
+   int ret = expfd->write(l.toStdString().c_str(), l.toStdString().size());
+   if ( ret != (int)l.toStdString().size() )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
    }
 }
 void writer::lwriteLine()
 {
-   std::string l( 80, 0x5F );					// horizontal line
-   lwrite( l.c_str() );
+   QString l( 80, 0x5F );					// horizontal line
+   lwrite( l );
 }
 void writer::lwriteNl()
 {
@@ -283,44 +212,47 @@ void writer::lwriteFf()
 // wild card comparison, search string e for the wild card string in s
 // At the moment we are using "space" as the wildcard.
 // we always scan down s for the first char in e
-bool wildComp( const std::string &ss, const std::string &ee )
+bool wildComp( const QString &ss, const QString &ee )
 {
-   const char * s = ss.c_str();
-   const char *e = ee.c_str();
-   while ( *s == ' ' )
+   int s = 0;
+   int sl = ss.length();
+   int e = 0;
+   int el = ee.length();
+
+   while ( ss[s] == ' ' )
       s++;
-   if ( !*s )
+   if ( s == sl )
       return false;
-   while ( *e == ' ' )
+   while ( ee[e] == ' ' )
       e++;
-   if ( !*e )
+   if ( e == el )
       return false;
 
 
-   const char *estart = e;
+   int estart = e;
 
    // scan for first char of e in s
 
-   const char *sstart = s;	// where to restart search
+   int sstart = s;	// where to restart search
 
-   while ( *sstart )
+   while ( sstart < sl )
    {
       s = sstart;		// position moving pointer
       e = estart;		// go back to the start of the searching string
 
-      while ( *s && *e && ( *s != *e ) )
+      while ( s < sl && e < el && ( ss[s] != ee[e] ) )
          s++;
-      if ( !*s )
+      if ( s >= sl )
          return false;		// s has ended without a match on char 1 of e
 
       sstart = ++s;			// next time start one on from this match
       e++;						// first char has matched
       // now attempt to match
-      while ( *s && *e )
+      while ( s < sl && e < el )
       {
          if (
-            ( *s == *e )
-            || ( ( *e == ' ' ) || ( *e == '*' ) || ( *e == '?' ) )
+            (ss[s] == ee[e] )
+            || ( ( ee[e] == ' ' ) || ( ee[e] == '*' ) || ( ee[e] == '?' ) )
          )
          {
             s++;
@@ -329,7 +261,7 @@ bool wildComp( const std::string &ss, const std::string &ee )
          }
          break;		// match failed, break out
       }
-      if ( !*e )
+      if ( e >= el )
          return true;		// we are at the end of the searching string, so matched
 
       // otherwise try again at next matching start char
@@ -337,73 +269,52 @@ bool wildComp( const std::string &ss, const std::string &ee )
    return false;
 }
 //=============================================================================
-std::string trimr( const std::string &s )
+QString trimr( const QString &r )
 {
-   int i;
-   for ( i = s.length() - 1; i >= 0; i-- )
-   {
-      char c = s[i];
-      if ( !iscntrl( c ) && !isspace( c ) )
-         break;
-   }
-   std::string s2;
-   if ( i >= 0 )
-      s2 = s.substr( 0, i + 1 );
-   return s2;
-}
-std::string trim( const std::string &s )
-{
-   std::string s2 = trimr( s );
-   unsigned int i;
-   for ( i = 0; i < s2.length(); i++ )
-   {
-      if ( !iscntrl( s[ i ] ) && !isspace( s[ i ] ) )
-         break;
-   }
-   std::string s3 = s2.substr( i, s2.length() );
-   return s3;
+    int n = r.size() - 1;
+    for (; n >= 0; --n)
+    {
+        if (!r.at(n).isSpace())
+        {
+            return r.left(n + 1);
+        }
+    }
+    return "";
 }
 //=============================================================================
-std::string makeADIFField( const std::string &fieldname, const std::string &content )
+QString makeADIFField( const QString &fieldname, const QString &content )
 {
-   std::string tag;
+   QString tag;
    int len = content.size();
    if ( len )
    {
-      std::string buff = ( boost::format( "<%s:%d>" ) % fieldname % len ).str();
+      QString buff = QString( "<%1:%2>" ).arg(fieldname).arg(len );
       tag = buff + content;
    }
    return tag;
 }
-std::string makeADIFField( const std::string &fieldname, int content )
+QString makeADIFField( const QString &fieldname, int content )
 {
-   std::string buff = ( boost::format( "%d" ) % content ).str();
-   return makeADIFField( fieldname, buff );
+   return makeADIFField( fieldname, QString::number(content) );
 }
 //=============================================================================
-std::string strupr( const std::string &s )
+QString strupr( const QString &s )
 {
-   std::string s2;
-   for ( unsigned int i = 0; i < s.length(); i++ )
-   {
-      s2 += toupper( s[ i ] );
-   }
-   //s = s2;
-   return s2;
+    return s.toUpper();
 }
 //=============================================================================
-int stricmp( const std::string &s1, const std::string &s2 )
+int stricmp( const QString &s1, const QString &s2 )
 {
    if ( s2.length() == 0 )
       return -1;
    if ( s1.length() == 0 )
       return 1;
-   return strcmpi( s1.c_str(), s2.c_str() );
+   return s1.compare(s2, Qt::CaseInsensitive );
 }
 //=============================================================================
-int strnicmp( const std::string &s1, const std::string &s2, unsigned int len )
+int strnicmp( const QString &s1, const QString &s2, unsigned int len )
 {
-   return ::strnicmp( s1.c_str(), s2.c_str(), len );
+    return s1.left(len).compare(s2.left(len));
 }
 //=============================================================================
 QDateTime CanonicalToTDT(QString cdtg )
@@ -417,13 +328,6 @@ QString TDTToCanonical(QDateTime d )
 {
    QString s = d.toString( "yyyyMMddhhmm" );
    return s;
-}
-//=============================================================================
-char *mystrncpy( char *s1, const char *s2, int maxlen )
-{
-   char * ret = strncpy( s1, s2, maxlen );
-   s1[ maxlen ] = 0;
-   return ret;
 }
 //=============================================================================
 
@@ -493,7 +397,7 @@ const QString ExcludeTrailingBackslash( const QString &s )
     if ( s.length() && ( s[ s.length() - 1 ] == '\\' || s[ s.length() - 1 ] == '/' ) )
     {
         QStringRef s1(&s, 0, s.length() - 1);
-//        std::string s1 = s.substr( 0, s.length() - 1 );
+//        QString s1 = s.substr( 0, s.length() - 1 );
         return s1.toString();
     }
     return s;
@@ -554,24 +458,7 @@ void SetCurrentDir( const QString &dir )
     QDir::setCurrent( dir );
 }
 
-int toInt ( const std::string &s, int def )
-{
-    if ( s.size() )
-    {
-        int i = atoi ( s.c_str() );
-        return i;
-    }
-    return def;
-}
-double toDouble ( const std::string &s, double def )
-{
-    if ( s.size() )
-    {
-        double d = atof ( s.c_str() );
-        return d;
-    }
-    return def;
-}
+
 int toInt ( const QString &s, int def )
 {
     if ( !s.isEmpty() )
@@ -593,4 +480,8 @@ double toDouble ( const QString &s, double def )
             return d;
     }
     return def;
+}
+QString makeStr( bool i )
+{
+   return ( i ? "true" : "false" );
 }

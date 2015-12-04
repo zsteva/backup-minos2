@@ -20,8 +20,8 @@ extern void resetCloseEvent();
 class LogEvent
 {
    public:
-      std::string eMessageType;
-      std::string eMessage;
+      QString eMessageType;
+      QString eMessage;
 
       LogEvent()
       {}
@@ -31,6 +31,6 @@ class LogEvent
 void queueLog( LogEvent *a );
 LogEvent * deQueueLog();
 //---------------------------------------------------------------------------
-extern void logMessage( const std::string &level, const std::string &mess );
+extern void logMessage( const QString &level, const QString &mess );
 //---------------------------------------------------------------------------
 #endif

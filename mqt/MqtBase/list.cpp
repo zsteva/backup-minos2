@@ -68,7 +68,7 @@ bool ContactList::cslLoad( void )
    std::ifstream istr( cfileName.toStdString().c_str() ); // should close when it goes out of scope
    if ( !istr )
    {
-      std::string lerr/* = lastError()*/;
+      QString lerr/* = lastError()*/;
       QString emess = "Failed to open ContactList file " + cfileName;// + " : " + lerr;
       MinosParameters::getMinosParameters() ->mshowMessage( emess );
 	  return false;
@@ -80,12 +80,15 @@ bool ContactList::cslLoad( void )
 
    while ( getline( istr, sbuff ) )
    {
-      sbuff = trim(sbuff);
-      if (sbuff.size() == 0 || trim(sbuff)[0] == '#')
+       QString qsbuff = sbuff.c_str();
+
+      sbuff = qsbuff.trimmed().toStdString();
+
+      if (sbuff.size() == 0 || sbuff[0] == '#')
       {
          continue;
       }
-      std::vector<std::string> parts;
+      std::vector<QString> parts;
 
       try
       {
@@ -94,7 +97,7 @@ bool ContactList::cslLoad( void )
 
          for( tokenizer::iterator beg=toker.begin(); beg!=toker.end();++beg)
          {
-            parts.push_back((*beg));
+            parts.push_back((*beg).c_str());
          }
          while (parts.size() < 6)
          {
@@ -103,7 +106,7 @@ bool ContactList::cslLoad( void )
 
          if ( ++lineno == 1 && parts[0].size() == 0 && parts[1].size() == 0 )
          {
-            name = parts[ 2 ].c_str();              // first line of file gives the list name
+            name = parts[ 2 ];              // first line of file gives the list name
          }
          else
          {

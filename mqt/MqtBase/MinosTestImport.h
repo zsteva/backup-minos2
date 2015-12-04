@@ -29,14 +29,14 @@ class MinosTestImport: public RPCDispatcher
 
       int stanzaCount;
 
-      bool getStructArgMemberValueDTG( boost::shared_ptr<RPCParam> rpm, const std::string &name, std::string &val );
-      bool getStructArgMemberValueDTG( boost::shared_ptr<RPCParam>rpm, const std::string &name, MinosItem<std::string> &val );
-      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const std::string &name, std::string &val );
-      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const std::string &name, MinosItem<std::string> &val );
-      bool getStructArgMemberValue(boost::shared_ptr<RPCParam>rpm, const std::string &name, int &val );
-      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const std::string &name, MinosItem<int> &val );
-      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const std::string &name, bool &val );
-      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const std::string &name, MinosItem<bool> &val );
+      bool getStructArgMemberValueDTG( boost::shared_ptr<RPCParam> rpm, const QString &name, QString &val );
+      bool getStructArgMemberValueDTG( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<QString> &val );
+      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, QString &val );
+      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<QString> &val );
+      bool getStructArgMemberValue(boost::shared_ptr<RPCParam>rpm, const QString &name, int &val );
+      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<int> &val );
+      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, bool &val );
+      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<bool> &val );
    public:
       void processMinosStanza( RPCRequest *xs );
       void processLogMinosStanza( RPCRequest *xs );
@@ -45,21 +45,21 @@ class MinosTestImport: public RPCDispatcher
       ~MinosTestImport();
 
       void startImportTest();
-      int importTestBuffer( const std::string &buffer );
+      int importTestBuffer( const QString &buffer );
       void endImportTest();
 
       int importTest( boost::shared_ptr<QFile> ctfile );
       bool analyseTest( boost::shared_ptr<QFile> ctfile );
       int readTestFile( boost::shared_ptr<QFile> ctfile );
 
-      bool getStructArgMemberValueDTG( const std::string &name, std::string &val );
-      bool getStructArgMemberValueDTG( const std::string &name, MinosItem<std::string> &val );
-      bool getStructArgMemberValue( const std::string &name, std::string &val );
-      bool getStructArgMemberValue( const std::string &name, MinosItem<std::string> &val );
-      bool getStructArgMemberValue( const std::string &name, int &val );
-      bool getStructArgMemberValue( const std::string &name, MinosItem<int> &val );
-      bool getStructArgMemberValue( const std::string &name, bool &val );
-      bool getStructArgMemberValue( const std::string &name, MinosItem<bool> &val );
+      bool getStructArgMemberValueDTG( const QString &name, QString &val );
+      bool getStructArgMemberValueDTG( const QString &name, MinosItem<QString> &val );
+      bool getStructArgMemberValue( const QString &name, QString &val );
+      bool getStructArgMemberValue( const QString &name, MinosItem<QString> &val );
+      bool getStructArgMemberValue( const QString &name, int &val );
+      bool getStructArgMemberValue( const QString &name, MinosItem<int> &val );
+      bool getStructArgMemberValue( const QString &name, bool &val );
+      bool getStructArgMemberValue( const QString &name, MinosItem<bool> &val );
 
       void setBit( unsigned short &cf, unsigned short bit, bool set
                     );

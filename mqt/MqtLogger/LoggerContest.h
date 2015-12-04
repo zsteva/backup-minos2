@@ -60,50 +60,50 @@ class LoggerContestLog : public BaseContestLog
          return needExport;
       }
 
-      virtual void processMinosStanza( const std::string &methodName, MinosTestImport *mt );
+      virtual void processMinosStanza( const QString &methodName, MinosTestImport *mt );
       void setStanza( unsigned int stanza, int stanzaStart );
-      virtual bool getStanza( unsigned int Stanza, std::string &stanzaData );
+      virtual bool getStanza( unsigned int Stanza, QString &stanzaData );
 
       // The contest details
 
       // Bundles are specific to the off disk logs, not the monitored logs
 
       SettingsBundle entryBundle;      // individual LoggerContestLog
-      MinosItem<std::string> entryBundleName;
+      MinosItem<QString> entryBundleName;
       SettingsBundle QTHBundle;        // individual QTH
-      MinosItem<std::string> QTHBundleName;
+      MinosItem<QString> QTHBundleName;
       SettingsBundle stationBundle;    // individual station
-      MinosItem<std::string> stationBundleName;
+      MinosItem<QString> stationBundleName;
 
-      MinosItem<std::string> VHFContestName;
+      MinosItem<QString> VHFContestName;
 
       // Most of this info is bundle related, and not relevant when monitored (?)
 
-      MinosItem<std::string> entrant;
-      MinosItem<std::string> entSect;
-      MinosItem<std::string> sqth1;
-      MinosItem<std::string> sqth2;
-      MinosItem<std::string> entTx;
-      MinosItem<std::string> entRx;
-      MinosItem<std::string> entAnt;
-      MinosItem<std::string> entAGL;
-      MinosItem<std::string> entASL;
-      MinosItem<std::string> ops1;        // list of ops for contest
-      MinosItem<std::string> ops2;        // list of ops for contest
-      MinosItem<std::string> entCondx1;
-      MinosItem<std::string> entCondx2;
-      MinosItem<std::string> entCondx3;
-      MinosItem<std::string> entCondx4;
-      MinosItem<std::string> entName;
-      MinosItem<std::string> entCall;
-      MinosItem<std::string> entAddr1;
-      MinosItem<std::string> entAddr2;
-      MinosItem<std::string> entPostCode;
-      MinosItem<std::string> entCity;
-      MinosItem<std::string> entCountry;
-      MinosItem<std::string> entPhone;
-      MinosItem<std::string> entEMail;
-      MinosItem<std::string> sectionList; // needed to be carried forward
+      MinosItem<QString> entrant;
+      MinosItem<QString> entSect;
+      MinosItem<QString> sqth1;
+      MinosItem<QString> sqth2;
+      MinosItem<QString> entTx;
+      MinosItem<QString> entRx;
+      MinosItem<QString> entAnt;
+      MinosItem<QString> entAGL;
+      MinosItem<QString> entASL;
+      MinosItem<QString> ops1;        // list of ops for contest
+      MinosItem<QString> ops2;        // list of ops for contest
+      MinosItem<QString> entCondx1;
+      MinosItem<QString> entCondx2;
+      MinosItem<QString> entCondx3;
+      MinosItem<QString> entCondx4;
+      MinosItem<QString> entName;
+      MinosItem<QString> entCall;
+      MinosItem<QString> entAddr1;
+      MinosItem<QString> entAddr2;
+      MinosItem<QString> entPostCode;
+      MinosItem<QString> entCity;
+      MinosItem<QString> entCountry;
+      MinosItem<QString> entPhone;
+      MinosItem<QString> entEMail;
+      MinosItem<QString> sectionList; // needed to be carried forward
 
       // dirty info is only relevant when it is being editted
       // but needs to stay with the data
@@ -113,8 +113,8 @@ class LoggerContestLog : public BaseContestLog
       // end of contest details
 
 
-      std::string bands;
-      std::string sections;
+      QString bands;
+      QString sections;
 
       void setINIDetails();
 

@@ -10,34 +10,34 @@
 #ifndef ProfilesH
 #define ProfilesH 
 //----------------------------------------------------------------------------
-extern const std::string noneBundle;
+extern const QString noneBundle;
 class SettingsBundle;
 class ProfileEntry
 {
       enum peType{petString, petInteger, petBool} pt;
    public:
       int id;
-      std::string name;
-      std::string dispname;
+      QString name;
+      QString dispname;
 
-      std::string sdefaultval;
+      QString sdefaultval;
       int idefaultval;
       bool bdefaultval;
 
-      std::string hint;
+      QString hint;
       bool RO;
 
       void createEntry( SettingsBundle * );
-      ProfileEntry( int id, const char *n, const char *d, const char * dname, const char *h, bool RO );
-      ProfileEntry( int id, const char *n, int d, const char * dname, const char *h, bool RO );
-      ProfileEntry( int id, const char *n, bool d, const char * dname, const char *h, bool RO );
+      ProfileEntry(int id, const QString &n, const QString &d, const QString &dname, const QString &h, bool RO );
+      ProfileEntry(int id, const QString &n, int d, const QString &dname, const QString &, bool RO );
+      ProfileEntry(int id, const QString &n, bool d, const QString &dname, const QString &h, bool RO );
 };
 class INIFile;
 
 class BundleFile
 {
    private:
-      std::string bundleName;
+      QString bundleName;
    public:
       boost::shared_ptr<INIFile> iniFile;
       std::vector<ProfileEntry> entries;
@@ -46,8 +46,8 @@ class BundleFile
       BundleFile( PROFILES p );
       ~BundleFile();
       static boost::shared_ptr<BundleFile> getBundleFile( PROFILES p );
-      bool openProfile( const std::string &pname, const std::string &bname );
-      std::string getBundle()
+      bool openProfile( const QString &pname, const QString &bname );
+      QString getBundle()
       {
          return bundleName;
       }
@@ -56,44 +56,44 @@ class BundleFile
 class SettingsBundle
 {
    private:
-      std::string currsection;
+      QString currsection;
    public:
       boost::shared_ptr<BundleFile> bundleFile;
 
       SettingsBundle( );
       ~SettingsBundle();
-      std::string getBundle();
+      QString getBundle();
 
       void setProfile( boost::shared_ptr<BundleFile> b );
 
-      void openSection( const std::string &psect );
-      std::string getSection();
-      bool dupSection( const std::string &sname );
-      bool newSection( const std::string &sname );
+      void openSection( const QString &psect );
+      QString getSection();
+      bool dupSection( const QString &sname );
+      bool newSection( const QString &sname );
       bool isSectionPresent();
 
       void closeProfile( void );
 
-      bool checkKeyExists( const char *key );
-      std::string displayNameOf( int enumKey );
+      bool checkKeyExists( const QString &key );
+      QString displayNameOf( int enumKey );
       bool isReadOnly( int enumKey );
-      void getBoolProfile( const char *key, bool &value, bool def );
-      void getBoolProfile( const char *key, MinosItem<bool> &value, bool def );
-      void setBoolProfile( const char *key, bool value );
+      void getBoolProfile( const QString &key, bool &value, bool def );
+      void getBoolProfile( const QString &key, MinosItem<bool> &value, bool def );
+      void setBoolProfile(const QString &key, bool value );
       void getBoolProfile( int enumkey, bool &value );
       void getBoolProfile( int enumkey, MinosItem<bool> &value );
       void setBoolProfile( int enumkey, bool value );
 
-      void getStringProfile( const char *key, std::string &value, const char *def );
-      void getStringProfile( const char *key, MinosItem<std::string> &value, const char *def );
-      void setStringProfile( const char *key, const char *value );
-      void getStringProfile( int enumkey, std::string &value );
-      void getStringProfile( int enumkey, MinosItem<std::string> &value );
-      void setStringProfile( int enumkey, const char *value );
+      void getStringProfile( const QString &key, QString &value, const QString &def );
+      void getStringProfile( const QString &key, MinosItem<QString> &value, const QString &def );
+      void setStringProfile(const QString &key, const QString &value );
+      void getStringProfile( int enumkey, QString &value );
+      void getStringProfile( int enumkey, MinosItem<QString> &value );
+      void setStringProfile( int enumkey, const QString &value );
 
-      void getIntProfile( const char *key, int &value, int def );
-      void getIntProfile( const char *key, MinosItem<int> &value, int def );
-      void setIntProfile( const char *key, int value );
+      void getIntProfile(const QString &key, int &value, int def );
+      void getIntProfile( const QString &key, MinosItem<int> &value, int def );
+      void setIntProfile( const QString &key, int value );
       void getIntProfile( int enumkey, int &value );
       void getIntProfile( int enumkey, MinosItem<int> &value );
       void setIntProfile( int enumkey, int value );
@@ -101,10 +101,10 @@ class SettingsBundle
       void flushProfile( );
       void clearProfileSection(bool clearCurr );
 
-      std::vector<std::string> getProfileEntries( );
+      QStringList getProfileEntries( );
       std::vector<int> getBundleEntries( );
-      std::vector<std::string> getBundleHints( );
-      std::vector<std::string> getSections( );
+      QStringList getBundleHints( );
+      QStringList getSections( );
 };
 /*
 extern ProfileEntry LoggerEntries[];

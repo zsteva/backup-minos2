@@ -283,17 +283,16 @@ void TLogContainer::HelpAboutActionExecute()
 }
 QString TLogContainer::getDefaultDirectory( bool IsList )
 {
-   std::string temp;
+   QString fileName;
    if ( IsList )
    {
-      TContestApp::getContestApp() ->loggerBundle.getStringProfile( elpListDirectory, temp );
+      TContestApp::getContestApp() ->loggerBundle.getStringProfile( elpListDirectory, fileName );
 
    }
    else
    {
-      TContestApp::getContestApp() ->loggerBundle.getStringProfile( elpLogDirectory, temp );
+      TContestApp::getContestApp() ->loggerBundle.getStringProfile( elpLogDirectory, fileName );
    }
-   QString fileName = temp.c_str();
 
    // we default to "./logs" or "./lists. On Vista this won't be relative to
    // the executable, but to the user data directory (I think). This is why Minos
@@ -321,7 +320,7 @@ void TLogContainer::FileNewActionExecute()
     QString nfileName( "C");
 
     dtg d( true );      // get time now
-    nfileName += d.getDate( DTGLOG ).c_str();
+    nfileName += d.getDate( DTGLOG );
 
     char letter = 'A';
     while ( letter < 'Z' )      // the A of A.Minos
@@ -345,21 +344,21 @@ void TLogContainer::FileNewActionExecute()
     {
        QString suggestedfName;
        c->mycall.validate();
-       suggestedfName = ( c->mycall.prefix + c->mycall.number + c->mycall.body ).c_str();
+       suggestedfName = ( c->mycall.prefix + c->mycall.number + c->mycall.body );
        suggestedfName += '_';
        if ( c->DTGStart.getValue().size() )
        {
-          suggestedfName += CanonicalToTDT( c->DTGStart.getValue().c_str() ).toString( "yyyyMMMdd" );
+          suggestedfName += CanonicalToTDT( c->DTGStart.getValue() ).toString( "yyyyMMMdd" );
        }
        else
        {
           suggestedfName += QDate::currentDate().toString( "yyyyMMMdd" );
        }
-       std::string band = c->band.getValue();
+       QString band = c->band.getValue();
        if ( band.size() )
        {
           suggestedfName += '_';
-          suggestedfName += band.c_str();
+          suggestedfName += band;
        }
        suggestedfName += ".minos";
 

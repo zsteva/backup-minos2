@@ -31,7 +31,7 @@ locator::~locator()
 {}
 char locator::validate( double &lon, double &lat )
 {
-   valRes = lonlat( loc.getValue().c_str(), lon, lat );
+   valRes = lonlat( loc.getValue(), lon, lat );
    return valRes;
 }
 char locator::validate( void )
@@ -39,7 +39,7 @@ char locator::validate( void )
    double longitude = 0.0;
    double latitude = 0.0;
 
-   valRes = lonlat( loc.getValue().c_str(), longitude, latitude );
+   valRes = lonlat( loc.getValue(), longitude, latitude );
 
    return valRes;
 }
@@ -64,8 +64,8 @@ dtg::dtg( bool now ): baddtg(false)
    if ( now )
    {
       QDateTime tdt = dtg::getCorrectedUTC();
-      setDate( tdt.toString( "dd/MM/yy" ).toStdString(), DTGDISP );
-      setTime( tdt.toString( "hh:nn:ss" ).toStdString(), DTGDISP );
+      setDate( tdt.toString( "dd/MM/yy" ), DTGDISP );
+      setTime( tdt.toString( "hh:nn:ss" ), DTGDISP );
    }
    else
    {
@@ -74,27 +74,27 @@ dtg::dtg( bool now ): baddtg(false)
       baddtg = true;
    }
 }
-void dtg::setIsoDTG( const std::string &d )
+void dtg::setIsoDTG(const QString &d )
 {
    // Untested! No errror handling!
-   std::string curDate = d.substr( 2, 6 );
-   std::string curTime = d.substr( 9, 8 );
+   QString curDate = d.mid( 2, 6 );
+   QString curTime = d.mid( 9, 8 );
    setDate( curDate, DTGLOG );
    setTime( curTime, DTGDISP );
 }
-std::string dtg::getIsoDTG( bool &d ) const
+QString dtg::getIsoDTG( bool &d ) const
 {
    // Untested! No error handling!
-   std::string temp_date;
-   std::string prefix = "20";
+   QString temp_date;
+   QString prefix = "20";
 
    bool dateDirty = false;
    bool timeDirty = false;
 
-   std::string dateValue = sdate.getValue( dateDirty );
+   QString dateValue = sdate.getValue( dateDirty );
    dateValue += "            ";
 
-   std::string timeValue = stime.getValue( timeDirty );
+   QString timeValue = stime.getValue( timeDirty );
    timeValue += "            ";
 
    if ( dateValue [ 0 ] >= '8' )
@@ -116,43 +116,43 @@ std::string dtg::getIsoDTG( bool &d ) const
          temp_date[ i ] = ' ';
 
    d = dateDirty || timeDirty;
-   return std::string( temp_date );
+   return QString( temp_date );
 }
-std::string dtg::getIsoDTG( ) const
+QString dtg::getIsoDTG( ) const
 {
    bool dirty;
    return getIsoDTG( dirty );
 }
-std::string dtg::getDate( DTG dstyle, bool &d ) const
+QString dtg::getDate( DTG dstyle, bool &d ) const
 {
-   std::string temp_date;
-   std::string dateValue = sdate.getValue( d );
+   QString temp_date;
+   QString dateValue = sdate.getValue( d );
    dateValue += "            ";
    if ( dstyle == DTGFULL )
    {
-      std::string prefix = "20";
+      QString prefix = "20";
 
       if ( dateValue [ 0 ] >= '8' )
          prefix = "19";
       temp_date = prefix + dateValue;
-      temp_date = temp_date.substr(0, 8);
+      temp_date = temp_date.left( 8);
    }
    else
       if ( dstyle == DTGLOG )
       {
          temp_date = dateValue;
-         temp_date = temp_date.substr(0, 8);
+         temp_date = temp_date.left( 8);
       }
       else
          if ( dstyle == DTGReg1Test )
          {
             temp_date = dateValue;
-            temp_date = temp_date.substr(0, 6);
+            temp_date = temp_date.left( 6);
          }
          else
             if (dstyle == DTGPRINT)
             {
-               std::string prefix = "20";
+               QString prefix = "20";
 
                if ( dateValue [ 0 ] >= '8' )
                   prefix = "19";
@@ -169,7 +169,7 @@ std::string dtg::getDate( DTG dstyle, bool &d ) const
                for ( int i = 0; i < 10; i++ )
                   if ( temp_date[ i ] == 0 )
                      temp_date[ i ] = ' ';
-               temp_date = temp_date.substr(0, 10);
+               temp_date = temp_date.left(10);
             }
             else
             {
@@ -185,24 +185,24 @@ std::string dtg::getDate( DTG dstyle, bool &d ) const
                for ( int i = 0; i < 8; i++ )
                   if ( temp_date[ i ] == 0 )
                      temp_date[ i ] = ' ';
-               temp_date = temp_date.substr(0, 8);
+               temp_date = temp_date.left( 8);
             }
    return temp_date;
 }
-std::string dtg::getDate( DTG dstyle ) const
+QString dtg::getDate( DTG dstyle ) const
 {
    bool dirty;
    return getDate( dstyle, dirty );
 }
-std::string dtg::getTime( DTG dstyle, bool &d ) const
+QString dtg::getTime( DTG dstyle, bool &d ) const
 {
-   std::string temp_time;
-   std::string timeValue = stime.getValue( d );
+   QString temp_time;
+   QString timeValue = stime.getValue( d );
    timeValue += "            ";
 
    if ( dstyle == DTGLOG )
    {
-      temp_time = timeValue.substr(0, 6);
+      temp_time = timeValue.left( 6);
    }
    else
       if ( dstyle == DTGReg1Test )
@@ -241,53 +241,43 @@ std::string dtg::getTime( DTG dstyle, bool &d ) const
          }
    return temp_time;
 }
-std::string dtg::getTime( DTG dstyle ) const
+QString dtg::getTime( DTG dstyle ) const
 {
    bool dirty;
    return getTime( dstyle, dirty );
 }
-bool dtg::getDtg( time_t &cttime, bool &d ) const
+bool dtg::getDtg( QDateTime &cttime, bool &d ) const
 {
-   std::string dateValue = sdate.getValue( d );
+   QString dateValue = sdate.getValue( d );
    dateValue += "            ";
 
-   std::string timeValue = stime.getValue( d );
+   QString timeValue = stime.getValue( d );
    timeValue += "            ";
 
-   struct tm tmstr;
    for ( int i = 0; i < 6; i++ )
-      if ( !isdigit( dateValue [ i ] ) )
+      if ( !dateValue [ i ].isDigit() )
          return false;
    for ( int i = 0; i < 4; i++ )
-      if ( !isdigit( timeValue [ i ] ) )
+      if ( !timeValue [ i ].isDigit() )
          return false;
 
-   tmstr.tm_sec = ( timeValue [ 4 ] - '0' ) * 10 + ( timeValue [ 5 ] - '0' );
-   tmstr.tm_min = ( timeValue [ 2 ] - '0' ) * 10 + ( timeValue [ 3 ] - '0' );
-   tmstr.tm_hour = ( timeValue [ 0 ] - '0' ) * 10 + ( timeValue [ 1 ] - '0' );
+   QTime tm = QTime::fromString(timeValue, "hhmmss");
 
-   tmstr.tm_mday = ( dateValue [ 4 ] - '0' ) * 10 + ( dateValue [ 5 ] - '0' );
-   tmstr.tm_mon = ( dateValue [ 2 ] - '0' ) * 10 + ( dateValue [ 3 ] - '0' ) - 1;	// month is 0-11
-   tmstr.tm_year = ( dateValue [ 0 ] - '0' ) * 10 + ( dateValue [ 1 ] - '0' );
+   QDate dt = QDate::fromString(dateValue, "ddMMyy");
 
-   if ( tmstr.tm_year < 80 )
-      tmstr.tm_year += 100;	// Y2K windowing
-
-   tmstr.tm_isdst = 0;
-
-   cttime = mktime( &tmstr );
+   cttime = QDateTime(dt, tm, Qt::UTC);
 
    return true;
 }
-bool dtg::getDtg( time_t &cttime ) const
+bool dtg::getDtg(QDateTime &cttime ) const
 {
    bool dirty;
    return getDtg( cttime, dirty );
 }
-void dtg::setDate( const std::string &d, DTG dstyle )
+void dtg::setDate(const QString &d, DTG dstyle )
 {
-   std::string temp;
-   if ( d.length() == 0 || !d[ 0 ] || ( d[ 0 ] == ' ' ) || ( d[ 0 ] == '/' )
+   QString temp;
+   if ( d.length() == 0 || ( d[ 0 ] == ' ' ) || ( d[ 0 ] == '/' )
         || ( ( dstyle != DTGLOG ) && ( dstyle != DTGReg1Test ) && ( ( d[ 2 ] != '/' ) || ( d[ 5 ] != '/' )
               || d.length() != 8 ) ) )
    {
@@ -305,23 +295,23 @@ void dtg::setDate( const std::string &d, DTG dstyle )
       }
       else // LOG or Reg1Test
       {
-         temp = d.substr( 0, 6 );
+         temp = d.left( 6 );
       }
    sdate.setValue( temp );
    baddtg = false;
 }
 
-void dtg::setTime( const std::string &t, DTG dstyle )
+void dtg::setTime( const QString &t, DTG dstyle )
 {
-   std::string temp;
-   if ( t.length() == 0 || ( !t[ 0 ] ) || ( t[ 0 ] == ' ' ) || ( t[ 0 ] == ':' ) )
+   QString temp;
+   if ( t.length() == 0  || ( t[ 0 ] == ' ' ) || ( t[ 0 ] == ':' ) )
    {
       temp = "    ";
    }
    else
       if ( dstyle == DTGDISP )
       {
-         std::string t2 = t + ":00:00:00";
+         QString t2 = t + ":00:00:00";
          temp = t2[ 0 ];
          temp += t2[ 1 ];
 
@@ -333,20 +323,21 @@ void dtg::setTime( const std::string &t, DTG dstyle )
       }
       else   // Log or Reg1Test (which should be a 4 char time)
       {
-         std::string t2 = t + "000000";
-         temp = t2.substr( 0, 6 );
+         QString t2 = t + "000000";
+         temp = t2.left( 6 );
       }
    stime.setValue( temp );
    baddtg = false;
 }
+/*
 void dtg::setDtg( time_t cttime )
 {
    struct tm * tms = localtime( &cttime );  // NB static data area!
    if ( tms->tm_isdst != 0 )
       tms->tm_hour -= 1;
 
-   std::string curTime;
-   std::string curDate;
+   QString curTime;
+   QString curDate;
 
    curTime = ( boost::format( "%02.2d:%02.2d:%02.2d" ) % tms->tm_hour % tms->tm_min % tms->tm_sec ).str();
 
@@ -358,17 +349,18 @@ void dtg::setDtg( time_t cttime )
    setTime( curTime, DTGDISP );
    setDate( curDate, DTGDISP );
 }
+*/
 int dtg::notEntered( void )
 {
    int i;
    bool te = false;
    bool de = false;
-   std::string temp_date = getDate( DTGDISP );
-   std::string temp_time = getTime( DTGDISP );
+   QString temp_date = getDate( DTGDISP );
+   QString temp_time = getTime( DTGDISP );
 
    for ( i = 0; i < DATELENGTH; i++ )
    {
-      if ( !temp_date[ i ] )
+      if ( i >= temp_date.length() )
          break;
 
       if ( temp_date[ i ] != ' ' && temp_date[ i ] != '/' )
@@ -379,7 +371,7 @@ int dtg::notEntered( void )
    }
    for ( i = 0; i < TIMELENGTH; i++ )
    {
-      if ( !temp_time[ i ] )
+      if ( i >= temp_time.length() )
          break;
 
       if ( temp_time[ i ] != ' ' && temp_time[ i ] != ':' )
@@ -418,7 +410,7 @@ dtg::~dtg()
 //============================================================
 callsign::callsign( ) : valRes( CS_NOT_VALIDATED )
 {}
-callsign::callsign( const std::string &pcs ) : valRes( CS_NOT_VALIDATED )
+callsign::callsign(const QString &pcs ) : valRes( CS_NOT_VALIDATED )
 {
    fullCall.setValue( pcs );
 }
@@ -441,12 +433,13 @@ char callsign::validate( )
    // NB that leading spaces may be genuine wildcards, and so may
    // actually be significant; we should reject as invalid
    // calls with leading spaces, even though this isn't very friendly
-   TEMPBUFF( csv, CALLSIGNLENGTH + 1 );
-   strncpy( csv, trimr(fullCall.getValue()).c_str(), CALLSIGNLENGTH );          // set up a modifiable buffer
-   csv[ CALLSIGNLENGTH ] = 0;
+   char csv[CALLSIGNLENGTH + 1];
+   strcpy(csv, trimr(fullCall.getValue()).toStdString().c_str());          // set up a modifiable buffer
+
+   csv[CALLSIGNLENGTH] = 0;
 
    valRes = ERR_NOCS;
-   if ( csv[ 0 ] == 0 )   			// all spaces
+   if ( fullCall.getValue().isEmpty() )   			// all spaces
       return valRes;
 
    // first check no funny characters; only alphanum and / allowed
@@ -454,20 +447,20 @@ char callsign::validate( )
 
    valRes = ERR_INVCS;
 
-   int cslen = strlen( csv );
+   int cslen = strlen(csv);
    for ( int i = 0; i < cslen; i++ )
    {
-      if ( ( csv[ i ] != '/' ) && ( !isalnum( csv[ i ] ) ) )
+      if ( ( csv[ i ] != '/' ) && ( !isalnum(csv[ i ]) ) )
       {
          return valRes;
       }
    }
 
-   prefix = "";
-   prefix2 = "";
-   suffix = "";
-   number = "";
-   body = "";
+   prefix.clear();
+   prefix2.clear();
+   suffix.clear();
+   number.clear();
+   body.clear();
 
    const char *f = csv;
 
@@ -519,22 +512,22 @@ char callsign::validate( )
       if ( spt2 - spt <= TRAILBITLENGTH + 1 )   	// assume the RVI case, allow for the '/'
       {
          prefix = "/";
-         prefix += std::string( spt ).substr( 1, BITLENGTH );
+         prefix += QString( spt ).mid( 1, BITLENGTH );
          spt = csv;			// main body is at the start
       }
       else
       {
          // current country prefix at the start
-         prefix = std::string( spt ).substr( 0, BITLENGTH );
+         prefix = QString( spt ).left( BITLENGTH );
       }
-      suffix = std::string( spt2 ).substr( 0, TRAILBITLENGTH );
+      suffix = QString( spt2 ).left(TRAILBITLENGTH );
    }
    else
       if ( spt && ( cse - spt <= TRAILBITLENGTH ) )
       {
          // tail shorter than 4 chars, therefor e.g. /p or /mm - or /RVI
          // we will eventually search for mults on suffix first then prefix
-         suffix = std::string( spt ).substr( 0, TRAILBITLENGTH );
+         suffix = QString( spt ).left( TRAILBITLENGTH );
          *spt = 0;
          spt = csv;
       }
@@ -543,7 +536,7 @@ char callsign::validate( )
          {
             // long tail, must be normal prefix only, no suffix
 
-            prefix = std::string( csv ).substr( 0, BITLENGTH );
+            prefix = QString( csv ).left(BITLENGTH );
          }
          else
          {
@@ -579,11 +572,11 @@ char callsign::validate( )
       number += *f++;
 
    // main CS letters
-   body = std::string( f ).substr( 0, BITLENGTH );
+   body = QString( f ).left( BITLENGTH );
 
    if ( prefix.length() == 0 )
    {
-      prefix = prefix2.substr( 0, BITLENGTH );   // prefix is country of location
+      prefix = prefix2.left( BITLENGTH );   // prefix is country of location
       // prefix2 is country of issue
    }
 
@@ -614,9 +607,9 @@ char callsign::validate( )
    // And also want to look for
    //     trailing number in body
    //
-   for (unsigned int i= 0; i < body.length(); i++)
+   for (int i= 0; i < body.length(); i++)
    {
-      if (!isalpha(body[i]))
+      if (!body[i].isLetter())
       {
          valRes = ERR_INVCS;
       }

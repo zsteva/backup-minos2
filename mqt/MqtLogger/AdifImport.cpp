@@ -37,10 +37,10 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
       {
          // ADIF now specifies 8 Digits representing a UTC date in YYYYMMDD format
          if ( FieldLength == 6 )
-            aqso->time.setDate( FieldContent.toStdString(), DTGLOG );
+            aqso->time.setDate( FieldContent, DTGLOG );
          else
             if ( FieldLength == 8 )
-               aqso->time.setDate( FieldContent.right(2).toStdString(), DTGLOG );
+               aqso->time.setDate( FieldContent.right(2), DTGLOG );
       }
       if ( Fieldname.toUpper() == "TIME_ON" )
       {
@@ -48,60 +48,60 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
          // or 4 Digits representing a time in HHMM format
          // either way we will take the 1st 4 chars
 
-         aqso->time.setTime( FieldContent.toStdString(), DTGLOG );
+         aqso->time.setTime( FieldContent, DTGLOG );
       }
       if ( Fieldname.toUpper() == "CALL" )
       {
-         strcpysp( temp, FieldContent.toStdString(), FieldLength );
+         strcpysp( temp, FieldContent, FieldLength );
          aqso->cs = callsign( strupr( temp ) );
          aqso->cs.valRes = CS_NOT_VALIDATED;
       }
       if ( Fieldname.toUpper() == "RST_SENT" )
       {
-         strcpysp( temp, FieldContent.toStdString().c_str(), FieldLength );
+         strcpysp( temp, FieldContent, FieldLength );
          aqso->reps.setInitialValue( temp );
       }
       if ( Fieldname.toUpper() == "RST_RCVD" )
       {
-         strcpysp( temp, FieldContent.toStdString().c_str(), FieldLength );
+         strcpysp( temp, FieldContent, FieldLength );
          aqso->repr.setInitialValue( temp );
       }
       if ( Fieldname.toUpper() == "SRX" || Fieldname.toUpper() == "NO_RCVD" )
       {
          int srx = FieldContent.toInt();
 
-         aqso->serialr.setInitialValue( QString::number(srx).toStdString() );
+         aqso->serialr.setInitialValue( QString::number(srx) );
       }
       if ( Fieldname.toUpper() == "STX" || Fieldname.toUpper() == "NO_SENT" )
       {
          int stx = FieldContent.toInt();
-         aqso->serials.setInitialValue( QString::number(stx).toStdString() );
+         aqso->serials.setInitialValue( QString::number(stx) );
          if ( stx > acontest->maxSerial )
             acontest->maxSerial = stx;
       }
       if ( Fieldname.toUpper() == "GRIDSQUARE" )
       {
-         strcpysp( temp, FieldContent.toStdString().c_str(), FieldLength );
+         strcpysp( temp, FieldContent, FieldLength );
          aqso->loc.loc.setInitialValue( temp );
          aqso->loc.valRes = LOC_NOT_VALIDATED;
       }
       if ( Fieldname.toUpper() == "QSO_PTS" || Fieldname.toUpper() == "POINTS" )
       {
-         std::string temp;
-         strcpysp( temp, FieldContent.toStdString(), FieldLength );
-         if ( atoi( temp.c_str() ) == 0 )
+         QString temp;
+         strcpysp( temp, FieldContent, FieldLength );
+         if ( temp.toInt() == 0 )
          {
             aqso->contactFlags.setInitialValue( NON_SCORING );
          }
       }
       if ( Fieldname.toUpper() == "QTH" )
       {
-         strcpysp( temp, FieldContent.toStdString(), FieldLength );
+         strcpysp( temp, FieldContent, FieldLength );
          aqso->extraText.setInitialValue( temp );
       }
       if ( Fieldname.toUpper() == "OPT_EXCH" )
       {
-         strcpysp( temp, FieldContent.toStdString(), FieldLength );
+         strcpysp( temp, FieldContent, FieldLength );
          aqso->extraText.setInitialValue( temp );
       }
    }
@@ -174,7 +174,7 @@ bool ADIFImport::executeImport()
 {
 
    char InChar;
-   std::string Header;
+   QString Header;
 
    if ( !getNextChar( InChar ) )
       return false;
@@ -197,7 +197,7 @@ bool ADIFImport::executeImport()
 
          //skip to >, Ignore field name
          //if it is not <EOH> then cannot do much about it!
-         std::string qEOH;
+         QString qEOH;
          do
          {
             if ( !getNextChar( InChar ) )
@@ -225,11 +225,11 @@ bool ADIFImport::executeImport()
    {
 
       // Clear the accumulator strings
-      std::string FieldName;
-      std::string FieldLengthString;
+      QString FieldName;
+      QString FieldLengthString;
       int FieldLength = 0;
-      std::string FieldType;
-      std::string FieldContent;
+      QString FieldType;
+      QString FieldContent;
 
 
       while ( InChar != '<' )
@@ -264,7 +264,7 @@ bool ADIFImport::executeImport()
          while ( InChar != ':' && InChar != '>' );
 
          // convert string to integer
-         FieldLength = toInt(FieldLengthString );
+         FieldLength = FieldLengthString.toInt();
       }
 
       //accumulate field type (if present)or skip to >
@@ -304,7 +304,7 @@ bool ADIFImport::executeImport()
       else
       {
          //do actions for other fields: call OnFieldDecode event
-         ADIFImportFieldDecode( FieldName.c_str(), FieldLength, FieldType.c_str(), FieldContent.c_str() );
+         ADIFImportFieldDecode( FieldName, FieldLength, FieldType, FieldContent );
       }
 
    }

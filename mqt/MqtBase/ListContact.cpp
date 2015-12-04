@@ -13,9 +13,9 @@
 QString ListContact::getField( int ACol, const BaseContestLog *const curcon ) const
 {
    // only used to get fields for main log display
-   std::string res;
+   QString res;
    if ( !curcon )
-      return res.c_str();
+      return res;
 
    switch ( ACol )
    {
@@ -31,7 +31,7 @@ QString ListContact::getField( int ACol, const BaseContestLog *const curcon ) co
             double lon = 0.0;
             double lat = 0.0;
 
-            if ( lonlat( loc.loc.getValue().c_str(), lon, lat ) == LOC_OK )
+            if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
             {
                // we don't have it worked out already...
                double lon = 0.0;
@@ -41,7 +41,7 @@ QString ListContact::getField( int ACol, const BaseContestLog *const curcon ) co
 
 
 
-               int lres = lonlat( loc.loc.getValue().c_str(), lon, lat );
+               int lres = lonlat( loc.loc.getValue(), lon, lat );
                if ( lres == LOC_OK )
                {
                   curcon->disbear( lon, lat, dist, brg );
@@ -55,7 +55,7 @@ QString ListContact::getField( int ACol, const BaseContestLog *const curcon ) co
 			   int offset = curcon->bearingOffset.getValue();
                brgbuff = QString( "%1\xB0").arg( brg + offset, 3);
             }
-            res = brgbuff.toStdString();
+            res = brgbuff;
          }
          break;
 
@@ -69,12 +69,12 @@ QString ListContact::getField( int ACol, const BaseContestLog *const curcon ) co
             int brg;
             double dist = 0.0;
 
-            if ( lonlat( loc.loc.getValue().c_str(), lon, lat ) == LOC_OK )
+            if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
             {
                curcon->disbear( lon, lat, dist, brg );
             }
             scorebuff = QString( "%1").arg(( int ) dist );
-            res = scorebuff.toStdString();
+            res = scorebuff;
          }
          break;
 
@@ -90,6 +90,6 @@ QString ListContact::getField( int ACol, const BaseContestLog *const curcon ) co
          }
          break;
    }
-   return res.c_str();
+   return res;
 }
 

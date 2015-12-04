@@ -30,56 +30,56 @@ enum eMultGridCols {ectCall, ectWorked, ectLocator, ectBearing, ectName, ectOthe
 class GlistEntry
 {
    public:
-      GlistEntry( const std::string &cd, const std::string &syn );
+      GlistEntry( const QString &cd, const QString &syn );
       virtual ~GlistEntry();
 
       bool operator<( const GlistEntry& rhs ) const;
       bool operator==( const GlistEntry& rhs ) const;
       bool operator!=( const GlistEntry& rhs ) const;
 
-      std::string synPrefix;
-      std::string dupPrefix;
+      QString synPrefix;
+      QString dupPrefix;
 };
 class MultEntry
 {
    public:
       int listOffset;
       locator central;	// central point to take bearings to
-      std::string realName;
+      QString realName;
 
-      MultEntry( const std::string &name, const std::string &cloc );
+      MultEntry( const QString &name, const QString &cloc );
       virtual ~MultEntry();
 
-      virtual std::string str( bool ) = 0;
+      virtual QString str( bool ) = 0;
 
-      virtual void addSynonyms( std::string & );
+      virtual void addSynonyms( QString & );
 };
 #define DISTRICT_CODE_LENGTH 2
 class DistrictEntry : public MultEntry
 {
    public:
 
-      std::string districtCode; // RSGB code
+      QString districtCode; // RSGB code
       CountryEntry * country1; // country containing district
       CountryEntry * country2; // country containing district
 
-      DistrictEntry( const std::string &cd, const std::string &name, const std::string &prefix, const std::string &prefix2, const std::string &cloc );
+      DistrictEntry( const QString &cd, const QString &name, const QString &prefix, const QString &prefix2, const QString &cloc );
       virtual ~DistrictEntry();
       bool operator<( const DistrictEntry& rhs ) const;
       bool operator==( const DistrictEntry& rhs ) const;
       bool operator!=( const DistrictEntry& rhs ) const;
 
-      virtual std::string str( bool );
-      virtual void addSynonyms( std::string & );
+      virtual QString str( bool );
+      virtual void addSynonyms( QString & );
 };
 
 class DistrictSynonym
 {
    public:
-      DistrictSynonym( const std::string &cd, const std::string &syn );
+      DistrictSynonym( const QString &cd, const QString &syn );
       virtual ~DistrictSynonym();
 
-      std::string synonym;
+      QString synonym;
       DistrictEntry *district;
       bool operator<( const DistrictSynonym& rhs ) const;
       bool operator==( const DistrictSynonym& rhs ) const;
@@ -90,16 +90,16 @@ class CountryEntry : public MultEntry
 {
       char distLimit;
    public:
-      std::string basePrefix;
-      std::string continent;
+      QString basePrefix;
+      QString continent;
 
       int districtLimit( void );
       bool hasDistricts( void );
 
-      CountryEntry( const std::string &continent, const std::string &prefix, const std::string &name, const std::string &cloc );
+      CountryEntry( const QString &continent, const QString &prefix, const QString &name, const QString &cloc );
       virtual ~CountryEntry();
-      virtual std::string str( bool );
-      virtual void addSynonyms( std::string & );
+      virtual QString str( bool );
+      virtual void addSynonyms( QString & );
       bool operator<( const CountryEntry& rhs ) const;
       bool operator==( const CountryEntry& rhs ) const;
       bool operator!=( const CountryEntry& rhs ) const;
@@ -108,14 +108,14 @@ class CountryEntry : public MultEntry
 class CountrySynonym
 {
    public:
-      std::string synPrefix;
+      QString synPrefix;
       CountryEntry * country;
 
-      CountrySynonym( const std::string &syn, const std::string &prefix );
+      CountrySynonym( const QString &syn, const QString &prefix );
       virtual ~CountrySynonym();
 
-      void getDupPrefix( std::string & );
-      virtual void synCat( std::string &add_buff );
+      void getDupPrefix( QString & );
+      virtual void synCat( QString &add_buff );
 
       virtual int compare( const CountrySynonym & ) const;
 
@@ -135,12 +135,12 @@ class LocCount
 class LocSquare
 {
    public:
-      LocSquare( const std::string &loc );
+      LocSquare( const QString &loc );
       LocCount *map( int num ); // give count char for loc num
-      LocCount *map( char *num ); // give count char for loc num
+      LocCount *map(const QString &num ); // give count char for loc num
       void clear( void );
 
-      char loc[ 3 ]; // two letter main square
+      QString loc; // two letter main square
 
       LocCount numbers[ 10 ][ 10 ]; // map of parts worked
       bool operator<( const LocSquare& rhs ) const;
@@ -176,14 +176,14 @@ class MultLists
       virtual ~MultLists();
 
       //      void addCountry( bool addsyn ) = 0;
-      virtual CountrySynonym *searchCountrySynonym( const std::string &syn ) = 0;
-      virtual DistrictEntry *searchDistrict( const std::string &syn ) = 0;
+      virtual CountrySynonym *searchCountrySynonym( const QString &syn ) = 0;
+      virtual DistrictEntry *searchDistrict( const QString &syn ) = 0;
 
       virtual int getCtryListSize() = 0;
       virtual int getDistListSize() = 0;
-      virtual CountryEntry *getCtryForPrefix( const std::string &forcedMult ) = 0;
-      virtual std::string getCtryListText( int item, int Column, BaseContestLog *const ct ) = 0;
-      virtual std::string getDistListText( int item, int Column, BaseContestLog *const ct ) = 0;
+      virtual CountryEntry *getCtryForPrefix( const QString &forcedMult ) = 0;
+      virtual QString getCtryListText( int item, int Column, BaseContestLog *const ct ) = 0;
+      virtual QString getDistListText( int item, int Column, BaseContestLog *const ct ) = 0;
       virtual CountryEntry * getCtryListAt( int index ) = 0;
       virtual int getCtryListIndexOf( CountryEntry * ) = 0;
       virtual int getDistListIndexOf( DistrictEntry * ) = 0;

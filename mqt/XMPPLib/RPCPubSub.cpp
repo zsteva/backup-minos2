@@ -25,16 +25,16 @@ void RPCPubSub::initialisePubSub( TRPCFunctor *notifycb )
       MinosRPCObj::addObj( new RPCNotifyServer( notifycb ) );
    }
 }
-void RPCPubSub::publish( const std::string &category, const std::string &key, const std::string &value, PublishState pState )
+void RPCPubSub::publish( const QString &category, const QString &key, const QString &value, PublishState pState )
 {
    RPCPublisher::testAndPublish( category, key, value, pState );
 }
 
-void RPCPubSub::subscribe( const std::string &category )
+void RPCPubSub::subscribe( const QString &category )
 {
    RPCSubscriber::testAndSubscribe( category );
 }
-void RPCPubSub::subscribeRemote( const std::string &server, const std::string &category )
+void RPCPubSub::subscribeRemote( const QString &server, const QString &category )
 {
    RPCRemoteSubscriber::testAndSubscribe( server, category );
 }

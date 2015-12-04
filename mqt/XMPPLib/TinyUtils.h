@@ -12,7 +12,7 @@
 #define TinyUtilsH
 
 class TiXmlElement;
-extern bool checkElementName( TiXmlElement *e, const std::string &expected );
-extern std::string getAttribute( TiXmlElement *tix, const char *attname );
+extern bool checkElementName( TiXmlElement *e, const QString &expected );
+extern QString getAttribute( TiXmlElement *tix, const QString &attname );
 
 #endif

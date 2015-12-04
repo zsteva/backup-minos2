@@ -53,7 +53,7 @@ MinosConnection::MinosConnection( RPCDispatcher *ud ) : sock( 0 ), user_data( ud
 {}
 MinosConnection::~MinosConnection()
 {}
-bool MinosConnection::minos_send( const std::string &xmlstr )
+bool MinosConnection::minos_send( const TIXML_STRING &xmlstr )
 {
    if ( xmlstr.size() )
    {
@@ -69,7 +69,7 @@ bool MinosConnection::minos_send( const std::string &xmlstr )
 bool MinosConnection::minos_send( TiXmlElement *data )
 {
    // serialise the data node, send it to the socket in a packet
-   std::string xmlstr;
+   TIXML_STRING xmlstr;
    xmlstr << ( *data );
    return minos_send( xmlstr );
 }
@@ -115,7 +115,7 @@ bool MinosConnection::runConnection()
                int packetlen = strtol( packetbuff.c_str() + 2, &ec, 10 );
                if ( *ec == '<' && packetlen <= ( int ) strlen( ec ) + 2 && packetbuff.find( ">&&" ) )
                {
-                  std::string packet = packetbuff.substr( packetoffset, packetlen );
+                  TIXML_STRING packet = packetbuff.substr( packetoffset, packetlen );
                   packetbuff = packetbuff.substr( packetoffset + packetlen + 2, strlen( ec + packetlen ) );
 
 #ifdef TRACE_PACKETS

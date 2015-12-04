@@ -56,13 +56,13 @@ MinosThread *MinosThread::minosThread = 0;
 QSemaphore MinosConnectEvent(1);
 bool connected = false;
 
-std::string myId;
+QString myId;
 
 GJV_thread *MinosThreadObj = 0;
 
 static bool terminated = false;
 //---------------------------------------------------------------------------
-bool startDaemonThread( const std::string &jid )
+bool startDaemonThread( const QString &jid )
 {
    MinosThread::minosThread = new MinosThread( jid );
    return MinosThread::minosThread->startDaemonThread();
@@ -118,7 +118,7 @@ void MinosThreadExecute( void * )
    }
    terminated = false;
 }
-bool XMPPInitialise( const std::string &pmyId )
+bool XMPPInitialise( const QString &pmyId )
 {
 
    if ( pmyId.size() == 0 )
@@ -127,7 +127,7 @@ bool XMPPInitialise( const std::string &pmyId )
       return false;
    }
 
-   myId = std::string( pmyId ) + "@localhost";
+   myId = QString( pmyId ) + "@localhost";
 
    if ( MinosThreadObj )
    {
@@ -194,7 +194,7 @@ bool XMPPClosedown()
 */
 void MinosThread::onLog ( const char *data, size_t /*size*/, int is_incoming )
 {
-   std::string logbuff;
+   QString logbuff;
    if ( is_incoming )
       logbuff += "RECV";
    else
@@ -207,7 +207,7 @@ void MinosThread::onLog ( const char *data, size_t /*size*/, int is_incoming )
 }
 
 //---------------------------------------------------------------------------
-MinosThread::MinosThread( const std::string &jid )
+MinosThread::MinosThread( const QString &jid )
       : ic( 0 ), jabberId( jid )//, lastEventTick( GetTickCount() )
 {
 }
@@ -270,7 +270,7 @@ void MinosThread::sendAction( XStanza *a )
    {
       // Two stage so we can keep prs private
       a->setNextId();   // only happens if no Id already
-      std::string xmlstr = a->getActionMessage();
+      TIXML_STRING xmlstr = a->getActionMessage().toStdString();
       ic->minos_send ( xmlstr );
    }
 }
@@ -290,8 +290,8 @@ void MinosThread::dispatchResponse( XStanza *xs )
          if ( rr->methodName == "ClientSetFromId" )
          {
             // server will return the REAL Jid
-            std::string ouraddr;
-            std::string from;
+            QString ouraddr;
+            QString from;
             if ( rr->getStringArg( 0, from ) )
             {
                // check that from is what connected to us...

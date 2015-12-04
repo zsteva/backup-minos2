@@ -55,7 +55,7 @@ BaseContestLog::BaseContestLog( void ) :
 #ifdef UKAC_BONUSES
    try
    {
-   //std::map<std::string, int> locBonuses;
+   //std::map<QString, int> locBonuses;
 
    // Load the loc bonuses from control\M8.ini
 
@@ -102,7 +102,7 @@ IO83=1000
          }
          else
          {
-            locBonuses[std::string(AnsiString(name).c_str())] = value.ToIntDef(1000);
+            locBonuses[QString(AnsiString(name).c_str())] = value.ToIntDef(1000);
          }
       }
    }
@@ -338,8 +338,9 @@ bool BaseContestLog::getsdist( const char *loc, char *minloc, double &mindist )
    return false;
 }
 //---------------------------------------------------------------------------
-int BaseContestLog::CalcNearest( const std::string &scalcloc )
+int BaseContestLog::CalcNearest( const QString &qscalcloc )
 {
+    std::string scalcloc = qscalcloc.toStdString();
    const char * calcloc = scalcloc.c_str();
 
    if ( scalcloc.size() != 4 )
@@ -420,17 +421,17 @@ bool BaseContestLog::updateStat( BaseContact *cct )
 {
    // need to check if a valid DTG
    bool acted = false;
-   dtg tnow( true );
+   QDateTime tnow = QDateTime::currentDateTimeUtc();
 
-   time_t nowTime;
-   time_t cttime;
+   QDateTime nowTime;
+   QDateTime cttime;
 
-   if ( ( cct->contactScore.getValue() <= 0 ) || !cct->time.getDtg( cttime ) || ! tnow.getDtg( nowTime) )
+   if ( ( cct->contactScore.getValue() <= 0 ) || !cct->time.getDtg( cttime ) )
       return true;
 
-   time_t t = nowTime + MinosParameters::getMinosParameters() ->getBigClockCorrection();
+   QDateTime t = tnow.addSecs( MinosParameters::getMinosParameters() ->getBigClockCorrection());
 
-   time_t tdiff = t - cttime;
+   int tdiff = cttime.secsTo(t);
    if ( tdiff < 0 )
       return true;
 
@@ -453,7 +454,7 @@ bool BaseContestLog::updateStat( BaseContact *cct )
 
    // find the time since the beginning of the contest
 
-   QDateTime  contestStart = CanonicalToTDT(DTGStart.getValue().c_str());
+   QDateTime  contestStart = CanonicalToTDT(DTGStart.getValue());
    int fromContestStart = contestStart.secsTo(QDateTime::currentDateTime());
    if (sp1 *2 > fromContestStart)
    {
@@ -569,17 +570,17 @@ BaseContact *BaseContestLog::getBestDX( void )
       isBestDX( ( *i ), &bestDX );
    return bestDX;
 }
-std::string BaseContestLog::dateRange( DTG dstyle )
+QString BaseContestLog::dateRange( DTG dstyle )
 {
-   std::string date1 = "999999";
-   std::string date2 = "000000";
+   QString date1 = "999999";
+   QString date2 = "000000";
    LogIterator low = ctList.end();
    LogIterator high = ctList.end();
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
       if ( ( *i ) ->contactScore.getValue() > 0 )
       {
-         std::string qsodate = ( *i ) ->time.getDate( DTGLOG );
+         QString qsodate = ( *i ) ->time.getDate( DTGLOG );
          if ( qsodate < date1 )
          {
             low = i;
@@ -599,7 +600,7 @@ std::string BaseContestLog::dateRange( DTG dstyle )
    return ( *low ) ->time.getDate( dstyle ) + ";" + ( *high ) ->time.getDate( dstyle );
 }
 
-void BaseContestLog::setScore( std::string &buff )
+void BaseContestLog::setScore( QString &buff )
 {
    ContestScore cs(this, QDateTime::currentDateTime());
    getScoresTo(cs, QDateTime::currentDateTime());
@@ -639,9 +640,9 @@ void BaseContestLog::scanContest( void )
    unfilledCount = 0;
 
 //   oplist.clear();
-   std::string curop1 = currentOp1.getValue();
+   QString curop1 = currentOp1.getValue();
    oplist.insert( curop1 );
-   std::string curop2 = currentOp2.getValue();
+   QString curop2 = currentOp2.getValue();
    oplist.insert( curop2 );
    while ( nextScan >= -1 )
    {
@@ -668,7 +669,7 @@ void BaseContestLog::scanContest( void )
       {
          unfilledCount++;
       }
-      std::string temp = nct->op1.getValue();
+      QString temp = nct->op1.getValue();
       if (temp.size())
       {
          curop1 = temp;
@@ -755,10 +756,10 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
 
 // NB this doesn't cope with crazy times from test contests and QSOs
 
-      QDateTime start = CanonicalToTDT( DTGStart.getValue().c_str() );
+      QDateTime start = CanonicalToTDT( DTGStart.getValue() );
 
-      std::string dtgstr = nct->time.getDate(DTGFULL) + nct->time.getTime(DTGLOG);
-      QDateTime ncheck = CanonicalToTDT( dtgstr.c_str() );
+      QString dtgstr = nct->time.getDate(DTGFULL) + nct->time.getTime(DTGLOG);
+      QDateTime ncheck = CanonicalToTDT( dtgstr );
 
 //      int elapsed = start.secsTo(ncheck);
       if (ncheck > limit)
@@ -770,12 +771,12 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
 
       if ( nct->contactFlags.getValue() & ( NON_SCORING | DONT_PRINT | LOCAL_COMMENT | COMMENT_ONLY | TO_BE_ENTERED ) )
       {
-         //trace(std::string("flags ") + nct->cs.fullCall.getValue() + " " + nct->serials.getValue());
+         //trace(QString("flags ") + nct->cs.fullCall.getValue() + " " + nct->serials.getValue());
          continue;
       }
       if (nct->cs.valRes != CS_OK)
       {
-         //trace(std::string("bad callsign ") + nct->cs.fullCall.getValue() + " " + nct->serials.getValue());
+         //trace(QString("bad callsign ") + nct->cs.fullCall.getValue() + " " + nct->serials.getValue());
          continue;
       }
 
@@ -820,7 +821,7 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
       }
       else
       {
-         trace(std::string("neg score ") + nct->cs.fullCall.getValue() + " " + nct->serials.getValue());
+         trace(QString("neg score ") + nct->cs.fullCall.getValue() + " " + nct->serials.getValue());
       }
    }
    cs.nmults = 0;
@@ -1064,7 +1065,7 @@ void dupsheet::clear()
    ctList.clear();
 }
 //============================================================
-void BaseContestLog::processMinosStanza( const std::string &methodName, MinosTestImport * const mt )
+void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImport * const mt )
 {
    unsigned long logSequence = ( unsigned long ) - 1;
 
@@ -1204,7 +1205,7 @@ void BaseContestLog::setStanza( unsigned int /*stanza*/, int /*stanzaStart*/ )
    // Used in Logger to give file position of stanza
 }
 //====================================================================
-bool BaseContestLog::getStanza( unsigned int /*stanza*/, std::string & /*stanzaData*/ )
+bool BaseContestLog::getStanza( unsigned int /*stanza*/, QString & /*stanzaData*/ )
 {
    // not used in base log
    // used in Logger to get stanza direct from a file
@@ -1227,11 +1228,11 @@ bool BaseContestLog::checkTime(const dtg &t)
 {
 //   try
 //   {
-      std::string dtgstr = t.getDate(DTGFULL) + t.getTime(DTGLOG);
+      QString dtgstr = t.getDate(DTGFULL) + t.getTime(DTGLOG);
 
-      QDateTime check = CanonicalToTDT( dtgstr.c_str() );
-      QDateTime start = CanonicalToTDT( DTGStart.getValue().c_str() );
-      QDateTime end = CanonicalToTDT( DTGEnd.getValue().c_str() );
+      QDateTime check = CanonicalToTDT( dtgstr );
+      QDateTime start = CanonicalToTDT( DTGStart.getValue() );
+      QDateTime end = CanonicalToTDT( DTGEnd.getValue() );
 
       if (check < start)
       {
@@ -1263,20 +1264,20 @@ ContestScore::ContestScore(BaseContestLog *ct, QDateTime limit)
    ct->getScoresTo(*this, limit);
    name = ct->publishedName;
 }
-std::string ContestScore::disp()
+QString ContestScore::disp()
 {
 /*
-   std::string buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:%c%d districts%c:%c%d(%d/%d) locators%c %cbonuses %d(%d)%c = %ld" )
+   QString buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:%c%d districts%c:%c%d(%d/%d) locators%c %cbonuses %d(%d)%c = %ld" )
             %nqsos % contestScore % brcc1 % nctry % brcc2 % brcc3 % ndistrict %
             brcc4 % brloc1 % nlocs % nGlocs % nonGlocs % brloc2
             % brbonus1 % bonus % nbonus % brbonus2
             % totalScore ).str();
   */
-   std::string buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:%c%d districts%c:%c%d(%d/%d) locators%c = %ld" )
-            %nqsos % contestScore % brcc1 % nctry % brcc2 % brcc3 % ndistrict %
-            brcc4 % brloc1 % nlocs % nGlocs % nonGlocs % brloc2
+   QString buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5:%6%7 districts%8:%9%d(%10/%11) locators%12 = %13" )
+            .arg(nqsos).arg(contestScore).arg(brcc1).arg(nctry).arg(brcc2).arg(brcc3).arg(ndistrict)
+            .arg(brcc4).arg(brloc1).arg(nlocs).arg(nGlocs).arg(nonGlocs).arg(brloc2)
 //            % brbonus1 % bonus % nbonus % brbonus2
-            % totalScore ).str();
+            .arg(totalScore );
    return buff;
 }
 //====================================================================

@@ -21,14 +21,14 @@ class matchElement
       bool match;
       bool empty;
       //      bool trimmed;
-      std::string mstr;
-      std::string rawstr;
+      QString mstr;
+      QString rawstr;
 
       matchElement( void );
       unsigned char set
-         ( const std::string & );
-      unsigned char checkGreater( const std::string & );
-      bool checkMatch( const std::string & );
+         ( const QString & );
+      unsigned char checkGreater( const QString & );
+      bool checkMatch( const QString & );
 };
 struct LtMatch
 {
@@ -80,8 +80,8 @@ class Matcher
       CountryEntry *ce;
 
       int thisContestMatched;
-      virtual void matchDistrict( const std::string &extraText ) = 0;
-      virtual void matchCountry( const std::string &cs ) = 0;
+      virtual void matchDistrict( const QString &extraText ) = 0;
+      virtual void matchCountry( const QString &cs ) = 0;
       virtual void replaceList( TMatchCollection *matchCollection ) = 0;
    public:
 
@@ -106,8 +106,8 @@ class Matcher
 };
 class LogMatcher: public Matcher
 {
-      virtual void matchDistrict( const std::string &extraText );
-      virtual void matchCountry( const std::string &cs );
+      virtual void matchDistrict( const QString &extraText );
+      virtual void matchCountry( const QString &cs );
       virtual void replaceList( TMatchCollection *matchCollection );
    public:
       LogMatcher( );
@@ -118,8 +118,8 @@ class LogMatcher: public Matcher
 };
 class ListMatcher: public Matcher
 {
-      virtual void matchDistrict( const std::string &extraText );
-      virtual void matchCountry( const std::string &cs );
+      virtual void matchDistrict( const QString &extraText );
+      virtual void matchCountry( const QString &cs );
       virtual void replaceList( TMatchCollection *matchCollection );
    public:
       ListMatcher( );
@@ -155,10 +155,10 @@ class TMatchThread : public QThread
       TMatchCollection *myMatches;        // used to pass the match list out
       TMatchCollection *myListMatches;    // used to pass the match list out
 
-      std::string ctrymatch;
-      std::string distmatch;
+      QString ctrymatch;
+      QString distmatch;
 
-      std::string matchStatus;
+      QString matchStatus;
 
       void doReplaceContestList( void );
       void doReplaceListList( void );
@@ -176,13 +176,13 @@ class TMatchThread : public QThread
           Terminated = true;
       }
 
-      void ShowMatchStatus( std::string mess );
+      void ShowMatchStatus( QString mess );
       void replaceContestList( TMatchCollection *matchCollection );
       void replaceListList( TMatchCollection *matchCollection );
-      void matchCountry( std::string cs );
-      void matchDistrict( std::string dist );
+      void matchCountry( QString cs );
+      void matchDistrict( QString dist );
 
-      static std::string getMatchStatus( );
+      static QString getMatchStatus( );
       static void InitialiseMatchThread();
       static void FinishMatchThread();
       static TMatchThread *getMatchThread()

@@ -21,7 +21,7 @@ class MinosConnection
       RPCDispatcher *user_data;
       QTcpSocket sock;
       char rxbuff[ RXBUFFLEN ];
-      std::string packetbuff;
+      TIXML_STRING packetbuff;
       void io_close ();
       bool io_connect ( const char *server, int port );
       bool io_send ( const char *data, size_t len );
@@ -33,7 +33,7 @@ class MinosConnection
       bool startConnection();
       bool runConnection();
       bool closeConnection();
-      bool minos_send( const std::string &data );
+      bool minos_send( const TIXML_STRING &data );
       bool minos_send( TiXmlElement *data );
 };
 #endif

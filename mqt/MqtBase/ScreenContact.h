@@ -38,18 +38,18 @@ class ScreenContact
       locator loc;   //CONTAIN MinosItem
       dtg time;      //CONTAIN MinosItem
 
-      std::string mode;
-      std::string reps;
-      std::string serials;
-      std::string repr;
-      std::string serialr;
-      std::string extraText;
-      std::string comments;
+      QString mode;
+      QString reps;
+      QString serials;
+      QString repr;
+      QString serialr;
+      QString extraText;
+      QString comments;
       unsigned short contactFlags;
-      std::string forcedMult;
+      QString forcedMult;
 
-      std::string op1;
-      std::string op2;
+      QString op1;
+      QString op2;
       //------------------
 
       bool screenQSOValid;

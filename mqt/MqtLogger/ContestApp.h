@@ -91,8 +91,8 @@ class TContestApp : public MinosParameters
       {
          return magneticVariation;
       }
-      virtual void getDisplayColumnWidth( const std::string &key, int &val, int def ) override;
-      virtual void setDisplayColumnWidth( const std::string &key, int val ) override;
+      virtual void getDisplayColumnWidth( const QString &key, int &val, int def ) override;
+      virtual void setDisplayColumnWidth( const QString &key, int val ) override;
       virtual void getBoolDisplayProfile( int enumkey, bool &value ) override;
       virtual void setBoolDisplayProfile( int enumkey, bool value ) override;
       virtual void flushDisplayProfile( void ) override;

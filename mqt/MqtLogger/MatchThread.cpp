@@ -76,8 +76,8 @@ void TMatchThread::ScreenContactChanged_Event ( /*MinosEventBase & Event*/ )
 void TMatchThread::CountrySelect_Event ( /*MinosEventBase & Event*/ )
 {
     /*
-   ActionEvent2<std::string,  BaseContestLog *, EN_CountrySelect> & S = dynamic_cast<ActionEvent2<std::string, BaseContestLog *, EN_CountrySelect> &> ( Event );
-   std::string sel = S.getData();
+   ActionEvent2<QString,  BaseContestLog *, EN_CountrySelect> & S = dynamic_cast<ActionEvent2<QString, BaseContestLog *, EN_CountrySelect> &> ( Event );
+   QString sel = S.getData();
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    if (S.getContext() == ct)
    {
@@ -92,8 +92,8 @@ void TMatchThread::CountrySelect_Event ( /*MinosEventBase & Event*/ )
 void TMatchThread::DistrictSelect_Event ( /*MinosEventBase & Event*/ )
 {
     /*
-   ActionEvent2<std::string,  BaseContestLog *, EN_DistrictSelect> & S = dynamic_cast<ActionEvent2<std::string, BaseContestLog *, EN_DistrictSelect> &> ( Event );
-   std::string sel = S.getData();
+   ActionEvent2<QString,  BaseContestLog *, EN_DistrictSelect> & S = dynamic_cast<ActionEvent2<QString, BaseContestLog *, EN_DistrictSelect> &> ( Event );
+   QString sel = S.getData();
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    if (S.getContext() == ct)
    {
@@ -106,8 +106,8 @@ void TMatchThread::DistrictSelect_Event ( /*MinosEventBase & Event*/ )
 void TMatchThread::LocatorSelect_Event (/*MinosEventBase & Event*/)
 {
     /*
-   ActionEvent2<std::string,  BaseContestLog *, EN_LocatorSelect> & S = dynamic_cast<ActionEvent2<std::string, BaseContestLog *, EN_LocatorSelect> &> ( Event );
-   std::string sel = S.getData();
+   ActionEvent2<QString,  BaseContestLog *, EN_LocatorSelect> & S = dynamic_cast<ActionEvent2<QString, BaseContestLog *, EN_LocatorSelect> &> ( Event );
+   QString sel = S.getData();
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    if (S.getContext() == ct)
    {
@@ -196,11 +196,11 @@ void TMatchThread::replaceListList( TMatchCollection *matchCollection )
    //Synchronize( &doReplaceListList );
 }
 //---------------------------------------------------------------------------
-void TMatchThread::ShowMatchStatus( std::string mess )
+void TMatchThread::ShowMatchStatus( QString mess )
 {
    matchStatus = mess;
 }
-std::string TMatchThread::getMatchStatus( )
+QString TMatchThread::getMatchStatus( )
 {
    if ( matchThread )
    {
@@ -220,7 +220,7 @@ void TMatchThread::doMatchCountry( void )
    catch ( ... )
    {}
 }
-void TMatchThread::matchCountry( std::string cs )
+void TMatchThread::matchCountry( QString cs )
 {
    ctrymatch = cs;
    //Synchronize( &doMatchCountry );
@@ -236,7 +236,7 @@ void TMatchThread::doMatchDistrict( void )
    catch ( ... )
    {}
 }
-void  TMatchThread::matchDistrict( std::string dist )
+void  TMatchThread::matchDistrict( QString dist )
 {
    distmatch = dist;
    //Synchronize( &doMatchDistrict );
@@ -263,8 +263,8 @@ matchElement::matchElement( void ) : match( false ), empty( true )
    mstr[ 0 ] = 0;
    rawstr[ 0 ] = 0;
 }
-static std::string match_temp;
-unsigned char matchElement::checkGreater( const std::string &s )
+static QString match_temp;
+unsigned char matchElement::checkGreater( const QString &s )
 {
    unsigned char res = 0;
    match_temp[ 0 ] = 0;
@@ -295,7 +295,7 @@ unsigned char matchElement::checkGreater( const std::string &s )
    return res;
 }
 unsigned char matchElement::set
-   ( const std::string &s )
+   ( const QString &s )
 {
    unsigned char res = 0;
    match_temp[ 0 ] = 0;
@@ -312,7 +312,7 @@ unsigned char matchElement::set
 
    res = checkGreater( s );
 
-   if ( match_temp[ 0 ] )
+   if ( !match_temp.isEmpty() )
    {
       empty = false;
       match = true;
@@ -322,7 +322,7 @@ unsigned char matchElement::set
    rawstr = match_temp;
    return res;
 }
-bool matchElement::checkMatch( const std::string &s )
+bool matchElement::checkMatch( const QString &s )
 {
    bool ismatch = true;
    if ( match && !empty )
@@ -461,11 +461,11 @@ LogMatcher::LogMatcher()
 {}
 LogMatcher::~LogMatcher()
 {}
-void LogMatcher::matchDistrict( const std::string &extraText )
+void LogMatcher::matchDistrict( const QString &extraText )
 {
    TMatchThread::getMatchThread() ->matchDistrict( extraText );   // scroll to
 }
-void LogMatcher::matchCountry( const std::string &cs )
+void LogMatcher::matchCountry( const QString &cs )
 {
    TMatchThread::getMatchThread() ->matchCountry( cs );   // scroll to
 }
@@ -519,7 +519,8 @@ bool LogMatcher::idleMatch( int limit )
                         if ( matchcs.match )
                         {
                            bool dropthrough = false;
-                           const char *c = matchcs.mstr.c_str();
+                           std::string smstr = matchcs.mstr.toStdString();
+                           const char *c = smstr.c_str();
                            // need to trim out any leading and trailing
                            while ( *c && *c != '/' )
                               c++;
@@ -532,18 +533,18 @@ bool LogMatcher::idleMatch( int limit )
 
                            if ( *c && *c2 )
                            {
-                              matchcs.mstr = std::string( c ).substr( 0, c2 - c );	// copy back over ourselves
+                              matchcs.mstr = QString( c ).left(c2 - c );	// copy back over ourselves
                            }
                            else
-                              if ( *c && ( c - matchcs.mstr.c_str() < 3 ) && ( strlen( c ) > 2 ) )
+                              if ( *c && ( c - smstr.c_str() < 3 ) && ( strlen( c ) > 2 ) )
                               {
                                  // prefix less than 3 chars and suffix more than 1 character
-                                 matchcs.mstr = std::string( c );	// copy back over ourselves
+                                 matchcs.mstr = QString( c );	// copy back over ourselves
                               }
                               else
                                  if ( *c == '/' )
                                  {
-                                    matchcs.mstr = matchcs.mstr.substr( 0, c - matchcs.mstr.c_str() );	// copy back over ourselves
+                                    matchcs.mstr = matchcs.mstr.left( c - smstr.c_str() );	// copy back over ourselves
                                     //                                 *c = 0;				// force a stop on the /
                                  }
                                  else
@@ -589,8 +590,9 @@ bool LogMatcher::idleMatch( int limit )
                         {
                            // We know that cs is not empty
                            // strip temp cs of its leading country and number
-                           const char * mstrStart = matchcs.mstr.c_str();
-                           const char * c = &mstrStart[ matchcs.mstr.length() ];
+                            std::string smstrStart = matchcs.mstr.toStdString();
+                           const char * mstrStart = smstrStart.c_str();
+                           const char * c = &mstrStart[ smstrStart.length() ];
 
                            while ( c > mstrStart )
                            {
@@ -638,7 +640,7 @@ bool LogMatcher::idleMatch( int limit )
                if ( bool( ct ) && ( mp != Country )  && ( mp != District )  && ( mp != Locator ) )
                   addMatch( ct->DupSheet.getCurDup(), ct );	// in case it isn't already
 
-               std::string buff;
+               QString buff;
                // now make it display
                replaceList( matchCollection );
 
@@ -646,7 +648,7 @@ bool LogMatcher::idleMatch( int limit )
                {
                   // conteste focused the top line of matches here
                   // want to manage plurals, and local/other contests
-                  std::string matchSuffix = "Possible";
+                  QString matchSuffix = "Possible";
                   if (mp == Country)
                   {
                      matchSuffix = "Country";
@@ -659,8 +661,10 @@ bool LogMatcher::idleMatch( int limit )
                   {
                      matchSuffix = "Locator";
                   }
-                  buff = ( boost::format( " - %s%d %s matches" ) % ( ( cnt > MATCH_LIM ) ? ">" : "" ) % thisContestMatched
-                           % ( ( mp == Exact ) ? "" : matchSuffix.c_str() ) ).str();
+                  buff = QString( " - %1%2 %3 matches" )
+                          .arg ( ( cnt > MATCH_LIM ) ? ">" : "" )
+                          .arg(thisContestMatched)
+                          .arg( ( mp == Exact ) ? "" : matchSuffix );
                }
                else
                {
@@ -816,9 +820,9 @@ ListMatcher::ListMatcher()
 {}
 ListMatcher::~ListMatcher()
 {}
-void ListMatcher::matchDistrict( const std::string &/*extraText*/ )
+void ListMatcher::matchDistrict( const QString &/*extraText*/ )
 {}
-void ListMatcher::matchCountry( const std::string &/*cs*/ )
+void ListMatcher::matchCountry( const QString &/*cs*/ )
 {}
 void ListMatcher::addMatch( ListContact *cct, ContactList * ccon )
 {
@@ -868,7 +872,8 @@ bool ListMatcher::idleMatch( int limit )
                         if ( matchcs.match )
                         {
                            bool dropthrough = false;
-                           const char *c = matchcs.mstr.c_str();
+                           std::string smatchcs = matchcs.mstr.toStdString();
+                           const char *c = smatchcs.c_str();
                            // need to trim out any leading and trailing
                            while ( *c && *c != '/' )
                               c++;
@@ -881,18 +886,18 @@ bool ListMatcher::idleMatch( int limit )
 
                            if ( *c && *c2 )
                            {
-                              matchcs.mstr = std::string( c ).substr( 0, c2 - c );	// copy back over ourselves
+                              matchcs.mstr = QString( c ).left( c2 - c );	// copy back over ourselves
                            }
                            else
-                              if ( *c && ( c - matchcs.mstr.c_str() < 3 ) && ( strlen( c ) > 2 ) )
+                              if ( *c && ( c - smatchcs.c_str() < 3 ) && ( strlen( c ) > 2 ) )
                               {
                                  // prefix less than 3 chars and suffix more than 1 character
-                                 matchcs.mstr = std::string( c );	// copy back over ourselves
+                                 matchcs.mstr = QString( c );	// copy back over ourselves
                               }
                               else
                                  if ( *c == '/' )
                                  {
-                                    matchcs.mstr = matchcs.mstr.substr( 0, c - matchcs.mstr.c_str() );	// copy back over ourselves
+                                    matchcs.mstr = matchcs.mstr.left( c - smatchcs.c_str() );	// copy back over ourselves
                                     //                                 *c = 0;				// force a stop on the /
                                  }
                                  else
@@ -938,8 +943,9 @@ bool ListMatcher::idleMatch( int limit )
                         {
                            // We know that cs is not empty
                            // strip temp cs of its leading country and number
-                           const char * mstrStart = matchcs.mstr.c_str();
-                           const char * c = &mstrStart[ matchcs.mstr.length() ];
+                            std::string smstrStart = matchcs.mstr.toStdString();
+                           const char * mstrStart = smstrStart.c_str();
+                           const char * c = &smstrStart[ smstrStart.length() ];
 
                            while ( c > mstrStart )
                            {
@@ -983,7 +989,7 @@ bool ListMatcher::idleMatch( int limit )
                matchStarted = false;
                setMatchRequired( false );
 
-               std::string buff;
+               QString buff;
                // now make it display
                replaceList( matchCollection );
 

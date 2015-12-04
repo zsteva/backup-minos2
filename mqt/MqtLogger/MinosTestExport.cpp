@@ -11,7 +11,7 @@
 #include "MinosTestExport.h"
 
 //==============================================================================
-std::string fileHeader = "<!--\r\n"
+QString fileHeader = "<!--\r\n"
                          "====================================================\r\n"
                          "\r\nDO NOT SEND THIS FILE AS YOUR ENTRY!\r\n\r\n"
                          "Use \"File\" | \"Produce Entry/Export File...\"\r\n"
@@ -31,7 +31,7 @@ MinosTestExport::~MinosTestExport()
 
 // AND (as for import) we need to get the contest object to provide the stanzas
 
-void MinosTestExport::sendRequest(boost::shared_ptr<QFile> expfd, const std::string &cmd, RPCParamStruct *st )
+void MinosTestExport::sendRequest(boost::shared_ptr<QFile> expfd, const QString &cmd, RPCParamStruct *st )
 {
    RPCArgs * MArgs = new RPCArgs;
    MArgs->addParam( boost::shared_ptr<RPCParam>(st) );
@@ -39,14 +39,14 @@ void MinosTestExport::sendRequest(boost::shared_ptr<QFile> expfd, const std::str
    RPCRequest *m = new RPCRequest( "", cmd );
    m->args = MArgs->args;
 
-   std::string req = m->getActionMessage() + "\r\n";
+   QString req = m->getActionMessage() + "\r\n";
 
    int fpos = expfd->size();
    if (!expfd->seek(fpos))
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "(write) seek failed!" );
    }
-   unsigned int written = expfd->write( req.c_str(), req.size() );
+   int written = expfd->write( req.toStdString().c_str(), req.size() );
    if ( written != req.size() )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
@@ -353,10 +353,10 @@ int MinosTestExport::exportAllDetails(boost::shared_ptr<QFile> minosContestFile,
    stanzaCount = 0;
    if ( newfile )
    {
-      //      std::string lbuff = "<?xml version='1.0'?><stream:stream xmlns:stream='http://etherx.jabber.org/streams' xmlns='jabber:client' version='1.0'>" ;
-      std::string lbuff = "<?xml version='1.0'?><stream:stream xmlns:stream='http://minos.goodey.org.uk/streams' xmlns='minos:client' version='1.0'>" ;
+      //      QString lbuff = "<?xml version='1.0'?><stream:stream xmlns:stream='http://etherx.jabber.org/streams' xmlns='jabber:client' version='1.0'>" ;
+      QString lbuff = "<?xml version='1.0'?><stream:stream xmlns:stream='http://minos.goodey.org.uk/streams' xmlns='minos:client' version='1.0'>" ;
       lbuff += "\r\n" + fileHeader;
-      unsigned int ret = minosContestFile->write(lbuff.c_str(), lbuff.length());
+      int ret = minosContestFile->write(lbuff.toStdString().c_str(), lbuff.length());
       if ( ret != lbuff.length() )
       {
          MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
@@ -377,9 +377,9 @@ int MinosTestExport::exportAllDetails(boost::shared_ptr<QFile> minosContestFile,
 int MinosTestExport::exportTest( boost::shared_ptr<QFile> expfd, int mindump, int maxdump )
 {
    stanzaCount = 0;
-   std::string lbuff = "<?xml version='1.0'?><stream:stream xmlns:stream='http://minos.goodey.org.uk/streams' xmlns='minos:client' version='1.0'>" ;
+   QString lbuff = "<?xml version='1.0'?><stream:stream xmlns:stream='http://minos.goodey.org.uk/streams' xmlns='minos:client' version='1.0'>" ;
    lbuff += "\r\n" + fileHeader;
-   unsigned int ret = expfd->write(lbuff.c_str(), lbuff.length());
+   int ret = expfd->write(lbuff.toStdString().c_str(), lbuff.length());
    if (  ret != lbuff.length() )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
@@ -408,7 +408,7 @@ int MinosTestExport::exportTest( boost::shared_ptr<QFile> expfd, int mindump, in
          continue;
       }
 
-      int serials = atoi( lct->serials.getValue().c_str() );
+      int serials = lct->serials.getValue().toInt();
       // dump the contact, until serial seen
 
       if ( ( serials >= mindump ) || ( mindump == 0 ) )

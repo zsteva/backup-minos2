@@ -26,11 +26,11 @@ int MinosParametersAdapter::getMagneticVariation()
 {
    return 0;
 }
-void MinosParametersAdapter::getDisplayColumnWidth( const std::string &/*key*/, int &val, int def )
+void MinosParametersAdapter::getDisplayColumnWidth( const QString &/*key*/, int &val, int def )
 {
    val = def;
 }
-void MinosParametersAdapter::setDisplayColumnWidth( const std::string &/*key*/, int /*val*/ )
+void MinosParametersAdapter::setDisplayColumnWidth( const QString &/*key*/, int /*val*/ )
 {
 }
 void MinosParametersAdapter::getBoolDisplayProfile( int /*enumkey*/, bool &value )

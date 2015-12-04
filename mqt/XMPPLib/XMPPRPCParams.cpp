@@ -88,19 +88,19 @@ bool RPCParam::getDouble( double & )
 {
    return false;
 }
-bool RPCParam::getString( std::string & )
+bool RPCParam::getString( QString & )
 {
    return false;
 }
-bool RPCParam::getBase64( std::string & )
+bool RPCParam::getBase64( QString & )
 {
    return false;
 }
-bool RPCParam::getDtg( std::string & )
+bool RPCParam::getDtg( QString & )
 {
    return false;
 }
-bool RPCParam::getMember( const std::string &, boost::shared_ptr<RPCParam>& )
+bool RPCParam::getMember( const QString &, boost::shared_ptr<RPCParam>& )
 {
    return false;
 }
@@ -116,32 +116,32 @@ bool RPCParam::getElement( unsigned int , boost::shared_ptr<RPCParam>& )
 {
    return false;
 }
-void RPCParam::addMember( boost::shared_ptr<RPCParam> , const std::string &/*name*/ )
+void RPCParam::addMember( boost::shared_ptr<RPCParam> , const QString &/*name*/ )
 {
    throw Exception("addMember to non-struct RPCParam");
 }
 
-void RPCParam::addMember( int, const std::string &/*name*/ )
+void RPCParam::addMember( int, const QString &/*name*/ )
 {
    throw Exception("addMember to non-struct RPCParam");
 }
-void RPCParam::addMember( bool, const std::string &/*name*/ )
+void RPCParam::addMember( bool, const QString &/*name*/ )
 {
    throw Exception("addMember to non-struct RPCParam");
 }
-void RPCParam::addMember( double, const std::string &/*name*/ )
+void RPCParam::addMember( double, const QString &/*name*/ )
 {
    throw Exception("addMember to non-struct RPCParam");
 }
-void RPCParam::addMember( const std::string &, const std::string &/*name*/ )
+void RPCParam::addMember( const QString &, const QString &/*name*/ )
 {
    throw Exception("addMember to non-struct RPCParam");
 }
-void RPCParam::addBase64Member( const std::string &, const std::string &/*name*/ )
+void RPCParam::addBase64Member( const QString &, const QString &/*name*/ )
 {
    throw Exception("addMember to non-struct RPCParam");
 }
-void RPCParam::addDtgMember( const std::string &, const std::string &/*name*/ )
+void RPCParam::addDtgMember( const QString &, const QString &/*name*/ )
 {
    throw Exception("addMember to non-struct RPCParam");
 }
@@ -157,7 +157,7 @@ RPCParamStruct::RPCParamStruct( TiXmlElement &aNode )
    {
       if ( checkElementName( e , "member" ) )
       {
-         std::string pname;
+         QString pname;
          TiXmlElement *valuenode = 0;
          for ( TiXmlElement * f = e->FirstChildElement(); f; f = f->NextSiblingElement() )
          {
@@ -186,32 +186,32 @@ RPCParamStruct::~RPCParamStruct()
    elements.clear(); // clears the shared pointers
 }
 
-void RPCParamStruct::addMember( boost::shared_ptr<RPCParam>p, const std::string &name )
+void RPCParamStruct::addMember( boost::shared_ptr<RPCParam>p, const QString &name )
 {
    p->name = name;
    elements.push_back( p );
 }
-void RPCParamStruct::addMember( int v, const std::string &name )
+void RPCParamStruct::addMember( int v, const QString &name )
 {
    addMember( boost::shared_ptr<RPCParam>(new RPCIntParam( v )), name );
 }
-void RPCParamStruct::addMember( bool v, const std::string &name )
+void RPCParamStruct::addMember( bool v, const QString &name )
 {
    addMember( boost::shared_ptr<RPCParam>(new RPCBooleanParam( v )), name );
 }
-void RPCParamStruct::addMember( double v, const std::string &name )
+void RPCParamStruct::addMember( double v, const QString &name )
 {
    addMember( boost::shared_ptr<RPCParam>(new RPCDoubleParam( v )), name );
 }
-void RPCParamStruct::addMember( const std::string &v, const std::string &name )
+void RPCParamStruct::addMember( const QString &v, const QString &name )
 {
    addMember( boost::shared_ptr<RPCParam>(new RPCStringParam( v )), name );
 }
-void RPCParamStruct::addBase64Member( const std::string &v, const std::string &name )
+void RPCParamStruct::addBase64Member( const QString &v, const QString &name )
 {
    addMember( boost::shared_ptr<RPCParam>(new RPCBase64Param( v )), name );
 }
-void RPCParamStruct::addDtgMember( const std::string &v, const std::string &name )
+void RPCParamStruct::addDtgMember( const QString &v, const QString &name )
 {
    addMember( boost::shared_ptr<RPCParam>(new RPCDtgParam( v )), name );
 }
@@ -228,7 +228,7 @@ void RPCParamStruct::addNode( TiXmlElement &node )
    {
       TiXmlElement mNode( "member" );
       TiXmlElement nNode( "name" );
-      TiXmlText tNode( ( *i ) ->name.c_str() );
+      TiXmlText tNode( ( *i ) ->name.toStdString() );
       nNode.InsertEndChild( tNode );
       mNode.InsertEndChild( nNode );
       ( *i ) ->addValue( mNode );
@@ -237,9 +237,9 @@ void RPCParamStruct::addNode( TiXmlElement &node )
    node.InsertEndChild( sNode );
 
 }
-std::string RPCParamStruct::print()
+QString RPCParamStruct::print()
 {
-   std::string s = "Struct\r\n";
+   QString s = "Struct\r\n";
    for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       s += "Member name " + ( *i ) ->name + "\r\n";
@@ -248,32 +248,32 @@ std::string RPCParamStruct::print()
    s += "End Struct\r\n";
    return s;
 }
-std::string RPCParamStruct::analyse()
+QString RPCParamStruct::analyse()
 {
-   std::string s;
+   QString s;
    for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       if (( *i ) ->name == "lseq" )
       {
          int n = 0;
          ( *i )->getInt(n);
-         std::string s1 = makeStr(n/65536);
-         std::string s2 = (n & 0x8000)?" 1":" 0";
-         std::string s3 = (n & 0x4000)?" 1":" 0";
-         std::string s4 = (n & 0x2000)?" 1":" 0";
-         std::string s5 = (n & 0x1000)?" 1":" 0";
-         std::string s6 = (n & 0x0800)?" 1":" 0";
-         std::string s7 = (n & 0x0400)?" 1":" 0";
-         std::string s8 = (n & 0x0200)?" 1":" 0";
-         std::string s9 = (n & 0x0100)?" 1":" 0";
-         std::string s10 = (n & 0x0080)?" 1":" 0";
-         std::string s11 = (n & 0x0040)?" 1":" 0";
-         std::string s12 = (n & 0x0020)?" 1":" 0";
-         std::string s13 = (n & 0x0010)?" 1":" 0";
-         std::string s14 = (n & 0x0008)?" 1":" 0";
-         std::string s15 = (n & 0x0004)?" 1":" 0";
-         std::string s16 = (n & 0x0002)?" 1":" 0";
-         std::string s17 = (n & 0x0001)?" 1":" 0";
+         QString s1 = QString::number(n/65536);
+         QString s2 = (n & 0x8000)?" 1":" 0";
+         QString s3 = (n & 0x4000)?" 1":" 0";
+         QString s4 = (n & 0x2000)?" 1":" 0";
+         QString s5 = (n & 0x1000)?" 1":" 0";
+         QString s6 = (n & 0x0800)?" 1":" 0";
+         QString s7 = (n & 0x0400)?" 1":" 0";
+         QString s8 = (n & 0x0200)?" 1":" 0";
+         QString s9 = (n & 0x0100)?" 1":" 0";
+         QString s10 = (n & 0x0080)?" 1":" 0";
+         QString s11 = (n & 0x0040)?" 1":" 0";
+         QString s12 = (n & 0x0020)?" 1":" 0";
+         QString s13 = (n & 0x0010)?" 1":" 0";
+         QString s14 = (n & 0x0008)?" 1":" 0";
+         QString s15 = (n & 0x0004)?" 1":" 0";
+         QString s16 = (n & 0x0002)?" 1":" 0";
+         QString s17 = (n & 0x0001)?" 1":" 0";
          s += ( *i ) ->name + "<" + s1 + " : " + s2  + s3  + s4  + s5  + s6  + s7  + s8  + s9  + s10 + s11 + s12  + s13  + s14  + s15  + s16  + s17 + " (" +  ( *i ) ->analyse() + ")>";
       }
       else
@@ -284,7 +284,7 @@ std::string RPCParamStruct::analyse()
    return s;
 }
 
-bool RPCParamStruct::getMember( const std::string &name, boost::shared_ptr<RPCParam>&p )
+bool RPCParamStruct::getMember( const QString &name, boost::shared_ptr<RPCParam>&p )
 {
    for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
@@ -336,7 +336,7 @@ RPCParamArray::RPCParamArray( TiXmlElement &aNode )
    {
       if ( checkElementName( e , "data" ) )
       {
-         std::string pname;
+         QString pname;
          for ( TiXmlElement * f = e->FirstChildElement(); f; f = f->NextSiblingElement() )
          {
             if ( checkElementName( f, "value" ) )
@@ -386,6 +386,18 @@ void RPCParamArray::AddDtgElement( const char *v )
 {
    addElement( boost::shared_ptr<RPCParam>(new RPCDtgParam( v )) );
 }
+void RPCParamArray::addElement( const QString &v )
+{
+   addElement( boost::shared_ptr<RPCParam>(new RPCStringParam( v )) );
+}
+void RPCParamArray::AddBase64Element( const QString &v )
+{
+   addElement( boost::shared_ptr<RPCParam>(new RPCBase64Param( v )) );
+}
+void RPCParamArray::AddDtgElement( const QString &v )
+{
+   addElement( boost::shared_ptr<RPCParam>(new RPCDtgParam( v )) );
+}
 
 void RPCParamArray::addNode( TiXmlElement &node )
 {
@@ -398,9 +410,9 @@ void RPCParamArray::addNode( TiXmlElement &node )
    aNode.InsertEndChild( dNode );
    node.InsertEndChild( aNode );
 }
-std::string RPCParamArray::print()
+QString RPCParamArray::print()
 {
-   std::string s = "Array\r\n";
+   QString s = "Array\r\n";
    for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       s += ( *i ) ->print();
@@ -408,9 +420,9 @@ std::string RPCParamArray::print()
    s += "End Array\r\n";
    return s;
 }
-std::string RPCParamArray::analyse()
+QString RPCParamArray::analyse()
 {
-   std::string s = "[";
+   QString s = "[";
    for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       s += ( *i ) ->analyse();
@@ -458,17 +470,17 @@ void RPCIntParam::addNode( TiXmlElement &node )
    vNode.InsertEndChild( tNode );
    node.InsertEndChild( vNode );
 }
-std::string RPCIntParam::print()
+QString RPCIntParam::print()
 {
    char buff[ 128 ];
    sprintf( buff, "Integer value %d\r\n", value );
-   return std::string( buff );
+   return QString( buff );
 }
-std::string RPCIntParam::analyse()
+QString RPCIntParam::analyse()
 {
    char buff[ 128 ];
    sprintf( buff, "%d", value );
-   return std::string( buff );
+   return QString( buff );
 }
 bool RPCIntParam::getInt( int &res )
 {
@@ -500,13 +512,13 @@ void RPCBooleanParam::addNode( TiXmlElement &node )
    node.InsertEndChild( vNode );
 
 }
-std::string RPCBooleanParam::print()
+QString RPCBooleanParam::print()
 {
    if ( value )
       return "Boolean value true\r\n";
    return "Boolean value false\r\n";
 }
-std::string RPCBooleanParam::analyse()
+QString RPCBooleanParam::analyse()
 {
    if ( value )
       return "true";
@@ -544,17 +556,17 @@ void RPCDoubleParam::addNode( TiXmlElement &node )
    vNode.InsertEndChild( tNode );
    node.InsertEndChild( vNode );
 }
-std::string RPCDoubleParam::print()
+QString RPCDoubleParam::print()
 {
    char buff[ 128 ];
    sprintf( buff, "double value %f\r\n", value );
-   return std::string( buff );
+   return QString( buff );
 }
-std::string RPCDoubleParam::analyse()
+QString RPCDoubleParam::analyse()
 {
    char buff[ 128 ];
    sprintf( buff, "%f", value );
-   return std::string( buff );
+   return QString( buff );
 }
 bool RPCDoubleParam::getDouble( double &res )
 {
@@ -564,7 +576,7 @@ bool RPCDoubleParam::getDouble( double &res )
 
 //---------------------------------------------------------------------------
 // string
-RPCStringParam::RPCStringParam( std::string v ) : value( v )
+RPCStringParam::RPCStringParam( QString v ) : value( v )
 {}
 RPCStringParam::RPCStringParam()
 {}
@@ -583,7 +595,7 @@ void RPCStringParam::addNode( TiXmlElement &node )
    TiXmlElement vNode( "string" );
 
    /*
-         std::string Out;
+         QString Out;
          int nIn = 0;
       
          int nInLen = value.size();
@@ -629,20 +641,20 @@ void RPCStringParam::addNode( TiXmlElement &node )
          // We need to add XML character escaping here
          TiXmlText tNode( Out );
    */
-   TiXmlText tNode( value );
+   TiXmlText tNode( value.toStdString().c_str() );
    vNode.InsertEndChild( tNode );
    node.InsertEndChild( vNode );
 }
-std::string RPCStringParam::print()
+QString RPCStringParam::print()
 {
-   std::string p = "String value \"" + value + "\"\r\n";
+   QString p = "String value \"" + value + "\"\r\n";
    return p;
 }
-std::string RPCStringParam::analyse()
+QString RPCStringParam::analyse()
 {
    return "'" + value + "'";
 }
-bool RPCStringParam::getString( std::string &res )
+bool RPCStringParam::getString( QString &res )
 {
    res = value;
    return true;
@@ -650,7 +662,7 @@ bool RPCStringParam::getString( std::string &res )
 
 //---------------------------------------------------------------------------
 // <dateTime.iso8601>
-RPCDtgParam::RPCDtgParam( std::string v ) : value( v )
+RPCDtgParam::RPCDtgParam( QString v ) : value( v )
 {}
 RPCDtgParam::RPCDtgParam()
 {}
@@ -667,19 +679,19 @@ RPCDtgParam::~RPCDtgParam()
 void RPCDtgParam::addNode( TiXmlElement &node )
 {
    TiXmlElement vNode( "dateTime.iso8601" );
-   TiXmlText tNode( value );
+   TiXmlText tNode( value.toStdString().c_str() );
    vNode.InsertEndChild( tNode );
    node.InsertEndChild( vNode );
 }
-std::string RPCDtgParam::print()
+QString RPCDtgParam::print()
 {
    return "dateTime.iso8601 value \"" + value + "\"\r\n";
 }
-std::string RPCDtgParam::analyse()
+QString RPCDtgParam::analyse()
 {
    return value;
 }
-bool RPCDtgParam::getDtg( std::string &res )
+bool RPCDtgParam::getDtg( QString &res )
 {
    res = value;
    return true;
@@ -689,7 +701,7 @@ bool RPCDtgParam::getDtg( std::string &res )
 // This code assumes that we are base64'ing a string, rather than binary...
 // NOT a correct assumption!
 
-RPCBase64Param::RPCBase64Param( std::string v ) : value( v )
+RPCBase64Param::RPCBase64Param( QString v ) : value( v )
 {
    //   char * b64 = iks_base64_encode( v.c_str(), ( unsigned int ) ( v.length() ) );
    //   value = b64;
@@ -713,19 +725,19 @@ RPCBase64Param::~RPCBase64Param()
 void RPCBase64Param::addNode( TiXmlElement &node )
 {
    TiXmlElement vNode( "base64" );
-   TiXmlText tNode( value );
+   TiXmlText tNode( value.toStdString().c_str() );
    vNode.InsertEndChild( tNode );
    node.InsertEndChild( vNode );
 }
-std::string RPCBase64Param::print()
+QString RPCBase64Param::print()
 {
    return "Base64 value \"" + value + "\"\r\n";
 }
-std::string RPCBase64Param::analyse()
+QString RPCBase64Param::analyse()
 {
    return value;
 }
-bool RPCBase64Param::getBase64( std::string &res )
+bool RPCBase64Param::getBase64( QString &res )
 {
    res = value;
    return true;
@@ -758,15 +770,15 @@ void RPCArgs::addParam( double v )
 {
    addParam( boost::shared_ptr<RPCParam>(new RPCDoubleParam( v )) );
 }
-void RPCArgs::addParam( const std::string &v )
+void RPCArgs::addParam( const QString &v )
 {
    addParam( boost::shared_ptr<RPCParam>(new RPCStringParam( v )) );
 }
-void RPCArgs::addBase64Param( const std::string &v )
+void RPCArgs::addBase64Param( const QString &v )
 {
    addParam( boost::shared_ptr<RPCParam>(new RPCBase64Param( v )) );
 }
-void RPCArgs::addDtgParam( const std::string &v )
+void RPCArgs::addDtgParam( const QString &v )
 {
    addParam( boost::shared_ptr<RPCParam>(new RPCDtgParam( v )) );
 }
@@ -783,13 +795,13 @@ TiXmlElement *RPCArgs::makeParamsNode( )
    return pNode;
 
 }
-std::string RPCArgs::makeParamsString()
+QString RPCArgs::makeParamsString()
 {
    TiXmlElement * params = makeParamsNode( );
-   std::string s;
+   TIXML_STRING s;
    s << *params;
    delete params;
-   return s;
+   return s.c_str();
 }
 
 void RPCArgs::addParams( TiXmlElement &paramsNode )
@@ -810,7 +822,7 @@ void RPCArgs::addParams( TiXmlElement &paramsNode )
       delete pNode;
    }
 }
-bool RPCArgs::parseParams( std::string UTF8XML )   // parse from the string to args
+bool RPCArgs::parseParams( TIXML_STRING UTF8XML )   // parse from the string to args
 {
    // And now we move to tinyXML for parsing...
    TiXmlBase::SetCondenseWhiteSpace( false );
@@ -851,9 +863,9 @@ bool RPCArgs::parseParams( std::string UTF8XML )   // parse from the string to a
    }
    return true;
 }
-std::string RPCArgs::PrintArgs()
+QString RPCArgs::PrintArgs()
 {
-   std::string s;
+   QString s;
 
    for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
    {
@@ -861,7 +873,7 @@ std::string RPCArgs::PrintArgs()
    }
    return s;
 }
-bool RPCArgs::getStructArgMember( unsigned int argno, const std::string &name, boost::shared_ptr<RPCParam>&res )
+bool RPCArgs::getStructArgMember( unsigned int argno, const QString &name, boost::shared_ptr<RPCParam>&res )
 {
    if ( args.size() > argno )
    {
@@ -917,7 +929,7 @@ bool RPCArgs::getDoubleArg( unsigned int argno, double &res )
    }
    return false;
 }
-bool RPCArgs::getStringArg( unsigned int argno, std::string &res )
+bool RPCArgs::getStringArg( unsigned int argno, QString &res )
 {
    if ( args.size() > argno )
    {
@@ -925,7 +937,7 @@ bool RPCArgs::getStringArg( unsigned int argno, std::string &res )
    }
    return false;
 }
-bool RPCArgs::getBase64Arg( unsigned int argno, std::string &res )
+bool RPCArgs::getBase64Arg( unsigned int argno, QString &res )
 {
    if ( args.size() > argno )
    {
@@ -933,7 +945,7 @@ bool RPCArgs::getBase64Arg( unsigned int argno, std::string &res )
    }
    return false;
 }
-bool RPCArgs::getDtgArg( unsigned int argno, std::string &res )
+bool RPCArgs::getDtgArg( unsigned int argno, QString &res )
 {
    if ( args.size() > argno )
    {

@@ -422,7 +422,7 @@ DisplayContestContact *LoggerContestLog::addContact( int newctno, int extraFlags
    makeContact( timenow, bct );
    DisplayContestContact *lct = dynamic_cast<DisplayContestContact *> (bct);
 
-   std::string temp = ( boost::format( "%3.3d" ) % newctno ).str();
+   QString temp = QString( "%1" ).arg(newctno, 3 );
    lct->serials.setValue( temp );
    lct->setLogSequence( nextBlock << 16 );
    nextBlock++;
@@ -520,7 +520,7 @@ bool LoggerContestLog::minosSaveContestContact( const ContestContact *lct )
 //==========================================================================
 bool LoggerContestLog::GJVsave( GJVParams &gp )
 {
-   const std::string nulc;
+   const QString nulc;
 
    // save the LoggerContestLog details to file_desc
    clearBuffer();
@@ -538,7 +538,7 @@ bool LoggerContestLog::GJVsave( GJVParams &gp )
    opyn( false /*Country_mult && County_mult*/ );	//CC_mult
    opyn( locMult );
 
-   std::string temp = ( boost::format( "%d" ) % gp.count ).str(); // leave off the dummy entry!
+   QString temp = QString::number( gp.count ); // leave off the dummy entry!
    strtobuf( temp );
 
    strtobuf( power );
@@ -576,7 +576,7 @@ bool LoggerContestLog::GJVsave( GJVParams &gp )
 }
 bool LoggerContestLog::GJVload( void )
 {
-   std::string temp;
+   QString temp;
    logCount = 0;
 
    // load the LoggerContestLog details from file_desc
@@ -584,7 +584,7 @@ bool LoggerContestLog::GJVload( void )
    readBlock( 0 );
    buffpt = 0;
    buftostr( temp );
-   if ( atoi( temp.c_str() ) != 0 )
+   if ( temp.toInt() != 0 )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "Invalid block 0 in LoggerContestLog file" );
       return false;
@@ -593,7 +593,7 @@ bool LoggerContestLog::GJVload( void )
    buftostr( temp );
    if ( strnicmp( temp, GJVVERSION, VERLENGTH ) != 0 )
    {
-      MinosParameters::getMinosParameters() ->mshowMessage( QString( "Invalid LoggerContestLog file format (" ) + temp.c_str() + ", " + GJVVERSION + " expected)" );
+      MinosParameters::getMinosParameters() ->mshowMessage( QString( "Invalid LoggerContestLog file format (" ) + temp + ", " + GJVVERSION + " expected)" );
       return false;
    }
 
@@ -618,7 +618,7 @@ bool LoggerContestLog::GJVload( void )
    locMult.setValue( inyn() );
 
    buftostr( temp );
-   logCount = atoi( temp.c_str() );
+   logCount = temp.toInt();
 
    buftostr( power );
 
@@ -677,7 +677,7 @@ bool LoggerContestLog::GJVloadContacts( void )
       {
          nextBlock++;
          ctList.insert( rct );
-         int maxct = atoi( rct->serials.getValue().c_str() );
+         int maxct = rct->serials.getValue().toInt();
          if ( maxct > maxSerial )
             maxSerial = maxct;
 
@@ -781,8 +781,8 @@ bool LoggerContestLog::exportGJV(boost::shared_ptr<QFile>fd )
 
    // ????   if ( MessageBox( 0, "Do you wish to edit the file?", "Contest", MB_OKCANCEL ) != ID_CANCEL )
    //   if (cmOK != messageBox(mfOKCancel|mfConfirmation, "Dumping all contacts between serials %d and %d inclusive", mindump, maxdump))
-   std::string temp = ( boost::format( "Dumping all contacts between serials %d and %d inclusive" ) % mindump % maxdump ).str();
-   if ( !MinosParameters::getMinosParameters() ->yesNoMessage( 0, temp.c_str() ) )
+   QString temp = QString( "Dumping all contacts between serials %1 and %2 inclusive" ).arg(mindump).arg(maxdump );
+   if ( !MinosParameters::getMinosParameters() ->yesNoMessage( 0, temp ) )
       return false;
 
    GJVParams gp( fd );
@@ -796,7 +796,7 @@ bool LoggerContestLog::exportGJV(boost::shared_ptr<QFile>fd )
       ContestContact *lct = dynamic_cast<ContestContact *>( *i );
       // we need to test for "in dump"
 
-      int serials = atoi( lct->serials.getValue().c_str() );
+      int serials = lct->serials.getValue().toInt();
       // dump the contact, until serial seen
 
       if ( ( serials == mindump ) || ( mindump == 0 ) )
@@ -824,13 +824,13 @@ bool LoggerContestLog::exportADIF(boost::shared_ptr<QFile> expfd )
    // ADIF format file entry
    // OP header
    // and EOH
-   std::string header = "Exported by G0GJV VHF LoggerContestLog logging system\r\n\r\n";
+   QString header = "Exported by G0GJV VHF LoggerContestLog logging system\r\n\r\n";
 
-   header += std::string( "From file " ) + cfileName.toStdString() + "\r\n\r\n";
+   header += QString( "From file " ) + cfileName + "\r\n\r\n";
 
    header += "<EOH>\r\n";
 
-   unsigned int ret = expfd->write(header.c_str(), header.size());
+   int ret = expfd->write(header.toStdString().c_str());
    if (  ret != header.size() )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
@@ -839,17 +839,17 @@ bool LoggerContestLog::exportADIF(boost::shared_ptr<QFile> expfd )
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
       ContestContact *lct = dynamic_cast<ContestContact *>( *i );
-      std::string l = lct ->getADIFLine();
+      QString l = lct ->getADIFLine();
       if ( l.size() )
       {
-         unsigned int ret = expfd->write(l.c_str(), l.size());
+         int ret = expfd->write(l.toStdString().c_str());
          if (  ret != l.size() )
          {
             MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
          }
          const char *EOR = "<EOR>\r\n";
          ret = expfd->write(EOR, strlen( EOR ));
-         if ( ret != strlen( EOR ) )
+         if ( ret != (int)strlen( EOR ) )
          {
             MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
          }
@@ -864,7 +864,7 @@ bool LoggerContestLog::exportREG1TEST(boost::shared_ptr<QFile>expfd )
 
    // band
 
-   std::string cb = trim(band.getValue());
+   QString cb = band.getValue().trimmed();
    BandList &blist = BandList::getBandList();
    BandInfo bi;
    bool bandOK = blist.findBand(cb, bi);
@@ -890,7 +890,7 @@ bool LoggerContestLog::exportREG1TEST(boost::shared_ptr<QFile>expfd )
 
       mshowMessage->BandCombo->ItemIndex = 0;
 
-      std::string capt = ( boost::format( "The band description chosen (%s) is invalid for Reg1Test"
+      QString capt = ( boost::format( "The band description chosen (%s) is invalid for Reg1Test"
                                           " (.EDI) entry. Please choose a valid band description." )
                            % band.getValue() ).str();
       mshowMessage->ScreedLabel->Caption = capt.c_str();
@@ -928,8 +928,8 @@ bool LoggerContestLog::exportMinos( boost::shared_ptr<QFile> expfd )
 
    // ????   if ( MessageBox( 0, "Do you wish to edit the file?", "Contest", MB_OKCANCEL ) != ID_CANCEL )
    //   if (cmOK != messageBox(mfOKCancel|mfConfirmation, "Dumping all contacts between serials %d and %d inclusive", mindump, maxdump))
-   std::string temp = ( boost::format( "Dumping all contacts between serials %d and %d inclusive" ) % mindump % maxdump ).str();
-   if ( !MinosParameters::getMinosParameters() ->yesNoMessage( 0, temp.c_str() ) )
+   QString temp = QString( "Dumping all contacts between serials %1 and %2 inclusive" ).arg(mindump).arg(maxdump );
+   if ( !MinosParameters::getMinosParameters() ->yesNoMessage( 0, temp ) )
       return false;
 
    MinosTestExport * mtest = new MinosTestExport( this );
@@ -959,8 +959,8 @@ static QString kmloutput ( Location *outgrid )
 
 bool LoggerContestLog::exportKML(boost::shared_ptr<QFile> expfd )
 {
-   typedef std::map <std::string, ContestContact *> cmap; // map by call
-   typedef std::map <std::string, cmap> smap;       // map by prefix
+   typedef std::map <QString, ContestContact *> cmap; // map by call
+   typedef std::map <QString, cmap> smap;       // map by prefix
    smap countries;
 
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
@@ -985,11 +985,11 @@ bool LoggerContestLog::exportKML(boost::shared_ptr<QFile> expfd )
 
    kml.append( "<kml xmlns=\"http://earth.google.com/kml/2.0\">" );
    kml.append( "<Document><visibility>0</visibility><open>1</open>" );
-   kml.append( ( "<Folder><name><![CDATA[" + name.getValue() + " " + mycall.fullCall.getValue() + "]]></name><visibility>0</visibility><open>1</open>" ).c_str() );
+   kml.append( "<Folder><name><![CDATA[" + name.getValue() + " " + mycall.fullCall.getValue() + "]]></name><visibility>0</visibility><open>1</open>" );
 
    for ( smap::iterator s = countries.begin(); s != countries.end(); s++ )
    {
-      kml.append( ( "<Folder><name><![CDATA[" + ( *s ).first + "]]></name><open>0</open><visibility>0</visibility>" ).c_str() );
+      kml.append( "<Folder><name><![CDATA[" + ( *s ).first + "]]></name><open>0</open><visibility>0</visibility>"  );
       for ( cmap::iterator e = ( ( *s ).second ).begin(); e != ( ( *s ).second ).end(); e++ )
       {
          Location l1;
@@ -998,7 +998,7 @@ bool LoggerContestLog::exportKML(boost::shared_ptr<QFile> expfd )
 
 
          char inputbuff[ 100 ];
-         strcpy( inputbuff, ct->loc.loc.getValue().c_str() );
+         strcpy( inputbuff, ct->loc.loc.getValue().toStdString().c_str() );
          l1.gridstyle = LOC;
          l1.datastring = inputbuff;
          l1.datalength = ct->loc.loc.getValue().length() + 1;
@@ -1013,8 +1013,8 @@ bool LoggerContestLog::exportKML(boost::shared_ptr<QFile> expfd )
          if ( transform( &l1, &l2 ) == GRIDOK )
          {
             kml.append( "<Placemark><visibility>0</visibility>" );
-            kml.append( ( "<description><![CDATA[" + ct->cs.fullCall.getValue() + " " + ct->loc.loc.getValue() + "]]></description>" ).c_str() );
-            kml.append( ( "<name><![CDATA[" + ct->cs.fullCall.getValue() + "]]></name>" ).c_str() );
+            kml.append( "<description><![CDATA[" + ct->cs.fullCall.getValue() + " " + ct->loc.loc.getValue() + "]]></description>"  );
+            kml.append( "<name><![CDATA[" + ct->cs.fullCall.getValue() + "]]></name>"  );
             kml.append( "<Point><coordinates>" + kmloutput( &l2 ) + ",0</coordinates></Point>"  );
             kml.append( "</Placemark>" );
          }
@@ -1064,8 +1064,8 @@ bool LoggerContestLog::importLOG(boost::shared_ptr<QFile> hLogFile )
    {
       // skip new format header information, until we can cope
       // properly with it
-      std::string stemp = trimr( ls[ lineNo ].toStdString() );
-      if ( stemp.length() == 0 || ( !started && !isdigit(stemp[0]) ) )
+      QString stemp = trimr( ls[ lineNo ] );
+      if ( stemp.length() == 0 || ( !started && !stemp[0].isDigit() ) )
       {
          // GJV.LOG
 
@@ -1100,39 +1100,39 @@ bool LoggerContestLog::importLOG(boost::shared_ptr<QFile> hLogFile )
                                Email : mjgoodey@compuserve.com
 
          */
-         unsigned int spos = stemp.find( ":" );
-         if ( spos != std::string::npos )
+         int spos = stemp.indexOf( ":" );
+         if ( spos != -1 )
          {
-            std::string text = trim( stemp.substr( spos + 1, stemp.size() ) );
+            QString text = stemp.mid( spos + 1, stemp.size() ).trimmed();
 
-            if ( strupr( stemp ).find( "CONTEST TITLE" ) == 0 )
+            if ( stemp.toUpper().indexOf( "CONTEST TITLE" ) == 0 )
             {
                name.setValue( text );
             }
             else
-               if ( strupr( stemp ).find( "BAND IN MHZ" ) == 0 )
+               if (  stemp.toUpper().indexOf( "BAND IN MHZ" ) == 0 )
                {
                   band.setValue( text );
                }
                else
-				  if ( strupr( stemp ).find( "SECTION ENTERED" ) == 0 )
+                  if ( stemp.toUpper().indexOf( "SECTION ENTERED" ) == 0 )
                   {
                      entSect.setValue( text );
                   }
                   else
-                     if ( strupr( stemp ).find( "NAME OF ENTRANT/CLUB/CONTEST GROUP" ) == 0 )
+                     if ( stemp.toUpper().indexOf( "NAME OF ENTRANT/CLUB/CONTEST GROUP" ) == 0 )
                      {
                         entrant.setValue( text );
                      }
                      else
-                        if ( strupr( stemp ).find( "CALLSIGN USED" ) == 0 )
+                        if ( stemp.toUpper().indexOf( "CALLSIGN USED" ) == 0 )
                         {
                            // we need to tail clip the callsign - or we end up with things like
                            // M1DUD/QRP        CLASS : SO  /   50MHZ FIXED
-                           unsigned int spos = text.find( " " );
-                           if ( spos != std::string::npos )
+                           int spos = text.indexOf( " " );
+                           if ( spos != -1 )
                            {
-                              text = trim( text.substr( 0, spos ) );
+                              text = text.left(spos ).trimmed();
                            }
                            mycall.fullCall.setValue( strupr( text ) );
                            mycall.valRes = CS_NOT_VALIDATED;
@@ -1140,45 +1140,45 @@ bool LoggerContestLog::importLOG(boost::shared_ptr<QFile> hLogFile )
 
                         }
                         else
-                           if ( strupr( stemp ).find( "QRH LOCATOR SENT" ) == 0 ||
-                                strupr( stemp ).find( "QTH LOCATOR SENT" ) == 0 )
+                           if ( stemp.toUpper().indexOf( "QRH LOCATOR SENT" ) == 0 ||
+                                stemp.toUpper().indexOf( "QTH LOCATOR SENT" ) == 0 )
                            {
                               // yes, contestx DOES say QRH!
                               myloc.loc.setValue( strupr( text ) );
                               validateLoc();
                            }
                            else
-                              if ( strupr( stemp ).find( "POWER OUTPUT" ) == 0 )
+                              if ( stemp.toUpper().indexOf( "POWER OUTPUT" ) == 0 )
                               {
                                  power.setValue( text );
                               }
                               else
-                                 if ( strupr( stemp ).find( "LOCATION AS SENT" ) == 0 )
+                                 if ( stemp.toUpper().indexOf( "LOCATION AS SENT" ) == 0 )
                                  {
                                     location.setValue( text );
                                  }
                                  else
-                                    if ( strupr( stemp ).find( "ANTENNA TYPE" ) == 0 )
+                                    if ( stemp.toUpper().indexOf( "ANTENNA TYPE" ) == 0 )
                                     {
                                        entAnt.setValue( text );
                                     }
                                     else
-                                       if ( strupr( stemp ).find( "ANTENNA HEIGHT" ) == 0 )
+                                       if ( stemp.toUpper().indexOf( "ANTENNA HEIGHT" ) == 0 )
                                        {
                                           entAGL.setValue( text );
                                        }
                                        else
-                                          if ( strupr( stemp ).find( "QTH HEIGHT" ) == 0 )
+                                          if ( stemp.toUpper().indexOf( "QTH HEIGHT" ) == 0 )
                                           {
 											 entASL.setValue( text );
                                           }
                                           else
-                                             if ( strupr( stemp ).find( "BRIEF DETAILS OF TRANSMITTER USED" ) == 0 )
+                                             if ( stemp.toUpper().indexOf( "BRIEF DETAILS OF TRANSMITTER USED" ) == 0 )
                                              {
                                                 entTx.setValue( text );
                                              }
                                              else
-                                                if ( strupr( stemp ).find( "BRIEF DETAILS OF RECEIVER USED" ) == 0 )
+                                                if ( stemp.toUpper().indexOf( "BRIEF DETAILS OF RECEIVER USED" ) == 0 )
                                                 {
                                                    entRx.setValue( text );
                                                 }
@@ -1192,8 +1192,10 @@ bool LoggerContestLog::importLOG(boost::shared_ptr<QFile> hLogFile )
       ct = dynamic_cast<DisplayContestContact *>(bct);
       ct->setLogSequence( 0 );
 
-      stemp += std::string( 200, ' ' );   // make sure there is plenty more...
-      const char *lbuff = stemp.c_str();
+      stemp += QString( 200, ' ' );   // make sure there is plenty more...
+
+      std::string sstemp = stemp.toStdString();
+      const char *lbuff = sstemp.c_str();
       // parse contact line in
 
       strcpysp( temp, &lbuff[ 0 ], 6 );
@@ -1208,7 +1210,7 @@ bool LoggerContestLog::importLOG(boost::shared_ptr<QFile> hLogFile )
       strcpysp( temp, &lbuff[ 41 ], 4 );
       ct->serials.setValue( temp );
 
-      int maxct = atoi( ct->serials.getValue().c_str() );
+      int maxct = ct->serials.getValue().toInt();
       if ( maxct > maxSerial )
          maxSerial = maxct;
 
@@ -1274,7 +1276,7 @@ bool LoggerContestLog::importReg1Test(boost::shared_ptr<QFile> r1ContestFile )
    return reg1test::doImportReg1test( this, r1ContestFile );
 }
 //====================================================================
-void LoggerContestLog::processMinosStanza( const std::string &methodName, MinosTestImport * const mt )
+void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestImport * const mt )
 {
    BaseContestLog::processMinosStanza( methodName, mt );
 
@@ -1363,7 +1365,7 @@ void LoggerContestLog::setStanza( unsigned int stanza, int stanzaStart )
    stanzaLocations.push_back( s );
 }
 //====================================================================
-bool LoggerContestLog::getStanza( unsigned int stanza, std::string &stanzaData )
+bool LoggerContestLog::getStanza( unsigned int stanza, QString &stanzaData )
 {
    if ( stanza - 1 >= stanzaLocations.size() )
    {
@@ -1397,10 +1399,10 @@ bool LoggerContestLog::getStanza( unsigned int stanza, std::string &stanzaData )
     {
         buffer[ chRead ] = 0;
         stanzaData = buffer;
-        unsigned int epos = stanzaData.find( "</iq>" );     // trim the excess - if there is any
-        if ( epos != std::string::npos )
+        int epos = stanzaData.indexOf( "</iq>" );     // trim the excess - if there is any
+        if ( epos != -1 )
         {
-            stanzaData = stanzaData.substr( 0, epos + 5 );
+            stanzaData = stanzaData.left(epos + 5 );
         }
     }
     else

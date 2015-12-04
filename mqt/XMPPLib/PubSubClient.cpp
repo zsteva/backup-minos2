@@ -13,15 +13,15 @@
 std::vector<RPCSubscriber *> subscribeList;
 std::vector<RPCPublisher *> publishList;
 
-bool RPCSubscriber::isEqual( const std::string &pcategory )
+bool RPCSubscriber::isEqual( const QString &pcategory )
 {
    return ( pcategory == category );
 }
-bool RPCSubscriber::isRemoteEqual( const std::string &/*pserver*/, const std::string &/*pcategory*/ )
+bool RPCSubscriber::isRemoteEqual( const QString &/*pserver*/, const QString &/*pcategory*/ )
 {
    return false;
 }
-void RPCSubscriber::testAndSubscribe( const std::string &category )
+void RPCSubscriber::testAndSubscribe( const QString &category )
 {
    RPCSubscriber * sub = 0;
    for ( std::vector<RPCSubscriber *>::iterator i = subscribeList.begin(); i != subscribeList.end(); i++ )
@@ -42,11 +42,11 @@ void RPCSubscriber::testAndSubscribe( const std::string &category )
       sub->reSubscribe();
    }
 }
-bool RPCRemoteSubscriber::isRemoteEqual( const std::string &pServer, const std::string &category )
+bool RPCRemoteSubscriber::isRemoteEqual( const QString &pServer, const QString &category )
 {
    return server == pServer && isEqual( category );
 }
-void RPCRemoteSubscriber::testAndSubscribe( const std::string &server, const std::string &category )
+void RPCRemoteSubscriber::testAndSubscribe( const QString &server, const QString &category )
 {
    RPCRemoteSubscriber * sub = 0;
    for ( std::vector<RPCSubscriber *>::iterator i = subscribeList.begin(); i != subscribeList.end(); i++ )
@@ -94,7 +94,7 @@ void RPCRemoteSubscriber::reSubscribe()
    rsc.queueCall( "localhost" );       // localhost just causes the server to loop
 }
 
-void RPCPublisher::testAndPublish( const std::string &category, const std::string &key, const std::string &value, PublishState pState )
+void RPCPublisher::testAndPublish( const QString &category, const QString &key, const QString &value, PublishState pState )
 {
    RPCPublisher * pub = 0;
    for ( std::vector<RPCPublisher *>::iterator i = publishList.begin(); i != publishList.end(); i++ )

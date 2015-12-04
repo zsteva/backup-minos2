@@ -17,7 +17,7 @@ void dispatchResponse( RPCDispatcher *RPCDisp, XStanza *xs )
    }
 }
 /*
-TiXmlElement *findNode( TiXmlElement *node, const std::string &name )
+TiXmlElement *findNode( TiXmlElement *node, const QString &name )
 {
    for ( TiXmlElement * e = node->FirstChildElement(); e; e = e->NextSiblingElement() )
    {
@@ -31,9 +31,9 @@ TiXmlElement *findNode( TiXmlElement *node, const std::string &name )
 }
 */
 /*
-std::string getNodeValue( TiXmlElement *node, const std::string &name )
+QString getNodeValue( TiXmlElement *node, const QString &name )
 {
-   std::string res;
+   QString res;
    for ( TiXmlElement * e = node->FirstChildElement(); e; e = e->NextSiblingElement() )
    {
       // declaration, destination lines
@@ -91,17 +91,17 @@ bool analyseNode( RPCDispatcher *RPCDisp, TiXmlElement *tix )
       return false;
    }
 
-   std::string from = getAttribute( tix, "from" );
-   std::string to = getAttribute( tix, "to" );
-   std::string id = getAttribute( tix, "id" );
-   std::string subtype = getAttribute( tix, "type" );
+   QString from = getAttribute( tix, "from" );
+   QString to = getAttribute( tix, "to" );
+   QString id = getAttribute( tix, "id" );
+   QString subtype = getAttribute( tix, "type" );
 
    TiXmlElement *query = findNode( tix, "query" );
    if ( !query )
    {
       return false;
    }
-   std::string ns = getAttribute( query, "xmlns" );
+   QString ns = getAttribute( query, "xmlns" );
    if ( ns != "minos:iq:rpc" )
    {
       return false;
@@ -113,7 +113,7 @@ bool analyseNode( RPCDispatcher *RPCDisp, TiXmlElement *tix )
    if ( subtype == "set" && mcall )
    {
       RPCRequest * xs = new RPCRequest( from, mcall );
-      xs->setId( id.c_str() );
+      xs->setId( id );
       dispatchResponse( RPCDisp, xs );
       delete xs;
       return true;
@@ -122,14 +122,14 @@ bool analyseNode( RPCDispatcher *RPCDisp, TiXmlElement *tix )
       if ( subtype == "result" && mresp )
       {
          RPCResponse * rr = new RPCResponse( from, mresp );
-         rr->setId( id.c_str() );
+         rr->setId( id );
          dispatchResponse( RPCDisp, rr );
          delete rr;
          return true;
       }
    return false;
 }
-bool analyseNode( RPCDispatcher *RPCDisp, std::string UTF8XML )
+bool analyseNode(RPCDispatcher *RPCDisp, TIXML_STRING UTF8XML )
 {
    TiXmlBase::SetCondenseWhiteSpace( false );
    TiXmlDocument xdoc;

@@ -13,7 +13,6 @@
 #include "MatchThread.h"
 //#include "MultDisp.h"
 //#include "StatsDisp.h"
-#include "shbrowse.h"
 
 //---------------------------------------------------------------------------
 
@@ -152,44 +151,44 @@ bool TContestApp::initialise()
    loggerBundle.openSection( "Default" );
 
    //----------------------------------
-   std::string preloadfile;
+   QString preloadfile;
    loggerBundle.getStringProfile( elpPreloadFile, preloadfile );
    BundleFile::bundleFiles[ epPRELOADPROFILE ] ->openProfile( preloadfile, "Preload options" );
 
    preloadBundle.setProfile( BundleFile::bundleFiles[ epPRELOADPROFILE ] );
 
-   std::string preloadsect;
+   QString preloadsect;
    loggerBundle.getStringProfile( elpPreloadSection, preloadsect );
    preloadBundle.openSection( preloadsect );
    //----------------------------------
 
-   std::string dispfile;
+   QString dispfile;
    loggerBundle.getStringProfile( elpDisplayFile, dispfile );
    BundleFile::bundleFiles[ epDISPLAYPROFILE ] ->openProfile( dispfile, "Display defaults" );
 
    displayBundle.setProfile( BundleFile::bundleFiles[ epDISPLAYPROFILE ] );
 
-   std::string dispsect;
+   QString dispsect;
    loggerBundle.getStringProfile( elpDisplaySection, dispsect );
    displayBundle.openSection( dispsect );
    //----------------------------------
 
-   std::string entfile;
+   QString entfile;
    loggerBundle.getStringProfile( elpEntryFile, entfile );
    BundleFile::bundleFiles[ epENTRYPROFILE ] ->openProfile( entfile, "Contest Entry details" );
    //----------------------------------
 
-   std::string qthfile;
+   QString qthfile;
    loggerBundle.getStringProfile( elpQTHFile, qthfile );
    BundleFile::bundleFiles[ epQTHPROFILE ] ->openProfile( qthfile, "QTH details" );
    //----------------------------------
 
-   std::string stationfile;
+   QString stationfile;
    loggerBundle.getStringProfile( elpStationFile, stationfile );
    BundleFile::bundleFiles[ epSTATIONPROFILE ] ->openProfile( stationfile, "Station details" );
    //----------------------------------
 
-   std::string locsfile;
+   QString locsfile;
    loggerBundle.getStringProfile( elpLocsFile, locsfile );
    BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] ->openProfile( locsfile, "Valid locator squares" );
 
@@ -453,8 +452,8 @@ void TContestApp::writeContestList()
       if ( !ct )
          continue;
 
-      std::string ent = ( boost::format( "%d" ) % cs->slotno ).str();
-      preloadBundle.setStringProfile( ent.c_str(), ct->cfileName.toStdString().c_str() );
+      QString ent = QString::number(cs->slotno );
+      preloadBundle.setStringProfile( ent, ct->cfileName );
       if ( currentContest == ct )
       {
          preloadBundle.setIntProfile( eppCurrent, cs->slotno );
@@ -467,8 +466,8 @@ void TContestApp::writeContestList()
       if ( !ct )
          continue;
 
-      std::string ent = ( boost::format( "List%d" ) % cs->slotno ).str();
-      preloadBundle.setStringProfile( ent.c_str(), ct->cfileName.toStdString().c_str() );
+      QString ent = "List" + QString::number(cs->slotno );
+      preloadBundle.setStringProfile( ent, ct->cfileName );
       // no need for any concept of a "current" list
    }
    preloadBundle.flushProfile();
@@ -551,21 +550,21 @@ void TContestApp::setCurrentContest( BaseContestLog * c )
    preloadBundle.flushProfile();
 }
 
-void TContestApp::getDisplayColumnWidth( const std::string &key, int &val, int def )
+void TContestApp::getDisplayColumnWidth( const QString &key, int &val, int def )
 {
-   displayBundle.getIntProfile( key.c_str(), val, def );
+   displayBundle.getIntProfile( key, val, def );
 }
-void TContestApp::setDisplayColumnWidth( const std::string &key, int val )
+void TContestApp::setDisplayColumnWidth( const QString &key, int val )
 {
    if (inFontChange <= 0)
    {
       if ( val < 0 )
       {
-         displayBundle.setStringProfile( key.c_str(), 0 );
+         displayBundle.setStringProfile( key, 0 );
       }
       else
       {
-         displayBundle.setIntProfile( key.c_str(), val );
+         displayBundle.setIntProfile( key, val );
       }
    }
 }

@@ -45,8 +45,6 @@
 #include "tinyxml.h"
 #include "tinyutils.h"
 
-#include "stringcast.h"
-
 #include "GJVThreads.h"
 #include "LogEvents.h"
 #include "MTrace.h"

@@ -73,12 +73,12 @@ typedef LogList::iterator LogIterator;
 
 struct StrLess
 {
-   bool operator() ( const std::string &s1, const std::string &s2 ) const
+   bool operator() ( const QString &s1, const QString &s2 ) const
    {
-      return stricmp( s1.c_str(), s2.c_str() ) < 0;
+      return s1.compare(s2, Qt::CaseInsensitive) < 0;
    }
 };
-typedef codeproject::sorted_vector < std::string, true, StrLess > OperatorList;
+typedef codeproject::sorted_vector < QString, true, StrLess > OperatorList;
 typedef OperatorList::iterator OperatorIterator;
 
 class BaseContestLog
@@ -114,8 +114,8 @@ class BaseContestLog
 
       MinosItem<bool> protectedContest;
 
-      MinosItem<std::string> name;         // name of contest
-      MinosItem<std::string> location;
+      MinosItem<QString> name;         // name of contest
+      MinosItem<QString> location;
 
       callsign mycall;  // CONTAINS MinosItem
       locator myloc;  // CONTAINS MinosItem
@@ -128,10 +128,10 @@ class BaseContestLog
       MinosItem<bool> locatorField;
       MinosItem<bool> QTHField;
 
-      MinosItem<std::string> power;
-      MinosItem<std::string> mode;
+      MinosItem<QString> power;
+      MinosItem<QString> mode;
 
-      MinosItem<std::string> band;
+      MinosItem<QString> band;
       MinosItem<bool> otherExchange;
       MinosItem<bool> countryMult;
       MinosItem<bool> nonGCountryMult;
@@ -145,8 +145,8 @@ class BaseContestLog
 
       MinosItem<bool> powerWatts;
       MinosItem<int> scoreMode;
-      MinosItem<std::string> DTGStart;
-      MinosItem<std::string> DTGEnd;
+      MinosItem<QString> DTGStart;
+      MinosItem<QString> DTGEnd;
 
 	  MinosItem<int> bearingOffset;
 
@@ -199,13 +199,13 @@ class BaseContestLog
 
       // Ancilliary variables
 
-      MinosItem<std::string> currentOp1;         // current main op - derived from contacts
-      MinosItem<std::string> currentOp2;         // current second op - derived from contacts
+      MinosItem<QString> currentOp1;         // current main op - derived from contacts
+      MinosItem<QString> currentOp2;         // current second op - derived from contacts
 
       OperatorList oplist;
 
-      std::string opsQSO1;
-      std::string opsQSO2;
+      QString opsQSO1;
+      QString opsQSO2;
 
       int maxSerial;
       long contestScore;
@@ -238,7 +238,7 @@ class BaseContestLog
       int bonus;
 
       int multsAsBonuses;
-      std::map<std::string, int> locBonuses;
+      std::map<QString, int> locBonuses;
       int ukLocBonus;
       int nonukLocBonus;
 
@@ -294,8 +294,8 @@ class BaseContestLog
 
       // Log monitoring
 
-      virtual void processMinosStanza( const std::string &methodName, MinosTestImport * const mt );
-      virtual bool getStanza( unsigned int stanza, std::string &stanzaData );
+      virtual void processMinosStanza( const QString &methodName, MinosTestImport * const mt );
+      virtual bool getStanza( unsigned int stanza, QString &stanzaData );
       virtual void setStanza( unsigned int stanza, int stanzaStart );
 
       // general
@@ -304,7 +304,7 @@ class BaseContestLog
       void getMatchText(BaseContact *, QString &, const BaseContestLog *const ct ) const;
       void getMatchField( BaseContact *pct, int col, QString &disp, const BaseContestLog *const ct ) const;
       void scanContest( void );
-      void setScore( std::string & );
+      void setScore( QString & );
       bool isCurDup( BaseContact *) const;
 
       virtual void getScoresTo(ContestScore &cs, QDateTime limit);
@@ -325,10 +325,10 @@ class BaseContestLog
       // calcs
 
       void disbear( double lon, double lat, double &dist, int &brg ) const;
-      int CalcNearest( const std::string &scalcloc );
+      int CalcNearest( const QString &scalcloc );
       bool getsdist( const char *loc, char *minloc, double &mindist );
       BaseContact *getBestDX( void );
-      std::string dateRange( DTG dstyle );
+      QString dateRange( DTG dstyle );
       bool checkTime(const dtg &t);
 
 };
@@ -358,7 +358,7 @@ class ContestScore
       int totalScore;
 
       ContestScore(BaseContestLog *, QDateTime limit);
-      std::string disp();
+      QString disp();
 };
 
 #endif

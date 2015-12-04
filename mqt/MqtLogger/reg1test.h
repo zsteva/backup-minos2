@@ -16,8 +16,7 @@ class reg1testLine
       QString data;
 
       reg1testLine( const QString &, const QString &dat );
-      reg1testLine( const QString &, const std::string &dat );
-      reg1testLine( void );
+      reg1testLine( );
       ~reg1testLine();
 
       reg1testLine & operator = ( const reg1testLine & );
@@ -28,7 +27,7 @@ class reg1test
       LoggerContestLog * ct;
       boost::shared_ptr<QFile> regContestFile;
       int nextBlock;
-      std::vector <std::string> remarks;
+      QStringList remarks;
       bool parseHeader( QString line );
       bool parseRemark( QString line );
       bool parseQSO( QString line );

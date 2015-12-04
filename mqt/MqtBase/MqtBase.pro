@@ -41,7 +41,6 @@ SOURCES += \
     mwin.cpp \
     RunApp.cpp \
     ScreenContact.cpp \
-    shbrowse.cpp \
     validators.cpp \
     VHFList.cpp \
     MMessageDialog.cpp \
@@ -69,7 +68,6 @@ HEADERS += \
     ProfileEnums.h \
     RunApp.h \
     ScreenContact.h \
-    shbrowse.h \
     sorted_vector.h \
     validators.h \
     VHFList.h \

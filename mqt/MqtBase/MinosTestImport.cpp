@@ -15,12 +15,12 @@ MinosTestImport::MinosTestImport( ) : ct( 0 ), stanzaCount( 0 ), curfpos( 0 )
 {}
 MinosTestImport::~MinosTestImport()
 {}
-bool MinosTestImport::getStructArgMemberValueDTG( boost::shared_ptr<RPCParam>rpm, const std::string &name, std::string &val )
+bool MinosTestImport::getStructArgMemberValueDTG( boost::shared_ptr<RPCParam>rpm, const QString &name, QString &val )
 {
    boost::shared_ptr<RPCParam> res;
    if ( rpm && rpm->getMember( name, res ) )
    {
-      std::string psval;
+      QString psval;
       if ( res->getDtg( psval ) )
       {
          val = psval;
@@ -29,9 +29,9 @@ bool MinosTestImport::getStructArgMemberValueDTG( boost::shared_ptr<RPCParam>rpm
    }
    return false;
 }
-bool MinosTestImport::getStructArgMemberValueDTG( boost::shared_ptr<RPCParam>rpm, const std::string &name, MinosItem<std::string> &val )
+bool MinosTestImport::getStructArgMemberValueDTG( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<QString> &val )
 {
-   std::string temp;
+   QString temp;
    bool ret = getStructArgMemberValueDTG( rpm, name, temp );
    if ( ret )
    {
@@ -39,12 +39,12 @@ bool MinosTestImport::getStructArgMemberValueDTG( boost::shared_ptr<RPCParam>rpm
    }
    return ret;
 }
-bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const std::string &name, std::string &val )
+bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, QString &val )
 {
    boost::shared_ptr<RPCParam> res;
    if ( rpm && rpm->getMember( name, res ) )
    {
-      std::string psval;
+      QString psval;
       if ( res->getString( psval ) )
       {
          val = psval;
@@ -53,9 +53,9 @@ bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, c
    }
    return false;
 }
-bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const std::string &name, MinosItem<std::string> &val )
+bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<QString> &val )
 {
-   std::string temp;
+   QString temp;
    bool ret = getStructArgMemberValue( rpm, name, temp );
    if ( ret )
    {
@@ -63,7 +63,7 @@ bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, c
    }
    return ret;
 }
-bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const std::string &name, int &val )
+bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, int &val )
 {
    boost::shared_ptr<RPCParam> res;
    if ( rpm && rpm->getMember( name, res ) )
@@ -77,7 +77,7 @@ bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, c
    }
    return false;
 }
-bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const std::string &name, MinosItem<int> &val )
+bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<int> &val )
 {
    int temp;
    bool ret = getStructArgMemberValue( rpm, name, temp );
@@ -87,7 +87,7 @@ bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, c
    }
    return ret;
 }
-bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const std::string &name, bool &val )
+bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, bool &val )
 {
    boost::shared_ptr<RPCParam> res;
    if ( rpm && rpm->getMember( name, res ) )
@@ -101,7 +101,7 @@ bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, c
    }
    return false;
 }
-bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam> rpm, const std::string &name, MinosItem<bool> &val )
+bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam> rpm, const QString &name, MinosItem<bool> &val )
 {
    bool temp;
    bool ret = getStructArgMemberValue( rpm, name, temp );
@@ -111,35 +111,35 @@ bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam> rpm, 
    }
    return ret;
 }
-bool MinosTestImport::getStructArgMemberValueDTG( const std::string &name, std::string &val )
+bool MinosTestImport::getStructArgMemberValueDTG( const QString &name, QString &val )
 {
    return getStructArgMemberValueDTG( body, name, val );
 }
-bool MinosTestImport::getStructArgMemberValueDTG( const std::string &name, MinosItem<std::string> &val )
+bool MinosTestImport::getStructArgMemberValueDTG( const QString &name, MinosItem<QString> &val )
 {
    return getStructArgMemberValueDTG( body, name, val );
 }
-bool MinosTestImport::getStructArgMemberValue( const std::string &name, std::string &val )
+bool MinosTestImport::getStructArgMemberValue( const QString &name, QString &val )
 {
    return getStructArgMemberValue( body, name, val );
 }
-bool MinosTestImport::getStructArgMemberValue( const std::string &name, MinosItem<std::string> &val )
+bool MinosTestImport::getStructArgMemberValue( const QString &name, MinosItem<QString> &val )
 {
    return getStructArgMemberValue( body, name, val );
 }
-bool MinosTestImport::getStructArgMemberValue( const std::string &name, int &val )
+bool MinosTestImport::getStructArgMemberValue( const QString &name, int &val )
 {
    return getStructArgMemberValue( body, name, val );
 }
-bool MinosTestImport::getStructArgMemberValue( const std::string &name, MinosItem<int> &val )
+bool MinosTestImport::getStructArgMemberValue( const QString &name, MinosItem<int> &val )
 {
    return getStructArgMemberValue( body, name, val );
 }
-bool MinosTestImport::getStructArgMemberValue( const std::string &name, bool &val )
+bool MinosTestImport::getStructArgMemberValue( const QString &name, bool &val )
 {
    return getStructArgMemberValue( body, name, val );
 }
-bool MinosTestImport::getStructArgMemberValue( const std::string &name, MinosItem<bool> &val )
+bool MinosTestImport::getStructArgMemberValue( const QString &name, MinosItem<bool> &val )
 {
    return getStructArgMemberValue( body, name, val );
 }
@@ -182,14 +182,14 @@ void MinosTestImport::processMinosStanza( RPCRequest *rq )
 // These are used for log monitoring
 void MinosTestImport::startImportTest()
 {}
-int MinosTestImport::importTestBuffer( const std::string &buffer )
+int MinosTestImport::importTestBuffer( const QString &buffer )
 {
    // called from monitoredLog when we get a "random" stanza in
 
    DispatchCallback oldcall = dispatchCallback;
    dispatchCallback = &MinosTestImport::analyseImportTest;
 
-   analyseNode( this, buffer );
+   analyseNode( this, buffer.toStdString() );
 
    dispatchCallback = oldcall;
 
@@ -214,7 +214,7 @@ int MinosTestImport::readTestFile(boost::shared_ptr<QFile> ctfile )
 
     // NB - old versions might not have a proper header
     bool firstRead = true;
-    std::string buffer;
+    QString buffer;
     while ( !fileComplete )
     {
         int chRead = ctfile->read(rdbuffer, IO_BUF_SIZE);
@@ -229,16 +229,16 @@ int MinosTestImport::readTestFile(boost::shared_ptr<QFile> ctfile )
                 iqOffset = 0;
                 if ( strncmp( rdbuffer, header1, strlen( header1 ) ) == 0 )
                 {
-                    buffer = buffer.substr( strlen( header1 ), buffer.size() - strlen( header1 ) );  // overwriting what is there already
+                    buffer = buffer.mid( strlen( header1 ), buffer.size() - strlen( header1 ) );  // overwriting what is there already
                     iqOffset = strlen( header1 );
                 }
                 else
                     if ( strncmp( rdbuffer, header2, strlen( header2 ) ) == 0 )
                     {
-                        buffer = buffer.substr( strlen( header2 ), buffer.size() - strlen( header2 ) );  // overwriting what is there already
+                        buffer = buffer.mid( strlen( header2 ), buffer.size() - strlen( header2 ) );  // overwriting what is there already
                         iqOffset = strlen( header2 );
                     }
-                buffer = std::string( stubHeader ) + buffer;
+                buffer = QString( stubHeader ) + buffer;
             }
         }
         else
@@ -251,7 +251,8 @@ int MinosTestImport::readTestFile(boost::shared_ptr<QFile> ctfile )
 
     TiXmlBase::SetCondenseWhiteSpace( false );
     TiXmlDocument xdoc;
-    xdoc.Parse( buffer.c_str(), 0 );
+    TIXML_STRING sb = buffer.toStdString();
+    xdoc.Parse( sb.c_str(), 0 );
     TiXmlElement *tix = xdoc.RootElement();
     if ( !tix || !checkElementName( tix, "stream:stream" ) )
     {
@@ -313,7 +314,7 @@ void MinosTestImport::processLogMinosStanza( RPCRequest *rq )
 {
    // We need to go through and log the tags and values in this node
 
-   std::string log = rq->analyse();
+   QString log = rq->analyse();
 
 //   #warning here is where we need to analyse the sequence number - or should we do it in the analyse with a callback
    // to here with the name?

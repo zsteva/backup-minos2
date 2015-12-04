@@ -18,7 +18,7 @@ class RPCPubSub : public MinosRPCClient
 {
    protected:
       static bool connected;
-      RPCPubSub( const std::string &call, TRPCFunctor *cb ) : MinosRPCClient( call, cb )
+      RPCPubSub( const QString &call, TRPCFunctor *cb ) : MinosRPCClient( call, cb )
       {}
       virtual ~RPCPubSub()
       {}
@@ -29,10 +29,10 @@ class RPCPubSub : public MinosRPCClient
          return connected;
       }
 
-      static void subscribe( const std::string &category );
-      static void subscribeRemote( const std::string &server, const std::string &category );
+      static void subscribe( const QString &category );
+      static void subscribeRemote( const QString &server, const QString &category );
 
-      static void publish( const std::string &category, const std::string &key, const std::string &value, PublishState pState );
+      static void publish( const QString &category, const QString &key, const QString &value, PublishState pState );
 
       static void initialisePubSub( TRPCFunctor *notifycb );
       static void reconnectPubSub( );
@@ -41,28 +41,28 @@ class RPCPubSub : public MinosRPCClient
 
 class AnalysePubSubNotify
 {
-      std::string server;
-      std::string category;
-      std::string key;
-      std::string value;
+      QString server;
+      QString category;
+      QString key;
+      QString value;
       PublishState state;
 
       bool OK;
    public:
       AnalysePubSubNotify( bool err, MinosRPCObj *mro );
-      std::string getServer()
+      QString getServer()
       {
          return server;
       }
-      std::string getCategory()
+      QString getCategory()
       {
          return category;
       }
-      std::string getKey()
+      QString getKey()
       {
          return key;
       }
-      std::string getValue()
+      QString getValue()
       {
          return value;
       }

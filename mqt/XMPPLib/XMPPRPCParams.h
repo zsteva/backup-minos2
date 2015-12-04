@@ -19,42 +19,42 @@ class TiXmlElement;
 class RPCParam
 {
    public:
-      std::string name;
+      QString name;
 
       RPCParam();
       virtual ~RPCParam();
       virtual void addParam( TiXmlElement &node );
       virtual void addValue( TiXmlElement &node );
       virtual void addNode( TiXmlElement &node ) = 0;
-      virtual std::string print() = 0;
-      virtual std::string analyse() = 0;
+      virtual QString print() = 0;
+      virtual QString analyse() = 0;
 
       static boost::shared_ptr<RPCParam> paramFactory( TiXmlElement &node );
 
-      virtual bool getMember( const std::string &name, boost::shared_ptr<RPCParam> &p );
+      virtual bool getMember( const QString &name, boost::shared_ptr<RPCParam> &p );
       virtual bool getMember( unsigned int eleno, boost::shared_ptr<RPCParam> &p );
       virtual bool getElements( unsigned int &size );
       virtual bool getElement( unsigned int eleno, boost::shared_ptr<RPCParam> &p );
       virtual bool getBoolean( bool &res );
       virtual bool getInt( int &res );
       virtual bool getDouble( double &res );
-      virtual bool getString( std::string &res );
-      virtual bool getBase64( std::string &res );
-      virtual bool getDtg( std::string &res );
+      virtual bool getString( QString &res );
+      virtual bool getBase64( QString &res );
+      virtual bool getDtg( QString &res );
 
-      virtual void addMember( boost::shared_ptr<RPCParam> , const std::string &name );
-      virtual void addMember( int, const std::string &name );
-      virtual void addMember( bool, const std::string &name );
-      virtual void addMember( double, const std::string &name );
-      virtual void addMember( const std::string &, const std::string &name );
-      virtual void addBase64Member( const std::string &, const std::string &name );
-      virtual void addDtgMember( const std::string &, const std::string &name );
+      virtual void addMember( boost::shared_ptr<RPCParam> , const QString &name );
+      virtual void addMember( int, const QString &name );
+      virtual void addMember( bool, const QString &name );
+      virtual void addMember( double, const QString &name );
+      virtual void addMember( const QString &, const QString &name );
+      virtual void addBase64Member( const QString &, const QString &name );
+      virtual void addDtgMember( const QString &, const QString &name );
 };
 
 // structure
 class RPCParamStruct: public RPCParam
 {
-      void addMember( RPCParam * , const std::string &name );
+      void addMember( RPCParam * , const QString &name );
    protected:
       std::vector <boost::shared_ptr<RPCParam> > elements;
    public:
@@ -62,21 +62,21 @@ class RPCParamStruct: public RPCParam
       RPCParamStruct( TiXmlElement &sNode );
       virtual ~RPCParamStruct();
 
-      void addMember( boost::shared_ptr<RPCParam> , const std::string &name );
-      void addMember( int, const std::string &name );
-      void addMember( bool, const std::string &name );
-      void addMember( double, const std::string &name );
-      void addMember( const std::string &, const std::string &name );
-      void addBase64Member( const std::string &, const std::string &name );
-      void addDtgMember( const std::string &, const std::string &name );
+      void addMember( boost::shared_ptr<RPCParam> , const QString &name );
+      void addMember( int, const QString &name );
+      void addMember( bool, const QString &name );
+      void addMember( double, const QString &name );
+      void addMember( const QString &, const QString &name );
+      void addBase64Member( const QString &, const QString &name );
+      void addDtgMember( const QString &, const QString &name );
 
       virtual void addNode( TiXmlElement &node );
-      virtual std::string print();
-      virtual std::string analyse();
+      virtual QString print();
+      virtual QString analyse();
 
       virtual bool getElements( unsigned int &size );
       virtual bool getElement( unsigned int eleno, boost::shared_ptr<RPCParam> &p );
-      virtual bool getMember( const std::string &name, boost::shared_ptr<RPCParam> &p );
+      virtual bool getMember( const QString &name, boost::shared_ptr<RPCParam> &p );
       virtual bool getMember( unsigned int eleno, boost::shared_ptr<RPCParam> &p );
 };
 
@@ -99,11 +99,14 @@ class RPCParamArray: public RPCParam
       void addElement( const char * );
       void AddBase64Element( const char * );
       void AddDtgElement( const char * );
+      void addElement( const QString & );
+      void AddBase64Element( const QString & );
+      void AddDtgElement( const QString & );
 
       virtual void addNode( TiXmlElement &node );
       static boost::shared_ptr<RPCParamArray> ParseArray( TiXmlElement &aNode );
-      virtual std::string print();
-      virtual std::string analyse();
+      virtual QString print();
+      virtual QString analyse();
       virtual bool getElements( unsigned int &size );
       virtual bool getElement( unsigned int eleno, boost::shared_ptr<RPCParam> &p );
 };
@@ -119,8 +122,8 @@ class RPCIntParam: public RPCParam
       RPCIntParam();
       virtual ~RPCIntParam();
       virtual void addNode( TiXmlElement &node );
-      virtual std::string print();
-      virtual std::string analyse();
+      virtual QString print();
+      virtual QString analyse();
 
       virtual bool getInt( int &res );
 };
@@ -136,8 +139,8 @@ class RPCBooleanParam: public RPCParam
       RPCBooleanParam();
       virtual ~RPCBooleanParam();
       virtual void addNode( TiXmlElement &node );
-      virtual std::string print();
-      virtual std::string analyse();
+      virtual QString print();
+      virtual QString analyse();
 
       virtual bool getBoolean( bool &res );
 };
@@ -153,8 +156,8 @@ class RPCDoubleParam: public RPCParam
       RPCDoubleParam();
       virtual ~RPCDoubleParam();
       virtual void addNode( TiXmlElement &node );
-      virtual std::string print();
-      virtual std::string analyse();
+      virtual QString print();
+      virtual QString analyse();
 
       virtual bool getDouble( double &res );
 };
@@ -163,51 +166,51 @@ class RPCDoubleParam: public RPCParam
 class RPCStringParam: public RPCParam
 {
    protected:
-      std::string value;
+      QString value;
    public:
-      RPCStringParam( std::string v );
+      RPCStringParam( QString v );
       RPCStringParam( TiXmlElement &sNode );
       RPCStringParam();
       virtual ~RPCStringParam();
       virtual void addNode( TiXmlElement &node );
-      virtual std::string print();
-      virtual std::string analyse();
+      virtual QString print();
+      virtual QString analyse();
 
-      virtual bool getString( std::string &res );
+      virtual bool getString( QString &res );
 };
 
 // <dateTime.iso8601>
 class RPCDtgParam: public RPCParam
 {
    protected:
-      std::string value;   // not we want eventually, but...
+      QString value;   // not we want eventually, but...
    public:
-      RPCDtgParam( std::string v );
+      RPCDtgParam( QString v );
       RPCDtgParam( TiXmlElement &sNode );
       RPCDtgParam();
       virtual ~RPCDtgParam();
       virtual void addNode( TiXmlElement &node );
-      virtual std::string print();
-      virtual std::string analyse();
+      virtual QString print();
+      virtual QString analyse();
 
-      virtual bool getDtg( std::string &res );
+      virtual bool getDtg( QString &res );
 };
 
 // base64
 class RPCBase64Param: public RPCParam
 {
    protected:
-      std::string value;
+      QString value;
    public:
-      RPCBase64Param( std::string v );
+      RPCBase64Param( QString v );
       RPCBase64Param( TiXmlElement &sNode );
       RPCBase64Param();
       virtual ~RPCBase64Param();
       virtual void addNode( TiXmlElement &node );
-      virtual std::string print();
-      virtual std::string analyse();
+      virtual QString print();
+      virtual QString analyse();
 
-      virtual bool getBase64( std::string &res );
+      virtual bool getBase64( QString &res );
 };
 
 class RPCArgs
@@ -217,26 +220,26 @@ class RPCArgs
       RPCArgs();
       virtual ~RPCArgs();
 
-      virtual std::string PrintArgs();
+      virtual QString PrintArgs();
 
       std::vector <boost::shared_ptr<RPCParam> > args;
-      std::string UTF8XML; // pre-built params structure
+      TIXML_STRING UTF8XML; // pre-built params structure
 
       void addParam( boost::shared_ptr<RPCParam> );
       void addParam( int );
       void addParam( bool );
       void addParam( double );
-      void addParam( const std::string & );
-      void addBase64Param( const std::string & );
-      void addDtgParam( const std::string & );
+      void addParam( const QString & );
+      void addBase64Param( const QString & );
+      void addDtgParam( const QString & );
 
       TiXmlElement * makeParamsNode(  );
-      std::string makeParamsString();
+      QString makeParamsString();
       void addParams( TiXmlElement &paramsNode );       // add args to the node
 
-      bool parseParams( std::string UTF8XML ); // parse from the string to args
+      bool parseParams( TIXML_STRING ); // parse from the string to args
 
-      bool getStructArgMember( unsigned int argno, const std::string &name, boost::shared_ptr<RPCParam>  &res );
+      bool getStructArgMember( unsigned int argno, const QString &name, boost::shared_ptr<RPCParam>  &res );
       bool getStructArgMember( unsigned int argno, unsigned int eleno, boost::shared_ptr<RPCParam>  &res );
       bool getArrayArgElements( unsigned int argno, unsigned int &size );
       bool getArrayArgElement( unsigned int argno, unsigned int eleno, boost::shared_ptr<RPCParam> &res );
@@ -244,9 +247,9 @@ class RPCArgs
       bool getBooleanArg( unsigned int argno, bool &res );
       bool getIntArg( unsigned int argno, int &res );
       bool getDoubleArg( unsigned int argno, double &res );
-      bool getStringArg( unsigned int argno, std::string &res );
-      bool getBase64Arg( unsigned int argno, std::string &res );
-      bool getDtgArg( unsigned int argno, std::string &res );
+      bool getStringArg( unsigned int argno, QString &res );
+      bool getBase64Arg( unsigned int argno, QString &res );
+      bool getDtgArg( unsigned int argno, QString &res );
 };
 
 //---------------------------------------------------------------------------

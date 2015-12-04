@@ -13,37 +13,33 @@
 extern const double pi /* = (double )3.141592653 */;  /* pi */
 extern const double dr /* = pi/180.0*/;      			  // degree to radian conversion factor
 
-extern bool checkFileOK( std::ifstream &istr, const std::string &fname, const std::string &fmess );
+extern bool checkFileOK( std::ifstream &istr, const QString &fname, const QString &fmess );
 
 //extern char *lbuff;
 extern void clearBuffer( void );
-extern void strtobuf( const std::string &str );
-extern void strtobuf( const MinosItem<std::string> &str );
+extern void strtobuf( const QString &str );
+extern void strtobuf( const MinosItem<QString> &str );
 extern void strtobuf();
-std::string strupr( const std::string &s );
-extern int stricmp( const std::string &s1, const std::string &s2 );
-extern int strnicmp( const std::string &s1, const std::string &s2, unsigned int len );
-//extern char *trimr(char *);
+QString strupr( const QString &s );
+extern int stricmp( const QString &s1, const QString &s2 );
+extern int strnicmp( const QString &s1, const QString &s2, unsigned int len );
 extern void opyn( bool b );
 void opyn( const MinosItem<bool> &b );
-extern void buftostr( std::string &str );
-extern void buftostr( MinosItem<std::string> &str );
+extern void buftostr( QString &str );
+extern void buftostr( MinosItem<QString> &str );
 extern bool inyn();
-extern bool wildComp( const std::string &e, const std::string &s );
-char *mystrncpy( char *s1, const char *s2, int maxlen );
-//extern void *mymemcpy(void *dest, const void *src, size_t n);
-extern int strcpysp( char *s1, const std::string &s2, int maxlen = 255 );
-extern int strcpysp( std::string &s1, const std::string &s2, int maxlen = 255 );
-extern int strcmpsp( const std::string &s1, const std::string &s2 );
-extern int stricmpsp( const std::string &s1, const std::string &s2 );
-extern int placestr( char *buff, const std::string &str, int start, int len );
+extern bool wildComp( const QString &e, const QString &s );
+extern int strcpysp( char *s1, const QString &s2, int maxlen = 255 );
+extern int strcpysp( QString &s1, const QString &s2, int maxlen = 255 );
+extern int strcmpsp( const QString &s1, const QString &s2 );
+extern int stricmpsp( const QString &s1, const QString &s2 );
+extern int placestr(QString &buff, const QString &str, int start, int len );
 int parseLine( char *buff, char sep, char **a, int count, char sep2, bool &sep2seen );
 
-extern std::string trimr( const std::string & );
-extern std::string trim( const std::string & );
+extern QString trimr( const QString & );
 
-extern std::string makeADIFField( const std::string &fieldname, const std::string &content );
-extern std::string makeADIFField( const std::string &fieldname, int content );
+extern QString makeADIFField( const QString &fieldname, const QString &content );
+extern QString makeADIFField( const QString &fieldname, int content );
 extern QString TDTToCanonical( QDateTime d );
 extern QDateTime CanonicalToTDT( QString cdtg );
 
@@ -58,7 +54,7 @@ class writer
       //      char *lbuff;
 
    public:
-      //void lwrite( void );
+      void lwrite( const QString & );
       void lwrite( const char * );
       void lwriteLine( void );
       void lwriteNl( void );
@@ -82,8 +78,7 @@ bool StaticDirectoryCreate (const QString & Path , QWidget *Owner);
 
 bool CreateDir( const QString &s );
 
-extern int toInt ( const std::string &s, int def = 0 );
-extern double toDouble ( const std::string &s, double def = 0.0 );
 extern int toInt ( const QString &s, int def = 0 );
 extern double toDouble ( const QString &s, double def = 0.0 );
+extern QString makeStr( bool i );
 #endif

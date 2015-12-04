@@ -69,44 +69,44 @@ class RPCNotifyServer: public MinosRPCServer
 class RPCSubscriber
 {
    protected:
-      std::string category;
-      RPCSubscriber( const std::string &category )
+      QString category;
+      RPCSubscriber( const QString &category )
             : category( category )
       {}
    public:
-      static void testAndSubscribe( const std::string &category );
+      static void testAndSubscribe( const QString &category );
       virtual ~RPCSubscriber(){}
       virtual void reSubscribe();
-      virtual bool isEqual( const std::string &category );
-      virtual bool isRemoteEqual( const std::string &server, const std::string &category );
+      virtual bool isEqual( const QString &category );
+      virtual bool isRemoteEqual( const QString &server, const QString &category );
 };
 class RPCRemoteSubscriber : public RPCSubscriber
 {
    private:
-      std::string server;
-      RPCRemoteSubscriber( const std::string &server, const std::string &category )
+      QString server;
+      RPCRemoteSubscriber( const QString &server, const QString &category )
             : RPCSubscriber( category ), server( server )
       {}
    public:
-      static void testAndSubscribe( const std::string &server, const std::string &category );
-      virtual bool isRemoteEqual( const std::string &server, const std::string &category );
+      static void testAndSubscribe( const QString &server, const QString &category );
+      virtual bool isRemoteEqual( const QString &server, const QString &category );
       virtual void reSubscribe();
-      std::string getServer()
+      QString getServer()
       {
          return server;
       }
 };
 class RPCPublisher
 {
-      std::string category;
-      std::string key;
-      std::string value;
+      QString category;
+      QString key;
+      QString value;
       PublishState state;
-      RPCPublisher( const std::string &category, const std::string &key, const std::string &value, PublishState pState )
+      RPCPublisher( const QString &category, const QString &key, const QString &value, PublishState pState )
             : category( category ), key( key ), value( value ), state(pState)
       {}
    public:
-      static void testAndPublish( const std::string &category, const std::string &key, const std::string &value, PublishState pState );
+      static void testAndPublish( const QString &category, const QString &key, const QString &value, PublishState pState );
       void rePublish();
 
 };

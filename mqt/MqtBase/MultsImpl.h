@@ -41,7 +41,7 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
          return 0;
       }
    public:
-      std::string multfilename;
+      QString multfilename;
       virtual bool procLine( char ** ) = 0;
       MultList()
       {}
@@ -49,15 +49,15 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
       {
          freeAll();
       }
-      void loadEntries( const std::string &sfname, const std::string &fmess )
+      void loadEntries( const QString &sfname, const QString &fmess )
       {
          TEMPBUFF( buff, 256 );
-         std::string fname = sfname;
+         QString fname = sfname;
          if ( multfilename.length() )
             fname = multfilename;
 
          // populate the contest object from the file
-         std::ifstream istr( fname.c_str() ); // should close when it goes out of scope
+         std::ifstream istr( fname.toStdString().c_str() ); // should close when it goes out of scope
          if ( !checkFileOK( istr, fname, fmess ) )
             return ;
 
@@ -100,9 +100,9 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
          return diff;
       }
 
-      std::string getText( int item, int Column, BaseContestLog *const ct )
+      QString getText( int item, int Column, BaseContestLog *const ct )
       {
-         std::string dest;
+         QString dest;
          if ( item >= (int)MultList::size() )
             return dest;
          itemtype ce = MultList::at( item );
@@ -124,7 +124,7 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
 
             case ectLocator:
                {
-                  dest = ce->central.loc.getValue().substr( 0, 6 );
+                  dest = ce->central.loc.getValue().left( 6 );
                   break;
                }
 
@@ -136,18 +136,16 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
                   bool brgscoreValid = true;
                   int useBearing = 0;
 
-                  TEMPBUFF( brgbuff, 6 );
-                  int valRes = lonlat( ce->central.loc.getValue().c_str(), longitude, latitude );
+                  QString brgbuff;
+                  int valRes = lonlat( ce->central.loc.getValue(), longitude, latitude );
                   if ( ( valRes == LOC_OK ) && ct ->locValid )
                      ct ->disbear( longitude, latitude, useScore, useBearing );
                   else
                      brgscoreValid = false;
                   if ( brgscoreValid && ( valRes == LOC_OK ) )
                   {
-                     sprintf( brgbuff, "%03.3d\xb0", varBrg( useBearing + ct->bearingOffset.getValue()) );
+                     brgbuff = QString( "%1\xb0").arg(varBrg( useBearing + ct->bearingOffset.getValue()), 3 );
                   }
-                  else
-                     brgbuff[ 0 ] = 0;
 
                   dest = brgbuff;
                   break;
@@ -170,10 +168,10 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
          return dest;
       }
 
-      std::string getText( int item, BaseContestLog *const ct )
+      QString getText( int item, BaseContestLog *const ct )
       {
          // Only called for fullMultDisp
-         std::string dest;
+         QString dest;
          if ( item >= (int)MultList::size() )
             return dest;
          itemtype ce = MultList::at( item );
@@ -184,9 +182,9 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
          bool brgscoreValid = true;
          int useBearing = 0;
 
-         TEMPBUFF( brgbuff, 6 );
-         char *buff = diskBuffer;
-         memset( buff, ' ', 255 );
+         QString brgbuff;
+         QString buff;
+
          int valRes = lonlat( ce->central.loc.getValue(), longitude, latitude );
          if ( ( valRes == LOC_OK ) && ct ->locValid )
             ct ->disbear( longitude, latitude, useScore, useBearing );
@@ -195,25 +193,23 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
 
          if ( brgscoreValid && ( valRes == LOC_OK ) )
          {
-            sprintf( brgbuff, "%03.3d\xb0", varBrg( useBearing ) );
+            brgbuff = QString("%1\xb0").arg( varBrg( useBearing), 3 ) ;
          }
-         else
-            brgbuff[ 0 ] = 0;
 
          int next = 0;
          next = placestr( buff, ce->str( true ), next, slen( true ) );
 
-         TEMPBUFF( wcount, 10 );
-         sprintf( wcount, "(%d)", getWorked( item, ct ) );
+         QString wcount;
+         wcount = QString("(%1)").arg( getWorked( item, ct ) );
          next = placestr( buff, wcount, next + 1, 5 );
 
          next = placestr( buff, ce->central.loc.getValue(), next + 1, 6 );
          next = placestr( buff, brgbuff, next + 1, 4 );
 
          // want to list synonyms after the real name, for both countries and districts
-         next = placestr( buff, ce->realName.c_str(), next + 1, strlen( ce->realName.c_str() ) );
+         next = placestr( buff, ce->realName, next + 1, ce->realName.length() );
 
-         std::string namebuff;
+         QString namebuff;
          ce->addSynonyms( namebuff );
 
          placestr( buff, namebuff, next + 1, 254 - next );
@@ -268,7 +264,7 @@ class CountryList : public MultList < CountryEntry * >
       void load( void );
       virtual bool procLine( char ** );
       virtual int slen( bool );
-      void loadEntries( const std::string &fname, const std::string &fmess );
+      void loadEntries( const QString &fname, const QString &fmess );
 };
 
 class CountrySynonymList : public MultList < CountrySynonym * >
@@ -297,13 +293,13 @@ class MultListsImpl: public MultLists
       static MultListsImpl *getMultLists();
       ~MultListsImpl();
       //      void addCountry( bool addsyn );
-      virtual CountrySynonym *searchCountrySynonym( const std::string &syn );
-      virtual DistrictEntry *searchDistrict( const std::string &syn );
+      virtual CountrySynonym *searchCountrySynonym( const QString &syn );
+      virtual DistrictEntry *searchDistrict( const QString &syn );
       virtual int getCtryListSize();
       virtual int getDistListSize();
-      virtual CountryEntry *getCtryForPrefix( const std::string &forcedMult );
-      virtual std::string getCtryListText( int item, int Column, BaseContestLog *const ct );
-      virtual std::string getDistListText( int item, int Column, BaseContestLog *const ct );
+      virtual CountryEntry *getCtryForPrefix( const QString &forcedMult );
+      virtual QString getCtryListText( int item, int Column, BaseContestLog *const ct );
+      virtual QString getDistListText( int item, int Column, BaseContestLog *const ct );
       virtual CountryEntry * getCtryListAt( int index );
       virtual int getCtryListIndexOf( CountryEntry * );
       virtual int getDistListIndexOf( DistrictEntry * );

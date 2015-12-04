@@ -23,7 +23,7 @@ void XStanza::setNextId()
       id = getNextId();
    }
 }
-/*static*/ std::string XStanza::getNextId()
+/*static*/ QString XStanza::getNextId()
 {
    static int nextId = 1;
    static char buff[ 40 ] = {0};
@@ -42,16 +42,16 @@ void XStanza::setNextId()
 // RPC base action
 RPCAction::RPCAction()
 {}
-RPCAction::RPCAction( const std::string &to, const std::string &from ) :
+RPCAction::RPCAction( const QString &to, const QString &from ) :
       to( to ), from( from )
 {}
 RPCAction::~RPCAction()
 {
    args.clear();
 }
-std::string RPCAction::print()
+QString RPCAction::print()
 {
-   std::string s = "From: " + getFrom() + " To: " + getTo() + "\r\n";
+   QString s = "From: " + getFrom() + " To: " + getTo() + "\r\n";
    for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
    {
       s += ( *i ) ->print();
@@ -60,14 +60,14 @@ std::string RPCAction::print()
 }
 void RPCAction::parseParams( TiXmlElement *paramsNode )      // parse from the node to args
 {
-   std::string s;
+   TIXML_STRING s;
    s << *paramsNode ;
    RPCArgs::parseParams( s );
 }
 
 //---------------------------------------------------------------------------
 // Do an RPC action (normally the receiver!)
-TiXmlElement *findNode( TiXmlElement *node, const std::string &name )
+TiXmlElement *findNode( TiXmlElement *node, const QString &name )
 {
    for ( TiXmlElement * e = node->FirstChildElement(); e; e = e->NextSiblingElement() )
    {
@@ -79,9 +79,9 @@ TiXmlElement *findNode( TiXmlElement *node, const std::string &name )
    }
    return 0;
 }
-std::string getNodeValue( TiXmlElement *node, const std::string &name )
+QString getNodeValue( TiXmlElement *node, const QString &name )
 {
-   std::string res;
+   QString res;
    for ( TiXmlElement * e = node->FirstChildElement(); e; e = e->NextSiblingElement() )
    {
       // declaration, destination lines
@@ -97,13 +97,13 @@ std::string getNodeValue( TiXmlElement *node, const std::string &name )
    }
    return res;
 }
-RPCRequest::RPCRequest( const std::string &to, const std::string &mname ) : RPCAction( to, "" ), methodName( mname )
+RPCRequest::RPCRequest( const QString &to, const QString &mname ) : RPCAction( to, "" ), methodName( mname )
 {}
-RPCRequest::RPCRequest( const std::string &to, const std::string &from, const std::string &mname ) : RPCAction( to, from ), methodName( mname )
+RPCRequest::RPCRequest( const QString &to, const QString &from, const QString &mname ) : RPCAction( to, from ), methodName( mname )
 {}
-RPCRequest::RPCRequest( const std::string &from, TiXmlElement *node ) : RPCAction( "", from )
+RPCRequest::RPCRequest( const QString &from, TiXmlElement *node ) : RPCAction( "", from )
 {
-   std::string mname = getNodeValue( node, "methodName" );
+   QString mname = getNodeValue( node, "methodName" );
    methodName = mname;
    TiXmlElement *p = findNode( node, "params" );
    if ( p )
@@ -114,54 +114,54 @@ RPCRequest::RPCRequest( const std::string &from, TiXmlElement *node ) : RPCActio
 RPCRequest::~RPCRequest()
 {}
 
-TiXmlElement *makeIq ( const std::string &type, const std::string &xmlns )
+TiXmlElement *makeIq ( const QString &type, const QString &xmlns )
 {
    TiXmlElement * x = new TiXmlElement( "iq" );
-   x->SetAttribute( "type", type );
+   x->SetAttribute( "type", type.toStdString() );
    TiXmlElement qNode( "query" );
-   qNode.SetAttribute( "xmlns", xmlns );
+   qNode.SetAttribute( "xmlns", xmlns.toStdString() );
 
    x->InsertEndChild( qNode );
    return x;
 }
 
 // Build up the DOM tree for the action, and send it
-std::string RPCRequest::getActionMessage( )
+QString RPCRequest::getActionMessage( )
 {
    TiXmlElement * x = makeIq( "set", "minos:iq:rpc" );
    if ( to.length() )
-      x->SetAttribute( "to", to );
+      x->SetAttribute( "to", to.toStdString() );
    if ( from.length() )
-      x->SetAttribute( "from", from );
+      x->SetAttribute( "from", from.toStdString() );
    if ( getId().length() )
-      x->SetAttribute( "id", getId() );
+      x->SetAttribute( "id", getId().toStdString() );
 
    TiXmlElement *q = findNode( x, "query" );
 
    TiXmlElement mcNode( "methodCall" );
    TiXmlElement mNode( "methodName" );
 
-   TiXmlText tNode( methodName );
+   TiXmlText tNode( methodName.toStdString() );
    mNode.InsertEndChild( tNode );
 
    mcNode.InsertEndChild( mNode );
    addParams( mcNode );
    q->InsertEndChild( mcNode );
 
-   std::string s;
+   TIXML_STRING s;
    s << *x ;
    delete x;
-   return s;
+   return s.c_str();
 }
-std::string RPCRequest::print()
+QString RPCRequest::print()
 {
-   std::string s = "Request\r\n";
+   QString s = "Request\r\n";
    s += RPCAction::print();
    return s;
 }
-std::string RPCRequest::analyse()
+QString RPCRequest::analyse()
 {
-   std::string s;
+   QString s;
    for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
    {
       s += ( *i ) ->analyse();
@@ -171,17 +171,17 @@ std::string RPCRequest::analyse()
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 // Do an RPC action (normally the receiver!)
-RPCResponse::RPCResponse( const std::string &to, const std::string &pid , const std::string &mname ) :
+RPCResponse::RPCResponse( const QString &to, const QString &pid , const QString &mname ) :
       RPCAction( to, "" ), methodName( mname )
 {
-   setId( pid.c_str() );
+   setId( pid );
 }
-RPCResponse::RPCResponse( const std::string &to, const std::string &from, const std::string &pid , const std::string &mname ) :
+RPCResponse::RPCResponse( const QString &to, const QString &from, const QString &pid , const QString &mname ) :
       RPCAction( to, from ), methodName( mname )
 {
-   setId( pid.c_str() );
+   setId( pid );
 }
-RPCResponse::RPCResponse( const std::string &from, TiXmlElement *node ) :
+RPCResponse::RPCResponse( const QString &from, TiXmlElement *node ) :
       RPCAction( "", from )
 {
    // node points to methodResponse
@@ -232,21 +232,21 @@ void RPCResponse::addFault( TiXmlElement &node )
    }
 }
 // Build up the DOM tree for the action, and send it
-std::string RPCResponse::getActionMessage( )
+QString RPCResponse::getActionMessage( )
 {
    TiXmlElement * x = makeIq( "result", "minos:iq:rpc" );
    if ( to.length() )
-      x->SetAttribute( "to", to );
+      x->SetAttribute( "to", to.toStdString() );
    if ( from.length() )
-      x->SetAttribute( "from", from );
+      x->SetAttribute( "from", from.toStdString() );
    if ( getId().length() )
-      x->SetAttribute( "id", getId() );
+      x->SetAttribute( "id", getId().toStdString() );
 
    TiXmlElement *q = findNode( x, "query" );
 
    TiXmlElement mrNode( "methodResponse" );
    TiXmlElement mNode( "methodName" );
-   TiXmlText tNode( methodName );
+   TiXmlText tNode( methodName.toStdString() );
    mNode.InsertEndChild( tNode );
    mrNode.InsertEndChild( mNode );
 
@@ -256,14 +256,14 @@ std::string RPCResponse::getActionMessage( )
       addParams( mrNode );
    q->InsertEndChild( mrNode );
 
-   std::string s;
+   TIXML_STRING s;
    s << *x;
    delete x;
-   return s;
+   return s.c_str();
 }
-std::string RPCResponse::print()
+QString RPCResponse::print()
 {
-   std::string s = "Response\r\n";
+   QString s = "Response\r\n";
    if ( fault )
       s += fault->print();
 

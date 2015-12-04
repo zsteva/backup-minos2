@@ -13,23 +13,23 @@
 class MultType
 {
    public:
-      std::string name;
-      std::string description;
-      std::string longDescription;
-      std::string scoringDescription;
-      std::string exchange;
+      QString name;
+      QString description;
+      QString longDescription;
+      QString scoringDescription;
+      QString exchange;
 };
 class SpecialRule
 {
    public:
-      std::string name;
-      std::string description;
-      std::string longDescription;
+      QString name;
+      QString description;
+      QString longDescription;
 };
 class MonthList
 {
    public:
-      std::string month;
+      QString month;
 };
 class Section
 {
@@ -38,18 +38,18 @@ class Section
       {}
       std::vector<MonthList> monthList;
 
-      std::string name;
-      std::string description;
-      std::string longDescription;
-      std::string power;
-      std::string height;
+      QString name;
+      QString description;
+      QString longDescription;
+      QString power;
+      QString height;
       bool singleAntenna;
       bool overall;
 };
 class StartDateList
 {
    public:
-      std::string date;
+      QString date;
 
 };
 class TimeList
@@ -57,51 +57,51 @@ class TimeList
    public:
       std::vector<MonthList> monthList;
       std::vector<StartDateList> startDateList;
-      std::string startDay;
-      std::string startWeek;
-      std::string startTime;
-      std::string timeType;
-      std::string duration;
-      std::string mult;
+      QString startDay;
+      QString startWeek;
+      QString startTime;
+      QString timeType;
+      QString duration;
+      QString mult;
 };
 class ContestBand
 {
    public:
-      std::string name;
-      std::string reg1band;
-      std::string wavelength;
+      QString name;
+      QString reg1band;
+      QString wavelength;
       std::vector<TimeList> timeList;
 };
 class ContestList
 {
    public:
-      std::string name;
+      QString name;
 
 };
 class ContestSeries
 {
    public:
-      std::string name;
-      std::string description;
+      QString name;
+      QString description;
       std::vector<ContestList>contestList;
-      std::vector<std::string>awardList;
+      std::vector<QString>awardList;
 };
 class SectionList
 {
    public:
-      std::string name;
+      QString name;
 
 };
 class CalendarBandList
 {
    public:
-      std::string name;
+      QString name;
 
 };
 class SpecialRuleList
 {
    public:
-      std::string name;
+      QString name;
 
 };
 class Contest
@@ -110,21 +110,21 @@ class Contest
       Contest() : scoring( perkms ), iaru( false )
       {}
 
-      std::string name;
-      std::string description;
-      std::string shortDescription;
+      QString name;
+      QString description;
+      QString shortDescription;
       enum ScoreType{oneppq, perkms} scoring;
       bool iaru;
-      std::string mult;
-      std::string power;
-      std::string mode;
-      std::string entryDate;
+      QString mult;
+      QString power;
+      QString mode;
+      QString entryDate;
 
       std::vector<TimeList> timeList;
       std::vector<CalendarBandList> bandList;
       std::vector<SectionList> sectionList;
       std::vector<SpecialRuleList> specialRulesList;
-      std::vector<std::string> awardList;
+      std::vector<QString> awardList;
 
 };
 class IndividualContest
@@ -132,18 +132,18 @@ class IndividualContest
    public:
       QDateTime start;
       QDateTime finish;
-      std::string duration;
+      QString duration;
 
-      std::string description;
-      std::string shortDescription;
-      std::string bands;
-      std::string reg1band;
+      QString description;
+      QString shortDescription;
+      QString bands;
+      QString reg1band;
       bool ppKmScoring;
-      std::string sections;
-      std::string mults;
-      std::string specialRules;
-      std::string power;
-      std::string antenna;
+      QString sections;
+      QString mults;
+      QString specialRules;
+      QString power;
+      QString antenna;
 
       bool operator<( const IndividualContest& rhs ) const;
 };
@@ -163,19 +163,19 @@ class Calendar
 
       bool parseTimeList( TiXmlElement * e, std::vector<TimeList> &timeList );
 
-      std::string version;
-      std::map<std::string, MultType> mults;
-      std::map<std::string, SpecialRule> specialRules;
-      std::map<std::string, Section> sections;
-      std::map<std::string, ContestBand> bands;
-      std::map<std::string, ContestSeries> contestSeries;
-      std::map<std::string, Contest> contests;
+      QString version;
+      std::map<QString, MultType> mults;
+      std::map<QString, SpecialRule> specialRules;
+      std::map<QString, Section> sections;
+      std::map<QString, ContestBand> bands;
+      std::map<QString, ContestSeries> contestSeries;
+      std::map<QString, Contest> contests;
 
       std::vector<IndividualContest> calendar;
 };
 extern QDateTime localToUTC( QDateTime t );
 extern void setYear( int y );
-extern int getMonth( const std::string &m );
+extern int getMonth( const QString &m );
 extern int getDate( int month, int day, int week );
 extern int getDayOfWeek( QDateTime dtg );
 

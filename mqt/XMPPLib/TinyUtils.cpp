@@ -9,20 +9,20 @@
 //---------------------------------------------------------------------------
 #include "XMPP_pch.h"
 
-bool checkElementName( TiXmlElement *e, const std::string &expected )
+bool checkElementName( TiXmlElement *e, const QString &expected )
 {
-   if ( !stricmp( e->Value(), expected.c_str() ) )
+   if ( expected.compare(e->Value(), Qt::CaseInsensitive) == 0 )
       return true;
    return false;
 }
 
-std::string getAttribute( TiXmlElement *tix, const char *attname )
+QString getAttribute( TiXmlElement *tix, const QString &attname )
 {
-   std::string attval;
-   const char * att = tix->Attribute( attname );
+   QString attval;
+   const char * att = tix->Attribute( attname.toStdString().c_str() );
    if ( att )
    {
-      attval = att;
+      attval = QString(att);
    }
    return attval;
 }

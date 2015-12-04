@@ -12,7 +12,7 @@
 
 #include "PrintFile.h"
 
-extern std::string fileHeader;
+extern QString fileHeader;
 
 enum PrintFile_order
 {
@@ -23,7 +23,7 @@ enum PrintFile_order
    LineCount
 };
 // We want to export as a human readable file
-PrintFileLine::PrintFileLine( const std::string &pre, const std::string &dat ) :
+PrintFileLine::PrintFileLine( const QString &pre, const QString &dat ) :
       prefix( pre ), data( dat )
 {}
 PrintFileLine::PrintFileLine( void )
@@ -78,11 +78,11 @@ bool PrintFile::exportTest(boost::shared_ptr<QFile> expfd )
    if ( ltot == 0 )
       ltot = 1;
 
-   std::vector <std::string> remarks;
-   remarks.push_back( ct->entCondx1.getValue() );
-   remarks.push_back( ct->entCondx2.getValue() );
-   remarks.push_back( ct->entCondx3.getValue() );
-   remarks.push_back( ct->entCondx4.getValue() );
+   QStringList remarks;
+   remarks.append( ct->entCondx1.getValue() );
+   remarks.append( ct->entCondx2.getValue() );
+   remarks.append( ct->entCondx3.getValue() );
+   remarks.append( ct->entCondx4.getValue() );
 
    for ( unsigned int i = 0; i < ct->ctList.size(); i++ )
    {
@@ -133,16 +133,18 @@ bool PrintFile::exportTest(boost::shared_ptr<QFile> expfd )
    linelist[ ( int ) CExcs ] = PrintFileLine( "Claimed number of exchanges             ", makeStr( ndistrict )); /*, "Claimed no. of exchanges; Bonus for each new exchange; Exchange Multiplier"*/
    linelist[ ( int ) CDXCs ] = PrintFileLine( "Claimed number of DXCCs                 ", makeStr( nctry )); /*, "Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier"*/
    linelist[ ( int ) CToSc ] = PrintFileLine( "Claimed total score                     ", makeStr( ct->contestScore * ltot ) ); /*, "Claimed total score"*/
-   linelist[ ( int ) CODXC ] = PrintFileLine( "Best DX - Callsign; Locator; Distance   ", bestdx ? ( ( bestdx->cs.fullCall.getValue() + ";" + bestdx->loc.loc.getValue() + ";" + makeStr( bestdx->contactScore.getValue() ).c_str() ).c_str() ) : ";;" ); /*, "(Best DX) Callsign; Locator; Distance"*/
+   linelist[ ( int ) CODXC ] = PrintFileLine( "Best DX - Callsign; Locator; Distance   ",
+       bestdx ? ( bestdx->cs.fullCall.getValue() + ";" + bestdx->loc.loc.getValue() + ";" + QString::number(bestdx->contactScore.getValue()) )
+              : ";;" ); /*, "(Best DX) Callsign; Locator; Distance"*/
 
-   wr.lwrite(fileHeader.c_str());
+   wr.lwrite(fileHeader);
    wr.lwriteLine();
 
    for ( int i = 0; i < LineCount; i++ )
    {
       if (linelist[ i ].prefix.size())
       {
-         sprintf( lbuff, "%s : %s", linelist[ i ].prefix.c_str(), linelist[ i ].data.c_str() );
+         sprintf( lbuff, "%s : %s", linelist[ i ].prefix.toStdString().c_str(), linelist[ i ].data.toStdString().c_str() );
          wr.lwrite( lbuff );
       }
    }
@@ -150,11 +152,11 @@ bool PrintFile::exportTest(boost::shared_ptr<QFile> expfd )
    wr.lwrite( "Remarks" );
    wr.lwrite( "=======" );
 
-   for ( unsigned int i = 0; i < remarks.size(); i++ )
+   for ( int i = 0; i < remarks.size(); i++ )
    {
       if (remarks[ i ].size())
       {
-         wr.lwrite( remarks[ i ].c_str() );
+         wr.lwrite( remarks[ i ] );
       }
    }
    wr.lwrite( "" );
@@ -168,13 +170,13 @@ bool PrintFile::exportTest(boost::shared_ptr<QFile> expfd )
       BaseContact *dct = ct->ctList[ i ];
       ContestContact *cct = dynamic_cast<ContestContact *>( dct );
 
-      std::string sbuff;
+      QString sbuff;
 
       cct->getPrintFileText( sbuff, 120 );   // lbuff if "bsize" = 256
       if ( sbuff.length() != 0 )
       {
          sbuff = trimr( sbuff );			// No need to pad to 250!!
-         wr.lwrite( sbuff.c_str() );
+         wr.lwrite( sbuff );
       }
    }
    wr.lwrite( "" );
@@ -183,7 +185,7 @@ bool PrintFile::exportTest(boost::shared_ptr<QFile> expfd )
    QString Version = VERSION;
 
    QString pver = "Produced by " + ProductName + " version " + Version;
-   wr.lwrite( pver.toStdString().c_str() );
+   wr.lwrite( pver );
 
    return true;
 

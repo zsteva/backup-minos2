@@ -30,10 +30,10 @@ DistCount distCounts[] =
       {"", 0}
    };
 //============================================================================
-GlistEntry::GlistEntry( const std::string &syn, const std::string &dup )
+GlistEntry::GlistEntry( const QString &syn, const QString &dup )
 {
-   synPrefix = trim( syn );
-   dupPrefix = trim( dup );
+   synPrefix = syn.trimmed();
+   dupPrefix = dup.trimmed();
 }
 GlistEntry::~GlistEntry()
 {}
@@ -79,21 +79,21 @@ bool GlistList::procLine( char **a )
 }
 
 //======================================================================
-MultEntry::MultEntry( const std::string &name, const std::string &cloc ) : listOffset( -1 )
+MultEntry::MultEntry( const QString &name, const QString &cloc ) : listOffset( -1 )
 {
-   realName = trim( name );
+   realName = name.trimmed();
 
    // set up central
-   central.loc.setValue( trim( cloc ).substr( 0, 6 ) );
+   central.loc.setValue( cloc.trimmed().left( 6 ) );
 }
 MultEntry::~MultEntry()
 {}
-void MultEntry::addSynonyms( std::string &s )
+void MultEntry::addSynonyms( QString &s )
 {
    s = "";
 }
 //======================================================================
-DistrictEntry::DistrictEntry( const std::string &cd, const std::string &name, const std::string &prefix, const std::string &prefix2, const std::string &cloc ) :
+DistrictEntry::DistrictEntry( const QString &cd, const QString &name, const QString &prefix, const QString &prefix2, const QString &cloc ) :
       MultEntry( name, cloc ), country1( 0 ), country2( 0 )
 {
    // set district code to cd
@@ -123,9 +123,9 @@ DistrictEntry::~DistrictEntry()
 {
    // no need to delete any components
 }
-std::string DistrictEntry::str( bool longdisp )
+QString DistrictEntry::str( bool longdisp )
 {
-   std::string temp;
+   QString temp;
    temp = districtCode;
    if ( longdisp )
    {
@@ -140,7 +140,7 @@ std::string DistrictEntry::str( bool longdisp )
    }
    return temp;
 }
-void DistrictEntry::addSynonyms( std::string &s )
+void DistrictEntry::addSynonyms( QString &s )
 {
    s = "";
 }
@@ -162,7 +162,7 @@ bool DistrictEntry::operator!=( const DistrictEntry& rhs ) const
 
 
 //======================================================================
-DistrictSynonym::DistrictSynonym( const std::string &cd, const std::string &syn ) :
+DistrictSynonym::DistrictSynonym( const QString &cd, const QString &syn ) :
       district( 0 )
 {
    synonym = syn;
@@ -264,7 +264,7 @@ bool DistrictSynonymList::procLine( char **a )
       delete dse;
    return true;
 }
-static bool compdistnames( DistrictEntry *ce, const std::string &syn )
+static bool compdistnames( DistrictEntry *ce, const QString &syn )
 {
    int len = ce->realName.length();
    for ( int i = 0; i < len; i++ )
@@ -281,7 +281,7 @@ static bool compdistnames( DistrictEntry *ce, const std::string &syn )
 
    return false;
 }
-static DistrictEntry * searchDistrict( const std::string &syn )
+static DistrictEntry * searchDistrict( const QString &syn )
 {
    // given a random string, look for an entry or a synonym
    for ( MultList < DistrictEntry * >::iterator i = MultListsImpl::getMultLists() ->distList.begin(); i != MultListsImpl::getMultLists() ->distList.end(); i++ )
@@ -311,11 +311,11 @@ static DistrictEntry * searchDistrict( const std::string &syn )
    return 0;
 }
 //======================================================================
-CountryEntry::CountryEntry( const std::string &continent, const std::string &prefix,
-                            const std::string &name, const std::string &cloc ) :
+CountryEntry::CountryEntry( const QString &continent, const QString &prefix,
+                            const QString &name, const QString &cloc ) :
       MultEntry( name, cloc ), distLimit( -1 ), continent( continent )
 {
-   basePrefix = trim( prefix );
+   basePrefix = prefix.trimmed();
 }
 CountryEntry::~CountryEntry()
 {}
@@ -343,11 +343,11 @@ bool CountryEntry::hasDistricts()
       return true;
    return false;
 }
-std::string CountryEntry::str( bool )
+QString CountryEntry::str( bool )
 {
    return basePrefix;
 }
-void CountryEntry::addSynonyms( std::string &s )
+void CountryEntry::addSynonyms( QString &s )
 {
    // add list of synonyms to the display buffer
    s = ":";
@@ -380,7 +380,7 @@ bool CountryEntry::operator!=( const CountryEntry& rhs ) const
    return res != 0;
 }
 //======================================================================
-static CountrySynonym *searchCountrySynonym( const std::string &syn )
+static CountrySynonym *searchCountrySynonym( const QString &syn )
 {
    CountrySynonym test( syn, "" );
 
@@ -397,16 +397,16 @@ static CountrySynonym *searchCountrySynonym( const std::string &syn )
    else
       return ( *cs );
 }
-static void makeCountrySynonym( const std::string &ssyn, const std::string &sprefix )
+static void makeCountrySynonym( const QString &ssyn, const QString &sprefix )
 {
    // search country list for the prefix
 
-   std::string syn = trim( ssyn );
-   std::string prefix = trim( sprefix );
+   QString syn = ssyn.trimmed();
+   QString prefix = sprefix.trimmed();
 
-   if ( strchr( syn.c_str(), '-' ) )
+   if ( syn.indexOf( '-' ) >= 0 )
    {
-      MinosParameters::getMinosParameters() ->mshowMessage( ( std::string( "Synonym ranges no longer allowed : " ) + ssyn + " for " + sprefix ).c_str() );
+      MinosParameters::getMinosParameters() ->mshowMessage( ( QString( "Synonym ranges no longer allowed : " ) + ssyn + " for " + sprefix ) );
       return ;
    }
 
@@ -436,11 +436,11 @@ static void makeCountrySynonym( const std::string &ssyn, const std::string &spre
    if ( !added )
       delete cts;
 }
-CountrySynonym::CountrySynonym( const std::string &ssyn, const std::string &sprefix ) :
+CountrySynonym::CountrySynonym( const QString &ssyn, const QString &sprefix ) :
       country( 0 )
 {
-   std::string syn = trim( ssyn );
-   std::string prefix = trim( sprefix );
+   QString syn = ssyn.trimmed();
+   QString prefix = sprefix.trimmed();
 
    if ( prefix.length() )   		// allow for stack based version to search by
    {
@@ -460,9 +460,9 @@ CountrySynonym::CountrySynonym( const std::string &ssyn, const std::string &spre
 }
 CountrySynonym::~CountrySynonym()
 {}
-void CountrySynonym::getDupPrefix( std::string &sprefix2 )
+void CountrySynonym::getDupPrefix( QString &sprefix2 )
 {
-   std::string prefix2 = trim( sprefix2 );
+   QString prefix2 = sprefix2.trimmed();
    //	search Glist
    // dup_prefix_offset was used to speed this up. We may need something similar
    // None found, then don't change prefix2
@@ -505,7 +505,7 @@ int CountrySynonym::compare( const CountrySynonym &cs ) const
       else
          return 1;
 }
-void CountrySynonym::synCat( std::string &add_buff )
+void CountrySynonym::synCat( QString &add_buff )
 {
    add_buff += synPrefix;
 }
@@ -607,12 +607,12 @@ Asiatic Russia:           17:  30:  AS:   55.00:   -83.00:    -7.0:  UA9:
     UI9,UI9I(18),UI9M(17),UI9S(17),UI9W(17);
 ------------------------------------------------------------------------
 */
-void CountryList::loadEntries( const std::string &fname, const std::string &fmess )
+void CountryList::loadEntries( const QString &fname, const QString &fmess )
 {
    // load a CT9 formatted list
    TEMPBUFF( countrybuff, 256 );
 
-   std::ifstream istr( fname.c_str() ); // should close when it goes out of scope
+   std::ifstream istr( fname.toStdString().c_str() ); // should close when it goes out of scope
    if ( !checkFileOK( istr, fname, fmess ) )
       return ;
 
@@ -630,7 +630,7 @@ void CountryList::loadEntries( const std::string &fname, const std::string &fmes
       bool sep2seen;
       parseLine( countrybuff, ':', a, 9, 0, sep2seen );
 
-      std::string mainPrefix( a[ 7 ] );
+      QString mainPrefix( a[ 7 ] );
       bool skip = ( mainPrefix[ 0 ] == '*' );
       if ( !skip )
       {
@@ -734,20 +734,18 @@ void LocList::freeAll()
    llist.clear();
 }
 //======================================================================
-LocSquare::LocSquare( const std::string &locId )
+LocSquare::LocSquare( const QString &locId )
 {
    clear();
-   loc[ 0 ] = toupper( locId[ 0 ] );
-   loc[ 1 ] = toupper( locId[ 1 ] );
-   loc[ 2 ] = 0;
+   loc = locId.left(2).toUpper();
 }
 
-LocCount *LocSquare::map( char *num )
+LocCount *LocSquare::map( const QString &num )
 {
-   if ( !isdigit( num[ 0 ] ) || !isdigit( num[ 1 ] ) )
+   if ( !num[ 0 ].isDigit() || !num[ 1 ].isDigit() )
       return 0;
 
-   return &numbers[ num[ 0 ] - '0' ][ num[ 1 ] - '0' ];
+   return &numbers[ num[ 0 ].toLatin1() - '0' ][ num[ 1 ].toLatin1() - '0' ];
 }
 
 LocCount *LocSquare::map( int num )
@@ -774,15 +772,15 @@ void LocSquare::clear( void )
 
 bool LocSquare::operator<( const LocSquare& rhs ) const
 {
-   return strncmp( loc, rhs.loc, 2 ) < 0;
+   return loc.compare(rhs.loc) < 0;
 }
 bool LocSquare::operator==( const LocSquare& rhs ) const
 {
-   return strncmp( loc, rhs.loc, 2 ) == 0;
+    return loc.compare(rhs.loc) < 0;
 }
 bool LocSquare::operator!=( const LocSquare& rhs ) const
 {
-   return strncmp( loc, rhs.loc, 2 ) != 0;
+    return loc.compare(rhs.loc) < 0;
 }
 
 //======================================================================
@@ -817,10 +815,10 @@ bool MultListsImpl::loadMultFiles( void )
    os << (String("================== country synonyms ") + String(m->ctrySynList.size()).c_str() + "========================").c_str() << std::endl;
    for (MultList < CountrySynonym * >::iterator i = m->ctrySynList.begin(); i != m->ctrySynList.end(); i++)
    {
-      std::string temp1 = (*i)->synPrefix;
+      QString temp1 = (*i)->synPrefix;
    //      CountryEntry * country = *((*i)->country);
       CountryEntry * country = (*i)->country;
-      std::string temp2 = country->basePrefix;
+      QString temp2 = country->basePrefix;
       os << (temp1 + " : " + temp2) << std::endl;
    }
    os << "================== district entries ========================" << std::endl;
@@ -861,7 +859,7 @@ int MultListsImpl::getDistListSize()
 {
    return distList.size();
 }
-CountryEntry *MultListsImpl::getCtryForPrefix( const std::string &forcedMult )
+CountryEntry *MultListsImpl::getCtryForPrefix( const QString &forcedMult )
 {
    CountryEntry * ctryMult = 0;
    for ( MultList < CountryEntry * >::iterator i = MultListsImpl::getMultLists() ->ctryList.begin(); i != MultListsImpl::getMultLists() ->ctryList.end(); i++ )
@@ -876,19 +874,19 @@ CountryEntry *MultListsImpl::getCtryForPrefix( const std::string &forcedMult )
 }
 
 //void MultListsImpl::addCountry( bool addsyn );
-CountrySynonym *MultListsImpl::searchCountrySynonym( const std::string &syn )
+CountrySynonym *MultListsImpl::searchCountrySynonym( const QString &syn )
 {
    return ::searchCountrySynonym( syn );
 }
-DistrictEntry *MultListsImpl::searchDistrict( const std::string &syn )
+DistrictEntry *MultListsImpl::searchDistrict( const QString &syn )
 {
    return ::searchDistrict( syn );
 }
-std::string MultListsImpl::getCtryListText( int item, int Column, BaseContestLog *const ct )
+QString MultListsImpl::getCtryListText( int item, int Column, BaseContestLog *const ct )
 {
    return ctryList.getText( item, Column, ct );
 }
-std::string MultListsImpl::getDistListText( int item, int Column, BaseContestLog *const ct )
+QString MultListsImpl::getDistListText( int item, int Column, BaseContestLog *const ct )
 {
    return distList.getText( item, Column, ct );
 }

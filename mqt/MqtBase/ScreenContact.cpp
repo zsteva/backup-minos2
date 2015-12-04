@@ -30,11 +30,10 @@ void ScreenContact::initialise( BaseContestLog *ct )
       mode = clp->mode.getValue();
       ms = clp->maxSerial + 1;
    }
-   char temp[ 10 ];
-   sprintf( temp, "%03.3d", ms );
+   QString temp = QString("%1").arg(ms, 3);
    serials = temp;
    repr = "5  ";
-   serialr = std::string( SERIALLENGTH, ' ' );
+   serialr = QString( SERIALLENGTH, ' ' );
    extraText = "";
    comments = "";
    contactFlags = 0;
@@ -242,11 +241,11 @@ void ScreenContact::checkScreenContact( )
          {
             if ( clp->districtMult.getValue() )
             {
-               if ( !trim( comments ).size() )
+               if ( !comments.trimmed().size() )
                   checkret = ERR_21;
             }
             else
-               if ( !trim( extraText ).size() )
+               if ( !extraText.trimmed().size() )
                   checkret = ERR_21;
          }
       }

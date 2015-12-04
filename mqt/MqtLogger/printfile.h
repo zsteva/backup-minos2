@@ -14,10 +14,10 @@
 class PrintFileLine
 {
    public:
-      std::string prefix;
-      std::string data;
+      QString prefix;
+      QString data;
 
-      PrintFileLine( const std::string &, const std::string &dat );
+      PrintFileLine( const QString &, const QString &dat );
       PrintFileLine( void );
       ~PrintFileLine();
 

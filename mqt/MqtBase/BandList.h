@@ -26,18 +26,18 @@
 
 class BandInfo
 {
-        std::string type;
+        QString type;
     public:
         double flow;
         double fhigh;
-        std::string wlen;
-        std::string uk;
-        std::string cabrillo;
-        std::string adif;
-        std::string reg1test;
+        QString wlen;
+        QString uk;
+        QString cabrillo;
+        QString adif;
+        QString reg1test;
 
-        void setType ( const std::string &t );
-        std::string getType();
+        void setType ( const QString &t );
+        QString getType();
 };
 class TiXmlElement;
 class BandList
@@ -48,7 +48,7 @@ class BandList
         ~BandList();
         std::vector<BandInfo> bandList;
         bool parseFile ( const QString &bandFile );
-        bool findBand ( const std::string &freq, BandInfo & );
+        bool findBand ( const QString &freq, BandInfo & );
         bool findBand ( int freq, BandInfo & );
 
         static BandList &getBandList();

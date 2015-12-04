@@ -30,7 +30,6 @@ SOURCES += \
     PubSubClient.cpp \
     RPCPubSub.cpp \
     ServerEvent.cpp \
-    stringcast.cpp \
     TinyUtils.cpp \
     XMPPEvents.cpp \
     XMPPRPCObj.cpp \
@@ -47,7 +46,6 @@ HEADERS += \
     PubSubClient.h \
     RPCPubSub.h \
     ServerEvent.h \
-    stringcast.h \
     TinyUtils.h \
     XMPP_pch.h \
     XMPPEvents.h \

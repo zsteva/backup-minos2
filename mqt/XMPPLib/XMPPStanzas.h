@@ -18,32 +18,31 @@
 
 class XStanza
 {
-      std::string id;
+      QString id;
    public:
 
       XStanza();
       virtual ~XStanza();
 
-      virtual void setId( const char * tid )
+      virtual void setId( const QString &tid )
       {
-         if ( tid )
-            id = tid;
+         id = tid;
       }
-      virtual std::string getId()
+      virtual QString getId()
       {
          return id;
       }
       void setNextId();
-      static std::string getNextId();
+      static QString getNextId();
 
-      virtual std::string getTo() = 0;
-      virtual std::string getFrom() = 0;
+      virtual QString getTo() = 0;
+      virtual QString getFrom() = 0;
 
       // Build up the DOM tree for the action, and send it
-      virtual std::string getActionMessage() = 0;
+      virtual QString getActionMessage() = 0;
 
-      virtual std::string print() = 0;
-      virtual std::string analyse() = 0;
+      virtual QString print() = 0;
+      virtual QString analyse() = 0;
 };
 //---------------------------------------------------------------------------
 // RPC actions. NB that calls, events and responses can come from either end!
@@ -53,26 +52,26 @@ class RPCAction: public XStanza, public RPCArgs
 {
    protected:
       void parseParams( TiXmlElement *paramsNode );     // parse from the node to args
-      std::string to;
-      std::string from;
+      QString to;
+      QString from;
    public:
 
-      std::string getTo()
+      QString getTo()
       {
          return to;
       }
-      std::string getFrom()
+      QString getFrom()
       {
          return from;
       }
 
       RPCAction();
-      RPCAction( const std::string &to, const std::string &from );
+      RPCAction( const QString &to, const QString &from );
       virtual ~RPCAction();
       // Build up the DOM tree for the action, and send it
-      virtual std::string getActionMessage() = 0;
-      virtual std::string print() = 0;
-      virtual std::string analyse()
+      virtual QString getActionMessage() = 0;
+      virtual QString print() = 0;
+      virtual QString analyse()
       {
          return "";
       }
@@ -81,37 +80,37 @@ class RPCAction: public XStanza, public RPCArgs
 class RPCRequest: public RPCAction
 {
    public:
-      std::string methodName;
-      RPCRequest( const std::string &to, const std::string &mname );
-      RPCRequest( const std::string &to, const std::string &from, const std::string &mname );
-      RPCRequest( const std::string &from, TiXmlElement *node );
+      QString methodName;
+      RPCRequest( const QString &to, const QString &mname );
+      RPCRequest( const QString &to, const QString &from, const QString &mname );
+      RPCRequest( const QString &from, TiXmlElement *node );
       virtual ~RPCRequest();
       // Build up the DOM tree for the action, and send it
-      virtual std::string getActionMessage( );
-      virtual std::string print();
-      virtual std::string analyse();
+      virtual QString getActionMessage( );
+      virtual QString print();
+      virtual QString analyse();
 };
 
 // Do an RPC action (normally the receiver!)
 class RPCResponse: public RPCAction
 {
    public:
-      std::string methodName;
+      QString methodName;
       boost::shared_ptr<RPCParam> fault;
 
-      RPCResponse( const std::string &to, const std::string &id, const std::string &mname );
-      RPCResponse( const std::string &to, const std::string &from, const std::string &id, const std::string &mname );
-      RPCResponse( const std::string &from, TiXmlElement *node );
+      RPCResponse( const QString &to, const QString &id, const QString &mname );
+      RPCResponse( const QString &to, const QString &from, const QString &id, const QString &mname );
+      RPCResponse( const QString &from, TiXmlElement *node );
       RPCResponse();
 
       void addFault( boost::shared_ptr<RPCParam> );
       void addFault( TiXmlElement & );
       virtual ~RPCResponse();
       // Build up the DOM tree for the action, and send it
-      virtual std::string getActionMessage( );
+      virtual QString getActionMessage( );
 
-      virtual std::string print();
-      virtual std::string analyse()
+      virtual QString print();
+      virtual QString analyse()
       {
          return "";
       }

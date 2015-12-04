@@ -10,7 +10,7 @@
 #include <sys\stat.h>
 
 #include "MLogFile.h"
-const std::string noneBundle = "<None>";
+const QString noneBundle = "<None>";
 
 // Here we define all the possible profile entries in a section
 // we use them for new sections in a bundle, and also to get
@@ -26,19 +26,19 @@ class INIEntry //: public NameChain
 {
    private:
       bool entryValid;
-      std::string entryValue;
+      QString entryValue;
       bool entryDirty;
 
    public:
-      std::string name;
+      QString name;
 
       INIEntry( INISection *cb,
-                const std::string &name, bool Valid );  // Constructor.
+                const QString &name, bool Valid );  // Constructor.
 
       ~INIEntry();        // Destructor.
 
-      std::string getValue( void );
-      void setValue( const std::string &Value );
+      QString getValue( void );
+      void setValue( const QString &Value );
       bool isValidEntry( void );
       bool isDirty()
       {
@@ -53,13 +53,13 @@ class INIEntry //: public NameChain
 typedef INIEntry *IniEntryPtr;
 struct INIEntryCmp
 {
-   std::string cmpstr;
-   INIEntryCmp( const std::string &s ) : cmpstr( s )
+   QString cmpstr;
+   INIEntryCmp( const QString &s ) : cmpstr( s )
    {}
 
    bool operator() ( IniEntryPtr &s1 ) const
    {
-      return stricmp( s1->name.c_str(), cmpstr.c_str() ) == 0;
+      return s1->name.compare(cmpstr, Qt::CaseInsensitive ) == 0;
    }
 };
 class INISection
@@ -68,10 +68,10 @@ class INISection
       bool entryValid;
       bool sectDirty;
    public:
-      std::string name;
+      QString name;
 
       INISection( INIFile *cb,
-                  const std::string &name, bool Valid );
+                  const QString &name, bool Valid );
 
       ~INISection();   // Destructor.
 
@@ -86,13 +86,13 @@ class INISection
 typedef INISection *IniSectionPtr;
 struct INISectionCmp
 {
-   std::string cmpstr;
-   INISectionCmp( const std::string &s ) : cmpstr( s )
+   QString cmpstr;
+   INISectionCmp( const QString &s ) : cmpstr( s )
    {}
 
    bool operator() ( IniSectionPtr &s1 ) const
    {
-      return stricmp( s1->name.c_str(), cmpstr.c_str() ) == 0;
+       return s1->name.compare(cmpstr, Qt::CaseInsensitive ) == 0;
    }
 };
 class INIFile
@@ -102,24 +102,26 @@ class INIFile
       bool loadINIFile( void );
       bool writeINIFile( void );
       bool checkStat( void );
-      bool checkKeyExists( const char *Section,
-                           const char *Entry
+      bool checkKeyExists(const QString &Section,
+                           const QString &Entry
                          );
-      int getPrivateProfileString( const char *Section,
-                                   const char *Entry,
-                                   const char *DefaultValue,
-                                   char *Buffer,
-                                   int Size );
+      int getPrivateProfileString(const QString &Section,
+                                   const QString &Entry,
+                                   const QString &DefaultValue,
+                                   QString &Buffer);
+      int getPrivateProfileList(const QString &Section,
+                                   const QString &Entry,
+                                   QStringList &Buffer);
 
-      int getPrivateProfileInt( const char *Section,
-                                const char *Entry,
+      int getPrivateProfileInt( const QString &Section,
+                                const QString &Entry,
                                 int DefaultValue );
 
-      bool writePrivateProfileString( const char *Section,
-                                      const char *Entry,
-                                      const char *Buffer );
+      bool writePrivateProfileString( const QString &Section,
+                                      const QString &Entry,
+                                      const QString &Buffer );
 
-      bool dupSection( const std::string &oldname, const std::string &newname );
+      bool dupSection( const QString &oldname, const QString &newname );
 
       std::vector <IniSectionPtr> sections;
       bool fileLoaded;
@@ -138,8 +140,8 @@ class INIFile
 
 
 //==============================================================================
-INISection::INISection( INIFile *cb, const std::string &name, bool valid )
-      : name( trim( name ) ), entryValid( valid ), sectDirty( false )
+INISection::INISection( INIFile *cb, const QString &name, bool valid )
+      : name( name.trimmed() ), entryValid( valid ), sectDirty( false )
 {
    cb->sections.push_back( this );
 }
@@ -184,8 +186,8 @@ void INISection::setClean( void )
 //==============================================================================
 
 
-INIEntry::INIEntry( INISection *cb, const std::string &name, bool valid )
-      : name( trim( name ) ), entryValid( valid ), entryDirty( false )
+INIEntry::INIEntry( INISection *cb, const QString &name, bool valid )
+      : name( name.trimmed() ), entryValid( valid ), entryDirty( false )
 {
    cb->entries.push_back( this );
 }
@@ -193,16 +195,16 @@ INIEntry::INIEntry( INISection *cb, const std::string &name, bool valid )
 INIEntry::~INIEntry()
 {}
 
-std::string INIEntry::getValue( void )
+QString INIEntry::getValue( void )
 {
    return entryValue;
 }
 
-void INIEntry::setValue( const std::string &value )
+void INIEntry::setValue( const QString &value )
 {
    if ( value != entryValue )
    {
-      entryValue = trim(value);
+      entryValue = value.trimmed();
       entryDirty = true;
    }
 }
@@ -243,7 +245,7 @@ INIFile::~INIFile()
    sections.clear();
    fileLoaded = false;
 }
-bool INIFile::dupSection( const std::string &oldname, const std::string &newname )
+bool INIFile::dupSection( const QString &oldname, const QString &newname )
 {
    std::vector<IniSectionPtr>::iterator newSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( newname ) );
    if ( newSect == sections.end() )
@@ -256,8 +258,8 @@ bool INIFile::dupSection( const std::string &oldname, const std::string &newname
          for ( std::vector <IniEntryPtr>::iterator this_ent = oldsect->entries.begin(); this_ent != oldsect->entries.end(); this_ent++ )
          {
             INIEntry *i = ( *this_ent );
-            std::string n = i->name;
-            std::string v = i->getValue();
+            QString n = i->name;
+            QString v = i->getValue();
             INIEntry *newent = new INIEntry( newsect, n, true );
             newent->setValue( v );
          }
@@ -320,26 +322,26 @@ bool INIFile::writeINIFile( void )
 
    for ( std::vector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
    {
-      const std::string sname = ( *thisSect ) ->name;
+      const QString sname = ( *thisSect ) ->name;
 
       if ( ( *thisSect ) ->isValidSection() )
       {
-          QString s = QString("[%1]\n").arg(sname.c_str());
+          QString s = QString("[%1]\n").arg(sname);
           out << s;
       }
 
       for ( std::vector <IniEntryPtr>::iterator this_entry = ( *thisSect ) ->entries.begin(); this_entry != ( *thisSect ) ->entries.end(); this_entry++ )
       {
-         const std::string name = ( *this_entry ) ->name;
-         const std::string val = ( *this_entry ) ->getValue();
+         const QString name = ( *this_entry ) ->name;
+         const QString val = ( *this_entry ) ->getValue();
          if ( ( *this_entry ) ->isValidEntry() )
          {
-             QString s = QString("%1=%2\n").arg(name.c_str()).arg(val.c_str());
+             QString s = QString("%1=%2\n").arg(name).arg(val);
              out << s;
          }
          else
          {
-             QString s = QString("%1\n").arg(val.c_str());
+             QString s = QString("%1\n").arg(val);
              out << s;
          }
       }
@@ -418,7 +420,7 @@ bool INIFile::loadINIFile()
       {
          this_entry = new INIEntry( thisSect, a[ 0 ], true );
          // somewhere we need to cope with quoted parameters
-         this_entry->setValue( trim(a[ 1 ]) );
+         this_entry->setValue( QString(a[ 1 ]).trimmed() );
          this_entry->setClean();
       }
       else
@@ -436,8 +438,8 @@ bool INIFile::loadINIFile()
    return realSections;
 }
 
-bool INIFile::checkKeyExists( const char *Section,
-                              const char *Entry
+bool INIFile::checkKeyExists( const QString &Section,
+                              const QString &Entry
                             )
 {
    loadINIFile();
@@ -456,68 +458,62 @@ bool INIFile::checkKeyExists( const char *Section,
    return false;
 }
 
-int INIFile::getPrivateProfileString( const char *Section,
-                                      const char *Entry,
-                                      const char *DefaultValue,
-                                      char *Buffer,
-                                      int Size )
+int INIFile::getPrivateProfileList( const QString &Section,
+                                      const QString &Entry,
+                                      QStringList &Buffer )
 {
-   int Length = 0;
+   loadINIFile();
 
+   std::vector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
+   if ( thisSect != sections.end() )
+   {
+      if ( Entry.isEmpty() )
+      {
+         /* build list of entry names in buffer */
+         for ( std::vector <IniEntryPtr>::iterator this_entry = ( *thisSect ) ->entries.begin(); this_entry != ( *thisSect ) ->entries.end(); this_entry++ )
+         {
+            if ( ( *this_entry ) ->isValidEntry() )
+            {
+               Buffer.append( (*this_entry ) ->name);
+            }
+         }
+      }
+   }
+   return Buffer.count();
+}
+int INIFile::getPrivateProfileString( const QString &Section,
+                                      const QString &Entry,
+                                      const QString &DefaultValue,
+                                      QString &Buffer )
+{
    loadINIFile();
 
    std::vector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
    if ( thisSect == sections.end() )
    {
-      const char * this_value = DefaultValue;
-      strncpy( Buffer, this_value , Size - 1 );
-      Buffer[ Size - 1 ] = 0;
+      Buffer = DefaultValue;
    }
    else
    {
-      if ( Entry == 0 )
-      {
-         /* build list of entry names in buffer */
-         char * ptr = Buffer;
-         char *bufend = &Buffer[ Size - 2 ]; // space for string null and end null
-
-         for ( std::vector <IniEntryPtr>::iterator this_entry = ( *thisSect ) ->entries.begin(); this_entry != ( *thisSect ) ->entries.end(); this_entry++ )
-         {
-            if ( ( *this_entry ) ->isValidEntry() && ( ( int ) ( *this_entry ) ->name.length() >= ( bufend - ptr ) ) )
-               break;
-
-            if ( ( *this_entry ) ->isValidEntry() )
-            {
-               strcpy( ptr, ( *this_entry ) ->name.c_str() );
-               ptr += ( *this_entry ) ->name.length() + 1;
-            }
-         }
-         *ptr++ = '\0';
-         Length = ( int ) ( ptr - Buffer );
-      }
-      else
+      if ( !Entry.isEmpty() )
       {
          std::vector<IniEntryPtr>::iterator this_entry = std::find_if( ( *thisSect ) ->entries.begin(), ( *thisSect ) ->entries.end(), INIEntryCmp( Entry ) );
          if ( this_entry == ( *thisSect ) ->entries.end() )
          {
-            strncpy( Buffer, DefaultValue, Size - 1 );
-            Buffer[ Size - 1 ] = 0;
+            Buffer = DefaultValue;
          }
          else
          {
-            std::string this_value = ( *this_entry ) ->getValue();
-            strncpy( Buffer, this_value.c_str() , Size - 1 );
-            Buffer[ Size - 1 ] = 0;
+            Buffer = ( *this_entry ) ->getValue();
          }
-         Length = strlen( Buffer );
       }
    }
-   return Length;
+   return Buffer.size();
 }
 
 
-int INIFile::getPrivateProfileInt( const char *Section,
-                                   const char *Entry,
+int INIFile::getPrivateProfileInt(const QString &Section,
+                                   const QString &Entry,
                                    int DefaultValue )
 {
    if ( ( Section == 0 ) || ( Entry == 0 ) )
@@ -537,14 +533,14 @@ int INIFile::getPrivateProfileInt( const char *Section,
       return DefaultValue;
    }
 
-   return atoi( ( *this_entry ) ->getValue().c_str() );
+   return ( *this_entry ) ->getValue().toInt();
 }
 
 
 
-bool INIFile::writePrivateProfileString( const char *Section,
-      const char *Entry,
-      const char *Buffer )
+bool INIFile::writePrivateProfileString(const QString &Section,
+      const QString &Entry,
+      const QString &Buffer )
 {
    /*
    lpAppName
@@ -639,13 +635,13 @@ bool INIFile::writePrivateProfileString( const char *Section,
 
 
 //=============================================================================
-ProfileEntry::ProfileEntry( int id, const char *n, const char *d, const char * dname, const char *h, bool RO )
+ProfileEntry::ProfileEntry(int id, const QString &n, const QString &d, const QString &dname, const QString &h, bool RO )
       : id( id ), name( n ), sdefaultval( d ), hint( h ), pt( petString ), dispname(dname), RO(RO)
 {}
-ProfileEntry::ProfileEntry( int id, const char *n, int d, const char * dname, const char *h, bool RO )
-      : id( id ), name( n ), idefaultval( d ), sdefaultval( makeStr( d ) ), hint( h ), pt( petInteger ), dispname(dname), RO(RO)
+ProfileEntry::ProfileEntry( int id, const QString &n, int d, const QString & dname, const QString &h, bool RO )
+      : id( id ), name( n ), idefaultval( d ), sdefaultval( QString::number( d ) ), hint( h ), pt( petInteger ), dispname(dname), RO(RO)
 {}
-ProfileEntry::ProfileEntry( int id, const char *n, bool d, const char * dname, const char *h, bool RO )
+ProfileEntry::ProfileEntry(int id, const QString &n, bool d, const QString &dname, const QString &h, bool RO )
       : id( id ), name( n ), bdefaultval( d ), sdefaultval( makeStr( d ) ), hint( h ), pt( petBool ), dispname(dname), RO(RO)
 {}
 void ProfileEntry::createEntry( SettingsBundle *s )
@@ -653,13 +649,13 @@ void ProfileEntry::createEntry( SettingsBundle *s )
    switch ( pt )
    {
       case petString:
-         s->setStringProfile( name.c_str(), sdefaultval.c_str() ) ;
+         s->setStringProfile( name, sdefaultval ) ;
          break;
       case petInteger:
-         s->setIntProfile( name.c_str(), idefaultval ) ;
+         s->setIntProfile( name, idefaultval ) ;
          break;
       case petBool:
-         s->setBoolProfile( name.c_str(), bdefaultval ) ;
+         s->setBoolProfile( name, bdefaultval ) ;
          break;
    }
 }
@@ -761,10 +757,10 @@ BundleFile::BundleFile( PROFILES p )  //: iniFile( 0 )
         break;
    }
 }
-bool BundleFile::openProfile( const std::string &fname, const std::string &bname )
+bool BundleFile::openProfile( const QString &fname, const QString &bname )
 {
    bundleName = bname;
-   iniFile = boost::shared_ptr<INIFile>( new INIFile( fname.c_str() ) );
+   iniFile = boost::shared_ptr<INIFile>( new INIFile( fname ) );
 
    iniFile->loadINIFile();
    return true;
@@ -806,7 +802,7 @@ SettingsBundle::~SettingsBundle()
    catch ( ... )
    {}
 }
-std::string SettingsBundle::getBundle()
+QString SettingsBundle::getBundle()
 {
    return bundleFile->getBundle();
 }
@@ -815,7 +811,7 @@ void SettingsBundle::setProfile( boost::shared_ptr<BundleFile> b )
 {
    bundleFile = b;
 }
-void SettingsBundle::openSection( const std::string &psect )
+void SettingsBundle::openSection( const QString &psect )
 {
    if ( psect.size() )
       currsection = psect;
@@ -842,11 +838,11 @@ void SettingsBundle::closeProfile()
 {
    flushProfile();
 }
-std::string SettingsBundle::getSection()
+QString SettingsBundle::getSection()
 {
    return currsection;
 }
-bool SettingsBundle::newSection( const std::string &newname )
+bool SettingsBundle::newSection( const QString &newname )
 {
    // Create a new section with no match
    std::vector<IniSectionPtr>::iterator newSect = std::find_if( bundleFile->iniFile->sections.begin(), bundleFile->iniFile->sections.end(), INISectionCmp( newname ) );
@@ -863,7 +859,7 @@ bool SettingsBundle::newSection( const std::string &newname )
 }
 
 
-bool SettingsBundle::dupSection( const std::string &newname )
+bool SettingsBundle::dupSection( const QString &newname )
 {
    if ( currsection == noneBundle )
    {
@@ -873,15 +869,15 @@ bool SettingsBundle::dupSection( const std::string &newname )
    return bundleFile->iniFile->dupSection( currsection, newname );
 }
 
-bool SettingsBundle::checkKeyExists( const char *key )
+bool SettingsBundle::checkKeyExists(const QString &key )
 {
    if ( !bundleFile || currsection == noneBundle )
    {
       return false;
    }
-   return bundleFile->iniFile->checkKeyExists( currsection.c_str(), key );
+   return bundleFile->iniFile->checkKeyExists( currsection, key );
 }
-std::string SettingsBundle::displayNameOf( int enumKey )
+QString SettingsBundle::displayNameOf( int enumKey )
 {
    if ( bool( bundleFile ) && currsection != noneBundle )
    {
@@ -914,14 +910,14 @@ bool SettingsBundle::isReadOnly( int enumKey )
    return "";
 }
 
-void SettingsBundle::getBoolProfile( const char *key, bool &value, bool def )
+void SettingsBundle::getBoolProfile(const QString &key, bool &value, bool def )
 {
    if ( !bundleFile || currsection == noneBundle )
    {
       value = def;
       return ;
    }
-   int intval = bundleFile->iniFile->getPrivateProfileInt( currsection.c_str(), key, ( int ) def );
+   int intval = bundleFile->iniFile->getPrivateProfileInt( currsection, key, ( int ) def );
    if ( intval )
       value = true;
    else
@@ -930,7 +926,7 @@ void SettingsBundle::getBoolProfile( const char *key, bool &value, bool def )
 void SettingsBundle::getBoolProfile( int enumkey, bool &value )
 {
    ProfileEntry & p = bundleFile->GetKey( enumkey );
-   getBoolProfile( p.name.c_str(), value, p.bdefaultval );
+   getBoolProfile( p.name, value, p.bdefaultval );
 }
 void SettingsBundle::getBoolProfile( int enumkey, MinosItem<bool> &value )
 {
@@ -938,69 +934,69 @@ void SettingsBundle::getBoolProfile( int enumkey, MinosItem<bool> &value )
    getBoolProfile( enumkey, temp );
    value.setValue( temp );
 }
-void SettingsBundle::setBoolProfile( const char *key, bool value )
+void SettingsBundle::setBoolProfile( const QString &key, bool value )
 {
    if ( !bundleFile || currsection == noneBundle )
    {
       return ;
    }
-   bundleFile->iniFile->writePrivateProfileString( currsection.c_str(), key, value ? "1" : "0" );
+   bundleFile->iniFile->writePrivateProfileString( currsection, key, value ? "1" : "0" );
 }
 void SettingsBundle::setBoolProfile( int enumkey, bool value )
 {
    ProfileEntry & p = bundleFile->GetKey( enumkey );
-   setBoolProfile( p.name.c_str(), value );
+   setBoolProfile( p.name, value );
 }
-void SettingsBundle::getStringProfile( const char *key, std::string &value, const char *def )
+void SettingsBundle::getStringProfile(const QString &key, QString &value, const QString &def )
 {
    if ( !bundleFile || currsection == noneBundle )
    {
       value = def;
       return ;
    }
-   TEMPBUFF( inbuff, 256 );
-   bundleFile->iniFile->getPrivateProfileString( currsection.c_str(), key, def, inbuff, 255 );
+   QString inbuff;
+   bundleFile->iniFile->getPrivateProfileString( currsection, key, def, inbuff );
    value = inbuff;
 }
-void SettingsBundle::getStringProfile( int enumkey, std::string &value )
+void SettingsBundle::getStringProfile( int enumkey, QString &value )
 {
    ProfileEntry & p = bundleFile->GetKey( enumkey );
-   getStringProfile( p.name.c_str(), value, p.sdefaultval.c_str() );
+   getStringProfile( p.name, value, p.sdefaultval );
 }
 
-void SettingsBundle::getStringProfile( int enumkey, MinosItem<std::string> &value )
+void SettingsBundle::getStringProfile(int enumkey, MinosItem<QString> &value )
 {
-   std::string temp;
+   QString temp;
    getStringProfile( enumkey, temp );
    value.setValue( temp );
 }
-void SettingsBundle::setStringProfile( const char *key, const char *value )
+void SettingsBundle::setStringProfile( const QString &key, const QString &value )
 {
    if ( !bundleFile || currsection == noneBundle )
    {
       return ;
    }
-   bundleFile->iniFile->writePrivateProfileString( currsection.c_str(), key, value );
+   bundleFile->iniFile->writePrivateProfileString( currsection, key, value );
 }
-void SettingsBundle::setStringProfile( int enumkey, const char *value )
+void SettingsBundle::setStringProfile(int enumkey, const QString &value )
 {
    ProfileEntry & p = bundleFile->GetKey( enumkey );
-   setStringProfile( p.name.c_str(), value );
+   setStringProfile( p.name, value );
 }
 
-void SettingsBundle::getIntProfile( const char *key, int &value, int def )
+void SettingsBundle::getIntProfile( const QString &key, int &value, int def )
 {
    if ( !bundleFile || currsection == noneBundle )
    {
       value = def;
       return ;
    }
-   value = bundleFile->iniFile->getPrivateProfileInt( currsection.c_str(), key, def );
+   value = bundleFile->iniFile->getPrivateProfileInt( currsection, key, def );
 }
 void SettingsBundle::getIntProfile( int enumkey, int &value )
 {
    ProfileEntry & p = bundleFile->GetKey( enumkey );
-   getIntProfile( p.name.c_str(), value, p.idefaultval );
+   getIntProfile( p.name, value, p.idefaultval );
 }
 void SettingsBundle::getIntProfile( int enumkey, MinosItem<int> &value )
 {
@@ -1008,41 +1004,31 @@ void SettingsBundle::getIntProfile( int enumkey, MinosItem<int> &value )
    getIntProfile( enumkey, temp );
    value.setValue( temp );
 }
-void SettingsBundle::setIntProfile( const char *key, int value )
+void SettingsBundle::setIntProfile(const QString &key, int value )
 {
    if ( !bundleFile || currsection == noneBundle )
    {
       return ;
    }
-   std::string sval = ( boost::format( "%d" ) % value ).str();
-   bundleFile->iniFile->writePrivateProfileString( currsection.c_str(), key, sval.c_str() );
+   QString sval = QString::number( value );
+   bundleFile->iniFile->writePrivateProfileString( currsection, key, sval );
 }
 void SettingsBundle::setIntProfile( int enumkey, int value )
 {
    ProfileEntry & p = bundleFile->GetKey( enumkey );
-   setIntProfile( p.name.c_str(), value );
+   setIntProfile( p.name, value );
 }
 
-std::vector<std::string> SettingsBundle::getProfileEntries( )
+QStringList SettingsBundle::getProfileEntries( )
 {
-   char retbuff[ 1024 ];
-
-   std::vector<std::string> sectlist;
+   QStringList sectlist;
    if ( !bundleFile || currsection == noneBundle )
    {
       return sectlist;
    }
 
-   int mlen = bundleFile->iniFile->getPrivateProfileString( currsection.c_str(), 0, "", retbuff, 1024 );
+   /*int mlen =*/ bundleFile->iniFile->getPrivateProfileList( currsection, "", sectlist );
 
-   char *npt = retbuff;
-
-   while ( *npt && ( npt - retbuff < mlen ) )
-   {
-      std::string str = npt;
-      sectlist.push_back( str );
-      npt = npt + strlen( npt ) + 1;
-   }
    return sectlist;
 }
 std::vector<int> SettingsBundle::getBundleEntries( )
@@ -1058,33 +1044,32 @@ std::vector<int> SettingsBundle::getBundleEntries( )
    return e;
 
 }
-std::vector<std::string> SettingsBundle::getBundleHints( )
+QStringList SettingsBundle::getBundleHints( )
 {
-   std::vector<std::string> e;
+   QStringList e;
    if ( bundleFile )
    {
       for ( std::vector<ProfileEntry>::iterator i = bundleFile->entries.begin(); i != bundleFile->entries.end(); i++ )
       {
-         e.push_back( ( *i ).hint );
+         e.append( ( *i ).hint );
       }
    }
    return e;
 }
-std::vector<std::string> SettingsBundle::getSections( )
+QStringList SettingsBundle::getSections( )
 {
-   std::vector<std::string> slist;
+   QStringList slist;
    if ( !bundleFile )
    {
       return slist;
    }
-   slist.push_back( noneBundle );
+   slist.append( noneBundle );
    for ( std::vector <IniSectionPtr>::iterator thisSect = bundleFile->iniFile->sections.begin(); thisSect != bundleFile->iniFile->sections.end(); thisSect++ )
    {
 
       if ( ( *thisSect ) ->isValidSection() )
       {
-         const std::string sname = ( *thisSect ) ->name;
-         slist.push_back( sname );
+         slist.append( ( *thisSect ) ->name );
       }
    }
    if (currsection.size() && std::find(slist.begin(), slist.end(), currsection) == slist.end())
@@ -1098,7 +1083,7 @@ void SettingsBundle::clearProfileSection( bool clearCurr)
    // clear the content AND the section header
    if ( bundleFile )
    {
-      bundleFile->iniFile->writePrivateProfileString( currsection.c_str(), 0, 0 );
+      bundleFile->iniFile->writePrivateProfileString( currsection, 0, 0 );
       if (clearCurr)
       {
          currsection = noneBundle;

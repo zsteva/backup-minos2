@@ -11,23 +11,23 @@
 
 //---------------------------------------------------------------------------
 extern bool connected;
-extern bool startDaemonThread( const std::string &jid );
+extern bool startDaemonThread( const QString &jid );
 extern bool runDaemonLoop();
 extern void closeDaemonThread();
 extern void sendAction( XStanza *a );
 
 extern QSemaphore MinosConnectEvent;
 
-extern std::string myId;
+extern QString myId;
 
-bool XMPPInitialise( const std::string &myId );
+bool XMPPInitialise( const QString &myId );
 bool XMPPClosedown();
 class MinosConnection;
 //---------------------------------------------------------------------------
 class MinosThread: RPCDispatcher
 {
    private:
-      std::string jabberId;
+      QString jabberId;
 
 //      long lastEventTick;
 
@@ -36,7 +36,7 @@ class MinosThread: RPCDispatcher
       MinosConnection *ic;
    public:
       static MinosThread *minosThread;
-      MinosThread( const std::string &jid );
+      MinosThread( const QString &jid );
       ~MinosThread();
       bool startDaemonThread();
       bool runDaemonLoop();
@@ -46,7 +46,7 @@ class MinosThread: RPCDispatcher
       void onLog ( const char *data, size_t size, int is_incoming );
 
       void sendAction( XStanza *a );
-      void setJid( const std::string &jid )
+      void setJid( const QString &jid )
       {
          jabberId = jid;
       }

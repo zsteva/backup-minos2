@@ -18,13 +18,12 @@ DisplayContestContact::DisplayContestContact( BaseContestLog * ct, bool time_now
 
    int ms = clp->maxSerial + 1;
 
-   serialr.setInitialValue( std::string( SERIALLENGTH, ' ' ) );
+   serialr.setInitialValue( QString( SERIALLENGTH, ' ' ) );
    repr.setInitialValue( "5  " );
    reps.setInitialValue( "5  " );
    clearDirty();
 
-   char temp[ 10 ];
-   sprintf( temp, "%03.3d", ms );
+   QString temp = QString("%1").arg(ms, 3);
    serials.setValue( temp );
 
    mode.setValue( clp->mode.getValue() );
@@ -80,8 +79,8 @@ void DisplayContestContact::copyFromArg( ScreenContact &cct )
 
 bool DisplayContestContact::ne( const ScreenContact &mct, bool checkDTG ) const
 {
-   std::string ne_temp_date = mct.time.getDate( DTGDISP );
-   std::string ne_temp_time = mct.time.getTime( DTGDISP );
+   QString ne_temp_date = mct.time.getDate( DTGDISP );
+   QString ne_temp_time = mct.time.getTime( DTGDISP );
 
    if (checkDTG)
    {
@@ -234,11 +233,11 @@ void DisplayContestContact::checkContact( )
          {
             if ( clp->districtMult.getValue() )
             {
-               if ( !trim( comments.getValue() ).size() )
+               if ( comments.getValue().isEmpty() )
                   checkret = ERR_21;
             }
             else
-               if ( !trim( extraText.getValue() ).size() )
+               if ( extraText.getValue().isEmpty() )
                   checkret = ERR_21;
          }
       }
@@ -251,7 +250,7 @@ void DisplayContestContact::checkContact( )
       double lat = 0.0;
       int brg;
 
-      if ( lonlat( loc.loc.getValue().c_str(), lon, lat ) == LOC_OK )
+      if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
       {
          clp->disbear( lon, lat, dist, brg );
          bearing = brg;
@@ -333,17 +332,13 @@ void DisplayContestContact::checkContact( )
 
    {
       // now look at the locator list
-      TEMPBUFF( letters, 3 );
-      TEMPBUFF( numbers, 3 );
+      QString letters;
+      QString numbers;
 
-      std::string sloc = loc.loc.getValue().substr(0, 4);
-      letters[ 0 ] = sloc[ 0 ];
-      letters[ 1 ] = sloc[ 1 ];
-      letters[ 2 ] = 0;
+      QString sloc = loc.loc.getValue().mid(0, 4);
 
-      numbers[ 0 ] = sloc[ 2 ];
-      numbers[ 1 ] = sloc[ 3 ];
-      numbers[ 2 ] = 0;
+      letters = sloc.left(2);
+      numbers = sloc.mid(2, 2);
 
       LocSquare *ls = 0;
 
@@ -358,7 +353,7 @@ void DisplayContestContact::checkContact( )
 
       if ( !ls )
       {
-         if ( isalpha( letters[ 0 ] ) && isalpha( letters[ 1 ] ) )
+         if ( letters[ 0 ].isLetter() && letters[ 1 ].isLetter() )
          {
             ls = new LocSquare( letters );
             clp->locs.llist.insert( ls );
@@ -377,7 +372,7 @@ void DisplayContestContact::checkContact( )
                if (npt->UKLocCount == 0 ||  npt->nonUKLocCount == 0)
                {
                   clp->bonus = 0;
-                  std::map<std::string, int>::iterator l = clp->locBonuses.find(sloc);
+                  std::map<QString, int>::iterator l = clp->locBonuses.find(sloc);
                   if (npt->UKLocCount == 0 &&  npt->nonUKLocCount == 0 && l != clp->locBonuses.end())
                   {
                      // specific bonus for square allocated
@@ -447,9 +442,9 @@ void DisplayContestContact::checkContact( )
 QString DisplayContestContact::getField( int ACol, const BaseContestLog *const curcon ) const
 {
    // only used to get fields for main log display
-   std::string res;
+   QString res;
    if ( !curcon )
-      return res.c_str();
+      return res;
 
    BaseContestLog * clp = contest;
 
@@ -484,8 +479,8 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
             break;
          case egSNTx:
             {
-               int ss = atoi( serials.getValue().c_str() );
-               res = QString("%1").arg(ss, 3).toStdString();
+               int ss = serials.getValue().toInt();
+               res = QString("%1").arg(ss, 3);
             }
             break;
          case egRSTRx:
@@ -493,8 +488,8 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
             break;
          case egSNRx:
             {
-               int sr = atoi( serialr.getValue().c_str() );
-               res = QString("%1").arg(sr, 3).toStdString();
+               int sr = serialr.getValue().toInt();
+               res = QString("%1").arg(sr, 3);
             }
             break;
          case egLoc:
@@ -521,7 +516,7 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
                         // rework to come from prime contest loc
                         double lon = 0.0;
                         double lat = 0.0;
-                        if ( lonlat( loc.loc.getValue().c_str(), lon, lat ) == LOC_OK )
+                        if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
                         {
                            // we don't have it worked out already...
                            double lon = 0.0;
@@ -529,7 +524,7 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
                            int brg;
                            double dist;
 
-                           if ( lonlat( loc.loc.getValue().c_str(), lon, lat ) == LOC_OK )
+                           if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
                            {
                               curcon->disbear( lon, lat, dist, brg );
                            }
@@ -602,7 +597,7 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
                         int brg;
                         double dist = 0.0;
 
-                        if ( lonlat( loc.loc.getValue().c_str(), lon, lat ) == LOC_OK )
+                        if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
                         {
                            curcon->disbear( lon, lat, dist, brg );
                         }
@@ -642,11 +637,11 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
             break;
       }
    }
-   return res.c_str()   ;
+   return res;
 }
-void DisplayContestContact::processMinosStanza( const std::string &methodName, MinosTestImport * const mt )
+void DisplayContestContact::processMinosStanza( const QString &methodName, MinosTestImport * const mt )
 {
-   std::string updtg;
+   QString updtg;
 
    int itemp;
    if ( mt->getStructArgMemberValue( "lseq", itemp ) )     // should already be done...
@@ -655,7 +650,7 @@ void DisplayContestContact::processMinosStanza( const std::string &methodName, M
 
    if ( methodName == "MinosLogComment" )
    {
-      std::string ctime;
+      QString ctime;
       mt->getStructArgMemberValueDTG( "logTime", ctime );
       time.setIsoDTG( ctime );
 
@@ -676,7 +671,7 @@ void DisplayContestContact::processMinosStanza( const std::string &methodName, M
 
          updtime.setIsoDTG( updtg );
 
-         std::string ctime;
+         QString ctime;
          if ( mt->getStructArgMemberValueDTG( "logTime", ctime ) )
             time.setIsoDTG( ctime );
 
@@ -728,7 +723,7 @@ void DisplayContestContact::processMinosStanza( const std::string &methodName, M
          mt->getStructArgMemberValue( "op1", op1 );
          mt->getStructArgMemberValue( "op2", op2 );
 
-         int maxct = atoi( serials.getValue().c_str() );
+         int maxct = serials.getValue().toInt();
          if ( maxct > contest->maxSerial )
             contest->maxSerial = maxct;
 

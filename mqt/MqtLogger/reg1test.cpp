@@ -25,10 +25,7 @@ enum reg1test_order
 reg1testLine::reg1testLine(const QString &pre, const QString &dat ) :
       prefix( pre ), data( dat )
 {}
-reg1testLine::reg1testLine(const QString &pre, const std::string &dat ) :
-      prefix( pre ), data( dat.c_str() )
-{}
-reg1testLine::reg1testLine( void )
+reg1testLine::reg1testLine()
 {}
 reg1testLine::~reg1testLine()
 {}
@@ -83,11 +80,11 @@ bool reg1test::exportTest( boost::shared_ptr<QFile> expfd )
    if ( ltot == 0 )
       ltot = 1;
 
-   std::vector <std::string> remarks;
-   remarks.push_back( ct->entCondx1.getValue() );
-   remarks.push_back( ct->entCondx2.getValue() );
-   remarks.push_back( ct->entCondx3.getValue() );
-   remarks.push_back( ct->entCondx4.getValue() );
+   QStringList remarks;
+   remarks.append( ct->entCondx1.getValue() );
+   remarks.append( ct->entCondx2.getValue() );
+   remarks.append( ct->entCondx3.getValue() );
+   remarks.append( ct->entCondx4.getValue() );
    int nvalid = 0;      // valid QSOs
    int nlines = 0;      // QSO records
    for ( unsigned int i = 0; i < ct->ctList.size(); i++ )
@@ -111,7 +108,7 @@ bool reg1test::exportTest( boost::shared_ptr<QFile> expfd )
    /*
    // build the list of main operators
    std::set
-      <std::string> op1list;
+      <QString> op1list;
 
    for ( LogIterator i = ct->ctList.begin(); i != ct->ctList.end(); i++ )
    {
@@ -144,8 +141,8 @@ bool reg1test::exportTest( boost::shared_ptr<QFile> expfd )
 
    linelist[ ( int ) RHBBS ] = reg1testLine( "RHBBS", ct->entEMail.getValue()  /*, "EMAIL address of responsible operator"*/ );
 
-   std::string opsl1 = ct->ops1.getValue();
-   std::string opsl2 = ct->ops2.getValue();
+   QString opsl1 = ct->ops1.getValue();
+   QString opsl2 = ct->ops2.getValue();
    if (opsl1.size() == 0 && opsl2.size() == 0)
    {
       opsl1 = ct->opsQSO1;
@@ -169,7 +166,7 @@ bool reg1test::exportTest( boost::shared_ptr<QFile> expfd )
    linelist[ ( int ) CDXCs ] = reg1testLine( "CDXCs", makeStr( nctry ) + ";0;1" ); /*, "Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier"*/
    linelist[ ( int ) CDXCB ] = reg1testLine( "CDXCB", QString("0") ); /*, "Claimed no of DXCC bonus points"*/
    linelist[ ( int ) CToSc ] = reg1testLine( "CToSc", makeStr( ct->contestScore * ltot ) ); /*, "Claimed total score"*/
-   linelist[ ( int ) CODXC ] = reg1testLine( "CODXC", QString(bestdx ? ( ( bestdx->cs.fullCall.getValue() + ";" + bestdx->loc.loc.getValue() + ";" + makeStr( bestdx->contactScore.getValue() ).c_str() ).c_str() ) : ";;" )); /*, "(Best DX) Callsign; Locator; Distance"*/
+   linelist[ ( int ) CODXC ] = reg1testLine( "CODXC", QString(bestdx ? ( bestdx->cs.fullCall.getValue() + ";" + bestdx->loc.loc.getValue() + ";" + QString::number( bestdx->contactScore.getValue() )  ) : ";;" )); /*, "(Best DX) Callsign; Locator; Distance"*/
 
    for ( int i = 0; i < LineCount; i++ )
    {
@@ -182,9 +179,9 @@ bool reg1test::exportTest( boost::shared_ptr<QFile> expfd )
    */
    wr.lwrite( "[Remarks]" );
 
-   for ( unsigned int i = 0; i < remarks.size(); i++ )
+   for ( int i = 0; i < remarks.size(); i++ )
    {
-      wr.lwrite( remarks[ i ].c_str() );
+      wr.lwrite( remarks[ i ] );
    }
 
    /*
@@ -206,20 +203,20 @@ bool reg1test::exportTest( boost::shared_ptr<QFile> expfd )
          continue;
       }
 
-      std::string sbuff;
+      QString sbuff;
       cct->getReg1TestText( sbuff );   // lbuff if "bsize" = 256
 
       if ( sbuff.length() == 0 )
          continue;
 
       sbuff = trimr( sbuff );			// No need to pad to 250!!
-      wr.lwrite( sbuff.c_str() );
+      wr.lwrite( sbuff );
    }
    // [END] isn't a part of the Reg1Test spec, but everyone else seems to have it!
    // Adjudication software copes either way round.
    
-   std::string pver = std::string("[END; MinosQt by G0GJV, version ") + VERSION + "]";
-   wr.lwrite( pver.c_str() );
+   QString pver = QString("[END; MinosQt by G0GJV, version ") + VERSION + "]";
+   wr.lwrite( pver );
 
    return true;
 
@@ -242,7 +239,7 @@ bool reg1test::parseHeader(QString line )
    }
 
    // now work through the possible header strings
-   std::string code = strupr(trim(std::string( a[ 0 ] )));
+   QString code = QString( a[ 0 ] ).trimmed().toUpper();
    if ( code == "TNAME" )
    {
       //TName=VHFNFD
@@ -493,7 +490,7 @@ bool reg1test::parseHeader(QString line )
 bool reg1test::parseRemark(QString line )
 {
    // free form lines
-   remarks.push_back( line.toStdString() );
+   remarks.append( line );
    return true;
 }
 //====================================================================
@@ -539,7 +536,7 @@ bool reg1test::parseQSO( QString line )
       aqso->reps.setValue( a[ 4 ] );
       aqso->serials.setValue( a[ 5 ] ); // not string, int
 
-      int maxct = atoi( aqso->serials.getValue().c_str() );
+      int maxct = aqso->serials.getValue().toInt();
       if ( maxct > ct->maxSerial )
          ct->maxSerial = maxct;
 

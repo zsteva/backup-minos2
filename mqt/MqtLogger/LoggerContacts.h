@@ -24,19 +24,19 @@ class ContestContact: public DisplayContestContact
       virtual void clearDirty();
       virtual void setDirty();
 
-      virtual bool setField( int ACol, const std::string Value );
+      virtual bool setField( int ACol, const QString Value );
 
       ContestContact( LoggerContestLog *contest, bool time_now );
       ~ContestContact();
-      void getPrintFileText( std::string &, short );
-      void addReg1TestComment( std::vector <std::string> &remarks );
-      void getReg1TestText( std::string & );
-      std::string getADIFLine();
+      void getPrintFileText(QString &, short );
+      void addReg1TestComment(QStringList &remarks );
+      void getReg1TestText( QString & );
+      QString getADIFLine();
       bool commonSave( );
       bool minosSave( );
       bool GJVsave( GJVParams & );
       virtual bool GJVload( int diskBlock );
-      virtual void processMinosStanza( const std::string &methodName, MinosTestImport * const mt );
+      virtual void processMinosStanza( const QString &methodName, MinosTestImport * const mt );
 };
 
 

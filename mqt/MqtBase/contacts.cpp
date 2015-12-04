@@ -11,13 +11,13 @@
 //============================================================
 namespace ContactBuffs
 {
-   char scorebuff[ 20 ];
-   char brgbuff[ 6 ];
-   char buff2[ 120 ];
-   char qthbuff[ 120 ];
-   char srbuff[ 6 ];
-   char ssbuff[ 6 ];
-   char buff[ 1024 ];
+    QString scorebuff;
+    QString brgbuff;
+    QString buff2;
+    QString qthbuff;
+    QString srbuff;
+    QString ssbuff;
+    QString buff;
 }
 //==========================================================================
 //==========================================================================
@@ -106,7 +106,7 @@ CountryEntry *findCtryPrefix( const callsign &cs )
 {
    CountryEntry * ctryMult;
 
-   std::string testpart = "/";	// look for e.g. /RVI as a country suffix
+   QString testpart = "/";	// look for e.g. /RVI as a country suffix
    testpart += cs.suffix;	// look for e.g. /RVI as a country suffix
 
    CountrySynonym *csyn = 0;
@@ -175,62 +175,56 @@ CountryEntry *findCtryPrefix( const callsign &cs )
 }
 void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) const
 {
-   ContactBuffs::brgbuff[ 0 ] = 0;
-   ContactBuffs::scorebuff[ 0 ] = 0;
-   ContactBuffs::qthbuff[ 0 ] = 0;
-
    if ( contactFlags.getValue() & ( LOCAL_COMMENT | COMMENT_ONLY | DONT_PRINT ) )
    {
-      sprintf( ContactBuffs::buff, "%-5.5s %s %-60.60s", time.getTime( DTGDISP ).c_str(),
-               ( contactFlags.getValue() & DONT_PRINT ) ? "DELETED" : ( contactFlags.getValue() & LOCAL_COMMENT ) ? "LOCAL COMMENT" : "COMMENT FOR ADJUDICATOR",
-               comments.getValue().c_str() );
+      ContactBuffs::buff = QString("%1 %2 %3")
+               .arg(time.getTime( DTGDISP ), 5)
+               .arg(( contactFlags.getValue() & DONT_PRINT ) ? "DELETED" : ( contactFlags.getValue() & LOCAL_COMMENT ) ? "LOCAL COMMENT" : "COMMENT FOR ADJUDICATOR")
+               .arg(comments.getValue(), 60);
    }
    else
    {
       // if contest requires a serial
       makestrings( curcon ->serialField.getValue() );
 
-      mystrncpy( ContactBuffs::qthbuff, extraText.getValue().c_str(), 100 );
+      ContactBuffs::qthbuff = extraText.getValue().left( 100 );
 
       if ( contactFlags.getValue() & MANUAL_SCORE )
-         strcpy( ContactBuffs::brgbuff, "MAN" );
+         ContactBuffs::brgbuff = "MAN";
 
       if ( contactFlags.getValue() & DONT_PRINT )
-         strcpy( ContactBuffs::scorebuff, "DEL" );
+         ContactBuffs::scorebuff = "DEL";
       else
          if ( contactFlags.getValue() & NON_SCORING )
-            strcpy( ContactBuffs::scorebuff, "N/S" );
+            ContactBuffs::scorebuff = "N/S";
          else
          {
             // look at the contest dup
             if ( ( cs.valRes == ERR_DUPCS ) && ( curcon == contest ) )
-               strcpy( ContactBuffs::scorebuff, "DUP" );
+               ContactBuffs::scorebuff = "DUP";
          }
    }
 
-   int nbuff = 4;
-
    if ( contactFlags.getValue() & VALID_DUPLICATE )
-      strcpy( ContactBuffs::buff2, "BP " );
+      ContactBuffs::buff2 = "BP ";
    else
       if ( contactFlags.getValue() & XBAND )
-         strcpy( ContactBuffs::buff2, "XB " );
+         ContactBuffs::buff2 = "XB ";
       else
       {
-         nbuff = 0;
-         ContactBuffs::buff2[ 0 ] = 0;
+         ContactBuffs::buff2.clear();
       }
    strcpysp( ContactBuffs::buff, comments.getValue(), 42 );
-   if ( ContactBuffs::buff[ 0 ] )
+   if ( !ContactBuffs::buff.isEmpty() )
    {
-      strcpysp( &ContactBuffs::buff2[ nbuff ], ContactBuffs::qthbuff, 20 );
-      strcat( ContactBuffs::buff2, " | " );
-      strcat( ContactBuffs::buff2, ContactBuffs::buff );
+      strcpysp( ContactBuffs::buff2, ContactBuffs::qthbuff, 20 );
+      ContactBuffs::buff2 += " | ";
+      ContactBuffs::buff2 += ContactBuffs::buff;
    }
    else
-      strcpysp( &ContactBuffs::buff2[ nbuff ], ContactBuffs::qthbuff, 42 );
+      strcpysp( ContactBuffs::buff2, ContactBuffs::qthbuff, 42 );
 
-   memset( ContactBuffs::buff, ' ', 255 );
+   ContactBuffs::buff.clear();
    int next = 0;
    next = placestr( ContactBuffs::buff, time.getDate( DTGDISP ), next, 8 );
    next += 1;
@@ -264,16 +258,16 @@ void BaseContact::makestrings( bool sf ) const
 {
    ContactBuffs::qthbuff[ 0 ] = 0;
 
-   int sr = atoi( serialr.getValue().c_str() );
-   int ss = atoi( serials.getValue().c_str() );
+   int sr = serialr.getValue().toInt();
+   int ss = serials.getValue().toInt();
    if ( ss )
-      sprintf( ContactBuffs::ssbuff, "%03.3d", ss );
+      ContactBuffs::ssbuff = QString("%1").arg(ss, 3);
    else
-      ContactBuffs::ssbuff[ 0 ] = 0;
+      ContactBuffs::ssbuff.clear();
 
    if ( sr && sf )
-      sprintf( ContactBuffs::srbuff, "%03.3d", sr );
+       ContactBuffs::srbuff = QString("%1").arg(sr, 3);
    else
-      ContactBuffs::srbuff[ 0 ] = 0;
+      ContactBuffs::srbuff.clear();
 }
 

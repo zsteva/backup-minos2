@@ -43,7 +43,7 @@ LogEvent * deQueueLog()
    return 0;
 }
 //---------------------------------------------------------------------------
-void logMessage( const std::string &level, const std::string &mess )
+void logMessage( const QString &level, const QString &mess )
 {
    // queue a log event on the event queue
    LogEvent * ev = new LogEvent;

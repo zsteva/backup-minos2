@@ -69,12 +69,13 @@ void RPCTestTest::testInt()
    RPCArgs * xms = new RPCArgs();
    xms->addParam( i1 );
 
-   std::string pstr = xms->makeParamsString();
+   QString pstr = xms->makeParamsString();
 
    delete xms;
 
    RPCArgs xm;
-   bool parseOK = xm.parseParams( pstr );
+   TIXML_STRING sstr = pstr.toStdString();
+   bool parseOK = xm.parseParams( sstr);
    QVERIFY( parseOK );
 
    int ires;
@@ -92,12 +93,13 @@ void RPCTestTest::testBool()
    xms->addParam( b1 );
    xms->addParam( !b1 );
 
-   std::string pstr = xms->makeParamsString();
+   QString pstr = xms->makeParamsString();
 
    delete xms;
 
    RPCArgs xm;
-   bool parseOK = xm.parseParams( pstr );
+   TIXML_STRING sstr = pstr.toStdString();
+   bool parseOK = xm.parseParams( sstr);
    QVERIFY(parseOK );
 
    bool bres;
@@ -118,12 +120,13 @@ void RPCTestTest::testDouble()
    RPCArgs * xms = new RPCArgs();
    xms->addParam( d1 );
 
-   std::string pstr = xms->makeParamsString();
+   QString pstr = xms->makeParamsString();
 
    delete xms;
 
    RPCArgs xm;
-   bool parseOK = xm.parseParams( pstr );
+   TIXML_STRING sstr = pstr.toStdString();
+   bool parseOK = xm.parseParams( sstr);
    QVERIFY( true == parseOK );
 
    double dres;
@@ -135,22 +138,23 @@ void RPCTestTest::testDouble()
 
 void RPCTestTest::testString()
 {
-   std::string s1( "This is a longish string which we are using for testing" );
-   std::string s2( "Try it <with some XML \"escape   characters\"> & some that aren't" );
+   QString s1( "This is a longish string which we are using for testing" );
+   QString s2( "Try it <with some XML \"escape   characters\"> & some that aren't" );
 
    RPCArgs * xms = new RPCArgs();
    xms->addParam( s1 );
    xms->addParam( s2 );
 
-   std::string pstr = xms->makeParamsString();
+   QString pstr = xms->makeParamsString();
 
    delete xms;
 
    RPCArgs xm;
-   bool parseOK = xm.parseParams( pstr );
+   TIXML_STRING sstr = pstr.toStdString();
+   bool parseOK = xm.parseParams( sstr);
    QVERIFY( true == parseOK );
 
-   std::string sres;
+   QString sres;
 
    bool pOK = xm.getStringArg( 0, sres );
    QVERIFY( true == pOK );
@@ -163,20 +167,21 @@ void RPCTestTest::testString()
 
 void RPCTestTest::testBase64()
 {
-   std::string s1( "This is a longish string which we are using for testing" );
+   QString s1( "This is a longish string which we are using for testing" );
 
    RPCArgs * xms = new RPCArgs();
    xms->addBase64Param( s1 );
 
-   std::string pstr = xms->makeParamsString();
+   QString pstr = xms->makeParamsString();
 
    delete xms;
 
    RPCArgs xm;
-   bool parseOK = xm.parseParams( pstr );
+   TIXML_STRING sstr = pstr.toStdString();
+   bool parseOK = xm.parseParams( sstr);
    QVERIFY( true == parseOK );
 
-   std::string sres;
+   QString sres;
 
    bool pOK = xm.getBase64Arg( 0, sres );
    QVERIFY( true == pOK );
@@ -185,20 +190,21 @@ void RPCTestTest::testBase64()
 
 void RPCTestTest::testDtg()
 {
-   std::string s1( "This is a longish string which we are using for testing" );
+   QString s1( "This is a longish string which we are using for testing" );
 
    RPCArgs * xms = new RPCArgs();
    xms->addDtgParam( s1 );
 
-   std::string pstr = xms->makeParamsString();
+   QString pstr = xms->makeParamsString();
 
    delete xms;
 
    RPCArgs xm;
-   bool parseOK = xm.parseParams( pstr );
+   TIXML_STRING sstr = pstr.toStdString();
+   bool parseOK = xm.parseParams( sstr);
    QVERIFY( true == parseOK );
 
-   std::string sres;
+   QString sres;
 
    bool pOK = xm.getDtgArg( 0, sres );
    QVERIFY( true == pOK );
@@ -209,27 +215,28 @@ void RPCTestTest::testStruct()
 {
    RPCArgs * xms = new RPCArgs();
    boost::shared_ptr<RPCParam>ps(new RPCParamStruct);
-   ps->addMember( std::string( "name value" ), "fred" );
-   ps->addMember( std::string( "value value" ), "joe" );
+   ps->addMember( QString( "name value" ), "fred" );
+   ps->addMember( QString( "value value" ), "joe" );
    xms->addParam( ps );
 
-   std::string pstr = xms->makeParamsString();
+   QString pstr = xms->makeParamsString();
 
    delete xms;
 
    RPCArgs xm;
-   bool parseOK = xm.parseParams( pstr );
+   TIXML_STRING sstr = pstr.toStdString();
+   bool parseOK = xm.parseParams( sstr);
    QVERIFY( true == parseOK );
 
    boost::shared_ptr<RPCParam> pres;
-   std::string sres;
+   QString sres;
    int ires;
 
    bool pOK = xm.getStructArgMember( 0, "fred", pres );
    QVERIFY( true == pOK );
    pOK = pres->getString( sres );
    QVERIFY( true == pOK );
-   QVERIFY( std::string( "name value" ) == sres );
+   QVERIFY( QString( "name value" ) == sres );
 
    pOK = pres->getInt( ires );
    QVERIFY( false == pOK );
@@ -241,18 +248,18 @@ void RPCTestTest::testStruct()
    QVERIFY( true == pOK );
    pOK = pres->getString( sres );
    QVERIFY( true == pOK );
-   QVERIFY( std::string( "value value" ) == sres );
+   QVERIFY( QString( "value value" ) == sres );
 
    pOK = xm.getStructArgMember( 0, 2, pres );
    QVERIFY( false == pOK );
 }
 
-RPCParamArray *RPCArrayFromStringVector( const std::vector< std::string> &plist )
+RPCParamArray *RPCArrayFromStringVector( const std::vector< QString> &plist )
 {
    RPCParamArray * rpc = new RPCParamArray();
    for ( unsigned int i = 0; i < plist.size(); i++ )
    {
-      rpc->addElement( plist[ i ].c_str() );
+      rpc->addElement( plist[ i ] );
    }
    return rpc;
 }
@@ -261,7 +268,7 @@ void RPCTestTest::testArray()
 {
    RPCArgs * xms = new RPCArgs();
 
-   std::vector < std::string > testvec;
+   std::vector < QString > testvec;
    testvec.push_back( "string 1" );
    testvec.push_back( "string 2" );
    testvec.push_back( "string 3" );
@@ -272,12 +279,13 @@ void RPCTestTest::testArray()
    boost::shared_ptr<RPCParam>rpca(RPCArrayFromStringVector( testvec ));
    xms->addParam( rpca );
 
-   std::string pstr = xms->makeParamsString();
+   QString pstr = xms->makeParamsString();
 
    delete xms;
 
    RPCArgs xm;
-   bool parseOK = xm.parseParams( pstr );
+   TIXML_STRING sstr = pstr.toStdString();
+   bool parseOK = xm.parseParams( sstr);
    QVERIFY( true == parseOK );
 
    //      bool GetArrayArgElements( unsigned int argno, unsigned int &size );
@@ -292,7 +300,7 @@ void RPCTestTest::testArray()
    for ( unsigned int i = 0; i < testvec.size(); i++ )
    {
       boost::shared_ptr<RPCParam> pres;
-      std::string sres;
+      QString sres;
 
       bool pOK = xm.getArrayArgElement( 0, i, pres );
       QVERIFY( true == pOK );
@@ -307,8 +315,8 @@ void RPCTestTest::testArray()
 void
 RPCTestTest::testMultiParam()
 {
-   std::string s1( "BarPosition" );
-   std::string s2( "HOVenue" );
+   QString s1( "BarPosition" );
+   QString s2( "HOVenue" );
    int i1 = 1;
 
    RPCArgs * xms = new RPCArgs();
@@ -316,15 +324,16 @@ RPCTestTest::testMultiParam()
    xms->addParam( s2 );
    xms->addParam( i1 );
 
-   std::string pstr = xms->makeParamsString();
+   QString pstr = xms->makeParamsString();
 
    delete xms;
 
    RPCArgs xm;
-   bool parseOK = xm.parseParams( pstr );
+   TIXML_STRING sstr = pstr.toStdString();
+   bool parseOK = xm.parseParams( sstr);
    QVERIFY( true == parseOK );
 
-   std::string sres;
+   QString sres;
    int ires;
 
    bool pOK = xm.getStringArg( 0, sres );
@@ -358,18 +367,18 @@ void RPCTestTest::dispatchResponse( XStanza *xs )
 void
 RPCTestTest::testRequest()
 {
-   std::string toId;
+   QString toId;
    RPCRequest *xm = new RPCRequest( toId, "testRequest" );
 
-   std::string s1( "BarPosition" );
-   std::string s2( "HOVenue" );
+   QString s1( "BarPosition" );
+   QString s2( "HOVenue" );
    int i1 = 1;
 
    xm->addParam( s1 );
    xm->addParam( s2 );
    xm->addParam( i1 );
 
-   std::string UTF8XML = xm->getActionMessage();
+   TIXML_STRING UTF8XML = xm->getActionMessage().toStdString();
 
    delete xm;
 
@@ -386,7 +395,7 @@ void RPCTestTest::analyseRequestTest( XStanza *xs )
    // and now analyse req
    QVERIFY( req->methodName == "testRequest" );
 
-   std::string s;
+   QString s;
    bool pOK = req->getStringArg( 0, s );
    QVERIFY( true == pOK );
    QVERIFY( s == "BarPosition" );
@@ -405,19 +414,19 @@ void RPCTestTest::analyseRequestTest( XStanza *xs )
 void
 RPCTestTest::testResponse()
 {
-   std::string toId = "256";
-   std::string to = "toMe";
+   QString toId = "256";
+   QString to = "toMe";
    RPCResponse *xm = new RPCResponse( to, toId, "testResponse" );
 
-   std::string s1( "BarPosition" );
-   std::string s2( "HOVenue" );
+   QString s1( "BarPosition" );
+   QString s2( "HOVenue" );
    int i1 = 1;
 
    xm->addParam( s1 );
    xm->addParam( s2 );
    xm->addParam( i1 );
 
-   std::string UTF8XML = xm->getActionMessage();
+   TIXML_STRING UTF8XML = xm->getActionMessage().toStdString();
 
    delete xm;
 
@@ -437,7 +446,7 @@ void RPCTestTest::analyseResponseTest( XStanza *xs )
    // and now analyse req
    QVERIFY( req->methodName == "testResponse" );
 
-   std::string s;
+   QString s;
    bool pOK = req->getStringArg( 0, s );
    QVERIFY( true == pOK );
    QVERIFY( s == "BarPosition" );
@@ -466,7 +475,7 @@ void RPCTestTest::testBands()
    BandInfo b;
    loaded = blist.findBand(144250000.0, b);
    QVERIFY( true == loaded );
-   QVERIFY( std::string("VHF") == b.getType() );
+   QVERIFY( QString("VHF") == b.getType() );
    int cnt = blist.bandList.size();
    QVERIFY( 21 == cnt );
 
@@ -495,14 +504,14 @@ void RPCTestTest::testDates()
    QDateTime t = QDateTime( QDate(2008, 5, 1) );
 
    QDateTime t2 = localToUTC( t );
-   int diff = t2.secsTo(t);
+   //int diff = t2.secsTo(t);
    //QVERIFY( 3600 == diff);
 
    t = QDateTime( QDate(2008, 10, 25 ));
 
    t2 = localToUTC( t );
 
-   int diff2 = t2.secsTo(t);
+   //int diff2 = t2.secsTo(t);
    //QVERIFY( 3600 == diff2);
 
    t = QDateTime( QDate(2008, 10, 26) );
@@ -525,7 +534,7 @@ void RPCTestTest::testContests()
    int nc = vhf.contests.size();
    QVERIFY( 33 == nc );
 
-   std::string lp144( "lp144" );
+   QString lp144( "lp144" );
    Contest &qrp144 = vhf.contests[ lp144 ];
    QVERIFY( lp144 == qrp144.name );
 
@@ -554,7 +563,7 @@ void RPCTestTest::testDates2009()
    QDateTime t = QDateTime( QDate(2009, 5, 1 ));
 
    QDateTime t2 = localToUTC( t );
-   int diff = t2.secsTo(t);
+  // int diff = t2.secsTo(t);
   // QVERIFY( 3600 == diff);
 
    t = QDateTime( QDate(2009, 10, 24 ));
@@ -583,7 +592,7 @@ void RPCTestTest::testContests2009()
    int nc = vhf.contests.size();
    QVERIFY( 33 == nc );
 
-   std::string lp144( "lp144" );
+   QString lp144( "lp144" );
    Contest &qrp144 = vhf.contests[ lp144 ];
    QVERIFY( lp144 == qrp144.name );
 
@@ -629,7 +638,7 @@ void RPCTestTest::testMults()
     for (int i = 0; i < m->getCtryListSize(); i++)
     {
         CountryEntry *ce = m->getCtryListAt( i );
-        os << ce->basePrefix + " " + ce->realName << std::endl;
+        os << ce->basePrefix.toStdString() + " " + ce->realName.toStdString() << std::endl;
     }
 /*
     os << "================== country entries ========================" << std::endl;
@@ -640,10 +649,10 @@ void RPCTestTest::testMults()
     os << (String("================== country synonyms ") + String(m->ctrySynList.size()).c_str() + "========================").c_str() << std::endl;
     for (MultList < CountrySynonym * >::iterator i = m->ctrySynList.begin(); i != m->ctrySynList.end(); i++)
     {
-       std::string temp1 = (*i)->synPrefix;
+       QString temp1 = (*i)->synPrefix;
     //      CountryEntry * country = *((*i)->country);
        CountryEntry * country = (*i)->country;
-       std::string temp2 = country->basePrefix;
+       QString temp2 = country->basePrefix;
        os << (temp1 + " : " + temp2) << std::endl;
     }
     os << "================== district entries ========================" << std::endl;

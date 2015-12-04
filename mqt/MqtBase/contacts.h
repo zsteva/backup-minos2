@@ -14,13 +14,13 @@
 
 namespace ContactBuffs
 {
-   extern char scorebuff[ 20 ];
-   extern char brgbuff[ 6 ];
-   extern char buff2[ 120 ];
-   extern char qthbuff[ 120 ];
-   extern char srbuff[ 6 ];
-   extern char ssbuff[ 6 ];
-   extern char buff[ 1024 ];
+   extern QString scorebuff;
+   extern QString brgbuff;
+   extern QString buff2;
+   extern QString qthbuff;
+   extern QString srbuff;
+   extern QString ssbuff;
+   extern QString buff;
 }
 
 class MatchContact;
@@ -92,18 +92,18 @@ class BaseContact
       locator loc;   //CONTAIN MinosItem
       dtg time;      //CONTAIN MinosItem
 
-      MinosItem<std::string> extraText;
-      MinosItem<std::string> mode;
-      MinosItem<std::string> reps;
-      MinosItem<std::string> serials;
-      MinosItem<std::string> repr;
-      MinosItem<std::string> serialr;
-      MinosItem<std::string> comments;
+      MinosItem<QString> extraText;
+      MinosItem<QString> mode;
+      MinosItem<QString> reps;
+      MinosItem<QString> serials;
+      MinosItem<QString> repr;
+      MinosItem<QString> serialr;
+      MinosItem<QString> comments;
       MinosItem<unsigned short> contactFlags;
-      MinosItem<std::string> forcedMult;
+      MinosItem<QString> forcedMult;
 
-      MinosItem<std::string> op1;         // current main op - derived from contacts
-      MinosItem<std::string> op2;         // current second op - derived from contacts
+      MinosItem<QString> op1;         // current main op - derived from contacts
+      MinosItem<QString> op2;         // current second op - derived from contacts
 
       MinosItem<int> contactScore;
 
@@ -142,7 +142,7 @@ class BaseContact
       {
          return false;
       }
-      virtual void processMinosStanza( const std::string &/*methodName*/, MinosTestImport * const /*mt*/ )
+      virtual void processMinosStanza( const QString &/*methodName*/, MinosTestImport * const /*mt*/ )
       {}
       virtual void checkContact( )
       {}

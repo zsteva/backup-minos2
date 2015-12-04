@@ -27,11 +27,11 @@
 
 //---------------------------------------------------------------------------
 
-void BandInfo::setType ( const std::string &t )
+void BandInfo::setType ( const QString &t )
 {
     type = strupr ( t );
 }
-std::string BandInfo::getType()
+QString BandInfo::getType()
 {
     return type;
 }
@@ -68,20 +68,20 @@ bool BandList::parseFile (const QString &fname )
 
     QByteArray total = file.readAll();
 
-    std::string buffer = QString( total ).toStdString();
-    std::string buffer2;
+    QString buffer = QString( total );
+    QString buffer2;
 
-    size_t dtdPos = buffer.find ( "<!DOCTYPE" );
-    if ( dtdPos != std::string::npos )
+    int dtdPos = buffer.indexOf ( "<!DOCTYPE" );
+    if ( dtdPos >= 0 )
     {
-        buffer2 = buffer.substr ( 0, dtdPos );
+        buffer2 = buffer.left(dtdPos );
 
-        size_t dtdEndPos = buffer.find ( "]>" );
-        if ( dtdEndPos == std::string::npos )
+        int dtdEndPos = buffer.indexOf ( "]>" );
+        if ( dtdEndPos < 0 )
         {
             return false;
         }
-        buffer2 += buffer.substr ( dtdEndPos + 2, buffer.size() - dtdEndPos - 2 );
+        buffer2 += buffer.mid ( dtdEndPos + 2, buffer.size() - dtdEndPos - 2 );
     }
     else
     {
@@ -90,7 +90,7 @@ bool BandList::parseFile (const QString &fname )
 
     TiXmlBase::SetCondenseWhiteSpace ( false );
     TiXmlDocument xdoc;
-    xdoc.Parse ( buffer2.c_str() );
+    xdoc.Parse ( buffer2.toStdString().c_str() );
     TiXmlElement *tix = xdoc.RootElement();
     if ( !tix || !checkElementName ( tix, "Bandlist" ) )
     {
@@ -116,11 +116,11 @@ bool BandList::parseBand ( TiXmlElement * e )
 
     band.setType ( getAttribute ( e, "type" ) );
 
-    std::string unit = getAttribute ( e, "unit" );
-    std::string temp = getAttribute ( e, "flow" );
-    band.flow = atoi ( temp.c_str() );
+    QString unit = getAttribute ( e, "unit" );
+    QString temp = getAttribute ( e, "flow" );
+    band.flow = temp.toInt();
     temp = getAttribute ( e, "fhigh" );
-    band.fhigh = atoi ( temp.c_str() );
+    band.fhigh = temp.toInt();
     if ( unit == "K" )
     {
         band.flow *= 1000.0;
@@ -149,10 +149,10 @@ bool BandList::parseBand ( TiXmlElement * e )
 
     return true;
 }
-bool BandList::findBand ( const std::string &psfreq, BandInfo &bi )
+bool BandList::findBand ( const QString &psfreq, BandInfo &bi )
 {
-    std::string sfreq = psfreq;
-    if ( trim ( sfreq ).size() == 0 )
+    QString sfreq = psfreq.trimmed();
+    if ( sfreq.size() == 0 )
     {
         return false;
     }
@@ -160,7 +160,7 @@ bool BandList::findBand ( const std::string &psfreq, BandInfo &bi )
     {
         sfreq = "1,3 GHz";
     }
-    int ifreq = atoi ( sfreq.c_str() );
+    int ifreq = sfreq.toInt();
     double dhffreq = ifreq * 1000.0;
     double dvhffreq = dhffreq * 1000.0;
     double dmwvfreq = dvhffreq * 1000.0;
@@ -180,7 +180,7 @@ bool BandList::findBand ( const std::string &psfreq, BandInfo &bi )
     }
     for ( unsigned int i = 0; i < bandList.size(); i++ )
     {
-        std::string bandType = bandList[ i ].getType();
+        QString bandType = bandList[ i ].getType();
         double bfhigh = bandList[ i ].fhigh;
         double bflow = bandList[ i ].flow;
 
@@ -219,11 +219,11 @@ bool BandList::findBand ( const std::string &psfreq, BandInfo &bi )
     for ( unsigned int i = 0; i < bandList.size(); i++ )
     {
         // find in string isn't a massively good idea! But we are doing it after everything else has failed
-        if ( bandList[ i ].uk.find ( sfreq ) != std::string::npos
-             || bandList[ i ].uk.find ( sfreq ) != std::string::npos
-             || bandList[ i ].adif.find ( sfreq ) != std::string::npos
-             || bandList[ i ].cabrillo.find ( sfreq ) != std::string::npos
-             || bandList[ i ].reg1test.find ( sfreq ) != std::string::npos
+        if ( bandList[ i ].uk.indexOf ( sfreq ) != -1
+             || bandList[ i ].uk.indexOf ( sfreq ) != -1
+             || bandList[ i ].adif.indexOf ( sfreq ) != -1
+             || bandList[ i ].cabrillo.indexOf ( sfreq ) != -1
+             || bandList[ i ].reg1test.indexOf ( sfreq ) != -1
            )
         {
             bi = bandList[ i ];

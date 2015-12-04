@@ -79,7 +79,7 @@ void ContestDetails::setDetails( LoggerContestLog * pcont )
    inputcontest = pcont;
    contest = new LoggerContestLog();
    *contest = *pcont;                // is this safe? not with the QSO vector... although it won't get changed!
-   sectionList = contest->sectionList.getValue().c_str(); // the combo will then be properly set up in setDetails()
+   sectionList = contest->sectionList.getValue(); // the combo will then be properly set up in setDetails()
    setDetails();
 }
 void ContestDetails::setDetails(  )

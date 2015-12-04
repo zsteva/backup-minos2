@@ -44,16 +44,16 @@ signals:
    void ScreenContactChanged(ScreenContact *, BaseContestLog *);
    void ReplaceLogList(TMatchCollection *matchCollection, BaseContestLog *);
    void ReplaceListList(TMatchCollection *matchCollection, BaseContestLog *);
-   void ScrollToCountry(std::string prefix, BaseContestLog *);
-   void ScrollToDistrict(std::string prefix, BaseContestLog *);
+   void ScrollToCountry(QString prefix, BaseContestLog *);
+   void ScrollToDistrict(QString prefix, BaseContestLog *);
    void MatchStarting(BaseContestLog *);
-   void Op1Change(std::string op1, BaseContestLog *);
-   void Op2Change(std::string op2, BaseContestLog *);
+   void Op1Change(QString op1, BaseContestLog *);
+   void Op2Change(QString op2, BaseContestLog *);
    void ShowOperators();
 
-   void CountrySelect(std::string cty, BaseContestLog *c);
-   void DistrictSelect(std::string dist, BaseContestLog *c);
-   void LocSelect(std::string loc, BaseContestLog *c);
+   void CountrySelect(QString cty, BaseContestLog *c);
+   void DistrictSelect(QString dist, BaseContestLog *c);
+   void LocSelect(QString loc, BaseContestLog *c);
 public:
    static void SendContestPageChanged();
    static void SendLogColumnsChanged();
@@ -75,16 +75,16 @@ public:
    static void SendScreenContactChanged(ScreenContact *, BaseContestLog *);
    static void SendReplaceLogList(TMatchCollection *matchCollection, BaseContestLog *);
    static void SendReplaceListList(TMatchCollection *matchCollection, BaseContestLog *);
-   static void SendScrollToCountry(std::string prefix, BaseContestLog *);
-   static void SendScrollToDistrict(std::string prefix, BaseContestLog *);
+   static void SendScrollToCountry(QString prefix, BaseContestLog *);
+   static void SendScrollToDistrict(QString prefix, BaseContestLog *);
    static void SendMatchStarting(BaseContestLog *);
-   static void SendOp1Change(std::string op1, BaseContestLog *);
-   static void SendOp2Change(std::string op2, BaseContestLog *);
+   static void SendOp1Change(QString op1, BaseContestLog *);
+   static void SendOp2Change(QString op2, BaseContestLog *);
    static void SendShowOperators();
 
-   static void SendCountrySelect(std::string cty, BaseContestLog *c);
-   static void SendDistrictSelect(std::string dist, BaseContestLog *c);
-   static void SendLocSelect(std::string loc, BaseContestLog *c);
+   static void SendCountrySelect(QString cty, BaseContestLog *c);
+   static void SendDistrictSelect(QString dist, BaseContestLog *c);
+   static void SendLocSelect(QString loc, BaseContestLog *c);
 
 };
 //---------------------------------------------------------------------------

@@ -25,32 +25,28 @@ void ContestContact::setDirty()
 {
    DisplayContestContact::setDirty();
 }
-static void catmult( char *multbuff, const std::string &text, int limit = 255 )
+static void catmult( QString &multbuff, const QString &text, int limit = 255 )
 {
-   strcat( multbuff, "*" );
-   strncat( multbuff, text.c_str(), limit );
-   strcat( multbuff, "* " );
+   multbuff += "*";
+   multbuff += text.left(limit );
+   multbuff += "* ";
 }
-void ContestContact::getPrintFileText( std::string &sdest, short maxlen )
+void ContestContact::getPrintFileText( QString &sdest, short maxlen )
 {
    BaseContestLog * clp = contest;
    int thisscore = 0;
 
-   TEMPBUFF( multbuff, 60 );
-   TEMPBUFF( dest, 1024 );
-   memset( dest, ' ', maxlen - 1 );
-   dest[ maxlen ] = 0;
+   QString multbuff;
+   QString dest;
 
    if ( contactFlags.getValue() & DONT_PRINT )
    {
-      memset( ContactBuffs::buff2, ' ', 120 );
       placestr( ContactBuffs::buff2, time.getDate( DTGPRINT ), 0, 10 );
       placestr( ContactBuffs::buff2, time.getTime( DTGPRINT ), 11, 5 );
       placestr( ContactBuffs::buff2, "DON'T PRINT", 21, 14 );
    }
    else if ( contactFlags.getValue() & LOCAL_COMMENT  )
    {
-      memset( ContactBuffs::buff2, ' ', 120 );
       placestr( ContactBuffs::buff2, time.getDate( DTGDISP ), 0, 10 );
       placestr( ContactBuffs::buff2, time.getTime( DTGDISP ), 11, 5 );
       placestr( ContactBuffs::buff2, "LOCAL COMMENT", 23, 14 );
@@ -58,7 +54,6 @@ void ContestContact::getPrintFileText( std::string &sdest, short maxlen )
    }
    else if ( contactFlags.getValue() & COMMENT_ONLY )
    {
-      memset( ContactBuffs::buff2, ' ', 120 );
       placestr( ContactBuffs::buff2, time.getDate( DTGDISP ), 0, 10 );
       placestr( ContactBuffs::buff2, time.getTime( DTGDISP ), 11, 5 );
       placestr( ContactBuffs::buff2, "LOGGED COMMENT", 23, 14 );
@@ -73,13 +68,13 @@ void ContestContact::getPrintFileText( std::string &sdest, short maxlen )
       exp_buff[ 0 ] = 0;
       if ( contactFlags.getValue() & NON_SCORING )
       {
-         strcpy( ContactBuffs::scorebuff, "0" );
+         ContactBuffs::scorebuff = "0";
          strcpy( exp_buff, "No Score Claimed " );
       }
       else
          if ( cs.valRes == ERR_DUPCS )
          {
-            strcpy( ContactBuffs::scorebuff, "0" );
+             ContactBuffs::scorebuff = "0";
             strcpy( exp_buff, "Duplicate " );
          }
          else
@@ -111,7 +106,7 @@ void ContestContact::getPrintFileText( std::string &sdest, short maxlen )
             }
             if ( contactScore.getValue() < 0 )
                thisscore = 0;
-            sprintf( ContactBuffs::scorebuff, "%5d", thisscore );
+            ContactBuffs::scorebuff = QString::number(thisscore );
          }
       ContactBuffs::scorebuff[ 5 ] = 0;
       multbuff[ 0 ] = 0;
@@ -129,20 +124,19 @@ void ContestContact::getPrintFileText( std::string &sdest, short maxlen )
             catmult( multbuff, loc.loc.getValue(), 4 );
          }
       }
-      strcpysp( ContactBuffs::buff, comments.getValue().c_str(), 42 );
-      if ( ContactBuffs::buff[ 0 ] )
+      strcpysp( ContactBuffs::buff, comments.getValue(), 42 );
+      if ( !ContactBuffs::buff.isEmpty() )
       {
          strcpysp( ContactBuffs::buff2, ContactBuffs::qthbuff, 20 );
-         strcat( ContactBuffs::buff2, " | " );
-         strcat( ContactBuffs::buff2, ContactBuffs::buff );
+         ContactBuffs::buff2 += " | ";
+         ContactBuffs::buff2 += ContactBuffs::buff;
       }
       else
       {
          strcpysp( ContactBuffs::buff2, ContactBuffs::qthbuff, 42 );
       }
-      sprintf( ContactBuffs::buff, "%s %s %s", ContactBuffs::buff2, exp_buff, multbuff );
+      ContactBuffs::buff = QString("%1 %2 %3").arg(ContactBuffs::buff2).arg(exp_buff).arg(multbuff );
 
-      memset( ContactBuffs::buff2, ' ', 120 );
       int next = 0;
       next = placestr( ContactBuffs::buff2, time.getDate( DTGPRINT ), next, 10 );
       next = placestr( ContactBuffs::buff2, time.getTime( DTGPRINT ), next + 1, 5 );
@@ -159,22 +153,21 @@ void ContestContact::getPrintFileText( std::string &sdest, short maxlen )
       next += 4;
       next = placestr( ContactBuffs::buff2, ContactBuffs::scorebuff, next + 1, -5 );
 
-      strncpy( ContactBuffs::qthbuff , trim(extraText.getValue()).c_str(), EXTRALENGTH );
+      ContactBuffs::qthbuff += extraText.getValue().trimmed();
       ContactBuffs::qthbuff[ EXTRALENGTH] = 0;
-      next = placestr( ContactBuffs::buff2, ContactBuffs::qthbuff, next + 1, strlen(ContactBuffs::qthbuff) );
+      next = placestr( ContactBuffs::buff2, ContactBuffs::qthbuff, next + 1, ContactBuffs::qthbuff.length() );
 
-      next = placestr( ContactBuffs::buff2, ContactBuffs::buff, next + 1, strlen(ContactBuffs::buff) );
+      next = placestr( ContactBuffs::buff2, ContactBuffs::buff, next + 1, ContactBuffs::buff.length() );
    }
-   strncpy( dest, ContactBuffs::buff2, maxlen );
-   dest[ strlen(ContactBuffs::buff2) ] = 0;
+   dest += ContactBuffs::buff2;
    // return value is point score for this line, for accumulation
 
-   sdest = std::string( dest ).substr( 0, maxlen );
+   sdest = dest.left( maxlen );
 
 }
-void ContestContact::addReg1TestComment( std::vector <std::string> &remarks )
+void ContestContact::addReg1TestComment( QStringList &remarks )
 {
-   std::string cmnt;
+   QString cmnt;
    cmnt += time.getDate( DTGLOG );
    cmnt += ';';
    cmnt += time.getTime( DTGLOG );
@@ -184,21 +177,21 @@ void ContestContact::addReg1TestComment( std::vector <std::string> &remarks )
    if ( contactFlags.getValue() & ( COMMENT_ONLY ) )
    {
       cmnt += comments.getValue();
-      remarks.push_back( cmnt );
+      remarks.append( cmnt );
       return ;
    }
 
-   if ( trim( comments.getValue() ).size() )
+   if ( !comments.getValue().isEmpty() )
    {
       cmnt += cs.fullCall.getValue();
       cmnt += ';';
-      cmnt += trim( comments.getValue() );
-      remarks.push_back( cmnt );
+      cmnt += comments.getValue().trimmed();
+      remarks.append( cmnt );
       return ;
    }
    return ;
 }
-void ContestContact::getReg1TestText( std::string &sdest )
+void ContestContact::getReg1TestText( QString &sdest )
 {
    /*
       Date(6);Time(4);Call(3 - 14);Mode code(1 below);
@@ -285,20 +278,20 @@ void ContestContact::getReg1TestText( std::string &sdest )
    sdest += ';';
 
    QString ssbuff;
-   int ss = atoi( serials.getValue().c_str() );
+   int ss = serials.getValue().toInt();
    if ( ss )
       ssbuff = QString("%1").arg(ss, 3 );
-   sdest += ssbuff.toStdString();   // TX sno
+   sdest += ssbuff;   // TX sno
    sdest += ';';
 
    sdest += repr.getValue();   // RX RST
    sdest += ';';
 
    QString srbuff;
-   int sr = atoi( serialr.getValue().c_str() );
+   int sr = serialr.getValue().toInt();
    if ( sr )
        srbuff = QString("%1").arg(sr, 3 );
-   sdest += srbuff.toStdString();   // RX sno
+   sdest += srbuff;   // RX sno
    sdest += ';';
 
    // exch
@@ -333,7 +326,7 @@ void ContestContact::getReg1TestText( std::string &sdest )
    if ( contactScore.getValue() <= 0 )
       temp = 0;
 
-   sprintf( ContactBuffs::scorebuff, "%d", temp );
+   ContactBuffs::scorebuff = QString::number(temp );
    sdest += ContactBuffs::scorebuff;
 
    sdest += ';';
@@ -359,7 +352,7 @@ void ContestContact::getReg1TestText( std::string &sdest )
 // this has to be sorted on the logSequence field
 
 
-std::string ContestContact::getADIFLine()
+QString ContestContact::getADIFLine()
 {
    //band
    //power
@@ -376,31 +369,30 @@ std::string ContestContact::getADIFLine()
    //Comments
    //QSO Pts
 
-   std::string outstr;
+   QString outstr;
    BaseContestLog * clp = contest;
    if ( !bool( clp ) )
       return outstr;
 
-   TEMPBUFF( exp_buff, 60 );
+   QString exp_buff;
 
    if ( contactFlags.getValue() & ( LOCAL_COMMENT | DONT_PRINT ) )
       return outstr;
 
-   memcpy( exp_buff, time.getDate( DTGLOG ).c_str(), 6 );
-   exp_buff[ 6 ] = 0;
-   std::string cent = "19";
-   if ( atoi( exp_buff ) < 300000 )
+   exp_buff = time.getDate( DTGLOG ).left(6 );
+   QString cent = "19";
+   if ( exp_buff.toInt() < 300000 )
       cent = "20";
 
    outstr += makeADIFField( "QSO_DATE", cent + exp_buff );
 
-   memcpy( exp_buff, time.getTime( DTGLOG ).c_str(), 4 );
-   exp_buff[ 4 ] = 0;
+   exp_buff = time.getTime( DTGLOG ).left( 4 );
+
    outstr += makeADIFField( "TIME_ON", exp_buff );
 
-   std::string cband = clp->band.getValue();
+   QString cband = clp->band.getValue();
 
-   std::string cb = trim(cband);
+   QString cb = cband.trimmed();
    BandList &blist = BandList::getBandList();
    BandInfo bi;
    bool bandOK = blist.findBand(cb, bi);
@@ -525,7 +517,7 @@ bool ContestContact::minosSave( )
 }
 bool ContestContact::GJVsave( GJVParams &gp )
 {
-   const std::string nulc;
+   const QString nulc;
    TEMPBUFF( temp, 50 );
    buffpt = 0;
 
@@ -591,23 +583,23 @@ bool ContestContact::GJVsave( GJVParams &gp )
 bool ContestContact::GJVload( int diskBlock )
 {
    LoggerContestLog * clp = dynamic_cast<LoggerContestLog *>( contest );
-   std::string temp;
+   QString temp;
    clearBuffer();
    clp->readBlock( diskBlock );
    buffpt = 0;
 
    buftostr( temp );
-   if ( atoi( temp.c_str() ) != diskBlock )
+   if ( temp.toInt() != diskBlock )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "Invalid block number in contact block" );
       return false;
    }
 
    buftostr( temp );
-   setLogSequence( atol( temp.c_str() ) );
+   setLogSequence( temp.toInt());
 
    buftostr( temp );
-   contactFlags.setInitialValue( atoi( temp.c_str() ) );
+   contactFlags.setInitialValue( temp.toInt() );
 
    buftostr( temp );
    op1.setInitialValue( temp );
@@ -646,7 +638,7 @@ bool ContestContact::GJVload( int diskBlock )
    mode.setInitialValue( temp );
 
    buftostr( temp );
-   contactScore.setInitialValue( atoi( temp.c_str() ) );
+   contactScore.setInitialValue( temp.toInt());
    bearing = -1;
 
    buftostr( temp );
@@ -663,7 +655,7 @@ bool ContestContact::GJVload( int diskBlock )
    //   }
    return true;
 }
-bool ContestContact::setField( int ACol, const std::string Value )
+bool ContestContact::setField( int ACol, const QString Value )
 {
 //#warning never used! There to allow grid editting
    // This really ought to validate it first...
@@ -725,7 +717,7 @@ bool ContestContact::setField( int ACol, const std::string Value )
    commonSave();
    return true;
 }
-void ContestContact::processMinosStanza( const std::string &methodName, MinosTestImport * const mt )
+void ContestContact::processMinosStanza( const QString &methodName, MinosTestImport * const mt )
 {
    DisplayContestContact::processMinosStanza( methodName, mt );
 }

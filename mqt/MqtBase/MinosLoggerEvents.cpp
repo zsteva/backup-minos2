@@ -111,12 +111,12 @@ void MinosLoggerEvents::SendReplaceListList(TMatchCollection *matchCollection, B
     emit mle.ReplaceListList(matchCollection, c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendScrollToCountry(std::string prefix, BaseContestLog *c)
+void MinosLoggerEvents::SendScrollToCountry(QString prefix, BaseContestLog *c)
 {
     emit mle.ScrollToCountry(prefix, c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendScrollToDistrict(std::string prefix, BaseContestLog *c)
+void MinosLoggerEvents::SendScrollToDistrict(QString prefix, BaseContestLog *c)
 {
     emit mle.ScrollToDistrict(prefix, c);
 }
@@ -126,12 +126,12 @@ void MinosLoggerEvents::SendMatchStarting( BaseContestLog *c)
     emit mle.MatchStarting(c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendOp1Change(std::string op, BaseContestLog *c)
+void MinosLoggerEvents::SendOp1Change(QString op, BaseContestLog *c)
 {
     emit mle.Op1Change(op, c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendOp2Change(std::string op, BaseContestLog *c)
+void MinosLoggerEvents::SendOp2Change(QString op, BaseContestLog *c)
 {
     emit mle.Op2Change(op, c);
 }
@@ -141,17 +141,17 @@ void MinosLoggerEvents::SendShowOperators()
     emit mle.ShowOperators();
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendCountrySelect(std::string cty, BaseContestLog *c)
+void MinosLoggerEvents::SendCountrySelect(QString cty, BaseContestLog *c)
 {
     emit mle.CountrySelect(cty, c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendDistrictSelect(std::string dist, BaseContestLog *c)
+void MinosLoggerEvents::SendDistrictSelect(QString dist, BaseContestLog *c)
 {
     emit mle.DistrictSelect(dist, c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendLocSelect(std::string loc, BaseContestLog *c)
+void MinosLoggerEvents::SendLocSelect(QString loc, BaseContestLog *c)
 {
     emit mle.LocSelect(loc, c);
 }

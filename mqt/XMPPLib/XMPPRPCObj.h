@@ -32,7 +32,7 @@ class TRPCFunctor
       // two possible functions to call member function. virtual cause derived
       // classes will use a pointer to an object and a pointer to a member function
       // to make the function call
-      virtual void call( bool err, MinosRPCObj *mro, const std::string &from ) = 0;        // call using function
+      virtual void call( bool err, MinosRPCObj *mro, const QString &from ) = 0;        // call using function
 };
 
 
@@ -41,21 +41,21 @@ template <class TClass>
 class TRPCCallback : public TRPCFunctor
 {
    private:
-      void ( TClass::*fpt ) ( bool err, MinosRPCObj *mro, const std::string &from );   // pointer to member function
+      void ( TClass::*fpt ) ( bool err, MinosRPCObj *mro, const QString &from );   // pointer to member function
       TClass* pt2Object;                  // pointer to object
 
    public:
 
       // constructor - takes pointer to an object and pointer to a member and stores
       // them in two private variables
-      TRPCCallback( TClass* _pt2Object, void( TClass::*_fpt ) ( bool err, MinosRPCObj *mro, const std::string &from ) )
+      TRPCCallback( TClass* _pt2Object, void( TClass::*_fpt ) ( bool err, MinosRPCObj *mro, const QString &from ) )
       {
          pt2Object = _pt2Object;
          fpt = _fpt;
       };
 
       // override function "Call"
-      virtual void call( bool err, MinosRPCObj *mro, const std::string &from )
+      virtual void call( bool err, MinosRPCObj *mro, const QString &from )
       {
          ( *pt2Object.*fpt ) ( err, mro, from );
       }
@@ -70,11 +70,11 @@ class MinosRPCObj
       // Base object for Minos RPC calls. It encapsulates both ends of
       // the call
    private:
-      //      static std::map <std::string, MinosRPCServer *> serverMethodMap;
-      //      static std::map <std::string, MinosRPCClient *> clientMethodMap;
+      //      static std::map <QString, MinosRPCServer *> serverMethodMap;
+      //      static std::map <QString, MinosRPCClient *> clientMethodMap;
 
    protected:
-      std::string methodName;
+      QString methodName;
       RPCArgs callArgs;
 
    public:
@@ -88,30 +88,30 @@ class MinosRPCObj
       }
       void clearCallArgs();
 
-      std::string id;
+      QString id;
       TRPCFunctor *callback;
 
-      MinosRPCObj( const std::string &methodName, TRPCFunctor *cb );
+      MinosRPCObj( const QString &methodName, TRPCFunctor *cb );
       virtual ~MinosRPCObj();
       static void clearRPCObjects();
 
       virtual MinosRPCObj *makeObj() = 0;
 
-      static MinosRPCClient *makeClientObj( std::string call );
-      static MinosRPCServer *makeServerObj( std::string call );
+      static MinosRPCClient *makeClientObj( QString call );
+      static MinosRPCServer *makeServerObj( QString call );
 
       static void addObj( MinosRPCClient *mro );
       static void addObj( MinosRPCServer *mro );
 
-      virtual void queueCall( std::string /* to*/ )
+      virtual void queueCall( QString /* to*/ )
       {}
 
       // Invalid call in some way; queue an errror response
-      virtual void queueErrorResponse( std::string /*to*/ )
+      virtual void queueErrorResponse( QString /*to*/ )
       {}
 
       // Valid response; queue the response
-      virtual void queueResponse( std::string /*to*/ )
+      virtual void queueResponse( QString /*to*/ )
       {}
 }
 ;
@@ -124,7 +124,7 @@ class MinosRPCClient: public MinosRPCObj
    private:
       MinosRPCClient();            // don't allow default constructor
    public:
-      MinosRPCClient( const std::string &methodName, TRPCFunctor *cb ) : MinosRPCObj( methodName, cb )
+      MinosRPCClient( const QString &methodName, TRPCFunctor *cb ) : MinosRPCObj( methodName, cb )
       {}
       virtual ~MinosRPCClient()
       {}
@@ -137,14 +137,14 @@ class MinosRPCClient: public MinosRPCObj
       // we don't wait on it, but we do queue it, and on response arriving
       // we queue the desired response
 
-      virtual void queueCall( std::string to );
+      virtual void queueCall( QString to );
 };
 class MinosRPCServer: public MinosRPCObj
 {
    private:
       MinosRPCServer();            // don't allow default constructor
    public:
-      MinosRPCServer( const std::string &methodName, TRPCFunctor *cb ) : MinosRPCObj( methodName, cb )
+      MinosRPCServer( const QString &methodName, TRPCFunctor *cb ) : MinosRPCObj( methodName, cb )
       {}
       virtual ~MinosRPCServer()
       {}
@@ -152,10 +152,10 @@ class MinosRPCServer: public MinosRPCObj
       virtual MinosRPCServer *makeObj() = 0;
 
       // Invalid call in some way; queue an errror response
-      virtual void queueErrorResponse( std::string to );
+      virtual void queueErrorResponse( QString to );
 
       // Valid response; queue the response
-      virtual void queueResponse( std::string to );
+      virtual void queueResponse( QString to );
 };
 
 #endif
