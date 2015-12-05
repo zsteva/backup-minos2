@@ -50,7 +50,7 @@ BandList &BandList::getBandList()
     static bool loaded = false;
     if ( !loaded )
     {
-        blist.parseFile ( "control\\bandlist.xml" ) ;
+        blist.parseFile ( "./Configuration/bandlist.xml" ) ;
         loaded = true;
     }
     return blist;

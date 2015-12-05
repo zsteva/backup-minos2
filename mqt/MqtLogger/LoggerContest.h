@@ -113,8 +113,8 @@ class LoggerContestLog : public BaseContestLog
       // end of contest details
 
 
-      QString bands;
-      QString sections;
+      QStringList bands;
+      QStringList sections;
 
       void setINIDetails();
 

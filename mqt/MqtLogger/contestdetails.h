@@ -38,6 +38,7 @@ private:   	// User declarations
    QWidget * getDetails( );
 public:   		// User declarations
    void setDetails( LoggerContestLog * ct );
+   virtual int exec() override;
 };
 
 #endif // CONTESTDETAILS_H

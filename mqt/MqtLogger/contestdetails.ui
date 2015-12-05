@@ -6,14 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>671</width>
-    <height>551</height>
+    <width>526</width>
+    <height>531</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_20">
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_18">
    <item>
     <widget class="QFrame" name="frame">
      <property name="frameShape">
@@ -25,11 +31,20 @@
      <property name="lineWidth">
       <number>1</number>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,1">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <widget class="QFrame" name="frame_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
           </property>
@@ -52,6 +67,12 @@
         </item>
         <item>
          <widget class="TBundleFrame" name="EntryBundleFrame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>200</width>
@@ -72,6 +93,12 @@
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <widget class="TBundleFrame" name="StationBundleFrame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -88,6 +115,12 @@
         </item>
         <item>
          <widget class="TBundleFrame" name="QTHBundleFrame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -145,48 +178,88 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <layout class="QHBoxLayout" name="horizontalLayout_14">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Contest Name</string>
-         </property>
-        </widget>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Contest Name</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="ContestNameEdit"/>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QLineEdit" name="ContestNameEdit"/>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Band</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="BandComboBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Section</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="SectionComboBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Band</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="BandComboBox"/>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Section</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="SectionComboBox"/>
-       </item>
-      </layout>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="title">
+        <string>Options</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_23">
+        <item>
+         <widget class="QCheckBox" name="ProtectedOption">
+          <property name="text">
+           <string>Protected</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </item>
     </layout>
    </item>
@@ -251,239 +324,215 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_15">
+    <layout class="QHBoxLayout" name="horizontalLayout_18">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_19">
+      <layout class="QVBoxLayout" name="verticalLayout_9">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_9">
-           <item>
-            <widget class="QLabel" name="label_8">
-             <property name="text">
-              <string>Start Date</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
-             <item>
-              <widget class="QLineEdit" name="StartDateEdit"/>
-             </item>
-             <item>
-              <widget class="QToolButton" name="StartDateButton">
-               <property name="text">
-                <string>...</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Start Date</string>
+           </property>
+          </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_10">
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
            <item>
-            <widget class="QLabel" name="label_9">
+            <widget class="QLineEdit" name="StartDateEdit"/>
+           </item>
+           <item>
+            <widget class="QToolButton" name="StartDateButton">
              <property name="text">
-              <string>Start Time</string>
+              <string>...</string>
              </property>
             </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="StartTimeCombo"/>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_11">
-           <item>
-            <widget class="QLabel" name="label_10">
-             <property name="text">
-              <string>End Date</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
-             <item>
-              <widget class="QLineEdit" name="EndDateEdit"/>
-             </item>
-             <item>
-              <widget class="QToolButton" name="EndDateButton">
-               <property name="text">
-                <string>...</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_10a">
-           <item>
-            <widget class="QLabel" name="label_9a">
-             <property name="text">
-              <string>End Time</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="EndTimeCombo"/>
            </item>
           </layout>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_14">
+        <layout class="QHBoxLayout" name="horizontalLayout_15">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_15">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>Start Time</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="StartTimeCombo">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_10">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_16">
+         <item>
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>End Date</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
            <item>
-            <widget class="QGroupBox" name="groupBox_2">
-             <property name="title">
-              <string>Scoring</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_22">
-              <item>
-               <widget class="QRadioButton" name="radioButton">
-                <property name="text">
-                 <string>Commenced Kilometer</string>
-                </property>
-                <attribute name="buttonGroup">
-                 <string notr="true">ScoreOptionsGroup</string>
-                </attribute>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="radioButton_2">
-                <property name="text">
-                 <string>Point per QSO</string>
-                </property>
-                <attribute name="buttonGroup">
-                 <string notr="true">ScoreOptionsGroup</string>
-                </attribute>
-               </widget>
-              </item>
-             </layout>
-            </widget>
+            <widget class="QLineEdit" name="EndDateEdit"/>
            </item>
            <item>
-            <widget class="QGroupBox" name="groupBox_3">
-             <property name="title">
-              <string>Options</string>
+            <widget class="QToolButton" name="EndDateButton">
+             <property name="text">
+              <string>...</string>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_23">
-              <item>
-               <widget class="QCheckBox" name="ProtectedOption">
-                <property name="text">
-                 <string>Protected</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
             </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_11">
-             <item>
-              <widget class="QLabel" name="label_13">
-               <property name="text">
-                <string>Antenna Offset</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="AntOffsetEdit"/>
-             </item>
-            </layout>
            </item>
           </layout>
          </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_17">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_18">
-           <item>
-            <widget class="QGroupBox" name="groupBox_4">
-             <property name="title">
-              <string>Locator Length</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_21">
-              <item>
-               <widget class="QCheckBox" name="AlowLoc4CB">
-                <property name="text">
-                 <string>Allow 4 char Locators</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="AllowLoc8CB">
-                <property name="text">
-                 <string>Allow 8 char Locators</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="groupBox_5">
-             <property name="title">
-              <string>Bonus Scheme</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_16">
-              <item>
-               <widget class="QComboBox" name="BonusComboBox"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="groupBox_6">
-             <property name="title">
-              <string>Optional Fields</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_17">
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_12">
-                <item>
-                 <widget class="QCheckBox" name="RSTField">
-                  <property name="text">
-                   <string>RS(T)</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="SerialField">
-                  <property name="text">
-                   <string>Serial</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_13">
-                <item>
-                 <widget class="QCheckBox" name="LocatorField">
-                  <property name="text">
-                   <string>Locator</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="QTHField">
-                  <property name="text">
-                   <string>QTH</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QLabel" name="label_9a">
+           <property name="text">
+            <string>End Time</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="EndTimeCombo">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_12">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_19">
+         <item>
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Main Op</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="MainOpComboBox">
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_20">
+         <item>
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>Second Op</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="SecondOpComboBox">
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_21">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_11">
+       <item>
+        <widget class="QGroupBox" name="ScoreGroupBox">
+         <property name="title">
+          <string>Scoring</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_22">
+          <item>
+           <widget class="QRadioButton" name="commencedKRB">
+            <property name="text">
+             <string>Commenced Kilometer</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">ScoreOptionsGroup</string>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="PPQSORB">
+            <property name="text">
+             <string>Point per QSO</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">ScoreOptionsGroup</string>
+            </attribute>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
+          <string>Bonus Scheme</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_16">
+          <item>
+           <widget class="QComboBox" name="BonusComboBox">
+            <property name="sizeAdjustPolicy">
+             <enum>QComboBox::AdjustToContents</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <item>
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string>Antenna Offset</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="AntOffsetEdit"/>
          </item>
         </layout>
        </item>
@@ -492,31 +541,79 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_14">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_12">
-         <item>
-          <widget class="QLabel" name="label_11">
-           <property name="text">
-            <string>Main Operator</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="MainOpComboBox"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_12">
-           <property name="text">
-            <string>Second Operator</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="SeondOpComboBox"/>
-         </item>
-        </layout>
+        <widget class="QGroupBox" name="LocatorGroupBox">
+         <property name="title">
+          <string>Locator Length</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_21">
+          <item>
+           <widget class="QCheckBox" name="AllowLoc4CB">
+            <property name="text">
+             <string>Allow 4 char Locators</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="AllowLoc8CB">
+            <property name="text">
+             <string>Allow 8 char Locators</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="FieldsGroupBox">
+         <property name="title">
+          <string>Optional Fields</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_17">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
+            <item>
+             <widget class="QCheckBox" name="RSTField">
+              <property name="text">
+               <string>RS(T)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="SerialField">
+              <property name="text">
+               <string>Serial</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_13">
+            <item>
+             <widget class="QCheckBox" name="LocatorField">
+              <property name="text">
+               <string>Locator</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="QTHField">
+              <property name="text">
+               <string>QTH</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_15">
+       <item>
+        <widget class="QGroupBox" name="MultGroupBox">
          <property name="title">
           <string>Multipliers and Exchange</string>
          </property>
@@ -550,9 +647,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="M7LOcatorMults">
+           <widget class="QCheckBox" name="M7LocatorMults">
             <property name="text">
-             <string>Qll locs; UK locs x2 (M7)</string>
+             <string>All locs; UK locs x2 (M7)</string>
             </property>
            </widget>
           </item>
@@ -644,6 +741,9 @@
     </layout>
    </item>
   </layout>
+  <zorder>frame</zorder>
+  <zorder>EndDateEdit</zorder>
+  <zorder>label_9a</zorder>
  </widget>
  <customwidgets>
   <customwidget>

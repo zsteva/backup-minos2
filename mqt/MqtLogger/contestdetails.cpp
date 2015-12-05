@@ -1,5 +1,6 @@
 #include "logger_pch.h"
 #include "VHFList.h"
+#include "BandList.h"
 #include "contestdetails.h"
 #include "ui_contestdetails.h"
 
@@ -10,6 +11,42 @@ ContestDetails::ContestDetails(QWidget *parent) :
     saveContestOK(false), suppressProtectedOnClick(false)
 {
     ui->setupUi(this);
+
+    ui->ExchangeComboBox->addItem("No Exchange Required");
+    ui->ExchangeComboBox->addItem("PostCode Multipliers");
+    ui->ExchangeComboBox->addItem("Other Exchange Multiplier");
+    ui->ExchangeComboBox->addItem("Exchange Required (no multiplier)");
+
+    ui->BonusComboBox->addItem("None");
+    ui->BonusComboBox->addItem("UKAC Bonuses");
+
+    for ( int i = 0; i < 24; i++ )
+    {
+        QString cbText = QString("%1:").arg(i, 2, 10, QChar('0'));
+        QString hour = cbText + "00";
+        QString halfhour = cbText + "30";
+        ui->StartTimeCombo->addItem( hour );
+        ui->StartTimeCombo->addItem ( halfhour );
+        ui->EndTimeCombo->addItem( hour );
+        ui->EndTimeCombo->addItem ( halfhour );
+    }
+}
+int ContestDetails::exec()
+{
+    ui->QTHBundleFrame->initialise( "QTH", &contest->QTHBundle, &contest->QTHBundleName );
+    ui->StationBundleFrame->initialise( "Station", &contest->stationBundle, &contest->stationBundleName );
+    ui->EntryBundleFrame->initialise( "Entry", &contest->entryBundle, &contest->entryBundleName );
+    ui->ContestNameSelected->setText(contest->VHFContestName.getValue());
+
+    contest->initialiseINI();
+
+    QWidget *nextD = getDetails( );
+    if ( nextD )
+    {
+       nextD->setFocus();
+    }
+
+    return QDialog::exec();
 }
 
 ContestDetails::~ContestDetails()
@@ -85,63 +122,51 @@ void ContestDetails::setDetails( LoggerContestLog * pcont )
 void ContestDetails::setDetails(  )
 {
    setWindowTitle( ("Details of Contest Entry - " + contest->cfileName));
-#ifdef RUBBISH
 
-   ContestNameEdit->Text = contest->name.getValue().c_str();                      // contest
+   ui->ContestNameEdit->setText(contest->name.getValue());
 
    // need to get legal bands from ContestLog
-   if ( contest->bands.size() )
+   if ( contest->bands.count() )
    {
-      BandComboBox->Style = Stdctrls::csDropDownList;
-      TStringList *sl = new TStringList;
-
-      sl->CommaText = contest->bands.c_str();
-      BandComboBox->Items = sl;
-
-      delete sl;
+      ui->BandComboBox->addItems(contest->bands);
    }
    else
    {
       BandList &blist = BandList::getBandList();
       for (std::vector<BandInfo>::iterator i = blist.bandList.begin(); i != blist.bandList.end(); i++)
       {
-         if ((*i).type != "HF")
+         if ((*i).getType() != "HF")
          {
-            BandComboBox->Items->Add( (*i).uk.c_str() );
+            ui->BandComboBox->addItem( (*i).uk );
          }
       }
    }
-   int b = BandComboBox->Items->IndexOf( contest->band.getValue().c_str() );        // contest
+   int b = ui->BandComboBox->findText( contest->band.getValue() );        // contest
 
    if ( b >= 0 )
    {
-      BandComboBox->ItemIndex = b;
+      ui->BandComboBox->setCurrentIndex( b);
    }
    else
    {
-      //BandComboBox->ItemIndex = 0;
-      BandComboBox->Style = Stdctrls::csDropDown;    // was csDropDownList
-      BandComboBox->Text = contest->band.getValue().c_str();
+      ui->BandComboBox->setCurrentText(contest->band.getValue());
    }
 
-   if ( sectionList.Length() )
+   if ( sectionList.size() )
    {
-      TStringList * sl = new TStringList;
-      sl->CommaText = sectionList.c_str();
-      SectionComboBox->Items = sl;
-      delete sl;
+       QStringList sl = sectionList.split(",", QString::SkipEmptyParts);
+       ui->SectionComboBox->addItems(sl);
    }
 
-   int s = SectionComboBox->Items->IndexOf( contest->entSect.getValue().c_str() );        // contest
+   int s = ui->SectionComboBox->findText( contest->entSect.getValue() );        // contest
 
    if ( s >= 0 )
    {
-      SectionComboBox->ItemIndex = s;
+      ui->SectionComboBox->setCurrentIndex(s);
    }
    else
    {
-      SectionComboBox->Style = Stdctrls::csDropDown;    // was csDropDownList
-      SectionComboBox->Text = contest->entSect.getValue().c_str();
+      ui->SectionComboBox->setCurrentText(contest->entSect.getValue());
    }
 
    // start/end of ContestLog
@@ -153,58 +178,66 @@ void ContestDetails::setDetails(  )
 
    if ( contest->DTGStart.getValue().size() )
    {
-      StartDateEdit->Text = CanonicalToTDT( contest->DTGStart.getValue().c_str() ).FormatString("dd/mm/yyyy");
-      StartTimeCombo->Text = CanonicalToTDT( contest->DTGStart.getValue().c_str() ).FormatString( "hh:nn" );
+      ui->StartDateEdit->setText(CanonicalToTDT( contest->DTGStart.getValue()).toString("dd/MM/yyyy"));
+      QString stc = CanonicalToTDT( contest->DTGStart.getValue()).toString( "hh:mm" );
+      ui->StartTimeCombo->setCurrentText(stc);
    }
    else
    {
       //         StartDateEdit->Date = "";
-      StartTimeCombo->Text = "";
+      ui->StartTimeCombo->setCurrentText("");
    }
    if ( contest->DTGEnd.getValue().size() )
    {
-      EndDateEdit->Text = CanonicalToTDT( contest->DTGEnd.getValue().c_str() ).FormatString("dd/mm/yyyy"); // short date format, hours:minutes
-      EndTimeCombo->Text = CanonicalToTDT( contest->DTGEnd.getValue().c_str() ).FormatString( "hh:nn" ); // short date format, hours:minutes
+      ui->EndDateEdit->setText(CanonicalToTDT( contest->DTGEnd.getValue() ).toString("dd/MM/yyyy")); // short date format, hours:minutes
+      QString etc = CanonicalToTDT( contest->DTGEnd.getValue()).toString( "hh:mm" );
+      ui->EndTimeCombo->setCurrentText(etc); // short date format, hours:minutes
    }
    else
    {
       //         EndDateEdit->Date = "";
-      EndTimeCombo->Text = "";
+      ui->EndTimeCombo->setCurrentText("");
    }
 
    if ( !contest->mycall.fullCall.getValue().size() )                                       // Entry
    {
-      std::string temp;
+      QString temp;
       contest->entryBundle.getStringProfile( eepCall, temp );
 
       // STL version of strupr
-      std::transform( temp.begin(), temp.end(),  	// source
-                      temp.begin(),  				// destination
-                      toupper );				// Function to use
+      temp = temp.toUpper();
       contest->mycall.fullCall.setValue( temp );
    }
-   CallsignEdit->Text = contest->mycall.fullCall.getValue().c_str();
+   ui->CallsignEdit->setText(contest->mycall.fullCall.getValue());
    if (contest->currentOp1.getValue().size()== 0)
    {
-      contest->currentOp1.setValue( CallsignEdit->Text.c_str());
+      contest->currentOp1.setValue( ui->CallsignEdit->text());
    }
 
    contest->validateLoc();
    if ( !contest->locValid && contest->myloc.loc.getValue().size() == 0 )
    {
-      std::string temp;
+      QString temp;
       contest->QTHBundle.getStringProfile( eqpLocator, temp );
       contest->myloc.loc.setValue( temp );
       contest->validateLoc();
    }
-   LocatorEdit->Text = contest->myloc.loc.getValue().c_str();
+   ui->LocatorEdit->setText(contest->myloc.loc.getValue());
 
-   AllowLoc4CB->Checked = contest->allowLoc4.getValue();    // bool               // ?? contest
-   AllowLoc8CB->Checked = contest->allowLoc8.getValue();    // bool               // ?? contest
+   ui->AllowLoc4CB->setChecked(contest->allowLoc4.getValue());    // bool               // ?? contest
+   ui->AllowLoc8CB->setChecked(contest->allowLoc8.getValue());    // bool               // ?? contest
 
-   ExchangeEdit->Text = contest->location.getValue().c_str(); // QTH/if contest specifies - but disp anyway
+   ui->ExchangeEdit->setText(contest->location.getValue()); // QTH/if contest specifies - but disp anyway
 
-   ScoreOptions->ItemIndex = ( int ) contest->scoreMode.getValue();  // combo     // contest
+   switch (contest->scoreMode.getValue())
+   {
+   case 0:
+       ui->commencedKRB->setChecked(true);
+       break;
+   case 1:
+       ui->PPQSORB->setChecked(true);
+       break;
+   }
 
    /*
       ExchangeComboBox:
@@ -217,52 +250,53 @@ void ContestDetails::setDetails(  )
 
    if ( contest->districtMult.getValue() )
    {
-      ExchangeComboBox->ItemIndex = 1;
+      ui->ExchangeComboBox->setCurrentIndex( 1);
    }
    else
       if ( contest->otherExchange.getValue() )
       {
-         ExchangeComboBox->ItemIndex = 3;
+          ui->ExchangeComboBox->setCurrentIndex( 3);
       }
       else
       {
-         ExchangeComboBox->ItemIndex = 0;
+          ui->ExchangeComboBox->setCurrentIndex( 0);
       }
-   DXCCMult->Checked = contest->countryMult.getValue() ;
-   NonGCtryMult->Checked = contest->nonGCountryMult.getValue() ;
+   ui->DXCCMult->setChecked( contest->countryMult.getValue()) ;
+   ui->NonGCtryMult->setChecked( contest->nonGCountryMult.getValue()) ;
 
-   M7LocatorMults->Checked = contest->M7Mults.getValue();
+   ui->M7LocatorMults->setChecked(contest->M7Mults.getValue());
 
    bool UKACBonus = contest->UKACBonus.getValue();
-   BonusComboBox->ItemIndex = UKACBonus?1:0;
+   ui->BonusComboBox->setCurrentIndex(UKACBonus?1:0);
 
-   LocatorMult->Checked = contest->locMult.getValue() ;
-   GLocMult->Checked = contest->GLocMult.getValue();
+   ui->LocatorMult->setChecked(contest->locMult.getValue()) ;
+   ui->GLocMult->setChecked(contest->GLocMult.getValue());
 
-   PowerEdit->Text = contest->power.getValue().c_str();
+   ui->PowerEdit->setText(contest->power.getValue());
 
    if ( contest->isMinosFile() )
    {
       suppressProtectedOnClick = true;
-      ProtectedOption->Checked = contest->isProtected() && !contest->isProtectedSuppressed();
+      ui->ProtectedOption->setChecked(contest->isProtected() && !contest->isProtectedSuppressed());
       suppressProtectedOnClick = false;
    }
    else
    {
-      ProtectedOption->Enabled = false;
+      ui->ProtectedOption->setEnabled(false);
    }
-   RSTField->Checked = contest->RSTField.getValue() ;   // bool                   // contest
-   SerialField->Checked = contest->serialField.getValue() ;   // bool             // contest
-   LocatorField->Checked = contest->locatorField.getValue() ;   // bool         // contest
-   QTHField->Checked = contest->QTHField.getValue() ;   // bool                   // contest
+   ui->RSTField->setChecked(contest->RSTField.getValue()) ;   // bool                   // contest
+   ui->SerialField->setChecked(contest->serialField.getValue()) ;   // bool             // contest
+   ui->LocatorField->setChecked(contest->locatorField.getValue()) ;   // bool         // contest
+   ui->QTHField->setChecked( contest->QTHField.getValue()) ;   // bool                   // contest
 
-   AntOffsetEdit->Text = contest->bearingOffset.getValue();	// int
+   ui->AntOffsetEdit->setText(QString::number(contest->bearingOffset.getValue()));	// int
    refreshOps();
 
    enableControls();
 }
 void ContestDetails::refreshOps()
 {
+#ifdef RUBBISH
    // refill the op combo boxes from the current contest, and select the correct op
    if (contest)
    {
@@ -1005,49 +1039,47 @@ void ContestDetails::ProtectedOptionClick(TObject */*Sender*/)
 }
 #endif
 //---------------------------------------------------------------------------
-#ifdef RUBBISH
 void ContestDetails::enableControls()
 {
 // Should protected be disabled if the contest is unwriteable?
-   bool protectedChecked = ProtectedOption->Checked;
+   bool protectedChecked = ui->ProtectedOption->isChecked();
 // enable/disable relevant fields based on protected
-   ContestNameEdit->Enabled = !protectedChecked;
-   BandComboBox->Enabled = !protectedChecked;
-   CallsignEdit->Enabled = !protectedChecked;
-   LocatorEdit->Enabled = !protectedChecked;
-   ExchangeEdit->Enabled = !protectedChecked;
-   ScoreOptions->Enabled = !protectedChecked;
-   MultGroupBox->Enabled = !protectedChecked;
-   DXCCMult->Enabled = !protectedChecked;
-   LocatorMult->Enabled = !protectedChecked;
-   FieldsGroupBox->Enabled = !protectedChecked;
-   RSTField->Enabled = !protectedChecked;
-   SerialField->Enabled = !protectedChecked;
-   LocatorField->Enabled = !protectedChecked;
-   QTHField->Enabled = !protectedChecked;
+   ui->ContestNameEdit->setEnabled(!protectedChecked);
+   ui->BandComboBox->setEnabled(!protectedChecked);
+   ui->CallsignEdit->setEnabled(!protectedChecked);
+   ui->LocatorEdit->setEnabled(!protectedChecked);
+   ui->ExchangeEdit->setEnabled(!protectedChecked);
+   ui->ScoreGroupBox->setEnabled(!protectedChecked);
+   ui->MultGroupBox->setEnabled(!protectedChecked);
+   ui->DXCCMult->setEnabled(!protectedChecked);
+   ui->LocatorMult->setEnabled(!protectedChecked);
+   ui->FieldsGroupBox->setEnabled(!protectedChecked);
+   ui->RSTField->setEnabled(!protectedChecked);
+   ui->SerialField->setEnabled(!protectedChecked);
+   ui->LocatorField->setEnabled(!protectedChecked);
+   ui->QTHField->setEnabled(!protectedChecked);
 
-   QTHBundleFrame->enableBundle(!protectedChecked);
-   StationBundleFrame->enableBundle(!protectedChecked);
-   EntryBundleFrame->enableBundle(!protectedChecked);
+   ui->QTHBundleFrame->enableBundle(!protectedChecked);
+   ui->StationBundleFrame->enableBundle(!protectedChecked);
+   ui->EntryBundleFrame->enableBundle(!protectedChecked);
 
-   SectionComboBox->Enabled = !protectedChecked;
-   StartTimeCombo->Enabled = !protectedChecked;
-   EndTimeCombo->Enabled = !protectedChecked;
-   ExchangeComboBox->Enabled = !protectedChecked;
-   VHFCalendarButton->Enabled = !protectedChecked;
-   ContestNameSelected->Enabled = !protectedChecked;
-   LocatorGroupBox->Enabled = !protectedChecked;
-   AllowLoc8CB->Enabled = !protectedChecked;
-   AllowLoc4CB->Enabled = !protectedChecked;
-   StartDateEdit->Enabled = !protectedChecked;
-   EndDateEdit->Enabled = !protectedChecked;
-   StartDateButton->Enabled = !protectedChecked;
-   EndDateButton->Enabled = !protectedChecked;
-   MainOpComboBox->Enabled = !protectedChecked;
-   SecondOpComboBox->Enabled = !protectedChecked;
-   AntOffsetEdit->Enabled = !protectedChecked;
+   ui->SectionComboBox->setEnabled(!protectedChecked);
+   ui->StartTimeCombo->setEnabled(!protectedChecked);
+   ui->EndTimeCombo->setEnabled(!protectedChecked);
+   ui->ExchangeComboBox->setEnabled(!protectedChecked);
+   ui->VHFCalendarButton->setEnabled(!protectedChecked);
+   ui->ContestNameSelected->setEnabled(!protectedChecked);
+   ui->LocatorGroupBox->setEnabled(!protectedChecked);
+   ui->AllowLoc8CB->setEnabled(!protectedChecked);
+   ui->AllowLoc4CB->setEnabled(!protectedChecked);
+   ui->StartDateEdit->setEnabled(!protectedChecked);
+   ui->EndDateEdit->setEnabled(!protectedChecked);
+   ui->StartDateButton->setEnabled(!protectedChecked);
+   ui->EndDateButton->setEnabled(!protectedChecked);
+   ui->MainOpComboBox->setEnabled(!protectedChecked);
+   ui->SecondOpComboBox->setEnabled(!protectedChecked);
+   ui->AntOffsetEdit->setEnabled(!protectedChecked);
 }
-#endif
 #ifdef RUBBISH
 
 void ContestDetails::DXCCMultClick(TObject */*Sender*/)
