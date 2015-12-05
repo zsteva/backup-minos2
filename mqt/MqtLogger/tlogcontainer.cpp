@@ -36,6 +36,7 @@ TLogContainer::TLogContainer(QWidget *parent) :
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
+    enableActions();
 }
 
 TLogContainer::~TLogContainer()
@@ -166,6 +167,7 @@ void TLogContainer::enableActions()
 
    ContestDetailsAction->setEnabled(f);
    GoToSerialAction->setEnabled(f);
+   NextUnfilledAction->setEnabled(f);
    MakeEntryAction->setEnabled(f);
 
    ManageListsAction->setEnabled( TContestApp::getContestApp() ->getOccupiedListSlotCount() > 0 );
