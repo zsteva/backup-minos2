@@ -22,16 +22,6 @@
 #include "base_pch.h"
 
 //---------------------------------------------------------------------------
-bool mShowYesNoMessage( QWidget* Owner, const std::string &mess )
-{
-    QMessageBox msgBox(Owner);
-    msgBox.setText( mess.c_str() );
-    msgBox.setStandardButtons( QMessageBox::Yes | QMessageBox::No );
-    msgBox.setDefaultButton( QMessageBox::Yes );
-    int ret = msgBox.exec();
-
-    return ret == QMessageBox::Yes;
-}
 bool mShowYesNoMessage( QWidget* Owner, const QString &mess )
 {
     QMessageBox msgBox(Owner);
@@ -43,16 +33,6 @@ bool mShowYesNoMessage( QWidget* Owner, const QString &mess )
     return ret == QMessageBox::Yes;
 }
 //---------------------------------------------------------------------------
-bool mShowOKCancelMessage( QWidget * Owner, const std::string &mess )
-{
-    QMessageBox msgBox(Owner);
-    msgBox.setText( mess.c_str() );
-    msgBox.setStandardButtons( QMessageBox::Ok | QMessageBox::Cancel );
-    msgBox.setDefaultButton( QMessageBox::Ok );
-    int ret = msgBox.exec();
-
-    return ret == QMessageBox::Ok;
-}
 bool mShowOKCancelMessage( QWidget * Owner, const QString &mess )
 {
     QMessageBox msgBox(Owner);
@@ -64,37 +44,19 @@ bool mShowOKCancelMessage( QWidget * Owner, const QString &mess )
     return ret == QMessageBox::Ok;
 }
 //---------------------------------------------------------------------------
-void mShowOKMessage( QWidget * Owner, const std::string &mess )
-{
-    QMessageBox msgBox(Owner);
-    msgBox.setText( mess.c_str() );
-    msgBox.exec();
-}
 void mShowOKMessage( QWidget * Owner, const QString &mess )
 {
     QMessageBox msgBox(Owner);
     msgBox.setText( mess );
     msgBox.exec();
 }
-bool sShowYesNoMessage( QWidget *Owner, const std::string &mess )
-{
-    return mShowYesNoMessage( Owner, mess );
-}
-bool sShowOKCancelMessage( QWidget *Owner, std::string mess )
+bool sShowOKCancelMessage( QWidget *Owner, const QString &mess )
 {
     return mShowOKCancelMessage( Owner, mess );
-}
-void sShowOKMessage( QWidget *Owner, const std::string &mess )
-{
-    mShowOKMessage( Owner, mess );
 }
 bool sShowYesNoMessage( QWidget *Owner, const QString &mess )
 {
     return mShowYesNoMessage( Owner, mess );
-}
-bool sShowOKCancelMessage( QWidget *Owner, const QString & mess )
-{
-    return mShowOKCancelMessage( Owner, mess );
 }
 void sShowOKMessage( QWidget *Owner, const QString &mess )
 {

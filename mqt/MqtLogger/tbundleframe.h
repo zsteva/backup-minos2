@@ -31,8 +31,10 @@ public:  		// User declarations
    void enableBundle( bool );
 
    void BundleSectionChange(  );
-   void BundleEditClick( );
 
+private slots:
+   void on_BundleEdit_clicked();
+   void on_BundleSection_currentIndexChanged(const QString &arg1);
 };
 
 #endif // TBUNDLEFRAME_H

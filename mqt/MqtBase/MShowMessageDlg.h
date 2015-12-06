@@ -22,7 +22,6 @@
 #ifndef MShowMessageDlgH
 #define MShowMessageDlgH 
 //---------------------------------------------------------------------------
-extern void mShowMessage( const std::string &mess, QWidget *Owner );
 extern void mShowMessage( const QString &mess, QWidget *Owner );
 extern void mShowMessage( const char *mess, QWidget *Ownersshowm );
 #endif

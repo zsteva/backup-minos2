@@ -39,7 +39,10 @@ SOURCES += main.cpp \
     MinosTestExport.cpp \
     reg1test.cpp \
     PrintFile.cpp \
-    tbundleframe.cpp
+    tbundleframe.cpp \
+    tsettingseditdlg.cpp \
+    tcalendarform.cpp \
+    tminoshelpform.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -57,13 +60,19 @@ HEADERS  += \
     MinosTestExport.h \
     reg1test.h \
     printfile.h \
-    tbundleframe.h
+    tbundleframe.h \
+    tsettingseditdlg.h \
+    tcalendarform.h \
+    tminoshelpform.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
     tsinglelogframe.ui \
     tentryoptionsform.ui \
-    tbundleframe.ui
+    tbundleframe.ui \
+    tsettingseditdlg.ui \
+    tcalendarform.ui \
+    tminoshelpform.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase

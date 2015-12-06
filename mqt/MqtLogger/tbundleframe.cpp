@@ -1,5 +1,7 @@
 #include "logger_pch.h"
 
+#include "contestdetails.h"
+#include "tsettingseditdlg.h"
 #include "tbundleframe.h"
 #include "ui_tbundleframe.h"
 
@@ -53,14 +55,13 @@ void TBundleFrame::initialise(const QString &cap, SettingsBundle *b, MinosItem<Q
 }
 //---------------------------------------------------------------------------
 bool TBundleFrame::doEdit( )
-{/*
+{
    TSettingsEditDlg ed ( this, bundle );
-   if ( ed->exec() == QDialog::Accepted )
+   if ( ed.exec() == QDialog::Accepted )
    {
       initialise();
       return true;
    }
-   */
    return false;
 }
 //---------------------------------------------------------------------------
@@ -78,11 +79,33 @@ void TBundleFrame::BundleSectionChange(  )
       bundle->openSection( ui->BundleSection->currentText() );
       bname->setValue( bundle->getSection() );
    }
+   ContestDetails *cd = dynamic_cast<ContestDetails *>(parent());
+   if (cd)
+   {
+       cd->bundleChanged();
+   }
 }
 //---------------------------------------------------------------------------
 
-void TBundleFrame::BundleEditClick( )
+void TBundleFrame::on_BundleEdit_clicked()
 {
-   doEdit( );
+    doEdit();
+
+    // And we need to call back to the contest detail form
+
+    ContestDetails *cd = dynamic_cast<ContestDetails *>(parent());
+    if (cd)
+    {
+        cd->bundleChanged();
+    }
 }
-//---------------------------------------------------------------------------
+
+void TBundleFrame::on_BundleSection_currentIndexChanged(const QString &arg1)
+{
+    ContestDetails *cd = dynamic_cast<ContestDetails *>(parent());
+    if (cd)
+    {
+        cd->bundleChanged();
+    }
+
+}

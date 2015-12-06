@@ -1,6 +1,11 @@
 #include "logger_pch.h"
 #include "VHFList.h"
 #include "BandList.h"
+#include "tentryoptionsform.h"
+#include "tminoshelpform.h"
+#include "tcalendarform.h"
+
+
 #include "contestdetails.h"
 #include "ui_contestdetails.h"
 
@@ -56,48 +61,6 @@ ContestDetails::~ContestDetails()
 
 
 //---------------------------------------------------------------------------
-#ifdef RUBBISH
-void ContestDetails::StartDateButtonClick(TObject */*Sender*/)
-{
-   std::auto_ptr <TDateSelectForm> DateSelectDlg( new TDateSelectForm( this ) );
-   TDateTime test;
-   try
-   {
-    test = TDateTime( StartDateEdit->Text, TDateTime::Date );
-   }
-   catch(...)
-   {
-       test = TDateTime::CurrentDate();
-   }
-   DateSelectDlg->CalendarDate = test;
-   if ( DateSelectDlg->ShowModal() == mrOk )
-   {
-       StartDateEdit->Text = DateSelectDlg->CalendarDate.FormatString( "dd/mm/yyyy" );
-   }
-}
-#endif
-//---------------------------------------------------------------------------
-#ifdef RUBBISH
-
-void  ContestDetails::EndDateButtonClick(TObject */*Sender*/)
-{
-   std::auto_ptr <TDateSelectForm> DateSelectDlg( new TDateSelectForm( this ) );
-   TDateTime test;
-   try
-   {
-    test = TDateTime( EndDateEdit->Text, TDateTime::Date );
-   }
-   catch(...)
-   {
-       test = TDateTime::CurrentDate();
-   }
-   DateSelectDlg->CalendarDate = test;
-   if ( DateSelectDlg->ShowModal() == mrOk )
-   {
-       EndDateEdit->Text = DateSelectDlg->CalendarDate.FormatString( "dd/mm/yyyy" );
-   }
-}
-#endif
 //---------------------------------------------------------------------------
 /*
       onShow - needs to produce a copy of the contest structure containing relevant
@@ -178,7 +141,7 @@ void ContestDetails::setDetails(  )
 
    if ( contest->DTGStart.getValue().size() )
    {
-      ui->StartDateEdit->setText(CanonicalToTDT( contest->DTGStart.getValue()).toString("dd/MM/yyyy"));
+      ui->StartDateEdit->setDate(CanonicalToTDT( contest->DTGStart.getValue()).date());
       QString stc = CanonicalToTDT( contest->DTGStart.getValue()).toString( "hh:mm" );
       ui->StartTimeCombo->setCurrentText(stc);
    }
@@ -189,7 +152,7 @@ void ContestDetails::setDetails(  )
    }
    if ( contest->DTGEnd.getValue().size() )
    {
-      ui->EndDateEdit->setText(CanonicalToTDT( contest->DTGEnd.getValue() ).toString("dd/MM/yyyy")); // short date format, hours:minutes
+      ui->EndDateEdit->setDate(CanonicalToTDT( contest->DTGEnd.getValue() ).date()); // short date format, hours:minutes
       QString etc = CanonicalToTDT( contest->DTGEnd.getValue()).toString( "hh:mm" );
       ui->EndTimeCombo->setCurrentText(etc); // short date format, hours:minutes
    }
@@ -222,7 +185,7 @@ void ContestDetails::setDetails(  )
       contest->myloc.loc.setValue( temp );
       contest->validateLoc();
    }
-   ui->LocatorEdit->setText(contest->myloc.loc.getValue());
+   ui->LocatorField->setText(contest->myloc.loc.getValue());
 
    ui->AllowLoc4CB->setChecked(contest->allowLoc4.getValue());    // bool               // ?? contest
    ui->AllowLoc8CB->setChecked(contest->allowLoc8.getValue());    // bool               // ?? contest
@@ -296,69 +259,60 @@ void ContestDetails::setDetails(  )
 }
 void ContestDetails::refreshOps()
 {
-#ifdef RUBBISH
    // refill the op combo boxes from the current contest, and select the correct op
    if (contest)
    {
-      MainOpComboBox->Clear();
-      SecondOpComboBox->Clear();
+      ui->MainOpComboBox->clear();
+      ui->SecondOpComboBox->clear();
       for ( OperatorIterator i = contest->oplist.begin(); i != contest->oplist.end(); i++ )
       {
          if ( ( *i ).size() )
          {
-            MainOpComboBox->Items->Add( ( *i ).c_str() );
-            SecondOpComboBox->Items->Add( ( *i ).c_str() );
+            ui->MainOpComboBox->addItem( ( *i ) );
+            ui->SecondOpComboBox->addItem( ( *i ) );
          }
       }
-      MainOpComboBox->Text = contest->currentOp1.getValue().c_str();
-      SecondOpComboBox->Text = contest->currentOp2.getValue().c_str();
+      ui->MainOpComboBox->setCurrentText(contest->currentOp1.getValue());
+      ui->SecondOpComboBox->setCurrentText(contest->currentOp2.getValue());
    }
-#endif
 }
 void ContestDetails::setDetails( const IndividualContest &ic )
 {
-#ifdef RUBBISH
 
-   Caption = ( "Details of Contest Entry - " + contest->cfileName ).c_str();
+   setWindowTitle("Details of Contest Entry - " + contest->cfileName );
 
-   ContestNameEdit->Text = ic.description.c_str();                      // contest
+   ui->ContestNameEdit->setText(ic.description);                      // contest
    contest->VHFContestName.setValue(ic.description);
 
    // need to get legal bands from ContestLog
-   BandComboBox->Items->Clear();
-   BandComboBox->Style = Stdctrls::csDropDownList;
+   ui->BandComboBox->clear();
 
-   BandComboBox->Items->Add( ic.reg1band.c_str() );
-   BandComboBox->ItemIndex = 0;
+   ui->BandComboBox->addItem( ic.reg1band );
+   ui->BandComboBox->setCurrentIndex(0);
 
-   sectionList = ic.sections.c_str(); // the combo will then be properly set up in setDetails()
-   if ( sectionList.Length() )
+   sectionList = ic.sections; // the combo will then be properly set up in setDetails()
+   if ( sectionList.size() )
    {
-      TStringList * sl = new TStringList;
-      sl->CommaText = sectionList.c_str();
-      SectionComboBox->Items = sl;
-      delete sl;
+      QStringList sl = sectionList.split(",");
+      ui->SectionComboBox->addItems(sl);
    }
 
-   int s = SectionComboBox->Items->IndexOf( contest->entSect.getValue().c_str() );        // contest
+   int s = ui->SectionComboBox->findText( contest->entSect.getValue() );        // contest
 
    if ( s >= 0 )
    {
-      SectionComboBox->ItemIndex = s;
+      ui->SectionComboBox->setCurrentIndex(s);
    }
    else
    {
-      SectionComboBox->Style = Stdctrls::csDropDown;    // was csDropDownList
-      SectionComboBox->Text = contest->entSect.getValue().c_str();
+      ui->SectionComboBox->setCurrentText(contest->entSect.getValue());
    }
 
-   StartDateEdit->Text = ic.start.DateString();
-   StartTimeCombo->Text = ic.start.FormatString( "hh:nn" );
+   ui->StartDateEdit->setDate(ic.start.date());
+   ui->StartTimeCombo->setCurrentText(ic.start.toString( "hh:mm" ));
 
-   EndDateEdit->Text = ic.finish.DateString(); // short date format, hours:minutes
-   EndTimeCombo->Text = ic.finish.FormatString( "hh:nn" ); // short date format, hours:minutes
-
-   ScoreOptions->ItemIndex = ( int ) contest->scoreMode.getValue();  // combo     // contest
+   ui->EndDateEdit->setDate(ic.finish.date()); // short date format, hours:minutes
+   ui->EndTimeCombo->setCurrentText(ic.finish.toString( "hh:mm" )); // short date format, hours:minutes
 
    if ( ic.mults == "M1" )
    {
@@ -498,131 +452,107 @@ void ContestDetails::setDetails( const IndividualContest &ic )
 
    if ( contest->districtMult.getValue() )
    {
-      ExchangeComboBox->ItemIndex = 1;
+      ui->ExchangeComboBox->setCurrentIndex(1);
    }
    else
       if ( contest->otherExchange.getValue() )
       {
-         ExchangeComboBox->ItemIndex = 3;
+         ui->ExchangeComboBox->setCurrentIndex(3);
       }
       else
       {
-         ExchangeComboBox->ItemIndex = 0;
+         ui->ExchangeComboBox->setCurrentIndex(0);
       }
-   NonGCtryMult->Checked = contest->nonGCountryMult.getValue() ;
-   DXCCMult->Checked = contest->countryMult.getValue() ;
+   ui->NonGCtryMult->setChecked(contest->nonGCountryMult.getValue()) ;
+   ui->DXCCMult->setChecked(contest->countryMult.getValue()) ;
 
-   LocatorMult->Checked = contest->locMult.getValue() ;
-   GLocMult->Checked = contest->GLocMult.getValue() ;
-   M7LocatorMults->Checked = contest->M7Mults.getValue() ;
+   ui->LocatorMult->setChecked(contest->locMult.getValue()) ;
+   ui->GLocMult->setChecked(contest->GLocMult.getValue()) ;
+   ui->M7LocatorMults->setChecked(contest->M7Mults.getValue()) ;
 
    bool UKACBonus = contest->UKACBonus.getValue();
-   BonusComboBox->ItemIndex = UKACBonus?1:0;
+   ui->BonusComboBox->setCurrentIndex(UKACBonus?1:0);
 
 
-   RSTField->Checked = true ;
-   SerialField->Checked = true ;
-   LocatorField->Checked = true ;
-   QTHField->Checked = true ;
+   ui->RSTField->setChecked(true) ;
+   ui->SerialField->setChecked(true) ;
+   ui->LocatorField->setChecked(true) ;
+   ui->QTHField->setChecked(true) ;
 
-   ScoreOptions->ItemIndex = ( ic.ppKmScoring ? 0 : 1 );
-   contest->scoreMode.setValue( ( SCOREMODE ) ScoreOptions->ItemIndex );  // combo
+   contest->scoreMode.setValue( ( SCOREMODE ) ( ic.ppKmScoring ? 0 : 1 ) );  // combo
 
-//   setDetails();
-#endif
+   switch (( ic.ppKmScoring ? 0 : 1 ))
+   {
+   case 0:
+       ui->commencedKRB->setChecked(true);
+       break;
+   case 1:
+       ui->PPQSORB->setChecked(true);
+       break;
+   }
+   setDetails();
 }
 //---------------------------------------------------------------------------
 QWidget * ContestDetails::getDetails( )
 {
-#ifdef RUBBISH
-   TWinControl *nextD = getNextFocus();
+   QWidget *nextD = getNextFocus();
 
-   contest->name.setValue( ContestNameEdit->Text.c_str() );
-   contest->band.setValue( BandComboBox->Text.c_str() );
-   contest->entSect.setValue( SectionComboBox->Text.c_str() );
-   contest->sectionList.setValue( sectionList.c_str() );
+   contest->name.setValue( ui->ContestNameEdit->text() );
+   contest->band.setValue( ui->BandComboBox->currentText() );
+   contest->entSect.setValue( ui->SectionComboBox->currentText() );
+   contest->sectionList.setValue( sectionList );
 
 
-   try
-   {
-      if (StartDateEdit->Text.IsEmpty())
-      {
-         StartDateEdit->Text = TDateTime::CurrentDate();
-      }
-    TDateTime test = TDateTime( StartDateEdit->Text, TDateTime::Date );
-      if ( ( int ) test > 0 )
-         contest->DTGStart.setValue(
-            TDTToCanonical( StartDateEdit->Text + " " + StartTimeCombo->Text ).c_str() );
-      else
-         contest->DTGStart.setValue( "" );
-   }
-   catch ( EConvertError & )
-   {
-      MinosParameters::getMinosParameters() ->mshowMessage
-      (
-         StartDateEdit->Text + " " + StartTimeCombo->Text +
-                     " is not a good date/time (DD/MM/CCYY HH:NN)"
-         , this
-      );
-      nextD = (nextD?nextD:StartDateEdit);
-   }
+    if (ui->StartDateEdit->text().isEmpty())
+    {
+        ui->StartDateEdit->setDate(QDate::currentDate());
+    }
+    contest->DTGStart.setValue( ui->StartDateEdit->text() + " " + ui->StartTimeCombo->currentText()) ;
 
-   try
-   {
-      if (EndDateEdit->Text.IsEmpty())
-      {
-         EndDateEdit->Text = TDateTime::CurrentDate();
-      }
-    TDateTime test = TDateTime( EndDateEdit->Text, TDateTime::Date );
-      if ( ( int ) test > 0 )
-         contest->DTGEnd.setValue( TDTToCanonical( EndDateEdit->Text + " " + EndTimeCombo->Text ).c_str() );
-      else
-         contest->DTGEnd.setValue( "" );
-   }
-   catch ( EConvertError & )
-   {
-      MinosParameters::getMinosParameters() ->mshowMessage( EndDateEdit->Text + " " + EndTimeCombo->Text + " is not a good date/time (DD/HH/CCYY HH:NN)", this );
-      nextD = (nextD?nextD:EndDateEdit);
-   }
+    if (ui->EndDateEdit->text().isEmpty())
+    {
+        ui->EndDateEdit->setDate(QDate::currentDate());
+    }
+    contest->DTGEnd.setValue(  ui->EndDateEdit->text() + " " + ui->EndTimeCombo->currentText()) ;
 
-   contest->mycall.fullCall.setValue( CallsignEdit->Text.c_str() );
+   contest->mycall.fullCall.setValue( ui->CallsignEdit->text() );
    contest->mycall.valRes = CS_NOT_VALIDATED;
    contest->mycall.validate();
    if ( contest->mycall.valRes != CS_OK )
    {
-      nextD = (nextD?nextD:CallsignEdit);
+      nextD = (nextD?nextD:ui->CallsignEdit);
    }
-   contest->myloc.loc.setValue( LocatorEdit->Text.c_str() );
+   contest->myloc.loc.setValue( ui->LocatorField->text() );
    contest->myloc.validate();
    if ( contest->myloc.valRes != LOC_OK )
    {
-      nextD = (nextD?nextD:LocatorEdit);
+      nextD = (nextD?nextD:ui->LocatorField);
    }
    if ( contest->currentOp1.getValue().size() == 0 )
    {
-      nextD = (nextD?nextD:MainOpComboBox);
+      nextD = (nextD?nextD:ui->MainOpComboBox);
    }
-   contest->allowLoc4.setValue( AllowLoc4CB->Checked );    // bool
-   contest->allowLoc8.setValue( AllowLoc8CB->Checked );    // bool
-   contest->location.setValue( ExchangeEdit->Text.c_str() );
-   contest->scoreMode.setValue( ( SCOREMODE ) ScoreOptions->ItemIndex );  // combo
+   contest->allowLoc4.setValue( ui->AllowLoc4CB->isChecked() );    // bool
+   contest->allowLoc8.setValue( ui->AllowLoc8CB->isChecked() );    // bool
+   contest->location.setValue( ui->ExchangeEdit->text() );
+   contest->scoreMode.setValue( ( SCOREMODE ) ui->PPQSORB->isChecked()?1:0 );  // combo
 
-   if (NonGCtryMult->Checked)
+   if (ui->NonGCtryMult->isChecked())
    {
-      DXCCMult->Checked = true;
+      ui->DXCCMult->setChecked(true);
    }
-   contest->countryMult.setValue( DXCCMult->Checked );   // bool
-   contest->nonGCountryMult.setValue( NonGCtryMult->Checked );   // bool
+   contest->countryMult.setValue( ui->DXCCMult->isChecked() );   // bool
+   contest->nonGCountryMult.setValue( ui->NonGCtryMult->isChecked() );   // bool
 
-   if (GLocMult->Checked || M7LocatorMults->Checked)
+   if (ui->GLocMult->isChecked() || ui->M7LocatorMults->isChecked())
    {
-      LocatorMult->Checked = true;
+      ui->LocatorMult->setChecked(true);
    }
 
-   contest->locMult.setValue( LocatorMult->Checked ) ;   // bool
-   contest->GLocMult.setValue( GLocMult->Checked ) ;   // bool
-   contest->M7Mults.setValue( M7LocatorMults->Checked ) ;   // bool
-   contest->UKACBonus.setValue(BonusComboBox->ItemIndex == 1);
+   contest->locMult.setValue( ui->LocatorMult->isChecked() ) ;   // bool
+   contest->GLocMult.setValue( ui->GLocMult->isChecked() ) ;   // bool
+   contest->M7Mults.setValue( ui->M7LocatorMults->isChecked() ) ;   // bool
+   contest->UKACBonus.setValue(ui->BonusComboBox->currentIndex() == 1);
 
    if (contest->GLocMult.getValue())
    {
@@ -656,18 +586,18 @@ QWidget * ContestDetails::getDetails( )
          contest->NonUKloc_multiplier = 0;
       }
    }
-   if (ProtectedOption->Checked && contest->isProtected() && contest->isProtectedSuppressed())
+   if (ui->ProtectedOption->isChecked() && contest->isProtected() && contest->isProtectedSuppressed())
    {
       contest->setProtectedSuppressed(false);
    }
    else
    {
-      if (ProtectedOption->Checked && !contest->isProtected())
+      if (ui->ProtectedOption->isChecked() && !contest->isProtected())
       {
          contest->setProtected( true ) ;
          saveContestOK  = true;
       }
-      else if (!ProtectedOption->Checked && contest->isProtected())
+      else if (!ui->ProtectedOption->isChecked() && contest->isProtected())
       {
          contest->setProtected( false ) ;
          saveContestOK  = true;
@@ -685,7 +615,7 @@ QWidget * ContestDetails::getDetails( )
       Other Exchange Multiplier
       Exchange Required (no multiplier)
    */
-   switch ( ExchangeComboBox->ItemIndex )
+   switch ( ui->ExchangeComboBox->currentIndex() )
    {
       case 0:
          contest->otherExchange.setValue( false );
@@ -708,336 +638,50 @@ QWidget * ContestDetails::getDetails( )
          break;
 
    }
-   contest->RSTField.setValue( RSTField->Checked ) ;   // bool
-   contest->serialField.setValue( SerialField->Checked ) ;   // bool
-   contest->locatorField.setValue( LocatorField->Checked ) ;   // bool
-   contest->QTHField.setValue( QTHField->Checked ) ;   // bool
+   contest->RSTField.setValue( ui->RSTField->isChecked() ) ;   // bool
+   contest->serialField.setValue( ui->SerialField->isChecked() ) ;   // bool
+   contest->locatorField.setValue( ui->LocatorField->isChecked() ) ;   // bool
+   contest->QTHField.setValue( ui->QTHField->isChecked() ) ;   // bool
 
-   contest->power.setValue( PowerEdit->Text.c_str() );
-   contest->bearingOffset.setValue(atoi(AntOffsetEdit->Text .c_str()));	// int
+   contest->power.setValue( ui->PowerEdit->text() );
+   contest->bearingOffset.setValue(ui->AntOffsetEdit->text().toInt());	// int
 
-   contest->currentOp1.setValue(MainOpComboBox->Text.c_str());
-   contest->currentOp2.setValue(SecondOpComboBox->Text.c_str());
+   contest->currentOp1.setValue(ui->MainOpComboBox->currentText());
+   contest->currentOp2.setValue(ui->SecondOpComboBox->currentText());
    contest->oplist.insert(contest->currentOp1.getValue());
    contest->oplist.insert(contest->currentOp2.getValue());
 
    contest->validateLoc();
 
    return nextD;
-#endif
-   return 0;
 }
 //---------------------------------------------------------------------------
 QWidget * ContestDetails::getNextFocus()
 {
-#ifdef RUBBISH
 
-   if ( ContestNameEdit->Text.Trim().Length() == 0 )
+   if ( ui->ContestNameEdit->text().trimmed().isEmpty() )
    {
-      return ContestNameEdit;
+      return ui->ContestNameEdit;
    }
-   if ( BandComboBox->Text.Trim().Length() == 0 )
+   if ( ui->BandComboBox->currentText().trimmed().isEmpty() )
    {
-      return BandComboBox;
+      return ui->BandComboBox;
    }
-   if ( CallsignEdit->Text.Trim().Length() == 0 )
+   if ( ui->CallsignEdit->text().trimmed().isEmpty() )
    {
-      return CallsignEdit;
+      return ui->CallsignEdit;
    }
-   if ( LocatorEdit->Text.Trim().Length() == 0 )
+   if ( ui->LocatorEdit->text().trimmed().isEmpty() )
    {
-      return LocatorEdit;
+      return ui->LocatorEdit;
    }
-   if ( PowerEdit->Text.Trim().Length() == 0 )
+   if ( ui->PowerEdit->text().trimmed().isEmpty() )
    {
-      return PowerEdit;
+      return ui->PowerEdit;
    }
-#endif
    return 0;
 }
-#ifdef RUBBISH
-void ContestDetails::OKButtonClick( TObject * /*Sender*/ )
-{
-   // make sure we have the minimum required information
 
-   if (ProtectedOption->Checked && ! contest->isProtected())
-   {
-      if (!mShowYesNoMessage(this, "This contest will be marked as protected.\r\n"
-                                    "This is a permanent change that may be temporarily overridden.\r\n"
-                                    "Please confirm this change by pressing \"Ok\"." ))
-      {
-         return;
-      }
-   }
-
-   TWinControl *nextD = getDetails( );
-   if ( nextD )
-   {
-      nextD->SetFocus();
-   }
-   else
-   {
-      if (saveContestOK)
-      {
-         bool temp = contest->isProtectedSuppressed();
-         contest->setProtectedSuppressed(true);
-         contest->commonSave( false );
-         contest->setProtectedSuppressed(temp);
-      }
-      *inputcontest = *contest;
-      ModalResult = mrOk;
-   }
-#endif
-
-//---------------------------------------------------------------------------
-
-#ifdef RUBBISH
-void ContestDetails::CancelButtonClick( QWidget * /*Sender*/ )
-{
-   //
-   ModalResult = mrCancel;
-}
-#endif
-//---------------------------------------------------------------------------
-#ifdef RUBBISH
-
-void ContestDetails::FormShow( QWidget * /*Sender*/ )
-{
-   MinosParameters::getMinosParameters() ->applyFontChange(this);
-
-   if (Height > Screen->Height * 0.75)
-   {
-      Height = Screen->Height * 0.75;
-   }
-   if (Width > Screen->Width * 0.75)
-   {
-      Width = Screen->Width * 0.75;
-   }
-
-   if (Top + Height > Screen->Height )
-   {
-      Top = (Screen->Height - Height)/2;
-   }
-
-   if (Left + Width > Screen->Width )
-   {
-      Left = (Screen->Width - Width)/2;
-   }
-   QTHBundleFrame->initialise( "QTH", &contest->QTHBundle, &contest->QTHBundleName );
-   StationBundleFrame->initialise( "Station", &contest->stationBundle, &contest->stationBundleName );
-   EntryBundleFrame->initialise( "Entry", &contest->entryBundle, &contest->entryBundleName );
-   ContestNameSelected->Text = contest->VHFContestName.getValue().c_str();
-
-   contest->initialiseINI();
-
-   for ( int i = 0; i < 24; i++ )
-   {
-      std::string cbText = ( boost::format( "%02.2d:" ) % i ).str();
-      std::string hour = cbText + "00";
-      std::string halfhour = cbText + "30";
-      StartTimeCombo->Items->Add( hour.c_str() );
-      StartTimeCombo->Items->Add( halfhour.c_str() );
-      EndTimeCombo->Items->Add( hour.c_str() );
-      EndTimeCombo->Items->Add( halfhour.c_str() );
-   }
-   TWinControl *nextD = getDetails( );
-   if ( nextD )
-   {
-      nextD->SetFocus();
-   }
-}
-#endif
-//---------------------------------------------------------------------------
-#ifdef RUBBISH
-
-void  ContestDetails::EntDetailButtonClick( TObject * /*Sender*/ )
-{
-   getDetails( );   // override from the window
-   std::auto_ptr <TEntryOptionsForm> EntryDlg( new TEntryOptionsForm( this, contest, false ) );
-   EntryDlg->EntryGroup->Visible = false;
-   EntryDlg->Caption = "Entry Details";
-   if ( EntryDlg->ShowModal() == mrOk )
-      setDetails( );
-
-}
-#endif
-//---------------------------------------------------------------------------
-QString BSHelpText =
-   "These settings are groups of settings that can "
-   "be applied to a contest all in one go."
-   "\r\n\r\n"
-   "There are four basic groups: - \r\n\r\n"
-   "Contest - for the description, bands, multipliers and time of a contest\r\n"
-   "Entry - all the extra bits for a real entry - callsign, group, contact details.\r\n"
-   "Station - Rig details, antenna, antenna height.\r\n"
-   "QTH - where the station is, height above sea level, Locator.\r\n"
-   "\r\n"
-   "To use them select from the drop down lists, or for Contest, use the "
-   "\"VHF Calendar\" button.\r\n"
-   "Any group set to \"<none>\" will be ignored.\r\n"
-   "\r\n"
-   "If the setting you want isn't there, press the \"Edit\" "
-   "button for the group.\r\n"
-   "\r\n"
-   "This brings up a dialog where you can define a new setting, "
-   "copy an existing setting, or delete an existing setting\r\n"
-   "\r\n"
-   "Click on the setting name on the left to select an existing setting "
-   "and then its components are shown in the right hand pane, and "
-   "can be edited individually.\r\n"
-   "\r\n"
-   "Move between components of a group using the mouse or up/down arrow keys.\r\n"
-   ;
-#ifdef RUBBISH
-
-void ContestDetails::BSHelpButtonClick( TObject */*Sender*/ )
-{
-   // Put up the help text on bundled settings
-   std::auto_ptr <TMinosHelpForm> HelpForm( new TMinosHelpForm( this ) );
-   HelpForm->Caption = "Settings";
-   HelpForm->HelpMemo->Text = BSHelpText;
-   HelpForm->ShowModal();
-}
-#endif
-//---------------------------------------------------------------------------
-#ifdef RUBBISH
-
-void ContestDetails::DateEditKeyPress( TObject * /*Sender*/,
-      char &Key )
-{
-   if ( Key == VK_ESCAPE || Key == VK_RETURN )
-   {
-      Key = 0;
-   }
-}
-#endif
-//---------------------------------------------------------------------------
-#ifdef RUBBISH
-
-void ContestDetails::VHFCalendarButtonClick( TObject * /*Sender*/ )
-{
-   std::auto_ptr <TCalendarForm> CalendarDlg(new TCalendarForm(this));
-
-   CalendarDlg->Caption = "VHF Calendar";
-   CalendarDlg->description = ContestNameSelected->Text;
-
-   if ( CalendarDlg->ShowModal() == mrOk )
-   {
-      // set up all the details that we can from the calendar
-      ContestNameSelected->Text = CalendarDlg->ic.description.c_str();
-      setDetails( CalendarDlg->ic );
-   }
-   TWinControl *next = getNextFocus();
-   if (next)
-   {
-      next->SetFocus();
-   }
-   else
-   {
-      OKButton->SetFocus();
-   }
-}
-#endif
-//---------------------------------------------------------------------------
-#ifdef RUBBISH
-
-void ContestDetails::BundleFrameBundleSectionChange(
-      TObject *Sender)
-{
-   TComboBox *cb = dynamic_cast<TComboBox *>(Sender);
-   TSettingBundleFrame *bf = dynamic_cast<TSettingBundleFrame *>(cb->Parent);
-   if (!bf && cb->Parent && cb->Parent->Parent)
-   {
-      bf = dynamic_cast<TSettingBundleFrame *>(cb->Parent->Parent);
-   }
-   if (bf)
-   {
-      bf->BundleSectionChange(Sender);
-   }
-   getDetails( );   // override from the window
-
-   contest->setINIDetails();
-   setDetails( );
-   TWinControl *next = getNextFocus();
-   if (next)
-   {
-      next->SetFocus();
-   }
-   else
-   {
-      OKButton->SetFocus();
-   }
-}
-#endif
-//---------------------------------------------------------------------------
-#ifdef RUBBISH
-
-void ContestDetails::BundleFrameBundleEditClick(
-      TObject *Sender)
-{
-   TButton *cb = dynamic_cast<TButton *>(Sender );
-   TSettingBundleFrame *bf = dynamic_cast<TSettingBundleFrame *>(cb->Parent);
-   if (!bf && cb->Parent && cb->Parent->Parent)
-   {
-      bf = dynamic_cast<TSettingBundleFrame *>(cb->Parent->Parent);
-   }
-   if (bf)
-   {
-      bf->BundleEditClick(Sender);
-   }
-   getDetails( );   // override from the window
-
-   contest->setINIDetails();
-   setDetails( );
-   TWinControl *next = getNextFocus();
-   if (next)
-   {
-      next->SetFocus();
-   }
-   else
-   {
-      OKButton->SetFocus();
-   }
-}
-#endif
-//---------------------------------------------------------------------------
-#ifdef RUBBISH
-
-
-void ContestDetails::CallsignEditExit(TObject */*Sender*/)
-{
-   if (MainOpComboBox->Text.IsEmpty())
-   {
-      MainOpComboBox->Text = CallsignEdit->Text;
-   }
-}
-#endif
-//---------------------------------------------------------------------------
-#ifdef RUBBISH
-
-void ContestDetails::ProtectedOptionClick(TObject */*Sender*/)
-{
-   if (!suppressProtectedOnClick)
-   {
-      if (ProtectedOption->Checked )
-      {
-         // move to protected
-         if (!mShowYesNoMessage(this, "Are you sure you want to protect this contest?" ))
-         {
-            ProtectedOption->Checked = contest->isProtected() && !contest->isProtectedSuppressed();
-         }
-      }
-      else // unchecked
-      {
-         if (!mShowYesNoMessage(this, "Are you sure you want to disable protection for this contest?" ))
-         {
-            ProtectedOption->Checked = contest->isProtected() && !contest->isProtectedSuppressed();
-         }
-      }
-      enableControls();
-   }
-}
-#endif
 //---------------------------------------------------------------------------
 void ContestDetails::enableControls()
 {
@@ -1074,68 +718,208 @@ void ContestDetails::enableControls()
    ui->AllowLoc4CB->setEnabled(!protectedChecked);
    ui->StartDateEdit->setEnabled(!protectedChecked);
    ui->EndDateEdit->setEnabled(!protectedChecked);
-   ui->StartDateButton->setEnabled(!protectedChecked);
-   ui->EndDateButton->setEnabled(!protectedChecked);
    ui->MainOpComboBox->setEnabled(!protectedChecked);
    ui->SecondOpComboBox->setEnabled(!protectedChecked);
    ui->AntOffsetEdit->setEnabled(!protectedChecked);
 }
-#ifdef RUBBISH
-
-void ContestDetails::DXCCMultClick(TObject */*Sender*/)
-{
-   if (DXCCMult->Checked)
-   {
-      NonGCtryMult->Checked = false;
-   }
-}
-#endif
-//---------------------------------------------------------------------------
-#ifdef RUBBISH
-
-void ContestDetails::NonGCtryMultClick(TObject */*Sender*/)
-{
-   if (NonGCtryMult->Checked)
-   {
-      DXCCMult->Checked = false;
-   }
-}
-#endif
-//---------------------------------------------------------------------------
-#ifdef RUBBISH
-
-void ContestDetails::LocatorMultClick(TObject */*Sender*/)
-{
-   if (!LocatorMult->Checked)
-   {
-      GLocMult->Checked = false;
-      M7LocatorMults->Checked = false;
-   }
-}
-#endif
-//---------------------------------------------------------------------------
-#ifdef RUBBISH
-
-void ContestDetails::GLocMultClick(TObject */*Sender*/)
-{
-   if (GLocMult->Checked)
-   {
-      LocatorMult->Checked = true;
-      M7LocatorMults->Checked = false;
-   }
-}
-#endif
-//---------------------------------------------------------------------------
-#ifdef RUBBISH
-
-void ContestDetails::M7LocatorMultsClick(TObject */*Sender*/)
-{
-   if (M7LocatorMults->Checked)
-   {
-      LocatorMult->Checked = true;
-      GLocMult->Checked = false;
-   }
-}
-#endif
 //---------------------------------------------------------------------------
 
+void ContestDetails::on_OKButton_clicked()
+{
+    // make sure we have the minimum required information
+
+    if (ui->ProtectedOption->isChecked() && ! contest->isProtected())
+    {
+       if (!mShowYesNoMessage(this, "This contest will be marked as protected.\r\n"
+                                     "This is a permanent change that may be temporarily overridden.\r\n"
+                                     "Please confirm this change by pressing \"Ok\"." ))
+       {
+          return;
+       }
+    }
+
+    QWidget *nextD = getDetails( );
+    if ( nextD )
+    {
+       nextD->setFocus();
+    }
+    else
+    {
+       if (saveContestOK)
+       {
+          bool temp = contest->isProtectedSuppressed();
+          contest->setProtectedSuppressed(true);
+          contest->commonSave( false );
+          contest->setProtectedSuppressed(temp);
+       }
+       *inputcontest = *contest;
+       accept();
+    }
+
+}
+
+void ContestDetails::on_EntDetailButton_clicked()
+{
+    getDetails( );   // override from the window
+    TEntryOptionsForm EntryDlg( this, contest, false );
+    //EntryDlg->EntryGroup->Visible = false;
+    //EntryDlg->Caption = "Entry Details";
+    if ( EntryDlg.exec() == QDialog::Accepted )
+       setDetails( );
+
+}
+
+void ContestDetails::on_CancelButton_clicked()
+{
+    reject();
+}
+
+
+QString BSHelpText =
+   "These settings are groups of settings that can "
+   "be applied to a contest all in one go."
+   "\r\n\r\n"
+   "There are four basic groups: - \r\n\r\n"
+   "Contest - for the description, bands, multipliers and time of a contest\r\n"
+   "Entry - all the extra bits for a real entry - callsign, group, contact details.\r\n"
+   "Station - Rig details, antenna, antenna height.\r\n"
+   "QTH - where the station is, height above sea level, Locator.\r\n"
+   "\r\n"
+   "To use them select from the drop down lists, or for Contest, use the "
+   "\"VHF Calendar\" button.\r\n"
+   "Any group set to \"<none>\" will be ignored.\r\n"
+   "\r\n"
+   "If the setting you want isn't there, press the \"Edit\" "
+   "button for the group.\r\n"
+   "\r\n"
+   "This brings up a dialog where you can define a new setting, "
+   "copy an existing setting, or delete an existing setting\r\n"
+   "\r\n"
+   "Click on the setting name on the left to select an existing setting "
+   "and then its components are shown in the right hand pane, and "
+   "can be edited individually.\r\n"
+   "\r\n"
+   "Move between components of a group using the mouse or up/down arrow keys.\r\n"
+   ;
+
+void ContestDetails::on_BSHelpButton_clicked()
+{
+    // Put up the help text on bundled settings
+     TMinosHelpForm HelpForm( this );
+//     HelpForm->Caption = "Settings";
+//     HelpForm->HelpMemo->Text = BSHelpText;
+     HelpForm.exec();}
+
+void ContestDetails::on_VHFCalendarButton_clicked()
+{
+    TCalendarForm CalendarDlg(this);
+
+//    CalendarDlg->Caption = "VHF Calendar";
+//    CalendarDlg->description = ContestNameSelected->Text;
+
+    if ( CalendarDlg.exec() == QDialog::Accepted )
+    {
+       // set up all the details that we can from the calendar
+//       ui->ContestNameSelected->setText(CalendarDlg.ic.description);
+//       setDetails( CalendarDlg.ic );
+    }
+    QWidget *next = getNextFocus();
+    if (next)
+    {
+       next->setFocus();
+    }
+    else
+    {
+       ui->OKButton->setFocus();
+    }
+}
+
+void ContestDetails::on_CallsignEdit_editingFinished()
+{
+    if (ui->MainOpComboBox->currentText().isEmpty())
+    {
+       ui->MainOpComboBox->setCurrentText( ui->CallsignEdit->text());
+    }
+
+}
+void ContestDetails::on_DXCCMult_clicked()
+{
+    if (ui->DXCCMult->isChecked())
+    {
+       ui->NonGCtryMult->setChecked(false);
+    }
+}
+
+void ContestDetails::on_NonGCtryMult_clicked()
+{
+    if (ui->NonGCtryMult->isChecked())
+    {
+       ui->DXCCMult->setChecked(false);
+    }
+}
+
+void ContestDetails::on_LocatorMult_clicked()
+{
+    if (!ui->LocatorMult->isChecked())
+    {
+       ui->GLocMult->setChecked(false);
+       ui->M7LocatorMults->setChecked(false);
+    }
+}
+
+void ContestDetails::on_GLocMult_clicked()
+{
+    if (ui->GLocMult->isChecked())
+    {
+       ui->LocatorMult->setChecked(true);
+       ui->M7LocatorMults->setChecked(false);
+    }
+}
+
+void ContestDetails::on_M7LocatorMults_clicked()
+{
+    if (ui->M7LocatorMults->isChecked())
+    {
+       ui->LocatorMult->setChecked(true);
+       ui->GLocMult->setChecked(false);
+    }
+}
+
+void ContestDetails::on_ProtectedOption_clicked()
+{
+    if (!suppressProtectedOnClick)
+    {
+       if (ui->ProtectedOption->isChecked() )
+       {
+          // move to protected
+          if (!mShowYesNoMessage(this, "Are you sure you want to protect this contest?" ))
+          {
+             ui->ProtectedOption->setChecked(contest->isProtected() && !contest->isProtectedSuppressed());
+          }
+       }
+       else // unchecked
+       {
+          if (!mShowYesNoMessage(this, "Are you sure you want to disable protection for this contest?" ))
+          {
+             ui->ProtectedOption->setChecked(contest->isProtected() && !contest->isProtectedSuppressed());
+          }
+       }
+       enableControls();
+    }
+}
+void ContestDetails::bundleChanged()
+{
+    getDetails( );   // override from the window
+
+    contest->setINIDetails();
+    setDetails( );
+    QWidget *next = getNextFocus();
+    if (next)
+    {
+        next->setFocus();
+    }
+    else
+    {
+        ui->OKButton->setFocus();
+    }
+}

@@ -28,10 +28,6 @@ void mShowMessage( const QString &mess, QWidget *Owner )
     msgBox.setText( mess );
     msgBox.exec();
 }
-void mShowMessage( const std::string &mess, QWidget *Owner )
-{
-    mShowMessage( QString(mess.c_str()), Owner );
-}
 
 void mShowMessage( const char *mess, QWidget *Owner )
 {

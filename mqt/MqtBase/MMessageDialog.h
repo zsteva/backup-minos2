@@ -23,18 +23,12 @@
 #define MMessageDialogH 
 //---------------------------------------------------------------------------
 
-bool mShowYesNoMessage( QWidget *Owner, const std::string &mess );
 bool mShowYesNoMessage( QWidget *Owner, const QString &mess );
-bool mShowOKCancelMessage(QWidget *Owner, const std::string &mess );
 bool mShowOKCancelMessage(QWidget *Owner, const QString &mess );
-void mShowOKMessage( QWidget *Owner, const std::string &mess );
 void mShowOKMessage( QWidget *Owner, const QString &mess );
 
-bool sShowYesNoMessage( QWidget *Owner, const std::string &mess );
 bool sShowYesNoMessage( QWidget *Owner, const QString &mess );
-bool sShowOKCancelMessage( QWidget *Owner, const std::string &mess );
-bool sShowOKCancelMessage( QWidget *Owner, const std::string &mess );
-void sShowOKMessage( QWidget *Owner, const std::string &mess );
+bool sShowOKCancelMessage( QWidget *Owner, const QString &mess );
 void sShowOKMessage( QWidget *Owner, const QString &mess );
 
 //---------------------------------------------------------------------------
