@@ -36,6 +36,10 @@ private:   	// User declarations
    void refreshOps();
    void enableControls();
    QWidget * getDetails( );
+
+   void closeEvent(QCloseEvent *event);
+   void resizeEvent(QResizeEvent *event);
+
 public:   		// User declarations
    void setDetails( LoggerContestLog * ct );
    void bundleChanged();

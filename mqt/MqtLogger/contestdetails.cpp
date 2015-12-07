@@ -15,7 +15,14 @@ ContestDetails::ContestDetails(QWidget *parent) :
     contest(0), inputcontest(0),
     saveContestOK(false), suppressProtectedOnClick(false)
 {
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
     ui->setupUi(this);
+
+    QSettings settings;
+    QByteArray geometry = settings.value("ContestDetails/geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
 
     ui->ExchangeComboBox->addItem("No Exchange Required");
     ui->ExchangeComboBox->addItem("PostCode Multipliers");
@@ -36,6 +43,19 @@ ContestDetails::ContestDetails(QWidget *parent) :
         ui->EndTimeCombo->addItem ( halfhour );
     }
 }
+void ContestDetails::closeEvent(QCloseEvent *event)
+{
+    QSettings settings;
+    settings.setValue("ContestDetails/geometry", saveGeometry());
+    QWidget::closeEvent(event);
+}
+void ContestDetails::resizeEvent(QResizeEvent * event)
+{
+    QSettings settings;
+    settings.setValue("ContestDetails/geometry", saveGeometry());
+    QWidget::resizeEvent(event);
+}
+
 int ContestDetails::exec()
 {
     ui->QTHBundleFrame->initialise( "QTH", &contest->QTHBundle, &contest->QTHBundleName );
