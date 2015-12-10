@@ -43,7 +43,15 @@ SOURCES += main.cpp \
     tbundleframe.cpp \
     tsettingseditdlg.cpp \
     tcalendarform.cpp \
-    tminoshelpform.cpp
+    tminoshelpform.cpp \
+    taboutbox.cpp \
+    tmanagelistsdlg.cpp \
+    tminosbandchooser.cpp \
+    tcontactlistdetails.cpp \
+    tclockdlg.cpp \
+    tforcelogdlg.cpp \
+    tqsoeditdlg.cpp \
+    tloccalcform.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -64,7 +72,15 @@ HEADERS  += \
     tbundleframe.h \
     tsettingseditdlg.h \
     tcalendarform.h \
-    tminoshelpform.h
+    tminoshelpform.h \
+    taboutbox.h \
+    tmanagelistsdlg.h \
+    tminosbandchooser.h \
+    tcontactlistdetails.h \
+    tclockdlg.h \
+    tforcelogdlg.h \
+    tqsoeditdlg.h \
+    tloccalcform.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
@@ -73,7 +89,15 @@ FORMS    += tlogcontainer.ui \
     tbundleframe.ui \
     tsettingseditdlg.ui \
     tcalendarform.ui \
-    tminoshelpform.ui
+    tminoshelpform.ui \
+    taboutbox.ui \
+    tmanagelistsdlg.ui \
+    tminosbandchooser.ui \
+    tcontactlistdetails.ui \
+    tclockdlg.ui \
+    tforcelogdlg.ui \
+    tqsoeditdlg.ui \
+    tloccalcform.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase

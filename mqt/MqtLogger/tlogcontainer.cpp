@@ -6,6 +6,7 @@
 #include "tlogcontainer.h"
 #include "ui_tlogcontainer.h"
 
+#include "taboutbox.h"
 #include "VHFList.h"
 #include "contestdetails.h"
 
@@ -35,13 +36,46 @@ TLogContainer::TLogContainer(QWidget *parent) :
     QByteArray geometry = settings.value("geometry").toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
-
-    enableActions();
 }
 
 TLogContainer::~TLogContainer()
 {
     delete ui;
+}
+bool TLogContainer::show(int argc, char *argv[])
+{
+    if ( TAboutBox::ShowAboutBox( this, true ) == false )
+    {
+       close();
+       return false;
+    }
+    bool mlpa = isScrollingContestTabs();
+    ScrollingContestTabsAction->setChecked(mlpa);
+    ui->ContestPageControl->setUsesScrollButtons(!mlpa);
+
+    bool so = isShowOperators();
+    ShowOperatorsAction->setChecked(so);
+
+    bool autoFill;
+    TContestApp::getContestApp() ->loggerBundle.getBoolProfile( elpAutoFill, autoFill );
+    ReportAutofillAction->setChecked(autoFill);
+    TContestApp::getContestApp() ->loggerBundle.setBoolProfile( elpAutoFill, autoFill );
+    TContestApp::getContestApp() ->loggerBundle.flushProfile();
+
+//    SendDM = new TSendDM( this );
+    if ( contestAppLoadFiles() )
+    {
+       // here need to pre-open the contest list
+       QString conarg;
+       if ( argc > 1 )
+       {
+          conarg = argv[1];
+       }
+       preloadFiles( conarg );
+       enableActions();
+    }
+    QMainWindow::show();
+    return true;
 }
 
 void TLogContainer::closeEvent(QCloseEvent *event)
@@ -191,6 +225,20 @@ bool TLogContainer::isNextContactDetailsOnLeft()
 {
    bool ncdol;
    TContestApp::getContestApp() ->displayBundle.getBoolProfile( edpNextContactDetailsOnLeft, ncdol );
+   return ncdol;
+}
+
+bool TLogContainer::isScrollingContestTabs()
+{
+   bool ncdol;
+   TContestApp::getContestApp() ->displayBundle.getBoolProfile( edpScrollingContestTabs, ncdol );
+   return ncdol;
+}
+
+bool TLogContainer::isShowOperators()
+{
+   bool ncdol;
+   TContestApp::getContestApp() ->displayBundle.getBoolProfile( edpShowOperators, ncdol );
    return ncdol;
 }
 
@@ -426,50 +474,55 @@ void TLogContainer::FileOpenActionExecute()
     }
 }
 
-void TLogContainer::ListOpenActionExecute()
-{
-
-}
-void TLogContainer::ManageListsActionExecute()
-{
-
-}
-
 void TLogContainer::ContestDetailsActionExecute()
 {
 
 }
+//---------------------------------------------------------------------------
 
 void TLogContainer::FileCloseActionExecute()
 {
-
+   int t = ui->ContestPageControl->currentIndex();
+   closeSlot(t, true );
 }
+
+//---------------------------------------------------------------------------
 
 void TLogContainer::CloseAllActionExecute()
 {
-
+   while ( ui->ContestPageControl->count())
+   {
+      // Keep closing the current (and hence visible) contest
+      closeSlot(0, true);
+   }
+//   ContestPageControlChange( this );
+   enableActions();
 }
+//---------------------------------------------------------------------------
 
 void TLogContainer::CloseAllButActionExecute()
 {
-
+   QWidget *thisContest = ui->ContestPageControl->currentWidget();
+   while ( ui->ContestPageControl->count() > 1)
+   {
+       int t = ui->ContestPageControl->count() - 1;
+      QWidget *ctab = ui->ContestPageControl->widget(t);
+      if (ctab == thisContest)
+      {
+         t -= 1;
+      }
+      closeSlot(t, true);
+   }
+  // ContestPageControlChange( this );
+   enableActions();
 }
+//---------------------------------------------------------------------------
 
 void TLogContainer::ExitActionExecute()
 {
-
+    close();
 }
 void TLogContainer::MakeEntryActionExecute()
-{
-
-}
-
-void TLogContainer::ShiftTabLeftActionExecute()
-{
-
-}
-
-void TLogContainer::ShiftTabRightActionExecute()
 {
 
 }
@@ -593,6 +646,7 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
          TSingleLogFrame *f = new TSingleLogFrame( this, contest );
          f->setObjectName( QString( "LogFrame" ) + QString::number(namegen++));
 
+
          int tno = ui->ContestPageControl->addTab(f, baseFName);
          if ( contest->needsExport() )      // imported from an alien format (e.g. .log)
          {
@@ -603,6 +657,8 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
                addSlot( 0, expName, false, -1 );
             }
          }
+         ui->ContestPageControl->tabBar()->setTabTextColor(tno,Qt::blue);
+        // ui->ContestPageControl->tabBar()->setTabBackgroundColor(tno,Qt::red); Doesn't exist :(
          removeCurrentFile( fname );
       }
    }
@@ -612,18 +668,31 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
 }
 void TLogContainer::closeSlot(int t, bool addToMRU )
 {
-   if ( t )
+   if ( t >= 0 )
    {
-      TSingleLogFrame * f = findLogFrame(t);
-      if ( addToMRU )
+      TSingleLogFrame * f = 0;
+      int cc = ui->ContestPageControl->count();
+      for ( int i = 0; i < cc; i++ )
       {
-         BaseContestLog * contest = f->getContest();
-         QString curPath = contest->cfileName;
-         setCurrentFile( curPath );
+         QWidget *tw = ui->ContestPageControl->widget(i);
+         if ( (f = dynamic_cast<TSingleLogFrame *>( tw )) != nullptr)
+         {
+            break;
+         }
       }
-      f->closeContest();    // which should close the contest
-      ui->ContestPageControl->removeTab(t);
-//      ContestPageControlChange( this );
+
+      if (f)
+      {
+          if ( addToMRU )
+          {
+             BaseContestLog * contest = f->getContest();
+             QString curPath = contest->cfileName;
+             setCurrentFile( curPath );
+          }
+          f->closeContest();    // which should close the contest
+          ui->ContestPageControl->removeTab(t);
+    //      ContestPageControlChange( this );
+      }
       enableActions();
    }
 }
@@ -631,8 +700,206 @@ TSingleLogFrame *TLogContainer::findLogFrame(int t)
 {
    // we need to find the embedded frame...
    // now ONLY used in closeSlot!
-   if ( t >= 0 )
+   if ( t < 0 )
       return 0;
-   TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( ui->ContestPageControl->currentWidget() );
-   return f;
+    int cc = ui->ContestPageControl->count();
+    for ( int i = 0; i < cc; i++ )
+    {
+       QWidget *tw = ui->ContestPageControl->widget(i);
+       if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( tw ))
+       {
+          return f;
+       }
+    }
+    return 0;
+}
+void TLogContainer::preloadFiles( const QString &conarg )
+{
+   // and here we want to pre-load lists and contests from the INI file
+   // based on what was last open
+
+// getProfileEntries gets the Current entry as well... not good
+   QStringList slotlst = TContestApp::getContestApp() ->preloadBundle.getProfileEntries();
+   QStringList pathlst;
+   for ( int i = 0; i < slotlst.count(); i++ )
+   {
+      QString ent;
+      TContestApp::getContestApp() ->preloadBundle.getStringProfile( slotlst[i], ent, "" );
+      pathlst.append( ent );
+   }
+   int curSlot = 0;
+   TContestApp::getContestApp() ->preloadBundle.getIntProfile( eppCurrent, curSlot );
+   for ( int i = 0; i < slotlst.size(); i++ )
+   {
+      QString s = slotlst[ i ].left( 4 );
+      if ( s == "List" )
+      {
+         int slotno = slotlst[ i ].mid( 4, 2 ).toInt() - 1; // even a 2 char number is a BIT excessive
+         if ( slotno >= 0 )
+         {
+            addListSlot( 0, pathlst[ i ], slotno );
+         }
+      }
+      else
+      {
+         int slotno = slotlst[ i ].toInt() - 1;
+         if ( slotno >= 0 )
+         {
+            addSlot( 0, pathlst[ i ], false, slotno );
+         }
+      }
+   }
+   BaseContestLog *ct = 0;
+
+   if ( TContestApp::getContestApp() ->getContestSlotCount() )
+   {
+      if ( curSlot > 0 )
+      {
+         ct = TContestApp::getContestApp() ->contestSlotList[ curSlot - 1 ] ->slot;
+      }
+   }
+
+   TContestApp::getContestApp() ->writeContestList();	// to clear the unopened and changed ones
+
+   if ( conarg.size() )
+   {
+      // open the "argument" one last - which will make it current
+      ct = addSlot( 0, conarg, false, -1 );
+      TContestApp::getContestApp() ->writeContestList();	// or this one will not get included
+   }
+
+   if ( ct )
+   {
+      selectContest( ct, 0 );
+   }
+}
+ContactList * TLogContainer::addListSlot( TContactListDetails *ced, const QString &fname, int slotno )
+{
+#ifdef RUBBISH
+   // Is this the correct return type, or do we have an even more basic one? Or even a useful interface...
+
+   // openFile ends up calling ContactList::initialise which then
+   // calls TContestApp::insertList
+
+   ContactList * list = TContestApp::getContestApp() ->openListFile( fname, slotno );
+   if ( list && ced )
+   {
+
+      ced->setDetails( list );
+      if ( ced->ShowModal() == mrOk )
+      {
+         ced->getDetails( list );
+      }
+      else
+      {
+         TContestApp::getContestApp() ->closeListFile( list );
+         list = 0;
+      }
+   }
+
+   TContestApp::getContestApp() ->writeContestList();
+   enableActions();
+   return list;
+ #endif
+   return 0;
+}
+
+void TLogContainer::ListOpenActionExecute()
+{
+
+}
+void TLogContainer::ManageListsActionExecute(  )
+{
+#ifdef RUBBISH
+   std::auto_ptr <TManageListsDlg> manageListsDlg( new TManageListsDlg( this ) );
+   manageListsDlg->ShowModal();
+   enableActions();
+#endif
+}
+//---------------------------------------------------------------------------
+
+void TLogContainer::ShiftTabRightActionExecute( )
+{
+   // We want to reorder the tabs so that this one goes right
+   if ( !ui->ContestPageControl->currentWidget() )
+      return ;
+   int tno = ui->ContestPageControl->currentIndex();
+   if ( tno < ui->ContestPageControl->count() - 1 )
+   {
+      ContestSlot * cs = TContestApp::getContestApp() ->contestSlotList[ tno ];
+      int s = cs->slotno;
+
+      ContestSlot *csp1 = TContestApp::getContestApp() ->contestSlotList[ tno + 1 ];
+      int sp1 = csp1->slotno;
+
+      TContestApp::getContestApp() ->contestSlotList[ tno ] = csp1;
+      csp1->slotno = s;
+
+      TContestApp::getContestApp() ->contestSlotList[ tno + 1 ] = cs;
+      cs->slotno = sp1;
+
+      TContestApp::getContestApp() ->writeContestList();
+
+      tno++;
+      ui->ContestPageControl->setCurrentIndex(tno);
+
+      enableActions();
+   }
+}
+//---------------------------------------------------------------------------
+
+void TLogContainer::ShiftTabLeftActionExecute( )
+{
+   //
+   if ( !ui->ContestPageControl->currentWidget() )
+      return ;
+   int tno = ui->ContestPageControl->currentIndex();
+   if ( tno > 0 )
+   {
+      ContestSlot * cs = TContestApp::getContestApp() ->contestSlotList[ tno ];
+      int s = cs->slotno;
+      ContestSlot *csm1 = TContestApp::getContestApp() ->contestSlotList[ tno - 1 ];
+      int sm1 = csm1->slotno;
+      TContestApp::getContestApp() ->contestSlotList[ tno ] = csm1;
+      csm1->slotno = s;
+
+      TContestApp::getContestApp() ->contestSlotList[ tno - 1 ] = cs;
+      cs->slotno = sm1;
+
+      tno--;
+      ui->ContestPageControl->setCurrentIndex( tno);
+      TContestApp::getContestApp() ->writeContestList();
+
+      enableActions();
+   }
+}
+void TLogContainer::selectContest( BaseContestLog *pc, BaseContact *pct )
+{
+   // we have double clicked on a contact in "other" or "archive" trees
+   // so we want to (a) switch tabs and (b) go to that contact edit
+
+/*
+ * This needs rethinking... keep tab pointer in display contest?
+ *
+ * for ( int j = 0; j < ui->ContestPageControl->count(); j++ )
+   {
+      QWidget *ctab = ContestPageControl->widget(j);
+      int cc = ctab->ControlCount;
+
+      BaseContestLog * clp = pc;
+      for ( int i = 0; i < cc; i++ )
+      {
+         if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( ctab->Controls[ i ] ) )
+         {
+            if ( f->getContest() == clp )
+            {
+               ContestPageControl->ActivePage = ctab;         // This doesn't call ContestPageControlChange (see TPageControl::OnChange in  help)
+               ContestPageControlChange( this );              // so the contest gets properly switched
+               f->QSOTreeSelectContact( pct );         // which triggers edit on the contact
+               return ;
+            }
+         }
+      }
+   }
+   */
 }

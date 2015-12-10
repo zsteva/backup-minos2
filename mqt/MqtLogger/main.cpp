@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     a.setOrganizationDomain( "g0gjv.org.uk" );
     a.QCoreApplication::setApplicationName( "MinosQtLogger" );
 
-    QSettings settings;
+    QSettings settings; // we may want to force to an INI file
     QVariant qfont = settings.value( "font" );
     if ( qfont != QVariant() )
     {
@@ -22,7 +22,9 @@ int main(int argc, char *argv[])
     }
 
     TLogContainer w;
-    w.show();
-
-    return a.exec();
+    bool ret = w.show(argc, argv);
+    if (ret == true)
+    {
+        return a.exec();
+    }
 }

@@ -315,7 +315,7 @@ bool INIFile::writeINIFile( void )
    // - but what do we do if it has? We should have loaded
    // it VERY recently
 
-   if (!inf.open(QIODevice::ReadWrite|QIODevice::Text))
+   if (!inf.open(QIODevice::WriteOnly|QIODevice::Text))
       return false;
 
    QTextStream out(&inf);
@@ -337,7 +337,9 @@ bool INIFile::writeINIFile( void )
          if ( ( *this_entry ) ->isValidEntry() )
          {
              QString s = QString("%1=%2\n").arg(name).arg(val);
-             out << s;
+             std::string ss = s.toStdString();
+             const char *sss = ss.c_str();
+             out << sss;
          }
          else
          {
@@ -393,7 +395,8 @@ bool INIFile::loadINIFile()
    // create dummy section for leading comments
 
    TEMPBUFF( buffer, 256 );
-   while ( inf.read( buffer, 256 ) != 0 )
+   int len = 0;
+   while ( (len = inf.readLine( buffer, 256 )) > 0 )
    {
       TEMPBUFF ( Parameter, 256 );
       if ( strchr( buffer, '[' ) && ( sscanf( buffer, " [ %255[^\n]", Parameter ) == 1 ) )
@@ -635,13 +638,18 @@ bool INIFile::writePrivateProfileString(const QString &Section,
 
 
 //=============================================================================
+ProfileEntry::ProfileEntry(int id, const char *n, const char *d, const char *dname, const char *h, bool RO )
+      : id( id ), name( n ), sdefaultval( d ), hint( h ), pt( petString ), dispname(dname), RO(RO)
+{}
+/*
 ProfileEntry::ProfileEntry(int id, const QString &n, const QString &d, const QString &dname, const QString &h, bool RO )
       : id( id ), name( n ), sdefaultval( d ), hint( h ), pt( petString ), dispname(dname), RO(RO)
 {}
-ProfileEntry::ProfileEntry( int id, const QString &n, int d, const QString & dname, const QString &h, bool RO )
+*/
+ProfileEntry::ProfileEntry( int id, const char *n, int d, const char *dname, const char *h, bool RO )
       : id( id ), name( n ), idefaultval( d ), sdefaultval( QString::number( d ) ), hint( h ), pt( petInteger ), dispname(dname), RO(RO)
 {}
-ProfileEntry::ProfileEntry(int id, const QString &n, bool d, const QString &dname, const QString &h, bool RO )
+ProfileEntry::ProfileEntry(int id, const char *n, bool d, const char *dname, const char *h, bool RO )
       : id( id ), name( n ), bdefaultval( d ), sdefaultval( makeStr( d ) ), hint( h ), pt( petBool ), dispname(dname), RO(RO)
 {}
 void ProfileEntry::createEntry( SettingsBundle *s )

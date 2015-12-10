@@ -11,7 +11,10 @@ class TLogContainer;
 
 class ContestDetails;
 class BaseContestLog;
+class BaseContact;
 class TSingleLogFrame;
+class TContactListDetails;
+class ContactList;
 
 class TLogContainer : public QMainWindow
 {
@@ -21,6 +24,8 @@ public:
     explicit TLogContainer(QWidget *parent = 0);
     ~TLogContainer();
 
+    void selectContest( BaseContestLog *pc, BaseContact *pct );
+    bool show(int argc, char *argv[]);
 private:
     Ui::TLogContainer *ui;
 
@@ -32,6 +37,8 @@ private:
 
     void enableActions();
     bool isNextContactDetailsOnLeft();
+    bool isScrollingContestTabs();
+    bool isShowOperators();
 
     QString getCurrentFile();
     void setCurrentFile(const QString &fileName);
@@ -79,6 +86,8 @@ private:
     QAction *NextContactDetailsOnLeftAction;
 
     QString getDefaultDirectory( bool IsList );
+    void preloadFiles( const QString &conarg );
+    ContactList * addListSlot( TContactListDetails *ced, const QString &fname, int slotno );
 
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *event);

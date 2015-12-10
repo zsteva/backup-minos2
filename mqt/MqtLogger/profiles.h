@@ -28,9 +28,10 @@ class ProfileEntry
       bool RO;
 
       void createEntry( SettingsBundle * );
-      ProfileEntry(int id, const QString &n, const QString &d, const QString &dname, const QString &h, bool RO );
-      ProfileEntry(int id, const QString &n, int d, const QString &dname, const QString &, bool RO );
-      ProfileEntry(int id, const QString &n, bool d, const QString &dname, const QString &h, bool RO );
+      ProfileEntry(int id, const  char *n, const char *d, const char *dname, const char *h, bool RO );
+//      ProfileEntry(int id, const QString &n, const QString &d, const QString &dname, const QString &h, bool RO );
+      ProfileEntry(int id, const  char *n, int d, const  char *dname, const  char *, bool RO );
+      ProfileEntry(int id, const char *n, bool d, const char *dname, const char *h, bool RO );
 };
 class INIFile;
 

@@ -205,7 +205,7 @@ void ContestDetails::setDetails(  )
       contest->myloc.loc.setValue( temp );
       contest->validateLoc();
    }
-   ui->LocatorField->setText(contest->myloc.loc.getValue());
+   ui->LocatorEdit->setText(contest->myloc.loc.getValue());
 
    ui->AllowLoc4CB->setChecked(contest->allowLoc4.getValue());    // bool               // ?? contest
    ui->AllowLoc8CB->setChecked(contest->allowLoc8.getValue());    // bool               // ?? contest
@@ -542,7 +542,7 @@ QWidget * ContestDetails::getDetails( )
    {
       nextD = (nextD?nextD:ui->CallsignEdit);
    }
-   contest->myloc.loc.setValue( ui->LocatorField->text() );
+   contest->myloc.loc.setValue( ui->LocatorEdit->text() );
    contest->myloc.validate();
    if ( contest->myloc.valRes != LOC_OK )
    {
