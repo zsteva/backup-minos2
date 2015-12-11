@@ -34,7 +34,7 @@ class MLogFile
       // Log and LogT are used to log data without and with a timestamp;
       std::ostream & log( void );
       std::ostream & logT( void );
-      // Log logs a string with a time prefix hh:nn:ss
+      // Log logs a string with a time prefix hh:mm:ss
       std::ostream & log( const QString &s );
       void close( void );
 

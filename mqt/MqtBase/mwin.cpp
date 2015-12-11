@@ -65,7 +65,7 @@ dtg::dtg( bool now ): baddtg(false)
    {
       QDateTime tdt = dtg::getCorrectedUTC();
       setDate( tdt.toString( "dd/MM/yy" ), DTGDISP );
-      setTime( tdt.toString( "hh:nn:ss" ), DTGDISP );
+      setTime( tdt.toString( "hh:mm:ss" ), DTGDISP );
    }
    else
    {

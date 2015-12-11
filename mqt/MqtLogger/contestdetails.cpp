@@ -161,8 +161,10 @@ void ContestDetails::setDetails(  )
 
    if ( contest->DTGStart.getValue().size() )
    {
-      ui->StartDateEdit->setDate(CanonicalToTDT( contest->DTGStart.getValue()).date());
-      QString stc = CanonicalToTDT( contest->DTGStart.getValue()).toString( "hh:mm" );
+      QString s = contest->DTGStart.getValue();
+      QDateTime t = QDateTime::fromString(s, "yyyyMMddhhmm");
+      ui->StartDateEdit->setDate(t.date());
+      QString stc = t.time().toString( "hh:mm" );
       ui->StartTimeCombo->setCurrentText(stc);
    }
    else
@@ -172,8 +174,10 @@ void ContestDetails::setDetails(  )
    }
    if ( contest->DTGEnd.getValue().size() )
    {
-      ui->EndDateEdit->setDate(CanonicalToTDT( contest->DTGEnd.getValue() ).date()); // short date format, hours:minutes
-      QString etc = CanonicalToTDT( contest->DTGEnd.getValue()).toString( "hh:mm" );
+       QString s = contest->DTGEnd.getValue();
+       QDateTime t = QDateTime::fromString(s, "yyyyMMddhhmm");
+      ui->EndDateEdit->setDate(t.date()); // short date format, hours:minutes
+      QString etc = t.time().toString( "hh:mm" );
       ui->EndTimeCombo->setCurrentText(etc); // short date format, hours:minutes
    }
    else
