@@ -476,7 +476,29 @@ void TLogContainer::FileOpenActionExecute()
 
 void TLogContainer::ContestDetailsActionExecute()
 {
+    QWidget *tw = ui->ContestPageControl->currentWidget();
+    TSingleLogFrame *f = dynamic_cast<TSingleLogFrame *>( tw );
 
+    if (f)
+    {
+        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( f->getContest());
+
+
+        if (ct)
+        {
+            ContestDetails pced( this );
+
+
+            pced.setDetails( ct );
+            if ( pced.exec() == QDialog::Accepted )
+            {
+                // and we need to do some re-init on the display
+                //updateQSODisplay();
+                ct->scanContest();
+                //MultDispFrame->refreshMults();
+            }
+        }
+    }
 }
 //---------------------------------------------------------------------------
 
