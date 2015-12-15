@@ -4,6 +4,8 @@
 #include "tsinglelogframe.h"
 #include "ui_tsinglelogframe.h"
 
+#include "focuswatcher.h"
+
 TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     QFrame(parent),
     ui(new Ui::TSingleLogFrame),
