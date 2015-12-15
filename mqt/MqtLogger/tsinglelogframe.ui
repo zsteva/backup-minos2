@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>735</width>
-    <height>439</height>
+    <height>369</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,14 +21,14 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <widget class="MinosSplitter" name="splitter_4">
+    <widget class="MinosSplitter" name="LogAreaSplitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="MinosSplitter" name="splitter_2">
+        <widget class="MinosSplitter" name="MultSplitter">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
@@ -38,14 +38,27 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <widget class="QTableWidget" name="tableWidget"/>
-         <widget class="MinosSplitter" name="splitter">
+         <widget class="QTableWidget" name="tableWidget">
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>2</number>
+          </property>
+          <property name="midLineWidth">
+           <number>2</number>
+          </property>
+         </widget>
+         <widget class="MinosSplitter" name="FilterSplitter">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
           <widget class="QTabWidget" name="tabWidget">
            <property name="tabPosition">
-            <enum>QTabWidget::East</enum>
+            <enum>QTabWidget::North</enum>
            </property>
            <property name="usesScrollButtons">
             <bool>false</bool>
@@ -61,7 +74,13 @@
             </attribute>
            </widget>
           </widget>
-          <widget class="QFrame" name="frame_2">
+          <widget class="QFrame" name="MultFilters">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
            </property>
@@ -69,10 +88,31 @@
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout">
+              <property name="spacing">
+               <number>0</number>
+              </property>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QCheckBox" name="checkBox">
                   <property name="text">
@@ -91,6 +131,9 @@
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QCheckBox" name="checkBox_3">
                   <property name="text">
@@ -109,6 +152,9 @@
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QCheckBox" name="checkBox_5">
                   <property name="text">
@@ -127,6 +173,9 @@
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QCheckBox" name="checkBox_7">
                   <property name="text">
@@ -151,30 +200,57 @@
         </widget>
        </item>
        <item>
-        <widget class="MinosSplitter" name="splitter_5">
+        <widget class="MinosSplitter" name="CribSplitter">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <widget class="QSOLogFrame" name="frame">
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::Box</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>2</number>
+          </property>
+          <property name="midLineWidth">
+           <number>2</number>
           </property>
          </widget>
-         <widget class="QFrame" name="frame_3">
+         <widget class="QFrame" name="CribSheet">
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::Box</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>2</number>
+          </property>
+          <property name="midLineWidth">
+           <number>2</number>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QLabel" name="label">
+            <widget class="QLabel" name="CribLabel">
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="lineWidth">
+              <number>2</number>
+             </property>
+             <property name="midLineWidth">
+              <number>2</number>
+             </property>
              <property name="text">
               <string>Minos</string>
+             </property>
+             <property name="textFormat">
+              <enum>Qt::RichText</enum>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -184,13 +260,43 @@
        </item>
       </layout>
      </widget>
-     <widget class="MinosSplitter" name="splitter_3">
+     <widget class="MinosSplitter" name="ArchiveSplitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTableWidget" name="tableWidget_4"/>
-      <widget class="QTableWidget" name="tableWidget_3"/>
-      <widget class="QTableWidget" name="tableWidget_2"/>
+      <widget class="QTableWidget" name="tableWidget_4">
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="midLineWidth">
+        <number>1</number>
+       </property>
+      </widget>
+      <widget class="QTableWidget" name="tableWidget_3">
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="midLineWidth">
+        <number>1</number>
+       </property>
+      </widget>
+      <widget class="QTableWidget" name="tableWidget_2">
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="midLineWidth">
+        <number>1</number>
+       </property>
+      </widget>
      </widget>
     </widget>
    </item>

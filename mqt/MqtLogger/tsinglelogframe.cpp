@@ -21,6 +21,11 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 
 {
     ui->setupUi(this);
+
+    ui->LogAreaSplitter->setClosingWidget(ui->ArchiveSplitter);
+    ui->CribSplitter->setClosingWidget(ui->CribSheet);
+    ui->FilterSplitter->setClosingWidget(ui->MultFilters);
+    ui->MultSplitter->setClosingWidget(ui->FilterSplitter);
 }
 
 TSingleLogFrame::~TSingleLogFrame()
