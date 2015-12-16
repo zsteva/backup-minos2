@@ -81,4 +81,5 @@ bool CreateDir( const QString &s );
 extern int toInt ( const QString &s, int def = 0 );
 extern double toDouble ( const QString &s, double def = 0.0 );
 extern QString makeStr( bool i );
+extern QString HtmlFontColour( const QColor &c );
 #endif

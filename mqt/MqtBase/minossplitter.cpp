@@ -72,14 +72,14 @@ MinosSplitterButton::MinosSplitterButton(Qt::Orientation orientation, const QStr
     // how do we get a horizontal splitter button to be narrow and tall?
     switch (orientation)
      {
-     case Qt::Horizontal:
+     case Qt::Horizontal:       // side by side
         // horizontal, vertical
-         setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+         setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
          break;
 
      case Qt::Vertical:
         // OK
-         setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
+         setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
          break;
      }
 }
@@ -217,13 +217,24 @@ void MinosSplitterHandle::mouseDoubleClickEvent(QMouseEvent *e)
 MinosSplitter::MinosSplitter(QWidget *parent)
     : QSplitter(parent), myHandle(0)
 {
-    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     setHandleWidth(10);
 }
 void MinosSplitter::setOrientation(Qt::Orientation orientation)
 {
     QSplitter::setOrientation(orientation);
+    switch (orientation)
+     {
+     case Qt::Horizontal:       // side by side
+        // horizontal, vertical
+         setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+         break;
 
+     case Qt::Vertical:
+        // OK
+         setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+         break;
+     }
 }
 
 QSplitterHandle *MinosSplitter::createHandle()

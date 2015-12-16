@@ -485,3 +485,8 @@ QString makeStr( bool i )
 {
    return ( i ? "true" : "false" );
 }
+QString HtmlFontColour( const QColor &c )
+{
+    QString s = "<font color='" + c.name() + "'>";
+    return s;
+}

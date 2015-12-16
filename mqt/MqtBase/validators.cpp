@@ -280,13 +280,13 @@ bool Validator::validNumber( const QString &str, bool trailingAlphaAllowed)
    if ( picvalid )
    {
       // must be more than one digit in a RST
-      int rst = atoi( t.toStdString().c_str() );
+      int rst = t.toInt();
       if ( rst < 10 )
          picvalid = false;
 
       // allow strength 0 to be typed, but it is still an error!
 
-      if ( t[ 2 ] == '0' )
+      if (l > 1 && t[ 1 ] == '0' )
          picvalid = false;
    }
    return picvalid;

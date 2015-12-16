@@ -1231,8 +1231,10 @@ bool BaseContestLog::checkTime(const dtg &t)
       QString dtgstr = t.getDate(DTGFULL) + t.getTime(DTGLOG);
 
       QDateTime check = CanonicalToTDT( dtgstr );
-      QDateTime start = CanonicalToTDT( DTGStart.getValue() );
-      QDateTime end = CanonicalToTDT( DTGEnd.getValue() );
+      QString t1 = DTGStart.getValue();
+      QDateTime start = CanonicalToTDT( t1 );
+      t1 = DTGEnd.getValue();
+      QDateTime end = CanonicalToTDT( t1 );
 
       if (check < start)
       {

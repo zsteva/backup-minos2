@@ -202,7 +202,7 @@ QString dtg::getTime( DTG dstyle, bool &d ) const
 
    if ( dstyle == DTGLOG )
    {
-      temp_time = timeValue.left( 6);
+      temp_time = timeValue.left( 4);
    }
    else
       if ( dstyle == DTGReg1Test )

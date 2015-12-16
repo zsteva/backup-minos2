@@ -14,6 +14,8 @@
 #include <QApplication>
 #include <QInputDialog>
 #include <QFileDialog>
+#include <QKeyEvent>
+#include <QAbstractItemModel>
 
 /*
 #include <ctype.h>

@@ -509,7 +509,8 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
                      {
                         // use the existing data
 						int offset = contest->bearingOffset.getValue();
-                        brgbuff = QString("%1\xB0").arg( varBrg( bearing + offset ), 3 );
+                        const QChar degreeChar(0260); // octal value
+                        brgbuff = QString("%1%2").arg( varBrg( bearing + offset ), 3 ).arg(degreeChar);
                      }
                      else
                      {
@@ -529,7 +530,8 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
                               curcon->disbear( lon, lat, dist, brg );
                            }
 						   int offset = curcon->bearingOffset.getValue();
-                           brgbuff = QString("%1\xB0").arg( varBrg( bearing + offset ), 3 );
+                           const QChar degreeChar(0260); // octal value
+                           brgbuff = QString("%1%2").arg( varBrg( bearing + offset ), 3 ).arg(degreeChar);
                         }
                      }
                   }

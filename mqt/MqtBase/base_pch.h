@@ -10,10 +10,16 @@
 #define BASE_PCH_H
 #include "XMPPClient_pch.h"
 
+#include <QApplication>
 #include <QDialog>
 
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QStyledItemDelegate>
+#include <QTextDocument>
+#include <QAbstractTextDocumentLayout>
+#include <QPainter>
+#include <QStyle>
 
 #include <math.h>
 #include <time.h>

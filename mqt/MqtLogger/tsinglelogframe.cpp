@@ -5,6 +5,7 @@
 #include "ui_tsinglelogframe.h"
 
 #include "focuswatcher.h"
+#include "htmldelegate.h"
 
 TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     QFrame(parent),
@@ -21,11 +22,22 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 
 {
     ui->setupUi(this);
+    qsoModel.initialise(contest);
+    ui->QSOTable->setModel(&qsoModel);
+    ui->QSOTable->setItemDelegate( new HtmlDelegate );
+
+    ui->QSOTable->resizeColumnsToContents();
+    //ui->QSOTable->resizeRowsToContents();
+    ui->QSOTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
 
     ui->LogAreaSplitter->setClosingWidget(ui->ArchiveSplitter);
     ui->CribSplitter->setClosingWidget(ui->CribSheet);
-    ui->FilterSplitter->setClosingWidget(ui->MultFilters);
-    ui->MultSplitter->setClosingWidget(ui->FilterSplitter);
+    ui->MultSplitter->setClosingWidget(ui->MultTabs);
+    ui->TopSplitter->setClosingWidget(ui->MultSplitter);
+
+//    LogMonitor->initialise( contest );
+    ui->GJVQSOLogFrame->initialise( contest, false );
+
 }
 
 TSingleLogFrame::~TSingleLogFrame()
@@ -67,6 +79,112 @@ void TSingleLogFrame::closeContest()
        TContestApp::getContestApp() ->closeFile( contest );
        contest = 0;
     }
+}
+QSOGridModel::QSOGridModel()
+{}
+QSOGridModel::~QSOGridModel()
+{}
+void QSOGridModel::initialise( BaseContestLog * pcontest )
+{
+   contest = pcontest;
+}
+QVariant QSOGridModel::data( const QModelIndex &index, int role ) const
+{
+    int row = index.row();
+    int column = index.column();
+
+    if ( row >= rowCount() )
+        return QVariant();
+
+    BaseContact * ct = contest->pcontactAt( row);
+
+    if (role == Qt::BackgroundRole)
+    {
+        if ( ct->contactFlags.getValue() & FORCE_LOG )
+        {
+           return ( QColor ) ( 0x00FF80C0 );        // Pink(ish)
+        }
+        else
+        {
+           if ( ct->getModificationCount() > 1 )
+           {
+               return ( QColor ) ( 0x00C0DCC0 );    // "money green"
+           }
+        }
+        return QVariant();
+    }
+    if ( role != Qt::DisplayRole && role != Qt::EditRole )
+        return QVariant();
+
+    if (role == Qt::DisplayRole)
+    {
+        if ( ct && column >= 0 && column < columnCount())
+        {
+           QString line = ct->getField( QSOTreeColumns[ column ].fieldId, contest );
+           QColor multhighlight = Qt::red;
+           bool setHighlight = false;
+           switch ( QSOTreeColumns[ column ].fieldId )
+           {
+              case egTime:
+                 if (!contest->checkTime(ct->time))
+                 {
+                    setHighlight = true;
+                 }
+                 break;
+              case egCall:
+                 if ( contest->countryMult.getValue() && ct->newCtry )
+                     setHighlight = true;
+                 break;
+              case egExchange:
+                 if ( contest->districtMult.getValue() && ct->newDistrict )
+                     setHighlight = true;
+                 break;
+              case egLoc:
+                 if ( (contest->locMult.getValue() && ct->locCount > 0) || (contest->UKACBonus.getValue() && ct->bonus > 0))
+                 {
+                     setHighlight = true;
+                 }
+                 break;
+           }
+           if (setHighlight)
+               line = HtmlFontColour(multhighlight) + line;
+           return line;
+        }
+    }
+    return QVariant();
+}
+QVariant QSOGridModel::headerData( int section, Qt::Orientation orientation,
+                     int role ) const
+{
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+    {
+        QString h = QSOTreeColumns[ section ].title;
+        return h;
+    }
+    return QVariant();
+}
+
+QModelIndex QSOGridModel::index( int row, int column, const QModelIndex &parent) const
+{
+    if ( row < 0 || row >= rowCount() || ( parent.isValid() && parent.column() != 0 ) )
+        return QModelIndex();
+
+    return createIndex( row, column );
+}
+
+QModelIndex QSOGridModel::parent( const QModelIndex &index ) const
+{
+    return QModelIndex();
+}
+
+int QSOGridModel::rowCount( const QModelIndex &parent ) const
+{
+    return contest->ctList.size();
+}
+
+int QSOGridModel::columnCount( const QModelIndex &parent ) const
+{
+    return  LOGTREECOLS;
 }
 
 

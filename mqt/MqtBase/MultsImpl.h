@@ -144,7 +144,8 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
                      brgscoreValid = false;
                   if ( brgscoreValid && ( valRes == LOC_OK ) )
                   {
-                     brgbuff = QString( "%1\xb0").arg(varBrg( useBearing + ct->bearingOffset.getValue()), 3 );
+                        const QChar degreeChar(0260); // octal value
+                        brgbuff = QString( "%1%2").arg(varBrg( useBearing + ct->bearingOffset.getValue()), 3 ).arg(degreeChar);
                   }
 
                   dest = brgbuff;
@@ -193,7 +194,8 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
 
          if ( brgscoreValid && ( valRes == LOC_OK ) )
          {
-            brgbuff = QString("%1\xb0").arg( varBrg( useBearing), 3 ) ;
+             const QChar degreeChar(0260); // octal value
+             brgbuff = QString("%1%2").arg( varBrg( useBearing), 3 ).arg(degreeChar) ;
          }
 
          int next = 0;

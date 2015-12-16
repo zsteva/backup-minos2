@@ -47,7 +47,8 @@ SOURCES += \
     MShowMessageDlg.cpp \
     DisplayContestContact.cpp \
     TreeUtils.cpp \
-    minossplitter.cpp
+    minossplitter.cpp \
+    htmldelegate.cpp
 
 HEADERS += \
     BandList.h \
@@ -76,7 +77,8 @@ HEADERS += \
     MShowMessageDlg.h \
     DisplayContestContact.h \
     TreeUtils.h \
-    minossplitter.h
+    minossplitter.h \
+    htmldelegate.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

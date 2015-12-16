@@ -176,7 +176,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="label_7">
+          <widget class="QLabel" name="BrgSt">
            <property name="text">
             <string>(123XT)</string>
            </property>
@@ -270,7 +270,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="CallsignEdit"/>
+        <widget class="QLineEdit" name="CallsignEdit">
+         <property name="inputMask">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -284,7 +288,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="RSTTXEdit"/>
+        <widget class="QLineEdit" name="RSTTXEdit">
+         <property name="inputMask">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -298,7 +306,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="SerTXEdit"/>
+        <widget class="QLineEdit" name="SerTXEdit">
+         <property name="inputMask">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -312,7 +324,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="RSTRXEdit"/>
+        <widget class="QLineEdit" name="RSTRXEdit">
+         <property name="inputMask">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -326,7 +342,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="SerRXEdit"/>
+        <widget class="QLineEdit" name="SerRXEdit">
+         <property name="inputMask">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -340,7 +360,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="LocEdit"/>
+        <widget class="QLineEdit" name="LocEdit">
+         <property name="inputMask">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -354,7 +378,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="QTHEdit"/>
+        <widget class="QLineEdit" name="QTHEdit">
+         <property name="inputMask">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -372,7 +400,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="CommentsEdit"/>
+        <widget class="QLineEdit" name="CommentsEdit">
+         <property name="inputMask">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

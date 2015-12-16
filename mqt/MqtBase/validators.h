@@ -120,6 +120,7 @@ class ValidatedControl
       Validator validator;
       bool tIfValid;
       ValidatedControl( QLineEdit *c, validatorTypes vt );
+      virtual ~ValidatedControl(){}
       virtual bool valid( validTypes cmd );
 };
 //---------------------------------------------------------------------------

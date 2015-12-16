@@ -2,6 +2,7 @@
 #define TSINGLELOGFRAME_H
 
 #include <QFrame>
+#include <QAbstractItemModel>
 
 namespace Ui {
 class TSingleLogFrame;
@@ -36,7 +37,24 @@ class MatchNodeListData
       ContactList *matchedList;
       ListContact *matchedContact;
 };
+class QSOGridModel: public QAbstractItemModel
+{
+    protected:
+        BaseContestLog *contest;
+    public:
+        QSOGridModel();
+        ~QSOGridModel();
+        void initialise( BaseContestLog * pcontest );
+        QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;
+        QVariant headerData( int section, Qt::Orientation orientation,
+                             int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
+        QModelIndex index( int row, int column,
+                           const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+        QModelIndex parent( const QModelIndex &index ) const Q_DECL_OVERRIDE;
 
+        int rowCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+        int columnCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+};
 class TSingleLogFrame : public QFrame
 {
     Q_OBJECT
@@ -88,6 +106,8 @@ private:
     Ui::TSingleLogFrame *ui;
 
     BaseContestLog * contest;
+    QSOGridModel qsoModel;
+
     int lastStanzaCount;
 
     long long currFreq;

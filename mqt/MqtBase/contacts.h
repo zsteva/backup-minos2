@@ -134,7 +134,7 @@ class BaseContact
       {
          return "no field";
       }
-      virtual bool ne( const /*ScreenContact*/&, bool /*checkDTG*/ ) const
+      virtual bool ne( const ScreenContact&, bool /*checkDTG*/ ) const
       {
          return false;
       }
