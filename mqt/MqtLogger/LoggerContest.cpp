@@ -336,12 +336,7 @@ void LoggerContestLog::setINIDetails()
 	  stationBundle.getIntProfile(espOffset, bearingOffset);
    }
 }
-/*
-void LoggerContestLog::makeContact( bool timeNow, ContestContact * &lct )
-{
-   lct = new ContestContact( this, timeNow );
-}
-*/
+
 int LoggerContestLog::readBlock( int bno )
 {
     bool sres = GJVcontestFile->seek(bno * bsize);

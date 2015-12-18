@@ -44,12 +44,7 @@ TLogContainer::~TLogContainer()
 }
 bool TLogContainer::show(int argc, char *argv[])
 {
-    if ( TAboutBox::ShowAboutBox( this, true ) == false )
-    {
-       close();
-       return false;
-    }
-    bool mlpa = isScrollingContestTabs();
+     bool mlpa = isScrollingContestTabs();
     ScrollingContestTabsAction->setChecked(mlpa);
     ui->ContestPageControl->setUsesScrollButtons(!mlpa);
 
@@ -63,6 +58,13 @@ bool TLogContainer::show(int argc, char *argv[])
     TContestApp::getContestApp() ->loggerBundle.flushProfile();
 
 //    SendDM = new TSendDM( this );
+    QMainWindow::show();
+    if ( TAboutBox::ShowAboutBox( this, true ) == false )
+    {
+       close();
+       return false;
+    }
+
     if ( contestAppLoadFiles() )
     {
        // here need to pre-open the contest list
@@ -74,12 +76,12 @@ bool TLogContainer::show(int argc, char *argv[])
        preloadFiles( conarg );
        enableActions();
     }
-    QMainWindow::show();
     return true;
 }
 
 void TLogContainer::closeEvent(QCloseEvent *event)
 {
+    closeContestApp();
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
     QWidget::closeEvent(event);
@@ -176,8 +178,8 @@ void TLogContainer::setupMenus()
     ScrollingContestTabsAction = newAction("Scrolling contest tabs", &TabPopup, SLOT(ScrollingContestTabsActionExecute()));
     ShowOperatorsAction = newAction("Show Operators", &TabPopup, SLOT(ShowOperatorsActionExecute()));
     TabPopup.addSeparator();
-    ShiftTabLeftAction = newAction("Shift Tab Left", &TabPopup, SLOT(ShiftTabLeftActionExecute()));
-    ShiftTabRightAction = newAction("Shift Tab Right", &TabPopup, SLOT(ShiftTabRightActionExecute()));
+    ShiftTabLeftAction = newAction("Shift Active Tab Left", &TabPopup, SLOT(ShiftTabLeftActionExecute()));
+    ShiftTabRightAction = newAction("Shift Active Tab Right", &TabPopup, SLOT(ShiftTabRightActionExecute()));
     CorrectDateTimeAction = newAction("Correct Date/Time", &TabPopup, SLOT(CorrectDateTimeActionExecute()));
     TabPopup.addSeparator();
     TabPopup.addAction(AnalyseMinosLogAction);
@@ -517,7 +519,7 @@ void TLogContainer::CloseAllActionExecute()
       // Keep closing the current (and hence visible) contest
       closeSlot(0, true);
    }
-//   ContestPageControlChange( this );
+   on_ContestPageControl_currentChanged(0);
    enableActions();
 }
 //---------------------------------------------------------------------------
@@ -535,7 +537,7 @@ void TLogContainer::CloseAllButActionExecute()
       }
       closeSlot(t, true);
    }
-  // ContestPageControlChange( this );
+   on_ContestPageControl_currentChanged(0);
    enableActions();
 }
 //---------------------------------------------------------------------------
@@ -610,9 +612,14 @@ void TLogContainer::NextContactDetailsOnLeftActionExecute()
 
 }
 
-void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
+void TLogContainer::on_ContestPageControl_currentChanged(int index)
 {
-    //
+    enableActions();
+
+    MinosLoggerEvents::SendContestPageChanged();
+
+    TContestApp::getContestApp() ->writeContestList();
+    enableActions();
 }
 
 void TLogContainer::on_ContestPageControl_tabBarDoubleClicked(int /*index*/)
@@ -670,6 +677,12 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
 
 
          int tno = ui->ContestPageControl->addTab(f, baseFName);
+
+         f->logColumnsChanged = true;  // also causes show QSOs
+         f->splittersChanged = true;
+
+         on_ContestPageControl_currentChanged(tno);
+
          if ( contest->needsExport() )      // imported from an alien format (e.g. .log)
          {
             QString expName = f->makeEntry( true );
@@ -688,20 +701,18 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
    enableActions();
    return contest;
 }
+TSingleLogFrame *TLogContainer::getCurrentLogFrame()
+{
+    QWidget *w = ui->ContestPageControl->currentWidget();
+    TSingleLogFrame *f = dynamic_cast<TSingleLogFrame *>(w);
+    return f;
+}
+
 void TLogContainer::closeSlot(int t, bool addToMRU )
 {
    if ( t >= 0 )
    {
-      TSingleLogFrame * f = 0;
-      int cc = ui->ContestPageControl->count();
-      for ( int i = 0; i < cc; i++ )
-      {
-         QWidget *tw = ui->ContestPageControl->widget(i);
-         if ( (f = dynamic_cast<TSingleLogFrame *>( tw )) != nullptr)
-         {
-            break;
-         }
-      }
+      TSingleLogFrame * f = findLogFrame(t);
 
       if (f)
       {
@@ -713,25 +724,21 @@ void TLogContainer::closeSlot(int t, bool addToMRU )
           }
           f->closeContest();    // which should close the contest
           ui->ContestPageControl->removeTab(t);
-    //      ContestPageControlChange( this );
+          on_ContestPageControl_currentChanged(0);
       }
       enableActions();
    }
 }
 TSingleLogFrame *TLogContainer::findLogFrame(int t)
 {
-   // we need to find the embedded frame...
-   // now ONLY used in closeSlot!
-   if ( t < 0 )
-      return 0;
-    int cc = ui->ContestPageControl->count();
-    for ( int i = 0; i < cc; i++ )
+    // we need to find the embedded frame...
+    // now ONLY used in closeSlot!
+    if ( t < 0 )
+        return 0;
+    QWidget *tw = ui->ContestPageControl->widget(t);
+    if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( tw ))
     {
-       QWidget *tw = ui->ContestPageControl->widget(i);
-       if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( tw ))
-       {
-          return f;
-       }
+        return f;
     }
     return 0;
 }
@@ -862,8 +869,9 @@ void TLogContainer::ShiftTabRightActionExecute( )
 
       TContestApp::getContestApp() ->writeContestList();
 
-      tno++;
-      ui->ContestPageControl->setCurrentIndex(tno);
+      ui->ContestPageControl->tabBar()->moveTab(tno, tno + 1);
+//      tno++;
+//      ui->ContestPageControl->setCurrentIndex(tno);
 
       enableActions();
    }
@@ -888,40 +896,34 @@ void TLogContainer::ShiftTabLeftActionExecute( )
       TContestApp::getContestApp() ->contestSlotList[ tno - 1 ] = cs;
       cs->slotno = sm1;
 
-      tno--;
-      ui->ContestPageControl->setCurrentIndex( tno);
       TContestApp::getContestApp() ->writeContestList();
+
+      //      ContestPageControl->ActivePage->PageIndex = tno; // BCB - this moves the tabs
+      ui->ContestPageControl->tabBar()->moveTab(tno, tno - 1);
+//      tno--;
+//      ui->ContestPageControl->setCurrentIndex( tno);
 
       enableActions();
    }
 }
 void TLogContainer::selectContest( BaseContestLog *pc, BaseContact *pct )
 {
-   // we have double clicked on a contact in "other" or "archive" trees
-   // so we want to (a) switch tabs and (b) go to that contact edit
+    // we have double clicked on a contact in "other" or "archive" trees
+    // so we want to (a) switch tabs and (b) go to that contact edit
 
-/*
- * This needs rethinking... keep tab pointer in display contest?
- *
- * for ( int j = 0; j < ui->ContestPageControl->count(); j++ )
-   {
-      QWidget *ctab = ContestPageControl->widget(j);
-      int cc = ctab->ControlCount;
 
-      BaseContestLog * clp = pc;
-      for ( int i = 0; i < cc; i++ )
-      {
-         if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( ctab->Controls[ i ] ) )
-         {
-            if ( f->getContest() == clp )
+    for ( int j = 0; j < ui->ContestPageControl->count(); j++ )
+    {
+        QWidget *ctab = ui->ContestPageControl->widget(j);
+        if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( ctab ) )
+        {
+            if ( f->getContest() == pc )
             {
-               ContestPageControl->ActivePage = ctab;         // This doesn't call ContestPageControlChange (see TPageControl::OnChange in  help)
-               ContestPageControlChange( this );              // so the contest gets properly switched
-               f->QSOTreeSelectContact( pct );         // which triggers edit on the contact
-               return ;
+                ui->ContestPageControl->setCurrentIndex(j);         // This doesn't call ContestPageControlChange (see TPageControl::OnChange in  help)
+                on_ContestPageControl_currentChanged(0);       // so the contest gets properly switched
+                f->QSOTreeSelectContact( pct );         // which triggers edit on the contact
+                return ;
             }
-         }
-      }
-   }
-   */
+        }
+    }
 }

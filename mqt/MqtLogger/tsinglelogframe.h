@@ -3,6 +3,7 @@
 
 #include <QFrame>
 #include <QAbstractItemModel>
+#include <QTableView>
 
 namespace Ui {
 class TSingleLogFrame;
@@ -93,11 +94,11 @@ public:
 
     bool getStanza( unsigned int stanza, std::string &stanzaData );
 
-//    PVirtualNode QSOTreeClickNode;
-//    PVirtualNode matchTreeClickNode;
-//    PVirtualNode otherTreeClickNode;
-//    PVirtualNode archiveTreeClickNode;
-//    TVirtualStringTree *xferTree;
+    QModelIndex QSOTreeClickIndex;
+    QModelIndex matchTreeClickIndex;
+    QModelIndex otherTreeClickIndex;
+    QModelIndex archiveTreeClickIndex;
+    QTableView *xferTree;
 
     void GoNextUnfilled();
     void doNextContactDetailsOnLeftClick( );
@@ -118,6 +119,12 @@ private:
     void transferDetails( MatchNodeData *MatchTreeIndex );
     void transferDetails( MatchNodeListData *MatchTreeIndex );
 
+    void keyPressEvent( QKeyEvent* event );
+
+private slots:
+    void on_ContestPageChanged();
+    void on_XferPressed();
+    void on_BandMapPressed();
 };
 
 #endif // TSINGLELOGFRAME_H

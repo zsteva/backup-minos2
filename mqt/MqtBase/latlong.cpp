@@ -95,14 +95,14 @@ static struct transformelement tfmatrix[ LOC + 1 ][ LOC + 1 ] =
    };
 
 static Location interlocs[ 8 ] = {
-                                    {NUL, "DUMMY", 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, "DUMMY", 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, "DUMMY", 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, "DUMMY", 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, "DUMMY", 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, "DUMMY", 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, "DUMMY", 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, "DUMMY", 0, 0, 0.0, 0.0, 0.0},
+                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
+                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
+                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
+                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
+                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
+                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
+                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
+                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
                                  };
 static Location p_ingrid, p_outgrid;
 

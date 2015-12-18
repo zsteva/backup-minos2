@@ -26,6 +26,8 @@ public:
 
     void selectContest( BaseContestLog *pc, BaseContact *pct );
     bool show(int argc, char *argv[]);
+    TSingleLogFrame *getCurrentLogFrame();
+
 private:
     Ui::TLogContainer *ui;
 
@@ -128,6 +130,7 @@ private slots:
     void on_ContestPageControl_currentChanged(int index);
     void on_ContestPageControl_tabBarDoubleClicked(int index);
     void on_ContestPageControl_customContextMenuRequested(const QPoint &pos);
+
 };
 extern TLogContainer *LogContainer;
 

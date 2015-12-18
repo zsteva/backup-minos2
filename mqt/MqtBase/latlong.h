@@ -18,7 +18,7 @@ typedef enum gridstyle {NUL, GEO, OWN, NGR, LOC} gridstyle;
 struct Location
 {
    gridstyle gridstyle;
-   char * datastring;
+   char *datastring;
    int dataoffset, datalength;
    double northing, easting, centremeridian;
 };

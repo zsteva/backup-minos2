@@ -20,9 +20,6 @@ class MinosLoggerEvents:public QObject
 {
     Q_OBJECT
 
-private:
-   static MinosLoggerEvents mle;
-
 signals:
    void ContestPageChanged();
    void LogColumnsChanged();
@@ -50,11 +47,15 @@ signals:
    void Op1Change(QString op1, BaseContestLog *);
    void Op2Change(QString op2, BaseContestLog *);
    void ShowOperators();
+   void XferPressed();
+   void BandMapPressed();
 
    void CountrySelect(QString cty, BaseContestLog *c);
    void DistrictSelect(QString dist, BaseContestLog *c);
    void LocSelect(QString loc, BaseContestLog *c);
 public:
+   static MinosLoggerEvents mle;
+
    static void SendContestPageChanged();
    static void SendLogColumnsChanged();
    static void SendSplittersChanged();
@@ -81,6 +82,8 @@ public:
    static void SendOp1Change(QString op1, BaseContestLog *);
    static void SendOp2Change(QString op2, BaseContestLog *);
    static void SendShowOperators();
+   static void SendXferPressed();
+   static void SendBandMapPressed();
 
    static void SendCountrySelect(QString cty, BaseContestLog *c);
    static void SendDistrictSelect(QString dist, BaseContestLog *c);

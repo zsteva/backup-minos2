@@ -16,11 +16,17 @@ class QSOLogFrame : public QFrame
     Q_OBJECT
 
 public:
-    explicit QSOLogFrame(QWidget *parent = 0);
+    explicit QSOLogFrame(QWidget *parent);
     ~QSOLogFrame();
+
+    void setAsEdit()
+    {
+        edit = true;
+    }
 
 private:
     ScreenContact *partialContact; // contact being edited on screen
+    virtual bool eventFilter(QObject *obj, QEvent *event) override;
 
 
      QString oldloc;
@@ -38,9 +44,10 @@ private:
      bool validateControls( validTypes command );
      void contactValid( void );
 
-     void keyPressEvent( QKeyEvent* event );
+     void mouseDoubleClickEvent(QObject *w);
+     BaseContact *getPriorContact();
+     BaseContact *getNextContact();
 
-     void mouseDoubleClickEvent(QMouseEvent *event);
 
   protected: 	// User declarations
      std::vector <ValidatedControl *> vcs;
@@ -53,7 +60,6 @@ private:
      void calcLoc( void );
      void doAutofill( void );
      void fillRst(QLineEdit *rIl, QString &rep, const QString &mode );
-     virtual void getScreenEntry();
      virtual void showScreenEntry( );
      virtual void getScreenContactTime();
      virtual void showScreenContactTime( ScreenContact &);
@@ -67,7 +73,10 @@ private:
      bool restorePartial( void );
      void killPartial( void );
      void startNextEntry( );
+     void keyPressEvent( QKeyEvent* event );
+     virtual void selectEntry( BaseContact *lct );
 
+     virtual void getScreenEntry();
      ScreenContact screenContact;  // contact being edited on screen
      BaseContact *selectedContact;   // contact from log list selected
      bool catchup;
@@ -79,15 +88,21 @@ private:
      void lgTraceerr( int err );
 
      virtual void selectField( QWidget *v );
-     virtual void initialise( BaseContestLog * contest, bool catchup );
+     virtual void initialise(BaseContestLog * contest, bool catchup , bool edit);
      virtual void refreshOps();
      virtual void updateQSOTime(bool fromTimer = false);
      virtual void updateQSODisplay();
      virtual void closeContest();
 
+     void doGJVCancelButton_clicked();
+
+     void transferDetails( const BaseContact * lct, const BaseContestLog *matct );
+     void transferDetails( const ListContact * lct, const ContactList *matct );
 
 private:
     Ui::QSOLogFrame *ui;
+
+    bool edit;
 
     FocusWatcher *CallsignFW;
     QString CallsignLabelString;
@@ -113,6 +128,9 @@ private:
     FocusWatcher *CommentsFW;
     QString CommentsLabelString;
 
+    FocusWatcher *MainOpFW;
+    FocusWatcher *SecondOpFW;
+
     ErrorList errs;
 
     ValidatedControl *csIl;
@@ -121,12 +139,14 @@ private:
     ValidatedControl *qthIl;
     ValidatedControl *cmntIl;
 
+    void MainOpComboBox_Exit();
+    void SecondOpComboBox_Exit();
+signals:
+    void QSOFrameCancelled();
 private slots:
     void focusChange(QObject *, bool);
     void on_CatchupButton_clicked();
     void on_FirstUnfilledButton_clicked();
-    void on_MainOpComboBox_currentTextChanged(const QString &arg1);
-    void on_SecondOpComboBox_currentTextChanged(const QString &arg1);
     void on_GJVOKButton_clicked();
     void on_GJVForceButton_clicked();
     void on_GJVCancelButton_clicked();
@@ -136,6 +156,10 @@ private slots:
     void on_CallsignEdit_textChanged(const QString &arg1);
     void on_LocEdit_textChanged(const QString &arg1);
     void on_ModeButton_clicked();
+    void on_InsertBeforeButton_clicked();
+    void on_InsertAfterButton_clicked();
+    void on_PriorButton_clicked();
+    void on_NextButton_clicked();
 };
 
 #endif // QSOLOGFRAME_H

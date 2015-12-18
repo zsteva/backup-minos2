@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>TQSOEditDlg</class>
  <widget class="QDialog" name="TQSOEditDlg">
@@ -12,7 +13,30 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTreeView" name="QSOHistoryTree"/>
+   </item>
+   <item>
+    <widget class="QSOLogFrame" name="GJVQSOEditFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QSOLogFrame</class>
+   <extends>QFrame</extends>
+   <header>qsologframe.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
