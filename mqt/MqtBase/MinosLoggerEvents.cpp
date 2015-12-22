@@ -101,9 +101,14 @@ void MinosLoggerEvents::SendScreenContactChanged(ScreenContact *sct, BaseContest
     emit mle.ScreenContactChanged(sct, c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendReplaceLogList(TMatchCollection *matchCollection, BaseContestLog *c)
+void MinosLoggerEvents::SendReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *c)
 {
-    emit mle.ReplaceLogList(matchCollection, c);
+    emit mle.ReplaceThisLogList(matchCollection, c);
+}
+//---------------------------------------------------------------------------
+void MinosLoggerEvents::SendReplaceOtherLogList(TMatchCollection *matchCollection, BaseContestLog *c)
+{
+    emit mle.ReplaceOtherLogList(matchCollection, c);
 }
 //---------------------------------------------------------------------------
 void MinosLoggerEvents::SendReplaceListList(TMatchCollection *matchCollection, BaseContestLog *c)
@@ -151,7 +156,11 @@ void MinosLoggerEvents::SendBandMapPressed()
 {
     emit mle.BandMapPressed();
 }
-
+//---------------------------------------------------------------------------
+void MinosLoggerEvents::SendTimerDistribution()
+{
+    emit mle.TimerDistribution();
+}
 //---------------------------------------------------------------------------
 void MinosLoggerEvents::SendCountrySelect(QString cty, BaseContestLog *c)
 {

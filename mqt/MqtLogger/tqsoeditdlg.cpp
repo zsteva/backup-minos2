@@ -13,21 +13,20 @@ class QSOHistoryNode
       int historyOffset;
       QSOHistoryNode() : root( 0 ), historyOffset( -1 )
       {}
-}
-;
+};
 //---------------------------------------------------------------------------
 TQSOEditDlg::TQSOEditDlg(QWidget *parent, bool catchup, bool unfilled )
     :QDialog(parent),
     ui(new Ui::TQSOEditDlg),
     firstContact( 0 ), contest( 0 ),
     catchup(catchup), unfilled(unfilled)
-//    ,EL_AfterSelectContact ( EN_AfterSelectContact, & AfterSelectContact_Event )
 {
     ui->setupUi(this);
 
     ui->GJVQSOEditFrame->setAsEdit();
 
     connect(ui->GJVQSOEditFrame, SIGNAL(QSOFrameCancelled()), this, SLOT(on_EditFrameCancelled()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(BaseContact *, BaseContestLog *)), this, SLOT(on_AfterSelectContact(BaseContact *, BaseContestLog *)));
 }
 TQSOEditDlg::~TQSOEditDlg()
 {
@@ -40,7 +39,7 @@ int TQSOEditDlg::exec()
 
     // we had this so that we could close the form easily on startup
     // when the conatct was zero - not sure if still needed
-    ui->GJVQSOEditFrame->initialise( contest, /*this,*/ catchup, true );
+    ui->GJVQSOEditFrame->initialise( contest, /*this,*/ catchup );
 
     // Supress the tabstops we weren't able to manage in the form designed
     // to discover where they went, uncomment the top block in
@@ -97,24 +96,39 @@ void TQSOEditDlg::selectContact( BaseContestLog * ccontest, DisplayContestContac
    firstContact = lct;
 }
 //---------------------------------------------------------------------------
-/*
-void TQSOEditDlg::AfterSelectContact_Event( MinosEventBase & Event)
+void TQSOEditDlg::addTreeRoot(BaseContact *lct)
 {
-   ActionEvent2<BaseContact *, BaseContestLog *, EN_AfterSelectContact> & S = dynamic_cast<ActionEvent2<BaseContact *, BaseContestLog *, EN_AfterSelectContact> &> ( Event );
-   if (contest == S.getContext())
-   {
-      BaseContact *lct = S.getData();
-      if (lct)
-      {
-         QSOHistoryTree->RootNodeCount = 0;
-         QSOHistoryTree->RootNodeCount = lct->getHistory().size();
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem(ui->QSOHistoryTree);
 
-         QSOHistoryTree->FullExpand();
-      }
-      refreshOps(GJVQSOEditFrame->screenContact);
-   }
+    QString line = lct->updtime.getDate( DTGACCURATE ) + " " + lct->updtime.getTime( DTGACCURATE ) + " UTC";
+    treeItem->setText(0, line);
+
+    lct->getText(line, contest);
+    addTreeChild(treeItem, line);
+    treeItem->setExpanded(true);
 }
-*/
+
+void TQSOEditDlg::addTreeChild(QTreeWidgetItem *parent,
+                  QString text)
+{
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
+
+    treeItem->setText(0, text);
+
+    parent->addChild(treeItem);
+}
+void TQSOEditDlg::on_AfterSelectContact( BaseContact *lct, BaseContestLog *contest)
+{
+  ui->QSOHistoryTree->clear();
+  if (lct)
+  {
+      for (unsigned int i = 0; i < lct->getHistory().size(); ++i)
+      {
+          addTreeRoot(&lct->getHistory()[i]);
+      }
+  }
+  refreshOps(ui->GJVQSOEditFrame->screenContact);
+}
 //---------------------------------------------------------------------------
 void TQSOEditDlg::refreshOps( ScreenContact &screenContact )
 {

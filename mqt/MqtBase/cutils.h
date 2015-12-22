@@ -40,7 +40,7 @@ extern QString trimr( const QString & );
 
 extern QString makeADIFField( const QString &fieldname, const QString &content );
 extern QString makeADIFField( const QString &fieldname, int content );
-extern QString TDTToCanonical( QDateTime d );
+extern QString TDTToCanonical( QString d );
 extern QDateTime CanonicalToTDT( QString cdtg );
 
 const int bsize = 256;

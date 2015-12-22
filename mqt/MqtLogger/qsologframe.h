@@ -67,7 +67,6 @@ private:
      virtual bool isTimeEdit(QLineEdit *tle);
      virtual void checkTimeEditExit();
      bool checkLogEntry(bool checkDTG );
-     virtual void setDTGNotValid(ScreenContact *vcct);
   public: 		// User declarations
      bool savePartial( void );
      bool restorePartial( void );
@@ -75,6 +74,7 @@ private:
      void startNextEntry( );
      void keyPressEvent( QKeyEvent* event );
      virtual void selectEntry( BaseContact *lct );
+     void setXferEnabled(bool);
 
      virtual void getScreenEntry();
      ScreenContact screenContact;  // contact being edited on screen
@@ -88,7 +88,7 @@ private:
      void lgTraceerr( int err );
 
      virtual void selectField( QWidget *v );
-     virtual void initialise(BaseContestLog * contest, bool catchup , bool edit);
+     virtual void initialise(BaseContestLog * contest, bool catchup );
      virtual void refreshOps();
      virtual void updateQSOTime(bool fromTimer = false);
      virtual void updateQSODisplay();
@@ -160,6 +160,9 @@ private slots:
     void on_InsertAfterButton_clicked();
     void on_PriorButton_clicked();
     void on_NextButton_clicked();
+
+    void on_TimeDisplayTimer();
+
 };
 
 #endif // QSOLOGFRAME_H

@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QMenu>
 #include <QSettings>
+#include <QTimer>
+#include <QLabel>
 
 namespace Ui {
 class TLogContainer;
@@ -28,8 +30,17 @@ public:
     bool show(int argc, char *argv[]);
     TSingleLogFrame *getCurrentLogFrame();
 
+    QLabel *sblabel0;
+    QLabel *sblabel1;
+    QLabel *sblabel2;
+
+
 private:
     Ui::TLogContainer *ui;
+
+
+    QTimer TimerUpdateQSOTimer;
+
 
     QMenu TabPopup;
 
@@ -131,6 +142,8 @@ private slots:
     void on_ContestPageControl_tabBarDoubleClicked(int index);
     void on_ContestPageControl_customContextMenuRequested(const QPoint &pos);
 
+    void on_TimeDisplayTimer( );
+    void on_ReportOverstrike(bool , BaseContestLog * );
 };
 extern TLogContainer *LogContainer;
 

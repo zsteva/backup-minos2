@@ -3,7 +3,8 @@
 
 #include <QFrame>
 #include <QAbstractItemModel>
-#include <QTableView>
+#include <QTreeView>
+#include <QTreeWidget>
 
 namespace Ui {
 class TSingleLogFrame;
@@ -69,13 +70,7 @@ public:
     void goSerial( );
     BaseContestLog * getContest();
     void closeContest();
-    void showMatchHeaders( );
-    void showMatchQSOs( TMatchCollection *matchCollection );
-    void showMatchList( TMatchCollection *matchCollection );
-    void matchDistrict( const std::string &qth );
-    void matchCountry( const std::string &csCs );
-    void replaceContestList( TMatchCollection *matchCollection );
-    void replaceListList( TMatchCollection *matchCollection );
+
     void setActiveControl( int *Key );
     QString makeEntry( bool saveMinos );
     void exportContest();
@@ -89,7 +84,6 @@ public:
     void setMode( QString m );
     void setFreq( QString f );
     void updateTrees();
-    void updateQSOTime(bool fromTimer = false);
     void updateQSODisplay();
 
     bool getStanza( unsigned int stanza, std::string &stanzaData );
@@ -98,7 +92,7 @@ public:
     QModelIndex matchTreeClickIndex;
     QModelIndex otherTreeClickIndex;
     QModelIndex archiveTreeClickIndex;
-    QTableView *xferTree;
+    QTreeView *xferTree;
 
     void GoNextUnfilled();
     void doNextContactDetailsOnLeftClick( );
@@ -121,10 +115,27 @@ private:
 
     void keyPressEvent( QKeyEvent* event );
 
+    QTreeWidgetItem *addTreeRoot(QTreeWidget *tree, QString text);
+    void addTreeChild(QTreeWidgetItem *parent, QString text);
+
+//    void showMatchHeaders( );
+    void showThisMatchQSOs( TMatchCollection *matchCollection );
+    void showOtherMatchQSOs( TMatchCollection *matchCollection );
+    void showMatchList( TMatchCollection *matchCollection );
+
 private slots:
     void on_ContestPageChanged();
     void on_XferPressed();
     void on_BandMapPressed();
+    void NextContactDetailsTimerTimer();
+    void on_QSOTable_doubleClicked(const QModelIndex &index);
+    void on_MatchStarting(BaseContestLog*);
+    void on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* );
+    void on_ReplaceOtherLogList( TMatchCollection *matchCollection, BaseContestLog* );
+    void on_ReplaceListList( TMatchCollection *matchCollection, BaseContestLog* );
+    void on_ScrollToDistrict( const QString &qth, BaseContestLog* );
+    void on_ScrollToCountry( const QString &csCs, BaseContestLog* );
+
 };
 
 #endif // TSINGLELOGFRAME_H

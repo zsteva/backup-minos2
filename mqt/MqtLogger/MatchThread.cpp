@@ -15,30 +15,18 @@
 #include "tlogcontainer.h"
 
 //---------------------------------------------------------------------------
-
-//   Important: Methods and properties of objects in VCL can only be
-//   used in a method called using Synchronize, for example:
-//
-//      Synchronize(UpdateCaption);
-//
-//   where UpdateCaption could look like:
-//
-//      void TMatchThread::UpdateCaption()
-//      {
-//        Form1->Caption = "Updated in a thread";
-//      }
-//---------------------------------------------------------------------------
 TMatchThread *TMatchThread::matchThread = 0;
 
  TMatchThread::TMatchThread()
-      : QThread(   ), myMatches( 0 ), myListMatches( 0 ), mct(0), Terminated(false)
-//      ,EL_ScreenContactChanged ( EN_ScreenContactChanged, & ScreenContactChanged_Event )
+      : QThread(   ), myThisMatches( 0 ), myOtherMatches( 0 ),myListMatches( 0 ), mct(0), Terminated(false)
 //      ,EL_CountrySelect ( EN_CountrySelect, & CountrySelect_Event )
 //      ,EL_DistrictSelect ( EN_DistrictSelect, & DistrictSelect_Event )
 //      ,EL_LocatorSelect ( EN_LocatorSelect, & LocatorSelect_Event )
 {
-   logMatch = new LogMatcher();
+   thisLogMatch = new ThisLogMatcher();
+   otherLogMatch = new OtherLogMatcher();
    listMatch = new ListMatcher();
+   connect(&MinosLoggerEvents::mle, SIGNAL(ScreenContactChanged(ScreenContact*,BaseContestLog*)), this, SLOT(on_ScreenContactChanged(ScreenContact*,BaseContestLog*)));
 }
 void TMatchThread::FinishMatchThread()
 {
@@ -53,16 +41,17 @@ void TMatchThread::FinishMatchThread()
 void TMatchThread::InitialiseMatchThread()
 {
    if ( !matchThread )
-      matchThread = new TMatchThread();
-}
-void TMatchThread::ScreenContactChanged_Event ( /*MinosEventBase & Event*/ )
-{
-    /*
-   ActionEvent2<ScreenContact *, BaseContestLog *, EN_ScreenContactChanged> & S = dynamic_cast<ActionEvent2<ScreenContact *, BaseContestLog *, EN_ScreenContactChanged> &> ( Event );
-   BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-   if (S.getContext() == ct)
    {
-      mct = S.getData();
+      matchThread = new TMatchThread();
+      matchThread->start(LowPriority);
+   }
+}
+void TMatchThread::on_ScreenContactChanged(ScreenContact *sct, BaseContestLog *context)
+{
+   BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+   if (context == ct)
+   {
+       mct = sct;
       if (mct)
       {
          // we want to initialise the search from the screen contact - break what couplings we can
@@ -70,7 +59,6 @@ void TMatchThread::ScreenContactChanged_Event ( /*MinosEventBase & Event*/ )
          startMatch();
       }
    }
-   */
 }
 //---------------------------------------------------------------------------
 void TMatchThread::CountrySelect_Event ( /*MinosEventBase & Event*/ )
@@ -127,16 +115,19 @@ void TMatchThread::Execute()
    {
       while ( !Terminated )
       {
-         logMatch->initMatch();  // does nothing unless matchRequired is true
+         thisLogMatch->initMatch();  // does nothing unless matchRequired is true
+         otherLogMatch->initMatch();  // does nothing unless matchRequired is true
          listMatch->initMatch();
 
          // so it only does a max of 20+20 contacts before switching
          // to "other" of log/list
-         if ( !logMatch->idleMatch( 20 ) && !listMatch->idleMatch( 20 ) )
-            sleep(100);
+         if ( !thisLogMatch->idleMatch( 20 ) && !otherLogMatch->idleMatch( 20 ) && !listMatch->idleMatch( 20 ) )
+            msleep(100);
       }
-      delete logMatch;
-      logMatch = 0;
+      delete thisLogMatch;
+      thisLogMatch = 0;
+      delete otherLogMatch;
+      otherLogMatch = 0;
       delete listMatch;
       listMatch = 0;
    }
@@ -149,7 +140,6 @@ void TMatchThread::Execute()
 }
 void TMatchThread::run()
 {
-    setPriority(LowPriority);
     Execute();
 }
 
@@ -159,87 +149,70 @@ void TMatchThread::run()
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    MinosLoggerEvents::SendMatchStarting(ct);
 
-   matchThread->logMatch->startMatch( ce );
+   matchThread->thisLogMatch->startMatch( ce );
+   matchThread->otherLogMatch->startMatch( ce );
    matchThread->listMatch->startMatch( ce );
 
 }
 //---------------------------------------------------------------------------
-void TMatchThread::doReplaceContestList( void )
+void TMatchThread::replaceThisContestList( TMatchCollection *matchCollection )
 {
-   try
-   {
-      BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-      MinosLoggerEvents::SendReplaceLogList(myMatches, ct);
-   }
-   catch ( ... )
-   {}
+   myThisMatches = matchCollection;
+   BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+   MinosLoggerEvents::SendReplaceThisLogList(myThisMatches, ct);
 }
-void TMatchThread::replaceContestList( TMatchCollection *matchCollection )
+void TMatchThread::replaceOtherContestList( TMatchCollection *matchCollection )
 {
-   myMatches = matchCollection;
-   //Synchronize( &doReplaceContestList );
+   myOtherMatches = matchCollection;
+   BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+   MinosLoggerEvents::SendReplaceOtherLogList(myOtherMatches, ct);
 }
 //---------------------------------------------------------------------------
-void TMatchThread::doReplaceListList( void )
-{
-   try
-   {
-      BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-      MinosLoggerEvents::SendReplaceListList(myListMatches, ct);
-   }
-   catch ( ... )
-   {}
-}
 void TMatchThread::replaceListList( TMatchCollection *matchCollection )
 {
    myListMatches = matchCollection;
-   //Synchronize( &doReplaceListList );
+   BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+   MinosLoggerEvents::SendReplaceListList(myListMatches, ct);
 }
 //---------------------------------------------------------------------------
-void TMatchThread::ShowMatchStatus( QString mess )
+void TMatchThread::ShowThisMatchStatus( QString mess )
 {
-   matchStatus = mess;
+   thisMatchStatus = mess;
 }
-QString TMatchThread::getMatchStatus( )
+QString TMatchThread::getThisMatchStatus( )
 {
    if ( matchThread )
    {
-      return matchThread->matchStatus;
+      return matchThread->thisMatchStatus;
+   }
+   return "";
+}
+void TMatchThread::ShowOtherMatchStatus( QString mess )
+{
+   otherMatchStatus = mess;
+}
+QString TMatchThread::getOtherMatchStatus( )
+{
+   if ( matchThread )
+   {
+      return matchThread->otherMatchStatus;
    }
    return "";
 }
 
 //=============================================================================
-void TMatchThread::doMatchCountry( void )
-{
-   try
-   {
-      BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-      MinosLoggerEvents::SendScrollToCountry(ctrymatch, ct);
-   }
-   catch ( ... )
-   {}
-}
 void TMatchThread::matchCountry( QString cs )
 {
    ctrymatch = cs;
-   //Synchronize( &doMatchCountry );
+   BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+   MinosLoggerEvents::SendScrollToCountry(ctrymatch, ct);
 }
 //=============================================================================
-void TMatchThread::doMatchDistrict( void )
-{
-   try
-   {
-      BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-      MinosLoggerEvents::SendScrollToDistrict(distmatch, ct);
-   }
-   catch ( ... )
-   {}
-}
 void  TMatchThread::matchDistrict( QString dist )
 {
    distmatch = dist;
-   //Synchronize( &doMatchDistrict );
+   BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+   MinosLoggerEvents::SendScrollToDistrict(distmatch, ct);
 }
 
 //=============================================================================
@@ -255,7 +228,9 @@ int TMatchCollection::getContactCount( void )
 }
 MatchContact *TMatchCollection::pcontactAt( int i )
 {
-   return matchList.at( i );
+    if (i > matchList.size())
+        return 0;
+    return matchList.at( i );
 }
 //=============================================================================
 matchElement::matchElement( void ) : match( false ), empty( true )
@@ -365,7 +340,8 @@ void Matcher::clearmatchall( )
    ce = 0;
    thisContestMatched = 0;
 
-   TMatchThread::getMatchThread() ->ShowMatchStatus( "" );
+   TMatchThread::getMatchThread() ->ShowThisMatchStatus( "" );
+   TMatchThread::getMatchThread() ->ShowOtherMatchStatus( "" );
 }
 // mark things that we want to start a match
 void Matcher::startMatch( CountryEntry *c )
@@ -457,19 +433,19 @@ void Matcher::initMatch( void )
    }
 }
 //==============================================================================
-LogMatcher::LogMatcher()
+ThisLogMatcher::ThisLogMatcher()
 {}
-LogMatcher::~LogMatcher()
+ThisLogMatcher::~ThisLogMatcher()
 {}
-void LogMatcher::matchDistrict( const QString &extraText )
+void ThisLogMatcher::matchDistrict( const QString &extraText )
 {
    TMatchThread::getMatchThread() ->matchDistrict( extraText );   // scroll to
 }
-void LogMatcher::matchCountry( const QString &cs )
+void ThisLogMatcher::matchCountry( const QString &cs )
 {
    TMatchThread::getMatchThread() ->matchCountry( cs );   // scroll to
 }
-void LogMatcher::addMatch( BaseContact *cct, BaseContestLog * ccon )
+void ThisLogMatcher::addMatch( BaseContact *cct, BaseContestLog * ccon )
 {
    if ( !cct )
       return ;
@@ -485,12 +461,332 @@ void LogMatcher::addMatch( BaseContact *cct, BaseContestLog * ccon )
    {
       delete mct;
    }
-   if ( ccon == TContestApp::getContestApp() ->getCurrentContest() )
+   thisContestMatched = matchCollection->matchList.size();
+}
+bool ThisLogMatcher::idleMatch( int limit )
+{
+    try
+    {
+       // this is called repeatedly off the timer to execute the match
+       if ( !matchStarted || ( contestIndex < 0 ) )
+          return false;				// nothing to do (yet)
+
+       int cnt = matchCollection->matchList.size();
+       if ( ( firstMatch == Starting ) && ( ( mp == Exact ) || ( mp == Country ) ) )
+       {
+          contestIndex = 0;
+          contactIndex = 0;
+          firstMatch = MainContest;
+       }
+       else
+          if ( ( contestIndex >= 1 ) || ( cnt > MATCH_LIM ) )
+          {
+             bool EndScan = true;
+
+             if ( cnt == 0 )
+             {
+                switch ( mp )
+                {
+                   case Exact:
+                      {
+                         if ( matchcs.match )
+                         {
+                            bool dropthrough = false;
+                            std::string smstr = matchcs.mstr.toStdString();
+                            const char *c = smstr.c_str();
+                            // need to trim out any leading and trailing
+                            while ( *c && *c != '/' )
+                               c++;
+
+                            const char *c2 = c;
+                            if ( *c2 )
+                               c2++;	// skip the first /
+                            while ( *c2 && *c2 != '/' )
+                               c2++;
+
+                            if ( *c && *c2 )
+                            {
+                               matchcs.mstr = QString( c ).left(c2 - c );	// copy back over ourselves
+                            }
+                            else
+                               if ( *c && ( c - smstr.c_str() < 3 ) && ( strlen( c ) > 2 ) )
+                               {
+                                  // prefix less than 3 chars and suffix more than 1 character
+                                  matchcs.mstr = QString( c );	// copy back over ourselves
+                               }
+                               else
+                                  if ( *c == '/' )
+                                  {
+                                     matchcs.mstr = matchcs.mstr.left( c - smstr.c_str() );	// copy back over ourselves
+                                     //                                 *c = 0;				// force a stop on the /
+                                  }
+                                  else
+                                  {
+                                     // want to drop through
+                                     dropthrough = true;
+                                  }
+
+                            if ( !dropthrough )
+                            {
+                               TMatchThread::getMatchThread() ->ShowThisMatchStatus( " - No exact match" );
+                               mp = NoSuffix;
+                               contestIndex = 0;
+                               contactIndex = 0;
+                               firstMatch = MainContest;
+                               EndScan = false;
+                               break;
+                            }
+                         }
+                      }
+                      // or no /P anyway, so drop through
+
+                   case NoSuffix:
+                      {
+                         if ( matchcs.match && ( matchloc.match || matchqth.match ) )
+                         {
+                            matchloc.set( "" );
+                            matchqth.set( "" );
+                            mp = NoLoc;
+                            contestIndex = 0;
+                            contactIndex = 0;
+                            firstMatch = MainContest;
+                            EndScan = false;
+                            TMatchThread::getMatchThread() ->ShowThisMatchStatus( " - No match No Suffix" );
+                            break;
+                         }
+                      }
+                      // or no loc anyway, so drop through
+
+                   case NoLoc:
+                      {
+                         if ( matchcs.match )
+                         {
+                            // We know that cs is not empty
+                            // strip temp cs of its leading country and number
+                             std::string smstrStart = matchcs.mstr.toStdString();
+                            const char * mstrStart = smstrStart.c_str();
+                            const char * c = &mstrStart[ smstrStart.length() ];
+
+                            while ( c > mstrStart )
+                            {
+                               if ( !isdigit( *( c - 1 ) ) )
+                                  c--;
+                               else
+                                  break;
+                            }
+
+                            if ( c > mstrStart )   	// i.e. we havent got back to the start
+                            {
+                               if ( *c )   			// we would be left with something
+                               {
+                                  matchcs.mstr = c;	// copy back over
+                                  mp = Body;
+                                  contestIndex = 0;
+                                  contactIndex = 0;
+                                  firstMatch = MainContest;
+                                  EndScan = false;
+                                  TMatchThread::getMatchThread() ->ShowThisMatchStatus( " - No match No LOC" );
+                                  break;
+                               }
+                            }
+                         }
+                      }
+                      // else we have already done what we can, so drop through
+
+                   case Country:
+                   case District:
+                   case Locator:
+                   case Body:
+                      {
+                         // we have finished.
+                         break;
+                      }
+                }
+             }
+
+             if ( EndScan )
+             {
+                matchStarted = false;
+                setMatchRequired( false );
+
+                BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+                if ( bool( ct ) && ( mp != Country )  && ( mp != District )  && ( mp != Locator ) )
+                   addMatch( ct->DupSheet.getCurDup(), ct );	// in case it isn't already
+
+                QString buff;
+                // now make it display
+                replaceList( matchCollection );
+
+                if ( thisContestMatched )
+                {
+                   // conteste focused the top line of matches here
+                   // want to manage plurals, and local/other contests
+                   QString matchSuffix = "Possible";
+                   if (mp == Country)
+                   {
+                      matchSuffix = "Country";
+                   }
+                   else if (mp == District)
+                   {
+                      matchSuffix = "District";
+                   }
+                   else if (mp == Locator)
+                   {
+                      matchSuffix = "Locator";
+                   }
+                   buff = QString( " - %1%2 %3 matches" )
+                           .arg ( ( cnt > MATCH_LIM ) ? ">" : "" )
+                           .arg(thisContestMatched)
+                           .arg( ( mp == Exact ) ? "" : matchSuffix );
+                }
+                else
+                {
+                   buff = " - No match";
+                }
+                TMatchThread::getMatchThread() ->ShowThisMatchStatus( buff );
+                contestIndex = -1;
+                return false;
+             }
+          }
+
+       BaseContestLog *ccon = TContestApp::getContestApp() ->getCurrentContest();		// we always go through current FIRST! to make sure we see it
+
+       while (  matchStarted && limit > 0 )
+       {
+          if ( !ccon ||
+               ( contactIndex >= ccon->getContactCount() )
+             )
+          {
+             // we need to move on
+
+             contactIndex = 0;
+             contestIndex++;
+             return true;
+          }
+          BaseContact *cct = ccon->pcontactAt( contactIndex++ );
+          if ( !cct )
+             return true;
+
+          // now do the match
+
+          if ( mp != Country && mp != District && mp != Locator )
+          {
+             bool csmatch = false;
+             bool locmatch = false;
+             bool qthmatch = false;
+
+             csmatch = matchcs.checkMatch( ( ( mp == Body ) ? ( cct->cs.body ) : ( cct->cs.fullCall.getValue() ) ) );
+
+             if ( csmatch )
+             {
+                locmatch = matchloc.checkMatch( cct->loc.loc.getValue() );
+             }
+
+             if ( csmatch && locmatch )
+             {
+                if ( !matchqth.match || matchqth.empty )
+                {
+                   qthmatch = true;
+                }
+                else
+                {
+                   TEMPBUFF( uprqth, EXTRALENGTH + 1 );
+                   strcpysp( uprqth, cct->extraText.getValue(), EXTRALENGTH );
+                   strupr( uprqth );
+                   qthmatch = matchqth.checkMatch( uprqth );
+
+                   if ( bool( ccon ) && !qthmatch )
+                   {
+                      if ( ccon->districtMult.getValue() )
+                      {
+                         // attempt match against district code
+                         if ( cct->districtMult && wildComp( cct->districtMult->districtCode, matchqth.mstr ) )
+                            qthmatch = true;
+                      }
+                   }
+                }
+             }
+
+             if ( csmatch && locmatch && qthmatch )
+             {
+                addMatch( cct, ccon );
+                if ( matchCollection->matchList.size() > MATCH_LIM )
+                   break;
+             }
+          }
+          else if (mp == Country)
+          {
+             if ( cct->ctryMult && ( cct->ctryMult == ce ) )
+             {
+                addMatch( cct, ccon );
+                if ( matchCollection->matchList.size() > MATCH_LIM )
+                   break;
+             }
+
+          }
+          else if (mp == District)
+          {
+ /*            if ( cct->ctryMult && ( cct->ctryMult == ce ) )
+             {
+                addMatch( cct, ccon );
+                if ( matchCollection->matchList.size() > MATCH_LIM )
+                   break;
+             }
+ */
+          }
+          else if (mp == Locator)
+          {
+ /*            if ( cct->ctryMult && ( cct->ctryMult == ce ) )
+             {
+                addMatch( cct, ccon );
+                if ( matchCollection->matchList.size() > MATCH_LIM )
+                   break;
+             }
+ */
+          }
+       }
+    }
+    catch ( ... )
+    {
+       trace( "Exception in log idle match" );
+    }
+    return true;
+}
+void ThisLogMatcher::replaceList( TMatchCollection *matchCollection )
+{
+   TMatchThread::getMatchThread() ->replaceThisContestList( matchCollection );
+}
+//==============================================================================
+OtherLogMatcher::OtherLogMatcher()
+{}
+OtherLogMatcher::~OtherLogMatcher()
+{}
+void OtherLogMatcher::matchDistrict( const QString &extraText )
+{
+   TMatchThread::getMatchThread() ->matchDistrict( extraText );   // scroll to
+}
+void OtherLogMatcher::matchCountry( const QString &cs )
+{
+   TMatchThread::getMatchThread() ->matchCountry( cs );   // scroll to
+}
+void OtherLogMatcher::addMatch( BaseContact *cct, BaseContestLog * ccon )
+{
+   if ( !cct )
+      return ;
+
+   MatchContact *mct = new MatchLogContact( ccon, cct );
+
+   bool exists = std::binary_search( matchCollection->matchList.begin(), matchCollection->matchList.end(), mct );
+   if ( !exists )
    {
-      thisContestMatched = matchCollection->matchList.size();
+      matchCollection->matchList.insert( mct );
+   }
+   else
+   {
+      delete mct;
    }
 }
-bool LogMatcher::idleMatch( int limit )
+bool OtherLogMatcher::idleMatch( int limit )
 {
    try
    {
@@ -503,7 +799,7 @@ bool LogMatcher::idleMatch( int limit )
       {
          contestIndex = 0;
          contactIndex = 0;
-         firstMatch = MainContest;
+         firstMatch = Rest;
       }
       else
          if ( ( contestIndex >= TContestApp::getContestApp() ->getContestSlotCount() ) || ( cnt > MATCH_LIM ) )
@@ -555,11 +851,11 @@ bool LogMatcher::idleMatch( int limit )
 
                            if ( !dropthrough )
                            {
-                              TMatchThread::getMatchThread() ->ShowMatchStatus( " - No exact match" );
+                              TMatchThread::getMatchThread() ->ShowOtherMatchStatus( " - No exact match" );
                               mp = NoSuffix;
                               contestIndex = 0;
                               contactIndex = 0;
-                              firstMatch = MainContest;
+                              firstMatch = Rest;
                               EndScan = false;
                               break;
                            }
@@ -576,9 +872,9 @@ bool LogMatcher::idleMatch( int limit )
                            mp = NoLoc;
                            contestIndex = 0;
                            contactIndex = 0;
-                           firstMatch = MainContest;
+                           firstMatch = Rest;
                            EndScan = false;
-                           TMatchThread::getMatchThread() ->ShowMatchStatus( " - No match No Suffix" );
+                           TMatchThread::getMatchThread() ->ShowOtherMatchStatus( " - No match No Suffix" );
                            break;
                         }
                      }
@@ -610,9 +906,9 @@ bool LogMatcher::idleMatch( int limit )
                                  mp = Body;
                                  contestIndex = 0;
                                  contactIndex = 0;
-                                 firstMatch = MainContest;
+                                 firstMatch = Rest;
                                  EndScan = false;
-                                 TMatchThread::getMatchThread() ->ShowMatchStatus( " - No match No LOC" );
+                                 TMatchThread::getMatchThread() ->ShowOtherMatchStatus( " - No match No LOC" );
                                  break;
                               }
                            }
@@ -626,9 +922,10 @@ bool LogMatcher::idleMatch( int limit )
                   case Body:
                      {
                         // we have finished.
+                        EndScan = true;
                         break;
                      }
-               }
+            }
             }
 
             if ( EndScan )
@@ -636,90 +933,34 @@ bool LogMatcher::idleMatch( int limit )
                matchStarted = false;
                setMatchRequired( false );
 
-               BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-               if ( bool( ct ) && ( mp != Country )  && ( mp != District )  && ( mp != Locator ) )
-                  addMatch( ct->DupSheet.getCurDup(), ct );	// in case it isn't already
-
-               QString buff;
                // now make it display
                replaceList( matchCollection );
 
-               if ( thisContestMatched )
-               {
-                  // conteste focused the top line of matches here
-                  // want to manage plurals, and local/other contests
-                  QString matchSuffix = "Possible";
-                  if (mp == Country)
-                  {
-                     matchSuffix = "Country";
-                  }
-                  else if (mp == District)
-                  {
-                     matchSuffix = "District";
-                  }
-                  else if (mp == Locator)
-                  {
-                     matchSuffix = "Locator";
-                  }
-                  buff = QString( " - %1%2 %3 matches" )
-                          .arg ( ( cnt > MATCH_LIM ) ? ">" : "" )
-                          .arg(thisContestMatched)
-                          .arg( ( mp == Exact ) ? "" : matchSuffix );
-               }
-               else
-               {
-                  buff = " - No match";
-               }
-               TMatchThread::getMatchThread() ->ShowMatchStatus( buff );
+               QString buff = " - No match";
+
+               TMatchThread::getMatchThread() ->ShowOtherMatchStatus( buff );
                contestIndex = -1;
                return false;
             }
          }
 
-      BaseContestLog * ccon;
-
-      if ( firstMatch == MainContest )
+      ContestSlot *cs = TContestApp::getContestApp() ->contestSlotList.at( contestIndex );
+      BaseContestLog * ccon = cs->slot;
+      if ( ccon == TContestApp::getContestApp() ->getCurrentContest() )
       {
-         ccon = TContestApp::getContestApp() ->getCurrentContest();		// we always go through current FIRST! to make sure we see it
-      }
-      else
-      {
-         ContestSlot *cs = TContestApp::getContestApp() ->contestSlotList.at( contestIndex );
-         ccon = cs->slot;
-         if ( ccon == TContestApp::getContestApp() ->getCurrentContest() )
-            contactIndex = ccon->getContactCount();	// force to go on
+         contactIndex = ccon->getContactCount();	// force to go on
       }
 
       while (  matchStarted && limit > 0 )
       {
-//         limit -= 1;
          if ( !ccon ||
               ( contactIndex >= ccon->getContactCount() )
             )
          {
             // we need to move on
 
-            bool next_needed = true;
             contactIndex = 0;
-
-            if ( firstMatch == MainContest )
-            {
-               // we have done the current ContestLog, go to the rest
-               firstMatch = Rest;
-               contestIndex = -1;	// as it gets ++ed lower down
-            }
-
-            if ( next_needed )
-            {
-               // go to the next ContestLog
-               contestIndex++;
-               if ( contestIndex < TContestApp::getContestApp() ->getContestSlotCount() )
-               {
-                  // ContestLog is valid
-                  ContestSlot * cs = TContestApp::getContestApp() ->contestSlotList.at( contestIndex );
-                  ccon = cs->slot;
-               }
-            }
+            contestIndex++;
             return true;
          }
          BaseContact *cct = ccon->pcontactAt( contactIndex++ );
@@ -734,7 +975,16 @@ bool LogMatcher::idleMatch( int limit )
             bool locmatch = false;
             bool qthmatch = false;
 
-            csmatch = matchcs.checkMatch( ( ( mp == Body ) ? ( cct->cs.body ) : ( cct->cs.fullCall.getValue() ) ) );
+            QString matchPart;
+            if (mp == Body)
+            {
+                matchPart = cct->cs.body;
+            }
+            else
+            {
+                matchPart = cct->cs.fullCall.getValue();
+            }
+            csmatch = matchcs.checkMatch( matchPart );
 
             if ( csmatch )
             {
@@ -754,7 +1004,7 @@ bool LogMatcher::idleMatch( int limit )
                   strupr( uprqth );
                   qthmatch = matchqth.checkMatch( uprqth );
 
-                  if ( bool( ccon ) && !qthmatch )
+                  if ( ccon != nullptr && !qthmatch )
                   {
                      if ( ccon->districtMult.getValue() )
                      {
@@ -811,10 +1061,11 @@ bool LogMatcher::idleMatch( int limit )
    }
    return true;
 }
-void LogMatcher::replaceList( TMatchCollection *matchCollection )
+void OtherLogMatcher::replaceList( TMatchCollection *matchCollection )
 {
-   TMatchThread::getMatchThread() ->replaceContestList( matchCollection );
+   TMatchThread::getMatchThread() ->replaceOtherContestList( matchCollection );
 }
+
 //==============================================================================
 ListMatcher::ListMatcher()
 {}

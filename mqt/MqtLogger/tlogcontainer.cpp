@@ -36,6 +36,13 @@ TLogContainer::TLogContainer(QWidget *parent) :
     QByteArray geometry = settings.value("geometry").toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
+
+    sblabel0 = new QLabel( "" );
+    statusBar() ->addWidget( sblabel0, 6 );
+    sblabel1 = new QLabel( "" );
+    statusBar() ->addWidget( sblabel1, 1 );
+    sblabel2 = new QLabel( "" );
+    statusBar() ->addWidget( sblabel2, 2 );
 }
 
 TLogContainer::~TLogContainer()
@@ -56,6 +63,11 @@ bool TLogContainer::show(int argc, char *argv[])
     ReportAutofillAction->setChecked(autoFill);
     TContestApp::getContestApp() ->loggerBundle.setBoolProfile( elpAutoFill, autoFill );
     TContestApp::getContestApp() ->loggerBundle.flushProfile();
+
+    TimerUpdateQSOTimer.start(1000);
+    connect(&TimerUpdateQSOTimer, SIGNAL(timeout()), this, SLOT(on_TimeDisplayTimer()));
+
+    connect(&MinosLoggerEvents::mle, SIGNAL(ReportOverstrike(bool , BaseContestLog * )), this, SLOT(on_ReportOverstrike(bool , BaseContestLog * )));
 
 //    SendDM = new TSendDM( this );
     QMainWindow::show();
@@ -78,9 +90,39 @@ bool TLogContainer::show(int argc, char *argv[])
     }
     return true;
 }
+void TLogContainer::on_TimeDisplayTimer( )
+{
+
+   if ( TContestApp::getContestApp() )
+   {
+       QString disp = QDateTime::currentDateTimeUtc().toString( "dd/MM/yyyy hh:mm:ss" ) + " UTC       ";
+
+       sblabel2 ->setText(disp);
+
+       MinosLoggerEvents::SendTimerDistribution();
+
+       QString statbuf;
+      BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+      if ( ct )
+      {
+         ct->setScore( statbuf );
+      }
+      sblabel0->setText( statbuf );
+   }
+
+}
+void TLogContainer::on_ReportOverstrike(bool overstrike, BaseContestLog *econtest )
+{
+   BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+   if (ct == econtest)
+   {
+      sblabel1->setText(overstrike ? "Overwrite" : "Insert");
+   }
+}
 
 void TLogContainer::closeEvent(QCloseEvent *event)
 {
+    TimerUpdateQSOTimer.stop();
     closeContestApp();
     QSettings settings;
     settings.setValue("geometry", saveGeometry());

@@ -44,35 +44,23 @@ char locator::validate( void )
    return valRes;
 }
 //============================================================
-//---------------------------------------------------------------------------
-/*static*/QDateTime dtg::getRawUTC( )
-{
-    QDateTime utc = QDateTime::currentDateTime().toUTC();
-    return utc;
-}
-/*static*/QDateTime dtg::getCorrectedUTC(  )
-{
-   QDateTime tdt = getRawUTC();
-   int correction = MinosParameters::getMinosParameters() ->getBigClockCorrection();
-   if ( correction )
-      tdt.addSecs( correction );
-   return tdt;
-}
-// We really need to hold FULL dates internally!
 dtg::dtg( bool now ): baddtg(false)
 {
-   if ( now )
-   {
-      QDateTime tdt = dtg::getCorrectedUTC();
-      setDate( tdt.toString( "dd/MM/yy" ), DTGDISP );
-      setTime( tdt.toString( "hh:mm:ss" ), DTGDISP );
-   }
-   else
-   {
-      setDate( "", DTGDISP );
-      setTime( "", DTGDISP );
-      baddtg = true;
-   }
+    if ( now )
+    {
+        QDateTime tdt = QDateTime::currentDateTimeUtc();
+        int correction = MinosParameters::getMinosParameters() ->getBigClockCorrection();
+        if ( correction )
+            tdt.addSecs( correction );
+        setDate( tdt.toString( "dd/MM/yy" ), DTGDISP );
+        setTime( tdt.toString( "hh:mm:ss" ), DTGDISP );
+    }
+    else
+    {
+        setDate( "", DTGDISP );
+        setTime( "", DTGDISP );
+        baddtg = true;
+    }
 }
 void dtg::setIsoDTG(const QString &d )
 {

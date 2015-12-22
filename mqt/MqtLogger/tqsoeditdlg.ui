@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>435</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,16 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTreeView" name="QSOHistoryTree"/>
+    <widget class="QTreeWidget" name="QSOHistoryTree">
+     <attribute name="headerVisible">
+      <bool>false</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string notr="true">1</string>
+      </property>
+     </column>
+    </widget>
    </item>
    <item>
     <widget class="QSOLogFrame" name="GJVQSOEditFrame">

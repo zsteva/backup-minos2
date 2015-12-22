@@ -7,7 +7,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include <QThread>
+#include "base_pch.h"
 
 #ifndef MatchThreadH
 #define MatchThreadH 
@@ -15,6 +15,8 @@
 //---------------------------------------------------------------------------
 #define SET_CHANGED 1
 #define SET_NOT_GREATER 2
+
+class MatchContact;
 class matchElement
 {
    public:
@@ -104,14 +106,26 @@ class Matcher
       }
 
 };
-class LogMatcher: public Matcher
+class ThisLogMatcher: public Matcher
 {
       virtual void matchDistrict( const QString &extraText );
       virtual void matchCountry( const QString &cs );
       virtual void replaceList( TMatchCollection *matchCollection );
    public:
-      LogMatcher( );
-      virtual ~LogMatcher();
+      ThisLogMatcher( );
+      virtual ~ThisLogMatcher();
+
+      virtual bool idleMatch( int limit );
+      void addMatch( BaseContact *, BaseContestLog * );
+};
+class OtherLogMatcher: public Matcher
+{
+      virtual void matchDistrict( const QString &extraText );
+      virtual void matchCountry( const QString &cs );
+      virtual void replaceList( TMatchCollection *matchCollection );
+   public:
+      OtherLogMatcher( );
+      virtual ~OtherLogMatcher();
 
       virtual bool idleMatch( int limit );
       void addMatch( BaseContact *, BaseContestLog * );
@@ -131,9 +145,9 @@ class ListMatcher: public Matcher
 //---------------------------------------------------------------------------
 class TMatchThread : public QThread
 {
-   private:
-//      MinosEventListener  EL_ScreenContactChanged;
-      void ScreenContactChanged_Event ( /*MinosEventBase & Event*/ );
+    Q_OBJECT
+
+private:
 
 //      MinosEventListener  EL_CountrySelect;
       void CountrySelect_Event ( /*MinosEventBase & Event*/ );
@@ -149,21 +163,19 @@ class TMatchThread : public QThread
       static TMatchThread *matchThread;
       TMatchThread();
 
-      LogMatcher *logMatch;
+      ThisLogMatcher *thisLogMatch;
+      OtherLogMatcher *otherLogMatch;
       ListMatcher *listMatch;
 
-      TMatchCollection *myMatches;        // used to pass the match list out
+      TMatchCollection *myThisMatches;        // used to pass the match list out
+      TMatchCollection *myOtherMatches;        // used to pass the match list out
       TMatchCollection *myListMatches;    // used to pass the match list out
 
       QString ctrymatch;
       QString distmatch;
 
-      QString matchStatus;
-
-      void doReplaceContestList( void );
-      void doReplaceListList( void );
-      void doMatchCountry( void );
-      void doMatchDistrict( void );
+      QString thisMatchStatus;
+      QString otherMatchStatus;
 
       bool Terminated;
 
@@ -176,13 +188,16 @@ class TMatchThread : public QThread
           Terminated = true;
       }
 
-      void ShowMatchStatus( QString mess );
-      void replaceContestList( TMatchCollection *matchCollection );
+      void replaceThisContestList( TMatchCollection *matchCollection );
+      void replaceOtherContestList( TMatchCollection *matchCollection );
       void replaceListList( TMatchCollection *matchCollection );
       void matchCountry( QString cs );
       void matchDistrict( QString dist );
 
-      static QString getMatchStatus( );
+      void ShowThisMatchStatus( QString mess );
+      void ShowOtherMatchStatus( QString mess );
+      static QString getThisMatchStatus( );
+      static QString getOtherMatchStatus( );
       static void InitialiseMatchThread();
       static void FinishMatchThread();
       static TMatchThread *getMatchThread()
@@ -193,6 +208,8 @@ class TMatchThread : public QThread
       // QThread interface
 protected:
       virtual void run() override;
+private slots:
+      void on_ScreenContactChanged(ScreenContact *mct, BaseContestLog *context);
 };
 //---------------------------------------------------------------------------
 #endif

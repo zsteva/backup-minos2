@@ -257,6 +257,12 @@
         <enum>Qt::Horizontal</enum>
        </property>
        <widget class="QSOLogFrame" name="GJVQSOLogFrame">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>6</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="frameShape">
          <enum>QFrame::Box</enum>
         </property>
@@ -271,6 +277,12 @@
         </property>
        </widget>
        <widget class="QFrame" name="CribSheet">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="frameShape">
          <enum>QFrame::Box</enum>
         </property>
@@ -283,9 +295,15 @@
         <property name="midLineWidth">
          <number>2</number>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_5">
+        <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0">
          <item>
-          <widget class="QLabel" name="CribLabel">
+          <widget class="QLabel" name="NextContactDetailsLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="frameShape">
             <enum>QFrame::NoFrame</enum>
            </property>
@@ -320,7 +338,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTableView" name="ThisMatchTable">
+      <widget class="QTreeWidget" name="ThisMatchTree">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -336,8 +354,22 @@
        <property name="midLineWidth">
         <number>1</number>
        </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="headerDefaultSectionSize">
+        <number>1000</number>
+       </attribute>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
       </widget>
-      <widget class="QTableView" name="OtherMatchTable">
+      <widget class="QTreeWidget" name="OtherMatchTree">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -353,8 +385,13 @@
        <property name="midLineWidth">
         <number>1</number>
        </property>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
       </widget>
-      <widget class="QTableView" name="ArchiveMatchTable">
+      <widget class="QTreeWidget" name="ArchiveMatchTree">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -370,15 +407,16 @@
        <property name="midLineWidth">
         <number>1</number>
        </property>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
       </widget>
      </widget>
     </widget>
    </item>
   </layout>
-  <zorder>LogAreaSplitter</zorder>
-  <zorder>MultTabs</zorder>
-  <zorder>CribLabel</zorder>
-  <zorder>QSOTable</zorder>
  </widget>
  <customwidgets>
   <customwidget>

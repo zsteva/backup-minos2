@@ -124,7 +124,16 @@ void ContestDetails::setDetails(  )
          }
       }
    }
-   int b = ui->BandComboBox->findText( contest->band.getValue() );        // contest
+   QString cb = contest->band.getValue().trimmed();
+   BandList &blist = BandList::getBandList();
+   BandInfo bi;
+   bool bandOK = blist.findBand(cb, bi);
+   if (bandOK)
+   {
+      cb = bi.uk;
+   }
+
+   int b = ui->BandComboBox->findText( cb );        // contest
 
    if ( b >= 0 )
    {
@@ -531,13 +540,13 @@ QWidget * ContestDetails::getDetails( )
     {
         ui->StartDateEdit->setDate(QDate::currentDate());
     }
-    contest->DTGStart.setValue( ui->StartDateEdit->text() + " " + ui->StartTimeCombo->currentText()) ;
+    contest->DTGStart.setValue(TDTToCanonical( ui->StartDateEdit->text() + " " + ui->StartTimeCombo->currentText())) ;
 
     if (ui->EndDateEdit->text().isEmpty())
     {
         ui->EndDateEdit->setDate(QDate::currentDate());
     }
-    contest->DTGEnd.setValue(  ui->EndDateEdit->text() + " " + ui->EndTimeCombo->currentText()) ;
+    contest->DTGEnd.setValue(  TDTToCanonical(ui->EndDateEdit->text() + " " + ui->EndTimeCombo->currentText())) ;
 
    contest->mycall.fullCall.setValue( ui->CallsignEdit->text() );
    contest->mycall.valRes = CS_NOT_VALIDATED;

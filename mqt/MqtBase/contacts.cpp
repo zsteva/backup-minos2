@@ -227,7 +227,7 @@ void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) 
    ContactBuffs::buff.clear();
    int next = 0;
    next = placestr( ContactBuffs::buff, time.getDate( DTGDISP ), next, 8 );
-   next += 1;
+   next += 2;
    next = placestr( ContactBuffs::buff, time.getTime( DTGDISP ), next, 5 );
 
    next += 1;
@@ -261,12 +261,12 @@ void BaseContact::makestrings( bool sf ) const
    int sr = serialr.getValue().toInt();
    int ss = serials.getValue().toInt();
    if ( ss )
-      ContactBuffs::ssbuff = QString("%1").arg(ss, 3);
+      ContactBuffs::ssbuff = QString("%1 ").arg(ss, 3);
    else
       ContactBuffs::ssbuff.clear();
 
    if ( sr && sf )
-       ContactBuffs::srbuff = QString("%1").arg(sr, 3);
+       ContactBuffs::srbuff = QString("%1 ").arg(sr, 3);
    else
       ContactBuffs::srbuff.clear();
 }

@@ -128,6 +128,7 @@ int placestr( QString &buff, const QString &str, int start, int len )
 {
    // if len is -ve, it means to R justify
 
+   buff += "     ";
    buff = buff.left(start);
    buff = QString("%1%2                                                                ").arg(buff).arg(str, -len).left(start + abs(len)) ;
    return start + abs(len);
@@ -219,11 +220,11 @@ bool wildComp( const QString &ss, const QString &ee )
    int e = 0;
    int el = ee.length();
 
-   while ( ss[s] == ' ' )
+   while (s < sl && ss[s] == ' ' )
       s++;
    if ( s == sl )
       return false;
-   while ( ee[e] == ' ' )
+   while (e < el && ee[e] == ' ' )
       e++;
    if ( e == el )
       return false;
@@ -324,9 +325,11 @@ QDateTime CanonicalToTDT(QString cdtg )
    return d;
 
 }
-QString TDTToCanonical(QDateTime d )
+QString TDTToCanonical(QString d )
 {
-   QString s = d.toString( "yyyyMMddhhmm" );
+    // comes in as dd/MM/yyy hh:mm
+   QDateTime dt = QDateTime::fromString(d, "dd/MM/yyyy hh:mm");
+   QString s = dt.toString( "yyyyMMddhhmm" );
    return s;
 }
 //=============================================================================

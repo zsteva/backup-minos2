@@ -39,7 +39,8 @@ signals:
    void SetFreq(QString, BaseContestLog *);
    void EditMatchContact(BaseContestLog *);
    void ScreenContactChanged(ScreenContact *, BaseContestLog *);
-   void ReplaceLogList(TMatchCollection *matchCollection, BaseContestLog *);
+   void ReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);
+   void ReplaceOtherLogList(TMatchCollection *matchCollection, BaseContestLog *);
    void ReplaceListList(TMatchCollection *matchCollection, BaseContestLog *);
    void ScrollToCountry(QString prefix, BaseContestLog *);
    void ScrollToDistrict(QString prefix, BaseContestLog *);
@@ -49,6 +50,7 @@ signals:
    void ShowOperators();
    void XferPressed();
    void BandMapPressed();
+   void TimerDistribution();
 
    void CountrySelect(QString cty, BaseContestLog *c);
    void DistrictSelect(QString dist, BaseContestLog *c);
@@ -74,7 +76,8 @@ public:
    static void SendSetFreq(QString, BaseContestLog *);
    static void SendEditMatchContact(BaseContestLog *);
    static void SendScreenContactChanged(ScreenContact *, BaseContestLog *);
-   static void SendReplaceLogList(TMatchCollection *matchCollection, BaseContestLog *);
+   static void SendReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);
+   static void SendReplaceOtherLogList(TMatchCollection *matchCollection, BaseContestLog *);
    static void SendReplaceListList(TMatchCollection *matchCollection, BaseContestLog *);
    static void SendScrollToCountry(QString prefix, BaseContestLog *);
    static void SendScrollToDistrict(QString prefix, BaseContestLog *);
@@ -84,6 +87,7 @@ public:
    static void SendShowOperators();
    static void SendXferPressed();
    static void SendBandMapPressed();
+   static void SendTimerDistribution();
 
    static void SendCountrySelect(QString cty, BaseContestLog *c);
    static void SendDistrictSelect(QString dist, BaseContestLog *c);

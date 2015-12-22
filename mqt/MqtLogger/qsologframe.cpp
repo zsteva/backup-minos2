@@ -23,6 +23,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     , current(0)
     , partialContact(0)
     , edit(false)
+    , overstrike(false)
 {
     ui->setupUi(this);
 
@@ -75,6 +76,8 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
 
     ui->ModeComboBoxGJV->addItem("A1A");
     ui->ModeComboBoxGJV->addItem("J3E");
+
+    connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(on_TimeDisplayTimer()));
 }
 bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
 {
@@ -96,6 +99,10 @@ QSOLogFrame::~QSOLogFrame()
     {
        delete ( *vcp );
     }
+}
+void QSOLogFrame::on_TimeDisplayTimer()
+{
+    updateQSOTime(true);
 }
 
 void QSOLogFrame::focusChange(QObject *obj, bool in)
@@ -156,13 +163,10 @@ void QSOLogFrame::focusChange(QObject *obj, bool in)
         SecondOpComboBox_Exit();
     }
 }
-void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf, bool edit )
+void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
 {
    catchup = bf;
-   if (!edit)
-       ui->EditFrame->setVisible(false);
 
-//   editScreen = edScreen;
    contest = pcontest;
    screenContact.initialise( contest ); // get ops etc correct
 
@@ -186,12 +190,35 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf, bool edit )
    ui->BrgSt->clear();
    ui->DistSt->clear();
 
+   if (!edit)
+   {
+       ui->EditFrame->setVisible(false);
+
+       QString ss("QLineEdit {  border: none ; }");
+       ui->DateEdit->setStyleSheet(ss);
+       ui->TimeEdit->setStyleSheet(ss);
+       ui->DateEdit->setReadOnly(true);
+       ui->TimeEdit->setReadOnly(true);
+   }
+   else
+   {
+       ui->MatchXferButton->setVisible(false);
+       ui->AutoBandmapTime->setVisible(false);
+       ui->AutoBandmapTune->setVisible(false);
+       ui->BandMapButton->setVisible(false);
+   }
 
    updateQSODisplay();
 //   SerTXEdit->Color = clBtnFace;
+   QString ss("QLineEdit { background-color: grey ; border-style: outset ; border-width: 1px ; border-color: black ; }");
+   ui->SerTXEdit->setStyleSheet(ss);
    current = 0;
    updateTimeAllowed = true;
    updateQSOTime();
+}
+void QSOLogFrame::setXferEnabled(bool s)
+{
+    ui->MatchXferButton->setEnabled(s);
 }
 
 void QSOLogFrame::on_CatchupButton_clicked()
@@ -371,7 +398,14 @@ void QSOLogFrame::on_GJVOKButton_clicked()
     {
        logCurrentContact( );
     }
-    selectField( 0 );             // make sure we move off the "Log" default button
+    if (edit)
+    {
+        emit QSOFrameCancelled();
+    }
+    else
+    {
+        selectField( 0 );             // make sure we move off the "Log" default button
+    }
     return;
 
 }
@@ -739,10 +773,8 @@ void QSOLogFrame::keyPressEvent( QKeyEvent* event )
            }
            if (ed == ui->CallsignEdit)
            {
-               QPalette Pal(ed->palette());
-               Pal.setColor(QPalette::Background, Qt::white);
-               ed->setAutoFillBackground(true);
-               ed->setPalette(Pal);
+               QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; }");
+               ui->CallsignEdit->setStyleSheet(ss);
            }
 
            QFrame::keyPressEvent(event);
@@ -954,18 +986,6 @@ void QSOLogFrame::EditControlExit( QObject */*Sender*/ )
       doAutofill();           // should only be time to be filled
    }
    MinosLoggerEvents::SendShowErrorList();
-   MinosLoggerEvents::SendReportOverstrike(overstrike, contest); // Why?
- /*
-   if (screenContact.cs.valRes == ERR_DUPCS)
-   {
-      CallsignEdit->Color = clRed;
-   }
-   else
-   {
-      CallsignEdit->Color = clWindow;
-   }
-   CallsignEdit->Repaint();
-   */
 
    // make sure the mode button shows the correct "flip" value
    if (ui->ModeComboBoxGJV->currentText() == "A1A")
@@ -1117,7 +1137,7 @@ void QSOLogFrame::calcLoc( )
             }
             else
             {
-                brgbuff = QString( "(%1%2%3)").arg(vb).arg(degreeChar).arg(rev );
+                brgbuff = QString( "%1%2%3").arg(vb).arg(degreeChar).arg(rev );
             }
             ui->BrgSt->setText(brgbuff);
          }
@@ -1256,7 +1276,6 @@ void QSOLogFrame::contactValid( void )
 
    getScreenEntry();
    ScreenContact *vcct = &screenContact;
-   setDTGNotValid(vcct);
 
    if ( vcct->contactFlags & DONT_PRINT )
    {
@@ -1526,24 +1545,23 @@ void QSOLogFrame::doGJVEditChange( QObject *Sender )
       {
          // clear the error list
          contest->DupSheet.clearCurDup();	// as edited, no longer a dup(?)
-/*
+
          if ( ( current == ui->CallsignEdit ))
          {
             valid( cmCheckValid ); // make sure all single and cross field
 
             if (screenContact.cs.valRes == ERR_DUPCS)
             {
-                QPalette Pal(ui->CallsignEdit->palette());
-                Pal.setColor(QPalette::Background, Qt::red);
-                ui->CallsignEdit->setAutoFillBackground(true);
-                ui->CallsignEdid->setPalette(Pal);
+                QString ss("QLineEdit { background-color: red ; border-style: outset ; border-width: 1px ; border-color: black ; }");
+                ui->CallsignEdit->setStyleSheet(ss);
             }
             else
             {
-                ui->CallsignEdit->setBackgroundRole(Qt::white);
+                QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; }");
+                ui->CallsignEdit->setStyleSheet(ss);
             }
          }
-*/
+
       }
       if ( current == ui->LocEdit || Sender == ui->LocEdit )
       {
@@ -1691,46 +1709,42 @@ void QSOLogFrame::logCurrentContact( )
 }
 void QSOLogFrame::updateQSOTime(bool fromTimer)
 {
-   // Check if dtg is within the contest time
-   // If not we wish to show as red
-   // We need to do this in log displays as well
+    // Check if dtg is within the contest time
+    // If not we wish to show as red
+    // We need to do this in log displays as well
+    if (!edit)
+    {
+        dtg tnow( true );
+        ui->DateEdit->setText(tnow.getDate( DTGDISP ));
+        QString t = tnow.getTime( DTGDISP );
+        ui->TimeEdit->setText(t);
+    }
+    dtg time(false);
+    time.setDate( ui->DateEdit->text(), DTGDISP );
+    time.setTime( ui->TimeEdit->text().left( 5), DTGDISP );
 
-   dtg tnow( true );
-   ui->DateEdit->setText(tnow.getDate( DTGDISP ));
-   QString t = tnow.getTime( DTGDISP );
-   ui->TimeEdit->setText(t);
+    bool timeOK = false;
 
-   dtg time(false);
-   time.setDate( ui->DateEdit->text(), DTGDISP );
-   time.setTime( ui->TimeEdit->text().left( 5), DTGDISP );
+    if (contest)
+    {
+        timeOK = contest->checkTime(time);
+    }
 
-   bool timeOK = false;
-
-   if (contest)
-   {
-      timeOK = contest->checkTime(time);
-   }
-/*
-   if (fromTimer)
-   {
-      DateLabel->Font->Assign(MinosParameters::getMinosParameters() ->getSysFont());
-      TimeLabel->Font->Assign(MinosParameters::getMinosParameters() ->getSysFont());
-      if (timeOK)
-      {
-         DateLabel->Font->Color = clWindowText;
-         TimeLabel->Font->Color = clWindowText;
-      }
-      else
-      {
-         DateLabel->Font->Color = clRed;
-         TimeLabel->Font->Color = clRed;
-      }
-   }
-   */
-}
-void QSOLogFrame::setDTGNotValid(ScreenContact */*vcct*/)
-{
-    // nothing needed
+    if (fromTimer)
+    {
+        if (timeOK)
+        {
+            QString ss("QLineEdit { background-color: white ; border: none ; color: black ; }");
+            ui->DateEdit->setStyleSheet(ss);
+            ui->TimeEdit->setStyleSheet(ss);
+        }
+        else
+        {
+            QString ss("QLineEdit { background-color: white ; border: none ; color: red ; }");
+            ui->DateEdit->setStyleSheet(ss);
+            ui->TimeEdit->setStyleSheet(ss);
+        }
+    }
 }
 
 void QSOLogFrame::transferDetails( const BaseContact * lct, const BaseContestLog *matct )

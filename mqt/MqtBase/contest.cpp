@@ -36,7 +36,8 @@ BaseContestLog::BaseContestLog( void ) :
       kms1( 0 ), kms2( 0 ), kms1p( 0 ), kms2p( 0 ),
       mults1( 0 ), mults2( 0 ), mults1p( 0 ), mults2p( 0 ),
       bonus1( 0 ), bonus2( 0 ), bonus1p( 0 ), bonus2p( 0 ),
-      bonus(0), nbonus(0)
+      bonus(0), nbonus(0),
+      ukLocBonus(0), nonukLocBonus()
 {
    bearingOffset.setValue(0);
    mode.setValue( "J3E" );
@@ -354,7 +355,7 @@ int BaseContestLog::CalcNearest( const QString &qscalcloc )
    char temploc[ LOCLENGTH + 1 ];
 
    strncpy( temploc, calcloc, LOCLENGTH );
-   temploc[ LOCLENGTH + 1 ] = 0;
+   temploc[ LOCLENGTH] = 0;
 
    for ( char i = 'A'; i <= 'X'; i++ )
    {
@@ -808,7 +809,7 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
          cs.nqsos++;
 
          cs.bonus += nct->bonus;
-         cs.nbonus += nct->newBonus;
+         cs.nbonus += nct->newBonus?1:0;
 
          if (nct->newGLoc)
          {
@@ -1275,7 +1276,7 @@ QString ContestScore::disp()
             % brbonus1 % bonus % nbonus % brbonus2
             % totalScore ).str();
   */
-   QString buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5:%6%7 districts%8:%9%d(%10/%11) locators%12 = %13" )
+   QString buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5:%6%7 districts%8:%9%10(%11/%12) locators %13 = %14" )
             .arg(nqsos).arg(contestScore).arg(brcc1).arg(nctry).arg(brcc2).arg(brcc3).arg(ndistrict)
             .arg(brcc4).arg(brloc1).arg(nlocs).arg(nGlocs).arg(nonGlocs).arg(brloc2)
 //            % brbonus1 % bonus % nbonus % brbonus2
