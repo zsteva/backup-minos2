@@ -1,3 +1,4 @@
+#ifdef RUBBISH
 /////////////////////////////////////////////////////////////////////////////
 // $Id$
 //
@@ -179,4 +180,5 @@ extern int getMonth( const QString &m );
 extern int getDate( int month, int day, int week );
 extern int getDayOfWeek( QDateTime dtg );
 
+#endif
 #endif

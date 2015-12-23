@@ -37,8 +37,11 @@ private:   	// User declarations
    void enableControls();
    QWidget * getDetails( );
 
-   void closeEvent(QCloseEvent *event);
-   void resizeEvent(QResizeEvent *event);
+   void doCloseEvent();
+
+public Q_SLOTS:
+   virtual void accept() override;
+   virtual void reject() override;
 
 public:   		// User declarations
    void setDetails( LoggerContestLog * ct );

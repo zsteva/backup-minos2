@@ -1,3 +1,4 @@
+#ifdef RUBBISH
 /////////////////////////////////////////////////////////////////////////////
 // $Id$
 //
@@ -880,3 +881,4 @@ bool Calendar::parseTimeList( TiXmlElement * tix, std::vector<TimeList> &timeLis
    return true;
 }
 
+#endif

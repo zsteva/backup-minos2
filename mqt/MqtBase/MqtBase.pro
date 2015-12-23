@@ -48,7 +48,8 @@ SOURCES += \
     DisplayContestContact.cpp \
     TreeUtils.cpp \
     minossplitter.cpp \
-    htmldelegate.cpp
+    htmldelegate.cpp \
+    CalendarList.cpp
 
 HEADERS += \
     BandList.h \
@@ -78,7 +79,8 @@ HEADERS += \
     DisplayContestContact.h \
     TreeUtils.h \
     minossplitter.h \
-    htmldelegate.h
+    htmldelegate.h \
+    CalendarList.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

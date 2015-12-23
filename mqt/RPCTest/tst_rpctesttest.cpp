@@ -2,7 +2,7 @@
 #include <QtTest>
 
 #include "BandList.h"
-#include "VHFList.h"
+#include "CalendarList.h"
 
 #include "base_pch.h"
 
@@ -521,21 +521,21 @@ void RPCTestTest::testDates()
 }
 void RPCTestTest::testCalendarParse()
 {
-   Calendar vhf(2008);
+   Calendar vhf(2008, ectVHF);
    bool loaded = vhf.parseFile( "C:/Projects/adjudge/adjsql/vhfcontests.xml" );
    QVERIFY( true == loaded );
 }
 void RPCTestTest::testContests()
 {
-   Calendar vhf(2008);
+   Calendar vhf(2008, ectVHF);
    bool loaded = vhf.parseFile( "C:/Projects/adjudge/adjsql/vhfcontests.xml" );
    QVERIFY( true == loaded );
 
    int nc = vhf.contests.size();
    QVERIFY( 33 == nc );
 
-   QString lp144( "lp144" );
-   Contest &qrp144 = vhf.contests[ lp144 ];
+   std::string lp144( "lp144" );
+   CalendarContest &qrp144 = vhf.contests[ lp144 ];
    QVERIFY( lp144 == qrp144.name );
 
 }
@@ -579,21 +579,21 @@ void RPCTestTest::testDates2009()
 }
 void RPCTestTest::testParse2009()
 {
-   Calendar vhf(2009);
+   Calendar vhf(2009, ectVHF);
    bool loaded = vhf.parseFile( "C:/Projects/adjudge/adjsql/vhfcontests09.xml" );
    QVERIFY( true == loaded );
 }
 void RPCTestTest::testContests2009()
 {
-   Calendar vhf(2009);
+   Calendar vhf(2009, ectVHF);
    bool loaded = vhf.parseFile( "C:/Projects/adjudge/adjsql/vhfcontests09.xml" );
    QVERIFY( true == loaded );
 
    int nc = vhf.contests.size();
    QVERIFY( 33 == nc );
 
-   QString lp144( "lp144" );
-   Contest &qrp144 = vhf.contests[ lp144 ];
+   std::string lp144( "lp144" );
+   CalendarContest &qrp144 = vhf.contests[ lp144 ];
    QVERIFY( lp144 == qrp144.name );
 
 }

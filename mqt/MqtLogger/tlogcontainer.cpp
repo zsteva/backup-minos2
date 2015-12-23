@@ -7,7 +7,7 @@
 #include "ui_tlogcontainer.h"
 
 #include "taboutbox.h"
-#include "VHFList.h"
+#include "CalendarList.h"
 #include "contestdetails.h"
 #include "tmanagelistsdlg.h"
 

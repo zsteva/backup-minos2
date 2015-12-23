@@ -1,5 +1,5 @@
 #include "logger_pch.h"
-#include "VHFList.h"
+#include "CalendarList.h"
 #include "BandList.h"
 #include "tentryoptionsform.h"
 #include "tminoshelpform.h"
@@ -43,17 +43,20 @@ ContestDetails::ContestDetails(QWidget *parent) :
         ui->EndTimeCombo->addItem ( halfhour );
     }
 }
-void ContestDetails::closeEvent(QCloseEvent *event)
+void ContestDetails::doCloseEvent()
 {
     QSettings settings;
     settings.setValue("ContestDetails/geometry", saveGeometry());
-    QWidget::closeEvent(event);
 }
-void ContestDetails::resizeEvent(QResizeEvent * event)
+void ContestDetails::reject()
 {
-    QSettings settings;
-    settings.setValue("ContestDetails/geometry", saveGeometry());
-    QWidget::resizeEvent(event);
+    doCloseEvent();
+    QDialog::reject();
+}
+void ContestDetails::accept()
+{
+    doCloseEvent();
+    QDialog::accept();
 }
 
 int ContestDetails::exec()
@@ -314,16 +317,16 @@ void ContestDetails::setDetails( const IndividualContest &ic )
 
    setWindowTitle("Details of Contest Entry - " + contest->cfileName );
 
-   ui->ContestNameEdit->setText(ic.description);                      // contest
-   contest->VHFContestName.setValue(ic.description);
+   ui->ContestNameEdit->setText(ic.description.c_str());                      // contest
+   contest->VHFContestName.setValue(ic.description.c_str());
 
    // need to get legal bands from ContestLog
    ui->BandComboBox->clear();
 
-   ui->BandComboBox->addItem( ic.reg1band );
+   ui->BandComboBox->addItem( ic.reg1band.c_str() );
    ui->BandComboBox->setCurrentIndex(0);
 
-   sectionList = ic.sections; // the combo will then be properly set up in setDetails()
+   sectionList = ic.sections.c_str(); // the combo will then be properly set up in setDetails()
    if ( sectionList.size() )
    {
       QStringList sl = sectionList.split(",");
@@ -523,7 +526,7 @@ void ContestDetails::setDetails( const IndividualContest &ic )
        ui->PPQSORB->setChecked(true);
        break;
    }
-   setDetails();
+//   setDetails();
 }
 //---------------------------------------------------------------------------
 QWidget * ContestDetails::getDetails( )
@@ -765,7 +768,7 @@ void ContestDetails::on_OKButton_clicked()
     {
        if (!mShowYesNoMessage(this, "This contest will be marked as protected.\r\n"
                                      "This is a permanent change that may be temporarily overridden.\r\n"
-                                     "Please confirm this change by pressing \"Ok\"." ))
+                                     "Please confirm this change by pressing \"Yes\"." ))
        {
           return;
        }
@@ -845,16 +848,16 @@ void ContestDetails::on_BSHelpButton_clicked()
 
 void ContestDetails::on_VHFCalendarButton_clicked()
 {
-    TCalendarForm CalendarDlg(this);
+    TCalendarForm CalendarDlg(this, ectVHF);
 
-//    CalendarDlg->Caption = "VHF Calendar";
-//    CalendarDlg->description = ContestNameSelected->Text;
+    CalendarDlg.setWindowTitle( "VHF Calendar");
+    CalendarDlg.description = ui->ContestNameSelected->text();
 
     if ( CalendarDlg.exec() == QDialog::Accepted )
     {
        // set up all the details that we can from the calendar
-//       ui->ContestNameSelected->setText(CalendarDlg.ic.description);
-//       setDetails( CalendarDlg.ic );
+       ui->ContestNameSelected->setText(CalendarDlg.ic.description.c_str());
+       setDetails( CalendarDlg.ic );
     }
     QWidget *next = getNextFocus();
     if (next)
