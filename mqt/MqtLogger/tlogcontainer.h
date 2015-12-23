@@ -100,7 +100,7 @@ private:
 
     QString getDefaultDirectory( bool IsList );
     void preloadFiles( const QString &conarg );
-    ContactList * addListSlot( TContactListDetails *ced, const QString &fname, int slotno );
+    void addListSlot(const QString &fname, int slotno , bool preload);
 
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *event);

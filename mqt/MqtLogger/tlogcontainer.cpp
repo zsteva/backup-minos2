@@ -9,6 +9,7 @@
 #include "taboutbox.h"
 #include "VHFList.h"
 #include "contestdetails.h"
+#include "tmanagelistsdlg.h"
 
 TLogContainer *LogContainer = 0;
 
@@ -373,7 +374,7 @@ QString TLogContainer::strippedName(const QString &fullFileName)
 
 void TLogContainer::HelpAboutActionExecute()
 {
-
+    TAboutBox::ShowAboutBox(this, false);
 }
 QString TLogContainer::getDefaultDirectory( bool IsList )
 {
@@ -590,7 +591,8 @@ void TLogContainer::ExitActionExecute()
 }
 void TLogContainer::MakeEntryActionExecute()
 {
-
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    MinosLoggerEvents::SendMakeEntry(ct);
 }
 
 void TLogContainer::LocCalcActionExecute()
@@ -808,7 +810,7 @@ void TLogContainer::preloadFiles( const QString &conarg )
          int slotno = slotlst[ i ].mid( 4, 2 ).toInt() - 1; // even a 2 char number is a BIT excessive
          if ( slotno >= 0 )
          {
-            addListSlot( 0, pathlst[ i ], slotno );
+            addListSlot( pathlst[ i ], slotno, true );
          }
       }
       else
@@ -844,48 +846,51 @@ void TLogContainer::preloadFiles( const QString &conarg )
       selectContest( ct, 0 );
    }
 }
-ContactList * TLogContainer::addListSlot( TContactListDetails *ced, const QString &fname, int slotno )
+void TLogContainer::addListSlot( const QString &fname, int slotno, bool preload )
 {
-#ifdef RUBBISH
    // Is this the correct return type, or do we have an even more basic one? Or even a useful interface...
 
    // openFile ends up calling ContactList::initialise which then
    // calls TContestApp::insertList
 
    ContactList * list = TContestApp::getContestApp() ->openListFile( fname, slotno );
-   if ( list && ced )
+   if ( list && !preload )
    {
 
-      ced->setDetails( list );
-      if ( ced->ShowModal() == mrOk )
-      {
-         ced->getDetails( list );
-      }
-      else
-      {
-         TContestApp::getContestApp() ->closeListFile( list );
-         list = 0;
-      }
+       if (!mShowOKCancelMessage(this, "Open List " + list->name + "?") )
+       {
+           TContestApp::getContestApp() ->closeListFile( list );
+           list = 0;
+       }
    }
 
    TContestApp::getContestApp() ->writeContestList();
    enableActions();
-   return list;
- #endif
-   return 0;
 }
 
 void TLogContainer::ListOpenActionExecute()
 {
+    // first choose file
+//"Images (*.png *.xpm *.jpg);;Text files (*.txt);;XML files (*.xml)"
 
+    QString Filter = "Contact list files (*.csl);;"
+                     "All Files (*.*)" ;
+
+    QString fname = QFileDialog::getOpenFileName( this,
+                       "Open Archive List",
+                       "",
+                       Filter
+                       );
+    if ( !fname.isEmpty() )
+    {
+        addListSlot( fname, -1, false );
+    }
 }
 void TLogContainer::ManageListsActionExecute(  )
 {
-#ifdef RUBBISH
-   std::auto_ptr <TManageListsDlg> manageListsDlg( new TManageListsDlg( this ) );
-   manageListsDlg->ShowModal();
+   TManageListsDlg manageListsDlg(this );
+   manageListsDlg.exec();
    enableActions();
-#endif
 }
 //---------------------------------------------------------------------------
 

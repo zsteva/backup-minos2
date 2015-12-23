@@ -395,6 +395,15 @@ bool FileAccessible(const QString &fname)
     qt_ntfs_permission_lookup--;
     return exists && readable;
 }
+bool FileWriteable(const QString &fname)
+{
+    qt_ntfs_permission_lookup++;
+    bool exists = FileExists(fname);
+    bool writeable = QFileInfo(fname).isWritable();
+
+    qt_ntfs_permission_lookup--;
+    return exists && writeable;
+}
 const QString ExcludeTrailingBackslash( const QString &s )
 {
     if ( s.length() && ( s[ s.length() - 1 ] == '\\' || s[ s.length() - 1 ] == '/' ) )

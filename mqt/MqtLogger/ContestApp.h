@@ -26,7 +26,7 @@ class ContestSlot
 class ListSlot
 {
    public:
-      unsigned int slotno;
+      int slotno;
       ContactList * slot;
       //      unsigned char colour;
 

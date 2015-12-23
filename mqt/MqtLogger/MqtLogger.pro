@@ -47,7 +47,6 @@ SOURCES += main.cpp \
     taboutbox.cpp \
     tmanagelistsdlg.cpp \
     tminosbandchooser.cpp \
-    tcontactlistdetails.cpp \
     tclockdlg.cpp \
     tforcelogdlg.cpp \
     tqsoeditdlg.cpp \
@@ -77,7 +76,6 @@ HEADERS  += \
     taboutbox.h \
     tmanagelistsdlg.h \
     tminosbandchooser.h \
-    tcontactlistdetails.h \
     tclockdlg.h \
     tforcelogdlg.h \
     tqsoeditdlg.h \
@@ -96,7 +94,6 @@ FORMS    += tlogcontainer.ui \
     taboutbox.ui \
     tmanagelistsdlg.ui \
     tminosbandchooser.ui \
-    tcontactlistdetails.ui \
     tclockdlg.ui \
     tforcelogdlg.ui \
     tqsoeditdlg.ui \

@@ -17,7 +17,7 @@
 #include <QKeyEvent>
 #include <QAbstractItemModel>
 #include <QTableView>
-
+#include <QTableWidgetItem>
 /*
 #include <ctype.h>
 #include <dir.h>

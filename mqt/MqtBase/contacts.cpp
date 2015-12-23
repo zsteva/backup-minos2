@@ -175,6 +175,15 @@ CountryEntry *findCtryPrefix( const callsign &cs )
 }
 void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) const
 {
+   ContactBuffs::scorebuff.clear();
+   ContactBuffs::scorebuff.clear();
+   ContactBuffs::brgbuff.clear();
+   ContactBuffs::buff2.clear();
+   ContactBuffs::qthbuff.clear();
+   ContactBuffs::srbuff.clear();
+   ContactBuffs::ssbuff.clear();
+   ContactBuffs::buff.clear();
+
    if ( contactFlags.getValue() & ( LOCAL_COMMENT | COMMENT_ONLY | DONT_PRINT ) )
    {
       ContactBuffs::buff = QString("%1 %2 %3")
@@ -210,10 +219,7 @@ void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) 
    else
       if ( contactFlags.getValue() & XBAND )
          ContactBuffs::buff2 = "XB ";
-      else
-      {
-         ContactBuffs::buff2.clear();
-      }
+
    strcpysp( ContactBuffs::buff, comments.getValue(), 42 );
    if ( !ContactBuffs::buff.isEmpty() )
    {
@@ -256,8 +262,6 @@ void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) 
 
 void BaseContact::makestrings( bool sf ) const
 {
-   ContactBuffs::qthbuff[ 0 ] = 0;
-
    int sr = serialr.getValue().toInt();
    int ss = serials.getValue().toInt();
    if ( ss )

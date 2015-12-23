@@ -72,6 +72,7 @@ QString ExtractFilePath(const QString &fname );
 QString ExtractFileName(const QString &fname );
 QString ExtractFileExt(const QString &fname );
 bool FileAccessible(const QString &fname);
+bool FileWriteable(const QString &fname);
 bool StaticDirectoryExists ( const QString & Name );
 bool StaticForceDirectories (const QString &Dir );
 bool StaticDirectoryCreate (const QString & Path , QWidget *Owner);
