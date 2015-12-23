@@ -1,28 +1,11 @@
+#include "logger_pch.h"
+
 #include "taboutbox.h"
 #include "ui_taboutbox.h"
 
-TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
-    QDialog(parent),
-    ui(new Ui::TAboutBox),
-    doStartup(onStartup)
-{
-    ui->setupUi(this);
-}
-
-TAboutBox::~TAboutBox()
-{
-    delete ui;
-}
-/*static*/bool TAboutBox::ShowAboutBox( QWidget *Owner,  bool onStartup )
-{
-   TAboutBox aboutBox( Owner, onStartup );
-   int ret = aboutBox.exec();
-   return ret == QDialog::Accepted;
-}
-#ifdef RUBBISH
 bool started = false;
 
-String MinosText =
+QString MinosText =
    "The Inferno, Dante, (trans Dorothy L Sayers, Penguin Classics); Canto 5.\r\n"
    "\r\n"
    "\"From the first circle thus I came descending\r\n"
@@ -51,73 +34,74 @@ String MinosText =
    "\r\n"
    "“Abandon Hope, all ye who enter here”…"
    ;
-//---------------------------------------------------------------------
-__fastcall TAboutBox::TAboutBox( TComponent *Owner, bool onStartup )
-      : TForm( Owner ), doStartup(false)
+
+/*static*/bool TAboutBox::ShowAboutBox( QWidget *Owner,  bool onStartup )
 {
+   TAboutBox aboutBox( Owner, onStartup );
 
-   TMyRCVersion RCVersion;
-   RCVersion.initialise();
-   ProductName->Caption = RCVersion.ProductName;
-   String minor = RCVersion.MinorVersion;
-#ifdef BETA_VERSION
-   bool Beta = true;
-#else
-   bool Beta = false;
-#endif
-   Version->Caption = "Version " + RCVersion.FileVersion + ( Beta ? " BETA" : "" );
-   Copyright->Caption = RCVersion.LegalCopyright;
-   String caption = String("Git SHA1 ") + GITVER + "\r\n\r\n";
-   Comments->Caption = caption + ( Beta ? "\r\nBeta version - use at your own risk!\r\n\r\n\r\n" : "" ) + RCVersion.Comments;
 
-   if ( !FileExists( ".\\Configuration\\MinosConfig.ini" ) /*|| !onStartup || checkServerReady()*/ )
+   int ret = aboutBox.exec();
+   /*
+   if ( !started && doStartup )
    {
-      AutoStartTabSheet->TabVisible = false;
-      LoggerOnlyButton->Visible = false;
-      ExitButton->Visible = onStartup;
+      // auto start on first run, but only if we gave that option
+      TConfigFrame1StartButtonClick( this );
    }
-   else
-   {
-      TConfigFrame1->StartButton->Enabled = !started;
-      TConfigFrame1->StopButton->Visible = false;
-      if (  !onStartup || checkServerReady() )
-      {
-         LoggerOnlyButton->Visible = false; // as we are started we cannot now be logger only
-         ExitButton->Visible = false;
-      }
-      else
-      {
-         doStartup = true; // click the start button on form close
-      }
-   }
-
+    */
+   return ret == QDialog::Accepted;
 }
-//---------------------------------------------------------------------
-/*static*/bool TAboutBox::ShowAboutBox( TComponent *Owner,  bool onStartup )
+
+TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
+    QDialog(parent),
+    ui(new Ui::TAboutBox),
+    doStartup(onStartup)
 {
-   std::auto_ptr <TAboutBox> aboutBox( new TAboutBox( Owner, onStartup ) );
-   return aboutBox->ShowModal() == mrOk;
-}
-//---------------------------------------------------------------------
+    ui->setupUi(this);
+    ui->PageControl1->setCurrentWidget(ui->AboutTabSheet);
+ //   TConfigFrame1->initialise();
 
-void __fastcall TAboutBox::FormShow( TObject */*Sender*/ )
+    ui->AboutMemo->setText("Welcome to Minos 2");
+
+    ui->MinosMemo->setText(MinosText);
+
+    if ( !FileExists( "./Configuration/MinosConfig.ini" ) /*|| !onStartup || checkServerReady()*/ )
+    {
+       ui->AutoStartTabSheet->setVisible(false);
+       ui->LoggerOnlyButton->setVisible(false);
+       ui->ExitButton->setVisible(onStartup);
+    }
+    else
+    {
+        /*
+       TConfigFrame1->StartButton->Enabled = !started;
+       TConfigFrame1->StopButton->Visible = false;
+       if (  !onStartup || checkServerReady() )
+       {
+          LoggerOnlyButton->Visible = false; // as we are started we cannot now be logger only
+          ExitButton->Visible = false;
+       }
+       else
+       {
+          doStartup = true; // click the start button on form close
+       }
+       */
+    }
+}
+
+TAboutBox::~TAboutBox()
 {
-   MinosParameters::getMinosParameters() ->applyFontChange(this);
-   PageControl1->ActivePage = AboutTabSheet;
-   TConfigFrame1->initialise();
-   WebLabel->Font->Color = clBlue;
-   WebLabel->Font->Style = WebLabel->Font->Style << fsUnderline;
-
-   MinosMemo->Text = MinosText;
+    delete ui;
 }
+
 //---------------------------------------------------------------------------
-
-void __fastcall TAboutBox::WebLabelClick( TObject */*Sender*/ )
+/*
+void __fastcall TAboutBox::WebLabelClick( )
 {
    ShellExecute( Handle, "open", WebLabel->Caption.c_str(), 0, 0, SW_SHOWNORMAL );   //The home page for this program
 }
+*/
 //---------------------------------------------------------------------------
-
+/*
 void __fastcall TAboutBox::TConfigFrame1StartButtonClick( TObject *Sender )
 {
    TConfigFrame1->StartButton->Enabled = false;
@@ -125,18 +109,8 @@ void __fastcall TAboutBox::TConfigFrame1StartButtonClick( TObject *Sender )
    TConfigFrame1->StopButton->Enabled = true;
    started = true;
 }
-//---------------------------------------------------------------------------
-
-void __fastcall TAboutBox::FormClose( TObject */*Sender*/, TCloseAction &/*Action*/ )
-{
-   if ( !started && doStartup )
-   {
-      // auto start on first run, but only if we gave that option
-      TConfigFrame1StartButtonClick( this );
-   }
-}
-//---------------------------------------------------------------------------
-
+*/
+/*
 void __fastcall TAboutBox::TConfigFrame1StopButtonClick( TObject *Sender )
 {
    started = false;
@@ -144,31 +118,17 @@ void __fastcall TAboutBox::TConfigFrame1StopButtonClick( TObject *Sender )
    TConfigFrame1->StartButton->Enabled = true;
    TConfigFrame1->StopButton->Enabled = false;
 }
+*/
 //---------------------------------------------------------------------------
-void __fastcall TAboutBox::LoggerOnlyButtonClick( TObject */*Sender*/ )
-{
-   doStartup = false;
-   ModalResult = mrOk;
-}
-//---------------------------------------------------------------------------
-void __fastcall TAboutBox::TConfigFrame1CancelButtonClick( TObject */*Sender*/ )
+/*
+void __fastcall TAboutBox::TConfigFrame1CancelButtonClick(  )
 {
    // cancel the start up
    doStartup = false;
    ModalResult = mrCancel;
 }
+*/
 //---------------------------------------------------------------------------
-
-
-
-void __fastcall TAboutBox::ExitButtonClick(TObject */*Sender*/)
-{
-   // cancel the start up
-   doStartup = false;
-   ModalResult = mrCancel;
-}
-//---------------------------------------------------------------------------
-#endif
 
 void TAboutBox::on_ExitButton_clicked()
 {
