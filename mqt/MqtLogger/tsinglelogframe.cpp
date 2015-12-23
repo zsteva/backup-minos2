@@ -34,6 +34,11 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     ui->MultSplitter->setClosingWidget(ui->MultTabs);
     ui->TopSplitter->setClosingWidget(ui->MultSplitter);
 
+    ui->ThisMatchTree->header()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->OtherMatchTree->header()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->ArchiveMatchTree->header()->setSectionResizeMode(QHeaderView::Stretch);
+
+
     ui->GJVQSOLogFrame->initialise( contest, false );
 
     connect(&MinosLoggerEvents::mle, SIGNAL(ContestPageChanged()), this, SLOT(on_ContestPageChanged()));
@@ -41,6 +46,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(BandMapPressed()), this, SLOT(on_BandMapPressed()));
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(NextContactDetailsTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(MatchStarting(BaseContestLog*)), this, SLOT(on_MatchStarting(BaseContestLog*)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(MakeEntry(BaseContestLog*)), this, SLOT(on_MakeEntry(BaseContestLog*)));
 
 
     connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceThisLogList(TMatchCollection*,BaseContestLog*)), this, SLOT(on_ReplaceThisLogList(TMatchCollection*,BaseContestLog*)), Qt::QueuedConnection);
@@ -401,6 +407,37 @@ void TSingleLogFrame::showOtherMatchQSOs( TMatchCollection *matchCollection )
 //---------------------------------------------------------------------------
 void TSingleLogFrame::showMatchList( TMatchCollection *matchCollection )
 {
+    ui->ArchiveMatchTree->clear();
+
+    if ( matchCollection->getContactCount() == 0 )
+    {
+        ui->GJVQSOLogFrame->setXferEnabled(false);
+        return ;
+    }
+    ui->GJVQSOLogFrame->setXferEnabled(true);
+    ContactList * last_pc = 0;
+    QTreeWidgetItem *lastTopNode = 0;
+
+    for ( int i = 0; i < matchCollection->getContactCount(); i++ )
+    {
+       MatchContact *pc = matchCollection->pcontactAt( i );
+       ContactList * clp = pc->getContactList();
+      if ( !last_pc || last_pc != clp )
+      {
+         // set up a contest node for "other"
+         lastTopNode = addTreeRoot(ui->ArchiveMatchTree, clp->name);
+         lastTopNode->setExpanded(true);
+      }
+      last_pc = clp;
+      if ( pc )
+      {
+         // and the contact node
+          ListContact *lc = pc->getListContact();
+          QString text = lc->cs.fullCall.getValue() + " " + lc->loc.loc.getValue();
+          addTreeChild(lastTopNode, text);
+       }
+    }
+#ifdef RUBBISH
    // display the current archive list
 
    // We want a node structure where the LoggerContestLog includes the number of matches
@@ -484,7 +521,7 @@ void TSingleLogFrame::showMatchList( TMatchCollection *matchCollection )
 
    ArchiveMatchTree->EndUpdate();
    */
-
+#endif
 }
 void TSingleLogFrame::on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* )
 {
@@ -520,6 +557,13 @@ void TSingleLogFrame::on_ScrollToCountry( const QString &csCs, BaseContestLog* )
     {
        unsigned int ctry_ind = MultLists::getMultLists() ->getCtryListIndexOf( ctryMult );
        //MultDispFrame->scrollToCountry( ctry_ind, true );
+    }
+}
+void TSingleLogFrame::on_MakeEntry(BaseContestLog *ct)
+{
+    if (ct == contest)
+    {
+       makeEntry( false );
     }
 }
 

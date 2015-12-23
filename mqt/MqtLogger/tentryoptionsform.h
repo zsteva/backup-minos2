@@ -20,12 +20,17 @@ public:
     ~TEntryOptionsForm();
 
     QString doFileSave( );
+private slots:
+    void on_CloseButton_clicked();
+
+    void on_CancelButton_clicked();
+
 private:
     Ui::TEntryOptionsForm *ui;
 
-    LoggerContestLog * ct;
+    void FormShow( );
 
-    std::vector<TOptionFrame *> options;
+    LoggerContestLog * ct;
 
     ExportType expformat;
     bool minosSave;
