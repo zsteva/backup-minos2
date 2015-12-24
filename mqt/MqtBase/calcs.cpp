@@ -133,22 +133,22 @@ char lonlat( const QString &pinqra, double &lon, double &lat )
 
 QString WtodbW(const QString &W )
 {
-   std::string res;
-   double watts = atof( W.toStdString().c_str() );
+   QString res;
+   double watts =W.toDouble();
    if ( watts != 0 )
    {
       double dbWatts = 10.0 * log10( watts );
-      res = ( boost::format( "%.2f%" ) % dbWatts ).str();
+      res = QString::number( dbWatts );
    }
-   return res.c_str();
+   return res;
 }
 
 QString dbWtoW(const QString &dbW )
 {
-   double dbWatts = atof( dbW.toStdString().c_str() );
+   double dbWatts = dbW.toDouble();
    double watts = pow( 10.0, dbWatts / 10.0 ) + 0.05;
-   std::string res = ( boost::format( "%.2f%" ) % watts ).str();
-   return res.c_str();
+   QString res = QString::number(watts );
+   return res;
 }
 
 int normBrg( int mbear )

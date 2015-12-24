@@ -32,6 +32,8 @@ private:
      QString oldloc;
      bool locValid;
 
+     bool oldTimeOK;
+
      void EditControlEnter( QObject *Sender );
      void EditControlExit( QObject *Sender );
 

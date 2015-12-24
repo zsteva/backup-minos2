@@ -46,6 +46,8 @@ class QSOGridModel: public QAbstractItemModel
     public:
         QSOGridModel();
         ~QSOGridModel();
+
+        void reset();
         void initialise( BaseContestLog * pcontest );
         QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;
         QVariant headerData( int section, Qt::Orientation orientation,
@@ -136,6 +138,8 @@ private slots:
     void on_ReplaceListList( TMatchCollection *matchCollection, BaseContestLog* );
     void on_ScrollToDistrict( const QString &qth, BaseContestLog* );
     void on_ScrollToCountry( const QString &csCs, BaseContestLog* );
+    void on_AfterSelectContact(BaseContact *lct, BaseContestLog *contest);
+    void on_AfterLogContact( BaseContestLog *ct);
 
 };
 

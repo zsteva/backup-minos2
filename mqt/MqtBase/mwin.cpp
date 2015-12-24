@@ -238,9 +238,11 @@ bool dtg::getDtg( QDateTime &cttime, bool &d ) const
 {
    QString dateValue = sdate.getValue( d );
    dateValue += "            ";
+   dateValue = dateValue.left(6);
 
    QString timeValue = stime.getValue( d );
    timeValue += "            ";
+   timeValue = timeValue.left(6);
 
    for ( int i = 0; i < 6; i++ )
       if ( !dateValue [ i ].isDigit() )
@@ -249,9 +251,11 @@ bool dtg::getDtg( QDateTime &cttime, bool &d ) const
       if ( !timeValue [ i ].isDigit() )
          return false;
 
+   dateValue  = "20" + dateValue;
+
    QTime tm = QTime::fromString(timeValue, "hhmmss");
 
-   QDate dt = QDate::fromString(dateValue, "ddMMyy");
+   QDate dt = QDate::fromString(dateValue, "yyyyMMdd");
 
    cttime = QDateTime(dt, tm, Qt::UTC);
 

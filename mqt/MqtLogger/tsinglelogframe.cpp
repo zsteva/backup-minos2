@@ -1,5 +1,7 @@
 #include "logger_pch.h"
 
+#include <QSignalMapper>
+
 #include "MatchThread.h"
 #include "BandList.h"
 #include "tqsoeditdlg.h"
@@ -31,7 +33,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 
     ui->LogAreaSplitter->setClosingWidget(ui->ArchiveSplitter);
     ui->CribSplitter->setClosingWidget(ui->CribSheet);
-    ui->MultSplitter->setClosingWidget(ui->MultTabs);
+    ui->MultSplitter->setClosingWidget(ui->MultDisp);
     ui->TopSplitter->setClosingWidget(ui->MultSplitter);
 
     ui->ThisMatchTree->header()->setSectionResizeMode(QHeaderView::Stretch);
@@ -47,6 +49,8 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(NextContactDetailsTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(MatchStarting(BaseContestLog*)), this, SLOT(on_MatchStarting(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(MakeEntry(BaseContestLog*)), this, SLOT(on_MakeEntry(BaseContestLog*)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(BaseContact *, BaseContestLog *)), this, SLOT(on_AfterSelectContact(BaseContact *, BaseContestLog *)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(AfterLogContact(BaseContestLog *)), this, SLOT(on_AfterLogContact(BaseContestLog *)));
 
 
     connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceThisLogList(TMatchCollection*,BaseContestLog*)), this, SLOT(on_ReplaceThisLogList(TMatchCollection*,BaseContestLog*)), Qt::QueuedConnection);
@@ -54,6 +58,31 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceListList(TMatchCollection*,BaseContestLog*)), this, SLOT(on_ReplaceListList(TMatchCollection*,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToCountry(QString,BaseContestLog*)), this, SLOT(on_ScrollToCountry(QString,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToDistrict(QString,BaseContestLog*)), this, SLOT(on_ScrollToDistrict(QString,BaseContestLog*)), Qt::QueuedConnection);
+
+
+    // Connect up the stats etc display
+    QSignalMapper* sm = new QSignalMapper(this);
+
+    // connect to `clicked' on all buttons
+    connect(ui->DXCCButton, SIGNAL(clicked()), sm, SLOT(map()));
+    connect(ui->FilterButton, SIGNAL(clicked()), sm, SLOT(map()));
+    connect(ui->DistrictButton, SIGNAL(clicked()), sm, SLOT(map()));
+    connect(ui->LocatorButton, SIGNAL(clicked()), sm, SLOT(map()));
+    connect(ui->StatsButton, SIGNAL(clicked()), sm, SLOT(map()));
+
+    // setMapping on each button to the QStackedWidget index we'd like to switch to
+    // note: this affects the value passed via QSignalMapper::mapped(int) signal
+    sm->setMapping(ui->DXCCButton, 0);
+    sm->setMapping(ui->FilterButton, 1);
+    sm->setMapping(ui->DistrictButton, 2);
+    sm->setMapping(ui->LocatorButton, 3);
+    sm->setMapping(ui->StatsButton, 4);
+
+    // finally, connect the mapper to the stacked widget
+    connect(sm, SIGNAL(mapped(int)), ui->StackedMults, SLOT(setCurrentIndex(int)));
+
+    ui->StatsFrame->setContest(contest);
+
 }
 
 TSingleLogFrame::~TSingleLogFrame()
@@ -437,91 +466,6 @@ void TSingleLogFrame::showMatchList( TMatchCollection *matchCollection )
           addTreeChild(lastTopNode, text);
        }
     }
-#ifdef RUBBISH
-   // display the current archive list
-
-   // We want a node structure where the LoggerContestLog includes the number of matches
-   // and we can tag "DUPLICATE" or whatever on the end of the LoggerContestLog name
-
-//   ArchiveMatchTree->Clear();
-//   ArchiveMatchTree->RootNodeCount = 0;
-
-   if ( matchCollection->getContactCount() == 0 )
-   {
-       /*
-      PVirtualNode LastNode = ArchiveMatchTree->AddChild( NULL );
-      MatchNodeListData * pc = ( MatchNodeListData * ) ArchiveMatchTree->GetNodeData( LastNode );
-      pc->top = false;
-      pc->matchedList = 0;
-      pc->matchedContact = 0;
-
-      WArchiveMatchSplitter->Minimize();          /// hide the archive list
-      */
-      return ;
-   }
-//   WArchiveMatchSplitter->Restore();
-
-//   ArchiveMatchTree->BeginUpdate();
-
-   ContactList * last_pc = 0;
-//   PVirtualNode archnode = 0;
-//   PVirtualNode lastTopNode = 0;
-
-   for ( int i = 0; i < matchCollection->getContactCount(); i++ )
-   {
-      MatchContact *pc = matchCollection->pcontactAt( i );
-      ContactList * clp = pc->getContactList();
-      if ( last_pc != clp )
-      {
-          /*
-         PVirtualNode LastNode = ArchiveMatchTree->AddChild( NULL );
-         lastTopNode = LastNode;
-         last_pc = clp;
-         MatchNodeListData * thispc = ( MatchNodeListData * ) ArchiveMatchTree->GetNodeData( LastNode );
-         thispc->matchedList = clp;
-         thispc->matchedContact = 0;
-         thispc->top = true;
-         */
-      }
-      if ( pc )
-      {
-          /*
-         // and the contact node
-         PVirtualNode LastNode = ArchiveMatchTree->AddChild( lastTopNode );
-         MatchNodeListData * thispc = ( MatchNodeListData * ) ArchiveMatchTree->GetNodeData( LastNode );
-         thispc->matchedList = pc->getContactList();
-         thispc->matchedContact = pc->getListContact();
-         thispc->top = false;
-         pc->treePointer = thispc;
-         if ( !archnode )
-         {
-            archnode = LastNode;
-         }
-         */
-      }
-   }
-   /*
-   if ( archnode )
-   {
-      archiveTreeClickNode = archnode;
-
-      ArchiveMatchTree->FocusedNode = archiveTreeClickNode;
-      ArchiveMatchTree->Selected[ archiveTreeClickNode ] = true;
-      // we only allow xfer from other or archive, not from "this"
-      if ( !matchTreeClickNode )
-      {
-         OtherMatchTree->Colors->UnfocusedSelectionColor = clBtnFace;
-         ArchiveMatchTree->Colors->UnfocusedSelectionColor = ( TColor ) ( 0x00C080FF );
-         GJVQSOLogFrame->MatchXferButton->Font->Color = ( TColor ) ( 0x00C080FF );
-          ui->GJVQSOLogFrame->setXferEnabled(true);
-      }
-   }
-
-   ArchiveMatchTree->FullExpand();
-
-   ArchiveMatchTree->EndUpdate();
-   */
-#endif
 }
 void TSingleLogFrame::on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* )
 {
@@ -566,12 +510,44 @@ void TSingleLogFrame::on_MakeEntry(BaseContestLog *ct)
        makeEntry( false );
     }
 }
-
+void TSingleLogFrame::on_AfterSelectContact( BaseContact *lct, BaseContestLog *ct)
+{
+    if (ct == contest && lct == nullptr)
+    {
+        ui->QSOTable->scrollToBottom();
+        int row = ui->QSOTable->model()->rowCount() - 1;
+        if (row >= 0)
+        {
+            QModelIndex index = ui->QSOTable->model()->index( row, 0 );
+            ui->QSOTable->setCurrentIndex(index);
+        }
+    }
+}
+void TSingleLogFrame::on_AfterLogContact( BaseContestLog *ct)
+{
+      if (ct == contest)
+      {
+         contest->scanContest();
+         updateTrees();
+         NextContactDetailsTimerTimer( );
+      }
+}
+void TSingleLogFrame::updateTrees()
+{
+   qsoModel.reset();
+   //MultDispFrame->refreshMults();
+}
 //=============================================================================
 QSOGridModel::QSOGridModel()
 {}
 QSOGridModel::~QSOGridModel()
 {}
+void QSOGridModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 void QSOGridModel::initialise( BaseContestLog * pcontest )
 {
    contest = pcontest;

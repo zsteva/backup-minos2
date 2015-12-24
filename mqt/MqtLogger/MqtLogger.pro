@@ -51,7 +51,8 @@ SOURCES += main.cpp \
     tforcelogdlg.cpp \
     tqsoeditdlg.cpp \
     tloccalcform.cpp \
-    qsologframe.cpp
+    qsologframe.cpp \
+    tstatsdispframe.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -81,7 +82,8 @@ HEADERS  += \
     tqsoeditdlg.h \
     tloccalcform.h \
     qsologframe.h \
-    focuswatcher.h
+    focuswatcher.h \
+    tstatsdispframe.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
@@ -98,7 +100,8 @@ FORMS    += tlogcontainer.ui \
     tforcelogdlg.ui \
     tqsoeditdlg.ui \
     tloccalcform.ui \
-    qsologframe.ui
+    qsologframe.ui \
+    tstatsdispframe.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase

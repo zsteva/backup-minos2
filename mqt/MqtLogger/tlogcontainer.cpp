@@ -62,7 +62,6 @@ bool TLogContainer::show(int argc, char *argv[])
     bool autoFill;
     TContestApp::getContestApp() ->loggerBundle.getBoolProfile( elpAutoFill, autoFill );
     ReportAutofillAction->setChecked(autoFill);
-    TContestApp::getContestApp() ->loggerBundle.setBoolProfile( elpAutoFill, autoFill );
     TContestApp::getContestApp() ->loggerBundle.flushProfile();
 
     TimerUpdateQSOTimer.start(1000);
@@ -303,7 +302,11 @@ void TLogContainer::openRecentFile()
         {
            setCurrentFile(FileName);
            ContestDetails pced( this );
-           addSlot( &pced, FileName, false, -1 );
+           BaseContestLog *ct = addSlot( &pced, FileName, false, -1 );
+           if (ct)
+           {
+               selectContest(ct, 0);
+           }
         }
         else
         {
@@ -494,6 +497,10 @@ void TLogContainer::FileNewActionExecute()
           MinosParameters::getMinosParameters() ->mshowMessage( QString( "Failed to delete " ) + initName );
        }
     }
+    else
+    {
+        selectContest(c, 0);
+    }
 }
 void TLogContainer::FileOpenActionExecute()
 {
@@ -512,10 +519,15 @@ void TLogContainer::FileOpenActionExecute()
                        "",
                        Filter
                        );
+    BaseContestLog *ct = 0;
     if ( !fname.isEmpty() )
     {
         ContestDetails pced(this );
-        addSlot( &pced, fname, false, -1 );   // not automatically read only
+        ct = addSlot( &pced, fname, false, -1 );   // not automatically read only
+        if (ct)
+        {
+            selectContest(ct, 0);
+        }
     }
 }
 
@@ -638,6 +650,9 @@ void TLogContainer::FontEditAcceptActionExecute()
 
 void TLogContainer::ReportAutofillActionExecute()
 {
+    bool autoFill = ReportAutofillAction->isChecked();
+    TContestApp::getContestApp() ->loggerBundle.setBoolProfile( elpAutoFill, autoFill );
+    TContestApp::getContestApp() ->loggerBundle.flushProfile();
 
 }
 

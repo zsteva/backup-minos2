@@ -24,6 +24,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     , partialContact(0)
     , edit(false)
     , overstrike(false)
+    , oldTimeOK(true)
 {
     ui->setupUi(this);
 
@@ -214,6 +215,7 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
    ui->SerTXEdit->setStyleSheet(ss);
    current = 0;
    updateTimeAllowed = true;
+   oldTimeOK = true;
    updateQSOTime();
 }
 void QSOLogFrame::setXferEnabled(bool s)
@@ -1494,6 +1496,9 @@ void QSOLogFrame::updateQSODisplay()
    ui->ModeButton->setEnabled(!contest->isReadOnly());
    ui->SecondOpComboBox->setEnabled(!contest->isReadOnly());
    ui->MainOpComboBox->setEnabled(!contest->isReadOnly());
+
+   ui->InsertBeforeButton->setEnabled(!contest->isReadOnly());
+   ui->InsertAfterButton->setEnabled(!contest->isReadOnly());
 }
 
 //---------------------------------------------------------------------------
@@ -1730,8 +1735,9 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
         timeOK = contest->checkTime(time);
     }
 
-    if (fromTimer)
+    if (fromTimer && timeOK != oldTimeOK)
     {
+        oldTimeOK = timeOK;
         if (timeOK)
         {
             QString ss("QLineEdit { background-color: white ; border: none ; color: black ; }");
@@ -1827,7 +1833,8 @@ void QSOLogFrame::selectEntry( BaseContact *slct )
 
    ui->PriorButton->setEnabled(getPriorContact());
    ui->NextButton->setEnabled(getNextContact());
-   ui->InsertAfterButton->setEnabled(getNextContact());  // dont allow insert after last contact
+   ui->InsertAfterButton->setEnabled(getNextContact() && !contest->isReadOnly());  // dont allow insert after last contact
+   ui->InsertBeforeButton->setEnabled(getPriorContact() && !contest->isReadOnly());  // dont allow insert after last contact
 
    ui->MainOpComboBox->setCurrentText(screenContact.op1);
    ui->SecondOpComboBox->setCurrentText(screenContact.op2);

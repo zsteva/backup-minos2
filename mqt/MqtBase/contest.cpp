@@ -422,15 +422,13 @@ bool BaseContestLog::updateStat( BaseContact *cct )
 {
    // need to check if a valid DTG
    bool acted = false;
-   QDateTime tnow = QDateTime::currentDateTimeUtc();
 
-   QDateTime nowTime;
    QDateTime cttime;
 
    if ( ( cct->contactScore.getValue() <= 0 ) || !cct->time.getDtg( cttime ) )
       return true;
 
-   QDateTime t = tnow.addSecs( MinosParameters::getMinosParameters() ->getBigClockCorrection());
+   QDateTime t = QDateTime::currentDateTimeUtc().addSecs( MinosParameters::getMinosParameters() ->getBigClockCorrection());
 
    int tdiff = cttime.secsTo(t);
    if ( tdiff < 0 )
