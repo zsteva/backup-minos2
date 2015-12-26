@@ -235,14 +235,14 @@ MatchContact *TMatchCollection::pcontactAt( int i )
 //=============================================================================
 matchElement::matchElement( void ) : match( false ), empty( true )
 {
-   mstr[ 0 ] = 0;
-   rawstr[ 0 ] = 0;
+   mstr.clear();
+   rawstr.clear();
 }
 static QString match_temp;
 unsigned char matchElement::checkGreater( const QString &s )
 {
    unsigned char res = 0;
-   match_temp[ 0 ] = 0;
+   match_temp.clear();
    if ( !s.length() )
    {
       return res;
@@ -256,7 +256,7 @@ unsigned char matchElement::checkGreater( const QString &s )
 
    if ( newlen == oldlen )
    {
-      if ( stricmp( match_temp, rawstr ) == 0 )
+      if ( match_temp.compare( rawstr, Qt::CaseInsensitive ) == 0 )
          return res;		// no change
       res = SET_CHANGED | SET_NOT_GREATER;
    }
@@ -273,15 +273,15 @@ unsigned char matchElement::set
    ( const QString &s )
 {
    unsigned char res = 0;
-   match_temp[ 0 ] = 0;
+   match_temp.clear();
    match = false;
    empty = true;
 
    if ( !s.length() )
    {
       // Null argument used to clear it out
-      mstr[ 0 ] = 0;
-      rawstr[ 0 ] = 0;
+      mstr.clear();
+      rawstr.clear();
       return res;
    }
 

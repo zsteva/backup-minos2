@@ -21,7 +21,7 @@ extern void strtobuf( const QString &str );
 extern void strtobuf( const MinosItem<QString> &str );
 extern void strtobuf();
 QString strupr( const QString &s );
-extern int stricmp( const QString &s1, const QString &s2 );
+//extern int stricmp( const QString &s1, const QString &s2 );
 extern int strnicmp( const QString &s1, const QString &s2, unsigned int len );
 extern void opyn( bool b );
 void opyn( const MinosItem<bool> &b );
@@ -83,4 +83,14 @@ extern int toInt ( const QString &s, int def = 0 );
 extern double toDouble ( const QString &s, double def = 0.0 );
 extern QString makeStr( bool i );
 extern QString HtmlFontColour( const QColor &c );
+
+class UpperCaseValidator:public QValidator
+{
+public:
+    State validate(QString & input, int & /*pos*/) const
+    {
+        input = input.toUpper();
+        return Acceptable;
+    }
+};
 #endif

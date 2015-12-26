@@ -12,3 +12,7 @@ TMinosHelpForm::~TMinosHelpForm()
 {
     delete ui;
 }
+void TMinosHelpForm::setText(const QString &text)
+{
+
+}

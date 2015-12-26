@@ -18,7 +18,7 @@ public:
     explicit TStatsDispFrame(QWidget *parent = 0);
     ~TStatsDispFrame();
 
-    void reInitialise();
+    void reInitialiseStats();
     void setContest( BaseContestLog *ct );
 
 private slots:

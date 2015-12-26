@@ -164,7 +164,7 @@ CountryEntry *findCtryPrefix( const callsign &cs )
          {
             // we need to stop when we get to the basic prefix...
             // otherwise RVI6ABC ends up matching R, which is UA
-            testpart[ clen ] = 0;
+            testpart = testpart.left(clen);
             clen--;
             csyn = MultLists::getMultLists() ->searchCountrySynonym(testpart );
          }

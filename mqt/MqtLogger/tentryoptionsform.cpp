@@ -305,6 +305,10 @@ QString TEntryOptionsForm::doFileSave( )
             }
             break;
         }
+        else
+        {
+            return "";
+        }
     }
     return expName;
 }

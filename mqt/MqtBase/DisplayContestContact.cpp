@@ -585,7 +585,7 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
 
                               case PPQSO:
                                  // actually we would often want the distance here
-                                 scorebuff = QString("%1XB").arg( temp, 4 );
+                                 scorebuff = QString("%1").arg( temp, 4 );
                                  break;
 
                            }
@@ -613,7 +613,7 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
          case egExchange:
             if ( districtMult )
             {
-               if (stricmp(districtMult->districtCode, extraText.getValue()) == 0)
+               if (districtMult->districtCode.compare( extraText.getValue(), Qt::CaseInsensitive) == 0)
                {
                   res = districtMult->districtCode;
                }

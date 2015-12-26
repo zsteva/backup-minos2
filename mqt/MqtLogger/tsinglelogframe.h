@@ -80,6 +80,8 @@ public:
     void EditMatchContact();
     void QSOTreeSelectContact( BaseContact * lct );
 
+    void refreshMults();
+
     bool logColumnsChanged;
     bool splittersChanged;
 
@@ -112,6 +114,11 @@ private:
     QString sCurrFreq;
     QString sOldFreq;
 
+    bool filterClickEnabled;
+
+    void initFilters();
+    void saveFilters();
+
     void transferDetails( MatchNodeData *MatchTreeIndex );
     void transferDetails( MatchNodeListData *MatchTreeIndex );
 
@@ -141,6 +148,14 @@ private slots:
     void on_AfterSelectContact(BaseContact *lct, BaseContestLog *contest);
     void on_AfterLogContact( BaseContestLog *ct);
 
+    void on_WorkedCB_clicked();
+    void on_UnworkedCB_clicked();
+    void on_ContEU_clicked();
+    void on_ContOC_clicked();
+    void on_ContAS_clicked();
+    void on_ContSA_clicked();
+    void on_ContAF_clicked();
+    void on_ContNA_clicked();
 };
 
 #endif // TSINGLELOGFRAME_H

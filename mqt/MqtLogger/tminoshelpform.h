@@ -14,6 +14,7 @@ class TMinosHelpForm : public QDialog
 public:
     explicit TMinosHelpForm(QWidget *parent = 0);
     ~TMinosHelpForm();
+    void setText(const QString &text);
 
 private:
     Ui::TMinosHelpForm *ui;

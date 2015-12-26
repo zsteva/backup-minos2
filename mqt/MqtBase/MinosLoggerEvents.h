@@ -51,6 +51,7 @@ signals:
    void XferPressed();
    void BandMapPressed();
    void TimerDistribution();
+   void FiltersChanged();
 
    void CountrySelect(QString cty, BaseContestLog *c);
    void DistrictSelect(QString dist, BaseContestLog *c);
@@ -88,6 +89,7 @@ public:
    static void SendXferPressed();
    static void SendBandMapPressed();
    static void SendTimerDistribution();
+   static void SendFiltersChanged();
 
    static void SendCountrySelect(QString cty, BaseContestLog *c);
    static void SendDistrictSelect(QString dist, BaseContestLog *c);

@@ -42,6 +42,8 @@ ContestDetails::ContestDetails(QWidget *parent) :
         ui->EndTimeCombo->addItem( hour );
         ui->EndTimeCombo->addItem ( halfhour );
     }
+    ui->CallsignEdit->setValidator(new UpperCaseValidator());
+    ui->LocatorEdit->setValidator(new UpperCaseValidator());
 }
 void ContestDetails::doCloseEvent()
 {
@@ -842,8 +844,7 @@ void ContestDetails::on_BSHelpButton_clicked()
 {
     // Put up the help text on bundled settings
      TMinosHelpForm HelpForm( this );
-//     HelpForm->Caption = "Settings";
-//     HelpForm->HelpMemo->Text = BSHelpText;
+     HelpForm.setText(BSHelpText);
      HelpForm.exec();}
 
 void ContestDetails::on_VHFCalendarButton_clicked()
@@ -874,6 +875,7 @@ void ContestDetails::on_CallsignEdit_editingFinished()
 {
     if (ui->MainOpComboBox->currentText().isEmpty())
     {
+       ui->MainOpComboBox->addItem( ( ui->CallsignEdit->text() ) );
        ui->MainOpComboBox->setCurrentText( ui->CallsignEdit->text());
     }
 

@@ -5,15 +5,6 @@
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
 
-class UpperCaseValidator:public QValidator
-{
-public:
-    State validate(QString & input, int & /*pos*/) const
-    {
-        input = input.toUpper();
-        return Acceptable;
-    }
-};
 
 QSOLogFrame::QSOLogFrame(QWidget *parent) :
     QFrame(parent)
@@ -917,6 +908,13 @@ void QSOLogFrame::EditControlEnter(QObject *Sender )
    current = dynamic_cast<QWidget *>(Sender);
    QLineEdit *tle = dynamic_cast<QLineEdit *>( current );
 
+   int endpos = tle->text().size();
+   if (endpos < 0)
+   {
+       endpos = 0;
+   }
+   tle->setCursorPosition(endpos);
+
    bool ovr = overstrike;
    checkTimeEditEnter(tle, ovr);
    MinosLoggerEvents::SendReportOverstrike(ovr, contest);
@@ -942,6 +940,15 @@ void QSOLogFrame::EditControlExit( QObject */*Sender*/ )
       QString loc = ui->LocEdit->text().trimmed().toUpper();
       if (loc.size() == 6 || loc.size() == 8)
       {
+         if (loc[0] == '1')
+         {
+            loc[0] = 'I';
+         }
+         if (loc[0] == '0')
+         {
+            loc[0] = '1';
+         }
+
          if (loc[1] == '1')
          {
             loc[1] = 'I';
@@ -950,13 +957,32 @@ void QSOLogFrame::EditControlExit( QObject */*Sender*/ )
          {
             loc[1] = 'O';
          }
-         if (loc[2] == '1')
+
+         if (loc[2] == 'I')
          {
-            loc[2] = 'I';
+            loc[2] = '1';
          }
-         if (loc[2] == '0')
+         if (loc[2] == 'O')
          {
-            loc[2] = 'O';
+            loc[2] = '0';
+         }
+
+         if (loc[3] == 'I')
+         {
+            loc[3] = '1';
+         }
+         if (loc[3] == 'O')
+         {
+            loc[3] = '0';
+         }
+
+         if (loc[4] == '1')
+         {
+            loc[4] = 'I';
+         }
+         if (loc[4] == '0')
+         {
+            loc[4] = 'O';
          }
 
          if (loc[5] == '1')
@@ -966,14 +992,6 @@ void QSOLogFrame::EditControlExit( QObject */*Sender*/ )
          if (loc[5] == '0')
          {
             loc[5] = 'O';
-         }
-         if (loc[6] == '1')
-         {
-            loc[6] = 'I';
-         }
-         if (loc[6] == '0')
-         {
-            loc[6] = 'O';
          }
          if (loc != ui->LocEdit->text().trimmed())
          {
@@ -1597,10 +1615,14 @@ void QSOLogFrame::logScreenEntry( )
    {
       return ;
    }
-   DisplayContestContact *lct = ct->addContact( ctmax, 0, false, false );	// "current" doesn't get flag, don't save ContestLog yet
+   BaseContact *lct = selectedContact;
+   if (lct == nullptr)
+   {
+        lct = ct->addContact( ctmax, 0, false, false );	// "current" doesn't get flag, don't save ContestLog yet
+   }
 
    bool contactmodeCW = ( screenContact.reps.size() == 3 && screenContact.repr.size() == 3 );
-   bool curmodeCW = ( stricmp( screenContact.mode, "A1A" ) == 0 );
+   bool curmodeCW = ( screenContact.mode.compare( "A1A", Qt::CaseInsensitive ) == 0 );
 
    if ( contactmodeCW != curmodeCW )
    {

@@ -42,21 +42,21 @@ bool GlistEntry::operator<( const GlistEntry& rhs ) const
 {
    // p1 is from list; p2 is the one being searched for
 
-   int res = stricmp( synPrefix, rhs.synPrefix );
+   int res = synPrefix.compare(rhs.synPrefix, Qt::CaseInsensitive );
    return res < 0;
 }
 bool GlistEntry::operator==( const GlistEntry& rhs ) const
 {
    // p1 is from list; p2 is the one being searched for
 
-   int res = stricmp( synPrefix, rhs.synPrefix );
+    int res = synPrefix.compare(rhs.synPrefix, Qt::CaseInsensitive );
    return res == 0;
 }
 bool GlistEntry::operator!=( const GlistEntry& rhs ) const
 {
    // p1 is from list; p2 is the one being searched for
 
-   int res = stricmp( synPrefix, rhs.synPrefix );
+    int res = synPrefix.compare(rhs.synPrefix, Qt::CaseInsensitive );
    return res != 0;
 }
 
@@ -104,7 +104,7 @@ DistrictEntry::DistrictEntry( const QString &cd, const QString &name, const QStr
 
    for ( MultList < CountryEntry * >::iterator i = MultListsImpl::getMultLists() ->ctryList.begin(); i != MultListsImpl::getMultLists() ->ctryList.end(); i++ )
    {
-      if ( stricmp( ( *i ) ->basePrefix, prefix2 ) == 0 )
+      if ( ( *i ) ->basePrefix.compare( prefix2, Qt::CaseInsensitive ) == 0 )
       {
          country2 = *i;
          break;
@@ -112,7 +112,7 @@ DistrictEntry::DistrictEntry( const QString &cd, const QString &name, const QStr
    }
    for ( MultList < CountryEntry * >::iterator i = MultListsImpl::getMultLists() ->ctryList.begin(); i != MultListsImpl::getMultLists() ->ctryList.end(); i++ )
    {
-      if ( stricmp( ( *i ) ->basePrefix, prefix ) == 0 )
+      if ( ( *i ) ->basePrefix.compare( prefix, Qt::CaseInsensitive ) == 0 )
       {
          country1 = *i;
          break;
@@ -146,17 +146,17 @@ void DistrictEntry::addSynonyms( QString &s )
 }
 bool DistrictEntry::operator<( const DistrictEntry& rhs ) const
 {
-   int res = stricmp( districtCode, rhs.districtCode );
+   int res =  districtCode.compare( rhs.districtCode, Qt::CaseInsensitive );
    return res < 0;
 }
 bool DistrictEntry::operator==( const DistrictEntry& rhs ) const
 {
-   int res = stricmp( districtCode, rhs.districtCode );
+    int res =  districtCode.compare( rhs.districtCode, Qt::CaseInsensitive );
    return res == 0;
 }
 bool DistrictEntry::operator!=( const DistrictEntry& rhs ) const
 {
-   int res = stricmp( districtCode, rhs.districtCode );
+    int res =  districtCode.compare( rhs.districtCode, Qt::CaseInsensitive );
    return res != 0;
 }
 
@@ -171,7 +171,7 @@ DistrictSynonym::DistrictSynonym( const QString &cd, const QString &syn ) :
 
    for ( MultList < DistrictEntry * >::iterator i = MultListsImpl::getMultLists() ->distList.begin(); i != MultListsImpl::getMultLists() ->distList.end(); i++ )
    {
-      if ( stricmp( ( *i ) ->districtCode, cd ) == 0 )
+      if ( ( *i ) ->districtCode.compare( cd, Qt::CaseInsensitive ) == 0 )
       {
          district = *i;
          break;
@@ -182,17 +182,17 @@ DistrictSynonym::~DistrictSynonym()
 {}
 bool DistrictSynonym::operator<( const DistrictSynonym& rhs ) const
 {
-   int res = stricmp( synonym, rhs.synonym );
+   int res = synonym.compare( rhs.synonym, Qt::CaseInsensitive );
    return res < 0;
 }
 bool DistrictSynonym::operator==( const DistrictSynonym& rhs ) const
 {
-   int res = stricmp( synonym, rhs.synonym );
+    int res = synonym.compare( rhs.synonym, Qt::CaseInsensitive );
    return res == 0;
 }
 bool DistrictSynonym::operator!=( const DistrictSynonym& rhs ) const
 {
-   int res = stricmp( synonym, rhs.synonym );
+    int res = synonym.compare( rhs.synonym, Qt::CaseInsensitive );
    return res != 0;
 }
 //======================================================================
@@ -286,7 +286,7 @@ static DistrictEntry * searchDistrict( const QString &syn )
    // given a random string, look for an entry or a synonym
    for ( MultList < DistrictEntry * >::iterator i = MultListsImpl::getMultLists() ->distList.begin(); i != MultListsImpl::getMultLists() ->distList.end(); i++ )
    {
-      if ( stricmp( ( *i ) ->districtCode, syn ) == 0 )
+      if ( ( *i ) ->districtCode.compare( syn, Qt::CaseInsensitive ) == 0 )
       {
          return ( *i );
       }
@@ -294,7 +294,7 @@ static DistrictEntry * searchDistrict( const QString &syn )
 
    for ( MultList < DistrictSynonym * >::iterator i = MultListsImpl::getMultLists() ->distSynList.begin(); i != MultListsImpl::getMultLists() ->distSynList.end(); i++ )
    {
-      if ( stricmp( ( *i ) ->synonym, syn ) == 0 )
+      if ( ( *i ) ->synonym.compare( syn, Qt::CaseInsensitive ) == 0 )
       {
          return ( *i ) ->district;
       }
@@ -328,7 +328,7 @@ int CountryEntry::districtLimit()
    DistCount *dc = &distCounts[ 0 ];
    while ( dc->dcount )
    {
-      if ( stricmp( basePrefix, dc->prefix ) == 0 )
+      if ( basePrefix.compare( dc->prefix, Qt::CaseInsensitive ) == 0 )
       {
          distLimit = dc->dcount;
          return distLimit;
@@ -366,17 +366,17 @@ void CountryEntry::addSynonyms( QString &s )
 }
 bool CountryEntry::operator<( const CountryEntry& rhs ) const
 {
-   int res = stricmp( basePrefix, rhs.basePrefix );
+   int res = basePrefix.compare( rhs.basePrefix, Qt::CaseInsensitive );
    return res < 0;
 }
 bool CountryEntry::operator==( const CountryEntry& rhs ) const
 {
-   int res = stricmp( basePrefix, rhs.basePrefix );
+    int res = basePrefix.compare( rhs.basePrefix, Qt::CaseInsensitive );
    return res == 0;
 }
 bool CountryEntry::operator!=( const CountryEntry& rhs ) const
 {
-   int res = stricmp( basePrefix, rhs.basePrefix );
+    int res = basePrefix.compare( rhs.basePrefix, Qt::CaseInsensitive );
    return res != 0;
 }
 //======================================================================
@@ -413,7 +413,7 @@ static void makeCountrySynonym( const QString &ssyn, const QString &sprefix )
    CountryEntry *ctry = 0;
    for ( MultList < CountryEntry * >::iterator i = MultListsImpl::getMultLists() ->ctryList.begin(); i != MultListsImpl::getMultLists() ->ctryList.end(); i++ )
    {
-      if ( stricmp( ( *i ) ->basePrefix, prefix ) == 0 )
+      if ( ( *i ) ->basePrefix.compare( prefix, Qt::CaseInsensitive ) == 0 )
       {
          ctry = ( *i );
          break;
@@ -448,7 +448,7 @@ CountrySynonym::CountrySynonym( const QString &ssyn, const QString &sprefix ) :
       // search country list for the prefix
       for ( MultList < CountryEntry * >::iterator i = MultListsImpl::getMultLists() ->ctryList.begin(); i != MultListsImpl::getMultLists() ->ctryList.end(); i++ )
       {
-         if ( stricmp( ( *i ) ->basePrefix, prefix ) == 0 )
+         if (  ( *i ) ->basePrefix.compare( prefix, Qt::CaseInsensitive ) == 0 )
             //          country = i;
             country = *i;
       }
@@ -468,7 +468,7 @@ void CountrySynonym::getDupPrefix( QString &sprefix2 )
    // None found, then don't change prefix2
    for ( MultList < GlistEntry * >::iterator i = MultListsImpl::getMultLists() ->glist.begin(); i != MultListsImpl::getMultLists() ->glist.end(); i++ )
    {
-      if ( stricmp( ( *i ) ->synPrefix, prefix2 ) == 0 )
+      if ( ( *i ) ->synPrefix.compare( prefix2, Qt::CaseInsensitive ) == 0 )
       {
          sprefix2 = ( *i ) ->dupPrefix;
          break;
@@ -496,7 +496,7 @@ int CountrySynonym::compare( const CountrySynonym &cs ) const
    // p1 is from list; p2 is the one being searched for
    int res;
 
-   res = stricmp( synPrefix, cs.synPrefix );
+   res = synPrefix.compare(cs.synPrefix, Qt::CaseInsensitive );
    if ( res < 0 )
       return -1;
    else
@@ -804,39 +804,41 @@ bool MultListsImpl::loadMultFiles( void )
    distList.load();
    distSynList.load();
    glist.load();
-   /*
+/*
    std::ofstream os("c:/temp/multlist.txt");
+
+   MultListsImpl *m = this;
 
    os << "================== country entries ========================" << std::endl;
    for (MultList < CountryEntry * >::iterator i = m->ctryList.begin(); i != m->ctryList.end(); i++)
    {
-      os << (*i)->basePrefix + " " + (*i)->realName << std::endl;
+      os << ((*i)->basePrefix + " " + (*i)->realName).toStdString().c_str() << std::endl;
    }
-   os << (String("================== country synonyms ") + String(m->ctrySynList.size()).c_str() + "========================").c_str() << std::endl;
+   os << (QString("================== country synonyms ") + QString::number(m->ctrySynList.size()) + "========================").toStdString().c_str() << std::endl;
    for (MultList < CountrySynonym * >::iterator i = m->ctrySynList.begin(); i != m->ctrySynList.end(); i++)
    {
       QString temp1 = (*i)->synPrefix;
    //      CountryEntry * country = *((*i)->country);
       CountryEntry * country = (*i)->country;
       QString temp2 = country->basePrefix;
-      os << (temp1 + " : " + temp2) << std::endl;
+      os << (temp1 + " : " + temp2).toStdString().c_str() << std::endl;
    }
    os << "================== district entries ========================" << std::endl;
    for (MultList < DistrictEntry * >::iterator i = m->distList.begin(); i != m->distList.end(); i++)
    {
-      os << (*i)->districtCode << std::endl;
+      os << (*i)->districtCode.toStdString().c_str() << std::endl;
    }
    os << "================== district synonyms ========================" << std::endl;
    for (MultList < DistrictSynonym * >::iterator i = m->distSynList.begin(); i != m->distSynList.end(); i++)
    {
-      os << ((*i)->synonym + " : " + ((*i)->district)->districtCode) << std::endl;
+      os << ((*i)->synonym + " : " + ((*i)->district)->districtCode).toStdString().c_str() << std::endl;
    }
    os << "================== Glist ========================" << std::endl;
    for (MultList < GlistEntry * >::iterator i = m->glist.begin(); i != m->glist.end(); i++)
    {
-      os << ((*i)->synPrefix + " : " + (*i)->dupPrefix) << std::endl;
+      os << ((*i)->synPrefix + " : " + (*i)->dupPrefix).toStdString().c_str() << std::endl;
    }
-   */ 
+*/
    return true;
 }
 MultListsImpl::MultListsImpl()
@@ -864,7 +866,7 @@ CountryEntry *MultListsImpl::getCtryForPrefix( const QString &forcedMult )
    CountryEntry * ctryMult = 0;
    for ( MultList < CountryEntry * >::iterator i = MultListsImpl::getMultLists() ->ctryList.begin(); i != MultListsImpl::getMultLists() ->ctryList.end(); i++ )
    {
-      if ( stricmp( ( *i ) ->basePrefix, forcedMult ) == 0 )
+      if ( ( *i ) ->basePrefix.compare( forcedMult, Qt::CaseInsensitive ) == 0 )
       {
          ctryMult = ( *i );
          break;
@@ -912,7 +914,7 @@ bool MultListsImpl::isUKprefix(const callsign &cs)
    }
    for (unsigned int i = 0; i < sizeof(distCounts)/sizeof(DistCount); i++)
    {
-      if (stricmp(ctry->basePrefix, distCounts[i].prefix ) == 0)
+      if (ctry->basePrefix.compare( distCounts[i].prefix, Qt::CaseInsensitive ) == 0)
       {
          return true;
       }

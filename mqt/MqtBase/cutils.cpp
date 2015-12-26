@@ -304,6 +304,7 @@ QString strupr( const QString &s )
     return s.toUpper();
 }
 //=============================================================================
+/*
 int stricmp( const QString &s1, const QString &s2 )
 {
    if ( s2.length() == 0 )
@@ -312,6 +313,7 @@ int stricmp( const QString &s1, const QString &s2 )
       return 1;
    return s1.compare(s2, Qt::CaseInsensitive );
 }
+*/
 //=============================================================================
 int strnicmp( const QString &s1, const QString &s2, unsigned int len )
 {

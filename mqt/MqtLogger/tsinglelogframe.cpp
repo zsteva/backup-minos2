@@ -12,6 +12,26 @@
 #include "focuswatcher.h"
 #include "htmldelegate.h"
 
+const int CONTINENTS = 6;
+struct ContList
+{
+   char continent[ 3 ];
+   bool allow;
+};
+
+extern ContList contlist[ CONTINENTS ];
+ContList contlist[ CONTINENTS ] =
+   {
+      {"EU", true},
+      {"AS", false},
+      {"AF", false},
+      {"OC", false},
+      {"SA", false},
+      {"NA", false},
+   };
+bool showWorked = false;
+bool showUnworked = false;
+
 TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     QFrame(parent),
     ui(new Ui::TSingleLogFrame),
@@ -20,7 +40,8 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     splittersChanged(false),
     currFreq( 0 ), oldFreq( 0 ),
     lastStanzaCount( 0 ),
-    xferTree( 0 )
+    xferTree( 0 ),
+    filterClickEnabled( false )
 
 {
     ui->setupUi(this);
@@ -82,6 +103,10 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(sm, SIGNAL(mapped(int)), ui->StackedMults, SLOT(setCurrentIndex(int)));
 
     ui->StatsFrame->setContest(contest);
+    ui->locFrame->setContest(contest);
+    ui->StatsButton->setChecked(true);
+    ui->StackedMults->setCurrentIndex(4);
+    initFilters();
 
 }
 
@@ -335,7 +360,7 @@ void TSingleLogFrame::EditContact( BaseContact *lct )
 
    ui->GJVQSOLogFrame->refreshOps();
    //LogMonitor->Invalidate();
-   //MultDispFrame->refreshMults();
+   refreshMults();
    //LogMonitor->Repaint();
    ui->GJVQSOLogFrame->startNextEntry();
 
@@ -532,10 +557,112 @@ void TSingleLogFrame::on_AfterLogContact( BaseContestLog *ct)
          NextContactDetailsTimerTimer( );
       }
 }
+void TSingleLogFrame::refreshMults()
+{
+    ui->locFrame->reInitialiseLocators();
+}
+
 void TSingleLogFrame::updateTrees()
 {
    qsoModel.reset();
-   //MultDispFrame->refreshMults();
+   refreshMults();
+}
+void TSingleLogFrame::initFilters()
+{
+   filterClickEnabled = false;
+
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentEU, contlist[ 0 ].allow );
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentAS, contlist[ 1 ].allow );
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentAF, contlist[ 2 ].allow );
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentOC, contlist[ 3 ].allow );
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentSA, contlist[ 4 ].allow );
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentNA, contlist[ 5 ].allow );
+
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowWorked, showWorked );
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowUnworked, showUnworked );
+
+   ui->ContEU->setChecked(contlist[ 0 ].allow);
+   ui->ContAS->setChecked(contlist[ 1 ].allow);
+   ui->ContAF->setChecked(contlist[ 2 ].allow);
+   ui->ContOC->setChecked(contlist[ 3 ].allow);
+   ui->ContSA->setChecked(contlist[ 4 ].allow);
+   ui->ContNA->setChecked(contlist[ 5 ].allow);
+   ui->WorkedCB->setChecked(showWorked);
+   ui->UnworkedCB->setChecked(showUnworked);
+
+   filterClickEnabled = true;
+}
+void TSingleLogFrame::saveFilters()
+{
+    if ( filterClickEnabled )
+    {
+        ui->dxccFrame->reInitialiseCountries();
+        ui->districtFrame->reInitialiseDistricts();
+        ui->locFrame->reInitialiseLocators();
+        ui->StatsFrame->reInitialiseStats();
+
+        contlist[ 0 ].allow = ui->ContEU->isChecked();
+        contlist[ 1 ].allow = ui->ContAS->isChecked();
+        contlist[ 2 ].allow = ui->ContAF->isChecked();
+        contlist[ 3 ].allow = ui->ContOC->isChecked();
+        contlist[ 4 ].allow = ui->ContSA->isChecked();
+        contlist[ 5 ].allow = ui->ContNA->isChecked();
+        showWorked = ui->WorkedCB->isChecked();
+        showUnworked = ui->UnworkedCB->isChecked();
+
+        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowContinentEU, contlist[ 0 ].allow );
+        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowContinentAS, contlist[ 1 ].allow );
+        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowContinentAF, contlist[ 2 ].allow );
+        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowContinentOC, contlist[ 3 ].allow );
+        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowContinentSA, contlist[ 4 ].allow );
+        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowContinentNA, contlist[ 5 ].allow );
+
+        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowWorked, showWorked );
+        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowUnworked, showUnworked );
+        MinosParameters::getMinosParameters() ->flushDisplayProfile();
+
+        MinosLoggerEvents::SendFiltersChanged();
+    }
+}
+
+void TSingleLogFrame::on_WorkedCB_clicked()
+{
+    saveFilters();
+}
+
+void TSingleLogFrame::on_UnworkedCB_clicked()
+{
+    saveFilters();
+}
+
+void TSingleLogFrame::on_ContEU_clicked()
+{
+    saveFilters();
+}
+
+void TSingleLogFrame::on_ContOC_clicked()
+{
+    saveFilters();
+}
+
+void TSingleLogFrame::on_ContAS_clicked()
+{
+    saveFilters();
+}
+
+void TSingleLogFrame::on_ContSA_clicked()
+{
+    saveFilters();
+}
+
+void TSingleLogFrame::on_ContAF_clicked()
+{
+    saveFilters();
+}
+
+void TSingleLogFrame::on_ContNA_clicked()
+{
+    saveFilters();
 }
 //=============================================================================
 QSOGridModel::QSOGridModel()
@@ -655,4 +782,3 @@ int QSOGridModel::columnCount( const QModelIndex &/*parent*/ ) const
 {
     return  LOGTREECOLS;
 }
-

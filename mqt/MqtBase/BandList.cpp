@@ -167,11 +167,12 @@ bool BandList::findBand ( const QString &psfreq, BandInfo &bi )
 
     for ( unsigned int i = 0; i < bandList.size(); i++ )
     {
-        if ( stricmp ( sfreq, bandList[ i ].uk ) == 0
-             || stricmp ( sfreq, bandList[ i ].wlen ) == 0
-             || stricmp ( sfreq, bandList[ i ].adif ) == 0
-             || stricmp ( sfreq, bandList[ i ].cabrillo ) == 0
-             || stricmp ( sfreq, bandList[ i ].reg1test ) == 0
+        if (
+                sfreq.compare(bandList[ i ].uk ) == 0
+                || sfreq.compare(bandList[ i ].wlen ) == 0
+                || sfreq.compare(bandList[ i ].adif ) == 0
+                || sfreq.compare(bandList[ i ].cabrillo ) == 0
+                || sfreq.compare(bandList[ i ].reg1test ) == 0
            )
         {
             bi = bandList[ i ];

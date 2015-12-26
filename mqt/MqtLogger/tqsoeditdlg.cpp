@@ -154,68 +154,6 @@ void TQSOEditDlg::refreshOps( ScreenContact &screenContact )
    */
 }
 //---------------------------------------------------------------------------
-/*
-void __fastcall TQSOEditDlg::QSOHistoryTreeGetText( TBaseVirtualTree *Sender,
-      PVirtualNode Node, TColumnIndex Column, TVSTTextType TextType,
-      WideString &CellText )
-{
-   CellText = "";
-   QSOHistoryNode * qn = ( QSOHistoryNode * ) Sender->GetNodeData( Node );
-
-   std::string line;
-   if ( qn && qn->root )
-   {
-      if ( qn->historyOffset == -1 )
-      {
-         line = qn->root->updtime.getDate( DTGACCURATE ) + " " + qn->root->updtime.getTime( DTGACCURATE ) + " UTC";
-      }
-      else
-      {
-         qn->root->getText( line, contest );
-      }
-   }
-   CellText = line.c_str();
-}
-*/
-//---------------------------------------------------------------------------
-/*
-void __fastcall TQSOEditDlg::QSOHistoryTreeInitNode( TBaseVirtualTree *Sender,
-      PVirtualNode ParentNode, PVirtualNode Node,
-      TVirtualNodeInitStates &InitialStates )
-{
-   int level = Sender->GetNodeLevel( Node );
-
-   QSOHistoryNode *qn = ( QSOHistoryNode * ) Sender->GetNodeData( Node );
-
-   if ( level == 0 )
-   {
-      InitialStates = InitialStates << ivsHasChildren;
-      if ( Node->Index < GJVQSOEditFrame->selectedContact->getHistory().size() )
-      {
-         qn->root = &GJVQSOEditFrame->selectedContact->getHistory() [ Node->Index ];
-      }
-      else
-      {
-         qn->root = 0;
-      }
-      qn->historyOffset = -1;
-   }
-   else
-   {
-      QSOHistoryNode *qnParent = ( QSOHistoryNode * ) Sender->GetNodeData( ParentNode );
-      qn->root = qnParent->root;
-      qn->historyOffset = Node->Index;
-   }
-
-}
-*/
-/*
-void __fastcall TQSOEditDlg::QSOHistoryTreeInitChildren(
-   TBaseVirtualTree *Sender, PVirtualNode Node, DWORD &ChildCount )
-{
-   ChildCount = 1;
-}
-*/
 //---------------------------------------------------------------------------
 /*
 

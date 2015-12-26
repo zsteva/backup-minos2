@@ -108,8 +108,8 @@ void ContestContact::getPrintFileText( QString &sdest, short maxlen )
                thisscore = 0;
             ContactBuffs::scorebuff = QString::number(thisscore );
          }
-      ContactBuffs::scorebuff[ 5 ] = 0;
-      multbuff[ 0 ] = 0;
+      ContactBuffs::scorebuff.truncate(4);;
+      multbuff.clear();
 
       if ( multCount )
       {
@@ -154,7 +154,7 @@ void ContestContact::getPrintFileText( QString &sdest, short maxlen )
       next = placestr( ContactBuffs::buff2, ContactBuffs::scorebuff, next + 1, -5 );
 
       ContactBuffs::qthbuff += extraText.getValue().trimmed();
-      ContactBuffs::qthbuff[ EXTRALENGTH] = 0;
+      ContactBuffs::qthbuff.truncate( EXTRALENGTH);
       next = placestr( ContactBuffs::buff2, ContactBuffs::qthbuff, next + 1, ContactBuffs::qthbuff.length() );
 
       next = placestr( ContactBuffs::buff2, ContactBuffs::buff, next + 1, ContactBuffs::buff.length() );
@@ -262,13 +262,14 @@ void ContestContact::getReg1TestText( QString &sdest )
    sdest += cs.fullCall.getValue();
    sdest += ';';
 
-   if ( stricmp( mode.getValue(), "A1A" ) == 0 )
+   QString smode = mode.getValue().toUpper();
+   if (  smode.compare( "A1A") == 0 )
       sdest += "2";
    else
-      if ( stricmp( mode.getValue(), "J3E" ) == 0 )
+      if ( smode.compare("J3E" ) == 0 )
          sdest += "1";
       else
-         if ( stricmp( mode.getValue(), "F3E" ) == 0 )
+         if ( smode.compare( "F3E" ) == 0 )
             sdest += "6";
          else
             sdest += "0";
@@ -404,13 +405,14 @@ QString ContestContact::getADIFLine()
    outstr += makeADIFField( "BAND", cb );
 
 
-   if ( stricmp( mode.getValue(), "A1A" ) == 0 )
+   QString smode = mode.getValue().toUpper();
+   if (  smode.compare( "A1A" ) == 0 )
       outstr += makeADIFField( "MODE", "CW" );
    else
-      if ( stricmp( mode.getValue(), "J3E" ) == 0 )
+      if ( smode.compare( "J3E" ) == 0 )
          outstr += makeADIFField( "MODE", "SSB" );
       else
-         if ( stricmp( mode.getValue(), "F3E" ) == 0 )
+         if ( smode.compare( "F3E" ) == 0 )
             outstr += makeADIFField( "MODE", "FM" );
          else
             outstr += makeADIFField( "MODE", mode.getValue() );

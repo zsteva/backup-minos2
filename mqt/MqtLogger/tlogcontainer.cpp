@@ -207,7 +207,7 @@ void TLogContainer::setupMenus()
 
 
     TabPopup.addAction(FileCloseAction);
-    CloseAllAction = newAction("Close all Contest", &TabPopup, SLOT(CloseAllActionExecute()));
+    CloseAllAction = newAction("Close all Contests", &TabPopup, SLOT(CloseAllActionExecute()));
     CloseAllButAction = newAction("Close all but this Contest", &TabPopup, SLOT(CloseAllButActionExecute()));
     TabPopup.addSeparator();
     TabPopup.addAction(ContestDetailsAction);
@@ -552,7 +552,7 @@ void TLogContainer::ContestDetailsActionExecute()
                 // and we need to do some re-init on the display
                 //updateQSODisplay();
                 ct->scanContest();
-                //MultDispFrame->refreshMults();
+                f->refreshMults();
             }
         }
     }

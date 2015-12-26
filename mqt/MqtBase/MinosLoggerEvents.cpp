@@ -162,6 +162,11 @@ void MinosLoggerEvents::SendTimerDistribution()
     emit mle.TimerDistribution();
 }
 //---------------------------------------------------------------------------
+void MinosLoggerEvents::SendFiltersChanged()
+{
+    emit mle.FiltersChanged();
+}
+//---------------------------------------------------------------------------
 void MinosLoggerEvents::SendCountrySelect(QString cty, BaseContestLog *c)
 {
     emit mle.CountrySelect(cty, c);

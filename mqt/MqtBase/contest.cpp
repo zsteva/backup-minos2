@@ -881,13 +881,13 @@ bool DupContact::operator<( const DupContact& rhs ) const
          c2 = &rhs.sct->cs;
       }
 
-   int ret = stricmp( c1->prefix2, c2->prefix2 );
+   int ret = c1->prefix2.compare(c2->prefix2, Qt::CaseInsensitive );
    if ( ret == 0 )
    {
-      ret = stricmp( c1->number, c2->number );
+      ret = c1->number.compare(c2->number, Qt::CaseInsensitive );
       if ( ret == 0 )
       {
-         ret = stricmp( c1->body, c2->body );
+         ret = c1->body.compare( c2->body, Qt::CaseInsensitive );
          if ( ret == 0 )
             return false;
       }
@@ -918,15 +918,15 @@ bool DupContact::operator==( const DupContact& rhs ) const
          c2 = &rhs.sct->cs;
       }
 
-   int ret = stricmp( c1->prefix2, c2->prefix2 );
+   int ret = c1->prefix2.compare(c2->prefix2, Qt::CaseInsensitive );
    if ( ret != 0 )
       return false;
 
-   ret = stricmp( c1->number, c2->number );
+   ret = c1->number.compare(c2->number, Qt::CaseInsensitive );
    if ( ret != 0 )
       return false;
 
-   ret = stricmp( c1->body, c2->body );
+   ret = c1->body.compare( c2->body, Qt::CaseInsensitive );
    if ( ret != 0 )
       return false;
 

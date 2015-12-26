@@ -31,23 +31,23 @@ void TStatsDispFrame::RecheckTimerTimer(  )
    if (lastCheckTime.secsTo(now) >= checkInterval)
    {
        lastCheckTime = now;
-       reInitialise();
+       reInitialiseStats();
    }
 }
 
 void TStatsDispFrame::on_P1Edit_valueChanged(int arg1)
 {
     MinosParameters::getMinosParameters() ->setStatsPeriod1( arg1 );
-    reInitialise();
+    reInitialiseStats();
 }
 
 void TStatsDispFrame::on_P2Edit_valueChanged(int arg1)
 {
     MinosParameters::getMinosParameters() ->setStatsPeriod2( arg1 );
-    reInitialise();
+    reInitialiseStats();
 }
 //---------------------------------------------------------------------------
-void TStatsDispFrame::reInitialise()
+void TStatsDispFrame::reInitialiseStats()
 {
    // we need to set the operator bundle to the current contest ops
    if ( !ui->P1Edit->hasFocus() && !ui->P2Edit->hasFocus() )
