@@ -34,7 +34,7 @@ private:
 
      bool oldTimeOK;
 
-     void EditControlEnter( QObject *Sender );
+     void EditControlEnter( QObject *Sender, QFocusEvent *event );
      void EditControlExit( QObject *Sender );
 
      virtual void logScreenEntry( );
@@ -146,7 +146,7 @@ private:
 signals:
     void QSOFrameCancelled();
 private slots:
-    void focusChange(QObject *, bool);
+    void focusChange(QObject *, bool, QFocusEvent *event);
     void on_CatchupButton_clicked();
     void on_FirstUnfilledButton_clicked();
     void on_GJVOKButton_clicked();
@@ -164,6 +164,8 @@ private slots:
     void on_NextButton_clicked();
 
     void on_TimeDisplayTimer();
+    void on_AfterTabFocusIn(QLineEdit *tle);
+
 
 };
 

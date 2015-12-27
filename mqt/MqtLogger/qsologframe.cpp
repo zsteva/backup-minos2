@@ -53,16 +53,16 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     MainOpFW = new FocusWatcher(ui->MainOpComboBox);
     SecondOpFW = new FocusWatcher(ui->SecondOpComboBox);
 
-    connect(CallsignFW, SIGNAL(focusChanged(QObject *, bool )), this, SLOT(focusChange(QObject *, bool)));
-    connect(RSTTXFW, SIGNAL(focusChanged(QObject *, bool )), this, SLOT(focusChange(QObject *, bool)));
-    connect(SerTXFW, SIGNAL(focusChanged(QObject *, bool )), this, SLOT(focusChange(QObject *, bool)));
-    connect(RSTRXFW, SIGNAL(focusChanged(QObject *, bool )), this, SLOT(focusChange(QObject *, bool)));
-    connect(SerRXFW, SIGNAL(focusChanged(QObject *, bool )), this, SLOT(focusChange(QObject *, bool)));
-    connect(LocFW, SIGNAL(focusChanged(QObject *, bool )), this, SLOT(focusChange(QObject *, bool)));
-    connect(QTHFW, SIGNAL(focusChanged(QObject *, bool )), this, SLOT(focusChange(QObject *, bool)));
-    connect(CommentsFW, SIGNAL(focusChanged(QObject *, bool )), this, SLOT(focusChange(QObject *, bool)));
-    connect(MainOpFW, SIGNAL(focusChanged(QObject *, bool )), this, SLOT(focusChange(QObject *, bool)));
-    connect(SecondOpFW, SIGNAL(focusChanged(QObject *, bool )), this, SLOT(focusChange(QObject *, bool)));
+    connect(CallsignFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(RSTTXFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(SerTXFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(RSTRXFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(SerRXFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(LocFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(QTHFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(CommentsFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(MainOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(SecondOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
 
     ui->SerTXEdit->installEventFilter(this);
 
@@ -70,6 +70,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     ui->ModeComboBoxGJV->addItem("J3E");
 
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(on_TimeDisplayTimer()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(AfterTabFocusIn(QLineEdit*)), this, SLOT(on_AfterTabFocusIn(QLineEdit*)), Qt::QueuedConnection);
 }
 bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
 {
@@ -97,10 +98,10 @@ void QSOLogFrame::on_TimeDisplayTimer()
     updateQSOTime(true);
 }
 
-void QSOLogFrame::focusChange(QObject *obj, bool in)
+void QSOLogFrame::focusChange(QObject *obj, bool in, QFocusEvent *event)
 {
     if (in)
-        EditControlEnter(obj);
+        EditControlEnter(obj, event);
     else
         EditControlExit(obj);
 
@@ -903,22 +904,31 @@ void QSOLogFrame::showScreenEntry( void )
    }
 }
 //---------------------------------------------------------------------------
-void QSOLogFrame::EditControlEnter(QObject *Sender )
+void QSOLogFrame::EditControlEnter(QObject *Sender , QFocusEvent *event)
 {
    current = dynamic_cast<QWidget *>(Sender);
-   QLineEdit *tle = dynamic_cast<QLineEdit *>( current );
+   QLineEdit *tle = dynamic_cast<QLineEdit *>(Sender);
 
-   int endpos = tle->text().size();
-   if (endpos < 0)
+   if (event->reason() == Qt::TabFocusReason || event->reason() == Qt::BacktabFocusReason)
    {
-       endpos = 0;
+       MinosLoggerEvents::SendAfterTabFocusIn(tle);
    }
-   tle->setCursorPosition(endpos);
-
-   bool ovr = overstrike;
-   checkTimeEditEnter(tle, ovr);
-   MinosLoggerEvents::SendReportOverstrike(ovr, contest);
 }
+void QSOLogFrame::on_AfterTabFocusIn(QLineEdit *tle)
+{
+    int endpos = tle->text().size();
+    if (endpos < 0)
+    {
+        endpos = 0;
+    }
+    tle->setCursorPosition(endpos);
+    tle->deselect();
+
+    bool ovr = overstrike;
+    checkTimeEditEnter(tle, ovr);
+    MinosLoggerEvents::SendReportOverstrike(ovr, contest);
+}
+
 //---------------------------------------------------------------------------
 
 void QSOLogFrame::EditControlExit( QObject */*Sender*/ )

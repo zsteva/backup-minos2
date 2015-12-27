@@ -15,6 +15,7 @@ class BaseContestLog;
 class BaseContact;
 class ScreenContact;
 class TMatchCollection;
+class QLineEdit;
 
 class MinosLoggerEvents:public QObject
 {
@@ -52,6 +53,7 @@ signals:
    void BandMapPressed();
    void TimerDistribution();
    void FiltersChanged();
+   void AfterTabFocusIn(QLineEdit *tle);
 
    void CountrySelect(QString cty, BaseContestLog *c);
    void DistrictSelect(QString dist, BaseContestLog *c);
@@ -90,6 +92,7 @@ public:
    static void SendBandMapPressed();
    static void SendTimerDistribution();
    static void SendFiltersChanged();
+   static void SendAfterTabFocusIn(QLineEdit *tle);
 
    static void SendCountrySelect(QString cty, BaseContestLog *c);
    static void SendDistrictSelect(QString dist, BaseContestLog *c);

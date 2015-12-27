@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QEvent>
+#include <QFocusEvent>
 
 class FocusWatcher : public QObject
 {
@@ -16,16 +17,19 @@ public:
    virtual bool eventFilter(QObject *obj, QEvent *event) override
    {
       Q_UNUSED(obj)
+
+      QFocusEvent *fEvent = dynamic_cast<QFocusEvent *>(event);
+
       if (event->type() == QEvent::FocusIn)
-         emit focusChanged(obj, true);
+         emit focusChanged(obj, true, fEvent);
       else if (event->type() == QEvent::FocusOut)
-         emit focusChanged(obj, false);
+         emit focusChanged(obj, false, fEvent);
 
       return false;
    }
 
 Q_SIGNALS:
-   void focusChanged(QObject *obj, bool in);
+   void focusChanged(QObject *obj, bool in, QFocusEvent *event);
 };
 #endif // FOCUSWATCHER
 
