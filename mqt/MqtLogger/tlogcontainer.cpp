@@ -413,7 +413,12 @@ QString TLogContainer::getDefaultDirectory( bool IsList )
 }
 void TLogContainer::FileNewActionExecute()
 {
-    QString InitialDir = GetCurrentDir() + "/Logs/";
+    QString InitialDir = getDefaultDirectory( false );
+
+    QFileInfo qf(InitialDir);
+
+    InitialDir = qf.canonicalFilePath();
+
     // generate a default filename for a new contest
     QString nfileName( "C");
 
