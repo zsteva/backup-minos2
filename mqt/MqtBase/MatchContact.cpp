@@ -47,7 +47,7 @@ bool MatchLogContact::operator<( const MatchContact& rhs ) const
       else
          if ( cn2 == cc )
             return false;
-      if ( cn1->slotno < cn2->slotno )
+      if ( cn1->cslotno < cn2->cslotno )
          return true;
       else
          return false;

@@ -413,12 +413,12 @@ QString TLogContainer::getDefaultDirectory( bool IsList )
 }
 void TLogContainer::FileNewActionExecute()
 {
-    QString InitialDir = getDefaultDirectory( false );
+    QString InitialDir = GetCurrentDir() + "/Logs/";
     // generate a default filename for a new contest
     QString nfileName( "C");
 
-    dtg d( true );      // get time now
-    nfileName += d.getDate( DTGLOG );
+    QDate d = QDate::currentDate();      // get time now
+    nfileName += d.toString("ddMMyy");
 
     char letter = 'A';
     while ( letter < 'Z' )      // the A of A.Minos
@@ -433,7 +433,7 @@ void TLogContainer::FileNewActionExecute()
           break;
     }
 
-    QString initName = InitialDir + "/" + nfileName + letter + ".minos";
+    QString initName = InitialDir + nfileName + letter + ".minos";
     ContestDetails pced( this );
     BaseContestLog * c = addSlot( &pced, initName, true, -1 );
 
@@ -464,7 +464,7 @@ void TLogContainer::FileNewActionExecute()
 
        QString fileName = QFileDialog::getSaveFileName( this,
                           "Save new contest as",
-                          suggestedfName,
+                          "./Logs/" + suggestedfName,
                           "Minos contest files (*.Minos)",
                           0,
                           QFileDialog::DontConfirmOverwrite
@@ -472,7 +472,7 @@ void TLogContainer::FileNewActionExecute()
        if ( !fileName.isEmpty() )
        {
           suggestedfName = fileName;
-          QDir r;
+          QDir r(GetCurrentDir() + "Logs");
           if ( !r.rename( initName, suggestedfName ) )
           {
              MinosParameters::getMinosParameters() ->mshowMessage( QString( "Failed to rename " ) + initName + " as " + suggestedfName );
@@ -736,6 +736,7 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
 
 
          int tno = ui->ContestPageControl->addTab(f, baseFName);
+         ui->ContestPageControl->setCurrentWidget(ui->ContestPageControl->widget(tno));
 
          f->logColumnsChanged = true;  // also causes show QSOs
          f->splittersChanged = true;

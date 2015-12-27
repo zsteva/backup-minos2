@@ -115,7 +115,7 @@ bool LoggerContestLog::initialise( int sno )
    {
 	  return false;
    }
-   slotno = sno;
+   cslotno = sno;
    return true;
 }
 

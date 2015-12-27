@@ -17,7 +17,7 @@ BaseContestLog::BaseContestLog( void ) :
       protectedContest( false ), suppressProtected(false),  unwriteable(false),
       nextBlock( 1 ),
       unfilledCount(0),
-      stanzaCount( 0 ), slotno( -1 ), locValid( false ),
+      stanzaCount( 0 ), cslotno( -1 ), locValid( false ),
       ode( 0.0 ), odn( 0.0 ), sinodn( 0.0 ), cosodn( 0.0 ),
       allowLoc8( false ), allowLoc4 ( false ),
       RSTField( true ), serialField( true ), locatorField( true ), QTHField( true ),

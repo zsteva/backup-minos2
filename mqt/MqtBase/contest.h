@@ -96,7 +96,7 @@ class BaseContestLog
       bool unwriteable;
 
    public:
-      int slotno;
+      int cslotno;
       int unfilledCount;
 
       BaseContestLog();
