@@ -156,16 +156,16 @@ bool reg1test::exportTest( boost::shared_ptr<QFile> expfd )
    linelist[ ( int ) SRXEq ] = reg1testLine( "SRXEq", ct->entRx.getValue()  /*, "RX Equipment"*/ );
    linelist[ ( int ) SAnte ] = reg1testLine( "SAnte", ct->entAnt.getValue()  /*, "Antenna"*/ );
    linelist[ ( int ) SAntH ] = reg1testLine( "SAntH", ct->entAGL.getValue() + ";" + ct->entASL.getValue()  /*, "Antenna Height agl;height asl"*/ );
-   linelist[ ( int ) CQSOs ] = reg1testLine( "CQSOs", makeStr( nvalid ) + ";1" /*, "Claimed no. of valid QSOs;Band multiplier"*/ );
+   linelist[ ( int ) CQSOs ] = reg1testLine( "CQSOs", QString::number( nvalid ) + ";1" /*, "Claimed no. of valid QSOs;Band multiplier"*/ );
 
-   linelist[ ( int ) CQSOP ] = reg1testLine( "CQSOP", makeStr( ct->contestScore ) ); /*, "Claimed no. of QSO points"*/
-   linelist[ ( int ) CWWLs ] = reg1testLine( "CWWLs", makeStr( nlocs ) + ";0;1" ); /*, "Claimed no. of WWLs;Bonus per new WWL;WWL multiplier"*/
-   linelist[ ( int ) CWWLB ] = reg1testLine( "CWWLB", makeStr ( ct->bonus) ); /*, "Claimed no. of WWL bonus points"*/
-   linelist[ ( int ) CExcs ] = reg1testLine( "CExcs", makeStr( ndistrict ) + ";0;1" ); /*, "Claimed no. of exchanges; Bonus for each new exchange; Exchange Multiplier"*/
+   linelist[ ( int ) CQSOP ] = reg1testLine( "CQSOP", QString::number( ct->contestScore ) ); /*, "Claimed no. of QSO points"*/
+   linelist[ ( int ) CWWLs ] = reg1testLine( "CWWLs", QString::number( nlocs ) + ";0;1" ); /*, "Claimed no. of WWLs;Bonus per new WWL;WWL multiplier"*/
+   linelist[ ( int ) CWWLB ] = reg1testLine( "CWWLB", QString::number ( ct->bonus) ); /*, "Claimed no. of WWL bonus points"*/
+   linelist[ ( int ) CExcs ] = reg1testLine( "CExcs", QString::number( ndistrict ) + ";0;1" ); /*, "Claimed no. of exchanges; Bonus for each new exchange; Exchange Multiplier"*/
    linelist[ ( int ) CExcB ] = reg1testLine( "CExcB", QString("0") ); /*, "Claimed no. of exchange bonus points"*/
-   linelist[ ( int ) CDXCs ] = reg1testLine( "CDXCs", makeStr( nctry ) + ";0;1" ); /*, "Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier"*/
+   linelist[ ( int ) CDXCs ] = reg1testLine( "CDXCs", QString::number( nctry ) + ";0;1" ); /*, "Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier"*/
    linelist[ ( int ) CDXCB ] = reg1testLine( "CDXCB", QString("0") ); /*, "Claimed no of DXCC bonus points"*/
-   linelist[ ( int ) CToSc ] = reg1testLine( "CToSc", makeStr( ct->contestScore * ltot ) ); /*, "Claimed total score"*/
+   linelist[ ( int ) CToSc ] = reg1testLine( "CToSc", QString::number( ct->contestScore * ltot ) ); /*, "Claimed total score"*/
    linelist[ ( int ) CODXC ] = reg1testLine( "CODXC", QString(bestdx ? ( bestdx->cs.fullCall.getValue() + ";" + bestdx->loc.loc.getValue() + ";" + QString::number( bestdx->contactScore.getValue() )  ) : ";;" )); /*, "(Best DX) Callsign; Locator; Distance"*/
 
    for ( int i = 0; i < LineCount; i++ )

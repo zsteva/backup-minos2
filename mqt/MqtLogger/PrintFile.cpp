@@ -127,12 +127,12 @@ bool PrintFile::exportTest(boost::shared_ptr<QFile> expfd )
    linelist[ ( int ) SAnte ] = PrintFileLine( "Antenna                                 ", ct->entAnt.getValue()  /*, "Antenna"*/ );
    linelist[ ( int ) SAntH ] = PrintFileLine( "Antenna Height agl;height asl           ", ct->entAGL.getValue() + ";" + ct->entASL.getValue()  /*, "Antenna Height agl;height asl"*/ );
 
-   linelist[ ( int ) CVQSO ] = PrintFileLine( "Number of valid QSOs                    ", makeStr( nvalid ) ); /*, "Claimed no. of QSO points"*/
-   linelist[ ( int ) CQSOP ] = PrintFileLine( "Claimed number of QSO points            ", makeStr( ct->contestScore ) ); /*, "Claimed no. of QSO points"*/
-   linelist[ ( int ) CWWLs ] = PrintFileLine( "Claimed number of WWLs                  ", makeStr( nlocs ) ); /*, "Claimed no. of WWLs;Bonus per new WWL;WWL multiplier"*/
-   linelist[ ( int ) CExcs ] = PrintFileLine( "Claimed number of exchanges             ", makeStr( ndistrict )); /*, "Claimed no. of exchanges; Bonus for each new exchange; Exchange Multiplier"*/
-   linelist[ ( int ) CDXCs ] = PrintFileLine( "Claimed number of DXCCs                 ", makeStr( nctry )); /*, "Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier"*/
-   linelist[ ( int ) CToSc ] = PrintFileLine( "Claimed total score                     ", makeStr( ct->contestScore * ltot ) ); /*, "Claimed total score"*/
+   linelist[ ( int ) CVQSO ] = PrintFileLine( "Number of valid QSOs                    ", QString::number( nvalid ) ); /*, "Claimed no. of QSO points"*/
+   linelist[ ( int ) CQSOP ] = PrintFileLine( "Claimed number of QSO points            ", QString::number( ct->contestScore ) ); /*, "Claimed no. of QSO points"*/
+   linelist[ ( int ) CWWLs ] = PrintFileLine( "Claimed number of WWLs                  ", QString::number( nlocs ) ); /*, "Claimed no. of WWLs;Bonus per new WWL;WWL multiplier"*/
+   linelist[ ( int ) CExcs ] = PrintFileLine( "Claimed number of exchanges             ", QString::number( ndistrict )); /*, "Claimed no. of exchanges; Bonus for each new exchange; Exchange Multiplier"*/
+   linelist[ ( int ) CDXCs ] = PrintFileLine( "Claimed number of DXCCs                 ", QString::number( nctry )); /*, "Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier"*/
+   linelist[ ( int ) CToSc ] = PrintFileLine( "Claimed total score                     ", QString::number( ct->contestScore * ltot ) ); /*, "Claimed total score"*/
    linelist[ ( int ) CODXC ] = PrintFileLine( "Best DX - Callsign; Locator; Distance   ",
        bestdx ? ( bestdx->cs.fullCall.getValue() + ";" + bestdx->loc.loc.getValue() + ";" + QString::number(bestdx->contactScore.getValue()) )
               : ";;" ); /*, "(Best DX) Callsign; Locator; Distance"*/

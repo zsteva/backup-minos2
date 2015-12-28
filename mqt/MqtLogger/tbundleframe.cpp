@@ -8,7 +8,7 @@
 TBundleFrame::TBundleFrame(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::TBundleFrame)
-  , bundle( 0 ), bname( 0 )
+  , bundle( 0 ), bname( 0 ), cd(0), suppressChange(false)
 {
     ui->setupUi(this);
 }
@@ -20,6 +20,7 @@ TBundleFrame::~TBundleFrame()
 
 void TBundleFrame::initialise()
 {
+    suppressChange = true;
    QString csect = bundle->getSection();
    QStringList slist = bundle->getSections( );
    ui->BundleSection->clear();
@@ -41,9 +42,11 @@ void TBundleFrame::initialise()
    {
       ui->BundleSection->setCurrentIndex( 0);
    }
+   suppressChange = false;
 }
-void TBundleFrame::initialise(const QString &cap, SettingsBundle *b, MinosItem<QString> *name )
+void TBundleFrame::initialise(ContestDetails *cdp, const QString &cap, SettingsBundle *b, MinosItem<QString> *name )
 {
+    cd = cdp;
    if ( b )
    {
       bundle = b;
@@ -72,20 +75,6 @@ void TBundleFrame::enableBundle( bool state )
    ui->BundleEdit->setEnabled(state);
 }
 //---------------------------------------------------------------------------
-void TBundleFrame::BundleSectionChange(  )
-{
-   if ( bundle )
-   {
-      bundle->openSection( ui->BundleSection->currentText() );
-      bname->setValue( bundle->getSection() );
-   }
-   ContestDetails *cd = dynamic_cast<ContestDetails *>(parent());
-   if (cd)
-   {
-       cd->bundleChanged();
-   }
-}
-//---------------------------------------------------------------------------
 
 void TBundleFrame::on_BundleEdit_clicked()
 {
@@ -93,7 +82,6 @@ void TBundleFrame::on_BundleEdit_clicked()
 
     // And we need to call back to the contest detail form
 
-    ContestDetails *cd = dynamic_cast<ContestDetails *>(parent());
     if (cd)
     {
         cd->bundleChanged();
@@ -102,8 +90,12 @@ void TBundleFrame::on_BundleEdit_clicked()
 
 void TBundleFrame::on_BundleSection_currentIndexChanged(const QString &/*arg1*/)
 {
-    ContestDetails *cd = dynamic_cast<ContestDetails *>(parent());
-    if (cd)
+    if ( bundle )
+    {
+       bundle->openSection( ui->BundleSection->currentText() );
+       bname->setValue( bundle->getSection() );
+    }
+    if (cd && !suppressChange)
     {
         cd->bundleChanged();
     }

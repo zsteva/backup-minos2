@@ -21,31 +21,31 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
 
     CallsignFW = new FocusWatcher(ui->CallsignEdit);
     CallsignLabelString = ui->Callsignlabel->text();
-    ui->CallsignEdit->setValidator(new UpperCaseValidator());
+    ui->CallsignEdit->setValidator(new UpperCaseValidator(true));
 
     RSTTXFW = new FocusWatcher(ui->RSTTXEdit);
     RSTTXLabelString = ui->RSTTXLabel->text();
-    ui->RSTTXEdit->setValidator(new UpperCaseValidator());
+    ui->RSTTXEdit->setValidator(new UpperCaseValidator(true));
 
     SerTXFW = new FocusWatcher(ui->SerTXEdit);
     SerTXLabelString = ui->SerTXLabel->text();
-    ui->SerTXEdit->setValidator(new UpperCaseValidator());
+    ui->SerTXEdit->setValidator(new UpperCaseValidator(true));
 
     RSTRXFW = new FocusWatcher(ui->RSTRXEdit);
     RSTRXLabelString = ui->RSTRXLabel->text();
-    ui->RSTRXEdit->setValidator(new UpperCaseValidator());
+    ui->RSTRXEdit->setValidator(new UpperCaseValidator(true));
 
     SerRXFW = new FocusWatcher(ui->SerRXEdit);
     SerRXLabelString = ui->SerRXLabel->text();
-    ui->SerRXEdit->setValidator(new UpperCaseValidator());
+    ui->SerRXEdit->setValidator(new UpperCaseValidator(true));
 
     LocFW = new FocusWatcher(ui->LocEdit);
     LocLabelString = ui->LocLabel->text();
-    ui->LocEdit->setValidator(new UpperCaseValidator());
+    ui->LocEdit->setValidator(new UpperCaseValidator(true));
 
     QTHFW = new FocusWatcher(ui->QTHEdit);
     QTHLabelString = ui->QTHLabel->text();
-    ui->QTHEdit->setValidator(new UpperCaseValidator());
+    ui->QTHEdit->setValidator(new UpperCaseValidator(true));
 
     CommentsFW = new FocusWatcher(ui->CommentsEdit);
     CommentsLabelString = ui->CommentsLabel->text();
@@ -71,6 +71,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
 
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(on_TimeDisplayTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterTabFocusIn(QLineEdit*)), this, SLOT(on_AfterTabFocusIn(QLineEdit*)), Qt::QueuedConnection);
+    connect(&MinosLoggerEvents::mle, SIGNAL(Validated()), this, SLOT(on_Validated()));
 }
 bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
 {
@@ -594,6 +595,11 @@ void QSOLogFrame::killPartial( void )
       partialContact = 0;
    }
 }
+void QSOLogFrame::on_Validated()
+{
+    killPartial();
+}
+
 void QSOLogFrame::startNextEntry( )
 {
    if (contest->unfilledCount <= 0 || contest->isReadOnly())
@@ -773,8 +779,6 @@ void QSOLogFrame::keyPressEvent( QKeyEvent* event )
 
            QFrame::keyPressEvent(event);
        }
-
-
 }
 void QSOLogFrame::mouseDoubleClickEvent(QObject *w)
 {
@@ -1027,62 +1031,7 @@ void QSOLogFrame::EditControlExit( QObject */*Sender*/ )
       ui->ModeButton->setText("A1A");
    }
 }
-
-//---------------------------------------------------------------------------
-
-
-/*
-void QSOLogFrame::GJVEditKeyPress( QObject *Sender, char &Key )
-{
-   if ( !iscntrl( Key ) )
-   {
-      killPartial(); // if a normal character, then lose
-      // any partial data preserved.
-   }
-
-   TLabeledEdit *ed = dynamic_cast<TLabeledEdit *>( Sender );
-   if ( !ed || ed->ReadOnly )
-   {
-      return ;
-   }
-   bool ovr = overstrike;
-   if ( isTimeEdit(ed) )
-   {
-      ovr = true;
-   }
-   if ( ovr && Key != 8 )
-   {
-      if ( ed->SelLength == 0 )
-         ed->SelLength = 1;
-   }
-   else
-      if ( ed && ovr && Key == 8 )
-      {
-         // need to overstrike with space, but move back one
-         if ( ed->SelStart > 0 )
-         {
-            ed->SelStart = ed->SelStart - 1;
-            ed->SelLength = 1;
-            ed->SelText = " ";
-            ed->SelStart = ed->SelStart - 1;
-         }
-         Key = 0;
-      }
-}
-      */
-//---------------------------------------------------------------------------
-/*
-void QSOLogFrame::SerTXEditChange( TObject *Sender )
-{
-   if ( contest->isReadOnly() )
-   {
-      return ;
-   }
-   SerTXEdit->ReadOnly = false;
-   SerTXEdit->Color = clWindow;
-}
-*/
-//---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
 void QSOLogFrame::setScoreText( int dist, bool partial, bool xband )
 {
    QString b;

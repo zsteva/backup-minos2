@@ -21,16 +21,16 @@ public:
 private:
     Ui::TBundleFrame *ui;
 
+   ContestDetails *cd;
+   bool suppressChange;
    SettingsBundle *bundle;
    MinosItem<QString> *bname;
 
 public:  		// User declarations
    void initialise();
-   void initialise( const QString &cap, SettingsBundle *bundle, MinosItem<QString> *name );
+   void initialise( ContestDetails *cd, const QString &cap, SettingsBundle *bundle, MinosItem<QString> *name );
    bool doEdit( );
    void enableBundle( bool );
-
-   void BundleSectionChange(  );
 
 private slots:
    void on_BundleEdit_clicked();

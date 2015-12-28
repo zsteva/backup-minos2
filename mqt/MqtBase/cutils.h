@@ -9,6 +9,9 @@
 //----------------------------------------------------------------------------
 #ifndef CutilsH
 #define CutilsH
+
+#include "MinosLoggerEvents.h"
+
 //----------------------------------------------------------------------------
 extern const double pi /* = (double )3.141592653 */;  /* pi */
 extern const double dr /* = pi/180.0*/;      			  // degree to radian conversion factor
@@ -82,14 +85,30 @@ bool CreateDir( const QString &s );
 extern int toInt ( const QString &s, int def = 0 );
 extern double toDouble ( const QString &s, double def = 0.0 );
 extern QString makeStr( bool i );
+
+// and disallow any other versions
+template <class T>
+QString makeStr(T) = delete; // C++11
+
 extern QString HtmlFontColour( const QColor &c );
 
 class UpperCaseValidator:public QValidator
 {
+    bool makeSignal;
 public:
+    UpperCaseValidator(bool makeSignal = false):makeSignal(makeSignal)
+    {
+
+    }
+
     State validate(QString & input, int & /*pos*/) const
     {
         input = input.toUpper();
+
+        if (makeSignal)
+        {
+            MinosLoggerEvents::SendValidated();
+        }
         return Acceptable;
     }
 };

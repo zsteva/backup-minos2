@@ -63,9 +63,9 @@ void ContestDetails::accept()
 
 int ContestDetails::exec()
 {
-    ui->QTHBundleFrame->initialise( "QTH", &contest->QTHBundle, &contest->QTHBundleName );
-    ui->StationBundleFrame->initialise( "Station", &contest->stationBundle, &contest->stationBundleName );
-    ui->EntryBundleFrame->initialise( "Entry", &contest->entryBundle, &contest->entryBundleName );
+    ui->QTHBundleFrame->initialise( this, "QTH", &contest->QTHBundle, &contest->QTHBundleName );
+    ui->StationBundleFrame->initialise(this,  "Station", &contest->stationBundle, &contest->stationBundleName );
+    ui->EntryBundleFrame->initialise(this,  "Entry", &contest->entryBundle, &contest->entryBundleName );
     ui->ContestNameSelected->setText(contest->VHFContestName.getValue());
 
     contest->initialiseINI();

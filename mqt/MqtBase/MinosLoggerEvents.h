@@ -54,6 +54,7 @@ signals:
    void TimerDistribution();
    void FiltersChanged();
    void AfterTabFocusIn(QLineEdit *tle);
+   void Validated();
 
    void CountrySelect(QString cty, BaseContestLog *c);
    void DistrictSelect(QString dist, BaseContestLog *c);
@@ -93,6 +94,7 @@ public:
    static void SendTimerDistribution();
    static void SendFiltersChanged();
    static void SendAfterTabFocusIn(QLineEdit *tle);
+   static void SendValidated();
 
    static void SendCountrySelect(QString cty, BaseContestLog *c);
    static void SendDistrictSelect(QString dist, BaseContestLog *c);

@@ -165,7 +165,7 @@ private slots:
 
     void on_TimeDisplayTimer();
     void on_AfterTabFocusIn(QLineEdit *tle);
-
+    void on_Validated();
 
     void on_ModeComboBoxGJV_currentIndexChanged(int index);
 };
