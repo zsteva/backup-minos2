@@ -90,7 +90,7 @@ void TStatsDispFrame::reInitialiseStats()
    #ifndef MAX_DISPLAY_TEST
                            .arg( tempcs) .arg(bestdx->serials.getValue())
                            .arg(bestdx->loc.loc.getValue()) .arg( bestdx->contactScore.getValue())
-                           .arg(avpts, 5);
+                           .arg(avpts, 0, 'f', 1);
    #else
                            .arg("PE0/LX5ABC/P") .arg("9999") .arg( "XX99XX") .arg(29999) .arg(9999.9);
    #endif
@@ -119,14 +119,14 @@ void TStatsDispFrame::reInitialiseStats()
             // Why the selection of period in this way?  kms1 is the distance for the first period; use that unless it is zero
             int period = ct->kms1 ? sp1 : sp2;
             double qmins = ( qmult * period ) / Qs;
-            temp = QString(" (%1 Mins)" ) .arg(qmins, 1) ;
+            temp = QString(" (%1 Mins)" ) .arg(qmins, 0, 'f', 1) ;
          }
 
          QString lbuff = QString( "%1\nOne New Multiplier is equivalent to %2 Average QSOs%3" ) .arg(buff)
    #ifndef MAX_DISPLAY_TEST
-                               .arg(qmult) .arg(temp);
+                               .arg(qmult, 0, 'f', 1) .arg(temp);
    #else
-                               .arg(9999.9) .arg(" (9999.9 Mins)");
+                               .arg("9999.9") .arg(" (9999.9 Mins)");
    #endif
          buff = lbuff ;
       }

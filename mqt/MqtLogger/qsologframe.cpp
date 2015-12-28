@@ -203,7 +203,7 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
 
    updateQSODisplay();
 //   SerTXEdit->Color = clBtnFace;
-   QString ss("QLineEdit { background-color: grey ; border-style: outset ; border-width: 1px ; border-color: black ; }");
+   QString ss("QLineEdit { background-color: silver ; border-style: outset ; border-width: 1px ; border-color: black ; }");
    ui->SerTXEdit->setStyleSheet(ss);
    current = 0;
    updateTimeAllowed = true;
@@ -2036,4 +2036,16 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
     DisplayContestContact *newct = ct->addContactBetween(selectedContact, nct);
     newct->contactFlags.setValue(newct->contactFlags.getValue()|TO_BE_ENTERED);
     selectEntry(newct);
+}
+
+void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
+{
+    if (ui->ModeComboBoxGJV->currentText() == "A1A")
+    {
+       ui->ModeButton->setText("J3E");
+    }
+    else
+    {
+       ui->ModeButton->setText("A1A");
+    }
 }

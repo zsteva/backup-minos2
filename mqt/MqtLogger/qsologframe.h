@@ -167,6 +167,7 @@ private slots:
     void on_AfterTabFocusIn(QLineEdit *tle);
 
 
+    void on_ModeComboBoxGJV_currentIndexChanged(int index);
 };
 
 #endif // QSOLOGFRAME_H

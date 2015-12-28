@@ -218,8 +218,8 @@ void TSingleLogFrame::NextContactDetailsTimerTimer( )
 
       if ( contest->isReadOnly() )
       {
-         ui->NextContactDetailsLabel->setText( "<big><b><center><nobr>"
-                                            + cb + "<br>"
+         ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
+                                            + cb + "</p><h1>"
                                             + contest->mycall.fullCall.getValue() + "<br>"
                                             + contest->myloc.loc.getValue() + "<br>"
                                             + contest->location.getValue());
@@ -227,8 +227,8 @@ void TSingleLogFrame::NextContactDetailsTimerTimer( )
       else
       {
          QString buff = QString::number( contest->maxSerial + 1 );
-         ui->NextContactDetailsLabel->setText( "<big><b><center><nobr>"
-                                            + cb + "<br>"
+         ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
+                                            + cb + "</p><h1>"
                                             + contest->mycall.fullCall.getValue() + "<br>"
                                             + buff + "<br>"
                                             + contest->myloc.loc.getValue() + "<br>"
