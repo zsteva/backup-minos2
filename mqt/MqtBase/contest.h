@@ -81,7 +81,7 @@ struct StrLess
 typedef codeproject::sorted_vector < QString, true, StrLess > OperatorList;
 typedef OperatorList::iterator OperatorIterator;
 
-class BaseContestLog
+class BaseContestLog: public BaseLogList
 {
       friend class MinosTestImport;
       friend class MonitoredLog;

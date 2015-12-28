@@ -251,5 +251,11 @@ class locator
       char validate( double &lon, double &lat );
 };
 
+class BaseLogList
+{
+public:
+    BaseLogList(){}
+    virtual ~BaseLogList(){}
+};
 
 #endif

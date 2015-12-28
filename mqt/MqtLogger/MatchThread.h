@@ -32,33 +32,26 @@ class matchElement
       unsigned char checkGreater( const QString & );
       bool checkMatch( const QString & );
 };
-struct LtMatch
-{
-   bool operator() ( const MatchContact* s1, const MatchContact* s2 ) const
-   {
-      return * s1 < *s2;
-   }
-};
-typedef codeproject::sorted_vector < MatchContact *, true, LtMatch > MatchList;
-typedef MatchList::iterator MatchIterator;
 
 class TMatchCollection
 {
    public:
-      MatchList matchList;
+      ContestMatchList matchList;
       void freeAll()
       {
-         for ( MatchIterator i = matchList.begin(); i != matchList.end(); i++ )
+         for (ContestMatchIterator i = matchList.begin(); i != matchList.end(); i++ )
          {
+             (*i)->freeAll();
             delete ( *i );
             ( *i ) = 0;
          }
          matchList.clear();
       }
+      int contactCount();
       TMatchCollection( void );
       ~TMatchCollection();
-      int getContactCount( void );
-      MatchContact *pcontactAt( int );
+      int getContestCount( void );
+      BaseMatchContest *pcontestAt( int );
 };
 class Matcher
 {

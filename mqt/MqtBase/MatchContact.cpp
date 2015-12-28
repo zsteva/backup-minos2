@@ -9,9 +9,66 @@
 #include "base_pch.h"
 
 //---------------------------------------------------------------------------
+bool LtMatch::operator() ( const MatchContact* s1, const MatchContact* s2 ) const
+{
+   return * s1 < *s2;
+}
+bool LtMatchContest::operator() ( const BaseMatchContest* s1, const BaseMatchContest* s2 ) const
+{
+   return * s1 < *s2;
+}
+MatchContact *BaseMatchContest::pcontactAt( int i )
+{
+    if (i > (int)matchList.size())
+        return 0;
+    return matchList.at( i );
+}
+bool MatchContactList::operator<( const BaseMatchContest& rhs ) const
+{
+   // p1 is from list; p2 is the one being searched for
+    // p1 is from list; p2 is the one being searched for
+
+    ContactList * cn1 = getContactList();
+    ContactList * cn2 = rhs.getContactList();
+
+    if ( cn2 == 0 )       // cn1 must be good - its us!
+    {
+       return false;
+    }
+    if ( cn1 != cn2 )
+    {
+       if ( cn1 < cn2 )
+          return true;
+       else
+          return false;
+    }
+
+    return false;
+}
+bool MatchContactLog::operator<( const BaseMatchContest& rhs ) const
+{
+   // p1 is from list; p2 is the one being searched for
+
+   BaseContestLog * cn1 = getContactLog();
+   BaseContestLog * cn2 = rhs.getContactLog();
+
+   if ( cn2 == 0 )
+   {
+      return true;
+   }
+   if ( cn1 != cn2 )
+   {
+       if ( cn1 < cn2 )
+          return true;
+       else
+          return false;
+   }
+
+   return false;
+
+}
 
 MatchContact::MatchContact( )
-      : treePointer( 0 )
 {}
 MatchContact::~MatchContact()
 {}

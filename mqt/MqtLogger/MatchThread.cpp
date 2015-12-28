@@ -222,16 +222,26 @@ TMatchCollection::~TMatchCollection( void )
 {
    freeAll();
 }
-int TMatchCollection::getContactCount( void )
+int TMatchCollection::getContestCount( void )
 {
    return matchList.size();
 }
-MatchContact *TMatchCollection::pcontactAt( int i )
+BaseMatchContest *TMatchCollection::pcontestAt( int i )
 {
-    if (i > matchList.size())
+    if (i > (int)matchList.size())
         return 0;
     return matchList.at( i );
 }
+int TMatchCollection::contactCount()
+{
+    int cc = 0;
+    for (ContestMatchIterator i = matchList.begin(); i != matchList.end(); i++ )
+    {
+        cc += (*i)->matchList.size();
+    }
+    return cc;
+}
+
 //=============================================================================
 matchElement::matchElement( void ) : match( false ), empty( true )
 {
@@ -450,18 +460,28 @@ void ThisLogMatcher::addMatch( BaseContact *cct, BaseContestLog * ccon )
    if ( !cct )
       return ;
 
+   BaseMatchContest *mc = 0;
+   ContestMatchList &matchList = matchCollection->matchList;
+   if (matchList.size() == 0)
+   {
+       mc = new MatchContactLog;
+       mc->matchedContest = ccon;
+       matchList.insert(mc);
+   }
+   mc = matchCollection->pcontestAt(matchList.size() - 1);
+
    MatchContact *mct = new MatchLogContact( ccon, cct );
 
-   bool exists = std::binary_search( matchCollection->matchList.begin(), matchCollection->matchList.end(), mct );
-   if ( !exists )
+//   bool exists = std::binary_search( matchCollection->matchList.begin(), matchCollection->matchList.end(), mct );
+//   if ( !exists )
    {
-      matchCollection->matchList.insert( mct );
+      mc->matchList.insert( mct );
    }
-   else
-   {
-      delete mct;
-   }
-   thisContestMatched = matchCollection->matchList.size();
+//   else
+//   {
+//      delete mct;
+//   }
+   thisContestMatched = matchCollection->contactCount();
 }
 bool ThisLogMatcher::idleMatch( int limit )
 {
@@ -471,7 +491,7 @@ bool ThisLogMatcher::idleMatch( int limit )
        if ( !matchStarted || ( contestIndex < 0 ) )
           return false;				// nothing to do (yet)
 
-       int cnt = matchCollection->matchList.size();
+       int cnt = matchCollection->contactCount();
        if ( ( firstMatch == Starting ) && ( ( mp == Exact ) || ( mp == Country ) ) )
        {
           contestIndex = 0;
@@ -710,7 +730,7 @@ bool ThisLogMatcher::idleMatch( int limit )
              if ( csmatch && locmatch && qthmatch )
              {
                 addMatch( cct, ccon );
-                if ( matchCollection->matchList.size() > MATCH_LIM )
+                if ( matchCollection->contactCount() > MATCH_LIM )
                    break;
              }
           }
@@ -719,7 +739,7 @@ bool ThisLogMatcher::idleMatch( int limit )
              if ( cct->ctryMult && ( cct->ctryMult == ce ) )
              {
                 addMatch( cct, ccon );
-                if ( matchCollection->matchList.size() > MATCH_LIM )
+                if ( matchCollection->contactCount() > MATCH_LIM )
                    break;
              }
 
@@ -729,7 +749,7 @@ bool ThisLogMatcher::idleMatch( int limit )
  /*            if ( cct->ctryMult && ( cct->ctryMult == ce ) )
              {
                 addMatch( cct, ccon );
-                if ( matchCollection->matchList.size() > MATCH_LIM )
+                if ( matchCollection->contactCount() > MATCH_LIM )
                    break;
              }
  */
@@ -739,7 +759,7 @@ bool ThisLogMatcher::idleMatch( int limit )
  /*            if ( cct->ctryMult && ( cct->ctryMult == ce ) )
              {
                 addMatch( cct, ccon );
-                if ( matchCollection->matchList.size() > MATCH_LIM )
+                if ( matchCollection->contactCount() > MATCH_LIM )
                    break;
              }
  */
@@ -771,20 +791,30 @@ void OtherLogMatcher::matchCountry( const QString &cs )
 }
 void OtherLogMatcher::addMatch( BaseContact *cct, BaseContestLog * ccon )
 {
+
    if ( !cct )
       return ;
 
+   BaseMatchContest *mc = 0;
+   ContestMatchList &matchList = matchCollection->matchList;
+   if (matchList.size() == 0)
+   {
+       mc = new MatchContactLog;
+       mc->matchedContest = ccon;
+       matchList.insert(mc);
+   }
+   mc = matchCollection->pcontestAt(matchList.size() - 1);
+   if (mc->matchedContest != ccon)
+   {
+       mc = new MatchContactLog;
+       mc->matchedContest = ccon;
+       matchList.insert(mc);
+   }
+
    MatchContact *mct = new MatchLogContact( ccon, cct );
 
-   bool exists = std::binary_search( matchCollection->matchList.begin(), matchCollection->matchList.end(), mct );
-   if ( !exists )
-   {
-      matchCollection->matchList.insert( mct );
-   }
-   else
-   {
-      delete mct;
-   }
+   mc->matchList.insert( mct );
+   thisContestMatched = matchCollection->contactCount();
 }
 bool OtherLogMatcher::idleMatch( int limit )
 {
@@ -794,7 +824,7 @@ bool OtherLogMatcher::idleMatch( int limit )
       if ( !matchStarted || ( contestIndex < 0 ) )
          return false;				// nothing to do (yet)
 
-      int cnt = matchCollection->matchList.size();
+      int cnt = matchCollection->contactCount();
       if ( ( firstMatch == Starting ) && ( ( mp == Exact ) || ( mp == Country ) ) )
       {
          contestIndex = 0;
@@ -1019,7 +1049,7 @@ bool OtherLogMatcher::idleMatch( int limit )
             if ( csmatch && locmatch && qthmatch )
             {
                addMatch( cct, ccon );
-               if ( matchCollection->matchList.size() > MATCH_LIM )
+               if ( matchCollection->contactCount() > MATCH_LIM )
                   break;
             }
          }
@@ -1028,7 +1058,7 @@ bool OtherLogMatcher::idleMatch( int limit )
             if ( cct->ctryMult && ( cct->ctryMult == ce ) )
             {
                addMatch( cct, ccon );
-               if ( matchCollection->matchList.size() > MATCH_LIM )
+               if ( matchCollection->contactCount() > MATCH_LIM )
                   break;
             }
 
@@ -1038,7 +1068,7 @@ bool OtherLogMatcher::idleMatch( int limit )
 /*            if ( cct->ctryMult && ( cct->ctryMult == ce ) )
             {
                addMatch( cct, ccon );
-               if ( matchCollection->matchList.size() > MATCH_LIM )
+               if ( matchCollection->contactCount() > MATCH_LIM )
                   break;
             }
 */
@@ -1048,7 +1078,7 @@ bool OtherLogMatcher::idleMatch( int limit )
 /*            if ( cct->ctryMult && ( cct->ctryMult == ce ) )
             {
                addMatch( cct, ccon );
-               if ( matchCollection->matchList.size() > MATCH_LIM )
+               if ( matchCollection->contactCount() > MATCH_LIM )
                   break;
             }
 */
@@ -1080,18 +1110,27 @@ void ListMatcher::addMatch( ListContact *cct, ContactList * ccon )
    if ( !cct )
       return ;
 
+   BaseMatchContest *mc = 0;
+   ContestMatchList &matchList = matchCollection->matchList;
+   if (matchList.size() == 0)
+   {
+       mc = new MatchContactList;
+       mc->matchedContest = ccon;
+       matchList.insert(mc);
+   }
+   mc = matchCollection->pcontestAt(matchList.size() - 1);
+   if (mc->matchedContest != ccon)
+   {
+       mc = new MatchContactList;
+       mc->matchedContest = ccon;
+       matchList.insert(mc);
+   }
+
    MatchListContact *mct = new MatchListContact( ccon, cct );
 
-   bool exists = std::binary_search( matchCollection->matchList.begin(), matchCollection->matchList.end(), mct );
-   if ( !exists )
-   {
-      matchCollection->matchList.insert( mct );
-   }
-   else
-   {
-      delete mct;
-   }
+   mc->matchList.insert( mct );
 }
+
 bool ListMatcher::idleMatch( int limit )
 {
    try
@@ -1102,7 +1141,7 @@ bool ListMatcher::idleMatch( int limit )
       if ( TContestApp::getContestApp() ->getListSlotCount() <= 0 )
          return false;
 
-      int cnt = matchCollection->matchList.size();
+      int cnt = matchCollection->contactCount();
       if ( ( firstMatch == Starting ) && ( ( mp == Exact ) || ( mp == Country ) || ( mp == District ) || ( mp == Locator ) ) )
       {
          contestIndex = 0;
@@ -1306,7 +1345,7 @@ bool ListMatcher::idleMatch( int limit )
          if ( csmatch && locmatch )
          {
             addMatch( cct, ccon );
-            if ( matchCollection->matchList.size() > MATCH_LIM )
+            if ( matchCollection->contactCount() > MATCH_LIM )
                break;
          }
       }

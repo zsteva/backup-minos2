@@ -21,7 +21,7 @@ class ListContact;
 typedef std::vector < ListContact *> ListList;
 typedef ListList::iterator ListIterator;
 
-class ContactList
+class ContactList : public BaseLogList
 {
    private:
       bool cslFile;

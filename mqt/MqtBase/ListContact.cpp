@@ -54,7 +54,7 @@ QString ListContact::getField( int ACol, const BaseContestLog *const curcon ) co
                   }
 			   int offset = curcon->bearingOffset.getValue();
                const QChar degreeChar(0260); // octal value
-               brgbuff = QString( "%1\xB0").arg( brg + offset, 3).arg(degreeChar);
+               brgbuff = QString( "%1%2").arg( varBrg(brg + offset), 3).arg(degreeChar);
             }
             res = brgbuff;
          }

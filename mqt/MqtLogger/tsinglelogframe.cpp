@@ -406,7 +406,7 @@ void TSingleLogFrame::showThisMatchQSOs( TMatchCollection *matchCollection )
 
     ui->GJVQSOLogFrame->setXferEnabled(false);
 
-   if ( matchCollection->getContactCount() == 0 )
+   if ( matchCollection->getContestCount() == 0 )
    {
       return ;
    }
@@ -414,14 +414,19 @@ void TSingleLogFrame::showThisMatchQSOs( TMatchCollection *matchCollection )
    QTreeWidgetItem *root = addTreeRoot(ui->ThisMatchTree, "Current contest" + TMatchThread::getThisMatchStatus());
    root->setExpanded(true);
 
-   for ( int i = 0; i < matchCollection->getContactCount(); i++ )
+   for ( int i = 0; i < matchCollection->getContestCount(); i++ )
    {
-      MatchContact *pc = matchCollection->pcontactAt( i );
-      BaseContestLog * clp = pc->getContactLog();
+       BaseMatchContest * clp = matchCollection->pcontestAt(i);
 
-      QString text;
-      pc->getText( text, clp );
-      addTreeChild(root, text);
+       for ( int j = 0; j < clp->getContactCount(); j++)
+       {
+
+           MatchContact *pc = clp->pcontactAt( j );
+
+          QString text;
+          pc->getText( text, clp->getContactLog() );
+          addTreeChild(root, text);
+       }
    }
 
 }
@@ -429,33 +434,38 @@ void TSingleLogFrame::showOtherMatchQSOs( TMatchCollection *matchCollection )
 {
    ui->OtherMatchTree->clear();
 
-   if ( matchCollection->getContactCount() == 0 )
+   ui->GJVQSOLogFrame->setXferEnabled(false);
+   if ( matchCollection->getContestCount() == 0 )
    {
-       ui->GJVQSOLogFrame->setXferEnabled(false);
        return ;
    }
    ui->GJVQSOLogFrame->setXferEnabled(true);
-   BaseContestLog * last_pc = 0;
    QTreeWidgetItem *lastTopNode = 0;
 
-   for ( int i = 0; i < matchCollection->getContactCount(); i++ )
+   BaseContestLog * cc = MinosParameters::getMinosParameters() ->getCurrentContest();
+
+   for ( int i = 0; i < matchCollection->getContestCount(); i++ )
    {
-      MatchContact *pc = matchCollection->pcontactAt( i );
-      BaseContestLog * clp = pc->getContactLog();
-     if ( !last_pc || last_pc != clp )
-     {
-        // set up a contest node for "other"
-        lastTopNode = addTreeRoot(ui->OtherMatchTree, clp->name.getValue());
-        lastTopNode->setExpanded(true);
-     }
-     last_pc = clp;
-     if ( pc )
-     {
-        // and the contact node
-         QString text;
-         pc->getText( text, clp );
-         addTreeChild(lastTopNode, text);
-      }
+       BaseMatchContest * clp = matchCollection->pcontestAt(i);
+
+       BaseContestLog *bcl = clp->getContactLog();
+       lastTopNode = addTreeRoot(ui->OtherMatchTree, bcl->band.getValue() + " " + bcl->name.getValue());
+       lastTopNode->setExpanded(true);
+
+       for ( int j = 0; j < clp->getContactCount(); j++)
+       {
+
+           MatchContact *pc = clp->pcontactAt( j );
+
+           BaseContact *lc = pc->getBaseContact();
+
+           QString text = lc->getField(egCall, cc) + " "
+                           + lc->getField(egLoc, cc) + " "
+                           + lc->getField(egBrg, cc) + " "
+                           + lc->getField(egScore, cc);
+
+           addTreeChild(lastTopNode, text);
+       }
    }
 }
 //---------------------------------------------------------------------------
@@ -463,33 +473,37 @@ void TSingleLogFrame::showMatchList( TMatchCollection *matchCollection )
 {
     ui->ArchiveMatchTree->clear();
 
-    if ( matchCollection->getContactCount() == 0 )
+    ui->GJVQSOLogFrame->setXferEnabled(false);
+    if ( matchCollection->getContestCount() == 0 )
     {
-        ui->GJVQSOLogFrame->setXferEnabled(false);
         return ;
     }
     ui->GJVQSOLogFrame->setXferEnabled(true);
-    ContactList * last_pc = 0;
-    QTreeWidgetItem *lastTopNode = 0;
+    BaseContestLog * cc = MinosParameters::getMinosParameters() ->getCurrentContest();
 
-    for ( int i = 0; i < matchCollection->getContactCount(); i++ )
+    QTreeWidgetItem *lastTopNode = 0;
+    for ( int i = 0; i < matchCollection->getContestCount(); i++ )
     {
-       MatchContact *pc = matchCollection->pcontactAt( i );
-       ContactList * clp = pc->getContactList();
-      if ( !last_pc || last_pc != clp )
-      {
-         // set up a contest node for "other"
-         lastTopNode = addTreeRoot(ui->ArchiveMatchTree, clp->name);
-         lastTopNode->setExpanded(true);
-      }
-      last_pc = clp;
-      if ( pc )
-      {
-         // and the contact node
-          ListContact *lc = pc->getListContact();
-          QString text = lc->cs.fullCall.getValue() + " " + lc->loc.loc.getValue();
-          addTreeChild(lastTopNode, text);
-       }
+        BaseMatchContest * clp = matchCollection->pcontestAt(i);
+
+        ContactList *bcl = clp->getContactList();
+        lastTopNode = addTreeRoot(ui->ArchiveMatchTree, bcl->name);
+        lastTopNode->setExpanded(true);
+
+        int contacts = clp->getContactCount();
+        for ( int j = 0; j < contacts; j++)
+        {
+
+            MatchContact *pc = clp->pcontactAt( j );
+
+            ListContact *lc = pc->getListContact();
+
+            QString text = lc->getField(egCall, cc) + " "
+                            + lc->getField(egLoc, cc) + " "
+                            + lc->getField(egBrg, cc) + " "
+                            + lc->getField(egScore, cc);
+            addTreeChild(lastTopNode, text);
+        }
     }
 }
 void TSingleLogFrame::on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* )

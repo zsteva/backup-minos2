@@ -13,11 +13,29 @@
 //---------------------------------------------------------------------------
 class ListContact;
 class ContactList;
+class BaseMatchContest;
+
+class LtMatchContest
+{
+public:
+   bool operator() ( const BaseMatchContest* s1, const BaseMatchContest* s2 ) const;
+};
+
+class LtMatch
+{
+public:
+   bool operator() ( const MatchContact* s1, const MatchContact* s2 ) const;
+};
+typedef codeproject::sorted_vector < BaseMatchContest *, true, LtMatchContest > ContestMatchList;
+typedef ContestMatchList::iterator ContestMatchIterator;
+
+typedef codeproject::sorted_vector < MatchContact *, true, LtMatch > MatchList;
+typedef MatchList::iterator MatchIterator;
+
+
 class MatchContact
 {
    public:
-      void *treePointer;      // back pointer to object representing this contact on display
-      // Not good if we want MVC - only one pointer per contact
       MatchContact( );
       virtual ~MatchContact();
       virtual ContactList *getContactList() const
@@ -41,6 +59,57 @@ class MatchContact
       virtual bool operator!=( const MatchContact& rhs ) const = 0;
       virtual void getText( QString &dest, BaseContestLog *const ct ) const = 0;
 };
+class BaseMatchContest
+{
+public:
+   virtual ~BaseMatchContest(){}
+
+   BaseLogList *matchedContest;
+
+   MatchList matchList;
+
+   void freeAll()
+   {
+      for (MatchIterator i = matchList.begin(); i != matchList.end(); i++ )
+      {
+         delete ( *i );
+         ( *i ) = 0;
+      }
+      matchList.clear();
+   }
+
+   virtual int getContactCount(){return matchList.size();}
+   MatchContact *pcontactAt( int );
+
+   virtual ContactList *getContactList() const
+   {
+      return 0;
+   }
+   virtual BaseContestLog *getContactLog() const
+   {
+      return 0;
+   }
+   virtual bool operator<( const BaseMatchContest& rhs ) const = 0;
+};
+class MatchContactList : public BaseMatchContest
+{
+public:
+   virtual ContactList *getContactList() const override
+   {
+      return dynamic_cast<ContactList *>(matchedContest);
+   }
+   virtual bool operator<( const BaseMatchContest& rhs ) const override;
+};
+class MatchContactLog : public BaseMatchContest
+{
+public:
+   virtual BaseContestLog *getContactLog() const override
+   {
+      return dynamic_cast<BaseContestLog *>(matchedContest);
+   }
+   virtual bool operator<( const BaseMatchContest& rhs ) const override;
+};
+
 
 class MatchListContact: public MatchContact
 {
