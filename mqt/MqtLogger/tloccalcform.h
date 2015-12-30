@@ -15,6 +15,9 @@ public:
     explicit TLocCalcForm(QWidget *parent = 0);
     ~TLocCalcForm();
 
+    QString S1Loc;
+    QString Distance;
+
 private:
     Ui::TLocCalcForm *ui;
 };

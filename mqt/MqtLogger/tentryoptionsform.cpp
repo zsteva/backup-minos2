@@ -226,30 +226,30 @@ QString TEntryOptionsForm::doFileSave( )
     switch ( expformat )
     {
     case EG0GJV:
-        defext = "GJV";
+        defext = "gjv";
         filter = "GJV ContestLog files (*.gjv);;All Files (*.*);;" ;
         break;
     case EMINOS:
-        defext = "Minos";
+        defext = "minos";
         filter = "Minos ContestLog files (*.minos);;All Files (*.*);;" ;
         break;
     case EADIF:
-        defext = "ADI";
+        defext = "adi";
         filter = "ADIF files (*.adi);;All Files (*.*);;" ;
         break;
     case EKML:
-        defext = "KML";
+        defext = "kml";
         filter = "KML(GoogleEarth) files (*.kml);;All Files (*.*);;" ;
         break;
     case EREG1TEST:
-        defext = "EDI";
+        defext = "edi";
         ct->mycall.valRes = CS_NOT_VALIDATED;
         ct->mycall.validate( );
         filter = "Region 1 EDI files (*.edi);;All Files (*.*);;" ;
         break;
     case EPRINTFILE:
     {
-        defext = "TXT";
+        defext = "txt";
         filter = "Text output (*.txt);;All Files (*.*);;" ;
     }
         break;
@@ -261,7 +261,7 @@ QString TEntryOptionsForm::doFileSave( )
     {
         QString fileName = QFileDialog::getSaveFileName( this,
                                                          "Save contest as...",
-                                                         fname,
+                                                         InitialDir + "/" + fname + "." + defext,
                                                          filter,
                                                          0,
                                                          QFileDialog::DontConfirmOverwrite
@@ -283,7 +283,7 @@ QString TEntryOptionsForm::doFileSave( )
                 continue;
             }
 
-            QIODevice::OpenMode om = QIODevice::ReadWrite | QIODevice::Unbuffered;
+            QIODevice::OpenMode om = QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered;
             boost::shared_ptr<QFile> contestFile(new QFile(expName));
 
             if (!contestFile->open(om))

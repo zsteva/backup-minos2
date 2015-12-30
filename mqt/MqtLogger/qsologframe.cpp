@@ -1,7 +1,7 @@
 #include "logger_pch.h"
 
 #include "tqsoeditdlg.h"
-
+#include "tforcelogdlg.h"
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
 
@@ -65,6 +65,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(SecondOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
 
     ui->SerTXEdit->installEventFilter(this);
+    ui->TimeEdit->installEventFilter(this);
 
     ui->ModeComboBoxGJV->addItem("A1A");
     ui->ModeComboBoxGJV->addItem("J3E");
@@ -72,10 +73,11 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(on_TimeDisplayTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterTabFocusIn(QLineEdit*)), this, SLOT(on_AfterTabFocusIn(QLineEdit*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(Validated()), this, SLOT(on_Validated()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(ValidateError(int)), this, SLOT(on_ValidateError(int)));
 }
 bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
 {
-   if (obj == ui->SerTXEdit )
+   if (obj == ui->SerTXEdit || obj == ui->TimeEdit)
    {
        if (event->type() == QEvent::MouseButtonDblClick)
        {
@@ -406,137 +408,18 @@ void QSOLogFrame::on_GJVOKButton_clicked()
 }
 bool QSOLogFrame::dlgForced()
 {
-    /*
-    std::auto_ptr <TForceLogDlg> ForceDlg( new TForceLogDlg( this ) );
-
     getScreenEntry();
     valid( cmCheckValid );       // This adds errors to the MAIN dialog error list, not our own
 
-    for ( ErrorIterator i = errs.begin(); i != errs.end(); i++ )
+    TForceLogDlg ForceDlg(this);
+
+    int res = ForceDlg.doexec(contest, screenContact, errs);
+    if ( res == QDialog::Accepted )
     {
-        ForceDlg->ErrList->Items->Add( ( *i ) ->errStr.c_str() );
-    }
-    ForceDlg->ErrList->ItemIndex = 0;
-
-    int s = screenContact.contactScore;
-    if ( s < 0 )
-        s = 0;
-    AnsiString temp;
-    temp.printf( "%d", s );
-    ForceDlg->ScoreIl->Text = temp;
-
-    ForceDlg->CheckBox1->Checked = screenContact.contactFlags & TO_BE_ENTERED;
-    ForceDlg->CheckBox2->Checked = screenContact.contactFlags & VALID_DUPLICATE;
-    ForceDlg->CheckBox3->Checked = screenContact.contactFlags & MANUAL_SCORE;
-    ForceDlg->CheckBox4->Checked = screenContact.contactFlags & NON_SCORING;
-    ForceDlg->CheckBox5->Checked = screenContact.contactFlags & DONT_PRINT;
-    ForceDlg->CheckBox6->Checked = screenContact.contactFlags & COUNTRY_FORCED;
-    ForceDlg->CheckBox7->Checked = screenContact.contactFlags & VALID_DISTRICT;
-    ForceDlg->CheckBox8->Checked = screenContact.contactFlags & XBAND;
-
-    if ((screenContact.cs.valRes == ERR_DUPCS) ||
-            ( screenContact.contactFlags & ( NON_SCORING | MANUAL_SCORE | DONT_PRINT | VALID_DUPLICATE | TO_BE_ENTERED | XBAND ) ) )
-
-    {
-        // set nothing! DUPs are dealt with!
-    }
-    else
-        if ( errs.size() != 0 )  				// no errors -> OK
-            ForceDlg->CheckBox4->Checked = screenContact.contactFlags | NON_SCORING;
-
-    if ( screenContact.contactFlags & COUNTRY_FORCED )
-    {
-        ForceDlg->CtryMultIl->Text = screenContact.forcedMult.c_str();
-    }
-    else
-        if ( contest->countryMult.getValue() && screenContact.ctryMult )
-        {
-            ForceDlg->CtryMultIl->Text = screenContact.ctryMult->basePrefix.c_str();
-        }
-
-    bool tryagain = true;
-    int res = mrCancel;
-    while ( tryagain && ( res = ForceDlg->ShowModal() ) == mrOk )
-    {
-        if ( contest->countryMult.getValue() )
-        {
-            temp = ForceDlg->CtryMultIl->Text;
-        }
-        else
-            break;
-
-        if ( !ForceDlg->CheckBox6->Checked )
-        {
-            tryagain = false;
-            screenContact.contactFlags &= ~ COUNTRY_FORCED;
-            screenContact.ctryMult = 0;
-            screenContact.forcedMult = "";
-            break;
-        }
-
-        temp = temp.Trim();
-
-        CountryEntry *ctryMult = MultLists::getMultLists() ->getCtryForPrefix( temp.c_str() );
-        if ( ctryMult )
-        {
-            tryagain = false;
-            if ( screenContact.ctryMult != ctryMult )
-            {
-                screenContact.ctryMult = ctryMult;
-                screenContact.contactFlags |= COUNTRY_FORCED;
-                screenContact.forcedMult = temp.c_str();
-            }
-        }
-        else
-        {
-            if ( mShowYesNoMessage( this, "Country not in CTY.DAT. Leave for now?") )
-            {
-                tryagain = false;
-                screenContact.contactFlags &= ~COUNTRY_FORCED;
-                screenContact.forcedMult = "";
-            }
-        }
-    }
-    if ( res == mrOk )
-    {
-        // save contact...
-        screenContact.contactFlags |= FORCE_LOG;
-        // here read it all off the dialog
-
-        screenContact.contactFlags &= ~( NON_SCORING | MANUAL_SCORE | DONT_PRINT | VALID_DUPLICATE | TO_BE_ENTERED | VALID_DISTRICT | XBAND );
-
-        if ( ForceDlg->CheckBox1->Checked )
-        {
-            screenContact.contactFlags |= TO_BE_ENTERED;
-        }
-        if ( ForceDlg->CheckBox2->Checked )
-        {
-            screenContact.contactFlags |= VALID_DUPLICATE;
-        }
-        if ( ForceDlg->CheckBox3->Checked )
-        {
-            screenContact.contactFlags |= MANUAL_SCORE;
-            temp = ForceDlg->ScoreIl->Text.Trim();
-            screenContact.contactScore = atoi( temp.c_str() );
-        }
-        if ( screenContact.contactFlags & ( TO_BE_ENTERED | VALID_DUPLICATE | MANUAL_SCORE ) )
-            ForceDlg->CheckBox4->Checked = false;
-
-        if ( ForceDlg->CheckBox4->Checked )
-            screenContact.contactFlags |= NON_SCORING;
-        if ( ForceDlg->CheckBox5->Checked )
-        {
-            screenContact.contactFlags |= ( DONT_PRINT | NON_SCORING );
-        }
-        if ( ForceDlg->CheckBox7->Checked )
-            screenContact.contactFlags |= VALID_DISTRICT;
-        if ( ForceDlg->CheckBox8->Checked )
-            screenContact.contactFlags |= XBAND;
-
         // make sure marked on main screen
 
-        NonScoreCheckBox->Checked = screenContact.contactFlags & NON_SCORING;
-        DeletedCheckBox->Checked = screenContact.contactFlags & DONT_PRINT;
+        ui->NonScoreCheckBox->setChecked(screenContact.contactFlags & NON_SCORING);
+        ui->DeletedCheckBox->setChecked(screenContact.contactFlags & DONT_PRINT);
         if ( screenContact.contactFlags & NON_SCORING )
         {
             screenContact.multCount = 0;
@@ -545,11 +428,9 @@ bool QSOLogFrame::dlgForced()
 
         // if no dtg then autofill dtg
 
-          logCurrentContact( );
+        logCurrentContact( );
         return true;
-
     }
-*/
     return false;
 }
 //---------------------------------------------------------------------------
@@ -788,6 +669,10 @@ void QSOLogFrame::mouseDoubleClickEvent(QObject *w)
     {
         ui->SerTXEdit->setReadOnly(false);
     }
+    if (edit && w == ui->TimeEdit)
+    {
+        ui->TimeEdit->setReadOnly(false);
+    }
     /*
     if ( contest->isReadOnly() )
     {
@@ -943,6 +828,7 @@ void QSOLogFrame::EditControlExit( QObject */*Sender*/ )
    }
    checkTimeEditExit();
    ui->SerTXEdit->setReadOnly(true);
+   ui->TimeEdit->setReadOnly(true);
 
    if ( current == ui->LocEdit )
    {
@@ -1987,7 +1873,7 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
     selectEntry(newct);
 }
 
-void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
+void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int /*index*/)
 {
     if (ui->ModeComboBoxGJV->currentText() == "A1A")
     {
@@ -1997,4 +1883,15 @@ void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
     {
        ui->ModeButton->setText("A1A");
     }
+}
+void QSOLogFrame::on_ValidateError (int mess_no )
+{
+      if ( mess_no == -1 )
+      {
+         errs.clear();
+         return ;
+      }
+
+      // add the message into the error list
+      errs.insert( &errDefs[ mess_no ] );
 }

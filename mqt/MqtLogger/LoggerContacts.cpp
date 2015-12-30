@@ -281,7 +281,7 @@ void ContestContact::getReg1TestText( QString &sdest )
    QString ssbuff;
    int ss = serials.getValue().toInt();
    if ( ss )
-      ssbuff = QString("%1").arg(ss, 3 );
+      ssbuff = QString("%1").arg(ss, 3, 10, QChar('0')  );
    sdest += ssbuff;   // TX sno
    sdest += ';';
 
@@ -291,7 +291,7 @@ void ContestContact::getReg1TestText( QString &sdest )
    QString srbuff;
    int sr = serialr.getValue().toInt();
    if ( sr )
-       srbuff = QString("%1").arg(sr, 3 );
+       srbuff = QString("%1").arg(sr, 3, 10, QChar('0') );
    sdest += srbuff;   // RX sno
    sdest += ';';
 
