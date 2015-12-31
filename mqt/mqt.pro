@@ -6,4 +6,5 @@ SUBDIRS += \
     XMPPClientLib \
     MqtBase \
     RPCTest \
-    MqtLogger
+    MqtLogger \
+    MqtServer
