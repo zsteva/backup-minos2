@@ -10,6 +10,8 @@
 #define BASE_PCH_H
 #include "XMPPClient_pch.h"
 
+#include "fileutils.h"
+
 #include <QApplication>
 #include <QDialog>
 

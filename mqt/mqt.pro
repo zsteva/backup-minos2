@@ -7,4 +7,5 @@ SUBDIRS += \
     MqtBase \
     RPCTest \
     MqtLogger \
-    MqtServer
+    MqtServer \
+    MqtUtils

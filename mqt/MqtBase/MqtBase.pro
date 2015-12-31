@@ -19,6 +19,7 @@ DEFINES += TIXML_USE_STL
 
 INCLUDEPATH += C:\Projects\boost\boost_1_59_0
 
+INCLUDEPATH += ../MqtUtils
 INCLUDEPATH += ../TinyXML
 INCLUDEPATH += ../XMPPLib
 INCLUDEPATH += ../XMPPClientLib
@@ -57,7 +58,6 @@ HEADERS += \
     calcs.h \
     contacts.h \
     contest.h \
-    cutils.h \
     latlong.h \
     list.h \
     ListContact.h \
@@ -80,7 +80,8 @@ HEADERS += \
     TreeUtils.h \
     minossplitter.h \
     htmldelegate.h \
-    CalendarList.h
+    CalendarList.h \
+    cutils.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
