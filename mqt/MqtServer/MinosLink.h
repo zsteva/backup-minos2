@@ -14,6 +14,7 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QTcpServer>
+#include <QSharedPointer>
 #include "tinyxml.h"
 //---------------------------------------------------------------------------
 class XStanza;
@@ -39,7 +40,7 @@ class MinosSocket:public QObject
 {
     Q_OBJECT
    protected:
-      QTcpSocket sock;
+      QSharedPointer<QTcpSocket> sock;
       bool txConnection;      // set if we can transmit on this connection
    public:
       MinosSocket();
@@ -52,7 +53,7 @@ class MinosSocket:public QObject
 
       void closeSocket()
       {
-         sock.close();
+         sock->close();
       }
       virtual bool tryForwardStanza( TiXmlElement * /*pak*/ )
       {
@@ -144,7 +145,7 @@ class MinosListener:public QObject
    protected:
 #define MAXIPSLOTS 64         // max for a single select call
 
-      QTcpServer sock;
+      QSharedPointer<QTcpServer> sock;
       std::vector<MinosSocket *>i_array;
    public:
       void processSockets();

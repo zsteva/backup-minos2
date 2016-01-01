@@ -26,7 +26,7 @@ GJV_thread *zcThread = 0;
 bool TZConf::sendMessage(const QString &mess )
 {
     QByteArray datagram = QByteArray(mess.toStdString().c_str());
-    qint64 ret = qus.writeDatagram(datagram.data(), datagram.size(),
+    qint64 ret = qus->writeDatagram(datagram.data(), datagram.size(),
                              groupAddress, iPort);
 
    return ret > 0;
@@ -43,6 +43,7 @@ void runZcThread( void *t )
 }
 void TZConf::runThread()
 {
+    qus = QSharedPointer<QUdpSocket>(new QUdpSocket(0));
    initialise( );
 
 
@@ -85,7 +86,7 @@ void TZConf::runThread()
 
    while ( !closeApp )
    {
-       if (qus.hasPendingDatagrams())
+       if (qus->hasPendingDatagrams())
        {
            /*
            char message[ 4096 ];
@@ -118,11 +119,11 @@ void TZConf::runThread()
             else
             {
                 QByteArray datagram;
-                datagram.resize(qus.pendingDatagramSize());
+                datagram.resize(qus->pendingDatagramSize());
                 QHostAddress sender;
                 quint16 senderPort;
 
-                qus.readDatagram(datagram.data(), datagram.size(),
+                qus->readDatagram(datagram.data(), datagram.size(),
                                         &sender, &senderPort);
 
                 sendBeaconResponse = setZConfString(QString(datagram), sender);
@@ -130,7 +131,7 @@ void TZConf::runThread()
        }
 
    }
-   qus.close();
+   qus->close();
 }
 Server *findStation( const QString s )
 {

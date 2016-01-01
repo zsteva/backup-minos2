@@ -31,7 +31,8 @@ SUBTARGETS    =  \
 		sub-RPCTest \
 		sub-MqtLogger \
 		sub-MqtServer \
-		sub-MqtUtils
+		sub-MqtUtils \
+		sub-MqtChat
 
 
 sub-TinyXML-qmake_all:  FORCE
@@ -234,6 +235,31 @@ sub-MqtUtils-install_subtargets: FORCE
 sub-MqtUtils-uninstall_subtargets: FORCE
 	@test -d MqtUtils/ || mkdir -p MqtUtils/
 	cd MqtUtils/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtUtils/MqtUtils.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile uninstall
+sub-MqtChat-qmake_all:  FORCE
+	@test -d MqtChat/ || mkdir -p MqtChat/
+	cd MqtChat/ && $(QMAKE) C:/Projects/sfMinos/mqt/MqtChat/MqtChat.pro -spec win32-g++ CONFIG+=debug -o Makefile
+	cd MqtChat/ && $(MAKE) -f Makefile qmake_all
+sub-MqtChat: FORCE
+	@test -d MqtChat/ || mkdir -p MqtChat/
+	cd MqtChat/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtChat/MqtChat.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile
+sub-MqtChat-make_first: FORCE
+	@test -d MqtChat/ || mkdir -p MqtChat/
+	cd MqtChat/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtChat/MqtChat.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile 
+sub-MqtChat-all: FORCE
+	@test -d MqtChat/ || mkdir -p MqtChat/
+	cd MqtChat/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtChat/MqtChat.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile all
+sub-MqtChat-clean: FORCE
+	@test -d MqtChat/ || mkdir -p MqtChat/
+	cd MqtChat/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtChat/MqtChat.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile clean
+sub-MqtChat-distclean: FORCE
+	@test -d MqtChat/ || mkdir -p MqtChat/
+	cd MqtChat/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtChat/MqtChat.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile distclean
+sub-MqtChat-install_subtargets: FORCE
+	@test -d MqtChat/ || mkdir -p MqtChat/
+	cd MqtChat/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtChat/MqtChat.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile install
+sub-MqtChat-uninstall_subtargets: FORCE
+	@test -d MqtChat/ || mkdir -p MqtChat/
+	cd MqtChat/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtChat/MqtChat.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile uninstall
 
 Makefile: ../../mqt/mqt.pro ../../../../Qt/5.5/mingw492_32/mkspecs/win32-g++/qmake.conf ../../../../Qt/5.5/mingw492_32/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.5/mingw492_32/mkspecs/qdevice.pri \
@@ -451,15 +477,15 @@ Makefile: ../../mqt/mqt.pro ../../../../Qt/5.5/mingw492_32/mkspecs/win32-g++/qma
 qmake: FORCE
 	@$(QMAKE) -spec win32-g++ CONFIG+=debug -o Makefile ../../mqt/mqt.pro
 
-qmake_all: sub-TinyXML-qmake_all sub-XMPPLib-qmake_all sub-XMPPClientLib-qmake_all sub-MqtBase-qmake_all sub-RPCTest-qmake_all sub-MqtLogger-qmake_all sub-MqtServer-qmake_all sub-MqtUtils-qmake_all FORCE
+qmake_all: sub-TinyXML-qmake_all sub-XMPPLib-qmake_all sub-XMPPClientLib-qmake_all sub-MqtBase-qmake_all sub-RPCTest-qmake_all sub-MqtLogger-qmake_all sub-MqtServer-qmake_all sub-MqtUtils-qmake_all sub-MqtChat-qmake_all FORCE
 
-make_first: sub-TinyXML-make_first sub-XMPPLib-make_first sub-XMPPClientLib-make_first sub-MqtBase-make_first sub-RPCTest-make_first sub-MqtLogger-make_first sub-MqtServer-make_first sub-MqtUtils-make_first  FORCE
-all: sub-TinyXML-all sub-XMPPLib-all sub-XMPPClientLib-all sub-MqtBase-all sub-RPCTest-all sub-MqtLogger-all sub-MqtServer-all sub-MqtUtils-all  FORCE
-clean: sub-TinyXML-clean sub-XMPPLib-clean sub-XMPPClientLib-clean sub-MqtBase-clean sub-RPCTest-clean sub-MqtLogger-clean sub-MqtServer-clean sub-MqtUtils-clean  FORCE
-distclean: sub-TinyXML-distclean sub-XMPPLib-distclean sub-XMPPClientLib-distclean sub-MqtBase-distclean sub-RPCTest-distclean sub-MqtLogger-distclean sub-MqtServer-distclean sub-MqtUtils-distclean  FORCE
+make_first: sub-TinyXML-make_first sub-XMPPLib-make_first sub-XMPPClientLib-make_first sub-MqtBase-make_first sub-RPCTest-make_first sub-MqtLogger-make_first sub-MqtServer-make_first sub-MqtUtils-make_first sub-MqtChat-make_first  FORCE
+all: sub-TinyXML-all sub-XMPPLib-all sub-XMPPClientLib-all sub-MqtBase-all sub-RPCTest-all sub-MqtLogger-all sub-MqtServer-all sub-MqtUtils-all sub-MqtChat-all  FORCE
+clean: sub-TinyXML-clean sub-XMPPLib-clean sub-XMPPClientLib-clean sub-MqtBase-clean sub-RPCTest-clean sub-MqtLogger-clean sub-MqtServer-clean sub-MqtUtils-clean sub-MqtChat-clean  FORCE
+distclean: sub-TinyXML-distclean sub-XMPPLib-distclean sub-XMPPClientLib-distclean sub-MqtBase-distclean sub-RPCTest-distclean sub-MqtLogger-distclean sub-MqtServer-distclean sub-MqtUtils-distclean sub-MqtChat-distclean  FORCE
 	-$(DEL_FILE) Makefile
-install_subtargets: sub-TinyXML-install_subtargets sub-XMPPLib-install_subtargets sub-XMPPClientLib-install_subtargets sub-MqtBase-install_subtargets sub-RPCTest-install_subtargets sub-MqtLogger-install_subtargets sub-MqtServer-install_subtargets sub-MqtUtils-install_subtargets FORCE
-uninstall_subtargets: sub-TinyXML-uninstall_subtargets sub-XMPPLib-uninstall_subtargets sub-XMPPClientLib-uninstall_subtargets sub-MqtBase-uninstall_subtargets sub-RPCTest-uninstall_subtargets sub-MqtLogger-uninstall_subtargets sub-MqtServer-uninstall_subtargets sub-MqtUtils-uninstall_subtargets FORCE
+install_subtargets: sub-TinyXML-install_subtargets sub-XMPPLib-install_subtargets sub-XMPPClientLib-install_subtargets sub-MqtBase-install_subtargets sub-RPCTest-install_subtargets sub-MqtLogger-install_subtargets sub-MqtServer-install_subtargets sub-MqtUtils-install_subtargets sub-MqtChat-install_subtargets FORCE
+uninstall_subtargets: sub-TinyXML-uninstall_subtargets sub-XMPPLib-uninstall_subtargets sub-XMPPClientLib-uninstall_subtargets sub-MqtBase-uninstall_subtargets sub-RPCTest-uninstall_subtargets sub-MqtLogger-uninstall_subtargets sub-MqtServer-uninstall_subtargets sub-MqtUtils-uninstall_subtargets sub-MqtChat-uninstall_subtargets FORCE
 
 sub-TinyXML-debug:
 	@test -d TinyXML/ || mkdir -p TinyXML/
@@ -485,7 +511,10 @@ sub-MqtServer-debug:
 sub-MqtUtils-debug:
 	@test -d MqtUtils/ || mkdir -p MqtUtils/
 	cd MqtUtils/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtUtils/MqtUtils.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile debug
-debug: sub-TinyXML-debug sub-XMPPLib-debug sub-XMPPClientLib-debug sub-MqtBase-debug sub-RPCTest-debug sub-MqtLogger-debug sub-MqtServer-debug sub-MqtUtils-debug
+sub-MqtChat-debug:
+	@test -d MqtChat/ || mkdir -p MqtChat/
+	cd MqtChat/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtChat/MqtChat.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile debug
+debug: sub-TinyXML-debug sub-XMPPLib-debug sub-XMPPClientLib-debug sub-MqtBase-debug sub-RPCTest-debug sub-MqtLogger-debug sub-MqtServer-debug sub-MqtUtils-debug sub-MqtChat-debug
 
 sub-TinyXML-release:
 	@test -d TinyXML/ || mkdir -p TinyXML/
@@ -511,7 +540,10 @@ sub-MqtServer-release:
 sub-MqtUtils-release:
 	@test -d MqtUtils/ || mkdir -p MqtUtils/
 	cd MqtUtils/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtUtils/MqtUtils.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile release
-release: sub-TinyXML-release sub-XMPPLib-release sub-XMPPClientLib-release sub-MqtBase-release sub-RPCTest-release sub-MqtLogger-release sub-MqtServer-release sub-MqtUtils-release
+sub-MqtChat-release:
+	@test -d MqtChat/ || mkdir -p MqtChat/
+	cd MqtChat/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtChat/MqtChat.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile release
+release: sub-TinyXML-release sub-XMPPLib-release sub-XMPPClientLib-release sub-MqtBase-release sub-RPCTest-release sub-MqtLogger-release sub-MqtServer-release sub-MqtUtils-release sub-MqtChat-release
 
 sub-TinyXML-check:
 	@test -d TinyXML/ || mkdir -p TinyXML/
@@ -537,7 +569,10 @@ sub-MqtServer-check:
 sub-MqtUtils-check:
 	@test -d MqtUtils/ || mkdir -p MqtUtils/
 	cd MqtUtils/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtUtils/MqtUtils.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile check
-check: sub-TinyXML-check sub-XMPPLib-check sub-XMPPClientLib-check sub-MqtBase-check sub-RPCTest-check sub-MqtLogger-check sub-MqtServer-check sub-MqtUtils-check
+sub-MqtChat-check:
+	@test -d MqtChat/ || mkdir -p MqtChat/
+	cd MqtChat/ && ( test -e Makefile || $(QMAKE) C:/Projects/sfMinos/mqt/MqtChat/MqtChat.pro -spec win32-g++ CONFIG+=debug -o Makefile ) && $(MAKE) -f Makefile check
+check: sub-TinyXML-check sub-XMPPLib-check sub-XMPPClientLib-check sub-MqtBase-check sub-RPCTest-check sub-MqtLogger-check sub-MqtServer-check sub-MqtUtils-check sub-MqtChat-check
 install:install_subtargets  FORCE
 
 uninstall: uninstall_subtargets FORCE

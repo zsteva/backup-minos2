@@ -9,7 +9,7 @@
 //---------------------------------------------------------------------------
 
 #include "XMPP_pch.h"
-
+#include "fileutils.h"
 
 //---------------------------------------------------------------------------
 static std::ofstream &getLogFile( QString name )
@@ -19,20 +19,18 @@ static std::ofstream &getLogFile( QString name )
 }
 
 //---------------------------------------------------------------------------
-std::ostream & MLogFile::createLogFile(const QString &prefix, int keepDays )
+std::ostream & MLogFile::createLogFile(const QString &path, const QString filePrefix, int keepDays )
 {
-   //Close();
-   QDateTime dt = QDateTime::currentDateTime();
-   QString tidyPrefix = prefix + "*";
-   tidyFiles( tidyPrefix, keepDays );
-   fLogFileName = generateLogFileName( prefix );
+    if ( !StaticDirectoryExists ( path ) )
+        StaticDirectoryCreate ( path, 0 );
 
-   QString sDir = ExtractFileDir( fLogFileName);
-   if ( !DirectoryExists( sDir ) )
-      CreateDir( sDir );
+    //Close();
+    QString TidyPrefix = path + "/" + filePrefix + "*";
+    tidyFiles ( TidyPrefix, keepDays );
+    QString fLogFileName = generateLogFileName ( path + "/" + filePrefix  );
 
-   QString sdt;
-    QString dtg = dt.toString( "yyyy MMM dd hh:m:ss.zzz" );
+    //QString sdt;
+    QString dtg = QDateTime::currentDateTime().toString( "yyyy MMM dd hh:m:ss.zzz" );
 
 	//   getLogFile().open( fLogFileName.c_str() );
 	getLogFile( fLogFileName );

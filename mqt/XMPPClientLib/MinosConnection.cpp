@@ -14,46 +14,46 @@
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 void
-MinosConnection::io_close ()
+MinosAppConnection::io_close ()
 {
-   sock.close();
+   sock->close();
 }
 
 bool
-MinosConnection::io_connect ( const char *server, int port )
+MinosAppConnection::io_connect ( const char *server, int port )
 {
-    sock.connectToHost(server, port);
+    sock->connectToHost(server, port);
     // and we have to wire things up to wait for conected() or error()
 
    return false;
 }
 
 bool
-MinosConnection::io_send ( const char *data, size_t len )
+MinosAppConnection::io_send ( const char *data, size_t len )
 {
-    if (sock.write(data, len) == -1)
+    if (sock->write(data, len) == -1)
       return false;
    return true;
 }
 
 int
-MinosConnection::io_recv ( char *buffer, size_t buf_len, int timeout )
+MinosAppConnection::io_recv ( char *buffer, size_t buf_len, int timeout )
 {
     int len = 0;
-    if (sock.waitForReadyRead(timeout))
+    if (sock->waitForReadyRead(timeout))
     {
         // documntation says this may occasionally fail on Windows
-        len = sock.read(buffer, buf_len);
+        len = sock->read(buffer, buf_len);
     }
     return len;
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-MinosConnection::MinosConnection( RPCDispatcher *ud ) : sock( 0 ), user_data( ud )
+MinosAppConnection::MinosAppConnection( RPCDispatcher *ud ) : sock( new QTcpSocket ), user_data( ud )
 {}
-MinosConnection::~MinosConnection()
+MinosAppConnection::~MinosAppConnection()
 {}
-bool MinosConnection::minos_send( const TIXML_STRING &xmlstr )
+bool MinosAppConnection::minos_send( const TIXML_STRING &xmlstr )
 {
    if ( xmlstr.size() )
    {
@@ -66,19 +66,19 @@ bool MinosConnection::minos_send( const TIXML_STRING &xmlstr )
    }
    return false;
 }
-bool MinosConnection::minos_send( TiXmlElement *data )
+bool MinosAppConnection::minos_send( TiXmlElement *data )
 {
    // serialise the data node, send it to the socket in a packet
    TIXML_STRING xmlstr;
    xmlstr << ( *data );
    return minos_send( xmlstr );
 }
-bool MinosConnection::startConnection()
+bool MinosAppConnection::startConnection()
 {
    // open up the socket connection to the minos
    return io_connect ( "localhost", ClientPort );
 }
-bool MinosConnection::runConnection()
+bool MinosAppConnection::runConnection()
 {
    // read from the connection; buffer until a complete packet received
 
@@ -136,7 +136,7 @@ bool MinosConnection::runConnection()
       }
    return true;
 }
-bool MinosConnection::closeConnection()
+bool MinosAppConnection::closeConnection()
 {
    // close down the socket connection
    io_close();

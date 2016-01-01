@@ -30,16 +30,16 @@ INCLUDEPATH += C:\Projects\boost\boost_1_59_0
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     MinosLink.cpp \
     MServer.cpp \
     MServerPubSub.cpp \
     MServerZConf.cpp \
     PubSubServer.cpp \
     serverThread.cpp \
-    clientThread.cpp
+    clientThread.cpp \
+    servermain.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     minos_pch.h \
     MinosLink.h \
     MServer.h \
@@ -47,9 +47,11 @@ HEADERS  += mainwindow.h \
     MServerZConf.h \
     PubSubServer.h \
     serverThread.h \
-    clientThread.h
+    clientThread.h \
+    servermain.h
 
-FORMS    += mainwindow.ui
+FORMS    += \
+    servermain.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../XMPPLib/release/ -lXMPPLib
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../XMPPLib/debug/ -lXMPPLib

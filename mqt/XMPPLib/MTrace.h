@@ -17,7 +17,7 @@
 void trace( const char *mess );
 void trace( const std::string & mess );
 void trace( const QString & mess );
-void enableTrace(const QString &where );
+void enableTrace(const QString &where, const QString filePrefix );
 void disableTrace( );
 QString getTraceFileName();
 #endif

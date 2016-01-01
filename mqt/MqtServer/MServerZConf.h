@@ -11,8 +11,9 @@
 #ifndef MServerZConfH
 #define MServerZConfH 
 //---------------------------------------------------------------------------
+#include <QObject>
 #include <QUdpSocket>
-
+#include <QSharedPointer>
 class Server
 {
    public:
@@ -38,8 +39,9 @@ class Server
 extern std::vector<Server *> serverList;
 extern Server *findStation( const QString s );
 
-class TZConf
+class TZConf: public QObject
 {
+    Q_OBJECT
    private:  	// User declarations
 
       static void publishServer(const QString &uuid, const QString &name,
@@ -48,7 +50,7 @@ class TZConf
       bool waitNameReply;
       QString localName;
 
-      QUdpSocket qus;
+      QSharedPointer<QUdpSocket> qus;
       QHostAddress groupAddress;
       int iPort;
 

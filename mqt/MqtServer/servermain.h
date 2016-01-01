@@ -8,7 +8,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class ServerMain : public QMainWindow
 {
     Q_OBJECT
 
@@ -16,8 +16,8 @@ class MainWindow : public QMainWindow
     QTimer ScanTimer;
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    explicit ServerMain(QWidget *parent = 0);
+    ~ServerMain();
     void logMessage( const QString &s );
 
 private slots:
@@ -28,7 +28,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 };
-extern MainWindow *MinosMainForm;
+extern ServerMain *MinosMainForm;
 extern bool closeApp;
 
 #endif // MAINWINDOW_H

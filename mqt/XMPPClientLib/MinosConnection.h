@@ -6,20 +6,23 @@
 // COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
 //
 /////////////////////////////////////////////////////////////////////////////
+#ifndef minosConnectionH
+#define minosConnectionH
 //---------------------------------------------------------------------------
 #include "XMPPClient_pch.h"
 
+#include <QObject>
+#include <QSharedPointer>
 
-#ifndef minosConnectionH
-#define minosConnectionH 
 //---------------------------------------------------------------------------
 
-class MinosConnection
+class MinosAppConnection:public QObject
 {
+    Q_OBJECT
 #define RXBUFFLEN 4096
    private:
       RPCDispatcher *user_data;
-      QTcpSocket sock;
+      QSharedPointer<QTcpSocket> sock;
       char rxbuff[ RXBUFFLEN ];
       TIXML_STRING packetbuff;
       void io_close ();
@@ -28,8 +31,8 @@ class MinosConnection
       int io_recv ( char *buffer, size_t buf_len, int timeout );
 
    public:
-      MinosConnection( RPCDispatcher *ud );
-      ~MinosConnection();
+      MinosAppConnection( RPCDispatcher *ud );
+      ~MinosAppConnection();
       bool startConnection();
       bool runConnection();
       bool closeConnection();

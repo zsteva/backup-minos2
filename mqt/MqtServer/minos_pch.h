@@ -13,7 +13,7 @@
 #include "XMPP_pch.h"
 #include <QTcpServer>
 
-#include "mainwindow.h"
+#include "servermain.h"
 #include "MinosLink.h"
 #include "MServer.h"
 #include "clientThread.h"

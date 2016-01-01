@@ -222,7 +222,7 @@ bool MinosThread::startDaemonThread()
 
    // set up the stream
 
-   ic = new MinosConnection( this );
+   ic = new MinosAppConnection( this );
    if ( ic->startConnection() )
    {
       connected = true;    // allow requests to go through...

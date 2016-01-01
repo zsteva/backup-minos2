@@ -17,6 +17,7 @@ QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 
 INCLUDEPATH += C:\Projects\boost\boost_1_59_0
 INCLUDEPATH += ../TinyXML
+INCLUDEPATH += ../MqtUtils
 
 DEFINES += TIXML_USE_STL
 

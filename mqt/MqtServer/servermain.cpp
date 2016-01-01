@@ -1,16 +1,16 @@
 #include "minos_pch.h"
 
-#include "mainwindow.h"
+#include "servermain.h"
 #include "ui_mainwindow.h"
 
 extern int GetSubscribedCount();
 extern int GetPublishedCount();
 
-MainWindow *MinosMainForm = 0;
+ServerMain *MinosMainForm = 0;
 
 bool closeApp = false;
 
-MainWindow::MainWindow(QWidget *parent) :
+ServerMain::ServerMain(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -18,23 +18,27 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
     connect(&ScanTimer, SIGNAL(timeout()), this, SLOT(ScanTimerTimer()));
 
-    enableTrace( ".\\TraceLog\\MinosServer_" );
+    enableTrace( "./TraceLog", "MinosServer_" );
     MinosServer::getMinosServer();
     clientThread = new GJV_thread( "client", &runClientThread, ( void * ) 0 );
     serverThread = new GJV_thread( "server", &runServerThread, ( void * ) 0 );
     PubSubMain = new TPubSubMain();
     ZConf = new TZConf();
-    ZConf->setName( MinosServer::getMinosServer() ->getServerName() );}
+    ZConf->setName( MinosServer::getMinosServer() ->getServerName() );
 
-MainWindow::~MainWindow()
+    LogTimer.start(100);
+    ScanTimer.start(20000);
+}
+
+ServerMain::~ServerMain()
 {
     delete ui;
 }
-void MainWindow::logMessage( const QString &s )
+void ServerMain::logMessage( const QString &s )
 {
    trace( s );
 }
-void MainWindow::LogTimerTimer( )
+void ServerMain::LogTimerTimer( )
 {
 
    static int lastServerCount = 0;
@@ -106,7 +110,7 @@ void MainWindow::LogTimerTimer( )
       }
    }
 }
-void MainWindow::ScanTimerTimer( )
+void ServerMain::ScanTimerTimer( )
 {
    // default is every 20 secs
    CsGuard g;
@@ -116,7 +120,7 @@ void MainWindow::ScanTimerTimer( )
 
 }
 
-void MainWindow::on_CloseButton_clicked()
+void ServerMain::on_CloseButton_clicked()
 {
     logMessage("Server close requested");
     closeApp = true;

@@ -22,7 +22,7 @@ extern QString myId;
 
 bool XMPPInitialise( const QString &myId );
 bool XMPPClosedown();
-class MinosConnection;
+class MinosAppConnection;
 //---------------------------------------------------------------------------
 class MinosThread: RPCDispatcher
 {
@@ -33,7 +33,7 @@ class MinosThread: RPCDispatcher
 
       void sendError( TiXmlElement *pak, char *type, char *defined_condition );
 
-      MinosConnection *ic;
+      MinosAppConnection *ic;
    public:
       static MinosThread *minosThread;
       MinosThread( const QString &jid );

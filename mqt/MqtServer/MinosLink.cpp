@@ -103,7 +103,7 @@ void MinosSocket::on_error(QAbstractSocket::SocketError socketError)
 }
 
 //=============================================================================
-MinosListener::MinosListener()
+MinosListener::MinosListener():sock(new QTcpServer(this))
 {}
 MinosListener::~MinosListener()
 {
@@ -113,9 +113,9 @@ MinosListener::~MinosListener()
 bool MinosListener::initialise( QString type, int port )
 {
 
-   bool res = sock.listen(QHostAddress::Any, port); // signals newConnection()
+   bool res = sock->listen(QHostAddress::Any, port); // signals newConnection()
    // need an event loop or waitForNewConnection()
-   xperror( res ,type + " listen"  );
+   xperror( res == false ,type + " listen"  );
 
    //i_array.push_back( this );
 
@@ -591,7 +591,7 @@ bool MinosCommonConnection::sendRaw ( const char *xmlstr )
       char * xmlbuff = new char[ 10 + 1 + xmllen + 1 ];
       sprintf( xmlbuff, "&&%d%s&&", xmllen, xmlstr );
       xmllen = strlen( xmlbuff );
-      int ret = sock.write ( xmlbuff, xmllen );
+      int ret = sock->write ( xmlbuff, xmllen );
       onLog ( xmlbuff, xmllen, 0 );
       if ( ret == -1 )
          return false;
