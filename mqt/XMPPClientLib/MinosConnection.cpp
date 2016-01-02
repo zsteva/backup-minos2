@@ -25,7 +25,7 @@ MinosAppConnection::io_connect ( const char *server, int port )
     sock->connectToHost(server, port);
     // and we have to wire things up to wait for conected() or error()
 
-   return false;
+   return sock->waitForConnected(10000);
 }
 
 bool
@@ -33,7 +33,7 @@ MinosAppConnection::io_send ( const char *data, size_t len )
 {
     if (sock->write(data, len) == -1)
       return false;
-   return true;
+   return sock->waitForBytesWritten(100);
 }
 
 int
@@ -83,7 +83,7 @@ bool MinosAppConnection::runConnection()
    // read from the connection; buffer until a complete packet received
 
    int rxlen = io_recv( rxbuff, RXBUFFLEN, 1 );
-   if ( rxlen < 0 )
+   if ( rxlen < 0 || sock->state() != QAbstractSocket::ConnectedState)
    {
       closeDaemonThread();
       return false;

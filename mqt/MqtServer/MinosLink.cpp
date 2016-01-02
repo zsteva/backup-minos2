@@ -72,12 +72,11 @@ void MinosId::setId( const QString &s )
    else
    {
       user = s.left(atpos );
-      server = s.right( atpos + 1 );
+      server = s.right( s.size() - atpos - 1 );
    }
 }
 
 //==============================================================================
-bool MinosSocket::newConnection = false;
 MinosSocket::MinosSocket() : //sock( INVALID_SOCKET ),
    remove( false ),
    txConnection(false)
@@ -86,20 +85,6 @@ MinosSocket::MinosSocket() : //sock( INVALID_SOCKET ),
 MinosSocket::~MinosSocket()
 {
    closeSocket();
-}
-void MinosSocket::on_connected()
-{
-
-}
-
-void MinosSocket::on_disconnected()
-{
-
-}
-
-void MinosSocket::on_error(QAbstractSocket::SocketError socketError)
-{
-
 }
 
 //=============================================================================
@@ -113,7 +98,13 @@ MinosListener::~MinosListener()
 bool MinosListener::initialise( QString type, int port )
 {
 
-   bool res = sock->listen(QHostAddress::Any, port); // signals newConnection()
+    QHostAddress::SpecialAddress addr = QHostAddress::Any;
+
+    if (type == "Client")
+    {
+        addr = QHostAddress::LocalHost;
+    }
+   bool res = sock->listen(addr, port); // signals newConnection()
    // need an event loop or waitForNewConnection()
    xperror( res == false ,type + " listen"  );
 
@@ -123,74 +114,28 @@ bool MinosListener::initialise( QString type, int port )
 }
 bool MinosListener::acceptFreeSlot( MinosCommonConnection *il )
 {
-    /*
-   if ( i_array.size() < MAXIPSLOTS )
-   {
-      // Create a new end point
-      i_array.push_back( il );
-      il->initialise();
-
-      SOCKADDR_IN sin;
-      int in_addr_len = sizeof( sin );
-
-      SOCKET s = accept( sock, ( LPSOCKADDR ) & sin, &in_addr_len );
-      il->connectHost = QString( inet_ntoa( sin.sin_addr ) );
-      logMessage( "acceptFreeSlot", "from " + il->connectHost );
-      if ( s == INVALID_SOCKET )
-      {
-         return false;
-      }
-
-      //il ->setSocket( s );
-      return true;
-   }
-   else
-   {
-      logMessage( "acceptFreeSlot", "Socket table full" );
-      SOCKET tmp = accept( sock, NULL, NULL );
-      closesocket( tmp );
-      delete il;
-   }
-*/
-   return false;
+    // Create a new end point
+/*    SOCKET s = accept( sock, ( LPSOCKADDR ) & sin, &in_addr_len );
+    il->connectHost = std::string( inet_ntoa( sin.sin_addr ) );
+    logMessage( "acceptFreeSlot", "from " + il->connectHost );
+    */
+    QHostAddress h = il->sock->peerAddress();
+    il->connectHost = h.toString();
+    i_array.push_back( il );
+    il->initialise();
+    return true;
 }
 // add a connected socket (we started the connection)
 bool MinosListener::connectFreeSlot( MinosCommonConnection *il )
 {
-   if ( i_array.size() < MAXIPSLOTS )
-   {
-      /* Create a new end point */
-      il->newConnection = true;
-      i_array.push_back( il );
-      il->initialise();
-      return true;
-   }
-   else
-   {
-      logMessage( "connectFreeSlot", "Socket table full" );
-      delete il;
-   }
-   return false;
+  /* Create a new end point */
+  i_array.push_back( il );
+  il->initialise();
+  return true;
 }
 int MinosListener::getConnectionCount()
 {
     return i_array.size();
-    /*
-   int cnt = 0;
-   for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      if ( ( *i ).isValid() )
-      {
-         cnt++;
-      }
-   }
-   int cnt2 = ( int ) i_array.size();
-   if ( cnt != cnt2 )
-   {
-      cnt = -1;
-   }
-   return cnt;
-   */
 }
 bool MinosListener::isServerConnection( const MinosId &s )
 {
@@ -225,9 +170,7 @@ bool MinosListener::isClientConnection( const MinosId &s )
    return false;
 }
 //==============================================================================
-/* */
-/* Check for activity on the sockets */
-/* */
+// Check for activity on the sockets
 
 // Predicate function for remove_if
 bool nosock( MinosSocket *ip )
@@ -239,44 +182,53 @@ bool nosock( MinosSocket *ip )
 }
 void MinosListener::processSockets( void )
 {
-    /*
-   try
-   {
-      int nsocks = i_array.size();
-      std::auto_ptr<WSAPOLLFD> fds(new WSAPOLLFD [nsocks]);
-
-      {
-         CsGuard g;
-         int n = 0;
-         for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++, n++ )
-         {
-            if ( ( *i ) && ( *i ) ->getSocket() != INVALID_SOCKET )
+    bool timedOut;
+    sock->waitForNewConnection(1000, &timedOut);
+    if (!timedOut)
+    {
+        QTcpSocket *s = sock->nextPendingConnection();
+        if (s)
+        {
+            MinosClientConnection *cc = new MinosClientConnection();
+            cc->sock = QSharedPointer<QTcpSocket>(s);
+            acceptFreeSlot(cc);
+            s->write("Hello world!\r\n");
+            s->waitForBytesWritten(1000);
+        }
+    }
+    else
+    {
+        for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
+        {
+            if ((*i)->sock->waitForReadyRead(10))
             {
-               fds.get()[n].fd = ( *i ) ->getSocket();
-               fds.get()[n].events = POLLIN;
-               fds.get()[n].revents = 0;
+                int bavail = (*i)->sock->bytesAvailable();
+                if ( bavail )
+                {
+                    (*i)->process();
+                }
             }
-            else
+            if ((*i)->sock->state() != QAbstractSocket::ConnectedState)
             {
-               fds.get()[n].fd = -1;
-               fds.get()[n].events = 0;
-               fds.get()[n].revents = 0;
+                (*i)->sock->close();
+                (*i)->remove = true;
             }
-         }
-      }
-      int nevents = WSAPoll( fds.get(), nsocks, 50 );   // 50 ms timeout
-
-      if (nevents < 0)
-      {
-         // timeout
-         for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-         {
-            try
+        }
+        bool clearup = false;
+        for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
+        {
+           try
+           {
+              if ( ( *i ) )
+              {
+                 ( *i ) ->sendKeepAlive();
+              }
+           }
+            catch ( Exception & e )
             {
-               if ( ( *i ) )
-               {
-                  ( *i ) ->sendKeepAlive();
-               }
+               logMessage( "process_sockets", QString( "Exception in sendKeepAlive : " ) + e.what() );
+               closeApp = true;
+               break;
             }
             catch ( ... )
             {
@@ -284,225 +236,38 @@ void MinosListener::processSockets( void )
                closeApp = true;
                break;
             }
-         }
-         return ;
-      }
-      if (nevents == 0)
-      {
-         return;
-      }
-      if (closeApp)
-      {
-         return;
-      }
 
-      //        Check for each of the sockets which could have fired for read
-
-      bool clearup = false;
-      int n = 0;
-      for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++, n++ )
-      {
-         if ( ( *i ) && (fds.get()[n].revents & POLLIN != 0) )
-         {
-            try
-            {
-               MinosSocket * ip = ( *i );
-               ip ->process();  // This may add an element...  in which case the iterator is screwed
-               if ( ip->newConnection )
-               {
-                  ip->newConnection = false;
-                  break;
-               }
-            }
-            catch ( Exception & e )
-            {
-               logMessage( "process_sockets", QString( "Exception processing socket : " ) + e.Message.c_str() );
-               closeApp = true;
-               break;
-            }
-            catch ( ... )
-            {
-               logMessage( "process_sockets", "Unknown Exception processing socket" );
-               closeApp = true;
-               break;
-            }
-         }
-      }
-      for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-      {
-         try
-         {
-            if ( ( *i ) ->remove
-               )
-            {
-               // process says to finish off
-               logMessage( "process_sockets", QString( "deleting socket : " ) + ( *i ) ->getIdentity() );
-               delete ( *i );
-               *i = 0;
-               clearup = true;
-            }
-         }
-         catch ( Exception & e )
-         {
-            logMessage( "process_sockets", QString( "Exception tidying socket : " ) + e.Message.c_str() );
-            closeApp = true;
-            break;
-         }
-         catch ( ... )
-         {
-            logMessage( "process_sockets", "Unknown Exception tidying socket" );
-            closeApp = true;
-            break;
-         }
-      }
-      if ( clearup )
-      {
-         i_array.erase( std::remove_if( i_array.begin(), i_array.end(), nosock ), i_array.end() );
-      }
-   }
-   catch ( Exception & e )
-   {
-      logMessage( "process_sockets", QString( "Exception while processing: " ) + e.Message.c_str() );
-      closeApp = true;
-   }
-   */
+              try
+              {
+                 if ( ( *i ) ->remove
+                    )
+                 {
+                    // process says to finish off
+                    logMessage( "process_sockets", QString( "deleting socket : " ) + ( *i ) ->getIdentity() );
+                    delete ( *i );
+                    *i = 0;
+                    clearup = true;
+                 }
+              }
+              catch ( Exception & e )
+              {
+                 logMessage( "process_sockets", QString( "Exception tidying socket : " ) + e.what() );
+                 closeApp = true;
+                 break;
+              }
+           catch ( ... )
+           {
+              logMessage( "process_sockets", "Unknown Exception in sendKeepAlive" );
+              closeApp = true;
+              break;
+           }
+        }
+        if ( clearup )
+        {
+           i_array.erase( std::remove_if( i_array.begin(), i_array.end(), nosock ), i_array.end() );
+        }
+    }
 }
-#ifdef RUBBISH
-void MinosListener::processSockets( void )
-{
-#warning change server over to socket polling - no 64 connection limit!
-   try
-   {
-      int ready_cnt = 0;
-
-      fd_set in_socks;
-
-      FD_ZERO( &in_socks );
-
-      /*
-           Add the active sockets to the list to be checked
-      */
-      {
-         CsGuard g;
-         for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-         {
-            if ( ( *i ) && ( *i ) ->getSocket() != INVALID_SOCKET )
-            {
-               FD_SET( ( *i ) ->getSocket(), &in_socks );
-            }
-         }
-      }
-
-      // When we get going, then we also want to queue output on each socket
-      // and send when the socket is ready - i.e. when a send is likely to
-      // succeed
-
-      timeval timeout;
-      timeout.tv_sec = 0;
-      timeout.tv_usec = 50000;
-
-      ready_cnt = select( 0, &in_socks, NULL, NULL, &timeout );
-
-      if (closeApp)
-      {
-         return;
-      }
-
-      /*
-         Pick up on the timeout
-      */
-      CsGuard g;
-      if ( ready_cnt < 1 )
-      {
-         for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-         {
-            try
-            {
-               if ( ( *i ) )
-               {
-                  ( *i ) ->sendKeepAlive();
-               }
-            }
-            catch ( ... )
-            {
-               logMessage( "process_sockets", "Unknown Exception in sendKeepAlive" );
-               closeApp = true;
-               break;
-            }
-         }
-         return ;
-      }
-      /*
-              Check for each of the sockets which could have fired for read
-      */
-      bool clearup = false;
-      for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-      {
-         if ( ( *i ) && FD_ISSET( ( *i ) ->getSocket(), &in_socks ) )
-         {
-            try
-            {
-               MinosSocket * ip = ( *i );
-               ip ->process();  // This may add an element...  in which case the iterator is screwed
-               if ( ip->newConnection )
-               {
-                  ip->newConnection = false;
-                  break;
-               }
-            }
-            catch ( Exception & e )
-            {
-               logMessage( "process_sockets", QString( "Exception processing socket : " ) + e.Message.c_str() );
-               closeApp = true;
-               break;
-            }
-            catch ( ... )
-            {
-               logMessage( "process_sockets", "Unknown Exception processing socket" );
-               closeApp = true;
-               break;
-            }
-         }
-      }
-      for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-      {
-         try
-         {
-            if ( ( *i ) ->remove
-               )
-            {
-               // process says to finish off
-               logMessage( "process_sockets", QString( "deleting socket : " ) + ( *i ) ->getIdentity() );
-               delete ( *i );
-               *i = 0;
-               clearup = true;
-            }
-         }
-         catch ( Exception & e )
-         {
-            logMessage( "process_sockets", QString( "Exception tidying socket : " ) + e.Message.c_str() );
-            closeApp = true;
-            break;
-         }
-         catch ( ... )
-         {
-            logMessage( "process_sockets", "Unknown Exception tidying socket" );
-            closeApp = true;
-            break;
-         }
-      }
-      if ( clearup )
-      {
-         i_array.erase( std::remove_if( i_array.begin(), i_array.end(), nosock ), i_array.end() );
-      }
-   }
-   catch ( Exception & e )
-   {
-      logMessage( "process_sockets", QString( "Exception while processing: " ) + e.Message.c_str() );
-      closeApp = true;
-   }
-}
-#endif
 void MinosListener::clearSockets()
 {
    CsGuard lck;
@@ -530,15 +295,6 @@ bool MinosListener::checkServerConnection( const QString &sname )
       }
    }
    return false;
-}
-void MinosListener::on_NewConnection()
-{
-
-}
-
-void MinosListener::on_acceptError(QAbstractSocket::SocketError socketError)
-{
-
 }
 
 //==============================================================================
@@ -723,14 +479,15 @@ void sendAction( XStanza *a )
    // or no valid destination found
 }
 //=============================================================================
-/*
+
 void MinosCommonConnection::process()
 {
    // select says we have data, so read it
    // and send the data through the parser
    logMessage ( "XMPP test", "MinosCommonConnection::process called to receive data from " + clientUser );
 
-   int rxlen = recv ( getSocket(), rxbuff, 4096 - 1, 0 );
+   // documntation says this may occasionally fail on Windows
+   int rxlen = sock->read(rxbuff, 4096 - 1);
    if ( rxlen > 0 )
    {
       rxbuff[ rxlen ] = '\0';
@@ -748,8 +505,12 @@ void MinosCommonConnection::process()
          rxpt += ptlen + 1;
       }
 
-      while ( packetbuff.size() > 2 && packetbuff.substr( 0, 2 ) == "&&" )
+      while ( packetbuff.size() > 2 && packetbuff.left( 2 ) == "&&" )
       {
+         int packetoffset = packetbuff.indexOf( '<' );
+         if ( packetoffset > 0 )    // length field should always be followed by XML
+         {
+/*
          int packetoffset = ( int ) packetbuff.find( '<' );
          if ( packetoffset > 0 )    // length field should always be followed by XML
          {
@@ -757,12 +518,21 @@ void MinosCommonConnection::process()
             int packetlen = strtol( packetbuff.c_str() + 2, &ec, 10 );
             if ( *ec == '<' && packetlen <= ( int ) strlen( ec ) + 2 && packetbuff.find( ">&&" ) )
             {
-               QString packet = packetbuff.substr( packetoffset, packetlen );
+               std::string packet = packetbuff.substr( packetoffset, packetlen );
                packetbuff = packetbuff.substr( packetoffset + packetlen + 2, strlen( ec + packetlen ) );
+ */
+
+             QStringRef slen = packetbuff.midRef(2, packetoffset - 2);
+             int packetlen = slen.toInt();
+            if ( packetlen <= ( int ) packetbuff.size() - 2 && packetbuff.indexOf( ">&&" ) )
+            {
+               QString packet = packetbuff.mid( packetoffset, packetlen );
+               packetbuff = packetbuff.right(  packetbuff.size() - 2 - packetlen - packetoffset );
 
                TiXmlBase::SetCondenseWhiteSpace( false );
                TiXmlDocument xdoc;
-               xdoc.Parse( packet.c_str(), 0 );
+               TIXML_STRING p = packet.toStdString();
+               xdoc.Parse( p.c_str(), 0 );
                TiXmlElement *tix = xdoc.RootElement();
                analyseNode( tix );
             }
@@ -776,11 +546,9 @@ void MinosCommonConnection::process()
    }
    else
    {
-      remove
-         = true;
+      remove = true;
    }
 }
-*/
 //==============================================================================
 void MinosCommonConnection::analyseNode( TiXmlElement *tix )
 {

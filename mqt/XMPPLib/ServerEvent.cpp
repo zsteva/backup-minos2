@@ -8,107 +8,55 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 #include "XMPP_pch.h"
+#include <QUuid>
 
-//---------------------------------------------------------------------------
-/*
-static HANDLE serverEvent = 0;
-static HANDLE serverShowEvent = 0;
-*/
+QSharedMemory ServerEvent;
+
 QString makeUuid()
 {
-    /*
-   // if there isn't one, then make one
     QUuid uuid = QUuid::createUuid();
-   GUID uuid;
-   CoCreateGuid( &uuid );
-
-   unsigned char *pid = 0;
-
-   UuidToStringA( &uuid, &pid );
-   std::string myUuid = ( char * ) pid;
-   RpcStringFreeA( &pid );
-
-   return myUuid;
-   */
-    return "Not a GUID";
+    return uuid.toString();
 }
 QString getServerId()
 {
    const QString key = "ServerUUID";
-   /*
-   // First, look in the registry for a GUID for us
-   static QString myUuid;
-   if ( myUuid.size( ) )
+
+   QSettings settings("G0GJV", "MinosQtServer");    // overrie the app settings
+
+   QString uuid = settings.value(key, "").toString();
+   if (uuid.size() == 0)
    {
-      return myUuid;
+       uuid = makeUuid();
+       settings.setValue(key, uuid);
    }
-   TRegistry *Reg = new TRegistry;
-   Reg->RootKey = HKEY_CURRENT_USER;
-   if ( Reg->OpenKeyReadOnly( "SOFTWARE\\G0GJV\\Minos\\Server" ) )
-   {
-      myUuid = AnsiString(Reg->ReadString( key )).c_str();
-   }
-   if ( myUuid.size() == 0 )
-   {
-      // if there isn't one, then make one
-      myUuid = makeUuid();
-      Reg->CloseKey();
-      if ( Reg->OpenKey( "SOFTWARE\\G0GJV\\Minos\\Server", true ) )
-      {
-         Reg->WriteString( key, myUuid.c_str() );
-      }
-      else
-      {
-         myUuid = "MinosServer"; // as we cannot write it, use something constant
-      }
-   }
-   Reg->CloseKey();
-   delete Reg;
-   */
-   return key ;
+   return uuid;
+
 }
 
-void makeServerEvent( bool /*create*/ )
+void makeServerEvent( bool create )
 {
-    /*
-   static std::string serverEventName = getServerId();
-   if ( create )
-   {
-      if ( !serverEvent )
-      {
-         // we should set up th ACLs etc so we could run serevr as a service
-         serverEvent = CreateEventA( 0, TRUE, FALSE, serverEventName.c_str() ); // Named Manual reset
-      }
-   }
-   else
-   {
-      if ( serverEvent )
-      {
-         CloseHandle( serverEvent );
-         serverEvent = 0;
-      }
-   }
-   return serverEvent;
-   */
+    CsGuard cs;
+    ServerEvent.setKey( "MinosQtServer" );
+    if (create)
+    {
+        ServerEvent.create( 1 );
+
+    }
+    else
+    {
+        ServerEvent.detach();
+    }
 }
 
 bool checkServerReady()
 {
-    /*
-   static std::string serverEventName = getServerId();
-
-   bool ret = false;
-   HANDLE serverEvent = CreateEventA( 0, TRUE, FALSE, serverEventName.c_str() ); // Named Manual reset
-   if ( serverEvent )
-   {
-      if ( GetLastError() == ERROR_ALREADY_EXISTS )
-      {
-         ret = true;
-      }
-      CloseHandle( serverEvent );
-   }
-   return ret;
-   */
+    CsGuard cs;
+    QSharedMemory mem( "MinosQtServer" );
+    if ( mem.attach() )
+    {
+        mem.detach();
+        return true;
+    }
     return false;
 }
 void makeServerShowEvent( )

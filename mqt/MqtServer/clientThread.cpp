@@ -58,13 +58,13 @@ void runClientThread( void * )
 
 }
 //==============================================================================
-/*
-void MinosClientListener::process()
+MinosCommonConnection *MinosClientListener::makeConnection(QTcpSocket *s)
 {
-    // needs to be a slot...
-//   newConnection = acceptFreeSlot( new MinosClientConnection() );
+    MinosClientConnection *c = new MinosClientConnection();
+    c->sock = QSharedPointer<QTcpSocket>(s);
+
+    return c;
 }
-*/
 //==============================================================================
 bool MinosClientListener::sendClient( MinosCommonConnection *il, TiXmlElement *tix )
 {
@@ -211,7 +211,11 @@ bool MinosClientConnection::setFromId( MinosId &from, RPCRequest */*req*/ )
    clientUser = from.user;
    fromIdSet = true;
 
-   assert(CheckLocalConnection());
+   bool con = CheckLocalConnection();
+   if (!con)
+   {
+       assert(con);
+   }
    return true;
 }
 //==============================================================================

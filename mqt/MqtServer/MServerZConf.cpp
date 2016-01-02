@@ -88,47 +88,25 @@ void TZConf::runThread()
    {
        if (qus->hasPendingDatagrams())
        {
-           /*
-           char message[ 4096 ];
-           int cnt = recvfrom( RetVal->NOTIFY_RECEIVE_sock, message, 4095, 0,
-                               ( struct sockaddr * ) & ( RetVal->addr ), &( RetVal->addrlen ) );
-           if ( cnt < 0 )
-           {
-              trace( "recvfrom" );
-              return ;     // end of thread?
-           }
-           else
-              if ( cnt > 0 )
-              {
-                 // and we have a message, so we need to parse it and do any necessary publishing
-                 message[ cnt ] = 0;
-                 std::string recvHost = std::string( inet_ntoa( RetVal->addr.sin_addr ) );
-                 trace( "UDP received from " + recvHost + " : " + message );
+            QByteArray datagram;
+            datagram.resize(qus->pendingDatagramSize());
+            QHostAddress sender;
+            quint16 senderPort;
 
-                 sendBeaconResponse = setZConfString(message, recvHost);
-              }
-           */
-            if (sendBeaconResponse || lastTick.msecsTo(QDateTime::currentDateTime()) > beaconInterval )
-            {
-               CsGuard guard;
-               trace(QString("Sending beacon, sendBeaconResponse = ") + (sendBeaconResponse?"true":"false"));
-               lastTick = QDateTime::currentDateTime();
-               sendMessage( sendBeaconResponse?nobeaconreq:beaconreq );   // timer requests beaconing, beacon just responds
-               sendBeaconResponse = false;
-            }
-            else
-            {
-                QByteArray datagram;
-                datagram.resize(qus->pendingDatagramSize());
-                QHostAddress sender;
-                quint16 senderPort;
+            qus->readDatagram(datagram.data(), datagram.size(),
+                                   &sender, &senderPort);
 
-                qus->readDatagram(datagram.data(), datagram.size(),
-                                        &sender, &senderPort);
-
-                sendBeaconResponse = setZConfString(QString(datagram), sender);
-            }
-       }
+            sendBeaconResponse = setZConfString(QString(datagram), sender);
+        }
+        if (sendBeaconResponse || lastTick.msecsTo(QDateTime::currentDateTime()) > beaconInterval )
+        {
+           CsGuard guard;
+           trace(QString("Sending beacon, sendBeaconResponse = ") + (sendBeaconResponse?"true":"false"));
+           lastTick = QDateTime::currentDateTime();
+           sendMessage( sendBeaconResponse?nobeaconreq:beaconreq );   // timer requests beaconing, beacon just responds
+           sendBeaconResponse = false;
+        }
+        QThread::msleep(1000);
 
    }
    qus->close();

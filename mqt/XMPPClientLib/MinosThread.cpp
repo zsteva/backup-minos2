@@ -81,7 +81,7 @@ void closeDaemonThread()
    }
    MinosThread::minosThread = 0;
    connected = false;
-   MinosConnectEvent.release();  // Tell ourselves that we can continue
+   MinosConnectEvent.release(1);  // Tell ourselves that we can continue
 }
 
 //---------------------------------------------------------------------------
@@ -120,6 +120,8 @@ void MinosThreadExecute( void * )
 }
 bool XMPPInitialise( const QString &pmyId )
 {
+    MinosConnectEvent.acquire(1);
+    int av = MinosConnectEvent.available();
 
    if ( pmyId.size() == 0 )
    {
@@ -150,12 +152,14 @@ bool XMPPInitialise( const QString &pmyId )
    MinosThreadObj = new GJV_thread( "MinosThread", &MinosThreadExecute, ( void * ) 0 );
    // wait for connection complete
    int i = 0;
+   int av1 = MinosConnectEvent.available();
    while ( i < 60 && !MinosConnectEvent.tryAcquire( 1, 5000 )  )       // This resets the event
    {
       i++;
    }
    if ( !connected )
    {
+      int av2 = MinosConnectEvent.available();
       logMessage( "Minos", "Connect event not seen - terminating Minos thread" );
       XMPPClosedown();
       return false;

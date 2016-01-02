@@ -40,7 +40,7 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
             aqso->time.setDate( FieldContent, DTGLOG );
          else
             if ( FieldLength == 8 )
-               aqso->time.setDate( FieldContent.right(2), DTGLOG );
+               aqso->time.setDate( FieldContent.right(6), DTGLOG );
       }
       if ( Fieldname.toUpper() == "TIME_ON" )
       {

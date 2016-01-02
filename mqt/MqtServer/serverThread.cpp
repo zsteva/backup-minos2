@@ -55,14 +55,14 @@ void runServerThread( void * )
    }
 }
 //==============================================================================
-/*
-void MinosServerListener::process()
+MinosCommonConnection *MinosServerListener::makeConnection(QTcpSocket *s)
 {
-   // someone has tried to connect to us...
-    // needs to be a slot...
-//   newConnection = acceptFreeSlot( new MinosServerConnection() );
+    MinosServerConnection *c = new MinosServerConnection();
+    c->sock = QSharedPointer<QTcpSocket>(s);
+
+    return c;
 }
-*/
+
 //==============================================================================
 bool MinosServerListener::sendServer( MinosCommonConnection *il, TiXmlElement *tix )
 {

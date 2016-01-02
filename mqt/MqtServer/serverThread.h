@@ -21,6 +21,7 @@ class MinosServerListener: public MinosListener
    private:
       static MinosServerListener *MSL;
    protected:
+      virtual MinosCommonConnection *makeConnection(QTcpSocket *s) override;
    public:
       static MinosServerListener *getListener()
       {

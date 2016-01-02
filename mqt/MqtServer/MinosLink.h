@@ -31,7 +31,6 @@ class MinosId
 
       MinosId();
       MinosId( const QString & );
-      //      MinosId(const QString &id);
       virtual ~MinosId();
 
       void setId( const QString & );
@@ -40,16 +39,17 @@ class MinosSocket:public QObject
 {
     Q_OBJECT
    protected:
-      QSharedPointer<QTcpSocket> sock;
       bool txConnection;      // set if we can transmit on this connection
    public:
       MinosSocket();
       virtual ~MinosSocket();
 
+      QSharedPointer<QTcpSocket> sock;
       //virtual void process() = 0;
 
       bool remove;
-      static bool newConnection;
+
+      virtual void process() = 0;
 
       void closeSocket()
       {
@@ -78,10 +78,6 @@ class MinosSocket:public QObject
       {
          return txConnection;
       }
-private slots:
-      void on_connected();
-      void on_disconnected();
-      void on_error(QAbstractSocket::SocketError socketError);
 };
 //==============================================================================
 #define RXBUFFLEN 4096
@@ -112,7 +108,7 @@ class MinosCommonConnection: public MinosSocket
       virtual bool initialise( ) = 0;
       virtual ~MinosCommonConnection();
 
-//      virtual void process();
+      virtual void process() override;
       virtual void analyseNode( TiXmlElement *pak );
       virtual bool tryForwardStanza( TiXmlElement *pak );
       virtual void sendError( TiXmlElement *pak, const char *type, const char *defined_condition );
@@ -143,11 +139,12 @@ class MinosListener:public QObject
 {
     Q_OBJECT
    protected:
-#define MAXIPSLOTS 64         // max for a single select call
 
       QSharedPointer<QTcpServer> sock;
       std::vector<MinosSocket *>i_array;
-   public:
+    protected:
+      virtual MinosCommonConnection *makeConnection(QTcpSocket *s) = 0;
+    public:
       void processSockets();
       void clearSockets();
       bool connectFreeSlot( MinosCommonConnection * );
@@ -162,9 +159,6 @@ class MinosListener:public QObject
       bool isClientConnection( const MinosId &s );
       bool checkServerConnection( const QString &sname );
 
-private slots:
-      void on_NewConnection();
-      void on_acceptError(QAbstractSocket::SocketError socketError);
 };
 //==============================================================================
 #endif
