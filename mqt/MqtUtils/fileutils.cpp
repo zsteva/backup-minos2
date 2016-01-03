@@ -109,14 +109,13 @@ bool StaticForceDirectories ( const QString & pDir )
 }
 
 //---------------------------------------------------------------------------
-bool StaticDirectoryCreate (const QString &Path, QWidget *Owner )
+bool StaticDirectoryCreate (const QString &Path )
 {
     if ( !StaticDirectoryExists ( Path ) )
     {
         bool res = StaticForceDirectories ( Path );
         if ( !res )
         {
-            //mShowMessage ( "Failed to create directory " + Path, Owner);
             return false;
         }
     }

@@ -17,7 +17,7 @@ bool FileAccessible(const QString &fname);
 bool FileWriteable(const QString &fname);
 bool StaticDirectoryExists ( const QString & Name );
 bool StaticForceDirectories (const QString &Dir );
-bool StaticDirectoryCreate (const QString & Path , QWidget *Owner);
+bool StaticDirectoryCreate (const QString &Path );
 
 bool CreateDir( const QString &s );
 

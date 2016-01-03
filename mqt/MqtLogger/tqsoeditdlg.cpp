@@ -117,7 +117,7 @@ void TQSOEditDlg::addTreeChild(QTreeWidgetItem *parent,
 
     parent->addChild(treeItem);
 }
-void TQSOEditDlg::on_AfterSelectContact( BaseContact *lct, BaseContestLog *contest)
+void TQSOEditDlg::on_AfterSelectContact( BaseContact *lct, BaseContestLog * /*contest*/)
 {
   ui->QSOHistoryTree->clear();
   if (lct)

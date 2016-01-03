@@ -676,7 +676,7 @@ void TLogContainer::NextContactDetailsOnLeftActionExecute()
 
 }
 
-void TLogContainer::on_ContestPageControl_currentChanged(int index)
+void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
 {
     enableActions();
 

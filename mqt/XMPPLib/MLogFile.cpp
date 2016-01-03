@@ -21,18 +21,14 @@ static std::ofstream &getLogFile( QString name )
 //---------------------------------------------------------------------------
 std::ostream & MLogFile::createLogFile(const QString &path, const QString filePrefix, int keepDays )
 {
-    if ( !StaticDirectoryExists ( path ) )
-        StaticDirectoryCreate ( path, 0 );
+    StaticDirectoryCreate ( path );
 
-    //Close();
     QString TidyPrefix = path + "/" + filePrefix + "*";
     tidyFiles ( TidyPrefix, keepDays );
     QString fLogFileName = generateLogFileName ( path + "/" + filePrefix  );
 
-    //QString sdt;
     QString dtg = QDateTime::currentDateTime().toString( "yyyy MMM dd hh:m:ss.zzz" );
 
-	//   getLogFile().open( fLogFileName.c_str() );
 	getLogFile( fLogFileName );
     return log() << dtg.toStdString().c_str() << std::endl;
 }
