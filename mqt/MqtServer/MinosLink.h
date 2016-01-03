@@ -53,7 +53,8 @@ class MinosSocket:public QObject
 
       void closeSocket()
       {
-         sock->close();
+        if (sock)
+            sock->close();
       }
       virtual bool tryForwardStanza( TiXmlElement * /*pak*/ )
       {

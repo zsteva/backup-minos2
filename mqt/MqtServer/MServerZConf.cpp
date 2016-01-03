@@ -10,7 +10,7 @@
 #include "minos_pch.h"
 
 #include <QSettings>
-
+#include <QNetworkInterface>
 //---------------------------------------------------------------------------
 
 #include "MServerZConf.h"
@@ -22,20 +22,39 @@ GJV_thread *zcThread = 0;
 #define UPNP_PORT 9999
 #define UPNP_GROUP "239.255.0.1"
 
+bool TZConf::sendMessage(const QString &mess )
+{
+    QByteArray packet = QByteArray(mess.toStdString().c_str());
+// Get network interfaces list
+    QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
 
+    // Interfaces iteration
+    for (int i = 0; i < ifaces.size(); i++)
+    {
+        // Now get all IP addresses for the current interface
+        QList<QNetworkAddressEntry> addrs = ifaces[i].addressEntries();
+
+        // And for any IP address, if it is IPv4 and the interface is active, send the packet
+        for (int j = 0; j < addrs.size(); j++)
+            if ((addrs[j].ip().protocol() == QAbstractSocket::IPv4Protocol) && (addrs[j].broadcast().toString() != ""))
+            {
+                qus->writeDatagram(packet.data(), packet.length(), addrs[j].broadcast(), UPNP_PORT);
+                qus->waitForBytesWritten(100);
+            }
+    }
+    return true;
+}
+/*
 bool TZConf::sendMessage(const QString &mess )
 {
     QByteArray datagram = QByteArray(mess.toStdString().c_str());
     qint64 ret = qus->writeDatagram(datagram.data(), datagram.size(),
                              groupAddress, iPort);
+    qus->waitForBytesWritten(100);
 
    return ret > 0;
 }
-bool TZConf::initialise()
-{
-   groupAddress = QHostAddress(UPNP_GROUP);
-   return true;
-}
+*/
 void runZcThread( void *t )
 {
    TZConf * tzc = ( TZConf * ) t;
@@ -44,8 +63,9 @@ void runZcThread( void *t )
 void TZConf::runThread()
 {
     qus = QSharedPointer<QUdpSocket>(new QUdpSocket(0));
-   initialise( );
-
+    groupAddress = QHostAddress(UPNP_GROUP);
+    /*bool res =*/ qus->bind(QHostAddress::AnyIPv4, UPNP_PORT,
+                    QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 
    QString beaconreq = getZConfString(true);
    QString nobeaconreq = getZConfString(false);
@@ -86,6 +106,7 @@ void TZConf::runThread()
 
    while ( !closeApp )
    {
+       qus->waitForReadyRead(10);
        if (qus->hasPendingDatagrams())
        {
             QByteArray datagram;

@@ -54,7 +54,6 @@ class TZConf: public QObject
       QHostAddress groupAddress;
       int iPort;
 
-      bool initialise( );
       bool sendMessage(const QString &mess );
 
    public:  		// User declarations

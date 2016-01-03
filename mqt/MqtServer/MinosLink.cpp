@@ -189,11 +189,9 @@ void MinosListener::processSockets( void )
         QTcpSocket *s = sock->nextPendingConnection();
         if (s)
         {
-            MinosClientConnection *cc = new MinosClientConnection();
-            cc->sock = QSharedPointer<QTcpSocket>(s);
+            MinosCommonConnection *cc = makeConnection(s);
+
             acceptFreeSlot(cc);
-            s->write("Hello world!\r\n");
-            s->waitForBytesWritten(1000);
         }
     }
     else
