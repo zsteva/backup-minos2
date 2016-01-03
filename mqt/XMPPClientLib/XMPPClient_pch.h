@@ -14,7 +14,7 @@
 
 #include "XMPP_pch.h"
 
-#include "MinosThread.h"
+#include "MinosConnection.h"
 
 #include "BandMapRPCObj.h"
 #include "ChatRPCObj.h"

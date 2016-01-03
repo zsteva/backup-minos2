@@ -11,82 +11,162 @@
 
 #include "MinosConnection.h" 
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-void
-MinosAppConnection::io_close ()
-{
-   sock->close();
-}
+/*
+   The minos protocol is related to the XMPP version, but only vaguely, in that
+   the payload is again XML/RPC, and made up exactly as for the XMPP version.
 
-bool
-MinosAppConnection::io_connect ( const char *server, int port )
-{
-    sock->connectToHost(server, port);
-    // and we have to wire things up to wait for conected() or error()
+   The "wrapper" is a decimal length string at the start (length of the XML payload
+   only), with a null ternminator on the end. The body between these two
+   elements must be a well formed XML document.
 
-   return sock->waitForConnected(10000);
-}
+   The whole message is enclosed in double amphersands; these should never
+   appear in "real" XML/RPC data, as they should always be escaped (no CData allowed!)
 
-bool
-MinosAppConnection::io_send ( const char *data, size_t len )
+   &&length<XML tag>...</XML tag>&&\0
+
+   <?xml version="1.0" encoding="UTF-8"?> is allowed to be present
+   but it will be assumed anyway.
+
+   WE ONLY WORK HERE WITH UTF-8 ENCODINGS.
+
+   The top level node is either <request>, <response>, or <event>.
+
+   In practice, requests all come from content, responses from minos.
+   events come from either side.
+
+   Requests and responses are tied together by the "id" attribute; it is the
+   responsability of the requester to provide a unique id string (we normally
+   use numbers, but this is not required.
+
+   <request requestName='name of request' id='1234'>
+      <XML/RPC parameter body/>
+   </request>
+
+   <event eventName='name of event'>
+      <XML/RPC parameter body/>
+   </event>
+
+   <response id='1234'>
+      <XML/RPC parameter body/>
+   </response>
+
+*///---------------------------------------------------------------------------
+MinosAppConnection *MinosAppConnection::minosAppConnection = 0;
+QString myId;
+bool connected = false;
+static bool terminated = false;
+
+bool XMPPInitialise( const QString &pmyId )
 {
-    if (sock->write(data, len) == -1)
+   if ( pmyId.size() == 0 )
+   {
+      logMessage( "XMPP", "No user ID set" );
       return false;
-   return sock->waitForBytesWritten(100);
+   }
+
+   myId = QString( pmyId ) + "@localhost";
+
+   if ( MinosAppConnection::minosAppConnection )
+   {
+      logMessage( "Minos", "XMPP Already initialised" );
+      return false;
+   }
+   MinosAppConnection::minosAppConnection = new MinosAppConnection( myId );
+
+   MinosAppConnection::minosAppConnection->startConnection();
+
+   return true;
+}
+//---------------------------------------------------------------------------
+bool XMPPClosedown()
+{
+   // signal to close down all boilerplate threads
+
+   terminated = true;
+
+   if ( MinosAppConnection::minosAppConnection )
+   {
+      // wait for XMPP and Request threads to finish
+      MinosAppConnection::minosAppConnection->closeDaemonThread();
+      delete MinosAppConnection::minosAppConnection;
+      MinosAppConnection::minosAppConnection = 0;
+   }
+
+   RPCPubSub::close();
+   return true;
+}
+//---------------------------------------------------------------------------
+void MinosAppConnection::startConnection()
+{
+    connect(&waitConectTimer, SIGNAL(timeout()), this, SLOT(on_WaitConnectTimeout()));
+    connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_ReadyRead()));
+    connect(sock.data(), SIGNAL(connected()), this, SLOT(on_Connected()));
+    waitConectTimer.start(1000);
+}
+void MinosAppConnection::on_WaitConnectTimeout()
+{
+    if (!checkServerReady())
+    {
+        return;
+    }
+    waitConectTimer.stop();
+    sock->connectToHost("localhost", ClientPort);
+}
+void MinosAppConnection::on_Connected()
+{
+    connected = true;
+
+    RPCRequest *rpa = new RPCRequest( "", myId, "ClientSetFromId" );   // for our local server, this one MUST have a from
+    rpa->addParam( myId );
+    sendAction( rpa );
+    delete rpa;
+    RPCPubSub::reconnectPubSub();
 }
 
-int
-MinosAppConnection::io_recv ( char *buffer, size_t buf_len, int timeout )
+void MinosAppConnection::on_Disconnected()
 {
-    int len = 0;
-    if (sock->waitForReadyRead(timeout))
-    {
-        // documntation says this may occasionally fail on Windows
-        len = sock->read(buffer, buf_len);
-    }
-    return len;
+
+}
+
+void MinosAppConnection::closeDaemonThread()
+{
+   if ( connected )
+   {
+      connected = false;
+   }
+   closeConnection();
 }
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-MinosAppConnection::MinosAppConnection( RPCDispatcher *ud ) : sock( new QTcpSocket ), user_data( ud )
+void MinosAppConnection::onLog ( const QString &data, int is_incoming )
+{
+   QString logbuff;
+   if ( is_incoming )
+      logbuff += "RECV";
+   else
+      logbuff += "SEND";
+   logbuff += "[";
+   logbuff += data;
+   logbuff += "]";
+
+   logMessage( "XMPP", logbuff );
+}//---------------------------------------------------------------------------
+MinosAppConnection::MinosAppConnection(const QString &jid ) : jabberId(jid), sock( new QTcpSocket ), user_data( this )
 {}
 MinosAppConnection::~MinosAppConnection()
 {}
-bool MinosAppConnection::minos_send( const TIXML_STRING &xmlstr )
-{
-   if ( xmlstr.size() )
-   {
-      unsigned int xmllen = ( unsigned int ) xmlstr.size();
-      char *xmlbuff = new char[ 10 + 1 + xmllen + 1 ];
-      sprintf( xmlbuff, "&&%d%s&&", xmllen, xmlstr.c_str() );
-      io_send ( xmlbuff, strlen( xmlbuff ) + 1 );  // always include the zero terminator
-      MinosThread::minosThread->onLog( xmlbuff, strlen( xmlbuff ), false );
-      delete [] xmlbuff;
-   }
-   return false;
-}
-bool MinosAppConnection::minos_send( TiXmlElement *data )
-{
-   // serialise the data node, send it to the socket in a packet
-   TIXML_STRING xmlstr;
-   xmlstr << ( *data );
-   return minos_send( xmlstr );
-}
-bool MinosAppConnection::startConnection()
-{
-   // open up the socket connection to the minos
-   return io_connect ( "localhost", ClientPort );
-}
-bool MinosAppConnection::runConnection()
+void MinosAppConnection::on_ReadyRead()
 {
    // read from the connection; buffer until a complete packet received
 
-   int rxlen = io_recv( rxbuff, RXBUFFLEN, 1 );
+    const int RXBUFFLEN = 4096;
+    char rxbuff[ RXBUFFLEN ];
+
+    int rxlen = sock->read(rxbuff, RXBUFFLEN);
+
    if ( rxlen < 0 || sock->state() != QAbstractSocket::ConnectedState)
    {
       closeDaemonThread();
-      return false;
+      return;
    }
    else
       if ( rxlen > 0 )
@@ -100,7 +180,7 @@ bool MinosAppConnection::runConnection()
             unsigned int ptlen = strlen( &rxbuff[ rxpt ] );
             if ( ptlen )
             {
-               MinosThread::minosThread->onLog( &rxbuff[ rxpt ], ptlen, true );
+               onLog( QString(&rxbuff[ rxpt ]), true );
                packetbuff += &rxbuff[ rxpt ];   // which will strip out any nulls
             }
             rxpt += ptlen + 1;
@@ -129,17 +209,77 @@ bool MinosAppConnection::runConnection()
                else
                {
                   // partial message, keep receiving until we get more
-                  return true;
+                  return;
                }
             }
          }
       }
-   return true;
+   return;
 }
 bool MinosAppConnection::closeConnection()
 {
    // close down the socket connection
-   io_close();
-   return false;
+    sock->close();
+    sock->waitForDisconnected();
+   return true;
 }
+
+void sendAction( XStanza *a )
+{
+   if ( MinosAppConnection::minosAppConnection )
+   {
+      MinosAppConnection::minosAppConnection->sendAction( a );
+   }
+}
+void MinosAppConnection::sendAction( XStanza *a )
+{
+   if ( connected )
+   {
+      a->setNextId();   // only happens if no Id already
+      QString xmlstr = a->getActionMessage();
+
+      int xmllen = xmlstr.size();
+      if ( xmllen )
+      {
+          xmlstr = QString("&&%1%2&&").arg(xmllen).arg(xmlstr);
+
+          std::string s = xmlstr.toStdString();
+
+         if (sock->write(s.c_str(), s.size() + 1 ) < 0)  // always include the zero terminator
+           return;
+
+         onLog( xmlstr, false );
+      }
+   }
+}
+//---------------------------------------------------------------------------
+void MinosAppConnection::dispatchResponse( XStanza *xs )
+{
+   RPCRequest * req = dynamic_cast<RPCRequest *>( xs );
+   if ( req )
+   {
+      makeXMPPEvent( req );
+   }
+   else
+   {
+      RPCResponse * rr = dynamic_cast<RPCResponse *>( xs );
+      if ( rr )
+      {
+         if ( rr->methodName == "ClientSetFromId" )
+         {
+            // server will return the REAL Jid
+            QString ouraddr;
+            QString from;
+            if ( rr->getStringArg( 0, from ) )
+            {
+               // check that from is what connected to us...
+               setJid( ouraddr );
+            }
+         }
+         else
+            makeXMPPEvent( rr );
+      }
+   }
+}
+//---------------------------------------------------------------------------
 

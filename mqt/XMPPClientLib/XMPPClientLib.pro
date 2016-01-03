@@ -29,8 +29,7 @@ SOURCES += \
     ControlRPCObj.cpp \
     KeyerRPCObj.cpp \
     LoggerRPCObj.cpp \
-    MinosConnection.cpp \
-    MinosThread.cpp
+    MinosConnection.cpp
 
 HEADERS += \
     BandMapRPCObj.h \
@@ -39,7 +38,6 @@ HEADERS += \
     KeyerRPCObj.h \
     LoggerRPCObj.h \
     MinosConnection.h \
-    MinosThread.h \
     XMPPClient_pch.h
 unix {
     target.path = /usr/lib

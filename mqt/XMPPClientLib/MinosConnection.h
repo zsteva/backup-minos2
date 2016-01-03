@@ -13,30 +13,52 @@
 
 #include <QObject>
 #include <QSharedPointer>
+#include <QTimer>
 
 //---------------------------------------------------------------------------
+extern bool connected;
+bool XMPPInitialise( const QString &myId );
+bool XMPPClosedown();
+//---------------------------------------------------------------------------
 
-class MinosAppConnection:public QObject
+
+class MinosAppConnection:public QObject, RPCDispatcher
 {
     Q_OBJECT
-#define RXBUFFLEN 4096
    private:
+      QString jabberId;
+
       RPCDispatcher *user_data;
       QSharedPointer<QTcpSocket> sock;
-      char rxbuff[ RXBUFFLEN ];
       TIXML_STRING packetbuff;
-      void io_close ();
-      bool io_connect ( const char *server, int port );
-      bool io_send ( const char *data, size_t len );
-      int io_recv ( char *buffer, size_t buf_len, int timeout );
+
+      QTimer waitConectTimer;
+
+      void onLog (const QString &data, int is_incoming );
+
+      bool closeConnection();
 
    public:
-      MinosAppConnection( RPCDispatcher *ud );
+      MinosAppConnection( const QString &jid );
       ~MinosAppConnection();
-      bool startConnection();
-      bool runConnection();
-      bool closeConnection();
-      bool minos_send( const TIXML_STRING &data );
-      bool minos_send( TiXmlElement *data );
+
+      static MinosAppConnection *minosAppConnection;
+
+      void startConnection();
+      void closeDaemonThread();
+
+      virtual void dispatchResponse( XStanza *a );
+
+      void sendAction( XStanza *a );
+      void setJid( const QString &jid )
+      {
+         jabberId = jid;
+      }
+private slots:
+      void on_WaitConnectTimeout();
+      void on_ReadyRead();
+      void on_Connected();
+      void on_Disconnected();
+
 };
 #endif
