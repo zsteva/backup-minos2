@@ -115,10 +115,10 @@ void __fastcall TQRigSyncMain::Transfer12ButtonClick(TObject *Sender)
    long freq = 0;
 
    freq = OmniRig->Rig1->FreqA;
-
-   // and we would need to send it to the QS1R
-//   OmniRig->Rig2->FreqA = freq;
-
+//">UpdateRxFreq\n?fHz\n?tf\n" - may need to set tf (local oscillator) as well
+   String mess = ">fHz " + String(fCentre) + "\n";
+   mess += ">tf " + String(freq - fCentre) + "\n";
+   ClientSocket1->Socket->SendBuf( mess.c_str(), mess.Length() );
 }
 //---------------------------------------------------------------------------
 
