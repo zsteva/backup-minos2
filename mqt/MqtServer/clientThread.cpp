@@ -16,6 +16,7 @@ void runClientThread( void * )
 {
 //   WSAGuard guardian;
 
+   trace("runClientThread");
    if ( MinosClientListener::getListener() )
       return ;
    try
@@ -121,6 +122,7 @@ bool MinosClientListener::sendClient( MinosCommonConnection *il, TiXmlElement *t
 
    // OK, it is for what might be one of our clients
 
+   CsGuard guard;
    for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
    {
       // worry about the details
@@ -143,6 +145,7 @@ bool MinosClientListener::sendClient( MinosCommonConnection *il, TiXmlElement *t
 }
 bool MinosClientListener::checkStillClientConnection( const QString &s )
 {
+   CsGuard guard;
    MinosId id( s );
    for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
    {
@@ -161,8 +164,9 @@ MinosClientConnection::MinosClientConnection()
 {
    txConnection = true;
 }
-bool MinosClientConnection::initialise()
+bool MinosClientConnection::initialise(bool conn)
 {
+   connected = conn;
    return true;
 }
 

@@ -62,6 +62,7 @@ void runZcThread( void *t )
 }
 void TZConf::runThread()
 {
+    trace("TZConf::runThread()");
     qus = QSharedPointer<QUdpSocket>(new QUdpSocket(0));
     groupAddress = QHostAddress(UPNP_GROUP);
     /*bool res =*/ qus->bind(QHostAddress::AnyIPv4, UPNP_PORT,

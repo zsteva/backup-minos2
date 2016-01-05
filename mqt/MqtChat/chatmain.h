@@ -45,6 +45,8 @@ private:
     static void makeRPCObjects();
     void syncChat();
     void syncStations();
+    void keyPressEvent( QKeyEvent* event );
+
  public: 		// User declarations
     void notifyCallback( bool err, MinosRPCObj *mro, const QString &from );
     void addChat(const QString &mess);

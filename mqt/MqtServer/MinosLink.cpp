@@ -78,9 +78,9 @@ void MinosId::setId( const QString &s )
 
 //==============================================================================
 MinosSocket::MinosSocket() : //sock( INVALID_SOCKET ),
-   remove( false ),
-   txConnection(false)
-
+   remove_socket( false ),
+   txConnection(false),
+   connected(false)
 {}
 MinosSocket::~MinosSocket()
 {
@@ -119,18 +119,23 @@ bool MinosListener::acceptFreeSlot( MinosCommonConnection *il )
     il->connectHost = std::string( inet_ntoa( sin.sin_addr ) );
     logMessage( "acceptFreeSlot", "from " + il->connectHost );
     */
+    logMessage( "acceptFreeSlot", "from " + il->connectHost );
+    CsGuard guard;
+
     QHostAddress h = il->sock->peerAddress();
     il->connectHost = h.toString();
     i_array.push_back( il );
-    il->initialise();
+    il->initialise(false);
     return true;
 }
 // add a connected socket (we started the connection)
 bool MinosListener::connectFreeSlot( MinosCommonConnection *il )
 {
   /* Create a new end point */
+    logMessage( "connectFreeSlot", "from " + il->connectHost );
+    CsGuard guard;
   i_array.push_back( il );
-  il->initialise();
+  il->initialise(true);
   return true;
 }
 int MinosListener::getConnectionCount()
@@ -139,6 +144,7 @@ int MinosListener::getConnectionCount()
 }
 bool MinosListener::isServerConnection( const MinosId &s )
 {
+    CsGuard guard;
    for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
    {
       // worry about the details
@@ -155,6 +161,7 @@ bool MinosListener::isServerConnection( const MinosId &s )
 }
 bool MinosListener::isClientConnection( const MinosId &s )
 {
+    CsGuard guard;
    for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
    {
       // worry about the details
@@ -180,10 +187,10 @@ bool nosock( MinosSocket *ip )
    else
       return false;
 }
-void MinosListener::processSockets( void )
+void MinosListener::processSockets(  )
 {
     bool timedOut;
-    sock->waitForNewConnection(1000, &timedOut);
+    sock->waitForNewConnection(100, &timedOut);
     if (!timedOut)
     {
         QTcpSocket *s = sock->nextPendingConnection();
@@ -196,23 +203,32 @@ void MinosListener::processSockets( void )
     }
     else
     {
-        for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
+        CsGuard guard;
+        for ( std::vector<MinosSocket *>::iterator m = i_array.begin(); m != i_array.end(); m++ )
         {
-            if ((*i)->sock->waitForReadyRead(10))
+            MinosSocket *ss = (*m);
+            if (!ss || !ss->sock.data())
+                continue;
+
+            if (ss->isConnected() && ss->sock->state() != QAbstractSocket::ConnectedState)
             {
-                int bavail = (*i)->sock->bytesAvailable();
+                ss->sock->close();
+                ss->remove_socket = true;
+            }
+            else
+
+            if (ss->sock->waitForReadyRead(10))
+            {
+                int bavail = ss->sock->bytesAvailable();
                 if ( bavail )
                 {
-                    (*i)->process();
+                    ss->process();
+                    break;
                 }
-            }
-            if ((*i)->sock->state() != QAbstractSocket::ConnectedState)
-            {
-                (*i)->sock->close();
-                (*i)->remove = true;
             }
         }
         bool clearup = false;
+
         for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
         {
            try
@@ -237,8 +253,7 @@ void MinosListener::processSockets( void )
 
               try
               {
-                 if ( ( *i ) ->remove
-                    )
+                 if ( ( *i ) ->remove_socket )
                  {
                     // process says to finish off
                     logMessage( "process_sockets", QString( "deleting socket : " ) + ( *i ) ->getIdentity() );
@@ -285,6 +300,7 @@ void MinosListener::clearSockets()
 }
 bool MinosListener::checkServerConnection( const QString &sname )
 {
+    CsGuard guard;
    for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
    {
       if ( ( *i ) ->checkServer( sname ) )
@@ -544,7 +560,7 @@ void MinosCommonConnection::process()
    }
    else
    {
-      remove = true;
+      remove_socket = true;
    }
 }
 //==============================================================================
@@ -561,7 +577,7 @@ void MinosCommonConnection::analyseNode( TiXmlElement *tix )
       if ( isServer() )
       {
          closeSocket();
-         remove = true;
+         remove_socket = true;
       }
       else
       {

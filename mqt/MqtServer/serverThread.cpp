@@ -16,6 +16,7 @@ void runServerThread( void * )
 {
 //   WSAGuard guardian;
 
+    trace("runServerThread");
    if ( MinosServerListener::getListener() )
       return ;
    try
@@ -79,6 +80,7 @@ bool MinosServerListener::sendServer( MinosCommonConnection *il, TiXmlElement *t
 
    //   bool connect = true;
    bool connect = false;
+   CsGuard guard;
    for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
    {
       if ( ( *i ) ->checkServer( to ) && (*i) ->isTxConnection() )
@@ -136,12 +138,15 @@ void MinosServerListener::checkServerConnected( Server *srv, bool force )
    {
       return ;
    }
-   for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
    {
-      if ( ( *i ) && ( *i ) ->checkServer( srv->station ) && (*i)->isTxConnection() )
-      {
-         return ;
-      }
+       CsGuard guard;
+       for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
+       {
+          if ( ( *i ) && ( *i ) ->checkServer( srv->station ) && (*i)->isTxConnection() )
+          {
+             return ;
+          }
+       }
    }
    if (force || srv->autoReconnect)
    {
@@ -155,6 +160,7 @@ void MinosServerListener::checkServerConnected( Server *srv, bool force )
 
 bool MinosServerListener::checkStillServerConnection( const QString &s )
 {
+    CsGuard guard;
    for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
    {
       if ( ( *i ) && ( *i ) ->checkServer( s ) )
@@ -168,9 +174,9 @@ bool MinosServerListener::checkStillServerConnection( const QString &s )
 //==============================================================================
 MinosServerConnection::MinosServerConnection() : srv( 0 ), resubscribed( false )
 {}
-bool MinosServerConnection::initialise()
+bool MinosServerConnection::initialise(bool conn)
 {
-   return true;   // already initialised
+   return conn;   // already initialised
 }
 
 MinosServerConnection::~MinosServerConnection()
@@ -196,46 +202,6 @@ bool MinosServerConnection::checkFrom( TiXmlElement *tix )
 
    return true;
 }
-bool MinosServerConnection::ioConnect ( const QString &server, int port )
-{
-    /*
-   int sock = -1;
-   int tmp;
-   struct hostent *host;
-   struct sockaddr_in sin;
-
-   host = gethostbyname ( server.c_str() );
-   if ( !host )
-      return false;
-
-   memcpy ( &sin.sin_addr, host->h_addr, host->h_length );
-   sin.sin_family = host->h_addrtype;
-   sin.sin_port = htons ( port );
-
-   sock = socket ( host->h_addrtype, SOCK_STREAM, 0 );
-   if ( sock == -1 )
-      return false;
-
-   tmp = connect ( sock, ( struct sockaddr * ) & sin, sizeof ( struct sockaddr_in ) );
-   if ( tmp != 0 )
-   {
-      closesocket( sock );
-      return false;
-   }
-
-//   setSocket( sock );
-   txConnection = true;
-   return true;
-*/
-   return false;
-}
-
-bool MinosServerConnection::connectWith ( const QString &host, int port )
-{
-   // We need to connect out to the end point - looks much like a client connection!
-   bool ret = ioConnect ( host, port );
-   return ret;
-}
 
 bool MinosServerConnection::mConnect( Server *psrv )
 {
@@ -245,20 +211,23 @@ bool MinosServerConnection::mConnect( Server *psrv )
    logMessage( "Server", QString( "Connecting to " ) + srv->station + " host " + srv->host );
 
    // connect to endpoint
-   bool ret = connectWith ( srv->host, srv->port );  // server port
-   if (ret)
-   {
-      RPCRequest *rpa = new RPCRequest( clientServer, MinosServer::getMinosServer() ->getServerName(), "ServerSetFromId" );   // for our local server, this one MUST have a from
-      rpa->addParam( MinosServer::getMinosServer() ->getServerName() );
-      rpa->addParam( ZConf->getZConfString( ) );
-      sendAction( rpa );               // This wants to be a queue response...
-      delete rpa;
-   }
-   else
-   {
-      logMessage( "Server", QString( "Connection to " ) + srv->station + " host " + srv->host + " failed");
-   }
-   return ret;
+   // We need to connect out to the end point - looks much like a client connection!
+    sock = QSharedPointer<QTcpSocket>(new QTcpSocket);
+
+    connect(sock.data(), SIGNAL(connected()), this, SLOT(on_connected()));
+    sock->connectToHost(srv->host, srv->port);
+    txConnection = true;
+   return true;
+}
+void MinosServerConnection::on_connected()
+{
+    connected = true;
+    logMessage( "Server", QString( "Connected OK to " ) + srv->station + " host " + srv->host );
+    RPCRequest *rpa = new RPCRequest( clientServer, MinosServer::getMinosServer() ->getServerName(), "ServerSetFromId" );   // for our local server, this one MUST have a from
+    rpa->addParam( MinosServer::getMinosServer() ->getServerName() );
+    rpa->addParam( ZConf->getZConfString( ) );
+    sendAction( rpa );               // This wants to be a queue response...
+    delete rpa;
 }
 //==============================================================================
 bool MinosServerConnection::setFromId( MinosId &id, RPCRequest *req )

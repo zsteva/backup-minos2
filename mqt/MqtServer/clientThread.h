@@ -12,13 +12,14 @@
 #ifndef clientThreadH
 #define clientThreadH 
 
-#include "MinosLink.h"
+#include "minos_pch.h"
 //---------------------------------------------------------------------------
 extern GJV_thread *clientThread;
 extern void runClientThread( void * );
 //==============================================================================
 class MinosClientListener: public MinosListener
 {
+    Q_OBJECT
    private:
       static MinosClientListener *MCL;
    protected:
@@ -48,11 +49,12 @@ class MinosClientListener: public MinosListener
 //==============================================================================
 class MinosClientConnection: public MinosCommonConnection
 {
+    Q_OBJECT
    private:
    protected:
    public:
       MinosClientConnection();
-      virtual bool initialise();
+      virtual bool initialise( bool conn) override;
       ~MinosClientConnection();
       virtual bool checkFrom( TiXmlElement *pak );
       virtual bool setFromId( MinosId &from, RPCRequest *req );

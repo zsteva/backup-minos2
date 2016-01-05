@@ -247,3 +247,16 @@ void TMinosChatForm::on_SendButton_clicked()
     ui->ChatEdit->clear(); // otherwise it is a pain!
     ui->ChatEdit->setFocus();
 }
+void TMinosChatForm::keyPressEvent( QKeyEvent* event )
+{
+    int Key = event->key();
+
+    if (Key == Qt::Key_Return)
+    {
+        ui->SendButton->clicked();
+    }
+    if (Key == Qt::Key_Escape)
+    {
+        ui->ChatEdit->clear();
+    }
+}

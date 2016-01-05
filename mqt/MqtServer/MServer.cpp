@@ -8,6 +8,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 #include "minos_pch.h"
+#include <QSettings>
+#include <QHostInfo>
 
 #include "XMPPEvents.h"
 #include "MServerZConf.h"
@@ -26,7 +28,17 @@ MinosServer *MinosServer::getMinosServer()
 //---------------------------------------------------------------------------
 
 MinosServer::MinosServer() : serverName( DEFAULT_SERVER_NAME )
-{/*
+{
+  QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
+  QString circleOfHell = config.value( "Circle Of Hell/Name", "No_name_in_config" ).toString().trimmed();
+  serverName = circleOfHell;
+
+  if ( serverName.size() == 0 )
+  {
+      QString h = QHostInfo::localHostName();
+      serverName = h;
+  }
+/*
    TIniFile * config = new TIniFile( ".\\Configuration\\MinosConfig.ini" );
    String circleOfHell = config->ReadString( "Circle Of Hell", "Name", "No_name_in_config" ).Trim();
    serverName = circleOfHell.c_str();

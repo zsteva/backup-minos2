@@ -40,14 +40,20 @@ class MinosSocket:public QObject
     Q_OBJECT
    protected:
       bool txConnection;      // set if we can transmit on this connection
+      bool connected;
    public:
       MinosSocket();
       virtual ~MinosSocket();
 
+      bool isConnected()
+      {
+          return connected;
+      }
+
       QSharedPointer<QTcpSocket> sock;
       //virtual void process() = 0;
 
-      bool remove;
+      bool remove_socket;
 
       virtual void process() = 0;
 
@@ -86,6 +92,7 @@ class MinosSocket:public QObject
 extern bool isHostLocal(const QString &host);
 class MinosCommonConnection: public MinosSocket
 {
+    Q_OBJECT
    private:
       char rxbuff[ RXBUFFLEN ];
       QString packetbuff;
@@ -106,7 +113,7 @@ class MinosCommonConnection: public MinosSocket
       QString connectHost;
 
       MinosCommonConnection();
-      virtual bool initialise( ) = 0;
+      virtual bool initialise(bool conn ) = 0;
       virtual ~MinosCommonConnection();
 
       virtual void process() override;

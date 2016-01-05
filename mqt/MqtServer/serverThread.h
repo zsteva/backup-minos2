@@ -11,6 +11,7 @@
 
 #ifndef serverThreadH
 #define serverThreadH
+#include "minos_pch.h"
 //---------------------------------------------------------------------------
 extern GJV_thread *serverThread;
 extern void runServerThread( void * );
@@ -18,6 +19,7 @@ class Server;
 //==============================================================================
 class MinosServerListener: public MinosListener
 {
+    Q_OBJECT
    private:
       static MinosServerListener *MSL;
    protected:
@@ -47,6 +49,7 @@ class MinosServerListener: public MinosListener
 //==============================================================================
 class MinosServerConnection: public MinosCommonConnection
 {
+    Q_OBJECT
    private:
       Server *srv;
       QDateTime lastEventTick;
@@ -54,7 +57,7 @@ class MinosServerConnection: public MinosCommonConnection
    protected:
    public:
       MinosServerConnection();
-      virtual bool initialise();
+      virtual bool initialise(bool conn) override;
       ~MinosServerConnection();
       virtual bool checkFrom( TiXmlElement *pak );
       virtual bool isServer()
@@ -63,8 +66,6 @@ class MinosServerConnection: public MinosCommonConnection
       }
       virtual bool setFromId( MinosId &from, RPCRequest *req );
 
-      bool ioConnect ( const QString &host, int port );
-      bool connectWith ( const QString &host, int port );
       virtual bool mConnect( Server *srv );
       virtual void sendAction( XStanza *a );
       virtual QString getIdentity()
@@ -72,6 +73,8 @@ class MinosServerConnection: public MinosCommonConnection
          return "MinosServerConnection " + makeJid();
       }
       virtual void sendKeepAlive( );
+private slots:
+      void on_connected();
 };
 //==============================================================================
 #endif
