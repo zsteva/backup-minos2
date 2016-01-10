@@ -12,44 +12,12 @@
 #ifndef clientThreadH
 #define clientThreadH 
 
-#include "minos_pch.h"
-//---------------------------------------------------------------------------
-extern GJV_thread *clientThread;
-extern void runClientThread( void * );
+#include "MinosLink.h"
 //==============================================================================
-class MinosClientListener: public MinosListener
-{
-    Q_OBJECT
-   private:
-      static MinosClientListener *MCL;
-   protected:
-      virtual MinosCommonConnection *makeConnection(QTcpSocket *s) override;
 
-   public:
-      static MinosClientListener *getListener()
-      {
-         return MCL;
-      }
-      MinosClientListener()
-      {
-         MCL = this;
-      }
-      ~MinosClientListener() override
-      {
-         MCL = 0;
-      }
-//      virtual void process() override;
-      bool sendClient( MinosCommonConnection *il, TiXmlElement *pak );
-      virtual QString getIdentity()
-      {
-         return "MinosClientListener";
-      }
-      bool checkStillClientConnection( const QString &s );
-};
-//==============================================================================
 class MinosClientConnection: public MinosCommonConnection
 {
-    Q_OBJECT
+    //Q_OBJECT
    private:
    protected:
    public:
@@ -66,6 +34,7 @@ class MinosClientConnection: public MinosCommonConnection
       {
          return "MinosClientConnection " + makeJid();
       }
+      void closeDown() override;
 };
 //==============================================================================
 

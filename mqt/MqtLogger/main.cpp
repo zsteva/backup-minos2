@@ -21,6 +21,8 @@ int main(int argc, char *argv[])
         exit( 0 );
     }
 
+    //a.setStyle("fusion");
+
     TLogContainer w;
     bool ret = w.show(argc, argv);
     if (ret == true)

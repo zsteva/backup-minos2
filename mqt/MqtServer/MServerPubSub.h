@@ -8,6 +8,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 
+#include "minos_pch.h"
+
 #ifndef MServerPubSubH
 #define MServerPubSubH 
 //---------------------------------------------------------------------------
@@ -32,6 +34,7 @@ class TPubSubMain
 
       void revokeClient(const QString &pubId);
       void disconnectServer(const QString &pubId);
+      void closeDown();
 
 };
 extern TPubSubMain *PubSubMain;

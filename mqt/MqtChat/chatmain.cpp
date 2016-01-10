@@ -43,7 +43,6 @@ void TMinosChatForm::closeEvent(QCloseEvent *event)
     XMPPClosedown();
     LogTimerTimer( );
     // and tidy up all loose ends
-    CsGuard::ClearDown();
 
     /*
     QSettings settings;
@@ -99,7 +98,6 @@ QString stateIndicator[] =
 };
 void TMinosChatForm::syncStations()
 {
-   CsGuard g;
    if ( syncstat )
    {
       syncstat = false;
@@ -107,7 +105,9 @@ void TMinosChatForm::syncStations()
       for ( std::vector<Server>::iterator i = serverList.begin(); i != serverList.end(); i++ )
       {
          // should we link an object with the state, and owner draw
-         ui->StationList->addItem( stateIndicator[(*i).state] + " " + (*i).name );
+          QString state = stateIndicator[(*i).state] + " " + (*i).name;
+         ui->StationList->addItem( state );
+         trace("syncStations " + state);
       }
    }
 }
@@ -119,10 +119,10 @@ void TMinosChatForm::addChat(const QString &mess)
 }
 void TMinosChatForm::syncChat()
 {
-   CsGuard g;
    for ( std::vector<QString>::iterator i = chatQueue.begin(); i != chatQueue.end(); i++ )
    {
       ui->ChatMemo->append( (*i) );
+      trace("syncChat " + (*i));
    }
    chatQueue.clear();
 }
@@ -142,7 +142,6 @@ void TMinosChatForm::notifyCallback( bool err, MinosRPCObj *mro, const QString &
    {
       if ( an.getCategory() == "Station" )
       {
-         CsGuard g;
          QString key = an.getKey();
          QString value = an.getValue();
          PublishState state = an.getState();
@@ -216,7 +215,6 @@ void TMinosChatForm::chatServerCallback( bool err, MinosRPCObj *mro, const QStri
 
             if ( Name == "SendChatMessage" )
             {
-               CsGuard g;
                // add to chat window
                QString mess = from + " : " + Value;
                addChat( mess );

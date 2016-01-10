@@ -35,7 +35,6 @@ QString getServerId()
 
 void makeServerEvent( bool create )
 {
-    CsGuard cs;
     ServerEvent.setKey( "MinosQtServer" );
     if (create)
     {
@@ -50,7 +49,6 @@ void makeServerEvent( bool create )
 
 bool checkServerReady()
 {
-    CsGuard cs;
     QSharedMemory mem( "MinosQtServer" );
     if ( mem.attach() )
     {

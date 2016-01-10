@@ -32,7 +32,7 @@ class MinosAppConnection:public QObject, RPCDispatcher
       QSharedPointer<QTcpSocket> sock;
       TIXML_STRING packetbuff;
 
-      QTimer waitConectTimer;
+      QTimer waitConnectTimer;
 
       void onLog (const QString &data, int is_incoming );
 
@@ -55,10 +55,10 @@ class MinosAppConnection:public QObject, RPCDispatcher
          jabberId = jid;
       }
 private slots:
-      void on_WaitConnectTimeout();
-      void on_ReadyRead();
-      void on_Connected();
-      void on_Disconnected();
+      void on_waitConnectTimeout();
+      void on_readyRead();
+      void on_connected();
+      void on_disconnected();
 
 };
 #endif

@@ -12,9 +12,10 @@
 #ifndef MinosLinkH
 #define MinosLinkH 
 #include <QObject>
+#include <QString>
 #include <QTcpSocket>
-#include <QTcpServer>
 #include <QSharedPointer>
+
 #include "tinyxml.h"
 //---------------------------------------------------------------------------
 class XStanza;
@@ -35,62 +36,12 @@ class MinosId
 
       void setId( const QString & );
 };
-class MinosSocket:public QObject
-{
-    Q_OBJECT
-   protected:
-      bool txConnection;      // set if we can transmit on this connection
-      bool connected;
-   public:
-      MinosSocket();
-      virtual ~MinosSocket();
 
-      bool isConnected()
-      {
-          return connected;
-      }
-
-      QSharedPointer<QTcpSocket> sock;
-      //virtual void process() = 0;
-
-      bool remove_socket;
-
-      virtual void process() = 0;
-
-      void closeSocket()
-      {
-        if (sock)
-            sock->close();
-      }
-      virtual bool tryForwardStanza( TiXmlElement * /*pak*/ )
-      {
-         return false;
-      }
-      virtual bool checkServer( const MinosId & /*s*/ )
-      {
-         return false;
-      }
-      virtual bool checkServer( const QString & /*s*/ )
-      {
-         return false;
-      }
-      virtual bool checkUser( const MinosId & /*s*/ )
-      {
-         return false;
-      }
-      virtual QString getIdentity() = 0;
-      virtual void sendKeepAlive( )
-      {}
-      bool isTxConnection()
-      {
-         return txConnection;
-      }
-};
 //==============================================================================
 #define RXBUFFLEN 4096
 
 extern bool isHostLocal(const QString &host);
-class MinosCommonConnection: public MinosSocket
+class MinosCommonConnection: public QObject
 {
     Q_OBJECT
    private:
@@ -98,7 +49,9 @@ class MinosCommonConnection: public MinosSocket
       QString packetbuff;
       QString rxBuff;
 
-   protected:
+    protected:
+       bool txConnection;      // set if we can transmit on this connection
+       bool connected;
 
       // who is connected?
       QString clientServer;     // server name
@@ -108,6 +61,10 @@ class MinosCommonConnection: public MinosSocket
       void onLog ( const char *data, size_t size, int is_incoming );
       bool sendRaw ( const char *xmlstr );
    public:
+
+      QSharedPointer<QTcpSocket> sock;
+
+      bool remove_socket;
       bool fromIdSet;
       bool connchecked;
       QString connectHost;
@@ -116,7 +73,6 @@ class MinosCommonConnection: public MinosSocket
       virtual bool initialise(bool conn ) = 0;
       virtual ~MinosCommonConnection();
 
-      virtual void process() override;
       virtual void analyseNode( TiXmlElement *pak );
       virtual bool tryForwardStanza( TiXmlElement *pak );
       virtual void sendError( TiXmlElement *pak, const char *type, const char *defined_condition );
@@ -141,32 +97,25 @@ class MinosCommonConnection: public MinosSocket
          return ( clientUser.compare(u.user, Qt::CaseInsensitive) == 0 );
       }
       virtual QString getIdentity() = 0;
-};
-//==============================================================================
-class MinosListener:public QObject
-{
-    Q_OBJECT
-   protected:
-
-      QSharedPointer<QTcpServer> sock;
-      std::vector<MinosSocket *>i_array;
-    protected:
-      virtual MinosCommonConnection *makeConnection(QTcpSocket *s) = 0;
-    public:
-      void processSockets();
-      void clearSockets();
-      bool connectFreeSlot( MinosCommonConnection * );
-      bool acceptFreeSlot( MinosCommonConnection * );
-      int getConnectionCount();
-      MinosListener();
-      virtual ~MinosListener();
-      virtual bool initialise( QString type, int port );
-      virtual QString getIdentity() = 0;
-
-      bool isServerConnection( const MinosId &s );
-      bool isClientConnection( const MinosId &s );
-      bool checkServerConnection( const QString &sname );
-
+      virtual void closeDown() = 0;
+      void closeSocket()
+      {
+        if (sock)
+            sock->close();
+      }
+      virtual void sendKeepAlive( )
+      {}
+      bool isTxConnection()
+      {
+         return txConnection;
+      }
+      bool isConnected()
+      {
+          return connected;
+      }
+private slots:
+      void on_readyRead();
+      void on_disconnected();
 };
 //==============================================================================
 #endif

@@ -46,10 +46,15 @@ LogEvent * deQueueLog()
 void logMessage( const QString &level, const QString &mess )
 {
    // queue a log event on the event queue
+
+    trace( "Log : " + level + " " + mess );
+
+/*
    LogEvent * ev = new LogEvent;
    ev->eMessageType = level;
    ev->eMessage = mess;
    queueLog( ev );
+   */
 }
 //---------------------------------------------------------------------------
 void createCloseEvent()

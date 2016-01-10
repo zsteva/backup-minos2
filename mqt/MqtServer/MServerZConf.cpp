@@ -9,74 +9,99 @@
 //---------------------------------------------------------------------------
 #include "minos_pch.h"
 
-#include <QSettings>
-#include <QNetworkInterface>
 //---------------------------------------------------------------------------
+#include "MinosLink.h"
+#include "clientThread.h"
+#include "serverThread.h"
+
+#include "minoslistener.h"
 
 #include "MServerZConf.h"
 #include "MServerPubSub.h"
-TZConf *ZConf = 0;
-std::vector<Server *> serverList;
-GJV_thread *zcThread = 0;
+
+extern bool closeApp;
 
 #define UPNP_PORT 9999
 #define UPNP_GROUP "239.255.0.1"
 
-bool TZConf::sendMessage(const QString &mess )
+TZConf *TZConf::ZConf = 0;
+std::vector<Server *> serverList;
+
+//---------------------------------------------------------------------------
+TZConf::TZConf( )
+      : waitNameReply( false )
 {
-    QByteArray packet = QByteArray(mess.toStdString().c_str());
-// Get network interfaces list
+   ZConf = this;
+   sendBeaconResponse = false;
+   beaconInterval = 60000;   // once a minute
+   lastTick = QDateTime::currentDateTimeUtc().addSecs(-59); // force a beacon soon
+}
+TZConf::~TZConf( )
+{
+   for ( std::vector<Server *>::iterator i = serverList.begin(); i != serverList.end(); i++ )
+   {
+      delete ( *i );
+   }
+   serverList.clear();
+}
+void TZConf::closeDown()
+{
+    trace("closeDown");
+
+}
+
+/*
+ * We seem to need one socket per interface. Our old QT code looped through the interfaces
+ * and broadcast (not multicast) on all the IPV4 ones (NB not localhost...)
+ *
+ * It then bound on "any IPV4 address" so one socket managed all the receives
+ *
+ * BCB code creates a socket per interface, and adds an extra for localhost, binds each for
+ * receive, and then loops through them for sending
+ *
+ */
+void TZConf::runThread(const QString &name)
+{
+    trace("TZConf::runThread()");
+
+    localName = name.trimmed();
+
+    groupAddress = QHostAddress(UPNP_GROUP);
+
+    // Get network interfaces list
+
     QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
 
     // Interfaces iteration
     for (int i = 0; i < ifaces.size(); i++)
     {
+        if (!ifaces[i].flags().testFlag( QNetworkInterface::IsUp))
+            continue;
+        if (!ifaces[i].flags().testFlag(QNetworkInterface::IsRunning))
+            continue;
         // Now get all IP addresses for the current interface
         QList<QNetworkAddressEntry> addrs = ifaces[i].addressEntries();
 
-        // And for any IP address, if it is IPv4 and the interface is active, send the packet
+        // And for any IP address, if it is IPv4 and the interface is active, make a socket
         for (int j = 0; j < addrs.size(); j++)
-            if ((addrs[j].ip().protocol() == QAbstractSocket::IPv4Protocol) && (addrs[j].broadcast().toString() != ""))
+        {
+            if ((addrs[j].ip().protocol() == QAbstractSocket::IPv4Protocol)
+                    && !addrs[j].ip().toString().isEmpty())
             {
-                qus->writeDatagram(packet.data(), packet.length(), addrs[j].broadcast(), UPNP_PORT);
-                qus->waitForBytesWritten(100);
+                QSharedPointer<UDPSocket> qus(new UDPSocket());
+
+                bool res = qus->setup(ifaces[i], addrs[j]);
+
+                if (res)
+                {
+                    UdpSocks.push_back(qus);
+                }
             }
+        }
     }
-    return true;
-}
-/*
-bool TZConf::sendMessage(const QString &mess )
-{
-    QByteArray datagram = QByteArray(mess.toStdString().c_str());
-    qint64 ret = qus->writeDatagram(datagram.data(), datagram.size(),
-                             groupAddress, iPort);
-    qus->waitForBytesWritten(100);
+    rxSocket = QSharedPointer<UDPSocket>(new UDPSocket());
 
-   return ret > 0;
-}
-*/
-void runZcThread( void *t )
-{
-   TZConf * tzc = ( TZConf * ) t;
-   tzc->runThread();
-}
-void TZConf::runThread()
-{
-    trace("TZConf::runThread()");
-    qus = QSharedPointer<QUdpSocket>(new QUdpSocket(0));
-    groupAddress = QHostAddress(UPNP_GROUP);
-    /*bool res =*/ qus->bind(QHostAddress::AnyIPv4, UPNP_PORT,
-                    QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
-
-   QString beaconreq = getZConfString(true);
-   QString nobeaconreq = getZConfString(false);
-
-   bool sendBeaconResponse = false;
-   unsigned int beaconInterval = 60000;   // once a minute
-   QDateTime lastTick = QDateTime::currentDateTimeUtc();
-
-   // send our first beacon message out... with a "report" request attached
-   sendMessage( beaconreq );
+    rxSocket->setupReadOnly();
 
    /*
       <minosServer UUID='xxx' name='name' port='port' request='true' />
@@ -105,34 +130,42 @@ void TZConf::runThread()
    // and now we go and sit on a select on all the notify sockets
    // but also remember to beacon occasionally...
 
-   while ( !closeApp )
-   {
-       qus->waitForReadyRead(10);
-       if (qus->hasPendingDatagrams())
-       {
-            QByteArray datagram;
-            datagram.resize(qus->pendingDatagramSize());
-            QHostAddress sender;
-            quint16 senderPort;
+   connect (&beaconTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
 
-            qus->readDatagram(datagram.data(), datagram.size(),
-                                   &sender, &senderPort);
 
-            sendBeaconResponse = setZConfString(QString(datagram), sender);
-        }
-        if (sendBeaconResponse || lastTick.msecsTo(QDateTime::currentDateTime()) > beaconInterval )
-        {
-           CsGuard guard;
-           trace(QString("Sending beacon, sendBeaconResponse = ") + (sendBeaconResponse?"true":"false"));
-           lastTick = QDateTime::currentDateTime();
-           sendMessage( sendBeaconResponse?nobeaconreq:beaconreq );   // timer requests beaconing, beacon just responds
-           sendBeaconResponse = false;
-        }
-        QThread::msleep(1000);
+   beaconTimer.setInterval(100);
+   beaconTimer.start();
 
-   }
-   qus->close();
+   readServerList();
 }
+void TZConf::onTimeout()
+{
+   // this should be on a timer
+   if (sendBeaconResponse || lastTick.msecsTo(QDateTime::currentDateTime()) > beaconInterval )
+   {
+      trace(QString("Timeout: Sending beacon, sendBeaconResponse = ") + (sendBeaconResponse?"true":"false"));
+      lastTick = QDateTime::currentDateTime();
+
+      sendMessage( sendBeaconResponse );   // timer requests beaconing, beacon just responds
+      sendBeaconResponse = false;
+   }
+}
+
+
+bool TZConf::sendMessage(bool beaconReq )
+{
+    for (std::vector<QSharedPointer<UDPSocket> >::iterator i = UdpSocks.begin(); i != UdpSocks.end(); i++)
+    {
+        QString mess = getZConfString(beaconReq);
+        (*i)->sendMessage(mess);
+//        break;
+    }
+   return true;
+}
+
+//---------------------------------------------------------------------------
+
+
 Server *findStation( const QString s )
 {
    for ( std::vector<Server *>::iterator i = serverList.begin(); i != serverList.end(); i++ )
@@ -146,7 +179,6 @@ Server *findStation( const QString s )
 }
 void TZConf::ServerScan()
 {
-   CsGuard guard;
    for ( std::vector<Server *>::iterator i = serverList.begin(); !closeApp && i != serverList.end(); i++ )
    {
       trace("Server scan - checking " + (*i)->station);
@@ -207,28 +239,6 @@ void TZConf::readServerList()
 }
 
 //---------------------------------------------------------------------------
-TZConf::TZConf( )
-      : waitNameReply( false )
-{}
-TZConf::~TZConf( )
-{
-   zcThread->GJV_join();
-   delete zcThread;
-   
-   for ( std::vector<Server *>::iterator i = serverList.begin(); i != serverList.end(); i++ )
-   {
-      delete ( *i );
-   }
-   serverList.clear();
-}
-//---------------------------------------------------------------------------
-void TZConf::setName( const QString &name )
-{
-   localName = name.trimmed();
-   zcThread = new GJV_thread( "ZConf", &runZcThread, ( void * ) this );
-   readServerList();
-}
-//---------------------------------------------------------------------------
 // uuid is the machines uuid (more unique than the server name!)
 // name is server name
 // hosttarget is the IP address/DNS name
@@ -241,7 +251,6 @@ void TZConf::setName( const QString &name )
 void TZConf::publishServer( const QString &uuid, const QString &name,
             QHostAddress hosttarget, int PortAsNumber, bool autoReconnect )
 {
-   CsGuard g;
    trace( "publishServer Host " + hosttarget.toString() + " Station " + name +
             " Port " + QString::number( PortAsNumber ) + " uuid " + uuid + " auto " + ( autoReconnect ? "true" : "false" ) );
    Server *s = findStation( name );
@@ -259,7 +268,7 @@ void TZConf::publishServer( const QString &uuid, const QString &name,
 
 //         s->available = state;
          s->zconf = true;;
-         if ( name == ZConf->getName() )
+         if ( name == getZConf()->getName() )
          {
             s->local = true;
          }
@@ -271,7 +280,7 @@ void TZConf::publishServer( const QString &uuid, const QString &name,
       s = new Server( uuid, hosttarget.toString(), name, PortAsNumber );
 //      s->available = state;
       s->autoReconnect = autoReconnect;
-      if ( name == ZConf->getName() )
+      if ( name == getZConf()->getName() )
       {
          s->local = true;
       }
@@ -292,6 +301,7 @@ void TZConf::publishServer( const QString &uuid, const QString &name,
 }
 void TZConf::publishDisconnect(const QString &name)
 {
+    trace("publishDisconnect");
    Server *s = findStation( name );
    if ( s )
    {
@@ -299,20 +309,21 @@ void TZConf::publishDisconnect(const QString &name)
    }
 }
 //==============================================================================
-QString TZConf::getZConfString(bool beacon)
+QString TZConf::getZConfString(bool beaconreq)
 {
+    static int sequence = 0;
    QString Uuid = getServerId();
    return  QString("<minosServer ")
-               + "UUID='" + Uuid
+               + "seq='" + QString::number(sequence++)
+               + "' UUID='" + Uuid
                + "' name='" + getName()
                + "' port='" + QString::number(ServerPort) + "'"
-               + (beacon?" request='true'":"")
+               + (beaconreq?"":" request='true'")
                + " />";
 }
 //==============================================================================
-bool TZConf::setZConfString(const QString &message, QHostAddress recvHost)
+bool TZConf::processZConfString(const QString &message, QHostAddress recvHost)
 {
-   CsGuard g;
    bool sendBeaconResponse = false;
 
    TiXmlDocument xdoc;
@@ -350,3 +361,107 @@ bool TZConf::setZConfString(const QString &message, QHostAddress recvHost)
 }
 //==============================================================================
 
+UDPSocket::UDPSocket()
+{
+}
+UDPSocket::~UDPSocket()
+{
+
+}
+
+bool UDPSocket::setup(QNetworkInterface &iface, QNetworkAddressEntry &addr)
+{
+    ifaceName = iface.humanReadableName();
+    qus = QSharedPointer<QUdpSocket>(new QUdpSocket);
+
+    connect(qus.data(), SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(onSocketStateChange(QAbstractSocket::SocketState)));
+
+    qui = iface;
+    bool res = qus->bind(
+                TZConf::getZConf()->groupAddress,//addr.ip(), QHostAddress::AnyIPv4,//TZConf::getZConf()->groupAddress,
+                UPNP_PORT,
+                QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint//QUdpSocket::DefaultForPlatform
+                );
+    return res;
+}
+void UDPSocket::onSocketStateChange (QAbstractSocket::SocketState state)
+{
+    if ( state == QAbstractSocket::BoundState )
+    {
+        qus->setSocketOption(QAbstractSocket::MulticastTtlOption, 1);   // default
+        qus->setSocketOption(QAbstractSocket::MulticastLoopbackOption, 1);  // default
+        qus->setMulticastInterface(qui);
+        bool res = qus->joinMulticastGroup(TZConf::getZConf()->groupAddress, qui);
+        if (res)
+        {
+            trace("Bound and Joined multicast group " + TZConf::getZConf()->groupAddress.toString()
+                  + " on " + qus->localAddress().toString() + " interface :" + ifaceName);
+        }
+    }
+}
+
+
+bool UDPSocket::setupReadOnly()
+{
+    qus = QSharedPointer<QUdpSocket>(new QUdpSocket);
+
+    connect(qus.data(), SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(onRoSocketStateChange(QAbstractSocket::SocketState)));
+
+    bool res = qus->bind(
+                QHostAddress::AnyIPv4, //TZConf::getZConf()->groupAddress, //QHostAddress::AnyIPv4,
+                UPNP_PORT,
+                QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint //QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint//QUdpSocket::DefaultForPlatform
+                );
+    return res;
+}
+void UDPSocket::onRoSocketStateChange (QAbstractSocket::SocketState state)
+{
+    if ( state == QAbstractSocket::BoundState )
+    {
+        QList<QNetworkInterface> mListIfaces = QNetworkInterface::allInterfaces();
+
+        for (int i = 0; i < mListIfaces.length(); ++i)
+        {
+            if (!mListIfaces.at(i).flags().testFlag( QNetworkInterface::IsUp))
+                continue;
+            if (!mListIfaces.at(i).flags().testFlag(QNetworkInterface::IsRunning))
+                continue;
+
+            bool ret = qus->joinMulticastGroup(TZConf::getZConf()->groupAddress, mListIfaces.at(i));
+            if (!ret)
+            {
+                trace("Failed to join " + mListIfaces.at(i).humanReadableName() + " :" + qus->errorString());
+            }
+        }
+        trace("Bound on " + qus->localAddress().toString() /*+ " interface " + QHostAddress::AnyIPv4,*/);
+        connect(qus.data(), SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+    }
+}
+void UDPSocket::onReadyRead()
+{
+    while (qus->hasPendingDatagrams())
+    {
+        QByteArray datagram;
+        datagram.resize(qus->pendingDatagramSize());
+        QHostAddress sender;
+        quint16 senderPort;
+
+        qus->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
+
+        trace("datagram read : "
+             + QString(datagram) + " from " + sender.toString());
+
+        TZConf::getZConf()->sendBeaconResponse = TZConf::getZConf()->processZConfString(QString(datagram), sender);
+    }
+}
+bool UDPSocket::sendMessage(const QString &mess )
+{
+    QByteArray packet = QByteArray(mess.toStdString().c_str());
+
+    int ret = qus->writeDatagram(packet.data(), packet.length(), TZConf::getZConf()->groupAddress, UPNP_PORT);
+
+    trace("send datagram on " + ifaceName
+          + " : " + mess);
+
+    return true;
+}

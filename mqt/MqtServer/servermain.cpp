@@ -1,7 +1,11 @@
 #include "minos_pch.h"
 
+#include "MinosLink.h"
+#include "clientThread.h"
+#include "serverThread.h"
+
 #include "servermain.h"
-#include "ui_mainwindow.h"
+#include "ui_servermain.h"
 
 extern int GetSubscribedCount();
 extern int GetPublishedCount();
@@ -15,19 +19,28 @@ ServerMain::ServerMain(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
     connect(&ScanTimer, SIGNAL(timeout()), this, SLOT(ScanTimerTimer()));
 
     enableTrace( "./TraceLog", "MinosServer_" );
-    MinosServer::getMinosServer();
-    clientThread = new GJV_thread( "client", &runClientThread, ( void * ) 0 );
-    serverThread = new GJV_thread( "server", &runServerThread, ( void * ) 0 );
-    PubSubMain = new TPubSubMain();
-    ZConf = new TZConf();
-    ZConf->setName( MinosServer::getMinosServer() ->getServerName() );
+    QString sname = MinosServer::getMinosServer()->getServerName();
+
+    clientListener = QSharedPointer<MinosClientListener>(new MinosClientListener);
+    clientListener ->initialise( "Client", ClientPort );
+
+    serverListener = QSharedPointer<MinosServerListener>(new MinosServerListener);
+    serverListener ->initialise( "Server", ServerPort );
+
+    ZConf = QSharedPointer<TZConf>(new TZConf);
+
+    PubSubMain = QSharedPointer<TPubSubMain>(new TPubSubMain);
+    ZConf->runThread (sname );
 
     LogTimer.start(100);
     ScanTimer.start(20000);
+
+    makeServerEvent( true );
 }
 
 ServerMain::~ServerMain()
@@ -113,7 +126,7 @@ void ServerMain::LogTimerTimer( )
 void ServerMain::ScanTimerTimer( )
 {
    // default is every 20 secs
-   CsGuard g;
+
    // scan the server list, and try to connect to all that we know of and we don't
    // have a server connection for
    ZConf->ServerScan();
@@ -124,4 +137,33 @@ void ServerMain::on_CloseButton_clicked()
 {
     logMessage("Server close requested");
     closeApp = true;
-    LogTimerTimer( );}
+//    LogTimerTimer( );
+}
+void ServerMain::closeEvent(QCloseEvent *event)
+{
+    static bool closeSeen = false;
+    if (!closeSeen)
+    {
+        closeSeen = true;
+        logMessage("Server close event seen");
+        closeApp = true;
+        PubSubMain->closeDown();
+        ZConf->closeDown();
+
+        clientListener ->closeDown();
+        serverListener ->closeDown();
+
+        LogTimerTimer( );
+
+        QWidget::closeEvent(event);
+    }
+}
+void ServerMain::resizeEvent(QResizeEvent * event)
+{
+    /*
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
+    */
+    QWidget::resizeEvent(event);
+}
+

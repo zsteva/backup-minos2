@@ -11,16 +11,27 @@
 #define Minos_pchH
 
 #include "XMPP_pch.h"
-#include <QTcpServer>
 
-#include "servermain.h"
-#include "MinosLink.h"
+#include <QApplication>
+#include <QObject>
+#include <QTimer>
+#include <QTcpSocket>
+#include <QTcpServer>
+#include <QUdpSocket>
+
+#include <QSharedPointer>
+#include <QHostAddress>
+#include <QHostInfo>
+
+#include <QSettings>
+#include <QHostInfo>
+#include <QNetworkInterface>
+
 #include "MServer.h"
-#include "clientThread.h"
-#include "serverThread.h"
 #include "MServerZConf.h"
 #include "MServerPubSub.h"
 #include "PubSubServer.h"
+
 
 #endif
 

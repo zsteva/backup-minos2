@@ -486,7 +486,7 @@ void RPCTestTest::testDates()
 
    int m = getMonth( "february" );
    QVERIFY( 2 == m );
-   m = getMonth( "rubbish" );
+   m = getMonth( "junk" );
    QVERIFY( 0 == m );
 
    int d = getDate( /*month*/1,  /*day*/1,  /*week*/1 );   // first Monday is 6th
@@ -545,7 +545,7 @@ void RPCTestTest::testDates2009()
 
    int m = getMonth( "february" );
    QVERIFY( 2 == m );
-   m = getMonth( "rubbish" );
+   m = getMonth( "junk" );
    QVERIFY( 0 == m );
 
    int d = getDate( /*month*/1,  /*day*/1,  /*week*/1 );   // first Monday is 5th

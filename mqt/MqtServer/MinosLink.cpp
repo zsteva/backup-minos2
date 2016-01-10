@@ -9,23 +9,15 @@
 //---------------------------------------------------------------------------
 #include "minos_pch.h"
 
-#include <QHostAddress>
-#include <QHostInfo>
+#include "MinosLink.h"
+#include "clientThread.h"
+#include "serverThread.h"
 
-void xperror( int test_val, QString s, bool endit = true )
-{
-//   int lerrno = GetLastError();
-   if ( test_val )
-   {
-//      QString s = QString( mesg ); // + " : error number " + QString::number( lerrno );
-      logMessage( "xperror", s );
+#include "minoslistener.h"
 
-      if ( endit )
-      {
-         throw Exception( ("JServer error: " + s ).toStdString().c_str());
-      }
-   }
-}
+extern bool closeApp;
+
+
 bool isHostLocal(const QString &host)
 {
     QHostInfo connaddr = QHostInfo::fromName( host );
@@ -77,246 +69,14 @@ void MinosId::setId( const QString &s )
 }
 
 //==============================================================================
-MinosSocket::MinosSocket() : //sock( INVALID_SOCKET ),
-   remove_socket( false ),
-   txConnection(false),
-   connected(false)
-{}
-MinosSocket::~MinosSocket()
-{
-   closeSocket();
-}
-
-//=============================================================================
-MinosListener::MinosListener():sock(new QTcpServer(this))
-{}
-MinosListener::~MinosListener()
-{
-   clearSockets();
-}
-//-----------------------------------------------------------------------------
-bool MinosListener::initialise( QString type, int port )
-{
-
-    QHostAddress::SpecialAddress addr = QHostAddress::Any;
-
-    if (type == "Client")
-    {
-        addr = QHostAddress::LocalHost;
-    }
-   bool res = sock->listen(addr, port); // signals newConnection()
-   // need an event loop or waitForNewConnection()
-   xperror( res == false ,type + " listen"  );
-
-   //i_array.push_back( this );
-
-   return true;
-}
-bool MinosListener::acceptFreeSlot( MinosCommonConnection *il )
-{
-    // Create a new end point
-/*    SOCKET s = accept( sock, ( LPSOCKADDR ) & sin, &in_addr_len );
-    il->connectHost = std::string( inet_ntoa( sin.sin_addr ) );
-    logMessage( "acceptFreeSlot", "from " + il->connectHost );
-    */
-    logMessage( "acceptFreeSlot", "from " + il->connectHost );
-    CsGuard guard;
-
-    QHostAddress h = il->sock->peerAddress();
-    il->connectHost = h.toString();
-    i_array.push_back( il );
-    il->initialise(false);
-    return true;
-}
-// add a connected socket (we started the connection)
-bool MinosListener::connectFreeSlot( MinosCommonConnection *il )
-{
-  /* Create a new end point */
-    logMessage( "connectFreeSlot", "from " + il->connectHost );
-    CsGuard guard;
-  i_array.push_back( il );
-  il->initialise(true);
-  return true;
-}
-int MinosListener::getConnectionCount()
-{
-    return i_array.size();
-}
-bool MinosListener::isServerConnection( const MinosId &s )
-{
-    CsGuard guard;
-   for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      // worry about the details
-      if ( ( *i ) ->checkServer( s ) )
-      {
-         return false;
-      }
-      if ( ( *i ) -> checkServer( s ) )
-      {
-         return true;
-      }
-   }
-   return false;
-}
-bool MinosListener::isClientConnection( const MinosId &s )
-{
-    CsGuard guard;
-   for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      // worry about the details
-      if ( ( *i ) ->checkUser( s ) )
-      {
-         return true;
-      }
-      if ( ( *i ) -> checkServer( s ) )
-      {
-         return false;
-      }
-   }
-   return false;
-}
-//==============================================================================
-// Check for activity on the sockets
-
-// Predicate function for remove_if
-bool nosock( MinosSocket *ip )
-{
-   if ( ip == 0 )
-      return true;
-   else
-      return false;
-}
-void MinosListener::processSockets(  )
-{
-    bool timedOut;
-    sock->waitForNewConnection(100, &timedOut);
-    if (!timedOut)
-    {
-        QTcpSocket *s = sock->nextPendingConnection();
-        if (s)
-        {
-            MinosCommonConnection *cc = makeConnection(s);
-
-            acceptFreeSlot(cc);
-        }
-    }
-    else
-    {
-        CsGuard guard;
-        for ( std::vector<MinosSocket *>::iterator m = i_array.begin(); m != i_array.end(); m++ )
-        {
-            MinosSocket *ss = (*m);
-            if (!ss || !ss->sock.data())
-                continue;
-
-            if (ss->isConnected() && ss->sock->state() != QAbstractSocket::ConnectedState)
-            {
-                ss->sock->close();
-                ss->remove_socket = true;
-            }
-            else
-
-            if (ss->sock->waitForReadyRead(10))
-            {
-                int bavail = ss->sock->bytesAvailable();
-                if ( bavail )
-                {
-                    ss->process();
-                    break;
-                }
-            }
-        }
-        bool clearup = false;
-
-        for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-        {
-           try
-           {
-              if ( ( *i ) )
-              {
-                 ( *i ) ->sendKeepAlive();
-              }
-           }
-            catch ( Exception & e )
-            {
-               logMessage( "process_sockets", QString( "Exception in sendKeepAlive : " ) + e.what() );
-               closeApp = true;
-               break;
-            }
-            catch ( ... )
-            {
-               logMessage( "process_sockets", "Unknown Exception in sendKeepAlive" );
-               closeApp = true;
-               break;
-            }
-
-              try
-              {
-                 if ( ( *i ) ->remove_socket )
-                 {
-                    // process says to finish off
-                    logMessage( "process_sockets", QString( "deleting socket : " ) + ( *i ) ->getIdentity() );
-                    delete ( *i );
-                    *i = 0;
-                    clearup = true;
-                 }
-              }
-              catch ( Exception & e )
-              {
-                 logMessage( "process_sockets", QString( "Exception tidying socket : " ) + e.what() );
-                 closeApp = true;
-                 break;
-              }
-           catch ( ... )
-           {
-              logMessage( "process_sockets", "Unknown Exception in sendKeepAlive" );
-              closeApp = true;
-              break;
-           }
-        }
-        if ( clearup )
-        {
-           i_array.erase( std::remove_if( i_array.begin(), i_array.end(), nosock ), i_array.end() );
-        }
-    }
-}
-void MinosListener::clearSockets()
-{
-   CsGuard lck;
-   try
-   {
-      for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-      {
-          delete ( *i );
-      }
-      //      i_array.erase( std::remove_if( i_array.begin(), i_array.end(), nosock ), i_array.end() );
-      i_array.clear();
-   }
-   catch ( Exception & e )
-   {
-      logMessage( "clear_sockets", QString( "Exception while closing sockets: " ) + e.what() );
-   }
-}
-bool MinosListener::checkServerConnection( const QString &sname )
-{
-    CsGuard guard;
-   for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      if ( ( *i ) ->checkServer( sname ) )
-      {
-         return true;               // we only need ONE that is right...
-      }
-   }
-   return false;
-}
-
-//==============================================================================
-
-//==============================================================================
 MinosCommonConnection::MinosCommonConnection()
-: fromIdSet( false ), connchecked( false )
-{}
+    : fromIdSet( false ),
+    connchecked( false ),
+    remove_socket( false ),
+    txConnection(false),
+    connected(false)
+{
+}
 MinosCommonConnection::~MinosCommonConnection()
 {}
 bool MinosCommonConnection::CheckLocalConnection()
@@ -494,11 +254,11 @@ void sendAction( XStanza *a )
 }
 //=============================================================================
 
-void MinosCommonConnection::process()
+void MinosCommonConnection::on_readyRead()
 {
    // select says we have data, so read it
    // and send the data through the parser
-   logMessage ( "XMPP test", "MinosCommonConnection::process called to receive data from " + clientUser );
+   logMessage ( "XMPP test", "MinosCommonConnection::on_readyRead called to receive data from " + connectHost );
 
    // documntation says this may occasionally fail on Windows
    int rxlen = sock->read(rxbuff, 4096 - 1);
@@ -524,18 +284,6 @@ void MinosCommonConnection::process()
          int packetoffset = packetbuff.indexOf( '<' );
          if ( packetoffset > 0 )    // length field should always be followed by XML
          {
-/*
-         int packetoffset = ( int ) packetbuff.find( '<' );
-         if ( packetoffset > 0 )    // length field should always be followed by XML
-         {
-            char * ec;
-            int packetlen = strtol( packetbuff.c_str() + 2, &ec, 10 );
-            if ( *ec == '<' && packetlen <= ( int ) strlen( ec ) + 2 && packetbuff.find( ">&&" ) )
-            {
-               std::string packet = packetbuff.substr( packetoffset, packetlen );
-               packetbuff = packetbuff.substr( packetoffset + packetlen + 2, strlen( ec + packetlen ) );
- */
-
              QStringRef slen = packetbuff.midRef(2, packetoffset - 2);
              int packetlen = slen.toInt();
             if ( packetlen <= ( int ) packetbuff.size() - 2 && packetbuff.indexOf( ">&&" ) )
@@ -558,10 +306,12 @@ void MinosCommonConnection::process()
          }
       }
    }
-   else
+   else if (rxlen < 0)
    {
+       trace("Bad read in MinosCommonConnection::on_readyRead; remove_socket = true");
       remove_socket = true;
    }
+   // rxlen == 0 is valid
 }
 //==============================================================================
 void MinosCommonConnection::analyseNode( TiXmlElement *tix )
@@ -577,6 +327,7 @@ void MinosCommonConnection::analyseNode( TiXmlElement *tix )
       if ( isServer() )
       {
          closeSocket();
+         trace("Bad checkFrom in MinosCommonConnection::analyseNode; remove_socket = true");
          remove_socket = true;
       }
       else
@@ -606,3 +357,8 @@ void MinosCommonConnection::analyseNode( TiXmlElement *tix )
 
 }
 //=============================================================================
+void MinosCommonConnection::on_disconnected()
+{
+    trace("MinosCommonConnection::on_disconnected()" + clientServer + "; remove_socket = true");
+    remove_socket = true;
+}

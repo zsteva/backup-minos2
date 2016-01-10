@@ -28,8 +28,6 @@ void XStanza::setNextId()
    static int nextId = 1;
    static char buff[ 40 ] = {0};
 
-   CsGuard lck;
-
    sprintf( buff, "%d", nextId );
    nextId++;
 

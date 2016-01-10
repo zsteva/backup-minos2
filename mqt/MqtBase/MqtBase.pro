@@ -43,7 +43,6 @@ SOURCES += \
     RunApp.cpp \
     ScreenContact.cpp \
     validators.cpp \
-    VHFList.cpp \
     MMessageDialog.cpp \
     MShowMessageDlg.cpp \
     DisplayContestContact.cpp \
@@ -73,7 +72,6 @@ HEADERS += \
     ScreenContact.h \
     sorted_vector.h \
     validators.h \
-    VHFList.h \
     MMessageDialog.h \
     MShowMessageDlg.h \
     DisplayContestContact.h \

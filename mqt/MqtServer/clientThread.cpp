@@ -9,154 +9,10 @@
 //---------------------------------------------------------------------------
 #include "minos_pch.h"
 
-GJV_thread *clientThread = 0;
-MinosClientListener *MinosClientListener::MCL = 0;
-//---------------------------------------------------------------------------
-void runClientThread( void * )
-{
-//   WSAGuard guardian;
+#include "MinosLink.h"
+#include "clientThread.h"
+#include "serverThread.h"
 
-   trace("runClientThread");
-   if ( MinosClientListener::getListener() )
-      return ;
-   try
-   {
-      /*
-         First open listener for Clients to connect to
-      */
-      new MinosClientListener();
-      MinosClientListener::getListener() ->initialise( "Client", ClientPort );
-   }
-   catch ( Exception & e )
-   {
-      logMessage( "Exception", QString( "Exception while setting up Client listener: " ) + e.what() );
-      return ;
-   }
-   try
-   {
-      makeServerEvent( true );
-      while ( !closeApp )
-      {
-         MinosClientListener::getListener() ->processSockets();
-      }
-      makeServerEvent( false );
-   }
-   catch ( Exception & e )
-   {
-      logMessage( "Exception", QString( "Exception while running Client listener: " ) + e.what() );
-      return ;
-   }
-   try
-   {
-      //      MinosClientListener::getListener() ->clearSockets();
-      delete MinosClientListener::getListener();
-   }
-   catch ( Exception & e )
-   {
-      logMessage( "Exception", QString( "Exception while closing Client listener: " ) + e.what() );
-      return ;
-   }
-
-}
-//==============================================================================
-MinosCommonConnection *MinosClientListener::makeConnection(QTcpSocket *s)
-{
-    MinosClientConnection *c = new MinosClientConnection();
-    c->sock = QSharedPointer<QTcpSocket>(s);
-
-    return c;
-}
-//==============================================================================
-bool MinosClientListener::sendClient( MinosCommonConnection *il, TiXmlElement *tix )
-{
-   MinosId from( getAttribute( tix, "from" ) );
-   MinosId to( getAttribute( tix, "to" ) );
-
-   if ( to.user.size() == 0 )
-   {
-      // invalid to servername (still default) or no "to" user
-      return false;
-   }
-   bool fromLocal = false;
-   bool fromLocalHost = false;
-   bool toLocal = false;
-   bool toLocalHost = false;
-
-   bool addressOK = false;
-
-   if ( from.empty() || from.server.compare( MinosServer::getMinosServer() ->getServerName(), Qt::CaseInsensitive ) == 0 )
-      fromLocal = true;
-
-   if ( from.empty() && from.server.compare( DEFAULT_SERVER_NAME, Qt::CaseInsensitive ) == 0 )
-      fromLocalHost = true;
-
-   if ( to.server.compare( MinosServer::getMinosServer() ->getServerName(), Qt::CaseInsensitive ) == 0 )
-      toLocal = true;
-
-   if ( to.server.compare( DEFAULT_SERVER_NAME, Qt::CaseInsensitive ) == 0 )
-      toLocalHost = true;
-
-   if ( toLocal )
-      addressOK = true;      // proper "to" server, from anywhere
-
-   if ( ( fromLocal || fromLocalHost ) && toLocalHost )      // "to" localhost OK if "from" local app
-      addressOK = true;
-
-   if ( fromLocal && !toLocal && !toLocalHost )      // from proper address, to remote address
-      addressOK = true;
-
-   if ( addressOK && !toLocal && !toLocalHost )
-      return false;
-
-   /* BUT (and we don't need to check...
-   if (fromLocalHost && !(toLocal || toLocalHost))
-      addressOK = false;
-   */
-
-   if ( !addressOK )
-   {
-      if ( il )
-         il->sendError( tix, "cancel", "invalid-addressing" );  // deletes pak
-      return true;   // don't pass it on - its rubbish
-   }
-
-   // OK, it is for what might be one of our clients
-
-   CsGuard guard;
-   for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      // worry about the details
-      if ( ( *i ) ->checkUser( to ) )
-      {
-         if ( !( *i ) ->tryForwardStanza( tix ) )
-         {
-            // send failed; stash the message
-            // (but some stanza types should be ignored?)
-            break;
-         }
-         return true;
-      }
-   }
-   // client is not connected; we have to ignore it (send an error)
-
-   if ( il )
-      il->sendError( tix, "cancel", "item-not-found" );
-   return true;   // don't pass it on - either we have dealt with it, or its rubbish
-}
-bool MinosClientListener::checkStillClientConnection( const QString &s )
-{
-   CsGuard guard;
-   MinosId id( s );
-   for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      // worry about the details
-      if ( ( *i ) ->checkUser( id ) )
-      {
-         return true;
-      }
-   }
-   return false;
-}
 //==============================================================================
 //==============================================================================
 
@@ -167,14 +23,23 @@ MinosClientConnection::MinosClientConnection()
 bool MinosClientConnection::initialise(bool conn)
 {
    connected = conn;
+   QHostAddress h = sock->peerAddress();
+   connectHost = h.toString();
+   connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_readyRead()));
+   connect(sock.data(), SIGNAL(disconnected()), this, SLOT(on_disconnected()));
+
    return true;
 }
 
 MinosClientConnection::~MinosClientConnection()
 {
-   logMessage( "Client Link", "Closing" );
-   // here we need to revoke all of this clients published keys
-   PubSubMain->revokeClient(makeJid());
+}
+//==============================================================================
+void MinosClientConnection::closeDown()
+{
+    logMessage( "Client Link", "Closing" );
+    // here we need to revoke all of this clients published keys
+    PubSubMain->revokeClient(makeJid());
 }
 //==============================================================================
 bool MinosClientConnection::checkFrom( TiXmlElement *tix )

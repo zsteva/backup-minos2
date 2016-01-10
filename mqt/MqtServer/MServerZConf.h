@@ -8,12 +8,29 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 
+//#include "minos_pch.h"
+
 #ifndef MServerZConfH
 #define MServerZConfH 
-//---------------------------------------------------------------------------
+
+#include <QApplication>
 #include <QObject>
+#include <QTimer>
+#include <QTcpSocket>
+#include <QTcpServer>
 #include <QUdpSocket>
+
 #include <QSharedPointer>
+#include <QHostAddress>
+#include <QHostInfo>
+
+#include <QSettings>
+#include <QHostInfo>
+#include <QNetworkInterface>
+#include <QDateTime>
+
+//#include "MServer.h"
+//---------------------------------------------------------------------------
 class Server
 {
    public:
@@ -35,10 +52,33 @@ class Server
             : /*available( false ),*/ zconf( false ), local( false ),
             station( s ), port( -1 ), autoReconnect(false)
       {}
+      virtual ~Server(){}
 };
 extern std::vector<Server *> serverList;
 extern Server *findStation( const QString s );
 
+class UDPSocket: public QObject
+{
+    Q_OBJECT
+    QSharedPointer<QUdpSocket> qus;
+    QString ifaceName;
+
+public:
+    UDPSocket();
+    virtual ~UDPSocket() override;
+    bool setup(QNetworkInterface &intr, QNetworkAddressEntry &addr);
+    bool setupReadOnly();
+
+    bool sendMessage(const QString &mess );
+
+    QNetworkInterface qui;
+
+private slots:
+      void onReadyRead();
+      void onSocketStateChange(QAbstractSocket::SocketState);
+      void onRoSocketStateChange(QAbstractSocket::SocketState);
+
+};
 class TZConf: public QObject
 {
     Q_OBJECT
@@ -50,30 +90,50 @@ class TZConf: public QObject
       bool waitNameReply;
       QString localName;
 
-      QSharedPointer<QUdpSocket> qus;
-      QHostAddress groupAddress;
+      QSharedPointer<UDPSocket> rxSocket;
+      std::vector<QSharedPointer<UDPSocket> > UdpSocks;
+
+      //QSharedPointer<UDPSocket>  rxSocket;
+
+      QTimer beaconTimer;
       int iPort;
 
-      bool sendMessage(const QString &mess );
+      bool sendMessage(bool beaconReq );
+
+      static TZConf *ZConf;
+
+      unsigned int beaconInterval;   // once a minute
+      QDateTime lastTick;
+
+
 
    public:  		// User declarations
 
       TZConf( );
-      ~TZConf( );
+      virtual ~TZConf( );
 //      static void publishServer( const QString &name );
+      static  TZConf *getZConf()
+       {
+           return ZConf;
+       }
 
-      void runThread();
+      void runThread(const QString &name);
 
-      void setName( const QString &name );
+     // void setName(  );
       QString getName()
       {
          return localName;
       }
-      void ServerScan();
 
-      QString getZConfString(bool beacon = false);
-      bool setZConfString(const QString &message, QHostAddress recvAddress);
+      void ServerScan();
+      bool sendBeaconResponse;
+      QHostAddress groupAddress;
+
+      QString getZConfString(bool beaconreq);
+      bool processZConfString(const QString &message, QHostAddress recvAddress);
       void publishDisconnect(const QString &name);
+      void closeDown();
+private slots:
+      void onTimeout();
 };
-extern TZConf *ZConf;
 #endif

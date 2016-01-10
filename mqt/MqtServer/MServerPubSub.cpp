@@ -9,13 +9,11 @@
 //---------------------------------------------------------------------------
 #include "minos_pch.h"
 
-#include "XMPPEvents.h"
-#include "MServerPubSub.h"
+#include "MinosLink.h"
+#include "clientThread.h"
+#include "serverThread.h"
 
-#include "XMPPRPCObj.h"
-#include "RPCPubSub.h"
-#include "PubSubClient.h"
-#include "PubSubServer.h"
+extern bool closeApp;
 
 //---------------------------------------------------------------------------
 TPubSubMain *PubSubMain = 0;
@@ -672,10 +670,6 @@ TPubSubMain::TPubSubMain( )
 //---------------------------------------------------------------------------
 TPubSubMain::~TPubSubMain()
 {
-   // need to clear all the lists
-   Published::clearPublist();
-   MinosRPCObj::clearRPCObjects();
-   RPCServerPubSub::close( );
 }
 //---------------------------------------------------------------------------
 const char *stateList[] =
@@ -686,7 +680,6 @@ const char *stateList[] =
 };
 bool TPubSubMain::publish( const QString &pubId, const QString &category, const QString &key, const QString &value, PublishState pState )
 {
-   CsGuard g;
    if (closeApp)
    {
       return false;
@@ -696,7 +689,6 @@ bool TPubSubMain::publish( const QString &pubId, const QString &category, const 
 }
 bool TPubSubMain::serverPublish( const QString &pubId, const QString &svr, const QString &category, const QString &key, const QString &value, PublishState pState )
 {
-   CsGuard g;
    if (closeApp)
    {
       return false;
@@ -706,12 +698,10 @@ bool TPubSubMain::serverPublish( const QString &pubId, const QString &svr, const
 }
 int GetSubscribedCount()
 {
-   CsGuard g;
    return Published::GetSubscribedCount();
 }
 int GetPublishedCount()
 {
-   CsGuard g;
    return Published::GetPublishedCount();
 }
 //---------------------------------------------------------------------------
@@ -720,7 +710,6 @@ int GetPublishedCount()
 
 void TPubSubMain::publishCallback( bool err, MinosRPCObj *mro, const QString &from )
 {
-   CsGuard g;
    logMessage( "Publish callback from " + from + ( err ? ":Error" : ":Normal" ) );
 
    if ( !err )
@@ -772,7 +761,6 @@ void TPubSubMain::publishCallback( bool err, MinosRPCObj *mro, const QString &fr
 
 void TPubSubMain::subscribeCallback( bool err, MinosRPCObj *mro, const QString &from )
 {
-   CsGuard g;
    logMessage( "Client Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
    if ( !err )
    {
@@ -815,7 +803,6 @@ void TPubSubMain::subscribeCallback( bool err, MinosRPCObj *mro, const QString &
 
 void TPubSubMain::remoteSubscribeCallback( bool err, MinosRPCObj *mro, const QString &from )
 {
-   CsGuard g;
    logMessage( "Remote Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
    if ( !err )
    {
@@ -867,7 +854,6 @@ void TPubSubMain::remoteSubscribeCallback( bool err, MinosRPCObj *mro, const QSt
 
 void TPubSubMain::serverSubscribeCallback( bool err, MinosRPCObj *mro, const QString &from )
 {
-   CsGuard g;
    logMessage( "Server Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
    if ( !err )
    {
@@ -914,7 +900,6 @@ void TPubSubMain::serverSubscribeCallback( bool err, MinosRPCObj *mro, const QSt
 
 void TPubSubMain::notifyCallback( bool err, MinosRPCObj * /*mro*/, const QString &from )
 {
-   CsGuard g;
    // response to pubsub calls
    logMessage( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
 }
@@ -924,7 +909,6 @@ void TPubSubMain::notifyCallback( bool err, MinosRPCObj * /*mro*/, const QString
 
 void TPubSubMain::serverNotifyCallback( bool err, MinosRPCObj *mro, const QString &from )
 {
-   CsGuard g;
    // we need to pass it on to any of our subscribers who are interested
    // in this event from this server
    // But why aren't we sending a result?
@@ -995,3 +979,10 @@ void TPubSubMain::disconnectServer(const QString &pubId)
    }
 }
 
+void TPubSubMain::closeDown()
+{
+    // need to clear all the lists
+    Published::clearPublist();
+    MinosRPCObj::clearRPCObjects();
+    RPCServerPubSub::close( );
+}

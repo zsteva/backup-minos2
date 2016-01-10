@@ -9,187 +9,35 @@
 //---------------------------------------------------------------------------
 #include "minos_pch.h"
 
-GJV_thread *serverThread = 0;
-MinosServerListener *MinosServerListener::MSL = 0;
-//---------------------------------------------------------------------------
-void runServerThread( void * )
-{
-//   WSAGuard guardian;
+#include "MinosLink.h"
+#include "clientThread.h"
+#include "serverThread.h"
 
-    trace("runServerThread");
-   if ( MinosServerListener::getListener() )
-      return ;
-   try
-   {
-      /*
-         Next open listener for Servers to connect to
-      */
-      new MinosServerListener();
-      MinosServerListener::getListener() ->initialise( "Server", ServerPort );
-   }
-   catch ( Exception & e )
-   {
-      logMessage( "Exception", QString( "Exception while setting up Server listener: " ) + e.what() );
-      return ;
-   }
-   try
-   {
-      while ( !closeApp )
-      {
-         MinosServerListener::getListener() ->processSockets();
-      }
-   }
-   catch ( Exception & e )
-   {
-      logMessage( "Exception", QString( "Exception while running Server listener: " ) + e.what() );
-      return ;
-   }
-   try
-   {
-      //      MinosServerListener::getListener() ->clearSockets();
-      delete MinosServerListener::getListener();
-   }
-   catch ( Exception & e )
-   {
-      logMessage( "Exception", QString( "Exception while closing Server listener: " ) + e.what() );
-      return ;
-   }
-}
-//==============================================================================
-MinosCommonConnection *MinosServerListener::makeConnection(QTcpSocket *s)
-{
-    MinosServerConnection *c = new MinosServerConnection();
-    c->sock = QSharedPointer<QTcpSocket>(s);
-
-    return c;
-}
-
-//==============================================================================
-bool MinosServerListener::sendServer( MinosCommonConnection *il, TiXmlElement *tix )
-{
-   MinosId to( getAttribute( tix, "to" ) );
-
-   if ( to.server.size() == 0 )
-      return false;
-   if ( to.server.compare( MinosServer::getMinosServer() ->getServerName(), Qt::CaseInsensitive) == 0 )
-      return false;
-   if ( to.server.compare( DEFAULT_SERVER_NAME, Qt::CaseInsensitive ) == 0 )
-      return false;
-
-   // OK, it is not for us... look at connected servers
-
-   //   bool connect = true;
-   bool connect = false;
-   CsGuard guard;
-   for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      if ( ( *i ) ->checkServer( to ) && (*i) ->isTxConnection() )
-      {
-         if ( !( *i ) ->tryForwardStanza( tix ) )
-         {
-            connect = false;
-            break;
-         }
-         return true;
-      }
-   }
-   // send failed; stash the message and initiate a server connection
-   // (but some stanza types should be ignored?)
-   if ( connect && MinosServer::getMinosServer() ->getServerName() != DEFAULT_SERVER_NAME )
-   {
-      // We need to look at the servers vector, and try to find the relevant one
-      // If we can't find it, we refuse anyway
-
-      Server * srv = findStation( to.server );
-      if ( srv )
-      {
-         // set ourselves up to connect
-         MinosServerConnection * s = new MinosServerConnection();
-         if ( s->mConnect( srv ) )
-         {
-            connectFreeSlot( s );
-            // and we need to TRY to resend
-            if (!s ->tryForwardStanza( tix ))
-            {
-               connect = false;
-            }
-            return true;
-         }
-         else
-         {
-            delete s;
-
-            // and continue to refuse the message
-         }
-      }
-   }
-
-   // server is not connected; REFUSE the message.
-
-   // The originator should retry sometime later to send message again
-
-   if ( il )
-      il->sendError( tix, "retry", "item-not-found" );  // deletes pak
-   return true;   // don't pass it on - either we have dealt with it, or its rubbish
-}
-void MinosServerListener::checkServerConnected( Server *srv, bool force )
-{
-   if ( srv->local )
-   {
-      return ;
-   }
-   {
-       CsGuard guard;
-       for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-       {
-          if ( ( *i ) && ( *i ) ->checkServer( srv->station ) && (*i)->isTxConnection() )
-          {
-             return ;
-          }
-       }
-   }
-   if (force || srv->autoReconnect)
-   {
-      MinosServerConnection * s = new MinosServerConnection();
-      if ( s->mConnect( srv ) )
-         connectFreeSlot( s );
-      else
-         delete s;
-   }
-}
-
-bool MinosServerListener::checkStillServerConnection( const QString &s )
-{
-    CsGuard guard;
-   for ( std::vector<MinosSocket *>::iterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      if ( ( *i ) && ( *i ) ->checkServer( s ) )
-      {
-         return true;
-      }
-   }
-   return false;
-}
 //==============================================================================
 //==============================================================================
 MinosServerConnection::MinosServerConnection() : srv( 0 ), resubscribed( false )
 {}
 bool MinosServerConnection::initialise(bool conn)
 {
+    QHostAddress h = sock->peerAddress();
+    connectHost = h.toString();
+    connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_readyRead()));
    return conn;   // already initialised
 }
 
 MinosServerConnection::~MinosServerConnection()
 {
-   logMessage( "Server Link", "Closing" );
-   // here we need to mark all of this servers published keys as disconnected
-   // but we leave them in place - server connections are to be treated as fragile
-   // When it reconnects what do we do with those that aren't republished?
-   // after a time they should be retired - server may have been restarted
-   PubSubMain->disconnectServer(makeJid());
-   if (srv)
-      ZConf->publishDisconnect(srv->station);
 }
+void MinosServerConnection::closeDown()
+{
+   logMessage( "Server Link", "Closing" );
+
+   if (PubSubMain)
+       PubSubMain->disconnectServer(makeJid());
+   if (srv)
+      TZConf::getZConf()->publishDisconnect(srv->station);
+}
+
 bool MinosServerConnection::checkFrom( TiXmlElement *tix )
 {
    // No "from" on a server link - kill the link
@@ -215,6 +63,8 @@ bool MinosServerConnection::mConnect( Server *psrv )
     sock = QSharedPointer<QTcpSocket>(new QTcpSocket);
 
     connect(sock.data(), SIGNAL(connected()), this, SLOT(on_connected()));
+    connect(sock.data(), SIGNAL(disconnected()), this, SLOT(on_disconnected()));
+    connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_readyRead()));
     sock->connectToHost(srv->host, srv->port);
     txConnection = true;
    return true;
@@ -225,10 +75,11 @@ void MinosServerConnection::on_connected()
     logMessage( "Server", QString( "Connected OK to " ) + srv->station + " host " + srv->host );
     RPCRequest *rpa = new RPCRequest( clientServer, MinosServer::getMinosServer() ->getServerName(), "ServerSetFromId" );   // for our local server, this one MUST have a from
     rpa->addParam( MinosServer::getMinosServer() ->getServerName() );
-    rpa->addParam( ZConf->getZConfString( ) );
+    rpa->addParam( TZConf::getZConf()->getZConfString(true ) );
     sendAction( rpa );               // This wants to be a queue response...
     delete rpa;
 }
+
 //==============================================================================
 bool MinosServerConnection::setFromId( MinosId &id, RPCRequest *req )
 {
@@ -261,7 +112,7 @@ bool MinosServerConnection::setFromId( MinosId &id, RPCRequest *req )
          QString message;
          if (req->getStringArg(1, message))
          {
-            ZConf->setZConfString(message, QHostAddress(connectHost));
+            TZConf::getZConf()->processZConfString(message, QHostAddress(connectHost));
          }
       }
    }

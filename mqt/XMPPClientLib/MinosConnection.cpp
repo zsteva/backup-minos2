@@ -96,23 +96,29 @@ bool XMPPClosedown()
    return true;
 }
 //---------------------------------------------------------------------------
+MinosAppConnection::MinosAppConnection(const QString &jid ) : jabberId(jid), sock( new QTcpSocket ), user_data( this )
+{
+    connect(&waitConnectTimer, SIGNAL(timeout()), this, SLOT(on_waitConnectTimeout()));
+    connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_readyRead()));
+    connect(sock.data(), SIGNAL(connected()), this, SLOT(on_connected()));
+    connect(sock.data(), SIGNAL(disconnected()), this, SLOT(on_disconnected()));
+}
+MinosAppConnection::~MinosAppConnection()
+{}
 void MinosAppConnection::startConnection()
 {
-    connect(&waitConectTimer, SIGNAL(timeout()), this, SLOT(on_WaitConnectTimeout()));
-    connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_ReadyRead()));
-    connect(sock.data(), SIGNAL(connected()), this, SLOT(on_Connected()));
-    waitConectTimer.start(1000);
+    waitConnectTimer.start(1000);
 }
-void MinosAppConnection::on_WaitConnectTimeout()
+void MinosAppConnection::on_waitConnectTimeout()
 {
     if (!checkServerReady())
     {
         return;
     }
-    waitConectTimer.stop();
+    waitConnectTimer.stop();
     sock->connectToHost("localhost", ClientPort);
 }
-void MinosAppConnection::on_Connected()
+void MinosAppConnection::on_connected()
 {
     connected = true;
 
@@ -123,9 +129,10 @@ void MinosAppConnection::on_Connected()
     RPCPubSub::reconnectPubSub();
 }
 
-void MinosAppConnection::on_Disconnected()
+void MinosAppConnection::on_disconnected()
 {
-
+    trace("on_disconnected");
+    closeDaemonThread();
 }
 
 void MinosAppConnection::closeDaemonThread()
@@ -135,6 +142,15 @@ void MinosAppConnection::closeDaemonThread()
       connected = false;
    }
    closeConnection();
+
+   startConnection();
+}
+bool MinosAppConnection::closeConnection()
+{
+   // close down the socket connection
+    sock->close();
+//    sock->waitForDisconnected();
+    return true;
 }
 //---------------------------------------------------------------------------
 void MinosAppConnection::onLog ( const QString &data, int is_incoming )
@@ -150,16 +166,13 @@ void MinosAppConnection::onLog ( const QString &data, int is_incoming )
 
    logMessage( "XMPP", logbuff );
 }//---------------------------------------------------------------------------
-MinosAppConnection::MinosAppConnection(const QString &jid ) : jabberId(jid), sock( new QTcpSocket ), user_data( this )
-{}
-MinosAppConnection::~MinosAppConnection()
-{}
-void MinosAppConnection::on_ReadyRead()
+
+void MinosAppConnection::on_readyRead()
 {
    // read from the connection; buffer until a complete packet received
 
     const int RXBUFFLEN = 4096;
-    char rxbuff[ RXBUFFLEN ];
+    char rxbuff[ RXBUFFLEN + 1 ];
 
     int rxlen = sock->read(rxbuff, RXBUFFLEN);
 
@@ -215,13 +228,6 @@ void MinosAppConnection::on_ReadyRead()
          }
       }
    return;
-}
-bool MinosAppConnection::closeConnection()
-{
-   // close down the socket connection
-    sock->close();
-    sock->waitForDisconnected();
-   return true;
 }
 
 void sendAction( XStanza *a )

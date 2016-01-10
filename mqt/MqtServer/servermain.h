@@ -4,6 +4,14 @@
 #include <QMainWindow>
 #include <QTimer>
 
+#include "MinosLink.h"
+#include "minoslistener.h"
+#include "clientThread.h"
+#include "serverThread.h"
+
+class TZConf;
+class TPubSubMain;
+
 namespace Ui {
 class MainWindow;
 }
@@ -19,6 +27,8 @@ public:
     explicit ServerMain(QWidget *parent = 0);
     ~ServerMain();
     void logMessage( const QString &s );
+    void closeEvent(QCloseEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 private slots:
     void on_CloseButton_clicked();
@@ -27,6 +37,10 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QSharedPointer<MinosClientListener> clientListener;
+    QSharedPointer<MinosServerListener> serverListener;
+    QSharedPointer<TZConf> ZConf;
+    QSharedPointer<TPubSubMain> PubSubMain;
 };
 extern ServerMain *MinosMainForm;
 extern bool closeApp;

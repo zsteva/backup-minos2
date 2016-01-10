@@ -8,45 +8,14 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-
 #ifndef serverThreadH
 #define serverThreadH
-#include "minos_pch.h"
-//---------------------------------------------------------------------------
-extern GJV_thread *serverThread;
-extern void runServerThread( void * );
+
+#include <QDateTime>
+#include "MinosLink.h"
+
 class Server;
-//==============================================================================
-class MinosServerListener: public MinosListener
-{
-    Q_OBJECT
-   private:
-      static MinosServerListener *MSL;
-   protected:
-      virtual MinosCommonConnection *makeConnection(QTcpSocket *s) override;
-   public:
-      static MinosServerListener *getListener()
-      {
-         return MSL;
-      }
-      MinosServerListener()
-      {
-         MSL = this;
-      }
-      ~MinosServerListener() override
-      {
-         MSL = 0;
-      }
-//      virtual void process() override;
-      bool sendServer( MinosCommonConnection *il, TiXmlElement *pak );
-      void checkServerConnected( Server *s, bool force );
-      bool checkStillServerConnection( const QString &s );
-      virtual QString getIdentity() override
-      {
-         return "MinosServerListener";
-      }
-};
-//==============================================================================
+
 class MinosServerConnection: public MinosCommonConnection
 {
     Q_OBJECT
@@ -73,6 +42,7 @@ class MinosServerConnection: public MinosCommonConnection
          return "MinosServerConnection " + makeJid();
       }
       virtual void sendKeepAlive( );
+      void closeDown() override;
 private slots:
       void on_connected();
 };

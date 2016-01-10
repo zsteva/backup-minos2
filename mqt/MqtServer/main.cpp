@@ -1,5 +1,5 @@
+#include "minos_pch.h"
 #include "servermain.h"
-#include <QApplication>
 
 int main(int argc, char *argv[])
 {

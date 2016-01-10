@@ -8,12 +8,10 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 #include "minos_pch.h"
-#include <QSettings>
-#include <QHostInfo>
 
-#include "XMPPEvents.h"
-#include "MServerZConf.h"
-#include "MServerPubSub.h"
+#include "MinosLink.h"
+#include "clientThread.h"
+#include "serverThread.h"
 
 MinosServer *MinosServer::singleton = 0;
 /*static*/
@@ -29,7 +27,7 @@ MinosServer *MinosServer::getMinosServer()
 
 MinosServer::MinosServer() : serverName( DEFAULT_SERVER_NAME )
 {
-  QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
+  QSettings config("./configuration/MinosConfig.ini", QSettings::IniFormat);
   QString circleOfHell = config.value( "Circle Of Hell/Name", "No_name_in_config" ).toString().trimmed();
   serverName = circleOfHell;
 
@@ -172,7 +170,6 @@ void MinosServer::dispatchStanza( MinosCommonConnection *il, RPCRequest *req )
         || req->methodName == "Minos:PubSub:ServerNotify"
         || req->methodName == "Minos:PubSub:ClientNotify" )
    {
-      CsGuard g;
       makeXMPPEvent( req );
    }
 }
