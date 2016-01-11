@@ -62,21 +62,22 @@ class UDPSocket: public QObject
     Q_OBJECT
     QSharedPointer<QUdpSocket> qus;
     QString ifaceName;
+    QNetworkInterface qui;
 
 public:
     UDPSocket();
     virtual ~UDPSocket() override;
     bool setup(QNetworkInterface &intr, QNetworkAddressEntry &addr);
-    bool setupReadOnly();
+    bool setupRO();
 
     bool sendMessage(const QString &mess );
 
-    QNetworkInterface qui;
 
 private slots:
       void onReadyRead();
       void onSocketStateChange(QAbstractSocket::SocketState);
-      void onRoSocketStateChange(QAbstractSocket::SocketState);
+      void onSocketStateChangeRO(QAbstractSocket::SocketState);
+      void onError(QAbstractSocket::SocketError socketError);
 
 };
 class TZConf: public QObject
@@ -90,8 +91,9 @@ class TZConf: public QObject
       bool waitNameReply;
       QString localName;
 
-      QSharedPointer<UDPSocket> rxSocket;
       std::vector<QSharedPointer<UDPSocket> > UdpSocks;
+
+      QSharedPointer<UDPSocket> rxSocket;
 
       //QSharedPointer<UDPSocket>  rxSocket;
 

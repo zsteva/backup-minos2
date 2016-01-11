@@ -68,6 +68,10 @@ void TZConf::runThread(const QString &name)
 
     groupAddress = QHostAddress(UPNP_GROUP);
 
+    QSharedPointer<UDPSocket> rqus(new UDPSocket());
+    rqus->setupRO();
+    rxSocket = rqus;
+
     // Get network interfaces list
 
     QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
@@ -99,9 +103,7 @@ void TZConf::runThread(const QString &name)
             }
         }
     }
-    rxSocket = QSharedPointer<UDPSocket>(new UDPSocket());
 
-    rxSocket->setupReadOnly();
 
    /*
       <minosServer UUID='xxx' name='name' port='port' request='true' />
@@ -372,15 +374,19 @@ UDPSocket::~UDPSocket()
 bool UDPSocket::setup(QNetworkInterface &iface, QNetworkAddressEntry &addr)
 {
     ifaceName = iface.humanReadableName();
+    qui = iface;
     qus = QSharedPointer<QUdpSocket>(new QUdpSocket);
+
+    connect(qus.data(), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(onError(QAbstractSocket::SocketError)));
 
     connect(qus.data(), SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(onSocketStateChange(QAbstractSocket::SocketState)));
 
     qui = iface;
+    trace("Binding to " + addr.ip().toString());
     bool res = qus->bind(
-                TZConf::getZConf()->groupAddress,//addr.ip(), QHostAddress::AnyIPv4,//TZConf::getZConf()->groupAddress,
+                addr.ip(),//addr.ip(), QHostAddress::AnyIPv4,//TZConf::getZConf()->groupAddress,
                 UPNP_PORT,
-                QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint//QUdpSocket::DefaultForPlatform
+                QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint
                 );
     return res;
 }
@@ -388,55 +394,82 @@ void UDPSocket::onSocketStateChange (QAbstractSocket::SocketState state)
 {
     if ( state == QAbstractSocket::BoundState )
     {
-        qus->setSocketOption(QAbstractSocket::MulticastTtlOption, 1);   // default
-        qus->setSocketOption(QAbstractSocket::MulticastLoopbackOption, 1);  // default
-        qus->setMulticastInterface(qui);
         bool res = qus->joinMulticastGroup(TZConf::getZConf()->groupAddress, qui);
         if (res)
         {
-            trace("Bound and Joined multicast group " + TZConf::getZConf()->groupAddress.toString()
+            trace("Bound and set multicast interface " + TZConf::getZConf()->groupAddress.toString()
+                  + " on " + qus->localAddress().toString() + " interface :" + ifaceName);
+        }
+        else
+        {
+            trace("Failed to set multicast interface " + TZConf::getZConf()->groupAddress.toString()
                   + " on " + qus->localAddress().toString() + " interface :" + ifaceName);
         }
     }
+    //connect(qus.data(), SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 }
-
-
-bool UDPSocket::setupReadOnly()
+bool UDPSocket::setupRO()
 {
     qus = QSharedPointer<QUdpSocket>(new QUdpSocket);
 
-    connect(qus.data(), SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(onRoSocketStateChange(QAbstractSocket::SocketState)));
+    connect(qus.data(), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(onError(QAbstractSocket::SocketError)));
+
+    connect(qus.data(), SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(onSocketStateChangeRO(QAbstractSocket::SocketState)));
 
     bool res = qus->bind(
-                QHostAddress::AnyIPv4, //TZConf::getZConf()->groupAddress, //QHostAddress::AnyIPv4,
+                TZConf::getZConf()->groupAddress, //QHostAddress::AnyIPv4,
                 UPNP_PORT,
-                QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint //QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint//QUdpSocket::DefaultForPlatform
+                QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint
                 );
     return res;
 }
-void UDPSocket::onRoSocketStateChange (QAbstractSocket::SocketState state)
+void UDPSocket::onSocketStateChangeRO (QAbstractSocket::SocketState state)
 {
     if ( state == QAbstractSocket::BoundState )
     {
-        QList<QNetworkInterface> mListIfaces = QNetworkInterface::allInterfaces();
+        QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
 
-        for (int i = 0; i < mListIfaces.length(); ++i)
+        // Interfaces iteration
+        for (int i = 0; i < ifaces.size(); i++)
         {
-            if (!mListIfaces.at(i).flags().testFlag( QNetworkInterface::IsUp))
+            if (!ifaces[i].flags().testFlag( QNetworkInterface::IsUp))
                 continue;
-            if (!mListIfaces.at(i).flags().testFlag(QNetworkInterface::IsRunning))
+            if (!ifaces[i].flags().testFlag(QNetworkInterface::IsRunning))
                 continue;
 
-            bool ret = qus->joinMulticastGroup(TZConf::getZConf()->groupAddress, mListIfaces.at(i));
-            if (!ret)
+            QList<QNetworkAddressEntry> addrs = ifaces[i].addressEntries();
+
+            // And for any IP address, if it is IPv4 and the interface is active, make a socket
+            for (int j = 0; j < addrs.size(); j++)
             {
-                trace("Failed to join " + mListIfaces.at(i).humanReadableName() + " :" + qus->errorString());
+                if ((addrs[j].ip().protocol() == QAbstractSocket::IPv4Protocol)
+                        && !addrs[j].ip().toString().isEmpty())
+                {
+                    bool res = qus->joinMulticastGroup(TZConf::getZConf()->groupAddress, ifaces[i]);
+                    if (res)
+                    {
+                        trace("Bound and Joined multicast group " + TZConf::getZConf()->groupAddress.toString()
+                              + " on " + qus->localAddress().toString() + " interface :" + ifaces[i].humanReadableName());
+                    }
+                    else
+                    {
+                        trace("Failed to Join multicast group " + TZConf::getZConf()->groupAddress.toString()
+                              + " on " + qus->localAddress().toString()
+                              + " interface :" + ifaces[i].humanReadableName()
+                              + " err " + QString::number(qus->error()));
+                    }
+                    break;
+                }
             }
+
+
         }
-        trace("Bound on " + qus->localAddress().toString() /*+ " interface " + QHostAddress::AnyIPv4,*/);
+
         connect(qus.data(), SIGNAL(readyRead()), this, SLOT(onReadyRead()));
     }
 }
+
+
 void UDPSocket::onReadyRead()
 {
     while (qus->hasPendingDatagrams())
@@ -448,8 +481,8 @@ void UDPSocket::onReadyRead()
 
         qus->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 
-        trace("datagram read : "
-             + QString(datagram) + " from " + sender.toString());
+        trace("DATAGRAM READ : "
+             + QString(datagram) + " from " + sender.toString() + " on " + ifaceName);
 
         TZConf::getZConf()->sendBeaconResponse = TZConf::getZConf()->processZConfString(QString(datagram), sender);
     }
@@ -458,10 +491,14 @@ bool UDPSocket::sendMessage(const QString &mess )
 {
     QByteArray packet = QByteArray(mess.toStdString().c_str());
 
-    int ret = qus->writeDatagram(packet.data(), packet.length(), TZConf::getZConf()->groupAddress, UPNP_PORT);
+    /*int ret =*/ qus->writeDatagram(packet.data(), packet.length(), TZConf::getZConf()->groupAddress, UPNP_PORT);
 
     trace("send datagram on " + ifaceName
           + " : " + mess);
 
     return true;
+}
+void UDPSocket::onError(QAbstractSocket::SocketError socketError)
+{
+    trace("Error: " + qus->errorString());
 }
