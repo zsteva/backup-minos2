@@ -13,6 +13,7 @@ extern bool closeApp;
 
 #define UPNP_PORT 9999
 #define UPNP_GROUP "239.255.0.1"
+class UPnPDataObject;
 
 class MCReadSocket : public QObject
 {
@@ -20,10 +21,12 @@ class MCReadSocket : public QObject
     QSharedPointer<QUdpSocket> qus;
     QString ifaceName;
     QNetworkInterface qui;
+    UPnPDataObject *state;
+
 public:
     explicit MCReadSocket(QObject *parent = 0);
     virtual ~MCReadSocket() override;
-    void setupRO();
+    bool setupRO();
 
     void onTimeout();
 signals:
@@ -31,8 +34,8 @@ signals:
     void readyRead(QString, QString);
 
 public slots:
-    void onSocketStateChangeRO(QAbstractSocket::SocketState);
-    void onReadyRead();
+    //void onSocketStateChangeRO(QAbstractSocket::SocketState);
+    //void onReadyRead();
 }
 ;
 

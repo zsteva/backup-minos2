@@ -27,7 +27,7 @@ DEFINES += TIXML_USE_STL
 
 INCLUDEPATH += C:\Projects\boost\boost_1_59_0
 
-
+LIBS += -lws2_32
 
 SOURCES += main.cpp\
     MinosLink.cpp \

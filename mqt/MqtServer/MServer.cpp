@@ -36,18 +36,6 @@ MinosServer::MinosServer() : serverName( DEFAULT_SERVER_NAME )
       QString h = QHostInfo::localHostName();
       serverName = h;
   }
-/*
-   TIniFile * config = new TIniFile( ".\\Configuration\\MinosConfig.ini" );
-   String circleOfHell = config->ReadString( "Circle Of Hell", "Name", "No_name_in_config" ).Trim();
-   serverName = circleOfHell.c_str();
-   if ( serverName.size() == 0 )
-   {
-      char buff[ 256 ];
-      if ( gethostname( buff, 255 ) == 0 )
-         serverName = buff;
-   }
-   delete config;
-*/
 }
 
 MinosServer::~MinosServer()
