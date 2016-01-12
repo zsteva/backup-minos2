@@ -55,7 +55,8 @@ SOURCES += main.cpp \
     tstatsdispframe.cpp \
     dxccframe.cpp \
     districtframe.cpp \
-    locframe.cpp
+    locframe.cpp \
+    SendRPCDM.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -89,7 +90,8 @@ HEADERS  += \
     tstatsdispframe.h \
     dxccframe.h \
     districtframe.h \
-    locframe.h
+    locframe.h \
+    SendRPCDM.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \

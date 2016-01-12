@@ -2,6 +2,9 @@
 
 #include "tqsoeditdlg.h"
 #include "tforcelogdlg.h"
+#include "SendRPCDM.h"
+
+
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
 
@@ -590,12 +593,12 @@ void QSOLogFrame::keyPressEvent( QKeyEvent* event )
        if ( ctrl && shift )
        {
           // keyer record keys
-          //TSendDM::sendKeyerRecord( Key - VK_F1 + 1 );
+          TSendDM::sendKeyerRecord( Key - Qt::Key_F1 + 1 );
        }
        else
        {
           // Keyer play keys
-          //TSendDM::sendKeyerPlay( Key - VK_F1 + 1 );
+          TSendDM::sendKeyerPlay( Key - Qt::Key_F1 + 1 );
        }
     }
     else

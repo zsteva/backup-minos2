@@ -678,6 +678,10 @@ void TSingleLogFrame::on_ContNA_clicked()
 {
     saveFilters();
 }
+bool TSingleLogFrame::getStanza( unsigned int stanza, QString &stanzaData )
+{
+   return contest->getStanza( stanza, stanzaData );
+}
 //=============================================================================
 QSOGridModel::QSOGridModel()
 {}

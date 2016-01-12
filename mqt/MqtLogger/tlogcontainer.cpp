@@ -10,6 +10,7 @@
 #include "CalendarList.h"
 #include "contestdetails.h"
 #include "tmanagelistsdlg.h"
+#include "SendRPCDM.h"
 
 TLogContainer *LogContainer = 0;
 
@@ -69,7 +70,7 @@ bool TLogContainer::show(int argc, char *argv[])
 
     connect(&MinosLoggerEvents::mle, SIGNAL(ReportOverstrike(bool , BaseContestLog * )), this, SLOT(on_ReportOverstrike(bool , BaseContestLog * )));
 
-//    SendDM = new TSendDM( this );
+    SendDM = new TSendDM( this );
     QMainWindow::show();
     if ( TAboutBox::ShowAboutBox( this, true ) == false )
     {
@@ -995,3 +996,53 @@ void TLogContainer::selectContest( BaseContestLog *pc, BaseContact *pct )
         }
     }
 }
+//---------------------------------------------------------------------------
+void TLogContainer::setBandMapLoaded()
+{
+   bandMapLoaded = true;
+}
+//---------------------------------------------------------------------------
+bool TLogContainer::isBandMapLoaded()
+{
+   return bandMapLoaded;
+}
+void TLogContainer::setCaption(QString captionToSet)
+{
+   if ( windowTitle().length() )
+   {
+      if ( captionToSet != windowTitle() )
+         setWindowTitle(captionToSet);
+   }
+   else
+      if ( windowTitle() != "Minos contest Logger Application" )
+         setWindowTitle("Minos contest Logger Application");
+}
+
+void TLogContainer::setMode( QString m )
+{
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    MinosLoggerEvents::SendSetMode(m, ct);
+}
+void TLogContainer::setFreq( QString f )
+{
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    MinosLoggerEvents::SendSetFreq(f, ct);
+}
+//---------------------------------------------------------------------------
+TSingleLogFrame *TLogContainer::findContest(const QString &pubname )
+{
+   for ( int j = 0; j < ui->ContestPageControl->count(); j++ )
+   {
+       QWidget *ctab = ui->ContestPageControl->widget(j);
+       if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( ctab ) )
+       {
+           if ( f->getContest() ->publishedName == pubname )
+           {
+              return f;
+           }
+       }
+   }
+
+   return 0;
+}
+//---------------------------------------------------------------------------

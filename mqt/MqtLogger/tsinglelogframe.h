@@ -90,7 +90,7 @@ public:
     void updateTrees();
     void updateQSODisplay();
 
-    bool getStanza( unsigned int stanza, std::string &stanzaData );
+    bool getStanza( unsigned int stanza, QString &stanzaData );
 
     QModelIndex QSOTreeClickIndex;
     QModelIndex matchTreeClickIndex;

@@ -34,6 +34,14 @@ public:
     QLabel *sblabel1;
     QLabel *sblabel2;
 
+    TSingleLogFrame *findContest( const QString &pubname );
+
+    void setCaption( QString );
+    void setMode( QString );
+    void setFreq( QString );
+    void setBandMapLoaded();
+    bool isBandMapLoaded();
+    bool bandMapLoaded;
 
 private:
     Ui::TLogContainer *ui;
