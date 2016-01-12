@@ -29,7 +29,8 @@
 #include <QNetworkInterface>
 #include <QDateTime>
 
-//#include "MServer.h"
+#include "mcreadsocket.h"
+
 //---------------------------------------------------------------------------
 class Server
 {
@@ -68,16 +69,15 @@ public:
     UDPSocket();
     virtual ~UDPSocket() override;
     bool setup(QNetworkInterface &intr, QNetworkAddressEntry &addr);
-    bool setupRO();
+//    bool setupRO(QNetworkInterface &intr, QNetworkAddressEntry &addr);
 
     bool sendMessage(const QString &mess );
 
 
 private slots:
-      void onReadyRead();
       void onSocketStateChange(QAbstractSocket::SocketState);
-      void onSocketStateChangeRO(QAbstractSocket::SocketState);
-      void onError(QAbstractSocket::SocketError socketError);
+//      void onSocketStateChangeRO(QAbstractSocket::SocketState);
+//      void onError(QAbstractSocket::SocketError socketError);
 
 };
 class TZConf: public QObject
@@ -86,14 +86,15 @@ class TZConf: public QObject
    private:  	// User declarations
 
       static void publishServer(const QString &uuid, const QString &name,
-                        QHostAddress hosttarget, int PortAsNumber, bool autoReconnect );
+                        const QString &hosttarget, int PortAsNumber, bool autoReconnect );
       void readServerList();
       bool waitNameReply;
       QString localName;
 
-      std::vector<QSharedPointer<UDPSocket> > UdpSocks;
+      std::vector<QSharedPointer<UDPSocket> > TxSocks;
+//      std::vector<QSharedPointer<UDPSocket> > RxSocks;
 
-      QSharedPointer<UDPSocket> rxSocket;
+      QSharedPointer<MCReadSocket> rxSocket;
 
       //QSharedPointer<UDPSocket>  rxSocket;
 
@@ -132,10 +133,11 @@ class TZConf: public QObject
       QHostAddress groupAddress;
 
       QString getZConfString(bool beaconreq);
-      bool processZConfString(const QString &message, QHostAddress recvAddress);
+      bool processZConfString(const QString &message,const  QString &recvAddress);
       void publishDisconnect(const QString &name);
       void closeDown();
 private slots:
+      void onReadyRead(QString datagram, QString sender);
       void onTimeout();
 };
 #endif

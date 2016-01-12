@@ -38,7 +38,8 @@ SOURCES += main.cpp\
     serverThread.cpp \
     clientThread.cpp \
     servermain.cpp \
-    minoslistener.cpp
+    minoslistener.cpp \
+    mcreadsocket.cpp
 
 HEADERS  += \
     minos_pch.h \
@@ -50,7 +51,8 @@ HEADERS  += \
     serverThread.h \
     clientThread.h \
     servermain.h \
-    minoslistener.h
+    minoslistener.h \
+    mcreadsocket.h
 
 FORMS    += \
     servermain.ui

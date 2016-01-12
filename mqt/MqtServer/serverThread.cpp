@@ -112,7 +112,7 @@ bool MinosServerConnection::setFromId( MinosId &id, RPCRequest *req )
          QString message;
          if (req->getStringArg(1, message))
          {
-            TZConf::getZConf()->processZConfString(message, QHostAddress(connectHost));
+            TZConf::getZConf()->processZConfString(message, connectHost);
          }
       }
    }
