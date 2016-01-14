@@ -455,13 +455,13 @@ bool BaseContestLog::updateStat( BaseContact *cct )
 
    QDateTime  contestStart = CanonicalToTDT(DTGStart.getValue());
    int fromContestStart = contestStart.secsTo(QDateTime::currentDateTime());
-   if (sp1 *2 > fromContestStart)
+   if (sp1 > fromContestStart/120)
    {
-      sp1 = fromContestStart/2;
+      sp1 = fromContestStart/120;
    }
-   if (sp2 *2 > fromContestStart)
+   if (sp2 > fromContestStart/120)
    {
-      sp2 = fromContestStart/2;
+      sp2 = fromContestStart/120;
    }
 
    if ( tdiff < sp1 * 60L )
