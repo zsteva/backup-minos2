@@ -95,8 +95,8 @@ void TStatsDispFrame::reInitialiseStats()
                            .arg("PE0/LX5ABC/P") .arg("9999") .arg( "XX99XX") .arg(29999) .arg(9999.9);
    #endif
 
-      int sp1 = MinosParameters::getMinosParameters() ->getStatsPeriod1();
-      int sp2 = MinosParameters::getMinosParameters() ->getStatsPeriod2();
+      int sp1 = MinosParameters::getMinosParameters() ->getStatsPeriod1() * 60;
+      int sp2 = MinosParameters::getMinosParameters() ->getStatsPeriod2() * 60;
       QDateTime  contestStart = CanonicalToTDT(ct->DTGStart.getValue());
       int fromContestStart = contestStart.secsTo(QDateTime::currentDateTime());
 
