@@ -113,6 +113,7 @@ void ContestDetails::setDetails(  )
 
    ui->ContestNameEdit->setText(contest->name.getValue());
 
+   ui->BandComboBox->clear();
    // need to get legal bands from ContestLog
    if ( contest->bands.count() )
    {
@@ -149,6 +150,7 @@ void ContestDetails::setDetails(  )
       ui->BandComboBox->setCurrentText(contest->band.getValue());
    }
 
+   ui->SectionComboBox->clear();
    if ( sectionList.size() )
    {
        QStringList sl = sectionList.split(",", QString::SkipEmptyParts);
@@ -327,6 +329,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
 
    ui->BandComboBox->addItem( ic.reg1band.c_str() );
    ui->BandComboBox->setCurrentIndex(0);
+
+   ui->SectionComboBox->clear();
 
    sectionList = ic.sections.c_str(); // the combo will then be properly set up in setDetails()
    if ( sectionList.size() )
