@@ -18,7 +18,7 @@
     <item>
      <widget class="QLogTabWidget" name="ContestPageControl">
       <property name="focusPolicy">
-       <enum>Qt::ClickFocus</enum>
+       <enum>Qt::NoFocus</enum>
       </property>
       <property name="movable">
        <bool>true</bool>
