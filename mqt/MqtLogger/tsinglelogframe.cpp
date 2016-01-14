@@ -80,6 +80,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToCountry(QString,BaseContestLog*)), this, SLOT(on_ScrollToCountry(QString,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToDistrict(QString,BaseContestLog*)), this, SLOT(on_ScrollToDistrict(QString,BaseContestLog*)), Qt::QueuedConnection);
 
+    connect(&MinosLoggerEvents::mle, SIGNAL(SplittersChanged()), this, SLOT(onSplittersChanged()));
 
     // Connect up the stats etc display
     QSignalMapper* sm = new QSignalMapper(this);
@@ -188,10 +189,10 @@ void TSingleLogFrame::on_ContestPageChanged ()
        logColumnsChanged = false;
     }
 
-//    if (splittersChanged)
-//    {
-//       getSplitters();
-//    }
+    if (splittersChanged)
+    {
+       getSplitters();
+    }
 
 
     ui->GJVQSOLogFrame->selectField(0);
@@ -682,6 +683,31 @@ bool TSingleLogFrame::getStanza( unsigned int stanza, QString &stanzaData )
 {
    return contest->getStanza( stanza, stanzaData );
 }
+void TSingleLogFrame::getSplitters()
+{
+    QSettings settings;
+    QByteArray state;
+
+    state = settings.value("LogAreaSplitter/state").toByteArray();
+    ui->LogAreaSplitter->restoreState(state);
+
+    state = settings.value("ArchiveSplitter/state").toByteArray();
+    ui->ArchiveSplitter->restoreState(state);
+
+    state = settings.value("TopSplitter/state").toByteArray();
+    ui->TopSplitter->restoreState(state);
+
+    state = settings.value("CribSplitter/state").toByteArray();
+    ui->CribSplitter->restoreState(state);
+
+    state = settings.value("MultSplitter/state").toByteArray();
+    ui->MultSplitter->restoreState(state);
+}
+void TSingleLogFrame::onSplittersChanged()
+{
+    splittersChanged = true;
+}
+
 //=============================================================================
 QSOGridModel::QSOGridModel()
 {}
@@ -799,4 +825,49 @@ int QSOGridModel::rowCount( const QModelIndex &/*parent*/ ) const
 int QSOGridModel::columnCount( const QModelIndex &/*parent*/ ) const
 {
     return  LOGTREECOLS;
+}
+
+void TSingleLogFrame::on_StackedMults_currentChanged(int /*arg1*/)
+{
+    ui->StatsFrame->reInitialiseStats();
+}
+
+void TSingleLogFrame::on_LogAreaSplitter_splitterMoved(int pos, int index)
+{
+    QByteArray state = ui->LogAreaSplitter->saveState();
+    QSettings settings;
+    settings.setValue("LogAreaSplitter/state", state);
+    MinosLoggerEvents::SendSplittersChanged();
+}
+
+void TSingleLogFrame::on_ArchiveSplitter_splitterMoved(int pos, int index)
+{
+    QByteArray state = ui->ArchiveSplitter->saveState();
+    QSettings settings;
+    settings.setValue("ArchiveSplitter/state", state);
+    MinosLoggerEvents::SendSplittersChanged();
+}
+
+void TSingleLogFrame::on_TopSplitter_splitterMoved(int pos, int index)
+{
+    QByteArray state = ui->TopSplitter->saveState();
+    QSettings settings;
+    settings.setValue("TopSplitter/state", state);
+    MinosLoggerEvents::SendSplittersChanged();
+}
+
+void TSingleLogFrame::on_CribSplitter_splitterMoved(int pos, int index)
+{
+    QByteArray state = ui->CribSplitter->saveState();
+    QSettings settings;
+    settings.setValue("CribSplitter/state", state);
+    MinosLoggerEvents::SendSplittersChanged();
+}
+
+void TSingleLogFrame::on_MultSplitter_splitterMoved(int pos, int index)
+{
+    QByteArray state = ui->MultSplitter->saveState();
+    QSettings settings;
+    settings.setValue("MultSplitter/state", state);
+    MinosLoggerEvents::SendSplittersChanged();
 }

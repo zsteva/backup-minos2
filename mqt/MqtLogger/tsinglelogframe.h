@@ -127,7 +127,6 @@ private:
     QTreeWidgetItem *addTreeRoot(QTreeWidget *tree, QString text);
     void addTreeChild(QTreeWidgetItem *parent, QString text);
 
-//    void showMatchHeaders( );
     void showThisMatchQSOs( TMatchCollection *matchCollection );
     void showOtherMatchQSOs( TMatchCollection *matchCollection );
     void showMatchList( TMatchCollection *matchCollection );
@@ -156,6 +155,15 @@ private slots:
     void on_ContSA_clicked();
     void on_ContAF_clicked();
     void on_ContNA_clicked();
+
+
+    void on_StackedMults_currentChanged(int arg1);
+    void onSplittersChanged();
+    void on_LogAreaSplitter_splitterMoved(int pos, int index);
+    void on_ArchiveSplitter_splitterMoved(int pos, int index);
+    void on_TopSplitter_splitterMoved(int pos, int index);
+    void on_CribSplitter_splitterMoved(int pos, int index);
+    void on_MultSplitter_splitterMoved(int pos, int index);
 };
 
 #endif // TSINGLELOGFRAME_H
