@@ -49,7 +49,8 @@ SOURCES += \
     TreeUtils.cpp \
     minossplitter.cpp \
     htmldelegate.cpp \
-    CalendarList.cpp
+    CalendarList.cpp \
+    qlogtabwidget.cpp
 
 HEADERS += \
     BandList.h \
@@ -79,7 +80,8 @@ HEADERS += \
     minossplitter.h \
     htmldelegate.h \
     CalendarList.h \
-    cutils.h
+    cutils.h \
+    qlogtabwidget.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

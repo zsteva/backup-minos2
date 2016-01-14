@@ -693,6 +693,28 @@ void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
 
     TContestApp::getContestApp() ->writeContestList();
     enableActions();
+
+    for (int i = 0; i < ui->ContestPageControl->count(); i++)
+    {
+        QWidget *ctab = ui->ContestPageControl->widget(i);
+        if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( ctab ) )
+        {
+            BaseContestLog *pc = f->getContest();
+
+            if (f == ui->ContestPageControl->currentWidget())
+            {
+                ui->ContestPageControl->setTabColor(i, Qt::red);
+            }
+            else if (pc->isReadOnly())
+            {
+                ui->ContestPageControl->setTabColor(i, Qt::darkGreen);
+            }
+            else
+            {
+                ui->ContestPageControl->setTabColor(i, Qt::darkBlue);
+            }
+        }
+    }
 }
 
 void TLogContainer::on_ContestPageControl_tabBarDoubleClicked(int /*index*/)
