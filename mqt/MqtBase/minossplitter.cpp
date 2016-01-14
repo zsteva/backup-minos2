@@ -82,6 +82,7 @@ MinosSplitterButton::MinosSplitterButton(Qt::Orientation orientation, const QStr
          setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
          break;
      }
+    setFocusPolicy(Qt::NoFocus);
 }
 
 //============================================================================
