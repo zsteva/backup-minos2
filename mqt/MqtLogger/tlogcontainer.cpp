@@ -102,6 +102,14 @@ void TLogContainer::on_TimeDisplayTimer( )
 
        MinosLoggerEvents::SendTimerDistribution();
 
+#ifdef FINDFOCUS
+       QWidget *f = QApplication::focusWidget ();
+       if(f)
+            sblabel1->setText(f->metaObject()->className());
+       else
+           sblabel1->setText("<unknown>");
+#endif
+
        QString statbuf;
       BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
       if ( ct )
@@ -117,7 +125,7 @@ void TLogContainer::on_ReportOverstrike(bool overstrike, BaseContestLog *econtes
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    if (ct == econtest)
    {
-      sblabel1->setText(overstrike ? "Overwrite" : "Insert");
+      //sblabel1->setText(overstrike ? "Overwrite" : "Insert");
    }
 }
 
