@@ -100,6 +100,8 @@ private:
      void transferDetails( const BaseContact * lct, const BaseContestLog *matct );
      void transferDetails( const ListContact * lct, const ContactList *matct );
 
+     void logTabChanged();
+
 private:
     Ui::QSOLogFrame *ui;
 

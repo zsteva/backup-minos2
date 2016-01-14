@@ -196,6 +196,7 @@ void TSingleLogFrame::on_ContestPageChanged ()
 
 
     ui->GJVQSOLogFrame->selectField(0);
+    ui->GJVQSOLogFrame->logTabChanged();
 
 //    MultDispFrame->setContest( contest );
 //    doNextContactDetailsOnLeftClick( this );

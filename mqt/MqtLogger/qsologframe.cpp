@@ -111,7 +111,7 @@ void QSOLogFrame::focusChange(QObject *obj, bool in, QFocusEvent *event)
     else
         EditControlExit(obj);
 
-    QColor colour = in?Qt::green:Qt::black;
+    QColor colour = in?Qt::blue:Qt::black;
     QString colStr = HtmlFontColour(colour);
 
     if (obj == ui->CallsignEdit)
@@ -750,6 +750,10 @@ void QSOLogFrame::getScreenEntry()
    }
 }
 //---------------------------------------------------------------------------
+void QSOLogFrame::logTabChanged()
+{
+    MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest);
+}
 void QSOLogFrame::showScreenEntry( void )
 {
    // display the contents of the contest->screenContact
