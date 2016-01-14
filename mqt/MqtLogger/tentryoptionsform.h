@@ -14,6 +14,7 @@ class TOptionFrame;
 class TEntryOptionsForm : public QDialog
 {
     Q_OBJECT
+    void doCloseEvent();
 
 public:
     explicit TEntryOptionsForm( QWidget* Owner, LoggerContestLog * , bool minosSave );
@@ -24,6 +25,10 @@ private slots:
     void on_CloseButton_clicked();
 
     void on_CancelButton_clicked();
+
+public Q_SLOTS:
+    virtual void accept() override;
+    virtual void reject() override;
 
 private:
     Ui::TEntryOptionsForm *ui;

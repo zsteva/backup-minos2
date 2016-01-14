@@ -14,6 +14,12 @@ TEntryOptionsForm::TEntryOptionsForm( QWidget* Owner, LoggerContestLog * cnt, bo
     if ( !ct )
         return ;
 
+    QSettings settings;
+    QByteArray geometry = settings.value("EntryOptions/geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
+
+
     QStringList vlabels =
     {
         "Date Range (Calculated)",
@@ -128,6 +134,21 @@ TEntryOptionsForm::TEntryOptionsForm( QWidget* Owner, LoggerContestLog * cnt, bo
 TEntryOptionsForm::~TEntryOptionsForm()
 {
     delete ui;
+}
+void TEntryOptionsForm::doCloseEvent()
+{
+    QSettings settings;
+    settings.setValue("EntryOptions/geometry", saveGeometry());
+}
+void TEntryOptionsForm::reject()
+{
+    doCloseEvent();
+    QDialog::reject();
+}
+void TEntryOptionsForm::accept()
+{
+    doCloseEvent();
+    QDialog::accept();
 }
 
 void TEntryOptionsForm::on_CloseButton_clicked()
