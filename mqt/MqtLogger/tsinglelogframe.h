@@ -58,17 +58,62 @@ class QSOGridModel: public QAbstractItemModel
         int rowCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
         int columnCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 };
+class BaseMatchContest;
+class MatchContact;
+
+class MatchTreeItem
+{
+    TMatchCollection *match;
+    BaseMatchContest *matchContest;
+    MatchContact *matchContact;
+
+    MatchTreeItem *parent;
+    std::vector<MatchTreeItem *> children;
+    int row;
+
+public:
+    MatchTreeItem(TMatchCollection* match, MatchTreeItem *parent, BaseMatchContest *matchContest, MatchContact *matchContact);
+    ~MatchTreeItem();
+
+    void addChild(MatchTreeItem *mi)
+    {
+        children.push_back(mi);
+        mi->setRow(children.size() - 1);
+    }
+    int childCount()
+    {
+        return children.size();
+    }
+
+    bool isMatchLine();
+    MatchContact *getMatchContact();
+    BaseMatchContest *getMatchContest();
+    MatchTreeItem *getParent();
+    MatchTreeItem *child(int i)
+    {
+        return children[i];
+    }
+    int getRow()
+    {
+        return row;
+    }
+    void setRow(int r)
+    {
+        row = r;
+    }
+};
+
 class QSOMatchGridModel: public QAbstractItemModel
 {
     protected:
         TMatchCollection *match;
+        MatchTreeItem * rootItem;
 
     public:
         QSOMatchGridModel();
         ~QSOMatchGridModel();
 
-        void reset();
-        void initialise( TMatchCollection * pmatch );
+        void initialise( TMatchCollection *pmatch );
         QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;
         QVariant headerData( int section, Qt::Orientation orientation,
                              int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;

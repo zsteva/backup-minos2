@@ -404,7 +404,6 @@ void TSingleLogFrame::addTreeChild(QTreeWidgetItem *parent, QString text)
 }
 void TSingleLogFrame::showThisMatchQSOs( TMatchCollection *matchCollection )
 {
-    thisMatchModel.reset();
     thisMatchModel.initialise(matchCollection);
     ui->ThisMatchTree->setModel(&thisMatchModel);
 
@@ -515,16 +514,19 @@ void TSingleLogFrame::showMatchList( TMatchCollection *matchCollection )
 }
 void TSingleLogFrame::on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* )
 {
-    showThisMatchQSOs( matchCollection );
+    if (contest == TContestApp::getContestApp() ->getCurrentContest())
+        showThisMatchQSOs( matchCollection );
 }
 void TSingleLogFrame::on_ReplaceOtherLogList( TMatchCollection *matchCollection, BaseContestLog* )
 {
-    showOtherMatchQSOs( matchCollection );
+    if (contest == TContestApp::getContestApp() ->getCurrentContest())
+        showOtherMatchQSOs( matchCollection );
 }
 
 void TSingleLogFrame::on_ReplaceListList(TMatchCollection *matchCollection , BaseContestLog *)
 {
-    showMatchList( matchCollection );
+    if (contest == TContestApp::getContestApp() ->getCurrentContest())
+        showMatchList( matchCollection );
 }
 
 void TSingleLogFrame::on_ScrollToDistrict( const QString &qth, BaseContestLog* )
@@ -878,46 +880,125 @@ int QSOGridModel::columnCount( const QModelIndex &/*parent*/ ) const
     return  LOGTREECOLS;
 }
 //=============================================================================
-QSOMatchGridModel::QSOMatchGridModel():match(0)
-{}
-QSOMatchGridModel::~QSOMatchGridModel()
-{}
-void QSOMatchGridModel::reset()
+
+MatchTreeItem::MatchTreeItem(TMatchCollection *match, MatchTreeItem *parent, BaseMatchContest *matchContest, MatchContact *matchContact)
+    :match(match), parent(parent), matchContest(matchContest), matchContact(matchContact), row(-1)
 {
-    beginResetModel();
-    endResetModel();
+
 }
 
-void QSOMatchGridModel::initialise( TMatchCollection * pmatch )
+MatchTreeItem::~MatchTreeItem()
 {
+    for (unsigned int i = 0; i < children.size(); i++)
+    {
+        delete children[i];
+        children[i] = 0;
+    }
+}
+
+bool MatchTreeItem::isMatchLine()
+{
+    return matchContact != 0;
+}
+MatchTreeItem *MatchTreeItem::getParent()
+{
+    return parent;
+}
+
+MatchContact *MatchTreeItem::getMatchContact()
+{
+    return matchContact;
+}
+BaseMatchContest *MatchTreeItem::getMatchContest()
+{
+    return matchContest;
+}
+
+
+QSOMatchGridModel::QSOMatchGridModel():match(0), rootItem(0)
+{}
+QSOMatchGridModel::~QSOMatchGridModel()
+{
+    delete rootItem;
+}
+
+void QSOMatchGridModel::initialise(TMatchCollection *pmatch )
+{
+   beginResetModel();
+   if (match)
+   {
+       delete match;
+       match = 0;
+   }
+   if (rootItem)
+   {
+       delete rootItem;
+       rootItem = 0;
+   }
+
+   if (pmatch == 0 || pmatch->contactCount() == 0)
+   {
+       endResetModel();
+       return;
+   }
    match = pmatch;
+
+   rootItem = new MatchTreeItem(match, 0, 0, 0);
+   rootItem->setRow(0);
+   for (ContestMatchIterator i = match->matchList.begin(); i != match->matchList.end(); i++)
+   {
+       MatchTreeItem *ci = new MatchTreeItem(match, rootItem, (*i), 0);
+       rootItem->addChild(ci); // also sets row
+       //(*i) is *BaseMatchContest
+       for (int j = 0; j < (*i)->getContactCount(); j++)
+       {
+           MatchTreeItem *mi = new MatchTreeItem(match, ci, (*i), (*i)->pcontactAt(j));
+           ci->addChild(mi);
+       }
+   }
+   endResetModel();
 }
 QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
 {
+    QModelIndex p = index.parent();
+
+
     int row = index.row();
     int column = index.column();
 
-    if ( row >= rowCount() )
+    if ( row >= rowCount(p) )
         return QVariant();
 
-    MatchContact * mct = match->pcontestAt(0)->pcontactAt( row);
-    BaseContact *ct = mct->getBaseContact();
+    BaseMatchContest *matchContest = 0;
+    BaseContestLog *contest = 0;
+    MatchContact * mct = 0;
+    BaseContact *ct = 0;
 
-    if (!ct)
-        return QVariant();
+    if (p.isValid())
+    {
+        matchContest = match->pcontestAt(p.row());
+        contest = matchContest->getContactLog();
 
+        if (matchContest)
+            mct = matchContest->pcontactAt( row);
+        if (mct)
+            ct = mct->getBaseContact();
+    }
     if (role == Qt::BackgroundRole)
     {
-        if ( ct->contactFlags.getValue() & FORCE_LOG )
+        if (ct)
         {
-           return ( QColor ) ( 0x00FF80C0 );        // Pink(ish)
-        }
-        else
-        {
-           if ( ct->getModificationCount() > 1 )
-           {
-               return ( QColor ) ( 0x00C0DCC0 );    // "money green"
-           }
+            if ( ct->contactFlags.getValue() & FORCE_LOG )
+            {
+               return ( QColor ) ( 0x00FF80C0 );        // Pink(ish)
+            }
+            else
+            {
+               if ( ct->getModificationCount() > 1 )
+               {
+                   return ( QColor ) ( 0x00C0DCC0 );    // "money green"
+               }
+            }
         }
         return QVariant();
     }
@@ -926,38 +1007,44 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
 
     if (role == Qt::DisplayRole)
     {
-        if ( ct && column >= 0 && column < columnCount())
+        if (p.isValid())
         {
-            BaseContestLog *contest = match->pcontestAt(0)->getContactLog();
-           QString line = ct->getField( QSOTreeColumns[ column ].fieldId, contest );
-           QColor multhighlight = Qt::red;
-           bool setHighlight = false;
-           switch ( QSOTreeColumns[ column ].fieldId )
-           {
-              case egTime:
-                 if (!contest->checkTime(ct->time))
-                 {
-                    setHighlight = true;
-                 }
-                 break;
-              case egCall:
-                 if ( contest->countryMult.getValue() && ct->newCtry )
-                     setHighlight = true;
-                 break;
-              case egExchange:
-                 if ( contest->districtMult.getValue() && ct->newDistrict )
-                     setHighlight = true;
-                 break;
-              case egLoc:
-                 if ( (contest->locMult.getValue() && ct->locCount > 0) || (contest->UKACBonus.getValue() && ct->bonus > 0))
-                 {
-                     setHighlight = true;
-                 }
-                 break;
-           }
-           if (setHighlight)
-               line = HtmlFontColour(multhighlight) + line;
-           return line;
+            if ( ct && column >= 0 && column < columnCount(p))
+            {
+                QString line = ct->getField( QSOTreeColumns[ column ].fieldId, contest );
+                QColor multhighlight = Qt::red;
+                bool setHighlight = false;
+                switch ( QSOTreeColumns[ column ].fieldId )
+                {
+                case egTime:
+                    if (!contest->checkTime(ct->time))
+                    {
+                        setHighlight = true;
+                    }
+                    break;
+                case egCall:
+                    if ( contest->countryMult.getValue() && ct->newCtry )
+                        setHighlight = true;
+                    break;
+                case egExchange:
+                    if ( contest->districtMult.getValue() && ct->newDistrict )
+                        setHighlight = true;
+                    break;
+                case egLoc:
+                    if ( (contest->locMult.getValue() && ct->locCount > 0) || (contest->UKACBonus.getValue() && ct->bonus > 0))
+                    {
+                        setHighlight = true;
+                    }
+                    break;
+                }
+                if (setHighlight)
+                    line = HtmlFontColour(multhighlight) + line;
+                return line;
+            }
+        }
+        else
+        {
+            return "Current contest" + TMatchThread::getThisMatchStatus();
         }
     }
     return QVariant();
@@ -975,26 +1062,56 @@ QVariant QSOMatchGridModel::headerData( int section, Qt::Orientation orientation
 
 QModelIndex QSOMatchGridModel::index( int row, int column, const QModelIndex &parent) const
 {
-    if ( row < 0 || row >= rowCount() || ( parent.isValid() && parent.column() != 0 ) )
+//    if ( row < 0 || row >= rowCount() || ( parent.isValid() && parent.column() != 0 ) )
+//        return QModelIndex();
+
+//    return createIndex( row, column );  // need to pass in a private pointer...
+
+    if (!hasIndex(row, column, parent))
         return QModelIndex();
 
-    return createIndex( row, column );
+    MatchTreeItem *parentItem;
+
+    if (!parent.isValid())
+        parentItem = rootItem;
+    else
+        parentItem = static_cast<MatchTreeItem*>(parent.internalPointer());
+
+    MatchTreeItem *childItem = parentItem->child(row);
+    if (childItem)
+        return createIndex(row, column, childItem);
+    else
+        return QModelIndex();
 }
 
-QModelIndex QSOMatchGridModel::parent( const QModelIndex &/*index*/ ) const
+QModelIndex QSOMatchGridModel::parent( const QModelIndex &index ) const
 {
-    return QModelIndex();
+    MatchTreeItem *parentItem = (static_cast<MatchTreeItem*>(index.internalPointer()))->getParent();
+    if (parentItem == rootItem)
+        return QModelIndex();
+
+    return createIndex(parentItem->getRow(), 0, parentItem);
 }
 
-int QSOMatchGridModel::rowCount( const QModelIndex &/*parent*/ ) const
+int QSOMatchGridModel::rowCount( const QModelIndex &parent ) const
+{
+    if (!match || !rootItem)
+        return 0;
+
+    if (!parent.isValid())
+        return rootItem->childCount();
+
+    MatchTreeItem *parentItem = static_cast<MatchTreeItem*>(parent.internalPointer());
+    return parentItem->childCount();
+}
+
+int QSOMatchGridModel::columnCount( const QModelIndex &parent ) const
 {
     if (!match)
         return 0;
 
-    return match->contactCount();
-}
+    if (parent.isValid())
+        return  THISMATCHTREECOLS;
+    return 1;
 
-int QSOMatchGridModel::columnCount( const QModelIndex &/*parent*/ ) const
-{
-    return  THISMATCHTREECOLS;
 }
