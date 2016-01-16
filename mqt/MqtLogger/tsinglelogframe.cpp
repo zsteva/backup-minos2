@@ -404,6 +404,11 @@ void TSingleLogFrame::addTreeChild(QTreeWidgetItem *parent, QString text)
 }
 void TSingleLogFrame::showThisMatchQSOs( TMatchCollection *matchCollection )
 {
+    thisMatchModel.reset();
+    thisMatchModel.initialise(matchCollection);
+    ui->ThisMatchTree->setModel(&thisMatchModel);
+
+    /*
     ui->ThisMatchTree->clear();
 
     ui->GJVQSOLogFrame->setXferEnabled(false);
@@ -430,7 +435,7 @@ void TSingleLogFrame::showThisMatchQSOs( TMatchCollection *matchCollection )
           addTreeChild(root, text);
        }
    }
-
+*/
 }
 void TSingleLogFrame::showOtherMatchQSOs( TMatchCollection *matchCollection )
 {
@@ -709,8 +714,53 @@ void TSingleLogFrame::onSplittersChanged()
     splittersChanged = true;
 }
 
+void TSingleLogFrame::on_StackedMults_currentChanged(int /*arg1*/)
+{
+    ui->StatsFrame->reInitialiseStats();
+}
+
+void TSingleLogFrame::on_LogAreaSplitter_splitterMoved(int /*pos*/, int /*index*/)
+{
+    QByteArray state = ui->LogAreaSplitter->saveState();
+    QSettings settings;
+    settings.setValue("LogAreaSplitter/state", state);
+    MinosLoggerEvents::SendSplittersChanged();
+}
+
+void TSingleLogFrame::on_ArchiveSplitter_splitterMoved(int /*pos*/, int /*index*/)
+{
+    QByteArray state = ui->ArchiveSplitter->saveState();
+    QSettings settings;
+    settings.setValue("ArchiveSplitter/state", state);
+    MinosLoggerEvents::SendSplittersChanged();
+}
+
+void TSingleLogFrame::on_TopSplitter_splitterMoved(int /*pos*/, int /*index*/)
+{
+    QByteArray state = ui->TopSplitter->saveState();
+    QSettings settings;
+    settings.setValue("TopSplitter/state", state);
+    MinosLoggerEvents::SendSplittersChanged();
+}
+
+void TSingleLogFrame::on_CribSplitter_splitterMoved(int /*pos*/, int /*index*/)
+{
+    QByteArray state = ui->CribSplitter->saveState();
+    QSettings settings;
+    settings.setValue("CribSplitter/state", state);
+    MinosLoggerEvents::SendSplittersChanged();
+}
+
+void TSingleLogFrame::on_MultSplitter_splitterMoved(int /*pos*/, int /*index*/)
+{
+    QByteArray state = ui->MultSplitter->saveState();
+    QSettings settings;
+    settings.setValue("MultSplitter/state", state);
+    MinosLoggerEvents::SendSplittersChanged();
+}
+
 //=============================================================================
-QSOGridModel::QSOGridModel()
+QSOGridModel::QSOGridModel():contest(0)
 {}
 QSOGridModel::~QSOGridModel()
 {}
@@ -827,48 +877,124 @@ int QSOGridModel::columnCount( const QModelIndex &/*parent*/ ) const
 {
     return  LOGTREECOLS;
 }
-
-void TSingleLogFrame::on_StackedMults_currentChanged(int /*arg1*/)
+//=============================================================================
+QSOMatchGridModel::QSOMatchGridModel():match(0)
+{}
+QSOMatchGridModel::~QSOMatchGridModel()
+{}
+void QSOMatchGridModel::reset()
 {
-    ui->StatsFrame->reInitialiseStats();
+    beginResetModel();
+    endResetModel();
 }
 
-void TSingleLogFrame::on_LogAreaSplitter_splitterMoved(int pos, int index)
+void QSOMatchGridModel::initialise( TMatchCollection * pmatch )
 {
-    QByteArray state = ui->LogAreaSplitter->saveState();
-    QSettings settings;
-    settings.setValue("LogAreaSplitter/state", state);
-    MinosLoggerEvents::SendSplittersChanged();
+   match = pmatch;
+}
+QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
+{
+    int row = index.row();
+    int column = index.column();
+
+    if ( row >= rowCount() )
+        return QVariant();
+
+    MatchContact * mct = match->pcontestAt(0)->pcontactAt( row);
+    BaseContact *ct = mct->getBaseContact();
+
+    if (!ct)
+        return QVariant();
+
+    if (role == Qt::BackgroundRole)
+    {
+        if ( ct->contactFlags.getValue() & FORCE_LOG )
+        {
+           return ( QColor ) ( 0x00FF80C0 );        // Pink(ish)
+        }
+        else
+        {
+           if ( ct->getModificationCount() > 1 )
+           {
+               return ( QColor ) ( 0x00C0DCC0 );    // "money green"
+           }
+        }
+        return QVariant();
+    }
+    if ( role != Qt::DisplayRole && role != Qt::EditRole )
+        return QVariant();
+
+    if (role == Qt::DisplayRole)
+    {
+        if ( ct && column >= 0 && column < columnCount())
+        {
+            BaseContestLog *contest = match->pcontestAt(0)->getContactLog();
+           QString line = ct->getField( QSOTreeColumns[ column ].fieldId, contest );
+           QColor multhighlight = Qt::red;
+           bool setHighlight = false;
+           switch ( QSOTreeColumns[ column ].fieldId )
+           {
+              case egTime:
+                 if (!contest->checkTime(ct->time))
+                 {
+                    setHighlight = true;
+                 }
+                 break;
+              case egCall:
+                 if ( contest->countryMult.getValue() && ct->newCtry )
+                     setHighlight = true;
+                 break;
+              case egExchange:
+                 if ( contest->districtMult.getValue() && ct->newDistrict )
+                     setHighlight = true;
+                 break;
+              case egLoc:
+                 if ( (contest->locMult.getValue() && ct->locCount > 0) || (contest->UKACBonus.getValue() && ct->bonus > 0))
+                 {
+                     setHighlight = true;
+                 }
+                 break;
+           }
+           if (setHighlight)
+               line = HtmlFontColour(multhighlight) + line;
+           return line;
+        }
+    }
+    return QVariant();
+}
+QVariant QSOMatchGridModel::headerData( int section, Qt::Orientation orientation,
+                     int role ) const
+{
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+    {
+        QString h = QSOTreeColumns[ section ].title;
+        return h;
+    }
+    return QVariant();
 }
 
-void TSingleLogFrame::on_ArchiveSplitter_splitterMoved(int pos, int index)
+QModelIndex QSOMatchGridModel::index( int row, int column, const QModelIndex &parent) const
 {
-    QByteArray state = ui->ArchiveSplitter->saveState();
-    QSettings settings;
-    settings.setValue("ArchiveSplitter/state", state);
-    MinosLoggerEvents::SendSplittersChanged();
+    if ( row < 0 || row >= rowCount() || ( parent.isValid() && parent.column() != 0 ) )
+        return QModelIndex();
+
+    return createIndex( row, column );
 }
 
-void TSingleLogFrame::on_TopSplitter_splitterMoved(int pos, int index)
+QModelIndex QSOMatchGridModel::parent( const QModelIndex &/*index*/ ) const
 {
-    QByteArray state = ui->TopSplitter->saveState();
-    QSettings settings;
-    settings.setValue("TopSplitter/state", state);
-    MinosLoggerEvents::SendSplittersChanged();
+    return QModelIndex();
 }
 
-void TSingleLogFrame::on_CribSplitter_splitterMoved(int pos, int index)
+int QSOMatchGridModel::rowCount( const QModelIndex &/*parent*/ ) const
 {
-    QByteArray state = ui->CribSplitter->saveState();
-    QSettings settings;
-    settings.setValue("CribSplitter/state", state);
-    MinosLoggerEvents::SendSplittersChanged();
+    if (!match)
+        return 0;
+
+    return match->contactCount();
 }
 
-void TSingleLogFrame::on_MultSplitter_splitterMoved(int pos, int index)
+int QSOMatchGridModel::columnCount( const QModelIndex &/*parent*/ ) const
 {
-    QByteArray state = ui->MultSplitter->saveState();
-    QSettings settings;
-    settings.setValue("MultSplitter/state", state);
-    MinosLoggerEvents::SendSplittersChanged();
+    return  THISMATCHTREECOLS;
 }

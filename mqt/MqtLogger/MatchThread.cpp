@@ -409,7 +409,7 @@ void Matcher::initMatch( void )
          if ( matchcs.empty && matchloc.empty && matchqth.empty )
          {
             clearmatchall();
-            replaceList( matchCollection );
+            replaceList( );
             return ;
          }
 
@@ -418,7 +418,7 @@ void Matcher::initMatch( void )
 
          if ( changed & SET_NOT_GREATER )
          {
-            replaceList( matchCollection );
+            replaceList( );
          }
          // we have something matchable, so go to it!
 
@@ -635,7 +635,7 @@ bool ThisLogMatcher::idleMatch( int limit )
 
                 QString buff;
                 // now make it display
-                replaceList( matchCollection );
+                replaceList( );
 
                 if ( thisContestMatched )
                 {
@@ -772,9 +772,10 @@ bool ThisLogMatcher::idleMatch( int limit )
     }
     return true;
 }
-void ThisLogMatcher::replaceList( TMatchCollection *matchCollection )
+void ThisLogMatcher::replaceList(  )
 {
    TMatchThread::getMatchThread() ->replaceThisContestList( matchCollection );
+   matchCollection = new TMatchCollection;  // pass ownership
 }
 //==============================================================================
 OtherLogMatcher::OtherLogMatcher()
@@ -964,7 +965,7 @@ bool OtherLogMatcher::idleMatch( int limit )
                setMatchRequired( false );
 
                // now make it display
-               replaceList( matchCollection );
+               replaceList( );
 
                QString buff = " - No match";
 
@@ -1091,9 +1092,11 @@ bool OtherLogMatcher::idleMatch( int limit )
    }
    return true;
 }
-void OtherLogMatcher::replaceList( TMatchCollection *matchCollection )
+void OtherLogMatcher::replaceList( )
 {
    TMatchThread::getMatchThread() ->replaceOtherContestList( matchCollection );
+   matchCollection = new TMatchCollection;  // pass ownership
+
 }
 
 //==============================================================================
@@ -1281,7 +1284,7 @@ bool ListMatcher::idleMatch( int limit )
 
                QString buff;
                // now make it display
-               replaceList( matchCollection );
+               replaceList( );
 
                contestIndex = -1;
                return false;
@@ -1356,8 +1359,10 @@ bool ListMatcher::idleMatch( int limit )
    }
    return true;
 }
-void ListMatcher::replaceList( TMatchCollection *matchCollection )
+void ListMatcher::replaceList( )
 {
    TMatchThread::getMatchThread() ->replaceListList( matchCollection );
+   matchCollection = new TMatchCollection;  // pass ownership
+
 }
 

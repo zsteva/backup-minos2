@@ -77,7 +77,7 @@ class Matcher
       int thisContestMatched;
       virtual void matchDistrict( const QString &extraText ) = 0;
       virtual void matchCountry( const QString &cs ) = 0;
-      virtual void replaceList( TMatchCollection *matchCollection ) = 0;
+      virtual void replaceList( ) = 0;
    public:
 
       Matcher( );
@@ -103,7 +103,7 @@ class ThisLogMatcher: public Matcher
 {
       virtual void matchDistrict( const QString &extraText );
       virtual void matchCountry( const QString &cs );
-      virtual void replaceList( TMatchCollection *matchCollection );
+      virtual void replaceList(  );
    public:
       ThisLogMatcher( );
       virtual ~ThisLogMatcher();
@@ -115,7 +115,7 @@ class OtherLogMatcher: public Matcher
 {
       virtual void matchDistrict( const QString &extraText );
       virtual void matchCountry( const QString &cs );
-      virtual void replaceList( TMatchCollection *matchCollection );
+      virtual void replaceList( );
    public:
       OtherLogMatcher( );
       virtual ~OtherLogMatcher();
@@ -127,7 +127,7 @@ class ListMatcher: public Matcher
 {
       virtual void matchDistrict( const QString &extraText );
       virtual void matchCountry( const QString &cs );
-      virtual void replaceList( TMatchCollection *matchCollection );
+      virtual void replaceList(  );
    public:
       ListMatcher( );
       ~ListMatcher();
