@@ -627,13 +627,13 @@
         <bool>true</bool>
        </property>
        <attribute name="headerDefaultSectionSize">
-        <number>100</number>
+        <number>150</number>
        </attribute>
        <attribute name="headerMinimumSectionSize">
         <number>33</number>
        </attribute>
       </widget>
-      <widget class="QTreeWidget" name="OtherMatchTree">
+      <widget class="QTreeView" name="OtherMatchTree">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -656,18 +656,19 @@
         <enum>Qt::ScrollBarAsNeeded</enum>
        </property>
        <property name="sizeAdjustPolicy">
-        <enum>QAbstractScrollArea::AdjustToContents</enum>
+        <enum>QAbstractScrollArea::AdjustIgnored</enum>
        </property>
-       <attribute name="headerVisible">
-        <bool>false</bool>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <attribute name="headerDefaultSectionSize">
+        <number>150</number>
        </attribute>
-       <column>
-        <property name="text">
-         <string notr="true">1</string>
-        </property>
-       </column>
       </widget>
-      <widget class="QTreeWidget" name="ArchiveMatchTree">
+      <widget class="QTreeView" name="ArchiveMatchTree">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -690,16 +691,17 @@
         <enum>Qt::ScrollBarAsNeeded</enum>
        </property>
        <property name="sizeAdjustPolicy">
-        <enum>QAbstractScrollArea::AdjustToContents</enum>
+        <enum>QAbstractScrollArea::AdjustIgnored</enum>
        </property>
-       <attribute name="headerVisible">
-        <bool>false</bool>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <attribute name="headerDefaultSectionSize">
+        <number>150</number>
        </attribute>
-       <column>
-        <property name="text">
-         <string notr="true">1</string>
-        </property>
-       </column>
       </widget>
      </widget>
     </widget>

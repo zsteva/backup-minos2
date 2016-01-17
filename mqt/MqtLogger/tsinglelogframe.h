@@ -61,6 +61,7 @@ class QSOGridModel: public QAbstractItemModel
 class BaseMatchContest;
 class MatchContact;
 
+enum MatchType {ThisMatch, OtherMatch, ArchiveMatch};
 class MatchTreeItem
 {
     BaseMatchContest *matchContest;
@@ -107,12 +108,13 @@ class QSOMatchGridModel: public QAbstractItemModel
     protected:
         TMatchCollection *match;
         MatchTreeItem * rootItem;
+        MatchType type;
 
     public:
         QSOMatchGridModel();
         ~QSOMatchGridModel();
 
-        void initialise( TMatchCollection *pmatch );
+        void initialise( MatchType, TMatchCollection *pmatch );
         QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;
         QVariant headerData( int section, Qt::Orientation orientation,
                              int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
@@ -172,6 +174,8 @@ private:
     QSOGridModel qsoModel;
 
     QSOMatchGridModel thisMatchModel;
+    QSOMatchGridModel otherMatchModel;
+    QSOMatchGridModel archiveMatchModel;
 
     int lastStanzaCount;
 
