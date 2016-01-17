@@ -63,7 +63,6 @@ class MatchContact;
 
 class MatchTreeItem
 {
-    TMatchCollection *match;
     BaseMatchContest *matchContest;
     MatchContact *matchContact;
 
@@ -72,7 +71,7 @@ class MatchTreeItem
     int row;
 
 public:
-    MatchTreeItem(TMatchCollection* match, MatchTreeItem *parent, BaseMatchContest *matchContest, MatchContact *matchContact);
+    MatchTreeItem(MatchTreeItem *parent, BaseMatchContest *matchContest, MatchContact *matchContact);
     ~MatchTreeItem();
 
     void addChild(MatchTreeItem *mi)

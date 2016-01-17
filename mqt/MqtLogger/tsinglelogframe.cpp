@@ -57,7 +57,9 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     ui->MultSplitter->setClosingWidget(ui->MultDisp);
     ui->TopSplitter->setClosingWidget(ui->MultSplitter);
 
-    ui->ThisMatchTree->header()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->ThisMatchTree->header()->setSectionResizeMode(QHeaderView::Interactive);
+    ui->ThisMatchTree->setItemDelegate( new HtmlDelegate );
+
     ui->OtherMatchTree->header()->setSectionResizeMode(QHeaderView::Stretch);
     ui->ArchiveMatchTree->header()->setSectionResizeMode(QHeaderView::Stretch);
 
@@ -406,35 +408,8 @@ void TSingleLogFrame::showThisMatchQSOs( TMatchCollection *matchCollection )
 {
     thisMatchModel.initialise(matchCollection);
     ui->ThisMatchTree->setModel(&thisMatchModel);
-
-    /*
-    ui->ThisMatchTree->clear();
-
-    ui->GJVQSOLogFrame->setXferEnabled(false);
-
-   if ( matchCollection->getContestCount() == 0 )
-   {
-      return ;
-   }
-
-   QTreeWidgetItem *root = addTreeRoot(ui->ThisMatchTree, "Current contest" + TMatchThread::getThisMatchStatus());
-   root->setExpanded(true);
-
-   for ( int i = 0; i < matchCollection->getContestCount(); i++ )
-   {
-       BaseMatchContest * clp = matchCollection->pcontestAt(i);
-
-       for ( int j = 0; j < clp->getContactCount(); j++)
-       {
-
-           MatchContact *pc = clp->pcontactAt( j );
-
-          QString text;
-          pc->getText( text, clp->getContactLog() );
-          addTreeChild(root, text);
-       }
-   }
-*/
+    ui->ThisMatchTree->setFirstColumnSpanned( 0, QModelIndex(), true );
+    ui->ThisMatchTree->expandAll();
 }
 void TSingleLogFrame::showOtherMatchQSOs( TMatchCollection *matchCollection )
 {
@@ -880,9 +855,44 @@ int QSOGridModel::columnCount( const QModelIndex &/*parent*/ ) const
     return  LOGTREECOLS;
 }
 //=============================================================================
+static GridColumn ThisMatchTreeColumns[ THISMATCHTREECOLS ] =
+   {
+      GridColumn( egTime, "XXXXXXXXXX", "UTC", taLeftJustify ),               // time
+      GridColumn( egCall, "MMMMMMMMMMM", "Callsign", taLeftJustify ),         // call
+      GridColumn( egRSTTx, "599XXX", "RepTx", taLeftJustify ),                 // RST
+      GridColumn( egSNTx, "1234X", "SnTx", taLeftJustify /*taRightJustify*/ ),   // serial
+      GridColumn( egRSTRx, "599XXX", "RepRx", taLeftJustify ),                 // RST
+      GridColumn( egSNRx, "1234X", "SnRx", taLeftJustify /*taRightJustify*/ ),   // Serial
+      GridColumn( egLoc, "MM00MM00X", "Loc", taLeftJustify ),            // LOC
+      GridColumn( egBrg, "3601X", "brg", taLeftJustify ),                // bearing
+      GridColumn( egScore, "12345XX", "dist", taLeftJustify /*taRightJustify*/ ),  // score
+      GridColumn( egExchange, "XXXXXXXXXXXXXXXX", "Exchange", taLeftJustify ),    // QTH
+      GridColumn( egComments, "XXXXXXXXXXXXXXXX", "Comments", taLeftJustify )     // comments
+   };
+//---------------------------------------------------------------------------
+static GridColumn OtherMatchTreeColumns[ OTHERMATCHTREECOLS ] =
+   {
+      GridColumn( egCall, "MMMMMMMMMMM", "Callsign", taLeftJustify ),         // call
+      GridColumn( egLoc, "MM00MM00X", "Loc", taLeftJustify ),            // LOC
+      GridColumn( egBrg, "3601X", "brg", taLeftJustify ),                // bearing
+      GridColumn( egScore, "12345XX", "dist", taLeftJustify /*taRightJustify*/ ),  // score
+      GridColumn( egExchange, "XXXXXXXXXXXXXXXX", "Exchange", taLeftJustify ),    // QTH
+      GridColumn( egComments, "XXXXXXXXXXXXXXXX", "Comments", taLeftJustify )     // comments
+   };
+//---------------------------------------------------------------------------
+static GridColumn ArchiveMatchTreeColumns[ ARCHIVEMATCHTREECOLS ] =
+   {
+      GridColumn( egCall, "MMMMMMMMMMM", "Callsign", taLeftJustify ),         // call
+      GridColumn( egLoc, "MM00MM00X", "Loc", taLeftJustify ),            // LOC
+      GridColumn( egBrg, "3601X", "brg", taLeftJustify ),                // bearing
+      GridColumn( egScore, "12345XX", "dist", taLeftJustify /*taRightJustify*/ ),  // score
+      GridColumn( egExchange, "XXXXXX", "Exchange", taLeftJustify ),     // exchange
+      GridColumn( egComments, "XXXX", "Comments", taLeftJustify )     // comments
+   };
+//---------------------------------------------------------------------------
 
-MatchTreeItem::MatchTreeItem(TMatchCollection *match, MatchTreeItem *parent, BaseMatchContest *matchContest, MatchContact *matchContact)
-    :match(match), parent(parent), matchContest(matchContest), matchContact(matchContact), row(-1)
+MatchTreeItem::MatchTreeItem(MatchTreeItem *parent, BaseMatchContest *matchContest, MatchContact *matchContact)
+    :parent(parent), matchContest(matchContest), matchContact(matchContact), row(-1)
 {
 
 }
@@ -915,11 +925,12 @@ BaseMatchContest *MatchTreeItem::getMatchContest()
 }
 
 
-QSOMatchGridModel::QSOMatchGridModel():match(0), rootItem(0)
+QSOMatchGridModel::QSOMatchGridModel():rootItem(0), match(0)
 {}
 QSOMatchGridModel::~QSOMatchGridModel()
 {
     delete rootItem;
+    delete match;
 }
 
 void QSOMatchGridModel::initialise(TMatchCollection *pmatch )
@@ -939,20 +950,21 @@ void QSOMatchGridModel::initialise(TMatchCollection *pmatch )
    if (pmatch == 0 || pmatch->contactCount() == 0)
    {
        endResetModel();
+       delete pmatch;
        return;
    }
-   match = pmatch;
 
-   rootItem = new MatchTreeItem(match, 0, 0, 0);
+   match = pmatch;  // preserve all the tree
+   rootItem = new MatchTreeItem(0, 0, 0);
    rootItem->setRow(0);
-   for (ContestMatchIterator i = match->matchList.begin(); i != match->matchList.end(); i++)
+   for (ContestMatchIterator i = pmatch->matchList.begin(); i != pmatch->matchList.end(); i++)
    {
-       MatchTreeItem *ci = new MatchTreeItem(match, rootItem, (*i), 0);
+       MatchTreeItem *ci = new MatchTreeItem(rootItem, (*i), 0);
        rootItem->addChild(ci); // also sets row
        //(*i) is *BaseMatchContest
        for (int j = 0; j < (*i)->getContactCount(); j++)
        {
-           MatchTreeItem *mi = new MatchTreeItem(match, ci, (*i), (*i)->pcontactAt(j));
+           MatchTreeItem *mi = new MatchTreeItem(ci, (*i), (*i)->pcontactAt(j));
            ci->addChild(mi);
        }
    }
@@ -962,28 +974,27 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
 {
     QModelIndex p = index.parent();
 
+    MatchTreeItem *thisItem = static_cast<MatchTreeItem*>(index.internalPointer());
+
+    MatchTreeItem *parentItem;
+    if (p.isValid())
+        parentItem = static_cast<MatchTreeItem*>(p.internalPointer());
+    else
+        parentItem = rootItem;
 
     int row = index.row();
     int column = index.column();
 
-    if ( row >= rowCount(p) )
+    if ( row >= parentItem->childCount() )
         return QVariant();
 
-    BaseMatchContest *matchContest = 0;
-    BaseContestLog *contest = 0;
-    MatchContact * mct = 0;
+    BaseMatchContest *matchContest = thisItem->getMatchContest();
+    MatchContact * mct = thisItem->getMatchContact();
     BaseContact *ct = 0;
 
-    if (p.isValid())
-    {
-        matchContest = match->pcontestAt(p.row());
-        contest = matchContest->getContactLog();
+    if (mct)
+        ct = mct->getBaseContact();
 
-        if (matchContest)
-            mct = matchContest->pcontactAt( row);
-        if (mct)
-            ct = mct->getBaseContact();
-    }
     if (role == Qt::BackgroundRole)
     {
         if (ct)
@@ -1007,10 +1018,11 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
 
     if (role == Qt::DisplayRole)
     {
-        if (p.isValid())
+        if (ct)
         {
-            if ( ct && column >= 0 && column < columnCount(p))
+            if( column >= 0 && column < columnCount(p))
             {
+                BaseContestLog *contest = matchContest->getContactLog();
                 QString line = ct->getField( QSOTreeColumns[ column ].fieldId, contest );
                 QColor multhighlight = Qt::red;
                 bool setHighlight = false;
@@ -1044,7 +1056,8 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
         }
         else
         {
-            return "Current contest" + TMatchThread::getThisMatchStatus();
+            if (column == 0)
+                return "Current contest" + TMatchThread::getThisMatchStatus();
         }
     }
     return QVariant();
@@ -1054,7 +1067,7 @@ QVariant QSOMatchGridModel::headerData( int section, Qt::Orientation orientation
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
     {
-        QString h = QSOTreeColumns[ section ].title;
+        QString h = ThisMatchTreeColumns[ section ].title;
         return h;
     }
     return QVariant();
@@ -1095,7 +1108,7 @@ QModelIndex QSOMatchGridModel::parent( const QModelIndex &index ) const
 
 int QSOMatchGridModel::rowCount( const QModelIndex &parent ) const
 {
-    if (!match || !rootItem)
+    if ( !rootItem)
         return 0;
 
     if (!parent.isValid())
@@ -1107,11 +1120,5 @@ int QSOMatchGridModel::rowCount( const QModelIndex &parent ) const
 
 int QSOMatchGridModel::columnCount( const QModelIndex &parent ) const
 {
-    if (!match)
-        return 0;
-
-    if (parent.isValid())
-        return  THISMATCHTREECOLS;
-    return 1;
-
+    return  THISMATCHTREECOLS;
 }
