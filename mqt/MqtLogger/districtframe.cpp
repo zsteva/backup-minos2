@@ -31,10 +31,17 @@ void DistrictFrame::setContest(BaseContestLog *contest)
     proxyModel.setSourceModel(&model);
     ui->DistrictTable->setModel(&proxyModel);
     reInitialiseDistricts();
+    connect( ui->DistrictTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
+             this, SLOT( on_sectionResized(int, int , int)));
 }
 void DistrictFrame::reInitialiseDistricts()
 {
     model.reset();
+    QSettings settings;
+    QByteArray state;
+
+    state = settings.value("DistrictTable/state").toByteArray();
+    ui->DistrictTable->horizontalHeader()->restoreState(state);
 }
 void DistrictFrame::scrollToDistrict( int district_ind, bool makeVisible )
 {
@@ -44,7 +51,14 @@ void DistrictFrame::scrollToDistrict( int district_ind, bool makeVisible )
         proxyModel.scrolledDistrict = -1;
    reInitialiseDistricts();
 }
+void DistrictFrame::on_sectionResized(int, int , int)
+{
+    QSettings settings;
+    QByteArray state;
 
+    state = ui->DistrictTable->horizontalHeader()->saveState();
+    settings.setValue("DistrictTable/state", state);
+}
 
 DistrictGridModel::DistrictGridModel()
 {}

@@ -45,7 +45,7 @@ public:
 
 class DistrictFrame : public QFrame
 {
-    //Q_OBJECT
+    Q_OBJECT
 
     DistrictGridModel model;
     DistrictSortFilterProxyModel proxyModel;
@@ -59,6 +59,8 @@ public:
     void scrollToDistrict( int district_ind, bool makeVisible );
 private:
     Ui::DistrictFrame *ui;
+private slots:
+    void on_sectionResized(int, int , int);
 };
 
 #endif // DISTRICTFRAME_H

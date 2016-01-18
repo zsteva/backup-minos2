@@ -44,7 +44,7 @@ public:
 
 class DXCCFrame : public QFrame
 {
-    //Q_OBJECT
+    Q_OBJECT
 
     DXCCGridModel model;
     DXCCSortFilterProxyModel proxyModel;
@@ -59,6 +59,8 @@ public:
 
 private:
     Ui::DXCCFrame *ui;
+private slots:
+    void on_sectionResized(int, int , int);
 };
 
 #endif // DXCCFRAME_H

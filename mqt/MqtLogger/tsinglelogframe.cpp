@@ -227,6 +227,7 @@ void TSingleLogFrame::on_ContestPageChanged ()
        getSplitters();
     }
 
+    refreshMults();
 
     ui->GJVQSOLogFrame->selectField(0);
     ui->GJVQSOLogFrame->logTabChanged();

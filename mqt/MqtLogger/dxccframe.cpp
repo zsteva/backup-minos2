@@ -34,10 +34,17 @@ void DXCCFrame::setContest(BaseContestLog *contest)
     proxyModel.setSourceModel(&model);
     ui->DXCCTable->setModel(&proxyModel);
     reInitialiseCountries();
+    connect( ui->DXCCTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
+             this, SLOT( on_sectionResized(int, int , int)));
 }
 void DXCCFrame::reInitialiseCountries()
 {
     model.reset();
+    QSettings settings;
+    QByteArray state;
+
+    state = settings.value("DXCCTable/state").toByteArray();
+    ui->DXCCTable->horizontalHeader()->restoreState(state);
 }
 void DXCCFrame::scrollToCountry( int ctry_ind, bool makeVisible )
 {
@@ -45,8 +52,17 @@ void DXCCFrame::scrollToCountry( int ctry_ind, bool makeVisible )
         proxyModel.scrolledCountry = ctry_ind;
     else
         proxyModel.scrolledCountry = -1;
-   reInitialiseCountries();}
+   reInitialiseCountries();
+}
 
+void DXCCFrame::on_sectionResized(int, int , int)
+{
+    QSettings settings;
+    QByteArray state;
+
+    state = ui->DXCCTable->horizontalHeader()->saveState();
+    settings.setValue("DXCCTable/state", state);
+}
 
 DXCCGridModel::DXCCGridModel()
 {}
