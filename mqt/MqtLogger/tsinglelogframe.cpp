@@ -81,6 +81,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToCountry(QString,BaseContestLog*)), this, SLOT(on_ScrollToCountry(QString,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToDistrict(QString,BaseContestLog*)), this, SLOT(on_ScrollToDistrict(QString,BaseContestLog*)), Qt::QueuedConnection);
 
+    connect(&MinosLoggerEvents::mle, SIGNAL(LogColumnsChanged()), this, SLOT(onLogColumnsChanged()));
     connect(&MinosLoggerEvents::mle, SIGNAL(SplittersChanged()), this, SLOT(onSplittersChanged()));
     connect(&MinosLoggerEvents::mle, SIGNAL(FiltersChanged()), this, SLOT(onFiltersChanged()));
 
@@ -105,13 +106,22 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     // finally, connect the mapper to the stacked widget
     connect(sm, SIGNAL(mapped(int)), ui->StackedMults, SLOT(setCurrentIndex(int)));
 
+    connect( ui->QSOTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
+             this, SLOT( on_sectionResized(int, int , int)));
+
+    connect( ui->ThisMatchTree->header(), SIGNAL(sectionResized(int, int , int)),
+             this, SLOT( on_sectionResized(int, int , int)));
+    connect( ui->OtherMatchTree->header(), SIGNAL(sectionResized(int, int , int)),
+             this, SLOT( on_sectionResized(int, int , int)));
+    connect( ui->ArchiveMatchTree->header(), SIGNAL(sectionResized(int, int , int)),
+             this, SLOT( on_sectionResized(int, int , int)));
+
     ui->dxccFrame->setContest(contest);
     ui->districtFrame->setContest(contest);
     ui->StatsFrame->setContest(contest);
     ui->locFrame->setContest(contest);
     ui->StatsButton->setChecked(true);
     ui->StackedMults->setCurrentIndex(4);
-
 }
 
 TSingleLogFrame::~TSingleLogFrame()
@@ -159,13 +169,33 @@ void TSingleLogFrame::closeContest()
        contest = 0;
     }
 }
+void TSingleLogFrame::restoreColumns()
+{
+    QSettings settings;
+    QByteArray state;
+
+    state = settings.value("QSOTable/state").toByteArray();
+    ui->QSOTable->horizontalHeader()->restoreState(state);
+
+    state = settings.value("ThisMatchTree/state").toByteArray();
+    ui->ThisMatchTree->header()->restoreState(state);
+
+    state = settings.value("OtherMatchTree/state").toByteArray();
+    ui->OtherMatchTree->header()->restoreState(state);
+
+    state = settings.value("ArchiveMatchTree/state").toByteArray();
+    ui->ArchiveMatchTree->header()->restoreState(state);
+
+    logColumnsChanged = false;
+
+}
+
 void TSingleLogFrame::showQSOs()
 {
 
    NextContactDetailsTimerTimer( );
 
-
-   logColumnsChanged = false;
+   restoreColumns();
 
    ui->GJVQSOLogFrame->clearCurrentField();
    ui->GJVQSOLogFrame->startNextEntry();
@@ -410,6 +440,7 @@ void TSingleLogFrame::showThisMatchQSOs( TMatchCollection *matchCollection )
     ui->ThisMatchTree->setModel(&thisMatchModel);
     ui->ThisMatchTree->setFirstColumnSpanned( 0, QModelIndex(), true );
     ui->ThisMatchTree->expandAll();
+    restoreColumns();
 }
 void TSingleLogFrame::showOtherMatchQSOs( TMatchCollection *matchCollection )
 {
@@ -417,7 +448,7 @@ void TSingleLogFrame::showOtherMatchQSOs( TMatchCollection *matchCollection )
     ui->OtherMatchTree->setModel(&otherMatchModel);
     ui->OtherMatchTree->setFirstColumnSpanned( 0, QModelIndex(), true );
     ui->OtherMatchTree->expandAll();
-
+    restoreColumns();
 }
 void TSingleLogFrame::showMatchList( TMatchCollection *matchCollection )
 {
@@ -425,6 +456,7 @@ void TSingleLogFrame::showMatchList( TMatchCollection *matchCollection )
     ui->ArchiveMatchTree->setModel(&archiveMatchModel);
     ui->ArchiveMatchTree->setFirstColumnSpanned( 0, QModelIndex(), true );
     ui->ArchiveMatchTree->expandAll();
+    restoreColumns();
 }
 //---------------------------------------------------------------------------
 void TSingleLogFrame::on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* )
@@ -681,6 +713,29 @@ void TSingleLogFrame::on_MultSplitter_splitterMoved(int /*pos*/, int /*index*/)
     QSettings settings;
     settings.setValue("MultSplitter/state", state);
     MinosLoggerEvents::SendSplittersChanged();
+}
+void TSingleLogFrame::on_sectionResized(int, int, int)
+{
+    QSettings settings;
+    QByteArray state;
+
+    state = ui->QSOTable->horizontalHeader()->saveState();
+    settings.setValue("QSOTable/state", state);
+
+    state = ui->ThisMatchTree->header()->saveState();
+    settings.setValue("ThisMatchTree/state", state);
+
+    state = ui->OtherMatchTree->header()->saveState();
+    settings.setValue("OtherMatchTree/state", state);
+
+    state = ui->ArchiveMatchTree->header()->saveState();
+    settings.setValue("ArchiveMatchTree/state", state);
+
+    MinosLoggerEvents::SendLogColumnsChanged();
+}
+void TSingleLogFrame::onLogColumnsChanged()
+{
+    logColumnsChanged = true;
 }
 
 //=============================================================================

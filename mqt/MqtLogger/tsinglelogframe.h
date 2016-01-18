@@ -203,6 +203,8 @@ private:
     void showThisMatchQSOs( TMatchCollection *matchCollection );
     void showOtherMatchQSOs( TMatchCollection *matchCollection );
     void showMatchList( TMatchCollection *matchCollection );
+    void restoreColumns();
+
 
 private slots:
     void on_ContestPageChanged();
@@ -231,6 +233,7 @@ private slots:
 
 
     void on_StackedMults_currentChanged(int arg1);
+    void onLogColumnsChanged();
     void onSplittersChanged();
     void onFiltersChanged();
     void on_LogAreaSplitter_splitterMoved(int pos, int index);
@@ -238,6 +241,7 @@ private slots:
     void on_TopSplitter_splitterMoved(int pos, int index);
     void on_CribSplitter_splitterMoved(int pos, int index);
     void on_MultSplitter_splitterMoved(int pos, int index);
+    void on_sectionResized(int, int, int);
 };
 
 #endif // TSINGLELOGFRAME_H
