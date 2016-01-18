@@ -922,3 +922,12 @@ bool MultListsImpl::isUKprefix(const callsign &cs)
 	return false;
 }
 
+int MultListsImpl::getDistWorked(int item, BaseContestLog * const ct)
+{
+    return distList.getWorked(item, ct);
+}
+
+int MultListsImpl::getCountryWorked(int item, BaseContestLog * const ct)
+{
+    return ctryList.getWorked(item, ct);
+}

@@ -20,6 +20,14 @@ class CountryList;
 class MultEntry;
 class BaseContestLog;
 
+
+const int CONTINENTS = 6;
+struct ContList
+{
+   char continent[ 3 ];
+   bool allow;
+};
+
 const int UKREGIONS = 10;
 
 enum eMultGridCols {ectCall, ectWorked, ectLocator, ectBearing, ectName, ectOtherCalls,
@@ -188,5 +196,9 @@ class MultLists
       virtual int getCtryListIndexOf( CountryEntry * ) = 0;
       virtual int getDistListIndexOf( DistrictEntry * ) = 0;
       virtual bool isUKprefix(const callsign &cs) = 0;
+//      virtual DistrictEntry *getDistrictEntry(int item) = 0;
+//      virtual CountryEntry *getCountryEntry(int item) = 0;
+      virtual int getDistWorked(int item, BaseContestLog *const ct ) = 0;
+      virtual int getCountryWorked(int item, BaseContestLog *const ct ) = 0;
 };
 #endif

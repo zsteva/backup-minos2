@@ -12,14 +12,7 @@
 #include "focuswatcher.h"
 #include "htmldelegate.h"
 
-const int CONTINENTS = 6;
-struct ContList
-{
-   char continent[ 3 ];
-   bool allow;
-};
 
-extern ContList contlist[ CONTINENTS ];
 ContList contlist[ CONTINENTS ] =
    {
       {"EU", true},
@@ -45,6 +38,9 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 
 {
     ui->setupUi(this);
+
+    initFilters();
+
     qsoModel.initialise(contest);
     ui->QSOTable->setModel(&qsoModel);
     ui->QSOTable->setItemDelegate( new HtmlDelegate );
@@ -86,6 +82,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToDistrict(QString,BaseContestLog*)), this, SLOT(on_ScrollToDistrict(QString,BaseContestLog*)), Qt::QueuedConnection);
 
     connect(&MinosLoggerEvents::mle, SIGNAL(SplittersChanged()), this, SLOT(onSplittersChanged()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(FiltersChanged()), this, SLOT(onFiltersChanged()));
 
     // Connect up the stats etc display
     QSignalMapper* sm = new QSignalMapper(this);
@@ -108,11 +105,12 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     // finally, connect the mapper to the stacked widget
     connect(sm, SIGNAL(mapped(int)), ui->StackedMults, SLOT(setCurrentIndex(int)));
 
+    ui->dxccFrame->setContest(contest);
+    ui->districtFrame->setContest(contest);
     ui->StatsFrame->setContest(contest);
     ui->locFrame->setContest(contest);
     ui->StatsButton->setChecked(true);
     ui->StackedMults->setCurrentIndex(4);
-    initFilters();
 
 }
 
@@ -453,7 +451,7 @@ void TSingleLogFrame::on_ScrollToDistrict( const QString &qth, BaseContestLog* )
     if ( dist )
     {
        unsigned int district_ind = MultLists::getMultLists() ->getDistListIndexOf( dist );
-       //MultDispFrame->scrollToDistrict( district_ind, true );
+       ui->districtFrame->scrollToDistrict( district_ind, true );
     }
 }
 
@@ -466,7 +464,7 @@ void TSingleLogFrame::on_ScrollToCountry( const QString &csCs, BaseContestLog* )
     if ( ctryMult )
     {
        unsigned int ctry_ind = MultLists::getMultLists() ->getCtryListIndexOf( ctryMult );
-       //MultDispFrame->scrollToCountry( ctry_ind, true );
+       ui->dxccFrame->scrollToCountry( ctry_ind, true );
     }
 }
 void TSingleLogFrame::on_MakeEntry(BaseContestLog *ct)
@@ -501,6 +499,8 @@ void TSingleLogFrame::on_AfterLogContact( BaseContestLog *ct)
 void TSingleLogFrame::refreshMults()
 {
     ui->locFrame->reInitialiseLocators();
+    ui->dxccFrame->reInitialiseCountries();
+    ui->districtFrame->reInitialiseDistricts();
 }
 
 void TSingleLogFrame::updateTrees()
@@ -510,7 +510,7 @@ void TSingleLogFrame::updateTrees()
 }
 void TSingleLogFrame::initFilters()
 {
-   filterClickEnabled = false;
+   filterClickEnabled = false;  // stop them being saved while we are setting up
 
    MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentEU, contlist[ 0 ].allow );
    MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentAS, contlist[ 1 ].allow );
@@ -531,17 +531,21 @@ void TSingleLogFrame::initFilters()
    ui->WorkedCB->setChecked(showWorked);
    ui->UnworkedCB->setChecked(showUnworked);
 
+
    filterClickEnabled = true;
 }
+void TSingleLogFrame::onFiltersChanged()
+{
+    ui->dxccFrame->reInitialiseCountries();
+    ui->districtFrame->reInitialiseDistricts();
+    ui->locFrame->reInitialiseLocators();
+    ui->StatsFrame->reInitialiseStats();
+}
+
 void TSingleLogFrame::saveFilters()
 {
     if ( filterClickEnabled )
     {
-        ui->dxccFrame->reInitialiseCountries();
-        ui->districtFrame->reInitialiseDistricts();
-        ui->locFrame->reInitialiseLocators();
-        ui->StatsFrame->reInitialiseStats();
-
         contlist[ 0 ].allow = ui->ContEU->isChecked();
         contlist[ 1 ].allow = ui->ContAS->isChecked();
         contlist[ 2 ].allow = ui->ContAF->isChecked();

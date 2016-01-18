@@ -35,12 +35,12 @@ struct MultCmp
 template < class itemtype >
 class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <itemtype> >
 {
-   protected:
+    public:
       virtual int getWorked( int /*item*/, BaseContestLog * const /*ct*/ )
       {
          return 0;
       }
-   public:
+
       QString multfilename;
       virtual bool procLine( char ** ) = 0;
       MultList()
@@ -234,14 +234,13 @@ class GlistList : public MultList < GlistEntry * >
 class DistrictList : public MultList < DistrictEntry * >
 {
       // list of DistrictEntry
-   protected:
-      virtual int getWorked( int item, BaseContestLog *const ct );
    public:
       DistrictList( void );
       virtual ~DistrictList();
       void load( void );
       virtual bool procLine( char ** );
       virtual int slen( bool );
+      virtual int getWorked( int item, BaseContestLog *const ct );
 };
 
 class DistrictSynonymList : public MultList < DistrictSynonym * >
@@ -258,8 +257,6 @@ class DistrictSynonymList : public MultList < DistrictSynonym * >
 class CountryList : public MultList < CountryEntry * >
 {
       // list of CountryEntry
-   protected:
-      virtual int getWorked( int item, BaseContestLog *const ct );
    public:
       CountryList( void );
       virtual ~CountryList();
@@ -267,6 +264,7 @@ class CountryList : public MultList < CountryEntry * >
       virtual bool procLine( char ** );
       virtual int slen( bool );
       void loadEntries( const QString &fname, const QString &fmess );
+      virtual int getWorked( int item, BaseContestLog *const ct );
 };
 
 class CountrySynonymList : public MultList < CountrySynonym * >
@@ -306,6 +304,10 @@ class MultListsImpl: public MultLists
       virtual int getCtryListIndexOf( CountryEntry * );
       virtual int getDistListIndexOf( DistrictEntry * );
       virtual bool isUKprefix(const callsign &cs);
+//      virtual DistrictEntry *getDistrictEntry(int item);
+//      virtual CountryEntry *getCountryEntry(int item);
+      virtual int getDistWorked(int item, BaseContestLog *const ct );
+      virtual int getCountryWorked(int item, BaseContestLog *const ct );
 
 };
 #endif

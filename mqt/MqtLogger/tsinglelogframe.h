@@ -9,6 +9,9 @@ namespace Ui {
 class TSingleLogFrame;
 }
 
+extern bool showWorked;
+extern bool showUnworked;
+
 class TMatchCollection;
 class MatchNodeData;
 class ProtoContest;
@@ -229,6 +232,7 @@ private slots:
 
     void on_StackedMults_currentChanged(int arg1);
     void onSplittersChanged();
+    void onFiltersChanged();
     void on_LogAreaSplitter_splitterMoved(int pos, int index);
     void on_ArchiveSplitter_splitterMoved(int pos, int index);
     void on_TopSplitter_splitterMoved(int pos, int index);
