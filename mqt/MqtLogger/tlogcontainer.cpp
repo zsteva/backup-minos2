@@ -11,6 +11,7 @@
 #include "contestdetails.h"
 #include "tmanagelistsdlg.h"
 #include "SendRPCDM.h"
+#include "tsettingseditdlg.h"
 
 TLogContainer *LogContainer = 0;
 
@@ -648,7 +649,13 @@ void TLogContainer::ShowOperatorsActionExecute()
 
 void TLogContainer::OptionsActionExecute()
 {
+    TSettingsEditDlg ed(this, &TContestApp::getContestApp() ->loggerBundle );
 
+    ed.ShowCurrentSectionOnly();
+    if (ed.exec() == QDialog::Accepted)
+    {
+       mShowMessage("You may need to close and reload Minos to have these settings applied", this);
+    }
 }
 
 void TLogContainer::FontEditAcceptActionExecute()
