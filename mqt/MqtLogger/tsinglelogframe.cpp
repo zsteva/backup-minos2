@@ -303,58 +303,49 @@ void TSingleLogFrame::on_XferPressed()
    // copy relevant parts of match contact to screen contact
    if ( archiveTreeClickIndex.isValid() && ( xferTree == 0 || xferTree == ui->ArchiveMatchTree ) )
    {
-      MatchNodeListData * MatchTreeIndex = ( MatchNodeListData * ) archiveTreeClickIndex.internalPointer();
-      ContactList *clp = MatchTreeIndex->matchedList;
-      if ( MatchTreeIndex && clp && MatchTreeIndex->matchedContact )
-      {
-         transferDetails( MatchTreeIndex );
-      }
+      MatchTreeItem * MatchTreeIndex = ( MatchTreeItem * ) archiveTreeClickIndex.internalPointer();
+
+      transferDetails( MatchTreeIndex );
+
    }
    else
    {
       if ( otherTreeClickIndex.isValid() && ( xferTree == 0 || xferTree == ui->OtherMatchTree ) )
       {
-         MatchNodeData * MatchTreeIndex = ( MatchNodeData * ) otherTreeClickIndex.internalPointer();
-         BaseContestLog *clp = MatchTreeIndex->matchedContest;
-         if ( MatchTreeIndex && clp && MatchTreeIndex->matchedContact )
-         {
-            transferDetails( MatchTreeIndex );
-         }
+         MatchTreeItem * MatchTreeIndex = ( MatchTreeItem * ) otherTreeClickIndex.internalPointer();
+
+         transferDetails( MatchTreeIndex );
       }
    }
 }
 //==============================================================================
-void TSingleLogFrame::transferDetails( MatchNodeData *MatchTreeIndex )
+void TSingleLogFrame::transferDetails(MatchTreeItem *MatchTreeIndex )
 {
+    if ( !contest )
+    {
+       return ;
+    }
    // needs to be transferred into QSOLogFrame.cpp
-   const BaseContact * lct = MatchTreeIndex->matchedContact;
-   if ( !contest )
-   {
-      return ;
-   }
+   MatchContact *mc = MatchTreeIndex->getMatchContact();
+   BaseContact *bct = mc->getBaseContact();
 
-   if ( lct )
+   if ( bct )
    {
-      BaseContestLog * matct = MatchTreeIndex->matchedContest;
-      ui->GJVQSOLogFrame->transferDetails( lct, matct );
+      BaseContestLog * matct = mc->getContactLog();
+      ui->GJVQSOLogFrame->transferDetails( bct, matct );
+   }
+   else
+   {
+       ListContact *lct = mc->getListContact();
+       if (lct)
+       {
+           ContactList * matct = mc->getContactList();
+           ui->GJVQSOLogFrame->transferDetails( lct, matct );
+       }
    }
 }
 //---------------------------------------------------------------------------
-void TSingleLogFrame::transferDetails( MatchNodeListData *MatchTreeIndex )
-{
-   // needs to be transferred into QSOLogFrame.cpp
-   const ListContact * lct = MatchTreeIndex->matchedContact;
-   if ( !contest )
-   {
-      return ;
-   }
 
-   if ( lct )
-   {
-      ContactList * matct = MatchTreeIndex->matchedList;
-      ui->GJVQSOLogFrame->transferDetails( lct, matct );
-   }
-}
 void TSingleLogFrame::on_BandMapPressed()
 {
     ui->GJVQSOLogFrame->getScreenEntry();
@@ -405,7 +396,7 @@ void TSingleLogFrame::on_MatchStarting(BaseContestLog *ct)
     if (contest == ct)
     {
       xferTree = 0;
-      matchTreeClickIndex = QModelIndex();
+//      matchTreeClickIndex = QModelIndex();
       otherTreeClickIndex = QModelIndex();
       archiveTreeClickIndex = QModelIndex();
 //      OtherMatchTree->Colors->UnfocusedSelectionColor = clBtnFace;
@@ -442,22 +433,31 @@ void TSingleLogFrame::showThisMatchQSOs( TMatchCollection *matchCollection )
     ui->ThisMatchTree->setFirstColumnSpanned( 0, QModelIndex(), true );
     ui->ThisMatchTree->expandAll();
     restoreColumns();
+
 }
 void TSingleLogFrame::showOtherMatchQSOs( TMatchCollection *matchCollection )
 {
+    if (matchCollection->contactCount())
+        ui->GJVQSOLogFrame->setXferEnabled(true);
     otherMatchModel.initialise(OtherMatch, matchCollection);
     ui->OtherMatchTree->setModel(&otherMatchModel);
     ui->OtherMatchTree->setFirstColumnSpanned( 0, QModelIndex(), true );
     ui->OtherMatchTree->expandAll();
     restoreColumns();
+    connect(ui->OtherMatchTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(on_OtherMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
 void TSingleLogFrame::showMatchList( TMatchCollection *matchCollection )
 {
+    if (matchCollection->contactCount())
+        ui->GJVQSOLogFrame->setXferEnabled(true);
     archiveMatchModel.initialise(ArchiveMatch, matchCollection);
     ui->ArchiveMatchTree->setModel(&archiveMatchModel);
     ui->ArchiveMatchTree->setFirstColumnSpanned( 0, QModelIndex(), true );
     ui->ArchiveMatchTree->expandAll();
     restoreColumns();
+    connect(ui->ArchiveMatchTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(on_ArchiveMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
 //---------------------------------------------------------------------------
 void TSingleLogFrame::on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* )
@@ -737,6 +737,17 @@ void TSingleLogFrame::on_sectionResized(int, int, int)
 void TSingleLogFrame::onLogColumnsChanged()
 {
     logColumnsChanged = true;
+}
+void TSingleLogFrame::on_OtherMatchTreeSelectionChanged(const QItemSelection &selected, const QItemSelection &)
+{
+    xferTree = ui->OtherMatchTree;
+    otherTreeClickIndex = selected.indexes().at(0);
+}
+
+void TSingleLogFrame::on_ArchiveMatchTreeSelectionChanged(const QItemSelection &selected, const QItemSelection &)
+{
+    xferTree = ui->ArchiveMatchTree;
+    archiveTreeClickIndex = selected.indexes().at(0);
 }
 
 //=============================================================================

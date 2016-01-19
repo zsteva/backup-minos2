@@ -23,6 +23,7 @@ class ListContact;
 // We may need to define our own validation controls with valid methods
 // for each needed type...
 //==========================================================
+/*
 class MatchNodeData
 {
    public:
@@ -41,6 +42,7 @@ class MatchNodeListData
       ContactList *matchedList;
       ListContact *matchedContact;
 };
+*/
 class QSOGridModel: public QAbstractItemModel
 {
     protected:
@@ -161,8 +163,8 @@ public:
 
     bool getStanza( unsigned int stanza, QString &stanzaData );
 
-    QModelIndex QSOTreeClickIndex;
-    QModelIndex matchTreeClickIndex;
+//    QModelIndex QSOTreeClickIndex;
+//    QModelIndex matchTreeClickIndex;
     QModelIndex otherTreeClickIndex;
     QModelIndex archiveTreeClickIndex;
     QTreeView *xferTree;
@@ -192,8 +194,7 @@ private:
     void initFilters();
     void saveFilters();
 
-    void transferDetails( MatchNodeData *MatchTreeIndex );
-    void transferDetails( MatchNodeListData *MatchTreeIndex );
+    void transferDetails( MatchTreeItem *MatchTreeIndex );
 
     void keyPressEvent( QKeyEvent* event );
 
@@ -242,6 +243,9 @@ private slots:
     void on_CribSplitter_splitterMoved(int pos, int index);
     void on_MultSplitter_splitterMoved(int pos, int index);
     void on_sectionResized(int, int, int);
+
+    void on_OtherMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &);
+    void on_ArchiveMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &);
 };
 
 #endif // TSINGLELOGFRAME_H
