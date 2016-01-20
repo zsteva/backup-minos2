@@ -68,6 +68,7 @@ int ContestDetails::exec()
     ui->EntryBundleFrame->initialise(this,  "Entry", &contest->entryBundle, &contest->entryBundleName );
     ui->ContestNameSelected->setText(contest->VHFContestName.getValue());
 
+    trace("4");
     contest->initialiseINI();
 
     QWidget *nextD = getDetails( );
@@ -202,19 +203,19 @@ void ContestDetails::setDetails(  )
       ui->EndTimeCombo->setCurrentText("");
    }
 
-   if ( !contest->mycall.fullCall.getValue().size() )                                       // Entry
+   QString call = contest->mycall.fullCall.getValue();
+   if ( !call.size() )                                       // Entry
    {
-      QString temp;
-      contest->entryBundle.getStringProfile( eepCall, temp );
+      contest->entryBundle.getStringProfile( eepCall, call );
 
       // STL version of strupr
-      temp = temp.toUpper();
-      contest->mycall.fullCall.setValue( temp );
+      call = call.toUpper();
+      contest->mycall.fullCall.setValue( call );
    }
-   ui->CallsignEdit->setText(contest->mycall.fullCall.getValue());
+   ui->CallsignEdit->setText(call);
    if (contest->currentOp1.getValue().size()== 0)
    {
-      contest->currentOp1.setValue( ui->CallsignEdit->text());
+      contest->currentOp1.setValue( call);
    }
 
    contest->validateLoc();
@@ -304,13 +305,33 @@ void ContestDetails::refreshOps()
    {
       ui->MainOpComboBox->clear();
       ui->SecondOpComboBox->clear();
+      bool addCall = true;
       for ( OperatorIterator i = contest->oplist.begin(); i != contest->oplist.end(); i++ )
       {
          if ( ( *i ).size() )
          {
             ui->MainOpComboBox->addItem( ( *i ) );
             ui->SecondOpComboBox->addItem( ( *i ) );
+            addCall = false;
          }
+      }
+      if (addCall)
+      {
+          QString cop1 = contest->currentOp1.getValue();
+          QString cop2 = contest->currentOp2.getValue();
+
+          if (cop1.size())
+          {
+            ui->MainOpComboBox->addItem( cop1 );
+            ui->SecondOpComboBox->addItem( cop1 );
+          }
+
+          if (cop2.size())
+          {
+            ui->MainOpComboBox->addItem( cop2 );
+            ui->SecondOpComboBox->addItem( cop2 );
+          }
+
       }
       ui->MainOpComboBox->setCurrentText(contest->currentOp1.getValue());
       ui->SecondOpComboBox->setCurrentText(contest->currentOp2.getValue());
