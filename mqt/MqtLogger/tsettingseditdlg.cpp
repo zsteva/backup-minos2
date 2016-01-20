@@ -13,6 +13,11 @@ TSettingsEditDlg::TSettingsEditDlg(QWidget *parent, SettingsBundle *bundle) :
 {
     ui->setupUi(this);
     initialSection = bundle->getSection();
+
+    QSettings settings;
+    QByteArray geometry = settings.value("EntrySettings/geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
 }
 void TSettingsEditDlg::ShowCurrentSectionOnly()
 {
@@ -212,8 +217,23 @@ void TSettingsEditDlg::on_OKButton_clicked()
     accept();
 }
 
-void TSettingsEditDlg::on_SectionsList_clicked(const QModelIndex &index)
+void TSettingsEditDlg::on_SectionsList_itemSelectionChanged()
 {
     getDetails();  // save what is set already
     showSection();
+}
+void TSettingsEditDlg::doCloseEvent()
+{
+    QSettings settings;
+    settings.setValue("EntrySettings/geometry", saveGeometry());
+}
+void TSettingsEditDlg::reject()
+{
+    doCloseEvent();
+    QDialog::reject();
+}
+void TSettingsEditDlg::accept()
+{
+    doCloseEvent();
+    QDialog::accept();
 }

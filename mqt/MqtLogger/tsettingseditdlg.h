@@ -22,6 +22,7 @@ class TSettingsEditDlg : public QDialog
     void showSection();
     void showDetails();
     void getDetails();
+    void doCloseEvent();
 public:
     explicit TSettingsEditDlg(QWidget *parent , SettingsBundle *bundle);
     void ShowCurrentSectionOnly();
@@ -40,6 +41,10 @@ private slots:
 
     void on_OKButton_clicked();
 
-    void on_SectionsList_clicked(const QModelIndex &index);
+    void on_SectionsList_itemSelectionChanged();
+public Q_SLOTS:
+    virtual void accept() override;
+    virtual void reject() override;
+
 };
 #endif // TSETTINGSEDITDLG_H
