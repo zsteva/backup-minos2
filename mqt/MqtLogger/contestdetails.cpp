@@ -68,7 +68,6 @@ int ContestDetails::exec()
     ui->EntryBundleFrame->initialise(this,  "Entry", &contest->entryBundle, &contest->entryBundleName );
     ui->ContestNameSelected->setText(contest->VHFContestName.getValue());
 
-    trace("4");
     contest->initialiseINI();
 
     QWidget *nextD = getDetails( );
