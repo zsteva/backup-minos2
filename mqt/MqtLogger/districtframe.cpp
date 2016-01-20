@@ -111,7 +111,7 @@ QVariant DistrictGridModel::headerData( int section, Qt::Orientation orientation
     return QVariant();
 }
 
-QModelIndex DistrictGridModel::index( int row, int column, const QModelIndex &parent) const
+QModelIndex DistrictGridModel::index( int row, int column, const QModelIndex &/*parent*/) const
 {
     if ( row < 0 || row >= rowCount()  )
         return QModelIndex();
@@ -119,12 +119,12 @@ QModelIndex DistrictGridModel::index( int row, int column, const QModelIndex &pa
     return createIndex( row, column );
 }
 
-QModelIndex DistrictGridModel::parent( const QModelIndex &index ) const
+QModelIndex DistrictGridModel::parent( const QModelIndex &/*index*/ ) const
 {
     return QModelIndex();
 }
 
-int DistrictGridModel::rowCount( const QModelIndex &parent ) const
+int DistrictGridModel::rowCount( const QModelIndex &/*parent*/ ) const
 {
     return MultLists::getMultLists() ->getDistListSize();
 }
@@ -133,7 +133,7 @@ int DistrictGridModel::columnCount( const QModelIndex &/*parent*/ ) const
 {
     return ectMultMaxCol - 1;
 }
-bool DistrictSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+bool DistrictSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &/*sourceParent*/) const
 {
     if (scrolledDistrict == sourceRow)
         return true;

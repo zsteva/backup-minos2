@@ -115,7 +115,7 @@ QVariant DXCCGridModel::headerData( int section, Qt::Orientation orientation,
     return QVariant();
 }
 
-QModelIndex DXCCGridModel::index( int row, int column, const QModelIndex &parent) const
+QModelIndex DXCCGridModel::index( int row, int column, const QModelIndex &/*parent*/) const
 {
     if ( row < 0 || row >= rowCount()  )
         return QModelIndex();
@@ -123,12 +123,12 @@ QModelIndex DXCCGridModel::index( int row, int column, const QModelIndex &parent
     return createIndex( row, column );
 }
 
-QModelIndex DXCCGridModel::parent( const QModelIndex &index ) const
+QModelIndex DXCCGridModel::parent( const QModelIndex &/*index*/ ) const
 {
     return QModelIndex();
 }
 
-int DXCCGridModel::rowCount( const QModelIndex &parent ) const
+int DXCCGridModel::rowCount( const QModelIndex &/*parent*/ ) const
 {
     return MultLists::getMultLists() ->getCtryListSize();
 }
@@ -137,7 +137,7 @@ int DXCCGridModel::columnCount( const QModelIndex &/*parent*/ ) const
 {
     return ectMultMaxCol;
 }
-bool DXCCSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+bool DXCCSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &/*sourceParent*/) const
 {
     if (scrolledCountry == sourceRow)
         return true;
