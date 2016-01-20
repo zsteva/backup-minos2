@@ -396,12 +396,9 @@ void TSingleLogFrame::on_MatchStarting(BaseContestLog *ct)
     if (contest == ct)
     {
       xferTree = 0;
-//      matchTreeClickIndex = QModelIndex();
+      matchTreeClickIndex = QModelIndex();
       otherTreeClickIndex = QModelIndex();
       archiveTreeClickIndex = QModelIndex();
-//      OtherMatchTree->Colors->UnfocusedSelectionColor = clBtnFace;
-//      ArchiveMatchTree->Colors->UnfocusedSelectionColor = clBtnFace;
-//      GJVQSOLogFrame->MatchXferButton->Font->Color = clBtnText;
 
       ui->GJVQSOLogFrame->setXferEnabled(false);
     }
@@ -748,6 +745,28 @@ void TSingleLogFrame::on_ArchiveMatchTreeSelectionChanged(const QItemSelection &
 {
     xferTree = ui->ArchiveMatchTree;
     archiveTreeClickIndex = selected.indexes().at(0);
+}
+void TSingleLogFrame::on_ThisMatchTree_doubleClicked(const QModelIndex &index)
+{
+    MatchTreeItem * MatchTreeIndex = ( MatchTreeItem * ) index.internalPointer();
+
+    MatchContact *mc = MatchTreeIndex->getMatchContact();
+    BaseContact *bct = mc->getBaseContact();
+
+    if ( bct )
+    {
+       EditContact( bct );
+    }
+}
+
+void TSingleLogFrame::on_OtherMatchTree_doubleClicked(const QModelIndex &index)
+{
+    MinosLoggerEvents::SendXferPressed();;
+}
+
+void TSingleLogFrame::on_ArchiveMatchTree_doubleClicked(const QModelIndex &index)
+{
+    MinosLoggerEvents::SendXferPressed();
 }
 
 //=============================================================================
@@ -1209,3 +1228,4 @@ int QSOMatchGridModel::columnCount( const QModelIndex &/*parent*/ ) const
     }
     return cols;
 }
+

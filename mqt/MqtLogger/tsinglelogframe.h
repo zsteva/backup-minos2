@@ -164,7 +164,7 @@ public:
     bool getStanza( unsigned int stanza, QString &stanzaData );
 
 //    QModelIndex QSOTreeClickIndex;
-//    QModelIndex matchTreeClickIndex;
+    QModelIndex matchTreeClickIndex;
     QModelIndex otherTreeClickIndex;
     QModelIndex archiveTreeClickIndex;
     QTreeView *xferTree;
@@ -246,6 +246,9 @@ private slots:
 
     void on_OtherMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &);
     void on_ArchiveMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &);
+    void on_ThisMatchTree_doubleClicked(const QModelIndex &index);
+    void on_OtherMatchTree_doubleClicked(const QModelIndex &index);
+    void on_ArchiveMatchTree_doubleClicked(const QModelIndex &index);
 };
 
 #endif // TSINGLELOGFRAME_H
