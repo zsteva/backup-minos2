@@ -534,7 +534,6 @@ void TLogContainer::FileOpenActionExecute()
                        "",
                        Filter
                        );
-
     for (int i = 0; i < fnames.size(); i++)
     {
         QString fname = fnames[i];
@@ -731,7 +730,7 @@ void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
 
 void TLogContainer::on_ContestPageControl_tabBarDoubleClicked(int /*index*/)
 {
-    //
+    ContestDetailsActionExecute();
 }
 
 void TLogContainer::on_ContestPageControl_customContextMenuRequested(const QPoint &pos)
@@ -753,7 +752,6 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
       bool show = false;
       if ( ced )
       {
-
          ced->setDetails( contest );
 
          {
