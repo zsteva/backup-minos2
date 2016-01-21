@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
+    MqtUtils \
     TinyXML \
     XMPPLib \
     XMPPClientLib \
@@ -8,5 +9,9 @@ SUBDIRS += \
     RPCTest \
     MqtLogger \
     MqtServer \
-    MqtUtils \
     MqtChat
+
+RPCTest.depends = MqtUtils TinyXML XMPPLib XMPPClientLib MqtBase
+MqtLogger.depends = MqtUtils TinyXML XMPPLib XMPPClientLib MqtBase
+MqtServer.depends = MqtUtils TinyXML XMPPLib XMPPClientLib MqtBase
+MqtChat.depends = MqtUtils TinyXML XMPPLib XMPPClientLib MqtBase
