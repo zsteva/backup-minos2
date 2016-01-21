@@ -110,8 +110,9 @@
 <!-- 15.010 29/04/15 G4CLA - There were 2 vhfnorm column desriptions !-->
 <!-- 15.011 27/07/15 G4CLA - add logscount for UKAC  add club names for vhfmults results-->
 <!-- 15.012 26/10/15 G4CLA - add adjudicator info -->
+<!-- 15.013 05/12/15 G4CLA - change CW Champ to be open sf and lp-->
 <calendar>
-<version>15.012 26/10/2015</version>
+<version>15.013 05/12/2015</version>
 <icalurl>http://www.rsgbcc.org/icals/vhf15.ics</icalurl>
 <googleurl>https://www.google.com/calendar/embed?src=pvb6brrneu19vj15qfg78nuumc%40group.calendar.google.com&amp;ctz=Europe/London</googleurl>
 <mult_type>
@@ -444,7 +445,7 @@ No longer used
 <long_description>
 This is an Affiliated Societies contest and is open to both individual entrants (who must be RSGB members), and to teams made up of a number of operators who must all be members of the same affiliated society, but not necessarily RSGB members themselves.   
 
-The results from the 6m, 2m and 70cm Affiliated Society contests contribute to the AFS Super League. http://www.rsgbcc.org/hf/rules/2013/AFS-SuperLeague2013-2014.shtml
+The results from the 6m, 2m and 70cm Affiliated Society contests contribute to the AFS Super League. http://www.rsgbcc.org/hf/rules/2014/AFS-SuperLeague2014-2015.shtml
 
 a. All members of the team must operate from within 80Km of the Virtual Meeting Place of the society and must be within the UK. No station may represent more than one society. No operator is allowed to use more than one callsign during the contest. In the case of national societies, each team must define a separate virtual meeting place , and each team member must operate within 80Km of that designated meeting place. See http://www.rsgbcc.org/hf/afsinfo.shtml for more information.
 
@@ -1245,7 +1246,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <name>Section O</name>
                         <field>clubName</field>
                         <display>Club</display>
-                        <filter>date!=0 and (Section="O" or Section="6O" or Section="SO")</filter>
+                        <filter>date!=0 and (Section="O" or Section="6O" or Section="SO") and (`call` like "M%" or `call` like "2%" or `call` like "G%")</filter>
                         <scorefield>totalScore</scorefield>
                         <table>Entries</table>
 					    <collateby>clubName</collateby>
@@ -1254,7 +1255,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <name>Section SF</name>
                         <field>call</field>
                         <display>Call</display>
-                        <filter>date!=0 and (Section="SF" or Section="6S")</filter>
+                        <filter>date!=0 and (Section="SF" or Section="6S") and (`call` like "M%" or `call` like "2%" or `call` like "G%")</filter>
                         <scorefield>totalScore</scorefield>
                         <table>Entries</table>
                         <collateby>operators</collateby>
@@ -1263,7 +1264,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                         <name>Section LP</name>
                         <field>call</field>
                         <display>Call</display>
-                        <filter>date!=0 and (Section="SF" or Section="6S") and VHFLP=1</filter>
+                        <filter>date!=0 and (Section="SF" or Section="6S") and VHFLP=1 and (`call` like "M%" or `call` like "2%" or `call` like "G%")</filter>
                         <scorefield>totalScore</scorefield>
                         <table>Entries</table>
                         <collateby>operators</collateby>
@@ -1352,7 +1353,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <name>cwchamp</name>
                <collate_list>
                         <name>Overall Scores</name>
-                        <field>call</field>
+                        <field>clubName</field>
                         <display>Call</display>
                         <filter>date!=0 and (callstub like "M%" or callStub like "2%" or callStub like "G%")</filter>
                         <scorefield>totalScore</scorefield>
@@ -1363,13 +1364,14 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <seriesResult>
         <name>VHF CW Championship</name>
         <ctl>cwchamp</ctl>
+        <order>Section O,Section SF,Section LP</order>
         <id_list>
                 <name>50MHz</name>
                 <id>cw50MHz</id>
                 <resultName>50MHz Contest CW</resultName>
                 <year>0</year>
                 <normaliseby>position</normaliseby>
-                <collate_type>cwchamp</collate_type>
+                <collate_type>standard</collate_type>
         </id_list>
         <id_list>
                 <name>70MHz</name>
@@ -1377,7 +1379,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                 <resultName>70MHz Contest CW</resultName>
                 <year>0</year>
                 <normaliseby>position</normaliseby>
-                <collate_type>cwchamp</collate_type>
+                <collate_type>standard</collate_type>
         </id_list>
         <id_list>
                 <name>144MHz</name>
@@ -1385,7 +1387,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
                 <resultName>144MHz CW Marconi</resultName>
                 <year>0</year>
                 <normaliseby>position</normaliseby>
-                <collate_type>cwchamp</collate_type>
+                <collate_type>sixand24hours</collate_type>
         </id_list>
 </seriesResult>
 <seriesResult>
