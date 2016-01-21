@@ -529,19 +529,23 @@ void TLogContainer::FileOpenActionExecute()
                      "ADIF Files (*.adi);;"
                      "All Files (*.*)" ;
 
-    QString fname = QFileDialog::getOpenFileName( this,
-                       "Open contest",
+    QStringList fnames = QFileDialog::getOpenFileNames( this,
+                       "Open contests",
                        "",
                        Filter
                        );
-    BaseContestLog *ct = 0;
-    if ( !fname.isEmpty() )
+    for (int i = 0; i < fnames.size(); i++)
     {
-        ContestDetails pced(this );
-        ct = addSlot( &pced, fname, false, -1 );   // not automatically read only
-        if (ct)
+        QString fname = fnames[i];
+        BaseContestLog *ct = 0;
+        if ( !fname.isEmpty() )
         {
-            selectContest(ct, 0);
+            ContestDetails pced(this );
+            ct = addSlot( &pced, fname, false, -1 );   // not automatically read only
+            if (ct)
+            {
+                selectContest(ct, 0);
+            }
         }
     }
 }
@@ -726,7 +730,7 @@ void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
 
 void TLogContainer::on_ContestPageControl_tabBarDoubleClicked(int /*index*/)
 {
-    //
+    ContestDetailsActionExecute();
 }
 
 void TLogContainer::on_ContestPageControl_customContextMenuRequested(const QPoint &pos)
@@ -748,7 +752,6 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
       bool show = false;
       if ( ced )
       {
-
          ced->setDetails( contest );
 
          {
@@ -935,14 +938,16 @@ void TLogContainer::ListOpenActionExecute()
     QString Filter = "Contact list files (*.csl);;"
                      "All Files (*.*)" ;
 
-    QString fname = QFileDialog::getOpenFileName( this,
+    QStringList fnames = QFileDialog::getOpenFileNames( this,
                        "Open Archive List",
                        "",
                        Filter
                        );
-    if ( !fname.isEmpty() )
+
+    for (int i = 0; i < fnames.size(); i++)
     {
-        addListSlot( fname, -1, false );
+         QString fname = fnames[i];
+         addListSlot( fname, -1, false );
     }
 }
 void TLogContainer::ManageListsActionExecute(  )

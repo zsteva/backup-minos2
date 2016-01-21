@@ -157,19 +157,19 @@ void TSendDM::SubscribeTimerTimer( )
    subscribeAll(); // may need to be repeated... won't do it too often, though
 }
 //---------------------------------------------------------------------------
-void TSendDM::bandMapClientCallback( bool err, MinosRPCObj */*mro*/, const QString &from )
+void TSendDM::bandMapClientCallback( bool err, MinosRPCObj * /*mro*/, const QString &from )
 {
    logMessage( "BandMap client callback from " + from + ( err ? ":Error" : ":Normal" ) );
    // transfer from contact to bandmap
 }
 //---------------------------------------------------------------------------
-void TSendDM::bandMapServerCallback( bool err, MinosRPCObj */*mro*/, const QString &from )
+void TSendDM::bandMapServerCallback( bool err, MinosRPCObj * /*mro*/, const QString &from )
 {
    logMessage( "BandMap server callback from " + from + ( err ? ":Error" : ":Normal" ) );
    // transfer from bandmap to new contact
 }
 //---------------------------------------------------------------------------
-void TSendDM::keyerCallback( bool err, MinosRPCObj */*mro*/, const QString &from )
+void TSendDM::keyerCallback( bool err, MinosRPCObj * /*mro*/, const QString &from )
 {
    logMessage( "Keyer callback from " + from + ( err ? ":Error" : ":Normal" ) );
 }
@@ -219,7 +219,7 @@ void TSendDM::notifyCallback( bool err, MinosRPCObj *mro, const QString &from )
 
 }
 //---------------------------------------------------------------------------
-void TSendDM::zconfCallback( bool err, MinosRPCObj */*mro*/, const QString &from )
+void TSendDM::zconfCallback( bool err, MinosRPCObj * /*mro*/, const QString &from )
 {
    logMessage( "RPC Response callback from " + from + ( err ? ":Error" : ":Normal" ) );
 }

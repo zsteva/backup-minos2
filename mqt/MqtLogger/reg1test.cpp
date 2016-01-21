@@ -229,8 +229,8 @@ bool reg1test::parseHeader(QString line )
    strncpy( buff, line.toStdString().c_str(), 1023 );
    buff[ 1023 ] = 0;
    bool sep2seen;
-   char *a[ 2 ];
-   char *b[ 3 ];
+   char *a[ 2 ] = {0};
+   char *b[ 3 ] = {0};
    int scnt = parseLine( buff, '=', a, 2, 0, sep2seen );   // BAD - parseLine writes to buffer
 
    if ( scnt != 1 )
@@ -415,6 +415,7 @@ bool reg1test::parseHeader(QString line )
                                                                                  else
                                                                                     if ( code == "CWWLS" )
                                                                                     {
+                                                                                       scnt = parseLine( a[ 1 ], ';', b, 3, 0, sep2seen );   // BAD - parseLine writes to buffer
                                                                                        // Claimed no. of WWLs;Bonus per new WWL;WWL multiplier
                                                                                        //CWWLs=0;0;1
                                                                                        if ( atoi( b[ 0 ] ) != 0 )
@@ -431,6 +432,7 @@ bool reg1test::parseHeader(QString line )
                                                                                        else
                                                                                           if ( code == "CEXCS" )
                                                                                           {
+                                                                                             scnt = parseLine( a[ 1 ], ';', b, 3, 0, sep2seen );   // BAD - parseLine writes to buffer
                                                                                              // Claimed no. of exchanges; Bonus for each new exchange; Exchange Multiplier
                                                                                              //CExcs=0;0;1
                                                                                              if ( atoi( b[ 0 ] ) != 0 )
@@ -447,6 +449,7 @@ bool reg1test::parseHeader(QString line )
                                                                                              else
                                                                                                 if ( code == "CDXCS" )
                                                                                                 {
+                                                                                                   scnt = parseLine( a[ 1 ], ';', b, 3, 0, sep2seen );   // BAD - parseLine writes to buffer
                                                                                                    // Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier
                                                                                                    //CDXCs=0;0;1
                                                                                                    if ( atoi( b[ 0 ] ) != 0 )
@@ -475,6 +478,7 @@ bool reg1test::parseHeader(QString line )
                                                                                                          else
                                                                                                             if ( code == "TDATE" )
                                                                                                             {
+                                                                                                               //scnt = parseLine( a[ 1 ], ';', b, 3, 0, sep2seen );   // BAD - parseLine writes to buffer
                                                                                                                // Start Date;End Date
                                                                                                                // derived
                                                                                                                //TDate=20060701;20060702
@@ -619,7 +623,7 @@ bool reg1test::importReg1test()
             {
                return false;
             }
-            QString snq = line.mid( 12, endq - 13 );
+            QString snq = line.mid( 12, endq - 12 );
             nq = snq.toInt();
             if ( !nq )
             {

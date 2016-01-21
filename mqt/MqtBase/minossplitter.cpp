@@ -11,7 +11,7 @@
 // button code influenced by (see below)
 // http://www.qtcentre.org/wiki/index.php?title=OrientationButton
 //============================================================================
-void MinosSplitterButton::paintEvent(QPaintEvent */*event*/)
+void MinosSplitterButton::paintEvent(QPaintEvent * /*event*/)
 {
     QStylePainter p(this);
     p.save();               // save it so we don't keep rotating it

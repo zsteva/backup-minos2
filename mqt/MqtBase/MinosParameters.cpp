@@ -18,7 +18,7 @@ MinosParameters *MinosParameters::getMinosParameters()
    return mp;
 }
 
-bool MinosParametersAdapter::insertContest( BaseContestLog */*p*/, unsigned int /*sno*/ )
+bool MinosParametersAdapter::insertContest( BaseContestLog * /*p*/, unsigned int /*sno*/ )
 {
    return true;
 }
@@ -81,7 +81,7 @@ BaseContestLog * MinosParametersAdapter::getCurrentContest()
 {
    return 0;
 }
-bool MinosParametersAdapter::insertList( ContactList */*p*/, unsigned int /*sno*/ )
+bool MinosParametersAdapter::insertList( ContactList * /*p*/, unsigned int /*sno*/ )
 {
    return false;
 }
