@@ -438,9 +438,12 @@ void TSingleLogFrame::showOtherMatchQSOs( TMatchCollection *matchCollection )
         ui->GJVQSOLogFrame->setXferEnabled(true);
     otherMatchModel.initialise(OtherMatch, matchCollection);
     ui->OtherMatchTree->setModel(&otherMatchModel);
-    ui->OtherMatchTree->setFirstColumnSpanned( 0, QModelIndex(), true );
     ui->OtherMatchTree->expandAll();
     restoreColumns();
+    for(int i = 0; i < otherMatchModel.rowCount(); i++)
+    {
+        ui->OtherMatchTree->setFirstColumnSpanned( i, QModelIndex(), true );
+    }
     connect(ui->OtherMatchTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(on_OtherMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
@@ -450,9 +453,12 @@ void TSingleLogFrame::showMatchList( TMatchCollection *matchCollection )
         ui->GJVQSOLogFrame->setXferEnabled(true);
     archiveMatchModel.initialise(ArchiveMatch, matchCollection);
     ui->ArchiveMatchTree->setModel(&archiveMatchModel);
-    ui->ArchiveMatchTree->setFirstColumnSpanned( 0, QModelIndex(), true );
     ui->ArchiveMatchTree->expandAll();
     restoreColumns();
+    for(int i = 0; i < archiveMatchModel.rowCount(); i++)
+    {
+        ui->ArchiveMatchTree->setFirstColumnSpanned( i, QModelIndex(), true );
+    }
     connect(ui->ArchiveMatchTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(on_ArchiveMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
@@ -759,12 +765,12 @@ void TSingleLogFrame::on_ThisMatchTree_doubleClicked(const QModelIndex &index)
     }
 }
 
-void TSingleLogFrame::on_OtherMatchTree_doubleClicked(const QModelIndex &index)
+void TSingleLogFrame::on_OtherMatchTree_doubleClicked(const QModelIndex &/*index*/)
 {
     MinosLoggerEvents::SendXferPressed();;
 }
 
-void TSingleLogFrame::on_ArchiveMatchTree_doubleClicked(const QModelIndex &index)
+void TSingleLogFrame::on_ArchiveMatchTree_doubleClicked(const QModelIndex &/*index*/)
 {
     MinosLoggerEvents::SendXferPressed();
 }
