@@ -27,10 +27,8 @@ REM download latest versions of files
 cd configuration
 \bin\wget\wget http://www.country-files.com/cty/cty.dat -O cty.dat
 
-cd ..
-
 \bin\wget\wget http://www.rsgbcc.org/vhf/vhfcontests16.xml
 
 
-cd ..\..\AdjQtRoot
+cd ..\..\..\mqt
 
