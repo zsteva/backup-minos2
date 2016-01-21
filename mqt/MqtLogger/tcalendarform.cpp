@@ -8,8 +8,8 @@
 #include "tcalendarform.h"
 #include "ui_tcalendarform.h"
 
-#define LOWYEAR -2
-#define LOWURLYEAR -2
+#define LOWYEAR -1
+#define LOWURLYEAR -1
 #define HIGHYEAR 1
 
 static int curYear = 0;
@@ -45,14 +45,12 @@ class CalendarYear
         virtual ~CalendarYear(){}
 
         virtual bool downloadFile ( bool showError );
-        virtual bool downloadProvisionalFile ( bool showError ) = 0;
 
         bool loaded;
         int yearOffset;
         CalType type;
         virtual QString getPath();
         virtual QString getURL();
-        virtual QString getProvisionalURL();
 };
 class HFCalendarYear : public CalendarYear
 {
@@ -61,7 +59,6 @@ class HFCalendarYear : public CalendarYear
         HFCalendarYear ( int year ) : CalendarYear ( ectHF, year )
         {
         }
-        virtual bool downloadProvisionalFile ( bool showError );
 };
 class HFBARTGCalendarYear : public CalendarYear
 {
@@ -70,7 +67,6 @@ class HFBARTGCalendarYear : public CalendarYear
         HFBARTGCalendarYear ( int year ) : CalendarYear ( ectHFBARTG, year )
         {
         }
-        virtual bool downloadProvisionalFile ( bool showError );
 };
 class VHFCalendarYear : public CalendarYear
 {
@@ -79,7 +75,6 @@ class VHFCalendarYear : public CalendarYear
         VHFCalendarYear ( int year ) : CalendarYear ( ectVHF, year )
         {
         }
-        virtual bool downloadProvisionalFile ( bool showError );
 };
 class MicroCalendarYear : public CalendarYear
 {
@@ -88,7 +83,6 @@ class MicroCalendarYear : public CalendarYear
         MicroCalendarYear ( int year ) : CalendarYear ( ectMwave, year )
         {
         }
-        virtual bool downloadProvisionalFile ( bool showError );
 };
 class HFOtherCalendarYear : public CalendarYear
 {
@@ -99,7 +93,6 @@ class HFOtherCalendarYear : public CalendarYear
         }
         virtual QString getPath();
         virtual QString getURL();
-        virtual bool downloadProvisionalFile (bool);
 };
 class VHFOtherCalendarYear : public CalendarYear
 {
@@ -110,18 +103,6 @@ class VHFOtherCalendarYear : public CalendarYear
         }
         virtual QString getPath();
         virtual QString getURL();
-        virtual bool downloadProvisionalFile ( bool showError );
-};
-class ClubListCalendarYear : public CalendarYear
-{
-        virtual QString getSite();
-    public:
-        ClubListCalendarYear ( int year ) : CalendarYear ( ectVHFOther, year )
-        {
-        }
-        virtual QString getPath();
-        virtual QString getURL();
-        virtual bool downloadProvisionalFile (bool);
 };
 class CTYCalendarYear : public CalendarYear
 {
@@ -132,7 +113,6 @@ class CTYCalendarYear : public CalendarYear
         }
         virtual QString getPath();
         virtual QString getURL();
-        virtual bool downloadProvisionalFile ( bool showError );
 };
 //---------------------------------------------------------------------------
 QString CalendarYear::getPath()
@@ -146,50 +126,26 @@ QString CalendarYear::getURL()
     return url;
 
 }
-QString CalendarYear::getProvisionalURL()
-{
-    QString url = getSite() + calString[ type ] + yearString() + "-prov.xml";
-    return url;
-
-}
 //---------------------------------------------------------------------------
 QString VHFCalendarYear::getSite()
 {
     return "http://www.rsgbcc.org/vhf/";
 }
-
-bool VHFCalendarYear::downloadProvisionalFile ( bool showError )
-{
-    return CalendarYear::downloadProvisionalFile ( showError );
-}
-
 //---------------------------------------------------------------------------
 QString HFCalendarYear::getSite()
 {
     // Yes, the HF calendar is under the VHF directory!
     return "http://www.rsgbcc.org/vhf/";
 }
-bool HFCalendarYear::downloadProvisionalFile ( bool showError )
-{
-    return CalendarYear::downloadProvisionalFile ( showError );
-}
 //---------------------------------------------------------------------------
 QString HFBARTGCalendarYear::getSite()
 {
     return "http://bartg.rsgbcc.org/";
 }
-bool HFBARTGCalendarYear::downloadProvisionalFile ( bool showError )
-{
-    return CalendarYear::downloadProvisionalFile ( showError );
-}
 //---------------------------------------------------------------------------
 QString MicroCalendarYear::getSite()
 {
     return "http://microwave.rsgbcc.org/";
-}
-bool MicroCalendarYear::downloadProvisionalFile ( bool showError )
-{
-    return CalendarYear::downloadProvisionalFile ( showError );
 }
 //---------------------------------------------------------------------------
 QString VHFOtherCalendarYear::getSite()
@@ -206,10 +162,6 @@ QString VHFOtherCalendarYear::getURL()
     // No URL
     return QString();
 }
-bool VHFOtherCalendarYear::downloadProvisionalFile ( bool /*showError*/ )
-{
-    return false;
-}
 //---------------------------------------------------------------------------
 QString HFOtherCalendarYear::getSite()
 {
@@ -225,28 +177,6 @@ QString HFOtherCalendarYear::getURL()
     // No URL
     return QString();
 }
-bool HFOtherCalendarYear::downloadProvisionalFile ( bool /*showError*/ )
-{
-    return false;
-}
-//---------------------------------------------------------------------------
-QString ClubListCalendarYear::getSite()
-{
-    return "http://www.rsgbcc.org/cgi-bin/vhfenter.pl?afsdownload=y";
-}
-QString ClubListCalendarYear::getPath()
-{
-    QString p = "./Configuration/clublist.txt";
-    return p;
-}
-QString ClubListCalendarYear::getURL()
-{
-    return getSite();
-}
-bool ClubListCalendarYear::downloadProvisionalFile ( bool /*showError*/ )
-{
-    return false;
-}
 //---------------------------------------------------------------------------
 QString CTYCalendarYear::getSite()
 {
@@ -260,10 +190,6 @@ QString CTYCalendarYear::getPath()
 QString CTYCalendarYear::getURL()
 {
     return getSite();
-}
-bool CTYCalendarYear::downloadProvisionalFile ( bool /*showError*/ )
-{
-    return false;
 }
 
 TCalendarForm::
@@ -629,67 +555,6 @@ bool CalendarYear::downloadFile ( bool showError )
     delete reply;
     return false;
 }
-bool CalendarYear::downloadProvisionalFile ( bool showError )
-{
-    QString calendarURL = getProvisionalURL();
-
-    QNetworkAccessManager m_NetworkMngr;
-    QUrl qurl( calendarURL );
-    QNetworkRequest qnr( qurl );
-    qnr.setRawHeader( "User-Agent" , "Mozilla/4.0 (compatible;Adjsql)" );
-    QNetworkReply *reply = m_NetworkMngr.get( qnr );
-    QEventLoop loop;
-    QObject::connect( reply, SIGNAL( finished() ), &loop, SLOT( quit() ) );
-    loop.exec();
-
-    if ( reply->error() == QNetworkReply::NoError )
-    {
-        int raw = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        if (raw == 301)
-        {
-            QUrl redirect =  reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-
-            QNetworkRequest qnr1( redirect );
-            qnr1.setRawHeader( "User-Agent" , "Mozilla/4.0 (compatible;Adjsql)" );
-
-            delete reply;
-            reply = m_NetworkMngr.get( qnr1 );
-            QEventLoop loop;
-            QObject::connect( reply, SIGNAL( finished() ), &loop, SLOT( quit() ) );
-            loop.exec();
-            raw = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        }
-        QByteArray data = reply->readAll();
-        if (data.size() > 0)
-        {
-            QUrl aUrl( calendarURL );
-            QFileInfo fileInfo = aUrl.path();
-
-            QFile file( getPath() );
-            file.open( QIODevice::WriteOnly );
-            file.write( data );
-            trace ( "HTPP Get of " + calendarURL + " OK" );
-        }
-        else
-        {
-           trace ( "HTPP Get of " + calendarURL + " failed - zero length data returned with attribute " + QString::number(raw));
-        }
-        delete reply;
-        return true;
-    }
-    else
-    {
-        trace ( QString( "HTPP Get of " ) + calendarURL + " failed: " + reply->errorString() );
-        if ( showError )
-        {
-            mShowMessage ( QString( "HTPP Get of " ) + calendarURL + " failed: " + reply->errorString(), LogContainer );
-        }
-    }
-
-
-    delete reply;
-    return false;
-}
 void TCalendarForm::downloadFiles()
 {
 
@@ -703,11 +568,10 @@ void TCalendarForm::downloadFiles()
     for ( int i = LOWURLYEAR; i <= HIGHYEAR; i++ )
     {
         yearList.push_back ( boost::shared_ptr<CalendarYear> ( new VHFCalendarYear ( i ) ) );
-        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFCalendarYear ( i ) ) );
-        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFBARTGCalendarYear ( i ) ) );
-        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new MicroCalendarYear ( i ) ) );
+//        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFCalendarYear ( i ) ) );
+//        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFBARTGCalendarYear ( i ) ) );
+//        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new MicroCalendarYear ( i ) ) );
     }
-    yearList.push_back ( boost::shared_ptr<CalendarYear> ( new ClubListCalendarYear ( 0 ) ) );
 
     for ( unsigned int i = 0; i < yearList.size(); i++ )
     {
@@ -715,14 +579,6 @@ void TCalendarForm::downloadFiles()
         {
             fileCount++;
         }
-        else
-            if ( yearList[ i ] ->yearOffset == 1 )
-            {
-                if ( yearList[ i ] ->downloadProvisionalFile ( false ) )
-                {
-                    fileCount++;
-                }
-            }
     }
 
     mShowMessage( QString::number ( fileCount ) + " of " + QString::number( yearList.size() ) + " files downloaded. We don't expect to load them all.", LogContainer );
