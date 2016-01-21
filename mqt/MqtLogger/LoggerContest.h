@@ -60,7 +60,7 @@ class LoggerContestLog : public BaseContestLog
          return needExport;
       }
 
-      virtual void processMinosStanza( const QString &methodName, MinosTestImport *mt );
+      virtual void processMinosStanza( const QString &methodName, MinosTestImport * const mt ) override;
       void setStanza( unsigned int stanza, int stanzaStart );
       virtual bool getStanza( unsigned int Stanza, QString &stanzaData );
 

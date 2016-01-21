@@ -190,7 +190,7 @@ void TMinosChatForm::ConnectTimerTimer( )
    }
 }
 //---------------------------------------------------------------------------
-void TMinosChatForm::chatClientCallback( bool /*err*/, MinosRPCObj */*mro*/, const QString &/*from*/ )
+void TMinosChatForm::chatClientCallback( bool /*err*/, MinosRPCObj * /*mro*/, const QString &/*from*/ )
 {
    // call back says OK/not OK
 }

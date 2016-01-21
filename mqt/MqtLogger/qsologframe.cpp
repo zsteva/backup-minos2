@@ -827,7 +827,7 @@ void QSOLogFrame::on_AfterTabFocusIn(QLineEdit *tle)
 
 //---------------------------------------------------------------------------
 
-void QSOLogFrame::EditControlExit( QObject */*Sender*/ )
+void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
 {
    if (!contest)
    {
@@ -1527,7 +1527,7 @@ void QSOLogFrame::showScreenContactTime( ScreenContact &temp )
    ui->TimeEdit->setText(temp.time.getTime( DTGDISP ));
 }
 //==============================================================================
-void QSOLogFrame::checkTimeEditEnter(QLineEdit */*tle*/, bool &/*ovr*/)
+void QSOLogFrame::checkTimeEditEnter(QLineEdit * /*tle*/, bool &/*ovr*/)
 {
 
 }
@@ -1537,7 +1537,7 @@ void QSOLogFrame::checkTimeEditExit()
 
 }
 //==============================================================================
-bool QSOLogFrame::isTimeEdit(QLineEdit */*tle*/)
+bool QSOLogFrame::isTimeEdit(QLineEdit * /*tle*/)
 {
    return false;
 }
@@ -1662,7 +1662,7 @@ void QSOLogFrame::transferDetails( const BaseContact * lct, const BaseContestLog
    doGJVEditChange(ui->LocEdit);
    doGJVEditChange(ui->QTHEdit);
 }
-void QSOLogFrame::transferDetails( const ListContact * lct, const ContactList */*matct*/ )
+void QSOLogFrame::transferDetails( const ListContact * lct, const ContactList * /*matct*/ )
 {
    ui->CallsignEdit->setText(lct->cs.fullCall.getValue());
    ui->LocEdit->setText(lct->loc.loc.getValue());

@@ -73,7 +73,7 @@ bool MinosClientConnection::checkFrom( TiXmlElement *tix )
    return true;
 }
 //==============================================================================
-bool MinosClientConnection::setFromId( MinosId &from, RPCRequest */*req*/ )
+bool MinosClientConnection::setFromId( MinosId &from, RPCRequest * /*req*/ )
 {
    // this should always be a local client
    clientServer = from.server;
