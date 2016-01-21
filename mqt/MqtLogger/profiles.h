@@ -43,7 +43,7 @@ class BundleFile
       boost::shared_ptr<INIFile> iniFile;
       std::vector<ProfileEntry> entries;
 
-      static boost::shared_ptr<BundleFile>bundleFiles[ epSTATIONPROFILE + 1 ];
+      static boost::shared_ptr<BundleFile>bundleFiles[ epLOCSQUARESPROFILE + 1 ];
       BundleFile( PROFILES p );
       ~BundleFile();
       static boost::shared_ptr<BundleFile> getBundleFile( PROFILES p );

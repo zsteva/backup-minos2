@@ -777,7 +777,7 @@ BundleFile::~BundleFile()
 {
 }
 /*static*/
-boost::shared_ptr<BundleFile>BundleFile::bundleFiles[ epSTATIONPROFILE + 1 ]; //  =  {0};
+boost::shared_ptr<BundleFile>BundleFile::bundleFiles[ epLOCSQUARESPROFILE + 1 ]; //  =  {0};
 /*static*/
 boost::shared_ptr<BundleFile>BundleFile::getBundleFile( PROFILES p )
 {
@@ -1071,10 +1071,10 @@ QStringList SettingsBundle::getSections( )
    {
       return slist;
    }
+
    slist.append( noneBundle );
    for ( std::vector <IniSectionPtr>::iterator thisSect = bundleFile->iniFile->sections.begin(); thisSect != bundleFile->iniFile->sections.end(); thisSect++ )
    {
-
       if ( ( *thisSect ) ->isValidSection() )
       {
          slist.append( ( *thisSect ) ->name );
@@ -1082,7 +1082,7 @@ QStringList SettingsBundle::getSections( )
    }
    if (currsection.size() && std::find(slist.begin(), slist.end(), currsection) == slist.end())
    {
-      slist.push_back(currsection);
+      slist.append(currsection);
    }
    return slist;
 }
