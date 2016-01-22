@@ -63,6 +63,7 @@ void TMinosChatForm::LogTimerTimer(  )
 {
    syncStations();
    syncChat();
+   /*
    // check log queue; if anything on it then log to main window
    while ( true )
    {
@@ -75,7 +76,7 @@ void TMinosChatForm::LogTimerTimer(  )
       else
          break;
    }
-
+*/
    static bool closed = false;
    if ( !closed )
    {

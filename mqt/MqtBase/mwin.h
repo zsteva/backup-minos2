@@ -165,7 +165,6 @@ class dtg
       bool getDtg( QDateTime & ) const;
       void setDate( const QString &, DTG );
       void setTime( const QString &, DTG );
-//      void setDtg( time_t );
 
       QString getIsoDTG( bool &d ) const;
       QString getIsoDTG( ) const;

@@ -942,7 +942,6 @@ void TLogContainer::addListSlot( const QString &fname, int slotno, bool preload 
 void TLogContainer::ListOpenActionExecute()
 {
     // first choose file
-//"Images (*.png *.xpm *.jpg);;Text files (*.txt);;XML files (*.xml)"
 
     QString Filter = "Contact list files (*.csl);;"
                      "All Files (*.*)" ;
@@ -990,8 +989,6 @@ void TLogContainer::ShiftTabRightActionExecute( )
       TContestApp::getContestApp() ->writeContestList();
 
       ui->ContestPageControl->tabBar()->moveTab(tno, tno + 1);
-//      tno++;
-//      ui->ContestPageControl->setCurrentIndex(tno);
 
       enableActions();
    }
@@ -1020,8 +1017,6 @@ void TLogContainer::ShiftTabLeftActionExecute( )
 
       //      ContestPageControl->ActivePage->PageIndex = tno; // BCB - this moves the tabs
       ui->ContestPageControl->tabBar()->moveTab(tno, tno - 1);
-//      tno--;
-//      ui->ContestPageControl->setCurrentIndex( tno);
 
       enableActions();
    }

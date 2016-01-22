@@ -21,17 +21,6 @@ void LocFrame::setContest(BaseContestLog *contest)
 
 void LocFrame::reInitialiseLocators()
 {
-    /*
-   LocatorMultTree->RootNodeCount = 0;
-   if ( !ct )
-   {
-      // clear down
-      return ;
-   }
-   LocatorMultTree->RootNodeCount = ct->locs.llist.size();
-   LocatorMultTree->ValidateNode( 0, true );
-   LocatorMultTree->FullExpand();
-   */
     ui->LocTree->clear();
     for (int k = 0; k <(int) ct->locs.llist.size(); k++)
     {

@@ -14,6 +14,7 @@
 
 #include <QDateTime>
 #include <QDir>
+#include <QDirIterator>
 #include <QFileInfo>
 #include <QFile>
 #include <QMutex>
@@ -45,7 +46,6 @@
 #include "tinyxml.h"
 #include "tinyutils.h"
 
-#include "GJVThreads.h"
 #include "LogEvents.h"
 #include "MTrace.h"
 #include "MLogFile.h"

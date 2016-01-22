@@ -10,7 +10,6 @@
 #include "logger_pch.h"
 
 #include "ServerEvent.h"
-#include "GJVThreads.h"
 #include "LogEvents.h"
 #include "XMPPRPCParams.h"
 #include "XMPPStanzas.h"

@@ -600,16 +600,7 @@ bool LoggerContestLog::GJVload( void )
    buftostr( location );
 
    otherExchange.setValue( inyn() );
-   /*bool CC_mult =*/
    inyn();
-   /*
-   if ( CC_mult )
-   {
-      Country_mult = true;
-      County_mult = true;
-      //      District_mult = true;
-   }
-   */
    locMult.setValue( inyn() );
 
    buftostr( temp );
@@ -633,11 +624,7 @@ bool LoggerContestLog::GJVload( void )
       scoreMode.setValue( PPQSO );
    }
    countryMult.setValue( inyn() );
-   if ( inyn() )
-   {
-      //      County_mult = true;
-      //      District_mult = true;
-   }
+   inyn();
    districtMult.setValue( inyn() );
 
    powerWatts.setValue( inyn() );
@@ -1245,8 +1232,6 @@ bool LoggerContestLog::importLOG(boost::shared_ptr<QFile> hLogFile )
       }
       ct->extraText.setValue( extra );
 
-      //	   strcpysp(ct->power, power, 7);
-      //      ct->PowerWatts = PowerWatts;
       // save contact
 
       // we have to have logSequence set before we insert - or it will cause

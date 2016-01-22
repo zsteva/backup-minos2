@@ -110,7 +110,6 @@ const int MATCH_LIM = 20;
 void TMatchThread::Execute()
 {
    //---- Place thread code here ----
-   //GJV_thread::setThreadName( "QSO Match" );
    try
    {
       while ( !Terminated )

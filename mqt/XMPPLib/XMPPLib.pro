@@ -24,7 +24,6 @@ DEFINES += TIXML_USE_STL
 
 SOURCES += \
     Dispatcher.cpp \
-    GJVThreads.cpp \
     LogEvents.cpp \
     MLogFile.cpp \
     MTrace.cpp \
@@ -40,7 +39,6 @@ SOURCES += \
 
 HEADERS += \
     Dispatcher.h \
-    GJVThreads.h \
     LogEvents.h \
     MLogFile.h \
     MTrace.h \

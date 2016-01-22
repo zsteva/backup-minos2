@@ -17,40 +17,6 @@ void dispatchResponse( RPCDispatcher *RPCDisp, XStanza *xs )
    }
 }
 /*
-TiXmlElement *findNode( TiXmlElement *node, const QString &name )
-{
-   for ( TiXmlElement * e = node->FirstChildElement(); e; e = e->NextSiblingElement() )
-   {
-      // declaration, destination lines
-      if ( checkElementName( e, name ) )
-      {
-         return e;
-      }
-   }
-   return 0;
-}
-*/
-/*
-QString getNodeValue( TiXmlElement *node, const QString &name )
-{
-   QString res;
-   for ( TiXmlElement * e = node->FirstChildElement(); e; e = e->NextSiblingElement() )
-   {
-      // declaration, destination lines
-      if ( checkElementName( e, name ) )
-      {
-         const char * val = e->GetText();
-         if ( val )
-         {
-            res = val;
-         }
-         break;
-      }
-   }
-   return res;
-}
-*/
-/*
 <?xml version='1.0'?>
 <stream:stream xmlns:stream='http://etherx.jabber.org/streams' xmlns='jabber:client' to='localhost' version='1.0'>*/ 
 /*

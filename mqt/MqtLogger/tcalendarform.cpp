@@ -269,24 +269,6 @@ void TCalendarForm::LoadGrid ( Calendar &cal )
     int cc = ( cal.calType == ectVHF ? 8 : 5 );
 
     ui->CalendarGrid->setColumnCount( cc );
-    /*
-    int col = 0;
-    ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "144MHz UK Activity CalendarContest and Club ChampionshipXXX" );
-    ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "248GHZZZZZZZ" );
-    ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "99/99/9999 99:99XXX" );
-    ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "99/99/9999 99:99XXX" );
-    if ( cal.calType == ectVHF )
-    {
-       ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "1PT/QSOXX" );
-       ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "MULTSXX" );
-       ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "3S, 3M, 10S, 10M" );
-       ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "LOW POWER CONTEST" );
-    }
-    else
-    {
-       ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "3S, 3M, 10S, 10M, XX, XX, XX, XX, XX, XX, XX, XX" );
-    }
-    */
     int col = 0;
     ui->CalendarGrid->setHorizontalHeaderItem( col++, new QTableWidgetItem( "Contest Name" ) );
     ui->CalendarGrid->setHorizontalHeaderItem( col++, new QTableWidgetItem( "Band" ) );

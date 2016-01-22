@@ -824,8 +824,6 @@ void ContestDetails::on_EntDetailButton_clicked()
 {
     getDetails( );   // override from the window
     TEntryOptionsForm EntryDlg( this, contest, false );
-    //EntryDlg->EntryGroup->Visible = false;
-    //EntryDlg->Caption = "Entry Details";
     if ( EntryDlg.exec() == QDialog::Accepted )
        setDetails( );
 

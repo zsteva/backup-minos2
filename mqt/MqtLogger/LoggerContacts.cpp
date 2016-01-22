@@ -645,16 +645,6 @@ bool ContestContact::GJVload( int diskBlock )
 
    buftostr( temp );
    forcedMult.setInitialValue( temp );
-   //   if (inyn(myHeap))
-   //   {
-   //      PowerWatts = true;
-   //   }
-   //   else
-   //   {
-   //   	LoggerContestLog * cnt =  dc_contest(contest);
-   //      if (cnt)
-   //	   	PowerWatts = cnt->PowerWatts;
-   //   }
    return true;
 }
 bool ContestContact::setField( int ACol, const QString Value )
@@ -669,23 +659,11 @@ bool ContestContact::setField( int ACol, const QString Value )
       case egTime:
          time.setTime( Value, DTGDISP );  // VALIDATE!
          break;
-         /*case egBand:
-            break;
-         */
-         /*case egPower:
-            break;
-         */
-         /*case egMode:
-            break;
-         */
       case egCall:
          cs.valRes = CS_NOT_VALIDATED;
          cs = callsign( Value );
          cs.validate( );
          break;
-         /*case egCountry:
-            break;
-         */
       case egRSTTx:
          reps.setValue( Value );
          break;
@@ -706,7 +684,6 @@ bool ContestContact::setField( int ACol, const QString Value )
       case egBrg:
          return false;
       case egScore:
-         //Beep();
          return false;
       case egExchange:
          extraText.setValue( Value );

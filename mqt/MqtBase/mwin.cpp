@@ -321,27 +321,6 @@ void dtg::setTime( const QString &t, DTG dstyle )
    stime.setValue( temp );
    baddtg = false;
 }
-/*
-void dtg::setDtg( time_t cttime )
-{
-   struct tm * tms = localtime( &cttime );  // NB static data area!
-   if ( tms->tm_isdst != 0 )
-      tms->tm_hour -= 1;
-
-   QString curTime;
-   QString curDate;
-
-   curTime = ( boost::format( "%02.2d:%02.2d:%02.2d" ) % tms->tm_hour % tms->tm_min % tms->tm_sec ).str();
-
-   int year = tms->tm_year;
-   while ( year > 99 )
-      year -= 100;			// take it back to two chars
-
-   curDate = ( boost::format( "%02.2d/%02.2d/%02.2d" ) % tms->tm_mday % ( tms->tm_mon + 1 ) % year ).str();
-   setTime( curTime, DTGDISP );
-   setDate( curDate, DTGDISP );
-}
-*/
 int dtg::notEntered( void )
 {
    int i;

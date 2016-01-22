@@ -29,7 +29,6 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     QFrame(parent),
     ui(new Ui::TSingleLogFrame),
     contest( contest ),
-//    logColumnsChanged( false ),
     splittersChanged(false),
     currFreq( 0 ), oldFreq( 0 ),
     lastStanzaCount( 0 ),

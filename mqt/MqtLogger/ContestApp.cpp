@@ -228,7 +228,6 @@ TContestApp::TContestApp() : MinosParameters(), magneticVariation( 0 ), period1(
    {
       ContestSlot *cs = new ContestSlot;
       cs->slotno = i + 1;
-      //      contestSlotList.push_back( cs );
       contestSlotList.insert( cs );
    }
    for ( int i = 0; i < INITIAL_LIST_SLOTS; i++ )
@@ -263,7 +262,6 @@ bool TContestApp::insertContest( BaseContestLog * p, unsigned int sno )
          {
             ContestSlot *cs = new ContestSlot;
             cs->slotno = i + 1;
-            //            contestSlotList.push_back( cs );
             contestSlotList.insert( cs );
          }
       }
@@ -288,7 +286,6 @@ bool TContestApp::insertContest( BaseContestLog * p, unsigned int sno )
    ContestSlot *cs = new ContestSlot;
    cs->slot = p;
    cs->slotno = contestSlotList.size() + 1;
-   //   contestSlotList.push_back( cs );
    contestSlotList.insert( cs );
    return true;
 }
@@ -304,7 +301,6 @@ bool TContestApp::insertList( ContactList * p, unsigned int sno )
          {
             ListSlot *cs = new ListSlot;
             cs->slotno = i + 1;
-            //            contestSlotList.push_back( cs );
             listSlotList.insert( cs );
          }
       }
@@ -384,20 +380,6 @@ BaseContestLog * TContestApp::findFirstContest()
    }
    return 0;
 }
-/*
-LoggerContestLog * TContestApp::findContest( LoggerContestLog *p )
-{
-   for ( unsigned int i = 0; i < contestSlotList.size(); i++ )
-   {
-      ContestSlot *cs = contestSlotList[ i ];
-      if ( cs->slot.get() == p )
-      {
-         return cs->slot;
-      }
-   }
-   return LoggerContestLog *();
-}
-*/
 int TContestApp::findContest( BaseContestLog * p )
 {
    for ( unsigned int i = 0; i < contestSlotList.size(); i++ )

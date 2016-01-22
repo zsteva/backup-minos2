@@ -10,7 +10,6 @@
 
 #include "LoggerContest.h"
 
-//#include "RCVersion.h"
 #include "reg1test.h"
 
 enum reg1test_order
