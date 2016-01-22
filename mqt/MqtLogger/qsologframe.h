@@ -91,6 +91,7 @@ private:
      virtual void selectField( QWidget *v );
      virtual void initialise(BaseContestLog * contest, bool catchup );
      virtual void refreshOps();
+     virtual void refreshOps(ScreenContact &screenContact);
      virtual void updateQSOTime(bool fromTimer = false);
      virtual void updateQSODisplay();
      virtual void closeContest();
@@ -100,6 +101,7 @@ private:
      void transferDetails( const BaseContact * lct, const BaseContestLog *matct );
      void transferDetails( const ListContact * lct, const ContactList *matct );
 
+     void setFirstUnfilledButtonEnabled(bool);
      void logTabChanged();
 
 private:
@@ -168,6 +170,7 @@ private slots:
     void on_AfterTabFocusIn(QLineEdit *tle);
     void on_Validated();
     void on_ValidateError (int mess_no );
+    void on_ShowOperators();
 
     void on_ModeComboBoxGJV_currentIndexChanged(int index);
 };

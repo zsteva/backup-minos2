@@ -36,6 +36,10 @@ public:
 
     TSingleLogFrame *findContest( const QString &pubname );
 
+    bool isShowOperators();
+    bool isNextContactDetailsOnLeft();
+    bool isScrollingContestTabs();
+
     void setCaption( QString );
     void setMode( QString );
     void setFreq( QString );
@@ -57,9 +61,6 @@ private:
     QMenu *recentFilesMenu;
 
     void enableActions();
-    bool isNextContactDetailsOnLeft();
-    bool isScrollingContestTabs();
-    bool isShowOperators();
 
     QString getCurrentFile();
     void setCurrentFile(const QString &fileName);

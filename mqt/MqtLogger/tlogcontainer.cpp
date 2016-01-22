@@ -226,9 +226,9 @@ void TLogContainer::setupMenus()
     TabPopup.addAction(GoToSerialAction);
     TabPopup.addAction(NextUnfilledAction);
     TabPopup.addSeparator();
-    NextContactDetailsOnLeftAction = newAction("&Next Contact Details On Left", &TabPopup, SLOT(NextContactDetailsOnLeftActionExecute()));
-    ScrollingContestTabsAction = newAction("Scrolling contest tabs", &TabPopup, SLOT(ScrollingContestTabsActionExecute()));
-    ShowOperatorsAction = newAction("Show Operators", &TabPopup, SLOT(ShowOperatorsActionExecute()));
+    NextContactDetailsOnLeftAction = newCheckableAction("&Next Contact Details On Left", &TabPopup, SLOT(NextContactDetailsOnLeftActionExecute()));
+    ScrollingContestTabsAction = newCheckableAction("Scrolling contest tabs", &TabPopup, SLOT(ScrollingContestTabsActionExecute()));
+    ShowOperatorsAction = newCheckableAction("Show Operators", &TabPopup, SLOT(ShowOperatorsActionExecute()));
     TabPopup.addSeparator();
     ShiftTabLeftAction = newAction("Shift Active Tab Left", &TabPopup, SLOT(ShiftTabLeftActionExecute()));
     ShiftTabRightAction = newAction("Shift Active Tab Right", &TabPopup, SLOT(ShiftTabRightActionExecute()));
@@ -648,7 +648,11 @@ void TLogContainer::ScrollingContestTabsActionExecute()
 
 void TLogContainer::ShowOperatorsActionExecute()
 {
-
+    bool so = !isShowOperators();
+    ShowOperatorsAction->setChecked(so);
+    TContestApp::getContestApp() ->displayBundle.setBoolProfile( edpShowOperators, so );
+    TContestApp::getContestApp() ->displayBundle.flushProfile();
+    MinosLoggerEvents::SendShowOperators();
 }
 
 void TLogContainer::OptionsActionExecute()
@@ -693,7 +697,12 @@ void TLogContainer::NextUnfilledActionExecute()
 
 void TLogContainer::NextContactDetailsOnLeftActionExecute()
 {
+    bool ncdol = !isNextContactDetailsOnLeft();
+    NextContactDetailsOnLeftAction->setChecked(ncdol);
+    TContestApp::getContestApp() ->displayBundle.setBoolProfile( edpNextContactDetailsOnLeft, ncdol );
+    TContestApp::getContestApp() ->displayBundle.flushProfile();
 
+    MinosLoggerEvents::SendNextContactDetailsOnLeft();
 }
 
 void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)

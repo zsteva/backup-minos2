@@ -84,6 +84,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(LogColumnsChanged()), this, SLOT(onLogColumnsChanged()));
     connect(&MinosLoggerEvents::mle, SIGNAL(SplittersChanged()), this, SLOT(onSplittersChanged()));
     connect(&MinosLoggerEvents::mle, SIGNAL(FiltersChanged()), this, SLOT(onFiltersChanged()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(NextContactDetailsOnLeft()), this, SLOT(on_NextContactDetailsOnLeft()));
 
     // Connect up the stats etc display
     QSignalMapper* sm = new QSignalMapper(this);
@@ -233,46 +234,63 @@ void TSingleLogFrame::on_ContestPageChanged ()
     ui->GJVQSOLogFrame->logTabChanged();
 
 //    MultDispFrame->setContest( contest );
-//    doNextContactDetailsOnLeftClick( this );
-//    MinosLoggerEvents::SendShowOperators();
+    doNextContactDetailsOnLeftClick( );
+    MinosLoggerEvents::SendShowOperators();
 
     updateQSODisplay();
 
 }
+void TSingleLogFrame::doNextContactDetailsOnLeftClick( )
+{
+    bool conleft = LogContainer->isNextContactDetailsOnLeft();
+
+    if (conleft)
+    {
+        ui->CribSplitter->insertWidget(0, ui->CribSheet);
+    }
+    else
+    {
+        ui->CribSplitter->insertWidget(1, ui->CribSheet);
+    }
+    on_CribSplitter_splitterMoved(0, 0);    // preserve the splitter position
+}
 void TSingleLogFrame::NextContactDetailsTimerTimer( )
 {
-   if ( contest )
-   {
-       QString cb = contest->band.getValue().trimmed();
-       BandList &blist = BandList::getBandList();
-       BandInfo bi;
-       bool bandOK = blist.findBand(cb, bi);
-       if (bandOK)
-       {
-          cb = bi.uk;
-       }
+    if ( contest )
+    {
+        QString cb = contest->band.getValue().trimmed();
+        BandList &blist = BandList::getBandList();
+        BandInfo bi;
+        bool bandOK = blist.findBand(cb, bi);
+        if (bandOK)
+        {
+            cb = bi.uk;
+        }
 
-      if ( contest->isReadOnly() )
-      {
-         ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
-                                            + cb + "</p><h1>"
-                                            + contest->mycall.fullCall.getValue() + "<br>"
-                                            + contest->myloc.loc.getValue() + "<br>"
-                                            + contest->location.getValue());
-      }
-      else
-      {
-         QString buff = QString::number( contest->maxSerial + 1 );
-         ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
-                                            + cb + "</p><h1>"
-                                            + contest->mycall.fullCall.getValue() + "<br>"
-                                            + buff + "<br>"
-                                            + contest->myloc.loc.getValue() + "<br>"
-                                            + contest->location.getValue());
-      }
-   }
+        if ( contest->isReadOnly() )
+        {
+            ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
+                                                  + cb + "</p><h1>"
+                                                  + contest->mycall.fullCall.getValue() + "<br>"
+                                                  + contest->myloc.loc.getValue() + "<br>"
+                                                  + contest->location.getValue());
+        }
+        else
+        {
+            QString buff = QString::number( contest->maxSerial + 1 );
+            ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
+                                                  + cb + "</p><h1>"
+                                                  + contest->mycall.fullCall.getValue() + "<br>"
+                                                  + buff + "<br>"
+                                                  + contest->myloc.loc.getValue() + "<br>"
+                                                  + contest->location.getValue());
+        }
+    }
 }
-
+void TSingleLogFrame::on_NextContactDetailsOnLeft()
+{
+    doNextContactDetailsOnLeftClick();
+}
 void TSingleLogFrame::updateQSODisplay()
 {
     /*

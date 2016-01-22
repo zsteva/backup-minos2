@@ -77,6 +77,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterTabFocusIn(QLineEdit*)), this, SLOT(on_AfterTabFocusIn(QLineEdit*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(Validated()), this, SLOT(on_Validated()));
     connect(&MinosLoggerEvents::mle, SIGNAL(ValidateError(int)), this, SLOT(on_ValidateError(int)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(ShowOperators()), this, SLOT(on_ShowOperators()));
 }
 bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
 {
@@ -243,7 +244,12 @@ void QSOLogFrame::on_FirstUnfilledButton_clicked()
     // Go to the first unfilled QSO
     // If there aren't any then it needs to be made invisible
     // ScanContest can work out how many there are - and we can display that on the button
-       MinosLoggerEvents::SendNextUnfilled(contest);}
+       MinosLoggerEvents::SendNextUnfilled(contest);
+}
+void QSOLogFrame::setFirstUnfilledButtonEnabled(bool state)
+{
+    ui->FirstUnfilledButton->setEnabled(state);
+}
 
 void QSOLogFrame::MainOpComboBox_Exit()
 {
@@ -1388,15 +1394,43 @@ void QSOLogFrame::refreshOps()
       {
          if ( ( *i ).size() )
          {
-            ui->MainOpComboBox->addItem( ( *i ) );
-            ui->SecondOpComboBox->addItem( ( *i ) );
+            ui->MainOpComboBox->addItem( *i );
+            ui->SecondOpComboBox->addItem( *i );
          }
       }
       ui->MainOpComboBox->setCurrentText(mainOp);
       ui->SecondOpComboBox->setCurrentText(secondOp);
    }
 }
+void QSOLogFrame::refreshOps( ScreenContact &screenContact )
+{
+   ui->MainOpComboBox->clear();
+   ui->SecondOpComboBox->clear();
+   // refill the op combo boxes from the curent contest, and select the correct op
+   BaseContestLog * contest = TContestApp::getContestApp() ->getCurrentContest();
 
+   for ( OperatorIterator i = contest->oplist.begin(); i != contest->oplist.end(); i++ )
+   {
+      if ( ( *i ).size() )
+      {
+         ui->MainOpComboBox->addItem( *i );
+         ui->SecondOpComboBox->addItem( *i );
+      }
+   }
+   ui->SecondOpComboBox->setCurrentText(screenContact.op2);
+   ui->MainOpComboBox->setCurrentText(screenContact.op1);
+
+   // and if this is the last contact, the ops should also propogate into the contest
+   // for the NEXT contact
+}
+void QSOLogFrame::on_ShowOperators ( )
+{
+   bool so = LogContainer->isShowOperators();
+   ui->SecondOpComboBox->setVisible(so);
+   ui->SecondOpLabel->setVisible(so);
+   ui->MainOpComboBox->setVisible(so);
+   ui->OperatorLabel->setVisible(so);
+}
 //---------------------------------------------------------------------------
 void QSOLogFrame::closeContest()
 {
