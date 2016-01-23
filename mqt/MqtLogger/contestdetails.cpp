@@ -305,33 +305,23 @@ void ContestDetails::refreshOps()
       ui->MainOpComboBox->clear();
       ui->SecondOpComboBox->clear();
       bool addCall = true;
+      QStringList ops;
       for ( OperatorIterator i = contest->oplist.begin(); i != contest->oplist.end(); i++ )
       {
-         if ( ( *i ).size() )
-         {
-            ui->MainOpComboBox->addItem( ( *i ) );
-            ui->SecondOpComboBox->addItem( ( *i ) );
-            addCall = false;
-         }
+          if (!(*i).isEmpty())
+            ops.append(*i);
       }
-      if (addCall)
-      {
-          QString cop1 = contest->currentOp1.getValue();
-          QString cop2 = contest->currentOp2.getValue();
+      ops.append(contest->currentOp1.getValue());
+      ops.append(contest->currentOp2.getValue());
 
-          if (cop1.size())
-          {
-            ui->MainOpComboBox->addItem( cop1 );
-            ui->SecondOpComboBox->addItem( cop1 );
-          }
+      ops.append("");
 
-          if (cop2.size())
-          {
-            ui->MainOpComboBox->addItem( cop2 );
-            ui->SecondOpComboBox->addItem( cop2 );
-          }
+      ops.sort();
+      ops.removeDuplicates();
 
-      }
+      ui->MainOpComboBox->addItems(ops);
+      ui->SecondOpComboBox->addItems(ops);
+
       ui->MainOpComboBox->setCurrentText(contest->currentOp1.getValue());
       ui->SecondOpComboBox->setCurrentText(contest->currentOp2.getValue());
    }

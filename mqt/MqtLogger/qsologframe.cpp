@@ -209,6 +209,8 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
    }
 
    updateQSODisplay();
+   refreshOps();
+
 //   SerTXEdit->Color = clBtnFace;
    QString ss("QLineEdit { background-color: silver ; border-style: outset ; border-width: 1px ; border-color: black ; }");
    ui->SerTXEdit->setStyleSheet(ss);
@@ -1382,46 +1384,74 @@ void QSOLogFrame::updateQSODisplay()
 void QSOLogFrame::refreshOps()
 {
    // refill the op combo boxes from the current contest, and select the correct op
-//   BaseContestLog * contest = TContestApp::getContestApp() ->getCurrentContest();
+
    if (contest)
    {
-      //if we are being closed then we are not the current contest - and current may be null
-      QString mainOp = ui->MainOpComboBox->currentText();
-      QString secondOp = ui->SecondOpComboBox->currentText();
-      ui->MainOpComboBox->clear();
-      ui->SecondOpComboBox->clear();
-      for ( OperatorIterator i = contest->oplist.begin(); i != contest->oplist.end(); i++ )
-      {
-         if ( ( *i ).size() )
-         {
-            ui->MainOpComboBox->addItem( *i );
-            ui->SecondOpComboBox->addItem( *i );
-         }
-      }
-      ui->MainOpComboBox->setCurrentText(mainOp);
-      ui->SecondOpComboBox->setCurrentText(secondOp);
+
+       QString mainOp = contest->currentOp1.getValue();
+       QString secondOp = contest->currentOp2.getValue();
+//       QString mainOp = ui->MainOpComboBox->currentText();
+//       QString secondOp = ui->SecondOpComboBox->currentText();
+
+       ui->MainOpComboBox->clear();
+       ui->SecondOpComboBox->clear();
+
+       QStringList ops;
+       for ( OperatorIterator i = contest->oplist.begin(); i != contest->oplist.end(); i++ )
+       {
+           if (!(*i).isEmpty())
+             ops.append(*i);
+       }
+       ops.append(mainOp);
+       ops.append(secondOp);
+
+       ops.append("");
+
+       ops.sort();
+       ops.removeDuplicates();
+
+       ui->MainOpComboBox->addItems(ops);
+       ui->SecondOpComboBox->addItems(ops);
+
+       ui->MainOpComboBox->setCurrentText(mainOp);
+       ui->SecondOpComboBox->setCurrentText(secondOp);
+
    }
 }
 void QSOLogFrame::refreshOps( ScreenContact &screenContact )
 {
-   ui->MainOpComboBox->clear();
-   ui->SecondOpComboBox->clear();
-   // refill the op combo boxes from the curent contest, and select the correct op
-   BaseContestLog * contest = TContestApp::getContestApp() ->getCurrentContest();
+    if (contest)
+    {
+        QString mainOp = screenContact.op1;
+        QString secondOp = screenContact.op2;
 
-   for ( OperatorIterator i = contest->oplist.begin(); i != contest->oplist.end(); i++ )
-   {
-      if ( ( *i ).size() )
-      {
-         ui->MainOpComboBox->addItem( *i );
-         ui->SecondOpComboBox->addItem( *i );
-      }
-   }
-   ui->SecondOpComboBox->setCurrentText(screenContact.op2);
-   ui->MainOpComboBox->setCurrentText(screenContact.op1);
+        ui->MainOpComboBox->clear();
+        ui->SecondOpComboBox->clear();
 
-   // and if this is the last contact, the ops should also propogate into the contest
-   // for the NEXT contact
+        BaseContestLog * contest = TContestApp::getContestApp() ->getCurrentContest();
+        QStringList ops;
+        for ( OperatorIterator i = contest->oplist.begin(); i != contest->oplist.end(); i++ )
+        {
+            if (!(*i).isEmpty())
+              ops.append(*i);
+        }
+        ops.append(mainOp);
+        ops.append(secondOp);
+
+        ops.append("");
+
+        ops.sort();
+        ops.removeDuplicates();
+
+        ui->MainOpComboBox->addItems(ops);
+        ui->SecondOpComboBox->addItems(ops);
+
+        ui->MainOpComboBox->setCurrentText(mainOp);
+        ui->SecondOpComboBox->setCurrentText(secondOp);
+
+       // and if this is the last contact, the ops should also propogate into the contest
+       // for the NEXT contact
+    }
 }
 void QSOLogFrame::on_ShowOperators ( )
 {
