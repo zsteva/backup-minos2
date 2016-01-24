@@ -19,10 +19,7 @@ public:
     explicit QSOLogFrame(QWidget *parent);
     ~QSOLogFrame();
 
-    void setAsEdit()
-    {
-        edit = true;
-    }
+    void setAsEdit();
 
 private:
     ScreenContact *partialContact; // contact being edited on screen
@@ -64,16 +61,13 @@ private:
      virtual void showScreenEntry( );
      virtual void getScreenContactTime();
      virtual void showScreenContactTime( ScreenContact &);
-     virtual void checkTimeEditEnter(QLineEdit *tle, bool &ovr);
-     virtual bool isTimeEdit(QLineEdit *tle);
-     virtual void checkTimeEditExit();
      bool checkLogEntry(bool checkDTG );
   public: 		// User declarations
      bool savePartial( void );
      bool restorePartial( void );
      void killPartial( void );
      void startNextEntry( );
-     void keyPressEvent( QKeyEvent* event );
+     bool doKeyPressEvent( QKeyEvent* event );
      virtual void selectEntry( BaseContact *lct );
      void setXferEnabled(bool);
 

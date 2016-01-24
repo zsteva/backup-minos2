@@ -80,7 +80,7 @@ int TQSOEditDlg::exec()
 //---------------------------------------------------------------------------
 void TQSOEditDlg::keyPressEvent( QKeyEvent* event )
 {
-    ui->GJVQSOEditFrame->keyPressEvent(event);
+    ui->GJVQSOEditFrame->doKeyPressEvent(event);
 }
 void TQSOEditDlg::on_EditFrameCancelled()
 {

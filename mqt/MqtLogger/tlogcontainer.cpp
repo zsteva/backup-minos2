@@ -69,7 +69,8 @@ bool TLogContainer::show(int argc, char *argv[])
     TimerUpdateQSOTimer.start(1000);
     connect(&TimerUpdateQSOTimer, SIGNAL(timeout()), this, SLOT(on_TimeDisplayTimer()));
 
-    connect(&MinosLoggerEvents::mle, SIGNAL(ReportOverstrike(bool , BaseContestLog * )), this, SLOT(on_ReportOverstrike(bool , BaseContestLog * )));
+    connect(&MinosLoggerEvents::mle, SIGNAL(ReportOverstrike(bool , BaseContestLog * )),
+            this, SLOT(on_ReportOverstrike(bool , BaseContestLog * )), Qt::QueuedConnection);
 
     SendDM = new TSendDM( this );
     QMainWindow::show();
@@ -126,7 +127,7 @@ void TLogContainer::on_ReportOverstrike(bool overstrike, BaseContestLog *econtes
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    if (ct == econtest)
    {
-      //sblabel1->setText(overstrike ? "Overwrite" : "Insert");
+      sblabel1->setText(overstrike ? "Overwrite" : "Insert");
    }
 }
 
@@ -687,12 +688,14 @@ void TLogContainer::ReportAutofillActionExecute()
 
 void TLogContainer::GoToSerialActionExecute()
 {
-
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    MinosLoggerEvents::SendGoToSerial(ct);
 }
 
 void TLogContainer::NextUnfilledActionExecute()
 {
-
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    MinosLoggerEvents::SendNextUnfilled(ct);
 }
 
 void TLogContainer::NextContactDetailsOnLeftActionExecute()

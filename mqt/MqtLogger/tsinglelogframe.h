@@ -169,7 +169,7 @@ public:
     QModelIndex archiveTreeClickIndex;
     QTreeView *xferTree;
 
-    void GoNextUnfilled();
+    void goNextUnfilled();
     void doNextContactDetailsOnLeftClick( );
 
 private:
@@ -223,6 +223,8 @@ private slots:
     void on_AfterSelectContact(BaseContact *lct, BaseContestLog *contest);
     void on_AfterLogContact( BaseContestLog *ct);
     void on_NextContactDetailsOnLeft();
+    void on_NextUnfilled(BaseContestLog*);
+    void on_GoToSerial(BaseContestLog*);
 
     void on_WorkedCB_clicked();
     void on_UnworkedCB_clicked();
