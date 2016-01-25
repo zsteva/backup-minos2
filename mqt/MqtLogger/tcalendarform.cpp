@@ -540,7 +540,7 @@ bool CalendarYear::downloadFile ( bool showError )
 void TCalendarForm::downloadFiles()
 {
 
-    QString fpath = "./configuration";
+    QString fpath = "./Configuration";
 
     int fileCount = 0;
 

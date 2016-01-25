@@ -118,9 +118,9 @@ bool TContestApp::initialise()
          if ( !destDir.isEmpty() )
          {
 
-            if (destDir.toUpper().indexOf("/CONFIGURATION") == destDir.size() - QString("/configuration").size())
+            if (destDir.toUpper().indexOf("/CONFIGURATION") == destDir.size() - QString("/Configuration").size())
             {
-               destDir = destDir.left(destDir.size() - QString("/configuration").size());
+               destDir = destDir.left(destDir.size() - QString("/Configuration").size());
             }
             QDir::setCurrent(destDir);
          }
