@@ -26,7 +26,7 @@ else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reord
 
 DEFINES += TIXML_USE_STL
 
-LIBS += -lws2_32
+win32:LIBS += -lws2_32
 
 SOURCES += main.cpp\
     MinosLink.cpp \

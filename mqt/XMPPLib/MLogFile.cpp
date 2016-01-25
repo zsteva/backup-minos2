@@ -43,8 +43,7 @@ std::ostream & MLogFile::logT( void )
 {
     CsGuard lock;
     QDateTime dt = QDateTime::currentDateTime();
-    int id = (int)QThread::currentThreadId();
-    QString time = dt.toString( "hh:mm:ss.zzz" ) + " <" + QString::number(id) + ">";
+    QString time = dt.toString( "hh:mm:ss.zzz" );
     return log() << time.toStdString().c_str();
 }
 //---------------------------------------------------------------------------

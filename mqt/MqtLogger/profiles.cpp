@@ -7,7 +7,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "logger_pch.h"
-#include <sys\stat.h>
+#include <sys/stat.h>
 
 #include "MLogFile.h"
 const QString noneBundle = "<None>";

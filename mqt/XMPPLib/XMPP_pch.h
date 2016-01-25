@@ -43,7 +43,7 @@
 #include <stdio.h>
 
 #include "tinyxml.h"
-#include "tinyutils.h"
+#include "TinyUtils.h"
 
 #include "LogEvents.h"
 #include "MTrace.h"

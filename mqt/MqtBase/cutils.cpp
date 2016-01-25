@@ -12,9 +12,8 @@ bool checkFileOK( std::ifstream &istr, const QString &fname, const QString &fmes
 {
    if ( !istr )
    {
-      QString ebuff = QString( "Failed to open %1 (%2)" ).arg(fmess).arg(fname );
-      char *emess = _strerror( ebuff.toStdString().c_str() );
-      MinosParameters::getMinosParameters() ->mshowMessage( emess );
+      QString ebuff = QString( "Failed to open %1 (%2) %s" ).arg(fmess).arg(fname ).arg(strerror( errno));
+      MinosParameters::getMinosParameters() ->mshowMessage( ebuff );
       return false;
    }
    return true;

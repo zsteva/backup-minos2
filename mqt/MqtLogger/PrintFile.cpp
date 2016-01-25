@@ -10,7 +10,7 @@
 
 #include "LoggerContest.h"
 
-#include "PrintFile.h"
+#include "printfile.h"
 
 extern QString fileHeader;
 

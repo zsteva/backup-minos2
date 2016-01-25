@@ -21,7 +21,6 @@
 
 #include "base_pch.h"
 #include "tinyxml.h"
-#include "tinyutils.h"
 #include "BandList.h"
 #include "CalendarList.h"
 

@@ -1,7 +1,7 @@
 #include "logger_pch.h"
 
-#include "Districtframe.h"
-#include "ui_Districtframe.h"
+#include "districtframe.h"
+#include "ui_districtframe.h"
 
 #include "tsinglelogframe.h"
 

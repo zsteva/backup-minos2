@@ -7,7 +7,17 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
+#ifdef Q_OS_WIN
 #include <ws2tcpip.h>
+#else
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+#define SOCKET int
+#endif
 
 #include "minos_pch.h"
 #include "mcreadsocket.h"
@@ -22,6 +32,7 @@ class WSAGuard
 };
 WSAGuard::WSAGuard( void )
 {
+#ifdef Q_OS_WIN
    // class to ensure that WinSock is opened and closed correctly
    WSADATA wsaData;
    const int major = 1;
@@ -46,12 +57,15 @@ WSAGuard::WSAGuard( void )
          exit( 1 );
       }
    }
+#endif
 }
 //---------------------------------------------------------------------------
 
 WSAGuard::~WSAGuard()
 {
+#ifdef Q_OS_WIN
    WSACleanup();
+#endif
 }
 
 WSAGuard *wsag = 0;
@@ -71,7 +85,7 @@ class UPnPDataObject
          free(AddressList);
       }
       struct sockaddr_in addr;
-      int addrlen;
+      socklen_t addrlen;
 
       struct ip_mreq mreq;
       char message[ 4096 ];
@@ -114,7 +128,7 @@ void MCReadSocket::onTimeout()
            {
               char message[ 4096 ];
               int cnt = recvfrom( state->NOTIFY_RECEIVE_sock, message, 4095, 0,
-                                  ( struct sockaddr * ) & ( state->addr ), &( state->addrlen ) );
+                                  ( /*struct*/ sockaddr * ) & ( state->addr ), &( state->addrlen ) );
               if ( cnt < 0 )
               {
                  trace( "recvfrom" );
@@ -141,7 +155,7 @@ void MCReadSocket::onTimeout()
 }
 int ILibGetLocalIPAddressList( int** pp_int )
 {
-
+#ifdef Q_OS_WIN
    //
    // Use an Ioctl call to fetch the IPAddress list
    //
@@ -158,6 +172,7 @@ int ILibGetLocalIPAddressList( int** pp_int )
    ( *pp_int ) [ i ] = inet_addr( "127.0.0.1" );
    closesocket( TempSocket );
    return ( 1 + ( ( SOCKET_ADDRESS_LIST* ) buffer ) ->iAddressCount );
+#endif
 }
 bool MCReadSocket::setupRO()
 {

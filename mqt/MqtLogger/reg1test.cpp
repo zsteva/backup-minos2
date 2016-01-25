@@ -551,7 +551,7 @@ bool reg1test::parseQSO( QString line )
       aqso->loc.valRes = LOC_NOT_VALIDATED;
       aqso->contactScore.setValue( atoi( a[ 10 ] ) );
 
-      if ( atoi( a[ 10 ] ) == 0 || stricmp( a[ 14 ], "D" ) == 0 )
+      if ( atoi( a[ 10 ] ) == 0 || QString::compare( a[ 14 ], "D", Qt::CaseInsensitive ) == 0 )
          aqso->contactFlags.setValue( NON_SCORING );
 
       nextBlock++;

@@ -46,8 +46,8 @@
 #include "contest.h"
 #include "list.h"
 #include "contacts.h"
-#include "screencontact.h"
-#include "matchcontact.h"
+#include "ScreenContact.h"
+#include "MatchContact.h"
 #include "ListContact.h"
 
 #include "MinosTestImport.h"
