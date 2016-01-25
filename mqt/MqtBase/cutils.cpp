@@ -169,7 +169,7 @@ int parseLine( char *buff, char sep, char **a, int count, char sep2, bool &sep2s
    }
    return sep_count;
 }
-writer::writer( boost::shared_ptr<QFile> f ) :  /*lbuff( diskBuffer ),*/ expfd( f )
+writer::writer( QSharedPointer<QFile> f ) :  /*lbuff( diskBuffer ),*/ expfd( f )
 {}
 writer::~writer()
 {}

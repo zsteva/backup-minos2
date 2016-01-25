@@ -343,7 +343,7 @@ void TCalendarForm::FormShow ( )
         yearList.clear();
         for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
         {
-            yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFCalendarYear ( i ) ) );
+            yearList.push_back ( QSharedPointer<CalendarYear> ( new HFCalendarYear ( i ) ) );
         }
 
         loaded = loadYear ( hf, year );
@@ -366,7 +366,7 @@ void TCalendarForm::FormShow ( )
             yearList.clear();
             for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
             {
-                yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFBARTGCalendarYear ( i ) ) );
+                yearList.push_back ( QSharedPointer<CalendarYear> ( new HFBARTGCalendarYear ( i ) ) );
             }
 
             loaded = loadYear ( hfbartg, year );
@@ -389,7 +389,7 @@ void TCalendarForm::FormShow ( )
                 yearList.clear();
                 for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
                 {
-                    yearList.push_back ( boost::shared_ptr<CalendarYear> ( new VHFCalendarYear ( i ) ) );
+                    yearList.push_back ( QSharedPointer<CalendarYear> ( new VHFCalendarYear ( i ) ) );
                 }
 
                 loaded = loadYear ( vhf, year );
@@ -411,7 +411,7 @@ void TCalendarForm::FormShow ( )
                     yearList.clear();
                     for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
                     {
-                        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFOtherCalendarYear ( i ) ) );
+                        yearList.push_back ( QSharedPointer<CalendarYear> ( new HFOtherCalendarYear ( i ) ) );
                     }
 
                     loaded = loadYear ( hfother, year );
@@ -434,7 +434,7 @@ void TCalendarForm::FormShow ( )
                         yearList.clear();
                         for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
                         {
-                            yearList.push_back ( boost::shared_ptr<CalendarYear> ( new VHFOtherCalendarYear ( i ) ) );
+                            yearList.push_back ( QSharedPointer<CalendarYear> ( new VHFOtherCalendarYear ( i ) ) );
                         }
 
                         loaded = loadYear ( vhfother, year );
@@ -456,7 +456,7 @@ void TCalendarForm::FormShow ( )
                             yearList.clear();
                             for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
                             {
-                                yearList.push_back ( boost::shared_ptr<CalendarYear> ( new MicroCalendarYear ( i ) ) );
+                                yearList.push_back ( QSharedPointer<CalendarYear> ( new MicroCalendarYear ( i ) ) );
                             }
 
                             loaded = loadYear ( mwave, year );
@@ -544,15 +544,15 @@ void TCalendarForm::downloadFiles()
 
     int fileCount = 0;
 
-    std::vector<boost::shared_ptr<CalendarYear> > yearList;
+    std::vector<QSharedPointer<CalendarYear> > yearList;
 
-    yearList.push_back ( boost::shared_ptr<CalendarYear> ( new CTYCalendarYear ( 0 ) ) );
+    yearList.push_back ( QSharedPointer<CalendarYear> ( new CTYCalendarYear ( 0 ) ) );
     for ( int i = LOWURLYEAR; i <= HIGHYEAR; i++ )
     {
-        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new VHFCalendarYear ( i ) ) );
-//        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFCalendarYear ( i ) ) );
-//        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFBARTGCalendarYear ( i ) ) );
-//        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new MicroCalendarYear ( i ) ) );
+        yearList.push_back ( QSharedPointer<CalendarYear> ( new VHFCalendarYear ( i ) ) );
+//        yearList.push_back ( QSharedPointer<CalendarYear> ( new HFCalendarYear ( i ) ) );
+//        yearList.push_back ( QSharedPointer<CalendarYear> ( new HFBARTGCalendarYear ( i ) ) );
+//        yearList.push_back ( QSharedPointer<CalendarYear> ( new MicroCalendarYear ( i ) ) );
     }
 
     for ( unsigned int i = 0; i < yearList.size(); i++ )

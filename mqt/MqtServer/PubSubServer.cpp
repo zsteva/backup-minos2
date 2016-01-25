@@ -76,9 +76,9 @@ void RPCServerSubscriber::testAndSubscribe( const QString &server, const QString
 void RPCServerSubscriber::serverReSubscribe()
 {
    RPCServerSubscribeClient rsc( 0 );
-   boost::shared_ptr<RPCParam>st(new RPCParamStruct);
-   boost::shared_ptr<RPCParam>sServer(new RPCStringParam( server ));
-   boost::shared_ptr<RPCParam>sCat(new RPCStringParam( category ));
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
+   QSharedPointer<RPCParam>sServer(new RPCStringParam( server ));
+   QSharedPointer<RPCParam>sCat(new RPCStringParam( category ));
    st->addMember( sServer, "Server" );
    st->addMember( sCat, "Category" );
    rsc.getCallArgs() ->addParam( st );

@@ -53,7 +53,7 @@ extern int buffpt;
 
 class writer
 {
-      boost::shared_ptr<QFile> expfd;
+      QSharedPointer<QFile> expfd;
       //      char *lbuff;
 
    public:
@@ -62,7 +62,7 @@ class writer
       void lwriteLine( void );
       void lwriteNl( void );
       void lwriteFf( void );
-      writer( boost::shared_ptr<QFile> f );
+      writer( QSharedPointer<QFile> f );
       ~writer();
 };
 

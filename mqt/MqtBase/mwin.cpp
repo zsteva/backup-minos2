@@ -10,7 +10,7 @@
 
 const double dtg::daySecs = 86400.0;	// 24 * 60 * 60
 //---------------------------------------------------------------------------
-GJVParams::GJVParams(boost::shared_ptr<QFile> f )
+GJVParams::GJVParams(QSharedPointer<QFile> f )
       : diskBlock( 1 ), fd( f ), count( 0 )
 {}
 GJVParams::~GJVParams()

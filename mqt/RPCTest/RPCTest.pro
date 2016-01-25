@@ -24,9 +24,6 @@ DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 DEFINES += TIXML_USE_STL
 
-INCLUDEPATH += C:\Projects\boost\boost_1_59_0
-
-
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase
 else:unix: LIBS += -L$$OUT_PWD/../MqtBase/ -lMqtBase

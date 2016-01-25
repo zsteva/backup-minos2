@@ -202,8 +202,8 @@ void TMinosChatForm::chatServerCallback( bool err, MinosRPCObj *mro, const QStri
 
    if ( !err )
    {
-      boost::shared_ptr<RPCParam> psName;
-      boost::shared_ptr<RPCParam>psValue;
+      QSharedPointer<RPCParam> psName;
+      QSharedPointer<RPCParam>psValue;
       RPCArgs *args = mro->getCallArgs();
       if ( args->getStructArgMember( 0, "Name", psName ) && args->getStructArgMember( 0, "Value", psValue ) )
       {
@@ -212,7 +212,7 @@ void TMinosChatForm::chatServerCallback( bool err, MinosRPCObj *mro, const QStri
 
          if ( psName->getString( Name ) && psValue->getString( Value ) )
          {
-            boost::shared_ptr<RPCParam>st(new RPCParamStruct);
+            QSharedPointer<RPCParam>st(new RPCParamStruct);
 
             if ( Name == "SendChatMessage" )
             {
@@ -235,9 +235,9 @@ void TMinosChatForm::on_SendButton_clicked()
     for ( std::vector<Server>::iterator i = serverList.begin(); i != serverList.end(); i++ )
     {
        RPCChatControlClient rpc( 0 );
-       boost::shared_ptr<RPCParam>st(new RPCParamStruct);
-       boost::shared_ptr<RPCParam>sName(new RPCStringParam( "SendChatMessage" ));
-       boost::shared_ptr<RPCParam>sValue(new RPCStringParam( ui->ChatEdit->text() ));
+       QSharedPointer<RPCParam>st(new RPCParamStruct);
+       QSharedPointer<RPCParam>sName(new RPCStringParam( "SendChatMessage" ));
+       QSharedPointer<RPCParam>sValue(new RPCStringParam( ui->ChatEdit->text() ));
        st->addMember( sName, "Name" );
        st->addMember( sValue, "Value" );
        rpc.getCallArgs() ->addParam( st );

@@ -79,11 +79,11 @@ AnalysePubSubNotify::AnalysePubSubNotify( bool err, MinosRPCObj *mro ) :
 {
    if ( !err )
    {
-      boost::shared_ptr<RPCParam> psServer;
-      boost::shared_ptr<RPCParam> psCategory;
-      boost::shared_ptr<RPCParam> psKey;
-      boost::shared_ptr<RPCParam> psValue;
-      boost::shared_ptr<RPCParam> psState;
+      QSharedPointer<RPCParam> psServer;
+      QSharedPointer<RPCParam> psCategory;
+      QSharedPointer<RPCParam> psKey;
+      QSharedPointer<RPCParam> psValue;
+      QSharedPointer<RPCParam> psState;
       RPCArgs *args = mro->getCallArgs();
       if (
          args->getStructArgMember( 0, "Server", psServer )

@@ -24,8 +24,6 @@ else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reord
 
 DEFINES += TIXML_USE_STL
 
-INCLUDEPATH += C:\Projects\boost\boost_1_59_0
-
 SOURCES += main.cpp \
     tlogcontainer.cpp \
     contestdetails.cpp \

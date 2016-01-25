@@ -25,7 +25,7 @@ class reg1testLine
 class reg1test
 {
       LoggerContestLog * ct;
-      boost::shared_ptr<QFile> regContestFile;
+      QSharedPointer<QFile> regContestFile;
       int nextBlock;
       QStringList remarks;
       bool parseHeader( QString line );
@@ -34,12 +34,12 @@ class reg1test
       bool importReg1test();
    public:
 
-      reg1test( LoggerContestLog * c, boost::shared_ptr<QFile> hFile );
+      reg1test( LoggerContestLog * c, QSharedPointer<QFile> hFile );
       reg1test( LoggerContestLog * const ct );
 
       ~reg1test();
-      bool exportTest( boost::shared_ptr<QFile> expfd );
-      static bool doImportReg1test( LoggerContestLog * c, boost::shared_ptr<QFile> hFile );
+      bool exportTest( QSharedPointer<QFile> expfd );
+      static bool doImportReg1test( LoggerContestLog * c, QSharedPointer<QFile> hFile );
 
 };
 #endif

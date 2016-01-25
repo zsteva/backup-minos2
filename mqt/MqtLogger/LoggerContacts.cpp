@@ -527,7 +527,7 @@ bool ContestContact::GJVsave( GJVParams &gp )
 
    int thisDiskBlock = gp.diskBlock++;
    setLogSequence( ( unsigned long ) ( thisDiskBlock ) << 16 );
-   boost::shared_ptr<QFile> fd = gp.fd;
+   QSharedPointer<QFile> fd = gp.fd;
 
    sprintf( temp, "%d", thisDiskBlock );
    strtobuf( temp );

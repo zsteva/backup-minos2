@@ -36,7 +36,7 @@ reg1testLine &reg1testLine::operator = ( const reg1testLine &l )
    return *this;
 }
 
-reg1test::reg1test( LoggerContestLog * ct, boost::shared_ptr<QFile> hFile )
+reg1test::reg1test( LoggerContestLog * ct, QSharedPointer<QFile> hFile )
       : ct( ct ), regContestFile( hFile ), nextBlock( 0 )
 {
 }
@@ -46,7 +46,7 @@ reg1test::reg1test( LoggerContestLog * const ct )
 reg1test::~reg1test()
 {}
 
-bool reg1test::exportTest( boost::shared_ptr<QFile> expfd )
+bool reg1test::exportTest( QSharedPointer<QFile> expfd )
 {
    // export current contest as REG1TEST
    writer wr( expfd );
@@ -568,7 +568,7 @@ bool reg1test::importReg1test()
    try
    {
         QStringList sl;
-        QTextStream in( regContestFile.get() );
+        QTextStream in( regContestFile.data() );
 
         while ( !in.atEnd() )
         {
@@ -682,7 +682,7 @@ bool reg1test::importReg1test()
    return true;
 }
 //---------------------------------------------------------------------------
-/*static*/bool reg1test::doImportReg1test(  LoggerContestLog * c,  boost::shared_ptr<QFile> hFile )
+/*static*/bool reg1test::doImportReg1test(  LoggerContestLog * c,  QSharedPointer<QFile> hFile )
 {
    if ( !c )
       return false;

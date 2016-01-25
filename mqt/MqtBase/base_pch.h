@@ -25,8 +25,6 @@
 
 #include <math.h>
 #include <time.h>
-//#include "boost\format.hpp"
-#include "boost\shared_ptr.hpp"
 
 //#define _MSC_VER 2300
 #include "sorted_vector.h"

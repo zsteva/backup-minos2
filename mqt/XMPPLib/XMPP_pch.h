@@ -26,6 +26,7 @@
 #include <QSemaphore>
 #include <QTcpSocket>
 #include <QSettings>
+#include <QSharedPointer>
 
 
 #include <exception>
@@ -38,10 +39,8 @@
 
 #include <fstream>
 
-#include <process.h>
+//#include <process.h>
 #include <stdio.h>
-
-#include "boost\shared_ptr.hpp"
 
 #include "tinyxml.h"
 #include "tinyutils.h"

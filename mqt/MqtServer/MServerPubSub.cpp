@@ -244,14 +244,14 @@ void Subscriber::SendTo ( const PublishedKey &pk )
 {
    // Build the stanza, and send it to the subid
    RPCClientNotifyClient rnc( 0 );
-   boost::shared_ptr<RPCParam>st(new RPCParamStruct);
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
 
    // local - no server
-   boost::shared_ptr<RPCParam>sServer(new RPCStringParam( "" ));
-   boost::shared_ptr<RPCParam>sCategory(new RPCStringParam( pk.getPubCat() ->getCategory() ));
-   boost::shared_ptr<RPCParam>sKey(new RPCStringParam( pk.getPubKey() ));
-   boost::shared_ptr<RPCParam>sValue(new RPCStringParam( pk.getPubValue() ));
-   boost::shared_ptr<RPCParam>sState(new RPCIntParam( pk.getPubState() ));
+   QSharedPointer<RPCParam>sServer(new RPCStringParam( "" ));
+   QSharedPointer<RPCParam>sCategory(new RPCStringParam( pk.getPubCat() ->getCategory() ));
+   QSharedPointer<RPCParam>sKey(new RPCStringParam( pk.getPubKey() ));
+   QSharedPointer<RPCParam>sValue(new RPCStringParam( pk.getPubValue() ));
+   QSharedPointer<RPCParam>sState(new RPCIntParam( pk.getPubState() ));
 
    st->addMember( sServer, "Server" );
    st->addMember( sCategory, "Category" );
@@ -267,14 +267,14 @@ void RemoteSubscriber::SendTo ( const PublishedKey &pk )
 {
    // Build the stanza, and send it to the subid
    RPCClientNotifyClient rnc( 0 );
-   boost::shared_ptr<RPCParam>st(new RPCParamStruct);
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
 
    // server is remote server name (as published)
-   boost::shared_ptr<RPCParam>sServer(new RPCStringParam( pk.getServer() ));
-   boost::shared_ptr<RPCParam>sCategory(new RPCStringParam( pk.getPubCat() ->getCategory() ));
-   boost::shared_ptr<RPCParam>sKey(new RPCStringParam( pk.getPubKey() ));
-   boost::shared_ptr<RPCParam>sValue(new RPCStringParam( pk.getPubValue() ));
-   boost::shared_ptr<RPCParam>sState(new RPCIntParam( pk.getPubState() ));
+   QSharedPointer<RPCParam>sServer(new RPCStringParam( pk.getServer() ));
+   QSharedPointer<RPCParam>sCategory(new RPCStringParam( pk.getPubCat() ->getCategory() ));
+   QSharedPointer<RPCParam>sKey(new RPCStringParam( pk.getPubKey() ));
+   QSharedPointer<RPCParam>sValue(new RPCStringParam( pk.getPubValue() ));
+   QSharedPointer<RPCParam>sState(new RPCIntParam( pk.getPubState() ));
 
    st->addMember( sServer, "Server" );
    st->addMember( sCategory, "Category" );
@@ -290,26 +290,26 @@ void ServerSubscriber::SendTo ( const PublishedKey &pk )
 {
    // Build the stanza, and send it to the subid
    RPCServerNotifyClient rnc( 0 );
-   boost::shared_ptr<RPCParam>st(new RPCParamStruct);
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
 
    //server is OUR server name
-   boost::shared_ptr<RPCParam>sServer(new RPCStringParam( MinosServer::getMinosServer() ->getServerName() ));
-   boost::shared_ptr<RPCParam>sCategory;
+   QSharedPointer<RPCParam>sServer(new RPCStringParam( MinosServer::getMinosServer() ->getServerName() ));
+   QSharedPointer<RPCParam>sCategory;
    PublishedCategory *pc = 0;
    QString cat;
    try
    {
       pc = pk.getPubCat();
       cat = pc ->getCategory();
-      sCategory = boost::shared_ptr<RPCParam>(new RPCStringParam( cat ));
+      sCategory = QSharedPointer<RPCParam>(new RPCStringParam( cat ));
    }
    catch(...)
    {
       // sCategory = 0;
    }
-   boost::shared_ptr<RPCParam>sKey(new RPCStringParam( pk.getPubKey() ));
-   boost::shared_ptr<RPCParam>sValue(new RPCStringParam( pk.getPubValue() ));
-   boost::shared_ptr<RPCParam>sState(new RPCIntParam( pk.getPubState() ));
+   QSharedPointer<RPCParam>sKey(new RPCStringParam( pk.getPubKey() ));
+   QSharedPointer<RPCParam>sValue(new RPCStringParam( pk.getPubValue() ));
+   QSharedPointer<RPCParam>sState(new RPCIntParam( pk.getPubState() ));
 
    st->addMember( sServer, "Server" );
    st->addMember( sCategory, "Category" );
@@ -714,10 +714,10 @@ void TPubSubMain::publishCallback( bool err, MinosRPCObj *mro, const QString &fr
 
    if ( !err )
    {
-      boost::shared_ptr<RPCParam> psCategory;
-      boost::shared_ptr<RPCParam> psKey;
-      boost::shared_ptr<RPCParam> psValue;
-      boost::shared_ptr<RPCParam> psState;
+      QSharedPointer<RPCParam> psCategory;
+      QSharedPointer<RPCParam> psKey;
+      QSharedPointer<RPCParam> psValue;
+      QSharedPointer<RPCParam> psState;
       RPCArgs *args = mro->getCallArgs();
       if ( args->getStructArgMember( 0, "Category", psCategory )
            && args->getStructArgMember( 0, "Key", psKey )
@@ -735,7 +735,7 @@ void TPubSubMain::publishCallback( bool err, MinosRPCObj *mro, const QString &fr
                   && psValue->getString( Value )  && psState->getInt( temps ))
          {
             State = static_cast<PublishState>(temps);
-            boost::shared_ptr<RPCParam>st(new RPCParamStruct);
+            QSharedPointer<RPCParam>st(new RPCParamStruct);
             if ( TPubSubMain::publish( from, Category, Key, Value, State ) )
             {
                st->addMember( true, "PublishResult" );
@@ -764,8 +764,8 @@ void TPubSubMain::subscribeCallback( bool err, MinosRPCObj *mro, const QString &
    logMessage( "Client Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
    if ( !err )
    {
-      boost::shared_ptr<RPCParam>st(new RPCParamStruct);
-      boost::shared_ptr<RPCParam> psCategory;
+      QSharedPointer<RPCParam>st(new RPCParamStruct);
+      QSharedPointer<RPCParam> psCategory;
       RPCArgs *args = mro->getCallArgs();
       if ( args->getStructArgMember( 0, "Category", psCategory ) )
       {
@@ -806,9 +806,9 @@ void TPubSubMain::remoteSubscribeCallback( bool err, MinosRPCObj *mro, const QSt
    logMessage( "Remote Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
    if ( !err )
    {
-      boost::shared_ptr<RPCParam>st(new RPCParamStruct);
-      boost::shared_ptr<RPCParam> psServer;
-      boost::shared_ptr<RPCParam> psCategory;
+      QSharedPointer<RPCParam>st(new RPCParamStruct);
+      QSharedPointer<RPCParam> psServer;
+      QSharedPointer<RPCParam> psCategory;
       RPCArgs *args = mro->getCallArgs();
       if ( args->getStructArgMember( 0, "Server", psServer ) &&
            args->getStructArgMember( 0, "Category", psCategory ) )
@@ -857,9 +857,9 @@ void TPubSubMain::serverSubscribeCallback( bool err, MinosRPCObj *mro, const QSt
    logMessage( "Server Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
    if ( !err )
    {
-      boost::shared_ptr<RPCParam>st(new RPCParamStruct);
-      boost::shared_ptr<RPCParam> psServer;
-      boost::shared_ptr<RPCParam> psCategory;
+      QSharedPointer<RPCParam>st(new RPCParamStruct);
+      QSharedPointer<RPCParam> psServer;
+      QSharedPointer<RPCParam> psCategory;
       RPCArgs *args = mro->getCallArgs();
       if ( args->getStructArgMember( 0, "Server", psServer ) &&
            args->getStructArgMember( 0, "Category", psCategory ) )
@@ -925,7 +925,7 @@ void TPubSubMain::serverNotifyCallback( bool err, MinosRPCObj *mro, const QStrin
       serverPublish( from, server, category, key, value, state );       // but we mustn't publish this back to any remote servers
       // even if they ARE subscribed
       mro->clearCallArgs();
-      boost::shared_ptr<RPCParam>st(new RPCParamStruct);
+      QSharedPointer<RPCParam>st(new RPCParamStruct);
       st->addMember( true, "ServerNotifyResult" );
       mro->getCallArgs() ->addParam( st );
       mro->queueResponse( from );

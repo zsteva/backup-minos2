@@ -182,7 +182,7 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
       {
         om = QIODevice::ReadOnly;
       }
-      boost::shared_ptr<QFile> contestFile(new QFile(fn));
+      QSharedPointer<QFile> contestFile(new QFile(fn));
 
       if (!contestFile->open(om))
       {
@@ -260,7 +260,7 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
           {
             om = QIODevice::ReadOnly;
           }
-          boost::shared_ptr<QFile> contestFile(new QFile(fn));
+          QSharedPointer<QFile> contestFile(new QFile(fn));
 
           if (!contestFile->open(om))
           {
@@ -353,11 +353,11 @@ int LoggerContestLog::readBlock( int bno )
 
    return rsize;
 }
-int LoggerContestLog::writeBlock(boost::shared_ptr<QFile> fd, int bno )
+int LoggerContestLog::writeBlock(QSharedPointer<QFile> fd, int bno )
 {
    // fd will not be contest_file if we are exporting a GJV file
 
-   if ( !fd.get() )
+   if ( !fd.data() )
       return bsize;		//tell lies
 
    int n = atoi( diskBuffer );
@@ -378,23 +378,23 @@ int LoggerContestLog::writeBlock(boost::shared_ptr<QFile> fd, int bno )
 }
 void LoggerContestLog::closeFile( void )
 {
-   if ( GJVcontestFile.get() )
+   if ( GJVcontestFile.data() )
    {
       GJVcontestFile->close();
    }
-   if ( minosContestFile.get() )
+   if ( minosContestFile.data() )
    {
       minosContestFile->close();
    }
-   if ( logContestFile.get() )
+   if ( logContestFile.data() )
    {
       logContestFile->close();
    }
-   if ( adifContestFile.get() )
+   if ( adifContestFile.data() )
    {
       adifContestFile->close();
    }
-   if ( ediContestFile.get() )
+   if ( ediContestFile.data() )
    {
       ediContestFile->close();
    }
@@ -562,7 +562,7 @@ bool LoggerContestLog::GJVsave( GJVParams &gp )
 
    strtobuf(); // clear tail
 
-   boost::shared_ptr<QFile> fd = gp.fd;
+   QSharedPointer<QFile> fd = gp.fd;
 
    writeBlock( fd, 0 );
 
@@ -667,7 +667,7 @@ bool LoggerContestLog::GJVloadContacts( void )
    }
    return true;
 }
-bool LoggerContestLog::export_contest(boost::shared_ptr<QFile> expfd, ExportType exptype )
+bool LoggerContestLog::export_contest(QSharedPointer<QFile> expfd, ExportType exptype )
 {
    bool ret = false;
    commonSave( false );
@@ -747,7 +747,7 @@ void LoggerContestLog::procUnknown( BaseContact *cct, writer &wr )
    }
 }
 
-bool LoggerContestLog::exportGJV(boost::shared_ptr<QFile>fd )
+bool LoggerContestLog::exportGJV(QSharedPointer<QFile>fd )
 {
    //	straight copy to disk
 
@@ -801,7 +801,7 @@ bool LoggerContestLog::exportGJV(boost::shared_ptr<QFile>fd )
 
    return true;
 }
-bool LoggerContestLog::exportADIF(boost::shared_ptr<QFile> expfd )
+bool LoggerContestLog::exportADIF(QSharedPointer<QFile> expfd )
 {
    // ADIF format file entry
    // OP header
@@ -840,7 +840,7 @@ bool LoggerContestLog::exportADIF(boost::shared_ptr<QFile> expfd )
 
    return true;
 }
-bool LoggerContestLog::exportREG1TEST(boost::shared_ptr<QFile>expfd )
+bool LoggerContestLog::exportREG1TEST(QSharedPointer<QFile>expfd )
 {
    // First test validity. Reg1test dictates in particular
 
@@ -889,14 +889,14 @@ bool LoggerContestLog::exportREG1TEST(boost::shared_ptr<QFile>expfd )
    delete rtest;
    return rep;
 }
-bool LoggerContestLog::exportPrintFile(boost::shared_ptr<QFile> expfd )
+bool LoggerContestLog::exportPrintFile(QSharedPointer<QFile> expfd )
 {
    PrintFile * rtest = new PrintFile( this );
    int rep = rtest->exportTest( expfd );
    delete rtest;
    return rep;
 }
-bool LoggerContestLog::exportMinos( boost::shared_ptr<QFile> expfd )
+bool LoggerContestLog::exportMinos( QSharedPointer<QFile> expfd )
 {
    int mind = 1;
    int maxd = maxSerial;
@@ -939,7 +939,7 @@ static QString kmloutput ( Location *outgrid )
 
 }
 
-bool LoggerContestLog::exportKML(boost::shared_ptr<QFile> expfd )
+bool LoggerContestLog::exportKML(QSharedPointer<QFile> expfd )
 {
    typedef std::map <QString, ContestContact *> cmap; // map by call
    typedef std::map <QString, cmap> smap;       // map by prefix
@@ -1009,7 +1009,7 @@ bool LoggerContestLog::exportKML(boost::shared_ptr<QFile> expfd )
    kml.append( "</kml>" );
 
 
-   QTextStream ts( expfd.get() );
+   QTextStream ts( expfd.data() );
    ts << kml.join( "\r\n" );
    ts << "\r\n";
 
@@ -1017,10 +1017,10 @@ bool LoggerContestLog::exportKML(boost::shared_ptr<QFile> expfd )
 
 }
 //============================================================
-bool LoggerContestLog::importLOG(boost::shared_ptr<QFile> hLogFile )
+bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
 {
     QStringList ls;
-    QTextStream in( hLogFile.get() );
+    QTextStream in( hLogFile.data() );
 
     while ( !in.atEnd() )
     {
@@ -1245,12 +1245,12 @@ bool LoggerContestLog::importLOG(boost::shared_ptr<QFile> hLogFile )
    return true;
 }
 //====================================================================
-bool LoggerContestLog::importAdif(boost::shared_ptr<QFile> adifContestFile )
+bool LoggerContestLog::importAdif(QSharedPointer<QFile> adifContestFile )
 {
    return ADIFImport::doImportADIFLog( this, adifContestFile );
 }
 //====================================================================
-bool LoggerContestLog::importReg1Test(boost::shared_ptr<QFile> r1ContestFile )
+bool LoggerContestLog::importReg1Test(QSharedPointer<QFile> r1ContestFile )
 {
    // in AdjSQL we do this as a semi-colon separated format, not as something special
    return reg1test::doImportReg1test( this, r1ContestFile );

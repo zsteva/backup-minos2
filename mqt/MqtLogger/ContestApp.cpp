@@ -137,13 +137,13 @@ bool TContestApp::initialise()
 
    //----------------------------------
 
-   BundleFile::bundleFiles[ epLOGGERPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epLOGGERPROFILE ) );
-   BundleFile::bundleFiles[ epPRELOADPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epPRELOADPROFILE ) );
-   BundleFile::bundleFiles[ epDISPLAYPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epDISPLAYPROFILE ) );
-   BundleFile::bundleFiles[ epENTRYPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epENTRYPROFILE ) );
-   BundleFile::bundleFiles[ epQTHPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epQTHPROFILE ) );
-   BundleFile::bundleFiles[ epSTATIONPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epSTATIONPROFILE ) );
-   BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epLOCSQUARESPROFILE ) );
+   BundleFile::bundleFiles[ epLOGGERPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLOGGERPROFILE ) );
+   BundleFile::bundleFiles[ epPRELOADPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epPRELOADPROFILE ) );
+   BundleFile::bundleFiles[ epDISPLAYPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epDISPLAYPROFILE ) );
+   BundleFile::bundleFiles[ epENTRYPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epENTRYPROFILE ) );
+   BundleFile::bundleFiles[ epQTHPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epQTHPROFILE ) );
+   BundleFile::bundleFiles[ epSTATIONPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epSTATIONPROFILE ) );
+   BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLOCSQUARESPROFILE ) );
 
    //----------------------------------
    BundleFile::bundleFiles[ epLOGGERPROFILE ] ->openProfile( "./Configuration/MinosLogger.ini", "Logger Defaults" );

@@ -50,10 +50,10 @@ class GJVParams
 {
    public:
       int diskBlock;
-      boost::shared_ptr<QFile> fd;
+      QSharedPointer<QFile> fd;
       int count;
 
-      GJVParams( boost::shared_ptr<QFile> f );
+      GJVParams( QSharedPointer<QFile> f );
       ~GJVParams();
 };
 //===================================================================================

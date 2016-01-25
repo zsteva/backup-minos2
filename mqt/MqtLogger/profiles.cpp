@@ -768,7 +768,7 @@ BundleFile::BundleFile( PROFILES p )  //: iniFile( 0 )
 bool BundleFile::openProfile( const QString &fname, const QString &bname )
 {
    bundleName = bname;
-   iniFile = boost::shared_ptr<INIFile>( new INIFile( fname ) );
+   iniFile = QSharedPointer<INIFile>( new INIFile( fname ) );
 
    iniFile->loadINIFile();
    return true;
@@ -777,13 +777,13 @@ BundleFile::~BundleFile()
 {
 }
 /*static*/
-boost::shared_ptr<BundleFile>BundleFile::bundleFiles[ epLOCSQUARESPROFILE + 1 ]; //  =  {0};
+QSharedPointer<BundleFile>BundleFile::bundleFiles[ epLOCSQUARESPROFILE + 1 ]; //  =  {0};
 /*static*/
-boost::shared_ptr<BundleFile>BundleFile::getBundleFile( PROFILES p )
+QSharedPointer<BundleFile>BundleFile::getBundleFile( PROFILES p )
 {
    if ( !bool( bundleFiles[ p ] ) )
    {
-      bundleFiles[ p ] = boost::shared_ptr<BundleFile>( new BundleFile( p ) );
+      bundleFiles[ p ] = QSharedPointer<BundleFile>( new BundleFile( p ) );
    }
    return bundleFiles[ p ];
 }
@@ -815,7 +815,7 @@ QString SettingsBundle::getBundle()
    return bundleFile->getBundle();
 }
 
-void SettingsBundle::setProfile( boost::shared_ptr<BundleFile> b )
+void SettingsBundle::setProfile( QSharedPointer<BundleFile> b )
 {
    bundleFile = b;
 }
