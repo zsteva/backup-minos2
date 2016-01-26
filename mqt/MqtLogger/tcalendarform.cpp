@@ -269,24 +269,6 @@ void TCalendarForm::LoadGrid ( Calendar &cal )
     int cc = ( cal.calType == ectVHF ? 8 : 5 );
 
     ui->CalendarGrid->setColumnCount( cc );
-    /*
-    int col = 0;
-    ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "144MHz UK Activity CalendarContest and Club ChampionshipXXX" );
-    ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "248GHZZZZZZZ" );
-    ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "99/99/9999 99:99XXX" );
-    ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "99/99/9999 99:99XXX" );
-    if ( cal.calType == ectVHF )
-    {
-       ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "1PT/QSOXX" );
-       ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "MULTSXX" );
-       ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "3S, 3M, 10S, 10M" );
-       ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "LOW POWER CONTEST" );
-    }
-    else
-    {
-       ui->CalendarGrid->ColWidths[ col++ ] = ui->CalendarGrid->Canvas->TextWidth ( "3S, 3M, 10S, 10M, XX, XX, XX, XX, XX, XX, XX, XX" );
-    }
-    */
     int col = 0;
     ui->CalendarGrid->setHorizontalHeaderItem( col++, new QTableWidgetItem( "Contest Name" ) );
     ui->CalendarGrid->setHorizontalHeaderItem( col++, new QTableWidgetItem( "Band" ) );
@@ -361,7 +343,7 @@ void TCalendarForm::FormShow ( )
         yearList.clear();
         for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
         {
-            yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFCalendarYear ( i ) ) );
+            yearList.push_back ( QSharedPointer<CalendarYear> ( new HFCalendarYear ( i ) ) );
         }
 
         loaded = loadYear ( hf, year );
@@ -384,7 +366,7 @@ void TCalendarForm::FormShow ( )
             yearList.clear();
             for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
             {
-                yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFBARTGCalendarYear ( i ) ) );
+                yearList.push_back ( QSharedPointer<CalendarYear> ( new HFBARTGCalendarYear ( i ) ) );
             }
 
             loaded = loadYear ( hfbartg, year );
@@ -407,7 +389,7 @@ void TCalendarForm::FormShow ( )
                 yearList.clear();
                 for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
                 {
-                    yearList.push_back ( boost::shared_ptr<CalendarYear> ( new VHFCalendarYear ( i ) ) );
+                    yearList.push_back ( QSharedPointer<CalendarYear> ( new VHFCalendarYear ( i ) ) );
                 }
 
                 loaded = loadYear ( vhf, year );
@@ -429,7 +411,7 @@ void TCalendarForm::FormShow ( )
                     yearList.clear();
                     for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
                     {
-                        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFOtherCalendarYear ( i ) ) );
+                        yearList.push_back ( QSharedPointer<CalendarYear> ( new HFOtherCalendarYear ( i ) ) );
                     }
 
                     loaded = loadYear ( hfother, year );
@@ -452,7 +434,7 @@ void TCalendarForm::FormShow ( )
                         yearList.clear();
                         for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
                         {
-                            yearList.push_back ( boost::shared_ptr<CalendarYear> ( new VHFOtherCalendarYear ( i ) ) );
+                            yearList.push_back ( QSharedPointer<CalendarYear> ( new VHFOtherCalendarYear ( i ) ) );
                         }
 
                         loaded = loadYear ( vhfother, year );
@@ -474,7 +456,7 @@ void TCalendarForm::FormShow ( )
                             yearList.clear();
                             for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
                             {
-                                yearList.push_back ( boost::shared_ptr<CalendarYear> ( new MicroCalendarYear ( i ) ) );
+                                yearList.push_back ( QSharedPointer<CalendarYear> ( new MicroCalendarYear ( i ) ) );
                             }
 
                             loaded = loadYear ( mwave, year );
@@ -558,19 +540,19 @@ bool CalendarYear::downloadFile ( bool showError )
 void TCalendarForm::downloadFiles()
 {
 
-    QString fpath = "./configuration";
+    QString fpath = "./Configuration";
 
     int fileCount = 0;
 
-    std::vector<boost::shared_ptr<CalendarYear> > yearList;
+    std::vector<QSharedPointer<CalendarYear> > yearList;
 
-    yearList.push_back ( boost::shared_ptr<CalendarYear> ( new CTYCalendarYear ( 0 ) ) );
+    yearList.push_back ( QSharedPointer<CalendarYear> ( new CTYCalendarYear ( 0 ) ) );
     for ( int i = LOWURLYEAR; i <= HIGHYEAR; i++ )
     {
-        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new VHFCalendarYear ( i ) ) );
-//        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFCalendarYear ( i ) ) );
-//        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new HFBARTGCalendarYear ( i ) ) );
-//        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new MicroCalendarYear ( i ) ) );
+        yearList.push_back ( QSharedPointer<CalendarYear> ( new VHFCalendarYear ( i ) ) );
+//        yearList.push_back ( QSharedPointer<CalendarYear> ( new HFCalendarYear ( i ) ) );
+//        yearList.push_back ( QSharedPointer<CalendarYear> ( new HFBARTGCalendarYear ( i ) ) );
+//        yearList.push_back ( QSharedPointer<CalendarYear> ( new MicroCalendarYear ( i ) ) );
     }
 
     for ( unsigned int i = 0; i < yearList.size(); i++ )

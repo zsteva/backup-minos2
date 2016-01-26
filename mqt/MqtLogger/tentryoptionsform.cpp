@@ -305,7 +305,7 @@ QString TEntryOptionsForm::doFileSave( )
             }
 
             QIODevice::OpenMode om = QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered;
-            boost::shared_ptr<QFile> contestFile(new QFile(expName));
+            QSharedPointer<QFile> contestFile(new QFile(expName));
 
             if (!contestFile->open(om))
             {

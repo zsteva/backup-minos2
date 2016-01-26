@@ -17,17 +17,14 @@ static bool logEnabled = false;
 void trace( const QString & mess )
 {
    mLogFile.log( mess );
-   //   std::cout << mess.c_str() << std::endl;
 }
 void trace( const char *mess )
 {
    mLogFile.log( mess );
-   //   std::cout << mess << std::endl;
 }
 void trace( const std::string & mess )
 {
    mLogFile.log( mess.c_str() );
-   //   std::cout << mess.c_str() << std::endl;
 }
 //---------------------------------------------------------------------------
 void enableTrace(const QString &where , const QString filePrefix)

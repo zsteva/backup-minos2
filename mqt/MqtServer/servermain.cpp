@@ -97,7 +97,7 @@ void ServerMain::LogTimerTimer( )
    {
       setVisible(false);
    }
-
+/*
    while ( true )
    {
       LogEvent * ev = deQueueLog();
@@ -109,6 +109,7 @@ void ServerMain::LogTimerTimer( )
       else
          break;
    }
+*/
    if ( closeApp )
       close();
 

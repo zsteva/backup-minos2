@@ -16,7 +16,6 @@ CONFIG += c++14
 win32-g++:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 
-INCLUDEPATH += C:\Projects\boost\boost_1_59_0
 INCLUDEPATH += ../TinyXML
 INCLUDEPATH += ../MqtUtils
 
@@ -24,7 +23,6 @@ DEFINES += TIXML_USE_STL
 
 SOURCES += \
     Dispatcher.cpp \
-    GJVThreads.cpp \
     LogEvents.cpp \
     MLogFile.cpp \
     MTrace.cpp \
@@ -40,7 +38,6 @@ SOURCES += \
 
 HEADERS += \
     Dispatcher.h \
-    GJVThreads.h \
     LogEvents.h \
     MLogFile.h \
     MTrace.h \

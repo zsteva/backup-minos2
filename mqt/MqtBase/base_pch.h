@@ -25,8 +25,6 @@
 
 #include <math.h>
 #include <time.h>
-//#include "boost\format.hpp"
-#include "boost\shared_ptr.hpp"
 
 //#define _MSC_VER 2300
 #include "sorted_vector.h"
@@ -48,8 +46,8 @@
 #include "contest.h"
 #include "list.h"
 #include "contacts.h"
-#include "screencontact.h"
-#include "matchcontact.h"
+#include "ScreenContact.h"
+#include "MatchContact.h"
 #include "ListContact.h"
 
 #include "MinosTestImport.h"

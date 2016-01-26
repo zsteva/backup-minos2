@@ -69,7 +69,8 @@ bool TLogContainer::show(int argc, char *argv[])
     TimerUpdateQSOTimer.start(1000);
     connect(&TimerUpdateQSOTimer, SIGNAL(timeout()), this, SLOT(on_TimeDisplayTimer()));
 
-    connect(&MinosLoggerEvents::mle, SIGNAL(ReportOverstrike(bool , BaseContestLog * )), this, SLOT(on_ReportOverstrike(bool , BaseContestLog * )));
+    connect(&MinosLoggerEvents::mle, SIGNAL(ReportOverstrike(bool , BaseContestLog * )),
+            this, SLOT(on_ReportOverstrike(bool , BaseContestLog * )), Qt::QueuedConnection);
 
     SendDM = new TSendDM( this );
     QMainWindow::show();
@@ -126,7 +127,7 @@ void TLogContainer::on_ReportOverstrike(bool overstrike, BaseContestLog *econtes
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    if (ct == econtest)
    {
-      //sblabel1->setText(overstrike ? "Overwrite" : "Insert");
+      sblabel1->setText(overstrike ? "Overwrite" : "Insert");
    }
 }
 
@@ -226,9 +227,9 @@ void TLogContainer::setupMenus()
     TabPopup.addAction(GoToSerialAction);
     TabPopup.addAction(NextUnfilledAction);
     TabPopup.addSeparator();
-    NextContactDetailsOnLeftAction = newAction("&Next Contact Details On Left", &TabPopup, SLOT(NextContactDetailsOnLeftActionExecute()));
-    ScrollingContestTabsAction = newAction("Scrolling contest tabs", &TabPopup, SLOT(ScrollingContestTabsActionExecute()));
-    ShowOperatorsAction = newAction("Show Operators", &TabPopup, SLOT(ShowOperatorsActionExecute()));
+    NextContactDetailsOnLeftAction = newCheckableAction("&Next Contact Details On Left", &TabPopup, SLOT(NextContactDetailsOnLeftActionExecute()));
+    ScrollingContestTabsAction = newCheckableAction("Scrolling contest tabs", &TabPopup, SLOT(ScrollingContestTabsActionExecute()));
+    ShowOperatorsAction = newCheckableAction("Show Operators", &TabPopup, SLOT(ShowOperatorsActionExecute()));
     TabPopup.addSeparator();
     ShiftTabLeftAction = newAction("Shift Active Tab Left", &TabPopup, SLOT(ShiftTabLeftActionExecute()));
     ShiftTabRightAction = newAction("Shift Active Tab Right", &TabPopup, SLOT(ShiftTabRightActionExecute()));
@@ -648,7 +649,11 @@ void TLogContainer::ScrollingContestTabsActionExecute()
 
 void TLogContainer::ShowOperatorsActionExecute()
 {
-
+    bool so = !isShowOperators();
+    ShowOperatorsAction->setChecked(so);
+    TContestApp::getContestApp() ->displayBundle.setBoolProfile( edpShowOperators, so );
+    TContestApp::getContestApp() ->displayBundle.flushProfile();
+    MinosLoggerEvents::SendShowOperators();
 }
 
 void TLogContainer::OptionsActionExecute()
@@ -683,17 +688,24 @@ void TLogContainer::ReportAutofillActionExecute()
 
 void TLogContainer::GoToSerialActionExecute()
 {
-
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    MinosLoggerEvents::SendGoToSerial(ct);
 }
 
 void TLogContainer::NextUnfilledActionExecute()
 {
-
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    MinosLoggerEvents::SendNextUnfilled(ct);
 }
 
 void TLogContainer::NextContactDetailsOnLeftActionExecute()
 {
+    bool ncdol = !isNextContactDetailsOnLeft();
+    NextContactDetailsOnLeftAction->setChecked(ncdol);
+    TContestApp::getContestApp() ->displayBundle.setBoolProfile( edpNextContactDetailsOnLeft, ncdol );
+    TContestApp::getContestApp() ->displayBundle.flushProfile();
 
+    MinosLoggerEvents::SendNextContactDetailsOnLeft();
 }
 
 void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
@@ -933,7 +945,6 @@ void TLogContainer::addListSlot( const QString &fname, int slotno, bool preload 
 void TLogContainer::ListOpenActionExecute()
 {
     // first choose file
-//"Images (*.png *.xpm *.jpg);;Text files (*.txt);;XML files (*.xml)"
 
     QString Filter = "Contact list files (*.csl);;"
                      "All Files (*.*)" ;
@@ -981,8 +992,6 @@ void TLogContainer::ShiftTabRightActionExecute( )
       TContestApp::getContestApp() ->writeContestList();
 
       ui->ContestPageControl->tabBar()->moveTab(tno, tno + 1);
-//      tno++;
-//      ui->ContestPageControl->setCurrentIndex(tno);
 
       enableActions();
    }
@@ -1011,8 +1020,6 @@ void TLogContainer::ShiftTabLeftActionExecute( )
 
       //      ContestPageControl->ActivePage->PageIndex = tno; // BCB - this moves the tabs
       ui->ContestPageControl->tabBar()->moveTab(tno, tno - 1);
-//      tno--;
-//      ui->ContestPageControl->setCurrentIndex( tno);
 
       enableActions();
    }

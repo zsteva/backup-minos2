@@ -42,7 +42,7 @@ class TCalendarForm : public QDialog
         bool loadYear ( Calendar &hf, int year );
         void LoadGrid ( Calendar &cal );
 
-        std::vector<boost::shared_ptr<CalendarYear> > yearList;
+        std::vector<QSharedPointer<CalendarYear> > yearList;
 
         void doCloseEvent();
 

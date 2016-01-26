@@ -50,7 +50,7 @@ RPCAction::~RPCAction()
 QString RPCAction::print()
 {
    QString s = "From: " + getFrom() + " To: " + getTo() + "\r\n";
-   for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
+   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
    {
       s += ( *i ) ->print();
    }
@@ -160,7 +160,7 @@ QString RPCRequest::print()
 QString RPCRequest::analyse()
 {
    QString s;
-   for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
+   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
    {
       s += ( *i ) ->analyse();
    }
@@ -201,7 +201,7 @@ RPCResponse::RPCResponse( const QString &from, TiXmlElement *node ) :
             TiXmlElement * ms = findNode( mv, "struct" );
             if ( ms )
             {
-               fault = boost::shared_ptr<RPCParam>(new RPCParamStruct( *ms ));
+               fault = QSharedPointer<RPCParam>(new RPCParamStruct( *ms ));
             }
          }
       }
@@ -212,7 +212,7 @@ RPCResponse::RPCResponse()
 RPCResponse::~RPCResponse()
 {
 }
-void RPCResponse::addFault( boost::shared_ptr<RPCParam>p )
+void RPCResponse::addFault( QSharedPointer<RPCParam>p )
 {
    fault = p;
 }

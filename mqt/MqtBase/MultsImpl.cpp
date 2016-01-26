@@ -522,15 +522,6 @@ int CountryList::slen( bool )
 }
 void CountryList::load( void )
 {
-   // load ignores from the ini file
-   /*
-   TContestApp::getContestApp() ->displayBundle.getBoolProfile( edpShowContinentEU, contlist[ 0 ].allow );
-   TContestApp::getContestApp() ->displayBundle.getBoolProfile( edpShowContinentAS, contlist[ 1 ].allow );
-   TContestApp::getContestApp() ->displayBundle.getBoolProfile( edpShowContinentAF, contlist[ 2 ].allow );
-   TContestApp::getContestApp() ->displayBundle.getBoolProfile( edpShowContinentOC, contlist[ 3 ].allow );
-   TContestApp::getContestApp() ->displayBundle.getBoolProfile( edpShowContinentSA, contlist[ 4 ].allow );
-   TContestApp::getContestApp() ->displayBundle.getBoolProfile( edpShowContinentNA, contlist[ 5 ].allow );
-   */
    loadEntries( "./Configuration/cty.dat", "CT9 Country File" );
 
    for ( unsigned int i = 0; i < size(); i++ )

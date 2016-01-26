@@ -19,10 +19,7 @@ public:
     explicit QSOLogFrame(QWidget *parent);
     ~QSOLogFrame();
 
-    void setAsEdit()
-    {
-        edit = true;
-    }
+    void setAsEdit();
 
 private:
     ScreenContact *partialContact; // contact being edited on screen
@@ -64,16 +61,13 @@ private:
      virtual void showScreenEntry( );
      virtual void getScreenContactTime();
      virtual void showScreenContactTime( ScreenContact &);
-     virtual void checkTimeEditEnter(QLineEdit *tle, bool &ovr);
-     virtual bool isTimeEdit(QLineEdit *tle);
-     virtual void checkTimeEditExit();
      bool checkLogEntry(bool checkDTG );
   public: 		// User declarations
      bool savePartial( void );
      bool restorePartial( void );
      void killPartial( void );
      void startNextEntry( );
-     void keyPressEvent( QKeyEvent* event );
+     bool doKeyPressEvent( QKeyEvent* event );
      virtual void selectEntry( BaseContact *lct );
      void setXferEnabled(bool);
 
@@ -91,6 +85,7 @@ private:
      virtual void selectField( QWidget *v );
      virtual void initialise(BaseContestLog * contest, bool catchup );
      virtual void refreshOps();
+     virtual void refreshOps(ScreenContact &screenContact);
      virtual void updateQSOTime(bool fromTimer = false);
      virtual void updateQSODisplay();
      virtual void closeContest();
@@ -100,6 +95,7 @@ private:
      void transferDetails( const BaseContact * lct, const BaseContestLog *matct );
      void transferDetails( const ListContact * lct, const ContactList *matct );
 
+     void setFirstUnfilledButtonEnabled(bool);
      void logTabChanged();
 
 private:
@@ -168,6 +164,7 @@ private slots:
     void on_AfterTabFocusIn(QLineEdit *tle);
     void on_Validated();
     void on_ValidateError (int mess_no );
+    void on_ShowOperators();
 
     void on_ModeComboBoxGJV_currentIndexChanged(int index);
 };

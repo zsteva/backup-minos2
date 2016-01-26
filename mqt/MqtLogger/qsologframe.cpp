@@ -25,33 +25,41 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     CallsignFW = new FocusWatcher(ui->CallsignEdit);
     CallsignLabelString = ui->Callsignlabel->text();
     ui->CallsignEdit->setValidator(new UpperCaseValidator(true));
+    ui->CallsignEdit->installEventFilter(this);
 
     RSTTXFW = new FocusWatcher(ui->RSTTXEdit);
     RSTTXLabelString = ui->RSTTXLabel->text();
     ui->RSTTXEdit->setValidator(new UpperCaseValidator(true));
+    ui->RSTTXEdit->installEventFilter(this);
 
     SerTXFW = new FocusWatcher(ui->SerTXEdit);
     SerTXLabelString = ui->SerTXLabel->text();
     ui->SerTXEdit->setValidator(new UpperCaseValidator(true));
+    ui->SerTXEdit->installEventFilter(this);
 
     RSTRXFW = new FocusWatcher(ui->RSTRXEdit);
     RSTRXLabelString = ui->RSTRXLabel->text();
     ui->RSTRXEdit->setValidator(new UpperCaseValidator(true));
+    ui->RSTRXEdit->installEventFilter(this);
 
     SerRXFW = new FocusWatcher(ui->SerRXEdit);
     SerRXLabelString = ui->SerRXLabel->text();
     ui->SerRXEdit->setValidator(new UpperCaseValidator(true));
+    ui->SerRXEdit->installEventFilter(this);
 
     LocFW = new FocusWatcher(ui->LocEdit);
     LocLabelString = ui->LocLabel->text();
     ui->LocEdit->setValidator(new UpperCaseValidator(true));
+    ui->LocEdit->installEventFilter(this);
 
     QTHFW = new FocusWatcher(ui->QTHEdit);
     QTHLabelString = ui->QTHLabel->text();
     ui->QTHEdit->setValidator(new UpperCaseValidator(true));
+    ui->QTHEdit->installEventFilter(this);
 
     CommentsFW = new FocusWatcher(ui->CommentsEdit);
     CommentsLabelString = ui->CommentsLabel->text();
+    ui->CommentsEdit->installEventFilter(this);
 
     MainOpFW = new FocusWatcher(ui->MainOpComboBox);
     SecondOpFW = new FocusWatcher(ui->SecondOpComboBox);
@@ -67,7 +75,6 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(MainOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
     connect(SecondOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
 
-    ui->SerTXEdit->installEventFilter(this);
     ui->TimeEdit->installEventFilter(this);
 
     ui->ModeComboBoxGJV->addItem("A1A");
@@ -77,18 +84,118 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterTabFocusIn(QLineEdit*)), this, SLOT(on_AfterTabFocusIn(QLineEdit*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(Validated()), this, SLOT(on_Validated()));
     connect(&MinosLoggerEvents::mle, SIGNAL(ValidateError(int)), this, SLOT(on_ValidateError(int)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(ShowOperators()), this, SLOT(on_ShowOperators()));
 }
 bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
 {
-   if (obj == ui->SerTXEdit || obj == ui->TimeEdit)
-   {
-       if (event->type() == QEvent::MouseButtonDblClick)
-       {
-          mouseDoubleClickEvent(obj);
-       }
+    if (event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *ke = dynamic_cast<QKeyEvent *>(event);
+        return doKeyPressEvent(ke);
+    }
+    else if (event->type() == QEvent::MouseButtonDblClick)
+    {
+        if (obj == ui->SerTXEdit || (edit && (obj == ui->TimeEdit)))
+        {
+            mouseDoubleClickEvent(obj);
+        }
    }
 
    return false;
+}
+bool QSOLogFrame::doKeyPressEvent( QKeyEvent* event )
+{
+    if (!event)
+        return false;
+
+    int Key = event->key();
+
+    Qt::KeyboardModifiers mods = event->modifiers();
+    bool shift = mods & Qt::ShiftModifier;
+    bool ctrl = mods & Qt::ControlModifier;
+    //bool alt = mods & Qt::AltModifier;
+
+    if (Key == Qt::Key_Return)
+    {
+        QMetaObject::invokeMethod(ui->GJVOKButton, "clicked", Qt::QueuedConnection);
+        return true;
+    }
+    if (Key == Qt::Key_Escape)
+    {
+        QMetaObject::invokeMethod(ui->GJVCancelButton, "clicked", Qt::QueuedConnection);
+        return true;
+    }
+
+    if (( ctrl || shift ) && Key >= Qt::Key_F1 && Key <= Qt::Key_F12 )
+    {
+        if ( ctrl && shift )
+        {
+            // keyer record keys
+            TSendDM::sendKeyerRecord( Key - Qt::Key_F1 + 1 );
+        }
+        else
+        {
+            // Keyer play keys
+            TSendDM::sendKeyerPlay( Key - Qt::Key_F1 + 1 );
+        }
+        return true;
+    }
+
+    if ( ( Key == Qt::Key_F1 || Key == Qt::Key_F2 || Key == Qt::Key_F3 || Key == Qt::Key_F4 || Key == Qt::Key_F5 || Key == Qt::Key_F6) )
+    {
+        setActiveControl( &Key );
+        return true;
+    }
+
+    bool doReturn = false;
+    if ( ( Key == Qt::Key_Insert ) && !shift && !ctrl )
+    {
+        overstrike = !overstrike;
+        doReturn = true;
+    }
+    bool ovr = overstrike;
+
+    QLineEdit *ed = dynamic_cast<QLineEdit *>( current );
+
+
+    MinosLoggerEvents::SendReportOverstrike(ovr, contest);  // queued
+
+    if (doReturn)
+        return true;
+
+    if (ed)
+    {
+
+        if (ovr && ((Key&0xff) == Key))    // QT keeps 8 bit ASCII range for real keys
+        {
+            int cpos = ed->cursorPosition();
+            int edLen = ed->text().size();
+            if (cpos < edLen)
+            {
+                QString edText = ed->text();
+                if ( Key != Qt::Key_Delete )
+                {
+                    // just delete the chracter at cursor pos, and let new char be inserted
+                    edText = edText.left(cpos) + edText.right(edLen - cpos - 1);
+                    ed->setText(edText);
+                    ed->setCursorPosition(cpos);
+                }
+                else
+                {
+                    // need to overstrike with space, but move cursor back one
+                    edText = edText.left(cpos) + " " + edText.right(edLen - cpos);
+                    ed->setText(edText);
+                    ed->setCursorPosition(cpos);
+                }
+            }
+        }
+        if (ed == ui->CallsignEdit)
+        {
+            QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; }");
+            ui->CallsignEdit->setStyleSheet(ss);
+        }
+    }
+    return false;
 }
 
 QSOLogFrame::~QSOLogFrame()
@@ -162,6 +269,12 @@ void QSOLogFrame::focusChange(QObject *obj, bool in, QFocusEvent *event)
         SecondOpComboBox_Exit();
     }
 }
+void QSOLogFrame::setAsEdit()
+{
+    edit = true;
+    ui->GJVCancelButton->setText("Return to Log");
+}
+
 void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
 {
    catchup = bf;
@@ -208,6 +321,8 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
    }
 
    updateQSODisplay();
+   refreshOps();
+
 //   SerTXEdit->Color = clBtnFace;
    QString ss("QLineEdit { background-color: silver ; border-style: outset ; border-width: 1px ; border-color: black ; }");
    ui->SerTXEdit->setStyleSheet(ss);
@@ -215,6 +330,8 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
    updateTimeAllowed = true;
    oldTimeOK = true;
    updateQSOTime();
+   MinosLoggerEvents::SendReportOverstrike(overstrike, contest);
+
 }
 void QSOLogFrame::setXferEnabled(bool s)
 {
@@ -243,7 +360,12 @@ void QSOLogFrame::on_FirstUnfilledButton_clicked()
     // Go to the first unfilled QSO
     // If there aren't any then it needs to be made invisible
     // ScanContest can work out how many there are - and we can display that on the button
-       MinosLoggerEvents::SendNextUnfilled(contest);}
+       MinosLoggerEvents::SendNextUnfilled(contest);
+}
+void QSOLogFrame::setFirstUnfilledButtonEnabled(bool state)
+{
+    ui->FirstUnfilledButton->setEnabled(state);
+}
 
 void QSOLogFrame::MainOpComboBox_Exit()
 {
@@ -344,21 +466,6 @@ void QSOLogFrame::on_GJVOKButton_clicked()
 
        // but if it is DTG, probably want CS instead (Unless post entry)
 
-       QLineEdit *ed = dynamic_cast<QLineEdit *>( nextf );
-       if ( isTimeEdit(ed) )
-       {
-          if ( !catchup && screenContact.time.notEntered() == 0 )
-          {
-             selectField( ui->CallsignEdit );
-             nextf = 0;			// dont show silly errors!
-             if ( screenContact.cs.validate( ) == CS_OK )
-             {
-                doAutofill();
-                //??????????????????????
-                return;// doGJVOKButtonClick( Sender );
-             }
-          }
-       }
 
        if ( nextf )
        {
@@ -398,13 +505,37 @@ void QSOLogFrame::on_GJVOKButton_clicked()
     {
        logCurrentContact( );
     }
-    if (edit)
+    if (edit && !catchup && !was_unfilled)
     {
         emit QSOFrameCancelled();
     }
     else
     {
-        selectField( 0 );             // make sure we move off the "Log" default button
+        if ( edit && unfilled )
+        {
+           // If Uri mode then continue to the next...
+           BaseContact * nuc = contest->findNextUnfilledContact( );
+           selectEntry(nuc);
+
+//           on_FirstUnfilledButton_clicked( );
+           bool stillUnfilled = screenContact.contactFlags & TO_BE_ENTERED;
+
+           if (!stillUnfilled)
+           {
+                emit QSOFrameCancelled();
+           }
+           else
+           {
+                selectField( 0 );             // make sure we move off the "Log" default button
+           }
+        }
+        if (edit && catchup)
+        {
+            LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+            int ctmax = ct->maxSerial + 1;
+            DisplayContestContact *lct = ct->addContact( ctmax, 0, false, catchup );
+            selectEntry( lct );
+        }
     }
     return;
 
@@ -570,100 +701,6 @@ void QSOLogFrame::on_LocEdit_textChanged(const QString &/*arg1*/)
    calcLoc();
    doGJVEditChange( ui->LocEdit );
 }
-void QSOLogFrame::keyPressEvent( QKeyEvent* event )
-{
-    int Key = event->key();
-
-    Qt::KeyboardModifiers mods = event->modifiers();
-    bool shift = mods & Qt::ShiftModifier;
-    bool ctrl = mods & Qt::ControlModifier;
-    //bool alt = mods & Qt::AltModifier;
-
-    if (Key == Qt::Key_Return)
-    {
-        ui->GJVOKButton->clicked();
-    }
-    if (Key == Qt::Key_Escape)
-    {
-        ui->GJVCancelButton->clicked();
-    }
-
-    if (( ctrl || shift ) && Key >= Qt::Key_F1 && Key <= Qt::Key_F12 )
-    {
-       if ( ctrl && shift )
-       {
-          // keyer record keys
-          TSendDM::sendKeyerRecord( Key - Qt::Key_F1 + 1 );
-       }
-       else
-       {
-          // Keyer play keys
-          TSendDM::sendKeyerPlay( Key - Qt::Key_F1 + 1 );
-       }
-    }
-    else
-       if ( mods == 0 )
-       {
-          if ( ( Key == Qt::Key_F1 || Key == Qt::Key_F2 || Key == Qt::Key_F3 || Key == Qt::Key_F4 || Key == Qt::Key_F5 || Key == Qt::Key_F6) )
-          {
-             setActiveControl( &Key );
-          }
-       }
-    else
-       {
-
-           if ( ( Key == Qt::Key_Insert ) && !shift )
-           {
-              overstrike = !overstrike;
-           }
-           // DTG need to be overstrike ALWAYS as they are formatted
-           // DTG need to be overstrike ALWAYS as they are formatted
-           bool ovr = overstrike;
-
-           QLineEdit *ed = dynamic_cast<QLineEdit *>( current );
-           if ( isTimeEdit(ed) )
-           {
-              ovr = true;
-           }
-
-           MinosLoggerEvents::SendReportOverstrike(ovr, contest);
-
-           if ( ed->isReadOnly() )
-           {
-              // want to pop up the hint
-              //MinosParameters::getMinosParameters() ->mshowMessage( ed->hint(), ed );
-              return ;
-           }
-
-           if ( ed && ovr && Key == Qt::Key_Delete )
-           {
-              // need to overstrike with space, but move back one
-              if ( ed->selectedText().length() == 0 )
-              {
-                 ed->setSelection(ed->cursorPosition(), 1);
-              }
-/*
-              QString repText;
-              int len = ed->selectedText().length();
-              for ( int i = 0; i < len; i++ )
-              {
-                 repText += ' ';
-              }
-              ed->SelText = repText;
-              ed->SelStart = ed->SelStart - len ;
-
-              Key = 0;
-              */
-           }
-           if (ed == ui->CallsignEdit)
-           {
-               QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; }");
-               ui->CallsignEdit->setStyleSheet(ss);
-           }
-
-           QFrame::keyPressEvent(event);
-       }
-}
 void QSOLogFrame::mouseDoubleClickEvent(QObject *w)
 {
     // How to find what was double clicked?
@@ -821,7 +858,6 @@ void QSOLogFrame::on_AfterTabFocusIn(QLineEdit *tle)
     tle->deselect();
 
     bool ovr = overstrike;
-    checkTimeEditEnter(tle, ovr);
     MinosLoggerEvents::SendReportOverstrike(ovr, contest);
 }
 
@@ -833,9 +869,9 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
    {
       return;
    }
-   checkTimeEditExit();
    ui->SerTXEdit->setReadOnly(true);
-   ui->TimeEdit->setReadOnly(true);
+
+   ui->TimeEdit->setReadOnly(!edit);
 
    if ( current == ui->LocEdit )
    {
@@ -1030,10 +1066,6 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
 
    for ( std::vector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
    {
-      if ( updateTimeAllowed && isTimeEdit((*vcp)->wc) )
-      {
-         continue;
-      }
       if ( !( *vcp ) ->valid( command ) )
          return false;
    }
@@ -1060,6 +1092,78 @@ bool QSOLogFrame::valid( validTypes command )
 //---------------------------------------------------------------------------
 void QSOLogFrame::selectField( QWidget *v )
 {
+    int dtgne = -1;
+
+    if ( catchup )
+    {
+       dtgne = screenContact.time.notEntered();
+       //   0;   // neither entered, will fill in when cs entered
+       //   1;   // time, no date
+       //   2;   // date, no time
+    }
+
+    if ( v == 0 )
+    {
+       if ( contest->isReadOnly() )
+       {
+          v = ui->CallsignEdit;
+       }
+       else
+          if ( catchup )
+          {
+             v = ( ( dtgne != -1 ) && ( dtgne <= 1 ) ) ? ui->DateEdit : ui->TimeEdit;
+          }
+          else
+             if ( screenContact.contactFlags & TO_BE_ENTERED )
+                v = ui->TimeEdit;
+             else
+                v = ui->CallsignEdit;
+
+    }
+    if ( !v || ( current == v ) )
+    {
+       if (v)
+          v->setFocus();
+       return ;
+    }
+
+    if ( ( current == ui->CallsignEdit ) || ( current == ui->LocEdit ) )
+    {
+       valid( cmCheckValid ); // make sure all single and cross field
+       doAutofill();
+    }
+
+    if ( v == ui->TimeEdit )
+    {
+       ( ( QLineEdit * ) v ) ->setReadOnly(false);
+       if (dtgne == 0 || dtgne == 1)
+       {
+//          TimeEdit->SelStart = 0;
+//          TimeEdit->SelLength = 1;
+       }
+    }
+    if ( v == ui->DateEdit )
+    {
+
+       ( ( QLineEdit * ) v ) ->setReadOnly(false);
+       if (dtgne == 0 || dtgne == 2)
+       {
+//          DateEdit->SelStart = 0;
+//          DateEdit->SelLength = 1;
+       }
+    }
+    if ( v == ui->SerTXEdit )
+    {
+        ( ( QLineEdit * ) v ) ->setReadOnly(false);
+    }
+    if ( v->isEnabled() )
+    {
+       v->setFocus();
+       current = v;
+    }
+    MinosLoggerEvents::SendShowErrorList();
+
+/*
    if ( v == 0 )
    {
       v = ui->CallsignEdit;
@@ -1089,6 +1193,7 @@ void QSOLogFrame::selectField( QWidget *v )
       current = v;
    }
    MinosLoggerEvents::SendShowErrorList();
+   */
 }
 //==============================================================================
 // check for embedded space or empty number
@@ -1376,27 +1481,83 @@ void QSOLogFrame::updateQSODisplay()
 void QSOLogFrame::refreshOps()
 {
    // refill the op combo boxes from the current contest, and select the correct op
-//   BaseContestLog * contest = TContestApp::getContestApp() ->getCurrentContest();
+
    if (contest)
    {
-      //if we are being closed then we are not the current contest - and current may be null
-      QString mainOp = ui->MainOpComboBox->currentText();
-      QString secondOp = ui->SecondOpComboBox->currentText();
-      ui->MainOpComboBox->clear();
-      ui->SecondOpComboBox->clear();
-      for ( OperatorIterator i = contest->oplist.begin(); i != contest->oplist.end(); i++ )
-      {
-         if ( ( *i ).size() )
-         {
-            ui->MainOpComboBox->addItem( ( *i ) );
-            ui->SecondOpComboBox->addItem( ( *i ) );
-         }
-      }
-      ui->MainOpComboBox->setCurrentText(mainOp);
-      ui->SecondOpComboBox->setCurrentText(secondOp);
+
+       QString mainOp = contest->currentOp1.getValue();
+       QString secondOp = contest->currentOp2.getValue();
+//       QString mainOp = ui->MainOpComboBox->currentText();
+//       QString secondOp = ui->SecondOpComboBox->currentText();
+
+       ui->MainOpComboBox->clear();
+       ui->SecondOpComboBox->clear();
+
+       QStringList ops;
+       for ( OperatorIterator i = contest->oplist.begin(); i != contest->oplist.end(); i++ )
+       {
+           if (!(*i).isEmpty())
+             ops.append(*i);
+       }
+       ops.append(mainOp);
+       ops.append(secondOp);
+
+       ops.append("");
+
+       ops.sort();
+       ops.removeDuplicates();
+
+       ui->MainOpComboBox->addItems(ops);
+       ui->SecondOpComboBox->addItems(ops);
+
+       ui->MainOpComboBox->setCurrentText(mainOp);
+       ui->SecondOpComboBox->setCurrentText(secondOp);
+
    }
 }
+void QSOLogFrame::refreshOps( ScreenContact &screenContact )
+{
+    if (contest)
+    {
+        QString mainOp = screenContact.op1;
+        QString secondOp = screenContact.op2;
 
+        ui->MainOpComboBox->clear();
+        ui->SecondOpComboBox->clear();
+
+        BaseContestLog * contest = TContestApp::getContestApp() ->getCurrentContest();
+        QStringList ops;
+        for ( OperatorIterator i = contest->oplist.begin(); i != contest->oplist.end(); i++ )
+        {
+            if (!(*i).isEmpty())
+              ops.append(*i);
+        }
+        ops.append(mainOp);
+        ops.append(secondOp);
+
+        ops.append("");
+
+        ops.sort();
+        ops.removeDuplicates();
+
+        ui->MainOpComboBox->addItems(ops);
+        ui->SecondOpComboBox->addItems(ops);
+
+        ui->MainOpComboBox->setCurrentText(mainOp);
+        ui->SecondOpComboBox->setCurrentText(secondOp);
+
+       // and if this is the last contact, the ops should also propogate into the contest
+       // for the NEXT contact
+    }
+}
+void QSOLogFrame::on_ShowOperators ( )
+{
+   bool so = LogContainer->isShowOperators();
+   ui->SecondOpComboBox->setVisible(so);
+   ui->SecondOpLabel->setVisible(so);
+   ui->MainOpComboBox->setVisible(so);
+   ui->OperatorLabel->setVisible(so);
+}
 //---------------------------------------------------------------------------
 void QSOLogFrame::closeContest()
 {
@@ -1525,21 +1686,6 @@ void QSOLogFrame::showScreenContactTime( ScreenContact &temp )
 
    ui->DateEdit->setText(temp.time.getDate( DTGDISP ));
    ui->TimeEdit->setText(temp.time.getTime( DTGDISP ));
-}
-//==============================================================================
-void QSOLogFrame::checkTimeEditEnter(QLineEdit * /*tle*/, bool &/*ovr*/)
-{
-
-}
-//==============================================================================
-void QSOLogFrame::checkTimeEditExit()
-{
-
-}
-//==============================================================================
-bool QSOLogFrame::isTimeEdit(QLineEdit * /*tle*/)
-{
-   return false;
 }
 //==============================================================================
 void QSOLogFrame::logCurrentContact( )
@@ -1712,7 +1858,7 @@ void QSOLogFrame::selectEntry( BaseContact *slct )
 
    ui->MainOpComboBox->setCurrentText(screenContact.op1);
    ui->SecondOpComboBox->setCurrentText(screenContact.op2);
-   if ( !contest->isReadOnly() && (screenContact.contactFlags & TO_BE_ENTERED || catchup))
+   if ( !contest->isReadOnly() && ((screenContact.contactFlags & TO_BE_ENTERED) || catchup))
    {
       // Uri Mode - catchuping QSOs from paper while logging current QSOs
       // and we need to set the date/time from the previous contact
@@ -1774,8 +1920,6 @@ void QSOLogFrame::selectEntry( BaseContact *slct )
       timeOK = contest->checkTime(time);
    }
 
-//   DateEdit->Font->Assign(MinosParameters::getMinosParameters() ->getSysFont());
-//   TimeEdit->Font->Assign(MinosParameters::getMinosParameters() ->getSysFont());
    if (timeOK)
    {
 //      DateEdit->Font->Color = clWindowText;

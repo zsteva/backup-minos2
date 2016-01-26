@@ -13,11 +13,11 @@
 #define GRIDOK 10000
 #define INVALIDGREF 10001
 
-typedef enum gridstyle {NUL, GEO, OWN, NGR, LOC} gridstyle;
+enum gridstyle {NUL, GEO, OWN, NGR, LOC};
 
 struct Location
 {
-   gridstyle gridstyle;
+   enum gridstyle gridstyle;
    char *datastring;
    int dataoffset, datalength;
    double northing, easting, centremeridian;

@@ -31,14 +31,14 @@ class LoggerContestLog : public BaseContestLog
       bool adifFile;
       bool ediFile;
       bool needExport;
-      boost::shared_ptr<QFile> minosContestFile;
-      boost::shared_ptr<QFile> GJVcontestFile;
-      boost::shared_ptr<QFile> logContestFile;
-      boost::shared_ptr<QFile> adifContestFile;
-      boost::shared_ptr<QFile> ediContestFile;
-      bool importLOG( boost::shared_ptr<QFile>  );
-      bool importAdif( boost::shared_ptr<QFile>  );
-      bool importReg1Test( boost::shared_ptr<QFile> adifContestFile );
+      QSharedPointer<QFile> minosContestFile;
+      QSharedPointer<QFile> GJVcontestFile;
+      QSharedPointer<QFile> logContestFile;
+      QSharedPointer<QFile> adifContestFile;
+      QSharedPointer<QFile> ediContestFile;
+      bool importLOG( QSharedPointer<QFile>  );
+      bool importAdif( QSharedPointer<QFile>  );
+      bool importReg1Test( QSharedPointer<QFile> adifContestFile );
       std::vector<StanzaPos> stanzaLocations;
 
    protected:
@@ -133,7 +133,7 @@ class LoggerContestLog : public BaseContestLog
 
       // GJV file manipulation
       int readBlock( int bno );
-      int writeBlock(boost::shared_ptr<QFile> fd, int bno );
+      int writeBlock(QSharedPointer<QFile> fd, int bno );
       bool GJVsave( GJVParams & );
       virtual bool GJVload( void );
       bool GJVloadContacts( void );
@@ -143,14 +143,14 @@ class LoggerContestLog : public BaseContestLog
       virtual bool minosSaveContestContact( const ContestContact *lct );
       // Import/export etc
 
-      bool export_contest( boost::shared_ptr<QFile>, ExportType );
-      bool exportGJV(boost::shared_ptr<QFile> );
+      bool export_contest( QSharedPointer<QFile>, ExportType );
+      bool exportGJV(QSharedPointer<QFile> );
       void procUnknown( BaseContact *cct, writer &wr );
-      bool exportADIF( boost::shared_ptr<QFile> expfd );
-      bool exportKML( boost::shared_ptr<QFile> expfd );
-      bool exportREG1TEST(boost::shared_ptr<QFile> expfd );
-      bool exportPrintFile( boost::shared_ptr<QFile> expfd );
-      bool exportMinos(boost::shared_ptr<QFile> expfd );
+      bool exportADIF( QSharedPointer<QFile> expfd );
+      bool exportKML( QSharedPointer<QFile> expfd );
+      bool exportREG1TEST(QSharedPointer<QFile> expfd );
+      bool exportPrintFile( QSharedPointer<QFile> expfd );
+      bool exportMinos(QSharedPointer<QFile> expfd );
 
       virtual void makeContact( bool time_now, BaseContact *& );
       DisplayContestContact *addContact( int newctno, int extra_flags, bool save_new, bool catchup );

@@ -10,7 +10,7 @@
 
 #include "LoggerContest.h"
 
-#include "PrintFile.h"
+#include "printfile.h"
 
 extern QString fileHeader;
 
@@ -44,7 +44,7 @@ PrintFile::PrintFile( LoggerContestLog * const ct )
 PrintFile::~PrintFile()
 {}
 
-bool PrintFile::exportTest(boost::shared_ptr<QFile> expfd )
+bool PrintFile::exportTest(QSharedPointer<QFile> expfd )
 {
    PrintFileLine linelist[ ( int ) LineCount ];
    // export current contest as PrintFile

@@ -15,9 +15,9 @@ MinosTestImport::MinosTestImport( ) : ct( 0 ), stanzaCount( 0 ), curfpos( 0 )
 {}
 MinosTestImport::~MinosTestImport()
 {}
-bool MinosTestImport::getStructArgMemberValueDTG( boost::shared_ptr<RPCParam>rpm, const QString &name, QString &val )
+bool MinosTestImport::getStructArgMemberValueDTG( QSharedPointer<RPCParam>rpm, const QString &name, QString &val )
 {
-   boost::shared_ptr<RPCParam> res;
+   QSharedPointer<RPCParam> res;
    if ( rpm && rpm->getMember( name, res ) )
    {
       QString psval;
@@ -29,7 +29,7 @@ bool MinosTestImport::getStructArgMemberValueDTG( boost::shared_ptr<RPCParam>rpm
    }
    return false;
 }
-bool MinosTestImport::getStructArgMemberValueDTG( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<QString> &val )
+bool MinosTestImport::getStructArgMemberValueDTG( QSharedPointer<RPCParam>rpm, const QString &name, MinosItem<QString> &val )
 {
    QString temp;
    bool ret = getStructArgMemberValueDTG( rpm, name, temp );
@@ -39,9 +39,9 @@ bool MinosTestImport::getStructArgMemberValueDTG( boost::shared_ptr<RPCParam>rpm
    }
    return ret;
 }
-bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, QString &val )
+bool MinosTestImport::getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, QString &val )
 {
-   boost::shared_ptr<RPCParam> res;
+   QSharedPointer<RPCParam> res;
    if ( rpm && rpm->getMember( name, res ) )
    {
       QString psval;
@@ -53,7 +53,7 @@ bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, c
    }
    return false;
 }
-bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<QString> &val )
+bool MinosTestImport::getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, MinosItem<QString> &val )
 {
    QString temp;
    bool ret = getStructArgMemberValue( rpm, name, temp );
@@ -63,9 +63,9 @@ bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, c
    }
    return ret;
 }
-bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, int &val )
+bool MinosTestImport::getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, int &val )
 {
-   boost::shared_ptr<RPCParam> res;
+   QSharedPointer<RPCParam> res;
    if ( rpm && rpm->getMember( name, res ) )
    {
       int psval;
@@ -77,7 +77,7 @@ bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, c
    }
    return false;
 }
-bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<int> &val )
+bool MinosTestImport::getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, MinosItem<int> &val )
 {
    int temp;
    bool ret = getStructArgMemberValue( rpm, name, temp );
@@ -87,9 +87,9 @@ bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, c
    }
    return ret;
 }
-bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, bool &val )
+bool MinosTestImport::getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, bool &val )
 {
-   boost::shared_ptr<RPCParam> res;
+   QSharedPointer<RPCParam> res;
    if ( rpm && rpm->getMember( name, res ) )
    {
       bool psval;
@@ -101,7 +101,7 @@ bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, c
    }
    return false;
 }
-bool MinosTestImport::getStructArgMemberValue( boost::shared_ptr<RPCParam> rpm, const QString &name, MinosItem<bool> &val )
+bool MinosTestImport::getStructArgMemberValue( QSharedPointer<RPCParam> rpm, const QString &name, MinosItem<bool> &val )
 {
    bool temp;
    bool ret = getStructArgMemberValue( rpm, name, temp );
@@ -206,7 +206,7 @@ void MinosTestImport::dispatchResponse( XStanza *xs )
    ( this->*dispatchCallback ) ( xs ); // What a horrid syntax for calling through a member pointer!
 }
 #define IO_BUF_SIZE 4096
-int MinosTestImport::readTestFile(boost::shared_ptr<QFile> ctfile )
+int MinosTestImport::readTestFile(QSharedPointer<QFile> ctfile )
 {
     // read the stream as a sequence of Minos stanzas
     char rdbuffer[ IO_BUF_SIZE + 1 ];
@@ -277,7 +277,7 @@ int MinosTestImport::readTestFile(boost::shared_ptr<QFile> ctfile )
     return stanzas;
 }
 //=============================================================================
-int MinosTestImport::importTest(boost::shared_ptr<QFile> ctfile )
+int MinosTestImport::importTest(QSharedPointer<QFile> ctfile )
 {
    stanzaCount = 0;
 
@@ -297,7 +297,7 @@ void MinosTestImport::analyseImportTest( XStanza *xs )
    }
 }
 //=============================================================================
-bool MinosTestImport::analyseTest(boost::shared_ptr<QFile> ctfile )
+bool MinosTestImport::analyseTest(QSharedPointer<QFile> ctfile )
 {
    dispatchCallback = &MinosTestImport::analyseImportLog;
    return readTestFile( ctfile );

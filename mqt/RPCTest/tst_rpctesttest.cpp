@@ -214,7 +214,7 @@ void RPCTestTest::testDtg()
 void RPCTestTest::testStruct()
 {
    RPCArgs * xms = new RPCArgs();
-   boost::shared_ptr<RPCParam>ps(new RPCParamStruct);
+   QSharedPointer<RPCParam>ps(new RPCParamStruct);
    ps->addMember( QString( "name value" ), "fred" );
    ps->addMember( QString( "value value" ), "joe" );
    xms->addParam( ps );
@@ -228,7 +228,7 @@ void RPCTestTest::testStruct()
    bool parseOK = xm.parseParams( sstr);
    QVERIFY( true == parseOK );
 
-   boost::shared_ptr<RPCParam> pres;
+   QSharedPointer<RPCParam> pres;
    QString sres;
    int ires;
 
@@ -276,7 +276,7 @@ void RPCTestTest::testArray()
    testvec.push_back( "" );
 
 
-   boost::shared_ptr<RPCParam>rpca(RPCArrayFromStringVector( testvec ));
+   QSharedPointer<RPCParam>rpca(RPCArrayFromStringVector( testvec ));
    xms->addParam( rpca );
 
    QString pstr = xms->makeParamsString();
@@ -299,7 +299,7 @@ void RPCTestTest::testArray()
 
    for ( unsigned int i = 0; i < testvec.size(); i++ )
    {
-      boost::shared_ptr<RPCParam> pres;
+      QSharedPointer<RPCParam> pres;
       QString sres;
 
       bool pOK = xm.getArrayArgElement( 0, i, pres );

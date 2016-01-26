@@ -11,6 +11,7 @@
 #include "XMPP_pch.h"
 #include "fileutils.h"
 
+QMutex CsGuard::m_mutex(QMutex::Recursive);
 //---------------------------------------------------------------------------
 static std::ofstream &getLogFile( QString name )
 {
@@ -42,8 +43,7 @@ std::ostream & MLogFile::logT( void )
 {
     CsGuard lock;
     QDateTime dt = QDateTime::currentDateTime();
-    int id = (int)QThread::currentThreadId();
-    QString time = dt.toString( "hh:mm:ss.zzz" ) + " <" + QString::number(id) + ">";
+    QString time = dt.toString( "hh:mm:ss.zzz" );
     return log() << time.toStdString().c_str();
 }
 //---------------------------------------------------------------------------
@@ -67,39 +67,31 @@ std::ostream & MLogFile::log(const QString &s )
    return s;
 }
 //---------------------------------------------------------------------------
-/*static */void MLogFile::tidyFiles(const QString &prefix,   int keepDays )
+/*static */
+void MLogFile::tidyFiles (const QString &Prefix, int KeepDays )
 {
-   QString s = prefix;
+    QString s = Prefix;
+    QString sDir = ExtractFileDir ( s );
+    if ( sDir != "" )
+    {
+        if ( sDir[ sDir.size() - 1 ] != '/' )
+            sDir += '/';
+    }
+    QDateTime kdt = QDateTime::currentDateTime().addDays( -KeepDays );
 
-   QString sDir = ExtractFileDir( s );
-   if ( sDir != "" )
-   {
-      if ( sDir[ sDir.size() ] != '\\' && sDir[ sDir.size() ] != '/' )
-         sDir += '/';
-   }
-   QDateTime kdt = QDateTime::currentDateTime().addDays(keepDays);
-/*
-   TSearchRec sr;
-   int iAttributes = faDirectory | faSysFile | faHidden;
+    QDirIterator files( sDir, QDir::Files | QDir::NoSymLinks , QDirIterator::NoIteratorFlags );
+    while ( files.hasNext() )
+    {
+        files.next();
+        QFileInfo fi(files.filePath());
+        QDateTime fd(fi.created());
 
-   if ( FindFirst( s, faAnyFile	, sr ) == 0 )
-   {
-      do
-      {
-         if ( sr.Name != "" && sr.Attr & ~iAttributes )
-         {
-            TDateTime dt;
-            dt = dt.FileDateToDateTime( sr.Time );
-            if ( dt < kdt )
+        if (fd < kdt)
+        {
+            if (!QFile::remove(files.filePath()))
             {
-               String sName = sDir + sr.Name;
-               DeleteFile( sName.c_str() );
+                trace("Failed to remove " + files.filePath());
             }
-         }
-      }
-      while ( FindNext( sr ) == 0 );
-      FindClose( sr );
-   }
-   */
+        }
+    }
 }
-

@@ -21,7 +21,6 @@
 
 #include "base_pch.h"
 #include "tinyxml.h"
-#include "tinyutils.h"
 #include "BandList.h"
 #include "CalendarList.h"
 
@@ -1049,37 +1048,3 @@ bool Calendar::parseTimeList ( TiXmlElement * tix, std::vector<TimeList> &timeLi
     timeList.push_back ( t );
     return true;
 }
-/*
-bool Calendar::findContest(const std::string desc, TDateTime start, const BandInfo &bi, IndividualContest &ic)
-{
-   calendarYear = start.FormatString("yyyy").ToIntDef(0);
-   bool loaded = false;
-   if (calendarYear >= 2009)
-   {
-      loaded = parseFile( "vhfContests09.xml" );
-   }
-   else
-   {
-      loaded = parseFile( "vhfContests.xml" );
-   }
-   if ( !loaded )
-   {
-      mShowMessage( "Failed to load the calendar file" );
-      return false; // don't close - they need a chance to download
-   }
- 
-   for (std::vector<IndividualContest>::iterator i =  calendar.begin(); i != calendar.end(); i++)
-   {
-      TDateTime icStart = (*i).start;
-      std::string icDesc = (*i).description;
-      std::string icBand = (*i).reg1band;
-      if (icStart == start && icDesc == desc && icBand == bi.reg1test)
-      {
-         ic = (*i);
-         return true;
-      }
-   }
-   return false; // don't close - they need a chance to download
-}
-*/
-

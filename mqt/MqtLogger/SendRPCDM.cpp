@@ -10,7 +10,6 @@
 #include "logger_pch.h"
 
 #include "ServerEvent.h"
-#include "GJVThreads.h"
 #include "LogEvents.h"
 #include "XMPPRPCParams.h"
 #include "XMPPStanzas.h"
@@ -28,7 +27,7 @@ TSendDM *SendDM = 0;
 //---------------------------------------------------------------------------
 void TSendDM::makeRPCObjects()
 {
-    QSettings config("./configuration/MinosConfig.ini", QSettings::IniFormat);
+    QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
     QString circleOfHell = config.value( "Circle Of Hell/Name", "No_name_in_config" ).toString().trimmed();
     serverName = circleOfHell;
 
@@ -61,9 +60,9 @@ void TSendDM::makeRPCObjects()
 void TSendDM::doSendKeyerPlay(  int fno )
 {
    RPCKeyerControlClient rpc( 0 );
-   boost::shared_ptr<RPCParam>st(new RPCParamStruct);
-   boost::shared_ptr<RPCParam>sName(new RPCStringParam( "PlayFile" ));
-   boost::shared_ptr<RPCParam>iValue(new RPCIntParam( fno ));
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
+   QSharedPointer<RPCParam>sName(new RPCStringParam( "PlayFile" ));
+   QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
    st->addMember( sName, "Name" );
    st->addMember( iValue, "Value" );
    rpc.getCallArgs() ->addParam( st );
@@ -78,9 +77,9 @@ void TSendDM::doSendKeyerPlay(  int fno )
 void TSendDM::doSendKeyerRecord(  int fno )
 {
    RPCKeyerControlClient rpc( 0 );
-   boost::shared_ptr<RPCParam>st(new RPCParamStruct);
-   boost::shared_ptr<RPCParam>sName(new RPCStringParam( "RecordFile" ));
-   boost::shared_ptr<RPCParam>iValue(new RPCIntParam( fno ));
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
+   QSharedPointer<RPCParam>sName(new RPCStringParam( "RecordFile" ));
+   QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
    st->addMember( sName, "Name" );
    st->addMember( iValue, "Value" );
    rpc.getCallArgs() ->addParam( st );
@@ -96,24 +95,24 @@ void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const 
 /*static*/ void TSendDM::doSendBandMap(  const QString &freq,   const QString &call,   const QString &utc,   const QString &loc,   const QString &qth )
 {
    RPCBandMapClient rpc( 0 );
-   boost::shared_ptr<RPCParam>st(new RPCParamStruct);
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-   boost::shared_ptr<RPCParam>sName(new RPCStringParam( "BandMap" ));
+   QSharedPointer<RPCParam>sName(new RPCStringParam( "BandMap" ));
    st->addMember( sName, "Name" );
 
-   boost::shared_ptr<RPCParam>sValue(new RPCStringParam( freq ));
+   QSharedPointer<RPCParam>sValue(new RPCStringParam( freq ));
    st->addMember( sValue, "Freq" );
 
-   boost::shared_ptr<RPCParam>sCall(new RPCStringParam( call ));
+   QSharedPointer<RPCParam>sCall(new RPCStringParam( call ));
    st->addMember( sCall, "Callsign" );
 
-   boost::shared_ptr<RPCParam>sLoc(new RPCStringParam( loc ));
+   QSharedPointer<RPCParam>sLoc(new RPCStringParam( loc ));
    st->addMember( sLoc, "Locator" );
 
-   boost::shared_ptr<RPCParam>dValue(new RPCDtgParam( utc ));
+   QSharedPointer<RPCParam>dValue(new RPCDtgParam( utc ));
    st->addMember( dValue, "UTC" );
 
-   boost::shared_ptr<RPCParam>sQTH(new RPCStringParam( qth ));
+   QSharedPointer<RPCParam>sQTH(new RPCStringParam( qth ));
    st->addMember( sQTH, "QTH" );
 
    rpc.getCallArgs() ->addParam( st );
@@ -230,8 +229,8 @@ void TSendDM::loggerServerCallback( bool err, MinosRPCObj *mro, const QString &f
    logMessage( "RPC loggerServerCallback from " + from + ( err ? ":Error" : ":Normal" ) );
    if ( !err )
    {
-      boost::shared_ptr<RPCParam> psLogName;
-      boost::shared_ptr<RPCParam>psStanza;
+      QSharedPointer<RPCParam> psLogName;
+      QSharedPointer<RPCParam>psStanza;
       RPCArgs *args = mro->getCallArgs();
       if ( args->getStructArgMember( 0, "LogName", psLogName )
            && args->getStructArgMember( 0, "Stanza", psStanza ) )
@@ -241,7 +240,7 @@ void TSendDM::loggerServerCallback( bool err, MinosRPCObj *mro, const QString &f
          if ( psLogName->getString( LogName ) && psStanza->getInt( Stanza ) )
          {
             mro->clearCallArgs();
-            boost::shared_ptr<RPCParam>st(new RPCParamStruct);
+            QSharedPointer<RPCParam>st(new RPCParamStruct);
 
 
             bool callOK = true;

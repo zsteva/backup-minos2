@@ -51,7 +51,12 @@ QString ExtractFileExt( const QString &fname )
     QFileInfo finf( fname );
     return ( "." + finf.completeSuffix() );
 }
+#ifdef Q_OS_WIN
 extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
+#else
+int qt_ntfs_permission_lookup = 0;
+#endif
+
 bool FileAccessible(const QString &fname)
 {
     qt_ntfs_permission_lookup++;

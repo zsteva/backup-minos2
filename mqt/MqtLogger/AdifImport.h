@@ -17,7 +17,7 @@ class ADIFImport
       int limit;
       bool getNextChar( char &ic );
 
-      ADIFImport( LoggerContestLog * c, boost::shared_ptr<QFile> hFile );
+      ADIFImport( LoggerContestLog * c, QSharedPointer<QFile> hFile );
       ~ADIFImport();
 
       bool importAdifFile();
@@ -26,14 +26,14 @@ class ADIFImport
       void ADIFImportFieldDecode(QString Fieldname, int FieldLength, QString FieldType, QString FieldContent );
       void ADIFImportEndOfRecord( );
 
-      boost::shared_ptr<QFile> adifContestFile;
+      QSharedPointer<QFile> adifContestFile;
       QString fileContent;
 
       LoggerContestLog * acontest;
       DisplayContestContact *aqso;
       int next_block;
    public:
-      static bool doImportADIFLog( LoggerContestLog * c, boost::shared_ptr<QFile> hFile );
+      static bool doImportADIFLog( LoggerContestLog * c, QSharedPointer<QFile> hFile );
 
 };
 

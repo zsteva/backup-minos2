@@ -7,7 +7,6 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
-#include "boost\format.hpp"
 
 typedef struct transformelement
 {
@@ -555,11 +554,15 @@ static int ngroutput( Location *outgrid )
    if ( gridref[ gri ] >= 'I' )
       gridref[ gri ] ++;
 
-   std::string pt1 = ( boost::format( "%05.5lu" ) % ( long ) ger ).str();
-   std::string pt2 = ( boost::format( "%05.5lu" ) % ( long ) gnr ).str();
-   std::string gr = ( boost::format( " %6.6s %6.6s" ) % pt1 % pt2 ).str();
+   //std::string pt1 = ( boost::format( "%05.5lu" ) % ( long ) ger ).str();
+   //std::string pt2 = ( boost::format( "%05.5lu" ) % ( long ) gnr ).str();
+   //std::string gr = ( boost::format( " %6.6s %6.6s" ) % pt1 % pt2 ).str();
 
-   strcpy( &gridref[ ++gri ], gr.c_str() );
+   QString pt1 = QString::number(ger, 'f', 5);
+   QString pt2 = QString::number(gnr, 'f', 5);
+   QString gr = pt1 + " " + pt2;
+
+   strcpy( &gridref[ ++gri ], gr.toStdString().c_str() );
    //   sprintf( &gridref[ ++gri ], "%06.6s%06.6s",
    //            pt1.c_str(), pt2.c_str() );
 

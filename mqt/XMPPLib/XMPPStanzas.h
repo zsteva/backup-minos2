@@ -96,14 +96,14 @@ class RPCResponse: public RPCAction
 {
    public:
       QString methodName;
-      boost::shared_ptr<RPCParam> fault;
+      QSharedPointer<RPCParam> fault;
 
       RPCResponse( const QString &to, const QString &id, const QString &mname );
       RPCResponse( const QString &to, const QString &from, const QString &id, const QString &mname );
       RPCResponse( const QString &from, TiXmlElement *node );
       RPCResponse();
 
-      void addFault( boost::shared_ptr<RPCParam> );
+      void addFault( QSharedPointer<RPCParam> );
       void addFault( TiXmlElement & );
       virtual ~RPCResponse();
       // Build up the DOM tree for the action, and send it

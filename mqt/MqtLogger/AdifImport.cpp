@@ -13,7 +13,7 @@
 #include "AdifImport.h"
 
 //====================================================================
-ADIFImport::ADIFImport(LoggerContestLog * c, boost::shared_ptr<QFile> adifContestFile ) :
+ADIFImport::ADIFImport(LoggerContestLog * c, QSharedPointer<QFile> adifContestFile ) :
       aqso( 0 ), next_block( 1 ),
       acontest( c ), adifContestFile( adifContestFile ),
       offset( -1 ), limit( -1 )
@@ -135,7 +135,7 @@ void ADIFImport::ADIFImportEndOfRecord( )
    }
 }
 //---------------------------------------------------------------------------
-/*static*/bool ADIFImport::doImportADIFLog(LoggerContestLog * c,  boost::shared_ptr<QFile> hFile )
+/*static*/bool ADIFImport::doImportADIFLog(LoggerContestLog * c,  QSharedPointer<QFile> hFile )
 {
    if ( !c )
       return false;
@@ -163,7 +163,7 @@ bool ADIFImport::getNextChar( char &ic )
 bool ADIFImport::importAdifFile()
 {
    //Create and Open File Stream
-    QTextStream in( adifContestFile.get() );
+    QTextStream in( adifContestFile.data() );
     fileContent =in.readAll();
     offset = 1;
     limit = fileContent.size();

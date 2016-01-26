@@ -118,9 +118,9 @@ bool TContestApp::initialise()
          if ( !destDir.isEmpty() )
          {
 
-            if (destDir.toUpper().indexOf("/CONFIGURATION") == destDir.size() - QString("/configuration").size())
+            if (destDir.toUpper().indexOf("/CONFIGURATION") == destDir.size() - QString("/Configuration").size())
             {
-               destDir = destDir.left(destDir.size() - QString("/configuration").size());
+               destDir = destDir.left(destDir.size() - QString("/Configuration").size());
             }
             QDir::setCurrent(destDir);
          }
@@ -137,13 +137,13 @@ bool TContestApp::initialise()
 
    //----------------------------------
 
-   BundleFile::bundleFiles[ epLOGGERPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epLOGGERPROFILE ) );
-   BundleFile::bundleFiles[ epPRELOADPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epPRELOADPROFILE ) );
-   BundleFile::bundleFiles[ epDISPLAYPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epDISPLAYPROFILE ) );
-   BundleFile::bundleFiles[ epENTRYPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epENTRYPROFILE ) );
-   BundleFile::bundleFiles[ epQTHPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epQTHPROFILE ) );
-   BundleFile::bundleFiles[ epSTATIONPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epSTATIONPROFILE ) );
-   BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] = boost::shared_ptr<BundleFile>( new BundleFile( epLOCSQUARESPROFILE ) );
+   BundleFile::bundleFiles[ epLOGGERPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLOGGERPROFILE ) );
+   BundleFile::bundleFiles[ epPRELOADPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epPRELOADPROFILE ) );
+   BundleFile::bundleFiles[ epDISPLAYPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epDISPLAYPROFILE ) );
+   BundleFile::bundleFiles[ epENTRYPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epENTRYPROFILE ) );
+   BundleFile::bundleFiles[ epQTHPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epQTHPROFILE ) );
+   BundleFile::bundleFiles[ epSTATIONPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epSTATIONPROFILE ) );
+   BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLOCSQUARESPROFILE ) );
 
    //----------------------------------
    BundleFile::bundleFiles[ epLOGGERPROFILE ] ->openProfile( "./Configuration/MinosLogger.ini", "Logger Defaults" );
@@ -228,7 +228,6 @@ TContestApp::TContestApp() : MinosParameters(), magneticVariation( 0 ), period1(
    {
       ContestSlot *cs = new ContestSlot;
       cs->slotno = i + 1;
-      //      contestSlotList.push_back( cs );
       contestSlotList.insert( cs );
    }
    for ( int i = 0; i < INITIAL_LIST_SLOTS; i++ )
@@ -263,7 +262,6 @@ bool TContestApp::insertContest( BaseContestLog * p, unsigned int sno )
          {
             ContestSlot *cs = new ContestSlot;
             cs->slotno = i + 1;
-            //            contestSlotList.push_back( cs );
             contestSlotList.insert( cs );
          }
       }
@@ -288,7 +286,6 @@ bool TContestApp::insertContest( BaseContestLog * p, unsigned int sno )
    ContestSlot *cs = new ContestSlot;
    cs->slot = p;
    cs->slotno = contestSlotList.size() + 1;
-   //   contestSlotList.push_back( cs );
    contestSlotList.insert( cs );
    return true;
 }
@@ -304,7 +301,6 @@ bool TContestApp::insertList( ContactList * p, unsigned int sno )
          {
             ListSlot *cs = new ListSlot;
             cs->slotno = i + 1;
-            //            contestSlotList.push_back( cs );
             listSlotList.insert( cs );
          }
       }
@@ -384,20 +380,6 @@ BaseContestLog * TContestApp::findFirstContest()
    }
    return 0;
 }
-/*
-LoggerContestLog * TContestApp::findContest( LoggerContestLog *p )
-{
-   for ( unsigned int i = 0; i < contestSlotList.size(); i++ )
-   {
-      ContestSlot *cs = contestSlotList[ i ];
-      if ( cs->slot.get() == p )
-      {
-         return cs->slot;
-      }
-   }
-   return LoggerContestLog *();
-}
-*/
 int TContestApp::findContest( BaseContestLog * p )
 {
    for ( unsigned int i = 0; i < contestSlotList.size(); i++ )

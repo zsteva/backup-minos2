@@ -40,13 +40,13 @@ class BundleFile
    private:
       QString bundleName;
    public:
-      boost::shared_ptr<INIFile> iniFile;
+      QSharedPointer<INIFile> iniFile;
       std::vector<ProfileEntry> entries;
 
-      static boost::shared_ptr<BundleFile>bundleFiles[ epLOCSQUARESPROFILE + 1 ];
+      static QSharedPointer<BundleFile>bundleFiles[ epLOCSQUARESPROFILE + 1 ];
       BundleFile( PROFILES p );
       ~BundleFile();
-      static boost::shared_ptr<BundleFile> getBundleFile( PROFILES p );
+      static QSharedPointer<BundleFile> getBundleFile( PROFILES p );
       bool openProfile( const QString &pname, const QString &bname );
       QString getBundle()
       {
@@ -59,13 +59,13 @@ class SettingsBundle
    private:
       QString currsection;
    public:
-      boost::shared_ptr<BundleFile> bundleFile;
+      QSharedPointer<BundleFile> bundleFile;
 
       SettingsBundle( );
       ~SettingsBundle();
       QString getBundle();
 
-      void setProfile( boost::shared_ptr<BundleFile> b );
+      void setProfile( QSharedPointer<BundleFile> b );
 
       void openSection( const QString &psect );
       QString getSection();

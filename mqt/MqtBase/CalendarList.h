@@ -192,14 +192,10 @@ class Calendar
         std::map<std::string, CalendarContest> contests;
 
         std::vector<IndividualContest> calendar;
-
-        //      bool findContest(const std::string desc, TDateTime start, const BandInfo &bi, IndividualContest &ic);
 };
 extern QDateTime localToUTC ( QDateTime t );
 extern void setYear ( int y );
 extern int getMonth ( const std::string &m );
 extern int getDate ( int month, int day, int week );
-
-//IndividualContest &findContest(const std::string desc, TDateTime start, const BandInfo &bi);
 
 #endif

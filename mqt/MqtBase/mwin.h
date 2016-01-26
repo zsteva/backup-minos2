@@ -50,10 +50,10 @@ class GJVParams
 {
    public:
       int diskBlock;
-      boost::shared_ptr<QFile> fd;
+      QSharedPointer<QFile> fd;
       int count;
 
-      GJVParams( boost::shared_ptr<QFile> f );
+      GJVParams( QSharedPointer<QFile> f );
       ~GJVParams();
 };
 //===================================================================================
@@ -165,7 +165,6 @@ class dtg
       bool getDtg( QDateTime & ) const;
       void setDate( const QString &, DTG );
       void setTime( const QString &, DTG );
-//      void setDtg( time_t );
 
       QString getIsoDTG( bool &d ) const;
       QString getIsoDTG( ) const;

@@ -28,53 +28,53 @@ void RPCParam::addValue( TiXmlElement &node )
    addNode( valueNode );
    node.InsertEndChild( valueNode );
 }
-/*static*/ boost::shared_ptr<RPCParam> RPCParam::paramFactory(   TiXmlElement &node )
+/*static*/ QSharedPointer<RPCParam> RPCParam::paramFactory(   TiXmlElement &node )
 {
    // node points to the typed node we need to analyse
 
    if ( checkElementName( &node , "struct" ) )
    {
       RPCParam *p = new RPCParamStruct( node );
-      return boost::shared_ptr<RPCParam>(p);
+      return QSharedPointer<RPCParam>(p);
    }
    else
       if ( checkElementName( &node , "array" ) )
       {
          RPCParam *p = new RPCParamArray(node);
-         return boost::shared_ptr<RPCParam>(p);
+         return QSharedPointer<RPCParam>(p);
       }
 
       else
          if ( checkElementName( &node , "int" ) || checkElementName( &node , "i4" ) )
          {
-            return boost::shared_ptr<RPCParam>(new RPCIntParam(node));
+            return QSharedPointer<RPCParam>(new RPCIntParam(node));
          }
          else
             if ( checkElementName( &node , "boolean" ) )
             {
-               return boost::shared_ptr<RPCParam>(new RPCBooleanParam(node));
+               return QSharedPointer<RPCParam>(new RPCBooleanParam(node));
             }
             else
                if ( checkElementName( &node , "double" ) )
                {
-                  return boost::shared_ptr<RPCParam>(new RPCDoubleParam(node));
+                  return QSharedPointer<RPCParam>(new RPCDoubleParam(node));
                }
                else
                   if ( checkElementName( &node , "string" ) )
                   {
-                     return boost::shared_ptr<RPCParam>(new RPCStringParam(node));
+                     return QSharedPointer<RPCParam>(new RPCStringParam(node));
                   }
                   else
                      if ( checkElementName( &node , "base64" ) )
                      {
-                        return boost::shared_ptr<RPCParam>(new RPCBase64Param(node));
+                        return QSharedPointer<RPCParam>(new RPCBase64Param(node));
                      }
                      else
                         if ( checkElementName( &node , "dateTime.iso8601" ) )
                         {
-                           return boost::shared_ptr<RPCParam>(new RPCDtgParam(node));
+                           return QSharedPointer<RPCParam>(new RPCDtgParam(node));
                         }
-   return boost::shared_ptr<RPCParam>((RPCParam *)0);
+   return QSharedPointer<RPCParam>((RPCParam *)0);
 }
 bool RPCParam::getBoolean( bool & )
 {
@@ -100,11 +100,11 @@ bool RPCParam::getDtg( QString & )
 {
    return false;
 }
-bool RPCParam::getMember( const QString &, boost::shared_ptr<RPCParam>& )
+bool RPCParam::getMember( const QString &, QSharedPointer<RPCParam>& )
 {
    return false;
 }
-bool RPCParam::getMember( unsigned int , boost::shared_ptr<RPCParam>& )
+bool RPCParam::getMember( unsigned int , QSharedPointer<RPCParam>& )
 {
    return false;
 }
@@ -112,11 +112,11 @@ bool RPCParam::getElements( unsigned int & )
 {
    return false;
 }
-bool RPCParam::getElement( unsigned int , boost::shared_ptr<RPCParam>& )
+bool RPCParam::getElement( unsigned int , QSharedPointer<RPCParam>& )
 {
    return false;
 }
-void RPCParam::addMember( boost::shared_ptr<RPCParam> , const QString &/*name*/ )
+void RPCParam::addMember( QSharedPointer<RPCParam> , const QString &/*name*/ )
 {
    throw Exception("addMember to non-struct RPCParam");
 }
@@ -186,34 +186,34 @@ RPCParamStruct::~RPCParamStruct()
    elements.clear(); // clears the shared pointers
 }
 
-void RPCParamStruct::addMember( boost::shared_ptr<RPCParam>p, const QString &name )
+void RPCParamStruct::addMember( QSharedPointer<RPCParam>p, const QString &name )
 {
    p->name = name;
    elements.push_back( p );
 }
 void RPCParamStruct::addMember( int v, const QString &name )
 {
-   addMember( boost::shared_ptr<RPCParam>(new RPCIntParam( v )), name );
+   addMember( QSharedPointer<RPCParam>(new RPCIntParam( v )), name );
 }
 void RPCParamStruct::addMember( bool v, const QString &name )
 {
-   addMember( boost::shared_ptr<RPCParam>(new RPCBooleanParam( v )), name );
+   addMember( QSharedPointer<RPCParam>(new RPCBooleanParam( v )), name );
 }
 void RPCParamStruct::addMember( double v, const QString &name )
 {
-   addMember( boost::shared_ptr<RPCParam>(new RPCDoubleParam( v )), name );
+   addMember( QSharedPointer<RPCParam>(new RPCDoubleParam( v )), name );
 }
 void RPCParamStruct::addMember( const QString &v, const QString &name )
 {
-   addMember( boost::shared_ptr<RPCParam>(new RPCStringParam( v )), name );
+   addMember( QSharedPointer<RPCParam>(new RPCStringParam( v )), name );
 }
 void RPCParamStruct::addBase64Member( const QString &v, const QString &name )
 {
-   addMember( boost::shared_ptr<RPCParam>(new RPCBase64Param( v )), name );
+   addMember( QSharedPointer<RPCParam>(new RPCBase64Param( v )), name );
 }
 void RPCParamStruct::addDtgMember( const QString &v, const QString &name )
 {
-   addMember( boost::shared_ptr<RPCParam>(new RPCDtgParam( v )), name );
+   addMember( QSharedPointer<RPCParam>(new RPCDtgParam( v )), name );
 }
 
 void RPCParamStruct::addNode( TiXmlElement &node )
@@ -224,7 +224,7 @@ void RPCParamStruct::addNode( TiXmlElement &node )
 
    // value as for individual
    TiXmlElement sNode( "struct" );
-   for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       TiXmlElement mNode( "member" );
       TiXmlElement nNode( "name" );
@@ -240,7 +240,7 @@ void RPCParamStruct::addNode( TiXmlElement &node )
 QString RPCParamStruct::print()
 {
    QString s = "Struct\r\n";
-   for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       s += "Member name " + ( *i ) ->name + "\r\n";
       s += ( *i ) ->print();
@@ -251,7 +251,7 @@ QString RPCParamStruct::print()
 QString RPCParamStruct::analyse()
 {
    QString s;
-   for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       if (( *i ) ->name == "lseq" )
       {
@@ -284,9 +284,9 @@ QString RPCParamStruct::analyse()
    return s;
 }
 
-bool RPCParamStruct::getMember( const QString &name, boost::shared_ptr<RPCParam>&p )
+bool RPCParamStruct::getMember( const QString &name, QSharedPointer<RPCParam>&p )
 {
-   for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       if ( ( *i ) ->name == name )
       {
@@ -296,7 +296,7 @@ bool RPCParamStruct::getMember( const QString &name, boost::shared_ptr<RPCParam>
    }
    return false;
 }
-bool RPCParamStruct::getMember( unsigned int eleno, boost::shared_ptr<RPCParam>&p )
+bool RPCParamStruct::getMember( unsigned int eleno, QSharedPointer<RPCParam>&p )
 {
    if ( eleno < elements.size() )
    {
@@ -310,7 +310,7 @@ bool RPCParamStruct::getElements( unsigned int &size )
    size = ( unsigned int ) elements.size();
    return true;
 }
-bool RPCParamStruct::getElement( unsigned int eleno, boost::shared_ptr<RPCParam>&p )
+bool RPCParamStruct::getElement( unsigned int eleno, QSharedPointer<RPCParam>&p )
 {
    if ( eleno < elements.size() )
    {
@@ -358,52 +358,52 @@ RPCParamArray::~RPCParamArray()
    elements.clear(); // clears shared pointers
 }
 
-void RPCParamArray::addElement( boost::shared_ptr<RPCParam> p )
+void RPCParamArray::addElement( QSharedPointer<RPCParam> p )
 {
    elements.push_back( p );
 }
 void RPCParamArray::addElement( int v )
 {
-   addElement( boost::shared_ptr<RPCParam>(new RPCIntParam( v )) );
+   addElement( QSharedPointer<RPCParam>(new RPCIntParam( v )) );
 }
 void RPCParamArray::addElement( bool v )
 {
-   addElement( boost::shared_ptr<RPCParam>(new RPCBooleanParam( v )) );
+   addElement( QSharedPointer<RPCParam>(new RPCBooleanParam( v )) );
 }
 void RPCParamArray::addElement( double v )
 {
-   addElement( boost::shared_ptr<RPCParam>(new RPCDoubleParam( v )) );
+   addElement( QSharedPointer<RPCParam>(new RPCDoubleParam( v )) );
 }
 void RPCParamArray::addElement( const char *v )
 {
-   addElement( boost::shared_ptr<RPCParam>(new RPCStringParam( v )) );
+   addElement( QSharedPointer<RPCParam>(new RPCStringParam( v )) );
 }
 void RPCParamArray::AddBase64Element( const char *v )
 {
-   addElement( boost::shared_ptr<RPCParam>(new RPCBase64Param( v )) );
+   addElement( QSharedPointer<RPCParam>(new RPCBase64Param( v )) );
 }
 void RPCParamArray::AddDtgElement( const char *v )
 {
-   addElement( boost::shared_ptr<RPCParam>(new RPCDtgParam( v )) );
+   addElement( QSharedPointer<RPCParam>(new RPCDtgParam( v )) );
 }
 void RPCParamArray::addElement( const QString &v )
 {
-   addElement( boost::shared_ptr<RPCParam>(new RPCStringParam( v )) );
+   addElement( QSharedPointer<RPCParam>(new RPCStringParam( v )) );
 }
 void RPCParamArray::AddBase64Element( const QString &v )
 {
-   addElement( boost::shared_ptr<RPCParam>(new RPCBase64Param( v )) );
+   addElement( QSharedPointer<RPCParam>(new RPCBase64Param( v )) );
 }
 void RPCParamArray::AddDtgElement( const QString &v )
 {
-   addElement( boost::shared_ptr<RPCParam>(new RPCDtgParam( v )) );
+   addElement( QSharedPointer<RPCParam>(new RPCDtgParam( v )) );
 }
 
 void RPCParamArray::addNode( TiXmlElement &node )
 {
    TiXmlElement aNode( "array" );
    TiXmlElement dNode( "data" );
-   for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       ( *i ) ->addValue( dNode );
    }
@@ -413,7 +413,7 @@ void RPCParamArray::addNode( TiXmlElement &node )
 QString RPCParamArray::print()
 {
    QString s = "Array\r\n";
-   for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       s += ( *i ) ->print();
    }
@@ -423,7 +423,7 @@ QString RPCParamArray::print()
 QString RPCParamArray::analyse()
 {
    QString s = "[";
-   for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       s += ( *i ) ->analyse();
    }
@@ -435,7 +435,7 @@ bool RPCParamArray::getElements( unsigned int &size )
    size = ( unsigned int ) elements.size();
    return true;
 }
-bool RPCParamArray::getElement( unsigned int eleno, boost::shared_ptr<RPCParam> &p )
+bool RPCParamArray::getElement( unsigned int eleno, QSharedPointer<RPCParam> &p )
 {
    if ( elements.size() > eleno )
    {
@@ -754,40 +754,40 @@ void RPCArgs::addParam( RPCParam *  )
 {
    throw Exception("Add param by pointer to RPCArgs");
 }
-void RPCArgs::addParam( boost::shared_ptr<RPCParam> p )
+void RPCArgs::addParam( QSharedPointer<RPCParam> p )
 {
    args.push_back( p );
 }
 void RPCArgs::addParam( int v )
 {
-   addParam( boost::shared_ptr<RPCParam>(new RPCIntParam(v)));
+   addParam( QSharedPointer<RPCParam>(new RPCIntParam(v)));
 }
 void RPCArgs::addParam( bool v )
 {
-   addParam( boost::shared_ptr<RPCParam>(new RPCBooleanParam( v )) );
+   addParam( QSharedPointer<RPCParam>(new RPCBooleanParam( v )) );
 }
 void RPCArgs::addParam( double v )
 {
-   addParam( boost::shared_ptr<RPCParam>(new RPCDoubleParam( v )) );
+   addParam( QSharedPointer<RPCParam>(new RPCDoubleParam( v )) );
 }
 void RPCArgs::addParam( const QString &v )
 {
-   addParam( boost::shared_ptr<RPCParam>(new RPCStringParam( v )) );
+   addParam( QSharedPointer<RPCParam>(new RPCStringParam( v )) );
 }
 void RPCArgs::addBase64Param( const QString &v )
 {
-   addParam( boost::shared_ptr<RPCParam>(new RPCBase64Param( v )) );
+   addParam( QSharedPointer<RPCParam>(new RPCBase64Param( v )) );
 }
 void RPCArgs::addDtgParam( const QString &v )
 {
-   addParam( boost::shared_ptr<RPCParam>(new RPCDtgParam( v )) );
+   addParam( QSharedPointer<RPCParam>(new RPCDtgParam( v )) );
 }
 
 TiXmlElement *RPCArgs::makeParamsNode( )
 {
    TiXmlElement * pNode = new TiXmlElement( "params" );
 
-   for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
+   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
    {
       ( *i ) ->addParam( *pNode );
    }
@@ -853,7 +853,7 @@ bool RPCArgs::parseParams( TIXML_STRING UTF8XML )   // parse from the string to 
             if ( pnode )
             {
                // and then pass the type node on to a param factory
-               boost::shared_ptr<RPCParam> p = RPCParam::paramFactory( *pnode );
+               QSharedPointer<RPCParam> p = RPCParam::paramFactory( *pnode );
                // add each one to args
                if ( p )
                   args.push_back( p );
@@ -867,13 +867,13 @@ QString RPCArgs::PrintArgs()
 {
    QString s;
 
-   for ( std::vector<boost::shared_ptr<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
+   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
    {
       s += ( *i ) ->print();
    }
    return s;
 }
-bool RPCArgs::getStructArgMember( unsigned int argno, const QString &name, boost::shared_ptr<RPCParam>&res )
+bool RPCArgs::getStructArgMember( unsigned int argno, const QString &name, QSharedPointer<RPCParam>&res )
 {
    if ( args.size() > argno )
    {
@@ -881,7 +881,7 @@ bool RPCArgs::getStructArgMember( unsigned int argno, const QString &name, boost
    }
    return false;
 }
-bool RPCArgs::getStructArgMember( unsigned int argno, unsigned int eleno, boost::shared_ptr<RPCParam>&res )
+bool RPCArgs::getStructArgMember( unsigned int argno, unsigned int eleno, QSharedPointer<RPCParam>&res )
 {
    if ( args.size() > argno )
    {
@@ -897,7 +897,7 @@ bool RPCArgs::getArrayArgElements( unsigned int argno, unsigned int &size )
    }
    return false;
 }
-bool RPCArgs::getArrayArgElement( unsigned int argno, unsigned int eleno, boost::shared_ptr<RPCParam>&res )
+bool RPCArgs::getArrayArgElement( unsigned int argno, unsigned int eleno, QSharedPointer<RPCParam>&res )
 {
    if ( args.size() > argno )
    {

@@ -25,18 +25,18 @@ class MinosTestImport: public RPCDispatcher
       int curfpos;
       int iqOffset;
 
-      boost::shared_ptr<RPCParam> body;
+      QSharedPointer<RPCParam> body;
 
       int stanzaCount;
 
-      bool getStructArgMemberValueDTG( boost::shared_ptr<RPCParam> rpm, const QString &name, QString &val );
-      bool getStructArgMemberValueDTG( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<QString> &val );
-      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, QString &val );
-      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<QString> &val );
-      bool getStructArgMemberValue(boost::shared_ptr<RPCParam>rpm, const QString &name, int &val );
-      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<int> &val );
-      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, bool &val );
-      bool getStructArgMemberValue( boost::shared_ptr<RPCParam>rpm, const QString &name, MinosItem<bool> &val );
+      bool getStructArgMemberValueDTG( QSharedPointer<RPCParam> rpm, const QString &name, QString &val );
+      bool getStructArgMemberValueDTG( QSharedPointer<RPCParam>rpm, const QString &name, MinosItem<QString> &val );
+      bool getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, QString &val );
+      bool getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, MinosItem<QString> &val );
+      bool getStructArgMemberValue(QSharedPointer<RPCParam>rpm, const QString &name, int &val );
+      bool getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, MinosItem<int> &val );
+      bool getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, bool &val );
+      bool getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, MinosItem<bool> &val );
    public:
       void processMinosStanza( RPCRequest *xs );
       void processLogMinosStanza( RPCRequest *xs );
@@ -48,9 +48,9 @@ class MinosTestImport: public RPCDispatcher
       int importTestBuffer( const QString &buffer );
       void endImportTest();
 
-      int importTest( boost::shared_ptr<QFile> ctfile );
-      bool analyseTest( boost::shared_ptr<QFile> ctfile );
-      int readTestFile( boost::shared_ptr<QFile> ctfile );
+      int importTest( QSharedPointer<QFile> ctfile );
+      bool analyseTest( QSharedPointer<QFile> ctfile );
+      int readTestFile( QSharedPointer<QFile> ctfile );
 
       bool getStructArgMemberValueDTG( const QString &name, QString &val );
       bool getStructArgMemberValueDTG( const QString &name, MinosItem<QString> &val );

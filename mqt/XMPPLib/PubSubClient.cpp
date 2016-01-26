@@ -73,9 +73,9 @@ void RPCRemoteSubscriber::testAndSubscribe( const QString &server, const QString
 void RPCSubscriber::reSubscribe()
 {
    RPCSubscribeClient rsc( 0 );
-   boost::shared_ptr<RPCParam>st(new RPCParamStruct);
-   boost::shared_ptr<RPCParam>sServer(new RPCStringParam( "localhost" ));
-   boost::shared_ptr<RPCParam>sCat(new RPCStringParam( category ));
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
+   QSharedPointer<RPCParam>sServer(new RPCStringParam( "localhost" ));
+   QSharedPointer<RPCParam>sCat(new RPCStringParam( category ));
    st->addMember( sServer, "Server" );
    st->addMember( sCat, "Category" );
    rsc.getCallArgs() ->addParam( st );
@@ -85,9 +85,9 @@ void RPCSubscriber::reSubscribe()
 void RPCRemoteSubscriber::reSubscribe()
 {
    RPCRemoteSubscribeClient rsc( 0 );
-   boost::shared_ptr<RPCParam>st(new RPCParamStruct);
-   boost::shared_ptr<RPCParam>sServer(new RPCStringParam( server ));
-   boost::shared_ptr<RPCParam>sCat(new RPCStringParam( category ));
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
+   QSharedPointer<RPCParam>sServer(new RPCStringParam( server ));
+   QSharedPointer<RPCParam>sCat(new RPCStringParam( category ));
    st->addMember( sServer, "Server" );
    st->addMember( sCat, "Category" );
    rsc.getCallArgs() ->addParam( st );
@@ -122,11 +122,11 @@ void RPCPublisher::testAndPublish( const QString &category, const QString &key, 
 void RPCPublisher::rePublish()
 {
    RPCPublishClient rpc( 0 );
-   boost::shared_ptr<RPCParam>st(new RPCParamStruct);
-   boost::shared_ptr<RPCParam>sCat(new RPCStringParam( category ));
-   boost::shared_ptr<RPCParam>sKey(new RPCStringParam( key ));
-   boost::shared_ptr<RPCParam>sValue(new RPCStringParam( value ));
-   boost::shared_ptr<RPCParam>sState(new RPCIntParam( state ));
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
+   QSharedPointer<RPCParam>sCat(new RPCStringParam( category ));
+   QSharedPointer<RPCParam>sKey(new RPCStringParam( key ));
+   QSharedPointer<RPCParam>sValue(new RPCStringParam( value ));
+   QSharedPointer<RPCParam>sState(new RPCIntParam( state ));
    st->addMember( sCat, "Category" );
    st->addMember( sKey, "Key" );
    st->addMember( sValue, "Value" );

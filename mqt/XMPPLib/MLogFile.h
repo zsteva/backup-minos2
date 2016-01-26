@@ -19,6 +19,23 @@ QString ExtractFilePath( const QString &fname );
 QString ExtractFileName(const QString &fname );
 QString ExtractFileExt( const QString &fname );
 
+class CsGuard:public QMutexLocker
+{
+      static QMutex m_mutex;
+   public:
+      CsGuard():QMutexLocker(&m_mutex)
+      {
+      }
+
+      ~CsGuard()
+      {
+      }
+      static void ClearDown()
+      {
+      }
+};
+
+
 //---------------------------------------------------------------------------
 class MLogFile
 {

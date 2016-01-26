@@ -33,6 +33,6 @@ class PrintFile
       PrintFile( LoggerContestLog * const ct );
 
       ~PrintFile();
-      bool exportTest( boost::shared_ptr<QFile> expfd );
+      bool exportTest( QSharedPointer<QFile> expfd );
 };
 #endif

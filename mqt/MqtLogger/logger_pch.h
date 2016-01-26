@@ -43,12 +43,12 @@
 #include <sstream>
 #include <fstream>
 
-#include "mtrace.h"
+//#include "mtrace.h"
 #include "profiles.h"
 
-#include "loggercontest.h"
+#include "LoggerContest.h"
 
-#include "loggercontacts.h"
+#include "LoggerContacts.h"
 #include "ContestApp.h"
 
 //#include "gridhint.h"

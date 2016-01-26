@@ -7,8 +7,77 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
-#include<boost/tokenizer.hpp>
+class CsvReader
+{
+    void checkString(QString &temp, QChar character, QList<QStringList> &csv);
+    QStringList itemList;
+public:
+    CsvReader();
 
+    bool parseCsv(const QString &fileName, QList<QStringList> &csv);
+};
+CsvReader::CsvReader(){}
+
+bool CsvReader::parseCsv(const QString &fileName, QList<QStringList> &csv)
+{
+    QFile file (fileName);
+     if (file.open(QIODevice::ReadOnly))
+     {
+         QString data = file.readAll();
+         data.remove( QRegExp("\r") ); //remove all ocurrences of CR (Carriage Return)
+         QString temp;
+         QChar character;
+         QTextStream textStream(&data);
+         while (!textStream.atEnd())
+         {
+             textStream >> character;
+             if (character == ',')
+             {
+                 checkString(temp, character, csv);
+             }
+             else if (character == '\n')
+             {
+                 checkString(temp, character, csv);
+             }
+             else if (textStream.atEnd())
+             {
+                 temp.append(character);
+                 checkString(temp, 0, csv);
+             }
+             else
+             {
+                 temp.append(character);
+             }
+         }
+         itemList.clear();
+         return true;
+     }
+     return false;
+}
+void CsvReader::checkString(QString &temp, QChar character, QList<QStringList> &csv)
+{
+    if(temp.count("\"")%2 == 0)
+    {
+        //if (temp.size() == 0 && character != ',') //problem with line endings
+        //    return;
+        if (temp.startsWith( QChar('\"')) && temp.endsWith( QChar('\"') ) )
+        {
+             temp.remove( QRegExp("^\"") );
+             temp.remove( QRegExp("\"$") );
+        }
+        //FIXME: will possibly fail if there are 4 or more reapeating double quotes
+        temp.replace("\"\"", "\"");
+        itemList.append(temp);
+        if (character != QChar(','))
+        {
+            csv.append(itemList);
+            itemList.clear();
+        }
+        temp.clear();
+    } else {
+        temp.append(character);
+    }
+}
 ContactList::ContactList() : slotno( -1 ), cslFile( false ), errMessShown(false)
 {
 }
@@ -61,84 +130,41 @@ bool ContactList::initialise(const QString &fn, int slotno )
 }
 bool ContactList::cslLoad( void )
 {
-   int lineno = 0;
-
-   ListContact *rct = 0;
-
-   std::ifstream istr( cfileName.toStdString().c_str() ); // should close when it goes out of scope
-   if ( !istr )
+   // read data from file
+   CsvReader csv;
+   QList<QStringList> readData;
+   if (csv.parseCsv(cfileName, readData))
    {
-      QString lerr/* = lastError()*/;
-      QString emess = "Failed to open ContactList file " + cfileName;// + " : " + lerr;
-      MinosParameters::getMinosParameters() ->mshowMessage( emess );
-	  return false;
+       QString fn = ExtractFileName( cfileName );
+       name = fn;
+
+       for ( int i = 0; i < readData.size(); ++i )
+       {
+           const QStringList &parts = readData.at(i);
+           if ( i == 0 && parts[0].size() == 0 && parts[1].size() == 0 )
+           {
+              name = parts[ 2 ];              // first line of file gives the list name
+           }
+           else
+           {
+              ListContact *rct = new ListContact();
+
+              // a1, a2, a3 will all be set - but may point to null terminator!
+
+              rct->cs.fullCall.setValue( parts[0].toUpper() );
+
+              rct->loc.loc.setValue( strupr( parts[ 1 ] ) );
+              rct->loc.valRes = LOC_NOT_VALIDATED;
+
+              rct->extraText = parts[ 2 ];
+              rct->comments = parts[ 3 ];
+
+              ctList.push_back( rct );
+           }
+       }
+       return true;
    }
-   QString fn = ExtractFileName( cfileName );
-   name = fn;
-
-   std::string sbuff;
-
-   while ( getline( istr, sbuff ) )
-   {
-       QString qsbuff = sbuff.c_str();
-
-      sbuff = qsbuff.trimmed().toStdString();
-
-      if (sbuff.size() == 0 || sbuff[0] == '#')
-      {
-         continue;
-      }
-      std::vector<QString> parts;
-
-      try
-      {
-         typedef boost::tokenizer< boost::escaped_list_separator<char> > tokenizer ;
-         tokenizer toker(sbuff);
-
-         for( tokenizer::iterator beg=toker.begin(); beg!=toker.end();++beg)
-         {
-            parts.push_back((*beg).c_str());
-         }
-         while (parts.size() < 6)
-         {
-            parts.push_back("");
-         }
-
-         if ( ++lineno == 1 && parts[0].size() == 0 && parts[1].size() == 0 )
-         {
-            name = parts[ 2 ];              // first line of file gives the list name
-         }
-         else
-         {
-            rct = new ListContact();
-
-            // a1, a2, a3 will all be set - but may point to null terminator!
-
-            rct->cs.fullCall.setValue( strupr( parts[0] ) );
-
-            rct->loc.loc.setValue( strupr( parts[ 1 ] ) );
-            rct->loc.valRes = LOC_NOT_VALIDATED;
-
-            rct->extraText = parts[ 2 ];
-            rct->comments = parts[ 3 ];
-
-            ctList.push_back( rct );
-         }
-      }
-      catch (boost::escaped_list_error &err)
-      {
-         if (!errMessShown)
-         {
-            errMessShown = true;
-            QString err = ("Errors in " + cfileName) ;
-            trace(err);
-            err += (QString("; see ") + getTraceFileName() + " for details.");
-            MinosParameters::getMinosParameters() ->mshowMessage(err);
-         }
-         trace("Error in " + sbuff + " : " + err.what());
-      }
-   }
-   return true;
+   return false;
 }
 bool ContactList::cslLoadContacts( void )
 {

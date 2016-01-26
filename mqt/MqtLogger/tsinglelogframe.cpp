@@ -11,7 +11,7 @@
 
 #include "focuswatcher.h"
 #include "htmldelegate.h"
-
+#include "enqdlg.h"
 
 ContList contlist[ CONTINENTS ] =
    {
@@ -29,7 +29,6 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     QFrame(parent),
     ui(new Ui::TSingleLogFrame),
     contest( contest ),
-//    logColumnsChanged( false ),
     splittersChanged(false),
     currFreq( 0 ), oldFreq( 0 ),
     lastStanzaCount( 0 ),
@@ -84,6 +83,9 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(LogColumnsChanged()), this, SLOT(onLogColumnsChanged()));
     connect(&MinosLoggerEvents::mle, SIGNAL(SplittersChanged()), this, SLOT(onSplittersChanged()));
     connect(&MinosLoggerEvents::mle, SIGNAL(FiltersChanged()), this, SLOT(onFiltersChanged()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(NextContactDetailsOnLeft()), this, SLOT(on_NextContactDetailsOnLeft()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(NextUnfilled(BaseContestLog*)), this, SLOT(on_NextUnfilled(BaseContestLog*)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(GoToSerial(BaseContestLog*)), this, SLOT(on_GoToSerial(BaseContestLog*)));
 
     // Connect up the stats etc display
     QSignalMapper* sm = new QSignalMapper(this);
@@ -131,7 +133,7 @@ TSingleLogFrame::~TSingleLogFrame()
 }
 void TSingleLogFrame::keyPressEvent( QKeyEvent* event )
 {
-    ui->GJVQSOLogFrame->keyPressEvent(event);
+    ui->GJVQSOLogFrame->doKeyPressEvent(event);
 }
 QString TSingleLogFrame::makeEntry( bool saveMinos )
 {
@@ -233,46 +235,63 @@ void TSingleLogFrame::on_ContestPageChanged ()
     ui->GJVQSOLogFrame->logTabChanged();
 
 //    MultDispFrame->setContest( contest );
-//    doNextContactDetailsOnLeftClick( this );
-//    MinosLoggerEvents::SendShowOperators();
+    doNextContactDetailsOnLeftClick( );
+    MinosLoggerEvents::SendShowOperators();
 
     updateQSODisplay();
 
 }
+void TSingleLogFrame::doNextContactDetailsOnLeftClick( )
+{
+    bool conleft = LogContainer->isNextContactDetailsOnLeft();
+
+    if (conleft)
+    {
+        ui->CribSplitter->insertWidget(0, ui->CribSheet);
+    }
+    else
+    {
+        ui->CribSplitter->insertWidget(1, ui->CribSheet);
+    }
+    on_CribSplitter_splitterMoved(0, 0);    // preserve the splitter position
+}
 void TSingleLogFrame::NextContactDetailsTimerTimer( )
 {
-   if ( contest )
-   {
-       QString cb = contest->band.getValue().trimmed();
-       BandList &blist = BandList::getBandList();
-       BandInfo bi;
-       bool bandOK = blist.findBand(cb, bi);
-       if (bandOK)
-       {
-          cb = bi.uk;
-       }
+    if ( contest )
+    {
+        QString cb = contest->band.getValue().trimmed();
+        BandList &blist = BandList::getBandList();
+        BandInfo bi;
+        bool bandOK = blist.findBand(cb, bi);
+        if (bandOK)
+        {
+            cb = bi.uk;
+        }
 
-      if ( contest->isReadOnly() )
-      {
-         ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
-                                            + cb + "</p><h1>"
-                                            + contest->mycall.fullCall.getValue() + "<br>"
-                                            + contest->myloc.loc.getValue() + "<br>"
-                                            + contest->location.getValue());
-      }
-      else
-      {
-         QString buff = QString::number( contest->maxSerial + 1 );
-         ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
-                                            + cb + "</p><h1>"
-                                            + contest->mycall.fullCall.getValue() + "<br>"
-                                            + buff + "<br>"
-                                            + contest->myloc.loc.getValue() + "<br>"
-                                            + contest->location.getValue());
-      }
-   }
+        if ( contest->isReadOnly() )
+        {
+            ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
+                                                  + cb + "</p><h1>"
+                                                  + contest->mycall.fullCall.getValue() + "<br>"
+                                                  + contest->myloc.loc.getValue() + "<br>"
+                                                  + contest->location.getValue());
+        }
+        else
+        {
+            QString buff = QString::number( contest->maxSerial + 1 );
+            ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
+                                                  + cb + "</p><h1>"
+                                                  + contest->mycall.fullCall.getValue() + "<br>"
+                                                  + buff + "<br>"
+                                                  + contest->myloc.loc.getValue() + "<br>"
+                                                  + contest->location.getValue());
+        }
+    }
 }
-
+void TSingleLogFrame::on_NextContactDetailsOnLeft()
+{
+    doNextContactDetailsOnLeftClick();
+}
 void TSingleLogFrame::updateQSODisplay()
 {
     /*
@@ -773,6 +792,75 @@ void TSingleLogFrame::on_OtherMatchTree_doubleClicked(const QModelIndex &/*index
 void TSingleLogFrame::on_ArchiveMatchTree_doubleClicked(const QModelIndex &/*index*/)
 {
     MinosLoggerEvents::SendXferPressed();
+}
+void TSingleLogFrame::goNextUnfilled()
+{
+   BaseContact * nuc = contest->findNextUnfilledContact( );
+   if ( nuc )
+   {
+      TQSOEditDlg qdlg(this, false, true );
+      qdlg.setContest( contest );
+      qdlg.setFirstContact( nuc );
+      qdlg.exec();
+      contest->scanContest();
+
+      //LogMonitor->QSOTree->Invalidate();
+      refreshMults();
+      //LogMonitor->QSOTree->Repaint();
+      ui->GJVQSOLogFrame->startNextEntry();
+   }
+   else
+   {
+      MinosParameters::getMinosParameters() ->mshowMessage( "No unfilled contacts" );
+   }
+
+}
+void TSingleLogFrame::on_NextUnfilled(BaseContestLog *ct)
+{
+    if (ct == contest)
+    {
+       goNextUnfilled();
+    }
+}
+
+void TSingleLogFrame::goSerial( )
+{
+    static int serial = 0;
+    do
+    {
+       if ( serial == -1 )
+          serial = 0;
+       if ( !enquireDialog( this, "Please give serial wanted", serial ) )
+          return ;
+    }
+    while ( serial == -1 );
+
+    DisplayContestContact *cfu = 0;
+    for ( LogIterator i = contest->ctList.begin(); i != contest->ctList.end(); i++ )
+    {
+        bool ok;
+        int s = ( *i ) ->serials.getValue().toInt(&ok );
+       if ( ok && serial == s )
+       {
+          cfu = dynamic_cast<DisplayContestContact *>( *i );
+          break;
+       }
+    }
+
+    if ( cfu )
+    {
+       EditContact( cfu );
+    }
+    else
+       MinosParameters::getMinosParameters() ->mshowMessage( "Serial number " + QString::number( serial ) + " not found" );
+}
+
+void TSingleLogFrame::on_GoToSerial(BaseContestLog *ct)
+{
+    if (ct == contest)
+    {
+       goSerial();
+    }
 }
 
 //=============================================================================

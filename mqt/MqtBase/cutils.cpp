@@ -12,9 +12,8 @@ bool checkFileOK( std::ifstream &istr, const QString &fname, const QString &fmes
 {
    if ( !istr )
    {
-      QString ebuff = QString( "Failed to open %1 (%2)" ).arg(fmess).arg(fname );
-      char *emess = _strerror( ebuff.toStdString().c_str() );
-      MinosParameters::getMinosParameters() ->mshowMessage( emess );
+      QString ebuff = QString( "Failed to open %1 (%2) %s" ).arg(fmess).arg(fname ).arg(strerror( errno));
+      MinosParameters::getMinosParameters() ->mshowMessage( ebuff );
       return false;
    }
    return true;
@@ -169,7 +168,7 @@ int parseLine( char *buff, char sep, char **a, int count, char sep2, bool &sep2s
    }
    return sep_count;
 }
-writer::writer( boost::shared_ptr<QFile> f ) :  /*lbuff( diskBuffer ),*/ expfd( f )
+writer::writer( QSharedPointer<QFile> f ) :  /*lbuff( diskBuffer ),*/ expfd( f )
 {}
 writer::~writer()
 {}

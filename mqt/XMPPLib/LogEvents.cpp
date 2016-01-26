@@ -10,6 +10,7 @@
 #include "XMPP_pch.h"
 
 //---------------------------------------------------------------------------
+/*
 class LogEventQ
 {
    public:
@@ -42,6 +43,7 @@ LogEvent * deQueueLog()
    }
    return 0;
 }
+*/
 //---------------------------------------------------------------------------
 void logMessage( const QString &level, const QString &mess )
 {

@@ -1267,13 +1267,7 @@ ContestScore::ContestScore(BaseContestLog *ct, QDateTime limit)
 }
 QString ContestScore::disp()
 {
-/*
-   QString buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:%c%d districts%c:%c%d(%d/%d) locators%c %cbonuses %d(%d)%c = %ld" )
-            %nqsos % contestScore % brcc1 % nctry % brcc2 % brcc3 % ndistrict %
-            brcc4 % brloc1 % nlocs % nGlocs % nonGlocs % brloc2
-            % brbonus1 % bonus % nbonus % brbonus2
-            % totalScore ).str();
-  */
+
    QString buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5:%6%7 districts%8:%9%10(%11/%12) locators %13 = %14" )
             .arg(nqsos).arg(contestScore).arg(brcc1).arg(nctry).arg(brcc2).arg(brcc3).arg(ndistrict)
             .arg(brcc4).arg(brloc1).arg(nlocs).arg(nGlocs).arg(nonGlocs).arg(brloc2)

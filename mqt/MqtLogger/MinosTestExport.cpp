@@ -31,10 +31,10 @@ MinosTestExport::~MinosTestExport()
 
 // AND (as for import) we need to get the contest object to provide the stanzas
 
-void MinosTestExport::sendRequest(boost::shared_ptr<QFile> expfd, const QString &cmd, RPCParamStruct *st )
+void MinosTestExport::sendRequest(QSharedPointer<QFile> expfd, const QString &cmd, RPCParamStruct *st )
 {
    RPCArgs * MArgs = new RPCArgs;
-   MArgs->addParam( boost::shared_ptr<RPCParam>(st) );
+   MArgs->addParam( QSharedPointer<RPCParam>(st) );
 
    RPCRequest *m = new RPCRequest( "", cmd );
    m->args = MArgs->args;
@@ -63,7 +63,7 @@ void MinosTestExport::makeHeader( RPCParamStruct * st, unsigned long ls )
    st->addMember( ( int ) ls, "lseq" );
    st->addDtgMember( tnow.getIsoDTG(), "uDTG" );
 }
-void MinosTestExport::exportMode(boost::shared_ptr<QFile> expfd )
+void MinosTestExport::exportMode(QSharedPointer<QFile> expfd )
 {
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, 1 );
@@ -81,7 +81,7 @@ void MinosTestExport::exportMode(boost::shared_ptr<QFile> expfd )
       delete st;
    }
 }
-void MinosTestExport::exportContest( boost::shared_ptr<QFile> expfd )
+void MinosTestExport::exportContest( QSharedPointer<QFile> expfd )
 {
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, 1 );
@@ -121,7 +121,7 @@ void MinosTestExport::exportContest( boost::shared_ptr<QFile> expfd )
       delete st;
    }
 }
-void MinosTestExport::exportQTH(boost::shared_ptr<QFile> expfd )
+void MinosTestExport::exportQTH(QSharedPointer<QFile> expfd )
 {
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, 1 );
@@ -144,7 +144,7 @@ void MinosTestExport::exportQTH(boost::shared_ptr<QFile> expfd )
       delete st;
    }
 }
-void MinosTestExport::exportEntry( boost::shared_ptr<QFile> expfd )
+void MinosTestExport::exportEntry( QSharedPointer<QFile> expfd )
 {
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, 1 );
@@ -172,7 +172,7 @@ void MinosTestExport::exportEntry( boost::shared_ptr<QFile> expfd )
       delete st;
    }
 }
-void MinosTestExport::exportStation(boost::shared_ptr<QFile> expfd )
+void MinosTestExport::exportStation(QSharedPointer<QFile> expfd )
 {
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, 1 );
@@ -195,7 +195,7 @@ void MinosTestExport::exportStation(boost::shared_ptr<QFile> expfd )
       delete st;
    }
 }
-void MinosTestExport::exportCurrent( boost::shared_ptr<QFile> expfd )
+void MinosTestExport::exportCurrent( QSharedPointer<QFile> expfd )
 {
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, 1 );
@@ -216,7 +216,7 @@ void MinosTestExport::exportCurrent( boost::shared_ptr<QFile> expfd )
       delete st;
    }
 }
-void MinosTestExport::exportOperators(boost::shared_ptr<QFile> expfd )
+void MinosTestExport::exportOperators(QSharedPointer<QFile> expfd )
 {
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, 1 );
@@ -239,7 +239,7 @@ void MinosTestExport::exportOperators(boost::shared_ptr<QFile> expfd )
    }
 
 }
-void MinosTestExport::exportBundles( boost::shared_ptr<QFile> expfd )
+void MinosTestExport::exportBundles( QSharedPointer<QFile> expfd )
 {
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, 1 );
@@ -263,7 +263,7 @@ void MinosTestExport::exportBundles( boost::shared_ptr<QFile> expfd )
    }
 
 }
-int MinosTestExport::exportComment( boost::shared_ptr<QFile> expfd, const ContestContact *lct )
+int MinosTestExport::exportComment( QSharedPointer<QFile> expfd, const ContestContact *lct )
 {
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, 1 );
@@ -292,7 +292,7 @@ int MinosTestExport::exportComment( boost::shared_ptr<QFile> expfd, const Contes
       return 0;
    }
 }
-int MinosTestExport::exportQSO(boost::shared_ptr<QFile> expfd, const ContestContact *lct )
+int MinosTestExport::exportQSO(QSharedPointer<QFile> expfd, const ContestContact *lct )
 {
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, lct->getLogSequence() );
@@ -348,7 +348,7 @@ int MinosTestExport::exportQSO(boost::shared_ptr<QFile> expfd, const ContestCont
    }
 
 }
-int MinosTestExport::exportAllDetails(boost::shared_ptr<QFile> minosContestFile, bool newfile )
+int MinosTestExport::exportAllDetails(QSharedPointer<QFile> minosContestFile, bool newfile )
 {
    stanzaCount = 0;
    if ( newfile )
@@ -374,7 +374,7 @@ int MinosTestExport::exportAllDetails(boost::shared_ptr<QFile> minosContestFile,
    return stanzaCount;
 }
 // AND we need an export operator change
-int MinosTestExport::exportTest( boost::shared_ptr<QFile> expfd, int mindump, int maxdump )
+int MinosTestExport::exportTest( QSharedPointer<QFile> expfd, int mindump, int maxdump )
 {
    stanzaCount = 0;
    QString lbuff = "<?xml version='1.0'?><stream:stream xmlns:stream='http://minos.goodey.org.uk/streams' xmlns='minos:client' version='1.0'>" ;

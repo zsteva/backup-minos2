@@ -14,6 +14,7 @@
 
 #include <QDateTime>
 #include <QDir>
+#include <QDirIterator>
 #include <QFileInfo>
 #include <QFile>
 #include <QMutex>
@@ -25,6 +26,7 @@
 #include <QSemaphore>
 #include <QTcpSocket>
 #include <QSettings>
+#include <QSharedPointer>
 
 
 #include <exception>
@@ -37,15 +39,12 @@
 
 #include <fstream>
 
-#include <process.h>
+//#include <process.h>
 #include <stdio.h>
 
-#include "boost\shared_ptr.hpp"
-
 #include "tinyxml.h"
-#include "tinyutils.h"
+#include "TinyUtils.h"
 
-#include "GJVThreads.h"
 #include "LogEvents.h"
 #include "MTrace.h"
 #include "MLogFile.h"

@@ -213,7 +213,7 @@ void TZConf::readServerList()
     /*
    trace("Reading Server List File");
    // Read the server override file
-   TIniFile * servers = new TIniFile( ".\\Configuration\\Servers.ini" );
+   TIniFile * servers = new TIniFile( "./Configuration/Servers.ini" );
    TStringList *sl = new TStringList;
    TStringList *params = new TStringList;
    servers->ReadSections( sl );
