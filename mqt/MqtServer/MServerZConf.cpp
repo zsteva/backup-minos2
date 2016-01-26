@@ -396,6 +396,7 @@ bool UDPSocket::setup(QNetworkInterface &iface, QNetworkAddressEntry &addr)
                 UPNP_PORT,
                 QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint
                 );
+    trace(QString("UDP bind returns ") + (res?"true":"false") + " on " + addr.ip().toString() + " error " + qus->errorString());
     return res;
 }
 void UDPSocket::onSocketStateChange (QAbstractSocket::SocketState state)

@@ -227,7 +227,7 @@ bool MCReadSocket::setupRO()
     addr.sin_addr.s_addr = htonl( INADDR_ANY );
     addr.sin_port = ( unsigned short ) htons( UPNP_PORT );
     int ra = 1;
-    if ( setsockopt( state->NOTIFY_RECEIVE_sock, SOL_SOCKET, SO_REUSEADDR, ( char* ) &ra, sizeof( ra ) ) < 0 )
+    if ( setsockopt( state->NOTIFY_RECEIVE_sock, SOL_SOCKET, SO_REUSEADDR|SO_REUSEPORT, ( char* ) &ra, sizeof( ra ) ) < 0 )
     {
        trace( "Setting SockOpt SO_REUSEADDR failed" );
        return false;
@@ -256,7 +256,12 @@ bool MCReadSocket::setupRO()
         //
         if ( setsockopt( state->NOTIFY_RECEIVE_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, ( char* ) &mreq, sizeof( mreq ) ) < 0 )
         {
+            trace("Join multicast failed "+ address.toString());
         /* Does not matter */
+        }
+        else
+        {
+            trace("RO bound to multicast " + address.toString());
         }
     }
     return true;
