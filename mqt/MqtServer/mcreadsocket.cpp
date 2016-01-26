@@ -7,6 +7,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
+#include <qglobal.h>
 #ifdef Q_OS_WIN
 #include <ws2tcpip.h>
 #else
@@ -23,6 +24,7 @@
 #include "mcreadsocket.h"
 #include "MServerZConf.h"
 
+#include <QListIterator>
 //==============================================================================
 class WSAGuard
 {
@@ -82,14 +84,13 @@ class UPnPDataObject
       }
       ~UPnPDataObject()
       {
-         free(AddressList);
       }
       struct sockaddr_in addr;
       socklen_t addrlen;
 
       struct ip_mreq mreq;
       char message[ 4096 ];
-      int *AddressList;
+      std::vector<QHostAddress> AddressList;
       int AddressListLength;
 
       SOCKET NOTIFY_RECEIVE_sock;
@@ -153,9 +154,36 @@ void MCReadSocket::onTimeout()
         }
     }
 }
+
+int GetLocalIPAddressList( std::vector<QHostAddress> &addrList )
+{
+    QList<QNetworkInterface> mListIfaces = QNetworkInterface::allInterfaces();
+
+    for (int i = 0; i < mListIfaces.length(); ++i)
+    {
+        if (!mListIfaces.at(i).flags().testFlag( QNetworkInterface::IsUp))
+            continue;
+        if (!mListIfaces.at(i).flags().testFlag(QNetworkInterface::IsRunning))
+            continue;
+
+        QListIterator< QNetworkAddressEntry > networkAddressEntry(mListIfaces.at(i).addressEntries());
+
+        while (networkAddressEntry.hasNext())
+        {
+            QNetworkAddressEntry netEntry(networkAddressEntry.next());
+
+            if (netEntry.ip().protocol() == QAbstractSocket::IPv4Protocol)
+            {
+                addrList.push_back(netEntry.ip());
+            }
+        }
+
+    }
+    return addrList.size();
+}
+#ifdef RUBBISH
 int ILibGetLocalIPAddressList( int** pp_int )
 {
-#ifdef Q_OS_WIN
    //
    // Use an Ioctl call to fetch the IPAddress list
    //
@@ -172,8 +200,8 @@ int ILibGetLocalIPAddressList( int** pp_int )
    ( *pp_int ) [ i ] = inet_addr( "127.0.0.1" );
    closesocket( TempSocket );
    return ( 1 + ( ( SOCKET_ADDRESS_LIST* ) buffer ) ->iAddressCount );
-#endif
 }
+#endif
 bool MCReadSocket::setupRO()
 {
     state = new UPnPDataObject();
@@ -191,7 +219,7 @@ bool MCReadSocket::setupRO()
 
 
     // Set up socket
-    state->AddressListLength = ILibGetLocalIPAddressList( &( state->AddressList ) );
+    state->AddressListLength = GetLocalIPAddressList( state->AddressList );
 
     state->NOTIFY_RECEIVE_sock = socket( AF_INET, SOCK_DGRAM, 0 );
     memset( ( char * ) &( addr ), 0, sizeof( addr ) );
@@ -213,15 +241,16 @@ bool MCReadSocket::setupRO()
     //
     // Iterate through all the current IP Addresses
     //
-    for ( int i = 0;i < state->AddressListLength;++i )
+    for ( int i = 0; i < state->AddressListLength; ++i )
     {
         memset( ( char * ) & ( addr ), 0, sizeof( addr ) );
         addr.sin_family = AF_INET;
-        addr.sin_addr.s_addr = state->AddressList[ i ];
+        QHostAddress &address = state->AddressList[ i ];
+        addr.sin_addr.s_addr = htonl(address.toIPv4Address());
         addr.sin_port = ( unsigned short ) htons( UPNP_PORT );
 
         mreq.imr_multiaddr.s_addr = inet_addr( UPNP_GROUP );
-        mreq.imr_interface.s_addr = state->AddressList[ i ];
+        mreq.imr_interface.s_addr = htonl(address.toIPv4Address());
         //
         // Join the multicast group
         //

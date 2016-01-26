@@ -102,18 +102,6 @@ void TZConf::runThread(const QString &name)
                         TxSocks.push_back(qus);
                     }
                 }
-                /*
-                {
-                    QSharedPointer<UDPSocket> qus(new UDPSocket());
-
-                    bool res = qus->setupRO(ifaces[i], addrs[j]);
-
-                    if (res)
-                    {
-                        RxSocks.push_back(qus);
-                    }
-                }
-                */
             }
         }
     }
