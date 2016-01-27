@@ -6,6 +6,7 @@
 #include "tlogcontainer.h"
 #include "ui_tlogcontainer.h"
 
+#include "tsinglelogframe.h"
 #include "taboutbox.h"
 #include "CalendarList.h"
 #include "contestdetails.h"

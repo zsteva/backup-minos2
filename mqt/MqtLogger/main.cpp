@@ -1,4 +1,5 @@
 #include "logger_pch.h"
+#include "tlogcontainer.h"
 
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC

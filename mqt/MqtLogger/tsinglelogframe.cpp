@@ -9,6 +9,7 @@
 #include "tsinglelogframe.h"
 #include "ui_tsinglelogframe.h"
 
+#include "tlogcontainer.h"
 #include "focuswatcher.h"
 #include "htmldelegate.h"
 #include "enqdlg.h"

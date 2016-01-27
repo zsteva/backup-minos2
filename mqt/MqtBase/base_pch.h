@@ -26,7 +26,6 @@
 #include <math.h>
 #include <time.h>
 
-//#define _MSC_VER 2300
 #include "sorted_vector.h"
 
 #include "MinosLoggerEvents.h"
@@ -52,8 +51,6 @@
 
 #include "MinosTestImport.h"
 #include "RunApp.h"
-
-//#include "BandInfo.h"
 
 #include "MShowMessageDlg.h"
 #include "MMessageDialog.h"

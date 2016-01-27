@@ -9,6 +9,7 @@ class TBundleFrame;
 }
 
 class SettingsBundle;
+class ContestDetails;
 
 class TBundleFrame : public QFrame
 {

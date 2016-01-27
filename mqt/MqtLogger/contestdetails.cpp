@@ -5,6 +5,7 @@
 #include "tminoshelpform.h"
 #include "tcalendarform.h"
 
+#include "tlogcontainer.h"
 
 #include "contestdetails.h"
 #include "ui_contestdetails.h"

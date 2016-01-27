@@ -28,18 +28,17 @@
 #include <QSettings>
 #include <QSharedPointer>
 
-
+#include <memory>
 #include <exception>
-#include <deque>
 #include <string>
 #include <vector>
+#include <map>
 #include <set>
+#include <deque>
 #include <algorithm>
 #include <sstream>
-
 #include <fstream>
 
-//#include <process.h>
 #include <stdio.h>
 
 #include "tinyxml.h"

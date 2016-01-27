@@ -1,5 +1,6 @@
 #include "logger_pch.h"
 
+#include "tlogcontainer.h"
 #include "contestdetails.h"
 #include "tsettingseditdlg.h"
 #include "tbundleframe.h"
