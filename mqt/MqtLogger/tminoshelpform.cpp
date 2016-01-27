@@ -14,5 +14,10 @@ TMinosHelpForm::~TMinosHelpForm()
 }
 void TMinosHelpForm::setText(const QString &text)
 {
+    ui->helpText->setText(text);
+}
 
+void TMinosHelpForm::on_CloseButton_clicked()
+{
+    accept();
 }
