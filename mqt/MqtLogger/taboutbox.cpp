@@ -63,6 +63,12 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
     doStartup(onStartup)
 {
     ui->setupUi(this);
+
+    QSettings settings;
+    QByteArray geometry = settings.value("MinosAbout/geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
+
     ui->ConfigFrame->initialise(this);
     ui->PageControl1->setCurrentWidget(ui->AboutTabSheet);
 
@@ -96,6 +102,21 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
 TAboutBox::~TAboutBox()
 {
     delete ui;
+}
+void TAboutBox::doCloseEvent()
+{
+    QSettings settings;
+    settings.setValue("MinosAbout/geometry", saveGeometry());
+}
+void TAboutBox::reject()
+{
+    doCloseEvent();
+    QDialog::reject();
+}
+void TAboutBox::accept()
+{
+    doCloseEvent();
+    QDialog::accept();
 }
 void TAboutBox::on_AboutMemo_linkActivated(const QString &link)
 {

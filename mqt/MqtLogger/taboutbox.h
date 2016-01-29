@@ -12,15 +12,24 @@ class TAboutBox : public QDialog
     Q_OBJECT
 
     Ui::TAboutBox *ui;
-public:
     explicit TAboutBox(QWidget *parent, bool onStartup );
     ~TAboutBox();
 
-    static bool ShowAboutBox(QWidget *Owner, bool onStartup );
     int exec();
 
+    void doCloseEvent();
+
+public:
+    static bool ShowAboutBox(QWidget *Owner, bool onStartup );
     bool doStartup;
+
+
+public slots:
+    virtual void reject() override;
+
 private slots:
+    virtual void accept() override;
+
     void on_ExitButton_clicked();
 
     void on_OKButton_clicked();
