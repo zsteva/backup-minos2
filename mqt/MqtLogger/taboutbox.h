@@ -11,12 +11,15 @@ class TAboutBox : public QDialog
 {
     Q_OBJECT
 
+    Ui::TAboutBox *ui;
 public:
     explicit TAboutBox(QWidget *parent, bool onStartup );
     ~TAboutBox();
 
-    static bool ShowAboutBox( QWidget *Owner, bool onStartup );
+    static bool ShowAboutBox(QWidget *Owner, bool onStartup );
+    int exec();
 
+    bool doStartup;
 private slots:
     void on_ExitButton_clicked();
 
@@ -24,10 +27,7 @@ private slots:
 
     void on_LoggerOnlyButton_clicked();
 
-private:
-    Ui::TAboutBox *ui;
-
-    bool doStartup;
+    void on_AboutMemo_linkActivated(const QString &link);
 };
 
 #endif // TABOUTBOX_H
