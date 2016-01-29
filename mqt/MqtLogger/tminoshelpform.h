@@ -16,6 +16,9 @@ public:
     ~TMinosHelpForm();
     void setText(const QString &text);
 
+private slots:
+    void on_CloseButton_clicked();
+
 private:
     Ui::TMinosHelpForm *ui;
 };

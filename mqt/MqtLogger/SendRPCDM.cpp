@@ -22,6 +22,8 @@
 #include "RPCPubSub.h"
 
 #include "SendRPCDM.h"
+#include "tsinglelogframe.h"
+#include "tlogcontainer.h"
 
 TSendDM *SendDM = 0;
 //---------------------------------------------------------------------------

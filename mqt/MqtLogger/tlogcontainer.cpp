@@ -6,6 +6,7 @@
 #include "tlogcontainer.h"
 #include "ui_tlogcontainer.h"
 
+#include "tsinglelogframe.h"
 #include "taboutbox.h"
 #include "CalendarList.h"
 #include "contestdetails.h"
@@ -439,7 +440,7 @@ void TLogContainer::FileNewActionExecute()
     char letter = 'A';
     while ( letter < 'Z' )      // the A of A.Minos
     {
-       QString fileNameBuff = InitialDir + "/" + nfileName + letter + ".minos";
+       QString fileNameBuff = InitialDir + "/" + nfileName + letter + ".Minos";
 
        if (FileExists(fileNameBuff))
        {
@@ -449,7 +450,7 @@ void TLogContainer::FileNewActionExecute()
           break;
     }
 
-    QString initName = InitialDir + nfileName + letter + ".minos";
+    QString initName = InitialDir + nfileName + letter + ".Minos";
     ContestDetails pced( this );
     BaseContestLog * c = addSlot( &pced, initName, true, -1 );
 
@@ -523,7 +524,7 @@ void TLogContainer::FileOpenActionExecute()
     // first choose file
 //"Images (*.png *.xpm *.jpg);;Text files (*.txt);;XML files (*.xml)"
 
-    QString Filter = "Minos contest files (*.minos);;"
+    QString Filter = "Minos contest files (*.Minos);;"
                      "Reg1Test Files (*.edi);;"
                      "GJV contest files (*.gjv);;"
                      "RSGB Log Files (*.log);;"

@@ -55,7 +55,7 @@ void MLogFile::close( void )
 std::ostream & MLogFile::log(const QString &s )
 {
    CsGuard scoped_lock;
-   return logT() << s.toStdString().c_str() << std::endl;
+   return logT() << " " << s.toStdString().c_str() << std::endl;
 }
 
 //---------------------------------------------------------------------------

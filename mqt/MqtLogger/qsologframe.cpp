@@ -1,5 +1,6 @@
 #include "logger_pch.h"
 
+#include "tlogcontainer.h"
 #include "tqsoeditdlg.h"
 #include "tforcelogdlg.h"
 #include "SendRPCDM.h"

@@ -66,7 +66,7 @@ GlistList::~GlistList()
 {}
 void GlistList::load( void )
 {
-   loadEntries( "./Configuration/prefix.SYN", "prefix synonyms file" );
+   loadEntries( "./Configuration/prefix.syn", "prefix synonyms file" );
 }
 bool GlistList::procLine( char **a )
 {
@@ -208,7 +208,7 @@ int DistrictList::slen( bool longver )
 }
 void DistrictList::load( void )
 {
-   loadEntries( "./Configuration/district.CTL", "District Control File" );
+   loadEntries( "./Configuration/district.ctl", "District Control File" );
 
    for ( unsigned int i = 0; i < size(); i++ )
    {
@@ -246,7 +246,7 @@ DistrictSynonymList::~DistrictSynonymList()
 
 void DistrictSynonymList::load( void )
 {
-   loadEntries( "./Configuration/district.SYN", "District Synonym File" );
+   loadEntries( "./Configuration/DISTRICT.SYN", "District Synonym File" );
 }
 bool DistrictSynonymList::procLine( char **a )
 {
@@ -699,7 +699,7 @@ CountrySynonymList::~CountrySynonymList()
 }
 void CountrySynonymList::load( void )
 {
-   loadEntries( "./Configuration/cty.SYN", "Country Synonym File" );
+   loadEntries( "./Configuration/cty.syn", "Country Synonym File" );
 }
 bool CountrySynonymList::procLine( char **a )
 {

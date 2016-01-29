@@ -102,18 +102,6 @@ void TZConf::runThread(const QString &name)
                         TxSocks.push_back(qus);
                     }
                 }
-                /*
-                {
-                    QSharedPointer<UDPSocket> qus(new UDPSocket());
-
-                    bool res = qus->setupRO(ifaces[i], addrs[j]);
-
-                    if (res)
-                    {
-                        RxSocks.push_back(qus);
-                    }
-                }
-                */
             }
         }
     }
@@ -408,6 +396,7 @@ bool UDPSocket::setup(QNetworkInterface &iface, QNetworkAddressEntry &addr)
                 UPNP_PORT,
                 QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint
                 );
+    trace(QString("UDP bind returns ") + (res?"true":"false") + " on " + addr.ip().toString() + " error " + qus->errorString());
     return res;
 }
 void UDPSocket::onSocketStateChange (QAbstractSocket::SocketState state)

@@ -67,7 +67,7 @@ void CsvReader::checkString(QString &temp, QChar character, QList<QStringList> &
         }
         //FIXME: will possibly fail if there are 4 or more reapeating double quotes
         temp.replace("\"\"", "\"");
-        itemList.append(temp);
+        itemList.append(temp.trimmed());
         if (character != QChar(','))
         {
             csv.append(itemList);
