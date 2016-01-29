@@ -91,7 +91,9 @@ bool TLogContainer::show(int argc, char *argv[])
        }
        preloadFiles( conarg );
        enableActions();
+
     }
+    TContestApp::getContestApp()->setPreloadComplete();
     return true;
 }
 void TLogContainer::on_TimeDisplayTimer( )

@@ -220,7 +220,7 @@ void TContestApp::close()
 }
 TContestApp::TContestApp() : MinosParameters(), magneticVariation( 0 ), period1( 5 ), period2( 20 ),
       reverseBearing( false ), dispCountry( false ), dispBearing( true ), dispScore( true ),
-      currentContest( 0 )
+      currentContest( 0 ), preloadComplete(false)
 
 {
 
@@ -426,33 +426,36 @@ void TContestApp::removeList( ContactList * p )
 }
 void TContestApp::writeContestList()
 {
-   preloadBundle.clearProfileSection( false );
-   for ( unsigned int i = 0; i < contestSlotList.size(); i++ )
-   {
-      ContestSlot *cs = contestSlotList[ i ];
-      BaseContestLog * ct = cs->slot;
-      if ( !ct )
-         continue;
+    if (preloadComplete)
+    {
+        preloadBundle.clearProfileSection( false );
+        for ( unsigned int i = 0; i < contestSlotList.size(); i++ )
+        {
+            ContestSlot *cs = contestSlotList[ i ];
+            BaseContestLog * ct = cs->slot;
+            if ( !ct )
+                continue;
 
-      QString ent = QString::number(cs->slotno );
-      preloadBundle.setStringProfile( ent, ct->cfileName );
-      if ( currentContest == ct )
-      {
-         preloadBundle.setIntProfile( eppCurrent, cs->slotno );
-      }
-   }
-   for ( unsigned int i = 0; i < listSlotList.size(); i++ )
-   {
-      ListSlot *cs = listSlotList[ i ];
-      ContactList * ct = cs->slot;
-      if ( !ct )
-         continue;
+            QString ent = QString::number(cs->slotno );
+            preloadBundle.setStringProfile( ent, ct->cfileName );
+            if ( currentContest == ct )
+            {
+                preloadBundle.setIntProfile( eppCurrent, cs->slotno );
+            }
+        }
+        for ( unsigned int i = 0; i < listSlotList.size(); i++ )
+        {
+            ListSlot *cs = listSlotList[ i ];
+            ContactList * ct = cs->slot;
+            if ( !ct )
+                continue;
 
-      QString ent = "List" + QString::number(cs->slotno );
-      preloadBundle.setStringProfile( ent, ct->cfileName );
-      // no need for any concept of a "current" list
-   }
-   preloadBundle.flushProfile();
+            QString ent = "List" + QString::number(cs->slotno );
+            preloadBundle.setStringProfile( ent, ct->cfileName );
+            // no need for any concept of a "current" list
+        }
+        preloadBundle.flushProfile();
+    }
 }
 std::vector<BaseContestLog *> TContestApp::getContestList()
 {
