@@ -22,6 +22,7 @@ bool MinosServerConnection::initialise(bool conn)
     QHostAddress h = sock->peerAddress();
     connectHost = h.toString();
     connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_readyRead()));
+    connect(sock.data(), SIGNAL(disconnected()), this, SLOT(on_disconnected()));
    return conn;   // already initialised
 }
 
