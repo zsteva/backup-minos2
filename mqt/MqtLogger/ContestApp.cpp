@@ -211,7 +211,7 @@ void closeContestApp( void )
    {
       TContestApp::getContestApp() ->close();
    }
-   delete TContestApp::getContestApp();
+   //delete TContestApp::getContestApp();
 }
 void TContestApp::close()
 {
