@@ -89,6 +89,8 @@ class BaseContestLog: public BaseLogList
       // which hold slightly different info, and more importantly handle backing store
       // totally differently
 
+      BaseContestLog(const BaseContestLog &);   // I hope a copy constructor
+
    protected:
       int stanzaCount;
       unsigned long nextBlock;
