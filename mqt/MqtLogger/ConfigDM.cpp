@@ -70,7 +70,11 @@ void TConfigElement::createProcess()
         runner = new QProcess(parent());
 
         QString program = commandLine;
-        runner->setProgram(program);
+        if (!FileExists(program))
+        {
+            trace(name + ":program doesn't exist:" + program);
+        }
+            runner->setProgram(program);
 
         //QStringList args;
         //runner->setArguments(args);
@@ -102,7 +106,7 @@ void TConfigElement::on_finished(int err, QProcess::ExitStatus exitStatus)
 
 void TConfigElement::on_error(QProcess::ProcessError error)
 {
-    trace(name + "error:" + QString::number(error));
+    trace(name + ":error:" + QString::number(error));
 }
 
 void TConfigElement::on_readyReadStandardError()
@@ -130,7 +134,7 @@ TMConfigDM::TMConfigDM( QWidget* Owner )
       for ( int i = 0; i < lsect.count(); i++ )
       {
          QString sect = lsect[ i ].trimmed();
-         if ( sect.compare("CIRCLE OF HELL", Qt::CaseInsensitive ) == 0)
+         if ( sect.compare("CIRCLEOFHELL", Qt::CaseInsensitive ) == 0)
          {
             getCircleOfHell();
          }
@@ -223,7 +227,7 @@ void TMConfigDM::setCircleOfHell( const QString &circle )
    }
    circleOfHell = circle;
    QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
-   config.setValue("Circle Of Hell/Name", circleOfHell);
+   config.setValue("CircleOfHell/Name", circleOfHell);
 }
 QString TMConfigDM::getCircleOfHell()
 {
@@ -232,7 +236,7 @@ QString TMConfigDM::getCircleOfHell()
       return "";
    }
    QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
-   circleOfHell = config.value( "Circle Of Hell/Name", "" ).toString().trimmed();
+   circleOfHell = config.value( "CircleOfHell/Name", "" ).toString().trimmed();
    return circleOfHell;
 }
 

@@ -28,7 +28,7 @@ MinosServer *MinosServer::getMinosServer()
 MinosServer::MinosServer() : serverName( DEFAULT_SERVER_NAME )
 {
   QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
-  QString circleOfHell = config.value( "Circle Of Hell/Name", "No_name_in_config" ).toString().trimmed();
+  QString circleOfHell = config.value( "CircleOfHell/Name", "No_name_in_config" ).toString().trimmed();
   serverName = circleOfHell;
 
   if ( serverName.size() == 0 )

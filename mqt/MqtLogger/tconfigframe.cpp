@@ -75,7 +75,8 @@ void TConfigFrame::on_HideCheckBox_clicked()
 
 void TConfigFrame::on_SetButton_clicked()
 {
-    TMConfigDM::getConfigDM( 0 ) ->setCircleOfHell( ui->StationIdEdit->text() );
+    QString coh = ui->StationIdEdit->text();
+    TMConfigDM::getConfigDM( 0 ) ->setCircleOfHell( coh );
 }
 
 void TConfigFrame::on_ClearAllButton_clicked()
