@@ -30,7 +30,7 @@ TSendDM *SendDM = 0;
 void TSendDM::makeRPCObjects()
 {
     QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
-    QString circleOfHell = config.value( "Circle Of Hell/Name", "No_name_in_config" ).toString().trimmed();
+    QString circleOfHell = config.value( "CircleOfHell/Name", "No_name_in_config" ).toString().trimmed();
     serverName = circleOfHell;
 
     QString rigServer = config.value( "RigControl/Server", "localhost" ).toString().trimmed();
