@@ -40,7 +40,6 @@ SOURCES += \
     mults.cpp \
     MultsImpl.cpp \
     mwin.cpp \
-    RunApp.cpp \
     ScreenContact.cpp \
     validators.cpp \
     MMessageDialog.cpp \
@@ -69,7 +68,6 @@ HEADERS += \
     MultsImpl.h \
     mwin.h \
     ProfileEnums.h \
-    RunApp.h \
     ScreenContact.h \
     sorted_vector.h \
     validators.h \
