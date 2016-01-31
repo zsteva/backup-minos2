@@ -30,6 +30,7 @@ private:
     Ui::TStatsDispFrame *ui;
     BaseContestLog *ct;
     QDateTime lastCheckTime;
+    bool suppressPeriodChange;
 };
 
 #endif // TSTATSDISPFRAME_H

@@ -131,6 +131,7 @@ TSingleLogFrame::~TSingleLogFrame()
 {
     delete ui;
     ui = nullptr;
+    contest = nullptr;
 }
 void TSingleLogFrame::keyPressEvent( QKeyEvent* event )
 {
@@ -592,10 +593,14 @@ void TSingleLogFrame::initFilters()
 }
 void TSingleLogFrame::onFiltersChanged()
 {
-    ui->dxccFrame->reInitialiseCountries();
-    ui->districtFrame->reInitialiseDistricts();
-    ui->locFrame->reInitialiseLocators();
-    ui->StatsFrame->reInitialiseStats();
+    if (contest)
+    {
+        initFilters();
+        ui->dxccFrame->reInitialiseCountries();
+        ui->districtFrame->reInitialiseDistricts();
+        ui->locFrame->reInitialiseLocators();
+        ui->StatsFrame->reInitialiseStats();
+    }
 }
 
 void TSingleLogFrame::saveFilters()

@@ -7,7 +7,9 @@ const int checkInterval = 10;
 TStatsDispFrame::TStatsDispFrame(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::TStatsDispFrame),
-    ct(0), lastCheckTime(QDateTime::currentDateTime().addSecs(-1000))
+    ct(0), lastCheckTime(QDateTime::currentDateTime().addSecs(-1000)),
+    suppressPeriodChange(false)
+
 {
     ui->setupUi(this);
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(RecheckTimerTimer()));
@@ -16,6 +18,7 @@ TStatsDispFrame::TStatsDispFrame(QWidget *parent) :
 TStatsDispFrame::~TStatsDispFrame()
 {
     delete ui;
+    ct = nullptr;
 }
 void TStatsDispFrame::setContest( BaseContestLog *pct )
 {
@@ -37,14 +40,20 @@ void TStatsDispFrame::RecheckTimerTimer(  )
 
 void TStatsDispFrame::on_P1Edit_valueChanged(int arg1)
 {
-    MinosParameters::getMinosParameters() ->setStatsPeriod1( arg1 );
-    reInitialiseStats();
+   if (!suppressPeriodChange)
+   {
+      MinosParameters::getMinosParameters() ->setStatsPeriod1( arg1 );
+      reInitialiseStats();
+   }
 }
 
 void TStatsDispFrame::on_P2Edit_valueChanged(int arg1)
 {
-    MinosParameters::getMinosParameters() ->setStatsPeriod2( arg1 );
-    reInitialiseStats();
+   if (!suppressPeriodChange)
+   {
+      MinosParameters::getMinosParameters() ->setStatsPeriod2( arg1 );
+      reInitialiseStats();
+   }
 }
 //---------------------------------------------------------------------------
 void TStatsDispFrame::reInitialiseStats()
@@ -52,8 +61,10 @@ void TStatsDispFrame::reInitialiseStats()
    // we need to set the operator bundle to the current contest ops
    if ( !ui->P1Edit->hasFocus() && !ui->P2Edit->hasFocus() )
    {
+      suppressPeriodChange = true;
       ui->P1Edit->setValue( MinosParameters::getMinosParameters() ->getStatsPeriod1() );
       ui->P2Edit->setValue( MinosParameters::getMinosParameters() ->getStatsPeriod2() );
+      suppressPeriodChange = false;
    }
 
    ui->SLabel1->clear();

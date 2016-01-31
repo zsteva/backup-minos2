@@ -4,7 +4,7 @@
 
 LocFrame::LocFrame(QWidget *parent) :
     QFrame(parent),
-    ui(new Ui::LocFrame)
+    ui(new Ui::LocFrame), ct(0)
 {
     ui->setupUi(this);
 }
@@ -12,6 +12,7 @@ LocFrame::LocFrame(QWidget *parent) :
 LocFrame::~LocFrame()
 {
     delete ui;
+    ct = nullptr;
 }
 void LocFrame::setContest(BaseContestLog *contest)
 {
