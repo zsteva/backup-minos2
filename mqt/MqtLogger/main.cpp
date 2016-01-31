@@ -84,12 +84,14 @@ int main(int argc, char *argv[])
         {
             a.setFont( qfont.value<QFont>() );
         }
+        /*
         QSharedMemory mem( "MinosQtLoggerSingleApplication" );
         if ( !mem.create( 1 ) )
         {
             QMessageBox::critical( 0, "Minos Qt Logger Instance detected!", "Application is already running!\nApplication terminating...", "Ok" );
             exit( 0 );
         }
+        */
 
         //a.setStyle("fusion");
 
