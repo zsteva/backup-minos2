@@ -452,7 +452,7 @@ void TLogContainer::FileNewActionExecute()
           break;
     }
 
-    QString initName = InitialDir + nfileName + letter + ".Minos";
+    QString initName = InitialDir + "/" + nfileName + letter + ".Minos";
     ContestDetails pced( this );
     BaseContestLog * c = addSlot( &pced, initName, true, -1 );
 
@@ -525,6 +525,11 @@ void TLogContainer::FileOpenActionExecute()
 {
     // first choose file
 //"Images (*.png *.xpm *.jpg);;Text files (*.txt);;XML files (*.xml)"
+    QString InitialDir = getDefaultDirectory( false );
+
+    QFileInfo qf(InitialDir);
+
+    InitialDir = qf.canonicalFilePath();
 
     QString Filter = "Minos contest files (*.Minos);;"
                      "Reg1Test Files (*.edi);;"
@@ -535,7 +540,7 @@ void TLogContainer::FileOpenActionExecute()
 
     QStringList fnames = QFileDialog::getOpenFileNames( this,
                        "Open contests",
-                       "",
+                       InitialDir,  // dir
                        Filter
                        );
     for (int i = 0; i < fnames.size(); i++)
@@ -949,12 +954,17 @@ void TLogContainer::ListOpenActionExecute()
 {
     // first choose file
 
+    QString InitialDir = getDefaultDirectory( true );
+
+    QFileInfo qf(InitialDir);
+
+    InitialDir = qf.canonicalFilePath();
     QString Filter = "Contact list files (*.csl);;"
                      "All Files (*.*)" ;
 
     QStringList fnames = QFileDialog::getOpenFileNames( this,
                        "Open Archive List",
-                       "",
+                       InitialDir,
                        Filter
                        );
 
