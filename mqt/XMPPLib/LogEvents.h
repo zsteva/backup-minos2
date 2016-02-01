@@ -12,6 +12,7 @@
 #define LogEventsH 
 //---------------------------------------------------------------------------
 extern bool checkCloseEvent();
+extern void createCloseEvent();
 //---------------------------------------------------------------------------
 extern void logMessage( const QString &level, const QString &mess );
 //---------------------------------------------------------------------------

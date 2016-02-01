@@ -28,6 +28,7 @@ void logMessage( const QString &level, const QString &mess )
 // How to find if parent has disappeared - this needs to go in the children
 // So we need a "starter" process for where we don't want the logger (e.g. voice keyer)
 
+static int original_ppid = 0;
 
 static unsigned long currentPID()
 {
@@ -92,17 +93,23 @@ static bool isParentRunning()
     return true;
 
 #else
-    return getppid() != 1;
+    int ppid = getppid() ;
+    //trace("ppid is " + QString::number(ppid));
+    return ppid == original_ppid;
 #endif
 }
 
 //---------------------------------------------------------------------------
 void resetCloseEvent()
 {
+    original_ppid = parentPID();
+    //trace("original_ppid is " + QString::number(original_ppid));
 }
 //---------------------------------------------------------------------------
 void createCloseEvent()
 {
+    original_ppid = parentPID();
+    //trace("original_ppid is " + QString::number(original_ppid));
 }
 //---------------------------------------------------------------------------
 void signalCloseEvent()
@@ -111,6 +118,9 @@ void signalCloseEvent()
 //---------------------------------------------------------------------------
 bool checkCloseEvent()
 {
-    return isParentRunning();
+    bool running = isParentRunning();
+
+    //trace("checkCloseEvent running is " + QString::number(running));
+    return !running;
 }
 //---------------------------------------------------------------------------
