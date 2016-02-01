@@ -10,6 +10,6 @@
 #ifndef PortIdsH
 #define PortIdsH
 //---------------------------------------------------------------------------
-#define ClientPort 7777
-#define ServerPort 7778
+#define MinosClientPort 7777
+#define MinosServerPort 7778
 #endif

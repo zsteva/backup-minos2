@@ -27,10 +27,10 @@ ServerMain::ServerMain(QWidget *parent) :
     QString sname = MinosServer::getMinosServer()->getServerName();
 
     clientListener = QSharedPointer<MinosClientListener>(new MinosClientListener);
-    clientListener ->initialise( "Client", ClientPort );
+    clientListener ->initialise( "Client", MinosClientPort );
 
     serverListener = QSharedPointer<MinosServerListener>(new MinosServerListener);
-    serverListener ->initialise( "Server", ServerPort );
+    serverListener ->initialise( "Server", MinosServerPort );
 
     ZConf = QSharedPointer<TZConf>(new TZConf);
 

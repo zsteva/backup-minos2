@@ -164,23 +164,6 @@ TMConfigDM::~TMConfigDM()
    elelist.clear();
 }
 //---------------------------------------------------------------------------
-void GuardianThreadExecute( void *arg )
-{
-    /*
-   TConfigElement * s = ( TConfigElement * ) arg;
-   QString app = s->name;
-   TGuardianThread *guardth = new TGuardianThread( s );
-   while ( !terminated )
-   {
-      guardth->execute();  // one pass at a time...
-      if ( terminated )
-         break;
-      Sleep( 1000 );
-   }
-   delete guardth;
-   */
-}
-//---------------------------------------------------------------------------
 void TMConfigDM::start()
 {
    if ( !configExists )
@@ -188,7 +171,7 @@ void TMConfigDM::start()
       return ;
    }
    terminated = false;
-   resetCloseEvent();
+//   resetCloseEvent();
 
    for ( std::vector <TConfigElement *>::iterator i = elelist.begin(); i != elelist.end(); i++ )
    {
@@ -203,7 +186,7 @@ void TMConfigDM::stop()
       return ;
    }
    terminated = true;
-   signalCloseEvent();
+//   signalCloseEvent();
 
    for ( std::vector <QProcess *> ::iterator i = guardv.begin(); i != guardv.end(); i++ )
    {
@@ -240,104 +223,3 @@ QString TMConfigDM::getCircleOfHell()
    return circleOfHell;
 }
 
-#ifdef RUBBISH
-
-// How to find if parent has disappeared - this needs to go in the children
-// So we need a "starter" process for where we don't want the logger (e.g. voice keyer)
-
-#ifndef PROCESS_H
-#define PROCESS_H
-
-class Process
-{
-public:
-
-static unsigned long currentPID();
-static unsigned long parentPID();
-
-static bool isParentRunning();
-
-};
-
-#endif // PROCESS_H
-@
-
-process.cpp
-@
-
-#include "process.h"
-
-#ifdef WIN32
-#include <windows.h>
-#include <tlhelp32.h>
-#else
-#include "unistd.h"
-#endif
-
-unsigned long Process::currentPID()
-{
-#ifdef WIN32
-return GetCurrentProcessId();
-#else
-return getpid();
-#endif
-}
-
-unsigned long Process::parentPID()
-{
-#ifdef WIN32
-
-HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-PROCESSENTRY32 pe = { 0 };
-pe.dwSize = sizeof(PROCESSENTRY32);
-
-unsigned long pid = currentPID();
-unsigned long ppid = 0;
-
-if( Process32First(h, &pe)) {
-do {
-if (pe.th32ProcessID == pid) {
-ppid = pe.th32ParentProcessID;
-break;
-}
-} while( Process32Next(h, &pe));
-}
-
-CloseHandle(h);
-
-return ppid;
-
-#else
-
-return getppid();
-
-#endif
-}
-
-bool Process::isParentRunning()
-{
-#ifdef WIN32
-
-static unsigned long _parentPID = parentPID();
-static void* _parentHandle = NULL;
-
-if (_parentHandle == NULL && _parentPID != 0)
-_parentHandle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, _parentPID);
-
-if (_parentHandle != NULL)
-{
-BOOL success;
-DWORD exitCode;
-
-success = GetExitCodeProcess(_parentHandle, &exitCode);
-
-return ( ! success) || exitCode == STILL_ACTIVE;
-}
-
-return true;
-
-#else
-return getppid() != 1;
-#endif
-}
-#endif
