@@ -13,6 +13,8 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
 
     enableTrace( "./TraceLog", "MinosChat_" );
 
+    createCloseEvent();
+
     MinosChatForm = this;
 
     connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
@@ -63,20 +65,7 @@ void TMinosChatForm::LogTimerTimer(  )
 {
    syncStations();
    syncChat();
-   /*
-   // check log queue; if anything on it then log to main window
-   while ( true )
-   {
-      LogEvent * ev = deQueueLog();
-      if ( ev )
-      {
-         logMessage( "Log : " + ev->eMessageType + " " + ev->eMessage );
-         delete ev;
-      }
-      else
-         break;
-   }
-*/
+
    static bool closed = false;
    if ( !closed )
    {
