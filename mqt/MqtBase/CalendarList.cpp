@@ -512,7 +512,7 @@ bool Calendar::parseFile ( const QString &fname )
                         std::string startday2;
                         int istartday1, istartday2;
 
-                        unsigned int ppos = startDay.find ( "+" );
+                        size_t ppos = startDay.find ( "+" );
                         if ( ppos != std::string::npos )
                         {
                             startday1 = startDay.substr ( 0, ppos );
