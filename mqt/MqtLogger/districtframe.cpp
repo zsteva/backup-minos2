@@ -42,6 +42,17 @@ void DistrictFrame::reInitialiseDistricts()
 
     state = settings.value("DistrictTable/state").toByteArray();
     ui->DistrictTable->horizontalHeader()->restoreState(state);
+
+    for(int i = 0; i < proxyModel.rowCount(); i++)
+    {
+        const QModelIndex index = proxyModel.mapToSource( proxyModel.index(i, 0) );
+        int sourceRow = index.row();
+        if (sourceRow == proxyModel.scrolledDistrict)
+        {
+            ui->DistrictTable->setCurrentIndex(proxyModel.index(i, 0));
+        }
+    }
+
 }
 void DistrictFrame::scrollToDistrict( int district_ind, bool makeVisible )
 {
@@ -151,4 +162,13 @@ bool DistrictSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelI
           makeVisible = false;
        }
     return makeVisible;
+}
+
+void DistrictFrame::on_DistrictTable_clicked(const QModelIndex &index)
+{
+    const QModelIndex srcindex = proxyModel.mapToSource( index );
+    int sourceRow = srcindex.row();
+
+    QString disp = MultLists::getMultLists() ->getDistListText( sourceRow, 0, model.ct );
+    MinosLoggerEvents::SendDistrictSelect(disp, model.ct);
 }
