@@ -30,7 +30,7 @@ TMatchThread *TMatchThread::matchThread = 0;
 
    connect(&MinosLoggerEvents::mle, SIGNAL(CountrySelect(QString,BaseContestLog*)), this, SLOT(on_CountrySelect(QString,BaseContestLog*)));
    connect(&MinosLoggerEvents::mle, SIGNAL(DistrictSelect(QString,BaseContestLog*)), this, SLOT(on_DistrictSelect(QString,BaseContestLog*)));
-   connect(&MinosLoggerEvents::mle, SIGNAL(LocatorSelect(QString,BaseContestLog*)), this, SLOT(on_LocatorSelect(QString,BaseContestLog*)));
+   connect(&MinosLoggerEvents::mle, SIGNAL(LocSelect(QString,BaseContestLog*)), this, SLOT(on_LocatorSelect(QString,BaseContestLog*)));
 }
 void TMatchThread::FinishMatchThread()
 {

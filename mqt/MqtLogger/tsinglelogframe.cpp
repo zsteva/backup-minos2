@@ -48,10 +48,10 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     ui->QSOTable->resizeColumnsToContents();
     ui->QSOTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
 
-    ui->LogAreaSplitter->setClosingWidget(ui->ArchiveSplitter);
-    ui->CribSplitter->setClosingWidget(ui->CribSheet);
-    ui->MultSplitter->setClosingWidget(ui->MultDisp);
-    ui->TopSplitter->setClosingWidget(ui->MultSplitter);
+    //ui->LogAreaSplitter->setClosingWidget(ui->ArchiveSplitter);
+    //ui->CribSplitter->setClosingWidget(ui->CribSheet);
+    //ui->MultSplitter->setClosingWidget(ui->MultDisp);
+    //ui->TopSplitter->setClosingWidget(ui->MultSplitter);
 
     ui->ThisMatchTree->header()->setSectionResizeMode(QHeaderView::Interactive);
     ui->ThisMatchTree->setItemDelegate( new HtmlDelegate );
