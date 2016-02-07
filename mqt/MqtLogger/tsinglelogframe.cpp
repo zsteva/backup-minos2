@@ -269,7 +269,6 @@ void TSingleLogFrame::NextContactDetailsTimerTimer( )
         {
             cb = bi.uk;
         }
-
         if ( contest->isReadOnly() )
         {
             ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
@@ -280,13 +279,18 @@ void TSingleLogFrame::NextContactDetailsTimerTimer( )
         }
         else
         {
-            QString buff = QString::number( contest->maxSerial + 1 );
+            QString snBuff = QString::number( contest->maxSerial + 1 );
+            QString locBuff;
+            if (contest->location.getValue().size())
+            {
+                locBuff = "<br>" + contest->location.getValue();
+            }
             ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
                                                   + cb + "</p><h1>"
                                                   + contest->mycall.fullCall.getValue() + "<br>"
-                                                  + buff + "<br>"
-                                                  + contest->myloc.loc.getValue() + "<br>"
-                                                  + contest->location.getValue());
+                                                  + snBuff + "<br>"
+                                                  + contest->myloc.loc.getValue()
+                                                  + locBuff);
         }
     }
 }
