@@ -241,6 +241,10 @@ void TLogContainer::setupMenus()
     TabPopup.addAction(AnalyseMinosLogAction);
     newAction( "Cancel", &TabPopup, SLOT( CancelClick() ) );
 
+    KeyerToneAction = newAction("Tune", ui->menuKeyer, SLOT(KeyerToneActionExecute()));
+    KeyerTwoToneAction = newAction("Two Tone", ui->menuKeyer, SLOT(KeyerTwoToneActionExecute()));
+    KeyerStopAction = newAction("Stop", ui->menuKeyer, SLOT(KeyerStopActionExecute()));
+
     HelpAboutAction = newAction("About...", ui->menuHelp, SLOT(HelpAboutActionExecute()));
 }
 void TLogContainer::enableActions()
@@ -714,6 +718,20 @@ void TLogContainer::NextContactDetailsOnLeftActionExecute()
     TContestApp::getContestApp() ->displayBundle.flushProfile();
 
     MinosLoggerEvents::SendNextContactDetailsOnLeft();
+}
+void TLogContainer::KeyerToneActionExecute()
+{
+    TSendDM::sendKeyerTone( );
+}
+
+void TLogContainer::KeyerTwoToneActionExecute()
+{
+    TSendDM::sendKeyerTwoTone( );
+}
+
+void TLogContainer::KeyerStopActionExecute()
+{
+    TSendDM::sendKeyerStop( );
 }
 
 void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
