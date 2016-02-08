@@ -140,7 +140,24 @@ void KeyerServer::keyerCallback( bool err, MinosRPCObj *mro, const std::string &
                      startRecordDVPFile( Value );
                      callOK = true;
                   }
-            }
+           }
+               if ( Name == "Tone" )
+               {
+                  sendTone1();
+                  callOK = true;
+               }
+            else
+               if ( Name == "TwoTone" )
+               {
+                  sendTone2();
+                  callOK = true;
+               }
+            else
+               if ( Name == "Stop" )
+               {
+                  stopKeyer();
+                  callOK = true;
+               }
 
             mro->clearCallArgs();
             boost::shared_ptr<RPCParam>st(new RPCParamStruct);
