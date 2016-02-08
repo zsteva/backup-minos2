@@ -30,7 +30,6 @@ private:
    MinosSplitterHandle *myHandle;
 public:
    MinosSplitter(QWidget *parent = 0);
-   void setOrientation(Qt::Orientation orientation);
 
 protected:
    QSplitterHandle *createHandle();

@@ -32,26 +32,7 @@ void MinosSplitterHandle::paintEvent(QPaintEvent *event)
 MinosSplitter::MinosSplitter(QWidget *parent)
     : QSplitter(parent), myHandle(0)
 {
-    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    //setHandleWidth(10);
 }
-void MinosSplitter::setOrientation(Qt::Orientation orientation)
-{
-    QSplitter::setOrientation(orientation);
-    switch (orientation)
-     {
-     case Qt::Horizontal:       // side by side
-        // horizontal, vertical
-         setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-         break;
-
-     case Qt::Vertical:
-        // OK
-         setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-         break;
-     }
-}
-
 QSplitterHandle *MinosSplitter::createHandle()
 {
     myHandle = new MinosSplitterHandle(orientation(), this);
