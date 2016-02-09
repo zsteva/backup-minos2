@@ -72,6 +72,39 @@ void TSendDM::makeRPCObjects()
    rpc.getCallArgs() ->addParam( st );
    rpc.queueCall( "Keyer@localhost" );
 }
+/*static*/ void TSendDM::sendTone1()
+{
+   RPCKeyerControlClient rpc( 0 );
+   boost::shared_ptr<RPCParam>st(new RPCParamStruct);
+   boost::shared_ptr<RPCParam>sName(new RPCStringParam( "Tone" ));
+   boost::shared_ptr<RPCParam>iValue(new RPCIntParam( 0 ));
+   st->addMember( sName, "Name" );
+   st->addMember( iValue, "Value" );
+   rpc.getCallArgs() ->addParam( st );
+   rpc.queueCall( "Keyer@localhost" );
+}
+/*static*/ void TSendDM::sendTone2()
+{
+   RPCKeyerControlClient rpc( 0 );
+   boost::shared_ptr<RPCParam>st(new RPCParamStruct);
+   boost::shared_ptr<RPCParam>sName(new RPCStringParam( "TwoTone" ));
+   boost::shared_ptr<RPCParam>iValue(new RPCIntParam( 0 ));
+   st->addMember( sName, "Name" );
+   st->addMember( iValue, "Value" );
+   rpc.getCallArgs() ->addParam( st );
+   rpc.queueCall( "Keyer@localhost" );
+}
+/*static*/ void TSendDM::sendStop()
+{
+   RPCKeyerControlClient rpc( 0 );
+   boost::shared_ptr<RPCParam>st(new RPCParamStruct);
+   boost::shared_ptr<RPCParam>sName(new RPCStringParam( "Stop" ));
+   boost::shared_ptr<RPCParam>iValue(new RPCIntParam( 0 ));
+   st->addMember( sName, "Name" );
+   st->addMember( iValue, "Value" );
+   rpc.getCallArgs() ->addParam( st );
+   rpc.queueCall( "Keyer@localhost" );
+}
 //---------------------------------------------------------------------------
 /*static*/ void TSendDM::sendBandMap(  const std::string &freq,   const std::string &call,   const std::string &utc,   const std::string &loc,   const std::string &qth )
 {

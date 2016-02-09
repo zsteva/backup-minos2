@@ -1701,3 +1701,21 @@ HintText;
 //---------------------------------------------------------------------------
 
 
+void __fastcall TSingleLogFrame::MultDispFrameButton1Click(TObject *Sender)
+{
+   TSendDM::sendTone1();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TSingleLogFrame::MultDispFrameButton2Click(TObject *Sender)
+{
+   TSendDM::sendTone2();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TSingleLogFrame::MultDispFrameButton3Click(TObject *Sender)
+{
+   TSendDM::sendStop();
+}
+//---------------------------------------------------------------------------
+

@@ -42,6 +42,10 @@ class TSendDM : public TDataModule
       static void sendKeyerPlay( int fno );
       static void sendKeyerRecord( int fno );
       static void sendBandMap( const std::string &freq, const std::string &call, const std::string &utc, const std::string &loc, const std::string &qth );
+
+      static void sendTone1();
+      static void sendTone2();
+      static void sendStop();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TSendDM *SendDM;

@@ -119,6 +119,10 @@ __fastcall TMultDispFrame::TMultDispFrame( TComponent* Owner )
 #ifndef BETA_VERSION
    CompSheet->TabVisible = false;
 #endif
+   if ( !FileExists( ".\\Configuration\\MinosConfig.ini" ))
+   {
+      KeyerTab->TabVisible = false;
+   }
    DistrictMultTree->BeginUpdate();
    DistrictMultTree->Header->Columns->Clear();
    DistrictMultTree->Margin = 0;
@@ -558,4 +562,6 @@ void __fastcall TMultDispFrame::LocatorMultTreeMouseDown(TObject */*Sender*/,
    // and we need more cleverness for locs
 }
 //---------------------------------------------------------------------------
+
+
 

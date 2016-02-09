@@ -163,6 +163,9 @@ class TSingleLogFrame : public TFrame
           PVirtualNode Node, TColumnIndex Column,
           TVTTooltipLineBreakStyle &LineBreakStyle, WideString &HintText);
    void __fastcall LogMonitorQSOTreeExit(TObject *Sender);
+   void __fastcall MultDispFrameButton1Click(TObject *Sender);
+   void __fastcall MultDispFrameButton2Click(TObject *Sender);
+   void __fastcall MultDispFrameButton3Click(TObject *Sender);
    private:  	// User declarations
 
       MinosEventListener  EL_ContestPageChanged;

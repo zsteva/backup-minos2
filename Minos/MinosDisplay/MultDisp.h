@@ -50,6 +50,10 @@ class TMultDispFrame : public TFrame
    TImage *Splitter_Image;
    TTabSheet *CompSheet;
    TCompFrame *CompFrame;
+   TTabSheet *KeyerTab;
+   TButton *Button1;
+   TButton *Button2;
+   TButton *Button3;
       void __fastcall CountryMultTreeGetNodeDataSize( TBaseVirtualTree *Sender,
             int &NodeDataSize );
       void __fastcall CountryMultTreeGetText( TBaseVirtualTree *Sender,

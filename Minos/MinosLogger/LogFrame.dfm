@@ -108,14 +108,8 @@ object SingleLogFrame: TSingleLogFrame
               end
             end
             inherited LocatorsTab: TTabSheet
-              ExplicitWidth = 202
-              ExplicitHeight = 98
               inherited LocatorMultTree: TVirtualStringTree
-                Width = 202
-                Height = 98
                 TabStop = False
-                ExplicitWidth = 202
-                ExplicitHeight = 98
               end
             end
             inherited StatsTab: TTabSheet
@@ -145,19 +139,34 @@ object SingleLogFrame: TSingleLogFrame
               inherited CompFrame: TCompFrame
                 Left = 0
                 Top = 0
-                Width = 248
+                Width = 228
                 Height = 182
                 Align = alClient
                 ExplicitLeft = 0
                 ExplicitTop = 0
-                ExplicitWidth = 248
+                ExplicitWidth = 228
                 ExplicitHeight = 182
                 inherited CompGrid: TVirtualStringTree
-                  Width = 248
+                  Width = 228
                   Height = 182
-                  ExplicitWidth = 248
+                  ExplicitWidth = 228
                   ExplicitHeight = 182
                 end
+              end
+            end
+            inherited KeyerTab: TTabSheet
+              ExplicitLeft = 4
+              ExplicitTop = 4
+              ExplicitWidth = 182
+              ExplicitHeight = 98
+              inherited Button1: TButton
+                OnClick = MultDispFrameButton1Click
+              end
+              inherited Button2: TButton
+                OnClick = MultDispFrameButton2Click
+              end
+              inherited Button3: TButton
+                OnClick = MultDispFrameButton3Click
               end
             end
           end
@@ -222,7 +231,6 @@ object SingleLogFrame: TSingleLogFrame
           OnGetHint = LogMonitorQSOTreeGetHint
           OnKeyDown = LogMonitorQSOTreeKeyDown
           OnMouseDown = LogMonitorQSOTreeMouseDown
-          ExplicitLeft = 3
           ExplicitWidth = 469
           ExplicitHeight = 216
         end
