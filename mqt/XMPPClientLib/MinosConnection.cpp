@@ -116,7 +116,7 @@ void MinosAppConnection::on_waitConnectTimeout()
         return;
     }
     waitConnectTimer.stop();
-    sock->connectToHost("localhost", ClientPort);
+    sock->connectToHost("localhost", MinosClientPort);
 }
 void MinosAppConnection::on_connected()
 {

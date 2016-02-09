@@ -46,9 +46,15 @@ class TSendDM : public QObject
       static void sendKeyerPlay( int fno );
       static void sendKeyerRecord( int fno );
       static void sendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
+      static void sendKeyerTone();
+      static void sendKeyerTwoTone();
+      static void sendKeyerStop();
       void doSendKeyerPlay( int fno );
       void doSendKeyerRecord( int fno );
       void doSendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
+      void doSendKeyerTone();
+      void doSendKeyerTwoTone();
+      void doSendKeyerStop();
      private slots:
       void ConnectTimerTimer();
       void SubscribeTimerTimer();

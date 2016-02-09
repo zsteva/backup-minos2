@@ -61,6 +61,7 @@ private:
     Ui::DistrictFrame *ui;
 private slots:
     void on_sectionResized(int, int , int);
+    void on_DistrictTable_clicked(const QModelIndex &index);
 };
 
 #endif // DISTRICTFRAME_H

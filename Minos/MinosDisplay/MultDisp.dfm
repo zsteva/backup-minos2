@@ -39,7 +39,7 @@ object MultDispFrame: TMultDispFrame
     Top = 0
     Width = 296
     Height = 190
-    ActivePage = LocatorsTab
+    ActivePage = KeyerTab
     Align = alClient
     MultiLine = True
     TabOrder = 0
@@ -49,7 +49,7 @@ object MultDispFrame: TMultDispFrame
       object CountryMultTree: TVirtualStringTree
         Left = 0
         Top = 0
-        Width = 248
+        Width = 228
         Height = 182
         Align = alClient
         Colors.UnfocusedColor = clMedGray
@@ -79,7 +79,7 @@ object MultDispFrame: TMultDispFrame
       object DistrictMultTree: TVirtualStringTree
         Left = 0
         Top = 0
-        Width = 248
+        Width = 228
         Height = 182
         Align = alClient
         Colors.UnfocusedColor = clMedGray
@@ -108,7 +108,7 @@ object MultDispFrame: TMultDispFrame
       object LocatorMultTree: TVirtualStringTree
         Left = 0
         Top = 0
-        Width = 248
+        Width = 228
         Height = 182
         Align = alClient
         Colors.UnfocusedColor = clMedGray
@@ -140,26 +140,26 @@ object MultDispFrame: TMultDispFrame
       inline StatsDispFrame: TStatsDispFrame
         Left = 0
         Top = 0
-        Width = 248
+        Width = 228
         Height = 182
         Align = alClient
         TabOrder = 0
         TabStop = True
-        ExplicitWidth = 248
+        ExplicitWidth = 228
         ExplicitHeight = 182
         inherited SLabel1: TLabel
-          Width = 248
+          Width = 228
           Height = 128
         end
         inherited Panel1: TPanel
           Top = 128
-          Width = 248
+          Width = 228
           Height = 54
           ExplicitTop = 128
-          ExplicitWidth = 248
+          ExplicitWidth = 228
           ExplicitHeight = 54
           DesignSize = (
-            248
+            228
             54)
           inherited P1Edit: TLabeledEdit
             Top = 23
@@ -181,14 +181,10 @@ object MultDispFrame: TMultDispFrame
     object ErrTab: TTabSheet
       Caption = 'Errors'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ErrList: TListBox
         Left = 0
         Top = 0
-        Width = 248
+        Width = 228
         Height = 182
         Align = alClient
         ItemHeight = 13
@@ -206,6 +202,34 @@ object MultDispFrame: TMultDispFrame
         TabOrder = 0
         ExplicitLeft = -72
         ExplicitTop = -58
+      end
+    end
+    object KeyerTab: TTabSheet
+      Caption = 'Keyer'
+      ImageIndex = 6
+      object Button1: TButton
+        Left = 72
+        Top = 24
+        Width = 75
+        Height = 25
+        Caption = 'Single Tone'
+        TabOrder = 0
+      end
+      object Button2: TButton
+        Left = 72
+        Top = 72
+        Width = 75
+        Height = 25
+        Caption = 'Two Tone'
+        TabOrder = 1
+      end
+      object Button3: TButton
+        Left = 72
+        Top = 120
+        Width = 75
+        Height = 25
+        Caption = 'Stop'
+        TabOrder = 2
       end
     end
   end

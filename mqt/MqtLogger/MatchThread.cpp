@@ -27,6 +27,10 @@ TMatchThread *TMatchThread::matchThread = 0;
    otherLogMatch = new OtherLogMatcher();
    listMatch = new ListMatcher();
    connect(&MinosLoggerEvents::mle, SIGNAL(ScreenContactChanged(ScreenContact*,BaseContestLog*)), this, SLOT(on_ScreenContactChanged(ScreenContact*,BaseContestLog*)));
+
+   connect(&MinosLoggerEvents::mle, SIGNAL(CountrySelect(QString,BaseContestLog*)), this, SLOT(on_CountrySelect(QString,BaseContestLog*)));
+   connect(&MinosLoggerEvents::mle, SIGNAL(DistrictSelect(QString,BaseContestLog*)), this, SLOT(on_DistrictSelect(QString,BaseContestLog*)));
+   connect(&MinosLoggerEvents::mle, SIGNAL(LocSelect(QString,BaseContestLog*)), this, SLOT(on_LocatorSelect(QString,BaseContestLog*)));
 }
 void TMatchThread::FinishMatchThread()
 {
@@ -61,49 +65,34 @@ void TMatchThread::on_ScreenContactChanged(ScreenContact *sct, BaseContestLog *c
    }
 }
 //---------------------------------------------------------------------------
-void TMatchThread::CountrySelect_Event ( /*MinosEventBase & Event*/ )
+void TMatchThread::on_CountrySelect(QString sel, BaseContestLog *c)
 {
-    /*
-   ActionEvent2<QString,  BaseContestLog *, EN_CountrySelect> & S = dynamic_cast<ActionEvent2<QString, BaseContestLog *, EN_CountrySelect> &> ( Event );
-   QString sel = S.getData();
-   BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-   if (S.getContext() == ct)
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+   if (c == ct)
    {
       mct = 0;
       CountryEntry *ce = MultLists::getMultLists() ->getCtryForPrefix( sel );
       startMatch(ce);
    }
-   */
 }
 
-//---------------------------------------------------------------------------
-void TMatchThread::DistrictSelect_Event ( /*MinosEventBase & Event*/ )
+void TMatchThread::on_DistrictSelect(QString sel, BaseContestLog *c)
 {
-    /*
-   ActionEvent2<QString,  BaseContestLog *, EN_DistrictSelect> & S = dynamic_cast<ActionEvent2<QString, BaseContestLog *, EN_DistrictSelect> &> ( Event );
-   QString sel = S.getData();
-   BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-   if (S.getContext() == ct)
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+   if (c == ct)
    {
 
    }
-   */
 }
 
-//---------------------------------------------------------------------------
-void TMatchThread::LocatorSelect_Event (/*MinosEventBase & Event*/)
+void TMatchThread::on_LocatorSelect(QString sel, BaseContestLog *c)
 {
-    /*
-   ActionEvent2<QString,  BaseContestLog *, EN_LocatorSelect> & S = dynamic_cast<ActionEvent2<QString, BaseContestLog *, EN_LocatorSelect> &> ( Event );
-   QString sel = S.getData();
-   BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-   if (S.getContext() == ct)
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+   if (c == ct)
    {
 
    }
-   */
 }
-
 //---------------------------------------------------------------------------
 // limit the total  number of hits
 const int MATCH_LIM = 20;

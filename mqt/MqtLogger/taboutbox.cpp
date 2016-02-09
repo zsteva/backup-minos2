@@ -1,4 +1,5 @@
 #include "logger_pch.h"
+#include <QDesktopServices>
 
 #include "taboutbox.h"
 #include "ui_taboutbox.h"
@@ -35,20 +36,25 @@ QString MinosText =
    "“Abandon Hope, all ye who enter here”…"
    ;
 
-/*static*/bool TAboutBox::ShowAboutBox( QWidget *Owner,  bool onStartup )
+/*static*/bool TAboutBox::ShowAboutBox(QWidget *Owner,  bool onStartup )
 {
    TAboutBox aboutBox( Owner, onStartup );
 
 
    int ret = aboutBox.exec();
-   /*
-   if ( !started && doStartup )
-   {
-      // auto start on first run, but only if we gave that option
-      TConfigFrame1StartButtonClick( this );
-   }
-    */
+
    return ret == QDialog::Accepted;
+}
+
+int TAboutBox::exec()
+{
+    int ret = QDialog::exec();
+    if ( !started && doStartup )
+    {
+       // auto start on first run, but only if we gave that option
+       ui->ConfigFrame->start();
+    }
+    return ret;
 }
 
 TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
@@ -57,10 +63,18 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
     doStartup(onStartup)
 {
     ui->setupUi(this);
-    ui->PageControl1->setCurrentWidget(ui->AboutTabSheet);
- //   TConfigFrame1->initialise();
 
-    ui->AboutMemo->setText("Welcome to Minos 2");
+    QSettings settings;
+    QByteArray geometry = settings.value("MinosAbout/geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
+
+    ui->ConfigFrame->initialise(this);
+    ui->PageControl1->setCurrentWidget(ui->AboutTabSheet);
+
+    ui->AboutMemo->setText("<h1>Welcome to Minos 2</h1><br><a href=\"http://minos.sourceforge.net/\">http://minos.sourceforge.net</a>");
+    ui->AboutMemo->setTextFormat(Qt::RichText);
+    ui->AboutMemo->setTextInteractionFlags(Qt::TextBrowserInteraction);
 
     ui->MinosMemo->setText(MinosText);
 
@@ -72,19 +86,16 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
     }
     else
     {
-        /*
-       TConfigFrame1->StartButton->Enabled = !started;
-       TConfigFrame1->StopButton->Visible = false;
+        ui->ConfigFrame->setup(started);
        if (  !onStartup || checkServerReady() )
        {
-          LoggerOnlyButton->Visible = false; // as we are started we cannot now be logger only
-          ExitButton->Visible = false;
+          ui->LoggerOnlyButton->setVisible(false); // as we are started we cannot now be logger only
+          ui->ExitButton->setVisible(false);
        }
        else
        {
           doStartup = true; // click the start button on form close
        }
-       */
     }
 }
 
@@ -92,43 +103,25 @@ TAboutBox::~TAboutBox()
 {
     delete ui;
 }
-
-//---------------------------------------------------------------------------
-/*
-void __fastcall TAboutBox::WebLabelClick( )
+void TAboutBox::doCloseEvent()
 {
-   ShellExecute( Handle, "open", WebLabel->Caption.c_str(), 0, 0, SW_SHOWNORMAL );   //The home page for this program
+    QSettings settings;
+    settings.setValue("MinosAbout/geometry", saveGeometry());
 }
-*/
-//---------------------------------------------------------------------------
-/*
-void __fastcall TAboutBox::TConfigFrame1StartButtonClick( TObject *Sender )
+void TAboutBox::reject()
 {
-   TConfigFrame1->StartButton->Enabled = false;
-   TConfigFrame1->StartButtonClick( Sender );
-   TConfigFrame1->StopButton->Enabled = true;
-   started = true;
+    doCloseEvent();
+    QDialog::reject();
 }
-*/
-/*
-void __fastcall TAboutBox::TConfigFrame1StopButtonClick( TObject *Sender )
+void TAboutBox::accept()
 {
-   started = false;
-   TConfigFrame1->StopButtonClick( Sender );
-   TConfigFrame1->StartButton->Enabled = true;
-   TConfigFrame1->StopButton->Enabled = false;
+    doCloseEvent();
+    QDialog::accept();
 }
-*/
-//---------------------------------------------------------------------------
-/*
-void __fastcall TAboutBox::TConfigFrame1CancelButtonClick(  )
+void TAboutBox::on_AboutMemo_linkActivated(const QString &link)
 {
-   // cancel the start up
-   doStartup = false;
-   ModalResult = mrCancel;
+    QDesktopServices::openUrl(QUrl(link));
 }
-*/
-//---------------------------------------------------------------------------
 
 void TAboutBox::on_ExitButton_clicked()
 {
@@ -138,7 +131,6 @@ void TAboutBox::on_ExitButton_clicked()
 
 void TAboutBox::on_OKButton_clicked()
 {
-    doStartup = false;
     accept();
 }
 
@@ -147,3 +139,4 @@ void TAboutBox::on_LoggerOnlyButton_clicked()
     doStartup = false;
     accept();
 }
+

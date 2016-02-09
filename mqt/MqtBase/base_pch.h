@@ -50,7 +50,6 @@
 #include "ListContact.h"
 
 #include "MinosTestImport.h"
-#include "RunApp.h"
 
 #include "MShowMessageDlg.h"
 #include "MMessageDialog.h"

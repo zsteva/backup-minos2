@@ -58,8 +58,14 @@ class TContestApp : public MinosParameters
       BaseContestLog * currentContest;
       static TContestApp *contestApp;
       int magneticVariation;
+      bool preloadComplete;
    public:
       static TContestApp *getContestApp();
+      void setPreloadComplete()
+      {
+          preloadComplete = true;
+      }
+
 
       // general settings - choose at startup
       SettingsBundle loggerBundle;     // startup defaults - INI files, sections, etc

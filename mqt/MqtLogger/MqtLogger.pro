@@ -55,7 +55,9 @@ SOURCES += main.cpp \
     dxccframe.cpp \
     districtframe.cpp \
     locframe.cpp \
-    SendRPCDM.cpp
+    SendRPCDM.cpp \
+    ConfigDM.cpp \
+    tconfigframe.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -90,7 +92,9 @@ HEADERS  += \
     dxccframe.h \
     districtframe.h \
     locframe.h \
-    SendRPCDM.h
+    SendRPCDM.h \
+    ConfigDM.h \
+    tconfigframe.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
@@ -111,7 +115,8 @@ FORMS    += tlogcontainer.ui \
     tstatsdispframe.ui \
     dxccframe.ui \
     districtframe.ui \
-    locframe.ui
+    locframe.ui \
+    tconfigframe.ui
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase

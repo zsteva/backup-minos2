@@ -45,6 +45,16 @@ void DXCCFrame::reInitialiseCountries()
 
     state = settings.value("DXCCTable/state").toByteArray();
     ui->DXCCTable->horizontalHeader()->restoreState(state);
+
+    for(int i = 0; i < proxyModel.rowCount(); i++)
+    {
+        const QModelIndex index = proxyModel.mapToSource( proxyModel.index(i, 0) );
+        int sourceRow = index.row();
+        if (sourceRow == proxyModel.scrolledCountry)
+        {
+            ui->DXCCTable->setCurrentIndex(proxyModel.index(i, 0));
+        }
+    }
 }
 void DXCCFrame::scrollToCountry( int ctry_ind, bool makeVisible )
 {
@@ -167,4 +177,14 @@ bool DXCCSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
 
 
     return makeVisible;
+}
+
+void DXCCFrame::on_DXCCTable_clicked(const QModelIndex &index)
+{
+    const QModelIndex srcindex = proxyModel.mapToSource( index );
+    int sourceRow = srcindex.row();
+
+    QString disp = MultLists::getMultLists() ->getCtryListText( sourceRow, 0, model.ct );
+    MinosLoggerEvents::SendCountrySelect(disp, model.ct);
+
 }

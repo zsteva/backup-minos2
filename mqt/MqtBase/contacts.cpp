@@ -58,6 +58,7 @@ BaseContact& BaseContact::operator =( const BaseContact &ct )
    op2 = ct.op2;         // current second op - derived from contacts
 
    contactScore = ct.contactScore;
+   bearing = ct.bearing;
 
    return *this;
 }
@@ -195,7 +196,7 @@ void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) 
    {
       // if contest requires a serial
       makestrings( curcon ->serialField.getValue() );
-
+/*
       int offset = curcon->bearingOffset.getValue();
       const QChar degreeChar(0260); // octal value
       ContactBuffs::brgbuff = QString("%1%2").arg( varBrg( bearing + offset ), 3 ).arg(degreeChar);
@@ -205,7 +206,7 @@ void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) 
       if ( contactScore.getValue() < 0 )
          thisscore = 0;
       ContactBuffs::scorebuff = QString::number(thisscore );
-
+*/
       ContactBuffs::qthbuff = extraText.getValue().left( 100 );
 
       if ( contactFlags.getValue() & MANUAL_SCORE )

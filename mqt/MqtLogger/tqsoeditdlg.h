@@ -38,6 +38,7 @@ private:
     void keyPressEvent( QKeyEvent* event );
     void addTreeRoot(BaseContact *lct);
     void addTreeChild(QTreeWidgetItem *parent, QString text);
+    void doCloseEvent();
 
 
  public: 		// User declarations
@@ -54,6 +55,9 @@ private:
 private slots:
     void on_EditFrameCancelled();
     void on_AfterSelectContact(BaseContact *lct, BaseContestLog *contest);
+public Q_SLOTS:
+    virtual void accept() override;
+    virtual void reject() override;
 };
 
 #endif // TQSOEDITDLG_H

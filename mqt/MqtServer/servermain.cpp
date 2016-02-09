@@ -20,17 +20,19 @@ ServerMain::ServerMain(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    enableTrace( "./TraceLog", "MinosServer_" );
+
+    createCloseEvent();
     connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
     connect(&ScanTimer, SIGNAL(timeout()), this, SLOT(ScanTimerTimer()));
 
-    enableTrace( "./TraceLog", "MinosServer_" );
     QString sname = MinosServer::getMinosServer()->getServerName();
 
     clientListener = QSharedPointer<MinosClientListener>(new MinosClientListener);
-    clientListener ->initialise( "Client", ClientPort );
+    clientListener ->initialise( "Client", MinosClientPort );
 
     serverListener = QSharedPointer<MinosServerListener>(new MinosServerListener);
-    serverListener ->initialise( "Server", ServerPort );
+    serverListener ->initialise( "Server", MinosServerPort );
 
     ZConf = QSharedPointer<TZConf>(new TZConf);
 
@@ -97,19 +99,7 @@ void ServerMain::LogTimerTimer( )
    {
       setVisible(false);
    }
-/*
-   while ( true )
-   {
-      LogEvent * ev = deQueueLog();
-      if ( ev )
-      {
-         logMessage( "Log : " + ev->eMessageType + " " + ev->eMessage );
-         delete ev;
-      }
-      else
-         break;
-   }
-*/
+
    if ( closeApp )
       close();
 

@@ -48,10 +48,10 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     ui->QSOTable->resizeColumnsToContents();
     ui->QSOTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
 
-    ui->LogAreaSplitter->setClosingWidget(ui->ArchiveSplitter);
-    ui->CribSplitter->setClosingWidget(ui->CribSheet);
-    ui->MultSplitter->setClosingWidget(ui->MultDisp);
-    ui->TopSplitter->setClosingWidget(ui->MultSplitter);
+    //ui->LogAreaSplitter->setClosingWidget(ui->ArchiveSplitter);
+    //ui->CribSplitter->setClosingWidget(ui->CribSheet);
+    //ui->MultSplitter->setClosingWidget(ui->MultDisp);
+    //ui->TopSplitter->setClosingWidget(ui->MultSplitter);
 
     ui->ThisMatchTree->header()->setSectionResizeMode(QHeaderView::Interactive);
     ui->ThisMatchTree->setItemDelegate( new HtmlDelegate );
@@ -131,6 +131,7 @@ TSingleLogFrame::~TSingleLogFrame()
 {
     delete ui;
     ui = nullptr;
+    contest = nullptr;
 }
 void TSingleLogFrame::keyPressEvent( QKeyEvent* event )
 {
@@ -268,7 +269,6 @@ void TSingleLogFrame::NextContactDetailsTimerTimer( )
         {
             cb = bi.uk;
         }
-
         if ( contest->isReadOnly() )
         {
             ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
@@ -279,13 +279,18 @@ void TSingleLogFrame::NextContactDetailsTimerTimer( )
         }
         else
         {
-            QString buff = QString::number( contest->maxSerial + 1 );
+            QString snBuff = QString::number( contest->maxSerial + 1 );
+            QString locBuff;
+            if (contest->location.getValue().size())
+            {
+                locBuff = "<br>" + contest->location.getValue();
+            }
             ui->NextContactDetailsLabel->setText( "<b><center><nobr><p><big>"
                                                   + cb + "</p><h1>"
                                                   + contest->mycall.fullCall.getValue() + "<br>"
-                                                  + buff + "<br>"
-                                                  + contest->myloc.loc.getValue() + "<br>"
-                                                  + contest->location.getValue());
+                                                  + snBuff + "<br>"
+                                                  + contest->myloc.loc.getValue()
+                                                  + locBuff);
         }
     }
 }
@@ -592,10 +597,14 @@ void TSingleLogFrame::initFilters()
 }
 void TSingleLogFrame::onFiltersChanged()
 {
-    ui->dxccFrame->reInitialiseCountries();
-    ui->districtFrame->reInitialiseDistricts();
-    ui->locFrame->reInitialiseLocators();
-    ui->StatsFrame->reInitialiseStats();
+    if (contest)
+    {
+        initFilters();
+        ui->dxccFrame->reInitialiseCountries();
+        ui->districtFrame->reInitialiseDistricts();
+        ui->locFrame->reInitialiseLocators();
+        ui->StatsFrame->reInitialiseStats();
+    }
 }
 
 void TSingleLogFrame::saveFilters()

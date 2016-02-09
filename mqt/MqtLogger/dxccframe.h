@@ -61,6 +61,7 @@ private:
     Ui::DXCCFrame *ui;
 private slots:
     void on_sectionResized(int, int , int);
+    void on_DXCCTable_clicked(const QModelIndex &index);
 };
 
 #endif // DXCCFRAME_H

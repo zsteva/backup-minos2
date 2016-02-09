@@ -107,6 +107,10 @@ private:
 
     QAction *NextContactDetailsOnLeftAction;
 
+    QAction *KeyerToneAction;
+    QAction *KeyerTwoToneAction;
+    QAction *KeyerStopAction;
+
     QString getDefaultDirectory( bool IsList );
     void preloadFiles( const QString &conarg );
     void addListSlot(const QString &fname, int slotno , bool preload);
@@ -146,6 +150,10 @@ private slots:
     void NextUnfilledActionExecute();
 
     void NextContactDetailsOnLeftActionExecute();
+
+    void KeyerToneActionExecute();
+    void KeyerTwoToneActionExecute();
+    void KeyerStopActionExecute();
 
     void on_ContestPageControl_currentChanged(int index);
     void on_ContestPageControl_tabBarDoubleClicked(int index);

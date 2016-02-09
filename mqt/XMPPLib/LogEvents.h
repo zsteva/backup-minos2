@@ -7,29 +7,12 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 
 #ifndef LogEventsH
 #define LogEventsH 
 //---------------------------------------------------------------------------
-extern void createCloseEvent();
-extern void signalCloseEvent();
 extern bool checkCloseEvent();
-extern void resetCloseEvent();
-//---------------------------------------------------------------------------
-class LogEvent
-{
-   public:
-      QString eMessageType;
-      QString eMessage;
-
-      LogEvent()
-      {}
-}
-;
-//---------------------------------------------------------------------------
-void queueLog( LogEvent *a );
-LogEvent * deQueueLog();
+extern void createCloseEvent();
 //---------------------------------------------------------------------------
 extern void logMessage( const QString &level, const QString &mess );
 //---------------------------------------------------------------------------

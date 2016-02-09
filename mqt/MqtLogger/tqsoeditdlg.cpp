@@ -23,6 +23,11 @@ TQSOEditDlg::TQSOEditDlg(QWidget *parent, bool catchup, bool unfilled )
 {
     ui->setupUi(this);
 
+    QSettings settings;
+    QByteArray geometry = settings.value("QSOEditDialog/geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
+
     ui->GJVQSOEditFrame->setAsEdit();
 
     connect(ui->GJVQSOEditFrame, SIGNAL(QSOFrameCancelled()), this, SLOT(on_EditFrameCancelled()));
@@ -154,4 +159,19 @@ void TQSOEditDlg::selectCatchup( BaseContestLog * c )
    DisplayContestContact *lct = ct->addContact( ctmax, 0, false, catchup );
    selectContact(c, lct);
    ui->GJVQSOEditFrame->setFirstUnfilledButtonEnabled(false);
+}
+void TQSOEditDlg::doCloseEvent()
+{
+    QSettings settings;
+    settings.setValue("QSOEditDialog/geometry", saveGeometry());
+}
+void TQSOEditDlg::reject()
+{
+    doCloseEvent();
+    QDialog::reject();
+}
+void TQSOEditDlg::accept()
+{
+    doCloseEvent();
+    QDialog::accept();
 }

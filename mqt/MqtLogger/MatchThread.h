@@ -142,15 +142,6 @@ class TMatchThread : public QThread
 
 private:
 
-//      MinosEventListener  EL_CountrySelect;
-      void CountrySelect_Event ( /*MinosEventBase & Event*/ );
-
-//      MinosEventListener  EL_DistrictSelect;
-      void DistrictSelect_Event ( /*MinosEventBase & Event*/ );
-
-//      MinosEventListener  EL_LocatorSelect;
-      void LocatorSelect_Event ( /*MinosEventBase & Event*/ );
-
       static void startMatch( CountryEntry *ce = 0 );
 
       static TMatchThread *matchThread;
@@ -203,6 +194,9 @@ protected:
       virtual void run() override;
 private slots:
       void on_ScreenContactChanged(ScreenContact *mct, BaseContestLog *context);
+      void on_CountrySelect(QString cty, BaseContestLog *c);
+      void on_DistrictSelect(QString dist, BaseContestLog *c);
+      void on_LocatorSelect(QString dist, BaseContestLog *c);
 };
 //---------------------------------------------------------------------------
 #endif

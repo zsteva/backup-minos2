@@ -30,7 +30,7 @@ TSendDM *SendDM = 0;
 void TSendDM::makeRPCObjects()
 {
     QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
-    QString circleOfHell = config.value( "Circle Of Hell/Name", "No_name_in_config" ).toString().trimmed();
+    QString circleOfHell = config.value( "CircleOfHell/Name", "No_name_in_config" ).toString().trimmed();
     serverName = circleOfHell;
 
     QString rigServer = config.value( "RigControl/Server", "localhost" ).toString().trimmed();
@@ -120,6 +120,57 @@ void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const 
    rpc.getCallArgs() ->addParam( st );
    rpc.queueCall( "BandMap@" + bandMapServerName );
 }
+
+/*static*/ void TSendDM::sendKeyerTone()
+{
+    if (SendDM)
+        SendDM->doSendKeyerTone();
+}
+void TSendDM::doSendKeyerTone()
+{
+    RPCKeyerControlClient rpc( 0 );
+    QSharedPointer<RPCParam>st(new RPCParamStruct);
+    QSharedPointer<RPCParam>sName(new RPCStringParam( "Tone" ));
+    QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
+    st->addMember( sName, "Name" );
+    st->addMember( iValue, "Value" );
+    rpc.getCallArgs() ->addParam( st );
+    rpc.queueCall( "Keyer@" + keyerServerName );}
+
+/*static*/ void TSendDM::sendKeyerTwoTone()
+{
+    if (SendDM)
+        SendDM->doSendKeyerTwoTone();
+}
+
+void TSendDM::doSendKeyerTwoTone()
+{
+    RPCKeyerControlClient rpc( 0 );
+    QSharedPointer<RPCParam>st(new RPCParamStruct);
+    QSharedPointer<RPCParam>sName(new RPCStringParam( "TwoTone" ));
+    QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
+    st->addMember( sName, "Name" );
+    st->addMember( iValue, "Value" );
+    rpc.getCallArgs() ->addParam( st );
+    rpc.queueCall( "Keyer@" + keyerServerName );}
+
+/*static*/ void TSendDM::sendKeyerStop()
+{
+    if (SendDM)
+        SendDM->doSendKeyerStop();
+}
+
+void TSendDM::doSendKeyerStop()
+{
+    RPCKeyerControlClient rpc( 0 );
+    QSharedPointer<RPCParam>st(new RPCParamStruct);
+    QSharedPointer<RPCParam>sName(new RPCStringParam( "Stop" ));
+    QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
+    st->addMember( sName, "Name" );
+    st->addMember( iValue, "Value" );
+    rpc.getCallArgs() ->addParam( st );
+    rpc.queueCall( "Keyer@" + keyerServerName );}
+
 //---------------------------------------------------------------------------
 TSendDM::TSendDM( QWidget* Owner )
       : QObject( Owner ), connected( false ), subscribed( false )

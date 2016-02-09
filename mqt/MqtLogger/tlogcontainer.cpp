@@ -91,7 +91,9 @@ bool TLogContainer::show(int argc, char *argv[])
        }
        preloadFiles( conarg );
        enableActions();
+
     }
+    TContestApp::getContestApp()->setPreloadComplete();
     return true;
 }
 void TLogContainer::on_TimeDisplayTimer( )
@@ -238,6 +240,10 @@ void TLogContainer::setupMenus()
     TabPopup.addSeparator();
     TabPopup.addAction(AnalyseMinosLogAction);
     newAction( "Cancel", &TabPopup, SLOT( CancelClick() ) );
+
+    KeyerToneAction = newAction("Tune", ui->menuKeyer, SLOT(KeyerToneActionExecute()));
+    KeyerTwoToneAction = newAction("Two Tone", ui->menuKeyer, SLOT(KeyerTwoToneActionExecute()));
+    KeyerStopAction = newAction("Stop", ui->menuKeyer, SLOT(KeyerStopActionExecute()));
 
     HelpAboutAction = newAction("About...", ui->menuHelp, SLOT(HelpAboutActionExecute()));
 }
@@ -450,7 +456,7 @@ void TLogContainer::FileNewActionExecute()
           break;
     }
 
-    QString initName = InitialDir + nfileName + letter + ".Minos";
+    QString initName = InitialDir + "/" + nfileName + letter + ".Minos";
     ContestDetails pced( this );
     BaseContestLog * c = addSlot( &pced, initName, true, -1 );
 
@@ -523,6 +529,11 @@ void TLogContainer::FileOpenActionExecute()
 {
     // first choose file
 //"Images (*.png *.xpm *.jpg);;Text files (*.txt);;XML files (*.xml)"
+    QString InitialDir = getDefaultDirectory( false );
+
+    QFileInfo qf(InitialDir);
+
+    InitialDir = qf.canonicalFilePath();
 
     QString Filter = "Minos contest files (*.Minos);;"
                      "Reg1Test Files (*.edi);;"
@@ -533,7 +544,7 @@ void TLogContainer::FileOpenActionExecute()
 
     QStringList fnames = QFileDialog::getOpenFileNames( this,
                        "Open contests",
-                       "",
+                       InitialDir,  // dir
                        Filter
                        );
     for (int i = 0; i < fnames.size(); i++)
@@ -707,6 +718,20 @@ void TLogContainer::NextContactDetailsOnLeftActionExecute()
     TContestApp::getContestApp() ->displayBundle.flushProfile();
 
     MinosLoggerEvents::SendNextContactDetailsOnLeft();
+}
+void TLogContainer::KeyerToneActionExecute()
+{
+    TSendDM::sendKeyerTone( );
+}
+
+void TLogContainer::KeyerTwoToneActionExecute()
+{
+    TSendDM::sendKeyerTwoTone( );
+}
+
+void TLogContainer::KeyerStopActionExecute()
+{
+    TSendDM::sendKeyerStop( );
 }
 
 void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
@@ -947,12 +972,17 @@ void TLogContainer::ListOpenActionExecute()
 {
     // first choose file
 
+    QString InitialDir = getDefaultDirectory( true );
+
+    QFileInfo qf(InitialDir);
+
+    InitialDir = qf.canonicalFilePath();
     QString Filter = "Contact list files (*.csl);;"
                      "All Files (*.*)" ;
 
     QStringList fnames = QFileDialog::getOpenFileNames( this,
                        "Open Archive List",
-                       "",
+                       InitialDir,
                        Filter
                        );
 

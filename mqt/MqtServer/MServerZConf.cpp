@@ -235,10 +235,10 @@ void TZConf::readServerList()
 
       if ( port.Length() == 0 )
       {
-         port == String(ServerPort);
+         port == String(MinosServerPort);
       }
 
-      publishServer( uuid.c_str(), station.c_str(), host.c_str(), port.ToIntDef( ServerPort ), true );
+      publishServer( uuid.c_str(), station.c_str(), host.c_str(), port.ToIntDef( MinosServerPort ), true );
 
    }
    delete params;
@@ -327,7 +327,7 @@ QString TZConf::getZConfString(bool beaconreq)
                + "seq='" + QString::number(sequence++)
                + "' UUID='" + Uuid
                + "' name='" + getName()
-               + "' port='" + QString::number(ServerPort) + "'"
+               + "' port='" + QString::number(MinosServerPort) + "'"
                + (beaconreq?"":" request='true'")
                + " />";
 }
@@ -354,7 +354,7 @@ bool TZConf::processZConfString(const QString &message, const QString &recvHost)
          bool ok;
          iPort = port.toInt(&ok);
          if (!ok)
-             iPort = ServerPort;
+             iPort = MinosServerPort;
          publishServer( UUID, station, recvHost, iPort, false );
          if ( request.size() && UUID != getServerId())
          {
