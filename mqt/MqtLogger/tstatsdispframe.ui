@@ -50,6 +50,9 @@
    </item>
    <item>
     <widget class="QLabel" name="SLabel1">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
      <property name="text">
       <string>TextLabel</string>
      </property>
@@ -76,6 +79,21 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
+     <property name="bottomMargin">
+      <number>2</number>
+     </property>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_11">
        <item>

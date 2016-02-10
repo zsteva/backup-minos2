@@ -39,6 +39,9 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 {
     ui->setupUi(this);
 
+    splitterHandleWidth = ui->ArchiveSplitter->handleWidth();
+    splitterHandleWidth = 6;
+
     initFilters();
 
     qsoModel.initialise(contest);
@@ -685,18 +688,23 @@ void TSingleLogFrame::getSplitters()
 
     state = settings.value("LogAreaSplitter/state").toByteArray();
     ui->LogAreaSplitter->restoreState(state);
+    ui->LogAreaSplitter->setHandleWidth(splitterHandleWidth);
 
     state = settings.value("ArchiveSplitter/state").toByteArray();
     ui->ArchiveSplitter->restoreState(state);
+    ui->ArchiveSplitter->setHandleWidth(splitterHandleWidth);
 
     state = settings.value("TopSplitter/state").toByteArray();
     ui->TopSplitter->restoreState(state);
+    ui->TopSplitter->setHandleWidth(splitterHandleWidth);
 
     state = settings.value("CribSplitter/state").toByteArray();
     ui->CribSplitter->restoreState(state);
+    ui->CribSplitter->setHandleWidth(splitterHandleWidth);
 
     state = settings.value("MultSplitter/state").toByteArray();
     ui->MultSplitter->restoreState(state);
+    ui->MultSplitter->setHandleWidth(splitterHandleWidth);
 }
 void TSingleLogFrame::onSplittersChanged()
 {

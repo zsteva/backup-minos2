@@ -175,6 +175,8 @@ public:
 private:
     Ui::TSingleLogFrame *ui;
 
+    int splitterHandleWidth;
+
     BaseContestLog * contest;
     QSOGridModel qsoModel;
 
