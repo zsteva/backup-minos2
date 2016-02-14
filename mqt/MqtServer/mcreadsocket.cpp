@@ -227,7 +227,7 @@ bool MCReadSocket::setupRO()
     addr.sin_addr.s_addr = htonl( INADDR_ANY );
     addr.sin_port = ( unsigned short ) htons( UPNP_PORT );
     int ra = 1;
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) | defined(Q_OS_ANDROID)
 #define SO_REUSEPORT 0
 #endif
     if ( setsockopt( state->NOTIFY_RECEIVE_sock, SOL_SOCKET, SO_REUSEADDR|SO_REUSEPORT, ( char* ) &ra, sizeof( ra ) ) < 0 )
