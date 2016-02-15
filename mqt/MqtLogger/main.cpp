@@ -1,6 +1,8 @@
 #include "logger_pch.h"
 #include "tlogcontainer.h"
 
+#include "fileutils.h"
+
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -78,6 +80,16 @@ int main(int argc, char *argv[])
         a.setOrganizationDomain( "g0gjv.org.uk" );
         a.QCoreApplication::setApplicationName( "MinosQtLogger" );
 
+#ifdef Q_OS_ANDROID
+        QString here = GetCurrentDir();
+        if (!DirectoryExists("Configuration"))
+        {
+            CreateDir("Configuration");
+            QFile::copy("assets:/Configuration/MinosLogger.ini","./Configuration/MinosLogger.ini");
+            //If it's a db file, you need write access:
+            QFile::setPermissions("./Configuration/MinosLogger.ini",QFile::ReadOwner|QFile::WriteOwner);
+        }
+#endif
         QSettings settings; // we may want to force to an INI file
         QVariant qfont = settings.value( "font" );
         if ( qfont != QVariant() )
