@@ -32,5 +32,5 @@ cd ..
 \bin\wget\wget http://www.rsgbcc.org/vhf/vhfcontests16.xml
 
 
-cd ..\..\AdjQtRoot
+cd ..\..\sfMinos
 
