@@ -200,6 +200,7 @@ DISTFILES += \
     AndroidTemplate/res/values/libs.xml \
     AndroidTemplate/build.gradle \
     AndroidTemplate/gradle/wrapper/gradle-wrapper.properties \
-    AndroidTemplate/gradlew.bat
+    AndroidTemplate/gradlew.bat \
+    android/MinosLogger.ini
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/AndroidTemplate
