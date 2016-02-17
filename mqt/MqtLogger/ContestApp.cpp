@@ -98,7 +98,7 @@ bool TContestApp::initialise()
    // Eventually, we should have an installation system so that e.g. under Vista
    // we can put things like config under the user directory
 
-   if (!DirectoryExists("./Configuration"))
+    if (!DirectoryExists("./Configuration"))
    {
 #ifdef Q_OS_ANDROID
              bool createOK = CreateDir("./Configuration");

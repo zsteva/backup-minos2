@@ -3,6 +3,7 @@
 
 #include "fileutils.h"
 
+
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -81,13 +82,17 @@ int main(int argc, char *argv[])
         a.QCoreApplication::setApplicationName( "MinosQtLogger" );
 
 #ifdef Q_OS_ANDROID
+        QString sdCard = getenv("EXTERNAL_STORAGE")+ QString("/uk.org.g0gjv.minos");
+
+        SetCurrentDir(sdCard);
         QString here = GetCurrentDir();
-        if (!DirectoryExists("Configuration"))
+
+        if (!DirectoryExists(sdCard + "/Configuration"))
         {
-            CreateDir("Configuration");
-            QFile::copy("assets:/Configuration/MinosLogger.ini","./Configuration/MinosLogger.ini");
+            CreateDir(sdCard + "/Configuration");
+            QFile::copy("assets:/Configuration/MinosLogger.ini",sdCard + "/Configuration/MinosLogger.ini");
             //If it's a db file, you need write access:
-            QFile::setPermissions("./Configuration/MinosLogger.ini",QFile::ReadOwner|QFile::WriteOwner);
+            QFile::setPermissions(sdCard + "/Configuration/MinosLogger.ini",QFile::ReadOwner|QFile::WriteOwner);
         }
 #endif
         QSettings settings; // we may want to force to an INI file

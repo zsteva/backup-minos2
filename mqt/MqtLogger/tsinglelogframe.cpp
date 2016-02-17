@@ -40,8 +40,11 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     ui->setupUi(this);
 
     splitterHandleWidth = ui->ArchiveSplitter->handleWidth();
+#ifdef Q_OS_ANDROID
+    splitterHandleWidth = 20;
+#else
     splitterHandleWidth = 6;
-
+#endif
     initFilters();
 
     qsoModel.initialise(contest);
