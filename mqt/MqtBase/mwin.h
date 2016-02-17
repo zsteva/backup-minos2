@@ -225,7 +225,7 @@ class callsign
       QString body;  // <ctt> (gjv) [CTT]main body
       QString suffix; // <mm> (p) [P]trailer
 
-      char valRes;   // current validation result
+      int valRes;   // current validation result
 
       callsign( );
       callsign( const QString &orig );

@@ -305,7 +305,7 @@ void ContestDetails::refreshOps()
    {
       ui->MainOpComboBox->clear();
       ui->SecondOpComboBox->clear();
-      bool addCall = true;
+      //bool addCall = true;
       QStringList ops;
       for ( OperatorIterator i = contest->oplist.begin(); i != contest->oplist.end(); i++ )
       {

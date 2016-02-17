@@ -96,7 +96,7 @@ class DistrictSynonym
 
 class CountryEntry : public MultEntry
 {
-      char distLimit;
+      int distLimit;
    public:
       QString basePrefix;
       QString continent;
