@@ -18,6 +18,9 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event);
+    void mouseMoveEvent(QMouseEvent *) override;
+    void mousePressEvent(QMouseEvent *) override;
+    void mouseReleaseEvent(QMouseEvent *) override;
 
 private:
     QLinearGradient gradient;
@@ -33,6 +36,7 @@ public:
 
 protected:
    QSplitterHandle *createHandle();
+
 };
 //============================================================================
 
