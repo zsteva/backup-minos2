@@ -22,6 +22,8 @@ TLogContainer::TLogContainer(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->kbframe->setVisible(false);
+
     LogContainer = this;
 
     // we may need to delay this to get the container fully constructed
