@@ -52,7 +52,8 @@ SOURCES += \
     minossplitter.cpp \
     htmldelegate.cpp \
     CalendarList.cpp \
-    qlogtabwidget.cpp
+    qlogtabwidget.cpp \
+    minoskeyboard.cpp
 
 HEADERS += \
     BandList.h \
@@ -82,7 +83,8 @@ HEADERS += \
     htmldelegate.h \
     CalendarList.h \
     cutils.h \
-    qlogtabwidget.h
+    qlogtabwidget.h \
+    minoskeyboard.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
@@ -90,3 +92,6 @@ unix {
 
 DISTFILES += \
     MqtBase.pro.autosave
+
+FORMS += \
+    minoskeyboard.ui

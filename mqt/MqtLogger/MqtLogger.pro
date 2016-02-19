@@ -20,7 +20,7 @@ android {
     CONFIG_INSTALL_PATH=/assets/Configuration
 
     config.path = $$CONFIG_INSTALL_PATH
-    config.files += android/MinosLogger.ini
+    config.files += android/Configuration/*
     config.depends += FORCE
 
     INSTALLS += config
