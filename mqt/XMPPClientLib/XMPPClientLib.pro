@@ -31,7 +31,8 @@ SOURCES += \
     ControlRPCObj.cpp \
     KeyerRPCObj.cpp \
     LoggerRPCObj.cpp \
-    MinosConnection.cpp
+    MinosConnection.cpp \
+    RotatorRPCObj.cpp
 
 HEADERS += \
     BandMapRPCObj.h \
@@ -40,7 +41,8 @@ HEADERS += \
     KeyerRPCObj.h \
     LoggerRPCObj.h \
     MinosConnection.h \
-    XMPPClient_pch.h
+    XMPPClient_pch.h \
+    RotatorRPCObj.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
