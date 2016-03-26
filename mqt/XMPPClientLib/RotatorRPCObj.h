@@ -13,7 +13,7 @@ enum RotateDirection :int {eRotateLeft, eRotateDirect, eRotateRight, eRotateStop
 class RPCRotatorClient: public MinosRPCClient
 {
    public:
-      RPCRotatorClient( TRPCFunctor *cb ) : MinosRPCClient( "Minos:BandMap", cb )
+      RPCRotatorClient( TRPCFunctor *cb ) : MinosRPCClient( "Minos:Rotator", cb )
       {}
       ~RPCRotatorClient()
       {}
@@ -25,7 +25,7 @@ class RPCRotatorClient: public MinosRPCClient
 class RPCRotatorServer: public MinosRPCServer
 {
    public:
-      RPCRotatorServer( TRPCFunctor *cb ) : MinosRPCServer( "Minos:BandMap", cb )
+      RPCRotatorServer( TRPCFunctor *cb ) : MinosRPCServer( "Minos:Rotator", cb )
       {}
       ~RPCRotatorServer()
       {}

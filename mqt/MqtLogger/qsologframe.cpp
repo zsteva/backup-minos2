@@ -2060,16 +2060,17 @@ int QSOLogFrame::getAngle()
     {
         if (brgSt[i].isDigit())
         {
-            for(int j = i; j < brgSt.length(); j++)
+            int j = 0;
+            for (j = i; j < brgSt.length(); j++)
             {
-                if (brgSt[j].isDigit())
+                if (!brgSt[j].isDigit())
                 {
-                    continue;
+                    break;
                 }
-                brgSt = brgSt.mid(i, brgSt.length() - j);
-                brg = brgSt.toInt();
-                break;
             }
+            brgSt = brgSt.mid(i, j - i);
+            brg = brgSt.toInt();
+            return brg;
         }
     }
     return brg;
