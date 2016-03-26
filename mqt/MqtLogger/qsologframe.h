@@ -47,6 +47,8 @@ private:
      BaseContact *getPriorContact();
      BaseContact *getNextContact();
 
+     int getAngle();
+
   protected: 	// User declarations
      std::vector <ValidatedControl *> vcs;
 
@@ -167,6 +169,10 @@ private slots:
     void on_ShowOperators();
 
     void on_ModeComboBoxGJV_currentIndexChanged(int index);
+    void on_RotateLeft_clicked();
+    void on_Rotate_clicked();
+    void on_RotateRight_clicked();
+    void on_StopRotate_clicked();
 };
 
 #endif // QSOLOGFRAME_H

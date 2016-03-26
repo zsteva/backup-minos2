@@ -86,6 +86,9 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(Validated()), this, SLOT(on_Validated()));
     connect(&MinosLoggerEvents::mle, SIGNAL(ValidateError(int)), this, SLOT(on_ValidateError(int)));
     connect(&MinosLoggerEvents::mle, SIGNAL(ShowOperators()), this, SLOT(on_ShowOperators()));
+
+    QFontMetrics metrics(QApplication::font());
+    ui->BrgSt->setFixedWidth(metrics.width("(8888)MT"));
 }
 bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
 {
@@ -2046,4 +2049,48 @@ void QSOLogFrame::on_ValidateError (int mess_no )
 
       // add the message into the error list
       errs.insert( &errDefs[ mess_no ] );
+}
+int QSOLogFrame::getAngle()
+{
+    QString brgSt = ui->BrgSt->text();
+
+    int brg = 0;
+
+    for (int i = 0;i < brgSt.length(); i++)
+    {
+        if (brgSt[i].isDigit())
+        {
+            for(int j = i; j < brgSt.length(); j++)
+            {
+                if (brgSt[j].isDigit())
+                {
+                    continue;
+                }
+                brgSt = brgSt.mid(i, brgSt.length() - j);
+                brg = brgSt.toInt();
+                break;
+            }
+        }
+    }
+    return brg;
+}
+
+void QSOLogFrame::on_RotateLeft_clicked()
+{
+    TSendDM::sendRotator(eRotateLeft, getAngle());
+}
+
+void QSOLogFrame::on_Rotate_clicked()
+{
+    TSendDM::sendRotator(eRotateDirect, getAngle());
+}
+
+void QSOLogFrame::on_RotateRight_clicked()
+{
+    TSendDM::sendRotator(eRotateRight, getAngle());
+}
+
+void QSOLogFrame::on_StopRotate_clicked()
+{
+    TSendDM::sendRotator(eRotateStop, 0);
 }

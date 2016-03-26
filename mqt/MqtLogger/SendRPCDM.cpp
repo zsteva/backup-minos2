@@ -42,11 +42,15 @@ void TSendDM::makeRPCObjects()
     QString bandMapServer = config.value( "BandMap/Server", "localhost" ).toString().trimmed();
     bandMapServerName = bandMapServer;
 
+    QString rotatorServer = config.value( "Rotator/Server", "localhost" ).toString().trimmed();
+    rotatorServerName = rotatorServer;
+
    RPCPubSub::initialisePubSub( new TRPCCallback <TSendDM> ( SendDM, &TSendDM::notifyCallback ) );
 
    MinosRPCObj::addObj( new RPCBandMapClient( new TRPCCallback <TSendDM> ( SendDM, &TSendDM::bandMapClientCallback ) ) );
    MinosRPCObj::addObj( new RPCBandMapServer( new TRPCCallback <TSendDM> ( SendDM, &TSendDM::bandMapServerCallback ) ) );
    MinosRPCObj::addObj( new RPCKeyerControlClient( new TRPCCallback <TSendDM> ( SendDM, &TSendDM::keyerCallback ) ) );
+   MinosRPCObj::addObj( new RPCRotatorClient( new TRPCCallback <TSendDM> ( SendDM, &TSendDM::rotatorCallback ) ) );
 
    TRPCFunctor *lccb = new TRPCCallback <TSendDM> ( SendDM, &TSendDM::loggerServerCallback );
    MinosRPCObj::addObj( new RPCLogSubscribeServer( lccb ) );
@@ -169,7 +173,26 @@ void TSendDM::doSendKeyerStop()
     st->addMember( sName, "Name" );
     st->addMember( iValue, "Value" );
     rpc.getCallArgs() ->addParam( st );
-    rpc.queueCall( "Keyer@" + keyerServerName );}
+    rpc.queueCall( "Keyer@" + keyerServerName );
+}
+
+/*static*/ void TSendDM::sendRotator(RotateDirection direction, int angle )
+{
+    if (SendDM)
+        SendDM->doSendRotator(direction, angle);
+}
+
+void TSendDM::doSendRotator( RotateDirection direction,  int angle )
+{
+   RPCRotatorClient rpc( 0 );
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
+
+   st->addMember( (int)direction, "RotatorDirection" );
+   st->addMember( angle, "RotatorAngle" );
+   rpc.getCallArgs() ->addParam( st );
+
+   rpc.queueCall( "Rotator@" + rotatorServerName );
+}
 
 //---------------------------------------------------------------------------
 TSendDM::TSendDM( QWidget* Owner )
@@ -224,6 +247,11 @@ void TSendDM::bandMapServerCallback( bool err, MinosRPCObj * /*mro*/, const QStr
 void TSendDM::keyerCallback( bool err, MinosRPCObj * /*mro*/, const QString &from )
 {
    logMessage( "Keyer callback from " + from + ( err ? ":Error" : ":Normal" ) );
+}
+//---------------------------------------------------------------------------
+void TSendDM::rotatorCallback( bool err, MinosRPCObj * /*mro*/, const QString &from )
+{
+   logMessage( "Rotator callback from " + from + ( err ? ":Error" : ":Normal" ) );
 }
 //---------------------------------------------------------------------------
 void TSendDM::subscribeAll()

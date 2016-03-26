@@ -21,5 +21,6 @@
 #include "ControlRPCObj.h"
 #include "KeyerRPCObj.h"
 #include "LoggerRPCObj.h"
+#include "RotatorRPCObj.h"
 
 #endif

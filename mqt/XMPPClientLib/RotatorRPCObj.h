@@ -9,6 +9,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
+enum RotateDirection :int {eRotateLeft, eRotateDirect, eRotateRight, eRotateStop};
 class RPCRotatorClient: public MinosRPCClient
 {
    public:
