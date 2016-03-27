@@ -2095,3 +2095,7 @@ void QSOLogFrame::on_StopRotate_clicked()
 {
     TSendDM::sendRotator(eRotateStop, 0);
 }
+void QSOLogFrame::setRotatorState(const QString &s)
+{
+    ui->rotatorState->setText(s);
+}

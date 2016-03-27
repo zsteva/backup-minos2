@@ -3,13 +3,11 @@
 
 #include "base_pch.h"
 
-#include <QMainWindow>
-#include <QTimer>
-
 namespace Ui {
 class RotatorMainWindow;
 }
 
+class RotatorLogic;
 class RotatorMainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -21,11 +19,9 @@ public:
 private:
     Ui::RotatorMainWindow *ui;
 
-    bool connected;
-    bool subscribed;
+    RotatorLogic *rl;
 
     QTimer LogTimer;
-    QTimer ConnectTimer;
 
 
     void closeEvent(QCloseEvent *event);
@@ -34,14 +30,11 @@ private:
 
     void logMessage( QString s );
 
-    void rotatorClientCallback( bool err, MinosRPCObj *mro, const QString &from );
-    void rotatorServerCallback( bool err, MinosRPCObj *mro, const QString &from );
-
-    static void makeRPCObjects();
-
 private slots:
     void LogTimerTimer( );
-    void ConnectTimerTimer( );
+    void onSetRotation(int direction, int angle);
+    void on_pushButton_2_clicked();
+    void on_pushButton_clicked();
 };
 
 #endif // ROTATORMAINWINDOW_H

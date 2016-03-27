@@ -265,6 +265,8 @@ void TSendDM::subscribeAll()
       RPCPubSub::subscribeRemote( keyerServerName, "Keyer" );
 
       RPCPubSub::subscribeRemote( bandMapServerName, "BandMap" );
+
+      RPCPubSub::subscribeRemote( rotatorServerName, "Rotator" );
    }
 }
 //---------------------------------------------------------------------------
@@ -294,6 +296,10 @@ void TSendDM::notifyCallback( bool err, MinosRPCObj *mro, const QString &from )
       if ( an.getCategory() == "BandMap" && an.getKey() == "Loaded" )
       {
          LogContainer->setBandMapLoaded();
+      }
+      if ( an.getCategory() == "Rotator" && an.getKey() == "State")
+      {
+         LogContainer->setRotatorState(an.getValue());
       }
    }
 

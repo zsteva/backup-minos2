@@ -20,6 +20,7 @@ public:
     ~QSOLogFrame();
 
     void setAsEdit();
+    void setRotatorState(const QString &s);
 
 private:
     ScreenContact *partialContact; // contact being edited on screen

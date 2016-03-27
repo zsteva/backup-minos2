@@ -25,9 +25,11 @@ else:android:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 DEFINES += TIXML_USE_STL
 
 SOURCES += main.cpp\
-        rotatormainwindow.cpp
+        rotatormainwindow.cpp \
+    rotatorlogic.cpp
 
-HEADERS  += rotatormainwindow.h
+HEADERS  += rotatormainwindow.h \
+    rotatorlogic.h
 
 FORMS    += rotatormainwindow.ui
 

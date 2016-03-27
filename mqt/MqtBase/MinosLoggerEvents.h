@@ -38,6 +38,7 @@ signals:
    void FormKey(unsigned int *, BaseContestLog *);
    void SetMode(QString, BaseContestLog *);
    void SetFreq(QString, BaseContestLog *);
+   void RotatorState(QString, BaseContestLog *);
    void EditMatchContact(BaseContestLog *);
    void ScreenContactChanged(ScreenContact *, BaseContestLog *);
    void ReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);
@@ -78,6 +79,7 @@ public:
    static void SendFormKey(unsigned int *, BaseContestLog *);
    static void SendSetMode(QString, BaseContestLog *);
    static void SendSetFreq(QString, BaseContestLog *);
+   static void SendRotatorState(QString, BaseContestLog *);
    static void SendEditMatchContact(BaseContestLog *);
    static void SendScreenContactChanged(ScreenContact *, BaseContestLog *);
    static void SendReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);

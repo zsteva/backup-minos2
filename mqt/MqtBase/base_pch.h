@@ -13,7 +13,10 @@
 #include "fileutils.h"
 
 #include <QApplication>
+#include <QMainWindow>
+
 #include <QDialog>
+#include <QTimer>
 
 #include <QLineEdit>
 #include <QMessageBox>

@@ -1,12 +1,14 @@
 #include "base_pch.h"
 
+#include "rotatorlogic.h"
+
 #include "rotatormainwindow.h"
 #include "ui_rotatormainwindow.h"
 
 RotatorMainWindow *MinosRotatorForm;
 
 RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
-    QMainWindow(parent),
+    QMainWindow(parent), rl(0),
     ui(new Ui::RotatorMainWindow)
 {
     ui->setupUi(this);
@@ -18,27 +20,21 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     MinosRotatorForm = this;
 
     connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
-    connect(&ConnectTimer, SIGNAL(timeout()), this, SLOT(ConnectTimerTimer()));
     LogTimer.start(100);
-    ConnectTimer.start(1000);
+
+    rl = new RotatorLogic(this);
+
+    connect(rl, SIGNAL(setRotation(int,int)), this, SLOT(onSetRotation(int,int)));
 }
 
 RotatorMainWindow::~RotatorMainWindow()
 {
+    delete rl;
     delete ui;
 }
 void RotatorMainWindow::logMessage( QString s )
 {
    trace( s );
-}
-/*static*/
-void RotatorMainWindow::makeRPCObjects()
-{
-   //RPCPubSub::initialisePubSub( new TRPCCallback <RotatorMainWindow> ( MinosRotatorForm, &RotatorMainWindow::notifyCallback ) );
-
-   MinosRPCObj::addObj( new RPCRotatorClient( new TRPCCallback <RotatorMainWindow> ( MinosRotatorForm, &RotatorMainWindow::rotatorClientCallback ) ) );
-   MinosRPCObj::addObj( new RPCRotatorServer( new TRPCCallback <RotatorMainWindow> ( MinosRotatorForm, &RotatorMainWindow::rotatorServerCallback ) ) );
-
 }
 
 void RotatorMainWindow::closeEvent(QCloseEvent *event)
@@ -76,50 +72,37 @@ void RotatorMainWindow::LogTimerTimer(  )
       }
    }
 }
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 
-void RotatorMainWindow::ConnectTimerTimer( )
+void RotatorMainWindow::onSetRotation(int direction, int angle)
 {
-   if ( !connected && checkServerReady() )
-   {
-      makeRPCObjects();
-      XMPPInitialise( "Rotator" );
-      connected = true;
-   }
+    ui->direction->setText( QString::number(direction));
+    ui->angle->setText( QString::number(angle));
 }
-//==================================================================================================
-void RotatorMainWindow::rotatorClientCallback( bool /*err*/, MinosRPCObj * /*mro*/, const QString &/*from*/ )
+
+
+void RotatorMainWindow::on_pushButton_2_clicked()
 {
-   // call back says OK/not OK
+    close();
 }
-//---------------------------------------------------------------------------
-void RotatorMainWindow::rotatorServerCallback( bool err, MinosRPCObj *mro, const QString &from )
+
+void RotatorMainWindow::on_pushButton_clicked()
 {
-   trace( "rotator callback from " + from + ( err ? ":Error" : ":Normal" ) );
+    QString sdir;
+    switch (ui->direction->text().toInt())
+    {
+    case eRotateLeft:
+        sdir = "L/";
+    break;
+    case eRotateDirect:
+        sdir = "D/";
+    break;
+    case eRotateRight:
+        sdir = "R/";
+    break;
+    case eRotateStop:
+        sdir = "S/";
+    break;
+    }
 
-   if ( !err )
-   {
-      QSharedPointer<RPCParam> psDirection;
-      QSharedPointer<RPCParam> psAngle;
-      RPCArgs *args = mro->getCallArgs();
-      if ( args->getStructArgMember( 0, "RotatorDirection", psDirection ) && args->getStructArgMember( 0, "RotatorAngle", psAngle ) )
-      {
-         int direction;
-         int angle;
-
-         if ( psDirection->getInt( direction ) && psAngle->getInt( angle ) )
-         {
-            QSharedPointer<RPCParam>st(new RPCParamStruct);
-
-           ui->direction->setText( QString::number(direction));
-           ui->angle->setText( QString::number(angle));
-
-           st->addMember( true, "RotatorResult" );
-            mro->clearCallArgs();
-            mro->getCallArgs() ->addParam( st );
-            mro->queueResponse( from );
-         }
-      }
-   }
+    rl->publishState(sdir + ui->angle->text());
 }
