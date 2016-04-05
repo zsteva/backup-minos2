@@ -1110,6 +1110,11 @@ void TLogContainer::setFreq( QString f )
     BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
     MinosLoggerEvents::SendSetFreq(f, ct);
 }
+void TLogContainer::setRotatorState( QString f )
+{
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    MinosLoggerEvents::SendRotatorState(f, ct);
+}
 //---------------------------------------------------------------------------
 TSingleLogFrame *TLogContainer::findContest(const QString &pubname )
 {

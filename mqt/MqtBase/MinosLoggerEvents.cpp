@@ -91,6 +91,11 @@ void MinosLoggerEvents::SendSetFreq(QString freq, BaseContestLog *c)
     emit mle.SetFreq(freq, c);
 }
 //---------------------------------------------------------------------------
+void MinosLoggerEvents::SendRotatorState(QString s, BaseContestLog *c)
+{
+    emit mle.RotatorState(s, c);
+}
+//---------------------------------------------------------------------------
 void MinosLoggerEvents::SendEditMatchContact(BaseContestLog *c)
 {
     emit mle.EditMatchContact(c);

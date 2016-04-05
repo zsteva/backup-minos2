@@ -158,6 +158,8 @@ public:
 
     void setMode( QString m );
     void setFreq( QString f );
+    void setRotatorState( QString f );
+
     void updateTrees();
     void updateQSODisplay();
 
@@ -254,6 +256,10 @@ private slots:
     void on_ThisMatchTree_doubleClicked(const QModelIndex &index);
     void on_OtherMatchTree_doubleClicked(const QModelIndex &index);
     void on_ArchiveMatchTree_doubleClicked(const QModelIndex &index);
+
+    void on_SetMode(QString,BaseContestLog*);
+    void on_SetFreq(QString,BaseContestLog*);
+    void on_RotatorState(QString,BaseContestLog*);
 };
 
 #endif // TSINGLELOGFRAME_H

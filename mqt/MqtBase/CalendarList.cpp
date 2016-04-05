@@ -565,18 +565,18 @@ bool Calendar::parseFile ( const QString &fname )
                         ic.bands = ( *bl ).name;
 
                         ic.start = QDateTime ( QDate( curYear, sm, istartDate ) );
-                        int h = atoi( ( *tl ).startTime.substr( 0, 2 ).c_str() );
-                        int m = atoi( ( *tl ).startTime.substr( 2, 2 ).c_str() );
+                        int h = atoi( startTime.substr( 0, 2 ).c_str() );
+                        int m = atoi( startTime.substr( 2, 2 ).c_str() );
 
                         ic.start = ic.start.addSecs( h * 3600 + m * 60 );
 
-                        ic.duration = ( *tl ).duration;
+                        ic.duration = duration;
                         double dur = atof ( ic.duration.c_str() );
                         double durh = ( int ) ( dur / 24 );
                         double durm = ( dur - durh ) * 60;
                         ic.finish = ic.start.addSecs( ( int ) durh * 3600 + ( int ) durm * 60 );
 
-                        std::string timeType1 = ( *tl ).timeType;
+                        std::string timeType1 = timeType;
                         if ( timeType1 == "local" )
                         {
                             ic.start = localToUTC ( ic.start );
