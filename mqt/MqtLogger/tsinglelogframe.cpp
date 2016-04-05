@@ -328,7 +328,7 @@ void TSingleLogFrame::updateQSODisplay()
 void TSingleLogFrame::on_XferPressed()
 {
    // transfer from current match
-   if ( contest->isReadOnly() )
+   if (!contest || contest->isReadOnly() )
       return ;
 
    // copy relevant parts of match contact to screen contact
