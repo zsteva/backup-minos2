@@ -18,6 +18,7 @@ class MinosRPCObj;
 //---------------------------------------------------------------------------
 class MinosRPCObj;
 //---------------------------------------------------------------------------
+enum RotateDirection : int;
 class TSendDM : public QObject
 {
     Q_OBJECT
@@ -30,6 +31,7 @@ class TSendDM : public QObject
       QString keyerServerName;
       QString rigServerName;
       QString bandMapServerName;
+      QString rotatorServerName;
 
       void logMessage( QString s );
       void makeRPCObjects();
@@ -37,6 +39,7 @@ class TSendDM : public QObject
       void bandMapClientCallback( bool err, MinosRPCObj *mro, const QString &from );
       void bandMapServerCallback( bool err, MinosRPCObj *mro, const QString &from );
       void keyerCallback( bool err, MinosRPCObj *mro, const QString &from );
+      void rotatorCallback( bool err, MinosRPCObj *mro, const QString &from );
       void zconfCallback( bool err, MinosRPCObj *mro, const QString &from );
       void loggerServerCallback( bool err, MinosRPCObj *mro, const QString &from );
    public:  		// User declarations
@@ -49,12 +52,14 @@ class TSendDM : public QObject
       static void sendKeyerTone();
       static void sendKeyerTwoTone();
       static void sendKeyerStop();
+      static void sendRotator(RotateDirection direction, int angle );
       void doSendKeyerPlay( int fno );
       void doSendKeyerRecord( int fno );
       void doSendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
       void doSendKeyerTone();
       void doSendKeyerTwoTone();
       void doSendKeyerStop();
+      void doSendRotator(RotateDirection, int angle );
      private slots:
       void ConnectTimerTimer();
       void SubscribeTimerTimer();

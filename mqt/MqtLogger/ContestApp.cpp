@@ -98,9 +98,16 @@ bool TContestApp::initialise()
    // Eventually, we should have an installation system so that e.g. under Vista
    // we can put things like config under the user directory
 
-   if (!DirectoryExists("./Configuration"))
+    if (!DirectoryExists("./Configuration"))
    {
-      // try for executable directory
+#ifdef Q_OS_ANDROID
+             bool createOK = CreateDir("./Configuration");
+             if (!mShowOKCancelMessage(0, createOK?"./Config created":"create ./Config failed; Cancel for abort"))
+             {
+                 exit(0);
+             }
+#else
+             // try for executable directory
       QString fpath = QCoreApplication::applicationDirPath();
 
       if (DirectoryExists(fpath + "/Configuration"))
@@ -125,6 +132,7 @@ bool TContestApp::initialise()
             QDir::setCurrent(destDir);
          }
       }
+#endif
    }
    // delay opening the trace file until we know where to put it
    enableTrace( "./TraceLog", "MinosLogger_" );

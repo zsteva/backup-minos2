@@ -16,6 +16,9 @@ CONFIG += c++14
 win32-g++:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 
+android:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
+else:android:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
+
 DEFINES += TIXML_USE_STL
 
 INCLUDEPATH += ../MqtUtils
@@ -49,7 +52,8 @@ SOURCES += \
     minossplitter.cpp \
     htmldelegate.cpp \
     CalendarList.cpp \
-    qlogtabwidget.cpp
+    qlogtabwidget.cpp \
+    minoskeyboard.cpp
 
 HEADERS += \
     BandList.h \
@@ -79,7 +83,8 @@ HEADERS += \
     htmldelegate.h \
     CalendarList.h \
     cutils.h \
-    qlogtabwidget.h
+    qlogtabwidget.h \
+    minoskeyboard.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
@@ -87,3 +92,6 @@ unix {
 
 DISTFILES += \
     MqtBase.pro.autosave
+
+FORMS += \
+    minoskeyboard.ui

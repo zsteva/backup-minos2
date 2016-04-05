@@ -39,6 +39,12 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 {
     ui->setupUi(this);
 
+    splitterHandleWidth = ui->ArchiveSplitter->handleWidth();
+#ifdef Q_OS_ANDROID
+    splitterHandleWidth = 20;
+#else
+    splitterHandleWidth = 6;
+#endif
     initFilters();
 
     qsoModel.initialise(contest);
@@ -87,6 +93,11 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(NextContactDetailsOnLeft()), this, SLOT(on_NextContactDetailsOnLeft()));
     connect(&MinosLoggerEvents::mle, SIGNAL(NextUnfilled(BaseContestLog*)), this, SLOT(on_NextUnfilled(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(GoToSerial(BaseContestLog*)), this, SLOT(on_GoToSerial(BaseContestLog*)));
+
+    connect(&MinosLoggerEvents::mle, SIGNAL(SetMode(QString, BaseContestLog*)), this, SLOT(on_SetFreq(QString, BaseContestLog*)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(SetFreq(QString, BaseContestLog*)), this, SLOT(on_SetMode(QString, BaseContestLog*)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(RotatorState(QString,BaseContestLog*)), this, SLOT(on_RotatorState(QString, BaseContestLog*)));
+
 
     // Connect up the stats etc display
     QSignalMapper* sm = new QSignalMapper(this);
@@ -685,18 +696,23 @@ void TSingleLogFrame::getSplitters()
 
     state = settings.value("LogAreaSplitter/state").toByteArray();
     ui->LogAreaSplitter->restoreState(state);
+    ui->LogAreaSplitter->setHandleWidth(splitterHandleWidth);
 
     state = settings.value("ArchiveSplitter/state").toByteArray();
     ui->ArchiveSplitter->restoreState(state);
+    ui->ArchiveSplitter->setHandleWidth(splitterHandleWidth);
 
     state = settings.value("TopSplitter/state").toByteArray();
     ui->TopSplitter->restoreState(state);
+    ui->TopSplitter->setHandleWidth(splitterHandleWidth);
 
     state = settings.value("CribSplitter/state").toByteArray();
     ui->CribSplitter->restoreState(state);
+    ui->CribSplitter->setHandleWidth(splitterHandleWidth);
 
     state = settings.value("MultSplitter/state").toByteArray();
     ui->MultSplitter->restoreState(state);
+    ui->MultSplitter->setHandleWidth(splitterHandleWidth);
 }
 void TSingleLogFrame::onSplittersChanged()
 {
@@ -871,6 +887,21 @@ void TSingleLogFrame::on_GoToSerial(BaseContestLog *ct)
     {
        goSerial();
     }
+}
+
+void TSingleLogFrame::on_SetMode(QString,BaseContestLog*)
+{
+
+}
+
+void TSingleLogFrame::on_SetFreq(QString,BaseContestLog*)
+{
+
+}
+
+void TSingleLogFrame::on_RotatorState(QString s, BaseContestLog *ct)
+{
+    ui->GJVQSOLogFrame->setRotatorState(s);
 }
 
 //=============================================================================

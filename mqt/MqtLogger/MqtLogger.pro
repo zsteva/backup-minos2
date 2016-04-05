@@ -16,11 +16,23 @@ win32:RC_ICONS += ../minos.ico
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
 
+android {
+    CONFIG_INSTALL_PATH=/assets/Configuration
+
+    config.path = $$CONFIG_INSTALL_PATH
+    config.files += android/Configuration/*
+    config.depends += FORCE
+
+    INSTALLS += config
+}
 
 CONFIG += c++14
 
 win32-g++:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
+
+android:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
+else:android:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 
 DEFINES += TIXML_USE_STL
 
@@ -183,3 +195,15 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MqtU
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MqtUtils/release/MqtUtils.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MqtUtils/debug/MqtUtils.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../MqtUtils/libMqtUtils.a
+
+DISTFILES += \
+    AndroidTemplate/AndroidManifest.xml \
+    AndroidTemplate/gradle/wrapper/gradle-wrapper.jar \
+    AndroidTemplate/gradlew \
+    AndroidTemplate/res/values/libs.xml \
+    AndroidTemplate/build.gradle \
+    AndroidTemplate/gradle/wrapper/gradle-wrapper.properties \
+    AndroidTemplate/gradlew.bat \
+    android/MinosLogger.ini
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/AndroidTemplate

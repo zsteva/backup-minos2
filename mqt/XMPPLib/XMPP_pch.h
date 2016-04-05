@@ -40,6 +40,7 @@
 #include <fstream>
 
 #include <stdio.h>
+#include <errno.h>
 
 #include "tinyxml.h"
 #include "TinyUtils.h"
