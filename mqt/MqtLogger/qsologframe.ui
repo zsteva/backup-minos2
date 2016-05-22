@@ -505,7 +505,7 @@
        <item>
         <widget class="QLabel" name="RSTTXLabel">
          <property name="text">
-          <string>RS(T)(F2)</string>
+          <string>RS(T)Tx(F2)</string>
          </property>
         </widget>
        </item>
@@ -532,7 +532,7 @@
        <item>
         <widget class="QLabel" name="SerTXLabel">
          <property name="text">
-          <string>Serial TX</string>
+          <string>Serial Tx</string>
          </property>
         </widget>
        </item>
@@ -562,7 +562,7 @@
        <item>
         <widget class="QLabel" name="RSTRXLabel">
          <property name="text">
-          <string>RS(T)(F3)</string>
+          <string>RS(T)Rx(F3)</string>
          </property>
         </widget>
        </item>
@@ -589,7 +589,7 @@
        <item>
         <widget class="QLabel" name="SerRXLabel">
          <property name="text">
-          <string>Serial RX</string>
+          <string>Serial Rx</string>
          </property>
         </widget>
        </item>

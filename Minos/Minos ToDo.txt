@@ -1,3 +1,10 @@
+MQT
+.Minos - or is it .minos?
+Tab drag/drop
+Stickiness of tab positions
+RMB on tab is ACTIVE tab, not THIS tab
+S1/S2 not auto-compressing at start of contest
+==================================================================    
 Bonuses
 - get real bonus file
 - agree with Pete how it will be presented in xml calendar and in results xml
