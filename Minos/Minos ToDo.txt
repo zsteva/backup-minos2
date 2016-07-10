@@ -1,25 +1,36 @@
-MQT
-.Minos - or is it .minos?
-Tab drag/drop
-Stickiness of tab positions
-RMB on tab is ACTIVE tab, not THIS tab
-S1/S2 not auto-compressing at start of contest
 ==================================================================    
-Bonuses
-- get real bonus file
-- agree with Pete how it will be presented in xml calendar and in results xml
-- output bonus in EDI file
-*yes show new bonuses in log display
-*yes add bonus to total score. before applying mults (?)
-*yes bonus on stats panel 
-- bonus column in log (maybe not, we don't have a mults column - maybe we should)
-- add bonus file to calendar downloads (adj and minos)
 ==================================================================    
-*yes cty.dat not downloading - 406 error (adjsql as well)
-==================================================================    
-I have recently started using Minos for VHF/UHF contests and am finding it very useful and well laid out.  There is one suggestion I have for a future improvement which was a feature of the previous software that I used.  It is - when a 'new' callsign is entered it would be useful if a match on a full callsign (a dupe) gave rise to the callsign field being highlighted as such, perhaps showing a red background or a thick red border.  This would be helpful as the operator is likely to be focussing on the fields to be typed in, rather than shifting his/her attention to a different area of the screen.  I shall continue to use Minos in future VHF/UHF contests and hope to work you on at least one of them.  
+Programs
 
-73 de Dave, M5DWI
+Rig control
+Voice keyer (Linux)
+Band map
+Rotator control of Spid
+Qs1R control via Minos (currently stand alone)
+==================================================================
+Need a "snagging list" - such things as 
+- "ops list" rows in details aren't RO (or at least don't show as such)
+- Rclick on tab dosn't select it before menu shown
+- various info shoud be dependent on the correct program connected via server
+- scoring wrong in UKAC after ?entry?reload?whatever?
+- occasional crash in match code 
+- .Minos - or is it .minos?
+- Tab drag/drop
+- S1/S2 not auto-compressing at start of contest
+==================================================================    
+Combo box of contest tabs, to allow choice of which one
+==================================================================    
+Instead of "non scoring" have "not complete" and "dup" (need better words
+ - may be used for backpackers as well)
+==================================================================    
+                              
+Please is it possible to inhibit the appearance of a readability of 5 in 
+both sent and received RST. This a real pain as many contacts on UHF are 
+very weak and are not readability 5
+==================================================================    
+Use of Qt style sheets for shapes, sizes, colours
+==================================================================    
+==================================================================    
 ==================================================================
 ==================================================================
 ==================================================================
@@ -64,15 +75,12 @@ Changes to do
 G4DDN - editing of archive list leads to crash
 Odd crashes in lists; do I have a stack trace in the logs? Although that was on Grahams's laptop.
                                    
-QT conversion - then others MIGHT be willing to play as well. And it would achieve good refactoring (which will then rot)
-
 Control key map tables to allow reassignment
-Rig control - Omnirig is probably adequate
+Rig control - Omnirig is probably adequate (but not on Linux!)
 Rotator control (don't think Omnirig does this, may need own code?)
 Voice keyer, calling freqs, etc
 Can we eliminate the voice keyer whistle? I think it is system/hardware, not software
 Disable F keys configurably (to allow voice keyer to run as well) (Qt?)
-Sanity check of splitter positions - all I'm doing is screwing it up further; check on release version
 We want an option(options?) to control visibility in a KML export
 Better header text for loc/distance in country and district display
 
@@ -104,35 +112,14 @@ Rethink logSequence and nextBlock; nextBlock is a hangover from the "old" logger
 We should just need to use logSequence, and maintain a "max" value for it.
 Then cancelled catch ups wouldn't keep incrementing it.
 ===========================================================================
-We DEFINITELY need a colour choice dialog...
-	live contest
-	current active contest
-	protected contest
-	protected suppressed contest
-	QSO editted
-	QSO forced
-	splitter flyover
-	splitter
-	focussed control label
-	outside contest DTG
-	band combo
-	new mult
-	hints
-	match Xfer and match xfer selected
-	And probably others...
-	
 //================================================================
 Bugs, etc to fix
 =================
-Look at stickiness of stats panel splitters
 
 Sticky splitters in monitor and chat
 
 Auto copy MinosLines on compilation
 
-//==================================================================
-*****************  Documentation for networking  *******************
-//==================================================================
 SysMenu - bring main window back to screen centre
 
 fly-by hints for headers
@@ -153,4 +140,6 @@ Revise networking to use something like activeMQ topics
 
 revise networking to use something like activeMQ clustering
 
-?? revise to use attached forms (with actions) rather than the current mess of frames?
+//==================================================================
+*****************  Documentation for networking  *******************
+//==================================================================
