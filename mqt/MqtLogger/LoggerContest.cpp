@@ -143,7 +143,7 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
       setUnwriteable(true);
    }
    else
-       if ( ext.compare(".Minos", Qt::CaseInsensitive ) == 0 )
+       if ( ext.compare(".minos", Qt::CaseInsensitive ) == 0 )
       {
          minosFile = true;
       }

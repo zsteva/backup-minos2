@@ -158,7 +158,7 @@ QString TSingleLogFrame::makeEntry( bool saveMinos )
    TEntryOptionsForm EntryDlg( this, ct, saveMinos  );
    if ( saveMinos )
    {
-      EntryDlg.setWindowTitle("Save imported log as a .Minos file");
+      EntryDlg.setWindowTitle("Save imported log as a .minos file");
    }
    if ( EntryDlg.exec() == QDialog::Accepted )
    {

@@ -448,7 +448,7 @@ void TLogContainer::FileNewActionExecute()
     char letter = 'A';
     while ( letter < 'Z' )      // the A of A.Minos
     {
-       QString fileNameBuff = InitialDir + "/" + nfileName + letter + ".Minos";
+       QString fileNameBuff = InitialDir + "/" + nfileName + letter + ".minos";
 
        if (FileExists(fileNameBuff))
        {
@@ -458,7 +458,7 @@ void TLogContainer::FileNewActionExecute()
           break;
     }
 
-    QString initName = InitialDir + "/" + nfileName + letter + ".Minos";
+    QString initName = InitialDir + "/" + nfileName + letter + ".minos";
     ContestDetails pced( this );
     BaseContestLog * c = addSlot( &pced, initName, true, -1 );
 
@@ -490,7 +490,7 @@ void TLogContainer::FileNewActionExecute()
        QString fileName = QFileDialog::getSaveFileName( this,
                           "Save new contest as",
                           "./Logs/" + suggestedfName,
-                          "Minos contest files (*.Minos)",
+                          "Minos contest files (*.minos *.Minos)",
                           0,
                           QFileDialog::DontConfirmOverwrite
                                                       );
@@ -537,7 +537,7 @@ void TLogContainer::FileOpenActionExecute()
 
     InitialDir = qf.canonicalFilePath();
 
-    QString Filter = "Minos contest files (*.Minos);;"
+    QString Filter = "Minos contest files (*.minos *.Minos);;"
                      "Reg1Test Files (*.edi);;"
                      "GJV contest files (*.gjv);;"
                      "RSGB Log Files (*.log);;"

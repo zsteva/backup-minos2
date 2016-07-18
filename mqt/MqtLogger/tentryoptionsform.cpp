@@ -252,7 +252,7 @@ QString TEntryOptionsForm::doFileSave( )
         break;
     case EMINOS:
         defext = "minos";
-        filter = "Minos ContestLog files (*.Minos);;All Files (*.*);;" ;
+        filter = "Minos ContestLog files (*.minos *.Minos);;All Files (*.*);;" ;
         break;
     case EADIF:
         defext = "adi";
