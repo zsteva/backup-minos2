@@ -1220,7 +1220,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <contest_series>
 <name>144backpackchamp</name>
 <description>144MHz Backpackers Championship</description>
-<contest_list>144backpack</contest_list>
+<contest_list>144backpack1</contest_list>
 <special_rules_list>Backpacker</special_rules_list>
 <award_list>Backpackers Trophy is awarded to the overall winner of the 3B Section</award_list>
 </contest_series>
