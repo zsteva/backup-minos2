@@ -340,12 +340,31 @@ bool Calendar::parseFile ( const QString &fname )
     setYear ( calendarYear );
     for ( std::map<std::string, CalendarContest>::iterator i = contests.begin(); i != contests.end(); i++ )
     {
-        // For each contest iterate the time list and the band list
-        for ( std::vector<TimeList>::iterator tl = ( *i ).second.timeList.begin(); tl != ( *i ).second.timeList.end(); tl++ )
+
+        for ( std::vector<CalendarBandList>::iterator bl = ( *i ).second.bandList.begin(); bl != ( *i ).second.bandList.end(); bl++ )
         {
-            for ( std::vector<MonthList>::iterator ml = ( *tl ).monthList.begin(); ml != ( *tl ).monthList.end(); ml++ )
+            // For each contest iterate the time list or the band list
+            // the band list overrides the time list!
+
+            std::vector<TimeList>::iterator tls;
+            std::vector<TimeList>::iterator tle;
+
+            CalendarBand &cb = bands[ (*bl).name ];
+
+            if (cb.timeList.size() != 0)
             {
-                for ( std::vector<CalendarBandList>::iterator bl = ( *i ).second.bandList.begin(); bl != ( *i ).second.bandList.end(); bl++ )
+                tls = cb.timeList.begin();
+                tle = cb.timeList.end();
+            }
+            else
+            {
+                tls = ( *i ).second.timeList.begin();
+                tle = ( *i ).second.timeList.end();
+            }
+
+            for ( std::vector<TimeList>::iterator tl = tls; tl != tle; tl++ )
+            {
+                for ( std::vector<MonthList>::iterator ml = ( *tl ).monthList.begin(); ml != ( *tl ).monthList.end(); ml++ )
                 {
                     // startDate needs to incorporate the week and day
 
@@ -356,16 +375,6 @@ bool Calendar::parseFile ( const QString &fname )
 
                     // XMAS cumulatives also have <start_date_list>, but they appear to be the only ones
 
-                    // Is it best to generate a table of 365(6) days, and assign each one month/week/day
-
-                    // And we may need month pointers, so we cna then count days from each
-
-                    // Somewhere, we need to evaluate the year... for now, we preset it
-
-                    CalendarContest cc = ( *i ).second;
-                    TimeList tli = ( *tl );
-                    MonthList mli = ( *ml );
-                    CalendarBandList cbli = ( *bl );
 
                     int sm = getMonth ( ( *ml ).month );
                     if ( sm == 0 )
@@ -373,14 +382,68 @@ bool Calendar::parseFile ( const QString &fname )
                         continue;
                     }
 
+                    // we need to copy the datelist before we add to it...
+
+                    std::vector<StartDateList> startDateList = ( *tl ).startDateList;
+
+                    if ( startDateList.size() == 0 )
+                    {
+                        // make the start info into a statt date (just one!)
+
+                        std::string startWeek = ( *tl ).startWeek;
+                        std::string startDay = ( *tl ).startDay;
 
 
-                    if ( ( *tl ).startDateList.size() )
+                        std::string startday1 = startDay;
+                        std::string startday2;
+                        int istartday1, istartday2;
+
+                        unsigned int ppos = startDay.find ( "+" );
+                        if ( ppos != std::string::npos )
+                        {
+                            startday1 = startDay.substr ( 0, ppos );
+                            startday2 = startDay.substr ( ppos + 1, startDay.size() );
+                            istartday1 = atoi ( startday1.c_str() );
+                            istartday2 = atoi ( startday2.c_str() );
+                        }
+                        else
+                        {
+                            istartday1 = atoi ( startday1.c_str() );
+                            istartday2 = 0;
+                        }
+                        if ( istartday1 == 0 )
+                        {
+                            continue;   // next time list
+                        }
+
+                        int istartWeek = atoi ( startWeek.c_str() );
+                        if ( istartWeek == 0 )
+                        {
+                            continue;   // next time list
+                        }
+
+
+                        //               std::string bstartWeek = (*bl).startWeek; // or iterate its timeList
+                        int istartDate = getDate ( sm, istartday1, istartWeek );
+                        if ( istartDate == 0 )
+                        {
+                            continue;   // next time list
+                        }
+
+                        istartDate += istartday2;
+
+                        StartDateList sdl;
+                        sdl.date = QString::number(istartDate).toStdString();
+
+                        startDateList.push_back(sdl);
+                    }
+
+                    if ( startDateList.size() )
                     {
                         // need to iterate the start dates
-                        for ( unsigned int j = 0; j < ( *tl ).startDateList.size(); j++ )
+                        for ( unsigned int j = 0; j < startDateList.size(); j++ )
                         {
-                            int istartDate = atoi ( ( *tl ).startDateList[ j ].date.c_str() );
+                            int istartDate = atoi ( startDateList[ j ].date.c_str() );
                             if ( istartDate == 0 )
                             {
                                 continue;
@@ -476,171 +539,314 @@ bool Calendar::parseFile ( const QString &fname )
                             calendar.push_back ( ic );
                         }
                     }
-                    else
-                    {
-
-                        // NB - band list overrides time list!
-
-                        std::string startWeek;
-                        std::string startDay;
-                        std::string startTime;
-                        std::string timeType;
-                        std::string duration;
-
-                        CalendarBand &blst = bands[ ( *bl ).name ];
-                        if ( blst.timeList.size() )
-                        {
-                            TimeList & b = blst.timeList[ 0 ];
-
-                            startWeek = b.startWeek;
-                            startDay = b.startDay;
-                            startTime = b.startTime;
-                            duration = b.duration;
-                            timeType = b.timeType;
-                        }
-                        else
-                        {
-                            startWeek = ( *tl ).startWeek;
-                            startDay = ( *tl ).startDay;
-                            startTime = ( *tl ).startTime;
-                            duration = ( *tl ).duration;
-                            timeType = ( *tl ).timeType;
-                        }
-
-
-                        std::string startday1 = startDay;
-                        std::string startday2;
-                        int istartday1, istartday2;
-
-                        size_t ppos = startDay.find ( "+" );
-                        if ( ppos != std::string::npos )
-                        {
-                            startday1 = startDay.substr ( 0, ppos );
-                            startday2 = startDay.substr ( ppos + 1, startDay.size() );
-                            istartday1 = atoi ( startday1.c_str() );
-                            istartday2 = atoi ( startday2.c_str() );
-                        }
-                        else
-                        {
-                            istartday1 = atoi ( startday1.c_str() );
-                            istartday2 = 0;
-                        }
-                        if ( istartday1 == 0 )
-                        {
-                            continue;
-                        }
-
-                        int istartWeek = atoi ( startWeek.c_str() );
-                        if ( istartWeek == 0 )
-                        {
-                            continue;
-                        }
-
-
-                        //               std::string bstartWeek = (*bl).startWeek; // or iterate its timeList
-                        int istartDate = getDate ( sm, istartday1, istartWeek );
-                        if ( istartDate == 0 )
-                        {
-                            continue;
-                        }
-
-                        istartDate += istartday2;
-
-                        IndividualContest ic;
-
-                        std::string desc = trim ( ( *i ).second.description );
-                        std::string name = trim ( ( *i ).second.name );
-                        std::string typeName = getTypeName ( name, calType );
-
-                        // This needs changing once the contests are sorted
-                        // as e.g. 70MHz cumulatives are defined in two groups
-                        //if (desc[desc.size() - 1] == '#')
-                        //{
-                        //   desc += makeStr(instance++);
-                        //}
-
-                        ic.name = name;
-                        ic.typeName = typeName;
-                        ic.description = desc;
-                        ic.bands = ( *bl ).name;
-
-                        ic.start = QDateTime ( QDate( curYear, sm, istartDate ) );
-                        int h = atoi( startTime.substr( 0, 2 ).c_str() );
-                        int m = atoi( startTime.substr( 2, 2 ).c_str() );
-
-                        ic.start = ic.start.addSecs( h * 3600 + m * 60 );
-
-                        ic.duration = duration;
-                        double dur = atof ( ic.duration.c_str() );
-                        double durh = ( int ) ( dur / 24 );
-                        double durm = ( dur - durh ) * 60;
-                        ic.finish = ic.start.addSecs( ( int ) durh * 3600 + ( int ) durm * 60 );
-
-                        std::string timeType1 = timeType;
-                        if ( timeType1 == "local" )
-                        {
-                            ic.start = localToUTC ( ic.start );
-                            ic.finish = localToUTC ( ic.finish );
-                        }
-
-
-                        ic.ppKmScoring = ( ( *i ).second.scoring == CalendarContest::perkms );
-                        for ( unsigned int j = 0; j < ( *i ).second.sectionList.size(); j++ )
-                        {
-                            std::string n = ( *i ).second.sectionList[ j ].name;
-
-
-
-                            std::map<std::string, CalendarSection>::iterator s = sections.find ( n );
-                            if ( s == sections.end() )
-                            {
-                                continue;
-                            }
-                            int mls = ( *s ).second.monthList.size();
-                            if ( mls )
-                            {
-                                bool monthOK = false;
-                                for ( std::vector<MonthList>::iterator ml = ( *s ).second.monthList.begin(); ml != ( *s ).second.monthList.end(); ml++ )
-                                {
-                                    if ( sstrupr ( ( *ml ).month ) == sstrupr ( monthTable[ sm - 1 ] ) )
-                                    {
-                                        monthOK = true;
-                                        break;
-                                    }
-                                }
-                                if ( !monthOK )
-                                {
-                                    continue;
-                                }
-                            }
-
-
-                            if ( !sections[ n ].overall )
-                            {
-                                ic.sections += n;
-                                ic.sections += ",";
-                            }
-                        }
-                        ic.sections = ic.sections.substr ( 0, ic.sections.size() - 1 );  // lose any trailing comma
-                        ic.mults = ( *i ).second.mult;
-                        for ( unsigned int j = 0; j < ( *i ).second.specialRulesList.size(); j++ )
-                        {
-                            ic.specialRules += ( *i ).second.specialRulesList[ j ].name + " ";
-                        }
-                        ic.power = ( *i ).second.power;
-
-                        ic.reg1band = bands[ ic.bands ].reg1band.c_str();
-                        if ( ic.reg1band == "1,2 GHz" )
-                        {
-                            ic.reg1band = "1,3 GHz";
-                        }
-
-                        calendar.push_back ( ic );
-                    }
                 }
             }
         }
     }
+
+//    for ( std::map<std::string, CalendarContest>::iterator i = contests.begin(); i != contests.end(); i++ )
+//    {
+//        // For each contest iterate the time list and the band list
+//        for ( std::vector<TimeList>::iterator tl = ( *i ).second.timeList.begin(); tl != ( *i ).second.timeList.end(); tl++ )
+//        {
+//            for ( std::vector<MonthList>::iterator ml = ( *tl ).monthList.begin(); ml != ( *tl ).monthList.end(); ml++ )
+//            {
+//                for ( std::vector<CalendarBandList>::iterator bl = ( *i ).second.bandList.begin(); bl != ( *i ).second.bandList.end(); bl++ )
+//                {
+//                    // startDate needs to incorporate the week and day
+
+//                    // day 6 week 1 means "first Saturday of the month"
+//                    // and day 2 week 1 means "first Tuesday of the month".
+//                    // week 2 day 2 would mean "2nd Tuesday of the month".
+//                    // day 6+1 is Sunday after Saturday
+
+//                    // XMAS cumulatives also have <start_date_list>, but they appear to be the only ones
+
+//                    // Is it best to generate a table of 365(6) days, and assign each one month/week/day
+
+//                    // And we may need month pointers, so we cna then count days from each
+
+//                    // Somewhere, we need to evaluate the year... for now, we preset it
+
+//                    CalendarContest cc = ( *i ).second;
+//                    TimeList tli = ( *tl );
+//                    MonthList mli = ( *ml );
+//                    CalendarBandList cbli = ( *bl );
+
+//                    int sm = getMonth ( ( *ml ).month );
+//                    if ( sm == 0 )
+//                    {
+//                        continue;
+//                    }
+
+
+
+//                    if ( ( *tl ).startDateList.size() )
+//                    {
+//                        // need to iterate the start dates
+//                        for ( unsigned int j = 0; j < ( *tl ).startDateList.size(); j++ )
+//                        {
+//                            int istartDate = atoi ( ( *tl ).startDateList[ j ].date.c_str() );
+//                            if ( istartDate == 0 )
+//                            {
+//                                continue;
+//                            }
+
+//                            IndividualContest ic;
+
+//                            std::string desc = trim ( ( *i ).second.description );
+//                            std::string sdesc = trim ( ( *i ).second.shortDescription );
+//                            std::string name = trim ( ( *i ).second.name );
+//                            std::string typeName = getTypeName ( name, calType );
+
+//                            // This needs changing once the contests are sorted
+//                            // as e.g. 70MHz cumulatives are defined in two groups
+//                            //if (desc[desc.size() - 1] == '#')
+//                            //{
+//                            //   desc += makeStr(instance++);
+//                            //}
+//                            ic.name = name;
+//                            ic.typeName = typeName;
+//                            ic.description = desc;
+//                            ic.shortDescription = sdesc;
+//                            ic.bands = ( *bl ).name;
+
+//                            ic.start = QDateTime ( QDate( curYear, sm, istartDate ) );
+//                            int h = atoi( ( *tl ).startTime.substr( 0, 2 ).c_str() );
+//                            int m = atoi( ( *tl ).startTime.substr( 2, 2 ).c_str() );
+
+//                            ic.start = ic.start.addSecs( h * 3600 + m * 60 );
+
+//                            ic.duration = ( *tl ).duration;
+//                            double dur = atof ( ic.duration.c_str() );
+//                            double durh = ( int ) ( dur / 24 );
+//                            double durm = ( dur - durh ) * 60;
+//                            ic.finish = ic.start.addSecs( ( int ) durh * 3600 + ( int ) durm * 60 );
+
+//                            std::string timeType = ( *tl ).timeType;
+//                            if ( timeType == "local" )
+//                            {
+//                                ic.start = localToUTC ( ic.start );
+//                                ic.finish = localToUTC ( ic.finish );
+//                            }
+
+//                            ic.ppKmScoring = ( ( *i ).second.scoring == CalendarContest::perkms );
+//                            for ( unsigned int j = 0; j < ( *i ).second.sectionList.size(); j++ )
+//                            {
+//                                std::string n = ( *i ).second.sectionList[ j ].name;
+
+//                                std::map<std::string, CalendarSection>::iterator s = sections.find ( n );
+
+//                                if ( s == sections.end() )
+//                                {
+//                                    continue;
+//                                }
+//                                int mls = ( *s ).second.monthList.size();
+//                                if ( mls )
+//                                {
+//                                    bool monthOK = false;
+//                                    for ( std::vector<MonthList>::iterator ml = ( *s ).second.monthList.begin(); ml != ( *s ).second.monthList.end(); ml++ )
+//                                    {
+//                                        if ( sstrupr ( ( *ml ).month ) == sstrupr ( monthTable[ sm - 1 ] ) )
+//                                        {
+//                                            monthOK = true;
+//                                            break;
+//                                        }
+//                                    }
+//                                    if ( !monthOK )
+//                                    {
+//                                        continue;
+//                                    }
+//                                }
+
+//                                if ( !sections[ n ].overall )
+//                                {
+//                                    ic.sections += n;
+//                                    ic.sections += ",";
+//                                }
+//                            }
+//                            ic.sections = ic.sections.substr ( 0, ic.sections.size() - 1 );  // lose any trailing comma
+//                            ic.mults = ( *i ).second.mult;
+//                            for ( unsigned int j = 0; j < ( *i ).second.specialRulesList.size(); j++ )
+//                            {
+//                                ic.specialRules += ( *i ).second.specialRulesList[ j ].name + " ";
+//                            }
+//                            ic.power = ( *i ).second.power;
+
+//                            ic.reg1band = bands[ ic.bands ].reg1band.c_str();
+//                            if ( ic.reg1band == "1,2 GHz" )
+//                            {
+//                                ic.reg1band = "1,3 GHz";
+//                            }
+
+//                            calendar.push_back ( ic );
+//                        }
+//                    }
+//                    else
+//                    {
+
+//                        // NB - band list overrides time list!
+
+//                        std::string startWeek;
+//                        std::string startDay;
+//                        std::string startTime;
+//                        std::string timeType;
+//                        std::string duration;
+
+//                        CalendarBand &blst = bands[ ( *bl ).name ];
+//                        if ( blst.timeList.size() )
+//                        {
+//                            TimeList & b = blst.timeList[ 0 ];
+
+//                            startWeek = b.startWeek;
+//                            startDay = b.startDay;
+//                            startTime = b.startTime;
+//                            duration = b.duration;
+//                            timeType = b.timeType;
+//                        }
+//                        else
+//                        {
+//                            startWeek = ( *tl ).startWeek;
+//                            startDay = ( *tl ).startDay;
+//                            startTime = ( *tl ).startTime;
+//                            duration = ( *tl ).duration;
+//                            timeType = ( *tl ).timeType;
+//                        }
+
+
+//                        std::string startday1 = startDay;
+//                        std::string startday2;
+//                        int istartday1, istartday2;
+
+//                        size_t ppos = startDay.find ( "+" );
+//                        if ( ppos != std::string::npos )
+//                        {
+//                            startday1 = startDay.substr ( 0, ppos );
+//                            startday2 = startDay.substr ( ppos + 1, startDay.size() );
+//                            istartday1 = atoi ( startday1.c_str() );
+//                            istartday2 = atoi ( startday2.c_str() );
+//                        }
+//                        else
+//                        {
+//                            istartday1 = atoi ( startday1.c_str() );
+//                            istartday2 = 0;
+//                        }
+//                        if ( istartday1 == 0 )
+//                        {
+//                            continue;
+//                        }
+
+//                        int istartWeek = atoi ( startWeek.c_str() );
+//                        if ( istartWeek == 0 )
+//                        {
+//                            continue;
+//                        }
+
+
+//                        //               std::string bstartWeek = (*bl).startWeek; // or iterate its timeList
+//                        int istartDate = getDate ( sm, istartday1, istartWeek );
+//                        if ( istartDate == 0 )
+//                        {
+//                            continue;
+//                        }
+
+//                        istartDate += istartday2;
+
+//                        IndividualContest ic;
+
+//                        std::string desc = trim ( ( *i ).second.description );
+//                        std::string name = trim ( ( *i ).second.name );
+//                        std::string typeName = getTypeName ( name, calType );
+
+//                        // This needs changing once the contests are sorted
+//                        // as e.g. 70MHz cumulatives are defined in two groups
+//                        //if (desc[desc.size() - 1] == '#')
+//                        //{
+//                        //   desc += makeStr(instance++);
+//                        //}
+
+//                        ic.name = name;
+//                        ic.typeName = typeName;
+//                        ic.description = desc;
+//                        ic.bands = ( *bl ).name;
+
+//                        ic.start = QDateTime ( QDate( curYear, sm, istartDate ) );
+//                        int h = atoi( startTime.substr( 0, 2 ).c_str() );
+//                        int m = atoi( startTime.substr( 2, 2 ).c_str() );
+
+//                        ic.start = ic.start.addSecs( h * 3600 + m * 60 );
+
+//                        ic.duration = duration;
+//                        double dur = atof ( ic.duration.c_str() );
+//                        double durh = ( int ) ( dur / 24 );
+//                        double durm = ( dur - durh ) * 60;
+//                        ic.finish = ic.start.addSecs( ( int ) durh * 3600 + ( int ) durm * 60 );
+
+//                        std::string timeType1 = timeType;
+//                        if ( timeType1 == "local" )
+//                        {
+//                            ic.start = localToUTC ( ic.start );
+//                            ic.finish = localToUTC ( ic.finish );
+//                        }
+
+
+//                        ic.ppKmScoring = ( ( *i ).second.scoring == CalendarContest::perkms );
+//                        for ( unsigned int j = 0; j < ( *i ).second.sectionList.size(); j++ )
+//                        {
+//                            std::string n = ( *i ).second.sectionList[ j ].name;
+
+
+
+//                            std::map<std::string, CalendarSection>::iterator s = sections.find ( n );
+//                            if ( s == sections.end() )
+//                            {
+//                                continue;
+//                            }
+//                            int mls = ( *s ).second.monthList.size();
+//                            if ( mls )
+//                            {
+//                                bool monthOK = false;
+//                                for ( std::vector<MonthList>::iterator ml = ( *s ).second.monthList.begin(); ml != ( *s ).second.monthList.end(); ml++ )
+//                                {
+//                                    if ( sstrupr ( ( *ml ).month ) == sstrupr ( monthTable[ sm - 1 ] ) )
+//                                    {
+//                                        monthOK = true;
+//                                        break;
+//                                    }
+//                                }
+//                                if ( !monthOK )
+//                                {
+//                                    continue;
+//                                }
+//                            }
+
+
+//                            if ( !sections[ n ].overall )
+//                            {
+//                                ic.sections += n;
+//                                ic.sections += ",";
+//                            }
+//                        }
+//                        ic.sections = ic.sections.substr ( 0, ic.sections.size() - 1 );  // lose any trailing comma
+//                        ic.mults = ( *i ).second.mult;
+//                        for ( unsigned int j = 0; j < ( *i ).second.specialRulesList.size(); j++ )
+//                        {
+//                            ic.specialRules += ( *i ).second.specialRulesList[ j ].name + " ";
+//                        }
+//                        ic.power = ( *i ).second.power;
+
+//                        ic.reg1band = bands[ ic.bands ].reg1band.c_str();
+//                        if ( ic.reg1band == "1,2 GHz" )
+//                        {
+//                            ic.reg1band = "1,3 GHz";
+//                        }
+
+//                        calendar.push_back ( ic );
+//                    }
+//                }
+//            }
+//        }
+//    }
     std::sort ( calendar.begin(), calendar.end() );
     return true;
 

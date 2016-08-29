@@ -31,10 +31,10 @@ class MonthList
    public:
       std::string month;
 };
-class Section
+class CalendarSection
 {
    public:
-      Section() : singleAntenna( false ), overall( false )
+      CalendarSection() : singleAntenna( false ), overall( false )
       {}
       std::vector<MonthList> monthList;
 
@@ -64,7 +64,7 @@ class TimeList
       std::string duration;
       std::string mult;
 };
-class ContestBand
+class CalendarBand
 {
    public:
       std::string name;
@@ -104,10 +104,10 @@ class SpecialRuleList
       std::string name;
 
 };
-class Contest
+class CalendarContest
 {
    public:
-      Contest() : scoring( perkms ), iaru( false )
+      CalendarContest() : scoring( perkms ), iaru( false )
       {}
 
       std::string name;
@@ -167,9 +167,9 @@ class Calendar
       std::map<std::string, MultType> mults;
       std::map<std::string, SpecialRule> specialRules;
       std::map<std::string, Section> sections;
-      std::map<std::string, ContestBand> bands;
+      std::map<std::string, CalendarBand> bands;
       std::map<std::string, ContestSeries> contestSeries;
-      std::map<std::string, Contest> contests;
+      std::map<std::string, CalendarContest> contests;
 
       std::vector<IndividualContest> calendar;
 };
