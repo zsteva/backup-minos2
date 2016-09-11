@@ -174,60 +174,62 @@ void MinosAppConnection::on_readyRead()
     const int RXBUFFLEN = 4096;
     char rxbuff[ RXBUFFLEN + 1 ];
 
-    int rxlen = sock->read(rxbuff, RXBUFFLEN);
+    while (sock->bytesAvailable() > 0)
+    {
+        int rxlen = sock->read(rxbuff, RXBUFFLEN);
 
-   if ( rxlen < 0 || sock->state() != QAbstractSocket::ConnectedState)
-   {
-      closeDaemonThread();
-      return;
-   }
-   else
-      if ( rxlen > 0 )
-      {
-         rxbuff[ rxlen ] = 0;
-
-         // We might have embedded nulls between message parts - so strip them
-         int rxpt = 0;
-         while ( rxpt < rxlen )
-         {
-            unsigned int ptlen = strlen( &rxbuff[ rxpt ] );
-            if ( ptlen )
+        if ( rxlen < 0 || sock->state() != QAbstractSocket::ConnectedState)
+        {
+            closeDaemonThread();
+            return;
+        }
+        else
+            if ( rxlen > 0 )
             {
-               onLog( QString(&rxbuff[ rxpt ]), true );
-               packetbuff += &rxbuff[ rxpt ];   // which will strip out any nulls
-            }
-            rxpt += ptlen + 1;
-         }
+                rxbuff[ rxlen ] = 0;
 
-         while ( packetbuff.size() > 2 && packetbuff.substr( 0, 2 ) == "&&" )
-         {
-            unsigned int packetoffset = packetbuff.find( '<' );
-            if ( packetoffset > 0 )    // length field should always be followed by XML
-            {
-               char * ec;
-               int packetlen = strtol( packetbuff.c_str() + 2, &ec, 10 );
-               if ( *ec == '<' && packetlen <= ( int ) strlen( ec ) + 2 && packetbuff.find( ">&&" ) )
-               {
-                  TIXML_STRING packet = packetbuff.substr( packetoffset, packetlen );
-                  packetbuff = packetbuff.substr( packetoffset + packetlen + 2, strlen( ec + packetlen ) );
+                // We might have embedded nulls between message parts - so strip them
+                int rxpt = 0;
+                while ( rxpt < rxlen )
+                {
+                    unsigned int ptlen = strlen( &rxbuff[ rxpt ] );
+                    if ( ptlen )
+                    {
+                        onLog( QString(&rxbuff[ rxpt ]), true );
+                        packetbuff += &rxbuff[ rxpt ];   // which will strip out any nulls
+                    }
+                    rxpt += ptlen + 1;
+                }
+
+                while ( packetbuff.size() > 2 && packetbuff.substr( 0, 2 ) == "&&" )
+                {
+                    unsigned int packetoffset = packetbuff.find( '<' );
+                    if ( packetoffset > 0 )    // length field should always be followed by XML
+                    {
+                        char * ec;
+                        int packetlen = strtol( packetbuff.c_str() + 2, &ec, 10 );
+                        if ( *ec == '<' && packetlen <= ( int ) strlen( ec ) + 2 && packetbuff.find( ">&&" ) )
+                        {
+                            TIXML_STRING packet = packetbuff.substr( packetoffset, packetlen );
+                            packetbuff = packetbuff.substr( packetoffset + packetlen + 2, strlen( ec + packetlen ) );
 
 #ifdef TRACE_PACKETS
 
-                  TraceIncoming( packet.c_str() );
+                            TraceIncoming( packet.c_str() );
 #endif
 
-                  analyseNode( user_data, packet );
-                  // and go round again...
-               }
-               else
-               {
-                  // partial message, keep receiving until we get more
-                  return;
-               }
+                            analyseNode( user_data, packet );
+                            // and go round again...
+                        }
+                        else
+                        {
+                            // partial message, keep receiving until we get more
+                            break;
+                        }
+                    }
+                }
             }
-         }
-      }
-   return;
+    }
 }
 
 void sendAction( XStanza *a )

@@ -261,57 +261,60 @@ void MinosCommonConnection::on_readyRead()
    logMessage ( "XMPP test", "MinosCommonConnection::on_readyRead called to receive data from " + connectHost );
 
    // documntation says this may occasionally fail on Windows
-   int rxlen = sock->read(rxbuff, 4096 - 1);
-   if ( rxlen > 0 )
+   while (sock->bytesAvailable() > 0)
    {
-      rxbuff[ rxlen ] = '\0';
+       int rxlen = sock->read(rxbuff, 4096 - 1);
+       if ( rxlen > 0 )
+       {
+          rxbuff[ rxlen ] = '\0';
 
-      // We might have embedded nulls between message parts - so strip them
-      int rxpt = 0;
-      while ( rxpt < rxlen )
-      {
-         int ptlen = ( int ) strlen( &rxbuff[ rxpt ] );
-         if ( ptlen )
-         {
-            onLog ( &rxbuff[ rxpt ], ptlen, 1 );  // but this ignores the wrapper
-            packetbuff += &rxbuff[ rxpt ];   // which will strip out any nulls
-         }
-         rxpt += ptlen + 1;
-      }
+          // We might have embedded nulls between message parts - so strip them
+          int rxpt = 0;
+          while ( rxpt < rxlen )
+          {
+             int ptlen = ( int ) strlen( &rxbuff[ rxpt ] );
+             if ( ptlen )
+             {
+                onLog ( &rxbuff[ rxpt ], ptlen, 1 );  // but this ignores the wrapper
+                packetbuff += &rxbuff[ rxpt ];   // which will strip out any nulls
+             }
+             rxpt += ptlen + 1;
+          }
 
-      while ( packetbuff.size() > 2 && packetbuff.left( 2 ) == "&&" )
-      {
-         int packetoffset = packetbuff.indexOf( '<' );
-         if ( packetoffset > 0 )    // length field should always be followed by XML
-         {
-             QStringRef slen = packetbuff.midRef(2, packetoffset - 2);
-             int packetlen = slen.toInt();
-            if ( packetlen <= ( int ) packetbuff.size() - 2 && packetbuff.indexOf( ">&&" ) )
-            {
-               QString packet = packetbuff.mid( packetoffset, packetlen );
-               packetbuff = packetbuff.right(  packetbuff.size() - 2 - packetlen - packetoffset );
+          while ( packetbuff.size() > 2 && packetbuff.left( 2 ) == "&&" )
+          {
+             int packetoffset = packetbuff.indexOf( '<' );
+             if ( packetoffset > 0 )    // length field should always be followed by XML
+             {
+                 QStringRef slen = packetbuff.midRef(2, packetoffset - 2);
+                 int packetlen = slen.toInt();
+                if ( packetlen <= ( int ) packetbuff.size() - 2 && packetbuff.indexOf( ">&&" ) )
+                {
+                   QString packet = packetbuff.mid( packetoffset, packetlen );
+                   packetbuff = packetbuff.right(  packetbuff.size() - 2 - packetlen - packetoffset );
 
-               TiXmlBase::SetCondenseWhiteSpace( false );
-               TiXmlDocument xdoc;
-               TIXML_STRING p = packet.toStdString();
-               xdoc.Parse( p.c_str(), 0 );
-               TiXmlElement *tix = xdoc.RootElement();
-               analyseNode( tix );
-            }
-            else
-            {
-               // partial message, keep receiving until we get more
-               return ;
-            }
-         }
-      }
+                   TiXmlBase::SetCondenseWhiteSpace( false );
+                   TiXmlDocument xdoc;
+                   TIXML_STRING p = packet.toStdString();
+                   xdoc.Parse( p.c_str(), 0 );
+                   TiXmlElement *tix = xdoc.RootElement();
+                   analyseNode( tix );
+                }
+                else
+                {
+                   // partial message, keep receiving until we get more
+                   break ;
+                }
+             }
+          }
+       }
+       else if (rxlen < 0)
+       {
+           trace("Bad read in MinosCommonConnection::on_readyRead; remove_socket = true");
+          remove_socket = true;
+       }
+       // rxlen == 0 is valid
    }
-   else if (rxlen < 0)
-   {
-       trace("Bad read in MinosCommonConnection::on_readyRead; remove_socket = true");
-      remove_socket = true;
-   }
-   // rxlen == 0 is valid
 }
 //==============================================================================
 void MinosCommonConnection::analyseNode( TiXmlElement *tix )
