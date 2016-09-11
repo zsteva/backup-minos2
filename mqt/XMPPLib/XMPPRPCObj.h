@@ -52,14 +52,13 @@ class TRPCCallback : public TRPCFunctor
       {
          pt2Object = _pt2Object;
          fpt = _fpt;
-      };
+      }
 
       // override function "Call"
       virtual void call( bool err, MinosRPCObj *mro, const QString &from )
       {
          ( *pt2Object.*fpt ) ( err, mro, from );
-      }
-      ;             // execute member function
+      } // execute member function
 };
 
 
