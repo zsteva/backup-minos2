@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,14 +24,36 @@ else:android:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 
 DEFINES += TIXML_USE_STL
 
-SOURCES += main.cpp\
-        rotatormainwindow.cpp \
+SOURCES += \
+    yaesu.cpp \
+    skyscandialog.cpp \
+    setupdialog.cpp \
+    settingsdialog.cpp \
+    rotatormainwindow.cpp \
+    minoscompass.cpp \
+    main.cpp \
+    logdialog.cpp \
+    editpresetsdialog.cpp \
     rotatorlogic.cpp
 
-HEADERS  += rotatormainwindow.h \
+HEADERS  += \
+    yaesu.h \
+    skyscandialog.h \
+    setupdialog.h \
+    settingsdialog.h \
+    rotatormainwindow.h \
+    minoscompass.h \
+    logdialog.h \
+    editpresetsdialog.h \
     rotatorlogic.h
 
-FORMS    += rotatormainwindow.ui
+FORMS    += \
+    skyscandialog.ui \
+    setupdialog.ui \
+    settingsdialog.ui \
+    rotatormainwindow.ui \
+    logdialog.ui \
+    editpresetsdialog.ui
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase

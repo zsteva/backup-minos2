@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SetupDialog</class>
+ <widget class="QDialog" name="SetupDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>322</width>
+    <height>213</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Rotator Setup</string>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>-30</x>
+     <y>170</y>
+     <width>341</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>11</y>
+     <width>289</width>
+     <height>147</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Comport</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Protocol</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QComboBox" name="comPortBox1"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="protcolBox1"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QComboBox" name="comPortBox2"/>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="protcolBox2"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QComboBox" name="comPortBox3"/>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="protcolBox3"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QComboBox" name="comPortBox4"/>
+      </item>
+      <item row="4" column="1">
+       <widget class="QComboBox" name="protcolBox4"/>
+      </item>
+      <item row="5" column="0">
+       <widget class="QComboBox" name="comPortBox5"/>
+      </item>
+      <item row="5" column="1">
+       <widget class="QComboBox" name="protcolBox5"/>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="1">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Rotator Name</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="setupLineEdit1"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="setupLineEdit2"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="setupLineEdit3"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="setupLineEdit4"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="setupLineEdit5"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>SetupDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>SetupDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

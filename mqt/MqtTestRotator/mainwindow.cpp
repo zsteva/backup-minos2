@@ -1,8 +1,5 @@
-#include "base_pch.h"
-#include "rotatorlogic.h"
-
-#include "rotatormainwindow.h"
-#include "ui_rotatormainwindow.h"
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 #include "minoscompass.h"
 #include "yaesu.h"
 #include "setupdialog.h"
@@ -16,25 +13,14 @@
 #include <QSettings>
 #include <QtDebug>
 
-RotatorMainWindow *MinosRotatorForm;
 
-
-RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
-    QMainWindow(parent), rl(0),
-    ui(new Ui::RotatorMainWindow)
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    enableTrace( "./TraceLog", "MinosChat_" );
 
-    createCloseEvent();
-
-    MinosRotatorForm = this;
-
-    connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
-    LogTimer.start(100);
-
-    rl = new RotatorLogic(this);
 
     presetButtons[0] = ui->presetButton1;
     presetButtons[1] = ui->presetButton2;
@@ -91,95 +77,14 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
 }
 
-RotatorMainWindow::~RotatorMainWindow()
+MainWindow::~MainWindow()
 {
-    delete rl;
     delete ui;
 }
 
-void RotatorMainWindow::logMessage( QString s )
-{
-   trace( s );
-}
-
-void RotatorMainWindow::closeEvent(QCloseEvent *event)
-{
-    MinosRPCObj::clearRPCObjects();
-    XMPPClosedown();
-    LogTimerTimer( );
-    // and tidy up all loose ends
-
-    /*
-    QSettings settings;
-    settings.setValue("geometry", saveGeometry());
-    */
-    QWidget::closeEvent(event);
-}
-void RotatorMainWindow::resizeEvent(QResizeEvent * event)
-{
-    /*
-    QSettings settings;
-    settings.setValue("geometry", saveGeometry());
-    */
-    QWidget::resizeEvent(event);
-}
-
-void RotatorMainWindow::LogTimerTimer(  )
-{
-
-   static bool closed = false;
-   if ( !closed )
-   {
-      if ( checkCloseEvent() )
-      {
-         closed = true;
-         close();
-      }
-   }
-}
-
-void RotatorMainWindow::onSetRotation(int direction, int angle)
-{
-/*
-
-    ui->direction->setText( QString::number(direction));
-    ui->angle->setText( QString::number(angle));
-*/
-}
 
 
-void RotatorMainWindow::on_pushButton_2_clicked()
-{
-    close();
-}
-
-void RotatorMainWindow::on_pushButton_clicked()
-{
- /*
-
-    QString sdir;
-    switch (ui->direction->text().toInt())
-    {
-    case eRotateLeft:
-        sdir = "L/";
-    break;
-    case eRotateDirect:
-        sdir = "D/";
-    break;
-    case eRotateRight:
-        sdir = "R/";
-    break;
-    case eRotateStop:
-        sdir = "S/";
-    break;
-    }
-
-    rl->publishState(sdir + ui->angle->text());
-*/
-}
-
-
-void RotatorMainWindow::openSerialPort()
+void MainWindow::openSerialPort()
 {
 
 
@@ -229,7 +134,7 @@ void RotatorMainWindow::openSerialPort()
     }
 }
 
-void RotatorMainWindow::closeSerialPort()
+void MainWindow::closeSerialPort()
 {
     if (serial->isOpen())
         serial->close();
@@ -243,20 +148,20 @@ void RotatorMainWindow::closeSerialPort()
 
 
 
-void RotatorMainWindow::writeData(QByteArray data)
+void MainWindow::writeData(QByteArray data)
 {
     qDebug() << " write to serial" << data;
     serial->write(data);
 }
 
-void RotatorMainWindow::readData()
+void MainWindow::readData()
 {
     QByteArray data = serial->readAll();
 
 }
 
 
-void RotatorMainWindow::handleError(QSerialPort::SerialPortError error)
+void MainWindow::handleError(QSerialPort::SerialPortError error)
 {
     if (error == QSerialPort::ResourceError) {
         QMessageBox::critical(this, tr("Critical Error"), serial->errorString());
@@ -266,13 +171,13 @@ void RotatorMainWindow::handleError(QSerialPort::SerialPortError error)
 
 
 
-void RotatorMainWindow::showStatusMessage(const QString &message)
+void MainWindow::showStatusMessage(const QString &message)
 {
     status->setText(message);
 }
 
 
-void RotatorMainWindow::rotateToController()
+void MainWindow::rotateToController()
 {
     bool ok;
     int intBearing;
@@ -303,7 +208,7 @@ void RotatorMainWindow::rotateToController()
 
 
 
-void RotatorMainWindow::initActionsConnections()
+void MainWindow::initActionsConnections()
 {
     //connect(ui->connectButton, SIGNAL(clicked(bool)), this, SLOT(openSerialPort()));
     connect(ui->selectAntennaBox, SIGNAL(activated(int)), this, SLOT(upDateAntenna()));
@@ -348,7 +253,7 @@ void RotatorMainWindow::initActionsConnections()
     //connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 }
 
-void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
+void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Escape:
@@ -359,7 +264,7 @@ void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void RotatorMainWindow::request_bearing()
+void MainWindow::request_bearing()
 {
     if (serial_connected)
     {
@@ -368,7 +273,7 @@ void RotatorMainWindow::request_bearing()
 }
 
 
-void RotatorMainWindow::displayBackBearing(const QString bearing)
+void MainWindow::displayBackBearing(const QString bearing)
 {
     bool ok;
     int backBearing = bearing.toInt(&ok, 10);
@@ -385,7 +290,7 @@ void RotatorMainWindow::displayBackBearing(const QString bearing)
     }
 }
 
-void RotatorMainWindow::readPresets()
+void MainWindow::readPresets()
 {
     QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
     config.beginGroup("Presets");
@@ -403,7 +308,7 @@ void RotatorMainWindow::readPresets()
 
 
 
-void RotatorMainWindow::refreshPresetLabels()
+void MainWindow::refreshPresetLabels()
 {
 
     readPresets();
@@ -420,7 +325,7 @@ void RotatorMainWindow::refreshPresetLabels()
 }
 
 
-void RotatorMainWindow::updatePresetLabels()
+void MainWindow::updatePresetLabels()
 {
     refreshPresetLabels();
     update();
@@ -428,7 +333,7 @@ void RotatorMainWindow::updatePresetLabels()
 
 
 
-void RotatorMainWindow::clickedPreset(int buttonNumber)
+void MainWindow::clickedPreset(int buttonNumber)
 {
 
     if (presetName[buttonNumber] != "")
@@ -443,7 +348,7 @@ void RotatorMainWindow::clickedPreset(int buttonNumber)
 }
 
 
-void RotatorMainWindow::initSelectAntennaBox()
+void MainWindow::initSelectAntennaBox()
 {
 
     selectAntenna->addItem("");
@@ -457,7 +362,7 @@ void RotatorMainWindow::initSelectAntennaBox()
 }
 
 
-void RotatorMainWindow::upDateAntenna()
+void MainWindow::upDateAntenna()
 {
     selectRotator->currentAntenna.name = ui->selectAntennaBox->currentText();
     selectRotator->currentAntenna.rotator.protocol = selectRotator->getRotatorProtocol(ui->selectAntennaBox->currentText());
@@ -475,7 +380,7 @@ void RotatorMainWindow::upDateAntenna()
 }
 
 
-void RotatorMainWindow::rotateCW()
+void MainWindow::rotateCW()
 {
     if (serial_connected)
     {
@@ -485,7 +390,7 @@ void RotatorMainWindow::rotateCW()
 
 
 
-void RotatorMainWindow::rotateCCW()
+void MainWindow::rotateCCW()
 {
     if (serial_connected)
     {

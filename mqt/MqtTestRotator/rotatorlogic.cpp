@@ -2,6 +2,8 @@
 #include "rotatormainwindow.h"
 #include "rotatorlogic.h"
 
+
+
 RotatorLogic *rotatorLogic;
 
 RotatorLogic::RotatorLogic(RotatorMainWindow *parent) : QObject(parent), parent(parent)
