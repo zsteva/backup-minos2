@@ -12,14 +12,14 @@ void MinosRPC::on_connectedTimeout()
 {
     if ( !connected && checkServerReady() )
     {
-        MinosRPCObj::addClientObj( QSharedPointer<MinosRPCObj>(new RPCGeneralClient( new TRPCCallback <MinosRPC> ( this, &clientCallback ) ) ) );
-        MinosRPCObj::addServerObj( QSharedPointer<MinosRPCObj>(new RPCGeneralServer( new TRPCCallback <MinosRPC> ( this, &serverCallback ) ) ) );
+        MinosRPCObj::addClientObj( QSharedPointer<MinosRPCObj>(new RPCGeneralClient( new TRPCCallback <MinosRPC> ( this, &MinosRPC::clientCallback ) ) ) );
+        MinosRPCObj::addServerObj( QSharedPointer<MinosRPCObj>(new RPCGeneralServer( new TRPCCallback <MinosRPC> ( this, &MinosRPC::serverCallback ) ) ) );
         XMPPInitialise( appName );
         connected = true;
     }
     if ( connected && !subscribed )
     {
-        RPCPubSub::initialisePubSub( new TRPCCallback <MinosRPC> ( this, &notifyCallback ) );
+        RPCPubSub::initialisePubSub( new TRPCCallback <MinosRPC> ( this, &MinosRPC::notifyCallback ) );
 
         QPair<QString, QString> p;
         foreach (p, remoteSubscriptions)

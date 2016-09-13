@@ -30,15 +30,6 @@ void logMessage( const QString &level, const QString &mess )
 
 static int original_ppid = 0;
 
-static unsigned long currentPID()
-{
-#ifdef Q_OS_WIN
-    return GetCurrentProcessId();
-#else
-    return getpid();
-#endif
-}
-
 static unsigned long parentPID()
 {
 #ifdef Q_OS_WIN
@@ -47,7 +38,7 @@ static unsigned long parentPID()
     PROCESSENTRY32 pe;
     pe.dwSize = sizeof(PROCESSENTRY32);
 
-    unsigned long pid = currentPID();
+    unsigned long pid = GetCurrentProcessId()();
     unsigned long ppid = 0;
 
     if( Process32First(h, &pe)) {
