@@ -38,7 +38,7 @@ static unsigned long parentPID()
     PROCESSENTRY32 pe;
     pe.dwSize = sizeof(PROCESSENTRY32);
 
-    unsigned long pid = GetCurrentProcessId()();
+    unsigned long pid = GetCurrentProcessId();
     unsigned long ppid = 0;
 
     if( Process32First(h, &pe)) {
