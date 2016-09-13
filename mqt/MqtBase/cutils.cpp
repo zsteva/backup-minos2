@@ -323,6 +323,7 @@ QDateTime CanonicalToTDT(QString cdtg )
 {
    QDateTime d;
    d = QDateTime::fromString(cdtg, "yyyyMMddhhmm" );
+   d.setTimeSpec(Qt::UTC);
    return d;
 
 }

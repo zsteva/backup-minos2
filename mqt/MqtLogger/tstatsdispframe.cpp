@@ -109,7 +109,8 @@ void TStatsDispFrame::reInitialiseStats()
       int sp1 = MinosParameters::getMinosParameters() ->getStatsPeriod1();
       int sp2 = MinosParameters::getMinosParameters() ->getStatsPeriod2();
       QDateTime  contestStart = CanonicalToTDT(ct->DTGStart.getValue());
-      int fromContestStart = contestStart.secsTo(QDateTime::currentDateTime());
+      QDateTime now = QDateTime::currentDateTimeUtc();
+      int fromContestStart = contestStart.secsTo(now);
 
       // if period is less than half the time from the start
       // then we want to split the time from start
