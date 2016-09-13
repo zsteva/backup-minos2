@@ -111,9 +111,12 @@ void TStatsDispFrame::reInitialiseStats()
       QDateTime  contestStart = CanonicalToTDT(ct->DTGStart.getValue());
       int fromContestStart = contestStart.secsTo(QDateTime::currentDateTime());
 
-      if (sp1 > fromContestStart/120)
+      // if period is less than half the time from the start
+      // then we want to split the time from start
+
+      if (sp1 > fromContestStart/120) // fromContestStart is seconds
       {
-         sp1 = fromContestStart/120;
+         sp1 = fromContestStart/120; // so half that, in minutes
       }
       if (sp2 > fromContestStart/120)
       {
