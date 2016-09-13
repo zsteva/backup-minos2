@@ -75,7 +75,7 @@ void TSendDM::logMessage( QString s )
 
 void TSendDM::doSendKeyerPlay(  int fno )
 {
-   RPCGeneralClient rpc;
+    RPCGeneralClient rpc("Minos:KeyerControl");
    QSharedPointer<RPCParam>st(new RPCParamStruct);
    QSharedPointer<RPCParam>sName(new RPCStringParam( "PlayFile" ));
    QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
@@ -92,7 +92,7 @@ void TSendDM::doSendKeyerPlay(  int fno )
 
 void TSendDM::doSendKeyerRecord(  int fno )
 {
-    RPCGeneralClient rpc;
+    RPCGeneralClient rpc("Minos:KeyerControl");
    QSharedPointer<RPCParam>st(new RPCParamStruct);
    QSharedPointer<RPCParam>sName(new RPCStringParam( "RecordFile" ));
    QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
@@ -110,7 +110,7 @@ void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const 
 
 /*static*/ void TSendDM::doSendBandMap(  const QString &freq,   const QString &call,   const QString &utc,   const QString &loc,   const QString &qth )
 {
-    RPCGeneralClient rpc;
+    RPCGeneralClient rpc("Minos:BandMap");
    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
    QSharedPointer<RPCParam>sName(new RPCStringParam( "BandMap" ));
@@ -142,7 +142,7 @@ void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const 
 }
 void TSendDM::doSendKeyerTone()
 {
-    RPCGeneralClient rpc;
+    RPCGeneralClient rpc("Minos:KeyerControl");
     QSharedPointer<RPCParam>st(new RPCParamStruct);
     QSharedPointer<RPCParam>sName(new RPCStringParam( "Tone" ));
     QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
@@ -159,7 +159,7 @@ void TSendDM::doSendKeyerTone()
 
 void TSendDM::doSendKeyerTwoTone()
 {
-    RPCGeneralClient rpc;
+    RPCGeneralClient rpc("Minos:KeyerControl");
     QSharedPointer<RPCParam>st(new RPCParamStruct);
     QSharedPointer<RPCParam>sName(new RPCStringParam( "TwoTone" ));
     QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
@@ -176,7 +176,7 @@ void TSendDM::doSendKeyerTwoTone()
 
 void TSendDM::doSendKeyerStop()
 {
-    RPCGeneralClient rpc;
+    RPCGeneralClient rpc("Minos:KeyerControl");
     QSharedPointer<RPCParam>st(new RPCParamStruct);
     QSharedPointer<RPCParam>sName(new RPCStringParam( "Stop" ));
     QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
@@ -194,7 +194,7 @@ void TSendDM::doSendKeyerStop()
 
 void TSendDM::doSendRotator( RotateDirection direction,  int angle )
 {
-    RPCGeneralClient rpc;
+    RPCGeneralClient rpc("Minos:Rotator");
    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
    st->addMember( (int)direction, "RotatorDirection" );
