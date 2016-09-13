@@ -548,12 +548,12 @@ void ContestDetails::setDetails( const IndividualContest &ic )
 //---------------------------------------------------------------------------
 QWidget * ContestDetails::getDetails( )
 {
-   QWidget *nextD = getNextFocus();
+    QWidget *nextD = getNextFocus();
 
-   contest->name.setValue( ui->ContestNameEdit->text() );
-   contest->band.setValue( ui->BandComboBox->currentText() );
-   contest->entSect.setValue( ui->SectionComboBox->currentText() );
-   contest->sectionList.setValue( sectionList );
+    contest->name.setValue( ui->ContestNameEdit->text() );
+    contest->band.setValue( ui->BandComboBox->currentText() );
+    contest->entSect.setValue( ui->SectionComboBox->currentText() );
+    contest->sectionList.setValue( sectionList );
 
 
     if (ui->StartDateEdit->text().isEmpty())
@@ -568,99 +568,100 @@ QWidget * ContestDetails::getDetails( )
     }
     contest->DTGEnd.setValue(  TDTToCanonical(ui->EndDateEdit->text() + " " + ui->EndTimeCombo->currentText())) ;
 
-   contest->mycall.fullCall.setValue( ui->CallsignEdit->text() );
-   contest->mycall.valRes = CS_NOT_VALIDATED;
-   contest->mycall.validate();
-   if ( contest->mycall.valRes != CS_OK )
-   {
-      nextD = (nextD?nextD:ui->CallsignEdit);
-   }
-   contest->myloc.loc.setValue( ui->LocatorEdit->text() );
-   contest->myloc.validate();
-   if ( contest->myloc.valRes != LOC_OK )
-   {
-      nextD = (nextD?nextD:ui->LocatorField);
-   }
-   if ( contest->currentOp1.getValue().size() == 0 )
-   {
-      nextD = (nextD?nextD:ui->MainOpComboBox);
-   }
-   contest->allowLoc4.setValue( ui->AllowLoc4CB->isChecked() );    // bool
-   contest->allowLoc8.setValue( ui->AllowLoc8CB->isChecked() );    // bool
-   contest->location.setValue( ui->ExchangeEdit->text() );
-   contest->scoreMode.setValue( ( SCOREMODE ) ui->PPQSORB->isChecked()?1:0 );  // combo
+    contest->mycall.fullCall.setValue( ui->CallsignEdit->text() );
+    contest->mycall.valRes = CS_NOT_VALIDATED;
+    contest->mycall.validate();
+    if ( contest->mycall.valRes != CS_OK )
+    {
+        nextD = (nextD?nextD:ui->CallsignEdit);
+    }
+    contest->myloc.loc.setValue( ui->LocatorEdit->text() );
+    contest->myloc.validate();
+    if ( contest->myloc.valRes != LOC_OK )
+    {
+        nextD = (nextD?nextD:ui->LocatorField);
+    }
+    if ( contest->currentOp1.getValue().size() == 0 )
+    {
+        nextD = (nextD?nextD:ui->MainOpComboBox);
+    }
+    contest->allowLoc4.setValue( ui->AllowLoc4CB->isChecked() );    // bool
+    contest->allowLoc8.setValue( ui->AllowLoc8CB->isChecked() );    // bool
+    contest->location.setValue( ui->ExchangeEdit->text() );
+    contest->scoreMode.setValue( ( SCOREMODE ) ui->PPQSORB->isChecked()?1:0 );  // combo
 
-   if (ui->NonGCtryMult->isChecked())
-   {
-      ui->DXCCMult->setChecked(true);
-   }
-   contest->countryMult.setValue( ui->DXCCMult->isChecked() );   // bool
-   contest->nonGCountryMult.setValue( ui->NonGCtryMult->isChecked() );   // bool
+    if (ui->NonGCtryMult->isChecked())
+    {
+        ui->DXCCMult->setChecked(true);
+    }
+    contest->countryMult.setValue( ui->DXCCMult->isChecked() );   // bool
+    contest->nonGCountryMult.setValue( ui->NonGCtryMult->isChecked() );   // bool
 
-   if (ui->GLocMult->isChecked() || ui->M7LocatorMults->isChecked())
-   {
-      ui->LocatorMult->setChecked(true);
-   }
+    if (ui->GLocMult->isChecked() || ui->M7LocatorMults->isChecked())
+    {
+        ui->LocatorMult->setChecked(true);
+    }
 
-   contest->locMult.setValue( ui->LocatorMult->isChecked() ) ;   // bool
-   contest->GLocMult.setValue( ui->GLocMult->isChecked() ) ;   // bool
-   contest->M7Mults.setValue( ui->M7LocatorMults->isChecked() ) ;   // bool
-   contest->UKACBonus.setValue(ui->BonusComboBox->currentIndex() == 1);
+    contest->locMult.setValue( ui->LocatorMult->isChecked() ) ;   // bool
+    contest->GLocMult.setValue( ui->GLocMult->isChecked() ) ;   // bool
+    contest->M7Mults.setValue( ui->M7LocatorMults->isChecked() ) ;   // bool
+    contest->UKACBonus.setValue(ui->BonusComboBox->currentIndex() == 1);
 
-   if (contest->GLocMult.getValue())
-   {
-      contest->UKloc_mult = true;
-      contest->NonUKloc_mult = false;
-      contest->UKloc_multiplier = 1;
-      contest->NonUKloc_multiplier = 0;
+    if (contest->M7Mults.getValue())
+    {
+        contest->UKloc_mult = true;
+        contest->NonUKloc_mult = true;
+        contest->UKloc_multiplier = 2;
+        contest->NonUKloc_multiplier = 1;
+    }
+    else
+    {
+        if (contest->locMult.getValue())
+        {
+            contest->UKloc_mult = true;
+            contest->UKloc_multiplier = 1;
 
-   }
-   else if (contest->M7Mults.getValue())
-   {
-      contest->UKloc_mult = true;
-      contest->NonUKloc_mult = true;
-      contest->UKloc_multiplier = 2;
-      contest->NonUKloc_multiplier = 1;
-   }
-   else
-   {
-      if (contest->locMult.getValue())
-      {
-         contest->UKloc_mult = true;
-         contest->NonUKloc_mult = true;
-         contest->UKloc_multiplier = 1;
-         contest->NonUKloc_multiplier = 1;
-      }
-      else
-      {
-         contest->UKloc_mult = false;
-         contest->NonUKloc_mult = false;
-         contest->UKloc_multiplier = 0;
-         contest->NonUKloc_multiplier = 0;
-      }
-   }
-   if (ui->ProtectedOption->isChecked() && contest->isProtected() && contest->isProtectedSuppressed())
-   {
-      contest->setProtectedSuppressed(false);
-   }
-   else
-   {
-      if (ui->ProtectedOption->isChecked() && !contest->isProtected())
-      {
-         contest->setProtected( true ) ;
-         saveContestOK  = true;
-      }
-      else if (!ui->ProtectedOption->isChecked() && contest->isProtected())
-      {
-         contest->setProtected( false ) ;
-         saveContestOK  = true;
-      }
-      else if (!contest->isReadOnly()) // not protected, not unwriteable, protected but suppressed
-      {
-         saveContestOK  = true;
-      }
-   }
-   /*
+            if (contest->GLocMult.getValue())
+            {
+                contest->NonUKloc_mult = false;
+                contest->NonUKloc_multiplier = 0;
+            }
+            else
+            {
+                contest->NonUKloc_mult = true;
+                contest->NonUKloc_multiplier = 1;
+            }
+        }
+        else
+        {
+            contest->UKloc_mult = false;
+            contest->NonUKloc_mult = false;
+            contest->UKloc_multiplier = 0;
+            contest->NonUKloc_multiplier = 0;
+        }
+    }
+    if (ui->ProtectedOption->isChecked() && contest->isProtected() && contest->isProtectedSuppressed())
+    {
+        contest->setProtectedSuppressed(false);
+    }
+    else
+    {
+        if (ui->ProtectedOption->isChecked() && !contest->isProtected())
+        {
+            contest->setProtected( true ) ;
+            saveContestOK  = true;
+        }
+        else if (!ui->ProtectedOption->isChecked() && contest->isProtected())
+        {
+            contest->setProtected( false ) ;
+            saveContestOK  = true;
+        }
+        else if (!contest->isReadOnly()) // not protected, not unwriteable, protected but suppressed
+        {
+            saveContestOK  = true;
+        }
+    }
+    /*
       ExchangeComboBox:
 
       No Exchange Required
@@ -668,45 +669,45 @@ QWidget * ContestDetails::getDetails( )
       Other Exchange Multiplier
       Exchange Required (no multiplier)
    */
-   switch ( ui->ExchangeComboBox->currentIndex() )
-   {
-      case 0:
-         contest->otherExchange.setValue( false );
-         contest->districtMult.setValue( false );
-         break;
+    switch ( ui->ExchangeComboBox->currentIndex() )
+    {
+    case 0:
+        contest->otherExchange.setValue( false );
+        contest->districtMult.setValue( false );
+        break;
 
-      case 1:
-         contest->otherExchange.setValue( true );
-         contest->districtMult.setValue( true );
-         break;
+    case 1:
+        contest->otherExchange.setValue( true );
+        contest->districtMult.setValue( true );
+        break;
 
-      case 2:
-         contest->otherExchange.setValue( true );
-         contest->districtMult.setValue( false );
-         break;
+    case 2:
+        contest->otherExchange.setValue( true );
+        contest->districtMult.setValue( false );
+        break;
 
-      case 3:
-         contest->otherExchange.setValue( true );
-         contest->districtMult.setValue( false );
-         break;
+    case 3:
+        contest->otherExchange.setValue( true );
+        contest->districtMult.setValue( false );
+        break;
 
-   }
-   contest->RSTField.setValue( ui->RSTField->isChecked() ) ;   // bool
-   contest->serialField.setValue( ui->SerialField->isChecked() ) ;   // bool
-   contest->locatorField.setValue( ui->LocatorField->isChecked() ) ;   // bool
-   contest->QTHField.setValue( ui->QTHField->isChecked() ) ;   // bool
+    }
+    contest->RSTField.setValue( ui->RSTField->isChecked() ) ;   // bool
+    contest->serialField.setValue( ui->SerialField->isChecked() ) ;   // bool
+    contest->locatorField.setValue( ui->LocatorField->isChecked() ) ;   // bool
+    contest->QTHField.setValue( ui->QTHField->isChecked() ) ;   // bool
 
-   contest->power.setValue( ui->PowerEdit->text() );
-   contest->bearingOffset.setValue(ui->AntOffsetEdit->text().toInt());	// int
+    contest->power.setValue( ui->PowerEdit->text() );
+    contest->bearingOffset.setValue(ui->AntOffsetEdit->text().toInt());	// int
 
-   contest->currentOp1.setValue(ui->MainOpComboBox->currentText());
-   contest->currentOp2.setValue(ui->SecondOpComboBox->currentText());
-   contest->oplist.insert(contest->currentOp1.getValue());
-   contest->oplist.insert(contest->currentOp2.getValue());
+    contest->currentOp1.setValue(ui->MainOpComboBox->currentText());
+    contest->currentOp2.setValue(ui->SecondOpComboBox->currentText());
+    contest->oplist.insert(contest->currentOp1.getValue());
+    contest->oplist.insert(contest->currentOp2.getValue());
 
-   contest->validateLoc();
+    contest->validateLoc();
 
-   return nextD;
+    return nextD;
 }
 //---------------------------------------------------------------------------
 QWidget * ContestDetails::getNextFocus()
