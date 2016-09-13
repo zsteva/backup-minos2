@@ -5,10 +5,10 @@
 #include "tforcelogdlg.h"
 #include "SendRPCDM.h"
 
+#include "RotatorConstants.h"
 
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
-
 
 QSOLogFrame::QSOLogFrame(QWidget *parent) :
     QFrame(parent)

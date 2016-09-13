@@ -1,5 +1,7 @@
 #include "base_pch.h"
 
+#include "MinosRPC.h"
+
 #include "chatmain.h"
 #include "ui_chatmain.h"
 
@@ -17,33 +19,35 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
 
     MinosChatForm = this;
 
-    connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
-    connect(&ConnectTimer, SIGNAL(timeout()), this, SLOT(ConnectTimerTimer()));
-    LogTimer.start(100);
-    ConnectTimer.start(1000);
+    connect(&SyncTimer, SIGNAL(timeout()), this, SLOT(SyncTimerTimer()));
+    SyncTimer.start(100);
+
+    MinosRPC *rpc = MinosRPC::getMinosRPC();
+
+    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
+
+    rpc->setAppName("Chat");
+    rpc->subscribe("Station");
 }
 
 TMinosChatForm::~TMinosChatForm()
 {
     delete ui;
 }
+//---------------------------------------------------------------------------
+
 void TMinosChatForm::logMessage( QString s )
 {
    trace( s );
-}
-/*static*/
-void TMinosChatForm::makeRPCObjects()
-{
-   RPCPubSub::initialisePubSub( new TRPCCallback <TMinosChatForm> ( MinosChatForm, &TMinosChatForm::notifyCallback ) );
-   MinosRPCObj::addObj( new RPCChatControlClient( new TRPCCallback <TMinosChatForm> ( MinosChatForm, &TMinosChatForm::chatClientCallback ) ) );
-   MinosRPCObj::addObj( new RPCChatControlServer( new TRPCCallback <TMinosChatForm> ( MinosChatForm, &TMinosChatForm::chatServerCallback ) ) );
 }
 
 void TMinosChatForm::closeEvent(QCloseEvent *event)
 {
     MinosRPCObj::clearRPCObjects();
     XMPPClosedown();
-    LogTimerTimer( );
+    SyncTimerTimer( );
     // and tidy up all loose ends
 
     /*
@@ -61,7 +65,7 @@ void TMinosChatForm::resizeEvent(QResizeEvent * event)
     QWidget::resizeEvent(event);
 }
 
-void TMinosChatForm::LogTimerTimer(  )
+void TMinosChatForm::SyncTimerTimer(  )
 {
    syncStations();
    syncChat();
@@ -123,28 +127,24 @@ QString stateList[] =
    "Not Available",
    "No Contact"
 };
-void TMinosChatForm::notifyCallback( bool err, MinosRPCObj *mro, const QString &from )
+void TMinosChatForm::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QString &/*from*/ )
 {
-   logMessage( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
-   AnalysePubSubNotify an( err, mro );
+    AnalysePubSubNotify an( err, mro );
 
-   if ( an.getOK() )
-   {
+    if ( an.getOK() )
+    {
       if ( an.getCategory() == "Station" )
       {
-         QString key = an.getKey();
-         QString value = an.getValue();
-         PublishState state = an.getState();
-         logMessage( QString(stateIndicator[state]) + " " + key + " " + value );
+         logMessage( QString(stateIndicator[an.getState()]) + " " + an.getKey() + " " + an.getValue() );
          std::vector<Server>::iterator stat;
          for ( stat = serverList.begin(); stat != serverList.end(); stat++ )
          {
-            if ((*stat).name == key)
+            if ((*stat).name == an.getKey())
             {
-               if ((*stat).state != state)
+               if ((*stat).state != an.getState())
                {
-                  (*stat).state = state;
-                  QString mess = key + " changed state to " + stateList[state];
+                  (*stat).state = an.getState();
+                  QString mess = an.getKey() + " changed state to " + stateList[an.getState()];
                   addChat( mess );
                   syncstat = true;
                }
@@ -156,11 +156,11 @@ void TMinosChatForm::notifyCallback( bool err, MinosRPCObj *mro, const QString &
          {
             // We have received notification from a previously unknown station - so report on it
             Server s;
-            s.name = key;
-            s.ip = value;
-            s.state = state;
+            s.name = an.getKey();
+            s.ip = an.getValue();
+            s.state = an.getState();
             serverList.push_back( s );
-            QString mess = key + " changed state to " + stateList[state];
+            QString mess = an.getKey() + " changed state to " + stateList[an.getState()];
             addChat( mess );
             syncstat = true;
          }
@@ -169,51 +169,42 @@ void TMinosChatForm::notifyCallback( bool err, MinosRPCObj *mro, const QString &
 }
 //---------------------------------------------------------------------------
 
-void TMinosChatForm::ConnectTimerTimer( )
-{
-   if ( !connected && checkServerReady() )
-   {
-      makeRPCObjects();
-      XMPPInitialise( "Chat" );
-      connected = true;
-      RPCPubSub::subscribe( "Station" );
-   }
-}
-//---------------------------------------------------------------------------
-void TMinosChatForm::chatClientCallback( bool /*err*/, MinosRPCObj * /*mro*/, const QString &/*from*/ )
+void TMinosChatForm::on_response( bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*/, const QString & /*from*/ )
 {
    // call back says OK/not OK
 }
 //---------------------------------------------------------------------------
-void TMinosChatForm::chatServerCallback( bool err, MinosRPCObj *mro, const QString &from )
+void TMinosChatForm::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
    trace( "chat callback from " + from + ( err ? ":Error" : ":Normal" ) );
 
+   // Should we use QMap to give a list of name/value pairs?
+   // BUT the value isn't always the same type - should it be?
+   // We could use QVariant, of course...
+
    if ( !err )
    {
-      QSharedPointer<RPCParam> psName;
-      QSharedPointer<RPCParam>psValue;
       RPCArgs *args = mro->getCallArgs();
-      if ( args->getStructArgMember( 0, "Name", psName ) && args->getStructArgMember( 0, "Value", psValue ) )
+
+      if (args)
       {
-         QString Name;
-         QString Value;
-
-         if ( psName->getString( Name ) && psValue->getString( Value ) )
-         {
-            QSharedPointer<RPCParam>st(new RPCParamStruct);
-
-            if ( Name == "SendChatMessage" )
+            QSharedPointer<RPCParam> psMess;
+            if (args->getStructArgMember(0, "SendChatMessage", psMess))
             {
-               // add to chat window
-               QString mess = from + " : " + Value;
-               addChat( mess );
+                QString pmess;
+                if (psMess->getString(pmess))
+                {
+                   // add to chat window
+                   QString mess = from + " : " + pmess;
+                   addChat( mess );
+
+                   QSharedPointer<RPCParam>st(new RPCParamStruct);
+                   st->addMember( true, "ChatResult" );
+                   mro->clearCallArgs();
+                   mro->getCallArgs() ->addParam( st );
+                   mro->queueResponse( from );
+                }
             }
-            st->addMember( true, "ChatResult" );
-            mro->clearCallArgs();
-            mro->getCallArgs() ->addParam( st );
-            mro->queueResponse( from );
-         }
       }
    }
 }
@@ -223,14 +214,11 @@ void TMinosChatForm::on_SendButton_clicked()
     // We need to send the message to all connected stations
     for ( std::vector<Server>::iterator i = serverList.begin(); i != serverList.end(); i++ )
     {
-       RPCChatControlClient rpc( 0 );
-       QSharedPointer<RPCParam>st(new RPCParamStruct);
-       QSharedPointer<RPCParam>sName(new RPCStringParam( "SendChatMessage" ));
-       QSharedPointer<RPCParam>sValue(new RPCStringParam( ui->ChatEdit->text() ));
-       st->addMember( sName, "Name" );
-       st->addMember( sValue, "Value" );
-       rpc.getCallArgs() ->addParam( st );
-       rpc.queueCall( "chat@" + ( (*i).name ) );
+        RPCGeneralClient rpc;
+        QSharedPointer<RPCParam>st(new RPCParamStruct);
+        st->addMember( ui->ChatEdit->text(), "SendChatMessage" );
+        rpc.getCallArgs() ->addParam( st );
+        rpc.queueCall( "chat@" + ( (*i).name ) );
     }
     ui->ChatEdit->clear(); // otherwise it is a pain!
     ui->ChatEdit->setFocus();

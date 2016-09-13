@@ -26,23 +26,13 @@ INCLUDEPATH += ../TinyXML
 INCLUDEPATH += ../XMPPLib
 
 SOURCES += \
-    BandMapRPCObj.cpp \
-    ChatRPCObj.cpp \
-    ControlRPCObj.cpp \
-    KeyerRPCObj.cpp \
-    LoggerRPCObj.cpp \
     MinosConnection.cpp \
-    RotatorRPCObj.cpp
+    MinosRPC.cpp
 
 HEADERS += \
-    BandMapRPCObj.h \
-    ChatRPCObj.h \
-    ControlRPCObj.h \
-    KeyerRPCObj.h \
-    LoggerRPCObj.h \
     MinosConnection.h \
     XMPPClient_pch.h \
-    RotatorRPCObj.h
+    MinosRPC.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

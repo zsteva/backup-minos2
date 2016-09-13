@@ -1,9 +1,11 @@
 #include "base_pch.h"
 
+#include "RotatorConstants.h"
 #include "rotatorlogic.h"
 
 #include "rotatormainwindow.h"
 #include "ui_rotatormainwindow.h"
+
 
 RotatorMainWindow *MinosRotatorForm;
 

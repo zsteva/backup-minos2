@@ -15,12 +15,6 @@
 #include "XMPP_pch.h"
 
 #include "MinosConnection.h"
-
-#include "BandMapRPCObj.h"
-#include "ChatRPCObj.h"
-#include "ControlRPCObj.h"
-#include "KeyerRPCObj.h"
-#include "LoggerRPCObj.h"
-#include "RotatorRPCObj.h"
+#include "MinosRPC.h"
 
 #endif

@@ -12,7 +12,7 @@
 #ifndef RPCPubSubH
 #define RPCPubSubH 
 //---------------------------------------------------------------------------
-enum PublishState {psPublished, psRevoked, psNotConnected};
+enum    PublishState {psPublished, psRevoked, psNotConnected};
 
 class RPCPubSub : public MinosRPCClient
 {
@@ -22,7 +22,7 @@ class RPCPubSub : public MinosRPCClient
       {}
       virtual ~RPCPubSub()
       {}
-      virtual RPCPubSub *makeObj() = 0;
+      virtual QSharedPointer<MinosRPCObj>makeObj() = 0;
    public:
       static bool isConnected()
       {
@@ -49,7 +49,7 @@ class AnalysePubSubNotify
 
       bool OK;
    public:
-      AnalysePubSubNotify( bool err, MinosRPCObj *mro );
+      AnalysePubSubNotify( bool err, QSharedPointer<MinosRPCObj>mro );
       QString getServer()
       {
          return server;

@@ -12,6 +12,7 @@
 #ifndef XMPPRPCParamsH
 #define XMPPRPCParamsH
 
+//#include <QMetaType>
 //---------------------------------------------------------------------------
 // RPC parameter structures
 
@@ -251,6 +252,6 @@ class RPCArgs
       bool getBase64Arg( unsigned int argno, QString &res );
       bool getDtgArg( unsigned int argno, QString &res );
 };
-
+Q_DECLARE_METATYPE(RPCArgs);
 //---------------------------------------------------------------------------
 #endif

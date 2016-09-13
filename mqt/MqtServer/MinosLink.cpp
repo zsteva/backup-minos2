@@ -362,6 +362,6 @@ void MinosCommonConnection::analyseNode( TiXmlElement *tix )
 //=============================================================================
 void MinosCommonConnection::on_disconnected()
 {
-    trace("MinosCommonConnection::on_disconnected()" + clientServer + "; remove_socket = true");
+    trace("MinosCommonConnection::on_disconnected() " + clientServer + "; remove_socket = true");
     remove_socket = true;
 }

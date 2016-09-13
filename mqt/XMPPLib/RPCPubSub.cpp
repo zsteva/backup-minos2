@@ -20,9 +20,9 @@ void RPCPubSub::initialisePubSub( TRPCFunctor *notifycb )
    if ( !objAdded )
    {
       objAdded = true;
-      MinosRPCObj::addObj( new RPCSubscribeClient( 0 ) );
-      MinosRPCObj::addObj( new RPCPublishClient( 0 ) );
-      MinosRPCObj::addObj( new RPCNotifyServer( notifycb ) );
+      MinosRPCObj::addClientObj( QSharedPointer<MinosRPCObj>(new RPCSubscribeClient( 0 ) ) );
+      MinosRPCObj::addClientObj( QSharedPointer<MinosRPCObj>(new RPCPublishClient( 0 ) ) );
+      MinosRPCObj::addServerObj( QSharedPointer<MinosRPCObj>(new RPCNotifyServer( notifycb )) );
    }
 }
 void RPCPubSub::publish( const QString &category, const QString &key, const QString &value, PublishState pState )
@@ -74,7 +74,7 @@ void RPCPubSub::close( )
    subscribeList.clear();
 }
 //---------------------------------------------------------------------------
-AnalysePubSubNotify::AnalysePubSubNotify( bool err, MinosRPCObj *mro ) :
+AnalysePubSubNotify::AnalysePubSubNotify(bool err, QSharedPointer<MinosRPCObj> mro ) :
       OK( false )
 {
    if ( !err )

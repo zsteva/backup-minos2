@@ -16,9 +16,6 @@
 #include "Dispatcher.h"
 #include "XMPPEvents.h"
 #include "XMPPRPCObj.h"
-#include "BandMapRPCObj.h"
-#include "KeyerRPCObj.h"
-#include "LoggerRPCObj.h"
 #include "RPCPubSub.h"
 
 #include "SendRPCDM.h"
@@ -27,7 +24,8 @@
 
 TSendDM *SendDM = 0;
 //---------------------------------------------------------------------------
-void TSendDM::makeRPCObjects()
+TSendDM::TSendDM( QWidget* Owner )
+      : QObject( Owner )
 {
     QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
     QString circleOfHell = config.value( "CircleOfHell/Name", "No_name_in_config" ).toString().trimmed();
@@ -45,18 +43,30 @@ void TSendDM::makeRPCObjects()
     QString rotatorServer = config.value( "Rotator/Server", "localhost" ).toString().trimmed();
     rotatorServerName = rotatorServer;
 
-   RPCPubSub::initialisePubSub( new TRPCCallback <TSendDM> ( SendDM, &TSendDM::notifyCallback ) );
+    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request (bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
-   MinosRPCObj::addObj( new RPCBandMapClient( new TRPCCallback <TSendDM> ( SendDM, &TSendDM::bandMapClientCallback ) ) );
-   MinosRPCObj::addObj( new RPCBandMapServer( new TRPCCallback <TSendDM> ( SendDM, &TSendDM::bandMapServerCallback ) ) );
-   MinosRPCObj::addObj( new RPCKeyerControlClient( new TRPCCallback <TSendDM> ( SendDM, &TSendDM::keyerCallback ) ) );
-   MinosRPCObj::addObj( new RPCRotatorClient( new TRPCCallback <TSendDM> ( SendDM, &TSendDM::rotatorCallback ) ) );
+    rpc->setAppName("Logger");
+    rpc->subscribeRemote( rigServerName, "RigControl" );
+    rpc->subscribeRemote( keyerServerName, "Keyer" );
+    rpc->subscribeRemote( bandMapServerName, "BandMap" );
+    rpc->subscribeRemote( rotatorServerName, "Rotator" );
+}
+TSendDM::~TSendDM()
+{
+//   MinosRPCObj::clearRPCObjects();
+//   XMPPClosedown();
 
-   TRPCFunctor *lccb = new TRPCCallback <TSendDM> ( SendDM, &TSendDM::loggerServerCallback );
-   MinosRPCObj::addObj( new RPCLogSubscribeServer( lccb ) );
-
+   SendDM = 0;
 }
 //---------------------------------------------------------------------------
+void TSendDM::logMessage( QString s )
+{
+   trace( s );
+}
+//---------------------------------------------------------------------------void TSendDM::makeRPCObjects()
 /*static*/ void TSendDM::sendKeyerPlay(  int fno )
 {
     if (SendDM)
@@ -65,7 +75,7 @@ void TSendDM::makeRPCObjects()
 
 void TSendDM::doSendKeyerPlay(  int fno )
 {
-   RPCKeyerControlClient rpc( 0 );
+   RPCGeneralClient rpc;
    QSharedPointer<RPCParam>st(new RPCParamStruct);
    QSharedPointer<RPCParam>sName(new RPCStringParam( "PlayFile" ));
    QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
@@ -82,7 +92,7 @@ void TSendDM::doSendKeyerPlay(  int fno )
 
 void TSendDM::doSendKeyerRecord(  int fno )
 {
-   RPCKeyerControlClient rpc( 0 );
+    RPCGeneralClient rpc;
    QSharedPointer<RPCParam>st(new RPCParamStruct);
    QSharedPointer<RPCParam>sName(new RPCStringParam( "RecordFile" ));
    QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
@@ -100,7 +110,7 @@ void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const 
 
 /*static*/ void TSendDM::doSendBandMap(  const QString &freq,   const QString &call,   const QString &utc,   const QString &loc,   const QString &qth )
 {
-   RPCBandMapClient rpc( 0 );
+    RPCGeneralClient rpc;
    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
    QSharedPointer<RPCParam>sName(new RPCStringParam( "BandMap" ));
@@ -132,7 +142,7 @@ void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const 
 }
 void TSendDM::doSendKeyerTone()
 {
-    RPCKeyerControlClient rpc( 0 );
+    RPCGeneralClient rpc;
     QSharedPointer<RPCParam>st(new RPCParamStruct);
     QSharedPointer<RPCParam>sName(new RPCStringParam( "Tone" ));
     QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
@@ -149,7 +159,7 @@ void TSendDM::doSendKeyerTone()
 
 void TSendDM::doSendKeyerTwoTone()
 {
-    RPCKeyerControlClient rpc( 0 );
+    RPCGeneralClient rpc;
     QSharedPointer<RPCParam>st(new RPCParamStruct);
     QSharedPointer<RPCParam>sName(new RPCStringParam( "TwoTone" ));
     QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
@@ -166,7 +176,7 @@ void TSendDM::doSendKeyerTwoTone()
 
 void TSendDM::doSendKeyerStop()
 {
-    RPCKeyerControlClient rpc( 0 );
+    RPCGeneralClient rpc;
     QSharedPointer<RPCParam>st(new RPCParamStruct);
     QSharedPointer<RPCParam>sName(new RPCStringParam( "Stop" ));
     QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
@@ -184,7 +194,7 @@ void TSendDM::doSendKeyerStop()
 
 void TSendDM::doSendRotator( RotateDirection direction,  int angle )
 {
-   RPCRotatorClient rpc( 0 );
+    RPCGeneralClient rpc;
    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
    st->addMember( (int)direction, "RotatorDirection" );
@@ -195,82 +205,7 @@ void TSendDM::doSendRotator( RotateDirection direction,  int angle )
 }
 
 //---------------------------------------------------------------------------
-TSendDM::TSendDM( QWidget* Owner )
-      : QObject( Owner ), connected( false ), subscribed( false )
-{
-    connect(&ConnectTimer, SIGNAL(timeout()), this, SLOT(ConnectTimerTimer()));
-    connect(&SubscribeTimer, SIGNAL(timeout()), this, SLOT(SubscribeTimerTimer()));
-    ConnectTimer.start(1000);
-}
-TSendDM::~TSendDM()
-{
-   MinosRPCObj::clearRPCObjects();
-   XMPPClosedown();
-
-   SendDM = 0;
-}
-//---------------------------------------------------------------------------
-void TSendDM::logMessage( QString s )
-{
-   trace( s );
-}
-//---------------------------------------------------------------------------
-void TSendDM::ConnectTimerTimer(  )
-{
-   if ( checkServerReady() )
-   {
-      ConnectTimer.stop();
-      makeRPCObjects();
-      XMPPInitialise( "Logger" );
-      connected = true;
-      SubscribeTimer.start(1000);
-   }
-}
-//---------------------------------------------------------------------------
-void TSendDM::SubscribeTimerTimer( )
-{
-   subscribeAll(); // may need to be repeated... won't do it too often, though
-}
-//---------------------------------------------------------------------------
-void TSendDM::bandMapClientCallback( bool err, MinosRPCObj * /*mro*/, const QString &from )
-{
-   logMessage( "BandMap client callback from " + from + ( err ? ":Error" : ":Normal" ) );
-   // transfer from contact to bandmap
-}
-//---------------------------------------------------------------------------
-void TSendDM::bandMapServerCallback( bool err, MinosRPCObj * /*mro*/, const QString &from )
-{
-   logMessage( "BandMap server callback from " + from + ( err ? ":Error" : ":Normal" ) );
-   // transfer from bandmap to new contact
-}
-//---------------------------------------------------------------------------
-void TSendDM::keyerCallback( bool err, MinosRPCObj * /*mro*/, const QString &from )
-{
-   logMessage( "Keyer callback from " + from + ( err ? ":Error" : ":Normal" ) );
-}
-//---------------------------------------------------------------------------
-void TSendDM::rotatorCallback( bool err, MinosRPCObj * /*mro*/, const QString &from )
-{
-   logMessage( "Rotator callback from " + from + ( err ? ":Error" : ":Normal" ) );
-}
-//---------------------------------------------------------------------------
-void TSendDM::subscribeAll()
-{
-   if ( SendDM && SendDM->connected && !SendDM->subscribed )
-   {
-      SendDM->subscribed = true;
-
-      RPCPubSub::subscribeRemote( rigServerName, "RigControl" );
-
-      RPCPubSub::subscribeRemote( keyerServerName, "Keyer" );
-
-      RPCPubSub::subscribeRemote( bandMapServerName, "BandMap" );
-
-      RPCPubSub::subscribeRemote( rotatorServerName, "Rotator" );
-   }
-}
-//---------------------------------------------------------------------------
-void TSendDM::notifyCallback( bool err, MinosRPCObj *mro, const QString &from )
+void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
    // PubSub notifications
    logMessage( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
@@ -305,15 +240,18 @@ void TSendDM::notifyCallback( bool err, MinosRPCObj *mro, const QString &from )
 
 }
 //---------------------------------------------------------------------------
-void TSendDM::zconfCallback( bool err, MinosRPCObj * /*mro*/, const QString &from )
+void TSendDM::on_response( bool err, QSharedPointer<MinosRPCObj> /*mro*/, const QString &from )
 {
-   logMessage( "RPC Response callback from " + from + ( err ? ":Error" : ":Normal" ) );
+   logMessage( "response callback from " + from + ( err ? ":Error" : ":Normal" ) );
 }
+
 //---------------------------------------------------------------------------
-void TSendDM::loggerServerCallback( bool err, MinosRPCObj *mro, const QString &from )
+void TSendDM::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
    // responds to pull calls from the monitoring client
-   logMessage( "RPC loggerServerCallback from " + from + ( err ? ":Error" : ":Normal" ) );
+   logMessage( "request callback from " + from + ( err ? ":Error" : ":Normal" ) );
+
+   // need to check "from" is correct
    if ( !err )
    {
       QSharedPointer<RPCParam> psLogName;

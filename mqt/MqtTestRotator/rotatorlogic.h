@@ -9,18 +9,8 @@ class RotatorLogic : public QObject
 {
     Q_OBJECT
 
-    bool connected;
-    bool subscribed;
-    QTimer ConnectTimer;
-
     RotatorMainWindow *parent;
 
-
-    void notifyCallback( bool err, MinosRPCObj *mro, const QString &from );
-    void rotatorClientCallback( bool err, MinosRPCObj *mro, const QString &from );
-    void rotatorServerCallback( bool err, MinosRPCObj *mro, const QString &from );
-
-    static void makeRPCObjects();
 public:
     explicit RotatorLogic(RotatorMainWindow *parent);
 
@@ -30,7 +20,9 @@ signals:
     void setRotation(int direction, int angle);
 
 private slots:
-    void ConnectTimerTimer( );
+    void on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );
+    void on_request( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
+    void on_response(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );
 };
 
 #endif // ROTATORLOGIC_H

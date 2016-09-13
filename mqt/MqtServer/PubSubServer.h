@@ -19,7 +19,7 @@ class RPCServerPubSub : public RPCPubSub
       {}
       virtual ~RPCServerPubSub()
       {}
-      virtual RPCServerPubSub *makeObj() = 0;
+      virtual QSharedPointer<MinosRPCObj> makeObj() = 0;
    public:
       static void initialisePubSub( TRPCFunctor *notifycb );
 
@@ -54,9 +54,9 @@ class RPCServerSubscribeClient: public RPCPubSub
       {}
       ~RPCServerSubscribeClient()
       {}
-      virtual RPCServerSubscribeClient *makeObj()
+      virtual QSharedPointer<MinosRPCObj> makeObj()
       {
-         return new RPCServerSubscribeClient( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCServerSubscribeClient( callback ) );
       }
 };
 class RPCRServerSubscribeServer: public MinosRPCServer
@@ -66,9 +66,9 @@ class RPCRServerSubscribeServer: public MinosRPCServer
       {}
       ~RPCRServerSubscribeServer()
       {}
-      virtual RPCRServerSubscribeServer *makeObj()
+      virtual QSharedPointer<MinosRPCObj> makeObj()
       {
-         return new RPCRServerSubscribeServer( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCRServerSubscribeServer( callback ) );
       }
 
 };
@@ -80,9 +80,9 @@ class RPCPublishServer: public MinosRPCServer
       {}
       ~RPCPublishServer()
       {}
-      virtual RPCPublishServer *makeObj()
+      virtual QSharedPointer<MinosRPCObj> makeObj()
       {
-         return new RPCPublishServer( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCPublishServer( callback ));
       }
 };
 class RPCSubscribeServer: public MinosRPCServer
@@ -92,9 +92,9 @@ class RPCSubscribeServer: public MinosRPCServer
       {}
       ~RPCSubscribeServer()
       {}
-      virtual RPCSubscribeServer *makeObj()
+      virtual QSharedPointer<MinosRPCObj> makeObj()
       {
-         return new RPCSubscribeServer( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCSubscribeServer( callback ) );
       }
 
 };
@@ -106,9 +106,9 @@ class RPCRemoteSubscribeServer: public MinosRPCServer
       {}
       ~RPCRemoteSubscribeServer()
       {}
-      virtual RPCRemoteSubscribeServer *makeObj()
+      virtual QSharedPointer<MinosRPCObj> makeObj()
       {
-         return new RPCRemoteSubscribeServer( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCRemoteSubscribeServer( callback ) );
       }
 
 };
@@ -124,9 +124,9 @@ class RPCClientNotifyClient: public MinosRPCClient
       {} // base class "callback" gets set to cb
       ~RPCClientNotifyClient()
       {}
-      virtual RPCClientNotifyClient *makeObj()
+      virtual QSharedPointer<MinosRPCObj> makeObj()
       {
-         return new RPCClientNotifyClient( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCClientNotifyClient( callback ));
       }
 };
 
@@ -140,9 +140,9 @@ class RPCServerNotifyClient: public MinosRPCClient
       {} // base class "callback" gets set to cb
       ~RPCServerNotifyClient()
       {}
-      virtual RPCServerNotifyClient *makeObj()
+      virtual QSharedPointer<MinosRPCObj>makeObj()
       {
-         return new RPCServerNotifyClient( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCServerNotifyClient( callback ));
       }
 };
 class RPCServerNotifyServer: public MinosRPCServer
@@ -152,9 +152,9 @@ class RPCServerNotifyServer: public MinosRPCServer
       {} // base class "callback" gets set to cb
       ~RPCServerNotifyServer()
       {}
-      virtual RPCServerNotifyServer *makeObj()
+      virtual QSharedPointer<MinosRPCObj> makeObj()
       {
-         return new RPCServerNotifyServer( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCServerNotifyServer( callback ));
       }
 };
 //---------------------------------------------------------------------------

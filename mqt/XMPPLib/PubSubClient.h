@@ -22,9 +22,9 @@ class RPCPublishClient: public RPCPubSub
       // member/method  that could go "up"
       ~RPCPublishClient()
       {}
-      virtual RPCPublishClient *makeObj()
+      virtual QSharedPointer<MinosRPCObj>makeObj()
       {
-         return new RPCPublishClient( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCPublishClient( callback ));
       }
 };
 
@@ -36,9 +36,9 @@ class RPCSubscribeClient: public RPCPubSub
       {}
       ~RPCSubscribeClient()
       {}
-      virtual RPCSubscribeClient *makeObj()
+      virtual QSharedPointer<MinosRPCObj>makeObj()
       {
-         return new RPCSubscribeClient( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCSubscribeClient( callback ));
       }
 };
 class RPCRemoteSubscribeClient: public RPCPubSub
@@ -48,9 +48,9 @@ class RPCRemoteSubscribeClient: public RPCPubSub
       {}
       ~RPCRemoteSubscribeClient()
       {}
-      virtual RPCRemoteSubscribeClient *makeObj()
+      virtual QSharedPointer<MinosRPCObj>makeObj()
       {
-         return new RPCRemoteSubscribeClient( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCRemoteSubscribeClient( callback ));
       }
 };
 class RPCNotifyServer: public MinosRPCServer
@@ -60,9 +60,9 @@ class RPCNotifyServer: public MinosRPCServer
       {}
       ~RPCNotifyServer()
       {}
-      virtual RPCNotifyServer *makeObj()
+      virtual QSharedPointer<MinosRPCObj>makeObj()
       {
-         return new RPCNotifyServer( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCNotifyServer( callback ));
       }
 };
 //---------------------------------------------------------------------------
