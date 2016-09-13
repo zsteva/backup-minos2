@@ -214,7 +214,7 @@ void TMinosChatForm::on_SendButton_clicked()
     // We need to send the message to all connected stations
     for ( std::vector<Server>::iterator i = serverList.begin(); i != serverList.end(); i++ )
     {
-        RPCGeneralClient rpc;
+        RPCGeneralClient rpc("Minos:Chat");
         QSharedPointer<RPCParam>st(new RPCParamStruct);
         st->addMember( ui->ChatEdit->text(), "SendChatMessage" );
         rpc.getCallArgs() ->addParam( st );
