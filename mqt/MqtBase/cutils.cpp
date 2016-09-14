@@ -329,7 +329,9 @@ QDateTime CanonicalToTDT(QString cdtg )
 }
 QString TDTToCanonical(QString d )
 {
-    // comes in as dd/MM/yyy hh:mm
+    // comes in as dd/MM/yyy hh:mm and maybe UTC/GMT
+   if (d.endsWith(" UTC"))
+        d = d.left(d.length() - 4);
    QDateTime dt = QDateTime::fromString(d, "dd/MM/yyyy hh:mm");
    QString s = dt.toString( "yyyyMMddhhmm" );
    return s;

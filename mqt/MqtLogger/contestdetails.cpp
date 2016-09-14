@@ -36,8 +36,8 @@ ContestDetails::ContestDetails(QWidget *parent) :
     for ( int i = 0; i < 24; i++ )
     {
         QString cbText = QString("%1:").arg(i, 2, 10, QChar('0'));
-        QString hour = cbText + "00";
-        QString halfhour = cbText + "30";
+        QString hour = cbText + "00 UTC";
+        QString halfhour = cbText + "30 UTC";
         ui->StartTimeCombo->addItem( hour );
         ui->StartTimeCombo->addItem ( halfhour );
         ui->EndTimeCombo->addItem( hour );
@@ -181,7 +181,7 @@ void ContestDetails::setDetails(  )
       QString s = contest->DTGStart.getValue();
       QDateTime t = QDateTime::fromString(s, "yyyyMMddhhmm");
       ui->StartDateEdit->setDate(t.date());
-      QString stc = t.time().toString( "hh:mm" );
+      QString stc = t.time().toString( "hh:mm UTC" );
       ui->StartTimeCombo->setCurrentText(stc);
    }
    else
