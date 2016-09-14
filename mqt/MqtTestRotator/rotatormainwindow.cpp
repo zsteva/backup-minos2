@@ -1,6 +1,6 @@
 #include "base_pch.h"
 
-#include "RotatorConstants.h"
+#include "RPCCommandConstants.h"
 #include "rotatorlogic.h"
 
 #include "rotatormainwindow.h"
@@ -92,16 +92,16 @@ void RotatorMainWindow::on_pushButton_clicked()
     QString sdir;
     switch (ui->direction->text().toInt())
     {
-    case eRotateLeft:
+    case rpcConstants::eRotateLeft:
         sdir = "L/";
     break;
-    case eRotateDirect:
+    case rpcConstants::eRotateDirect:
         sdir = "D/";
     break;
-    case eRotateRight:
+    case rpcConstants::eRotateRight:
         sdir = "R/";
     break;
-    case eRotateStop:
+    case rpcConstants::eRotateStop:
         sdir = "S/";
     break;
     }

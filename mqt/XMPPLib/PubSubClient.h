@@ -15,7 +15,7 @@
 class RPCPublishClient: public RPCPubSub
 {
    public:
-      RPCPublishClient( TRPCFunctor *cb ) : RPCPubSub( "Minos:PubSub:Publish", cb )
+      RPCPublishClient( TRPCFunctor *cb ) : RPCPubSub( /*rpcConstants::publish*/"Minos:PubSub:Publish", cb )
       {}    // method name should be shared
       // plus we want factory access to it
       // so it would be nice to have a static

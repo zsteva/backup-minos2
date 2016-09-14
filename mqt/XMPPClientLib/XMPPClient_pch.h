@@ -17,4 +17,6 @@
 #include "MinosConnection.h"
 #include "MinosRPC.h"
 
+#include "RPCCommandConstants.h"
+
 #endif

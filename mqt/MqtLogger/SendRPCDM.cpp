@@ -49,16 +49,13 @@ TSendDM::TSendDM( QWidget* Owner )
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
     rpc->setAppName("Logger");
-    rpc->subscribeRemote( rigServerName, "RigControl" );
-    rpc->subscribeRemote( keyerServerName, "Keyer" );
-    rpc->subscribeRemote( bandMapServerName, "BandMap" );
-    rpc->subscribeRemote( rotatorServerName, "Rotator" );
+    rpc->subscribeRemote( rigServerName, rpcConstants::RigControlCategory );
+    rpc->subscribeRemote( keyerServerName, rpcConstants::KeyerCategory );
+    rpc->subscribeRemote( bandMapServerName, rpcConstants::BandMapCategory );
+    rpc->subscribeRemote( rotatorServerName, rpcConstants::RotatorCategory );
 }
 TSendDM::~TSendDM()
 {
-//   MinosRPCObj::clearRPCObjects();
-//   XMPPClosedown();
-
    SendDM = 0;
 }
 //---------------------------------------------------------------------------
@@ -66,7 +63,7 @@ void TSendDM::logMessage( QString s )
 {
    trace( s );
 }
-//---------------------------------------------------------------------------void TSendDM::makeRPCObjects()
+//---------------------------------------------------------------------------
 /*static*/ void TSendDM::sendKeyerPlay(  int fno )
 {
     if (SendDM)
@@ -75,14 +72,14 @@ void TSendDM::logMessage( QString s )
 
 void TSendDM::doSendKeyerPlay(  int fno )
 {
-    RPCGeneralClient rpc("Minos:KeyerControl");
+    RPCGeneralClient rpc(rpcConstants::keyerMethod);
    QSharedPointer<RPCParam>st(new RPCParamStruct);
-   QSharedPointer<RPCParam>sName(new RPCStringParam( "PlayFile" ));
+   QSharedPointer<RPCParam>sName(new RPCStringParam( rpcConstants::keyerPlayFile ));
    QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
    st->addMember( sName, "Name" );
    st->addMember( iValue, "Value" );
    rpc.getCallArgs() ->addParam( st );
-   rpc.queueCall( "Keyer@" + keyerServerName );
+   rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerName );
 }
 /*static*/ void TSendDM::sendKeyerRecord(  int fno )
 {
@@ -92,14 +89,65 @@ void TSendDM::doSendKeyerPlay(  int fno )
 
 void TSendDM::doSendKeyerRecord(  int fno )
 {
-    RPCGeneralClient rpc("Minos:KeyerControl");
+    RPCGeneralClient rpc(rpcConstants::keyerMethod);
    QSharedPointer<RPCParam>st(new RPCParamStruct);
    QSharedPointer<RPCParam>sName(new RPCStringParam( "RecordFile" ));
    QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
    st->addMember( sName, "Name" );
    st->addMember( iValue, "Value" );
    rpc.getCallArgs() ->addParam( st );
-   rpc.queueCall( "Keyer@" + keyerServerName );
+   rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerName );
+}
+
+/*static*/ void TSendDM::sendKeyerTone()
+{
+    if (SendDM)
+        SendDM->doSendKeyerTone();
+}
+void TSendDM::doSendKeyerTone()
+{
+    RPCGeneralClient rpc(rpcConstants::keyerMethod);
+    QSharedPointer<RPCParam>st(new RPCParamStruct);
+    QSharedPointer<RPCParam>sName(new RPCStringParam( "Tone" ));
+    QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
+    st->addMember( sName, "Name" );
+    st->addMember( iValue, "Value" );
+    rpc.getCallArgs() ->addParam( st );
+    rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerName );
+}
+/*static*/ void TSendDM::sendKeyerTwoTone()
+{
+    if (SendDM)
+        SendDM->doSendKeyerTwoTone();
+}
+
+void TSendDM::doSendKeyerTwoTone()
+{
+    RPCGeneralClient rpc(rpcConstants::keyerMethod);
+    QSharedPointer<RPCParam>st(new RPCParamStruct);
+    QSharedPointer<RPCParam>sName(new RPCStringParam( "TwoTone" ));
+    QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
+    st->addMember( sName, "Name" );
+    st->addMember( iValue, "Value" );
+    rpc.getCallArgs() ->addParam( st );
+    rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerName );
+}
+/*static*/ void TSendDM::sendKeyerStop()
+{
+    if (SendDM)
+        SendDM->doSendKeyerStop();
+}
+
+void TSendDM::doSendKeyerStop()
+{
+    RPCGeneralClient rpc(rpcConstants::keyerMethod);
+    QSharedPointer<RPCParam>st(new RPCParamStruct);
+    QSharedPointer<RPCParam>sName(new RPCStringParam( "Stop" ));
+    QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
+    st->addMember( sName, "Name" );
+    st->addMember( iValue, "Value" );
+    rpc.getCallArgs() ->addParam( st );
+    rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerName );
 }
 //---------------------------------------------------------------------------
 void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const QString &utc,   const QString &loc,   const QString &qth )
@@ -110,98 +158,36 @@ void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const 
 
 /*static*/ void TSendDM::doSendBandMap(  const QString &freq,   const QString &call,   const QString &utc,   const QString &loc,   const QString &qth )
 {
-    RPCGeneralClient rpc("Minos:BandMap");
+    RPCGeneralClient rpc(rpcConstants::bandmapMethod);
    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-   QSharedPointer<RPCParam>sName(new RPCStringParam( "BandMap" ));
-   st->addMember( sName, "Name" );
-
-   QSharedPointer<RPCParam>sValue(new RPCStringParam( freq ));
-   st->addMember( sValue, "Freq" );
-
-   QSharedPointer<RPCParam>sCall(new RPCStringParam( call ));
-   st->addMember( sCall, "Callsign" );
-
-   QSharedPointer<RPCParam>sLoc(new RPCStringParam( loc ));
-   st->addMember( sLoc, "Locator" );
-
-   QSharedPointer<RPCParam>dValue(new RPCDtgParam( utc ));
-   st->addMember( dValue, "UTC" );
-
-   QSharedPointer<RPCParam>sQTH(new RPCStringParam( qth ));
-   st->addMember( sQTH, "QTH" );
+   st->addMember( rpcConstants::bandmapApp, rpcConstants::bandmapParamName );
+   st->addMember( freq, rpcConstants::bandmapParamFreq );
+   st->addMember( call, rpcConstants::bandmapParamCallsign );
+   st->addMember( loc, rpcConstants::bandmapParamLocator );
+   st->addDtgMember( utc, rpcConstants::bandmapParamUTC );
+   st->addMember( qth, rpcConstants::bandmapParamQTH );
 
    rpc.getCallArgs() ->addParam( st );
-   rpc.queueCall( "BandMap@" + bandMapServerName );
+   rpc.queueCall( rpcConstants::bandmapApp + "@" + bandMapServerName );
 }
 
-/*static*/ void TSendDM::sendKeyerTone()
-{
-    if (SendDM)
-        SendDM->doSendKeyerTone();
-}
-void TSendDM::doSendKeyerTone()
-{
-    RPCGeneralClient rpc("Minos:KeyerControl");
-    QSharedPointer<RPCParam>st(new RPCParamStruct);
-    QSharedPointer<RPCParam>sName(new RPCStringParam( "Tone" ));
-    QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
-    st->addMember( sName, "Name" );
-    st->addMember( iValue, "Value" );
-    rpc.getCallArgs() ->addParam( st );
-    rpc.queueCall( "Keyer@" + keyerServerName );}
-
-/*static*/ void TSendDM::sendKeyerTwoTone()
-{
-    if (SendDM)
-        SendDM->doSendKeyerTwoTone();
-}
-
-void TSendDM::doSendKeyerTwoTone()
-{
-    RPCGeneralClient rpc("Minos:KeyerControl");
-    QSharedPointer<RPCParam>st(new RPCParamStruct);
-    QSharedPointer<RPCParam>sName(new RPCStringParam( "TwoTone" ));
-    QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
-    st->addMember( sName, "Name" );
-    st->addMember( iValue, "Value" );
-    rpc.getCallArgs() ->addParam( st );
-    rpc.queueCall( "Keyer@" + keyerServerName );}
-
-/*static*/ void TSendDM::sendKeyerStop()
-{
-    if (SendDM)
-        SendDM->doSendKeyerStop();
-}
-
-void TSendDM::doSendKeyerStop()
-{
-    RPCGeneralClient rpc("Minos:KeyerControl");
-    QSharedPointer<RPCParam>st(new RPCParamStruct);
-    QSharedPointer<RPCParam>sName(new RPCStringParam( "Stop" ));
-    QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
-    st->addMember( sName, "Name" );
-    st->addMember( iValue, "Value" );
-    rpc.getCallArgs() ->addParam( st );
-    rpc.queueCall( "Keyer@" + keyerServerName );
-}
-
-/*static*/ void TSendDM::sendRotator(RotateDirection direction, int angle )
+/*static*/ void TSendDM::sendRotator(rpcConstants::RotateDirection direction, int angle )
 {
     if (SendDM)
         SendDM->doSendRotator(direction, angle);
 }
 
-void TSendDM::doSendRotator( RotateDirection direction,  int angle )
+void TSendDM::doSendRotator( rpcConstants::RotateDirection direction,  int angle )
 {
-    RPCGeneralClient rpc("Minos:Rotator");
+    RPCGeneralClient rpc(rpcConstants::rotatorMethod);
    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-   st->addMember( (int)direction, "RotatorDirection" );
-   st->addMember( angle, "RotatorAngle" );
+   st->addMember( (int)direction, rpcConstants::rotatorParamDirection );
+   st->addMember( angle, rpcConstants::rotatorParamAngle );
    rpc.getCallArgs() ->addParam( st );
 
-   rpc.queueCall( "Rotator@" + rotatorServerName );
+   rpc.queueCall( rpcConstants::rotatorApp + "@" + rotatorServerName );
 }
 
 //---------------------------------------------------------------------------
@@ -214,25 +200,25 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
    // called whenever frequency changes
    if ( an.getOK() )
    {
-      if ( an.getCategory() == "Keyer" && an.getKey() == "Report" )
+      if ( an.getCategory() == rpcConstants::KeyerCategory && an.getKey() == "Report" )
       {
          LogContainer->setCaption( an.getValue() );
          logMessage( "KeyerReport " + an.getValue() );
       }
-      if ( an.getCategory() == "RigControl" && an.getKey() == "Mode" )
+      if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == "Mode" )
       {
          LogContainer->setMode( an.getValue() );
          logMessage( "RigMode " + an.getValue() );
       }
-      if ( an.getCategory() == "RigControl" && an.getKey() == "Frequency" )
+      if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == "Frequency" )
       {
          LogContainer->setFreq( an.getValue() );
       }
-      if ( an.getCategory() == "BandMap" && an.getKey() == "Loaded" )
+      if ( an.getCategory() == rpcConstants::BandMapCategory && an.getKey() == "Loaded" )
       {
          LogContainer->setBandMapLoaded();
       }
-      if ( an.getCategory() == "Rotator" && an.getKey() == "State")
+      if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "State")
       {
          LogContainer->setRotatorState(an.getValue());
       }

@@ -9,6 +9,8 @@
 
 #ifndef SendRPCDMH
 #define SendRPCDMH 
+#include "logger_pch.h"
+
 #include <QObject>
 #include <QWidget>
 #include <QString>
@@ -34,36 +36,24 @@ class TSendDM : public QObject
       QString rotatorServerName;
 
       void logMessage( QString s );
-//      void makeRPCObjects();
-      /*
-      void notifyCallback(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );
-      void bandMapClientCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
-      void bandMapServerCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
-      void keyerCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
-      void rotatorCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
-      void loggerServerCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
-      */
    public:  		// User declarations
       TSendDM( QWidget* Owner );
       ~TSendDM();
-//      void subscribeAll();
       static void sendKeyerPlay( int fno );
       static void sendKeyerRecord( int fno );
       static void sendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
       static void sendKeyerTone();
       static void sendKeyerTwoTone();
       static void sendKeyerStop();
-      static void sendRotator(RotateDirection direction, int angle );
+      static void sendRotator(rpcConstants::RotateDirection direction, int angle );
       void doSendKeyerPlay( int fno );
       void doSendKeyerRecord( int fno );
       void doSendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
       void doSendKeyerTone();
       void doSendKeyerTwoTone();
       void doSendKeyerStop();
-      void doSendRotator(RotateDirection, int angle );
+      void doSendRotator(rpcConstants::RotateDirection, int angle );
      private slots:
-      //void ConnectTimerTimer();
-      //void SubscribeTimerTimer();
       void on_request( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
       void on_response( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
       void on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );

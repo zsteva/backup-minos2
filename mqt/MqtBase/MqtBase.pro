@@ -80,8 +80,7 @@ HEADERS += \
     CalendarList.h \
     cutils.h \
     qlogtabwidget.h \
-    minoskeyboard.h \
-    RotatorConstants.h
+    minoskeyboard.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

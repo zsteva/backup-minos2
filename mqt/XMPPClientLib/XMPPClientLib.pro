@@ -28,7 +28,8 @@ SOURCES += \
 HEADERS += \
     MinosConnection.h \
     XMPPClient_pch.h \
-    MinosRPC.h
+    MinosRPC.h \
+    RPCCommandConstants.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

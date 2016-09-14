@@ -14,7 +14,7 @@ RotatorLogic::RotatorLogic(RotatorMainWindow *parent) : QObject(parent), parent(
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
-    rpc->setAppName("Minos:Rotator");
+    rpc->setAppName(rpcConstants::rotatorApp);
 
     // we aren't subscribing to anything!
 
@@ -28,7 +28,7 @@ void RotatorLogic::publishState(const QString &state)
     if ( state != old )
     {
        old = state;
-       RPCPubSub::publish( "Rotator", "State", state, psPublished );
+       RPCPubSub::publish( rpcConstants::RotatorCategory, rpcConstants::rotatorKeyState, state, psPublished );
     }
 }
 
@@ -63,7 +63,8 @@ void RotatorLogic::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const Q
         QSharedPointer<RPCParam> psDirection;
         QSharedPointer<RPCParam> psAngle;
         RPCArgs *args = mro->getCallArgs();
-        if ( args->getStructArgMember( 0, "RotatorDirection", psDirection ) && args->getStructArgMember( 0, "RotatorAngle", psAngle ) )
+        if ( args->getStructArgMember( 0, rpcConstants::rotatorParamDirection, psDirection )
+             && args->getStructArgMember( 0, rpcConstants::rotatorParamAngle, psAngle ) )
         {
             int direction;
             int angle;
@@ -75,7 +76,7 @@ void RotatorLogic::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const Q
                 emit (setRotation(direction, angle));
 
                 QSharedPointer<RPCParam>st(new RPCParamStruct);
-                st->addMember( true, "RotatorResult" );
+                st->addMember( true, rpcConstants::rotatorResult );
                 mro->clearCallArgs();
                 mro->getCallArgs() ->addParam( st );
                 mro->queueResponse( from );

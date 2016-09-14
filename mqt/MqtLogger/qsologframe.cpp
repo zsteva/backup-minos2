@@ -5,8 +5,6 @@
 #include "tforcelogdlg.h"
 #include "SendRPCDM.h"
 
-#include "RotatorConstants.h"
-
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
 
@@ -2078,22 +2076,22 @@ int QSOLogFrame::getAngle()
 
 void QSOLogFrame::on_RotateLeft_clicked()
 {
-    TSendDM::sendRotator(eRotateLeft, getAngle());
+    TSendDM::sendRotator(rpcConstants::eRotateLeft, getAngle());
 }
 
 void QSOLogFrame::on_Rotate_clicked()
 {
-    TSendDM::sendRotator(eRotateDirect, getAngle());
+    TSendDM::sendRotator(rpcConstants::eRotateDirect, getAngle());
 }
 
 void QSOLogFrame::on_RotateRight_clicked()
 {
-    TSendDM::sendRotator(eRotateRight, getAngle());
+    TSendDM::sendRotator(rpcConstants::eRotateRight, getAngle());
 }
 
 void QSOLogFrame::on_StopRotate_clicked()
 {
-    TSendDM::sendRotator(eRotateStop, 0);
+    TSendDM::sendRotator(rpcConstants::eRotateStop, 0);
 }
 void QSOLogFrame::setRotatorState(const QString &s)
 {

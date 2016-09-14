@@ -28,8 +28,8 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
-    rpc->setAppName("Chat");
-    rpc->subscribe("Station");
+    rpc->setAppName(rpcConstants::chatApp);
+    rpc->subscribe(rpcConstants::StationCategory);
 }
 
 TMinosChatForm::~TMinosChatForm()
@@ -133,7 +133,7 @@ void TMinosChatForm::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const 
 
     if ( an.getOK() )
     {
-      if ( an.getCategory() == "Station" )
+      if ( an.getCategory() == rpcConstants::StationCategory )
       {
          logMessage( QString(stateIndicator[an.getState()]) + " " + an.getKey() + " " + an.getValue() );
          std::vector<Server>::iterator stat;
@@ -189,7 +189,7 @@ void TMinosChatForm::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const
       if (args)
       {
             QSharedPointer<RPCParam> psMess;
-            if (args->getStructArgMember(0, "SendChatMessage", psMess))
+            if (args->getStructArgMember(0, rpcConstants::SendChatMessage, psMess))
             {
                 QString pmess;
                 if (psMess->getString(pmess))
@@ -199,7 +199,7 @@ void TMinosChatForm::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const
                    addChat( mess );
 
                    QSharedPointer<RPCParam>st(new RPCParamStruct);
-                   st->addMember( true, "ChatResult" );
+                   st->addMember( true, rpcConstants::ChatResult );
                    mro->clearCallArgs();
                    mro->getCallArgs() ->addParam( st );
                    mro->queueResponse( from );
@@ -214,11 +214,11 @@ void TMinosChatForm::on_SendButton_clicked()
     // We need to send the message to all connected stations
     for ( std::vector<Server>::iterator i = serverList.begin(); i != serverList.end(); i++ )
     {
-        RPCGeneralClient rpc("Minos:Chat");
+        RPCGeneralClient rpc(rpcConstants::chatMethod);
         QSharedPointer<RPCParam>st(new RPCParamStruct);
-        st->addMember( ui->ChatEdit->text(), "SendChatMessage" );
+        st->addMember( ui->ChatEdit->text(), rpcConstants::SendChatMessage );
         rpc.getCallArgs() ->addParam( st );
-        rpc.queueCall( "chat@" + ( (*i).name ) );
+        rpc.queueCall( rpcConstants::chatApp + "@" + ( (*i).name ) );
     }
     ui->ChatEdit->clear(); // otherwise it is a pain!
     ui->ChatEdit->setFocus();
