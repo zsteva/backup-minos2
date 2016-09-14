@@ -28,7 +28,8 @@ void RotatorLogic::publishState(const QString &state)
     if ( state != old )
     {
        old = state;
-       RPCPubSub::publish( rpcConstants::RotatorCategory, rpcConstants::rotatorKeyState, state, psPublished );
+       MinosRPC *rpc = MinosRPC::getMinosRPC();
+       rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorKeyState, state, psPublished );
     }
 }
 

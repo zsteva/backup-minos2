@@ -70,6 +70,9 @@ public:
     void subscribe(const QString &);
     void subscribeRemote(const QString &, const QString &);
 
+    void publish( const QString &category, const QString &key, const QString &value, PublishState pState );
+
+
 signals:
     void notify( bool err, QSharedPointer<MinosRPCObj>, const QString &from );
     void clientCall( bool err, QSharedPointer<MinosRPCObj>, const QString &from );

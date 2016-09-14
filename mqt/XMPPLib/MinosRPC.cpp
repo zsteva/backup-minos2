@@ -58,6 +58,10 @@ void MinosRPC::subscribeRemote(const QString &s, const QString &c)
         RPCPubSub::subscribeRemote( s, c );
     }
 }
+void MinosRPC::publish( const QString &category, const QString &key, const QString &value, PublishState pState )
+{
+   RPCPubSub::publish( category, key, value, pState );
+}
 void MinosRPC::notifyCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
    trace( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );

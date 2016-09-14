@@ -177,7 +177,6 @@ void TSingleLogFrame::closeContest()
 {
     if ( TContestApp::getContestApp() )
     {
-//       RPCPubSub::publish( "ContestLog", contest->publishedName, makeStr( 0 ), psRevoked );
        qsoModel.initialise(0);
        TContestApp::getContestApp() ->closeFile( contest );
        ui->GJVQSOLogFrame->closeContest();

@@ -59,11 +59,12 @@
 #include "XMPPRPCParams.h"
 #include "XMPPStanzas.h"
 #include "XMPPRPCObj.h"
+#include "RPCPubSub.h"
+
 #include "RPCCommandConstants.h"
 #include "MinosRPC.h"
-
-#include "RPCPubSub.h"
 #include "PubSubClient.h"
+
 
 #include "MinosConnection.h"
 #endif
