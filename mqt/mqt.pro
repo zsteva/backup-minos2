@@ -4,7 +4,6 @@ SUBDIRS += \
     MqtUtils \
     TinyXML \
     XMPPLib \
-    XMPPClientLib \
     MqtBase \
     RPCTest \
     MqtLogger \
@@ -12,7 +11,7 @@ SUBDIRS += \
     MqtChat \
     MqtTestRotator
 
-RPCTest.depends = MqtUtils TinyXML XMPPLib XMPPClientLib MqtBase
-MqtLogger.depends = MqtUtils TinyXML XMPPLib XMPPClientLib MqtBase
-MqtServer.depends = MqtUtils TinyXML XMPPLib XMPPClientLib MqtBase
-MqtChat.depends = MqtUtils TinyXML XMPPLib XMPPClientLib MqtBase
+RPCTest.depends = MqtUtils TinyXML XMPPLib MqtBase
+MqtLogger.depends = MqtUtils TinyXML XMPPLib MqtBase
+MqtServer.depends = MqtUtils TinyXML XMPPLib MqtBase
+MqtChat.depends = MqtUtils TinyXML XMPPLib MqtBase

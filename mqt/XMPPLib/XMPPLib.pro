@@ -33,7 +33,9 @@ SOURCES += \
     XMPPEvents.cpp \
     XMPPRPCObj.cpp \
     XMPPRPCParams.cpp \
-    XMPPStanzas.cpp
+    XMPPStanzas.cpp \
+    MinosConnection.cpp \
+    MinosRPC.cpp
 
 HEADERS += \
     Dispatcher.h \
@@ -49,7 +51,10 @@ HEADERS += \
     XMPPEvents.h \
     XMPPRPCObj.h \
     XMPPRPCParams.h \
-    XMPPStanzas.h
+    XMPPStanzas.h \
+    MinosConnection.h \
+    MinosRPC.h \
+    RPCCommandConstants.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

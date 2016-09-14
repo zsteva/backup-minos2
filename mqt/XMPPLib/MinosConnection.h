@@ -9,7 +9,7 @@
 #ifndef minosConnectionH
 #define minosConnectionH
 //---------------------------------------------------------------------------
-#include "XMPPClient_pch.h"
+#include "XMPP_pch.h"
 
 #include <QObject>
 #include <QSharedPointer>

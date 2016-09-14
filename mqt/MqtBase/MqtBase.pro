@@ -20,7 +20,6 @@ DEFINES += TIXML_USE_STL
 INCLUDEPATH += ../MqtUtils
 INCLUDEPATH += ../TinyXML
 INCLUDEPATH += ../XMPPLib
-INCLUDEPATH += ../XMPPClientLib
 INCLUDEPATH += ../qtcsv/src/include
 
 SOURCES += \

@@ -1,7 +1,7 @@
 #ifndef MINOSRPC_H
 #define MINOSRPC_H
 
-#include "XMPPClient_pch.h"
+#include "XMPP_pch.h"
 #include <QTimer>
 
 class RPCGeneralClient: public MinosRPCClient
