@@ -50,7 +50,7 @@ extern std::vector<RPCServerSubscriber *> serverSubscribeList;
 class RPCServerSubscribeClient: public RPCPubSub
 {
    public:
-      RPCServerSubscribeClient( TRPCFunctor *cb ) : RPCPubSub( "Minos:PubSub:ServerSubscribe", cb )
+      RPCServerSubscribeClient( TRPCFunctor *cb ) : RPCPubSub( rpcConstants::serverSubscribe, cb )
       {}
       ~RPCServerSubscribeClient()
       {}
@@ -62,7 +62,7 @@ class RPCServerSubscribeClient: public RPCPubSub
 class RPCRServerSubscribeServer: public MinosRPCServer
 {
    public:
-      RPCRServerSubscribeServer( TRPCFunctor *cb ) : MinosRPCServer( "Minos:PubSub:ServerSubscribe", cb )
+      RPCRServerSubscribeServer( TRPCFunctor *cb ) : MinosRPCServer( rpcConstants::serverSubscribe, cb )
       {}
       ~RPCRServerSubscribeServer()
       {}
@@ -76,7 +76,7 @@ class RPCRServerSubscribeServer: public MinosRPCServer
 class RPCPublishServer: public MinosRPCServer
 {
    public:
-      RPCPublishServer( TRPCFunctor *cb ) : MinosRPCServer( "Minos:PubSub:Publish", cb )
+      RPCPublishServer( TRPCFunctor *cb ) : MinosRPCServer( rpcConstants::publish, cb )
       {}
       ~RPCPublishServer()
       {}
@@ -88,7 +88,7 @@ class RPCPublishServer: public MinosRPCServer
 class RPCSubscribeServer: public MinosRPCServer
 {
    public:
-      RPCSubscribeServer( TRPCFunctor *cb ) : MinosRPCServer( "Minos:PubSub:Subscribe", cb )
+      RPCSubscribeServer( TRPCFunctor *cb ) : MinosRPCServer( rpcConstants::subscribe, cb )
       {}
       ~RPCSubscribeServer()
       {}
@@ -102,7 +102,7 @@ class RPCSubscribeServer: public MinosRPCServer
 class RPCRemoteSubscribeServer: public MinosRPCServer
 {
    public:
-      RPCRemoteSubscribeServer( TRPCFunctor *cb ) : MinosRPCServer( "Minos:PubSub:RemoteSubscribe", cb )
+      RPCRemoteSubscribeServer( TRPCFunctor *cb ) : MinosRPCServer( rpcConstants::remoteSubscribe, cb )
       {}
       ~RPCRemoteSubscribeServer()
       {}
@@ -120,7 +120,7 @@ class RPCRemoteSubscribeServer: public MinosRPCServer
 class RPCClientNotifyClient: public MinosRPCClient
 {
    public:
-      RPCClientNotifyClient( TRPCFunctor *cb ) : MinosRPCClient( "Minos:PubSub:ClientNotify", cb )
+      RPCClientNotifyClient( TRPCFunctor *cb ) : MinosRPCClient( rpcConstants::clientNotify, cb )
       {} // base class "callback" gets set to cb
       ~RPCClientNotifyClient()
       {}
@@ -136,7 +136,7 @@ class RPCClientNotifyClient: public MinosRPCClient
 class RPCServerNotifyClient: public MinosRPCClient
 {
    public:
-      RPCServerNotifyClient( TRPCFunctor *cb ) : MinosRPCClient( "Minos:PubSub:ServerNotify", cb )
+      RPCServerNotifyClient( TRPCFunctor *cb ) : MinosRPCClient( rpcConstants::serverNotify, cb )
       {} // base class "callback" gets set to cb
       ~RPCServerNotifyClient()
       {}
@@ -148,7 +148,7 @@ class RPCServerNotifyClient: public MinosRPCClient
 class RPCServerNotifyServer: public MinosRPCServer
 {
    public:
-      RPCServerNotifyServer( TRPCFunctor *cb ) : MinosRPCServer( "Minos:PubSub:ServerNotify", cb )
+      RPCServerNotifyServer( TRPCFunctor *cb ) : MinosRPCServer( rpcConstants::serverNotify, cb )
       {} // base class "callback" gets set to cb
       ~RPCServerNotifyServer()
       {}

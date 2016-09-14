@@ -15,7 +15,7 @@
 class RPCPublishClient: public RPCPubSub
 {
    public:
-      RPCPublishClient( TRPCFunctor *cb ) : RPCPubSub( /*rpcConstants::publish*/"Minos:PubSub:Publish", cb )
+      RPCPublishClient( TRPCFunctor *cb ) : RPCPubSub( rpcConstants::publish, cb )
       {}    // method name should be shared
       // plus we want factory access to it
       // so it would be nice to have a static
@@ -32,7 +32,7 @@ class RPCPublishClient: public RPCPubSub
 class RPCSubscribeClient: public RPCPubSub
 {
    public:
-      RPCSubscribeClient( TRPCFunctor *cb ) : RPCPubSub( "Minos:PubSub:Subscribe", cb )
+      RPCSubscribeClient( TRPCFunctor *cb ) : RPCPubSub( rpcConstants::subscribe, cb )
       {}
       ~RPCSubscribeClient()
       {}
@@ -44,7 +44,7 @@ class RPCSubscribeClient: public RPCPubSub
 class RPCRemoteSubscribeClient: public RPCPubSub
 {
    public:
-      RPCRemoteSubscribeClient( TRPCFunctor *cb ) : RPCPubSub( "Minos:PubSub:RemoteSubscribe", cb )
+      RPCRemoteSubscribeClient( TRPCFunctor *cb ) : RPCPubSub( rpcConstants::remoteSubscribe, cb )
       {}
       ~RPCRemoteSubscribeClient()
       {}
@@ -56,7 +56,7 @@ class RPCRemoteSubscribeClient: public RPCPubSub
 class RPCNotifyServer: public MinosRPCServer
 {
    public:
-      RPCNotifyServer( TRPCFunctor *cb ) : MinosRPCServer( "Minos:PubSub:ClientNotify", cb )
+      RPCNotifyServer( TRPCFunctor *cb ) : MinosRPCServer( rpcConstants::clientNotify, cb )
       {}
       ~RPCNotifyServer()
       {}
