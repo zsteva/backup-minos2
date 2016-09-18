@@ -48,7 +48,8 @@ SOURCES += \
     htmldelegate.cpp \
     CalendarList.cpp \
     qlogtabwidget.cpp \
-    minoskeyboard.cpp
+    minoskeyboard.cpp \
+    MinosLines.cpp
 
 HEADERS += \
     BandList.h \
@@ -79,7 +80,8 @@ HEADERS += \
     CalendarList.h \
     cutils.h \
     qlogtabwidget.h \
-    minoskeyboard.h
+    minoskeyboard.h \
+    MinosLines.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

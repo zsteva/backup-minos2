@@ -9,9 +9,13 @@ SUBDIRS += \
     MqtLogger \
     MqtServer \
     MqtChat \
-    MqtTestRotator
+    MqtTestRotator \
+    mqtControl \
+    mqtKeyer
 
 RPCTest.depends = MqtUtils TinyXML XMPPLib MqtBase
 MqtLogger.depends = MqtUtils TinyXML XMPPLib MqtBase
 MqtServer.depends = MqtUtils TinyXML XMPPLib MqtBase
 MqtChat.depends = MqtUtils TinyXML XMPPLib MqtBase
+MqtControl.depends = MqtUtils TinyXML XMPPLib MqtBase
+MqtKeyer.depends = MqtUtils TinyXML XMPPLib MqtBase

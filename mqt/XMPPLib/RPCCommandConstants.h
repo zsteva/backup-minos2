@@ -50,6 +50,18 @@ static const QString keyerStop          = QT_TR_NOOP("Stop");
 static const QString KeyerCategory      = QT_TR_NOOP("Keyer");
 static const QString keyerKeyReport     = QT_TR_NOOP("Report");
 
+// Control
+static const QString controlApp         = QT_TR_NOOP("Control");
+
+static const QString controlParamName   = QT_TR_NOOP("Name");
+static const QString controlParamLine   = QT_TR_NOOP("Line");
+static const QString controlResult      = QT_TR_NOOP("ControlResult");
+static const QString controlLineState   = QT_TR_NOOP("LineState");
+static const QString controlState       = QT_TR_NOOP("State");
+static const QString controlGetLine     = QT_TR_NOOP("GetLine");
+
+
+
 // Rotator
 
 enum RotateDirection :int {eRotateLeft, eRotateDirect, eRotateRight, eRotateStop};

@@ -1,16 +1,15 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-03-26T21:27:38
+# Project created by QtCreator 2016-09-16T11:01:18
 #
 #-------------------------------------------------
 
 QT       += core gui network widgets
 
-TARGET = MqtTestRotator
+TARGET = mqtControl
 TEMPLATE = app
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
-
 
 CONFIG += c++14
 
@@ -19,14 +18,27 @@ QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 DEFINES += TIXML_USE_STL
 
 SOURCES += main.cpp\
-        rotatormainwindow.cpp \
-    rotatorlogic.cpp
+        ControlMain.cpp \
+    windowMonitor.cpp \
+    CommonMonitor.cpp \
+    COMPORT.CPP \
+    controlport.cpp \
+    HidControl.cpp \
+    K8055Container.cpp \
+    portconf.cpp \
+    UBWContainer.cpp
 
-HEADERS  += rotatormainwindow.h \
-    rotatorlogic.h
+HEADERS  += ControlMain.h \
+    windowMonitor.h \
+    CommonMonitor.h \
+    COMPORT.h \
+    controlport.h \
+    K8055Container.h \
+    portconf.h \
+    UBWContainer.h
 
-FORMS    += rotatormainwindow.ui
-
+FORMS    += ControlMain.ui \
+    windowMonitor.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase

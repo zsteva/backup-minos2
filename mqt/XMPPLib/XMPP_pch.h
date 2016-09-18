@@ -12,6 +12,8 @@
 #ifndef XMPP_pchH
 #define XMPP_pchH
 
+#include <stdint.h>
+
 #include <QDateTime>
 #include <QDir>
 #include <QDirIterator>
@@ -23,7 +25,7 @@
 #include <QSharedMemory>
 #include <QTextStream>
 #include <QThread>
-#include <QSemaphore>
+#include <QSystemSemaphore>
 #include <QTcpSocket>
 #include <QSettings>
 #include <QSharedPointer>
@@ -67,4 +69,72 @@
 
 
 #include "MinosConnection.h"
+template < class qe >
+class my_deque : public std::deque < qe >
+{
+   public:
+      my_deque()
+      {}
+      ~my_deque()
+      {}
+
+      void freeAll()
+      {
+         //disableInterrupts fred;
+          for (typename  my_deque::iterator i = this->begin(); i != this->end(); i++ )
+            delete ( *i );
+          my_deque::clear();
+      }
+
+      qe find( const QString &s )
+      {
+         //disableInterrupts fred;
+         for (typename  my_deque::iterator i = this->begin(); i != this->end(); i++ )
+            if ( ( *i ) ->pName.compare(s, Qt::CaseInsensitive ) == 0 )
+               return ( *i );
+         return 0;
+      }
+
+      void clear_after ( qe e )
+      {
+         //disableInterrupts fred;
+         typename my_deque::iterator i = std::find( this->begin(), this->end(), e );
+         if ( i == this->end() )
+            return ;
+         i++;
+         if ( i == this->end() )
+            return ;
+         for ( typename my_deque::iterator i2 = i; i2 != this->end(); i2++ )
+         {
+            delete ( *i2 );
+         }
+         my_deque::erase( i, this->end() );
+      }
+      void free_element ( qe e )
+      {
+         //disableInterrupts fred;
+         if ( e )
+         {
+            typename my_deque::iterator i = std::find( this->begin(), this->end(), e );
+            if ( i != this->end() )
+            {
+               my_deque::erase( i );
+            }
+            delete e;
+         }
+      }
+
+      qe next_element( qe q )
+      {
+         //disableInterrupts fred;
+         typename my_deque::iterator i = std::find( this->begin(), this->end(), q );
+         if ( i != this->end() )
+         {
+            i++;
+            if ( i != this->end() )
+               return * i;
+         }
+         return 0;
+      }
+};
 #endif

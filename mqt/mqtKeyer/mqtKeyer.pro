@@ -1,12 +1,12 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-03-26T21:27:38
+# Project created by QtCreator 2016-09-16T11:01:45
 #
 #-------------------------------------------------
 
-QT       += core gui network widgets
+QT       += core gui network widgets multimedia
 
-TARGET = MqtTestRotator
+TARGET = mqtKeyer
 TEMPLATE = app
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
@@ -19,14 +19,40 @@ QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 DEFINES += TIXML_USE_STL
 
 SOURCES += main.cpp\
-        rotatormainwindow.cpp \
-    rotatorlogic.cpp
+        KeyerMain.cpp \
+    keyerAbout.cpp \
+    keyconf.cpp \
+    KeyerRPCServer.cpp \
+    keyers.cpp \
+    portcon.cpp \
+    riff.cpp \
+    sbdriver.cpp \
+    soundsys.cpp \
+    VKMixer.cpp \
+    WriterThread.cpp \
+    levelmeter.cpp \
+    windowMonitor.cpp
 
-HEADERS  += rotatormainwindow.h \
-    rotatorlogic.h
+HEADERS  += KeyerMain.h \
+    keyerAbout.h \
+    ddc.h \
+    keyconf.h \
+    keyctrl.h \
+    keyerlog.h \
+    KeyerRPCServer.h \
+    keyers.h \
+    portcon.h \
+    riff.h \
+    sbdriver.h \
+    soundsys.h \
+    VKMixer.h \
+    WriterThread.h \
+    levelmeter.h \
+    windowMonitor.h
 
-FORMS    += rotatormainwindow.ui
-
+FORMS    += KeyerMain.ui \
+    keyerAbout.ui \
+    windowMonitor.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase
