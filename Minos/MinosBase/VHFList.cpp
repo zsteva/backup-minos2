@@ -463,7 +463,7 @@ bool Calendar::parseFile( const std::string &fname )
                                     bool monthOK = false;
                                     for ( std::vector<MonthList>::iterator ml = ( *s ).second.monthList.begin(); ml != ( *s ).second.monthList.end(); ml++ )
                                     {
-                                        if ( sstrupr ( ( *ml ).month ) == sstrupr ( monthTable[ sm - 1 ] ) )
+										if ( strupr ( ( *ml ).month ) == strupr ( monthTable[ sm - 1 ] ) )
                                         {
                                             monthOK = true;
                                             break;
@@ -885,7 +885,7 @@ bool Calendar::parseSpecialRule( TiXmlElement * tix )
 }
 bool Calendar::parseSection( TiXmlElement * tix )
 {
-   Section s;
+   CalendarSection s;
    for ( TiXmlElement * e = tix->FirstChildElement(); e; e = e->NextSiblingElement() )
    {
       if ( checkElementName( e, "name" ) )
@@ -940,7 +940,7 @@ bool Calendar::parseSection( TiXmlElement * tix )
 }
 bool Calendar::parseBand( TiXmlElement * tix )
 {
-   ContestBand b;
+   CalendarBand b;
    for ( TiXmlElement * e = tix->FirstChildElement(); e; e = e->NextSiblingElement() )
    {
       if ( checkElementName( e, "name" ) )
@@ -1015,7 +1015,7 @@ bool Calendar::parseContestSeries( TiXmlElement * tix )
 }
 bool Calendar::parseContest( TiXmlElement * tix )
 {
-   Contest c;
+   CalendarContest c;
    for ( TiXmlElement * e = tix->FirstChildElement(); e; e = e->NextSiblingElement() )
    {
       if ( checkElementName( e, "name" ) )
@@ -1071,12 +1071,12 @@ bool Calendar::parseContest( TiXmlElement * tix )
                                  {
                                     if ( checkElementName( f, "perkms" ) )
                                     {
-                                       c.scoring = Contest::perkms;
+									   c.scoring = CalendarContest::perkms;
                                     }
                                     else
                                        if ( checkElementName( f, "oneppq" ) )
                                        {
-                                          c.scoring = Contest::oneppq;
+										  c.scoring = CalendarContest::oneppq;
                                        }
                                        else
                                           return false;

@@ -166,7 +166,7 @@ class Calendar
       std::string version;
       std::map<std::string, MultType> mults;
       std::map<std::string, SpecialRule> specialRules;
-      std::map<std::string, Section> sections;
+	  std::map<std::string, CalendarSection> sections;
       std::map<std::string, CalendarBand> bands;
       std::map<std::string, ContestSeries> contestSeries;
       std::map<std::string, CalendarContest> contests;

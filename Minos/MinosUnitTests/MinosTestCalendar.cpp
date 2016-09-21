@@ -93,7 +93,7 @@ void CalendarTestParams::testContests()
    CPPUNIT_ASSERT_EQUAL( 33, nc );
 
    std::string lp144( "lp144" );
-   Contest &qrp144 = vhf.contests[ lp144 ];
+   CalendarContest &qrp144 = vhf.contests[ lp144 ];
    CPPUNIT_ASSERT_EQUAL( lp144, qrp144.name );
 
 }
@@ -153,7 +153,7 @@ void CalendarTestParams::testContests2009()
    CPPUNIT_ASSERT_EQUAL( 33, nc );
 
    std::string lp144( "lp144" );
-   Contest &qrp144 = vhf.contests[ lp144 ];
+   CalendarContest &qrp144 = vhf.contests[ lp144 ];
    CPPUNIT_ASSERT_EQUAL( lp144, qrp144.name );
 
 }
