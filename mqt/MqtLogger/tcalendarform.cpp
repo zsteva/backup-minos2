@@ -202,6 +202,7 @@ TCalendarForm( QWidget *parent, CalType calType ) :
         hfbartg( 2000, ectHFBARTG ), calType ( calType )
 {
     ui->setupUi( this );
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 int TCalendarForm::exec()
 {

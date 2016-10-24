@@ -6,6 +6,7 @@ TMinosBandChooser::TMinosBandChooser(QWidget *parent) :
     ui(new Ui::TMinosBandChooser)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
 TMinosBandChooser::~TMinosBandChooser()

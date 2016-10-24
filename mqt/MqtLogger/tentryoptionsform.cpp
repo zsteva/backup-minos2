@@ -10,6 +10,7 @@ TEntryOptionsForm::TEntryOptionsForm( QWidget* Owner, LoggerContestLog * cnt, bo
     opsEntryLine1(-1), opsEntryLine2(-1)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     if ( !ct )
         return ;

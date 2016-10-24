@@ -22,6 +22,7 @@ TQSOEditDlg::TQSOEditDlg(QWidget *parent, bool catchup, bool unfilled )
     catchup(catchup), unfilled(unfilled)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     QSettings settings;
     QByteArray geometry = settings.value("QSOEditDialog/geometry").toByteArray();

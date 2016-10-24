@@ -6,6 +6,7 @@ TMinosHelpForm::TMinosHelpForm(QWidget *parent) :
     ui(new Ui::TMinosHelpForm)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
 TMinosHelpForm::~TMinosHelpForm()

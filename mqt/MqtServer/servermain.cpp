@@ -19,6 +19,7 @@ ServerMain::ServerMain(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     enableTrace( "./TraceLog", "MinosServer_" );
 

@@ -26,6 +26,7 @@ ControlMain::ControlMain(QWidget *parent) :
 
     controlMain = this;
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     MinosRPC *rpc = MinosRPC::getMinosRPC();
 
     connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(controlClientCallback(bool,QSharedPointer<MinosRPCObj>,QString)));

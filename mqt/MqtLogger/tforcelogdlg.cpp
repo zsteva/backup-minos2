@@ -9,6 +9,7 @@ TForceLogDlg::TForceLogDlg(QWidget *parent) :
     ui(new Ui::TForceLogDlg)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     ui->CheckBox3->setFocus();
 }
 

@@ -8,6 +8,7 @@ TManageListsDlg::TManageListsDlg(QWidget *parent) :
     ui(new Ui::TManageListsDlg)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     ui->ListsListBox->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     DrawList();
 }

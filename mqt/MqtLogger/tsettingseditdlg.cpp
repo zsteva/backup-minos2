@@ -12,6 +12,7 @@ TSettingsEditDlg::TSettingsEditDlg(QWidget *parent, SettingsBundle *bundle) :
 
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     initialSection = bundle->getSection();
 
     QSettings settings;

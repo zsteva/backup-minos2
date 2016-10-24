@@ -14,6 +14,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     ui(new Ui::RotatorMainWindow)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     enableTrace( "./TraceLog", "MinosChat_" );
 
