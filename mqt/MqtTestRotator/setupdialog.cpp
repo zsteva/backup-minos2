@@ -1,6 +1,6 @@
 #include "setupdialog.h"
 #include "ui_setupdialog.h"
-
+#include "rotcontrol.h"
 #include <QSignalMapper>
 #include <QComboBox>
 #include <QLineEdit>
@@ -13,15 +13,35 @@
 static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
 
 
-SetupDialog::SetupDialog(QWidget *parent) :
+SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SetupDialog)
 {
     ui->setupUi(this);
 
-    comPorts[NUM_ANTENNAS] = new  QComboBox;
-    protocols[NUM_ANTENNAS] = new  QComboBox;
+    rotator = rotator;
+
     antennaName[NUM_ANTENNAS] = new QLineEdit;
+    rotatorModel[NUM_ANTENNAS] = new  QComboBox;
+    comPorts[NUM_ANTENNAS] = new  QComboBox;
+    comSpeed[NUM_ANTENNAS] = new QComboBox;
+    comDataBits[NUM_ANTENNAS] = new QComboBox;
+    comStopBits[NUM_ANTENNAS] = new QComboBox;
+    comParity[NUM_ANTENNAS] = new QComboBox;
+    comHandShake[NUM_ANTENNAS] = new QComboBox;
+
+
+    antennaName[0] = ui->antennaNameEdit1;
+    antennaName[1] = ui->antennaNameEdit2;
+    antennaName[2] = ui->antennaNameEdit3;
+    antennaName[3] = ui->antennaNameEdit4;
+    antennaName[4] = ui->antennaNameEdit5;
+
+    rotatorModel[0] = ui->rotatorModelBox1;
+    rotatorModel[1] = ui->rotatorModelBox2;
+    rotatorModel[2] = ui->rotatorModelBox3;
+    rotatorModel[3] = ui->rotatorModelBox4;
+    rotatorModel[4] = ui->rotatorModelBox5;
 
 
     comPorts[0] = ui->comPortBox1;
@@ -30,37 +50,36 @@ SetupDialog::SetupDialog(QWidget *parent) :
     comPorts[3] = ui->comPortBox4;
     comPorts[4] = ui->comPortBox5;
 
-    protocols[0] = ui->protcolBox1;
-    protocols[1] = ui->protcolBox2;
-    protocols[2] = ui->protcolBox3;
-    protocols[3] = ui->protcolBox4;
-    protocols[4] = ui->protcolBox5;
+    comSpeed[0] = ui->comSpeedBox1;
+    comSpeed[1] = ui->comSpeedBox2;
+    comSpeed[2] = ui->comSpeedBox3;
+    comSpeed[3] = ui->comSpeedBox4;
+    comSpeed[4] = ui->comSpeedBox5;
 
-    antennaName[0] = ui->setupLineEdit1;
-    antennaName[1] = ui->setupLineEdit2;
-    antennaName[2] = ui->setupLineEdit3;
-    antennaName[3] = ui->setupLineEdit4;
-    antennaName[4] = ui->setupLineEdit5;
+    comDataBits[0] = ui->comDataBitsBox1;
+    comDataBits[1] = ui->comDataBitsBox2;
+    comDataBits[2] = ui->comDataBitsBox3;
+    comDataBits[3] = ui->comDataBitsBox4;
+    comDataBits[4] = ui->comDataBitsBox5;
 
-    QSignalMapper *comPorts_mapper = new QSignalMapper(this);
+    comStopBits[0] = ui->comStopBitsBox1;
+    comStopBits[1] = ui->comStopBitsBox2;
+    comStopBits[2] = ui->comStopBitsBox3;
+    comStopBits[3] = ui->comStopBitsBox4;
+    comStopBits[4] = ui->comStopBitsBox5;
 
+    comParity[0] = ui->comParityBox1;
+    comParity[1] = ui->comParityBox2;
+    comParity[2] = ui->comParityBox3;
+    comParity[3] = ui->comParityBox4;
+    comParity[4] = ui->comParityBox5;
 
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        comPorts_mapper->setMapping(comPorts[i], i);
-        connect(comPorts[i], SIGNAL(activated(int)), comPorts_mapper, SLOT(map()));
-    }
+    comHandShake[0] = ui->comHandShakeBox1;
+    comHandShake[1] = ui->comHandShakeBox2;
+    comHandShake[2] = ui->comHandShakeBox3;
+    comHandShake[3] = ui->comHandShakeBox4;
+    comHandShake[4] = ui->comHandShakeBox5;
 
-    connect(comPorts_mapper, SIGNAL(mapped(int)), this, SLOT(comportSelected(int)));
-
-    QSignalMapper *protocols_mapper = new QSignalMapper(this);
-
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        protocols_mapper->setMapping(protocols[i], i);
-        connect(protocols[i], SIGNAL(activated(int)), protocols_mapper, SLOT(map()));
-    }
-    connect(protocols_mapper, SIGNAL(mapped(int)), this, SLOT(protocolSelected(int)));
 
     QSignalMapper *antennaName_mapper = new QSignalMapper(this);
 
@@ -69,24 +88,103 @@ SetupDialog::SetupDialog(QWidget *parent) :
        antennaName_mapper->setMapping(antennaName[i], i);
         connect(antennaName[i], SIGNAL(editingFinished()), antennaName_mapper, SLOT(map()));
     }
-    connect(antennaName_mapper, SIGNAL(mapped(int)), this, SLOT(rotatorNameFinished(int)));
+    connect(antennaName_mapper, SIGNAL(mapped(int)), this, SLOT(antennaNameFinished(int)));
+
+
+    QSignalMapper *rotatorModel_mapper = new QSignalMapper(this);
+
+    for (int i = 0; i < NUM_ANTENNAS; i++ )
+    {
+        rotatorModel_mapper->setMapping(rotatorModel[i], i);
+        connect(rotatorModel[i], SIGNAL(activated(int)), rotatorModel_mapper, SLOT(map()));
+    }
+    connect(rotatorModel_mapper, SIGNAL(mapped(int)), this, SLOT(rotatorModelSelected(int)));
+
+
+    QSignalMapper *comPorts_mapper = new QSignalMapper(this);
+    for (int i = 0; i < NUM_ANTENNAS; i++ )
+    {
+        comPorts_mapper->setMapping(comPorts[i], i);
+        connect(comPorts[i], SIGNAL(activated(int)), comPorts_mapper, SLOT(map()));
+    }
+
+    connect(comPorts_mapper, SIGNAL(mapped(int)), this, SLOT(comportSelected(int)));
+
+
+    QSignalMapper *comSpeed_mapper = new QSignalMapper(this);
+    for (int i = 0; i < NUM_ANTENNAS; i++ )
+    {
+        comSpeed_mapper->setMapping(comSpeed[i], i);
+        connect(comSpeed[i], SIGNAL(activated(int)), comSpeed_mapper, SLOT(map()));
+    }
+
+    connect(comSpeed_mapper, SIGNAL(mapped(int)), this, SLOT(comSpeedSelected(int)));
+
+    QSignalMapper *comDataBits_mapper = new QSignalMapper(this);
+    for (int i = 0; i < NUM_ANTENNAS; i++ )
+    {
+        comDataBits_mapper->setMapping(comDataBits[i], i);
+        connect(comDataBits[i], SIGNAL(activated(int)), comDataBits_mapper, SLOT(map()));
+    }
+
+    connect(comDataBits_mapper, SIGNAL(mapped(int)), this, SLOT(comDataBitsSelected(int)));
+
+    QSignalMapper *comStopBits_mapper = new QSignalMapper(this);
+    for (int i = 0; i < NUM_ANTENNAS; i++ )
+    {
+        comStopBits_mapper->setMapping(comStopBits[i], i);
+        connect(comStopBits[i], SIGNAL(activated(int)), comStopBits_mapper, SLOT(map()));
+    }
+
+    connect(comStopBits_mapper, SIGNAL(mapped(int)), this, SLOT(comStopBitsSelected(int)));
+
+    QSignalMapper *comParity_mapper = new QSignalMapper(this);
+    for (int i = 0; i < NUM_ANTENNAS; i++ )
+    {
+        comParity_mapper->setMapping(comParity[i], i);
+        connect(comParity[i], SIGNAL(activated(int)), comParity_mapper, SLOT(map()));
+    }
+
+    connect(comParity_mapper, SIGNAL(mapped(int)), this, SLOT(comParitySelected(int)));
+
+    QSignalMapper *comHandShake_mapper = new QSignalMapper(this);
+    for (int i = 0; i < NUM_ANTENNAS; i++ )
+    {
+        comHandShake_mapper->setMapping(comHandShake[i], i);
+        connect(comHandShake[i], SIGNAL(activated(int)), comHandShake_mapper, SLOT(map()));
+    }
+
+    connect(comHandShake_mapper, SIGNAL(mapped(int)), this, SLOT(comHandShakeSelected(int)));
+
+
 
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveButtonPushed()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
 
 
-    initRotProtocols();  //build available rotator protocol table
+//    initRotProtocols();  //build available rotator protocol table
+
+    fillAntennaModelInfo();  // add rotator models to drop down
     fillPortsInfo();     // add comports to drop down
-    fillProtocolInfo();  // add rotator protocols to drop down
+    fillSpeedInfo();
+    fillDataBitsInfo();
+    fillStopBitsInfo();
+    fillParityInfo();
+    fillHandShakeInfo();
     clearAvailRotators(); // clear the AvailRotator table, also init with default serial parameters
     clearCurrentRotator(); // clear the currently selected Rotator table, also init with default serial parameters
 
     readSettings();
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
-        comPorts[i]->setCurrentIndex(availAntennas[i].comPort_idx);
-        protocols[i]->setCurrentIndex(availAntennas[i].rotator_idx);
-        antennaName[i]->setText(availAntennas[i].name);
+        antennaName[i]->setText(availAntennas[i].antennaName);
+        rotatorModel[i]->setCurrentIndex(availAntennas[i].rotatorModel_idx);
+        comPorts[i]->setCurrentIndex(availAntennas[i].comport_idx);
+        comSpeed[i]->setCurrentIndex(availAntennas[i].baudrate_idx);
+        comDataBits[i]->setCurrentIndex(availAntennas[i].databits_idx);
+        comStopBits[i]->setCurrentIndex(availAntennas[i].stopbits_idx);
+        comParity[i]->setCurrentIndex(availAntennas[i].parity_idx);
+        comHandShake[i]->setCurrentIndex(availAntennas[i].handshake_idx);
 
     }
 
@@ -100,12 +198,39 @@ SetupDialog::~SetupDialog()
     delete ui;
 }
 
+
+void SetupDialog::antennaNameFinished(int boxNumber)
+{
+    qDebug() << "finished name";
+    if (antennaName[boxNumber]->text() != availAntennas[boxNumber].antennaName)
+    {
+        availAntennas[boxNumber].antennaName = antennaName[boxNumber]->text();
+        antennaValueChanged[boxNumber] = true;
+        antennaChanged = true;
+
+    }
+}
+
+
+void SetupDialog::rotatorModelSelected(int boxNumber)
+{
+    if (rotatorModel[boxNumber]->currentText() != availAntennas[boxNumber].rotatorModel)
+    {
+        availAntennas[boxNumber].rotatorModel = rotatorModel[boxNumber]->currentText();
+        availAntennas[boxNumber].rotatorModelNumber = rotator->getModelNumber(rotatorModel[boxNumber]->currentIndex());
+        antennaValueChanged[boxNumber] = true;
+        antennaChanged = true;
+
+    }
+}
+
+
 void SetupDialog::comportSelected(int boxNumber)
 {
 
-    if (comPorts[boxNumber]->currentText() != availAntennas[boxNumber].comPort)
+    if (comPorts[boxNumber]->currentText() != availAntennas[boxNumber].comport)
     {
-        availAntennas[boxNumber].comPort = comPorts[boxNumber]->currentText();
+        availAntennas[boxNumber].comport = comPorts[boxNumber]->currentText();
         antennaValueChanged[boxNumber] = true;
         antennaChanged = true;
 
@@ -113,34 +238,68 @@ void SetupDialog::comportSelected(int boxNumber)
 }
 
 
-void SetupDialog::protocolSelected(int boxNumber)
+
+void SetupDialog::comSpeedSelected(int boxNumber)
 {
 
-    if (protocols[boxNumber]->currentText() != availAntennas[boxNumber].rotator.protocol)
-    {
-        availAntennas[boxNumber].rotator.protocol = protocols[boxNumber]->currentText();
-        availAntennas[boxNumber].rotator.id = getRotatorId(protocols[boxNumber]->currentText());
-        antennaValueChanged[boxNumber] = true;
-        antennaChanged = true;
-
-    }
+    availAntennas[boxNumber].baudrate = comSpeed[boxNumber]->currentText().toInt();
+    antennaValueChanged[boxNumber] = true;
+    antennaChanged = true;
 }
 
-
-void SetupDialog::rotatorNameFinished(int boxNumber)
+void SetupDialog::comDataBitsSelected(int boxNumber)
 {
-    qDebug() << "finished name";
-    if (antennaName[boxNumber]->text() != availAntennas[boxNumber].name)
-    {
-        availAntennas[boxNumber].name = antennaName[boxNumber]->text();
-        antennaValueChanged[boxNumber] = true;
-        antennaChanged = true;
 
-    }
+    availAntennas[boxNumber].databits = comDataBits[boxNumber]->currentText().toInt();
+    antennaValueChanged[boxNumber] = true;
+    antennaChanged = true;
+}
+
+void SetupDialog::comStopBitsSelected(int boxNumber)
+{
+
+    availAntennas[boxNumber].stopbits = comStopBits[boxNumber]->currentText().toInt();
+    antennaValueChanged[boxNumber] = true;
+    antennaChanged = true;
+}
+
+void SetupDialog::comParitySelected(int boxNumber)
+{
+
+    availAntennas[boxNumber].parity = comParity[boxNumber]->currentText();
+    antennaValueChanged[boxNumber] = true;
+    antennaChanged = true;
+}
+
+
+void SetupDialog::comHandShakeSelected(int boxNumber)
+{
+
+    availAntennas[boxNumber].handshake = comHandShake[boxNumber]->currentText();
+    antennaValueChanged[boxNumber] = true;
+    antennaChanged = true;
 }
 
 
 
+
+
+
+void SetupDialog::fillAntennaModelInfo()
+{
+
+    for (int i = 0; i < NUM_ANTENNAS; i++)
+    {
+        rotatorModel[i]->clear();
+    }
+
+     for (int i = 0; i < NUM_ANTENNAS; i++)
+     {
+        rotator->getRotatorList(rotatorModel[i]);
+     }
+
+
+}
 
 
 void SetupDialog::fillPortsInfo()
@@ -183,25 +342,106 @@ void SetupDialog::fillPortsInfo()
 }
 
 
-void SetupDialog::fillProtocolInfo()
+
+
+void SetupDialog::fillSpeedInfo()
 {
 
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        protocols[i]->clear();
-    }
+    QStringList list;
+    list << "1200" << "2400" << "4800" << "9600" << "19200" << "38400";
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
-       protocols[i]->addItem("");
-
-        for (int j =0; j < NUM_ROTATOR_PROTOCOLS; j++)
-        {
-            protocols[i]->addItem(rotProtocol[j]->protocol);
-        }
+        comSpeed[i]->clear();
     }
+
+     for (int i = 0; i < NUM_ANTENNAS; i++)
+     {
+        comSpeed[i]->addItems(list);
+     }
+
+
 }
 
+void SetupDialog::fillDataBitsInfo()
+{
+
+    QStringList list;
+    list << "7" << "8" ;
+
+    for (int i = 0; i < NUM_ANTENNAS; i++)
+    {
+        comDataBits[i]->clear();
+    }
+
+     for (int i = 0; i < NUM_ANTENNAS; i++)
+     {
+        comDataBits[i]->addItems(list);
+     }
+
+
+}
+
+void SetupDialog::fillStopBitsInfo()
+{
+
+    QStringList list;
+    list << "1" << "2" ;
+
+    for (int i = 0; i < NUM_ANTENNAS; i++)
+    {
+        comStopBits[i]->clear();
+    }
+
+     for (int i = 0; i < NUM_ANTENNAS; i++)
+     {
+        comStopBits[i]->addItems(list);
+     }
+
+
+}
+
+
+
+void SetupDialog::fillParityInfo()
+{
+
+    QStringList list;
+    list << "None" << "Odd" << "Even";
+
+    for (int i = 0; i < NUM_ANTENNAS; i++)
+    {
+        comParity[i]->clear();
+    }
+
+     for (int i = 0; i < NUM_ANTENNAS; i++)
+     {
+        comParity[i]->addItems(list);
+     }
+
+
+}
+
+
+
+void SetupDialog::fillHandShakeInfo()
+{
+
+    QStringList list;
+    list << "None" << "XON/XOFF" << "CTS/RTS";
+
+    for (int i = 0; i < NUM_ANTENNAS; i++)
+    {
+        comHandShake[i]->clear();
+    }
+
+     for (int i = 0; i < NUM_ANTENNAS; i++)
+     {
+        comHandShake[i]->addItems(list);
+     }
+
+
+}
 
 
 void SetupDialog::saveButtonPushed()
@@ -237,20 +477,15 @@ void SetupDialog::saveSettings()
             if (antennaValueChanged[i])
             {
                 config.beginGroup("Antenna" + QString::number(i+1));
-                config.setValue("name", availAntennas[i].name);
-                config.setValue("protocol", availAntennas[i].rotator.protocol);
-                config.setValue("id", availAntennas[i].rotator.id);
-                config.setValue("comport", availAntennas[i].comPort);
-                config.setValue("baudrate", availAntennas[i].baudRate);
-                config.setValue("stringbaudrate", availAntennas[i].stringBaudRate);
-                config.setValue("databits", availAntennas[i].dataBits);
-                config.setValue("stringdatabits", availAntennas[i].stringDataBits);
+                config.setValue("antennaName", availAntennas[i].antennaName);
+                config.setValue("rotatorModel", availAntennas[i].rotatorModel);
+                config.setValue("rotatorModelNumber", availAntennas[i].rotatorModelNumber);
+                config.setValue("comport", availAntennas[i].comport);
+                config.setValue("baudrate", availAntennas[i].baudrate);
+                config.setValue("databits", availAntennas[i].databits);
                 config.setValue("parity", availAntennas[i].parity);
-                config.setValue("stringparity", availAntennas[i].stringParity);
-                config.setValue("stopbits", availAntennas[i].stopBits);
-                config.setValue("stringstopbits" , availAntennas[i].stringStopBits);
-                config.setValue("flowcontrol", availAntennas[i].flowControl);
-                config.setValue("stringflowcontrol", availAntennas[i].stringFlowControl);
+                config.setValue("stopbits", availAntennas[i].stopbits);
+                config.setValue("handshake", availAntennas[i].handshake);
                 config.endGroup();
                 antennaValueChanged[i] = false;
 
@@ -271,17 +506,15 @@ void SetupDialog::readSettings()
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
         config.beginGroup("Antenna" + QString::number(i+1));
-        availAntennas[i].name = config.value("name", "").toString();
-        availAntennas[i].rotator.protocol = config.value("protocol", "").toString();
-        availAntennas[i].rotator_idx = protocols[i]->findText(availAntennas[i].rotator.protocol);
-        availAntennas[i].rotator.id = config.value("id", "").toInt();
-        availAntennas[i].comPort = config.value("comport", "").toString();
-        availAntennas[i].comPort_idx = comPorts[i]->findText(availAntennas[i].comPort);
-        //availAntennas[i].baudRate = config.value("baudrate", 0).toInt();
-        //availAntennas[i].dataBits = config.value("databits", 0).toInt();
-        //availAntennas[i].parity = config.value("parity", 0).toInt();
-        //availAntennas[i].stopBits = config.value("stopbits", 0).toInt();
-        //availAntennas[i].flowControl = config.value("flowcontrol", 0).toInt();
+        availAntennas[i].antennaName = config.value("antennaName", "").toString();
+        availAntennas[i].rotatorModel = config.value("rotatorModel", "").toString();
+        availAntennas[i].rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
+        availAntennas[i].comport = config.value("comport", "").toString();
+        availAntennas[i].baudrate = config.value("baudrate", 0).toInt();
+        availAntennas[i].databits = config.value("databits", 0).toInt();
+        availAntennas[i].parity = config.value("parity", 0).toString();
+        availAntennas[i].stopbits = config.value("stopbits", 0).toInt();
+        availAntennas[i].handshake = config.value("handshake", 0).toInt();
         config.endGroup();
     }
 
@@ -295,15 +528,15 @@ void SetupDialog::clearAvailRotators()
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
-        availAntennas[i].name = "";
-        availAntennas[i].rotator.protocol = "";
-        availAntennas[i].rotator.id = -1;
-        availAntennas[i].comPort = "";
-        availAntennas[i].baudRate = QSerialPort::Baud9600;
-        availAntennas[i].dataBits = QSerialPort::Data8;
-        availAntennas[i].parity = QSerialPort::NoParity;
-        availAntennas[i].stopBits = QSerialPort::OneStop;
-        availAntennas[i].flowControl = QSerialPort::NoFlowControl;
+//        availAntennas[i].name = "";
+//        availAntennas[i].rotator.protocol = "";
+//        availAntennas[i].rotator.id = -1;
+//        availAntennas[i].comPort = "";
+//        availAntennas[i].baudRate = QSerialPort::Baud9600;
+//        availAntennas[i].dataBits = QSerialPort::Data8;
+//        availAntennas[i].parity = QSerialPort::NoParity;
+//        availAntennas[i].stopBits = QSerialPort::OneStop;
+//        availAntennas[i].flowControl = QSerialPort::NoFlowControl;
     }
 
 
@@ -312,34 +545,37 @@ void SetupDialog::clearAvailRotators()
 
 void SetupDialog::clearCurrentRotator()
 {
-    currentAntenna.name = "";
-    currentAntenna.rotator.protocol = "";
-    currentAntenna.rotator.id = 0;
-    currentAntenna.comPort = "";
-    currentAntenna.baudRate = QSerialPort::Baud9600;
-    currentAntenna.dataBits = QSerialPort::Data8;
-    currentAntenna.parity = QSerialPort::NoParity;
-    currentAntenna.stopBits = QSerialPort::OneStop;
-    currentAntenna.flowControl = QSerialPort::NoFlowControl;
+//    currentAntenna.name = "";
+//    currentAntenna.rotator.protocol = "";
+//    currentAntenna.rotator.id = 0;
+//    currentAntenna.comPort = "";
+//    currentAntenna.baudRate = QSerialPort::Baud9600;
+//    currentAntenna.dataBits = QSerialPort::Data8;
+//    currentAntenna.parity = QSerialPort::NoParity;
+//    currentAntenna.stopBits = QSerialPort::OneStop;
+//    currentAntenna.flowControl = QSerialPort::NoFlowControl;
 }
 
 
-void SetupDialog::initRotProtocols()
-{
+//void SetupDialog::initRotProtocols()
+//{
 
-    yaesu = new RotatorType;
-    yaesu->protocol = "Yaesu";
-    yaesu->id = 0;
-    rotProtocol[0] = yaesu;
+//    return
 
-    prositel = new RotatorType;
-    prositel->protocol = "Prositel";
-    prositel->id = 1;
-    rotProtocol[1] = prositel;
+    //yaesu = new RotatorType;
+    //yaesu->protocol = "Yaesu";
+    //yaesu->id = 0;
+    //rotProtocol[0] = yaesu;
+
+    //prositel = new RotatorType;
+    //prositel->protocol = "Prositel";
+    //prositel->id = 1;
+    //rotProtocol[1] = prositel;
 
 
-}
+//}
 
+/*
 int SetupDialog::getRotatorId(QString rotator)
 {
 
@@ -371,14 +607,16 @@ QString SetupDialog::getRotatorProtocol(QString antennaName)
 
 }
 
+*/
+
 QString SetupDialog::getRotatorComPort(QString antennaName)
 {
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
-        if (availAntennas[i].name == antennaName)
+        if (availAntennas[i].antennaName == antennaName)
         {
-            return availAntennas[i].comPort;
+            return availAntennas[i].comport;
         }
     }
 
@@ -396,20 +634,20 @@ void SetupDialog::saveCurrentAntenna()
 
 
     config.beginGroup("CurrentAntenna");
-    config.setValue("name", currentAntenna.name);
-    config.setValue("protocol", currentAntenna.rotator.protocol);
-    config.setValue("id", currentAntenna.rotator.id);
-    config.setValue("comport", currentAntenna.comPort);
-    config.setValue("baudrate", currentAntenna.baudRate);
-    config.setValue("stringbaudrate", currentAntenna.stringBaudRate);
-    config.setValue("databits", currentAntenna.dataBits);
-    config.setValue("stringdatabits", currentAntenna.stringDataBits);
+    config.setValue("antennaName", currentAntenna.antennaName);
+    config.setValue("rotatorModel", currentAntenna.rotatorModel);
+    config.setValue("rotatorModelNumber", currentAntenna.rotatorModelNumber);
+    config.setValue("comport", currentAntenna.comport);
+    config.setValue("baudrate", currentAntenna.baudrate);
+//    config.setValue("stringbaudrate", currentAntenna.BaudRate);
+    config.setValue("databits", currentAntenna.databits);
+//    config.setValue("stringdatabits", currentAntenna.stringDataBits);
     config.setValue("parity", currentAntenna.parity);
-    config.setValue("stringparity", currentAntenna.stringParity);
-    config.setValue("stopbits", currentAntenna.stopBits);
-    config.setValue("stringstopbits" , currentAntenna.stringStopBits);
-    config.setValue("flowcontrol", currentAntenna.flowControl);
-    config.setValue("stringflowcontrol", currentAntenna.stringFlowControl);
+//    config.setValue("stringparity", currentAntenna.stringParity);
+    config.setValue("stopbits", currentAntenna.stopbits);
+//    config.setValue("stringstopbits" , currentAntenna.stringStopBits);
+    config.setValue("handshake", currentAntenna.handshake);
+//    config.setValue("stringflowcontrol", currentAntenna.stringFlowControl);
     config.endGroup();
 
 
@@ -425,15 +663,15 @@ void SetupDialog::readCurrentAntenna()
 
     {
         config.beginGroup("CurrentAntenna");
-        currentAntenna.name = config.value("name", "").toString();
-        currentAntenna.rotator.protocol = config.value("protocol", "").toString();
-        currentAntenna.rotator.id = config.value("id", "").toInt();
-        currentAntenna.comPort = config.value("comport", "").toString();
-        //currentAntenna.baudRate = config.value("baudrate", 0).toInt();
-        //currentAntenna.dataBits = config.value("databits", 0).toInt();
-        //currentAntenna.parity = config.value("parity", 0).toInt();
-        //currentAntenna.stopBits = config.value("stopbits", 0).toInt();
-        //currentAntenna.flowControl = config.value("flowcontrol", 0).toInt();
+        currentAntenna.antennaName = config.value("antennaName", "").toString();
+        currentAntenna.rotatorModel = config.value("rotatorModel", "").toString();
+        currentAntenna.rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
+        currentAntenna.comport = config.value("comport", "").toString();
+        currentAntenna.baudrate = config.value("baudrate", 0).toInt();
+        currentAntenna.databits = config.value("databits", 0).toInt();
+        currentAntenna.parity = config.value("parity", 0).toInt();
+        currentAntenna.stopbits = config.value("stopbits", 0).toInt();
+        currentAntenna.handshake = config.value("handshake", 0).toInt();
         config.endGroup();
     }
 
@@ -441,7 +679,7 @@ void SetupDialog::readCurrentAntenna()
 
 
 
-SetupDialog::Rotators SetupDialog::getCurrentAntenna() const
+srotParams SetupDialog::getCurrentAntenna() const
 {
     return currentAntenna;
 }

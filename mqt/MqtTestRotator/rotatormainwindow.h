@@ -9,6 +9,7 @@
 #include <QPushButton>
 
 
+
 #define NUM_PRESETS 10
 #define NUM_ROTATOR_PROTOCOLS 2
 
@@ -16,7 +17,8 @@ class QLabel;
 class QComboBox;
 class SetupDialog;
 class MinosCompass;
-class Yaesu;
+//class Yaesu;
+class RotControl;
 class EditPresetsDialog;
 
 
@@ -57,7 +59,8 @@ private:
     QComboBox *selectAntenna;
     QPushButton* presetButtons[NUM_PRESETS];
     MinosCompass* compassDial;
-    Yaesu *rotator;
+    RotControl  *rotator;
+//    Yaesu *rotator;
     QLabel *status;
     SetupDialog *selectRotator;
     EditPresetsDialog *editPresets;
@@ -67,6 +70,7 @@ private:
     QString backBearingmsg;
     QString presetName[NUM_PRESETS];
     QString presetBearing[NUM_PRESETS];
+
 
     void refreshPresetLabels();
     void showStatusMessage(const QString &);

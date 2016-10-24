@@ -16,6 +16,11 @@ DEFINES += VERSION=\\\"$$VERSION\\\"
 
 CONFIG += c++14
 
+
+INCLUDEPATH += D:/hamlib-3.0.1/include
+
+win32: LIBS += -LD:/hamlib-w32-3.0.1/lib/gcc/ -llibhamlib
+
 win32-g++:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 
@@ -28,29 +33,28 @@ SOURCES += \
     yaesu.cpp \
     skyscandialog.cpp \
     setupdialog.cpp \
-    settingsdialog.cpp \
     rotatormainwindow.cpp \
     minoscompass.cpp \
     main.cpp \
     logdialog.cpp \
     editpresetsdialog.cpp \
-    rotatorlogic.cpp
+    rotatorlogic.cpp \
+    rotcontrol.cpp \
 
 HEADERS  += \
     yaesu.h \
     skyscandialog.h \
     setupdialog.h \
-    settingsdialog.h \
     rotatormainwindow.h \
     minoscompass.h \
     logdialog.h \
     editpresetsdialog.h \
-    rotatorlogic.h
+    rotatorlogic.h \
+    rotcontrol.h \
 
 FORMS    += \
     skyscandialog.ui \
     setupdialog.ui \
-    settingsdialog.ui \
     rotatormainwindow.ui \
     logdialog.ui \
     editpresetsdialog.ui
@@ -121,3 +125,4 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MqtU
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MqtUtils/release/MqtUtils.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MqtUtils/debug/MqtUtils.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../MqtUtils/libMqtUtils.a
+

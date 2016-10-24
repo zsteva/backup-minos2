@@ -4,7 +4,8 @@
 #include "rotatormainwindow.h"
 #include "ui_rotatormainwindow.h"
 #include "minoscompass.h"
-#include "yaesu.h"
+//#include "yaesu.h"
+#include "rotcontrol.h"
 #include "setupdialog.h"
 #include "editpresetsdialog.h"
 #include <QString>
@@ -57,11 +58,11 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     }
     connect(preset_mapper, SIGNAL(mapped(int)), this, SLOT(clickedPreset(int)));
 
-
-    selectRotator = new SetupDialog;
+    rotator = new RotControl();
+    selectRotator = new SetupDialog(rotator);
     editPresets = new EditPresetsDialog;
     serial = new QSerialPort(this);
-    rotator = new Yaesu(serial);
+//    rotator = new Yaesu(serial);
     timer = new QTimer(this);
     status = new QLabel;
     compassDial = new MinosCompass;
@@ -70,10 +71,14 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
 
 
+
+
+
     ui->statusBar->addWidget(status);
 
 
     ui->verticalLayout_3->addWidget(compassDial);
+
 
 
     serial_connected = false;
@@ -85,7 +90,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     selectAntenna = ui->selectAntennaBox;
     initSelectAntennaBox();
     selectRotator->readCurrentAntenna();
-    selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.name));
+    selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
 
     openSerialPort();
 
@@ -183,30 +188,30 @@ void RotatorMainWindow::openSerialPort()
 {
 
 
-    if (selectRotator->currentAntenna.name == "")
+    if (selectRotator->currentAntenna.antennaName == "")
     {
         showStatusMessage("Please select an Antenna");
         return;
     }
-    if(selectRotator->currentAntenna.comPort == "")
+    if(selectRotator->currentAntenna.comport == "")
     {
         showStatusMessage("Please select a Comport");
         return;
 
     }
-    if (selectRotator->currentAntenna.rotator.protocol == "")
+    if (selectRotator->currentAntenna.rotatorModel == "")
     {
         showStatusMessage("Please select a rotator protcol");
         return;
     }
 
-    SetupDialog::Rotators p = selectRotator->getCurrentAntenna();
-    serial->setPortName(p.comPort);
-    serial->setBaudRate(p.baudRate);
-    serial->setDataBits(p.dataBits);
-    serial->setParity(p.parity);
-    serial->setStopBits(p.stopBits);
-    serial->setFlowControl(p.flowControl);
+    srotParams p = selectRotator->getCurrentAntenna();
+//    serial->setPortName(p.comport);
+//    serial->setBaudRate(p.baudrate);
+//    serial->setDataBits(p.databits);
+//    serial->setParity(p.parity);
+//    serial->setStopBits(p.stopbits);
+//    serial->setFlowControl(p.handshake);
 
 
 
@@ -220,8 +225,8 @@ void RotatorMainWindow::openSerialPort()
         serial_connected = true;
         timer->start(1000);             // start timer to send message to controller
         showStatusMessage(tr("Connected to %1 : %2, %3, %4, %5, %6, %7, %8")
-                          .arg(p.name).arg(p.rotator.protocol).arg(p.comPort).arg(p.stringBaudRate).arg(p.stringDataBits)
-                          .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
+                          .arg(p.antennaName).arg(p.rotatorModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
+                          .arg(p.parity).arg(p.stopbits).arg(p.handshake));
     } else {
         QMessageBox::critical(this, tr("Error"), serial->errorString());
 
@@ -289,7 +294,7 @@ void RotatorMainWindow::rotateToController()
     {
         if (serial_connected)
         {
-        rotator->rotate_to_bearing(bearing);
+        //rotator->rotate_to_bearing(bearing);
         }
     }
     else
@@ -363,7 +368,7 @@ void RotatorMainWindow::request_bearing()
 {
     if (serial_connected)
     {
-        rotator->request_bearing();
+//        rotator->request_bearing();
     }
 }
 
@@ -450,7 +455,7 @@ void RotatorMainWindow::initSelectAntennaBox()
     for (int i= 0; i < NUM_ANTENNAS; i++)
     {
 
-        selectAntenna->addItem(selectRotator->availAntennas[i].name);
+        selectAntenna->addItem(selectRotator->availAntennas[i].antennaName);
     }
 
 
@@ -459,10 +464,10 @@ void RotatorMainWindow::initSelectAntennaBox()
 
 void RotatorMainWindow::upDateAntenna()
 {
-    selectRotator->currentAntenna.name = ui->selectAntennaBox->currentText();
-    selectRotator->currentAntenna.rotator.protocol = selectRotator->getRotatorProtocol(ui->selectAntennaBox->currentText());
-    selectRotator->currentAntenna.rotator.id = selectRotator->getRotatorId(selectRotator->currentAntenna.rotator.protocol);
-    selectRotator->currentAntenna.comPort = selectRotator->getRotatorComPort(ui->selectAntennaBox->currentText());
+    selectRotator->currentAntenna.antennaName = ui->selectAntennaBox->currentText();
+//    selectRotator->currentAntenna.rotator.protocol = selectRotator->getRotatorProtocol(ui->selectAntennaBox->currentText());
+//    selectRotator->currentAntenna.rotator.id = selectRotator->getRotatorId(selectRotator->currentAntenna.rotator.protocol);
+    selectRotator->currentAntenna.comport = selectRotator->getRotatorComPort(ui->selectAntennaBox->currentText());
     selectRotator->saveCurrentAntenna();
 
     if (serial_connected)
@@ -479,7 +484,7 @@ void RotatorMainWindow::rotateCW()
 {
     if (serial_connected)
     {
-        rotator->rotateClockwise();
+        //rotator->rotateClockwise();
     }
 }
 
@@ -489,6 +494,6 @@ void RotatorMainWindow::rotateCCW()
 {
     if (serial_connected)
     {
-        rotator->rotateCClockwise();
+        //rotator->rotateCClockwise();
     }
 }
