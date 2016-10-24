@@ -68,7 +68,7 @@ void TConfigElement::createProcess()
     if ( run && !runner)
     {
         runner = new QProcess(parent());
-
+/*
         QString program = commandLine;
         if (!FileExists(program))
         {
@@ -76,9 +76,10 @@ void TConfigElement::createProcess()
         }
             runner->setProgram(program);
 
-        //QStringList args;
-        //runner->setArguments(args);
-
+        QStringList args;
+        args.append(params);
+        runner->setArguments(args);
+*/
         QString wdir = rundir;
         runner->setWorkingDirectory(wdir);
 
@@ -89,7 +90,7 @@ void TConfigElement::createProcess()
         connect (runner, SIGNAL(readyReadStandardError()), this, SLOT(on_readyReadStandardError()));
         connect (runner, SIGNAL(readyReadStandardOutput()), this, SLOT(on_readyReadStandardOutput()));
 
-        runner->start();
+        runner->start(commandLine);
     }
 }
 
