@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QtSerialPort/QSerialPort>
+#include <QStringList>
 #include "rotcontrol.h"
 
 #define NUM_ROTATOR_PROTOCOLS 2
@@ -19,6 +20,9 @@ namespace Ui {
 class SetupDialog;
 }
 
+
+
+
 class SetupDialog : public QDialog
 {
     Q_OBJECT
@@ -28,35 +32,6 @@ public:
     ~SetupDialog();
 
 
-//    struct RotatorType{
-//            QString protocol;
-//            int id;
-//    };
-
-
-
-//    struct Rotators {
-//        QString name;
-//        RotatorType rotator;
-//        int rotator_idx;
-//        QString comPort;
-//        int comPort_idx;
-//        qint32 baudRate;
-//        QString stringBaudRate;
-//        QSerialPort::DataBits dataBits;
-//        QString stringDataBits;
-//        QSerialPort::Parity parity;
-//        QString stringParity;
-//        QSerialPort::StopBits stopBits;
-//        QString stringStopBits;
-//        QSerialPort::FlowControl flowControl;
-//        QString stringFlowControl;
-//    };
-
-
-
-
-
     srotParams getCurrentAntenna() const;
     int getRotatorId(QString rotator);
 
@@ -64,7 +39,7 @@ public:
     srotParams availAntennas[NUM_ANTENNAS];
     srotParams currentAntenna;
 
-//    RotatorType *rotProtocol[NUM_ROTATOR_PROTOCOLS];
+
 
     QString getRotatorProtocol(QString );
     void readCurrentAntenna();
@@ -100,8 +75,11 @@ private:
     QComboBox *comParity[NUM_ANTENNAS];
     QComboBox *comHandShake[NUM_ANTENNAS];
     QIntValidator *intValidator;
-//    RotatorType *yaesu;
-//    RotatorType *prositel;
+    QStringList parityStr = (QStringList() << "None" << "Odd" << "Even" << "Mark" << "Space");
+    QStringList handshakeStr = (QStringList() << "None" << "XON/XOFF" << "CTS/RTS");
+    QStringList baudrateStr = (QStringList() << "" << "1200" << "2400" << "4800" << "9600" << "19200" << "38400");
+    QStringList databitsStr = (QStringList() << "" << "7" << "8" );
+    QStringList stopbitsStr = (QStringList()<< "" << "1" << "2");
     bool antennaValueChanged[NUM_ANTENNAS];
     bool antennaChanged;
     void saveSettings();

@@ -162,7 +162,7 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
 
 
-//    initRotProtocols();  //build available rotator protocol table
+
 
     fillAntennaModelInfo();  // add rotator models to drop down
     fillPortsInfo();     // add comports to drop down
@@ -178,13 +178,13 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
         antennaName[i]->setText(availAntennas[i].antennaName);
-        rotatorModel[i]->setCurrentIndex(availAntennas[i].rotatorModel_idx);
-        comPorts[i]->setCurrentIndex(availAntennas[i].comport_idx);
-        comSpeed[i]->setCurrentIndex(availAntennas[i].baudrate_idx);
-        comDataBits[i]->setCurrentIndex(availAntennas[i].databits_idx);
-        comStopBits[i]->setCurrentIndex(availAntennas[i].stopbits_idx);
-        comParity[i]->setCurrentIndex(availAntennas[i].parity_idx);
-        comHandShake[i]->setCurrentIndex(availAntennas[i].handshake_idx);
+        rotatorModel[i]->setCurrentIndex(rotatorModel[i]->findText(availAntennas[i].rotatorModel));
+        comPorts[i]->setCurrentIndex(comPorts[i]->findText(availAntennas[i].comport));
+        comSpeed[i]->setCurrentIndex(comSpeed[i]->findText(QString::number(availAntennas[i].baudrate)));
+        comDataBits[i]->setCurrentIndex(comDataBits[i]->findText(QString::number(availAntennas[i].databits)));
+        comStopBits[i]->setCurrentIndex(comStopBits[i]->findText(QString::number(availAntennas[i].stopbits)));
+        comParity[i]->setCurrentIndex(availAntennas[i].parity);
+        comHandShake[i]->setCurrentIndex(availAntennas[i].handshake);
 
     }
 
@@ -218,6 +218,7 @@ void SetupDialog::rotatorModelSelected(int boxNumber)
     {
         availAntennas[boxNumber].rotatorModel = rotatorModel[boxNumber]->currentText();
         availAntennas[boxNumber].rotatorModelNumber = rotator->getModelNumber(rotatorModel[boxNumber]->currentIndex());
+        availAntennas[boxNumber].rotatorModelName = rotator->getModel_Name(rotatorModel[boxNumber]->currentIndex());
         antennaValueChanged[boxNumber] = true;
         antennaChanged = true;
 
@@ -266,7 +267,7 @@ void SetupDialog::comStopBitsSelected(int boxNumber)
 void SetupDialog::comParitySelected(int boxNumber)
 {
 
-    availAntennas[boxNumber].parity = comParity[boxNumber]->currentText();
+    availAntennas[boxNumber].parity = rotator->getSerialParityCode(comParity[boxNumber]->currentIndex());
     antennaValueChanged[boxNumber] = true;
     antennaChanged = true;
 }
@@ -275,7 +276,7 @@ void SetupDialog::comParitySelected(int boxNumber)
 void SetupDialog::comHandShakeSelected(int boxNumber)
 {
 
-    availAntennas[boxNumber].handshake = comHandShake[boxNumber]->currentText();
+    availAntennas[boxNumber].handshake = rotator->getSerialHandshakeCode(comHandShake[boxNumber]->currentIndex());
     antennaValueChanged[boxNumber] = true;
     antennaChanged = true;
 }
@@ -347,8 +348,7 @@ void SetupDialog::fillPortsInfo()
 void SetupDialog::fillSpeedInfo()
 {
 
-    QStringList list;
-    list << "1200" << "2400" << "4800" << "9600" << "19200" << "38400";
+
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
@@ -357,7 +357,7 @@ void SetupDialog::fillSpeedInfo()
 
      for (int i = 0; i < NUM_ANTENNAS; i++)
      {
-        comSpeed[i]->addItems(list);
+        comSpeed[i]->addItems(baudrateStr);
      }
 
 
@@ -366,8 +366,6 @@ void SetupDialog::fillSpeedInfo()
 void SetupDialog::fillDataBitsInfo()
 {
 
-    QStringList list;
-    list << "7" << "8" ;
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
@@ -376,7 +374,7 @@ void SetupDialog::fillDataBitsInfo()
 
      for (int i = 0; i < NUM_ANTENNAS; i++)
      {
-        comDataBits[i]->addItems(list);
+        comDataBits[i]->addItems(databitsStr);
      }
 
 
@@ -385,9 +383,6 @@ void SetupDialog::fillDataBitsInfo()
 void SetupDialog::fillStopBitsInfo()
 {
 
-    QStringList list;
-    list << "1" << "2" ;
-
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
         comStopBits[i]->clear();
@@ -395,7 +390,7 @@ void SetupDialog::fillStopBitsInfo()
 
      for (int i = 0; i < NUM_ANTENNAS; i++)
      {
-        comStopBits[i]->addItems(list);
+        comStopBits[i]->addItems(stopbitsStr);
      }
 
 
@@ -406,9 +401,6 @@ void SetupDialog::fillStopBitsInfo()
 void SetupDialog::fillParityInfo()
 {
 
-    QStringList list;
-    list << "None" << "Odd" << "Even";
-
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
         comParity[i]->clear();
@@ -416,7 +408,7 @@ void SetupDialog::fillParityInfo()
 
      for (int i = 0; i < NUM_ANTENNAS; i++)
      {
-        comParity[i]->addItems(list);
+        comParity[i]->addItems(parityStr);
      }
 
 
@@ -427,8 +419,6 @@ void SetupDialog::fillParityInfo()
 void SetupDialog::fillHandShakeInfo()
 {
 
-    QStringList list;
-    list << "None" << "XON/XOFF" << "CTS/RTS";
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
@@ -437,11 +427,15 @@ void SetupDialog::fillHandShakeInfo()
 
      for (int i = 0; i < NUM_ANTENNAS; i++)
      {
-        comHandShake[i]->addItems(list);
+        comHandShake[i]->addItems(handshakeStr);
      }
 
 
 }
+
+
+
+
 
 
 void SetupDialog::saveButtonPushed()
@@ -479,6 +473,7 @@ void SetupDialog::saveSettings()
                 config.beginGroup("Antenna" + QString::number(i+1));
                 config.setValue("antennaName", availAntennas[i].antennaName);
                 config.setValue("rotatorModel", availAntennas[i].rotatorModel);
+                config.setValue("rotatorModelName", availAntennas[i].rotatorModelName);
                 config.setValue("rotatorModelNumber", availAntennas[i].rotatorModelNumber);
                 config.setValue("comport", availAntennas[i].comport);
                 config.setValue("baudrate", availAntennas[i].baudrate);
@@ -508,12 +503,13 @@ void SetupDialog::readSettings()
         config.beginGroup("Antenna" + QString::number(i+1));
         availAntennas[i].antennaName = config.value("antennaName", "").toString();
         availAntennas[i].rotatorModel = config.value("rotatorModel", "").toString();
+        availAntennas[i].rotatorModelName = config.value("rotatorModelName", "").toString();
         availAntennas[i].rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
         availAntennas[i].comport = config.value("comport", "").toString();
-        availAntennas[i].baudrate = config.value("baudrate", 0).toInt();
-        availAntennas[i].databits = config.value("databits", 0).toInt();
-        availAntennas[i].parity = config.value("parity", 0).toString();
-        availAntennas[i].stopbits = config.value("stopbits", 0).toInt();
+        availAntennas[i].baudrate = config.value("baudrate", 9600).toInt();
+        availAntennas[i].databits = config.value("databits", 8).toInt();
+        availAntennas[i].parity = config.value("parity", 0).toInt();
+        availAntennas[i].stopbits = config.value("stopbits", 1).toInt();
         availAntennas[i].handshake = config.value("handshake", 0).toInt();
         config.endGroup();
     }
@@ -528,15 +524,14 @@ void SetupDialog::clearAvailRotators()
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
-//        availAntennas[i].name = "";
-//        availAntennas[i].rotator.protocol = "";
-//        availAntennas[i].rotator.id = -1;
-//        availAntennas[i].comPort = "";
-//        availAntennas[i].baudRate = QSerialPort::Baud9600;
-//        availAntennas[i].dataBits = QSerialPort::Data8;
-//        availAntennas[i].parity = QSerialPort::NoParity;
-//        availAntennas[i].stopBits = QSerialPort::OneStop;
-//        availAntennas[i].flowControl = QSerialPort::NoFlowControl;
+        availAntennas[i].antennaName = "";
+        availAntennas[i].rotatorModelName = "";
+        availAntennas[i].rotatorModelNumber = 0;
+        availAntennas[i].comport = "";
+        availAntennas[i].baudrate = 9600;
+        availAntennas[i].databits = 8;
+        availAntennas[i].parity = rotator->getSerialParityCode(0);
+        availAntennas[i].handshake = rotator->getSerialHandshakeCode(0);
     }
 
 
@@ -545,35 +540,20 @@ void SetupDialog::clearAvailRotators()
 
 void SetupDialog::clearCurrentRotator()
 {
-//    currentAntenna.name = "";
-//    currentAntenna.rotator.protocol = "";
-//    currentAntenna.rotator.id = 0;
-//    currentAntenna.comPort = "";
-//    currentAntenna.baudRate = QSerialPort::Baud9600;
-//    currentAntenna.dataBits = QSerialPort::Data8;
-//    currentAntenna.parity = QSerialPort::NoParity;
-//    currentAntenna.stopBits = QSerialPort::OneStop;
-//    currentAntenna.flowControl = QSerialPort::NoFlowControl;
+
+    currentAntenna.antennaName = "";
+    currentAntenna.rotatorModelName = "";
+    currentAntenna.rotatorModelNumber = 0;
+    currentAntenna.comport = "";
+    currentAntenna.baudrate = 9600;
+    currentAntenna.databits = 8;
+    currentAntenna.parity = rotator->getSerialParityCode(0);
+    currentAntenna.handshake = rotator->getSerialHandshakeCode(0);
+
 }
 
 
-//void SetupDialog::initRotProtocols()
-//{
 
-//    return
-
-    //yaesu = new RotatorType;
-    //yaesu->protocol = "Yaesu";
-    //yaesu->id = 0;
-    //rotProtocol[0] = yaesu;
-
-    //prositel = new RotatorType;
-    //prositel->protocol = "Prositel";
-    //prositel->id = 1;
-    //rotProtocol[1] = prositel;
-
-
-//}
 
 /*
 int SetupDialog::getRotatorId(QString rotator)
@@ -639,15 +619,10 @@ void SetupDialog::saveCurrentAntenna()
     config.setValue("rotatorModelNumber", currentAntenna.rotatorModelNumber);
     config.setValue("comport", currentAntenna.comport);
     config.setValue("baudrate", currentAntenna.baudrate);
-//    config.setValue("stringbaudrate", currentAntenna.BaudRate);
     config.setValue("databits", currentAntenna.databits);
-//    config.setValue("stringdatabits", currentAntenna.stringDataBits);
     config.setValue("parity", currentAntenna.parity);
-//    config.setValue("stringparity", currentAntenna.stringParity);
     config.setValue("stopbits", currentAntenna.stopbits);
-//    config.setValue("stringstopbits" , currentAntenna.stringStopBits);
     config.setValue("handshake", currentAntenna.handshake);
-//    config.setValue("stringflowcontrol", currentAntenna.stringFlowControl);
     config.endGroup();
 
 

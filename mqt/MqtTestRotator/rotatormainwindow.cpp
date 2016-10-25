@@ -92,7 +92,8 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     selectRotator->readCurrentAntenna();
     selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
 
-    openSerialPort();
+//    openSerialPort();
+    rotator->init(selectRotator->currentAntenna);
 
 }
 
@@ -182,6 +183,8 @@ void RotatorMainWindow::on_pushButton_clicked()
     rl->publishState(sdir + ui->angle->text());
 */
 }
+
+
 
 
 void RotatorMainWindow::openSerialPort()
@@ -464,10 +467,17 @@ void RotatorMainWindow::initSelectAntennaBox()
 
 void RotatorMainWindow::upDateAntenna()
 {
-    selectRotator->currentAntenna.antennaName = ui->selectAntennaBox->currentText();
-//    selectRotator->currentAntenna.rotator.protocol = selectRotator->getRotatorProtocol(ui->selectAntennaBox->currentText());
-//    selectRotator->currentAntenna.rotator.id = selectRotator->getRotatorId(selectRotator->currentAntenna.rotator.protocol);
-    selectRotator->currentAntenna.comport = selectRotator->getRotatorComPort(ui->selectAntennaBox->currentText());
+    int antennaIndex;
+    antennaIndex = ui->selectAntennaBox->currentIndex();
+    selectRotator->currentAntenna.antennaName = selectRotator->availAntennas[antennaIndex].antennaName;
+    selectRotator->currentAntenna.rotatorModel = selectRotator->availAntennas[antennaIndex].rotatorModel;
+    selectRotator->currentAntenna.rotatorModelNumber = selectRotator->availAntennas[antennaIndex].rotatorModelNumber;
+    selectRotator->currentAntenna.comport = selectRotator->availAntennas[antennaIndex].comport;
+    selectRotator->currentAntenna.baudrate = selectRotator->availAntennas[antennaIndex].baudrate;
+    selectRotator->currentAntenna.databits = selectRotator->availAntennas[antennaIndex].databits;
+    selectRotator->currentAntenna.stopbits = selectRotator->availAntennas[antennaIndex].stopbits;
+    selectRotator->currentAntenna.parity = selectRotator->availAntennas[antennaIndex].parity;
+    selectRotator->currentAntenna.handshake = selectRotator->availAntennas[antennaIndex].handshake;
     selectRotator->saveCurrentAntenna();
 
     if (serial_connected)

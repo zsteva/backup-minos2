@@ -190,7 +190,7 @@
     <item>
      <widget class="QLabel" name="label_5">
       <property name="text">
-       <string>Databits</string>
+       <string>Data Bits</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -227,7 +227,7 @@
     <item>
      <widget class="QLabel" name="label_6">
       <property name="text">
-       <string>StopBits</string>
+       <string>Stop Bits</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>

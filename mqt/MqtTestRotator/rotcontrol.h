@@ -13,6 +13,10 @@ extern "C" int read_block(hamlib_port_t *p, char *rxbuffer, size_t count);
 
 bool model_Sort(const rot_caps *caps1,const rot_caps *caps2);
 
+//enum serial_parity_e p_none = RIG_PARITY_NONE;
+//enum serial_parity_e p_even = RIG_PARITY_EVEN;
+//enum serial_parity_e parity_codes[] = {p_none, p_even};
+
 
 
 
@@ -21,20 +25,14 @@ struct srotParams
   QString antennaName;
   QString configLabel;
   QString comport; /**<  serial port device*/
-  int comport_idx;
   QString rotatorModel;
+  QString rotatorModelName;
   int rotatorModelNumber;
-  int rotatorModel_idx;
   int baudrate; /**<  serial port baudrate*/
-  int baudrate_idx;
-  QString parity;
-  int parity_idx;
+  int parity;
   int stopbits;
-  int stopbits_idx;
   int databits;
-  int databits_idx;
-  QString handshake;
-  int handshake_idx;
+  int handshake;
   bool enableRot;
   bool activeRTS;
   bool activeDTR;
@@ -50,17 +48,27 @@ class RotControl: public QObject
 public:
     RotControl();
     ~RotControl();
-
+    bool init(srotParams currentAntenna);
     int getModelNumber(int idx);
     int getRotatorModelIndex();
     bool getRotatorList(QComboBox *cb);
     const char * getMfg_Name(int idx);
     const char * getModel_Name(int idx);
+    int rotate_to_bearing(QString bearing);
+    int rotateCClockwise(int speed);
+    int rotateClockwise(int speed);
+    azimuth_t getRotatorAzimuth();
+    int request_bearing();
+    int stop_rotation();
+    enum serial_parity_e getSerialParityCode(int index);
+    enum serial_handshake_e getSerialHandshakeCode(int index);
     QString initError;
 
 private:
     hamlib_port_t myport;
     ROT *my_rot;            // handle to rig (nstance)
+    azimuth_t rot_azimuth;  // azimuth from rotator
+    elevation_t rot_elevation; // not used
 //    freq_t freq;            // frequency
 //    rmode_t rmode;          // radio mode of operation
 //    pbwidth_t width;
@@ -75,6 +83,8 @@ private:
     bool rotatorlistLoaded=false;
     srotParams rotParams;
     int serialP;
+
+
 //    bool setPTT(bool On);
 //    double lastFrequency;
 //    QStringList xmlModes;
