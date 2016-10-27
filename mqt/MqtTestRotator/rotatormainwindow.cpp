@@ -287,7 +287,8 @@ void RotatorMainWindow::rotateToController()
     {
         if (rotator->get_serialConnected())
         {
-        //rotator->rotate_to_bearing(bearing);
+            //rotate_to_bearing(intbearing);
+            rotator->rotate_to_bearing(bearing);
         }
     }
     else
@@ -313,7 +314,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(ui->stopButton, SIGNAL(clicked(bool)), ui->bearingEdit, SLOT(setFocus()));
     connect(ui->bearingEdit, SIGNAL(returnPressed()), ui->bearingEdit, SLOT(setFocus()));
     connect(ui->bearingEdit, SIGNAL(returnPressed()), ui->bearingEdit, SLOT(selectAll()));
-    connect(ui->stopButton, SIGNAL(clicked(bool)), rotator, SLOT(stop_rotation()));
+    connect(ui->stopButton, SIGNAL(clicked(bool)), this, SLOT(stopRotation()));
     connect(ui->rot_right_button, SIGNAL(clicked(bool)), this, SLOT(rotateCW()));
     connect(ui->rot_left_button, SIGNAL(clicked(bool)), this, SLOT(rotateCCW()));
     connect(this, SIGNAL(escapePressed()), rotator, SLOT(stop_rotation()));
@@ -471,7 +472,10 @@ void RotatorMainWindow::upDateAntenna()
    rotator->init(selectRotator->currentAntenna);
 }
 
-
+void RotatorMainWindow::stopRotation()
+{
+    rotator->stop_rotation();
+}
 
 
 void RotatorMainWindow::rotateCW()

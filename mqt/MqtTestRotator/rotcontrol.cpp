@@ -157,7 +157,7 @@ int RotControl::getRotatorModelIndex()
 int RotControl::stop_rotation()
 {
     int retcode;
-    rot_stop (my_rot);
+    rot_stop(my_rot);
 
     qDebug() << "stop message" ;
     return retcode;
@@ -194,7 +194,7 @@ int RotControl::rotateClockwise(int speed)
 {
 
     int retcode;
-    retcode = rot_move(my_rot, ROT_MOVE_CW , speed);
+    retcode = rot_move(my_rot, ROT_MOVE_RIGHT , speed);
     qDebug() << "rotate CW message";
     return retcode;
 }
@@ -202,7 +202,7 @@ int RotControl::rotateClockwise(int speed)
 int RotControl::rotateCClockwise(int speed)
 {
     int retcode;
-    retcode = rot_move(my_rot, ROT_MOVE_CCW , speed);
+    retcode = rot_move(my_rot, ROT_MOVE_LEFT , speed);
     qDebug() << "rotate CCW message";
     return retcode;
 }

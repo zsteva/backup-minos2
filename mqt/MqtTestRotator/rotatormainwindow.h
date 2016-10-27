@@ -72,6 +72,7 @@ private:
 
     void openRotator();
     void closeRotator();
+
     void refreshPresetLabels();
     void showStatusMessage(const QString &);
     void readPresets();
@@ -97,6 +98,7 @@ protected slots:
     void request_bearing();
     void rotateCW();
     void rotateCCW();
+    void stopRotation();
 
 private slots:
     void LogTimerTimer( );
