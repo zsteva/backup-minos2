@@ -57,18 +57,30 @@ public:
     int rotate_to_bearing(QString bearing);
     int rotateCClockwise(int speed);
     int rotateClockwise(int speed);
+    void set_rotatorSpeed(int speed);
+    int get_rotatorSpeed();
     azimuth_t getRotatorAzimuth();
-    int request_bearing();
+    void request_bearing();
     int stop_rotation();
     enum serial_parity_e getSerialParityCode(int index);
     enum serial_handshake_e getSerialHandshakeCode(int index);
     QString initError;
+
+
+signals:
+   void bearing_updated(QString);
+//   void send_bearing_msg(QByteArray);
+//   void send_rotate_to_msg(QByteArray);
+//   void send_stop_msg(QByteArray);
+//   void send_az_cw_msg(QByteArray);
+//   void send_az_ccw_msg(QByteArray);
 
 private:
     hamlib_port_t myport;
     ROT *my_rot;            // handle to rig (nstance)
     azimuth_t rot_azimuth;  // azimuth from rotator
     elevation_t rot_elevation; // not used
+    int rot_speed = 1;
 //    freq_t freq;            // frequency
 //    rmode_t rmode;          // radio mode of operation
 //    pbwidth_t width;

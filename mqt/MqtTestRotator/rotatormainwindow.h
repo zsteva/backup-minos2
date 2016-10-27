@@ -71,7 +71,7 @@ private:
     QString presetName[NUM_PRESETS];
     QString presetBearing[NUM_PRESETS];
 
-
+    void openRotator();
     void refreshPresetLabels();
     void showStatusMessage(const QString &);
     void readPresets();

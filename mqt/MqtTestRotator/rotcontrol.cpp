@@ -1,6 +1,6 @@
 #include <QList>
 #include<QDebug>
-
+#include <QString>
 #include "rotcontrol.h"
 #include <hamlib/rotator.h>
 //#include "rotctl_parse.h"
@@ -20,29 +20,9 @@ int collect(const rot_caps *caps,rig_ptr_t)
 
 RotControl::RotControl()
 {
-
-
     getRotatorList();
-//    my_model = atoi("601");
-//    rot_file = "COM2";
-//    serial_rate = atoi("9600");
-
-//    my_rot = rot_init(my_model);
-
-//    retcode = set_conf(my_rot, conf_parms);
-
-//    if (rot_file)
-//        strncpy(my_rot->state.rotport.pathname, rot_file, FILPATHLEN - 1);
-
-    /* FIXME: bound checking and port type == serial */
-//    if (serial_rate != 0)
-//        my_rot->state.rotport.parm.serial.rate = serial_rate;
-
-//    retcode = rot_open(my_rot);
-
-
-
-
+    rot_azimuth = 0.0;
+    rot_elevation = 0.0;
 
 }
 
@@ -56,14 +36,17 @@ RotControl::~RotControl()
 bool RotControl::init(srotParams currentAntenna)
 {
     int retcode;
+    QString comport = "\\\\.\\";
+    comport.append(currentAntenna.comport);
 
     my_rot = rot_init(currentAntenna.rotatorModelNumber);
     if (!my_rot)
     {
         qDebug() << "Error init rotator";
     }
+
     // load rotator params
-        strncpy(my_rot->state.rotport.pathname, (const char*)currentAntenna.comport.toLatin1(), FILPATHLEN);
+        strncpy(my_rot->state.rotport.pathname, (const char*)comport.toLatin1(), FILPATHLEN);
         my_rot->state.rotport.parm.serial.rate = currentAntenna.baudrate;
         my_rot->state.rotport.parm.serial.data_bits = currentAntenna.databits;
         my_rot->state.rotport.parm.serial.stop_bits = currentAntenna.stopbits;
@@ -163,7 +146,7 @@ int RotControl::stop_rotation()
     int retcode;
     rot_stop (my_rot);
 
-    qDebug() << "stop message" << stop_message;
+    qDebug() << "stop message" ;
     return retcode;
 }
 
@@ -171,12 +154,18 @@ int RotControl::stop_rotation()
 // send signal to serial write slot
 
 
-int RotControl::request_bearing()
+void RotControl::request_bearing()
 {
     int retcode;
-    rot_get_position (my_rot, &rot_azimuth, &rot_elevation);
+    QString bearing;
+    retcode = rot_get_position (my_rot, &rot_azimuth, &rot_elevation);
+    if (retcode == RIG_OK)
+    {
+        bearing.setNum(rot_azimuth);
+        emit bearing_updated(bearing);
+    }
 
-    return retcode;
+    //  Need error stuff here
 
 }
 
@@ -193,7 +182,7 @@ int RotControl::rotateClockwise(int speed)
 
     int retcode;
     retcode = rot_move(my_rot, ROT_MOVE_CW , speed);
-    qDebug() << "rotate CW message" << cw_message;
+    qDebug() << "rotate CW message";
     return retcode;
 }
 
@@ -201,7 +190,7 @@ int RotControl::rotateCClockwise(int speed)
 {
     int retcode;
     retcode = rot_move(my_rot, ROT_MOVE_CCW , speed);
-    qDebug() << "rotate CCW message" << ccw_message;
+    qDebug() << "rotate CCW message";
     return retcode;
 }
 
@@ -211,20 +200,22 @@ int RotControl::rotate_to_bearing(QString bearing)
     int retcode;
     qDebug() << "got to rotate bearing";
 
-    rot_set_position(my_rot, (azimuth_t)bearing, 0.0);
+    rot_set_position(my_rot, (azimuth_t)bearing.toFloat(), 0.0);
 
-    qDebug() << "rotate message to serial " << tx_rotate_to_message;
+    qDebug() << "rotate message to serial ";
     return retcode;
 
 }
 
+void RotControl::set_rotatorSpeed(int speed)
+{
+    rot_speed = speed;
+}
 
-int rotate_to_bearing(QString bearing);
-int rotateCClockwise(int speed);
-int rotateClockwise(int speed);
-azimuth_t getRotatorAzimuth();
-int request_bearing();
-int stop_rotation();
+int RotControl::get_rotatorSpeed()
+{
+    return rot_speed;
+}
 
  enum serial_parity_e RotControl::getSerialParityCode(int index)
  {
