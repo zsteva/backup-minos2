@@ -57,8 +57,10 @@ bool RotControl::init(srotParams currentAntenna)
         if (retcode)
         {
             qDebug() << "rotator open error";
+            set_serialConnected(false);
         }
         qDebug() << "rotator opened ok";
+        set_serialConnected(true);
 
         return true;
 
@@ -216,6 +218,22 @@ int RotControl::get_rotatorSpeed()
 {
     return rot_speed;
 }
+
+
+void RotControl::set_serialConnected(bool connectFlag)
+{
+    serialConnected = connectFlag;
+}
+
+
+
+
+bool RotControl::get_serialConnected()
+{
+    return serialConnected;
+}
+
+
 
  enum serial_parity_e RotControl::getSerialParityCode(int index)
  {

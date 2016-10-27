@@ -66,7 +66,7 @@ private:
     EditPresetsDialog *editPresets;
     QSerialPort *serial;
     QTimer *timer;
-    bool serial_connected;
+    //bool serial_connected;
     QString backBearingmsg;
     QString presetName[NUM_PRESETS];
     QString presetBearing[NUM_PRESETS];

@@ -59,6 +59,8 @@ public:
     int rotateClockwise(int speed);
     void set_rotatorSpeed(int speed);
     int get_rotatorSpeed();
+    void set_serialConnected(bool connectFlag);
+    bool get_serialConnected();
     azimuth_t getRotatorAzimuth();
     void request_bearing();
     int stop_rotation();
@@ -90,6 +92,7 @@ private:
 //    rot_model_t myrot_model;
 
     bool rotControlEnabled;
+    bool serialConnected;
     void errorMessage(int errorCode,QString command);
     void getRotatorList();
     bool rotatorlistLoaded=false;
