@@ -66,6 +66,17 @@ bool RotControl::init(srotParams currentAntenna)
 
 }
 
+
+void RotControl::closeRotator()
+{
+    int retcode;
+    retcode = rot_close (my_rot);
+
+    retcode = rot_cleanup (my_rot);
+    set_serialConnected(false);
+
+}
+
 void RotControl::getRotatorList()
 {
     if(!rotatorlistLoaded)

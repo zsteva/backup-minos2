@@ -36,9 +36,8 @@ public:
     explicit RotatorMainWindow(QWidget *parent = 0);
     ~RotatorMainWindow();
 
-    void closeSerialPort();
-    void readData();
-    void handleError(QSerialPort::SerialPortError error);
+//    void readData();
+//    void handleError(QSerialPort::SerialPortError error);
 
     // setup connections
     void initActionsConnections();
@@ -64,7 +63,7 @@ private:
     QLabel *status;
     SetupDialog *selectRotator;
     EditPresetsDialog *editPresets;
-    QSerialPort *serial;
+//    QSerialPort *serial;
     QTimer *timer;
     //bool serial_connected;
     QString backBearingmsg;
@@ -72,6 +71,7 @@ private:
     QString presetBearing[NUM_PRESETS];
 
     void openRotator();
+    void closeRotator();
     void refreshPresetLabels();
     void showStatusMessage(const QString &);
     void readPresets();
@@ -85,8 +85,8 @@ private:
     void logMessage( QString s );
 
 public slots:
-    void writeData(QByteArray);
-    void openSerialPort();
+//    void writeData(QByteArray);
+//    void openSerialPort();
     void rotateToController();
     void displayBackBearing(const QString);
     void updatePresetLabels();

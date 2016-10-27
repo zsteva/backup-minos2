@@ -53,7 +53,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     rotator = new RotControl();
     selectRotator = new SetupDialog(rotator);
     editPresets = new EditPresetsDialog;
-    serial = new QSerialPort(this);
+//    serial = new QSerialPort(this);
 //    rotator = new Yaesu(serial);
     timer = new QTimer(this);
     status = new QLabel;
@@ -77,13 +77,9 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
 
 
-    rotator->init(selectRotator->currentAntenna);
-    if (rotator->get_serialConnected())
-    {
+    openRotator();
 
-        timer->start(1000);             // start timer to send message to controller
 
-    }
 
 }
 
@@ -184,7 +180,7 @@ void RotatorMainWindow::on_pushButton_clicked()
 
 
 
-void RotatorMainWindow::openSerialPort()
+void RotatorMainWindow::openRotator()
 {
     if (selectRotator->currentAntenna.antennaName == "")
     {
@@ -202,70 +198,72 @@ void RotatorMainWindow::openSerialPort()
         return;
     }
     srotParams p = selectRotator->getCurrentAntenna();
-//    serial->setPortName(p.comport);
-//    serial->setBaudRate(p.baudrate);
-//    serial->setDataBits(p.databits);
-//    serial->setParity(p.parity);
-//    serial->setStopBits(p.stopbits);
-//    serial->setFlowControl(p.handshake);
-    if (serial->open(QIODevice::ReadWrite)) {
-        //console->setEnabled(true);
-        //console->setLocalEchoEnabled(p.localEchoEnabled);
-        //ui->actionConnect->setEnabled(false);
-        //ui->actionDisconnect->setEnabled(true);
-        //ui->actionSetup_Rotator->setEnabled(false);
-//        serial_connected = true;
+
+    rotator->init(selectRotator->currentAntenna);
+
+    if (rotator->get_serialConnected())
+    {
+
         timer->start(1000);             // start timer to send message to controller
-        showStatusMessage(tr("Connected to %1 : %2, %3, %4, %5, %6, %7, %8")
-                          .arg(p.antennaName).arg(p.rotatorModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
-                          .arg(p.parity).arg(p.stopbits).arg(p.handshake));
-    } else {
-        QMessageBox::critical(this, tr("Error"), serial->errorString());
+        showStatusMessage(tr("Connected to Antenna: %1 - %2, %3, %4, %5, %6, %7, %8")
+                              .arg(p.antennaName).arg(p.rotatorModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
+                              .arg(p.parity).arg(p.stopbits).arg(p.handshake));
+
+    }
+    else
+    {
+//        QMessageBox::critical(this, tr("Error"), serial->errorString());
         showStatusMessage(tr("Open error"));
     }
+
+
+}
+
+void RotatorMainWindow::closeRotator()
+{
+    rotator->closeRotator();
+    showStatusMessage(tr("Disconnected"));
 }
 
 
-
-
-void RotatorMainWindow::closeSerialPort()
-{
-    if (serial->isOpen())
-        serial->close();
+//void RotatorMainWindow::closeSerialPort()
+//{
+//    if (serial->isOpen())
+//        serial->close();
     //console->setEnabled(false);
     //ui->actionConnect->setEnabled(true);
     //ui->actionDisconnect->setEnabled(false);
     //ui->actionSetup_Rotator->setEnabled(true);
 //    serial_connected = false;
-    showStatusMessage(tr("Disconnected"));
-}
+//    showStatusMessage(tr("Disconnected"));
+//}
 
 
 
 
-void RotatorMainWindow::writeData(QByteArray data)
-{
-    qDebug() << " write to serial" << data;
-    serial->write(data);
-}
+//void RotatorMainWindow::writeData(QByteArray data)
+//{
+//   qDebug() << " write to serial" << data;
+//    serial->write(data);
+//}
 
 
 
 
-void RotatorMainWindow::readData()
-{
-    QByteArray data = serial->readAll();
-}
+//void RotatorMainWindow::readData()
+//{
+//    QByteArray data = serial->readAll();
+//}
 
 
 
-void RotatorMainWindow::handleError(QSerialPort::SerialPortError error)
-{
-    if (error == QSerialPort::ResourceError) {
-        QMessageBox::critical(this, tr("Critical Error"), serial->errorString());
-        closeSerialPort();
-    }
-}
+//void RotatorMainWindow::handleError(QSerialPort::SerialPortError error)
+//{
+//    if (error == QSerialPort::ResourceError) {
+//        QMessageBox::critical(this, tr("Critical Error"), serial->errorString());
+//        closeRotator();
+//    }
+//}
 
 
 
@@ -334,7 +332,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(rotator, SIGNAL(send_stop_msg(QByteArray)), this, SLOT(writeData(QByteArray)));
     connect(rotator, SIGNAL(send_az_cw_msg(QByteArray)), this, SLOT(writeData(QByteArray)));
     connect(rotator, SIGNAL(send_az_ccw_msg(QByteArray)), this, SLOT(writeData(QByteArray)));
-    connect(serial, SIGNAL(readyRead()), rotator, SLOT(received_bearing()));
+//    connect(serial, SIGNAL(readyRead()), rotator, SLOT(received_bearing()));
     connect(timer, SIGNAL(timeout()), this, SLOT(request_bearing()));
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
     //connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
@@ -468,9 +466,9 @@ void RotatorMainWindow::upDateAntenna()
     selectRotator->saveCurrentAntenna();
     if (rotator->get_serialConnected())
    {
-            closeSerialPort();
+            closeRotator();
    }
-   openSerialPort();
+   rotator->init(selectRotator->currentAntenna);
 }
 
 

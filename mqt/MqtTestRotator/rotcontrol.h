@@ -49,6 +49,7 @@ public:
     RotControl();
     ~RotControl();
     bool init(srotParams currentAntenna);
+    void closeRotator();
     int getModelNumber(int idx);
     int getRotatorModelIndex();
     bool getRotatorList(QComboBox *cb);
