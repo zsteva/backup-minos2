@@ -59,6 +59,7 @@ FORMS    += \
     logdialog.ui \
     editpresetsdialog.ui
 
+RC_FILE = MqtRotator.rc
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase

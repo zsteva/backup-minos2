@@ -36,8 +36,9 @@ public:
     explicit RotatorMainWindow(QWidget *parent = 0);
     ~RotatorMainWindow();
 
-//    void readData();
-//    void handleError(QSerialPort::SerialPortError error);
+
+    void setPolltime(int interval);
+    int getPolltime();
 
     // setup connections
     void initActionsConnections();
@@ -59,13 +60,11 @@ private:
     QPushButton* presetButtons[NUM_PRESETS];
     MinosCompass* compassDial;
     RotControl  *rotator;
-//    Yaesu *rotator;
     QLabel *status;
     SetupDialog *selectRotator;
     EditPresetsDialog *editPresets;
-//    QSerialPort *serial;
     QTimer *timer;
-    //bool serial_connected;
+    int pollTime;
     QString backBearingmsg;
     QString presetName[NUM_PRESETS];
     QString presetBearing[NUM_PRESETS];
