@@ -53,7 +53,8 @@ HEADERS += \
     XMPPEvents.h \
     XMPPRPCObj.h \
     XMPPRPCParams.h \
-    XMPPStanzas.h
+    XMPPStanzas.h \
+    RPCCommandConstants.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

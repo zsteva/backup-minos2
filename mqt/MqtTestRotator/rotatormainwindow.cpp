@@ -1,9 +1,9 @@
 #include "base_pch.h"
+#include "C:/Qt_Projects/minos-minos/mqt/XMPPLib/RPCCommandConstants.h"
 #include "rotatorlogic.h"
 #include "rotatormainwindow.h"
 #include "ui_rotatormainwindow.h"
 #include "minoscompass.h"
-//#include "yaesu.h"
 #include "rotcontrol.h"
 #include "setupdialog.h"
 #include "editpresetsdialog.h"
@@ -138,45 +138,31 @@ void RotatorMainWindow::LogTimerTimer(  )
 
 
 
-void RotatorMainWindow::onSetRotation(int direction, int angle)
+void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
 {
-/*
-    ui->direction->setText( QString::number(direction));
-    ui->angle->setText( QString::number(angle));
-*/
-}
 
-
-
-void RotatorMainWindow::on_pushButton_2_clicked()
-{
-    close();
-}
-
-
-
-void RotatorMainWindow::on_pushButton_clicked()
-{
- /*
-    QString sdir;
-    switch (ui->direction->text().toInt())
+    int dirCommand = direction;
+    if (dirCommand == rpcConstants::eRotateDirect)
     {
-    case eRotateLeft:
-        sdir = "L/";
-    break;
-    case eRotateDirect:
-        sdir = "D/";
-    break;
-    case eRotateRight:
-        sdir = "R/";
-    break;
-    case eRotateStop:
-        sdir = "S/";
-    break;
+            rotator->rotate_to_bearing(angle);
+
     }
-    rl->publishState(sdir + ui->angle->text());
-*/
+    else if (dirCommand == rpcConstants::eRotateLeft)
+    {
+            rotateCCW();
+    }
+    else if (dirCommand == rpcConstants::eRotateRight)
+    {
+            rotateCW();
+    }
+    else if (dirCommand == rpcConstants::eRotateStop)
+    {
+            stopRotation();
+    }
+
+
 }
+
 
 
 
@@ -208,7 +194,7 @@ void RotatorMainWindow::openRotator()
         timer->start(pollTime);             // start timer to send message to controller
         showStatusMessage(tr("Connected to Antenna: %1 - %2, %3, %4, %5, %6, %7, %8")
                               .arg(p.antennaName).arg(p.rotatorModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
-                              .arg(p.parity).arg(p.stopbits).arg(p.handshake));
+                              .arg(p.stopbits).arg(p.parity).arg(p.handshake));
 
     }
     else
@@ -252,7 +238,7 @@ void RotatorMainWindow::rotateToController()
         if (rotator->get_serialConnected())
         {
             //rotate_to_bearing(intbearing);
-            rotator->rotate_to_bearing(bearing);
+            rotator->rotate_to_bearing(intBearing);
         }
     }
     else
@@ -292,12 +278,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(rotator, SIGNAL(bearing_updated(QString)), ui->bearingDisplay, SLOT(setText(const QString &)));
     connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(displayBackBearing(const QString)));
     connect(rotator, SIGNAL(bearing_updated(QString)), compassDial, SLOT(compassDialUpdate(const QString &)));
-    connect(rotator, SIGNAL(send_bearing_msg(QByteArray)), this, SLOT(writeData(QByteArray)));
-    connect(rotator, SIGNAL(send_rotate_to_msg(QByteArray)), this, SLOT(writeData(QByteArray)));
-    connect(rotator, SIGNAL(send_stop_msg(QByteArray)), this, SLOT(writeData(QByteArray)));
-    connect(rotator, SIGNAL(send_az_cw_msg(QByteArray)), this, SLOT(writeData(QByteArray)));
-    connect(rotator, SIGNAL(send_az_ccw_msg(QByteArray)), this, SLOT(writeData(QByteArray)));
-//    connect(serial, SIGNAL(readyRead()), rotator, SLOT(received_bearing()));
+    connect(rl, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));
     connect(timer, SIGNAL(timeout()), this, SLOT(request_bearing()));
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
     //connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));

@@ -55,7 +55,7 @@ public:
     bool getRotatorList(QComboBox *cb);
     const char * getMfg_Name(int idx);
     const char * getModel_Name(int idx);
-    int rotate_to_bearing(QString bearing);
+    int rotate_to_bearing(int bearing);
     int rotateCClockwise(int speed);
     int rotateClockwise(int speed);
     void set_rotatorSpeed(int speed);
@@ -72,11 +72,7 @@ public:
 
 signals:
    void bearing_updated(QString);
-//   void send_bearing_msg(QByteArray);
-//   void send_rotate_to_msg(QByteArray);
-//   void send_stop_msg(QByteArray);
-//   void send_az_cw_msg(QByteArray);
-//   void send_az_ccw_msg(QByteArray);
+
 
 private:
     hamlib_port_t myport;
@@ -84,14 +80,6 @@ private:
     azimuth_t rot_azimuth;  // azimuth from rotator
     elevation_t rot_elevation; // not used
     int rot_speed = 100;
-//    freq_t freq;            // frequency
-//    rmode_t rmode;          // radio mode of operation
-//    pbwidth_t width;
-//    vfo_t vfo;              // vfo selection
-//    int strength;           // S-Meter level
-//   int retcode;            // generic return code from functions
-//    rot_model_t myrot_model;
-
     bool rotControlEnabled;
     bool serialConnected;
     void errorMessage(int errorCode,QString command);
@@ -100,10 +88,6 @@ private:
     srotParams rotParams;
     int serialP;
 
-
-//    bool setPTT(bool On);
-//    double lastFrequency;
-//    QStringList xmlModes;
 
     int retcode;		/* generic return code from functions */
     int exitcode;

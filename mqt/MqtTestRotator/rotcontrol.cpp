@@ -208,12 +208,13 @@ int RotControl::rotateCClockwise(int speed)
 }
 
 
-int RotControl::rotate_to_bearing(QString bearing)
+int RotControl::rotate_to_bearing(int bearing)
 {
     int retcode;
+    float rotbearing = bearing;
     qDebug() << "got to rotate bearing";
 
-    rot_set_position(my_rot, (azimuth_t)bearing.toFloat(), 0.0);
+    rot_set_position(my_rot, rotbearing, 0.0);
 
     qDebug() << "rotate message to serial ";
     return retcode;

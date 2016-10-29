@@ -287,14 +287,14 @@
      <item>
       <widget class="QPushButton" name="rot_left_button">
        <property name="text">
-        <string>LEFT</string>
+        <string>CCW</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="rot_right_button">
        <property name="text">
-        <string>RIGHT</string>
+        <string>CW</string>
        </property>
       </widget>
      </item>

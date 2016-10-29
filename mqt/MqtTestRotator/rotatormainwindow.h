@@ -2,6 +2,7 @@
 #define ROTATORMAINWINDOW_H
 
 #include "base_pch.h"
+#include "rotatorlogic.h"
 #include <QMainWindow>
 #include <QObject>
 #include <QtSerialPort/QSerialPort>
@@ -20,13 +21,13 @@ class MinosCompass;
 //class Yaesu;
 class RotControl;
 class EditPresetsDialog;
-
+class RotatorLogic;
 
 namespace Ui {
 class RotatorMainWindow;
 }
 
-class RotatorLogic;
+
 
 class RotatorMainWindow : public QMainWindow
 {
@@ -85,8 +86,6 @@ private:
     void logMessage( QString s );
 
 public slots:
-//    void writeData(QByteArray);
-//    void openSerialPort();
     void rotateToController();
     void displayBackBearing(const QString);
     void updatePresetLabels();
@@ -101,9 +100,9 @@ protected slots:
 
 private slots:
     void LogTimerTimer( );
-    void onSetRotation(int direction, int angle);
-    void on_pushButton_2_clicked();
-    void on_pushButton_clicked();
+    void onLoggerSetRotation(int direction, int angle);
+//    void on_pushButton_2_clicked();
+//   void on_pushButton_clicked();
 
 
 };
