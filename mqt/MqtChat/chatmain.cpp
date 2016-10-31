@@ -12,8 +12,17 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     enableTrace( "./TraceLog", "MinosChat_" );
+
+    trace("Arguments");
+    QCoreApplication *app = QCoreApplication::instance();
+    foreach (QString arg, app->arguments())
+    {
+        trace(arg);
+    }
+    trace("End of Arguments");
 
     createCloseEvent();
 
