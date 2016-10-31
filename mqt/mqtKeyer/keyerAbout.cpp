@@ -6,6 +6,7 @@ keyerAbout::keyerAbout(QWidget *parent) :
     ui(new Ui::keyerAbout)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
 keyerAbout::~keyerAbout()

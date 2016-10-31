@@ -16,7 +16,7 @@
 
 extern unsigned long MORSEINTCOUNT;
 extern qint64 currTick;
-extern qint64 basetick;
+//extern qint64 basetick;
 
 class SoundSystemDriver;
 
@@ -197,7 +197,7 @@ extern std::map <int, MORSEMSG> MORSEMSGS;
 class KeyerAction
 {
    protected:
-      qint64 startTick;
+//      qint64 startTick;
       qint64 lastTick;
    public:
       int pipStartDelaySamples;

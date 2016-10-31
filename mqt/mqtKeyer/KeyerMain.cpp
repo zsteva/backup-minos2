@@ -34,6 +34,7 @@ KeyerMain::KeyerMain(QWidget *parent) :
     recording(false)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 //    connect(m_engine, SIGNAL(levelChanged(qreal, qreal, int)),
 //            m_levelMeter, SLOT(levelChanged(qreal, qreal, int)));
 

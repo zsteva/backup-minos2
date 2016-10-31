@@ -36,7 +36,7 @@ int CWTone = 1000;
 int CWSpeed = 12;
 
 qint64 currTick;
-qint64 basetick;
+//qint64 basetick;
 my_deque < KeyerAction *> KeyerAction::currentAction;
 //=============================================================================
 
@@ -105,8 +105,8 @@ bool keyer_init( QString &errmess )
       trace( "newkeyer_init called" );   // make sure file is open
    }
 
-   currTick = QDateTime::currentMSecsSinceEpoch();
-   basetick = QDateTime::currentMSecsSinceEpoch();
+   currTick = QDateTime::currentMSecsSinceEpoch()/55;
+//   basetick = QDateTime::currentMSecsSinceEpoch();
 
    // Use the mixer as it is - don't attempt to save/reset
    // If needed, use the mixer utility program for that!
@@ -414,7 +414,7 @@ void commonKeyer::tickEvent()
    {
       started = ( --startcount < 0 );
    }
-   currTick = QDateTime::currentMSecsSinceEpoch();
+   currTick = QDateTime::currentMSecsSinceEpoch()/55;
 }
 bool commonKeyer::getPTT( void )
 {
@@ -837,7 +837,7 @@ KeyerAction::KeyerAction() : actionTime( -1 ), deleteAtTick( false ),
 {
    //disableInterrupts guard;
    KeyerAction::currentAction.push_back( this );
-   startTick = currTick;
+   //startTick = currTick;
    lastTick = currTick;
 }
 KeyerAction::~KeyerAction()
@@ -1005,7 +1005,7 @@ ToneAction::ToneAction( int n, long pdelayStart ) : actionState( etasInitial ), 
    {
       trace( "new ToneAction" );
    }
-   delayTicks = pdelayStart;
+   delayTicks = pdelayStart/55;
    if ( delayTicks <= 0 )
       delayTicks = 1;	// so it starts on next tick
    actionTime = 1;

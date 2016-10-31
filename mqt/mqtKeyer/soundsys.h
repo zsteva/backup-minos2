@@ -9,6 +9,10 @@
 #ifndef soundsysH
 #define soundsysH
 
+#include <QAudioInput>
+#include <QAudioOutput>
+#include <QIODevice>
+
 #ifndef MAX_BLOCK_LENGTH
 #define MAX_BLOCK_LENGTH 1024
 #endif
@@ -20,9 +24,33 @@
 */
 #define BLOCK_COUNT 20
 
-class WriterThread;
-class QtSoundSystem
+
+class MinosAudioOut : public QIODevice
 {
+    Q_OBJECT
+
+public:
+    MinosAudioOut(QObject *parent);
+    ~MinosAudioOut();
+
+    void start();
+    void stop();
+
+    qint64 readData(char *data, qint64 maxlen);
+    qint64 writeData(const char *data, qint64 len);
+    qint64 bytesAvailable() const;
+
+    void setData(qint16 *data, int len);
+
+private:
+    qint64 m_pos;
+    QByteArray m_buffer;
+};
+
+class WriterThread;
+class QtSoundSystem: public QObject
+{
+    Q_OBJECT
 protected:
    int cfgrate;
 
@@ -32,7 +60,7 @@ public:
    volatile long now;
    volatile int sbactive;
 
-   int16_t *dataptr;
+   qint16 *dataptr;
    long samples;
 
    int mset;
@@ -40,21 +68,14 @@ public:
    static QtSoundSystem *createSoundSystem();
 
 private:
+    QAudioOutput *qout;
+    QAudioInput *qin;
+
+    MinosAudioOut *maout;
+
       // internal values
       WriterThread *wt;
       int sampleRate;
-      //====================================================
-
-      int writeAudio( int deadSamples = 0 );
-
-      //====================================================
-
-      volatile long samplesInput;
-
-      void readAudio();
-
-      //====================================================
-
    public:
 
       QtSoundSystem();
@@ -62,13 +83,15 @@ private:
 
       virtual bool initialise( QString &errmess );
 
-      bool startInput( QString fname );
-      bool startOutput();
       virtual void terminate();
       virtual int setRate();
 
       virtual bool startDMA( bool play, const QString &fname );
       virtual void stopDMA();
+
+private slots:
+      void handleStateChanged(QAudio::State newState);
+
 };
 
 #endif

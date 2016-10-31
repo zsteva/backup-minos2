@@ -534,9 +534,10 @@ SoundSystemDriver::~SoundSystemDriver()
 void SoundSystemDriver::initTone1( int t1 )
 {
    delete [] t1ptr;
-
    toneSamples = rate * ( long ) tuneTime;
+
    t1ptr = new int16_t [ toneSamples ];
+
    genTone( t1ptr, false, t1, toneSamples, 5000 /* ramp time*/, ( tuneLevel / 100 ) * 32767.0 );
 }
 void SoundSystemDriver::initTone2( int t1, int t2 )
