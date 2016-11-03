@@ -30,7 +30,6 @@ else:android:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 DEFINES += TIXML_USE_STL
 
 SOURCES += \
-    yaesu.cpp \
     skyscandialog.cpp \
     setupdialog.cpp \
     rotatormainwindow.cpp \
@@ -42,7 +41,6 @@ SOURCES += \
     rotcontrol.cpp \
 
 HEADERS  += \
-    yaesu.h \
     skyscandialog.h \
     setupdialog.h \
     rotatormainwindow.h \

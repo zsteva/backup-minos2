@@ -348,7 +348,7 @@ void SetupDialog::fillPortsInfo()
 void SetupDialog::fillSpeedInfo()
 {
 
-
+    QStringList baudrateStr = rotator->getBaudRateNames();
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
@@ -366,6 +366,7 @@ void SetupDialog::fillSpeedInfo()
 void SetupDialog::fillDataBitsInfo()
 {
 
+    QStringList databitsStr = rotator->getDataBitsNames();
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
@@ -382,6 +383,7 @@ void SetupDialog::fillDataBitsInfo()
 
 void SetupDialog::fillStopBitsInfo()
 {
+    QStringList stopbitsStr = rotator->getStopBitsNames();
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
@@ -401,6 +403,8 @@ void SetupDialog::fillStopBitsInfo()
 void SetupDialog::fillParityInfo()
 {
 
+    QStringList parityStr = rotator->getParityCodeNames();
+
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
         comParity[i]->clear();
@@ -419,6 +423,7 @@ void SetupDialog::fillParityInfo()
 void SetupDialog::fillHandShakeInfo()
 {
 
+    QStringList handshakeStr = rotator->getHandShakeNames();
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {

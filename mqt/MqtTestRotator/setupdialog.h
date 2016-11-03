@@ -75,11 +75,6 @@ private:
     QComboBox *comParity[NUM_ANTENNAS];
     QComboBox *comHandShake[NUM_ANTENNAS];
     QIntValidator *intValidator;
-    QStringList parityStr = (QStringList() << "None" << "Odd" << "Even" << "Mark" << "Space");
-    QStringList handshakeStr = (QStringList() << "None" << "XON/XOFF" << "CTS/RTS");
-    QStringList baudrateStr = (QStringList() << "" << "1200" << "2400" << "4800" << "9600" << "19200" << "38400");
-    QStringList databitsStr = (QStringList() << "" << "7" << "8" );
-    QStringList stopbitsStr = (QStringList()<< "" << "1" << "2");
     bool antennaValueChanged[NUM_ANTENNAS];
     bool antennaChanged;
     void saveSettings();

@@ -66,6 +66,8 @@ private:
     EditPresetsDialog *editPresets;
     QTimer *timer;
     int pollTime;
+    int brakedelay;
+    bool brakeflag;
     QString backBearingmsg;
     QString presetName[NUM_PRESETS];
     QString presetBearing[NUM_PRESETS];
@@ -83,7 +85,10 @@ private:
     void resizeEvent(QResizeEvent *event);
     void keyPressEvent(QKeyEvent *);
 
+    void hamlibError(int errorCode);
+
     void logMessage( QString s );
+    void sleepFor(qint64 milliseconds);
 
 public slots:
     void rotateToController();

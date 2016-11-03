@@ -1,6 +1,6 @@
 #include <QList>
-#include<QDebug>
-#include <QString>
+#include <QDebug>
+#include <QStringList>
 #include "rotcontrol.h"
 #include <hamlib/rotator.h>
 //#include "rotctl_parse.h"
@@ -33,7 +33,7 @@ RotControl::~RotControl()
     rot_cleanup(my_rot); /* if you care about memory */
 }
 
-bool RotControl::init(srotParams currentAntenna)
+int RotControl::init(srotParams currentAntenna)
 {
     int retcode;
     QString comport = "\\\\.\\";
@@ -54,26 +54,30 @@ bool RotControl::init(srotParams currentAntenna)
         my_rot->state.rotport.parm.serial.handshake = getSerialHandshakeCode(currentAntenna.handshake);
 
         retcode = rot_open(my_rot);
-        if (retcode)
+        if (retcode >= 0)
+        {
+            qDebug() << "rotator opened ok";
+            set_serialConnected(true);
+        }
+        else
         {
             qDebug() << "rotator open error";
             set_serialConnected(false);
         }
-        qDebug() << "rotator opened ok";
-        set_serialConnected(true);
 
-        return true;
+        return retcode;
 
 }
 
 
-void RotControl::closeRotator()
+int RotControl::closeRotator()
 {
     int retcode;
     retcode = rot_close (my_rot);
 
     retcode = rot_cleanup (my_rot);
     set_serialConnected(false);
+    return retcode;
 
 }
 
@@ -156,29 +160,29 @@ int RotControl::getRotatorModelIndex()
 
 int RotControl::stop_rotation()
 {
-    int retcode;
+    int retCode;
     rot_stop(my_rot);
 
     qDebug() << "stop message" ;
-    return retcode;
+    return retCode;
 }
 
 // request current bearing from controller
 // send signal to serial write slot
 
 
-void RotControl::request_bearing()
+int RotControl::request_bearing()
 {
-    int retcode;
+    int retCode;
     QString bearing;
-    retcode = rot_get_position (my_rot, &rot_azimuth, &rot_elevation);
-    if (retcode == RIG_OK)
+    retCode = rot_get_position (my_rot, &rot_azimuth, &rot_elevation);
+    if (retCode == RIG_OK)
     {
         bearing.setNum(rot_azimuth);
         emit bearing_updated(bearing);
     }
 
-    //  Need error stuff here
+    return retCode;
 
 }
 
@@ -193,31 +197,31 @@ azimuth_t RotControl::getRotatorAzimuth()
 int RotControl::rotateClockwise(int speed)
 {
 
-    int retcode;
-    retcode = rot_move(my_rot, ROT_MOVE_RIGHT , speed);
+    int retCode;
+    retCode = rot_move(my_rot, ROT_MOVE_RIGHT , speed);
     qDebug() << "rotate CW message";
-    return retcode;
+    return retCode;
 }
 
 int RotControl::rotateCClockwise(int speed)
 {
-    int retcode;
-    retcode = rot_move(my_rot, ROT_MOVE_LEFT , speed);
+    int retCode;
+    retCode = rot_move(my_rot, ROT_MOVE_LEFT , speed);
     qDebug() << "rotate CCW message";
-    return retcode;
+    return retCode;
 }
 
 
 int RotControl::rotate_to_bearing(int bearing)
 {
-    int retcode;
+    int retCode;
     float rotbearing = bearing;
     qDebug() << "got to rotate bearing";
 
-    rot_set_position(my_rot, rotbearing, 0.0);
+    retCode = rot_set_position(my_rot, rotbearing, 0.0);
 
     qDebug() << "rotate message to serial ";
-    return retcode;
+    return retCode;
 
 }
 
@@ -249,18 +253,62 @@ bool RotControl::get_serialConnected()
 
  enum serial_parity_e RotControl::getSerialParityCode(int index)
  {
-     enum serial_parity_e parity_codes[5] = {RIG_PARITY_NONE, RIG_PARITY_ODD, RIG_PARITY_EVEN, RIG_PARITY_MARK, RIG_PARITY_SPACE};
 
-     return parity_codes[index];
+     return serialData::parityCodes[index];
 
  }
 
  enum serial_handshake_e RotControl::getSerialHandshakeCode(int index)
  {
-     enum serial_handshake_e handshake_codes[3] = {RIG_HANDSHAKE_NONE, RIG_HANDSHAKE_XONXOFF, RIG_HANDSHAKE_HARDWARE};
 
-     return handshake_codes[index];
+     return serialData::handshakeCodes[index];
  }
+
+ QStringList RotControl::getParityCodeNames()
+ {
+    return serialData::parityStr;
+ }
+
+ QStringList RotControl::getHandShakeNames()
+ {
+     return serialData::handshakeStr;
+ }
+
+ QStringList RotControl::getBaudRateNames()
+ {
+
+
+     return serialData::baudrateStr;
+ }
+
+ QStringList RotControl::getDataBitsNames()
+ {
+     return serialData::databitsStr;
+ }
+
+ QStringList RotControl::getStopBitsNames()
+ {
+     return serialData::stopbitsStr;
+ }
+
+QString RotControl::gethamlibErrorMsg(int errorCode)
+{
+    if (errorCode > serialData::hamlibErrorMsg.count())
+    {
+        return "hamlib Errorcode too large!";
+    }
+    return serialData::hamlibErrorMsg[errorCode];
+}
+
+
+QStringList RotControl::gethamlibErrorMsg()
+{
+
+    return serialData::hamlibErrorMsg;
+}
+
+
+
 
 bool model_Sort(const rot_caps *caps1,const rot_caps *caps2)
 {
