@@ -1,6 +1,7 @@
 #include "base_pch.h"
 #include "C:/Qt_Projects/minos-minos/mqt/XMPPLib/RPCCommandConstants.h"
 #include "rotatorlogic.h"
+#include "rotatorlog.h"
 #include "rotatormainwindow.h"
 #include "ui_rotatormainwindow.h"
 #include "minoscompass.h"
@@ -60,6 +61,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     status = new QLabel;
     compassDial = new MinosCompass;
     selectAntenna = new QComboBox;
+    rotlog = new RotatorLog;
 
     ui->statusBar->addWidget(status);
     ui->verticalLayout_3->addWidget(compassDial);
@@ -78,10 +80,23 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
 
     brakedelay = 3 * 1000;
+
     brakeflag = false;
-    setPolltime(500);
+    cwCcwflag = false;
+    rotCmdflag = false;
+    stopCmdflag = false;
+    rotLogFlg = true;
+
+    moving = false;
+    bearing = 0;
+
+    setPolltime(1000);
+
+
 
     openRotator();
+
+
 
 
 
@@ -147,16 +162,23 @@ void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
     int dirCommand = direction;
     if (dirCommand == rpcConstants::eRotateDirect)
     {
-            rotator->rotate_to_bearing(angle);
+        ui->bearingEdit->text() = angle;
+        rotator->rotate_to_bearing(angle);
 
     }
     else if (dirCommand == rpcConstants::eRotateLeft)
     {
-            rotateCCW();
+            if (!moving)
+            {
+                rotateCCW(true);
+            }
     }
     else if (dirCommand == rpcConstants::eRotateRight)
     {
-            rotateCW();
+            if (!moving)
+            {
+                rotateCW(true);
+            }
     }
     else if (dirCommand == rpcConstants::eRotateStop)
     {
@@ -251,9 +273,9 @@ void RotatorMainWindow::initActionsConnections()
     connect(ui->stopButton, SIGNAL(clicked(bool)), ui->bearingEdit, SLOT(setFocus()));
     connect(ui->bearingEdit, SIGNAL(returnPressed()), ui->bearingEdit, SLOT(setFocus()));
     connect(ui->bearingEdit, SIGNAL(returnPressed()), ui->bearingEdit, SLOT(selectAll()));
-    connect(ui->stopButton, SIGNAL(clicked(bool)), this, SLOT(stopRotation()));
-    connect(ui->rot_right_button, SIGNAL(clicked(bool)), this, SLOT(rotateCW()));
-    connect(ui->rot_left_button, SIGNAL(clicked(bool)), this, SLOT(rotateCCW()));
+    connect(ui->stopButton, SIGNAL(clicked(bool)), this, SLOT(stopButton()));
+    connect(ui->rot_right_button, SIGNAL(toggled(bool)), this, SLOT(rotateCW(bool)));
+    connect(ui->rot_left_button, SIGNAL(toggled(bool)), this, SLOT(rotateCCW(bool)));
     connect(this, SIGNAL(escapePressed()), rotator, SLOT(stop_rotation()));
     connect(this, SIGNAL(sendBackBearing(QString)), ui->backBearingDisplay, SLOT(setText(const QString &)));
     //connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
@@ -265,6 +287,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(rotator, SIGNAL(bearing_updated(QString)), ui->bearingDisplay, SLOT(setText(const QString &)));
     connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(displayBackBearing(const QString)));
     connect(rotator, SIGNAL(bearing_updated(QString)), compassDial, SLOT(compassDialUpdate(const QString &)));
+    connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(logBearing(const QString &)));
     connect(rl, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));
     connect(timer, SIGNAL(timeout()), this, SLOT(request_bearing()));
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
@@ -407,7 +430,7 @@ void RotatorMainWindow::upDateAntenna()
 void RotatorMainWindow::request_bearing()
 {
     int retCode = 0;
-    if (brakeflag) return;
+    if (brakeflag || cwCcwflag || rotCmdflag) return;
     if (rotator->get_serialConnected())
     {
         retCode = rotator->request_bearing();
@@ -424,6 +447,7 @@ void RotatorMainWindow::rotateToController()
     bool ok;
     int intBearing;
     int retCode = 0;
+    rotCmdflag = true;
     qDebug() << "Triggered from Turnbutton";
     // get bearing from bearing line edit form
     QString bearing = ui->bearingEdit->text();
@@ -445,13 +469,36 @@ void RotatorMainWindow::rotateToController()
     {
         QMessageBox::critical(this, tr("Bearing Error"), tr("Invalid Bearing\nPlease enter 0 - 359"));
     }
+    rotCmdflag = false;
+}
+
+
+void RotatorMainWindow::stopButton()
+{
+    if (ui->rot_left_button->isChecked())
+    {
+        ui->rot_left_button->setChecked(!ui->rot_left_button->isChecked());
+        return;
+    }
+    else if (ui->rot_right_button->isChecked())
+    {
+        ui->rot_right_button->setChecked(!ui->rot_right_button->isChecked());
+        return;
+    }
+    else
+    {
+        stopRotation();
+    }
 }
 
 
 void RotatorMainWindow::stopRotation()
 {
+
+
     int retCode = 0;
     brakeflag = true;
+    stopCmdflag = true;
     retCode = rotator->stop_rotation();
     if (retCode < 0)
     {
@@ -459,36 +506,66 @@ void RotatorMainWindow::stopRotation()
     }
     sleepFor(brakedelay);
     brakeflag = false;
+    moving = false;
+    stopCmdflag = false;
+
 }
 
 
-void RotatorMainWindow::rotateCW()
+void RotatorMainWindow::rotateCW(bool toggle)
 {
-    int retCode = 0;
-    if (rotator->get_serialConnected())
+    cwCcwflag = true;
+    if (toggle)
     {
-        retCode = rotator->rotateClockwise(rotator->get_rotatorSpeed());
-        if (retCode < 0)
+
+        int retCode = 0;
+        if (rotator->get_serialConnected())
         {
-            hamlibError(retCode);
+            retCode = rotator->rotateClockwise(rotator->get_rotatorSpeed());
+            if (retCode < 0)
+            {
+                hamlibError(retCode);
+                moving = false;
+            }
+            moving = true;
         }
+
+
     }
+    else
+    {
+        stopRotation();
+    }
+    cwCcwflag = false;
 }
 
 
 
 
-void RotatorMainWindow::rotateCCW()
+void RotatorMainWindow::rotateCCW(bool toggle)
 {
-    int retCode = 0;
-    if (rotator->get_serialConnected())
+    cwCcwflag = true;
+    if (toggle)
     {
-        retCode = rotator->rotateCClockwise(rotator->get_rotatorSpeed());
-        if (retCode < 0)
+
+        int retCode = 0;
+        if (rotator->get_serialConnected())
         {
-            hamlibError(retCode);
+            retCode = rotator->rotateCClockwise(rotator->get_rotatorSpeed());
+            if (retCode < 0)
+            {
+                hamlibError(retCode);
+                moving = false;
+            }
+            moving = true;
         }
+
+     }
+    else
+    {
+        stopRotation();
     }
+    cwCcwflag = false;
 }
 
 
@@ -518,6 +595,16 @@ void RotatorMainWindow::hamlibError(int errorCode)
     QMessageBox::critical(this, "hamlib Error", QString::number(errCode) + " - " + errorMsg);
 
 
+}
+
+
+void RotatorMainWindow::logBearing(const QString bearing)
+{
+    int retCode = 0;
+    if (rotLogFlg)
+    {
+        retCode = rotlog->writeLog(bearing);
+    }
 }
 
 

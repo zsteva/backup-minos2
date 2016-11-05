@@ -22,6 +22,7 @@ class MinosCompass;
 class RotControl;
 class EditPresetsDialog;
 class RotatorLogic;
+class RotatorLog;
 
 namespace Ui {
 class RotatorMainWindow;
@@ -64,10 +65,17 @@ private:
     QLabel *status;
     SetupDialog *selectRotator;
     EditPresetsDialog *editPresets;
+    RotatorLog *rotlog;
+    bool rotLogFlg;
     QTimer *timer;
     int pollTime;
     int brakedelay;
     bool brakeflag;
+    bool moving;
+    bool cwCcwflag;     // command sent
+    bool stopCmdflag;
+    bool rotCmdflag;
+    int bearing;
     QString backBearingmsg;
     QString presetName[NUM_PRESETS];
     QString presetBearing[NUM_PRESETS];
@@ -88,6 +96,7 @@ private:
     void hamlibError(int errorCode);
 
     void logMessage( QString s );
+
     void sleepFor(qint64 milliseconds);
 
 public slots:
@@ -99,12 +108,14 @@ public slots:
 protected slots:
     void upDateAntenna();
     void request_bearing();
-    void rotateCW();
-    void rotateCCW();
+    void rotateCW(bool toogle);
+    void rotateCCW(bool toogle);
+    void stopButton();
     void stopRotation();
 
 private slots:
     void LogTimerTimer( );
+    void logBearing(const QString bearing);
     void onLoggerSetRotation(int direction, int angle);
 //    void on_pushButton_2_clicked();
 //   void on_pushButton_clicked();

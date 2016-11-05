@@ -1,5 +1,7 @@
 #include "logdialog.h"
 #include "ui_logdialog.h"
+#include <QFile>
+#include <QDateTime>
 
 LogDialog::LogDialog(QWidget *parent) :
     QDialog(parent),

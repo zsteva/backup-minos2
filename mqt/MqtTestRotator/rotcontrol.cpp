@@ -160,20 +160,20 @@ int RotControl::getRotatorModelIndex()
 
 int RotControl::stop_rotation()
 {
-    int retCode;
-    rot_stop(my_rot);
+    int retCode = RIG_OK;
+    retCode = rot_stop(my_rot);
 
     qDebug() << "stop message" ;
     return retCode;
 }
 
 // request current bearing from controller
-// send signal to serial write slot
+
 
 
 int RotControl::request_bearing()
 {
-    int retCode;
+    int retCode = RIG_OK;
     QString bearing;
     retCode = rot_get_position (my_rot, &rot_azimuth, &rot_elevation);
     if (retCode == RIG_OK)
@@ -197,7 +197,7 @@ azimuth_t RotControl::getRotatorAzimuth()
 int RotControl::rotateClockwise(int speed)
 {
 
-    int retCode;
+    int retCode = RIG_OK;
     retCode = rot_move(my_rot, ROT_MOVE_RIGHT , speed);
     qDebug() << "rotate CW message";
     return retCode;
@@ -205,7 +205,7 @@ int RotControl::rotateClockwise(int speed)
 
 int RotControl::rotateCClockwise(int speed)
 {
-    int retCode;
+    int retCode = RIG_OK;
     retCode = rot_move(my_rot, ROT_MOVE_LEFT , speed);
     qDebug() << "rotate CCW message";
     return retCode;
@@ -214,7 +214,7 @@ int RotControl::rotateCClockwise(int speed)
 
 int RotControl::rotate_to_bearing(int bearing)
 {
-    int retCode;
+    int retCode = RIG_OK;
     float rotbearing = bearing;
     qDebug() << "got to rotate bearing";
 

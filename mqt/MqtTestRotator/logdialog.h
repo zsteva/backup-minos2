@@ -17,6 +17,9 @@ public:
 
 private:
     Ui::LogDialog *ui;
+
+    int polltime;       // file write interval
+
 };
 
 #endif // LOGDIALOG_H
