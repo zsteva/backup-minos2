@@ -1094,7 +1094,9 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
       mt->getStructArgMemberValue( "AllowLoc8", allowLoc8 );
 
       mt->getStructArgMemberValue( "UKACBonus", UKACBonus );
-      if (mt->getStructArgMemberValue( "M7Mults", M7Mults) && M7Mults.getValue())
+      mt->getStructArgMemberValue( "M7Mults", M7Mults);
+
+      if ( M7Mults.getValue())
       {
          NonUKloc_mult = true;
          NonUKloc_multiplier = 1;

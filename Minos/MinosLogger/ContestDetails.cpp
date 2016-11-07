@@ -598,38 +598,39 @@ TWinControl * TContestEntryDetails::getDetails( )
    contest->M7Mults.setValue( M7LocatorMults->Checked ) ;   // bool
    contest->UKACBonus.setValue(BonusComboBox->ItemIndex == 1);
 
-   if (contest->GLocMult.getValue())
-   {
-      contest->UKloc_mult = true;
-      contest->NonUKloc_mult = false;
-      contest->UKloc_multiplier = 1;
-      contest->NonUKloc_multiplier = 0;
+    if (contest->M7Mults.getValue())
+    {
+        contest->UKloc_mult = true;
+        contest->NonUKloc_mult = true;
+        contest->UKloc_multiplier = 2;
+        contest->NonUKloc_multiplier = 1;
+    }
+    else
+    {
+        if (contest->locMult.getValue())
+        {
+            contest->UKloc_mult = true;
+            contest->UKloc_multiplier = 1;
 
-   }
-   else if (contest->M7Mults.getValue())
-   {
-      contest->UKloc_mult = true;
-      contest->NonUKloc_mult = true;
-      contest->UKloc_multiplier = 2;
-      contest->NonUKloc_multiplier = 1;
-   }
-   else
-   {
-      if (contest->locMult.getValue())
-      {
-         contest->UKloc_mult = true;
-         contest->NonUKloc_mult = true;
-         contest->UKloc_multiplier = 1;
-         contest->NonUKloc_multiplier = 1;
-      }
-      else
-      {
-         contest->UKloc_mult = false;
-         contest->NonUKloc_mult = false;
-         contest->UKloc_multiplier = 0;
-         contest->NonUKloc_multiplier = 0;
-      }
-   }
+            if (contest->GLocMult.getValue())
+            {
+                contest->NonUKloc_mult = false;
+                contest->NonUKloc_multiplier = 0;
+            }
+            else
+            {
+                contest->NonUKloc_mult = true;
+                contest->NonUKloc_multiplier = 1;
+            }
+        }
+        else
+        {
+            contest->UKloc_mult = false;
+            contest->NonUKloc_mult = false;
+            contest->UKloc_multiplier = 0;
+            contest->NonUKloc_multiplier = 0;
+        }
+    }
    if (ProtectedOption->Checked && contest->isProtected() && contest->isProtectedSuppressed())
    {
       contest->setProtectedSuppressed(false);
