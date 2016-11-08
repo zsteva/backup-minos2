@@ -362,10 +362,10 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    }
 
    ui->StartDateEdit->setDate(ic.start.date());
-   ui->StartTimeCombo->setCurrentText(ic.start.toString( "hh:mm" ));
+   ui->StartTimeCombo->setCurrentText(ic.start.toString( "hh:mm" ) + " UTC");
 
    ui->EndDateEdit->setDate(ic.finish.date()); // short date format, hours:minutes
-   ui->EndTimeCombo->setCurrentText(ic.finish.toString( "hh:mm" )); // short date format, hours:minutes
+   ui->EndTimeCombo->setCurrentText(ic.finish.toString( "hh:mm" ) + " UTC"); // short date format, hours:minutes
 
    if ( ic.mults == "M1" )
    {
