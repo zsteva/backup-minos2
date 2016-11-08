@@ -12,11 +12,11 @@ Need a "snagging list" - such things as
 - "ops list" rows in details aren't RO (or at least don't show as such)
 - Rclick on tab dosn't select it before menu shown
 - various info shoud be dependent on the correct program connected via server
-- scoring wrong in UKAC after ?entry?reload?whatever?
 - occasional crash in match code 
 - .Minos - or is it .minos?
 - Tab drag/drop
-- S1/S2 not auto-compressing at start of contest
+==================================================================    
+Sorting of contest tabs- by name/start date/band/???
 ==================================================================    
 Combo box of contest tabs, to allow choice of which one
 ==================================================================    
