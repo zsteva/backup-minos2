@@ -194,7 +194,7 @@ void ContestDetails::setDetails(  )
        QString s = contest->DTGEnd.getValue();
        QDateTime t = QDateTime::fromString(s, "yyyyMMddhhmm");
       ui->EndDateEdit->setDate(t.date()); // short date format, hours:minutes
-      QString etc = t.time().toString( "hh:mm" );
+      QString etc = t.time().toString( "hh:mm UTC" );
       ui->EndTimeCombo->setCurrentText(etc); // short date format, hours:minutes
    }
    else
