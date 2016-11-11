@@ -1,196 +1,10 @@
 #include "logger_pch.h"
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QNetworkRequest>
 
 #include "tlogcontainer.h"
 
 #include "tcalendarform.h"
 #include "ui_tcalendarform.h"
 
-#define LOWYEAR -1
-#define LOWURLYEAR -1
-#define HIGHYEAR 1
-
-static int curYear = 0;
-
-//enum CalType {ectVHF, ectHF, ectMwave, ectVHFOther, ectHFOther, ectHFBARTG};
-QString calString[] =
-    {
-        "vhfcontests",
-        "hfcontests",
-        "microcontests",
-        "VHFContestsOther",
-        "HFContestsOther",
-        "bartgcontests"
-    };
-class CalendarYear
-{
-        virtual QString getSite() = 0;
-        QString yearString()
-        {
-            QString y = QString::number( curYear + yearOffset );
-            y = y.midRef( 2, 2 ).toString();
-            return y;
-        }
-    public:
-        CalendarYear ( CalType t, int y ) : type ( t ), yearOffset ( y )
-        {
-            if ( curYear == 0 )
-            {
-                curYear = QDate::currentDate().year();
-            }
-
-        }
-        virtual ~CalendarYear(){}
-
-        virtual bool downloadFile ( bool showError );
-
-        bool loaded;
-        int yearOffset;
-        CalType type;
-        virtual QString getPath();
-        virtual QString getURL();
-};
-class HFCalendarYear : public CalendarYear
-{
-        virtual QString getSite();
-    public:
-        HFCalendarYear ( int year ) : CalendarYear ( ectHF, year )
-        {
-        }
-};
-class HFBARTGCalendarYear : public CalendarYear
-{
-        virtual QString getSite();
-    public:
-        HFBARTGCalendarYear ( int year ) : CalendarYear ( ectHFBARTG, year )
-        {
-        }
-};
-class VHFCalendarYear : public CalendarYear
-{
-        virtual QString getSite();
-    public:
-        VHFCalendarYear ( int year ) : CalendarYear ( ectVHF, year )
-        {
-        }
-};
-class MicroCalendarYear : public CalendarYear
-{
-        virtual QString getSite();
-    public:
-        MicroCalendarYear ( int year ) : CalendarYear ( ectMwave, year )
-        {
-        }
-};
-class HFOtherCalendarYear : public CalendarYear
-{
-        virtual QString getSite();
-    public:
-        HFOtherCalendarYear ( int year ) : CalendarYear ( ectHFOther, year )
-        {
-        }
-        virtual QString getPath();
-        virtual QString getURL();
-};
-class VHFOtherCalendarYear : public CalendarYear
-{
-        virtual QString getSite();
-    public:
-        VHFOtherCalendarYear ( int year ) : CalendarYear ( ectVHFOther, year )
-        {
-        }
-        virtual QString getPath();
-        virtual QString getURL();
-};
-class CTYCalendarYear : public CalendarYear
-{
-        virtual QString getSite();
-    public:
-        CTYCalendarYear ( int year ) : CalendarYear ( ectVHFOther, year )
-        {
-        }
-        virtual QString getPath();
-        virtual QString getURL();
-};
-//---------------------------------------------------------------------------
-QString CalendarYear::getPath()
-{
-    QString path =  "./Configuration/" + calString[ type ] + yearString() + ".xml";
-    return path;
-}
-QString CalendarYear::getURL()
-{
-    QString url = getSite() + calString[ type ] + yearString() + ".xml";
-    return url;
-
-}
-//---------------------------------------------------------------------------
-QString VHFCalendarYear::getSite()
-{
-    return "http://www.rsgbcc.org/vhf/";
-}
-//---------------------------------------------------------------------------
-QString HFCalendarYear::getSite()
-{
-    // Yes, the HF calendar is under the VHF directory!
-    return "http://www.rsgbcc.org/vhf/";
-}
-//---------------------------------------------------------------------------
-QString HFBARTGCalendarYear::getSite()
-{
-    return "http://bartg.rsgbcc.org/";
-}
-//---------------------------------------------------------------------------
-QString MicroCalendarYear::getSite()
-{
-    return "http://microwave.rsgbcc.org/";
-}
-//---------------------------------------------------------------------------
-QString VHFOtherCalendarYear::getSite()
-{
-    return "";
-}
-QString VHFOtherCalendarYear::getPath()
-{
-    QString p = "./Configuration/" + calString[ type ] + ".xml";
-    return p;
-}
-QString VHFOtherCalendarYear::getURL()
-{
-    // No URL
-    return QString();
-}
-//---------------------------------------------------------------------------
-QString HFOtherCalendarYear::getSite()
-{
-    return "";
-}
-QString HFOtherCalendarYear::getPath()
-{
-    QString p = "./Configuration/" + calString[ type ] + ".xml";
-    return p;
-}
-QString HFOtherCalendarYear::getURL()
-{
-    // No URL
-    return QString();
-}
-//---------------------------------------------------------------------------
-QString CTYCalendarYear::getSite()
-{
-    return "http://www.country-files.com/cty/cty.dat";
-}
-QString CTYCalendarYear::getPath()
-{
-    QString p = "./Configuration/cty.dat";
-    return p;
-}
-QString CTYCalendarYear::getURL()
-{
-    return getSite();
-}
 
 TCalendarForm::
 TCalendarForm( QWidget *parent, CalType calType ) :
@@ -211,14 +25,14 @@ int TCalendarForm::exec()
     FormShow();
 
     QSettings settings;
-    QString sname = "Calendar/grid_geometry_" + calString[calType];
+    QString sname = "Calendar/grid_geometry_" + calendarNameString[calType];
     QByteArray state = settings.value(sname).toByteArray();
     if (state.size())
     {
         ui->CalendarGrid->horizontalHeader()->restoreState(state);
     }
 
-    QByteArray geometry = settings.value("Calendar/form_geometry_" + calString[calType]).toByteArray();
+    QByteArray geometry = settings.value("Calendar/form_geometry_" + calendarNameString[calType]).toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
@@ -244,9 +58,9 @@ void TCalendarForm::doCloseEvent()
 {
     QSettings settings;
 
-    settings.setValue("Calendar/grid_geometry_" + calString[calType], ui->CalendarGrid->horizontalHeader()->saveState());
+    settings.setValue("Calendar/grid_geometry_" + calendarNameString[calType], ui->CalendarGrid->horizontalHeader()->saveState());
 
-    settings.setValue("Calendar/form_geometry_" + calString[calType], saveGeometry());
+    settings.setValue("Calendar/form_geometry_" + calendarNameString[calType], saveGeometry());
 }
 
 bool TCalendarForm::loadYear ( Calendar &cal, int year )
@@ -472,72 +286,6 @@ void TCalendarForm::FormShow ( )
                             LoadGrid ( mwave );
                         }
 }
-//---------------------------------------------------------------------------
-bool CalendarYear::downloadFile ( bool showError )
-{
-    QString calendarURL = getURL();
-
-
-    QNetworkAccessManager m_NetworkMngr;
-
-    QUrl qurl( calendarURL );
-    QNetworkRequest qnr( qurl );
-
-    qnr.setRawHeader( "User-Agent" , "Mozilla/4.0 (compatible;Adjsql)" );
-
-    QNetworkReply *reply = m_NetworkMngr.get( qnr );
-
-    QEventLoop loop;
-    QObject::connect( reply, SIGNAL( finished() ), &loop, SLOT( quit() ) );
-    loop.exec();
-
-    if ( reply->error() == QNetworkReply::NoError )
-    {
-        int raw = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        if (raw == 301)
-        {
-            QUrl redirect =  reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-
-            QNetworkRequest qnr1( redirect );
-            qnr1.setRawHeader( "User-Agent" , "Mozilla/4.0 (compatible;Adjsql)" );
-
-            delete reply;
-            reply = m_NetworkMngr.get( qnr1 );
-            QEventLoop loop;
-            QObject::connect( reply, SIGNAL( finished() ), &loop, SLOT( quit() ) );
-            loop.exec();
-            raw = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        }
-        QByteArray data = reply->readAll();
-        if (data.size() > 0)
-        {
-            QUrl aUrl( calendarURL );
-            QFileInfo fileInfo = aUrl.path();
-
-            QFile file( getPath() );
-            file.open( QIODevice::WriteOnly );
-            file.write( data );
-            trace ( "HTPP Get of " + calendarURL + " OK" );
-        }
-        else
-        {
-           trace ( "HTPP Get of " + calendarURL + " failed - zero length data returned with attribute " + QString::number(raw));
-        }
-        delete reply;
-        return true;
-    }
-    else
-    {
-        trace ( QString( "HTPP Get of " ) + calendarURL + " failed: " + reply->errorString() );
-        if ( showError )
-        {
-            mShowMessage ( QString( "HTPP Get of " ) + calendarURL + " failed: " + reply->errorString(), LogContainer );
-        }
-    }
-
-    delete reply;
-    return false;
-}
 void TCalendarForm::downloadFiles()
 {
 
@@ -558,7 +306,7 @@ void TCalendarForm::downloadFiles()
 
     for ( unsigned int i = 0; i < yearList.size(); i++ )
     {
-        if ( yearList[ i ] ->downloadFile ( false ) )
+        if ( yearList[ i ] ->downloadFile ( false, LogContainer ) )
         {
             fileCount++;
         }

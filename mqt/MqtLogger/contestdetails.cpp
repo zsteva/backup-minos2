@@ -370,6 +370,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    if ( ic.mults == "M1" )
    {
       // PC, DXCC
+       contest->UKACBonus.setValue(false);
+
       contest->districtMult.setValue( true );
       contest->countryMult.setValue( true );
       contest->locMult.setValue( false );
@@ -386,6 +388,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M2" )
    {
       // Loc
+       contest->UKACBonus.setValue(false);
+
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
       contest->locMult.setValue( true );
@@ -402,6 +406,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M3" )
    {
       // PC, DXCC, LOC
+       contest->UKACBonus.setValue(false);
+
       contest->districtMult.setValue( true );
       contest->countryMult.setValue( true );
       contest->locMult.setValue( true );
@@ -418,6 +424,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M4" )
    {
       // DXCC, LOC
+      contest->UKACBonus.setValue(false);
+
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( true );
       contest->locMult.setValue( true );
@@ -434,6 +442,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M5" )
    {
       // G Locs only
+      contest->UKACBonus.setValue(false);
+
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
       contest->locMult.setValue( true );
@@ -450,6 +460,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M6" )
    {
       // G Locs only  + DXCC
+      contest->UKACBonus.setValue(false);
+
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
       contest->locMult.setValue( true );
@@ -466,6 +478,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M7" )
    {
       // Modified M5; non UK 1 mult, UK 2 mults
+      contest->UKACBonus.setValue(false);
+
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
       contest->locMult.setValue( true );
@@ -479,8 +493,27 @@ void ContestDetails::setDetails( const IndividualContest &ic )
       contest->UKloc_multiplier = 2;
       contest->NonUKloc_multiplier = 1;
    }
+   else if ( ic.mults == "B2" )
+   {
+       contest->UKACBonus.setValue(true);
+
+       contest->districtMult.setValue( false );
+       contest->countryMult.setValue( false );
+       contest->locMult.setValue( false );
+       contest->GLocMult.setValue( false );
+       contest->nonGCountryMult.setValue( false );
+
+       contest->M7Mults.setValue(false);
+
+       contest->UKloc_mult = false;
+       contest->NonUKloc_mult = false;
+       contest->UKloc_multiplier = 0;
+       contest->NonUKloc_multiplier = 0;
+   }
    else
    {
+      contest->UKACBonus.setValue(false);
+
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
       contest->locMult.setValue( false );
@@ -606,6 +639,11 @@ QWidget * ContestDetails::getDetails( )
     contest->GLocMult.setValue( ui->GLocMult->isChecked() ) ;   // bool
     contest->M7Mults.setValue( ui->M7LocatorMults->isChecked() ) ;   // bool
     contest->UKACBonus.setValue(ui->BonusComboBox->currentIndex() == 1);
+
+    if (contest->UKACBonus.getValue())
+    {
+        contest->loadBonusList();
+    }
 
     if (contest->M7Mults.getValue())
     {

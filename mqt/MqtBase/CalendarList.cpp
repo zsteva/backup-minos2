@@ -1,31 +1,25 @@
-/*====================================================================================
-    This file is part of AdjQt, the QT based version of the RSGB
-    contest adjudication software.
-    
-    AdjQt and its predecessor AdjSQL are Copyright 1992 - 2016 Mike Goodey G0GJV 
- 
-    AdjQt is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    AdjQt is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with AdjQt in file gpl.txt.  If not, see <http://www.gnu.org/licenses/>.
-    
-======================================================================================*/
-
 #include "base_pch.h"
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+
 #include "tinyxml.h"
 #include "BandList.h"
 #include "CalendarList.h"
 
 const char *TypeVHFContest = "<VHF from VHFContests.xml>";
 const char *TypeMwaveContest = "<Microwave from MicroContestsxx.xml>";
+
+QString calendarNameString[] =
+    {
+        "vhfcontests",
+        "hfcontests",
+        "microcontests",
+        "VHFContestsOther",
+        "HFContestsOther",
+        "bartgcontests"
+    };
+
 
 int calendarYear = 2000;
 std::string trimr ( const std::string &s )
@@ -65,6 +59,85 @@ std::string sstrupr ( const std::string &s )
     return s2;
 }
 
+//---------------------------------------------------------------------------
+QString CalendarYear::getPath()
+{
+    QString path =  "./Configuration/" + calendarNameString[ type ] + yearString() + ".xml";
+    return path;
+}
+QString CalendarYear::getURL()
+{
+    QString url = getSite() + calendarNameString[ type ] + yearString() + ".xml";
+    return url;
+
+}
+//---------------------------------------------------------------------------
+QString VHFCalendarYear::getSite()
+{
+    return "http://www.rsgbcc.org/vhf/";
+}
+//---------------------------------------------------------------------------
+QString HFCalendarYear::getSite()
+{
+    // Yes, the HF calendar is under the VHF directory!
+    return "http://www.rsgbcc.org/vhf/";
+}
+//---------------------------------------------------------------------------
+QString HFBARTGCalendarYear::getSite()
+{
+    return "http://bartg.rsgbcc.org/";
+}
+//---------------------------------------------------------------------------
+QString MicroCalendarYear::getSite()
+{
+    return "http://microwave.rsgbcc.org/";
+}
+//---------------------------------------------------------------------------
+QString VHFOtherCalendarYear::getSite()
+{
+    return "";
+}
+QString VHFOtherCalendarYear::getPath()
+{
+    QString p = "./Configuration/" + calendarNameString[ type ] + ".xml";
+    return p;
+}
+QString VHFOtherCalendarYear::getURL()
+{
+    // No URL
+    return QString();
+}
+//---------------------------------------------------------------------------
+QString HFOtherCalendarYear::getSite()
+{
+    return "";
+}
+QString HFOtherCalendarYear::getPath()
+{
+    QString p = "./Configuration/" + calendarNameString[ type ] + ".xml";
+    return p;
+}
+QString HFOtherCalendarYear::getURL()
+{
+    // No URL
+    return QString();
+}
+//---------------------------------------------------------------------------
+QString CTYCalendarYear::getSite()
+{
+    return "http://www.country-files.com/cty/cty.dat";
+}
+QString CTYCalendarYear::getPath()
+{
+    QString p = "./Configuration/cty.dat";
+    return p;
+}
+QString CTYCalendarYear::getURL()
+{
+    return getSite();
+}
+//---------------------------------------------------------------------------
+
 std::map<std::string, std::string> contestNameMap;
 
 std::string getTypeName ( const std::string &xmlName, CalType calType )
@@ -99,7 +172,7 @@ std::string strupr ( const std::string &s )
     return s2;
 }
 
-static int curYear = 0;
+int curYear = 0;
 
 const char *monthTable[ 12 ] =
     {
@@ -521,7 +594,7 @@ bool Calendar::parseFile ( const QString &fname )
                             {
                                 ic.specialRules += ( *i ).second.specialRulesList[ j ].name + " ";
                             }
-                            ic.power = ( *i ).second.power;
+                            //ic.power = ( *i ).second.power;
 
                             ic.reg1band = bands[ ic.bands ].reg1band.c_str();
                             if ( ic.reg1band == "1,2 GHz" )
@@ -538,6 +611,7 @@ bool Calendar::parseFile ( const QString &fname )
     }
 
     std::sort ( calendar.begin(), calendar.end() );
+
     return true;
 
 }
@@ -590,10 +664,19 @@ bool Calendar::parseMultType ( TiXmlElement * tix )
                             mt.scoringDescription = e->GetText();
                         }
                         else
-                        {
-                            std::string eval = e->Value();
-                            continue;
-                        }
+                            if ( checkElementName ( e, "bonus" ) )
+                            {
+                                //<bonus square="IO83" points="500"/>
+                                std::string square = e->Attribute("square");
+                                std::string points = e->Attribute("points");
+
+                                mt.bonuses[square] = atoi(points.c_str());
+                            }
+                            else
+                                {
+                                    std::string eval = e->Value();
+                                    continue;
+                                }
     }
     mults[ mt.name ] = mt;
     return true;
@@ -648,7 +731,7 @@ bool Calendar::parseSection ( TiXmlElement * tix )
                 else
                     if ( checkElementName ( e, "power" ) )
                     {
-                        s.power = e->GetText();
+                        //s.power = e->GetText();
                     }
                     else
                         if ( checkElementName ( e, "height" ) )
@@ -866,7 +949,7 @@ bool Calendar::parseContest ( TiXmlElement * tix )
                                                                     else
                                                                         if ( checkElementName ( e, "power" ) )
                                                                         {
-                                                                            c.power = e->GetText();
+                                                                            //c.power = e->GetText();
                                                                         }
                                                                         else
                                                                             if ( checkElementName ( e, "mode" ) )
@@ -943,4 +1026,70 @@ bool Calendar::parseTimeList ( TiXmlElement * tix, std::vector<TimeList> &timeLi
     }
     timeList.push_back ( t );
     return true;
+}
+//---------------------------------------------------------------------------
+bool CalendarYear::downloadFile ( bool showError, QWidget *parent )
+{
+    QString calendarURL = getURL();
+
+
+    QNetworkAccessManager m_NetworkMngr;
+
+    QUrl qurl( calendarURL );
+    QNetworkRequest qnr( qurl );
+
+    qnr.setRawHeader( "User-Agent" , "Mozilla/4.0 (compatible;Adjsql)" );
+
+    QNetworkReply *reply = m_NetworkMngr.get( qnr );
+
+    QEventLoop loop;
+    QObject::connect( reply, SIGNAL( finished() ), &loop, SLOT( quit() ) );
+    loop.exec();
+
+    if ( reply->error() == QNetworkReply::NoError )
+    {
+        int raw = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        if (raw == 301)
+        {
+            QUrl redirect =  reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+
+            QNetworkRequest qnr1( redirect );
+            qnr1.setRawHeader( "User-Agent" , "Mozilla/4.0 (compatible;Adjsql)" );
+
+            delete reply;
+            reply = m_NetworkMngr.get( qnr1 );
+            QEventLoop loop;
+            QObject::connect( reply, SIGNAL( finished() ), &loop, SLOT( quit() ) );
+            loop.exec();
+            raw = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        }
+        QByteArray data = reply->readAll();
+        if (data.size() > 0)
+        {
+            QUrl aUrl( calendarURL );
+            QFileInfo fileInfo = aUrl.path();
+
+            QFile file( getPath() );
+            file.open( QIODevice::WriteOnly );
+            file.write( data );
+            trace ( "HTPP Get of " + calendarURL + " OK" );
+        }
+        else
+        {
+           trace ( "HTPP Get of " + calendarURL + " failed - zero length data returned with attribute " + QString::number(raw));
+        }
+        delete reply;
+        return true;
+    }
+    else
+    {
+        trace ( QString( "HTPP Get of " ) + calendarURL + " failed: " + reply->errorString() );
+        if ( showError )
+        {
+            mShowMessage ( QString( "HTPP Get of " ) + calendarURL + " failed: " + reply->errorString(), parent );
+        }
+    }
+
+    delete reply;
+    return false;
 }

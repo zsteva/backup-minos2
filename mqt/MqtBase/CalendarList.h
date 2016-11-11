@@ -1,30 +1,106 @@
-/*====================================================================================
-    This file is part of AdjQt, the QT based version of the RSGB
-    contest adjudication software.
-    
-    AdjQt and its predecessor AdjSQL are Copyright 1992 - 2016 Mike Goodey G0GJV 
- 
-    AdjQt is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    AdjQt is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with AdjQt in file gpl.txt.  If not, see <http://www.gnu.org/licenses/>.
-    
-======================================================================================*/
-
 #ifndef CalendarListH
 #define CalendarListH 
 //---------------------------------------------------------------------------
 enum CalType {ectVHF, ectHF, ectMwave, ectVHFOther, ectHFOther, ectHFBARTG};
-//extern std::map<std::string, std::string> contestNameMap;
 int getDayOfWeek ( QDateTime dtg );
+extern int curYear;
+
+#define LOWYEAR -1
+#define LOWURLYEAR -1
+#define HIGHYEAR 1
+
+extern QString calendarNameString[];
+
+class CalendarYear
+{
+        virtual QString getSite() = 0;
+        QString yearString()
+        {
+            QString y = QString::number( curYear + yearOffset );
+            y = y.midRef( 2, 2 ).toString();
+            return y;
+        }
+    public:
+        CalendarYear ( CalType t, int y ) : type ( t ), yearOffset ( y )
+        {
+            if ( curYear == 0 )
+            {
+                curYear = QDate::currentDate().year();
+            }
+
+        }
+        virtual ~CalendarYear(){}
+
+        virtual bool downloadFile ( bool showError, QWidget *parent );
+
+        bool loaded;
+        int yearOffset;
+        CalType type;
+        virtual QString getPath();
+        virtual QString getURL();
+};
+class HFCalendarYear : public CalendarYear
+{
+        virtual QString getSite();
+    public:
+        HFCalendarYear ( int year ) : CalendarYear ( ectHF, year )
+        {
+        }
+};
+class HFBARTGCalendarYear : public CalendarYear
+{
+        virtual QString getSite();
+    public:
+        HFBARTGCalendarYear ( int year ) : CalendarYear ( ectHFBARTG, year )
+        {
+        }
+};
+class VHFCalendarYear : public CalendarYear
+{
+        virtual QString getSite();
+    public:
+        VHFCalendarYear ( int year ) : CalendarYear ( ectVHF, year )
+        {
+        }
+};
+class MicroCalendarYear : public CalendarYear
+{
+        virtual QString getSite();
+    public:
+        MicroCalendarYear ( int year ) : CalendarYear ( ectMwave, year )
+        {
+        }
+};
+class HFOtherCalendarYear : public CalendarYear
+{
+        virtual QString getSite();
+    public:
+        HFOtherCalendarYear ( int year ) : CalendarYear ( ectHFOther, year )
+        {
+        }
+        virtual QString getPath();
+        virtual QString getURL();
+};
+class VHFOtherCalendarYear : public CalendarYear
+{
+        virtual QString getSite();
+    public:
+        VHFOtherCalendarYear ( int year ) : CalendarYear ( ectVHFOther, year )
+        {
+        }
+        virtual QString getPath();
+        virtual QString getURL();
+};
+class CTYCalendarYear : public CalendarYear
+{
+        virtual QString getSite();
+    public:
+        CTYCalendarYear ( int year ) : CalendarYear ( ectVHFOther, year )
+        {
+        }
+        virtual QString getPath();
+        virtual QString getURL();
+};
 
 class MultType
 {
@@ -34,6 +110,8 @@ class MultType
         std::string longDescription;
         std::string scoringDescription;
         std::string exchange;
+
+        std::map<std::string, int> bonuses;
 };
 class SpecialRule
 {
@@ -57,7 +135,7 @@ class CalendarSection
         std::string name;
         std::string description;
         std::string longDescription;
-        std::string power;
+        //std::string power;
         std::string height;
         bool singleAntenna;
         bool overall;
@@ -132,7 +210,7 @@ class CalendarContest
         enum ScoreType{oneppq, perkms, desc} scoring;
         bool iaru;
         std::string mult;
-        std::string power;
+//        std::string power;
         std::string mode;
         std::string entryDate;
 
@@ -160,7 +238,7 @@ class IndividualContest
         std::string sections;
         std::string mults;
         std::string specialRules;
-        std::string power;
+//        std::string power;
         std::string antenna;
 
         bool operator< ( const IndividualContest& rhs ) const;

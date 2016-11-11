@@ -240,7 +240,10 @@ class BaseContestLog: public BaseLogList
       int bonus;
 
       int multsAsBonuses;
+      int bonusYearLoaded;
       std::map<QString, int> locBonuses;
+      void loadBonusList();
+
       int ukLocBonus;
       int nonukLocBonus;
 
@@ -347,6 +350,8 @@ class ContestScore
       char brbonus2;
 
       QString name;
+      bool UKACBonus;
+
       int nqsos;
       int contestScore;
       int nctry;

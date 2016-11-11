@@ -7,6 +7,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
+#include "CalendarList.h"
 
 bool LtLogSeq::operator() ( const BaseContact* s1, const BaseContact* s2 ) const
 {
@@ -37,7 +38,7 @@ BaseContestLog::BaseContestLog( void ) :
       mults1( 0 ), mults2( 0 ), mults1p( 0 ), mults2p( 0 ),
       bonus1( 0 ), bonus2( 0 ), bonus1p( 0 ), bonus2p( 0 ),
       bonus(0), nbonus(0),
-      ukLocBonus(0), nonukLocBonus()
+      ukLocBonus(0), nonukLocBonus(), bonusYearLoaded(0)
 {
    bearingOffset.setValue(0);
    mode.setValue( "J3E" );
@@ -53,65 +54,6 @@ BaseContestLog::BaseContestLog( void ) :
    for ( i = 0; i < nc; i++ )
       districtWorked[ i ] = 0;
 
-#ifdef UKAC_BONUSES
-   try
-   {
-   //std::map<QString, int> locBonuses;
-
-   // Load the loc bonuses from control\M8.ini
-
-   /*
-[M8]
-UK=1500
-NONUK=500
-JO00=1000
-JO01=1000
-JO02=1000
-JO03=1000
-IO90=1000
-IO91=1000
-IO92=1000
-IO93=1000
-IO80=1000
-IO81=1000
-IO82=1000
-IO83=1000
-
-
-   */
-   // General non-UK
-
-   // General UK
-
-   // Specific squares
-      multsAsBonuses = 0;
-
-      std::auto_ptr <TIniFile> m8Ini ( new TIniFile ( "Configuration/UKACBonus.ini" ) );
-      std::auto_ptr<TStrings > ukacStrings(new TStringList());
-      m8Ini->ReadSectionValues("UKACBonus", ukacStrings.get());
-      for (int i = 0; i < ukacStrings->Count; i++)
-      {
-         String name = ukacStrings->Names[i].Trim().UpperCase();
-         String value = ukacStrings->Values[name].Trim();
-         if (name == "UK")
-         {
-            ukLocBonus = value.ToIntDef(1500);
-         }
-         else if (name == "NONUK")
-         {
-            nonukLocBonus = value.ToIntDef(500);
-         }
-         else
-         {
-            locBonuses[QString(AnsiString(name).c_str())] = value.ToIntDef(1000);
-         }
-      }
-   }
-   catch(...)
-   {
-
-   }
-   #endif
 }
 BaseContestLog::~BaseContestLog()
 {
@@ -1094,6 +1036,10 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
       mt->getStructArgMemberValue( "AllowLoc8", allowLoc8 );
 
       mt->getStructArgMemberValue( "UKACBonus", UKACBonus );
+      if (UKACBonus.getValue())
+      {
+          loadBonusList();
+      }
       mt->getStructArgMemberValue( "M7Mults", M7Mults);
 
       if ( M7Mults.getValue())
@@ -1252,6 +1198,53 @@ bool BaseContestLog::checkTime(const dtg &t)
 //      return false;
 //   }
 }
+static bool loadCalYear ( Calendar &cal, int year )
+{
+    bool loaded = false;
+    std::vector<QSharedPointer<CalendarYear> > yearList;
+    for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
+    {
+        yearList.push_back ( QSharedPointer<CalendarYear> ( new VHFCalendarYear ( i ) ) );
+    }
+
+    for ( int i = yearList.size() - 1; i >= 0; i-- )
+    {
+        if ( !loaded && FileExists ( yearList[ i ] ->getPath() ) && year >= curYear + yearList[ i ] ->yearOffset )
+        {
+            loaded = cal.parseFile ( yearList[ i ] ->getPath() );
+        }
+    }
+    return loaded;
+}
+void BaseContestLog::loadBonusList()
+{
+
+    QDateTime  contestStart = CanonicalToTDT(DTGStart.getValue());
+    int year = contestStart.date().year();
+    if (year != bonusYearLoaded)
+    {
+
+        Calendar vhf(year, ectVHF);
+        bool loaded = loadCalYear ( vhf, year );
+
+        if (loaded)
+        {
+            bonusYearLoaded = year;
+        }
+
+        MultType B2 = vhf.mults["B2"];
+
+        locBonuses.clear();
+
+        for (std::map<std::string, int>::iterator i = B2.bonuses.begin(); i != B2.bonuses.end(); i++)
+        {
+            QString name = QString((*i).first.c_str()).toUpper().trimmed();
+            int value = (*i).second;
+
+            locBonuses[name] = value;
+        }
+    }
+}
 //====================================================================
 ContestScore::ContestScore(BaseContestLog *ct, QDateTime limit)
 {
@@ -1266,15 +1259,26 @@ ContestScore::ContestScore(BaseContestLog *ct, QDateTime limit)
 
    ct->getScoresTo(*this, limit);
    name = ct->publishedName;
+   UKACBonus = ct->UKACBonus.getValue();
 }
 QString ContestScore::disp()
 {
-
-   QString buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5:%6%7 districts%8:%9%10(%11/%12) locators %13 = %14" )
+    QString buff;
+    if (UKACBonus == true)
+    {
+        buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5:%6%7 districts%8:%9%10(%11/%12) locators %13 bonuses %14(%15) = %16" )
+            .arg(nqsos).arg(contestScore).arg(brcc1).arg(nctry).arg(brcc2).arg(brcc3).arg(ndistrict)
+            .arg(brcc4).arg(brloc1).arg(nlocs).arg(nGlocs).arg(nonGlocs).arg(brloc2)
+            .arg(bonus) .arg(nbonus)
+            .arg(totalScore );
+    }
+    else
+    {
+        buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5:%6%7 districts%8:%9%10(%11/%12) locators %13 = %14" )
             .arg(nqsos).arg(contestScore).arg(brcc1).arg(nctry).arg(brcc2).arg(brcc3).arg(ndistrict)
             .arg(brcc4).arg(brloc1).arg(nlocs).arg(nGlocs).arg(nonGlocs).arg(brloc2)
 //            % brbonus1 % bonus % nbonus % brbonus2
-            .arg(totalScore );
+            .arg(totalScore );    }
    return buff;
 }
 //====================================================================
