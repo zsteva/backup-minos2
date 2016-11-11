@@ -714,6 +714,7 @@ void QSOLogFrame::mouseDoubleClickEvent(QObject *w)
     if (edit && w == ui->TimeEdit)
     {
         ui->TimeEdit->setReadOnly(false);
+        ui->DateEdit->setReadOnly(false);
     }
     /*
     if ( contest->isReadOnly() )
@@ -874,6 +875,7 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
    ui->SerTXEdit->setReadOnly(true);
 
    ui->TimeEdit->setReadOnly(!edit);
+   ui->DateEdit->setReadOnly(!edit);
 
    if ( current == ui->LocEdit )
    {
