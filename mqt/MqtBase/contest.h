@@ -244,9 +244,6 @@ class BaseContestLog: public BaseLogList
       std::map<QString, int> locBonuses;
       void loadBonusList();
 
-      int ukLocBonus;
-      int nonukLocBonus;
-
       int *districtWorked;
       int *countryWorked;
       LocList locs;

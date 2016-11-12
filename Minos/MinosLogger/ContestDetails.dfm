@@ -539,7 +539,6 @@ object ContestEntryDetails: TContestEntryDetails
       Height = 43
       Caption = 'Bonus Scheme'
       TabOrder = 25
-      Visible = False
       object BonusComboBox: TComboBox
         Left = 8
         Top = 17

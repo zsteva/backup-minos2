@@ -9,7 +9,81 @@
 
 #ifndef VHFListH
 #define VHFListH 
+#include <IdBaseComponent.hpp>
+#include <IdComponent.hpp>
+#include <IdHTTP.hpp>
+#include <IdTCPClient.hpp>
+#include <IdTCPConnection.hpp>
 //---------------------------------------------------------------------------
+enum CalType {ectVHF, ectHF, ectMwave, ectVHFOther, ectHFOther};
+extern String calString[];
+#define LOWYEAR -2
+#define LOWURLYEAR -1
+#define HIGHYEAR 1
+
+extern int curYear;
+
+class CalendarYear
+{
+      virtual String getSite() = 0;
+      String yearString()
+      {
+         String y = String(curYear + yearOffset);
+         y = y.SubString(3, 2);
+         return y;
+      }
+   public:
+      CalendarYear(CalType t, int y): type(t), yearOffset(y)
+      {
+         if (curYear == 0)
+         {
+            SYSTEMTIME st;
+            GetLocalTime( &st );
+            curYear = st.wYear;
+         }
+
+      }
+      virtual bool downloadFile(TIdHTTP *IdHTTP1, bool showError);
+
+      bool loaded;
+      int yearOffset;
+      CalType type;
+      virtual String getPath();
+      virtual String getURL();
+//      virtual String getProvisionalURL();
+};
+class VHFCalendarYear : public CalendarYear
+{
+      virtual String getSite();
+   public:
+      VHFCalendarYear(int year): CalendarYear(ectVHF, year)
+      {
+
+      }
+};
+class CTYCalendarYear : public CalendarYear
+{
+      virtual String getSite();
+   public:
+      CTYCalendarYear ( ) : CalendarYear ( ectVHFOther, 0 )
+      {
+
+      }
+      virtual String getPath();
+      virtual String getURL();
+};
+class LocSquaresCalendarYear : public CalendarYear
+{
+      virtual String getSite();
+   public:
+      LocSquaresCalendarYear ( ) : CalendarYear ( ectVHFOther, 0 )
+      {
+
+      }
+      virtual String getPath();
+      virtual String getURL();
+};
+
 class MultType
 {
    public:
@@ -18,6 +92,8 @@ class MultType
       std::string longDescription;
       std::string scoringDescription;
       std::string exchange;
+
+      std::map<std::string, int> bonuses;
 };
 class SpecialRule
 {
@@ -41,7 +117,7 @@ class CalendarSection
       std::string name;
       std::string description;
       std::string longDescription;
-      std::string power;
+      //std::string power;
       std::string height;
       bool singleAntenna;
       bool overall;
@@ -116,7 +192,7 @@ class CalendarContest
       enum ScoreType{oneppq, perkms} scoring;
       bool iaru;
       std::string mult;
-      std::string power;
+      //std::string power;
       std::string mode;
       std::string entryDate;
 
@@ -142,7 +218,7 @@ class IndividualContest
       std::string sections;
       std::string mults;
       std::string specialRules;
-      std::string power;
+      //std::string power;
       std::string antenna;
 
       bool operator<( const IndividualContest& rhs ) const;

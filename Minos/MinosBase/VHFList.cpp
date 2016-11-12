@@ -9,6 +9,14 @@
 #include "base_pch.h"
 #pragma hdrstop
 #include "VHFList.h"
+String calString[] =
+{
+   "vhfcontests",
+   "hfcontests",
+   "microcontests",
+   "VHFContestsOther",
+   "HFContestsOther"
+};
 
 std::string strupr( const std::string &s )
 {
@@ -167,6 +175,101 @@ TDateTime localToUTC( TDateTime t )
       t -= TDateTime( 1, 0, 0, 0 );
    }
    return t;
+}
+String CalendarYear::getPath()
+{
+   char appFName[ 255 ];
+   int nLen = 0;
+   nLen = ::GetModuleFileName( HInstance, appFName, 255 );
+   appFName[ nLen ] = '\0';
+
+   String fpath = ExtractFilePath( appFName );
+
+   String path = fpath +  "configuration\\" + calString[type] + yearString() + ".xml";
+   return path;
+}
+String CalendarYear::getURL()
+{
+   String url = getSite() + calString[type] + yearString() + ".xml";
+   return url;
+
+}
+/*String CalendarYear::getProvisionalURL()
+{
+   String url = getSite() + calString[type] + yearString() + "-prov.xml";
+   return url;
+
+}
+*/
+//---------------------------------------------------------------------------
+String VHFCalendarYear::getSite()
+{
+   return "http://www.rsgbcc.org/vhf/";
+}
+bool CalendarYear::downloadFile(TIdHTTP *IdHTTP1, bool showError)
+{
+   String calendarURL = getURL();
+   try
+   {
+      String cal = IdHTTP1->Get( calendarURL );
+      // and write it out
+
+      TStringList *sl = new TStringList();
+      sl->Text = cal;
+      sl->SaveToFile( getPath() );
+      trace(("HTPP Get of " + calendarURL + " OK").c_str());
+      delete sl;
+      return true;
+   }
+   catch ( Exception & e )
+   {
+      trace(("HTPP Get of " + calendarURL + " failed: " + e.Message).c_str());
+      if (showError)
+      {
+         ShowMessage( "HTPP Get of " + calendarURL + " failed: " + e.Message );
+      }
+   }
+   return false;
+}
+//---------------------------------------------------------------------------
+String CTYCalendarYear::getSite()
+{
+   return "http://www.country-files.com/cty/cty.dat";
+}
+String CTYCalendarYear::getPath()
+{
+   char appFName[ 255 ];
+   int nLen = 0;
+   nLen = ::GetModuleFileName( HInstance, appFName, 255 );
+   appFName[ nLen ] = '\0';
+
+   String fpath = ExtractFilePath( appFName );
+   String p = fpath + "\\Configuration\\" + "cty.dat";
+   return p;
+}
+String CTYCalendarYear::getURL()
+{
+   return getSite();
+}
+//---------------------------------------------------------------------------
+String LocSquaresCalendarYear::getSite()
+{
+   return "http://www.g0gjv.org.uk/LocSquares.ini";
+}
+String LocSquaresCalendarYear::getPath()
+{
+   char appFName[ 255 ];
+   int nLen = 0;
+   nLen = ::GetModuleFileName( HInstance, appFName, 255 );
+   appFName[ nLen ] = '\0';
+
+   String fpath = ExtractFilePath( appFName );
+   String p = fpath + "\\Configuration\\" + "LocSquares.ini";
+   return p;
+}
+String LocSquaresCalendarYear::getURL()
+{
+   return getSite();
 }
 bool Calendar::parseFile( const std::string &fname )
 {
@@ -487,7 +590,7 @@ bool Calendar::parseFile( const std::string &fname )
                             {
                                 ic.specialRules += ( *i ).second.specialRulesList[ j ].name + " ";
                             }
-                            ic.power = ( *i ).second.power;
+                            //ic.power = ( *i ).second.power;
 
                             ic.reg1band = bands[ ic.bands ].reg1band.c_str();
                             if ( ic.reg1band == "1,2 GHz" )
@@ -847,10 +950,19 @@ bool Calendar::parseMultType( TiXmlElement * tix )
                      mt.scoringDescription = e->GetText();
                   }
                   else
-                  {
-                     std::string eval = e->Value();
-                     continue;
-                  }
+                      if ( checkElementName ( e, "bonus" ) )
+                      {
+                          //<bonus square="IO83" points="500"/>
+                          std::string square = trim(e->Attribute("square"));
+                          std::string points = e->Attribute("points");
+
+                          mt.bonuses[square] = atoi(points.c_str());
+                      }
+                      else
+                        {
+                           std::string eval = e->Value();
+                           continue;
+                        }
    }
    mults[ mt.name ] = mt;
    return true;
@@ -905,7 +1017,7 @@ bool Calendar::parseSection( TiXmlElement * tix )
             else
                if ( checkElementName( e, "power" ) )
                {
-                  s.power = e->GetText();
+                  //s.power = e->GetText();
                }
                else
                   if ( checkElementName( e, "height" ) )
@@ -1091,7 +1203,7 @@ bool Calendar::parseContest( TiXmlElement * tix )
                                  else
                                     if ( checkElementName( e, "power" ) )
                                     {
-                                       c.power = e->GetText();
+                                       //c.power = e->GetText();
                                     }
                                     else
                                        if ( checkElementName( e, "mode" ) )
