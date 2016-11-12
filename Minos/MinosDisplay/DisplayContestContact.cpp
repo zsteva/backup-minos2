@@ -378,26 +378,24 @@ void DisplayContestContact::checkContact( )
          {
             if (clp->UKACBonus.getValue())
             {
-               if (npt->UKLocCount == 0 ||  npt->nonUKLocCount == 0)
+               if (npt->UKLocCount == 0 &&  npt->nonUKLocCount == 0)
                {
                   clp->bonus = 0;
                   std::map<std::string, int>::iterator l = clp->locBonuses.find(sloc);
-                  if (npt->UKLocCount == 0 &&  npt->nonUKLocCount == 0)
+
+                  if ( l != clp->locBonuses.end())
                   {
-                      if ( l != clp->locBonuses.end())
-                      {
-                         // specific bonus for square allocated
-                         clp->bonus = l->second;
-                      }
-                      else
-                      {
-                          std::map<std::string, int>::iterator l = clp->locBonuses.find("default");
-                          if ( l != clp->locBonuses.end())
-                          {
-                             // specific bonus for square allocated
-                             clp->bonus = l->second;
-                          }
-                      }
+                     // specific bonus for square allocated
+                     clp->bonus = l->second;
+                  }
+                  else
+                  {
+                     std::map<std::string, int>::iterator l = clp->locBonuses.find("DEFAULT");
+                     if ( l != clp->locBonuses.end())
+                     {
+                        // specific bonus for square allocated
+                        clp->bonus = l->second;
+                     }
                   }
 
                   bonus += clp->bonus;

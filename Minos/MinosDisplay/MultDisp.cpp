@@ -122,6 +122,7 @@ __fastcall TMultDispFrame::TMultDispFrame( TComponent* Owner )
    if ( !FileExists( ".\\Configuration\\MinosConfig.ini" ))
    {
       KeyerTab->TabVisible = false;
+      MultPages->ActivePage = LocatorsTab;
    }
    DistrictMultTree->BeginUpdate();
    DistrictMultTree->Header->Columns->Clear();
