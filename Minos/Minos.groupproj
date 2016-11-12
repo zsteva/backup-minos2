@@ -21,9 +21,6 @@
     <Projects Include="MinosLogger\MinosLogger.cbproj">
       <Dependencies>MinosDisplay\MinosDisplay.cbproj;MinosBase\MinosBase.cbproj;XMPPLib\XMPPClientLib.cbproj;XMPPLib\XMPPLib.cbproj;Versioning.cbproj</Dependencies>
     </Projects>
-    <Projects Include="MinosMonitor\MinosMonitor.cbproj">
-      <Dependencies>Versioning.cbproj;XMPPLib\XMPPClientLib.cbproj;MinosBase\MinosBase.cbproj;MinosDisplay\MinosDisplay.cbproj</Dependencies>
-    </Projects>
     <Projects Include="MinosRigCtl\MinosRigCtl.cbproj" />
     <Projects Include="MinosServer\MinosServer.cbproj">
       <Dependencies>XMPPLib\XMPPLib.cbproj;Versioning.cbproj</Dependencies>
@@ -150,15 +147,6 @@
   <Target Name="MinosLogger:Make" DependsOnTargets="MinosDisplay:Make;MinosBase:Make;XMPPClientLib:Make;XMPPLib:Make;Versioning:Make">
     <MSBuild Projects="MinosLogger\MinosLogger.cbproj" Targets="Make" />
   </Target>
-  <Target Name="MinosMonitor" DependsOnTargets="Versioning;XMPPClientLib;MinosBase;MinosDisplay">
-    <MSBuild Projects="MinosMonitor\MinosMonitor.cbproj" Targets="" />
-  </Target>
-  <Target Name="MinosMonitor:Clean" DependsOnTargets="Versioning:Clean;XMPPClientLib:Clean;MinosBase:Clean;MinosDisplay:Clean">
-    <MSBuild Projects="MinosMonitor\MinosMonitor.cbproj" Targets="Clean" />
-  </Target>
-  <Target Name="MinosMonitor:Make" DependsOnTargets="Versioning:Make;XMPPClientLib:Make;MinosBase:Make;MinosDisplay:Make">
-    <MSBuild Projects="MinosMonitor\MinosMonitor.cbproj" Targets="Make" />
-  </Target>
   <Target Name="MinosServer" DependsOnTargets="XMPPLib;Versioning">
     <MSBuild Projects="MinosServer\MinosServer.cbproj" Targets="" />
   </Target>
@@ -214,13 +202,13 @@
     <MSBuild Projects="MinosRigCtl\MinosRigCtl.cbproj" Targets="Make" />
   </Target>
   <Target Name="Build">
-    <CallTarget Targets="embedGitVersion;Versioning;XMPPLib;XMPPClientLib;MinosBase;MinosDisplay;MinosLines;MinosBandMap;MinosChat;MinosControl;MinosKeyer;MinosLogger;MinosMonitor;MinosServer;MinosTestClient;multtest;MinosUnitTest;TestRig;MinosRigCtl" />
+    <CallTarget Targets="embedGitVersion;Versioning;XMPPLib;XMPPClientLib;MinosBase;MinosDisplay;MinosLines;MinosBandMap;MinosChat;MinosControl;MinosKeyer;MinosLogger;MinosServer;MinosTestClient;multtest;MinosUnitTest;TestRig;MinosRigCtl" />
   </Target>
   <Target Name="Clean">
-    <CallTarget Targets="embedGitVersion:Clean;Versioning:Clean;XMPPLib:Clean;XMPPClientLib:Clean;MinosBase:Clean;MinosDisplay:Clean;MinosLines:Clean;MinosBandMap:Clean;MinosChat:Clean;MinosControl:Clean;MinosKeyer:Clean;MinosLogger:Clean;MinosMonitor:Clean;MinosServer:Clean;MinosTestClient:Clean;multtest:Clean;MinosUnitTest:Clean;TestRig:Clean;MinosRigCtl:Clean" />
+    <CallTarget Targets="embedGitVersion:Clean;Versioning:Clean;XMPPLib:Clean;XMPPClientLib:Clean;MinosBase:Clean;MinosDisplay:Clean;MinosLines:Clean;MinosBandMap:Clean;MinosChat:Clean;MinosControl:Clean;MinosKeyer:Clean;MinosLogger:Clean;MinosServer:Clean;MinosTestClient:Clean;multtest:Clean;MinosUnitTest:Clean;TestRig:Clean;MinosRigCtl:Clean" />
   </Target>
   <Target Name="Make">
-    <CallTarget Targets="embedGitVersion:Make;Versioning:Make;XMPPLib:Make;XMPPClientLib:Make;MinosBase:Make;MinosDisplay:Make;MinosLines:Make;MinosBandMap:Make;MinosChat:Make;MinosControl:Make;MinosKeyer:Make;MinosLogger:Make;MinosMonitor:Make;MinosServer:Make;MinosTestClient:Make;multtest:Make;MinosUnitTest:Make;TestRig:Make;MinosRigCtl:Make" />
+    <CallTarget Targets="embedGitVersion:Make;Versioning:Make;XMPPLib:Make;XMPPClientLib:Make;MinosBase:Make;MinosDisplay:Make;MinosLines:Make;MinosBandMap:Make;MinosChat:Make;MinosControl:Make;MinosKeyer:Make;MinosLogger:Make;MinosServer:Make;MinosTestClient:Make;multtest:Make;MinosUnitTest:Make;TestRig:Make;MinosRigCtl:Make" />
   </Target>
   <Import Condition="Exists('$(MSBuildBinPath)\Borland.Group.Targets')" Project="$(MSBuildBinPath)\Borland.Group.Targets" />
 </Project>
