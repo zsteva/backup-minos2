@@ -1235,7 +1235,13 @@ void BaseContestLog::loadBonusList()
         }
 
         MultType B2 = vhf.mults["B2"];
-
+        if (B2.bonuses.size() == 0)
+        {
+            // load from ./Configuration/B2Mults.xml
+            vhf = Calendar(year);
+            loaded = vhf.parseFile ( "./Configuration/B2Mults.xml" );
+            B2 = vhf.mults["B2"];
+        }
         locBonuses.clear();
 
         for (std::map<std::string, int>::iterator i = B2.bonuses.begin(); i != B2.bonuses.end(); i++)
