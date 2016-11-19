@@ -207,6 +207,10 @@ object MultDispFrame: TMultDispFrame
     object KeyerTab: TTabSheet
       Caption = 'Keyer'
       ImageIndex = 6
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button1: TButton
         Left = 72
         Top = 24

@@ -239,6 +239,7 @@ class BaseContestLog
       int bonusYearLoaded;
       std::map<std::string, int> locBonuses;
       void loadBonusList();
+      int getSquareBonus(AnsiString sloc);
 
       int *districtWorked;
       int *countryWorked;

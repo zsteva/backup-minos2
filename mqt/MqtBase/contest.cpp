@@ -1253,6 +1253,28 @@ void BaseContestLog::loadBonusList()
         }
     }
 }
+int BaseContestLog::getSquareBonus(QString sloc)
+{
+    int bonus = 0;
+    std::map<QString, int>::iterator l = locBonuses.find(sloc);
+
+    if ( l != locBonuses.end())
+    {
+       // specific bonus for square allocated
+       bonus = l->second;
+    }
+    else
+    {
+        std::map<QString, int>::iterator l = locBonuses.find("DEFAULT");
+        if ( l != locBonuses.end())
+        {
+           // specific bonus for square allocated
+           bonus = l->second;
+        }
+    }
+    return bonus;
+}
+
 //====================================================================
 ContestScore::ContestScore(BaseContestLog *ct, QDateTime limit)
 {
@@ -1274,9 +1296,8 @@ QString ContestScore::disp()
     QString buff;
     if (UKACBonus == true)
     {
-        buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5:%6%7 districts%8:%9%10(%11/%12) locators %13 bonuses %14(%15) = %16" )
-            .arg(nqsos).arg(contestScore).arg(brcc1).arg(nctry).arg(brcc2).arg(brcc3).arg(ndistrict)
-            .arg(brcc4).arg(brloc1).arg(nlocs).arg(nGlocs).arg(nonGlocs).arg(brloc2)
+        buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5: bonuses %6(%7) = %8" )
+            .arg(nqsos).arg(contestScore).arg(brcc1).arg(nctry).arg(brcc2)
             .arg(bonus) .arg(nbonus)
             .arg(totalScore );
     }

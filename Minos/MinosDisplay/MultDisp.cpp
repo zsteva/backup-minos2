@@ -425,11 +425,26 @@ void __fastcall TMultDispFrame::LocatorMultTreeGetText(
       String dispLine;
       for (int i = 0; ct->locs.llist.size() && i < 10; i++)
       {
+         AnsiString locStart = ct->locs.llist[ Node->Parent->Index ] ->loc;
+
          LocCount *lc = ct->locs.llist[ Node->Parent->Index ] ->map( Node->Index * 10 + i );
          AnsiString disp;
          disp.printf( "%2.2d", Node->Index * 10 + i );
+
          if ( lc && (lc->UKLocCount || lc->nonUKLocCount))
-            dispLine += disp + " (" + lc->UKLocCount + (lc->nonUKLocCount?(AnsiString("/") + lc->nonUKLocCount):AnsiString("")) + ") ";
+         {
+              if (ct->UKACBonus.getValue())
+              {
+                  dispLine += disp + " (" + AnsiString(lc->UKLocCount + lc->nonUKLocCount)
+                              + "/" + AnsiString(ct->getSquareBonus(locStart + disp)) + ") ";
+              }
+              else
+              {
+                  dispLine += disp + " (" + lc->UKLocCount + (lc->nonUKLocCount?(AnsiString("/") + lc->nonUKLocCount):AnsiString("")) + ") ";
+              }
+         }
+
+
       }
       CellText = dispLine;
    }
