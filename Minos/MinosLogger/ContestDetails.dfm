@@ -548,6 +548,7 @@ object ContestEntryDetails: TContestEntryDetails
         ItemIndex = 0
         TabOrder = 0
         Text = 'None'
+        OnChange = BonusComboBoxChange
         Items.Strings = (
           'None'
           'UKAC Bonuses')

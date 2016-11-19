@@ -27,7 +27,7 @@
 //---------------------------------------------------------------------------
 __fastcall TContestEntryDetails::TContestEntryDetails( TComponent* Owner)
       : TForm( Owner ), /*CalendarDlg( 0 ),*/ contest(0), inputcontest(0),
-      saveContestOK(false), suppressProtectedOnClick(false)
+      saveContestOK(false), suppressProtectedOnClick(false), noMultRipple(false)
 {
 }
 //---------------------------------------------------------------------------
@@ -1059,49 +1059,105 @@ void TContestEntryDetails::enableControls()
 
 void __fastcall TContestEntryDetails::DXCCMultClick(TObject */*Sender*/)
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
    if (DXCCMult->Checked)
    {
       NonGCtryMult->Checked = false;
+      M7LocatorMults->Checked = false;
    }
+   BonusComboBox->ItemIndex = 0;
+   noMultRipple = false;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TContestEntryDetails::NonGCtryMultClick(TObject */*Sender*/)
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
    if (NonGCtryMult->Checked)
    {
       DXCCMult->Checked = false;
+      M7LocatorMults->Checked = false;
    }
+   BonusComboBox->ItemIndex = 0;
+   noMultRipple = false;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TContestEntryDetails::LocatorMultClick(TObject */*Sender*/)
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
    if (!LocatorMult->Checked)
    {
       GLocMult->Checked = false;
       M7LocatorMults->Checked = false;
    }
+   BonusComboBox->ItemIndex = 0;
+   noMultRipple = false;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TContestEntryDetails::GLocMultClick(TObject */*Sender*/)
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
    if (GLocMult->Checked)
    {
       LocatorMult->Checked = true;
       M7LocatorMults->Checked = false;
    }
+   BonusComboBox->ItemIndex = 0;
+   noMultRipple = false;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TContestEntryDetails::M7LocatorMultsClick(TObject */*Sender*/)
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
    if (M7LocatorMults->Checked)
    {
       LocatorMult->Checked = true;
       GLocMult->Checked = false;
+      NonGCtryMult->Checked = false;
+      DXCCMult->Checked = false;
+
    }
+   BonusComboBox->ItemIndex = 0;
+   noMultRipple = false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TContestEntryDetails::BonusComboBoxChange(TObject *Sender)
+{
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
+   LocatorMult->Checked = false;
+   GLocMult->Checked = false;
+   NonGCtryMult->Checked = false;
+   DXCCMult->Checked = false;
+   M7LocatorMults->Checked = false;
+   noMultRipple = false;
 }
 //---------------------------------------------------------------------------
 

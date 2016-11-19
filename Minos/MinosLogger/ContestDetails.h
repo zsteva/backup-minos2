@@ -96,6 +96,7 @@ class TContestEntryDetails : public TForm
    void __fastcall LocatorMultClick(TObject *Sender);
    void __fastcall GLocMultClick(TObject *Sender);
    void __fastcall M7LocatorMultsClick(TObject *Sender);
+   void __fastcall BonusComboBoxChange(TObject *Sender);
    private:   	// User declarations
 //      TCalendarForm *CalendarDlg;
       LoggerContestLog * contest;
@@ -103,6 +104,7 @@ class TContestEntryDetails : public TForm
       String sectionList;
       bool saveContestOK;
       bool suppressProtectedOnClick;
+      bool noMultRipple;
 
       TWinControl * getNextFocus();
       void setDetails( const IndividualContest &ic );

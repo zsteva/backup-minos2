@@ -14,7 +14,8 @@ ContestDetails::ContestDetails(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ContestDetails),
     contest(0), inputcontest(0),
-    saveContestOK(false), suppressProtectedOnClick(false)
+    saveContestOK(false), suppressProtectedOnClick(false),
+    noMultRipple(false)
 {
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
@@ -934,45 +935,98 @@ void ContestDetails::on_CallsignEdit_editingFinished()
 }
 void ContestDetails::on_DXCCMult_clicked()
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
     if (ui->DXCCMult->isChecked())
     {
        ui->NonGCtryMult->setChecked(false);
     }
+    ui->BonusComboBox->setCurrentIndex(0);
+    noMultRipple = false;
 }
 
 void ContestDetails::on_NonGCtryMult_clicked()
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
     if (ui->NonGCtryMult->isChecked())
     {
        ui->DXCCMult->setChecked(false);
     }
+    ui->BonusComboBox->setCurrentIndex(0);
+    noMultRipple = false;
 }
 
 void ContestDetails::on_LocatorMult_clicked()
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
     if (!ui->LocatorMult->isChecked())
     {
+
        ui->GLocMult->setChecked(false);
        ui->M7LocatorMults->setChecked(false);
+
     }
+    ui->BonusComboBox->setCurrentIndex(0);
+    noMultRipple = false;
 }
 
 void ContestDetails::on_GLocMult_clicked()
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
     if (ui->GLocMult->isChecked())
     {
        ui->LocatorMult->setChecked(true);
        ui->M7LocatorMults->setChecked(false);
     }
+    ui->BonusComboBox->setCurrentIndex(0);
+    noMultRipple = false;
 }
 
 void ContestDetails::on_M7LocatorMults_clicked()
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
     if (ui->M7LocatorMults->isChecked())
     {
        ui->LocatorMult->setChecked(true);
        ui->GLocMult->setChecked(false);
+       ui->NonGCtryMult->setChecked(false);
+       ui->DXCCMult->setChecked(false);
     }
+    ui->BonusComboBox->setCurrentIndex(0);
+    noMultRipple = false;
+}
+void ContestDetails::on_BonusComboBox_currentIndexChanged(int index)
+{
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
+    ui->LocatorMult->setChecked(false);
+    ui->GLocMult->setChecked(false);
+    ui->NonGCtryMult->setChecked(false);
+    ui->DXCCMult->setChecked(false);
+    ui->M7LocatorMults->setChecked(false);
+    noMultRipple = false;
 }
 
 void ContestDetails::on_ProtectedOption_clicked()
@@ -1013,3 +1067,4 @@ void ContestDetails::bundleChanged()
         ui->OKButton->setFocus();
     }
 }
+
