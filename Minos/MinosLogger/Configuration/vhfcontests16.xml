@@ -124,8 +124,9 @@
 <!-- 16.012 09/07/16 G4CLA - impliment band dependant power levels-->
 <!-- 16.013 15/09/16 G4CLA - Change names of IARU sections-->
 <!-- 16.014 03/10/16 G4CLA - Change date of 50MHz AFS to Sunday of 3rd full weekendin Oct to stop clash with RSGB convention in 2017-->
+<!-- 16.015 20/10/16 G4CLA - Add nax and min power levels where needed-->
 <calendar>
-<version>16.014 03/10/2016</version>
+<version>16.015 20/10/2016</version>
 <icalurl>http://www.rsgbcc.org/icals/vhf16.ics</icalurl>
 <googleurl>https://calendar.google.com/calendar/embed?src=to9rnst6ihvc3a32hdo90d3lkc%40group.calendar.google.com&amp;ctz=Europe/London</googleurl>
 <openlogs>6.008</openlogs>
@@ -640,6 +641,11 @@ No longer used
 <long_description> 
 Standard licence consitions and no antenna restrictions.
 </long_description>
+<power band="50" max="400" min="101"/>
+<power band="70" max="160" min="41"/>
+<power band="432" max="400" min="101"/>
+<power band="144" max="400" min="101"/>
+<power band="1296" max="400" min="101"/>
 <collate>callsign</collate>
 <certfields>call</certfields>
 </section>
@@ -650,6 +656,10 @@ Standard licence consitions and no antenna restrictions.
 <long_description> 
 Standard licence consitions and no antenna restrictions.
 </long_description>
+<power band="2320UKAC" max = "400" min="51"/>
+<power band="3400" max = "400" min="11"/>
+<power band="5760" max = "400" min="11"/>
+<power band="10368" max = "400" min="6"/>
 <collate>callsign</collate>
 <certfields>call</certfields>
 </section>
@@ -661,11 +671,11 @@ Standard licence consitions and no antenna restrictions.
 The power output must be not more than 100W PEP (40W on 4m) at the final output stage or external amplifier connection to the antenna.
 Only one antenna may be used. Stacked or bayed antennas are not allowed. 
 </long_description>
-<power band="50">100</power>
-<power band="70">40</power>
-<power band="432">100</power>
-<power band="144">100</power>
-<power band="1296">100</power>
+<power band="50" max="100" min="11"/>
+<power band="70" max="40" min="5"/>
+<power band="432" max="100" min="11"/>
+<power band="144" max="100" min="11"/>
+<power band="1296" max="100" min="11"/>
 <singleantenna>1</singleantenna>
 <collate>callsign</collate>
 <certfields>call</certfields>
@@ -678,10 +688,10 @@ Only one antenna may be used. Stacked or bayed antennas are not allowed.
 The power output at the final output stage or external amplifier connection to the antenna must be no more than 50W on 2.3 GHz, no more than 10W on 3.4 &amp; 5.7 GHz and no more than 5W on 10 GHz.
 No antenna restrictions.
 </long_description>
-<power band="2320UKAC">50</power>
-<power band="3400">10</power>
-<power band="5760">10</power>
-<power band="10368">5</power>
+<power band="2320UKAC" max="50"/>
+<power band="3400" max="10"/>
+<power band="5760" max="10"/>
+<power band="10368" max="5"/>
 <collate>callsign</collate>
 <certfields>call</certfields>
 </section>
@@ -692,11 +702,11 @@ No antenna restrictions.
 The power output must not exceed 10W PEP (4W on 4m) at the final output stage or external amplifier connection to the antenna.
 Only one antenna may be used Stacked or bayed antenna arrays may not be used.
 </long_description>
-<power band="50">10</power>
-<power band="70">4</power>
-<power band="432">10</power>
-<power band="145">10</power>
-<power band="1296">10</power>
+<power band="50" max="10"/>
+<power band="70" max="4"/>
+<power band="432" max="10"/>
+<power band="145" max="10"/>
+<power band="1296" max="10"/>
 <singleantenna>1</singleantenna>
 <certfields>call</certfields>
 <collate>callsign</collate>
@@ -802,7 +812,7 @@ e) All equipment used during the contest must be battery, wind or solar powered.
 f) Equipment must be carried and operated at least 100m from the transportation vehicle. 
 g) Stations entering in this section must use the /P callsign suffix 
 </long_description>
-<power>3</power>
+<power max="3"/>
 <height>4</height>
 <collate>callsign</collate>
 <certfields>call</certfields>
@@ -819,7 +829,7 @@ d) Operation from a motor vehicle permitted.
 e) All equipment used during the contest must be battery, wind or solar powered.  If equipment is powered from a vehicle supply, the engine must be switched off for the duration of the contest.
 f) Stations entering in this section must use the /P callsign suffix. 
 </long_description>
-<power>10</power>
+<power max="10"/>
 <height>6</height>
 <collate>callsign</collate>
 <certfields>call</certfields>
@@ -915,11 +925,11 @@ The list of registered stations can be found at http://www.rsgbcc.org/cgi-bin/vh
 (vi) An award will be made to the leading Sweeper on each band and additionally bronze, silver and gold awards for contacting 50, 75 and 90% of registered NFD stations.
 
 </long_description>
-<power band="50NFD">100</power>
-<power band="70NFD">40</power>
-<power band="432">100</power>
-<power band="144">100</power>
-<power band="1296">100</power>
+<power band="50NFD" max="100"/>
+<power band="70NFD" max="40"/>
+<power band="432" max="100"/>
+<power band="144" max="100"/>
+<power band="1296" max="100"/>
 <singleantenna>1</singleantenna>
 <collate>xvhfnfd</collate>
 <certfields>call</certfields>
@@ -949,11 +959,11 @@ The list of registered stations can be found at http://www.rsgbcc.org/cgi-bin/vh
 
 Stations entering in this section must use the /P callsign suffix. 
 </long_description>
-<power band="50NFD">100</power>
-<power band="70NFD">40</power>
-<power band="432">100</power>
-<power band="144">100</power>
-<power band="1295">100</power>
+<power band="50NFD" max="100"/>
+<power band="70NFD" max="40"/>
+<power band="432" max="100"/>
+<power band="144" max="100"/>
+<power band="1295" max="100"/>
 <height>10</height>
 <singleantenna>1</singleantenna>
 <collate>vhfnfd</collate>
@@ -986,11 +996,11 @@ Stations entering in this section must use the /P callsign suffix.
 
 Stations entering in this section must use the /P callsign suffix. 
 </long_description>
-<power band="50NFD">25</power>
-<power band="70NFD">10</power>
-<power band="432">25</power>
-<power band="144">25</power>
-<power band="1296">25</power>
+<power band="50NFD" max="25"/>
+<power band="70NFD" max="10"/>
+<power band="432" max="25"/>
+<power band="144" max="25"/>
+<power band="1296" max="25"/>
 <height>10</height>
 <singleantenna>1</singleantenna>
 <collate>vhfnfd</collate>
@@ -1025,11 +1035,11 @@ Stations entering in this section must use the /P callsign suffix.
 Entries in this Section cannot form part of an entry in the Mix and Match Section. 
 See FAQ list http://www.rsgbcc.org/vhf/rules/16rules/multisinglefaq.shtml
 </long_description>
-<power band="50NFD">100</power>
-<power band="70NFD">40</power>
-<power band="432">50</power>
-<power band="144">100</power>
-<power band="1296">10</power>
+<power band="50NFD" max="100"/>
+<power band="70NFD" max="40"/>
+<power band="432" max="50"/>
+<power band="144" max="100"/>
+<power band="1296" max="10"/>
 <height>12</height>
 <singleantenna>1</singleantenna>
 <collate>vhfnfd</collate>
@@ -1076,7 +1086,7 @@ Stations entering in this section must use the /P callsign suffix.
 This section is open to single operator fixed stations using 25W or less output and a single antenna. 
 When applied to the VHF Championship, if a station enters some contests with high power or extra antennas, and some with low power and a single antenna, only the low power, single antenna scores will count towards the championship.
 </long_description>
-<power>25</power>
+<power max="25"/>
 <singleantenna>1</singleantenna>
 </section>
 <band>
@@ -2805,7 +2815,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <special_rules_list>Low Power Contest</special_rules_list>
 <band_list>144</band_list>
 <mult>M3</mult>
-<power>25</power>
+<power max="25"/>
 <entry_date>7 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
 <autocerts>yes</autocerts>
@@ -2832,7 +2842,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <special_rules_list>Low Power Contest</special_rules_list>
 <band_list>432</band_list>
 <mult>M3</mult>
-<power>25</power>
+<power max="25"/>
 <entry_date>7 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
 <autocerts>yes</autocerts>
