@@ -53,6 +53,9 @@ int RotControl::init(srotParams currentAntenna)
         my_rot->state.rotport.parm.serial.parity = getSerialParityCode(currentAntenna.parity);
         my_rot->state.rotport.parm.serial.handshake = getSerialHandshakeCode(currentAntenna.handshake);
 
+//       setMinAzimuth();
+//       setMaxAzimuth();
+
         retcode = rot_open(my_rot);
         if (retcode >= 0)
         {
@@ -154,6 +157,37 @@ int RotControl::getRotatorModelIndex()
     return -1;
 }
 
+
+
+
+/*
+
+void RotControl::setMaxAzimuth()
+{
+//  max_azimuth = (int) my_rot->caps->max_az;
+}
+
+void RotControl::setMinAzimuth()
+{
+//    min_azimuth = (int) my_rot->caps->min_el;
+}
+
+
+
+azimuth_t RotControl::getMaxAzimuth()
+{
+    return max_azimuth;
+}
+
+
+
+
+azimuth_t RotControl::getMinAzimuth()
+{
+    return min_azimuth;
+}
+
+*/
 
 // stop azimuth rotation
 

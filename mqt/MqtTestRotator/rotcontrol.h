@@ -87,6 +87,8 @@ public:
     const char * getModel_Name(int idx);
     void set_rotatorSpeed(int speed);
     int get_rotatorSpeed();
+    void setMaxAzimuth();
+    void setMinAzimuth();
     void set_serialConnected(bool connectFlag);
     bool get_serialConnected();
     azimuth_t getRotatorAzimuth();
@@ -104,7 +106,7 @@ public:
     QStringList getStopBitsNames();
     QStringList gethamlibErrorMsg();
     QString gethamlibErrorMsg(int errorCode);
-    QString initError;
+//    QString initError;
 
 
 signals:

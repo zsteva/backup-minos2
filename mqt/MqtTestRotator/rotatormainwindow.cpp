@@ -89,6 +89,9 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     moving = false;
     bearing = 0;
+    min_azimuth = 0;
+    max_azimuth = 0;
+
 
     setPolltime(1000);
 
@@ -212,6 +215,9 @@ void RotatorMainWindow::openRotator()
         showStatusMessage("Please select a rotator protcol");
         return;
     }
+
+
+
     srotParams p = selectRotator->getCurrentAntenna();
 
     retCode = rotator->init(selectRotator->currentAntenna);

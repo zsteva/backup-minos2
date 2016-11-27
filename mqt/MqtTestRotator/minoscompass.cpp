@@ -137,12 +137,12 @@ void MinosCompass::paintEvent(QPaintEvent *)
 
 
 
-    QString degLegends = " ,20,40,60,80, ,100,120,140,160, ,200,220,240,260, ,280,300,320,340";
-    int degreeRotate[] = {20,20,20,20,10,10,20,20,20,20,20,20,20,20,10,10,20,20,20,20};
+    QString degLegends = " ,30,60, ,120,150, ,210,240, ,300,330";
+    int degreeRotate[] = {30,30,30,30,30,30,30,30,30,30,30,30};
     QStringList legendsList = degLegends.split(",");
     QRect textRect1(-8, -90, 20,15);
 
-    for (int j = 0; j < 20; j++)
+    for (int j = 0; j < 12; j++)
     {
         painter.drawText(textRect1,legendsList.value(j));
         painter.rotate(degreeRotate[j]);
@@ -150,6 +150,7 @@ void MinosCompass::paintEvent(QPaintEvent *)
 
     QString dirLegends = "N,E,S,W";
     QStringList dirLegendsList = dirLegends.split(",");
+
     QRect textRect2(-3, -90, 15,15);
 //    QFont textFont();
 //    textFont.setWeight( QFont::Bold );

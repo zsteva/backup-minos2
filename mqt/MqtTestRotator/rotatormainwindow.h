@@ -76,6 +76,8 @@ private:
     bool stopCmdflag;
     bool rotCmdflag;
     int bearing;
+    int min_azimuth;
+    int max_azimuth;
     QString backBearingmsg;
     QString presetName[NUM_PRESETS];
     QString presetBearing[NUM_PRESETS];
