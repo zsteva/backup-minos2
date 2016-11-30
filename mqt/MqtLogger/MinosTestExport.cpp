@@ -60,7 +60,7 @@ void MinosTestExport::sendRequest(QSharedPointer<QFile> expfd, const QString &cm
 void MinosTestExport::makeHeader( RPCParamStruct * st, unsigned long ls )
 {
    dtg tnow( true );
-   st->addMember( ( int ) ls, "lseq" );
+   st->addMember( static_cast< int>(ls), "lseq" );
    st->addDtgMember( tnow.getIsoDTG(), "uDTG" );
 }
 void MinosTestExport::exportMode(QSharedPointer<QFile> expfd )

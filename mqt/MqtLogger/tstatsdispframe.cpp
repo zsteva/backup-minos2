@@ -92,7 +92,7 @@ void TStatsDispFrame::reInitialiseStats()
    int nvalid = ct->getValidQSOs();
    if (nvalid)
    {
-      double avpts = ( double ) ct->contestScore / nvalid;
+      double avpts = static_cast< double>(ct->contestScore) / nvalid;
       QString tempcs;
       tempcs = bestdx->cs.fullCall.getValue().trimmed() ;
 
@@ -125,7 +125,7 @@ void TStatsDispFrame::reInitialiseStats()
       }
       if ( ltot )
       {
-         double qmult = ( double ) nvalid / ltot;
+         double qmult = static_cast<double> (nvalid) / ltot;
          QString temp;
 
          long Qs = ct->QSO1 ? ct->QSO1 : ct->QSO2;

@@ -655,7 +655,7 @@ bool LoggerContestLog::GJVloadContacts( void )
        BaseContact *bct = rct;
       makeContact( false, bct );
       rct = dynamic_cast<ContestContact *>(bct);
-      if ( rct->GJVload( ( int ) nextBlock ) )
+      if ( rct->GJVload( static_cast< int >( nextBlock) ) )
       {
          nextBlock++;
          ctList.insert( rct );
@@ -831,7 +831,7 @@ bool LoggerContestLog::exportADIF(QSharedPointer<QFile> expfd )
          }
          const char *EOR = "<EOR>\r\n";
          ret = expfd->write(EOR, strlen( EOR ));
-         if ( ret != (int)strlen( EOR ) )
+         if ( ret != static_cast< int >(strlen( EOR )) )
          {
             MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
          }

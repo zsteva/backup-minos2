@@ -44,7 +44,7 @@ void strtobuf()
 
    // null fill the rest of the buffer
    memset( s1, 0, bsize - buffpt );
-   if ( buffpt + noeditlength < ( int ) ( bsize - 3 ) )
+   if ( buffpt + noeditlength < ( bsize - 3 ) )
    {
       memcpy( &diskBuffer[ bsize - noeditlength - 1 ], noeditstr, noeditlength );
    }
@@ -182,7 +182,7 @@ void writer::lwrite( const char *b )
    QString l = QString( b ) + "\r\n";
 
    int ret = expfd->write(l.toStdString().c_str(), l.toStdString().size());
-   if ( ret != (int)l.toStdString().size() )
+   if ( ret != static_cast<int >(l.toStdString().size()) )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
    }

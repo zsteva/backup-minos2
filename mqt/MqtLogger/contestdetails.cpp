@@ -566,7 +566,7 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    ui->LocatorField->setChecked(true) ;
    ui->QTHField->setChecked(true) ;
 
-   contest->scoreMode.setValue( ( SCOREMODE ) ( ic.ppKmScoring ? 0 : 1 ) );  // combo
+   contest->scoreMode.setValue( static_cast< SCOREMODE> ( ic.ppKmScoring ? 0 : 1 ) );  // combo
 
    switch (( ic.ppKmScoring ? 0 : 1 ))
    {
@@ -622,7 +622,7 @@ QWidget * ContestDetails::getDetails( )
     contest->allowLoc4.setValue( ui->AllowLoc4CB->isChecked() );    // bool
     contest->allowLoc8.setValue( ui->AllowLoc8CB->isChecked() );    // bool
     contest->location.setValue( ui->ExchangeEdit->text() );
-    contest->scoreMode.setValue( ( SCOREMODE ) ui->PPQSORB->isChecked()?1:0 );  // combo
+    contest->scoreMode.setValue( static_cast< SCOREMODE > (ui->PPQSORB->isChecked()?1:0) );  // combo
 
     if (ui->NonGCtryMult->isChecked())
     {
@@ -1014,7 +1014,7 @@ void ContestDetails::on_M7LocatorMults_clicked()
     ui->BonusComboBox->setCurrentIndex(0);
     noMultRipple = false;
 }
-void ContestDetails::on_BonusComboBox_currentIndexChanged(int index)
+void ContestDetails::on_BonusComboBox_currentIndexChanged(int /*index*/)
 {
     if (noMultRipple)
     {

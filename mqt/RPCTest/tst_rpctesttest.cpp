@@ -295,7 +295,7 @@ void RPCTestTest::testArray()
 
    bool pOK = xm.getArrayArgElements( 0, asize );
    QVERIFY( true == pOK );
-   QVERIFY( ( unsigned int ) testvec.size() == asize );
+   QVERIFY( static_cast< unsigned int > (testvec.size()) == asize );
 
    for ( unsigned int i = 0; i < testvec.size(); i++ )
    {

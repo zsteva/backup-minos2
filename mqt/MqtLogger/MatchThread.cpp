@@ -216,7 +216,7 @@ int TMatchCollection::getContestCount( void )
 }
 BaseMatchContest *TMatchCollection::pcontestAt( int i )
 {
-    if (i > (int)matchList.size())
+    if (i > static_cast< int>(matchList.size()))
         return 0;
     return matchList.at( i );
 }

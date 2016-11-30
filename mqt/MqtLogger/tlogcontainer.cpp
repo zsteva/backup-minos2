@@ -375,7 +375,7 @@ void TLogContainer::updateRecentFileActions()
     QSettings settings;
     QStringList files = settings.value("dbmru").toStringList();
 
-    int numRecentFiles = qMin(files.size(), (int)MaxRecentFiles);
+    int numRecentFiles = qMin(files.size(), static_cast< int >(MaxRecentFiles));
 
     for (int i = 0; i < numRecentFiles; ++i) {
         QString text = tr("&%1 %2").arg(i + 1).arg(strippedName(files[i]));

@@ -1040,7 +1040,7 @@ void QSOLogFrame::calcLoc( )
                vb = normBrg( vb - 180 );
                strcat( rev, "R" );
             }
-            setScoreText( ( int ) dist, ( locValres == LOC_PARTIAL ), sct.contactFlags & XBAND );
+            setScoreText( static_cast< int> ( dist), ( locValres == LOC_PARTIAL ), sct.contactFlags & XBAND );
             QString brgbuff;
             const QChar degreeChar(0260); // octal value
             if ( locValres == LOC_PARTIAL )
@@ -1139,7 +1139,7 @@ void QSOLogFrame::selectField( QWidget *v )
 
     if ( v == ui->TimeEdit )
     {
-       ( ( QLineEdit * ) v ) ->setReadOnly(false);
+       ( static_cast< QLineEdit * > (v) ) ->setReadOnly(false);
        if (dtgne == 0 || dtgne == 1)
        {
 //          TimeEdit->SelStart = 0;
@@ -1149,7 +1149,7 @@ void QSOLogFrame::selectField( QWidget *v )
     if ( v == ui->DateEdit )
     {
 
-       ( ( QLineEdit * ) v ) ->setReadOnly(false);
+       ( static_cast< QLineEdit * > ( v) ) ->setReadOnly(false);
        if (dtgne == 0 || dtgne == 2)
        {
 //          DateEdit->SelStart = 0;
@@ -1158,7 +1158,7 @@ void QSOLogFrame::selectField( QWidget *v )
     }
     if ( v == ui->SerTXEdit )
     {
-        ( ( QLineEdit * ) v ) ->setReadOnly(false);
+        ( static_cast< QLineEdit * > (v) ) ->setReadOnly(false);
     }
     if ( v->isEnabled() )
     {

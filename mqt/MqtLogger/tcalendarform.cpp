@@ -326,7 +326,7 @@ void TCalendarForm::on_SelectButton_clicked()
     int row = ui->CalendarGrid->currentRow();
     if ( calType == ectHF )
     {
-        if ( row >= 0 && row < ( int ) hf.calendar.size() )
+        if ( row >= 0 && row < static_cast< int> (hf.calendar.size()) )
         {
             ic = hf.calendar[ row ];
             accept();
@@ -335,7 +335,7 @@ void TCalendarForm::on_SelectButton_clicked()
     else
         if ( calType == ectHFOther )
         {
-            if ( row >= 0 && row < ( int ) hfother.calendar.size() )
+            if ( row >= 0 && row < static_cast< int> (hfother.calendar.size()) )
             {
                 ic = hfother.calendar[ row ];
                 accept();
@@ -344,7 +344,7 @@ void TCalendarForm::on_SelectButton_clicked()
         else
             if ( calType == ectVHF )
             {
-                if ( row >= 0 && row < ( int ) vhf.calendar.size() )
+                if ( row >= 0 && row < static_cast< int> ( vhf.calendar.size()) )
                 {
                     ic = vhf.calendar[ row ];
                     accept();
@@ -353,7 +353,7 @@ void TCalendarForm::on_SelectButton_clicked()
             else
                 if ( calType == ectVHFOther )
                 {
-                    if ( row >= 0 && row < ( int ) vhfother.calendar.size() )
+                    if ( row >= 0 && row < static_cast< int> ( vhfother.calendar.size()) )
                     {
                         ic = vhfother.calendar[ row ];
                         accept();
@@ -362,7 +362,7 @@ void TCalendarForm::on_SelectButton_clicked()
                 else
                     if ( calType == ectMwave )
                     {
-                        if ( row >= 0 && row < ( int ) mwave.calendar.size() )
+                        if ( row >= 0 && row < static_cast< int> (mwave.calendar.size()) )
                         {
                             ic = mwave.calendar[ row ];
                             accept();
@@ -372,7 +372,7 @@ void TCalendarForm::on_SelectButton_clicked()
                     else
                         if ( calType == ectHFBARTG )
                         {
-                            if ( row >= 0 && row < ( int ) hfbartg.calendar.size() )
+                            if ( row >= 0 && row < static_cast< int> (hfbartg.calendar.size()) )
                             {
                                 ic = hfbartg.calendar[ row ];
                                 accept();

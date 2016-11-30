@@ -925,7 +925,7 @@ void SettingsBundle::getBoolProfile(const QString &key, bool &value, bool def )
       value = def;
       return ;
    }
-   int intval = bundleFile->iniFile->getPrivateProfileInt( currsection, key, ( int ) def );
+   int intval = bundleFile->iniFile->getPrivateProfileInt( currsection, key,  (def?true:false) );
    if ( intval )
       value = true;
    else

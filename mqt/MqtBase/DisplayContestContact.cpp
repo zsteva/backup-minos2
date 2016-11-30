@@ -583,7 +583,7 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
                         {
                            curcon->disbear( lon, lat, dist, brg );
                         }
-                        scorebuff = QString("%1").arg( ( int ) dist );
+                        scorebuff = QString("%1").arg( static_cast< int >  (dist) );
 
                      }
                   }
@@ -627,7 +627,7 @@ void DisplayContestContact::processMinosStanza( const QString &methodName, Minos
 
    int itemp;
    if ( mt->getStructArgMemberValue( "lseq", itemp ) )     // should already be done...
-      logSequence = ( unsigned long ) itemp;
+      logSequence = static_cast< unsigned long > (itemp);
    mt->getStructArgMemberValueDTG( "uDTG", updtg );
 
    if ( methodName == "MinosLogComment" )

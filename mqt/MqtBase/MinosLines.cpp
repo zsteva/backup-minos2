@@ -29,7 +29,7 @@ class LineFileMapper
       void Close();
       char *GetMap()
       {
-         return (char *)(hFile.data());
+         return static_cast<char *>(hFile.data());
       }
 };
 class LineFileBlock

@@ -8,7 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
-extern const double pi = ( double ) 3.141592653 ;  /* pi */
+extern const double pi = 3.141592653 ;  /* pi */
 extern const double dr = pi / 180.0;      // degree to radian conversion factor
 
 /******************************************************/
@@ -88,7 +88,7 @@ char lonlat( const QString &pinqra, double &lon, double &lat )
             if ( *wp1 < *wp2 || *wp1 > *( wp3++ ) )     /* out of range */
                return ( ERR_LOC_RANGE );                 /* invalid locator */
             else
-               *( fp1++ ) = ( double ) ( *( wp1++ ) - ( double ) * ( wp2++ ) ); /* convert to double */
+               *( fp1++ ) = static_cast<double> ( *( wp1++ ) - static_cast<double>( * ( wp2++ )) ); /* convert to double */
 		 }
 
       }
@@ -96,13 +96,13 @@ char lonlat( const QString &pinqra, double &lon, double &lat )
       // NB for short locs we have already set up ft
 
       /* calculate longtitude and latitude from maidenhead locator*/
-      wfe1 = ft[ 0 ] * ( double ) 20.0 + ft[ 2 ] * ( double ) 2.0 - ( double ) 180.0 ;
-      wfe2 = ft[ 4 ] / ( double ) 12.0 + ft[ 6 ] / 120.0;
-      wfe = wfe1 + wfe2 /*+ (double )1.0 / (double )240.0 */;
+      wfe1 = ft[ 0 ] * 20.0 + ft[ 2 ] * 2.0 - 180.0 ;
+      wfe2 = ft[ 4 ] / 12.0 + ft[ 6 ] / 120.0;
+      wfe = wfe1 + wfe2 ;
 
-      wfn1 = ft[ 1 ] * ( double ) 10.0 + ft[ 3 ] - ( double ) 90.0 ;
-      wfn2 = ft[ 5 ] / ( double ) 24.0 + ft[ 7 ] / 240.0;
-      wfn = wfn1 + wfn2 /*+ (double )1.0 / (double )480.0 */;
+      wfn1 = ft[ 1 ] *  10.0 + ft[ 3 ] - 90.0 ;
+      wfn2 = ft[ 5 ] / 24.0 + ft[ 7 ] / 240.0;
+      wfn = wfn1 + wfn2;
       lat = wfn ;                  /* set up latitude */
       lon = wfe ;                  /* set up longtitude */
    }

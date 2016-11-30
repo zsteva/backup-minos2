@@ -526,7 +526,7 @@ bool ContestContact::GJVsave( GJVParams &gp )
    // write it all into sbuff
 
    int thisDiskBlock = gp.diskBlock++;
-   setLogSequence( ( unsigned long ) ( thisDiskBlock ) << 16 );
+   setLogSequence( static_cast< unsigned long > ( thisDiskBlock ) << 16 );
    QSharedPointer<QFile> fd = gp.fd;
 
    sprintf( temp, "%d", thisDiskBlock );
@@ -535,7 +535,7 @@ bool ContestContact::GJVsave( GJVParams &gp )
    sprintf( temp, "%ld", getLogSequence() );
    strtobuf( temp );
 
-   sprintf( temp, "%d", ( unsigned int ) contactFlags.getValue() );
+   sprintf( temp, "%d", static_cast< unsigned int > (contactFlags.getValue()) );
    strtobuf( temp );
 
    strtobuf( op1.getValue() );

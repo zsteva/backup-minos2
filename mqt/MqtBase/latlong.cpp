@@ -535,21 +535,21 @@ static int ngroutput( Location *outgrid )
    if ( ( e < 0.0 ) || ( n1 < 0.0 ) || ( e > 2500000.0 ) || ( n1 > 2500000.0 ) )
       return ( INVALIDGREF );
 
-   ea = ( int ) ( e / 500000.0 );
-   na = ( int ) ( n1 / 500000.0 );
+   ea = static_cast< int > ( e / 500000.0 );
+   na = static_cast< int >  ( n1 / 500000.0 );
 
-   eb = ( int ) ( ( e - ( 500000.0 * ea ) ) / 100000.0 );
-   nb = ( int ) ( ( n1 - ( 500000.0 * na ) ) / 100000.0 );
+   eb = static_cast< int >  ( ( e - ( 500000.0 * ea ) ) / 100000.0 );
+   nb = static_cast< int >  ( ( n1 - ( 500000.0 * na ) ) / 100000.0 );
 
    ger = e - ( 500000.0 * ea + 100000.0 * eb );
    gnr = n1 - ( 500000.0 * na + 100000.0 * nb );
 
-   gridref[ gri ] = ( char ) ( ( 4 - na ) * 5 + ea + 'A' );
+   gridref[ gri ] = static_cast< char >  ( ( 4 - na ) * 5 + ea + 'A' );
 
    if ( gridref[ gri ] >= 'I' )
       gridref[ gri ] ++;
 
-   gridref[ ++gri ] = ( char ) ( ( 4 - nb ) * 5 + eb + 'A' );
+   gridref[ ++gri ] = static_cast< char >  ( ( 4 - nb ) * 5 + eb + 'A' );
 
    if ( gridref[ gri ] >= 'I' )
       gridref[ gri ] ++;
@@ -599,11 +599,11 @@ static int internaltoloc( Location *ingrid, Location *outgrid )
 
 static void txgeoloc( double *n, double *e, int f, char t, char **gp )
 {
-   *e = f * ( *e - ( ( int ) * e ) );
-   *n = f * ( *n - ( ( int ) * n ) );
+   *e = f * ( *e - ( static_cast< int >  (* e) ) );
+   *n = f * ( *n - ( static_cast< int >  (* n) ) );
 
-   *( ( *gp ) ++ ) = ( char ) ( ( int ) ( *e ) + t );
-   *( ( *gp ) ++ ) = ( char ) ( ( int ) ( *n ) + t );
+   *( ( *gp ) ++ ) = static_cast< char >  ( static_cast< int >  ( *e ) + t );
+   *( ( *gp ) ++ ) = static_cast< char >  ( static_cast< int >  ( *n ) + t );
 }
 
 int geotoloc( double lat, double longi, char *&gridref )
@@ -650,8 +650,8 @@ void dms( double deg, int *d, int *m, double *s )
       sign = -1;
       deg = -deg;
    }
-   *d = ( int ) floor( deg );
-   *m = ( int ) floor( ( deg - *d ) * 60.0 );
+   *d = static_cast< int >  (floor( deg ));
+   *m = static_cast< int >  (floor( ( deg - *d ) * 60.0 ));
    *s = 60.0 * ( ( deg - *d ) * 60.0 - *m );
 
    if ( *s >= 59.00009 )   	// near enough

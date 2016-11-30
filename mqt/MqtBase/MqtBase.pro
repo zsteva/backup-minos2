@@ -13,7 +13,7 @@ TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += c++14
 
-QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
+QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
 
 DEFINES += TIXML_USE_STL
 

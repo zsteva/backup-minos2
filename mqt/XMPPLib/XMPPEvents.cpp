@@ -19,7 +19,7 @@ void makeXMPPEvent( XStanza *xs )
       // external RPC request - decode and action
         QSharedPointer<MinosRPCObj> mro = MinosRPCObj::makeServerObj( rq->methodName );
 
-        if ((bool)mro)
+        if (mro)
         {
             mro->setCallArgs( *rq );
             mro->id = xs->getId();
@@ -38,7 +38,7 @@ void makeXMPPEvent( XStanza *xs )
       {
          // RPC response where call was not blocking
          QSharedPointer<MinosRPCObj> mro = MinosRPCObj::makeClientObj( rp->methodName );
-         if ((bool)mro)
+         if (mro)
          {
             mro->id = xs->getId();
             mro->setCallArgs( *rp );

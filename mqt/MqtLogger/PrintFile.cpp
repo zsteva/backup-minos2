@@ -46,7 +46,7 @@ PrintFile::~PrintFile()
 
 bool PrintFile::exportTest(QSharedPointer<QFile> expfd )
 {
-   PrintFileLine linelist[ ( int ) LineCount ];
+   PrintFileLine linelist[ static_cast< int> (LineCount) ];
    // export current contest as PrintFile
    writer wr( expfd );
    char lbuff[ 1024 ];
@@ -96,44 +96,44 @@ bool PrintFile::exportTest(QSharedPointer<QFile> expfd )
    // get the best DX contact
    BaseContact *bestdx = ct->getBestDX();
 
-   linelist[ ( int ) TName ] = PrintFileLine( "Contest Name                            ", ct->name.getValue()  /*, "Contest Name"*/ ),
+   linelist[ static_cast< int> (TName) ] = PrintFileLine( "Contest Name                            ", ct->name.getValue()  /*, "Contest Name"*/ ),
 
-//   linelist[ ( int ) TdDate ] = PrintFileLine("Start Date;End Date                     ", ct->dateRange( DTGFULL )  /*, "Start Date;End Date"*/ );
-   linelist[ ( int ) PCall ] = PrintFileLine( "Callsign Used                           ", ct->mycall.fullCall.getValue()  /*, "Callsign Used"*/ );
-   linelist[ ( int ) PWWLo ] = PrintFileLine( "Locator Used                            ", ct->myloc.loc.getValue()  /*, "Locator Used"*/ );
-   linelist[ ( int ) PExch ] = PrintFileLine( "Exchange Used                           ", ct->location.getValue()  /*, "Exchange Used"*/ );
-   linelist[ ( int ) PAdr1 ] = PrintFileLine( "Address line 1/2 of station             ", ct->sqth1.getValue()  /*, "Address line 1/2 of station"*/ );
-   linelist[ ( int ) PAdr2 ] = PrintFileLine( "Address line 2/2 of station             ", ct->sqth2.getValue()  /*, "Address line 2/2 of station"*/ );
-   linelist[ ( int ) PSect ] = PrintFileLine( "Section Entered                         ", ct->entSect.getValue()  /*, "Section Entered"*/ );
-   linelist[ ( int ) PBand ] = PrintFileLine( "Band Used                               ", ct->band.getValue()  /*, "Band Used"*/ );
+//   linelist[ static_cast< int> ( TdDate ] = PrintFileLine("Start Date;End Date                     ", ct->dateRange( DTGFULL )  /*, "Start Date;End Date"*/ );
+   linelist[ static_cast< int> (PCall) ] = PrintFileLine( "Callsign Used                           ", ct->mycall.fullCall.getValue()  /*, "Callsign Used"*/ );
+   linelist[ static_cast< int> (PWWLo) ] = PrintFileLine( "Locator Used                            ", ct->myloc.loc.getValue()  /*, "Locator Used"*/ );
+   linelist[ static_cast< int> (PExch) ] = PrintFileLine( "Exchange Used                           ", ct->location.getValue()  /*, "Exchange Used"*/ );
+   linelist[ static_cast< int> (PAdr1) ] = PrintFileLine( "Address line 1/2 of station             ", ct->sqth1.getValue()  /*, "Address line 1/2 of station"*/ );
+   linelist[ static_cast< int> (PAdr2) ] = PrintFileLine( "Address line 2/2 of station             ", ct->sqth2.getValue()  /*, "Address line 2/2 of station"*/ );
+   linelist[ static_cast< int> (PSect) ] = PrintFileLine( "Section Entered                         ", ct->entSect.getValue()  /*, "Section Entered"*/ );
+   linelist[ static_cast< int> (PBand) ] = PrintFileLine( "Band Used                               ", ct->band.getValue()  /*, "Band Used"*/ );
 
-   linelist[ ( int ) PClub ] = PrintFileLine( "Name of club/group                      ", ct->entrant.getValue()  /*, "Name of club/group"*/ );
-   linelist[ ( int ) RName ] = PrintFileLine( "Name of responsible operator            ", ct->entName.getValue()  /*, "Name of responsible operator"*/ );
-   linelist[ ( int ) RCall ] = PrintFileLine( "Callsign of responsible operator        ", ct->entCall.getValue()  /*, "Callsign of responsible operator"*/ );
+   linelist[ static_cast< int> (PClub) ] = PrintFileLine( "Name of club/group                      ", ct->entrant.getValue()  /*, "Name of club/group"*/ );
+   linelist[ static_cast< int> (RName) ] = PrintFileLine( "Name of responsible operator            ", ct->entName.getValue()  /*, "Name of responsible operator"*/ );
+   linelist[ static_cast< int> (RCall) ] = PrintFileLine( "Callsign of responsible operator        ", ct->entCall.getValue()  /*, "Callsign of responsible operator"*/ );
 
-   linelist[ ( int ) RAdr1 ] = PrintFileLine( "Address line 1/2 of responsible operator", ct->entAddr1.getValue()  /*, "Address line 1/2 of responsible operator"*/ );
-   linelist[ ( int ) RAdr2 ] = PrintFileLine( "Address line 2/2 of responsible operator", ct->entAddr2.getValue()  /*, "Address line 2/2 of responsible operator"*/ );
-   linelist[ ( int ) RCity ] = PrintFileLine( "City of responsible operator            ", ct->entCity.getValue()  /*, "City of responsible operator"*/ );
-   linelist[ ( int ) RPoCo ] = PrintFileLine( "Post Code of responsible operator       ", ct->entPostCode.getValue()  /*, "Post Code of responsible operator"*/ );
-   linelist[ ( int ) RCoun ] = PrintFileLine( "Country of responsible operator         ", ct->entCountry.getValue()  /*, "Country of responsible operator"*/ );
-   linelist[ ( int ) RPhon ] = PrintFileLine( "Phone number of responsible operator    ", ct->entPhone.getValue()  /*, "Phone no. of responsible operator"*/ );
+   linelist[ static_cast< int> (RAdr1) ] = PrintFileLine( "Address line 1/2 of responsible operator", ct->entAddr1.getValue()  /*, "Address line 1/2 of responsible operator"*/ );
+   linelist[ static_cast< int> (RAdr2) ] = PrintFileLine( "Address line 2/2 of responsible operator", ct->entAddr2.getValue()  /*, "Address line 2/2 of responsible operator"*/ );
+   linelist[ static_cast< int> (RCity) ] = PrintFileLine( "City of responsible operator            ", ct->entCity.getValue()  /*, "City of responsible operator"*/ );
+   linelist[ static_cast< int> (RPoCo) ] = PrintFileLine( "Post Code of responsible operator       ", ct->entPostCode.getValue()  /*, "Post Code of responsible operator"*/ );
+   linelist[ static_cast< int> (RCoun) ] = PrintFileLine( "Country of responsible operator         ", ct->entCountry.getValue()  /*, "Country of responsible operator"*/ );
+   linelist[ static_cast< int> (RPhon) ] = PrintFileLine( "Phone number of responsible operator    ", ct->entPhone.getValue()  /*, "Phone no. of responsible operator"*/ );
 
-   linelist[ ( int ) RHBBS ] = PrintFileLine( "eMail address of responsible operator   ", ct->entEMail.getValue()  /*, "EMAIL address of responsible operator"*/ );
-   linelist[ ( int ) MOpe1 ] = PrintFileLine( "Operators line 1/2                      ", ct->ops1.getValue()  /*, "Operators line 1/2"*/ );
-   linelist[ ( int ) MOpe2 ] = PrintFileLine( "Operators line 2/2                      ", ct->ops2.getValue()  /*, "Operators line 2/2"*/ );
-   linelist[ ( int ) STXEq ] = PrintFileLine( "TX Equipment                            ", ct->entTx.getValue()  /*, "TX Equipment"*/ );
-   linelist[ ( int ) SPowe ] = PrintFileLine( "TX Power (W)                            ", ct->power.getValue()  /*, "TX Power (W)"*/ );
-   linelist[ ( int ) SRXEq ] = PrintFileLine( "RX Equipment                            ", ct->entRx.getValue()  /*, "RX Equipment"*/ );
-   linelist[ ( int ) SAnte ] = PrintFileLine( "Antenna                                 ", ct->entAnt.getValue()  /*, "Antenna"*/ );
-   linelist[ ( int ) SAntH ] = PrintFileLine( "Antenna Height agl;height asl           ", ct->entAGL.getValue() + ";" + ct->entASL.getValue()  /*, "Antenna Height agl;height asl"*/ );
+   linelist[ static_cast< int> (RHBBS) ] = PrintFileLine( "eMail address of responsible operator   ", ct->entEMail.getValue()  /*, "EMAIL address of responsible operator"*/ );
+   linelist[ static_cast< int> (MOpe1) ] = PrintFileLine( "Operators line 1/2                      ", ct->ops1.getValue()  /*, "Operators line 1/2"*/ );
+   linelist[ static_cast< int> (MOpe2) ] = PrintFileLine( "Operators line 2/2                      ", ct->ops2.getValue()  /*, "Operators line 2/2"*/ );
+   linelist[ static_cast< int> (STXEq) ] = PrintFileLine( "TX Equipment                            ", ct->entTx.getValue()  /*, "TX Equipment"*/ );
+   linelist[ static_cast< int> (SPowe) ] = PrintFileLine( "TX Power (W)                            ", ct->power.getValue()  /*, "TX Power (W)"*/ );
+   linelist[ static_cast< int> (SRXEq) ] = PrintFileLine( "RX Equipment                            ", ct->entRx.getValue()  /*, "RX Equipment"*/ );
+   linelist[ static_cast< int> (SAnte) ] = PrintFileLine( "Antenna                                 ", ct->entAnt.getValue()  /*, "Antenna"*/ );
+   linelist[ static_cast< int> (SAntH) ] = PrintFileLine( "Antenna Height agl;height asl           ", ct->entAGL.getValue() + ";" + ct->entASL.getValue()  /*, "Antenna Height agl;height asl"*/ );
 
-   linelist[ ( int ) CVQSO ] = PrintFileLine( "Number of valid QSOs                    ", QString::number( nvalid ) ); /*, "Claimed no. of QSO points"*/
-   linelist[ ( int ) CQSOP ] = PrintFileLine( "Claimed number of QSO points            ", QString::number( ct->contestScore ) ); /*, "Claimed no. of QSO points"*/
-   linelist[ ( int ) CWWLs ] = PrintFileLine( "Claimed number of WWLs                  ", QString::number( nlocs ) ); /*, "Claimed no. of WWLs;Bonus per new WWL;WWL multiplier"*/
-   linelist[ ( int ) CExcs ] = PrintFileLine( "Claimed number of exchanges             ", QString::number( ndistrict )); /*, "Claimed no. of exchanges; Bonus for each new exchange; Exchange Multiplier"*/
-   linelist[ ( int ) CDXCs ] = PrintFileLine( "Claimed number of DXCCs                 ", QString::number( nctry )); /*, "Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier"*/
-   linelist[ ( int ) CToSc ] = PrintFileLine( "Claimed total score                     ", QString::number( ct->contestScore * ltot ) ); /*, "Claimed total score"*/
-   linelist[ ( int ) CODXC ] = PrintFileLine( "Best DX - Callsign; Locator; Distance   ",
+   linelist[ static_cast< int> (CVQSO) ] = PrintFileLine( "Number of valid QSOs                    ", QString::number( nvalid ) ); /*, "Claimed no. of QSO points"*/
+   linelist[ static_cast< int> (CQSOP) ] = PrintFileLine( "Claimed number of QSO points            ", QString::number( ct->contestScore ) ); /*, "Claimed no. of QSO points"*/
+   linelist[ static_cast< int> (CWWLs) ] = PrintFileLine( "Claimed number of WWLs                  ", QString::number( nlocs ) ); /*, "Claimed no. of WWLs;Bonus per new WWL;WWL multiplier"*/
+   linelist[ static_cast< int> (CExcs) ] = PrintFileLine( "Claimed number of exchanges             ", QString::number( ndistrict )); /*, "Claimed no. of exchanges; Bonus for each new exchange; Exchange Multiplier"*/
+   linelist[ static_cast< int> (CDXCs) ] = PrintFileLine( "Claimed number of DXCCs                 ", QString::number( nctry )); /*, "Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier"*/
+   linelist[ static_cast< int> (CToSc) ] = PrintFileLine( "Claimed total score                     ", QString::number( ct->contestScore * ltot ) ); /*, "Claimed total score"*/
+   linelist[ static_cast< int> (CODXC) ] = PrintFileLine( "Best DX - Callsign; Locator; Distance   ",
        bestdx ? ( bestdx->cs.fullCall.getValue() + ";" + bestdx->loc.loc.getValue() + ";" + QString::number(bestdx->contactScore.getValue()) )
               : ";;" ); /*, "(Best DX) Callsign; Locator; Distance"*/
 

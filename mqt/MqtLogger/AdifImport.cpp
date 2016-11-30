@@ -123,7 +123,7 @@ void ADIFImport::ADIFImportEndOfRecord( )
       // we have to have log_sequence set before we insert - or it will cause
       // duplicates
 
-      aqso->setLogSequence( ( unsigned long ) ( next_block++ ) << 16 );
+      aqso->setLogSequence( static_cast< unsigned long> ( next_block++ ) << 16 );
 
       acontest->ctList.insert( aqso );
 
@@ -247,7 +247,7 @@ bool ADIFImport::executeImport()
          if ( !getNextChar( InChar ) )
             return false;
          if ( InChar != ':' && InChar != '>' && InChar != ' ' )
-            FieldName = FieldName + (char)toupper( InChar );
+            FieldName = FieldName + static_cast< char>(toupper( InChar ));
       }
       while ( InChar != ':' && InChar != '>' );
 

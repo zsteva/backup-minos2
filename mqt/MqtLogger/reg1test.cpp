@@ -115,30 +115,30 @@ bool reg1test::exportTest( QSharedPointer<QFile> expfd )
    }
    */
 
-   reg1testLine linelist[ ( int ) LineCount ];
-   linelist[ ( int ) TName ] = reg1testLine( "TName", ct->name.getValue()  /*, "Contest Name"*/ ),
+   reg1testLine linelist[ static_cast<int>(LineCount) ];
+   linelist[ static_cast< int> (TName) ] = reg1testLine( "TName", ct->name.getValue()  /*, "Contest Name"*/ ),
 
-   linelist[ ( int ) TdDate ] = reg1testLine( "TDate", ct->dateRange( DTGFULL )  /*, "Start Date;End Date"*/ );
-   linelist[ ( int ) PCall ] = reg1testLine( "PCall", ct->mycall.fullCall.getValue()  /*, "Callsign Used"*/ );
-   linelist[ ( int ) PWWLo ] = reg1testLine( "PWWLo", ct->myloc.loc.getValue()  /*, "Locator Used"*/ );
-   linelist[ ( int ) PExch ] = reg1testLine( "PExch", ct->location.getValue()  /*, "Exchange Used"*/ );
-   linelist[ ( int ) PAdr1 ] = reg1testLine( "PAdr1", ct->sqth1.getValue()  /*, "Address line 1/2 of station"*/ );
-   linelist[ ( int ) PAdr2 ] = reg1testLine( "PAdr2", ct->sqth2.getValue()  /*, "Address line 2/2 of station"*/ );
-   linelist[ ( int ) PSect ] = reg1testLine( "PSect", ct->entSect.getValue()  /*, "Section Entered"*/ );
-   linelist[ ( int ) PBand ] = reg1testLine( "PBand", ct->band.getValue()  /*, "Band Used"*/ );
+   linelist[ static_cast< int> (TdDate )] = reg1testLine( "TDate", ct->dateRange( DTGFULL )  /*, "Start Date;End Date"*/ );
+   linelist[ static_cast< int> (PCall )] = reg1testLine( "PCall", ct->mycall.fullCall.getValue()  /*, "Callsign Used"*/ );
+   linelist[ static_cast< int> (PWWLo )] = reg1testLine( "PWWLo", ct->myloc.loc.getValue()  /*, "Locator Used"*/ );
+   linelist[ static_cast< int> (PExch )] = reg1testLine( "PExch", ct->location.getValue()  /*, "Exchange Used"*/ );
+   linelist[ static_cast< int> (PAdr1 )] = reg1testLine( "PAdr1", ct->sqth1.getValue()  /*, "Address line 1/2 of station"*/ );
+   linelist[ static_cast< int> (PAdr2 )] = reg1testLine( "PAdr2", ct->sqth2.getValue()  /*, "Address line 2/2 of station"*/ );
+   linelist[ static_cast< int> (PSect )] = reg1testLine( "PSect", ct->entSect.getValue()  /*, "Section Entered"*/ );
+   linelist[ static_cast< int> (PBand )] = reg1testLine( "PBand", ct->band.getValue()  /*, "Band Used"*/ );
 
-   linelist[ ( int ) PClub ] = reg1testLine( "PClub", ct->entrant.getValue()  /*, "Name of club/group"*/ );
-   linelist[ ( int ) RName ] = reg1testLine( "RName", ct->entName.getValue()  /*, "Name of responsible operator"*/ );
-   linelist[ ( int ) RCall ] = reg1testLine( "RCall", ct->entCall.getValue()  /*, "Callsign of responsible operator"*/ );
+   linelist[ static_cast< int> (PClub )] = reg1testLine( "PClub", ct->entrant.getValue()  /*, "Name of club/group"*/ );
+   linelist[ static_cast< int> (RName )] = reg1testLine( "RName", ct->entName.getValue()  /*, "Name of responsible operator"*/ );
+   linelist[ static_cast< int> (RCall )] = reg1testLine( "RCall", ct->entCall.getValue()  /*, "Callsign of responsible operator"*/ );
 
-   linelist[ ( int ) RAdr1 ] = reg1testLine( "RAdr1", ct->entAddr1.getValue()  /*, "Address line 1/2 of responsible operator"*/ );
-   linelist[ ( int ) RAdr2 ] = reg1testLine( "RAdr2", ct->entAddr2.getValue()  /*, "Address line 2/2 of responsible operator"*/ );
-   linelist[ ( int ) RCity ] = reg1testLine( "RCity", ct->entCity.getValue()  /*, "City of responsible operator"*/ );
-   linelist[ ( int ) RPoCo ] = reg1testLine( "RPoCo", ct->entPostCode.getValue()  /*, "Post Code of responsible operator"*/ );
-   linelist[ ( int ) RCoun ] = reg1testLine( "RCoun", ct->entCountry.getValue()  /*, "Country of responsible operator"*/ );
-   linelist[ ( int ) RPhon ] = reg1testLine( "RPhon", ct->entPhone.getValue()  /*, "Phone no. of responsible operator"*/ );
+   linelist[ static_cast< int> (RAdr1 )] = reg1testLine( "RAdr1", ct->entAddr1.getValue()  /*, "Address line 1/2 of responsible operator"*/ );
+   linelist[ static_cast< int> (RAdr2 )] = reg1testLine( "RAdr2", ct->entAddr2.getValue()  /*, "Address line 2/2 of responsible operator"*/ );
+   linelist[ static_cast< int> (RCity )] = reg1testLine( "RCity", ct->entCity.getValue()  /*, "City of responsible operator"*/ );
+   linelist[ static_cast< int> (RPoCo )] = reg1testLine( "RPoCo", ct->entPostCode.getValue()  /*, "Post Code of responsible operator"*/ );
+   linelist[ static_cast< int> (RCoun )] = reg1testLine( "RCoun", ct->entCountry.getValue()  /*, "Country of responsible operator"*/ );
+   linelist[ static_cast< int> (RPhon )] = reg1testLine( "RPhon", ct->entPhone.getValue()  /*, "Phone no. of responsible operator"*/ );
 
-   linelist[ ( int ) RHBBS ] = reg1testLine( "RHBBS", ct->entEMail.getValue()  /*, "EMAIL address of responsible operator"*/ );
+   linelist[ static_cast< int> (RHBBS )] = reg1testLine( "RHBBS", ct->entEMail.getValue()  /*, "EMAIL address of responsible operator"*/ );
 
    QString opsl1 = ct->ops1.getValue();
    QString opsl2 = ct->ops2.getValue();
@@ -148,24 +148,24 @@ bool reg1test::exportTest( QSharedPointer<QFile> expfd )
       opsl2 = ct->opsQSO2;
    }
 
-   linelist[ ( int ) MOpe1 ] = reg1testLine( "MOpe1", opsl1  /*, "Operators line 1/2"*/ );
-   linelist[ ( int ) MOpe2 ] = reg1testLine( "MOpe2", opsl2  /*, "Operators line 2/2"*/ );
-   linelist[ ( int ) STXEq ] = reg1testLine( "STXEq", ct->entTx.getValue()  /*, "TX Equipment"*/ );
-   linelist[ ( int ) SPowe ] = reg1testLine( "SPowe", ct->power.getValue()  /*, "TX Power (W)"*/ );
-   linelist[ ( int ) SRXEq ] = reg1testLine( "SRXEq", ct->entRx.getValue()  /*, "RX Equipment"*/ );
-   linelist[ ( int ) SAnte ] = reg1testLine( "SAnte", ct->entAnt.getValue()  /*, "Antenna"*/ );
-   linelist[ ( int ) SAntH ] = reg1testLine( "SAntH", ct->entAGL.getValue() + ";" + ct->entASL.getValue()  /*, "Antenna Height agl;height asl"*/ );
-   linelist[ ( int ) CQSOs ] = reg1testLine( "CQSOs", QString::number( nvalid ) + ";1" /*, "Claimed no. of valid QSOs;Band multiplier"*/ );
+   linelist[ static_cast< int> (MOpe1) ] = reg1testLine( "MOpe1", opsl1  /*, "Operators line 1/2"*/ );
+   linelist[ static_cast< int> (MOpe2) ] = reg1testLine( "MOpe2", opsl2  /*, "Operators line 2/2"*/ );
+   linelist[ static_cast< int> (STXEq) ] = reg1testLine( "STXEq", ct->entTx.getValue()  /*, "TX Equipment"*/ );
+   linelist[ static_cast< int> (SPowe) ] = reg1testLine( "SPowe", ct->power.getValue()  /*, "TX Power (W)"*/ );
+   linelist[ static_cast< int> (SRXEq) ] = reg1testLine( "SRXEq", ct->entRx.getValue()  /*, "RX Equipment"*/ );
+   linelist[ static_cast< int> (SAnte) ] = reg1testLine( "SAnte", ct->entAnt.getValue()  /*, "Antenna"*/ );
+   linelist[ static_cast< int> (SAntH) ] = reg1testLine( "SAntH", ct->entAGL.getValue() + ";" + ct->entASL.getValue()  /*, "Antenna Height agl;height asl"*/ );
+   linelist[ static_cast< int> (CQSOs) ] = reg1testLine( "CQSOs", QString::number( nvalid ) + ";1" /*, "Claimed no. of valid QSOs;Band multiplier"*/ );
 
-   linelist[ ( int ) CQSOP ] = reg1testLine( "CQSOP", QString::number( ct->contestScore ) ); /*, "Claimed no. of QSO points"*/
-   linelist[ ( int ) CWWLs ] = reg1testLine( "CWWLs", QString::number( nlocs ) + ";0;1" ); /*, "Claimed no. of WWLs;Bonus per new WWL;WWL multiplier"*/
-   linelist[ ( int ) CWWLB ] = reg1testLine( "CWWLB", QString::number ( ct->bonus) ); /*, "Claimed no. of WWL bonus points"*/
-   linelist[ ( int ) CExcs ] = reg1testLine( "CExcs", QString::number( ndistrict ) + ";0;1" ); /*, "Claimed no. of exchanges; Bonus for each new exchange; Exchange Multiplier"*/
-   linelist[ ( int ) CExcB ] = reg1testLine( "CExcB", QString("0") ); /*, "Claimed no. of exchange bonus points"*/
-   linelist[ ( int ) CDXCs ] = reg1testLine( "CDXCs", QString::number( nctry ) + ";0;1" ); /*, "Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier"*/
-   linelist[ ( int ) CDXCB ] = reg1testLine( "CDXCB", QString("0") ); /*, "Claimed no of DXCC bonus points"*/
-   linelist[ ( int ) CToSc ] = reg1testLine( "CToSc", QString::number( ct->contestScore * ltot ) ); /*, "Claimed total score"*/
-   linelist[ ( int ) CODXC ] = reg1testLine( "CODXC", QString(bestdx ? ( bestdx->cs.fullCall.getValue() + ";" + bestdx->loc.loc.getValue() + ";" + QString::number( bestdx->contactScore.getValue() )  ) : ";;" )); /*, "(Best DX) Callsign; Locator; Distance"*/
+   linelist[ static_cast< int> (CQSOP) ] = reg1testLine( "CQSOP", QString::number( ct->contestScore ) ); /*, "Claimed no. of QSO points"*/
+   linelist[ static_cast< int> (CWWLs) ] = reg1testLine( "CWWLs", QString::number( nlocs ) + ";0;1" ); /*, "Claimed no. of WWLs;Bonus per new WWL;WWL multiplier"*/
+   linelist[ static_cast< int> (CWWLB) ] = reg1testLine( "CWWLB", QString::number ( ct->bonus) ); /*, "Claimed no. of WWL bonus points"*/
+   linelist[ static_cast< int> (CExcs) ] = reg1testLine( "CExcs", QString::number( ndistrict ) + ";0;1" ); /*, "Claimed no. of exchanges; Bonus for each new exchange; Exchange Multiplier"*/
+   linelist[ static_cast< int> (CExcB) ] = reg1testLine( "CExcB", QString("0") ); /*, "Claimed no. of exchange bonus points"*/
+   linelist[ static_cast< int> (CDXCs) ] = reg1testLine( "CDXCs", QString::number( nctry ) + ";0;1" ); /*, "Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier"*/
+   linelist[ static_cast< int> (CDXCB) ] = reg1testLine( "CDXCB", QString("0") ); /*, "Claimed no of DXCC bonus points"*/
+   linelist[ static_cast< int> (CToSc) ] = reg1testLine( "CToSc", QString::number( ct->contestScore * ltot ) ); /*, "Claimed total score"*/
+   linelist[ static_cast< int> (CODXC) ] = reg1testLine( "CODXC", QString(bestdx ? ( bestdx->cs.fullCall.getValue() + ";" + bestdx->loc.loc.getValue() + ";" + QString::number( bestdx->contactScore.getValue() )  ) : ";;" )); /*, "(Best DX) Callsign; Locator; Distance"*/
 
    for ( int i = 0; i < LineCount; i++ )
    {

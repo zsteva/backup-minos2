@@ -534,7 +534,7 @@ SoundSystemDriver::~SoundSystemDriver()
 void SoundSystemDriver::initTone1( int t1 )
 {
    delete [] t1ptr;
-   toneSamples = rate * ( long ) tuneTime;
+   toneSamples = rate * static_cast<long>(tuneTime);
 
    t1ptr = new int16_t [ toneSamples ];
 
@@ -544,7 +544,7 @@ void SoundSystemDriver::initTone2( int t1, int t2 )
 {
    delete [] t2ptr;
 
-   toneSamples = rate * ( long ) tuneTime;
+   toneSamples = rate * static_cast<long>(tuneTime);
    t2ptr = new int16_t [ toneSamples ];
    // ((tuneLevel/100) * 32767.0) / sqrt( 2 ) is an attempt to get equal power - but it can result
    // in peak levels that are out of range, so what to do? Flat top it?

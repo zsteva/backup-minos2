@@ -272,7 +272,7 @@ void MinosCommonConnection::on_readyRead()
           int rxpt = 0;
           while ( rxpt < rxlen )
           {
-             int ptlen = ( int ) strlen( &rxbuff[ rxpt ] );
+             int ptlen = static_cast<int> (strlen( &rxbuff[ rxpt ] ));
              if ( ptlen )
              {
                 onLog ( &rxbuff[ rxpt ], ptlen, 1 );  // but this ignores the wrapper
@@ -288,7 +288,7 @@ void MinosCommonConnection::on_readyRead()
              {
                  QStringRef slen = packetbuff.midRef(2, packetoffset - 2);
                  int packetlen = slen.toInt();
-                if ( packetlen <= ( int ) packetbuff.size() - 2 && packetbuff.indexOf( ">&&" ) )
+                if ( packetlen <= static_cast<int> (packetbuff.size()) - 2 && packetbuff.indexOf( ">&&" ) )
                 {
                    QString packet = packetbuff.mid( packetoffset, packetlen );
                    packetbuff = packetbuff.right(  packetbuff.size() - 2 - packetlen - packetoffset );

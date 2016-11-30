@@ -129,7 +129,7 @@ void MCReadSocket::onTimeout()
            {
               char message[ 4096 ];
               int cnt = recvfrom( state->NOTIFY_RECEIVE_sock, message, 4095, 0,
-                                  ( /*struct*/ sockaddr * ) & ( state->addr ), &( state->addrlen ) );
+                                  reinterpret_cast< /*struct*/ sockaddr * > (& ( state->addr )), &( state->addrlen ) );
               if ( cnt < 0 )
               {
                  trace( "recvfrom" );
@@ -211,10 +211,10 @@ bool MCReadSocket::setupRO()
 
     // Complete State Reset
 
-    memset( ( char * ) &( state->addr ), 0, sizeof( state->addr ) );
+    memset( reinterpret_cast< char *> (&( state->addr )), 0, sizeof( state->addr ) );
     state->addr.sin_family = AF_INET;
     state->addr.sin_addr.s_addr = htonl( INADDR_ANY );
-    state->addr.sin_port = ( unsigned short ) htons( UPNP_PORT );
+    state->addr.sin_port = static_cast<unsigned short>(htons( UPNP_PORT ));
     state->addrlen = sizeof( state->addr );
 
 
@@ -222,20 +222,20 @@ bool MCReadSocket::setupRO()
     state->AddressListLength = GetLocalIPAddressList( state->AddressList );
 
     state->NOTIFY_RECEIVE_sock = socket( AF_INET, SOCK_DGRAM, 0 );
-    memset( ( char * ) &( addr ), 0, sizeof( addr ) );
+    memset( reinterpret_cast<char *>(&( addr )), 0, sizeof( addr ) );
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = htonl( INADDR_ANY );
-    addr.sin_port = ( unsigned short ) htons( UPNP_PORT );
+    addr.sin_port = static_cast<unsigned short>(htons( UPNP_PORT ));
     int ra = 1;
 #if defined(Q_OS_WIN) | defined(Q_OS_ANDROID)
 #define SO_REUSEPORT 0
 #endif
-    if ( setsockopt( state->NOTIFY_RECEIVE_sock, SOL_SOCKET, SO_REUSEADDR|SO_REUSEPORT, ( char* ) &ra, sizeof( ra ) ) < 0 )
+    if ( setsockopt( state->NOTIFY_RECEIVE_sock, SOL_SOCKET, SO_REUSEADDR|SO_REUSEPORT, reinterpret_cast<char*>(&ra), sizeof( ra ) ) < 0 )
     {
        trace( "Setting SockOpt SO_REUSEADDR failed" );
        return false;
     }
-    if ( bind( state->NOTIFY_RECEIVE_sock, ( struct sockaddr * ) &( addr ), sizeof( addr ) ) < 0 )
+    if ( bind( state->NOTIFY_RECEIVE_sock, reinterpret_cast<struct sockaddr *>(&( addr )), sizeof( addr ) ) < 0 )
     {
        trace( "Could not bind to UPnP Listen Port" );
        return false;
@@ -246,18 +246,18 @@ bool MCReadSocket::setupRO()
     //
     for ( int i = 0; i < state->AddressListLength; ++i )
     {
-        memset( ( char * ) & ( addr ), 0, sizeof( addr ) );
+        memset( reinterpret_cast<char *> (& ( addr )), 0, sizeof( addr ) );
         addr.sin_family = AF_INET;
         QHostAddress &address = state->AddressList[ i ];
         addr.sin_addr.s_addr = htonl(address.toIPv4Address());
-        addr.sin_port = ( unsigned short ) htons( UPNP_PORT );
+        addr.sin_port = static_cast<unsigned short>(htons( UPNP_PORT ));
 
         mreq.imr_multiaddr.s_addr = inet_addr( UPNP_GROUP );
         mreq.imr_interface.s_addr = htonl(address.toIPv4Address());
         //
         // Join the multicast group
         //
-        if ( setsockopt( state->NOTIFY_RECEIVE_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, ( char* ) &mreq, sizeof( mreq ) ) < 0 )
+        if ( setsockopt( state->NOTIFY_RECEIVE_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, reinterpret_cast<char*>(&mreq), sizeof( mreq ) ) < 0 )
         {
             trace("Join multicast failed "+ address.toString());
         /* Does not matter */

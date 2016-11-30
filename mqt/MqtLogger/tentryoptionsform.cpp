@@ -194,7 +194,7 @@ void TEntryOptionsForm::on_CloseButton_clicked()
     ct->entEMail.setValue( ui->OptionsScrollBox->item(r++, 0)->text() );
 
     //enum ExportType {EREG1TEST, EADIF, EG0GJV, EMINOS, EKML};
-    expformat = ( ExportType ) ui->EntryGroup->checkedId();
+    expformat = static_cast< ExportType> (ui->EntryGroup->checkedId());
 
     accept();
 }

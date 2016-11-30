@@ -262,7 +262,7 @@ bool TContestApp::insertContest( BaseContestLog * p, unsigned int sno )
 {
 
    // called from LoggerContestLog::initialise
-   if ( ( int ) sno != -1 )
+   if ( static_cast< int > (sno) != -1 )
    {
       if ( sno >= contestSlotList.size() )
       {
@@ -301,7 +301,7 @@ bool TContestApp::insertList( ContactList * p, unsigned int sno )
 {
 
    // called from LoggerContestLog::initialise
-   if ( ( int ) sno != -1 )
+   if ( static_cast< int > (sno) != -1 )
    {
       if ( sno >= listSlotList.size() )
       {

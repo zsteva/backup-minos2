@@ -134,7 +134,7 @@ bool select_keyer( const QString &kn )
          {
             if ( currentKeyer )
                currentKeyer->select( false );
-            currentKeyer = ( commonKeyer * ) lm;
+            currentKeyer = static_cast<commonKeyer *>(lm);
             if ( sblog )
             {
                trace( "Keyer " + kn + " made current." );
@@ -1251,7 +1251,7 @@ PlayAction::PlayAction( const QString &pfileName, bool noPTT, long pdelayStart,
    if ( delayTicks <= 0 )
       delayTicks = 1;	// so it starts on next tick
 
-   repeatTicks = ( long ) ( prepeatDelay * 1000);
+   repeatTicks = prepeatDelay * 1000;
    actionTime = 1;
 
    if ( testMode )

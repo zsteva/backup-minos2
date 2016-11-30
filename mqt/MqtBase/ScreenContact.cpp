@@ -15,7 +15,7 @@ ScreenContact::~ScreenContact()
 void ScreenContact::initialise( BaseContestLog *ct )
 {
    contest = ct;
-   logSequence = ( unsigned long ) - 1;
+   logSequence = static_cast<unsigned long> (- 1);
    cs = callsign();
    loc = locator();
    time = dtg( false );
@@ -258,6 +258,6 @@ void ScreenContact::checkScreenContact( )
 }
 bool ScreenContact::isNextContact( void ) const
 {
-   return ( logSequence == ( unsigned long ) - 1L ) ? true : false;
+   return ( logSequence == static_cast< unsigned long > (- 1L) ) ? true : false;
 }
 

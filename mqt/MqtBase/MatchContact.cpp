@@ -19,7 +19,7 @@ bool LtMatchContest::operator() ( const BaseMatchContest* s1, const BaseMatchCon
 }
 MatchContact *BaseMatchContest::pcontactAt( int i )
 {
-    if (i > (int)matchList.size())
+    if (i > static_cast< int > (matchList.size()))
         return 0;
     return matchList.at( i );
 }

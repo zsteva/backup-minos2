@@ -27,7 +27,7 @@ std::string trimr ( const std::string &s )
     int i;
     for ( i = s.length() - 1; i >= 0; i-- )
     {
-        if ( !iscntrl ( ( unsigned int ) ( s[ i ] ) ) && !isspace ( ( unsigned int ) ( s[ i ] ) ) )
+        if ( !iscntrl ( static_cast< unsigned int >  ( s[ i ] ) ) && !isspace ( static_cast< unsigned int >  ( s[ i ] ) ) )
             break;
     }
     std::string s2;
@@ -41,7 +41,7 @@ std::string trim ( const std::string &s )
     unsigned int i;
     for ( i = 0; i < s2.length(); i++ )
     {
-        if ( !iscntrl ( ( unsigned int ) ( s[ i ] ) ) && !isspace ( ( unsigned int ) ( s[ i ] ) ) )
+        if ( !iscntrl ( static_cast< unsigned int > ( s[ i ] ) ) && !isspace ( static_cast< unsigned int > ( s[ i ] ) ) )
             break;
     }
     std::string s3 = s2.substr ( i, s2.length() );
@@ -53,7 +53,7 @@ std::string sstrupr ( const std::string &s )
     std::string s2;
     for ( i = 0; i < s.length(); i++ )
     {
-        s2 += toupper ( ( unsigned int ) ( s[ i ] ) );
+        s2 += toupper ( static_cast< unsigned int >( s[ i ] ) );
     }
     //   s = s2;   // don't modify the input
     return s2;
@@ -542,9 +542,9 @@ bool Calendar::parseFile ( const QString &fname )
 
                             ic.duration = ( *tl ).duration;
                             double dur = atof ( ic.duration.c_str() );
-                            double durh = ( int ) ( dur / 24 );
+                            double durh = static_cast< int > ( dur / 24 );
                             double durm = ( dur - durh ) * 60;
-                            ic.finish = ic.start.addSecs( ( int ) durh * 3600 + ( int ) durm * 60 );
+                            ic.finish = ic.start.addSecs( static_cast< int > (durh) * 3600 + static_cast< int > (durm) * 60 );
 
                             std::string timeType = ( *tl ).timeType;
                             if ( timeType == "local" )

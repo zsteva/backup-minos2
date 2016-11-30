@@ -183,7 +183,7 @@ void TSendDM::doSendRotator( rpcConstants::RotateDirection direction,  int angle
     RPCGeneralClient rpc(rpcConstants::rotatorMethod);
    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-   st->addMember( (int)direction, rpcConstants::rotatorParamDirection );
+   st->addMember( static_cast<int> (direction), rpcConstants::rotatorParamDirection );
    st->addMember( angle, rpcConstants::rotatorParamAngle );
    rpc.getCallArgs() ->addParam( st );
 

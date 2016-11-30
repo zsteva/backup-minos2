@@ -41,7 +41,7 @@
 uint32_t FourCC ( const char *ChunkName )
 {
    uint32_t retbuf = 0x20202020L;   // four spaces (padding)
-   char *p = ( ( char * ) & retbuf );
+   char *p = ( reinterpret_cast<char *>(& retbuf) );
 
    // Remember, this is Intel format!
    // The first character goes in the LSB
@@ -252,7 +252,7 @@ DDCRET RiffFile::Backpatch ( long FileOffset,
 
 DDCRET RiffFile::Expect ( const void *Data, unsigned NumBytes )
 {
-   char * p = ( char * ) Data;
+   const char * p = reinterpret_cast<const char *>(Data);
 
    while ( NumBytes-- )
    {

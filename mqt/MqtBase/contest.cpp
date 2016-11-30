@@ -233,31 +233,31 @@ void BaseContestLog::disbear( double lon, double lat, double &dist, int &brg ) c
    // first distance into dx
 
    double co = cos( ode - lon ) * coscos + sinodn * sinlat ;
-   double ca = atan( fabs( sqrt( ( double ) 1.0 - co * co ) / co ) );
-   if ( co < ( double ) 0.0 )
+   double ca = atan( fabs( sqrt( 1.0 - co * co ) / co ) );
+   if ( co < 0.0 )
       ca = pi - ca ;
-   double dx = ( double ) 6371.291 * ca ;       /* 6371.291 is approved radius of earth */
+   double dx = 6371.291 * ca ;       /* 6371.291 is approved radius of earth */
 
    // and then the bearing
 
    double si = sin( lon - ode ) * coscos ;
    co = sinlat - sinodn * cos( ca );
    double az = atan( fabs( si / co ) );
-   if ( co < ( double ) 0.0 )
+   if ( co < 0.0 )
       az = pi - az ;
-   if ( si < ( double ) 0.0 )
+   if ( si <  0.0 )
       az = -az ;
-   if ( az < ( double ) 0.0 )
-      az = az + ( double ) 2.0 * pi ;
+   if ( az < 0.0 )
+      az = az + 2.0 * pi ;
 
    az = az / dr ;                      /* convert to degrees */
-   az += ( double ) 0.5 ;                /* correct angle */
+   az += 0.5 ;                /* correct angle */
    dx = ceil( dx );                      // adjust for commenced kilometer
-   dx += ( double ) 0.5 ;              // make sure double truncates properly back to int
+   dx += 0.5 ;              // make sure double truncates properly back to int
    dist = dx ;			                  /* return result */
-   if ( ( int ) az == 0 )                  /* due north */
+   if ( static_cast<int>(az) == 0 )                  /* due north */
       az = 360.00 ;                 	/* so show valid */
-   brg = ( int ) az ;                   /* and give it back as integer */
+   brg = static_cast< int > (az) ;                   /* and give it back as integer */
 }
 //---------------------------------------------------------------------------
 bool BaseContestLog::getsdist( const char *loc, char *minloc, double &mindist )
@@ -1008,11 +1008,11 @@ void dupsheet::clear()
 //============================================================
 void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImport * const mt )
 {
-   unsigned long logSequence = ( unsigned long ) - 1;
+   unsigned long logSequence = static_cast< unsigned long > (- 1);
 
    int itemp;
    if ( mt->getStructArgMemberValue( "lseq", itemp ) )
-      logSequence = ( unsigned long ) itemp;
+      logSequence = static_cast< unsigned long > (itemp);
 
    if ( methodName == "MinosLogContest" )
    {

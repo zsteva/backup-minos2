@@ -338,7 +338,7 @@ void TSingleLogFrame::on_XferPressed()
    // copy relevant parts of match contact to screen contact
    if ( archiveTreeClickIndex.isValid() && ( xferTree == 0 || xferTree == ui->ArchiveMatchTree ) )
    {
-      MatchTreeItem * MatchTreeIndex = ( MatchTreeItem * ) archiveTreeClickIndex.internalPointer();
+      MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem * >(archiveTreeClickIndex.internalPointer());
 
       transferDetails( MatchTreeIndex );
 
@@ -347,7 +347,7 @@ void TSingleLogFrame::on_XferPressed()
    {
       if ( otherTreeClickIndex.isValid() && ( xferTree == 0 || xferTree == ui->OtherMatchTree ) )
       {
-         MatchTreeItem * MatchTreeIndex = ( MatchTreeItem * ) otherTreeClickIndex.internalPointer();
+         MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem * > (otherTreeClickIndex.internalPointer());
 
          transferDetails( MatchTreeIndex );
       }
@@ -798,7 +798,7 @@ void TSingleLogFrame::on_ArchiveMatchTreeSelectionChanged(const QItemSelection &
 }
 void TSingleLogFrame::on_ThisMatchTree_doubleClicked(const QModelIndex &index)
 {
-    MatchTreeItem * MatchTreeIndex = ( MatchTreeItem * ) index.internalPointer();
+    MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem *>(index.internalPointer());
 
     MatchContact *mc = MatchTreeIndex->getMatchContact();
     BaseContact *bct = mc->getBaseContact();
@@ -898,7 +898,7 @@ void TSingleLogFrame::on_SetFreq(QString,BaseContestLog*)
 
 }
 
-void TSingleLogFrame::on_RotatorState(QString s, BaseContestLog *ct)
+void TSingleLogFrame::on_RotatorState(QString s, BaseContestLog * /*ct*/)
 {
     ui->GJVQSOLogFrame->setRotatorState(s);
 }
@@ -934,13 +934,13 @@ QVariant QSOGridModel::data( const QModelIndex &index, int role ) const
     {
         if ( ct->contactFlags.getValue() & FORCE_LOG )
         {
-           return ( QColor ) ( 0x00FF80C0 );        // Pink(ish)
+           return static_cast< QColor> ( 0x00FF80C0 );        // Pink(ish)
         }
         else
         {
            if ( ct->getModificationCount() > 1 )
            {
-               return ( QColor ) ( 0x00C0DCC0 );    // "money green"
+               return static_cast< QColor> ( 0x00C0DCC0 );    // "money green"
            }
         }
         return QVariant();
@@ -1174,13 +1174,13 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
         {
             if ( ct->contactFlags.getValue() & FORCE_LOG )
             {
-               return ( QColor ) ( 0x00FF80C0 );        // Pink(ish)
+               return static_cast< QColor > ( 0x00FF80C0 );        // Pink(ish)
             }
             else
             {
                if ( ct->getModificationCount() > 1 )
                {
-                   return ( QColor ) ( 0x00C0DCC0 );    // "money green"
+                   return static_cast< QColor > ( 0x00C0DCC0 );    // "money green"
                }
             }
         }

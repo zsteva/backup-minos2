@@ -74,7 +74,7 @@ void RPCParam::addValue( TiXmlElement &node )
                         {
                            return QSharedPointer<RPCParam>(new RPCDtgParam(node));
                         }
-   return QSharedPointer<RPCParam>((RPCParam *)0);
+   return QSharedPointer<RPCParam>();
 }
 bool RPCParam::getBoolean( bool & )
 {
@@ -307,7 +307,7 @@ bool RPCParamStruct::getMember( unsigned int eleno, QSharedPointer<RPCParam>&p )
 }
 bool RPCParamStruct::getElements( unsigned int &size )
 {
-   size = ( unsigned int ) elements.size();
+   size = elements.size();
    return true;
 }
 bool RPCParamStruct::getElement( unsigned int eleno, QSharedPointer<RPCParam>&p )
@@ -432,7 +432,7 @@ QString RPCParamArray::analyse()
 }
 bool RPCParamArray::getElements( unsigned int &size )
 {
-   size = ( unsigned int ) elements.size();
+   size = elements.size();
    return true;
 }
 bool RPCParamArray::getElement( unsigned int eleno, QSharedPointer<RPCParam> &p )

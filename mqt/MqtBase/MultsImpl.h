@@ -103,7 +103,7 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
       QString getText( int item, int Column, BaseContestLog *const ct )
       {
          QString dest;
-         if ( item >= (int)MultList::size() )
+         if ( item >= static_cast< int > (MultList::size()) )
             return dest;
          itemtype ce = MultList::at( item );
          switch ( Column )
@@ -173,7 +173,7 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
       {
          // Only called for fullMultDisp
          QString dest;
-         if ( item >= (int)MultList::size() )
+         if ( item >= static_cast< int > (MultList::size()) )
             return dest;
          itemtype ce = MultList::at( item );
 
