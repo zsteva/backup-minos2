@@ -1,155 +1,32 @@
 #include "base_pch.h"
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QNetworkRequest>
 
 #include "tinyxml.h"
-#include "BandList.h"
 #include "Calendar.h"
-#include "CalendarList.h"
 
-const char *TypeVHFContest = "<VHF from VHFContests.xml>";
-const char *TypeMwaveContest = "<Microwave from MicroContestsxx.xml>";
-QMap<QString, QString> contestNameMap;
-int calendarFormYear = 0;
+extern const char *TypeVHFContest;
+extern const char *TypeMwaveContest;
 
-QString calendarNameString[] =
+const char *monthTable[ 12 ] =
     {
-        "vhfcontests",
-        "hfcontests",
-        "microcontests",
-        "VHFContestsOther",
-        "HFContestsOther",
-        "bartgcontests"
+        "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+    };
+int monthLength[ 12 ] =
+    {
+        31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+    };
+const char *days[ 7 ] =
+    {
+        "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
     };
 
 
-int calendarYear = 2000;
-std::string trimr ( const std::string &s )
-{
-    int i;
-    for ( i = s.length() - 1; i >= 0; i-- )
-    {
-        if ( !iscntrl ( static_cast< unsigned int >  ( s[ i ] ) ) && !isspace ( static_cast< unsigned int >  ( s[ i ] ) ) )
-            break;
-    }
-    std::string s2;
-    if ( i >= 0 )
-        s2 = s.substr ( 0, i + 1 );
-    return s2;
-}
-std::string trim ( const std::string &s )
-{
-    std::string s2 = trimr ( s );
-    unsigned int i;
-    for ( i = 0; i < s2.length(); i++ )
-    {
-        if ( !iscntrl ( static_cast< unsigned int > ( s[ i ] ) ) && !isspace ( static_cast< unsigned int > ( s[ i ] ) ) )
-            break;
-    }
-    std::string s3 = s2.substr ( i, s2.length() );
-    return s3;
-}
-std::string sstrupr ( const std::string &s )
-{
-    unsigned int i;
-    std::string s2;
-    for ( i = 0; i < s.length(); i++ )
-    {
-        s2 += toupper ( static_cast< unsigned int >( s[ i ] ) );
-    }
-    //   s = s2;   // don't modify the input
-    return s2;
-}
-
-//---------------------------------------------------------------------------
-QString CalendarYear::getPath()
-{
-    QString path =  "./Configuration/" + calendarNameString[ type ] + yearString() + ".xml";
-    return path;
-}
-QString CalendarYear::getURL()
-{
-    QString url = getSite() + calendarNameString[ type ] + yearString() + ".xml";
-    return url;
-
-}
-//---------------------------------------------------------------------------
-QString VHFCalendarYear::getSite()
-{
-    return "http://www.rsgbcc.org/vhf/";
-}
-//---------------------------------------------------------------------------
-QString HFCalendarYear::getSite()
-{
-    // Yes, the HF calendar is under the VHF directory!
-    return "http://www.rsgbcc.org/vhf/";
-}
-//---------------------------------------------------------------------------
-QString HFBARTGCalendarYear::getSite()
-{
-    return "http://bartg.rsgbcc.org/";
-}
-//---------------------------------------------------------------------------
-QString MicroCalendarYear::getSite()
-{
-    return "http://microwave.rsgbcc.org/";
-}
-//---------------------------------------------------------------------------
-QString VHFOtherCalendarYear::getSite()
-{
-    return "";
-}
-QString VHFOtherCalendarYear::getPath()
-{
-    QString p = "./Configuration/" + calendarNameString[ type ] + ".xml";
-    return p;
-}
-QString VHFOtherCalendarYear::getURL()
-{
-    // No URL
-    return QString();
-}
-//---------------------------------------------------------------------------
-QString HFOtherCalendarYear::getSite()
-{
-    return "";
-}
-QString HFOtherCalendarYear::getPath()
-{
-    QString p = "./Configuration/" + calendarNameString[ type ] + ".xml";
-    return p;
-}
-QString HFOtherCalendarYear::getURL()
-{
-    // No URL
-    return QString();
-}
-//---------------------------------------------------------------------------
-QString CTYCalendarYear::getSite()
-{
-    return "http://www.country-files.com/cty/cty.dat";
-}
-QString CTYCalendarYear::getPath()
-{
-    QString p = "./Configuration/cty.dat";
-    return p;
-}
-QString CTYCalendarYear::getURL()
-{
-    return getSite();
-}
-//---------------------------------------------------------------------------
-
-#ifdef SEPARATECALENDAR
-std::map<std::string, std::string> contestNameMap;
-std::string getTypeName ( const std::string &xmlName, CalType calType )
+QString Calendar::getTypeName ( const QString &xmlName, CalType calType )
 {
 
-    std::map<std::string, std::string>::iterator ctype = contestNameMap.find( xmlName );
+    QMap<QString, QString>::iterator ctype = contestNameMap.find( xmlName );
     if ( ctype != contestNameMap.end() )
     {
-        return ctype->second;
+        return ctype.value();
     }
 
     if ( calType == ectVHF || calType == ectVHFOther )
@@ -164,32 +41,7 @@ std::string getTypeName ( const std::string &xmlName, CalType calType )
     return "Undefined";
 }
 
-std::string strupr ( const std::string &s )
-{
-    std::string s2;
-    for ( unsigned int i = 0; i < s.length(); i++ )
-    {
-        s2 += toupper ( s[ i ] );
-    }
-    //s = s2;
-    return s2;
-}
-
-int curYear = 0;
-
-const char *monthTable[ 12 ] =
-    {
-        "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
-    };
-int monthLength[ 12 ] =
-    {
-        31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-    };
-const char *days[ 7 ] =
-    {
-        "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
-    };
-void setYear ( int y )
+void Calendar::setYear ( int y )
 {
     curYear = y;
     if ( y % 4 == 0 )
@@ -201,9 +53,9 @@ void setYear ( int y )
         monthLength[ 1 ] = 28;
     }
 }
-int getMonth ( const std::string &m )
+int Calendar::getMonth ( const QString &m )
 {
-    std::string m2 = strupr ( m ).substr ( 0, 3 );
+    QString m2 = m.toUpper().left ( 3 );
     for ( int i = 0; i < 12; i++ )
     {
         if ( m2 == monthTable[ i ] )
@@ -213,12 +65,12 @@ int getMonth ( const std::string &m )
     }
     return 0;
 }
-int getDayOfWeek ( QDateTime dtg )
+int Calendar::getDayOfWeek ( QDateTime dtg )
 {
     int dw = dtg.date().dayOfWeek();    // Monday is 1, Sunday is 7
     return dw;
 }
-int getDate ( int month, int day, int week )
+int Calendar::getDate ( int month, int day, int week )
 {
     // Day 1 is Monday
 
@@ -254,6 +106,7 @@ int getDate ( int month, int day, int week )
 
     return 0;
 }
+
 Calendar::Calendar ( int year, CalType calType ) : calType ( calType )
 {
     calendarYear = year;
@@ -270,7 +123,7 @@ that these start and end dates should apply indefinitely.
 */
 
 
-QDateTime localToUTC( QDateTime t )
+QDateTime Calendar::localToUTC( QDateTime t )
 {
     unsigned short month = t.date().month();
     unsigned short day = t.date().day();
@@ -319,26 +172,26 @@ bool Calendar::parseFile ( const QString &fname )
 
     QByteArray total = file.readAll();
 
-    std::string buffer = QString( total ).toStdString();
+    QString buffer = QString( total );
 
-    std::string buffer2;
+    QString buffer2;
 
-    size_t dtdPos = buffer.find ( "<!DOCTYPE" );
-    if ( dtdPos != std::string::npos )
+    int dtdPos = buffer.indexOf ( "<!DOCTYPE" );
+    if ( dtdPos != -1 )
     {
-        buffer2 = buffer.substr ( 0, dtdPos );
+        buffer2 = buffer.left (dtdPos );
 
-        size_t dtdEndPos = buffer.find ( "]>" );
-        if ( dtdEndPos == std::string::npos )
+        int dtdEndPos = buffer.indexOf ( "]>" );
+        if ( dtdEndPos == -1 )
         {
             return false;
         }
-        buffer2 += buffer.substr ( dtdEndPos + 2, buffer.size() - dtdEndPos - 2 );
+        buffer2 += buffer.mid ( dtdEndPos + 2, buffer.size() - dtdEndPos - 2 );
     }
 
     TiXmlBase::SetCondenseWhiteSpace ( false );
     TiXmlDocument xdoc;
-    const char *loaded = xdoc.Parse ( buffer2.c_str() );
+    const char *loaded = xdoc.Parse ( buffer2.toStdString().c_str() );
     if ( !loaded )
     {
         return false;
@@ -406,7 +259,7 @@ bool Calendar::parseFile ( const QString &fname )
                             }
                             else
                             {
-                                std::string eval = e->Value();
+                                QString eval = e->Value();
                                 //<!ELEMENT calendar (version, icalurl?, googleurl?, notes_list*, mult_type+, special_rule+, category*, section+, band+, contest_series*, contest+)>
                                 continue;
                             }
@@ -414,16 +267,16 @@ bool Calendar::parseFile ( const QString &fname )
     // Now we have the raw info; we need to go through it and
     // generate all the individual contest details for logger/adjsql
     setYear ( calendarYear );
-    for ( std::map<std::string, CalendarContest>::iterator i = contests.begin(); i != contests.end(); i++ )
+    for ( QMap<QString, CalendarContest>::iterator i = contests.begin(); i != contests.end(); i++ )
     {
 
-        for ( std::vector<CalendarBandList>::iterator bl = ( *i ).second.bandList.begin(); bl != ( *i ).second.bandList.end(); bl++ )
+        for ( QVector<CalendarBandList>::iterator bl = i.value().bandList.begin(); bl != i.value().bandList.end(); bl++ )
         {
             // For each contest iterate the time list or the band list
             // the band list overrides the time list!
 
-            std::vector<TimeList>::iterator tls;
-            std::vector<TimeList>::iterator tle;
+            QVector<TimeList>::iterator tls;
+            QVector<TimeList>::iterator tle;
 
             CalendarBand &cb = bands[ (*bl).name ];
 
@@ -434,13 +287,13 @@ bool Calendar::parseFile ( const QString &fname )
             }
             else
             {
-                tls = ( *i ).second.timeList.begin();
-                tle = ( *i ).second.timeList.end();
+                tls = i.value().timeList.begin();
+                tle = i.value().timeList.end();
             }
 
-            for ( std::vector<TimeList>::iterator tl = tls; tl != tle; tl++ )
+            for ( QVector<TimeList>::iterator tl = tls; tl != tle; tl++ )
             {
-                for ( std::vector<MonthList>::iterator ml = ( *tl ).monthList.begin(); ml != ( *tl ).monthList.end(); ml++ )
+                for ( QVector<MonthList>::iterator ml = ( *tl ).monthList.begin(); ml != ( *tl ).monthList.end(); ml++ )
                 {
                     // startDate needs to incorporate the week and day
 
@@ -460,31 +313,31 @@ bool Calendar::parseFile ( const QString &fname )
 
                     // we need to copy the datelist before we add to it...
 
-                    std::vector<StartDateList> startDateList = ( *tl ).startDateList;
+                    QVector<StartDateList> startDateList = ( *tl ).startDateList;
 
                     if ( startDateList.size() == 0 )
                     {
                         // make the start info into a statt date (just one!)
 
-                        std::string startWeek = ( *tl ).startWeek;
-                        std::string startDay = ( *tl ).startDay;
+                        QString startWeek = ( *tl ).startWeek;
+                        QString startDay = ( *tl ).startDay;
 
 
-                        std::string startday1 = startDay;
-                        std::string startday2;
+                        QString startday1 = startDay;
+                        QString startday2;
                         int istartday1, istartday2;
 
-                        size_t ppos = startDay.find ( "+" );
-                        if ( ppos != std::string::npos )
+                        int ppos = startDay.indexOf ( "+" );
+                        if ( ppos != -1 )
                         {
-                            startday1 = startDay.substr ( 0, ppos );
-                            startday2 = startDay.substr ( ppos + 1, startDay.size() );
-                            istartday1 = atoi ( startday1.c_str() );
-                            istartday2 = atoi ( startday2.c_str() );
+                            startday1 = startDay.left ( ppos );
+                            startday2 = startDay.mid ( ppos + 1, startDay.size() );
+                            istartday1 = startday1.toInt();
+                            istartday2 = startday2.toInt();
                         }
                         else
                         {
-                            istartday1 = atoi ( startday1.c_str() );
+                            istartday1 = startday1.toInt();
                             istartday2 = 0;
                         }
                         if ( istartday1 == 0 )
@@ -492,13 +345,14 @@ bool Calendar::parseFile ( const QString &fname )
                             continue;   // next time list
                         }
 
-                        int istartWeek = atoi ( startWeek.c_str() );
+                        int istartWeek = startWeek.toInt();
                         if ( istartWeek == 0 )
                         {
                             continue;   // next time list
                         }
 
 
+                        //               QString bstartWeek = (*bl).startWeek; // or iterate its timeList
                         int istartDate = getDate ( sm, istartday1, istartWeek );
                         if ( istartDate == 0 )
                         {
@@ -508,7 +362,7 @@ bool Calendar::parseFile ( const QString &fname )
                         istartDate += istartday2;
 
                         StartDateList sdl;
-                        sdl.date = QString::number(istartDate).toStdString();
+                        sdl.date = QString::number(istartDate);
 
                         startDateList.push_back(sdl);
                     }
@@ -516,9 +370,9 @@ bool Calendar::parseFile ( const QString &fname )
                     if ( startDateList.size() )
                     {
                         // need to iterate the start dates
-                        for ( unsigned int j = 0; j < startDateList.size(); j++ )
+                        for ( int j = 0; j < startDateList.size(); j++ )
                         {
-                            int istartDate = atoi ( startDateList[ j ].date.c_str() );
+                            int istartDate = startDateList[ j ].date.toInt();
                             if ( istartDate == 0 )
                             {
                                 continue;
@@ -526,11 +380,17 @@ bool Calendar::parseFile ( const QString &fname )
 
                             IndividualContest ic;
 
-                            std::string desc = trim ( ( *i ).second.description );
-                            std::string sdesc = trim ( ( *i ).second.shortDescription );
-                            std::string name = trim ( ( *i ).second.name );
-                            std::string typeName = getTypeName ( name, calType );
+                            QString desc = i.value().description.trimmed();
+                            QString sdesc = i.value().shortDescription.trimmed();
+                            QString name = i.value().name.trimmed();
+                            QString typeName = getTypeName ( name, calType );
 
+                            // This needs changing once the contests are sorted
+                            // as e.g. 70MHz cumulatives are defined in two groups
+                            //if (desc[desc.size() - 1] == '#')
+                            //{
+                            //   desc += QString::number(instance++);
+                            //}
                             ic.name = name;
                             ic.typeName = typeName;
                             ic.description = desc;
@@ -538,42 +398,42 @@ bool Calendar::parseFile ( const QString &fname )
                             ic.bands = ( *bl ).name;
 
                             ic.start = QDateTime ( QDate( curYear, sm, istartDate ) );
-                            int h = atoi( ( *tl ).startTime.substr( 0, 2 ).c_str() );
-                            int m = atoi( ( *tl ).startTime.substr( 2, 2 ).c_str() );
+                            int h = ( *tl ).startTime.left( 2 ).toInt();
+                            int m = ( *tl ).startTime.mid( 2, 2 ).toInt();
 
                             ic.start = ic.start.addSecs( h * 3600 + m * 60 );
 
                             ic.duration = ( *tl ).duration;
-                            double dur = atof ( ic.duration.c_str() );
-                            double durh = static_cast< int > ( dur / 24 );
+                            double dur = ic.duration.toDouble();
+                            double durh = static_cast< int >( dur / 24 );
                             double durm = ( dur - durh ) * 60;
-                            ic.finish = ic.start.addSecs( static_cast< int > (durh) * 3600 + static_cast< int > (durm) * 60 );
+                            ic.finish = ic.start.addSecs( static_cast< int >(durh) * 3600 + static_cast< int >(durm) * 60 );
 
-                            std::string timeType = ( *tl ).timeType;
+                            QString timeType = ( *tl ).timeType;
                             if ( timeType == "local" )
                             {
                                 ic.start = localToUTC ( ic.start );
                                 ic.finish = localToUTC ( ic.finish );
                             }
 
-                            ic.ppKmScoring = ( ( *i ).second.scoring == CalendarContest::perkms );
-                            for ( unsigned int j = 0; j < ( *i ).second.sectionList.size(); j++ )
+                            ic.ppKmScoring = ( i.value().scoring == CalendarContest::perkms );
+                            for ( int j = 0; j < i.value().sectionList.size(); j++ )
                             {
-                                std::string n = ( *i ).second.sectionList[ j ].name;
+                                QString n = i.value().sectionList[ j ].name;
 
-                                std::map<std::string, CalendarSection>::iterator s = sections.find ( n );
+                                QMap<QString, CalendarSection>::iterator s = sections.find ( n );
 
                                 if ( s == sections.end() )
                                 {
                                     continue;
                                 }
-                                int mls = ( *s ).second.monthList.size();
+                                size_t mls = s.value().monthList.size();
                                 if ( mls )
                                 {
                                     bool monthOK = false;
-                                    for ( std::vector<MonthList>::iterator ml = ( *s ).second.monthList.begin(); ml != ( *s ).second.monthList.end(); ml++ )
+                                    for ( QVector<MonthList>::iterator ml = s.value().monthList.begin(); ml != s.value().monthList.end(); ml++ )
                                     {
-                                        if ( sstrupr ( ( *ml ).month ) == sstrupr ( monthTable[ sm - 1 ] ) )
+                                        if ( ( *ml ).month.compare(monthTable[ sm - 1 ], Qt::CaseInsensitive) == 0 )
                                         {
                                             monthOK = true;
                                             break;
@@ -591,15 +451,15 @@ bool Calendar::parseFile ( const QString &fname )
                                     ic.sections += ",";
                                 }
                             }
-                            ic.sections = ic.sections.substr ( 0, ic.sections.size() - 1 );  // lose any trailing comma
-                            ic.mults = ( *i ).second.mult;
-                            for ( unsigned int j = 0; j < ( *i ).second.specialRulesList.size(); j++ )
+                            ic.sections = ic.sections.left ( ic.sections.size() - 1 );  // lose any trailing comma
+                            ic.mults = i.value().mult;
+                            for ( int j = 0; j < i.value().specialRulesList.size(); j++ )
                             {
-                                ic.specialRules += ( *i ).second.specialRulesList[ j ].name + " ";
+                                ic.specialRules += i.value().specialRulesList[ j ].name + " ";
                             }
-                            //ic.power = ( *i ).second.power;
+                            ic.power = i.value().power;
 
-                            ic.reg1band = bands[ ic.bands ].reg1band.c_str();
+                            ic.reg1band = bands[ ic.bands ].reg1band;
                             if ( ic.reg1band == "1,2 GHz" )
                             {
                                 ic.reg1band = "1,3 GHz";
@@ -611,10 +471,11 @@ bool Calendar::parseFile ( const QString &fname )
                 }
             }
         }
+        // Now correct the power for the overall contest
+        // (the band NAME is against each level, we want the canonical band)
+        // and for each section
     }
-
     std::sort ( calendar.begin(), calendar.end() );
-
     return true;
 
 }
@@ -670,14 +531,14 @@ bool Calendar::parseMultType ( TiXmlElement * tix )
                             if ( checkElementName ( e, "bonus" ) )
                             {
                                 //<bonus square="IO83" points="500"/>
-                                std::string square = e->Attribute("square");
-                                std::string points = e->Attribute("points");
+                                QString square = e->Attribute("square");
+                                QString points = e->Attribute("points");
 
-                                mt.bonuses[square] = atoi(points.c_str());
+                                mt.bonuses[square] = points.toInt();
                             }
                             else
                                 {
-                                    std::string eval = e->Value();
+                                    QString eval = e->Value();
                                     continue;
                                 }
     }
@@ -705,7 +566,7 @@ bool Calendar::parseSpecialRule ( TiXmlElement * tix )
                 }
                 else
                 {
-                    std::string eval = e->Value();
+                    QString eval = e->Value();
                     continue;
                 }
     }
@@ -734,34 +595,45 @@ bool Calendar::parseSection ( TiXmlElement * tix )
                 else
                     if ( checkElementName ( e, "power" ) )
                     {
-                        //s.power = e->GetText();
+                        // POWER TO DO
+                        // may be several entries - per band
+                        QString band = getAttribute(e, "band");
+                        s.maxPower[band] = e->GetText();
                     }
                     else
-                        if ( checkElementName ( e, "height" ) )
+                        if (checkElementName ( e, "minpower" ))
                         {
-                            s.height = e->GetText();
+                            // POWER TO DO
+                            // may be several entries - per band
+                            QString band = getAttribute(e, "band");
+                            s.minPower[band] = e->GetText();
                         }
                         else
-                            if ( checkElementName ( e, "singleantenna" ) )
+                            if ( checkElementName ( e, "height" ) )
                             {
-                                s.singleAntenna = ( std::string(e->GetText()) == "1" );
+                                s.height = e->GetText();
                             }
                             else
-                                if ( checkElementName ( e, "overall_section" ) )
+                                if ( checkElementName ( e, "singleantenna" ) )
                                 {
-                                    s.overall = true;
+                                    s.singleAntenna = ( QString(e->GetText()) == "1" );
                                 }
                                 else
-                                    if ( checkElementName ( e, "month_list" ) )
+                                    if ( checkElementName ( e, "overall_section" ) )
                                     {
-                                        MonthList m;
-                                        m.month = e->GetText();
-                                        s.monthList.push_back ( m );
+                                        s.overall = true;
                                     }
                                     else
-                                    {
-                                        std::string eval = e->Value();
-                                        continue;
+                                        if ( checkElementName ( e, "month_list" ) )
+                                        {
+                                            MonthList m;
+                                            m.month = e->GetText();
+                                            s.monthList.push_back ( m );
+                                        }
+                                        else
+                                        {
+                                            QString eval = e->Value();
+                                            continue;
                                     }
     }
     sections[ s.name ] = s;
@@ -798,7 +670,7 @@ bool Calendar::parseBand ( TiXmlElement * tix )
                     }
                     else
                     {
-                        std::string eval = e->Value();
+                        QString eval = e->Value();
                         continue;
                     }
     }
@@ -829,13 +701,13 @@ bool Calendar::parseContestSeries ( TiXmlElement * tix )
                 else
                     if ( checkElementName ( e, "award_list" ) )
                     {
-                        std::string al;
+                        QString al;
                         al = e->GetText();
                         cs.awardList.push_back ( al );
                     }
                     else
                     {
-                        std::string eval = e->Value();
+                        QString eval = e->Value();
                         continue;
                     }
     }
@@ -911,14 +783,14 @@ bool Calendar::parseContest ( TiXmlElement * tix )
                                                     else
                                                         if ( checkElementName ( e, "award_list" ) )
                                                         {
-                                                            std::string al;
+                                                            QString al;
                                                             al = e->GetText();
                                                             c.awardList.push_back ( al );
                                                         }
                                                         else
                                                             if ( checkElementName ( e, "iaru" ) )
                                                             {
-                                                                c.iaru = ( std::string(e->GetText()) == "1" );
+                                                                c.iaru = ( QString(e->GetText()) == "1" );
                                                             }
                                                             else
                                                                 if ( checkElementName ( e, "scoring" ) )
@@ -940,7 +812,24 @@ bool Calendar::parseContest ( TiXmlElement * tix )
                                                                                     c.scoring = CalendarContest::desc;
                                                                                 }
                                                                                 else
-                                                                                    return false;
+                                                                                    if ( checkElementName ( e, "power" ) )
+                                                                                    {
+                                                                                        // POWER TO DO
+                                                                                        // may be several entries - per band
+                                                                                        QString band = getAttribute(e, "band");
+                                                                                        // This gives the XML name for the band
+                                                                                        c.maxPower[band] = e->GetText();
+                                                                                    }
+                                                                                    else
+                                                                                        if (checkElementName ( e, "minpower" ))
+                                                                                        {
+                                                                                            // POWER TO DO
+                                                                                            // may be several entries - per band
+                                                                                            QString band = getAttribute(e, "band");
+                                                                                            c.minPower[band] = e->GetText();
+                                                                                        }
+                                                                                        else
+                                                                                            return false;
                                                                         break;
                                                                     }
                                                                 }
@@ -952,7 +841,7 @@ bool Calendar::parseContest ( TiXmlElement * tix )
                                                                     else
                                                                         if ( checkElementName ( e, "power" ) )
                                                                         {
-                                                                            //c.power = e->GetText();
+                                                                            c.power = e->GetText();
                                                                         }
                                                                         else
                                                                             if ( checkElementName ( e, "mode" ) )
@@ -966,14 +855,14 @@ bool Calendar::parseContest ( TiXmlElement * tix )
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    std::string eval = e->Value();
+                                                                                    QString eval = e->Value();
                                                                                     continue;
                                                                                 }
     }
     contests[ c.name ] = c;
     return true;
 }
-bool Calendar::parseTimeList ( TiXmlElement * tix, std::vector<TimeList> &timeList )
+bool Calendar::parseTimeList ( TiXmlElement * tix, QVector<TimeList> &timeList )
 {
     TimeList t;
     for ( TiXmlElement * e = tix->FirstChildElement(); e; e = e->NextSiblingElement() )
@@ -1023,77 +912,10 @@ bool Calendar::parseTimeList ( TiXmlElement * tix, std::vector<TimeList> &timeLi
                                     }
                                     else
                                     {
-                                        std::string eval = e->Value();
+                                        QString eval = e->Value();
                                         continue;
                                     }
     }
     timeList.push_back ( t );
     return true;
-}
-#endif
-//---------------------------------------------------------------------------
-bool CalendarYear::downloadFile ( bool showError, QWidget *parent )
-{
-    QString calendarURL = getURL();
-
-
-    QNetworkAccessManager m_NetworkMngr;
-
-    QUrl qurl( calendarURL );
-    QNetworkRequest qnr( qurl );
-
-    qnr.setRawHeader( "User-Agent" , "Mozilla/4.0 (compatible;Adjsql)" );
-
-    QNetworkReply *reply = m_NetworkMngr.get( qnr );
-
-    QEventLoop loop;
-    QObject::connect( reply, SIGNAL( finished() ), &loop, SLOT( quit() ) );
-    loop.exec();
-
-    if ( reply->error() == QNetworkReply::NoError )
-    {
-        int raw = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        if (raw == 301)
-        {
-            QUrl redirect =  reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-
-            QNetworkRequest qnr1( redirect );
-            qnr1.setRawHeader( "User-Agent" , "Mozilla/4.0 (compatible;Adjsql)" );
-
-            delete reply;
-            reply = m_NetworkMngr.get( qnr1 );
-            QEventLoop loop;
-            QObject::connect( reply, SIGNAL( finished() ), &loop, SLOT( quit() ) );
-            loop.exec();
-            raw = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        }
-        QByteArray data = reply->readAll();
-        if (data.size() > 0)
-        {
-            QUrl aUrl( calendarURL );
-            QFileInfo fileInfo = aUrl.path();
-
-            QFile file( getPath() );
-            file.open( QIODevice::WriteOnly );
-            file.write( data );
-            trace ( "HTPP Get of " + calendarURL + " OK" );
-        }
-        else
-        {
-           trace ( "HTPP Get of " + calendarURL + " failed - zero length data returned with attribute " + QString::number(raw));
-        }
-        delete reply;
-        return true;
-    }
-    else
-    {
-        trace ( QString( "HTPP Get of " ) + calendarURL + " failed: " + reply->errorString() );
-        if ( showError )
-        {
-            mShowMessage ( QString( "HTPP Get of " ) + calendarURL + " failed: " + reply->errorString(), parent );
-        }
-    }
-
-    delete reply;
-    return false;
 }

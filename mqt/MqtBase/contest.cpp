@@ -7,6 +7,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
+#include "Calendar.h"
 #include "CalendarList.h"
 
 bool LtLogSeq::operator() ( const BaseContact* s1, const BaseContact* s2 ) const
@@ -1209,7 +1210,7 @@ static bool loadCalYear ( Calendar &cal, int year )
 
     for ( int i = yearList.size() - 1; i >= 0; i-- )
     {
-        if ( !loaded && FileExists ( yearList[ i ] ->getPath() ) && year >= curYear + yearList[ i ] ->yearOffset )
+        if ( !loaded && FileExists ( yearList[ i ] ->getPath() ) && year >= calendarFormYear + yearList[ i ] ->yearOffset )
         {
             loaded = cal.parseFile ( yearList[ i ] ->getPath() );
         }
@@ -1244,10 +1245,10 @@ void BaseContestLog::loadBonusList()
 
         locBonuses.clear();
 
-        for (std::map<std::string, int>::iterator i = B2.bonuses.begin(); i != B2.bonuses.end(); i++)
+        for (QMap<QString, int>::iterator i = B2.bonuses.begin(); i != B2.bonuses.end(); i++)
         {
-            QString name = QString((*i).first.c_str()).toUpper().trimmed();
-            int value = (*i).second;
+            QString name = i.key();
+            int value = i.value();
 
             locBonuses[name] = value;
         }

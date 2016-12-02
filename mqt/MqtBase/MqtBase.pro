@@ -49,7 +49,8 @@ SOURCES += \
     CalendarList.cpp \
     qlogtabwidget.cpp \
     minoskeyboard.cpp \
-    MinosLines.cpp
+    MinosLines.cpp \
+    Calendar.cpp
 
 HEADERS += \
     BandList.h \
@@ -81,7 +82,8 @@ HEADERS += \
     cutils.h \
     qlogtabwidget.h \
     minoskeyboard.h \
-    MinosLines.h
+    MinosLines.h \
+    Calendar.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

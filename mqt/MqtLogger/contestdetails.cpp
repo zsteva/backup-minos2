@@ -1,4 +1,5 @@
 #include "logger_pch.h"
+#include "Calendar.h"
 #include "CalendarList.h"
 #include "BandList.h"
 #include "tentryoptionsform.h"
@@ -333,18 +334,18 @@ void ContestDetails::setDetails( const IndividualContest &ic )
 
    setWindowTitle("Details of Contest Entry - " + contest->cfileName );
 
-   ui->ContestNameEdit->setText(ic.description.c_str());                      // contest
-   contest->VHFContestName.setValue(ic.description.c_str());
+   ui->ContestNameEdit->setText(ic.description);                      // contest
+   contest->VHFContestName.setValue(ic.description);
 
    // need to get legal bands from ContestLog
    ui->BandComboBox->clear();
 
-   ui->BandComboBox->addItem( ic.reg1band.c_str() );
+   ui->BandComboBox->addItem( ic.reg1band );
    ui->BandComboBox->setCurrentIndex(0);
 
    ui->SectionComboBox->clear();
 
-   sectionList = ic.sections.c_str(); // the combo will then be properly set up in setDetails()
+   sectionList = ic.sections; // the combo will then be properly set up in setDetails()
    if ( sectionList.size() )
    {
       QStringList sl = sectionList.split(",");
@@ -910,7 +911,7 @@ void ContestDetails::on_VHFCalendarButton_clicked()
     if ( CalendarDlg.exec() == QDialog::Accepted )
     {
        // set up all the details that we can from the calendar
-       ui->ContestNameSelected->setText(CalendarDlg.ic.description.c_str());
+       ui->ContestNameSelected->setText(CalendarDlg.ic.description);
        setDetails( CalendarDlg.ic );
     }
     QWidget *next = getNextFocus();

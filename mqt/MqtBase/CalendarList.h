@@ -1,10 +1,13 @@
 #ifndef CalendarListH
 #define CalendarListH 
 //---------------------------------------------------------------------------
+#ifdef SEPARATECALENDAR
 enum CalType {ectVHF, ectHF, ectMwave, ectVHFOther, ectHFOther, ectHFBARTG};
 int getDayOfWeek ( QDateTime dtg );
 extern int curYear;
+#endif
 
+extern int calendarFormYear;
 #define LOWYEAR -1
 #define LOWURLYEAR -1
 #define HIGHYEAR 1
@@ -16,16 +19,16 @@ class CalendarYear
         virtual QString getSite() = 0;
         QString yearString()
         {
-            QString y = QString::number( curYear + yearOffset );
+            QString y = QString::number( calendarFormYear + yearOffset );
             y = y.midRef( 2, 2 ).toString();
             return y;
         }
     public:
         CalendarYear ( CalType t, int y ) : type ( t ), yearOffset ( y )
         {
-            if ( curYear == 0 )
+            if ( calendarFormYear == 0 )
             {
-                curYear = QDate::currentDate().year();
+                calendarFormYear = QDate::currentDate().year();
             }
 
         }
@@ -102,6 +105,7 @@ class CTYCalendarYear : public CalendarYear
         virtual QString getURL();
 };
 
+#ifdef SEPARATECALENDAR
 class MultType
 {
     public:
@@ -275,5 +279,5 @@ extern QDateTime localToUTC ( QDateTime t );
 extern void setYear ( int y );
 extern int getMonth ( const std::string &m );
 extern int getDate ( int month, int day, int week );
-
+#endif
 #endif

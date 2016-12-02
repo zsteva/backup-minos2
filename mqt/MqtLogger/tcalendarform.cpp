@@ -69,7 +69,7 @@ bool TCalendarForm::loadYear ( Calendar &cal, int year )
 
     for ( int i = yearList.size() - 1; i >= 0; i-- )
     {
-        if ( !loaded && FileExists ( yearList[ i ] ->getPath() ) && year >= curYear + yearList[ i ] ->yearOffset )
+        if ( !loaded && FileExists ( yearList[ i ] ->getPath() ) && year >= calendarFormYear + yearList[ i ] ->yearOffset )
         {
             loaded = cal.parseFile ( yearList[ i ] ->getPath() );
         }
@@ -79,7 +79,7 @@ bool TCalendarForm::loadYear ( Calendar &cal, int year )
 //---------------------------------------------------------------------------
 void TCalendarForm::LoadGrid ( Calendar &cal )
 {
-    ui->CalendarVersionLabel->setText( ( "File Version " + cal.version ).c_str() );
+    ui->CalendarVersionLabel->setText( ( "File Version " + cal.version ) );
     ui->CalendarGrid->setRowCount( cal.calendar.size() + 1 );
     int cc = ( cal.calType == ectVHF ? 8 : 5 );
 
@@ -102,28 +102,28 @@ void TCalendarForm::LoadGrid ( Calendar &cal )
     int row = 0;
     int nextContest = 0;
     QDateTime now = QDateTime::currentDateTime();
-    for ( std::vector<IndividualContest>::iterator i = cal.calendar.begin(); i != cal.calendar.end(); i++ )
+    for ( QVector<IndividualContest>::iterator i = cal.calendar.begin(); i != cal.calendar.end(); i++ )
     {
         col = 0;
-        ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).description.c_str() ) );
-        ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).bands.c_str() ) );
+        ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).description ) );
+        ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).bands ) );
         ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).start.toString ( "dd/MM/yyyy hh:mm" ) ) );
         ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).finish.toString ( "dd/MM/yyyy hh:mm" ) ) );
 
         if ( cal.calType == ectVHF )
         {
             ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).ppKmScoring ? "1Pt/Km" : "1Pt/QSO" ) );
-            ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).mults.c_str() ) );
+            ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).mults ) );
         }
-        ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).sections.c_str() ) );
+        ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).sections ) );
         if ( cal.calType == ectVHF )
         {
-            ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).specialRules.c_str() ) );
+            ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).specialRules ) );
         }
 
         if (!description.isEmpty())
          {
-            if (nextContest == 0 && description == (*i).description.c_str())
+            if (nextContest == 0 && description == (*i).description)
             {
                nextContest = row;
             }
@@ -392,13 +392,13 @@ void TCalendarForm::on_YearDownButton_clicked()
     bool ok;
     int year = ui->YearEdit->text().toInt(&ok);
     if (!ok)
-        year = curYear;
+        year = calendarFormYear;
 
     year--;
 
-    if ( year < curYear + LOWYEAR )
+    if ( year < calendarFormYear + LOWYEAR )
     {
-        year = curYear + HIGHYEAR;
+        year = calendarFormYear + HIGHYEAR;
     }
     ui->YearEdit->setText( QString::number( year ) );
 
@@ -411,12 +411,12 @@ void TCalendarForm::on_YearUpButton_clicked()
     bool ok;
     int year = ui->YearEdit->text().toInt(&ok);
     if (!ok)
-        year = curYear;
+        year = calendarFormYear;
     year++;
 
-    if ( year > curYear + HIGHYEAR )
+    if ( year > calendarFormYear + HIGHYEAR )
     {
-        year = curYear + LOWYEAR;
+        year = calendarFormYear + LOWYEAR;
     }
     ui->YearEdit->setText( QString::number( year ) );
 

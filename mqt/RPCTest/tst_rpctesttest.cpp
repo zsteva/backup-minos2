@@ -2,6 +2,7 @@
 #include <QtTest>
 
 #include "BandList.h"
+#include "Calendar.h"
 #include "CalendarList.h"
 
 #include "base_pch.h"
@@ -482,6 +483,7 @@ void RPCTestTest::testBands()
 }
 void RPCTestTest::testDates()
 {
+#ifdef TESTCALENDAR
    setYear( 2008 );
 
    int m = getMonth( "february" );
@@ -518,6 +520,7 @@ void RPCTestTest::testDates()
 
    t2 = localToUTC( t );
    //QVERIFY( 0 == t2.secsTo(t));
+#endif
 }
 void RPCTestTest::testCalendarParse()
 {
@@ -534,13 +537,15 @@ void RPCTestTest::testContests()
    int nc = vhf.contests.size();
    QVERIFY( 33 == nc );
 
-   std::string lp144( "lp144" );
+   QString lp144( "lp144" );
    CalendarContest &qrp144 = vhf.contests[ lp144 ];
    QVERIFY( lp144 == qrp144.name );
 
 }
 void RPCTestTest::testDates2009()
 {
+#ifdef TESTCALENDAR
+
    setYear( 2009 );
 
    int m = getMonth( "february" );
@@ -576,6 +581,7 @@ void RPCTestTest::testDates2009()
 
    t2 = localToUTC( t );
    QVERIFY( 0 == t2.secsTo(t));
+#endif
 }
 void RPCTestTest::testParse2009()
 {
@@ -592,18 +598,23 @@ void RPCTestTest::testContests2009()
    int nc = vhf.contests.size();
    QVERIFY( 33 == nc );
 
-   std::string lp144( "lp144" );
+   QString lp144( "lp144" );
    CalendarContest &qrp144 = vhf.contests[ lp144 ];
    QVERIFY( lp144 == qrp144.name );
 
 }
+#ifdef TESTCALENDAR
+
 int fsun(int month)
 {
    int fSunday = getDate(month, 7, 1);    // month, day, week
    return fSunday;
 }
+#endif
 void RPCTestTest::testBST()
 {
+#ifdef TESTCALENDAR
+
    for (int i = 0; i < 40; i++)
    {
       setYear(2005 + i);
@@ -624,7 +635,7 @@ void RPCTestTest::testBST()
          QVERIFY( true == (dow >= 1 && dow <= 7));
       }
    }
-
+#endif
 }
 
 void RPCTestTest::testMults()

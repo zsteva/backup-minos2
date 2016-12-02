@@ -8,6 +8,7 @@
 
 #include "tsinglelogframe.h"
 #include "taboutbox.h"
+#include "Calendar.h"
 #include "CalendarList.h"
 #include "contestdetails.h"
 #include "tmanagelistsdlg.h"
