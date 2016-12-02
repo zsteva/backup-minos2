@@ -175,8 +175,8 @@ void ContestDetails::setDetails(  )
    // if attempt to log QSO BEFORE, complain (but allow) (give set time offset option)
    // if AFTER at load time, set "post entry"
    // if attempt to log QSO AFTER and NOT post entry, complain (give set time offset option, post entry option)
-   //      std::string contest->DTGStart;  //ccccmmsshhmm
-   //      std::string contest->DTGEnd;    //ccccmmsshhmm
+   //      QString contest->DTGStart;  //ccccmmsshhmm
+   //      QString contest->DTGEnd;    //ccccmmsshhmm
 
    if ( contest->DTGStart.getValue().size() )
    {

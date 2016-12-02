@@ -1176,7 +1176,7 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
 
       stemp += QString( 200, ' ' );   // make sure there is plenty more...
 
-      std::string sstemp = stemp.toStdString();
+      std::string sstemp = stemp.toStdString(); // allowed conversion through std::string
       const char *lbuff = sstemp.c_str();
       // parse contact line in
 

@@ -27,7 +27,7 @@ QString getAttribute( TiXmlElement *tix, const QString &attname )
 }
 int GetStringAttribute( TiXmlElement *e, const QString &name, QString &s )
 {
-   const std::string * a = e->Attribute( name.toStdString() );
+   const std::string * a = e->Attribute( name.toStdString() );// allowed conversion through std::string
    if ( !a )
    {
       return TIXML_NO_ATTRIBUTE;
@@ -47,7 +47,7 @@ int GetStringAttribute( TiXmlElement *e, const QString &name, QString &s, const 
 }
 int GetIntAttribute( TiXmlElement *e, const QString &name, int &i )
 {
-   const std::string * a = e->Attribute( name.toStdString() );
+   const std::string * a = e->Attribute( name.toStdString() );// allowed conversion through std::string
    if ( !a )
    {
       i = 0;

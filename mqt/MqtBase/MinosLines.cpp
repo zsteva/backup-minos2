@@ -122,7 +122,7 @@ void LineSet::writeSet()
    // modify memory mapped file
    char linebuff[ MAX_LINE_SIZE ];
    memset( linebuff, 0, MAX_LINE_SIZE );
-   std::string scxml = cxml.toStdString();
+   std::string scxml = cxml.toStdString();      // allowed conversion through std::string
    memcpy( linebuff, scxml.c_str(), scxml.size() ); //include zero termination
    linebuff[ cxml.size() ] = 0;
    memcpy( FileMap->GetMap(), linebuff, MAX_LINE_SIZE ); //include zero termination

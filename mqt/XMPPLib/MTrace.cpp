@@ -18,14 +18,6 @@ void trace( const QString & mess )
 {
    mLogFile.log( mess );
 }
-void trace( const char *mess )
-{
-   mLogFile.log( mess );
-}
-void trace( const std::string & mess )
-{
-   mLogFile.log( mess.c_str() );
-}
 //---------------------------------------------------------------------------
 void enableTrace(const QString &where , const QString filePrefix)
 {
@@ -53,32 +45,7 @@ void disableTrace( )
    }
 }
 //---------------------------------------------------------------------------
-/* Windows only
-std::string lastError( DWORD erno )
-{
-   LPVOID lpMsgBuf;
 
-   FormatMessage(
-      FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-      NULL,
-      erno,
-      MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),    // Default language
-      ( LPTSTR ) & lpMsgBuf,
-      0,
-      NULL
-   );
-   std::string s;
-   s = reinterpret_cast<const char*>( lpMsgBuf );
-
-   // Free the buffer.
-   LocalFree( lpMsgBuf );
-   return s;
-}
-std::string lastError( void )
-{
-   return lastError( GetLastError() );
-}
-*/
 QString getTraceFileName()
 {
    return mLogFile.getTraceFileName();

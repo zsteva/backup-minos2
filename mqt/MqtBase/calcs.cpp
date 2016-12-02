@@ -37,7 +37,7 @@ char lonlat( const QString &pinqra, double &lon, double &lat )
    const char *wp3 ;
    double *fp1 ;
 
-   std::string inqra = pinqra.toStdString();
+   std::string inqra = pinqra.toStdString();    // allowed conversion through std::string
 
    for ( l = inqra.length() - 1; l >= 0; l-- )
    {

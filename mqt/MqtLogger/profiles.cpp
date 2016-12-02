@@ -337,9 +337,7 @@ bool INIFile::writeINIFile( void )
          if ( ( *this_entry ) ->isValidEntry() )
          {
              QString s = QString("%1=%2\n").arg(name).arg(val);
-             std::string ss = s.toStdString();
-             const char *sss = ss.c_str();
-             out << sss;
+             out << s;
          }
          else
          {

@@ -500,7 +500,7 @@ bool ThisLogMatcher::idleMatch( int limit )
                          if ( matchcs.match )
                          {
                             bool dropthrough = false;
-                            std::string smstr = matchcs.mstr.toStdString();
+                            std::string smstr = matchcs.mstr.toStdString();// allowed conversion through std::string
                             const char *c = smstr.c_str();
                             // need to trim out any leading and trailing
                             while ( *c && *c != '/' )
@@ -571,7 +571,7 @@ bool ThisLogMatcher::idleMatch( int limit )
                          {
                             // We know that cs is not empty
                             // strip temp cs of its leading country and number
-                             std::string smstrStart = matchcs.mstr.toStdString();
+                             std::string smstrStart = matchcs.mstr.toStdString();// allowed conversion through std::string
                             const char * mstrStart = smstrStart.c_str();
                             const char * c = &mstrStart[ smstrStart.length() ];
 
@@ -834,7 +834,7 @@ bool OtherLogMatcher::idleMatch( int limit )
                         if ( matchcs.match )
                         {
                            bool dropthrough = false;
-                           std::string smstr = matchcs.mstr.toStdString();
+                           std::string smstr = matchcs.mstr.toStdString();// allowed conversion through std::string
                            const char *c = smstr.c_str();
                            // need to trim out any leading and trailing
                            while ( *c && *c != '/' )
@@ -905,7 +905,7 @@ bool OtherLogMatcher::idleMatch( int limit )
                         {
                            // We know that cs is not empty
                            // strip temp cs of its leading country and number
-                            std::string smstrStart = matchcs.mstr.toStdString();
+                            std::string smstrStart = matchcs.mstr.toStdString();// allowed conversion through std::string
                            const char * mstrStart = smstrStart.c_str();
                            const char * c = &mstrStart[ smstrStart.length() ];
 
@@ -1153,7 +1153,7 @@ bool ListMatcher::idleMatch( int limit )
                         if ( matchcs.match )
                         {
                            bool dropthrough = false;
-                           std::string smatchcs = matchcs.mstr.toStdString();
+                           std::string smatchcs = matchcs.mstr.toStdString();// allowed conversion through std::string
                            const char *c = smatchcs.c_str();
                            // need to trim out any leading and trailing
                            while ( *c && *c != '/' )
@@ -1224,7 +1224,7 @@ bool ListMatcher::idleMatch( int limit )
                         {
                            // We know that cs is not empty
                            // strip temp cs of its leading country and number
-                            std::string smstrStart = matchcs.mstr.toStdString();
+                            std::string smstrStart = matchcs.mstr.toStdString();// allowed conversion through std::string
                            const char * mstrStart = smstrStart.c_str();
                            const char * c = &smstrStart[ smstrStart.length() ];
 

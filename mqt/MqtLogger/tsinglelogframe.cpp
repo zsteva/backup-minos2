@@ -310,23 +310,6 @@ void TSingleLogFrame::on_NextContactDetailsOnLeft()
 }
 void TSingleLogFrame::updateQSODisplay()
 {
-    /*
-   BandCombo->Clear();
-
-   std::string cb = trim(contest->band.getValue());
-   BandList &blist = BandList::getBandList();
-   BandInfo bi;
-   bool bandOK = blist.findBand(cb, bi);
-   if (bandOK)
-   {
-      BandCombo->Items->Add(bi.uk.c_str());
-   }
-   else
-   {
-      BandCombo->Items->Add(contest->band.getValue().c_str());
-   }
-   BandCombo->ItemIndex = 0;
-*/
    ui->GJVQSOLogFrame->updateQSODisplay();
 }
 void TSingleLogFrame::on_XferPressed()

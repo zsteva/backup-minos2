@@ -44,9 +44,6 @@ WSAGuard::WSAGuard( void )
    volatile int WSAerr = WSAStartup( wVersionRequested, &wsaData );
    if ( WSAerr != 0 )
    {
-      //      std::string csText = "Unable to initialise Winsock.DLL : error no ";
-      //      csText += string_cast( WSAerr );
-      //      ::logMessage(iKernelBaseAPI::iKernelAPIFramework,  csText );
       exit( 1 );
    }
    else
@@ -54,8 +51,6 @@ WSAGuard::WSAGuard( void )
 
       if ( LOBYTE( wsaData.wVersion ) != major || HIBYTE( wsaData.wVersion ) != minor )
       {
-         //         const char * csText = "This Winsock.DLL doesn't support this application";
-         //         ::logMessage(iKernelBaseAPI::iKernelAPIFramework,  csText );
          exit( 1 );
       }
    }

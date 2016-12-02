@@ -250,7 +250,7 @@ void MinosAppConnection::sendAction( XStanza *a )
       {
           xmlstr = QString("&&%1%2&&").arg(xmllen).arg(xmlstr);
 
-          std::string s = xmlstr.toStdString();
+          std::string s = xmlstr.toStdString();// allowed conversion through std::string
 
          if (sock->write(s.c_str(), s.size() + 1 ) < 0)  // always include the zero terminator
            return;

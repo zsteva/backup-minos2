@@ -284,7 +284,7 @@ bool BaseContestLog::getsdist( const char *loc, char *minloc, double &mindist )
 //---------------------------------------------------------------------------
 int BaseContestLog::CalcNearest( const QString &qscalcloc )
 {
-    std::string scalcloc = qscalcloc.toStdString();
+    std::string scalcloc = qscalcloc.toStdString(); // allowed conversion through std::string
    const char * calcloc = scalcloc.c_str();
 
    if ( scalcloc.size() != 4 )

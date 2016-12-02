@@ -16,13 +16,13 @@ void makeXMPPEvent( XStanza *a );
 
 class Exception: public std::exception
 {
-    std::string messStr;
+    QString messStr;
 public:
     Exception(const char *s):messStr(s)
     {
 
     }
-    std::string mess()
+    QString mess()
     {
         return messStr;
     }
