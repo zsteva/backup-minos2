@@ -483,18 +483,18 @@ void TSingleLogFrame::showMatchList( TMatchCollection *matchCollection )
 //---------------------------------------------------------------------------
 void TSingleLogFrame::on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* )
 {
-    if (contest == TContestApp::getContestApp() ->getCurrentContest())
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         showThisMatchQSOs( matchCollection );
 }
 void TSingleLogFrame::on_ReplaceOtherLogList( TMatchCollection *matchCollection, BaseContestLog* )
 {
-    if (contest == TContestApp::getContestApp() ->getCurrentContest())
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         showOtherMatchQSOs( matchCollection );
 }
 
 void TSingleLogFrame::on_ReplaceListList(TMatchCollection *matchCollection , BaseContestLog *)
 {
-    if (contest == TContestApp::getContestApp() ->getCurrentContest())
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         showMatchList( matchCollection );
 }
 //---------------------------------------------------------------------------
