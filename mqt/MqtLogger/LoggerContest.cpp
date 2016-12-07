@@ -969,6 +969,44 @@ bool LoggerContestLog::exportKML(QSharedPointer<QFile> expfd )
    kml.append( "<Document><visibility>0</visibility><open>1</open>" );
    kml.append( "<Folder><name><![CDATA[" + name.getValue() + " " + mycall.fullCall.getValue() + "]]></name><visibility>0</visibility><open>1</open>" );
 
+
+
+   kml.append( "<Style id=\"normalState\">");
+   kml.append( "<IconStyle>");
+   kml.append( "<scale>1.0</scale>");
+   kml.append( "<Icon>");
+   kml.append( "<href>http://maps.google.com/mapfiles/kml/paddle/ylw-blank.png</href>");
+   kml.append( "</Icon>");
+   kml.append( "<scale>0.75</scale>");
+   kml.append( "</IconStyle>");
+   kml.append( "<LabelStyle>");
+   kml.append( "<scale>0</scale>");
+   kml.append( "</LabelStyle>");
+   kml.append( "</Style>");
+   kml.append( "<Style id=\"highlightState\">");
+   kml.append( "<IconStyle>");
+   kml.append( "<Icon>");
+   kml.append( "<href>http://maps.google.com/mapfiles/kml/paddle/ylw-stars.png</href>");
+   kml.append( "</Icon>");
+   kml.append( "<scale>1.0</scale>");
+   kml.append( "</IconStyle>");
+   kml.append( "<LabelStyle>");
+   kml.append( "<scale>1.0</scale>");
+   kml.append( "</LabelStyle>");
+   kml.append( "</Style>");
+   kml.append( "<StyleMap id=\"styleMapGJV\">");
+   kml.append( "<Pair>");
+   kml.append( "<key>normal</key>");
+   kml.append( "<styleUrl>#normalState</styleUrl>");
+   kml.append( "</Pair>");
+   kml.append( "<Pair>");
+   kml.append( "<key>highlight</key>");
+   kml.append( "<styleUrl>#highlightState</styleUrl>");
+   kml.append( "</Pair>");
+   kml.append( "</StyleMap>");
+
+
+
    for ( smap::iterator s = countries.begin(); s != countries.end(); s++ )
    {
       kml.append( "<Folder><name><![CDATA[" + ( *s ).first + "]]></name><open>0</open><visibility>0</visibility>"  );
@@ -995,6 +1033,7 @@ bool LoggerContestLog::exportKML(QSharedPointer<QFile> expfd )
          if ( transform( &l1, &l2 ) == GRIDOK )
          {
             kml.append( "<Placemark><visibility>0</visibility>" );
+            kml.append("<styleUrl>#styleMapGJV</styleUrl>");
             kml.append( "<description><![CDATA[" + ct->cs.fullCall.getValue() + " " + ct->loc.loc.getValue() + "]]></description>"  );
             kml.append( "<name><![CDATA[" + ct->cs.fullCall.getValue() + "]]></name>"  );
             kml.append( "<Point><coordinates>" + kmloutput( &l2 ) + ",0</coordinates></Point>"  );
