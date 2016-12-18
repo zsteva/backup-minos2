@@ -1070,9 +1070,13 @@ bool Calendar::parseBand( TiXmlElement * tix )
          }
          else
             if ( checkElementName( e, "wavelength" ) )
-            {
-               b.wavelength = e->GetText();
-            }
+			{
+			   const char *w = e->GetText();
+			   if (w)
+			   {
+				   b.wavelength = std::string(w);
+			   }
+			}
             else
                if ( checkElementName( e, "time_list" ) )
                {
