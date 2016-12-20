@@ -99,7 +99,7 @@ class dvkFile
       }
 };
 #define MAXFILES 10
-std::vector <dvkFile *> recfil;
+QVector <dvkFile *> recfil;
 //==============================================================================
 
 bool SoundSystemDriver::dofile( int i, int clipRecord )

@@ -75,7 +75,7 @@ void startRecordDVPFile( int fileno );
 void finishRecordDVPFile( void );
 void playKeyerFile( int fileno, bool ptt );
 
-std::vector < QString > get_keyer_list();
+QVector < QString > get_keyer_list();
 bool select_keyer( const QString &kn );
 
 void stopKeyer();

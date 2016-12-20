@@ -154,7 +154,7 @@ void loadKeyers()
    bool KeyerLoaded = keyer_init( buff );	// params are argc, argv fo DVP control strings
    if ( KeyerLoaded )
    {
-      std::vector < QString > kl = get_keyer_list();
+      QVector < QString > kl = get_keyer_list();
       if ( kl.size() )
       {
          select_keyer( kl[ 0 ] );
@@ -216,9 +216,9 @@ unsigned long keyer_getintcount()
 {
    return MORSEINTCOUNT;
 }
-std::vector < QString > get_keyer_list()
+QVector < QString > get_keyer_list()
 {
-   std::vector < QString > keylist;
+   QVector < QString > keylist;
    // go through portChain, and look down each namechain of linemonitors
    keylist.clear();
    for ( std::deque <commonPort *>::iterator icp = portChain.begin(); icp != portChain.end(); icp++ )
