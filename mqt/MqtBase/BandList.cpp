@@ -236,7 +236,7 @@ bool BandList::findBand ( const QString &psfreq, BandInfo &bi )
 
 bool BandList::findBand(int freq, BandInfo &bi)
 {
-   for (std::vector<BandInfo>::iterator i = bandList.begin(); i != bandList.end(); i++)
+   for (QVector<BandInfo>::iterator i = bandList.begin(); i != bandList.end(); i++)
    {
       if ((*i).flow <= freq && (*i).fhigh >= freq)
       {

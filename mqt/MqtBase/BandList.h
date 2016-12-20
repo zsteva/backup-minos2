@@ -46,7 +46,7 @@ class BandList
     public:
         BandList();
         ~BandList();
-        std::vector<BandInfo> bandList;
+        QVector<BandInfo> bandList;
         bool parseFile ( const QString &bandFile );
         bool findBand ( const QString &freq, BandInfo & );
         bool findBand ( int freq, BandInfo & );

@@ -125,7 +125,7 @@ void ContestDetails::setDetails(  )
    else
    {
       BandList &blist = BandList::getBandList();
-      for (std::vector<BandInfo>::iterator i = blist.bandList.begin(); i != blist.bandList.end(); i++)
+      for (QVector<BandInfo>::iterator i = blist.bandList.begin(); i != blist.bandList.end(); i++)
       {
          if ((*i).getType() != "HF")
          {
