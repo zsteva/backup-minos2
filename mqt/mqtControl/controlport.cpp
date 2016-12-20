@@ -82,7 +82,7 @@ void commonPort::addLine( const LineConfig &line )
 
 commonPort::~commonPort()
 {
-   for ( std::vector<commonLineControl *>::iterator i = lines.begin(); i != lines.end(); i++ )
+   for ( QVector<commonLineControl *>::iterator i = lines.begin(); i != lines.end(); i++ )
    {
       delete ( *i );
    }
@@ -100,7 +100,7 @@ bool commonPort::initialise( const PortConfig & /*port*/, commonController &mon 
 }
 commonLineControl *commonPort::findLine(const QString &name, bool lineIn )
 {
-   for ( std::vector<commonLineControl *>::iterator i = lines.begin(); i != lines.end(); i++ )
+   for ( QVector<commonLineControl *>::iterator i = lines.begin(); i != lines.end(); i++ )
    {
       if ( ( *i ) ->lineIn == lineIn && ( *i ) ->lineName == name )
          return ( *i );
@@ -110,7 +110,7 @@ commonLineControl *commonPort::findLine(const QString &name, bool lineIn )
 void commonPort::checkControls( void )
 {
    getLineState();
-   for ( std::vector<commonLineControl *>::iterator i = lines.begin(); i != lines.end(); i++ )
+   for ( QVector<commonLineControl *>::iterator i = lines.begin(); i != lines.end(); i++ )
    {
       // output lines can't sort their state in the same way
       if ( ( *i ) ->lineIn )
@@ -364,7 +364,7 @@ bool UBWPort::openPort()
    if ( ret != -1 )
    {
       // On startup, need to configure all the lines we intend to use as input or output
-      for ( std::vector<commonLineControl *>::iterator i = lines.begin(); i != lines.end(); i++ )
+      for ( QVector<commonLineControl *>::iterator i = lines.begin(); i != lines.end(); i++ )
       {
          UBW::setLineDirection( ( *i ) ->portLineName, ( *i ) ->lineIn );
       }

@@ -53,7 +53,7 @@ class commonPort
       // Then we will have a common line change routine.
       // checkControls will have to report on all relevant line changes
 
-      std::vector<commonLineControl *> lines;
+      QVector<commonLineControl *> lines;
       virtual void addLine( const LineConfig &line );
       commonLineControl *findLine( const QString &name, bool lineIn );
 
