@@ -13,7 +13,9 @@ CONFIG += staticlib
 
 CONFIG += c++14
 
-QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
+win32-g++:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
+else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
+
 
 INCLUDEPATH += ../TinyXML
 INCLUDEPATH += ../MqtUtils

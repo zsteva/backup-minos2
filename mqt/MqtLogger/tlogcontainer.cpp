@@ -918,7 +918,8 @@ void TLogContainer::preloadFiles( const QString &conarg )
       }
       else
       {
-         int slotno = slotlst[ i ].toInt() - 1;
+          QString slot = slotlst[ i ];
+         int slotno = slot.toInt() - 1;
          if ( slotno >= 0 )
          {
             addSlot( 0, pathlst[ i ], false, slotno );

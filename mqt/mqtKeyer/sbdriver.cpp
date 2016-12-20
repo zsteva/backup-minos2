@@ -428,7 +428,7 @@ void SoundSystemDriver::genTone(int16_t *dest, bool add
              + QString::number( volmult ) + ")" );
    }
 
-   double deltaAngle = 2 * M_PI * tone / rate;
+   double deltaAngle = 2 * pi * tone / rate;
    double yk = 2 * cos( deltaAngle );
    double y1 = sin ( -2 * deltaAngle );
    double y2 = sin ( -deltaAngle );

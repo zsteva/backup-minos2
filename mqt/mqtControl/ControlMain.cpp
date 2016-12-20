@@ -33,7 +33,7 @@ ControlMain::ControlMain(QWidget *parent) :
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(controlServerCallback(bool,QSharedPointer<MinosRPCObj>,QString)));
 //    connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
-    QTimer::singleShot(100, this, on_formShown);
+    QTimer::singleShot(100, this, &ControlMain::on_formShown);
     rpc->setAppName(rpcConstants::controlApp);
 
 
