@@ -49,13 +49,13 @@ class TMConfigDM : public QObject
     Q_OBJECT
    private:  	// User declarations
       static TMConfigDM *thisDM;
-      std::vector <QProcess *> guardv;
+      QVector <QProcess *> guardv;
       QString circleOfHell;
       TMConfigDM( QWidget* Owner );
    public:  		// User declarations
       ~TMConfigDM();
 
-      std::vector <TConfigElement *> elelist;
+      QVector <TConfigElement *> elelist;
 
       void start();
       void stop();

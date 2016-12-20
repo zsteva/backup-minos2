@@ -30,7 +30,7 @@ private:
 
     QTimer SyncTimer;
 
-    std::vector<Server> serverList;
+    QVector<Server> serverList;
 
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *event);

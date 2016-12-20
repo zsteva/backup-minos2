@@ -158,7 +158,7 @@ TMConfigDM::~TMConfigDM()
    if ( !terminated )
       stop();
 
-   for ( std::vector <TConfigElement *>::iterator i = elelist.begin(); i != elelist.end(); i++ )
+   for ( QVector <TConfigElement *>::iterator i = elelist.begin(); i != elelist.end(); i++ )
    {
       delete ( *i );
    }
@@ -174,7 +174,7 @@ void TMConfigDM::start()
    terminated = false;
 //   resetCloseEvent();
 
-   for ( std::vector <TConfigElement *>::iterator i = elelist.begin(); i != elelist.end(); i++ )
+   for ( QVector <TConfigElement *>::iterator i = elelist.begin(); i != elelist.end(); i++ )
    {
        (*i)->createProcess();
    }
@@ -189,7 +189,7 @@ void TMConfigDM::stop()
    terminated = true;
 //   signalCloseEvent();
 
-   for ( std::vector <QProcess *> ::iterator i = guardv.begin(); i != guardv.end(); i++ )
+   for ( QVector <QProcess *> ::iterator i = guardv.begin(); i != guardv.end(); i++ )
    {
       if ( ( *i ) )
       {

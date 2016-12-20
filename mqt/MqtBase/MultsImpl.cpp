@@ -673,7 +673,7 @@ void CountryList::loadEntries( const QString &fname, const QString &fmess )
          int i = 0;
          while ( !skip && i < 99 && b[ i ] && b[ i ][ 0 ]  && b[ i ][ 0 ] != '=')
          {
-            int bracket = strcspn( b[ i ], "({[<" );
+            size_t bracket = strcspn( b[ i ], "({[<" );
             if ( bracket )
                b[ i ][ bracket ] = 0;   // chop off the brackets
             makeCountrySynonym( b[ i ], mainPrefix );

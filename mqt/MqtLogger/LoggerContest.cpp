@@ -1376,7 +1376,7 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
                               }
 }
 //====================================================================
-void LoggerContestLog::setStanza( unsigned int stanza, int stanzaStart )
+void LoggerContestLog::setStanza(int stanza, int stanzaStart )
 {
    StanzaPos s;
    s.stanza = stanza;
@@ -1384,7 +1384,7 @@ void LoggerContestLog::setStanza( unsigned int stanza, int stanzaStart )
    stanzaLocations.push_back( s );
 }
 //====================================================================
-bool LoggerContestLog::getStanza( unsigned int stanza, QString &stanzaData )
+bool LoggerContestLog::getStanza( int stanza, QString &stanzaData )
 {
    if ( stanza - 1 >= stanzaLocations.size() )
    {

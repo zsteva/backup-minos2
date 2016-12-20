@@ -50,7 +50,7 @@ RPCAction::~RPCAction()
 QString RPCAction::print()
 {
    QString s = "From: " + getFrom() + " To: " + getTo() + "\r\n";
-   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
+   for ( QVector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
    {
       s += ( *i ) ->print();
    }
@@ -160,7 +160,7 @@ QString RPCRequest::print()
 QString RPCRequest::analyse()
 {
    QString s;
-   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
+   for ( QVector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
    {
       s += ( *i ) ->analyse();
    }

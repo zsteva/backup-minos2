@@ -30,24 +30,24 @@ static void makeRPCObjects()
 }
 //---------------------------------------------------------------------------
 class Subscriber;
-typedef std::vector <Subscriber *> SubscriberList;
-typedef std::vector <Subscriber *>::iterator SubscriberListIterator;
+typedef QVector <Subscriber *> SubscriberList;
+typedef QVector <Subscriber *>::iterator SubscriberListIterator;
 //---------------------------------------------------------------------------
 class RemoteSubscriber;
-typedef std::vector <RemoteSubscriber *> RemoteSubscriberList;
-typedef std::vector <RemoteSubscriber *>::iterator RemoteSubscriberListIterator;
+typedef QVector <RemoteSubscriber *> RemoteSubscriberList;
+typedef QVector <RemoteSubscriber *>::iterator RemoteSubscriberListIterator;
 //---------------------------------------------------------------------------
 class ServerSubscriber;
-typedef std::vector <ServerSubscriber *> ServerSubscriberList;
-typedef std::vector <ServerSubscriber *>::iterator ServerSubscriberListIterator;
+typedef QVector <ServerSubscriber *> ServerSubscriberList;
+typedef QVector <ServerSubscriber *>::iterator ServerSubscriberListIterator;
 //---------------------------------------------------------------------------
 class PublishedCategory;
-typedef std::vector <PublishedCategory *> PublishedCategoryList;
-typedef std::vector <PublishedCategory *>::iterator PublishedCategoryListIterator;
+typedef QVector <PublishedCategory *> PublishedCategoryList;
+typedef QVector <PublishedCategory *>::iterator PublishedCategoryListIterator;
 //---------------------------------------------------------------------------
 class PublishedKey;
-typedef std::vector <PublishedKey *> PublishedKeyList;
-typedef std::vector <PublishedKey *>::iterator PublishedKeyListIterator;
+typedef QVector <PublishedKey *> PublishedKeyList;
+typedef QVector <PublishedKey *>::iterator PublishedKeyListIterator;
 //---------------------------------------------------------------------------
 // normal subscriber; client prog of this server
 class Subscriber

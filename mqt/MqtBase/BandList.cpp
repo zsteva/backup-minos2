@@ -164,7 +164,7 @@ bool BandList::findBand ( const QString &psfreq, BandInfo &bi )
     double dvhffreq = dhffreq * 1000.0;
     double dmwvfreq = dvhffreq * 1000.0;
 
-    for ( unsigned int i = 0; i < bandList.size(); i++ )
+    for ( int i = 0; i < bandList.size(); i++ )
     {
         if (
                 sfreq.compare(bandList[ i ].uk ) == 0
@@ -178,7 +178,7 @@ bool BandList::findBand ( const QString &psfreq, BandInfo &bi )
             return true;
         }
     }
-    for ( unsigned int i = 0; i < bandList.size(); i++ )
+    for ( int i = 0; i < bandList.size(); i++ )
     {
         QString bandType = bandList[ i ].getType();
         double bfhigh = bandList[ i ].fhigh;
@@ -216,7 +216,7 @@ bool BandList::findBand ( const QString &psfreq, BandInfo &bi )
                     }
                 }
     }
-    for ( unsigned int i = 0; i < bandList.size(); i++ )
+    for ( int i = 0; i < bandList.size(); i++ )
     {
         // find in string isn't a massively good idea! But we are doing it after everything else has failed
         if ( bandList[ i ].uk.indexOf ( sfreq ) != -1

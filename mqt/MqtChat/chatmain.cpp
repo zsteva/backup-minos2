@@ -17,8 +17,7 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     enableTrace( "./TraceLog", "MinosChat_" );
 
     trace("Arguments");
-    QCoreApplication *app = QCoreApplication::instance();
-    foreach (QString arg, app->arguments())
+    foreach (QString arg, QCoreApplication::instance()->arguments())
     {
         trace(arg);
     }
@@ -92,7 +91,7 @@ void TMinosChatForm::SyncTimerTimer(  )
 //---------------------------------------------------------------------------
 
 bool syncstat = false;
-std::vector<QString> chatQueue;
+QVector<QString> chatQueue;
 QString stateIndicator[] =
 {
    "Av",
@@ -105,7 +104,7 @@ void TMinosChatForm::syncStations()
    {
       syncstat = false;
       ui->StationList->clear();
-      for ( std::vector<Server>::iterator i = serverList.begin(); i != serverList.end(); i++ )
+      for ( QVector<Server>::iterator i = serverList.begin(); i != serverList.end(); i++ )
       {
          // should we link an object with the state, and owner draw
           QString state = stateIndicator[(*i).state] + " " + (*i).name;
@@ -122,7 +121,7 @@ void TMinosChatForm::addChat(const QString &mess)
 }
 void TMinosChatForm::syncChat()
 {
-   for ( std::vector<QString>::iterator i = chatQueue.begin(); i != chatQueue.end(); i++ )
+   for ( QVector<QString>::iterator i = chatQueue.begin(); i != chatQueue.end(); i++ )
    {
       ui->ChatMemo->append( (*i) );
       trace("syncChat " + (*i));
@@ -145,7 +144,7 @@ void TMinosChatForm::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const 
       if ( an.getCategory() == rpcConstants::StationCategory )
       {
          logMessage( QString(stateIndicator[an.getState()]) + " " + an.getKey() + " " + an.getValue() );
-         std::vector<Server>::iterator stat;
+         QVector<Server>::iterator stat;
          for ( stat = serverList.begin(); stat != serverList.end(); stat++ )
          {
             if ((*stat).name == an.getKey())
@@ -221,7 +220,7 @@ void TMinosChatForm::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const
 void TMinosChatForm::on_SendButton_clicked()
 {
     // We need to send the message to all connected stations
-    for ( std::vector<Server>::iterator i = serverList.begin(); i != serverList.end(); i++ )
+    for ( QVector<Server>::iterator i = serverList.begin(); i != serverList.end(); i++ )
     {
         RPCGeneralClient rpc(rpcConstants::chatMethod);
         QSharedPointer<RPCParam>st(new RPCParamStruct);

@@ -13,7 +13,7 @@
 class DisplayContestContact;
 struct StanzaPos
 {
-   unsigned int stanza;
+   int stanza;
    long stanzaStart;
 };
 class LoggerContestLog : public BaseContestLog
@@ -39,7 +39,7 @@ class LoggerContestLog : public BaseContestLog
       bool importLOG( QSharedPointer<QFile>  );
       bool importAdif( QSharedPointer<QFile>  );
       bool importReg1Test( QSharedPointer<QFile> adifContestFile );
-      std::vector<StanzaPos> stanzaLocations;
+      QVector<StanzaPos> stanzaLocations;
 
    protected:
    public:
@@ -61,8 +61,8 @@ class LoggerContestLog : public BaseContestLog
       }
 
       virtual void processMinosStanza( const QString &methodName, MinosTestImport * const mt ) override;
-      void setStanza( unsigned int stanza, int stanzaStart );
-      virtual bool getStanza( unsigned int Stanza, QString &stanzaData );
+      void setStanza( int stanza, int stanzaStart );
+      virtual bool getStanza(int Stanza, QString &stanzaData );
 
       // The contest details
 

@@ -85,7 +85,7 @@ class UPnPDataObject
 
       struct ip_mreq mreq;
       char message[ 4096 ];
-      std::vector<QHostAddress> AddressList;
+      QVector<QHostAddress> AddressList;
       int AddressListLength;
 
       SOCKET NOTIFY_RECEIVE_sock;
@@ -150,7 +150,7 @@ void MCReadSocket::onTimeout()
     }
 }
 
-int GetLocalIPAddressList( std::vector<QHostAddress> &addrList )
+int GetLocalIPAddressList( QVector<QHostAddress> &addrList )
 {
     QList<QNetworkInterface> mListIfaces = QNetworkInterface::allInterfaces();
 

@@ -57,7 +57,7 @@ class RPCParamStruct: public RPCParam
 {
       void addMember( RPCParam * , const QString &name );
    protected:
-      std::vector <QSharedPointer<RPCParam> > elements;
+      QVector <QSharedPointer<RPCParam> > elements;
    public:
       RPCParamStruct();
       RPCParamStruct( TiXmlElement &sNode );
@@ -75,10 +75,10 @@ class RPCParamStruct: public RPCParam
       virtual QString print();
       virtual QString analyse();
 
-      virtual bool getElements( unsigned int &size );
-      virtual bool getElement( unsigned int eleno, QSharedPointer<RPCParam> &p );
+      virtual bool getElements(int &size );
+      virtual bool getElement( int eleno, QSharedPointer<RPCParam> &p );
       virtual bool getMember( const QString &name, QSharedPointer<RPCParam> &p );
-      virtual bool getMember( unsigned int eleno, QSharedPointer<RPCParam> &p );
+      virtual bool getMember(int eleno, QSharedPointer<RPCParam> &p );
 };
 
 // array
@@ -86,7 +86,7 @@ class RPCParamArray: public RPCParam
 {
       void addElement( RPCParam * );
    protected:
-      std::vector <QSharedPointer<RPCParam> > elements;
+      QVector <QSharedPointer<RPCParam> > elements;
    public:
       RPCParamArray();
       RPCParamArray( TiXmlElement &sNode );
@@ -108,8 +108,8 @@ class RPCParamArray: public RPCParam
       static QSharedPointer<RPCParamArray> ParseArray( TiXmlElement &aNode );
       virtual QString print();
       virtual QString analyse();
-      virtual bool getElements( unsigned int &size );
-      virtual bool getElement( unsigned int eleno, QSharedPointer<RPCParam> &p );
+      virtual bool getElements( int &size );
+      virtual bool getElement(int eleno, QSharedPointer<RPCParam> &p );
 };
 
 // int or i4
@@ -223,7 +223,7 @@ class RPCArgs
 
       virtual QString PrintArgs();
 
-      std::vector <QSharedPointer<RPCParam> > args;
+      QVector <QSharedPointer<RPCParam> > args;
       TIXML_STRING UTF8XML; // pre-built params structure
 
       void addParam( QSharedPointer<RPCParam> );
@@ -240,17 +240,17 @@ class RPCArgs
 
       bool parseParams( TIXML_STRING ); // parse from the string to args
 
-      bool getStructArgMember( unsigned int argno, const QString &name, QSharedPointer<RPCParam>  &res );
-      bool getStructArgMember( unsigned int argno, unsigned int eleno, QSharedPointer<RPCParam>  &res );
-      bool getArrayArgElements( unsigned int argno, unsigned int &size );
-      bool getArrayArgElement( unsigned int argno, unsigned int eleno, QSharedPointer<RPCParam> &res );
+      bool getStructArgMember(int argno, const QString &name, QSharedPointer<RPCParam>  &res );
+      bool getStructArgMember( int argno, unsigned int eleno, QSharedPointer<RPCParam>  &res );
+      bool getArrayArgElements(int argno, unsigned int &size );
+      bool getArrayArgElement( int argno, unsigned int eleno, QSharedPointer<RPCParam> &res );
 
-      bool getBooleanArg( unsigned int argno, bool &res );
-      bool getIntArg( unsigned int argno, int &res );
-      bool getDoubleArg( unsigned int argno, double &res );
-      bool getStringArg( unsigned int argno, QString &res );
-      bool getBase64Arg( unsigned int argno, QString &res );
-      bool getDtgArg( unsigned int argno, QString &res );
+      bool getBooleanArg(int argno, bool &res );
+      bool getIntArg( int argno, int &res );
+      bool getDoubleArg(int argno, double &res );
+      bool getStringArg( int argno, QString &res );
+      bool getBase64Arg(int argno, QString &res );
+      bool getDtgArg( int argno, QString &res );
 };
 Q_DECLARE_METATYPE(RPCArgs);
 //---------------------------------------------------------------------------

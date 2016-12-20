@@ -93,9 +93,9 @@ bool MinosParametersAdapter::isListOpen(const QString /*fn*/ )
 {
    return false;
 }
-std::vector<BaseContestLog *> MinosParametersAdapter::getContestList()
+QVector<BaseContestLog *> MinosParametersAdapter::getContestList()
 {
-   std::vector<BaseContestLog *> logList;
+   QVector<BaseContestLog *> logList;
    return logList;
 }
 

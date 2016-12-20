@@ -110,6 +110,6 @@ class RPCPublisher
       void rePublish();
 
 };
-extern std::vector<RPCSubscriber *> subscribeList;
-extern std::vector<RPCPublisher *> publishList;
+extern QVector<RPCSubscriber *> subscribeList;
+extern QVector<RPCPublisher *> publishList;
 #endif

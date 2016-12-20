@@ -51,7 +51,7 @@ private:
      int getAngle();
 
   protected: 	// User declarations
-     std::vector <ValidatedControl *> vcs;
+     QVector <ValidatedControl *> vcs;
 
      BaseContestLog * contest;
      bool overstrike;

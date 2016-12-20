@@ -188,10 +188,10 @@ void MinosAppConnection::on_readyRead()
                 rxbuff[ rxlen ] = 0;
 
                 // We might have embedded nulls between message parts - so strip them
-                int rxpt = 0;
+                size_t rxpt = 0;
                 while ( rxpt < rxlen )
                 {
-                    unsigned int ptlen = strlen( &rxbuff[ rxpt ] );
+                    size_t ptlen = strlen( &rxbuff[ rxpt ] );
                     if ( ptlen )
                     {
                         onLog( QString(&rxbuff[ rxpt ]), true );
@@ -202,7 +202,7 @@ void MinosAppConnection::on_readyRead()
 
                 while ( packetbuff.size() > 2 && packetbuff.substr( 0, 2 ) == "&&" )
                 {
-                    unsigned int packetoffset = packetbuff.find( '<' );
+                    size_t packetoffset = packetbuff.find( '<' );
                     if ( packetoffset > 0 )    // length field should always be followed by XML
                     {
                         char * ec;

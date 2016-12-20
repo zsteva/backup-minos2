@@ -55,7 +55,7 @@ class Server
       {}
       virtual ~Server(){}
 };
-extern std::vector<Server *> serverList;
+extern QVector<Server *> serverList;
 extern Server *findStation( const QString s );
 
 class UDPSocket: public QObject
@@ -91,8 +91,8 @@ class TZConf: public QObject
       bool waitNameReply;
       QString localName;
 
-      std::vector<QSharedPointer<UDPSocket> > TxSocks;
-//      std::vector<QSharedPointer<UDPSocket> > RxSocks;
+      QVector<QSharedPointer<UDPSocket> > TxSocks;
+//      QVector<QSharedPointer<UDPSocket> > RxSocks;
 
       QSharedPointer<MCReadSocket> rxSocket;
 

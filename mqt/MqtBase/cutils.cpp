@@ -20,7 +20,7 @@ bool checkFileOK( std::ifstream &istr, const QString &fname, const QString &fmes
 }
 char diskBuffer[ bsize + 1 ];
 //char *lbuff = &diskBuffer[ 0 ];
-int buffpt = 0;
+size_t buffpt = 0;
 
 void clearBuffer( void )
 {
@@ -63,7 +63,7 @@ void buftostr( QString &str )
 {
    int i;
    str = "";
-   int len = strlen( &diskBuffer[ buffpt ] );
+   size_t len = strlen( &diskBuffer[ buffpt ] );
    for ( i = 0; i < 1024 && i < len; i++ )
    {
       str += diskBuffer[ buffpt + i ];
@@ -90,7 +90,7 @@ int strcpysp( QString &s1, const QString &s2, int maxlen )
     s1 = s2.trimmed().left(maxlen);
     return s1.size();
 }
-int strcpysp( char *s1, const QString &s2, int maxlen )
+size_t strcpysp( char *s1, const QString &s2, int maxlen )
 {
     QString ss2 = s2.trimmed().left(maxlen);
 
@@ -141,7 +141,7 @@ int parseLine( char *buff, char sep, char **a, int count, char sep2, bool &sep2s
    int sep_count = 0;
    sep2seen = false;
 
-   int len = strlen( buff );
+   size_t len = strlen( buff );
    for ( int j = 0; j < count; j++ )
    {
       // do it this way so we strip spaces off the start of every element,

@@ -73,7 +73,7 @@ class MatchTreeItem
     MatchContact *matchContact;
 
     MatchTreeItem *parent;
-    std::vector<MatchTreeItem *> children;
+    QVector<MatchTreeItem *> children;
     int row;
 
 public:

@@ -45,7 +45,7 @@ class RPCServerSubscriber : public RPCSubscriber
          return server;
       }
 };
-extern std::vector<RPCServerSubscriber *> serverSubscribeList;
+extern QVector<RPCServerSubscriber *> serverSubscribeList;
 //---------------------------------------------------------------------------
 class RPCServerSubscribeClient: public RPCPubSub
 {

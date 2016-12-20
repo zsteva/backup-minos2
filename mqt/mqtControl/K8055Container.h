@@ -27,7 +27,7 @@ class TDMK8055 : public TForm
       void __fastcall Timer1Timer( TObject *Sender );
    private:  	// User declarations
    public:  		// User declarations
-//      std::vector <TJvHidDevice *> devList;
+//      QVector <TJvHidDevice *> devList;
 //      TJvHidDevice *theDev;
       bool timed;
       bool viewed;

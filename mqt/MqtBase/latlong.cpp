@@ -667,7 +667,7 @@ static int geoinput( Location *ingrid )
    int esign = 1;
    int deg, min;
    float secs;
-   int i, j;
+   size_t i, j;
 
    //		fprintf(outfile, "\nLatitude (int int f): ");
    //		getline();

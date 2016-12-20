@@ -255,10 +255,10 @@ void RPCTestTest::testStruct()
    QVERIFY( false == pOK );
 }
 
-RPCParamArray *RPCArrayFromStringVector( const std::vector< QString> &plist )
+RPCParamArray *RPCArrayFromStringVector( const QVector< QString> &plist )
 {
    RPCParamArray * rpc = new RPCParamArray();
-   for ( unsigned int i = 0; i < plist.size(); i++ )
+   for ( int i = 0; i < plist.size(); i++ )
    {
       rpc->addElement( plist[ i ] );
    }
@@ -269,7 +269,7 @@ void RPCTestTest::testArray()
 {
    RPCArgs * xms = new RPCArgs();
 
-   std::vector < QString > testvec;
+   QVector < QString > testvec;
    testvec.push_back( "string 1" );
    testvec.push_back( "string 2" );
    testvec.push_back( "string 3" );
@@ -298,7 +298,7 @@ void RPCTestTest::testArray()
    QVERIFY( true == pOK );
    QVERIFY( static_cast< unsigned int > (testvec.size()) == asize );
 
-   for ( unsigned int i = 0; i < testvec.size(); i++ )
+   for ( int i = 0; i < testvec.size(); i++ )
    {
       QSharedPointer<RPCParam> pres;
       QString sres;

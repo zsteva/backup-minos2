@@ -1202,7 +1202,7 @@ bool BaseContestLog::checkTime(const dtg &t)
 static bool loadCalYear ( Calendar &cal, int year )
 {
     bool loaded = false;
-    std::vector<QSharedPointer<CalendarYear> > yearList;
+    QVector<QSharedPointer<CalendarYear> > yearList;
     for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
     {
         yearList.push_back ( QSharedPointer<CalendarYear> ( new VHFCalendarYear ( i ) ) );

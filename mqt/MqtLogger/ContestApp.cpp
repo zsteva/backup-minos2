@@ -464,9 +464,9 @@ void TContestApp::writeContestList()
         preloadBundle.flushProfile();
     }
 }
-std::vector<BaseContestLog *> TContestApp::getContestList()
+QVector<BaseContestLog *> TContestApp::getContestList()
 {
-   std::vector<BaseContestLog *> logList;
+   QVector<BaseContestLog *> logList;
    for ( int i = 0; i < contestSlotList.size(); i++ )
    {
       QSharedPointer<ContestSlot> cs = contestSlotList[ i ];

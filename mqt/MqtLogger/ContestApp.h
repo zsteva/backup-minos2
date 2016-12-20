@@ -92,7 +92,7 @@ class TContestApp : public MinosParameters
       virtual bool insertList( ContactList *p, int sno ) override;
       virtual bool isContestOpen( const QString fn ) override;
       virtual bool isListOpen(const QString fn ) override;
-      virtual std::vector<BaseContestLog *> getContestList() override;
+      virtual QVector<BaseContestLog *> getContestList() override;
 
       TContestApp();
       bool initialise();

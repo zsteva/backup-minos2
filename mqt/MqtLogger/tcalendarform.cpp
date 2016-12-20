@@ -293,7 +293,7 @@ void TCalendarForm::downloadFiles()
 
     int fileCount = 0;
 
-    std::vector<QSharedPointer<CalendarYear> > yearList;
+    QVector<QSharedPointer<CalendarYear> > yearList;
 
     yearList.push_back ( QSharedPointer<CalendarYear> ( new CTYCalendarYear ( 0 ) ) );
     for ( int i = LOWURLYEAR; i <= HIGHYEAR; i++ )
@@ -304,7 +304,7 @@ void TCalendarForm::downloadFiles()
 //        yearList.push_back ( QSharedPointer<CalendarYear> ( new MicroCalendarYear ( i ) ) );
     }
 
-    for ( unsigned int i = 0; i < yearList.size(); i++ )
+    for ( int i = 0; i < yearList.size(); i++ )
     {
         if ( yearList[ i ] ->downloadFile ( false, LogContainer ) )
         {

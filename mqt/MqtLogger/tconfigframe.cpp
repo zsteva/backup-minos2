@@ -21,7 +21,7 @@ void TConfigFrame::initialise(TAboutBox *b)
 {
     dialog = b;
 
-    for (unsigned int i = 0; i < TMConfigDM::getConfigDM( 0 ) ->elelist.size(); i++)
+    for (int i = 0; i < TMConfigDM::getConfigDM( 0 ) ->elelist.size(); i++)
     {
        TConfigElement *c = TMConfigDM::getConfigDM( 0 ) ->elelist[i];
        QString sect = c ->name;
@@ -48,7 +48,7 @@ void TConfigFrame::setup(bool started)
 void TConfigFrame::start()
 {
     on_SetButton_clicked();    // set the circle of hell
-    for (unsigned int i = 0; i < TMConfigDM::getConfigDM( 0 ) ->elelist.size(); i++)
+    for (int i = 0; i < TMConfigDM::getConfigDM( 0 ) ->elelist.size(); i++)
     {
        TMConfigDM::getConfigDM( 0 ) ->elelist[i] ->setRun(ui->ElementListBox->item(i) ->checkState());
     }
@@ -81,7 +81,7 @@ void TConfigFrame::on_SetButton_clicked()
 
 void TConfigFrame::on_ClearAllButton_clicked()
 {
-    for (unsigned int i = 0; i < TMConfigDM::getConfigDM( 0 ) ->elelist.size(); i++)
+    for ( int i = 0; i < TMConfigDM::getConfigDM( 0 ) ->elelist.size(); i++)
     {
        ui->ElementListBox->item(i) ->setCheckState(Qt::Unchecked);
     }
@@ -91,7 +91,7 @@ void TConfigFrame::on_ModifyButton_clicked()
 {
     // we really need to have accumulated changes, so that we can cancel - or we action them instantly
     // Change the INI file to match what is shown
-    for (unsigned int i = 0; i < TMConfigDM::getConfigDM( 0 ) ->elelist.size(); i++)
+    for (int i = 0; i < TMConfigDM::getConfigDM( 0 ) ->elelist.size(); i++)
     {
        TMConfigDM::getConfigDM( 0 ) ->elelist[i] ->setRun(ui->ElementListBox->item(i) ->checkState());
     }

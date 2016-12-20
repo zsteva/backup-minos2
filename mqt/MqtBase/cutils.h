@@ -32,7 +32,7 @@ extern void buftostr( QString &str );
 extern void buftostr( MinosItem<QString> &str );
 extern bool inyn();
 extern bool wildComp( const QString &e, const QString &s );
-extern int strcpysp( char *s1, const QString &s2, int maxlen = 255 );
+extern size_t strcpysp( char *s1, const QString &s2, int maxlen = 255 );
 extern int strcpysp( QString &s1, const QString &s2, int maxlen = 255 );
 extern int strcmpsp( const QString &s1, const QString &s2 );
 extern int stricmpsp( const QString &s1, const QString &s2 );
@@ -49,7 +49,7 @@ extern QDateTime CanonicalToTDT( QString cdtg );
 const int bsize = 256;
 extern char diskBuffer[ bsize + 1 ];
 
-extern int buffpt;
+extern size_t buffpt;
 
 class writer
 {

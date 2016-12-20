@@ -203,7 +203,7 @@ bool QSOLogFrame::doKeyPressEvent( QKeyEvent* event )
 QSOLogFrame::~QSOLogFrame()
 {
     delete ui;
-    for ( std::vector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
+    for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
     {
        delete ( *vcp );
     }
@@ -436,7 +436,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
        QWidget *nextInvalid = 0;
        bool onCurrent = false;
        bool pastCurrent = false;
-       for ( std::vector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
+       for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
        {
           if ( /*( *vcp ) ->wc->ReadOnly ||*/ !( *vcp ) ->wc->isVisible() )
           {
@@ -820,7 +820,7 @@ void QSOLogFrame::showScreenEntry( void )
       setMode(temp.mode.trimmed());
 
       // and now we want to put the selection on each at the END of the text
-      for ( std::vector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
+      for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
       {
          int selpt = ( *vcp ) ->wc->text().length();
          ( *vcp )->wc ->setSelection(selpt, 0);
@@ -1068,7 +1068,7 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
    // spin round all controls, and validate them
    // return true if all valid
 
-   for ( std::vector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
+   for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
    {
       if ( !( *vcp ) ->valid( command ) )
          return false;

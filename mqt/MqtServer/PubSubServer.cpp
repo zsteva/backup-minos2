@@ -9,7 +9,7 @@
 //---------------------------------------------------------------------------
 #include "minos_pch.h"
 
-std::vector<RPCServerSubscriber *> serverSubscribeList;
+QVector<RPCServerSubscriber *> serverSubscribeList;
 
 /*static*/
 void RPCServerPubSub::initialisePubSub( TRPCFunctor *notifycb )
@@ -27,7 +27,7 @@ void RPCServerPubSub::serverSubscribeRemote( const QString &server, const QStrin
 }
 void RPCServerPubSub::serverReconnectRemotePubSub( const QString &server )
 {
-   for ( std::vector<RPCServerSubscriber *>::iterator i = serverSubscribeList.begin(); i != serverSubscribeList.end(); i++ )
+   for ( QVector<RPCServerSubscriber *>::iterator i = serverSubscribeList.begin(); i != serverSubscribeList.end(); i++ )
    {
       if ( ( *i ) && ( *i ) ->getServer() == server )
       {
@@ -39,7 +39,7 @@ void RPCServerPubSub::serverReconnectRemotePubSub( const QString &server )
 void RPCServerPubSub::close( )
 {
    RPCPubSub::close( );
-   for ( std::vector<RPCServerSubscriber *>::iterator i = serverSubscribeList.begin(); i != serverSubscribeList.end(); i++ )
+   for ( QVector<RPCServerSubscriber *>::iterator i = serverSubscribeList.begin(); i != serverSubscribeList.end(); i++ )
    {
       delete ( *i );
       ( *i ) = 0;
@@ -55,7 +55,7 @@ bool RPCServerSubscriber::isRemoteEqual( const QString &pServer, const QString &
 void RPCServerSubscriber::testAndSubscribe( const QString &server, const QString &category )
 {
    RPCServerSubscriber * sub = 0;
-   for ( std::vector<RPCServerSubscriber *>::iterator i = serverSubscribeList.begin(); i != serverSubscribeList.end(); i++ )
+   for ( QVector<RPCServerSubscriber *>::iterator i = serverSubscribeList.begin(); i != serverSubscribeList.end(); i++ )
    {
       if ( ( *i ) ->isRemoteEqual( server, category ) )
       {

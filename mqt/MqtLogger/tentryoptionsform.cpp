@@ -217,8 +217,8 @@ void TEntryOptionsForm::getContestOperators()
 
     QString ops1;
     QString ops2;
-    unsigned int ls = operators.size();
-    for (unsigned int i = 0; i < ls; i++)
+    size_t ls = operators.size();
+    for (size_t i = 0; i < ls; i++)
     {
         if (i <= ls/2)
         {

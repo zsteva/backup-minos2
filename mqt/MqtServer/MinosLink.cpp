@@ -115,7 +115,7 @@ QString MinosCommonConnection::makeJid()
 }
 bool MinosCommonConnection::sendRaw ( const char *xmlstr )
 {
-   unsigned int xmllen = strlen( xmlstr );
+   size_t xmllen = strlen( xmlstr );
    if ( xmllen )
    {
       char * xmlbuff = new char[ 10 + 1 + xmllen + 1 ];

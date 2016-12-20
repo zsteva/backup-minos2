@@ -10,8 +10,8 @@
 #include "XMPP_pch.h"
 
 //---------------------------------------------------------------------------
-std::vector<RPCSubscriber *> subscribeList;
-std::vector<RPCPublisher *> publishList;
+QVector<RPCSubscriber *> subscribeList;
+QVector<RPCPublisher *> publishList;
 
 bool RPCSubscriber::isEqual( const QString &pcategory )
 {
@@ -24,7 +24,7 @@ bool RPCSubscriber::isRemoteEqual( const QString &/*pserver*/, const QString &/*
 void RPCSubscriber::testAndSubscribe( const QString &category )
 {
    RPCSubscriber * sub = 0;
-   for ( std::vector<RPCSubscriber *>::iterator i = subscribeList.begin(); i != subscribeList.end(); i++ )
+   for ( QVector<RPCSubscriber *>::iterator i = subscribeList.begin(); i != subscribeList.end(); i++ )
    {
       if ( ( *i ) ->isEqual( category ) )
       {
@@ -49,7 +49,7 @@ bool RPCRemoteSubscriber::isRemoteEqual( const QString &pServer, const QString &
 void RPCRemoteSubscriber::testAndSubscribe( const QString &server, const QString &category )
 {
    RPCRemoteSubscriber * sub = 0;
-   for ( std::vector<RPCSubscriber *>::iterator i = subscribeList.begin(); i != subscribeList.end(); i++ )
+   for ( QVector<RPCSubscriber *>::iterator i = subscribeList.begin(); i != subscribeList.end(); i++ )
    {
       if ( ( *i ) ->isRemoteEqual( server, category ) )
       {
@@ -97,7 +97,7 @@ void RPCRemoteSubscriber::reSubscribe()
 void RPCPublisher::testAndPublish( const QString &category, const QString &key, const QString &value, PublishState pState )
 {
    RPCPublisher * pub = 0;
-   for ( std::vector<RPCPublisher *>::iterator i = publishList.begin(); i != publishList.end(); i++ )
+   for ( QVector<RPCPublisher *>::iterator i = publishList.begin(); i != publishList.end(); i++ )
    {
       if ( ( *i ) ->category == category && ( *i ) ->key == key )
       {

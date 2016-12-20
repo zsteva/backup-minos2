@@ -209,7 +209,7 @@ void SoundSystemDriver::record_file( const QString &filename )
    CW_ACTIVE = false;
    if ( currentKeyer )
       currentKeyer->ptt( 0 );
-   unsigned int i;
+   int i;
    for ( i = 0;i < recfil.size();i++ )
    {
       if ( filename.compare(recfil[ i ] ->fileName, Qt::CaseInsensitive ) == 0 )
@@ -266,7 +266,7 @@ long SoundSystemDriver::play_file( const QString &filename, bool xmit )
    }
    else
    {
-      unsigned int i;
+      int i;
       for ( i = 0;i < recfil.size();i++ )
       {
          if ( filename.compare(recfil[ i ] ->fileName, Qt::CaseInsensitive ) == 0 )
@@ -345,7 +345,7 @@ bool SoundSystemDriver::sbdvp_init( QString &errmess, int pipTone, int pipVolume
 
       // clear the recfil structure
 
-      for ( unsigned int i = 0; i < recfil.size(); i++ )
+      for ( int i = 0; i < recfil.size(); i++ )
          delete recfil[ i ];
       recfil.clear();
       // attempt to set up all recorded files
@@ -399,7 +399,7 @@ void SoundSystemDriver::unload( void )
       KeyerAction::currentAction.freeAll();
 
       //   CLOSE_PCKEYER();
-      for ( unsigned int i = 0; i < recfil.size(); i++ )
+      for ( int i = 0; i < recfil.size(); i++ )
          delete recfil[ i ];
       recfil.clear();
    }
@@ -602,7 +602,7 @@ void SoundSystemDriver::createCWBuffer( const char *message, int speed, int tone
    genTone( ditbuff, false, tone, ditlength, ramptime, 32767.0 * 0.9 );
    genTone( dahbuff, false, tone, dahlength, ramptime, 32767.0 * 0.9 );
 
-   int messlen = strlen( message );
+   size_t messlen = strlen( message );
    int messsamples = 0;
    for ( int i = 0; i < messlen; i++ )
    {

@@ -23,7 +23,6 @@ extern const double dr = pi / 180.0;      // degree to radian conversion factor
 /******************************************************/
 char lonlat( const QString &pinqra, double &lon, double &lat )
 {
-   int l ;                       /* length of qra string */
    double ft[ 8 ] = {0.0, 0.0, 5.0, 5.0, 11.0, 11.0, 5.0, 5.0} ; /* work values for locator positions */
    // defaulted to square centres - LL55LL55
    double wfe = 0.0 ;                  /* work values for longtitude */
@@ -38,6 +37,7 @@ char lonlat( const QString &pinqra, double &lon, double &lat )
    double *fp1 ;
 
    std::string inqra = pinqra.toStdString();    // allowed conversion through std::string
+   int l ;                       /* length of qra string NOT size_t */
 
    for ( l = inqra.length() - 1; l >= 0; l-- )
    {

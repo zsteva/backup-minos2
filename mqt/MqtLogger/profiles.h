@@ -41,7 +41,7 @@ class BundleFile
       QString bundleName;
    public:
       QSharedPointer<INIFile> iniFile;
-      std::vector<ProfileEntry> entries;
+      QVector<QSharedPointer<ProfileEntry> > entries;
 
       static QSharedPointer<BundleFile>bundleFiles[ epLOCSQUARESPROFILE + 1 ];
       BundleFile( PROFILES p );
@@ -52,7 +52,7 @@ class BundleFile
       {
          return bundleName;
       }
-      ProfileEntry &GetKey( int p );
+      QSharedPointer<ProfileEntry> &GetKey( int p );
 };
 class SettingsBundle
 {
@@ -103,7 +103,7 @@ class SettingsBundle
       void clearProfileSection(bool clearCurr );
 
       QStringList getProfileEntries( );
-      std::vector<int> getBundleEntries( );
+      QVector<int> getBundleEntries( );
       QStringList getBundleHints( );
       QStringList getSections( );
 };
