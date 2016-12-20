@@ -15,6 +15,7 @@ class ListContact;
 class ContactList;
 class BaseMatchContest;
 
+/*
 class LtMatchContest
 {
 public:
@@ -31,26 +32,31 @@ typedef ContestMatchList::iterator ContestMatchIterator;
 
 typedef codeproject::sorted_vector < MatchContact *, true, LtMatch > MatchList;
 typedef MatchList::iterator MatchIterator;
+*/
+typedef QMap < QSharedPointer<BaseMatchContest>, QSharedPointer<BaseMatchContest> > ContestMatchList;
+typedef ContestMatchList::iterator ContestMatchIterator;
 
+typedef QMap < QSharedPointer<MatchContact>, QSharedPointer<MatchContact> > MatchList;
+typedef MatchList::iterator MatchIterator;
 
 class MatchContact
 {
    public:
       MatchContact( );
       virtual ~MatchContact();
-      virtual ContactList *getContactList() const
+      virtual ContactList * getContactList() const
       {
          return 0;
       }
-      virtual ListContact *getListContact() const
+      virtual ListContact * getListContact() const
       {
          return 0;
       }
-      virtual BaseContestLog *getContactLog() const
+      virtual BaseContestLog * getContactLog() const
       {
          return 0;
       }
-      virtual BaseContact *getBaseContact() const
+      virtual BaseContact * getBaseContact() const
       {
          return 0;
       }
@@ -68,24 +74,14 @@ public:
 
    MatchList matchList;
 
-   void freeAll()
-   {
-      for (MatchIterator i = matchList.begin(); i != matchList.end(); i++ )
-      {
-         delete ( *i );
-         ( *i ) = 0;
-      }
-      matchList.clear();
-   }
-
    virtual int getContactCount(){return matchList.size();}
-   MatchContact *pcontactAt( int );
+   QSharedPointer<MatchContact> pcontactAt( int );
 
-   virtual ContactList *getContactList() const
+   virtual const ContactList * getContactList() const
    {
       return 0;
    }
-   virtual BaseContestLog *getContactLog() const
+   virtual const BaseContestLog * getContactLog() const
    {
       return 0;
    }
@@ -96,16 +92,16 @@ class MatchContactList : public BaseMatchContest
 public:
    virtual ContactList *getContactList() const override
    {
-      return dynamic_cast<ContactList *>(matchedContest);
+      return dynamic_cast<ContactList * >(matchedContest);
    }
    virtual bool operator<( const BaseMatchContest& rhs ) const override;
 };
 class MatchContactLog : public BaseMatchContest
 {
 public:
-   virtual BaseContestLog *getContactLog() const override
+   virtual const BaseContestLog * getContactLog() const override
    {
-      return dynamic_cast<BaseContestLog *>(matchedContest);
+      return dynamic_cast<BaseContestLog* >(matchedContest);
    }
    virtual bool operator<( const BaseMatchContest& rhs ) const override;
 };
@@ -116,13 +112,13 @@ class MatchListContact: public MatchContact
    public:
       ContactList *matchedList;
       ListContact *matchedListContact;
-      MatchListContact( ContactList *ct, ListContact *lc );
+      MatchListContact( ContactList * ct, ListContact * lc );
       virtual ~MatchListContact();
-      virtual ContactList *getContactList() const
+      virtual ContactList * getContactList() const override
       {
          return matchedList;
       }
-      virtual ListContact *getListContact() const
+      virtual ListContact * getListContact() const override
       {
          return matchedListContact;
       }
@@ -136,13 +132,13 @@ class MatchLogContact: public MatchContact
    public:
       BaseContestLog *matchedContest;
       BaseContact *matchedContact;
-      MatchLogContact( BaseContestLog *ct, BaseContact *lc );
+      MatchLogContact(BaseContestLog * ct, BaseContact *lc );
       virtual ~MatchLogContact();
-      virtual BaseContestLog *getContactLog() const
+      virtual BaseContestLog * getContactLog() const
       {
          return matchedContest;
       }
-      virtual BaseContact *getBaseContact() const
+      virtual BaseContact * getBaseContact() const
       {
          return matchedContact;
       }

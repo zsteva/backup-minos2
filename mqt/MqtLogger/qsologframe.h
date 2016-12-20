@@ -95,8 +95,8 @@ private:
 
      void doGJVCancelButton_clicked();
 
-     void transferDetails( const BaseContact * lct, const BaseContestLog *matct );
-     void transferDetails( const ListContact * lct, const ContactList *matct );
+     void transferDetails( const BaseContact *lct, const BaseContestLog *matct );
+     void transferDetails(const ListContact *lct, const ContactList *matct );
 
      void setFirstUnfilledButtonEnabled(bool);
      void logTabChanged();

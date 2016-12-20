@@ -208,18 +208,24 @@ TMatchCollection::TMatchCollection( void )
 {}
 TMatchCollection::~TMatchCollection( void )
 {
-   freeAll();
+   //freeAll();
 }
 int TMatchCollection::getContestCount( void )
 {
    return matchList.size();
 }
-BaseMatchContest *TMatchCollection::pcontestAt( int i )
+
+QSharedPointer<BaseMatchContest> TMatchCollection::pcontestAt( int i )
 {
-    if (i > static_cast< int>(matchList.size()))
-        return 0;
-    return matchList.at( i );
+    if (i > matchList.size())
+        return QSharedPointer<BaseMatchContest>();
+
+    return *std::next(matchList.begin(), i);
+// ERROR
+ //   return QSharedPointer<BaseMatchContest>();
+//    return matchList.at( i );
 }
+
 int TMatchCollection::contactCount()
 {
     int cc = 0;
@@ -443,28 +449,29 @@ void ThisLogMatcher::matchCountry( const QString &cs )
 {
    TMatchThread::getMatchThread() ->matchCountry( cs );   // scroll to
 }
-void ThisLogMatcher::addMatch( BaseContact *cct, BaseContestLog * ccon )
+void ThisLogMatcher::addMatch( BaseContact *cct, BaseContestLog *ccon )
 {
    if ( !cct )
       return ;
 
-   BaseMatchContest *mc = 0;
+   QSharedPointer<BaseMatchContest> mc;
+   //BaseMatchContest *mc = 0;
    ContestMatchList &matchList = matchCollection->matchList;
    if (matchList.size() == 0)
    {
-       mc = new MatchContactLog;
+       mc = QSharedPointer<BaseMatchContest>(new MatchContactLog);
        mc->matchedContest = ccon;
-       matchList.insert(mc);
+       matchList.insert(mc, mc);
    }
-   mc = matchCollection->pcontestAt(matchList.size() - 1);
+   mc = matchCollection->matchList.begin().value();
 
-   MatchContact *mct = new MatchLogContact( ccon, cct );
+   QSharedPointer<MatchContact> mct(new MatchLogContact( ccon, cct ));
 
 //   bool exists = std::binary_search( matchCollection->matchList.begin(), matchCollection->matchList.end(), mct );
 //   if ( !exists )
-   {
-      mc->matchList.insert( mct );
-   }
+//   {
+      mc->matchList.insert( mct, mct );
+//   }
 //   else
 //   {
 //      delete mct;
@@ -784,25 +791,25 @@ void OtherLogMatcher::addMatch( BaseContact *cct, BaseContestLog * ccon )
    if ( !cct )
       return ;
 
-   BaseMatchContest *mc = 0;
+   QSharedPointer<BaseMatchContest> mc;
    ContestMatchList &matchList = matchCollection->matchList;
    if (matchList.size() == 0)
    {
-       mc = new MatchContactLog;
+       mc = QSharedPointer<MatchContactLog>(new MatchContactLog);
        mc->matchedContest = ccon;
-       matchList.insert(mc);
+       matchList.insert(mc, mc);
    }
    mc = matchCollection->pcontestAt(matchList.size() - 1);
    if (mc->matchedContest != ccon)
    {
-       mc = new MatchContactLog;
+       mc = QSharedPointer<MatchContactLog>(new MatchContactLog);
        mc->matchedContest = ccon;
-       matchList.insert(mc);
+       matchList.insert(mc, mc);
    }
 
-   MatchContact *mct = new MatchLogContact( ccon, cct );
+   QSharedPointer<MatchContact> mct(new MatchLogContact( ccon, cct ));
 
-   mc->matchList.insert( mct );
+   mc->matchList.insert( mct, mct );
    thisContestMatched = matchCollection->contactCount();
 }
 bool OtherLogMatcher::idleMatch( int limit )
@@ -1101,25 +1108,25 @@ void ListMatcher::addMatch( ListContact *cct, ContactList * ccon )
    if ( !cct )
       return ;
 
-   BaseMatchContest *mc = 0;
+   QSharedPointer<BaseMatchContest> mc;
    ContestMatchList &matchList = matchCollection->matchList;
    if (matchList.size() == 0)
    {
-       mc = new MatchContactList;
+       mc = QSharedPointer<MatchContactList>(new MatchContactList);
        mc->matchedContest = ccon;
-       matchList.insert(mc);
+       matchList.insert(mc, mc);
    }
    mc = matchCollection->pcontestAt(matchList.size() - 1);
    if (mc->matchedContest != ccon)
    {
-       mc = new MatchContactList;
+       mc = QSharedPointer<MatchContactList>(new MatchContactList);
        mc->matchedContest = ccon;
-       matchList.insert(mc);
+       matchList.insert(mc, mc);
    }
 
-   MatchListContact *mct = new MatchListContact( ccon, cct );
+   QSharedPointer<MatchListContact> mct = QSharedPointer<MatchListContact>(new MatchListContact( ccon, cct ));
 
-   mc->matchList.insert( mct );
+   mc->matchList.insert( mct, mct );
 }
 
 bool ListMatcher::idleMatch( int limit )

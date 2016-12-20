@@ -54,7 +54,7 @@ class dupsheet
       bool checkCurDup( BaseContact *nct, BaseContact *valp, bool insert );
       bool checkCurDup( ScreenContact *nct, BaseContact *valp, bool insert );
       bool isCurDup( BaseContact *nct ) const;
-      bool isCurDup( ScreenContact *nct ) const;
+      bool isCurDup(ScreenContact *nct ) const;
       void clearCurDup();
       void clear();
       BaseContact *getCurDup();
@@ -308,7 +308,7 @@ class BaseContestLog: public BaseLogList
       void getMatchField( BaseContact *pct, int col, QString &disp, const BaseContestLog *const ct ) const;
       void scanContest( void );
       void setScore( QString & );
-      bool isCurDup( BaseContact *) const;
+      bool isCurDup(BaseContact *) const;
 
       virtual void getScoresTo(ContestScore &cs, QDateTime limit);
 
@@ -332,7 +332,7 @@ class BaseContestLog: public BaseLogList
       bool getsdist( const char *loc, char *minloc, double &mindist );
       BaseContact *getBestDX( void );
       QString dateRange( DTG dstyle );
-      bool checkTime(const dtg &t);
+      bool checkTime(const dtg &t) const;
 
 };
 class ContestScore

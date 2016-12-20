@@ -1777,7 +1777,7 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
     }
 }
 
-void QSOLogFrame::transferDetails( const BaseContact * lct, const BaseContestLog *matct )
+void QSOLogFrame::transferDetails(const BaseContact *lct, const BaseContestLog *matct )
 {
    ui->CallsignEdit->setText(lct->cs.fullCall.getValue());
    ui->LocEdit->setText(lct->loc.loc.getValue());  // also forces update of score etc
@@ -1812,7 +1812,7 @@ void QSOLogFrame::transferDetails( const BaseContact * lct, const BaseContestLog
    doGJVEditChange(ui->LocEdit);
    doGJVEditChange(ui->QTHEdit);
 }
-void QSOLogFrame::transferDetails( const ListContact * lct, const ContactList * /*matct*/ )
+void QSOLogFrame::transferDetails( const ListContact *lct, const ContactList * /*matct*/ )
 {
    ui->CallsignEdit->setText(lct->cs.fullCall.getValue());
    ui->LocEdit->setText(lct->loc.loc.getValue());

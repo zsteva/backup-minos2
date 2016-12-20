@@ -70,14 +70,14 @@ enum MatchType {ThisMatch, OtherMatch, ArchiveMatch};
 class MatchTreeItem
 {
     BaseMatchContest *matchContest;
-    MatchContact *matchContact;
+    QSharedPointer<MatchContact> matchContact;
 
     MatchTreeItem *parent;
     QVector<MatchTreeItem *> children;
     int row;
 
 public:
-    MatchTreeItem(MatchTreeItem *parent, BaseMatchContest *matchContest, MatchContact *matchContact);
+    MatchTreeItem(MatchTreeItem *parent, BaseMatchContest *matchContest, QSharedPointer<MatchContact> matchContact);
     ~MatchTreeItem();
 
     void addChild(MatchTreeItem *mi)
@@ -91,7 +91,7 @@ public:
     }
 
     bool isMatchLine();
-    MatchContact *getMatchContact();
+    QSharedPointer<MatchContact> getMatchContact();
     BaseMatchContest *getMatchContest();
     MatchTreeItem *getParent();
     MatchTreeItem *child(int i)

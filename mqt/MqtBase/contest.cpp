@@ -975,7 +975,7 @@ bool dupsheet::isCurDup( ScreenContact *nct ) const
    }
    return cd;
 }
-bool dupsheet::isCurDup( BaseContact *nct ) const
+bool dupsheet::isCurDup(BaseContact *nct ) const
 {
    const DupContact test( nct );
    bool cd = curdup && ( *curdup == test ) ;
@@ -1172,7 +1172,7 @@ BaseContact * BaseContestLog::findNextUnfilledContact()
    return 0;
 }
 //====================================================================
-bool BaseContestLog::checkTime(const dtg &t)
+bool BaseContestLog::checkTime(const dtg &t) const
 {
 //   try
 //   {

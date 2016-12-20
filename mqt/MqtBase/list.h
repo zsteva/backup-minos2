@@ -39,7 +39,7 @@ class ContactList : public BaseLogList
       ~ContactList();
       bool initialise( int slotno );
       bool initialise( const QString &, int slotno );
-      void getMatchText( ListContact *, QString &, const BaseContestLog *const ct ) const;
+      void getMatchText(ListContact *, QString &, const BaseContestLog *const ct ) const;
       void getMatchField( ListContact *pct, int col, QString &disp, const BaseContestLog *const ct ) const;
       int getContactCount( void )
       {

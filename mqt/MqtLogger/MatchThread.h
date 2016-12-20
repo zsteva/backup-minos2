@@ -39,19 +39,21 @@ class TMatchCollection
       ContestMatchList matchList;
       void freeAll()
       {
+          /*
          for (ContestMatchIterator i = matchList.begin(); i != matchList.end(); i++ )
          {
              (*i)->freeAll();
             delete ( *i );
             ( *i ) = 0;
          }
+      */
          matchList.clear();
       }
       int contactCount();
       TMatchCollection( void );
       ~TMatchCollection();
       int getContestCount( void );
-      BaseMatchContest *pcontestAt( int );
+      QSharedPointer<BaseMatchContest> pcontestAt( int );
 };
 class Matcher
 {

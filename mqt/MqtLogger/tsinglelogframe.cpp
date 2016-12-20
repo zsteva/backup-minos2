@@ -344,12 +344,12 @@ void TSingleLogFrame::transferDetails(MatchTreeItem *MatchTreeIndex )
        return ;
     }
    // needs to be transferred into QSOLogFrame.cpp
-   MatchContact *mc = MatchTreeIndex->getMatchContact();
+   QSharedPointer<MatchContact> mc = MatchTreeIndex->getMatchContact();
    BaseContact *bct = mc->getBaseContact();
 
    if ( bct )
    {
-      BaseContestLog * matct = mc->getContactLog();
+      BaseContestLog *matct = mc->getContactLog();
       ui->GJVQSOLogFrame->transferDetails( bct, matct );
    }
    else
@@ -357,7 +357,7 @@ void TSingleLogFrame::transferDetails(MatchTreeItem *MatchTreeIndex )
        ListContact *lct = mc->getListContact();
        if (lct)
        {
-           ContactList * matct = mc->getContactList();
+           ContactList *matct = mc->getContactList();
            ui->GJVQSOLogFrame->transferDetails( lct, matct );
        }
    }
@@ -783,7 +783,7 @@ void TSingleLogFrame::on_ThisMatchTree_doubleClicked(const QModelIndex &index)
 {
     MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem *>(index.internalPointer());
 
-    MatchContact *mc = MatchTreeIndex->getMatchContact();
+    QSharedPointer<MatchContact> mc = MatchTreeIndex->getMatchContact();
     BaseContact *bct = mc->getBaseContact();
 
     if ( bct )
@@ -1041,7 +1041,7 @@ static GridColumn ArchiveMatchTreeColumns[ ARCHIVEMATCHTREECOLS ] =
    };
 //---------------------------------------------------------------------------
 
-MatchTreeItem::MatchTreeItem(MatchTreeItem *parent, BaseMatchContest *matchContest, MatchContact *matchContact)
+MatchTreeItem::MatchTreeItem(MatchTreeItem *parent, BaseMatchContest *matchContest, QSharedPointer<MatchContact> matchContact)
     :parent(parent), matchContest(matchContest), matchContact(matchContact), row(-1)
 {
 
@@ -1065,7 +1065,7 @@ MatchTreeItem *MatchTreeItem::getParent()
     return parent;
 }
 
-MatchContact *MatchTreeItem::getMatchContact()
+QSharedPointer<MatchContact> MatchTreeItem::getMatchContact()
 {
     return matchContact;
 }
@@ -1107,16 +1107,16 @@ void QSOMatchGridModel::initialise(MatchType t, TMatchCollection *pmatch )
    }
 
    match = pmatch;  // preserve all the tree
-   rootItem = new MatchTreeItem(0, 0, 0);
+   rootItem = new MatchTreeItem(0, 0, QSharedPointer<MatchContact>());
    rootItem->setRow(0);
    for (ContestMatchIterator i = pmatch->matchList.begin(); i != pmatch->matchList.end(); i++)
    {
-       MatchTreeItem *ci = new MatchTreeItem(rootItem, (*i), 0);
+       MatchTreeItem *ci = new MatchTreeItem(rootItem, (*i).data(), QSharedPointer<MatchContact>());
        rootItem->addChild(ci); // also sets row
        //(*i) is *BaseMatchContest
        for (int j = 0; j < (*i)->getContactCount(); j++)
        {
-           MatchTreeItem *mi = new MatchTreeItem(ci, (*i), (*i)->pcontactAt(j));
+           MatchTreeItem *mi = new MatchTreeItem(ci, (*i).data(), (*i)->pcontactAt(j));
            ci->addChild(mi);
        }
    }
@@ -1141,7 +1141,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
         return QVariant();
 
     BaseMatchContest *matchContest = thisItem->getMatchContest();
-    MatchContact * mct = thisItem->getMatchContact();
+    QSharedPointer<MatchContact> mct = thisItem->getMatchContact();
     BaseContact *ct = 0;
     ListContact *lct = 0;
 
@@ -1176,7 +1176,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
     {
         if (type == ArchiveMatch)
         {
-            ContactList *contest = matchContest->getContactList();
+            const ContactList *contest = matchContest->getContactList();
             if (lct)
             {
                 if( column >= 0 && column < columnCount(p))
@@ -1197,7 +1197,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
         }
         else
         {
-            BaseContestLog *contest = matchContest->getContactLog();
+            const BaseContestLog *contest = matchContest->getContactLog();
             if (ct)
             {
                 if( column >= 0 && column < columnCount(p))
