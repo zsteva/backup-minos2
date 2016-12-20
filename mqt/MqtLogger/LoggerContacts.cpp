@@ -511,8 +511,8 @@ bool ContestContact::minosSave( )
 {
    LoggerContestLog * clp = dynamic_cast<LoggerContestLog *>( contest );
    clp->minosSaveContestContact( this );
-   BaseContact bc( *this );
-   bc.updtime = dtg( true ); // update time is now
+   QSharedPointer<BaseContact> bc( new BaseContact(*this ));
+   bc->updtime = dtg( true ); // update time is now
    getHistory().push_back( bc );
    setModificationCount( getModificationCount() + 1 );
    return true;

@@ -62,7 +62,7 @@ const short FORCE_LOG = 0x0001;		// Force logged into log
 
 class BaseContact
 {
-      std::vector < BaseContact > history;
+      QVector < QSharedPointer<BaseContact> > history;
    protected:
       BaseContestLog *contest;
    public:
@@ -80,7 +80,7 @@ class BaseContact
       {
          return 0;
       }
-      virtual std::vector < BaseContact > &getHistory()
+      virtual QVector < QSharedPointer<BaseContact> > &getHistory()
       {
          return history;
       }

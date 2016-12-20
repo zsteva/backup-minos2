@@ -102,7 +102,7 @@ void TQSOEditDlg::selectContact( BaseContestLog * ccontest, DisplayContestContac
    firstContact = lct;
 }
 //---------------------------------------------------------------------------
-void TQSOEditDlg::addTreeRoot(BaseContact *lct)
+void TQSOEditDlg::addTreeRoot(QSharedPointer<BaseContact> lct)
 {
     QTreeWidgetItem *treeItem = new QTreeWidgetItem(ui->QSOHistoryTree);
 
@@ -128,9 +128,9 @@ void TQSOEditDlg::on_AfterSelectContact( BaseContact *lct, BaseContestLog * /*co
   ui->QSOHistoryTree->clear();
   if (lct)
   {
-      for (unsigned int i = 0; i < lct->getHistory().size(); ++i)
+      for (int i = 0; i < lct->getHistory().size(); ++i)
       {
-          addTreeRoot(&lct->getHistory()[i]);
+          addTreeRoot(lct->getHistory()[i]);
       }
   }
   refreshOps(ui->GJVQSOEditFrame->screenContact);

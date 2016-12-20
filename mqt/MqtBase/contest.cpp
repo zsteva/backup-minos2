@@ -655,7 +655,7 @@ void BaseContestLog::scanContest( void )
 //      nct->baddtg = false;
       if (nct->time.notEntered() == 0 && !(nct->contactFlags.getValue() & TO_BE_ENTERED))
       {
-         nct->time = nct->getHistory()[0].updtime;
+         nct->time = nct->getHistory()[0]->updtime;
          nct->time.clearDirty();
          nct->time.setBadDtg();
       }

@@ -711,7 +711,7 @@ void DisplayContestContact::processMinosStanza( const QString &methodName, Minos
 
          contest->validationPoint = this;
          checkContact();                 // processMinosStanza - Do we need to? scanContest will repeat it. Except we push the contact in it's current state into history
-         BaseContact bc( *this );   // this should get it now??
+         QSharedPointer<BaseContact> bc( new BaseContact(*this) );   // this should get it now??
          getHistory().push_back( bc );
       }
 

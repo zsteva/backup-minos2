@@ -36,7 +36,7 @@ private:
     bool unfilled;
     void refreshOps( ScreenContact &screenContact );
     void keyPressEvent( QKeyEvent* event );
-    void addTreeRoot(BaseContact *lct);
+    void addTreeRoot(QSharedPointer<BaseContact> lct);
     void addTreeChild(QTreeWidgetItem *parent, QString text);
     void doCloseEvent();
 
