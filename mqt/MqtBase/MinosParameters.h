@@ -35,7 +35,7 @@ class MinosParameters
       }
 
       static MinosParameters *getMinosParameters();
-      virtual bool insertContest( BaseContestLog *p, unsigned int sno ) = 0;
+      virtual bool insertContest( BaseContestLog *p, int sno ) = 0;
       virtual int getMagneticVariation() = 0;
       virtual void getDisplayColumnWidth( const QString &key, int &val, int def ) = 0;
       virtual void setDisplayColumnWidth( const QString &key, int val ) = 0;
@@ -52,7 +52,7 @@ class MinosParameters
       virtual bool yesNoMessage( QWidget* Owner, const QString &mess ) = 0;
       virtual void mshowMessage( const QString &mess, QWidget* Owner = 0 ) = 0;
       virtual BaseContestLog *getCurrentContest() = 0;
-      virtual bool insertList( ContactList *p, unsigned int sno ) = 0;
+      virtual bool insertList( ContactList *p, int sno ) = 0;
       virtual bool isContestOpen( const QString fn ) = 0;
       virtual bool isListOpen( const QString fn ) = 0;
       virtual std::vector<BaseContestLog *> getContestList() = 0;
@@ -64,7 +64,7 @@ class MinosParametersAdapter : public MinosParameters
       {}
       ~MinosParametersAdapter() override
       {}
-      virtual bool insertContest( BaseContestLog *p, unsigned int sno ) override;
+      virtual bool insertContest( BaseContestLog *p, int sno ) override;
       virtual int getMagneticVariation() override;
       virtual void getDisplayColumnWidth( const QString &key, int &val, int def ) override;
       virtual void setDisplayColumnWidth( const QString &key, int val ) override;
@@ -81,7 +81,7 @@ class MinosParametersAdapter : public MinosParameters
       virtual bool yesNoMessage( QWidget* Owner, const QString &mess ) override;
       virtual void mshowMessage(const QString &mess, QWidget* Owner = 0 ) override;
       virtual BaseContestLog *getCurrentContest() override;
-      virtual bool insertList( ContactList *p, unsigned int sno ) override;
+      virtual bool insertList( ContactList *p, int sno ) override;
       virtual bool isContestOpen( const QString fn ) override;
       virtual bool isListOpen(const QString fn ) override;
       virtual std::vector<BaseContestLog *> getContestList() override;

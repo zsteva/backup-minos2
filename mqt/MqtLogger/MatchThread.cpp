@@ -963,7 +963,7 @@ bool OtherLogMatcher::idleMatch( int limit )
             }
          }
 
-      ContestSlot *cs = TContestApp::getContestApp() ->contestSlotList.at( contestIndex );
+      QSharedPointer<ContestSlot> cs = TContestApp::getContestApp() ->contestSlotList[ contestIndex ];
       BaseContestLog * ccon = cs->slot;
       if ( ccon == TContestApp::getContestApp() ->getCurrentContest() )
       {
@@ -1281,7 +1281,7 @@ bool ListMatcher::idleMatch( int limit )
 
       ContactList * ccon;
 
-      ListSlot *cs = TContestApp::getContestApp() ->listSlotList.at( contestIndex );
+      QSharedPointer<ListSlot> cs = TContestApp::getContestApp() ->listSlotList[ contestIndex ];
       ccon = cs->slot;
 
       while ( limit > 0  && !ce)
@@ -1310,7 +1310,7 @@ bool ListMatcher::idleMatch( int limit )
                if ( contestIndex < TContestApp::getContestApp() ->getListSlotCount() )
                {
                   // ContestLog is valid, if it is a list set first part
-                  ListSlot * cs = TContestApp::getContestApp() ->listSlotList.at( contestIndex );
+                  QSharedPointer<ListSlot> cs = TContestApp::getContestApp() ->listSlotList[ contestIndex ];
                   ccon = cs->slot;
                }
             }

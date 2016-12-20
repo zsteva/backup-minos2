@@ -16,9 +16,8 @@ class TMatchThread;
 class ContestSlot
 {
    public:
-      unsigned int slotno;
+      int slotno;
       BaseContestLog * slot;
-      //      unsigned char colour;
 
       ContestSlot( void );
       ~ContestSlot();
@@ -28,27 +27,14 @@ class ListSlot
    public:
       int slotno;
       ContactList * slot;
-      //      unsigned char colour;
 
       ListSlot( void );
       ~ListSlot();
 };
-struct CmpSlotNo
-{
-   bool operator() ( const ContestSlot* s1, const ContestSlot* s2 ) const
-   {
-      return s1->slotno < s2->slotno;
-   }
-   bool operator() ( const ListSlot* s1, const ListSlot* s2 ) const
-   {
-      return s1->slotno < s2->slotno;
-   }
-};
-
-typedef codeproject::sorted_vector < ContestSlot *, true, CmpSlotNo > ContestSlotList;
+typedef QMap < int, QSharedPointer<ContestSlot> > ContestSlotList;
 typedef ContestSlotList::iterator SlotIterator;
 
-typedef codeproject::sorted_vector < ListSlot *, true, CmpSlotNo > ListSlotList;
+typedef QMap < int, QSharedPointer<ListSlot> > ListSlotList;
 typedef ListSlotList::iterator ListSlotIterator;
 
 class TContestApp : public MinosParameters
@@ -75,15 +61,6 @@ class TContestApp : public MinosParameters
 
       ContestSlotList contestSlotList;
       ListSlotList listSlotList;
-      void freeAll()
-      {
-         for ( SlotIterator i = contestSlotList.begin(); i != contestSlotList.end(); i++ )
-            delete ( *i );
-         contestSlotList.clear();
-         for ( ListSlotIterator i = listSlotList.begin(); i != listSlotList.end(); i++ )
-            delete ( *i );
-         listSlotList.clear();
-      }
 
 
       int period1, period2;
@@ -112,7 +89,7 @@ class TContestApp : public MinosParameters
       virtual bool yesNoMessage( QWidget* Owner, const QString &mess ) override;
       virtual void mshowMessage( const QString &mess, QWidget* Owner = 0 ) override;
       virtual BaseContestLog * getCurrentContest() override;
-      virtual bool insertList( ContactList *p, unsigned int sno ) override;
+      virtual bool insertList( ContactList *p, int sno ) override;
       virtual bool isContestOpen( const QString fn ) override;
       virtual bool isListOpen(const QString fn ) override;
       virtual std::vector<BaseContestLog *> getContestList() override;
@@ -132,13 +109,13 @@ class TContestApp : public MinosParameters
       }
       int getOccupiedListSlotCount();
 
-      bool insertContest( BaseContestLog *p, unsigned int sno );
+      bool insertContest( BaseContestLog *p, int sno );
       BaseContestLog * findFirstContest();
       int findContest( BaseContestLog * p );
       int findList( ContactList * p );
       //      LoggerContestLog * findContest( LoggerContestLog *p );
-      void removeContest( BaseContestLog * p );
-      void removeList( ContactList * p );
+      int removeContest( BaseContestLog * p );
+      int removeList( ContactList * p );
       void writeContestList();
       LoggerContestLog * openFile(const QString &fn, bool newFile, int slotno );
       ContactList * openListFile( const QString &fn, int slotno );
@@ -150,8 +127,8 @@ class TContestApp : public MinosParameters
 };
 extern double bigClockCorr;
 
-extern bool isOpen(ContestSlot *cs, const QString &fn );
-extern bool isOpen( ListSlot *cs, const QString &fn );
+extern bool isOpen(QSharedPointer<ContestSlot> cs, const QString &fn );
+extern bool isOpen(QSharedPointer<ListSlot> cs, const QString &fn );
 extern void closeContestApp( void );
 extern bool initialiseContestApp( void );
 extern bool contestAppLoadFiles( void );

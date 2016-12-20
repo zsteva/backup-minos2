@@ -1012,10 +1012,10 @@ void TLogContainer::ShiftTabRightActionExecute( )
    int tno = ui->ContestPageControl->currentIndex();
    if ( tno < ui->ContestPageControl->count() - 1 )
    {
-      ContestSlot * cs = TContestApp::getContestApp() ->contestSlotList[ tno ];
+      QSharedPointer<ContestSlot> cs = TContestApp::getContestApp() ->contestSlotList[ tno ];
       int s = cs->slotno;
 
-      ContestSlot *csp1 = TContestApp::getContestApp() ->contestSlotList[ tno + 1 ];
+      QSharedPointer<ContestSlot> csp1 = TContestApp::getContestApp() ->contestSlotList[ tno + 1 ];
       int sp1 = csp1->slotno;
 
       TContestApp::getContestApp() ->contestSlotList[ tno ] = csp1;
@@ -1041,9 +1041,9 @@ void TLogContainer::ShiftTabLeftActionExecute( )
    int tno = ui->ContestPageControl->currentIndex();
    if ( tno > 0 )
    {
-      ContestSlot * cs = TContestApp::getContestApp() ->contestSlotList[ tno ];
+      QSharedPointer<ContestSlot> cs = TContestApp::getContestApp() ->contestSlotList[ tno ];
       int s = cs->slotno;
-      ContestSlot *csm1 = TContestApp::getContestApp() ->contestSlotList[ tno - 1 ];
+      QSharedPointer<ContestSlot> csm1 = TContestApp::getContestApp() ->contestSlotList[ tno - 1 ];
       int sm1 = csm1->slotno;
       TContestApp::getContestApp() ->contestSlotList[ tno ] = csm1;
       csm1->slotno = s;

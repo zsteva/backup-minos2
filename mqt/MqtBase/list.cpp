@@ -188,7 +188,7 @@ void ContactList::getMatchField(ListContact *pct, int col, QString &disp, const 
 
    disp = temp.trimmed();
 }
-ListContact *ContactList::pcontactAt( unsigned int i )
+ListContact *ContactList::pcontactAt( int i )
 {
    if ( i < ctList.size() )
    {

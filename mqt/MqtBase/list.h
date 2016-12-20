@@ -18,7 +18,7 @@ struct LtListSeq
 typedef codeproject::sorted_vector < ListContact *, true, LtListSeq > ListList;
 */
 class ListContact;
-typedef std::vector < ListContact *> ListList;
+typedef QVector < ListContact *> ListList;
 typedef ListList::iterator ListIterator;
 
 class ContactList : public BaseLogList
@@ -45,6 +45,6 @@ class ContactList : public BaseLogList
       {
          return ctList.size();
       }
-      ListContact *pcontactAt( unsigned int offset );
+      ListContact *pcontactAt(int offset );
 };
 #endif
