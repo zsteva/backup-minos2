@@ -90,6 +90,8 @@ class MultList : public QMap < MultWrapper<itemtype>, MultWrapper<itemtype> >
           {
             if (*m->wt.data() == item)
                 return i;
+
+            i++;
           }
           return -1;
       }

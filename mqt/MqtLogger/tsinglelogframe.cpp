@@ -517,7 +517,7 @@ void TSingleLogFrame::on_ScrollToCountry( const QString &csCs, BaseContestLog* )
     QSharedPointer<CountryEntry> ctryMult = findCtryPrefix( cs );
     if ( ctryMult )
     {
-       unsigned int ctry_ind = MultLists::getMultLists() ->getCtryListIndexOf( ctryMult );
+       int ctry_ind = MultLists::getMultLists() ->getCtryListIndexOf( ctryMult );
        ui->dxccFrame->scrollToCountry( ctry_ind, true );
     }
 }
