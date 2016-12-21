@@ -941,8 +941,8 @@ static QString kmloutput ( Location *outgrid )
 
 bool LoggerContestLog::exportKML(QSharedPointer<QFile> expfd )
 {
-   typedef std::map <QString, ContestContact *> cmap; // map by call
-   typedef std::map <QString, cmap> smap;       // map by prefix
+   typedef QMap <QString, ContestContact *> cmap; // map by call
+   typedef QMap <QString, cmap> smap;       // map by prefix
    smap countries;
 
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
@@ -1009,12 +1009,12 @@ bool LoggerContestLog::exportKML(QSharedPointer<QFile> expfd )
 
    for ( smap::iterator s = countries.begin(); s != countries.end(); s++ )
    {
-      kml.append( "<Folder><name><![CDATA[" + ( *s ).first + "]]></name><open>0</open><visibility>0</visibility>"  );
-      for ( cmap::iterator e = ( ( *s ).second ).begin(); e != ( ( *s ).second ).end(); e++ )
+      kml.append( "<Folder><name><![CDATA[" + s.key() + "]]></name><open>0</open><visibility>0</visibility>"  );
+      for ( cmap::iterator e = s.value().begin(); e != s.value().end(); e++ )
       {
          Location l1;
          Location l2;
-         ContestContact *ct = ( *e ).second;
+         ContestContact *ct = e.value();
 
 
          char inputbuff[ 100 ];

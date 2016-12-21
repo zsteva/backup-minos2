@@ -49,8 +49,8 @@ class TiXmlElement;
 class PortConfigure
 {
    private:
-      std::map <QString, PortConfig> portmap;
-      std::map <QString, LineConfig> linemap;
+      QMap <QString, PortConfig> portmap;
+      QMap <QString, LineConfig> linemap;
 
       void SetPorts( TiXmlElement *e );
       void SetLines( TiXmlElement *e );

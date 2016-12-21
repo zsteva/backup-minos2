@@ -10,7 +10,6 @@
 #define keyconfH
 
 #include <QString>
-#include <map>
 
 class PortConfig
 {
@@ -64,8 +63,8 @@ class TiXmlElement;
 class KeyerConfigure
 {
    private:
-      std::map <QString, PortConfig> portmap;
-      std::map <QString, KeyerConfig> keyermap;
+      QMap <QString, PortConfig> portmap;
+      QMap <QString, KeyerConfig> keyermap;
 
       commonKeyer *createKeyer( const KeyerConfig &keyer, const PortConfig &port );
       void SetTrace( TiXmlElement *e );

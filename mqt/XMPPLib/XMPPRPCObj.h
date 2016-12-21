@@ -13,7 +13,6 @@
 #define XMPPRPCObjH 
 //---------------------------------------------------------------------------
 #include <string>
-#include <map> 
 //---------------------------------------------------------------------------
 
 // We need a factory for MinosRPCObj descendents, so that we can register those we
@@ -69,8 +68,6 @@ class MinosRPCObj
       // Base object for Minos RPC calls. It encapsulates both ends of
       // the call
    private:
-      //      static std::map <QString, MinosRPCServer *> serverMethodMap;
-      //      static std::map <QString, MinosRPCClient *> clientMethodMap;
       bool general;
 
    protected:

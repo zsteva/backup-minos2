@@ -16,8 +16,8 @@
 
 //==============================================================================
 
-std::map <char, QString> MORSECODE;    // . is 0x40, - is 0x80
-std::map <int, MORSEMSG> MORSEMSGS;
+QMap <char, QString> MORSECODE;    // . is 0x40, - is 0x80
+QMap <int, MORSEMSG> MORSEMSGS;
 
 //CRITICAL_SECTION disableInterrupts::intCriticalSection;
 //bool disableInterrupts::terminated = true;

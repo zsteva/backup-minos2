@@ -161,10 +161,10 @@ void KeyerServer::notifyCallback(bool err, QSharedPointer<MinosRPCObj> mro, cons
 //---------------------------------------------------------------------------
 bool KeyerServer::getState( const QString &line )
 {
-   std::map<QString, bool>::iterator l = lineStates.find( line );
+   QMap<QString, bool>::iterator l = lineStates.find( line );
    if ( l != lineStates.end() )
    {
-      return ( *l ).second;
+      return l.value();
    }
    return false;
 }

@@ -1257,20 +1257,20 @@ void BaseContestLog::loadBonusList()
 int BaseContestLog::getSquareBonus(QString sloc)
 {
     int bonus = 0;
-    std::map<QString, int>::iterator l = locBonuses.find(sloc);
+    QMap<QString, int>::iterator l = locBonuses.find(sloc);
 
     if ( l != locBonuses.end())
     {
        // specific bonus for square allocated
-       bonus = l->second;
+       bonus = l.value();
     }
     else
     {
-        std::map<QString, int>::iterator l = locBonuses.find("DEFAULT");
+        QMap<QString, int>::iterator l = locBonuses.find("DEFAULT");
         if ( l != locBonuses.end())
         {
            // specific bonus for square allocated
-           bonus = l->second;
+           bonus = l.value();
         }
     }
     return bonus;

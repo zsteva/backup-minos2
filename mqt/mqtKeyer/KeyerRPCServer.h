@@ -13,13 +13,14 @@
 //---------------------------------------------------------------------------
 #include <QObject>
 #include <QString>
+#include <QMap>
 
 class MinosRPCObj;
 class KeyerServer:public QObject
 {
     Q_OBJECT
    private:
-      std::map<QString, bool> lineStates;
+      QMap<QString, bool> lineStates;
       void doPublishState( const QString &state );
       void doPublishCommand( const QString &cmd );
    public:

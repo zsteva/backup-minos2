@@ -180,7 +180,7 @@ extern int CWSpeed;
 
 extern commonKeyer *currentKeyer;
 
-extern std::map <char, QString> MORSECODE;    // . is 0x40, - is 0x80
+extern QMap <char, QString> MORSECODE;    // . is 0x40, - is 0x80
 class MORSEMSG
 {
    public:
@@ -190,7 +190,7 @@ class MORSEMSG
       QString msg;
       bool repeat;
 };
-extern std::map <int, MORSEMSG> MORSEMSGS;
+extern QMap <int, MORSEMSG> MORSEMSGS;
 
 
 //=============================================================================

@@ -11,7 +11,7 @@ class LineSet: public QObject
    private:
       static LineSet *myLineSet;
 
-      std::map < QString, bool > LineMap;
+      QMap < QString, bool > LineMap;
       LineFileMapper *FileMap;
 
       QTimer checkTimer;

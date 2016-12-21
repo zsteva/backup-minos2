@@ -13,14 +13,14 @@ extern void sendAction( XStanza *a );      // which might not be the one in XMPP
 
 //---------------------------------------------------------------------------
 
-std::map <QString, QSharedPointer<MinosRPCObj>> &getServerMethodMap()
+QMap <QString, QSharedPointer<MinosRPCObj>> &getServerMethodMap()
 {
-   static std::map <QString, QSharedPointer<MinosRPCObj> > serverMethodMap;
+   static QMap <QString, QSharedPointer<MinosRPCObj> > serverMethodMap;
    return serverMethodMap;
 }
-std::map <QString, QSharedPointer<MinosRPCObj> > &getClientMethodMap()
+QMap <QString, QSharedPointer<MinosRPCObj> > &getClientMethodMap()
 {
-   static std::map <QString, QSharedPointer<MinosRPCObj> > clientMethodMap;
+   static QMap <QString, QSharedPointer<MinosRPCObj> > clientMethodMap;
    return clientMethodMap;
 }
 //==============================================================================
@@ -37,41 +37,41 @@ void MinosRPCObj::clearCallArgs()
 }
 /*static*/ void MinosRPCObj::clearRPCObjects()
 {
-   for ( std::map <QString, QSharedPointer<MinosRPCObj> >::iterator i = getServerMethodMap().begin(); i != getServerMethodMap().end(); i++ )
+   for ( QMap <QString, QSharedPointer<MinosRPCObj> >::iterator i = getServerMethodMap().begin(); i != getServerMethodMap().end(); i++ )
    {
-      delete ( *i ).second->callback;
-      ( *i ).second.reset();
+      delete i.value()->callback;
+      i.value().reset();
    }
    getServerMethodMap().clear();
-   for ( std::map <QString, QSharedPointer<MinosRPCObj> >::iterator i = getClientMethodMap().begin(); i != getClientMethodMap().end(); i++ )
+   for ( QMap <QString, QSharedPointer<MinosRPCObj> >::iterator i = getClientMethodMap().begin(); i != getClientMethodMap().end(); i++ )
    {
-      delete ( *i ).second->callback;
-      ( *i ).second.reset();
+       delete i.value()->callback;
+       i.value().reset();
    }
    getClientMethodMap().clear();
 }
 
 /*static*/ void MinosRPCObj::addClientObj(QSharedPointer<MinosRPCObj> mro )
 {
-   getClientMethodMap().insert( std::pair <QString, QSharedPointer<MinosRPCObj> >( mro->methodName, mro ) );
+   getClientMethodMap().insert(  mro->methodName, mro  );
 }
 /*static*/ void MinosRPCObj::addServerObj(  QSharedPointer<MinosRPCObj> mro )
 {
-   getServerMethodMap().insert( std::pair <QString, QSharedPointer<MinosRPCObj> >( mro->methodName, mro ) );
+   getServerMethodMap().insert( mro->methodName, mro );
 }
 
 /*static*/ QSharedPointer<MinosRPCObj> MinosRPCObj::makeClientObj(  QString call )
 {
-   std::map <QString, QSharedPointer<MinosRPCObj> >::iterator mo = getClientMethodMap().find( call );
+   QMap <QString, QSharedPointer<MinosRPCObj> >::iterator mo = getClientMethodMap().find( call );
    if ( mo != getClientMethodMap().end() )
    {
-      return ( *mo ).second->makeObj();
+      return mo.value()->makeObj();
    }
    for (mo = getClientMethodMap().begin(); mo != getClientMethodMap().end(); mo++)
    {
-       if ((*mo).second->isGeneralObject())
+       if (mo.value()->isGeneralObject())
        {
-           return ( *mo ).second->makeObj();
+           return mo.value()->makeObj();
        }
    }
    return QSharedPointer<MinosRPCObj>();
@@ -79,16 +79,16 @@ void MinosRPCObj::clearCallArgs()
 
 /*static*/ QSharedPointer<MinosRPCObj> MinosRPCObj::makeServerObj(  QString call )
 {
-   std::map <QString, QSharedPointer<MinosRPCObj> >::iterator mo = getServerMethodMap().find( call );
+   QMap <QString, QSharedPointer<MinosRPCObj> >::iterator mo = getServerMethodMap().find( call );
    if ( mo != getServerMethodMap().end() )
    {
-      return ( *mo ).second->makeObj();
+      return mo.value()->makeObj();
    }
    for (mo = getServerMethodMap().begin(); mo != getServerMethodMap().end(); mo++)
    {
-       if ((*mo).second->isGeneralObject())
+       if (mo.value()->isGeneralObject())
        {
-           return ( *mo ).second->makeObj();
+           return mo.value()->makeObj();
        }
    }
    return QSharedPointer<MinosRPCObj>();

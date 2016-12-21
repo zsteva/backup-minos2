@@ -21,7 +21,7 @@ class LineFileMapper
       char *lpPtr;
    public:
       QSharedMemory hFile;
-      std::map < QString, int > LineMap;
+      QMap < QString, int > LineMap;
 
       LineFileMapper();
       ~LineFileMapper();
@@ -111,10 +111,10 @@ void LineSet::writeSet()
    QString cxml;
    //  cxml += "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
    cxml += "<Lines>";
-   for ( std::map < QString, bool > ::iterator i = LineMap.begin(); i != LineMap.end(); i++ )
+   for ( QMap < QString, bool > ::iterator i = LineMap.begin(); i != LineMap.end(); i++ )
    {
-      QString name = i->first;
-      QString val = ( i->second ? "1" : "0" );
+      QString name = i.key();
+      QString val = ( i.value() ? "1" : "0" );
 
       cxml += QString( "<" ) + name + " state=\"" + val + "\"/>";
    }
@@ -178,11 +178,11 @@ void LineSet::readLines()
 }
 bool LineSet::getState( const QString name )
 {
-   for ( std::map <QString, bool>::iterator i = LineMap.begin(); i != LineMap.end(); i++ )
+   for ( QMap <QString, bool>::iterator i = LineMap.begin(); i != LineMap.end(); i++ )
    {
-      if ( name == ( *i ).first )
+      if ( name == i.key() )
       {
-         return ( *i ).second;
+         return i.value();
       }
    }
 
@@ -190,11 +190,11 @@ bool LineSet::getState( const QString name )
 }
 void LineSet::checkTimerTimeout()
 {
-    std::map <QString, bool> oldMap = LineMap;
+    QMap <QString, bool> oldMap = LineMap;
     readSet();
-    for ( std::map <QString, bool>::iterator i = LineMap.begin(); i != LineMap.end(); i++ )
+    for ( QMap <QString, bool>::iterator i = LineMap.begin(); i != LineMap.end(); i++ )
     {
-       if ( oldMap[(*i).first] != (*i).second )
+       if ( oldMap[i.key()] != i.value() )
        {
            Log( QString( "checkTimerTimeout emitting lineChanged " ) + FileMap->GetMap() );
             emit linesChanged();
