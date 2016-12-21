@@ -47,8 +47,8 @@ void ScreenContact::initialise( BaseContestLog *ct )
    op1 = "" ;
    op2 = "" ;
 
-   districtMult = 0;
-   ctryMult = 0;
+   districtMult = QSharedPointer<DistrictEntry>();
+   ctryMult = QSharedPointer<CountryEntry>();
 
    contactScore = -1;
    bearing = 0;
@@ -236,7 +236,7 @@ void ScreenContact::checkScreenContact( )
    else
       if ( !checkret )
       {
-         districtMult = 0;						// just in case we have changed the type...
+         districtMult.reset();						// just in case we have changed the type...
          if ( clp->otherExchange.getValue() )
          {
             if ( clp->districtMult.getValue() )

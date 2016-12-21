@@ -154,7 +154,7 @@ bool DXCCSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
     BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
     int worked = MultLists::getMultLists()->getCountryWorked(sourceRow, ct) ;
 
-    CountryEntry * ce = MultLists::getMultLists() ->getCtryListAt( sourceRow );
+    QSharedPointer<CountryEntry> ce = MultLists::getMultLists() ->getCtryListAt( sourceRow );
     bool makeVisible = false;
     for ( int i = 0; i < CONTINENTS; i++ )
     {

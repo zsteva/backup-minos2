@@ -648,7 +648,7 @@ void RPCTestTest::testMults()
 
     for (int i = 0; i < m->getCtryListSize(); i++)
     {
-        CountryEntry *ce = m->getCtryListAt( i );
+        QSharedPointer<CountryEntry> ce = m->getCtryListAt( i );
         os << ce->basePrefix.toStdString() + " " + ce->realName.toStdString() << std::endl;
     }
 /*

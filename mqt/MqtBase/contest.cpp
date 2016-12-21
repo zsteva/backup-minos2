@@ -63,7 +63,6 @@ BaseContestLog::~BaseContestLog()
    districtWorked = 0;
    countryWorked = 0;
 
-   locs.freeAll();
    freeAll();
    closeFile();
 }
@@ -553,7 +552,8 @@ void BaseContestLog::scanContest( void )
 {
    DupSheet.clear();
 
-   locs.freeAll();
+   locs.llist.clear();
+
    delete [] districtWorked;
    delete [] countryWorked;
    districtWorked = 0;

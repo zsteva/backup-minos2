@@ -71,7 +71,7 @@ void TMatchThread::on_CountrySelect(QString sel, BaseContestLog *c)
    if (c == ct)
    {
       mct = 0;
-      CountryEntry *ce = MultLists::getMultLists() ->getCtryForPrefix( sel );
+      QSharedPointer<CountryEntry> ce = MultLists::getMultLists() ->getCtryForPrefix( sel );
       startMatch(ce);
    }
 }
@@ -132,7 +132,7 @@ void TMatchThread::run()
 }
 
 //---------------------------------------------------------------------------
-/*static*/ void TMatchThread::startMatch(   CountryEntry *ce )
+/*static*/ void TMatchThread::startMatch(   QSharedPointer<CountryEntry> ce )
 {
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    MinosLoggerEvents::SendMatchStarting(ct);
@@ -341,14 +341,14 @@ void Matcher::clearmatchall( )
    matchcs.set( "" );
    matchloc.set( "" );
    matchqth.set( "" );
-   ce = 0;
+   ce.reset();
    thisContestMatched = 0;
 
    TMatchThread::getMatchThread() ->ShowThisMatchStatus( "" );
    TMatchThread::getMatchThread() ->ShowOtherMatchStatus( "" );
 }
 // mark things that we want to start a match
-void Matcher::startMatch( CountryEntry *c )
+void Matcher::startMatch( QSharedPointer<CountryEntry> c )
 {
    matchRequired = true;
    matchStarted = false;				// if it started we need to stop it...
@@ -420,7 +420,7 @@ void Matcher::initMatch( void )
       }
       else
       {
-         CountryEntry *c = ce;	// preserve over cleardown
+         QSharedPointer<CountryEntry> c = ce;	// preserve over cleardown
          clearmatchall();
          mp = Country;
          ce = c;

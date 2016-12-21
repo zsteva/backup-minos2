@@ -103,14 +103,12 @@ void BaseContact::setDirty()
    contactScore.setDirty();
 }
 //==========================================================================
-CountryEntry *findCtryPrefix( const callsign &cs )
+QSharedPointer<CountryEntry> findCtryPrefix( const callsign &cs )
 {
-   CountryEntry * ctryMult;
-
    QString testpart = "/";	// look for e.g. /RVI as a country suffix
    testpart += cs.suffix;	// look for e.g. /RVI as a country suffix
 
-   CountrySynonym *csyn = 0;
+   QSharedPointer<CountrySynonym> csyn;
    if ( cs.suffix.length() )
       csyn = MultLists::getMultLists() ->searchCountrySynonym( testpart );
 
@@ -171,7 +169,10 @@ CountryEntry *findCtryPrefix( const callsign &cs )
          }
       }
    }
-   ctryMult = ( csyn ) ? ( csyn->country ) : 0;
+
+   QSharedPointer<CountryEntry> ctryMult;
+   if (csyn)
+        ctryMult = csyn->country;
    return ctryMult;
 }
 void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) const

@@ -20,6 +20,30 @@ class CountryList;
 class MultEntry;
 class BaseContestLog;
 
+template <class itemtype>
+class MultWrapper
+{
+public:
+    QSharedPointer<itemtype> wt;
+    MultWrapper(itemtype *mp):wt(mp){}
+    MultWrapper(QSharedPointer<itemtype> mp):wt(mp){}
+    MultWrapper(const MultWrapper &m)
+    {
+        wt = m.wt;
+    }
+
+
+};
+template <class itemtype >inline bool operator < (const MultWrapper<itemtype> &key1, const MultWrapper<itemtype> &key2)
+{
+    itemtype *i1 = key1.wt.data();
+    itemtype *i2 = key2.wt.data();
+    return *i1 < *i2;
+}
+template <class itemtype >inline bool operator == (const MultWrapper<itemtype> &key1, const MultWrapper<itemtype> &key2)
+{
+    return key1.wt.data() == key2.wt.data();
+}
 
 const int CONTINENTS = 6;
 struct ContList
@@ -68,8 +92,8 @@ class DistrictEntry : public MultEntry
    public:
 
       QString districtCode; // RSGB code
-      CountryEntry * country1; // country containing district
-      CountryEntry * country2; // country containing district
+      QSharedPointer<CountryEntry> country1; // country containing district
+      QSharedPointer<CountryEntry> country2; // country containing district
 
       DistrictEntry( const QString &cd, const QString &name, const QString &prefix, const QString &prefix2, const QString &cloc );
       virtual ~DistrictEntry();
@@ -88,7 +112,7 @@ class DistrictSynonym
       virtual ~DistrictSynonym();
 
       QString synonym;
-      DistrictEntry *district;
+      QSharedPointer<DistrictEntry> district;
       bool operator<( const DistrictSynonym& rhs ) const;
       bool operator==( const DistrictSynonym& rhs ) const;
       bool operator!=( const DistrictSynonym& rhs ) const;
@@ -117,7 +141,7 @@ class CountrySynonym
 {
    public:
       QString synPrefix;
-      CountryEntry * country;
+      QSharedPointer<CountryEntry> country;
 
       CountrySynonym( const QString &syn, const QString &prefix );
       virtual ~CountrySynonym();
@@ -165,7 +189,7 @@ struct LocSqCmp
    }
 };
 
-typedef codeproject::sorted_vector < LocSquare *, true, LocSqCmp > LocSquareList;
+typedef QMap < MultWrapper<LocSquare>, MultWrapper<LocSquare> > LocSquareList;
 typedef LocSquareList::iterator LocSquareIterator;
 class LocList
 {
@@ -173,7 +197,11 @@ class LocList
       LocSquareList llist;
       LocList( void );
       virtual ~LocList();
-      void freeAll();
+      QSharedPointer<LocSquare> itemAt(int offset)
+      {
+          QSharedPointer<LocSquare> ce = std::next(llist.begin(), offset)->wt;
+          return ce;
+      }
 };
 
 class MultLists
@@ -184,17 +212,17 @@ class MultLists
       virtual ~MultLists();
 
       //      void addCountry( bool addsyn ) = 0;
-      virtual CountrySynonym *searchCountrySynonym( const QString &syn ) = 0;
-      virtual DistrictEntry *searchDistrict( const QString &syn ) = 0;
+      virtual QSharedPointer<CountrySynonym> searchCountrySynonym( const QString &syn ) = 0;
+      virtual QSharedPointer<DistrictEntry> searchDistrict( const QString &syn ) = 0;
 
       virtual int getCtryListSize() = 0;
       virtual int getDistListSize() = 0;
-      virtual CountryEntry *getCtryForPrefix( const QString &forcedMult ) = 0;
+      virtual QSharedPointer<CountryEntry> getCtryForPrefix( const QString &forcedMult ) = 0;
       virtual QString getCtryListText( int item, int Column, BaseContestLog *const ct ) = 0;
       virtual QString getDistListText( int item, int Column, BaseContestLog *const ct ) = 0;
-      virtual CountryEntry * getCtryListAt( int index ) = 0;
-      virtual int getCtryListIndexOf( CountryEntry * ) = 0;
-      virtual int getDistListIndexOf( DistrictEntry * ) = 0;
+      virtual QSharedPointer<CountryEntry> getCtryListAt( int index ) = 0;
+      virtual int getCtryListIndexOf( QSharedPointer<CountryEntry> ) = 0;
+      virtual int getDistListIndexOf( QSharedPointer<DistrictEntry> ) = 0;
       virtual bool isUKprefix(const callsign &cs) = 0;
 //      virtual DistrictEntry *getDistrictEntry(int item) = 0;
 //      virtual CountryEntry *getCountryEntry(int item) = 0;

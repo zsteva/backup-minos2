@@ -97,14 +97,14 @@ int TForceLogDlg::doexec(BaseContestLog *contest,  ScreenContact &screenContact,
         {
             tryagain = false;
             screenContact.contactFlags &= ~ COUNTRY_FORCED;
-            screenContact.ctryMult = 0;
+            screenContact.ctryMult.reset();
             screenContact.forcedMult = "";
             break;
         }
 
         temp = temp.trimmed();
 
-        CountryEntry *ctryMult = MultLists::getMultLists() ->getCtryForPrefix( temp );
+        QSharedPointer<CountryEntry> ctryMult = MultLists::getMultLists() ->getCtryForPrefix( temp );
         if ( ctryMult )
         {
             tryagain = false;

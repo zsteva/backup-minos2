@@ -74,7 +74,7 @@ class Matcher
       matchElement matchloc;
       matchElement matchqth;
 
-      CountryEntry *ce;
+      QSharedPointer<CountryEntry> ce;
 
       int thisContestMatched;
       virtual void matchDistrict( const QString &extraText ) = 0;
@@ -86,7 +86,7 @@ class Matcher
       virtual ~Matcher();
       TMatchCollection *matchCollection;
 
-      void startMatch( CountryEntry *ce = 0 );
+      void startMatch(QSharedPointer<CountryEntry> ce = QSharedPointer<CountryEntry>() );
       void initMatch( void );
       void clearmatchall();
       virtual bool idleMatch( int limit ) = 0;
@@ -144,7 +144,7 @@ class TMatchThread : public QThread
 
 private:
 
-      static void startMatch( CountryEntry *ce = 0 );
+      static void startMatch(QSharedPointer<CountryEntry> ce = QSharedPointer<CountryEntry>() );
 
       static TMatchThread *matchThread;
       TMatchThread();

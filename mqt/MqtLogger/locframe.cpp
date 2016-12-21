@@ -26,7 +26,7 @@ void LocFrame::reInitialiseLocators()
     for (int k = 0; k < static_cast<int> (ct->locs.llist.size()); k++)
     {
         QTreeWidgetItem *it = new QTreeWidgetItem(ui->LocTree);
-        QString locStart = ct->locs.llist[ k ] ->loc;
+        QString locStart = ct->locs.itemAt(k) ->loc;
         it->setText(0, locStart);
         it->setExpanded(true);
 
@@ -35,7 +35,7 @@ void LocFrame::reInitialiseLocators()
             QString dispLine;
             for (int i = 0; i < 10; i++)
             {
-                LocCount *lc = ct->locs.llist[ k ] ->map( j * 10 + i );
+                LocCount *lc = ct->locs.itemAt(k) ->map( j * 10 + i );
                 QString disp = QString("%1").arg(j * 10 + i, 2, 10, QChar('0'));
 
                 if ( lc && (lc->UKLocCount || lc->nonUKLocCount))

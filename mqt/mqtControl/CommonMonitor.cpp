@@ -37,7 +37,7 @@ commonController::commonController(QWidget *p ):parent(p)
 void commonController::closeDown()
 {
    // close down each port
-   for ( std::deque <commonPort *>::iterator icp = portChain.begin(); icp != portChain.end(); icp++ )
+   for ( QVector <commonPort *>::iterator icp = portChain.begin(); icp != portChain.end(); icp++ )
    {
       if ( *icp )
          ( *icp ) ->closePort();
@@ -71,15 +71,22 @@ void commonController::tickEvent()        // this will often be an interrupt rou
 void commonController::checkControls( void )
 {
    // loop through ports, checkControls on each
-   for ( my_deque < commonPort *>::iterator i = portChain.begin(); i != portChain.end(); i++ )
+   for ( QVector < commonPort *>::iterator i = portChain.begin(); i != portChain.end(); i++ )
    {
       ( *i ) ->checkControls();
    }
 }
 commonPort *commonController::createPort( const PortConfig &port )
 {
-   // we cannot use dynamic_cast as we have turned RTTI off to save space
-   commonPort * cp = portChain.find( port.name );
+    commonPort * cp = 0;
+    foreach(commonPort *ni, portChain)
+    {
+        if (ni->portName == port.name)
+        {
+            cp = ni;
+            break;
+        }
+    }
 
    if ( cp )
       return cp;
@@ -112,7 +119,7 @@ commonPort *commonController::createPort( const PortConfig &port )
 commonLineControl *commonController::findLine( const QString &name, bool lineIn )
 {
    commonLineControl * clc = 0;
-   for ( my_deque < commonPort *>::iterator i = portChain.begin(); i != portChain.end(); i++ )
+   for ( QVector < commonPort *>::iterator i = portChain.begin(); i != portChain.end(); i++ )
    {
       clc = ( *i ) ->findLine( name, lineIn );
       if ( clc )

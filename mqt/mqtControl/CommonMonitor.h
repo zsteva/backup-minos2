@@ -46,7 +46,7 @@ class commonController: public timerTicker
    public:
       commonController(QWidget *p);
       ~commonController();
-      my_deque < commonPort *> portChain;
+      QVector < commonPort *> portChain;
       commonPort *createPort( const PortConfig &port );
       commonLineControl *findLine(const QString &name, bool lineIn );
 

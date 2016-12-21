@@ -559,7 +559,7 @@ char callsign::validate( )
 
    // Replace real prefix2 with the dup check prefix2 - for dup checking
    // Need to implement the G list here...
-   CountrySynonym *syn = MultLists::getMultLists() ->searchCountrySynonym( prefix2 );
+   QSharedPointer<CountrySynonym> syn = MultLists::getMultLists() ->searchCountrySynonym( prefix2 );
    if ( syn )
    {
       syn->getDupPrefix( prefix2 );

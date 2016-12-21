@@ -59,9 +59,8 @@ class ScreenContact
       bool newGLoc;
       bool newNonGLoc;
 
-      DistrictEntry * districtMult;
-      CountryEntry * ctryMult;
-
+      QSharedPointer<DistrictEntry> districtMult;
+      QSharedPointer<CountryEntry> ctryMult;
 
       int contactScore;
       int bearing;

@@ -501,7 +501,7 @@ void TSingleLogFrame::on_ReplaceListList(TMatchCollection *matchCollection , Bas
 
 void TSingleLogFrame::on_ScrollToDistrict( const QString &qth, BaseContestLog* )
 {
-    DistrictEntry * dist = MultLists::getMultLists() ->searchDistrict( qth );
+    QSharedPointer<DistrictEntry> dist = MultLists::getMultLists() ->searchDistrict( qth );
     if ( dist )
     {
        unsigned int district_ind = MultLists::getMultLists() ->getDistListIndexOf( dist );
@@ -514,7 +514,7 @@ void TSingleLogFrame::on_ScrollToCountry( const QString &csCs, BaseContestLog* )
     callsign cs( csCs );
     cs.validate( );	// we don't use the result
 
-    CountryEntry *ctryMult = findCtryPrefix( cs );
+    QSharedPointer<CountryEntry> ctryMult = findCtryPrefix( cs );
     if ( ctryMult )
     {
        unsigned int ctry_ind = MultLists::getMultLists() ->getCtryListIndexOf( ctryMult );

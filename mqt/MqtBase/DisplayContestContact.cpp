@@ -228,7 +228,7 @@ void DisplayContestContact::checkContact( )
    else
       if ( !checkret )
       {
-         districtMult = 0;						// just in case we have changed the type...
+         districtMult.reset();						// just in case we have changed the type...
          if ( clp->otherExchange.getValue() )
          {
             if ( clp->districtMult.getValue() )
@@ -344,19 +344,23 @@ void DisplayContestContact::checkContact( )
 
       for ( LocSquareIterator i = clp->locs.llist.begin(); i != clp->locs.llist.end(); i++ )
       {
-         if ( strnicmp( ( *i ) ->loc, letters, 2 ) == 0 )
-         {
-            ls = ( *i );
-            break;
-         }
+          LocSquare *locsq = ( *i ).wt.data();
+          if ( strnicmp ( locsq ->loc, letters, 2 ) == 0 )
+          {
+              ls = locsq;
+              break;
+          }
+
       }
 
       if ( !ls )
       {
          if ( letters[ 0 ].isLetter() && letters[ 1 ].isLetter() )
          {
-            ls = new LocSquare( letters );
-            clp->locs.llist.insert( ls );
+            ls = new LocSquare ( letters );
+            MultWrapper<LocSquare> wls(ls);
+            if (!clp->locs.llist.contains(wls))
+                clp->locs.llist.insert ( wls, wls );
          }
       }
 

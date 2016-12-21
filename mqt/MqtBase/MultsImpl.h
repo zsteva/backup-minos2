@@ -22,7 +22,7 @@ class CountryList;
 class MultEntry;
 class BaseContestLog;
 
-
+/*
 template < class itemtype >
 struct MultCmp
 {
@@ -31,9 +31,9 @@ struct MultCmp
       return * s1 < *s2;
    }
 };
-
+*/
 template < class itemtype >
-class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <itemtype> >
+class MultList : public QMap < MultWrapper<itemtype>, MultWrapper<itemtype> >
 {
     public:
       virtual int getWorked( int /*item*/, BaseContestLog * const /*ct*/ )
@@ -47,7 +47,6 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
       {}
       virtual ~MultList()
       {
-         freeAll();
       }
       void loadEntries( const QString &sfname, const QString &fmess )
       {
@@ -79,25 +78,26 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
 
          }
       }
-      void freeAll()
-      {
-         for ( typename MultList::iterator i = MultList::begin(); i != MultList::end(); i++ )
-            delete ( *i );
-         MultList::clear();
-      }
       virtual int slen( bool )
       {
          return -1;
       }
-      unsigned int indexOf( itemtype item )
+
+      int indexOf( itemtype item )
       {
-         typename MultList::iterator f = std::lower_bound( MultList::begin(), MultList::end(), item, MultCmp <itemtype>() );
-         if ( f == MultList::end() || ( *f ) != item )
-         {
-            return ( MultList::end() - MultList::begin() );
-         }
-         unsigned int diff = f - MultList::begin();
-         return diff;
+          int i = 0;
+          for (MultList::iterator m = begin(); m != end(); m++)
+          {
+            if (*m->wt.data() == item)
+                return i;
+          }
+          return -1;
+      }
+
+      QSharedPointer<itemtype> itemAt(int offset)
+      {
+          QSharedPointer<itemtype> ce = std::next(begin(), offset)->wt;
+          return ce;
       }
 
       QString getText( int item, int Column, BaseContestLog *const ct )
@@ -105,7 +105,7 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
          QString dest;
          if ( item >= static_cast< int > (MultList::size()) )
             return dest;
-         itemtype ce = MultList::at( item );
+         QSharedPointer<itemtype> ce = std::next(begin(), item)->wt;
          switch ( Column )
          {
             case ectCall:
@@ -221,7 +221,7 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
       }
 
 };
-class GlistList : public MultList < GlistEntry * >
+class GlistList : public MultList < GlistEntry >
 {
       // list of DistrictEntry
    public:
@@ -231,7 +231,7 @@ class GlistList : public MultList < GlistEntry * >
       virtual bool procLine( char ** );
 
 };
-class DistrictList : public MultList < DistrictEntry * >
+class DistrictList : public MultList < DistrictEntry >
 {
       // list of DistrictEntry
    public:
@@ -243,7 +243,7 @@ class DistrictList : public MultList < DistrictEntry * >
       virtual int getWorked( int item, BaseContestLog *const ct );
 };
 
-class DistrictSynonymList : public MultList < DistrictSynonym * >
+class DistrictSynonymList : public MultList < DistrictSynonym >
 {
       // list of DistrictSynonym
    public:
@@ -254,7 +254,7 @@ class DistrictSynonymList : public MultList < DistrictSynonym * >
 };
 
 
-class CountryList : public MultList < CountryEntry * >
+class CountryList : public MultList < CountryEntry >
 {
       // list of CountryEntry
    public:
@@ -267,7 +267,7 @@ class CountryList : public MultList < CountryEntry * >
       virtual int getWorked( int item, BaseContestLog *const ct );
 };
 
-class CountrySynonymList : public MultList < CountrySynonym * >
+class CountrySynonymList : public MultList < CountrySynonym >
 {
       // list of CountrySynonym
    public:
@@ -293,16 +293,16 @@ class MultListsImpl: public MultLists
       static MultListsImpl *getMultLists();
       ~MultListsImpl();
       //      void addCountry( bool addsyn );
-      virtual CountrySynonym *searchCountrySynonym( const QString &syn );
-      virtual DistrictEntry *searchDistrict( const QString &syn );
+      virtual QSharedPointer<CountrySynonym> searchCountrySynonym( const QString &syn );
+      virtual QSharedPointer<DistrictEntry> searchDistrict( const QString &syn );
       virtual int getCtryListSize();
       virtual int getDistListSize();
-      virtual CountryEntry *getCtryForPrefix( const QString &forcedMult );
+      virtual QSharedPointer<CountryEntry> getCtryForPrefix( const QString &forcedMult );
       virtual QString getCtryListText( int item, int Column, BaseContestLog *const ct );
       virtual QString getDistListText( int item, int Column, BaseContestLog *const ct );
-      virtual CountryEntry * getCtryListAt( int index );
-      virtual int getCtryListIndexOf( CountryEntry * );
-      virtual int getDistListIndexOf( DistrictEntry * );
+      virtual QSharedPointer<CountryEntry>  getCtryListAt( int index );
+      virtual int getCtryListIndexOf(QSharedPointer<CountryEntry> );
+      virtual int getDistListIndexOf( QSharedPointer<DistrictEntry> );
       virtual bool isUKprefix(const callsign &cs);
 //      virtual DistrictEntry *getDistrictEntry(int item);
 //      virtual CountryEntry *getCountryEntry(int item);

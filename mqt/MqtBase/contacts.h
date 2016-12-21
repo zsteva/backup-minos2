@@ -39,7 +39,7 @@ class CountrySynonym;
 class CountryList;
 class ScreenContact;
 
-CountryEntry *findCtryPrefix( const callsign &cs );
+QSharedPointer<CountryEntry> findCtryPrefix( const callsign &cs );
 
 // This is a contact, either in the log or the current screen contact
 // Various parts may be missing to allow "comment" records in the log.
@@ -123,8 +123,8 @@ class BaseContact
       int bonus;
       bool newBonus;
 
-      DistrictEntry * districtMult;
-      CountryEntry * ctryMult;
+      QSharedPointer<DistrictEntry> districtMult;
+      QSharedPointer<CountryEntry> ctryMult;
       virtual void makestrings( bool serialFields ) const;
       virtual void getText(QString &dest, const BaseContestLog * const curcon ) const;
       char multCount;
