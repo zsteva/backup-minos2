@@ -2048,7 +2048,7 @@ void QSOLogFrame::on_ValidateError (int mess_no )
       }
 
       // add the message into the error list
-      errs.insert( &errDefs[ mess_no ] );
+      errs.insert( &errDefs[ mess_no ], &errDefs[ mess_no ] );
 }
 int QSOLogFrame::getAngle()
 {

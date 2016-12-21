@@ -90,7 +90,7 @@ class ErrEntry
 extern ErrEntry errDefs[];
 extern bool allSpaces( const QString s );
 
-typedef codeproject::sorted_vector < ErrEntry *, true > ErrorList;
+typedef QMap < ErrEntry *, ErrEntry *> ErrorList;
 typedef ErrorList::iterator ErrorIterator;
 
 enum validTypes { /*cmNone, cmCancel, cmValid,*/ cmCheckValid, cmValidStatus /*, cmReleasedFocus*/};
