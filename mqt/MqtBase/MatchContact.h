@@ -15,24 +15,7 @@ class ListContact;
 class ContactList;
 class BaseMatchContest;
 
-/*
-class LtMatchContest
-{
-public:
-   bool operator() ( const BaseMatchContest* s1, const BaseMatchContest* s2 ) const;
-};
 
-class LtMatch
-{
-public:
-   bool operator() ( const MatchContact* s1, const MatchContact* s2 ) const;
-};
-typedef codeproject::sorted_vector < BaseMatchContest *, true, LtMatchContest > ContestMatchList;
-typedef ContestMatchList::iterator ContestMatchIterator;
-
-typedef codeproject::sorted_vector < MatchContact *, true, LtMatch > MatchList;
-typedef MatchList::iterator MatchIterator;
-*/
 typedef QMap < QSharedPointer<BaseMatchContest>, QSharedPointer<BaseMatchContest> > ContestMatchList;
 typedef ContestMatchList::iterator ContestMatchIterator;
 

@@ -436,20 +436,43 @@ void TContestApp::writeContestList()
     if (preloadComplete)
     {
         preloadBundle.clearProfileSection( false );
-        for ( int i = 0; i < contestSlotList.size(); i++ )
+
+        // build a stripped, renumbered list
+        int newSlotNo = 0;
+        ContestSlotList newContestSlotList;
+        foreach ( QSharedPointer<ContestSlot> cs,  contestSlotList)
         {
-            QSharedPointer<ContestSlot> cs = contestSlotList[ i ];
+            BaseContestLog * ct = cs->slot;
+            if (ct)
+            {
+                cs->slotno = newSlotNo;
+                newContestSlotList[newSlotNo] = cs;
+                newSlotNo++;
+            }
+        }
+        // replace the list
+        contestSlotList = newContestSlotList;
+
+        // and write it out
+        foreach ( QSharedPointer<ContestSlot> cs,  contestSlotList)
+        {
             BaseContestLog * ct = cs->slot;
             if ( !ct )
-                continue;
+            {
+                continue;   // shouldn't happen...
+            }
 
             QString ent = QString::number(cs->slotno + 1 );
+
             preloadBundle.setStringProfile( ent, ct->cfileName );
             if ( currentContest == ct )
             {
                 preloadBundle.setIntProfile( eppCurrent, cs->slotno + 1 );
             }
         }
+
+        // and on to the list slots
+
         for ( int i = 0; i < listSlotList.size(); i++ )
         {
             QSharedPointer<ListSlot> cs = listSlotList[ i ];
