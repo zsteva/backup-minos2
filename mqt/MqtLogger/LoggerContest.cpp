@@ -1343,9 +1343,9 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
 					 mt->getStructArgMemberValue( "ops1", ops1 );
 					 mt->getStructArgMemberValue( "ops2", ops2 );
 					 mt->getStructArgMemberValue( "currentOp1", currentOp1 );
-					 oplist.insert(currentOp1.getValue());
+                     oplist.insert(currentOp1.getValue(), currentOp1.getValue());
                      mt->getStructArgMemberValue( "currentOp2", currentOp2 );
-                     oplist.insert(currentOp2.getValue());
+                     oplist.insert(currentOp2.getValue(), currentOp2.getValue());
                   }
                   else
                      if ( methodName == "MinosLogCurrent" )

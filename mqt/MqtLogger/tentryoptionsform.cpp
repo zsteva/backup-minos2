@@ -210,7 +210,7 @@ void TEntryOptionsForm::getContestOperators()
 
     for ( OperatorIterator op = ct->oplist.begin(); op != ct->oplist.end(); op++ )
     {
-        operators.insert(*op);
+        operators.insert(*op, *op);
     }
 
     // now actual ops are a sorted list
@@ -218,16 +218,18 @@ void TEntryOptionsForm::getContestOperators()
     QString ops1;
     QString ops2;
     size_t ls = operators.size();
-    for (size_t i = 0; i < ls; i++)
+    int i = 0;
+    foreach(QString op, operators)
     {
         if (i <= ls/2)
         {
-            ops1 += operators[i] + " ";
+            ops1 += op + " ";
         }
         else
         {
-            ops2 += operators[i] + " ";
+            ops2 += op + " ";
         }
+        i++;
     }
     ct->opsQSO1 = ops1.trimmed();
     ct->opsQSO2 = ops2.trimmed();

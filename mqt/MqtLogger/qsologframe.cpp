@@ -377,7 +377,7 @@ void QSOLogFrame::MainOpComboBox_Exit()
         contest->currentOp1.setValue( op1 );
         if ( op1.size() )
         {
-           contest->oplist.insert( op1 );
+           contest->oplist.insert( op1, op1 );
         }
         contest->commonSave(false);
         refreshOps();
@@ -392,7 +392,7 @@ void QSOLogFrame::SecondOpComboBox_Exit()
        contest->currentOp2.setValue( op2 );
        if ( op2.size() )
        {
-          contest->oplist.insert( op2 );
+          contest->oplist.insert( op2, op2 );
        }
        contest->commonSave(false);
        refreshOps();

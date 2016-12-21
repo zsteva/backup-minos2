@@ -583,9 +583,9 @@ void BaseContestLog::scanContest( void )
 
 //   oplist.clear();
    QString curop1 = currentOp1.getValue();
-   oplist.insert( curop1 );
+   oplist.insert( curop1, curop1 );
    QString curop2 = currentOp2.getValue();
-   oplist.insert( curop2 );
+   oplist.insert( curop2, curop2 );
    while ( nextScan >= -1 )
    {
       // get the next contact in sequence and do any required scan checks
@@ -615,10 +615,10 @@ void BaseContestLog::scanContest( void )
       if (temp.size())
       {
          curop1 = temp;
-         oplist.insert( curop1 );
+         oplist.insert( curop1, curop1 );
       }
       curop2 = nct->op2.getValue();
-      oplist.insert( curop2 );
+      oplist.insert( curop2, curop2 );
 
       if ( nct->contactFlags.getValue() & ( NON_SCORING | DONT_PRINT | LOCAL_COMMENT | COMMENT_ONLY ) )
       {
@@ -879,13 +879,13 @@ bool DupContact::operator!=( const DupContact& rhs ) const
 {
    return !( *this == rhs );
 }
-
+/*
 bool LtDup::operator() ( const DupContact* s1, const DupContact* s2 ) const
 {
    bool res = ( *s1 < *s2 );
    return res;
 }
-
+*/
 dupsheet::dupsheet()
 {}
 dupsheet::~dupsheet()
@@ -894,24 +894,22 @@ dupsheet::~dupsheet()
 }
 bool dupsheet::checkCurDup( ScreenContact *nct, BaseContact *valp, bool insert )
 {
-   curdup = 0;
+   curdup.reset();
    if ( nct->cs.valRes == CS_OK )
    {
-      DupContact test( nct );
-      bool exists = std::binary_search( ctList.begin(), ctList.end(), &test, LtDup() );
-      if ( exists )
+      QSharedPointer<DupContact> test( new DupContact(nct) );
+      DupIterator c = ctList.find(test);
+      if ( c!= ctList.end() )
       {
          if ( !( nct->contactFlags & VALID_DUPLICATE ) )
          {
-            DupIterator c = std::lower_bound( ctList.begin(), ctList.end(), &test, LtDup() );
-
-            if ( valp && valp->getLogSequence() <= ( *c ) ->dct->getLogSequence() )
+            if ( valp && valp->getLogSequence() <= c->wt ->dct->getLogSequence() )
             {
                return false; // as val point earlier than current list item
             }
 
             if ( c != ctList.end() )
-               curdup = *c;
+               curdup = c->wt;
 
             return true;
          }
@@ -919,8 +917,8 @@ bool dupsheet::checkCurDup( ScreenContact *nct, BaseContact *valp, bool insert )
       else
          if ( insert )
          {
-            DupContact * ins = new DupContact( nct );
-            ctList.insert( ins );
+            QSharedPointer<DupContact> ins( new DupContact( nct ));
+            ctList.insert( ins, ins );
             return false;
          }
    }
@@ -928,24 +926,22 @@ bool dupsheet::checkCurDup( ScreenContact *nct, BaseContact *valp, bool insert )
 }
 bool dupsheet::checkCurDup( BaseContact *nct, BaseContact *valp, bool insert )
 {
-   curdup = 0;
+   curdup.reset();
    if ( nct->cs.valRes == CS_OK )
    {
-      DupContact test( nct );
-      bool exists = std::binary_search( ctList.begin(), ctList.end(), &test, LtDup() );
-      if ( exists )
+      QSharedPointer<DupContact> test( new DupContact(nct) );
+      DupIterator c = ctList.find(test);
+      if ( c != ctList.end() )
       {
          if ( !( nct->contactFlags.getValue() & VALID_DUPLICATE ) )
          {
-            DupIterator c = std::lower_bound( ctList.begin(), ctList.end(), &test, LtDup() );
-
-            if ( valp && valp->getLogSequence() <= ( *c ) ->dct->getLogSequence() )
+            if ( valp && valp->getLogSequence() <= c->wt ->dct->getLogSequence() )
             {
                return false; // as val point earlier than current list item
             }
 
             if ( c != ctList.end() )
-               curdup = *c;
+               curdup = c->wt;
 
             return true;
          }
@@ -953,8 +949,8 @@ bool dupsheet::checkCurDup( BaseContact *nct, BaseContact *valp, bool insert )
       else
          if ( insert )
          {
-            DupContact * ins = new DupContact( nct );
-            ctList.insert( ins );
+            QSharedPointer<DupContact> ins(new DupContact( nct ));
+            ctList.insert( ins, ins );
             return false;
          }
    }
@@ -991,7 +987,7 @@ bool dupsheet::isCurDup(BaseContact *nct ) const
 }
 void dupsheet::clearCurDup()
 {
-   curdup = 0;
+   curdup.reset();
 }
 BaseContact *dupsheet::getCurDup()
 {
@@ -1001,9 +997,7 @@ BaseContact *dupsheet::getCurDup()
 }
 void dupsheet::clear()
 {
-   curdup = 0;
-   for ( DupIterator i = ctList.begin(); i != ctList.end(); i++ )
-      delete ( *i );
+   curdup.reset();
    ctList.clear();
 }
 //============================================================

@@ -34,12 +34,13 @@ class DupContact
       DupContact();
       ~DupContact();
 };
+/*
 struct LtDup
 {
    bool operator() ( const DupContact* s1, const DupContact* s2 ) const;
 };
-
-typedef codeproject::sorted_vector < DupContact *, true, LtDup > DupList;
+*/
+typedef QMap < MultWrapper<DupContact>, MultWrapper<DupContact> > DupList;
 typedef DupList::iterator DupIterator;
 class dupsheet
 {
@@ -48,7 +49,7 @@ class dupsheet
 
    private:
       DupList ctList;
-      DupContact *curdup; // points into dupsheet
+      QSharedPointer<DupContact> curdup; // points into dupsheet
 
    public:
       bool checkCurDup( BaseContact *nct, BaseContact *valp, bool insert );
@@ -78,7 +79,7 @@ struct StrLess
       return s1.compare(s2, Qt::CaseInsensitive) < 0;
    }
 };
-typedef codeproject::sorted_vector < QString, true, StrLess > OperatorList;
+typedef QMap < QString, QString > OperatorList;
 typedef OperatorList::iterator OperatorIterator;
 
 class BaseContestLog: public BaseLogList

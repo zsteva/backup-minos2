@@ -742,8 +742,8 @@ QWidget * ContestDetails::getDetails( )
 
     contest->currentOp1.setValue(ui->MainOpComboBox->currentText());
     contest->currentOp2.setValue(ui->SecondOpComboBox->currentText());
-    contest->oplist.insert(contest->currentOp1.getValue());
-    contest->oplist.insert(contest->currentOp2.getValue());
+    contest->oplist.insert(contest->currentOp1.getValue(), contest->currentOp1.getValue());
+    contest->oplist.insert(contest->currentOp2.getValue(), contest->currentOp2.getValue());
 
     contest->validateLoc();
 
