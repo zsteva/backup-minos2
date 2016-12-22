@@ -22,16 +22,7 @@ class CountryList;
 class MultEntry;
 class BaseContestLog;
 
-/*
-template < class itemtype >
-struct MultCmp
-{
-   bool operator() ( const itemtype s1, const itemtype s2 ) const
-   {
-      return * s1 < *s2;
-   }
-};
-*/
+
 template < class itemtype >
 class MultList : public QMap < MultWrapper<itemtype>, MultWrapper<itemtype> >
 {

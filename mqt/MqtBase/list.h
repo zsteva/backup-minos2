@@ -10,13 +10,6 @@
 #ifndef listH
 #define listH 
 //---------------------------------------------------------------------------
-/*
-struct LtListSeq
-{
-   bool operator() ( const ListContact* s1, const ListContact* s2 ) const;
-};
-typedef codeproject::sorted_vector < ListContact *, true, LtListSeq > ListList;
-*/
 class ListContact;
 typedef QVector < ListContact *> ListList;
 typedef ListList::iterator ListIterator;

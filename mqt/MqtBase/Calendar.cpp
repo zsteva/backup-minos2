@@ -475,7 +475,7 @@ bool Calendar::parseFile ( const QString &fname )
         // (the band NAME is against each level, we want the canonical band)
         // and for each section
     }
-    std::sort ( calendar.begin(), calendar.end() );
+    qSort(calendar );
     return true;
 
 }

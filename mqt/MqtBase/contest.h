@@ -34,12 +34,6 @@ class DupContact
       DupContact();
       ~DupContact();
 };
-/*
-struct LtDup
-{
-   bool operator() ( const DupContact* s1, const DupContact* s2 ) const;
-};
-*/
 typedef QMap < MultWrapper<DupContact>, MultWrapper<DupContact> > DupList;
 typedef DupList::iterator DupIterator;
 class dupsheet
@@ -69,16 +63,10 @@ struct LtLogSeq
 {
    bool operator() ( const BaseContact* s1, const BaseContact* s2 ) const;
 };
+
 typedef codeproject::sorted_vector < BaseContact *, true, LtLogSeq > LogList;
 typedef LogList::iterator LogIterator;
 
-struct StrLess
-{
-   bool operator() ( const QString &s1, const QString &s2 ) const
-   {
-      return s1.compare(s2, Qt::CaseInsensitive) < 0;
-   }
-};
 typedef QMap < QString, QString > OperatorList;
 typedef OperatorList::iterator OperatorIterator;
 

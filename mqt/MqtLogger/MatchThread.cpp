@@ -467,15 +467,8 @@ void ThisLogMatcher::addMatch( BaseContact *cct, BaseContestLog *ccon )
 
    QSharedPointer<MatchContact> mct(new MatchLogContact( ccon, cct ));
 
-//   bool exists = std::binary_search( matchCollection->matchList.begin(), matchCollection->matchList.end(), mct );
-//   if ( !exists )
-//   {
-      mc->matchList.insert( mct, mct );
-//   }
-//   else
-//   {
-//      delete mct;
-//   }
+   mc->matchList.insert( mct, mct );
+
    thisContestMatched = matchCollection->contactCount();
 }
 bool ThisLogMatcher::idleMatch( int limit )

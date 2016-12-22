@@ -181,14 +181,6 @@ class LocSquare
 
 };
 
-struct LocSqCmp
-{
-   bool operator() ( const LocSquare *s1, const LocSquare *s2 ) const
-   {
-      return * s1 < *s2;
-   }
-};
-
 typedef QMap < MultWrapper<LocSquare>, MultWrapper<LocSquare> > LocSquareList;
 typedef LocSquareList::iterator LocSquareIterator;
 class LocList

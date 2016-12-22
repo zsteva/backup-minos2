@@ -104,17 +104,6 @@ bool reg1test::exportTest( QSharedPointer<QFile> expfd )
    // get the best DX contact
    BaseContact *bestdx = ct->getBestDX();
 
-   /*
-   // build the list of main operators
-   std::set
-      <QString> op1list;
-
-   for ( LogIterator i = ct->ctList.begin(); i != ct->ctList.end(); i++ )
-   {
-      op1list.insert( ( *i ) ->op1.getValue() );
-   }
-   */
-
    reg1testLine linelist[ static_cast<int>(LineCount) ];
    linelist[ static_cast< int> (TName) ] = reg1testLine( "TName", ct->name.getValue()  /*, "Contest Name"*/ ),
 
