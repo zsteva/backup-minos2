@@ -358,7 +358,7 @@ void DisplayContestContact::checkContact( )
          if ( letters[ 0 ].isLetter() && letters[ 1 ].isLetter() )
          {
             ls = new LocSquare ( letters );
-            MultWrapper<LocSquare> wls(ls);
+            MapWrapper<LocSquare> wls(ls);
             if (!clp->locs.llist.contains(wls))
                 clp->locs.llist.insert ( wls, wls );
          }

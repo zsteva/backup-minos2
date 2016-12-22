@@ -24,7 +24,7 @@ class BaseContestLog;
 
 
 template < class itemtype >
-class MultList : public QMap < MultWrapper<itemtype>, MultWrapper<itemtype> >
+class MultList : public QMap < MapWrapper<itemtype>, MapWrapper<itemtype> >
 {
     public:
       virtual int getWorked( int /*item*/, BaseContestLog * const /*ct*/ )

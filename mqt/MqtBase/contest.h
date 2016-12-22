@@ -34,7 +34,7 @@ class DupContact
       DupContact();
       ~DupContact();
 };
-typedef QMap < MultWrapper<DupContact>, MultWrapper<DupContact> > DupList;
+typedef QMap < MapWrapper<DupContact>, MapWrapper<DupContact> > DupList;
 typedef DupList::iterator DupIterator;
 class dupsheet
 {

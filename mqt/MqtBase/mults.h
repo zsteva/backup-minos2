@@ -15,35 +15,10 @@ class DistrictSynonym;
 class DistrictList;
 class CountrySynonymList;
 class CountryEntry;
-class CountrySynonym;					 //
+class CountrySynonym;
 class CountryList;
 class MultEntry;
 class BaseContestLog;
-
-template <class itemtype>
-class MultWrapper
-{
-public:
-    QSharedPointer<itemtype> wt;
-    MultWrapper(itemtype *mp):wt(mp){}
-    MultWrapper(QSharedPointer<itemtype> mp):wt(mp){}
-    MultWrapper(const MultWrapper &m)
-    {
-        wt = m.wt;
-    }
-
-
-};
-template <class itemtype >inline bool operator < (const MultWrapper<itemtype> &key1, const MultWrapper<itemtype> &key2)
-{
-    itemtype *i1 = key1.wt.data();
-    itemtype *i2 = key2.wt.data();
-    return *i1 < *i2;
-}
-template <class itemtype >inline bool operator == (const MultWrapper<itemtype> &key1, const MultWrapper<itemtype> &key2)
-{
-    return key1.wt.data() == key2.wt.data();
-}
 
 const int CONTINENTS = 6;
 struct ContList
@@ -181,7 +156,7 @@ class LocSquare
 
 };
 
-typedef QMap < MultWrapper<LocSquare>, MultWrapper<LocSquare> > LocSquareList;
+typedef QMap < MapWrapper<LocSquare>, MapWrapper<LocSquare> > LocSquareList;
 typedef LocSquareList::iterator LocSquareIterator;
 class LocList
 {

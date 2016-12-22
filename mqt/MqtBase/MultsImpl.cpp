@@ -73,7 +73,7 @@ bool GlistList::procLine( char **a )
    char * syn = a[ 0 ];
    char *dup = a[ 1 ];
 
-   MultWrapper<GlistEntry>gle(new GlistEntry ( syn, dup ));
+   MapWrapper<GlistEntry>gle(new GlistEntry ( syn, dup ));
    if (!contains(gle))
        insert ( gle, gle );
    return true;
@@ -225,7 +225,7 @@ bool DistrictList::procLine( char **a )
    char *prefix2 = a[ 3 ];
    char *cloc = a[ 4 ];
 
-   MultWrapper<DistrictEntry >dte(new DistrictEntry ( cd, cname, prefix, prefix2, cloc ));
+   MapWrapper<DistrictEntry >dte(new DistrictEntry ( cd, cname, prefix, prefix2, cloc ));
    if (!contains(dte))
        insert ( dte, dte );
    return true;
@@ -253,7 +253,7 @@ bool DistrictSynonymList::procLine( char **a )
 {
    char * cd = a[ 0 ];
    char *cname = a[ 1 ];
-   MultWrapper<DistrictSynonym> dse(new DistrictSynonym ( cd, cname ));
+   MapWrapper<DistrictSynonym> dse(new DistrictSynonym ( cd, cname ));
 
    if ( dse.wt->district )
        insert ( dse, dse );
@@ -376,7 +376,7 @@ bool CountryEntry::operator!=( const CountryEntry& rhs ) const
 //======================================================================
 static QSharedPointer<CountrySynonym> searchCountrySynonym( const QString &syn )
 {
-    MultWrapper <CountrySynonym> test(new CountrySynonym( syn, "" ));
+    MapWrapper <CountrySynonym> test(new CountrySynonym( syn, "" ));
 
    MultList < CountrySynonym > ::iterator cs = std::lower_bound( MultListsImpl::getMultLists() ->ctrySynList.begin(),
          MultListsImpl::getMultLists() ->ctrySynList.end(),
@@ -417,11 +417,11 @@ static void makeCountrySynonym( const QString &ssyn, const QString &sprefix )
    if ( !ctry )
       return ;		// as it will be unsuccessfull anyway
 
-   MultWrapper< CountrySynonym> cts(searchCountrySynonym ( syn ));
+   MapWrapper< CountrySynonym> cts(searchCountrySynonym ( syn ));
    if ( cts.wt && ( cts.wt->country.data() == ctry.data() ) )
       return ;		// as already there
 
-   cts = MultWrapper<CountrySynonym >(new CountrySynonym ( syn, prefix ));
+   cts = MapWrapper<CountrySynonym >(new CountrySynonym ( syn, prefix ));
 
    if ( cts.wt->country )
    {
@@ -634,7 +634,7 @@ void CountryList::loadEntries( const QString &fname, const QString &fmess )
          char *grid = gridref;
          geotoloc( lat, -longi, grid );	// kill temporary warning
 
-         MultWrapper<CountryEntry> cte(new CountryEntry ( a[ 3 ], a[ 7 ], a[ 0 ], gridref ));
+         MapWrapper<CountryEntry> cte(new CountryEntry ( a[ 3 ], a[ 7 ], a[ 0 ], gridref ));
          if (!contains(cte))
              insert ( cte, cte );
       }
