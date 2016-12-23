@@ -1107,14 +1107,14 @@ void QSOMatchGridModel::initialise(MatchType t, TMatchCollection *pmatch )
    match = pmatch;  // preserve all the tree
    rootItem = new MatchTreeItem(0, 0, QSharedPointer<MatchContact>());
    rootItem->setRow(0);
-   for (ContestMatchIterator i = pmatch->matchList.begin(); i != pmatch->matchList.end(); i++)
+   for (ContestMatchIterator i = pmatch->contestMatchList.begin(); i != pmatch->contestMatchList.end(); i++)
    {
-       MatchTreeItem *ci = new MatchTreeItem(rootItem, (*i).data(), QSharedPointer<MatchContact>());
+       MatchTreeItem *ci = new MatchTreeItem(rootItem, i->wt.data(), QSharedPointer<MatchContact>());
        rootItem->addChild(ci); // also sets row
        //(*i) is *BaseMatchContest
-       for (int j = 0; j < (*i)->getContactCount(); j++)
+       for (int j = 0; j < i->wt->getContactCount(); j++)
        {
-           MatchTreeItem *mi = new MatchTreeItem(ci, (*i).data(), (*i)->pcontactAt(j));
+           MatchTreeItem *mi = new MatchTreeItem(ci, i->wt.data(), i->wt->pcontactAt(j));
            ci->addChild(mi);
        }
    }

@@ -9,29 +9,13 @@
 #include "base_pch.h"
 
 //---------------------------------------------------------------------------
-/*
-bool LtMatch::operator() ( const MatchContact* s1, const MatchContact* s2 ) const
-{
-   return * s1 < *s2;
-}
-bool LtMatchContest::operator() ( const BaseMatchContest* s1, const BaseMatchContest* s2 ) const
-{
-   return * s1 < *s2;
-}
-*/
-
 QSharedPointer<MatchContact> BaseMatchContest::pcontactAt( int i )
 {
-    if (i > static_cast< int > (matchList.size()))
+    if (i > static_cast< int > (contactMatchList.size()))
         return QSharedPointer<MatchContact>();
-    return *std::next(matchList.begin(), i);
-    // ERROR
-    //return 0;
-    /*
-    return matchList.at( i );
-    */
+    return std::next(contactMatchList.begin(), i)->wt;
 }
-
+// Here we compare pointers, just to give an actual < operator
 bool MatchContactList::operator<( const BaseMatchContest& rhs ) const
 {
    // p1 is from list; p2 is the one being searched for
@@ -175,6 +159,9 @@ bool MatchLogContact::operator!=( const MatchContact& rhs ) const
    return ( getBaseContact() != rhs.getBaseContact() );
 }
 //==============================================================================
+MatchListContact::MatchListContact( )
+{}
+
 MatchListContact::MatchListContact(ContactList *ct, ListContact *lc )
       : matchedList( ct ), matchedListContact( lc )
 {}

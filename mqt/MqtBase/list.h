@@ -22,7 +22,6 @@ class ContactList : public BaseLogList
       bool errMessShown;
       bool cslLoad();
       bool cslLoadContacts();
-      void freeAll();
    public:
       QString cfileName;
       QString name;

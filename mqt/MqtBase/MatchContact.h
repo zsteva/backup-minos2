@@ -16,10 +16,10 @@ class ContactList;
 class BaseMatchContest;
 
 
-typedef QMap < QSharedPointer<BaseMatchContest>, QSharedPointer<BaseMatchContest> > ContestMatchList;
+typedef QMap < MapWrapper<BaseMatchContest>, MapWrapper<BaseMatchContest> > ContestMatchList;
 typedef ContestMatchList::iterator ContestMatchIterator;
 
-typedef QMap < QSharedPointer<MatchContact>, QSharedPointer<MatchContact> > MatchList;
+typedef QMap < MapWrapper<MatchContact>, MapWrapper<MatchContact> > MatchList;
 typedef MatchList::iterator MatchIterator;
 
 class MatchContact
@@ -55,9 +55,9 @@ public:
 
    BaseLogList *matchedContest;
 
-   MatchList matchList;
+   MatchList contactMatchList;
 
-   virtual int getContactCount(){return matchList.size();}
+   virtual int getContactCount(){return contactMatchList.size();}
    QSharedPointer<MatchContact> pcontactAt( int );
 
    virtual const ContactList * getContactList() const
@@ -96,6 +96,7 @@ class MatchListContact: public MatchContact
       ContactList *matchedList;
       ListContact *matchedListContact;
       MatchListContact( ContactList * ct, ListContact * lc );
+      MatchListContact( );
       virtual ~MatchListContact();
       virtual ContactList * getContactList() const override
       {

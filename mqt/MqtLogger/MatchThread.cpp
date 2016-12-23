@@ -208,30 +208,26 @@ TMatchCollection::TMatchCollection( void )
 {}
 TMatchCollection::~TMatchCollection( void )
 {
-   //freeAll();
 }
 int TMatchCollection::getContestCount( void )
 {
-   return matchList.size();
+   return contestMatchList.size();
 }
 
 QSharedPointer<BaseMatchContest> TMatchCollection::pcontestAt( int i )
 {
-    if (i > matchList.size())
+    if (i > contestMatchList.size())
         return QSharedPointer<BaseMatchContest>();
 
-    return *std::next(matchList.begin(), i);
-// ERROR
- //   return QSharedPointer<BaseMatchContest>();
-//    return matchList.at( i );
+    return std::next(contestMatchList.begin(), i)->wt;
 }
 
 int TMatchCollection::contactCount()
 {
     int cc = 0;
-    for (ContestMatchIterator i = matchList.begin(); i != matchList.end(); i++ )
+    for (ContestMatchIterator i = contestMatchList.begin(); i != contestMatchList.end(); i++ )
     {
-        cc += (*i)->matchList.size();
+        cc += i->wt->contactMatchList.size();
     }
     return cc;
 }
@@ -335,7 +331,7 @@ void Matcher::clearmatchall( )
    matchStarted = false;
    matchRequired = false;
 
-   matchCollection->freeAll();
+   matchCollection->contestMatchList.clear();
 
    // don't want to keep the old, so clear down the memory of selection terms
    matchcs.set( "" );
@@ -454,20 +450,24 @@ void ThisLogMatcher::addMatch( QSharedPointer<BaseContact> cct, BaseContestLog *
    if ( !cct )
       return ;
 
-   QSharedPointer<BaseMatchContest> mc;
-   //BaseMatchContest *mc = 0;
-   ContestMatchList &matchList = matchCollection->matchList;
-   if (matchList.size() == 0)
+   ContestMatchList &contestMatchList = matchCollection->contestMatchList;
+   MapWrapper<BaseMatchContest> wmc = MapWrapper<BaseMatchContest>(new MatchContactLog);
+   if (contestMatchList.size() == 0)
    {
-       mc = QSharedPointer<BaseMatchContest>(new MatchContactLog);
-       mc->matchedContest = ccon;
-       matchList.insert(mc, mc);
+       wmc.wt->matchedContest = ccon;
+       contestMatchList.insert(wmc, wmc);
    }
-   mc = matchCollection->matchList.begin().value();
-
-   QSharedPointer<MatchContact> mct(new MatchLogContact( ccon, cct ));
-
-   mc->matchList.insert( mct, mct );
+   QSharedPointer<BaseMatchContest> found;
+   foreach(MapWrapper<BaseMatchContest> test, contestMatchList)
+   {
+       if (test.wt->getContactLog() == ccon)
+       {
+            found = test.wt;
+            MapWrapper<MatchContact> wmct(new MatchLogContact( ccon, cct ));
+            found->contactMatchList.insert( wmct, wmct );
+            break;
+       }
+   }
 
    thisContestMatched = matchCollection->contactCount();
 }
@@ -784,25 +784,36 @@ void OtherLogMatcher::addMatch( QSharedPointer<BaseContact> cct, BaseContestLog 
    if ( !cct )
       return ;
 
-   QSharedPointer<BaseMatchContest> mc;
-   ContestMatchList &matchList = matchCollection->matchList;
-   if (matchList.size() == 0)
+   ContestMatchList &contestMatchList = matchCollection->contestMatchList;
+   MapWrapper<BaseMatchContest> wmc(new MatchContactLog);
+
+
+   QSharedPointer<BaseMatchContest> found;
+   foreach(MapWrapper<BaseMatchContest> test, contestMatchList)
    {
-       mc = QSharedPointer<MatchContactLog>(new MatchContactLog);
-       mc->matchedContest = ccon;
-       matchList.insert(mc, mc);
+       if (test.wt->getContactLog() == ccon)
+       {
+            found = test.wt;
+            break;
+       }
    }
-   mc = matchCollection->pcontestAt(matchList.size() - 1);
-   if (mc->matchedContest != ccon)
+   if (!found)
    {
-       mc = QSharedPointer<MatchContactLog>(new MatchContactLog);
-       mc->matchedContest = ccon;
-       matchList.insert(mc, mc);
+       wmc.wt->matchedContest = ccon;
+       contestMatchList.insert(wmc, wmc);
+   }
+   found.reset();
+   foreach(MapWrapper<BaseMatchContest> test, contestMatchList)
+   {
+       if (test.wt->getContactLog() == ccon)
+       {
+            found = test.wt;
+            MapWrapper<MatchContact> mct(new MatchLogContact( ccon, cct ));
+            found->contactMatchList.insert( mct, mct );
+            break;
+       }
    }
 
-   QSharedPointer<MatchContact> mct(new MatchLogContact( ccon, cct ));
-
-   mc->matchList.insert( mct, mct );
    thisContestMatched = matchCollection->contactCount();
 }
 bool OtherLogMatcher::idleMatch( int limit )
@@ -1098,28 +1109,40 @@ void ListMatcher::matchCountry( const QString &/*cs*/ )
 {}
 void ListMatcher::addMatch( ListContact *cct, ContactList * ccon )
 {
-   if ( !cct )
-      return ;
+       if ( !cct )
+          return ;
 
-   QSharedPointer<BaseMatchContest> mc;
-   ContestMatchList &matchList = matchCollection->matchList;
-   if (matchList.size() == 0)
-   {
-       mc = QSharedPointer<MatchContactList>(new MatchContactList);
-       mc->matchedContest = ccon;
-       matchList.insert(mc, mc);
-   }
-   mc = matchCollection->pcontestAt(matchList.size() - 1);
-   if (mc->matchedContest != ccon)
-   {
-       mc = QSharedPointer<MatchContactList>(new MatchContactList);
-       mc->matchedContest = ccon;
-       matchList.insert(mc, mc);
-   }
+       ContestMatchList &contestMatchList = matchCollection->contestMatchList;
+       MapWrapper<BaseMatchContest> wmc(new MatchContactList);
 
-   QSharedPointer<MatchListContact> mct = QSharedPointer<MatchListContact>(new MatchListContact( ccon, cct ));
 
-   mc->matchList.insert( mct, mct );
+       QSharedPointer<BaseMatchContest> found;
+       foreach(MapWrapper<BaseMatchContest> test, contestMatchList)
+       {
+           if (test.wt->getContactList() == ccon)
+           {
+                found = test.wt;
+                break;
+           }
+       }
+       if (!found)
+       {
+           wmc.wt->matchedContest = ccon;
+           contestMatchList.insert(wmc, wmc);
+       }
+       found.reset();
+       foreach(MapWrapper<BaseMatchContest> test, contestMatchList)
+       {
+           if (test.wt->getContactList() == ccon)
+           {
+                found = test.wt;
+                MapWrapper<MatchContact> mct(new MatchListContact( ccon, cct ));
+                found->contactMatchList.insert( mct, mct );
+                break;
+           }
+       }
+
+       thisContestMatched = matchCollection->contactCount();
 }
 
 bool ListMatcher::idleMatch( int limit )

@@ -894,7 +894,7 @@ bool dupsheet::checkCurDup(ScreenContact *nct, unsigned long valpseq, bool inser
       {
          if ( !( nct->contactFlags & VALID_DUPLICATE ) )
          {
-            if ( valpseq <= c->wt ->dct->getLogSequence() )
+            if ( valpseq != 0 && valpseq <= c->wt ->dct->getLogSequence() )
             {
                return false; // as val point earlier than current list item
             }
@@ -908,7 +908,7 @@ bool dupsheet::checkCurDup(ScreenContact *nct, unsigned long valpseq, bool inser
       else
          if ( insert )
          {
-            QSharedPointer<DupContact> ins( new DupContact( nct ));
+            MapWrapper<DupContact> ins( test);
             ctList.insert( ins, ins );
             return false;
          }
@@ -927,7 +927,7 @@ bool dupsheet::checkCurDup(BaseContestLog *contest, unsigned long nctseq, unsign
       {
          if ( !( nct->contactFlags.getValue() & VALID_DUPLICATE ) )
          {
-            if ( valpseq  <= c->wt ->dct->getLogSequence() )
+            if ( valpseq != 0 && valpseq  <= c->wt ->dct->getLogSequence() )
             {
                return false; // as val point earlier than current list item
             }

@@ -36,19 +36,7 @@ class matchElement
 class TMatchCollection
 {
    public:
-      ContestMatchList matchList;
-      void freeAll()
-      {
-          /*
-         for (ContestMatchIterator i = matchList.begin(); i != matchList.end(); i++ )
-         {
-             (*i)->freeAll();
-            delete ( *i );
-            ( *i ) = 0;
-         }
-      */
-         matchList.clear();
-      }
+      ContestMatchList contestMatchList;
       int contactCount();
       TMatchCollection( void );
       ~TMatchCollection();

@@ -77,7 +77,7 @@ class MultList : public QMap < MapWrapper<itemtype>, MapWrapper<itemtype> >
       int indexOf( itemtype item )
       {
           int i = 0;
-          for (MultList::iterator m = begin(); m != end(); m++)
+          for (typename MultList::iterator m = this->begin(); m != this->end(); m++)
           {
             if (*m->wt.data() == item)
                 return i;
@@ -89,7 +89,7 @@ class MultList : public QMap < MapWrapper<itemtype>, MapWrapper<itemtype> >
 
       QSharedPointer<itemtype> itemAt(int offset)
       {
-          QSharedPointer<itemtype> ce = std::next(begin(), offset)->wt;
+          QSharedPointer<itemtype> ce = std::next(this->begin(), offset)->wt;
           return ce;
       }
 
@@ -98,7 +98,7 @@ class MultList : public QMap < MapWrapper<itemtype>, MapWrapper<itemtype> >
          QString dest;
          if ( item >= static_cast< int > (MultList::size()) )
             return dest;
-         QSharedPointer<itemtype> ce = std::next(begin(), item)->wt;
+         QSharedPointer<itemtype> ce = std::next(this->begin(), item)->wt;
          switch ( Column )
          {
             case ectCall:

@@ -83,7 +83,8 @@ ContactList::ContactList() : slotno( -1 ), cslFile( false ), errMessShown(false)
 }
 ContactList::~ContactList()
 {
-   freeAll();
+    for ( ListIterator i = ctList.begin(); i != ctList.end(); i++ )
+       delete ( *i );
 }
 bool ContactList::initialise( int sno )
 {
@@ -169,12 +170,6 @@ bool ContactList::cslLoad( void )
 bool ContactList::cslLoadContacts( void )
 {
    return true;
-}
-void ContactList::freeAll()
-{
-   for ( ListIterator i = ctList.begin(); i != ctList.end(); i++ )
-	  delete ( *i );
-   ctList.clear();
 }
 void ContactList::getMatchText(ListContact *, QString &disp, const BaseContestLog *const /*ct*/ ) const
 {
