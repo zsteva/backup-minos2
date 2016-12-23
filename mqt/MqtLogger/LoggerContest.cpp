@@ -23,9 +23,9 @@ LoggerContestLog::LoggerContestLog( void ) : BaseContestLog(),
       needExport( false )
 {
 }
-void LoggerContestLog::makeContact( bool timeNow, BaseContact *&lct )
+void LoggerContestLog::makeContact(bool timeNow, QSharedPointer<BaseContact> &lct )
 {
-   lct = new ContestContact( this, timeNow );
+   lct = QSharedPointer<BaseContact>(new ContestContact( this, timeNow ));
 }
 LoggerContestLog::~LoggerContestLog()
 {
@@ -405,7 +405,7 @@ void LoggerContestLog::closeFile( void )
    adifContestFile.reset();
    ediContestFile.reset();
 }
-DisplayContestContact *LoggerContestLog::addContact( int newctno, int extraFlags, bool saveNew, bool catchup )
+QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, int extraFlags, bool saveNew, bool catchup )
 {
    // add the contact number as an new empty contact, with disk block and log_seq
 
@@ -413,72 +413,78 @@ DisplayContestContact *LoggerContestLog::addContact( int newctno, int extraFlags
    if ( ( extraFlags & TO_BE_ENTERED ) || catchup )
       timenow = false;
 
-   BaseContact *bct = 0;
+   QSharedPointer<BaseContact> bct;
    makeContact( timenow, bct );
-   DisplayContestContact *lct = dynamic_cast<DisplayContestContact *> (bct);
 
    QString temp = QString( "%1" ).arg(newctno, 3 );
-   lct->serials.setValue( temp );
-   lct->setLogSequence( nextBlock << 16 );
+   bct->serials.setValue( temp );
+   bct->setLogSequence( nextBlock << 16 );
    nextBlock++;
    if ( newctno > maxSerial )
    {
       maxSerial = newctno;
    }
-   lct->contactFlags.setValue( lct->contactFlags.getValue() | extraFlags );
+   bct->contactFlags.setValue( bct->contactFlags.getValue() | extraFlags );
 
    if (catchup)
    {
-      lct->op1 = currentOp1;
-      lct->op2 = currentOp2;
+      bct->op1 = currentOp1;
+      bct->op2 = currentOp2;
    }
    if ( saveNew )
    {
-      lct->commonSave();		// make sure contact is correct
+      bct->commonSave(bct);		// make sure contact is correct
    }
-   ctList.insert( lct );
+   MapWrapper<BaseContact> wbct(bct);
+   ctList.insert( wbct, wbct );
    if ( saveNew )
    {
       commonSave( false );
    }
 
-   return lct;
+   return bct;
 }
-DisplayContestContact *LoggerContestLog::addContactBetween( BaseContact *prior, BaseContact *next )
+QSharedPointer<BaseContact> LoggerContestLog::addContactBetween(QSharedPointer<BaseContact> prior, QSharedPointer<BaseContact> next )
 {
    // add the contact number as an new empty contact, with disk block and log_seq
 
    if (!next)
    {
       MinosParameters::getMinosParameters() ->mshowMessage("Attempt to insert after last contact - not allowed. Pease report a bug!");
-      return 0;
+      return QSharedPointer<BaseContact>();
    }
    bool timenow = false;
 
-   BaseContact *bct = 0;
+   QSharedPointer<BaseContact> bct;
    makeContact( timenow, bct );
-   DisplayContestContact *lct = dynamic_cast<DisplayContestContact *> (bct);
 
-   lct->serials.setValue( "" );
+   bct->serials.setValue( "" );
 
    unsigned long pls =  prior?prior->getLogSequence():0;
    unsigned long nls =  next->getLogSequence();
 
    unsigned long seq = (pls + nls)/2;
 
-   lct->setLogSequence( seq );
+   bct->setLogSequence( seq );
 
-   lct->commonSave();		// make sure contact is correct
-   ctList.insert( lct );
+   bct->commonSave(bct);		// make sure contact is correct
+   MapWrapper<BaseContact>wbct(bct);
+   ctList.insert( wbct, wbct );
    commonSave( false );
 
-   return lct;
+   return bct;
 }
 //==========================================================================
-void LoggerContestLog::removeContact( DisplayContestContact *lct )
+void LoggerContestLog::removeContact( QSharedPointer<BaseContact> lct )
 {
-   ctList.erase(lct);
-   delete lct;
+    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
+    {
+        if (i->wt.data() == lct.data())
+        {
+            ctList.erase(i);
+            break;
+        }
+    }
 }
 //==========================================================================
 bool LoggerContestLog::commonSave( bool newfile )
@@ -506,7 +512,7 @@ bool LoggerContestLog::minosSaveFile( bool newfile )
    clearDirty();
    return true;
 }
-bool LoggerContestLog::minosSaveContestContact( const ContestContact *lct )
+bool LoggerContestLog::minosSaveContestContact( const QSharedPointer<BaseContact> lct )
 {
    MinosTestExport mt( this );
    stanzaCount += mt.exportQSO( minosContestFile, lct );
@@ -646,20 +652,18 @@ bool LoggerContestLog::GJVload( void )
 }
 bool LoggerContestLog::GJVloadContacts( void )
 {
-   ContestContact * rct = 0;
-
    nextBlock = 1;
 
    for ( int i = 0; i < logCount; i++ )
    {
-       BaseContact *bct = rct;
+      QSharedPointer<BaseContact>bct;
       makeContact( false, bct );
-      rct = dynamic_cast<ContestContact *>(bct);
-      if ( rct->GJVload( static_cast< int >( nextBlock) ) )
+      if ( bct->GJVload( static_cast< int >( nextBlock) ) )
       {
          nextBlock++;
-         ctList.insert( rct );
-         int maxct = rct->serials.getValue().toInt();
+         MapWrapper<BaseContact> wbct(bct);
+         ctList.insert( wbct, wbct );
+         int maxct = bct->serials.getValue().toInt();
          if ( maxct > maxSerial )
             maxSerial = maxct;
 
@@ -707,7 +711,7 @@ bool LoggerContestLog::export_contest(QSharedPointer<QFile> expfd, ExportType ex
 }
 static bool uhNeeded = false;
 static bool utNeeded = false;
-void LoggerContestLog::procUnknown( BaseContact *cct, writer &wr )
+void LoggerContestLog::procUnknown(QSharedPointer<BaseContact> cct, writer &wr )
 {
    QString lbuff;
 
@@ -775,7 +779,7 @@ bool LoggerContestLog::exportGJV(QSharedPointer<QFile>fd )
 
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      ContestContact *lct = dynamic_cast<ContestContact *>( *i );
+      QSharedPointer<BaseContact> lct = i->wt;
       // we need to test for "in dump"
 
       int serials = lct->serials.getValue().toInt();
@@ -820,7 +824,7 @@ bool LoggerContestLog::exportADIF(QSharedPointer<QFile> expfd )
 
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      ContestContact *lct = dynamic_cast<ContestContact *>( *i );
+      QSharedPointer<BaseContact> lct = i->wt;
       QString l = lct ->getADIFLine();
       if ( l.size() )
       {
@@ -941,13 +945,13 @@ static QString kmloutput ( Location *outgrid )
 
 bool LoggerContestLog::exportKML(QSharedPointer<QFile> expfd )
 {
-   typedef QMap <QString, ContestContact *> cmap; // map by call
+   typedef QMap <QString, QSharedPointer<BaseContact>> cmap; // map by call
    typedef QMap <QString, cmap> smap;       // map by prefix
    smap countries;
 
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      ContestContact *ct = dynamic_cast<ContestContact *>( *i );
+      QSharedPointer<BaseContact> ct = i->wt;
       if ( ct->ctryMult )
       {
          ( countries[ ct->ctryMult->basePrefix ] ) [ ct->cs.fullCall.getValue() ] = ct;
@@ -1014,7 +1018,7 @@ bool LoggerContestLog::exportKML(QSharedPointer<QFile> expfd )
       {
          Location l1;
          Location l2;
-         ContestContact *ct = e.value();
+         QSharedPointer<BaseContact> ct = e.value();
 
 
          char inputbuff[ 100 ];
@@ -1079,7 +1083,7 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
 
    bool started = false;
 
-   DisplayContestContact *ct = 0;
+   //QSharedPointer<BaseContact> ct;
    int lineNo = -1;
    while ( ++lineNo < ls.count() )
    {
@@ -1208,10 +1212,9 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
       }
       started = true;
 
-      BaseContact *bct = ct;
+      QSharedPointer<BaseContact> bct;
       makeContact( false, bct );
-      ct = dynamic_cast<DisplayContestContact *>(bct);
-      ct->setLogSequence( 0 );
+      bct->setLogSequence( 0 );
 
       stemp += QString( 200, ' ' );   // make sure there is plenty more...
 
@@ -1220,37 +1223,37 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
       // parse contact line in
 
       strcpysp( temp, &lbuff[ 0 ], 6 );
-      ct->time.setDate( temp, DTGLOG );
+      bct->time.setDate( temp, DTGLOG );
       strcpysp( temp, &lbuff[ 7 ], 4 );
-      ct->time.setTime( temp, DTGLOG );
+      bct->time.setTime( temp, DTGLOG );
       strcpysp( temp, &lbuff[ 21 ], 15 );
-      ct->cs = callsign( strupr( temp ) );
-      ct->cs.valRes = CS_NOT_VALIDATED;
+      bct->cs = callsign( strupr( temp ) );
+      bct->cs.valRes = CS_NOT_VALIDATED;
       strcpysp( temp, &lbuff[ 37 ], 3 );
-      ct->reps.setValue( temp );
+      bct->reps.setValue( temp );
       strcpysp( temp, &lbuff[ 41 ], 4 );
-      ct->serials.setValue( temp );
+      bct->serials.setValue( temp );
 
-      int maxct = ct->serials.getValue().toInt();
+      int maxct = bct->serials.getValue().toInt();
       if ( maxct > maxSerial )
          maxSerial = maxct;
 
       strcpysp( temp, &lbuff[ 46 ], 3 );
-      ct->repr.setValue( temp );
+      bct->repr.setValue( temp );
       strcpysp( temp, &lbuff[ 51 ], 4 );
-      ct->serialr.setValue( temp );
+      bct->serialr.setValue( temp );
 
       // here is the score field
       strcpysp( temp, &lbuff[ 59 ], 5 );
       if ( atoi( temp ) == 0 )
-         ct->contactFlags.setValue( NON_SCORING );
+         bct->contactFlags.setValue( NON_SCORING );
 
       strcpysp( temp, &lbuff[ 65 ], 6 );
-      ct->op1.setValue( temp );
+      bct->op1.setValue( temp );
 
       strcpysp( temp, &lbuff[ 72 ], 6 );
-      ct->loc.loc.setValue( temp );
-      ct->loc.valRes = LOC_NOT_VALIDATED;
+      bct->loc.loc.setValue( temp );
+      bct->loc.valRes = LOC_NOT_VALIDATED;
 
       //ct->comments = "";
 
@@ -1262,14 +1265,14 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
       {
          // we always attempt to import the district mult field
          strcpysp( comments, &lbuff[ 93 ], COMMENTLENGTH );
-         ct->comments.setValue( comments );
+         bct->comments.setValue( comments );
 
       }
       else
       {
          strcpysp( extra, &lbuff[ 93 ], EXTRALENGTH );
       }
-      ct->extraText.setValue( extra );
+      bct->extraText.setValue( extra );
 
       // save contact
 
@@ -1277,9 +1280,10 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
       // duplicates
 
       next_block++ ;
-      ct->setLogSequence( next_block << 16 );
+      bct->setLogSequence( next_block << 16 );
 
-      ctList.insert( ct );
+      MapWrapper<BaseContact> wbct(bct);
+      ctList.insert( wbct, wbct );
    }
    return true;
 }

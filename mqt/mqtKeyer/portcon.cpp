@@ -48,7 +48,6 @@ WinMonitor *winp = 0;
 //==============================================================================
 commonPort *createPort( const PortConfig &port )
 {
-   // we cannot use dynamic_cast as we have turned RTTI off to save space
    commonPort * cp = portChain.find( port.name );
 
    if ( cp )

@@ -449,7 +449,7 @@ void ThisLogMatcher::matchCountry( const QString &cs )
 {
    TMatchThread::getMatchThread() ->matchCountry( cs );   // scroll to
 }
-void ThisLogMatcher::addMatch( BaseContact *cct, BaseContestLog *ccon )
+void ThisLogMatcher::addMatch( QSharedPointer<BaseContact> cct, BaseContestLog *ccon )
 {
    if ( !cct )
       return ;
@@ -671,7 +671,7 @@ bool ThisLogMatcher::idleMatch( int limit )
              contestIndex++;
              return true;
           }
-          BaseContact *cct = ccon->pcontactAt( contactIndex++ );
+          QSharedPointer<BaseContact> cct = ccon->pcontactAt( contactIndex++ );
           if ( !cct )
              return true;
 
@@ -778,7 +778,7 @@ void OtherLogMatcher::matchCountry( const QString &cs )
 {
    TMatchThread::getMatchThread() ->matchCountry( cs );   // scroll to
 }
-void OtherLogMatcher::addMatch( BaseContact *cct, BaseContestLog * ccon )
+void OtherLogMatcher::addMatch( QSharedPointer<BaseContact> cct, BaseContestLog * ccon )
 {
 
    if ( !cct )
@@ -982,7 +982,7 @@ bool OtherLogMatcher::idleMatch( int limit )
             contestIndex++;
             return true;
          }
-         BaseContact *cct = ccon->pcontactAt( contactIndex++ );
+         QSharedPointer<BaseContact> cct = ccon->pcontactAt( contactIndex++ );
          if ( !cct )
             return true;
 

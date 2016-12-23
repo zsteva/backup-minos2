@@ -10,11 +10,6 @@
 #include "Calendar.h"
 #include "CalendarList.h"
 
-bool LtLogSeq::operator() ( const BaseContact* s1, const BaseContact* s2 ) const
-{
-   return s1->getLogSequence() < s2->getLogSequence();
-}
-
 BaseContestLog::BaseContestLog( void ) :
       protectedContest( false ), suppressProtected(false),  unwriteable(false),
       nextBlock( 1 ),
@@ -63,47 +58,43 @@ BaseContestLog::~BaseContestLog()
    districtWorked = 0;
    countryWorked = 0;
 
-   freeAll();
    closeFile();
 }
-void BaseContestLog::freeAll()
+int BaseContestLog::indexOf(QSharedPointer<BaseContact> item )
 {
-   for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
-      delete ( *i );
-   ctList.clear();
-}
-unsigned int BaseContestLog::indexOf( BaseContact * item )
-{
-   LogIterator f = std::lower_bound( ctList.begin(), ctList.end(), item, LtLogSeq() );
-   if ( f == ctList.end() || ( *f ) != item )
-   {
-      return ( ctList.end() - ctList.begin() );
-   }
-   unsigned int diff = f - ctList.begin();
-   return diff;
+    int i = 0;
+    for (LogIterator m = ctList.begin(); m != ctList.end(); m++)
+    {
+      if (m->wt.data() == item.data())
+          return i;
+
+      i++;
+    }
+    return -1;
 }
 int BaseContestLog::getContactCount( void )
 {
    return ctList.size();
 }
 
-BaseContact *BaseContestLog::pcontactAt( unsigned int i )
+QSharedPointer<BaseContact> BaseContestLog::pcontactAt( int i )
 {
    if ( i < ctList.size() )
    {
-      return ctList.at( i );
+       QSharedPointer<BaseContact> ce = std::next(ctList.begin(), i)->wt;
+       return ce;
    }
-   return 0;
+   return QSharedPointer<BaseContact>();
 }
 
-BaseContact *BaseContestLog::pcontactAtSeq( unsigned long logSequence )
+QSharedPointer<BaseContact> BaseContestLog::pcontactAtSeq( unsigned long logSequence )
 {
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      if ( ( *i ) ->getLogSequence() == logSequence )
-         return ( *i );
+      if ( i->wt ->getLogSequence() == logSequence )
+         return i->wt;
    }
-   return 0;
+   return QSharedPointer<BaseContact>();
 }
 void BaseContestLog::clearDirty()
 {
@@ -138,7 +129,7 @@ void BaseContestLog::clearDirty()
    DTGEnd.clearDirty();
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      ( *i ) ->clearDirty();
+      i->wt->clearDirty();
    }
 }
 void BaseContestLog::setDirty()
@@ -173,12 +164,12 @@ void BaseContestLog::setDirty()
    DTGEnd.setDirty();
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      ( *i ) ->setDirty();
+      i->wt->setDirty();
    }
 }
-void BaseContestLog::makeContact( bool timeNow, BaseContact *&lct )
+void BaseContestLog::makeContact( bool timeNow, QSharedPointer<BaseContact>&lct )
 {
-   lct = new BaseContact( this, timeNow );
+   lct = QSharedPointer<BaseContact>(new BaseContact( this, timeNow ));
 }
 void BaseContestLog::validateLoc( void )
 {
@@ -331,7 +322,7 @@ int BaseContestLog::CalcNearest( const QString &qscalcloc )
    }
    return mindist;
 }
-void BaseContestLog::getMatchText( BaseContact *pct, QString &disp, const BaseContestLog *const ct ) const
+void BaseContestLog::getMatchText( QSharedPointer<BaseContact> pct, QString &disp, const BaseContestLog *const ct ) const
 {
    if ( DupSheet.isCurDup( pct ) )
    {
@@ -343,11 +334,11 @@ void BaseContestLog::getMatchText( BaseContact *pct, QString &disp, const BaseCo
 
    disp = disp.trimmed();
 }
-bool BaseContestLog::isCurDup( BaseContact *pct) const
+bool BaseContestLog::isCurDup( QSharedPointer<BaseContact> pct) const
 {
    return pct && DupSheet.isCurDup( pct );
 }
-void BaseContestLog::getMatchField(BaseContact *pct, int col, QString &disp, const BaseContestLog *const ct ) const
+void BaseContestLog::getMatchField(QSharedPointer<BaseContact> pct, int col, QString &disp, const BaseContestLog *const ct ) const
 {
    if ( col ==0 && isCurDup( pct ) )
    {
@@ -360,7 +351,7 @@ void BaseContestLog::getMatchField(BaseContact *pct, int col, QString &disp, con
 
    disp = temp.trimmed();
 }
-bool BaseContestLog::updateStat( BaseContact *cct )
+bool BaseContestLog::updateStat( QSharedPointer<BaseContact> cct )
 {
    // need to check if a valid DTG
    bool acted = false;
@@ -470,18 +461,18 @@ void BaseContestLog::updateStats( void )
    bonus1p = 0;
    bonus2 = 0;
    bonus2p = 0;
-   for ( int i = getContactCount() - 1; i >= 0; i-- )
+   foreach(MapWrapper<BaseContact> i, ctList)
    {
-      if ( !updateStat( ctList[ i ] ) )
+      if ( !updateStat( i.wt ) )
          break;
    }
 }
 int BaseContestLog::getValidQSOs()
 {
    int nvalid = 0;
-   for ( unsigned int i = 0; i < ctList.size(); i++ )
+   foreach(MapWrapper<BaseContact> i, ctList)
    {
-      BaseContact *dct = ctList[ i ];
+      QSharedPointer<BaseContact> dct = i.wt;
 
       if ( dct->contactFlags.getValue() & ( LOCAL_COMMENT | COMMENT_ONLY | DONT_PRINT ) )
          continue;
@@ -492,7 +483,7 @@ int BaseContestLog::getValidQSOs()
    return nvalid;
 }
 
-static void isBestDX( BaseContact *cct, BaseContact **bestDX )
+static void isBestDX( QSharedPointer<BaseContact> cct, QSharedPointer<BaseContact> *bestDX )
 {
 
    if ( cct->contactFlags.getValue() & ( NON_SCORING | COMMENT_ONLY | LOCAL_COMMENT | DONT_PRINT ) )
@@ -504,11 +495,11 @@ static void isBestDX( BaseContact *cct, BaseContact **bestDX )
    if ( ( !*bestDX ) || ( ( cct->contactScore.getValue() > ( *bestDX ) ->contactScore.getValue() ) ) )
       * bestDX = cct;
 }
-BaseContact *BaseContestLog::getBestDX( void )
+QSharedPointer<BaseContact> BaseContestLog::getBestDX( void )
 {
-   BaseContact * bestDX = 0;
+   QSharedPointer<BaseContact> bestDX;
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
-      isBestDX( ( *i ), &bestDX );
+      isBestDX( i->wt, &bestDX );
    return bestDX;
 }
 QString BaseContestLog::dateRange( DTG dstyle )
@@ -519,18 +510,18 @@ QString BaseContestLog::dateRange( DTG dstyle )
    LogIterator high = ctList.end();
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      if ( ( *i ) ->contactScore.getValue() > 0 )
+      if ( i->wt ->contactScore.getValue() > 0 )
       {
-         QString qsodate = ( *i ) ->time.getDate( DTGLOG );
+         QString qsodate = i->wt ->time.getDate( DTGLOG );
          if ( qsodate < date1 )
          {
             low = i;
-            date1 = ( *i ) ->time.getDate( DTGLOG );
+            date1 = i->wt ->time.getDate( DTGLOG );
          }
          if ( qsodate > date2 )
          {
             high = i;
-            date2 = ( *i ) ->time.getDate( DTGLOG );
+            date2 = i->wt ->time.getDate( DTGLOG );
          }
       }
    }
@@ -538,7 +529,7 @@ QString BaseContestLog::dateRange( DTG dstyle )
    {
       return "";
    }
-   return ( *low ) ->time.getDate( dstyle ) + ";" + ( *high ) ->time.getDate( dstyle );
+   return low->wt->time.getDate( dstyle ) + ";" + high->wt->time.getDate( dstyle );
 }
 
 void BaseContestLog::setScore( QString &buff )
@@ -603,7 +594,7 @@ void BaseContestLog::scanContest( void )
 
          break;
       }
-      BaseContact *nct = ctList[ nextScan ];
+      QSharedPointer<BaseContact> nct = pcontactAt( nextScan );
       if ( !nct )
          break ;
 
@@ -626,7 +617,7 @@ void BaseContestLog::scanContest( void )
          continue;
       }
 
-      validationPoint = nct;
+      validationPoint = nct->getLogSequence();
 
       // check for duplicates; accumulate the current points score
 
@@ -638,7 +629,7 @@ void BaseContestLog::scanContest( void )
 
       //int index;
 
-      if ( DupSheet.checkCurDup( nct, 0, true ) )    // check for dup, insert it if required
+      if ( DupSheet.checkCurDup( this, nct->getLogSequence(), 0, true ) )    // check for dup, insert it if required
          nct->cs.valRes = ERR_DUPCS;
 
 
@@ -692,7 +683,7 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
 
          break;
       }
-      BaseContact *nct = ctList[ nextScan ];
+      QSharedPointer<BaseContact> nct = pcontactAt( nextScan );
       if ( !nct )
          break ;
 
@@ -792,7 +783,7 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
 
 }
 //============================================================
-DupContact::DupContact( BaseContact *c ) : dct( c ), sct( 0 )
+DupContact::DupContact(QSharedPointer<BaseContact> c ) : dct( c ), sct( 0 )
 {}
 DupContact::DupContact( ScreenContact *c ) : dct( 0 ), sct( c )
 {}
@@ -892,7 +883,7 @@ dupsheet::~dupsheet()
 {
    clear();
 }
-bool dupsheet::checkCurDup( ScreenContact *nct, BaseContact *valp, bool insert )
+bool dupsheet::checkCurDup(ScreenContact *nct, unsigned long valpseq, bool insert )
 {
    curdup.reset();
    if ( nct->cs.valRes == CS_OK )
@@ -903,7 +894,7 @@ bool dupsheet::checkCurDup( ScreenContact *nct, BaseContact *valp, bool insert )
       {
          if ( !( nct->contactFlags & VALID_DUPLICATE ) )
          {
-            if ( valp && valp->getLogSequence() <= c->wt ->dct->getLogSequence() )
+            if ( valpseq <= c->wt ->dct->getLogSequence() )
             {
                return false; // as val point earlier than current list item
             }
@@ -924,9 +915,10 @@ bool dupsheet::checkCurDup( ScreenContact *nct, BaseContact *valp, bool insert )
    }
    return false;
 }
-bool dupsheet::checkCurDup( BaseContact *nct, BaseContact *valp, bool insert )
+bool dupsheet::checkCurDup(BaseContestLog *contest, unsigned long nctseq, unsigned long valpseq, bool insert )
 {
    curdup.reset();
+   QSharedPointer<BaseContact> nct = contest->pcontactAtSeq(nctseq);
    if ( nct->cs.valRes == CS_OK )
    {
       QSharedPointer<DupContact> test( new DupContact(nct) );
@@ -935,7 +927,7 @@ bool dupsheet::checkCurDup( BaseContact *nct, BaseContact *valp, bool insert )
       {
          if ( !( nct->contactFlags.getValue() & VALID_DUPLICATE ) )
          {
-            if ( valp && valp->getLogSequence() <= c->wt ->dct->getLogSequence() )
+            if ( valpseq  <= c->wt ->dct->getLogSequence() )
             {
                return false; // as val point earlier than current list item
             }
@@ -971,7 +963,7 @@ bool dupsheet::isCurDup( ScreenContact *nct ) const
    }
    return cd;
 }
-bool dupsheet::isCurDup(BaseContact *nct ) const
+bool dupsheet::isCurDup(QSharedPointer<BaseContact> nct ) const
 {
    const DupContact test( nct );
    bool cd = curdup && ( *curdup == test ) ;
@@ -989,11 +981,11 @@ void dupsheet::clearCurDup()
 {
    curdup.reset();
 }
-BaseContact *dupsheet::getCurDup()
+QSharedPointer<BaseContact> dupsheet::getCurDup()
 {
    if ( curdup )
       return curdup->dct;
-   return 0;
+   return QSharedPointer<BaseContact>();
 }
 void dupsheet::clear()
 {
@@ -1106,12 +1098,13 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
                         else
                            if ( methodName == "MinosLogComment" )
                            {
-                              BaseContact * rct = pcontactAtSeq( logSequence );
+                             QSharedPointer<BaseContact> rct = pcontactAtSeq( logSequence );
                               if ( !rct )
                               {
                                  makeContact( false, rct );
                                  rct->setLogSequence( logSequence );
-                                 ctList.insert( rct );
+                                 MapWrapper<BaseContact> wrct(rct);
+                                 ctList.insert( wrct, wrct );
                                  if (logSequence >> 16 >= nextBlock)
                                  {
                                     nextBlock = (logSequence >> 16) + 1;
@@ -1123,12 +1116,13 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
                            else
                               if ( methodName == "MinosLogQSO" )
                               {
-                                 BaseContact * rct = pcontactAtSeq( logSequence );
+                                 QSharedPointer<BaseContact> rct = pcontactAtSeq( logSequence );
                                  if ( !rct )
                                  {
                                     makeContact( false, rct );
                                     rct->setLogSequence( logSequence );
-                                    ctList.insert( rct );
+                                    MapWrapper<BaseContact> wrct(rct);
+                                    ctList.insert( wrct, wrct );
                                     // Was just nextBlock++ - no test
                                     if (logSequence >> 16 >= nextBlock)
                                     {
@@ -1154,16 +1148,16 @@ bool BaseContestLog::getStanza( unsigned int /*stanza*/, QString & /*stanzaData*
    return false;
 }
 //====================================================================
-BaseContact * BaseContestLog::findNextUnfilledContact()
+QSharedPointer<BaseContact> BaseContestLog::findNextUnfilledContact()
 {
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      if ( ( *i ) ->contactFlags.getValue() & TO_BE_ENTERED )
+      if ( i->wt ->contactFlags.getValue() & TO_BE_ENTERED )
       {
-         return ( *i );
+         return i->wt;
       }
    }
-   return 0;
+   return QSharedPointer<BaseContact>();
 }
 //====================================================================
 bool BaseContestLog::checkTime(const dtg &t) const

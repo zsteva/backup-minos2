@@ -516,7 +516,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
         if ( edit && unfilled )
         {
            // If Uri mode then continue to the next...
-           BaseContact * nuc = contest->findNextUnfilledContact( );
+           QSharedPointer<BaseContact> nuc = contest->findNextUnfilledContact( );
            selectEntry(nuc);
 
 //           on_FirstUnfilledButton_clicked( );
@@ -535,7 +535,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
         {
             LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
             int ctmax = ct->maxSerial + 1;
-            DisplayContestContact *lct = ct->addContact( ctmax, 0, false, catchup );
+            QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup );
             selectEntry( lct );
         }
     }
@@ -637,7 +637,7 @@ void QSOLogFrame::startNextEntry( )
    updateQSOTime();
    showScreenEntry();
 
-   MinosLoggerEvents::SendAfterSelectContact(0, contest);
+   MinosLoggerEvents::SendAfterSelectContact(QSharedPointer<BaseContact>(), contest);
 }
 void QSOLogFrame::doGJVCancelButton_clicked()
 {
@@ -801,7 +801,8 @@ void QSOLogFrame::showScreenEntry( void )
    if ( contest )
    {
       // we only validate this contact up to the validation point
-      contest->validationPoint = selectedContact;
+
+      contest->validationPoint = selectedContact?selectedContact->getLogSequence():0;
       ScreenContact temp;
       temp.copyFromArg( screenContact ); // as screen contact gets corrupted by auto changes
       // op1, op2 in ScreenContact ge corrupted as well
@@ -1279,7 +1280,7 @@ void QSOLogFrame::contactValid( void )
    vcct->cs.valRes = CS_NOT_VALIDATED;
 
    // we only validate this contact up to the validation point of the contest
-   contest->validationPoint = selectedContact ;
+   contest->validationPoint = selectedContact?selectedContact->getLogSequence():0 ;
 
    int csret = vcct->cs.validate( );
    contest->DupSheet.clearCurDup();
@@ -1394,7 +1395,7 @@ bool QSOLogFrame::checkLogEntry(bool checkDTG)
    // check if the screen contact and selected log contact differ
    bool retval = true;
    getScreenEntry();
-   BaseContact *sct = selectedContact ;
+   QSharedPointer<BaseContact> sct = selectedContact ;
    if ( sct->ne( screenContact, checkDTG ) )
    {
       bool mresp = true;
@@ -1419,7 +1420,7 @@ bool QSOLogFrame::checkLogEntry(bool checkDTG)
       else
       {
          //Cancel - Discard changes, continue action
-         screenContact.copyFromArg( *selectedContact );  // we have to ACTUALLY revert, as the action may not conmplete
+         screenContact.copyFromArg( selectedContact );  // we have to ACTUALLY revert, as the action may not conmplete
          showScreenEntry();
          retval = false;	// stay where we are
       }
@@ -1632,8 +1633,8 @@ void QSOLogFrame::logScreenEntry( )
    {
       return ;
    }
-   BaseContact *lct = selectedContact;
-   if (lct == nullptr)
+   QSharedPointer<BaseContact> lct = selectedContact;
+   if (!lct)
    {
         lct = ct->addContact( ctmax, 0, false, false );	// "current" doesn't get flag, don't save ContestLog yet
    }
@@ -1669,7 +1670,7 @@ void QSOLogFrame::logScreenEntry( )
                          // But this only happens when seconds are :00, as the main log
                          // is only to a minute resolution
 
-   lct->commonSave();				// which also saves the ContestLog
+   lct->commonSave(lct);				// which also saves the ContestLog
 
    killPartial();
 
@@ -1777,7 +1778,7 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
     }
 }
 
-void QSOLogFrame::transferDetails(const BaseContact *lct, const BaseContestLog *matct )
+void QSOLogFrame::transferDetails(const QSharedPointer<BaseContact> lct, const BaseContestLog *matct )
 {
    ui->CallsignEdit->setText(lct->cs.fullCall.getValue());
    ui->LocEdit->setText(lct->loc.loc.getValue());  // also forces update of score etc
@@ -1845,14 +1846,14 @@ void QSOLogFrame::transferDetails( const ListContact *lct, const ContactList * /
    doGJVEditChange(ui->LocEdit);
    doGJVEditChange(ui->QTHEdit);
 }
-void QSOLogFrame::selectEntry( BaseContact *slct )
+void QSOLogFrame::selectEntry( QSharedPointer<BaseContact> slct )
 {
    selectedContact = slct;   // contact from log list selected
 
    ui->FirstUnfilledButton->setVisible(false);
    ui->CatchupButton->setVisible(false);
 
-   screenContact.copyFromArg( *slct );
+   screenContact.copyFromArg( slct );
    showScreenEntry();
 
    ui->PriorButton->setEnabled(getPriorContact());
@@ -1873,7 +1874,7 @@ void QSOLogFrame::selectEntry( BaseContact *slct )
       // full dtg gives -ve, none gives 0
       if ( tne == 0 )
       {
-         BaseContact * pct = getPriorContact();
+         QSharedPointer<BaseContact> pct = getPriorContact();
          if ( pct )
          {
             screenContact.time = pct->time;
@@ -1935,25 +1936,25 @@ void QSOLogFrame::selectEntry( BaseContact *slct )
 //      TimeEdit->Font->Color = clRed;
    }
 
-   MinosLoggerEvents::SendAfterSelectContact(catchup?0:slct, contest);
+   MinosLoggerEvents::SendAfterSelectContact(catchup?QSharedPointer<BaseContact>():slct, contest);
    selectField( 0 );
 }
 //---------------------------------------------------------------------------
-BaseContact *QSOLogFrame::getPriorContact()
+QSharedPointer<BaseContact> QSOLogFrame::getPriorContact()
 {
    for ( LogIterator i = contest->ctList.begin(); i != contest->ctList.end(); i++ )
    {
-      if ( ( *i ) ->getLogSequence() == screenContact.getLogSequence() )
+      if ( i->wt->getLogSequence() == screenContact.getLogSequence() )
       {
          if ( i != contest->ctList.begin() )
          {
             i--;
-            return ( *i ) ;
+            return ( i->wt ) ;
          }
-         return 0;
+         return QSharedPointer<BaseContact>();
       }
    }
-   return 0;
+   return QSharedPointer<BaseContact>();
 }
 
 
@@ -1964,7 +1965,7 @@ void QSOLogFrame::on_PriorButton_clicked()
    {
       return ;
    }
-   BaseContact *lct = getPriorContact();
+   QSharedPointer<BaseContact> lct = getPriorContact();
    if ( lct )
    {
       selectEntry( lct );
@@ -1975,21 +1976,21 @@ void QSOLogFrame::on_PriorButton_clicked()
    }
 }
 //---------------------------------------------------------------------------
-BaseContact *QSOLogFrame::getNextContact()
+QSharedPointer<BaseContact> QSOLogFrame::getNextContact()
 {
    for ( LogIterator i = contest->ctList.begin(); i != contest->ctList.end(); i++ )
    {
-      if ( ( *i ) ->getLogSequence() == screenContact.getLogSequence() )
+      if ( i->wt->getLogSequence() == screenContact.getLogSequence() )
       {
          i++;
          if ( i != contest->ctList.end() )
          {
-            return (*i);
+            return i->wt;
          }
-         return 0;
+         return QSharedPointer<BaseContact>();
       }
    }
-   return 0;
+   return QSharedPointer<BaseContact>();
 }
 
 void QSOLogFrame::on_NextButton_clicked()
@@ -1999,7 +2000,7 @@ void QSOLogFrame::on_NextButton_clicked()
    {
       return ;
    }
-   BaseContact *lct = getNextContact();
+   QSharedPointer<BaseContact> lct = getNextContact();
    if ( lct )
    {
       selectEntry( lct );
@@ -2012,18 +2013,18 @@ void QSOLogFrame::on_NextButton_clicked()
 
 void QSOLogFrame::on_InsertBeforeButton_clicked()
 {
-    BaseContact *pct = getPriorContact();
+    QSharedPointer<BaseContact> pct = getPriorContact();
     LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-    DisplayContestContact *newct = ct->addContactBetween(pct, selectedContact);
+    QSharedPointer<BaseContact> newct = ct->addContactBetween(pct, selectedContact);
     newct->contactFlags.setValue(newct->contactFlags.getValue()|TO_BE_ENTERED);
     selectEntry(newct);
 }
 
 void QSOLogFrame::on_InsertAfterButton_clicked()
 {
-    BaseContact *nct = getNextContact();
+    QSharedPointer<BaseContact> nct = getNextContact();
     LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-    DisplayContestContact *newct = ct->addContactBetween(selectedContact, nct);
+    QSharedPointer<BaseContact> newct = ct->addContactBetween(selectedContact, nct);
     newct->contactFlags.setValue(newct->contactFlags.getValue()|TO_BE_ENTERED);
     selectEntry(newct);
 }

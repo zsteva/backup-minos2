@@ -75,7 +75,7 @@ void TStatsDispFrame::reInitialiseStats()
       return ;
    }
 
-   BaseContact *bestdx = ct->getBestDX();
+   QSharedPointer<BaseContact> bestdx = ct->getBestDX();
 
    if ( !bestdx || ct->maxSerial <= 0 )
       return ;

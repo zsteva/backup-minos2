@@ -263,7 +263,7 @@ void MinosTestExport::exportBundles( QSharedPointer<QFile> expfd )
    }
 
 }
-int MinosTestExport::exportComment( QSharedPointer<QFile> expfd, const ContestContact *lct )
+int MinosTestExport::exportComment(QSharedPointer<QFile> expfd, const QSharedPointer<BaseContact> lct )
 {
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, 1 );
@@ -292,7 +292,7 @@ int MinosTestExport::exportComment( QSharedPointer<QFile> expfd, const ContestCo
       return 0;
    }
 }
-int MinosTestExport::exportQSO(QSharedPointer<QFile> expfd, const ContestContact *lct )
+int MinosTestExport::exportQSO(QSharedPointer<QFile> expfd, const QSharedPointer<BaseContact> lct )
 {
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, lct->getLogSequence() );
@@ -397,10 +397,9 @@ int MinosTestExport::exportTest( QSharedPointer<QFile> expfd, int mindump, int m
    exportBundles( expfd );
 
    bool inDump = false;
-   for ( unsigned int i = 0; i < ct->ctList.size(); i++ )
+   foreach(MapWrapper<BaseContact> dct, ct->ctList)
    {
-      BaseContact *dct = ct->ctList[ i ];
-      ContestContact *lct = dynamic_cast<ContestContact *>( dct );
+       QSharedPointer<BaseContact> lct = dct.wt;
 
       if ( inDump && lct->contactFlags.getValue() & ( LOCAL_COMMENT | COMMENT_ONLY ) )
       {

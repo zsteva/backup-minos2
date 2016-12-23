@@ -20,7 +20,6 @@ ADIFImport::ADIFImport(LoggerContestLog * c, QSharedPointer<QFile> adifContestFi
 {}
 ADIFImport::~ADIFImport()
 {
-   delete aqso;
 }
 //---------------------------------------------------------------------------
 
@@ -125,11 +124,12 @@ void ADIFImport::ADIFImportEndOfRecord( )
 
       aqso->setLogSequence( static_cast< unsigned long> ( next_block++ ) << 16 );
 
-      acontest->ctList.insert( aqso );
+      MapWrapper<BaseContact> waqso(aqso);
+      acontest->ctList.insert( waqso, waqso );
 
-      BaseContact *bct = aqso;
+      QSharedPointer<BaseContact> bct;
       acontest->makeContact( false, bct );
-      aqso = dynamic_cast<DisplayContestContact *>(bct);
+      aqso = bct;
       aqso->setLogSequence( 0 );     // will be derived from the contest
 
    }
@@ -214,9 +214,8 @@ bool ADIFImport::executeImport()
          }
       }
       // end of header - start the qso's
-      BaseContact *bct = aqso;
-      acontest->makeContact( false, bct );
-      bct = dynamic_cast<DisplayContestContact *>(bct);
+      QSharedPointer<BaseContact> bct;
+      acontest->makeContact( false, aqso );
       aqso->setLogSequence( 0 );     // will be derived from the contest
    }
 

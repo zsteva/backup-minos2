@@ -77,7 +77,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(NextContactDetailsTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(MatchStarting(BaseContestLog*)), this, SLOT(on_MatchStarting(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(MakeEntry(BaseContestLog*)), this, SLOT(on_MakeEntry(BaseContestLog*)));
-    connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(BaseContact *, BaseContestLog *)), this, SLOT(on_AfterSelectContact(BaseContact *, BaseContestLog *)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)), this, SLOT(on_AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterLogContact(BaseContestLog *)), this, SLOT(on_AfterLogContact(BaseContestLog *)));
 
 
@@ -345,7 +345,7 @@ void TSingleLogFrame::transferDetails(MatchTreeItem *MatchTreeIndex )
     }
    // needs to be transferred into QSOLogFrame.cpp
    QSharedPointer<MatchContact> mc = MatchTreeIndex->getMatchContact();
-   BaseContact *bct = mc->getBaseContact();
+   QSharedPointer<BaseContact> bct = mc->getBaseContact();
 
    if ( bct )
    {
@@ -381,7 +381,7 @@ void TSingleLogFrame::on_BandMapPressed()
        ui->GJVQSOLogFrame->doGJVCancelButton_clicked();
     }
 }
-void TSingleLogFrame::QSOTreeSelectContact( BaseContact * lct )
+void TSingleLogFrame::QSOTreeSelectContact( QSharedPointer<BaseContact> lct )
 {
    if (lct)
    {
@@ -390,14 +390,12 @@ void TSingleLogFrame::QSOTreeSelectContact( BaseContact * lct )
 }
 void TSingleLogFrame::on_QSOTable_doubleClicked(const QModelIndex &index)
 {
-    BaseContact * lct = dynamic_cast<BaseContact*>( contest->pcontactAt( index.row() ) );
-    QSOTreeSelectContact(lct);
+    QSOTreeSelectContact(contest->pcontactAt( index.row() ));
 }
-void TSingleLogFrame::EditContact( BaseContact *lct )
+void TSingleLogFrame::EditContact( QSharedPointer<BaseContact> lct )
 {
    TQSOEditDlg qdlg( this, false, false );
-   ContestContact *ct = dynamic_cast<ContestContact *>( lct );
-   qdlg.selectContact( contest, ct );
+   qdlg.selectContact( contest, lct );
 
    qdlg.exec();
 
@@ -528,9 +526,9 @@ void TSingleLogFrame::on_MakeEntry(BaseContestLog *ct)
        makeEntry( false );
     }
 }
-void TSingleLogFrame::on_AfterSelectContact( BaseContact *lct, BaseContestLog *ct)
+void TSingleLogFrame::on_AfterSelectContact( QSharedPointer<BaseContact>lct, BaseContestLog *ct)
 {
-    if (ct == contest && lct == nullptr)
+    if (ct == contest && !lct)
     {
         ui->QSOTable->scrollToBottom();
         int row = ui->QSOTable->model()->rowCount() - 1;
@@ -784,7 +782,7 @@ void TSingleLogFrame::on_ThisMatchTree_doubleClicked(const QModelIndex &index)
     MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem *>(index.internalPointer());
 
     QSharedPointer<MatchContact> mc = MatchTreeIndex->getMatchContact();
-    BaseContact *bct = mc->getBaseContact();
+    QSharedPointer<BaseContact> bct = mc->getBaseContact();
 
     if ( bct )
     {
@@ -803,7 +801,7 @@ void TSingleLogFrame::on_ArchiveMatchTree_doubleClicked(const QModelIndex &/*ind
 }
 void TSingleLogFrame::goNextUnfilled()
 {
-   BaseContact * nuc = contest->findNextUnfilledContact( );
+   QSharedPointer<BaseContact> nuc = contest->findNextUnfilledContact( );
    if ( nuc )
    {
       TQSOEditDlg qdlg(this, false, true );
@@ -843,14 +841,14 @@ void TSingleLogFrame::goSerial( )
     }
     while ( serial == -1 );
 
-    DisplayContestContact *cfu = 0;
+    QSharedPointer<BaseContact> cfu;
     for ( LogIterator i = contest->ctList.begin(); i != contest->ctList.end(); i++ )
     {
         bool ok;
-        int s = ( *i ) ->serials.getValue().toInt(&ok );
+        int s = i->wt->serials.getValue().toInt(&ok );
        if ( ok && serial == s )
        {
-          cfu = dynamic_cast<DisplayContestContact *>( *i );
+          cfu = i->wt;
           break;
        }
     }
@@ -909,7 +907,7 @@ QVariant QSOGridModel::data( const QModelIndex &index, int role ) const
     if ( row >= rowCount() )
         return QVariant();
 
-    BaseContact * ct = contest->pcontactAt( row);
+    QSharedPointer<BaseContact> ct = contest->pcontactAt( row);
     if (!ct)
         return QVariant();
 
@@ -1142,7 +1140,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
 
     BaseMatchContest *matchContest = thisItem->getMatchContest();
     QSharedPointer<MatchContact> mct = thisItem->getMatchContact();
-    BaseContact *ct = 0;
+    QSharedPointer<BaseContact> ct;
     ListContact *lct = 0;
 
     if (mct)

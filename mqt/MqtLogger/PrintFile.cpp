@@ -84,17 +84,16 @@ bool PrintFile::exportTest(QSharedPointer<QFile> expfd )
    remarks.append( ct->entCondx3.getValue() );
    remarks.append( ct->entCondx4.getValue() );
 
-   for ( unsigned int i = 0; i < ct->ctList.size(); i++ )
+   foreach(MapWrapper<BaseContact> dct, ct->ctList)
    {
-      BaseContact *dct = ct->ctList[ i ];
-      ContestContact *cct = dynamic_cast<ContestContact *>( dct );
+      QSharedPointer<BaseContact> cct = dct.wt;
 
       if ( cct->contactScore.getValue() > 0 )
          nvalid++;
    }
 
    // get the best DX contact
-   BaseContact *bestdx = ct->getBestDX();
+   QSharedPointer<BaseContact> bestdx = ct->getBestDX();
 
    linelist[ static_cast< int> (TName) ] = PrintFileLine( "Contest Name                            ", ct->name.getValue()  /*, "Contest Name"*/ ),
 
@@ -165,10 +164,9 @@ bool PrintFile::exportTest(QSharedPointer<QFile> expfd )
 
    wr.lwrite( "QSOs" );
    wr.lwrite( "====" );
-   for ( unsigned int i = 0; i < ct->ctList.size(); i++ )
+   foreach(MapWrapper<BaseContact> dct, ct->ctList)
    {
-      BaseContact *dct = ct->ctList[ i ];
-      ContestContact *cct = dynamic_cast<ContestContact *>( dct );
+       QSharedPointer<BaseContact> cct = dct.wt;
 
       QString sbuff;
 

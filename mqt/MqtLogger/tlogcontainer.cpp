@@ -326,7 +326,7 @@ void TLogContainer::openRecentFile()
            BaseContestLog *ct = addSlot( &pced, FileName, false, -1 );
            if (ct)
            {
-               selectContest(ct, 0);
+              selectContest(ct, QSharedPointer<BaseContact>());
            }
         }
         else
@@ -525,7 +525,7 @@ void TLogContainer::FileNewActionExecute()
     }
     else
     {
-        selectContest(c, 0);
+        selectContest(c, QSharedPointer<BaseContact>());
     }
 }
 void TLogContainer::FileOpenActionExecute()
@@ -560,7 +560,7 @@ void TLogContainer::FileOpenActionExecute()
             ct = addSlot( &pced, fname, false, -1 );   // not automatically read only
             if (ct)
             {
-                selectContest(ct, 0);
+                selectContest(ct, QSharedPointer<BaseContact>());
             }
         }
     }
@@ -947,7 +947,7 @@ void TLogContainer::preloadFiles( const QString &conarg )
 
    if ( ct )
    {
-      selectContest( ct, 0 );
+      selectContest( ct, QSharedPointer<BaseContact>() );
    }
 }
 void TLogContainer::addListSlot( const QString &fname, int slotno, bool preload )
@@ -1059,7 +1059,7 @@ void TLogContainer::ShiftTabLeftActionExecute( )
       enableActions();
    }
 }
-void TLogContainer::selectContest( BaseContestLog *pc, BaseContact *pct )
+void TLogContainer::selectContest( BaseContestLog *pc, QSharedPointer<BaseContact> pct )
 {
     // we have double clicked on a contact in "other" or "archive" trees
     // so we want to (a) switch tabs and (b) go to that contact edit

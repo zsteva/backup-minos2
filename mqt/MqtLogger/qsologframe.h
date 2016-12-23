@@ -45,8 +45,8 @@ private:
      void contactValid( void );
 
      void mouseDoubleClickEvent(QObject *w);
-     BaseContact *getPriorContact();
-     BaseContact *getNextContact();
+     QSharedPointer<BaseContact> getPriorContact();
+     QSharedPointer<BaseContact> getNextContact();
 
      int getAngle();
 
@@ -71,12 +71,12 @@ private:
      void killPartial( void );
      void startNextEntry( );
      bool doKeyPressEvent( QKeyEvent* event );
-     virtual void selectEntry( BaseContact *lct );
+     virtual void selectEntry(QSharedPointer<BaseContact> lct );
      void setXferEnabled(bool);
 
      virtual void getScreenEntry();
      ScreenContact screenContact;  // contact being edited on screen
-     BaseContact *selectedContact;   // contact from log list selected
+     QSharedPointer<BaseContact> selectedContact;   // contact from log list selected
      bool catchup;
      bool unfilled;
 
@@ -95,7 +95,7 @@ private:
 
      void doGJVCancelButton_clicked();
 
-     void transferDetails( const BaseContact *lct, const BaseContestLog *matct );
+     void transferDetails(const QSharedPointer<BaseContact> lct, const BaseContestLog *matct );
      void transferDetails(const ListContact *lct, const ContactList *matct );
 
      void setFirstUnfilledButtonEnabled(bool);

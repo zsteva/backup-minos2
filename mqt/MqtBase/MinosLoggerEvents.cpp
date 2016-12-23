@@ -46,7 +46,7 @@ void MinosLoggerEvents::SendAfterLogContact(BaseContestLog *ct)
     emit mle.AfterLogContact(ct);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendAfterSelectContact(BaseContact *lct, BaseContestLog *c)
+void MinosLoggerEvents::SendAfterSelectContact(QSharedPointer<BaseContact> lct, BaseContestLog *c)
 {
     emit mle.AfterSelectContact(lct, c);
 }

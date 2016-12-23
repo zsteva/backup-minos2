@@ -26,6 +26,7 @@ extern void strtobuf();
 QString strupr( const QString &s );
 //extern int stricmp( const QString &s1, const QString &s2 );
 extern int strnicmp( const QString &s1, const QString &s2, unsigned int len );
+extern int strncmp( const QString &s1, const QString &s2, unsigned int len );
 extern void opyn( bool b );
 void opyn( const MinosItem<bool> &b );
 extern void buftostr( QString &str );

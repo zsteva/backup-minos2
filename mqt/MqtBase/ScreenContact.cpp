@@ -58,52 +58,52 @@ void ScreenContact::initialise( BaseContestLog *ct )
    newBonus = false;
 
 }
-void ScreenContact::copyFromArg( BaseContact &cct )
+void ScreenContact::copyFromArg( QSharedPointer<BaseContact> cct )
 {
-   logSequence = cct.getLogSequence();
-   loc = cct.loc;
+   logSequence = cct->getLogSequence();
+   loc = cct->loc;
    loc.validate();
    loc.loc.clearDirty();
 
-   extraText = cct.extraText.getValue();
+   extraText = cct->extraText.getValue();
 
-   cs = cct.cs;
+   cs = cct->cs;
    cs.fullCall.clearDirty();
    cs.validate();
 
-   time = cct.time;
+   time = cct->time;
    time.clearDirty();
 
-   reps = cct.reps.getValue();
-   serials = cct.serials.getValue();
-   repr = cct.repr.getValue();
-   serialr = cct.serialr.getValue();
+   reps = cct->reps.getValue();
+   serials = cct->serials.getValue();
+   repr = cct->repr.getValue();
+   serialr = cct->serialr.getValue();
 
-   screenQSOValid = cct.QSOValid;
+   screenQSOValid = cct->QSOValid;
 
-   districtMult = cct.districtMult;
-   ctryMult = cct.ctryMult;
-   multCount = cct.multCount;
-   forcedMult = cct.forcedMult.getValue();
-   bonus = cct.bonus;
-   newBonus = cct.newBonus;
+   districtMult = cct->districtMult;
+   ctryMult = cct->ctryMult;
+   multCount = cct->multCount;
+   forcedMult = cct->forcedMult.getValue();
+   bonus = cct->bonus;
+   newBonus = cct->newBonus;
 
-   op1 = cct.op1.getValue();
-   op2 = cct.op2.getValue();
+   op1 = cct->op1.getValue();
+   op2 = cct->op2.getValue();
 
-   locCount = cct.locCount;
-   newGLoc = cct.newGLoc;
-   newNonGLoc = cct.newNonGLoc;
-   newDistrict = cct.newDistrict;
-   newCtry = cct.newCtry;
+   locCount = cct->locCount;
+   newGLoc = cct->newGLoc;
+   newNonGLoc = cct->newNonGLoc;
+   newDistrict = cct->newDistrict;
+   newCtry = cct->newCtry;
 
-   comments = cct.comments.getValue();
+   comments = cct->comments.getValue();
 
-   contactFlags = cct.contactFlags.getValue();
+   contactFlags = cct->contactFlags.getValue();
 
-   contactScore = cct.contactScore.getValue();
-   bearing = cct.bearing;
-   mode = cct.mode.getValue();
+   contactScore = cct->contactScore.getValue();
+   bearing = cct->bearing;
+   mode = cct->mode.getValue();
 }
 void ScreenContact::copyFromArg( ScreenContact &cct )
 {
@@ -175,8 +175,7 @@ void ScreenContact::checkScreenContact( )
    // AND it has been dup checked
    if ( !checkret )
    {
-      BaseContact * valp = 0;
-      valp = clp->validationPoint;
+      unsigned long valp = clp->validationPoint;
       if ( clp->DupSheet.checkCurDup( this, valp, false ) )
       {
          cs.valRes = ERR_DUPCS;

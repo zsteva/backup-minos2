@@ -9,9 +9,9 @@ TQSOEditDlg *QSOEditDlg;
 class QSOHistoryNode
 {
    public:
-      BaseContact *root;
+      QSharedPointer<BaseContact> root;
       int historyOffset;
-      QSOHistoryNode() : root( 0 ), historyOffset( -1 )
+      QSOHistoryNode() :historyOffset( -1 )
       {}
 };
 //---------------------------------------------------------------------------
@@ -32,7 +32,7 @@ TQSOEditDlg::TQSOEditDlg(QWidget *parent, bool catchup, bool unfilled )
     ui->GJVQSOEditFrame->setAsEdit();
 
     connect(ui->GJVQSOEditFrame, SIGNAL(QSOFrameCancelled()), this, SLOT(on_EditFrameCancelled()));
-    connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(BaseContact *, BaseContestLog *)), this, SLOT(on_AfterSelectContact(BaseContact *, BaseContestLog *)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)), this, SLOT(on_AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)));
 }
 TQSOEditDlg::~TQSOEditDlg()
 {
@@ -45,7 +45,7 @@ int TQSOEditDlg::exec()
 
     // we had this so that we could close the form easily on startup
     // when the conatct was zero - not sure if still needed
-    ui->GJVQSOEditFrame->initialise( contest, /*this,*/ catchup );
+    ui->GJVQSOEditFrame->initialise( contest, catchup );
 
     // Supress the tabstops we weren't able to manage in the form designed
     // to discover where they went, uncomment the top block in
@@ -66,15 +66,14 @@ int TQSOEditDlg::exec()
     {
        setWindowTitle("Editting QSO");
     }
-    firstContact = 0;
+    firstContact.reset();
 
     int ret = QDialog::exec();
 
     if (catchup)
     {
        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-       DisplayContestContact * lct = dynamic_cast<DisplayContestContact*>( ui->GJVQSOEditFrame->selectedContact );
-       ct->removeContact(lct);
+       ct->removeContact(ui->GJVQSOEditFrame->selectedContact );
        ct->maxSerial--;
     }
 
@@ -95,7 +94,7 @@ void TQSOEditDlg::on_EditFrameCancelled()
 
 //---------------------------------------------------------------------------
 
-void TQSOEditDlg::selectContact( BaseContestLog * ccontest, DisplayContestContact *lct )
+void TQSOEditDlg::selectContact( BaseContestLog * ccontest, QSharedPointer<BaseContact> lct )
 {
    // this is the first call after construction
    contest = ccontest;
@@ -123,7 +122,7 @@ void TQSOEditDlg::addTreeChild(QTreeWidgetItem *parent,
 
     parent->addChild(treeItem);
 }
-void TQSOEditDlg::on_AfterSelectContact( BaseContact *lct, BaseContestLog * /*contest*/)
+void TQSOEditDlg::on_AfterSelectContact(QSharedPointer<BaseContact> lct, BaseContestLog * /*contest*/)
 {
   ui->QSOHistoryTree->clear();
   if (lct)
@@ -157,7 +156,7 @@ void TQSOEditDlg::selectCatchup( BaseContestLog * c )
 
    int ctmax = ct->maxSerial + 1;
 
-   DisplayContestContact *lct = ct->addContact( ctmax, 0, false, catchup );
+   QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup );
    selectContact(c, lct);
    ui->GJVQSOEditFrame->setFirstUnfilledButtonEnabled(false);
 }

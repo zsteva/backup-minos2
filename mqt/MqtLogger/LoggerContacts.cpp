@@ -477,7 +477,7 @@ QString ContestContact::getADIFLine()
 
    return outstr;
 }
-bool ContestContact::commonSave( )
+bool ContestContact::commonSave(QSharedPointer<BaseContact> tct)
 {
    bool ret = false;
    LoggerContestLog * clp = dynamic_cast<LoggerContestLog *>( contest );
@@ -491,7 +491,7 @@ bool ContestContact::commonSave( )
       else
          if ( clp->isMinosFile() )
          {
-            ret = minosSave();
+            ret = minosSave(tct);
          }
 
       if ( ret )
@@ -507,10 +507,10 @@ bool ContestContact::commonSave( )
    }
    return ret;
 }
-bool ContestContact::minosSave( )
+bool ContestContact::minosSave(QSharedPointer<BaseContact> tct )
 {
    LoggerContestLog * clp = dynamic_cast<LoggerContestLog *>( contest );
-   clp->minosSaveContestContact( this );
+   clp->minosSaveContestContact( tct );
    QSharedPointer<BaseContact> bc( new BaseContact(*this ));
    bc->updtime = dtg( true ); // update time is now
    getHistory().push_back( bc );
@@ -647,7 +647,7 @@ bool ContestContact::GJVload( int diskBlock )
    forcedMult.setInitialValue( temp );
    return true;
 }
-bool ContestContact::setField( int ACol, const QString Value )
+bool ContestContact::setField(QSharedPointer<BaseContact> tct, int ACol, const QString Value )
 {
 //#warning never used! There to allow grid editting
    // This really ought to validate it first...
@@ -693,7 +693,7 @@ bool ContestContact::setField( int ACol, const QString Value )
          break;
    }
    // here we should save the contact
-   commonSave();
+   commonSave(tct);
    return true;
 }
 void ContestContact::processMinosStanza( const QString &methodName, MinosTestImport * const mt )

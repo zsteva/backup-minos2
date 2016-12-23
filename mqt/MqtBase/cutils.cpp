@@ -316,6 +316,10 @@ int stricmp( const QString &s1, const QString &s2 )
 //=============================================================================
 int strnicmp( const QString &s1, const QString &s2, unsigned int len )
 {
+    return s1.left(len).compare(s2.left(len), Qt::CaseInsensitive);
+}
+int strncmp( const QString &s1, const QString &s2, unsigned int len )
+{
     return s1.left(len).compare(s2.left(len));
 }
 //=============================================================================

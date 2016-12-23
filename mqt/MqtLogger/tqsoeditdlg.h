@@ -31,7 +31,7 @@ private:
 //    void AfterSelectContact_Event ( MinosEventBase & Event );
 
     BaseContestLog * contest;
-    BaseContact *firstContact;
+    QSharedPointer<BaseContact> firstContact;
     bool catchup;
     bool unfilled;
     void refreshOps( ScreenContact &screenContact );
@@ -42,19 +42,19 @@ private:
 
 
  public: 		// User declarations
-    void selectContact( BaseContestLog * contest, DisplayContestContact *lct );
+    void selectContact(BaseContestLog * contest, QSharedPointer<BaseContact> lct );
     void setContest( BaseContestLog * c )
     {
        contest = c;
     }
     void selectCatchup( BaseContestLog * contest );
-    void setFirstContact( BaseContact *c )
+    void setFirstContact( QSharedPointer<BaseContact> c )
     {
        firstContact = c;
     }
 private slots:
     void on_EditFrameCancelled();
-    void on_AfterSelectContact(BaseContact *lct, BaseContestLog *contest);
+    void on_AfterSelectContact(QSharedPointer<BaseContact> lct, BaseContestLog *contest);
 public Q_SLOTS:
     virtual void accept() override;
     virtual void reject() override;

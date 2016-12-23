@@ -165,9 +165,8 @@ void DisplayContestContact::checkContact( )
    {
 // and if scanContest has set dup, then this won't fire tering a new QSO
 // But it DOES fire when checking on en
-      BaseContact * valp = 0;
-      valp = clp->validationPoint;
-      if ( clp->DupSheet.checkCurDup( this, valp, false ) )
+      unsigned long valp  = clp->validationPoint;
+      if ( clp->DupSheet.checkCurDup( clp, getLogSequence(), valp, false ) )
       {
          cs.valRes = ERR_DUPCS;
          checkret = ERR_12;
@@ -295,7 +294,7 @@ void DisplayContestContact::checkContact( )
          }
       }
    }
-   clp->DupSheet.checkCurDup( this, 0, true ); // add to duplicates list
+   clp->DupSheet.checkCurDup( clp, getLogSequence(), 0, true ); // add to duplicates list
 
    if ( !( contactFlags.getValue() & ( MANUAL_SCORE | NON_SCORING | LOCAL_COMMENT | COMMENT_ONLY | DONT_PRINT ) ) )
    {
@@ -713,7 +712,7 @@ void DisplayContestContact::processMinosStanza( const QString &methodName, Minos
          if ( maxct > contest->maxSerial )
             contest->maxSerial = maxct;
 
-         contest->validationPoint = this;
+         contest->validationPoint = getLogSequence();
          checkContact();                 // processMinosStanza - Do we need to? scanContest will repeat it. Except we push the contact in it's current state into history
          QSharedPointer<BaseContact> bc( new BaseContact(*this) );   // this should get it now??
          getHistory().push_back( bc );

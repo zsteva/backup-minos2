@@ -69,6 +69,7 @@ class BaseContact
       BaseContact( const BaseContact & );
       BaseContact( BaseContestLog *contest, bool time_now );
       BaseContact& operator =( const BaseContact & );
+      bool operator<( const BaseContact& rhs ) const;
       virtual ~BaseContact(){}
       virtual void setLogSequence( unsigned long /*ul*/ )
       {}
@@ -84,6 +85,26 @@ class BaseContact
       {
          return history;
       }
+      virtual bool GJVload( int /*diskBlock*/ )
+      {
+          return false;
+      }
+
+      virtual bool GJVsave( GJVParams & )
+      {
+          return false;
+      }
+      virtual void addReg1TestComment(QStringList & )
+      {}
+      virtual void getReg1TestText( QString & )
+      {}
+      virtual void getPrintFileText(QString &, short )
+      {}
+      virtual QString getADIFLine()
+      {
+          return QString();
+      }
+
       // These CONTAIN minositems
 
       dtg updtime;      //CONTAIN MinosItem
@@ -138,13 +159,15 @@ class BaseContact
       {
          return false;
       }
-      virtual bool commonSave( )
+      virtual bool commonSave(QSharedPointer<BaseContact> )
       {
          return false;
       }
       virtual void processMinosStanza( const QString &/*methodName*/, MinosTestImport * const /*mt*/ )
       {}
       virtual void checkContact( )
+      {}
+      virtual void copyFromArg(QSharedPointer<BaseContact> )
       {}
       virtual void copyFromArg( ScreenContact & )
       {}

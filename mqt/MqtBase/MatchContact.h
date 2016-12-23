@@ -39,9 +39,9 @@ class MatchContact
       {
          return 0;
       }
-      virtual BaseContact * getBaseContact() const
+      virtual QSharedPointer<BaseContact> getBaseContact() const
       {
-         return 0;
+         return QSharedPointer<BaseContact>();
       }
       virtual bool operator<( const MatchContact& rhs ) const = 0;
       virtual bool operator==( const MatchContact& rhs ) const = 0;
@@ -114,14 +114,14 @@ class MatchLogContact: public MatchContact
 {
    public:
       BaseContestLog *matchedContest;
-      BaseContact *matchedContact;
-      MatchLogContact(BaseContestLog * ct, BaseContact *lc );
+      QSharedPointer<BaseContact> matchedContact;
+      MatchLogContact(BaseContestLog * ct, QSharedPointer<BaseContact> lc );
       virtual ~MatchLogContact();
       virtual BaseContestLog * getContactLog() const
       {
          return matchedContest;
       }
-      virtual BaseContact * getBaseContact() const
+      virtual QSharedPointer<BaseContact> getBaseContact() const
       {
          return matchedContact;
       }

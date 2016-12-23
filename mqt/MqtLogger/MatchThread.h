@@ -111,7 +111,7 @@ class ThisLogMatcher: public Matcher
       virtual ~ThisLogMatcher();
 
       virtual bool idleMatch( int limit );
-      void addMatch( BaseContact *, BaseContestLog * );
+      void addMatch(QSharedPointer<BaseContact>, BaseContestLog * );
 };
 class OtherLogMatcher: public Matcher
 {
@@ -123,7 +123,7 @@ class OtherLogMatcher: public Matcher
       virtual ~OtherLogMatcher();
 
       virtual bool idleMatch( int limit );
-      void addMatch( BaseContact *, BaseContestLog * );
+      void addMatch(QSharedPointer<BaseContact>, BaseContestLog * );
 };
 class ListMatcher: public Matcher
 {

@@ -86,10 +86,9 @@ bool reg1test::exportTest( QSharedPointer<QFile> expfd )
    remarks.append( ct->entCondx4.getValue() );
    int nvalid = 0;      // valid QSOs
    int nlines = 0;      // QSO records
-   for ( unsigned int i = 0; i < ct->ctList.size(); i++ )
+   foreach(MapWrapper<BaseContact> dct, ct->ctList)
    {
-      BaseContact *dct = ct->ctList[ i ];
-      ContestContact *cct = dynamic_cast<ContestContact *>( dct );
+      QSharedPointer<BaseContact> cct = dct.wt;
       // Extract comments for "Remarks" section
       cct->addReg1TestComment( remarks );
 
@@ -102,7 +101,7 @@ bool reg1test::exportTest( QSharedPointer<QFile> expfd )
    }
 
    // get the best DX contact
-   BaseContact *bestdx = ct->getBestDX();
+   QSharedPointer<BaseContact> bestdx = ct->getBestDX();
 
    reg1testLine linelist[ static_cast<int>(LineCount) ];
    linelist[ static_cast< int> (TName) ] = reg1testLine( "TName", ct->name.getValue()  /*, "Contest Name"*/ ),
@@ -179,10 +178,9 @@ bool reg1test::exportTest( QSharedPointer<QFile> expfd )
    wr.lwrite( lbuff );
    // and then the contact list
 
-   for ( unsigned int i = 0; i < ct->ctList.size(); i++ )
+   foreach(MapWrapper<BaseContact> dct, ct->ctList)
    {
-      BaseContact *dct = ct->ctList[ i ];
-      ContestContact *cct = dynamic_cast<ContestContact *>( dct );
+       QSharedPointer<BaseContact> cct = dct.wt;
 
       if ( cct->contactFlags.getValue() & ( LOCAL_COMMENT | COMMENT_ONLY | DONT_PRINT ) )
       {
@@ -498,9 +496,8 @@ bool reg1test::parseQSO( QString line )
    int scnt = parseLine( buff, ';', a, 20, 0, sep2seen );   // BAD - parseLine writes to buffer
    if ( scnt >= 14 )
    {
-      BaseContact *bct = 0;
-      ct->makeContact( false, bct );
-      DisplayContestContact * aqso = dynamic_cast<DisplayContestContact *>(bct);
+      QSharedPointer<BaseContact> aqso;
+      ct->makeContact( false, aqso );
       /*
        0  Date(6);
        1  Time(4);
@@ -545,7 +542,9 @@ bool reg1test::parseQSO( QString line )
 
       nextBlock++;
       aqso->setLogSequence( nextBlock << 16 );
-      ct->ctList.insert( aqso );
+
+      MapWrapper<BaseContact> wbct(aqso);
+      ct->ctList.insert( wbct, wbct );
       return true;
    }
    return false;

@@ -39,7 +39,7 @@ char lonlat( const QString &pinqra, double &lon, double &lat )
    std::string inqra = pinqra.toStdString();    // allowed conversion through std::string
    int l ;                       /* length of qra string NOT size_t */
 
-   for ( l = inqra.length() - 1; l >= 0; l-- )
+   for ( l = static_cast<int>(inqra.length()) - 1; l >= 0; l-- )
    {
       if ( inqra[ l ] != ' ' )
          break;

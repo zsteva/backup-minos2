@@ -26,7 +26,7 @@ public:
     explicit TLogContainer(QWidget *parent = 0);
     ~TLogContainer();
 
-    void selectContest( BaseContestLog *pc, BaseContact *pct );
+    void selectContest(BaseContestLog *pc, QSharedPointer<BaseContact> pct );
     bool show(int argc, char *argv[]);
     TSingleLogFrame *getCurrentLogFrame();
 
