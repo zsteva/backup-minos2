@@ -44,7 +44,7 @@ static void setprojectionconstants( struct projectionparams * );
 
 static int tfele( int, int, Location *, Location *, int * );
 
-static int getgridcoord( char *, int, int, double *, double * );
+static int getgridcoord(char *, size_t, size_t, double *, double * );
 static double north( double );
 static double dnorth( double );
 static int transngrletters( char, int *, int * );
@@ -268,10 +268,10 @@ double degrad( double x )
 }
 /**********************************************************************/
 
-static int getgridcoord( char *gridref, int offset, int dlength, double *e, double *n )
+static int getgridcoord( char *gridref, size_t offset, size_t dlength, double *e, double *n )
 {
-   int i = offset;
-   int j = offset;
+   size_t i = offset;
+   size_t j = offset;
    TEMPBUFF( tbuff, 50 );
    double x = 0.0, y = 0.0;
 
@@ -479,8 +479,8 @@ static int ngrinput( Location *ingrid )
    double ge = 0.0, gn = 0.0;
 
    char *gridref = ingrid->datastring;
-   int offset = ingrid->dataoffset;
-   int dlength = ingrid->datalength;
+   size_t offset = ingrid->dataoffset;
+   size_t dlength = ingrid->datalength;
 
    ingrid->centremeridian = degrad( -2 );
 
@@ -524,7 +524,7 @@ static int ngroutput( Location *outgrid )
 {
 
    int ea, eb, na, nb;
-   int gri = outgrid->dataoffset;
+   size_t gri = outgrid->dataoffset;
    double ger = 0.0, gnr = 0.0;
    double n1 = 0.0, e = 0.0;
    char *gridref = outgrid->datastring;
@@ -575,7 +575,7 @@ static void ukoscentre ( double /*longi*/, double *centre )
 
 static int locinput( Location *ingrid )
 {
-   int gri = ingrid->dataoffset;
+   size_t gri = ingrid->dataoffset;
    char *gridref = &ingrid->datastring[ gri ];
 
    if ( lonlat( gridref, ingrid->easting, ingrid->northing ) == LOC_OK )
@@ -624,7 +624,7 @@ static int locoutput( Location *outgrid )
 {
    double lat = 0.0, longi = 0.0;
 
-   int gri = outgrid->dataoffset;
+   size_t gri = outgrid->dataoffset;
    char *gridref = &outgrid->datastring[ gri ];
 
    longi = raddeg( outgrid->easting );
@@ -760,7 +760,7 @@ static int geooutput( Location *outgrid )
    char lngs = 'E', lats = 'N';
    double slng = 0.0, slat = 0.0;
 
-   int gri = outgrid->dataoffset;
+   size_t gri = outgrid->dataoffset;
    char *gridref = &outgrid->datastring[ gri ];
 
    if ( outgrid->datalength < 16 )

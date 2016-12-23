@@ -419,7 +419,7 @@ char callsign::validate( )
    valRes = ERR_INVCS;
 
    size_t cslen = strlen(csv);
-   for ( int i = 0; i < cslen; i++ )
+   for ( size_t i = 0; i < cslen; i++ )
    {
       if ( ( csv[ i ] != '/' ) && ( !isalnum(csv[ i ]) ) )
       {

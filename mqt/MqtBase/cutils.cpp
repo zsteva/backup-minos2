@@ -63,7 +63,7 @@ void buftostr( QString &str )
 {
    int i;
    str = "";
-   size_t len = strlen( &diskBuffer[ buffpt ] );
+   int len = static_cast<int>(strlen( &diskBuffer[ buffpt ] ));
    for ( i = 0; i < 1024 && i < len; i++ )
    {
       str += diskBuffer[ buffpt + i ];
@@ -141,7 +141,7 @@ int parseLine( char *buff, char sep, char **a, int count, char sep2, bool &sep2s
    int sep_count = 0;
    sep2seen = false;
 
-   size_t len = strlen( buff );
+   int len = static_cast<int>(strlen( buff ));
    for ( int j = 0; j < count; j++ )
    {
       // do it this way so we strip spaces off the start of every element,

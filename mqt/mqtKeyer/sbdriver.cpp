@@ -604,7 +604,7 @@ void SoundSystemDriver::createCWBuffer( const char *message, int speed, int tone
 
    size_t messlen = strlen( message );
    int messsamples = 0;
-   for ( int i = 0; i < messlen; i++ )
+   for ( size_t i = 0; i < messlen; i++ )
    {
       if ( message[ i ] == ' ' )
       {
@@ -638,7 +638,7 @@ void SoundSystemDriver::createCWBuffer( const char *message, int speed, int tone
    cwptr = new int16_t [ messsamples ];
    memset( cwptr, 0, cwSamples * 2 );
    messsamples = 0;
-   for ( int i = 0; i < messlen; i++ )
+   for ( size_t i = 0; i < messlen; i++ )
    {
       if ( message[ i ] == ' ' )
       {

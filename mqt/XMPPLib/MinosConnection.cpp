@@ -188,10 +188,10 @@ void MinosAppConnection::on_readyRead()
                 rxbuff[ rxlen ] = 0;
 
                 // We might have embedded nulls between message parts - so strip them
-                size_t rxpt = 0;
+                int rxpt = 0;
                 while ( rxpt < rxlen )
                 {
-                    size_t ptlen = strlen( &rxbuff[ rxpt ] );
+                    int ptlen = static_cast<int>(strlen( &rxbuff[ rxpt ]) );
                     if ( ptlen )
                     {
                         onLog( QString(&rxbuff[ rxpt ]), true );
