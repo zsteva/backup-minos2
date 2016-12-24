@@ -577,26 +577,11 @@ void BaseContestLog::scanContest( void )
    oplist.insert( curop1, curop1 );
    QString curop2 = currentOp2.getValue();
    oplist.insert( curop2, curop2 );
-   while ( nextScan >= -1 )
+
+   foreach(MapWrapper<BaseContact> wnct, ctList)
    {
       // get the next contact in sequence and do any required scan checks
-      nextScan++;
-      if ( nextScan >= getContactCount() )
-      {
-         // end of scan
-
-         nextScan = -2;
-
-         if ( isReadOnly() )
-         {
-            DupSheet.clear();
-         }
-
-         break;
-      }
-      QSharedPointer<BaseContact> nct = pcontactAt( nextScan );
-      if ( !nct )
-         break ;
+      QSharedPointer<BaseContact> nct = wnct.wt;
 
       if (nct->contactFlags.getValue() & TO_BE_ENTERED)
       {
@@ -650,6 +635,10 @@ void BaseContestLog::scanContest( void )
          nct->time.clearDirty();
          nct->time.setBadDtg();
       }
+   }
+   if ( isReadOnly() )
+   {
+      DupSheet.clear();
    }
    if (currentOp1.getValue().size() == 0)
    {
