@@ -96,7 +96,7 @@ class MultList : public QMap < MapWrapper<itemtype>, MapWrapper<itemtype> >
       QString getText( int item, int Column, BaseContestLog *const ct )
       {
          QString dest;
-         if ( item >= static_cast< int > (MultList::size()) )
+         if ( item >= MultList::size())
             return dest;
          QSharedPointer<itemtype> ce = std::next(this->begin(), item)->wt;
          switch ( Column )
@@ -166,7 +166,7 @@ class MultList : public QMap < MapWrapper<itemtype>, MapWrapper<itemtype> >
       {
          // Only called for fullMultDisp
          QString dest;
-         if ( item >= static_cast< int > (MultList::size()) )
+         if ( item >= MultList::size())
             return dest;
          itemtype ce = MultList::at( item );
 

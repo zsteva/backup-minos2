@@ -23,7 +23,7 @@ void LocFrame::setContest(BaseContestLog *contest)
 void LocFrame::reInitialiseLocators()
 {
     ui->LocTree->clear();
-    for (int k = 0; k < static_cast<int> (ct->locs.llist.size()); k++)
+    for (int k = 0; k < ct->locs.llist.size(); k++)
     {
         QTreeWidgetItem *it = new QTreeWidgetItem(ui->LocTree);
         QString locStart = ct->locs.itemAt(k) ->loc;
