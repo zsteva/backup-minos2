@@ -3,10 +3,10 @@
 #include "tinyxml.h"
 #include "Calendar.h"
 
-extern const char *TypeVHFContest;
-extern const char *TypeMwaveContest;
+const QString TypeVHFContest("<VHF from VHFContests.xml>");
+const QString TypeMwaveContest("<Microwave from MicroContestsxx.xml>");
 
-const char *monthTable[ 12 ] =
+const QString monthTable[ 12 ] =
     {
         "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
     };
@@ -14,7 +14,7 @@ int monthLength[ 12 ] =
     {
         31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
     };
-const char *days[ 7 ] =
+const QString days[ 7 ] =
     {
         "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
     };
@@ -192,7 +192,7 @@ bool Calendar::parseFile ( const QString &fname )
     TiXmlBase::SetCondenseWhiteSpace ( false );
     TiXmlDocument xdoc;
     const char *loaded = xdoc.Parse ( buffer2.toStdString().c_str() );
-    if ( !loaded )
+    if (!loaded)
     {
         return false;
     }

@@ -28,7 +28,6 @@ BaseContestLog::BaseContestLog( void ) :
       validationPoint( 0 ),
       nextScan( -2 ),
       countryWorked( 0 ), districtWorked( 0 ),
-      mycall( "" ),
       QSO1( 0 ), QSO2( 0 ), QSO1p( 0 ), QSO2p( 0 ),
       kms1( 0 ), kms2( 0 ), kms1p( 0 ), kms2p( 0 ),
       mults1( 0 ), mults2( 0 ), mults1p( 0 ), mults2p( 0 ),

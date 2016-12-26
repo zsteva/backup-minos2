@@ -8,8 +8,6 @@
 #include "Calendar.h"
 #include "CalendarList.h"
 
-const char *TypeVHFContest = "<VHF from VHFContests.xml>";
-const char *TypeMwaveContest = "<Microwave from MicroContestsxx.xml>";
 QMap<QString, QString> contestNameMap;
 int calendarFormYear = 0;
 

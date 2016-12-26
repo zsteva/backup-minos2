@@ -380,7 +380,9 @@ dtg::~dtg()
 {}
 //============================================================
 callsign::callsign( ) : valRes( CS_NOT_VALIDATED )
-{}
+{
+    fullCall.setValue( "" );
+}
 callsign::callsign(const QString &pcs ) : valRes( CS_NOT_VALIDATED )
 {
    fullCall.setValue( pcs );
