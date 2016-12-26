@@ -18,21 +18,17 @@ extern const double dr /* = pi/180.0*/;      			  // degree to radian conversion
 
 extern bool checkFileOK( std::ifstream &istr, const QString &fname, const QString &fmess );
 
-//extern char *lbuff;
 extern void clearBuffer( void );
 extern void strtobuf( const QString &str );
 extern void strtobuf( const MinosItem<QString> &str );
 extern void strtobuf();
 QString strupr( const QString &s );
-//extern int stricmp( const QString &s1, const QString &s2 );
 extern int strnicmp( const QString &s1, const QString &s2, unsigned int len );
-extern int strncmp( const QString &s1, const QString &s2, unsigned int len );
 extern void opyn( bool b );
 void opyn( const MinosItem<bool> &b );
 extern void buftostr( QString &str );
 extern void buftostr( MinosItem<QString> &str );
 extern bool inyn();
-extern bool wildComp( const QString &e, const QString &s );
 extern size_t strcpysp( char *s1, const QString &s2, int maxlen = 255 );
 extern int strcpysp( QString &s1, const QString &s2, int maxlen = 255 );
 extern int strcmpsp( const QString &s1, const QString &s2 );

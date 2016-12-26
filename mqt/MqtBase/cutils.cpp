@@ -209,65 +209,6 @@ void writer::lwriteFf()
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
    }
 }
-// wild card comparison, search string e for the wild card string in s
-// At the moment we are using "space" as the wildcard.
-// we always scan down s for the first char in e
-bool wildComp( const QString &ss, const QString &ee )
-{
-   int s = 0;
-   int sl = ss.length();
-   int e = 0;
-   int el = ee.length();
-
-   while (s < sl && ss[s] == ' ' )
-      s++;
-   if ( s == sl )
-      return false;
-   while (e < el && ee[e] == ' ' )
-      e++;
-   if ( e == el )
-      return false;
-
-
-   int estart = e;
-
-   // scan for first char of e in s
-
-   int sstart = s;	// where to restart search
-
-   while ( sstart < sl )
-   {
-      s = sstart;		// position moving pointer
-      e = estart;		// go back to the start of the searching string
-
-      while ( s < sl && e < el && ( ss[s] != ee[e] ) )
-         s++;
-      if ( s >= sl )
-         return false;		// s has ended without a match on char 1 of e
-
-      sstart = ++s;			// next time start one on from this match
-      e++;						// first char has matched
-      // now attempt to match
-      while ( s < sl && e < el )
-      {
-         if (
-            (ss[s] == ee[e] )
-            || ( ( ee[e] == ' ' ) || ( ee[e] == '*' ) || ( ee[e] == '?' ) )
-         )
-         {
-            s++;
-            e++;
-            continue;
-         }
-         break;		// match failed, break out
-      }
-      if ( e >= el )
-         return true;		// we are at the end of the searching string, so matched
-
-      // otherwise try again at next matching start char
-   }
-   return false;
-}
 //=============================================================================
 QString trimr( const QString &r )
 {
@@ -303,24 +244,10 @@ QString strupr( const QString &s )
     return s.toUpper();
 }
 //=============================================================================
-/*
-int stricmp( const QString &s1, const QString &s2 )
-{
-   if ( s2.length() == 0 )
-      return -1;
-   if ( s1.length() == 0 )
-      return 1;
-   return s1.compare(s2, Qt::CaseInsensitive );
-}
-*/
-//=============================================================================
+
 int strnicmp( const QString &s1, const QString &s2, unsigned int len )
 {
     return s1.left(len).compare(s2.left(len), Qt::CaseInsensitive);
-}
-int strncmp( const QString &s1, const QString &s2, unsigned int len )
-{
-    return s1.left(len).compare(s2.left(len));
 }
 //=============================================================================
 QDateTime CanonicalToTDT(QString cdtg )

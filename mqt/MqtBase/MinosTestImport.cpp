@@ -170,14 +170,6 @@ void MinosTestImport::processMinosStanza( RPCRequest *rq )
 
 }
 
-/*
-   void processMinosStanza(RPCRequest *rq, long fpos, void *user )
-   {
-      MinosTestImport *mti = reinterpret_cast<MinosTestImport *> (user);
-      mti->processMinosStanza(rq, fpos);
-   }
-*/
-
 //==============================================================================
 // These are used for log monitoring
 void MinosTestImport::startImportTest()

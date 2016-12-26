@@ -17,7 +17,67 @@
 //---------------------------------------------------------------------------
 TMatchThread *TMatchThread::matchThread = 0;
 
- TMatchThread::TMatchThread()
+// wild card comparison, search string e for the wild card string in s
+// At the moment we are using "space" as the wildcard.
+// we always scan down s for the first char in e
+bool wildComp( const QString &ss, const QString &ee )
+{
+   int s = 0;
+   int sl = ss.length();
+   int e = 0;
+   int el = ee.length();
+
+   while (s < sl && ss[s] == ' ' )
+      s++;
+   if ( s == sl )
+      return false;
+   while (e < el && ee[e] == ' ' )
+      e++;
+   if ( e == el )
+      return false;
+
+
+   int estart = e;
+
+   // scan for first char of e in s
+
+   int sstart = s;	// where to restart search
+
+   while ( sstart < sl )
+   {
+      s = sstart;		// position moving pointer
+      e = estart;		// go back to the start of the searching string
+
+      while ( s < sl && e < el && ( ss[s] != ee[e] ) )
+         s++;
+      if ( s >= sl )
+         return false;		// s has ended without a match on char 1 of e
+
+      sstart = ++s;			// next time start one on from this match
+      e++;						// first char has matched
+      // now attempt to match
+      while ( s < sl && e < el )
+      {
+         if (
+            (ss[s] == ee[e] )
+            || ( ( ee[e] == ' ' ) || ( ee[e] == '*' ) || ( ee[e] == '?' ) )
+         )
+         {
+            s++;
+            e++;
+            continue;
+         }
+         break;		// match failed, break out
+      }
+      if ( e >= el )
+         return true;		// we are at the end of the searching string, so matched
+
+      // otherwise try again at next matching start char
+   }
+   return false;
+}
+
+TMatchThread::TMatchThread()
       : QThread(   ), myThisMatches( 0 ), myOtherMatches( 0 ),myListMatches( 0 ), mct(0), Terminated(false)
 //      ,EL_CountrySelect ( EN_CountrySelect, & CountrySelect_Event )
 //      ,EL_DistrictSelect ( EN_DistrictSelect, & DistrictSelect_Event )

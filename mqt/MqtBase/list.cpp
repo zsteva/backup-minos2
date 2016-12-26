@@ -58,14 +58,11 @@ void CsvReader::checkString(QString &temp, QChar character, QList<QStringList> &
 {
     if(temp.count("\"")%2 == 0)
     {
-        //if (temp.size() == 0 && character != ',') //problem with line endings
-        //    return;
         if (temp.startsWith( QChar('\"')) && temp.endsWith( QChar('\"') ) )
         {
              temp.remove( QRegExp("^\"") );
              temp.remove( QRegExp("\"$") );
         }
-        //FIXME: will possibly fail if there are 4 or more reapeating double quotes
         temp.replace("\"\"", "\"");
         itemList.append(temp.trimmed());
         if (character != QChar(','))

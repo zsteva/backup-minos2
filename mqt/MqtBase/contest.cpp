@@ -611,8 +611,6 @@ void BaseContestLog::scanContest( void )
       nct->bearing = -1;		// force a recalc
       nct->loc.validate();
 
-      //int index;
-
       if ( DupSheet.checkCurDup( this, nct->getLogSequence(), 0, true ) )    // check for dup, insert it if required
          nct->cs.valRes = ERR_DUPCS;
 
@@ -627,7 +625,6 @@ void BaseContestLog::scanContest( void )
       nct->newBonus = false;
       nct->checkContact( );   // in scanContest
 
-//      nct->baddtg = false;
       if (nct->time.notEntered() == 0 && !(nct->contactFlags.getValue() & TO_BE_ENTERED))
       {
          nct->time = nct->getHistory()[0]->updtime;
@@ -682,7 +679,6 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
       QString dtgstr = nct->time.getDate(DTGFULL) + nct->time.getTime(DTGLOG);
       QDateTime ncheck = CanonicalToTDT( dtgstr );
 
-//      int elapsed = start.secsTo(ncheck);
       if (ncheck > limit)
       {
          nextScan = -2; // continue; we want to include this one
@@ -692,17 +688,15 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
 
       if ( nct->contactFlags.getValue() & ( NON_SCORING | DONT_PRINT | LOCAL_COMMENT | COMMENT_ONLY | TO_BE_ENTERED ) )
       {
-         //trace(QString("flags ") + nct->cs.fullCall.getValue() + " " + nct->serials.getValue());
          continue;
       }
       if (nct->cs.valRes != CS_OK)
       {
-         //trace(QString("bad callsign ") + nct->cs.fullCall.getValue() + " " + nct->serials.getValue());
          continue;
       }
 
      if ( locatorField.getValue() || nct->contactScore.getValue() >= 0 )   		// don't add -1 scores in, but DO add zero km
-         // as it is 1 point.
+                                                                                // as it is 1 point.
       {
          int cscore = nct->contactScore.getValue();
          switch ( scoreMode.getValue() )
@@ -858,13 +852,6 @@ bool DupContact::operator!=( const DupContact& rhs ) const
 {
    return !( *this == rhs );
 }
-/*
-bool LtDup::operator() ( const DupContact* s1, const DupContact* s2 ) const
-{
-   bool res = ( *s1 < *s2 );
-   return res;
-}
-*/
 dupsheet::dupsheet()
 {}
 dupsheet::~dupsheet()
@@ -1150,8 +1137,6 @@ QSharedPointer<BaseContact> BaseContestLog::findNextUnfilledContact()
 //====================================================================
 bool BaseContestLog::checkTime(const dtg &t) const
 {
-//   try
-//   {
       QString dtgstr = t.getDate(DTGFULL) + t.getTime(DTGLOG);
 
       QDateTime check = CanonicalToTDT( dtgstr );
@@ -1169,11 +1154,6 @@ bool BaseContestLog::checkTime(const dtg &t) const
          return false;
       }
       return true;
-//   }
-//   catch (EConvertError & /*e*/)
-//   {
-//      return false;
-//   }
 }
 static bool loadCalYear ( Calendar &cal, int year )
 {
@@ -1283,7 +1263,6 @@ QString ContestScore::disp()
         buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5:%6%7 districts%8:%9%10(%11/%12) locators %13 = %14" )
             .arg(nqsos).arg(contestScore).arg(brcc1).arg(nctry).arg(brcc2).arg(brcc3).arg(ndistrict)
             .arg(brcc4).arg(brloc1).arg(nlocs).arg(nGlocs).arg(nonGlocs).arg(brloc2)
-//            % brbonus1 % bonus % nbonus % brbonus2
             .arg(totalScore );    }
    return buff;
 }
