@@ -460,11 +460,14 @@ void BaseContestLog::updateStats( void )
    bonus1p = 0;
    bonus2 = 0;
    bonus2p = 0;
-   foreach(MapWrapper<BaseContact> i, ctList)
-   {
-      if ( !updateStat( i.wt ) )
-         break;
+
+   auto it = ctList.end(), end = ctList.begin();
+   while ( it != end ) {
+       --it;
+       if ( !updateStat( it.value().wt ) )
+          break;
    }
+
 }
 int BaseContestLog::getValidQSOs()
 {
