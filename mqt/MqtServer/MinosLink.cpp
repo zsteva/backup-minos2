@@ -119,7 +119,7 @@ bool MinosCommonConnection::sendRaw ( const char *xmlstr )
    if ( xmllen )
    {
       char * xmlbuff = new char[ 10 + 1 + xmllen + 1 ];
-      sprintf( xmlbuff, "&&%d%s&&", xmllen, xmlstr );
+      sprintf( xmlbuff, "&&%lu%s&&", static_cast<unsigned long>(xmllen), xmlstr );
       xmllen = strlen( xmlbuff );
       int ret = sock->write ( xmlbuff, xmllen );
       onLog ( xmlbuff, xmllen, 0 );
