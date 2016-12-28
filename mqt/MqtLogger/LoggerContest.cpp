@@ -1071,7 +1071,6 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
         ls.append(line);
     }
 
-   TEMPBUFF( temp, 100 );
    // Import from LOG format
    // Needs modification for "new" log format
 
@@ -1222,6 +1221,7 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
       const char *lbuff = sstemp.c_str();
       // parse contact line in
 
+      QString temp;
       strcpysp( temp, &lbuff[ 0 ], 6 );
       bct->time.setDate( temp, DTGLOG );
       strcpysp( temp, &lbuff[ 7 ], 4 );
@@ -1245,7 +1245,7 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
 
       // here is the score field
       strcpysp( temp, &lbuff[ 59 ], 5 );
-      if ( atoi( temp ) == 0 )
+      if ( toInt( temp ) == 0 )
          bct->contactFlags.setValue( NON_SCORING );
 
       strcpysp( temp, &lbuff[ 65 ], 6 );
@@ -1257,11 +1257,11 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
 
       //ct->comments = "";
 
-      TEMPBUFF( extra, EXTRALENGTH + 1 );
-      TEMPBUFF( comments, COMMENTLENGTH + 1 );
+      QString extra;
+      QString comments;
 
       strcpysp( extra, &lbuff[ 81 ], 2 );          // 81 is district code
-      if ( extra[ 0 ] && extra[ 1 ] && ( extra[ 0 ] != ' ' && extra[ 1 ] != ' ' ) )
+      if ( extra.length() >= 2 && ( extra[ 0 ] != ' ' && extra[ 1 ] != ' ' ) )
       {
          // we always attempt to import the district mult field
          strcpysp( comments, &lbuff[ 93 ], COMMENTLENGTH );

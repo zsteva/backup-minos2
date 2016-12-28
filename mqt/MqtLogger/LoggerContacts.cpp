@@ -64,26 +64,26 @@ void ContestContact::getPrintFileText( QString &sdest, short maxlen )
    {
       makestrings( clp->serialField.getValue() );
 
-      TEMPBUFF( exp_buff, 60 );
-      exp_buff[ 0 ] = 0;
+      QString exp_buff;
+
       if ( contactFlags.getValue() & NON_SCORING )
       {
          ContactBuffs::scorebuff = "0";
-         strcpy( exp_buff, "No Score Claimed " );
+         exp_buff = "No Score Claimed " ;
       }
       else
          if ( cs.valRes == ERR_DUPCS )
          {
              ContactBuffs::scorebuff = "0";
-            strcpy( exp_buff, "Duplicate " );
+             exp_buff = "Duplicate ";
          }
          else
          {
             if ( contactFlags.getValue() & VALID_DUPLICATE )
-               strcpy( exp_buff, "BackPacker " );
+               exp_buff = "BackPacker ";
 
             if ( contactFlags.getValue() & VALID_DISTRICT )
-               strcat( exp_buff, "No district code " );
+               exp_buff += "No district code ";
 
             thisscore = contactScore.getValue();
             switch ( clp->scoreMode.getValue() )
@@ -520,7 +520,7 @@ bool ContestContact::minosSave(QSharedPointer<BaseContact> tct )
 bool ContestContact::GJVsave( GJVParams &gp )
 {
    const QString nulc;
-   TEMPBUFF( temp, 50 );
+   QString temp;
    buffpt = 0;
 
    // write it all into sbuff
@@ -529,13 +529,13 @@ bool ContestContact::GJVsave( GJVParams &gp )
    setLogSequence( static_cast< unsigned long > ( thisDiskBlock ) << 16 );
    QSharedPointer<QFile> fd = gp.fd;
 
-   sprintf( temp, "%d", thisDiskBlock );
+   temp = QString::number(thisDiskBlock );
    strtobuf( temp );
 
-   sprintf( temp, "%ld", getLogSequence() );
+   temp = QString::number( getLogSequence() );
    strtobuf( temp );
 
-   sprintf( temp, "%d", static_cast< unsigned int > (contactFlags.getValue()) );
+   temp = QString::number( static_cast< unsigned int > (contactFlags.getValue()) );
    strtobuf( temp );
 
    strtobuf( op1.getValue() );
@@ -569,7 +569,7 @@ bool ContestContact::GJVsave( GJVParams &gp )
    strtobuf( "0" );			// power - removed
    strtobuf( mode.getValue() );
 
-   sprintf( temp, "%d", contactScore.getValue() );
+   temp = QString::number(contactScore.getValue() );
    strtobuf( temp );
 
    strtobuf( forcedMult.getValue() );

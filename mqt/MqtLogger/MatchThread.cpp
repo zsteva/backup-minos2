@@ -758,9 +758,9 @@ bool ThisLogMatcher::idleMatch( int limit )
                 }
                 else
                 {
-                   TEMPBUFF( uprqth, EXTRALENGTH + 1 );
+                   QString uprqth;
                    strcpysp( uprqth, cct->extraText.getValue(), EXTRALENGTH );
-                   strupr( uprqth );
+                   uprqth = uprqth.toUpper();
                    qthmatch = matchqth.checkMatch( uprqth );
 
                    if ( bool( ccon ) && !qthmatch )
@@ -1089,9 +1089,9 @@ bool OtherLogMatcher::idleMatch( int limit )
                }
                else
                {
-                  TEMPBUFF( uprqth, EXTRALENGTH + 1 );
+                  QString uprqth;
                   strcpysp( uprqth, cct->extraText.getValue(), EXTRALENGTH );
-                  strupr( uprqth );
+                  uprqth = uprqth.toUpper();
                   qthmatch = matchqth.checkMatch( uprqth );
 
                   if ( ccon != nullptr && !qthmatch )

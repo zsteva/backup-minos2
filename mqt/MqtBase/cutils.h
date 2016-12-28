@@ -35,6 +35,7 @@ extern int strcmpsp( const QString &s1, const QString &s2 );
 extern int stricmpsp( const QString &s1, const QString &s2 );
 extern int placestr(QString &buff, const QString &str, int start, int len );
 int parseLine( char *buff, char sep, char **a, int count, char sep2, bool &sep2seen );
+int parseLine(QString buff, char sep, QStringList &a, int count, char sep2, bool &sep2seen );
 
 extern QString trimr( const QString & );
 

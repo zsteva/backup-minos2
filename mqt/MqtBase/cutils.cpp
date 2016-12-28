@@ -168,6 +168,40 @@ int parseLine( char *buff, char sep, char **a, int count, char sep2, bool &sep2s
    }
    return sep_count;
 }
+int parseLine( QString buff, char sep, QStringList &a, int count, char sep2, bool &sep2seen )
+{
+    int i = 0;
+    int sep_count = 0;
+    sep2seen = false;
+
+    int len = buff.length();
+    int lastSep = 0;
+
+    for ( int j = 0; j < count; j++ )
+    {
+        // terminate the previous entry on a '<sep>'
+        while ( i < len && buff[ i ] != sep && buff[ i ] != sep2 )
+            i++;
+
+        if ( i < len && ( buff[ i ] == sep || ( sep2 != 0 && buff[ i ] == sep2 ) ) )
+        {
+            if ( buff[ i ] == sep2 )
+                sep2seen = true;
+            sep_count++;
+            QString part = buff.mid(lastSep, i).trimmed();
+            a.push_back(part);
+            i++;
+            lastSep = i;
+        }
+        if (i == len)
+        {
+            QString part = buff.mid(lastSep, i).trimmed();
+            a.push_back(part);
+            break;
+        }
+    }
+    return sep_count;
+}
 writer::writer( QSharedPointer<QFile> f ) :  /*lbuff( diskBuffer ),*/ expfd( f )
 {}
 writer::~writer()

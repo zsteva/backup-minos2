@@ -271,8 +271,7 @@ double degrad( double x )
 static int getgridcoord( char *gridref, size_t offset, size_t dlength, double *e, double *n )
 {
    size_t i = offset;
-   size_t j = offset;
-   TEMPBUFF( tbuff, 50 );
+   QString tbuff;
    double x = 0.0, y = 0.0;
 
    if ( dlength >= 50 )
@@ -281,22 +280,22 @@ static int getgridcoord( char *gridref, size_t offset, size_t dlength, double *e
    while ( ( i < 20 ) && gridref[ i ] )
    {
       if ( gridref[ i ] != ' ' )
-         tbuff[ j++ ] = gridref[ i ];
+         tbuff += gridref[ i ];
       i++;
    }
-   tbuff[ j ] = 0;
    i = 0;
 
-   while ( ( ( i + offset ) < dlength ) && ( isdigit( tbuff[ i + offset ] ) )
+   while ( ( ( i + offset ) < dlength ) && ( ( tbuff[ i + offset ] ).isNumber() )
            && ( i < 10 ) )
    {
-      coordele[ i ] = tbuff[ i + offset ] - '0';
+      coordele[ i ] = tbuff[ i + offset ].toLatin1() - '0';
       i++;
    }
 
    if ( i % 2 == 1 )
       return ( INVALIDGREF );
 
+   size_t j;
    for ( j = 0; j < ( i / 2 ); j++ )
       x = x * 10.0 + coordele[ j ];
 
@@ -660,8 +659,8 @@ void dms( double deg, int *d, int *m, double *s )
 
 static int geoinput( Location *ingrid )
 {
-   TEMPBUFF( longbuff, 50 );
-   TEMPBUFF( latbuff, 50 );
+   QString longbuff;
+   QString latbuff;
 
    int nsign = 1;
    int esign = 1;
@@ -680,8 +679,9 @@ static int geoinput( Location *ingrid )
    else
       j = 0;
 
-   char *b1 = 0;
-   char *b2 = 0;
+   QString nStr;
+   QString &b1 = nStr;
+   QString &b2 = nStr;
 
    char dsi = ingrid->datastring[ i ];
    char dsj = ingrid->datastring[ i + 1 + j ];
@@ -698,7 +698,7 @@ static int geoinput( Location *ingrid )
       if ( ( dsj == 'E' ) || ( dsj == 'W' ) )
          b2 = longbuff;
 
-   if ( ( b1 == 0 ) || ( b2 == 0 ) || ( b1 == b2 ) )
+   if ( ( b1.isNull() ) || ( b2.isNull() ) || ( b1 == b2 ) )
       return ( INVALIDGREF );
 
    if ( ( dsi == 'S' ) || ( dsj == 'S' ) )
@@ -706,16 +706,15 @@ static int geoinput( Location *ingrid )
    if ( ( dsi == 'W' ) || ( dsj == 'W' ) )
       esign = -1;
 
-   strncpy( b1, ingrid->datastring, i );
-   b1[ i ] = 0;
-   strncpy( b2, &ingrid->datastring[ i + 1 ], j );
-   b2[ i ] = 0;
+   b1 = QString(ingrid->datastring).left(i);
+   b2 = QString(ingrid->datastring).mid( i + 1, j );
 
    deg = 0;
    min = 0;
    secs = 0;
 
-   sscanf( latbuff, "%d %d %f", &deg, &min, &secs );
+   QTextStream(&latbuff) >>deg >> min >> secs;
+//   sscanf( latbuff, "%d %d %f", &deg, &min, &secs );
 
    if ( deg < 0 )
    {
@@ -732,7 +731,8 @@ static int geoinput( Location *ingrid )
    min = 0;
    secs = 0;
 
-   sscanf( longbuff, "%d %d %f", &deg, &min, &secs );
+   QTextStream(&longbuff) >>deg >> min >> secs;
+//   sscanf( longbuff, "%d %d %f", &deg, &min, &secs );
 
    if ( deg < 0 )
    {

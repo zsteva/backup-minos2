@@ -31,7 +31,7 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
       // If in QSO accumulate aqso
       //      Trace( "In QSO" );
 
-      TEMPBUFF( temp, 100 );
+      QString temp;
       if ( Fieldname.toUpper() == "QSO_DATE" )
       {
          // ADIF now specifies 8 Digits representing a UTC date in YYYYMMDD format
@@ -52,7 +52,7 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
       if ( Fieldname.toUpper() == "CALL" )
       {
          strcpysp( temp, FieldContent, FieldLength );
-         aqso->cs = callsign( strupr( temp ) );
+         aqso->cs = callsign( temp.toUpper() );
          aqso->cs.valRes = CS_NOT_VALIDATED;
       }
       if ( Fieldname.toUpper() == "RST_SENT" )
@@ -86,7 +86,6 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
       }
       if ( Fieldname.toUpper() == "QSO_PTS" || Fieldname.toUpper() == "POINTS" )
       {
-         QString temp;
          strcpysp( temp, FieldContent, FieldLength );
          if ( temp.toInt() == 0 )
          {
@@ -104,12 +103,6 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
          aqso->extraText.setInitialValue( temp );
       }
    }
-   /*   Trace( ("Fieldname " + Fieldname
-             + " length " + FieldLength
-             + " type " + FieldType
-             + " content " + FieldContent).c_str()
-           );
-   */
 }
 //---------------------------------------------------------------------------
 

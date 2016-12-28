@@ -1028,18 +1028,17 @@ void QSOLogFrame::calcLoc( )
 
             int offset = contest->bearingOffset.getValue();
 
-            TEMPBUFF( rev, 10 );
-            rev[0] = 0;
+            QString rev;
             if (offset)
             {
-                strcat( rev, "O");
+                rev += "O";
             }
-            strcat( rev, ( MinosParameters::getMinosParameters() ->getMagneticVariation() ) ? "M" : "T" );
+            rev += ( MinosParameters::getMinosParameters() ->getMagneticVariation() ) ? "M" : "T" ;
             int vb = varBrg( brg + offset);
             if ( TContestApp::getContestApp() ->reverseBearing )
             {
                vb = normBrg( vb - 180 );
-               strcat( rev, "R" );
+               rev += "R";
             }
             setScoreText( static_cast< int> ( dist), ( locValres == LOC_PARTIAL ), sct.contactFlags & XBAND );
             QString brgbuff;

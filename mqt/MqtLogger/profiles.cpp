@@ -376,44 +376,40 @@ bool INIFile::loadINIFile()
 
    fileLoaded = true;
 
-   QFile inf(loadedFileName);
-
+   QFile lf(loadedFileName);
 
    // here we need to stat the file to see if it has changed
    // - but what do we do if it has? We should have loaded
    // it VERY recently
 
-   if (!inf.open(QIODevice::ReadOnly|QIODevice::Text))
+   if (!lf.open(QIODevice::ReadOnly|QIODevice::Text))
    {
       MinosParameters::getMinosParameters() ->mshowMessage( QString( "Initialisation file \"" ) + loadedFileName + "\" not found." );
       return false;
    }
+   QTextStream inf(&lf);
 
    thisSect = new INISection( this, "?Comments", false );
    // create dummy section for leading comments
 
-   TEMPBUFF( buffer, 256 );
-   int len = 0;
-   while ( (len = inf.readLine( buffer, 256 )) > 0 )
+   while (!inf.atEnd())
    {
-      TEMPBUFF ( Parameter, 256 );
-      if ( strchr( buffer, '[' ) && ( sscanf( buffer, " [ %255[^\n]", Parameter ) == 1 ) )
+      QString buffer = inf.readLine( 256 );
+
+      QStringList p1 = buffer.split('[');
+      if (p1.length() > 1)
       {
-         char * p = strchr( Parameter, ']' );
-         if ( p != 0 )
-         {
-            *p = '\0';
+        QStringList p2 = p1[1].split(']');
+        if (p2.length())
+        {
+            QString Parameter = p2[0];
             thisSect = new INISection( this, Parameter, true );
             realSections = true;
             continue;
-         }
-         // and if no trailing ']' should we be lenient?
+        }
       }
 
-      if ( buffer[ strlen( buffer ) - 1 ] == '\n' )
-         buffer[ strlen( buffer ) - 1 ] = 0;		// take off trailing new line
-
-      char *a[ 3 ];
+      QStringList a;
       bool sep2seen;
       int scnt = parseLine( buffer, '=', a, 2, 0, sep2seen );
 
@@ -421,7 +417,7 @@ bool INIFile::loadINIFile()
       {
          this_entry = new INIEntry( thisSect, a[ 0 ], true );
          // somewhere we need to cope with quoted parameters
-         this_entry->setValue( QString(a[ 1 ]).trimmed() );
+         this_entry->setValue( a[ 1 ] );
          this_entry->setClean();
       }
       else
@@ -432,7 +428,6 @@ bool INIFile::loadINIFile()
          this_entry->setClean();
       }
    }
-   inf.close();
    // now stat the file so we can check for changes
    checkStat();
 
