@@ -7,11 +7,15 @@ SUBDIRS += \
     MqtBase \
     RPCTest \
     MqtLogger \
-    MqtServer \
+    MqtServer
+
+!unix {
+    SUBDIRS += \
     MqtChat \
     MqtTestRotator \
     mqtControl \
     mqtKeyer
+}
 
 RPCTest.depends = MqtUtils TinyXML XMPPLib MqtBase
 MqtLogger.depends = MqtUtils TinyXML XMPPLib MqtBase
