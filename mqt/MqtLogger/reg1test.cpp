@@ -211,13 +211,11 @@ bool reg1test::exportTest( QSharedPointer<QFile> expfd )
 bool reg1test::parseHeader(QString line )
 {
    // break line at semicolons
-   char buff[ 1024 ];
-   strncpy( buff, line.toStdString().c_str(), 1023 );
-   buff[ 1023 ] = 0;
    bool sep2seen;
-   char *a[ 2 ] = {0};
-   char *b[ 3 ] = {0};
-   int scnt = parseLine( buff, '=', a, 2, 0, sep2seen );   // BAD - parseLine writes to buffer
+   QStringList a;
+   QStringList b;
+
+   int scnt = parseLine( line, '=', a, 2, 0, sep2seen );
 
    if ( scnt != 1 )
    {
@@ -225,7 +223,7 @@ bool reg1test::parseHeader(QString line )
    }
 
    // now work through the possible header strings
-   QString code = QString( a[ 0 ] ).trimmed().toUpper();
+   QString code = a[ 0 ].toUpper();
    if ( code == "TNAME" )
    {
       //TName=VHFNFD
@@ -235,7 +233,7 @@ bool reg1test::parseHeader(QString line )
       if ( code == "PCALL" )
       {
          //PCall=G4RFR/P
-         ct->mycall = callsign( strupr( a[ 1 ] ) );
+         ct->mycall = callsign( a[ 1 ].toUpper() );
          ct->mycall.valRes = CS_NOT_VALIDATED;
          ct->mycall.validate();
       }
@@ -404,7 +402,7 @@ bool reg1test::parseHeader(QString line )
                                                                                        scnt = parseLine( a[ 1 ], ';', b, 3, 0, sep2seen );   // BAD - parseLine writes to buffer
                                                                                        // Claimed no. of WWLs;Bonus per new WWL;WWL multiplier
                                                                                        //CWWLs=0;0;1
-                                                                                       if ( atoi( b[ 0 ] ) != 0 )
+                                                                                       if ( b[ 0 ].toInt() != 0 )
                                                                                        {
                                                                                           ct->locMult.setValue( true );
                                                                                        }
@@ -421,7 +419,7 @@ bool reg1test::parseHeader(QString line )
                                                                                              scnt = parseLine( a[ 1 ], ';', b, 3, 0, sep2seen );   // BAD - parseLine writes to buffer
                                                                                              // Claimed no. of exchanges; Bonus for each new exchange; Exchange Multiplier
                                                                                              //CExcs=0;0;1
-                                                                                             if ( atoi( b[ 0 ] ) != 0 )
+                                                                                             if ( b[ 0 ].toInt() != 0 )
                                                                                              {
                                                                                                 ct->districtMult.setValue( true );
                                                                                              }
@@ -438,7 +436,7 @@ bool reg1test::parseHeader(QString line )
                                                                                                    scnt = parseLine( a[ 1 ], ';', b, 3, 0, sep2seen );   // BAD - parseLine writes to buffer
                                                                                                    // Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier
                                                                                                    //CDXCs=0;0;1
-                                                                                                   if ( atoi( b[ 0 ] ) != 0 )
+                                                                                                   if ( b[ 0 ].toInt() != 0 )
                                                                                                    {
                                                                                                       ct->countryMult.setValue( true );
                                                                                                    }
@@ -488,12 +486,9 @@ bool reg1test::parseQSO( QString line )
 {
    // break line at semicolons
    //060701;1408;M3MQR;;59;001;59;001;;IO80OU;24;;;;
-   char * a[ 20 ];
-   char buff[ 1024 ];
-   strncpy( buff, line.toStdString().c_str(), 1023 );
-   buff[ 1023 ] = 0;
+   QStringList a;
    bool sep2seen;
-   int scnt = parseLine( buff, ';', a, 20, 0, sep2seen );   // BAD - parseLine writes to buffer
+   int scnt = parseLine( line, ';', a, 20, 0, sep2seen );   // BAD - parseLine writes to buffer
    if ( scnt >= 14 )
    {
       QSharedPointer<BaseContact> aqso;
@@ -519,7 +514,7 @@ bool reg1test::parseQSO( QString line )
       */
       aqso->time.setDate( a[ 0 ], DTGReg1Test );
       aqso->time.setTime( a[ 1 ], DTGReg1Test );
-      aqso->cs = callsign( strupr( a[ 2 ] ) );
+      aqso->cs = callsign( a[ 2 ].toUpper() );
       aqso->cs.valRes = CS_NOT_VALIDATED;
       // a[3] mode
       aqso->reps.setValue( a[ 4 ] );
@@ -535,9 +530,9 @@ bool reg1test::parseQSO( QString line )
       aqso->loc.loc.setValue( a[ 9 ] );
 
       aqso->loc.valRes = LOC_NOT_VALIDATED;
-      aqso->contactScore.setValue( atoi( a[ 10 ] ) );
+      aqso->contactScore.setValue( a[ 10 ].toInt() );
 
-      if ( atoi( a[ 10 ] ) == 0 || QString::compare( a[ 14 ], "D", Qt::CaseInsensitive ) == 0 )
+      if ( a[ 10 ].toInt() == 0 || QString::compare( a[ 14 ], "D", Qt::CaseInsensitive ) == 0 )
          aqso->contactFlags.setValue( NON_SCORING );
 
       nextBlock++;

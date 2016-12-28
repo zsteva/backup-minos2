@@ -122,6 +122,20 @@ int stricmpsp( const QString &s1, const QString &s2 )
    return sp1.compare(sp2, Qt::CaseInsensitive );
 }
 //============================================================
+int strcspn(const QString &s, const QString &chars)
+{
+    for (int i = 0; i < chars.length(); i++)
+    {
+        int p = s.indexOf(chars[i]);
+        if (p >= 0)
+        {
+            return p;
+        }
+    }
+    return -1;
+}
+
+//============================================================
 
 int placestr( QString &buff, const QString &str, int start, int len )
 {
@@ -132,42 +146,7 @@ int placestr( QString &buff, const QString &str, int start, int len )
    buff = QString("%1%2                                                                ").arg(buff).arg(str, -len).left(start + abs(len)) ;
    return start + abs(len);
 }
-//      int scnt = parseLine( buffer, '=', a, 2, 0, sep2seen );
-//#warning I want to rewrite parseLine to use strings...
-
-int parseLine( char *buff, char sep, char **a, int count, char sep2, bool &sep2seen )
-{
-   int i = 0;
-   int sep_count = 0;
-   sep2seen = false;
-
-   int len = static_cast<int>(strlen( buff ));
-   for ( int j = 0; j < count; j++ )
-   {
-      // do it this way so we strip spaces off the start of every element,
-      // including the first
-
-      if ( j != 0 )
-      {
-         // terminate the previous entry on a '<sep>'
-         while ( i < len && buff[ i ] && buff[ i ] != sep && buff[ i ] != sep2 )
-            i++;
-
-         if ( buff[ i ] == sep || ( sep2 != 0 && buff[ i ] == sep2 ) )
-         {
-            if ( buff[ i ] == sep2 )
-               sep2seen = true;
-            sep_count++;
-            buff[ i++ ] = 0;
-         }
-      }
-      while ( ( i < len ) && buff[ i ] && ( buff[ i ] == ' ' ) )
-         i++;
-
-      a[ j ] = &buff[ i ];
-   }
-   return sep_count;
-}
+//============================================================
 int parseLine( QString buff, char sep, QStringList &a, int count, char sep2, bool &sep2seen )
 {
     int i = 0;
@@ -188,20 +167,21 @@ int parseLine( QString buff, char sep, QStringList &a, int count, char sep2, boo
             if ( buff[ i ] == sep2 )
                 sep2seen = true;
             sep_count++;
-            QString part = buff.mid(lastSep, i).trimmed();
+            QString part = buff.mid(lastSep, i - lastSep).trimmed();
             a.push_back(part);
             i++;
             lastSep = i;
         }
         if (i == len)
         {
-            QString part = buff.mid(lastSep, i).trimmed();
+            QString part = buff.mid(lastSep, i - lastSep).trimmed();
             a.push_back(part);
             break;
         }
     }
     return sep_count;
 }
+//============================================================
 writer::writer( QSharedPointer<QFile> f ) :  /*lbuff( diskBuffer ),*/ expfd( f )
 {}
 writer::~writer()

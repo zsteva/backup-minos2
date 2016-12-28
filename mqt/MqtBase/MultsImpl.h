@@ -33,7 +33,7 @@ class MultList : public QMap < MapWrapper<itemtype>, MapWrapper<itemtype> >
       }
 
       QString multfilename;
-      virtual bool procLine( char ** ) = 0;
+      virtual bool procLine( QStringList ) = 0;
       MultList()
       {}
       virtual ~MultList()
@@ -41,25 +41,28 @@ class MultList : public QMap < MapWrapper<itemtype>, MapWrapper<itemtype> >
       }
       void loadEntries( const QString &sfname, const QString &fmess )
       {
-         TEMPBUFF( buff, 256 );
          QString fname = sfname;
          if ( multfilename.length() )
             fname = multfilename;
 
-         // populate the contest object from the file
-         std::ifstream istr( fname.toStdString().c_str() ); // should close when it goes out of scope
-         if ( !checkFileOK( istr, fname, fmess ) )
-            return ;
+         QFile lf(fname);
 
+         if (!lf.open(QIODevice::ReadOnly|QIODevice::Text))
+         {
+             QString ebuff = QString( "Failed to open %1 (%2)" ).arg(fmess).arg(fname );
+             MinosParameters::getMinosParameters() ->mshowMessage( ebuff );
+             return;
+         }
+         QTextStream istr(&lf);
+         while (!istr.atEnd())
+         {
          // loop through file, parsing each line into a_exp entries
          // for each line, call proc_line
          // ignore comment lines. (any non alpha/num char)
 
-
-         while ( istr.getline( buff, 255 ) )
-         {
-            char * a[ 255 ];
-            if ( buff[ 0 ] != '/' && !isalnum( buff[ 0 ] ) )      // allow '/' for suffixes
+             QString buff = istr.readLine(255);
+            QStringList a;
+            if (buff.isEmpty() || (buff[ 0 ] != '/' && !buff[0].isLetterOrNumber() ) )     // allow '/' for suffixes
                continue;   // skip comment lines
             bool sep2seen;
             parseLine( buff, ',', a, 255, 0, sep2seen );
@@ -219,7 +222,7 @@ class GlistList : public MultList < GlistEntry >
       GlistList( void );
       virtual ~GlistList();
       void load( void );
-      virtual bool procLine( char ** );
+      virtual bool procLine(QStringList );
 
 };
 class DistrictList : public MultList < DistrictEntry >
@@ -229,7 +232,7 @@ class DistrictList : public MultList < DistrictEntry >
       DistrictList( void );
       virtual ~DistrictList();
       void load( void );
-      virtual bool procLine( char ** );
+      virtual bool procLine( QStringList );
       virtual int slen( bool );
       virtual int getWorked( int item, BaseContestLog *const ct );
 };
@@ -241,7 +244,7 @@ class DistrictSynonymList : public MultList < DistrictSynonym >
       DistrictSynonymList( void );
       virtual ~DistrictSynonymList();
       void load( void );
-      virtual bool procLine( char ** );
+      virtual bool procLine(QStringList );
 };
 
 
@@ -252,7 +255,7 @@ class CountryList : public MultList < CountryEntry >
       CountryList( void );
       virtual ~CountryList();
       void load( void );
-      virtual bool procLine( char ** );
+      virtual bool procLine( QStringList );
       virtual int slen( bool );
       void loadEntries( const QString &fname, const QString &fmess );
       virtual int getWorked( int item, BaseContestLog *const ct );
@@ -265,7 +268,7 @@ class CountrySynonymList : public MultList < CountrySynonym >
       CountrySynonymList( void );
       virtual ~CountrySynonymList();
       void load( void );
-      virtual bool procLine( char ** );
+      virtual bool procLine(QStringList );
 };
 
 

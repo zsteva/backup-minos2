@@ -68,10 +68,10 @@ void GlistList::load( void )
 {
    loadEntries( "./Configuration/prefix.syn", "prefix synonyms file" );
 }
-bool GlistList::procLine( char **a )
+bool GlistList::procLine( QStringList a )
 {
-   char * syn = a[ 0 ];
-   char *dup = a[ 1 ];
+   QString syn = a[ 0 ];
+   QString dup = a[ 1 ];
 
    MapWrapper<GlistEntry>gle(new GlistEntry ( syn, dup ));
    if (!contains(gle))
@@ -217,13 +217,13 @@ void DistrictList::load( void )
        ce->wt ->listOffset = i++;
    }
 }
-bool DistrictList::procLine( char **a )
+bool DistrictList::procLine(QStringList a )
 {
-   char * cd = a[ 0 ];
-   char *cname = a[ 1 ];
-   char *prefix = a[ 2 ];
-   char *prefix2 = a[ 3 ];
-   char *cloc = a[ 4 ];
+   QString cd = a[ 0 ];
+   QString cname = a[ 1 ];
+   QString prefix = a[ 2 ];
+   QString prefix2 = a[ 3 ];
+   QString cloc = a[ 4 ];
 
    MapWrapper<DistrictEntry >dte(new DistrictEntry ( cd, cname, prefix, prefix2, cloc ));
    if (!contains(dte))
@@ -249,10 +249,10 @@ void DistrictSynonymList::load( void )
 {
    loadEntries( "./Configuration/DISTRICT.SYN", "District Synonym File" );
 }
-bool DistrictSynonymList::procLine( char **a )
+bool DistrictSynonymList::procLine( QStringList a )
 {
-   char * cd = a[ 0 ];
-   char *cname = a[ 1 ];
+   QString cd = a[ 0 ];
+   QString cname = a[ 1 ];
    MapWrapper<DistrictSynonym> dse(new DistrictSynonym ( cd, cname ));
 
    if ( dse.wt->district )
@@ -345,7 +345,7 @@ QString CountryEntry::str( bool )
 void CountryEntry::addSynonyms( QString &s )
 {
    // add list of synonyms to the display buffer
-   s = ":";
+   s = QString();
    for ( MultList < CountrySynonym >::iterator i = MultListsImpl::getMultLists() ->ctrySynList.begin(); i != MultListsImpl::getMultLists() ->ctrySynList.end(); i++ )
    {
       if ( i->wt ->country == this )
@@ -522,12 +522,12 @@ void CountryList::load( void )
        ce->wt ->listOffset = i++;
    }
 }
-bool CountryList::procLine( char ** )
+bool CountryList::procLine(QStringList )
 {
    return true;
 }
 // lat, longi to be in degrees, -ve for W or S
-extern int geotoloc( double lat, double longi, char *&gridref );
+extern int geotoloc( double lat, double longi, QString &gridref );
 //==============================================================================
 
 // Parse the CT9 CTY.DAT format
@@ -596,23 +596,25 @@ Asiatic Russia:           17:  30:  AS:   55.00:   -83.00:    -7.0:  UA9:
 void CountryList::loadEntries( const QString &fname, const QString &fmess )
 {
    // load a CT9 formatted list
-   TEMPBUFF( countrybuff, 256 );
 
-   std::ifstream istr( fname.toStdString().c_str() ); // should close when it goes out of scope
-   if ( !checkFileOK( istr, fname, fmess ) )
-      return ;
+    QFile lf(fname);
 
-   // loop through file, parsing each line
-   // ignore comment lines. (# prefix)
+    if (!lf.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        QString ebuff = QString( "Failed to open %1 (%2)" ).arg(fmess).arg(fname );
+        MinosParameters::getMinosParameters() ->mshowMessage( ebuff );
+        return;
+    }
+    QTextStream istr(&lf);
+    while (!istr.atEnd())
+    {
 
+      QString countrybuff = istr.readLine(255);
 
-   while ( istr.getline( countrybuff, 255 ) )
-   {
-      char * a[ 9 ]; // allow one extra as separator terminated line
-
-      if ( countrybuff[ 0 ] == '#' )      // only allow # comments
+      if ( countrybuff.isEmpty() || countrybuff[ 0 ] == '#' )      // only allow # comments
          continue;   // skip comment lines
 
+      QStringList a;
       bool sep2seen;
       parseLine( countrybuff, ':', a, 9, 0, sep2seen );
 
@@ -627,12 +629,11 @@ void CountryList::loadEntries( const QString &fname, const QString &fmess )
          double lat = 0.0;
          double longi = 0.0;
 
-         lat = atof( a[ 4 ] );
-         longi = atof( a[ 5 ] );
+         lat = a[ 4 ].toDouble();
+         longi = a[ 5 ].toDouble();
 
-         TEMPBUFF( gridref, 15 );
-         char *grid = gridref;
-         geotoloc( lat, -longi, grid );	// kill temporary warning
+         QString gridref;
+         geotoloc( lat, -longi, gridref );	// kill temporary warning
 
          MapWrapper<CountryEntry> cte(new CountryEntry ( a[ 3 ], a[ 7 ], a[ 0 ], gridref ));
          if (!contains(cte))
@@ -650,26 +651,29 @@ void CountryList::loadEntries( const QString &fname, const QString &fmess )
    */
       // now we go through following lines up to a semicolon terminator
       sep2seen = false;
-      while ( !sep2seen && istr.getline( countrybuff, 255 ) )
+      while ( !sep2seen && !istr.atEnd())
       {
+          countrybuff = istr.readLine(255);
          // elements are comma separated, including the end of line
          // may be white space around
          // elements may be complete callsigns
          // each one wants to be added to the CountrySynonymList
-         char * b[ 99 ];
 
-         if ( countrybuff[ 0 ] == '#' )      // only allow # comments
+         if ( countrybuff.isEmpty() || countrybuff[ 0 ] == '#' )      // only allow # comments
             continue;   // skip comment lines
 
+         QStringList b;
          parseLine( countrybuff, ',', b, 99, ';', sep2seen );
          int i = 0;
-         while ( !skip && i < 99 && b[ i ] && b[ i ][ 0 ]  && b[ i ][ 0 ] != '=')
+         QString part = b[i];
+         while ( !skip && i < 99 && !part.isEmpty()  && part[ 0 ] != '=')
          {
-            size_t bracket = strcspn( b[ i ], "({[<" );
-            if ( bracket )
-               b[ i ][ bracket ] = 0;   // chop off the brackets
+            int bracket = strcspn( b[ i ], "({[<" );
+            if ( bracket >= 0 )
+               b[ i ] = b[i].left(bracket);   // chop off the brackets
             makeCountrySynonym( b[ i ], mainPrefix );
             i++;
+            part = b[i];
          }
       }
    }
@@ -693,9 +697,9 @@ void CountrySynonymList::load( void )
 {
    loadEntries( "./Configuration/cty.syn", "Country Synonym File" );
 }
-bool CountrySynonymList::procLine( char **a )
+bool CountrySynonymList::procLine( QStringList a )
 {
-   for ( int i = 1; i < 255 && a[ i ] && a[ i ][ 0 ] ; i++ )
+   for ( int i = 1; i < a.length() && !a[ i ].isEmpty() ; i++ )
    {
       makeCountrySynonym( a[ i ], a[ 0 ] );
    }

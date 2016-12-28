@@ -592,30 +592,30 @@ static int internaltoloc( Location *ingrid, Location *outgrid )
    return ( internaltogeo( ingrid, outgrid ) );
 }
 
-static void txgeoloc( double *n, double *e, int f, char t, char **gp )
+static QString txgeoloc( double *n, double *e, int f, char t)
 {
    *e = f * ( *e - ( static_cast< int >  (* e) ) );
    *n = f * ( *n - ( static_cast< int >  (* n) ) );
 
-   *( ( *gp ) ++ ) = static_cast< char >  ( static_cast< int >  ( *e ) + t );
-   *( ( *gp ) ++ ) = static_cast< char >  ( static_cast< int >  ( *n ) + t );
+    QString res;
+    res += static_cast< char >  ( static_cast< int >  ( *e ) + t );
+    res += static_cast< char >  ( static_cast< int >  ( *n ) + t );
+
+    return res;
 }
 
-int geotoloc( double lat, double longi, char *&gridref )
+int geotoloc( double lat, double longi, QString &gridref )
 {
    // lat, longi to be in degrees, -ve for W or S
 
    longi = longi / 360 + 0.5;
    lat = lat / 180 + 0.5;
 
-   char *grid = gridref;
+   gridref = txgeoloc( &lat, &longi, 18, 'A' );
+   gridref += txgeoloc( &lat, &longi, 10, '0' );
+   gridref += txgeoloc( &lat, &longi, 24, 'A' );
+   gridref += txgeoloc( &lat, &longi, 10, '0' );
 
-   txgeoloc( &lat, &longi, 18, 'A', &grid );
-   txgeoloc( &lat, &longi, 10, '0', &grid );
-   txgeoloc( &lat, &longi, 24, 'A', &grid );
-   txgeoloc( &lat, &longi, 10, '0', &grid );
-
-   *grid = 0;
    return ( GRIDOK );
 
 }
@@ -623,8 +623,8 @@ static int locoutput( Location *outgrid )
 {
    double lat = 0.0, longi = 0.0;
 
-   size_t gri = outgrid->dataoffset;
-   char *gridref = &outgrid->datastring[ gri ];
+   int gri = outgrid->dataoffset;
+   QString gridref = QString(outgrid->datastring).mid( gri );
 
    longi = raddeg( outgrid->easting );
    lat = raddeg( outgrid->northing );
