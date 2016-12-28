@@ -109,9 +109,7 @@ class MultList : public QMap < MapWrapper<itemtype>, MapWrapper<itemtype> >
 
             case ectWorked:
                {
-                  TEMPBUFF( wcount, 10 );
-                  sprintf( wcount, "%d", getWorked( item, ct ) );
-                  dest = wcount;
+                  dest = QString::number(getWorked( item, ct ));
                   break;
                }
 

@@ -44,7 +44,7 @@ static void setprojectionconstants( struct projectionparams * );
 
 static int tfele( int, int, Location *, Location *, int * );
 
-static int getgridcoord(char *, size_t, size_t, double *, double * );
+static int getgridcoord(char *, int, int, double *, double * );
 static double north( double );
 static double dnorth( double );
 static int transngrletters( char, int *, int * );
@@ -268,15 +268,15 @@ double degrad( double x )
 }
 /**********************************************************************/
 
-static int getgridcoord( char *gridref, size_t offset, size_t dlength, double *e, double *n )
+static int getgridcoord( char *gridref, int offset, int dlength, double *e, double *n )
 {
-   size_t i = offset;
    QString tbuff;
    double x = 0.0, y = 0.0;
 
    if ( dlength >= 50 )
       return ( INVALIDGREF );
 
+   int i = offset;
    while ( ( i < 20 ) && gridref[ i ] )
    {
       if ( gridref[ i ] != ' ' )
@@ -285,7 +285,7 @@ static int getgridcoord( char *gridref, size_t offset, size_t dlength, double *e
    }
    i = 0;
 
-   while ( ( ( i + offset ) < dlength ) && ( ( tbuff[ i + offset ] ).isNumber() )
+   while ( ( ( i + offset ) < dlength ) && ( tbuff[ i + offset ].isNumber() )
            && ( i < 10 ) )
    {
       coordele[ i ] = tbuff[ i + offset ].toLatin1() - '0';
@@ -295,7 +295,7 @@ static int getgridcoord( char *gridref, size_t offset, size_t dlength, double *e
    if ( i % 2 == 1 )
       return ( INVALIDGREF );
 
-   size_t j;
+   int j;
    for ( j = 0; j < ( i / 2 ); j++ )
       x = x * 10.0 + coordele[ j ];
 
@@ -478,8 +478,8 @@ static int ngrinput( Location *ingrid )
    double ge = 0.0, gn = 0.0;
 
    char *gridref = ingrid->datastring;
-   size_t offset = ingrid->dataoffset;
-   size_t dlength = ingrid->datalength;
+   int offset = ingrid->dataoffset;
+   int dlength = ingrid->datalength;
 
    ingrid->centremeridian = degrad( -2 );
 
@@ -666,16 +666,16 @@ static int geoinput( Location *ingrid )
    int esign = 1;
    int deg, min;
    float secs;
-   size_t i, j;
+   int i, j;
 
    //		fprintf(outfile, "\nLatitude (int int f): ");
    //		getline();
 
    strupr( ingrid->datastring );
 
-   i = strcspn( ingrid->datastring, "NSEW" );
+   i = static_cast<int>(strcspn( ingrid->datastring, "NSEW" ));
    if ( i < ingrid->datalength )
-      j = strcspn( &ingrid->datastring[ i + 1 ], "NSEW" );
+      j = static_cast<int>(strcspn( &ingrid->datastring[ i + 1 ], "NSEW" ));
    else
       j = 0;
 

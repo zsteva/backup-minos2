@@ -19,7 +19,7 @@ struct Location
 {
    enum gridstyle gridstyle;
    char *datastring;
-   size_t dataoffset, datalength;
+   int dataoffset, datalength;
    double northing, easting, centremeridian;
 };
 
