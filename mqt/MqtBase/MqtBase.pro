@@ -71,7 +71,6 @@ HEADERS += \
     mwin.h \
     ProfileEnums.h \
     ScreenContact.h \
-    sorted_vector.h \
     validators.h \
     MMessageDialog.h \
     MShowMessageDlg.h \

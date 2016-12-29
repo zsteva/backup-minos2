@@ -8,10 +8,6 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
-#ifndef _STDEXCEPT_
-// #include <stdexcept>
-#endif
-
 #include "keyctrl.h"
 #include "keyers.h"
 #include "portcon.h"

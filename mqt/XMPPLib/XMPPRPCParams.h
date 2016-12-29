@@ -12,7 +12,6 @@
 #ifndef XMPPRPCParamsH
 #define XMPPRPCParamsH
 
-//#include <QMetaType>
 //---------------------------------------------------------------------------
 // RPC parameter structures
 

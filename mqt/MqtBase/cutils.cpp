@@ -8,16 +8,6 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
-bool checkFileOK( std::ifstream &istr, const QString &fname, const QString &fmess )
-{
-   if ( !istr )
-   {
-      QString ebuff = QString( "Failed to open %1 (%2)" ).arg(fmess).arg(fname ).arg(strerror( errno));
-      MinosParameters::getMinosParameters() ->mshowMessage( ebuff );
-      return false;
-   }
-   return true;
-}
 char diskBuffer[ bsize + 1 ];
 //char *lbuff = &diskBuffer[ 0 ];
 size_t buffpt = 0;

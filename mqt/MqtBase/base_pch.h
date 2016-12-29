@@ -10,8 +10,6 @@
 #define BASE_PCH_H
 #include "XMPP_pch.h"
 
-#include "fileutils.h"
-
 #include <QApplication>
 #include <QMainWindow>
 
@@ -26,7 +24,6 @@
 #include <QPainter>
 #include <QStyle>
 
-
 template <class itemtype>
 class MapWrapper
 {
@@ -38,8 +35,6 @@ public:
     {
         wt = m.wt;
     }
-
-
 };
 template <class itemtype >inline bool operator < (const MapWrapper<itemtype> &key1, const MapWrapper<itemtype> &key2)
 {
@@ -56,18 +51,13 @@ template <class itemtype >inline bool operator == (const MapWrapper<itemtype> &k
 #include <math.h>
 #include <time.h>
 
-#include "sorted_vector.h"
-
+#include "fileutils.h"
 #include "MinosLoggerEvents.h"
-
 #include "validators.h"
-
 #include "MinosParameters.h"
 #include "ProfileEnums.h"
-
 #include "mwin.h"
 #include "cutils.h"
-
 #include "latlong.h"
 #include "calcs.h"
 

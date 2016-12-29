@@ -16,8 +16,6 @@
 extern const double pi /* = (double )3.141592653 */;  /* pi */
 extern const double dr /* = pi/180.0*/;      			  // degree to radian conversion factor
 
-extern bool checkFileOK( std::ifstream &istr, const QString &fname, const QString &fmess );
-
 extern void clearBuffer( void );
 extern void strtobuf( const QString &str );
 extern void strtobuf( const MinosItem<QString> &str );

@@ -13,9 +13,6 @@
 #include "tinyxml.h"
 #include "portconf.h"
 #include "controlport.h"
-#ifndef _STDEXCEPT_
-// #include <stdexcept>
-#endif
 
 #include "CommonMonitor.h"
 #include "MinosLines.h"

@@ -9,8 +9,6 @@
 #ifndef keyctrlH
 #define keyctrlH
 
-//#include <dir.h>
-
 typedef void ( *LineCallBack ) ( bool PTT, bool keyline, bool pPTTRef, bool pL1Ref, bool pL2Ref );
 typedef void ( *VUCallBack ) ( unsigned int vol );
 

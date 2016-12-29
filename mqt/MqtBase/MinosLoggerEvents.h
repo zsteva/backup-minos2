@@ -9,7 +9,7 @@
 #ifndef MinosLoggerEventsH
 #define MinosLoggerEventsH
 
-#include <XMPP_pch.h>
+#include "XMPP_pch.h"
 //---------------------------------------------------------------------------
 class BaseContestLog;
 class BaseContact;

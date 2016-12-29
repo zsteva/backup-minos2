@@ -14,9 +14,6 @@
 #include "portconf.h"
 #include "CommonMonitor.h"
 #include "controlport.h"
-#ifndef _STDEXCEPT_
-// #include <stdexcept>
-#endif
 
 #include "WindowMonitor.h"
 #include "K8055Container.h"

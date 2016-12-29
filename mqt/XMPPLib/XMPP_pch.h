@@ -12,7 +12,7 @@
 #ifndef XMPP_pchH
 #define XMPP_pchH
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <QDateTime>
 #include <QDir>
@@ -30,13 +30,9 @@
 #include <QSettings>
 #include <QSharedPointer>
 
-#include <memory>
 #include <exception>
 #include <string>
-#include <vector>
-#include <set>
 #include <algorithm>
-#include <sstream>
 #include <fstream>
 
 #include <stdio.h>
