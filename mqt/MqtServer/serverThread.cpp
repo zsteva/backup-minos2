@@ -23,6 +23,10 @@ bool MinosServerConnection::initialise(bool conn)
     connectHost = h.toString();
     connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_readyRead()));
     connect(sock.data(), SIGNAL(disconnected()), this, SLOT(on_disconnected()));
+
+    connect(&resubscribeTimer, SIGNAL(timeout()), this, SLOT(sendKeepAlive()));
+    resubscribeTimer.start(1000);
+
    return conn;   // already initialised
 }
 
@@ -147,14 +151,6 @@ void MinosServerConnection::sendKeepAlive( )
          resubscribed = true;
          return ;
       }
-   }
-   QDateTime tickCount = QDateTime::currentDateTimeUtc();
-   if ( srv && lastEventTick.msecsTo(tickCount) > 15000 )  // tickCount is milliseconds
-   {
-      lastEventTick = tickCount;
-      //      RPCRequest *rpa = new RPCRequest( /*to*/srv->station, /*from*/ MinosServer::getMinosServer() ->getServerName(), "KeepAlive" );  // for local server
-      // we need to set our "from" here
-      //      sendAction( rpa );
    }
 }
 //==============================================================================

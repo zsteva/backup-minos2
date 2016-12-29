@@ -12,6 +12,7 @@
 #define serverThreadH
 
 #include <QDateTime>
+#include <QTimer>
 #include "MinosLink.h"
 
 class Server;
@@ -21,8 +22,9 @@ class MinosServerConnection: public MinosCommonConnection
     Q_OBJECT
    private:
       Server *srv;
-      QDateTime lastEventTick;
       bool resubscribed;
+
+      QTimer resubscribeTimer;
    protected:
    public:
       MinosServerConnection();
@@ -41,10 +43,10 @@ class MinosServerConnection: public MinosCommonConnection
       {
          return "MinosServerConnection " + makeJid();
       }
-      virtual void sendKeepAlive( );
       void closeDown() override;
 private slots:
       void on_connected();
+      virtual void sendKeepAlive( );
 };
 //==============================================================================
 #endif
