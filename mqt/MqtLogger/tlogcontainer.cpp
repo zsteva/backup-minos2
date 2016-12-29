@@ -649,7 +649,65 @@ void TLogContainer::LocCalcActionExecute()
 
 void TLogContainer::AnalyseMinosLogActionExecute()
 {
+/*
 
+   OpenDialog1->InitialDir = getDefaultDirectory( false );
+   OpenDialog1->DefaultExt = "Minos";
+   OpenDialog1->Filter = "Minos contest files (*.minos)|*.MINOS|All Files (*.*)|*.*" ;
+   BaseContestLog * contest = TContestApp::getContestApp() ->getCurrentContest();
+   if ( contest )
+   {
+      OpenDialog1->FileName = contest->cfileName.c_str();
+   }
+   if ( OpenDialog1->Execute() )
+   {
+      HANDLE contestFile = CreateFile( OpenDialog1->FileName.c_str(),
+                                       GENERIC_READ,
+                                       FILE_SHARE_READ | FILE_SHARE_WRITE,
+                                       0,                  // security
+                                       OPEN_EXISTING,
+                                       0,
+                                       0 );               // template handle
+      if ( contestFile == INVALID_HANDLE_VALUE )
+      {
+         std::string lerr = lastError();
+         std::string emess = std::string( "Failed to open ContestLog file " ) + OpenDialog1->FileName.c_str() + " : " + lerr;
+         MinosParameters::getMinosParameters() ->mshowMessage( emess.c_str() );
+         return ;
+      }
+*/
+
+    QString InitialDir = getDefaultDirectory( false );
+
+    QFileInfo qf(InitialDir);
+
+    InitialDir = qf.canonicalFilePath();
+
+    QString Filter = "Minos contest files (*.minos *.Minos);;"
+                     "All Files (*.*)" ;
+
+    QString fname = QFileDialog::getOpenFileName( this,
+                       "Open contest for Analysis",
+                       InitialDir,  // dir
+                       Filter
+                       );
+
+    QIODevice::OpenMode om = QIODevice::ReadOnly;
+
+    QSharedPointer<QFile> contestFile(new QFile(fname));
+
+    if (!contestFile->open(om))
+    {
+       QString lerr = contestFile->errorString();
+       QString emess = "Failed to open Contest Log file " + fname + " : " + lerr;
+       MinosParameters::getMinosParameters() ->mshowMessage( emess );
+       return;
+    }
+
+    MinosTestImport mt;
+    mt.analyseTest( contestFile );
+
+    MinosParameters::getMinosParameters() ->mshowMessage( "Analysis of " + fname + " complete; look in the trace log for analysis." );
 }
 
 void TLogContainer::CorrectDateTimeActionExecute()
