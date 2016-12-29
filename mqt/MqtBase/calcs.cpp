@@ -27,8 +27,7 @@ char lonlat( const QString &inqra, double &lon, double &lat )
    double ft[ 8 ] = {0.0, 0.0, 5.0, 5.0, 11.0, 11.0, 5.0, 5.0} ; /* work values for locator positions */
    double *fp1 ;
 
-   //std::string inqra = pinqra.toStdString();    // allowed conversion through std::string
-   int l ;                       /* length of qra string NOT size_t */
+   int l ;
 
    for ( l = inqra.length() - 1; l >= 0; l-- )
    {
