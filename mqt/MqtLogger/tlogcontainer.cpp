@@ -207,44 +207,61 @@ void TLogContainer::setupMenus()
 
     FileNewAction = newAction("&New Contest...", ui->menuFile, SLOT(FileNewActionExecute()));
     FileCloseAction = newAction("Close Contest", ui->menuFile, SLOT(FileCloseActionExecute()));
+    CloseAllAction = newAction("Close all Contests", ui->menuFile, SLOT(CloseAllActionExecute()));
+    CloseAllButAction = newAction("Close all but this Contest", ui->menuFile, SLOT(CloseAllButActionExecute()));
     ui->menuFile->addSeparator();
+
     ContestDetailsAction = newAction("Contest Details...", ui->menuFile, SLOT(ContestDetailsActionExecute()));
     MakeEntryAction = newAction("Produce Entry/Export File...", ui->menuFile, SLOT(MakeEntryActionExecute()));
     ui->menuFile->addSeparator();
+
     ListOpenAction = newAction("Open &Archive List...", ui->menuFile, SLOT(ListOpenActionExecute()));
     ManageListsAction = newAction("&Manage Archive Lists...", ui->menuFile, SLOT(ManageListsActionExecute()));
     ui->menuFile->addSeparator();
+
     OptionsAction = newAction("Options...", ui->menuFile, SLOT(OptionsActionExecute()));
     ExitAction = newAction("E&xit MinosQt", ui->menuFile, SLOT(ExitActionExecute()));
+// end of file menu
 
     GoToSerialAction = newAction("&Go To Contact Serial...", ui->menuSearch, SLOT(GoToSerialActionExecute()));
     NextUnfilledAction = newAction("Goto First Unfilled Contact", ui->menuSearch, SLOT(NextUnfilledActionExecute()));
+// end of search menu
 
     LocCalcAction = newAction("Locator Calculator", ui->menuTools, SLOT(LocCalcActionExecute()));
     AnalyseMinosLogAction = newAction("Analyse Minos Log", ui->menuTools, SLOT(AnalyseMinosLogActionExecute()));
     ui->menuFile->addSeparator();
+
     FontEditAcceptAction = newAction("Select &Font...", ui->menuTools, SLOT(FontEditAcceptActionExecute()));
     ReportAutofillAction = newCheckableAction("Signal Report AutoFill", ui->menuTools, SLOT(ReportAutofillActionExecute()));
 
+    // end of tools manu
 
+    TabPopup.addAction(FileOpenAction);
+    TabPopup.addMenu(recentFilesMenu);
+    TabPopup.addAction(FileNewAction);
     TabPopup.addAction(FileCloseAction);
-    CloseAllAction = newAction("Close all Contests", &TabPopup, SLOT(CloseAllActionExecute()));
-    CloseAllButAction = newAction("Close all but this Contest", &TabPopup, SLOT(CloseAllButActionExecute()));
+    TabPopup.addAction(CloseAllAction);
+    TabPopup.addAction(CloseAllButAction);
     TabPopup.addSeparator();
+
     TabPopup.addAction(ContestDetailsAction);
     TabPopup.addAction(MakeEntryAction);
     TabPopup.addSeparator();
+
     TabPopup.addAction(GoToSerialAction);
     TabPopup.addAction(NextUnfilledAction);
     TabPopup.addSeparator();
+
     NextContactDetailsOnLeftAction = newCheckableAction("&Next Contact Details On Left", &TabPopup, SLOT(NextContactDetailsOnLeftActionExecute()));
     ScrollingContestTabsAction = newCheckableAction("Scrolling contest tabs", &TabPopup, SLOT(ScrollingContestTabsActionExecute()));
     ShowOperatorsAction = newCheckableAction("Show Operators", &TabPopup, SLOT(ShowOperatorsActionExecute()));
     TabPopup.addSeparator();
+
     ShiftTabLeftAction = newAction("Shift Active Tab Left", &TabPopup, SLOT(ShiftTabLeftActionExecute()));
     ShiftTabRightAction = newAction("Shift Active Tab Right", &TabPopup, SLOT(ShiftTabRightActionExecute()));
     CorrectDateTimeAction = newAction("Correct Date/Time", &TabPopup, SLOT(CorrectDateTimeActionExecute()));
     TabPopup.addSeparator();
+
     TabPopup.addAction(AnalyseMinosLogAction);
     newAction( "Cancel", &TabPopup, SLOT( CancelClick() ) );
 
