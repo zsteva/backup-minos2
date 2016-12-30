@@ -40,6 +40,8 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
     enableTrace( "./TraceLog", "MinosKeyer_" );
 
+    createCloseEvent();
+
     QList<QAudioDeviceInfo> audioInputDevices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
 
     foreach(const QAudioDeviceInfo indev, audioInputDevices)
@@ -82,7 +84,18 @@ const char *msets[] = {"emsUnloaded", "emsPassThroughNoPTT", "emsPassThroughPTT"
                 };
 void KeyerMain::LineTimerTimer( )
 {
-   syncSetLines();
+    static bool closed = false;
+    if ( !closed )
+    {
+       if ( checkCloseEvent() )
+       {
+          closed = true;
+          close();
+          return;
+       }
+    }
+
+    syncSetLines();
    bool PTT = getPTT();
    if ( recordWait && PTT )
    {
@@ -123,6 +136,7 @@ void KeyerMain::LineTimerTimer( )
 void KeyerMain::CaptionTimerTimer( )
 {
    CaptionTimer.stop();
+
    KeyerServer::publishState( windowTitle() );
 }
 void KeyerMain::on_recordButton_clicked()
