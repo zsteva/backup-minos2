@@ -43,10 +43,20 @@ public:
     void setCaption( QString );
     void setMode( QString );
     void setFreq( QString );
+
     void setRotatorState( QString );
+
     void setBandMapLoaded();
     bool isBandMapLoaded();
     bool bandMapLoaded;
+
+    void setKeyerLoaded();
+    bool isKeyerLoaded();
+    bool keyerLoaded;
+
+    void setRotatorLoaded();
+    bool isRotatorLoaded();
+    bool rotatorLoaded;
 
 private:
     Ui::TLogContainer *ui;

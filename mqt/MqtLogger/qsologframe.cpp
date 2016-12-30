@@ -979,6 +979,7 @@ void QSOLogFrame::setScoreText( int dist, bool partial, bool xband )
       b += ")";
    if ( xband )
       b += "X";
+   b += "  ";
    ui->DistSt->setText(b);
 }
 //---------------------------------------------------------------------------
@@ -1775,6 +1776,13 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
             ui->TimeEdit->setStyleSheet(ss);
         }
     }
+    ui->bandMapFrame->setVisible( LogContainer->isBandMapLoaded());
+
+    ui->Rotate->setVisible(LogContainer->isRotatorLoaded());
+    ui->RotateLeft->setVisible(LogContainer->isRotatorLoaded());
+    ui->RotateRight->setVisible(LogContainer->isRotatorLoaded());
+    ui->StopRotate->setVisible(LogContainer->isRotatorLoaded());
+    ui->rotatorState->setVisible(LogContainer->isRotatorLoaded());
 }
 
 void QSOLogFrame::transferDetails(const QSharedPointer<BaseContact> lct, const BaseContestLog *matct )

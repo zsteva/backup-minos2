@@ -19,6 +19,7 @@ TLogContainer *LogContainer = 0;
 
 TLogContainer::TLogContainer(QWidget *parent) :
     QMainWindow(parent),
+    rotatorLoaded(false), keyerLoaded(false), bandMapLoaded(false),
     ui(new Ui::TLogContainer)
 {
     ui->setupUi(this);
@@ -126,6 +127,8 @@ void TLogContainer::on_TimeDisplayTimer( )
          ct->setScore( statbuf );
       }
       sblabel0->setText( statbuf );
+
+      ui->menuKeyer->menuAction()->setVisible(isKeyerLoaded());
    }
 
 }
@@ -1144,11 +1147,29 @@ void TLogContainer::setBandMapLoaded()
 {
    bandMapLoaded = true;
 }
-//---------------------------------------------------------------------------
 bool TLogContainer::isBandMapLoaded()
 {
    return bandMapLoaded;
 }
+//---------------------------------------------------------------------------
+void TLogContainer::setRotatorLoaded()
+{
+   rotatorLoaded = true;
+}
+bool TLogContainer::isRotatorLoaded()
+{
+   return rotatorLoaded;
+}
+//---------------------------------------------------------------------------
+void TLogContainer::setKeyerLoaded()
+{
+   keyerLoaded = true;
+}
+bool TLogContainer::isKeyerLoaded()
+{
+   return keyerLoaded;
+}
+//---------------------------------------------------------------------------
 void TLogContainer::setCaption(QString captionToSet)
 {
    if ( windowTitle().length() )

@@ -202,6 +202,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
    {
       if ( an.getCategory() == rpcConstants::KeyerCategory && an.getKey() == "Report" )
       {
+         LogContainer->setKeyerLoaded();
          LogContainer->setCaption( an.getValue() );
          logMessage( "KeyerReport " + an.getValue() );
       }
@@ -220,6 +221,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
       }
       if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "State")
       {
+         LogContainer->setRotatorLoaded();
          LogContainer->setRotatorState(an.getValue());
       }
    }
