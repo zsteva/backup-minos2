@@ -250,7 +250,7 @@ void BaseContestLog::disbear( double lon, double lat, double &dist, int &brg ) c
    brg = static_cast< int > (az) ;                   /* and give it back as integer */
 }
 //---------------------------------------------------------------------------
-bool BaseContestLog::getsdist( const char *loc, char *minloc, double &mindist )
+bool BaseContestLog::getsdist( const QString &loc, QString &minloc, double &mindist )
 {
    int brg;
    double dist = 0.0;
@@ -264,7 +264,7 @@ bool BaseContestLog::getsdist( const char *loc, char *minloc, double &mindist )
       if ( dist < mindist )
       {
          mindist = dist;
-         strcpy( minloc, loc );
+         minloc = loc;
       }
       return true;
    }
@@ -273,27 +273,22 @@ bool BaseContestLog::getsdist( const char *loc, char *minloc, double &mindist )
 //---------------------------------------------------------------------------
 int BaseContestLog::CalcNearest( const QString &qscalcloc )
 {
-    std::string scalcloc = qscalcloc.toStdString(); // allowed conversion through std::string
-   const char * calcloc = scalcloc.c_str();
-
-   if ( scalcloc.size() != 4 )
+   if ( qscalcloc.length() != 4 )
       return 0;	// only valid 4 fig locs
 
    // calculate the nearest point of loc2 from loc1
 
    double mindist = 1000000.0;
 
-   char minloc[ LOCLENGTH + 1 ] = {0};
-   char temploc[ LOCLENGTH + 1 ];
-
-   strncpy( temploc, calcloc, LOCLENGTH );
-   temploc[ LOCLENGTH] = 0;
+   QString minloc;
+   QString temploc;
 
    for ( char i = 'A'; i <= 'X'; i++ )
    {
-      temploc[ 4 ] = 'A';
-      temploc[ 5 ] = i;
-      temploc[ 6 ] = 0;
+       temploc = qscalcloc;
+      temploc += 'A';
+      temploc += i;
+
       if ( !getsdist( temploc, minloc, mindist ) )
       {
          return -1;

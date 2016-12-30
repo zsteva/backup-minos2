@@ -124,7 +124,7 @@ void LineSet::writeSet()
    memset( linebuff, 0, MAX_LINE_SIZE );
    std::string scxml = cxml.toStdString();      // allowed conversion through std::string
    memcpy( linebuff, scxml.c_str(), scxml.size() ); //include zero termination
-   linebuff[ cxml.size() ] = 0;
+   linebuff[ scxml.size() ] = 0;
    memcpy( FileMap->GetMap(), linebuff, MAX_LINE_SIZE ); //include zero termination
    Log( QString( "writeSet (publish)  " ) + FileMap->GetMap() );
 }

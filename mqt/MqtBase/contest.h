@@ -308,7 +308,7 @@ class BaseContestLog: public BaseLogList
 
       void disbear( double lon, double lat, double &dist, int &brg ) const;
       int CalcNearest( const QString &scalcloc );
-      bool getsdist( const char *loc, char *minloc, double &mindist );
+      bool getsdist(const QString &loc, QString &minloc, double &mindist );
       QSharedPointer<BaseContact> getBestDX( void );
       QString dateRange( DTG dstyle );
       bool checkTime(const dtg &t) const;

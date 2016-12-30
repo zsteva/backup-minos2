@@ -79,9 +79,6 @@ bool wildComp( const QString &ss, const QString &ee )
 
 TMatchThread::TMatchThread()
       : QThread(   ), myThisMatches( 0 ), myOtherMatches( 0 ),myListMatches( 0 ), mct(0), Terminated(false)
-//      ,EL_CountrySelect ( EN_CountrySelect, & CountrySelect_Event )
-//      ,EL_DistrictSelect ( EN_DistrictSelect, & DistrictSelect_Event )
-//      ,EL_LocatorSelect ( EN_LocatorSelect, & LocatorSelect_Event )
 {
    thisLogMatch = new ThisLogMatcher();
    otherLogMatch = new OtherLogMatcher();
@@ -560,33 +557,32 @@ bool ThisLogMatcher::idleMatch( int limit )
                          if ( matchcs.match )
                          {
                             bool dropthrough = false;
-                            std::string smstr = matchcs.mstr.toStdString();// allowed conversion through std::string
-                            const char *c = smstr.c_str();
+                            QString smstr = matchcs.mstr;
+                            int c = 0;
                             // need to trim out any leading and trailing
-                            while ( *c && *c != '/' )
+                            while ( c < smstr.length() && smstr[c] != '/' )
                                c++;
 
-                            const char *c2 = c;
-                            if ( *c2 )
+                            int c2 = c;
+                            if ( c2 < smstr.length() )
                                c2++;	// skip the first /
-                            while ( *c2 && *c2 != '/' )
+                            while ( c2 < smstr.length() && smstr[c2] != '/' )
                                c2++;
 
-                            if ( *c && *c2 )
+                            if ( c < smstr.length() && c2 < smstr.length() )
                             {
-                               matchcs.mstr = QString( c ).left(c2 - c );	// copy back over ourselves
+                               matchcs.mstr = smstr.mid(c, c2 - c );	// copy back over ourselves
                             }
                             else
-                               if ( *c && ( c - smstr.c_str() < 3 ) && ( strlen( c ) > 2 ) )
+                               if ( c < smstr.length() && ( c < 3 ) && smstr.length() - c > 2  )
                                {
                                   // prefix less than 3 chars and suffix more than 1 character
-                                  matchcs.mstr = QString( c );	// copy back over ourselves
+                                  matchcs.mstr = smstr.mid( c );	// copy back over ourselves
                                }
                                else
-                                  if ( *c == '/' )
+                                  if ( smstr[c] == '/' )
                                   {
-                                     matchcs.mstr = matchcs.mstr.left( c - smstr.c_str() );	// copy back over ourselves
-                                     //                                 *c = 0;				// force a stop on the /
+                                     matchcs.mstr = matchcs.mstr.left( c );	// copy back over ourselves
                                   }
                                   else
                                   {
@@ -631,23 +627,22 @@ bool ThisLogMatcher::idleMatch( int limit )
                          {
                             // We know that cs is not empty
                             // strip temp cs of its leading country and number
-                             std::string smstrStart = matchcs.mstr.toStdString();// allowed conversion through std::string
-                            const char * mstrStart = smstrStart.c_str();
-                            const char * c = &mstrStart[ smstrStart.length() ];
+                            QString smstrStart = matchcs.mstr;
+                            int c = smstrStart.length();
 
-                            while ( c > mstrStart )
+                            while ( c > 0 )
                             {
-                               if ( !isdigit( *( c - 1 ) ) )
+                               if ( !smstrStart[c - 1].isDigit())
                                   c--;
                                else
                                   break;
                             }
 
-                            if ( c > mstrStart )   	// i.e. we havent got back to the start
+                            if ( c > 0 )   	// i.e. we havent got back to the start
                             {
-                               if ( *c )   			// we would be left with something
+                               if ( c < smstrStart.length() )   			// we would be left with something
                                {
-                                  matchcs.mstr = c;	// copy back over
+                                  matchcs.mstr = smstrStart.mid(c);	// copy back over
                                   mp = Body;
                                   contestIndex = 0;
                                   contactIndex = 0;
@@ -902,56 +897,55 @@ bool OtherLogMatcher::idleMatch( int limit )
                {
                   case Exact:
                      {
-                        if ( matchcs.match )
-                        {
-                           bool dropthrough = false;
-                           std::string smstr = matchcs.mstr.toStdString();// allowed conversion through std::string
-                           const char *c = smstr.c_str();
-                           // need to trim out any leading and trailing
-                           while ( *c && *c != '/' )
-                              c++;
+                   if ( matchcs.match )
+                   {
+                      bool dropthrough = false;
+                      QString smstr = matchcs.mstr;
+                      int c = 0;
+                      // need to trim out any leading and trailing
+                      while ( c < smstr.length() && smstr[c] != '/' )
+                         c++;
 
-                           const char *c2 = c;
-                           if ( *c2 )
-                              c2++;	// skip the first /
-                           while ( *c2 && *c2 != '/' )
-                              c2++;
+                      int c2 = c;
+                      if ( c2 < smstr.length() )
+                         c2++;	// skip the first /
+                      while ( c2 < smstr.length() && smstr[c2] != '/' )
+                         c2++;
 
-                           if ( *c && *c2 )
-                           {
-                              matchcs.mstr = QString( c ).left(c2 - c );	// copy back over ourselves
-                           }
-                           else
-                              if ( *c && ( c - smstr.c_str() < 3 ) && ( strlen( c ) > 2 ) )
-                              {
-                                 // prefix less than 3 chars and suffix more than 1 character
-                                 matchcs.mstr = QString( c );	// copy back over ourselves
-                              }
-                              else
-                                 if ( *c == '/' )
-                                 {
-                                    matchcs.mstr = matchcs.mstr.left( c - smstr.c_str() );	// copy back over ourselves
-                                    //                                 *c = 0;				// force a stop on the /
-                                 }
-                                 else
-                                 {
-                                    // want to drop through
-                                    dropthrough = true;
-                                 }
+                      if ( c < smstr.length() && c2 < smstr.length() )
+                      {
+                         matchcs.mstr = smstr.mid(c, c2 - c );	// copy back over ourselves
+                      }
+                      else
+                         if ( c < smstr.length() && ( c < 3 ) && smstr.length() - c > 2  )
+                         {
+                            // prefix less than 3 chars and suffix more than 1 character
+                            matchcs.mstr = smstr.mid( c );	// copy back over ourselves
+                         }
+                         else
+                            if ( smstr[c] == '/' )
+                            {
+                               matchcs.mstr = matchcs.mstr.left( c );	// copy back over ourselves
+                            }
+                            else
+                            {
+                               // want to drop through
+                               dropthrough = true;
+                            }
 
-                           if ( !dropthrough )
-                           {
-                              TMatchThread::getMatchThread() ->ShowOtherMatchStatus( " - No exact match" );
-                              mp = NoSuffix;
-                              contestIndex = 0;
-                              contactIndex = 0;
-                              firstMatch = Rest;
-                              EndScan = false;
-                              break;
-                           }
-                        }
-                     }
-                     // or no /P anyway, so drop through
+                      if ( !dropthrough )
+                      {
+                         TMatchThread::getMatchThread() ->ShowThisMatchStatus( " - No exact match" );
+                         mp = NoSuffix;
+                         contestIndex = 0;
+                         contactIndex = 0;
+                         firstMatch = MainContest;
+                         EndScan = false;
+                         break;
+                      }
+                   }
+                }
+                // or no /P anyway, so drop through
 
                   case NoSuffix:
                      {
@@ -974,34 +968,33 @@ bool OtherLogMatcher::idleMatch( int limit )
                      {
                         if ( matchcs.match )
                         {
-                           // We know that cs is not empty
-                           // strip temp cs of its leading country and number
-                            std::string smstrStart = matchcs.mstr.toStdString();// allowed conversion through std::string
-                           const char * mstrStart = smstrStart.c_str();
-                           const char * c = &mstrStart[ smstrStart.length() ];
+                            // We know that cs is not empty
+                            // strip temp cs of its leading country and number
+                            QString smstrStart = matchcs.mstr;
+                            int c = smstrStart.length();
 
-                           while ( c > mstrStart )
-                           {
-                              if ( !isdigit( *( c - 1 ) ) )
-                                 c--;
-                              else
-                                 break;
-                           }
+                            while ( c > 0 )
+                            {
+                               if ( !smstrStart[c - 1].isDigit())
+                                  c--;
+                               else
+                                  break;
+                            }
 
-                           if ( c > mstrStart )   	// i.e. we havent got back to the start
-                           {
-                              if ( *c )   			// we would be left with something
-                              {
-                                 matchcs.mstr = c;	// copy back over
-                                 mp = Body;
-                                 contestIndex = 0;
-                                 contactIndex = 0;
-                                 firstMatch = Rest;
-                                 EndScan = false;
-                                 TMatchThread::getMatchThread() ->ShowOtherMatchStatus( " - No match No LOC" );
-                                 break;
-                              }
-                           }
+                            if ( c > 0 )   	// i.e. we havent got back to the start
+                            {
+                               if ( c < smstrStart.length() )   			// we would be left with something
+                               {
+                                  matchcs.mstr = smstrStart.mid(c);	// copy back over
+                                  mp = Body;
+                                  contestIndex = 0;
+                                  contactIndex = 0;
+                                  firstMatch = MainContest;
+                                  EndScan = false;
+                                  TMatchThread::getMatchThread() ->ShowThisMatchStatus( " - No match No LOC" );
+                                  break;
+                               }
+                            }
                         }
                      }
                      // else we have already done what we can, so drop through
@@ -1233,56 +1226,55 @@ bool ListMatcher::idleMatch( int limit )
                {
                   case Exact:
                      {
-                        if ( matchcs.match )
-                        {
-                           bool dropthrough = false;
-                           std::string smatchcs = matchcs.mstr.toStdString();// allowed conversion through std::string
-                           const char *c = smatchcs.c_str();
-                           // need to trim out any leading and trailing
-                           while ( *c && *c != '/' )
-                              c++;
+                   if ( matchcs.match )
+                   {
+                      bool dropthrough = false;
+                      QString smstr = matchcs.mstr;
+                      int c = 0;
+                      // need to trim out any leading and trailing
+                      while ( c < smstr.length() && smstr[c] != '/' )
+                         c++;
 
-                           const char *c2 = c;
-                           if ( *c2 )
-                              c2++;	// skip the first /
-                           while ( *c2 && *c2 != '/' )
-                              c2++;
+                      int c2 = c;
+                      if ( c2 < smstr.length() )
+                         c2++;	// skip the first /
+                      while ( c2 < smstr.length() && smstr[c2] != '/' )
+                         c2++;
 
-                           if ( *c && *c2 )
-                           {
-                              matchcs.mstr = QString( c ).left( c2 - c );	// copy back over ourselves
-                           }
-                           else
-                              if ( *c && ( c - smatchcs.c_str() < 3 ) && ( strlen( c ) > 2 ) )
-                              {
-                                 // prefix less than 3 chars and suffix more than 1 character
-                                 matchcs.mstr = QString( c );	// copy back over ourselves
-                              }
-                              else
-                                 if ( *c == '/' )
-                                 {
-                                    matchcs.mstr = matchcs.mstr.left( c - smatchcs.c_str() );	// copy back over ourselves
-                                    //                                 *c = 0;				// force a stop on the /
-                                 }
-                                 else
-                                 {
-                                    // want to drop through
-                                    dropthrough = true;
-                                 }
+                      if ( c < smstr.length() && c2 < smstr.length() )
+                      {
+                         matchcs.mstr = smstr.mid(c, c2 - c );	// copy back over ourselves
+                      }
+                      else
+                         if ( c < smstr.length() && ( c < 3 ) && smstr.length() - c > 2  )
+                         {
+                            // prefix less than 3 chars and suffix more than 1 character
+                            matchcs.mstr = smstr.mid( c );	// copy back over ourselves
+                         }
+                         else
+                            if ( smstr[c] == '/' )
+                            {
+                               matchcs.mstr = matchcs.mstr.left( c );	// copy back over ourselves
+                            }
+                            else
+                            {
+                               // want to drop through
+                               dropthrough = true;
+                            }
 
-                           if ( !dropthrough )
-                           {
-                              //TMatchThread::getMatchThread()->ShowMatchStatus( " - No exact match" );
-                              mp = NoSuffix;
-                              contestIndex = 0;
-                              contactIndex = 0;
-                              firstMatch = MainContest;
-                              EndScan = false;
-                              break;
-                           }
-                        }
-                     }
-                     // or no /P anyway, so drop through
+                      if ( !dropthrough )
+                      {
+                         TMatchThread::getMatchThread() ->ShowThisMatchStatus( " - No exact match" );
+                         mp = NoSuffix;
+                         contestIndex = 0;
+                         contactIndex = 0;
+                         firstMatch = MainContest;
+                         EndScan = false;
+                         break;
+                      }
+                   }
+                }
+                // or no /P anyway, so drop through
 
                   case NoSuffix:
                      {
@@ -1305,35 +1297,33 @@ bool ListMatcher::idleMatch( int limit )
                      {
                         if ( matchcs.match )
                         {
-                           // We know that cs is not empty
-                           // strip temp cs of its leading country and number
-                            std::string smstrStart = matchcs.mstr.toStdString();// allowed conversion through std::string
-                           const char * mstrStart = smstrStart.c_str();
-                           const char * c = &smstrStart[ smstrStart.length() ];
+                            // We know that cs is not empty
+                            // strip temp cs of its leading country and number
+                            QString smstrStart = matchcs.mstr;
+                            int c = smstrStart.length();
 
-                           while ( c > mstrStart )
-                           {
-                              if ( !isdigit( *( c - 1 ) ) )
-                                 c--;
-                              else
-                                 break;
-                           }
+                            while ( c > 0 )
+                            {
+                               if ( !smstrStart[c - 1].isDigit())
+                                  c--;
+                               else
+                                  break;
+                            }
 
-                           if ( c > mstrStart )   	// i.e. we havent got back to the start
-                           {
-                              if ( *c )   			// we would be left with something
-                              {
-                                 matchcs.mstr = c;	// copy back over
-                                 mp = Body;
-                                 contestIndex = 0;
-                                 contactIndex = 0;
-                                 firstMatch = MainContest;
-                                 EndScan = false;
-                                 //TMatchThread::getMatchThread()->ShowMatchStatus( " - No match No LOC" );
-                                 break;
-                              }
-                           }
-                        }
+                            if ( c > 0 )   	// i.e. we havent got back to the start
+                            {
+                               if ( c < smstrStart.length() )   			// we would be left with something
+                               {
+                                  matchcs.mstr = smstrStart.mid(c);	// copy back over
+                                  mp = Body;
+                                  contestIndex = 0;
+                                  contactIndex = 0;
+                                  firstMatch = MainContest;
+                                  EndScan = false;
+                                  TMatchThread::getMatchThread() ->ShowThisMatchStatus( " - No match No LOC" );
+                                  break;
+                               }
+                            }                        }
                      }
                      // else we have already done what we can, so drop through
 
@@ -1404,7 +1394,7 @@ bool ListMatcher::idleMatch( int limit )
             return true;
 
          // now do the match
-// And why aren't we doing a QTH match mere?
+// And why aren't we doing a QTH match here?
          bool csmatch = false;
          bool locmatch = false;
 

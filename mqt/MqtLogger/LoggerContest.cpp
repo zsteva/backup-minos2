@@ -1217,41 +1217,41 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
 
       stemp += QString( 200, ' ' );   // make sure there is plenty more...
 
-      std::string sstemp = stemp.toStdString(); // allowed conversion through std::string
-      const char *lbuff = sstemp.c_str();
+      QString &lbuff = stemp;
+
       // parse contact line in
 
       QString temp;
-      strcpysp( temp, &lbuff[ 0 ], 6 );
+      strcpysp( temp, lbuff, 6 );
       bct->time.setDate( temp, DTGLOG );
-      strcpysp( temp, &lbuff[ 7 ], 4 );
+      strcpysp( temp, lbuff.mid(7), 4 );
       bct->time.setTime( temp, DTGLOG );
-      strcpysp( temp, &lbuff[ 21 ], 15 );
-      bct->cs = callsign( strupr( temp ) );
+      strcpysp( temp, lbuff.mid(21), 15 );
+      bct->cs = callsign( temp.toUpper() );
       bct->cs.valRes = CS_NOT_VALIDATED;
-      strcpysp( temp, &lbuff[ 37 ], 3 );
+      strcpysp( temp, lbuff.mid( 37 ), 3 );
       bct->reps.setValue( temp );
-      strcpysp( temp, &lbuff[ 41 ], 4 );
+      strcpysp( temp, lbuff.mid( 41 ), 4 );
       bct->serials.setValue( temp );
 
       int maxct = bct->serials.getValue().toInt();
       if ( maxct > maxSerial )
          maxSerial = maxct;
 
-      strcpysp( temp, &lbuff[ 46 ], 3 );
+      strcpysp( temp, lbuff.mid( 46 ), 3 );
       bct->repr.setValue( temp );
-      strcpysp( temp, &lbuff[ 51 ], 4 );
+      strcpysp( temp, lbuff.mid( 51 ), 4 );
       bct->serialr.setValue( temp );
 
       // here is the score field
-      strcpysp( temp, &lbuff[ 59 ], 5 );
+      strcpysp( temp, lbuff.mid( 59 ), 5 );
       if ( toInt( temp ) == 0 )
          bct->contactFlags.setValue( NON_SCORING );
 
-      strcpysp( temp, &lbuff[ 65 ], 6 );
+      strcpysp( temp, lbuff.mid( 65 ), 6 );
       bct->op1.setValue( temp );
 
-      strcpysp( temp, &lbuff[ 72 ], 6 );
+      strcpysp( temp, lbuff.mid( 72 ), 6 );
       bct->loc.loc.setValue( temp );
       bct->loc.valRes = LOC_NOT_VALIDATED;
 
@@ -1260,17 +1260,17 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
       QString extra;
       QString comments;
 
-      strcpysp( extra, &lbuff[ 81 ], 2 );          // 81 is district code
+      strcpysp( extra, lbuff.mid( 81 ), 2 );          // 81 is district code
       if ( extra.length() >= 2 && ( extra[ 0 ] != ' ' && extra[ 1 ] != ' ' ) )
       {
          // we always attempt to import the district mult field
-         strcpysp( comments, &lbuff[ 93 ], COMMENTLENGTH );
+         strcpysp( comments, lbuff.mid( 93 ), COMMENTLENGTH );
          bct->comments.setValue( comments );
 
       }
       else
       {
-         strcpysp( extra, &lbuff[ 93 ], EXTRALENGTH );
+         strcpysp( extra, lbuff.mid( 93 ), EXTRALENGTH );
       }
       bct->extraText.setValue( extra );
 
