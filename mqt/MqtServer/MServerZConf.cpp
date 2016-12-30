@@ -337,7 +337,7 @@ bool TZConf::processZConfString(const QString &message, const QString &recvHost)
    bool sendBeaconResponse = false;
 
    TiXmlDocument xdoc;
-   std::string smessage = message.toStdString();// allowed conversion through std::string
+   TIXML_STRING smessage = message.toStdString();// allowed conversion through TIXML_STRING
    xdoc.Parse( smessage.c_str(), 0 );
    TiXmlElement * tix = xdoc.RootElement();
    if ( tix && checkElementName( tix, "minosServer" ) )
