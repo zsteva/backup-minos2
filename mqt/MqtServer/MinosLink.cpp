@@ -113,13 +113,13 @@ QString MinosCommonConnection::makeJid()
 
    return id;
 }
-bool MinosCommonConnection::sendRaw ( const char *xmlstr )
+bool MinosCommonConnection::sendRaw ( const TIXML_STRING xmlstr )
 {
-   size_t xmllen = strlen( xmlstr );
+   size_t xmllen = xmlstr.length();
    if ( xmllen )
    {
       char * xmlbuff = new char[ 10 + 1 + xmllen + 1 ];
-      sprintf( xmlbuff, "&&%lu%s&&", static_cast<unsigned long>(xmllen), xmlstr );
+      sprintf( xmlbuff, "&&%lu%s&&", static_cast<unsigned long>(xmllen), xmlstr.c_str() );
       xmllen = strlen( xmlbuff );
       int ret = sock->write ( xmlbuff, xmllen );
       onLog ( xmlbuff, xmllen, 0 );
@@ -148,7 +148,7 @@ bool MinosCommonConnection::tryForwardStanza( TiXmlElement *tix )
 {
    TIXML_STRING s;
    s << *tix;
-   bool res = sendRaw( s.c_str() );
+   bool res = sendRaw( s );
    return res;
 }
 //---------------------------------------------------------------------------
@@ -197,28 +197,28 @@ void MinosCommonConnection::sendError( TiXmlElement *tix,const  char * /*type*/,
    TIXML_STRING s;
    s << x;
 
-   sendRaw ( s.c_str() );
+   sendRaw ( s );
 }
 //---------------------------------------------------------------------------
 void MinosCommonConnection::sendAction( XStanza *a )
 {
    // use the stanza to send itself
    a->setNextId();   // only happens if no Id already
-   TIXML_STRING s = a->getActionMessage().toStdString();
-   sendRaw( s.c_str() );
+   TIXML_STRING s = a->getActionMessage();
+   sendRaw( s );
 }
 //=============================================================================
 void sendAction( XStanza *a )
 {
    // stanza has a "to" - but this is internal, so we need to dispatch it
-   QString mess = a->getActionMessage();
+   TIXML_STRING mess = a->getActionMessage();
    //int err;
 
    // convert from a RPCParam structure to a DOM
 
    TiXmlBase::SetCondenseWhiteSpace( false );
    TiXmlDocument xdoc;
-   xdoc.Parse( mess.toStdString().c_str(), 0 );
+   xdoc.Parse( mess.c_str(), 0 );
    TiXmlElement *x = xdoc.RootElement();
 
    if ( a->getFrom().size() == 0 )

@@ -152,7 +152,7 @@ bool MinosAppConnection::closeConnection()
     return true;
 }
 //---------------------------------------------------------------------------
-void MinosAppConnection::onLog ( const QString &data, int is_incoming )
+void MinosAppConnection::onLog ( const TIXML_STRING &data, int is_incoming )
 {
    QString logbuff;
    if ( is_incoming )
@@ -160,7 +160,7 @@ void MinosAppConnection::onLog ( const QString &data, int is_incoming )
    else
       logbuff += "SEND";
    logbuff += "[";
-   logbuff += data;
+   logbuff += data.c_str();
    logbuff += "]";
 
    logMessage( "XMPP", logbuff );
@@ -194,7 +194,7 @@ void MinosAppConnection::on_readyRead()
                     int ptlen = static_cast<int>(strlen( &rxbuff[ rxpt ]) );
                     if ( ptlen )
                     {
-                        onLog( QString(&rxbuff[ rxpt ]), true );
+                        onLog( &rxbuff[ rxpt ], true );
                         packetbuff += &rxbuff[ rxpt ];   // which will strip out any nulls
                     }
                     rxpt += ptlen + 1;
@@ -238,24 +238,25 @@ void sendAction( XStanza *a )
       MinosAppConnection::minosAppConnection->sendAction( a );
    }
 }
+
 void MinosAppConnection::sendAction( XStanza *a )
 {
    if ( connected )
    {
       a->setNextId();   // only happens if no Id already
-      QString xmlstr = a->getActionMessage();
+      TIXML_STRING xmlstr = a->getActionMessage();
 
-      int xmllen = xmlstr.size();
-      if ( xmllen )
+      size_t xmllen = xmlstr.length();
+
+      if (xmllen)
       {
-          xmlstr = QString("&&%1%2&&").arg(xmllen).arg(xmlstr);
-
-          std::string s = xmlstr.toStdString();// allowed conversion through std::string
-
-         if (sock->write(s.c_str(), s.size() + 1 ) < 0)  // always include the zero terminator
-           return;
-
-         onLog( xmlstr, false );
+          char * xmlbuff = new char[ 10 + 1 + xmllen + 1 ];
+          sprintf( xmlbuff, "&&%lu%s&&", static_cast<unsigned long>(xmllen), xmlstr.c_str() );
+          xmllen = strlen( xmlbuff );
+          int ret = sock->write ( xmlbuff, xmllen );
+          if (ret >= 0)
+              onLog ( xmlbuff, false );
+          delete [] xmlbuff;
       }
    }
 }

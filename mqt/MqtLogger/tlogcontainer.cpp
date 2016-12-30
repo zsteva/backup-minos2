@@ -653,34 +653,6 @@ void TLogContainer::LocCalcActionExecute()
 
 void TLogContainer::AnalyseMinosLogActionExecute()
 {
-/*
-
-   OpenDialog1->InitialDir = getDefaultDirectory( false );
-   OpenDialog1->DefaultExt = "Minos";
-   OpenDialog1->Filter = "Minos contest files (*.minos)|*.MINOS|All Files (*.*)|*.*" ;
-   BaseContestLog * contest = TContestApp::getContestApp() ->getCurrentContest();
-   if ( contest )
-   {
-      OpenDialog1->FileName = contest->cfileName.c_str();
-   }
-   if ( OpenDialog1->Execute() )
-   {
-      HANDLE contestFile = CreateFile( OpenDialog1->FileName.c_str(),
-                                       GENERIC_READ,
-                                       FILE_SHARE_READ | FILE_SHARE_WRITE,
-                                       0,                  // security
-                                       OPEN_EXISTING,
-                                       0,
-                                       0 );               // template handle
-      if ( contestFile == INVALID_HANDLE_VALUE )
-      {
-         std::string lerr = lastError();
-         std::string emess = std::string( "Failed to open ContestLog file " ) + OpenDialog1->FileName.c_str() + " : " + lerr;
-         MinosParameters::getMinosParameters() ->mshowMessage( emess.c_str() );
-         return ;
-      }
-*/
-
     QString InitialDir = getDefaultDirectory( false );
 
     QFileInfo qf(InitialDir);

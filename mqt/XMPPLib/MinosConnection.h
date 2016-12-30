@@ -34,7 +34,7 @@ class MinosAppConnection:public QObject, RPCDispatcher
 
       QTimer waitConnectTimer;
 
-      void onLog (const QString &data, int is_incoming );
+      void onLog (const TIXML_STRING &data, int is_incoming );
 
       bool closeConnection();
 

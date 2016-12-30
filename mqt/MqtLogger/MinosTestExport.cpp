@@ -39,14 +39,14 @@ void MinosTestExport::sendRequest(QSharedPointer<QFile> expfd, const QString &cm
    RPCRequest *m = new RPCRequest( "", cmd );
    m->args = MArgs->args;
 
-   QString req = m->getActionMessage() + "\r\n";
+   TIXML_STRING req = m->getActionMessage() + "\r\n";
 
    int fpos = expfd->size();
    if (!expfd->seek(fpos))
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "(write) seek failed!" );
    }
-   int written = expfd->write( req.toStdString().c_str(), req.size() );
+   int written = expfd->write( req.c_str(), req.size() );
    if ( written != req.size() )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );

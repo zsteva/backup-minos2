@@ -135,8 +135,8 @@ void MinosServerConnection::sendAction( XStanza *a )
    // use the stanza to send itself
    a->setNextId();   // only happens if no Id already
 
-   QString s = a->getActionMessage();
-   sendRaw( s.toStdString().c_str() );
+   TIXML_STRING s = a->getActionMessage();
+   sendRaw( s );
 }
 //==============================================================================
 void MinosServerConnection::sendKeepAlive( )

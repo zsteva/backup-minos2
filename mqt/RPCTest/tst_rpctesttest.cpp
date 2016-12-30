@@ -379,7 +379,7 @@ RPCTestTest::testRequest()
    xm->addParam( s2 );
    xm->addParam( i1 );
 
-   TIXML_STRING UTF8XML = xm->getActionMessage().toStdString();
+   TIXML_STRING UTF8XML = xm->getActionMessage();
 
    delete xm;
 
@@ -427,7 +427,7 @@ RPCTestTest::testResponse()
    xm->addParam( s2 );
    xm->addParam( i1 );
 
-   TIXML_STRING UTF8XML = xm->getActionMessage().toStdString();
+   TIXML_STRING UTF8XML = xm->getActionMessage();
 
    delete xm;
 

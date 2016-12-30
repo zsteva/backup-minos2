@@ -39,7 +39,7 @@ class XStanza
       virtual QString getFrom() = 0;
 
       // Build up the DOM tree for the action, and send it
-      virtual QString getActionMessage() = 0;
+      virtual TIXML_STRING getActionMessage() = 0;
 
       virtual QString print() = 0;
       virtual QString analyse() = 0;
@@ -69,7 +69,7 @@ class RPCAction: public XStanza, public RPCArgs
       RPCAction( const QString &to, const QString &from );
       virtual ~RPCAction();
       // Build up the DOM tree for the action, and send it
-      virtual QString getActionMessage() = 0;
+      virtual TIXML_STRING getActionMessage() = 0;
       virtual QString print() = 0;
       virtual QString analyse()
       {
@@ -86,7 +86,7 @@ class RPCRequest: public RPCAction
       RPCRequest( const QString &from, TiXmlElement *node );
       virtual ~RPCRequest();
       // Build up the DOM tree for the action, and send it
-      virtual QString getActionMessage( );
+      virtual TIXML_STRING getActionMessage( );
       virtual QString print();
       virtual QString analyse();
 };
@@ -107,7 +107,7 @@ class RPCResponse: public RPCAction
       void addFault( TiXmlElement & );
       virtual ~RPCResponse();
       // Build up the DOM tree for the action, and send it
-      virtual QString getActionMessage( );
+      virtual TIXML_STRING getActionMessage( );
 
       virtual QString print();
       virtual QString analyse()

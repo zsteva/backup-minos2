@@ -59,7 +59,7 @@ class MinosCommonConnection: public QObject
       QString makeJid();        // return the Jabber ID
 
       void onLog ( const char *data, size_t size, int is_incoming );
-      bool sendRaw ( const char *xmlstr );
+      bool sendRaw (const TIXML_STRING xmlstr );
    public:
 
       QSharedPointer<QTcpSocket> sock;
