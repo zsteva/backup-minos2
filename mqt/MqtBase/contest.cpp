@@ -657,23 +657,10 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
    cs.bonus = 0;
    cs.nbonus = 0;
 
-   int nextScan = -1;
-
-   while ( nextScan >= -1 )
+   foreach(MapWrapper<BaseContact> i, ctList)
    {
-      // get the next contact in sequence and do any required scan checks
-      nextScan++;
-      if ( nextScan >= getContactCount() )
-      {
-         // end of scan
-
-         nextScan = -2;
-
-         break;
-      }
-      QSharedPointer<BaseContact> nct = pcontactAt( nextScan );
-      if ( !nct )
-         break ;
+       // get the next contact in sequence and do any required scan checks
+      QSharedPointer<BaseContact> nct = i.wt;
 
 // NB this doesn't cope with crazy times from test contests and QSOs
 
@@ -684,7 +671,6 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
 
       if (ncheck > limit)
       {
-         nextScan = -2; // continue; we want to include this one
          break;
       }
 
