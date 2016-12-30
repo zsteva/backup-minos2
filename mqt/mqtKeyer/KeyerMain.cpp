@@ -60,6 +60,8 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
     connect(&LineTimer, SIGNAL(timeout()), this, SLOT(LineTimerTimer()));
     LineTimer.start(100);
+
+    connect(&CaptionTimer, SIGNAL(timeout()), this, SLOT(CaptionTimerTimer()));
 }
 
 KeyerMain::~KeyerMain()
