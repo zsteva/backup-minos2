@@ -19,7 +19,7 @@
 #define INITIAL_CONTEST_SLOTS 2
 #define INITIAL_LIST_SLOTS 10
 
-double bigClockCorr = 0;
+int bigClockCorr = 0;
 TContestApp *TContestApp::contestApp = 0;
 int inFontChange = 0;
 
@@ -79,12 +79,19 @@ ListSlot::~ListSlot()
 //---------------------------------------------------------------------------
 static void initClock( void )
 {
-   std::ifstream strm( "./Configuration/time.correction", std::ios::binary ); // should close when it goes out of scope
-   if ( strm )
+    QFile lf( "./Configuration/time.correction");
+
+    if (!lf.open(QIODevice::ReadOnly))
+    {
+        return;
+    }
+    QTextStream strm(&lf);
+
+   if ( !strm.atEnd() )
    {
       long big_corr;
       strm >> big_corr;
-      bigClockCorr = big_corr / dtg::daySecs;
+      bigClockCorr = big_corr;
    }
 }
 bool TContestApp::initialise()

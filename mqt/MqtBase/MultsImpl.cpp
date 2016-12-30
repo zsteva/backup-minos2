@@ -784,41 +784,44 @@ bool MultListsImpl::loadMultFiles( void )
    distList.load();
    distSynList.load();
    glist.load();
-/*
-   std::ofstream os("c:/temp/multlist.txt");
+
+   QFile fos("c:/temp/multlist.txt");
+   if (!fos.open(QIODevice::WriteOnly|QIODevice::Text))
+      return false;
+
+   QTextStream os(&fos);
 
    MultListsImpl *m = this;
 
-   os << "================== country entries ========================" << std::endl;
-   for (MultList < CountryEntry * >::iterator i = m->ctryList.begin(); i != m->ctryList.end(); i++)
+   os << "================== country entries ========================\n";
+   for (MultList < CountryEntry >::iterator i = m->ctryList.begin(); i != m->ctryList.end(); i++)
    {
-      os << ((*i)->basePrefix + " " + (*i)->realName).toStdString().c_str() << std::endl;
+      os << i->wt->basePrefix + " " + i->wt->realName << "\n";
    }
-   os << (QString("================== country synonyms ") + QString::number(m->ctrySynList.size()) + "========================").toStdString().c_str() << std::endl;
-   for (MultList < CountrySynonym * >::iterator i = m->ctrySynList.begin(); i != m->ctrySynList.end(); i++)
+   os << QString("================== country synonyms ") + QString::number(m->ctrySynList.size()) + "========================\n";
+   for (MultList < CountrySynonym  >::iterator i = m->ctrySynList.begin(); i != m->ctrySynList.end(); i++)
    {
-      QString temp1 = (*i)->synPrefix;
-   //      CountryEntry * country = *((*i)->country);
-      CountryEntry * country = (*i)->country;
+      QString temp1 = i->wt->synPrefix;
+      QSharedPointer<CountryEntry> country = i->wt->country;
       QString temp2 = country->basePrefix;
-      os << (temp1 + " : " + temp2).toStdString().c_str() << std::endl;
+      os << (temp1 + " : " + temp2) << "\n";
    }
-   os << "================== district entries ========================" << std::endl;
-   for (MultList < DistrictEntry * >::iterator i = m->distList.begin(); i != m->distList.end(); i++)
+   os << "================== district entries ========================\n";
+   for (MultList < DistrictEntry >::iterator i = m->distList.begin(); i != m->distList.end(); i++)
    {
-      os << (*i)->districtCode.toStdString().c_str() << std::endl;
+      os << i->wt->districtCode << "\n";
    }
-   os << "================== district synonyms ========================" << std::endl;
-   for (MultList < DistrictSynonym * >::iterator i = m->distSynList.begin(); i != m->distSynList.end(); i++)
+   os << "================== district synonyms ========================\n";
+   for (MultList < DistrictSynonym >::iterator i = m->distSynList.begin(); i != m->distSynList.end(); i++)
    {
-      os << ((*i)->synonym + " : " + ((*i)->district)->districtCode).toStdString().c_str() << std::endl;
+      os << i->wt->synonym + " : " + (i->wt->district)->districtCode  + "\n";
    }
-   os << "================== Glist ========================" << std::endl;
-   for (MultList < GlistEntry * >::iterator i = m->glist.begin(); i != m->glist.end(); i++)
+   os << "================== Glist ========================\n";
+   for (MultList < GlistEntry >::iterator i = m->glist.begin(); i != m->glist.end(); i++)
    {
-      os << ((*i)->synPrefix + " : " + (*i)->dupPrefix).toStdString().c_str() << std::endl;
+      os << i->wt->synPrefix + " : " + i->wt->dupPrefix + "\n";
    }
-*/
+
    return true;
 }
 MultListsImpl::MultListsImpl()

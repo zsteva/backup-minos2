@@ -13,14 +13,24 @@
 
 QMutex CsGuard::m_mutex(QMutex::Recursive);
 //---------------------------------------------------------------------------
-static std::ofstream &getLogFile( QString name )
+static QTextStream &getLogFile( QString name )
 {
-   static std::ofstream logFile( name.toStdString().c_str() );
-   return logFile;
+    static QTextStream logFile;
+    static bool opened = false;
+    if (!opened && !name.isEmpty())
+    {
+        static QFile qfn(name);
+        if (qfn.open(QIODevice::WriteOnly|QIODevice::Text))
+        {
+            logFile.setDevice(&qfn);
+        }
+        opened = true;
+    }
+    return logFile;
 }
 
 //---------------------------------------------------------------------------
-std::ostream & MLogFile::createLogFile(const QString &path, const QString filePrefix, int keepDays )
+void MLogFile::createLogFile(const QString &path, const QString filePrefix, int keepDays )
 {
     StaticDirectoryCreate ( path );
 
@@ -31,31 +41,39 @@ std::ostream & MLogFile::createLogFile(const QString &path, const QString filePr
     QString dtg = QDateTime::currentDateTime().toString( "yyyy MMM dd hh:m:ss.zzz" );
 
 	getLogFile( fLogFileName );
-    return log() << dtg.toStdString().c_str() << std::endl;
+    QTextStream &l = log();
+    l << dtg << "\n";
+    l.flush();
 }
 //---------------------------------------------------------------------------
-std::ostream & MLogFile::log( void )
+QTextStream & MLogFile::log( void )
 {
 	return getLogFile( "" );
 }
 //---------------------------------------------------------------------------
-std::ostream & MLogFile::logT( void )
+QTextStream &MLogFile::logT( void )
 {
     CsGuard lock;
     QDateTime dt = QDateTime::currentDateTime();
     QString time = dt.toString( "hh:mm:ss.zzz" );
-    return log() << time.toStdString().c_str();
+    return log() << time;
 }
 //---------------------------------------------------------------------------
 void MLogFile::close( void )
 {
-   getLogFile( "" ).close();
+    QTextStream &l = log();
+    l.flush();
+    l.device()->close();
+    l.setDevice(0);
 }
 //---------------------------------------------------------------------------
-std::ostream & MLogFile::log(const QString &s )
+QTextStream & MLogFile::log(const QString &s )
 {
    CsGuard scoped_lock;
-   return logT() << " " << s.toStdString().c_str() << std::endl;
+   QTextStream &l = logT();
+   l << " " << s << "\n";
+   l.flush();
+   return l;
 }
 
 //---------------------------------------------------------------------------

@@ -51,7 +51,9 @@ dtg::dtg( bool now ): baddtg(false)
         QDateTime tdt = QDateTime::currentDateTimeUtc();
         int correction = MinosParameters::getMinosParameters() ->getBigClockCorrection();
         if ( correction )
-            tdt.addSecs( correction );
+        {
+            tdt = tdt.addSecs( correction );
+        }
         setDate( tdt.toString( "dd/MM/yy" ), DTGDISP );
         setTime( tdt.toString( "hh:mm:ss" ), DTGDISP );
     }

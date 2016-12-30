@@ -104,7 +104,8 @@ void TLogContainer::on_TimeDisplayTimer( )
 
    if ( TContestApp::getContestApp() )
    {
-       QString disp = QDateTime::currentDateTimeUtc().toString( "dd/MM/yyyy hh:mm:ss" ) + " UTC       ";
+       QDateTime t = QDateTime::currentDateTimeUtc().addSecs( MinosParameters::getMinosParameters() ->getBigClockCorrection());
+       QString disp = t.toString( "dd/MM/yyyy hh:mm:ss" ) + " UTC       ";
 
        sblabel2 ->setText(disp);
 

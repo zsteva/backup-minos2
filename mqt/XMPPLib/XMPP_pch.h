@@ -32,8 +32,7 @@
 
 #include <exception>
 #include <string>
-#include <algorithm>
-#include <fstream>
+#include <algorithm>    // and it also gets included by a different route
 
 #include <stdio.h>
 #include <errno.h>

@@ -644,44 +644,47 @@ void RPCTestTest::testMults()
 
     MultLists *m = MultLists::getMultLists();
 
-    std::ofstream os("c:/temp/multlist.txt");
+    QFile fos("c:/temp/multlist.txt");
+    if (!fos.open(QIODevice::WriteOnly|QIODevice::Text))
+       return ;
+
+    QTextStream os(&fos);
 
     for (int i = 0; i < m->getCtryListSize(); i++)
     {
         QSharedPointer<CountryEntry> ce = m->getCtryListAt( i );
-        os << ce->basePrefix.toStdString() + " " + ce->realName.toStdString() << std::endl;
+        os << ce->basePrefix + " " + ce->realName << "\n";
     }
-/*
-    os << "================== country entries ========================" << std::endl;
-    for (MultList < CountryEntry * >::iterator i = m->ctryList.begin(); i != m->ctryList.end(); i++)
+    /*
+    os << "================== country entries ========================\n";
+    for (MultList < CountryEntry >::iterator i = m->ctryList.begin(); i != m->ctryList.end(); i++)
     {
-       os << (*i)->basePrefix + " " + (*i)->realName << std::endl;
+       os << i->wt->basePrefix + " " + i->wt->realName << "\n";
     }
-    os << (String("================== country synonyms ") + String(m->ctrySynList.size()).c_str() + "========================").c_str() << std::endl;
-    for (MultList < CountrySynonym * >::iterator i = m->ctrySynList.begin(); i != m->ctrySynList.end(); i++)
+    os << QString("================== country synonyms ") + QString::number(m->ctrySynList.size()) + "========================\n";
+    for (MultList < CountrySynonym  >::iterator i = m->ctrySynList.begin(); i != m->ctrySynList.end(); i++)
     {
-       QString temp1 = (*i)->synPrefix;
-    //      CountryEntry * country = *((*i)->country);
-       CountryEntry * country = (*i)->country;
+       QString temp1 = i->wt->synPrefix;
+       QSharedPointer<CountryEntry> country = i->wt->country;
        QString temp2 = country->basePrefix;
-       os << (temp1 + " : " + temp2) << std::endl;
+       os << (temp1 + " : " + temp2) << "\n";
     }
-    os << "================== district entries ========================" << std::endl;
-    for (MultList < DistrictEntry * >::iterator i = m->distList.begin(); i != m->distList.end(); i++)
+    os << "================== district entries ========================\n";
+    for (MultList < DistrictEntry >::iterator i = m->distList.begin(); i != m->distList.end(); i++)
     {
-       os << (*i)->districtCode << std::endl;
+       os << i->wt->districtCode << "\n";
     }
-    os << "================== district synonyms ========================" << std::endl;
-    for (MultList < DistrictSynonym * >::iterator i = m->distSynList.begin(); i != m->distSynList.end(); i++)
+    os << "================== district synonyms ========================\n";
+    for (MultList < DistrictSynonym >::iterator i = m->distSynList.begin(); i != m->distSynList.end(); i++)
     {
-       os << ((*i)->synonym + " : " + ((*i)->district)->districtCode) << std::endl;
+       os << i->wt->synonym + " : " + (i->wt->district)->districtCode  + "\n";
     }
-    os << "================== Glist ========================" << std::endl;
-    for (MultList < GlistEntry * >::iterator i = m->glist.begin(); i != m->glist.end(); i++)
+    os << "================== Glist ========================\n";
+    for (MultList < GlistEntry >::iterator i = m->glist.begin(); i != m->glist.end(); i++)
     {
-       os << ((*i)->synPrefix + " : " + (*i)->dupPrefix) << std::endl;
+       os << i->wt->synPrefix + " : " + i->wt->dupPrefix + "\n";
     }
-*/
+    */
 }
 
 QTEST_MAIN(RPCTestTest)

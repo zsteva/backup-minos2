@@ -125,7 +125,7 @@ class TContestApp : public MinosParameters
       void setCurrentContest( BaseContestLog * );
 
 };
-extern double bigClockCorr;
+extern int bigClockCorr;
 
 extern bool isOpen(QSharedPointer<ContestSlot> cs, const QString &fn );
 extern bool isOpen(QSharedPointer<ListSlot> cs, const QString &fn );
