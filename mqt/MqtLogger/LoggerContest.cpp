@@ -762,8 +762,8 @@ bool LoggerContestLog::exportGJV(QSharedPointer<QFile>fd )
    if ( !enquireDialog(   /*Owner*/0, "Please give last serial to be dumped", maxd ) )
       return false;
 
-   int mindump = std::min( mind, maxd );
-   int maxdump = std::max( mind, maxd );
+   int mindump = qMin( mind, maxd );
+   int maxdump = qMax( mind, maxd );
 
    // ????   if ( MessageBox( 0, "Do you wish to edit the file?", "Contest", MB_OKCANCEL ) != ID_CANCEL )
    //   if (cmOK != messageBox(mfOKCancel|mfConfirmation, "Dumping all contacts between serials %d and %d inclusive", mindump, maxdump))
@@ -863,27 +863,27 @@ bool LoggerContestLog::exportREG1TEST(QSharedPointer<QFile>expfd )
    {
        /*
       // put up a band chooser dialog
-      std::auto_ptr<TMinosBandChooser> mshowMessage( new TMinosBandChooser( LogContainer ) );
+      TMinosBandChooser mshowMessage( LogContainer );
 
       BandList &blist = BandList::getBandList();
       for (unsigned int i = 0; i < blist.bandList.size(); i++)
       {
          if (blist.bandList[ i ].reg1test.size())  // only put up real reg1test options
          {
-            mshowMessage->BandCombo->Items->Add( blist.bandList[ i ].reg1test.c_str() );
+            mshowMessage.BandCombo->Items->Add( blist.bandList[ i ].reg1test.c_str() );
          }
       }
 
-      mshowMessage->BandCombo->ItemIndex = 0;
+      mshowMessage.BandCombo->ItemIndex = 0;
 
       QString capt = ( boost::format( "The band description chosen (%s) is invalid for Reg1Test"
                                           " (.EDI) entry. Please choose a valid band description." )
                            % band.getValue() ).str();
-      mshowMessage->ScreedLabel->Caption = capt.c_str();
+      mshowMessage.ScreedLabel->Caption = capt.c_str();
 
-      mshowMessage->ShowModal();
+      mshowMessage.ShowModal();
 
-      band.setValue( mshowMessage->BandCombo->Text.c_str() );
+      band.setValue( mshowMessage.BandCombo->Text.c_str() );
       */
    }
 
@@ -909,8 +909,8 @@ bool LoggerContestLog::exportMinos( QSharedPointer<QFile> expfd )
    if ( !enquireDialog(   /*Owner*/0, "Please give last serial to be dumped", maxd ) )
       return false;
 
-   int mindump = std::min( mind, maxd );
-   int maxdump = std::max( mind, maxd );
+   int mindump = qMin( mind, maxd );
+   int maxdump = qMax( mind, maxd );
 
    // ????   if ( MessageBox( 0, "Do you wish to edit the file?", "Contest", MB_OKCANCEL ) != ID_CANCEL )
    //   if (cmOK != messageBox(mfOKCancel|mfConfirmation, "Dumping all contacts between serials %d and %d inclusive", mindump, maxdump))

@@ -743,7 +743,7 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
    {
       cs.brbonus1 = cs.brbonus2 = ' ';
    }
-   cs.nmults = std::max(cs.nmults, 1);
+   cs.nmults = qMax(cs.nmults, 1);
 
    cs.totalScore = (cs.contestScore + cs.bonus)*cs.nmults;
 
