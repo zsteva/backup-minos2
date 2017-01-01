@@ -14,6 +14,7 @@
 #include "tmanagelistsdlg.h"
 #include "SendRPCDM.h"
 #include "tsettingseditdlg.h"
+#include "tclockdlg.h"
 
 TLogContainer *LogContainer = 0;
 
@@ -233,6 +234,7 @@ void TLogContainer::setupMenus()
 
     FontEditAcceptAction = newAction("Select &Font...", ui->menuTools, SLOT(FontEditAcceptActionExecute()));
     ReportAutofillAction = newCheckableAction("Signal Report AutoFill", ui->menuTools, SLOT(ReportAutofillActionExecute()));
+    CorrectDateTimeAction = newAction("Correct Date/Time", ui->menuTools, SLOT(CorrectDateTimeActionExecute()));
 
     // end of tools manu
 
@@ -259,7 +261,7 @@ void TLogContainer::setupMenus()
 
     ShiftTabLeftAction = newAction("Shift Active Tab Left", &TabPopup, SLOT(ShiftTabLeftActionExecute()));
     ShiftTabRightAction = newAction("Shift Active Tab Right", &TabPopup, SLOT(ShiftTabRightActionExecute()));
-    CorrectDateTimeAction = newAction("Correct Date/Time", &TabPopup, SLOT(CorrectDateTimeActionExecute()));
+    TabPopup.addAction(CorrectDateTimeAction);
     TabPopup.addSeparator();
 
     TabPopup.addAction(AnalyseMinosLogAction);
@@ -705,7 +707,8 @@ void TLogContainer::AnalyseMinosLogActionExecute()
 
 void TLogContainer::CorrectDateTimeActionExecute()
 {
-
+    TClockDlg cdlg(this);
+    cdlg.exec();
 }
 
 void TLogContainer::ScrollingContestTabsActionExecute()

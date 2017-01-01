@@ -152,9 +152,6 @@ class dtg
    public:
       static const double daySecs;
 
-      static QDateTime getRawUTC( );
-      static QDateTime getCorrectedUTC( );
-
       QString getDate( DTG, bool &d ) const;
       QString getDate( DTG ) const;
       QString getTime( DTG, bool &d ) const;

@@ -2,6 +2,7 @@
 #define TCLOCKDLG_H
 
 #include <QDialog>
+#include <QTimer>
 
 namespace Ui {
 class TClockDlg;
@@ -15,8 +16,30 @@ public:
     explicit TClockDlg(QWidget *parent = 0);
     ~TClockDlg();
 
+private slots:
+    void on_OKButton_clicked();
+
+    void on_clearButton_clicked();
+
+    void on_applyButton_clicked();
+
+    void on_cancelButton_clicked();
+
+    void on_clockTicked();
+
+    void on_dateEdit_dateChanged(const QDate &date);
+
+    void on_timeEdit_timeChanged(const QTime &time);
+
 private:
     Ui::TClockDlg *ui;
+    void setEdits();
+    void handleEdit();
+
+    bool initialised;
+    int initialCorrection;
+    QTimer clockTick;
+
 };
 
 #endif // TCLOCKDLG_H
