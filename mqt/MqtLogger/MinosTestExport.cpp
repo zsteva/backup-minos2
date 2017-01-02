@@ -47,7 +47,7 @@ void MinosTestExport::sendRequest(QSharedPointer<QFile> expfd, const QString &cm
       MinosParameters::getMinosParameters() ->mshowMessage( "(write) seek failed!" );
    }
    int written = expfd->write( req.c_str(), req.size() );
-   if ( written != req.size() )
+   if ( written != static_cast<int>(req.size()) )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
    }
