@@ -15,6 +15,7 @@
 #include "SendRPCDM.h"
 #include "tsettingseditdlg.h"
 #include "tclockdlg.h"
+#include "tloccalcform.h"
 
 TLogContainer *LogContainer = 0;
 
@@ -667,7 +668,13 @@ void TLogContainer::MakeEntryActionExecute()
 
 void TLogContainer::LocCalcActionExecute()
 {
-
+    TLocCalcForm loccalc( this );
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    if (ct)
+    {
+       loccalc.S1Loc = ct->myloc.loc.getValue();
+    }
+    loccalc.exec();
 }
 
 void TLogContainer::AnalyseMinosLogActionExecute()
