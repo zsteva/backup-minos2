@@ -17,11 +17,68 @@
 //---------------------------------------------------------------------------
 TMatchThread *TMatchThread::matchThread = 0;
 
- TMatchThread::TMatchThread()
+// wild card comparison, search string e for the wild card string in s
+// At the moment we are using "space" as the wildcard.
+// we always scan down s for the first char in e
+bool wildComp( const QString &ss, const QString &ee )
+{
+   int s = 0;
+   int sl = ss.length();
+   int e = 0;
+   int el = ee.length();
+
+   while (s < sl && ss[s] == ' ' )
+      s++;
+   if ( s == sl )
+      return false;
+   while (e < el && ee[e] == ' ' )
+      e++;
+   if ( e == el )
+      return false;
+
+
+   int estart = e;
+
+   // scan for first char of e in s
+
+   int sstart = s;	// where to restart search
+
+   while ( sstart < sl )
+   {
+      s = sstart;		// position moving pointer
+      e = estart;		// go back to the start of the searching string
+
+      while ( s < sl && e < el && ( ss[s] != ee[e] ) )
+         s++;
+      if ( s >= sl )
+         return false;		// s has ended without a match on char 1 of e
+
+      sstart = ++s;			// next time start one on from this match
+      e++;						// first char has matched
+      // now attempt to match
+      while ( s < sl && e < el )
+      {
+         if (
+            (ss[s] == ee[e] )
+            || ( ( ee[e] == ' ' ) || ( ee[e] == '*' ) || ( ee[e] == '?' ) )
+         )
+         {
+            s++;
+            e++;
+            continue;
+         }
+         break;		// match failed, break out
+      }
+      if ( e >= el )
+         return true;		// we are at the end of the searching string, so matched
+
+      // otherwise try again at next matching start char
+   }
+   return false;
+}
+
+TMatchThread::TMatchThread()
       : QThread(   ), myThisMatches( 0 ), myOtherMatches( 0 ),myListMatches( 0 ), mct(0), Terminated(false)
-//      ,EL_CountrySelect ( EN_CountrySelect, & CountrySelect_Event )
-//      ,EL_DistrictSelect ( EN_DistrictSelect, & DistrictSelect_Event )
-//      ,EL_LocatorSelect ( EN_LocatorSelect, & LocatorSelect_Event )
 {
    thisLogMatch = new ThisLogMatcher();
    otherLogMatch = new OtherLogMatcher();
@@ -71,7 +128,7 @@ void TMatchThread::on_CountrySelect(QString sel, BaseContestLog *c)
    if (c == ct)
    {
       mct = 0;
-      CountryEntry *ce = MultLists::getMultLists() ->getCtryForPrefix( sel );
+      QSharedPointer<CountryEntry> ce = MultLists::getMultLists() ->getCtryForPrefix( sel );
       startMatch(ce);
    }
 }
@@ -132,7 +189,7 @@ void TMatchThread::run()
 }
 
 //---------------------------------------------------------------------------
-/*static*/ void TMatchThread::startMatch(   CountryEntry *ce )
+/*static*/ void TMatchThread::startMatch(   QSharedPointer<CountryEntry> ce )
 {
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    MinosLoggerEvents::SendMatchStarting(ct);
@@ -208,24 +265,26 @@ TMatchCollection::TMatchCollection( void )
 {}
 TMatchCollection::~TMatchCollection( void )
 {
-   freeAll();
 }
 int TMatchCollection::getContestCount( void )
 {
-   return matchList.size();
+   return contestMatchList.size();
 }
-BaseMatchContest *TMatchCollection::pcontestAt( int i )
+
+QSharedPointer<BaseMatchContest> TMatchCollection::pcontestAt( int i )
 {
-    if (i > (int)matchList.size())
-        return 0;
-    return matchList.at( i );
+    if (i > contestMatchList.size())
+        return QSharedPointer<BaseMatchContest>();
+
+    return std::next(contestMatchList.begin(), i)->wt;
 }
+
 int TMatchCollection::contactCount()
 {
     int cc = 0;
-    for (ContestMatchIterator i = matchList.begin(); i != matchList.end(); i++ )
+    for (ContestMatchIterator i = contestMatchList.begin(); i != contestMatchList.end(); i++ )
     {
-        cc += (*i)->matchList.size();
+        cc += i->wt->contactMatchList.size();
     }
     return cc;
 }
@@ -329,20 +388,20 @@ void Matcher::clearmatchall( )
    matchStarted = false;
    matchRequired = false;
 
-   matchCollection->freeAll();
+   matchCollection->contestMatchList.clear();
 
    // don't want to keep the old, so clear down the memory of selection terms
    matchcs.set( "" );
    matchloc.set( "" );
    matchqth.set( "" );
-   ce = 0;
+   ce.reset();
    thisContestMatched = 0;
 
    TMatchThread::getMatchThread() ->ShowThisMatchStatus( "" );
    TMatchThread::getMatchThread() ->ShowOtherMatchStatus( "" );
 }
 // mark things that we want to start a match
-void Matcher::startMatch( CountryEntry *c )
+void Matcher::startMatch( QSharedPointer<CountryEntry> c )
 {
    matchRequired = true;
    matchStarted = false;				// if it started we need to stop it...
@@ -414,7 +473,7 @@ void Matcher::initMatch( void )
       }
       else
       {
-         CountryEntry *c = ce;	// preserve over cleardown
+         QSharedPointer<CountryEntry> c = ce;	// preserve over cleardown
          clearmatchall();
          mp = Country;
          ce = c;
@@ -443,32 +502,30 @@ void ThisLogMatcher::matchCountry( const QString &cs )
 {
    TMatchThread::getMatchThread() ->matchCountry( cs );   // scroll to
 }
-void ThisLogMatcher::addMatch( BaseContact *cct, BaseContestLog * ccon )
+void ThisLogMatcher::addMatch( QSharedPointer<BaseContact> cct, BaseContestLog *ccon )
 {
    if ( !cct )
       return ;
 
-   BaseMatchContest *mc = 0;
-   ContestMatchList &matchList = matchCollection->matchList;
-   if (matchList.size() == 0)
+   ContestMatchList &contestMatchList = matchCollection->contestMatchList;
+   MapWrapper<BaseMatchContest> wmc = MapWrapper<BaseMatchContest>(new MatchContactLog);
+   if (contestMatchList.size() == 0)
    {
-       mc = new MatchContactLog;
-       mc->matchedContest = ccon;
-       matchList.insert(mc);
+       wmc.wt->matchedContest = ccon;
+       contestMatchList.insert(wmc, wmc);
    }
-   mc = matchCollection->pcontestAt(matchList.size() - 1);
-
-   MatchContact *mct = new MatchLogContact( ccon, cct );
-
-//   bool exists = std::binary_search( matchCollection->matchList.begin(), matchCollection->matchList.end(), mct );
-//   if ( !exists )
+   QSharedPointer<BaseMatchContest> found;
+   foreach(MapWrapper<BaseMatchContest> test, contestMatchList)
    {
-      mc->matchList.insert( mct );
+       if (test.wt->getContactLog() == ccon)
+       {
+            found = test.wt;
+            MapWrapper<MatchContact> wmct(new MatchLogContact( ccon, cct ));
+            found->contactMatchList.insert( wmct, wmct );
+            break;
+       }
    }
-//   else
-//   {
-//      delete mct;
-//   }
+
    thisContestMatched = matchCollection->contactCount();
 }
 bool ThisLogMatcher::idleMatch( int limit )
@@ -500,33 +557,32 @@ bool ThisLogMatcher::idleMatch( int limit )
                          if ( matchcs.match )
                          {
                             bool dropthrough = false;
-                            std::string smstr = matchcs.mstr.toStdString();
-                            const char *c = smstr.c_str();
+                            QString smstr = matchcs.mstr;
+                            int c = 0;
                             // need to trim out any leading and trailing
-                            while ( *c && *c != '/' )
+                            while ( c < smstr.length() && smstr[c] != '/' )
                                c++;
 
-                            const char *c2 = c;
-                            if ( *c2 )
+                            int c2 = c;
+                            if ( c2 < smstr.length() )
                                c2++;	// skip the first /
-                            while ( *c2 && *c2 != '/' )
+                            while ( c2 < smstr.length() && smstr[c2] != '/' )
                                c2++;
 
-                            if ( *c && *c2 )
+                            if ( c < smstr.length() && c2 < smstr.length() )
                             {
-                               matchcs.mstr = QString( c ).left(c2 - c );	// copy back over ourselves
+                               matchcs.mstr = smstr.mid(c, c2 - c );	// copy back over ourselves
                             }
                             else
-                               if ( *c && ( c - smstr.c_str() < 3 ) && ( strlen( c ) > 2 ) )
+                               if ( c < smstr.length() && ( c < 3 ) && smstr.length() - c > 2  )
                                {
                                   // prefix less than 3 chars and suffix more than 1 character
-                                  matchcs.mstr = QString( c );	// copy back over ourselves
+                                  matchcs.mstr = smstr.mid( c );	// copy back over ourselves
                                }
                                else
-                                  if ( *c == '/' )
+                                  if ( smstr[c] == '/' )
                                   {
-                                     matchcs.mstr = matchcs.mstr.left( c - smstr.c_str() );	// copy back over ourselves
-                                     //                                 *c = 0;				// force a stop on the /
+                                     matchcs.mstr = matchcs.mstr.left( c );	// copy back over ourselves
                                   }
                                   else
                                   {
@@ -571,23 +627,22 @@ bool ThisLogMatcher::idleMatch( int limit )
                          {
                             // We know that cs is not empty
                             // strip temp cs of its leading country and number
-                             std::string smstrStart = matchcs.mstr.toStdString();
-                            const char * mstrStart = smstrStart.c_str();
-                            const char * c = &mstrStart[ smstrStart.length() ];
+                            QString smstrStart = matchcs.mstr;
+                            int c = smstrStart.length();
 
-                            while ( c > mstrStart )
+                            while ( c > 0 )
                             {
-                               if ( !isdigit( *( c - 1 ) ) )
+                               if ( !smstrStart[c - 1].isDigit())
                                   c--;
                                else
                                   break;
                             }
 
-                            if ( c > mstrStart )   	// i.e. we havent got back to the start
+                            if ( c > 0 )   	// i.e. we havent got back to the start
                             {
-                               if ( *c )   			// we would be left with something
+                               if ( c < smstrStart.length() )   			// we would be left with something
                                {
-                                  matchcs.mstr = c;	// copy back over
+                                  matchcs.mstr = smstrStart.mid(c);	// copy back over
                                   mp = Body;
                                   contestIndex = 0;
                                   contactIndex = 0;
@@ -671,7 +726,7 @@ bool ThisLogMatcher::idleMatch( int limit )
              contestIndex++;
              return true;
           }
-          BaseContact *cct = ccon->pcontactAt( contactIndex++ );
+          QSharedPointer<BaseContact> cct = ccon->pcontactAt( contactIndex++ );
           if ( !cct )
              return true;
 
@@ -698,9 +753,9 @@ bool ThisLogMatcher::idleMatch( int limit )
                 }
                 else
                 {
-                   TEMPBUFF( uprqth, EXTRALENGTH + 1 );
+                   QString uprqth;
                    strcpysp( uprqth, cct->extraText.getValue(), EXTRALENGTH );
-                   strupr( uprqth );
+                   uprqth = uprqth.toUpper();
                    qthmatch = matchqth.checkMatch( uprqth );
 
                    if ( bool( ccon ) && !qthmatch )
@@ -778,31 +833,42 @@ void OtherLogMatcher::matchCountry( const QString &cs )
 {
    TMatchThread::getMatchThread() ->matchCountry( cs );   // scroll to
 }
-void OtherLogMatcher::addMatch( BaseContact *cct, BaseContestLog * ccon )
+void OtherLogMatcher::addMatch( QSharedPointer<BaseContact> cct, BaseContestLog * ccon )
 {
 
    if ( !cct )
       return ;
 
-   BaseMatchContest *mc = 0;
-   ContestMatchList &matchList = matchCollection->matchList;
-   if (matchList.size() == 0)
+   ContestMatchList &contestMatchList = matchCollection->contestMatchList;
+   MapWrapper<BaseMatchContest> wmc(new MatchContactLog);
+
+
+   QSharedPointer<BaseMatchContest> found;
+   foreach(MapWrapper<BaseMatchContest> test, contestMatchList)
    {
-       mc = new MatchContactLog;
-       mc->matchedContest = ccon;
-       matchList.insert(mc);
+       if (test.wt->getContactLog() == ccon)
+       {
+            found = test.wt;
+            break;
+       }
    }
-   mc = matchCollection->pcontestAt(matchList.size() - 1);
-   if (mc->matchedContest != ccon)
+   if (!found)
    {
-       mc = new MatchContactLog;
-       mc->matchedContest = ccon;
-       matchList.insert(mc);
+       wmc.wt->matchedContest = ccon;
+       contestMatchList.insert(wmc, wmc);
+   }
+   found.reset();
+   foreach(MapWrapper<BaseMatchContest> test, contestMatchList)
+   {
+       if (test.wt->getContactLog() == ccon)
+       {
+            found = test.wt;
+            MapWrapper<MatchContact> mct(new MatchLogContact( ccon, cct ));
+            found->contactMatchList.insert( mct, mct );
+            break;
+       }
    }
 
-   MatchContact *mct = new MatchLogContact( ccon, cct );
-
-   mc->matchList.insert( mct );
    thisContestMatched = matchCollection->contactCount();
 }
 bool OtherLogMatcher::idleMatch( int limit )
@@ -831,56 +897,55 @@ bool OtherLogMatcher::idleMatch( int limit )
                {
                   case Exact:
                      {
-                        if ( matchcs.match )
-                        {
-                           bool dropthrough = false;
-                           std::string smstr = matchcs.mstr.toStdString();
-                           const char *c = smstr.c_str();
-                           // need to trim out any leading and trailing
-                           while ( *c && *c != '/' )
-                              c++;
+                   if ( matchcs.match )
+                   {
+                      bool dropthrough = false;
+                      QString smstr = matchcs.mstr;
+                      int c = 0;
+                      // need to trim out any leading and trailing
+                      while ( c < smstr.length() && smstr[c] != '/' )
+                         c++;
 
-                           const char *c2 = c;
-                           if ( *c2 )
-                              c2++;	// skip the first /
-                           while ( *c2 && *c2 != '/' )
-                              c2++;
+                      int c2 = c;
+                      if ( c2 < smstr.length() )
+                         c2++;	// skip the first /
+                      while ( c2 < smstr.length() && smstr[c2] != '/' )
+                         c2++;
 
-                           if ( *c && *c2 )
-                           {
-                              matchcs.mstr = QString( c ).left(c2 - c );	// copy back over ourselves
-                           }
-                           else
-                              if ( *c && ( c - smstr.c_str() < 3 ) && ( strlen( c ) > 2 ) )
-                              {
-                                 // prefix less than 3 chars and suffix more than 1 character
-                                 matchcs.mstr = QString( c );	// copy back over ourselves
-                              }
-                              else
-                                 if ( *c == '/' )
-                                 {
-                                    matchcs.mstr = matchcs.mstr.left( c - smstr.c_str() );	// copy back over ourselves
-                                    //                                 *c = 0;				// force a stop on the /
-                                 }
-                                 else
-                                 {
-                                    // want to drop through
-                                    dropthrough = true;
-                                 }
+                      if ( c < smstr.length() && c2 < smstr.length() )
+                      {
+                         matchcs.mstr = smstr.mid(c, c2 - c );	// copy back over ourselves
+                      }
+                      else
+                         if ( c < smstr.length() && ( c < 3 ) && smstr.length() - c > 2  )
+                         {
+                            // prefix less than 3 chars and suffix more than 1 character
+                            matchcs.mstr = smstr.mid( c );	// copy back over ourselves
+                         }
+                         else
+                            if ( smstr[c] == '/' )
+                            {
+                               matchcs.mstr = matchcs.mstr.left( c );	// copy back over ourselves
+                            }
+                            else
+                            {
+                               // want to drop through
+                               dropthrough = true;
+                            }
 
-                           if ( !dropthrough )
-                           {
-                              TMatchThread::getMatchThread() ->ShowOtherMatchStatus( " - No exact match" );
-                              mp = NoSuffix;
-                              contestIndex = 0;
-                              contactIndex = 0;
-                              firstMatch = Rest;
-                              EndScan = false;
-                              break;
-                           }
-                        }
-                     }
-                     // or no /P anyway, so drop through
+                      if ( !dropthrough )
+                      {
+                         TMatchThread::getMatchThread() ->ShowThisMatchStatus( " - No exact match" );
+                         mp = NoSuffix;
+                         contestIndex = 0;
+                         contactIndex = 0;
+                         firstMatch = MainContest;
+                         EndScan = false;
+                         break;
+                      }
+                   }
+                }
+                // or no /P anyway, so drop through
 
                   case NoSuffix:
                      {
@@ -903,34 +968,33 @@ bool OtherLogMatcher::idleMatch( int limit )
                      {
                         if ( matchcs.match )
                         {
-                           // We know that cs is not empty
-                           // strip temp cs of its leading country and number
-                            std::string smstrStart = matchcs.mstr.toStdString();
-                           const char * mstrStart = smstrStart.c_str();
-                           const char * c = &mstrStart[ smstrStart.length() ];
+                            // We know that cs is not empty
+                            // strip temp cs of its leading country and number
+                            QString smstrStart = matchcs.mstr;
+                            int c = smstrStart.length();
 
-                           while ( c > mstrStart )
-                           {
-                              if ( !isdigit( *( c - 1 ) ) )
-                                 c--;
-                              else
-                                 break;
-                           }
+                            while ( c > 0 )
+                            {
+                               if ( !smstrStart[c - 1].isDigit())
+                                  c--;
+                               else
+                                  break;
+                            }
 
-                           if ( c > mstrStart )   	// i.e. we havent got back to the start
-                           {
-                              if ( *c )   			// we would be left with something
-                              {
-                                 matchcs.mstr = c;	// copy back over
-                                 mp = Body;
-                                 contestIndex = 0;
-                                 contactIndex = 0;
-                                 firstMatch = Rest;
-                                 EndScan = false;
-                                 TMatchThread::getMatchThread() ->ShowOtherMatchStatus( " - No match No LOC" );
-                                 break;
-                              }
-                           }
+                            if ( c > 0 )   	// i.e. we havent got back to the start
+                            {
+                               if ( c < smstrStart.length() )   			// we would be left with something
+                               {
+                                  matchcs.mstr = smstrStart.mid(c);	// copy back over
+                                  mp = Body;
+                                  contestIndex = 0;
+                                  contactIndex = 0;
+                                  firstMatch = MainContest;
+                                  EndScan = false;
+                                  TMatchThread::getMatchThread() ->ShowThisMatchStatus( " - No match No LOC" );
+                                  break;
+                               }
+                            }
                         }
                      }
                      // else we have already done what we can, so drop through
@@ -963,7 +1027,7 @@ bool OtherLogMatcher::idleMatch( int limit )
             }
          }
 
-      ContestSlot *cs = TContestApp::getContestApp() ->contestSlotList.at( contestIndex );
+      QSharedPointer<ContestSlot> cs = TContestApp::getContestApp() ->contestSlotList[ contestIndex ];
       BaseContestLog * ccon = cs->slot;
       if ( ccon == TContestApp::getContestApp() ->getCurrentContest() )
       {
@@ -982,7 +1046,7 @@ bool OtherLogMatcher::idleMatch( int limit )
             contestIndex++;
             return true;
          }
-         BaseContact *cct = ccon->pcontactAt( contactIndex++ );
+         QSharedPointer<BaseContact> cct = ccon->pcontactAt( contactIndex++ );
          if ( !cct )
             return true;
 
@@ -1018,9 +1082,9 @@ bool OtherLogMatcher::idleMatch( int limit )
                }
                else
                {
-                  TEMPBUFF( uprqth, EXTRALENGTH + 1 );
+                  QString uprqth;
                   strcpysp( uprqth, cct->extraText.getValue(), EXTRALENGTH );
-                  strupr( uprqth );
+                  uprqth = uprqth.toUpper();
                   qthmatch = matchqth.checkMatch( uprqth );
 
                   if ( ccon != nullptr && !qthmatch )
@@ -1098,28 +1162,40 @@ void ListMatcher::matchCountry( const QString &/*cs*/ )
 {}
 void ListMatcher::addMatch( ListContact *cct, ContactList * ccon )
 {
-   if ( !cct )
-      return ;
+       if ( !cct )
+          return ;
 
-   BaseMatchContest *mc = 0;
-   ContestMatchList &matchList = matchCollection->matchList;
-   if (matchList.size() == 0)
-   {
-       mc = new MatchContactList;
-       mc->matchedContest = ccon;
-       matchList.insert(mc);
-   }
-   mc = matchCollection->pcontestAt(matchList.size() - 1);
-   if (mc->matchedContest != ccon)
-   {
-       mc = new MatchContactList;
-       mc->matchedContest = ccon;
-       matchList.insert(mc);
-   }
+       ContestMatchList &contestMatchList = matchCollection->contestMatchList;
+       MapWrapper<BaseMatchContest> wmc(new MatchContactList);
 
-   MatchListContact *mct = new MatchListContact( ccon, cct );
 
-   mc->matchList.insert( mct );
+       QSharedPointer<BaseMatchContest> found;
+       foreach(MapWrapper<BaseMatchContest> test, contestMatchList)
+       {
+           if (test.wt->getContactList() == ccon)
+           {
+                found = test.wt;
+                break;
+           }
+       }
+       if (!found)
+       {
+           wmc.wt->matchedContest = ccon;
+           contestMatchList.insert(wmc, wmc);
+       }
+       found.reset();
+       foreach(MapWrapper<BaseMatchContest> test, contestMatchList)
+       {
+           if (test.wt->getContactList() == ccon)
+           {
+                found = test.wt;
+                MapWrapper<MatchContact> mct(new MatchListContact( ccon, cct ));
+                found->contactMatchList.insert( mct, mct );
+                break;
+           }
+       }
+
+       thisContestMatched = matchCollection->contactCount();
 }
 
 bool ListMatcher::idleMatch( int limit )
@@ -1150,56 +1226,55 @@ bool ListMatcher::idleMatch( int limit )
                {
                   case Exact:
                      {
-                        if ( matchcs.match )
-                        {
-                           bool dropthrough = false;
-                           std::string smatchcs = matchcs.mstr.toStdString();
-                           const char *c = smatchcs.c_str();
-                           // need to trim out any leading and trailing
-                           while ( *c && *c != '/' )
-                              c++;
+                   if ( matchcs.match )
+                   {
+                      bool dropthrough = false;
+                      QString smstr = matchcs.mstr;
+                      int c = 0;
+                      // need to trim out any leading and trailing
+                      while ( c < smstr.length() && smstr[c] != '/' )
+                         c++;
 
-                           const char *c2 = c;
-                           if ( *c2 )
-                              c2++;	// skip the first /
-                           while ( *c2 && *c2 != '/' )
-                              c2++;
+                      int c2 = c;
+                      if ( c2 < smstr.length() )
+                         c2++;	// skip the first /
+                      while ( c2 < smstr.length() && smstr[c2] != '/' )
+                         c2++;
 
-                           if ( *c && *c2 )
-                           {
-                              matchcs.mstr = QString( c ).left( c2 - c );	// copy back over ourselves
-                           }
-                           else
-                              if ( *c && ( c - smatchcs.c_str() < 3 ) && ( strlen( c ) > 2 ) )
-                              {
-                                 // prefix less than 3 chars and suffix more than 1 character
-                                 matchcs.mstr = QString( c );	// copy back over ourselves
-                              }
-                              else
-                                 if ( *c == '/' )
-                                 {
-                                    matchcs.mstr = matchcs.mstr.left( c - smatchcs.c_str() );	// copy back over ourselves
-                                    //                                 *c = 0;				// force a stop on the /
-                                 }
-                                 else
-                                 {
-                                    // want to drop through
-                                    dropthrough = true;
-                                 }
+                      if ( c < smstr.length() && c2 < smstr.length() )
+                      {
+                         matchcs.mstr = smstr.mid(c, c2 - c );	// copy back over ourselves
+                      }
+                      else
+                         if ( c < smstr.length() && ( c < 3 ) && smstr.length() - c > 2  )
+                         {
+                            // prefix less than 3 chars and suffix more than 1 character
+                            matchcs.mstr = smstr.mid( c );	// copy back over ourselves
+                         }
+                         else
+                            if ( smstr[c] == '/' )
+                            {
+                               matchcs.mstr = matchcs.mstr.left( c );	// copy back over ourselves
+                            }
+                            else
+                            {
+                               // want to drop through
+                               dropthrough = true;
+                            }
 
-                           if ( !dropthrough )
-                           {
-                              //TMatchThread::getMatchThread()->ShowMatchStatus( " - No exact match" );
-                              mp = NoSuffix;
-                              contestIndex = 0;
-                              contactIndex = 0;
-                              firstMatch = MainContest;
-                              EndScan = false;
-                              break;
-                           }
-                        }
-                     }
-                     // or no /P anyway, so drop through
+                      if ( !dropthrough )
+                      {
+                         TMatchThread::getMatchThread() ->ShowThisMatchStatus( " - No exact match" );
+                         mp = NoSuffix;
+                         contestIndex = 0;
+                         contactIndex = 0;
+                         firstMatch = MainContest;
+                         EndScan = false;
+                         break;
+                      }
+                   }
+                }
+                // or no /P anyway, so drop through
 
                   case NoSuffix:
                      {
@@ -1222,35 +1297,33 @@ bool ListMatcher::idleMatch( int limit )
                      {
                         if ( matchcs.match )
                         {
-                           // We know that cs is not empty
-                           // strip temp cs of its leading country and number
-                            std::string smstrStart = matchcs.mstr.toStdString();
-                           const char * mstrStart = smstrStart.c_str();
-                           const char * c = &smstrStart[ smstrStart.length() ];
+                            // We know that cs is not empty
+                            // strip temp cs of its leading country and number
+                            QString smstrStart = matchcs.mstr;
+                            int c = smstrStart.length();
 
-                           while ( c > mstrStart )
-                           {
-                              if ( !isdigit( *( c - 1 ) ) )
-                                 c--;
-                              else
-                                 break;
-                           }
+                            while ( c > 0 )
+                            {
+                               if ( !smstrStart[c - 1].isDigit())
+                                  c--;
+                               else
+                                  break;
+                            }
 
-                           if ( c > mstrStart )   	// i.e. we havent got back to the start
-                           {
-                              if ( *c )   			// we would be left with something
-                              {
-                                 matchcs.mstr = c;	// copy back over
-                                 mp = Body;
-                                 contestIndex = 0;
-                                 contactIndex = 0;
-                                 firstMatch = MainContest;
-                                 EndScan = false;
-                                 //TMatchThread::getMatchThread()->ShowMatchStatus( " - No match No LOC" );
-                                 break;
-                              }
-                           }
-                        }
+                            if ( c > 0 )   	// i.e. we havent got back to the start
+                            {
+                               if ( c < smstrStart.length() )   			// we would be left with something
+                               {
+                                  matchcs.mstr = smstrStart.mid(c);	// copy back over
+                                  mp = Body;
+                                  contestIndex = 0;
+                                  contactIndex = 0;
+                                  firstMatch = MainContest;
+                                  EndScan = false;
+                                  TMatchThread::getMatchThread() ->ShowThisMatchStatus( " - No match No LOC" );
+                                  break;
+                               }
+                            }                        }
                      }
                      // else we have already done what we can, so drop through
 
@@ -1281,7 +1354,7 @@ bool ListMatcher::idleMatch( int limit )
 
       ContactList * ccon;
 
-      ListSlot *cs = TContestApp::getContestApp() ->listSlotList.at( contestIndex );
+      QSharedPointer<ListSlot> cs = TContestApp::getContestApp() ->listSlotList[ contestIndex ];
       ccon = cs->slot;
 
       while ( limit > 0  && !ce)
@@ -1310,7 +1383,7 @@ bool ListMatcher::idleMatch( int limit )
                if ( contestIndex < TContestApp::getContestApp() ->getListSlotCount() )
                {
                   // ContestLog is valid, if it is a list set first part
-                  ListSlot * cs = TContestApp::getContestApp() ->listSlotList.at( contestIndex );
+                  QSharedPointer<ListSlot> cs = TContestApp::getContestApp() ->listSlotList[ contestIndex ];
                   ccon = cs->slot;
                }
             }
@@ -1321,7 +1394,7 @@ bool ListMatcher::idleMatch( int limit )
             return true;
 
          // now do the match
-// And why aren't we doing a QTH match mere?
+// And why aren't we doing a QTH match here?
          bool csmatch = false;
          bool locmatch = false;
 

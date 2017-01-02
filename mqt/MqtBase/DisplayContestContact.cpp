@@ -165,9 +165,8 @@ void DisplayContestContact::checkContact( )
    {
 // and if scanContest has set dup, then this won't fire tering a new QSO
 // But it DOES fire when checking on en
-      BaseContact * valp = 0;
-      valp = clp->validationPoint;
-      if ( clp->DupSheet.checkCurDup( this, valp, false ) )
+      unsigned long valp  = clp->validationPoint;
+      if ( clp->DupSheet.checkCurDup( clp, getLogSequence(), valp, false ) )
       {
          cs.valRes = ERR_DUPCS;
          checkret = ERR_12;
@@ -228,7 +227,7 @@ void DisplayContestContact::checkContact( )
    else
       if ( !checkret )
       {
-         districtMult = 0;						// just in case we have changed the type...
+         districtMult.reset();						// just in case we have changed the type...
          if ( clp->otherExchange.getValue() )
          {
             if ( clp->districtMult.getValue() )
@@ -295,7 +294,7 @@ void DisplayContestContact::checkContact( )
          }
       }
    }
-   clp->DupSheet.checkCurDup( this, 0, true ); // add to duplicates list
+   clp->DupSheet.checkCurDup( clp, getLogSequence(), 0, true ); // add to duplicates list
 
    if ( !( contactFlags.getValue() & ( MANUAL_SCORE | NON_SCORING | LOCAL_COMMENT | COMMENT_ONLY | DONT_PRINT ) ) )
    {
@@ -344,19 +343,23 @@ void DisplayContestContact::checkContact( )
 
       for ( LocSquareIterator i = clp->locs.llist.begin(); i != clp->locs.llist.end(); i++ )
       {
-         if ( strnicmp( ( *i ) ->loc, letters, 2 ) == 0 )
-         {
-            ls = ( *i );
-            break;
-         }
+          LocSquare *locsq = ( *i ).wt.data();
+          if ( strnicmp ( locsq ->loc, letters, 2 ) == 0 )
+          {
+              ls = locsq;
+              break;
+          }
+
       }
 
       if ( !ls )
       {
          if ( letters[ 0 ].isLetter() && letters[ 1 ].isLetter() )
          {
-            ls = new LocSquare( letters );
-            clp->locs.llist.insert( ls );
+            ls = new LocSquare ( letters );
+            MapWrapper<LocSquare> wls(ls);
+            if (!clp->locs.llist.contains(wls))
+                clp->locs.llist.insert ( wls, wls );
          }
       }
 
@@ -369,30 +372,10 @@ void DisplayContestContact::checkContact( )
          {
             if (clp->UKACBonus.getValue())
             {
-               if (npt->UKLocCount == 0 ||  npt->nonUKLocCount == 0)
+               if (npt->UKLocCount == 0 &&  npt->nonUKLocCount == 0)
                {
-                  clp->bonus = 0;
-                  std::map<QString, int>::iterator l = clp->locBonuses.find(sloc);
-                  if (npt->UKLocCount == 0 &&  npt->nonUKLocCount == 0 && l != clp->locBonuses.end())
-                  {
-                     // specific bonus for square allocated
-                     clp->bonus = l->second;
-                  }
-                  else if (!UKcall && npt->UKLocCount == 0 &&  npt->nonUKLocCount == 0)
-                  {
-                     clp->bonus = clp->nonukLocBonus;
-                  }
-                  else if (UKcall && npt->UKLocCount == 0)
-                  {
-                     if ( npt->nonUKLocCount == 0)
-                     {
-                        clp->bonus = clp->ukLocBonus;
-                     }
-                     else
-                     {
-                        clp->bonus = clp->ukLocBonus - clp->nonukLocBonus;
-                     }
-                  }
+                  clp->bonus = clp->getSquareBonus(sloc);
+
                   bonus += clp->bonus;
                   clp->nbonus = true;
                   newBonus = true;
@@ -603,7 +586,7 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
                         {
                            curcon->disbear( lon, lat, dist, brg );
                         }
-                        scorebuff = QString("%1").arg( ( int ) dist );
+                        scorebuff = QString("%1").arg( static_cast< int >  (dist) );
 
                      }
                   }
@@ -647,7 +630,7 @@ void DisplayContestContact::processMinosStanza( const QString &methodName, Minos
 
    int itemp;
    if ( mt->getStructArgMemberValue( "lseq", itemp ) )     // should already be done...
-      logSequence = ( unsigned long ) itemp;
+      logSequence = static_cast< unsigned long > (itemp);
    mt->getStructArgMemberValueDTG( "uDTG", updtg );
 
    if ( methodName == "MinosLogComment" )
@@ -729,9 +712,9 @@ void DisplayContestContact::processMinosStanza( const QString &methodName, Minos
          if ( maxct > contest->maxSerial )
             contest->maxSerial = maxct;
 
-         contest->validationPoint = this;
+         contest->validationPoint = getLogSequence();
          checkContact();                 // processMinosStanza - Do we need to? scanContest will repeat it. Except we push the contact in it's current state into history
-         BaseContact bc( *this );   // this should get it now??
+         QSharedPointer<BaseContact> bc( new BaseContact(*this) );   // this should get it now??
          getHistory().push_back( bc );
       }
 

@@ -74,7 +74,7 @@ QString ListContact::getField( int ACol, const BaseContestLog *const curcon ) co
             {
                curcon->disbear( lon, lat, dist, brg );
             }
-            scorebuff = QString( "%1").arg(( int ) dist );
+            scorebuff = QString( "%1").arg(static_cast<int>(dist) );
             res = scorebuff;
          }
          break;

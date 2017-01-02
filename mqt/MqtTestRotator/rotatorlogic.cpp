@@ -9,49 +9,33 @@ RotatorLogic *rotatorLogic;
 RotatorLogic::RotatorLogic(RotatorMainWindow *parent) : QObject(parent), parent(parent)
 {
     rotatorLogic = this;
-    connect(&ConnectTimer, SIGNAL(timeout()), this, SLOT(ConnectTimerTimer()));
-    ConnectTimer.start(1000);
-}
-//---------------------------------------------------------------------------
 
-/*static*/
-void RotatorLogic::makeRPCObjects()
-{
-   MinosRPCObj::addObj( new RPCRotatorClient( new TRPCCallback <RotatorLogic> ( rotatorLogic, &RotatorLogic::rotatorClientCallback ) ) );
-   MinosRPCObj::addObj( new RPCRotatorServer( new TRPCCallback <RotatorLogic> ( rotatorLogic, &RotatorLogic::rotatorServerCallback ) ) );
+    MinosRPC *rpc = MinosRPC::getMinosRPC();
+
+    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
+
+    rpc->setAppName(rpcConstants::rotatorApp);
+
+    // we aren't subscribing to anything!
 
 }
 //---------------------------------------------------------------------------
 
 void RotatorLogic::publishState(const QString &state)
 {
-    if (connected && subscribed)
-    {
-        static QString old;
+    static QString old;
 
-        if ( state != old )
-        {
-           old = state;
-           RPCPubSub::publish( "Rotator", "State", state, psPublished );
-        }
+    if ( state != old )
+    {
+       old = state;
+       MinosRPC *rpc = MinosRPC::getMinosRPC();
+       rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorKeyState, state, psPublished );
     }
 }
 
-void RotatorLogic::ConnectTimerTimer( )
-{
-   if ( !connected && checkServerReady() )
-   {
-      makeRPCObjects();
-      XMPPInitialise( "Rotator" );
-      connected = true;
-   }
-   if ( connected && !subscribed )
-   {
-      RPCPubSub::initialisePubSub( new TRPCCallback <RotatorLogic> ( rotatorLogic, &RotatorLogic::notifyCallback ) );
-      subscribed = true;
-   }
-}
-void RotatorLogic::notifyCallback( bool err, MinosRPCObj *mro, const QString &from )
+void RotatorLogic::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
    trace( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
    AnalysePubSubNotify an( err, mro );
@@ -68,12 +52,12 @@ void RotatorLogic::notifyCallback( bool err, MinosRPCObj *mro, const QString &fr
    }
 }
 //---------------------------------------------------------------------------
-void RotatorLogic::rotatorClientCallback( bool /*err*/, MinosRPCObj * /*mro*/, const QString &/*from*/ )
+void RotatorLogic::on_response(bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*/, const QString &/*from*/ )
 {
    // call back says OK/not OK, and we ignore it
 }
 //---------------------------------------------------------------------------
-void RotatorLogic::rotatorServerCallback( bool err, MinosRPCObj *mro, const QString &from )
+void RotatorLogic::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
     trace( "rotator callback from " + from + ( err ? ":Error" : ":Normal" ) );
 
@@ -82,7 +66,8 @@ void RotatorLogic::rotatorServerCallback( bool err, MinosRPCObj *mro, const QStr
         QSharedPointer<RPCParam> psDirection;
         QSharedPointer<RPCParam> psAngle;
         RPCArgs *args = mro->getCallArgs();
-        if ( args->getStructArgMember( 0, "RotatorDirection", psDirection ) && args->getStructArgMember( 0, "RotatorAngle", psAngle ) )
+        if ( args->getStructArgMember( 0, rpcConstants::rotatorParamDirection, psDirection )
+             && args->getStructArgMember( 0, rpcConstants::rotatorParamAngle, psAngle ) )
         {
             int direction;
             int angle;
@@ -94,7 +79,7 @@ void RotatorLogic::rotatorServerCallback( bool err, MinosRPCObj *mro, const QStr
                 emit (setRotation(direction, angle));
 
                 QSharedPointer<RPCParam>st(new RPCParamStruct);
-                st->addMember( true, "RotatorResult" );
+                st->addMember( true, rpcConstants::rotatorResult );
                 mro->clearCallArgs();
                 mro->getCallArgs() ->addParam( st );
                 mro->queueResponse( from );

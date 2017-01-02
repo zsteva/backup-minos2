@@ -51,7 +51,9 @@ dtg::dtg( bool now ): baddtg(false)
         QDateTime tdt = QDateTime::currentDateTimeUtc();
         int correction = MinosParameters::getMinosParameters() ->getBigClockCorrection();
         if ( correction )
-            tdt.addSecs( correction );
+        {
+            tdt = tdt.addSecs( correction );
+        }
         setDate( tdt.toString( "dd/MM/yy" ), DTGDISP );
         setTime( tdt.toString( "hh:mm:ss" ), DTGDISP );
     }
@@ -380,7 +382,9 @@ dtg::~dtg()
 {}
 //============================================================
 callsign::callsign( ) : valRes( CS_NOT_VALIDATED )
-{}
+{
+    fullCall.setValue( "" );
+}
 callsign::callsign(const QString &pcs ) : valRes( CS_NOT_VALIDATED )
 {
    fullCall.setValue( pcs );
@@ -418,8 +422,8 @@ char callsign::validate( )
 
    valRes = ERR_INVCS;
 
-   int cslen = strlen(csv);
-   for ( int i = 0; i < cslen; i++ )
+   size_t cslen = strlen(csv);
+   for ( size_t i = 0; i < cslen; i++ )
    {
       if ( ( csv[ i ] != '/' ) && ( !isalnum(csv[ i ]) ) )
       {
@@ -559,7 +563,7 @@ char callsign::validate( )
 
    // Replace real prefix2 with the dup check prefix2 - for dup checking
    // Need to implement the G list here...
-   CountrySynonym *syn = MultLists::getMultLists() ->searchCountrySynonym( prefix2 );
+   QSharedPointer<CountrySynonym> syn = MultLists::getMultLists() ->searchCountrySynonym( prefix2 );
    if ( syn )
    {
       syn->getDupPrefix( prefix2 );

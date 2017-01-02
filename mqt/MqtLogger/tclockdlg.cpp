@@ -6,6 +6,7 @@ TClockDlg::TClockDlg(QWidget *parent) :
     ui(new Ui::TClockDlg)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
 TClockDlg::~TClockDlg()

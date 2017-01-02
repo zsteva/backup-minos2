@@ -13,18 +13,14 @@ TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += c++14
 
-win32-g++:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
-else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
-
-android:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
-else:android:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
+*g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
+else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
 
 DEFINES += TIXML_USE_STL
 
 INCLUDEPATH += ../MqtUtils
 INCLUDEPATH += ../TinyXML
 INCLUDEPATH += ../XMPPLib
-INCLUDEPATH += ../XMPPClientLib
 INCLUDEPATH += ../qtcsv/src/include
 
 SOURCES += \
@@ -53,7 +49,9 @@ SOURCES += \
     htmldelegate.cpp \
     CalendarList.cpp \
     qlogtabwidget.cpp \
-    minoskeyboard.cpp
+    minoskeyboard.cpp \
+    MinosLines.cpp \
+    Calendar.cpp
 
 HEADERS += \
     BandList.h \
@@ -73,7 +71,6 @@ HEADERS += \
     mwin.h \
     ProfileEnums.h \
     ScreenContact.h \
-    sorted_vector.h \
     validators.h \
     MMessageDialog.h \
     MShowMessageDlg.h \
@@ -84,7 +81,9 @@ HEADERS += \
     CalendarList.h \
     cutils.h \
     qlogtabwidget.h \
-    minoskeyboard.h
+    minoskeyboard.h \
+    MinosLines.h \
+    Calendar.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

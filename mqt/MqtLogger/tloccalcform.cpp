@@ -6,6 +6,7 @@ TLocCalcForm::TLocCalcForm(QWidget *parent) :
     ui(new Ui::TLocCalcForm)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
 TLocCalcForm::~TLocCalcForm()

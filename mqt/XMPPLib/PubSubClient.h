@@ -15,16 +15,16 @@
 class RPCPublishClient: public RPCPubSub
 {
    public:
-      RPCPublishClient( TRPCFunctor *cb ) : RPCPubSub( "Minos:PubSub:Publish", cb )
+      RPCPublishClient( TRPCFunctor *cb ) : RPCPubSub( rpcConstants::publish, cb )
       {}    // method name should be shared
       // plus we want factory access to it
       // so it would be nice to have a static
       // member/method  that could go "up"
       ~RPCPublishClient()
       {}
-      virtual RPCPublishClient *makeObj()
+      virtual QSharedPointer<MinosRPCObj>makeObj()
       {
-         return new RPCPublishClient( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCPublishClient( callback ));
       }
 };
 
@@ -32,37 +32,37 @@ class RPCPublishClient: public RPCPubSub
 class RPCSubscribeClient: public RPCPubSub
 {
    public:
-      RPCSubscribeClient( TRPCFunctor *cb ) : RPCPubSub( "Minos:PubSub:Subscribe", cb )
+      RPCSubscribeClient( TRPCFunctor *cb ) : RPCPubSub( rpcConstants::subscribe, cb )
       {}
       ~RPCSubscribeClient()
       {}
-      virtual RPCSubscribeClient *makeObj()
+      virtual QSharedPointer<MinosRPCObj>makeObj()
       {
-         return new RPCSubscribeClient( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCSubscribeClient( callback ));
       }
 };
 class RPCRemoteSubscribeClient: public RPCPubSub
 {
    public:
-      RPCRemoteSubscribeClient( TRPCFunctor *cb ) : RPCPubSub( "Minos:PubSub:RemoteSubscribe", cb )
+      RPCRemoteSubscribeClient( TRPCFunctor *cb ) : RPCPubSub( rpcConstants::remoteSubscribe, cb )
       {}
       ~RPCRemoteSubscribeClient()
       {}
-      virtual RPCRemoteSubscribeClient *makeObj()
+      virtual QSharedPointer<MinosRPCObj>makeObj()
       {
-         return new RPCRemoteSubscribeClient( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCRemoteSubscribeClient( callback ));
       }
 };
 class RPCNotifyServer: public MinosRPCServer
 {
    public:
-      RPCNotifyServer( TRPCFunctor *cb ) : MinosRPCServer( "Minos:PubSub:ClientNotify", cb )
+      RPCNotifyServer( TRPCFunctor *cb ) : MinosRPCServer( rpcConstants::clientNotify, cb )
       {}
       ~RPCNotifyServer()
       {}
-      virtual RPCNotifyServer *makeObj()
+      virtual QSharedPointer<MinosRPCObj>makeObj()
       {
-         return new RPCNotifyServer( callback );
+         return QSharedPointer<MinosRPCObj>(new RPCNotifyServer( callback ));
       }
 };
 //---------------------------------------------------------------------------
@@ -110,6 +110,6 @@ class RPCPublisher
       void rePublish();
 
 };
-extern std::vector<RPCSubscriber *> subscribeList;
-extern std::vector<RPCPublisher *> publishList;
+extern QVector<RPCSubscriber *> subscribeList;
+extern QVector<RPCPublisher *> publishList;
 #endif

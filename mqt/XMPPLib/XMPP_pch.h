@@ -12,6 +12,8 @@
 #ifndef XMPP_pchH
 #define XMPP_pchH
 
+#include <cstdint>
+
 #include <QDateTime>
 #include <QDir>
 #include <QDirIterator>
@@ -23,21 +25,14 @@
 #include <QSharedMemory>
 #include <QTextStream>
 #include <QThread>
-#include <QSemaphore>
+#include <QSystemSemaphore>
 #include <QTcpSocket>
 #include <QSettings>
 #include <QSharedPointer>
 
-#include <memory>
 #include <exception>
 #include <string>
-#include <vector>
-#include <map>
-#include <set>
-#include <deque>
-#include <algorithm>
-#include <sstream>
-#include <fstream>
+#include <algorithm>    // and it also gets included by a different route
 
 #include <stdio.h>
 #include <errno.h>
@@ -60,6 +55,11 @@
 #include "XMPPStanzas.h"
 #include "XMPPRPCObj.h"
 #include "RPCPubSub.h"
+
+#include "RPCCommandConstants.h"
+#include "MinosRPC.h"
 #include "PubSubClient.h"
 
+
+#include "MinosConnection.h"
 #endif

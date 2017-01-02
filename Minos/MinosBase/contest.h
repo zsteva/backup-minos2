@@ -236,9 +236,10 @@ class BaseContestLog
       int bonus;
 
       int multsAsBonuses;
+      int bonusYearLoaded;
       std::map<std::string, int> locBonuses;
-      int ukLocBonus;
-      int nonukLocBonus;
+      void loadBonusList();
+      int getSquareBonus(AnsiString sloc);
 
       int *districtWorked;
       int *countryWorked;
@@ -343,6 +344,8 @@ class ContestScore
       char brbonus2;
 
       std::string name;
+      bool UKACBonus;
+
       int nqsos;
       int contestScore;
       int nctry;

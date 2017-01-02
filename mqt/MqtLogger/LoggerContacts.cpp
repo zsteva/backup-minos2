@@ -64,26 +64,26 @@ void ContestContact::getPrintFileText( QString &sdest, short maxlen )
    {
       makestrings( clp->serialField.getValue() );
 
-      TEMPBUFF( exp_buff, 60 );
-      exp_buff[ 0 ] = 0;
+      QString exp_buff;
+
       if ( contactFlags.getValue() & NON_SCORING )
       {
          ContactBuffs::scorebuff = "0";
-         strcpy( exp_buff, "No Score Claimed " );
+         exp_buff = "No Score Claimed " ;
       }
       else
          if ( cs.valRes == ERR_DUPCS )
          {
              ContactBuffs::scorebuff = "0";
-            strcpy( exp_buff, "Duplicate " );
+             exp_buff = "Duplicate ";
          }
          else
          {
             if ( contactFlags.getValue() & VALID_DUPLICATE )
-               strcpy( exp_buff, "BackPacker " );
+               exp_buff = "BackPacker ";
 
             if ( contactFlags.getValue() & VALID_DISTRICT )
-               strcat( exp_buff, "No district code " );
+               exp_buff += "No district code ";
 
             thisscore = contactScore.getValue();
             switch ( clp->scoreMode.getValue() )
@@ -477,7 +477,7 @@ QString ContestContact::getADIFLine()
 
    return outstr;
 }
-bool ContestContact::commonSave( )
+bool ContestContact::commonSave(QSharedPointer<BaseContact> tct)
 {
    bool ret = false;
    LoggerContestLog * clp = dynamic_cast<LoggerContestLog *>( contest );
@@ -491,7 +491,7 @@ bool ContestContact::commonSave( )
       else
          if ( clp->isMinosFile() )
          {
-            ret = minosSave();
+            ret = minosSave(tct);
          }
 
       if ( ret )
@@ -507,12 +507,12 @@ bool ContestContact::commonSave( )
    }
    return ret;
 }
-bool ContestContact::minosSave( )
+bool ContestContact::minosSave(QSharedPointer<BaseContact> tct )
 {
    LoggerContestLog * clp = dynamic_cast<LoggerContestLog *>( contest );
-   clp->minosSaveContestContact( this );
-   BaseContact bc( *this );
-   bc.updtime = dtg( true ); // update time is now
+   clp->minosSaveContestContact( tct );
+   QSharedPointer<BaseContact> bc( new BaseContact(*this ));
+   bc->updtime = dtg( true ); // update time is now
    getHistory().push_back( bc );
    setModificationCount( getModificationCount() + 1 );
    return true;
@@ -520,22 +520,22 @@ bool ContestContact::minosSave( )
 bool ContestContact::GJVsave( GJVParams &gp )
 {
    const QString nulc;
-   TEMPBUFF( temp, 50 );
+   QString temp;
    buffpt = 0;
 
    // write it all into sbuff
 
    int thisDiskBlock = gp.diskBlock++;
-   setLogSequence( ( unsigned long ) ( thisDiskBlock ) << 16 );
+   setLogSequence( static_cast< unsigned long > ( thisDiskBlock ) << 16 );
    QSharedPointer<QFile> fd = gp.fd;
 
-   sprintf( temp, "%d", thisDiskBlock );
+   temp = QString::number(thisDiskBlock );
    strtobuf( temp );
 
-   sprintf( temp, "%ld", getLogSequence() );
+   temp = QString::number( getLogSequence() );
    strtobuf( temp );
 
-   sprintf( temp, "%d", ( unsigned int ) contactFlags.getValue() );
+   temp = QString::number( static_cast< unsigned int > (contactFlags.getValue()) );
    strtobuf( temp );
 
    strtobuf( op1.getValue() );
@@ -569,7 +569,7 @@ bool ContestContact::GJVsave( GJVParams &gp )
    strtobuf( "0" );			// power - removed
    strtobuf( mode.getValue() );
 
-   sprintf( temp, "%d", contactScore.getValue() );
+   temp = QString::number(contactScore.getValue() );
    strtobuf( temp );
 
    strtobuf( forcedMult.getValue() );
@@ -647,7 +647,7 @@ bool ContestContact::GJVload( int diskBlock )
    forcedMult.setInitialValue( temp );
    return true;
 }
-bool ContestContact::setField( int ACol, const QString Value )
+bool ContestContact::setField(QSharedPointer<BaseContact> tct, int ACol, const QString Value )
 {
 //#warning never used! There to allow grid editting
    // This really ought to validate it first...
@@ -693,7 +693,7 @@ bool ContestContact::setField( int ACol, const QString Value )
          break;
    }
    // here we should save the contact
-   commonSave();
+   commonSave(tct);
    return true;
 }
 void ContestContact::processMinosStanza( const QString &methodName, MinosTestImport * const mt )

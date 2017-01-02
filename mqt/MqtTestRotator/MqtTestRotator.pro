@@ -4,9 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network serialport
+QT       += core gui network widgets serialport
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MqtTestRotator
 TEMPLATE = app
@@ -16,6 +15,8 @@ DEFINES += VERSION=\\\"$$VERSION\\\"
 
 CONFIG += c++14
 
+*g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
+else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
 
 INCLUDEPATH += D:/hamlib-3.0.1/include
 
@@ -24,8 +25,6 @@ win32: LIBS += -LD:/hamlib-w32-3.0.1/lib/gcc/ -llibhamlib
 win32-g++:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 
-android:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
-else:android:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 
 DEFINES += TIXML_USE_STL
 
@@ -73,20 +72,6 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MqtB
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MqtBase/release/MqtBase.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MqtBase/debug/MqtBase.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../MqtBase/libMqtBase.a
-
-
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../XMPPClientLib/release/ -lXMPPClientLib
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../XMPPClientLib/debug/ -lXMPPClientLib
-else:unix: LIBS += -L$$OUT_PWD/../XMPPClientLib/ -lXMPPClientLib
-
-INCLUDEPATH += $$PWD/../XMPPClientLib
-DEPENDPATH += $$PWD/../XMPPClientLib
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPClientLib/release/libXMPPClientLib.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPClientLib/debug/libXMPPClientLib.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPClientLib/release/XMPPClientLib.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPClientLib/debug/XMPPClientLib.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../XMPPClientLib/libXMPPClientLib.a
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../XMPPLib/release/ -lXMPPLib
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../XMPPLib/debug/ -lXMPPLib

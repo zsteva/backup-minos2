@@ -75,7 +75,7 @@ void TStatsDispFrame::reInitialiseStats()
       return ;
    }
 
-   BaseContact *bestdx = ct->getBestDX();
+   QSharedPointer<BaseContact> bestdx = ct->getBestDX();
 
    if ( !bestdx || ct->maxSerial <= 0 )
       return ;
@@ -92,7 +92,7 @@ void TStatsDispFrame::reInitialiseStats()
    int nvalid = ct->getValidQSOs();
    if (nvalid)
    {
-      double avpts = ( double ) ct->contestScore / nvalid;
+      double avpts = static_cast< double>(ct->contestScore) / nvalid;
       QString tempcs;
       tempcs = bestdx->cs.fullCall.getValue().trimmed() ;
 
@@ -109,11 +109,15 @@ void TStatsDispFrame::reInitialiseStats()
       int sp1 = MinosParameters::getMinosParameters() ->getStatsPeriod1();
       int sp2 = MinosParameters::getMinosParameters() ->getStatsPeriod2();
       QDateTime  contestStart = CanonicalToTDT(ct->DTGStart.getValue());
-      int fromContestStart = contestStart.secsTo(QDateTime::currentDateTime());
+      QDateTime now = QDateTime::currentDateTimeUtc().addSecs( MinosParameters::getMinosParameters() ->getBigClockCorrection());
+      int fromContestStart = contestStart.secsTo(now);
 
-      if (sp1 > fromContestStart/120)
+      // if period is less than half the time from the start
+      // then we want to split the time from start
+
+      if (sp1 > fromContestStart/120) // fromContestStart is seconds
       {
-         sp1 = fromContestStart/120;
+         sp1 = fromContestStart/120; // so half that, in minutes
       }
       if (sp2 > fromContestStart/120)
       {
@@ -121,7 +125,7 @@ void TStatsDispFrame::reInitialiseStats()
       }
       if ( ltot )
       {
-         double qmult = ( double ) nvalid / ltot;
+         double qmult = static_cast<double> (nvalid) / ltot;
          QString temp;
 
          long Qs = ct->QSO1 ? ct->QSO1 : ct->QSO2;
@@ -134,26 +138,30 @@ void TStatsDispFrame::reInitialiseStats()
          }
 
          QString lbuff = QString( "%1\nOne New Multiplier is equivalent to %2 Average QSOs%3" ) .arg(buff)
-   #ifndef MAX_DISPLAY_TEST
                                .arg(qmult, 0, 'f', 1) .arg(temp);
-   #else
-                               .arg("9999.9") .arg(" (9999.9 Mins)");
-   #endif
          buff = lbuff ;
       }
 
-      QString lbuff = QString( "Last %1 Mins: %2 QSO %3 pts %4 mults\r\n(Previous %5; %6; %7)"
+      QString lbuff;
+
+      if (ct->UKACBonus.getValue())
+      {
+          lbuff = QString( "Last %1 Mins: %2 QSO %3 pts %4 bonus\r\n(Previous %5; %6; %7)"
+                               "\nLast %8 Mins: %9 QSO %10 pts %11 bonus\r\n(Previous %12; %13; %14)" )
+                              .arg(sp1)  .arg(ct->QSO1) .arg(ct->kms1) .arg(ct->bonus1)
+                              .arg(ct->QSO1p) .arg(ct->kms1p) .arg(ct->bonus1p)
+                              .arg(sp2) .arg(ct->QSO2) .arg(ct->kms2) .arg(ct->bonus2)
+                              .arg(ct->QSO2p) .arg(ct->kms2p) .arg(ct->bonus2p);
+      }
+      else
+      {
+        lbuff = QString( "Last %1 Mins: %2 QSO %3 pts %4 mults\r\n(Previous %5; %6; %7)"
                              "\nLast %8 Mins: %9 QSO %10 pts %11 mults\r\n(Previous %12; %13; %14)" )
-   #ifndef MAX_DISPLAY_TEST
                             .arg(sp1)  .arg(ct->QSO1) .arg(ct->kms1) .arg(ct->mults1)
                             .arg(ct->QSO1p) .arg(ct->kms1p) .arg(ct->mults1p)
                             .arg(sp2) .arg(ct->QSO2) .arg(ct->kms2) .arg(ct->mults2)
                             .arg(ct->QSO2p) .arg(ct->kms2p) .arg(ct->mults2p);
-   #else
-
-                            .arg(999) .arg(1999) .arg(999999L) .arg(999) .arg(1999) .arg(999999L) .arg(999) .arg(999999)
-                            .arg(999) .arg(1999) .arg(999999L) .arg(999) .arg(1999) .arg(999999L) .arg(999) .arg(999999);
-   #endif
+      }
       ui->SLabel1->setText( buff + "\r\n\r\n" + lbuff );
    }
 }

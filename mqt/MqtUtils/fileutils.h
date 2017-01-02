@@ -1,5 +1,6 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
+#include <cstdint>
 #include <QDir>
 #include <QFileInfo>
 #include <QFile>
@@ -20,5 +21,7 @@ bool StaticForceDirectories (const QString &Dir );
 bool StaticDirectoryCreate (const QString &Path );
 
 bool CreateDir( const QString &s );
+
+int64_t FileLength(const QString &fname);
 
 #endif // FILEUTILS_H

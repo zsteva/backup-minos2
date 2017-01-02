@@ -24,16 +24,7 @@ class BaseContestLog;
 
 
 template < class itemtype >
-struct MultCmp
-{
-   bool operator() ( const itemtype s1, const itemtype s2 ) const
-   {
-      return * s1 < *s2;
-   }
-};
-
-template < class itemtype >
-class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <itemtype> >
+class MultList : public QMap < MapWrapper<itemtype>, MapWrapper<itemtype> >
 {
     public:
       virtual int getWorked( int /*item*/, BaseContestLog * const /*ct*/ )
@@ -42,34 +33,36 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
       }
 
       QString multfilename;
-      virtual bool procLine( char ** ) = 0;
+      virtual bool procLine( QStringList ) = 0;
       MultList()
       {}
       virtual ~MultList()
       {
-         freeAll();
       }
       void loadEntries( const QString &sfname, const QString &fmess )
       {
-         TEMPBUFF( buff, 256 );
          QString fname = sfname;
          if ( multfilename.length() )
             fname = multfilename;
 
-         // populate the contest object from the file
-         std::ifstream istr( fname.toStdString().c_str() ); // should close when it goes out of scope
-         if ( !checkFileOK( istr, fname, fmess ) )
-            return ;
+         QFile lf(fname);
 
+         if (!lf.open(QIODevice::ReadOnly|QIODevice::Text))
+         {
+             QString ebuff = QString( "Failed to open %1 (%2)" ).arg(fmess).arg(fname );
+             MinosParameters::getMinosParameters() ->mshowMessage( ebuff );
+             return;
+         }
+         QTextStream istr(&lf);
+         while (!istr.atEnd())
+         {
          // loop through file, parsing each line into a_exp entries
          // for each line, call proc_line
          // ignore comment lines. (any non alpha/num char)
 
-
-         while ( istr.getline( buff, 255 ) )
-         {
-            char * a[ 255 ];
-            if ( buff[ 0 ] != '/' && !isalnum( buff[ 0 ] ) )      // allow '/' for suffixes
+             QString buff = istr.readLine(255);
+            QStringList a;
+            if (buff.isEmpty() || (buff[ 0 ] != '/' && !buff[0].isLetterOrNumber() ) )     // allow '/' for suffixes
                continue;   // skip comment lines
             bool sep2seen;
             parseLine( buff, ',', a, 255, 0, sep2seen );
@@ -79,33 +72,36 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
 
          }
       }
-      void freeAll()
-      {
-         for ( typename MultList::iterator i = MultList::begin(); i != MultList::end(); i++ )
-            delete ( *i );
-         MultList::clear();
-      }
       virtual int slen( bool )
       {
          return -1;
       }
-      unsigned int indexOf( itemtype item )
+
+      int indexOf( itemtype item )
       {
-         typename MultList::iterator f = std::lower_bound( MultList::begin(), MultList::end(), item, MultCmp <itemtype>() );
-         if ( f == MultList::end() || ( *f ) != item )
-         {
-            return ( MultList::end() - MultList::begin() );
-         }
-         unsigned int diff = f - MultList::begin();
-         return diff;
+          int i = 0;
+          for (typename MultList::iterator m = this->begin(); m != this->end(); m++)
+          {
+            if (*m->wt.data() == item)
+                return i;
+
+            i++;
+          }
+          return -1;
+      }
+
+      QSharedPointer<itemtype> itemAt(int offset)
+      {
+          QSharedPointer<itemtype> ce = std::next(this->begin(), offset)->wt;
+          return ce;
       }
 
       QString getText( int item, int Column, BaseContestLog *const ct )
       {
          QString dest;
-         if ( item >= (int)MultList::size() )
+         if ( item >= MultList::size())
             return dest;
-         itemtype ce = MultList::at( item );
+         QSharedPointer<itemtype> ce = std::next(this->begin(), item)->wt;
          switch ( Column )
          {
             case ectCall:
@@ -116,9 +112,7 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
 
             case ectWorked:
                {
-                  TEMPBUFF( wcount, 10 );
-                  sprintf( wcount, "%d", getWorked( item, ct ) );
-                  dest = wcount;
+                  dest = QString::number(getWorked( item, ct ));
                   break;
                }
 
@@ -173,7 +167,7 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
       {
          // Only called for fullMultDisp
          QString dest;
-         if ( item >= (int)MultList::size() )
+         if ( item >= MultList::size())
             return dest;
          itemtype ce = MultList::at( item );
 
@@ -221,60 +215,60 @@ class MultList : public codeproject::sorted_vector < itemtype, true, MultCmp <it
       }
 
 };
-class GlistList : public MultList < GlistEntry * >
+class GlistList : public MultList < GlistEntry >
 {
       // list of DistrictEntry
    public:
       GlistList( void );
       virtual ~GlistList();
       void load( void );
-      virtual bool procLine( char ** );
+      virtual bool procLine(QStringList );
 
 };
-class DistrictList : public MultList < DistrictEntry * >
+class DistrictList : public MultList < DistrictEntry >
 {
       // list of DistrictEntry
    public:
       DistrictList( void );
       virtual ~DistrictList();
       void load( void );
-      virtual bool procLine( char ** );
+      virtual bool procLine( QStringList );
       virtual int slen( bool );
       virtual int getWorked( int item, BaseContestLog *const ct );
 };
 
-class DistrictSynonymList : public MultList < DistrictSynonym * >
+class DistrictSynonymList : public MultList < DistrictSynonym >
 {
       // list of DistrictSynonym
    public:
       DistrictSynonymList( void );
       virtual ~DistrictSynonymList();
       void load( void );
-      virtual bool procLine( char ** );
+      virtual bool procLine(QStringList );
 };
 
 
-class CountryList : public MultList < CountryEntry * >
+class CountryList : public MultList < CountryEntry >
 {
       // list of CountryEntry
    public:
       CountryList( void );
       virtual ~CountryList();
       void load( void );
-      virtual bool procLine( char ** );
+      virtual bool procLine( QStringList );
       virtual int slen( bool );
       void loadEntries( const QString &fname, const QString &fmess );
       virtual int getWorked( int item, BaseContestLog *const ct );
 };
 
-class CountrySynonymList : public MultList < CountrySynonym * >
+class CountrySynonymList : public MultList < CountrySynonym >
 {
       // list of CountrySynonym
    public:
       CountrySynonymList( void );
       virtual ~CountrySynonymList();
       void load( void );
-      virtual bool procLine( char ** );
+      virtual bool procLine(QStringList );
 };
 
 
@@ -293,16 +287,16 @@ class MultListsImpl: public MultLists
       static MultListsImpl *getMultLists();
       ~MultListsImpl();
       //      void addCountry( bool addsyn );
-      virtual CountrySynonym *searchCountrySynonym( const QString &syn );
-      virtual DistrictEntry *searchDistrict( const QString &syn );
+      virtual QSharedPointer<CountrySynonym> searchCountrySynonym( const QString &syn );
+      virtual QSharedPointer<DistrictEntry> searchDistrict( const QString &syn );
       virtual int getCtryListSize();
       virtual int getDistListSize();
-      virtual CountryEntry *getCtryForPrefix( const QString &forcedMult );
+      virtual QSharedPointer<CountryEntry> getCtryForPrefix( const QString &forcedMult );
       virtual QString getCtryListText( int item, int Column, BaseContestLog *const ct );
       virtual QString getDistListText( int item, int Column, BaseContestLog *const ct );
-      virtual CountryEntry * getCtryListAt( int index );
-      virtual int getCtryListIndexOf( CountryEntry * );
-      virtual int getDistListIndexOf( DistrictEntry * );
+      virtual QSharedPointer<CountryEntry>  getCtryListAt( int index );
+      virtual int getCtryListIndexOf(QSharedPointer<CountryEntry> );
+      virtual int getDistListIndexOf( QSharedPointer<DistrictEntry> );
       virtual bool isUKprefix(const callsign &cs);
 //      virtual DistrictEntry *getDistrictEntry(int item);
 //      virtual CountryEntry *getCountryEntry(int item);

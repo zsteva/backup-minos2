@@ -21,12 +21,12 @@ class TPubSubMain
    public:  		// User declarations
       TPubSubMain( );
       ~TPubSubMain( );
-      void publishCallback( bool err, MinosRPCObj *mro, const QString &from );
-      void subscribeCallback( bool err, MinosRPCObj *mro, const QString &from );
-      void remoteSubscribeCallback( bool err, MinosRPCObj *mro, const QString &from );
-      void serverSubscribeCallback( bool err, MinosRPCObj *mro, const QString &from );
-      void notifyCallback( bool err, MinosRPCObj *mro, const QString &from );
-      void serverNotifyCallback( bool err, MinosRPCObj *mro, const QString &from );
+      void publishCallback(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );
+      void subscribeCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
+      void remoteSubscribeCallback(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );
+      void serverSubscribeCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
+      void notifyCallback(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );
+      void serverNotifyCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
 
       bool publish( const QString &pubId, const QString &category, const QString &key, const QString &value, PublishState state );
       bool serverPublish( const QString &pubId, const QString &svr, const QString &category, const QString &key, const QString &value, PublishState state );

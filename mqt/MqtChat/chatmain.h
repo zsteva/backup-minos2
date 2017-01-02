@@ -23,40 +23,32 @@ class TMinosChatForm : public QMainWindow
 public:
     explicit TMinosChatForm(QWidget *parent = 0);
     ~TMinosChatForm();
+    void addChat(const QString &mess);
 
 private:
     Ui::MainWindow *ui;
 
-    bool connected;
-    bool subscribed;
-    std::vector<Server> serverList;
+    QTimer SyncTimer;
 
-    QTimer LogTimer;
-    QTimer ConnectTimer;
-
+    QVector<Server> serverList;
 
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *event);
 
 
     void logMessage( QString s );
-    void chatClientCallback( bool err, MinosRPCObj *mro, const QString &from );
-    void chatServerCallback( bool err, MinosRPCObj *mro, const QString &from );
-    static void makeRPCObjects();
     void syncChat();
     void syncStations();
     void keyPressEvent( QKeyEvent* event );
 
- public: 		// User declarations
-    void notifyCallback( bool err, MinosRPCObj *mro, const QString &from );
-    void addChat(const QString &mess);
-
 private slots:
-    void LogTimerTimer( );
-    void ConnectTimerTimer( );
-
+    void SyncTimerTimer( );
 
     void on_SendButton_clicked();
+
+    void on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );
+    void on_response( bool err, QSharedPointer<MinosRPCObj> , const QString &from );
+    void on_request( bool err, QSharedPointer<MinosRPCObj>, const QString &from );
 };
 
 #endif // MAINWINDOW_H

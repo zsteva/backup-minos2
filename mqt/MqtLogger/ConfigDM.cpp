@@ -68,7 +68,7 @@ void TConfigElement::createProcess()
     if ( run && !runner)
     {
         runner = new QProcess(parent());
-
+/*
         QString program = commandLine;
         if (!FileExists(program))
         {
@@ -76,9 +76,10 @@ void TConfigElement::createProcess()
         }
             runner->setProgram(program);
 
-        //QStringList args;
-        //runner->setArguments(args);
-
+        QStringList args;
+        args.append(params);
+        runner->setArguments(args);
+*/
         QString wdir = rundir;
         runner->setWorkingDirectory(wdir);
 
@@ -89,7 +90,7 @@ void TConfigElement::createProcess()
         connect (runner, SIGNAL(readyReadStandardError()), this, SLOT(on_readyReadStandardError()));
         connect (runner, SIGNAL(readyReadStandardOutput()), this, SLOT(on_readyReadStandardOutput()));
 
-        runner->start();
+        runner->start(commandLine);
     }
 }
 
@@ -157,7 +158,7 @@ TMConfigDM::~TMConfigDM()
    if ( !terminated )
       stop();
 
-   for ( std::vector <TConfigElement *>::iterator i = elelist.begin(); i != elelist.end(); i++ )
+   for ( QVector <TConfigElement *>::iterator i = elelist.begin(); i != elelist.end(); i++ )
    {
       delete ( *i );
    }
@@ -173,7 +174,7 @@ void TMConfigDM::start()
    terminated = false;
 //   resetCloseEvent();
 
-   for ( std::vector <TConfigElement *>::iterator i = elelist.begin(); i != elelist.end(); i++ )
+   for ( QVector <TConfigElement *>::iterator i = elelist.begin(); i != elelist.end(); i++ )
    {
        (*i)->createProcess();
    }
@@ -188,7 +189,7 @@ void TMConfigDM::stop()
    terminated = true;
 //   signalCloseEvent();
 
-   for ( std::vector <QProcess *> ::iterator i = guardv.begin(); i != guardv.end(); i++ )
+   for ( QVector <QProcess *> ::iterator i = guardv.begin(); i != guardv.end(); i++ )
    {
       if ( ( *i ) )
       {

@@ -20,9 +20,9 @@ void RPCPubSub::initialisePubSub( TRPCFunctor *notifycb )
    if ( !objAdded )
    {
       objAdded = true;
-      MinosRPCObj::addObj( new RPCSubscribeClient( 0 ) );
-      MinosRPCObj::addObj( new RPCPublishClient( 0 ) );
-      MinosRPCObj::addObj( new RPCNotifyServer( notifycb ) );
+      MinosRPCObj::addClientObj( QSharedPointer<MinosRPCObj>(new RPCSubscribeClient( 0 ) ) );
+      MinosRPCObj::addClientObj( QSharedPointer<MinosRPCObj>(new RPCPublishClient( 0 ) ) );
+      MinosRPCObj::addServerObj( QSharedPointer<MinosRPCObj>(new RPCNotifyServer( notifycb )) );
    }
 }
 void RPCPubSub::publish( const QString &category, const QString &key, const QString &value, PublishState pState )
@@ -41,14 +41,14 @@ void RPCPubSub::subscribeRemote( const QString &server, const QString &category 
 void RPCPubSub::reconnectPubSub( )
 {
    // iterate the publish and subscribe objects and re-do them
-   for ( std::vector<RPCPublisher *>::iterator i = publishList.begin(); i != publishList.end(); i++ )
+   for ( QVector<RPCPublisher *>::iterator i = publishList.begin(); i != publishList.end(); i++ )
    {
       if ( *i )
       {
          ( *i ) ->rePublish();
       }
    }
-   for ( std::vector<RPCSubscriber *>::iterator i = subscribeList.begin(); i != subscribeList.end(); i++ )
+   for ( QVector<RPCSubscriber *>::iterator i = subscribeList.begin(); i != subscribeList.end(); i++ )
    {
       if ( *i )
       {
@@ -60,13 +60,13 @@ void RPCPubSub::reconnectPubSub( )
 
 void RPCPubSub::close( )
 {
-   for ( std::vector<RPCPublisher *>::iterator i = publishList.begin(); i != publishList.end(); i++ )
+   for ( QVector<RPCPublisher *>::iterator i = publishList.begin(); i != publishList.end(); i++ )
    {
       delete ( *i );
       ( *i ) = 0;
    }
    publishList.clear();
-   for ( std::vector<RPCSubscriber *>::iterator i = subscribeList.begin(); i != subscribeList.end(); i++ )
+   for ( QVector<RPCSubscriber *>::iterator i = subscribeList.begin(); i != subscribeList.end(); i++ )
    {
       delete ( *i );
       ( *i ) = 0;
@@ -74,7 +74,7 @@ void RPCPubSub::close( )
    subscribeList.clear();
 }
 //---------------------------------------------------------------------------
-AnalysePubSubNotify::AnalysePubSubNotify( bool err, MinosRPCObj *mro ) :
+AnalysePubSubNotify::AnalysePubSubNotify(bool err, QSharedPointer<MinosRPCObj> mro ) :
       OK( false )
 {
    if ( !err )

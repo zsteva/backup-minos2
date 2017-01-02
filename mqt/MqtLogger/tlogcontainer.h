@@ -26,7 +26,7 @@ public:
     explicit TLogContainer(QWidget *parent = 0);
     ~TLogContainer();
 
-    void selectContest( BaseContestLog *pc, BaseContact *pct );
+    void selectContest(BaseContestLog *pc, QSharedPointer<BaseContact> pct );
     bool show(int argc, char *argv[]);
     TSingleLogFrame *getCurrentLogFrame();
 
@@ -43,10 +43,20 @@ public:
     void setCaption( QString );
     void setMode( QString );
     void setFreq( QString );
+
     void setRotatorState( QString );
+
     void setBandMapLoaded();
     bool isBandMapLoaded();
     bool bandMapLoaded;
+
+    void setKeyerLoaded();
+    bool isKeyerLoaded();
+    bool keyerLoaded;
+
+    void setRotatorLoaded();
+    bool isRotatorLoaded();
+    bool rotatorLoaded;
 
 private:
     Ui::TLogContainer *ui;

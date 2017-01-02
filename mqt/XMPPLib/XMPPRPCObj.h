@@ -13,7 +13,6 @@
 #define XMPPRPCObjH 
 //---------------------------------------------------------------------------
 #include <string>
-#include <map> 
 //---------------------------------------------------------------------------
 
 // We need a factory for MinosRPCObj descendents, so that we can register those we
@@ -32,7 +31,7 @@ class TRPCFunctor
       // two possible functions to call member function. virtual cause derived
       // classes will use a pointer to an object and a pointer to a member function
       // to make the function call
-      virtual void call( bool err, MinosRPCObj *mro, const QString &from ) = 0;        // call using function
+      virtual void call( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from ) = 0;        // call using function
 };
 
 
@@ -41,25 +40,24 @@ template <class TClass>
 class TRPCCallback : public TRPCFunctor
 {
    private:
-      void ( TClass::*fpt ) ( bool err, MinosRPCObj *mro, const QString &from );   // pointer to member function
+      void ( TClass::*fpt ) ( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );   // pointer to member function
       TClass* pt2Object;                  // pointer to object
 
    public:
 
       // constructor - takes pointer to an object and pointer to a member and stores
       // them in two private variables
-      TRPCCallback( TClass* _pt2Object, void( TClass::*_fpt ) ( bool err, MinosRPCObj *mro, const QString &from ) )
+      TRPCCallback( TClass* _pt2Object, void( TClass::*_fpt ) ( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from ) )
       {
          pt2Object = _pt2Object;
          fpt = _fpt;
-      };
+      }
 
       // override function "Call"
-      virtual void call( bool err, MinosRPCObj *mro, const QString &from )
+      virtual void call( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
       {
          ( *pt2Object.*fpt ) ( err, mro, from );
-      }
-      ;             // execute member function
+      } // execute member function
 };
 
 
@@ -70,8 +68,7 @@ class MinosRPCObj
       // Base object for Minos RPC calls. It encapsulates both ends of
       // the call
    private:
-      //      static std::map <QString, MinosRPCServer *> serverMethodMap;
-      //      static std::map <QString, MinosRPCClient *> clientMethodMap;
+      bool general;
 
    protected:
       QString methodName;
@@ -88,20 +85,25 @@ class MinosRPCObj
       }
       void clearCallArgs();
 
+      virtual bool isGeneralObject()
+      {
+          return general;
+      }
+
       QString id;
       TRPCFunctor *callback;
 
-      MinosRPCObj( const QString &methodName, TRPCFunctor *cb );
+      MinosRPCObj( const QString &methodName, TRPCFunctor *cb, bool gen = false );
       virtual ~MinosRPCObj();
       static void clearRPCObjects();
 
-      virtual MinosRPCObj *makeObj() = 0;
+      virtual QSharedPointer<MinosRPCObj>makeObj() = 0;
 
-      static MinosRPCClient *makeClientObj( QString call );
-      static MinosRPCServer *makeServerObj( QString call );
+      static QSharedPointer<MinosRPCObj> makeClientObj( QString call );
+      static QSharedPointer<MinosRPCObj> makeServerObj( QString call );
 
-      static void addObj( MinosRPCClient *mro );
-      static void addObj( MinosRPCServer *mro );
+      static void addClientObj( QSharedPointer<MinosRPCObj> mro );
+      static void addServerObj( QSharedPointer<MinosRPCObj> mro );
 
       virtual void queueCall( QString /* to*/ )
       {}
@@ -113,8 +115,8 @@ class MinosRPCObj
       // Valid response; queue the response
       virtual void queueResponse( QString /*to*/ )
       {}
-}
-;
+};
+
 
 // I think we need master and slave ends...  how do we do this?
 // Do we go for mixins, one for each type?
@@ -124,12 +126,12 @@ class MinosRPCClient: public MinosRPCObj
    private:
       MinosRPCClient();            // don't allow default constructor
    public:
-      MinosRPCClient( const QString &methodName, TRPCFunctor *cb ) : MinosRPCObj( methodName, cb )
+      MinosRPCClient( const QString &methodName, TRPCFunctor *cb, bool gen = false ) : MinosRPCObj( methodName, cb, gen )
       {}
       virtual ~MinosRPCClient()
       {}
 
-      virtual MinosRPCClient *makeObj() = 0;
+      virtual QSharedPointer<MinosRPCObj>makeObj() = 0;
 
       // call queueCall to make initial call;
       // This will construct a BlockingRequest to allow the eventual callback
@@ -144,12 +146,12 @@ class MinosRPCServer: public MinosRPCObj
    private:
       MinosRPCServer();            // don't allow default constructor
    public:
-      MinosRPCServer( const QString &methodName, TRPCFunctor *cb ) : MinosRPCObj( methodName, cb )
+      MinosRPCServer( const QString &methodName, TRPCFunctor *cb, bool gen = false ) : MinosRPCObj( methodName, cb, gen )
       {}
       virtual ~MinosRPCServer()
       {}
 
-      virtual MinosRPCServer *makeObj() = 0;
+      virtual QSharedPointer<MinosRPCObj>makeObj() = 0;
 
       // Invalid call in some way; queue an errror response
       virtual void queueErrorResponse( QString to );

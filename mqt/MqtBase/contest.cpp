@@ -7,11 +7,8 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
-
-bool LtLogSeq::operator() ( const BaseContact* s1, const BaseContact* s2 ) const
-{
-   return s1->getLogSequence() < s2->getLogSequence();
-}
+#include "Calendar.h"
+#include "CalendarList.h"
 
 BaseContestLog::BaseContestLog( void ) :
       protectedContest( false ), suppressProtected(false),  unwriteable(false),
@@ -31,13 +28,12 @@ BaseContestLog::BaseContestLog( void ) :
       validationPoint( 0 ),
       nextScan( -2 ),
       countryWorked( 0 ), districtWorked( 0 ),
-      mycall( "" ),
       QSO1( 0 ), QSO2( 0 ), QSO1p( 0 ), QSO2p( 0 ),
       kms1( 0 ), kms2( 0 ), kms1p( 0 ), kms2p( 0 ),
       mults1( 0 ), mults2( 0 ), mults1p( 0 ), mults2p( 0 ),
       bonus1( 0 ), bonus2( 0 ), bonus1p( 0 ), bonus2p( 0 ),
       bonus(0), nbonus(0),
-      ukLocBonus(0), nonukLocBonus()
+      bonusYearLoaded(0)
 {
    bearingOffset.setValue(0);
    mode.setValue( "J3E" );
@@ -53,65 +49,6 @@ BaseContestLog::BaseContestLog( void ) :
    for ( i = 0; i < nc; i++ )
       districtWorked[ i ] = 0;
 
-#ifdef UKAC_BONUSES
-   try
-   {
-   //std::map<QString, int> locBonuses;
-
-   // Load the loc bonuses from control\M8.ini
-
-   /*
-[M8]
-UK=1500
-NONUK=500
-JO00=1000
-JO01=1000
-JO02=1000
-JO03=1000
-IO90=1000
-IO91=1000
-IO92=1000
-IO93=1000
-IO80=1000
-IO81=1000
-IO82=1000
-IO83=1000
-
-
-   */
-   // General non-UK
-
-   // General UK
-
-   // Specific squares
-      multsAsBonuses = 0;
-
-      std::auto_ptr <TIniFile> m8Ini ( new TIniFile ( "Configuration/UKACBonus.ini" ) );
-      std::auto_ptr<TStrings > ukacStrings(new TStringList());
-      m8Ini->ReadSectionValues("UKACBonus", ukacStrings.get());
-      for (int i = 0; i < ukacStrings->Count; i++)
-      {
-         String name = ukacStrings->Names[i].Trim().UpperCase();
-         String value = ukacStrings->Values[name].Trim();
-         if (name == "UK")
-         {
-            ukLocBonus = value.ToIntDef(1500);
-         }
-         else if (name == "NONUK")
-         {
-            nonukLocBonus = value.ToIntDef(500);
-         }
-         else
-         {
-            locBonuses[QString(AnsiString(name).c_str())] = value.ToIntDef(1000);
-         }
-      }
-   }
-   catch(...)
-   {
-
-   }
-   #endif
 }
 BaseContestLog::~BaseContestLog()
 {
@@ -120,48 +57,43 @@ BaseContestLog::~BaseContestLog()
    districtWorked = 0;
    countryWorked = 0;
 
-   locs.freeAll();
-   freeAll();
    closeFile();
 }
-void BaseContestLog::freeAll()
+int BaseContestLog::indexOf(QSharedPointer<BaseContact> item )
 {
-   for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
-      delete ( *i );
-   ctList.clear();
-}
-unsigned int BaseContestLog::indexOf( BaseContact * item )
-{
-   LogIterator f = std::lower_bound( ctList.begin(), ctList.end(), item, LtLogSeq() );
-   if ( f == ctList.end() || ( *f ) != item )
-   {
-      return ( ctList.end() - ctList.begin() );
-   }
-   unsigned int diff = f - ctList.begin();
-   return diff;
+    int i = 0;
+    for (LogIterator m = ctList.begin(); m != ctList.end(); m++)
+    {
+      if (m->wt.data() == item.data())
+          return i;
+
+      i++;
+    }
+    return -1;
 }
 int BaseContestLog::getContactCount( void )
 {
    return ctList.size();
 }
 
-BaseContact *BaseContestLog::pcontactAt( unsigned int i )
+QSharedPointer<BaseContact> BaseContestLog::pcontactAt( int i )
 {
    if ( i < ctList.size() )
    {
-      return ctList.at( i );
+       QSharedPointer<BaseContact> ce = std::next(ctList.begin(), i)->wt;
+       return ce;
    }
-   return 0;
+   return QSharedPointer<BaseContact>();
 }
 
-BaseContact *BaseContestLog::pcontactAtSeq( unsigned long logSequence )
+QSharedPointer<BaseContact> BaseContestLog::pcontactAtSeq( unsigned long logSequence )
 {
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      if ( ( *i ) ->getLogSequence() == logSequence )
-         return ( *i );
+      if ( i->wt ->getLogSequence() == logSequence )
+         return i->wt;
    }
-   return 0;
+   return QSharedPointer<BaseContact>();
 }
 void BaseContestLog::clearDirty()
 {
@@ -196,7 +128,7 @@ void BaseContestLog::clearDirty()
    DTGEnd.clearDirty();
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      ( *i ) ->clearDirty();
+      i->wt->clearDirty();
    }
 }
 void BaseContestLog::setDirty()
@@ -231,12 +163,12 @@ void BaseContestLog::setDirty()
    DTGEnd.setDirty();
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      ( *i ) ->setDirty();
+      i->wt->setDirty();
    }
 }
-void BaseContestLog::makeContact( bool timeNow, BaseContact *&lct )
+void BaseContestLog::makeContact( bool timeNow, QSharedPointer<BaseContact>&lct )
 {
-   lct = new BaseContact( this, timeNow );
+   lct = QSharedPointer<BaseContact>(new BaseContact( this, timeNow ));
 }
 void BaseContestLog::validateLoc( void )
 {
@@ -291,34 +223,34 @@ void BaseContestLog::disbear( double lon, double lat, double &dist, int &brg ) c
    // first distance into dx
 
    double co = cos( ode - lon ) * coscos + sinodn * sinlat ;
-   double ca = atan( fabs( sqrt( ( double ) 1.0 - co * co ) / co ) );
-   if ( co < ( double ) 0.0 )
+   double ca = atan( fabs( sqrt( 1.0 - co * co ) / co ) );
+   if ( co < 0.0 )
       ca = pi - ca ;
-   double dx = ( double ) 6371.291 * ca ;       /* 6371.291 is approved radius of earth */
+   double dx = 6371.291 * ca ;       /* 6371.291 is approved radius of earth */
 
    // and then the bearing
 
    double si = sin( lon - ode ) * coscos ;
    co = sinlat - sinodn * cos( ca );
    double az = atan( fabs( si / co ) );
-   if ( co < ( double ) 0.0 )
+   if ( co < 0.0 )
       az = pi - az ;
-   if ( si < ( double ) 0.0 )
+   if ( si <  0.0 )
       az = -az ;
-   if ( az < ( double ) 0.0 )
-      az = az + ( double ) 2.0 * pi ;
+   if ( az < 0.0 )
+      az = az + 2.0 * pi ;
 
    az = az / dr ;                      /* convert to degrees */
-   az += ( double ) 0.5 ;                /* correct angle */
+   az += 0.5 ;                /* correct angle */
    dx = ceil( dx );                      // adjust for commenced kilometer
-   dx += ( double ) 0.5 ;              // make sure double truncates properly back to int
+   dx += 0.5 ;              // make sure double truncates properly back to int
    dist = dx ;			                  /* return result */
-   if ( ( int ) az == 0 )                  /* due north */
+   if ( static_cast<int>(az) == 0 )                  /* due north */
       az = 360.00 ;                 	/* so show valid */
-   brg = ( int ) az ;                   /* and give it back as integer */
+   brg = static_cast< int > (az) ;                   /* and give it back as integer */
 }
 //---------------------------------------------------------------------------
-bool BaseContestLog::getsdist( const char *loc, char *minloc, double &mindist )
+bool BaseContestLog::getsdist( const QString &loc, QString &minloc, double &mindist )
 {
    int brg;
    double dist = 0.0;
@@ -332,7 +264,7 @@ bool BaseContestLog::getsdist( const char *loc, char *minloc, double &mindist )
       if ( dist < mindist )
       {
          mindist = dist;
-         strcpy( minloc, loc );
+         minloc = loc;
       }
       return true;
    }
@@ -341,27 +273,22 @@ bool BaseContestLog::getsdist( const char *loc, char *minloc, double &mindist )
 //---------------------------------------------------------------------------
 int BaseContestLog::CalcNearest( const QString &qscalcloc )
 {
-    std::string scalcloc = qscalcloc.toStdString();
-   const char * calcloc = scalcloc.c_str();
-
-   if ( scalcloc.size() != 4 )
+   if ( qscalcloc.length() != 4 )
       return 0;	// only valid 4 fig locs
 
    // calculate the nearest point of loc2 from loc1
 
    double mindist = 1000000.0;
 
-   char minloc[ LOCLENGTH + 1 ] = {0};
-   char temploc[ LOCLENGTH + 1 ];
-
-   strncpy( temploc, calcloc, LOCLENGTH );
-   temploc[ LOCLENGTH] = 0;
+   QString minloc;
+   QString temploc;
 
    for ( char i = 'A'; i <= 'X'; i++ )
    {
-      temploc[ 4 ] = 'A';
-      temploc[ 5 ] = i;
-      temploc[ 6 ] = 0;
+       temploc = qscalcloc;
+      temploc += 'A';
+      temploc += i;
+
       if ( !getsdist( temploc, minloc, mindist ) )
       {
          return -1;
@@ -389,7 +316,7 @@ int BaseContestLog::CalcNearest( const QString &qscalcloc )
    }
    return mindist;
 }
-void BaseContestLog::getMatchText( BaseContact *pct, QString &disp, const BaseContestLog *const ct ) const
+void BaseContestLog::getMatchText( QSharedPointer<BaseContact> pct, QString &disp, const BaseContestLog *const ct ) const
 {
    if ( DupSheet.isCurDup( pct ) )
    {
@@ -401,11 +328,11 @@ void BaseContestLog::getMatchText( BaseContact *pct, QString &disp, const BaseCo
 
    disp = disp.trimmed();
 }
-bool BaseContestLog::isCurDup( BaseContact *pct) const
+bool BaseContestLog::isCurDup( QSharedPointer<BaseContact> pct) const
 {
    return pct && DupSheet.isCurDup( pct );
 }
-void BaseContestLog::getMatchField(BaseContact *pct, int col, QString &disp, const BaseContestLog *const ct ) const
+void BaseContestLog::getMatchField(QSharedPointer<BaseContact> pct, int col, QString &disp, const BaseContestLog *const ct ) const
 {
    if ( col ==0 && isCurDup( pct ) )
    {
@@ -418,7 +345,7 @@ void BaseContestLog::getMatchField(BaseContact *pct, int col, QString &disp, con
 
    disp = temp.trimmed();
 }
-bool BaseContestLog::updateStat( BaseContact *cct )
+bool BaseContestLog::updateStat( QSharedPointer<BaseContact> cct )
 {
    // need to check if a valid DTG
    bool acted = false;
@@ -528,18 +455,21 @@ void BaseContestLog::updateStats( void )
    bonus1p = 0;
    bonus2 = 0;
    bonus2p = 0;
-   for ( int i = getContactCount() - 1; i >= 0; i-- )
-   {
-      if ( !updateStat( ctList[ i ] ) )
-         break;
+
+   auto it = ctList.end(), end = ctList.begin();
+   while ( it != end ) {
+       --it;
+       if ( !updateStat( it.value().wt ) )
+          break;
    }
+
 }
 int BaseContestLog::getValidQSOs()
 {
    int nvalid = 0;
-   for ( unsigned int i = 0; i < ctList.size(); i++ )
+   foreach(MapWrapper<BaseContact> i, ctList)
    {
-      BaseContact *dct = ctList[ i ];
+      QSharedPointer<BaseContact> dct = i.wt;
 
       if ( dct->contactFlags.getValue() & ( LOCAL_COMMENT | COMMENT_ONLY | DONT_PRINT ) )
          continue;
@@ -550,7 +480,7 @@ int BaseContestLog::getValidQSOs()
    return nvalid;
 }
 
-static void isBestDX( BaseContact *cct, BaseContact **bestDX )
+static void isBestDX( QSharedPointer<BaseContact> cct, QSharedPointer<BaseContact> *bestDX )
 {
 
    if ( cct->contactFlags.getValue() & ( NON_SCORING | COMMENT_ONLY | LOCAL_COMMENT | DONT_PRINT ) )
@@ -562,11 +492,11 @@ static void isBestDX( BaseContact *cct, BaseContact **bestDX )
    if ( ( !*bestDX ) || ( ( cct->contactScore.getValue() > ( *bestDX ) ->contactScore.getValue() ) ) )
       * bestDX = cct;
 }
-BaseContact *BaseContestLog::getBestDX( void )
+QSharedPointer<BaseContact> BaseContestLog::getBestDX( void )
 {
-   BaseContact * bestDX = 0;
+   QSharedPointer<BaseContact> bestDX;
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
-      isBestDX( ( *i ), &bestDX );
+      isBestDX( i->wt, &bestDX );
    return bestDX;
 }
 QString BaseContestLog::dateRange( DTG dstyle )
@@ -577,18 +507,18 @@ QString BaseContestLog::dateRange( DTG dstyle )
    LogIterator high = ctList.end();
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      if ( ( *i ) ->contactScore.getValue() > 0 )
+      if ( i->wt ->contactScore.getValue() > 0 )
       {
-         QString qsodate = ( *i ) ->time.getDate( DTGLOG );
+         QString qsodate = i->wt ->time.getDate( DTGLOG );
          if ( qsodate < date1 )
          {
             low = i;
-            date1 = ( *i ) ->time.getDate( DTGLOG );
+            date1 = i->wt ->time.getDate( DTGLOG );
          }
          if ( qsodate > date2 )
          {
             high = i;
-            date2 = ( *i ) ->time.getDate( DTGLOG );
+            date2 = i->wt ->time.getDate( DTGLOG );
          }
       }
    }
@@ -596,7 +526,7 @@ QString BaseContestLog::dateRange( DTG dstyle )
    {
       return "";
    }
-   return ( *low ) ->time.getDate( dstyle ) + ";" + ( *high ) ->time.getDate( dstyle );
+   return low->wt->time.getDate( dstyle ) + ";" + high->wt->time.getDate( dstyle );
 }
 
 void BaseContestLog::setScore( QString &buff )
@@ -610,7 +540,8 @@ void BaseContestLog::scanContest( void )
 {
    DupSheet.clear();
 
-   locs.freeAll();
+   locs.llist.clear();
+
    delete [] districtWorked;
    delete [] countryWorked;
    districtWorked = 0;
@@ -640,29 +571,14 @@ void BaseContestLog::scanContest( void )
 
 //   oplist.clear();
    QString curop1 = currentOp1.getValue();
-   oplist.insert( curop1 );
+   oplist.insert( curop1, curop1 );
    QString curop2 = currentOp2.getValue();
-   oplist.insert( curop2 );
-   while ( nextScan >= -1 )
+   oplist.insert( curop2, curop2 );
+
+   foreach(MapWrapper<BaseContact> wnct, ctList)
    {
       // get the next contact in sequence and do any required scan checks
-      nextScan++;
-      if ( nextScan >= getContactCount() )
-      {
-         // end of scan
-
-         nextScan = -2;
-
-         if ( isReadOnly() )
-         {
-            DupSheet.clear();
-         }
-
-         break;
-      }
-      BaseContact *nct = ctList[ nextScan ];
-      if ( !nct )
-         break ;
+      QSharedPointer<BaseContact> nct = wnct.wt;
 
       if (nct->contactFlags.getValue() & TO_BE_ENTERED)
       {
@@ -672,10 +588,10 @@ void BaseContestLog::scanContest( void )
       if (temp.size())
       {
          curop1 = temp;
-         oplist.insert( curop1 );
+         oplist.insert( curop1, curop1 );
       }
       curop2 = nct->op2.getValue();
-      oplist.insert( curop2 );
+      oplist.insert( curop2, curop2 );
 
       if ( nct->contactFlags.getValue() & ( NON_SCORING | DONT_PRINT | LOCAL_COMMENT | COMMENT_ONLY ) )
       {
@@ -683,7 +599,7 @@ void BaseContestLog::scanContest( void )
          continue;
       }
 
-      validationPoint = nct;
+      validationPoint = nct->getLogSequence();
 
       // check for duplicates; accumulate the current points score
 
@@ -693,9 +609,7 @@ void BaseContestLog::scanContest( void )
       nct->bearing = -1;		// force a recalc
       nct->loc.validate();
 
-      //int index;
-
-      if ( DupSheet.checkCurDup( nct, 0, true ) )    // check for dup, insert it if required
+      if ( DupSheet.checkCurDup( this, nct->getLogSequence(), 0, true ) )    // check for dup, insert it if required
          nct->cs.valRes = ERR_DUPCS;
 
 
@@ -709,13 +623,16 @@ void BaseContestLog::scanContest( void )
       nct->newBonus = false;
       nct->checkContact( );   // in scanContest
 
-//      nct->baddtg = false;
       if (nct->time.notEntered() == 0 && !(nct->contactFlags.getValue() & TO_BE_ENTERED))
       {
-         nct->time = nct->getHistory()[0].updtime;
+         nct->time = nct->getHistory()[0]->updtime;
          nct->time.clearDirty();
          nct->time.setBadDtg();
       }
+   }
+   if ( isReadOnly() )
+   {
+      DupSheet.clear();
    }
    if (currentOp1.getValue().size() == 0)
    {
@@ -735,23 +652,10 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
    cs.bonus = 0;
    cs.nbonus = 0;
 
-   int nextScan = -1;
-
-   while ( nextScan >= -1 )
+   foreach(MapWrapper<BaseContact> i, ctList)
    {
-      // get the next contact in sequence and do any required scan checks
-      nextScan++;
-      if ( nextScan >= getContactCount() )
-      {
-         // end of scan
-
-         nextScan = -2;
-
-         break;
-      }
-      BaseContact *nct = ctList[ nextScan ];
-      if ( !nct )
-         break ;
+       // get the next contact in sequence and do any required scan checks
+      QSharedPointer<BaseContact> nct = i.wt;
 
 // NB this doesn't cope with crazy times from test contests and QSOs
 
@@ -760,27 +664,23 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
       QString dtgstr = nct->time.getDate(DTGFULL) + nct->time.getTime(DTGLOG);
       QDateTime ncheck = CanonicalToTDT( dtgstr );
 
-//      int elapsed = start.secsTo(ncheck);
       if (ncheck > limit)
       {
-         nextScan = -2; // continue; we want to include this one
          break;
       }
 
 
       if ( nct->contactFlags.getValue() & ( NON_SCORING | DONT_PRINT | LOCAL_COMMENT | COMMENT_ONLY | TO_BE_ENTERED ) )
       {
-         //trace(QString("flags ") + nct->cs.fullCall.getValue() + " " + nct->serials.getValue());
          continue;
       }
       if (nct->cs.valRes != CS_OK)
       {
-         //trace(QString("bad callsign ") + nct->cs.fullCall.getValue() + " " + nct->serials.getValue());
          continue;
       }
 
      if ( locatorField.getValue() || nct->contactScore.getValue() >= 0 )   		// don't add -1 scores in, but DO add zero km
-         // as it is 1 point.
+                                                                                // as it is 1 point.
       {
          int cscore = nct->contactScore.getValue();
          switch ( scoreMode.getValue() )
@@ -843,13 +743,13 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
    {
       cs.brbonus1 = cs.brbonus2 = ' ';
    }
-   cs.nmults = std::max(cs.nmults, 1);
+   cs.nmults = qMax(cs.nmults, 1);
 
    cs.totalScore = (cs.contestScore + cs.bonus)*cs.nmults;
 
 }
 //============================================================
-DupContact::DupContact( BaseContact *c ) : dct( c ), sct( 0 )
+DupContact::DupContact(QSharedPointer<BaseContact> c ) : dct( c ), sct( 0 )
 {}
 DupContact::DupContact( ScreenContact *c ) : dct( 0 ), sct( c )
 {}
@@ -936,39 +836,30 @@ bool DupContact::operator!=( const DupContact& rhs ) const
 {
    return !( *this == rhs );
 }
-
-bool LtDup::operator() ( const DupContact* s1, const DupContact* s2 ) const
-{
-   bool res = ( *s1 < *s2 );
-   return res;
-}
-
 dupsheet::dupsheet()
 {}
 dupsheet::~dupsheet()
 {
    clear();
 }
-bool dupsheet::checkCurDup( ScreenContact *nct, BaseContact *valp, bool insert )
+bool dupsheet::checkCurDup(ScreenContact *nct, unsigned long valpseq, bool insert )
 {
-   curdup = 0;
+   curdup.reset();
    if ( nct->cs.valRes == CS_OK )
    {
-      DupContact test( nct );
-      bool exists = std::binary_search( ctList.begin(), ctList.end(), &test, LtDup() );
-      if ( exists )
+      QSharedPointer<DupContact> test( new DupContact(nct) );
+      DupIterator c = ctList.find(test);
+      if ( c!= ctList.end() )
       {
          if ( !( nct->contactFlags & VALID_DUPLICATE ) )
          {
-            DupIterator c = std::lower_bound( ctList.begin(), ctList.end(), &test, LtDup() );
-
-            if ( valp && valp->getLogSequence() <= ( *c ) ->dct->getLogSequence() )
+            if ( valpseq != 0 && valpseq <= c->wt ->dct->getLogSequence() )
             {
                return false; // as val point earlier than current list item
             }
 
             if ( c != ctList.end() )
-               curdup = *c;
+               curdup = c->wt;
 
             return true;
          }
@@ -976,33 +867,32 @@ bool dupsheet::checkCurDup( ScreenContact *nct, BaseContact *valp, bool insert )
       else
          if ( insert )
          {
-            DupContact * ins = new DupContact( nct );
-            ctList.insert( ins );
+            MapWrapper<DupContact> ins( test);
+            ctList.insert( ins, ins );
             return false;
          }
    }
    return false;
 }
-bool dupsheet::checkCurDup( BaseContact *nct, BaseContact *valp, bool insert )
+bool dupsheet::checkCurDup(BaseContestLog *contest, unsigned long nctseq, unsigned long valpseq, bool insert )
 {
-   curdup = 0;
+   curdup.reset();
+   QSharedPointer<BaseContact> nct = contest->pcontactAtSeq(nctseq);
    if ( nct->cs.valRes == CS_OK )
    {
-      DupContact test( nct );
-      bool exists = std::binary_search( ctList.begin(), ctList.end(), &test, LtDup() );
-      if ( exists )
+      QSharedPointer<DupContact> test( new DupContact(nct) );
+      DupIterator c = ctList.find(test);
+      if ( c != ctList.end() )
       {
          if ( !( nct->contactFlags.getValue() & VALID_DUPLICATE ) )
          {
-            DupIterator c = std::lower_bound( ctList.begin(), ctList.end(), &test, LtDup() );
-
-            if ( valp && valp->getLogSequence() <= ( *c ) ->dct->getLogSequence() )
+            if ( valpseq != 0 && valpseq  <= c->wt ->dct->getLogSequence() )
             {
                return false; // as val point earlier than current list item
             }
 
             if ( c != ctList.end() )
-               curdup = *c;
+               curdup = c->wt;
 
             return true;
          }
@@ -1010,8 +900,8 @@ bool dupsheet::checkCurDup( BaseContact *nct, BaseContact *valp, bool insert )
       else
          if ( insert )
          {
-            DupContact * ins = new DupContact( nct );
-            ctList.insert( ins );
+            QSharedPointer<DupContact> ins(new DupContact( nct ));
+            ctList.insert( ins, ins );
             return false;
          }
    }
@@ -1032,7 +922,7 @@ bool dupsheet::isCurDup( ScreenContact *nct ) const
    }
    return cd;
 }
-bool dupsheet::isCurDup( BaseContact *nct ) const
+bool dupsheet::isCurDup(QSharedPointer<BaseContact> nct ) const
 {
    const DupContact test( nct );
    bool cd = curdup && ( *curdup == test ) ;
@@ -1048,29 +938,27 @@ bool dupsheet::isCurDup( BaseContact *nct ) const
 }
 void dupsheet::clearCurDup()
 {
-   curdup = 0;
+   curdup.reset();
 }
-BaseContact *dupsheet::getCurDup()
+QSharedPointer<BaseContact> dupsheet::getCurDup()
 {
    if ( curdup )
       return curdup->dct;
-   return 0;
+   return QSharedPointer<BaseContact>();
 }
 void dupsheet::clear()
 {
-   curdup = 0;
-   for ( DupIterator i = ctList.begin(); i != ctList.end(); i++ )
-      delete ( *i );
+   curdup.reset();
    ctList.clear();
 }
 //============================================================
 void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImport * const mt )
 {
-   unsigned long logSequence = ( unsigned long ) - 1;
+   unsigned long logSequence = static_cast< unsigned long > (- 1);
 
    int itemp;
    if ( mt->getStructArgMemberValue( "lseq", itemp ) )
-      logSequence = ( unsigned long ) itemp;
+      logSequence = static_cast< unsigned long > (itemp);
 
    if ( methodName == "MinosLogContest" )
    {
@@ -1094,7 +982,13 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
       mt->getStructArgMemberValue( "AllowLoc8", allowLoc8 );
 
       mt->getStructArgMemberValue( "UKACBonus", UKACBonus );
-      if (mt->getStructArgMemberValue( "M7Mults", M7Mults) && M7Mults.getValue())
+      if (UKACBonus.getValue())
+      {
+          loadBonusList();
+      }
+      mt->getStructArgMemberValue( "M7Mults", M7Mults);
+
+      if ( M7Mults.getValue())
       {
          NonUKloc_mult = true;
          NonUKloc_multiplier = 1;
@@ -1163,12 +1057,13 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
                         else
                            if ( methodName == "MinosLogComment" )
                            {
-                              BaseContact * rct = pcontactAtSeq( logSequence );
+                             QSharedPointer<BaseContact> rct = pcontactAtSeq( logSequence );
                               if ( !rct )
                               {
                                  makeContact( false, rct );
                                  rct->setLogSequence( logSequence );
-                                 ctList.insert( rct );
+                                 MapWrapper<BaseContact> wrct(rct);
+                                 ctList.insert( wrct, wrct );
                                  if (logSequence >> 16 >= nextBlock)
                                  {
                                     nextBlock = (logSequence >> 16) + 1;
@@ -1180,12 +1075,13 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
                            else
                               if ( methodName == "MinosLogQSO" )
                               {
-                                 BaseContact * rct = pcontactAtSeq( logSequence );
+                                 QSharedPointer<BaseContact> rct = pcontactAtSeq( logSequence );
                                  if ( !rct )
                                  {
                                     makeContact( false, rct );
                                     rct->setLogSequence( logSequence );
-                                    ctList.insert( rct );
+                                    MapWrapper<BaseContact> wrct(rct);
+                                    ctList.insert( wrct, wrct );
                                     // Was just nextBlock++ - no test
                                     if (logSequence >> 16 >= nextBlock)
                                     {
@@ -1211,22 +1107,20 @@ bool BaseContestLog::getStanza( unsigned int /*stanza*/, QString & /*stanzaData*
    return false;
 }
 //====================================================================
-BaseContact * BaseContestLog::findNextUnfilledContact()
+QSharedPointer<BaseContact> BaseContestLog::findNextUnfilledContact()
 {
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      if ( ( *i ) ->contactFlags.getValue() & TO_BE_ENTERED )
+      if ( i->wt ->contactFlags.getValue() & TO_BE_ENTERED )
       {
-         return ( *i );
+         return i->wt;
       }
    }
-   return 0;
+   return QSharedPointer<BaseContact>();
 }
 //====================================================================
-bool BaseContestLog::checkTime(const dtg &t)
+bool BaseContestLog::checkTime(const dtg &t) const
 {
-//   try
-//   {
       QString dtgstr = t.getDate(DTGFULL) + t.getTime(DTGLOG);
 
       QDateTime check = CanonicalToTDT( dtgstr );
@@ -1244,12 +1138,84 @@ bool BaseContestLog::checkTime(const dtg &t)
          return false;
       }
       return true;
-//   }
-//   catch (EConvertError & /*e*/)
-//   {
-//      return false;
-//   }
 }
+static bool loadCalYear ( Calendar &cal, int year )
+{
+    bool loaded = false;
+    QVector<QSharedPointer<CalendarYear> > yearList;
+    for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
+    {
+        yearList.push_back ( QSharedPointer<CalendarYear> ( new VHFCalendarYear ( i ) ) );
+    }
+
+    for ( int i = yearList.size() - 1; i >= 0; i-- )
+    {
+        if ( !loaded && FileExists ( yearList[ i ] ->getPath() ) && year >= calendarFormYear + yearList[ i ] ->yearOffset )
+        {
+            loaded = cal.parseFile ( yearList[ i ] ->getPath() );
+        }
+    }
+    return loaded;
+}
+void BaseContestLog::loadBonusList()
+{
+
+    QDateTime  contestStart = CanonicalToTDT(DTGStart.getValue());
+    int year = contestStart.date().year();
+    if (year != bonusYearLoaded)
+    {
+
+        Calendar vhf(year, ectVHF);
+        bool loaded = loadCalYear ( vhf, year );
+
+        if (loaded)
+        {
+            bonusYearLoaded = year;
+        }
+
+        MultType B2 = vhf.mults["B2"];
+
+        if (B2.bonuses.size() == 0)
+        {
+            // load from ./Configuration/B2Mults.xml
+            vhf = Calendar(year, ectVHF);
+            loaded = vhf.parseFile ( "./Configuration/B2Mults.xml" );
+            B2 = vhf.mults["B2"];
+        }
+
+        locBonuses.clear();
+
+        for (QMap<QString, int>::iterator i = B2.bonuses.begin(); i != B2.bonuses.end(); i++)
+        {
+            QString name = i.key();
+            int value = i.value();
+
+            locBonuses[name] = value;
+        }
+    }
+}
+int BaseContestLog::getSquareBonus(QString sloc)
+{
+    int bonus = 0;
+    QMap<QString, int>::iterator l = locBonuses.find(sloc);
+
+    if ( l != locBonuses.end())
+    {
+       // specific bonus for square allocated
+       bonus = l.value();
+    }
+    else
+    {
+        QMap<QString, int>::iterator l = locBonuses.find("DEFAULT");
+        if ( l != locBonuses.end())
+        {
+           // specific bonus for square allocated
+           bonus = l.value();
+        }
+    }
+    return bonus;
+}
+
 //====================================================================
 ContestScore::ContestScore(BaseContestLog *ct, QDateTime limit)
 {
@@ -1264,15 +1230,24 @@ ContestScore::ContestScore(BaseContestLog *ct, QDateTime limit)
 
    ct->getScoresTo(*this, limit);
    name = ct->publishedName;
+   UKACBonus = ct->UKACBonus.getValue();
 }
 QString ContestScore::disp()
 {
-
-   QString buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5:%6%7 districts%8:%9%10(%11/%12) locators %13 = %14" )
+    QString buff;
+    if (UKACBonus == true)
+    {
+        buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5: bonuses %6(%7) = %8" )
+            .arg(nqsos).arg(contestScore).arg(brcc1).arg(nctry).arg(brcc2)
+            .arg(bonus) .arg(nbonus)
+            .arg(totalScore );
+    }
+    else
+    {
+        buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5:%6%7 districts%8:%9%10(%11/%12) locators %13 = %14" )
             .arg(nqsos).arg(contestScore).arg(brcc1).arg(nctry).arg(brcc2).arg(brcc3).arg(ndistrict)
             .arg(brcc4).arg(brloc1).arg(nlocs).arg(nGlocs).arg(nonGlocs).arg(brloc2)
-//            % brbonus1 % bonus % nbonus % brbonus2
-            .arg(totalScore );
+            .arg(totalScore );    }
    return buff;
 }
 //====================================================================

@@ -151,12 +151,12 @@ void MinosServer::dispatchStanza( MinosCommonConnection *il, RPCRequest *req )
       }
    }
 
-   else if ( req->methodName == "Minos:PubSub:Publish"
-        || req->methodName == "Minos:PubSub:ServerSubscribe"
-        || req->methodName == "Minos:PubSub:RemoteSubscribe"
-        || req->methodName == "Minos:PubSub:Subscribe"
-        || req->methodName == "Minos:PubSub:ServerNotify"
-        || req->methodName == "Minos:PubSub:ClientNotify" )
+   else if ( req->methodName == rpcConstants::publish
+        || req->methodName == rpcConstants::serverSubscribe
+        || req->methodName == rpcConstants::remoteSubscribe
+        || req->methodName == rpcConstants::subscribe
+        || req->methodName == rpcConstants::serverNotify
+        || req->methodName == rpcConstants::clientNotify )
    {
       makeXMPPEvent( req );
    }

@@ -24,17 +24,17 @@ class ContestContact: public DisplayContestContact
       virtual void clearDirty();
       virtual void setDirty();
 
-      virtual bool setField( int ACol, const QString Value );
+      virtual bool setField(QSharedPointer<BaseContact> tct, int ACol, const QString Value );
 
       ContestContact( LoggerContestLog *contest, bool time_now );
       ~ContestContact();
-      void getPrintFileText(QString &, short );
-      void addReg1TestComment(QStringList &remarks );
-      void getReg1TestText( QString & );
-      QString getADIFLine();
-      bool commonSave( );
-      bool minosSave( );
-      bool GJVsave( GJVParams & );
+      virtual void getPrintFileText(QString &, short );
+      virtual void addReg1TestComment(QStringList &remarks );
+      virtual void getReg1TestText( QString & );
+      virtual QString getADIFLine();
+      bool commonSave(QSharedPointer<BaseContact>  );
+      bool minosSave(QSharedPointer<BaseContact> tct);
+      virtual bool GJVsave( GJVParams & );
       virtual bool GJVload( int diskBlock );
       virtual void processMinosStanza( const QString &methodName, MinosTestImport * const mt );
 };

@@ -9,7 +9,7 @@
 #ifndef MinosLoggerEventsH
 #define MinosLoggerEventsH
 
-#include <XMPP_pch.h>
+#include "XMPP_pch.h"
 //---------------------------------------------------------------------------
 class BaseContestLog;
 class BaseContact;
@@ -29,7 +29,7 @@ signals:
    void ShowErrorList();
    void ReportOverstrike(bool ov, BaseContestLog *c);
    void AfterLogContact(BaseContestLog *ct);
-   void AfterSelectContact(BaseContact *ct, BaseContestLog *);
+   void AfterSelectContact(QSharedPointer<BaseContact> ct, BaseContestLog *);
    void NextContactDetailsOnLeft();
    void ContestDetails(BaseContestLog *);
    void GoToSerial(BaseContestLog *);
@@ -70,7 +70,7 @@ public:
    static void SendShowErrorList();
    static void SendReportOverstrike(bool ov, BaseContestLog *c);
    static void SendAfterLogContact(BaseContestLog *ct);
-   static void SendAfterSelectContact(BaseContact *ct, BaseContestLog *);
+   static void SendAfterSelectContact(QSharedPointer<BaseContact> ct, BaseContestLog *);
    static void SendNextContactDetailsOnLeft();
    static void SendContestDetails(BaseContestLog *);
    static void SendGoToSerial(BaseContestLog *);

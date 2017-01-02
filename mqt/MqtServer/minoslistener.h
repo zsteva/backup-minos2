@@ -26,7 +26,7 @@ class MinosListener:public QObject
 
      QTimer CheckTimer;
       QSharedPointer<QTcpServer> sock;
-      std::vector<MinosCommonConnection *>i_array;
+      QVector<MinosCommonConnection *>i_array;
 
       virtual MinosCommonConnection *makeConnection(QTcpSocket *s) = 0;
     public:
@@ -50,7 +50,7 @@ private slots:
       void on_newConnection();
       void on_timeout();
 };
-typedef std::vector<MinosCommonConnection *>::iterator CommonIterator;
+typedef QVector<MinosCommonConnection *>::iterator CommonIterator;
 //==============================================================================
 class MinosServerListener: public MinosListener
 {

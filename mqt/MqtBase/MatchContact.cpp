@@ -9,27 +9,22 @@
 #include "base_pch.h"
 
 //---------------------------------------------------------------------------
-bool LtMatch::operator() ( const MatchContact* s1, const MatchContact* s2 ) const
+
+QSharedPointer<MatchContact> BaseMatchContest::pcontactAt( int i )
 {
-   return * s1 < *s2;
+    if (i > contactMatchList.size())
+        return QSharedPointer<MatchContact>();
+    return std::next(contactMatchList.begin(), i)->wt;
 }
-bool LtMatchContest::operator() ( const BaseMatchContest* s1, const BaseMatchContest* s2 ) const
-{
-   return * s1 < *s2;
-}
-MatchContact *BaseMatchContest::pcontactAt( int i )
-{
-    if (i > (int)matchList.size())
-        return 0;
-    return matchList.at( i );
-}
+
+// Here we compare pointers, just to give an actual < operator
 bool MatchContactList::operator<( const BaseMatchContest& rhs ) const
 {
    // p1 is from list; p2 is the one being searched for
     // p1 is from list; p2 is the one being searched for
 
-    ContactList * cn1 = getContactList();
-    ContactList * cn2 = rhs.getContactList();
+    const ContactList * cn1 = getContactList();
+    const ContactList * cn2 = rhs.getContactList();
 
     if ( cn2 == 0 )       // cn1 must be good - its us!
     {
@@ -49,8 +44,8 @@ bool MatchContactLog::operator<( const BaseMatchContest& rhs ) const
 {
    // p1 is from list; p2 is the one being searched for
 
-   BaseContestLog * cn1 = getContactLog();
-   BaseContestLog * cn2 = rhs.getContactLog();
+   const BaseContestLog * cn1 = getContactLog();
+   const BaseContestLog * cn2 = rhs.getContactLog();
 
    if ( cn2 == 0 )
    {
@@ -73,7 +68,7 @@ MatchContact::MatchContact( )
 MatchContact::~MatchContact()
 {}
 //==============================================================================
-MatchLogContact::MatchLogContact( BaseContestLog *ct, BaseContact *lc )
+MatchLogContact::MatchLogContact(BaseContestLog *ct, QSharedPointer<BaseContact> lc )
       : matchedContest( ct ), matchedContact( lc )
 {}
 MatchLogContact::~MatchLogContact()
@@ -88,8 +83,8 @@ bool MatchLogContact::operator<( const MatchContact& rhs ) const
 {
    // p1 is from list; p2 is the one being searched for
 
-   BaseContestLog * cn1 = getContactLog();
-   BaseContestLog * cn2 = rhs.getContactLog();
+   BaseContestLog *cn1 = getContactLog();
+   BaseContestLog *cn2 = rhs.getContactLog();
 
    if ( cn2 == 0 )
    {
@@ -117,7 +112,7 @@ bool MatchLogContact::operator<( const MatchContact& rhs ) const
       return false;
 
    // This one is more problematic
-   BaseContestLog * ct = MinosParameters::getMinosParameters() ->getCurrentContest();
+   const BaseContestLog * ct = MinosParameters::getMinosParameters() ->getCurrentContest();
    if ( bool( ct ) && ( ct->DupSheet.isCurDup( getBaseContact() ) ) )
       return true;
 
@@ -131,8 +126,8 @@ bool MatchLogContact::operator==( const MatchContact& rhs ) const
 {
    // p1 is from list; p2 is the one being searched for
 
-   BaseContestLog * cn1 = getContactLog();
-   BaseContestLog * cn2 = rhs.getContactLog();
+   BaseContestLog *cn1 = getContactLog();
+   BaseContestLog *cn2 = rhs.getContactLog();
 
    if ( cn2 == 0 )
    {
@@ -150,8 +145,8 @@ bool MatchLogContact::operator!=( const MatchContact& rhs ) const
 {
    // p1 is from list; p2 is the one being searched for
 
-   BaseContestLog * cn1 = getContactLog();
-   BaseContestLog * cn2 = rhs.getContactLog();
+    BaseContestLog *cn1 = getContactLog();
+    BaseContestLog *cn2 = rhs.getContactLog();
 
    if ( cn2 == 0 )
    {
@@ -166,7 +161,10 @@ bool MatchLogContact::operator!=( const MatchContact& rhs ) const
    return ( getBaseContact() != rhs.getBaseContact() );
 }
 //==============================================================================
-MatchListContact::MatchListContact( ContactList *ct, ListContact *lc )
+MatchListContact::MatchListContact( )
+{}
+
+MatchListContact::MatchListContact(ContactList *ct, ListContact *lc )
       : matchedList( ct ), matchedListContact( lc )
 {}
 MatchListContact::~MatchListContact()
@@ -174,15 +172,15 @@ MatchListContact::~MatchListContact()
 
 void MatchListContact::getText( QString &dest, BaseContestLog *const ct ) const
 {
-   ContactList * clp = matchedList;
+   ContactList *clp = matchedList;
    clp->getMatchText( matchedListContact, dest, ct );
 }
 bool MatchListContact::operator<( const MatchContact& rhs ) const
 {
    // p1 is from list; p2 is the one being searched for
 
-   ContactList * cn1 = getContactList();
-   ContactList * cn2 = rhs.getContactList();
+   ContactList *cn1 = getContactList();
+   ContactList *cn2 = rhs.getContactList();
 
    if ( cn2 == 0 )       // cn1 must be good - its us!
    {
@@ -212,8 +210,8 @@ bool MatchListContact::operator==( const MatchContact& rhs ) const
 {
    // p1 is from list; p2 is the one being searched for
 
-   ContactList * cn1 = getContactList();
-   ContactList * cn2 = rhs.getContactList();
+   ContactList *cn1 = getContactList();
+   ContactList *cn2 = rhs.getContactList();
 
    if ( cn1 != cn2 )
    {
@@ -226,8 +224,8 @@ bool MatchListContact::operator!=( const MatchContact& rhs ) const
 {
    // p1 is from list; p2 is the one being searched for
 
-   ContactList * cn1 = getContactList();
-   ContactList * cn2 = rhs.getContactList();
+   ContactList *cn1 = getContactList();
+   ContactList *cn2 = rhs.getContactList();
 
    if ( cn1 != cn2 )
    {

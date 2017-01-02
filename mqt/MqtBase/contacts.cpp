@@ -25,7 +25,6 @@ BaseContact::BaseContact( BaseContestLog * contest, bool time_now ) :
       contest( contest ), contactScore( -1 ), time( time_now ), updtime( time_now ),
       contactFlags( 0 ), multCount( 0 ),
       bearing( -1 ),
-      districtMult( 0 ), ctryMult( 0 ),
       QSOValid( false ),
       locCount( 0 ), newGLoc(false), newNonGLoc(false), newDistrict( false ), newCtry( false ),
       bonus(0), newBonus(false)
@@ -63,6 +62,10 @@ BaseContact& BaseContact::operator =( const BaseContact &ct )
    return *this;
 }
 //==========================================================================
+bool BaseContact::operator<( const BaseContact& rhs ) const
+{
+   return getLogSequence() < rhs.getLogSequence();
+}
 //==========================================================================
 void BaseContact::clearDirty()
 {
@@ -103,14 +106,12 @@ void BaseContact::setDirty()
    contactScore.setDirty();
 }
 //==========================================================================
-CountryEntry *findCtryPrefix( const callsign &cs )
+QSharedPointer<CountryEntry> findCtryPrefix( const callsign &cs )
 {
-   CountryEntry * ctryMult;
-
    QString testpart = "/";	// look for e.g. /RVI as a country suffix
    testpart += cs.suffix;	// look for e.g. /RVI as a country suffix
 
-   CountrySynonym *csyn = 0;
+   QSharedPointer<CountrySynonym> csyn;
    if ( cs.suffix.length() )
       csyn = MultLists::getMultLists() ->searchCountrySynonym( testpart );
 
@@ -171,7 +172,10 @@ CountryEntry *findCtryPrefix( const callsign &cs )
          }
       }
    }
-   ctryMult = ( csyn ) ? ( csyn->country ) : 0;
+
+   QSharedPointer<CountryEntry> ctryMult;
+   if (csyn)
+        ctryMult = csyn->country;
    return ctryMult;
 }
 void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) const
@@ -196,17 +200,7 @@ void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) 
    {
       // if contest requires a serial
       makestrings( curcon ->serialField.getValue() );
-/*
-      int offset = curcon->bearingOffset.getValue();
-      const QChar degreeChar(0260); // octal value
-      ContactBuffs::brgbuff = QString("%1%2").arg( varBrg( bearing + offset ), 3 ).arg(degreeChar);
 
-      int thisscore = contactScore.getValue();
-
-      if ( contactScore.getValue() < 0 )
-         thisscore = 0;
-      ContactBuffs::scorebuff = QString::number(thisscore );
-*/
       ContactBuffs::qthbuff = extraText.getValue().left( 100 );
 
       if ( contactFlags.getValue() & MANUAL_SCORE )

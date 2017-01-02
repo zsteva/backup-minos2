@@ -29,6 +29,7 @@ private:   	// User declarations
    QString sectionList;
    bool saveContestOK;
    bool suppressProtectedOnClick;
+   bool noMultRipple;
 
    QWidget * getNextFocus();
    void setDetails( const IndividualContest &ic );
@@ -61,6 +62,7 @@ private slots:
    void on_GLocMult_clicked();
    void on_M7LocatorMults_clicked();
    void on_ProtectedOption_clicked();
+   void on_BonusComboBox_currentIndexChanged(int index);
 };
 
 #endif // CONTESTDETAILS_H

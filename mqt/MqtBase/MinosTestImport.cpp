@@ -170,14 +170,6 @@ void MinosTestImport::processMinosStanza( RPCRequest *rq )
 
 }
 
-/*
-   void processMinosStanza(RPCRequest *rq, long fpos, void *user )
-   {
-      MinosTestImport *mti = reinterpret_cast<MinosTestImport *> (user);
-      mti->processMinosStanza(rq, fpos);
-   }
-*/
-
 //==============================================================================
 // These are used for log monitoring
 void MinosTestImport::startImportTest()
@@ -198,9 +190,10 @@ int MinosTestImport::importTestBuffer( const QString &buffer )
 void MinosTestImport::endImportTest()
 {}
 //==============================================================================
-const char *header1 = "<?xml version='1.0'?><stream:stream xmlns:stream='http://minos.goodey.org.uk/streams' xmlns='minos:client' version='1.0'>";
-const char *header2 = "<?xml version='1.0'?><stream:stream xmlns:stream='http://etherx.jabber.org/streams' xmlns='jabber:client' version='1.0'>";
-const char *stubHeader = "<stream:stream>";
+const QString header1 = "<?xml version='1.0'?><stream:stream xmlns:stream='http://minos.goodey.org.uk/streams' xmlns='minos:client' version='1.0'>";
+const QString header2 = "<?xml version='1.0'?><stream:stream xmlns:stream='http://etherx.jabber.org/streams' xmlns='jabber:client' version='1.0'>";
+const QString stubHeader = "<stream:stream>";
+
 void MinosTestImport::dispatchResponse( XStanza *xs )
 {
    ( this->*dispatchCallback ) ( xs ); // What a horrid syntax for calling through a member pointer!
@@ -209,7 +202,7 @@ void MinosTestImport::dispatchResponse( XStanza *xs )
 int MinosTestImport::readTestFile(QSharedPointer<QFile> ctfile )
 {
     // read the stream as a sequence of Minos stanzas
-    char rdbuffer[ IO_BUF_SIZE + 1 ];
+    char rdcbuffer[ IO_BUF_SIZE + 1 ];
     bool fileComplete = false;
 
     // NB - old versions might not have a proper header
@@ -217,26 +210,28 @@ int MinosTestImport::readTestFile(QSharedPointer<QFile> ctfile )
     QString buffer;
     while ( !fileComplete )
     {
-        int chRead = ctfile->read(rdbuffer, IO_BUF_SIZE);
+        int chRead = ctfile->read(rdcbuffer, IO_BUF_SIZE);
         if ( chRead > 0 )
         {
-            rdbuffer[ chRead ] = '\0';
+            rdcbuffer[ chRead ] = '\0';
+
+            QString rdbuffer(rdcbuffer);
 
             buffer += rdbuffer;
             if ( firstRead )
             {
                 firstRead = false;
                 iqOffset = 0;
-                if ( strncmp( rdbuffer, header1, strlen( header1 ) ) == 0 )
+                if ( strnicmp( rdbuffer, header1, header1.length() ) == 0 )
                 {
-                    buffer = buffer.mid( strlen( header1 ), buffer.size() - strlen( header1 ) );  // overwriting what is there already
-                    iqOffset = strlen( header1 );
+                    buffer = buffer.mid( header1.length(), buffer.length() - header1.length() );  // overwriting what is there already
+                    iqOffset = header1.length();
                 }
                 else
-                    if ( strncmp( rdbuffer, header2, strlen( header2 ) ) == 0 )
+                    if ( strnicmp( rdbuffer, header2, header2.length() ) == 0 )
                     {
-                        buffer = buffer.mid( strlen( header2 ), buffer.size() - strlen( header2 ) );  // overwriting what is there already
-                        iqOffset = strlen( header2 );
+                        buffer = buffer.mid( header2.length(), buffer.length() - header2.length() );  // overwriting what is there already
+                        iqOffset = header2.length();
                     }
                 buffer = QString( stubHeader ) + buffer;
             }
@@ -271,7 +266,7 @@ int MinosTestImport::readTestFile(QSharedPointer<QFile> ctfile )
         // as we get a position of the START rather than the END of a stanza,
         // we don't always get a good length, so we may need to do a "large" read in thos cases
 
-        curfpos = iqOffset + e->DataPos() - 1 - strlen( stubHeader );
+        curfpos = iqOffset + e->DataPos() - 1 - stubHeader.length();
         analyseNode( this, e );
     }
     return stanzas;

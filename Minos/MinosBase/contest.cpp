@@ -9,12 +9,8 @@
 #include "base_pch.h"
 #pragma hdrstop
 #include <inifiles.hpp>
-/*
-#include "latlong.h"
+#include "VHFList.h"
 
-#include "MatchContact.h"
-#include "MinosTestImport.h"
-*/
 bool LtLogSeq::operator() ( const BaseContact* s1, const BaseContact* s2 ) const
 {
    return s1->getLogSequence() < s2->getLogSequence();
@@ -43,7 +39,8 @@ BaseContestLog::BaseContestLog( void ) :
       kms1( 0 ), kms2( 0 ), kms1p( 0 ), kms2p( 0 ),
       mults1( 0 ), mults2( 0 ), mults1p( 0 ), mults2p( 0 ),
       bonus1( 0 ), bonus2( 0 ), bonus1p( 0 ), bonus2p( 0 ),
-      bonus(0), nbonus(0)
+      bonus(0), nbonus(0),
+      bonusYearLoaded(0)
 {
    bearingOffset.setValue(0);
    mode.setValue( "J3E" );
@@ -58,66 +55,6 @@ BaseContestLog::BaseContestLog( void ) :
    districtWorked = new int[ nc ];
    for ( i = 0; i < nc; i++ )
       districtWorked[ i ] = 0;
-
-#ifdef UKAC_BONUSES
-   try
-   {
-   //std::map<std::string, int> locBonuses;
-
-   // Load the loc bonuses from control\M8.ini
-
-   /*
-[M8]
-UK=1500
-NONUK=500
-JO00=1000
-JO01=1000
-JO02=1000
-JO03=1000
-IO90=1000
-IO91=1000
-IO92=1000
-IO93=1000
-IO80=1000
-IO81=1000
-IO82=1000
-IO83=1000
-
-
-   */
-   // General non-UK
-
-   // General UK
-
-   // Specific squares
-      multsAsBonuses = 0;
-
-      std::auto_ptr <TIniFile> m8Ini ( new TIniFile ( "Configuration\\UKACBonus.ini" ) );
-      std::auto_ptr<TStrings > ukacStrings(new TStringList());
-      m8Ini->ReadSectionValues("UKACBonus", ukacStrings.get());
-      for (int i = 0; i < ukacStrings->Count; i++)
-      {
-         String name = ukacStrings->Names[i].Trim().UpperCase();
-         String value = ukacStrings->Values[name].Trim();
-         if (name == "UK")
-         {
-            ukLocBonus = value.ToIntDef(1500);
-         }
-         else if (name == "NONUK")
-         {
-            nonukLocBonus = value.ToIntDef(500);
-         }
-         else
-         {
-            locBonuses[std::string(AnsiString(name).c_str())] = value.ToIntDef(1000);
-         }
-      }
-   }
-   catch(...)
-   {
-
-   }
-   #endif
 }
 BaseContestLog::~BaseContestLog()
 {
@@ -1102,7 +1039,13 @@ void BaseContestLog::processMinosStanza( const std::string &methodName, MinosTes
       mt->getStructArgMemberValue( "AllowLoc8", allowLoc8 );
 
       mt->getStructArgMemberValue( "UKACBonus", UKACBonus );
-      if (mt->getStructArgMemberValue( "M7Mults", M7Mults) && M7Mults.getValue())
+      if (UKACBonus.getValue())
+      {
+          loadBonusList();
+      }
+      mt->getStructArgMemberValue( "M7Mults", M7Mults);
+
+      if (M7Mults.getValue())
       {
          NonUKloc_mult = true;
          NonUKloc_multiplier = 1;
@@ -1111,7 +1054,7 @@ void BaseContestLog::processMinosStanza( const std::string &methodName, MinosTes
       }
       else
       {
-         if (locMult.getValue())
+         if (locMult.getValue())    // but this is from contest, NOT the stanza
          {
             UKloc_multiplier = 1;
             UKloc_mult = true;
@@ -1256,6 +1199,82 @@ bool BaseContestLog::checkTime(const dtg &t)
       return false;
    }
 }
+static bool loadCalYear ( Calendar &cal, int year )
+{
+    bool loaded = false;
+    std::vector<boost::shared_ptr<CalendarYear> > yearList;
+    for ( int i = LOWYEAR; i <= HIGHYEAR; i++ )
+    {
+        yearList.push_back ( boost::shared_ptr<CalendarYear> ( new VHFCalendarYear ( i ) ) );
+    }
+
+    for ( int i = yearList.size() - 1; i >= 0; i-- )
+    {
+        if ( !loaded && FileExists ( yearList[ i ] ->getPath() ) && year >= curYear + yearList[ i ] ->yearOffset )
+        {
+            loaded = cal.parseFile ( yearList[ i ] ->getPath().c_str() );
+        }
+    }
+    return loaded;
+}
+void BaseContestLog::loadBonusList()
+{
+
+    TDateTime  contestStart = CanonicalToTDT(DTGStart.getValue().c_str());
+    Word  year, AMonth, ADay;
+    DecodeDate(contestStart, year, AMonth, ADay);
+    if (year != bonusYearLoaded)
+    {
+
+        Calendar vhf(year);
+        bool loaded = loadCalYear ( vhf, year );
+
+        if (loaded)
+        {
+            bonusYearLoaded = year;
+        }
+
+        MultType B2 = vhf.mults["B2"];
+        if (B2.bonuses.size() == 0)
+        {
+            // load from ./Configuration/B2Mults.xml
+            vhf = Calendar(year);
+            loaded = vhf.parseFile ( "./Configuration/B2Mults.xml" );
+            B2 = vhf.mults["B2"];
+        }
+        locBonuses.clear();
+
+        for (std::map<std::string, int>::iterator i = B2.bonuses.begin(); i != B2.bonuses.end(); i++)
+        {
+            std::string name = strupr(trim((*i).first));
+            int value = (*i).second;
+
+            locBonuses[name] = value;
+        }
+    }
+}
+
+int BaseContestLog::getSquareBonus(AnsiString sloc)
+{
+   int bonus = 0;
+   std::map<std::string, int>::iterator l = locBonuses.find(sloc.c_str());
+
+   if ( l != locBonuses.end())
+   {
+      // specific bonus for square allocated
+      bonus = l->second;
+   }
+   else
+   {
+      std::map<std::string, int>::iterator l = locBonuses.find("DEFAULT");
+      if ( l != locBonuses.end())
+      {
+         // specific bonus for square allocated
+         bonus = l->second;
+      }
+   }
+   return bonus;
+}
 //====================================================================
 ContestScore::ContestScore(BaseContestLog *ct, TDateTime limit)
 {
@@ -1270,21 +1289,26 @@ ContestScore::ContestScore(BaseContestLog *ct, TDateTime limit)
 
    ct->getScoresTo(*this, limit);
    name = ct->publishedName;
+   UKACBonus = ct->UKACBonus.getValue();
 }
 std::string ContestScore::disp()
 {
-/*
-   std::string buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:%c%d districts%c:%c%d(%d/%d) locators%c %cbonuses %d(%d)%c = %ld" )
+   std::string buff;
+   if (UKACBonus)
+   {
+      buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:bonuses %d(%d) = %ld" )
+            %nqsos % contestScore % brcc1 % nctry % brcc2
+            % bonus % nbonus
+            % totalScore ).str();
+
+   }
+   else
+   {
+      buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:%c%d districts%c:%c%d(%d/%d) locators%c = %ld" )
             %nqsos % contestScore % brcc1 % nctry % brcc2 % brcc3 % ndistrict %
             brcc4 % brloc1 % nlocs % nGlocs % nonGlocs % brloc2
-            % brbonus1 % bonus % nbonus % brbonus2
             % totalScore ).str();
-  */
-   std::string buff = ( boost::format( "Score: Qsos: %d; %ld pts :%c%d countries%c:%c%d districts%c:%c%d(%d/%d) locators%c = %ld" )
-            %nqsos % contestScore % brcc1 % nctry % brcc2 % brcc3 % ndistrict %
-            brcc4 % brloc1 % nlocs % nGlocs % nonGlocs % brloc2
-//            % brbonus1 % bonus % nbonus % brbonus2
-            % totalScore ).str();
+   }
    return buff;
 }
 //====================================================================

@@ -1,5 +1,6 @@
 #include "base_pch.h"
 #include "C:/Qt_Projects/minos-minos/mqt/XMPPLib/RPCCommandConstants.h"
+#include "RPCCommandConstants.h"
 #include "rotatorlogic.h"
 #include "rotatorlog.h"
 #include "rotatormainwindow.h"
@@ -27,6 +28,8 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     ui(new Ui::RotatorMainWindow)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
     enableTrace( "./TraceLog", "MinosChat_" );
     createCloseEvent();
     MinosRotatorForm = this;

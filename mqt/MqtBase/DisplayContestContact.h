@@ -42,7 +42,7 @@ class DisplayContestContact: public BaseContact
 
       // end of Contact items
 
-      virtual bool commonSave( )
+      virtual bool commonSave(QSharedPointer<BaseContact>  )
       {
          return false;
       }

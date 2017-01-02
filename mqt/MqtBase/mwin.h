@@ -43,8 +43,6 @@
 
 enum ExportType {EREG1TEST, EADIF, EG0GJV, EMINOS, EKML, EPRINTFILE };
 
-#define TEMPBUFF(a, b) char a[(b)]
-
 // control block for repeated actions on contest contacts
 class GJVParams
 {

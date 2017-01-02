@@ -17,36 +17,35 @@ void makeXMPPEvent( XStanza *xs )
    if ( RPCRequest * rq = dynamic_cast<RPCRequest *>( xs ) )
    {
       // external RPC request - decode and action
-      MinosRPCServer * mro = MinosRPCObj::makeServerObj( rq->methodName );
-      if ( mro )
-      {
-         mro->setCallArgs( *rq );
-         mro->id = xs->getId();
+        QSharedPointer<MinosRPCObj> mro = MinosRPCObj::makeServerObj( rq->methodName );
 
-         // we should be able to queue response/error response
-         // on mro (request) - how?
-         if ( mro->callback )
-         {
-            mro->callback->call( false, mro, rq->getFrom() );
-         }
-         delete mro;
-      }
+        if (mro)
+        {
+            mro->setCallArgs( *rq );
+            mro->id = xs->getId();
+
+            // we should be able to queue response/error response
+            // on mro (request) - how?
+            if ( mro->callback )
+            {
+                mro->callback->call( false, mro, rq->getFrom() );
+            }
+        }
    }
    else
    {
       if ( RPCResponse * rp = dynamic_cast<RPCResponse *>( xs ) )
       {
          // RPC response where call was not blocking
-         MinosRPCClient * mro = MinosRPCObj::makeClientObj( rp->methodName );
-         if ( mro )
+         QSharedPointer<MinosRPCObj> mro = MinosRPCObj::makeClientObj( rp->methodName );
+         if (mro)
          {
             mro->id = xs->getId();
             mro->setCallArgs( *rp );
             if ( mro->callback )
             {
-               mro->callback->call( false, mro, rp->getFrom() );
+                 mro->callback->call( false, mro, rp->getFrom() );
             }
-            delete mro;
          }
       }
    }

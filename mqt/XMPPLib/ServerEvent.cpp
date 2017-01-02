@@ -59,52 +59,14 @@ bool checkServerReady()
 }
 void makeServerShowEvent( )
 {
-    /*
-   static std::string serverShowEventName = getServerId() + "Show";
-   if ( !serverShowEvent )
-   {
-      // we should set up th ACLs etc so we could run serevr as a service
-      serverShowEvent = CreateEventA( 0, TRUE, FALSE, serverShowEventName.c_str() ); // Named Manual reset
-   }
-   return serverShowEvent;
-   */
+
 }
 bool getShowServers()
 {
-    /*
-   static std::string serverShowEventName = getServerId() + "Show";
 
-   bool ret = false;
-   HANDLE serverShowEvent = CreateEventA( 0, TRUE, FALSE, serverShowEventName.c_str() ); // Named Manual reset
-   if ( serverShowEvent )
-   {
-      if (WaitForSingleObject(serverShowEvent, 0) == WAIT_OBJECT_0)
-      {
-         ret = true;
-      }
-      else
-      {
-         ret = false;
-      }
-
-      CloseHandle( serverShowEvent );
-   }
-   return ret;
-   */
     return true;
 }
 void setShowServers(bool /*state*/)
 {
-    /*
-   HANDLE sshEvent = makeServerShowEvent();
-   if (state)
-   {
-      SetEvent(sshEvent);
-   }
-   else
-   {
-      ResetEvent(sshEvent);
-   }
-   */
 }
 

@@ -2,6 +2,7 @@
 #include <QtTest>
 
 #include "BandList.h"
+#include "Calendar.h"
 #include "CalendarList.h"
 
 #include "base_pch.h"
@@ -254,10 +255,10 @@ void RPCTestTest::testStruct()
    QVERIFY( false == pOK );
 }
 
-RPCParamArray *RPCArrayFromStringVector( const std::vector< QString> &plist )
+RPCParamArray *RPCArrayFromStringVector( const QVector< QString> &plist )
 {
    RPCParamArray * rpc = new RPCParamArray();
-   for ( unsigned int i = 0; i < plist.size(); i++ )
+   for ( int i = 0; i < plist.size(); i++ )
    {
       rpc->addElement( plist[ i ] );
    }
@@ -268,7 +269,7 @@ void RPCTestTest::testArray()
 {
    RPCArgs * xms = new RPCArgs();
 
-   std::vector < QString > testvec;
+   QVector < QString > testvec;
    testvec.push_back( "string 1" );
    testvec.push_back( "string 2" );
    testvec.push_back( "string 3" );
@@ -295,9 +296,9 @@ void RPCTestTest::testArray()
 
    bool pOK = xm.getArrayArgElements( 0, asize );
    QVERIFY( true == pOK );
-   QVERIFY( ( unsigned int ) testvec.size() == asize );
+   QVERIFY( static_cast< unsigned int > (testvec.size()) == asize );
 
-   for ( unsigned int i = 0; i < testvec.size(); i++ )
+   for ( int i = 0; i < testvec.size(); i++ )
    {
       QSharedPointer<RPCParam> pres;
       QString sres;
@@ -378,7 +379,7 @@ RPCTestTest::testRequest()
    xm->addParam( s2 );
    xm->addParam( i1 );
 
-   TIXML_STRING UTF8XML = xm->getActionMessage().toStdString();
+   TIXML_STRING UTF8XML = xm->getActionMessage();
 
    delete xm;
 
@@ -426,7 +427,7 @@ RPCTestTest::testResponse()
    xm->addParam( s2 );
    xm->addParam( i1 );
 
-   TIXML_STRING UTF8XML = xm->getActionMessage().toStdString();
+   TIXML_STRING UTF8XML = xm->getActionMessage();
 
    delete xm;
 
@@ -482,6 +483,7 @@ void RPCTestTest::testBands()
 }
 void RPCTestTest::testDates()
 {
+#ifdef TESTCALENDAR
    setYear( 2008 );
 
    int m = getMonth( "february" );
@@ -518,6 +520,7 @@ void RPCTestTest::testDates()
 
    t2 = localToUTC( t );
    //QVERIFY( 0 == t2.secsTo(t));
+#endif
 }
 void RPCTestTest::testCalendarParse()
 {
@@ -534,13 +537,15 @@ void RPCTestTest::testContests()
    int nc = vhf.contests.size();
    QVERIFY( 33 == nc );
 
-   std::string lp144( "lp144" );
+   QString lp144( "lp144" );
    CalendarContest &qrp144 = vhf.contests[ lp144 ];
    QVERIFY( lp144 == qrp144.name );
 
 }
 void RPCTestTest::testDates2009()
 {
+#ifdef TESTCALENDAR
+
    setYear( 2009 );
 
    int m = getMonth( "february" );
@@ -576,6 +581,7 @@ void RPCTestTest::testDates2009()
 
    t2 = localToUTC( t );
    QVERIFY( 0 == t2.secsTo(t));
+#endif
 }
 void RPCTestTest::testParse2009()
 {
@@ -592,18 +598,23 @@ void RPCTestTest::testContests2009()
    int nc = vhf.contests.size();
    QVERIFY( 33 == nc );
 
-   std::string lp144( "lp144" );
+   QString lp144( "lp144" );
    CalendarContest &qrp144 = vhf.contests[ lp144 ];
    QVERIFY( lp144 == qrp144.name );
 
 }
+#ifdef TESTCALENDAR
+
 int fsun(int month)
 {
    int fSunday = getDate(month, 7, 1);    // month, day, week
    return fSunday;
 }
+#endif
 void RPCTestTest::testBST()
 {
+#ifdef TESTCALENDAR
+
    for (int i = 0; i < 40; i++)
    {
       setYear(2005 + i);
@@ -624,7 +635,7 @@ void RPCTestTest::testBST()
          QVERIFY( true == (dow >= 1 && dow <= 7));
       }
    }
-
+#endif
 }
 
 void RPCTestTest::testMults()
@@ -633,44 +644,47 @@ void RPCTestTest::testMults()
 
     MultLists *m = MultLists::getMultLists();
 
-    std::ofstream os("c:/temp/multlist.txt");
+    QFile fos("c:/temp/multlist.txt");
+    if (!fos.open(QIODevice::WriteOnly|QIODevice::Text))
+       return ;
+
+    QTextStream os(&fos);
 
     for (int i = 0; i < m->getCtryListSize(); i++)
     {
-        CountryEntry *ce = m->getCtryListAt( i );
-        os << ce->basePrefix.toStdString() + " " + ce->realName.toStdString() << std::endl;
+        QSharedPointer<CountryEntry> ce = m->getCtryListAt( i );
+        os << ce->basePrefix + " " + ce->realName << "\n";
     }
-/*
-    os << "================== country entries ========================" << std::endl;
-    for (MultList < CountryEntry * >::iterator i = m->ctryList.begin(); i != m->ctryList.end(); i++)
+    /*
+    os << "================== country entries ========================\n";
+    for (MultList < CountryEntry >::iterator i = m->ctryList.begin(); i != m->ctryList.end(); i++)
     {
-       os << (*i)->basePrefix + " " + (*i)->realName << std::endl;
+       os << i->wt->basePrefix + " " + i->wt->realName << "\n";
     }
-    os << (String("================== country synonyms ") + String(m->ctrySynList.size()).c_str() + "========================").c_str() << std::endl;
-    for (MultList < CountrySynonym * >::iterator i = m->ctrySynList.begin(); i != m->ctrySynList.end(); i++)
+    os << QString("================== country synonyms ") + QString::number(m->ctrySynList.size()) + "========================\n";
+    for (MultList < CountrySynonym  >::iterator i = m->ctrySynList.begin(); i != m->ctrySynList.end(); i++)
     {
-       QString temp1 = (*i)->synPrefix;
-    //      CountryEntry * country = *((*i)->country);
-       CountryEntry * country = (*i)->country;
+       QString temp1 = i->wt->synPrefix;
+       QSharedPointer<CountryEntry> country = i->wt->country;
        QString temp2 = country->basePrefix;
-       os << (temp1 + " : " + temp2) << std::endl;
+       os << (temp1 + " : " + temp2) << "\n";
     }
-    os << "================== district entries ========================" << std::endl;
-    for (MultList < DistrictEntry * >::iterator i = m->distList.begin(); i != m->distList.end(); i++)
+    os << "================== district entries ========================\n";
+    for (MultList < DistrictEntry >::iterator i = m->distList.begin(); i != m->distList.end(); i++)
     {
-       os << (*i)->districtCode << std::endl;
+       os << i->wt->districtCode << "\n";
     }
-    os << "================== district synonyms ========================" << std::endl;
-    for (MultList < DistrictSynonym * >::iterator i = m->distSynList.begin(); i != m->distSynList.end(); i++)
+    os << "================== district synonyms ========================\n";
+    for (MultList < DistrictSynonym >::iterator i = m->distSynList.begin(); i != m->distSynList.end(); i++)
     {
-       os << ((*i)->synonym + " : " + ((*i)->district)->districtCode) << std::endl;
+       os << i->wt->synonym + " : " + (i->wt->district)->districtCode  + "\n";
     }
-    os << "================== Glist ========================" << std::endl;
-    for (MultList < GlistEntry * >::iterator i = m->glist.begin(); i != m->glist.end(); i++)
+    os << "================== Glist ========================\n";
+    for (MultList < GlistEntry >::iterator i = m->glist.begin(); i != m->glist.end(); i++)
     {
-       os << ((*i)->synPrefix + " : " + (*i)->dupPrefix) << std::endl;
+       os << i->wt->synPrefix + " : " + i->wt->dupPrefix + "\n";
     }
-*/
+    */
 }
 
 QTEST_MAIN(RPCTestTest)

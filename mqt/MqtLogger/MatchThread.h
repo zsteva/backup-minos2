@@ -36,22 +36,12 @@ class matchElement
 class TMatchCollection
 {
    public:
-      ContestMatchList matchList;
-      void freeAll()
-      {
-         for (ContestMatchIterator i = matchList.begin(); i != matchList.end(); i++ )
-         {
-             (*i)->freeAll();
-            delete ( *i );
-            ( *i ) = 0;
-         }
-         matchList.clear();
-      }
+      ContestMatchList contestMatchList;
       int contactCount();
       TMatchCollection( void );
       ~TMatchCollection();
       int getContestCount( void );
-      BaseMatchContest *pcontestAt( int );
+      QSharedPointer<BaseMatchContest> pcontestAt( int );
 };
 class Matcher
 {
@@ -72,7 +62,7 @@ class Matcher
       matchElement matchloc;
       matchElement matchqth;
 
-      CountryEntry *ce;
+      QSharedPointer<CountryEntry> ce;
 
       int thisContestMatched;
       virtual void matchDistrict( const QString &extraText ) = 0;
@@ -84,7 +74,7 @@ class Matcher
       virtual ~Matcher();
       TMatchCollection *matchCollection;
 
-      void startMatch( CountryEntry *ce = 0 );
+      void startMatch(QSharedPointer<CountryEntry> ce = QSharedPointer<CountryEntry>() );
       void initMatch( void );
       void clearmatchall();
       virtual bool idleMatch( int limit ) = 0;
@@ -109,7 +99,7 @@ class ThisLogMatcher: public Matcher
       virtual ~ThisLogMatcher();
 
       virtual bool idleMatch( int limit );
-      void addMatch( BaseContact *, BaseContestLog * );
+      void addMatch(QSharedPointer<BaseContact>, BaseContestLog * );
 };
 class OtherLogMatcher: public Matcher
 {
@@ -121,7 +111,7 @@ class OtherLogMatcher: public Matcher
       virtual ~OtherLogMatcher();
 
       virtual bool idleMatch( int limit );
-      void addMatch( BaseContact *, BaseContestLog * );
+      void addMatch(QSharedPointer<BaseContact>, BaseContestLog * );
 };
 class ListMatcher: public Matcher
 {
@@ -142,7 +132,7 @@ class TMatchThread : public QThread
 
 private:
 
-      static void startMatch( CountryEntry *ce = 0 );
+      static void startMatch(QSharedPointer<CountryEntry> ce = QSharedPointer<CountryEntry>() );
 
       static TMatchThread *matchThread;
       TMatchThread();

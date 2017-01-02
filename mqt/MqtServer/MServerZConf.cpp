@@ -23,7 +23,7 @@
 
 
 TZConf *TZConf::ZConf = 0;
-std::vector<Server *> serverList;
+QVector<Server *> serverList;
 
 //---------------------------------------------------------------------------
 TZConf::TZConf( )
@@ -36,7 +36,7 @@ TZConf::TZConf( )
 }
 TZConf::~TZConf( )
 {
-   for ( std::vector<Server *>::iterator i = serverList.begin(); i != serverList.end(); i++ )
+   for ( QVector<Server *>::iterator i = serverList.begin(); i != serverList.end(); i++ )
    {
       delete ( *i );
    }
@@ -159,7 +159,7 @@ void TZConf::onTimeout()
 
 bool TZConf::sendMessage(bool beaconReq )
 {
-    for (std::vector<QSharedPointer<UDPSocket> >::iterator i = TxSocks.begin(); i != TxSocks.end(); i++)
+    for (QVector<QSharedPointer<UDPSocket> >::iterator i = TxSocks.begin(); i != TxSocks.end(); i++)
     {
         QString mess = getZConfString(beaconReq);
         (*i)->sendMessage(mess);
@@ -178,7 +178,7 @@ void TZConf::onReadyRead(QString datagram, QString sender)
 
 Server *findStation( const QString s )
 {
-   for ( std::vector<Server *>::iterator i = serverList.begin(); i != serverList.end(); i++ )
+   for ( QVector<Server *>::iterator i = serverList.begin(); i != serverList.end(); i++ )
    {
       if ( ( *i ) ->station.compare( s, Qt::CaseInsensitive ) == 0 )
       {
@@ -189,7 +189,7 @@ Server *findStation( const QString s )
 }
 void TZConf::ServerScan()
 {
-   for ( std::vector<Server *>::iterator i = serverList.begin(); !closeApp && i != serverList.end(); i++ )
+   for ( QVector<Server *>::iterator i = serverList.begin(); !closeApp && i != serverList.end(); i++ )
    {
       trace("Server scan - checking " + (*i)->station);
       MinosServerListener::getListener() ->checkServerConnected( ( *i ), false );
@@ -337,7 +337,7 @@ bool TZConf::processZConfString(const QString &message, const QString &recvHost)
    bool sendBeaconResponse = false;
 
    TiXmlDocument xdoc;
-   std::string smessage = message.toStdString();
+   TIXML_STRING smessage = message.toStdString();// allowed conversion through TIXML_STRING
    xdoc.Parse( smessage.c_str(), 0 );
    TiXmlElement * tix = xdoc.RootElement();
    if ( tix && checkElementName( tix, "minosServer" ) )

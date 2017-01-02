@@ -23,26 +23,7 @@ class ListContact;
 // We may need to define our own validation controls with valid methods
 // for each needed type...
 //==========================================================
-/*
-class MatchNodeData
-{
-   public:
-      MatchNodeData();
 
-      bool top;
-      BaseContestLog *matchedContest;
-      BaseContact *matchedContact;
-};
-class MatchNodeListData
-{
-   public:
-      MatchNodeListData();
-
-      bool top;
-      ContactList *matchedList;
-      ListContact *matchedContact;
-};
-*/
 class QSOGridModel: public QAbstractItemModel
 {
     protected:
@@ -70,14 +51,14 @@ enum MatchType {ThisMatch, OtherMatch, ArchiveMatch};
 class MatchTreeItem
 {
     BaseMatchContest *matchContest;
-    MatchContact *matchContact;
+    QSharedPointer<MatchContact> matchContact;
 
     MatchTreeItem *parent;
-    std::vector<MatchTreeItem *> children;
+    QVector<MatchTreeItem *> children;
     int row;
 
 public:
-    MatchTreeItem(MatchTreeItem *parent, BaseMatchContest *matchContest, MatchContact *matchContact);
+    MatchTreeItem(MatchTreeItem *parent, BaseMatchContest *matchContest, QSharedPointer<MatchContact> matchContact);
     ~MatchTreeItem();
 
     void addChild(MatchTreeItem *mi)
@@ -91,7 +72,7 @@ public:
     }
 
     bool isMatchLine();
-    MatchContact *getMatchContact();
+    QSharedPointer<MatchContact> getMatchContact();
     BaseMatchContest *getMatchContest();
     MatchTreeItem *getParent();
     MatchTreeItem *child(int i)
@@ -147,9 +128,9 @@ public:
     void setActiveControl( int *Key );
     QString makeEntry( bool saveMinos );
     void exportContest();
-    void EditContact( BaseContact *lct );
+    void EditContact(QSharedPointer<BaseContact> lct );
     void EditMatchContact();
-    void QSOTreeSelectContact( BaseContact * lct );
+    void QSOTreeSelectContact( QSharedPointer<BaseContact> lct );
 
     void refreshMults();
 
@@ -224,7 +205,7 @@ private slots:
     void on_ReplaceListList( TMatchCollection *matchCollection, BaseContestLog* );
     void on_ScrollToDistrict( const QString &qth, BaseContestLog* );
     void on_ScrollToCountry( const QString &csCs, BaseContestLog* );
-    void on_AfterSelectContact(BaseContact *lct, BaseContestLog *contest);
+    void on_AfterSelectContact(QSharedPointer<BaseContact> lct, BaseContestLog *contest);
     void on_AfterLogContact( BaseContestLog *ct);
     void on_NextContactDetailsOnLeft();
     void on_NextUnfilled(BaseContestLog*);

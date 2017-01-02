@@ -8,6 +8,7 @@
 
 #include "tsinglelogframe.h"
 #include "taboutbox.h"
+#include "Calendar.h"
 #include "CalendarList.h"
 #include "contestdetails.h"
 #include "tmanagelistsdlg.h"
@@ -18,6 +19,7 @@ TLogContainer *LogContainer = 0;
 
 TLogContainer::TLogContainer(QWidget *parent) :
     QMainWindow(parent),
+    rotatorLoaded(false), keyerLoaded(false), bandMapLoaded(false),
     ui(new Ui::TLogContainer)
 {
     ui->setupUi(this);
@@ -103,7 +105,8 @@ void TLogContainer::on_TimeDisplayTimer( )
 
    if ( TContestApp::getContestApp() )
    {
-       QString disp = QDateTime::currentDateTimeUtc().toString( "dd/MM/yyyy hh:mm:ss" ) + " UTC       ";
+       QDateTime t = QDateTime::currentDateTimeUtc().addSecs( MinosParameters::getMinosParameters() ->getBigClockCorrection());
+       QString disp = t.toString( "dd/MM/yyyy hh:mm:ss" ) + " UTC       ";
 
        sblabel2 ->setText(disp);
 
@@ -124,6 +127,8 @@ void TLogContainer::on_TimeDisplayTimer( )
          ct->setScore( statbuf );
       }
       sblabel0->setText( statbuf );
+
+      ui->menuKeyer->menuAction()->setVisible(isKeyerLoaded());
    }
 
 }
@@ -202,44 +207,61 @@ void TLogContainer::setupMenus()
 
     FileNewAction = newAction("&New Contest...", ui->menuFile, SLOT(FileNewActionExecute()));
     FileCloseAction = newAction("Close Contest", ui->menuFile, SLOT(FileCloseActionExecute()));
+    CloseAllAction = newAction("Close all Contests", ui->menuFile, SLOT(CloseAllActionExecute()));
+    CloseAllButAction = newAction("Close all but this Contest", ui->menuFile, SLOT(CloseAllButActionExecute()));
     ui->menuFile->addSeparator();
+
     ContestDetailsAction = newAction("Contest Details...", ui->menuFile, SLOT(ContestDetailsActionExecute()));
     MakeEntryAction = newAction("Produce Entry/Export File...", ui->menuFile, SLOT(MakeEntryActionExecute()));
     ui->menuFile->addSeparator();
+
     ListOpenAction = newAction("Open &Archive List...", ui->menuFile, SLOT(ListOpenActionExecute()));
     ManageListsAction = newAction("&Manage Archive Lists...", ui->menuFile, SLOT(ManageListsActionExecute()));
     ui->menuFile->addSeparator();
+
     OptionsAction = newAction("Options...", ui->menuFile, SLOT(OptionsActionExecute()));
     ExitAction = newAction("E&xit MinosQt", ui->menuFile, SLOT(ExitActionExecute()));
+// end of file menu
 
     GoToSerialAction = newAction("&Go To Contact Serial...", ui->menuSearch, SLOT(GoToSerialActionExecute()));
     NextUnfilledAction = newAction("Goto First Unfilled Contact", ui->menuSearch, SLOT(NextUnfilledActionExecute()));
+// end of search menu
 
     LocCalcAction = newAction("Locator Calculator", ui->menuTools, SLOT(LocCalcActionExecute()));
     AnalyseMinosLogAction = newAction("Analyse Minos Log", ui->menuTools, SLOT(AnalyseMinosLogActionExecute()));
     ui->menuFile->addSeparator();
+
     FontEditAcceptAction = newAction("Select &Font...", ui->menuTools, SLOT(FontEditAcceptActionExecute()));
     ReportAutofillAction = newCheckableAction("Signal Report AutoFill", ui->menuTools, SLOT(ReportAutofillActionExecute()));
 
+    // end of tools manu
 
+    TabPopup.addAction(FileOpenAction);
+    TabPopup.addMenu(recentFilesMenu);
+    TabPopup.addAction(FileNewAction);
     TabPopup.addAction(FileCloseAction);
-    CloseAllAction = newAction("Close all Contests", &TabPopup, SLOT(CloseAllActionExecute()));
-    CloseAllButAction = newAction("Close all but this Contest", &TabPopup, SLOT(CloseAllButActionExecute()));
+    TabPopup.addAction(CloseAllAction);
+    TabPopup.addAction(CloseAllButAction);
     TabPopup.addSeparator();
+
     TabPopup.addAction(ContestDetailsAction);
     TabPopup.addAction(MakeEntryAction);
     TabPopup.addSeparator();
+
     TabPopup.addAction(GoToSerialAction);
     TabPopup.addAction(NextUnfilledAction);
     TabPopup.addSeparator();
+
     NextContactDetailsOnLeftAction = newCheckableAction("&Next Contact Details On Left", &TabPopup, SLOT(NextContactDetailsOnLeftActionExecute()));
     ScrollingContestTabsAction = newCheckableAction("Scrolling contest tabs", &TabPopup, SLOT(ScrollingContestTabsActionExecute()));
     ShowOperatorsAction = newCheckableAction("Show Operators", &TabPopup, SLOT(ShowOperatorsActionExecute()));
     TabPopup.addSeparator();
+
     ShiftTabLeftAction = newAction("Shift Active Tab Left", &TabPopup, SLOT(ShiftTabLeftActionExecute()));
     ShiftTabRightAction = newAction("Shift Active Tab Right", &TabPopup, SLOT(ShiftTabRightActionExecute()));
     CorrectDateTimeAction = newAction("Correct Date/Time", &TabPopup, SLOT(CorrectDateTimeActionExecute()));
     TabPopup.addSeparator();
+
     TabPopup.addAction(AnalyseMinosLogAction);
     newAction( "Cancel", &TabPopup, SLOT( CancelClick() ) );
 
@@ -325,7 +347,7 @@ void TLogContainer::openRecentFile()
            BaseContestLog *ct = addSlot( &pced, FileName, false, -1 );
            if (ct)
            {
-               selectContest(ct, 0);
+              selectContest(ct, QSharedPointer<BaseContact>());
            }
         }
         else
@@ -375,7 +397,7 @@ void TLogContainer::updateRecentFileActions()
     QSettings settings;
     QStringList files = settings.value("dbmru").toStringList();
 
-    int numRecentFiles = qMin(files.size(), (int)MaxRecentFiles);
+    int numRecentFiles = qMin(files.size(), static_cast< int >(MaxRecentFiles));
 
     for (int i = 0; i < numRecentFiles; ++i) {
         QString text = tr("&%1 %2").arg(i + 1).arg(strippedName(files[i]));
@@ -448,7 +470,7 @@ void TLogContainer::FileNewActionExecute()
     char letter = 'A';
     while ( letter < 'Z' )      // the A of A.Minos
     {
-       QString fileNameBuff = InitialDir + "/" + nfileName + letter + ".Minos";
+       QString fileNameBuff = InitialDir + "/" + nfileName + letter + ".minos";
 
        if (FileExists(fileNameBuff))
        {
@@ -458,7 +480,7 @@ void TLogContainer::FileNewActionExecute()
           break;
     }
 
-    QString initName = InitialDir + "/" + nfileName + letter + ".Minos";
+    QString initName = InitialDir + "/" + nfileName + letter + ".minos";
     ContestDetails pced( this );
     BaseContestLog * c = addSlot( &pced, initName, true, -1 );
 
@@ -490,7 +512,7 @@ void TLogContainer::FileNewActionExecute()
        QString fileName = QFileDialog::getSaveFileName( this,
                           "Save new contest as",
                           "./Logs/" + suggestedfName,
-                          "Minos contest files (*.Minos)",
+                          "Minos contest files (*.minos *.Minos)",
                           0,
                           QFileDialog::DontConfirmOverwrite
                                                       );
@@ -524,7 +546,7 @@ void TLogContainer::FileNewActionExecute()
     }
     else
     {
-        selectContest(c, 0);
+        selectContest(c, QSharedPointer<BaseContact>());
     }
 }
 void TLogContainer::FileOpenActionExecute()
@@ -537,7 +559,7 @@ void TLogContainer::FileOpenActionExecute()
 
     InitialDir = qf.canonicalFilePath();
 
-    QString Filter = "Minos contest files (*.Minos);;"
+    QString Filter = "Minos contest files (*.minos *.Minos);;"
                      "Reg1Test Files (*.edi);;"
                      "GJV contest files (*.gjv);;"
                      "RSGB Log Files (*.log);;"
@@ -559,7 +581,7 @@ void TLogContainer::FileOpenActionExecute()
             ct = addSlot( &pced, fname, false, -1 );   // not automatically read only
             if (ct)
             {
-                selectContest(ct, 0);
+                selectContest(ct, QSharedPointer<BaseContact>());
             }
         }
     }
@@ -648,7 +670,37 @@ void TLogContainer::LocCalcActionExecute()
 
 void TLogContainer::AnalyseMinosLogActionExecute()
 {
+    QString InitialDir = getDefaultDirectory( false );
 
+    QFileInfo qf(InitialDir);
+
+    InitialDir = qf.canonicalFilePath();
+
+    QString Filter = "Minos contest files (*.minos *.Minos);;"
+                     "All Files (*.*)" ;
+
+    QString fname = QFileDialog::getOpenFileName( this,
+                       "Open contest for Analysis",
+                       InitialDir,  // dir
+                       Filter
+                       );
+
+    QIODevice::OpenMode om = QIODevice::ReadOnly;
+
+    QSharedPointer<QFile> contestFile(new QFile(fname));
+
+    if (!contestFile->open(om))
+    {
+       QString lerr = contestFile->errorString();
+       QString emess = "Failed to open Contest Log file " + fname + " : " + lerr;
+       MinosParameters::getMinosParameters() ->mshowMessage( emess );
+       return;
+    }
+
+    MinosTestImport mt;
+    mt.analyseTest( contestFile );
+
+    MinosParameters::getMinosParameters() ->mshowMessage( "Analysis of " + fname + " complete; look in the trace log for analysis." );
 }
 
 void TLogContainer::CorrectDateTimeActionExecute()
@@ -917,7 +969,8 @@ void TLogContainer::preloadFiles( const QString &conarg )
       }
       else
       {
-         int slotno = slotlst[ i ].toInt() - 1;
+          QString slot = slotlst[ i ];
+         int slotno = slot.toInt() - 1;
          if ( slotno >= 0 )
          {
             addSlot( 0, pathlst[ i ], false, slotno );
@@ -945,7 +998,7 @@ void TLogContainer::preloadFiles( const QString &conarg )
 
    if ( ct )
    {
-      selectContest( ct, 0 );
+      selectContest( ct, QSharedPointer<BaseContact>() );
    }
 }
 void TLogContainer::addListSlot( const QString &fname, int slotno, bool preload )
@@ -1010,10 +1063,10 @@ void TLogContainer::ShiftTabRightActionExecute( )
    int tno = ui->ContestPageControl->currentIndex();
    if ( tno < ui->ContestPageControl->count() - 1 )
    {
-      ContestSlot * cs = TContestApp::getContestApp() ->contestSlotList[ tno ];
+      QSharedPointer<ContestSlot> cs = TContestApp::getContestApp() ->contestSlotList[ tno ];
       int s = cs->slotno;
 
-      ContestSlot *csp1 = TContestApp::getContestApp() ->contestSlotList[ tno + 1 ];
+      QSharedPointer<ContestSlot> csp1 = TContestApp::getContestApp() ->contestSlotList[ tno + 1 ];
       int sp1 = csp1->slotno;
 
       TContestApp::getContestApp() ->contestSlotList[ tno ] = csp1;
@@ -1039,9 +1092,9 @@ void TLogContainer::ShiftTabLeftActionExecute( )
    int tno = ui->ContestPageControl->currentIndex();
    if ( tno > 0 )
    {
-      ContestSlot * cs = TContestApp::getContestApp() ->contestSlotList[ tno ];
+      QSharedPointer<ContestSlot> cs = TContestApp::getContestApp() ->contestSlotList[ tno ];
       int s = cs->slotno;
-      ContestSlot *csm1 = TContestApp::getContestApp() ->contestSlotList[ tno - 1 ];
+      QSharedPointer<ContestSlot> csm1 = TContestApp::getContestApp() ->contestSlotList[ tno - 1 ];
       int sm1 = csm1->slotno;
       TContestApp::getContestApp() ->contestSlotList[ tno ] = csm1;
       csm1->slotno = s;
@@ -1057,7 +1110,7 @@ void TLogContainer::ShiftTabLeftActionExecute( )
       enableActions();
    }
 }
-void TLogContainer::selectContest( BaseContestLog *pc, BaseContact *pct )
+void TLogContainer::selectContest( BaseContestLog *pc, QSharedPointer<BaseContact> pct )
 {
     // we have double clicked on a contact in "other" or "archive" trees
     // so we want to (a) switch tabs and (b) go to that contact edit
@@ -1083,11 +1136,29 @@ void TLogContainer::setBandMapLoaded()
 {
    bandMapLoaded = true;
 }
-//---------------------------------------------------------------------------
 bool TLogContainer::isBandMapLoaded()
 {
    return bandMapLoaded;
 }
+//---------------------------------------------------------------------------
+void TLogContainer::setRotatorLoaded()
+{
+   rotatorLoaded = true;
+}
+bool TLogContainer::isRotatorLoaded()
+{
+   return rotatorLoaded;
+}
+//---------------------------------------------------------------------------
+void TLogContainer::setKeyerLoaded()
+{
+   keyerLoaded = true;
+}
+bool TLogContainer::isKeyerLoaded()
+{
+   return keyerLoaded;
+}
+//---------------------------------------------------------------------------
 void TLogContainer::setCaption(QString captionToSet)
 {
    if ( windowTitle().length() )

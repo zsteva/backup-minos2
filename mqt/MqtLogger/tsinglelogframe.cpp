@@ -77,7 +77,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(NextContactDetailsTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(MatchStarting(BaseContestLog*)), this, SLOT(on_MatchStarting(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(MakeEntry(BaseContestLog*)), this, SLOT(on_MakeEntry(BaseContestLog*)));
-    connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(BaseContact *, BaseContestLog *)), this, SLOT(on_AfterSelectContact(BaseContact *, BaseContestLog *)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)), this, SLOT(on_AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterLogContact(BaseContestLog *)), this, SLOT(on_AfterLogContact(BaseContestLog *)));
 
 
@@ -158,7 +158,7 @@ QString TSingleLogFrame::makeEntry( bool saveMinos )
    TEntryOptionsForm EntryDlg( this, ct, saveMinos  );
    if ( saveMinos )
    {
-      EntryDlg.setWindowTitle("Save imported log as a .Minos file");
+      EntryDlg.setWindowTitle("Save imported log as a .minos file");
    }
    if ( EntryDlg.exec() == QDialog::Accepted )
    {
@@ -177,7 +177,6 @@ void TSingleLogFrame::closeContest()
 {
     if ( TContestApp::getContestApp() )
     {
-//       RPCPubSub::publish( "ContestLog", contest->publishedName, makeStr( 0 ), psRevoked );
        qsoModel.initialise(0);
        TContestApp::getContestApp() ->closeFile( contest );
        ui->GJVQSOLogFrame->closeContest();
@@ -311,35 +310,18 @@ void TSingleLogFrame::on_NextContactDetailsOnLeft()
 }
 void TSingleLogFrame::updateQSODisplay()
 {
-    /*
-   BandCombo->Clear();
-
-   std::string cb = trim(contest->band.getValue());
-   BandList &blist = BandList::getBandList();
-   BandInfo bi;
-   bool bandOK = blist.findBand(cb, bi);
-   if (bandOK)
-   {
-      BandCombo->Items->Add(bi.uk.c_str());
-   }
-   else
-   {
-      BandCombo->Items->Add(contest->band.getValue().c_str());
-   }
-   BandCombo->ItemIndex = 0;
-*/
    ui->GJVQSOLogFrame->updateQSODisplay();
 }
 void TSingleLogFrame::on_XferPressed()
 {
    // transfer from current match
-   if ( contest->isReadOnly() )
+   if (!contest || contest->isReadOnly() )
       return ;
 
    // copy relevant parts of match contact to screen contact
    if ( archiveTreeClickIndex.isValid() && ( xferTree == 0 || xferTree == ui->ArchiveMatchTree ) )
    {
-      MatchTreeItem * MatchTreeIndex = ( MatchTreeItem * ) archiveTreeClickIndex.internalPointer();
+      MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem * >(archiveTreeClickIndex.internalPointer());
 
       transferDetails( MatchTreeIndex );
 
@@ -348,7 +330,7 @@ void TSingleLogFrame::on_XferPressed()
    {
       if ( otherTreeClickIndex.isValid() && ( xferTree == 0 || xferTree == ui->OtherMatchTree ) )
       {
-         MatchTreeItem * MatchTreeIndex = ( MatchTreeItem * ) otherTreeClickIndex.internalPointer();
+         MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem * > (otherTreeClickIndex.internalPointer());
 
          transferDetails( MatchTreeIndex );
       }
@@ -362,12 +344,12 @@ void TSingleLogFrame::transferDetails(MatchTreeItem *MatchTreeIndex )
        return ;
     }
    // needs to be transferred into QSOLogFrame.cpp
-   MatchContact *mc = MatchTreeIndex->getMatchContact();
-   BaseContact *bct = mc->getBaseContact();
+   QSharedPointer<MatchContact> mc = MatchTreeIndex->getMatchContact();
+   QSharedPointer<BaseContact> bct = mc->getBaseContact();
 
    if ( bct )
    {
-      BaseContestLog * matct = mc->getContactLog();
+      BaseContestLog *matct = mc->getContactLog();
       ui->GJVQSOLogFrame->transferDetails( bct, matct );
    }
    else
@@ -375,7 +357,7 @@ void TSingleLogFrame::transferDetails(MatchTreeItem *MatchTreeIndex )
        ListContact *lct = mc->getListContact();
        if (lct)
        {
-           ContactList * matct = mc->getContactList();
+           ContactList *matct = mc->getContactList();
            ui->GJVQSOLogFrame->transferDetails( lct, matct );
        }
    }
@@ -399,7 +381,7 @@ void TSingleLogFrame::on_BandMapPressed()
        ui->GJVQSOLogFrame->doGJVCancelButton_clicked();
     }
 }
-void TSingleLogFrame::QSOTreeSelectContact( BaseContact * lct )
+void TSingleLogFrame::QSOTreeSelectContact( QSharedPointer<BaseContact> lct )
 {
    if (lct)
    {
@@ -408,14 +390,12 @@ void TSingleLogFrame::QSOTreeSelectContact( BaseContact * lct )
 }
 void TSingleLogFrame::on_QSOTable_doubleClicked(const QModelIndex &index)
 {
-    BaseContact * lct = dynamic_cast<BaseContact*>( contest->pcontactAt( index.row() ) );
-    QSOTreeSelectContact(lct);
+    QSOTreeSelectContact(contest->pcontactAt( index.row() ));
 }
-void TSingleLogFrame::EditContact( BaseContact *lct )
+void TSingleLogFrame::EditContact( QSharedPointer<BaseContact> lct )
 {
    TQSOEditDlg qdlg( this, false, false );
-   ContestContact *ct = dynamic_cast<ContestContact *>( lct );
-   qdlg.selectContact( contest, ct );
+   qdlg.selectContact( contest, lct );
 
    qdlg.exec();
 
@@ -501,25 +481,25 @@ void TSingleLogFrame::showMatchList( TMatchCollection *matchCollection )
 //---------------------------------------------------------------------------
 void TSingleLogFrame::on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* )
 {
-    if (contest == TContestApp::getContestApp() ->getCurrentContest())
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         showThisMatchQSOs( matchCollection );
 }
 void TSingleLogFrame::on_ReplaceOtherLogList( TMatchCollection *matchCollection, BaseContestLog* )
 {
-    if (contest == TContestApp::getContestApp() ->getCurrentContest())
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         showOtherMatchQSOs( matchCollection );
 }
 
 void TSingleLogFrame::on_ReplaceListList(TMatchCollection *matchCollection , BaseContestLog *)
 {
-    if (contest == TContestApp::getContestApp() ->getCurrentContest())
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         showMatchList( matchCollection );
 }
 //---------------------------------------------------------------------------
 
 void TSingleLogFrame::on_ScrollToDistrict( const QString &qth, BaseContestLog* )
 {
-    DistrictEntry * dist = MultLists::getMultLists() ->searchDistrict( qth );
+    QSharedPointer<DistrictEntry> dist = MultLists::getMultLists() ->searchDistrict( qth );
     if ( dist )
     {
        unsigned int district_ind = MultLists::getMultLists() ->getDistListIndexOf( dist );
@@ -532,10 +512,10 @@ void TSingleLogFrame::on_ScrollToCountry( const QString &csCs, BaseContestLog* )
     callsign cs( csCs );
     cs.validate( );	// we don't use the result
 
-    CountryEntry *ctryMult = findCtryPrefix( cs );
+    QSharedPointer<CountryEntry> ctryMult = findCtryPrefix( cs );
     if ( ctryMult )
     {
-       unsigned int ctry_ind = MultLists::getMultLists() ->getCtryListIndexOf( ctryMult );
+       int ctry_ind = MultLists::getMultLists() ->getCtryListIndexOf( ctryMult );
        ui->dxccFrame->scrollToCountry( ctry_ind, true );
     }
 }
@@ -546,9 +526,9 @@ void TSingleLogFrame::on_MakeEntry(BaseContestLog *ct)
        makeEntry( false );
     }
 }
-void TSingleLogFrame::on_AfterSelectContact( BaseContact *lct, BaseContestLog *ct)
+void TSingleLogFrame::on_AfterSelectContact( QSharedPointer<BaseContact>lct, BaseContestLog *ct)
 {
-    if (ct == contest && lct == nullptr)
+    if (ct == contest && !lct)
     {
         ui->QSOTable->scrollToBottom();
         int row = ui->QSOTable->model()->rowCount() - 1;
@@ -799,10 +779,10 @@ void TSingleLogFrame::on_ArchiveMatchTreeSelectionChanged(const QItemSelection &
 }
 void TSingleLogFrame::on_ThisMatchTree_doubleClicked(const QModelIndex &index)
 {
-    MatchTreeItem * MatchTreeIndex = ( MatchTreeItem * ) index.internalPointer();
+    MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem *>(index.internalPointer());
 
-    MatchContact *mc = MatchTreeIndex->getMatchContact();
-    BaseContact *bct = mc->getBaseContact();
+    QSharedPointer<MatchContact> mc = MatchTreeIndex->getMatchContact();
+    QSharedPointer<BaseContact> bct = mc->getBaseContact();
 
     if ( bct )
     {
@@ -821,7 +801,7 @@ void TSingleLogFrame::on_ArchiveMatchTree_doubleClicked(const QModelIndex &/*ind
 }
 void TSingleLogFrame::goNextUnfilled()
 {
-   BaseContact * nuc = contest->findNextUnfilledContact( );
+   QSharedPointer<BaseContact> nuc = contest->findNextUnfilledContact( );
    if ( nuc )
    {
       TQSOEditDlg qdlg(this, false, true );
@@ -861,14 +841,14 @@ void TSingleLogFrame::goSerial( )
     }
     while ( serial == -1 );
 
-    DisplayContestContact *cfu = 0;
+    QSharedPointer<BaseContact> cfu;
     for ( LogIterator i = contest->ctList.begin(); i != contest->ctList.end(); i++ )
     {
         bool ok;
-        int s = ( *i ) ->serials.getValue().toInt(&ok );
+        int s = i->wt->serials.getValue().toInt(&ok );
        if ( ok && serial == s )
        {
-          cfu = dynamic_cast<DisplayContestContact *>( *i );
+          cfu = i->wt;
           break;
        }
     }
@@ -899,7 +879,7 @@ void TSingleLogFrame::on_SetFreq(QString,BaseContestLog*)
 
 }
 
-void TSingleLogFrame::on_RotatorState(QString s, BaseContestLog *ct)
+void TSingleLogFrame::on_RotatorState(QString s, BaseContestLog * /*ct*/)
 {
     ui->GJVQSOLogFrame->setRotatorState(s);
 }
@@ -927,7 +907,7 @@ QVariant QSOGridModel::data( const QModelIndex &index, int role ) const
     if ( row >= rowCount() )
         return QVariant();
 
-    BaseContact * ct = contest->pcontactAt( row);
+    QSharedPointer<BaseContact> ct = contest->pcontactAt( row);
     if (!ct)
         return QVariant();
 
@@ -935,13 +915,13 @@ QVariant QSOGridModel::data( const QModelIndex &index, int role ) const
     {
         if ( ct->contactFlags.getValue() & FORCE_LOG )
         {
-           return ( QColor ) ( 0x00FF80C0 );        // Pink(ish)
+           return static_cast< QColor> ( 0x00FF80C0 );        // Pink(ish)
         }
         else
         {
            if ( ct->getModificationCount() > 1 )
            {
-               return ( QColor ) ( 0x00C0DCC0 );    // "money green"
+               return static_cast< QColor> ( 0x00C0DCC0 );    // "money green"
            }
         }
         return QVariant();
@@ -1059,7 +1039,7 @@ static GridColumn ArchiveMatchTreeColumns[ ARCHIVEMATCHTREECOLS ] =
    };
 //---------------------------------------------------------------------------
 
-MatchTreeItem::MatchTreeItem(MatchTreeItem *parent, BaseMatchContest *matchContest, MatchContact *matchContact)
+MatchTreeItem::MatchTreeItem(MatchTreeItem *parent, BaseMatchContest *matchContest, QSharedPointer<MatchContact> matchContact)
     :parent(parent), matchContest(matchContest), matchContact(matchContact), row(-1)
 {
 
@@ -1067,7 +1047,7 @@ MatchTreeItem::MatchTreeItem(MatchTreeItem *parent, BaseMatchContest *matchConte
 
 MatchTreeItem::~MatchTreeItem()
 {
-    for (unsigned int i = 0; i < children.size(); i++)
+    for (int i = 0; i < children.size(); i++)
     {
         delete children[i];
         children[i] = 0;
@@ -1083,7 +1063,7 @@ MatchTreeItem *MatchTreeItem::getParent()
     return parent;
 }
 
-MatchContact *MatchTreeItem::getMatchContact()
+QSharedPointer<MatchContact> MatchTreeItem::getMatchContact()
 {
     return matchContact;
 }
@@ -1125,16 +1105,16 @@ void QSOMatchGridModel::initialise(MatchType t, TMatchCollection *pmatch )
    }
 
    match = pmatch;  // preserve all the tree
-   rootItem = new MatchTreeItem(0, 0, 0);
+   rootItem = new MatchTreeItem(0, 0, QSharedPointer<MatchContact>());
    rootItem->setRow(0);
-   for (ContestMatchIterator i = pmatch->matchList.begin(); i != pmatch->matchList.end(); i++)
+   for (ContestMatchIterator i = pmatch->contestMatchList.begin(); i != pmatch->contestMatchList.end(); i++)
    {
-       MatchTreeItem *ci = new MatchTreeItem(rootItem, (*i), 0);
+       MatchTreeItem *ci = new MatchTreeItem(rootItem, i->wt.data(), QSharedPointer<MatchContact>());
        rootItem->addChild(ci); // also sets row
        //(*i) is *BaseMatchContest
-       for (int j = 0; j < (*i)->getContactCount(); j++)
+       foreach(auto mct, i->wt->contactMatchList)
        {
-           MatchTreeItem *mi = new MatchTreeItem(ci, (*i), (*i)->pcontactAt(j));
+           MatchTreeItem *mi = new MatchTreeItem(ci, i->wt.data(), mct.wt);
            ci->addChild(mi);
        }
    }
@@ -1159,8 +1139,8 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
         return QVariant();
 
     BaseMatchContest *matchContest = thisItem->getMatchContest();
-    MatchContact * mct = thisItem->getMatchContact();
-    BaseContact *ct = 0;
+    QSharedPointer<MatchContact> mct = thisItem->getMatchContact();
+    QSharedPointer<BaseContact> ct;
     ListContact *lct = 0;
 
     if (mct)
@@ -1175,13 +1155,13 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
         {
             if ( ct->contactFlags.getValue() & FORCE_LOG )
             {
-               return ( QColor ) ( 0x00FF80C0 );        // Pink(ish)
+               return static_cast< QColor > ( 0x00FF80C0 );        // Pink(ish)
             }
             else
             {
                if ( ct->getModificationCount() > 1 )
                {
-                   return ( QColor ) ( 0x00C0DCC0 );    // "money green"
+                   return static_cast< QColor > ( 0x00C0DCC0 );    // "money green"
                }
             }
         }
@@ -1194,7 +1174,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
     {
         if (type == ArchiveMatch)
         {
-            ContactList *contest = matchContest->getContactList();
+            const ContactList *contest = matchContest->getContactList();
             if (lct)
             {
                 if( column >= 0 && column < columnCount(p))
@@ -1215,7 +1195,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
         }
         else
         {
-            BaseContestLog *contest = matchContest->getContactLog();
+            const BaseContestLog *contest = matchContest->getContactLog();
             if (ct)
             {
                 if( column >= 0 && column < columnCount(p))

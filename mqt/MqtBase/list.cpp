@@ -58,14 +58,11 @@ void CsvReader::checkString(QString &temp, QChar character, QList<QStringList> &
 {
     if(temp.count("\"")%2 == 0)
     {
-        //if (temp.size() == 0 && character != ',') //problem with line endings
-        //    return;
         if (temp.startsWith( QChar('\"')) && temp.endsWith( QChar('\"') ) )
         {
              temp.remove( QRegExp("^\"") );
              temp.remove( QRegExp("\"$") );
         }
-        //FIXME: will possibly fail if there are 4 or more reapeating double quotes
         temp.replace("\"\"", "\"");
         itemList.append(temp.trimmed());
         if (character != QChar(','))
@@ -83,7 +80,8 @@ ContactList::ContactList() : slotno( -1 ), cslFile( false ), errMessShown(false)
 }
 ContactList::~ContactList()
 {
-   freeAll();
+    for ( ListIterator i = ctList.begin(); i != ctList.end(); i++ )
+       delete ( *i );
 }
 bool ContactList::initialise( int sno )
 {
@@ -170,12 +168,6 @@ bool ContactList::cslLoadContacts( void )
 {
    return true;
 }
-void ContactList::freeAll()
-{
-   for ( ListIterator i = ctList.begin(); i != ctList.end(); i++ )
-	  delete ( *i );
-   ctList.clear();
-}
 void ContactList::getMatchText(ListContact *, QString &disp, const BaseContestLog *const /*ct*/ ) const
 {
    disp = "N/A";
@@ -188,7 +180,7 @@ void ContactList::getMatchField(ListContact *pct, int col, QString &disp, const 
 
    disp = temp.trimmed();
 }
-ListContact *ContactList::pcontactAt( unsigned int i )
+ListContact *ContactList::pcontactAt( int i )
 {
    if ( i < ctList.size() )
    {

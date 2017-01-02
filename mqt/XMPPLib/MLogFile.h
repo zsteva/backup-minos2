@@ -46,13 +46,13 @@ class MLogFile
       MLogFile()
       { }
       // CreateLogFile is called by the boot form at startup
-      std::ostream & createLogFile(const QString &path, const QString filePrefix, int keepDays );
+      void createLogFile(const QString &path, const QString filePrefix, int keepDays );
 
       // Log and LogT are used to log data without and with a timestamp;
-      std::ostream & log( void );
-      std::ostream & logT( void );
+      QTextStream &log( void );
+      QTextStream & logT( void );
       // Log logs a string with a time prefix hh:mm:ss
-      std::ostream & log( const QString &s );
+      QTextStream &log( const QString &s );
       void close( void );
 
       // Generates a suffix of the form yyyyddmmhhmmss

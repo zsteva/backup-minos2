@@ -50,7 +50,7 @@ RPCAction::~RPCAction()
 QString RPCAction::print()
 {
    QString s = "From: " + getFrom() + " To: " + getTo() + "\r\n";
-   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
+   for ( QVector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
    {
       s += ( *i ) ->print();
    }
@@ -124,7 +124,7 @@ TiXmlElement *makeIq ( const QString &type, const QString &xmlns )
 }
 
 // Build up the DOM tree for the action, and send it
-QString RPCRequest::getActionMessage( )
+TIXML_STRING RPCRequest::getActionMessage( )
 {
    TiXmlElement * x = makeIq( "set", "minos:iq:rpc" );
    if ( to.length() )
@@ -149,7 +149,7 @@ QString RPCRequest::getActionMessage( )
    TIXML_STRING s;
    s << *x ;
    delete x;
-   return s.c_str();
+   return s;
 }
 QString RPCRequest::print()
 {
@@ -160,7 +160,7 @@ QString RPCRequest::print()
 QString RPCRequest::analyse()
 {
    QString s;
-   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
+   for ( QVector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
    {
       s += ( *i ) ->analyse();
    }
@@ -230,7 +230,7 @@ void RPCResponse::addFault( TiXmlElement &node )
    }
 }
 // Build up the DOM tree for the action, and send it
-QString RPCResponse::getActionMessage( )
+TIXML_STRING RPCResponse::getActionMessage( )
 {
    TiXmlElement * x = makeIq( "result", "minos:iq:rpc" );
    if ( to.length() )
@@ -257,7 +257,7 @@ QString RPCResponse::getActionMessage( )
    TIXML_STRING s;
    s << *x;
    delete x;
-   return s.c_str();
+   return s;
 }
 QString RPCResponse::print()
 {

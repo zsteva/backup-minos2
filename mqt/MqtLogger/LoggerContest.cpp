@@ -23,9 +23,9 @@ LoggerContestLog::LoggerContestLog( void ) : BaseContestLog(),
       needExport( false )
 {
 }
-void LoggerContestLog::makeContact( bool timeNow, BaseContact *&lct )
+void LoggerContestLog::makeContact(bool timeNow, QSharedPointer<BaseContact> &lct )
 {
-   lct = new ContestContact( this, timeNow );
+   lct = QSharedPointer<BaseContact>(new ContestContact( this, timeNow ));
 }
 LoggerContestLog::~LoggerContestLog()
 {
@@ -143,7 +143,7 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
       setUnwriteable(true);
    }
    else
-       if ( ext.compare(".Minos", Qt::CaseInsensitive ) == 0 )
+       if ( ext.compare(".minos", Qt::CaseInsensitive ) == 0 )
       {
          minosFile = true;
       }
@@ -405,7 +405,7 @@ void LoggerContestLog::closeFile( void )
    adifContestFile.reset();
    ediContestFile.reset();
 }
-DisplayContestContact *LoggerContestLog::addContact( int newctno, int extraFlags, bool saveNew, bool catchup )
+QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, int extraFlags, bool saveNew, bool catchup )
 {
    // add the contact number as an new empty contact, with disk block and log_seq
 
@@ -413,72 +413,78 @@ DisplayContestContact *LoggerContestLog::addContact( int newctno, int extraFlags
    if ( ( extraFlags & TO_BE_ENTERED ) || catchup )
       timenow = false;
 
-   BaseContact *bct = 0;
+   QSharedPointer<BaseContact> bct;
    makeContact( timenow, bct );
-   DisplayContestContact *lct = dynamic_cast<DisplayContestContact *> (bct);
 
    QString temp = QString( "%1" ).arg(newctno, 3 );
-   lct->serials.setValue( temp );
-   lct->setLogSequence( nextBlock << 16 );
+   bct->serials.setValue( temp );
+   bct->setLogSequence( nextBlock << 16 );
    nextBlock++;
    if ( newctno > maxSerial )
    {
       maxSerial = newctno;
    }
-   lct->contactFlags.setValue( lct->contactFlags.getValue() | extraFlags );
+   bct->contactFlags.setValue( bct->contactFlags.getValue() | extraFlags );
 
    if (catchup)
    {
-      lct->op1 = currentOp1;
-      lct->op2 = currentOp2;
+      bct->op1 = currentOp1;
+      bct->op2 = currentOp2;
    }
    if ( saveNew )
    {
-      lct->commonSave();		// make sure contact is correct
+      bct->commonSave(bct);		// make sure contact is correct
    }
-   ctList.insert( lct );
+   MapWrapper<BaseContact> wbct(bct);
+   ctList.insert( wbct, wbct );
    if ( saveNew )
    {
       commonSave( false );
    }
 
-   return lct;
+   return bct;
 }
-DisplayContestContact *LoggerContestLog::addContactBetween( BaseContact *prior, BaseContact *next )
+QSharedPointer<BaseContact> LoggerContestLog::addContactBetween(QSharedPointer<BaseContact> prior, QSharedPointer<BaseContact> next )
 {
    // add the contact number as an new empty contact, with disk block and log_seq
 
    if (!next)
    {
       MinosParameters::getMinosParameters() ->mshowMessage("Attempt to insert after last contact - not allowed. Pease report a bug!");
-      return 0;
+      return QSharedPointer<BaseContact>();
    }
    bool timenow = false;
 
-   BaseContact *bct = 0;
+   QSharedPointer<BaseContact> bct;
    makeContact( timenow, bct );
-   DisplayContestContact *lct = dynamic_cast<DisplayContestContact *> (bct);
 
-   lct->serials.setValue( "" );
+   bct->serials.setValue( "" );
 
    unsigned long pls =  prior?prior->getLogSequence():0;
    unsigned long nls =  next->getLogSequence();
 
    unsigned long seq = (pls + nls)/2;
 
-   lct->setLogSequence( seq );
+   bct->setLogSequence( seq );
 
-   lct->commonSave();		// make sure contact is correct
-   ctList.insert( lct );
+   bct->commonSave(bct);		// make sure contact is correct
+   MapWrapper<BaseContact>wbct(bct);
+   ctList.insert( wbct, wbct );
    commonSave( false );
 
-   return lct;
+   return bct;
 }
 //==========================================================================
-void LoggerContestLog::removeContact( DisplayContestContact *lct )
+void LoggerContestLog::removeContact( QSharedPointer<BaseContact> lct )
 {
-   ctList.erase(lct);
-   delete lct;
+    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
+    {
+        if (i->wt.data() == lct.data())
+        {
+            ctList.erase(i);
+            break;
+        }
+    }
 }
 //==========================================================================
 bool LoggerContestLog::commonSave( bool newfile )
@@ -506,7 +512,7 @@ bool LoggerContestLog::minosSaveFile( bool newfile )
    clearDirty();
    return true;
 }
-bool LoggerContestLog::minosSaveContestContact( const ContestContact *lct )
+bool LoggerContestLog::minosSaveContestContact( const QSharedPointer<BaseContact> lct )
 {
    MinosTestExport mt( this );
    stanzaCount += mt.exportQSO( minosContestFile, lct );
@@ -646,20 +652,18 @@ bool LoggerContestLog::GJVload( void )
 }
 bool LoggerContestLog::GJVloadContacts( void )
 {
-   ContestContact * rct = 0;
-
    nextBlock = 1;
 
    for ( int i = 0; i < logCount; i++ )
    {
-       BaseContact *bct = rct;
+      QSharedPointer<BaseContact>bct;
       makeContact( false, bct );
-      rct = dynamic_cast<ContestContact *>(bct);
-      if ( rct->GJVload( ( int ) nextBlock ) )
+      if ( bct->GJVload( static_cast< int >( nextBlock) ) )
       {
          nextBlock++;
-         ctList.insert( rct );
-         int maxct = rct->serials.getValue().toInt();
+         MapWrapper<BaseContact> wbct(bct);
+         ctList.insert( wbct, wbct );
+         int maxct = bct->serials.getValue().toInt();
          if ( maxct > maxSerial )
             maxSerial = maxct;
 
@@ -707,7 +711,7 @@ bool LoggerContestLog::export_contest(QSharedPointer<QFile> expfd, ExportType ex
 }
 static bool uhNeeded = false;
 static bool utNeeded = false;
-void LoggerContestLog::procUnknown( BaseContact *cct, writer &wr )
+void LoggerContestLog::procUnknown(QSharedPointer<BaseContact> cct, writer &wr )
 {
    QString lbuff;
 
@@ -758,8 +762,8 @@ bool LoggerContestLog::exportGJV(QSharedPointer<QFile>fd )
    if ( !enquireDialog(   /*Owner*/0, "Please give last serial to be dumped", maxd ) )
       return false;
 
-   int mindump = std::min( mind, maxd );
-   int maxdump = std::max( mind, maxd );
+   int mindump = qMin( mind, maxd );
+   int maxdump = qMax( mind, maxd );
 
    // ????   if ( MessageBox( 0, "Do you wish to edit the file?", "Contest", MB_OKCANCEL ) != ID_CANCEL )
    //   if (cmOK != messageBox(mfOKCancel|mfConfirmation, "Dumping all contacts between serials %d and %d inclusive", mindump, maxdump))
@@ -775,7 +779,7 @@ bool LoggerContestLog::exportGJV(QSharedPointer<QFile>fd )
 
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      ContestContact *lct = dynamic_cast<ContestContact *>( *i );
+      QSharedPointer<BaseContact> lct = i->wt;
       // we need to test for "in dump"
 
       int serials = lct->serials.getValue().toInt();
@@ -820,7 +824,7 @@ bool LoggerContestLog::exportADIF(QSharedPointer<QFile> expfd )
 
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      ContestContact *lct = dynamic_cast<ContestContact *>( *i );
+      QSharedPointer<BaseContact> lct = i->wt;
       QString l = lct ->getADIFLine();
       if ( l.size() )
       {
@@ -831,7 +835,7 @@ bool LoggerContestLog::exportADIF(QSharedPointer<QFile> expfd )
          }
          const char *EOR = "<EOR>\r\n";
          ret = expfd->write(EOR, strlen( EOR ));
-         if ( ret != (int)strlen( EOR ) )
+         if ( ret != static_cast< int >(strlen( EOR )) )
          {
             MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
          }
@@ -859,27 +863,27 @@ bool LoggerContestLog::exportREG1TEST(QSharedPointer<QFile>expfd )
    {
        /*
       // put up a band chooser dialog
-      std::auto_ptr<TMinosBandChooser> mshowMessage( new TMinosBandChooser( LogContainer ) );
+      TMinosBandChooser mshowMessage( LogContainer );
 
       BandList &blist = BandList::getBandList();
       for (unsigned int i = 0; i < blist.bandList.size(); i++)
       {
          if (blist.bandList[ i ].reg1test.size())  // only put up real reg1test options
          {
-            mshowMessage->BandCombo->Items->Add( blist.bandList[ i ].reg1test.c_str() );
+            mshowMessage.BandCombo->Items->Add( blist.bandList[ i ].reg1test.c_str() );
          }
       }
 
-      mshowMessage->BandCombo->ItemIndex = 0;
+      mshowMessage.BandCombo->ItemIndex = 0;
 
       QString capt = ( boost::format( "The band description chosen (%s) is invalid for Reg1Test"
                                           " (.EDI) entry. Please choose a valid band description." )
                            % band.getValue() ).str();
-      mshowMessage->ScreedLabel->Caption = capt.c_str();
+      mshowMessage.ScreedLabel->Caption = capt.c_str();
 
-      mshowMessage->ShowModal();
+      mshowMessage.ShowModal();
 
-      band.setValue( mshowMessage->BandCombo->Text.c_str() );
+      band.setValue( mshowMessage.BandCombo->Text.c_str() );
       */
    }
 
@@ -905,8 +909,8 @@ bool LoggerContestLog::exportMinos( QSharedPointer<QFile> expfd )
    if ( !enquireDialog(   /*Owner*/0, "Please give last serial to be dumped", maxd ) )
       return false;
 
-   int mindump = std::min( mind, maxd );
-   int maxdump = std::max( mind, maxd );
+   int mindump = qMin( mind, maxd );
+   int maxdump = qMax( mind, maxd );
 
    // ????   if ( MessageBox( 0, "Do you wish to edit the file?", "Contest", MB_OKCANCEL ) != ID_CANCEL )
    //   if (cmOK != messageBox(mfOKCancel|mfConfirmation, "Dumping all contacts between serials %d and %d inclusive", mindump, maxdump))
@@ -941,13 +945,13 @@ static QString kmloutput ( Location *outgrid )
 
 bool LoggerContestLog::exportKML(QSharedPointer<QFile> expfd )
 {
-   typedef std::map <QString, ContestContact *> cmap; // map by call
-   typedef std::map <QString, cmap> smap;       // map by prefix
+   typedef QMap <QString, QSharedPointer<BaseContact>> cmap; // map by call
+   typedef QMap <QString, cmap> smap;       // map by prefix
    smap countries;
 
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
    {
-      ContestContact *ct = dynamic_cast<ContestContact *>( *i );
+      QSharedPointer<BaseContact> ct = i->wt;
       if ( ct->ctryMult )
       {
          ( countries[ ct->ctryMult->basePrefix ] ) [ ct->cs.fullCall.getValue() ] = ct;
@@ -969,14 +973,52 @@ bool LoggerContestLog::exportKML(QSharedPointer<QFile> expfd )
    kml.append( "<Document><visibility>0</visibility><open>1</open>" );
    kml.append( "<Folder><name><![CDATA[" + name.getValue() + " " + mycall.fullCall.getValue() + "]]></name><visibility>0</visibility><open>1</open>" );
 
+
+
+   kml.append( "<Style id=\"normalState\">");
+   kml.append( "<IconStyle>");
+   kml.append( "<scale>1.0</scale>");
+   kml.append( "<Icon>");
+   kml.append( "<href>http://maps.google.com/mapfiles/kml/paddle/ylw-blank.png</href>");
+   kml.append( "</Icon>");
+   kml.append( "<scale>0.75</scale>");
+   kml.append( "</IconStyle>");
+   kml.append( "<LabelStyle>");
+   kml.append( "<scale>0</scale>");
+   kml.append( "</LabelStyle>");
+   kml.append( "</Style>");
+   kml.append( "<Style id=\"highlightState\">");
+   kml.append( "<IconStyle>");
+   kml.append( "<Icon>");
+   kml.append( "<href>http://maps.google.com/mapfiles/kml/paddle/ylw-stars.png</href>");
+   kml.append( "</Icon>");
+   kml.append( "<scale>1.0</scale>");
+   kml.append( "</IconStyle>");
+   kml.append( "<LabelStyle>");
+   kml.append( "<scale>1.0</scale>");
+   kml.append( "</LabelStyle>");
+   kml.append( "</Style>");
+   kml.append( "<StyleMap id=\"styleMapGJV\">");
+   kml.append( "<Pair>");
+   kml.append( "<key>normal</key>");
+   kml.append( "<styleUrl>#normalState</styleUrl>");
+   kml.append( "</Pair>");
+   kml.append( "<Pair>");
+   kml.append( "<key>highlight</key>");
+   kml.append( "<styleUrl>#highlightState</styleUrl>");
+   kml.append( "</Pair>");
+   kml.append( "</StyleMap>");
+
+
+
    for ( smap::iterator s = countries.begin(); s != countries.end(); s++ )
    {
-      kml.append( "<Folder><name><![CDATA[" + ( *s ).first + "]]></name><open>0</open><visibility>0</visibility>"  );
-      for ( cmap::iterator e = ( ( *s ).second ).begin(); e != ( ( *s ).second ).end(); e++ )
+      kml.append( "<Folder><name><![CDATA[" + s.key() + "]]></name><open>0</open><visibility>0</visibility>"  );
+      for ( cmap::iterator e = s.value().begin(); e != s.value().end(); e++ )
       {
          Location l1;
          Location l2;
-         ContestContact *ct = ( *e ).second;
+         QSharedPointer<BaseContact> ct = e.value();
 
 
          char inputbuff[ 100 ];
@@ -995,6 +1037,7 @@ bool LoggerContestLog::exportKML(QSharedPointer<QFile> expfd )
          if ( transform( &l1, &l2 ) == GRIDOK )
          {
             kml.append( "<Placemark><visibility>0</visibility>" );
+            kml.append("<styleUrl>#styleMapGJV</styleUrl>");
             kml.append( "<description><![CDATA[" + ct->cs.fullCall.getValue() + " " + ct->loc.loc.getValue() + "]]></description>"  );
             kml.append( "<name><![CDATA[" + ct->cs.fullCall.getValue() + "]]></name>"  );
             kml.append( "<Point><coordinates>" + kmloutput( &l2 ) + ",0</coordinates></Point>"  );
@@ -1028,7 +1071,6 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
         ls.append(line);
     }
 
-   TEMPBUFF( temp, 100 );
    // Import from LOG format
    // Needs modification for "new" log format
 
@@ -1040,7 +1082,7 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
 
    bool started = false;
 
-   DisplayContestContact *ct = 0;
+   //QSharedPointer<BaseContact> ct;
    int lineNo = -1;
    while ( ++lineNo < ls.count() )
    {
@@ -1169,68 +1211,68 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
       }
       started = true;
 
-      BaseContact *bct = ct;
+      QSharedPointer<BaseContact> bct;
       makeContact( false, bct );
-      ct = dynamic_cast<DisplayContestContact *>(bct);
-      ct->setLogSequence( 0 );
+      bct->setLogSequence( 0 );
 
       stemp += QString( 200, ' ' );   // make sure there is plenty more...
 
-      std::string sstemp = stemp.toStdString();
-      const char *lbuff = sstemp.c_str();
+      QString &lbuff = stemp;
+
       // parse contact line in
 
-      strcpysp( temp, &lbuff[ 0 ], 6 );
-      ct->time.setDate( temp, DTGLOG );
-      strcpysp( temp, &lbuff[ 7 ], 4 );
-      ct->time.setTime( temp, DTGLOG );
-      strcpysp( temp, &lbuff[ 21 ], 15 );
-      ct->cs = callsign( strupr( temp ) );
-      ct->cs.valRes = CS_NOT_VALIDATED;
-      strcpysp( temp, &lbuff[ 37 ], 3 );
-      ct->reps.setValue( temp );
-      strcpysp( temp, &lbuff[ 41 ], 4 );
-      ct->serials.setValue( temp );
+      QString temp;
+      strcpysp( temp, lbuff, 6 );
+      bct->time.setDate( temp, DTGLOG );
+      strcpysp( temp, lbuff.mid(7), 4 );
+      bct->time.setTime( temp, DTGLOG );
+      strcpysp( temp, lbuff.mid(21), 15 );
+      bct->cs = callsign( temp.toUpper() );
+      bct->cs.valRes = CS_NOT_VALIDATED;
+      strcpysp( temp, lbuff.mid( 37 ), 3 );
+      bct->reps.setValue( temp );
+      strcpysp( temp, lbuff.mid( 41 ), 4 );
+      bct->serials.setValue( temp );
 
-      int maxct = ct->serials.getValue().toInt();
+      int maxct = bct->serials.getValue().toInt();
       if ( maxct > maxSerial )
          maxSerial = maxct;
 
-      strcpysp( temp, &lbuff[ 46 ], 3 );
-      ct->repr.setValue( temp );
-      strcpysp( temp, &lbuff[ 51 ], 4 );
-      ct->serialr.setValue( temp );
+      strcpysp( temp, lbuff.mid( 46 ), 3 );
+      bct->repr.setValue( temp );
+      strcpysp( temp, lbuff.mid( 51 ), 4 );
+      bct->serialr.setValue( temp );
 
       // here is the score field
-      strcpysp( temp, &lbuff[ 59 ], 5 );
-      if ( atoi( temp ) == 0 )
-         ct->contactFlags.setValue( NON_SCORING );
+      strcpysp( temp, lbuff.mid( 59 ), 5 );
+      if ( toInt( temp ) == 0 )
+         bct->contactFlags.setValue( NON_SCORING );
 
-      strcpysp( temp, &lbuff[ 65 ], 6 );
-      ct->op1.setValue( temp );
+      strcpysp( temp, lbuff.mid( 65 ), 6 );
+      bct->op1.setValue( temp );
 
-      strcpysp( temp, &lbuff[ 72 ], 6 );
-      ct->loc.loc.setValue( temp );
-      ct->loc.valRes = LOC_NOT_VALIDATED;
+      strcpysp( temp, lbuff.mid( 72 ), 6 );
+      bct->loc.loc.setValue( temp );
+      bct->loc.valRes = LOC_NOT_VALIDATED;
 
       //ct->comments = "";
 
-      TEMPBUFF( extra, EXTRALENGTH + 1 );
-      TEMPBUFF( comments, COMMENTLENGTH + 1 );
+      QString extra;
+      QString comments;
 
-      strcpysp( extra, &lbuff[ 81 ], 2 );          // 81 is district code
-      if ( extra[ 0 ] && extra[ 1 ] && ( extra[ 0 ] != ' ' && extra[ 1 ] != ' ' ) )
+      strcpysp( extra, lbuff.mid( 81 ), 2 );          // 81 is district code
+      if ( extra.length() >= 2 && ( extra[ 0 ] != ' ' && extra[ 1 ] != ' ' ) )
       {
          // we always attempt to import the district mult field
-         strcpysp( comments, &lbuff[ 93 ], COMMENTLENGTH );
-         ct->comments.setValue( comments );
+         strcpysp( comments, lbuff.mid( 93 ), COMMENTLENGTH );
+         bct->comments.setValue( comments );
 
       }
       else
       {
-         strcpysp( extra, &lbuff[ 93 ], EXTRALENGTH );
+         strcpysp( extra, lbuff.mid( 93 ), EXTRALENGTH );
       }
-      ct->extraText.setValue( extra );
+      bct->extraText.setValue( extra );
 
       // save contact
 
@@ -1238,9 +1280,10 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
       // duplicates
 
       next_block++ ;
-      ct->setLogSequence( next_block << 16 );
+      bct->setLogSequence( next_block << 16 );
 
-      ctList.insert( ct );
+      MapWrapper<BaseContact> wbct(bct);
+      ctList.insert( wbct, wbct );
    }
    return true;
 }
@@ -1304,9 +1347,9 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
 					 mt->getStructArgMemberValue( "ops1", ops1 );
 					 mt->getStructArgMemberValue( "ops2", ops2 );
 					 mt->getStructArgMemberValue( "currentOp1", currentOp1 );
-					 oplist.insert(currentOp1.getValue());
+                     oplist.insert(currentOp1.getValue(), currentOp1.getValue());
                      mt->getStructArgMemberValue( "currentOp2", currentOp2 );
-                     oplist.insert(currentOp2.getValue());
+                     oplist.insert(currentOp2.getValue(), currentOp2.getValue());
                   }
                   else
                      if ( methodName == "MinosLogCurrent" )
@@ -1337,7 +1380,7 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
                               }
 }
 //====================================================================
-void LoggerContestLog::setStanza( unsigned int stanza, int stanzaStart )
+void LoggerContestLog::setStanza(int stanza, int stanzaStart )
 {
    StanzaPos s;
    s.stanza = stanza;
@@ -1345,7 +1388,7 @@ void LoggerContestLog::setStanza( unsigned int stanza, int stanzaStart )
    stanzaLocations.push_back( s );
 }
 //====================================================================
-bool LoggerContestLog::getStanza( unsigned int stanza, QString &stanzaData )
+bool LoggerContestLog::getStanza( int stanza, QString &stanzaData )
 {
    if ( stanza - 1 >= stanzaLocations.size() )
    {

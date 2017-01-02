@@ -77,7 +77,7 @@ class INISection
 
       bool isValidSection( void );
 
-      std::vector <IniEntryPtr> entries;
+      QVector <IniEntryPtr> entries;
 
       bool isDirty();
       void setClean();
@@ -123,7 +123,7 @@ class INIFile
 
       bool dupSection( const QString &oldname, const QString &newname );
 
-      std::vector <IniSectionPtr> sections;
+      QVector <IniSectionPtr> sections;
       bool fileLoaded;
       bool isDirty();
       void setClean();
@@ -149,7 +149,7 @@ INISection::INISection( INIFile *cb, const QString &name, bool valid )
 INISection::~INISection()
 {
    // delete all entries
-   for ( std::vector <IniEntryPtr>::iterator this_ent = entries.begin();
+   for ( QVector <IniEntryPtr>::iterator this_ent = entries.begin();
          this_ent != entries.end(); this_ent++ )
    {
       delete ( *this_ent );
@@ -166,7 +166,7 @@ bool INISection::isDirty( void )
    if ( sectDirty )
       return true;
 
-   for ( std::vector <IniEntryPtr>::iterator thisEntry = entries.begin();
+   for ( QVector <IniEntryPtr>::iterator thisEntry = entries.begin();
          thisEntry != entries.end(); thisEntry++ )
    {
       if ( ( *thisEntry ) ->isDirty() )
@@ -177,7 +177,7 @@ bool INISection::isDirty( void )
 void INISection::setClean( void )
 {
    //walk all sections and set each clean
-   for ( std::vector <IniEntryPtr>::iterator thisEntry = entries.begin();
+   for ( QVector <IniEntryPtr>::iterator thisEntry = entries.begin();
          thisEntry != entries.end(); thisEntry++ )
    {
       ( *thisEntry ) ->setClean();
@@ -238,7 +238,7 @@ INIFile::~INIFile()
 {
    writePrivateProfileString( 0, 0, 0 );
    // delete all sections
-   for ( std::vector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
+   for ( QVector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
    {
       delete ( *thisSect );
    }
@@ -247,15 +247,15 @@ INIFile::~INIFile()
 }
 bool INIFile::dupSection( const QString &oldname, const QString &newname )
 {
-   std::vector<IniSectionPtr>::iterator newSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( newname ) );
+   QVector<IniSectionPtr>::iterator newSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( newname ) );
    if ( newSect == sections.end() )
    {
-      std::vector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( oldname ) );
+      QVector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( oldname ) );
       if ( thisSect != sections.end() )
       {
          INISection * oldsect = ( *thisSect );
          INISection *newsect = new INISection( this, newname, true );
-         for ( std::vector <IniEntryPtr>::iterator this_ent = oldsect->entries.begin(); this_ent != oldsect->entries.end(); this_ent++ )
+         for ( QVector <IniEntryPtr>::iterator this_ent = oldsect->entries.begin(); this_ent != oldsect->entries.end(); this_ent++ )
          {
             INIEntry *i = ( *this_ent );
             QString n = i->name;
@@ -288,7 +288,7 @@ bool INIFile::isDirty( void )
    if ( fileDirty )
       return true;
 
-   for ( std::vector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
+   for ( QVector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
    {
       if ( ( *thisSect ) ->isDirty() )
          return true;
@@ -298,7 +298,7 @@ bool INIFile::isDirty( void )
 void INIFile::setClean( void )
 {
    //walk all sections and set each clean
-   for ( std::vector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
+   for ( QVector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
    {
       ( *thisSect ) ->setClean();
    }
@@ -320,7 +320,7 @@ bool INIFile::writeINIFile( void )
 
    QTextStream out(&inf);
 
-   for ( std::vector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
+   for ( QVector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
    {
       const QString sname = ( *thisSect ) ->name;
 
@@ -330,16 +330,14 @@ bool INIFile::writeINIFile( void )
           out << s;
       }
 
-      for ( std::vector <IniEntryPtr>::iterator this_entry = ( *thisSect ) ->entries.begin(); this_entry != ( *thisSect ) ->entries.end(); this_entry++ )
+      for ( QVector <IniEntryPtr>::iterator this_entry = ( *thisSect ) ->entries.begin(); this_entry != ( *thisSect ) ->entries.end(); this_entry++ )
       {
          const QString name = ( *this_entry ) ->name;
          const QString val = ( *this_entry ) ->getValue();
          if ( ( *this_entry ) ->isValidEntry() )
          {
              QString s = QString("%1=%2\n").arg(name).arg(val);
-             std::string ss = s.toStdString();
-             const char *sss = ss.c_str();
-             out << sss;
+             out << s;
          }
          else
          {
@@ -368,7 +366,7 @@ bool INIFile::loadINIFile()
       if ( !checkStat() )
          return false;			// no change, so don't re-read
       writePrivateProfileString( 0, 0, 0 );
-      for ( std::vector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
+      for ( QVector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
       {
          delete ( *thisSect );
       }
@@ -378,44 +376,40 @@ bool INIFile::loadINIFile()
 
    fileLoaded = true;
 
-   QFile inf(loadedFileName);
-
+   QFile lf(loadedFileName);
 
    // here we need to stat the file to see if it has changed
    // - but what do we do if it has? We should have loaded
    // it VERY recently
 
-   if (!inf.open(QIODevice::ReadOnly|QIODevice::Text))
+   if (!lf.open(QIODevice::ReadOnly|QIODevice::Text))
    {
       MinosParameters::getMinosParameters() ->mshowMessage( QString( "Initialisation file \"" ) + loadedFileName + "\" not found." );
       return false;
    }
+   QTextStream inf(&lf);
 
    thisSect = new INISection( this, "?Comments", false );
    // create dummy section for leading comments
 
-   TEMPBUFF( buffer, 256 );
-   int len = 0;
-   while ( (len = inf.readLine( buffer, 256 )) > 0 )
+   while (!inf.atEnd())
    {
-      TEMPBUFF ( Parameter, 256 );
-      if ( strchr( buffer, '[' ) && ( sscanf( buffer, " [ %255[^\n]", Parameter ) == 1 ) )
+      QString buffer = inf.readLine( 256 );
+
+      QStringList p1 = buffer.split('[');
+      if (p1.length() > 1)
       {
-         char * p = strchr( Parameter, ']' );
-         if ( p != 0 )
-         {
-            *p = '\0';
+        QStringList p2 = p1[1].split(']');
+        if (p2.length())
+        {
+            QString Parameter = p2[0];
             thisSect = new INISection( this, Parameter, true );
             realSections = true;
             continue;
-         }
-         // and if no trailing ']' should we be lenient?
+        }
       }
 
-      if ( buffer[ strlen( buffer ) - 1 ] == '\n' )
-         buffer[ strlen( buffer ) - 1 ] = 0;		// take off trailing new line
-
-      char *a[ 3 ];
+      QStringList a;
       bool sep2seen;
       int scnt = parseLine( buffer, '=', a, 2, 0, sep2seen );
 
@@ -423,7 +417,7 @@ bool INIFile::loadINIFile()
       {
          this_entry = new INIEntry( thisSect, a[ 0 ], true );
          // somewhere we need to cope with quoted parameters
-         this_entry->setValue( QString(a[ 1 ]).trimmed() );
+         this_entry->setValue( a[ 1 ] );
          this_entry->setClean();
       }
       else
@@ -434,7 +428,6 @@ bool INIFile::loadINIFile()
          this_entry->setClean();
       }
    }
-   inf.close();
    // now stat the file so we can check for changes
    checkStat();
 
@@ -447,12 +440,12 @@ bool INIFile::checkKeyExists( const QString &Section,
 {
    loadINIFile();
 
-   std::vector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
+   QVector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
    if ( thisSect != sections.end() )
    {
       if ( Entry == 0 )
          return true;
-      std::vector<IniEntryPtr>::iterator this_entry = std::find_if( ( *thisSect ) ->entries.begin(), ( *thisSect ) ->entries.end(), INIEntryCmp( Entry ) );
+      QVector<IniEntryPtr>::iterator this_entry = std::find_if( ( *thisSect ) ->entries.begin(), ( *thisSect ) ->entries.end(), INIEntryCmp( Entry ) );
       if ( this_entry != ( *thisSect ) ->entries.end() )
       {
          return true;
@@ -467,13 +460,13 @@ int INIFile::getPrivateProfileList( const QString &Section,
 {
    loadINIFile();
 
-   std::vector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
+   QVector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
    if ( thisSect != sections.end() )
    {
       if ( Entry.isEmpty() )
       {
          /* build list of entry names in buffer */
-         for ( std::vector <IniEntryPtr>::iterator this_entry = ( *thisSect ) ->entries.begin(); this_entry != ( *thisSect ) ->entries.end(); this_entry++ )
+         for ( QVector <IniEntryPtr>::iterator this_entry = ( *thisSect ) ->entries.begin(); this_entry != ( *thisSect ) ->entries.end(); this_entry++ )
          {
             if ( ( *this_entry ) ->isValidEntry() )
             {
@@ -491,7 +484,7 @@ int INIFile::getPrivateProfileString( const QString &Section,
 {
    loadINIFile();
 
-   std::vector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
+   QVector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
    if ( thisSect == sections.end() )
    {
       Buffer = DefaultValue;
@@ -500,7 +493,7 @@ int INIFile::getPrivateProfileString( const QString &Section,
    {
       if ( !Entry.isEmpty() )
       {
-         std::vector<IniEntryPtr>::iterator this_entry = std::find_if( ( *thisSect ) ->entries.begin(), ( *thisSect ) ->entries.end(), INIEntryCmp( Entry ) );
+         QVector<IniEntryPtr>::iterator this_entry = std::find_if( ( *thisSect ) ->entries.begin(), ( *thisSect ) ->entries.end(), INIEntryCmp( Entry ) );
          if ( this_entry == ( *thisSect ) ->entries.end() )
          {
             Buffer = DefaultValue;
@@ -524,13 +517,13 @@ int INIFile::getPrivateProfileInt(const QString &Section,
 
    loadINIFile();
 
-   std::vector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
+   QVector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
    if ( thisSect == sections.end() )
    {
       return DefaultValue;
    }
 
-   std::vector<IniEntryPtr>::iterator this_entry = std::find_if( ( *thisSect ) ->entries.begin(), ( *thisSect ) ->entries.end(), INIEntryCmp( Entry ) );
+   QVector<IniEntryPtr>::iterator this_entry = std::find_if( ( *thisSect ) ->entries.begin(), ( *thisSect ) ->entries.end(), INIEntryCmp( Entry ) );
    if ( this_entry == ( *thisSect ) ->entries.end() )
    {
       return DefaultValue;
@@ -584,13 +577,13 @@ bool INIFile::writePrivateProfileString(const QString &Section,
 
    loadINIFile();
 
-   std::vector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
+   QVector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
    if ( Entry == 0 )
    {
       if ( thisSect != sections.end() )
       {
          fileDirty = true;
-         for ( std::vector <IniEntryPtr>::iterator this_ent = ( *thisSect ) ->entries.begin(); this_ent != ( *thisSect ) ->entries.end(); this_ent++ )
+         for ( QVector <IniEntryPtr>::iterator this_ent = ( *thisSect ) ->entries.begin(); this_ent != ( *thisSect ) ->entries.end(); this_ent++ )
          {
             delete ( *this_ent );
          }
@@ -609,7 +602,7 @@ bool INIFile::writePrivateProfileString(const QString &Section,
          thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
          fileDirty = true;
       }
-      std::vector<IniEntryPtr>::iterator this_entry = std::find_if( ( *thisSect ) ->entries.begin(), ( *thisSect ) ->entries.end(), INIEntryCmp( Entry ) );
+      QVector<IniEntryPtr>::iterator this_entry = std::find_if( ( *thisSect ) ->entries.begin(), ( *thisSect ) ->entries.end(), INIEntryCmp( Entry ) );
       if ( Buffer == 0 )
       {
          if ( this_entry != ( *thisSect ) ->entries.end() )
@@ -674,90 +667,90 @@ BundleFile::BundleFile( PROFILES p )  //: iniFile( 0 )
    {
 	  case epLOGGERPROFILE:
 
-         entries.push_back( ProfileEntry( elpListDirectory, "List Directory", "./Lists", "", "Default archive list directory", false ) );
-         entries.push_back( ProfileEntry( elpLogDirectory, "Log Directory", "./Logs", "", "Default logs directory", false ) );
+         entries.push_back( QSharedPointer<ProfileEntry> (new ProfileEntry( elpListDirectory, "List Directory", "./Lists", "", "Default archive list directory", false ) ) );
+         entries.push_back( QSharedPointer<ProfileEntry> (new ProfileEntry( elpLogDirectory, "Log Directory", "./Logs", "", "Default logs directory", false ) ) );
 
-         entries.push_back( ProfileEntry( elpEntryFile, "EntryFile", "./Configuration/Entry.ini", "Entry settings file", "File containing entry settings", false ) );
-         entries.push_back( ProfileEntry( elpStationFile, "StationFile", "./Configuration/Station.ini", "Station settings file", "File containing station settings", false ) );
-         entries.push_back( ProfileEntry( elpQTHFile, "QTHFile", "./Configuration/QTH.ini", "QTH settings file", "File containing QTH settings", false ) );
-         entries.push_back( ProfileEntry( elpLocsFile, "LocsFile", "./Configuration/LocSquares.ini", "Country locators file", "File containing valid locators for countries", false ) );
+         entries.push_back( QSharedPointer<ProfileEntry> (new ProfileEntry( elpEntryFile, "EntryFile", "./Configuration/Entry.ini", "Entry settings file", "File containing entry settings", false ) ) );
+         entries.push_back( QSharedPointer<ProfileEntry> (new ProfileEntry( elpStationFile, "StationFile", "./Configuration/Station.ini", "Station settings file", "File containing station settings", false ) ) );
+         entries.push_back( QSharedPointer<ProfileEntry> (new ProfileEntry( elpQTHFile, "QTHFile", "./Configuration/QTH.ini", "QTH settings file", "File containing QTH settings", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpLocsFile, "LocsFile", "./Configuration/LocSquares.ini", "Country locators file", "File containing valid locators for countries", false ) ));
 
-         entries.push_back( ProfileEntry( elpDisplayFile, "DisplayFile", "./Configuration/Display.ini", "Display settings file", "File containing saved display settings", false ) );
-		 entries.push_back( ProfileEntry( elpDisplaySection, "DisplaySection", "Default", "Display file section", "Section to use in display file", false ) );
-         entries.push_back( ProfileEntry( elpOperatorFile, "OperatorFile", "./Configuration/Operator.ini", "Operators file", "File containing operators", false ) );
-		 entries.push_back( ProfileEntry( elpOperatorSection, "OperatorSection", "Default", "Operators file section", "section to use in operators file", false ) );
-         entries.push_back( ProfileEntry( elpPreloadFile, "PreloadFile", "./Configuration/Preload.ini", "Log and List preload file", "File containing log and list pre-loads", false ) );
-		 entries.push_back( ProfileEntry( elpPreloadSection, "PreloadSection", "Default", "Preload file section", "Section to use in preload file", false ) );
-       entries.push_back( ProfileEntry( elpAutoFill, "AutoFill", false, "Auto Fill signal report", "Auto Fill signal report on return", false ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpDisplayFile, "DisplayFile", "./Configuration/Display.ini", "Display settings file", "File containing saved display settings", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpDisplaySection, "DisplaySection", "Default", "Display file section", "Section to use in display file", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpOperatorFile, "OperatorFile", "./Configuration/Operator.ini", "Operators file", "File containing operators", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpOperatorSection, "OperatorSection", "Default", "Operators file section", "section to use in operators file", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpPreloadFile, "PreloadFile", "./Configuration/Preload.ini", "Log and List preload file", "File containing log and list pre-loads", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpPreloadSection, "PreloadSection", "Default", "Preload file section", "Section to use in preload file", false ) ) );
+       entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpAutoFill, "AutoFill", false, "Auto Fill signal report", "Auto Fill signal report on return", false ) ) );
 
 		 break;
 	  case epPRELOADPROFILE:
-		 entries.push_back( ProfileEntry( eppCurrent, "Current", 0, "", "hint", false ) );
-         entries.push_back( ProfileEntry( epp1, "1", "", "", "hint", false ) );
-         entries.push_back( ProfileEntry( epp2, "2", "", "", "hint", false ) );
-         entries.push_back( ProfileEntry( epp3, "3", "", "", "hint", false ) );
-         entries.push_back( ProfileEntry( epp4, "4", "", "", "hint", false ) );
-         entries.push_back( ProfileEntry( epp5, "5", "", "", "hint", false ) );
-         entries.push_back( ProfileEntry( epp6, "6", "", "", "hint", false ) );
-         entries.push_back( ProfileEntry( epp7, "7", "", "", "hint", false ) );
-         entries.push_back( ProfileEntry( epp8, "8", "", "", "hint", false ) );
-         entries.push_back( ProfileEntry( epp9, "9", "", "", "hint", false ) );
-         entries.push_back( ProfileEntry( epp10, "10", "", "", "hint", false ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppCurrent, "Current", 0, "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp1, "1", "", "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp2, "2", "", "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp3, "3", "", "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp4, "4", "", "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp5, "5", "", "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp6, "6", "", "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp7, "7", "", "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp8, "8", "", "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp9, "9", "", "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp10, "10", "", "", "hint", false ) ) );
          break;
       case epDISPLAYPROFILE:
-         entries.push_back( ProfileEntry( edpTop, "Top", 10, "", "Top of Logger window", false ) );
-         entries.push_back( ProfileEntry( edpLeft, "Left", 25, "", "Left of Logger window", false ) );
-         entries.push_back( ProfileEntry( edpWidth, "Width", 780, "", "Width of Logger window", false ) );
-         entries.push_back( ProfileEntry( edpHeight, "Height", 590, "", "Height of Logger window", false ) );
-         entries.push_back( ProfileEntry( edpShowContinentEU, "ShowContinentEU", true, "", "hint", false ) );
-         entries.push_back( ProfileEntry( edpShowContinentAS, "ShowContinentAS", false, "", "hint", false ) );
-         entries.push_back( ProfileEntry( edpShowContinentAF, "ShowContinentAF", false, "", "hint", false ) );
-         entries.push_back( ProfileEntry( edpShowContinentOC, "ShowContinentOC", false, "", "hint", false ) );
-         entries.push_back( ProfileEntry( edpShowContinentSA, "ShowContinentSA", false, "", "hint", false ) );
-         entries.push_back( ProfileEntry( edpShowContinentNA, "ShowContinentNA", false, "", "hint", false ) );
-         entries.push_back( ProfileEntry( edpShowWorked, "ShowWorked", true, "", "hint", false ) );
-         entries.push_back( ProfileEntry( edpShowUnworked, "ShowUnworked", true, "", "hint", false ) );
-         entries.push_back( ProfileEntry( edpNextContactDetailsOnLeft, "ShowNextContactDetailsOnLeft", false, "", "hint", false ) );
-         entries.push_back( ProfileEntry( edpScrollingContestTabs, "ScrollingContestTabs", false, "", "hint", false ) );
-         entries.push_back( ProfileEntry( edpShowOperators, "ShowOperators", true, "", "hint", false ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpTop, "Top", 10, "", "Top of Logger window", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpLeft, "Left", 25, "", "Left of Logger window", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpWidth, "Width", 780, "", "Width of Logger window", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpHeight, "Height", 590, "", "Height of Logger window", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowContinentEU, "ShowContinentEU", true, "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowContinentAS, "ShowContinentAS", false, "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowContinentAF, "ShowContinentAF", false, "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowContinentOC, "ShowContinentOC", false, "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowContinentSA, "ShowContinentSA", false, "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowContinentNA, "ShowContinentNA", false, "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowWorked, "ShowWorked", true, "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowUnworked, "ShowUnworked", true, "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpNextContactDetailsOnLeft, "ShowNextContactDetailsOnLeft", false, "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpScrollingContestTabs, "ScrollingContestTabs", false, "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowOperators, "ShowOperators", true, "", "hint", false ) ) );
 
-         entries.push_back( ProfileEntry( edpEditor, "Editor", "Notepad.exe", "", "Default editor", false ) );
-         entries.push_back( ProfileEntry( edpAutoBandMapTuneAmount, "AutoBandMapTuneAmount", 2000, "", "Send to band map on tune more than x Hz ", false ) );
-         entries.push_back( ProfileEntry( edpAutoBandMapTune, "AutoBandMapTune", false, "", "Enable send to band map on tune", false ) );
-         entries.push_back( ProfileEntry( edpAutoBandMapTimeLapse, "AutoBandMapTimeLapse", 20, "", "Send to band map on leaving more than x seconds ", false ) );
-         entries.push_back( ProfileEntry( edpAutoBandMapTime, "AutoBandMapTime", false, "", "Enable send to band map on time lapse", false ) );
-         entries.push_back( ProfileEntry( edpStatisticsPeriod1, "Statistics Period 1", 10, "", "Statistics Period 1", false ) );
-         entries.push_back( ProfileEntry( edpStatisticsPeriod2, "Statistics Period 2", 60, "", "Statistics Period 2", false ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpEditor, "Editor", "Notepad.exe", "", "Default editor", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpAutoBandMapTuneAmount, "AutoBandMapTuneAmount", 2000, "", "Send to band map on tune more than x Hz ", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpAutoBandMapTune, "AutoBandMapTune", false, "", "Enable send to band map on tune", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpAutoBandMapTimeLapse, "AutoBandMapTimeLapse", 20, "", "Send to band map on leaving more than x seconds ", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpAutoBandMapTime, "AutoBandMapTime", false, "", "Enable send to band map on time lapse", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpStatisticsPeriod1, "Statistics Period 1", 10, "", "Statistics Period 1", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpStatisticsPeriod2, "Statistics Period 2", 60, "", "Statistics Period 2", false ) ) );
          break;
       case epENTRYPROFILE:
-         entries.push_back( ProfileEntry( eepCall, "Call", "", "Call Used", "Call sign used", false ) );
-         entries.push_back( ProfileEntry( eepEntrant, "Entrant", "", "On Behalf Of (Club)", "Name of club/group", false ) );
-         entries.push_back( ProfileEntry( eepMyName, "MyName", "", "My Name", "Name of responsible operator", false ) );
-         entries.push_back( ProfileEntry( eepMyCall, "MyCall", "", "My Call", "Callsign of responsible operator", false ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepCall, "Call", "", "Call Used", "Call sign used", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepEntrant, "Entrant", "", "On Behalf Of (Club)", "Name of club/group", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyName, "MyName", "", "My Name", "Name of responsible operator", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyCall, "MyCall", "", "My Call", "Callsign of responsible operator", false ) ) );
 
-         entries.push_back( ProfileEntry( eepMyAddress1, "MyAddress1", "", "My Address", "Address line 1 of responsible operator", false ) );
-         entries.push_back( ProfileEntry( eepMyAddress2, "MyAddress2", "", "My Address", "Address line 2 of responsible operator", false ) );
-         entries.push_back( ProfileEntry( eepMyCity, "MyCity", "", "My City", "City of responsible operator", false ) );
-         entries.push_back( ProfileEntry( eepMyCountry, "MyCountry", "", "My Country", "Country of responsible operator", false ) );
-         entries.push_back( ProfileEntry( eepMyPostCode, "MyPostCode", "", "My Postcode", "Post Code of responsible operator", false ) );
-         entries.push_back( ProfileEntry( eepMyPhone, "MyPhone", "", "My Phone", "Phone no. of responsible operator", false ) );
-         entries.push_back( ProfileEntry( eepMyEmail, "MyEmail", "", "My Email", "eMail address of responsible operator", false ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyAddress1, "MyAddress1", "", "My Address", "Address line 1 of responsible operator", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyAddress2, "MyAddress2", "", "My Address", "Address line 2 of responsible operator", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyCity, "MyCity", "", "My City", "City of responsible operator", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyCountry, "MyCountry", "", "My Country", "Country of responsible operator", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyPostCode, "MyPostCode", "", "My Postcode", "Post Code of responsible operator", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyPhone, "MyPhone", "", "My Phone", "Phone no. of responsible operator", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyEmail, "MyEmail", "", "My Email", "eMail address of responsible operator", false ) ) );
          break;
       case epQTHPROFILE:
-         entries.push_back( ProfileEntry( eqpLocator, "Locator", "", "", "Locator", false ) );
-         entries.push_back( ProfileEntry( eqpDistrict, "District", "", "", "District Exchange", false ) );
-         entries.push_back( ProfileEntry( eqpLocation, "Location", "", "", "Descriptive Location Exchange", false ) );
-         entries.push_back( ProfileEntry( eqpStationQTH1, "StationQTH1", "", "Station QTH", "Address line 1/2 of station", false ) );
-         entries.push_back( ProfileEntry( eqpStationQTH2, "StationQTH2", "", "Station QTH", "Address line 2/2 of station", false ) );
-         entries.push_back( ProfileEntry( eqpASL, "ASL", 0, "QTH Height ASL (metres)", "QTH height ASL (metres)", false ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpLocator, "Locator", "", "", "Locator", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpDistrict, "District", "", "", "District Exchange", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpLocation, "Location", "", "", "Descriptive Location Exchange", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpStationQTH1, "StationQTH1", "", "Station QTH", "Address line 1/2 of station", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpStationQTH2, "StationQTH2", "", "Station QTH", "Address line 2/2 of station", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpASL, "ASL", 0, "QTH Height ASL (metres)", "QTH height ASL (metres)", false ) ) );
          break;
       case epSTATIONPROFILE:
-         entries.push_back( ProfileEntry( espPower, "Power", 0, "Transmitter Power", "Transmit Power (Watts)", false ) );
-         entries.push_back( ProfileEntry( espTransmitter, "Transmitter", "", "", "Transmit Equipment", false ) );
-         entries.push_back( ProfileEntry( espReceiver, "Receiver", "", "", "Receive Equipment", false ) );
-         entries.push_back( ProfileEntry( espAntenna, "Antenna", "", "", "Antenna details", false ) );
-         entries.push_back( ProfileEntry( espAGL, "AGL", 0, "Antenna Height AGL (metres)", "Antenna Height AGL (metres)", false ) );
-		 entries.push_back( ProfileEntry( espOffset, "Bearing Offset", 0, "Antenna Bearing Offset", "Amount to offset antenna bearings", false ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espPower, "Power", 0, "Transmitter Power", "Transmit Power (Watts)", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espTransmitter, "Transmitter", "", "", "Transmit Equipment", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espReceiver, "Receiver", "", "", "Receive Equipment", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espAntenna, "Antenna", "", "", "Antenna details", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espAGL, "AGL", 0, "Antenna Height AGL (metres)", "Antenna Height AGL (metres)", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espOffset, "Bearing Offset", 0, "Antenna Bearing Offset", "Amount to offset antenna bearings", false ) ) );
 		 break;
 
       case epLOCSQUARESPROFILE:
@@ -787,12 +780,12 @@ QSharedPointer<BundleFile>BundleFile::getBundleFile( PROFILES p )
    }
    return bundleFiles[ p ];
 }
-ProfileEntry &BundleFile::GetKey( int p )
+QSharedPointer <ProfileEntry> &BundleFile::GetKey( int p )
 {
-   static ProfileEntry NullEntry( -1, "", 0,"",  "", false );
-   for ( unsigned int i = 0; i < entries.size(); i++ )
+   static QSharedPointer <ProfileEntry> NullEntry(new ProfileEntry( -1, "", 0,"",  "", false ));
+   for ( int i = 0; i < entries.size(); i++ )
    {
-      if ( entries[ i ].id == p )
+      if ( entries[ i ]->id == p )
          return entries[ i ];
    }
    return NullEntry;
@@ -829,7 +822,7 @@ void SettingsBundle::openSection( const QString &psect )
 
 bool SettingsBundle::isSectionPresent()
 {
-   std::vector<IniSectionPtr>::iterator thisSect = std::find_if( bundleFile->iniFile->sections.begin(), bundleFile->iniFile->sections.end(), INISectionCmp( currsection ) );
+   QVector<IniSectionPtr>::iterator thisSect = std::find_if( bundleFile->iniFile->sections.begin(), bundleFile->iniFile->sections.end(), INISectionCmp( currsection ) );
    if ( thisSect == bundleFile->iniFile->sections.end() )
    {
       return false;
@@ -853,13 +846,13 @@ QString SettingsBundle::getSection()
 bool SettingsBundle::newSection( const QString &newname )
 {
    // Create a new section with no match
-   std::vector<IniSectionPtr>::iterator newSect = std::find_if( bundleFile->iniFile->sections.begin(), bundleFile->iniFile->sections.end(), INISectionCmp( newname ) );
+   QVector<IniSectionPtr>::iterator newSect = std::find_if( bundleFile->iniFile->sections.begin(), bundleFile->iniFile->sections.end(), INISectionCmp( newname ) );
    if ( newSect == bundleFile->iniFile->sections.end() )
    {
       currsection = newname;
-      for ( std::vector<ProfileEntry>::iterator i = bundleFile->entries.begin(); i != bundleFile->entries.end(); i++ )
+      for ( QVector<QSharedPointer<ProfileEntry> >::iterator i = bundleFile->entries.begin(); i != bundleFile->entries.end(); i++ )
       {
-         ( *i ).createEntry( this );
+         (*i)->createEntry( this );
       }
       return true;
    }
@@ -889,15 +882,15 @@ QString SettingsBundle::displayNameOf( int enumKey )
 {
    if ( bool( bundleFile ) && currsection != noneBundle )
    {
-      for ( std::vector<ProfileEntry>::iterator i = bundleFile->entries.begin(); i != bundleFile->entries.end(); i++ )
+      for ( QVector<QSharedPointer <ProfileEntry> >::iterator i = bundleFile->entries.begin(); i != bundleFile->entries.end(); i++ )
       {
-         if ( ( *i ).id == enumKey )
+         if ( ( *i )->id == enumKey )
          {
-            if (( *i ).dispname.size())
+            if (( *i )->dispname.size())
             {
-               return ( *i ).dispname;
+               return ( *i )->dispname;
             }
-            return ( *i ).name;
+            return ( *i )->name;
          }
       }
    }
@@ -907,11 +900,11 @@ bool SettingsBundle::isReadOnly( int enumKey )
 {
    if ( bool( bundleFile ) && currsection != noneBundle )
    {
-      for ( std::vector<ProfileEntry>::iterator i = bundleFile->entries.begin(); i != bundleFile->entries.end(); i++ )
+      for ( QVector<QSharedPointer <ProfileEntry> >::iterator i = bundleFile->entries.begin(); i != bundleFile->entries.end(); i++ )
       {
-         if ( ( *i ).id == enumKey )
+         if ( ( *i )->id == enumKey )
          {
-            return ( *i ).RO;
+            return ( *i )->RO;
          }
       }
    }
@@ -925,7 +918,7 @@ void SettingsBundle::getBoolProfile(const QString &key, bool &value, bool def )
       value = def;
       return ;
    }
-   int intval = bundleFile->iniFile->getPrivateProfileInt( currsection, key, ( int ) def );
+   int intval = bundleFile->iniFile->getPrivateProfileInt( currsection, key,  (def?true:false) );
    if ( intval )
       value = true;
    else
@@ -933,8 +926,8 @@ void SettingsBundle::getBoolProfile(const QString &key, bool &value, bool def )
 }
 void SettingsBundle::getBoolProfile( int enumkey, bool &value )
 {
-   ProfileEntry & p = bundleFile->GetKey( enumkey );
-   getBoolProfile( p.name, value, p.bdefaultval );
+   QSharedPointer <ProfileEntry>  p = bundleFile->GetKey( enumkey );
+   getBoolProfile( p->name, value, p->bdefaultval );
 }
 void SettingsBundle::getBoolProfile( int enumkey, MinosItem<bool> &value )
 {
@@ -952,8 +945,8 @@ void SettingsBundle::setBoolProfile( const QString &key, bool value )
 }
 void SettingsBundle::setBoolProfile( int enumkey, bool value )
 {
-   ProfileEntry & p = bundleFile->GetKey( enumkey );
-   setBoolProfile( p.name, value );
+   QSharedPointer <ProfileEntry> p = bundleFile->GetKey( enumkey );
+   setBoolProfile( p->name, value );
 }
 void SettingsBundle::getStringProfile(const QString &key, QString &value, const QString &def )
 {
@@ -968,8 +961,8 @@ void SettingsBundle::getStringProfile(const QString &key, QString &value, const 
 }
 void SettingsBundle::getStringProfile( int enumkey, QString &value )
 {
-   ProfileEntry & p = bundleFile->GetKey( enumkey );
-   getStringProfile( p.name, value, p.sdefaultval );
+   QSharedPointer <ProfileEntry>  p = bundleFile->GetKey( enumkey );
+   getStringProfile( p->name, value, p->sdefaultval );
 }
 
 void SettingsBundle::getStringProfile(int enumkey, MinosItem<QString> &value )
@@ -988,8 +981,8 @@ void SettingsBundle::setStringProfile( const QString &key, const QString &value 
 }
 void SettingsBundle::setStringProfile(int enumkey, const QString &value )
 {
-   ProfileEntry & p = bundleFile->GetKey( enumkey );
-   setStringProfile( p.name, value );
+   QSharedPointer <ProfileEntry>  p = bundleFile->GetKey( enumkey );
+   setStringProfile( p->name, value );
 }
 
 void SettingsBundle::getIntProfile( const QString &key, int &value, int def )
@@ -1003,8 +996,8 @@ void SettingsBundle::getIntProfile( const QString &key, int &value, int def )
 }
 void SettingsBundle::getIntProfile( int enumkey, int &value )
 {
-   ProfileEntry & p = bundleFile->GetKey( enumkey );
-   getIntProfile( p.name, value, p.idefaultval );
+   QSharedPointer <ProfileEntry>  p = bundleFile->GetKey( enumkey );
+   getIntProfile( p->name, value, p->idefaultval );
 }
 void SettingsBundle::getIntProfile( int enumkey, MinosItem<int> &value )
 {
@@ -1023,8 +1016,8 @@ void SettingsBundle::setIntProfile(const QString &key, int value )
 }
 void SettingsBundle::setIntProfile( int enumkey, int value )
 {
-   ProfileEntry & p = bundleFile->GetKey( enumkey );
-   setIntProfile( p.name, value );
+   QSharedPointer <ProfileEntry>  p = bundleFile->GetKey( enumkey );
+   setIntProfile( p->name, value );
 }
 
 QStringList SettingsBundle::getProfileEntries( )
@@ -1039,14 +1032,14 @@ QStringList SettingsBundle::getProfileEntries( )
 
    return sectlist;
 }
-std::vector<int> SettingsBundle::getBundleEntries( )
+QVector<int> SettingsBundle::getBundleEntries( )
 {
-   std::vector<int> e;
+   QVector<int> e;
    if ( bundleFile )
    {
-      for ( std::vector<ProfileEntry>::iterator i = bundleFile->entries.begin(); i != bundleFile->entries.end(); i++ )
+      for ( QVector<QSharedPointer <ProfileEntry> >::iterator i = bundleFile->entries.begin(); i != bundleFile->entries.end(); i++ )
       {
-         e.push_back( ( *i ).id );
+         e.push_back( ( *i )->id );
       }
    }
    return e;
@@ -1057,9 +1050,9 @@ QStringList SettingsBundle::getBundleHints( )
    QStringList e;
    if ( bundleFile )
    {
-      for ( std::vector<ProfileEntry>::iterator i = bundleFile->entries.begin(); i != bundleFile->entries.end(); i++ )
+      for ( QVector<QSharedPointer <ProfileEntry> >::iterator i = bundleFile->entries.begin(); i != bundleFile->entries.end(); i++ )
       {
-         e.append( ( *i ).hint );
+         e.append( ( *i )->hint );
       }
    }
    return e;
@@ -1073,7 +1066,7 @@ QStringList SettingsBundle::getSections( )
    }
 
    slist.append( noneBundle );
-   for ( std::vector <IniSectionPtr>::iterator thisSect = bundleFile->iniFile->sections.begin(); thisSect != bundleFile->iniFile->sections.end(); thisSect++ )
+   for ( QVector <IniSectionPtr>::iterator thisSect = bundleFile->iniFile->sections.begin(); thisSect != bundleFile->iniFile->sections.end(); thisSect++ )
    {
       if ( ( *thisSect ) ->isValidSection() )
       {

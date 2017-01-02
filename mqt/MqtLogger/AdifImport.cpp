@@ -20,7 +20,6 @@ ADIFImport::ADIFImport(LoggerContestLog * c, QSharedPointer<QFile> adifContestFi
 {}
 ADIFImport::~ADIFImport()
 {
-   delete aqso;
 }
 //---------------------------------------------------------------------------
 
@@ -32,7 +31,7 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
       // If in QSO accumulate aqso
       //      Trace( "In QSO" );
 
-      TEMPBUFF( temp, 100 );
+      QString temp;
       if ( Fieldname.toUpper() == "QSO_DATE" )
       {
          // ADIF now specifies 8 Digits representing a UTC date in YYYYMMDD format
@@ -53,7 +52,7 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
       if ( Fieldname.toUpper() == "CALL" )
       {
          strcpysp( temp, FieldContent, FieldLength );
-         aqso->cs = callsign( strupr( temp ) );
+         aqso->cs = callsign( temp.toUpper() );
          aqso->cs.valRes = CS_NOT_VALIDATED;
       }
       if ( Fieldname.toUpper() == "RST_SENT" )
@@ -87,7 +86,6 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
       }
       if ( Fieldname.toUpper() == "QSO_PTS" || Fieldname.toUpper() == "POINTS" )
       {
-         QString temp;
          strcpysp( temp, FieldContent, FieldLength );
          if ( temp.toInt() == 0 )
          {
@@ -105,12 +103,6 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
          aqso->extraText.setInitialValue( temp );
       }
    }
-   /*   Trace( ("Fieldname " + Fieldname
-             + " length " + FieldLength
-             + " type " + FieldType
-             + " content " + FieldContent).c_str()
-           );
-   */
 }
 //---------------------------------------------------------------------------
 
@@ -123,13 +115,14 @@ void ADIFImport::ADIFImportEndOfRecord( )
       // we have to have log_sequence set before we insert - or it will cause
       // duplicates
 
-      aqso->setLogSequence( ( unsigned long ) ( next_block++ ) << 16 );
+      aqso->setLogSequence( static_cast< unsigned long> ( next_block++ ) << 16 );
 
-      acontest->ctList.insert( aqso );
+      MapWrapper<BaseContact> waqso(aqso);
+      acontest->ctList.insert( waqso, waqso );
 
-      BaseContact *bct = aqso;
+      QSharedPointer<BaseContact> bct;
       acontest->makeContact( false, bct );
-      aqso = dynamic_cast<DisplayContestContact *>(bct);
+      aqso = bct;
       aqso->setLogSequence( 0 );     // will be derived from the contest
 
    }
@@ -214,9 +207,8 @@ bool ADIFImport::executeImport()
          }
       }
       // end of header - start the qso's
-      BaseContact *bct = aqso;
-      acontest->makeContact( false, bct );
-      bct = dynamic_cast<DisplayContestContact *>(bct);
+      QSharedPointer<BaseContact> bct;
+      acontest->makeContact( false, aqso );
       aqso->setLogSequence( 0 );     // will be derived from the contest
    }
 
@@ -247,7 +239,7 @@ bool ADIFImport::executeImport()
          if ( !getNextChar( InChar ) )
             return false;
          if ( InChar != ':' && InChar != '>' && InChar != ' ' )
-            FieldName = FieldName + (char)toupper( InChar );
+            FieldName = FieldName + static_cast< char>(toupper( InChar ));
       }
       while ( InChar != ':' && InChar != '>' );
 

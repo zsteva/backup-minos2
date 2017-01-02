@@ -10,15 +10,8 @@
 #ifndef listH
 #define listH 
 //---------------------------------------------------------------------------
-/*
-struct LtListSeq
-{
-   bool operator() ( const ListContact* s1, const ListContact* s2 ) const;
-};
-typedef codeproject::sorted_vector < ListContact *, true, LtListSeq > ListList;
-*/
 class ListContact;
-typedef std::vector < ListContact *> ListList;
+typedef QVector < ListContact *> ListList;
 typedef ListList::iterator ListIterator;
 
 class ContactList : public BaseLogList
@@ -29,7 +22,6 @@ class ContactList : public BaseLogList
       bool errMessShown;
       bool cslLoad();
       bool cslLoadContacts();
-      void freeAll();
    public:
       QString cfileName;
       QString name;
@@ -39,12 +31,12 @@ class ContactList : public BaseLogList
       ~ContactList();
       bool initialise( int slotno );
       bool initialise( const QString &, int slotno );
-      void getMatchText( ListContact *, QString &, const BaseContestLog *const ct ) const;
+      void getMatchText(ListContact *, QString &, const BaseContestLog *const ct ) const;
       void getMatchField( ListContact *pct, int col, QString &disp, const BaseContestLog *const ct ) const;
       int getContactCount( void )
       {
          return ctList.size();
       }
-      ListContact *pcontactAt( unsigned int offset );
+      ListContact *pcontactAt(int offset );
 };
 #endif

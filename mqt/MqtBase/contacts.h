@@ -39,7 +39,7 @@ class CountrySynonym;
 class CountryList;
 class ScreenContact;
 
-CountryEntry *findCtryPrefix( const callsign &cs );
+QSharedPointer<CountryEntry> findCtryPrefix( const callsign &cs );
 
 // This is a contact, either in the log or the current screen contact
 // Various parts may be missing to allow "comment" records in the log.
@@ -62,13 +62,14 @@ const short FORCE_LOG = 0x0001;		// Force logged into log
 
 class BaseContact
 {
-      std::vector < BaseContact > history;
+      QVector < QSharedPointer<BaseContact> > history;
    protected:
       BaseContestLog *contest;
    public:
       BaseContact( const BaseContact & );
       BaseContact( BaseContestLog *contest, bool time_now );
       BaseContact& operator =( const BaseContact & );
+      bool operator<( const BaseContact& rhs ) const;
       virtual ~BaseContact(){}
       virtual void setLogSequence( unsigned long /*ul*/ )
       {}
@@ -80,10 +81,30 @@ class BaseContact
       {
          return 0;
       }
-      virtual std::vector < BaseContact > &getHistory()
+      virtual QVector < QSharedPointer<BaseContact> > &getHistory()
       {
          return history;
       }
+      virtual bool GJVload( int /*diskBlock*/ )
+      {
+          return false;
+      }
+
+      virtual bool GJVsave( GJVParams & )
+      {
+          return false;
+      }
+      virtual void addReg1TestComment(QStringList & )
+      {}
+      virtual void getReg1TestText( QString & )
+      {}
+      virtual void getPrintFileText(QString &, short )
+      {}
+      virtual QString getADIFLine()
+      {
+          return QString();
+      }
+
       // These CONTAIN minositems
 
       dtg updtime;      //CONTAIN MinosItem
@@ -123,8 +144,8 @@ class BaseContact
       int bonus;
       bool newBonus;
 
-      DistrictEntry * districtMult;
-      CountryEntry * ctryMult;
+      QSharedPointer<DistrictEntry> districtMult;
+      QSharedPointer<CountryEntry> ctryMult;
       virtual void makestrings( bool serialFields ) const;
       virtual void getText(QString &dest, const BaseContestLog * const curcon ) const;
       char multCount;
@@ -138,13 +159,15 @@ class BaseContact
       {
          return false;
       }
-      virtual bool commonSave( )
+      virtual bool commonSave(QSharedPointer<BaseContact> )
       {
          return false;
       }
       virtual void processMinosStanza( const QString &/*methodName*/, MinosTestImport * const /*mt*/ )
       {}
       virtual void checkContact( )
+      {}
+      virtual void copyFromArg(QSharedPointer<BaseContact> )
       {}
       virtual void copyFromArg( ScreenContact & )
       {}

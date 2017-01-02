@@ -27,7 +27,7 @@
 //---------------------------------------------------------------------------
 __fastcall TContestEntryDetails::TContestEntryDetails( TComponent* Owner)
       : TForm( Owner ), /*CalendarDlg( 0 ),*/ contest(0), inputcontest(0),
-      saveContestOK(false), suppressProtectedOnClick(false)
+      saveContestOK(false), suppressProtectedOnClick(false), noMultRipple(false)
 {
 }
 //---------------------------------------------------------------------------
@@ -339,6 +339,7 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
    if ( ic.mults == "M1" )
    {
       // PC, DXCC
+      contest->UKACBonus.setValue(false);
       contest->districtMult.setValue( true );
       contest->countryMult.setValue( true );
       contest->locMult.setValue( false );
@@ -355,6 +356,7 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M2" )
    {
       // Loc
+      contest->UKACBonus.setValue(false);
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
       contest->locMult.setValue( true );
@@ -371,6 +373,7 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M3" )
    {
       // PC, DXCC, LOC
+      contest->UKACBonus.setValue(false);
       contest->districtMult.setValue( true );
       contest->countryMult.setValue( true );
       contest->locMult.setValue( true );
@@ -387,6 +390,7 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M4" )
    {
       // DXCC, LOC
+      contest->UKACBonus.setValue(false);
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( true );
       contest->locMult.setValue( true );
@@ -403,6 +407,7 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M5" )
    {
       // G Locs only
+      contest->UKACBonus.setValue(false);
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
       contest->locMult.setValue( true );
@@ -419,6 +424,7 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M6" )
    {
       // G Locs only  + DXCC
+      contest->UKACBonus.setValue(false);
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
       contest->locMult.setValue( true );
@@ -435,6 +441,7 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M7" )
    {
       // Modified M5; non UK 1 mult, UK 2 mults
+      contest->UKACBonus.setValue(false);
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
       contest->locMult.setValue( true );
@@ -448,8 +455,26 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
       contest->UKloc_multiplier = 2;
       contest->NonUKloc_multiplier = 1;
    }
+   else if ( ic.mults == "B2" )
+   {
+       contest->UKACBonus.setValue(true);
+
+       contest->districtMult.setValue( false );
+       contest->countryMult.setValue( false );
+       contest->locMult.setValue( false );
+       contest->GLocMult.setValue( false );
+       contest->nonGCountryMult.setValue( false );
+
+       contest->M7Mults.setValue(false);
+
+       contest->UKloc_mult = false;
+       contest->NonUKloc_mult = false;
+       contest->UKloc_multiplier = 0;
+       contest->NonUKloc_multiplier = 0;
+   }
    else
    {
+      contest->UKACBonus.setValue(false);
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
       contest->locMult.setValue( false );
@@ -598,38 +623,43 @@ TWinControl * TContestEntryDetails::getDetails( )
    contest->M7Mults.setValue( M7LocatorMults->Checked ) ;   // bool
    contest->UKACBonus.setValue(BonusComboBox->ItemIndex == 1);
 
-   if (contest->GLocMult.getValue())
-   {
-      contest->UKloc_mult = true;
-      contest->NonUKloc_mult = false;
-      contest->UKloc_multiplier = 1;
-      contest->NonUKloc_multiplier = 0;
+    if (contest->UKACBonus.getValue())
+    {
+        contest->loadBonusList();
+    }
+    if (contest->M7Mults.getValue())
+    {
+        contest->UKloc_mult = true;
+        contest->NonUKloc_mult = true;
+        contest->UKloc_multiplier = 2;
+        contest->NonUKloc_multiplier = 1;
+    }
+    else
+    {
+        if (contest->locMult.getValue())
+        {
+            contest->UKloc_mult = true;
+            contest->UKloc_multiplier = 1;
 
-   }
-   else if (contest->M7Mults.getValue())
-   {
-      contest->UKloc_mult = true;
-      contest->NonUKloc_mult = true;
-      contest->UKloc_multiplier = 2;
-      contest->NonUKloc_multiplier = 1;
-   }
-   else
-   {
-      if (contest->locMult.getValue())
-      {
-         contest->UKloc_mult = true;
-         contest->NonUKloc_mult = true;
-         contest->UKloc_multiplier = 1;
-         contest->NonUKloc_multiplier = 1;
-      }
-      else
-      {
-         contest->UKloc_mult = false;
-         contest->NonUKloc_mult = false;
-         contest->UKloc_multiplier = 0;
-         contest->NonUKloc_multiplier = 0;
-      }
-   }
+            if (contest->GLocMult.getValue())
+            {
+                contest->NonUKloc_mult = false;
+                contest->NonUKloc_multiplier = 0;
+            }
+            else
+            {
+                contest->NonUKloc_mult = true;
+                contest->NonUKloc_multiplier = 1;
+            }
+        }
+        else
+        {
+            contest->UKloc_mult = false;
+            contest->NonUKloc_mult = false;
+            contest->UKloc_multiplier = 0;
+            contest->NonUKloc_multiplier = 0;
+        }
+    }
    if (ProtectedOption->Checked && contest->isProtected() && contest->isProtectedSuppressed())
    {
       contest->setProtectedSuppressed(false);
@@ -1029,49 +1059,105 @@ void TContestEntryDetails::enableControls()
 
 void __fastcall TContestEntryDetails::DXCCMultClick(TObject */*Sender*/)
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
    if (DXCCMult->Checked)
    {
       NonGCtryMult->Checked = false;
+      M7LocatorMults->Checked = false;
    }
+   BonusComboBox->ItemIndex = 0;
+   noMultRipple = false;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TContestEntryDetails::NonGCtryMultClick(TObject */*Sender*/)
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
    if (NonGCtryMult->Checked)
    {
       DXCCMult->Checked = false;
+      M7LocatorMults->Checked = false;
    }
+   BonusComboBox->ItemIndex = 0;
+   noMultRipple = false;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TContestEntryDetails::LocatorMultClick(TObject */*Sender*/)
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
    if (!LocatorMult->Checked)
    {
       GLocMult->Checked = false;
       M7LocatorMults->Checked = false;
    }
+   BonusComboBox->ItemIndex = 0;
+   noMultRipple = false;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TContestEntryDetails::GLocMultClick(TObject */*Sender*/)
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
    if (GLocMult->Checked)
    {
       LocatorMult->Checked = true;
       M7LocatorMults->Checked = false;
    }
+   BonusComboBox->ItemIndex = 0;
+   noMultRipple = false;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TContestEntryDetails::M7LocatorMultsClick(TObject */*Sender*/)
 {
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
    if (M7LocatorMults->Checked)
    {
       LocatorMult->Checked = true;
       GLocMult->Checked = false;
+      NonGCtryMult->Checked = false;
+      DXCCMult->Checked = false;
+
    }
+   BonusComboBox->ItemIndex = 0;
+   noMultRipple = false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TContestEntryDetails::BonusComboBoxChange(TObject *Sender)
+{
+    if (noMultRipple)
+    {
+        return;
+    }
+    noMultRipple = true;
+   LocatorMult->Checked = false;
+   GLocMult->Checked = false;
+   NonGCtryMult->Checked = false;
+   DXCCMult->Checked = false;
+   M7LocatorMults->Checked = false;
+   noMultRipple = false;
 }
 //---------------------------------------------------------------------------
 

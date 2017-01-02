@@ -1,3 +1,6 @@
+1.6.0
+Got missed!
+B2 mults, other bug fixes (calendar)
 ==================================================================
 1.5.11
 Fix bug from 1.5.10 - new contests didn't get loaded on Minos reload

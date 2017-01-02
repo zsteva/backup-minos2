@@ -23,23 +23,18 @@ class MinosTestImport;
 class DupContact
 {
    public:
-      BaseContact *dct;
+      QSharedPointer<BaseContact> dct;
       ScreenContact *sct;
       bool operator<( const DupContact& rhs ) const;
       bool operator==( const DupContact& rhs ) const;
       bool operator!=( const DupContact& rhs ) const;
 
-      DupContact( BaseContact *c );
+      DupContact( QSharedPointer<BaseContact> c );
       DupContact( ScreenContact *c );
       DupContact();
       ~DupContact();
 };
-struct LtDup
-{
-   bool operator() ( const DupContact* s1, const DupContact* s2 ) const;
-};
-
-typedef codeproject::sorted_vector < DupContact *, true, LtDup > DupList;
+typedef QMap < MapWrapper<DupContact>, MapWrapper<DupContact> > DupList;
 typedef DupList::iterator DupIterator;
 class dupsheet
 {
@@ -48,37 +43,26 @@ class dupsheet
 
    private:
       DupList ctList;
-      DupContact *curdup; // points into dupsheet
+      QSharedPointer<DupContact> curdup; // points into dupsheet
 
    public:
-      bool checkCurDup( BaseContact *nct, BaseContact *valp, bool insert );
-      bool checkCurDup( ScreenContact *nct, BaseContact *valp, bool insert );
-      bool isCurDup( BaseContact *nct ) const;
-      bool isCurDup( ScreenContact *nct ) const;
+      bool checkCurDup(BaseContestLog *contest, unsigned long nctseq, unsigned long valpseq, bool insert );
+      bool checkCurDup(ScreenContact *nct, unsigned long valpseq, bool insert );
+      bool isCurDup(QSharedPointer<BaseContact> nct ) const;
+      bool isCurDup(ScreenContact *nct ) const;
       void clearCurDup();
       void clear();
-      BaseContact *getCurDup();
+      QSharedPointer<BaseContact> getCurDup();
       dupsheet();
       ~dupsheet();
 };
 
 enum SCOREMODE {PPKM, PPQSO};
 
-struct LtLogSeq
-{
-   bool operator() ( const BaseContact* s1, const BaseContact* s2 ) const;
-};
-typedef codeproject::sorted_vector < BaseContact *, true, LtLogSeq > LogList;
+typedef QMap < MapWrapper<BaseContact>, MapWrapper<BaseContact> > LogList;
 typedef LogList::iterator LogIterator;
 
-struct StrLess
-{
-   bool operator() ( const QString &s1, const QString &s2 ) const
-   {
-      return s1.compare(s2, Qt::CaseInsensitive) < 0;
-   }
-};
-typedef codeproject::sorted_vector < QString, true, StrLess > OperatorList;
+typedef QMap < QString, QString > OperatorList;
 typedef OperatorList::iterator OperatorIterator;
 
 class BaseContestLog: public BaseLogList
@@ -223,7 +207,7 @@ class BaseContestLog: public BaseLogList
 
       // duplicate sheet
 
-      BaseContact *validationPoint;   // contact from log list to be treated
+      unsigned long validationPoint;   // key of contact from log list to be treated
       dupsheet DupSheet;
       int nextScan;
 
@@ -240,9 +224,10 @@ class BaseContestLog: public BaseLogList
       int bonus;
 
       int multsAsBonuses;
-      std::map<QString, int> locBonuses;
-      int ukLocBonus;
-      int nonukLocBonus;
+      int bonusYearLoaded;
+      QMap<QString, int> locBonuses;
+      void loadBonusList();
+      int getSquareBonus(QString sloc);
 
       int *districtWorked;
       int *countryWorked;
@@ -264,7 +249,7 @@ class BaseContestLog: public BaseLogList
       long kms1, kms2, kms1p, kms2p;
       int mults1, mults2, mults1p, mults2p;
       int bonus1, bonus2, bonus1p, bonus2p;
-      bool updateStat( BaseContact *cct );
+      bool updateStat(QSharedPointer<BaseContact> cct );
       void updateStats();
       char lasttchar;
 
@@ -286,10 +271,7 @@ class BaseContestLog: public BaseLogList
       {
          return false;
       }
-      /*
-      virtual bool minosSaveBaseContact( const BaseContact *lct){return false;}
-      */
-      virtual bool minosSaveContestContact( const ContestContact * /*lct*/ )
+      virtual bool minosSaveContestContact( const QSharedPointer<BaseContact> /*lct*/ )
       {
          return false;
       }
@@ -303,35 +285,33 @@ class BaseContestLog: public BaseLogList
       // general
 
       void validateLoc( void );
-      void getMatchText(BaseContact *, QString &, const BaseContestLog *const ct ) const;
-      void getMatchField( BaseContact *pct, int col, QString &disp, const BaseContestLog *const ct ) const;
+      void getMatchText(QSharedPointer<BaseContact>, QString &, const BaseContestLog *const ct ) const;
+      void getMatchField( QSharedPointer<BaseContact> pct, int col, QString &disp, const BaseContestLog *const ct ) const;
       void scanContest( void );
       void setScore( QString & );
-      bool isCurDup( BaseContact *) const;
+      bool isCurDup(QSharedPointer<BaseContact>) const;
 
       virtual void getScoresTo(ContestScore &cs, QDateTime limit);
 
       // manipulation of contact list
 
       int getContactCount( void );
-      unsigned int indexOf( BaseContact * item );
-      BaseContact *pcontactAtSeq( unsigned long logSequence );
-      BaseContact *pcontactAt( unsigned int offset );
+      int indexOf( QSharedPointer<BaseContact> item );
+      QSharedPointer<BaseContact> pcontactAtSeq( unsigned long logSequence );
+      QSharedPointer<BaseContact> pcontactAt(int offset );
 
       //      virtual void makeContact( bool time_now, DisplayContestContact *&){}
-      virtual void makeContact( bool time_now, BaseContact *& );
-      BaseContact* findNextUnfilledContact();
-
-      void freeAll();
+      virtual void makeContact(bool time_now, QSharedPointer<BaseContact> & );
+      QSharedPointer<BaseContact> findNextUnfilledContact();
 
       // calcs
 
       void disbear( double lon, double lat, double &dist, int &brg ) const;
       int CalcNearest( const QString &scalcloc );
-      bool getsdist( const char *loc, char *minloc, double &mindist );
-      BaseContact *getBestDX( void );
+      bool getsdist(const QString &loc, QString &minloc, double &mindist );
+      QSharedPointer<BaseContact> getBestDX( void );
       QString dateRange( DTG dstyle );
-      bool checkTime(const dtg &t);
+      bool checkTime(const dtg &t) const;
 
 };
 class ContestScore
@@ -347,6 +327,8 @@ class ContestScore
       char brbonus2;
 
       QString name;
+      bool UKACBonus;
+
       int nqsos;
       int contestScore;
       int nctry;

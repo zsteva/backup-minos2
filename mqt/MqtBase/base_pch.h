@@ -8,9 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #ifndef BASE_PCH_H
 #define BASE_PCH_H
-#include "XMPPClient_pch.h"
-
-#include "fileutils.h"
+#include "XMPP_pch.h"
 
 #include <QApplication>
 #include <QMainWindow>
@@ -26,21 +24,40 @@
 #include <QPainter>
 #include <QStyle>
 
+template <class itemtype>
+class MapWrapper
+{
+public:
+    QSharedPointer<itemtype> wt;
+    MapWrapper(itemtype *mp):wt(mp){}
+    MapWrapper(QSharedPointer<itemtype> mp):wt(mp){}
+    MapWrapper(const MapWrapper &m)
+    {
+        wt = m.wt;
+    }
+};
+template <class itemtype >inline bool operator < (const MapWrapper<itemtype> &key1, const MapWrapper<itemtype> &key2)
+{
+    itemtype *i1 = key1.wt.data();
+    itemtype *i2 = key2.wt.data();
+    return *i1 < *i2;
+}
+template <class itemtype >inline bool operator == (const MapWrapper<itemtype> &key1, const MapWrapper<itemtype> &key2)
+{
+    return key1.wt.data() == key2.wt.data();
+}
+
+
 #include <math.h>
 #include <time.h>
 
-#include "sorted_vector.h"
-
+#include "fileutils.h"
 #include "MinosLoggerEvents.h"
-
 #include "validators.h"
-
 #include "MinosParameters.h"
 #include "ProfileEnums.h"
-
 #include "mwin.h"
 #include "cutils.h"
-
 #include "latlong.h"
 #include "calcs.h"
 

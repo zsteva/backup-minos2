@@ -10,6 +10,7 @@ TEntryOptionsForm::TEntryOptionsForm( QWidget* Owner, LoggerContestLog * cnt, bo
     opsEntryLine1(-1), opsEntryLine2(-1)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     if ( !ct )
         return ;
@@ -193,7 +194,7 @@ void TEntryOptionsForm::on_CloseButton_clicked()
     ct->entEMail.setValue( ui->OptionsScrollBox->item(r++, 0)->text() );
 
     //enum ExportType {EREG1TEST, EADIF, EG0GJV, EMINOS, EKML};
-    expformat = ( ExportType ) ui->EntryGroup->checkedId();
+    expformat = static_cast< ExportType> (ui->EntryGroup->checkedId());
 
     accept();
 }
@@ -209,24 +210,26 @@ void TEntryOptionsForm::getContestOperators()
 
     for ( OperatorIterator op = ct->oplist.begin(); op != ct->oplist.end(); op++ )
     {
-        operators.insert(*op);
+        operators.insert(*op, *op);
     }
 
     // now actual ops are a sorted list
 
     QString ops1;
     QString ops2;
-    unsigned int ls = operators.size();
-    for (unsigned int i = 0; i < ls; i++)
+    int ls = operators.size();
+    int i = 0;
+    foreach(QString op, operators)
     {
         if (i <= ls/2)
         {
-            ops1 += operators[i] + " ";
+            ops1 += op + " ";
         }
         else
         {
-            ops2 += operators[i] + " ";
+            ops2 += op + " ";
         }
+        i++;
     }
     ct->opsQSO1 = ops1.trimmed();
     ct->opsQSO2 = ops2.trimmed();
@@ -252,7 +255,7 @@ QString TEntryOptionsForm::doFileSave( )
         break;
     case EMINOS:
         defext = "minos";
-        filter = "Minos ContestLog files (*.Minos);;All Files (*.*);;" ;
+        filter = "Minos ContestLog files (*.minos *.Minos);;All Files (*.*);;" ;
         break;
     case EADIF:
         defext = "adi";

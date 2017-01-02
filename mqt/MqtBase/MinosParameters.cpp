@@ -18,7 +18,7 @@ MinosParameters *MinosParameters::getMinosParameters()
    return mp;
 }
 
-bool MinosParametersAdapter::insertContest( BaseContestLog * /*p*/, unsigned int /*sno*/ )
+bool MinosParametersAdapter::insertContest( BaseContestLog * /*p*/, int /*sno*/ )
 {
    return true;
 }
@@ -81,7 +81,7 @@ BaseContestLog * MinosParametersAdapter::getCurrentContest()
 {
    return 0;
 }
-bool MinosParametersAdapter::insertList( ContactList * /*p*/, unsigned int /*sno*/ )
+bool MinosParametersAdapter::insertList(ContactList * /*p*/, int /*sno*/ )
 {
    return false;
 }
@@ -93,9 +93,9 @@ bool MinosParametersAdapter::isListOpen(const QString /*fn*/ )
 {
    return false;
 }
-std::vector<BaseContestLog *> MinosParametersAdapter::getContestList()
+QVector<BaseContestLog *> MinosParametersAdapter::getContestList()
 {
-   std::vector<BaseContestLog *> logList;
+   QVector<BaseContestLog *> logList;
    return logList;
 }
 

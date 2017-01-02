@@ -74,7 +74,7 @@ void RPCParam::addValue( TiXmlElement &node )
                         {
                            return QSharedPointer<RPCParam>(new RPCDtgParam(node));
                         }
-   return QSharedPointer<RPCParam>((RPCParam *)0);
+   return QSharedPointer<RPCParam>();
 }
 bool RPCParam::getBoolean( bool & )
 {
@@ -224,7 +224,7 @@ void RPCParamStruct::addNode( TiXmlElement &node )
 
    // value as for individual
    TiXmlElement sNode( "struct" );
-   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( QVector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       TiXmlElement mNode( "member" );
       TiXmlElement nNode( "name" );
@@ -240,7 +240,7 @@ void RPCParamStruct::addNode( TiXmlElement &node )
 QString RPCParamStruct::print()
 {
    QString s = "Struct\r\n";
-   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( QVector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       s += "Member name " + ( *i ) ->name + "\r\n";
       s += ( *i ) ->print();
@@ -251,7 +251,7 @@ QString RPCParamStruct::print()
 QString RPCParamStruct::analyse()
 {
    QString s;
-   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( QVector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       if (( *i ) ->name == "lseq" )
       {
@@ -286,7 +286,7 @@ QString RPCParamStruct::analyse()
 
 bool RPCParamStruct::getMember( const QString &name, QSharedPointer<RPCParam>&p )
 {
-   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( QVector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       if ( ( *i ) ->name == name )
       {
@@ -296,7 +296,7 @@ bool RPCParamStruct::getMember( const QString &name, QSharedPointer<RPCParam>&p 
    }
    return false;
 }
-bool RPCParamStruct::getMember( unsigned int eleno, QSharedPointer<RPCParam>&p )
+bool RPCParamStruct::getMember( int eleno, QSharedPointer<RPCParam>&p )
 {
    if ( eleno < elements.size() )
    {
@@ -305,12 +305,12 @@ bool RPCParamStruct::getMember( unsigned int eleno, QSharedPointer<RPCParam>&p )
    }
    return false;
 }
-bool RPCParamStruct::getElements( unsigned int &size )
+bool RPCParamStruct::getElements( int &size )
 {
-   size = ( unsigned int ) elements.size();
+   size = elements.size();
    return true;
 }
-bool RPCParamStruct::getElement( unsigned int eleno, QSharedPointer<RPCParam>&p )
+bool RPCParamStruct::getElement(int eleno, QSharedPointer<RPCParam>&p )
 {
    if ( eleno < elements.size() )
    {
@@ -403,7 +403,7 @@ void RPCParamArray::addNode( TiXmlElement &node )
 {
    TiXmlElement aNode( "array" );
    TiXmlElement dNode( "data" );
-   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( QVector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       ( *i ) ->addValue( dNode );
    }
@@ -413,7 +413,7 @@ void RPCParamArray::addNode( TiXmlElement &node )
 QString RPCParamArray::print()
 {
    QString s = "Array\r\n";
-   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( QVector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       s += ( *i ) ->print();
    }
@@ -423,19 +423,19 @@ QString RPCParamArray::print()
 QString RPCParamArray::analyse()
 {
    QString s = "[";
-   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
+   for ( QVector<QSharedPointer<RPCParam> >::iterator i = elements.begin(); i != elements.end(); i++ )
    {
       s += ( *i ) ->analyse();
    }
    s += "]";
    return s;
 }
-bool RPCParamArray::getElements( unsigned int &size )
+bool RPCParamArray::getElements(int &size )
 {
-   size = ( unsigned int ) elements.size();
+   size = elements.size();
    return true;
 }
-bool RPCParamArray::getElement( unsigned int eleno, QSharedPointer<RPCParam> &p )
+bool RPCParamArray::getElement( int eleno, QSharedPointer<RPCParam> &p )
 {
    if ( elements.size() > eleno )
    {
@@ -787,7 +787,7 @@ TiXmlElement *RPCArgs::makeParamsNode( )
 {
    TiXmlElement * pNode = new TiXmlElement( "params" );
 
-   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
+   for ( QVector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
    {
       ( *i ) ->addParam( *pNode );
    }
@@ -867,13 +867,13 @@ QString RPCArgs::PrintArgs()
 {
    QString s;
 
-   for ( std::vector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
+   for ( QVector<QSharedPointer<RPCParam> >::iterator i = args.begin(); i != args.end(); i++ )
    {
       s += ( *i ) ->print();
    }
    return s;
 }
-bool RPCArgs::getStructArgMember( unsigned int argno, const QString &name, QSharedPointer<RPCParam>&res )
+bool RPCArgs::getStructArgMember( int argno, const QString &name, QSharedPointer<RPCParam>&res )
 {
    if ( args.size() > argno )
    {
@@ -881,7 +881,7 @@ bool RPCArgs::getStructArgMember( unsigned int argno, const QString &name, QShar
    }
    return false;
 }
-bool RPCArgs::getStructArgMember( unsigned int argno, unsigned int eleno, QSharedPointer<RPCParam>&res )
+bool RPCArgs::getStructArgMember(int argno, unsigned int eleno, QSharedPointer<RPCParam>&res )
 {
    if ( args.size() > argno )
    {
@@ -889,7 +889,7 @@ bool RPCArgs::getStructArgMember( unsigned int argno, unsigned int eleno, QShare
    }
    return false;
 }
-bool RPCArgs::getArrayArgElements( unsigned int argno, unsigned int &size )
+bool RPCArgs::getArrayArgElements( int argno, unsigned int &size )
 {
    if ( args.size() > argno )
    {
@@ -897,7 +897,7 @@ bool RPCArgs::getArrayArgElements( unsigned int argno, unsigned int &size )
    }
    return false;
 }
-bool RPCArgs::getArrayArgElement( unsigned int argno, unsigned int eleno, QSharedPointer<RPCParam>&res )
+bool RPCArgs::getArrayArgElement(int argno, unsigned int eleno, QSharedPointer<RPCParam>&res )
 {
    if ( args.size() > argno )
    {
@@ -905,7 +905,7 @@ bool RPCArgs::getArrayArgElement( unsigned int argno, unsigned int eleno, QShare
    }
    return false;
 }
-bool RPCArgs::getBooleanArg( unsigned int argno, bool &res )
+bool RPCArgs::getBooleanArg( int argno, bool &res )
 {
    if ( args.size() > argno )
    {
@@ -913,7 +913,7 @@ bool RPCArgs::getBooleanArg( unsigned int argno, bool &res )
    }
    return false;
 }
-bool RPCArgs::getIntArg( unsigned int argno, int &res )
+bool RPCArgs::getIntArg(int argno, int &res )
 {
    if ( args.size() > argno )
    {
@@ -921,7 +921,7 @@ bool RPCArgs::getIntArg( unsigned int argno, int &res )
    }
    return false;
 }
-bool RPCArgs::getDoubleArg( unsigned int argno, double &res )
+bool RPCArgs::getDoubleArg( int argno, double &res )
 {
    if ( args.size() > argno )
    {
@@ -929,7 +929,7 @@ bool RPCArgs::getDoubleArg( unsigned int argno, double &res )
    }
    return false;
 }
-bool RPCArgs::getStringArg( unsigned int argno, QString &res )
+bool RPCArgs::getStringArg(int argno, QString &res )
 {
    if ( args.size() > argno )
    {
@@ -937,7 +937,7 @@ bool RPCArgs::getStringArg( unsigned int argno, QString &res )
    }
    return false;
 }
-bool RPCArgs::getBase64Arg( unsigned int argno, QString &res )
+bool RPCArgs::getBase64Arg( int argno, QString &res )
 {
    if ( args.size() > argno )
    {
@@ -945,7 +945,7 @@ bool RPCArgs::getBase64Arg( unsigned int argno, QString &res )
    }
    return false;
 }
-bool RPCArgs::getDtgArg( unsigned int argno, QString &res )
+bool RPCArgs::getDtgArg(int argno, QString &res )
 {
    if ( args.size() > argno )
    {

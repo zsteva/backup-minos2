@@ -113,13 +113,13 @@ QString MinosCommonConnection::makeJid()
 
    return id;
 }
-bool MinosCommonConnection::sendRaw ( const char *xmlstr )
+bool MinosCommonConnection::sendRaw ( const TIXML_STRING xmlstr )
 {
-   unsigned int xmllen = strlen( xmlstr );
+   size_t xmllen = xmlstr.length();
    if ( xmllen )
    {
       char * xmlbuff = new char[ 10 + 1 + xmllen + 1 ];
-      sprintf( xmlbuff, "&&%d%s&&", xmllen, xmlstr );
+      sprintf( xmlbuff, "&&%lu%s&&", static_cast<unsigned long>(xmllen), xmlstr.c_str() );
       xmllen = strlen( xmlbuff );
       int ret = sock->write ( xmlbuff, xmllen );
       onLog ( xmlbuff, xmllen, 0 );
@@ -148,7 +148,7 @@ bool MinosCommonConnection::tryForwardStanza( TiXmlElement *tix )
 {
    TIXML_STRING s;
    s << *tix;
-   bool res = sendRaw( s.c_str() );
+   bool res = sendRaw( s );
    return res;
 }
 //---------------------------------------------------------------------------
@@ -197,28 +197,28 @@ void MinosCommonConnection::sendError( TiXmlElement *tix,const  char * /*type*/,
    TIXML_STRING s;
    s << x;
 
-   sendRaw ( s.c_str() );
+   sendRaw ( s );
 }
 //---------------------------------------------------------------------------
 void MinosCommonConnection::sendAction( XStanza *a )
 {
    // use the stanza to send itself
    a->setNextId();   // only happens if no Id already
-   TIXML_STRING s = a->getActionMessage().toStdString();
-   sendRaw( s.c_str() );
+   TIXML_STRING s = a->getActionMessage();
+   sendRaw( s );
 }
 //=============================================================================
 void sendAction( XStanza *a )
 {
    // stanza has a "to" - but this is internal, so we need to dispatch it
-   QString mess = a->getActionMessage();
+   TIXML_STRING mess = a->getActionMessage();
    //int err;
 
    // convert from a RPCParam structure to a DOM
 
    TiXmlBase::SetCondenseWhiteSpace( false );
    TiXmlDocument xdoc;
-   xdoc.Parse( mess.toStdString().c_str(), 0 );
+   xdoc.Parse( mess.c_str(), 0 );
    TiXmlElement *x = xdoc.RootElement();
 
    if ( a->getFrom().size() == 0 )
@@ -261,57 +261,60 @@ void MinosCommonConnection::on_readyRead()
    logMessage ( "XMPP test", "MinosCommonConnection::on_readyRead called to receive data from " + connectHost );
 
    // documntation says this may occasionally fail on Windows
-   int rxlen = sock->read(rxbuff, 4096 - 1);
-   if ( rxlen > 0 )
+   while (sock->bytesAvailable() > 0)
    {
-      rxbuff[ rxlen ] = '\0';
+       int rxlen = sock->read(rxbuff, 4096 - 1);
+       if ( rxlen > 0 )
+       {
+          rxbuff[ rxlen ] = '\0';
 
-      // We might have embedded nulls between message parts - so strip them
-      int rxpt = 0;
-      while ( rxpt < rxlen )
-      {
-         int ptlen = ( int ) strlen( &rxbuff[ rxpt ] );
-         if ( ptlen )
-         {
-            onLog ( &rxbuff[ rxpt ], ptlen, 1 );  // but this ignores the wrapper
-            packetbuff += &rxbuff[ rxpt ];   // which will strip out any nulls
-         }
-         rxpt += ptlen + 1;
-      }
+          // We might have embedded nulls between message parts - so strip them
+          int rxpt = 0;
+          while ( rxpt < rxlen )
+          {
+             int ptlen = static_cast<int> (strlen( &rxbuff[ rxpt ] ));
+             if ( ptlen )
+             {
+                onLog ( &rxbuff[ rxpt ], ptlen, 1 );  // but this ignores the wrapper
+                packetbuff += &rxbuff[ rxpt ];   // which will strip out any nulls
+             }
+             rxpt += ptlen + 1;
+          }
 
-      while ( packetbuff.size() > 2 && packetbuff.left( 2 ) == "&&" )
-      {
-         int packetoffset = packetbuff.indexOf( '<' );
-         if ( packetoffset > 0 )    // length field should always be followed by XML
-         {
-             QStringRef slen = packetbuff.midRef(2, packetoffset - 2);
-             int packetlen = slen.toInt();
-            if ( packetlen <= ( int ) packetbuff.size() - 2 && packetbuff.indexOf( ">&&" ) )
-            {
-               QString packet = packetbuff.mid( packetoffset, packetlen );
-               packetbuff = packetbuff.right(  packetbuff.size() - 2 - packetlen - packetoffset );
+          while ( packetbuff.size() > 2 && packetbuff.left( 2 ) == "&&" )
+          {
+             int packetoffset = packetbuff.indexOf( '<' );
+             if ( packetoffset > 0 )    // length field should always be followed by XML
+             {
+                 QStringRef slen = packetbuff.midRef(2, packetoffset - 2);
+                 int packetlen = slen.toInt();
+                if ( packetlen <= static_cast<int> (packetbuff.size()) - 2 && packetbuff.indexOf( ">&&" ) )
+                {
+                   QString packet = packetbuff.mid( packetoffset, packetlen );
+                   packetbuff = packetbuff.right(  packetbuff.size() - 2 - packetlen - packetoffset );
 
-               TiXmlBase::SetCondenseWhiteSpace( false );
-               TiXmlDocument xdoc;
-               TIXML_STRING p = packet.toStdString();
-               xdoc.Parse( p.c_str(), 0 );
-               TiXmlElement *tix = xdoc.RootElement();
-               analyseNode( tix );
-            }
-            else
-            {
-               // partial message, keep receiving until we get more
-               return ;
-            }
-         }
-      }
+                   TiXmlBase::SetCondenseWhiteSpace( false );
+                   TiXmlDocument xdoc;
+                   TIXML_STRING p = packet.toStdString();
+                   xdoc.Parse( p.c_str(), 0 );
+                   TiXmlElement *tix = xdoc.RootElement();
+                   analyseNode( tix );
+                }
+                else
+                {
+                   // partial message, keep receiving until we get more
+                   break ;
+                }
+             }
+          }
+       }
+       else if (rxlen < 0)
+       {
+           trace("Bad read in MinosCommonConnection::on_readyRead; remove_socket = true");
+          remove_socket = true;
+       }
+       // rxlen == 0 is valid
    }
-   else if (rxlen < 0)
-   {
-       trace("Bad read in MinosCommonConnection::on_readyRead; remove_socket = true");
-      remove_socket = true;
-   }
-   // rxlen == 0 is valid
 }
 //==============================================================================
 void MinosCommonConnection::analyseNode( TiXmlElement *tix )
@@ -359,6 +362,6 @@ void MinosCommonConnection::analyseNode( TiXmlElement *tix )
 //=============================================================================
 void MinosCommonConnection::on_disconnected()
 {
-    trace("MinosCommonConnection::on_disconnected()" + clientServer + "; remove_socket = true");
+    trace("MinosCommonConnection::on_disconnected() " + clientServer + "; remove_socket = true");
     remove_socket = true;
 }

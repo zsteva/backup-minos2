@@ -12,6 +12,7 @@ TSettingsEditDlg::TSettingsEditDlg(QWidget *parent, SettingsBundle *bundle) :
 
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     initialSection = bundle->getSection();
 
     QSettings settings;
@@ -98,7 +99,7 @@ void TSettingsEditDlg::showDetails()
    if ( offset > 0 || currSectionOnly)
    {
        // sections are all i = aaaaaaa
-       std::vector<int> entries = bundle->getBundleEntries();
+       QVector<int> entries = bundle->getBundleEntries();
 
        QStringList hints = bundle->getBundleHints( );
 
@@ -108,7 +109,7 @@ void TSettingsEditDlg::showDetails()
        ui->OptionsTable->setColumnCount(1);
        ui->OptionsTable->setRowCount(entries.size());
 
-       for ( unsigned int i= 0; i < entries.size(); i++ )
+       for ( int i= 0; i < entries.size(); i++ )
        {
            labels.append(bundle->displayNameOf( entries[ i ] ));
 
@@ -135,8 +136,8 @@ void TSettingsEditDlg::getDetails()
    int offset = ui->SectionsList->currentRow();
    if (( offset > 0 || currSectionOnly) && ui->OptionsTable->rowCount())
    {
-      std::vector<int> entries = bundle->getBundleEntries();
-      for ( unsigned int r = 0; r < entries.size(); r++ )
+      QVector<int> entries = bundle->getBundleEntries();
+      for ( int r = 0; r < entries.size(); r++ )
       {
          QString val = ui->OptionsTable->item(r, 0)->text();
          bundle->setStringProfile( entries[ r ], val );

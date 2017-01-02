@@ -13,7 +13,7 @@
 class DisplayContestContact;
 struct StanzaPos
 {
-   unsigned int stanza;
+   int stanza;
    long stanzaStart;
 };
 class LoggerContestLog : public BaseContestLog
@@ -39,7 +39,7 @@ class LoggerContestLog : public BaseContestLog
       bool importLOG( QSharedPointer<QFile>  );
       bool importAdif( QSharedPointer<QFile>  );
       bool importReg1Test( QSharedPointer<QFile> adifContestFile );
-      std::vector<StanzaPos> stanzaLocations;
+      QVector<StanzaPos> stanzaLocations;
 
    protected:
    public:
@@ -61,8 +61,8 @@ class LoggerContestLog : public BaseContestLog
       }
 
       virtual void processMinosStanza( const QString &methodName, MinosTestImport * const mt ) override;
-      void setStanza( unsigned int stanza, int stanzaStart );
-      virtual bool getStanza( unsigned int Stanza, QString &stanzaData );
+      void setStanza( int stanza, int stanzaStart );
+      virtual bool getStanza(int Stanza, QString &stanzaData );
 
       // The contest details
 
@@ -140,22 +140,22 @@ class LoggerContestLog : public BaseContestLog
 
       // minos file
       virtual bool minosSaveFile( bool newfile );
-      virtual bool minosSaveContestContact( const ContestContact *lct );
+      virtual bool minosSaveContestContact(const QSharedPointer<BaseContact> lct );
       // Import/export etc
 
       bool export_contest( QSharedPointer<QFile>, ExportType );
       bool exportGJV(QSharedPointer<QFile> );
-      void procUnknown( BaseContact *cct, writer &wr );
+      void procUnknown( QSharedPointer<BaseContact> cct, writer &wr );
       bool exportADIF( QSharedPointer<QFile> expfd );
       bool exportKML( QSharedPointer<QFile> expfd );
       bool exportREG1TEST(QSharedPointer<QFile> expfd );
       bool exportPrintFile( QSharedPointer<QFile> expfd );
       bool exportMinos(QSharedPointer<QFile> expfd );
 
-      virtual void makeContact( bool time_now, BaseContact *& );
-      DisplayContestContact *addContact( int newctno, int extra_flags, bool save_new, bool catchup );
-      DisplayContestContact *addContactBetween( BaseContact *prior, BaseContact *next );
-      void removeContact( DisplayContestContact * );
+      virtual void makeContact( bool time_now, QSharedPointer<BaseContact>& );
+      QSharedPointer<BaseContact> addContact( int newctno, int extra_flags, bool save_new, bool catchup );
+      QSharedPointer<BaseContact> addContactBetween( QSharedPointer<BaseContact> prior, QSharedPointer<BaseContact> next );
+      void removeContact(QSharedPointer<BaseContact> );
 
 };
 

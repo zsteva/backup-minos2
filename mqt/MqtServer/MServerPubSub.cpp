@@ -20,34 +20,34 @@ TPubSubMain *PubSubMain = 0;
 //---------------------------------------------------------------------------
 static void makeRPCObjects()
 {
-   MinosRPCObj::addObj( new RPCPublishServer( new TRPCCallback <TPubSubMain> ( PubSubMain, &TPubSubMain::publishCallback ) ) );
-   MinosRPCObj::addObj( new RPCSubscribeServer( new TRPCCallback <TPubSubMain> ( PubSubMain, &TPubSubMain::subscribeCallback ) ) );
-   MinosRPCObj::addObj( new RPCRemoteSubscribeServer( new TRPCCallback <TPubSubMain> ( PubSubMain, &TPubSubMain::remoteSubscribeCallback ) ) );
-   MinosRPCObj::addObj( new RPCRServerSubscribeServer( new TRPCCallback <TPubSubMain> ( PubSubMain, &TPubSubMain::serverSubscribeCallback ) ) );
-   MinosRPCObj::addObj( new RPCServerNotifyServer( new TRPCCallback <TPubSubMain> ( PubSubMain, &TPubSubMain::serverNotifyCallback ) ) );
+   MinosRPCObj::addServerObj( QSharedPointer<MinosRPCObj>(new RPCPublishServer( new TRPCCallback <TPubSubMain> ( PubSubMain, &TPubSubMain::publishCallback ) ) ) );
+   MinosRPCObj::addServerObj( QSharedPointer<MinosRPCObj>(new RPCSubscribeServer( new TRPCCallback <TPubSubMain> ( PubSubMain, &TPubSubMain::subscribeCallback ) ) ) );
+   MinosRPCObj::addServerObj( QSharedPointer<MinosRPCObj>(new RPCRemoteSubscribeServer( new TRPCCallback <TPubSubMain> ( PubSubMain, &TPubSubMain::remoteSubscribeCallback ) ) ) );
+   MinosRPCObj::addServerObj( QSharedPointer<MinosRPCObj>(new RPCRServerSubscribeServer( new TRPCCallback <TPubSubMain> ( PubSubMain, &TPubSubMain::serverSubscribeCallback ) ) ) );
+   MinosRPCObj::addServerObj( QSharedPointer<MinosRPCObj>(new RPCServerNotifyServer( new TRPCCallback <TPubSubMain> ( PubSubMain, &TPubSubMain::serverNotifyCallback ) ) ) );
 
    RPCServerPubSub::initialisePubSub( new TRPCCallback <TPubSubMain> ( PubSubMain, &TPubSubMain::notifyCallback ) );
 }
 //---------------------------------------------------------------------------
 class Subscriber;
-typedef std::vector <Subscriber *> SubscriberList;
-typedef std::vector <Subscriber *>::iterator SubscriberListIterator;
+typedef QVector <Subscriber *> SubscriberList;
+typedef QVector <Subscriber *>::iterator SubscriberListIterator;
 //---------------------------------------------------------------------------
 class RemoteSubscriber;
-typedef std::vector <RemoteSubscriber *> RemoteSubscriberList;
-typedef std::vector <RemoteSubscriber *>::iterator RemoteSubscriberListIterator;
+typedef QVector <RemoteSubscriber *> RemoteSubscriberList;
+typedef QVector <RemoteSubscriber *>::iterator RemoteSubscriberListIterator;
 //---------------------------------------------------------------------------
 class ServerSubscriber;
-typedef std::vector <ServerSubscriber *> ServerSubscriberList;
-typedef std::vector <ServerSubscriber *>::iterator ServerSubscriberListIterator;
+typedef QVector <ServerSubscriber *> ServerSubscriberList;
+typedef QVector <ServerSubscriber *>::iterator ServerSubscriberListIterator;
 //---------------------------------------------------------------------------
 class PublishedCategory;
-typedef std::vector <PublishedCategory *> PublishedCategoryList;
-typedef std::vector <PublishedCategory *>::iterator PublishedCategoryListIterator;
+typedef QVector <PublishedCategory *> PublishedCategoryList;
+typedef QVector <PublishedCategory *>::iterator PublishedCategoryListIterator;
 //---------------------------------------------------------------------------
 class PublishedKey;
-typedef std::vector <PublishedKey *> PublishedKeyList;
-typedef std::vector <PublishedKey *>::iterator PublishedKeyListIterator;
+typedef QVector <PublishedKey *> PublishedKeyList;
+typedef QVector <PublishedKey *>::iterator PublishedKeyListIterator;
 //---------------------------------------------------------------------------
 // normal subscriber; client prog of this server
 class Subscriber
@@ -708,7 +708,7 @@ int GetPublishedCount()
 
 // callback to publish local server - this may get proxied when we have a remote server subscriber
 
-void TPubSubMain::publishCallback( bool err, MinosRPCObj *mro, const QString &from )
+void TPubSubMain::publishCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
    logMessage( "Publish callback from " + from + ( err ? ":Error" : ":Normal" ) );
 
@@ -759,7 +759,7 @@ void TPubSubMain::publishCallback( bool err, MinosRPCObj *mro, const QString &fr
 
 // callback to subscribe client - local server (there should not be a server member)
 
-void TPubSubMain::subscribeCallback( bool err, MinosRPCObj *mro, const QString &from )
+void TPubSubMain::subscribeCallback(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
    logMessage( "Client Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
    if ( !err )
@@ -801,7 +801,7 @@ void TPubSubMain::subscribeCallback( bool err, MinosRPCObj *mro, const QString &
 
 // callback to subscribe client  - remote server
 
-void TPubSubMain::remoteSubscribeCallback( bool err, MinosRPCObj *mro, const QString &from )
+void TPubSubMain::remoteSubscribeCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
    logMessage( "Remote Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
    if ( !err )
@@ -852,7 +852,7 @@ void TPubSubMain::remoteSubscribeCallback( bool err, MinosRPCObj *mro, const QSt
 
 // callback to subscribe server  - remote server
 
-void TPubSubMain::serverSubscribeCallback( bool err, MinosRPCObj *mro, const QString &from )
+void TPubSubMain::serverSubscribeCallback(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
    logMessage( "Server Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
    if ( !err )
@@ -898,7 +898,7 @@ void TPubSubMain::serverSubscribeCallback( bool err, MinosRPCObj *mro, const QSt
 
 // callback for responses to notify messages
 
-void TPubSubMain::notifyCallback( bool err, MinosRPCObj * /*mro*/, const QString &from )
+void TPubSubMain::notifyCallback( bool err, QSharedPointer<MinosRPCObj> /*mro*/, const QString &from )
 {
    // response to pubsub calls
    logMessage( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
@@ -907,7 +907,7 @@ void TPubSubMain::notifyCallback( bool err, MinosRPCObj * /*mro*/, const QString
 
 // this we get when we get a subscribe notification from a remote server
 
-void TPubSubMain::serverNotifyCallback( bool err, MinosRPCObj *mro, const QString &from )
+void TPubSubMain::serverNotifyCallback(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
    // we need to pass it on to any of our subscribers who are interested
    // in this event from this server

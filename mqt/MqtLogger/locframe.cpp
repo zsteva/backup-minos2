@@ -23,10 +23,11 @@ void LocFrame::setContest(BaseContestLog *contest)
 void LocFrame::reInitialiseLocators()
 {
     ui->LocTree->clear();
-    for (int k = 0; k <(int) ct->locs.llist.size(); k++)
+    for (int k = 0; k < ct->locs.llist.size(); k++)
     {
         QTreeWidgetItem *it = new QTreeWidgetItem(ui->LocTree);
-        it->setText(0, ct->locs.llist[ k ] ->loc);
+        QString locStart = ct->locs.itemAt(k) ->loc;
+        it->setText(0, locStart);
         it->setExpanded(true);
 
         for (int j = 0; j < 10; j++)
@@ -34,11 +35,22 @@ void LocFrame::reInitialiseLocators()
             QString dispLine;
             for (int i = 0; i < 10; i++)
             {
-                LocCount *lc = ct->locs.llist[ k ] ->map( j * 10 + i );
+                LocCount *lc = ct->locs.itemAt(k) ->map( j * 10 + i );
                 QString disp = QString("%1").arg(j * 10 + i, 2, 10, QChar('0'));
 
                 if ( lc && (lc->UKLocCount || lc->nonUKLocCount))
-                    dispLine += disp + " (" + QString::number(lc->UKLocCount) + (lc->nonUKLocCount?("/" + QString::number(lc->nonUKLocCount)):QString("")) + ") ";
+                {
+                    if (ct->UKACBonus.getValue())
+                    {
+                        dispLine += disp + " (" + QString::number(lc->UKLocCount + lc->nonUKLocCount)
+                                    + "/" + QString::number(ct->getSquareBonus(locStart + disp)) + ") ";
+                    }
+                    else
+                    {
+                        dispLine += disp + " (" + QString::number(lc->UKLocCount)
+                                    + (lc->nonUKLocCount?("/" + QString::number(lc->nonUKLocCount)):QString("")) + ") ";
+                    }
+                }
             }
             if (dispLine.size())
             {

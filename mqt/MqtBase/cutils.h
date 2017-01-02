@@ -16,28 +16,24 @@
 extern const double pi /* = (double )3.141592653 */;  /* pi */
 extern const double dr /* = pi/180.0*/;      			  // degree to radian conversion factor
 
-extern bool checkFileOK( std::ifstream &istr, const QString &fname, const QString &fmess );
-
-//extern char *lbuff;
 extern void clearBuffer( void );
 extern void strtobuf( const QString &str );
 extern void strtobuf( const MinosItem<QString> &str );
 extern void strtobuf();
 QString strupr( const QString &s );
-//extern int stricmp( const QString &s1, const QString &s2 );
 extern int strnicmp( const QString &s1, const QString &s2, unsigned int len );
 extern void opyn( bool b );
 void opyn( const MinosItem<bool> &b );
 extern void buftostr( QString &str );
 extern void buftostr( MinosItem<QString> &str );
 extern bool inyn();
-extern bool wildComp( const QString &e, const QString &s );
-extern int strcpysp( char *s1, const QString &s2, int maxlen = 255 );
+extern size_t strcpysp( char *s1, const QString &s2, int maxlen = 255 );
 extern int strcpysp( QString &s1, const QString &s2, int maxlen = 255 );
 extern int strcmpsp( const QString &s1, const QString &s2 );
 extern int stricmpsp( const QString &s1, const QString &s2 );
 extern int placestr(QString &buff, const QString &str, int start, int len );
-int parseLine( char *buff, char sep, char **a, int count, char sep2, bool &sep2seen );
+extern int strcspn(const QString &s, const QString &chars);
+int parseLine(QString buff, char sep, QStringList &a, int count, char sep2, bool &sep2seen );
 
 extern QString trimr( const QString & );
 
@@ -49,7 +45,7 @@ extern QDateTime CanonicalToTDT( QString cdtg );
 const int bsize = 256;
 extern char diskBuffer[ bsize + 1 ];
 
-extern int buffpt;
+extern size_t buffpt;
 
 class writer
 {

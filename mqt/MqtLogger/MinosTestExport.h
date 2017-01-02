@@ -40,8 +40,8 @@ class MinosTestExport
       int exportAllDetails( QSharedPointer<QFile> expfd, bool newfile );
       int exportTest(QSharedPointer<QFile> expfd, int mindump, int maxdump );
 
-      int exportComment( QSharedPointer<QFile> expfd, const ContestContact *lct );
-      int exportQSO( QSharedPointer<QFile> expfd, const ContestContact *lct );
+      int exportComment( QSharedPointer<QFile> expfd, const QSharedPointer<BaseContact> lct );
+      int exportQSO( QSharedPointer<QFile> expfd, const QSharedPointer<BaseContact>lct );
 
 };
 #endif
