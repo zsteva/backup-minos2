@@ -11,6 +11,11 @@ TClockDlg::TClockDlg(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
+    QSettings settings;
+    QByteArray geometry = settings.value("TClockDlg/geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
+
     connect(&clockTick, SIGNAL(timeout()), this, SLOT(on_clockTicked()));
     clockTick.start(500);
 
@@ -100,4 +105,19 @@ void TClockDlg::on_dateEdit_dateChanged(const QDate &/*date*/)
 void TClockDlg::on_timeEdit_timeChanged(const QTime &/*time*/)
 {
     handleEdit();
+}
+void TClockDlg::doCloseEvent()
+{
+    QSettings settings;
+    settings.setValue("TClockDlg/geometry", saveGeometry());
+}
+void TClockDlg::reject()
+{
+    doCloseEvent();
+    QDialog::reject();
+}
+void TClockDlg::accept()
+{
+    doCloseEvent();
+    QDialog::accept();
 }

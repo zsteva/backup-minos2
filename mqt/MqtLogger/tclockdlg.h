@@ -35,10 +35,14 @@ private:
     Ui::TClockDlg *ui;
     void setEdits();
     void handleEdit();
+    void doCloseEvent();
 
     bool initialised;
     int initialCorrection;
     QTimer clockTick;
+public Q_SLOTS:
+    virtual void accept() override;
+    virtual void reject() override;
 
 };
 
