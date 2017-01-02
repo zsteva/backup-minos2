@@ -98,19 +98,14 @@ char lonlat( const QString &inqra, double &lon, double &lat )
    lat = lat * dr ;
 
    bool allowLoc4 = MinosParameters::getMinosParameters() ->getAllowLoc4();
-   bool allowLoc8 = MinosParameters::getMinosParameters() ->getAllowLoc8();
 
    if ( l == 4 && allowLoc4 )
    {
       return locres;
    }
-   if ( l == 8 && allowLoc8 )
+   if ( l == 6 || l == 8 )
    {
 	  return locres;
-   }
-   if ( l == 6 )
-   {
-      return locres;
    }
    return LOC_PARTIAL;
 }
