@@ -1025,14 +1025,10 @@ bool LoggerContestLog::exportKML(QSharedPointer<QFile> expfd )
          strcpy( inputbuff, ct->loc.loc.getValue().toStdString().c_str() );
          l1.gridstyle = LOC;
          l1.datastring = inputbuff;
-         l1.datalength = ct->loc.loc.getValue().length() + 1;
-         l1.dataoffset = 0;
 
          char outputbuff[ 100 ];
          l2.datastring = outputbuff;
          l2.gridstyle = GEO;
-         l2.datalength = 40;
-         l2.dataoffset = 0;
 
          if ( transform( &l1, &l2 ) == GRIDOK )
          {

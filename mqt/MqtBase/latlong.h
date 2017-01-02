@@ -18,11 +18,13 @@ enum gridstyle {NUL, GEO, OWN, NGR, LOC};
 struct Location
 {
    enum gridstyle gridstyle;
-   char *datastring;
-   int dataoffset, datalength;
+   QString datastring;
    double northing, easting, centremeridian;
 };
 
 void dms( double, int *, int *, double * );
 int transform( Location *, Location * );
+double raddeg( double );
+double degrad( double );
+
 #endif

@@ -95,14 +95,14 @@ static struct transformelement tfmatrix[ LOC + 1 ][ LOC + 1 ] =
    };
 
 static Location interlocs[ 8 ] = {
-                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
-                                    {NUL, nullptr, 0, 0, 0.0, 0.0, 0.0},
+                                    {NUL, "", 0.0, 0.0, 0.0},
+                                    {NUL, "", 0.0, 0.0, 0.0},
+                                    {NUL, "", 0.0, 0.0, 0.0},
+                                    {NUL, "", 0.0, 0.0, 0.0},
+                                    {NUL, "", 0.0, 0.0, 0.0},
+                                    {NUL, "", 0.0, 0.0, 0.0},
+                                    {NUL, "", 0.0, 0.0, 0.0},
+                                    {NUL, "", 0.0, 0.0, 0.0}
                                  };
 static Location p_ingrid, p_outgrid;
 
@@ -268,7 +268,7 @@ double degrad( double x )
 }
 /**********************************************************************/
 
-static int getgridcoord( char *gridref, int offset, int dlength, double *e, double *n )
+static int getgridcoord( QString gridref, int offset, int dlength, double *e, double *n )
 {
    QString tbuff;
    double x = 0.0, y = 0.0;
@@ -277,7 +277,7 @@ static int getgridcoord( char *gridref, int offset, int dlength, double *e, doub
       return ( INVALIDGREF );
 
    int i = offset;
-   while ( ( i < 20 ) && gridref[ i ] )
+   while ( ( i < 20 ) && i < gridref.length() )
    {
       if ( gridref[ i ] != ' ' )
          tbuff += gridref[ i ];
@@ -285,10 +285,10 @@ static int getgridcoord( char *gridref, int offset, int dlength, double *e, doub
    }
    i = 0;
 
-   while ( ( ( i + offset ) < dlength ) && ( tbuff[ i + offset ].isNumber() )
+   while ( ( ( i + offset ) < dlength ) && ( tbuff[ i ].isNumber() )
            && ( i < 10 ) )
    {
-      coordele[ i ] = tbuff[ i + offset ].toLatin1() - '0';
+      coordele[ i ] = tbuff[ i ].toLatin1() - '0';
       i++;
    }
 
@@ -472,21 +472,17 @@ static int transngrletters( char letter, int *e, int *n )
 
 static int ngrinput( Location *ingrid )
 {
-
    int ea, eb, na, nb;
-   char l1, l2;
    double ge = 0.0, gn = 0.0;
 
-   char *gridref = ingrid->datastring;
-   int offset = ingrid->dataoffset;
-   int dlength = ingrid->datalength;
+   QString gridref = ingrid->datastring.toUpper();
+   int offset = 0;
+   int dlength = gridref.length();
 
    ingrid->centremeridian = degrad( -2 );
 
-   strupr( gridref );
-
-   l1 = gridref[ offset++ ];
-   l2 = gridref[ offset++ ];
+   char l1 = gridref[ offset++ ].toLatin1();
+   char l2 = gridref[ offset++ ].toLatin1();
 
    if ( getgridcoord( gridref, offset, dlength, &ge, &gn ) != GRIDOK )
       return ( INVALIDGREF );
@@ -521,45 +517,41 @@ static int internaltongr( Location *ingrid, Location *outgrid )
 
 static int ngroutput( Location *outgrid )
 {
+   QString gridref;
 
-   int ea, eb, na, nb;
-   size_t gri = outgrid->dataoffset;
-   double ger = 0.0, gnr = 0.0;
-   double n1 = 0.0, e = 0.0;
-   char *gridref = outgrid->datastring;
-
-   e = outgrid->easting + 1000000.0;
-   n1 = outgrid->northing + 500000.0;
+   double e = outgrid->easting + 1000000.0;
+   double n1 = outgrid->northing + 500000.0;
 
    if ( ( e < 0.0 ) || ( n1 < 0.0 ) || ( e > 2500000.0 ) || ( n1 > 2500000.0 ) )
       return ( INVALIDGREF );
 
-   ea = static_cast< int > ( e / 500000.0 );
-   na = static_cast< int >  ( n1 / 500000.0 );
+   int ea = static_cast< int > ( e / 500000.0 );
+   int na = static_cast< int >  ( n1 / 500000.0 );
 
-   eb = static_cast< int >  ( ( e - ( 500000.0 * ea ) ) / 100000.0 );
-   nb = static_cast< int >  ( ( n1 - ( 500000.0 * na ) ) / 100000.0 );
+   int eb = static_cast< int >  ( ( e - ( 500000.0 * ea ) ) / 100000.0 );
+   int nb = static_cast< int >  ( ( n1 - ( 500000.0 * na ) ) / 100000.0 );
 
-   ger = e - ( 500000.0 * ea + 100000.0 * eb );
-   gnr = n1 - ( 500000.0 * na + 100000.0 * nb );
+   double ger = e - ( 500000.0 * ea + 100000.0 * eb );
+   double gnr = n1 - ( 500000.0 * na + 100000.0 * nb );
 
-   gridref[ gri ] = static_cast< char >  ( ( 4 - na ) * 5 + ea + 'A' );
+   char g = static_cast< char >  ( ( 4 - na ) * 5 + ea + 'A' );
 
-   if ( gridref[ gri ] >= 'I' )
-      gridref[ gri ] ++;
+   if ( g >= 'I' )
+      g++;
+   gridref += g;
 
-   gridref[ ++gri ] = static_cast< char >  ( ( 4 - nb ) * 5 + eb + 'A' );
+   g = static_cast< char >  ( ( 4 - nb ) * 5 + eb + 'A' );
 
-   if ( gridref[ gri ] >= 'I' )
-      gridref[ gri ] ++;
+   if ( g >= 'I' )
+      g++;
+   gridref += g;
 
-   QString pt1 = QString::number(ger, 'f', 5);
-   QString pt2 = QString::number(gnr, 'f', 5);
-   QString gr = pt1 + " " + pt2;
+   QString pt1 = QString::number(static_cast<int>(ger)).rightJustified(5, '0');
+   QString pt2 = QString::number(static_cast<int>(gnr)).rightJustified(5, '0');
+   QString gr = " " + pt1 + " " + pt2;
 
-   strcpy( &gridref[ ++gri ], gr.toStdString().c_str() );
-   //   sprintf( &gridref[ ++gri ], "%06.6s%06.6s",
-   //            pt1.c_str(), pt2.c_str() );
+   gridref += gr;
+   outgrid->datastring = gridref;
 
    return ( GRIDOK );
 }
@@ -574,11 +566,12 @@ static void ukoscentre ( double /*longi*/, double *centre )
 
 static int locinput( Location *ingrid )
 {
-   size_t gri = ingrid->dataoffset;
-   char *gridref = &ingrid->datastring[ gri ];
+   int tok = lonlat( ingrid->datastring, ingrid->easting, ingrid->northing );
 
-   if ( lonlat( gridref, ingrid->easting, ingrid->northing ) == LOC_OK )
+   if (tok == LOC_OK )
+   {
       return GRIDOK;
+   }
    return ( INVALIDGREF );
 }
 
@@ -623,13 +616,11 @@ static int locoutput( Location *outgrid )
 {
    double lat = 0.0, longi = 0.0;
 
-   int gri = outgrid->dataoffset;
-   QString gridref = QString(outgrid->datastring).mid( gri );
-
    longi = raddeg( outgrid->easting );
    lat = raddeg( outgrid->northing );
 
-   return geotoloc( lat, longi, gridref );
+   int ret = geotoloc( lat, longi, outgrid->datastring );
+   return ret;
 }
 static void loccentre( double /*longi*/, double *centre )
 {
@@ -671,34 +662,37 @@ static int geoinput( Location *ingrid )
    //		fprintf(outfile, "\nLatitude (int int f): ");
    //		getline();
 
-   strupr( ingrid->datastring );
+   ingrid->datastring = ingrid->datastring.toUpper();
 
    i = static_cast<int>(strcspn( ingrid->datastring, "NSEW" ));
-   if ( i < ingrid->datalength )
-      j = static_cast<int>(strcspn( &ingrid->datastring[ i + 1 ], "NSEW" ));
+   if ( i < ingrid->datastring.length() )
+      j = static_cast<int>(strcspn( ingrid->datastring.mid( i + 1 ), "NSEW" ));
    else
       j = 0;
 
    QString nStr;
-   QString &b1 = nStr;
-   QString &b2 = nStr;
+   QString *b1 = 0;
+   QString *b2 = 0;
 
-   char dsi = ingrid->datastring[ i ];
-   char dsj = ingrid->datastring[ i + 1 + j ];
+   if (i < 0 || j < 0)
+       return INVALIDGREF;
+
+   char dsi = ingrid->datastring[ i ].toLatin1();
+   char dsj = ingrid->datastring[ i + 1 + j ].toLatin1();
 
    if ( ( dsi == 'N' ) || ( dsi == 'S' ) )
-      b1 = latbuff;
+      b1 = &latbuff;
    else
       if ( ( dsi == 'E' ) || ( dsi == 'W' ) )
-         b1 = longbuff;
+         b1 = &longbuff;
 
    if ( ( dsj == 'N' ) || ( dsj == 'S' ) )
-      b2 = latbuff;
+      b2 = &latbuff;
    else
       if ( ( dsj == 'E' ) || ( dsj == 'W' ) )
-         b2 = longbuff;
+         b2 = &longbuff;
 
-   if ( ( b1.isNull() ) || ( b2.isNull() ) || ( b1 == b2 ) )
+   if ( ( b1 == 0 ) || ( b2 == 0 ) || ( b1 == b2 ) )
       return ( INVALIDGREF );
 
    if ( ( dsi == 'S' ) || ( dsj == 'S' ) )
@@ -706,8 +700,8 @@ static int geoinput( Location *ingrid )
    if ( ( dsi == 'W' ) || ( dsj == 'W' ) )
       esign = -1;
 
-   b1 = QString(ingrid->datastring).left(i);
-   b2 = QString(ingrid->datastring).mid( i + 1, j );
+   *b1 = QString(ingrid->datastring).left(i);
+   *b2 = QString(ingrid->datastring).mid( i + 1, j );
 
    deg = 0;
    min = 0;
@@ -760,11 +754,6 @@ static int geooutput( Location *outgrid )
    char lngs = 'E', lats = 'N';
    double slng = 0.0, slat = 0.0;
 
-   size_t gri = outgrid->dataoffset;
-   char *gridref = &outgrid->datastring[ gri ];
-
-   if ( outgrid->datalength < 16 )
-      return ( INVALIDGREF );
    dms( raddeg( outgrid->northing ), &dlat, &mlat, &slat );
    dms( raddeg( outgrid->easting ), &dlng, &mlng, &slng );
    if ( outgrid->northing < 0 )
@@ -777,12 +766,15 @@ static int geooutput( Location *outgrid )
       dlng = -dlng;
       lngs = 'W';
    }
+
+   char gridref[100];
    sprintf( gridref,
             "%2.2d %2.2d %2.4f %c " 		// northing
             "%3.3d %2.2d %2.4f %c",       // easting
             dlat, mlat, slat, lats,
             dlng, mlng, slng, lngs
           );
+   outgrid->datastring = gridref;
    return ( GRIDOK );
 
 }
