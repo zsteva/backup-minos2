@@ -67,7 +67,8 @@ SOURCES += main.cpp \
     locframe.cpp \
     SendRPCDM.cpp \
     ConfigDM.cpp \
-    tconfigframe.cpp
+    tconfigframe.cpp \
+    TSessionManager.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -104,7 +105,8 @@ HEADERS  += \
     locframe.h \
     SendRPCDM.h \
     ConfigDM.h \
-    tconfigframe.h
+    tconfigframe.h \
+    TSessionManager.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
@@ -126,7 +128,8 @@ FORMS    += tlogcontainer.ui \
     dxccframe.ui \
     districtframe.ui \
     locframe.ui \
-    tconfigframe.ui
+    tconfigframe.ui \
+    TSessionManager.ui
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase

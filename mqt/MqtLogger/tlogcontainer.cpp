@@ -16,6 +16,7 @@
 #include "tsettingseditdlg.h"
 #include "tclockdlg.h"
 #include "tloccalcform.h"
+#include "TSessionManager.h"
 
 TLogContainer *LogContainer = 0;
 
@@ -199,7 +200,7 @@ void TLogContainer::setupMenus()
 
     for (int i = 0; i < MaxRecentFiles; ++i)
     {
-        recentFileActs[i] = new QAction(this);
+        recentFileActs.push_back( new QAction(this));
         recentFileActs[i]->setVisible(false);
         connect(recentFileActs[i], SIGNAL(triggered()),
                 this, SLOT(openRecentFile()));
@@ -207,12 +208,19 @@ void TLogContainer::setupMenus()
     }
     updateRecentFileActions();
 
+    sessionsMenu = ui->menuFile->addMenu("Sessions");
+    sessionSaveAction = newAction("&Save Session...", sessionsMenu, SLOT(sessionSaveExecute()));
+    sessionManagerAction  = newAction("&Manage Sessions...", sessionsMenu, SLOT(sessionManageExecute()));
+    sessionsMenu->addSeparator();
+    updateSessionActions();
+
     FileNewAction = newAction("&New Contest...", ui->menuFile, SLOT(FileNewActionExecute()));
     FileCloseAction = newAction("Close Contest", ui->menuFile, SLOT(FileCloseActionExecute()));
     CloseAllAction = newAction("Close all Contests", ui->menuFile, SLOT(CloseAllActionExecute()));
     CloseAllButAction = newAction("Close all but this Contest", ui->menuFile, SLOT(CloseAllButActionExecute()));
     ui->menuFile->addSeparator();
 
+    ui->menuFile->addSeparator();
     ContestDetailsAction = newAction("Contest Details...", ui->menuFile, SLOT(ContestDetailsActionExecute()));
     MakeEntryAction = newAction("Produce Entry/Export File...", ui->menuFile, SLOT(MakeEntryActionExecute()));
     ui->menuFile->addSeparator();
@@ -274,6 +282,82 @@ void TLogContainer::setupMenus()
 
     HelpAboutAction = newAction("About...", ui->menuHelp, SLOT(HelpAboutActionExecute()));
 }
+
+QStringList TLogContainer::getSessions()
+{
+   QStringList sessionlst = TContestApp::getContestApp() ->preloadBundle.getSections();
+   qSort( sessionlst);
+   for (int i = 0; i < sessionlst.size(); ++i) {
+       if (sessionlst[i] == noneBundle)
+       {
+           sessionlst.removeAt(i);
+           break;
+       }
+   }
+   return sessionlst;
+}
+
+void TLogContainer::updateSessionActions()
+{
+    QStringList sessionlst = getSessions();
+    for (int i = 0; i < sessionlst.size(); ++i)
+    {
+        sessionActs.push_back( new QAction(this));
+        sessionActs[i]->setText(sessionlst[i]);
+        connect(sessionActs[i], SIGNAL(triggered()),
+                this, SLOT(selectSession()));
+        sessionsMenu->addAction(sessionActs[i]);
+    }
+    // here we should get the session from defaults
+    currSession = "Default";
+}
+// we need "new session"
+void TLogContainer::sessionSaveExecute()
+{
+    // start with "save session as" default current session
+    QStringList sl = getSessions();
+
+    int offset = sl.indexOf( currSession );
+
+    bool ok = false;
+    QString prompt = "Enter session name";
+    QString text = QInputDialog::getItem( 0, "Please supply value",
+                                          prompt, sl,
+                                          offset, true, &ok );
+    if ( ok )
+    {
+        QString Value = text;
+    }
+
+    // do we auto save current session on session change/exit program?
+}
+
+void TLogContainer::sessionManageExecute()
+{
+    // present list of sessions, with contents (L/R panes)
+    // allow select, remove on LH
+    // and select as open, current, remove, re-order on RH
+
+    // open new session, move contest between sessions
+
+    TSessionManager tsm(this);
+    tsm.currSession = currSession;
+    if (tsm.exec() == QDialog::Accepted)
+    {
+        currSession = tsm.currSession;
+    }
+}
+void TLogContainer::selectSession()
+{
+    QAction *action = qobject_cast<QAction *>(sender());
+    if (action)
+    {
+        QString selText = action->text();
+        currSession = selText;
+        mShowMessage(selText, this);
+    }
+}
+
 void TLogContainer::enableActions()
 {
    bool f = ( ui->ContestPageControl->currentIndex() >= 0 );
@@ -418,7 +502,6 @@ QString TLogContainer::strippedName(const QString &fullFileName)
 {
     return QFileInfo(fullFileName).fileName();
 }
-
 
 void TLogContainer::HelpAboutActionExecute()
 {

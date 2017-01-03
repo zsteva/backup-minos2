@@ -68,8 +68,10 @@ private:
     QMenu TabPopup;
 
     enum { MaxRecentFiles = 5 };
-    QAction *recentFileActs[MaxRecentFiles];
+    QVector<QAction *> recentFileActs;
     QMenu *recentFilesMenu;
+    QVector<QAction *> sessionActs;
+    QMenu *sessionsMenu;
 
     void enableActions();
 
@@ -78,6 +80,10 @@ private:
     void removeCurrentFile(const QString &fileName);
     void updateRecentFileActions();
     QString strippedName(const QString &fullFileName);
+
+    QString currSession;
+    QStringList getSessions();
+    void updateSessionActions();
 
     BaseContestLog * addSlot(ContestDetails *ced, const QString &fname, bool newfile, int slotno );
     void closeSlot(int t, bool addToMRU );
@@ -96,6 +102,10 @@ private:
     QAction *FileCloseAction;
     QAction *CloseAllAction;
     QAction *CloseAllButAction;
+
+    QAction *sessionSaveAction;
+    QAction *sessionManagerAction;
+
     QAction *ExitAction;
     QAction *MakeEntryAction;
     QAction *FileNewAction;
@@ -133,6 +143,7 @@ private slots:
     void CancelClick();
     void HelpAboutActionExecute();
 
+    void selectSession();
     void openRecentFile();
     void FileOpenActionExecute();
     void ListOpenActionExecute();
@@ -142,6 +153,9 @@ private slots:
     void CloseAllActionExecute();
     void CloseAllButActionExecute();
     void ExitActionExecute();
+
+    void sessionSaveExecute();
+    void sessionManageExecute();
 
     void MakeEntryActionExecute();
     void FileNewActionExecute();
