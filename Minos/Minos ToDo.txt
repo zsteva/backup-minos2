@@ -1,10 +1,25 @@
 ==================================================================    
+To be tested
+
+Catch up
+Post entry
+Archive list editting
+
+==================================================================
+==================================================================
+==================================================================
+==================================================================
+==================================================================
+==================================================================
+==================================================================
+==================================================================
 ==================================================================    
 ==================================================================    
 ==================================================================    
 ==================================================================    
-================================================================== 
-Implement TClockDlg - apply overall correction to PC clock   
+==================================================================    
+==================================================================
+fractional minutes in stats display 
 ==================================================================    
 mqt - no fly by hints
 ==================================================================    
@@ -19,8 +34,6 @@ Qs1R control via Minos (currently stand alone)
 Need a "snagging list" - such things as 
 - "ops list" rows in details aren't RO (or at least don't show as such)
 - Rclick on tab dosn't select it before menu shown
-- various info shoud be dependent on the correct program connected via server
-- occasional crash in match code 
 - .Minos - or is it .minos?
 - Tab drag/drop
 ==================================================================    
@@ -38,15 +51,6 @@ very weak and are not readability 5
 ==================================================================    
 Use of Qt style sheets for shapes, sizes, colours
 ==================================================================    
-==================================================================    
-==================================================================
-==================================================================
-==================================================================
-==================================================================
-==================================================================
-==================================================================
-==================================================================
-==================================================================
 Google My Maps now accepts CSV files as input and these are probably
 more flexible and useful than KML,  It would be nice if Minos was
 able to export QSOs as CSVs, including lat/lon so they can be both
@@ -69,12 +73,12 @@ Multi band logs
 run/S&P switching
 ==================================================================
 Try a proper locator map
-Scaleable; change granularity with scale; IO/IO80/IO80ST
-Colour loc squares on map for number of contacts
-Able to select by country?
-How do we get a usable map? Or can we leverage google and embed the map?
-If we don't have a map is a splatter diagram still meaningul?
-Or can we get a crude "loc squares" map 
+  Scaleable; change granularity with scale; IO/IO80/IO80ST
+  Colour loc squares on map for number of contacts
+  Able to select by country?
+  How do we get a usable map? Or can we leverage google and embed the map?
+  If we don't have a map is a splatter diagram still meaningul?
+  Or can we get a crude "loc squares" map 
 ==================================================================
 Changes to do
 

@@ -117,6 +117,7 @@ void TSettingsEditDlg::showDetails()
            bundle->getStringProfile( entries[ i ], val );
 
            QTableWidgetItem *it = new QTableWidgetItem(val);
+           it->setToolTip(hints[i]);
 
 
           bool RO = bundle->isReadOnly(entries[ i ]);

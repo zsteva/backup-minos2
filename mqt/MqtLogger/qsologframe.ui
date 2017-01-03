@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>486</width>
-    <height>190</height>
+    <width>502</width>
+    <height>206</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -685,6 +685,9 @@
        <property name="focusPolicy">
         <enum>Qt::ClickFocus</enum>
        </property>
+       <property name="toolTip">
+        <string>Log the QSO, or move to next unfilled field</string>
+       </property>
        <property name="text">
         <string>Log</string>
        </property>
@@ -694,6 +697,9 @@
       <widget class="QPushButton" name="GJVForceButton">
        <property name="focusPolicy">
         <enum>Qt::ClickFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>Force logging the QSO, even when incomplete</string>
        </property>
        <property name="text">
         <string>Force...</string>
@@ -720,6 +726,9 @@
       <widget class="QPushButton" name="MatchXferButton">
        <property name="focusPolicy">
         <enum>Qt::ClickFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>Get fields from current matching QSO</string>
        </property>
        <property name="text">
         <string>Match Xfer F12</string>

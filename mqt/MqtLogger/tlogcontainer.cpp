@@ -885,6 +885,7 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
 
          int tno = ui->ContestPageControl->addTab(f, baseFName);
          ui->ContestPageControl->setCurrentWidget(ui->ContestPageControl->widget(tno));
+         ui->ContestPageControl->setTabToolTip(tno, contest->cfileName);
 
          f->logColumnsChanged = true;  // also causes show QSOs
          f->splittersChanged = true;
