@@ -7,7 +7,7 @@
 QT       += core gui network widgets serialport
 
 
-TARGET = MqtTestRotator
+TARGET = MqtRotator
 TEMPLATE = app
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
