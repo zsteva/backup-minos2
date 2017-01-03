@@ -8,7 +8,8 @@ SUBDIRS += \
     RPCTest \
     MqtLogger \
     MqtServer \
-    MqtRotator
+    MqtRotator \
+    MqtBandmap
 
 !unix {
     SUBDIRS += \
