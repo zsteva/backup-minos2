@@ -375,23 +375,23 @@ bool BaseContestLog::updateStat( QSharedPointer<BaseContact> cct )
          break;
 
    }
-   int sp1 = MinosParameters::getMinosParameters() ->getStatsPeriod1();
-   int sp2 = MinosParameters::getMinosParameters() ->getStatsPeriod2();
+   int sp1 = MinosParameters::getMinosParameters() ->getStatsPeriod1() * 60;
+   int sp2 = MinosParameters::getMinosParameters() ->getStatsPeriod2() * 60;
 
    // find the time since the beginning of the contest
 
    QDateTime  contestStart = CanonicalToTDT(DTGStart.getValue());
    int fromContestStart = contestStart.secsTo(QDateTime::currentDateTime());
-   if (sp1 > fromContestStart/120)
+   if (sp1 > fromContestStart/2)
    {
-      sp1 = fromContestStart/120;
+      sp1 = fromContestStart/2;
    }
-   if (sp2 > fromContestStart/120)
+   if (sp2 > fromContestStart/2)
    {
-      sp2 = fromContestStart/120;
+      sp2 = fromContestStart/2;
    }
 
-   if ( tdiff < sp1 * 60L )
+   if ( tdiff < sp1 )
    {
       // need a common routine
       // This period
@@ -402,7 +402,7 @@ bool BaseContestLog::updateStat( QSharedPointer<BaseContact> cct )
       acted = true;
    }
    else
-      if ( tdiff < sp1 * 60L * 2 )
+      if ( tdiff < sp1 * 2 )
       {
          // need a common routine
          // previous period
@@ -413,7 +413,7 @@ bool BaseContestLog::updateStat( QSharedPointer<BaseContact> cct )
          acted = true;
       }
 
-   if ( tdiff < sp2 * 60L )
+   if ( tdiff < sp2 )
    {
       // need a common routine
       // this period
@@ -424,7 +424,7 @@ bool BaseContestLog::updateStat( QSharedPointer<BaseContact> cct )
       acted = true;
    }
    else
-      if ( tdiff < sp2 * 60L * 2 )
+      if ( tdiff < sp2 * 2 )
       {
          // need a common routine
          // previous period
