@@ -1187,7 +1187,7 @@ void BaseContestLog::loadBonusList()
 
         for (QMap<QString, int>::iterator i = B2.bonuses.begin(); i != B2.bonuses.end(); i++)
         {
-            QString name = i.key();
+            QString name = i.key().toUpper();
             int value = i.value();
 
             locBonuses[name] = value;
