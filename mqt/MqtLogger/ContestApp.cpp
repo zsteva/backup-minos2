@@ -154,6 +154,7 @@ bool TContestApp::initialise()
 
    BundleFile::bundleFiles[ epLOGGERPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLOGGERPROFILE ) );
    BundleFile::bundleFiles[ epPRELOADPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epPRELOADPROFILE ) );
+   BundleFile::bundleFiles[ epLISTSPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLISTSPROFILE ) );
    BundleFile::bundleFiles[ epDISPLAYPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epDISPLAYPROFILE ) );
    BundleFile::bundleFiles[ epENTRYPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epENTRYPROFILE ) );
    BundleFile::bundleFiles[ epQTHPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epQTHPROFILE ) );
@@ -170,11 +171,21 @@ bool TContestApp::initialise()
    loggerBundle.getStringProfile( elpPreloadFile, preloadfile );
    BundleFile::bundleFiles[ epPRELOADPROFILE ] ->openProfile( preloadfile, "Preload options" );
 
-   preloadBundle.setProfile( BundleFile::bundleFiles[ epPRELOADPROFILE ] );
+   logsPreloadBundle.setProfile( BundleFile::bundleFiles[ epPRELOADPROFILE ] );
 
    QString preloadsect;
    loggerBundle.getStringProfile( elpPreloadSection, preloadsect );
-   preloadBundle.openSection( preloadsect );
+   logsPreloadBundle.openSection( preloadsect );
+   //----------------------------------
+   QString listsfile;
+   loggerBundle.getStringProfile( elpListsFile, listsfile );
+   BundleFile::bundleFiles[ epLISTSPROFILE ] ->openProfile( listsfile, "List Preload options" );
+
+   listsPreloadBundle.setProfile( BundleFile::bundleFiles[ epLISTSPROFILE ] );
+
+   QString listsect;
+   loggerBundle.getStringProfile( elpListsSection, listsect );
+   listsPreloadBundle.openSection( listsect );
    //----------------------------------
 
    QString dispfile;
@@ -255,7 +266,8 @@ TContestApp::TContestApp() : MinosParameters(), magneticVariation( 0 ), period1(
 TContestApp::~TContestApp()
 {
    loggerBundle.closeProfile();
-   preloadBundle.closeProfile();
+   logsPreloadBundle.closeProfile();
+   listsPreloadBundle.closeProfile();
    displayBundle.closeProfile();
    contestApp = 0;
 
@@ -329,7 +341,7 @@ bool TContestApp::insertList(ContactList * p, int sno )
    for ( int i = 0; i < listSlotList.size(); i++ )
    {
       QSharedPointer<ListSlot> cs = listSlotList[ i ];
-      if ( !cs->slot )
+      if (cs && !cs->slot )
       {
          cs->slot = p;
          return true;
@@ -442,7 +454,7 @@ void TContestApp::writeContestList()
 {
     if (preloadComplete)
     {
-        preloadBundle.clearProfileSection( false );
+        logsPreloadBundle.clearProfileSection( false );
 
         // build a stripped, renumbered list
         int newSlotNo = 0;
@@ -471,27 +483,37 @@ void TContestApp::writeContestList()
 
             QString ent = QString::number(cs->slotno + 1 );
 
-            preloadBundle.setStringProfile( ent, ct->cfileName );
+            logsPreloadBundle.setStringProfile( ent, ct->cfileName );
             if ( currentContest == ct )
             {
-                preloadBundle.setIntProfile( eppCurrent, cs->slotno + 1 );
+                logsPreloadBundle.setIntProfile( eppCurrent, cs->slotno + 1 );
             }
         }
 
-        // and on to the list slots
+        logsPreloadBundle.flushProfile();
+    }
+}
+void TContestApp::writeListsList()
+{
+    if (preloadComplete)
+    {
+        listsPreloadBundle.clearProfileSection( false );
 
         for ( int i = 0; i < listSlotList.size(); i++ )
         {
             QSharedPointer<ListSlot> cs = listSlotList[ i ];
-            ContactList * ct = cs->slot;
-            if ( !ct )
-                continue;
+            if (cs)
+            {
+                ContactList * ct = cs->slot;
+                if ( !ct )
+                    continue;
 
-            QString ent = "List" + QString::number(cs->slotno + 1 );
-            preloadBundle.setStringProfile( ent, ct->cfileName );
+                QString ent =  QString::number(cs->slotno + 1 );
+                listsPreloadBundle.setStringProfile( ent, ct->cfileName );
+            }
             // no need for any concept of a "current" list
         }
-        preloadBundle.flushProfile();
+        listsPreloadBundle.flushProfile();
     }
 }
 QVector<BaseContestLog *> TContestApp::getContestList()
@@ -560,7 +582,7 @@ void TContestApp::closeListFile( ContactList *list )
    }
    ListSlotIterator lsi = listSlotList.find(lpos);
    listSlotList.erase( lsi );
-   writeContestList();
+   writeListsList();
 }
 BaseContestLog * TContestApp::getCurrentContest()
 {
@@ -570,8 +592,8 @@ void TContestApp::setCurrentContest( BaseContestLog * c )
 {
    currentContest = c;
    int cc = findContest( c );
-   preloadBundle.setIntProfile( eppCurrent, cc );
-   preloadBundle.flushProfile();
+   logsPreloadBundle.setIntProfile( eppCurrent, cc + 1 );
+   logsPreloadBundle.flushProfile();
 }
 
 void TContestApp::getDisplayColumnWidth( const QString &key, int &val, int def )

@@ -60,7 +60,7 @@ void TManageListsDlg::on_CloseListButton_clicked()
        if ( ( *i ) && ( *i ) ->slotno == slotno )
        {
           TContestApp::getContestApp() ->closeListFile( ( *i ) ->slot );
-          ( *i ) ->slot = 0;
+//          ( *i ) ->slot = 0;
           break;
        }
     }

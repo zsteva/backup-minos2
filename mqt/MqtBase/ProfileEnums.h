@@ -12,6 +12,7 @@
 //----------------------------------------------------------------------------
 enum LOGGERPROFILE {
    elpPreloadFile, elpPreloadSection,
+   elpListsFile, elpListsSection,
    elpDisplayFile, elpDisplaySection,
    elpOperatorFile, elpOperatorSection,
    elpListDirectory, elpLogDirectory,
@@ -20,7 +21,7 @@ enum LOGGERPROFILE {
    elpStationFile, elpQTHFile,
    elpAutoFill
 };
-enum PRELOADPROFILE {eppCurrent, epp1 , epp2 , epp3 , epp4 , epp5 , epp6 , epp7 , epp8 , epp9 , epp10};
+enum PRELOADPROFILE {eppCurrent};
 
 enum DISPLAYPROFILE {edpTop, edpLeft, edpWidth, edpHeight,
                      edpShowContinentEU, edpShowContinentAS,
@@ -40,6 +41,6 @@ enum ENTRYPROFILE {eepCall, eepEntrant, eepMyName, eepMyCall,
 enum QTHPROFILE {eqpLocator, eqpDistrict, eqpLocation, eqpStationQTH1, eqpStationQTH2, eqpASL};
 enum STATIONPROFILE {espPower, espTransmitter, espReceiver, espAntenna, espAGL, espOffset};
 
-enum PROFILES {epLOGGERPROFILE, epPRELOADPROFILE, epDISPLAYPROFILE,
+enum PROFILES {epLOGGERPROFILE, epPRELOADPROFILE, epLISTSPROFILE, epDISPLAYPROFILE,
 			   epENTRYPROFILE, epQTHPROFILE, epSTATIONPROFILE, epLOCSQUARESPROFILE};
 #endif

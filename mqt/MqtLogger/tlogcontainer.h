@@ -133,6 +133,8 @@ private:
     QAction *KeyerStopAction;
 
     QString getDefaultDirectory( bool IsList );
+    void preloadSession( );
+    void preloadLists( );
     void preloadFiles( const QString &conarg );
     void addListSlot(const QString &fname, int slotno , bool preload);
 

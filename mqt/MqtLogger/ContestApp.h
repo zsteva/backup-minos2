@@ -55,7 +55,8 @@ class TContestApp : public MinosParameters
 
       // general settings - choose at startup
       SettingsBundle loggerBundle;     // startup defaults - INI files, sections, etc
-      SettingsBundle preloadBundle;    // contests to be preloaded
+      SettingsBundle logsPreloadBundle;    // logs to be preloaded
+      SettingsBundle listsPreloadBundle;      // lists to be preloaded
       SettingsBundle displayBundle;    // display settings - or is this an op preference
       SettingsBundle locsBundle;       // Country valid locators
 
@@ -117,6 +118,7 @@ class TContestApp : public MinosParameters
       int removeContest( BaseContestLog * p );
       int removeList( ContactList * p );
       void writeContestList();
+      void writeListsList();
       LoggerContestLog * openFile(const QString &fn, bool newFile, int slotno );
       ContactList * openListFile( const QString &fn, int slotno );
       void closeFile( BaseContestLog *contest );

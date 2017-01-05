@@ -679,24 +679,20 @@ BundleFile::BundleFile( PROFILES p )  //: iniFile( 0 )
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpDisplaySection, "DisplaySection", "Default", "Display file section", "Section to use in display file", false ) ) );
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpOperatorFile, "OperatorFile", "./Configuration/Operator.ini", "Operators file", "File containing operators", false ) ) );
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpOperatorSection, "OperatorSection", "Default", "Operators file section", "section to use in operators file", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpPreloadFile, "PreloadFile", "./Configuration/Preload.ini", "Log and List preload file", "File containing log and list pre-loads", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpPreloadSection, "PreloadSection", "Default", "Preload file section", "Section to use in preload file", false ) ) );
-       entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpAutoFill, "AutoFill", false, "Auto Fill signal report", "Auto Fill signal report on return", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpPreloadFile, "PreloadFile", "./Configuration/LogsPreload.ini", "Log preload file", "File containing log pre-loads", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpPreloadSection, "PreloadSection", "Default", "Preload contests default section", "Section to use in preload file", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpListsFile, "ListsFile", "./Configuration/ListPreload.ini", "List preload file", "File containing list pre-loads", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpListsSection, "ListsSection", "Default", "Preload Lists file section", "Section to use in lists preload file", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpAutoFill, "AutoFill", false, "Auto Fill signal report", "Auto Fill signal report on return", false ) ) );
 
 		 break;
 	  case epPRELOADPROFILE:
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppCurrent, "Current", 0, "", "hint", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp1, "1", "", "", "hint", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp2, "2", "", "", "hint", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp3, "3", "", "", "hint", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp4, "4", "", "", "hint", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp5, "5", "", "", "hint", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp6, "6", "", "", "hint", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp7, "7", "", "", "hint", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp8, "8", "", "", "hint", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp9, "9", "", "", "hint", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( epp10, "10", "", "", "hint", false ) ) );
          break;
+
+      case epLISTSPROFILE:
+         break;
+
       case epDISPLAYPROFILE:
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpTop, "Top", 10, "", "Top of Logger window", false ) ) );
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpLeft, "Left", 25, "", "Left of Logger window", false ) ) );

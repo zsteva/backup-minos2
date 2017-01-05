@@ -96,6 +96,7 @@ bool TLogContainer::show(int argc, char *argv[])
        {
           conarg = argv[1];
        }
+       preloadLists();;
        preloadFiles( conarg );
        enableActions();
 
@@ -283,80 +284,6 @@ void TLogContainer::setupMenus()
     HelpAboutAction = newAction("About...", ui->menuHelp, SLOT(HelpAboutActionExecute()));
 }
 
-QStringList TLogContainer::getSessions()
-{
-   QStringList sessionlst = TContestApp::getContestApp() ->preloadBundle.getSections();
-   qSort( sessionlst);
-   for (int i = 0; i < sessionlst.size(); ++i) {
-       if (sessionlst[i] == noneBundle)
-       {
-           sessionlst.removeAt(i);
-           break;
-       }
-   }
-   return sessionlst;
-}
-
-void TLogContainer::updateSessionActions()
-{
-    QStringList sessionlst = getSessions();
-    for (int i = 0; i < sessionlst.size(); ++i)
-    {
-        sessionActs.push_back( new QAction(this));
-        sessionActs[i]->setText(sessionlst[i]);
-        connect(sessionActs[i], SIGNAL(triggered()),
-                this, SLOT(selectSession()));
-        sessionsMenu->addAction(sessionActs[i]);
-    }
-    // here we should get the session from defaults
-    currSession = "Default";
-}
-// we need "new session"
-void TLogContainer::sessionSaveExecute()
-{
-    // start with "save session as" default current session
-    QStringList sl = getSessions();
-
-    int offset = sl.indexOf( currSession );
-
-    bool ok = false;
-    QString prompt = "Enter session name";
-    QString text = QInputDialog::getItem( 0, "Please supply value",
-                                          prompt, sl,
-                                          offset, true, &ok );
-    if ( ok )
-    {
-        QString Value = text;
-    }
-
-    // do we auto save current session on session change/exit program?
-}
-
-void TLogContainer::sessionManageExecute()
-{
-    // present list of sessions, with contents (L/R panes)
-    // allow select, remove on LH
-    // and select as open, current, remove, re-order on RH
-
-    // open new session, move contest between sessions
-
-    TSessionManager tsm(this);
-    tsm.currSession = currSession;
-    if (tsm.exec() == QDialog::Accepted)
-    {
-        currSession = tsm.currSession;
-    }
-}
-void TLogContainer::selectSession()
-{
-    QAction *action = qobject_cast<QAction *>(sender());
-    if (action)
-    {
-        QString selText = action->text();
-        currSession = selText;
-        mShowMessage(selText, this);
-    }
-}
 
 void TLogContainer::enableActions()
 {
@@ -1034,87 +961,184 @@ TSingleLogFrame *TLogContainer::findLogFrame(int t)
     }
     return 0;
 }
+
+QStringList TLogContainer::getSessions()
+{
+    QStringList sessionlst = TContestApp::getContestApp() ->logsPreloadBundle.getSections();
+    qSort( sessionlst);
+    for (int i = 0; i < sessionlst.size(); ++i) {
+        if (sessionlst[i] == noneBundle)
+        {
+            sessionlst.removeAt(i);
+            break;
+        }
+    }
+    return sessionlst;
+}
+
+void TLogContainer::updateSessionActions()
+{
+    QStringList sessionlst = getSessions();
+    for (int i = 0; i < sessionlst.size(); ++i)
+    {
+        sessionActs.push_back( new QAction(this));
+        sessionActs[i]->setText(sessionlst[i]);
+        connect(sessionActs[i], SIGNAL(triggered()),
+                this, SLOT(selectSession()));
+        sessionsMenu->addAction(sessionActs[i]);
+    }
+    // here we should get the session from defaults
+    currSession = "Default";
+}
+// we need "new session"
+void TLogContainer::sessionSaveExecute()
+{
+    // start with "save session as" default current session
+    QStringList sl = getSessions();
+
+    int offset = sl.indexOf( currSession );
+
+    bool ok = false;
+    QString prompt = "Enter session name";
+    QString text = QInputDialog::getItem( 0, "Please supply value",
+                                          prompt, sl,
+                                          offset, true, &ok );
+    if ( ok )
+    {
+        QString Value = text;
+    }
+
+    // do we auto save current session on session change/exit program?
+}
+
+void TLogContainer::sessionManageExecute()
+{
+    // present list of sessions, with contents (L/R panes)
+    // allow select, remove on LH
+    // and select as open, current, remove, re-order on RH
+
+    // open new session, move contest between sessions
+
+    TSessionManager tsm(this);
+    tsm.currSession = currSession;
+    if (tsm.exec() == QDialog::Accepted)
+    {
+        currSession = tsm.currSession;
+    }
+}
+void TLogContainer::selectSession()
+{
+    QAction *action = qobject_cast<QAction *>(sender());
+    if (action)
+    {
+        QString selText = action->text();
+        currSession = selText;
+        mShowMessage(selText, this);
+    }
+}
+
+void TLogContainer::preloadSession( )
+{
+
+}
+
+void TLogContainer::preloadLists( )
+{
+    // get all the keys
+    QStringList slotlst = TContestApp::getContestApp() ->listsPreloadBundle.getProfileEntries();
+    QStringList pathlst;
+    for ( int i = 0; i < slotlst.count(); i++ )
+    {
+        // get each value
+        QString ent;
+        TContestApp::getContestApp() ->listsPreloadBundle.getStringProfile( slotlst[i], ent, "" );
+        pathlst.append( ent );
+    }
+
+    for ( int i = 0; i < slotlst.size(); i++ )
+    {
+        // go through keys(slotlst) and values(pathlst) and oad lists/contests
+        int slotno = slotlst[i].toInt() - 1;
+        if ( slotno >= 0 )
+        {
+            addListSlot( pathlst[ i ], slotno, true );
+        }
+    }
+}
+
 void TLogContainer::preloadFiles( const QString &conarg )
 {
-   // and here we want to pre-load lists and contests from the INI file
-   // based on what was last open
+    // and here we want to pre-load lists and contests from the INI file
+    // based on what was last open
 
-// getProfileEntries gets the Current entry as well... not good
-   QStringList slotlst = TContestApp::getContestApp() ->preloadBundle.getProfileEntries();
-   QStringList pathlst;
-   for ( int i = 0; i < slotlst.count(); i++ )
-   {
-      QString ent;
-      TContestApp::getContestApp() ->preloadBundle.getStringProfile( slotlst[i], ent, "" );
-      pathlst.append( ent );
-   }
-   int curSlot = 0;
-   TContestApp::getContestApp() ->preloadBundle.getIntProfile( eppCurrent, curSlot );
-   for ( int i = 0; i < slotlst.size(); i++ )
-   {
-      QString s = slotlst[ i ].left( 4 );
-      if ( s == "List" )
-      {
-         int slotno = slotlst[ i ].mid( 4, 2 ).toInt() - 1; // even a 2 char number is a BIT excessive
-         if ( slotno >= 0 )
-         {
-            addListSlot( pathlst[ i ], slotno, true );
-         }
-      }
-      else
-      {
-          QString slot = slotlst[ i ];
-         int slotno = slot.toInt() - 1;
-         if ( slotno >= 0 )
-         {
+    // getProfileEntries gets the Current entry as well... not good
+
+    // get all the keys
+    QStringList slotlst = TContestApp::getContestApp() ->logsPreloadBundle.getProfileEntries();
+    QStringList pathlst;
+    for ( int i = 0; i < slotlst.count(); i++ )
+    {
+        // get each value
+        QString ent;
+        TContestApp::getContestApp() ->logsPreloadBundle.getStringProfile( slotlst[i], ent, "" );
+        pathlst.append( ent );
+    }
+    int curSlot = 0;
+    TContestApp::getContestApp() ->logsPreloadBundle.getIntProfile( eppCurrent, curSlot );
+    for ( int i = 0; i < slotlst.size(); i++ )
+    {
+        // go through keys(slotlst) and values(pathlst) and load lists/contests
+        QString slot = slotlst[ i ];
+        int slotno = slot.toInt() - 1;
+        if ( slotno >= 0 )
+        {
             addSlot( 0, pathlst[ i ], false, slotno );
-         }
-      }
-   }
-   BaseContestLog *ct = 0;
+        }
+    }
+    BaseContestLog *ct = 0;
 
-   if ( TContestApp::getContestApp() ->getContestSlotCount() )
-   {
-      if ( curSlot > 0 )
-      {
-         ct = TContestApp::getContestApp() ->contestSlotList[ curSlot - 1 ] ->slot;
-      }
-   }
+    if ( TContestApp::getContestApp() ->getContestSlotCount() )
+    {
+        if ( curSlot > 0 )
+        {
+            ct = TContestApp::getContestApp() ->contestSlotList[ curSlot - 1 ] ->slot;
+        }
+    }
 
-   TContestApp::getContestApp() ->writeContestList();	// to clear the unopened and changed ones
+    TContestApp::getContestApp() ->writeContestList();	// to clear the unopened and changed ones
 
-   if ( conarg.size() )
-   {
-      // open the "argument" one last - which will make it current
-      ct = addSlot( 0, conarg, false, -1 );
-      TContestApp::getContestApp() ->writeContestList();	// or this one will not get included
-   }
+    if ( conarg.size() )
+    {
+        // open the "argument" one last - which will make it current
+        ct = addSlot( 0, conarg, false, -1 );
+        TContestApp::getContestApp() ->writeContestList();	// or this one will not get included
+    }
 
-   if ( ct )
-   {
-      selectContest( ct, QSharedPointer<BaseContact>() );
-   }
+    if ( ct )
+    {
+        selectContest( ct, QSharedPointer<BaseContact>() );
+    }
 }
 void TLogContainer::addListSlot( const QString &fname, int slotno, bool preload )
 {
-   // Is this the correct return type, or do we have an even more basic one? Or even a useful interface...
+    // Is this the correct return type, or do we have an even more basic one? Or even a useful interface...
 
-   // openFile ends up calling ContactList::initialise which then
-   // calls TContestApp::insertList
+    // openFile ends up calling ContactList::initialise which then
+    // calls TContestApp::insertList
 
-   ContactList * list = TContestApp::getContestApp() ->openListFile( fname, slotno );
-   if ( list && !preload )
-   {
+    ContactList * list = TContestApp::getContestApp() ->openListFile( fname, slotno );
+    if ( list && !preload )
+    {
 
-       if (!mShowOKCancelMessage(this, "Open List " + list->name + "?") )
-       {
-           TContestApp::getContestApp() ->closeListFile( list );
-           list = 0;
-       }
-   }
+        if (!mShowOKCancelMessage(this, "Open List " + list->name + "?") )
+        {
+            TContestApp::getContestApp() ->closeListFile( list );
+            list = 0;
+        }
+    }
 
-   TContestApp::getContestApp() ->writeContestList();
-   enableActions();
+    TContestApp::getContestApp() ->writeListsList();
+    enableActions();
 }
 
 void TLogContainer::ListOpenActionExecute()
