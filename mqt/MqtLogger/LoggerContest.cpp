@@ -923,19 +923,7 @@ bool LoggerContestLog::exportMinos( QSharedPointer<QFile> expfd )
    delete mtest;
    return ( rep > 0 );
 }
-static void ccor( double &y )
-{
-   while ( ( y < -180.0 ) || ( y > 180.0 ) )
-      y += ( y < 0.0 ) ? 360.0 : -360.0;
-}
-static double raddeg( double x )
-{
-   double y = x * 180.0 / pi;
 
-   ccor( y );
-   return ( y );
-
-}
 static QString kmloutput ( Location *outgrid )
 {
    QString qkml = QString("%1,%2").arg(raddeg ( outgrid->easting),3,'f',8 ).arg(raddeg ( outgrid->northing),3,'f',8 );

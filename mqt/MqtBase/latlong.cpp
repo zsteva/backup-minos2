@@ -44,7 +44,6 @@ static void setprojectionconstants( struct projectionparams * );
 
 static int tfele( int, int, Location *, Location *, int * );
 
-static int getgridcoord(char *, int, int, double *, double * );
 static double north( double );
 static double dnorth( double );
 static int transngrletters( char, int *, int * );
@@ -251,7 +250,7 @@ static void ccor( double &y )
    while ( ( y < -180.0 ) || ( y > 180.0 ) )
       y += ( y < 0.0 ) ? 360.0 : -360.0;
 }
-static double raddeg( double x )
+double raddeg( double x )
 {
    double y = x * 180.0 / pi;
 
