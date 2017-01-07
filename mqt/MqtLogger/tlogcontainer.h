@@ -86,7 +86,7 @@ private:
     void updateSessionActions();
 
     BaseContestLog * addSlot(ContestDetails *ced, const QString &fname, bool newfile, int slotno );
-    void closeSlot(int t, bool addToMRU );
+    void closeSlot(int t, bool addToMRU , bool writePreload);
     TSingleLogFrame *findLogFrame(int t);
 
 
@@ -103,7 +103,6 @@ private:
     QAction *CloseAllAction;
     QAction *CloseAllButAction;
 
-    QAction *sessionSaveAction;
     QAction *sessionManagerAction;
 
     QAction *ExitAction;
@@ -156,7 +155,6 @@ private slots:
     void CloseAllButActionExecute();
     void ExitActionExecute();
 
-    void sessionSaveExecute();
     void sessionManageExecute();
 
     void MakeEntryActionExecute();

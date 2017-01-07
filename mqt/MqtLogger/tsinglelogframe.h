@@ -123,7 +123,7 @@ public:
     void getSplitters();
     void goSerial( );
     BaseContestLog * getContest();
-    void closeContest();
+    void closeContest(bool writePreload);
 
     void setActiveControl( int *Key );
     QString makeEntry( bool saveMinos );

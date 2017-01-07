@@ -428,7 +428,7 @@ int TContestApp::findList( ContactList * p )
    }
    return -1;
 }
-int TContestApp::removeContest( BaseContestLog * p )
+int TContestApp::removeContest( BaseContestLog * p , bool writePreload)
 {
    int i = findContest( p );
    if ( i >= 0 )
@@ -536,7 +536,7 @@ LoggerContestLog * TContestApp::openFile( const QString &fn, bool newFile, int s
 
    if ( !contest->initialise( fn, newFile, slotno ) )    // this adds it to the slot
    {
-      closeFile( contest );
+      closeFile( contest, true );
       return 0;
    }
 
@@ -554,15 +554,16 @@ ContactList * TContestApp::openListFile(const QString &fn, int slotno )
 
    return list;
 }
-void TContestApp::closeFile( BaseContestLog * contest )
+void TContestApp::closeFile(BaseContestLog * contest, bool writePreload )
 {
    if ( contest )
    {
-      removeContest( contest ); 		// must remove LoggerContestLog from its slot
+      removeContest( contest, writePreload ); 		// must remove LoggerContestLog from its slot
       delete contest;
    }
 
-   writeContestList();
+   if (writePreload)
+        writeContestList();
 }
 // Predicate function for remove_if
 bool noslot( ListSlot *ip )

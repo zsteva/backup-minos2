@@ -43,3 +43,4 @@ void TSessionManager::accept()
     doCloseEvent();
     QDialog::accept();
 }
+

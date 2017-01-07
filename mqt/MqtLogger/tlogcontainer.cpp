@@ -210,7 +210,6 @@ void TLogContainer::setupMenus()
     updateRecentFileActions();
 
     sessionsMenu = ui->menuFile->addMenu("Sessions");
-    sessionSaveAction = newAction("&Save Session...", sessionsMenu, SLOT(sessionSaveExecute()));
     sessionManagerAction  = newAction("&Manage Sessions...", sessionsMenu, SLOT(sessionManageExecute()));
     sessionsMenu->addSeparator();
     updateSessionActions();
@@ -520,7 +519,7 @@ void TLogContainer::FileNewActionExecute()
        }
        suggestedfName += ".minos";
 
-       closeSlot(ui->ContestPageControl->currentIndex(), false );
+       closeSlot(ui->ContestPageControl->currentIndex(), false, true );
 
        QString fileName = QFileDialog::getSaveFileName( this,
                           "Save new contest as",
@@ -631,7 +630,7 @@ void TLogContainer::ContestDetailsActionExecute()
 void TLogContainer::FileCloseActionExecute()
 {
    int t = ui->ContestPageControl->currentIndex();
-   closeSlot(t, true );
+   closeSlot(t, true, true );
 }
 
 //---------------------------------------------------------------------------
@@ -641,7 +640,7 @@ void TLogContainer::CloseAllActionExecute()
    while ( ui->ContestPageControl->count())
    {
       // Keep closing the current (and hence visible) contest
-      closeSlot(0, true);
+      closeSlot(0, true, true);
    }
    on_ContestPageControl_currentChanged(0);
    enableActions();
@@ -659,7 +658,7 @@ void TLogContainer::CloseAllButActionExecute()
       {
          t -= 1;
       }
-      closeSlot(t, true);
+      closeSlot(t, true, true);
    }
    on_ContestPageControl_currentChanged(0);
    enableActions();
@@ -874,7 +873,7 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
             }
             else
             {
-               TContestApp::getContestApp() ->closeFile( contest );
+               TContestApp::getContestApp() ->closeFile( contest, true );
                contest = 0;
             }
          }
@@ -907,7 +906,7 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
             QString expName = f->makeEntry( true );
             if ( expName.size() )
             {
-               closeSlot(tno, true );
+               closeSlot(tno, true, true );
                addSlot( 0, expName, false, -1 );
             }
          }
@@ -927,7 +926,7 @@ TSingleLogFrame *TLogContainer::getCurrentLogFrame()
     return f;
 }
 
-void TLogContainer::closeSlot(int t, bool addToMRU )
+void TLogContainer::closeSlot(int t, bool addToMRU, bool writePreload )
 {
    if ( t >= 0 )
    {
@@ -941,7 +940,7 @@ void TLogContainer::closeSlot(int t, bool addToMRU )
              QString curPath = contest->cfileName;
              setCurrentFile( curPath );
           }
-          f->closeContest();    // which should close the contest
+          f->closeContest(writePreload);    // which should close the contest
           ui->ContestPageControl->removeTab(t);
           on_ContestPageControl_currentChanged(0);
       }
@@ -990,27 +989,6 @@ void TLogContainer::updateSessionActions()
     // here we should get the session from defaults
     currSession = "Default";
 }
-// we need "new session"
-void TLogContainer::sessionSaveExecute()
-{
-    // start with "save session as" default current session
-    QStringList sl = getSessions();
-
-    int offset = sl.indexOf( currSession );
-
-    bool ok = false;
-    QString prompt = "Enter session name";
-    QString text = QInputDialog::getItem( 0, "Please supply value",
-                                          prompt, sl,
-                                          offset, true, &ok );
-    if ( ok )
-    {
-        QString Value = text;
-    }
-
-    // do we auto save current session on session change/exit program?
-}
-
 void TLogContainer::sessionManageExecute()
 {
     // present list of sessions, with contents (L/R panes)
@@ -1034,6 +1012,12 @@ void TLogContainer::selectSession()
         QString selText = action->text();
         currSession = selText;
         mShowMessage(selText, this);
+
+        // first, close all current slots, but don't write preload
+
+        // switch sections
+
+        // and reload
     }
 }
 
