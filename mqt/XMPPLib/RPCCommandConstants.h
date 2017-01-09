@@ -82,7 +82,13 @@ static const QString RigControlCategory = QT_TR_NOOP("RigControl");
 static const QString rigControlKeyMode  = QT_TR_NOOP("Mode");
 static const QString rigControlKeyFrequency    = QT_TR_NOOP("Frequency");
 
+// dgb test rpc1
 
+static const QString rpc1App         = QT_TR_NOOP("Rpc1");
+
+// dgb test rpc2
+
+static const QString rpc2App         = QT_TR_NOOP("Rpc2");
 
 }
 #endif // RPCCOMMANDRCONSTANTS_H

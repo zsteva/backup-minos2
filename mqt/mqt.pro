@@ -9,7 +9,10 @@ SUBDIRS += \
     MqtLogger \
     MqtServer \
     MqtRotator \
-    MqtBandmap
+    MqtBandmap \
+    MqtTestrpc1 \
+    MqtTestrpc2 \
+    MqtTestrpc2
 
 !unix {
     SUBDIRS += \
