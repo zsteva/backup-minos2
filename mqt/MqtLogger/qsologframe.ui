@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>486</width>
-    <height>190</height>
+    <width>543</width>
+    <height>194</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -306,12 +306,34 @@
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="RotBrg">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="text">
+            <string>0000</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="margin">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QToolButton" name="RotateLeft">
            <property name="focusPolicy">
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>RL</string>
+            <string>CCW</string>
            </property>
           </widget>
          </item>
@@ -321,7 +343,7 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>R</string>
+            <string>Turn</string>
            </property>
           </widget>
          </item>
@@ -331,7 +353,7 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>RR</string>
+            <string>CW</string>
            </property>
           </widget>
          </item>

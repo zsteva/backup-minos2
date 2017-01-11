@@ -75,6 +75,7 @@ static const QString rotatorParamAngle  = QT_TR_NOOP("RotatorAngle");
 
 static const QString RotatorCategory    = QT_TR_NOOP("Rotator");
 static const QString rotatorKeyState    = QT_TR_NOOP("State");
+static const QString rotatorBearing     = QT_TR_NOOP("Bearing");
 
 // Rig Control
 

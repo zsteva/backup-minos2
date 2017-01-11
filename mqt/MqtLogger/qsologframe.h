@@ -21,6 +21,7 @@ public:
 
     void setAsEdit();
     void setRotatorState(const QString &s);
+    void setRotatorBearing(const QString &s);
 
 private:
     ScreenContact *partialContact; // contact being edited on screen

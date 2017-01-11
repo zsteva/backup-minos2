@@ -36,9 +36,9 @@ SOURCES += \
     main.cpp \
     logdialog.cpp \
     editpresetsdialog.cpp \
-    rotatorlogic.cpp \
     rotcontrol.cpp \
-    rotatorlog.cpp
+    rotatorlog.cpp \
+    rotatorRpc.cpp
 
 HEADERS  += \
     skyscandialog.h \
@@ -47,9 +47,9 @@ HEADERS  += \
     minoscompass.h \
     logdialog.h \
     editpresetsdialog.h \
-    rotatorlogic.h \
     rotcontrol.h \
-    rotatorlog.h
+    rotatorlog.h \
+    rotatorRpc.h
 
 FORMS    += \
     skyscandialog.ui \

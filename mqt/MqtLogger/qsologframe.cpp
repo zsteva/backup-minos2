@@ -1783,6 +1783,7 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
     ui->RotateRight->setVisible(LogContainer->isRotatorLoaded());
     ui->StopRotate->setVisible(LogContainer->isRotatorLoaded());
     ui->rotatorState->setVisible(LogContainer->isRotatorLoaded());
+    ui->rotatorState->setVisible(LogContainer->isRotatorLoaded());
 }
 
 void QSOLogFrame::transferDetails(const QSharedPointer<BaseContact> lct, const BaseContestLog *matct )
@@ -2105,5 +2106,29 @@ void QSOLogFrame::on_StopRotate_clicked()
 }
 void QSOLogFrame::setRotatorState(const QString &s)
 {
-    ui->rotatorState->setText(s);
+       ui->rotatorState->setText(s);
+}
+void QSOLogFrame::setRotatorBearing(const QString &s)
+{
+    QString brg;
+    QChar degsym = QChar('\xB0');
+    int len = s.length();
+
+    if (len < 2)
+    {
+        brg = QString("%1%2%3")
+        .arg("  ").arg(s).arg(degsym);
+    }
+    else if (len < 3)
+    {
+        brg = QString("%1%2%3")
+        .arg(" ").arg(s).arg(degsym);
+    }
+    else
+    {
+        brg = QString("%1%2")
+        .arg(s).arg(degsym);
+    }
+
+    ui->RotBrg->setText(brg);
 }
