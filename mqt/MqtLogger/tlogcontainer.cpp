@@ -505,11 +505,19 @@ void TLogContainer::FileNewActionExecute()
        suggestedfName += '_';
        if ( c->DTGStart.getValue().size() )
        {
-          suggestedfName += CanonicalToTDT( c->DTGStart.getValue() ).toString( "yyyyMMMdd" );
+          suggestedfName += CanonicalToTDT( c->DTGStart.getValue() ).toString( "yyyy_MM_dd" );
        }
        else
        {
-          suggestedfName += QDate::currentDate().toString( "yyyyMMMdd" );
+          suggestedfName += QDate::currentDate().toString( "yyyy_MM_dd" );
+       }
+       int fnum = 1;
+       while (FileExists(suggestedfName))
+       {
+           QString nfname = suggestedfName + QString::number(fnum);
+           if (fnum == 9)
+               break;
+           suggestedfName = nfname;
        }
        QString band = c->band.getValue();
        if ( band.size() )
