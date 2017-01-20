@@ -60,6 +60,7 @@ bool reg1test::exportTest( QSharedPointer<QFile> expfd )
    int nctry = 0;
    int ndistrict = 0;
    int nlocs = 0;
+   int bonus = 0;
 
    if ( ct->countryMult.getValue() )   {
       ltot += ct->nctry ;
@@ -97,7 +98,10 @@ bool reg1test::exportTest( QSharedPointer<QFile> expfd )
 
       nlines++;
       if ( cct->contactScore.getValue() > 0 )
+      {
          nvalid++;
+         bonus += cct->bonus;
+      }
    }
 
    // get the best DX contact
@@ -147,7 +151,7 @@ bool reg1test::exportTest( QSharedPointer<QFile> expfd )
 
    linelist[ static_cast< int> (CQSOP) ] = reg1testLine( "CQSOP", QString::number( ct->contestScore ) ); /*, "Claimed no. of QSO points"*/
    linelist[ static_cast< int> (CWWLs) ] = reg1testLine( "CWWLs", QString::number( nlocs ) + ";0;1" ); /*, "Claimed no. of WWLs;Bonus per new WWL;WWL multiplier"*/
-   linelist[ static_cast< int> (CWWLB) ] = reg1testLine( "CWWLB", QString::number ( ct->bonus) ); /*, "Claimed no. of WWL bonus points"*/
+   linelist[ static_cast< int> (CWWLB) ] = reg1testLine( "CWWLB", QString::number ( bonus) ); /*, "Claimed no. of WWL bonus points"*/
    linelist[ static_cast< int> (CExcs) ] = reg1testLine( "CExcs", QString::number( ndistrict ) + ";0;1" ); /*, "Claimed no. of exchanges; Bonus for each new exchange; Exchange Multiplier"*/
    linelist[ static_cast< int> (CExcB) ] = reg1testLine( "CExcB", QString("0") ); /*, "Claimed no. of exchange bonus points"*/
    linelist[ static_cast< int> (CDXCs) ] = reg1testLine( "CDXCs", QString::number( nctry ) + ";0;1" ); /*, "Claimed no. of DXCCs; Bonus for each new DXCC;DXCC multiplier"*/

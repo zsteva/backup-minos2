@@ -61,6 +61,7 @@ bool reg1test::exportTest( HANDLE expfd )
    int nctry = 0;
    int ndistrict = 0;
    int nlocs = 0;
+   int bonus = 0;
 
    if ( ct->countryMult.getValue() )   {
       ltot += ct->nctry ;
@@ -99,7 +100,10 @@ bool reg1test::exportTest( HANDLE expfd )
 
       nlines++;
       if ( cct->contactScore.getValue() > 0 )
+      {
          nvalid++;
+         bonus += cct->bonus;
+      }
    }
 
    // get the best DX contact
