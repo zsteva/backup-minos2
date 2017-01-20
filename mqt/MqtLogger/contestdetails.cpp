@@ -21,6 +21,7 @@ ContestDetails::ContestDetails(QWidget *parent) :
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     ui->setupUi(this);
+    ui->FieldsGroupBox->setVisible(false); // as it isn't implemented
 
     QSettings settings;
     QByteArray geometry = settings.value("ContestDetails/geometry").toByteArray();
