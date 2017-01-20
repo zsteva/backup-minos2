@@ -511,19 +511,21 @@ void TLogContainer::FileNewActionExecute()
        {
           suggestedfName += QDate::currentDate().toString( "yyyy_MM_dd" );
        }
-       int fnum = 1;
-       while (FileExists(suggestedfName))
-       {
-           QString nfname = suggestedfName + QString::number(fnum);
-           if (fnum == 9)
-               break;
-           suggestedfName = nfname;
-       }
+
        QString band = c->band.getValue();
        if ( band.size() )
        {
           suggestedfName += '_';
           suggestedfName += band;
+       }
+
+       int fnum = 1;
+       while (FileExists("./Logs/" + suggestedfName + ".minos"))
+       {
+           QString nfname = suggestedfName + "_" + QString::number(fnum);
+           if (fnum == 9)
+               break;
+           suggestedfName = nfname;
        }
        suggestedfName += ".minos";
 
