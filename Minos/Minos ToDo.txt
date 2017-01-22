@@ -1,28 +1,43 @@
 ==================================================================    
 To be tested
+------------
 
 Catch up
 Post entry
 Archive list editting
+fractional minutes in stats display 
+LatLong tool
+
+To be completed
+---------------
+
+Sessions 
+Rclick on tab dosn't select it before menu shown
+Combo box of contest tabs, to allow choice of which one
+mqt - no fly by hints
+
+Nice to have
+------------
+
+Add suggested filename change to old Minos
+
+Remove (old) .gjv format - and .log?
+Add cabrillo import/export
+Tab drag/drop: Tab drag would be nice as well
+Facility to defeat fly by hints? Maybe use status bar instead (which is where they will be on Qt)?
+Time offset to a contest (Bob Offer's problem)) - to be applied post contest; not a a clock offset
 
 ==================================================================
-==================================================================
-==================================================================
-==================================================================
-==================================================================
-==================================================================
-==================================================================
-==================================================================
+Break lat/long up into multiple edits (YMC)
+allow decimal lat/long             
+Need to break up single latlong field into deg/mins/secs
+Plus EW and NS check boxes - but allow negative degrees, or E/W/N/S texts
+On exit logic has to change as latlong will normally take several steps to complete
+===========================================================================
+Rethink logSequence and nextBlock; nextBlock is a hangover from the "old" logger.
+We should just need to use logSequence, and maintain a "max" value for it.
+Then cancelled catch ups wouldn't keep incrementing it.
 ==================================================================    
-==================================================================    
-==================================================================    
-==================================================================    
-==================================================================   
-Sessions 
-==================================================================
-fractional minutes in stats display 
-==================================================================    
-mqt - no fly by hints
 ==================================================================    
 Programs
 
@@ -34,13 +49,10 @@ Qs1R control via Minos (currently stand alone)
 ==================================================================
 Need a "snagging list" - such things as 
 - "ops list" rows in details aren't RO (or at least don't show as such)
-- Rclick on tab dosn't select it before menu shown
 - .Minos - or is it .minos?
-- Tab drag/drop
 ==================================================================    
 Sorting of contest tabs- by name/start date/band/???
 ==================================================================    
-Combo box of contest tabs, to allow choice of which one
 ==================================================================    
 Instead of "non scoring" have "not complete" and "dup" (need better words
  - may be used for backpackers as well)
@@ -61,12 +73,9 @@ by spreadsheet
 > I was also going to raise an issue regarding catch up mode and ask if it is
 > possible to make the archive files active when working in catch up mode.
 ==================================================================
-Tab drag would be nice as well
 ==================================================================
 Button(?) on details for export
 ==================================================================
-Time offset to a contest (Bob Offer's problem)) - to be applied post contest
-not a a clock offset
 ==================================================================
 Display of operating time within the contest; may need to make the "1 hour" configurable
 ==================================================================
@@ -98,12 +107,6 @@ Better header text for loc/distance in country and district display
 And eventually, get back into networking
 And HF? How do we go about cabrillo export in general?
 ==================================================================
-Break lat/long up into multiple edits (YMC)
-allow decimal lat/long             
-Need to break up single latlong field into deg/mins/secs
-Plus EW and NS check boxes - but allow negative degrees, or E/W/N/S texts
-On exit logic has to change as latlong will normally take several steps to complete
-==================================================================
 Double click on contest in Vista default directory says "already open"?
 Well, it will if it is in the pre-load list!
 ==================================================================
@@ -117,11 +120,6 @@ e.g.
 [Default]
 Log Directory=c:\temp
 ===========================================================================
-Facility to defeat fly by hints? Maybe use status bar instead (which is where they will be on Qt)?
-===========================================================================
-Rethink logSequence and nextBlock; nextBlock is a hangover from the "old" logger.
-We should just need to use logSequence, and maintain a "max" value for it.
-Then cancelled catch ups wouldn't keep incrementing it.
 ===========================================================================
 //================================================================
 Bugs, etc to fix
