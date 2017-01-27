@@ -77,4 +77,6 @@ template <class itemtype >inline bool operator == (const MapWrapper<itemtype> &k
 #include "TreeUtils.h"
 #include "DisplayContestContact.h"
 
+#include "waitcursor.h"
+
 #endif

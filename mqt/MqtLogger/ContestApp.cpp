@@ -38,8 +38,10 @@ TContestApp *TContestApp::getContestApp()
 
 bool isOpen(QSharedPointer<ContestSlot> cs, const QString &fn )
 {
+   if (cs.isNull())
+       return false;
    BaseContestLog * con = cs->slot;
-   if ( !bool( con ) )
+   if ( !con )
       return false;
    if ( con->cfileName.compare(fn, Qt::CaseInsensitive ) == 0 )
       return true;
@@ -48,7 +50,7 @@ bool isOpen(QSharedPointer<ContestSlot> cs, const QString &fn )
 bool isOpen(QSharedPointer<ListSlot> cs, const QString &fn )
 {
    ContactList * con = cs->slot;
-   if ( !bool( con ) )
+   if ( !con )
       return false;
    if ( con->cfileName.compare(fn, Qt::CaseInsensitive ) == 0 )
       return true;
@@ -96,11 +98,7 @@ static void initClock( void )
 }
 bool TContestApp::initialise()
 {
-   // Force the short date format to be as we expect
-
-   //ShortDateFormat = "dd/MM/yyyy";
-   // Under Linux/Wine (in particular) the current working directory may not
-   // be where expected. So reset it to where it should be
+    suppressWritePreload = false;
 
    // Eventually, we should have an installation system so that e.g. under Vista
    // we can put things like config under the user directory
@@ -173,7 +171,7 @@ bool TContestApp::initialise()
 
    logsPreloadBundle.setProfile( BundleFile::bundleFiles[ epPRELOADPROFILE ] );
 
-   QString preloadsect;
+//   QString preloadsect;   // moved to class
    loggerBundle.getStringProfile( elpPreloadSection, preloadsect );
    logsPreloadBundle.openSection( preloadsect );
    //----------------------------------
@@ -291,7 +289,7 @@ bool TContestApp::insertContest(BaseContestLog * p, int sno )
          }
       }
       QSharedPointer<ContestSlot> cs = contestSlotList[ sno ];
-      if ( bool( cs->slot ) )
+      if ( cs->slot )
          return false;
       else
       {
@@ -302,7 +300,7 @@ bool TContestApp::insertContest(BaseContestLog * p, int sno )
    for ( int i = 0; i < contestSlotList.size(); i++ )
    {
       QSharedPointer<ContestSlot> cs = contestSlotList[ i ];
-      if ( !bool( cs->slot ) )
+      if ( !cs->slot )
       {
          cs->slot = p;
          return true;
@@ -397,7 +395,7 @@ BaseContestLog * TContestApp::findFirstContest()
    for ( int i = 0; i < contestSlotList.size(); i++ )
    {
       QSharedPointer<ContestSlot> cs = contestSlotList[ i ];
-      if ( bool( cs->slot ) )
+      if ( cs->slot )
       {
          return cs->slot;
       }
@@ -428,15 +426,21 @@ int TContestApp::findList( ContactList * p )
    }
    return -1;
 }
-int TContestApp::removeContest( BaseContestLog * p , bool writePreload)
+int TContestApp::removeContest(BaseContestLog * p )
 {
    int i = findContest( p );
-   if ( i >= 0 )
+   if (preloadComplete)
    {
-      if ( getCurrentContest() == p )
-         setCurrentContest( 0 );
-      QSharedPointer<ContestSlot> cs = contestSlotList[ i ];
-      cs->slot = 0;
+       if ( i >= 0 )
+       {
+          if (!suppressWritePreload)
+          {
+             if ( getCurrentContest() == p )
+                setCurrentContest( 0 );
+          }
+          QSharedPointer<ContestSlot> cs = contestSlotList[ i ];
+          cs->slot = 0;
+       }
    }
    return i;
 }
@@ -452,7 +456,7 @@ int TContestApp::removeList( ContactList * p )
 }
 void TContestApp::writeContestList()
 {
-    if (preloadComplete)
+    if (preloadComplete && !suppressWritePreload)
     {
         logsPreloadBundle.clearProfileSection( false );
 
@@ -481,12 +485,12 @@ void TContestApp::writeContestList()
                 continue;   // shouldn't happen...
             }
 
-            QString ent = QString::number(cs->slotno + 1 );
+            QString ent = QString::number(cs->slotno);
 
             logsPreloadBundle.setStringProfile( ent, ct->cfileName );
             if ( currentContest == ct )
             {
-                logsPreloadBundle.setIntProfile( eppCurrent, cs->slotno + 1 );
+                logsPreloadBundle.setIntProfile( eppCurrent, cs->slotno );
             }
         }
 
@@ -536,7 +540,7 @@ LoggerContestLog * TContestApp::openFile( const QString &fn, bool newFile, int s
 
    if ( !contest->initialise( fn, newFile, slotno ) )    // this adds it to the slot
    {
-      closeFile( contest, true );
+      closeFile( contest );
       return 0;
    }
 
@@ -554,16 +558,15 @@ ContactList * TContestApp::openListFile(const QString &fn, int slotno )
 
    return list;
 }
-void TContestApp::closeFile(BaseContestLog * contest, bool writePreload )
+void TContestApp::closeFile(BaseContestLog * contest)
 {
    if ( contest )
    {
-      removeContest( contest, writePreload ); 		// must remove LoggerContestLog from its slot
+      removeContest( contest ); 		// must remove LoggerContestLog from its slot
       delete contest;
    }
 
-   if (writePreload)
-        writeContestList();
+   writeContestList();
 }
 // Predicate function for remove_if
 bool noslot( ListSlot *ip )
@@ -592,9 +595,12 @@ BaseContestLog * TContestApp::getCurrentContest()
 void TContestApp::setCurrentContest( BaseContestLog * c )
 {
    currentContest = c;
-   int cc = findContest( c );
-   logsPreloadBundle.setIntProfile( eppCurrent, cc + 1 );
-   logsPreloadBundle.flushProfile();
+   if (!TContestApp::getContestApp() ->suppressWritePreload)
+   {
+       int cc = findContest( c );
+       logsPreloadBundle.setIntProfile( eppCurrent, cc );
+       logsPreloadBundle.flushProfile();
+   }
 }
 
 void TContestApp::getDisplayColumnWidth( const QString &key, int &val, int def )

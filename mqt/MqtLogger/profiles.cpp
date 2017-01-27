@@ -687,7 +687,9 @@ BundleFile::BundleFile( PROFILES p )  //: iniFile( 0 )
 
 		 break;
 	  case epPRELOADPROFILE:
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppCurrent, "Current", 0, "", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppCurrent, "CurrentLog", 0, 0, "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppDefSession, "DefaultSessionName", "Default Session", "Default Session", "hint", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppSession, "CurrentSession", "Default Session", "Default Session", "hint", false ) ) );
          break;
 
       case epLISTSPROFILE:

@@ -21,7 +21,7 @@ enum LOGGERPROFILE {
    elpStationFile, elpQTHFile,
    elpAutoFill
 };
-enum PRELOADPROFILE {eppCurrent};
+enum PRELOADPROFILE {eppSession, eppCurrent, eppDefSession};
 
 enum DISPLAYPROFILE {edpTop, edpLeft, edpWidth, edpHeight,
                      edpShowContinentEU, edpShowContinentAS,

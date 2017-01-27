@@ -58,6 +58,11 @@ public:
     bool isRotatorLoaded();
     bool rotatorLoaded;
 
+    void getCurrSession();
+    QStringList getSessions();
+    void updateSessionActions();
+    void selectSession(QString sessName);
+
 private:
     Ui::TLogContainer *ui;
 
@@ -81,14 +86,11 @@ private:
     void updateRecentFileActions();
     QString strippedName(const QString &fullFileName);
 
-    QString currSession;
-    QStringList getSessions();
-    void updateSessionActions();
-
     BaseContestLog * addSlot(ContestDetails *ced, const QString &fname, bool newfile, int slotno );
-    void closeSlot(int t, bool addToMRU , bool writePreload);
+    void closeSlot(int t, bool addToMRU );
     TSingleLogFrame *findLogFrame(int t);
 
+    QAction *lastSessionSelected;
 
     QAction *newAction(const QString &text, QMenu *m, const char *atype );
     QAction *newCheckableAction( const QString &text, QMenu *m, const char *atype );
@@ -132,7 +134,7 @@ private:
     QAction *KeyerStopAction;
 
     QString getDefaultDirectory( bool IsList );
-    void preloadSession( );
+    BaseContestLog *loadSession(QString sessName);
     void preloadLists( );
     void preloadFiles( const QString &conarg );
     void addListSlot(const QString &fname, int slotno , bool preload);

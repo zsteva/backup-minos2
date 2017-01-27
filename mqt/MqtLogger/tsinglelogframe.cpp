@@ -173,12 +173,12 @@ BaseContestLog * TSingleLogFrame::getContest()
    return contest;
 }
 
-void TSingleLogFrame::closeContest(bool writePreload)
+void TSingleLogFrame::closeContest()
 {
     if ( TContestApp::getContestApp() )
     {
        qsoModel.initialise(0);
-       TContestApp::getContestApp() ->closeFile( contest, writePreload );
+       TContestApp::getContestApp() ->closeFile( contest );
        ui->GJVQSOLogFrame->closeContest();
        contest = 0;
     }

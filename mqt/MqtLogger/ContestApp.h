@@ -47,6 +47,11 @@ class TContestApp : public MinosParameters
       bool preloadComplete;
    public:
       static TContestApp *getContestApp();
+      QString preloadsect;
+      QString currSession;
+      QString defaultSession;
+      bool suppressWritePreload;
+
       void setPreloadComplete()
       {
           preloadComplete = true;
@@ -115,13 +120,13 @@ class TContestApp : public MinosParameters
       int findContest( BaseContestLog * p );
       int findList( ContactList * p );
       //      LoggerContestLog * findContest( LoggerContestLog *p );
-      int removeContest(BaseContestLog * p , bool writePreload);
+      int removeContest(BaseContestLog * p);
       int removeList( ContactList * p );
       void writeContestList();
       void writeListsList();
       LoggerContestLog * openFile(const QString &fn, bool newFile, int slotno );
       ContactList * openListFile( const QString &fn, int slotno );
-      void closeFile(BaseContestLog *contest , bool writePreload);
+      void closeFile(BaseContestLog *contest );
       void closeListFile( ContactList *list );
 
       void setCurrentContest( BaseContestLog * );

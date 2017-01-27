@@ -83,7 +83,8 @@ HEADERS += \
     qlogtabwidget.h \
     minoskeyboard.h \
     MinosLines.h \
-    Calendar.h
+    Calendar.h \
+    waitcursor.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
