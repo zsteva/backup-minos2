@@ -1,12 +1,14 @@
 #include "logger_pch.h"
 
 #include "tlogcontainer.h"
+#include "enqdlg.h"
 
 #include "TSessionManager.h"
 #include "ui_TSessionManager.h"
 
 TSessionManager::TSessionManager(TLogContainer *parent) :
     QDialog(parent), tlc(parent),
+    inShowSession(false), inShowSessions(false),
     ui(new Ui::TSessionManager)
 {
     ui->setupUi(this);
@@ -27,7 +29,22 @@ TSessionManager::~TSessionManager()
 
 void TSessionManager::enableButtons()
 {
+    int nsess = sessionList.sessions.count();
+    int nentries = 0;
+    int currEntry = 0;
+    if (nsess)
+    {
+        nentries = sessionList.sessions[sessionList.currentSession].entries.count();
+        currEntry = sessionList.sessions[sessionList.currentSession].currentEntry;
+    }
 
+    ui->CloneSessionButton->setEnabled(nsess > 0);
+    ui->DeleteSessionButton->setEnabled(nsess > 0);
+    ui->RenameSessionButton->setEnabled(nsess > 0);
+    ui->AddEntryButton->setEnabled(nsess > 0);
+    ui->DeleteEntryButton->setEnabled(nentries > 0);
+    ui->MoveEntryUpButton->setEnabled(nentries > 0 && currEntry >= 1);          // not first entry
+    ui->MoveEntryDownButton->setEnabled(nentries > 0 && currEntry < nentries - 1);  // not last entry
 }
 void TSessionManager::parseSessions()
 {
@@ -95,31 +112,69 @@ void TSessionManager::writeSessions()
 
 void TSessionManager::showSessions()
 {
-    ui->sessionsList->clear();
-    ui->sessionEntries->clear();
-
-    for ( int i = 0; i < sessionList.sessions.count(); i++ )
+    if (!inShowSessions && !inShowSession)
     {
-       ui->sessionsList->addItem( sessionList.sessions[ i ].sessionName );
+        inShowSessions = true;
+        if (sessionList.currentSession >= sessionList.sessions.count())
+        {
+            sessionList.currentSession = sessionList.sessions.count() - 1;
+        }
+        if (sessionList.currentSession < 0)
+        {
+            sessionList.currentSession = 0;
+        }
+
+        ui->sessionsList->clear();
+        ui->sessionEntries->clear();
+
+        for ( int i = 0; i < sessionList.sessions.count(); i++ )
+        {
+           ui->sessionsList->addItem( sessionList.sessions[ i ].sessionName );
+        }
+        inShowSessions = false;
+
+        showSession(sessionList.currentSession);
+        enableButtons();
+
     }
-    ui->sessionsList->setCurrentRow(sessionList.currentSession);
 }
 
 void TSessionManager::showSession(int sess)
 {
-    ui->sessionEntries->clear();
-
-    int rowCount = sessionList.sessions[sess].entries.count();
-    ui->sessionEntries->setColumnCount(1);
-    ui->sessionEntries->setRowCount(rowCount);
-
-    for ( int i = 0; i < rowCount; i++ )
+    if (!inShowSessions && !inShowSession)
     {
-        ui->sessionEntries->setItem(i, 0, new QTableWidgetItem(sessionList.sessions[sess].entries[i]));
-    }
-    ui->sessionEntries->selectRow(sessionList.sessions[sess].currentEntry);
+        inShowSession = true;
+        if (sessionList.sessions[sess].currentEntry >= sessionList.sessions[sess].entries.count())
+        {
+            sessionList.sessions[sess].currentEntry = sessionList.sessions[sess].entries.count() - 1;
+        }
+        if (sessionList.sessions[sess].currentEntry < 0)
+        {
+            sessionList.sessions[sess].currentEntry = 0;
+        }
 
-    sessionList.currentSession = sess;
+        sessionList.currentSession = sess;
+
+        if (sessionList.sessions.count())
+            ui->sessionsList->setCurrentRow(sessionList.currentSession);
+
+        ui->sessionEntries->clear();
+
+        int rowCount = sessionList.sessions[sess].entries.count();
+        ui->sessionEntries->setColumnCount(1);
+        ui->sessionEntries->setRowCount(rowCount);
+
+        for ( int i = 0; i < rowCount; i++ )
+        {
+            ui->sessionEntries->setItem(i, 0, new QTableWidgetItem(sessionList.sessions[sess].entries[i]));
+        }
+        if (sessionList.sessions[sess].entries.count())
+        {
+            ui->sessionEntries->selectRow(sessionList.sessions[sess].currentEntry);
+        }
+        enableButtons();
+        inShowSession = false;
+    }
 }
 
 void TSessionManager::on_OKButton_clicked()
@@ -130,6 +185,11 @@ void TSessionManager::on_OKButton_clicked()
     accept();
 }
 
+
+void TSessionManager::on_amendButton_clicked()
+{
+    writeSessions();
+}
 void TSessionManager::on_cancelButton_clicked()
 {
     // ignore it all... just let our structures die.
@@ -151,57 +211,138 @@ void TSessionManager::accept()
     QDialog::accept();
 }
 
-
 void TSessionManager::on_NewSessionButton_clicked()
 {
     // create and enter a new session
+    QString newName;
+    QString prompt = "Give name for new session";
+    if (enquireDialog(this, prompt, newName))
+    {
+        Session newSession;
+        newSession.sessionName = newName;
+        sessionList.sessions.push_back(newSession);
+        sessionList.currentSession = sessionList.sessions.count() - 1;
+        showSessions();
+    }
+
 }
 
 void TSessionManager::on_CloneSessionButton_clicked()
 {
     // copy the current session with  new name, enter it
+    QString newName;
+    Session newSession = sessionList.sessions[sessionList.currentSession];
+    QString prompt = "Give name for new log set";
+    if (enquireDialog(this, prompt, newName))
+    {
+        newSession.sessionName = newName;
+        sessionList.sessions.push_back(newSession);
+        sessionList.currentSession = sessionList.sessions.count() - 1;
+        showSessions();
+    }
 }
 
 void TSessionManager::on_DeleteSessionButton_clicked()
 {
     // delete the current session, move on one
+    sessionList.sessions.remove(sessionList.currentSession);
+    showSessions();
 }
 
 void TSessionManager::on_AddEntryButton_clicked()
 {
     // add an entry to the current session beow the current entry
     //- need to put up a file selection dialog
+    // AND we want it to be multiselect
+
+    QString InitialDir = tlc->getDefaultDirectory( false );
+
+    QFileInfo qf(InitialDir);
+
+    InitialDir = qf.canonicalFilePath();
+
+    QString Filter = "Minos contest files (*.minos *.Minos);;"
+                     "All Files (*.*)" ;
+
+    QStringList fnames = QFileDialog::getOpenFileNames( this,
+                       "Open contests",
+                       InitialDir,  // dir
+                       Filter
+                       );
+    for (int i = 0; i < fnames.size(); i++)
+    {
+        QString fname = fnames[i];
+        if ( !fname.isEmpty() )
+        {
+            sessionList.sessions[sessionList.currentSession].entries.push_back(fname);
+        }
+    }
+
+    showSession(sessionList.currentSession);
 }
 
 void TSessionManager::on_DeleteEntryButton_clicked()
 {
     // delete the current entry from the current session
+    int &ce = sessionList.sessions[sessionList.currentSession].currentEntry;
+    QVector<QString> &entries = sessionList.sessions[sessionList.currentSession].entries;
+
+    entries.remove(ce);
+    showSession(sessionList.currentSession);
 }
 
 void TSessionManager::on_MoveEntryUpButton_clicked()
 {
     // shift the current entry up one
+    int &ce = sessionList.sessions[sessionList.currentSession].currentEntry;
+    QVector<QString> &entries = sessionList.sessions[sessionList.currentSession].entries;
+
+    std::swap(entries[ce], entries[ce -1]);
+    ce--;
+
+    showSession(sessionList.currentSession);
 }
 
 void TSessionManager::on_MoveEntryDownButton_clicked()
 {
     // shift the current entry down one
+    int &ce = sessionList.sessions[sessionList.currentSession].currentEntry;
+    QVector<QString> &entries = sessionList.sessions[sessionList.currentSession].entries;
+
+    std::swap(entries[ce], entries[ce +1]);
+    ce++;
+
+    showSession(sessionList.currentSession);
 }
 
 void TSessionManager::on_RenameSessionButton_clicked()
 {
     // change the session name
+    QString newName;
+    QString prompt = "Give new name for log set " + sessionList.sessions[sessionList.currentSession].sessionName;
+    if (enquireDialog(this, prompt, newName))
+    {
+        sessionList.sessions[sessionList.currentSession].sessionName = newName;
+        showSessions();
+    }
 }
 
 void TSessionManager::on_sessionsList_currentRowChanged(int currentRow)
 {
-    showSession(currentRow);
+    if ( !inShowSession && !inShowSession )
+    {
+        showSession(currentRow);
+    }
 }
 
 void TSessionManager::on_sessionEntries_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem */*previous*/)
 {
-    if (current)
+    if ( !inShowSession && !inShowSession )
     {
-        sessionList.sessions[sessionList.currentSession].currentEntry = current->row();
+        if (current)
+        {
+            sessionList.sessions[sessionList.currentSession].currentEntry = current->row();
+        }
+        enableButtons();
     }
 }

@@ -35,6 +35,7 @@ public:
     QLabel *sblabel2;
 
     TSingleLogFrame *findContest( const QString &pubname );
+    QString getDefaultDirectory( bool IsList );
 
     bool isShowOperators();
     bool isNextContactDetailsOnLeft();
@@ -133,7 +134,6 @@ private:
     QAction *KeyerTwoToneAction;
     QAction *KeyerStopAction;
 
-    QString getDefaultDirectory( bool IsList );
     BaseContestLog *loadSession(QString sessName);
     void preloadLists( );
     void preloadFiles( const QString &conarg );

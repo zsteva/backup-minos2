@@ -11,11 +11,56 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Minos Session Management</string>
+   <string>Manage Log Sets</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
+  <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QPushButton" name="NewSessionButton">
+         <property name="text">
+          <string>New Log Set</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="CloneSessionButton">
+         <property name="text">
+          <string>Clone Log Set</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="DeleteSessionButton">
+         <property name="text">
+          <string>Delete Log Set</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="RenameSessionButton">
+         <property name="text">
+          <string>Rename Log Set</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
      <item>
       <widget class="QSplitter" name="splitter">
        <property name="orientation">
@@ -29,7 +74,7 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Sessions</string>
+            <string>Log Sets</string>
            </property>
           </widget>
          </item>
@@ -43,7 +88,7 @@
          <item>
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>Entries in Session</string>
+            <string>Entries in Log Sets</string>
            </property>
           </widget>
          </item>
@@ -72,34 +117,6 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QPushButton" name="NewSessionButton">
-         <property name="text">
-          <string>New Session</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="CloneSessionButton">
-         <property name="text">
-          <string>Clone Session</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="DeleteSessionButton">
-         <property name="text">
-          <string>Delete Session</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="RenameSessionButton">
-         <property name="text">
-          <string>Rename Session</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QPushButton" name="AddEntryButton">
          <property name="text">
           <string>Add Entry</string>
@@ -127,6 +144,19 @@
          </property>
         </widget>
        </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </item>
     </layout>
@@ -150,6 +180,26 @@
       <widget class="QPushButton" name="OKButton">
        <property name="text">
         <string>OK</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="amendButton">
+       <property name="text">
+        <string>Apply</string>
        </property>
       </widget>
      </item>

@@ -210,7 +210,7 @@ void TLogContainer::setupMenus()
     }
     updateRecentFileActions();
 
-    sessionsMenu = ui->menuFile->addMenu("Sessions");
+    sessionsMenu = ui->menuFile->addMenu("Contest Sets");
     updateSessionActions();
 
     FileNewAction = newAction("&New Contest...", ui->menuFile, SLOT(FileNewActionExecute()));
@@ -997,7 +997,7 @@ void TLogContainer::updateSessionActions()
 
     sessionsMenu->clear();
 
-    sessionManagerAction  = newAction("&Manage Sessions...", sessionsMenu, SLOT(sessionManageExecute()));
+    sessionManagerAction  = newAction("&Manage Contest Sets...", sessionsMenu, SLOT(sessionManageExecute()));
     sessionsMenu->addSeparator();
 
     QStringList sessionlst = getSessions();
@@ -1036,12 +1036,10 @@ void TLogContainer::sessionManageExecute()
     if (tsm.exec() == QDialog::Accepted)
     {
         TWaitCursor wc(this);
-        TContestApp *app = TContestApp::getContestApp();
-        SettingsBundle &preloadBundle = app ->logsPreloadBundle;
 
-        getCurrSession();
+        updateSessionActions();
 
-        selectSession(app->currSession);
+        selectSession(TContestApp::getContestApp()->currSession);
     }
 }
 void TLogContainer::selectSession()

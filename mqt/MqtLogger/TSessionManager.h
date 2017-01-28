@@ -60,6 +60,8 @@ private slots:
 
     void on_sessionEntries_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
 
+    void on_amendButton_clicked();
+
 private:
     Ui::TSessionManager *ui;
     void doCloseEvent();
@@ -70,6 +72,8 @@ private:
     void enableButtons();
 
     TLogContainer *tlc;
+    bool inShowSession;
+    bool inShowSessions;
     SessionVector sessionList;
 
 
