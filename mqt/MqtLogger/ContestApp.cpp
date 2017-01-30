@@ -493,6 +493,10 @@ void TContestApp::writeContestList()
                 logsPreloadBundle.setIntProfile( eppCurrent, cs->slotno );
             }
         }
+        if (contestSlotList.size() == 0)
+        {
+            logsPreloadBundle.setIntProfile( eppCurrent, 0 );
+        }
 
         logsPreloadBundle.flushProfile();
     }

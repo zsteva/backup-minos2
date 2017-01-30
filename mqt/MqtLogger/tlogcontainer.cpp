@@ -210,9 +210,6 @@ void TLogContainer::setupMenus()
     }
     updateRecentFileActions();
 
-    sessionsMenu = ui->menuFile->addMenu("Contest Sets");
-    updateSessionActions();
-
     FileNewAction = newAction("&New Contest...", ui->menuFile, SLOT(FileNewActionExecute()));
     FileCloseAction = newAction("Close Contest", ui->menuFile, SLOT(FileCloseActionExecute()));
     CloseAllAction = newAction("Close all Contests", ui->menuFile, SLOT(CloseAllActionExecute()));
@@ -840,6 +837,9 @@ void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
     ui->menuLogs->clear();
     menuLogsActions.clear();
 
+    sessionsMenu = ui->menuLogs->addMenu("Contest Sets");
+    updateSessionActions();
+
     for (int i = 0; i < ui->ContestPageControl->count(); i++)
     {
         QWidget *ctab = ui->ContestPageControl->widget(i);
@@ -1152,10 +1152,15 @@ BaseContestLog *TLogContainer::loadSession( QString sessName)
             }
         }
     }
+    app->setCurrentContest(ct);
+
     preloadBundle.openSection(app->preloadsect);
     preloadBundle.setStringProfile(eppSession, sessName);
     preloadBundle.openSection(sessName);
     app ->writeContestList();	// to clear the unopened and changed ones
+    sessionsMenu = ui->menuLogs->addMenu("Contest Sets");
+    updateSessionActions();
+
     return ct;
 }
 void TLogContainer::getCurrSession()
