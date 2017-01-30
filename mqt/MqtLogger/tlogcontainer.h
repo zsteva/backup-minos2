@@ -134,6 +134,8 @@ private:
     QAction *KeyerTwoToneAction;
     QAction *KeyerStopAction;
 
+    QVector< QSharedPointer<QAction> > menuLogsActions;
+
     BaseContestLog *loadSession(QString sessName);
     void preloadLists( );
     void preloadFiles( const QString &conarg );
@@ -181,6 +183,8 @@ private slots:
     void KeyerToneActionExecute();
     void KeyerTwoToneActionExecute();
     void KeyerStopActionExecute();
+
+    void menuLogsActionExecute();
 
     void on_ContestPageControl_currentChanged(int index);
     void on_ContestPageControl_tabBarDoubleClicked(int index);

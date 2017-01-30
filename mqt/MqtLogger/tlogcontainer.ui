@@ -43,7 +43,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>40</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -71,11 +71,17 @@
      <string>Keyer</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuLogs">
+    <property name="title">
+     <string>Logs</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSearch"/>
    <addaction name="menuTools"/>
    <addaction name="menuKeyer"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuLogs"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>

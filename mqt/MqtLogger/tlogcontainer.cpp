@@ -815,6 +815,18 @@ void TLogContainer::KeyerStopActionExecute()
 {
     TSendDM::sendKeyerStop( );
 }
+void TLogContainer::menuLogsActionExecute()
+{
+    QAction *qa = qobject_cast<QAction *>(sender());
+    if (qa)
+    {
+        int i = qa->data().toInt();
+        QWidget *ctab = ui->ContestPageControl->widget(i);
+        TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( ctab );
+        BaseContestLog *pc = f->getContest();
+        selectContest(pc, QSharedPointer<BaseContact>());
+    }
+}
 
 void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
 {
@@ -825,16 +837,28 @@ void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
     TContestApp::getContestApp() ->writeContestList();
     enableActions();
 
+    ui->menuLogs->clear();
+    menuLogsActions.clear();
+
     for (int i = 0; i < ui->ContestPageControl->count(); i++)
     {
         QWidget *ctab = ui->ContestPageControl->widget(i);
-        if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( ctab ) )
+        TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( ctab );
+        BaseContestLog *pc = f->getContest();
+
+        QSharedPointer<QAction> ma(newCheckableAction(ui->ContestPageControl->tabText(i), ui->menuLogs, SLOT(menuLogsActionExecute())));
+
+        QVariant qpc(i);
+        ma->setData(qpc);
+        menuLogsActions.push_back(ma);
+
+        if ( f )
         {
-            BaseContestLog *pc = f->getContest();
 
             if (f == ui->ContestPageControl->currentWidget())
             {
                 ui->ContestPageControl->setTabColor(i, Qt::red);
+                ma->setChecked(true);
             }
             else if (pc->isReadOnly())
             {
