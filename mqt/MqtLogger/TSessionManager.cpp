@@ -335,7 +335,7 @@ void TSessionManager::on_sessionsList_currentRowChanged(int currentRow)
     }
 }
 
-void TSessionManager::on_sessionEntries_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem */*previous*/)
+void TSessionManager::on_sessionEntries_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem * /*previous*/)
 {
     if ( !inShowSession && !inShowSession )
     {
