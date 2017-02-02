@@ -2,8 +2,6 @@
 To be tested
 ------------
 
-Catch up
-Post entry
 Archive list editting
 fractional minutes in stats display 
 LatLong tool

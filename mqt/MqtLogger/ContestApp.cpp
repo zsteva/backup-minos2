@@ -429,11 +429,9 @@ int TContestApp::findList( ContactList * p )
 int TContestApp::removeContest(BaseContestLog * p )
 {
    int i = findContest( p );
-   if (preloadComplete)
    {
        if ( i >= 0 )
        {
-          if (!suppressWritePreload)
           {
              if ( getCurrentContest() == p )
                 setCurrentContest( 0 );
