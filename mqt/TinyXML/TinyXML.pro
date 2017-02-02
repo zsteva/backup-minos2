@@ -9,7 +9,7 @@ QT       -= core gui
 TARGET = TinyXML
 TEMPLATE = lib
 CONFIG += staticlib
-CONFIG += c++14
+CONFIG += c++11
 
 DEFINES += TIXML_USE_STL
 

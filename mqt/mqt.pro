@@ -9,7 +9,7 @@ SUBDIRS += \
     MqtLogger \
     MqtServer
 
-!unix {
+win32 {
     SUBDIRS += \
     MqtChat \
     MqtTestRotator \

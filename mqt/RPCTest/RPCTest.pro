@@ -9,7 +9,7 @@ QT       += core gui
 QT       += widgets
 QT       += network
 
-CONFIG += c++14
+CONFIG += c++11
 
 TARGET = tst_rpctesttest
 CONFIG   += console

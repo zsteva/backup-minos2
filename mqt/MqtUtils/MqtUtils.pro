@@ -10,7 +10,7 @@ TARGET = MqtUtils
 TEMPLATE = lib
 CONFIG += staticlib
 
-CONFIG += c++14
+CONFIG += c++11
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
