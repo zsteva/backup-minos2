@@ -49,6 +49,8 @@ bool isOpen(QSharedPointer<ContestSlot> cs, const QString &fn )
 }
 bool isOpen(QSharedPointer<ListSlot> cs, const QString &fn )
 {
+    if (cs.isNull())
+        return false;
    ContactList * con = cs->slot;
    if ( !con )
       return false;
