@@ -115,7 +115,7 @@ bool PortConfigure::configurePorts( commonController &monitor )
 
    TiXmlBase::SetCondenseWhiteSpace( false );
    TiXmlDocument keyerdoc;
-   keyerdoc.LoadFile( ".\\Configuration\\portConfig.xml" );
+   keyerdoc.LoadFile( "./Configuration/portConfig.xml" );
    TiXmlElement *root = keyerdoc.RootElement();
    if ( !root )
    {

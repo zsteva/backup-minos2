@@ -1005,7 +1005,7 @@ ToneAction::ToneAction( int n, long pdelayStart ) : actionState( etasInitial ), 
    {
       trace( "new ToneAction" );
    }
-   delayTicks = pdelayStart/55;
+   delayTicks = (pdelayStart + 55)/55;
    if ( delayTicks <= 0 )
       delayTicks = 1;	// so it starts on next tick
    actionTime = 1;
@@ -1086,7 +1086,7 @@ void InitialPTTAction::timeOut()
 
       case einitPTTStart:
          {
-            if ( lastTick - currTick <= 55 )
+            if ( lastTick - currTick <= 1 )
             {
                actionState = einitPTTFlickRelease;
                actionTime = 1;
@@ -1247,11 +1247,11 @@ PlayAction::PlayAction( const QString &pfileName, bool noPTT, long pdelayStart,
    }
    fileName = pfileName;
 
-   delayTicks = pdelayStart;
+   delayTicks = (pdelayStart + 55)/55;
    if ( delayTicks <= 0 )
       delayTicks = 1;	// so it starts on next tick
 
-   repeatTicks = prepeatDelay * 1000;
+   repeatTicks = (prepeatDelay * 1000)/55;
    actionTime = 1;
 
    if ( testMode )
@@ -1471,7 +1471,7 @@ void PipAction::timeOut()
    {
       case epipasInitial:
          // start up the pip tone
-         actionTime = currentKeyer->kconf.pipStartDelay;
+         actionTime = (currentKeyer->kconf.pipStartDelay + 50)/55;
          if ( actionTime < 1 )
             actionTime = 1;
          actionState = epipasPip;

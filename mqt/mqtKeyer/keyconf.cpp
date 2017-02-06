@@ -101,13 +101,7 @@ void KeyerConfigure::SetPorts( TiXmlElement *e )
 }
 void KeyerConfigure::SetKeyers( TiXmlElement *e )
 {
-   /*
-      void procKeyerParam( void *self, const QString &pname, int pvalue )
-      {
-         lineMonitor * lm = ( lineMonitor * ) self;
-         lm->procParam( pname, pvalue );
-      }
-   */
+
    for ( TiXmlElement * c = e->FirstChildElement(); c; c = c->NextSiblingElement() )
    {
       if ( checkElementName( c, "Keyer" ) )
@@ -256,7 +250,7 @@ bool KeyerConfigure::configureKeyers()
 
    TiXmlBase::SetCondenseWhiteSpace( false );
    TiXmlDocument keyerdoc;
-   keyerdoc.LoadFile( ".\\Configuration\\keyerConfig.xml" );
+   keyerdoc.LoadFile( "./Configuration/keyerConfig.xml" );
    TiXmlElement *root = keyerdoc.RootElement();
    if ( !root )
    {

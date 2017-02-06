@@ -9,6 +9,8 @@
 #ifndef soundsysH
 #define soundsysH
 
+#include "base_pch.h"
+
 #include <QAudioInput>
 #include <QAudioOutput>
 #include <QIODevice>
@@ -29,6 +31,10 @@ class MinosAudioOut : public QIODevice
 {
     Q_OBJECT
 
+protected:
+    virtual qint64 readData(char *data, qint64 maxlen) override;
+    virtual qint64 writeData(const char *data, qint64 len) override;
+
 public:
     MinosAudioOut(QObject *parent);
     ~MinosAudioOut();
@@ -36,15 +42,17 @@ public:
     void start();
     void stop();
 
-    qint64 readData(char *data, qint64 maxlen);
-    qint64 writeData(const char *data, qint64 len);
-    qint64 bytesAvailable() const;
+    virtual qint64 bytesAvailable() const override;
 
-    void setData(qint16 *data, int len);
+    void setData(int16_t *data, int len);
+    void setPipData(int16_t *data, int len, int delayLen);
 
 private:
     qint64 m_pos;
+    qint64 p_pos;
     QByteArray m_buffer;
+    QByteArray p_buffer;
+    long pipDelayBytes;
 };
 
 class WriterThread;
@@ -60,8 +68,11 @@ public:
    volatile long now;
    volatile int sbactive;
 
-   qint16 *dataptr;
+   int16_t *dataptr;
    long samples;
+
+   int16_t *pipdataptr;
+   long pipSamples;
 
    int mset;
 

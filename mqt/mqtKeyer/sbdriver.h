@@ -52,14 +52,14 @@ class SoundSystemDriver
 
       int cwTone;
 
-      int pipSamples;
+      long pipSamples;
       int16_t * pipptr;
 
-      int toneSamples;
+      long toneSamples;
       int16_t * t1ptr;
       int16_t * t2ptr;
 
-      int cwSamples;
+      long cwSamples;
       int16_t * cwptr;
 
       int16_t *ptr;       /* data for current file */

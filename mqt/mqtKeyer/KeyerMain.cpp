@@ -64,6 +64,17 @@ KeyerMain::KeyerMain(QWidget *parent) :
     LineTimer.start(100);
 
     connect(&CaptionTimer, SIGNAL(timeout()), this, SLOT(CaptionTimerTimer()));
+
+    ui->PipCheckBox->setChecked(getPipEnabled());
+
+    ui->delayEdit->setValue(getAutoRepeatDelay());
+    ui->AutoRepeatCheckBox->setChecked( getEnableAutoRepeat());
+
+    for (int i = 1; i < 10; i++)
+    {
+        ui->keyCombo->addItem(QString::number(i));
+    }
+    ui->keyCombo->setCurrentIndex(0);
 }
 
 KeyerMain::~KeyerMain()
