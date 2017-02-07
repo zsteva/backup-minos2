@@ -14,20 +14,10 @@
 #include <QAudioInput>
 #include <QAudioOutput>
 #include <QIODevice>
-
-#ifndef MAX_BLOCK_LENGTH
-#define MAX_BLOCK_LENGTH 1024
-#endif
-#ifndef CW_BLOCK_LENGTH
-#define CW_BLOCK_LENGTH 256
-#endif 
-/*
-* some good values for block size and count
-*/
-#define BLOCK_COUNT 20
+#include "riff.h"
 
 
-class MinosAudioOut : public QIODevice
+class MinosAudioIODeviceOut : public QIODevice
 {
     Q_OBJECT
 
@@ -36,8 +26,8 @@ protected:
     virtual qint64 writeData(const char *data, qint64 len) override;
 
 public:
-    MinosAudioOut(QObject *parent);
-    ~MinosAudioOut();
+    MinosAudioIODeviceOut(QObject *parent);
+    ~MinosAudioIODeviceOut();
 
     void start();
     void stop();
@@ -53,6 +43,25 @@ private:
     QByteArray m_buffer;
     QByteArray p_buffer;
     long pipDelayBytes;
+};
+class MinosAudioIODeviceIn : public QIODevice
+{
+    Q_OBJECT
+
+protected:
+    virtual qint64 readData(char *data, qint64 maxlen) override;
+    virtual qint64 writeData(const char *data, qint64 len) override;
+
+public:
+    MinosAudioIODeviceIn(QObject *parent);
+    ~MinosAudioIODeviceIn();
+
+    bool startInput( QString fn );
+    void start();
+    void stop();
+private:
+    WaveFile outWave;
+
 };
 
 class WriterThread;
@@ -79,29 +88,32 @@ public:
    static QtSoundSystem *createSoundSystem();
 
 private:
-    QAudioOutput *qout;
-    QAudioInput *qin;
+    bool startInput( QString fname );
 
-    MinosAudioOut *maout;
+    QAudioOutput *qAudioOut;
+    QAudioInput *qAudioIn;
+
+    MinosAudioIODeviceOut *maIOout;
+    MinosAudioIODeviceIn *maIOin;
 
       // internal values
-      WriterThread *wt;
-      int sampleRate;
-   public:
+    int sampleRate;
+public:
 
-      QtSoundSystem();
-      virtual ~QtSoundSystem();
+    QtSoundSystem();
+    virtual ~QtSoundSystem();
 
-      virtual bool initialise( QString &errmess );
+    virtual bool initialise( QString &errmess );
 
-      virtual void terminate();
-      virtual int setRate();
+    virtual void terminate();
+    virtual int setRate();
 
-      virtual bool startDMA( bool play, const QString &fname );
-      virtual void stopDMA();
+    virtual bool startDMA( bool play, const QString &fname );
+    virtual void stopDMA();
 
 private slots:
-      void handleStateChanged(QAudio::State newState);
+      void handleOutStateChanged(QAudio::State newState);
+      void handleInStateChanged(QAudio::State newState);
 
 };
 

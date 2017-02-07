@@ -16,10 +16,6 @@
 #include "sbdriver.h"
 #include "soundsys.h"
 
-
-//==============================================================================
-int curBlockLength = 0;
-
 //==============================================================================
 class dvkFile
 {
@@ -115,8 +111,6 @@ bool SoundSystemDriver::dofile( int i, int clipRecord )
 
    // stop the DMA before we start it again
    stopDMA();
-
-   curBlockLength = MAX_BLOCK_LENGTH;
 
    if ( ihand >= 0 )
    {
