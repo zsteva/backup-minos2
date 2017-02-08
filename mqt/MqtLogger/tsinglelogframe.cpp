@@ -953,8 +953,25 @@ QVariant QSOGridModel::data( const QModelIndex &index, int role ) const
                      setHighlight = true;
                  break;
               case egLoc:
-                 if ( (contest->locMult.getValue() && ct->locCount > 0) || (contest->UKACBonus.getValue() && ct->bonus > 0))
+                 if ( contest->locMult.getValue() && ct->locCount > 0)
                  {
+                     setHighlight = true;
+                 }
+                 else if ( contest->UKACBonus.getValue() && ct->bonus > 0)
+                 {
+                     switch (ct->bonus)
+                     {
+                     case 500:  //blue
+                         multhighlight = Qt::blue;
+                         break;
+                     case 1000: //green
+                         multhighlight = Qt::darkGreen;
+                         break;
+                     case 2000: //red
+                         multhighlight = Qt::red;
+                         break;
+                     }
+
                      setHighlight = true;
                  }
                  break;
@@ -1231,10 +1248,27 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
                                 setHighlight = true;
                             break;
                         case egLoc:
-                            if ( (contest->locMult.getValue() && ct->locCount > 0) || (contest->UKACBonus.getValue() && ct->bonus > 0))
-                            {
-                                setHighlight = true;
-                            }
+                           if ( contest->locMult.getValue() && ct->locCount > 0)
+                           {
+                               setHighlight = true;
+                           }
+                           else if ( contest->UKACBonus.getValue() && ct->bonus > 0)
+                           {
+                               switch (ct->bonus)
+                               {
+                               case 500:  //blue
+                                   multhighlight = Qt::blue;
+                                   break;
+                               case 1000: //green
+                                   multhighlight = Qt::darkGreen;
+                                   break;
+                               case 2000: //red
+                                   multhighlight = Qt::red;
+                                   break;
+                               }
+
+                               setHighlight = true;
+                           }
                             break;
                         }
                         if (setHighlight)

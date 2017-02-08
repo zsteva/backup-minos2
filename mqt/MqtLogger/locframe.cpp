@@ -1,12 +1,16 @@
 #include "logger_pch.h"
 #include "locframe.h"
 #include "ui_locframe.h"
+#include "htmldelegate.h"
+
 
 LocFrame::LocFrame(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::LocFrame), ct(0)
 {
     ui->setupUi(this);
+
+    ui->LocTree->setItemDelegate(new HtmlDelegate);
 }
 
 LocFrame::~LocFrame()
@@ -42,8 +46,21 @@ void LocFrame::reInitialiseLocators()
                 {
                     if (ct->UKACBonus.getValue())
                     {
-                        dispLine += disp + " (" + QString::number(lc->UKLocCount + lc->nonUKLocCount)
-                                    + "/" + QString::number(ct->getSquareBonus(locStart + disp)) + ") ";
+                        QColor multhighlight = Qt::black;
+                        switch (ct->getSquareBonus(locStart + disp))
+                        {
+                        case 500:  //blue
+                            multhighlight = Qt::blue;
+                            break;
+                        case 1000: //green
+                            multhighlight = Qt::darkGreen;
+                            break;
+                        case 2000: //red
+                            multhighlight = Qt::red;
+                            break;
+                        }
+
+                        dispLine += HtmlFontColour(multhighlight) + disp + " (" + QString::number(lc->UKLocCount + lc->nonUKLocCount) + ") ";
                     }
                     else
                     {
