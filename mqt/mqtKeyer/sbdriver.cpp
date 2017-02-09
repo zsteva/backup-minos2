@@ -282,6 +282,7 @@ long SoundSystemDriver::play_file( const QString &filename, bool xmit )
 }
 void SoundSystemDriver::stopall()
 {
+    trace("stopall");
    ptr = 0;
    stoprec();
    stopDMA();  // stop - eventually

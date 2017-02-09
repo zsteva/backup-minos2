@@ -17,7 +17,7 @@
 #include "riff.h"
 
 
-class MinosAudioIODeviceOut : public QIODevice
+class MinosAudioIODevice : public QIODevice
 {
     Q_OBJECT
 
@@ -26,11 +26,14 @@ protected:
     virtual qint64 writeData(const char *data, qint64 len) override;
 
 public:
-    MinosAudioIODeviceOut(QObject *parent);
-    ~MinosAudioIODeviceOut();
+    MinosAudioIODevice(QObject *parent);
+    ~MinosAudioIODevice();
 
-    void start();
-    void stop();
+    void startOutput();
+    void stopOutput();
+    void startInput();
+    void stopInput();
+    bool startInput( QString fn );
 
     virtual qint64 bytesAvailable() const override;
 
@@ -43,26 +46,10 @@ private:
     QByteArray m_buffer;
     QByteArray p_buffer;
     long pipDelayBytes;
-};
-class MinosAudioIODeviceIn : public QIODevice
-{
-    Q_OBJECT
 
-protected:
-    virtual qint64 readData(char *data, qint64 maxlen) override;
-    virtual qint64 writeData(const char *data, qint64 len) override;
-
-public:
-    MinosAudioIODeviceIn(QObject *parent);
-    ~MinosAudioIODeviceIn();
-
-    bool startInput( QString fn );
-    void start();
-    void stop();
-private:
     WaveFile outWave;
-
 };
+
 
 class WriterThread;
 class QtSoundSystem: public QObject
@@ -93,8 +80,7 @@ private:
     QAudioOutput *qAudioOut;
     QAudioInput *qAudioIn;
 
-    MinosAudioIODeviceOut *maIOout;
-    MinosAudioIODeviceIn *maIOin;
+    MinosAudioIODevice *maIOdev;
 
       // internal values
     int sampleRate;

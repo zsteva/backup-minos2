@@ -534,6 +534,8 @@ bool voiceKeyer::docommand( const KeyerCtrl &dvp_ctrl )
          }
 
       case eKEYER_STOPRECORD:      /* stop recording file */
+       trace("docommand eKEYER_STOPRECORD");
+
          SoundSystemDriver::getSbDriver() ->stoprec();
          KeyerAction::currentAction.freeAll();
          break;
@@ -788,6 +790,7 @@ void sbKeyer::sbTickEvent()           // this will often be an interrupt routine
                sbn->actionTime = 1;
             }
             // need to remove the action from the queue
+            trace("delete at tick");
             KeyerAction::currentAction.free_element( sba );
          }
 
@@ -1595,9 +1598,10 @@ void RecordAction::timeOut()
          break;
 
       case erasStopRec:
+       trace("timeout erasStopRec");
          // stop recording
          actionState = erasRecFinished;
-         actionTime = 1000 ;			// safety net to finish buffer return
+         actionTime = 1000/55 ;			// safety net to finish buffer return
          SoundSystemDriver::getSbDriver() ->stoprec();
          currentKeyer->recPending = false;
          break;

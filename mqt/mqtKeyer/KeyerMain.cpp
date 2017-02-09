@@ -30,6 +30,7 @@ void KeyerMain::syncSetLines()
 KeyerMain::KeyerMain(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KeyerMain),
+    PTT(false), keyline(false), PTTRef(false), L1Ref(false), L2Ref(false),
     recordWait(false),
     recording(false)
 {
@@ -152,6 +153,7 @@ void KeyerMain::CaptionTimerTimer( )
 }
 void KeyerMain::on_recordButton_clicked()
 {
+    trace("Record Button");
     int fno = ui->keyCombo->currentText().toInt();
     if ( fno >= 1 && fno <= 12 )
     {
@@ -164,6 +166,7 @@ void KeyerMain::on_recordButton_clicked()
 
 void KeyerMain::on_playButton_clicked()
 {
+    trace("Play Button");
     int fno = ui->keyCombo->currentText().toInt( );
     if ( fno >= 1 && fno <= 12 )
     {
@@ -175,6 +178,7 @@ void KeyerMain::on_playButton_clicked()
 
 void KeyerMain::on_showButton_clicked()
 {
+    trace("Show Button");
     /*
     if ( !WaveShowForm )
      {
@@ -195,6 +199,7 @@ void KeyerMain::on_showButton_clicked()
 
 void KeyerMain::on_stopButton_clicked()
 {
+    trace("Stop Button");
     if ( recordWait )
     {
        ui->recind->setText("");
@@ -246,11 +251,13 @@ void KeyerMain::on_outputComboBox_currentTextChanged(const QString &/*arg1*/)
 
 void KeyerMain::on_tuneButton_clicked()
 {
+    trace("Tone 1 Button");
     sendTone1();
 }
 
 void KeyerMain::on_twoToneButton_clicked()
 {
+    trace("Tone 2 Button");
     sendTone2();
 }
 

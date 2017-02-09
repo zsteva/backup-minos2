@@ -33,29 +33,48 @@ QtSoundSystem *QtSoundSystem::createSoundSystem()
    return new QtSoundSystem();
 }
 //==============================================================================
-MinosAudioIODeviceOut::MinosAudioIODeviceOut(QObject *parent)
+MinosAudioIODevice::MinosAudioIODevice(QObject *parent)
     :   QIODevice(parent)
     ,   m_pos(0), p_pos(0)
 {
 }
 
-MinosAudioIODeviceOut::~MinosAudioIODeviceOut()
+MinosAudioIODevice::~MinosAudioIODevice()
 {
 
 }
 
-void MinosAudioIODeviceOut::start()
+void MinosAudioIODevice::startOutput()
 {
     open(QIODevice::ReadOnly);
 }
 
-void MinosAudioIODeviceOut::stop()
+void MinosAudioIODevice::stopOutput()
 {
     m_pos = 0;
     p_pos = 0;
     close();
 }
-void MinosAudioIODeviceOut::setData(int16_t *data, int len)
+void MinosAudioIODevice::startInput()
+{
+    open(QIODevice::WriteOnly);
+}
+
+void MinosAudioIODevice::stopInput()
+{
+    outWave.Close();
+    close();
+}
+bool MinosAudioIODevice::startInput( QString fn )
+{
+    // open fname, assign a text(?)
+    if ( outWave.OpenForWrite( fn.toLatin1(), 22050, 16, 1 ) == DDC_SUCCESS )
+       return true;
+
+    return false;
+}
+
+void MinosAudioIODevice::setData(int16_t *data, int len)
 {
     m_buffer.resize(len * sizeof(uint16_t));
     unsigned char *ptr = reinterpret_cast<unsigned char *>(m_buffer.data());
@@ -69,7 +88,7 @@ void MinosAudioIODeviceOut::setData(int16_t *data, int len)
     }
     m_pos = 0;
 }
-void MinosAudioIODeviceOut::setPipData(int16_t *data, int len, int delayLen)
+void MinosAudioIODevice::setPipData(int16_t *data, int len, int delayLen)
 {
     pipDelayBytes = delayLen * sizeof(uint16_t);
     p_buffer.resize(len * sizeof(uint16_t));
@@ -84,7 +103,7 @@ void MinosAudioIODeviceOut::setPipData(int16_t *data, int len, int delayLen)
     }
     p_pos = 0;
 }
-qint64 MinosAudioIODeviceOut::readData(char *data, qint64 len)
+qint64 MinosAudioIODevice::readData(char *data, qint64 len)
 {
     // we have to add in the pip here as well...
     qint64 total = 0;
@@ -140,39 +159,7 @@ qint64 MinosAudioIODeviceOut::readData(char *data, qint64 len)
     return total;
 }
 
-qint64 MinosAudioIODeviceOut::writeData(const char *data, qint64 len)
-{
-    Q_UNUSED(data);
-    Q_UNUSED(len);
-
-    return 0;
-}
-
-qint64 MinosAudioIODeviceOut::bytesAvailable() const
-{
-    return m_buffer.size() + QIODevice::bytesAvailable();
-}
-//==============================================================================
-MinosAudioIODeviceIn::MinosAudioIODeviceIn(QObject *parent)
-    :   QIODevice(parent)
-{
-
-}
-
-MinosAudioIODeviceIn::~MinosAudioIODeviceIn()
-{
-
-}
-
-qint64 MinosAudioIODeviceIn::readData(char *data, qint64 maxlen)
-{
-    Q_UNUSED(data);
-    Q_UNUSED(maxlen);
-
-    return 0;
-}
-
-qint64 MinosAudioIODeviceIn::writeData(const char *data, qint64 len)
+qint64 MinosAudioIODevice::writeData(const char *data, qint64 len)
 {
     // data arrives here; we need to write it to the (already open) file,
     // or ditch it
@@ -189,31 +176,19 @@ qint64 MinosAudioIODeviceIn::writeData(const char *data, qint64 len)
     return len;
 }
 
-void MinosAudioIODeviceIn::start()
+qint64 MinosAudioIODevice::bytesAvailable() const
 {
-    open(QIODevice::WriteOnly);
+    return m_buffer.size() + QIODevice::bytesAvailable();
 }
-
-void MinosAudioIODeviceIn::stop()
-{
-    outWave.Close();
-    close();
-}
-bool MinosAudioIODeviceIn::startInput( QString fn )
-{
-    // open fname, assign a text(?)
-    if ( outWave.OpenForWrite( fn.toLatin1(), 22050, 16, 1 ) == DDC_SUCCESS )
-       return true;
-
-    return false;
-}
+//==============================================================================
 
 //==============================================================================
 QtSoundSystem::QtSoundSystem() :
     sampleRate( 0 )
   , qAudioIn(0), qAudioOut(0)
-  , maIOout(0), maIOin(0)
+  , maIOdev(0)
 {
+    maIOdev = new MinosAudioIODevice(this);
 }
 QtSoundSystem::~QtSoundSystem()
 {
@@ -243,7 +218,7 @@ bool QtSoundSystem::initialise( QString &/*errmess*/ )
     qaf.setCodec("audio/pcm");
 
     qAudioIn = new QAudioInput(qaf);
-    connect(qAudioIn, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleOutStateChanged(QAudio::State)));
+    connect(qAudioIn, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleInStateChanged(QAudio::State)));
 
     qAudioOut = new QAudioOutput(qaf);
     connect(qAudioOut, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleOutStateChanged(QAudio::State)));
@@ -293,10 +268,11 @@ void QtSoundSystem::handleInStateChanged(QAudio::State newState)
     switch (newState) {
         case QAudio::IdleState:
         {
+        // this doesn't happen... at least not while recording
             trace("Audio input idle state");
             // Finished playing (no more data)
-            if (maIOin)
-                maIOin->stop();
+            if (maIOdev)
+                maIOdev->stopInput();
             KeyerAction * sba = KeyerAction::getCurrentAction();
              if ( sba )
              {
@@ -305,7 +281,8 @@ void QtSoundSystem::handleInStateChanged(QAudio::State newState)
                    trace( "All buffers now returned" );
                 }
                 sba->queueFinished();
-             }        }
+             }
+        }
         break;
 
         case QAudio::StoppedState:
@@ -313,6 +290,18 @@ void QtSoundSystem::handleInStateChanged(QAudio::State newState)
             // Stopped for other reasons
             if (qAudioOut->error() != QAudio::NoError) {
                 // Error handling
+            }
+            else
+            {
+                KeyerAction * sba = KeyerAction::getCurrentAction();
+                 if ( sba )
+                 {
+                    if ( sblog )
+                    {
+                       trace( "All buffers now returned" );
+                    }
+                    sba->queueFinished();
+                 }
             }
             break;
 
@@ -336,34 +325,30 @@ bool QtSoundSystem::startDMA( bool play, const QString &fname )
       {
          trace( "Starting output" );
       }
-        if (maIOout == 0)
-            maIOout = new MinosAudioIODeviceOut(qAudioOut);
 
-        maIOout->setData(dataptr, samples);                           // with DO_FILE_PIP this works
+        maIOdev->setData(dataptr, samples);                           // with DO_FILE_PIP this works
         KeyerAction * sba = KeyerAction::getCurrentAction();
         if (sba && sba->tailWithPip)
         {
             long psamples = SoundSystemDriver::getSbDriver() ->pipSamples;  // but this is inverted!
             int16_t *pdataptr = SoundSystemDriver::getSbDriver() ->pipptr;
-            maIOout->setPipData(pdataptr, psamples, sba->pipStartDelaySamples);
+            maIOdev->setPipData(pdataptr, psamples, sba->pipStartDelaySamples);
         }
-        maIOout->start();
-        qAudioOut->start(maIOout);
+        maIOdev->startOutput();
+        qAudioOut->start(maIOdev);
    }
    else
    {
        if ( sblog )
        {
-          trace( "Starting input" );
+          trace( "(StartDMA) Starting input" );
        }
-         if (maIOin == 0)
-             maIOin = new MinosAudioIODeviceIn(qAudioIn);
 
-         if ( !maIOin->startInput( fname ) )
+         if ( !maIOdev->startInput( fname ) )
             return false;
 
-         maIOin->start();
-         qAudioIn->start(maIOin);
+         maIOdev->startInput();
+         qAudioIn->start(maIOdev);
    }
    return true;
 }
