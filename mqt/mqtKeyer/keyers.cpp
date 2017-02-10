@@ -947,7 +947,6 @@ void ToneAction::pttChanged( bool state )
 void ToneAction::queueFinished()
 {
    actionTime = 1;
-   //   timeOut();
 }
 void ToneAction::timeOut()
 {
@@ -1191,7 +1190,7 @@ void InterruptingPTTAction::timeOut()
       case einterPTTWaitDelay:
          {
             actionState = einterPTTWaitDelayFinish;
-            actionTime = currentKeyer->kconf.playPTTDelay;
+            actionTime = currentKeyer->kconf.playPTTDelay/55;
             if ( actionTime < 1 )
                actionTime = 1;
             break;
@@ -1323,6 +1322,7 @@ void PlayAction::pttChanged( bool state )
 void PlayAction::queueFinished()
 {
    actionTime = 1;
+   // if we have picked up with PTT, this bypasses deleteAtTick
    timeOut();   // pick it up as quickly as possible
 }
 void PlayAction::timeOut()
@@ -1365,8 +1365,11 @@ void PlayAction::timeOut()
             actionState = epasEndPlayFile;
             ActionStateString = "Play";
 
-            pipStartDelaySamples = ( currentKeyer->kconf.pipStartDelay * SoundSystemDriver::getSbDriver() ->rate ) / 1000;
-            tailWithPip = currentKeyer->kconf.enablePip;
+            if (!fileName.isEmpty())
+            {
+                pipStartDelaySamples = ( currentKeyer->kconf.pipStartDelay * SoundSystemDriver::getSbDriver() ->rate ) / 1000;
+                tailWithPip = currentKeyer->kconf.enablePip;
+            }
 
             if ( SoundSystemDriver::getSbDriver() ->play_file( fileName, !testMode ) < 0 )
             {
@@ -1375,7 +1378,7 @@ void PlayAction::timeOut()
             }
             else
             {
-               actionTime = 1000;	// 1 sec to first interrupt ought to be enough
+               actionTime = 1000/55;	// 1 sec to first interrupt ought to be enough
             }
             break;
          }
@@ -1383,7 +1386,6 @@ void PlayAction::timeOut()
       case epasEndPlayFile:
          // state 3 chain PIP and chain next repeat; start in state 1
          ActionStateString = "Ending";
-         KeyerAction *sbn = getNextAction();
          /*
          if ( currentKeyer->kconf.enablePip )
          {
@@ -1400,6 +1402,7 @@ void PlayAction::timeOut()
                currentKeyer->ptt( 0 );
             SetCurrentMixerSet( emsPassThroughNoPTT );
          }
+         KeyerAction *sbn = getNextAction();
          if ( !testMode && currentKeyer->kconf.enableAutoRepeat && currentKeyer->kconf.autoRepeatDelay && !sbn && !CW )
          {
             new PlayAction( fileName, false, currentKeyer->kconf.startDelay, currentKeyer->kconf.autoRepeatDelay, false, false );
@@ -1486,7 +1489,7 @@ void PipAction::timeOut()
          SoundSystemDriver::getSbDriver() ->recording = false;
          SoundSystemDriver::getSbDriver() ->dofile( DOFILE_PIP );
          actionState = epipasEndPip;
-         actionTime = 1000;	// safety net! 1 sec to first interrupt
+         actionTime = 1000/55;	// safety net! 1 sec to first interrupt
          break;
 
       case epipasEndPip:

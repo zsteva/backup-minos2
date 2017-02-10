@@ -155,13 +155,9 @@ bool SoundSystemDriver::dofile( int i, int clipRecord )
                   ptr = cwptr;
                   samples = cwSamples;
                }
-   soundSystem->now = 0;
-   soundSystem->samplesremaining = samples;
    soundSystem->samples = samples;
    soundSystem->dataptr = ptr;
 
-   soundSystem->done = false;
-   soundSystem->sbactive = true;
    /*
     start record/playback!
    */ 
@@ -182,11 +178,9 @@ void SoundSystemDriver::stoprec()
          currentKeyer->ptt( 0 );
       stopDMA();  // stop - eventually
       CW_ACTIVE = false;
-      samples = ( soundSystem->now / 2 < samples ) ? soundSystem->now / 2 : samples;
       ihand = isave;
       recfil[ isave ] ->fsample = samples;
       recording = false;
-      //      recfil[isave]->copyfile();
       QString err;
       recfil[ isave ] ->LoadFile( err );
    }
@@ -319,10 +313,7 @@ bool SoundSystemDriver::sbdvp_init( QString &errmess, int pipTone, int pipVolume
 
       // should be in each sound class
 
-      soundSystem->mset = 0; // 16 bit center value
-
       rate = soundSystem->setRate();
-      //    printf("nearest rate is %d Hz\n", rate);
 
       if ( !soundSystem->initialise( errmess ) )
          return false;
@@ -330,8 +321,6 @@ bool SoundSystemDriver::sbdvp_init( QString &errmess, int pipTone, int pipVolume
       if ( currentKeyer )
          currentKeyer->ptt( 0 );
 
-      soundSystem->done = true;
-      soundSystem->sbactive = false;
       play = true;
       recording = false;
 

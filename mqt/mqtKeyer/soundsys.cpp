@@ -32,40 +32,29 @@ QtSoundSystem *QtSoundSystem::createSoundSystem()
 {
    return new QtSoundSystem();
 }
-//==============================================================================
-MinosAudioIODevice::MinosAudioIODevice(QObject *parent)
-    :   QIODevice(parent)
-    ,   m_pos(0), p_pos(0)
+
+void QtSoundSystem::startOutput()
 {
 }
 
-MinosAudioIODevice::~MinosAudioIODevice()
+void QtSoundSystem::stopOutput()
 {
+    outDev = 0;
+    qAudioOut->stop();
+    outDev = qAudioOut->start();
 
-}
-
-void MinosAudioIODevice::startOutput()
-{
-    open(QIODevice::ReadOnly);
-}
-
-void MinosAudioIODevice::stopOutput()
-{
     m_pos = 0;
     p_pos = 0;
-    close();
 }
-void MinosAudioIODevice::startInput()
+void QtSoundSystem::startInput()
 {
-    open(QIODevice::WriteOnly);
 }
 
-void MinosAudioIODevice::stopInput()
+void QtSoundSystem::stopInput()
 {
     outWave.Close();
-    close();
 }
-bool MinosAudioIODevice::startInput( QString fn )
+bool QtSoundSystem::startInput( QString fn )
 {
     // open fname, assign a text(?)
     if ( outWave.OpenForWrite( fn.toLatin1(), 22050, 16, 1 ) == DDC_SUCCESS )
@@ -74,7 +63,7 @@ bool MinosAudioIODevice::startInput( QString fn )
     return false;
 }
 
-void MinosAudioIODevice::setData(int16_t *data, int len)
+void QtSoundSystem::setData(int16_t *data, int len)
 {
     m_buffer.resize(len * sizeof(uint16_t));
     unsigned char *ptr = reinterpret_cast<unsigned char *>(m_buffer.data());
@@ -88,7 +77,7 @@ void MinosAudioIODevice::setData(int16_t *data, int len)
     }
     m_pos = 0;
 }
-void MinosAudioIODevice::setPipData(int16_t *data, int len, int delayLen)
+void QtSoundSystem::setPipData(int16_t *data, int len, int delayLen)
 {
     pipDelayBytes = delayLen * sizeof(uint16_t);
     p_buffer.resize(len * sizeof(uint16_t));
@@ -103,92 +92,117 @@ void MinosAudioIODevice::setPipData(int16_t *data, int len, int delayLen)
     }
     p_pos = 0;
 }
-qint64 MinosAudioIODevice::readData(char *data, qint64 len)
-{
-    // we have to add in the pip here as well...
-    qint64 total = 0;
-    if (m_pos >= m_buffer.size())
-    {
-        // add in pip delay and pip
-        if (p_pos >= p_buffer.size())
-        {
-            trace("Audio readData " + QString::number(len) + " returning " + QString::number(0));
-            return 0;
-        }
-        if (pipDelayBytes > 0)
-        {
-            qint64 ps = pipDelayBytes;
-            total = qMin(ps, len);
-            memset(data, 0, total);
-            pipDelayBytes -= total;
-            trace("pipdelay");
-        }
-        else
-        {
-            if (!p_buffer.isEmpty())
-            {
-                total = qMin((p_buffer.size() - p_pos), len);
-                memcpy(data, p_buffer.constData() + p_pos, total);
-                p_pos += total;
-                trace("pip");
-            }
-            else
-            {
-                trace("p_buffer empty");
-            }
-        }
-    }
-    else
-    {
-        if (!m_buffer.isEmpty())
-        {
-            total = qMin((m_buffer.size() - m_pos), len);
-            memcpy(data, m_buffer.constData() + m_pos, total);
-            m_pos += total;
-            trace("data");
-        }
-        else
-        {
-            trace("m_buffer empty");
-        }
-    }
-    KeyerAction * sba = KeyerAction::getCurrentAction();
-    if ( sba )
-       sba->interruptOK();	// so as we do not time it out immediately
-    trace("Audio readData " + QString::number(len) + " returning " + QString::number(total));
-    return total;
-}
 
-qint64 MinosAudioIODevice::writeData(const char *data, qint64 len)
+void QtSoundSystem::writeDataToFile(QByteArray &inp)
 {
     // data arrives here; we need to write it to the (already open) file,
     // or ditch it
 
     // OR pass it on to the output device for passthrough?
 
-    int16_t *q = ( int16_t * ) ( data );
-    DDCRET ret = outWave.WriteData ( q, len / 2 );   // size is samples
-    if ( ret != DDC_SUCCESS )
+    int len = inp.length();
+    if (len)
     {
-        return 0;
+        const int16_t *q = reinterpret_cast< const int16_t * > ( inp.data() );
+        DDCRET ret = outWave.WriteData ( q, len / 2 );   // size is samples
+        if ( ret != DDC_SUCCESS )
+        {
+            return;
+        }
     }
-
-    return len;
 }
-
-qint64 MinosAudioIODevice::bytesAvailable() const
+void QtSoundSystem::readFromFile()
 {
-    return m_buffer.size() + QIODevice::bytesAvailable();
+    qint64 len = qAudioOut->bytesFree();
+
+    if (len)
+    {
+        QByteArray data;
+
+        // we have to add in the pip here as well...
+        qint64 total = 0;
+        if (m_pos >= m_buffer.size())
+        {
+            // add in pip delay and pip
+            if (p_pos >= p_buffer.size())
+            {
+                trace("Audio readData " + QString::number(len) + " returning " + QString::number(0));
+                return;
+            }
+            if (pipDelayBytes > 0)
+            {
+                qint64 ps = pipDelayBytes;
+                total = qMin(ps, len);
+                data.fill(0, total);
+                pipDelayBytes -= total;
+                trace("pipdelay");
+            }
+            else
+            {
+                if (!p_buffer.isEmpty())
+                {
+                    total = qMin((p_buffer.size() - p_pos), len);
+                    data.append(p_buffer.constData() + p_pos, total);
+                    p_pos += total;
+                    trace("pip");
+                }
+                else
+                {
+                    p_buffer.clear();
+                    trace("p_buffer empty");
+                }
+            }
+        }
+        else
+        {
+            if (!m_buffer.isEmpty())
+            {
+                total = qMin((m_buffer.size() - m_pos), len);
+                data.append(m_buffer.constData() + m_pos, total);
+                m_pos += total;
+                trace("data");
+            }
+            else
+            {
+                trace("m_buffer empty");
+            }
+        }
+        KeyerAction * sba = KeyerAction::getCurrentAction();
+        if ( sba )
+           sba->interruptOK();	// so as we do not time it out immediately
+        trace("Audio readData " + QString::number(len) + " returning " + QString::number(total));
+
+        outDev->write(data);
+    }
 }
+
+void QtSoundSystem::passThroughData(QByteArray &inp)
+{
+    if (inp.size() && currentKeyer)
+    {
+        bool ptt = currentKeyer->pttState;
+        if (ptt)
+        {
+            int len = qAudioOut->bytesFree();
+            len = qMin(len, inp.size());
+            trace("Passthrough writing " + QString::number(len) + " of " + QString::number(inp.size()));
+            outDev->write(inp.constData(), len);
+        }
+    }
+}
+
 //==============================================================================
 
 //==============================================================================
 QtSoundSystem::QtSoundSystem() :
     sampleRate( 0 )
   , qAudioIn(0), qAudioOut(0)
-  , maIOdev(0)
+  , playingFile(false)
+  , recordingFile(false)
+  , passThrough(false)
+  , m_pos(0), p_pos(0)
 {
-    maIOdev = new MinosAudioIODevice(this);
+
 }
 QtSoundSystem::~QtSoundSystem()
 {
@@ -196,15 +210,8 @@ QtSoundSystem::~QtSoundSystem()
 }
 int QtSoundSystem::setRate()
 {
-   int rate = cfgrate;
-   if ( rate < 1 )                   // as we have no way of setting it this is always true...
-      rate = 22050;
-   rate = ( rate > 44100 ) ? 44100 : rate;
-   rate = ( rate < 8000 ) ? 8000 : rate;
-
-   sampleRate = rate;
-   return rate;
-
+   sampleRate = 22050;
+   return 22050;
 }
 
 bool QtSoundSystem::initialise( QString &/*errmess*/ )
@@ -222,8 +229,40 @@ bool QtSoundSystem::initialise( QString &/*errmess*/ )
 
     qAudioOut = new QAudioOutput(qaf);
     connect(qAudioOut, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleOutStateChanged(QAudio::State)));
+
+    inDev = qAudioIn->start();
+    outDev = qAudioOut->start();
+
+    connect(&pushTimer, SIGNAL(timeout()), this, SLOT(handle_pushTimer_timeout()));
+    pushTimer.start(10);
    return true;
 }
+void QtSoundSystem::handle_pushTimer_timeout()
+{
+    // read input, buffer
+
+    QByteArray inp = inDev->readAll();
+
+    if (recordingFile)
+    {
+        // if recording write buffer to RIFF, return losing input
+        writeDataToFile(inp);
+    }
+    else if (playingFile)
+    {
+        // if playing file, push any remaining data to output losing input
+        //          and do pip tail after delay if required
+        readFromFile();
+
+    }
+    else if (passThrough)
+    {
+        // if passthrough, push read data to output
+        passThroughData(inp);
+    }
+    // what do we do with any remaining input? Just lose it?
+}
+
 void QtSoundSystem::handleOutStateChanged(QAudio::State newState)
 {
 //    enum Error { NoError, OpenError, IOError, UnderrunError, FatalError };
@@ -241,18 +280,21 @@ void QtSoundSystem::handleOutStateChanged(QAudio::State newState)
                 {
                    trace( "All buffers now returned" );
                 }
-                sba->queueFinished();
+//                sba->queueFinished();
+                sba->actionTime = 1;
              }
         }
         break;
 
         case QAudio::StoppedState:
-        trace("Audio output stopped state");
+        {
+            trace("Audio output stopped state");
             // Stopped for other reasons
             if (qAudioOut->error() != QAudio::NoError) {
                 // Error handling
             }
-            break;
+        }
+        break;
 
         default:
             // ... other cases as appropriate
@@ -271,8 +313,8 @@ void QtSoundSystem::handleInStateChanged(QAudio::State newState)
         // this doesn't happen... at least not while recording
             trace("Audio input idle state");
             // Finished playing (no more data)
-            if (maIOdev)
-                maIOdev->stopInput();
+
+            stopInput();
             KeyerAction * sba = KeyerAction::getCurrentAction();
              if ( sba )
              {
@@ -313,7 +355,13 @@ void QtSoundSystem::handleInStateChanged(QAudio::State newState)
 }
 void QtSoundSystem::terminate()
 {
+    if (qAudioIn)
+        qAudioIn->stop();
+    if (qAudioOut)
+        qAudioOut->stop();
 
+    delete qAudioIn;
+    delete qAudioOut;
 }
 bool QtSoundSystem::startDMA( bool play, const QString &fname )
 {
@@ -321,21 +369,24 @@ bool QtSoundSystem::startDMA( bool play, const QString &fname )
 
    if ( play )
    {
-      if ( sblog )
-      {
-         trace( "Starting output" );
-      }
+        if ( sblog )
+        {
+            trace( "(StartDMA) Starting output" );
+        }
 
-        maIOdev->setData(dataptr, samples);                           // with DO_FILE_PIP this works
+        playingFile = true;
+        recordingFile = false;
+        passThrough = false;
+
+        setData(dataptr, samples);                           // with DO_FILE_PIP this works
         KeyerAction * sba = KeyerAction::getCurrentAction();
         if (sba && sba->tailWithPip)
         {
             long psamples = SoundSystemDriver::getSbDriver() ->pipSamples;  // but this is inverted!
             int16_t *pdataptr = SoundSystemDriver::getSbDriver() ->pipptr;
-            maIOdev->setPipData(pdataptr, psamples, sba->pipStartDelaySamples);
+            setPipData(pdataptr, psamples, sba->pipStartDelaySamples);
         }
-        maIOdev->startOutput();
-        qAudioOut->start(maIOdev);
+        startOutput();
    }
    else
    {
@@ -344,18 +395,35 @@ bool QtSoundSystem::startDMA( bool play, const QString &fname )
           trace( "(StartDMA) Starting input" );
        }
 
-         if ( !maIOdev->startInput( fname ) )
+         if ( !startInput( fname ) )
             return false;
 
-         maIOdev->startInput();
-         qAudioIn->start(maIOdev);
+         playingFile = false;
+         recordingFile = true;
+         passThrough = false;
+
+         startInput();
    }
    return true;
 }
 void QtSoundSystem::stopDMA()
 {
 //    Here we need to stop input/output
-    if (qAudioIn)
-        qAudioIn->stop();
     trace( "QtSoundSystem::stopDMA" );
+
+    if (playingFile)
+        stopOutput();
+
+    if (recordingFile)
+        stopInput();
+
+    m_buffer.clear();
+    p_buffer.clear();
+    m_pos = 0;
+    p_pos = 0;
+
+    playingFile = false;
+    recordingFile = false;
+    passThrough = true;
+
 }

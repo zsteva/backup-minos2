@@ -16,74 +16,32 @@
 #include <QIODevice>
 #include "riff.h"
 
-
-class MinosAudioIODevice : public QIODevice
-{
-    Q_OBJECT
-
-protected:
-    virtual qint64 readData(char *data, qint64 maxlen) override;
-    virtual qint64 writeData(const char *data, qint64 len) override;
-
-public:
-    MinosAudioIODevice(QObject *parent);
-    ~MinosAudioIODevice();
-
-    void startOutput();
-    void stopOutput();
-    void startInput();
-    void stopInput();
-    bool startInput( QString fn );
-
-    virtual qint64 bytesAvailable() const override;
-
-    void setData(int16_t *data, int len);
-    void setPipData(int16_t *data, int len, int delayLen);
-
-private:
-    qint64 m_pos;
-    qint64 p_pos;
-    QByteArray m_buffer;
-    QByteArray p_buffer;
-    long pipDelayBytes;
-
-    WaveFile outWave;
-};
-
-
 class WriterThread;
 class QtSoundSystem: public QObject
 {
     Q_OBJECT
-protected:
-   int cfgrate;
 
 public:
-   volatile int done;
-   volatile long samplesremaining;
-   volatile long now;
-   volatile int sbactive;
-
    int16_t *dataptr;
    long samples;
-
-   int16_t *pipdataptr;
-   long pipSamples;
-
-   int mset;
 
    static QtSoundSystem *createSoundSystem();
 
 private:
-    bool startInput( QString fname );
+    QTimer pushTimer;
 
     QAudioOutput *qAudioOut;
     QAudioInput *qAudioIn;
-
-    MinosAudioIODevice *maIOdev;
+    QIODevice *inDev;
+    QIODevice *outDev;
 
       // internal values
     int sampleRate;
+
+    bool playingFile;
+    bool recordingFile;
+    bool passThrough;
+
 public:
 
     QtSoundSystem();
@@ -100,7 +58,31 @@ public:
 private slots:
       void handleOutStateChanged(QAudio::State newState);
       void handleInStateChanged(QAudio::State newState);
+      void handle_pushTimer_timeout();
 
+protected:
+    void writeDataToFile(QByteArray &inp);
+    void readFromFile();
+    void passThroughData(QByteArray &inp);
+
+public:
+    void startOutput();
+    void stopOutput();
+    void startInput();
+    void stopInput();
+    bool startInput( QString fn );
+
+    void setData(int16_t *data, int len);
+    void setPipData(int16_t *data, int len, int delayLen);
+
+private:
+    qint64 m_pos;
+    qint64 p_pos;
+    QByteArray m_buffer;
+    QByteArray p_buffer;
+    long pipDelayBytes;
+
+    WaveFile outWave;
 };
 
 #endif
