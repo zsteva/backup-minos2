@@ -10,14 +10,14 @@
 
 #include <qendian.h>
 
-#include <process.h>
+//#include <process.h>
 #include "keyctrl.h"
 #include "keyconf.h"
-#include "vkmixer.h"
+#include "VKMixer.h"
 #include "sbdriver.h"
 #include "soundsys.h"
 #include "keyers.h"
-#include "writerthread.h"
+#include "WriterThread.h"
 #include "keyerlog.h"
 #include "riff.h"
 

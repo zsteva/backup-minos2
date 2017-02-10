@@ -11,7 +11,7 @@
 #include "keyctrl.h"
 #include "keyers.h"
 #include "portcon.h"
-#include "WindowMonitor.h"
+#include "windowMonitor.h"
 #include "MinosLines.h"
 
 // For serial port

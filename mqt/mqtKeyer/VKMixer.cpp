@@ -1,5 +1,5 @@
 #include "base_pch.h"
-#include "vkmixer.h"
+#include "VKMixer.h"
 
 eMixerSets CurrMixerSet = emsUnloaded;
 eMixerSets GetCurrentMixerSet()

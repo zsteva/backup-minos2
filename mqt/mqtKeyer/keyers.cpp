@@ -8,10 +8,10 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
-#include <process.h>
+//#include <process.h>
 #include "keyers.h"
 #include "portcon.h"
-#include "vkmixer.h"
+#include "VKMixer.h"
 #include "sbdriver.h"
 
 //==============================================================================
