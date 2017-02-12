@@ -43,7 +43,7 @@ public:
 
 LineFileBlock::LineFileBlock(LineFileMapper *l):lfm(l)
 {
-    l->hFile.lock();
+    bool locked = lfm->hFile.lock();
 }
 LineFileBlock::~LineFileBlock()
 {

@@ -20,6 +20,8 @@ ControlMain::ControlMain(QWidget *parent) :
     ui(new Ui::ControlMain)
 {
     enableTrace( "./TraceLog", "MinosControl_" );
+    createCloseEvent();
+
     LineSet *ls = LineSet::GetLineSet();
     ls->lsLog = LineLog;
     connect(ls, SIGNAL(linesChanged()), this, SLOT(linesChangedEvent()));

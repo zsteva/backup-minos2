@@ -9,7 +9,7 @@
 #include "base_pch.h"
 
 #include "tinyxml.h"
-#include "tinyutils.h"
+#include "TinyUtils.h"
 #include "CommonMonitor.h"
 #include "controlport.h"
 #include "portconf.h"

@@ -8,14 +8,10 @@ SUBDIRS += \
     RPCTest \
     MqtLogger \
     MqtServer \
-    mqtKeyer
-
-win32 {
-    SUBDIRS += \
+    mqtKeyer \
+    mqtControl \
     MqtChat \
-    MqtTestRotator \
-    mqtControl
-}
+    MqtTestRotator
 
 RPCTest.depends = MqtUtils TinyXML XMPPLib MqtBase
 MqtLogger.depends = MqtUtils TinyXML XMPPLib MqtBase

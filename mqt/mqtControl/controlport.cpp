@@ -8,14 +8,14 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
-#include <process.h>
+//#include <process.h>
 
 #include "tinyxml.h"
 #include "portconf.h"
 #include "CommonMonitor.h"
 #include "controlport.h"
 
-#include "WindowMonitor.h"
+#include "windowMonitor.h"
 #include "K8055Container.h"
 #include "UBWContainer.h" 
 //#include "K8055D.h"        // Velleman K8055 interface

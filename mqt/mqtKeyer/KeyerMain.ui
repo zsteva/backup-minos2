@@ -397,7 +397,7 @@
   <customwidget>
    <class>LevelMeter</class>
    <extends>QWidget</extends>
-   <header>LevelMeter.h</header>
+   <header>levelmeter.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

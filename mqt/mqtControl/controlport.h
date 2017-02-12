@@ -9,7 +9,7 @@
 #ifndef ControlPortH
 #define ControlPortH 
 //==============================================================================
-#include "comport.h"
+//#include "comport.h"
 //#include "portconf.h"
 //#include "WindowsMonitor.h"
 
