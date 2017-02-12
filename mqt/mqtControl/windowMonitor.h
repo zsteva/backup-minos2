@@ -2,6 +2,7 @@
 #define WINDOWMONITOR_H
 
 #include <QDialog>
+#include <QTimer>
 
 namespace Ui {
 class windowMonitor;
@@ -25,6 +26,7 @@ public:
 
 private:
     Ui::windowMonitor *ui;
+    QTimer setPosTimer;
 private slots:
     void setPosition();
 

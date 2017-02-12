@@ -10,7 +10,8 @@ windowMonitor::windowMonitor(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 
-    QTimer::singleShot(100, this, &windowMonitor::setPosition);
+    setPosTimer.setSingleShot(true);
+    connect(&setPosTimer, SIGNAL(timeout()), this, SLOT(setPosition()));
 }
 void windowMonitor::setPosition()
 {

@@ -31,6 +31,7 @@ private:
     void closeEvent(QCloseEvent *event);
 
     QTimer LogTimer;
+    QTimer formShowTimer;
 
 private slots:
     void on_formShown();
