@@ -35,7 +35,9 @@
 #include <algorithm>    // and it also gets included by a different route
 
 #include <stdio.h>
+#ifdef Q_OS_UNIX
 #include <unistd.h>
+#endif
 #include <errno.h>
 
 #include "tinyxml.h"
