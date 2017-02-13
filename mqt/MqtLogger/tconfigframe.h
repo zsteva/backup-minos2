@@ -12,12 +12,12 @@ class TConfigFrame : public QFrame
 {
     Q_OBJECT
 
-    TAboutBox * dialog;
+    QDialog * dialog;
 
 public:
     explicit TConfigFrame(QWidget *parent = 0);
     ~TConfigFrame();
-    void initialise(TAboutBox *b);
+    void initialise(QDialog *b);
     void setup(bool started);
 
     void start();

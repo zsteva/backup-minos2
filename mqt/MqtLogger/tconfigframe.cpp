@@ -1,9 +1,8 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "tconfigframe.h"
 #include "ui_tconfigframe.h"
 
-#include "taboutbox.h"
 #include "ConfigDM.h"
 
 TConfigFrame::TConfigFrame(QWidget *parent) :
@@ -17,7 +16,7 @@ TConfigFrame::~TConfigFrame()
 {
     delete ui;
 }
-void TConfigFrame::initialise(TAboutBox *b)
+void TConfigFrame::initialise(QDialog *b)
 {
     dialog = b;
 
@@ -100,7 +99,6 @@ void TConfigFrame::on_ModifyButton_clicked()
 void TConfigFrame::on_CancelButton_clicked()
 {
     // need to pass up to parent
-    dialog->doStartup = false;
     dialog->reject();
 }
 

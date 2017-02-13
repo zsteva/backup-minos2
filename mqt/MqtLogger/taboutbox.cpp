@@ -49,6 +49,10 @@ QString MinosText =
 int TAboutBox::exec()
 {
     int ret = QDialog::exec();
+    if (ret == QDialog::Rejected)
+    {
+        doStartup = false;
+    }
     if ( !started && doStartup )
     {
        // auto start on first run, but only if we gave that option
