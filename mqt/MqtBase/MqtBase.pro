@@ -51,7 +51,9 @@ SOURCES += \
     qlogtabwidget.cpp \
     minoskeyboard.cpp \
     MinosLines.cpp \
-    Calendar.cpp
+    Calendar.cpp \
+    ConfigDM.cpp \
+    tconfigframe.cpp
 
 HEADERS += \
     BandList.h \
@@ -84,7 +86,9 @@ HEADERS += \
     minoskeyboard.h \
     MinosLines.h \
     Calendar.h \
-    waitcursor.h
+    waitcursor.h \
+    ConfigDM.h \
+    tconfigframe.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
@@ -94,4 +98,5 @@ DISTFILES += \
     MqtBase.pro.autosave
 
 FORMS += \
-    minoskeyboard.ui
+    minoskeyboard.ui \
+    tconfigframe.ui

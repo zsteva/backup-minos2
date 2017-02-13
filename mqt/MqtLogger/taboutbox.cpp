@@ -60,7 +60,11 @@ int TAboutBox::exec()
     }
     return ret;
 }
-
+void closeCallback(QWidget *w)
+{
+    TAboutBox *tab = dynamic_cast<TAboutBox *>(w);
+    tab->reject();
+}
 TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
     QDialog(parent),
     ui(new Ui::TAboutBox),
@@ -74,7 +78,7 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
-    ui->ConfigFrame->initialise(this);
+    ui->ConfigFrame->initialise(this, &::closeCallback);
     ui->PageControl1->setCurrentWidget(ui->AboutTabSheet);
 
     ui->AboutMemo->setText("<h1>Welcome to Minos 2</h1><br><a href=\"http://minos.sourceforge.net/\">http://minos.sourceforge.net</a>");

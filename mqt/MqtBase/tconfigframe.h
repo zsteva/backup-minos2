@@ -7,17 +7,16 @@ namespace Ui {
 class TConfigFrame;
 }
 
-class TAboutBox;
+typedef void ( *ConfigCloseCallBack ) ( QWidget *w );
+
 class TConfigFrame : public QFrame
 {
     Q_OBJECT
 
-    QDialog * dialog;
-
 public:
     explicit TConfigFrame(QWidget *parent = 0);
     ~TConfigFrame();
-    void initialise(QDialog *b);
+    void initialise(QWidget *parent, ConfigCloseCallBack);
     void setup(bool started);
 
     void start();
@@ -39,5 +38,7 @@ private slots:
 
 private:
     Ui::TConfigFrame *ui;
+    QWidget *parent;
+    ConfigCloseCallBack closeCb;
 };
 #endif // TTCONFIGFRAME_H

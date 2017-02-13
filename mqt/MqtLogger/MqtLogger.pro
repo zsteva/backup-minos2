@@ -66,8 +66,6 @@ SOURCES += main.cpp \
     districtframe.cpp \
     locframe.cpp \
     SendRPCDM.cpp \
-    ConfigDM.cpp \
-    tconfigframe.cpp \
     TSessionManager.cpp
 
 HEADERS  += \
@@ -104,8 +102,6 @@ HEADERS  += \
     districtframe.h \
     locframe.h \
     SendRPCDM.h \
-    ConfigDM.h \
-    tconfigframe.h \
     TSessionManager.h
 
 FORMS    += tlogcontainer.ui \
@@ -128,7 +124,6 @@ FORMS    += tlogcontainer.ui \
     dxccframe.ui \
     districtframe.ui \
     locframe.ui \
-    tconfigframe.ui \
     TSessionManager.ui
 
 

@@ -16,9 +16,10 @@ TConfigFrame::~TConfigFrame()
 {
     delete ui;
 }
-void TConfigFrame::initialise(QDialog *b)
+void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb)
 {
-    dialog = b;
+    closeCb = ccb;
+    parent = p;
 
     for (int i = 0; i < TMConfigDM::getConfigDM( 0 ) ->elelist.size(); i++)
     {
@@ -99,6 +100,6 @@ void TConfigFrame::on_ModifyButton_clicked()
 void TConfigFrame::on_CancelButton_clicked()
 {
     // need to pass up to parent
-    dialog->reject();
+    closeCb(parent);
 }
 
