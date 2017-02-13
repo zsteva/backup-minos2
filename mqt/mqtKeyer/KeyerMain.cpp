@@ -3,6 +3,7 @@
 #include "keyctrl.h"
 #include "KeyerRPCServer.h"
 #include "VKMixer.h"
+#include "AlsaVolume.h"
 
 KeyerMain *keyerMain = 0;
 
@@ -10,6 +11,27 @@ void lcallback( bool pPTT, bool pkeyline, bool pPTTRef, bool pL1Ref, bool pL2Ref
 {
     keyerMain->setLines(pPTT, pPTTRef, pL1Ref, pL2Ref, pkeyline);
 }
+//---------------------------------------------------------------------------
+void recvolcallback( unsigned int vol )
+{
+    keyerMain->recvolcallback(vol);
+}
+//---------------------------------------------------------------------------
+void outvolcallback( unsigned int vol )
+{
+    keyerMain->outvolcallback(vol);
+}
+void KeyerMain::outvolcallback( unsigned int vol )
+{
+   ui->commonLevelMeter->levelChanged( vol / 65536.0, vol / 65536.0, 200 );
+}
+//---------------------------------------------------------------------------
+void KeyerMain::recvolcallback( unsigned int vol )
+{
+    ui->commonLevelMeter->levelChanged( vol / 65536.0, vol / 65536.0, 200 );
+}
+
+//---------------------------------------------------------------------------
 void KeyerMain::setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool key )
 {
     PTT = PTTOut;
@@ -58,6 +80,7 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
     keyerMain = this;
     setLineCallBack( lcallback );
+    setVUCallBack( &::recvolcallback, &::outvolcallback );
 
     loadKeyers();
 
@@ -266,3 +289,15 @@ void KeyerMain::on_aboutButton_clicked()
 
 }
 
+
+void KeyerMain::on_inputLevelSlider_sliderMoved(int position)
+{
+    AlsaVolume av;
+    av.SetAlsaRecordMasterVolume(position);
+}
+
+void KeyerMain::on_outputLevelSlider_sliderMoved(int position)
+{
+    AlsaVolume av;
+    av.SetAlsaPlaybackMasterVolume(position);
+}

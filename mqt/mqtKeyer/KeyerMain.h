@@ -20,6 +20,8 @@ public:
     explicit KeyerMain(QWidget *parent = 0);
     ~KeyerMain();
     void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool key );
+    void recvolcallback( unsigned int vol );
+    void outvolcallback( unsigned int vol );
 
 private slots:
     void on_recordButton_clicked();
@@ -46,6 +48,14 @@ private slots:
 
     void on_aboutButton_clicked();
 
+    void CaptionTimerTimer();
+
+    void LineTimerTimer();
+
+    void on_inputLevelSlider_sliderMoved(int position);
+
+    void on_outputLevelSlider_sliderMoved(int position);
+
 private:
     Ui::KeyerMain *ui;
     void syncSetLines();
@@ -61,8 +71,5 @@ private:
     bool recordWait;
     bool recording;
 
-private slots:
-    void CaptionTimerTimer();
-    void LineTimerTimer();
 };
 #endif // KEYERMAIN_H

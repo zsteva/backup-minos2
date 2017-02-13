@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     VKMixer.cpp \
     WriterThread.cpp \
     levelmeter.cpp \
-    windowMonitor.cpp
+    windowMonitor.cpp \
+    AlsaVolume.cpp
 
 HEADERS  += KeyerMain.h \
     keyerAbout.h \
@@ -50,7 +51,8 @@ HEADERS  += KeyerMain.h \
     VKMixer.h \
     WriterThread.h \
     levelmeter.h \
-    windowMonitor.h
+    windowMonitor.h \
+    AlsaVolume.h
 
 FORMS    += KeyerMain.ui \
     keyerAbout.ui \
