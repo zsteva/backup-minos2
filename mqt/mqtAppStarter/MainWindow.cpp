@@ -1,3 +1,4 @@
+#include "base_pch.h"
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
@@ -13,9 +14,26 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->configFrame->initialise(this, &::closeCallback);
+    createCloseEvent();
+    QSettings settings;
+    QByteArray geometry = settings.value("geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
+    QMainWindow::closeEvent(event);
+}
+void MainWindow::resizeEvent(QResizeEvent * event)
+{
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
+    QMainWindow::resizeEvent(event);
 }
