@@ -14,9 +14,10 @@ AlsaVolume::AlsaVolume()
 void AlsaVolume::SetAlsaPlaybackMasterVolume(long volume)
 {
 #ifdef Q_OS_LINUX
-    long min, max;
-    snd_mixer_t *handle;
-    snd_mixer_selem_id_t *sid;
+    long min = 0;
+    long max = 0;
+    snd_mixer_t *handle = 0;
+    snd_mixer_selem_id_t *sid = 0;
     const char *card = "default";
     const char *selem_name = "Master";
 
@@ -57,8 +58,8 @@ void AlsaVolume::SetAlsaRecordMasterVolume(long volume)
     snd_mixer_selem_id_set_name(sid, selem_name);
     snd_mixer_elem_t* elem = snd_mixer_find_selem(handle, sid);
 
-    snd_mixer_selem_get_record_volume_range(elem, &min, &max);
-    snd_mixer_selem_set_record_volume_all(elem, volume * max / 100);
+    snd_mixer_selem_get_capture_volume_range(elem, &min, &max);
+    snd_mixer_selem_set_capture_volume_all(elem, volume * max / 100);
 
     snd_mixer_close(handle);
 #else

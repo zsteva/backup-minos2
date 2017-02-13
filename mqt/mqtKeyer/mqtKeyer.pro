@@ -58,6 +58,8 @@ FORMS    += KeyerMain.ui \
     keyerAbout.ui \
     windowMonitor.ui
 
+unix{ LIBS += -lasound}
+
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase
 else:unix: LIBS += -L$$OUT_PWD/../MqtBase/ -lMqtBase
