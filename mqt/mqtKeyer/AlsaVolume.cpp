@@ -1,4 +1,4 @@
-#include <QObject>
+#include "base_pch.h"
 
 #include "AlsaVolume.h"
 
@@ -36,18 +36,12 @@ void AlsaVolume::SetAlsaPlaybackMasterVolume(long volume)
     if (res < 0)
         trace(QString("snd_mixer_load ") + snd_strerror(res));
 
-    res = snd_mixer_selem_id_alloca(&sid);
-    if (res < 0)
-        trace(QString("snd_mixer_selem_id_alloca ") + snd_strerror(res));
-    res = snd_mixer_selem_id_set_index(sid, 0);
-    if (res < 0)
-        trace(QString("snd_mixer_selem_id_set_index ") + snd_strerror(res));
-    res = snd_mixer_selem_id_set_name(sid, selem_name);
-    if (res < 0)
-        trace(QString("snd_mixer_selem_id_set_name ") + snd_strerror(res));
-    res = snd_mixer_elem_t* elem = snd_mixer_find_selem(handle, sid);
-    if (res < 0)
-        trace(QString("snd_mixer_find_selem ") + snd_strerror(res));
+    snd_mixer_selem_id_alloca(&sid);
+    snd_mixer_selem_id_set_index(sid, 0);
+    snd_mixer_selem_id_set_name(sid, selem_name);
+    snd_mixer_elem_t* elem = snd_mixer_find_selem(handle, sid);
+    if (elem == 0)
+        trace(QString("snd_mixer_find_selem failed"));
 
     res = snd_mixer_selem_get_playback_volume_range(elem, &min, &max);
     if (res < 0)
@@ -86,18 +80,12 @@ void AlsaVolume::SetAlsaRecordMasterVolume(long volume)
     if (res < 0)
         trace(QString("snd_mixer_load ") + snd_strerror(res));
 
-    res = snd_mixer_selem_id_alloca(&sid);
-    if (res < 0)
-        trace(QString("snd_mixer_selem_id_alloca ") + snd_strerror(res));
-    res = snd_mixer_selem_id_set_index(sid, 0);
-    if (res < 0)
-        trace(QString("snd_mixer_selem_id_set_index ") + snd_strerror(res));
-    res = snd_mixer_selem_id_set_name(sid, selem_name);
-    if (res < 0)
-        trace(QString("snd_mixer_selem_id_set_name ") + snd_strerror(res));
-    res = snd_mixer_elem_t* elem = snd_mixer_find_selem(handle, sid);
-    if (res < 0)
-        trace(QString("snd_mixer_find_selem ") + snd_strerror(res));
+    snd_mixer_selem_id_alloca(&sid);
+    snd_mixer_selem_id_set_index(sid, 0);
+    snd_mixer_selem_id_set_name(sid, selem_name);
+    snd_mixer_elem_t* elem = snd_mixer_find_selem(handle, sid);
+    if (elem == 0)
+        trace(QString("snd_mixer_find_selem failed"));
 
     res = snd_mixer_selem_get_capture_volume_range(elem, &min, &max);
     if (res < 0)
