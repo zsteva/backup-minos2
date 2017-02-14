@@ -212,14 +212,14 @@ void QtSoundSystem::passThroughData(QByteArray &inp)
         bool ptt = currentKeyer->pttState;
         if (ptt)
         {
-            int len = qAudioOut->bytesFree();
-            len = qMin(len, inp.size());
+            int flen = qAudioOut->bytesFree();
+            int len = qMin(flen, inp.size());
             //trace("Passthrough writing " + QString::number(len) + " of " + QString::number(inp.size()));
             int16_t * q = reinterpret_cast< int16_t * > ( &inp );
              int16_t maxvol = 0;
 
              // determine max for VU meter
-            for ( int i = 0; i < inp.size() / 2; i++ )
+            for ( int i = 0; i < len / 2; i++ )
             {
                int16_t sample = abs( *q++ );
                if ( sample > maxvol )
@@ -386,7 +386,7 @@ void QtSoundSystem::handleInStateChanged(QAudio::State newState)
         case QAudio::StoppedState:
             trace("Audio input stopped state");
             // Stopped for other reasons
-            if (qAudioOut->error() != QAudio::NoError) {
+            if (qAudioIn->error() != QAudio::NoError) {
                 // Error handling
             }
             else
