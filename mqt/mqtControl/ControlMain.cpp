@@ -37,6 +37,7 @@ ControlMain::ControlMain(QWidget *parent) :
 
     formShowTimer.setSingleShot(true);
     connect(&formShowTimer, SIGNAL(timeout()), this, SLOT(on_formShown()));
+    formShowTimer.start(100);
 
     rpc->setAppName(rpcConstants::controlApp);
 

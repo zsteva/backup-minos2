@@ -71,5 +71,7 @@ private:
     bool recordWait;
     bool recording;
 
+    bool inVolChange;
+
 };
 #endif // KEYERMAIN_H

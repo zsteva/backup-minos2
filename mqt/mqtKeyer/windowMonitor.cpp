@@ -13,6 +13,7 @@ windowMonitor::windowMonitor(QWidget *parent) :
 
     setPosTimer.setSingleShot(true);
     connect(&setPosTimer, SIGNAL(timeout()), this, SLOT(setPosition()));
+    setPosTimer.start(100);
 }
 void windowMonitor::setPosition()
 {

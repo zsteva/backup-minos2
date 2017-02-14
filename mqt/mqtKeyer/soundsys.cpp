@@ -32,6 +32,25 @@ QtSoundSystem *QtSoundSystem::createSoundSystem()
 {
    return new QtSoundSystem();
 }
+qreal QtSoundSystem::getKeyerPlaybackVolume()
+{
+    return qAudioOut->volume();
+}
+
+qreal QtSoundSystem::getKeyerRecordVolume()
+{
+    return qAudioIn->volume();
+}
+
+void QtSoundSystem::setKeyerPlaybackVolume(qreal vol)
+{
+    qAudioOut->setVolume(vol);
+}
+
+void QtSoundSystem::setKeyerRecordVolume(qreal vol)
+{
+    qAudioIn->setVolume(vol);
+}
 
 void QtSoundSystem::startOutput()
 {

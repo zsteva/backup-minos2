@@ -88,12 +88,16 @@ class SoundSystemDriver
       void startTone1();
       void startTone2();
       void createCWBuffer( const char *message, int speed, int tone );
-   public:
+
       bool sbdvp_init( QString &errmess, int pipTone, int pipVolume, int pipLength );
       SoundSystemDriver();
       ~SoundSystemDriver();
 
       static SoundSystemDriver *getSbDriver();
-};
+
+      qreal getKeyerPlaybackVolume();
+      qreal getKeyerRecordVolume();
+      void setKeyerPlaybackVolume(qreal);
+      void setKeyerRecordVolume(qreal);};
 
 #endif

@@ -21,11 +21,46 @@ class QtSoundSystem: public QObject
 {
     Q_OBJECT
 
-public:
-   int16_t *dataptr;
-   long samples;
+private slots:
+      void handleOutStateChanged(QAudio::State newState);
+      void handleInStateChanged(QAudio::State newState);
+      void handle_pushTimer_timeout();
 
-   static QtSoundSystem *createSoundSystem();
+protected:
+    void writeDataToFile(QByteArray &inp);
+    void readFromFile();
+    void passThroughData(QByteArray &inp);
+
+public:
+    QtSoundSystem();
+    virtual ~QtSoundSystem();
+
+    virtual bool initialise( QString &errmess );
+
+    virtual void terminate();
+    virtual int setRate();
+
+    virtual bool startDMA( bool play, const QString &fname );
+    virtual void stopDMA();
+
+    static QtSoundSystem *createSoundSystem();
+
+    qreal getKeyerPlaybackVolume();
+    qreal getKeyerRecordVolume();
+    void setKeyerPlaybackVolume(qreal);
+    void setKeyerRecordVolume(qreal);
+
+    void startOutput();
+    void stopOutput();
+    void startInput();
+    void stopInput();
+    bool startInput( QString fn );
+
+    void setData(int16_t *data, int len);
+    void setPipData(int16_t *data, int len, int delayLen);
+
+    int16_t *dataptr;
+    long samples;
 
 private:
     QTimer pushTimer;
@@ -42,40 +77,6 @@ private:
     bool recordingFile;
     bool passThrough;
 
-public:
-
-    QtSoundSystem();
-    virtual ~QtSoundSystem();
-
-    virtual bool initialise( QString &errmess );
-
-    virtual void terminate();
-    virtual int setRate();
-
-    virtual bool startDMA( bool play, const QString &fname );
-    virtual void stopDMA();
-
-private slots:
-      void handleOutStateChanged(QAudio::State newState);
-      void handleInStateChanged(QAudio::State newState);
-      void handle_pushTimer_timeout();
-
-protected:
-    void writeDataToFile(QByteArray &inp);
-    void readFromFile();
-    void passThroughData(QByteArray &inp);
-
-public:
-    void startOutput();
-    void stopOutput();
-    void startInput();
-    void stopInput();
-    bool startInput( QString fn );
-
-    void setData(int16_t *data, int len);
-    void setPipData(int16_t *data, int len, int delayLen);
-
-private:
     qint64 m_pos;
     qint64 p_pos;
     QByteArray m_buffer;

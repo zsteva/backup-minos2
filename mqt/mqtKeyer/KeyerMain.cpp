@@ -54,7 +54,8 @@ KeyerMain::KeyerMain(QWidget *parent) :
     ui(new Ui::KeyerMain),
     PTT(false), keyline(false), PTTRef(false), L1Ref(false), L2Ref(false),
     recordWait(false),
-    recording(false)
+    recording(false),
+    inVolChange(false)
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -167,6 +168,15 @@ void KeyerMain::LineTimerTimer( )
       CaptionTimer.start(200);
    }
 
+   inVolChange = true;
+
+   qreal inVol = getKeyerRecordVolume();
+   qreal outVol = getKeyerPlaybackVolume();
+
+   ui->inputLevelSlider->setValue(inVol * ui->inputLevelSlider->maximum());
+   ui->outputLevelSlider->setValue(outVol * ui->outputLevelSlider->maximum());
+
+   inVolChange = false;
 }
 void KeyerMain::CaptionTimerTimer( )
 {
@@ -292,12 +302,16 @@ void KeyerMain::on_aboutButton_clicked()
 
 void KeyerMain::on_inputLevelSlider_sliderMoved(int position)
 {
-    AlsaVolume av;
-    av.SetAlsaRecordMasterVolume(position);
+    if (!inVolChange)
+    {
+        setKeyerRecordVolume(1.0*position/ui->inputLevelSlider->maximum());
+    }
 }
 
 void KeyerMain::on_outputLevelSlider_sliderMoved(int position)
 {
-    AlsaVolume av;
-    av.SetAlsaPlaybackMasterVolume(position);
+    if (!inVolChange)
+    {
+        setKeyerPlaybackVolume(1.0*position/ui->outputLevelSlider->maximum());
+    }
 }
