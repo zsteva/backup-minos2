@@ -115,9 +115,6 @@ void QtSoundSystem::setPipData(int16_t *data, int len, int delayLen)
 void QtSoundSystem::writeDataToFile(QByteArray &inp)
 {
     // data arrives here; we need to write it to the (already open) file,
-    // or ditch it
-
-    // OR pass it on to the output device for passthrough?
 
     int len = inp.length();
     if (len)
@@ -145,7 +142,7 @@ void QtSoundSystem::readFromFile()
             // add in pip delay and pip
             if (p_pos >= p_buffer.size())
             {
-                trace("Audio readData " + QString::number(len) + " returning " + QString::number(0));
+                //trace("Audio readData " + QString::number(len) + " returning " + QString::number(0));
                 return;
             }
             if (pipDelayBytes > 0)
@@ -154,7 +151,7 @@ void QtSoundSystem::readFromFile()
                 total = qMin(ps, len);
                 data.fill(0, total);
                 pipDelayBytes -= total;
-                trace("pipdelay");
+                //trace("pipdelay");
             }
             else
             {
@@ -163,7 +160,7 @@ void QtSoundSystem::readFromFile()
                     total = qMin((p_buffer.size() - p_pos), len);
                     data.append(p_buffer.constData() + p_pos, total);
                     p_pos += total;
-                    trace("pip");
+                    //trace("pip");
                 }
                 else
                 {
@@ -179,7 +176,7 @@ void QtSoundSystem::readFromFile()
                 total = qMin((m_buffer.size() - m_pos), len);
                 data.append(m_buffer.constData() + m_pos, total);
                 m_pos += total;
-                trace("data");
+                //trace("data");
             }
             else
             {
@@ -189,7 +186,7 @@ void QtSoundSystem::readFromFile()
         KeyerAction * sba = KeyerAction::getCurrentAction();
         if ( sba )
            sba->interruptOK();	// so as we do not time it out immediately
-        trace("Audio readData " + QString::number(len) + " returning " + QString::number(total));
+        //trace("Audio readData " + QString::number(len) + " returning " + QString::number(total));
 
         int16_t * q = reinterpret_cast< int16_t * > ( &data );
          int16_t maxvol = 0;
@@ -217,7 +214,7 @@ void QtSoundSystem::passThroughData(QByteArray &inp)
         {
             int len = qAudioOut->bytesFree();
             len = qMin(len, inp.size());
-            trace("Passthrough writing " + QString::number(len) + " of " + QString::number(inp.size()));
+            //trace("Passthrough writing " + QString::number(len) + " of " + QString::number(inp.size()));
             int16_t * q = reinterpret_cast< int16_t * > ( &inp );
              int16_t maxvol = 0;
 
@@ -331,7 +328,7 @@ void QtSoundSystem::handleOutStateChanged(QAudio::State newState)
              {
                 if ( sblog )
                 {
-                   trace( "All buffers now returned" );
+                   //trace( "All buffers now returned" );
                 }
 //                sba->queueFinished();
                 sba->actionTime = 1;
@@ -348,7 +345,13 @@ void QtSoundSystem::handleOutStateChanged(QAudio::State newState)
             }
         }
         break;
-
+        case QAudio::ActiveState:
+        {
+            // make sure any volume change actually happens
+            qAudioOut->setVolume(qAudioOut->volume());
+            trace("Audio output active state");
+        }
+        break;
         default:
             // ... other cases as appropriate
         trace("Audio output other state " + QString::number(newState));
@@ -373,7 +376,7 @@ void QtSoundSystem::handleInStateChanged(QAudio::State newState)
              {
                 if ( sblog )
                 {
-                   trace( "All buffers now returned" );
+                   //trace( "All buffers now returned" );
                 }
                 sba->queueFinished();
              }
@@ -393,10 +396,17 @@ void QtSoundSystem::handleInStateChanged(QAudio::State newState)
                  {
                     if ( sblog )
                     {
-                       trace( "All buffers now returned" );
+                       //trace( "All buffers now returned" );
                     }
                     sba->queueFinished();
                  }
+            }
+            break;
+            case QAudio::ActiveState:
+            {
+                // make sure any volume change actually happens
+                qAudioIn->setVolume(qAudioIn->volume());
+                trace("Audio output active state");
             }
             break;
 
