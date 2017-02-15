@@ -170,11 +170,19 @@ void KeyerMain::LineTimerTimer( )
 
    inVolChange = true;
 
-   qreal inVol = getKeyerRecordVolume();
-   qreal outVol = getKeyerPlaybackVolume();
+   QSettings settings;
+   bool inpok;
+   bool outok;
+   qreal invol = 0.0;
+   qreal outvol = 0.0;
 
-   ui->inputLevelSlider->setValue(inVol * ui->inputLevelSlider->maximum());
-   ui->outputLevelSlider->setValue(outVol * ui->outputLevelSlider->maximum());
+   invol = settings.value("Volume/input", 0.0).toReal(&inpok);
+   outvol = settings.value("Volume/output", 0.0).toReal(&outok);;
+   ui->inputLevelSlider->setValue(invol * ui->inputLevelSlider->maximum());
+   ui->outputLevelSlider->setValue(outvol * ui->outputLevelSlider->maximum());
+
+   setKeyerPlaybackVolume(invol);
+   setKeyerPlaybackVolume(outvol);
 
    inVolChange = false;
 }
@@ -304,7 +312,10 @@ void KeyerMain::on_inputLevelSlider_sliderMoved(int position)
 {
     if (!inVolChange)
     {
-        setKeyerRecordVolume(1.0*position/ui->inputLevelSlider->maximum());
+        qreal vol = 1.0*position/ui->inputLevelSlider->maximum();
+        setKeyerRecordVolume(vol);
+        QSettings settings;
+        settings.setValue("Volume/input", vol);
     }
 }
 
@@ -312,6 +323,9 @@ void KeyerMain::on_outputLevelSlider_sliderMoved(int position)
 {
     if (!inVolChange)
     {
-        setKeyerPlaybackVolume(1.0*position/ui->outputLevelSlider->maximum());
+        qreal vol = 1.0*position/ui->outputLevelSlider->maximum();
+        setKeyerPlaybackVolume(vol);
+        QSettings settings;
+        settings.setValue("Volume/output", vol);
     }
 }
