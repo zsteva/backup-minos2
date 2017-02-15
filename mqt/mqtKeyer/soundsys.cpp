@@ -54,16 +54,13 @@ void QtSoundSystem::setKeyerRecordVolume(qreal vol)
 
 void QtSoundSystem::startOutput()
 {
+    outDev = qAudioOut->start();    // restarts as necessary
 }
 
 void QtSoundSystem::stopOutput()
 {
-    outDev = 0;
-    qAudioOut->stop();
-    outDev = qAudioOut->start();
+    outDev = qAudioOut->start();    // restarts as necessary
 
-    m_pos = 0;
-    p_pos = 0;
 }
 void QtSoundSystem::startInput()
 {
@@ -87,12 +84,7 @@ void QtSoundSystem::setData(int16_t *data, int len)
     m_buffer.resize(len * sizeof(uint16_t));
     unsigned char *ptr = reinterpret_cast<unsigned char *>(m_buffer.data());
 
-    qToLittleEndian<uint16_t>(-1, ptr);
-    ptr += 2;
-    qToLittleEndian<uint16_t>(+1, ptr);
-    ptr += 2;
-
-    for (int i = 2; i < len; i++)
+    for (int i = 0; i < len; i++)
     {
         uint16_t value = data[i];
         // This may or may not be neccesary... on a big endian system
@@ -107,12 +99,7 @@ void QtSoundSystem::setPipData(int16_t *data, int len, int delayLen)
     p_buffer.resize(len * sizeof(uint16_t));
     unsigned char *ptr = reinterpret_cast<unsigned char *>(p_buffer.data());
 
-    qToLittleEndian<uint16_t>(-1, ptr);
-    ptr += 2;
-    qToLittleEndian<uint16_t>(+1, ptr);
-    ptr += 2;
-
-    for (int i = 2; i < len; i++)
+    for (int i = 0; i < len; i++)
     {
         uint16_t value = data[i];
         // This may or may not be neccesary... on a big endian system
@@ -186,19 +173,6 @@ void QtSoundSystem::readFromFile()
                 total = qMin((m_buffer.size() - m_pos), len);
                 data.append(m_buffer.constData() + m_pos, total);
 
-                if (m_pos == 0)
-                {
-                    int16_t i1 = *reinterpret_cast<int16_t *>(data.data());
-                    int16_t i2 = *reinterpret_cast<int16_t *>(data.data() + 2);
-                    if (i1 != -1 || i2 != +1)
-                    {
-                        trace("i1 is " + QString::number(i1) + " ; i2 is " + QString::number(i2));
-                    }
-                    else
-                    {
-                        trace("-1, +1 sentinel OK");
-                    }
-                }
                 m_pos += total;
                 //trace("data");
             }
@@ -234,9 +208,9 @@ void QtSoundSystem::passThroughData(QByteArray &inp)
     if (inp.size() && currentKeyer)
     {
         bool ptt = currentKeyer->pttState;
-        if (ptt)
+        int flen = qAudioOut->bytesFree();
+        if (ptt && flen)
         {
-            int flen = qAudioOut->bytesFree();
             int len = qMin(flen, inp.size());
             //trace("Passthrough writing " + QString::number(len) + " of " + QString::number(inp.size()));
             const int16_t * q = reinterpret_cast< const int16_t * > ( inp.constData() );
@@ -251,7 +225,7 @@ void QtSoundSystem::passThroughData(QByteArray &inp)
             }
 
              SoundSystemDriver::getSbDriver() ->WinVUOutCallback( maxvol * shortmult );
-            outDev->write(inp.constData(), len);
+            outDev->write(inp);
         }
         else
         {
