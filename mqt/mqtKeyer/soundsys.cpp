@@ -188,7 +188,7 @@ void QtSoundSystem::readFromFile()
            sba->interruptOK();	// so as we do not time it out immediately
         //trace("Audio readData " + QString::number(len) + " returning " + QString::number(total));
 
-        int16_t * q = reinterpret_cast< int16_t * > ( &data );
+        const int16_t * q = reinterpret_cast< const int16_t * > ( data.constData() );
          int16_t maxvol = 0;
 
          // determine max for VU meter
@@ -215,7 +215,7 @@ void QtSoundSystem::passThroughData(QByteArray &inp)
             int flen = qAudioOut->bytesFree();
             int len = qMin(flen, inp.size());
             //trace("Passthrough writing " + QString::number(len) + " of " + QString::number(inp.size()));
-            int16_t * q = reinterpret_cast< int16_t * > ( &inp );
+            const int16_t * q = reinterpret_cast< const int16_t * > ( inp.constData() );
              int16_t maxvol = 0;
 
              // determine max for VU meter
