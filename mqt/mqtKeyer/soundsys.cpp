@@ -87,7 +87,12 @@ void QtSoundSystem::setData(int16_t *data, int len)
     m_buffer.resize(len * sizeof(uint16_t));
     unsigned char *ptr = reinterpret_cast<unsigned char *>(m_buffer.data());
 
-    for (int i = 0; i < len; i++)
+    qToLittleEndian<uint16_t>(-1, ptr);
+    ptr += 2;
+    qToLittleEndian<uint16_t>(+1, ptr);
+    ptr += 2;
+
+    for (int i = 2; i < len; i++)
     {
         uint16_t value = data[i];
         // This may or may not be neccesary... on a big endian system
@@ -102,7 +107,12 @@ void QtSoundSystem::setPipData(int16_t *data, int len, int delayLen)
     p_buffer.resize(len * sizeof(uint16_t));
     unsigned char *ptr = reinterpret_cast<unsigned char *>(p_buffer.data());
 
-    for (int i = 0; i < len; i++)
+    qToLittleEndian<uint16_t>(-1, ptr);
+    ptr += 2;
+    qToLittleEndian<uint16_t>(+1, ptr);
+    ptr += 2;
+
+    for (int i = 2; i < len; i++)
     {
         uint16_t value = data[i];
         // This may or may not be neccesary... on a big endian system
@@ -175,6 +185,20 @@ void QtSoundSystem::readFromFile()
             {
                 total = qMin((m_buffer.size() - m_pos), len);
                 data.append(m_buffer.constData() + m_pos, total);
+
+                if (m_pos == 0)
+                {
+                    int16_t i1 = *reinterpret_cast<int16_t *>(data.data());
+                    int16_t i2 = *reinterpret_cast<int16_t *>(data.data() + 2);
+                    if (i1 != -1 || i2 != +1)
+                    {
+                        trace("i1 is " + QString::number(i1) + " ; i2 is " + QString::number(i2));
+                    }
+                    else
+                    {
+                        trace("-1, +1 sentinel OK");
+                    }
+                }
                 m_pos += total;
                 //trace("data");
             }
@@ -441,11 +465,11 @@ bool QtSoundSystem::startDMA( bool play, const QString &fname )
         recordingFile = false;
         passThrough = false;
 
-        setData(dataptr, samples);                           // with DO_FILE_PIP this works
+        setData(dataptr, samples);
         KeyerAction * sba = KeyerAction::getCurrentAction();
         if (sba && sba->tailWithPip)
         {
-            long psamples = SoundSystemDriver::getSbDriver() ->pipSamples;  // but this is inverted!
+            long psamples = SoundSystemDriver::getSbDriver() ->pipSamples;
             int16_t *pdataptr = SoundSystemDriver::getSbDriver() ->pipptr;
             setPipData(pdataptr, psamples, sba->pipStartDelaySamples);
         }
