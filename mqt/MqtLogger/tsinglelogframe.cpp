@@ -977,7 +977,7 @@ QVariant QSOGridModel::data( const QModelIndex &index, int role ) const
                  break;
            }
            if (setHighlight)
-               line = HtmlFontColour(multhighlight) + line;
+               line = HtmlFontColour(multhighlight) + "<b>" + line;
            return line;
         }
     }
@@ -1272,7 +1272,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
                             break;
                         }
                         if (setHighlight)
-                            line = HtmlFontColour(multhighlight) + line;
+                            line = HtmlFontColour(multhighlight) + "<b>" + line;
                     }
                     return line;
                 }

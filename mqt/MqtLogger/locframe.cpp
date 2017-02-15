@@ -60,7 +60,7 @@ void LocFrame::reInitialiseLocators()
                             break;
                         }
 
-                        dispLine += HtmlFontColour(multhighlight) + disp + " (" + QString::number(lc->UKLocCount + lc->nonUKLocCount) + ") ";
+                        dispLine += HtmlFontColour(multhighlight) + "<b>" + disp + "</b>" + " (" + QString::number(lc->UKLocCount + lc->nonUKLocCount) + ") ";
                     }
                     else
                     {
