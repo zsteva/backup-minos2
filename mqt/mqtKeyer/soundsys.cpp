@@ -139,7 +139,6 @@ void QtSoundSystem::readFromFile()
             // add in pip delay and pip
             if (p_pos >= p_buffer.size())
             {
-                //trace("Audio readData " + QString::number(len) + " returning " + QString::number(0));
                 return;
             }
             if (pipDelayBytes > 0)
@@ -148,7 +147,6 @@ void QtSoundSystem::readFromFile()
                 total = qMin(ps, len);
                 data.fill(0, total);
                 pipDelayBytes -= total;
-                //trace("pipdelay");
             }
             else
             {
@@ -157,7 +155,6 @@ void QtSoundSystem::readFromFile()
                     total = qMin((p_buffer.size() - p_pos), len);
                     data.append(p_buffer.constData() + p_pos, total);
                     p_pos += total;
-                    //trace("pip");
                 }
                 else
                 {
@@ -174,7 +171,6 @@ void QtSoundSystem::readFromFile()
                 data.append(m_buffer.constData() + m_pos, total);
 
                 m_pos += total;
-                //trace("data");
             }
             else
             {
@@ -184,7 +180,6 @@ void QtSoundSystem::readFromFile()
         KeyerAction * sba = KeyerAction::getCurrentAction();
         if ( sba )
            sba->interruptOK();	// so as we do not time it out immediately
-        //trace("Audio readData " + QString::number(len) + " returning " + QString::number(total));
 
         const int16_t * q = reinterpret_cast< const int16_t * > ( data.constData() );
          int16_t maxvol = 0;
@@ -212,7 +207,6 @@ void QtSoundSystem::passThroughData(QByteArray &inp)
         if (ptt && flen)
         {
             int len = qMin(flen, inp.size());
-            //trace("Passthrough writing " + QString::number(len) + " of " + QString::number(inp.size()));
             const int16_t * q = reinterpret_cast< const int16_t * > ( inp.constData() );
              int16_t maxvol = 0;
 
@@ -328,7 +322,6 @@ void QtSoundSystem::handleOutStateChanged(QAudio::State newState)
                 {
                    //trace( "All buffers now returned" );
                 }
-//                sba->queueFinished();
                 sba->actionTime = 1;
              }
         }
