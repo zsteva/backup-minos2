@@ -66,17 +66,27 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
     createCloseEvent();
 
+    QAudioFormat qaf;
+    qaf.setChannelCount(1);
+    qaf.setSampleRate(22050);
+    qaf.setSampleSize(16);
+    qaf.setSampleType(QAudioFormat::SignedInt);
+    qaf.setByteOrder(QAudioFormat::LittleEndian);
+    qaf.setCodec("audio/pcm");
+
     QList<QAudioDeviceInfo> audioInputDevices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
 
     foreach(const QAudioDeviceInfo indev, audioInputDevices)
     {
-        ui->inputComboBox->addItem(indev.deviceName());
+        if (indev.isFormatSupported(qaf))
+            ui->inputComboBox->addItem(indev.deviceName());
     }
 
     QList<QAudioDeviceInfo> audioOutputDevices = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
     foreach(const QAudioDeviceInfo outdev, audioOutputDevices)
     {
-        ui->outputComboBox->addItem(outdev.deviceName());
+        if (outdev.isFormatSupported(qaf))
+            ui->outputComboBox->addItem(outdev.deviceName());
     }
 
     keyerMain = this;
