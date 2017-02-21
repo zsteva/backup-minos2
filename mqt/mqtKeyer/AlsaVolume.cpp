@@ -13,16 +13,32 @@ AlsaVolume::AlsaVolume()
 void AlsaVolume::init()
 {
 #ifdef Q_OS_LINUX
+
+    // use amixer -c 1 controls to get the control names
+    // e.g. for one of the cmedia dongles
+    /*
+mjg@mjg-Aspire-5920:~$ amixer -c 1 controls
+numid=3,iface=MIXER,name='Mic Playback Switch'
+numid=4,iface=MIXER,name='Mic Playback Volume'
+numid=7,iface=MIXER,name='Mic Capture Switch'
+numid=8,iface=MIXER,name='Mic Capture Volume'
+numid=9,iface=MIXER,name='Auto Gain Control'
+numid=5,iface=MIXER,name='Speaker Playback Switch'
+numid=6,iface=MIXER,name='Speaker Playback Volume'
+numid=2,iface=PCM,name='Capture Channel Map'
+numid=1,iface=PCM,name='Playback Channel Map'
+    */
     // So here is the minimum code needed to duplicate the following command line:
 
-//    > amixer -c 1 cset name='Line Playback Volume' 66,77
-//    The control has the following features:
+//    > amixer -c 1 cset name='Speaker Playback Volume' 66,77
+//    The control has the following features (after the above call):
 
-//    > amixer -c 1 cget name='Line Playback Volume'
-//    numid=1,iface=MIXER,name='Line Playback Volume'
-//     ; type=INTEGER,access=rw---R--,values=2,min=0,max=255,step=0
-//     : values=200,200
-//     | dBscale-min=-51.75dB,step=0.25dB,mute=1
+//    > amixer -c 1 cget name='Speaker Playback Volume'
+//    numid=6,iface=MIXER,name='Speaker Playback Volume'
+//      ; type=INTEGER,access=rw---R--,values=2,min=0,max=151,step=0
+//      : values=66,77
+//      | dBminmax-min=-28.37dB,max=-0.06dB
+
 //    The coloured parameters are the same colour in the code.
 
 //    We will use the high-level control API. First we need to open an hctl and load its data:
@@ -43,35 +59,48 @@ void AlsaVolume::init()
 
     //We must specify the interface and either the numeric id
 
-    //snd_ctl_elem_id_set_id(id, 1);
+    //snd_ctl_elem_id_set_numid(id, 0);
 
     //or the name of the control.
 
-    snd_ctl_elem_id_set_name(id, "Line Playback Volume");
+    snd_ctl_elem_id_set_name(id, "Speaker Playback Volume");
 
     //With this initialised we can use it to get a snd_hctl_elem_t object and a snd_ctl_elem_value_t object. The elem is retrieved as follows:
 
 
     snd_hctl_elem_t *elem = snd_hctl_find_elem(hctl, id);
 
-    //The elem_value is initialised with the id of the element and the value we want to set like this:
+    if (elem)
+    {
 
+        //The elem_value is initialised with the id of the element and the value we want to set like this:
 
-    snd_ctl_elem_value_t *control;
-    snd_ctl_elem_value_alloca(&control);
-    snd_ctl_elem_value_set_id(control, id);
+        snd_ctl_elem_value_t *control;
+        snd_ctl_elem_value_alloca(&control);
+        snd_ctl_elem_value_set_id(control, id);
 
-    //Finally we are ready to write our values to the mixer control:
+        // try reading the value(s)
+//        int snd_hctl_elem_read(snd_hctl_elem_t *elem, snd_ctl_elem_value_t * value);
+        snd_ctl_elem_value_t *val;
+        snd_ctl_elem_value_alloca(&val);
+        int vals[2];
+        if ((err = snd_hctl_elem_read(elem,val)) == 0)
+        {
+            for (int idx=0; idx<2; idx++)
+            {
+                vals[idx]=snd_ctl_elem_value_get_integer(val, idx);
+            }
+        }
+        //Finally we are ready to write our values to the mixer control:
 
+        snd_ctl_elem_value_set_integer(control, 0, 66);
+        err = snd_hctl_elem_write(elem, control);
 
-    snd_ctl_elem_value_set_integer(control, 0, 66);
-    err = snd_hctl_elem_write(elem, control);
+        snd_ctl_elem_value_set_integer(control, 1, 77);
+        err = snd_hctl_elem_write(elem, control);
 
-    snd_ctl_elem_value_set_integer(control, 1, 77);
-    err = snd_hctl_elem_write(elem, control);
-
-    //And if we don't want to do anything else we can close the high level control handle:
-
+        //And if we don't want to do anything else we can close the high level control handle:
+    }
 
     snd_hctl_close(hctl);
 
