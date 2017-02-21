@@ -56,6 +56,8 @@ private slots:
 
     void on_outputLevelSlider_sliderMoved(int position);
 
+    void on_pushButton_clicked();
+
 private:
     Ui::KeyerMain *ui;
     void syncSetLines();
