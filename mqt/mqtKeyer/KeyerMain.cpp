@@ -339,3 +339,9 @@ void KeyerMain::on_outputLevelSlider_sliderMoved(int position)
         settings.setValue("Volume/output", vol);
     }
 }
+
+void KeyerMain::on_pushButton_clicked()
+{
+    AlsaVolume av;
+    av.init();
+}
