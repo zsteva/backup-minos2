@@ -204,9 +204,11 @@ void QtSoundSystem::passThroughData(QByteArray &inp)
     {
         bool ptt = currentKeyer->pttState;
         int flen = qAudioOut->bytesFree();
+        int ilen = inp.size();
+        int blen = qAudioOut->bufferSize();
         if (ptt && flen)
         {
-            int len = qMin(flen, inp.size());
+            int len = qMin(flen, ilen);
             const int16_t * q = reinterpret_cast< const int16_t * > ( inp.constData() );
              int16_t maxvol = 0;
 
