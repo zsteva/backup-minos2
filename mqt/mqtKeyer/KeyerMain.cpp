@@ -83,7 +83,12 @@ KeyerMain::KeyerMain(QWidget *parent) :
     createCloseEvent();
 
     AlsaVolume av;
-    QStringList cards = av.getCardList();
+    QVector<Card> cards = av.getCardList();
+
+    foreach (Card card, cards)
+    {
+        ui->cardCombo->addItem(card.name);
+    }
 
     QAudioFormat qaf;
     qaf.setChannelCount(1);

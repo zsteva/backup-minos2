@@ -199,71 +199,49 @@ void AlsaVolume::SetAlsaRecordMasterVolume(long volume)
     Q_UNUSED(volume)
 #endif
 }
-class Card {
-public:
-    Card *next;
-    QString indexstr;
-    QString name;
-    QString device_name;
-};
-QStringList AlsaVolume::getCardList()
+QVector<Card> AlsaVolume::getCardList()
 {
-    QStringList cards;
+    QVector<Card> cards;
 #ifdef Q_OS_LINUX
-    int count, number, err;
-    snd_ctl_t *ctl;
+
+    Card card;
+    card.indexstr = "-";
+    card.name = "(default)";
+    card.device_name = "default";
+
+    cards.push_back(card);
+
     snd_ctl_card_info_t *info;
-    char buf[16];
-    Card first_card;
-    Card *card;
-    Card *prev_card;
-
-    first_card.indexstr = "-";
-    first_card.name = _("(default)");
-    first_card.device_name = "default";
-    count = 1;
-
     snd_ctl_card_info_alloca(&info);
-    prev_card = &first_card;
-    number = -1;
+    int number = -1;
     for (;;)
     {
-        err = snd_card_next(&number);
+        int err = snd_card_next(&number);
         if (err < 0)
         {
-            trace(_("cannot enumerate sound cards"), err);
+            trace("cannot enumerate sound cards" + QString::number(err));
             return cards;
         }
         if (number < 0)
             break;
-        sprintf(buf, "hw:%d", number);
-        err = snd_ctl_open(&ctl, buf, 0);
+
+        QString buf = "hw:" + QString::number(number);
+        snd_ctl_t *ctl;
+        err = snd_ctl_open(&ctl, buf.toLatin1(), 0);
         if (err < 0)
             continue;
+
         err = snd_ctl_card_info(ctl, info);
         snd_ctl_close(ctl);
         if (err < 0)
             continue;
-        card = new Card();
-        sprintf(buf, "%d", number);
-        card->indexstr = buf;
-        card->name = snd_ctl_card_info_get_name(info);
-        sprintf(buf, "hw:%d", number);
-        card->device_name = buf;
-        prev_card->next = card;
-        prev_card = card;
-        ++count;
-        cards += card.name;
+
+        card.indexstr = QString::number(number);
+        card.name = snd_ctl_card_info_get_name(info);
+        card.device_name = buf;
+        cards.push_back(card);
     }
 
-    card = new Card());
-    card->indexstr = "";
-    card->name = _("enter device name...");
-    prev_card->next = card;
-    ++count;
-
-    return count;
-#else
-    return cards;
 #endif
+    return cards;
 }
