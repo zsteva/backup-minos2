@@ -141,13 +141,11 @@ TMConfigDM::TMConfigDM( QWidget* Owner )
          }
          else
          {
-            TConfigElement *tce = new TConfigElement();
+            QSharedPointer<TConfigElement> tce = QSharedPointer<TConfigElement>(new TConfigElement());
             if ( tce->initialise( sect ) )
             {
                elelist.push_back( tce );
             }
-            else
-               delete tce;
          }
       }
    }
@@ -158,10 +156,6 @@ TMConfigDM::~TMConfigDM()
    if ( !terminated )
       stop();
 
-   for ( QVector <TConfigElement *>::iterator i = elelist.begin(); i != elelist.end(); i++ )
-   {
-      delete ( *i );
-   }
    elelist.clear();
 }
 //---------------------------------------------------------------------------
@@ -174,7 +168,7 @@ void TMConfigDM::start()
    terminated = false;
 //   resetCloseEvent();
 
-   for ( QVector <TConfigElement *>::iterator i = elelist.begin(); i != elelist.end(); i++ )
+   for ( QVector <QSharedPointer<TConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
    {
        (*i)->createProcess();
    }

@@ -55,7 +55,7 @@ class TMConfigDM : public QObject
    public:  		// User declarations
       ~TMConfigDM();
 
-      QVector <TConfigElement *> elelist;
+      QVector <QSharedPointer<TConfigElement> > elelist;
 
       void start();
       void stop();

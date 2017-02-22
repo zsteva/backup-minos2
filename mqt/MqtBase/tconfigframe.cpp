@@ -23,7 +23,7 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb)
 
     for (int i = 0; i < TMConfigDM::getConfigDM( 0 ) ->elelist.size(); i++)
     {
-       TConfigElement *c = TMConfigDM::getConfigDM( 0 ) ->elelist[i];
+       QSharedPointer<TConfigElement> c = TMConfigDM::getConfigDM( 0 ) ->elelist[i];
        QString sect = c ->name;
        QListWidgetItem *listItem = new QListWidgetItem(sect, ui->ElementListBox);
        if (c->commandLine.isEmpty())
