@@ -42,6 +42,12 @@ qreal QtSoundSystem::getKeyerRecordVolume()
     return qAudioIn->volume();
 }
 
+qreal QtSoundSystem::getKeyerPassthruVolume()
+{
+//    return qAudioIn->volume();
+    return 0;
+}
+
 void QtSoundSystem::setKeyerPlaybackVolume(qreal vol)
 {
     qAudioOut->setVolume(vol);
@@ -50,6 +56,11 @@ void QtSoundSystem::setKeyerPlaybackVolume(qreal vol)
 void QtSoundSystem::setKeyerRecordVolume(qreal vol)
 {
     qAudioIn->setVolume(vol);
+}
+
+void QtSoundSystem::setKeyerPassthruVolume(qreal vol)
+{
+    //qAudioIn->setVolume(vol);
 }
 
 void QtSoundSystem::startOutput()
@@ -246,6 +257,8 @@ QtSoundSystem::QtSoundSystem() :
 QtSoundSystem::~QtSoundSystem()
 {
    stopDMA();
+   delete qAudioIn;
+   delete qAudioOut;
 }
 int QtSoundSystem::setRate()
 {

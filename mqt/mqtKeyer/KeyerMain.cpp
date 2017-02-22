@@ -23,12 +23,12 @@ void outvolcallback( unsigned int vol )
 }
 void KeyerMain::outvolcallback( unsigned int vol )
 {
-   ui->commonLevelMeter->levelChanged( vol / 65536.0, vol / 65536.0, 200 );
+   ui->masterLevelMeter->levelChanged( vol / 65536.0, vol / 65536.0, 200 );
 }
 //---------------------------------------------------------------------------
 void KeyerMain::recvolcallback( unsigned int vol )
 {
-    ui->commonLevelMeter->levelChanged( vol / 65536.0, vol / 65536.0, 200 );
+    ui->inputLevelMeter->levelChanged( vol / 65536.0, vol / 65536.0, 200 );
 }
 
 //---------------------------------------------------------------------------
@@ -49,6 +49,22 @@ void KeyerMain::syncSetLines()
    ui->L2ReflectCheckBox->setChecked(L2Ref);
 }
 
+void KeyerMain::setMixerCombo(QComboBox *combo, QList<QAudioDeviceInfo> audioDevices, QAudioFormat *qaf)
+{
+    int cwidth = combo->width();
+    foreach(const QAudioDeviceInfo indev, audioDevices)
+    {
+        if (!qaf || indev.isFormatSupported(*qaf))
+        {
+            QString name = indev.deviceName();
+            combo->addItem(name);
+            QFontMetrics fm(combo->fontMetrics());
+            int pixelsWide = fm.width(name);
+            cwidth = qMax(cwidth,pixelsWide );
+        }
+    }
+    combo->view()->setMinimumWidth(cwidth);
+}
 KeyerMain::KeyerMain(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KeyerMain),
@@ -66,6 +82,9 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
     createCloseEvent();
 
+    AlsaVolume av;
+    QStringList cards = av.getCardList();
+
     QAudioFormat qaf;
     qaf.setChannelCount(1);
     qaf.setSampleRate(22050);
@@ -75,19 +94,29 @@ KeyerMain::KeyerMain(QWidget *parent) :
     qaf.setCodec("audio/pcm");
 
     QList<QAudioDeviceInfo> audioInputDevices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
+    setMixerCombo(ui->inputCombo, audioInputDevices, &qaf);
 
-    foreach(const QAudioDeviceInfo indev, audioInputDevices)
-    {
-        if (indev.isFormatSupported(qaf))
-            ui->inputComboBox->addItem(indev.deviceName());
-    }
+    //QList<QAudioDeviceInfo> audioInputDevices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
+    setMixerCombo(ui->passthruCombo, audioInputDevices, 0);
 
     QList<QAudioDeviceInfo> audioOutputDevices = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
-    foreach(const QAudioDeviceInfo outdev, audioOutputDevices)
-    {
-        if (outdev.isFormatSupported(qaf))
-            ui->outputComboBox->addItem(outdev.deviceName());
-    }
+    setMixerCombo(ui->outputCombo, audioOutputDevices, &qaf);
+
+    QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
+
+    applyMixerSetting(keyerSettings, "Card", ui->cardCombo);
+
+    applyMixerSetting(keyerSettings, "PCMInput", ui->inputCombo);
+    applyMixerSetting(keyerSettings, "PCMInput", ui->inputLevelCombo);
+    applyMixerSetting(keyerSettings, "PCMInput", ui->inputMuteCombo);
+
+    applyMixerSetting(keyerSettings, "PCMInput", ui->outputCombo);
+    applyMixerSetting(keyerSettings, "PCMInput", ui->outputLevelCombo);
+    applyMixerSetting(keyerSettings, "PCMInput", ui->outputMuteCombo);
+
+    applyMixerSetting(keyerSettings, "PCMInput", ui->passthruCombo);
+    applyMixerSetting(keyerSettings, "PCMInput", ui->passthruLevelCombo);
+    applyMixerSetting(keyerSettings, "PCMInput", ui->passthruMuteCombo);
 
     keyerMain = this;
     setLineCallBack( lcallback );
@@ -189,7 +218,7 @@ void KeyerMain::LineTimerTimer( )
    invol = settings.value("Volume/input", 0.0).toReal(&inpok);
    outvol = settings.value("Volume/output", 0.0).toReal(&outok);;
    ui->inputLevelSlider->setValue(invol * ui->inputLevelSlider->maximum());
-   ui->outputLevelSlider->setValue(outvol * ui->outputLevelSlider->maximum());
+   ui->masterLevelSlider->setValue(outvol * ui->masterLevelSlider->maximum());
 
    setKeyerPlaybackVolume(invol);
    setKeyerPlaybackVolume(outvol);
@@ -289,17 +318,6 @@ void KeyerMain::on_delayEdit_valueChanged(const QString &/*arg1*/)
 
 }
 
-void KeyerMain::on_inputComboBox_currentTextChanged(const QString &/*arg1*/)
-{
-
-}
-
-void KeyerMain::on_outputComboBox_currentTextChanged(const QString &/*arg1*/)
-{
-
-}
-
-
 void KeyerMain::on_tuneButton_clicked()
 {
     trace("Tone 1 Button");
@@ -329,19 +347,63 @@ void KeyerMain::on_inputLevelSlider_sliderMoved(int position)
     }
 }
 
-void KeyerMain::on_outputLevelSlider_sliderMoved(int position)
+void KeyerMain::on_masterLevelSlider_sliderMoved(int position)
 {
     if (!inVolChange)
     {
-        qreal vol = 1.0*position/ui->outputLevelSlider->maximum();
+        qreal vol = 1.0*position/ui->masterLevelSlider->maximum();
         setKeyerPlaybackVolume(vol);
         QSettings settings;
         settings.setValue("Volume/output", vol);
     }
 }
 
-void KeyerMain::on_pushButton_clicked()
+void KeyerMain::on_passthruLevelSlider_sliderMoved(int position)
+{
+    if (!inVolChange)
+    {
+        qreal vol = 1.0*position/ui->passthruLevelSlider->maximum();
+        setKeyerPassthruVolume(vol);
+        QSettings settings;
+        settings.setValue("Volume/passthru", vol);
+    }
+}
+
+void KeyerMain::on_alsaTestButton_clicked()
 {
     AlsaVolume av;
     av.init();
+}
+
+void KeyerMain::applyMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo)
+{
+    QString name = keyerSettings.value(key, "").toString();
+    combo->setCurrentText(name);
+}
+
+void KeyerMain::saveMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo)
+{
+    QString name = combo->currentText();
+    keyerSettings.setValue(key, name);
+}
+
+void KeyerMain::on_mixerApplyButton_clicked()
+{
+    QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
+
+    saveMixerSetting(keyerSettings, "Card", ui->cardCombo);
+
+    saveMixerSetting(keyerSettings, "PCMInput", ui->inputCombo);
+    saveMixerSetting(keyerSettings, "InputLevel", ui->inputLevelCombo);
+    saveMixerSetting(keyerSettings, "InputMute", ui->inputMuteCombo);
+
+    saveMixerSetting(keyerSettings, "PCMOutput", ui->outputCombo);
+    saveMixerSetting(keyerSettings, "OutputLevel", ui->outputLevelCombo);
+    saveMixerSetting(keyerSettings, "OutputMute", ui->outputMuteCombo);
+
+    saveMixerSetting(keyerSettings, "PassThru", ui->passthruCombo);
+    saveMixerSetting(keyerSettings, "PassThruLevel", ui->passthruLevelCombo);
+    saveMixerSetting(keyerSettings, "PassThruMute", ui->passthruMuteCombo);
+
+    close();
 }

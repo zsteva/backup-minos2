@@ -5,6 +5,7 @@
 #include <QAudioDeviceInfo>
 #include <QAudioInput>
 #include <QAudioOutput>
+#include <QComboBox>
 #include <QMainWindow>
 
 namespace Ui {
@@ -15,6 +16,9 @@ class KeyerMain : public QMainWindow
 {
     Q_OBJECT
     void closeEvent(QCloseEvent * /*event*/);
+    void setMixerCombo(QComboBox *combo, QList<QAudioDeviceInfo> audioDevices, QAudioFormat *qaf);
+    void saveMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
+    void applyMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
 
 public:
     explicit KeyerMain(QWidget *parent = 0);
@@ -38,10 +42,6 @@ private slots:
 
     void on_delayEdit_valueChanged(const QString &arg1);
 
-    void on_inputComboBox_currentTextChanged(const QString &arg1);
-
-    void on_outputComboBox_currentTextChanged(const QString &arg1);
-
     void on_tuneButton_clicked();
 
     void on_twoToneButton_clicked();
@@ -54,9 +54,13 @@ private slots:
 
     void on_inputLevelSlider_sliderMoved(int position);
 
-    void on_outputLevelSlider_sliderMoved(int position);
+    void on_masterLevelSlider_sliderMoved(int position);
 
-    void on_pushButton_clicked();
+    void on_passthruLevelSlider_sliderMoved(int position);
+
+    void on_alsaTestButton_clicked();
+
+    void on_mixerApplyButton_clicked();
 
 private:
     Ui::KeyerMain *ui;

@@ -162,6 +162,8 @@ class commonKeyer: public lineMonitor, public timerTicker
       virtual qreal getKeyerRecordVolume();
       virtual void setKeyerPlaybackVolume(qreal);
       virtual void setKeyerRecordVolume(qreal);
+      virtual qreal getKeyerPassthruVolume();
+      virtual void setKeyerPassthruVolume(qreal vol);
 
       virtual bool pttChanged( int state );
       virtual bool L1Changed( int state );

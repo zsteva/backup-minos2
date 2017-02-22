@@ -346,6 +346,12 @@ qreal getKeyerRecordVolume()
         return currentKeyer->getKeyerRecordVolume();
     return 0;
 }
+qreal getKeyerPassthruVolume()
+{
+    if (currentKeyer)
+        return currentKeyer->getKeyerPassthruVolume();
+    return 0;
+}
 void setKeyerPlaybackVolume(qreal vol)
 {
     if (currentKeyer)
@@ -356,6 +362,12 @@ void setKeyerRecordVolume(qreal vol)
 {
     if (currentKeyer)
         currentKeyer->setKeyerRecordVolume(vol);
+}
+
+void setKeyerPassthruVolume(qreal vol)
+{
+    if (currentKeyer)
+        currentKeyer->setKeyerPassthruVolume(vol);
 }
 
 //==============================================================================================
@@ -525,9 +537,19 @@ qreal commonKeyer::getKeyerRecordVolume()
     return SoundSystemDriver::getSbDriver() -> getKeyerRecordVolume();
 }
 
+qreal commonKeyer::getKeyerPassthruVolume()
+{
+    return SoundSystemDriver::getSbDriver() -> getKeyerPassthruVolume();
+}
+
 void commonKeyer::setKeyerPlaybackVolume(qreal vol)
 {
     SoundSystemDriver::getSbDriver() -> setKeyerPlaybackVolume(vol);
+
+}
+void commonKeyer::setKeyerPassthruVolume(qreal vol)
+{
+    SoundSystemDriver::getSbDriver() -> setKeyerPassthruVolume(vol);
 
 }
 

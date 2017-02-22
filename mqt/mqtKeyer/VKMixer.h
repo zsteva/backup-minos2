@@ -19,4 +19,22 @@ enum eMixerSets {emsUnloaded, emsPassThroughNoPTT, emsPassThroughPTT,
 
 extern eMixerSets GetCurrentMixerSet();
 extern void SetCurrentMixerSet( eMixerSets cms );
+
+class VKMixer
+{
+    static VKMixer *inputMixer;
+    static VKMixer *outputMixer;
+   public:
+      VKMixer();
+
+      ~VKMixer();
+
+      static VKMixer *GetInputVKMixer();
+      static VKMixer *GetOutputVKMixer();
+
+      void SetMasterMute( bool );
+      void SetMicOutMute( bool );
+
+};
+
 #endif

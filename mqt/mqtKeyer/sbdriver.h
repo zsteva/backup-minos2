@@ -98,6 +98,8 @@ class SoundSystemDriver
       qreal getKeyerPlaybackVolume();
       qreal getKeyerRecordVolume();
       void setKeyerPlaybackVolume(qreal);
-      void setKeyerRecordVolume(qreal);};
-
+      void setKeyerRecordVolume(qreal);
+      qreal getKeyerPassthruVolume();
+      void setKeyerPassthruVolume(qreal vol);
+};
 #endif

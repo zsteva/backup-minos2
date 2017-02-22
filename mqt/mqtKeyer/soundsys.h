@@ -49,6 +49,8 @@ public:
     qreal getKeyerRecordVolume();
     void setKeyerPlaybackVolume(qreal);
     void setKeyerRecordVolume(qreal);
+    qreal getKeyerPassthruVolume();
+    void setKeyerPassthruVolume(qreal vol);
 
     void startOutput();
     void stopOutput();
