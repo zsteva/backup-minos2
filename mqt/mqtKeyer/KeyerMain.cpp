@@ -83,7 +83,8 @@ KeyerMain::KeyerMain(QWidget *parent) :
     createCloseEvent();
 
     AlsaVolume av;
-    QVector<Card> cards = av.getCardList();
+    av.init();
+    QVector<Card> cards = av.cards;
 
     foreach (Card card, cards)
     {
@@ -97,6 +98,9 @@ KeyerMain::KeyerMain(QWidget *parent) :
     qaf.setSampleType(QAudioFormat::SignedInt);
     qaf.setByteOrder(QAudioFormat::LittleEndian);
     qaf.setCodec("audio/pcm");
+
+    // This gives us alsa AND pulse devices. I think we only want alsa
+    // device given is the frst
 
     QList<QAudioDeviceInfo> audioInputDevices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
     setMixerCombo(ui->inputCombo, audioInputDevices, &qaf);
