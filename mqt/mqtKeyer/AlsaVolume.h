@@ -15,7 +15,9 @@ public:
 class Device
 {
 public:
+#ifdef Q_OS_LINUX
     snd_pcm_stream_t stream;
+#endif
     QString index;
     QString devId;
     QString devName;
@@ -34,15 +36,16 @@ public:
 class AlsaVolume
 {
 private:
+    QVector<Card> cards;
     QVector<Card> getCardList();
+#ifdef Q_OS_LINUX
     QVector<Device> getDeviceList(Card &card, snd_pcm_stream_t stream);
+#endif
 public:
     AlsaVolume();
-    void init();
+    QVector<Card> init();
     void SetPlaybackMasterVolume(long volume);
     void SetRecordMasterVolume(long volume);
-
-    QVector<Card> cards;
 };
 
 #endif // ALSAVOLUME_H

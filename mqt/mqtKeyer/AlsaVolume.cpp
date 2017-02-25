@@ -1,5 +1,9 @@
 #include "base_pch.h"
 
+#ifdef Q_OS_LINUX
+#include <alsa/asoundlib.h>
+#endif
+
 #include "AlsaVolume.h"
 
 /**
@@ -16,17 +20,19 @@ AlsaVolume::AlsaVolume()
 }
 // What may be the top level - one day!
 extern void create_controls();
-void AlsaVolume::init()
+QVector<Card> AlsaVolume::init()
 {
-//create_controls();
-
     cards = getCardList();
-    foreach(Card card, cards)
+#ifdef Q_OS_LINUX
+    for(int i = 0; i < cards.size(); i++)
     {
+        Card &card = cards[i];
         card.capture = getDeviceList(card, SND_PCM_STREAM_CAPTURE);
         card.playback = getDeviceList(card, SND_PCM_STREAM_PLAYBACK);
     }
-
+    create_controls();
+#endif
+    return cards;
 }
 
 void AlsaVolume::SetPlaybackMasterVolume(long volume)
@@ -49,13 +55,6 @@ QVector<Card> AlsaVolume::getCardList()
 {
     QVector<Card> cards;
 #ifdef Q_OS_LINUX
-
-    Card card;
-    card.indexstr = "-";
-    card.name = "(default)";
-    card.device_name = "default";
-
-    cards.push_back(card);
 
     snd_ctl_card_info_t *info;
     snd_ctl_card_info_alloca(&info);
@@ -82,6 +81,7 @@ QVector<Card> AlsaVolume::getCardList()
         if (err < 0)
             continue;
 
+        Card card;
         card.indexstr = QString::number(number);
         card.name = snd_ctl_card_info_get_name(info);
         card.device_name = buf;
@@ -97,6 +97,7 @@ QVector<Device> AlsaVolume::getDeviceList(Card &card, snd_pcm_stream_t stream)
 {
     QVector<Device> devices;
 
+#ifdef Q_OS_LINUX
     snd_ctl_t *handle;
     int err;
     QString name = "hw:" + card.indexstr;
@@ -145,6 +146,8 @@ card 0: I82801AAICH [Intel 82801AA-ICH], device 0: Intel ICH [Intel 82801AA-ICH]
         device.devName = snd_pcm_info_get_name(pcminfo);
         device.stream = stream;
 
+        trace("");
+        trace(QString("PCM ") + ((stream == SND_PCM_STREAM_CAPTURE)?"capture":"playback") + " device " + device.devName);
         unsigned int count = snd_pcm_info_get_subdevices_count(pcminfo);
 
         for (unsigned int idx = 0; idx < count; idx++)
@@ -161,15 +164,17 @@ card 0: I82801AAICH [Intel 82801AA-ICH], device 0: Intel ICH [Intel 82801AA-ICH]
                 subdev.index = idx;
                 subdev.subdevName = snd_pcm_info_get_subdevice_name(pcminfo);
                 device.subdevs.push_back(subdev);
+                trace(QString("PCM subdevice ") + subdev.subdevName);
             }
         }
         devices.push_back(device);
     }
     snd_ctl_close(handle);
-
+#endif
     return devices;
 }
 //==========================================================================================================
+#ifdef Q_OS_LINUX
 // sample code from alsamixer
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof *(a))
 
@@ -198,6 +203,32 @@ public:
     snd_mixer_selem_channel_id_t cswitch_channels[2];
     unsigned int enum_channel_bits;
 };
+
+//typedef enum _snd_mixer_selem_channel_id {
+//	/** Unknown */
+//	SND_MIXER_SCHN_UNKNOWN = -1,
+//	/** Front left */
+//	SND_MIXER_SCHN_FRONT_LEFT = 0,
+//	/** Front right */
+//	SND_MIXER_SCHN_FRONT_RIGHT,
+//	/** Rear left */
+//	SND_MIXER_SCHN_REAR_LEFT,
+//	/** Rear right */
+//	SND_MIXER_SCHN_REAR_RIGHT,
+//	/** Front center */
+//	SND_MIXER_SCHN_FRONT_CENTER,
+//	/** Woofer */
+//	SND_MIXER_SCHN_WOOFER,
+//	/** Side Left */
+//	SND_MIXER_SCHN_SIDE_LEFT,
+//	/** Side Right */
+//	SND_MIXER_SCHN_SIDE_RIGHT,
+//	/** Rear Center */
+//	SND_MIXER_SCHN_REAR_CENTER,
+//	SND_MIXER_SCHN_LAST = 31,
+//	/** Mono (Front left alias) */
+//	SND_MIXER_SCHN_MONO = SND_MIXER_SCHN_FRONT_LEFT
+//} snd_mixer_selem_channel_id_t;
 
 
 void create_controls(void);
@@ -240,8 +271,10 @@ static bool has_more_than_front_capture_channels(snd_mixer_elem_t *elem)
     unsigned int i;
 
     for (i = 2; i < ARRAY_SIZE(supported_channels); ++i)
+    {
         if (snd_mixer_selem_has_capture_channel(elem, supported_channels[i]))
             return TRUE;
+    }
     return FALSE;
 }
 
@@ -262,14 +295,16 @@ static bool has_merged_cswitch(snd_mixer_elem_t *elem)
     psw = snd_mixer_selem_has_playback_switch(elem);
     if ((pvol || psw) &&
         snd_mixer_selem_has_capture_switch(elem) &&
-        !snd_mixer_selem_has_capture_volume(elem)) {
+        !snd_mixer_selem_has_capture_volume(elem))
+    {
         if (snd_mixer_selem_has_capture_switch_joined(elem))
             return TRUE;
         else if (((pvol && snd_mixer_selem_has_playback_volume_joined(elem)) ||
               (psw && snd_mixer_selem_has_playback_switch_joined(elem))) &&
              has_more_than_front_capture_channels(elem))
             return FALSE;
-        for (i = 0; i < ARRAY_SIZE(control_channels); ++i) {
+        for (i = 0; i < ARRAY_SIZE(control_channels); ++i)
+        {
             if (has_any_control_channel(elem, control_channels[i], snd_mixer_selem_has_capture_channel) &&
                 !has_any_control_channel(elem, control_channels[i], snd_mixer_selem_has_playback_channel))
                 return FALSE;
@@ -292,11 +327,14 @@ static unsigned int get_playback_controls_count(snd_mixer_elem_t *elem)
     if ((!has_vol || snd_mixer_selem_has_playback_volume_joined(elem)) &&
         (!has_sw || snd_mixer_selem_has_playback_switch_joined(elem)))
         return 1;
-    for (i = 0; i < ARRAY_SIZE(control_channels); ++i) {
+    for (i = 0; i < ARRAY_SIZE(control_channels); ++i)
+    {
         if (snd_mixer_selem_has_playback_channel(elem, control_channels[i][0]) ||
             (control_channels[i][1] != SND_MIXER_SCHN_UNKNOWN &&
              snd_mixer_selem_has_playback_channel(elem, control_channels[i][1])))
+        {
             ++count;
+        }
     }
     return count;
 }
@@ -315,11 +353,14 @@ static unsigned int get_capture_controls_count(snd_mixer_elem_t *elem)
     if ((!has_vol || snd_mixer_selem_has_capture_volume_joined(elem)) &&
         (!has_sw || snd_mixer_selem_has_capture_switch_joined(elem)))
         return 1;
-    for (i = 0; i < ARRAY_SIZE(control_channels); ++i) {
+    for (i = 0; i < ARRAY_SIZE(control_channels); ++i)
+    {
         if (snd_mixer_selem_has_capture_channel(elem, control_channels[i][0]) ||
             (control_channels[i][1] != SND_MIXER_SCHN_UNKNOWN &&
              snd_mixer_selem_has_capture_channel(elem, control_channels[i][1])))
+        {
             ++count;
+        }
     }
     return count;
 }
@@ -394,8 +435,10 @@ static unsigned int create_controls_for_elem(snd_mixer_elem_t *elem, Control *co
         control->flags = TYPE_ENUM;
         control->enum_channel_bits = 0;
         for (i = 0; i <= SND_MIXER_SCHN_LAST; ++i)
+        {
             if (snd_mixer_selem_get_enum_item(control->elem, static_cast<snd_mixer_selem_channel_id_t>(i), &enum_index) >= 0)
                 control->enum_channel_bits |= 1 << i;
+        }
         if (snd_mixer_selem_is_active(control->elem))
             control->flags |= IS_ACTIVE;
         create_name(control);
@@ -651,7 +694,7 @@ void free_controls(void)
 void create_mixer_object(struct snd_mixer_selem_regopt *selem_regopt)
 {
 
-    int err;
+    int err = -1;
 
     err = snd_mixer_open(&mixer, 0);
     if (err < 0)
@@ -659,7 +702,14 @@ void create_mixer_object(struct snd_mixer_selem_regopt *selem_regopt)
         trace(QString("cannot open mixer ") + snd_strerror(err));
         return;
     }
-
+    /*
+    err = snd_mixer_attach(mixer, "hw:0");
+    if (err < 0)
+    {
+        trace(QString("cannot open mixer ") + snd_strerror(err));
+        return;
+    }
+*/
     mixer_device_name = QString(selem_regopt->device);
     err = snd_mixer_selem_register(mixer, selem_regopt, NULL);
     if (err < 0)
@@ -687,20 +737,22 @@ void create_mixer_object(struct snd_mixer_selem_regopt *selem_regopt)
 
 void create_controls(void)
 {
-    snd_mixer_elem_t *elem;
+    snd_mixer_elem_t *elem; // opaque handle
     Control *control;
 
     free_controls();
 
     selem_regopt.ver = 1;
     selem_regopt.abstract = SND_MIXER_SABSTRACT_NONE;
-    selem_regopt.device = "default";
+    selem_regopt.device = "hw:0";   // need to get this from chosen card
 
     create_mixer_object(&selem_regopt);
     for (elem = snd_mixer_first_elem(mixer);
          elem;
          elem = snd_mixer_elem_next(elem))
+    {
         controls_count += get_controls_count_for_elem(elem);
+    }
 
     if (controls_count > 0) {
         controls = new Control [controls_count];
@@ -708,16 +760,67 @@ void create_controls(void)
         for (elem = snd_mixer_first_elem(mixer);
              elem;
              elem = snd_mixer_elem_next(elem))
+        {
             control += create_controls_for_elem(elem, control);
+        }
         assert(control == controls + controls_count);
     }
-/*
-    compute_controls_layout();
-    display_view_mode();
 
-    search_for_focus_control();
-    refocus_control();
-*/
+    for (unsigned int i = 0; i < controls_count; i++)
+    {
+        QString t = controls[i].name;
+        if (controls[i].flags & TYPE_PVOLUME)
+            t += " TYPE_PVOLUME";
+
+        if (controls[i].flags & TYPE_CVOLUME)
+            t += " TYPE_CVOLUME";
+
+        if (controls[i].flags & TYPE_PSWITCH)
+            t += " TYPE_PSWITCH";
+
+        if (controls[i].flags & TYPE_CSWITCH)
+            t += " TYPE_CSWITCH";
+
+        if (controls[i].flags & TYPE_ENUM)
+            t += " TYPE_ENUM";
+
+        if (controls[i].flags & HAS_VOLUME_0)
+            t += " HAS_VOLUME_0";
+
+        if (controls[i].flags & HAS_VOLUME_1)
+            t += " HAS_VOLUME_1";
+
+        if (controls[i].flags & HAS_PSWITCH_0)
+            t += " HAS_PSWITCH_0";
+
+        if (controls[i].flags & HAS_PSWITCH_1)
+            t += " HAS_PSWITCH_1";
+
+        if (controls[i].flags & HAS_CSWITCH_0)
+            t += " HAS_CSWITCH_0";
+
+        if (controls[i].flags & HAS_CSWITCH_1)
+            t += " HAS_CSWITCH_1";
+
+        if (controls[i].flags & IS_MULTICH)
+            t += " IS_MULTICH";
+
+        if (controls[i].flags & IS_ACTIVE)
+            t += " IS_ACTIVE";
+
+//        if (controls[i].flags & MULTICH_MASK)
+//            t += " MULTICH_MASK";
+
+        trace(t);
+
+//        snd_mixer_selem_channel_id_t volume_channels[2];
+ //       snd_mixer_selem_channel_id_t pswitch_channels[2];
+  //      snd_mixer_selem_channel_id_t cswitch_channels[2];
+   //     unsigned int enum_channel_bits;
+
+    }
+// and for now, get rid of them again...
+
     free_controls();
     if (mixer)
         snd_mixer_close(mixer);
@@ -725,3 +828,4 @@ void create_controls(void)
         snd_mixer_selem_id_free(current_selem_id);
 
 }
+#endif

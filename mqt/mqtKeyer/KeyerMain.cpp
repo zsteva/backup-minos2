@@ -65,6 +65,19 @@ void KeyerMain::setMixerCombo(QComboBox *combo, QList<QAudioDeviceInfo> audioDev
     }
     combo->view()->setMinimumWidth(cwidth);
 }
+void KeyerMain::setMixerCombo(QComboBox *combo, QVector<Device> devices)
+{
+    int cwidth = combo->width();
+    foreach(const Device indev, devices)
+    {
+        QString name = indev.devName;
+        combo->addItem(name);
+        QFontMetrics fm(combo->fontMetrics());
+        int pixelsWide = fm.width(name);
+        cwidth = qMax(cwidth,pixelsWide );
+    }
+    combo->view()->setMinimumWidth(cwidth);
+}
 KeyerMain::KeyerMain(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KeyerMain),
@@ -83,8 +96,7 @@ KeyerMain::KeyerMain(QWidget *parent) :
     createCloseEvent();
 
     AlsaVolume av;
-    av.init();
-    QVector<Card> cards = av.cards;
+    QVector<Card> cards = av.init();
 
     foreach (Card card, cards)
     {
@@ -101,7 +113,7 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
     // This gives us alsa AND pulse devices. I think we only want alsa
     // device given is the frst
-
+/*
     QList<QAudioDeviceInfo> audioInputDevices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
     setMixerCombo(ui->inputCombo, audioInputDevices, &qaf);
 
@@ -110,9 +122,12 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
     QList<QAudioDeviceInfo> audioOutputDevices = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
     setMixerCombo(ui->outputCombo, audioOutputDevices, &qaf);
+*/
+    setMixerCombo(ui->inputCombo, cards[0].capture);
+    setMixerCombo(ui->outputCombo, cards[0].playback);
 
     QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
-
+/*
     applyMixerSetting(keyerSettings, "Card", ui->cardCombo);
 
     applyMixerSetting(keyerSettings, "PCMInput", ui->inputCombo);
@@ -126,7 +141,7 @@ KeyerMain::KeyerMain(QWidget *parent) :
     applyMixerSetting(keyerSettings, "PCMInput", ui->passthruCombo);
     applyMixerSetting(keyerSettings, "PCMInput", ui->passthruLevelCombo);
     applyMixerSetting(keyerSettings, "PCMInput", ui->passthruMuteCombo);
-
+*/
     keyerMain = this;
     setLineCallBack( lcallback );
     setVUCallBack( &::recvolcallback, &::outvolcallback );

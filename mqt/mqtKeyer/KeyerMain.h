@@ -8,6 +8,8 @@
 #include <QComboBox>
 #include <QMainWindow>
 
+#include "AlsaVolume.h"
+
 namespace Ui {
 class KeyerMain;
 }
@@ -17,6 +19,8 @@ class KeyerMain : public QMainWindow
     Q_OBJECT
     void closeEvent(QCloseEvent * /*event*/);
     void setMixerCombo(QComboBox *combo, QList<QAudioDeviceInfo> audioDevices, QAudioFormat *qaf);
+    void setMixerCombo(QComboBox *combo, QVector<Device> devices);
+
     void saveMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
     void applyMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
 
