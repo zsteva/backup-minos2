@@ -93,11 +93,11 @@ QVector<Card> AlsaVolume::getCardList()
 }
 //static snd_pcm_stream_t stream = SND_PCM_STREAM_PLAYBACK or 	SND_PCM_STREAM_CAPTURE,
 
+#ifdef Q_OS_LINUX
 QVector<Device> AlsaVolume::getDeviceList(Card &card, snd_pcm_stream_t stream)
 {
     QVector<Device> devices;
 
-#ifdef Q_OS_LINUX
     snd_ctl_t *handle;
     int err;
     QString name = "hw:" + card.indexstr;
@@ -170,9 +170,9 @@ card 0: I82801AAICH [Intel 82801AA-ICH], device 0: Intel ICH [Intel 82801AA-ICH]
         devices.push_back(device);
     }
     snd_ctl_close(handle);
-#endif
     return devices;
 }
+#endif
 //==========================================================================================================
 #ifdef Q_OS_LINUX
 // sample code from alsamixer
