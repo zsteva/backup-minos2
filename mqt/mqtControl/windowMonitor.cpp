@@ -16,8 +16,9 @@ windowMonitor::windowMonitor(QWidget *parent) :
 }
 void windowMonitor::setPosition()
 {
-    QPoint bl = controlMain->frameGeometry().bottomLeft();
-    move(bl);
+    QPoint tl = controlMain->frameGeometry().topLeft();
+    tl.setY(tl.y() + controlMain->frameGeometry().height() + 30);
+    move(tl);
 }
 
 windowMonitor::~windowMonitor()
