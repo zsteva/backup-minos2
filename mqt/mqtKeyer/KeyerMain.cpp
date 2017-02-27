@@ -70,7 +70,7 @@ void KeyerMain::setMixerCombo(QComboBox *combo, QVector<Device> devices)
     int cwidth = combo->width();
     foreach(const Device indev, devices)
     {
-        QString name = indev.devName;
+        QString name = indev.devId;
         combo->addItem(name);
         QFontMetrics fm(combo->fontMetrics());
         int pixelsWide = fm.width(name);
@@ -78,70 +78,70 @@ void KeyerMain::setMixerCombo(QComboBox *combo, QVector<Device> devices)
     }
     combo->view()->setMinimumWidth(cwidth);
 }
+void KeyerMain::setMixerCombo(QComboBox *combo, PxDev &devices)
+{
+    int cwidth = combo->width();
+    foreach(const PxSelem selem, devices.selems)
+    {
+        QString name = selem.name;
+        combo->addItem(name);
+        QFontMetrics fm(combo->fontMetrics());
+        int pixelsWide = fm.width(name);
+        cwidth = qMax(cwidth,pixelsWide );
+    }
+    combo->view()->setMinimumWidth(cwidth);
+}
+
 KeyerMain::KeyerMain(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KeyerMain),
     PTT(false), keyline(false), PTTRef(false), L1Ref(false), L2Ref(false),
     recordWait(false),
     recording(false),
-    inVolChange(false)
+    inVolChange(false),
+    currCardIndex(0),
+    currInputIndex(0),
+    currOutputIndex(0),
+    inInit(true)
+
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-//    connect(m_engine, SIGNAL(levelChanged(qreal, qreal, int)),
-//            m_levelMeter, SLOT(levelChanged(qreal, qreal, int)));
+
+    QSettings settings;
+    QByteArray geometry = settings.value("KeyerMain/geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
 
     enableTrace( "./TraceLog", "MinosKeyer_" );
 
     createCloseEvent();
 
-    AlsaVolume av;
-    QVector<Card> cards = av.init();
+    cards = av.init();
 
     foreach (Card card, cards)
     {
         ui->cardCombo->addItem(card.name);
     }
-
-    QAudioFormat qaf;
-    qaf.setChannelCount(1);
-    qaf.setSampleRate(22050);
-    qaf.setSampleSize(16);
-    qaf.setSampleType(QAudioFormat::SignedInt);
-    qaf.setByteOrder(QAudioFormat::LittleEndian);
-    qaf.setCodec("audio/pcm");
-
-    // This gives us alsa AND pulse devices. I think we only want alsa
-    // device given is the frst
-/*
-    QList<QAudioDeviceInfo> audioInputDevices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
-    setMixerCombo(ui->inputCombo, audioInputDevices, &qaf);
-
-    //QList<QAudioDeviceInfo> audioInputDevices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
-    setMixerCombo(ui->passthruCombo, audioInputDevices, 0);
-
-    QList<QAudioDeviceInfo> audioOutputDevices = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
-    setMixerCombo(ui->outputCombo, audioOutputDevices, &qaf);
-*/
-    setMixerCombo(ui->inputCombo, cards[0].capture);
-    setMixerCombo(ui->outputCombo, cards[0].playback);
-
     QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
-/*
     applyMixerSetting(keyerSettings, "Card", ui->cardCombo);
 
-    applyMixerSetting(keyerSettings, "PCMInput", ui->inputCombo);
-    applyMixerSetting(keyerSettings, "PCMInput", ui->inputLevelCombo);
-    applyMixerSetting(keyerSettings, "PCMInput", ui->inputMuteCombo);
+    OpenMixer_Linux_ALSA(&Px);
 
-    applyMixerSetting(keyerSettings, "PCMInput", ui->outputCombo);
-    applyMixerSetting(keyerSettings, "PCMInput", ui->outputLevelCombo);
-    applyMixerSetting(keyerSettings, "PCMInput", ui->outputMuteCombo);
+    setMixerCombo(ui->inputControlCombo, Px.info.capture);
 
-    applyMixerSetting(keyerSettings, "PCMInput", ui->passthruCombo);
-    applyMixerSetting(keyerSettings, "PCMInput", ui->passthruLevelCombo);
-    applyMixerSetting(keyerSettings, "PCMInput", ui->passthruMuteCombo);
-*/
+    setMixerCombo(ui->passthruControlCombo, Px.info.capture);
+
+    setMixerCombo(ui->outputControlCombo, Px.info.playback);
+
+
+    applyMixerSetting(keyerSettings, "PCMInput", ui->inputDeviceCombo);
+    applyMixerSetting(keyerSettings, "PCMOutput", ui->outputDeviceCombo);
+
+    applyMixerSetting(keyerSettings, "InputControl", ui->inputControlCombo);
+    applyMixerSetting(keyerSettings, "OutputControl", ui->outputControlCombo);
+    applyMixerSetting(keyerSettings, "PassThruControl", ui->passthruControlCombo);
+
     keyerMain = this;
     setLineCallBack( lcallback );
     setVUCallBack( &::recvolcallback, &::outvolcallback );
@@ -163,6 +163,8 @@ KeyerMain::KeyerMain(QWidget *parent) :
         ui->keyCombo->addItem(QString::number(i));
     }
     ui->keyCombo->setCurrentIndex(0);
+
+    inInit = false;
 }
 
 KeyerMain::~KeyerMain()
@@ -170,10 +172,93 @@ KeyerMain::~KeyerMain()
     delete ui;
 }
 
-void KeyerMain::closeEvent(QCloseEvent * /*event*/)
+void KeyerMain::closeEvent(QCloseEvent *event)
 {
     unloadKeyers();
+    QSettings settings;
+    settings.setValue("KeyerMain/geometry", saveGeometry());
+    QWidget::closeEvent(event);
 }
+void KeyerMain::resizeEvent(QResizeEvent *event)
+{
+    QSettings settings;
+    settings.setValue("KeyerMain/geometry", saveGeometry());
+    QWidget::resizeEvent(event);
+}
+void KeyerMain::on_cardCombo_currentIndexChanged(int index)
+{
+    currCardIndex = index;
+
+    av.switchCard(currCardIndex);
+    setMixerCombo(ui->inputDeviceCombo, cards[currCardIndex].capture);
+    setMixerCombo(ui->outputDeviceCombo, cards[currCardIndex].playback);
+
+    if (inInit)
+        return;
+
+    QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
+    saveMixerSetting(keyerSettings, "Card", ui->cardCombo);
+}
+
+void KeyerMain::on_inputDeviceCombo_currentIndexChanged(int index)
+{
+    currInputIndex = index;
+
+    //Fill in the capture channels
+
+    if (inInit)
+        return;
+    QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
+    saveMixerSetting(keyerSettings, "PCMInput", ui->inputDeviceCombo);
+
+
+}
+
+void KeyerMain::on_outputDeviceCombo_currentIndexChanged(int index)
+{
+    currOutputIndex = index;
+    // fill in the playback channels
+
+    // (is this input or output?) fill in the passthru channels
+
+    if (inInit)
+        return;
+    QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
+    saveMixerSetting(keyerSettings, "PCMOutput", ui->outputDeviceCombo);
+
+}
+
+
+void KeyerMain::on_inputControlCombo_currentIndexChanged(int /*index*/)
+{
+
+    if (inInit)
+        return;
+    QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
+    saveMixerSetting(keyerSettings, "InputControl", ui->inputControlCombo);
+
+}
+
+void KeyerMain::on_outputControlCombo_currentIndexChanged(int /*index*/)
+{
+
+    if (inInit)
+        return;
+    QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
+    saveMixerSetting(keyerSettings, "OutputControl", ui->outputControlCombo);
+
+}
+
+void KeyerMain::on_passthruControlCombo_currentIndexChanged(int /*index*/)
+{
+
+    if (inInit)
+        return;
+    QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
+    saveMixerSetting(keyerSettings, "PassThruControl", ui->passthruControlCombo);
+
+}
+
 const char *msets[] = {"emsUnloaded", "emsPassThroughNoPTT", "emsPassThroughPTT",
                  "emsReplay", "emsReplayPip", "emsReplayT1", "emsReplayT2",
                  "emsVoiceRecord",
@@ -393,12 +478,6 @@ void KeyerMain::on_passthruLevelSlider_sliderMoved(int position)
     }
 }
 
-void KeyerMain::on_alsaTestButton_clicked()
-{
-    AlsaVolume av;
-    av.init();
-}
-
 void KeyerMain::applyMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo)
 {
     QString name = keyerSettings.value(key, "").toString();
@@ -411,23 +490,3 @@ void KeyerMain::saveMixerSetting(QSettings &keyerSettings, QString key, QComboBo
     keyerSettings.setValue(key, name);
 }
 
-void KeyerMain::on_mixerApplyButton_clicked()
-{
-    QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
-
-    saveMixerSetting(keyerSettings, "Card", ui->cardCombo);
-
-    saveMixerSetting(keyerSettings, "PCMInput", ui->inputCombo);
-    saveMixerSetting(keyerSettings, "InputLevel", ui->inputLevelCombo);
-    saveMixerSetting(keyerSettings, "InputMute", ui->inputMuteCombo);
-
-    saveMixerSetting(keyerSettings, "PCMOutput", ui->outputCombo);
-    saveMixerSetting(keyerSettings, "OutputLevel", ui->outputLevelCombo);
-    saveMixerSetting(keyerSettings, "OutputMute", ui->outputMuteCombo);
-
-    saveMixerSetting(keyerSettings, "PassThru", ui->passthruCombo);
-    saveMixerSetting(keyerSettings, "PassThruLevel", ui->passthruLevelCombo);
-    saveMixerSetting(keyerSettings, "PassThruMute", ui->passthruMuteCombo);
-
-    close();
-}

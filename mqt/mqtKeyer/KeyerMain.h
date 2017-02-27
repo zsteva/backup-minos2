@@ -17,9 +17,11 @@ class KeyerMain;
 class KeyerMain : public QMainWindow
 {
     Q_OBJECT
-    void closeEvent(QCloseEvent * /*event*/);
+    void closeEvent(QCloseEvent * event);
+    void resizeEvent(QResizeEvent *event);
     void setMixerCombo(QComboBox *combo, QList<QAudioDeviceInfo> audioDevices, QAudioFormat *qaf);
     void setMixerCombo(QComboBox *combo, QVector<Device> devices);
+    void setMixerCombo(QComboBox *combo, PxDev &devices);
 
     void saveMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
     void applyMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
@@ -62,15 +64,31 @@ private slots:
 
     void on_passthruLevelSlider_sliderMoved(int position);
 
-    void on_alsaTestButton_clicked();
+    void on_cardCombo_currentIndexChanged(int index);
 
-    void on_mixerApplyButton_clicked();
+    void on_inputDeviceCombo_currentIndexChanged(int index);
+
+    void on_outputDeviceCombo_currentIndexChanged(int index);
+
+    void on_inputControlCombo_currentIndexChanged(int index);
+
+    void on_outputControlCombo_currentIndexChanged(int index);
+
+    void on_passthruControlCombo_currentIndexChanged(int index);
 
 private:
     Ui::KeyerMain *ui;
     void syncSetLines();
     QTimer LineTimer;
     QTimer CaptionTimer;
+
+    QVector<Card> cards;
+
+    px_mixer Px;
+
+    int currCardIndex;
+    int currInputIndex;
+    int currOutputIndex;
 
     bool PTT;
     bool keyline;
@@ -82,6 +100,7 @@ private:
     bool recording;
 
     bool inVolChange;
+    bool inInit;
 
 };
 #endif // KEYERMAIN_H

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>586</width>
-    <height>336</height>
+    <width>1032</width>
+    <height>587</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,11 +16,11 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,1">
     <item>
-     <widget class="QTabWidget" name="MixerTab">
+     <widget class="QTabWidget" name="KeyerTabs">
       <property name="currentIndex">
        <number>1</number>
       </property>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="voiceTab">
        <attribute name="title">
         <string>Voice</string>
        </attribute>
@@ -292,162 +292,86 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="QWidget" name="mixerTab">
        <attribute name="title">
         <string>Mixer</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_15">
+       <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_14">
+         <layout class="QHBoxLayout" name="horizontalLayout_17">
           <item>
-           <widget class="QLabel" name="label_18">
-            <property name="text">
-             <string>Card</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="cardCombo"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="1,1,1">
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout">
+           <layout class="QVBoxLayout" name="verticalLayout_14">
             <item>
-             <widget class="QLabel" name="label">
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_18">
               <property name="text">
-               <string>Input Device</string>
+               <string>Card</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="inputCombo">
-              <property name="sizeAdjustPolicy">
-               <enum>QComboBox::AdjustToContents</enum>
+             <widget class="QComboBox" name="cardCombo"/>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
               </property>
-             </widget>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
-            <item>
-             <widget class="QLabel" name="label_12">
-              <property name="text">
-               <string>Input Level</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="inputLevelCombo"/>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
-            <item>
-             <widget class="QLabel" name="label_13">
-              <property name="text">
-               <string>Input Mute</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="inputMuteCombo"/>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="1,1,1">
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_8">
-            <item>
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Output Device</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="outputCombo"/>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_10">
-            <item>
-             <widget class="QLabel" name="label_14">
-              <property name="text">
-               <string>Output Level</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="outputLevelCombo"/>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_11">
-            <item>
-             <widget class="QLabel" name="label_15">
-              <property name="text">
-               <string>Output Mute</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="outputMuteCombo"/>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="1,1,1">
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_9">
             <item>
-             <widget class="QLabel" name="label_11">
-              <property name="text">
-               <string>PassThru Device</string>
-              </property>
-             </widget>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Input Device</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="inputDeviceCombo">
+                <property name="sizeAdjustPolicy">
+                 <enum>QComboBox::AdjustToContents</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QComboBox" name="passthruCombo"/>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_12">
-            <item>
-             <widget class="QLabel" name="label_16">
-              <property name="text">
-               <string>PassThru Level</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="passthruLevelCombo"/>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_13">
-            <item>
-             <widget class="QLabel" name="label_17">
-              <property name="text">
-               <string>PassThru Mute</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="passthruMuteCombo"/>
+             <layout class="QVBoxLayout" name="verticalLayout_8">
+              <item>
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Output Device</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="outputDeviceCombo"/>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
@@ -461,43 +385,68 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>228</height>
+            <height>21</height>
            </size>
           </property>
          </spacer>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_16">
+         <layout class="QHBoxLayout" name="horizontalLayout_13">
           <item>
-           <widget class="QPushButton" name="alsaTestButton">
+           <widget class="QLabel" name="label_12">
             <property name="text">
-             <string>Alsa Test</string>
+             <string>Input Control</string>
             </property>
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_10">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="mixerApplyButton">
-            <property name="text">
-             <string>Apply</string>
-            </property>
-           </widget>
+           <widget class="QComboBox" name="inputControlCombo"/>
           </item>
          </layout>
         </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_14">
+          <item>
+           <widget class="QLabel" name="label_14">
+            <property name="text">
+             <string>Output Control</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="outputControlCombo"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_15">
+          <item>
+           <widget class="QLabel" name="label_16">
+            <property name="text">
+             <string>PassThru Control</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="passthruControlCombo"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
+       <zorder>label_16</zorder>
       </widget>
      </widget>
     </item>
