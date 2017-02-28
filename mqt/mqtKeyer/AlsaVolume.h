@@ -10,6 +10,20 @@ typedef double PxVolume; /* 0.0 (min) --> 1.0 (max) */
 class PxSelem
 {
 public:
+    PxSelem(): commvol(false), commswitch(false),
+        cvol(false), pvol(false),
+        cswitch(false), pswitch(false),
+        elem(0), vol(0), index(0), item(0)
+    {
+
+    }
+    bool commvol;
+    bool cvol;
+    bool pvol;
+    bool commswitch;
+    bool cswitch;
+    bool pswitch;
+
    snd_mixer_elem_t *elem;
    snd_mixer_elem_t *vol;
    unsigned int index;
@@ -27,15 +41,11 @@ public:
    int playback;
    int source;
 
-   int numselems;
    QVector<PxSelem> selems;
 };
 class PxInfo
 {
 public:
-   int numMixers;
-   //char *mixers;
-
    PxDev playback;
    PxDev capture;
 };
