@@ -7,10 +7,51 @@
 
 KeyerMain *keyerMain = 0;
 
+class MixerSet
+{
+   public:
+      MixerSet( bool PassThruMute, bool MasterMute )
+            : PassThruMute( PassThruMute ), MasterMute( MasterMute )
+      {}
+      // we need a line setting, stereo volume + mute
+      bool PassThruMute;
+      bool MasterMute;
+};
+//---------------------------------------------------------------------------
+
+MixerSet MixerSets[ emsMaxMixerSet ] =
+   {
+      // revise to MicOut mute, Speaker mute as only ones we need to drive
+      // and we need to mute or drive to zero if no mute.
+      // MixerSet(MicRec, MicOut,  Rec,   Master)
+      // MixerSet(bool MicOutMute, bool MasterMute)
+
+      MixerSet( false, false ),         //emsUnloaded
+      MixerSet( false, false ),         //emsPassThroughNoPTT
+      MixerSet( false, false ),         //emsPassThroughPTT
+      MixerSet( true , false ),         //emsReplay
+      MixerSet( true , false ),         //emsReplayPip
+      MixerSet( true , false ),         //emsReplayT1
+      MixerSet( true , false ),         //emsReplayT2
+      MixerSet( false, true ),         //emsVoiceRecord
+      MixerSet( true , false ),         //emsCWTransmit
+      MixerSet( true , false )         //emsCWPassThrough
+   };
+eMixerSets GetCurrentMixerSet()
+{
+    return keyerMain->GetCurrentMixerSet();
+}
+
+void SetCurrentMixerSet( eMixerSets cms )
+{
+    keyerMain->SetCurrentMixerSet(cms);
+}
+
 void lcallback( bool pPTT, bool pkeyline, bool pPTTRef, bool pL1Ref, bool pL2Ref )
 {
     keyerMain->setLines(pPTT, pPTTRef, pL1Ref, pL2Ref, pkeyline);
 }
+
 //---------------------------------------------------------------------------
 void recvolcallback( unsigned int vol )
 {
@@ -23,7 +64,7 @@ void outvolcallback( unsigned int vol )
 }
 void KeyerMain::outvolcallback( unsigned int vol )
 {
-   ui->masterLevelMeter->levelChanged( vol / 65536.0, vol / 65536.0, 200 );
+   ui->outputLevelMeter->levelChanged( vol / 65536.0, vol / 65536.0, 200 );
 }
 //---------------------------------------------------------------------------
 void KeyerMain::recvolcallback( unsigned int vol )
@@ -47,6 +88,29 @@ void KeyerMain::syncSetLines()
    ui->PTTReflectCheckBox->setChecked(PTTRef);
    ui->L1ReflectCheckBox->setChecked(L1Ref);
    ui->L2ReflectCheckBox->setChecked(L2Ref);
+}
+eMixerSets KeyerMain::GetCurrentMixerSet()
+{
+    return CurrMixerSet;
+}
+
+void KeyerMain::SetCurrentMixerSet( eMixerSets cms )
+{
+    CurrMixerSet = cms;
+    // and now we need to apply the settings...
+    // and we need to mute or drive to zero if no mute.
+    // BUT we need to get the correct level to reset it to...
+    // and hope it doesn't change while we are busy?
+
+    av.set_switch_indexed(&Px.info.playback, ui->inputControlCombo->currentIndex(), MixerSets[ CurrMixerSet ].PassThruMute);
+
+    av.set_switch_indexed(&Px.info.playback, ui->masterControlCombo->currentIndex(), MixerSets[ CurrMixerSet ].MasterMute);
+
+    adjustDeviceControls(&Px.info.capture, ui->inputControlCombo, ui->inputLevelSlider, ui->inputMute);
+    adjustDeviceControls(&Px.info.playback, ui->outputControlCombo, ui->outputLevelSlider, ui->outputMute);
+    adjustDeviceControls(&Px.info.playback, ui->passthruControlCombo, ui->passthruLevelSlider, ui->passthruMute);
+    adjustDeviceControls(&Px.info.playback, ui->masterControlCombo, ui->masterLevelSlider, ui->masterMute);
+
 }
 
 void KeyerMain::setMixerCombo(QComboBox *combo, QList<QAudioDeviceInfo> audioDevices, QAudioFormat *qaf)
@@ -102,7 +166,8 @@ KeyerMain::KeyerMain(QWidget *parent) :
     currCardIndex(0),
     currInputIndex(0),
     currOutputIndex(0),
-    inInit(true)
+    inInit(true),
+    CurrMixerSet(emsUnloaded)
 
 {
     ui->setupUi(this);
@@ -126,13 +191,12 @@ KeyerMain::KeyerMain(QWidget *parent) :
     QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
     applyMixerSetting(keyerSettings, "Card", ui->cardCombo);
 
-    OpenMixer_Linux_ALSA(&Px);
+    av.OpenMixer_Linux_ALSA(&Px);
 
     setMixerCombo(ui->inputControlCombo, Px.info.capture);
-
-    setMixerCombo(ui->passthruControlCombo, Px.info.capture);
-
+    setMixerCombo(ui->passthruControlCombo, Px.info.playback);
     setMixerCombo(ui->outputControlCombo, Px.info.playback);
+    setMixerCombo(ui->masterControlCombo, Px.info.playback);
 
 
     applyMixerSetting(keyerSettings, "PCMInput", ui->inputDeviceCombo);
@@ -141,6 +205,7 @@ KeyerMain::KeyerMain(QWidget *parent) :
     applyMixerSetting(keyerSettings, "InputControl", ui->inputControlCombo);
     applyMixerSetting(keyerSettings, "OutputControl", ui->outputControlCombo);
     applyMixerSetting(keyerSettings, "PassThruControl", ui->passthruControlCombo);
+    applyMixerSetting(keyerSettings, "MasterControl", ui->masterControlCombo);
 
     keyerMain = this;
     setLineCallBack( lcallback );
@@ -258,6 +323,13 @@ void KeyerMain::on_passthruControlCombo_currentIndexChanged(int /*index*/)
     saveMixerSetting(keyerSettings, "PassThruControl", ui->passthruControlCombo);
 
 }
+void KeyerMain::on_masterControlCombo_currentIndexChanged(int /*index*/)
+{
+    if (inInit)
+        return;
+    QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
+    saveMixerSetting(keyerSettings, "MasterControl", ui->masterControlCombo);
+}
 
 const char *msets[] = {"emsUnloaded", "emsPassThroughNoPTT", "emsPassThroughPTT",
                  "emsReplay", "emsReplayPip", "emsReplayT1", "emsReplayT2",
@@ -266,6 +338,35 @@ const char *msets[] = {"emsUnloaded", "emsPassThroughNoPTT", "emsPassThroughPTT"
                  "emsMicMonitor", "emsReplayMonitor",
                  "emsMaxMixerSet"
                 };
+
+void KeyerMain::adjustDeviceControls( PxDev *dev, QComboBox *devCombo, QSlider *slider, QCheckBox *muteBox)
+{
+    int index = devCombo->currentIndex();
+    qreal vol = av.get_volume_indexed(dev, index);
+    bool mute = av.get_switch_indexed(dev, index);
+
+    if (av.has_volume_indexed(dev, index))
+    {
+        slider->setValue(vol * slider->maximum());
+        slider->setEnabled(true);
+    }
+    else
+    {
+        slider->setValue(0);
+        slider->setEnabled(false);
+    }
+    if (av.has_volume_indexed(dev, index))
+    {
+        muteBox->setChecked(mute);
+        muteBox->setEnabled(true);
+    }
+    else
+    {
+        muteBox->setChecked(false);
+        muteBox->setEnabled(false);
+    }
+
+}
 void KeyerMain::LineTimerTimer( )
 {
     static bool closed = false;
@@ -316,9 +417,23 @@ void KeyerMain::LineTimerTimer( )
       CaptionTimer.start(200);
    }
 
+   av.timer(Px.info.capture);
+   av.timer(Px.info.playback);
+
    inVolChange = true;
 
-   QSettings settings;
+   if (av.control_values_changed)
+   {
+       av.control_values_changed = false;
+
+        adjustDeviceControls(&Px.info.capture, ui->inputControlCombo, ui->inputLevelSlider, ui->inputMute);
+        adjustDeviceControls(&Px.info.playback, ui->outputControlCombo, ui->outputLevelSlider, ui->outputMute);
+        adjustDeviceControls(&Px.info.playback, ui->passthruControlCombo, ui->passthruLevelSlider, ui->passthruMute);
+        adjustDeviceControls(&Px.info.playback, ui->masterControlCombo, ui->masterLevelSlider, ui->masterMute);
+   }
+
+/*
+ *    QSettings settings;
    bool inpok;
    bool outok;
    qreal invol = 0.0;
@@ -331,7 +446,7 @@ void KeyerMain::LineTimerTimer( )
 
    setKeyerPlaybackVolume(invol);
    setKeyerPlaybackVolume(outvol);
-
+*/
    inVolChange = false;
 }
 void KeyerMain::CaptionTimerTimer( )
@@ -450,18 +565,20 @@ void KeyerMain::on_inputLevelSlider_sliderMoved(int position)
     if (!inVolChange)
     {
         qreal vol = 1.0*position/ui->inputLevelSlider->maximum();
-        setKeyerRecordVolume(vol);
+        av.set_volume_indexed(&Px.info.capture, ui->inputControlCombo->currentIndex(), vol);
+//        setKeyerRecordVolume(vol);
         QSettings settings;
         settings.setValue("Volume/input", vol);
     }
 }
 
-void KeyerMain::on_masterLevelSlider_sliderMoved(int position)
+void KeyerMain::on_outputLevelSlider_sliderMoved(int position)
 {
     if (!inVolChange)
     {
-        qreal vol = 1.0*position/ui->masterLevelSlider->maximum();
-        setKeyerPlaybackVolume(vol);
+        qreal vol = 1.0*position/ui->outputLevelSlider->maximum();
+        av.set_volume_indexed(&Px.info.playback, ui->outputControlCombo->currentIndex(), vol);
+//        setKeyerPlaybackVolume(vol);
         QSettings settings;
         settings.setValue("Volume/output", vol);
     }
@@ -472,9 +589,21 @@ void KeyerMain::on_passthruLevelSlider_sliderMoved(int position)
     if (!inVolChange)
     {
         qreal vol = 1.0*position/ui->passthruLevelSlider->maximum();
-        setKeyerPassthruVolume(vol);
+        av.set_volume_indexed(&Px.info.playback, ui->passthruControlCombo->currentIndex(), vol);
+//        setKeyerPassthruVolume(vol);
         QSettings settings;
         settings.setValue("Volume/passthru", vol);
+    }
+}
+void KeyerMain::on_masterLevelSlider_sliderMoved(int position)
+{
+    if (!inVolChange)
+    {
+        qreal vol = 1.0*position/ui->masterLevelSlider->maximum();
+        av.set_volume_indexed(&Px.info.playback, ui->masterControlCombo->currentIndex(), vol);
+//        setKeyerPlaybackVolume(vol);
+        QSettings settings;
+        settings.setValue("Volume/master", vol);
     }
 }
 
@@ -490,3 +619,29 @@ void KeyerMain::saveMixerSetting(QSettings &keyerSettings, QString key, QComboBo
     keyerSettings.setValue(key, name);
 }
 
+
+void KeyerMain::on_inputMute_toggled(bool /*checked*/)
+{
+    bool inmute = ui->inputMute->isChecked();
+    av.set_switch_indexed(&Px.info.playback, ui->inputControlCombo->currentIndex(), inmute);
+}
+
+void KeyerMain::on_masterMute_toggled(bool /*checked*/)
+{
+    bool mastermute = ui->masterMute->isChecked();
+    av.set_switch_indexed(&Px.info.playback, ui->masterControlCombo->currentIndex(), mastermute);
+}
+
+void KeyerMain::on_passthruMute_toggled(bool /*checked*/)
+{
+    bool passmute = ui->passthruMute->isChecked();
+    av.set_switch_indexed(&Px.info.playback, ui->passthruControlCombo->currentIndex(), passmute);
+
+}
+
+
+void KeyerMain::on_outputMute_toggled(bool /*checked*/)
+{
+    bool outputmute = ui->outputMute->isChecked();
+    av.set_switch_indexed(&Px.info.playback, ui->outputControlCombo->currentIndex(), outputmute);
+}

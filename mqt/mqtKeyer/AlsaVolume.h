@@ -1,6 +1,7 @@
 #ifndef ALSAVOLUME_H
 #define ALSAVOLUME_H
 
+#include "VKMixer.h"
 #ifdef Q_OS_LINUX
 #include <alsa/asoundlib.h>
 #endif
@@ -95,8 +96,36 @@ private:
     int currCard;
     QVector<Card> cards;
     QVector<Card> getCardList();
+
 #ifdef Q_OS_LINUX
     QVector<Device> getDeviceList(Card &card, snd_pcm_stream_t stream);
+
+    int open_mixer(PxDev *dev, int card, int playback);
+    int cleanup(px_mixer *Px);
+    int generic_lookup(PxDev *dev, const char *generic);
+    void close_mixer(px_mixer *Px);
+    int get_num_mixers(px_mixer * /*Px*/);
+    const char *get_mixer_name(px_mixer */*Px*/, int /*i*/);
+    int supports_pcm_output_volume(px_mixer *Px);
+    PxVolume get_pcm_output_volume(px_mixer *Px);
+    void set_pcm_output_volume(px_mixer *Px, PxVolume volume);
+    int get_num_output_volumes(px_mixer *Px);
+    const char *get_output_volume_name(px_mixer *Px, int i);
+
+    PxVolume get_volume(PxDev *dev, const char *name);
+    void set_volume(PxDev *dev, const char *name, PxVolume volume);
+
+    PxVolume get_output_volume(px_mixer *Px, int i);
+    void set_output_volume(px_mixer *Px, int i, PxVolume volume);
+    PxVolume get_master_volume(px_mixer *Px);
+    void set_master_volume(px_mixer *Px, PxVolume volume);
+    PxVolume get_input_volume(px_mixer *Px);
+    void set_input_volume(px_mixer *Px, PxVolume volume);
+
+    int get_num_input_sources(px_mixer *Px);
+    const char *get_input_source_name(px_mixer *Px, int i);
+    int get_current_input_source(px_mixer *Px);
+    void set_current_input_source(px_mixer *Px, int i);
 #endif
 
 public:
@@ -107,13 +136,24 @@ public:
     {
         currCard = index;
     }
+
+    bool control_values_changed;
+    bool controls_changed;
+
+    void timer(PxDev &dev);
+    int OpenMixer_Linux_ALSA(px_mixer *Px);
     bool GetInputCard(int *card);
     bool GetOutputCard( int *card);
+    int elem_callback(snd_mixer_elem_t *elem, unsigned int mask);
+    int mixer_callback(snd_mixer_t *mixer, unsigned int mask, snd_mixer_elem_t *elem);
 
-private:
-#ifdef Q_OS_LINUX
+    bool has_volume_indexed(PxDev *dev, int i);
+    PxVolume get_volume_indexed(PxDev *dev, int i);
+    void set_volume_indexed(PxDev *dev, int i, PxVolume volume);
 
-#endif
+    bool has_switch_indexed(PxDev *dev, int i);
+    bool get_switch_indexed(PxDev *dev, int i);
+    void set_switch_indexed(PxDev *dev, int i, bool set);
 };
 int OpenMixer_Linux_ALSA(px_mixer *Px);
 

@@ -17,18 +17,14 @@ class KeyerMain;
 class KeyerMain : public QMainWindow
 {
     Q_OBJECT
-    void closeEvent(QCloseEvent * event);
-    void resizeEvent(QResizeEvent *event);
-    void setMixerCombo(QComboBox *combo, QList<QAudioDeviceInfo> audioDevices, QAudioFormat *qaf);
-    void setMixerCombo(QComboBox *combo, QVector<Device> devices);
-    void setMixerCombo(QComboBox *combo, PxDev &devices);
-
-    void saveMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
-    void applyMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
+    Ui::KeyerMain *ui;
 
 public:
     explicit KeyerMain(QWidget *parent = 0);
     ~KeyerMain();
+    eMixerSets GetCurrentMixerSet();
+    void SetCurrentMixerSet( eMixerSets cms );
+
     void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool key );
     void recvolcallback( unsigned int vol );
     void outvolcallback( unsigned int vol );
@@ -64,6 +60,8 @@ private slots:
 
     void on_passthruLevelSlider_sliderMoved(int position);
 
+    void on_outputLevelSlider_sliderMoved(int position);
+
     void on_cardCombo_currentIndexChanged(int index);
 
     void on_inputDeviceCombo_currentIndexChanged(int index);
@@ -76,11 +74,23 @@ private slots:
 
     void on_passthruControlCombo_currentIndexChanged(int index);
 
+    void on_masterControlCombo_currentIndexChanged(int index);
+
+
+    void on_inputMute_toggled(bool checked);
+
+    void on_masterMute_toggled(bool checked);
+
+    void on_passthruMute_toggled(bool checked);
+
+
+    void on_outputMute_toggled(bool checked);
+
 private:
-    Ui::KeyerMain *ui;
     void syncSetLines();
     QTimer LineTimer;
     QTimer CaptionTimer;
+    eMixerSets CurrMixerSet;
 
     QVector<Card> cards;
 
@@ -102,5 +112,14 @@ private:
     bool inVolChange;
     bool inInit;
 
+    void closeEvent(QCloseEvent * event);
+    void resizeEvent(QResizeEvent *event);
+    void setMixerCombo(QComboBox *combo, QList<QAudioDeviceInfo> audioDevices, QAudioFormat *qaf);
+    void setMixerCombo(QComboBox *combo, QVector<Device> devices);
+    void setMixerCombo(QComboBox *combo, PxDev &devices);
+
+    void saveMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
+    void applyMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
+    void adjustDeviceControls( PxDev *dev, QComboBox *devCombo, QSlider *slider, QCheckBox *muteBox);
 };
 #endif // KEYERMAIN_H

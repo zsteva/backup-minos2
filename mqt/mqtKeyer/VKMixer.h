@@ -20,6 +20,8 @@ enum eMixerSets {emsUnloaded, emsPassThroughNoPTT, emsPassThroughPTT,
 extern eMixerSets GetCurrentMixerSet();
 extern void SetCurrentMixerSet( eMixerSets cms );
 
+#ifdef RUBBISH
+
 class VKMixer
 {
     static VKMixer *inputMixer;
@@ -36,5 +38,5 @@ class VKMixer
       void SetMicOutMute( bool );
 
 };
-
+#endif
 #endif

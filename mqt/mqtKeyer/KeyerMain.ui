@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1032</width>
+    <width>1120</width>
     <height>587</height>
    </rect>
   </property>
@@ -14,7 +14,7 @@
    <string>Minos Voice Keyer</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,1">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
     <item>
      <widget class="QTabWidget" name="KeyerTabs">
       <property name="currentIndex">
@@ -391,44 +391,72 @@
          </spacer>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_13">
-          <item>
+         <layout class="QGridLayout" name="gridLayout" columnstretch="1,6,10,1">
+          <item row="0" column="1">
            <widget class="QLabel" name="label_12">
             <property name="text">
              <string>Input Control</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="0" column="2">
            <widget class="QComboBox" name="inputControlCombo"/>
           </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_14">
-          <item>
+          <item row="1" column="1">
            <widget class="QLabel" name="label_14">
             <property name="text">
              <string>Output Control</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="1" column="2">
            <widget class="QComboBox" name="outputControlCombo"/>
           </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_15">
-          <item>
+          <item row="2" column="0">
+           <spacer name="horizontalSpacer_10">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="2" column="1">
            <widget class="QLabel" name="label_16">
             <property name="text">
              <string>PassThru Control</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="2" column="2">
            <widget class="QComboBox" name="passthruControlCombo"/>
+          </item>
+          <item row="2" column="3">
+           <spacer name="horizontalSpacer_11">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Master Control</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QComboBox" name="masterControlCombo"/>
           </item>
          </layout>
         </item>
@@ -446,7 +474,6 @@
          </spacer>
         </item>
        </layout>
-       <zorder>label_16</zorder>
       </widget>
      </widget>
     </item>
@@ -458,7 +485,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_12">
+      <layout class="QHBoxLayout" name="horizontalLayout_16">
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
@@ -485,7 +512,7 @@
          <item>
           <widget class="QLabel" name="label_8">
            <property name="text">
-            <string>Mic</string>
+            <string>Input</string>
            </property>
           </widget>
          </item>
@@ -509,19 +536,19 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_10">
            <item>
-            <widget class="QSlider" name="masterLevelSlider">
+            <widget class="QSlider" name="outputLevelSlider">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="LevelMeter" name="masterLevelMeter" native="true"/>
+            <widget class="LevelMeter" name="outputLevelMeter" native="true"/>
            </item>
           </layout>
          </item>
          <item>
-          <widget class="QCheckBox" name="masterMute">
+          <widget class="QCheckBox" name="outputMute">
            <property name="text">
             <string>Mute</string>
            </property>
@@ -530,7 +557,7 @@
          <item>
           <widget class="QLabel" name="label_9">
            <property name="text">
-            <string>Master</string>
+            <string>Output</string>
            </property>
           </widget>
          </item>
@@ -573,6 +600,38 @@
           <widget class="QLabel" name="label_10">
            <property name="text">
             <string>PassThru</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_12">
+           <item>
+            <widget class="QSlider" name="masterLevelSlider">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="LevelMeter" name="masterLevelMeter" native="true"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="masterMute">
+           <property name="text">
+            <string>Mute</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Master</string>
            </property>
           </widget>
          </item>
