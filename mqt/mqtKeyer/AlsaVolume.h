@@ -5,6 +5,10 @@
 #ifdef Q_OS_LINUX
 #include <alsa/asoundlib.h>
 #endif
+#ifndef Q_OS_LINUX
+class snd_mixer_elem_t{};
+class snd_mixer_t{};
+#endif
 
 typedef double PxVolume; /* 0.0 (min) --> 1.0 (max) */
 

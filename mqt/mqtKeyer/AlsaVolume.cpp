@@ -92,6 +92,15 @@ bool AlsaVolume::GetOutputCard( int *card)
     *card = currCard;
     return true;
 }
+void AlsaVolume::timer(PxDev &dev)
+{
+#ifdef Q_OS_LINUX
+    if (dev.handle)
+        snd_mixer_handle_events(dev.handle);
+#else
+    Q_UNUSED(dev)
+#endif
+}
 
 //static snd_pcm_stream_t stream = SND_PCM_STREAM_PLAYBACK or 	SND_PCM_STREAM_CAPTURE,
 
@@ -176,6 +185,27 @@ card 0: I82801AAICH [Intel 82801AA-ICH], device 0: Intel ICH [Intel 82801AA-ICH]
 }
 #endif
 //==========================================================================================================
+int AlsaVolume::OpenMixer_Linux_ALSA(px_mixer *Px)
+{
+#ifdef Q_OS_LINUX
+   int card;
+
+   if (av.GetInputCard(&card) == true) {
+      if (!open_mixer(&Px->info.capture, card, false)) {
+         return cleanup(Px);
+      }
+   }
+
+   if (av.GetOutputCard(&card) == true) {
+      if (!open_mixer(&Px->info.playback, card, true)) {
+         return cleanup(Px);
+      }
+   }
+#else
+    Q_UNUSED(Px)
+#endif
+   return true;
+}
 #ifdef Q_OS_LINUX
 
 static int elem_callback(snd_mixer_elem_t *elem, unsigned int mask)
@@ -220,12 +250,6 @@ int AlsaVolume::mixer_callback(snd_mixer_t */*mixer*/, unsigned int mask, snd_mi
         controls_changed = true;
     }
     return 0;
-}
-
-void AlsaVolume::timer(PxDev &dev)
-{
-    if (dev.handle)
-        snd_mixer_handle_events(dev.handle);
 }
 
 int AlsaVolume::open_mixer(PxDev *dev, int card, int playback)
@@ -444,24 +468,6 @@ int AlsaVolume::cleanup(px_mixer *Px)
 
    return false;
 }
-int AlsaVolume::OpenMixer_Linux_ALSA(px_mixer *Px)
-{
-   int card;
-
-   if (av.GetInputCard(&card) == true) {
-      if (!open_mixer(&Px->info.capture, card, false)) {
-         return cleanup(Px);
-      }
-   }
-
-   if (av.GetOutputCard(&card) == true) {
-      if (!open_mixer(&Px->info.playback, card, true)) {
-         return cleanup(Px);
-      }
-   }
-
-   return true;
-}
 
 int AlsaVolume::generic_lookup(PxDev *dev, const char *generic)
 {
@@ -477,8 +483,10 @@ int AlsaVolume::generic_lookup(PxDev *dev, const char *generic)
 
    return -1;
 }
+#endif
 bool AlsaVolume::has_volume_indexed(PxDev *dev, int i)
 {
+#ifdef Q_OS_LINUX
     snd_mixer_elem_t *elem;
 
     if (!dev->handle) {
@@ -500,10 +508,17 @@ bool AlsaVolume::has_volume_indexed(PxDev *dev, int i)
         s = snd_mixer_selem_has_capture_volume(elem);
     }
     return s != 0;
+#else
+    Q_UNUSED(i)
+    Q_UNUSED(dev)
+    return false;
+#endif
 }
 
 PxVolume AlsaVolume::get_volume_indexed(PxDev *dev, int i)
 {
+#ifdef Q_OS_LINUX
+
    snd_mixer_elem_t *elem;
    long vol, min, max;
 
@@ -530,10 +545,13 @@ PxVolume AlsaVolume::get_volume_indexed(PxDev *dev, int i)
          return /*(PxVolume)*/ vol * 1.0 / (max - min);
       }
    }
-
+#else
+    Q_UNUSED(i)
+    Q_UNUSED(dev)
+#endif
    return 0.0;
 }
-
+#ifdef Q_OS_LINUX
 PxVolume AlsaVolume::get_volume(PxDev *dev, const char *name)
 {
    int i;
@@ -547,12 +565,12 @@ PxVolume AlsaVolume::get_volume(PxDev *dev, const char *name)
          return get_volume_indexed(dev, i);
       }
    }
-
    return 0.0;
 }
-
+#endif
 void AlsaVolume::set_volume_indexed(PxDev *dev, int i, PxVolume volume)
 {
+#ifdef Q_OS_LINUX
    snd_mixer_elem_t *elem;
    long vol, min, max;
    int j;
@@ -584,10 +602,14 @@ void AlsaVolume::set_volume_indexed(PxDev *dev, int i, PxVolume volume)
          }
       }
    }
-
-   return;
+#else
+    Q_UNUSED(i)
+    Q_UNUSED(dev)
+    Q_UNUSED(volume)
+#endif
 }
 
+#ifdef Q_OS_LINUX
 void AlsaVolume::set_volume(PxDev *dev, const char *name, PxVolume volume)
 {
    int i;
@@ -602,11 +624,11 @@ void AlsaVolume::set_volume(PxDev *dev, const char *name, PxVolume volume)
          break;
       }
    }
-
-   return;
 }
+#endif
 bool AlsaVolume::has_switch_indexed(PxDev *dev, int i)
 {
+#ifdef Q_OS_LINUX
     if (!dev->handle) {
        return false;
     }
@@ -627,10 +649,15 @@ bool AlsaVolume::has_switch_indexed(PxDev *dev, int i)
     }
 
     return s != 0;
+#else
+    Q_UNUSED(i)
+    Q_UNUSED(dev)
+    return false;
+#endif
 }
-
 bool AlsaVolume::get_switch_indexed(PxDev *dev, int i)
 {
+#ifdef Q_OS_LINUX
     if (!dev->handle) {
        return false;
     }
@@ -657,10 +684,16 @@ bool AlsaVolume::get_switch_indexed(PxDev *dev, int i)
     }
 
     return s != 0;
+#else
+    Q_UNUSED(i)
+    Q_UNUSED(dev)
+    return false;
+#endif
 }
 
 void AlsaVolume::set_switch_indexed(PxDev *dev, int i, bool set)
 {
+#ifdef Q_OS_LINUX
     if (!dev->handle) {
        return;
     }
@@ -685,9 +718,13 @@ void AlsaVolume::set_switch_indexed(PxDev *dev, int i, bool set)
     {
         trace(QString("set switch failed: ") + snd_strerror(err));
     }
-    return;
-
+#else
+    Q_UNUSED(i)
+    Q_UNUSED(dev)
+    Q_UNUSED(set)
+#endif
 }
+#ifdef Q_OS_LINUX
 
 void AlsaVolume::close_mixer(px_mixer *Px)
 {
@@ -928,24 +965,4 @@ void AlsaVolume::set_input_volume(px_mixer *Px, PxVolume volume)
 
    return;
 }
-/*
-        get_func = snd_mixer_selem_get_playback_switch;
-        set_func = snd_mixer_selem_set_playback_switch;
-        channel_ids[0] = control->pswitch_channels[0];
-        channel_ids[1] = control->pswitch_channels[1];
-    } else {
-        switch_1_mask = HAS_CSWITCH_1;
-        get_func = snd_mixer_selem_get_capture_switch;
-        set_func = snd_mixer_selem_set_capture_switch;
-        channel_ids[0] = control->cswitch_channels[0];
-        channel_ids[1] = control->cswitch_channels[1];
-
-
-int snd_mixer_selem_set_playback_switch_all(snd_mixer_elem_t *elem, int value);
-int snd_mixer_selem_set_capture_switch_all(snd_mixer_elem_t *elem, int value);
-
-int snd_mixer_selem_get_playback_switch(snd_mixer_elem_t *elem, snd_mixer_selem_channel_id_t channel, int *value);
-int snd_mixer_selem_get_capture_switch(snd_mixer_elem_t *elem, snd_mixer_selem_channel_id_t channel, int *value);
-
- */
 #endif
