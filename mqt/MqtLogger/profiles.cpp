@@ -631,19 +631,19 @@ bool INIFile::writePrivateProfileString(const QString &Section,
 
 
 //=============================================================================
-ProfileEntry::ProfileEntry(int id, const char *n, const char *d, const char *dname, const char *h, bool RO )
-      : id( id ), name( n ), sdefaultval( d ), hint( h ), pt( petString ), dispname(dname), RO(RO)
+ProfileEntry::ProfileEntry(int id, const char *name, const char *def, const char *dispname, const char *hint, bool RO )
+      : id( id ), name( name ), sdefaultval( def ), hint( hint ), pt( petString ), dispname(dispname), RO(RO)
 {}
 /*
 ProfileEntry::ProfileEntry(int id, const QString &n, const QString &d, const QString &dname, const QString &h, bool RO )
       : id( id ), name( n ), sdefaultval( d ), hint( h ), pt( petString ), dispname(dname), RO(RO)
 {}
 */
-ProfileEntry::ProfileEntry( int id, const char *n, int d, const char *dname, const char *h, bool RO )
-      : id( id ), name( n ), idefaultval( d ), sdefaultval( QString::number( d ) ), hint( h ), pt( petInteger ), dispname(dname), RO(RO)
+ProfileEntry::ProfileEntry(int id, const char *name, int def, const char *dispname, const char *hint, bool RO )
+      : id( id ), name( name ), idefaultval( def ), sdefaultval( QString::number( def ) ), hint( hint ), pt( petInteger ), dispname(dispname), RO(RO)
 {}
-ProfileEntry::ProfileEntry(int id, const char *n, bool d, const char *dname, const char *h, bool RO )
-      : id( id ), name( n ), bdefaultval( d ), sdefaultval( makeStr( d ) ), hint( h ), pt( petBool ), dispname(dname), RO(RO)
+ProfileEntry::ProfileEntry(int id, const char *name, bool def, const char *dispname, const char *hint, bool RO )
+      : id( id ), name( name ), bdefaultval( def ), sdefaultval( makeStr( def ) ), hint( hint ), pt( petBool ), dispname(dispname), RO(RO)
 {}
 void ProfileEntry::createEntry( SettingsBundle *s )
 {
@@ -726,8 +726,8 @@ BundleFile::BundleFile( PROFILES p )  //: iniFile( 0 )
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyName, "MyName", "", "My Name", "Name of responsible operator", false ) ) );
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyCall, "MyCall", "", "My Call", "Callsign of responsible operator", false ) ) );
 
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyAddress1, "MyAddress1", "", "My Address", "Address line 1 of responsible operator", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyAddress2, "MyAddress2", "", "My Address", "Address line 2 of responsible operator", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyAddress1, "MyAddress1", "", "My Address Line 1", "Address line 1 of responsible operator", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyAddress2, "MyAddress2", "", "My Address Line 2", "Address line 2 of responsible operator", false ) ) );
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyCity, "MyCity", "", "My City", "City of responsible operator", false ) ) );
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyCountry, "MyCountry", "", "My Country", "Country of responsible operator", false ) ) );
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyPostCode, "MyPostCode", "", "My Postcode", "Post Code of responsible operator", false ) ) );
@@ -735,18 +735,18 @@ BundleFile::BundleFile( PROFILES p )  //: iniFile( 0 )
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eepMyEmail, "MyEmail", "", "My Email", "eMail address of responsible operator", false ) ) );
          break;
       case epQTHPROFILE:
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpLocator, "Locator", "", "", "Locator", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpDistrict, "District", "", "", "District Exchange", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpLocation, "Location", "", "", "Descriptive Location Exchange", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpStationQTH1, "StationQTH1", "", "Station QTH", "Address line 1/2 of station", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpStationQTH2, "StationQTH2", "", "Station QTH", "Address line 2/2 of station", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpLocator, "Locator", "", "Locator", "Locator", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpDistrict, "District", "", "District Exchange", "District Exchange", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpLocation, "Location", "", "Location Exchange", "Descriptive Location Exchange", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpStationQTH1, "StationQTH1", "", "Station QTH Line 1", "Address line 1/2 of station", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpStationQTH2, "StationQTH2", "", "Station QTH Line 2", "Address line 2/2 of station", false ) ) );
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eqpASL, "ASL", 0, "QTH Height ASL (metres)", "QTH height ASL (metres)", false ) ) );
          break;
       case epSTATIONPROFILE:
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espPower, "Power", 0, "Transmitter Power", "Transmit Power (Watts)", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espTransmitter, "Transmitter", "", "", "Transmit Equipment", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espReceiver, "Receiver", "", "", "Receive Equipment", false ) ) );
-         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espAntenna, "Antenna", "", "", "Antenna details", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espTransmitter, "Transmitter", "", "Transmit Equipment", "Transmit Equipment", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espReceiver, "Receiver", "", "Receive Equipment", "Receive Equipment", false ) ) );
+         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espAntenna, "Antenna", "", "Antenna details", "Antenna details", false ) ) );
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espAGL, "AGL", 0, "Antenna Height AGL (metres)", "Antenna Height AGL (metres)", false ) ) );
          entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espOffset, "Bearing Offset", 0, "Antenna Bearing Offset", "Amount to offset antenna bearings", false ) ) );
 		 break;
@@ -892,7 +892,7 @@ bool SettingsBundle::checkKeyExists(const QString &key )
 }
 QString SettingsBundle::displayNameOf( int enumKey )
 {
-   if ( bool( bundleFile ) && currsection != noneBundle )
+   if ( bool( bundleFile ) /*&& currsection != noneBundle*/ )
    {
       for ( QVector<QSharedPointer <ProfileEntry> >::iterator i = bundleFile->entries.begin(); i != bundleFile->entries.end(); i++ )
       {
@@ -920,7 +920,7 @@ bool SettingsBundle::isReadOnly( int enumKey )
          }
       }
    }
-   return "";
+   return true;
 }
 
 void SettingsBundle::getBoolProfile(const QString &key, bool &value, bool def )

@@ -28,9 +28,9 @@ class ProfileEntry
       bool RO;
 
       void createEntry( SettingsBundle * );
-      ProfileEntry(int id, const  char *n, const char *d, const char *dname, const char *h, bool RO );
-      ProfileEntry(int id, const  char *n, int d, const  char *dname, const  char *, bool RO );
-      ProfileEntry(int id, const char *n, bool d, const char *dname, const char *h, bool RO );
+      ProfileEntry(int id, const  char *name, const char *def, const char *dispname, const char *hint, bool RO );
+      ProfileEntry(int id, const  char *name, int def, const  char *dispname, const  char *hint, bool RO );
+      ProfileEntry(int id, const char *name, bool def, const char *dispname, const char *hint, bool RO );
 };
 class INIFile;
 

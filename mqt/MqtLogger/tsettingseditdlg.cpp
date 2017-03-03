@@ -77,7 +77,7 @@ void TSettingsEditDlg::showSection()
       ui->OptionsTable->setVisible(true);
       showDetails();
    }
-   else if ( offset > 0 && offset < sections.size() )
+   else if ( offset >= 0 && offset < sections.size() )
    {
       qSort(sections);
       QString sect = sections[ offset ];
@@ -85,6 +85,7 @@ void TSettingsEditDlg::showSection()
       ui->OptionsTable->setVisible(true);
       showDetails();
    }
+
    else
    {
       ui->OptionsTable->setVisible(false);
@@ -100,7 +101,7 @@ void TSettingsEditDlg::showDetails()
 {
    ui->OptionsTable->clear();
    int offset = ui->SectionsList->currentRow();
-   if ( offset > 0 || currSectionOnly)
+   if ( offset >= 0 || currSectionOnly)
    {
        // sections are all i = aaaaaaa
        QVector<int> entries = bundle->getBundleEntries();
@@ -115,10 +116,12 @@ void TSettingsEditDlg::showDetails()
 
        for ( int i= 0; i < entries.size(); i++ )
        {
-           labels.append(bundle->displayNameOf( entries[ i ] ));
+           QString label = bundle->displayNameOf( entries[ i ] );
+           labels.append(label);
 
            QString val;
-           bundle->getStringProfile( entries[ i ], val );
+           if (offset > 0 || currSectionOnly)
+            bundle->getStringProfile( entries[ i ], val );
 
            QTableWidgetItem *it = new QTableWidgetItem(val);
            it->setToolTip(hints[i]);
@@ -160,7 +163,7 @@ void TSettingsEditDlg::on_NewSectionButton_clicked()
 {
     getDetails();  // save what is set already
     QString Value = "new section";
-    if ( enquireDialog( this, "Please give a name for the new section", Value ) )
+//    if ( enquireDialog( this, "Please give a name for the new section", Value ) )
     {
        bundle->newSection( Value );
        bundle->openSection( Value );
