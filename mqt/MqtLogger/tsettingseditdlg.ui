@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>478</width>
+    <width>538</width>
     <height>344</height>
    </rect>
   </property>
@@ -35,6 +35,9 @@
        </property>
        <property name="resizeMode">
         <enum>QListView::Fixed</enum>
+       </property>
+       <property name="sortingEnabled">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -88,6 +91,13 @@
       <widget class="QPushButton" name="DeleteButton">
        <property name="text">
         <string>Delete Setting</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="renameButton">
+       <property name="text">
+        <string>Rename Setting</string>
        </property>
       </widget>
      </item>

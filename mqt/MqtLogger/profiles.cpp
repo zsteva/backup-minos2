@@ -857,7 +857,6 @@ bool SettingsBundle::newSection( const QString &newname )
    return false;
 }
 
-
 bool SettingsBundle::dupSection( const QString &newname )
 {
    if ( currsection == noneBundle )
@@ -866,6 +865,21 @@ bool SettingsBundle::dupSection( const QString &newname )
    }
    // Create a new section that matches the old
    return bundleFile->iniFile->dupSection( currsection, newname );
+}
+
+bool SettingsBundle::renameSection( const QString &newname )
+{
+   if ( currsection == noneBundle )
+   {
+      return false;
+   }
+   // Create a new section that matches the old
+   if (bundleFile->iniFile->dupSection( currsection, newname ))
+   {
+        clearProfileSection(true);
+        currsection = newname;
+   }
+   return true;
 }
 
 bool SettingsBundle::checkKeyExists(const QString &key )

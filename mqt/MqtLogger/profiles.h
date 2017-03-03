@@ -70,6 +70,7 @@ class SettingsBundle
       QString getSection();
       bool dupSection( const QString &sname );
       bool newSection( const QString &sname );
+      bool renameSection( const QString &sname );
       bool isSectionPresent();
 
       void closeProfile( void );

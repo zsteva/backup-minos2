@@ -18,7 +18,7 @@ class TSettingsEditDlg : public QDialog
     SettingsBundle *bundle;
     bool currSectionOnly;
     QString initialSection;
-    void showSections();
+    void showSections(QString currSection);
     void showSection();
     void showDetails();
     void getDetails();
@@ -42,6 +42,8 @@ private slots:
     void on_OKButton_clicked();
 
     void on_SectionsList_itemSelectionChanged();
+    void on_renameButton_clicked();
+
 public Q_SLOTS:
     virtual void accept() override;
     virtual void reject() override;
