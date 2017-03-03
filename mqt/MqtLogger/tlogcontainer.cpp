@@ -150,9 +150,13 @@ void TLogContainer::closeEvent(QCloseEvent *event)
 {
     TimerUpdateQSOTimer.stop();
     closeContestApp();
+    QWidget::closeEvent(event);
+}
+void TLogContainer::moveEvent(QMoveEvent *event)
+{
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
-    QWidget::closeEvent(event);
+    QWidget::moveEvent(event);
 }
 void TLogContainer::resizeEvent(QResizeEvent * event)
 {

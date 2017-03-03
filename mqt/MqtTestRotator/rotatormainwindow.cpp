@@ -19,6 +19,10 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     enableTrace( "./TraceLog", "MinosChat_" );
 
     createCloseEvent();
+    QSettings settings;
+    QByteArray geometry = settings.value("geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
 
     MinosRotatorForm = this;
 
@@ -42,23 +46,23 @@ void RotatorMainWindow::logMessage( QString s )
 
 void RotatorMainWindow::closeEvent(QCloseEvent *event)
 {
+    // and tidy up all loose ends
     MinosRPCObj::clearRPCObjects();
     XMPPClosedown();
     LogTimerTimer( );
-    // and tidy up all loose ends
 
-    /*
+    QWidget::closeEvent(event);
+}
+void RotatorMainWindow::moveEvent(QMoveEvent * event)
+{
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
-    */
-    QWidget::closeEvent(event);
+    QWidget::moveEvent(event);
 }
 void RotatorMainWindow::resizeEvent(QResizeEvent * event)
 {
-    /*
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
-    */
     QWidget::resizeEvent(event);
 }
 

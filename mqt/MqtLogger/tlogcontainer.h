@@ -141,8 +141,9 @@ private:
     void preloadFiles( const QString &conarg );
     void addListSlot(const QString &fname, int slotno , bool preload);
 
-    void closeEvent(QCloseEvent *event);
-    void resizeEvent(QResizeEvent *event);
+    virtual void closeEvent(QCloseEvent *event) override;
+    virtual void resizeEvent(QResizeEvent *event) override;
+    virtual void moveEvent(QMoveEvent *event) override;
 
 private slots:
     void CancelClick();

@@ -112,8 +112,9 @@ private:
     bool inVolChange;
     bool inInit;
 
-    void closeEvent(QCloseEvent * event);
-    void resizeEvent(QResizeEvent *event);
+    virtual void closeEvent(QCloseEvent *event) override;
+    virtual void resizeEvent(QResizeEvent *event) override;
+    virtual void moveEvent(QMoveEvent *event) override;
     void setMixerCombo(QComboBox *combo, QList<QAudioDeviceInfo> audioDevices, QAudioFormat *qaf);
     void setMixerCombo(QComboBox *combo, QVector<Device> devices);
     void setMixerCombo(QComboBox *combo, PxDev &devices);

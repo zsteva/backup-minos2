@@ -24,6 +24,11 @@ ServerMain::ServerMain(QWidget *parent) :
     enableTrace( "./TraceLog", "MinosServer_" );
 
     createCloseEvent();
+    QSettings settings;
+    QByteArray geometry = settings.value("geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
+
     connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
     connect(&ScanTimer, SIGNAL(timeout()), this, SLOT(ScanTimerTimer()));
 
@@ -152,10 +157,14 @@ void ServerMain::closeEvent(QCloseEvent *event)
 }
 void ServerMain::resizeEvent(QResizeEvent * event)
 {
-    /*
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
-    */
     QWidget::resizeEvent(event);
+}
+void ServerMain::moveEvent(QMoveEvent * event)
+{
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
+    QWidget::moveEvent(event);
 }
 

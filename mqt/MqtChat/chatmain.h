@@ -32,9 +32,9 @@ private:
 
     QVector<Server> serverList;
 
-    void closeEvent(QCloseEvent *event);
-    void resizeEvent(QResizeEvent *event);
-
+    virtual void closeEvent(QCloseEvent *event) override;
+    virtual void resizeEvent(QResizeEvent *event) override;
+    virtual void moveEvent(QMoveEvent *event) override;
 
     void logMessage( QString s );
     void syncChat();

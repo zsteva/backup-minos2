@@ -25,6 +25,11 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
 
     createCloseEvent();
 
+    QSettings settings;
+    QByteArray geometry = settings.value("geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
+
     MinosChatForm = this;
 
     connect(&SyncTimer, SIGNAL(timeout()), this, SLOT(SyncTimerTimer()));
@@ -53,23 +58,24 @@ void TMinosChatForm::logMessage( QString s )
 
 void TMinosChatForm::closeEvent(QCloseEvent *event)
 {
+    // and tidy up all loose ends
+
     MinosRPCObj::clearRPCObjects();
     XMPPClosedown();
     SyncTimerTimer( );
-    // and tidy up all loose ends
 
-    /*
+    QWidget::closeEvent(event);
+}
+void TMinosChatForm::moveEvent(QMoveEvent * event)
+{
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
-    */
-    QWidget::closeEvent(event);
+    QWidget::moveEvent(event);
 }
 void TMinosChatForm::resizeEvent(QResizeEvent * event)
 {
-    /*
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
-    */
     QWidget::resizeEvent(event);
 }
 

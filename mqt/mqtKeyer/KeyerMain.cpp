@@ -240,9 +240,14 @@ KeyerMain::~KeyerMain()
 void KeyerMain::closeEvent(QCloseEvent *event)
 {
     unloadKeyers();
+
+    QWidget::closeEvent(event);
+}
+void KeyerMain::moveEvent(QMoveEvent *event)
+{
     QSettings settings;
     settings.setValue("KeyerMain/geometry", saveGeometry());
-    QWidget::closeEvent(event);
+    QWidget::moveEvent(event);
 }
 void KeyerMain::resizeEvent(QResizeEvent *event)
 {

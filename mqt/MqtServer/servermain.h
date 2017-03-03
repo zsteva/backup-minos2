@@ -27,8 +27,9 @@ public:
     explicit ServerMain(QWidget *parent = 0);
     ~ServerMain();
     void logMessage( const QString &s );
-    void closeEvent(QCloseEvent *event);
-    void resizeEvent(QResizeEvent *event);
+    virtual void closeEvent(QCloseEvent *event) override;
+    virtual void resizeEvent(QResizeEvent *event) override;
+    virtual void moveEvent(QMoveEvent *event) override;
 
 private slots:
     void on_CloseButton_clicked();

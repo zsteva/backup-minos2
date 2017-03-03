@@ -27,9 +27,13 @@ MainWindow::~MainWindow()
 }
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    QMainWindow::closeEvent(event);
+}
+void MainWindow::moveEvent(QMoveEvent *event)
+{
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
-    QMainWindow::closeEvent(event);
+    QMainWindow::moveEvent(event);
 }
 void MainWindow::resizeEvent(QResizeEvent * event)
 {
