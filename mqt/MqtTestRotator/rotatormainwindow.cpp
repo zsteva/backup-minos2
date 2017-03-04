@@ -65,6 +65,14 @@ void RotatorMainWindow::resizeEvent(QResizeEvent * event)
     settings.setValue("geometry", saveGeometry());
     QWidget::resizeEvent(event);
 }
+void RotatorMainWindow::changeEvent( QEvent* e )
+{
+    if( e->type() == QEvent::WindowStateChange )
+    {
+        QSettings settings;
+        settings.setValue("geometry", saveGeometry());
+    }
+}
 
 void RotatorMainWindow::LogTimerTimer(  )
 {

@@ -115,6 +115,8 @@ private:
     virtual void closeEvent(QCloseEvent *event) override;
     virtual void resizeEvent(QResizeEvent *event) override;
     virtual void moveEvent(QMoveEvent *event) override;
+    virtual void changeEvent( QEvent* e ) override;
+
     void setMixerCombo(QComboBox *combo, QList<QAudioDeviceInfo> audioDevices, QAudioFormat *qaf);
     void setMixerCombo(QComboBox *combo, QVector<Device> devices);
     void setMixerCombo(QComboBox *combo, PxDev &devices);

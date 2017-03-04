@@ -167,4 +167,12 @@ void ServerMain::moveEvent(QMoveEvent * event)
     settings.setValue("geometry", saveGeometry());
     QWidget::moveEvent(event);
 }
+void ServerMain::changeEvent( QEvent* e )
+{
+    if( e->type() == QEvent::WindowStateChange )
+    {
+        QSettings settings;
+        settings.setValue("geometry", saveGeometry());
+    }
+}
 

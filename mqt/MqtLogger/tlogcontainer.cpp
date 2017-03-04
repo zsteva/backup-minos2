@@ -150,6 +150,8 @@ void TLogContainer::closeEvent(QCloseEvent *event)
 {
     TimerUpdateQSOTimer.stop();
     closeContestApp();
+//    QSettings settings;
+//    settings.setValue("geometry", saveGeometry());
     QWidget::closeEvent(event);
 }
 void TLogContainer::moveEvent(QMoveEvent *event)
@@ -164,7 +166,14 @@ void TLogContainer::resizeEvent(QResizeEvent * event)
     settings.setValue("geometry", saveGeometry());
     QWidget::resizeEvent(event);
 }
-
+void TLogContainer::changeEvent( QEvent* e )
+{
+    if( e->type() == QEvent::WindowStateChange )
+    {
+        QSettings settings;
+        settings.setValue("geometry", saveGeometry());
+    }
+}
 /*
 
 ContestPageControl

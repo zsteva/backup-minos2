@@ -78,7 +78,14 @@ void TMinosChatForm::resizeEvent(QResizeEvent * event)
     settings.setValue("geometry", saveGeometry());
     QWidget::resizeEvent(event);
 }
-
+void TMinosChatForm::changeEvent( QEvent* e )
+{
+    if( e->type() == QEvent::WindowStateChange )
+    {
+        QSettings settings;
+        settings.setValue("geometry", saveGeometry());
+    }
+}
 void TMinosChatForm::SyncTimerTimer(  )
 {
    syncStations();

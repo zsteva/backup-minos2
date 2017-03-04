@@ -255,6 +255,14 @@ void KeyerMain::resizeEvent(QResizeEvent *event)
     settings.setValue("KeyerMain/geometry", saveGeometry());
     QWidget::resizeEvent(event);
 }
+void KeyerMain::changeEvent( QEvent* e )
+{
+    if( e->type() == QEvent::WindowStateChange )
+    {
+        QSettings settings;
+        settings.setValue("geometry", saveGeometry());
+    }
+}
 void KeyerMain::on_cardCombo_currentIndexChanged(int index)
 {
     currCardIndex = index;
