@@ -214,7 +214,19 @@ bool PiGPIOPort::closePort()
    return true;
 }
 
+void PiGPIOPort::addLine( const LineConfig &line )
+{
+    commonPort::addLine(line);
 
+    if (line.lineIn)
+    {
+        pigpio->setPinInput(toInt(line.portLineName));
+    }
+    else
+    {
+        pigpio->setPinOutput(toInt(line.portLineName));
+    }
+}
 void PiGPIOPort::setLine( commonLineControl *line )
 {
    int l = toInt(line->portLineName );

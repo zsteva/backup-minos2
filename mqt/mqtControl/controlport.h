@@ -112,6 +112,7 @@ class PiGPIOPort: public commonPort
 
       virtual bool openPort();
       virtual bool closePort();
+      virtual void addLine( const LineConfig &line ) override;
 
       void setLine( commonLineControl * );
       bool getLine( commonLineControl * );
