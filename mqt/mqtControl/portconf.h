@@ -13,7 +13,7 @@ class commonController;
 class PortConfig
 {
    public:
-      enum PortType {eptWindows, eptSerial, eptK8055, eptUBW};
+      enum PortType {eptWindows, eptPiGPIO, eptK8055};
       QString name;
       PortType portType;
       QString portName;

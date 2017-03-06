@@ -36,9 +36,9 @@ void PortConfigure::SetPorts( TiXmlElement *e )
                pt = PortConfig::eptWindows;
             }
             else
-               if ( t == "Serial" )
+               if ( t == "PiGPIO" )
                {
-                  pt = PortConfig::eptSerial;
+                  pt = PortConfig::eptPiGPIO;
                }
                else
                   if ( t == "K8055" )
@@ -46,15 +46,10 @@ void PortConfigure::SetPorts( TiXmlElement *e )
                      pt = PortConfig::eptK8055;
                   }
                   else
-                     if ( t == "UBW" )
-                     {
-                        pt = PortConfig::eptUBW;
-                     }
-                     else
-                     {
-                        // error...
-                        continue;
-                     }
+                 {
+                    // error...
+                    continue;
+                 }
             PortConfig p( n, pt, cn );
             portmap[ n ] = p;
          }

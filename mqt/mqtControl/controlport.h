@@ -18,6 +18,7 @@ class LineConfig;
 class PortConfig;
 class commonController;
 
+class PiGPIO;
 class commonLineControl
 {
       bool state;
@@ -77,51 +78,6 @@ class commonPort
 
 
 //==============================================================================
-#ifdef RUBBISH
-// this is a particular implementation, created by factory and not generally seen
-class BasicComPort: public COMPort
-{
-   public:
-      virtual void processRxBuff()
-      {
-         rxBuff.clear();
-      }
-};
-
-class serialPort: public commonPort
-{
-   private:
-#define COMMSBUFFSIZE 0x200
-
-      int speed;
-      int parity;
-      int bits;
-      int stopbits;
-
-      COMPort::MSPack msr;
-      BasicComPort aPort;
-
-   public:
-
-      //      static serialPort *C1;
-      //      static serialPort *C2;
-
-      serialPort( const PortConfig &port );
-      virtual ~serialPort();
-
-      virtual bool initialisePort();
-
-      /* Set up the port */
-
-      virtual bool openPort();
-      virtual bool closePort();
-
-      void setLine( commonLineControl * );
-      bool getLine( commonLineControl * );
-      void getLineState();
-};
-#endif
-//==============================================================================
 
 // this is a particular implementation, created by factory and not generally seen
 
@@ -143,16 +99,14 @@ class WindowsMonitorPort: public commonPort
       bool getLine( commonLineControl * );
       void getLineState();
 };
-#ifdef RUBBISH
-class K8055Port: public commonPort
+class PiGPIOPort: public commonPort
 {
    private:
-
-      int addr;
-      long dig;
+      PiGPIO *pigpio;
    public:
-      K8055Port( const PortConfig &port );
-      virtual ~K8055Port();
+
+      PiGPIOPort(const PortConfig &port );
+      virtual ~PiGPIOPort();
 
       virtual bool initialisePort();
 
@@ -163,16 +117,16 @@ class K8055Port: public commonPort
       bool getLine( commonLineControl * );
       void getLineState();
 };
-#endif
 #ifdef RUBBISH
-class UBWPort: public commonPort
+class K8055Port: public commonPort
 {
    private:
 
+      int addr;
       long dig;
    public:
-      UBWPort( const PortConfig &port );
-      virtual ~UBWPort();
+      K8055Port( const PortConfig &port );
+      virtual ~K8055Port();
 
       virtual bool initialisePort();
 

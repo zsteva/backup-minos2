@@ -18,10 +18,14 @@ public:
 
     bool L1Checked();
     bool L2Checked();
+    bool L3Checked();
+    bool L4Checked();
     bool PTTChecked();
 
     void checkL1(bool checked);
     void checkL2(bool checked);
+    void checkL3(bool checked);
+    void checkL4(bool checked);
     void checkPTT(bool checked);
 
 private:

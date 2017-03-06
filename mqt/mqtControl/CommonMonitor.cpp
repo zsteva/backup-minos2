@@ -93,8 +93,8 @@ commonPort *commonController::createPort( const PortConfig &port )
 
       switch ( port.portType )
       {
-         case PortConfig::eptSerial:
-            //cp = new serialPort( port );
+         case PortConfig::eptPiGPIO:
+            cp = new PiGPIOPort( port );
             break;
 
         case PortConfig::eptWindows:
@@ -105,9 +105,6 @@ commonPort *commonController::createPort( const PortConfig &port )
             //cp = new K8055Port( port );
             break;
 
-         case PortConfig::eptUBW:
-            //cp = new UBWPort( port );
-            break;
       }
 
    }
@@ -132,9 +129,11 @@ void commonController::lineChange( commonLineControl *line )
    commonLineControl *pttin = findLine( "PTTIn", true );
    commonLineControl *l1 = findLine( "L1", true );
    commonLineControl *l2 = findLine( "L2", true );
-   if ( pttout && pttin && l1 && l2 )
+   commonLineControl *l3 = findLine( "L3", true );
+   commonLineControl *l4 = findLine( "L4", true );
+   if ( pttout && pttin && l1 && l2 &&l3 && l4 )
    {
-      setLines( pttout->getState(), pttin->getState(), l1->getState(), l2->getState() );
+      setLines( pttout->getState(), pttin->getState(), l1->getState(), l2->getState(), l3->getState(), l4->getState() );
    }
    LineSet *ls = LineSet::GetLineSet();
    ls->publish( line->lineName, line->getState() );

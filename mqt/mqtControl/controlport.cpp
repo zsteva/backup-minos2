@@ -17,8 +17,7 @@
 
 #include "windowMonitor.h"
 #include "K8055Container.h"
-#include "UBWContainer.h" 
-//#include "K8055D.h"        // Velleman K8055 interface
+#include "PiGPIO.h"
 
 //==============================================================================
 
@@ -122,110 +121,6 @@ void commonPort::reportLineChange( commonLineControl *line )
 }
 
 //==============================================================================
-#ifdef RUBBISH
-/*
-serialPort *serialPort::C1 = 0;
-serialPort *serialPort::C2 = 0;
-*/
-serialPort::serialPort( const PortConfig &port ) : commonPort( port ),
-      speed( -1 ), parity( -1 ), bits( -1 ), stopbits( -1 )
-{}
-serialPort::~serialPort()
-{
-   closePort();
-}
-
-/*
-struct MSPack
-{
-   unsigned char DTR : 1;
-   unsigned char RTS : 1;
-   unsigned char dummy : 2;
-   unsigned char CTS : 1;
-   unsigned char DSR : 1;
-   unsigned char RI  : 1;
-   unsigned char DCD : 1;
-};
-*/
-
-void serialPort::getLineState()
-{
-   msr = aPort.getModemSignals();
-}
-bool serialPort::getLine( commonLineControl *line )
-{
-   if ( line->portLineName == "DSR" )
-   {
-      return ( msr.DSR == 0 );
-   }
-   if ( line->portLineName == "CTS" )
-   {
-      return ( msr.CTS == 0 );
-   }
-   if ( line->portLineName == "DCD" )
-   {
-      return ( msr.DCD == 0 );
-   }
-   return false;
-}
-void serialPort::setLine( commonLineControl *line )
-{
-   if ( line->portLineName == "RTS" )
-   {
-      aPort.setRTS( line->getState() );
-   }
-   if ( line->portLineName == "DTR" )
-   {
-      aPort.setDTR( line->getState() );
-   }
-}
-bool serialPort::initialisePort()
-{
-   // read the port parameters from the INI file
-   /* Communications parameters */
-
-   if ( speed == -1 )
-      speed = 2400;
-   if ( parity == -1 )
-      parity = COMPort::None;
-   if ( bits == -1 )
-      bits = 8;
-   //  if (stopbits == -1)
-   stopbits = COMPort::sb1;
-
-   return true;
-}
-bool serialPort::openPort()
-{
-   try
-   {
-      if ( !aPort.Initialise ( portName.c_str() ) )
-         return false;
-      aPort.setBitRate ( speed );
-      aPort.setParity ( ( COMPort::Parity ) parity );
-      aPort.setDataBits ( ( COMPort::DataBits ) bits );
-      aPort.setStopBits ( ( COMPort::StopBits ) stopbits );
-
-      aPort.setRTS( false );
-      aPort.setDTR( false );
-   }
-   catch ( const std::exception & sre )
-   {
-      return false;
-   }
-   catch ( ... )
-   {
-      return false;
-   }
-   return true;
-}
-bool serialPort::closePort()
-{
-   aPort.CloseDown();
-   return true;
-}
-#endif
-//==============================================================================
 //=============================================================================
 WindowsMonitorPort::WindowsMonitorPort(QWidget *p, const PortConfig &port ) : parent(p), commonPort( port )
 {}
@@ -277,6 +172,14 @@ bool WindowsMonitorPort::getLine( commonLineControl *line )
    {
       return WindowsMonitorForm->L2Checked();
    }
+   if ( line->portLineName == "L3" )
+   {
+      return WindowsMonitorForm->L3Checked();
+   }
+   if ( line->portLineName == "L4" )
+   {
+      return WindowsMonitorForm->L4Checked();
+   }
    return false;
 }
 void WindowsMonitorPort::getLineState()
@@ -284,7 +187,55 @@ void WindowsMonitorPort::getLineState()
    // no need to get it all in one go
 }
 
+//==============================================================================
+PiGPIOPort::PiGPIOPort( const PortConfig &port ) : commonPort( port ),
+    pigpio(new PiGPIO)
+{
+   trace( "PiGPIOPort::PiGPIOPort" );
+}
+PiGPIOPort::~PiGPIOPort()
+{
+   closePort();
+   delete pigpio;
+}
+bool PiGPIOPort::initialisePort()
+{
+   return true;
+}
 
+
+bool PiGPIOPort::openPort()
+{
+    return true;
+}
+
+bool PiGPIOPort::closePort()
+{
+   return true;
+}
+
+
+void PiGPIOPort::setLine( commonLineControl *line )
+{
+   int l = toInt(line->portLineName );
+   if ( line->getState() )
+   {
+       pigpio->setPin(l, true);
+   }
+   else
+   {
+       pigpio->setPin(l, false);
+   }
+}
+bool PiGPIOPort::getLine( commonLineControl *line )
+{
+   int l = toInt( line->portLineName );
+   return pigpio->readPin(l);
+}
+void PiGPIOPort::getLineState()
+{
+//   nothing to do
+}
 //==============================================================================
 #ifdef RUBBISH
 K8055Port::K8055Port( const PortConfig &port ) : commonPort( port ),
@@ -337,59 +288,6 @@ bool K8055Port::getLine( commonLineControl *line )
 void K8055Port::getLineState()
 {
    dig = K8055::readAllDigital();
-}
-#endif
-//==============================================================================
-#ifdef RUBBISH
-UBWPort::UBWPort( const PortConfig &port ) : commonPort( port ), dig( 0 )
-{
-   trace( "UBWPort::UBWPort" );
-}
-UBWPort::~UBWPort()
-{
-   closePort();
-}
-bool UBWPort::initialisePort()
-{
-   return true;
-}
-
-
-bool UBWPort::openPort()
-{
-   int ret = UBW::openDevice();
-   if ( ret != -1 )
-   {
-      // On startup, need to configure all the lines we intend to use as input or output
-      for ( QVector<commonLineControl *>::iterator i = lines.begin(); i != lines.end(); i++ )
-      {
-         UBW::setLineDirection( ( *i ) ->portLineName, ( *i ) ->lineIn );
-      }
-   }
-   return ret != -1;
-}
-
-bool UBWPort::closePort()
-{
-   UBW::closeDevice();
-   return true;
-}
-
-
-void UBWPort::setLine( commonLineControl *line )
-{
-   // a line is of the form A1, where A is RA (a - C), 1 is line 1 (0 - 7)
-   UBW::setDigitalChannel( line->portLineName, line->getState() );
-}
-bool UBWPort::getLine( commonLineControl *line )
-{
-   bool l = UBW::readDigitalChannel( line->portLineName );
-   return l;
-}
-void UBWPort::getLineState()
-{
-   // it happens in the background
-   //   dig = UBW::readAllDigital();
 }
 #endif
 //==============================================================================

@@ -35,6 +35,20 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="QCheckBox" name="L3CheckBox">
+     <property name="text">
+      <string>L3 In</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="L4CheckBox">
+     <property name="text">
+      <string>L4 In</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>

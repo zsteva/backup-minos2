@@ -23,21 +23,19 @@ SOURCES += main.cpp\
         ControlMain.cpp \
     windowMonitor.cpp \
     CommonMonitor.cpp \
-    COMPORT.CPP \
     controlport.cpp \
     HidControl.cpp \
     K8055Container.cpp \
     portconf.cpp \
-    UBWContainer.cpp
+    PiGPIO.cpp
 
 HEADERS  += ControlMain.h \
     windowMonitor.h \
     CommonMonitor.h \
-    COMPORT.h \
     controlport.h \
     K8055Container.h \
     portconf.h \
-    UBWContainer.h
+    PiGPIO.h
 
 FORMS    += ControlMain.ui \
     windowMonitor.ui

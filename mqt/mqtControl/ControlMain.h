@@ -23,6 +23,8 @@ public:
     void setPTTOut(bool s);
     void setL1(bool s);
     void setL2(bool s);
+    void setL3(bool s);
+    void setL4(bool s);
 
 private:
     Ui::ControlMain *ui;

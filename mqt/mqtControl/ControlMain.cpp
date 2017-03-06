@@ -64,9 +64,10 @@ ControlMain::~ControlMain()
     controlMain = 0;
     delete ui;
 }
-void ControlMain::closeEvent(QCloseEvent * /*event*/)
+void ControlMain::closeEvent(QCloseEvent * event)
 {
     monitor.closeDown();
+    QWidget::closeEvent(event);
 }
 void ControlMain::LogTimerTimer( )
 {
@@ -220,12 +221,22 @@ void ControlMain::setL2(bool s)
 {
     ui->L2CheckBox->setChecked(s);
 }
+void ControlMain::setL3(bool s)
+{
+    ui->L3CheckBox->setChecked(s);
+}
+void ControlMain::setL4(bool s)
+{
+    ui->L4CheckBox->setChecked(s);
+}
 
-void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2 )
+void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool L3, bool L4 )
 {
    // This ought to be synchronised...
    controlMain->setPTTOut(PTTOut);
    controlMain->setPTTIn(PTTIn);
    controlMain->setL1(L1);
    controlMain->setL2(L2);
+   controlMain->setL3(L3);
+   controlMain->setL4(L4);
 }
