@@ -10,10 +10,8 @@ class GPIOLine: public QObject
 {
     Q_OBJECT
     bool input;
-    bool value;
     int pin;
     int fd;
-    QSharedPointer<QSocketNotifier> pinNotifier;
 public:
     GPIOLine(int pin, bool input);
     virtual ~GPIOLine();
@@ -26,16 +24,12 @@ public:
     {
         return pin;
     }
-    bool getValue()
-    {
-        return value;
-    }
+
 
     bool initialise();
     void setPin(bool state);
     bool readPin();
-private slots:
-    void on_activated(int socket);
+
 };
 
 class PiGPIO: public QObject

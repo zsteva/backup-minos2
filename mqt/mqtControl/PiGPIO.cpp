@@ -78,17 +78,12 @@ bool GPIOLine::initialise()
 
     QThread::msleep(100);
 
-    if (input)
-    {
-        pinNotifier = QSharedPointer<QSocketNotifier>(new QSocketNotifier(fd, QSocketNotifier::Read));
-        connect(pinNotifier.data(), SIGNAL(activated(int)), this, SLOT(on_activated(int)));
-
-        value = readPin();
-    }
     return true;
 }
 void GPIOLine::setPin(bool state)
 {
+    lseek(fd, 0, SEEK_SET);
+
     if (1 != write(fd, state ? "1" : "0", 1))
     {
         trace("Failed to write value pin " + QString::number(pin));
@@ -97,19 +92,20 @@ void GPIOLine::setPin(bool state)
 
 bool GPIOLine::readPin()
 {
-    char value_str[3];
+    char value_str[4];
 
-    if (-1 == read(fd, value_str, 3))
+    lseek(fd, 0, SEEK_SET);
+    int ret = read(fd, value_str, 3);
+
+    if (-1 == ret)
     {
         trace("Failed to read value for pin " + QString::number(pin));
         return false;
     }
+    value_str[ret] = 0;
     return value_str[0] != '0';
 }
-void GPIOLine::on_activated(int /*socket*/)
-{
-    value = readPin();
-}
+
 
 PiGPIO::PiGPIO()
 {
@@ -149,7 +145,8 @@ bool PiGPIO::readPin(int pin)
 {
     QSharedPointer<GPIOLine> line = exportedPins[pin];
     if (line)
-        return line->getValue();    // read the buffered value
+        return line->readPin();    // read the buffered value
+
     return false;
 }
 
