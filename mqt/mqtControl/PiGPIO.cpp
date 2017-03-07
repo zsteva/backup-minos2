@@ -8,169 +8,137 @@
 
 #include "PiGPIO.h"
 
-// derived from http://elinux.org/RPi_GPIO_Code_Samples
-
-#define BUFFER_MAX 3
-
-#define IN  0
-#define OUT 1
-
-#define LOW  0
-#define HIGH 1
-
-#define PIN  24 /* P1-18 */
-#define POUT 4  /* P1-07 */
-
-static int
-GPIOExport(int pin)
+GPIOLine::GPIOLine(int pin, bool input):pin(pin), input(input), fd(-1)
 {
-    char buffer[BUFFER_MAX];
-    ssize_t bytes_written;
-    int fd;
 
-    fd = open("/sys/class/gpio/export", O_WRONLY);
-    if (-1 == fd) {
-        trace("Failed to open export for writing!");
-        return(-1);
-    }
-
-    bytes_written = snprintf(buffer, BUFFER_MAX, "%d", pin);
-    write(fd, buffer, bytes_written);
-    close(fd);
-    return(0);
 }
 
-static int
-GPIOUnexport(int pin)
+GPIOLine::~GPIOLine()
 {
-    char buffer[BUFFER_MAX];
-    ssize_t bytes_written;
-    int fd;
-
-    fd = open("/sys/class/gpio/unexport", O_WRONLY);
-    if (-1 == fd) {
-        trace ("Failed to open unexport for writing!");
-        return(-1);
-    }
-
-    bytes_written = snprintf(buffer, BUFFER_MAX, "%d", pin);
-    write(fd, buffer, bytes_written);
     close(fd);
-    return(0);
+    QString spin = "/sys/class/gpio/unexport";
+
+    fd = open(spin.toLatin1(), O_WRONLY);
+    if (-1 == fd)
+    {
+        trace("Failed to open " + spin + " for writing!");
+        return;
+    }
+
+    spin = QString::number(pin);
+    QByteArray apin = spin.toUtf8();
+    write(fd, apin.data(), apin.length());
+    close(fd);
 }
-
-static int
-GPIODirection(int pin, int dir)
+bool GPIOLine::initialise()
 {
-    static const char s_directions_str[]  = "in\0out";
+    QString spin = "/sys/class/gpio/export";
 
-#define DIRECTION_MAX 35
-    char path[DIRECTION_MAX];
-    int fd;
+    fd = open(spin.toLatin1(), O_WRONLY);
+    if (-1 == fd)
+    {
+        trace("Failed to open " + spin + " for writing!");
+        return false;
+    }
 
-    snprintf(path, DIRECTION_MAX, "/sys/class/gpio/gpio%d/direction", pin);
-    fd = open(path, O_WRONLY);
-    if (-1 == fd) {
-        trace("Failed to open gpio direction for writing!");
+    spin = QString::number(pin);
+    QByteArray apin = spin.toUtf8();
+    write(fd, apin.data(), apin.length());
+    close(fd);
+
+    spin = "/sys/class/gpio/gpio" + spin;
+    fd = open((spin + "/direction").toLatin1(), O_WRONLY);
+    if (-1 == fd)
+    {
+        trace("Failed to open" + spin  + "/direction for writing!");
         return(-1);
     }
 
-    if (-1 == write(fd, &s_directions_str[IN == dir ? 0 : 3], IN == dir ? 2 : 3)) {
+    spin = input?"in":"out";
+    apin = spin.toUtf8();
+    if (-1 == write(fd, apin.data(), apin.length()))
+    {
         trace("Failed to set direction!");
         return(-1);
     }
 
     close(fd);
-    return(0);
+
+    fd = open((spin + "/value").toLatin1(), O_RDWR);
+    if (-1 == fd)
+    {
+        trace("Failed to open " + spin + "/value for read/write!");
+        return false;
+    }
+
+    if (input)
+    {
+        pinNotifier = QSharedPointer<QSocketNotifier>(new QSocketNotifier(fd, QSocketNotifier::Read));
+        connect(pinNotifier.data(), SIGNAL(activated(int)), this, SLOT(on_activated(int)));
+
+        value = readPin();
+    }
+    return true;
+}
+void GPIOLine::setPin(bool state)
+{
+    if (1 != write(fd, state ? "1" : "0", 1))
+    {
+        trace("Failed to write value pin " + QString::number(pin));
+    }
 }
 
-static int
-GPIORead(int pin)
+bool GPIOLine::readPin()
 {
-#define VALUE_MAX 30
-    char path[VALUE_MAX];
     char value_str[3];
-    int fd;
 
-    snprintf(path, VALUE_MAX, "/sys/class/gpio/gpio%d/value", pin);
-    fd = open(path, O_RDONLY);
-    if (-1 == fd) {
-        trace("Failed to open gpio value for reading!");
-        return(-1);
+    if (-1 == read(fd, value_str, 3))
+    {
+        trace("Failed to read value for pin " + QString::number(pin));
+        return false;
     }
-
-    if (-1 == read(fd, value_str, 3)) {
-        trace("Failed to read value!");
-        return(-1);
-    }
-
-    close(fd);
-
-    return(atoi(value_str));
+    return value_str[0] != '0';
 }
-
-static int
-GPIOWrite(int pin, int value)
+void GPIOLine::on_activated(int /*socket*/)
 {
-    static const char s_values_str[] = "01";
-
-    char path[VALUE_MAX];
-    int fd;
-
-    snprintf(path, VALUE_MAX, "/sys/class/gpio/gpio%d/value", pin);
-    fd = open(path, O_WRONLY);
-    if (-1 == fd) {
-        trace("Failed to open gpio value for writing!");
-        return(-1);
-    }
-
-    if (1 != write(fd, &s_values_str[LOW == value ? 0 : 1], 1)) {
-        trace("Failed to write value!");
-        return(-1);
-    }
-
-    close(fd);
-    return(0);
+    value = readPin();
 }
+
 PiGPIO::PiGPIO()
 {
 
 }
 PiGPIO::~PiGPIO()
 {
-    foreach(int pin, exportedPins)
-    {
-        GPIOUnexport(pin);
-    }
     exportedPins.clear();
 }
 
 void PiGPIO::setPinInput(int pin)
 {
-    if (GPIOExport(pin) < 0)
-        return;
-    if (GPIODirection(pin, IN) < 0)
-        return;
+    QSharedPointer<GPIOLine> line(new GPIOLine(pin, true));
+    if (line->initialise())
+        exportedPins[pin] = line;
 }
 
 void PiGPIO::setPinOutput(int pin)
 {
-    if (GPIOExport(pin) < 0)
-        return;
-    if (GPIODirection(pin, OUT) < 0)
-        return;
-    if (!exportedPins.contains(pin))
-    {
-        exportedPins.push_back(pin);
-    }
+    QSharedPointer<GPIOLine> line(new GPIOLine(pin, false));
+    if (line->initialise())
+        exportedPins[pin] = line;
 }
 
 void PiGPIO::setPin(int pin, bool state)
 {
-    GPIOWrite(pin, state);
+    QSharedPointer<GPIOLine> line = exportedPins[pin];
+    if (line)
+        line->setPin(state);
 }
 
 bool PiGPIO::readPin(int pin)
 {
-    return GPIORead(pin);
+    QSharedPointer<GPIOLine> line = exportedPins[pin];
+    if (line)
+        return line->getValue();    // read the buffered value
+    return false;
 }
+
