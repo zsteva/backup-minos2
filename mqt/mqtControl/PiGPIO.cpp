@@ -46,30 +46,37 @@ bool GPIOLine::initialise()
     write(fd, apin.data(), apin.length());
     close(fd);
 
+    QThread::msleep(100);
+
     spin = "/sys/class/gpio/gpio" + spin;
-    fd = open((spin + "/direction").toLatin1(), O_WRONLY);
+    QString sspin = spin + "/direction";
+    fd = open(sspin.toLatin1(), O_WRONLY);
     if (-1 == fd)
     {
-        trace("Failed to open" + spin  + "/direction for writing!");
-        return(-1);
+        trace("Failed to open" + sspin  + " for writing! errno is " + QString::number(errno));
+        return false;
     }
 
-    spin = input?"in":"out";
-    apin = spin.toUtf8();
+    sspin = input?"in":"out";
+    apin = sspin.toUtf8();
     if (-1 == write(fd, apin.data(), apin.length()))
     {
         trace("Failed to set direction!");
-        return(-1);
+        return false;
     }
 
     close(fd);
 
+    QThread::msleep(100);
+
     fd = open((spin + "/value").toLatin1(), O_RDWR);
     if (-1 == fd)
     {
-        trace("Failed to open " + spin + "/value for read/write!");
+        trace("Failed to open " + spin + "/value for read/write! errno is " + QString::number(errno));
         return false;
     }
+
+    QThread::msleep(100);
 
     if (input)
     {
@@ -117,14 +124,18 @@ void PiGPIO::setPinInput(int pin)
 {
     QSharedPointer<GPIOLine> line(new GPIOLine(pin, true));
     if (line->initialise())
+    {
         exportedPins[pin] = line;
+    }
 }
 
 void PiGPIO::setPinOutput(int pin)
 {
     QSharedPointer<GPIOLine> line(new GPIOLine(pin, false));
     if (line->initialise())
+    {
         exportedPins[pin] = line;
+    }
 }
 
 void PiGPIO::setPin(int pin, bool state)
