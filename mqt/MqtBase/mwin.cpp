@@ -54,8 +54,13 @@ dtg::dtg( bool now ): baddtg(false)
         {
             tdt = tdt.addSecs( correction );
         }
-        setDate( tdt.toString( "dd/MM/yy" ), DTGDISP );
-        setTime( tdt.toString( "hh:mm:ss" ), DTGDISP );
+
+        QString d = tdt.toString("yyMMdd");
+        sdate.setValue(d);
+        QString t = tdt.toString("hhmmss");
+        stime.setValue(t);
+//        setDate( tdt.toString( "dd/MM/yy" ), DTGDISP );
+//        setTime( tdt.toString( "hh:mm:ss" ), DTGDISP );
     }
     else
     {
