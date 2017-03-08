@@ -108,8 +108,18 @@
 <!-- 17.005 10/12/16 G4CLA Changes for SHF UKAC-->
 <!-- 17.006 11/12/16 G4CLA Put back the 4m cumulatives add FMAC rules-->
 <!-- 17.007 12/12/16 G4CLA Change web folders using LONGYEAR-->
+<!-- 17.008 18/12/16 G4CLA Missing wavelength for 144FM band-->
+<!-- 17.009 28/12/16 G4CLA Update Adjudicators-->
+<!-- 17.010 01/01/17 G4CLA change S9 to inlude stations within the 35kms radius. Plus add a link to afs.pl-->
+<!-- 17.011 02/01/17 G4CLA FMAC Contests are not clubs events-->
+<!-- 17.012 04/01/17 G4CLA Add bonus points to UKAC Contests results change ukac stats to show bonuses-->
+<!-- 17.013 05/01/17 G4CLA can now used different VMPs for different AFS conetsts-->
+<!-- 17.014 13/01/17 G4CLA Add results format for FMACs-->
+<!-- 17.015 21/01/17 G4CLA added link to B2 map-->
+<!-- 17.016 18/02/17 G4CLA Fixed freq in power power clauses also removed min power for all sections expect UKAC SHF Open-->
+<!-- 17.017 19/02/17 G4CLA Reject FMAC/UKAC that are on the same day of the times are wrong !-->
 <calendar>
-<version>17.007 12/12/2016</version>
+<version>17.016 18/02/2017</version>
 <icalurl>https://calendar.google.com/calendar/ical/al9eovbso8av1avk2ittht2910%40group.calendar.google.com/public/basic.ics</icalurl>
 <googleurl>https://calendar.google.com/calendar/embed?src=al9eovbso8av1avk2ittht2910%40group.calendar.google.com&amp;ctz=Europe/London</googleurl>
 <openlogs>6.008</openlogs>
@@ -120,12 +130,14 @@
 The first contact with each large square is awarded a number of bonus points as shown below. 
 &lt;table  style=font-size:12&gt;
 &lt;tr&gt;&lt;td&gt;&lt;td&gt;500 Points&lt;td&gt;&lt;td&gt;IO80, IO81, IO82, IO83, IO90, IO91, IO92, IO93, JO00, JO01, JO02, JO03&lt;td&gt;&lt;tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;td&gt;2000 Points&lt;td&gt;&lt;td&gt;IO65, IO69, IO75, IO85, IO95, IO66, IO76, IO86, IO37, IO57, IO67, IO77, IO87, IO97, IO58, IO68, IO78, IO88, IO79, IO89, IO99, IP80, IP90&lt;td&gt;&lt;tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;td&gt;2000 Points&lt;td&gt;&lt;td&gt;IO65, IO75, IO85, IO95, IO66, IO76, IO86, IO37, IO57, IO67, IO77, IO87, IO97, IO68, IO78, IO88, IO69, IO79, IO89, IO99, IP80, IP90&lt;td&gt;&lt;tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;td&gt;1000 Points&lt;td&gt;&lt;td&gt;All other squares&lt;tr&gt;
 &lt;/table&gt;
+See map &lt;a href=/vhf/images/b2-map.jpg&gt;here&lt;/a&gt;
+&lt;br&gt;
 </long_description>
 <exchange> serial number and QTH Locator </exchange>
-<scoring_description> Complex
+<scoring_description> plus
 </scoring_description>
 <bonus square="IO83" points="500"/>
 <bonus square="IO93" points="500"/>
@@ -168,11 +180,11 @@ The first contact with each large square is awarded a number of bonus points as 
 <name>M1</name>
 <description>Post Codes and Countries</description>
 <long_description>
-Post Code and Country Multipliers. The multiplier for a band is the sum of the number of different DXCC countries and UK post code areas worked on that band.
+Post Code and Country Multipliers. The multiplier for a band is the sum of the number of different DXCC countries and UK&amp;CD post code areas worked on that band.
 A full list of DXCCs can be found here http://www.arrl.org/files/file/DXCC/2015_Current_Deleted.txt
 A full list of Postcodes can be found here http://www.rsgbcc.org/vhf/rules/LONGYEAR/postcode.shtml
 </long_description>
-<exchange> serial number and QTH Locator and UK stations send the first 2 letters of their Postcode</exchange>
+<exchange> serial number and QTH Locator and UK&amp;CD stations send the first 2 letters of their Postcode</exchange>
 <scoring_description> multiplied by the number of Countries plus Postcodes 
 </scoring_description>
 </mult_type>
@@ -184,7 +196,7 @@ Post Code, Country and QTH Locator Multiplier. The multiplier for a band is the 
 A full list of DXCCs can be found here http://www.arrl.org/files/file/DXCC/2015_Current_Deleted.txt
 A full list of Postcodes can be found here http://www.rsgbcc.org/vhf/rules/LONGYEAR/postcode.shtml
 </long_description>
-<exchange> serial number and QTH Locator and UK stations send the first 2 letters of their Postcode</exchange>
+<exchange> serial number and QTH Locator and UK&amp;CD stations send the first 2 letters of their Postcode</exchange>
 <scoring_description> multiplied by the number of Countries plus Postcodes plus QTH locator squares</scoring_description>
 </mult_type>
 <mult_type>
@@ -215,6 +227,26 @@ A full list of DXCCs can be found here http://www.arrl.org/files/file/DXCC/2015_
         <Columns Title = "Comments" Field="SoapBox" Align = "left" img="soapbox.gif" ></Columns>
 </ColumnFormat>
 <ColumnFormat>
+        <name>vhfbonus</name>
+        <Columns Title = "Certificate Winner" Nocolumn="true" Merge="right" Field="cert" img="cert.gif" ></Columns>
+        <Columns Title = "Pos___" Field="position" Merge="left" Align="right" ></Columns>
+        <Columns Index="true" Title = "Callsign" Field ="call" Align = "left" ></Columns>
+        <Columns Title = "Loc" Field ="locator" Align = "center" ></Columns>
+        <Columns Title = "QSOS" Field = "Qs" Align = "right" ></Columns>
+        <Columns Title = "Score" Field="score" Align = "right" ></Columns>
+        <Columns Title = "Bonus" Field="bonus" Align = "right" ></Columns>
+        <Columns Title = "Total" Field="totalScore" Align = "right" ></Columns>
+        <Columns Title = "Norm" Field="normalisedScore" Align = "right" ></Columns>
+        <Columns Title = "ODX" Field="ODXCall" Align = "center" ></Columns>
+        <Columns Title = "Kms" Field="ODXKms" Align = "center" ></Columns>
+        <Columns Title = "Power" Field="power" Align = "center" ></Columns>
+        <Columns Title = "Group" Field="clubName" Align = "center" ></Columns>
+        <Columns Title = "Ant" Field="ant" Align = "center" img="tower.gif" ></Columns>
+        <Columns Title = "Equipment" Field="equipment" Align = "center" img="tx.gif" ></Columns>
+        <Columns Title = "Comments" Field="SoapBox" Align = "left" img="soapbox.gif" ></Columns>
+        <Columns Title = "Operators" Field="Operators" Align = "left" Sections= "O,6O" ></Columns>
+</ColumnFormat>
+<ColumnFormat>
         <name>vhfmultsandnorm</name>
         <Columns Title = "Certificate Winner" Nocolumn="true" Merge="right" Field="cert" img="cert.gif" ></Columns>
         <Columns Title = "Pos___" Field="position" Merge="left" Align="right" ></Columns>
@@ -233,6 +265,22 @@ A full list of DXCCs can be found here http://www.arrl.org/files/file/DXCC/2015_
         <Columns Title = "Equipment" Field="equipment" Align = "center" img="tx.gif" ></Columns>
         <Columns Title = "Comments" Field="SoapBox" Align = "left" img="soapbox.gif" ></Columns>
         <Columns Title = "Operators" Field="Operators" Align = "left" Sections= "O,6O" ></Columns>
+</ColumnFormat>
+<ColumnFormat>
+        <name>fmac</name>
+        <Columns Title = "Certificate Winner" Nocolumn="true" Merge="right" Field="cert" img="cert.gif" ></Columns>
+        <Columns Title = "Pos___" Field="position" Merge="left" Align="right" ></Columns>
+        <Columns Index="true" Title = "Callsign" Field ="call" Align = "left" ></Columns>
+        <Columns Title = "Loc" Field ="locator" Align = "center" ></Columns>
+        <Columns Title = "QSOs" Field = "Qs" Align = "right" ></Columns>
+        <Columns Title = "Score" Field="score" Align = "right" ></Columns>
+        <Columns Title = "Norm" Field="normalisedScore" Align = "right" ></Columns>
+        <Columns Title = "ODX" Field="ODXCall" Align = "center" ></Columns>
+        <Columns Title = "Kms" Field="ODXKms" Align = "center" ></Columns>
+        <Columns Title = "Power" Field="power" Align = "center" ></Columns>
+        <Columns Title = "Ant" Field="ant" Align = "center" img="tower.gif" ></Columns>
+        <Columns Title = "Equipment" Field="equipment" Align = "center" img="tx.gif" ></Columns>
+        <Columns Title = "Comments" Field="SoapBox" Align = "left" img="soapbox.gif" ></Columns>
 </ColumnFormat>
 <ColumnFormat>
         <name>vhfnorm</name>
@@ -353,7 +401,7 @@ A full list of DXCCs can be found here http://www.arrl.org/files/file/DXCC/2015_
 <name>ukac</name>
 <section_list>Totals</section_list>
 <columns Title = "Qs" Field="RealAnyQs" ></columns>
-<columns Title = "Mults" Field="AnyMults"></columns>
+<columns Title = "Bonus" Field="AnyBonuses"></columns>
 </statsFormat>
 <statsFormat>
 <name>dummy</name>
@@ -392,10 +440,17 @@ A full list of DXCCs can be found here http://www.arrl.org/files/file/DXCC/2015_
         <ScoresCount>3</ScoresCount>
 </resultsFormatType>
 <resultsFormatType>
+        <name>vhffmac</name>
+        <ColumnFormatUsed>fmac</ColumnFormatUsed>
+        <cumulativeField>Norm</cumulativeField>
+        <normType>Pos</normType>
+        <ScoresCount>8</ScoresCount>
+</resultsFormatType>
+<resultsFormatType>
         <name>vhfukac</name>
 		<ClubSections>General,Local</ClubSections>
 		<ClubContestId>ukac</ClubContestId>
-        <ColumnFormatUsed>vhfmultsandnorm</ColumnFormatUsed>
+        <ColumnFormatUsed>vhfbonus</ColumnFormatUsed>
         <cumulativeField>Norm</cumulativeField>
         <normType>Pos</normType>
         <ScoresCount>8</ScoresCount>
@@ -405,7 +460,7 @@ A full list of DXCCs can be found here http://www.arrl.org/files/file/DXCC/2015_
         <name>shfukac</name>
 		<ClubSections>General,Local</ClubSections>
 		<ClubContestId>ukac</ClubContestId>
-        <ColumnFormatUsed>vhfmultsandnorm</ColumnFormatUsed>
+        <ColumnFormatUsed>vhfnorm</ColumnFormatUsed>
         <cumulativeField>Norm</cumulativeField>
         <normType>Pos</normType>
         <ScoresCount>8</ScoresCount>
@@ -470,7 +525,7 @@ This is an Affiliated Societies contest and is open to both individual entrants 
 
 The results from the 6m, 2m and 70cm Affiliated Society contests contribute to the AFS Super League. http://www.rsgbcc.org/hf/rules/2016/rSL-thisandnext.shtml
 
-a. All members of the team must operate from within 80Km of the Virtual Meeting Place of the society and must be within the UK. No station may represent more than one society. No operator is allowed to use more than one callsign during the contest. In the case of national societies, each team must define a separate virtual meeting place , and each team member must operate within 80Km of that designated meeting place. See http://www.rsgbcc.org/hf/afsinfo.shtml for more information.
+a. All members of the team must operate from within 80Km of the Virtual Meeting Place of the society and must be within the UK&amp;CD. No station may represent more than one society. No operator is allowed to use more than one callsign during the contest. In the case of national societies, each team must define a separate virtual meeting place , and each team member must operate within 80Km of that designated meeting place. See http://www.rsgbcc.org/hf/afsinfo.shtml for more information.
 
 b. QSOs with other members of your team will count for points.
 
@@ -511,18 +566,19 @@ This contest runs concurrently with the first few hours of an RSGB 24 hour event
 <name>S7</name>
 <description>Runs concurrently with all or part of an IARU co-ordinated contest</description>
 <long_description>
-This contest runs concurrently with all or part of an IARU co-ordinated contest. UK entrants who make all their QSOs using SSB, CW or FM will be submitted to the IARU event unless you specifically request otherwise. 
+This contest runs concurrently with all or part of an IARU co-ordinated contest. UK&amp;CD entrants who make all their QSOs using SSB, CW or FM will be submitted to the IARU event unless you specifically request otherwise. 
 
-On 4m and 6m MGM modes may also be used (except in CW only contests) provided the entrant meets the requirements of the IARU rules, see rule is 5.3.7 on page 60  at http://www.iaru-r1.org/index.php/downloads/Documents/VHF/VHF-managers-Handbook-7.0/
+On 4m and 6m MGM modes may also be used (except in CW only contests) provided the entrant meets the requirements of the IARU rules, see rule is 5.3.7 on page 60  at http://www.iaru-r1.org/index.php/downloads/Documents/VHF/VHF-managers-Handbook-7.0/. 
+You can find guidelines on the use of MGM here http://www.rsgbcc.org/vhf/MGMGuidelines.pdf
 </long_description>
 </special_rule>
 <special_rule>
 <name>S8</name>
 <description>Activity contest</description>
 <long_description>
-These contests are timed to co-incide with the last two hours of a number of European activity contests, with an extra half hour at the end to encourage intra UK activity.  They take place on Tuesdays from 2000-2230 local time with 144 MHz on the 1st Tuesday of the month, 432 MHz on the 2nd Tuesday, 1.3 GHz on the 3rd Tuesday, and 13cms to 3cms on the 4th Tuesday (due to Primary user restrictions, the 13cm event timings differ), and on Thursdays from 2000-2230 with 50MHz on the 2nd Thursday and 70 MHz on the 3rd Thursday in the month.
+These contests are timed to co-incide with the last two hours of a number of European activity contests, with an extra half hour at the end to encourage intra UK&amp;CD activity.  They take place on Tuesdays from 2000-2230 local time with 144 MHz on the 1st Tuesday of the month, 432 MHz on the 2nd Tuesday, 1.3 GHz on the 3rd Tuesday, and 13cms to 3cms on the 4th Tuesday (due to Primary user restrictions, the 13cm event timings differ), and on Thursdays from 2000-2230 with 50MHz on the 2nd Thursday and 70 MHz on the 3rd Thursday in the month.
 
-A UK station is required to be at one or both ends of a QSO for it to be valid.
+A UK&amp;CD station is required to be at one or both ends of a QSO for it to be valid.
 
 Please submit an entry after each session in which you are active. 
 
@@ -546,11 +602,11 @@ Certificates will be awarded to the overall winners and runners-up in each secti
 <name>S9</name>
 <description>Club Championship</description>
 <long_description>
-a.	The individual entries by a club's members to the UK activity contests which take place on Tuesday and Thursday in every month, all count towards a society's overall score for the year for each UKAC. To maximise the club score, it's important for the club contest organiser to get as many members to come on for as many sessions as possible. 
+a.	The individual entries by a club's members to the UK&amp;CD activity contests which take place on Tuesday and Thursday in every month, all count towards a society's overall score for the year for each UKAC. To maximise the club score, it's important for the club contest organiser to get as many members to come on for as many sessions as possible. 
 b.	There are two categories for clubs, 'General' and 'Local'. 
-Clubs wishing to enter the 'Local' category must specify a Virtual Meeting Place (VMP) -- a reference point from which distances are measured, and which need not have any connection with the Society's activities. Societies must email the UK Postcode or 6-digit QTH locator of their VMP to afs.query@rsgbcc.org before the first relevant contest entry of each calendar year. Their VMP will be used for all HF AFS, 80m CC contests, VHF AFS and UKAC contests'. An affiliated society must enter the same club category for every UKAC band.
+Clubs wishing to enter the 'Local' category must specify a Virtual Meeting Place (VMP) -- a reference point from which distances are measured, and which need not have any connection with the Society's activities. Societies must email the UK&amp;CD Postcode or UK&amp;CD 6-digit QTH locator of their VMP to &lt;a href=mailto:afs.query@rsgbcc.org&gt;afs.query@rsgbcc.org&lt;/a&gt; before the first relevant contest entry of each calendar year. The UKAC VMP may be different from that used for other AFS based contests. An affiliated society must enter the same club category for every UKAC band.
 
-c.	Society members in the Local Category must have their home QTH (as shown on their Ofcom validation document) within a circle of radius 35km from their Club's Virtual Meeting Place. However, members may be based outsdie the 35Km radius if there are no other AFS with that 35Km . Stations must state their UK Postcode or 6-digit QTH locator of their home QTH when entering their log on behalf of a club in the 'Local' section. There is no distance restriction on where their station is operated.
+c.	Society members in the Local Category must either operate within or have their home QTH (as shown on their Ofcom validation document) within a circle of radius 35km from their Club's Virtual Meeting Place. However, members may be based outside the 35Km radius if there are no other AFS with that 35Km . Stations must state their UK&amp;CD Postcode or UK&amp;CD QTH locator of their home QTH when entering their log on behalf of a club in the 'Local' section. There is no distance restriction on where their station is operated.
 
 d.	Stations enter the UKAC contests in the normal way, but need to choose an AFS (affiliated society) name when uploading their log. Entries to all sections of the UKAC count towards the overall club score which is the simple sum of the normalised scores of each team member operating that month. 
 
@@ -559,6 +615,8 @@ e.	Stations who enter on behalf of an affiliated society must be members of the 
 f.	All sessions will count towards the total club score.
 
 e.	All clubs's taking part must be Affiliated to the RSGB. 
+
+g. A list of all affiliated societies that have registered for RSGB Contests can be found &lt;a href=/cgi-bin/afs.pl&gt;here&lt;/a&gt;
 
 </long_description>
 </special_rule>
@@ -579,7 +637,7 @@ c.      Certificates will be awarded to the top 3 Clubs.
 <long_description>
 These contests are timed to co-incide with the two hours of a number of European activity contests.  They take place on the 4th Tuesdays from 2000-2230 local time .
 
-A UK station is required to be at one or both ends of a QSO for it to be valid.
+A UK&amp;CD station is required to be at one or both ends of a QSO for it to be valid.
 
 Please submit an entry after each session in which you are active. In order to speed adjudication entries must be sent within 7 days of the contest.
 
@@ -650,11 +708,11 @@ No longer used
 <long_description> 
 Standard licence consitions and no antenna restrictions.
 </long_description>
-<power band="50" max="400" min="101"/>
-<power band="70" max="160" min="41"/>
-<power band="432" max="400" min="101"/>
-<power band="144" max="400" min="101"/>
-<power band="1296" max="400" min="101"/>
+<power band="50" max="400" />
+<power band="70" max="160" />
+<power band="432" max="400" />
+<power band="144" max="400" />
+<power band="1296" max="400" />
 <collate>callsign</collate>
 <certfields>call</certfields>
 </section>
@@ -680,11 +738,11 @@ Standard licence conditions and no antenna restrictions, the power output must b
 The power output must be not more than 10W  the final output stage or external amplifier connection to the antenna.
 Only one antenna may be used. 
 </long_description>
-<power band="50" max="10" min="1"/>
-<power band="70" max="10" min="1"/>
-<power band="432" max="10" min="1"/>
-<power band="144" max="10" min="1"/>
-<power band="1296" max="10" min="1"/>
+<power band="50" max="10" />
+<power band="70" max="10" />
+<power band="432" max="10" />
+<power band="144" max="10" />
+<power band="1296" max="10" />
 <singleantenna>1</singleantenna>
 <collate>callsign</collate>
 <certfields>call</certfields>
@@ -697,11 +755,11 @@ Only one antenna may be used.
 The power output must be not more than 50W at the final output stage or external amplifier connection to the antenna.
 Only one antenna may be used. 
 </long_description>
-<power band="50" max="50" min="11"/>
-<power band="70" max="50" min="11"/>
-<power band="432" max="50" min="11"/>
-<power band="144" max="50" min="11"/>
-<power band="1296" max="50" min="11"/>
+<power band="50" max="50" />
+<power band="70" max="50" />
+<power band="432" max="50" />
+<power band="144" max="50" />
+<power band="1296" max="50" />
 <singleantenna>1</singleantenna>
 <collate>callsign</collate>
 <certfields>call</certfields>
@@ -712,13 +770,13 @@ Only one antenna may be used.
 <resdescription>Restricted</resdescription>
 <long_description> 
 The power output must be not more than 100W PEP (40W on 4m) at the final output stage or external amplifier connection to the antenna.
-Only one antenna may be used. Stacked or bayed antennas are not allowed.
+Only one antenna may be used. Stacked or bayed antennas are not allowed. Backfire or parabolic dish type antennas must not exceed 2 metres in diameter.
 </long_description>
-<power band="50" max="100" min="11"/>
-<power band="70" max="40" min="5"/>
-<power band="432" max="100" min="11"/>
-<power band="144" max="100" min="11"/>
-<power band="1296" max="100" min="11"/>
+<power band="50" max="100" />
+<power band="70" max="40" />
+<power band="432" max="100" />
+<power band="144" max="100" />
+<power band="1296" max="100" />
 <singleantenna>1</singleantenna>
 <collate>callsign</collate>
 <certfields>call</certfields>
@@ -743,12 +801,12 @@ No antenna restrictions.
 <description>AC Low Power</description>
 <long_description> 
 The power output must not exceed 10W PEP (4W on 4m) at the final output stage or external amplifier connection to the antenna.
-Only one antenna may be used Stacked or bayed antenna arrays may not be used.
+Only one antenna may be used Stacked or bayed antenna arrays may not be used. Backfire or parabolic dish type antennas must not exceed 2 metres in diameter
 </long_description>
 <power band="50" max="10"/>
 <power band="70" max="4"/>
 <power band="432" max="10"/>
-<power band="145" max="10"/>
+<power band="144" max="10"/>
 <power band="1296" max="10"/>
 <singleantenna>1</singleantenna>
 <certfields>call</certfields>
@@ -1020,7 +1078,7 @@ Stations entering in this section must use the /P callsign suffix.
 <power band="70NFD" max="40"/>
 <power band="432" max="100"/>
 <power band="144" max="100"/>
-<power band="1295" max="100"/>
+<power band="1296" max="100"/>
 <height>10</height>
 <singleantenna>1</singleantenna>
 <collate>vhfnfd</collate>
@@ -1233,7 +1291,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <band>
 <name>144FM</name>
 <reg1band>145 MHz</reg1band>
-<wavelength></wavelength>
+<wavelength>2m</wavelength>
 <description>Contest activity should only take place within the band segments listed below which cover parts of both the FM only and all mode sections of the bands. There are gaps left here specifically to ensure that space remains on the bands for non-contest participants during these short events. Please take care to avoid interference to other established QSOs / data links etc.
 &lt;br&gt;144.5125 MHz - 144.7875 MHz and 145.200 MHz - 145.400 MHz</description>
 </band>
@@ -1288,19 +1346,19 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <multfactor>3</multfactor>
 </band>
 <band>
-<name>120GHz</name>
+<name>122GHz</name>
 <reg1band>120 GHz</reg1band>
 <wavelength>2.5mm</wavelength>
-<multfactor>5</multfactor>
+<multfactor>4</multfactor>
 </band>
 <band>
-<name>144GHz</name>
+<name>134GHz</name>
 <reg1band>144 GHz</reg1band>
 <wavelength>2mm</wavelength>
-<multfactor>6</multfactor>
+<multfactor>8</multfactor>
 </band>
 <band>
-<name>248GHz</name>
+<name>245GHz</name>
 <reg1band>248 GHz</reg1band>
 <wavelength>1.2mm</wavelength>
 <multfactor>10</multfactor>
@@ -2077,7 +2135,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <G3SQX name="Ed" email="gw3sqx@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/gw3sqx2013.jpg" />
 <G3WRR name="Quin" email="g3wrr@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/g3wrr.JPG" />
 <G3XDY name="John" email="g3xdy@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/g3xdy.jpg" />
-<G0KAD name="Mike" email="g0kad@rsgbcc.org" img="" />
+<G0KAD name="Mike" email="g0kad@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/g0kad.jpg" />
 <G4SHF name="Stephen" email="g4shf@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/g4shf.jpg" />
 <G6XSY name="Jacqui" email="g6xsy@rsgbcc.org" img="http://www.rsgbcc.org/vhf/images/committee/G6XSY.jpg" />
 </adjudicators>
@@ -2164,7 +2222,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>7 days</entry_date>
 <club_contest>afs</club_contest>
 <resultsFormatUsed>vhfafs</resultsFormatUsed>
-<clubdistance>50m</clubdistance>
+<clubdistance>80</clubdistance>
 <adjudicator callsign="G3SQX" />
 </contest>
 <contest>
@@ -2280,7 +2338,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 </contest>
 <contest>
   <name>mayuhf</name>
-  <description>May 432MHz-248GHz Contest</description>
+  <description>May 432MHz-245GHz Contest</description>
   <short_description>May UHF</short_description>
   <time_list>
     <month_list>May</month_list>
@@ -2304,9 +2362,9 @@ When applied to the VHF Championship, if a station enters some contests with hig
     <band_list>24GHz</band_list>
     <band_list>47GHz</band_list>
     <band_list>76GHz</band_list>
-    <band_list>120GHz</band_list>
-    <band_list>144GHz</band_list>
-    <band_list>248GHz</band_list>
+    <band_list>122GHz</band_list>
+    <band_list>134GHz</band_list>
+    <band_list>245GHz</band_list>
 <entry_date>7 days</entry_date>
 <resultsFormatUsed>multiband2</resultsFormatUsed>
 <autocerts>yes</autocerts>
@@ -2316,7 +2374,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 </contest>
 <contest>
   <name>octuhf</name>
-  <description>Oct 432MHz-248GHz Contest</description>
+  <description>Oct 432MHz-245GHz Contest</description>
   <short_description>Oct UHF</short_description>
   <time_list>
     <month_list>Oct</month_list>
@@ -2341,9 +2399,9 @@ When applied to the VHF Championship, if a station enters some contests with hig
     <band_list>24GHz</band_list>
     <band_list>47GHz</band_list>
     <band_list>76GHz</band_list>
-    <band_list>120GHz</band_list>
-    <band_list>144GHz</band_list>
-    <band_list>248GHz</band_list>
+    <band_list>122GHz</band_list>
+    <band_list>134GHz</band_list>
+    <band_list>245GHz</band_list>
 <category_list>MGM</category_list>
 <category_list>Non MGM</category_list>
 <iaru>1</iaru>
@@ -2455,14 +2513,14 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>7 days</entry_date>
 <club_contest>afs</club_contest>
 <resultsFormatUsed>vhfafsmults</resultsFormatUsed>
-<clubdistance>50m</clubdistance>
+<clubdistance>80</clubdistance>
 <autocerts>yes</autocerts>
-<adjudicator callsign="G4SHF" />
+<adjudicator callsign="G0KAD" />
 </contest>
 <contest>
   <name>2mfmac</name>
   <description>144MHz FMAC</description>
-  <intro>These contests are intended to provide a place where stations who have FM equipment can come on and get a feel for contesting, and hopefully move-on over time to more conventional contesting on SSB. As such - we've tried to make the rules simple and equipment requirements simple. </intro>
+  <intro>These contests are intended to provide a place where stations who have FM equipment can come on and get a feel for contesting, and hopefully move-on over time to more conventional contesting on SSB. As such - we've tried to make the rules simple and equipment requirements simple and are open to non RSGB members </intro>
   <time_list>
     <month_list>Jan</month_list>
     <month_list>Feb</month_list>
@@ -2488,15 +2546,18 @@ When applied to the VHF Championship, if a station enters some contests with hig
     <perkms>1</perkms>
   </scoring>
   <band_list>144FM</band_list>
+<club_contest>no</club_contest>
 <autocerts>yes</autocerts>
 <adjudicator callsign="G0FCT" />
+<resultsFormatUsed>vhffmac</resultsFormatUsed>
 <entry_date>7 days</entry_date>
 <mode>FM</mode>
+<rejectlog>yes</rejectlog>
 </contest>
 <contest>
   <name>70cmsfmac</name>
   <description>432MHz FMAC</description>
-  <intro>These contests are intended to provide a place where stations who have FM equipment can come on and get a feel for contesting, and hopefully move-on over time to more conventional contesting on SSB. As such - we've tried to make the rules simple and equipment requirements simple. </intro>
+  <intro>These contests are intended to provide a place where stations who have FM equipment can come on and get a feel for contesting, and hopefully move-on over time to more conventional contesting on SSB. As such - we've tried to make the rules simple and equipment requirements simple and are open to non RSGB members . </intro>
   <time_list>
     <month_list>Jan</month_list>
     <month_list>Feb</month_list>
@@ -2524,13 +2585,16 @@ When applied to the VHF Championship, if a station enters some contests with hig
   <band_list>432FM</band_list>
 <autocerts>yes</autocerts>
 <entry_date>7 days</entry_date>
+<club_contest>no</club_contest>
 <mode>FM</mode>
 <adjudicator callsign="G4CLA" />
+<resultsFormatUsed>vhffmac</resultsFormatUsed>
+<rejectlog>yes</rejectlog>
 </contest>
 <contest>
   <name>4mfmac</name>
   <description>70MHz FMAC</description>
-  <intro>These contests are intended to provide a place where stations who have FM equipment can come on and get a feel for contesting, and hopefully move-on over time to more conventional contesting on SSB. As such - we've tried to make the rules simple and equipment requirements simple. </intro>
+  <intro>These contests are intended to provide a place where stations who have FM equipment can come on and get a feel for contesting, and hopefully move-on over time to more conventional contesting on SSB. As such - we've tried to make the rules simple and equipment requirements simple and are open to non RSGB members . </intro>
   <time_list>
     <month_list>Jan</month_list>
     <month_list>Feb</month_list>
@@ -2558,8 +2622,11 @@ When applied to the VHF Championship, if a station enters some contests with hig
   <band_list>70FM</band_list>
 <mode>FM</mode>
 <entry_date>7 days</entry_date>
+<club_contest>no</club_contest>
 <autocerts>yes</autocerts>
 <adjudicator callsign="G3WRR" />
+<resultsFormatUsed>vhffmac</resultsFormatUsed>
+<rejectlog>yes</rejectlog>
 </contest>
 <contest>
   <name>2mukac</name>
@@ -2600,8 +2667,9 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <club_contest>afs</club_contest>
 <resultsFormatUsed>vhfukac</resultsFormatUsed>
 <autocerts>yes</autocerts>
-<clubdistance>35k</clubdistance>
+<clubdistance>35</clubdistance>
 <adjudicator callsign="G0FCT" />
+<rejectlog>yes</rejectlog>
 </contest>
 <contest>
   <name>70cmsukac</name>
@@ -2640,7 +2708,8 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <resultsFormatUsed>vhfukac</resultsFormatUsed>
 <autocerts>yes</autocerts>
 <adjudicator callsign="G4CLA" />
-<clubdistance>35k</clubdistance>
+<clubdistance>35</clubdistance>
+<rejectlog>yes</rejectlog>
 </contest>
 <contest>
   <name>uhfukac</name>
@@ -2679,7 +2748,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <resultsFormatUsed>vhfukac</resultsFormatUsed>
 <autocerts>yes</autocerts>
 <adjudicator callsign="G6XSY" />
-<clubdistance>35k</clubdistance>
+<clubdistance>35</clubdistance>
 </contest>
 <contest>
   <name>shfukac</name> 
@@ -2718,7 +2787,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <resultsFormatUsed>shfukac</resultsFormatUsed>
 <autocerts>yes</autocerts>
 <adjudicator callsign="G3XDY" />
-<clubdistance>35k</clubdistance>
+<clubdistance>35</clubdistance>
 </contest>
 <contest>
   <name>6mukac</name>
@@ -2756,7 +2825,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <club_contest>afs</club_contest>
 <resultsFormatUsed>vhfukac</resultsFormatUsed>
 <adjudicator callsign="G3XDY" />
-<clubdistance>35k</clubdistance>
+<clubdistance>35</clubdistance>
 </contest>
 <contest>
   <name>4mukac</name>
@@ -2795,7 +2864,8 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <resultsFormatUsed>vhfukac</resultsFormatUsed>
 <autocerts>yes</autocerts>
 <adjudicator callsign="G3WRR" />
-<clubdistance>35k</clubdistance>
+<clubdistance>35</clubdistance>
+<rejectlog>yes</rejectlog>
 </contest>
 <contest>
 <name>VHFNFD</name>
@@ -2867,7 +2937,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>7 days</entry_date>
 <resultsFormatUsed>multiband2</resultsFormatUsed>
 <SCCAllowed>Yes</SCCAllowed>
-<adjudicator callsign="G4BVY" />
+<adjudicator callsign="G4SHF" />
 </contest>
 <contest>
 <name>may144</name>
@@ -3104,7 +3174,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <award_list>4 Metre Cup is awarded to the highest scoring Single Operator entry</award_list>
 <entry_date>7 days</entry_date>
 <resultsFormatUsed>vhfmultsuk</resultsFormatUsed>
-<adjudicator callsign="G4SHF" />
+<adjudicator callsign="G0KAD" />
 </contest>
 <contest>
 <name>50trophy</name>
@@ -3134,7 +3204,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <mult>M4</mult>
 <iaru>1</iaru>
 <award_list>The Telford Trophy is awarded to the winner of the Open Section</award_list>
-<award_list>The Six Metre Cup is awarded to the highest scoring UK Single Operator entry</award_list>
+<award_list>The Six Metre Cup is awarded to the highest scoring UK&amp;CD Single Operator entry</award_list>
 <entry_date>7 days</entry_date>
 <resultsFormatUsed>vhfmults</resultsFormatUsed>
 <SCCAllowed>Yes</SCCAllowed>
@@ -3171,7 +3241,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <resultsFormatUsed>group</resultsFormatUsed>
 <autocerts>yes</autocerts>
 <SCCAllowed>Yes</SCCAllowed>
-<adjudicator callsign="G4BVY" />
+<adjudicator callsign="G0FCT" />
 </contest>
 <contest>
 <name>144marconi</name>
@@ -3225,9 +3295,9 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <entry_date>7 days</entry_date>
 <club_contest>afs</club_contest>
 <resultsFormatUsed>vhfafs</resultsFormatUsed>
-<clubdistance>50m</clubdistance>
+<clubdistance>80</clubdistance>
 <autocerts>yes</autocerts>
-<adjudicator callsign="G3SQX" />
+<adjudicator callsign="G0KAD" />
 </contest>
 <contest>
 <name>xmasfun</name>

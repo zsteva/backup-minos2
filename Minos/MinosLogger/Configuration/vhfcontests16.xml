@@ -413,7 +413,7 @@ All large square locators count as multipliers;  A locator in which a UK station
         <name>xmasfun</name>
         <ColumnFormatUsed>xmasresults</ColumnFormatUsed>
         <cumulativeField>Norm</cumulativeField>
-        <normType>1000UK</normType>
+        <normType>1000</normType>
         <ScoresCount>3</ScoresCount>
 	<useContestID>Christmas Cumulatives</useContestID>
 </resultsFormatType>
@@ -1692,7 +1692,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
         <id_list>
                 <name>50MHz</name>
                 <id>xmasfun</id>
-				<resultName>Christmas Cumulatives 50 MHz&amp;Band=50 MHz</resultName>
+				<resultName>Contestid=xmasfun</resultName>
                 <year>0</year>
                 <collate_list>
                         <name>Section O</name>
@@ -1715,7 +1715,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
         <id_list>
                 <name>70MHz</name>
                 <id>xmasfun</id>
-				<resultName>Christmas Cumulatives 70 MHz&amp;Band=70 MHz</resultName>
+				<resultName>Contestid=xmasfun</resultName>
                 <year>0</year>
                 <collate_list>
                         <name>Section O</name>
@@ -1738,7 +1738,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
         <id_list>
                 <name>144MHz</name>
                 <id>xmasfun</id>
-				<resultName>Christmas Cumulatives 144 MHz&amp;Band=144 MHz</resultName>
+				<resultName>Contestid=xmasfun</resultName>
                 <year>0</year>
                 <collate_list>
                         <name>Section O</name>
@@ -1761,7 +1761,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
         <id_list>
                 <name>432MHz</name>
                 <id>xmasfun</id>
-				<resultName>Christmas Cumulatives 432 MHz&amp;Band=432 MHz</resultName>
+				<resultName>Contestid=xmasfun</resultName>
                 <year>0</year>
                 <collate_list>
                         <name>Section O</name>
