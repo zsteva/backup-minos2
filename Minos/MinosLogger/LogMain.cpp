@@ -612,6 +612,9 @@ String TLogContainer::getDefaultDirectory( bool IsList )
 void __fastcall TLogContainer::FileNewActionExecute( TObject */*Sender*/ )
 {
    String InitialDir = getDefaultDirectory( false );
+   char fullPath[1024];
+   GetFullPathName(InitialDir.c_str(), 1023, fullPath, 0);  // forces save dialog to behave itself
+   InitialDir = fullPath;
    // generate a default filename for a new contest
    char nfileName [ MAXPATH + 10 ];
    nfileName[ 0 ] = 0;
@@ -650,18 +653,35 @@ void __fastcall TLogContainer::FileNewActionExecute( TObject */*Sender*/ )
       suggestedfName += '_';
       if ( c->DTGStart.getValue().size() )
       {
-         suggestedfName += CanonicalToTDT( c->DTGStart.getValue().c_str() ).FormatString( "yyyymmmdd" );
+         suggestedfName += CanonicalToTDT( c->DTGStart.getValue().c_str() ).FormatString( "yyyy_mm_dd" );
       }
       else
       {
-         suggestedfName += TDateTime::CurrentDate().FormatString( "yyyymmmdd" );
+         suggestedfName += TDateTime::CurrentDate().FormatString( "yyyy_mm_dd" );
       }
-      std::string band = c->band.getValue();
-      if ( band.size() )
+       std::string band = c->band.getValue();
+       if ( band.size() )
+       {
+          suggestedfName += '_';
+          suggestedfName += band.c_str();
+       }
+
+
+      int fnum = 1;
+      String sfname = "./Logs/" + suggestedfName + ".Minos";
+      if (FileExists(sfname) )
       {
-         suggestedfName += '_';
-         suggestedfName += band.c_str();
+          sfname = "./Logs/" + suggestedfName + "_" + String(fnum) + ".Minos";
+          while (FileExists(sfname))
+          {
+              if (fnum == 9)
+                  break;
+              fnum++;
+              sfname = "./Logs/" + suggestedfName + "_" + String(fnum) + ".Minos";
+          }
+          suggestedfName = suggestedfName + "_" + String(fnum);
       }
+
       suggestedfName += ".Minos";
 
       SaveDialog1->Title = "Save new contest as";
