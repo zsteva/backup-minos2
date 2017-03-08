@@ -388,10 +388,11 @@ void TGJVQSOLogFrame::updateQSOTime(bool fromTimer)
    // If not we wish to show as red
    // We need to do this in log displays as well
 
-   dtg tnow( true );
-   DateLabel->Caption = tnow.getDate( DTGDISP ).c_str();
-   std::string t = tnow.getTime( DTGDISP );
-   TimeLabel->Caption = t.c_str();
+   TDateTime tdt = dtg::getCorrectedUTC();
+   String d = tdt.FormatString("dd/mm/yy");
+   DateLabel->Caption = d;
+   String t = tdt.FormatString("hh:nn");
+   TimeLabel->Caption = t;
 
    dtg time(false);
    time.setDate( DateLabel->Caption.c_str(), DTGDISP );

@@ -89,8 +89,13 @@ dtg::dtg( bool now ): baddtg(false)
    if ( now )
    {
       TDateTime tdt = dtg::getCorrectedUTC();
-      setDate( tdt.FormatString( "dd/mm/yy" ).c_str(), DTGDISP );
-      setTime( tdt.FormatString( "hh:nn:ss" ).c_str(), DTGDISP );
+      String d = tdt.FormatString("yymmdd");
+      sdate.setValue(d.c_str());
+      String t = tdt.FormatString("hhnnss");
+      stime.setValue(t.c_str());
+
+//      setDate( tdt.FormatString( "dd/mm/yy" ).c_str(), DTGDISP );
+//      setTime( tdt.FormatString( "hh:nn:ss" ).c_str(), DTGDISP );
    }
    else
    {
@@ -312,9 +317,19 @@ bool dtg::getDtg( time_t &cttime ) const
 void dtg::setDate( const std::string &d, DTG dstyle )
 {
    std::string temp;
-   if ( d.length() == 0 || !d[ 0 ] || ( d[ 0 ] == ' ' ) || ( d[ 0 ] == '/' )
-        || ( ( dstyle != DTGLOG ) && ( dstyle != DTGReg1Test ) && ( ( d[ 2 ] != '/' ) || ( d[ 5 ] != '/' )
-              || d.length() != 8 ) ) )
+   if ( d.length() == 0
+         || !d[ 0 ]
+         || ( d[ 0 ] == ' ' )
+         || ( d[ 0 ] == '/' )
+         || (
+               ( dstyle != DTGLOG )
+               && ( dstyle != DTGReg1Test )
+               && (
+                     ( d[ 2 ] != '/' )
+                     || ( d[ 5 ] != '/' )
+                     || d.length() != 8 )
+               )
+         )
    {
       temp = "      ";
    }
