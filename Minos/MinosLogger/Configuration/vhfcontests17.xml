@@ -301,6 +301,24 @@ A full list of DXCCs can be found here http://www.arrl.org/files/file/DXCC/2015_
         <Columns Title = "Operators" Field="Operators" Align = "left" Sections= "O,6O" ></Columns>
 </ColumnFormat>
 <ColumnFormat>
+        <name>vhfchamp</name>
+        <Columns Title = "Certificate Winner" Nocolumn="true" Merge="right" Field="cert" img="cert.gif" ></Columns>
+        <Columns Title = "Pos___" Field="position" Merge="left" Align="right" ></Columns>
+        <Columns Title = "Group" Field="clubName" Align = "center"  ></Columns>
+        <Columns Index="true" Title = "Callsign" Field ="call" Align = "left" ></Columns>
+        <Columns Title = "Loc" Field ="locator" Align = "center" ></Columns>
+        <Columns Title = "QSOs" Field = "Qs" Align = "right" ></Columns>
+        <Columns Title = "Score" Field="score" Align = "right" ></Columns>
+        <Columns Title = "Norm" Field="normalisedScore" Align = "right" ></Columns>
+        <Columns Title = "ODX" Field="ODXCall" Align = "center" ></Columns>
+        <Columns Title = "Kms" Field="ODXKms" Align = "center" ></Columns>
+        <Columns Title = "Power" Field="power" Align = "center" ></Columns>
+        <Columns Title = "Ant" Field="ant" Align = "center" img="tower.gif" ></Columns>
+        <Columns Title = "Equipment" Field="equipment" Align = "center" img="tx.gif" ></Columns>
+        <Columns Title = "Comments" Field="SoapBox" Align = "left" img="soapbox.gif" ></Columns>
+        <Columns Title = "Operators" Field="Operators" Align = "left" Sections= "O,6O" ></Columns>
+</ColumnFormat>
+<ColumnFormat>
         <name>vhfgroup</name>
         <Columns Title = "Certificate Winner" Nocolumn="true" Merge="right" Field="cert" img="cert.gif" ></Columns>
         <Columns Title = "Pos___" Field="position" Merge="left" Align="right" ></Columns>
@@ -424,7 +442,7 @@ A full list of DXCCs can be found here http://www.arrl.org/files/file/DXCC/2015_
 </resultsFormatType>
 <resultsFormatType>
         <name>multiband2</name>
-        <ColumnFormatUsed>vhfnorm</ColumnFormatUsed>
+        <ColumnFormatUsed>vhfchamp</ColumnFormatUsed>
         <cumulativeField>Norm</cumulativeField>
         <normType>1000UK</normType>
 </resultsFormatType>
