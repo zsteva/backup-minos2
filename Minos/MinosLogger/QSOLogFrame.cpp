@@ -390,6 +390,16 @@ void TGJVQSOLogFrame::updateQSOTime(bool fromTimer)
 
    TDateTime tdt = dtg::getCorrectedUTC();
    String d = tdt.FormatString("dd/mm/yy");
+
+   if (d[3] != '/')
+   {
+      // letting the computer sleep seems to lose the short date format (at least)
+      DateSeparator = '/';
+      ShortDateFormat = "dd/MM/yyyy";
+      TimeSeparator = ':';
+      ShortTimeFormat = "hh:mm";
+      d = dtg::getCorrectedUTC( ).FormatString( "dd/mm/yyyy hh:nn:ss" ) + " UTC       ";
+   }
    DateLabel->Caption = d;
    String t = tdt.FormatString("hh:nn");
    TimeLabel->Caption = t;

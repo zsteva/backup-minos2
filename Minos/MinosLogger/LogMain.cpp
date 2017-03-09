@@ -730,6 +730,15 @@ void __fastcall TLogContainer::ContestDetailsActionExecute( TObject */*Sender*/ 
 void __fastcall TLogContainer::TimeDisplayTimerTimer( TObject */*Sender*/ )
 {
    String disp = dtg::getCorrectedUTC( ).FormatString( "dd/mm/yyyy hh:nn:ss" ) + " UTC       ";
+   if (disp[3] != '/')
+   {
+      // letting the computer sleep seems to lose the short date format (at least)
+      DateSeparator = '/';
+      ShortDateFormat = "dd/MM/yyyy";
+      TimeSeparator = ':';
+      ShortTimeFormat = "hh:mm";
+      disp = dtg::getCorrectedUTC( ).FormatString( "dd/mm/yyyy hh:nn:ss" ) + " UTC       ";
+   }
 
    LogContainer->StatusBar1->Panels->Items[ 2 ] ->Text = disp;
 
