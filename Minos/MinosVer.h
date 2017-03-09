@@ -8,15 +8,15 @@
 /////////////////////////////////////////////////////////////////////////////
 #define MINOSVERSIONMAJ 1
 #define MINOSVERSIONMIN 6
-#define MINOSINCREMENT 1
-#define MINOSVERSION "1.6.1"
+#define MINOSINCREMENT 2
+#define MINOSVERSION "1.6.2"
 #define MINOSFILEDESCRIPTION "Minos\0"
 #define MINOSINTERNALNAME "Minos\0"
 #define MINOSORIGINALFILENAME "Minos~.exe\0"
 
 #define MINOSBUILD "0"
 #define MINOSBUILDNO 0
-#define MINOSVERSIONBUILD "1.6.1.0"
-#define MINOSRCVERSION "1.6.1.0\0"
+#define MINOSVERSIONBUILD "1.6.2.0"
+#define MINOSRCVERSION "1.6.2.0\0"
 
 // #define BETA_VERSION
