@@ -78,6 +78,8 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
 
     ui->ModeComboBoxGJV->addItem("A1A");
     ui->ModeComboBoxGJV->addItem("J3E");
+    ui->ModeComboBoxGJV->addItem("F3E");
+    ui->ModeComboBoxGJV->addItem("MGM");
 
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(on_TimeDisplayTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterTabFocusIn(QLineEdit*)), this, SLOT(on_AfterTabFocusIn(QLineEdit*)), Qt::QueuedConnection);

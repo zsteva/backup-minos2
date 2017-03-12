@@ -526,7 +526,12 @@ void __fastcall TLogContainer::HelpAboutActionExecute( TObject */*Sender*/ )
 //---------------------------------------------------------------------------
 void __fastcall TLogContainer::FileOpen1BeforeExecute( TObject */*Sender*/ )
 {
-   FileOpen1->Dialog->InitialDir = getDefaultDirectory( false );
+   String InitialDir = getDefaultDirectory( false );
+   char fullPath[1024];
+   GetFullPathName(InitialDir.c_str(), 1023, fullPath, 0);  // forces save dialog to behave itself
+   InitialDir = fullPath;
+
+   FileOpen1->Dialog->InitialDir = InitialDir;
    FileOpen1->Dialog->DefaultExt = "minos";
    FileOpen1->Dialog->Filter = "Minos contest files (*.minos)|*.MINOS|"
                                "Reg1Test Files (*.edi)|*.EDI|"
@@ -552,7 +557,12 @@ void __fastcall TLogContainer::FileOpen1Cancel( TObject */*Sender*/ )
 
 void __fastcall TLogContainer::ListOpen1BeforeExecute( TObject */*Sender*/ )
 {
-   ListOpen1->Dialog->InitialDir = getDefaultDirectory( true );
+   String InitialDir = getDefaultDirectory( true );
+   char fullPath[1024];
+   GetFullPathName(InitialDir.c_str(), 1023, fullPath, 0);  // forces save dialog to behave itself
+   InitialDir = fullPath;
+
+   ListOpen1->Dialog->InitialDir = InitialDir;
    ListOpen1->Dialog->DefaultExt = "CSL";
    ListOpen1->Dialog->Filter = "Contact list files (*.csl)|*.CSL|"
                                "All Files (*.*)|*.*" ;
@@ -644,60 +654,89 @@ void __fastcall TLogContainer::FileNewActionExecute( TObject */*Sender*/ )
    std::auto_ptr <TContestEntryDetails> pced( new TContestEntryDetails( this ) );
    BaseContestLog * c = addSlot( pced.get(), initName.c_str(), true, -1 );
 
-   bool repeatDialog = (c != 0);
+   if (c == 0)
+   {
+      if ( !DeleteFile( initName ) )
+      {
+         ShowMessage( String( "Failed to delete " ) + initName );
+      }
+      return;
+   }
+   bool repeatDialog = true;
+
+   String suggestedfName;
+   c->mycall.validate();
+   suggestedfName = ( c->mycall.prefix + c->mycall.number + c->mycall.body ).c_str();
+   suggestedfName += '_';
+   if ( c->DTGStart.getValue().size() )
+   {
+      suggestedfName += CanonicalToTDT( c->DTGStart.getValue().c_str() ).FormatString( "yyyy_mm_dd" );
+   }
+   else
+   {
+      suggestedfName += TDateTime::CurrentDate().FormatString( "yyyy_mm_dd" );
+   }
+    std::string band = c->band.getValue();
+    if ( band.size() )
+    {
+       suggestedfName += '_';
+       suggestedfName += band.c_str();
+    }
+
+   String nameBase = suggestedfName;
+   int fnum = 1;
+   String sfname = InitialDir + "\\" + nameBase + ".Minos";
+   if (FileExists(sfname) )
+   {
+       sfname = InitialDir + "\\" + nameBase + "_" + String(fnum) + ".Minos";
+       while (FileExists(sfname))
+       {
+           if (fnum == 9)
+               break;
+           fnum++;
+           sfname = InitialDir + "\\" + nameBase + "_" + String(fnum) + ".Minos";
+       }
+       suggestedfName = nameBase + "_" + String(fnum);
+   }
+
+   suggestedfName += ".Minos";
+
+   // close the slot - we will re-open it later under the new name
+   closeSlot(ContestPageControl->ActivePage, false );
    while ( repeatDialog )
    {
-      String suggestedfName;
-      c->mycall.validate();
-      suggestedfName = ( c->mycall.prefix + c->mycall.number + c->mycall.body ).c_str();
-      suggestedfName += '_';
-      if ( c->DTGStart.getValue().size() )
-      {
-         suggestedfName += CanonicalToTDT( c->DTGStart.getValue().c_str() ).FormatString( "yyyy_mm_dd" );
-      }
-      else
-      {
-         suggestedfName += TDateTime::CurrentDate().FormatString( "yyyy_mm_dd" );
-      }
-       std::string band = c->band.getValue();
-       if ( band.size() )
-       {
-          suggestedfName += '_';
-          suggestedfName += band.c_str();
-       }
-
-
-      int fnum = 1;
-      String sfname = "./Logs/" + suggestedfName + ".Minos";
-      if (FileExists(sfname) )
-      {
-          sfname = "./Logs/" + suggestedfName + "_" + String(fnum) + ".Minos";
-          while (FileExists(sfname))
-          {
-              if (fnum == 9)
-                  break;
-              fnum++;
-              sfname = "./Logs/" + suggestedfName + "_" + String(fnum) + ".Minos";
-          }
-          suggestedfName = suggestedfName + "_" + String(fnum);
-      }
-
-      suggestedfName += ".Minos";
-
       SaveDialog1->Title = "Save new contest as";
       SaveDialog1->InitialDir = InitialDir;
       SaveDialog1->DefaultExt = "Minos";
       SaveDialog1->Filter = "Minos contest files (*.Minos)|*.Minos|All Files (*.*)|*.*" ;
       SaveDialog1->FileName = suggestedfName;
 
-      closeSlot(ContestPageControl->ActivePage, false );
       if ( SaveDialog1->Execute() )
       {
          suggestedfName = SaveDialog1->FileName;
+         if (FileExists(suggestedfName) )
+         {
+             mShowMessage( suggestedfName + "\r\nalready exists.\r\n\r\nPlease choose a new name." );
+
+             InitialDir = ExtractFilePath(suggestedfName);
+             sfname = InitialDir + nameBase + "_" + String(fnum) + ".Minos";
+             while (FileExists(sfname))
+             {
+                 if (fnum == 9)
+                     break;
+                 fnum++;
+                 sfname = InitialDir + "\\" + nameBase + "_" + String(fnum) + ".Minos";
+             }
+             suggestedfName = nameBase + "_" + String(fnum);
+             suggestedfName += ".Minos";
+             continue;
+         }
+
          if ( !RenameFile( initName, suggestedfName ) )
          {
-            ShowMessage( String( "Failed to rename " ) + initName + " as " + suggestedfName );
-            suggestedfName = initName;
+            mShowMessage( String( "Failed to rename\r\n" ) + initName + "\r\n as \r\n" + suggestedfName +
+            "\r\n\r\nPlease choose a new name." );
+            continue;
          }
 
          // we want to (re)open it WITHOUT using the dialog!
@@ -709,13 +748,6 @@ void __fastcall TLogContainer::FileNewActionExecute( TObject */*Sender*/ )
             std::auto_ptr <TContestEntryDetails> pced( new TContestEntryDetails( this ) );
             c = addSlot( pced.get(), initName.c_str(), false, -1 );
             repeatDialog = (c != 0);
-      }
-   }
-   if (!c)
-   {
-      if ( !DeleteFile( initName ) )
-      {
-         ShowMessage( String( "Failed to delete " ) + initName );
       }
    }
 }
@@ -903,7 +935,12 @@ void __fastcall TLogContainer::MakeEntryActionExecute( TObject */*Sender*/ )
 //---------------------------------------------------------------------------
 void __fastcall TLogContainer::AnalyseMinosLogActionExecute( TObject */*Sender*/ )
 {
-   OpenDialog1->InitialDir = getDefaultDirectory( false );
+   String InitialDir = getDefaultDirectory( false );
+   char fullPath[1024];
+   GetFullPathName(InitialDir.c_str(), 1023, fullPath, 0);  // forces save dialog to behave itself
+   InitialDir = fullPath;
+
+   OpenDialog1->InitialDir = InitialDir;
    OpenDialog1->DefaultExt = "Minos";
    OpenDialog1->Filter = "Minos contest files (*.minos)|*.MINOS|All Files (*.*)|*.*" ;
    BaseContestLog * contest = TContestApp::getContestApp() ->getCurrentContest();
@@ -1366,4 +1403,5 @@ void __fastcall TLogContainer::Copyversliontoclipboard1Click(TObject */*Sender*/
    Clipboard()->SetTextBuf ( v.c_str() );
 }
 //---------------------------------------------------------------------------
+
 

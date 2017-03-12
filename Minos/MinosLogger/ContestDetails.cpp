@@ -102,28 +102,15 @@ void TContestEntryDetails::setDetails(  )
 
    ContestNameEdit->Text = contest->name.getValue().c_str();                      // contest
 
-   // need to get legal bands from ContestLog
-   if ( contest->bands.size() )
+   BandList &blist = BandList::getBandList();
+   for (std::vector<BandInfo>::iterator i = blist.bandList.begin(); i != blist.bandList.end(); i++)
    {
-      BandComboBox->Style = Stdctrls::csDropDownList;
-      TStringList *sl = new TStringList;
-
-      sl->CommaText = contest->bands.c_str();
-      BandComboBox->Items = sl;
-
-      delete sl;
-   }
-   else
-   {
-      BandList &blist = BandList::getBandList();
-      for (std::vector<BandInfo>::iterator i = blist.bandList.begin(); i != blist.bandList.end(); i++)
+      if ((*i).type != "HF")
       {
-         if ((*i).type != "HF")
-         {
-            BandComboBox->Items->Add( (*i).uk.c_str() );
-         }
+         BandComboBox->Items->Add( (*i).uk.c_str() );
       }
    }
+
    int b = BandComboBox->Items->IndexOf( contest->band.getValue().c_str() );        // contest
 
    if ( b >= 0 )

@@ -112,10 +112,6 @@ class LoggerContestLog : public BaseContestLog
       virtual void setDirty();
       // end of contest details
 
-
-      QStringList bands;
-      QStringList sections;
-
       void setINIDetails();
 
       // startup/closedown

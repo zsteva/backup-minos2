@@ -505,42 +505,52 @@ void TLogContainer::FileNewActionExecute()
     ContestDetails pced( this );
     BaseContestLog * c = addSlot( &pced, initName, true, -1 );
 
-    bool repeatDialog = (c != 0);
-    while ( repeatDialog )
+    if (!c)
     {
-       QString suggestedfName;
-       c->mycall.validate();
-       suggestedfName = ( c->mycall.prefix + c->mycall.number + c->mycall.body );
-       suggestedfName += '_';
-       if ( c->DTGStart.getValue().size() )
+       if ( !QFile::remove( initName ) )
        {
-          suggestedfName += CanonicalToTDT( c->DTGStart.getValue() ).toString( "yyyy_MM_dd" );
+          MinosParameters::getMinosParameters() ->mshowMessage( QString( "Failed to delete " ) + initName );
        }
-       else
+       return;
+    }
+    bool repeatDialog = true;
+   QString suggestedfName;
+   c->mycall.validate();
+   suggestedfName = ( c->mycall.prefix + c->mycall.number + c->mycall.body );
+   suggestedfName += '_';
+   if ( c->DTGStart.getValue().size() )
+   {
+      suggestedfName += CanonicalToTDT( c->DTGStart.getValue() ).toString( "yyyy_MM_dd" );
+   }
+   else
+   {
+      suggestedfName += QDate::currentDate().toString( "yyyy_MM_dd" );
+   }
+   QString band = c->band.getValue();
+   if ( band.size() )
+   {
+      suggestedfName += '_';
+      suggestedfName += band;
+   }
+   QString nameBase = suggestedfName;
+   int fnum = 1;
+   if (FileExists("./Logs/" + nameBase + ".minos"))
+   {
+       while (FileExists("./Logs/" + nameBase + "_" + QString::number(fnum) + ".minos"))
        {
-          suggestedfName += QDate::currentDate().toString( "yyyy_MM_dd" );
+           if (fnum == 9)
+               break;
+           fnum++;
        }
-       QString band = c->band.getValue();
-       if ( band.size() )
-       {
-          suggestedfName += '_';
-          suggestedfName += band;
-       }
-       int fnum = 1;
-       if (FileExists("./Logs/" + suggestedfName + ".minos"))
-       {
-           while (FileExists("./Logs/" + suggestedfName + "_" + QString::number(fnum) + ".minos"))
-           {
-               if (fnum == 9)
-                   break;
-               fnum++;
-           }
-           suggestedfName = suggestedfName + "_" + QString::number(fnum);
-       }
-       suggestedfName += ".minos";
+       suggestedfName = nameBase + "_" + QString::number(fnum);
+   }
+   suggestedfName += ".minos";
 
-       closeSlot(ui->ContestPageControl->currentIndex(), false );
+   // close the slot - we will re-open it later under the new name
+   closeSlot(ui->ContestPageControl->currentIndex(), false );
 
+   while ( repeatDialog )
+   {
        QString fileName = QFileDialog::getSaveFileName( this,
                           "Save new contest as",
                           "./Logs/" + suggestedfName,
@@ -550,11 +560,29 @@ void TLogContainer::FileNewActionExecute()
                                                       );
        if ( !fileName.isEmpty() )
        {
+           if (FileExists(fileName) )
+           {
+               MinosParameters::getMinosParameters() ->mshowMessage( fileName + "\nalready exists.\n\nPlease choose a new name." );
+
+               InitialDir = ExtractFilePath(fileName);
+               QString sfname = InitialDir + nameBase + "_" + QString::number(fnum) + ".minos";
+               while (FileExists(sfname))
+               {
+                   if (fnum == 9)
+                       break;
+                   fnum++;
+                   sfname = InitialDir + nameBase + "_" + QString::number(fnum) + ".minos";
+               }
+               suggestedfName = nameBase + "_" + QString::number(fnum);
+               suggestedfName += ".minos";
+               continue;
+           }
           suggestedfName = fileName;
-          QDir r(GetCurrentDir() + "Logs");
+          QDir r(GetCurrentDir() + "/Logs");
           if ( !r.rename( initName, suggestedfName ) )
           {
-             MinosParameters::getMinosParameters() ->mshowMessage( QString( "Failed to rename " ) + initName + " as " + suggestedfName );
+             MinosParameters::getMinosParameters() ->mshowMessage( QString( "Failed to rename\n" ) + initName + "\n as \n" + suggestedfName +
+                                                                   "\n\nPlease choose a new name." );
              suggestedfName = initName;
           }
 
@@ -569,17 +597,7 @@ void TLogContainer::FileNewActionExecute()
              repeatDialog = (c != 0);
        }
     }
-    if (!c)
-    {
-       if ( !QFile::remove( initName ) )
-       {
-          MinosParameters::getMinosParameters() ->mshowMessage( QString( "Failed to delete " ) + initName );
-       }
-    }
-    else
-    {
-        selectContest(c, QSharedPointer<BaseContact>());
-    }
+    selectContest(c, QSharedPointer<BaseContact>());
 }
 void TLogContainer::FileOpenActionExecute()
 {

@@ -46,6 +46,8 @@ ContestDetails::ContestDetails(QWidget *parent) :
         ui->EndTimeCombo->addItem( hour );
         ui->EndTimeCombo->addItem ( halfhour );
     }
+    ui->StartDateEdit->setDate(QDate::currentDate());
+    ui->EndDateEdit->setDate(QDate::currentDate());
     ui->CallsignEdit->setValidator(new UpperCaseValidator());
     ui->LocatorEdit->setValidator(new UpperCaseValidator());
 }
@@ -119,24 +121,19 @@ void ContestDetails::setDetails(  )
 
    ui->BandComboBox->clear();
    // need to get legal bands from ContestLog
-   if ( contest->bands.count() )
-   {
-      ui->BandComboBox->addItems(contest->bands);
-   }
-   else
-   {
-      BandList &blist = BandList::getBandList();
-      for (QVector<BandInfo>::iterator i = blist.bandList.begin(); i != blist.bandList.end(); i++)
-      {
-         if ((*i).getType() != "HF")
-         {
-            ui->BandComboBox->addItem( (*i).uk );
-         }
-      }
-   }
-   QString cb = contest->band.getValue().trimmed();
-   BandList &blist = BandList::getBandList();
-   BandInfo bi;
+
+  BandList &blist = BandList::getBandList();
+  for (QVector<BandInfo>::iterator i = blist.bandList.begin(); i != blist.bandList.end(); i++)
+  {
+     if ((*i).getType() != "HF")
+     {
+        ui->BandComboBox->addItem( (*i).uk );
+     }
+  }
+
+  QString cb = contest->band.getValue().trimmed();
+
+  BandInfo bi;
    bool bandOK = blist.findBand(cb, bi);
    if (bandOK)
    {
@@ -341,8 +338,18 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    // need to get legal bands from ContestLog
    ui->BandComboBox->clear();
 
-   ui->BandComboBox->addItem( ic.reg1band );
-   ui->BandComboBox->setCurrentIndex(0);
+   BandList &blist = BandList::getBandList();
+   BandInfo bi;
+    bool bandOK = blist.findBand(ic.reg1band, bi);
+    if (bandOK)
+    {
+        ui->BandComboBox->addItem( bi.uk );
+    }
+   else
+    {
+        ui->BandComboBox->addItem( ic.reg1band );
+    }
+    ui->BandComboBox->setCurrentIndex(0);
 
    ui->SectionComboBox->clear();
 
@@ -596,13 +603,14 @@ QWidget * ContestDetails::getDetails( )
     {
         ui->StartDateEdit->setDate(QDate::currentDate());
     }
-    contest->DTGStart.setValue(TDTToCanonical( ui->StartDateEdit->text() + " " + ui->StartTimeCombo->currentText())) ;
+    QString sdate = ui->StartDateEdit->date().toString("dd/MM/yyyy");
+    contest->DTGStart.setValue(TDTToCanonical( sdate + " " + ui->StartTimeCombo->currentText())) ;
 
     if (ui->EndDateEdit->text().isEmpty())
     {
         ui->EndDateEdit->setDate(QDate::currentDate());
     }
-    contest->DTGEnd.setValue(  TDTToCanonical(ui->EndDateEdit->text() + " " + ui->EndTimeCombo->currentText())) ;
+    contest->DTGEnd.setValue(  TDTToCanonical(ui->EndDateEdit->date().toString("dd/MM/yyyy") + " " + ui->EndTimeCombo->currentText())) ;
 
     contest->mycall.fullCall.setValue( ui->CallsignEdit->text() );
     contest->mycall.valRes = CS_NOT_VALIDATED;

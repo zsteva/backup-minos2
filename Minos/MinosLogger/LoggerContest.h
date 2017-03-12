@@ -112,10 +112,6 @@ class LoggerContestLog : public BaseContestLog
       virtual void setDirty();
       // end of contest details
 
-
-      std::string bands;
-      std::string sections;
-
       void setINIDetails();
 
       // startup/closedown
