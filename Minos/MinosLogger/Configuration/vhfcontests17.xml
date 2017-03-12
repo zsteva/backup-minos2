@@ -118,8 +118,9 @@
 <!-- 17.015 21/01/17 G4CLA added link to B2 map-->
 <!-- 17.016 18/02/17 G4CLA Fixed freq in power power clauses also removed min power for all sections expect UKAC SHF Open-->
 <!-- 17.017 19/02/17 G4CLA Reject FMAC/UKAC that are on the same day of the times are wrong !-->
+<!-- 17.018 09/03/17 G4CLA Add Section AFS to VHF champs - needs coding yet !-->
 <calendar>
-<version>17.016 18/02/2017</version>
+<version>17.018 09/08/2017</version>
 <icalurl>https://calendar.google.com/calendar/ical/al9eovbso8av1avk2ittht2910%40group.calendar.google.com/public/basic.ics</icalurl>
 <googleurl>https://calendar.google.com/calendar/embed?src=al9eovbso8av1avk2ittht2910%40group.calendar.google.com&amp;ctz=Europe/London</googleurl>
 <openlogs>6.008</openlogs>
@@ -442,6 +443,7 @@ A full list of DXCCs can be found here http://www.arrl.org/files/file/DXCC/2015_
 </resultsFormatType>
 <resultsFormatType>
         <name>multiband2</name>
+		<showgroup>vhfchamp</showgroup>
         <ColumnFormatUsed>vhfchamp</ColumnFormatUsed>
         <cumulativeField>Norm</cumulativeField>
         <normType>1000UK</normType>
@@ -1456,6 +1458,17 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <seriesCollate>
 <name>sixand24hours</name>
 				<collate_list>
+                        <name>Section AFS</name>
+                        <field>clubName</field>
+                        <display>Club</display>
+                        <filter>date!=0 and (`call` like "M%" or `call` like "2%" or `call` like "G%")</filter>
+                        <scorefield>normalisedScore</scorefield>
+                        <table>Entries</table>
+					    <collateby>clubName</collateby>
+						<accumulateScores>yes</accumulateScores>
+						<AFSOnly>yes</AFSOnly>
+                </collate_list>
+				<collate_list>
                         <name>Section O</name>
                         <field>clubName</field>
                         <display>Club</display>
@@ -1731,7 +1744,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 <seriesResult>
         <name>VHF Championship</name>
 		<ctl>vhfchampionship</ctl>
-		<order>Section O,Section SF,Section LP</order>
+		<order>Section AFS,Section O,Section SF,Section LP</order>
         <id_list>
                 <name>March 144/432</name>
                 <id>mar144432</id>
