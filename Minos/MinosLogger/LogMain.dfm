@@ -663,7 +663,7 @@ object LogContainer: TLogContainer
     Top = 136
   end
   object SaveDialog1: TSaveDialog
-    Options = [ofOverwritePrompt, ofHideReadOnly, ofNoChangeDir, ofPathMustExist, ofEnableSizing]
+    Options = [ofHideReadOnly, ofNoChangeDir, ofPathMustExist, ofEnableSizing]
     Left = 24
     Top = 184
   end
