@@ -482,6 +482,8 @@ void TLogContainer::FileNewActionExecute()
 
     InitialDir = qf.canonicalFilePath();
 
+    QString creationDir = InitialDir;
+
     // generate a default filename for a new contest
     QString nfileName( "C");
 
@@ -491,7 +493,7 @@ void TLogContainer::FileNewActionExecute()
     char letter = 'A';
     while ( letter < 'Z' )      // the A of A.Minos
     {
-       QString fileNameBuff = InitialDir + "/" + nfileName + letter + ".minos";
+       QString fileNameBuff = creationDir + "/" + nfileName + letter + ".minos";
 
        if (FileExists(fileNameBuff))
        {
@@ -501,7 +503,7 @@ void TLogContainer::FileNewActionExecute()
           break;
     }
 
-    QString initName = InitialDir + "/" + nfileName + letter + ".minos";
+    QString initName = creationDir + "/" + nfileName + letter + ".minos";
     ContestDetails pced( this );
     BaseContestLog * c = addSlot( &pced, initName, true, -1 );
 
@@ -534,9 +536,9 @@ void TLogContainer::FileNewActionExecute()
    }
    QString nameBase = suggestedfName;
    int fnum = 1;
-   if (FileExists("./Logs/" + nameBase + ".minos"))
+   if (FileExists(InitialDir + "/" + nameBase + ".minos"))
    {
-       while (FileExists("./Logs/" + nameBase + "_" + QString::number(fnum) + ".minos"))
+       while (FileExists(InitialDir + "/" + nameBase + "_" + QString::number(fnum) + ".minos"))
        {
            if (fnum == 9)
                break;
@@ -553,7 +555,7 @@ void TLogContainer::FileNewActionExecute()
    {
        QString fileName = QFileDialog::getSaveFileName( this,
                           "Save new contest as",
-                          "./Logs/" + suggestedfName,
+                          InitialDir + "/" + suggestedfName,
                           "Minos contest files (*.minos *.Minos)",
                           0,
                           QFileDialog::DontConfirmOverwrite
@@ -578,7 +580,7 @@ void TLogContainer::FileNewActionExecute()
                continue;
            }
           suggestedfName = fileName;
-          QDir r(GetCurrentDir() + "/Logs");
+          QDir r(creationDir);
           if ( !r.rename( initName, suggestedfName ) )
           {
              MinosParameters::getMinosParameters() ->mshowMessage( QString( "Failed to rename\n" ) + initName + "\n as \n" + suggestedfName +
