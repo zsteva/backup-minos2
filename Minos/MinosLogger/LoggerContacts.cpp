@@ -279,7 +279,10 @@ void ContestContact::getReg1TestText( std::string &sdest )
          if ( stricmp( mode.getValue(), "F3E" ) == 0 )
             sdest += "6";
          else
-            sdest += "0";
+            if ( stricmp( mode.getValue(), "MGM" ) == 0 )
+               sdest += "7";
+            else
+               sdest += "0";
    sdest += ';';
 
    sdest += reps.getValue();   // TX RST

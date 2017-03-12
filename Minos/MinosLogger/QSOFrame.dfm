@@ -197,7 +197,8 @@ object GJVEditFrame: TGJVEditFrame
       Items.Strings = (
         'J3E'
         'A1A'
-        'F3E')
+        'F3E'
+        'MGM')
     end
     object GJVOKButton: TButton
       Left = 142
@@ -286,7 +287,7 @@ object GJVEditFrame: TGJVEditFrame
       Width = 84
       Height = 21
       CharCase = ecUpperCase
-      ItemHeight = 0
+      ItemHeight = 13
       TabOrder = 18
       TabStop = False
     end
@@ -296,7 +297,7 @@ object GJVEditFrame: TGJVEditFrame
       Width = 84
       Height = 21
       CharCase = ecUpperCase
-      ItemHeight = 0
+      ItemHeight = 13
       TabOrder = 17
       TabStop = False
     end

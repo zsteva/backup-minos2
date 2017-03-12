@@ -272,7 +272,10 @@ void ContestContact::getReg1TestText( QString &sdest )
          if ( smode.compare( "F3E" ) == 0 )
             sdest += "6";
          else
-            sdest += "0";
+            if ( smode.compare( "MGM" ) == 0 )
+               sdest += "7";
+             else
+                sdest += "0";
    sdest += ';';
 
    sdest += reps.getValue();   // TX RST
