@@ -1,4 +1,14 @@
 ==================================================================
+1.7.0 
+Honour options properly for logs and lists directories
+MGM added as a mode
+
+Fix the "lost date" problem. This looks as though it MIGHT be due to "short date format"
+being (wrongly) used, and getting lost when the PC sleeps. Especially when the PC has
+a "wrong" short date format set.
+
+Modify the save file name when it would duplicate (e.g. FMAC and UKAC)
+==================================================================
 1.6.1 (limited, experimental)
 1.6.2 (limited, experimental)
 Fix the "lost date" problem. This looks as though it MIGHT be due to "short date format"
