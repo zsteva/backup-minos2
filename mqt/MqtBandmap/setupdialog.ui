@@ -6,17 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1137</width>
+    <width>937</width>
     <height>202</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Antenna Setup</string>
+   <string>Radio Setup</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>750</x>
+     <x>570</x>
      <y>160</y>
      <width>341</width>
      <height>32</height>
@@ -42,7 +42,7 @@
     <item>
      <widget class="QLabel" name="label_3">
       <property name="text">
-       <string>Antenna Name</string>
+       <string>Radio Name</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -50,49 +50,26 @@
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="antennaNameEdit1">
-      <property name="maxLength">
-       <number>20</number>
-      </property>
-     </widget>
+     <widget class="QLineEdit" name="radioNameEdit1"/>
     </item>
     <item>
-     <widget class="QLineEdit" name="antennaNameEdit2">
-      <property name="inputMask">
-       <string/>
-      </property>
-      <property name="maxLength">
-       <number>20</number>
-      </property>
-     </widget>
+     <widget class="QLineEdit" name="radioNameEdit2"/>
     </item>
     <item>
-     <widget class="QLineEdit" name="antennaNameEdit3">
-      <property name="maxLength">
-       <number>20</number>
-      </property>
-     </widget>
+     <widget class="QLineEdit" name="radioNameEdit3"/>
     </item>
     <item>
-     <widget class="QLineEdit" name="antennaNameEdit4">
-      <property name="maxLength">
-       <number>20</number>
-      </property>
-     </widget>
+     <widget class="QLineEdit" name="radioNameEdit4"/>
     </item>
     <item>
-     <widget class="QLineEdit" name="antennaNameEdit5">
-      <property name="maxLength">
-       <number>20</number>
-      </property>
-     </widget>
+     <widget class="QLineEdit" name="radioNameEdit5"/>
     </item>
    </layout>
   </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>700</x>
+     <x>520</x>
      <y>10</y>
      <width>71</width>
      <height>145</height>
@@ -139,7 +116,7 @@
     <item>
      <widget class="QLabel" name="label_2">
       <property name="text">
-       <string>Rotator Model</string>
+       <string>Radio Model</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -147,26 +124,26 @@
      </widget>
     </item>
     <item>
-     <widget class="QComboBox" name="rotatorModelBox1"/>
+     <widget class="QComboBox" name="radioModelBox1"/>
     </item>
     <item>
-     <widget class="QComboBox" name="rotatorModelBox2"/>
+     <widget class="QComboBox" name="radioModelBox2"/>
     </item>
     <item>
-     <widget class="QComboBox" name="rotatorModelBox3"/>
+     <widget class="QComboBox" name="radioModelBox3"/>
     </item>
     <item>
-     <widget class="QComboBox" name="rotatorModelBox4"/>
+     <widget class="QComboBox" name="radioModelBox4"/>
     </item>
     <item>
-     <widget class="QComboBox" name="rotatorModelBox5"/>
+     <widget class="QComboBox" name="radioModelBox5"/>
     </item>
    </layout>
   </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>620</x>
+     <x>440</x>
      <y>10</y>
      <width>71</width>
      <height>145</height>
@@ -203,7 +180,7 @@
   <widget class="QWidget" name="layoutWidget_2">
    <property name="geometry">
     <rect>
-     <x>780</x>
+     <x>600</x>
      <y>10</y>
      <width>71</width>
      <height>145</height>
@@ -240,7 +217,7 @@
   <widget class="QWidget" name="layoutWidget_3">
    <property name="geometry">
     <rect>
-     <x>860</x>
+     <x>680</x>
      <y>10</y>
      <width>71</width>
      <height>145</height>
@@ -277,7 +254,7 @@
   <widget class="QWidget" name="layoutWidget_4">
    <property name="geometry">
     <rect>
-     <x>940</x>
+     <x>760</x>
      <y>10</y>
      <width>71</width>
      <height>145</height>
@@ -314,7 +291,7 @@
   <widget class="QWidget" name="layoutWidget_5">
    <property name="geometry">
     <rect>
-     <x>1020</x>
+     <x>840</x>
      <y>10</y>
      <width>71</width>
      <height>145</height>
@@ -353,160 +330,35 @@
     <rect>
      <x>400</x>
      <y>10</y>
-     <width>218</width>
+     <width>31</width>
      <height>145</height>
     </rect>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+   <layout class="QVBoxLayout" name="verticalLayout_9">
+    <item>
      <widget class="QLabel" name="label_9">
       <property name="text">
-       <string>S Stop</string>
+       <string>CIV</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QLabel" name="label_10">
-      <property name="text">
-       <string>Overrun</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
+    <item>
+     <widget class="QLineEdit" name="CIVlineEdit1"/>
     </item>
-    <item row="0" column="2">
-     <widget class="QLabel" name="label_11">
-      <property name="text">
-       <string>Offset</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
+    <item>
+     <widget class="QLineEdit" name="CIVlineEdit2"/>
     </item>
-    <item row="1" column="0">
-     <widget class="QCheckBox" name="chkSstop1">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
+    <item>
+     <widget class="QLineEdit" name="CIVlineEdit3"/>
     </item>
-    <item row="1" column="1">
-     <widget class="QCheckBox" name="chkOverrun1">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
+    <item>
+     <widget class="QLineEdit" name="CIVlineEdit4"/>
     </item>
-    <item row="2" column="0">
-     <widget class="QCheckBox" name="chkSstop2">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QCheckBox" name="chkOverrun2">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QCheckBox" name="chkSstop3">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QCheckBox" name="chkOverrun3">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QCheckBox" name="chkSstop4">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QCheckBox" name="chkOverrun4">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QCheckBox" name="chkSstop5">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="1">
-     <widget class="QCheckBox" name="chkOverrun5">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QLineEdit" name="lEditOffset1">
-      <property name="inputMask">
-       <string/>
-      </property>
-      <property name="maxLength">
-       <number>3</number>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="2">
-     <widget class="QLineEdit" name="lEditOffset2">
-      <property name="inputMask">
-       <string/>
-      </property>
-      <property name="maxLength">
-       <number>3</number>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2">
-     <widget class="QLineEdit" name="lEditOffset3">
-      <property name="inputMask">
-       <string/>
-      </property>
-      <property name="maxLength">
-       <number>3</number>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="2">
-     <widget class="QLineEdit" name="lEditOffset4">
-      <property name="inputMask">
-       <string/>
-      </property>
-      <property name="maxLength">
-       <number>3</number>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="2">
-     <widget class="QLineEdit" name="lEditOffset5">
-      <property name="inputMask">
-       <string/>
-      </property>
-      <property name="maxLength">
-       <number>3</number>
-      </property>
-     </widget>
+    <item>
+     <widget class="QLineEdit" name="CIVlineEdit5"/>
     </item>
    </layout>
   </widget>

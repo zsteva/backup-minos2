@@ -70,6 +70,9 @@ struct srotParams
   int rotatorModelNumber;
   azimuth_t max_azimuth;
   elevation_t max_elevation;
+  bool southStopFlag = false;
+  bool overRunFlag = false;
+  int rotatorOffset = 0;
   bool moving;
   int serial_rate_max;
   int serial_rate_min;

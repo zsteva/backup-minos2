@@ -83,7 +83,7 @@ private:
     EditPresetsDialog *editPresets;
     RotatorLog *rotlog;
     bool rotLogFlg;
-    QTimer *timer;
+    QTimer *pollTimer;
     int pollTime;
     int brakedelay;
     bool brakeflag;
@@ -103,6 +103,7 @@ private:
 
     void refreshPresetLabels();
     void showStatusMessage(const QString &);
+    void sndStatusLoggger(const QString &);
     void readPresets();
 
     void initSelectAntennaBox();

@@ -25,6 +25,7 @@
 class QIntValidator;
 class QComboBox;
 class QLineEdit;
+class QCheckBox;
 
 
 
@@ -62,6 +63,9 @@ protected slots:
 
     void antennaNameFinished(int);
     void rotatorModelSelected(int);
+    void southStopFlagSelected(int);
+    void overRunFlagSelected(int);
+    void rotatorOffsetFinished(int);
     void comportSelected(int);
     void comSpeedSelected(int);
     void comDataBitsSelected(int);
@@ -80,6 +84,9 @@ private:
 
     QLineEdit *antennaName[NUM_ANTENNAS];
     QComboBox *rotatorModel[NUM_ANTENNAS];
+    QCheckBox *southStopFlag[NUM_ANTENNAS];
+    QCheckBox *overRunFlag[NUM_ANTENNAS];
+    QLineEdit *rotatorOffset[NUM_ANTENNAS];
     QComboBox *comPorts[NUM_ANTENNAS];
     QComboBox *comSpeed[NUM_ANTENNAS];
     QComboBox *comDataBits[NUM_ANTENNAS];
