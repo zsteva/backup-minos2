@@ -19,7 +19,7 @@
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_19">
+  <layout class="QVBoxLayout" name="verticalLayout_20">
    <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="widgetResizable">
@@ -34,7 +34,7 @@
         <height>540</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_18">
+      <layout class="QVBoxLayout" name="verticalLayout_19">
        <item>
         <widget class="QFrame" name="frame">
          <property name="frameShape">
@@ -468,6 +468,20 @@
               </widget>
              </item>
             </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_18">
+           <item>
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>Current Mode</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="ModeComboBox"/>
            </item>
           </layout>
          </item>

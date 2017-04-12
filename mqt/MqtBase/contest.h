@@ -115,7 +115,7 @@ class BaseContestLog: public BaseLogList
       MinosItem<bool> QTHField;
 
       MinosItem<QString> power;
-      MinosItem<QString> mode;
+      MinosItem<QString> currentMode;
 
       MinosItem<QString> band;
       MinosItem<bool> otherExchange;

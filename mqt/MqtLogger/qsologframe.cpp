@@ -344,8 +344,9 @@ void QSOLogFrame::setXferEnabled(bool s)
 
 void QSOLogFrame::on_CatchupButton_clicked()
 {
+    QString mode = ui->ModeComboBoxGJV->currentText();
     TQSOEditDlg qdlg(this, true, false );
-    qdlg.selectCatchup( contest );
+    qdlg.selectCatchup( contest, mode );
 
     qdlg.exec();
 
@@ -537,7 +538,8 @@ void QSOLogFrame::on_GJVOKButton_clicked()
         {
             LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
             int ctmax = ct->maxSerial + 1;
-            QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup );
+            QString mode = ui->ModeComboBoxGJV->currentText();
+            QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup, mode );
             selectEntry( lct );
         }
     }
@@ -1638,7 +1640,7 @@ void QSOLogFrame::logScreenEntry( )
    QSharedPointer<BaseContact> lct = selectedContact;
    if (!lct)
    {
-        lct = ct->addContact( ctmax, 0, false, false );	// "current" doesn't get flag, don't save ContestLog yet
+        lct = ct->addContact( ctmax, 0, false, false, screenContact.mode );	// "current" doesn't get flag, don't save ContestLog yet
    }
 
    bool contactmodeCW = ( screenContact.reps.size() == 3 && screenContact.repr.size() == 3 );
@@ -1662,7 +1664,7 @@ void QSOLogFrame::logScreenEntry( )
          }
       }
    }
-   ct->mode.setValue( screenContact.mode );
+   ct->currentMode.setValue( screenContact.mode );
    screenContact.op1 = ct->currentOp1.getValue() ;
    screenContact.op2 = ct->currentOp2.getValue();
 
@@ -1672,7 +1674,8 @@ void QSOLogFrame::logScreenEntry( )
                          // But this only happens when seconds are :00, as the main log
                          // is only to a minute resolution
 
-   lct->commonSave(lct);				// which also saves the ContestLog
+   lct->commonSave(lct);
+   ct->commonSave(false);
 
    killPartial();
 
@@ -1723,7 +1726,8 @@ void QSOLogFrame::logCurrentContact( )
          {
             // last child is "current contact", and we need to add TO IT
             LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-            ct->addContact( nct_no, orflag, true, false ); // last contact
+            QString mode = ui->ModeComboBoxGJV->currentText();
+            ct->addContact( nct_no, orflag, true, false, mode ); // last contact
             nct_no++;
          }
          while ( nct_no < ctno ) ;

@@ -36,6 +36,11 @@ ContestDetails::ContestDetails(QWidget *parent) :
     ui->BonusComboBox->addItem("None");
     ui->BonusComboBox->addItem("UKAC Bonuses");
 
+    ui->ModeComboBox->addItem("A1A");
+    ui->ModeComboBox->addItem("J3E");
+    ui->ModeComboBox->addItem("F3E");
+    ui->ModeComboBox->addItem("MGM");
+
     for ( int i = 0; i < 24; i++ )
     {
         QString cbText = QString("%1:").arg(i, 2, 10, QChar('0'));
@@ -151,6 +156,19 @@ void ContestDetails::setDetails(  )
       ui->BandComboBox->setCurrentText(contest->band.getValue());
    }
 
+   if (!contest->currentMode.getValue().isEmpty())
+   {
+       int m = ui->ModeComboBox->findText( contest->currentMode.getValue() );
+
+       if ( m >= 0 )
+       {
+          ui->ModeComboBox->setCurrentIndex(m);
+       }
+       else
+       {
+          ui->ModeComboBox->setCurrentText(contest->currentMode.getValue());
+       }
+    }
    ui->SectionComboBox->clear();
    if ( sectionList.size() )
    {
@@ -350,6 +368,23 @@ void ContestDetails::setDetails( const IndividualContest &ic )
         ui->BandComboBox->addItem( ic.reg1band );
     }
     ui->BandComboBox->setCurrentIndex(0);
+
+    QString mode = ic.mode;
+    if (mode.isEmpty())
+    {
+       mode = "J3E";
+    }
+    int m = ui->ModeComboBox->findText( mode );
+
+    if ( m >= 0 )
+    {
+       ui->ModeComboBox->setCurrentIndex(m);
+    }
+    else
+    {
+       ui->ModeComboBox->setCurrentText(mode);
+    }
+    contest->currentMode.setValue(mode);
 
    ui->SectionComboBox->clear();
 

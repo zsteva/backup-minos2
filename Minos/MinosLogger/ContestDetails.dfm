@@ -51,18 +51,25 @@ object ContestEntryDetails: TContestEntryDetails
       Caption = 'End Time'
     end
     object Label1: TLabel
-      Left = 492
+      Left = 535
       Top = 233
       Width = 81
       Height = 13
       Caption = 'Main Operator'
     end
     object Label2: TLabel
-      Left = 492
+      Left = 535
       Top = 283
       Width = 97
       Height = 13
       Caption = 'Second Operator'
+    end
+    object Label3: TLabel
+      Left = 432
+      Top = 245
+      Width = 78
+      Height = 13
+      Caption = 'Current Mode'
     end
     object OKButton: TButton
       Left = 56
@@ -110,7 +117,7 @@ object ContestEntryDetails: TContestEntryDetails
       Width = 145
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 5
     end
     object CallsignEdit: TLabeledEdit
@@ -409,7 +416,7 @@ object ContestEntryDetails: TContestEntryDetails
       Height = 21
       Style = csDropDownList
       CharCase = ecUpperCase
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 6
     end
     object PowerEdit: TLabeledEdit
@@ -427,7 +434,7 @@ object ContestEntryDetails: TContestEntryDetails
       Top = 262
       Width = 74
       Height = 21
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 13
     end
     object EndTimeCombo: TComboBox
@@ -435,7 +442,7 @@ object ContestEntryDetails: TContestEntryDetails
       Top = 262
       Width = 74
       Height = 21
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 16
     end
     object LocatorGroupBox: TGroupBox
@@ -503,21 +510,21 @@ object ContestEntryDetails: TContestEntryDetails
       OnClick = EndDateButtonClick
     end
     object MainOpComboBox: TComboBox
-      Left = 492
+      Left = 535
       Top = 256
       Width = 145
       Height = 21
       CharCase = ecUpperCase
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 17
     end
     object SecondOpComboBox: TComboBox
-      Left = 492
+      Left = 535
       Top = 303
       Width = 145
       Height = 21
       CharCase = ecUpperCase
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 18
     end
     object AntOffsetEdit: TLabeledEdit
@@ -553,6 +560,20 @@ object ContestEntryDetails: TContestEntryDetails
           'None'
           'UKAC Bonuses')
       end
+    end
+    object ModeComboBox: TComboBox
+      Left = 432
+      Top = 262
+      Width = 81
+      Height = 21
+      ItemHeight = 13
+      TabOrder = 26
+      Text = 'J3E'
+      Items.Strings = (
+        'J3E'
+        'A1A'
+        'F3E'
+        'MGM')
     end
   end
 end

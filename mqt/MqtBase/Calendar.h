@@ -146,6 +146,7 @@ class IndividualContest
         QString specialRules;
         QString power;
         QString antenna;
+        QString mode;
 
         bool operator< ( const IndividualContest& rhs ) const;
 };

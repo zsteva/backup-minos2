@@ -149,7 +149,7 @@ class LoggerContestLog : public BaseContestLog
       bool exportMinos( HANDLE expfd );
 
       virtual void makeContact( bool time_now, BaseContact *& );
-      DisplayContestContact *addContact( int newctno, int extra_flags, bool save_new, bool catchup );
+      DisplayContestContact *addContact( int newctno, int extra_flags, bool save_new, bool catchup, const std::string &mode );
       DisplayContestContact *addContactBetween( BaseContact *prior, BaseContact *next );
       void removeContact( DisplayContestContact * );
 

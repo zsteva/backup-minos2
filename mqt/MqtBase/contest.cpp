@@ -36,7 +36,7 @@ BaseContestLog::BaseContestLog( void ) :
       bonusYearLoaded(0)
 {
    bearingOffset.setValue(0);
-   mode.setValue( "J3E" );
+   currentMode.setValue( "J3E" );
    int i;
 
    int nc = MultLists::getMultLists() ->getCtryListSize();
@@ -110,7 +110,7 @@ void BaseContestLog::clearDirty()
    locatorField.clearDirty();
    QTHField.clearDirty();
    power.clearDirty();
-   mode.clearDirty();
+   currentMode.clearDirty();
    band.clearDirty();
    otherExchange.clearDirty();
    countryMult.clearDirty();
@@ -145,7 +145,7 @@ void BaseContestLog::setDirty()
    locatorField.setDirty();
    QTHField.setDirty();
    power.setDirty();
-   mode.setDirty();
+   currentMode.setDirty();
    band.setDirty();
    otherExchange.setDirty();
    countryMult.setDirty();
@@ -980,6 +980,7 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
       mt->getStructArgMemberValue( "QTHReq", otherExchange );
       mt->getStructArgMemberValue( "AllowLoc4", allowLoc4 );
       mt->getStructArgMemberValue( "AllowLoc8", allowLoc8 );
+      mt->getStructArgMemberValue( "currentMode", currentMode);
 
       mt->getStructArgMemberValue( "UKACBonus", UKACBonus );
       if (UKACBonus.getValue())

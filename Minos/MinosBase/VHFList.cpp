@@ -528,6 +528,7 @@ bool Calendar::parseFile( const std::string &fname )
                             ic.description = desc;
                             ic.shortDescription = sdesc;
                             ic.bands = ( *bl ).name;
+                            ic.mode = ( *i ).second.mode;
 
                            try
                            {
@@ -1212,7 +1213,21 @@ bool Calendar::parseContest( TiXmlElement * tix )
                                     else
                                        if ( checkElementName( e, "mode" ) )
                                        {
-                                          c.mode = e->GetText();
+                                          std::string mode;
+                                          mode = e->GetText();
+                                          if (mode == "SSB")
+                                          {
+                                             mode = "J3E";
+                                          }
+                                          if (mode == "CW")
+                                          {
+                                             mode = "A1A";
+                                          }
+                                          if (mode == "FM")
+                                          {
+                                             mode = "F3E";
+                                          }
+                                          c.mode = mode;
                                        }
                                        else
                                           if ( checkElementName( e, "award_list" ) )

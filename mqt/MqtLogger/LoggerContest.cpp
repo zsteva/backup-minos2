@@ -405,7 +405,7 @@ void LoggerContestLog::closeFile( void )
    adifContestFile.reset();
    ediContestFile.reset();
 }
-QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, int extraFlags, bool saveNew, bool catchup )
+QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, int extraFlags, bool saveNew, bool catchup, QString mode )
 {
    // add the contact number as an new empty contact, with disk block and log_seq
 
@@ -425,6 +425,7 @@ QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, int extra
       maxSerial = newctno;
    }
    bct->contactFlags.setValue( bct->contactFlags.getValue() | extraFlags );
+   bct->mode.setValue(mode);
 
    if (catchup)
    {
@@ -459,6 +460,7 @@ QSharedPointer<BaseContact> LoggerContestLog::addContactBetween(QSharedPointer<B
    makeContact( timenow, bct );
 
    bct->serials.setValue( "" );
+   bct->mode.setValue(prior->mode.getValue());
 
    unsigned long pls =  prior?prior->getLogSequence():0;
    unsigned long nls =  next->getLogSequence();
@@ -548,7 +550,7 @@ bool LoggerContestLog::GJVsave( GJVParams &gp )
    //   strtobuf( mainOpNow );
    strtobuf( nulc );
    //   strtobuf( secondOpNow );
-   strtobuf( mode );
+   strtobuf( currentMode );
    opyn( true );						// RADIAL rings are DEAD
    opyn( false );                // was post entry
    opyn( scoreMode.getValue() == PPQSO );
@@ -620,7 +622,7 @@ bool LoggerContestLog::GJVload( void )
    buftostr( temp );
    //   buftostr( secondOpNow );
 
-   buftostr( mode );
+   buftostr( currentMode );
    inyn();
    scoreMode.setValue( PPKM );			// don't take any notice of radial flag!
 

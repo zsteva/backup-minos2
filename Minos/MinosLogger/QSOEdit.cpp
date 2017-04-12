@@ -217,7 +217,9 @@ void __fastcall TQSOEditDlg::GJVQSOEditFrame1GJVOKButtonClick( TObject *Sender )
       {
          LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
          int ctmax = ct->maxSerial + 1;
-         DisplayContestContact *lct = ct->addContact( ctmax, 0, false, catchup );
+
+         std::string mode = GJVQSOEditFrame->ModeComboBoxGJV->Text.c_str();
+         DisplayContestContact *lct = ct->addContact( ctmax, 0, false, catchup, mode );
          GJVQSOEditFrame->selectEntry( lct );
       }
       else
@@ -240,7 +242,8 @@ void __fastcall TQSOEditDlg::GJVQSOEditFrame1GJVForceButtonClick(
       {
          LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
          int ctmax = ct->maxSerial + 1;
-         DisplayContestContact *lct = ct->addContact( ctmax, 0, false, catchup );
+         std::string mode = GJVQSOEditFrame->ModeComboBoxGJV->Text.c_str();
+         DisplayContestContact *lct = ct->addContact( ctmax, 0, false, catchup, mode );
          GJVQSOEditFrame->selectEntry( lct );
       }
       else
@@ -305,7 +308,7 @@ void __fastcall TQSOEditDlg::QSOHistoryTreeBeforeItemErase(
 
 }
 //---------------------------------------------------------------------------
-void TQSOEditDlg::selectCatchup( BaseContestLog * c )
+void TQSOEditDlg::selectCatchup( BaseContestLog * c, const std::string &mode )
 {
    // Kick off Post Entry/catchup
    // We need to create a new contact, and set the "post entry" flag
@@ -321,7 +324,7 @@ void TQSOEditDlg::selectCatchup( BaseContestLog * c )
 
    int ctmax = ct->maxSerial + 1;
 
-   DisplayContestContact *lct = ct->addContact( ctmax, 0, false, catchup );
+   DisplayContestContact *lct = ct->addContact( ctmax, 0, false, catchup, mode );
    selectContact(c, lct);
 //   GJVQSOEditFrame->FirstUnfilledButton->Enabled = false;
 }

@@ -65,7 +65,7 @@ class TQSOEditDlg : public TForm
       {
          contest = c;
       }
-      void selectCatchup( BaseContestLog * contest );
+      void selectCatchup( BaseContestLog * contest, const std::string &mode );
       void setFirstContact( BaseContact *c )
       {
          firstContact = c;

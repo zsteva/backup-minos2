@@ -57,7 +57,7 @@ void TGJVQSOLogFrame::logScreenEntry( )
    {
       return ;
    }
-   DisplayContestContact *lct = ct->addContact( ctmax, 0, false, false );	// "current" doesn't get flag, don't save ContestLog yet
+   DisplayContestContact *lct = ct->addContact( ctmax, 0, false, false, screenContact.mode );	// "current" doesn't get flag, don't save ContestLog yet
 
    bool contactmodeCW = ( screenContact.reps.size() == 3 && screenContact.repr.size() == 3 );
    bool curmodeCW = ( stricmp( screenContact.mode, "A1A" ) == 0 );
@@ -80,7 +80,7 @@ void TGJVQSOLogFrame::logScreenEntry( )
          }
       }
    }
-   ct->mode.setValue( screenContact.mode );
+   ct->currentMode.setValue( screenContact.mode );
    screenContact.op1 = ct->currentOp1.getValue() ;
    screenContact.op2 = ct->currentOp2.getValue();
 
@@ -90,7 +90,8 @@ void TGJVQSOLogFrame::logScreenEntry( )
                          // But this only happens when seconds are :00, as the main log
                          // is only to a minute resolution 
 
-   lct->commonSave();				// which also saves the ContestLog
+   lct->commonSave();
+   ct->commonSave(false);
 
    killPartial();
 
@@ -156,7 +157,7 @@ void TGJVQSOLogFrame::logCurrentContact( )
          {
             // last child is "current contact", and we need to add TO IT
             LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-            ct->addContact( nct_no, orflag, true, false ); // last contact
+            ct->addContact( nct_no, orflag, true, false, screenContact.mode ); // last contact
             nct_no++;
          }
          while ( nct_no < ctno ) ;
@@ -435,14 +436,16 @@ void TGJVQSOLogFrame::updateQSOTime(bool fromTimer)
 
 void __fastcall TGJVQSOLogFrame::CatchupButtonClick(TObject */*Sender*/)
 {
+   std::string mode = ModeComboBoxGJV->Text.c_str();
    std::auto_ptr <TQSOEditDlg> qdlg( new TQSOEditDlg( this, true, false ) );
-   qdlg->selectCatchup( contest );
+   qdlg->selectCatchup( contest, mode );
 
    qdlg->ShowModal();
 
    contest->scanContest();
 
    screenContact.initialise(contest);
+   screenContact.mode = mode;
    showScreenEntry();
 
    refreshOps();

@@ -140,7 +140,7 @@ void TQSOEditDlg::refreshOps( ScreenContact &screenContact )
     ui->GJVQSOEditFrame->refreshOps(screenContact);
 }
 //---------------------------------------------------------------------------
-void TQSOEditDlg::selectCatchup( BaseContestLog * c )
+void TQSOEditDlg::selectCatchup(BaseContestLog * c , QString mode)
 {
    // Kick off Post Entry/catchup
    // We need to create a new contact, and set the "post entry" flag
@@ -156,7 +156,7 @@ void TQSOEditDlg::selectCatchup( BaseContestLog * c )
 
    int ctmax = ct->maxSerial + 1;
 
-   QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup );
+   QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup, mode );
    selectContact(c, lct);
    ui->GJVQSOEditFrame->setFirstUnfilledButtonEnabled(false);
 }

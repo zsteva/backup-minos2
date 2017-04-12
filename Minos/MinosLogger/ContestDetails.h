@@ -78,6 +78,8 @@ class TContestEntryDetails : public TForm
    TScrollBox *ScrollBox1;
    TGroupBox *GroupBox1;
    TComboBox *BonusComboBox;
+   TLabel *Label3;
+   TComboBox *ModeComboBox;
       void __fastcall OKButtonClick( TObject *Sender );
       void __fastcall CancelButtonClick( TObject *Sender );
       void __fastcall FormShow( TObject *Sender );

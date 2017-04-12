@@ -26,7 +26,7 @@ DisplayContestContact::DisplayContestContact( BaseContestLog * ct, bool time_now
    QString temp = QString("%1").arg(ms, 3);
    serials.setValue( temp );
 
-   mode.setValue( clp->mode.getValue() );
+   mode.setValue( clp->currentMode.getValue() );
 }
 DisplayContestContact::~DisplayContestContact()
 {}

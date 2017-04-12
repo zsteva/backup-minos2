@@ -149,7 +149,7 @@ class LoggerContestLog : public BaseContestLog
       bool exportMinos(QSharedPointer<QFile> expfd );
 
       virtual void makeContact( bool time_now, QSharedPointer<BaseContact>& );
-      QSharedPointer<BaseContact> addContact( int newctno, int extra_flags, bool save_new, bool catchup );
+      QSharedPointer<BaseContact> addContact(int newctno, int extra_flags, bool save_new, bool catchup , QString mode);
       QSharedPointer<BaseContact> addContactBetween( QSharedPointer<BaseContact> prior, QSharedPointer<BaseContact> next );
       void removeContact(QSharedPointer<BaseContact> );
 

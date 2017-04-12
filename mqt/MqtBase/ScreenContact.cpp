@@ -27,7 +27,7 @@ void ScreenContact::initialise( BaseContestLog *ct )
    int ms = 0;
    if ( clp )
    {
-      mode = clp->mode.getValue();
+      mode = clp->currentMode.getValue();
       ms = clp->maxSerial + 1;
    }
    QString temp = QString("%1").arg(ms, 3);

@@ -424,7 +424,7 @@ void LoggerContestLog::closeFile( void )
    adifContestFile = INVALID_HANDLE_VALUE;
    ediContestFile = INVALID_HANDLE_VALUE;
 }
-DisplayContestContact *LoggerContestLog::addContact( int newctno, int extraFlags, bool saveNew, bool catchup )
+DisplayContestContact *LoggerContestLog::addContact( int newctno, int extraFlags, bool saveNew, bool catchup, const std::string &mode )
 {
    // add the contact number as an new empty contact, with disk block and log_seq
 
@@ -443,6 +443,8 @@ DisplayContestContact *LoggerContestLog::addContact( int newctno, int extraFlags
       maxSerial = newctno;
    }
    lct->contactFlags.setValue( lct->contactFlags.getValue() | extraFlags );
+
+   lct->mode.setValue(mode);
 
    if (catchup)
    {
@@ -476,6 +478,7 @@ DisplayContestContact *LoggerContestLog::addContactBetween( BaseContact *prior, 
    makeContact( timenow, ( BaseContact * ) lct );
 
    lct->serials.setValue( "" );
+   lct->mode.setValue(prior->mode.getValue());
 
    unsigned long pls =  prior?prior->getLogSequence():0;
    unsigned long nls =  next->getLogSequence();
@@ -558,7 +561,7 @@ bool LoggerContestLog::GJVsave( GJVParams &gp )
    //   strtobuf( mainOpNow );
    strtobuf( nulc );
    //   strtobuf( secondOpNow );
-   strtobuf( mode );
+   strtobuf( currentMode );
    opyn( true );						// RADIAL rings are DEAD
    opyn( false );                // was post entry
    opyn( scoreMode.getValue() == PPQSO );
@@ -639,7 +642,7 @@ bool LoggerContestLog::GJVload( void )
    buftostr( temp );
    //   buftostr( secondOpNow );
 
-   buftostr( mode );
+   buftostr( currentMode );
    inyn();
    scoreMode.setValue( PPKM );			// don't take any notice of radial flag!
 

@@ -219,6 +219,7 @@ class IndividualContest
       std::string mults;
       std::string specialRules;
       //std::string power;
+      std::string mode;
       std::string antenna;
 
       bool operator<( const IndividualContest& rhs ) const;

@@ -108,7 +108,7 @@ void MinosTestExport::exportContest( HANDLE expfd )
    ct->otherExchange.addIfDirty( st, "QTHReq", dirty );
    ct->allowLoc4.addIfDirty( st, "AllowLoc4", dirty );
    ct->allowLoc8.addIfDirty( st, "AllowLoc8", dirty );
-
+   ct->currentMode.addIfDirty(st, "currentMode", dirty);
 
    ct->M7Mults.addIfDirty( st, "M7Mults", dirty );
    ct->UKACBonus.addIfDirty( st, "UKACBonus", dirty );

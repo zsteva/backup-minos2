@@ -124,6 +124,20 @@ void TContestEntryDetails::setDetails(  )
       BandComboBox->Text = contest->band.getValue().c_str();
    }
 
+   if (!contest->currentMode.getValue().empty())
+   {
+      int m = ModeComboBox->Items->IndexOf( contest->currentMode.getValue().c_str() );        // contest
+
+      if ( m >= 0 )
+      {
+         ModeComboBox->ItemIndex = m;
+      }
+      else
+      {
+         ModeComboBox->Style = Stdctrls::csDropDown;    // was csDropDownList
+         ModeComboBox->Text = contest->currentMode.getValue().c_str();
+      }
+   }
    if ( sectionList.Length() )
    {
       TStringList * sl = new TStringList;
@@ -293,6 +307,25 @@ void TContestEntryDetails::setDetails( const IndividualContest &ic )
 
    BandComboBox->Items->Add( ic.reg1band.c_str() );
    BandComboBox->ItemIndex = 0;
+
+   std::string mode = ic.mode;
+   if (mode.empty())
+   {
+      mode = "J3E";
+   }
+   int m = ModeComboBox->Items->IndexOf( mode.c_str() );
+
+   if ( m >= 0 )
+   {
+      ModeComboBox->ItemIndex = m;
+   }
+   else
+   {
+      ModeComboBox->Style = Stdctrls::csDropDown;    // was csDropDownList
+      ModeComboBox->Items->Add(mode.c_str());
+      ModeComboBox->Text = mode.c_str();
+   }
+   contest->currentMode.setValue(mode);
 
    sectionList = ic.sections.c_str(); // the combo will then be properly set up in setDetails()
    if ( sectionList.Length() )
@@ -525,6 +558,7 @@ TWinControl * TContestEntryDetails::getDetails( )
 
    contest->name.setValue( ContestNameEdit->Text.c_str() );
    contest->band.setValue( BandComboBox->Text.c_str() );
+   contest->currentMode.setValue( ModeComboBox->Text.c_str() );
    contest->entSect.setValue( SectionComboBox->Text.c_str() );
    contest->sectionList.setValue( sectionList.c_str() );
 
@@ -1009,6 +1043,7 @@ void TContestEntryDetails::enableControls()
 // enable/disable relevant fields based on protected
    ContestNameEdit->Enabled = !protectedChecked;
    BandComboBox->Enabled = !protectedChecked;
+   ModeComboBox->Enabled = !protectedChecked;
    CallsignEdit->Enabled = !protectedChecked;
    LocatorEdit->Enabled = !protectedChecked;
    ExchangeEdit->Enabled = !protectedChecked;

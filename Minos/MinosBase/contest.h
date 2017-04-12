@@ -127,7 +127,7 @@ class BaseContestLog
       MinosItem<bool> QTHField;
 
       MinosItem<std::string> power;
-      MinosItem<std::string> mode;
+      MinosItem<std::string> currentMode;
 
       MinosItem<std::string> band;
       MinosItem<bool> otherExchange;

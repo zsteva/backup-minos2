@@ -384,6 +384,7 @@ bool Calendar::parseFile ( const QString &fname )
                             QString sdesc = i.value().shortDescription.trimmed();
                             QString name = i.value().name.trimmed();
                             QString typeName = getTypeName ( name, calType );
+                            QString mode = i.value().mode.trimmed();
 
                             // This needs changing once the contests are sorted
                             // as e.g. 70MHz cumulatives are defined in two groups
@@ -396,6 +397,7 @@ bool Calendar::parseFile ( const QString &fname )
                             ic.description = desc;
                             ic.shortDescription = sdesc;
                             ic.bands = ( *bl ).name;
+                            ic.mode = mode;
 
                             ic.start = QDateTime ( QDate( curYear, sm, istartDate ) );
                             int h = ( *tl ).startTime.left( 2 ).toInt();
@@ -846,7 +848,21 @@ bool Calendar::parseContest ( TiXmlElement * tix )
                                                                         else
                                                                             if ( checkElementName ( e, "mode" ) )
                                                                             {
-                                                                                c.mode = e->GetText();
+                                                                                QString mode;
+                                                                                mode = e->GetText();
+                                                                                if (mode == "SSB")
+                                                                                {
+                                                                                   mode = "J3E";
+                                                                                }
+                                                                                if (mode == "CW")
+                                                                                {
+                                                                                   mode = "A1A";
+                                                                                }
+                                                                                if (mode == "FM")
+                                                                                {
+                                                                                   mode = "F3E";
+                                                                                }
+                                                                                c.mode = mode;
                                                                             }
                                                                             else
                                                                                 if ( checkElementName ( e, "entry_date" ) )
