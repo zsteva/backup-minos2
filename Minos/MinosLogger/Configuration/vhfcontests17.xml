@@ -119,8 +119,9 @@
 <!-- 17.016 18/02/17 G4CLA Fixed freq in power power clauses also removed min power for all sections expect UKAC SHF Open-->
 <!-- 17.017 19/02/17 G4CLA Reject FMAC/UKAC that are on the same day of the times are wrong !-->
 <!-- 17.018 09/03/17 G4CLA Add Section AFS to VHF champs - needs coding yet !-->
+<!-- 17.019 11/04/17 G4CLA Change collate type for single op others to call (was club!)!-->
 <calendar>
-<version>17.018 09/08/2017</version>
+<version>17.019 11/04/2017</version>
 <icalurl>https://calendar.google.com/calendar/ical/al9eovbso8av1avk2ittht2910%40group.calendar.google.com/public/basic.ics</icalurl>
 <googleurl>https://calendar.google.com/calendar/embed?src=al9eovbso8av1avk2ittht2910%40group.calendar.google.com&amp;ctz=Europe/London</googleurl>
 <openlogs>6.008</openlogs>
@@ -856,7 +857,7 @@ Only one antenna may be used Stacked or bayed antenna arrays may not be used. Ba
 <resdescription>Single Operator Open</resdescription>
 <long_description> Single Operators not located at a fixed station address as defined in the SF section.
 </long_description>
-<collate>clubName</collate>
+<collate>callsign</collate>
 <certfields>call</certfields>
 </section>
 <section>
