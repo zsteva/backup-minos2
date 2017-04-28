@@ -230,6 +230,7 @@ private slots:
     void on_TopSplitter_splitterMoved(int pos, int index);
     void on_CribSplitter_splitterMoved(int pos, int index);
     void on_MultSplitter_splitterMoved(int pos, int index);
+    void on_LocatorSplitter_splitterMoved(int pos, int index);
     void on_sectionResized(int, int, int);
 
     void on_OtherMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &);

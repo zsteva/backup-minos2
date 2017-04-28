@@ -53,7 +53,8 @@ SOURCES += \
     MinosLines.cpp \
     Calendar.cpp \
     ConfigDM.cpp \
-    tconfigframe.cpp
+    tconfigframe.cpp \
+    MinosTableView.cpp
 
 HEADERS += \
     BandList.h \
@@ -88,7 +89,8 @@ HEADERS += \
     Calendar.h \
     waitcursor.h \
     ConfigDM.h \
-    tconfigframe.h
+    tconfigframe.h \
+    MinosTableView.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

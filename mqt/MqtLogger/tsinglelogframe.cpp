@@ -130,6 +130,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect( ui->ArchiveMatchTree->header(), SIGNAL(sectionResized(int, int , int)),
              this, SLOT( on_sectionResized(int, int , int)));
 
+    connect( ui->locFrame->getLocatorSplitter(), SIGNAL(splitterMoved(int,int)), this, SLOT(on_LocatorSplitter_splitterMoved(int,int)));
     ui->dxccFrame->setContest(contest);
     ui->districtFrame->setContest(contest);
     ui->StatsFrame->setContest(contest);
@@ -693,6 +694,11 @@ void TSingleLogFrame::getSplitters()
     state = settings.value("MultSplitter/state").toByteArray();
     ui->MultSplitter->restoreState(state);
     ui->MultSplitter->setHandleWidth(splitterHandleWidth);
+
+    QSplitter *locatorSplitter = ui->locFrame->getLocatorSplitter();
+    state = settings.value("LocatorSplitter/state").toByteArray();
+    locatorSplitter->restoreState(state);
+    locatorSplitter->setHandleWidth(splitterHandleWidth);
 }
 void TSingleLogFrame::onSplittersChanged()
 {
@@ -743,6 +749,14 @@ void TSingleLogFrame::on_MultSplitter_splitterMoved(int /*pos*/, int /*index*/)
     settings.setValue("MultSplitter/state", state);
     MinosLoggerEvents::SendSplittersChanged();
 }
+void TSingleLogFrame::on_LocatorSplitter_splitterMoved(int /*pos*/, int /*index*/)
+{
+    QByteArray state = ui->locFrame->getLocatorSplitter()->saveState();
+    QSettings settings;
+    settings.setValue("LocatorSplitter/state", state);
+    MinosLoggerEvents::SendSplittersChanged();
+}
+
 void TSingleLogFrame::on_sectionResized(int, int, int)
 {
     QSettings settings;
