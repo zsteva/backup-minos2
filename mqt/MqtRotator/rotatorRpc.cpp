@@ -1,12 +1,31 @@
+/////////////////////////////////////////////////////////////////////////////
+// $Id$
+//
+// PROJECT NAME 		Minos Amateur Radio Control and Logging System
+//                      Rotator Control
+// Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2016
+//
+// Interprocess Control Logic
+// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
+//
+//
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+
 #include "base_pch.h"
 #include "rotatormainwindow.h"
-#include "rotatorlogic.h"
+#include "rotatorRpc.h"
 
-RotatorLogic *rotatorLogic;
 
-RotatorLogic::RotatorLogic(RotatorMainWindow *parent) : QObject(parent), parent(parent)
+
+RotatorRpc *rotatorRpc;
+
+RotatorRpc::RotatorRpc(RotatorMainWindow *parent) : QObject(parent), parent(parent)
 {
-    rotatorLogic = this;
+    rotatorRpc = this;
 
     MinosRPC *rpc = MinosRPC::getMinosRPC();
 
@@ -21,7 +40,7 @@ RotatorLogic::RotatorLogic(RotatorMainWindow *parent) : QObject(parent), parent(
 }
 //---------------------------------------------------------------------------
 
-void RotatorLogic::publishState(const QString &state)
+void RotatorRpc::publishState(const QString &state)
 {
     static QString old;
 
@@ -33,7 +52,26 @@ void RotatorLogic::publishState(const QString &state)
     }
 }
 
-void RotatorLogic::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
+
+void RotatorRpc::publishBearing(const QString &bearing)
+{
+    static QString old;
+
+    if ( bearing != old )
+    {
+       old = bearing;
+       MinosRPC *rpc = MinosRPC::getMinosRPC();
+       rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorBearing, bearing, psPublished );
+    }
+}
+
+
+
+
+
+
+
+void RotatorRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
    trace( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
    AnalysePubSubNotify an( err, mro );
@@ -50,12 +88,12 @@ void RotatorLogic::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QS
    }
 }
 //---------------------------------------------------------------------------
-void RotatorLogic::on_response(bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*/, const QString &/*from*/ )
+void RotatorRpc::on_response(bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*/, const QString &/*from*/ )
 {
    // call back says OK/not OK, and we ignore it
 }
 //---------------------------------------------------------------------------
-void RotatorLogic::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
+void RotatorRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
     trace( "rotator callback from " + from + ( err ? ":Error" : ":Normal" ) );
 
@@ -85,3 +123,4 @@ void RotatorLogic::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const Q
         }
     }
 }
+

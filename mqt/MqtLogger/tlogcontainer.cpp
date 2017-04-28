@@ -1455,6 +1455,12 @@ void TLogContainer::setRotatorState( QString f )
     BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
     MinosLoggerEvents::SendRotatorState(f, ct);
 }
+void TLogContainer::setRotatorBearing( QString f )
+{
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    MinosLoggerEvents::SendRotatorBearing(f, ct);
+}
+
 //---------------------------------------------------------------------------
 TSingleLogFrame *TLogContainer::findContest(const QString &pubname )
 {

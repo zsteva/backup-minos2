@@ -224,6 +224,12 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
          LogContainer->setRotatorLoaded();
          LogContainer->setRotatorState(an.getValue());
       }
+      if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "Bearing")
+      {
+
+         LogContainer->setRotatorBearing(an.getValue());
+      }
+
    }
 
 }

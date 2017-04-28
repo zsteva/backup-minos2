@@ -46,6 +46,7 @@ public:
     void setFreq( QString );
 
     void setRotatorState( QString );
+    void setRotatorBearing( QString );
 
     void setBandMapLoaded();
     bool isBandMapLoaded();

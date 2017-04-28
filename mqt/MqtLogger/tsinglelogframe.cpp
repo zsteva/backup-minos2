@@ -97,7 +97,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(SetMode(QString, BaseContestLog*)), this, SLOT(on_SetFreq(QString, BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(SetFreq(QString, BaseContestLog*)), this, SLOT(on_SetMode(QString, BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(RotatorState(QString,BaseContestLog*)), this, SLOT(on_RotatorState(QString, BaseContestLog*)));
-
+    connect(&MinosLoggerEvents::mle, SIGNAL(RotatorBearing(QString,BaseContestLog*)), this, SLOT(on_RotatorBearing(QString, BaseContestLog*)));
 
     // Connect up the stats etc display
     QSignalMapper* sm = new QSignalMapper(this);
@@ -896,6 +896,11 @@ void TSingleLogFrame::on_SetFreq(QString,BaseContestLog*)
 void TSingleLogFrame::on_RotatorState(QString s, BaseContestLog * /*ct*/)
 {
     ui->GJVQSOLogFrame->setRotatorState(s);
+}
+
+void TSingleLogFrame::on_RotatorBearing(QString s, BaseContestLog * /*ct*/)
+{
+    ui->GJVQSOLogFrame->setRotatorBearing(s);
 }
 
 //=============================================================================

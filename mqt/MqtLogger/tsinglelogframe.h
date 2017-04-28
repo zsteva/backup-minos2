@@ -140,6 +140,7 @@ public:
     void setMode( QString m );
     void setFreq( QString f );
     void setRotatorState( QString f );
+    void setRotatorBearing( QString f );
 
     void updateTrees();
     void updateQSODisplay();
@@ -242,6 +243,7 @@ private slots:
     void on_SetMode(QString,BaseContestLog*);
     void on_SetFreq(QString,BaseContestLog*);
     void on_RotatorState(QString,BaseContestLog*);
+    void on_RotatorBearing(QString,BaseContestLog*);
 };
 
 #endif // TSINGLELOGFRAME_H

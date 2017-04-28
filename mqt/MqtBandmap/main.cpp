@@ -1,10 +1,10 @@
-#include "rotatormainwindow.h"
+#include "bandmapmainwindow.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    RotatorMainWindow w;
+    BandMapMainWindow w;
     w.show();
 
     return a.exec();

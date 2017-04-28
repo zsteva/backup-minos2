@@ -96,6 +96,11 @@ void MinosLoggerEvents::SendRotatorState(QString s, BaseContestLog *c)
     emit mle.RotatorState(s, c);
 }
 //---------------------------------------------------------------------------
+void MinosLoggerEvents::SendRotatorBearing(QString s, BaseContestLog *c)
+{
+    emit mle.RotatorBearing(s, c);
+}
+//---------------------------------------------------------------------------
 void MinosLoggerEvents::SendEditMatchContact(BaseContestLog *c)
 {
     emit mle.EditMatchContact(c);
