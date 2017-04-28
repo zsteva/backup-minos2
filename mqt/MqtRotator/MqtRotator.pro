@@ -18,9 +18,9 @@ CONFIG += c++11
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
 
-INCLUDEPATH += D:/hamlib-3.0.1/include
+win32: INCLUDEPATH += C:/Projects/hamlib-w32-3.1/include
 
-win32: LIBS += -LD:/hamlib-w32-3.0.1/lib/gcc/ -llibhamlib
+win32: LIBS += -LC:/Projects/hamlib-w32-3.1/lib/gcc/ -llibhamlib
 
 win32-g++:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder

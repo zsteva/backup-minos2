@@ -8,10 +8,11 @@ QT       += core gui serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++14
-INCLUDEPATH += D:/hamlib-3.0.1/include
+CONFIG += c++11
 
-win32: LIBS += -LD:/hamlib-w32-3.0.1/lib/gcc/ -llibhamlib
+win32: INCLUDEPATH += C:/Projects/hamlib-w32-3.1/include
+
+win32: LIBS += -LC:/Projects/hamlib-w32-3.1/lib/gcc/ -llibhamlib
 
 TARGET = MqtBandmap
 TEMPLATE = app
