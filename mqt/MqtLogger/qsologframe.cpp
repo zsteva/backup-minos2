@@ -1788,6 +1788,7 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
     ui->RotateLeft->setVisible(LogContainer->isRotatorLoaded());
     ui->RotateRight->setVisible(LogContainer->isRotatorLoaded());
     ui->StopRotate->setVisible(LogContainer->isRotatorLoaded());
+    ui->RotBrg->setVisible(LogContainer->isRotatorLoaded());
     ui->rotatorState->setVisible(LogContainer->isRotatorLoaded());
     ui->rotatorState->setVisible(LogContainer->isRotatorLoaded());
 }
