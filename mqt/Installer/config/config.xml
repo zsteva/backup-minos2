@@ -6,5 +6,5 @@
       <Publisher>Minos</Publisher>
       <ProductUrl>http://minos.sourceforge.net/</ProductUrl>
       <StartMenuDir>Minos 2</StartMenuDir>
-      <TargetDir>@ApplicationsDir@/Minos2</TargetDir>
+      <TargetDir>@HomeDir@/Minos2</TargetDir>
   </Installer>

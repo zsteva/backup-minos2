@@ -53,6 +53,7 @@ Component.prototype.createOperations = function()
                 var userProfile = installer.environmentVariable("USERPROFILE");
                 installer.setValue("UserProfile", userProfile);
                 component.addOperation("CreateShortcut", "@TargetDir@\\MqtLogger.exe", "@UserProfile@\\Desktop\\MqtLogger.lnk");
+                component.addOperation("CreateShortcut", "@TargetDir@\\maintenancetool.exe", "@UserProfile@\\Desktop\\MqtLogger Uninstall.lnk");
             } catch (e) {
                 // Do nothing if key doesn't exist
             }
