@@ -81,7 +81,7 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
     ui->ConfigFrame->initialise(this, &::closeCallback);
     ui->PageControl1->setCurrentWidget(ui->AboutTabSheet);
 
-    ui->AboutMemo->setText("<h1>Welcome to Minos 2</h1><br><a href=\"http://minos.sourceforge.net/\">http://minos.sourceforge.net</a>");
+    ui->AboutMemo->setText(QString("<h1>Welcome to Minos 2 Version ") + VERSION + " Beta" + "</h1><br><a href=\"http://minos.sourceforge.net/\">http://minos.sourceforge.net</a>");
     ui->AboutMemo->setTextFormat(Qt::RichText);
     ui->AboutMemo->setTextInteractionFlags(Qt::TextBrowserInteraction);
 

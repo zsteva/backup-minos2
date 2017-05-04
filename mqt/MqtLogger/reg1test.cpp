@@ -205,7 +205,7 @@ bool reg1test::exportTest( QSharedPointer<QFile> expfd )
    // [END] isn't a part of the Reg1Test spec, but everyone else seems to have it!
    // Adjudication software copes either way round.
    
-   QString pver = QString("[END; MinosQt by G0GJV, version ") + VERSION + "]";
+   QString pver = QString("[END; Minos 2 by G0GJV, version ") + VERSION + "]";
    wr.lwrite( pver );
 
    return true;
