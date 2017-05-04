@@ -33,22 +33,31 @@ function Component()
 
 Component.prototype.createOperations = function()
 {
+/*
     // call default implementation to actually instal!
     component.createOperations();
 
-    // and now isntall the start menu icons
-    // BUT we don't know how to unnstall them again :(
+    // and now install a desktop icon
+    // BUT we don't know how to uninstall them again :(
     
     if (systemInfo.productType === "windows") {
-        component.addOperation("CreateShortcut", "@TargetDir@/MqtLogger.exe", "@StartMenuDir@/MqtLogger.lnk",
+        component.addOperation("CreateShortcut", "@TargetDir@/MqtLogger.exe", "@DesktopDir@/MqtLogger.lnk",
             "workingDirectory=@TargetDir@"
-//            , "iconPath=%SystemRoot%/system32/SHELL32.dll",
-//            "iconId=2"
-      );
-        component.addOperation("CreateShortcut", "@TargetDir@/maintenancetool.exe", "@StartMenuDir@/MaintenanceTool.lnk",
-            "workingDirectory=@TargetDir@"
-            //, "iconPath=%SystemRoot%/system32/SHELL32.dll",
-            //"iconId=2"
-            );
+    }
+*/
+    try {
+        // call the base create operations function
+        component.createOperations();
+        if (installer.value("os") == "win") { 
+            try {
+                var userProfile = installer.environmentVariable("USERPROFILE");
+                installer.setValue("UserProfile", userProfile);
+                component.addOperation("CreateShortcut", "@TargetDir@\\MqtLogger.exe", "@UserProfile@\\Desktop\\MqtLogger.lnk");
+            } catch (e) {
+                // Do nothing if key doesn't exist
+            }
+        }
+    } catch (e) {
+        print(e);
     }
 }
