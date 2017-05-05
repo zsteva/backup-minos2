@@ -83,7 +83,8 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     selectAntenna = new QComboBox;
     rotlog = new RotatorLog;
 
-    ui->statusBar->addWidget(status);
+    ui->statusbar->addWidget(status);
+
 //    ui->verticalLayout_3->addWidget(compassDial);
 
     rotator->set_serialConnected(false);
@@ -320,13 +321,13 @@ void RotatorMainWindow::initActionsConnections()
     connect(this, SIGNAL(sendBackBearing(QString)), ui->backBearingDisplay, SLOT(setText(const QString &)));
     //connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
     //connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
-    connect(ui->actionSetup_Comport, SIGNAL(triggered()), selectRotator, SLOT(show()));
+    connect(ui->actionSetup_Antennas, SIGNAL(triggered()), selectRotator, SLOT(show()));
     connect(ui->actionEdit_Presets, SIGNAL(triggered()), editPresets, SLOT(loadPresetEditFieldsShow()));
     connect(editPresets, SIGNAL(showEditPresetDialog()), editPresets, SLOT(show()));
     connect(editPresets, SIGNAL(updatePresetButtonLabels()), this, SLOT(updatePresetLabels()));
     connect(rotator, SIGNAL(bearing_updated(QString)), ui->bearingDisplay, SLOT(setText(const QString &)));
     connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(displayBackBearing(const QString)));
-    connect(rotator, SIGNAL(bearing_updated(QString)), ui->compassDial, SLOT(compassDialUpdate(const QString &)));
+//    connect(rotator, SIGNAL(bearing_updated(QString)), ui->compassDial, SLOT(compassDialUpdate(const QString &)));
     connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(logBearing(const QString &)));
     connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(sendBearingLogger(const QString &)));
     connect(msg, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));
