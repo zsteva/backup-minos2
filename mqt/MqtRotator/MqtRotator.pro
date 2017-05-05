@@ -54,9 +54,9 @@ HEADERS  += \
 FORMS    += \
     skyscandialog.ui \
     setupdialog.ui \
-    rotatormainwindow.ui \
     logdialog.ui \
-    editpresetsdialog.ui
+    editpresetsdialog.ui \
+    rotatormainwindow.ui
 
 RC_FILE = MqtRotator.rc
 
