@@ -6,12 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>929</width>
-    <height>202</height>
+    <width>930</width>
+    <height>210</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>930</width>
+    <height>210</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>Antenna Setup</string>
+   <string>Setup Antenna </string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_9">
    <item>
