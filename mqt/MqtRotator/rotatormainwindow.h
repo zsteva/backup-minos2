@@ -76,7 +76,7 @@ private:
 
     QComboBox *selectAntenna;
     QPushButton* presetButtons[NUM_PRESETS];
-    MinosCompass* compassDial;
+//    MinosCompass* compassDial;
     RotControl  *rotator;
     QLabel *status;
     SetupDialog *selectRotator;

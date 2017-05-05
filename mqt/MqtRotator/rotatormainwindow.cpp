@@ -79,12 +79,12 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     editPresets = new EditPresetsDialog;
     pollTimer = new QTimer(this);
     status = new QLabel;
-    compassDial = new MinosCompass;
+//    compassDial = new MinosCompass;
     selectAntenna = new QComboBox;
     rotlog = new RotatorLog;
 
     ui->statusBar->addWidget(status);
-    ui->verticalLayout_3->addWidget(compassDial);
+//    ui->verticalLayout_3->addWidget(compassDial);
 
     rotator->set_serialConnected(false);
 
@@ -326,7 +326,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(editPresets, SIGNAL(updatePresetButtonLabels()), this, SLOT(updatePresetLabels()));
     connect(rotator, SIGNAL(bearing_updated(QString)), ui->bearingDisplay, SLOT(setText(const QString &)));
     connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(displayBackBearing(const QString)));
-    connect(rotator, SIGNAL(bearing_updated(QString)), compassDial, SLOT(compassDialUpdate(const QString &)));
+    connect(rotator, SIGNAL(bearing_updated(QString)), ui->compassDial, SLOT(compassDialUpdate(const QString &)));
     connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(logBearing(const QString &)));
     connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(sendBearingLogger(const QString &)));
     connect(msg, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));

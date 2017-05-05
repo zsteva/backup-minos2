@@ -14,10 +14,10 @@
 #ifndef MINOSCOMPASS_H
 #define MINOSCOMPASS_H
 
-#include <QWidget>
+//#include <QWidget>
+#include <QDial>
 
-
-class MinosCompass : public QWidget
+class MinosCompass : public QDial
 {
     Q_OBJECT
 
@@ -27,7 +27,15 @@ public:
 public slots:
 
     void compassDialUpdate(const QString);
+/*
+// for test
+    void upDateDial();
 
+signals:
+    void bearing_updated(const QString);
+
+// for test
+*/
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 

@@ -20,6 +20,7 @@
 #include<QLineEdit>
 
 #define NUM_PRESETS 10
+#define EMPTY_PRESET_NAME "        "
 
 namespace Ui {
 class EditPresetsDialog;

@@ -236,7 +236,7 @@ void EditPresetsDialog::clearPresets()
 
     for (int i = 0; i < NUM_PRESETS; i++)
     {
-        presetName[i] = "";
+        presetName[i] = EMPTY_PRESET_NAME;
         presetNameUpdated[i] = false;
         presetBearing[i] = "";
         presetBearingUpdated[i] = false;
