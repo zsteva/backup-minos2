@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>543</width>
-    <height>194</height>
+    <height>208</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -237,6 +237,9 @@
            <property name="focusPolicy">
             <enum>Qt::ClickFocus</enum>
            </property>
+           <property name="editable">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
@@ -253,6 +256,9 @@
           <widget class="QComboBox" name="SecondOpComboBox">
            <property name="focusPolicy">
             <enum>Qt::ClickFocus</enum>
+           </property>
+           <property name="editable">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

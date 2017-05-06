@@ -227,6 +227,9 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="editable">
+                <bool>true</bool>
+               </property>
                <property name="sizeAdjustPolicy">
                 <enum>QComboBox::AdjustToContents</enum>
                </property>
@@ -250,6 +253,9 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="editable">
+                <bool>true</bool>
                </property>
                <property name="sizeAdjustPolicy">
                 <enum>QComboBox::AdjustToContents</enum>
@@ -444,6 +450,9 @@
              </item>
              <item>
               <widget class="QComboBox" name="MainOpComboBox">
+               <property name="editable">
+                <bool>true</bool>
+               </property>
                <property name="sizeAdjustPolicy">
                 <enum>QComboBox::AdjustToContents</enum>
                </property>
@@ -462,6 +471,9 @@
              </item>
              <item>
               <widget class="QComboBox" name="SecondOpComboBox">
+               <property name="editable">
+                <bool>true</bool>
+               </property>
                <property name="sizeAdjustPolicy">
                 <enum>QComboBox::AdjustToContents</enum>
                </property>
@@ -481,7 +493,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="ModeComboBox"/>
+            <widget class="QComboBox" name="ModeComboBox">
+             <property name="editable">
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
