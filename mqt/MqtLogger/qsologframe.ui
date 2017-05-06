@@ -607,7 +607,7 @@
        <item>
         <widget class="QLabel" name="SerRXLabel">
          <property name="text">
-          <string>Serial Rx</string>
+          <string>Serial Rx (F4)</string>
          </property>
         </widget>
        </item>
@@ -661,7 +661,7 @@
        <item>
         <widget class="QLabel" name="QTHLabel">
          <property name="text">
-          <string>Exchange</string>
+          <string>Exchange (F6)</string>
          </property>
         </widget>
        </item>
