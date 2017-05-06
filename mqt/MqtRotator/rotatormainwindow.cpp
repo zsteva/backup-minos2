@@ -327,7 +327,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(editPresets, SIGNAL(updatePresetButtonLabels()), this, SLOT(updatePresetLabels()));
     connect(rotator, SIGNAL(bearing_updated(QString)), ui->bearingDisplay, SLOT(setText(const QString &)));
     connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(displayBackBearing(const QString)));
-//    connect(rotator, SIGNAL(bearing_updated(QString)), ui->compassDial, SLOT(compassDialUpdate(const QString &)));
+    connect(rotator, SIGNAL(bearing_updated(QString)), ui->compassDial, SLOT(compassDialUpdate(const QString &)));
     connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(logBearing(const QString &)));
     connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(sendBearingLogger(const QString &)));
     connect(msg, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));
@@ -340,15 +340,52 @@ void RotatorMainWindow::initActionsConnections()
 
 
 
-void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
+bool RotatorMainWindow::keyPressEvent(QKeyEvent *event)
 {
-    switch (event->key()) {
-    case Qt::Key_Escape:
+
+    int Key = event->key();
+
+    Qt::KeyboardModifiers mods = event->modifiers();
+    bool shift = mods & Qt::ShiftModifier;
+    bool ctrl = mods & Qt::ControlModifier;
+    bool alt = mods & Qt::AltModifier;
+
+    if (Key == Qt::Key_Escape)
+    {
+
         emit escapePressed();
-    break;
-    default:
-        break;
+        return false;
+
     }
+
+    else if (!(shift || ctrl) && alt)
+    {
+        switch (Key) {
+        case ROTATE_CW_KEY:
+            emit rotate_cwKeyPressed();
+        break;
+        case ROTATE_CCW_KEY:
+            emit rotate_ccwKeyPressed();
+        break;
+        case ROTATE_STOP_KEY:
+            emit rotateStopKeyPressed();
+        break;
+        case ROTATE_TURN_KEY:
+            emit rotateTurnKeyPressed();
+        break;
+        default:
+            return false;
+        }
+        return true;
+    }
+    else if (Key >= Qt::Key_F1 && Key <= Qt::Key_F12 )
+    {
+        emit rotateFunctionKeyPressed(Key);
+        return true;
+    }
+
+    return false;
+
 }
 
 

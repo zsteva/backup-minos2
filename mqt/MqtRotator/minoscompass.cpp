@@ -168,9 +168,6 @@ void MinosCompass::paintEvent(QPaintEvent *)
         painter.rotate(90);
     }
 
-    painter.setPen( Qt::red );
-    painter.drawEllipse( QRect( -10, 30, 15, 15 ) );
-
 
 }
 

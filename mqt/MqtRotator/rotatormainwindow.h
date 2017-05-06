@@ -28,7 +28,16 @@
 
 
 #define NUM_PRESETS 10
-#define NUM_ROTATOR_PROTOCOLS 2
+//#define NUM_ROTATOR_PROTOCOLS 2
+
+// Rotator Keys
+#define ROTATE_CW_KEY Key_R
+#define ROTATE_CCW_KEY Key_L
+#define ROTATE_STOP_KEY Key_S
+#define ROTATE_TURN_KEY Key_T
+
+
+
 
 class QLabel;
 class QComboBox;
@@ -62,7 +71,14 @@ public:
     void initActionsConnections();
 
 signals:
+
     void escapePressed();
+    void rotate_cwKeyPressed();
+    void rotate_ccwKeyPressed();
+    void rotateStopKeyPressed();
+    void rotateTurnKeyPressed();
+    void rotateFunctionKeyPressed(int);
+
     void sendBackBearing(QString);
     void presetRotateTo();
 
