@@ -61,7 +61,9 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     ui->CommentsEdit->installEventFilter(this);
 
     MainOpFW = new FocusWatcher(ui->MainOpComboBox);
+    ui->MainOpComboBox->setValidator(new UpperCaseValidator(false));
     SecondOpFW = new FocusWatcher(ui->SecondOpComboBox);
+    ui->SecondOpComboBox->setValidator(new UpperCaseValidator(false));
 
     connect(CallsignFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
     connect(RSTTXFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
