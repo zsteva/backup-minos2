@@ -139,9 +139,9 @@ bool ContactList::cslLoad( void )
        for ( int i = 0; i < readData.size(); ++i )
        {
            const QStringList &parts = readData.at(i);
-           if ( i == 0 && parts[0].size() == 0 && parts[1].size() == 0 )
+           if ( i == 0 && parts.size() > 2 && parts[0].size() == 0 && parts[1].size() == 0 )
            {
-              name = parts[ 2 ];              // first line of file gives the list name
+               name = parts[ 2 ];              // first line of file gives the list name
            }
            else
            {
@@ -149,13 +149,19 @@ bool ContactList::cslLoad( void )
 
               // a1, a2, a3 will all be set - but may point to null terminator!
 
-              rct->cs.fullCall.setValue( parts[0].toUpper() );
+              if (parts.size() > 0)
+                  rct->cs.fullCall.setValue( parts[0].toUpper() );
 
-              rct->loc.loc.setValue( strupr( parts[ 1 ] ) );
-              rct->loc.valRes = LOC_NOT_VALIDATED;
+              if (parts.size() > 1)
+              {
+                  rct->loc.loc.setValue( strupr( parts[ 1 ] ) );
+                  rct->loc.valRes = LOC_NOT_VALIDATED;
+              }
 
-              rct->extraText = parts[ 2 ];
-              rct->comments = parts[ 3 ];
+              if (parts.size() > 2)
+                  rct->extraText = parts[ 2 ];
+              if (parts.size() > 3)
+                  rct->comments = parts[ 3 ];
 
               ctList.push_back( rct );
            }
