@@ -318,6 +318,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(ui->rot_right_button, SIGNAL(toggled(bool)), this, SLOT(rotateCW(bool)));
     connect(ui->rot_left_button, SIGNAL(toggled(bool)), this, SLOT(rotateCCW(bool)));
     connect(this, SIGNAL(escapePressed()), rotator, SLOT(stop_rotation()));
+    connect(this, SIGNAL(sendBearing(QString)), ui->bearingDisplay, SLOT(setText(const QString &)));
     connect(this, SIGNAL(sendBackBearing(QString)), ui->backBearingDisplay, SLOT(setText(const QString &)));
     //connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
     //connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
@@ -325,11 +326,16 @@ void RotatorMainWindow::initActionsConnections()
     connect(ui->actionEdit_Presets, SIGNAL(triggered()), editPresets, SLOT(loadPresetEditFieldsShow()));
     connect(editPresets, SIGNAL(showEditPresetDialog()), editPresets, SLOT(show()));
     connect(editPresets, SIGNAL(updatePresetButtonLabels()), this, SLOT(updatePresetLabels()));
-    connect(rotator, SIGNAL(bearing_updated(QString)), ui->bearingDisplay, SLOT(setText(const QString &)));
-    connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(displayBackBearing(const QString)));
-    connect(rotator, SIGNAL(bearing_updated(QString)), ui->compassDial, SLOT(compassDialUpdate(const QString &)));
-    connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(logBearing(const QString &)));
-    connect(rotator, SIGNAL(bearing_updated(QString)), this, SLOT(sendBearingLogger(const QString &)));
+//    connect(rotator, SIGNAL(bearing_updated(int)), ui->bearingDisplay, SLOT(setText(const QString &)));
+    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(displayBearing(int)));
+//    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(displayBackBearing(const QString)));
+    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(displayBackBearing(int)));
+//    connect(rotator, SIGNAL(bearing_updated(int)), ui->compassDial, SLOT(compassDialUpdate(const QString &)));
+    connect(rotator, SIGNAL(bearing_updated(int)), ui->compassDial, SLOT(compassDialUpdate(int)));
+//    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(logBearing(const QString.s &)));
+//    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(logBearing(int)));
+//    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(sendBearingLogger(const QString &)));
+//    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(sendBearingLogger(int)));
     connect(msg, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));
     connect(pollTimer, SIGNAL(timeout()), this, SLOT(request_bearing()));
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
@@ -340,7 +346,7 @@ void RotatorMainWindow::initActionsConnections()
 
 
 
-bool RotatorMainWindow::keyPressEvent(QKeyEvent *event)
+void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
 {
 
     int Key = event->key();
@@ -354,58 +360,88 @@ bool RotatorMainWindow::keyPressEvent(QKeyEvent *event)
     {
 
         emit escapePressed();
-        return false;
+
 
     }
 
+    if (Key >= Qt::Key_F1 && Key <= Qt::Key_F10 )
+    {
+        qDebug() << "rotate function key pressed!";
+        qDebug() << Key;
+        emit rotateFunctionKeyPressed(Key);
+    }
     else if (!(shift || ctrl) && alt)
     {
         switch (Key) {
         case ROTATE_CW_KEY:
+            qDebug() << "rotate cw key pressed!";
             emit rotate_cwKeyPressed();
         break;
         case ROTATE_CCW_KEY:
+            qDebug() << "rotate ccw key pressed!";
             emit rotate_ccwKeyPressed();
         break;
         case ROTATE_STOP_KEY:
+            qDebug() << "rotate stop key pressed!";
             emit rotateStopKeyPressed();
         break;
         case ROTATE_TURN_KEY:
+            qDebug() << "rotate turn key pressed!";
             emit rotateTurnKeyPressed();
         break;
-        default:
-            return false;
         }
-        return true;
-    }
-    else if (Key >= Qt::Key_F1 && Key <= Qt::Key_F12 )
+
+
+     }
+}
+
+
+
+void RotatorMainWindow::displayBearing(int bearing)
+{
+
+    // send Bearing to display
+    QString bearingmsg = QString::number(bearing, 10);
+    if (bearing < 10)
     {
-        emit rotateFunctionKeyPressed(Key);
-        return true;
+        bearingmsg = "00" + bearingmsg;
+    }
+    else if (bearing < 100)
+    {
+        bearingmsg = "0" + bearingmsg;
     }
 
-    return false;
+    emit sendBearing(bearingmsg);
+
 
 }
 
 
 
 
-void RotatorMainWindow::displayBackBearing(const QString bearing)
+void RotatorMainWindow::displayBackBearing(int bearing)
 {
-    bool ok;
-    int backBearing = bearing.toInt(&ok, 10);
-    if (ok)
+
+    int backBearing = bearing;
+
+    backBearing += 180;
+    if (backBearing >= 360)
     {
-        backBearing += 180;
-        if (backBearing >= 360)
-        {
-            backBearing -= 360;
-        }
-        // send backBearing to display
-        backBearingmsg = QString::number(backBearing, 10);
-        emit sendBackBearing(backBearingmsg);
+        backBearing -= 360;
     }
+    // send backBearing to display
+    QString backBearingmsg = QString::number(backBearing, 10);
+    if (backBearing < 10)
+    {
+        backBearingmsg = "00" + backBearingmsg;
+    }
+    else if (backBearing < 100)
+    {
+        backBearingmsg = "0" + backBearingmsg;
+    }
+    emit sendBackBearing(backBearingmsg);
+
+
 }
 
 

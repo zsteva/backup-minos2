@@ -130,7 +130,7 @@ public:
     int getMaxElevation();
 
 signals:
-   void bearing_updated(QString);
+   void bearing_updated(int);
    void request_bearingError(int);
 
 

@@ -26,7 +26,7 @@ public:
 
 public slots:
 
-    void compassDialUpdate(const QString);
+    void compassDialUpdate(int);
 /*
 // for test
     void upDateDial();

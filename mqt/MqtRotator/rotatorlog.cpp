@@ -25,28 +25,28 @@ RotatorLog::RotatorLog()
 
 
 
-int RotatorLog::writeLog(const QString bearing)
+int RotatorLog::writeLog(int bearing)
 {
-
-    if (oldBearing != bearing && !firstBearing)
+    QString sbearing = sbearing.setNum(bearing);
+    if (oldBearing != sbearing && !firstBearing)
     {
-        oldBearing = bearing;
-        writeBearing(bearing);
+        oldBearing = sbearing;
+        writeBearing(sbearing);
         firstBearing = true;
         return 0;
     }
-    if (oldBearing != bearing && firstBearing)
+    if (oldBearing != sbearing && firstBearing)
     {
-        oldBearing = bearing;
+        oldBearing = sbearing;
         moving = true;
         return 0;
     }
     if (moving)
     {
-        if (oldBearing == bearing && firstBearing)
+        if (oldBearing == sbearing && firstBearing)
         {
             moving = false;
-            writeBearing(bearing);
+            writeBearing(sbearing);
         }
     }
     return 0;

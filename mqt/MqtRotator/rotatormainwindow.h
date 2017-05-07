@@ -31,10 +31,12 @@
 //#define NUM_ROTATOR_PROTOCOLS 2
 
 // Rotator Keys
-#define ROTATE_CW_KEY Key_R
-#define ROTATE_CCW_KEY Key_L
-#define ROTATE_STOP_KEY Key_S
-#define ROTATE_TURN_KEY Key_T
+//#define ROTATE_CW_KEY Qt::Key_R
+//#define ROTATE_CCW_KEY Qt::Key_L
+#define ROTATE_CW_KEY Qt::Key_Right
+#define ROTATE_CCW_KEY Qt::Key_Left
+#define ROTATE_STOP_KEY Qt::Key_S
+#define ROTATE_TURN_KEY Qt::Key_T
 
 
 
@@ -43,7 +45,6 @@ class QLabel;
 class QComboBox;
 class SetupDialog;
 class MinosCompass;
-//class Yaesu;
 class RotControl;
 class EditPresetsDialog;
 class RotatorRpc;
@@ -79,6 +80,7 @@ signals:
     void rotateTurnKeyPressed();
     void rotateFunctionKeyPressed(int);
 
+    void sendBearing(QString);
     void sendBackBearing(QString);
     void presetRotateTo();
 
@@ -138,7 +140,8 @@ private:
 
 public slots:
     void rotateToController();
-    void displayBackBearing(const QString);
+    void displayBearing(int);
+    void displayBackBearing(int);
     void updatePresetLabels();
     void clickedPreset(int buttonNumber);
 

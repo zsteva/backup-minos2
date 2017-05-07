@@ -380,6 +380,9 @@
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
+    <property name="contextMenuPolicy">
+     <enum>Qt::DefaultContextMenu</enum>
+    </property>
     <property name="title">
      <string>&amp;File</string>
     </property>
@@ -389,6 +392,9 @@
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menu_Configure">
+    <property name="contextMenuPolicy">
+     <enum>Qt::DefaultContextMenu</enum>
+    </property>
     <property name="title">
      <string>&amp;Configure</string>
     </property>
@@ -398,6 +404,9 @@
     <addaction name="actionLog_Heading"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
+    <property name="contextMenuPolicy">
+     <enum>Qt::DefaultContextMenu</enum>
+    </property>
     <property name="title">
      <string>Help</string>
     </property>

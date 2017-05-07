@@ -20,7 +20,7 @@ class RotatorLog
 {
 public:
     RotatorLog();
-    int writeLog(const QString);
+    int writeLog(int);
 
 private:
     QString oldBearing;

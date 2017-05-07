@@ -185,15 +185,11 @@ void MinosCompass::mousePressEvent(QMouseEvent *event)
 
 
 
-void MinosCompass::compassDialUpdate(const QString bearing)
+void MinosCompass::compassDialUpdate(int bearing)
 {
-    bool ok;
-    qDebug() << "bearing to compass " << bearing;
-    compassDialBearing = bearing.toInt(&ok, 10);
-    qDebug() << "int bearing to compass " << compassDialBearing;
-    if (ok)
-    {
-        update();
-    }
+
+    compassDialBearing = bearing;
+    update();
+
 }
 

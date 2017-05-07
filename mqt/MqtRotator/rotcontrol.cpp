@@ -231,12 +231,14 @@ int RotControl::stop_rotation()
 int RotControl::request_bearing()
 {
     int retCode = RIG_OK;
-    QString bearing;
+//    QString bearing;
     retCode = rot_get_position (my_rot, &rot_azimuth, &rot_elevation);
     if (retCode == RIG_OK)
     {
-        bearing.setNum(rot_azimuth);
-        emit bearing_updated(bearing);
+//        bearing.setNum(rot_azimuth);
+
+//        bearing.setNum(rot_azimuth);
+        emit bearing_updated(rot_azimuth);
     }
 
     return retCode;
