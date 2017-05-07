@@ -275,7 +275,7 @@ void BaseContact::makestrings( bool sf ) const
       ContactBuffs::ssbuff.clear();
 
    if ( sr && sf )
-       ContactBuffs::srbuff = QString("%1 ").arg(sr, 3);
+       ContactBuffs::srbuff = QString("%1 ").arg(sr, 3, 10, QChar('0')); // Leading zeroes
    else
       ContactBuffs::srbuff.clear();
 }
