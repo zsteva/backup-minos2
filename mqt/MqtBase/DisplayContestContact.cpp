@@ -463,7 +463,7 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
          case egSNTx:
             {
                int ss = serials.getValue().toInt();
-               res = QString("%1").arg(ss, 3);
+               res = QString("%1").arg(ss, 3, 10, QChar('0'));  //leading zeros
             }
             break;
          case egRSTRx:
@@ -472,7 +472,7 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
          case egSNRx:
             {
                int sr = serialr.getValue().toInt();
-               res = QString("%1").arg(sr, 3);
+               res = QString("%1").arg(sr, 3, 10, QChar('0'));  //leading zeros
             }
             break;
          case egLoc:

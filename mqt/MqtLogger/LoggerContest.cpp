@@ -416,7 +416,7 @@ QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, int extra
    QSharedPointer<BaseContact> bct;
    makeContact( timenow, bct );
 
-   QString temp = QString( "%1" ).arg(newctno, 3 );
+   QString temp = QString( "%1" ).arg(newctno, 3, 10, QChar('0') );  //leading zeros
    bct->serials.setValue( temp );
    bct->setLogSequence( nextBlock << 16 );
    nextBlock++;

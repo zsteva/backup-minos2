@@ -270,7 +270,7 @@ void BaseContact::makestrings( bool sf ) const
    int sr = serialr.getValue().toInt();
    int ss = serials.getValue().toInt();
    if ( ss )
-      ContactBuffs::ssbuff = QString("%1 ").arg(ss, 3);
+      ContactBuffs::ssbuff = QString("%1 ").arg(ss, 3, 10, QChar('0')); // Leading zeroes
    else
       ContactBuffs::ssbuff.clear();
 

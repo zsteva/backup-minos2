@@ -290,7 +290,7 @@ void TSingleLogFrame::NextContactDetailsTimerTimer( )
         }
         else
         {
-            QString snBuff = QString::number( contest->maxSerial + 1 );
+            QString snBuff = QString("%1").arg( contest->maxSerial + 1, 3, 10, QChar('0') );
             QString locBuff;
             if (contest->location.getValue().size())
             {
