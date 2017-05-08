@@ -342,6 +342,12 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
 void QSOLogFrame::setXferEnabled(bool s)
 {
     ui->MatchXferButton->setEnabled(s);
+    QString ss;
+    if (s)
+        ss = "color:red";
+    else
+        ss = "";
+    ui->MatchXferButton->setStyleSheet(ss);
 }
 
 void QSOLogFrame::on_CatchupButton_clicked()
