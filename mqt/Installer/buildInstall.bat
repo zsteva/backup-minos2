@@ -34,10 +34,7 @@ mkdir Installer
 xcopy /E /F /Y C:\Projects\sfMinos\mqt\Installer .\Installer
 xcopy /E /F /Y .\installFiles .\Installer\packages\Logger\data
 
-REM copy MqtLoggerFiles.7z Installer\packages\Logger\data
-
-REM <location-of-ifw>\binarycreator.exe --offline-only -t <location-of-ifw>\installerbase.exe -p <package_directory> -c <config_directory>\<config_file> <installer_name>
-C:\Qt\Tools\QtInstallerFramework\2.0\bin\binarycreator.exe --offline-only -t C:\Qt\Tools\QtInstallerFramework\2.0\bin\installerbase.exe -p C:\temp\mqtInstaller\Installer\packages -c C:\temp\mqtInstaller\Installer\config\config.xml Minos2Install.exe
+C:\Qt\Tools\QtInstallerFramework\2.0\bin\binarycreator.exe --offline-only -t C:\Qt\Tools\QtInstallerFramework\2.0\bin\installerbase.exe -p C:\temp\mqtInstaller\Installer\packages -c C:\temp\mqtInstaller\Installer\config\config.xml Minos2Install_0_3_0.exe
 
 
 cd C:\Projects\sfMinos\mqt\Installer

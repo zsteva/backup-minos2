@@ -11,7 +11,7 @@ QT       += network
 TARGET = MqtLogger
 TEMPLATE = app
 
-VERSION=0.2.0.0
+VERSION=0.3.0.0
 win32:RC_ICONS += ../minos.ico
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
