@@ -176,7 +176,7 @@ void LocFrame::reInitialiseLocators()
                 if ( lc && (lc->UKLocCount || lc->nonUKLocCount))
                 {
                     model->locMap[locStart + disp] = lc;
-                    if (ct->UKACBonus.getValue())
+                    if (ct->usesBonus.getValue())
                     {
                         QColor multhighlight = Qt::black;
                         switch (ct->getSquareBonus(locStart + disp))
@@ -314,7 +314,7 @@ QVariant LocGridModel::data( const QModelIndex &index, int role ) const
     if (role == Qt::BackgroundRole)
     {
         QColor multhighlight = Qt::darkGray;
-        if (ct->UKACBonus.getValue())
+        if (ct->usesBonus.getValue())
         {
             switch (ct->getSquareBonus(disp))
             {

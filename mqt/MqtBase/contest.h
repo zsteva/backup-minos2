@@ -127,7 +127,8 @@ class BaseContestLog: public BaseLogList
 
       MinosItem<bool> M7Mults;
 
-      MinosItem<bool> UKACBonus;
+      MinosItem<bool> usesBonus;
+      MinosItem<QString> bonusType;
 
       MinosItem<bool> powerWatts;
       MinosItem<int> scoreMode;
@@ -327,7 +328,7 @@ class ContestScore
       char brbonus2;
 
       QString name;
-      bool UKACBonus;
+      bool usesBonus;
 
       int nqsos;
       int contestScore;
