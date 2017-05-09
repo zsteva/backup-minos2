@@ -1025,7 +1025,7 @@ QVariant QSOGridModel::data( const QModelIndex &index, int role ) const
                  {
                      setHighlight = true;
                  }
-                 else if ( contest->UKACBonus.getValue() && ct->bonus > 0)
+                 else if ( contest->usesBonus.getValue() && ct->bonus > 0)
                  {
                      switch (ct->bonus)
                      {
@@ -1335,7 +1335,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
                            {
                                setHighlight = true;
                            }
-                           else if ( contest->UKACBonus.getValue() && ct->bonus > 0)
+                           else if ( contest->usesBonus.getValue() && ct->bonus > 0)
                            {
                                switch (ct->bonus)
                                {

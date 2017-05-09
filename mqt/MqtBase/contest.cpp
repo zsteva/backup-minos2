@@ -21,7 +21,7 @@ BaseContestLog::BaseContestLog( void ) :
       otherExchange( false ), countryMult( false ), nonGCountryMult( false ),
       districtMult( false ), locMult( false ), GLocMult(false),
       M7Mults(false), NonUKloc_mult(false), NonUKloc_multiplier(0), UKloc_mult(false), UKloc_multiplier(0),
-      UKACBonus(false),
+      usesBonus(false),
       scoreMode( PPKM ),
       powerWatts( true ), maxSerial( 0 ),
       contestScore( 0 ), ndistrict( 0 ), nctry( 0 ), nlocs( 0 ),
@@ -120,7 +120,8 @@ void BaseContestLog::clearDirty()
    districtMult.clearDirty();
 
    M7Mults.clearDirty();
-   UKACBonus.clearDirty();
+   usesBonus.clearDirty();
+   bonusType.clearDirty();
 
    powerWatts.clearDirty();
    scoreMode.clearDirty();
@@ -155,7 +156,8 @@ void BaseContestLog::setDirty()
    districtMult.setDirty();
 
    M7Mults.setDirty();
-   UKACBonus.setDirty();
+   usesBonus.setDirty();
+   bonusType.setDirty();
 
    powerWatts.setDirty();
    scoreMode.setDirty();
@@ -739,7 +741,7 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
       cs.brloc1 = cs.brloc2 = ' ';
       cs.nmults += cs.nlocs;
    }
-   if (UKACBonus.getValue())
+   if (usesBonus.getValue())
    {
       cs.brbonus1 = cs.brbonus2 = ' ';
    }
@@ -982,9 +984,12 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
       mt->getStructArgMemberValue( "AllowLoc8", allowLoc8 );
       mt->getStructArgMemberValue( "currentMode", currentMode);
 
-      mt->getStructArgMemberValue( "UKACBonus", UKACBonus );
-      if (UKACBonus.getValue())
+      mt->getStructArgMemberValue( "UKACBonus", usesBonus );
+      mt->getStructArgMemberValue("BonusType", bonusType);
+      if (usesBonus.getValue())
       {
+          if (bonusType.getValue().isEmpty())
+              bonusType.setValue("B2"); // cope with old Minos files
           loadBonusList();
       }
       mt->getStructArgMemberValue( "M7Mults", M7Mults);
@@ -1160,40 +1165,49 @@ static bool loadCalYear ( Calendar &cal, int year )
 }
 void BaseContestLog::loadBonusList()
 {
-
-    QDateTime  contestStart = CanonicalToTDT(DTGStart.getValue());
-    int year = contestStart.date().year();
-    if (year != bonusYearLoaded)
+    if (usesBonus.getValue() && bonusType.getValue() == "B2")
     {
-
-        Calendar vhf(year, ectVHF);
-        bool loaded = loadCalYear ( vhf, year );
-
-        if (loaded)
+        QDateTime  contestStart = CanonicalToTDT(DTGStart.getValue());
+        int year = contestStart.date().year();
+        if (year != bonusYearLoaded)
         {
-            bonusYearLoaded = year;
-        }
 
-        MultType B2 = vhf.mults["B2"];
+            Calendar vhf(year, ectVHF);
+            bool loaded = loadCalYear ( vhf, year );
 
-        if (B2.bonuses.size() == 0)
-        {
-            // load from ./Configuration/B2Mults.xml
-            vhf = Calendar(year, ectVHF);
-            loaded = vhf.parseFile ( "./Configuration/B2Mults.xml" );
-            B2 = vhf.mults["B2"];
-        }
+            if (loaded)
+            {
+                bonusYearLoaded = year;
+            }
 
-        locBonuses.clear();
+            MultType B2 = vhf.mults["B2"];
 
-        for (QMap<QString, int>::iterator i = B2.bonuses.begin(); i != B2.bonuses.end(); i++)
-        {
-            QString name = i.key().toUpper();
-            int value = i.value();
+            if (B2.bonuses.size() == 0)
+            {
+                // load from ./Configuration/B2Mults.xml
+                vhf = Calendar(year, ectVHF);
+                loaded = vhf.parseFile ( "./Configuration/B2Mults.xml" );
+                B2 = vhf.mults["B2"];
+            }
 
-            locBonuses[name] = value;
+            locBonuses.clear();
+
+            for (QMap<QString, int>::iterator i = B2.bonuses.begin(); i != B2.bonuses.end(); i++)
+            {
+                QString name = i.key().toUpper();
+                int value = i.value();
+
+                locBonuses[name] = value;
+            }
         }
     }
+    else if (usesBonus.getValue() && bonusType.getValue() == "NAC")
+    {
+        bonusYearLoaded = 0;
+        locBonuses.clear();
+        locBonuses["DEFAULT"] = 500;
+    }
+
 }
 int BaseContestLog::getSquareBonus(QString sloc)
 {
@@ -1231,12 +1245,12 @@ ContestScore::ContestScore(BaseContestLog *ct, QDateTime limit)
 
    ct->getScoresTo(*this, limit);
    name = ct->publishedName;
-   UKACBonus = ct->UKACBonus.getValue();
+   usesBonus = ct->usesBonus.getValue();
 }
 QString ContestScore::disp()
 {
     QString buff;
-    if (UKACBonus == true)
+    if (usesBonus == true)
     {
         buff = QString( "Score: Qsos: %1; %2 pts :%3%4 countries%5: bonuses %6(%7) = %8" )
             .arg(nqsos).arg(contestScore).arg(brcc1).arg(nctry).arg(brcc2)

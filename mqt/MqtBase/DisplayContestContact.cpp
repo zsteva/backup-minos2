@@ -370,7 +370,7 @@ void DisplayContestContact::checkContact( )
          LocCount * npt = ls->map ( numbers );
          if ( npt )
          {
-            if (clp->UKACBonus.getValue())
+            if (clp->usesBonus.getValue())
             {
                if (npt->UKLocCount == 0 &&  npt->nonUKLocCount == 0)
                {
