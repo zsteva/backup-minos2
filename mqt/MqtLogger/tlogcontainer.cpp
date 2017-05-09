@@ -285,10 +285,20 @@ void TLogContainer::setupMenus()
     TabPopup.addAction(AnalyseMinosLogAction);
     newAction( "Cancel", &TabPopup, SLOT( CancelClick() ) );
 
+    keyerRecordMenu = ui->menuKeyer->addMenu("Record");
+    keyerPlaybackMenu = ui->menuKeyer->addMenu("Playback");
     KeyerToneAction = newAction("Tune", ui->menuKeyer, SLOT(KeyerToneActionExecute()));
     KeyerTwoToneAction = newAction("Two Tone", ui->menuKeyer, SLOT(KeyerTwoToneActionExecute()));
     KeyerStopAction = newAction("Stop", ui->menuKeyer, SLOT(KeyerStopActionExecute()));
 
+    for (int i = 1; i < 10; i++)
+    {
+        QString s = QString::number(i);
+        KeyerRecordAction = newAction((s), keyerRecordMenu, SLOT(KeyerRecordActionExecute()));
+        KeyerRecordAction->setData(i);
+        KeyerPlaybackAction = newAction((s), keyerPlaybackMenu, SLOT(KeyerPlaybackActionExecute()));
+        KeyerPlaybackAction->setData(i);
+    }
     HelpAboutAction = newAction("About...", ui->menuHelp, SLOT(HelpAboutActionExecute()));
 }
 
@@ -846,6 +856,25 @@ void TLogContainer::KeyerStopActionExecute()
 {
     TSendDM::sendKeyerStop( );
 }
+void TLogContainer::KeyerRecordActionExecute()
+{
+    QAction *qa = qobject_cast<QAction *>(sender());
+    if (qa)
+    {
+        int k = qa->data().toInt();
+        TSendDM::sendKeyerRecord( k );
+    }
+}
+void TLogContainer::KeyerPlaybackActionExecute()
+{
+    QAction *qa = qobject_cast<QAction *>(sender());
+    if (qa)
+    {
+        int k = qa->data().toInt();
+        TSendDM::sendKeyerPlay( k );
+    }
+}
+
 void TLogContainer::menuLogsActionExecute()
 {
     QAction *qa = qobject_cast<QAction *>(sender());

@@ -132,21 +132,6 @@ bool QSOLogFrame::doKeyPressEvent( QKeyEvent* event )
         return true;
     }
 
-    if (( ctrl || shift ) && Key >= Qt::Key_F1 && Key <= Qt::Key_F12 )
-    {
-        if ( ctrl && shift )
-        {
-            // keyer record keys
-            TSendDM::sendKeyerRecord( Key - Qt::Key_F1 + 1 );
-        }
-        else
-        {
-            // Keyer play keys
-            TSendDM::sendKeyerPlay( Key - Qt::Key_F1 + 1 );
-        }
-        return true;
-    }
-
     if ( ( Key == Qt::Key_F1 || Key == Qt::Key_F2 || Key == Qt::Key_F3 || Key == Qt::Key_F4 || Key == Qt::Key_F5 || Key == Qt::Key_F6) )
     {
         setActiveControl( &Key );
