@@ -13,7 +13,7 @@
 #define MyAppBuild ""
 #define MyFullVersion ParseVersion(AddBackslash(SourcePath) + MyAppExeName, MyAppMajor, MyAppMinor, MyAppRev, MyAppBuild)
 #define MyAppVersion Str(MyAppMajor) + "." + Str(MyAppMinor) + "." + Str(MyAppRev)
-#define MyAppName "Minos 2"
+#define MyAppName "Minos2"
 
 #define MainBinaryName  "mqtLogger.exe"
 #define SetupBaseName   "Minos2Install_"
@@ -39,8 +39,8 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile=C:\temp\mqtInstaller\Installer\packages\Logger\meta\gpl3.txt
-;OutputBaseFilename=IMinos2Setup-{#MyAppVersion}
+DirExistsWarning=yes
+LicenseFile=C:\temp\mqtInstaller\Installer\gpl3.txt
 
 OutputDir=..\InnoInstaller\
 OutputBaseFilename={#SetupBaseName + AppVersionFile}
@@ -56,7 +56,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
