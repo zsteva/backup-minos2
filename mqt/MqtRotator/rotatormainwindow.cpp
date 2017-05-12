@@ -68,12 +68,35 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     presetButtons[9] = ui->presetButton10;
     QSignalMapper *preset_mapper = new QSignalMapper(this);
 
+    ui->presetButton1->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1));
+    ui->presetButton2->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_2));
+    ui->presetButton3->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_3));
+    ui->presetButton4->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
+    ui->presetButton5->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_5));
+    ui->presetButton6->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_6));
+    ui->presetButton7->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_7));
+    ui->presetButton8->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_8));
+    ui->presetButton9->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_9));
+    ui->presetButton10->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_0));
+    ui->rot_left_button->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
+    ui->rot_right_button->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
+    ui->turnButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
+    ui->stopButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
+
+
     for (int i = 0; i < NUM_PRESETS; i++ )
     {
         preset_mapper->setMapping(presetButtons[i], i);
         connect(presetButtons[i], SIGNAL(clicked()), preset_mapper, SLOT(map()));
     }
     connect(preset_mapper, SIGNAL(mapped(int)), this, SLOT(clickedPreset(int)));
+
+    ui->rot_left_button->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
+    ui->rot_right_button->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
+    ui->turnButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
+    ui->stopButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
+
+
     rotator = new RotControl();
     selectRotator = new SetupDialog(rotator);
     editPresets = new EditPresetsDialog;
@@ -100,15 +123,19 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
 
-    brakedelay = 3 * 1000;
+
+
+    brakedelay = 1 * 1000;
 
     brakeflag = false;
-    cwCcwflag = false;
+    cwCcwCmdflag = false;
     rotCmdflag = false;
     stopCmdflag = false;
-    rotLogFlg = true;
-
+    reqBearCmdflag  = false;
+    overLapflag = false;
     moving = false;
+
+    rotLogFlg = true;
     bearing = 0;
     min_azimuth = 0;
     max_azimuth = 0;
@@ -326,11 +353,8 @@ void RotatorMainWindow::initActionsConnections()
     connect(ui->actionEdit_Presets, SIGNAL(triggered()), editPresets, SLOT(loadPresetEditFieldsShow()));
     connect(editPresets, SIGNAL(showEditPresetDialog()), editPresets, SLOT(show()));
     connect(editPresets, SIGNAL(updatePresetButtonLabels()), this, SLOT(updatePresetLabels()));
-//    connect(rotator, SIGNAL(bearing_updated(int)), ui->bearingDisplay, SLOT(setText(const QString &)));
     connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(displayBearing(int)));
-//    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(displayBackBearing(const QString)));
     connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(displayBackBearing(int)));
-//    connect(rotator, SIGNAL(bearing_updated(int)), ui->compassDial, SLOT(compassDialUpdate(const QString &)));
     connect(rotator, SIGNAL(bearing_updated(int)), ui->compassDial, SLOT(compassDialUpdate(int)));
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(logBearing(const QString.s &)));
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(logBearing(int)));
@@ -363,6 +387,13 @@ void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
 
 
     }
+/*
+    if (Key == Qt::Key_R)
+    {
+        qDebug() << "r pressed";
+    }
+
+
 
     if (Key >= Qt::Key_F1 && Key <= Qt::Key_F10 )
     {
@@ -370,8 +401,11 @@ void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
         qDebug() << Key;
         emit rotateFunctionKeyPressed(Key);
     }
-    else if (!(shift || ctrl) && alt)
+    //else if (!(shift || ctrl) && alt)
+    else if (ctrl)
     {
+        qDebug() << "ctrl key pressed!";
+        qDebug() << Key;
         switch (Key) {
         case ROTATE_CW_KEY:
             qDebug() << "rotate cw key pressed!";
@@ -393,6 +427,7 @@ void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
 
 
      }
+*/
 }
 
 
@@ -400,7 +435,13 @@ void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
 void RotatorMainWindow::displayBearing(int bearing)
 {
 
-    // send Bearing to display
+
+
+    // send Bearing to displays
+
+
+
+
     QString bearingmsg = QString::number(bearing, 10);
     if (bearing < 10)
     {
@@ -547,8 +588,9 @@ void RotatorMainWindow::upDateAntenna()
 
 void RotatorMainWindow::request_bearing()
 {
+    reqBearCmdflag = true;
     int retCode = 0;
-    if (brakeflag || cwCcwflag || rotCmdflag) return;
+    if (brakeflag || cwCcwCmdflag || rotCmdflag) return;
     if (rotator->get_serialConnected())
     {
         retCode = rotator->request_bearing();
@@ -557,19 +599,22 @@ void RotatorMainWindow::request_bearing()
             hamlibError(retCode);
         }
     }
+    reqBearCmdflag = false;
 }
 
 
 void RotatorMainWindow::rotateToController()
 {
+
+    if (reqBearCmdflag) return;
     bool ok;
     int intBearing;
     int retCode = 0;
     rotCmdflag = true;
-    qDebug() << "Triggered from Turnbutton";
+    //qDebug() << "Triggered from Turnbutton";
     // get bearing from bearing line edit form
     QString bearing = ui->bearingEdit->text();
-    qDebug() << "string from box " << bearing;
+    //qDebug() << "string from box " << bearing;
     intBearing = bearing.toInt(&ok, 10);
     if (intBearing >= 0 && intBearing <= 359 && ok)
     {
@@ -581,6 +626,7 @@ void RotatorMainWindow::rotateToController()
             {
                 hamlibError(retCode);
             }
+            moving = true;
         }
     }
     else
@@ -595,12 +641,12 @@ void RotatorMainWindow::stopButton()
 {
     if (ui->rot_left_button->isChecked())
     {
-        ui->rot_left_button->setChecked(!ui->rot_left_button->isChecked());
+        ui->rot_left_button->setChecked(false);
         return;
     }
     else if (ui->rot_right_button->isChecked())
     {
-        ui->rot_right_button->setChecked(!ui->rot_right_button->isChecked());
+        ui->rot_right_button->setChecked(false);
         return;
     }
     else
@@ -632,7 +678,12 @@ void RotatorMainWindow::stopRotation()
 
 void RotatorMainWindow::rotateCW(bool toggle)
 {
-    cwCcwflag = true;
+    if (moving)
+    {
+        stopButton();
+    }
+
+    cwCcwCmdflag = true;
     if (toggle)
     {
 
@@ -645,16 +696,17 @@ void RotatorMainWindow::rotateCW(bool toggle)
                 hamlibError(retCode);
                 moving = false;
             }
-            moving = true;
+            else
+            {
+                ui->rot_right_button->setChecked(true);
+                moving = true;
+            }
+            cwCcwCmdflag = false;
         }
+    }
 
 
-    }
-    else
-    {
-        stopRotation();
-    }
-    cwCcwflag = false;
+    cwCcwCmdflag = false;
 }
 
 
@@ -662,7 +714,12 @@ void RotatorMainWindow::rotateCW(bool toggle)
 
 void RotatorMainWindow::rotateCCW(bool toggle)
 {
-    cwCcwflag = true;
+    if (moving)
+    {
+        stopButton();
+    }
+
+    cwCcwCmdflag = true;
     if (toggle)
     {
 
@@ -675,15 +732,16 @@ void RotatorMainWindow::rotateCCW(bool toggle)
                 hamlibError(retCode);
                 moving = false;
             }
-            moving = true;
+            else
+            {
+                ui->rot_left_button->setChecked(true);
+                moving = true;
+            }
+
         }
 
-     }
-    else
-    {
-        stopRotation();
     }
-    cwCcwflag = false;
+    cwCcwCmdflag = false;
 }
 
 
@@ -720,7 +778,7 @@ void RotatorMainWindow::hamlibError(int errorCode)
 }
 
 
-void RotatorMainWindow::logBearing(const QString bearing)
+void RotatorMainWindow::logBearing(int bearing)
 {
     int retCode = 0;
     if (rotLogFlg)

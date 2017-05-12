@@ -233,11 +233,13 @@ int RotControl::request_bearing()
     int retCode = RIG_OK;
 //    QString bearing;
     retCode = rot_get_position (my_rot, &rot_azimuth, &rot_elevation);
+    //qDebug() << "request error" << retCode;
     if (retCode == RIG_OK)
     {
 //        bearing.setNum(rot_azimuth);
 
 //        bearing.setNum(rot_azimuth);
+
         emit bearing_updated(rot_azimuth);
     }
 
@@ -276,10 +278,11 @@ int RotControl::rotate_to_bearing(int bearing)
     int retCode = RIG_OK;
     float rotbearing = bearing;
     qDebug() << "got to rotate bearing";
-
+    qDebug() << "send rotate message to serial ";
     retCode = rot_set_position(my_rot, rotbearing, 0.0);
+    qDebug() << "error" << retCode;
 
-    qDebug() << "rotate message to serial ";
+
     return retCode;
 
 }

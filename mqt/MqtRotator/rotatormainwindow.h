@@ -31,10 +31,10 @@
 //#define NUM_ROTATOR_PROTOCOLS 2
 
 // Rotator Keys
-//#define ROTATE_CW_KEY Qt::Key_R
-//#define ROTATE_CCW_KEY Qt::Key_L
-#define ROTATE_CW_KEY Qt::Key_Right
-#define ROTATE_CCW_KEY Qt::Key_Left
+#define ROTATE_CW_KEY Qt::Key_R
+#define ROTATE_CCW_KEY Qt::Key_L
+//#define ROTATE_CW_KEY Qt::Key_Right
+//#define ROTATE_CCW_KEY Qt::Key_Left
 #define ROTATE_STOP_KEY Qt::Key_S
 #define ROTATE_TURN_KEY Qt::Key_T
 
@@ -106,9 +106,11 @@ private:
     int brakedelay;
     bool brakeflag;
     bool moving;
-    bool cwCcwflag;     // command sent
+    bool cwCcwCmdflag;     // command sentflag
     bool stopCmdflag;
     bool rotCmdflag;
+    bool overLapflag = false;
+    bool overLapflag;
     int bearing;
     int min_azimuth;
     int max_azimuth;
@@ -155,7 +157,7 @@ protected slots:
 
 private slots:
     void LogTimerTimer( );
-    void logBearing(const QString bearing);
+    void logBearing(int bearing);
     void sendBearingLogger(const QString bearing);
     void onLoggerSetRotation(int direction, int angle);
 //    void on_pushButton_2_clicked();
