@@ -82,6 +82,7 @@ signals:
 
     void sendBearing(QString);
     void sendCompassDial(int);
+    void displayOverlap(bool);
     void sendBackBearing(QString);
     void presetRotateTo();
 

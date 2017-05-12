@@ -349,6 +349,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(this, SIGNAL(sendCompassDial(int)), ui->compassDial, SLOT(compassDialUpdate(int)));
     connect(this, SIGNAL(sendBearing(QString)), ui->bearingDisplay, SLOT(setText(const QString &)));
     connect(this, SIGNAL(sendBackBearing(QString)), ui->backBearingDisplay, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(displayOverlap(bool)), ui->overlap ,SLOT(overlapDisplayUpdate(bool)));
     //connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
     //connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionSetup_Antennas, SIGNAL(triggered()), selectRotator, SLOT(show()));
@@ -460,7 +461,7 @@ void RotatorMainWindow::displayBearing(int bearing)
 
     emit sendBearing(bearingmsg);
     emit sendCompassDial(bearing);
-
+    emit displayOverlap(overLapflag);
 
     int backBearing = bearing;
 
