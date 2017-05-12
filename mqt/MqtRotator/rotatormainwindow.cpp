@@ -132,13 +132,28 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     rotCmdflag = false;
     stopCmdflag = false;
     reqBearCmdflag  = false;
-    overLapflag = false;
+    overLapOnflag = false;
     moving = false;
+    movingCW  = false;
+    movingCCW = false;
 
     rotLogFlg = true;
-    bearing = 0;
-    min_azimuth = 0;
-    max_azimuth = 0;
+    currentBearing = COMPASS_MIN0;
+    currentMinAzimuth = COMPASS_MIN0;
+
+    if (selectRotator->currentAntenna.max_azimuth > COMPASS_MAX360 && selectRotator->currentAntenna.overRunFlag)
+    {
+        currentMaxAzimuth = selectRotator->currentAntenna.max_azimuth;
+        overLapActiveflag = true;
+    }
+    else
+    {
+        currentMaxAzimuth = COMPASS_MAX360;
+        overLapActiveflag = false;
+    }
+
+    southStopActiveflag = selectRotator->currentAntenna.southStopFlag;
+
 
 
     setPolltime(1000);
@@ -220,7 +235,7 @@ void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
     if (dirCommand == rpcConstants::eRotateDirect)
     {
         ui->bearingEdit->setText(QString::number(angle));
-        rotator->rotate_to_bearing(angle);
+        rotateTo(angle);
 
     }
     else if (dirCommand == rpcConstants::eRotateLeft)
@@ -350,6 +365,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(this, SIGNAL(sendBearing(QString)), ui->bearingDisplay, SLOT(setText(const QString &)));
     connect(this, SIGNAL(sendBackBearing(QString)), ui->backBearingDisplay, SLOT(setText(const QString &)));
     connect(this, SIGNAL(displayOverlap(bool)), ui->overlap ,SLOT(overlapDisplayUpdate(bool)));
+    connect(this, SIGNAL(checkingEndStop()), this, SLOT(checkEndStop()));
     //connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
     //connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionSetup_Antennas, SIGNAL(triggered()), selectRotator, SLOT(show()));
@@ -376,92 +392,60 @@ void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
 
     int Key = event->key();
 
+/*
     Qt::KeyboardModifiers mods = event->modifiers();
     bool shift = mods & Qt::ShiftModifier;
     bool ctrl = mods & Qt::ControlModifier;
     bool alt = mods & Qt::AltModifier;
-
+*/
     if (Key == Qt::Key_Escape)
     {
-
         emit escapePressed();
-
-
-    }
-/*
-    if (Key == Qt::Key_R)
-    {
-        qDebug() << "r pressed";
     }
 
-
-
-    if (Key >= Qt::Key_F1 && Key <= Qt::Key_F10 )
-    {
-        qDebug() << "rotate function key pressed!";
-        qDebug() << Key;
-        emit rotateFunctionKeyPressed(Key);
-    }
-    //else if (!(shift || ctrl) && alt)
-    else if (ctrl)
-    {
-        qDebug() << "ctrl key pressed!";
-        qDebug() << Key;
-        switch (Key) {
-        case ROTATE_CW_KEY:
-            qDebug() << "rotate cw key pressed!";
-            emit rotate_cwKeyPressed();
-        break;
-        case ROTATE_CCW_KEY:
-            qDebug() << "rotate ccw key pressed!";
-            emit rotate_ccwKeyPressed();
-        break;
-        case ROTATE_STOP_KEY:
-            qDebug() << "rotate stop key pressed!";
-            emit rotateStopKeyPressed();
-        break;
-        case ROTATE_TURN_KEY:
-            qDebug() << "rotate turn key pressed!";
-            emit rotateTurnKeyPressed();
-        break;
-        }
-
-
-     }
-*/
 }
 
-
+// receives updates from rotator
 
 void RotatorMainWindow::displayBearing(int bearing)
 {
 
+
+    if (bearing == currentBearing)
+    {
+        return;
+    }
+
+    currentBearing = bearing;
+    int _bearing = bearing;
+
     // send Bearing to displays
 
-    if (bearing > 360)
+    if (_bearing > 360)
     {
-        bearing -= 360;
-        overLapflag = true;
+        _bearing -= 360;
+        overLapOnflag = true;
     }
     else
     {
-        overLapflag = false;
+        overLapOnflag = false;
     }
 
 
-    QString bearingmsg = QString::number(bearing, 10);
-    if (bearing < 10)
+    QString bearingmsg = QString::number(_bearing, 10);
+    if (_bearing < 10)
     {
         bearingmsg = "00" + bearingmsg;
     }
-    else if (bearing < 100)
+    else if (_bearing < 100)
     {
         bearingmsg = "0" + bearingmsg;
     }
 
     emit sendBearing(bearingmsg);
-    emit sendCompassDial(bearing);
-    emit displayOverlap(overLapflag);
+    emit sendCompassDial(_bearing);
+    emit checkingEndStop();
+    emit displayOverlap(overLapOnflag);
 
     int backBearing = bearing;
 
@@ -606,37 +590,91 @@ void RotatorMainWindow::request_bearing()
 }
 
 
+void RotatorMainWindow::checkEndStop()
+{
+    if (movingCW)
+    {
+        if (currentBearing >= currentMaxAzimuth)
+        {
+            stopButton();
+        }
+    }
+    else if (movingCCW)
+    {
+        if (currentBearing <= COMPASS_MIN0)
+        {
+            stopButton();
+        }
+    }
+}
+
+
 void RotatorMainWindow::rotateToController()
 {
 
     if (reqBearCmdflag) return;
     bool ok;
     int intBearing;
-    int retCode = 0;
+
     rotCmdflag = true;
     //qDebug() << "Triggered from Turnbutton";
     // get bearing from bearing line edit form
     QString bearing = ui->bearingEdit->text();
     //qDebug() << "string from box " << bearing;
     intBearing = bearing.toInt(&ok, 10);
-    if (intBearing >= 0 && intBearing <= 359 && ok)
+    if (intBearing >= 0 && intBearing <= currentMaxAzimuth && ok)
     {
-        if (rotator->get_serialConnected())
-        {
-            //rotate_to_bearing(intbearing);
-            retCode = rotator->rotate_to_bearing(intBearing);
-            if (retCode < 0)
-            {
-                hamlibError(retCode);
-            }
-            moving = true;
-        }
+        rotateTo(intBearing);
     }
     else
     {
-        QMessageBox::critical(this, tr("Bearing Error"), tr("Invalid Bearing\nPlease enter 0 - 359"));
+        QString s = "Invalid Bearing\nPlease enter 0 - ";
+        s.append(QString::number(currentMaxAzimuth));
+        QMessageBox::critical(this, tr("Bearing Error"), s);
     }
     rotCmdflag = false;
+}
+
+
+void RotatorMainWindow::rotateTo(int bearing)
+{
+    int retCode = 0;
+    int rotateTo = bearing;
+
+
+    if (bearing > currentMaxAzimuth || bearing < COMPASS_MIN0)
+    {
+        return; //error
+    }
+
+    if (overLapActiveflag)
+    {
+        if (bearing < COMPASS_MAX360)
+        {
+            if (!(COMPASS_MAX360 + bearing) > currentMaxAzimuth)
+            {
+                if ((COMPASS_MAX360 - currentBearing + bearing) < (currentBearing - bearing))
+                {
+                    rotateTo = COMPASS_MAX360 + bearing;
+                }
+            }
+        }
+    }
+    if (rotator->get_serialConnected())
+    {
+        //rotate_to_bearing(intbearing);
+        retCode = rotator->rotate_to_bearing(rotateTo);
+        if (retCode < 0)
+        {
+            hamlibError(retCode);
+        }
+        else
+        {
+            moving = true;
+        }
+
+    }
+
 }
 
 
@@ -674,6 +712,8 @@ void RotatorMainWindow::stopRotation()
     sleepFor(brakedelay);
     brakeflag = false;
     moving = false;
+    movingCW = false;
+    movingCCW = false;
     stopCmdflag = false;
 
 }
@@ -681,9 +721,18 @@ void RotatorMainWindow::stopRotation()
 
 void RotatorMainWindow::rotateCW(bool toggle)
 {
-    if (moving)
+
+
+
+    if (moving || movingCW || movingCCW)
     {
         stopButton();
+    }
+
+    if (currentBearing >= currentMaxAzimuth)
+    {
+        ui->rot_right_button->setChecked(false);
+        return;
     }
 
     cwCcwCmdflag = true;
@@ -697,12 +746,12 @@ void RotatorMainWindow::rotateCW(bool toggle)
             if (retCode < 0)
             {
                 hamlibError(retCode);
-                moving = false;
+                movingCW = false;
             }
             else
             {
                 ui->rot_right_button->setChecked(true);
-                moving = true;
+                movingCW = true;
             }
             cwCcwCmdflag = false;
         }
@@ -717,9 +766,15 @@ void RotatorMainWindow::rotateCW(bool toggle)
 
 void RotatorMainWindow::rotateCCW(bool toggle)
 {
-    if (moving)
+    if (moving  || movingCW || movingCCW)
     {
         stopButton();
+    }
+
+    if (currentBearing <= COMPASS_MIN0)
+    {
+        ui->rot_left_button->setChecked(false);
+        return;
     }
 
     cwCcwCmdflag = true;
@@ -733,12 +788,12 @@ void RotatorMainWindow::rotateCCW(bool toggle)
             if (retCode < 0)
             {
                 hamlibError(retCode);
-                moving = false;
+                movingCCW = false;
             }
             else
             {
                 ui->rot_left_button->setChecked(true);
-                moving = true;
+                movingCCW = true;
             }
 
         }

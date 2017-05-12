@@ -38,8 +38,8 @@
 #define ROTATE_STOP_KEY Qt::Key_S
 #define ROTATE_TURN_KEY Qt::Key_T
 
-
-
+#define COMPASS_MAX360 359
+#define COMPASS_MIN0 0
 
 class QLabel;
 class QComboBox;
@@ -83,6 +83,7 @@ signals:
     void sendBearing(QString);
     void sendCompassDial(int);
     void displayOverlap(bool);
+    void checkingEndStop();
     void sendBackBearing(QString);
     void presetRotateTo();
 
@@ -108,14 +109,18 @@ private:
     int brakedelay;
     bool brakeflag;
     bool moving;
+    bool movingCW;
+    bool movingCCW;
     bool cwCcwCmdflag;     // command sentflag
     bool stopCmdflag;
     bool rotCmdflag;
     bool reqBearCmdflag;
-    bool overLapflag;
-    int bearing;
-    int min_azimuth;
-    int max_azimuth;
+    bool overLapOnflag;
+    bool overLapActiveflag;
+    bool southStopActiveflag;
+    int currentBearing;
+    int currentMinAzimuth;
+    int currentMaxAzimuth;
     QString backBearingmsg;
     QString presetName[NUM_PRESETS];
     QString presetBearing[NUM_PRESETS];
@@ -127,6 +132,7 @@ private:
     void showStatusMessage(const QString &);
     void sndStatusLoggger(const QString &);
     void readPresets();
+
 
     void initSelectAntennaBox();
 
@@ -156,13 +162,19 @@ protected slots:
     void stopButton();
     void stopRotation();
 
+
 private slots:
     void LogTimerTimer( );
     void logBearing(int bearing);
     void sendBearingLogger(const QString bearing);
     void onLoggerSetRotation(int direction, int angle);
+    void checkEndStop();
 //    void on_pushButton_2_clicked();
 //   void on_pushButton_clicked();
+
+
+private:
+     void rotateTo(int bearing);
 
 
 };
