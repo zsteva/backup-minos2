@@ -81,6 +81,7 @@ signals:
     void rotateFunctionKeyPressed(int);
 
     void sendBearing(QString);
+    void sendCompassDial(int);
     void sendBackBearing(QString);
     void presetRotateTo();
 
@@ -109,7 +110,7 @@ private:
     bool cwCcwCmdflag;     // command sentflag
     bool stopCmdflag;
     bool rotCmdflag;
-    bool overLapflag = false;
+    bool reqBearCmdflag;
     bool overLapflag;
     int bearing;
     int min_azimuth;
@@ -143,7 +144,6 @@ private:
 public slots:
     void rotateToController();
     void displayBearing(int);
-    void displayBackBearing(int);
     void updatePresetLabels();
     void clickedPreset(int buttonNumber);
 

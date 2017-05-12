@@ -345,6 +345,8 @@ void RotatorMainWindow::initActionsConnections()
     connect(ui->rot_right_button, SIGNAL(toggled(bool)), this, SLOT(rotateCW(bool)));
     connect(ui->rot_left_button, SIGNAL(toggled(bool)), this, SLOT(rotateCCW(bool)));
     connect(this, SIGNAL(escapePressed()), rotator, SLOT(stop_rotation()));
+    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(displayBearing(int)));
+    connect(this, SIGNAL(sendCompassDial(int)), ui->compassDial, SLOT(compassDialUpdate(int)));
     connect(this, SIGNAL(sendBearing(QString)), ui->bearingDisplay, SLOT(setText(const QString &)));
     connect(this, SIGNAL(sendBackBearing(QString)), ui->backBearingDisplay, SLOT(setText(const QString &)));
     //connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
@@ -353,9 +355,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(ui->actionEdit_Presets, SIGNAL(triggered()), editPresets, SLOT(loadPresetEditFieldsShow()));
     connect(editPresets, SIGNAL(showEditPresetDialog()), editPresets, SLOT(show()));
     connect(editPresets, SIGNAL(updatePresetButtonLabels()), this, SLOT(updatePresetLabels()));
-    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(displayBearing(int)));
-    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(displayBackBearing(int)));
-    connect(rotator, SIGNAL(bearing_updated(int)), ui->compassDial, SLOT(compassDialUpdate(int)));
+
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(logBearing(const QString.s &)));
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(logBearing(int)));
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(sendBearingLogger(const QString &)));
@@ -435,11 +435,17 @@ void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
 void RotatorMainWindow::displayBearing(int bearing)
 {
 
-
-
     // send Bearing to displays
 
-
+    if (bearing > 360)
+    {
+        bearing -= 360;
+        overLapflag = true;
+    }
+    else
+    {
+        overLapflag = false;
+    }
 
 
     QString bearingmsg = QString::number(bearing, 10);
@@ -453,15 +459,8 @@ void RotatorMainWindow::displayBearing(int bearing)
     }
 
     emit sendBearing(bearingmsg);
+    emit sendCompassDial(bearing);
 
-
-}
-
-
-
-
-void RotatorMainWindow::displayBackBearing(int bearing)
-{
 
     int backBearing = bearing;
 
@@ -482,8 +481,11 @@ void RotatorMainWindow::displayBackBearing(int bearing)
     }
     emit sendBackBearing(backBearingmsg);
 
-
 }
+
+
+
+
 
 
 
