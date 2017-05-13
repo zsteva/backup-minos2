@@ -132,7 +132,7 @@ bool QSOLogFrame::doKeyPressEvent( QKeyEvent* event )
         return true;
     }
 
-    if ( ( Key == Qt::Key_F1 || Key == Qt::Key_F2 || Key == Qt::Key_F3 || Key == Qt::Key_F4 || Key == Qt::Key_F5 || Key == Qt::Key_F6) )
+    if ( ( Key == Qt::Key_F1 || Key == Qt::Key_F2 || Key == Qt::Key_F3 || Key == Qt::Key_F4 || Key == Qt::Key_F5 || Key == Qt::Key_F6|| Key == Qt::Key_F12) )
     {
         setActiveControl( &Key );
         return true;
@@ -750,6 +750,11 @@ void QSOLogFrame::setActiveControl( int *Key )
          selectField( ui->QTHEdit );
          *Key = 0;
          break;
+   case Qt::Key_F12:
+       if (ui->MatchXferButton->isEnabled())
+            MinosLoggerEvents::SendXferPressed();
+      *Key = 0;
+      break;
    }
 }
 //---------------------------------------------------------------------------
