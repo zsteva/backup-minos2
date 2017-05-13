@@ -146,7 +146,7 @@ private:
     void errorMessage(int errorCode,QString command);
     void getRotatorList();
     bool rotatorlistLoaded=false;
-    srotParams rotParams;
+    srotParams curRotParams;
     int serialP;
 
 

@@ -10,7 +10,7 @@ OverLapWidget::OverLapWidget(QWidget *parent) : QWidget(parent)
 
 void OverLapWidget::paintEvent(QPaintEvent *)
 {
-    QRect rect(6,0,80,20);
+    QRect rect(15,0,60,12);
     QPainter painter(this);
 
     painter.setPen(Qt::black);

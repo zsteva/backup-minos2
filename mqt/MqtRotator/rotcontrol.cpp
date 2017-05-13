@@ -64,17 +64,17 @@ int RotControl::init(srotParams currentAntenna)
 
 
     // get rotator parameters
-    rotParams.antennaName = currentAntenna.antennaName;
-    rotParams.baudrate =  currentAntenna.baudrate;
+    curRotParams.antennaName = currentAntenna.antennaName;
+    curRotParams.baudrate =  currentAntenna.baudrate;
     //rotParams.comport =
-    rotParams.databits = currentAntenna.databits;
-    rotParams.stopbits = currentAntenna.stopbits;
-    rotParams.parity = getSerialParityCode(currentAntenna.parity);
-    rotParams.handshake = getSerialHandshakeCode(currentAntenna.handshake);
-    rotParams.serial_rate_max = my_rot->caps->serial_rate_max;
-    rotParams.serial_rate_min = my_rot->caps->serial_rate_min;
-    rotParams.max_azimuth = my_rot->caps->max_az;
-    rotParams.max_elevation = my_rot->caps->max_el;
+    curRotParams.databits = currentAntenna.databits;
+    curRotParams.stopbits = currentAntenna.stopbits;
+    curRotParams.parity = getSerialParityCode(currentAntenna.parity);
+    curRotParams.handshake = getSerialHandshakeCode(currentAntenna.handshake);
+    curRotParams.serial_rate_max = my_rot->caps->serial_rate_max;
+    curRotParams.serial_rate_min = my_rot->caps->serial_rate_min;
+    curRotParams.max_azimuth = my_rot->caps->max_az;
+    curRotParams.max_elevation = my_rot->caps->max_el;
 
 
 
@@ -176,7 +176,7 @@ const char * RotControl::getModel_Name(int idx)
 int RotControl::getRotatorModelIndex()
 {
     int i;
-    QString t=rotParams.rotatorModel;
+    QString t=curRotParams.rotatorModel;
     t=t.remove(0,5);
     t=t.simplified();
     QStringList sl=t.split(",");
@@ -199,7 +199,7 @@ int RotControl::getRotatorModelIndex()
 
 int RotControl::getMaxAzimuth()
 {
-    return (int)rotParams.max_azimuth;
+    return (int)curRotParams.max_azimuth;
 }
 
 
@@ -207,7 +207,7 @@ int RotControl::getMaxAzimuth()
 
 int RotControl::getMaxElevation()
 {
-    return (int)rotParams.max_elevation;
+    return (int)curRotParams.max_elevation;
 }
 
 

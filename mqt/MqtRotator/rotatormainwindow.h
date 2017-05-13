@@ -85,6 +85,7 @@ signals:
     void displayOverlap(bool);
     void checkingEndStop();
     void sendBackBearing(QString);
+    void displayOverlapBearing(QString);
     void presetRotateTo();
 
 private:
