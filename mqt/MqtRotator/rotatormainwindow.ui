@@ -607,8 +607,8 @@
     </property>
     <addaction name="actionEdit_Presets"/>
     <addaction name="actionSetup_Antennas"/>
-    <addaction name="actionSkyScan"/>
     <addaction name="actionLog_Heading"/>
+    <addaction name="actionSkyScan"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="contextMenuPolicy">

@@ -17,20 +17,20 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Rotator Position Logging</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Log Directory</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="logDirectoryEdit"/>
+      <widget class="QLineEdit" name="lineEdit"/>
      </item>
      <item>
       <widget class="QPushButton" name="logDirBrowsePb">
@@ -44,26 +44,44 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="label">
        <property name="text">
         <string>Log Filename</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="logFilenameEdit"/>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="logcheckBox">
-       <property name="text">
-        <string>Logging</string>
+      <widget class="QLineEdit" name="logFilenameEdit">
+       <property name="maxLength">
+        <number>50</number>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QSpinBox" name="bearingDifferenceSBox"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Bearing Difference</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="logcheckBox">
+       <property name="text">
+        <string>Logging Enabled</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="logDialogOkPb">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -73,11 +91,16 @@
     </widget>
    </item>
   </layout>
+  <zorder>logDialogOkPb</zorder>
+  <zorder>logcheckBox</zorder>
+  <zorder>bearingDifferenceSBox</zorder>
+  <zorder>label_3</zorder>
+  <zorder>logDialogOkPb</zorder>
  </widget>
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>logDialogOkPb</sender>
    <signal>accepted()</signal>
    <receiver>LogDialog</receiver>
    <slot>accept()</slot>
@@ -93,7 +116,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>logDialogOkPb</sender>
    <signal>rejected()</signal>
    <receiver>LogDialog</receiver>
    <slot>reject()</slot>

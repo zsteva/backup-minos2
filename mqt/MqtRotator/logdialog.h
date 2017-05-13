@@ -27,6 +27,12 @@ public:
     explicit LogDialog(QWidget *parent = 0);
     ~LogDialog();
 
+private slots:
+
+
+    void on_logDirBrowsePb_clicked();
+    void on_logFileBrowsePb_clicked();
+
 private:
     Ui::LogDialog *ui;
 

@@ -49,6 +49,7 @@ class RotControl;
 class EditPresetsDialog;
 class RotatorRpc;
 class RotatorLog;
+class LogDialog;
 
 namespace Ui {
 class RotatorMainWindow;
@@ -103,6 +104,7 @@ private:
     QLabel *status;
     SetupDialog *selectRotator;
     EditPresetsDialog *editPresets;
+    LogDialog *setupLog;
     RotatorLog *rotlog;
     bool rotLogFlg;
     QTimer *pollTimer;

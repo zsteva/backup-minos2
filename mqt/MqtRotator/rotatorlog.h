@@ -23,7 +23,11 @@ public:
     int writeLog(int);
 
 private:
+    QString directory;
+    QString filename;
     QString oldBearing;
+    bool bearingLogOn = false;
+    int bearingDiff = 0;
     bool firstBearing;
     bool moving;
     int writeBearing(const QString bearing);

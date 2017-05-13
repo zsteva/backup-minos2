@@ -28,6 +28,7 @@
 #include "rotcontrol.h"
 #include "setupdialog.h"
 #include "editpresetsdialog.h"
+#include "logdialog.h"
 #include <QString>
 #include <QLabel>
 #include <QMessageBox>
@@ -100,6 +101,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     rotator = new RotControl();
     selectRotator = new SetupDialog(rotator);
     editPresets = new EditPresetsDialog;
+    setupLog = new LogDialog;
     pollTimer = new QTimer(this);
     status = new QLabel;
 //    compassDial = new MinosCompass;
@@ -372,6 +374,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(editPresets, SIGNAL(showEditPresetDialog()), editPresets, SLOT(show()));
     connect(editPresets, SIGNAL(updatePresetButtonLabels()), this, SLOT(updatePresetLabels()));
 
+    connect(ui->actionLog_Heading, SIGNAL(triggered()), setupLog, SLOT(show()));
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(logBearing(const QString.s &)));
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(logBearing(int)));
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(sendBearingLogger(const QString &)));
