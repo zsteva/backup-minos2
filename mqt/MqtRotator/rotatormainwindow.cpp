@@ -104,13 +104,12 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     setupLog = new LogDialog;
     pollTimer = new QTimer(this);
     status = new QLabel;
-//    compassDial = new MinosCompass;
     selectAntenna = new QComboBox;
     rotlog = new RotatorLog;
 
     ui->statusbar->addWidget(status);
 
-//    ui->verticalLayout_3->addWidget(compassDial);
+
 
     rotator->set_serialConnected(false);
 
@@ -343,7 +342,7 @@ void RotatorMainWindow::sndStatusLoggger(const QString &message)
 
 void RotatorMainWindow::initActionsConnections()
 {
-    //connect(ui->connectButton, SIGNAL(clicked(bool)), this, SLOT(openSerialPort()));
+
     connect(ui->selectAntennaBox, SIGNAL(activated(int)), this, SLOT(upDateAntenna()));
     connect(ui->turnButton, SIGNAL(clicked(bool)), this, SLOT(rotateToController()));
     connect(ui->bearingEdit, SIGNAL(returnPressed()), this, SLOT(rotateToController()));
@@ -374,7 +373,8 @@ void RotatorMainWindow::initActionsConnections()
     connect(editPresets, SIGNAL(showEditPresetDialog()), editPresets, SLOT(show()));
     connect(editPresets, SIGNAL(updatePresetButtonLabels()), this, SLOT(updatePresetLabels()));
 
-    connect(ui->actionLog_Heading, SIGNAL(triggered()), setupLog, SLOT(show()));
+    connect(ui->actionLog_Heading, SIGNAL(triggered()), setupLog, SLOT(loadLogConfig()));
+    connect(setupLog, SIGNAL(showLogDialog()), setupLog, SLOT(show()));
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(logBearing(const QString.s &)));
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(logBearing(int)));
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(sendBearingLogger(const QString &)));
@@ -408,6 +408,9 @@ void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
 }
 
 // receives updates from rotator
+// update bearing displays
+// backbearing display
+// and also signal check of endstops
 
 void RotatorMainWindow::displayBearing(int bearing)
 {
@@ -630,11 +633,10 @@ void RotatorMainWindow::rotateToController()
     int intBearing;
 
     rotCmdflag = true;
-    //qDebug() << "Triggered from Turnbutton";
-    // get bearing from bearing line edit form
     QString bearing = ui->bearingEdit->text();
-    //qDebug() << "string from box " << bearing;
+
     intBearing = bearing.toInt(&ok, 10);
+
     if (intBearing >= 0 && intBearing <= currentMaxAzimuth && ok)
     {
         rotateTo(intBearing);

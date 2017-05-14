@@ -27,17 +27,27 @@ public:
     explicit LogDialog(QWidget *parent = 0);
     ~LogDialog();
 
+signals:
+    void showLogDialog();
+
+
 private slots:
 
 
     void on_logDirBrowsePb_clicked();
-    void on_logFileBrowsePb_clicked();
+    void on_logFilenameEdit_textChanged(const QString &arg1);
+    void loadLogConfig();
 
 private:
     Ui::LogDialog *ui;
-
+    QString directory;
+    QString filename;
+    int bearingDiff;
+    bool logEnabled;
     int polltime;       // file write interval
 
+    void saveLogConfig();
+    void readLogConfig();
 };
 
 #endif // LOGDIALOG_H
