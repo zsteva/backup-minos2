@@ -29,7 +29,7 @@ public:
 
 signals:
     void showLogDialog();
-
+    bearingLogConfigChanged();
 
 private slots:
 
@@ -38,16 +38,29 @@ private slots:
     void on_logFilenameEdit_textChanged(const QString &arg1);
     void loadLogConfig();
 
+    void on_logDialogOkPb_accepted();
+
+    void on_logDialogOkPb_rejected();
+
+    void on_bearingDifferenceSBox_valueChanged(int arg1);
+
+    void on_logcheckBox_toggled(bool checked);
+
 private:
     Ui::LogDialog *ui;
     QString directory;
     QString filename;
-    int bearingDiff;
-    bool logEnabled;
+    bool dirChanged = false;
+    bool filenameChanged = false;
+    bool bearDiffChanged = false;
+    bool logEnabledChanged = false;
+    int bearingDiff = 0;
+    bool logEnabled = false;
     int polltime;       // file write interval
 
     void saveLogConfig();
     void readLogConfig();
+    void keyPressEvent(QKeyEvent *event);
 };
 
 #endif // LOGDIALOG_H

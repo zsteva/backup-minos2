@@ -373,9 +373,11 @@ void RotatorMainWindow::initActionsConnections()
     connect(editPresets, SIGNAL(showEditPresetDialog()), editPresets, SLOT(show()));
     connect(editPresets, SIGNAL(updatePresetButtonLabels()), this, SLOT(updatePresetLabels()));
 
+    // Bearing Log
     connect(ui->actionLog_Heading, SIGNAL(triggered()), setupLog, SLOT(loadLogConfig()));
     connect(setupLog, SIGNAL(showLogDialog()), setupLog, SLOT(show()));
-//    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(logBearing(const QString.s &)));
+    connect(setuplog, SIGNAL(bearingLogConfigChanged), rotlog, SLOT(readBearingLogConfig()));
+    connect(rotator, SIGNAL(bearing_updated(int)), rotlog, SLOT(writeLog(int)));
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(logBearing(int)));
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(sendBearingLogger(const QString &)));
 //    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(sendBearingLogger(int)));
@@ -859,21 +861,10 @@ void RotatorMainWindow::hamlibError(int errorCode)
 }
 
 
-void RotatorMainWindow::logBearing(int bearing)
-{
-    int retCode = 0;
-    if (rotLogFlg)
-    {
-        retCode = rotlog->writeLog(bearing);
-    }
-}
 
 
-void RotatorMainWindow::sendBearingLogger(const QString bearing)
-{
 
-    msg->publishBearing(bearing);
-}
+
 
 
 void RotatorMainWindow::sleepFor(qint64 milliseconds)

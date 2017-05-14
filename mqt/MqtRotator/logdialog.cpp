@@ -18,6 +18,7 @@
 #include <QFileDialog>
 #include <QSpinBox>
 #include <QSettings>
+#include <QKeyEvent>
 
 LogDialog::LogDialog(QWidget *parent) :
     QDialog(parent),
@@ -35,10 +36,16 @@ LogDialog::~LogDialog()
 
 
 
+
+
 void LogDialog::on_logDirBrowsePb_clicked()
 {
-    directory = QFileDialog::getExistingDirectory(0, ("Select Bearing Log Folder"), "./BearingLog");
-
+    QString dir = QFileDialog::getExistingDirectory(0, ("Select Bearing Log Folder"), "./Configuration/BearingLog");
+    if (dir != directory)
+    {
+        directory = dir;
+        dirChanged = true;
+    }
 }
 
 
@@ -48,7 +55,12 @@ void LogDialog::on_logDirBrowsePb_clicked()
 
 void LogDialog::on_logFilenameEdit_textChanged(const QString &arg1)
 {
-    filename = arg1;
+    QString name = arg1;
+    if (name != filename)
+    {
+        filename = name;
+        filenameChanged = true;
+    }
 }
 
 
@@ -56,16 +68,40 @@ void LogDialog::on_logFilenameEdit_textChanged(const QString &arg1)
 void LogDialog:: saveLogConfig()
 {
 
-
+    bool changed = false;
     QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
     config.beginGroup("BearingLog");
+    if (dirChanged)
+    {
+        config.setValue("directory", directory);
+        dirChanged = false;
+        changed = true;
+    }
+    if (filenameChanged)
+    {
+        config.setValue("filename", filename);
+        filenameChanged = false;
+        changed = true;
+    }
+    if (bearDiffChanged)
+    {
+        config.setValue("bearing_difference", bearingDiff);
+        bearDiffChanged = false;
+        changed = true;
+    }
+    if (logEnabledChanged)
+    {
+        config.setValue("loggingEnabled", logEnabled);
+        logEnabledChanged = false;
+        changed = true;
+    }
 
-    config.setValue("directory", directory);
-    config.setValue("filename", filename);
-    config.setValue("bearing_difference", bearingDiff);
-    config.setValue("loggingEnabled", logEnabled);
 
     config.endGroup();
+    if (changed)
+    {
+        emit bearingLogConfigChanged();
+    }
 
 }
 
@@ -77,7 +113,7 @@ void LogDialog::readLogConfig()
     QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
     config.beginGroup("BearingLog");
 
-    directory = config.value("directory", "./Configuration/").toString();
+    directory = config.value("directory", "./Configuration/BearingLog").toString();
     filename = config.value("filename", "bearingLog").toString();
     bearingDiff = config.value("bearing_difference", 0).toInt();
     logEnabled = config.value("loggingEnabled", false).toBool();
@@ -95,3 +131,43 @@ void LogDialog::loadLogConfig()
     emit showLogDialog();
 }
 
+
+void LogDialog::keyPressEvent(QKeyEvent *event)
+{
+
+    switch (event->key())
+    {
+        case Qt::Key_Escape:
+            close();
+        break;
+
+    }
+}
+
+void LogDialog::on_logDialogOkPb_accepted()
+{
+    saveLogConfig();
+}
+
+void LogDialog::on_logDialogOkPb_rejected()
+{
+    close();
+}
+
+void LogDialog::on_bearingDifferenceSBox_valueChanged(int arg1)
+{
+    if (arg1 != bearingDiff)
+    {
+        bearingDiff = arg1;
+        bearDiffChanged = true;
+    }
+}
+
+void LogDialog::on_logcheckBox_toggled(bool checked)
+{
+    if (checked != logEnabled)
+    {
+        logEnabled = checked;
+        logEnabledChanged = true;
+    }
+}

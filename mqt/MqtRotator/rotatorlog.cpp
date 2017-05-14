@@ -15,6 +15,7 @@
 #include <QFile>
 #include <QtDebug>
 #include <QDateTime>
+#include <QSettings>
 
 RotatorLog::RotatorLog()
 {
@@ -27,39 +28,48 @@ RotatorLog::RotatorLog()
 
 int RotatorLog::writeLog(int bearing)
 {
-    QString sbearing = sbearing.setNum(bearing);
-    if (oldBearing != sbearing && !firstBearing)
+    QString fileName = bearingLogDir;
+    if (bearingLogEnabled)
     {
-        oldBearing = sbearing;
-        writeBearing(sbearing);
-        firstBearing = true;
-        return 0;
-    }
-    if (oldBearing != sbearing && firstBearing)
-    {
-        oldBearing = sbearing;
-        moving = true;
-        return 0;
-    }
-    if (moving)
-    {
-        if (oldBearing == sbearing && firstBearing)
+
+       fileName.append('/');
+       fileName.append(bearingLogFileName);
+
+       QString sbearing = sbearing.setNum(bearing);
+        if (oldBearing != sbearing && !firstBearing)
         {
-            moving = false;
-            writeBearing(sbearing);
+            oldBearing = sbearing;
+            writeBearing(sbearing, fileName);
+            firstBearing = true;
+            return 0;
         }
-    }
+        if (oldBearing != sbearing && firstBearing)
+        {
+            oldBearing = sbearing;
+            moving = true;
+            return 0;
+        }
+        if (moving)
+        {
+            if (oldBearing == sbearing && firstBearing)
+            {
+                moving = false;
+                writeBearing(sbearing, fileName);
+            }
+        }
+     }
+
     return 0;
 }
 
 
 
-int RotatorLog::writeBearing(const QString bearing)
+int RotatorLog::writeBearing(const QString bearing, QString filename)
 {
         QDateTime t = QDateTime::currentDateTime();
         QString t_str = t.toString();
 
-        QFile file( "testfile.txt" );
+        QFile file( filename );
         if( !file.exists() )
         {
             qDebug() << "The file" << file.fileName() << "does not exist.";
@@ -79,6 +89,21 @@ int RotatorLog::writeBearing(const QString bearing)
         file.close();
         return 0;
 }
+
+
+void RotatorLog::readBearingLogConfig()
+{
+    QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
+    config.beginGroup("BearingLog");
+
+    bearingLogDir = config.value("directory", "./Configuration/BearingLog").toString();
+    bearingLogFileName = config.value("filename", "bearingLog").toString();
+    bearingLogBearingDiff = config.value("bearing_difference", 0).toInt();
+    bearingLogEnabled = config.value("loggingEnabled", false).toBool();
+
+    config.endGroup();
+}
+
 
 
 

@@ -22,15 +22,17 @@ public:
     RotatorLog();
     int writeLog(int);
 
+public slots:
+    void readBearingLogConfig();
 private:
-    QString directory;
-    QString filename;
     QString oldBearing;
-    bool bearingLogOn = false;
-    int bearingDiff = 0;
+    QString bearingLogDir;
+    QString bearingLogFileName;
+    int bearingLogBearingDiff;
+    bool bearingLogEnabled;
     bool firstBearing;
     bool moving;
-    int writeBearing(const QString bearing);
+    int writeBearing(const QString, QString);
 
 };
 

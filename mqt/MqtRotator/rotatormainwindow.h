@@ -128,6 +128,8 @@ private:
     QString presetName[NUM_PRESETS];
     QString presetBearing[NUM_PRESETS];
 
+
+
     void openRotator();
     void closeRotator();
 
@@ -168,8 +170,8 @@ protected slots:
 
 private slots:
     void LogTimerTimer( );
-    void logBearing(int bearing);
-    void sendBearingLogger(const QString bearing);
+
+
     void onLoggerSetRotation(int direction, int angle);
     void checkEndStop();
 //    void on_pushButton_2_clicked();
