@@ -29,7 +29,7 @@ public:
 
 signals:
     void showLogDialog();
-    bearingLogConfigChanged();
+    void bearingLogConfigChanged();
 
 private slots:
 

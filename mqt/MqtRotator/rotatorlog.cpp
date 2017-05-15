@@ -25,6 +25,12 @@ RotatorLog::RotatorLog()
 }
 
 
+void RotatorLog::logBearing(int bearing)
+{
+    writeLog(bearing);
+}
+
+
 
 int RotatorLog::writeLog(int bearing)
 {
@@ -91,7 +97,7 @@ int RotatorLog::writeBearing(const QString bearing, QString filename)
 }
 
 
-void RotatorLog::readBearingLogConfig()
+void RotatorLog::getBearingLogConfig()
 {
     QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
     config.beginGroup("BearingLog");

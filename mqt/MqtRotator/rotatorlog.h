@@ -23,7 +23,10 @@ public:
     int writeLog(int);
 
 public slots:
-    void readBearingLogConfig();
+
+    void getBearingLogConfig();
+    void logBearing(int);
+
 private:
     QString oldBearing;
     QString bearingLogDir;

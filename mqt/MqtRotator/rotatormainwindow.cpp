@@ -359,6 +359,9 @@ void RotatorMainWindow::initActionsConnections()
     connect(ui->rot_right_button, SIGNAL(toggled(bool)), this, SLOT(rotateCW(bool)));
     connect(ui->rot_left_button, SIGNAL(toggled(bool)), this, SLOT(rotateCCW(bool)));
     connect(this, SIGNAL(escapePressed()), rotator, SLOT(stop_rotation()));
+
+    // display bearing
+    connect(pollTimer, SIGNAL(timeout()), this, SLOT(request_bearing()));
     connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(displayBearing(int)));
     connect(this, SIGNAL(sendCompassDial(int)), ui->compassDial, SLOT(compassDialUpdate(int)));
     connect(this, SIGNAL(sendBearing(QString)), ui->bearingDisplay, SLOT(setText(const QString &)));
@@ -368,21 +371,24 @@ void RotatorMainWindow::initActionsConnections()
     connect(this, SIGNAL(checkingEndStop()), this, SLOT(checkEndStop()));
     //connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
     //connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
+
+    // setup antennas
     connect(ui->actionSetup_Antennas, SIGNAL(triggered()), selectRotator, SLOT(show()));
     connect(ui->actionEdit_Presets, SIGNAL(triggered()), editPresets, SLOT(loadPresetEditFieldsShow()));
+    // setup presets
     connect(editPresets, SIGNAL(showEditPresetDialog()), editPresets, SLOT(show()));
     connect(editPresets, SIGNAL(updatePresetButtonLabels()), this, SLOT(updatePresetLabels()));
 
     // Bearing Log
     connect(ui->actionLog_Heading, SIGNAL(triggered()), setupLog, SLOT(loadLogConfig()));
     connect(setupLog, SIGNAL(showLogDialog()), setupLog, SLOT(show()));
-    connect(setuplog, SIGNAL(bearingLogConfigChanged), rotlog, SLOT(readBearingLogConfig()));
-    connect(rotator, SIGNAL(bearing_updated(int)), rotlog, SLOT(writeLog(int)));
-//    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(logBearing(int)));
-//    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(sendBearingLogger(const QString &)));
-//    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(sendBearingLogger(int)));
+
+/*
+    connect(setupLog, SIGNAL(bearingLogConfigChanged()), rotlog, SLOT(getBearingLogConfig());
+    connect(rotator, SIGNAL(bearing_updated(int)), rotlog, SLOT(logBearing(int)));
+*/
     connect(msg, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));
-    connect(pollTimer, SIGNAL(timeout()), this, SLOT(request_bearing()));
+
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
     //connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     //connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
