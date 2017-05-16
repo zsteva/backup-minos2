@@ -435,6 +435,13 @@ void RotatorMainWindow::displayBearing(int bearing)
     int _bearing = bearing;
 
     // send Bearing to displays
+
+    // send to logger
+    QString s = QString::number(_bearing);
+    msg->publishBearing(s);
+
+
+    // send Bearing to displays
     if (overLapActiveflag)
     {
         if (_bearing > 360)
@@ -583,12 +590,14 @@ void RotatorMainWindow::upDateAntenna()
         selectRotator->currentAntenna.parity = selectRotator->availAntennas[antennaIndex].parity;
         selectRotator->currentAntenna.handshake = selectRotator->availAntennas[antennaIndex].handshake;
         selectRotator->saveCurrentAntenna();
-        if (rotator->get_serialConnected())
+       if (rotator->get_serialConnected())
        {
                 closeRotator();
        }
        openRotator();
-
+       // update logger
+       msg->publishAntennaName(selectRotator->currentAntenna.antennaName);
+       msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
     }
 
 

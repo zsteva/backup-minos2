@@ -22,6 +22,8 @@ public:
     void setAsEdit();
     void setRotatorState(const QString &s);
     void setRotatorBearing(const QString &s);
+    void setRotatorAntennaName(const QString &s);
+    void setRotatorMaxAzimuth(const QString &s);
 
 private:
     ScreenContact *partialContact; // contact being edited on screen
@@ -50,6 +52,7 @@ private:
      QSharedPointer<BaseContact> getNextContact();
 
      int getAngle();
+     int maxAzimuth = 360;
 
   protected: 	// User declarations
      QVector <ValidatedControl *> vcs;

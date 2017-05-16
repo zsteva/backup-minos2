@@ -96,9 +96,19 @@ void MinosLoggerEvents::SendRotatorState(QString s, BaseContestLog *c)
     emit mle.RotatorState(s, c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendRotatorBearing(QString s, BaseContestLog *c)
+void MinosLoggerEvents::SendRotatorBearing(QString bearing, BaseContestLog *c)
 {
-    emit mle.RotatorBearing(s, c);
+    emit mle.RotatorBearing(bearing, c);
+}
+//---------------------------------------------------------------------------
+void MinosLoggerEvents::SendRotatorMaxAzimuth(QString maxAzimuth, BaseContestLog *c)
+{
+    emit mle.RotatorMaxAzimuth(maxAzimuth, c);
+}
+//---------------------------------------------------------------------------
+void MinosLoggerEvents::SendRotatorAntennaName(QString antennaName, BaseContestLog *c)
+{
+    emit mle.RotatorAntennaName(antennaName, c);
 }
 //---------------------------------------------------------------------------
 void MinosLoggerEvents::SendEditMatchContact(BaseContestLog *c)

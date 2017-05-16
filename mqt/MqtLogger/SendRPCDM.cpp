@@ -229,6 +229,16 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
 
          LogContainer->setRotatorBearing(an.getValue());
       }
+      if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "MaxAzimuth")
+      {
+
+         LogContainer->setRotatorMaxAzimuth(an.getValue());
+      }
+      if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "AntennaName")
+      {
+
+         LogContainer->setRotatorAntennaName(an.getValue());
+      }
 
    }
 

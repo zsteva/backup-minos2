@@ -1789,7 +1789,8 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
     ui->RotateRight->setVisible(LogContainer->isRotatorLoaded());
     ui->StopRotate->setVisible(LogContainer->isRotatorLoaded());
     ui->rotatorState->setVisible(LogContainer->isRotatorLoaded());
-    ui->rotatorState->setVisible(LogContainer->isRotatorLoaded());
+    ui->antennaName->setVisible(LogContainer->isRotatorLoaded());
+
 }
 
 void QSOLogFrame::transferDetails(const QSharedPointer<BaseContact> lct, const BaseContestLog *matct )
@@ -2114,27 +2115,67 @@ void QSOLogFrame::setRotatorState(const QString &s)
 {
        ui->rotatorState->setText(s);
 }
+
+void QSOLogFrame::setRotatorAntennaName(const QString &s)
+{
+       ui->antennaName->setText(s);
+}
+
 void QSOLogFrame::setRotatorBearing(const QString &s)
 {
+    bool ok;
+    bool overlap = false;
+    int iBearing = s.toInt(&ok, 10);
+    if (!ok) return;
+
+    if (iBearing > 360)
+    {
+        iBearing -= 360;
+        overlap = true;
+    }
+    QString bearing = bearing.number(iBearing);
     QString brg;
     QChar degsym = QChar('\xB0');
-    int len = s.length();
+    int len = bearing.length();
 
     if (len < 2)
     {
         brg = QString("%1%2%3")
-        .arg("  ").arg(s).arg(degsym);
+        .arg("  ").arg(bearing).arg(degsym);
     }
     else if (len < 3)
     {
         brg = QString("%1%2%3")
-        .arg(" ").arg(s).arg(degsym);
+        .arg(" ").arg(bearing).arg(degsym);
     }
     else
     {
         brg = QString("%1%2")
-        .arg(s).arg(degsym);
+        .arg(bearing).arg(degsym);
     }
 
-    ui->RotBrg->setText(brg);
+    brg.append("</font>");
+
+    if (overlap)
+    {
+        brg.prepend("<font color='Red'>");
+        ui->RotBrg->setText(brg);
+    }
+    else
+    {
+        brg.prepend("<font color='Black'>");
+        ui->RotBrg->setText(brg);
+    }
+
+}
+
+void QSOLogFrame::setRotatorMaxAzimuth(const QString &s)
+{
+    bool ok;
+    int max_azimuth = 0;
+    max_azimuth = s.toInt(&ok, 10);
+    if (ok)
+    {
+        maxAzimuth = max_azimuth;
+    }
 }

@@ -40,6 +40,8 @@ signals:
    void SetFreq(QString, BaseContestLog *);
    void RotatorState(QString, BaseContestLog *);
    void RotatorBearing(QString, BaseContestLog *);
+   void RotatorMaxAzimuth(QString, BaseContestLog *);
+   void RotatorAntennaName(QString, BaseContestLog *);
    void EditMatchContact(BaseContestLog *);
    void ScreenContactChanged(ScreenContact *, BaseContestLog *);
    void ReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);
@@ -81,7 +83,9 @@ public:
    static void SendSetMode(QString, BaseContestLog *);
    static void SendSetFreq(QString, BaseContestLog *);
    static void SendRotatorState(QString, BaseContestLog *);
-   static void SendRotatorBearing(QString s, BaseContestLog *c);
+   static void SendRotatorBearing(QString, BaseContestLog *c);
+   static void SendRotatorMaxAzimuth(QString, BaseContestLog *c);
+   static void SendRotatorAntennaName(QString, BaseContestLog *c);
    static void SendEditMatchContact(BaseContestLog *);
    static void SendScreenContactChanged(ScreenContact *, BaseContestLog *);
    static void SendReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);
