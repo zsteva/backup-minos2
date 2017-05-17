@@ -107,7 +107,7 @@ QString dtg::getIsoDTG( bool &d ) const
    temp_date += timeValue [ 5 ];
 
    for ( int i = 0; i < 17; i++ )
-      if ( temp_date[ i ] == 0 )
+      if ( temp_date[ i ].unicode() == 0 )
          temp_date[ i ] = ' ';
 
    d = dateDirty || timeDirty;
@@ -162,7 +162,7 @@ QString dtg::getDate( DTG dstyle, bool &d ) const
                temp_date += dateValue [ 1 ];
 
                for ( int i = 0; i < 10; i++ )
-                  if ( temp_date[ i ] == 0 )
+                  if ( temp_date[ i ].unicode() == 0 )
                      temp_date[ i ] = ' ';
                temp_date = temp_date.left(10);
             }
@@ -178,7 +178,7 @@ QString dtg::getDate( DTG dstyle, bool &d ) const
                temp_date += dateValue [ 1 ];
 
                for ( int i = 0; i < 8; i++ )
-                  if ( temp_date[ i ] == 0 )
+                  if ( temp_date[ i ].unicode() == 0 )
                      temp_date[ i ] = ' ';
                temp_date = temp_date.left( 8);
             }
@@ -219,7 +219,7 @@ QString dtg::getTime( DTG dstyle, bool &d ) const
          temp_time += timeValue [ 5 ];
 
          for ( int i = 0; i < 8; i++ )
-            if ( temp_time[ i ] == 0 )
+            if ( temp_time[ i ].unicode() == 0 )
                temp_time[ i ] = ' ';
       }
          else
@@ -231,7 +231,7 @@ QString dtg::getTime( DTG dstyle, bool &d ) const
             temp_time += timeValue [ 3 ];
 
             for ( int i = 0; i < 5; i++ )
-               if ( temp_time[ i ] == 0 )
+               if ( temp_time[ i ].unicode() == 0 )
                   temp_time[ i ] = ' ';
          }
    return temp_time;

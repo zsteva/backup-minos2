@@ -176,7 +176,7 @@ void KeyerConfigure::SetMorseCode( TiXmlElement *e )
               && GetStringAttribute( c, "code", code ) == TIXML_SUCCESS )
          {
             QString proccode;
-            for ( int i = 0; i < 8 && code[ i ] != 0 && code[ i ] != ' '; i++ )
+            for ( int i = 0; i < 8 && code[ i ].unicode() != 0 && code[ i ].unicode() != ' '; i++ )
             {
                if ( code[ i ] == '.' )
                   proccode += '\x40';
