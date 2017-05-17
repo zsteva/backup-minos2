@@ -20,6 +20,7 @@
 
 #include "base_pch.h"
 #include "RPCCommandConstants.h"
+#include "rotatorCommonConstants.h"
 #include "rotatorRpc.h"
 #include "rotatorlog.h"
 #include "rotatormainwindow.h"
@@ -235,29 +236,24 @@ void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
     {
         ui->bearingEdit->setText(QString::number(angle));
         rotateTo(angle);
-        sendStatusLogTurn();
+        sendStatusToLogTurn();
     }
     else if (dirCommand == rpcConstants::eRotateLeft)
     {
-            if (!moving)
-            {
-                rotateCCW(true);
-                sendStatusToLogRotCCW();
-            }
+        rotateCCW(true);
+        //sendStatusToLogRotCCW();
+
     }
     else if (dirCommand == rpcConstants::eRotateRight)
     {
-            if (!moving)
-            {
-                rotateCW(true);
-                sendStatusLogRotCW();
-            }
+        rotateCW(true);
+        //sendStatusToLogRotCW();
+
     }
     else if (dirCommand == rpcConstants::eRotateStop)
     {
             stopRotation();
-            sendStatusLogStop();
-
+            //sendStatusToLogStop();
     }
 
 
@@ -320,7 +316,7 @@ void RotatorMainWindow::closeRotator()
 {
     rotator->closeRotator();
     showStatusMessage(tr("Disconnected"));
-    sendStatusLogDisConnected();
+    sendStatusToLogDisConnected();
 }
 
 
@@ -388,6 +384,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(setupLog, SIGNAL(bearingLogConfigChanged()), rotlog, SLOT(getBearingLogConfig());
     connect(rotator, SIGNAL(bearing_updated(int)), rotlog, SLOT(logBearing(int)));
 */
+    // Message from Logger
     connect(msg, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));
 
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
@@ -712,6 +709,7 @@ void RotatorMainWindow::rotateTo(int bearing)
         else
         {
             moving = true;
+            sendStatusToLogTurn();
         }
 
     }
@@ -749,7 +747,9 @@ void RotatorMainWindow::stopRotation()
     if (retCode < 0)
     {
         hamlibError(retCode);
+        sendStatusToLogError();
     }
+    sendStatusToLogStop();
     sleepFor(brakedelay);
     brakeflag = false;
     moving = false;
@@ -788,11 +788,13 @@ void RotatorMainWindow::rotateCW(bool toggle)
             {
                 hamlibError(retCode);
                 movingCW = false;
+                sendStatusToLogError();
             }
             else
             {
                 ui->rot_right_button->setChecked(true);
                 movingCW = true;
+                sendStatusToLogRotCW();
             }
             cwCcwCmdflag = false;
         }
@@ -830,11 +832,13 @@ void RotatorMainWindow::rotateCCW(bool toggle)
             {
                 hamlibError(retCode);
                 movingCCW = false;
+                sendStatusToLogError();
             }
             else
             {
                 ui->rot_left_button->setChecked(true);
                 movingCCW = true;
+                sendStatusToLogRotCCW();
             }
 
         }
@@ -887,27 +891,27 @@ void RotatorMainWindow::sendStatusToLogRotCCW()
     sendStatusLogger("CCW");
 }
 
-void RotatorMainWindow::sendStatusLogRotCW()
+void RotatorMainWindow::sendStatusToLogRotCW()
 {
     sendStatusLogger("CW");
 }
 
-void RotatorMainWindow::sendStatusLogStop()
+void RotatorMainWindow::sendStatusToLogStop()
 {
     sendStatusLogger("Stop");
 }
 
-void RotatorMainWindow::sendStatusLogTurn()
+void RotatorMainWindow::sendStatusToLogTurn()
 {
     sendStatusLogger("Turn to Bearing");
 }
 
-void RotatorMainWindow::sendStatusLogDisConnected()
+void RotatorMainWindow::sendStatusToLogDisConnected()
 {
     sendStatusLogger("Disconnected");
 }
 
-void RotatorMainWindow::sendStatusLogError()
+void RotatorMainWindow::sendStatusToLogError()
 {
     sendStatusLogger("Error");
 }

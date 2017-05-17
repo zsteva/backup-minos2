@@ -51,7 +51,8 @@ HEADERS  += \
     rotcontrol.h \
     rotatorlog.h \
     rotatorRpc.h \
-    overlapwidget.h
+    overlapwidget.h \
+    rotatorCommonConstants.h
 
 FORMS    += \
     skyscandialog.ui \
