@@ -58,6 +58,11 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     LogTimer.start(100);
     msg = new RotatorRpc(this);
 
+    QSettings settings;
+    QByteArray geometry = settings.value("geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
+
     presetButtons[0] = ui->presetButton1;
     presetButtons[1] = ui->presetButton2;
     presetButtons[2] = ui->presetButton3;
@@ -193,10 +198,10 @@ void RotatorMainWindow::closeEvent(QCloseEvent *event)
     XMPPClosedown();
     LogTimerTimer( );
     // and tidy up all loose ends
-    /*
+
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
-    */
+
     QWidget::closeEvent(event);
 }
 
@@ -204,10 +209,10 @@ void RotatorMainWindow::closeEvent(QCloseEvent *event)
 
 void RotatorMainWindow::resizeEvent(QResizeEvent * event)
 {
-    /*
+
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
-    */
+
     QWidget::resizeEvent(event);
 }
 
@@ -442,9 +447,9 @@ void RotatorMainWindow::displayBearing(int bearing)
     // send Bearing to displays
     if (overLapActiveflag)
     {
-        if (_bearing > 360)
+        if (_bearing > COMPASS_MAX360)
         {
-            _bearing -= 360;
+            _bearing -= COMPASS_MAX360;
             overlapbearingmsg = QString::number(bearing);
             overLapOnflag = true;
         }
@@ -478,10 +483,10 @@ void RotatorMainWindow::displayBearing(int bearing)
     // calc and send backbearing
     int backBearing = bearing;
 
-    backBearing += 180;
-    if (backBearing >= 360)
+    backBearing += COMPASS_HALF;
+    if (backBearing >= COMPASS_MAX360)
     {
-        backBearing -= 360;
+        backBearing -= COMPASS_MAX360;
     }
     // send backBearing to display
     QString backBearingmsg = QString::number(backBearing, 10);
@@ -749,6 +754,8 @@ void RotatorMainWindow::stopRotation()
         hamlibError(retCode);
         sendStatusToLogError();
     }
+    ui->rot_left_button->setChecked(false);
+    ui->rot_right_button->setChecked(false);
     sendStatusToLogStop();
     sleepFor(brakedelay);
     brakeflag = false;
@@ -883,37 +890,37 @@ void RotatorMainWindow::hamlibError(int errorCode)
 
 void RotatorMainWindow::sendStatusToLogReady()
 {
-    sendStatusLogger("Ready");
+    sendStatusLogger(STATUS_READY);
 }
 
 void RotatorMainWindow::sendStatusToLogRotCCW()
 {
-    sendStatusLogger("CCW");
+    sendStatusLogger(STATUS_ROTATE_CCW);
 }
 
 void RotatorMainWindow::sendStatusToLogRotCW()
 {
-    sendStatusLogger("CW");
+    sendStatusLogger(STATUS_ROTATE_CW);
 }
 
 void RotatorMainWindow::sendStatusToLogStop()
 {
-    sendStatusLogger("Stop");
+    sendStatusLogger(STATUS_STOP);
 }
 
 void RotatorMainWindow::sendStatusToLogTurn()
 {
-    sendStatusLogger("Turn to Bearing");
+    sendStatusLogger(STATUS_TURN_TO);
 }
 
 void RotatorMainWindow::sendStatusToLogDisConnected()
 {
-    sendStatusLogger("Disconnected");
+    sendStatusLogger(STATUS_DISCONNECTED);
 }
 
 void RotatorMainWindow::sendStatusToLogError()
 {
-    sendStatusLogger("Error");
+    sendStatusLogger(STATUS_ERROR);
 }
 
 void RotatorMainWindow::sleepFor(qint64 milliseconds)

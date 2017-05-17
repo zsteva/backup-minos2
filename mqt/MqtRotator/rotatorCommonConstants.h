@@ -15,6 +15,8 @@
 
 // Common Rotator Constants
 
+#define DEGREE_SYMBOL '\xB0'
+
 // Rotator Keys
 #define ROTATE_CW_KEY Qt::Key_R
 #define ROTATE_CCW_KEY Qt::Key_L
@@ -23,8 +25,18 @@
 #define ROTATE_STOP_KEY Qt::Key_S
 #define ROTATE_TURN_KEY Qt::Key_T
 
-#define COMPASS_MAX360 359
+#define COMPASS_MAX360 360
+#define COMPASS_HALF 180
 #define COMPASS_MIN0 0
 
+
+// Status messages sent to logger
+#define STATUS_READY "Ready"
+#define STATUS_ROTATE_CCW "Rotating CCW"
+#define STATUS_ROTATE_CW "Rotating CW"
+#define STATUS_STOP "Stop"
+#define STATUS_TURN_TO "Turning to bearing"
+#define STATUS_DISCONNECTED "Disconnected"
+#define STATUS_ERROR "Error"
 
 #endif // ROTATORCOMMON_H

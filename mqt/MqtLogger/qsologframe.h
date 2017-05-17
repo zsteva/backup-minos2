@@ -5,7 +5,7 @@
 
 #include "focuswatcher.h"
 #include "validators.h"
-
+#include "rotatorCommonConstants.h"
 
 namespace Ui {
 class QSOLogFrame;
@@ -51,8 +51,15 @@ private:
      QSharedPointer<BaseContact> getPriorContact();
      QSharedPointer<BaseContact> getNextContact();
 
+     // rotator
      int getAngle();
-     int maxAzimuth = 360;
+     int maxAzimuth = COMPASS_MAX360;
+     int currentBearing = 0;
+     bool moving = false;
+     bool movingCW = false;
+     bool movingCCW = false;
+     void clearRotatorFlags();
+
 
   protected: 	// User declarations
      QVector <ValidatedControl *> vcs;
@@ -145,8 +152,11 @@ private:
     ValidatedControl *qthIl;
     ValidatedControl *cmntIl;
 
+
+
     void MainOpComboBox_Exit();
     void SecondOpComboBox_Exit();
+
 signals:
     void QSOFrameCancelled();
 private slots:
@@ -174,9 +184,9 @@ private slots:
     void on_ShowOperators();
 
     void on_ModeComboBoxGJV_currentIndexChanged(int index);
-    void on_RotateLeft_clicked();
+    void on_RotateLeft_clicked(bool);
     void on_Rotate_clicked();
-    void on_RotateRight_clicked();
+    void on_RotateRight_clicked(bool);
     void on_StopRotate_clicked();
 };
 

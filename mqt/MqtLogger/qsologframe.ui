@@ -356,6 +356,9 @@
            <property name="text">
             <string>Left (CCW)</string>
            </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
@@ -375,6 +378,9 @@
            </property>
            <property name="text">
             <string>Right (CW)</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -920,19 +926,10 @@
     </widget>
    </item>
   </layout>
+  <zorder></zorder>
+  <zorder></zorder>
+  <zorder></zorder>
   <zorder>EditFrame</zorder>
-  <zorder></zorder>
-  <zorder>antennaName</zorder>
-  <zorder></zorder>
-  <zorder></zorder>
-  <zorder></zorder>
-  <zorder></zorder>
-  <zorder></zorder>
-  <zorder></zorder>
-  <zorder></zorder>
-  <zorder>antennaName</zorder>
-  <zorder>horizontalSpacer_3</zorder>
-  <zorder>horizontalSpacer_11</zorder>
  </widget>
  <resources/>
  <connections/>
