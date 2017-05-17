@@ -17,17 +17,32 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Entry/Export Options</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QTableWidget" name="OptionsScrollBox">
      <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOn</enum>
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
+     <property name="textElideMode">
+      <enum>Qt::ElideNone</enum>
+     </property>
+     <property name="verticalScrollMode">
+      <enum>QAbstractItemView::ScrollPerItem</enum>
+     </property>
+     <property name="horizontalScrollMode">
+      <enum>QAbstractItemView::ScrollPerPixel</enum>
+     </property>
+     <property name="cornerButtonEnabled">
+      <bool>false</bool>
      </property>
      <property name="columnCount">
       <number>1</number>
      </property>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
      <column/>
     </widget>
    </item>

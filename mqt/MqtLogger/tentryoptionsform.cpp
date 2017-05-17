@@ -58,10 +58,15 @@ TEntryOptionsForm::TEntryOptionsForm( QWidget* Owner, LoggerContestLog * cnt, bo
         "email address for queries"
     };
 
-    ui->OptionsScrollBox->setColumnCount(1);
+    ui->OptionsScrollBox->horizontalHeader()->hide();
+    ui->OptionsScrollBox->verticalHeader()->hide();
+
+    ui->OptionsScrollBox->setColumnCount(2);
     ui->OptionsScrollBox->setRowCount(vlabels.count());
 
     int r = 0;
+
+    ui->OptionsScrollBox->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     ui->OptionsScrollBox->setVerticalHeaderLabels(vlabels);
 
@@ -92,9 +97,6 @@ TEntryOptionsForm::TEntryOptionsForm( QWidget* Owner, LoggerContestLog * cnt, bo
     opsEntryLine2 = r;
     ui->OptionsScrollBox->setItem(r++, 0, new QTableWidgetItem(ct->ops1.getValue()));
 
-    // Focus here
-    //ActiveControl = options[ r ]->OptionEdit;
-
     ui->OptionsScrollBox->setItem(r++, 0, new QTableWidgetItem(ct->entCondx1.getValue()));
     ui->OptionsScrollBox->setItem(r++, 0, new QTableWidgetItem(ct->entCondx2.getValue()));
     ui->OptionsScrollBox->setItem(r++, 0, new QTableWidgetItem(ct->entCondx3.getValue()));
@@ -110,8 +112,6 @@ TEntryOptionsForm::TEntryOptionsForm( QWidget* Owner, LoggerContestLog * cnt, bo
     ui->OptionsScrollBox->setItem(r++, 0, new QTableWidgetItem(ct->entPhone.getValue()));
     ui->OptionsScrollBox->setItem(r++, 0, new QTableWidgetItem(ct->entEMail.getValue()));
 
-    ui->OptionsScrollBox->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    ui->OptionsScrollBox->horizontalHeader()->hide();
     ui->OptionsScrollBox->verticalHeader()->show();
 
     ui->EntryGroup->setId( ui->enrb0, 0 );
