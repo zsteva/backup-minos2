@@ -163,11 +163,11 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     southStopActiveflag = selectRotator->currentAntenna.southStopFlag;
 
-    // tell logger that rotator is active
+    // tell logger that rotator is active, antenna name and maxRotation
 
 
-    sndStatusLoggger("Rotator Ready");
-
+    sendStatusToLogReady();
+    upDateAntenna();
 
 
 
@@ -235,14 +235,14 @@ void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
     {
         ui->bearingEdit->setText(QString::number(angle));
         rotateTo(angle);
-
+        sendStatusLogTurn();
     }
     else if (dirCommand == rpcConstants::eRotateLeft)
     {
             if (!moving)
             {
                 rotateCCW(true);
-                sndStatusLoggger("Rotating CCW");
+                sendStatusToLogRotCCW();
             }
     }
     else if (dirCommand == rpcConstants::eRotateRight)
@@ -250,13 +250,13 @@ void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
             if (!moving)
             {
                 rotateCW(true);
-                sndStatusLoggger("Rotating CW");
+                sendStatusLogRotCW();
             }
     }
     else if (dirCommand == rpcConstants::eRotateStop)
     {
             stopRotation();
-            sndStatusLoggger("Rotator Stop");
+            sendStatusLogStop();
 
     }
 
@@ -304,7 +304,7 @@ void RotatorMainWindow::openRotator()
         showStatusMessage(tr("Connected to Antenna: %1 - %2, %3, %4, %5, %6, %7, %8")
                               .arg(p.antennaName).arg(p.rotatorModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
                               .arg(p.stopbits).arg(rotator->getParityCodeNames()[p.parity]).arg(rotator->getHandShakeNames()[p.handshake]));
-
+        sendStatusToLogReady();
     }
     else
     {
@@ -320,6 +320,7 @@ void RotatorMainWindow::closeRotator()
 {
     rotator->closeRotator();
     showStatusMessage(tr("Disconnected"));
+    sendStatusLogDisConnected();
 }
 
 
@@ -333,7 +334,7 @@ void RotatorMainWindow::showStatusMessage(const QString &message)
 }
 
 
-void RotatorMainWindow::sndStatusLoggger(const QString &message)
+void RotatorMainWindow::sendStatusLogger(const QString &message)
 {
     msg->publishState(message);
 }
@@ -876,11 +877,40 @@ void RotatorMainWindow::hamlibError(int errorCode)
 }
 
 
+void RotatorMainWindow::sendStatusToLogReady()
+{
+    sendStatusLogger("Ready");
+}
 
+void RotatorMainWindow::sendStatusToLogRotCCW()
+{
+    sendStatusLogger("CCW");
+}
 
+void RotatorMainWindow::sendStatusLogRotCW()
+{
+    sendStatusLogger("CW");
+}
 
+void RotatorMainWindow::sendStatusLogStop()
+{
+    sendStatusLogger("Stop");
+}
 
+void RotatorMainWindow::sendStatusLogTurn()
+{
+    sendStatusLogger("Turn to Bearing");
+}
 
+void RotatorMainWindow::sendStatusLogDisConnected()
+{
+    sendStatusLogger("Disconnected");
+}
+
+void RotatorMainWindow::sendStatusLogError()
+{
+    sendStatusLogger("Error");
+}
 
 void RotatorMainWindow::sleepFor(qint64 milliseconds)
 {

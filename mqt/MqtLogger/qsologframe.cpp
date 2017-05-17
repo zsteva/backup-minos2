@@ -2094,12 +2094,21 @@ int QSOLogFrame::getAngle()
 
 void QSOLogFrame::on_RotateLeft_clicked()
 {
+
     TSendDM::sendRotator(rpcConstants::eRotateLeft, getAngle());
+
 }
 
 void QSOLogFrame::on_Rotate_clicked()
 {
-    TSendDM::sendRotator(rpcConstants::eRotateDirect, getAngle());
+    if (getAngle() < maxAzimuth)
+    {
+        TSendDM::sendRotator(rpcConstants::eRotateDirect, getAngle());
+    }
+    else
+    {
+        ui->rotatorState->setText("<font color='Red'>Bearing too large</font>");
+    }
 }
 
 void QSOLogFrame::on_RotateRight_clicked()

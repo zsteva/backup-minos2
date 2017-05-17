@@ -72,6 +72,8 @@ public:
     // setup connections
     void initActionsConnections();
 
+
+
 signals:
 
     void escapePressed();
@@ -135,7 +137,7 @@ private:
 
     void refreshPresetLabels();
     void showStatusMessage(const QString &);
-    void sndStatusLoggger(const QString &);
+    void sendStatusLogger(const QString &);
     void readPresets();
 
 
@@ -153,6 +155,7 @@ private:
 
     void rotatorActive();
 
+
 public slots:
     void rotateToController();
     void displayBearing(int);
@@ -166,6 +169,14 @@ protected slots:
     void rotateCCW(bool toogle);
     void stopButton();
     void stopRotation();
+    void sendStatusToLogReady();
+    void sendStatusToLogRotCCW();
+    void sendStatusLogRotCW();
+    void sendStatusLogStop();
+    void sendStatusLogTurn();
+    void sendStatusLogDisConnected();
+    void sendStatusLogError();
+
 
 
 private slots:
@@ -179,8 +190,7 @@ private slots:
 
 
 private:
-     void rotateTo(int bearing);
-
+    void rotateTo(int bearing);
 
 };
 
