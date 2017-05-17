@@ -12,7 +12,7 @@ mkdir Configuration
 mkdir Lists
 mkdir Logs
 
-copy C:\Projects\sfMinos\QTbuild\gcc\mqt\MqtLogger\release\MqtLogger.exe
+copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtLogger\release\MqtLogger.exe
 
 xcopy /E /F /Y C:\Projects\sfMinos\mqt\ControlFiles\Configuration .\Configuration
 
