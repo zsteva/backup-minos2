@@ -384,17 +384,20 @@ void RotatorMainWindow::initActionsConnections()
     // Bearing Log
     connect(ui->actionLog_Heading, SIGNAL(triggered()), setupLog, SLOT(loadLogConfig()));
     connect(setupLog, SIGNAL(showLogDialog()), setupLog, SLOT(show()));
+    connect(setupLog, SIGNAL(bearingLogConfigChanged()), rotlog, SLOT(getBearingLogConfig()));
+    connect(rotator, SIGNAL(bearing_updated(int)), rotlog, SLOT(writeLog(int)));
 
-/*
-    connect(setupLog, SIGNAL(bearingLogConfigChanged()), rotlog, SLOT(getBearingLogConfig());
-    connect(rotator, SIGNAL(bearing_updated(int)), rotlog, SLOT(logBearing(int)));
-*/
+
     // Message from Logger
     connect(msg, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));
 
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
     //connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     //connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
+
+
+
 }
 
 

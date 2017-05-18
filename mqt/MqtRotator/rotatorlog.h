@@ -16,16 +16,20 @@
 
 #include <QObject>
 
-class RotatorLog
+class RotatorLog: public QObject
 {
+    Q_OBJECT
+
+
 public:
     RotatorLog();
-    int writeLog(int);
+
+
 
 public slots:
 
     void getBearingLogConfig();
-    void logBearing(int);
+    int writeLog(int);
 
 private:
     QString oldBearing;

@@ -25,10 +25,6 @@ RotatorLog::RotatorLog()
 }
 
 
-void RotatorLog::logBearing(int bearing)
-{
-    writeLog(bearing);
-}
 
 
 
