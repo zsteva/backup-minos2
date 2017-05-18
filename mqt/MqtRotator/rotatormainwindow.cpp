@@ -169,6 +169,8 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     southStopActiveflag = selectRotator->currentAntenna.southStopFlag;
 
+    rotlog->getBearingLogConfig();
+
     // tell logger that rotator is active, antenna name and maxRotation
 
 
@@ -385,7 +387,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(ui->actionLog_Heading, SIGNAL(triggered()), setupLog, SLOT(loadLogConfig()));
     connect(setupLog, SIGNAL(showLogDialog()), setupLog, SLOT(show()));
     connect(setupLog, SIGNAL(bearingLogConfigChanged()), rotlog, SLOT(getBearingLogConfig()));
-    connect(rotator, SIGNAL(bearing_updated(int)), rotlog, SLOT(writeLog(int)));
+    connect(rotator, SIGNAL(bearing_updated(int)), rotlog, SLOT(saveBearingLog(int)));
 
 
     // Message from Logger

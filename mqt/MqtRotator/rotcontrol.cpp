@@ -197,17 +197,17 @@ int RotControl::getRotatorModelIndex()
 
 
 
-int RotControl::getMaxAzimuth()
+azimuth_t RotControl::getMaxAzimuth()
 {
-    return (int)curRotParams.max_azimuth;
+    return curRotParams.max_azimuth;
 }
 
 
 
 
-int RotControl::getMaxElevation()
+elevation_t RotControl::getMaxElevation()
 {
-    return (int)curRotParams.max_elevation;
+    return curRotParams.max_elevation;
 }
 
 

@@ -30,7 +30,7 @@
 #define COMPASS_MIN0 0
 
 
-// Status messages sent to logger
+// Status messages sent to minos logger
 #define STATUS_READY "Ready"
 #define STATUS_ROTATE_CCW "Rotating CCW"
 #define STATUS_ROTATE_CW "Rotating CW"
@@ -38,5 +38,8 @@
 #define STATUS_TURN_TO "Turning to bearing"
 #define STATUS_DISCONNECTED "Disconnected"
 #define STATUS_ERROR "Error"
+
+// Bearing Log
+#define BEARINGLOG_FILETYPE ".log"
 
 #endif // ROTATORCOMMON_H

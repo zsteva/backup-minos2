@@ -6,37 +6,89 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
-    <height>450</height>
+    <width>760</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>650</width>
-    <height>450</height>
+    <width>760</width>
+    <height>300</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Edit Presets</string>
+   <string>Edit Bearing Presets</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="BearingPresetTitle">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Bearing Presets</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <layout class="QGridLayout" name="gridLayout_14">
-     <item row="0" column="0">
+     <item row="0" column="4">
+      <widget class="QGroupBox" name="groupBox_4">
+       <property name="title">
+        <string>Preset 4</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="presetNameEdit4">
+          <property name="maxLength">
+           <number>15</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="editPreset4_NameLabel">
+          <property name="text">
+           <string>Name:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="editPresetBearing4_Label">
+          <property name="text">
+           <string>Bearing:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="presetBearingEdit4"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="0" column="5">
+      <widget class="QGroupBox" name="groupBox_5">
+       <property name="title">
+        <string>Preset 5</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
+         <widget class="QLabel" name="editPreset5_NameLabel">
+          <property name="text">
+           <string>Name:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="presetNameEdit5">
+          <property name="maxLength">
+           <number>15</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="editPresetBearing5_Label">
+          <property name="text">
+           <string>Bearing:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="presetBearingEdit5"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="0" column="1">
       <widget class="QGroupBox" name="groupBox_1">
        <property name="title">
         <string>Preset 1</string>
@@ -53,6 +105,9 @@
          <widget class="QLineEdit" name="presetNameEdit1">
           <property name="text">
            <string/>
+          </property>
+          <property name="maxLength">
+           <number>15</number>
           </property>
          </widget>
         </item>
@@ -71,10 +126,9 @@
        <zorder>editPresetBearing1_Label</zorder>
        <zorder>presetNameEdit1</zorder>
        <zorder>presetBearingEdit1</zorder>
-       <zorder>groupBox_2</zorder>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="0" column="2">
       <widget class="QGroupBox" name="groupBox_2">
        <property name="title">
         <string>Preset 2</string>
@@ -88,7 +142,11 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLineEdit" name="presetNameEdit2"/>
+         <widget class="QLineEdit" name="presetNameEdit2">
+          <property name="maxLength">
+           <number>15</number>
+          </property>
+         </widget>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="editPresetBearing2_Label">
@@ -103,7 +161,7 @@
        </layout>
       </widget>
      </item>
-     <item row="0" column="2">
+     <item row="0" column="3">
       <widget class="QGroupBox" name="groupBox_3">
        <property name="title">
         <string>Preset 3</string>
@@ -117,7 +175,11 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLineEdit" name="presetNameEdit3"/>
+         <widget class="QLineEdit" name="presetNameEdit3">
+          <property name="maxLength">
+           <number>15</number>
+          </property>
+         </widget>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="editPresetBearing3_Label">
@@ -132,181 +194,7 @@
        </layout>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QGroupBox" name="groupBox_4">
-       <property name="title">
-        <string>Preset 4</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0">
-         <widget class="QLabel" name="editPreset4_NameLabel">
-          <property name="text">
-           <string>Name:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="presetNameEdit4"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="editPresetBearing4_Label">
-          <property name="text">
-           <string>Bearing:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="presetBearingEdit4"/>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QGroupBox" name="groupBox_5">
-       <property name="title">
-        <string>Preset 5</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_6">
-        <item row="0" column="0">
-         <widget class="QLabel" name="editPreset5_NameLabel">
-          <property name="text">
-           <string>Name:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="presetNameEdit5"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="editPresetBearing5_Label">
-          <property name="text">
-           <string>Bearing:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="presetBearingEdit5"/>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QGroupBox" name="groupBox_6">
-       <property name="title">
-        <string>Preset 6</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_7">
-        <item row="0" column="0">
-         <widget class="QLabel" name="editPreset6_NameLabel">
-          <property name="text">
-           <string>Name:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="presetNameEdit6"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="editPresetBearing6_Label">
-          <property name="text">
-           <string>Bearing:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="presetBearingEdit6"/>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QGroupBox" name="groupBox_7">
-       <property name="title">
-        <string>Preset 7</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_8">
-        <item row="0" column="0">
-         <widget class="QLabel" name="editPreset7_NameLabel">
-          <property name="text">
-           <string>Name:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="presetNameEdit7"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="editPresetBearing7_Label">
-          <property name="text">
-           <string>Bearing:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="presetBearingEdit7"/>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QGroupBox" name="groupBox_8">
-       <property name="title">
-        <string>Preset 8</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_9">
-        <item row="0" column="0">
-         <widget class="QLabel" name="editPreset8_NameLabel">
-          <property name="text">
-           <string>Name:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="presetNameEdit8"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="editPresetBearing8_Label">
-          <property name="text">
-           <string>Bearing:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="presetBearingEdit8"/>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QGroupBox" name="groupBox_9">
-       <property name="title">
-        <string>Preset 9</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_10">
-        <item row="0" column="0">
-         <widget class="QLabel" name="editPreset9_NameLabel">
-          <property name="text">
-           <string>Name:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="presetNameEdit9"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="editPresetBearing9_Label">
-          <property name="text">
-           <string>Bearing:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="presetBearingEdit9"/>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="3" column="0">
+     <item row="1" column="5">
       <widget class="QGroupBox" name="groupBox_10">
        <property name="title">
         <string>Preset 10</string>
@@ -320,7 +208,11 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLineEdit" name="presetNameEdit10"/>
+         <widget class="QLineEdit" name="presetNameEdit10">
+          <property name="maxLength">
+           <number>15</number>
+          </property>
+         </widget>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="editPresetBearing10_Label">
@@ -335,67 +227,136 @@
        </layout>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QGroupBox" name="groupBox_11">
+     <item row="1" column="4">
+      <widget class="QGroupBox" name="groupBox_9">
        <property name="title">
-        <string>Preset 11</string>
+        <string>Preset 9</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_12">
+       <layout class="QGridLayout" name="gridLayout_10">
         <item row="0" column="0">
-         <widget class="QLabel" name="editPreset10_NameLabel_2">
+         <widget class="QLabel" name="editPreset9_NameLabel">
           <property name="text">
            <string>Name:</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLineEdit" name="presetNameEdit11"/>
+         <widget class="QLineEdit" name="presetNameEdit9">
+          <property name="maxLength">
+           <number>15</number>
+          </property>
+         </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="editPresetBearing10_Label_2">
+         <widget class="QLabel" name="editPresetBearing9_Label">
           <property name="text">
            <string>Bearing:</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="presetBearingEdit11"/>
+         <widget class="QLineEdit" name="presetBearingEdit9"/>
         </item>
        </layout>
       </widget>
      </item>
-     <item row="3" column="2">
-      <widget class="QGroupBox" name="groupBox_12">
+     <item row="1" column="3">
+      <widget class="QGroupBox" name="groupBox_8">
        <property name="title">
-        <string>Preset 12</string>
+        <string>Preset 8</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_13">
+       <layout class="QGridLayout" name="gridLayout_9">
         <item row="0" column="0">
-         <widget class="QLabel" name="editPreset10_NameLabel_3">
+         <widget class="QLabel" name="editPreset8_NameLabel">
           <property name="text">
            <string>Name:</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLineEdit" name="presetNameEdit12"/>
+         <widget class="QLineEdit" name="presetNameEdit8">
+          <property name="maxLength">
+           <number>15</number>
+          </property>
+         </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="editPresetBearing10_Label_3">
+         <widget class="QLabel" name="editPresetBearing8_Label">
           <property name="text">
            <string>Bearing:</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="presetBearingEdit12"/>
+         <widget class="QLineEdit" name="presetBearingEdit8"/>
         </item>
        </layout>
-       <zorder>editPreset10_NameLabel_3</zorder>
-       <zorder>editPresetBearing10_Label_3</zorder>
-       <zorder>presetNameEdit12</zorder>
-       <zorder>presetBearingEdit12</zorder>
-       <zorder>groupBox_11</zorder>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QGroupBox" name="groupBox_7">
+       <property name="title">
+        <string>Preset 7</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_8">
+        <item row="0" column="0">
+         <widget class="QLabel" name="editPreset7_NameLabel">
+          <property name="text">
+           <string>Name:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="presetNameEdit7">
+          <property name="maxLength">
+           <number>15</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="presetBearingEdit7"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="editPresetBearing7_Label">
+          <property name="text">
+           <string>Bearing:</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QGroupBox" name="groupBox_6">
+       <property name="title">
+        <string>Preset 6</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_7">
+        <item row="0" column="0">
+         <widget class="QLabel" name="editPreset6_NameLabel">
+          <property name="text">
+           <string>Name:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="presetNameEdit6">
+          <property name="maxLength">
+           <number>15</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="editPresetBearing6_Label">
+          <property name="text">
+           <string>Bearing:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="presetBearingEdit6"/>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>
@@ -411,20 +372,6 @@
     </widget>
    </item>
   </layout>
-  <zorder>groupBox_4</zorder>
-  <zorder>editPresetbuttonBox</zorder>
-  <zorder>groupBox_5</zorder>
-  <zorder>groupBox_8</zorder>
-  <zorder>groupBox_10</zorder>
-  <zorder>groupBox_1</zorder>
-  <zorder>groupBox_3</zorder>
-  <zorder>groupBox_9</zorder>
-  <zorder>groupBox_6</zorder>
-  <zorder>BearingPresetTitle</zorder>
-  <zorder>groupBox_7</zorder>
-  <zorder>groupBox_2</zorder>
-  <zorder>groupBox_11</zorder>
-  <zorder>groupBox_12</zorder>
  </widget>
  <tabstops>
   <tabstop>presetNameEdit1</tabstop>

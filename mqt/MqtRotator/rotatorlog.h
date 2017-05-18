@@ -29,7 +29,9 @@ public:
 public slots:
 
     void getBearingLogConfig();
-    int writeLog(int);
+    void saveBearingLog(int bearing);
+
+
 
 private:
     QString oldBearing;
@@ -40,6 +42,7 @@ private:
     bool firstBearing;
     bool moving;
     int writeBearing(const QString, QString);
+    int writeLog(int);
 
 };
 

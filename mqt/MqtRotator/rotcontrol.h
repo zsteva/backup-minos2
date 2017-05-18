@@ -126,8 +126,8 @@ public:
     QString gethamlibErrorMsg(int errorCode);
 //    QString initError;
 
-    int getMaxAzimuth();
-    int getMaxElevation();
+    azimuth_t getMaxAzimuth();
+    elevation_t getMaxElevation();
 
 signals:
    void bearing_updated(int);

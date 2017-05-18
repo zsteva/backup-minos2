@@ -12,6 +12,7 @@
 
 
 #include "rotatorlog.h"
+#include "rotatorCommonConstants.h"
 #include <QFile>
 #include <QtDebug>
 #include <QDateTime>
@@ -24,20 +25,39 @@ RotatorLog::RotatorLog()
     moving = false;
 }
 
+void RotatorLog::saveBearingLog(int bearing)
+{
+    static int oldbearing = -1;
+    if (oldbearing == bearing)
+        return;
+    oldbearing = bearing;
 
+    writeLog(bearing);
+
+}
 
 
 
 int RotatorLog::writeLog(int bearing)
 {
+    int compassBearing = bearing;
+    if (compassBearing > COMPASS_MAX360)
+    {
+        compassBearing -= COMPASS_MAX360;
+    }
     QString fileName = bearingLogDir;
+    qDebug() << "write log";
+    qDebug() << fileName << bearing;
     if (bearingLogEnabled)
     {
 
        fileName.append('/');
        fileName.append(bearingLogFileName);
+       fileName.append(BEARINGLOG_FILETYPE);
 
-       QString sbearing = sbearing.setNum(bearing);
+       QString sbearing = QString::number(compassBearing);
+
+
         if (oldBearing != sbearing && !firstBearing)
         {
             oldBearing = sbearing;
