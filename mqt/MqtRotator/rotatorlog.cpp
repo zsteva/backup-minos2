@@ -14,6 +14,8 @@
 #include "rotatorlog.h"
 #include "rotatorCommonConstants.h"
 #include <QFile>
+#include <QDir>
+#include <QFileInfo>
 #include <QtDebug>
 #include <QDateTime>
 #include <QSettings>
@@ -28,7 +30,7 @@ RotatorLog::RotatorLog()
 void RotatorLog::saveBearingLog(int bearing)
 {
     static int oldbearing = -1;
-    if (oldbearing == bearing)
+    if (oldbearing == bearing && !bearingLogEnabled)
         return;
     oldbearing = bearing;
 
@@ -46,8 +48,12 @@ int RotatorLog::writeLog(int bearing)
         compassBearing -= COMPASS_MAX360;
     }
     QString fileName = bearingLogDir;
-    qDebug() << "write log";
-    qDebug() << fileName << bearing;
+    if (!QDir(fileName).exists())
+    {
+        QDir().mkdir(fileName);
+    }
+
+
     if (bearingLogEnabled)
     {
 
@@ -58,25 +64,33 @@ int RotatorLog::writeLog(int bearing)
        QString sbearing = QString::number(compassBearing);
 
 
-        if (oldBearing != sbearing && !firstBearing)
+        if (oldBearing != sbearing && !firstBearing && !moving)
         {
             oldBearing = sbearing;
             writeBearing(sbearing, fileName);
             firstBearing = true;
-            return 0;
-        }
-        if (oldBearing != sbearing && firstBearing)
-        {
-            oldBearing = sbearing;
             moving = true;
             return 0;
         }
-        if (moving)
+
+
+
+        if (moving && firstBearing)
         {
-            if (oldBearing == sbearing && firstBearing)
+            if (oldBearing != sbearing)
+            {
+                oldBearing = sbearing;
+                writeBearing(sbearing, fileName);
+                return 0;
+            }
+
+
+            if (oldBearing == sbearing)
             {
                 moving = false;
+                firstBearing = false;
                 writeBearing(sbearing, fileName);
+                return 0;
             }
         }
      }
@@ -118,8 +132,8 @@ void RotatorLog::getBearingLogConfig()
     QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
     config.beginGroup("BearingLog");
 
-    bearingLogDir = config.value("directory", "./Configuration/BearingLog").toString();
-    bearingLogFileName = config.value("filename", "bearingLog").toString();
+    bearingLogDir = config.value("directory", "./BearingLog").toString();
+    bearingLogFileName = config.value("filename", "bearing").toString();
     bearingLogBearingDiff = config.value("bearing_difference", 0).toInt();
     bearingLogEnabled = config.value("loggingEnabled", false).toBool();
 
