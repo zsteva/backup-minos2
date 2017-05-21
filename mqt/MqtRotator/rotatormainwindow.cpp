@@ -63,6 +63,16 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
+
+    ui->rot_left_button->setShortcut(QKeySequence(ROTATE_CCW_KEY));
+    ui->rot_right_button->setShortcut(QKeySequence(ROTATE_CW_KEY));
+    ui->turnButton->setShortcut(QKeySequence(ROTATE_STOP_KEY));
+    ui->stopButton->setShortcut(QKeySequence(ROTATE_TURN_KEY));
+
+
+
+
+
     presetButtons[0] = ui->presetButton1;
     presetButtons[1] = ui->presetButton2;
     presetButtons[2] = ui->presetButton3;
@@ -75,31 +85,19 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     presetButtons[9] = ui->presetButton10;
     QSignalMapper *preset_mapper = new QSignalMapper(this);
 
-    ui->presetButton1->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1));
-    ui->presetButton2->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_2));
-    ui->presetButton3->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_3));
-    ui->presetButton4->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
-    ui->presetButton5->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_5));
-    ui->presetButton6->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_6));
-    ui->presetButton7->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_7));
-    ui->presetButton8->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_8));
-    ui->presetButton9->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_9));
-    ui->presetButton10->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_0));
-    ui->rot_left_button->setShortcut(QKeySequence(ROTATE_CCW_KEY));
-    ui->rot_right_button->setShortcut(QKeySequence(ROTATE_CW_KEY));
-    ui->turnButton->setShortcut(QKeySequence(ROTATE_STOP_KEY));
-    ui->stopButton->setShortcut(QKeySequence(ROTATE_TURN_KEY));
-
-
-    for (int i = 0; i < NUM_PRESETS; i++ )
+        for (int i = 0; i < NUM_PRESETS; i++ )
     {
         preset_mapper->setMapping(presetButtons[i], i);
         connect(presetButtons[i], SIGNAL(clicked()), preset_mapper, SLOT(map()));
+
     }
     connect(preset_mapper, SIGNAL(mapped(int)), this, SLOT(clickedPreset(int)));
 
 
-
+    for (int i = 0; i < NUM_PRESETS; i++)
+    {
+        presetButtons[i]->setShortcut(presetShortCut[i]);
+    }
 
     rotator = new RotControl();
     selectRotator = new SetupDialog(rotator);
@@ -529,12 +527,15 @@ void RotatorMainWindow::readPresets()
 
 void RotatorMainWindow::refreshPresetLabels()
 {
+
     readPresets();
+
     for (int i = 0; i < NUM_PRESETS; i++)
     {
         if (presetName[i] != "" || presetName[i] != presetButtons[i]->text())
         {
             presetButtons[i]->setText(presetName[i]);
+            presetButtons[i]->setShortcut(presetShortCut[i]);     // restore the shortcut
         }
     }
 }
@@ -550,8 +551,10 @@ void RotatorMainWindow::updatePresetLabels()
 
 
 
+
 void RotatorMainWindow::clickedPreset(int buttonNumber)
 {
+    int a = 0;
     if (presetName[buttonNumber] != "")
     {
         if (presetBearing[buttonNumber] != "")
