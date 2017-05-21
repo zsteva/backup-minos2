@@ -85,10 +85,10 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     ui->presetButton8->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_8));
     ui->presetButton9->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_9));
     ui->presetButton10->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_0));
-    ui->rot_left_button->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
-    ui->rot_right_button->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
-    ui->turnButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
-    ui->stopButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
+    ui->rot_left_button->setShortcut(QKeySequence(ROTATE_CCW_KEY));
+    ui->rot_right_button->setShortcut(QKeySequence(ROTATE_CW_KEY));
+    ui->turnButton->setShortcut(QKeySequence(ROTATE_STOP_KEY));
+    ui->stopButton->setShortcut(QKeySequence(ROTATE_TURN_KEY));
 
 
     for (int i = 0; i < NUM_PRESETS; i++ )
@@ -98,10 +98,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     }
     connect(preset_mapper, SIGNAL(mapped(int)), this, SLOT(clickedPreset(int)));
 
-    ui->rot_left_button->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
-    ui->rot_right_button->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
-    ui->turnButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
-    ui->stopButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
+
 
 
     rotator = new RotControl();

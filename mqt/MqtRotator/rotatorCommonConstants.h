@@ -18,12 +18,12 @@
 #define DEGREE_SYMBOL '\xB0'
 
 // Rotator Keys
-#define ROTATE_CW_KEY Qt::Key_R
-#define ROTATE_CCW_KEY Qt::Key_L
-//#define ROTATE_CW_KEY Qt::Key_Right
-//#define ROTATE_CCW_KEY Qt::Key_Left
-#define ROTATE_STOP_KEY Qt::Key_S
-#define ROTATE_TURN_KEY Qt::Key_T
+#define ROTATE_CW_KEY Qt::CTRL + Qt::Key_R
+#define ROTATE_CCW_KEY Qt::CTRL + Qt::Key_L
+//#define ROTATE_CW_KEY Qt::CTRL + Qt::Key_Right
+//#define ROTATE_CCW_KEY Qt::CTRL + Qt::Key_Left
+#define ROTATE_STOP_KEY Qt::CTRL + Qt::Key_S
+#define ROTATE_TURN_KEY Qt::CTRL + Qt::Key_T
 
 #define COMPASS_MAX360 360
 #define COMPASS_HALF 180

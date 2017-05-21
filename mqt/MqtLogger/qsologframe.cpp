@@ -91,6 +91,13 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
 
     QFontMetrics metrics(QApplication::font());
     ui->BrgSt->setFixedWidth(metrics.width("(8888)MT"));
+
+    ui->RotateLeft->setShortcut(QKeySequence(ROTATE_CCW_KEY));
+    ui->RotateRight->setShortcut(QKeySequence(ROTATE_CW_KEY));
+    ui->Rotate->setShortcut(QKeySequence(ROTATE_TURN_KEY));
+    ui->StopRotate->setShortcut(QKeySequence(ROTATE_STOP_KEY));
+
+
 }
 bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
 {
