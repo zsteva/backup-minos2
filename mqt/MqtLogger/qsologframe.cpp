@@ -2193,7 +2193,7 @@ void QSOLogFrame::setRotatorState(const QString &s)
            moving = false;
            movingCW = false;
            movingCCW = true;
-           clearRotatorFlags();
+          // clearRotatorFlags();
            ui->RotateLeft->setChecked(true);
        }
        else if (s == STATUS_ROTATE_CW)
@@ -2201,7 +2201,7 @@ void QSOLogFrame::setRotatorState(const QString &s)
            moving = false;
            movingCW = true;
            movingCCW = false;
-           clearRotatorFlags();
+           //clearRotatorFlags();
            ui->RotateRight->setChecked(true);
        }
        else if (s == STATUS_TURN_TO)
@@ -2209,7 +2209,7 @@ void QSOLogFrame::setRotatorState(const QString &s)
            moving = true;
            movingCW = false;
            movingCCW = false;
-           clearRotatorFlags();
+           //clearRotatorFlags();
 
        }
 

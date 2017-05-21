@@ -175,9 +175,7 @@ private slots:
 
     void onLoggerSetRotation(int direction, int angle);
     void checkEndStop();
-//    void on_pushButton_2_clicked();
-//   void on_pushButton_clicked();
-
+    void checkMoving(int bearing);
 
 private:
     void rotateTo(int bearing);

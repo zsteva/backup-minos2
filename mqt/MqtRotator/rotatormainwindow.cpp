@@ -372,7 +372,9 @@ void RotatorMainWindow::initActionsConnections()
     connect(this, SIGNAL(sendBackBearing(QString)), ui->backBearingDisplay, SLOT(setText(const QString &)));
     connect(this, SIGNAL(displayOverlapBearing(QString)), ui->overlapBearingDisplay, SLOT( setText(const QString &)));
     connect(this, SIGNAL(displayOverlap(bool)), ui->overLapDisplay ,SLOT(overlapDisplayUpdate(bool)));
+    // check endstop and turn to rotation stop
     connect(this, SIGNAL(checkingEndStop()), this, SLOT(checkEndStop()));
+    connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(checkMoving(int)));
     //connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
     //connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -649,6 +651,29 @@ void RotatorMainWindow::checkEndStop()
     }
 }
 
+
+void RotatorMainWindow::checkMoving(int bearing)
+{
+    static int oldBearing;
+
+    if (!moving)
+    {
+        return;
+    }
+
+    if (oldBearing != bearing)
+    {
+            oldBearing = bearing;
+            return;
+    }
+    else
+    {
+        //stopButton();
+        sendStatusToLogStop();
+
+    }
+
+}
 
 void RotatorMainWindow::rotateToController()
 {
