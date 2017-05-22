@@ -51,7 +51,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    enableTrace( "./TraceLog", "MinosChat_" );
+    enableTrace( "./TraceLog", "MqtRotator_" );
     createCloseEvent();
     MinosRotatorForm = this;
     connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
@@ -554,7 +554,7 @@ void RotatorMainWindow::updatePresetLabels()
 
 void RotatorMainWindow::clickedPreset(int buttonNumber)
 {
-    int a = 0;
+
     if (presetName[buttonNumber] != "")
     {
         if (presetBearing[buttonNumber] != "")
@@ -668,7 +668,7 @@ void RotatorMainWindow::checkMoving(int bearing)
     }
     else
     {
-        //stopButton();
+        stopButton();
         sendStatusToLogStop();
 
     }
@@ -710,6 +710,11 @@ void RotatorMainWindow::rotateTo(int bearing)
     if (bearing > currentMaxAzimuth || bearing < COMPASS_MIN0)
     {
         return; //error
+    }
+
+    if (movingCW || movingCCW)
+    {
+        stopRotation();
     }
 
     if (overLapActiveflag && !ui->overLapDisable->isChecked())
@@ -764,10 +769,9 @@ void RotatorMainWindow::stopButton()
         ui->rot_right_button->setChecked(false);
         return;
     }
-    else
-    {
-        stopRotation();
-    }
+
+    stopRotation();
+
 }
 
 
