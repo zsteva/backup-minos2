@@ -103,6 +103,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     QSignalMapper* sm = new QSignalMapper(this);
 
     // connect to `clicked' on all buttons
+    connect(ui->ClockButton, SIGNAL(clicked()), sm, SLOT(map()));
     connect(ui->DXCCButton, SIGNAL(clicked()), sm, SLOT(map()));
     connect(ui->FilterButton, SIGNAL(clicked()), sm, SLOT(map()));
     connect(ui->DistrictButton, SIGNAL(clicked()), sm, SLOT(map()));
@@ -116,6 +117,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     sm->setMapping(ui->DistrictButton, 2);
     sm->setMapping(ui->LocatorButton, 3);
     sm->setMapping(ui->StatsButton, 4);
+    sm->setMapping(ui->ClockButton, 5);
 
     // finally, connect the mapper to the stacked widget
     connect(sm, SIGNAL(mapped(int)), ui->StackedMults, SLOT(setCurrentIndex(int)));
