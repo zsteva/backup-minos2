@@ -320,7 +320,7 @@ QString TEntryOptionsForm::doFileSave( )
             }
 
 
-            int ret = ct->export_contest( contestFile, expformat );
+            int ret = ct->export_contest( contestFile, expformat, ui->NACSerials->isChecked() );
             contestFile->close();
 
             if ( ret == -1 )

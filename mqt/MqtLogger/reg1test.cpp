@@ -46,7 +46,7 @@ reg1test::reg1test( LoggerContestLog * const ct )
 reg1test::~reg1test()
 {}
 
-bool reg1test::exportTest( QSharedPointer<QFile> expfd )
+bool reg1test::exportTest( QSharedPointer<QFile> expfd, bool noSerials )
 {
    // export current contest as REG1TEST
    writer wr( expfd );
@@ -194,7 +194,7 @@ bool reg1test::exportTest( QSharedPointer<QFile> expfd )
       }
 
       QString sbuff;
-      cct->getReg1TestText( sbuff );   // lbuff if "bsize" = 256
+      cct->getReg1TestText( sbuff, noSerials );   // lbuff if "bsize" = 256
 
       if ( sbuff.length() == 0 )
          continue;

@@ -267,15 +267,24 @@ void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) 
 
 void BaseContact::makestrings( bool sf ) const
 {
-   int sr = serialr.getValue().toInt();
    int ss = serials.getValue().toInt();
+
+   QString ssr = serialr.getValue();
+   int sr = ssr.toInt();
+   QString srs = QString("%1 ").arg(sr, 3, 10, QChar('0')); // Leading zeroes
+   if (ssr == "-")
+   {
+       srs = "-";
+       sr = -1;
+   }
+
    if ( ss )
       ContactBuffs::ssbuff = QString("%1 ").arg(ss, 3, 10, QChar('0')); // Leading zeroes
    else
       ContactBuffs::ssbuff.clear();
 
    if ( sr && sf )
-       ContactBuffs::srbuff = QString("%1 ").arg(sr, 3, 10, QChar('0')); // Leading zeroes
+       ContactBuffs::srbuff = srs;
    else
       ContactBuffs::srbuff.clear();
 }

@@ -30,7 +30,7 @@ class ContestContact: public DisplayContestContact
       ~ContestContact();
       virtual void getPrintFileText(QString &, short );
       virtual void addReg1TestComment(QStringList &remarks );
-      virtual void getReg1TestText( QString & );
+      virtual void getReg1TestText( QString &, bool noSerials );
       virtual QString getADIFLine();
       bool commonSave(QSharedPointer<BaseContact>  );
       bool minosSave(QSharedPointer<BaseContact> tct);

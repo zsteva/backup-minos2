@@ -96,7 +96,7 @@ class BaseContact
       }
       virtual void addReg1TestComment(QStringList & )
       {}
-      virtual void getReg1TestText( QString & )
+      virtual void getReg1TestText( QString &, bool /*noSerials*/ )
       {}
       virtual void getPrintFileText(QString &, short )
       {}

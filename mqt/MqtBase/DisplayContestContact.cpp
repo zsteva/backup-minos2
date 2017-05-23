@@ -471,8 +471,16 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
             break;
          case egSNRx:
             {
-               int sr = serialr.getValue().toInt();
-               res = QString("%1").arg(sr, 3, 10, QChar('0'));  //leading zeros
+               QString ssr = serialr.getValue();
+               if (ssr == "-")
+               {
+                   res = ssr;
+               }
+               else
+               {
+                   int sr = ssr.toInt();
+                   res = QString("%1").arg(sr, 3, 10, QChar('0'));  //leading zeros
+               }
             }
             break;
          case egLoc:

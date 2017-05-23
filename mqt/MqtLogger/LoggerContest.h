@@ -139,12 +139,12 @@ class LoggerContestLog : public BaseContestLog
       virtual bool minosSaveContestContact(const QSharedPointer<BaseContact> lct );
       // Import/export etc
 
-      bool export_contest( QSharedPointer<QFile>, ExportType );
+      bool export_contest( QSharedPointer<QFile>, ExportType, bool noSerials );
       bool exportGJV(QSharedPointer<QFile> );
       void procUnknown( QSharedPointer<BaseContact> cct, writer &wr );
       bool exportADIF( QSharedPointer<QFile> expfd );
       bool exportKML( QSharedPointer<QFile> expfd );
-      bool exportREG1TEST(QSharedPointer<QFile> expfd );
+      bool exportREG1TEST(QSharedPointer<QFile> expfd, bool noSerials );
       bool exportPrintFile( QSharedPointer<QFile> expfd );
       bool exportMinos(QSharedPointer<QFile> expfd );
 

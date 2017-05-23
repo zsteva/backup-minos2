@@ -38,7 +38,7 @@ class reg1test
       reg1test( LoggerContestLog * const ct );
 
       ~reg1test();
-      bool exportTest( QSharedPointer<QFile> expfd );
+      bool exportTest( QSharedPointer<QFile> expfd, bool noSerials );
       static bool doImportReg1test( LoggerContestLog * c, QSharedPointer<QFile> hFile );
 
 };
