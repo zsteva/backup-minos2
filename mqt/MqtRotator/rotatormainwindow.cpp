@@ -141,7 +141,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     rotLogFlg = true;
     currentBearing = COMPASS_MIN0;
-    currentMinAzimuth = COMPASS_MIN0;
+
 
     setPolltime(1000);
 
@@ -154,11 +154,13 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     if (rotator->getMaxAzimuth() > COMPASS_MAX360 && selectRotator->currentAntenna.overRunFlag)
     {
         currentMaxAzimuth = rotator->getMaxAzimuth();
+        currentMinAzimuth = rotator->getMinAzimuth();
         overLapActiveflag = true;
     }
     else
     {
         currentMaxAzimuth = COMPASS_MAX360;
+        currentMinAzimuth = COMPASS_MIN0;
         overLapActiveflag = false;
     }
 

@@ -68,8 +68,10 @@ struct srotParams
   QString rotatorModel;
   QString rotatorModelName;
   int rotatorModelNumber;
-  azimuth_t max_azimuth;        // rotator max rotation
-  elevation_t max_elevation;    // rotator max elevation
+  azimuth_t min_azimuth;
+  azimuth_t max_azimuth;
+  elevation_t min_elevation;
+  elevation_t max_elevation;
   bool southStopFlag = false;
   bool overRunFlag = false;
   int rotatorOffset = 0;

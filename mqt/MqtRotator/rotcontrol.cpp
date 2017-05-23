@@ -73,7 +73,9 @@ int RotControl::init(srotParams currentAntenna)
     curRotParams.handshake = getSerialHandshakeCode(currentAntenna.handshake);
     curRotParams.serial_rate_max = my_rot->caps->serial_rate_max;
     curRotParams.serial_rate_min = my_rot->caps->serial_rate_min;
+    curRotParams.min_azimuth = my_rot->caps->min_az;
     curRotParams.max_azimuth = my_rot->caps->max_az;
+    curRotParams.min_elevation = my_rot->caps->min_el;
     curRotParams.max_elevation = my_rot->caps->max_el;
 
 
@@ -192,7 +194,10 @@ int RotControl::getRotatorModelIndex()
 }
 
 
-
+azimuth_t RotControl::getMinAzimuth()
+{
+    return curRotParams.min_azimuth;
+}
 
 
 
@@ -202,7 +207,10 @@ azimuth_t RotControl::getMaxAzimuth()
     return curRotParams.max_azimuth;
 }
 
-
+elevation_t RotControl::getMinElevation()
+{
+    return curRotParams.min_elevation;
+}
 
 
 elevation_t RotControl::getMaxElevation()
