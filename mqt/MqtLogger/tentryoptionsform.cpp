@@ -286,10 +286,11 @@ QString TEntryOptionsForm::doFileSave( )
         QString fileName = QFileDialog::getSaveFileName( this,
                                                          "Save contest as...",
                                                          InitialDir + "/" + fname + "." + defext,
-                                                         filter,
-                                                         0,
-                                                         QFileDialog::DontConfirmOverwrite
-                                                         );
+                                                         filter);
+//                                                         ,
+//                                                         0,
+//                                                         QFileDialog::DontConfirmOverwrite
+//                                                         );
         if ( !fileName.isEmpty() )
         {
 
