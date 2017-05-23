@@ -1262,6 +1262,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
 
     if (role == Qt::DisplayRole)
     {
+        QColor lightRed = QColor(Qt::red).lighter(140);
         if (type == ArchiveMatch)
         {
             const ContactList *contactList = matchContest->getContactList();
@@ -1275,7 +1276,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
 
                     if (currentModel)
                     {
-                        cell = HtmlFontColour(QColor(Qt::red).lighter()) + "<b>" + cell;
+                        cell = HtmlFontColour(lightRed) + "<b>" + cell;
                     }
                     return cell;
                 }
@@ -1287,7 +1288,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
                     QString cell = contactList->name;
                     if (currentModel)
                     {
-                        cell = HtmlFontColour(QColor(Qt::red).lighter()) + "<b>" + cell;
+                        cell = HtmlFontColour(lightRed) + "<b>" + cell;
                     }
                     return cell;
                 }
@@ -1361,7 +1362,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
                     {
                         if (currentModel)
                         {
-                            line = HtmlFontColour(QColor(Qt::red).lighter()) + "<b>" + line;
+                            line = HtmlFontColour(lightRed) + "<b>" + line;
                         }
 
                     }
@@ -1379,7 +1380,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
                         QString cell = contest->name.getValue();
                         if (currentModel)
                         {
-                            cell = HtmlFontColour(QColor(Qt::red).lighter()) + "<b>" + cell;
+                            cell = HtmlFontColour(lightRed) + "<b>" + cell;
                         }
                         return cell;
                     }
