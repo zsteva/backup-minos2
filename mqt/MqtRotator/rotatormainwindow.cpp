@@ -66,8 +66,8 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     ui->rot_left_button->setShortcut(QKeySequence(ROTATE_CCW_KEY));
     ui->rot_right_button->setShortcut(QKeySequence(ROTATE_CW_KEY));
-    ui->turnButton->setShortcut(QKeySequence(ROTATE_STOP_KEY));
-    ui->stopButton->setShortcut(QKeySequence(ROTATE_TURN_KEY));
+    ui->turnButton->setShortcut(QKeySequence(ROTATE_TURN_KEY));
+    ui->stopButton->setShortcut(QKeySequence(ROTATE_STOP_KEY));
 
 
 
@@ -143,11 +143,13 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     currentBearing = COMPASS_MIN0;
 
 
-    setPolltime(1000);
+
 
     openRotator();
 
-    setPolltime(1000);
+    setPolltime(1000);   // to allow variable controller polltime - not implemented!
+    rotTimeCount = 0;
+    RotateTimer.start(200);  // to set timeout for antenna rotating
 
     // open rotator to get this info...
 
@@ -370,6 +372,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(this, SIGNAL(displayOverlapBearing(QString)), ui->overlapBearingDisplay, SLOT( setText(const QString &)));
     connect(this, SIGNAL(displayOverlap(bool)), ui->overLapDisplay ,SLOT(overlapDisplayUpdate(bool)));
     // check endstop and turn to rotation stop
+    connect(&RotateTimer, SIGNAL(timeout()), this, SLOT(rotatingTimer()));
     connect(this, SIGNAL(checkingEndStop()), this, SLOT(checkEndStop()));
     connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(checkMoving(int)));
     //connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
@@ -646,11 +649,19 @@ void RotatorMainWindow::checkEndStop()
     }
     else if (movingCCW)
     {
-        if (currentBearing <= COMPASS_MIN0)
+        if (currentBearing <= currentMinAzimuth)
         {
             stopButton();
         }
     }
+}
+
+
+void RotatorMainWindow::rotatingTimer()
+{
+
+     rotTimeCount++;
+
 }
 
 
@@ -666,12 +677,16 @@ void RotatorMainWindow::checkMoving(int bearing)
     if (oldBearing != bearing)
     {
             oldBearing = bearing;
+            rotTimeCount = 0;
             return;
     }
     else
     {
-        stopButton();
-        sendStatusToLogStop();
+        if (rotTimeCount > ROTATE_MOVE_TIMEOUT)
+        {
+            stopButton();
+            sendStatusToLogStop();
+        }
 
     }
 
@@ -719,6 +734,10 @@ void RotatorMainWindow::rotateTo(int bearing)
         stopRotation();
     }
 
+    // calculate target bearing based on current position
+    rotateTo  = northCalcTarget(rotateTo);
+
+/*
     if (overLapActiveflag && !ui->overLapDisable->isChecked())
     {
         if (currentBearing < COMPASS_MAX360)
@@ -739,7 +758,7 @@ void RotatorMainWindow::rotateTo(int bearing)
            }
         }
     }
-
+*/
     if (rotator->get_serialConnected())
     {
 
@@ -752,11 +771,95 @@ void RotatorMainWindow::rotateTo(int bearing)
         {
             moving = true;
             sendStatusToLogTurn();
+            rotTimeCount = 0;           // clear timer count
         }
 
     }
 
 }
+
+
+
+int RotatorMainWindow::northCalcTarget(int targetBearing)
+{
+
+    int target = 0;
+
+    if (currentBearing >= COMPASS_MAX360)
+    {
+        if (targetBearing > COMPASS_MIN0 && targetBearing < currentMaxAzimuth - COMPASS_MAX360)
+        {
+            target = COMPASS_MAX360 + targetBearing;
+            return target;
+        }
+    }
+    else if (currentBearing < COMPASS_MIN0)
+    {
+        if (targetBearing < COMPASS_MAX360 and targetBearing > COMPASS_MAX360 - (currentMinAzimuth * -1))
+        {
+            target = (COMPASS_MAX360 - targetBearing) * -1;
+            return target;
+        }
+        else if (targetBearing > COMPASS_MIN0)
+        {
+            target = targetBearing;
+                return target;
+         }
+     }
+
+
+     if (currentBearing >= COMPASS_MIN0 && currentBearing <= COMPASS_HALF)
+     {
+        if (targetBearing > COMPASS_MIN0 && targetBearing <= COMPASS_HALF)
+        {
+            target = targetBearing;
+        }
+        else if (targetBearing - currentBearing < COMPASS_MAX360 - targetBearing + currentBearing)
+        {
+            target = targetBearing;
+            return target;
+        }
+
+
+        else
+        {
+            if (currentMinAzimuth < COMPASS_MIN0)
+            {
+                target = (COMPASS_MAX360 - targetBearing) * -1;
+                return target;
+            }
+            else
+            {
+                target = targetBearing;
+                return target;
+            }
+        }
+     }
+
+    else if (currentBearing >= COMPASS_HALF && currentBearing <= COMPASS_MAX360)
+    {
+        if (targetBearing > COMPASS_HALF && targetBearing <= COMPASS_MAX360)
+        {
+            target = targetBearing;
+            return target;
+        }
+        else if (COMPASS_MAX360 - currentBearing + targetBearing > currentBearing - targetBearing)
+        {
+            target = targetBearing;
+            return target;
+        }
+        else
+        {
+            target = COMPASS_MAX360 + targetBearing;
+            return target;
+        }
+     }
+
+     return target;
+
+}
+
+
 
 
 void RotatorMainWindow::stopButton()

@@ -285,10 +285,10 @@ int RotControl::rotate_to_bearing(int bearing)
 {
     int retCode = RIG_OK;
     float rotbearing = bearing;
-    qDebug() << "got to rotate bearing";
-    qDebug() << "send rotate message to serial ";
+    //qDebug() << "got to rotate bearing";
+    //qDebug() << "send rotate message to serial ";
     retCode = rot_set_position(my_rot, rotbearing, 0.0);
-    qDebug() << "error" << retCode;
+    //qDebug() << "error" << retCode;
 
 
     return retCode;

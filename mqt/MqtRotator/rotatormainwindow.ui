@@ -163,13 +163,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="overLapDisable">
-          <property name="text">
-           <string>Disable</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="Line" name="line_5">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>

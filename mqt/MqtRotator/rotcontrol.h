@@ -129,7 +129,9 @@ public:
 //    QString initError;
 
     azimuth_t getMaxAzimuth();
+    azimuth_t getMinAzimuth();
     elevation_t getMaxElevation();
+    elevation_t getMinElevation();
 
 signals:
    void bearing_updated(int);

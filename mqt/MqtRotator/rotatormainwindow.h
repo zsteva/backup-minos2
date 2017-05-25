@@ -88,6 +88,7 @@ private:
     RotatorRpc *msg;
 
     QTimer LogTimer;
+    QTimer RotateTimer;
 
     QComboBox *selectAntenna;
     QPushButton* presetButtons[NUM_PRESETS];
@@ -101,6 +102,7 @@ private:
     bool rotLogFlg;
     QTimer *pollTimer;
     int pollTime;
+    int rotTimeCount;
     int brakedelay;
     bool brakeflag;
     bool moving;
@@ -182,9 +184,10 @@ private slots:
     void checkEndStop();
     void checkMoving(int bearing);
 
+    void rotatingTimer();
 private:
     void rotateTo(int bearing);
-
+    int northCalcTarget(int targetBearing);
 };
 
 #endif // ROTATORMAINWINDOW_H

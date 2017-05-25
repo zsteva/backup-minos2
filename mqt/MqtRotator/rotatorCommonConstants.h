@@ -16,6 +16,7 @@
 // Common Rotator Constants
 
 #define DEGREE_SYMBOL '\xB0'
+#define ROTATE_MOVE_TIMEOUT 5
 
 // Rotator Keys
 
