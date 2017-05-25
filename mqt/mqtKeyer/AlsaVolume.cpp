@@ -6,9 +6,6 @@
 
 #include "AlsaVolume.h"
 
-AlsaVolume av;
-
-
 /**
  * Reads audio devices from ALSA interface and returns count and array of
  * strings containing the devices.

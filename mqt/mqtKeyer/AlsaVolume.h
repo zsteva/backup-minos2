@@ -1,7 +1,6 @@
 #ifndef ALSAVOLUME_H
 #define ALSAVOLUME_H
 
-#include "VKMixer.h"
 #ifdef Q_OS_LINUX
 #include <alsa/asoundlib.h>
 #endif
@@ -161,5 +160,4 @@ public:
 };
 int OpenMixer_Linux_ALSA(px_mixer *Px);
 
-extern AlsaVolume av;
 #endif // ALSAVOLUME_H

@@ -8,7 +8,7 @@
 #include <QComboBox>
 #include <QMainWindow>
 
-#include "AlsaVolume.h"
+#include "VKMixer.h"
 
 namespace Ui {
 class KeyerMain;
@@ -22,8 +22,6 @@ class KeyerMain : public QMainWindow
 public:
     explicit KeyerMain(QWidget *parent = 0);
     ~KeyerMain();
-    eMixerSets GetCurrentMixerSet();
-    void SetCurrentMixerSet( eMixerSets cms );
 
     void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool key );
     void recvolcallback( unsigned int vol );
@@ -64,25 +62,11 @@ private slots:
 
     void on_cardCombo_currentIndexChanged(int index);
 
-    void on_inputDeviceCombo_currentIndexChanged(int index);
-
-    void on_outputDeviceCombo_currentIndexChanged(int index);
-
-    void on_inputControlCombo_currentIndexChanged(int index);
-
-    void on_outputControlCombo_currentIndexChanged(int index);
-
-    void on_passthruControlCombo_currentIndexChanged(int index);
-
-    void on_masterControlCombo_currentIndexChanged(int index);
-
-
     void on_inputMute_toggled(bool checked);
 
     void on_masterMute_toggled(bool checked);
 
     void on_passthruMute_toggled(bool checked);
-
 
     void on_outputMute_toggled(bool checked);
 
@@ -90,15 +74,8 @@ private:
     void syncSetLines();
     QTimer LineTimer;
     QTimer CaptionTimer;
-    eMixerSets CurrMixerSet;
 
-    QVector<Card> cards;
-
-    px_mixer Px;
-
-    int currCardIndex;
-    int currInputIndex;
-    int currOutputIndex;
+    VKMixer *mixer;
 
     bool PTT;
     bool keyline;
@@ -117,12 +94,8 @@ private:
     virtual void moveEvent(QMoveEvent *event) override;
     virtual void changeEvent( QEvent* e ) override;
 
-    void setMixerCombo(QComboBox *combo, QList<QAudioDeviceInfo> audioDevices, QAudioFormat *qaf);
-    void setMixerCombo(QComboBox *combo, QVector<Device> devices);
-    void setMixerCombo(QComboBox *combo, PxDev &devices);
-
     void saveMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
     void applyMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
-    void adjustDeviceControls( PxDev *dev, QComboBox *devCombo, QSlider *slider, QCheckBox *muteBox);
+//    void adjustDeviceControls( PxDev *dev, QComboBox *devCombo, QSlider *slider, QCheckBox *muteBox);
 };
 #endif // KEYERMAIN_H
