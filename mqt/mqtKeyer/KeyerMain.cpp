@@ -77,9 +77,9 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
     mixer = VKMixer::GetVKMixer();
 
-    QVector<Card> cards = mixer->init();
+    QVector<Card> cards = VKMixer::getCardList();
 
-    foreach (Card card, mixer->cards)
+    foreach (Card card, cards)
     {
         ui->cardCombo->addItem(card.name);
     }

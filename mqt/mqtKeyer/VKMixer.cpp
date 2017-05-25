@@ -89,7 +89,7 @@ AlsaVolume VKMixer::av;
     return av.init();
 #else
 #ifdef Q_OS_WIN
-    return QVector<Card>;
+    return QVector<Card>();
 #endif
 #endif
 }
@@ -141,10 +141,6 @@ void VKMixer::SetCurrentMixerSet( eMixerSets cms )
     adjustDeviceControls(&Px.info.playback, ui->masterControlCombo, ui->masterLevelSlider, ui->masterMute);
 */
 }
-QVector<Card> VKMixer::init()
-{
-    return cards;
-}
 
 void VKMixer::timer()
 {
@@ -192,7 +188,6 @@ void VKMixer::setPassThruMute(bool mute)
 
 AudioInjectorMixer::AudioInjectorMixer()
 {
-    cards = av.init();
 }
 AudioInjectorMixer::~AudioInjectorMixer()
 {
