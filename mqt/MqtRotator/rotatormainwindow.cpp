@@ -258,7 +258,7 @@ void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
     }
     else if (dirCommand == rpcConstants::eRotateStop)
     {
-            stopRotation();
+            stopRotation(true);
             //sendStatusToLogStop();
     }
 
@@ -312,6 +312,7 @@ void RotatorMainWindow::openRotator()
     {
 //        QMessageBox::critical(this, tr("Error"), serial->errorString());
         pollTimer->stop();
+        stopRotation(false);           // clear flags
         showStatusMessage(tr("Rotator Open error"));
     }
 
@@ -587,6 +588,10 @@ void RotatorMainWindow::initSelectAntennaBox()
 
 void RotatorMainWindow::upDateAntenna()
 {
+
+    if (moving  || movingCCW || movingCW)
+        stopRotation(true);
+
     int antennaIndex = ui->selectAntennaBox->currentIndex();
     if (antennaIndex > 0)
     {
@@ -731,7 +736,7 @@ void RotatorMainWindow::rotateTo(int bearing)
 
     if (movingCW || movingCCW)
     {
-        stopRotation();
+        stopRotation(true);
     }
 
     // calculate target bearing based on current position
@@ -875,23 +880,26 @@ void RotatorMainWindow::stopButton()
         return;
     }
 
-    stopRotation();
+    stopRotation(true);
 
 }
 
 
-void RotatorMainWindow::stopRotation()
+void RotatorMainWindow::stopRotation(bool sendStop)
 {
 
 
     int retCode = 0;
     brakeflag = true;
     stopCmdflag = true;
-    retCode = rotator->stop_rotation();
-    if (retCode < 0)
+    if (sendStop)
     {
-        hamlibError(retCode);
-        sendStatusToLogError();
+        retCode = rotator->stop_rotation();
+        if (retCode < 0)
+        {
+            hamlibError(retCode);
+            sendStatusToLogError();
+        }
     }
     ui->rot_left_button->setChecked(false);
     ui->rot_right_button->setChecked(false);
