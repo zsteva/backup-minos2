@@ -25,6 +25,7 @@ LogDialog::LogDialog(QWidget *parent) :
     ui(new Ui::LogDialog)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
     ui->bearingDifferenceSBox->setRange(0,20);
     readLogConfig();
 }

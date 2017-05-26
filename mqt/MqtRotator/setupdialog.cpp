@@ -37,7 +37,7 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     ui(new Ui::SetupDialog)
 {
     ui->setupUi(this);
-
+    this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
     rotator = rotator;
 
     antennaName[NUM_ANTENNAS] = new QLineEdit;

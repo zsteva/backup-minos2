@@ -27,6 +27,7 @@ EditPresetsDialog::EditPresetsDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     presetNameLineEdit[0] = ui->presetNameEdit1;
     presetNameLineEdit[1] = ui->presetNameEdit2;
