@@ -6,6 +6,9 @@
 
 #include "AlsaVolume.h"
 
+AlsaVolume AlsaVolume::av;
+QVector<Card> AlsaVolume::cards;
+
 /**
  * Reads audio devices from ALSA interface and returns count and array of
  * strings containing the devices.
@@ -24,7 +27,7 @@ AlsaVolume::~AlsaVolume()
 
 }
 // What may be the top level - one day!
-QVector<Card> AlsaVolume::init()
+/*static*/QVector<Card> AlsaVolume::init()
 {
     cards = getCardList();
 #ifdef Q_OS_LINUX
@@ -38,7 +41,7 @@ QVector<Card> AlsaVolume::init()
     return cards;
 }
 // code derived from aplay
-QVector<Card> AlsaVolume::getCardList()
+/*static*/QVector<Card> AlsaVolume::getCardList()
 {
     QVector<Card> cards;
 #ifdef Q_OS_LINUX
@@ -207,7 +210,7 @@ int AlsaVolume::OpenMixer_Linux_ALSA(px_mixer *Px)
 
 static int elem_callback(snd_mixer_elem_t *elem, unsigned int mask)
 {
-    return av.elem_callback(elem, mask);
+    return AlsaVolume::av.elem_callback(elem, mask);
 }
 
 int AlsaVolume::elem_callback(snd_mixer_elem_t */*elem*/, unsigned int mask)
@@ -236,7 +239,7 @@ int AlsaVolume::elem_callback(snd_mixer_elem_t */*elem*/, unsigned int mask)
 
 static int mixer_callback(snd_mixer_t *mixer, unsigned int mask, snd_mixer_elem_t *elem)
 {
-    return av.mixer_callback(mixer, mask, elem);
+    return AlsaVolume::av.mixer_callback(mixer, mask, elem);
 }
 
 int AlsaVolume::mixer_callback(snd_mixer_t */*mixer*/, unsigned int mask, snd_mixer_elem_t *elem)

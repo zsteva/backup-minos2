@@ -28,6 +28,13 @@ public:
     void outvolcallback( unsigned int vol );
 
 private slots:
+    void cardComboCurrentIndexChanged(int index);
+
+    void CaptionTimerTimer();
+
+    void LineTimerTimer();
+
+
     void on_recordButton_clicked();
 
     void on_playButton_clicked();
@@ -48,10 +55,6 @@ private slots:
 
     void on_aboutButton_clicked();
 
-    void CaptionTimerTimer();
-
-    void LineTimerTimer();
-
     void on_inputLevelSlider_sliderMoved(int position);
 
     void on_masterLevelSlider_sliderMoved(int position);
@@ -59,8 +62,6 @@ private slots:
     void on_passthruLevelSlider_sliderMoved(int position);
 
     void on_outputLevelSlider_sliderMoved(int position);
-
-    void on_cardCombo_currentIndexChanged(int index);
 
     void on_inputMute_toggled(bool checked);
 
@@ -87,7 +88,6 @@ private:
     bool recording;
 
     bool inVolChange;
-    bool inInit;
 
     virtual void closeEvent(QCloseEvent *event) override;
     virtual void resizeEvent(QResizeEvent *event) override;
@@ -96,6 +96,5 @@ private:
 
     void saveMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
     void applyMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
-//    void adjustDeviceControls( PxDev *dev, QComboBox *devCombo, QSlider *slider, QCheckBox *muteBox);
 };
 #endif // KEYERMAIN_H

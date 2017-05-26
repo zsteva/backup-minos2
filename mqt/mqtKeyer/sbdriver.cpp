@@ -502,7 +502,6 @@ SoundSystemDriver::SoundSystemDriver() :
       lastCWRate( 0 ), t1ptr( 0 ), t2ptr( 0 ), toneSamples( 0 ),
       cwptr( 0 ), cwSamples( 0 ),
       soundSystem( 0 ), WinVUInCallback( 0 ), WinVUOutCallback( 0 )
-      //,mixer(0)
 {
    soundSystem = QtSoundSystem::createSoundSystem();
 }

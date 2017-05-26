@@ -57,21 +57,22 @@ MixerSet MixerSets[ emsMaxMixerSet ] =
 //===================================================================
 VKMixer * VKMixer::currentMixer = 0;
 
-/*static*/ bool VKMixer::OpenMixer(const QString &mixerCard)
+/*static*/ VKMixer * VKMixer::OpenMixer(const QString &mixerCard)
 {
-    currentMixer = new VKMixer();
-    return true;
+    VKMixer *mixer = GetVKMixer();
+    mixer->switchCard(mixerCard);
+    return mixer;
 }
-/*static*/ bool VKMixer::switchCard(const QString &mixerCard)
+/*static*/ VKMixer *VKMixer::GetVKMixer()
 {
-    delete currentMixer;
-    return OpenMixer(mixerCard);
+    if (!currentMixer)
+    {
+        currentMixer = new VKMixer();
+    }
+    return currentMixer;
 }
 
 VKMixer::VKMixer():
-    currCardIndex(0),
-    currInputIndex(0),
-    currOutputIndex(0),
     CurrMixerSet(emsUnloaded)
 
 {
@@ -81,30 +82,28 @@ VKMixer::~VKMixer()
 }
 #ifdef Q_OS_LINUX
 AlsaVolume VKMixer::av;
-#endif
 /*static*/ QVector<Card> VKMixer::getCardList()
 {
-#ifdef Q_OS_LINUX
-    AlsaVolume av;
-    return av.init();
-#else
-#ifdef Q_OS_WIN
-    return QVector<Card>();
-#endif
-#endif
+    return AlsaVolume::getCardList();
 }
-
-/*static*/ VKMixer *VKMixer::GetVKMixer()
-{
-    if (!currentMixer)
+#else
+    #ifdef Q_OS_WIN
+    /*static*/ QVector<Card> VKMixer::getCardList()
     {
-        // This is all backwards: we need to get the card list
-        // which won't always be Alsa! - and then use a factory
-        // to create the desired mixer instance
-
-        currentMixer = new AudioInjectorMixer();
+            return QVector<Card>();
     }
-    return currentMixer;
+    #endif
+#endif
+
+
+bool VKMixer::switchCard(const QString &mixerCard)
+{
+    if (currentCard == mixerCard)
+        return true;
+
+    // No we need to open the correct interface to the card
+
+    return false;
 }
 
 void VKMixer::SetMasterMute( bool )
@@ -182,14 +181,6 @@ void VKMixer::setPassThruLevel(qreal vol)
 }
 
 void VKMixer::setPassThruMute(bool mute)
-{
-
-}
-
-AudioInjectorMixer::AudioInjectorMixer()
-{
-}
-AudioInjectorMixer::~AudioInjectorMixer()
 {
 
 }

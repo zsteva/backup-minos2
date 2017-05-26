@@ -11,8 +11,9 @@
 #ifndef VKMixerH
 #define VKMixerH
 
+#ifdef Q_OS_LINUX
 #include "AlsaVolume.h"
-
+#endif
 enum eMixerSets {emsUnloaded, emsPassThroughNoPTT, emsPassThroughPTT,
                  emsReplay, emsReplayPip, emsReplayT1, emsReplayT2,
                  emsVoiceRecord,
@@ -27,15 +28,12 @@ class VKMixer
     static QVector<Card> getCardList();
 #ifdef Q_OS_LINUX
     static AlsaVolume av;
+    px_mixer Px;        // internally, very Alsa oriented
 #endif
-        eMixerSets CurrMixerSet;
+      eMixerSets CurrMixerSet;
 
+      QString currentCard;
 
-        px_mixer Px;
-
-        int currCardIndex;
-        int currInputIndex;
-        int currOutputIndex;
 
       VKMixer();
 
@@ -49,9 +47,9 @@ class VKMixer
       eMixerSets GetCurrentMixerSet();
       void SetCurrentMixerSet( eMixerSets cms );
 
-      static bool OpenMixer(const QString &currentCard);
+      static VKMixer *OpenMixer(const QString &currentCard);
 
-      static bool switchCard(const QString &currentCard);
+      bool switchCard(const QString &currentCard);
 
       void timer();
 
@@ -66,14 +64,5 @@ class VKMixer
 
 };
 
-class AudioInjectorMixer: public VKMixer
-{
-private:
-    AlsaVolume av;
-
-public:
-    AudioInjectorMixer();
-    virtual ~AudioInjectorMixer();
-};
 
 #endif

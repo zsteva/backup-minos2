@@ -6,6 +6,15 @@
 
 KeyerMain *keyerMain = 0;
 
+// texts for displaying the current mixer set
+
+const char *msets[] = {"emsUnloaded", "emsPassThroughNoPTT", "emsPassThroughPTT",
+                 "emsReplay", "emsReplayPip", "emsReplayT1", "emsReplayT2",
+                 "emsVoiceRecord",
+                 "emsCWTransmit", "emsCWPassThrough",
+                 "emsMicMonitor", "emsReplayMonitor",
+                 "emsMaxMixerSet"
+                };
 
 void lcallback( bool pPTT, bool pkeyline, bool pPTTRef, bool pL1Ref, bool pL2Ref )
 {
@@ -59,9 +68,7 @@ KeyerMain::KeyerMain(QWidget *parent) :
     PTT(false), keyline(false), PTTRef(false), L1Ref(false), L2Ref(false),
     recordWait(false),
     recording(false),
-    inVolChange(false),
-    inInit(true)
-
+    inVolChange(false)
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -75,8 +82,6 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
     createCloseEvent();
 
-    mixer = VKMixer::GetVKMixer();
-
     QVector<Card> cards = VKMixer::getCardList();
 
     foreach (Card card, cards)
@@ -86,7 +91,7 @@ KeyerMain::KeyerMain(QWidget *parent) :
     QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
     applyMixerSetting(keyerSettings, "Card", ui->cardCombo);
 
-    VKMixer::OpenMixer(ui->cardCombo->currentText());
+    mixer = VKMixer::OpenMixer(ui->cardCombo->currentText());
 
     keyerMain = this;
     setLineCallBack( lcallback );
@@ -94,9 +99,15 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
     loadKeyers();
 
+    // don't let the combo connect automatically, or it keeps firing while being set up
+    // and we won't actually have a mixer!
+
+    connect(ui->cardCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(cardComboCurrentIndexChanged(int)));
+
     connect(&LineTimer, SIGNAL(timeout()), this, SLOT(LineTimerTimer()));
     LineTimer.start(100);
 
+    // NB CaptionTimer only runs after something changes - the line timer triggers it
     connect(&CaptionTimer, SIGNAL(timeout()), this, SLOT(CaptionTimerTimer()));
 
     ui->PipCheckBox->setChecked(getPipEnabled());
@@ -109,8 +120,6 @@ KeyerMain::KeyerMain(QWidget *parent) :
         ui->keyCombo->addItem(QString::number(i));
     }
     ui->keyCombo->setCurrentIndex(0);
-
-    inInit = false;
 }
 
 KeyerMain::~KeyerMain()
@@ -144,54 +153,17 @@ void KeyerMain::changeEvent( QEvent* e )
         settings.setValue("geometry", saveGeometry());
     }
 }
-void KeyerMain::on_cardCombo_currentIndexChanged(int index)
+void KeyerMain::cardComboCurrentIndexChanged(int index)
 {
-    mixer->switchCard(ui->cardCombo->currentText());
-
-    if (inInit)
+    if (!mixer)
         return;
+
+    mixer->switchCard(ui->cardCombo->currentText());
 
     QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
     saveMixerSetting(keyerSettings, "Card", ui->cardCombo);
 }
 
-const char *msets[] = {"emsUnloaded", "emsPassThroughNoPTT", "emsPassThroughPTT",
-                 "emsReplay", "emsReplayPip", "emsReplayT1", "emsReplayT2",
-                 "emsVoiceRecord",
-                 "emsCWTransmit", "emsCWPassThrough",
-                 "emsMicMonitor", "emsReplayMonitor",
-                 "emsMaxMixerSet"
-                };
-/*
-void KeyerMain::adjustDeviceControls( PxDev *dev, QComboBox *devCombo, QSlider *slider, QCheckBox *muteBox)
-{
-    int index = devCombo->currentIndex();
-    qreal vol = av.get_volume_indexed(dev, index);
-    bool mute = av.get_switch_indexed(dev, index);
-
-    if (av.has_volume_indexed(dev, index))
-    {
-        slider->setValue(vol * slider->maximum());
-        slider->setEnabled(true);
-    }
-    else
-    {
-        slider->setValue(0);
-        slider->setEnabled(false);
-    }
-    if (av.has_volume_indexed(dev, index))
-    {
-        muteBox->setChecked(mute);
-        muteBox->setEnabled(true);
-    }
-    else
-    {
-        muteBox->setChecked(false);
-        muteBox->setEnabled(false);
-    }
-
-}
-*/
 void KeyerMain::LineTimerTimer( )
 {
     static bool closed = false;

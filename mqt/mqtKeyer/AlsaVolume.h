@@ -97,11 +97,10 @@ private:
     QString mixer_device_name;
 
     int currCard;
-    QVector<Card> cards;
-    QVector<Card> getCardList();
+    static QVector<Card> cards;
 
 #ifdef Q_OS_LINUX
-    QVector<Device> getDeviceList(Card &card, snd_pcm_stream_t stream);
+    static QVector<Device> getDeviceList(Card &card, snd_pcm_stream_t stream);
 
     int open_mixer(PxDev *dev, int card, int playback);
     int cleanup(px_mixer *Px);
@@ -134,7 +133,9 @@ private:
 public:
     AlsaVolume();
     ~AlsaVolume();
-    QVector<Card> init();
+    static AlsaVolume av;
+    static QVector<Card> init();
+    static QVector<Card> getCardList();
     void switchCard(int index)
     {
         currCard = index;
@@ -158,6 +159,6 @@ public:
     bool get_switch_indexed(PxDev *dev, int i);
     void set_switch_indexed(PxDev *dev, int i, bool set);
 };
-int OpenMixer_Linux_ALSA(px_mixer *Px);
+
 
 #endif // ALSAVOLUME_H
