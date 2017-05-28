@@ -855,7 +855,14 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
         }
         else
         {
-            target = COMPASS_MAX360 + targetBearing;
+            if (COMPASS_MAX360 + targetBearing > currentMaxAzimuth)
+            {
+                target = targetBearing;
+            }
+            else
+            {
+                target = COMPASS_MAX360 + targetBearing;
+            }
             return target;
         }
      }
