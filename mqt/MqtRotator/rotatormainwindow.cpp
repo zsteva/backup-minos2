@@ -397,7 +397,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(msg, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));
 
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
-    //connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
+    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     //connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
 
@@ -1086,3 +1086,10 @@ void RotatorMainWindow::sleepFor(qint64 milliseconds)
 }
 
 
+
+
+
+void RotatorMainWindow::about()
+{
+    QMessageBox::about(this, "Minos Rotator", "Minos QT Rotator\nCopyright D Balharrie G8FKH/M0DGB 2017\nVersion 0.1");
+}

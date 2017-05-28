@@ -185,9 +185,11 @@ private slots:
     void checkMoving(int bearing);
 
     void rotatingTimer();
+    void about();
 private:
     void rotateTo(int bearing);
     int northCalcTarget(int targetBearing);
+
 };
 
 #endif // ROTATORMAINWINDOW_H
