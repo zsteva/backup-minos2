@@ -1,3 +1,5 @@
+#include <QFileDialog>
+
 #include "KeyerMain.h"
 #include "ui_KeyerMain.h"
 #include "keyctrl.h"
@@ -68,7 +70,8 @@ KeyerMain::KeyerMain(QWidget *parent) :
     PTT(false), keyline(false), PTTRef(false), L1Ref(false), L2Ref(false),
     recordWait(false),
     recording(false),
-    inVolChange(false)
+    inVolChange(false),
+    runner(0)
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -82,27 +85,19 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
     createCloseEvent();
 
-    QVector<Card> cards = VKMixer::getCardList();
-
-    foreach (Card card, cards)
-    {
-        ui->cardCombo->addItem(card.name);
-    }
     QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
-    applyMixerSetting(keyerSettings, "Card", ui->cardCombo);
+    QString alsaFileName = keyerSettings.value("AlsaCtlFile", "").toString();
+    ui->setupScriptEdit->setText(alsaFileName);
 
-    mixer = VKMixer::OpenMixer(ui->cardCombo->currentText());
+    runAlsaScript(alsaFileName);
+
+    mixer = VKMixer::OpenMixer();
 
     keyerMain = this;
     setLineCallBack( lcallback );
     setVUCallBack( &::recvolcallback, &::outvolcallback );
 
     loadKeyers();
-
-    // don't let the combo connect automatically, or it keeps firing while being set up
-    // and we won't actually have a mixer!
-
-    connect(ui->cardCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(cardComboCurrentIndexChanged(int)));
 
     connect(&LineTimer, SIGNAL(timeout()), this, SLOT(LineTimerTimer()));
     LineTimer.start(100);
@@ -152,16 +147,6 @@ void KeyerMain::changeEvent( QEvent* e )
         QSettings settings;
         settings.setValue("geometry", saveGeometry());
     }
-}
-void KeyerMain::cardComboCurrentIndexChanged(int index)
-{
-    if (!mixer)
-        return;
-
-    mixer->switchCard(ui->cardCombo->currentText());
-
-    QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
-    saveMixerSetting(keyerSettings, "Card", ui->cardCombo);
 }
 
 void KeyerMain::LineTimerTimer( )
@@ -213,9 +198,6 @@ void KeyerMain::LineTimerTimer( )
       old = windowTitle();
       CaptionTimer.start(200);
    }
-
-   mixer->timer();
-
 }
 void KeyerMain::CaptionTimerTimer( )
 {
@@ -327,85 +309,87 @@ void KeyerMain::on_aboutButton_clicked()
 
 }
 
-
-void KeyerMain::on_inputLevelSlider_sliderMoved(int position)
+void KeyerMain::runAlsaScript(const QString &alsaFileName)
 {
-    if (!inVolChange)
+    if (alsaFileName.isEmpty())
+        return;
+
+    if ( !runner)
     {
-        qreal vol = 1.0*position/ui->inputLevelSlider->maximum();
-        mixer->setInputLevel(vol);
-        QSettings settings;
-        settings.setValue("Volume/input", vol);
+        runner = new QProcess(parent());
+        connect (runner, SIGNAL(started()), this, SLOT(on_started()));
+        connect (runner, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(on_finished(int, QProcess::ExitStatus)));
+        connect (runner, SIGNAL(error(QProcess::ProcessError)), this, SLOT(on_error(QProcess::ProcessError)));
+
+        connect (runner, SIGNAL(readyReadStandardError()), this, SLOT(on_readyReadStandardError()));
+        connect (runner, SIGNAL(readyReadStandardOutput()), this, SLOT(on_readyReadStandardOutput()));
+
+        QString wdir = GetCurrentDir();
+        runner->setWorkingDirectory(wdir);
     }
+
+
+    QString commandLine = "alsactl -f " + alsaFileName + " restore";// <card>
+    runner->start(commandLine);
+}
+void KeyerMain::on_started()
+{
+    trace("AlsaCtl :started");
 }
 
-void KeyerMain::on_outputLevelSlider_sliderMoved(int position)
+void KeyerMain::on_finished(int err, QProcess::ExitStatus exitStatus)
 {
-    if (!inVolChange)
+    trace("AlsaCtl :finished:" + QString::number(err) + ":" + QString::number(exitStatus));
+
+    // we need to delete runner sometime - but not yet?
+}
+
+void KeyerMain::on_error(QProcess::ProcessError error)
+{
+    trace("AlsaCtl :error:" + QString::number(error));
+}
+
+void KeyerMain::on_readyReadStandardError()
+{
+    QString r = runner->readAllStandardError();
+    trace("AlsaCtl :stdErr:" + r);
+}
+
+void KeyerMain::on_readyReadStandardOutput()
+{
+    QString r = runner->readAllStandardOutput();
+    trace("AlsaCtl :stdOut:" + r);
+}
+
+
+void KeyerMain::on_setupBrowseButton_clicked()
+{
+    QString InitialDir = GetCurrentDir();
+
+    QString Filter = "Alsa Control Files (*.txt);;"
+                     "All Files (*.*)" ;
+
+    QString alsaFileName = QFileDialog::getOpenFileName( this,
+                       "File for mixer setup",
+                       InitialDir,                   // opendir
+                       Filter );
+
+    if ( !alsaFileName.isEmpty() )
     {
-        qreal vol = 1.0*position/ui->outputLevelSlider->maximum();
-        mixer->setOutputLevel(vol);
-        QSettings settings;
-        settings.setValue("Volume/output", vol);
+        // run alsactl on the file
+        // so we need the alsa card names :(
+        // AND I think we need the QtAudio card names
+        // unless we can always use the default card...
+
+        // alsactl -f <filename> restore <card>
+
+        // And save the file name for the next startup
+
+        ui->setupScriptEdit->setText(alsaFileName);
+
+        QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
+        keyerSettings.setValue("AlsaCtlFile", alsaFileName);
+
+        runAlsaScript(alsaFileName);
     }
-}
-
-void KeyerMain::on_passthruLevelSlider_sliderMoved(int position)
-{
-    if (!inVolChange)
-    {
-        qreal vol = 1.0*position/ui->passthruLevelSlider->maximum();
-        mixer->setPassThruLevel(vol);
-        QSettings settings;
-        settings.setValue("Volume/passthru", vol);
-    }
-}
-void KeyerMain::on_masterLevelSlider_sliderMoved(int position)
-{
-    if (!inVolChange)
-    {
-        qreal vol = 1.0*position/ui->masterLevelSlider->maximum();
-        mixer->setMasterLevel(vol);
-        QSettings settings;
-        settings.setValue("Volume/master", vol);
-    }
-}
-
-void KeyerMain::applyMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo)
-{
-    QString name = keyerSettings.value(key, "").toString();
-    combo->setCurrentText(name);
-}
-
-void KeyerMain::saveMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo)
-{
-    QString name = combo->currentText();
-    keyerSettings.setValue(key, name);
-}
-
-
-void KeyerMain::on_inputMute_toggled(bool /*checked*/)
-{
-    bool inmute = ui->inputMute->isChecked();
-    mixer->setInputMute(inmute);
-}
-
-void KeyerMain::on_masterMute_toggled(bool /*checked*/)
-{
-    bool mastermute = ui->masterMute->isChecked();
-    mixer->setMasterMute(mastermute);
-}
-
-void KeyerMain::on_passthruMute_toggled(bool /*checked*/)
-{
-    bool passmute = ui->passthruMute->isChecked();
-    mixer->setPassThruMute(passmute);
-
-}
-
-
-void KeyerMain::on_outputMute_toggled(bool /*checked*/)
-{
-    bool outputmute = ui->outputMute->isChecked();
-    mixer->setOutputMute(outputmute);
 }

@@ -58,7 +58,7 @@ void QtSoundSystem::setKeyerRecordVolume(qreal vol)
     qAudioIn->setVolume(vol);
 }
 
-void QtSoundSystem::setKeyerPassthruVolume(qreal vol)
+void QtSoundSystem::setKeyerPassthruVolume(qreal /*vol*/)
 {
     //qAudioIn->setVolume(vol);
 }
@@ -216,7 +216,7 @@ void QtSoundSystem::passThroughData(QByteArray &inp)
         bool ptt = currentKeyer->pttState;
         int flen = qAudioOut->bytesFree();
         int ilen = inp.size();
-        int blen = qAudioOut->bufferSize();
+        //int blen = qAudioOut->bufferSize();
         if (ptt && flen)
         {
             int len = qMin(flen, ilen);

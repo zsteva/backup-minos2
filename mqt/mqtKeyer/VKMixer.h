@@ -11,29 +11,21 @@
 #ifndef VKMixerH
 #define VKMixerH
 
-#ifdef Q_OS_LINUX
-#include "AlsaVolume.h"
-#endif
+//======================================================================================
 enum eMixerSets {emsUnloaded, emsPassThroughNoPTT, emsPassThroughPTT,
                  emsReplay, emsReplayPip, emsReplayT1, emsReplayT2,
                  emsVoiceRecord,
                  emsCWTransmit, emsCWPassThrough,
                  emsMaxMixerSet};
-
+//======================================================================================
 
 class VKMixer
 {
+private:
     static VKMixer *currentMixer;
-   public:
-    static QVector<Card> getCardList();
-#ifdef Q_OS_LINUX
-    static AlsaVolume av;
-    px_mixer Px;        // internally, very Alsa oriented
-#endif
-      eMixerSets CurrMixerSet;
+public:
 
-      QString currentCard;
-
+    eMixerSets CurrMixerSet;
 
       VKMixer();
 
@@ -41,28 +33,10 @@ class VKMixer
 
       static VKMixer *GetVKMixer();
 
-      void SetMasterMute( bool );
-      void SetMicOutMute( bool );
-
       eMixerSets GetCurrentMixerSet();
       void SetCurrentMixerSet( eMixerSets cms );
 
-      static VKMixer *OpenMixer(const QString &currentCard);
-
-      bool switchCard(const QString &currentCard);
-
-      void timer();
-
-      void setInputLevel(qreal vol);
-      void setInputMute(bool mute);
-      void setOutputLevel(qreal vol);
-      void setOutputMute(bool mute);
-      void setMasterLevel(qreal vol);
-      void setMasterMute(bool mute);
-      void setPassThruLevel(qreal vol);
-      void setPassThruMute(bool mute);
-
+      static VKMixer *OpenMixer();
 };
-
-
+//======================================================================================
 #endif

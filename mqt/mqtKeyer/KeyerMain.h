@@ -2,11 +2,9 @@
 #define KEYERMAIN_H
 
 #include "base_pch.h"
-#include <QAudioDeviceInfo>
-#include <QAudioInput>
-#include <QAudioOutput>
 #include <QComboBox>
 #include <QMainWindow>
+#include <QProcess>
 
 #include "VKMixer.h"
 
@@ -28,7 +26,6 @@ public:
     void outvolcallback( unsigned int vol );
 
 private slots:
-    void cardComboCurrentIndexChanged(int index);
 
     void CaptionTimerTimer();
 
@@ -55,21 +52,15 @@ private slots:
 
     void on_aboutButton_clicked();
 
-    void on_inputLevelSlider_sliderMoved(int position);
+    void on_setupBrowseButton_clicked();
 
-    void on_masterLevelSlider_sliderMoved(int position);
+    void on_started();
+    void on_finished(int, QProcess::ExitStatus exitStatus);
+    void on_error(QProcess::ProcessError error);
 
-    void on_passthruLevelSlider_sliderMoved(int position);
+    void on_readyReadStandardError();
+    void on_readyReadStandardOutput();
 
-    void on_outputLevelSlider_sliderMoved(int position);
-
-    void on_inputMute_toggled(bool checked);
-
-    void on_masterMute_toggled(bool checked);
-
-    void on_passthruMute_toggled(bool checked);
-
-    void on_outputMute_toggled(bool checked);
 
 private:
     void syncSetLines();
@@ -89,12 +80,14 @@ private:
 
     bool inVolChange;
 
+    QProcess *runner;
+
+
+    void runAlsaScript(const QString &alsaFileName);
+
     virtual void closeEvent(QCloseEvent *event) override;
     virtual void resizeEvent(QResizeEvent *event) override;
     virtual void moveEvent(QMoveEvent *event) override;
     virtual void changeEvent( QEvent* e ) override;
-
-    void saveMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
-    void applyMixerSetting(QSettings &keyerSettings, QString key, QComboBox *combo);
 };
 #endif // KEYERMAIN_H
