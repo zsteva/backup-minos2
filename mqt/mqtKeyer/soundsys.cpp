@@ -22,46 +22,13 @@
 
 // VU meter takes 65536 as 100%
 #define shortmult 2
-//==============================================================================
-//static CRITICAL_SECTION waveCriticalSection;
-//==============================================================================
+
 
 /*static*/
 QtSoundSystem *QtSoundSystem::createSoundSystem()
 {
    return new QtSoundSystem();
 }
-qreal QtSoundSystem::getKeyerPlaybackVolume()
-{
-    return qAudioOut->volume();
-}
-
-qreal QtSoundSystem::getKeyerRecordVolume()
-{
-    return qAudioIn->volume();
-}
-
-qreal QtSoundSystem::getKeyerPassthruVolume()
-{
-//    return qAudioIn->volume();
-    return 0;
-}
-
-void QtSoundSystem::setKeyerPlaybackVolume(qreal vol)
-{
-    qAudioOut->setVolume(vol);
-}
-
-void QtSoundSystem::setKeyerRecordVolume(qreal vol)
-{
-    qAudioIn->setVolume(vol);
-}
-
-void QtSoundSystem::setKeyerPassthruVolume(qreal /*vol*/)
-{
-    //qAudioIn->setVolume(vol);
-}
-
 void QtSoundSystem::startOutput()
 {
     outDev = qAudioOut->start();    // restarts as necessary
@@ -293,22 +260,42 @@ void QtSoundSystem::handle_pushTimer_timeout()
 {
     // read input, buffer
 
+    if (currentKeyer == 0)
+        return;
+
+    bool ptt = currentKeyer->pttState;
+
     QByteArray inp = inDev->readAll();
 
-    if (recordingFile)
+    const int16_t * q = reinterpret_cast< const int16_t * > ( inp.constData() );
+     int16_t maxvol = 0;
+     int total = inp.size();
+
+     // determine max for VU meter
+    for ( int i = 0; i < total / 2; i++ )
     {
+       int16_t sample = abs( *q++ );
+       if ( sample > maxvol )
+          maxvol = sample;
+    }
+
+    if (recordingFile && ptt)
+    {
+        SoundSystemDriver::getSbDriver() ->WinVUInCallback( maxvol * shortmult );   // as we are looking at abs of signed data
         // if recording write buffer to RIFF, return losing input
         writeDataToFile(inp);
     }
     else if (playingFile)
     {
+        SoundSystemDriver::getSbDriver() ->WinVUInCallback( 0);
         // if playing file, push any remaining data to output losing input
         //          and do pip tail after delay if required
         readFromFile();
 
     }
-    else if (passThrough)
+    else if (passThrough && ptt )
     {
+        SoundSystemDriver::getSbDriver() ->WinVUInCallback( maxvol * shortmult );   // as we are looking at abs of signed data
         // if passthrough, push read data to output
         passThroughData(inp);
     }
@@ -353,8 +340,6 @@ void QtSoundSystem::handleOutStateChanged(QAudio::State newState)
         break;
         case QAudio::ActiveState:
         {
-            // make sure any volume change actually happens
-            qAudioOut->setVolume(qAudioOut->volume());
             trace("Audio output active state");
         }
         break;
@@ -411,8 +396,6 @@ void QtSoundSystem::handleInStateChanged(QAudio::State newState)
             break;
             case QAudio::ActiveState:
             {
-                // make sure any volume change actually happens
-                qAudioIn->setVolume(qAudioIn->volume());
                 trace("Audio output active state");
             }
             break;
