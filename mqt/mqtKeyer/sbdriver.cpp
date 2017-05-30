@@ -513,35 +513,6 @@ SoundSystemDriver::~SoundSystemDriver()
    }
    delete soundSystem;
 }
-qreal SoundSystemDriver::getKeyerPlaybackVolume()
-{
-    return soundSystem -> getKeyerPlaybackVolume();
-}
-
-qreal SoundSystemDriver::getKeyerRecordVolume()
-{
-    return soundSystem -> getKeyerRecordVolume();
-}
-
-qreal SoundSystemDriver::getKeyerPassthruVolume()
-{
-    return soundSystem -> getKeyerPassthruVolume();
-}
-
-void SoundSystemDriver::setKeyerPlaybackVolume(qreal vol)
-{
-    soundSystem -> setKeyerPlaybackVolume(vol);
-
-}
-void SoundSystemDriver::setKeyerRecordVolume(qreal vol)
-{
-    soundSystem -> setKeyerRecordVolume(vol);
-}
-void SoundSystemDriver::setKeyerPassthruVolume(qreal vol)
-{
-    soundSystem -> setKeyerPassthruVolume(vol);
-}
-
 //==============================================================================
 void SoundSystemDriver::initTone1( int t1 )
 {

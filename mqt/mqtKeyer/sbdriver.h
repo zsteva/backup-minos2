@@ -94,12 +94,5 @@ class SoundSystemDriver
       ~SoundSystemDriver();
 
       static SoundSystemDriver *getSbDriver();
-
-      qreal getKeyerPlaybackVolume();
-      qreal getKeyerRecordVolume();
-      void setKeyerPlaybackVolume(qreal);
-      void setKeyerRecordVolume(qreal);
-      qreal getKeyerPassthruVolume();
-      void setKeyerPassthruVolume(qreal vol);
 };
 #endif
