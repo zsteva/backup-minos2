@@ -8,6 +8,9 @@
 
 KeyerMain *keyerMain = 0;
 
+QString alsaStore("store");
+QString alsaRestore("restore");
+
 // texts for displaying the current mixer set
 
 const char *msets[] = {"emsUnloaded", "emsPassThroughNoPTT", "emsPassThroughPTT",
@@ -89,7 +92,7 @@ KeyerMain::KeyerMain(QWidget *parent) :
     QString alsaFileName = keyerSettings.value("AlsaCtlFile", "").toString();
     ui->setupScriptEdit->setText(alsaFileName);
 
-    runAlsaScript(alsaFileName);
+    runAlsaScript(alsaFileName, alsaRestore);
 
     mixer = VKMixer::OpenMixer();
 
@@ -309,7 +312,7 @@ void KeyerMain::on_aboutButton_clicked()
 
 }
 
-void KeyerMain::runAlsaScript(const QString &alsaFileName)
+void KeyerMain::runAlsaScript(const QString &alsaFileName, const QString &command)
 {
     if (alsaFileName.isEmpty())
         return;
@@ -329,7 +332,7 @@ void KeyerMain::runAlsaScript(const QString &alsaFileName)
     }
 
 
-    QString commandLine = "alsactl -f " + alsaFileName + " restore";// <card>
+    QString commandLine = "alsactl -f " + alsaFileName + " " + command;// <card>
     runner->start(commandLine);
 }
 void KeyerMain::on_started()
@@ -390,6 +393,18 @@ void KeyerMain::on_setupBrowseButton_clicked()
         QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
         keyerSettings.setValue("AlsaCtlFile", alsaFileName);
 
-        runAlsaScript(alsaFileName);
+        runAlsaScript(alsaFileName, alsaRestore);
     }
+}
+
+void KeyerMain::on_saveAlsaButton_clicked()
+{
+    QString alsaFileName = ui->setupScriptEdit->text();
+    runAlsaScript(alsaFileName, alsaStore);
+}
+
+void KeyerMain::on_restoreAlsaButton_clicked()
+{
+    QString alsaFileName = ui->setupScriptEdit->text();
+    runAlsaScript(alsaFileName, alsaRestore);
 }

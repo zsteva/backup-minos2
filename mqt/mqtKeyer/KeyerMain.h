@@ -62,6 +62,10 @@ private slots:
     void on_readyReadStandardOutput();
 
 
+    void on_saveAlsaButton_clicked();
+
+    void on_restoreAlsaButton_clicked();
+
 private:
     void syncSetLines();
     QTimer LineTimer;
@@ -83,7 +87,7 @@ private:
     QProcess *runner;
 
 
-    void runAlsaScript(const QString &alsaFileName);
+    void runAlsaScript(const QString &alsaFileName, const QString &command);
 
     virtual void closeEvent(QCloseEvent *event) override;
     virtual void resizeEvent(QResizeEvent *event) override;
