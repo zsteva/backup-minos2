@@ -16,7 +16,6 @@
 #include <QIODevice>
 #include "riff.h"
 
-class WriterThread;
 class QtSoundSystem: public QObject
 {
     Q_OBJECT
@@ -38,7 +37,7 @@ public:
     virtual bool initialise( QString &errmess );
 
     virtual void terminate();
-    virtual int setRate();
+    virtual int setRate(int rate);
 
     virtual bool startDMA( bool play, const QString &fname );
     virtual void stopDMA();
@@ -86,6 +85,8 @@ private:
     long pipDelayBytes;
 
     WaveFile outWave;
+
+    bool ignoreFirstIdle;
 };
 
 #endif

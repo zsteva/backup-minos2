@@ -17,7 +17,6 @@
 #include "sbdriver.h"
 #include "soundsys.h"
 #include "keyers.h"
-#include "WriterThread.h"
 #include "keyerlog.h"
 #include "riff.h"
 
@@ -84,7 +83,7 @@ void QtSoundSystem::stopInput()
 bool QtSoundSystem::startInput( QString fn )
 {
     // open fname, assign a text(?)
-    if ( outWave.OpenForWrite( fn.toLatin1(), 22050, 16, 1 ) == DDC_SUCCESS )
+    if ( outWave.OpenForWrite( fn.toLatin1(), sampleRate, 16, 1 ) == DDC_SUCCESS )
        return true;
 
     return false;
@@ -250,7 +249,8 @@ QtSoundSystem::QtSoundSystem() :
   , playingFile(false)
   , recordingFile(false)
   , passThrough(false)
-  , m_pos(0), p_pos(0)
+  , m_pos(0), p_pos(0),
+    ignoreFirstIdle(false)
 {
 
 }
@@ -260,10 +260,10 @@ QtSoundSystem::~QtSoundSystem()
    delete qAudioIn;
    delete qAudioOut;
 }
-int QtSoundSystem::setRate()
+int QtSoundSystem::setRate(int rate)
 {
-   sampleRate = 22050;
-   return 22050;
+   sampleRate = rate;
+   return sampleRate;
 }
 
 bool QtSoundSystem::initialise( QString &/*errmess*/ )
@@ -331,13 +331,13 @@ void QtSoundSystem::handleOutStateChanged(QAudio::State newState)
         trace("Audio output idle state");
             // Finished playing (no more data)
             KeyerAction * sba = KeyerAction::getCurrentAction();
-             if ( sba )
+             if ( sba && !ignoreFirstIdle )
              {
                 if ( sblog )
                 {
                    //trace( "All buffers now returned" );
                 }
-                sba->actionTime = 1;
+                sba->actionTime = 1;    // force to stop
              }
         }
         break;
@@ -363,6 +363,7 @@ void QtSoundSystem::handleOutStateChanged(QAudio::State newState)
         trace("Audio output other state " + QString::number(newState));
             break;
     }
+    ignoreFirstIdle = false;
 }
 void QtSoundSystem::handleInStateChanged(QAudio::State newState)
 {
@@ -455,6 +456,7 @@ bool QtSoundSystem::startDMA( bool play, const QString &fname )
             int16_t *pdataptr = SoundSystemDriver::getSbDriver() ->pipptr;
             setPipData(pdataptr, psamples, sba->pipStartDelaySamples);
         }
+        ignoreFirstIdle = true;
         startOutput();
    }
    else

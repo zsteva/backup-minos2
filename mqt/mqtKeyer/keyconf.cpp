@@ -108,6 +108,7 @@ void KeyerConfigure::SetKeyers( TiXmlElement *e )
       {
          // attribs name PipTone EnablePip StartDelay AutoRepeat PipStartDelay PlayPTTDelay
          QString name;
+         int sampleRate;
          int PipTone;
          int PipLength;
          bool EnablePip;
@@ -122,6 +123,7 @@ void KeyerConfigure::SetKeyers( TiXmlElement *e )
 
          if ( GetStringAttribute( c, "name", name ) == TIXML_SUCCESS )
          {
+            GetIntAttribute( c, "sampleRate", sampleRate, 22050);
             GetIntAttribute( c, "pipTone", PipTone, 1000 );
             GetIntAttribute( c, "pipLength", PipLength, 250 );
             GetBoolAttribute( c, "enablePip", EnablePip, false );
@@ -134,7 +136,7 @@ void KeyerConfigure::SetKeyers( TiXmlElement *e )
             GetIntAttribute( c, "voxHangTime", voxHangTime, 0 );
             GetIntAttribute( c, "clipRecord", ClipRecord, 0 );
 
-            KeyerConfig k( name, PipTone, pipVolume, PipLength, EnablePip, StartDelay,
+            KeyerConfig k( name, sampleRate, PipTone, pipVolume, PipLength, EnablePip, StartDelay,
                            AutoRepeatDelay, EnableAutoRepeat, PipStartDelay, PlayPTTDelay, voxHangTime,
                            ClipRecord );
             keyermap[ name ] = k;

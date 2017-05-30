@@ -32,6 +32,7 @@ class KeyerConfig
       enum KeyerType {ektVoiceKeyer};
       QString name;
       KeyerType type;
+      int sampleRate;
       int pipTone;
       bool enablePip;
       int startDelay;
@@ -46,9 +47,9 @@ class KeyerConfig
 
       KeyerConfig()
       {}
-      KeyerConfig( const QString &name, int pipTone, int pipVolume, int pipLength, bool enablePip, int startDelay,
+      KeyerConfig( const QString &name, int rate, int pipTone, int pipVolume, int pipLength, bool enablePip, int startDelay,
                    int autoRepeatDelay, bool enableAutoRepeat, int pipStartDelay, int playPTTDelay, int voxHangTime, int clipRecord )
-            : name( name ), type( ektVoiceKeyer ), pipTone( pipTone ), enablePip( enablePip ), startDelay( startDelay ),
+            : name( name ), type( ektVoiceKeyer ), sampleRate(rate), pipTone( pipTone ), enablePip( enablePip ), startDelay( startDelay ),
             autoRepeatDelay( autoRepeatDelay ), enableAutoRepeat( enableAutoRepeat ), pipStartDelay( pipStartDelay ), playPTTDelay( playPTTDelay ),
             voxHangTime( voxHangTime ), pipVolume( pipVolume ), clipRecord( clipRecord ), pipLength( pipLength )
       {}

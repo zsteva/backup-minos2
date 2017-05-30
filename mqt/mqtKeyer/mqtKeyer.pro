@@ -31,7 +31,6 @@ SOURCES += main.cpp\
     sbdriver.cpp \
     soundsys.cpp \
     VKMixer.cpp \
-    WriterThread.cpp \
     levelmeter.cpp \
     windowMonitor.cpp
 
@@ -48,7 +47,6 @@ HEADERS  += KeyerMain.h \
     sbdriver.h \
     soundsys.h \
     VKMixer.h \
-    WriterThread.h \
     levelmeter.h \
     windowMonitor.h
 

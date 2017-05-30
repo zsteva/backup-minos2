@@ -784,7 +784,7 @@ bool voiceKeyer::initialise( const KeyerConfig &keyer, const PortConfig &port )
       {
          trace( "commonkeyer initialised" );
       }
-      return sbInitialise( kconf.pipTone, kconf.pipVolume, kconf.pipLength );
+      return sbInitialise(kconf.sampleRate, kconf.pipTone, kconf.pipVolume, kconf.pipLength );
    }
    return false;
 }
@@ -872,10 +872,10 @@ void sbKeyer::sbTickEvent()           // this will often be an interrupt routine
       currentKeyer->checkControls();   // which we are a base class of...
    }
 }
-bool sbKeyer::sbInitialise( int pipTone, int pipVolume, int pipLength )
+bool sbKeyer::sbInitialise( int rate, int pipTone, int pipVolume, int pipLength )
 {
    QString errmess;
-   if ( !SoundSystemDriver::getSbDriver() ->sbdvp_init( errmess, pipTone, pipVolume, pipLength ) )
+   if ( !SoundSystemDriver::getSbDriver() ->sbdvp_init( errmess, rate, pipTone, pipVolume, pipLength ) )
    {
       trace( "sbdvp_init failed! " + errmess );
       trace( errmess );

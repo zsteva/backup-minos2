@@ -11,8 +11,6 @@
 #include "riff.h"
 
 #include "keyers.h" 
-//#include "vkmixer.h"
-#include "WriterThread.h"
 #include "sbdriver.h"
 #include "soundsys.h"
 
@@ -23,6 +21,7 @@ class dvkFile
       bool loaded;
       bool frec;          // flag set to true if audio has been recorded
       QString fileName;
+      int sampleRate;       // system required sample rate
       long fsample;        // number of bytes for each sound files
       int16_t *fptr;          // data area for each sound file
       unsigned int rate;
@@ -58,7 +57,7 @@ class dvkFile
             frec = false;
             fsample = inWave.NumSamples();
 
-            if ( rate == 22050 && BitsPerSample == 16 && NumChannels == 1 )
+            if ( rate == static_cast<unsigned int>(sampleRate) && BitsPerSample == 16 && NumChannels == 1 )
             {
                fptr = new int16_t[ fsample ];
                if ( inWave.ReadData( fptr, fsample ) == DDC_SUCCESS )
@@ -86,7 +85,7 @@ class dvkFile
          }
          return loaded;
       }
-      dvkFile() : loaded( false ), frec( false ), fsample( 0 ), fptr( 0 ), rate( 0 )
+      dvkFile() : loaded( false ), frec( false ), fsample( 0 ), fptr( 0 ), rate( 0 ), sampleRate(0)
       {}
       ~dvkFile()
       {
@@ -294,7 +293,7 @@ void SoundSystemDriver::stopall()
    cwSamples = 0;
 }
 
-bool SoundSystemDriver::sbdvp_init( QString &errmess, int pipTone, int pipVolume, int pipLength )
+bool SoundSystemDriver::sbdvp_init( QString &errmess, int srate, int pipTone, int pipVolume, int pipLength )
 {
    // should be done from config when the sb is defined as in use.
 
@@ -313,7 +312,7 @@ bool SoundSystemDriver::sbdvp_init( QString &errmess, int pipTone, int pipVolume
 
       // should be in each sound class
 
-      rate = soundSystem->setRate();
+      rate = soundSystem->setRate(srate);
 
       if ( !soundSystem->initialise( errmess ) )
          return false;
@@ -341,6 +340,7 @@ bool SoundSystemDriver::sbdvp_init( QString &errmess, int pipTone, int pipVolume
          char buff[ 100 ];
          sprintf( buff, "CQF%d.WAV", fileno );
          dvk->fileName = buff;
+         dvk->sampleRate = rate;
 
          dvk->LoadFile( errmess );
          recfil.push_back( dvk );
