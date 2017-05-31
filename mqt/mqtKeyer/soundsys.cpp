@@ -20,10 +20,6 @@
 #include "keyerlog.h"
 #include "riff.h"
 
-// VU meter takes 65536 as 100%
-#define shortmult 2
-
-
 /*static*/
 QtSoundSystem *QtSoundSystem::createSoundSystem()
 {
@@ -160,6 +156,7 @@ void QtSoundSystem::readFromFile()
 
         const int16_t * q = reinterpret_cast< const int16_t * > ( data.constData() );
          int16_t maxvol = 0;
+         qreal rmsvol = 0;
 
          // determine max for VU meter
         for ( int i = 0; i < total / 2; i++ )
@@ -167,9 +164,11 @@ void QtSoundSystem::readFromFile()
            int16_t sample = abs( *q++ );
            if ( sample > maxvol )
               maxvol = sample;
+
+           rmsvol += sample * sample;
         }
 
-         SoundSystemDriver::getSbDriver() ->WinVUOutCallback( maxvol * shortmult );
+         SoundSystemDriver::getSbDriver() ->WinVUOutCallback( maxvol, 2.0 * sqrt(rmsvol/total), total/2 );
 
          outDev->write(data);
     }
@@ -188,6 +187,7 @@ void QtSoundSystem::passThroughData(QByteArray &inp)
             int len = qMin(flen, ilen);
             const int16_t * q = reinterpret_cast< const int16_t * > ( inp.constData() );
              int16_t maxvol = 0;
+             qreal rmsvol = 0;
 
              // determine max for VU meter
             for ( int i = 0; i < len / 2; i++ )
@@ -195,14 +195,15 @@ void QtSoundSystem::passThroughData(QByteArray &inp)
                int16_t sample = abs( *q++ );
                if ( sample > maxvol )
                   maxvol = sample;
+               rmsvol += sample * sample;
             }
 
-             SoundSystemDriver::getSbDriver() ->WinVUOutCallback( maxvol * shortmult );
+             SoundSystemDriver::getSbDriver() ->WinVUOutCallback( maxvol, 2.0 * sqrt(rmsvol/len), len/2 );
             outDev->write(inp);
         }
         else
         {
-            SoundSystemDriver::getSbDriver() ->WinVUOutCallback( 0 );
+            SoundSystemDriver::getSbDriver() ->WinVUOutCallback( 0, 0, ilen/2 );
         }
     }
 }
@@ -270,6 +271,7 @@ void QtSoundSystem::handle_pushTimer_timeout()
     const int16_t * q = reinterpret_cast< const int16_t * > ( inp.constData() );
      int16_t maxvol = 0;
      int total = inp.size();
+     qreal rmsval = 0;
 
      // determine max for VU meter
     for ( int i = 0; i < total / 2; i++ )
@@ -277,17 +279,19 @@ void QtSoundSystem::handle_pushTimer_timeout()
        int16_t sample = abs( *q++ );
        if ( sample > maxvol )
           maxvol = sample;
+
+       rmsval += sample * sample;
     }
 
     if (recordingFile && ptt)
     {
-        SoundSystemDriver::getSbDriver() ->WinVUInCallback( maxvol * shortmult );   // as we are looking at abs of signed data
+        SoundSystemDriver::getSbDriver() ->WinVUInCallback( maxvol, sqrt(2.0*rmsval/total), total/2 );   // as we are looking at abs of signed data
         // if recording write buffer to RIFF, return losing input
         writeDataToFile(inp);
     }
     else if (playingFile)
     {
-        SoundSystemDriver::getSbDriver() ->WinVUInCallback( 0);
+        SoundSystemDriver::getSbDriver() ->WinVUInCallback( 0, 0, total/2 );
         // if playing file, push any remaining data to output losing input
         //          and do pip tail after delay if required
         readFromFile();
@@ -295,15 +299,15 @@ void QtSoundSystem::handle_pushTimer_timeout()
     }
     else if (passThrough && ptt )
     {
-        SoundSystemDriver::getSbDriver() ->WinVUInCallback( maxvol * shortmult );   // as we are looking at abs of signed data
+        SoundSystemDriver::getSbDriver() ->WinVUInCallback( maxvol, sqrt(2.0*rmsval/total), total/2  );   // as we are looking at abs of signed data
         // if passthrough, push read data to output
         passThroughData(inp);
     }
     else
     {
     // what do we do with any remaining input? Just lose it?
-        SoundSystemDriver::getSbDriver() ->WinVUInCallback( 0 );
-        SoundSystemDriver::getSbDriver() ->WinVUOutCallback( 0 );
+        SoundSystemDriver::getSbDriver() ->WinVUInCallback( 0, 0, total/2 );
+        SoundSystemDriver::getSbDriver() ->WinVUOutCallback( 0, 0, total/2 );
     }
 }
 
@@ -479,7 +483,7 @@ void QtSoundSystem::stopDMA()
     playingFile = false;
     recordingFile = false;
     passThrough = true;
-    SoundSystemDriver::getSbDriver() ->WinVUInCallback( 0 );
-    SoundSystemDriver::getSbDriver() ->WinVUOutCallback( 0 );
+    SoundSystemDriver::getSbDriver() ->WinVUInCallback( 0, 0, 0 );
+    SoundSystemDriver::getSbDriver() ->WinVUOutCallback( 0, 0, 0 );
 
 }

@@ -27,23 +27,23 @@ void lcallback( bool pPTT, bool pkeyline, bool pPTTRef, bool pL1Ref, bool pL2Ref
 }
 
 //---------------------------------------------------------------------------
-void recvolcallback( unsigned int vol )
+void recvolcallback( unsigned int rmsvol, unsigned int peakvol, int samples )
 {
-    keyerMain->recvolcallback(vol);
+    keyerMain->recvolcallback(rmsvol, peakvol, samples);
 }
 //---------------------------------------------------------------------------
-void outvolcallback( unsigned int vol )
+void outvolcallback( unsigned int rmsvol, unsigned int peakvol, int samples )
 {
-    keyerMain->outvolcallback(vol);
+    keyerMain->outvolcallback(rmsvol, peakvol, samples);
 }
-void KeyerMain::outvolcallback( unsigned int vol )
+void KeyerMain::outvolcallback( unsigned int rmsvol, unsigned int peakvol, int samples )
 {
-   ui->outputLevelMeter->levelChanged( vol / 65536.0, vol / 65536.0, 200 );
+   ui->outputLevelMeter->levelChanged( rmsvol / 32768.0, peakvol / 32768.0, samples );
 }
 //---------------------------------------------------------------------------
-void KeyerMain::recvolcallback( unsigned int vol )
+void KeyerMain::recvolcallback(unsigned int rmsvol , unsigned int peakvol, int samples)
 {
-    ui->inputLevelMeter->levelChanged( vol / 65536.0, vol / 65536.0, 200 );
+    ui->inputLevelMeter->levelChanged( rmsvol / 32768.0, peakvol / 32768.0, samples );
 }
 
 //---------------------------------------------------------------------------

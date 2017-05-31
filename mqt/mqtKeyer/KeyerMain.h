@@ -22,8 +22,8 @@ public:
     ~KeyerMain();
 
     void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool key );
-    void recvolcallback( unsigned int vol );
-    void outvolcallback( unsigned int vol );
+    void recvolcallback( unsigned int rmsvol , unsigned int peakvol, int samples );
+    void outvolcallback(unsigned int rmsvol , unsigned int peakvol, int samples);
 
 private slots:
 

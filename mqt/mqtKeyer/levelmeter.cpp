@@ -124,6 +124,8 @@ void LevelMeter::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)
 
+    // decibels = 20 * log(ratio);  // so ratio of 1 is 0db
+
     QPainter painter(this);
     painter.fillRect(rect(), Qt::black);
 
