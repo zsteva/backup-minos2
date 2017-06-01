@@ -36,7 +36,14 @@ TSettingsEditDlg::~TSettingsEditDlg()
 {
     delete ui;
 }
-
+bool sectionLessThan(const QString &s1, const QString &s2)
+{
+    if (s1 == noneBundle)
+        return true;
+    if (s2 == noneBundle)
+        return false;
+    return s1.toLower() < s2.toLower();
+}
 void TSettingsEditDlg::showSections(QString currSection)
 {
    ui->SectionsList->clear();
@@ -52,7 +59,7 @@ void TSettingsEditDlg::showSections(QString currSection)
    }
 
 
-   qSort(sections);
+   qSort(sections.begin(), sections.end(), sectionLessThan);
    setWindowTitle(windowTitle() + " - " + bundle->getBundle() + " for " + bundle->getSection()) ;
 
    int offset = 0;
@@ -79,7 +86,7 @@ void TSettingsEditDlg::showSection()
    }
    else if ( offset >= 0 && offset < sections.size() )
    {
-      qSort(sections);
+      qSort(sections.begin(), sections.end(), sectionLessThan);
       QString sect = sections[ offset ];
       bundle->openSection( sect );
       ui->OptionsTable->setVisible(true);
@@ -93,9 +100,9 @@ void TSettingsEditDlg::showSection()
    }
 
    ui->NewSectionButton->setEnabled(!currSectionOnly);
-   ui->DeleteButton->setEnabled(currSectionOnly?false:( offset > 0 ));
-   ui->CopyButton->setEnabled(currSectionOnly?false:( offset > 0 ));
-   ui->renameButton->setEnabled(currSectionOnly?false:( offset > 0 ));
+   ui->DeleteButton->setEnabled(currSectionOnly?false:( offset > 0 ));  // ************* >= ?
+   ui->CopyButton->setEnabled(currSectionOnly?false:( offset > 0 )); // ************* >= ?
+   ui->renameButton->setEnabled(currSectionOnly?false:( offset > 0 )); // ************* >= ?
 }
 void TSettingsEditDlg::showDetails()
 {
@@ -120,7 +127,7 @@ void TSettingsEditDlg::showDetails()
            labels.append(label);
 
            QString val;
-           if (offset > 0 || currSectionOnly)
+           if (offset > 0 || currSectionOnly)               // ********** >= ?
             bundle->getStringProfile( entries[ i ], val );
 
            QTableWidgetItem *it = new QTableWidgetItem(val);
@@ -142,7 +149,7 @@ void TSettingsEditDlg::showDetails()
 void TSettingsEditDlg::getDetails()
 {
    int offset = ui->SectionsList->currentRow();
-   if (( offset > 0 || currSectionOnly) && ui->OptionsTable->rowCount())
+   if (( offset > 0 || currSectionOnly) && ui->OptionsTable->rowCount())  // ************* >= ?
    {
       QVector<int> entries = bundle->getBundleEntries();
       for ( int r = 0; r < entries.size(); r++ )
@@ -177,7 +184,7 @@ void TSettingsEditDlg::on_CopyButton_clicked()
     getDetails();  // save what is set already
 
     int offset = ui->SectionsList->currentRow();
-    if ( offset > 0 && !currSectionOnly)
+    if ( offset > 0 && !currSectionOnly) // ************* >= ?
     {
        QString Value = bundle->getSection();
        if ( enquireDialog( this, "Please give a name for the new section", Value ) )
@@ -224,7 +231,7 @@ void TSettingsEditDlg::on_renameButton_clicked()
     int offset = ui->SectionsList->currentRow();
     if ( offset == 0 )
        MinosParameters::getMinosParameters() ->mshowMessage( "You cannot rename the empty section!", this );
-    else if ( offset > 0 && !currSectionOnly)
+    else if ( offset > 0 && !currSectionOnly) // ************* >= ?
     {
        QString Value = bundle->getSection();
        if ( enquireDialog( this, "Please give a new name for the section", Value ) )

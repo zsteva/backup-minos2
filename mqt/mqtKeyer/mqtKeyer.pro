@@ -31,10 +31,8 @@ SOURCES += main.cpp\
     sbdriver.cpp \
     soundsys.cpp \
     VKMixer.cpp \
-    WriterThread.cpp \
     levelmeter.cpp \
-    windowMonitor.cpp \
-    AlsaVolume.cpp
+    windowMonitor.cpp
 
 HEADERS  += KeyerMain.h \
     keyerAbout.h \
@@ -49,10 +47,8 @@ HEADERS  += KeyerMain.h \
     sbdriver.h \
     soundsys.h \
     VKMixer.h \
-    WriterThread.h \
     levelmeter.h \
-    windowMonitor.h \
-    AlsaVolume.h
+    windowMonitor.h
 
 FORMS    += KeyerMain.ui \
     keyerAbout.ui \

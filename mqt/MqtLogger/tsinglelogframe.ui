@@ -139,7 +139,7 @@
             <enum>QFrame::NoFrame</enum>
            </property>
            <property name="currentIndex">
-            <number>4</number>
+            <number>5</number>
            </property>
            <widget class="QWidget" name="DXCCPage">
             <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -222,6 +222,12 @@
                   <property name="spacing">
                    <number>0</number>
                   </property>
+                  <property name="leftMargin">
+                   <number>10</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>10</number>
+                  </property>
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_2">
                     <property name="spacing">
@@ -230,14 +236,14 @@
                     <item>
                      <widget class="QCheckBox" name="WorkedCB">
                       <property name="text">
-                       <string>Worked Only</string>
+                       <string>Worked</string>
                       </property>
                      </widget>
                     </item>
                     <item>
                      <widget class="QCheckBox" name="UnworkedCB">
                       <property name="text">
-                       <string>Unworked Only</string>
+                       <string>Unworked</string>
                       </property>
                      </widget>
                     </item>
@@ -400,6 +406,20 @@
              </item>
             </layout>
            </widget>
+           <widget class="QWidget" name="ClockPage">
+            <layout class="QVBoxLayout" name="verticalLayout_11">
+             <item>
+              <widget class="TClockFrame" name="clockFrame">
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Plain</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
          <item>
@@ -426,6 +446,16 @@
             <property name="bottomMargin">
              <number>0</number>
             </property>
+            <item>
+             <widget class="QRadioButton" name="ClockButton">
+              <property name="text">
+               <string>Clock</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">buttonGroup</string>
+              </attribute>
+             </widget>
+            </item>
             <item>
              <widget class="QRadioButton" name="DXCCButton">
               <property name="focusPolicy">
@@ -725,15 +755,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QSOLogFrame</class>
-   <extends>QFrame</extends>
-   <header>qsologframe.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>MinosSplitter</class>
    <extends>QSplitter</extends>
    <header>minossplitter.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QSOLogFrame</class>
+   <extends>QFrame</extends>
+   <header>qsologframe.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -758,6 +788,12 @@
    <class>LocFrame</class>
    <extends>QFrame</extends>
    <header>locframe.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TClockFrame</class>
+   <extends>QFrame</extends>
+   <header>TClockFrame.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

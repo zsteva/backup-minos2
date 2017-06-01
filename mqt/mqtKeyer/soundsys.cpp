@@ -17,52 +17,18 @@
 #include "sbdriver.h"
 #include "soundsys.h"
 #include "keyers.h"
-#include "WriterThread.h"
 #include "keyerlog.h"
 #include "riff.h"
 
 // VU meter takes 65536 as 100%
 #define shortmult 2
-//==============================================================================
-//static CRITICAL_SECTION waveCriticalSection;
-//==============================================================================
+
 
 /*static*/
 QtSoundSystem *QtSoundSystem::createSoundSystem()
 {
    return new QtSoundSystem();
 }
-qreal QtSoundSystem::getKeyerPlaybackVolume()
-{
-    return qAudioOut->volume();
-}
-
-qreal QtSoundSystem::getKeyerRecordVolume()
-{
-    return qAudioIn->volume();
-}
-
-qreal QtSoundSystem::getKeyerPassthruVolume()
-{
-//    return qAudioIn->volume();
-    return 0;
-}
-
-void QtSoundSystem::setKeyerPlaybackVolume(qreal vol)
-{
-    qAudioOut->setVolume(vol);
-}
-
-void QtSoundSystem::setKeyerRecordVolume(qreal vol)
-{
-    qAudioIn->setVolume(vol);
-}
-
-void QtSoundSystem::setKeyerPassthruVolume(qreal vol)
-{
-    //qAudioIn->setVolume(vol);
-}
-
 void QtSoundSystem::startOutput()
 {
     outDev = qAudioOut->start();    // restarts as necessary
@@ -84,7 +50,7 @@ void QtSoundSystem::stopInput()
 bool QtSoundSystem::startInput( QString fn )
 {
     // open fname, assign a text(?)
-    if ( outWave.OpenForWrite( fn.toLatin1(), 22050, 16, 1 ) == DDC_SUCCESS )
+    if ( outWave.OpenForWrite( fn.toLatin1(), sampleRate, 16, 1 ) == DDC_SUCCESS )
        return true;
 
     return false;
@@ -216,7 +182,7 @@ void QtSoundSystem::passThroughData(QByteArray &inp)
         bool ptt = currentKeyer->pttState;
         int flen = qAudioOut->bytesFree();
         int ilen = inp.size();
-        int blen = qAudioOut->bufferSize();
+        //int blen = qAudioOut->bufferSize();
         if (ptt && flen)
         {
             int len = qMin(flen, ilen);
@@ -250,7 +216,8 @@ QtSoundSystem::QtSoundSystem() :
   , playingFile(false)
   , recordingFile(false)
   , passThrough(false)
-  , m_pos(0), p_pos(0)
+  , m_pos(0), p_pos(0),
+    ignoreFirstIdle(false)
 {
 
 }
@@ -260,10 +227,10 @@ QtSoundSystem::~QtSoundSystem()
    delete qAudioIn;
    delete qAudioOut;
 }
-int QtSoundSystem::setRate()
+int QtSoundSystem::setRate(int rate)
 {
-   sampleRate = 22050;
-   return 22050;
+   sampleRate = rate;
+   return sampleRate;
 }
 
 bool QtSoundSystem::initialise( QString &/*errmess*/ )
@@ -293,22 +260,42 @@ void QtSoundSystem::handle_pushTimer_timeout()
 {
     // read input, buffer
 
+    if (currentKeyer == 0)
+        return;
+
+    bool ptt = currentKeyer->pttState;
+
     QByteArray inp = inDev->readAll();
 
-    if (recordingFile)
+    const int16_t * q = reinterpret_cast< const int16_t * > ( inp.constData() );
+     int16_t maxvol = 0;
+     int total = inp.size();
+
+     // determine max for VU meter
+    for ( int i = 0; i < total / 2; i++ )
     {
+       int16_t sample = abs( *q++ );
+       if ( sample > maxvol )
+          maxvol = sample;
+    }
+
+    if (recordingFile && ptt)
+    {
+        SoundSystemDriver::getSbDriver() ->WinVUInCallback( maxvol * shortmult );   // as we are looking at abs of signed data
         // if recording write buffer to RIFF, return losing input
         writeDataToFile(inp);
     }
     else if (playingFile)
     {
+        SoundSystemDriver::getSbDriver() ->WinVUInCallback( 0);
         // if playing file, push any remaining data to output losing input
         //          and do pip tail after delay if required
         readFromFile();
 
     }
-    else if (passThrough)
+    else if (passThrough && ptt )
     {
+        SoundSystemDriver::getSbDriver() ->WinVUInCallback( maxvol * shortmult );   // as we are looking at abs of signed data
         // if passthrough, push read data to output
         passThroughData(inp);
     }
@@ -331,13 +318,13 @@ void QtSoundSystem::handleOutStateChanged(QAudio::State newState)
         trace("Audio output idle state");
             // Finished playing (no more data)
             KeyerAction * sba = KeyerAction::getCurrentAction();
-             if ( sba )
+             if ( sba && !ignoreFirstIdle )
              {
                 if ( sblog )
                 {
                    //trace( "All buffers now returned" );
                 }
-                sba->actionTime = 1;
+                sba->actionTime = 1;    // force to stop
              }
         }
         break;
@@ -353,8 +340,6 @@ void QtSoundSystem::handleOutStateChanged(QAudio::State newState)
         break;
         case QAudio::ActiveState:
         {
-            // make sure any volume change actually happens
-            qAudioOut->setVolume(qAudioOut->volume());
             trace("Audio output active state");
         }
         break;
@@ -363,6 +348,7 @@ void QtSoundSystem::handleOutStateChanged(QAudio::State newState)
         trace("Audio output other state " + QString::number(newState));
             break;
     }
+    ignoreFirstIdle = false;
 }
 void QtSoundSystem::handleInStateChanged(QAudio::State newState)
 {
@@ -410,8 +396,6 @@ void QtSoundSystem::handleInStateChanged(QAudio::State newState)
             break;
             case QAudio::ActiveState:
             {
-                // make sure any volume change actually happens
-                qAudioIn->setVolume(qAudioIn->volume());
                 trace("Audio output active state");
             }
             break;
@@ -455,6 +439,7 @@ bool QtSoundSystem::startDMA( bool play, const QString &fname )
             int16_t *pdataptr = SoundSystemDriver::getSbDriver() ->pipptr;
             setPipData(pdataptr, psamples, sba->pipStartDelaySamples);
         }
+        ignoreFirstIdle = true;
         startOutput();
    }
    else

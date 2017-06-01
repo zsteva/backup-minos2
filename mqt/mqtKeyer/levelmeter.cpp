@@ -64,7 +64,7 @@ LevelMeter::LevelMeter(QWidget *parent)
     ,   m_rmsColor(Qt::red)
     ,   m_peakColor(255, 200, 200, 255)
 {
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     setMinimumWidth(30);
 
     connect(m_redrawTimer, SIGNAL(timeout()), this, SLOT(redrawTimerExpired()));

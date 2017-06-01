@@ -63,7 +63,9 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     ui->CommentsEdit->installEventFilter(this);
 
     MainOpFW = new FocusWatcher(ui->MainOpComboBox);
+    ui->MainOpComboBox->setValidator(new UpperCaseValidator(false));
     SecondOpFW = new FocusWatcher(ui->SecondOpComboBox);
+    ui->SecondOpComboBox->setValidator(new UpperCaseValidator(false));
 
     connect(CallsignFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
     connect(RSTTXFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
@@ -139,22 +141,7 @@ bool QSOLogFrame::doKeyPressEvent( QKeyEvent* event )
         return true;
     }
 
-    if (( ctrl || shift ) && Key >= Qt::Key_F1 && Key <= Qt::Key_F12 )
-    {
-        if ( ctrl && shift )
-        {
-            // keyer record keys
-            TSendDM::sendKeyerRecord( Key - Qt::Key_F1 + 1 );
-        }
-        else
-        {
-            // Keyer play keys
-            TSendDM::sendKeyerPlay( Key - Qt::Key_F1 + 1 );
-        }
-        return true;
-    }
-
-    if ( ( Key == Qt::Key_F1 || Key == Qt::Key_F2 || Key == Qt::Key_F3 || Key == Qt::Key_F4 || Key == Qt::Key_F5 || Key == Qt::Key_F6) )
+    if ( ( Key == Qt::Key_F1 || Key == Qt::Key_F2 || Key == Qt::Key_F3 || Key == Qt::Key_F4 || Key == Qt::Key_F5 || Key == Qt::Key_F6|| Key == Qt::Key_F12) )
     {
         setActiveControl( &Key );
         return true;
@@ -349,6 +336,12 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
 void QSOLogFrame::setXferEnabled(bool s)
 {
     ui->MatchXferButton->setEnabled(s);
+    QString ss;
+    if (s)
+        ss = "color:red";
+    else
+        ss = "";
+    ui->MatchXferButton->setStyleSheet(ss);
 }
 
 void QSOLogFrame::on_CatchupButton_clicked()
@@ -766,6 +759,11 @@ void QSOLogFrame::setActiveControl( int *Key )
          selectField( ui->QTHEdit );
          *Key = 0;
          break;
+   case Qt::Key_F12:
+       if (ui->MatchXferButton->isEnabled())
+            MinosLoggerEvents::SendXferPressed();
+      *Key = 0;
+      break;
    }
 }
 //---------------------------------------------------------------------------
@@ -1797,6 +1795,7 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
     ui->RotateLeft->setVisible(LogContainer->isRotatorLoaded());
     ui->RotateRight->setVisible(LogContainer->isRotatorLoaded());
     ui->StopRotate->setVisible(LogContainer->isRotatorLoaded());
+    ui->RotBrg->setVisible(LogContainer->isRotatorLoaded());
     ui->rotatorState->setVisible(LogContainer->isRotatorLoaded());
     ui->antennaName->setVisible(LogContainer->isRotatorLoaded());
 

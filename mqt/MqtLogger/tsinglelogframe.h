@@ -19,6 +19,7 @@ class BaseContestLog;
 class BaseContact;
 class ContactList;
 class ListContact;
+class FocusWatcher;
 
 // We may need to define our own validation controls with valid methods
 // for each needed type...
@@ -100,6 +101,9 @@ class QSOMatchGridModel: public QAbstractItemModel
         QSOMatchGridModel();
         ~QSOMatchGridModel();
 
+        QModelIndex firstIndex;
+        bool currentModel;
+
         void initialise( MatchType, TMatchCollection *pmatch );
         QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;
         QVariant headerData( int section, Qt::Orientation orientation,
@@ -168,6 +172,9 @@ private:
     QSOMatchGridModel otherMatchModel;
     QSOMatchGridModel archiveMatchModel;
 
+    FocusWatcher *OtherMatchTreeFW;
+    FocusWatcher *ArchiveMatchTreeFW;
+
     int lastStanzaCount;
 
     long long currFreq;
@@ -183,9 +190,6 @@ private:
     void transferDetails( MatchTreeItem *MatchTreeIndex );
 
     void keyPressEvent( QKeyEvent* event );
-
-    QTreeWidgetItem *addTreeRoot(QTreeWidget *tree, QString text);
-    void addTreeChild(QTreeWidgetItem *parent, QString text);
 
     void showThisMatchQSOs( TMatchCollection *matchCollection );
     void showOtherMatchQSOs( TMatchCollection *matchCollection );
@@ -246,6 +250,8 @@ private slots:
     void on_RotatorBearing(QString, BaseContestLog*);
     void on_RotatorMaxAzimuth(QString, BaseContestLog *);
     void on_RotatorAntennaName(QString, BaseContestLog *);
+    void onArchiveMatchTreeFocused(QObject *, bool, QFocusEvent * );
+    void onOtherMatchTreeFocused(QObject *, bool, QFocusEvent * );
 };
 
 #endif // TSINGLELOGFRAME_H

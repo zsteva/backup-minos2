@@ -5,7 +5,9 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef Q_OS_WIN
 #include <io.h>
+#endif
 
 #include "PiGPIO.h"
 

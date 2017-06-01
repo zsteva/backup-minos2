@@ -1,6 +1,37 @@
 #include "base_pch.h"
-#ifdef RUBBISH
+
 #include "VKMixer.h"
+
+class MixerSet
+{
+   public:
+      MixerSet( bool PassThruMute, bool MasterMute )
+            : PassThruMute( PassThruMute ), MasterMute( MasterMute )
+      {}
+      // we need a line setting, stereo volume + mute
+      bool PassThruMute;
+      bool MasterMute;
+};
+//---------------------------------------------------------------------------
+
+MixerSet MixerSets[ emsMaxMixerSet ] =
+   {
+      // revise to MicOut mute, Speaker mute as only ones we need to drive
+      // and we need to mute or drive to zero if no mute.
+      // MixerSet(MicRec, MicOut,  Rec,   Master)
+      // MixerSet(bool MicOutMute, bool MasterMute)
+
+      MixerSet( false, false ),         //emsUnloaded
+      MixerSet( false, false ),         //emsPassThroughNoPTT
+      MixerSet( false, false ),         //emsPassThroughPTT
+      MixerSet( true , false ),         //emsReplay
+      MixerSet( true , false ),         //emsReplayPip
+      MixerSet( true , false ),         //emsReplayT1
+      MixerSet( true , false ),         //emsReplayT2
+      MixerSet( false, true ),         //emsVoiceRecord
+      MixerSet( true , false ),         //emsCWTransmit
+      MixerSet( true , false )         //emsCWPassThrough
+   };
 
 /*
   Need INI file settings for mixer and controls
@@ -24,30 +55,38 @@
 
   */
 //===================================================================
-VKMixer * VKMixer::inputMixer = 0;
-VKMixer * VKMixer::outputMixer = 0;
-VKMixer::VKMixer()
+VKMixer * VKMixer::currentMixer = 0;
+
+/*static*/ VKMixer * VKMixer::OpenMixer()
+{
+    VKMixer *mixer = GetVKMixer();
+    return mixer;
+}
+/*static*/ VKMixer *VKMixer::GetVKMixer()
+{
+    if (!currentMixer)
+    {
+        currentMixer = new VKMixer();
+    }
+    return currentMixer;
+}
+
+VKMixer::VKMixer():
+    CurrMixerSet(emsUnloaded)
+
 {
 }
 VKMixer::~VKMixer()
 {
 }
-/*static*/ VKMixer *VKMixer::GetInputVKMixer()
+
+eMixerSets VKMixer::GetCurrentMixerSet()
 {
-   return inputMixer;
+    return CurrMixerSet;
 }
 
-/*static*/ VKMixer *VKMixer::GetOutputVKMixer()
+void VKMixer::SetCurrentMixerSet( eMixerSets cms )
 {
-   return outputMixer;
-}
-void VKMixer::SetMasterMute( bool )
-{
+    CurrMixerSet = cms;
 
 }
-
-void VKMixer::SetMicOutMute( bool )
-{
-
-}
-#endif

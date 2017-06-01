@@ -81,6 +81,8 @@ private:
     QMenu *recentFilesMenu;
     QVector<QAction *> sessionActs;
     QMenu *sessionsMenu;
+    QMenu *keyerRecordMenu;
+    QMenu *keyerPlaybackMenu;
 
     void enableActions();
 
@@ -137,6 +139,9 @@ private:
     QAction *KeyerTwoToneAction;
     QAction *KeyerStopAction;
 
+    QAction *KeyerRecordAction;
+    QAction *KeyerPlaybackAction;
+
     QVector< QSharedPointer<QAction> > menuLogsActions;
 
     BaseContestLog *loadSession(QString sessName);
@@ -188,6 +193,8 @@ private slots:
     void KeyerToneActionExecute();
     void KeyerTwoToneActionExecute();
     void KeyerStopActionExecute();
+    void KeyerRecordActionExecute();
+    void KeyerPlaybackActionExecute();
 
     void menuLogsActionExecute();
 

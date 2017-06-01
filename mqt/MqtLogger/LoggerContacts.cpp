@@ -191,7 +191,7 @@ void ContestContact::addReg1TestComment( QStringList &remarks )
    }
    return ;
 }
-void ContestContact::getReg1TestText( QString &sdest )
+void ContestContact::getReg1TestText(QString &sdest , bool noSerials)
 {
    /*
       Date(6);Time(4);Call(3 - 14);Mode code(1 below);
@@ -281,21 +281,35 @@ void ContestContact::getReg1TestText( QString &sdest )
    sdest += reps.getValue();   // TX RST
    sdest += ';';
 
-   QString ssbuff;
-   int ss = serials.getValue().toInt();
-   if ( ss )
-      ssbuff = QString("%1").arg(ss, 3, 10, QChar('0')  );
-   sdest += ssbuff;   // TX sno
+   if (noSerials)
+   {
+    // no data
+   }
+   else
+   {
+       QString ssbuff;
+       int ss = serials.getValue().toInt();
+       if ( ss )
+          ssbuff = QString("%1").arg(ss, 3, 10, QChar('0')  );
+       sdest += ssbuff;   // TX sno
+   }
    sdest += ';';
 
    sdest += repr.getValue();   // RX RST
    sdest += ';';
 
-   QString srbuff;
-   int sr = serialr.getValue().toInt();
-   if ( sr )
-       srbuff = QString("%1").arg(sr, 3, 10, QChar('0') );
-   sdest += srbuff;   // RX sno
+   if (noSerials)
+   {
+    // no data
+   }
+   else
+   {
+       QString srbuff;
+       int sr = serialr.getValue().toInt();
+       if ( sr )
+           srbuff = QString("%1").arg(sr, 3, 10, QChar('0') );
+       sdest += srbuff;   // RX sno
+   }
    sdest += ';';
 
    // exch

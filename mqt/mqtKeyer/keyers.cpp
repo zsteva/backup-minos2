@@ -333,42 +333,6 @@ bool sendCW( const char *message, int speed, int tone )
    }
    return false;
 }
-qreal getKeyerPlaybackVolume()
-{
-    if (currentKeyer)
-        return currentKeyer->getKeyerPlaybackVolume();
-    return 0;
-}
-
-qreal getKeyerRecordVolume()
-{
-    if (currentKeyer)
-        return currentKeyer->getKeyerRecordVolume();
-    return 0;
-}
-qreal getKeyerPassthruVolume()
-{
-    if (currentKeyer)
-        return currentKeyer->getKeyerPassthruVolume();
-    return 0;
-}
-void setKeyerPlaybackVolume(qreal vol)
-{
-    if (currentKeyer)
-        currentKeyer->setKeyerPlaybackVolume(vol);
-}
-
-void setKeyerRecordVolume(qreal vol)
-{
-    if (currentKeyer)
-        currentKeyer->setKeyerRecordVolume(vol);
-}
-
-void setKeyerPassthruVolume(qreal vol)
-{
-    if (currentKeyer)
-        currentKeyer->setKeyerPassthruVolume(vol);
-}
 
 //==============================================================================================
 lineMonitor::lineMonitor( const QString pname )
@@ -527,37 +491,6 @@ bool commonKeyer::pttChanged( int state )
 }
 void commonKeyer::queueFinished()
 {}
-qreal commonKeyer::getKeyerPlaybackVolume()
-{
-    return SoundSystemDriver::getSbDriver() -> getKeyerPlaybackVolume();
-}
-
-qreal commonKeyer::getKeyerRecordVolume()
-{
-    return SoundSystemDriver::getSbDriver() -> getKeyerRecordVolume();
-}
-
-qreal commonKeyer::getKeyerPassthruVolume()
-{
-    return SoundSystemDriver::getSbDriver() -> getKeyerPassthruVolume();
-}
-
-void commonKeyer::setKeyerPlaybackVolume(qreal vol)
-{
-    SoundSystemDriver::getSbDriver() -> setKeyerPlaybackVolume(vol);
-
-}
-void commonKeyer::setKeyerPassthruVolume(qreal vol)
-{
-    SoundSystemDriver::getSbDriver() -> setKeyerPassthruVolume(vol);
-
-}
-
-void commonKeyer::setKeyerRecordVolume(qreal vol)
-{
-    SoundSystemDriver::getSbDriver() -> setKeyerRecordVolume(vol);
-}
-
 //==============================================================================
 
 voiceKeyer::voiceKeyer( const KeyerConfig &keyer, const PortConfig &port )
@@ -584,7 +517,7 @@ bool voiceKeyer::docommand( const KeyerCtrl &dvp_ctrl )
          {
             SoundSystemDriver::getSbDriver() ->stopall();
             KeyerAction::currentAction.freeAll();
-            SetCurrentMixerSet( emsPassThroughNoPTT );
+            VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
             break;
          }
 
@@ -784,7 +717,7 @@ bool voiceKeyer::initialise( const KeyerConfig &keyer, const PortConfig &port )
       {
          trace( "commonkeyer initialised" );
       }
-      return sbInitialise( kconf.pipTone, kconf.pipVolume, kconf.pipLength );
+      return sbInitialise(kconf.sampleRate, kconf.pipTone, kconf.pipVolume, kconf.pipLength );
    }
    return false;
 }
@@ -872,10 +805,10 @@ void sbKeyer::sbTickEvent()           // this will often be an interrupt routine
       currentKeyer->checkControls();   // which we are a base class of...
    }
 }
-bool sbKeyer::sbInitialise( int pipTone, int pipVolume, int pipLength )
+bool sbKeyer::sbInitialise( int rate, int pipTone, int pipVolume, int pipLength )
 {
    QString errmess;
-   if ( !SoundSystemDriver::getSbDriver() ->sbdvp_init( errmess, pipTone, pipVolume, pipLength ) )
+   if ( !SoundSystemDriver::getSbDriver() ->sbdvp_init( errmess, rate, pipTone, pipVolume, pipLength ) )
    {
       trace( "sbdvp_init failed! " + errmess );
       trace( errmess );
@@ -993,7 +926,7 @@ void ToneAction::LxChanged( int /*line*/, bool state )
    SoundSystemDriver::getSbDriver() ->CW_ACTIVE = false;
    if ( currentKeyer )
       currentKeyer->ptt( 0 );
-   SetCurrentMixerSet( emsPassThroughNoPTT );
+   VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
    deleteAtTick = true;
 }
 void ToneAction::pttChanged( bool state )
@@ -1010,7 +943,7 @@ void ToneAction::pttChanged( bool state )
    SoundSystemDriver::getSbDriver() ->CW_ACTIVE = false;
    if ( currentKeyer )
       currentKeyer->ptt( 0 );
-   SetCurrentMixerSet( emsPassThroughNoPTT );
+   VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
    deleteAtTick = true;
 }
 void ToneAction::queueFinished()
@@ -1042,12 +975,12 @@ void ToneAction::timeOut()
          actionState = etasStopTone;
          if ( nTone == 1 )
          {
-            SetCurrentMixerSet( emsReplayT1 );
+            VKMixer::GetVKMixer()->SetCurrentMixerSet( emsReplayT1 );
             currentKeyer->startTone1();
          }
          else
          {
-            SetCurrentMixerSet( emsReplayT2 );
+            VKMixer::GetVKMixer()->SetCurrentMixerSet( emsReplayT2 );
             currentKeyer->startTone2();
          }
          break;
@@ -1057,7 +990,7 @@ void ToneAction::timeOut()
          SoundSystemDriver::getSbDriver() ->CW_ACTIVE = false;
          if ( currentKeyer )
             currentKeyer->ptt( 0 );
-         SetCurrentMixerSet( emsPassThroughNoPTT );
+         VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
          deleteAtTick = true;
          ;
          break;
@@ -1147,7 +1080,7 @@ void InitialPTTAction::timeOut()
          if ( currentKeyer )
          {
             currentKeyer->ptt( 1 );
-            SetCurrentMixerSet( emsPassThroughPTT );
+            VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughPTT );
             currentKeyer->startMicPassThrough();
          }
          actionState = einitPTTStart;
@@ -1193,7 +1126,7 @@ void InitialPTTAction::timeOut()
 
       case einitPTTEnd:
          currentKeyer->ptt( 0 );	// if we got here then no "next" so kill ptt
-         SetCurrentMixerSet( emsPassThroughNoPTT );
+         VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
          deleteAtTick = true;
          break;
 
@@ -1271,7 +1204,7 @@ void InterruptingPTTAction::timeOut()
             if ( currentKeyer->pttState )
             {
                currentKeyer->ptt( 1 );
-               SetCurrentMixerSet( emsPassThroughPTT );
+               VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughPTT );
                // This is where we tail end a file play with a normal transmission
                currentKeyer->startMicPassThrough();
 
@@ -1299,7 +1232,7 @@ void InterruptingPTTAction::timeOut()
 
       case einterPTTQuickRelease:
          currentKeyer->ptt( 0 );	// if we got here then no "next" so kill ptt
-         SetCurrentMixerSet( emsPassThroughNoPTT );
+         VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
          deleteAtTick = true;
          break;
 
@@ -1430,7 +1363,7 @@ void PlayAction::timeOut()
       case epasPlayFile:
          {
             // state 2 play file
-            SetCurrentMixerSet( emsReplay );
+            VKMixer::GetVKMixer()->SetCurrentMixerSet( emsReplay );
             actionState = epasEndPlayFile;
             ActionStateString = "Play";
 
@@ -1469,7 +1402,7 @@ void PlayAction::timeOut()
             SoundSystemDriver::getSbDriver() ->CW_ACTIVE = false;
             if ( currentKeyer )
                currentKeyer->ptt( 0 );
-            SetCurrentMixerSet( emsPassThroughNoPTT );
+            VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
          }
          KeyerAction *sbn = getNextAction();
          if ( !testMode && currentKeyer->kconf.enableAutoRepeat && currentKeyer->kconf.autoRepeatDelay && !sbn && !CW )
@@ -1553,7 +1486,7 @@ void PipAction::timeOut()
          break;
 
       case epipasPip:
-         SetCurrentMixerSet( emsReplayPip );
+         VKMixer::GetVKMixer()->SetCurrentMixerSet( emsReplayPip );
          SoundSystemDriver::getSbDriver() ->play = true;
          SoundSystemDriver::getSbDriver() ->recording = false;
          SoundSystemDriver::getSbDriver() ->dofile( DOFILE_PIP );
@@ -1567,7 +1500,7 @@ void PipAction::timeOut()
          SoundSystemDriver::getSbDriver() ->CW_ACTIVE = false;
          if ( currentKeyer )
             currentKeyer->ptt( 0 );
-         SetCurrentMixerSet( emsPassThroughNoPTT );
+         VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
          break;
 
    }
@@ -1663,7 +1596,7 @@ void RecordAction::timeOut()
 
       case erasStartRec:
          // start recording
-         SetCurrentMixerSet( emsVoiceRecord );
+         VKMixer::GetVKMixer()->SetCurrentMixerSet( emsVoiceRecord );
          actionState = erasStopRec;
          SoundSystemDriver::getSbDriver() ->record_file( fileName );
          actionTime = 1000;			// safety net to first interrupt
@@ -1679,7 +1612,7 @@ void RecordAction::timeOut()
          break;
 
       case erasRecFinished:                            // queue finished should bring us here
-         SetCurrentMixerSet( emsPassThroughNoPTT );
+         VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
          deleteAtTick = true;
          break;
    }

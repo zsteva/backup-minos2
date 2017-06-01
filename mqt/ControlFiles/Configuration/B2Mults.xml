@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE calendar [
+]>
+<calendar>
+<version>0.0 18/11/2016</version>
+<mult_type>
+<name>B2</name>
+<description>B2</description>
+<long_description>
+Empty
+</long_description>
+<exchange> serial number and QTH Locator </exchange>
+<scoring_description> Complex
+</scoring_description>
+<bonus square="IO83" points="500"/>
+<bonus square="IO93" points="500"/>
+<bonus square="JO03" points="500"/>
+<bonus square="IO82" points="500"/>
+<bonus square="IO92" points="500"/>
+<bonus square="JO02" points="500"/>
+<bonus square="IO81" points="500"/>
+<bonus square="IO91" points="500"/>
+<bonus square="JO01" points="500"/>
+<bonus square="IO80" points="500"/>
+<bonus square="IO90" points="500"/>
+<bonus square="JO00" points="500"/>
+<bonus square="IP80" points="2000"/>
+<bonus square="IP81" points="2000"/>
+<bonus square="IO78" points="2000"/>
+<bonus square="IO79" points="2000"/>
+<bonus square="IO89" points="2000"/>
+<bonus square="IO99" points="2000"/>
+<bonus square="IO68" points="2000"/>
+<bonus square="IO78" points="2000"/>
+<bonus square="IO88" points="2000"/>
+<bonus square="IO37" points="2000"/>
+<bonus square="IO57" points="2000"/>
+<bonus square="IO67" points="2000"/>
+<bonus square="IO77" points="2000"/>
+<bonus square="IO87" points="2000"/>
+<bonus square="IO97" points="2000"/>
+<bonus square="IO66" points="2000"/>
+<bonus square="IO76" points="2000"/>
+<bonus square="IO86" points="2000"/>
+<bonus square="IO65" points="2000"/>
+<bonus square="IO75" points="2000"/>
+<bonus square="IO85" points="2000"/>
+<bonus square="IO95" points="2000"/>
+<bonus square="default" points="1000"/>
+</mult_type>
+</calendar>

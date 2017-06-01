@@ -144,7 +144,7 @@ void TStatsDispFrame::reInitialiseStats()
 
       QString lbuff;
 
-      if (ct->UKACBonus.getValue())
+      if (ct->usesBonus.getValue())
       {
           lbuff = QString( "Last %1 Mins: %2 QSO %3 pts %4 bonus\r\n(Previous %5; %6; %7)"
                                "\nLast %8 Mins: %9 QSO %10 pts %11 bonus\r\n(Previous %12; %13; %14)" )

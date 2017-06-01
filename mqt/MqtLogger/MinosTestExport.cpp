@@ -109,7 +109,8 @@ void MinosTestExport::exportContest( QSharedPointer<QFile> expfd )
    ct->currentMode.addIfDirty(st, "currentMode", dirty);
 
    ct->M7Mults.addIfDirty( st, "M7Mults", dirty );
-   ct->UKACBonus.addIfDirty( st, "UKACBonus", dirty );
+   ct->usesBonus.addIfDirty( st, "UKACBonus", dirty );
+   ct->bonusType.addIfDirty( st, "BonusType", dirty );
 
    if ( dirty )
    {

@@ -416,7 +416,7 @@ QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, int extra
    QSharedPointer<BaseContact> bct;
    makeContact( timenow, bct );
 
-   QString temp = QString( "%1" ).arg(newctno, 3 );
+   QString temp = QString( "%1" ).arg(newctno, 3, 10, QChar('0') );  //leading zeros
    bct->serials.setValue( temp );
    bct->setLogSequence( nextBlock << 16 );
    nextBlock++;
@@ -673,7 +673,7 @@ bool LoggerContestLog::GJVloadContacts( void )
    }
    return true;
 }
-bool LoggerContestLog::export_contest(QSharedPointer<QFile> expfd, ExportType exptype )
+bool LoggerContestLog::export_contest(QSharedPointer<QFile> expfd, ExportType exptype, bool noSerials )
 {
    bool ret = false;
    commonSave( false );
@@ -699,7 +699,7 @@ bool LoggerContestLog::export_contest(QSharedPointer<QFile> expfd, ExportType ex
          break;
 
       case EREG1TEST:
-         ret = exportREG1TEST( expfd );
+         ret = exportREG1TEST( expfd, noSerials );
          break;
 
       case EPRINTFILE:
@@ -846,7 +846,7 @@ bool LoggerContestLog::exportADIF(QSharedPointer<QFile> expfd )
 
    return true;
 }
-bool LoggerContestLog::exportREG1TEST(QSharedPointer<QFile>expfd )
+bool LoggerContestLog::exportREG1TEST(QSharedPointer<QFile>expfd, bool noSerials )
 {
    // First test validity. Reg1test dictates in particular
 
@@ -891,7 +891,7 @@ bool LoggerContestLog::exportREG1TEST(QSharedPointer<QFile>expfd )
 
 
    reg1test * rtest = new reg1test( this );
-   int rep = rtest->exportTest( expfd );
+   int rep = rtest->exportTest( expfd, noSerials );
    delete rtest;
    return rep;
 }

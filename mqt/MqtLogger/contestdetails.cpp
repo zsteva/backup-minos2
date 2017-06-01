@@ -35,6 +35,7 @@ ContestDetails::ContestDetails(QWidget *parent) :
 
     ui->BonusComboBox->addItem("None");
     ui->BonusComboBox->addItem("UKAC Bonuses");
+    ui->BonusComboBox->addItem("NAC Bonuses");
 
     ui->ModeComboBox->addItem("A1A");
     ui->ModeComboBox->addItem("J3E");
@@ -55,6 +56,8 @@ ContestDetails::ContestDetails(QWidget *parent) :
     ui->EndDateEdit->setDate(QDate::currentDate());
     ui->CallsignEdit->setValidator(new UpperCaseValidator());
     ui->LocatorEdit->setValidator(new UpperCaseValidator());
+    ui->MainOpComboBox->setValidator(new UpperCaseValidator(false));
+    ui->SecondOpComboBox->setValidator(new UpperCaseValidator(false));
 }
 void ContestDetails::doCloseEvent()
 {
@@ -288,8 +291,23 @@ void ContestDetails::setDetails(  )
 
    ui->M7LocatorMults->setChecked(contest->M7Mults.getValue());
 
-   bool UKACBonus = contest->UKACBonus.getValue();
-   ui->BonusComboBox->setCurrentIndex(UKACBonus?1:0);
+   bool usesBonus = contest->usesBonus.getValue();
+   QString bonusType = contest->bonusType.getValue();
+
+   if (usesBonus)
+   {
+       if (bonusType == "B2")
+           ui->BonusComboBox->setCurrentIndex(1);
+       else if (bonusType == "NAC")
+           ui->BonusComboBox->setCurrentIndex(2);
+       else
+           ui->BonusComboBox->setCurrentIndex(0);
+
+   }
+   else
+   {
+       ui->BonusComboBox->setCurrentIndex(0);
+   }
 
    ui->LocatorMult->setChecked(contest->locMult.getValue()) ;
    ui->GLocMult->setChecked(contest->GLocMult.getValue());
@@ -415,7 +433,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    if ( ic.mults == "M1" )
    {
       // PC, DXCC
-       contest->UKACBonus.setValue(false);
+       contest->usesBonus.setValue(false);
+       contest->bonusType.setValue("");
 
       contest->districtMult.setValue( true );
       contest->countryMult.setValue( true );
@@ -433,7 +452,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M2" )
    {
       // Loc
-       contest->UKACBonus.setValue(false);
+       contest->usesBonus.setValue(false);
+       contest->bonusType.setValue("");
 
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
@@ -451,7 +471,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M3" )
    {
       // PC, DXCC, LOC
-       contest->UKACBonus.setValue(false);
+       contest->usesBonus.setValue(false);
+       contest->bonusType.setValue("");
 
       contest->districtMult.setValue( true );
       contest->countryMult.setValue( true );
@@ -469,7 +490,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M4" )
    {
       // DXCC, LOC
-      contest->UKACBonus.setValue(false);
+      contest->usesBonus.setValue(false);
+      contest->bonusType.setValue("");
 
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( true );
@@ -487,7 +509,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M5" )
    {
       // G Locs only
-      contest->UKACBonus.setValue(false);
+      contest->usesBonus.setValue(false);
+      contest->bonusType.setValue("");
 
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
@@ -505,7 +528,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M6" )
    {
       // G Locs only  + DXCC
-      contest->UKACBonus.setValue(false);
+      contest->usesBonus.setValue(false);
+      contest->bonusType.setValue("");
 
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
@@ -523,7 +547,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    else if ( ic.mults == "M7" )
    {
       // Modified M5; non UK 1 mult, UK 2 mults
-      contest->UKACBonus.setValue(false);
+      contest->usesBonus.setValue(false);
+      contest->bonusType.setValue("");
 
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
@@ -540,7 +565,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    }
    else if ( ic.mults == "B2" )
    {
-       contest->UKACBonus.setValue(true);
+       contest->usesBonus.setValue(true);
+       contest->bonusType.setValue("B2");
 
        contest->districtMult.setValue( false );
        contest->countryMult.setValue( false );
@@ -557,7 +583,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    }
    else
    {
-      contest->UKACBonus.setValue(false);
+      contest->usesBonus.setValue(false);
+      contest->bonusType.setValue("");
 
       contest->districtMult.setValue( false );
       contest->countryMult.setValue( false );
@@ -601,7 +628,7 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    ui->GLocMult->setChecked(contest->GLocMult.getValue()) ;
    ui->M7LocatorMults->setChecked(contest->M7Mults.getValue()) ;
 
-   bool UKACBonus = contest->UKACBonus.getValue();
+   bool UKACBonus = contest->usesBonus.getValue();
    ui->BonusComboBox->setCurrentIndex(UKACBonus?1:0);
 
 
@@ -684,11 +711,31 @@ QWidget * ContestDetails::getDetails( )
     contest->locMult.setValue( ui->LocatorMult->isChecked() ) ;   // bool
     contest->GLocMult.setValue( ui->GLocMult->isChecked() ) ;   // bool
     contest->M7Mults.setValue( ui->M7LocatorMults->isChecked() ) ;   // bool
-    contest->UKACBonus.setValue(ui->BonusComboBox->currentIndex() == 1);
+    contest->usesBonus.setValue(ui->BonusComboBox->currentIndex() >= 1);
 
-    if (contest->UKACBonus.getValue())
+    if (contest->usesBonus.getValue())
     {
-        contest->loadBonusList();
+        int bt = ui->BonusComboBox->currentIndex();
+
+        if (bt == 1)
+        {
+            contest->bonusType.setValue("B2");
+            contest->loadBonusList();
+        }
+        else if (bt == 2)
+        {
+            contest->bonusType.setValue("NAC");
+            contest->loadBonusList();
+        }
+        else
+        {
+            contest->usesBonus.setValue(false);
+            contest->bonusType.setValue("");
+        }
+    }
+    else
+    {
+        contest->bonusType.setValue("");
     }
 
     if (contest->M7Mults.getValue())

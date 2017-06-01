@@ -370,7 +370,7 @@ void DisplayContestContact::checkContact( )
          LocCount * npt = ls->map ( numbers );
          if ( npt )
          {
-            if (clp->UKACBonus.getValue())
+            if (clp->usesBonus.getValue())
             {
                if (npt->UKLocCount == 0 &&  npt->nonUKLocCount == 0)
                {
@@ -463,7 +463,7 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
          case egSNTx:
             {
                int ss = serials.getValue().toInt();
-               res = QString("%1").arg(ss, 3);
+               res = QString("%1").arg(ss, 3, 10, QChar('0'));  //leading zeros
             }
             break;
          case egRSTRx:
@@ -471,8 +471,16 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
             break;
          case egSNRx:
             {
-               int sr = serialr.getValue().toInt();
-               res = QString("%1").arg(sr, 3);
+               QString ssr = serialr.getValue();
+               if (ssr == "-")
+               {
+                   res = ssr;
+               }
+               else
+               {
+                   int sr = ssr.toInt();
+                   res = QString("%1").arg(sr, 3, 10, QChar('0'));  //leading zeros
+               }
             }
             break;
          case egLoc:

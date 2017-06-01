@@ -11,32 +11,32 @@
 #ifndef VKMixerH
 #define VKMixerH
 
+//======================================================================================
 enum eMixerSets {emsUnloaded, emsPassThroughNoPTT, emsPassThroughPTT,
                  emsReplay, emsReplayPip, emsReplayT1, emsReplayT2,
                  emsVoiceRecord,
                  emsCWTransmit, emsCWPassThrough,
                  emsMaxMixerSet};
-
-extern eMixerSets GetCurrentMixerSet();
-extern void SetCurrentMixerSet( eMixerSets cms );
-
-#ifdef RUBBISH
+//======================================================================================
 
 class VKMixer
 {
-    static VKMixer *inputMixer;
-    static VKMixer *outputMixer;
-   public:
+private:
+    static VKMixer *currentMixer;
+public:
+
+    eMixerSets CurrMixerSet;
+
       VKMixer();
 
-      ~VKMixer();
+      virtual ~VKMixer();
 
-      static VKMixer *GetInputVKMixer();
-      static VKMixer *GetOutputVKMixer();
+      static VKMixer *GetVKMixer();
 
-      void SetMasterMute( bool );
-      void SetMicOutMute( bool );
+      eMixerSets GetCurrentMixerSet();
+      void SetCurrentMixerSet( eMixerSets cms );
 
+      static VKMixer *OpenMixer();
 };
-#endif
+//======================================================================================
 #endif

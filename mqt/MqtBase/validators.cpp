@@ -146,7 +146,7 @@ bool Validator::validate(const QString &str )
          return true;
 
       case vtSN:
-         if ( validNumber( str ) )
+         if ( validNumber( str ) || str == "-" )
          {
             return true;
          }

@@ -158,13 +158,6 @@ class commonKeyer: public lineMonitor, public timerTicker
       commonKeyer( const KeyerConfig &keyer, const PortConfig &port );
       ~commonKeyer();
 
-      virtual qreal getKeyerPlaybackVolume();
-      virtual qreal getKeyerRecordVolume();
-      virtual void setKeyerPlaybackVolume(qreal);
-      virtual void setKeyerRecordVolume(qreal);
-      virtual qreal getKeyerPassthruVolume();
-      virtual void setKeyerPassthruVolume(qreal vol);
-
       virtual bool pttChanged( int state );
       virtual bool L1Changed( int state );
       virtual bool L2Changed( int state );
@@ -217,7 +210,7 @@ class sbKeyer
       sbKeyer();
       virtual ~sbKeyer();
       void sbTickEvent();       // this will often be an interrupt routine
-      bool sbInitialise( int pipTone, int pipVolume, int pipLength );
+      bool sbInitialise( int rate, int pipTone, int pipVolume, int pipLength );
       void sbInitTone1( int );
       void sbInitTone2( int, int );
       void sbStartTone1();
