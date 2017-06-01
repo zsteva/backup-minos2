@@ -64,7 +64,7 @@ struct srotParams
 {
   QString antennaName;
   QString configLabel;
-  QString comport; /**<  serial port device*/
+  QString comport;
   QString rotatorModel;
   QString rotatorModelName;
   int rotatorModelNumber;
@@ -78,7 +78,7 @@ struct srotParams
   bool moving;
   int serial_rate_max;
   int serial_rate_min;
-  int baudrate; /**<  serial port baudrate*/
+  int baudrate;
   int parity;
   int stopbits;
   int databits;
@@ -132,6 +132,9 @@ public:
     azimuth_t getMinAzimuth();
     elevation_t getMaxElevation();
     elevation_t getMinElevation();
+
+    int calcSouthBearing(int rotatorBearing);
+
 
 signals:
    void bearing_updated(int);

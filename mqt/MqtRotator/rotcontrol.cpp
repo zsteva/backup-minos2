@@ -21,7 +21,7 @@
 #include "rotcontrol.h"
 #include <hamlib/rotator.h>
 //#include "rotctl_parse.h"
-
+#include "rotatorCommonConstants.h"
 
 QList<const rot_caps *> capsList;
 bool rotatorlistLoaded=false;
@@ -377,7 +377,28 @@ QStringList RotControl::gethamlibErrorMsg()
     return serialData::hamlibErrorMsg;
 }
 
+// not tested........
+int RotControl::calcSouthBearing(int rotatorBearing)
+{
 
+    // convert rotator bearing to actual bearing for rotator with southstop
+
+    if (rotatorBearing >= getMinAzimuth() && rotatorBearing < COMPASS_HALF)
+    {
+        return rotatorBearing + COMPASS_HALF;
+    }
+    else if (rotatorBearing >= COMPASS_HALF && rotatorBearing <= getMinAzimuth())
+    {
+        return rotatorBearing - COMPASS_HALF;
+    }
+    else
+    {
+        // error
+        return 2000;     // need an error code define....
+    }
+
+
+}
 
 
 bool model_Sort(const rot_caps *caps1,const rot_caps *caps2)
@@ -390,3 +411,4 @@ bool model_Sort(const rot_caps *caps1,const rot_caps *caps2)
     if (QString::compare(caps1->mfg_name,caps2->mfg_name)<0) return true;
     return false;
 }
+
