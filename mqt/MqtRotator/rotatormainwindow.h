@@ -165,6 +165,7 @@ protected slots:
     void rotateCW(bool toogle);
     void rotateCCW(bool toogle);
     void stopButton();
+    void stop_rotation();
     void stopRotation(bool);
     void sendStatusToLogReady();
     void sendStatusToLogRotCCW();
