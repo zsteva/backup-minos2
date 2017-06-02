@@ -50,13 +50,13 @@ RotControl::~RotControl()
     rot_cleanup(my_rot); /* if you care about memory */
 }
 
-int RotControl::init(srotParams currentAntenna)
+int RotControl::init(srotParams selectedAntenna)
 {
     int retcode;
     QString comport = "\\\\.\\";
-    comport.append(currentAntenna.comport);
+    comport.append(selectedAntenna.comport);
 
-    my_rot = rot_init(currentAntenna.rotatorModelNumber);
+    my_rot = rot_init(selectedAntenna.rotatorModelNumber);
     if (!my_rot)
     {
         qDebug() << "Error init rotator";
@@ -64,27 +64,24 @@ int RotControl::init(srotParams currentAntenna)
 
 
     // get rotator parameters
-    curRotParams.antennaName = currentAntenna.antennaName;
-    curRotParams.baudrate =  currentAntenna.baudrate;
+    curRotParams.antennaName = selectedAntenna.antennaName;
+    curRotParams.baudrate =  selectedAntenna.baudrate;
     //rotParams.comport =
-    curRotParams.databits = currentAntenna.databits;
-    curRotParams.stopbits = currentAntenna.stopbits;
-    curRotParams.parity = getSerialParityCode(currentAntenna.parity);
-    curRotParams.handshake = getSerialHandshakeCode(currentAntenna.handshake);
+    curRotParams.databits = selectedAntenna.databits;
+    curRotParams.stopbits = selectedAntenna.stopbits;
+    curRotParams.parity = getSerialParityCode(selectedAntenna.parity);
+    curRotParams.handshake = getSerialHandshakeCode(selectedAntenna.handshake);
     curRotParams.serial_rate_max = my_rot->caps->serial_rate_max;
     curRotParams.serial_rate_min = my_rot->caps->serial_rate_min;
-    curRotParams.min_azimuth = my_rot->caps->min_az;
-    curRotParams.max_azimuth = my_rot->caps->max_az;
-    curRotParams.min_elevation = my_rot->caps->min_el;
-    curRotParams.max_elevation = my_rot->caps->max_el;
+
 
     // load rotator params to open
     strncpy(my_rot->state.rotport.pathname, comport.toLatin1().data(), FILPATHLEN);
-    my_rot->state.rotport.parm.serial.rate = currentAntenna.baudrate;
-    my_rot->state.rotport.parm.serial.data_bits = currentAntenna.databits;
-    my_rot->state.rotport.parm.serial.stop_bits = currentAntenna.stopbits;
-    my_rot->state.rotport.parm.serial.parity = getSerialParityCode(currentAntenna.parity);
-    my_rot->state.rotport.parm.serial.handshake = getSerialHandshakeCode(currentAntenna.handshake);
+    my_rot->state.rotport.parm.serial.rate = selectedAntenna.baudrate;
+    my_rot->state.rotport.parm.serial.data_bits = selectedAntenna.databits;
+    my_rot->state.rotport.parm.serial.stop_bits = selectedAntenna.stopbits;
+    my_rot->state.rotport.parm.serial.parity = getSerialParityCode(selectedAntenna.parity);
+    my_rot->state.rotport.parm.serial.handshake = getSerialHandshakeCode(selectedAntenna.handshake);
 
 
     retcode = rot_open(my_rot);
@@ -92,6 +89,11 @@ int RotControl::init(srotParams currentAntenna)
     {
         qDebug() << "rotator opened ok";
         set_serialConnected(true);
+        // update rotator specific parameters
+        curRotParams.max_azimuth = my_rot->caps->max_az;
+        curRotParams.min_azimuth = my_rot->caps->min_az;
+        curRotParams.serial_rate_max = my_rot->caps->serial_rate_max;
+        curRotParams.serial_rate_min = my_rot->caps->serial_rate_min;
     }
     else
     {
@@ -199,6 +201,7 @@ azimuth_t RotControl::getMinAzimuth()
 
 azimuth_t RotControl::getMaxAzimuth()
 {
+
     return curRotParams.max_azimuth;
 }
 
@@ -213,7 +216,16 @@ elevation_t RotControl::getMaxElevation()
     return curRotParams.max_elevation;
 }
 
+int RotControl::getMaxBaudRate()
+{
+    return curRotParams.serial_rate_max;
+}
 
+
+int RotControl::getMinBaudRate()
+{
+    return curRotParams.serial_rate_min;
+}
 
 // stop azimuth rotation
 

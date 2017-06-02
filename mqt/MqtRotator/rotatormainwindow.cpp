@@ -69,9 +69,10 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     ui->turnButton->setShortcut(QKeySequence(ROTATE_TURN_KEY));
     ui->stopButton->setShortcut(QKeySequence(ROTATE_STOP_KEY));
 
-
-
-
+    // disable some menus for now
+    ui->actionHelp->setVisible(false);
+    ui->actionSkyScan->setVisible(false);
+    ui->actionAlways_On_Top->setVisible(false);
 
     presetButtons[0] = ui->presetButton1;
     presetButtons[1] = ui->presetButton2;
@@ -169,6 +170,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     southStopActiveflag = selectRotator->currentAntenna.southStopFlag;
 
     rotlog->getBearingLogConfig();
+    readTraceLogFlag();
 
     // tell logger that rotator is active, antenna name and maxRotation
 
@@ -184,13 +186,13 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     trace("Databits = " + QString::number(selectRotator->currentAntenna.databits));
     trace("Stop bits = " + QString::number(selectRotator->currentAntenna.stopbits));
     trace("Handshake = " + QString::number(selectRotator->currentAntenna.handshake));
-    trace("Max Azimuth = " + QString::number(selectRotator->currentAntenna.max_azimuth));
-    trace("Min Azimuth = " + QString::number(selectRotator->currentAntenna.min_azimuth));
+    trace("Max Azimuth = " + QString::number(currentMaxAzimuth));
+    trace("Min Azimuth = " + QString::number(currentMinAzimuth));
     trace("Rotator Offset = " + QString::number(selectRotator->currentAntenna.rotatorOffset));
     trace("South Stop Flag = " + QString::number(selectRotator->currentAntenna.southStopFlag));
     trace("Overrun flag = " + QString::number(selectRotator->currentAntenna.overRunFlag));
-    trace("Rotator Max Baudrate = " + QString::number(selectRotator->currentAntenna.serial_rate_max));
-    trace("Rotator Min Baud rate = " + QString::number(selectRotator->currentAntenna.serial_rate_min));
+    trace("Rotator Max Baudrate = " + QString::number(rotator->getMaxBaudRate()));
+    trace("Rotator Min Baud rate = " + QString::number(rotator->getMinBaudRate()));
 
 }
 
@@ -263,19 +265,19 @@ void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
     else if (dirCommand == rpcConstants::eRotateLeft)
     {
         rotateCCW(true);
-        //sendStatusToLogRotCCW();
+
 
     }
     else if (dirCommand == rpcConstants::eRotateRight)
     {
         rotateCW(true);
-        //sendStatusToLogRotCW();
+
 
     }
     else if (dirCommand == rpcConstants::eRotateStop)
     {
             stopRotation(true);
-            //sendStatusToLogStop();
+
     }
 
 
@@ -365,6 +367,7 @@ void RotatorMainWindow::initActionsConnections()
 {
 
     connect(ui->selectAntennaBox, SIGNAL(activated(int)), this, SLOT(upDateAntenna()));
+    connect(ui->actionTraceLog, SIGNAL(changed()), this, SLOT(saveTraceLogFlag()));
     connect(ui->turnButton, SIGNAL(clicked(bool)), this, SLOT(rotateToController()));
     connect(ui->bearingEdit, SIGNAL(returnPressed()), this, SLOT(rotateToController()));
     connect(this, SIGNAL(presetRotateTo()), this, SLOT(rotateToController()));
@@ -1115,7 +1118,25 @@ void RotatorMainWindow::sleepFor(qint64 milliseconds)
 }
 
 
+void RotatorMainWindow::readTraceLogFlag()
+{
+    QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
+    config.beginGroup("TraceLog");
 
+    ui->actionTraceLog->setChecked(config.value("TraceLog", false).toBool());
+
+    config.endGroup();
+}
+
+void RotatorMainWindow::saveTraceLogFlag()
+{
+    QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
+    config.beginGroup("TraceLog");
+
+    config.setValue("TraceLog", ui->actionTraceLog->isChecked());
+
+    config.endGroup();
+}
 
 
 void RotatorMainWindow::about()

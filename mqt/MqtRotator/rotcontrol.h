@@ -136,6 +136,8 @@ public:
     int calcSouthBearing(int rotatorBearing);
 
 
+    int getMaxBaudRate();
+    int getMinBaudRate();
 signals:
    void bearing_updated(int);
    void request_bearingError(int);
