@@ -188,11 +188,13 @@ private slots:
     void rotatingTimer();
     void about();
     void saveTraceLogFlag();
+    void overLapDisplayBox(bool status);
 private:
     void rotateTo(int bearing);
     int northCalcTarget(int targetBearing);
 
     void readTraceLogFlag();
+
 
 };
 

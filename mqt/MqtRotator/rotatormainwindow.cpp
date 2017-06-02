@@ -111,7 +111,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     ui->statusbar->addWidget(status);
 
-
+    ui->overlaplineEdit->setFixedSize(60,20);
 
     rotator->set_serialConnected(false);
 
@@ -391,7 +391,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(this, SIGNAL(sendBearing(QString)), ui->bearingDisplay, SLOT(setText(const QString &)));
     connect(this, SIGNAL(sendBackBearing(QString)), ui->backBearingDisplay, SLOT(setText(const QString &)));
     connect(this, SIGNAL(displayOverlapBearing(QString)), ui->overlapBearingDisplay, SLOT( setText(const QString &)));
-    connect(this, SIGNAL(displayOverlap(bool)), ui->overLapDisplay ,SLOT(overlapDisplayUpdate(bool)));
+    connect(this, SIGNAL(displayOverlap(bool)), this ,SLOT(overLapDisplayBox(bool)));
     // check endstop and turn to rotation stop
     connect(&RotateTimer, SIGNAL(timeout()), this, SLOT(rotatingTimer()));
     connect(this, SIGNAL(checkingEndStop()), this, SLOT(checkEndStop()));
@@ -1142,4 +1142,21 @@ void RotatorMainWindow::saveTraceLogFlag()
 void RotatorMainWindow::about()
 {
     QMessageBox::about(this, "Minos Rotator", "Minos QT Rotator\nCopyright D Balharrie G8FKH/M0DGB 2017\nVersion 0.1");
+}
+
+
+void RotatorMainWindow::overLapDisplayBox(bool status)
+{
+    QPalette palette;
+
+    if (status)
+    {
+        palette.setColor(QPalette::Base,Qt::red);
+    }
+    else
+    {
+        palette.setColor(QPalette::Base,Qt::lightGray);
+    }
+
+    ui->overlaplineEdit->setPalette(palette);
 }
