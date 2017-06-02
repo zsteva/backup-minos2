@@ -273,7 +273,7 @@
               <enum>Qt::ClickFocus</enum>
              </property>
              <property name="frame">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -356,6 +356,9 @@
                <property name="text">
                 <string> Left (CCW)</string>
                </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
               </widget>
              </item>
              <item>
@@ -375,6 +378,9 @@
                </property>
                <property name="text">
                 <string>Right (CW)</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
                </property>
               </widget>
              </item>

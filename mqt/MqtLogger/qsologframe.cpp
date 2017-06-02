@@ -77,6 +77,10 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(CommentsFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
     connect(MainOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
     connect(SecondOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(ui->RotateLeft, SIGNAL(clicked(bool)), this, SLOT(on_RotateLeft_clicked(bool)));
+    connect(ui->RotateRight, SIGNAL(clicked(bool)), this, SLOT(on_RotateRight_clicked(bool)));
+    connect(ui->Rotate, SIGNAL(clicked(bool)), this, SLOT(on_Rotate_clicked()));
+    connect(ui->StopRotate, SIGNAL(clicked(bool)), this, SLOT(on_StopRotate_clicked()));
 
     ui->TimeEdit->installEventFilter(this);
 
