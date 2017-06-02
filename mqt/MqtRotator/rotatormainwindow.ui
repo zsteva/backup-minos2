@@ -602,6 +602,7 @@
     <addaction name="actionSetup_Antennas"/>
     <addaction name="actionLog_Heading"/>
     <addaction name="actionSkyScan"/>
+    <addaction name="actionTraceLog"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="contextMenuPolicy">
@@ -659,6 +660,14 @@
   <action name="actionHelp">
    <property name="text">
     <string>Help</string>
+   </property>
+  </action>
+  <action name="actionTraceLog">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>TraceLog</string>
    </property>
   </action>
  </widget>

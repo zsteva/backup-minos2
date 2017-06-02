@@ -175,8 +175,22 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     sendStatusToLogReady();
     upDateAntenna();
-
-
+    trace("MinosRotator Started");
+    trace("Rotator Name = " + selectRotator->currentAntenna.antennaName);
+    trace("Rotator Model = " + selectRotator->currentAntenna.rotatorModel);
+    trace("Rotator Number = " + QString::number(selectRotator->currentAntenna.rotatorModelNumber));
+    trace("Rotator Comport = " + selectRotator->currentAntenna.comport);
+    trace("Baudrate = " + QString::number(selectRotator->currentAntenna.baudrate));
+    trace("Databits = " + QString::number(selectRotator->currentAntenna.databits));
+    trace("Stop bits = " + QString::number(selectRotator->currentAntenna.stopbits));
+    trace("Handshake = " + QString::number(selectRotator->currentAntenna.handshake));
+    trace("Max Azimuth = " + QString::number(selectRotator->currentAntenna.max_azimuth));
+    trace("Min Azimuth = " + QString::number(selectRotator->currentAntenna.min_azimuth));
+    trace("Rotator Offset = " + QString::number(selectRotator->currentAntenna.rotatorOffset));
+    trace("South Stop Flag = " + QString::number(selectRotator->currentAntenna.southStopFlag));
+    trace("Overrun flag = " + QString::number(selectRotator->currentAntenna.overRunFlag));
+    trace("Rotator Max Baudrate = " + QString::number(selectRotator->currentAntenna.serial_rate_max));
+    trace("Rotator Min Baud rate = " + QString::number(selectRotator->currentAntenna.serial_rate_min));
 
 }
 
@@ -189,7 +203,8 @@ RotatorMainWindow::~RotatorMainWindow()
 
 void RotatorMainWindow::logMessage( QString s )
 {
-   trace( s );
+   if (ui->actionTraceLog)
+        trace( s );
 }
 
 
@@ -202,7 +217,7 @@ void RotatorMainWindow::closeEvent(QCloseEvent *event)
 
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
-
+    logMessage("MinosRotator Closing");
     QWidget::closeEvent(event);
 }
 
@@ -237,6 +252,7 @@ void RotatorMainWindow::LogTimerTimer(  )
 void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
 {
 
+    logMessage("Command From Logger direction = " + QString::number(direction) + "angle = " + QString::number(angle));
     int dirCommand = direction;
     if (dirCommand == rpcConstants::eRotateDirect)
     {
@@ -324,6 +340,7 @@ void RotatorMainWindow::closeRotator()
     rotator->closeRotator();
     showStatusMessage(tr("Disconnected"));
     sendStatusToLogDisConnected();
+    logMessage("Rotator Closed");
 }
 
 
@@ -434,6 +451,7 @@ void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
 void RotatorMainWindow::displayBearing(int bearing)
 {
 
+    logMessage("Display Bearing from Rotator " + QString::number(bearing));
 
     if (bearing == currentBearing)
     {
@@ -618,6 +636,7 @@ void RotatorMainWindow::upDateAntenna()
        // update logger
        msg->publishAntennaName(selectRotator->currentAntenna.antennaName);
        msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
+       logMessage("Antenna Updated");
     }
 
 
@@ -628,6 +647,7 @@ void RotatorMainWindow::upDateAntenna()
 
 void RotatorMainWindow::request_bearing()
 {
+    logMessage("Request Bearing");
     reqBearCmdflag = true;
     int retCode = 0;
     if (brakeflag || cwCcwCmdflag || rotCmdflag) return;
@@ -645,6 +665,7 @@ void RotatorMainWindow::request_bearing()
 
 void RotatorMainWindow::checkEndStop()
 {
+    logMessage("Check EndStop");
     if (movingCW)
     {
         if (currentBearing >= currentMaxAzimuth)
@@ -712,6 +733,7 @@ void RotatorMainWindow::rotateToController()
     if (intBearing >= 0 && intBearing <= currentMaxAzimuth && ok)
     {
         rotateTo(intBearing);
+        logMessage("Rotate to bearing " + bearing);
     }
     else
     {
@@ -876,6 +898,7 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
 
 void RotatorMainWindow::stopButton()
 {
+    logMessage("StopButton");
     if (ui->rot_left_button->isChecked())
     {
         ui->rot_left_button->setChecked(false);
@@ -889,13 +912,14 @@ void RotatorMainWindow::stopButton()
 
     stopRotation(true);
 
+
 }
 
 
 void RotatorMainWindow::stopRotation(bool sendStop)
 {
 
-
+    logMessage("Stop Rotation");
     int retCode = 0;
     brakeflag = true;
     stopCmdflag = true;
@@ -925,7 +949,7 @@ void RotatorMainWindow::rotateCW(bool toggle)
 {
 
 
-
+    logMessage("RotateCW");
     if (moving || movingCW || movingCCW)
     {
         stopButton();
@@ -970,6 +994,7 @@ void RotatorMainWindow::rotateCW(bool toggle)
 
 void RotatorMainWindow::rotateCCW(bool toggle)
 {
+    logMessage("RotateCCW");
     if (moving  || movingCW || movingCCW)
     {
         stopButton();
