@@ -379,7 +379,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(ui->stopButton, SIGNAL(clicked(bool)), this, SLOT(stopButton()));
     connect(ui->rot_right_button, SIGNAL(toggled(bool)), this, SLOT(rotateCW(bool)));
     connect(ui->rot_left_button, SIGNAL(toggled(bool)), this, SLOT(rotateCCW(bool)));
-    connect(this, SIGNAL(escapePressed()), rotator, SLOT(stop_rotation()));
+    connect(this, SIGNAL(escapePressed()), this, SLOT(stop_rotation()));
 
     // display bearing
     connect(pollTimer, SIGNAL(timeout()), this, SLOT(request_bearing()));
@@ -915,6 +915,10 @@ void RotatorMainWindow::stopButton()
 
 }
 
+void RotatorMainWindow::stop_rotation()
+{
+    stopRotation(true);
+}
 
 void RotatorMainWindow::stopRotation(bool sendStop)
 {

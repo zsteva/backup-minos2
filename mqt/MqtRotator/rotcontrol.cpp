@@ -78,13 +78,8 @@ int RotControl::init(srotParams currentAntenna)
     curRotParams.min_elevation = my_rot->caps->min_el;
     curRotParams.max_elevation = my_rot->caps->max_el;
 
-
-
-
-
-
     // load rotator params to open
-    strncpy(my_rot->state.rotport.pathname, (const char*)comport.toLatin1(), FILPATHLEN);
+    strncpy(my_rot->state.rotport.pathname, comport.toLatin1().data(), FILPATHLEN);
     my_rot->state.rotport.parm.serial.rate = currentAntenna.baudrate;
     my_rot->state.rotport.parm.serial.data_bits = currentAntenna.databits;
     my_rot->state.rotport.parm.serial.stop_bits = currentAntenna.stopbits;
