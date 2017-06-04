@@ -9,6 +9,7 @@ QT       += core gui network widgets multimedia
 TARGET = mqtKeyer
 TEMPLATE = app
 
+VERSION=0.5.0.0
 DEFINES += VERSION=\\\"$$VERSION\\\"
 
 

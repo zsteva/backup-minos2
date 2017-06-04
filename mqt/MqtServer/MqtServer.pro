@@ -13,7 +13,7 @@ QT       += network
 TARGET = MqtServer
 TEMPLATE = app
 
-VERSION=0.4.0.0
+VERSION=0.5.0.0
 win32:RC_ICONS += ../minos.ico
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
