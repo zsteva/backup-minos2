@@ -630,15 +630,21 @@ void RotatorMainWindow::upDateAntenna()
         selectRotator->currentAntenna.stopbits = selectRotator->availAntennas[antennaIndex].stopbits;
         selectRotator->currentAntenna.parity = selectRotator->availAntennas[antennaIndex].parity;
         selectRotator->currentAntenna.handshake = selectRotator->availAntennas[antennaIndex].handshake;
+
         selectRotator->saveCurrentAntenna();
+
        if (rotator->get_serialConnected())
        {
                 closeRotator();
        }
+
        openRotator();
+
        // update logger
        msg->publishAntennaName(selectRotator->currentAntenna.antennaName);
        msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
+       msg->publishMinAzimuth(QString::number(currentMinAzimuth));
+
        logMessage("Antenna Updated");
     }
 
@@ -754,9 +760,34 @@ void RotatorMainWindow::rotateTo(int bearing)
     int rotateTo = bearing;
 
 
-    if (bearing > currentMaxAzimuth || bearing < COMPASS_MIN0)
+    if (bearing > currentMaxAzimuth || bearing < currentMinAzimuth)
     {
         return; //error
+    }
+
+    // check if we are endstops North stop rotator
+    if (overLapActiveflag)
+    {
+        if (bearing + COMPASS_MAX360 == currentMaxAzimuth)
+        {
+            return;
+        }
+        else if(bearing == COMPASS_MIN0 && currentMinAzimuth == COMPASS_MIN0)
+        {
+            return;
+        }
+        else if (currentMinAzimuth < COMPASS_MIN0)
+        {
+            if (bearing >= COMPASS_HALF && bearing <= COMPASS_MAX360)
+            {
+                if ((COMPASS_MAX360 -  bearing) * -1 == currentMinAzimuth)
+                {
+
+                    return;
+                }
+            }
+        }
+
     }
 
     if (movingCW || movingCCW)
@@ -814,6 +845,7 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
 {
 
     int target = 0;
+
 
     if (currentBearing >= COMPASS_MAX360)
     {

@@ -249,6 +249,7 @@ private slots:
     void on_RotatorState(QString, BaseContestLog*);
     void on_RotatorBearing(QString, BaseContestLog*);
     void on_RotatorMaxAzimuth(QString, BaseContestLog *);
+    void on_RotatorMinAzimuth(QString, BaseContestLog *);
     void on_RotatorAntennaName(QString, BaseContestLog *);
     void onArchiveMatchTreeFocused(QObject *, bool, QFocusEvent * );
     void onOtherMatchTreeFocused(QObject *, bool, QFocusEvent * );

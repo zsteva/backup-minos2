@@ -106,6 +106,11 @@ void MinosLoggerEvents::SendRotatorMaxAzimuth(QString maxAzimuth, BaseContestLog
     emit mle.RotatorMaxAzimuth(maxAzimuth, c);
 }
 //---------------------------------------------------------------------------
+void MinosLoggerEvents::SendRotatorMinAzimuth(QString minAzimuth, BaseContestLog *c)
+{
+    emit mle.RotatorMinAzimuth(minAzimuth, c);
+}
+//---------------------------------------------------------------------------
 void MinosLoggerEvents::SendRotatorAntennaName(QString antennaName, BaseContestLog *c)
 {
     emit mle.RotatorAntennaName(antennaName, c);

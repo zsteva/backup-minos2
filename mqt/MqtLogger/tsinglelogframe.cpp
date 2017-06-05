@@ -101,6 +101,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(RotatorState(QString,BaseContestLog*)), this, SLOT(on_RotatorState(QString, BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(RotatorBearing(QString,BaseContestLog*)), this, SLOT(on_RotatorBearing(QString, BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(RotatorMaxAzimuth(QString,BaseContestLog*)), this, SLOT(on_RotatorMaxAzimuth(QString, BaseContestLog*)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(RotatorMinAzimuth(QString,BaseContestLog*)), this, SLOT(on_RotatorMinAzimuth(QString, BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(RotatorAntennaName(QString,BaseContestLog*)), this, SLOT(on_RotatorAntennaName(QString, BaseContestLog*)));
 
 
@@ -964,6 +965,12 @@ void TSingleLogFrame::on_RotatorMaxAzimuth(QString s, BaseContestLog * /*ct*/)
 {
     ui->GJVQSOLogFrame->setRotatorMaxAzimuth(s);
 }
+
+void TSingleLogFrame::on_RotatorMinAzimuth(QString s, BaseContestLog * /*ct*/)
+{
+    ui->GJVQSOLogFrame->setRotatorMinAzimuth(s);
+}
+
 
 void TSingleLogFrame::on_RotatorAntennaName(QString s, BaseContestLog * /*ct*/)
 {

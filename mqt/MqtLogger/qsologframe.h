@@ -24,7 +24,7 @@ public:
     void setRotatorBearing(const QString &s);
     void setRotatorAntennaName(const QString &s);
     void setRotatorMaxAzimuth(const QString &s);
-
+    void setRotatorMinAzimuth(const QString &s);
 private:
     ScreenContact *partialContact; // contact being edited on screen
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
@@ -53,7 +53,10 @@ private:
 
      // rotator
      int getAngle();
-     int maxAzimuth = COMPASS_MAX360;
+//     int maxAzimuth = COMPASS_MAX360;
+//     int minAzimuth = COMPASS_MIN0;
+     int maxAzimuth = 0;
+     int minAzimuth = 0;
      int currentBearing = 0;
      bool moving = false;
      bool movingCW = false;
@@ -184,9 +187,11 @@ private slots:
     void on_ShowOperators();
 
     void on_ModeComboBoxGJV_currentIndexChanged(int index);
-    void on_RotateLeft_clicked(bool);
     void on_Rotate_clicked();
+    void on_RotateLeft_clicked(bool);
     void on_RotateRight_clicked(bool);
+//    void on_RotateLeft_toggled(bool);
+//    void on_RotateRight_toggled(bool);
     void on_StopRotate_clicked();
 };
 

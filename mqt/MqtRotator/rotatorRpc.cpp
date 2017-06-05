@@ -78,7 +78,17 @@ void RotatorRpc::publishMaxAzimuth(const QString maxAzimuth)
     }
 }
 
+void RotatorRpc::publishMinAzimuth(const QString minAzimuth)
+{
+    static QString old;
 
+    if ( minAzimuth != old )
+    {
+       old = minAzimuth;
+       MinosRPC *rpc = MinosRPC::getMinosRPC();
+       rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorMinAzimuth, minAzimuth, psPublished );
+    }
+}
 
 
 

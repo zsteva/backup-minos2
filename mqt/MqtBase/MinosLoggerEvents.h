@@ -41,6 +41,7 @@ signals:
    void RotatorState(QString, BaseContestLog *);
    void RotatorBearing(QString, BaseContestLog *);
    void RotatorMaxAzimuth(QString, BaseContestLog *);
+   void RotatorMinAzimuth(QString, BaseContestLog *);
    void RotatorAntennaName(QString, BaseContestLog *);
    void EditMatchContact(BaseContestLog *);
    void ScreenContactChanged(ScreenContact *, BaseContestLog *);
@@ -85,6 +86,7 @@ public:
    static void SendRotatorState(QString, BaseContestLog *);
    static void SendRotatorBearing(QString, BaseContestLog *c);
    static void SendRotatorMaxAzimuth(QString, BaseContestLog *c);
+   static void SendRotatorMinAzimuth(QString, BaseContestLog *c);
    static void SendRotatorAntennaName(QString, BaseContestLog *c);
    static void SendEditMatchContact(BaseContestLog *);
    static void SendScreenContactChanged(ScreenContact *, BaseContestLog *);

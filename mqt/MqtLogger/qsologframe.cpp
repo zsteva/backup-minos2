@@ -77,10 +77,6 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(CommentsFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
     connect(MainOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
     connect(SecondOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
-    connect(ui->RotateLeft, SIGNAL(clicked(bool)), this, SLOT(on_RotateLeft_clicked(bool)));
-    connect(ui->RotateRight, SIGNAL(clicked(bool)), this, SLOT(on_RotateRight_clicked(bool)));
-    connect(ui->Rotate, SIGNAL(clicked(bool)), this, SLOT(on_Rotate_clicked()));
-    connect(ui->StopRotate, SIGNAL(clicked(bool)), this, SLOT(on_StopRotate_clicked()));
 
     ui->TimeEdit->installEventFilter(this);
 
@@ -2117,19 +2113,19 @@ void QSOLogFrame::on_Rotate_clicked()
     }
 }
 
-
 void QSOLogFrame::on_RotateLeft_clicked(bool toggle)
 {
+    if (currentBearing <= minAzimuth)
+    {
+        ui->RotateLeft->setChecked(false);
+        return;
+    }
+
     if (moving || movingCW || movingCCW)
     {
         on_StopRotate_clicked();
     }
 
-    if (currentBearing >= maxAzimuth)
-    {
-        ui->RotateLeft->setChecked(false);
-        return;
-    }
 
     if (toggle)
     {
@@ -2145,20 +2141,20 @@ void QSOLogFrame::on_RotateLeft_clicked(bool toggle)
 }
 
 
-
 void QSOLogFrame::on_RotateRight_clicked(bool toggle)
 {
+    if (currentBearing >= maxAzimuth)
+    {
+        ui->RotateRight->setChecked(false);
+        return;
+    }
 
     if (moving || movingCW || movingCCW)
     {
         on_StopRotate_clicked();
     }
 
-    if (currentBearing >= maxAzimuth)
-    {
-        ui->RotateRight->setChecked(false);
-        return;
-    }
+
 
     if (toggle)
     {
@@ -2287,5 +2283,17 @@ void QSOLogFrame::setRotatorMaxAzimuth(const QString &s)
     if (ok)
     {
         maxAzimuth = max_azimuth;
+    }
+}
+
+
+void QSOLogFrame::setRotatorMinAzimuth(const QString &s)
+{
+    bool ok;
+    int min_azimuth = 0;
+    min_azimuth = s.toInt(&ok, 10);
+    if (ok)
+    {
+        minAzimuth = min_azimuth;
     }
 }
