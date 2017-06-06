@@ -115,7 +115,8 @@ private:
     bool overLapOnflag;
     bool overLapActiveflag;
     bool southStopActiveflag;
-    int currentBearing;
+    int rotatorBearing;
+    int offsetCurrentBearing;
     int currentMinAzimuth;
     int currentMaxAzimuth;
     QString backBearingmsg;
@@ -196,6 +197,7 @@ private:
     void readTraceLogFlag();
 
 
+    void toggleOverLapDisplay(bool toggle);
 };
 
 #endif // ROTATORMAINWINDOW_H

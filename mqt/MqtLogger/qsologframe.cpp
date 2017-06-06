@@ -1789,6 +1789,7 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
             ui->TimeEdit->setStyleSheet(ss);
         }
     }
+
     ui->bandMapFrame->setVisible( LogContainer->isBandMapLoaded());
 
     ui->Rotate->setVisible(LogContainer->isRotatorLoaded());
@@ -1798,6 +1799,8 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
     ui->RotBrg->setVisible(LogContainer->isRotatorLoaded());
     ui->rotatorState->setVisible(LogContainer->isRotatorLoaded());
     ui->antennaName->setVisible(LogContainer->isRotatorLoaded());
+    ui->BrgSt->setFrame(LogContainer->isRotatorLoaded());
+    ui->BrgSt->setReadOnly(!LogContainer->isRotatorLoaded());
 
 }
 
@@ -2102,15 +2105,25 @@ int QSOLogFrame::getAngle()
 
 void QSOLogFrame::on_Rotate_clicked()
 {
-    if (getAngle() < maxAzimuth)
+    int angle = getAngle();
+
+
+    if (angle > maxAzimuth)
+    {
+        QString msg = "<font color='Red'>Bearing too large - " + QString::number(angle) + "</font>";
+        ui->rotatorState->setText(msg);
+    }
+    else if (angle < minAzimuth)
+    {
+        QString msg = "<font color='Red'>Bearing too small - " + QString::number(angle) + "</font>";
+        ui->rotatorState->setText(msg);
+    }
+    else
     {
         TSendDM::sendRotator(rpcConstants::eRotateDirect, getAngle());
         moving = true;
     }
-    else
-    {
-        ui->rotatorState->setText("<font color='Red'>Bearing too large</font>");
-    }
+
 }
 
 void QSOLogFrame::on_RotateLeft_clicked(bool toggle)

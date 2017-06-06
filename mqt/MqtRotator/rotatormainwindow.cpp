@@ -167,6 +167,9 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
         overLapActiveflag = false;
     }
 
+    // don't display overlap if rotator doesn't support or user turned off overlap
+    toggleOverLapDisplay(overLapActiveflag);
+
     southStopActiveflag = selectRotator->currentAntenna.southStopFlag;
 
     rotlog->getBearingLogConfig();
@@ -456,20 +459,22 @@ void RotatorMainWindow::displayBearing(int bearing)
 
     logMessage("Display Bearing from Rotator " + QString::number(bearing));
 
-    if (bearing == currentBearing)
+    if (bearing == rotatorBearing)
     {
         return;
     }
 
     QString overlapbearingmsg = "";
 
-    currentBearing = bearing;
-    int _bearing = bearing;
+    rotatorBearing = bearing;
+
+    offsetCurrentBearing += QString::number(selectRotator->currentAntenna.rotatorOffset);
+
 
     // send Bearing to displays
 
     // send to logger
-    QString s = QString::number(_bearing);
+    QString s = QString::number(offsetCurrentBearing);
     msg->publishBearing(s);
 
 
@@ -739,15 +744,14 @@ void RotatorMainWindow::rotateToController()
 
     intBearing = bearing.toInt(&ok, 10);
 
-    if (intBearing >= 0 && intBearing <= currentMaxAzimuth && ok)
+    if (intBearing >= currentMinAzimuth && intBearing <= currentMaxAzimuth && ok)
     {
         rotateTo(intBearing);
         logMessage("Rotate to bearing " + bearing);
     }
     else
     {
-        QString s = "Invalid Bearing\nPlease enter 0 - ";
-        s.append(QString::number(currentMaxAzimuth));
+        QString s = "Invalid Bearing\nPlease enter " + QString::number(currentMinAzimuth) + " - " + QString::number(currentMaxAzimuth);
         QMessageBox::critical(this, tr("Bearing Error"), s);
     }
     rotCmdflag = false;
@@ -765,30 +769,7 @@ void RotatorMainWindow::rotateTo(int bearing)
         return; //error
     }
 
-    // check if we are endstops North stop rotator
-    if (overLapActiveflag)
-    {
-        if (bearing + COMPASS_MAX360 == currentMaxAzimuth)
-        {
-            return;
-        }
-        else if(bearing == COMPASS_MIN0 && currentMinAzimuth == COMPASS_MIN0)
-        {
-            return;
-        }
-        else if (currentMinAzimuth < COMPASS_MIN0)
-        {
-            if (bearing >= COMPASS_HALF && bearing <= COMPASS_MAX360)
-            {
-                if ((COMPASS_MAX360 -  bearing) * -1 == currentMinAzimuth)
-                {
 
-                    return;
-                }
-            }
-        }
-
-    }
 
     if (movingCW || movingCCW)
     {
@@ -797,6 +778,12 @@ void RotatorMainWindow::rotateTo(int bearing)
 
     // calculate target bearing based on current position
     rotateTo  = northCalcTarget(rotateTo);
+
+    // check if we are already at bearing
+    if (rotateTo == currentBearing)
+    {
+        return;
+    }
 
 /*
     if (overLapActiveflag && !ui->overLapDisable->isChecked())
@@ -849,7 +836,7 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
 
     if (currentBearing >= COMPASS_MAX360)
     {
-        if (targetBearing > COMPASS_MIN0 && targetBearing < currentMaxAzimuth - COMPASS_MAX360)
+        if (targetBearing >= COMPASS_MIN0 && targetBearing <= currentMaxAzimuth - COMPASS_MAX360)
         {
             target = COMPASS_MAX360 + targetBearing;
             return target;
@@ -1191,4 +1178,14 @@ void RotatorMainWindow::overLapDisplayBox(bool status)
     }
 
     ui->overlaplineEdit->setPalette(palette);
+}
+
+
+void RotatorMainWindow::toggleOverLapDisplay(bool toggle)
+{
+    // don't display overlap if rotator doesn't support or user turned off overlap
+    ui->overlap->setVisible(toggle);
+    ui->overlapBearingDisplay->setVisible(toggle);
+    ui->overlaplineEdit->setVisible(toggle);
+
 }

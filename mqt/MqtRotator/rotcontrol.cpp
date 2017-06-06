@@ -66,6 +66,7 @@ int RotControl::init(srotParams selectedAntenna)
     // get rotator parameters
     curRotParams.antennaName = selectedAntenna.antennaName;
     curRotParams.baudrate =  selectedAntenna.baudrate;
+    curRotParams.rotatorOffset = selectedAntenna.rotatorOffset;
     //rotParams.comport =
     curRotParams.databits = selectedAntenna.databits;
     curRotParams.stopbits = selectedAntenna.stopbits;
@@ -246,15 +247,11 @@ int RotControl::stop_rotation()
 int RotControl::request_bearing()
 {
     int retCode = RIG_OK;
-//    QString bearing;
+
     retCode = rot_get_position (my_rot, &rot_azimuth, &rot_elevation);
-    //qDebug() << "request error" << retCode;
+
     if (retCode == RIG_OK)
     {
-//        bearing.setNum(rot_azimuth);
-
-//        bearing.setNum(rot_azimuth);
-
         emit bearing_updated(rot_azimuth);
     }
 
