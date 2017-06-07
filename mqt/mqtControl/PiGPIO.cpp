@@ -106,7 +106,7 @@ bool GPIOLine::readPin()
         return false;
     }
     value_str[ret] = 0;
-    return value_str[0] != '0';
+    return value_str[0] == '0';
 }
 
 
