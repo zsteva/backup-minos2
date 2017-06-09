@@ -77,6 +77,9 @@ class SoundSystemDriver
       long play_file( const QString &filename, bool xmit );
       void stopall();
       void stopDMA();
+      bool startMicPassThrough();
+      bool stopMicPassThrough();
+
       bool rdenv( QString &errmess, QString &in );
 
       void genTone(int16_t *tptr, bool add

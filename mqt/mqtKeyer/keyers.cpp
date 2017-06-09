@@ -756,11 +756,11 @@ bool voiceKeyer::sendCW( const char *message, int speed, int tone )
 }
 bool voiceKeyer::startMicPassThrough()
 {
-   return false;
+   return SoundSystemDriver::getSbDriver() ->startMicPassThrough();
 }
 bool voiceKeyer::stopMicPassThrough()
 {
-   return false;
+    return SoundSystemDriver::getSbDriver() ->stopMicPassThrough();
 }
 //==============================================================================
 //==============================================================================

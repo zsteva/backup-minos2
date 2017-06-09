@@ -292,6 +292,14 @@ void SoundSystemDriver::stopall()
    cwptr = 0;
    cwSamples = 0;
 }
+bool SoundSystemDriver::startMicPassThrough()
+{
+   return soundSystem->startMicPassThrough();
+}
+bool SoundSystemDriver::stopMicPassThrough()
+{
+    return soundSystem->stopMicPassThrough();
+}
 
 bool SoundSystemDriver::sbdvp_init( QString &errmess, int srate, int pipTone, int pipVolume, int pipLength )
 {

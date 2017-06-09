@@ -27,7 +27,9 @@ QtSoundSystem *QtSoundSystem::createSoundSystem()
 }
 void QtSoundSystem::startOutput()
 {
+    trace("startOutput");
     outDev = qAudioOut->start();    // restarts as necessary
+    qAudioOut->setVolume(1.0);
 }
 
 void QtSoundSystem::stopOutput()
@@ -37,6 +39,7 @@ void QtSoundSystem::stopOutput()
 }
 void QtSoundSystem::startInput()
 {
+    qAudioIn->setVolume(1.0);
 }
 
 void QtSoundSystem::stopInput()
@@ -176,13 +179,11 @@ void QtSoundSystem::readFromFile()
 
 void QtSoundSystem::passThroughData(QByteArray &inp)
 {
-    if (inp.size() && currentKeyer)
+    if (inp.size())
     {
-        bool ptt = currentKeyer->pttState;
         int flen = qAudioOut->bytesFree();
         int ilen = inp.size();
-        //int blen = qAudioOut->bufferSize();
-        if (ptt && flen)
+        if (flen)
         {
             int len = qMin(flen, ilen);
             const int16_t * q = reinterpret_cast< const int16_t * > ( inp.constData() );
@@ -200,11 +201,18 @@ void QtSoundSystem::passThroughData(QByteArray &inp)
 
              SoundSystemDriver::getSbDriver() ->WinVUOutCallback( maxvol, 2.0 * sqrt(rmsvol/len), len/2 );
             outDev->write(inp);
+            trace("passthru write " + QString::number(len));
         }
         else
         {
             SoundSystemDriver::getSbDriver() ->WinVUOutCallback( 0, 0, ilen/2 );
+            trace("passthru no write ");
+
         }
+    }
+    else
+    {
+        trace("passthru no data " );
     }
 }
 
@@ -250,6 +258,8 @@ bool QtSoundSystem::initialise( QString &/*errmess*/ )
     qAudioOut = new QAudioOutput(qaf);
     connect(qAudioOut, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleOutStateChanged(QAudio::State)));
 
+    qAudioIn->setVolume(1.0);
+    qAudioOut->setVolume(1.0);
     inDev = qAudioIn->start();
     outDev = qAudioOut->start();
 
@@ -486,4 +496,14 @@ void QtSoundSystem::stopDMA()
     SoundSystemDriver::getSbDriver() ->WinVUInCallback( 0, 0, 0 );
     SoundSystemDriver::getSbDriver() ->WinVUOutCallback( 0, 0, 0 );
 
+}
+bool QtSoundSystem::startMicPassThrough()
+{
+    trace("startMicPassThrough");
+   return true;
+}
+bool QtSoundSystem::stopMicPassThrough()
+{
+    trace("stopMicPassThrough");
+    return true;
 }

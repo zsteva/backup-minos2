@@ -42,6 +42,9 @@ public:
     virtual bool startDMA( bool play, const QString &fname );
     virtual void stopDMA();
 
+    virtual bool startMicPassThrough();
+    virtual bool stopMicPassThrough();
+
     static QtSoundSystem *createSoundSystem();
 
     void startOutput();
