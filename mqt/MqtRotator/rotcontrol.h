@@ -74,7 +74,7 @@ struct srotParams
   elevation_t max_elevation;
   bool southStopFlag = false;
   bool overRunFlag = false;
-  int rotatorOffset = 0;
+  int antennaOffset = 0;
   bool moving;
   int serial_rate_max;
   int serial_rate_min;

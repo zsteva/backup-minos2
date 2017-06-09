@@ -66,7 +66,7 @@ int RotControl::init(srotParams selectedAntenna)
     // get rotator parameters
     curRotParams.antennaName = selectedAntenna.antennaName;
     curRotParams.baudrate =  selectedAntenna.baudrate;
-    curRotParams.rotatorOffset = selectedAntenna.rotatorOffset;
+    curRotParams.antennaOffset = selectedAntenna.antennaOffset;
     //rotParams.comport =
     curRotParams.databits = selectedAntenna.databits;
     curRotParams.stopbits = selectedAntenna.stopbits;

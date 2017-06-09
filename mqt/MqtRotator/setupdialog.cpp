@@ -44,7 +44,7 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     rotatorModel[NUM_ANTENNAS] = new  QComboBox;
     southStopFlag[NUM_ANTENNAS] = new QCheckBox;
     overRunFlag[NUM_ANTENNAS] = new QCheckBox;
-    rotatorOffset[NUM_ANTENNAS] = new QLineEdit;
+    antennaOffset[NUM_ANTENNAS] = new QLineEdit;
     comPorts[NUM_ANTENNAS] = new  QComboBox;
     comSpeed[NUM_ANTENNAS] = new QComboBox;
     comDataBits[NUM_ANTENNAS] = new QComboBox;
@@ -77,11 +77,11 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     overRunFlag[3] = ui->chkOverrun4;
     overRunFlag[4] = ui->chkOverrun5;
 
-    rotatorOffset[0] = ui->lEditOffset1;
-    rotatorOffset[1] = ui->lEditOffset2;
-    rotatorOffset[2] = ui->lEditOffset3;
-    rotatorOffset[3] = ui->lEditOffset4;
-    rotatorOffset[4] = ui->lEditOffset5;
+    antennaOffset[0] = ui->lEditOffset1;
+    antennaOffset[1] = ui->lEditOffset2;
+    antennaOffset[2] = ui->lEditOffset3;
+    antennaOffset[3] = ui->lEditOffset4;
+    antennaOffset[4] = ui->lEditOffset5;
 
 
     comPorts[0] = ui->comPortBox1;
@@ -166,14 +166,14 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
 
 //--------------------------------------------------------------------------------------------------
 
-    QSignalMapper *rotatorOffset_mapper = new QSignalMapper(this);
+    QSignalMapper *antennaOffset_mapper = new QSignalMapper(this);
 
     for (int i = 0; i < NUM_ANTENNAS; i++ )
     {
-        rotatorOffset_mapper->setMapping(rotatorOffset[i], i);
-        connect(rotatorOffset[i], SIGNAL(editingFinished()), rotatorOffset_mapper, SLOT(map()));
+        antennaOffset_mapper->setMapping(antennaOffset[i], i);
+        connect(antennaOffset[i], SIGNAL(editingFinished()), antennaOffset_mapper, SLOT(map()));
     }
-    connect(rotatorOffset_mapper, SIGNAL(mapped(int)), this, SLOT(rotatorOffsetFinished(int)));
+    connect(antennaOffset_mapper, SIGNAL(mapped(int)), this, SLOT(antennaOffsetFinished(int)));
 
 //--------------------------------------------------------------------------------------------------
 
@@ -266,7 +266,7 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
         rotatorModel[i]->setCurrentIndex(rotatorModel[i]->findText(availAntennas[i].rotatorModel));
         southStopFlag[i]->setChecked(availAntennas[i].southStopFlag);
         overRunFlag[i]->setChecked(availAntennas[i].overRunFlag);
-        rotatorOffset[i]->setText(QString::number(availAntennas[i].rotatorOffset));
+        antennaOffset[i]->setText(QString::number(availAntennas[i].antennaOffset));
         comPorts[i]->setCurrentIndex(comPorts[i]->findText(availAntennas[i].comport));
         comSpeed[i]->setCurrentIndex(comSpeed[i]->findText(QString::number(availAntennas[i].baudrate)));
         comDataBits[i]->setCurrentIndex(comDataBits[i]->findText(QString::number(availAntennas[i].databits)));
@@ -334,27 +334,27 @@ void SetupDialog::overRunFlagSelected(int boxNumber)
     }
 }
 
-void SetupDialog::rotatorOffsetFinished(int boxNumber)
+void SetupDialog::antennaOffsetFinished(int boxNumber)
 {
-    const int minOffset = -90;
-    const int maxOffset = 90;
+
     QMessageBox messageBox;
 
-    if (rotatorOffset[boxNumber]->text() != "")
+    if (antennaOffset[boxNumber]->text() != "")
     {
-        int offset = rotatorOffset[boxNumber]->text().toInt();
+        int offset = antennaOffset[boxNumber]->text().toInt();
         if (offset < minOffset || offset > maxOffset)
         {
-            rotatorOffset[boxNumber]->text() = "0";
-            messageBox.critical(this,"Offset Error","Value must be between -90 and 90");
+            antennaOffset[boxNumber]->setText("0");
+            QString msg = "Value must be between " + QString::number(minOffset) + " and " + QString::number(maxOffset);
+            messageBox.critical(this, "Antenna Offset Error", msg);
 
         }
         else
         {
 
-            if (offset  != availAntennas[boxNumber].rotatorOffset)
+            if (offset  != availAntennas[boxNumber].antennaOffset)
             {
-                availAntennas[boxNumber].rotatorOffset = offset;
+                availAntennas[boxNumber].antennaOffset = offset;
                 antennaValueChanged[boxNumber] = true;
                 antennaChanged = true;
             }
@@ -623,7 +623,7 @@ void SetupDialog::saveSettings()
                 config.setValue("rotatorModelNumber", availAntennas[i].rotatorModelNumber);
                 config.setValue("southStop", availAntennas[i].southStopFlag);
                 config.setValue("overRun", availAntennas[i].overRunFlag);
-                config.setValue("rotatorOffset", availAntennas[i].rotatorOffset);
+                config.setValue("antennaOffset", availAntennas[i].antennaOffset);
                 config.setValue("comport", availAntennas[i].comport);
                 config.setValue("baudrate", availAntennas[i].baudrate);
                 config.setValue("databits", availAntennas[i].databits);
@@ -656,7 +656,7 @@ void SetupDialog::readSettings()
         availAntennas[i].rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
         availAntennas[i].southStopFlag = config.value("southStop", true).toBool();
         availAntennas[i].overRunFlag = config.value("overRun", false).toBool();
-        availAntennas[i].rotatorOffset = config.value("rotatorOffset", "").toInt();
+        availAntennas[i].antennaOffset = config.value("antennaOffset", "").toInt();
         availAntennas[i].comport = config.value("comport", "").toString();
         availAntennas[i].baudrate = config.value("baudrate", 9600).toInt();
         availAntennas[i].databits = config.value("databits", 8).toInt();
@@ -681,7 +681,7 @@ void SetupDialog::clearAvailRotators()
         availAntennas[i].rotatorModelNumber = 0;
         availAntennas[i].southStopFlag = false;
         availAntennas[i].overRunFlag = false;
-        availAntennas[i].rotatorOffset = 0;
+        availAntennas[i].antennaOffset = 0;
         availAntennas[i].comport = "";
         availAntennas[i].baudrate = 9600;
         availAntennas[i].databits = 8;
@@ -701,7 +701,7 @@ void SetupDialog::clearCurrentRotator()
     currentAntenna.rotatorModelNumber = 0;
     currentAntenna.southStopFlag = false;
     currentAntenna.overRunFlag = false;
-    currentAntenna.rotatorOffset = 0;
+    currentAntenna.antennaOffset = 0;
     currentAntenna.comport = "";
     currentAntenna.baudrate = 9600;
     currentAntenna.databits = 8;
@@ -777,7 +777,7 @@ void SetupDialog::saveCurrentAntenna()
     config.setValue("rotatorModelNumber", currentAntenna.rotatorModelNumber);
     config.setValue("southStop", currentAntenna.southStopFlag);
     config.setValue("overRun", currentAntenna.overRunFlag);
-    config.setValue("rotatorOffset", currentAntenna.rotatorOffset);
+    config.setValue("antennaOffset", currentAntenna.antennaOffset);
     config.setValue("comport", currentAntenna.comport);
     config.setValue("baudrate", currentAntenna.baudrate);
     config.setValue("databits", currentAntenna.databits);
@@ -804,7 +804,7 @@ void SetupDialog::readCurrentAntenna()
         currentAntenna.rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
         currentAntenna.southStopFlag = config.value("southStop", false).toBool();
         currentAntenna.overRunFlag = config.value("overRun", false).toBool();
-        currentAntenna.rotatorOffset = config.value("rotatorOffset", "").toInt();
+        currentAntenna.antennaOffset = config.value("antennaOffset", "").toInt();
         currentAntenna.comport = config.value("comport", "").toString();
         currentAntenna.baudrate = config.value("baudrate", 0).toInt();
         currentAntenna.databits = config.value("databits", 0).toInt();

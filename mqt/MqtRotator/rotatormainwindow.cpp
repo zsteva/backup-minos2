@@ -105,11 +105,25 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     editPresets = new EditPresetsDialog;
     setupLog = new LogDialog;
     pollTimer = new QTimer(this);
-    status = new QLabel;
+
     selectAntenna = new QComboBox;
     rotlog = new RotatorLog;
 
+    status = new QLabel;
+    offSetlbl = new QLabel;
+    offSetDisplay = new QLabel;
+    actualRotatorlbl = new QLabel;
+    actualRotatorDisplay = new QLabel;
+
     ui->statusbar->addWidget(status);
+
+    ui->statusbar->addPermanentWidget(offSetlbl);
+    offSetlbl->setText("Offset: ");
+    ui->statusbar->addPermanentWidget(offSetDisplay);
+
+    ui->statusbar->addPermanentWidget(actualRotatorlbl);
+    actualRotatorlbl->setText("Actual: ");
+    ui->statusbar->addPermanentWidget(actualRotatorDisplay);
 
     ui->overlaplineEdit->setFixedSize(60,20);
 
@@ -141,7 +155,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     movingCCW = false;
 
     rotLogFlg = true;
-    currentBearing = COMPASS_MIN0;
+    rotatorBearing = 9999; // force first update
 
 
 
@@ -152,25 +166,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     rotTimeCount = 0;
     RotateTimer.start(200);  // to set timeout for antenna rotating
 
-    // open rotator to get this info...
 
-    if (rotator->getMaxAzimuth() > COMPASS_MAX360 && selectRotator->currentAntenna.overRunFlag)
-    {
-        currentMaxAzimuth = rotator->getMaxAzimuth();
-        currentMinAzimuth = rotator->getMinAzimuth();
-        overLapActiveflag = true;
-    }
-    else
-    {
-        currentMaxAzimuth = COMPASS_MAX360;
-        currentMinAzimuth = COMPASS_MIN0;
-        overLapActiveflag = false;
-    }
-
-    // don't display overlap if rotator doesn't support or user turned off overlap
-    toggleOverLapDisplay(overLapActiveflag);
-
-    southStopActiveflag = selectRotator->currentAntenna.southStopFlag;
 
     rotlog->getBearingLogConfig();
     readTraceLogFlag();
@@ -189,9 +185,11 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     trace("Databits = " + QString::number(selectRotator->currentAntenna.databits));
     trace("Stop bits = " + QString::number(selectRotator->currentAntenna.stopbits));
     trace("Handshake = " + QString::number(selectRotator->currentAntenna.handshake));
-    trace("Max Azimuth = " + QString::number(currentMaxAzimuth));
-    trace("Min Azimuth = " + QString::number(currentMinAzimuth));
-    trace("Rotator Offset = " + QString::number(selectRotator->currentAntenna.rotatorOffset));
+//    trace("Rotator Max Azimuth = " + QString::number(rotatorMaxAzimuth));
+//    trace("Rotator Min Azimuth = " + QString::number(rotatorMinAzimuth));
+    trace("Antenna Offset = " + QString::number(selectRotator->currentAntenna.antennaOffset));
+    trace("Current Max Azimuth = " + QString::number(currentMaxAzimuth));
+    trace("Current Min Azimuth = " + QString::number(currentMinAzimuth));
     trace("South Stop Flag = " + QString::number(selectRotator->currentAntenna.southStopFlag));
     trace("Overrun flag = " + QString::number(selectRotator->currentAntenna.overRunFlag));
     trace("Rotator Max Baudrate = " + QString::number(rotator->getMaxBaudRate()));
@@ -393,7 +391,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(this, SIGNAL(sendCompassDial(int)), ui->compassDial, SLOT(compassDialUpdate(int)));
     connect(this, SIGNAL(sendBearing(QString)), ui->bearingDisplay, SLOT(setText(const QString &)));
     connect(this, SIGNAL(sendBackBearing(QString)), ui->backBearingDisplay, SLOT(setText(const QString &)));
-    connect(this, SIGNAL(displayOverlapBearing(QString)), ui->overlapBearingDisplay, SLOT( setText(const QString &)));
+    connect(this, SIGNAL(displayActualBearing(QString)), actualRotatorDisplay, SLOT( setText(const QString &)));
     connect(this, SIGNAL(displayOverlap(bool)), this ,SLOT(overLapDisplayBox(bool)));
     // check endstop and turn to rotation stop
     connect(&RotateTimer, SIGNAL(timeout()), this, SLOT(rotatingTimer()));
@@ -457,65 +455,93 @@ void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
 void RotatorMainWindow::displayBearing(int bearing)
 {
 
-    logMessage("Display Bearing from Rotator " + QString::number(bearing));
+    logMessage("Bearing from Rotator " + QString::number(bearing));
 
     if (bearing == rotatorBearing)
     {
         return;
     }
 
-    QString overlapbearingmsg = "";
-
     rotatorBearing = bearing;
 
-    offsetCurrentBearing += QString::number(selectRotator->currentAntenna.rotatorOffset);
+    currentBearingOffset = bearing + selectRotator->currentAntenna.antennaOffset;
 
+    logMessage("Current Bearing + offset = " + QString::number(currentBearingOffset));
+
+    int displayBearing = currentBearingOffset;
+
+    if (currentBearingOffset >= COMPASS_MAX360)
+    {
+        displayBearing = currentBearingOffset - COMPASS_MAX360;
+    }
+    else if (currentBearingOffset < COMPASS_MIN0)
+    {
+        displayBearing = COMPASS_MAX360 + currentBearingOffset;
+    }
+    logMessage("Display Bearing = " + QString::number(displayBearing));
 
     // send Bearing to displays
 
-    // send to logger
-    QString s = QString::number(offsetCurrentBearing);
+    // send to minos logger
+    QString s = QString::number(displayBearing);
     msg->publishBearing(s);
 
 
-    // send Bearing to displays
+
+
+    QString rotatorBearingmsg = QString::number(rotatorBearing);
+    if (rotatorBearing < 10)
+    {
+        rotatorBearingmsg = "00" +rotatorBearingmsg;
+    }
+    else if (rotatorBearing < 100)
+    {
+        rotatorBearingmsg = "0" +rotatorBearingmsg;
+    }
+    // send rotatorBearing to actual rotatorBearingDisplay
+    emit displayActualBearing(rotatorBearingmsg);
+
+
+
     if (overLapActiveflag)
     {
-        if (_bearing > COMPASS_MAX360)
+        if (rotatorBearing > COMPASS_MAX360)
         {
-            _bearing -= COMPASS_MAX360;
-            overlapbearingmsg = QString::number(bearing);
+            bearing -= COMPASS_MAX360;
+
+            logMessage("OverLapOn - Rotator Bearing = " + QString::number(bearing));
             overLapOnflag = true;
         }
         else
         {
             overLapOnflag = false;
-            overlapbearingmsg = "   ";
+            logMessage("OverLapOff - Rotator Bearing = " + QString::number(bearing));
+
         }
 
         emit displayOverlap(overLapOnflag);
-        emit displayOverlapBearing(overlapbearingmsg);
+
 
     }
 
-    QString bearingmsg = QString::number(_bearing, 10);
-    if (_bearing < 10)    // prevent display resizing
+    QString bearingmsg = QString::number(displayBearing, 10);
+    if (displayBearing < 10)    // prevent display resizing
     {
         bearingmsg = "00" + bearingmsg;
     }
-    else if (_bearing < 100)
+    else if (displayBearing < 100)
     {
         bearingmsg = "0" + bearingmsg;
     }
 
     emit sendBearing(bearingmsg);
-    emit sendCompassDial(_bearing);
+    emit sendCompassDial(displayBearing);
 
     // check antenna is not at endstops when manually rotating
     emit checkingEndStop();
 
     // calc and send backbearing
-    int backBearing = bearing;
+    int backBearing = displayBearing;
 
     backBearing += COMPASS_HALF;
     if (backBearing >= COMPASS_MAX360)
@@ -628,7 +654,7 @@ void RotatorMainWindow::upDateAntenna()
         selectRotator->currentAntenna.rotatorModelNumber = selectRotator->availAntennas[antennaIndex].rotatorModelNumber;
         selectRotator->currentAntenna.southStopFlag = selectRotator->availAntennas[antennaIndex].southStopFlag;
         selectRotator->currentAntenna.overRunFlag = selectRotator->availAntennas[antennaIndex].overRunFlag;
-        selectRotator->currentAntenna.rotatorOffset = selectRotator->availAntennas[antennaIndex].rotatorOffset;
+        selectRotator->currentAntenna.antennaOffset = selectRotator->availAntennas[antennaIndex].antennaOffset;
         selectRotator->currentAntenna.comport = selectRotator->availAntennas[antennaIndex].comport;
         selectRotator->currentAntenna.baudrate = selectRotator->availAntennas[antennaIndex].baudrate;
         selectRotator->currentAntenna.databits = selectRotator->availAntennas[antennaIndex].databits;
@@ -645,6 +671,33 @@ void RotatorMainWindow::upDateAntenna()
 
        openRotator();
 
+       offSetDisplay->setText(QString::number(selectRotator->currentAntenna.antennaOffset));
+
+       // open rotator to get this info...
+       rotatorMaxAzimuth = rotator->getMaxAzimuth();
+       rotatorMinAzimuth = rotator->getMinAzimuth();
+
+       if (rotator->getMaxAzimuth() > COMPASS_MAX360 && selectRotator->currentAntenna.overRunFlag)
+       {
+            currentMaxAzimuth = rotator->getMaxAzimuth(); // + selectRotator->currentAntenna.antennaOffset;
+            currentMinAzimuth = rotator->getMinAzimuth(); // + selectRotator->currentAntenna.antennaOffset;
+            overLapActiveflag = true;
+       }
+       else
+       {
+            currentMaxAzimuth = COMPASS_MAX360; //+ selectRotator->currentAntenna.antennaOffset;
+            currentMinAzimuth = COMPASS_MIN0;  //+ selectRotator->currentAntenna.antennaOffset;
+            overLapActiveflag = false;
+       }
+
+
+
+       // don't display overlap if rotator doesn't support or user turned off overlap
+       toggleOverLapDisplay(overLapActiveflag);
+
+       southStopActiveflag = selectRotator->currentAntenna.southStopFlag;
+
+        rotatorBearing = 9999;      // force display update
        // update logger
        msg->publishAntennaName(selectRotator->currentAntenna.antennaName);
        msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
@@ -680,16 +733,20 @@ void RotatorMainWindow::request_bearing()
 void RotatorMainWindow::checkEndStop()
 {
     logMessage("Check EndStop");
+    qDebug() << "currentBearingOffset = " << currentBearingOffset;
+    qDebug() << "rotatorBearing = " << rotatorBearing;
+    qDebug() << "currentMaxAzimuth = " << currentMaxAzimuth;
+    qDebug() << "currentMinAzimuth = " << currentMinAzimuth;
     if (movingCW)
     {
-        if (currentBearing >= currentMaxAzimuth)
+        if (rotatorBearing >= currentMaxAzimuth)
         {
             stopButton();
         }
     }
     else if (movingCCW)
     {
-        if (currentBearing <= currentMinAzimuth)
+        if (rotatorBearing <= currentMinAzimuth)
         {
             stopButton();
         }
@@ -780,7 +837,7 @@ void RotatorMainWindow::rotateTo(int bearing)
     rotateTo  = northCalcTarget(rotateTo);
 
     // check if we are already at bearing
-    if (rotateTo == currentBearing)
+    if (rotateTo == rotatorBearing)
     {
         return;
     }
@@ -834,7 +891,7 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
     int target = 0;
 
 
-    if (currentBearing >= COMPASS_MAX360)
+    if (rotatorBearing >= COMPASS_MAX360)
     {
         if (targetBearing >= COMPASS_MIN0 && targetBearing <= currentMaxAzimuth - COMPASS_MAX360)
         {
@@ -842,7 +899,7 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
             return target;
         }
     }
-    else if (currentBearing < COMPASS_MIN0)
+    else if (rotatorBearing < COMPASS_MIN0)
     {
         if (targetBearing < COMPASS_MAX360 and targetBearing > COMPASS_MAX360 - (currentMinAzimuth * -1))
         {
@@ -857,13 +914,13 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
      }
 
 
-     if (currentBearing >= COMPASS_MIN0 && currentBearing <= COMPASS_HALF)
+     if (rotatorBearing >= COMPASS_MIN0 && rotatorBearing <= COMPASS_HALF)
      {
         if (targetBearing > COMPASS_MIN0 && targetBearing <= COMPASS_HALF)
         {
             target = targetBearing;
         }
-        else if (targetBearing - currentBearing < COMPASS_MAX360 - targetBearing + currentBearing)
+        else if (targetBearing - rotatorBearing < COMPASS_MAX360 - targetBearing + rotatorBearing)
         {
             target = targetBearing;
             return target;
@@ -885,14 +942,14 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
         }
      }
 
-    else if (currentBearing >= COMPASS_HALF && currentBearing <= COMPASS_MAX360)
+    else if (rotatorBearing >= COMPASS_HALF && rotatorBearing <= COMPASS_MAX360)
     {
         if (targetBearing > COMPASS_HALF && targetBearing <= COMPASS_MAX360)
         {
             target = targetBearing;
             return target;
         }
-        else if (COMPASS_MAX360 - currentBearing + targetBearing > currentBearing - targetBearing)
+        else if (COMPASS_MAX360 - rotatorBearing + targetBearing > rotatorBearing - targetBearing)
         {
             target = targetBearing;
             return target;
@@ -981,7 +1038,7 @@ void RotatorMainWindow::rotateCW(bool toggle)
         stopButton();
     }
 
-    if (currentBearing >= currentMaxAzimuth)
+    if (rotatorBearing >= currentMaxAzimuth)
     {
         ui->rot_right_button->setChecked(false);
         return;
@@ -1026,7 +1083,7 @@ void RotatorMainWindow::rotateCCW(bool toggle)
         stopButton();
     }
 
-    if (currentBearing <= COMPASS_MIN0)
+    if (rotatorBearing <= COMPASS_MIN0)
     {
         ui->rot_left_button->setChecked(false);
         return;
@@ -1185,7 +1242,9 @@ void RotatorMainWindow::toggleOverLapDisplay(bool toggle)
 {
     // don't display overlap if rotator doesn't support or user turned off overlap
     ui->overlap->setVisible(toggle);
-    ui->overlapBearingDisplay->setVisible(toggle);
     ui->overlaplineEdit->setVisible(toggle);
 
 }
+
+
+

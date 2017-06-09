@@ -78,7 +78,8 @@ signals:
     void displayOverlap(bool);
     void checkingEndStop();
     void sendBackBearing(QString);
-    void displayOverlapBearing(QString);
+//   void displayOverlapBearing(QString);
+    void displayActualBearing(QString);
     void presetRotateTo();
 
 private:
@@ -95,6 +96,10 @@ private:
 //    MinosCompass* compassDial;
     RotControl  *rotator;
     QLabel *status;
+    QLabel *offSetlbl;
+    QLabel *offSetDisplay;
+    QLabel *actualRotatorlbl;
+    QLabel *actualRotatorDisplay;
     SetupDialog *selectRotator;
     EditPresetsDialog *editPresets;
     LogDialog *setupLog;
@@ -116,7 +121,9 @@ private:
     bool overLapActiveflag;
     bool southStopActiveflag;
     int rotatorBearing;
-    int offsetCurrentBearing;
+    int currentBearingOffset;
+    int rotatorMinAzimuth;
+    int rotatorMaxAzimuth;
     int currentMinAzimuth;
     int currentMaxAzimuth;
     QString backBearingmsg;
@@ -198,6 +205,7 @@ private:
 
 
     void toggleOverLapDisplay(bool toggle);
+
 };
 
 #endif // ROTATORMAINWINDOW_H

@@ -65,7 +65,7 @@ protected slots:
     void rotatorModelSelected(int);
     void southStopFlagSelected(int);
     void overRunFlagSelected(int);
-    void rotatorOffsetFinished(int);
+    void antennaOffsetFinished(int);
     void comportSelected(int);
     void comSpeedSelected(int);
     void comDataBitsSelected(int);
@@ -86,7 +86,7 @@ private:
     QComboBox *rotatorModel[NUM_ANTENNAS];
     QCheckBox *southStopFlag[NUM_ANTENNAS];
     QCheckBox *overRunFlag[NUM_ANTENNAS];
-    QLineEdit *rotatorOffset[NUM_ANTENNAS];
+    QLineEdit *antennaOffset[NUM_ANTENNAS];
     QComboBox *comPorts[NUM_ANTENNAS];
     QComboBox *comSpeed[NUM_ANTENNAS];
     QComboBox *comDataBits[NUM_ANTENNAS];
@@ -96,6 +96,8 @@ private:
     QIntValidator *intValidator;
     bool antennaValueChanged[NUM_ANTENNAS];
     bool antennaChanged;
+    const int minOffset = -90;
+    const int maxOffset = 90;
     void saveSettings();
     void readSettings();
     void fillAntennaModelInfo();
