@@ -108,15 +108,15 @@ int RotatorLog::writeBearing(const QString bearing, QString filename)
         QFile file( filename );
         if( !file.exists() )
         {
-            qDebug() << "The file" << file.fileName() << "does not exist.";
+            //logMessage("The file" + file.fileName() + "does not exist.");
             //return -1;
         }
         if( !file.open( QIODevice::Append | QIODevice::Text) )
         {
-            qDebug() << "Could not open" << file.fileName() << "for writing.";
+            //logMessage("Could not open" + file.fileName() + "for writing.");
             //return -1;
         }
-        qDebug() << "The file opened.";
+
 
         QTextStream stream(&file);
 

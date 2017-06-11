@@ -289,7 +289,7 @@ SetupDialog::~SetupDialog()
 
 void SetupDialog::antennaNameFinished(int boxNumber)
 {
-    qDebug() << "finished name";
+
     if (antennaName[boxNumber]->text() != availAntennas[boxNumber].antennaName)
     {
         availAntennas[boxNumber].antennaName = antennaName[boxNumber]->text();

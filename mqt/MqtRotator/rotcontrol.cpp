@@ -59,7 +59,7 @@ int RotControl::init(srotParams selectedAntenna)
     my_rot = rot_init(selectedAntenna.rotatorModelNumber);
     if (!my_rot)
     {
-        qDebug() << "Error init rotator";
+        //logMessage("Error init rotator");
     }
 
 
@@ -88,7 +88,7 @@ int RotControl::init(srotParams selectedAntenna)
     retcode = rot_open(my_rot);
     if (retcode >= 0)
     {
-        qDebug() << "rotator opened ok";
+        //logMessage("rotator opened ok");
         set_serialConnected(true);
         // update rotator specific parameters
         curRotParams.max_azimuth = my_rot->caps->max_az;
@@ -98,7 +98,7 @@ int RotControl::init(srotParams selectedAntenna)
     }
     else
     {
-        qDebug() << "rotator open error";
+        //logMessage("rotator open error");
         set_serialConnected(false);
     }
 
@@ -236,7 +236,7 @@ int RotControl::stop_rotation()
     int retCode = RIG_OK;
     retCode = rot_stop(my_rot);
 
-    qDebug() << "stop message" ;
+    //logMessage("stop message");
     return retCode;
 }
 
@@ -272,7 +272,7 @@ int RotControl::rotateClockwise(int speed)
 
     int retCode = RIG_OK;
     retCode = rot_move(my_rot, ROT_MOVE_RIGHT , speed);
-    qDebug() << "rotate CW message";
+    //logMessage("rotate CW message");
     return retCode;
 }
 
@@ -280,7 +280,7 @@ int RotControl::rotateCClockwise(int speed)
 {
     int retCode = RIG_OK;
     retCode = rot_move(my_rot, ROT_MOVE_LEFT , speed);
-    qDebug() << "rotate CCW message";
+    //logMessage("rotate CCW message");
     return retCode;
 }
 
@@ -289,11 +289,8 @@ int RotControl::rotate_to_bearing(int bearing)
 {
     int retCode = RIG_OK;
     float rotbearing = bearing;
-    //qDebug() << "got to rotate bearing";
-    //qDebug() << "send rotate message to serial ";
+    //logMessage("send rotate message to serial " + QString::number(bearing);
     retCode = rot_set_position(my_rot, rotbearing, 0.0);
-    //qDebug() << "error" << retCode;
-
 
     return retCode;
 
