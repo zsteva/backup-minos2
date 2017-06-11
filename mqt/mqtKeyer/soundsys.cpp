@@ -276,6 +276,8 @@ void QtSoundSystem::handle_pushTimer_timeout()
 
     bool ptt = currentKeyer->pttState;
 
+    //Move inp to class; read at end of routine if doing passthrough so we are always one buffer late so that we shouldn't underrun
+
     QByteArray inp = inDev->readAll();
 
     const int16_t * q = reinterpret_cast< const int16_t * > ( inp.constData() );
@@ -330,6 +332,8 @@ void QtSoundSystem::handleOutStateChanged(QAudio::State newState)
         case QAudio::IdleState:
         {
         trace("Audio output idle state");
+
+        //Ignore if in passthrough (stop passthrough not yet called)
             // Finished playing (no more data)
             KeyerAction * sba = KeyerAction::getCurrentAction();
              if ( sba && !ignoreFirstIdle )
@@ -500,10 +504,13 @@ void QtSoundSystem::stopDMA()
 bool QtSoundSystem::startMicPassThrough()
 {
     trace("startMicPassThrough");
+    //set flag to enable passThrough
+    //clear passthrough buffer
    return true;
 }
 bool QtSoundSystem::stopMicPassThrough()
 {
     trace("stopMicPassThrough");
+    //clear flag for passthrough
     return true;
 }
