@@ -702,7 +702,22 @@ void RotatorMainWindow::upDateAntenna()
        msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
        msg->publishMinAzimuth(QString::number(currentMinAzimuth));
 
-       logMessage("Antenna Updated");
+       logMessage("*** Antenna Updated ***");
+       logMessage("Rotator Name = " + selectRotator->currentAntenna.antennaName);
+       logMessage("Rotator Model = " + selectRotator->currentAntenna.rotatorModel);
+       logMessage("Rotator Number = " + QString::number(selectRotator->currentAntenna.rotatorModelNumber));
+       logMessage("Rotator Comport = " + selectRotator->currentAntenna.comport);
+       logMessage("Baudrate = " + QString::number(selectRotator->currentAntenna.baudrate));
+       logMessage("Databits = " + QString::number(selectRotator->currentAntenna.databits));
+       logMessage("Stop bits = " + QString::number(selectRotator->currentAntenna.stopbits));
+       logMessage("Handshake = " + QString::number(selectRotator->currentAntenna.handshake));
+       logMessage("Antenna Offset = " + QString::number(selectRotator->currentAntenna.antennaOffset));
+       logMessage("Current Max Azimuth = " + QString::number(currentMaxAzimuth));
+       logMessage("Current Min Azimuth = " + QString::number(currentMinAzimuth));
+       logMessage("South Stop Flag = " + QString::number(selectRotator->currentAntenna.southStopFlag));
+       logMessage("Overrun flag = " + QString::number(selectRotator->currentAntenna.overRunFlag));
+       logMessage("Rotator Max Baudrate = " + QString::number(rotator->getMaxBaudRate()));
+       logMessage("Rotator Min Baud rate = " + QString::number(rotator->getMinBaudRate()));
     }
 
 
@@ -818,7 +833,7 @@ void RotatorMainWindow::rotateTo(int bearing)
 {
     int retCode = 0;
     int rotateTo = bearing;
-    logMessage("Bearing in rotateTo = " +QString::number(bearing));
+    logMessage("RotateTo Bearing = " +QString::number(bearing));
 
     if (bearing > currentMaxAzimuth || bearing < currentMinAzimuth)
     {
@@ -838,7 +853,11 @@ void RotatorMainWindow::rotateTo(int bearing)
     }
     else
     {
-        rotateTo = rotateTo + selectRotator->currentAntenna.antennaOffset;
+        rotateTo = rotateTo - selectRotator->currentAntenna.antennaOffset;
+        if (rotateTo < COMPASS_MIN0)
+        {
+            rotateTo = COMPASS_MAX360 + rotateTo;
+        }
     }
 
 
@@ -846,27 +865,6 @@ void RotatorMainWindow::rotateTo(int bearing)
 
 
 
-
-/*
-    if (selectRotator->currentAntenna.antennaOffset < 0)
-    {
-        rotateTo = rotateTo + selectRotator->currentAntenna.antennaOffset;
-    }
-    else
-    {
-        rotateTo = rotateTo - selectRotator->currentAntenna.antennaOffset;
-    }
-
-
-
-    if (currentMinAzimuth == COMPASS_MIN0)
-    {
-        if (rotateTo < COMPASS_MIN0)
-        {
-            rotateTo = COMPASS_MAX360 + rotateTo;
-        }
-    }
-*/
     if (rotateTo > currentMaxAzimuth || rotateTo < currentMinAzimuth)
     {
         logMessage("Error - Rotate To Bearing = " + QString::number(rotateTo));
@@ -891,28 +889,7 @@ void RotatorMainWindow::rotateTo(int bearing)
         return;
     }
 
-/*
-    if (overLapActiveflag && !ui->overLapDisable->isChecked())
-    {
-        if (currentBearing < COMPASS_MAX360)
-        {
-            if ((COMPASS_MAX360 + bearing) < currentMaxAzimuth)
-            {
-                if ((COMPASS_MAX360 - currentBearing + bearing) < (currentBearing - bearing))
-                {
-                    rotateTo = COMPASS_MAX360 + bearing;
-                }
-            }
-        }
-        else // current bearing > COMPASS_MAX360
-        {
-           if (COMPASS_MAX360 + bearing < currentMaxAzimuth)
-           {
-              rotateTo = COMPASS_MAX360 + bearing;
-           }
-        }
-    }
-*/
+
     if (rotator->get_serialConnected())
     {
 
@@ -984,11 +961,17 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
                     logMessage("target5 = " + QString::number(target));
                     return target;
                 }
+                else
+                {
+                    target = targetBearing;
+                    logMessage("target6 = " + QString::number(target));
+                    return target;
+                }
             }
             else
             {
                 target = targetBearing;
-                logMessage("target6 = " + QString::number(target));
+                logMessage("target7 = " + QString::number(target));
                 return target;
             }
         }
@@ -1000,31 +983,31 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
             if ((rotatorBearing + COMPASS_MAX360 - targetBearing < targetBearing - rotatorBearing) && currentMinAzimuth < COMPASS_MIN0)
             {
                 target = COMPASS_MIN0 - (COMPASS_MAX360 - targetBearing);
-                logMessage("target7 = " + QString::number(target));
+                logMessage("target8 = " + QString::number(target));
                 return target;
             }
             else
             {
                 target = targetBearing;
-                logMessage("target8 = " + QString::number(target));
+                logMessage("target9 = " + QString::number(target));
                 return target;
             }
         }
         else
         {
             target = targetBearing;
-            logMessage("target9 = " + QString::number(target));
+            logMessage("target10 = " + QString::number(target));
             return target;
         }
     }
     else if (rotatorBearing >= currentMinAzimuth && rotatorBearing< COMPASS_MIN0)
     {
         target = targetBearing;
-        logMessage("target10 = " + QString::number(target));
+        logMessage("target11 = " + QString::number(target));
         return target;
     }
 
-    logMessage("target11 (error?) = " + QString::number(target));
+    logMessage("target12 (error?) = " + QString::number(target));
     return target;
 
 
