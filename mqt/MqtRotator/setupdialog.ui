@@ -106,7 +106,7 @@
      <item>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
-        <widget class="QLabel" name="label_9">
+        <widget class="QLabel" name="S_stoplbl">
          <property name="text">
           <string>S Stop</string>
          </property>

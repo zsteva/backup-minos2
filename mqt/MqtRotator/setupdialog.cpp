@@ -71,6 +71,15 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     southStopFlag[3] = ui->chkSstop4;
     southStopFlag[4] = ui->chkSstop5;
 
+    // set southStop invisible
+    ui->chkSstop1->setVisible(false);
+    ui->chkSstop2->setVisible(false);
+    ui->chkSstop3->setVisible(false);
+    ui->chkSstop4->setVisible(false);
+    ui->chkSstop5->setVisible(false);
+    ui->S_stoplbl->setVisible(false);
+
+
     overRunFlag[0] = ui->chkOverrun1;
     overRunFlag[1] = ui->chkOverrun2;
     overRunFlag[2] = ui->chkOverrun3;
