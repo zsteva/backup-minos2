@@ -86,21 +86,30 @@ void LevelMeter::reset()
 void LevelMeter::levelChanged(qreal rmsLevel, qreal peakLevel, int numSamples)
 {
     // Smooth the RMS signal
-    const qreal smooth = pow(qreal(0.9), static_cast<qreal>(numSamples) / 256); // TODO: remove this magic number
-    m_rmsLevel = (m_rmsLevel * smooth) + (rmsLevel * (1.0 - smooth));
+    if (numSamples)
+    {
+        const qreal smooth = pow(qreal(0.9), static_cast<qreal>(numSamples) / 256); // TODO: remove this magic number
+        m_rmsLevel = (m_rmsLevel * smooth) + (rmsLevel * (1.0 - smooth));
 
-    if (peakLevel > m_decayedPeakLevel) {
-        m_peakLevel = peakLevel;
-        m_decayedPeakLevel = peakLevel;
-        m_peakLevelChanged.start();
+        if (peakLevel > m_decayedPeakLevel) {
+            m_peakLevel = peakLevel;
+            m_decayedPeakLevel = peakLevel;
+            m_peakLevelChanged.start();
+        }
+
+        if (peakLevel > m_peakHoldLevel) {
+            m_peakHoldLevel = peakLevel;
+            m_peakHoldLevelChanged.start();
+        }
+    }
+    else
+    {
+        m_peakLevel = 0.0;
+        m_decayedPeakLevel = 0.0;
+        m_peakHoldLevel = 0.0;
     }
 
-    if (peakLevel > m_peakHoldLevel) {
-        m_peakHoldLevel = peakLevel;
-        m_peakHoldLevelChanged.start();
-    }
-
-    update();
+    //update();
 }
 
 void LevelMeter::redrawTimerExpired()

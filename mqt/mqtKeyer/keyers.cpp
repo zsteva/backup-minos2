@@ -1114,6 +1114,7 @@ void InitialPTTAction::timeOut()
          break;
 
       case einitPTTRelease:
+         currentKeyer->stopMicPassThrough();
          if ( currentKeyer->kconf.enablePip )
          {
             if ( !getNextAction() )
@@ -1220,6 +1221,7 @@ void InterruptingPTTAction::timeOut()
          }
 
       case einterPTTDoPip:
+         currentKeyer->stopMicPassThrough();
          if ( currentKeyer->kconf.enablePip )
          {
             if ( !getNextAction() )

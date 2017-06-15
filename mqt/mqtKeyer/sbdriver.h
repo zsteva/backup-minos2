@@ -16,14 +16,14 @@ enum sbControls {ePTT, eL1, eL2};
 #define DOFILE_T2 -3
 #define DOFILE_CW -4
 
-class QtSoundSystem;
+class RtAudioSoundSystem;
 class SoundSystemDriver
 {
    private:
       // another singleton to handle the sb card
       // it may need callbacks to interested parties!
       static SoundSystemDriver *singleton_sb;
-      QtSoundSystem *soundSystem;
+      RtAudioSoundSystem *soundSystem;
       //===============================================================
       // working values, read from control on entry, written back on exit
 

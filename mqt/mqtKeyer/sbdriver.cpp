@@ -402,7 +402,6 @@ void SoundSystemDriver::unload( void )
    delete [] cwptr;
    if ( soundSystem )
    {
-      soundSystem->terminate();
       delete soundSystem;
       soundSystem = 0;
    }
@@ -511,7 +510,7 @@ SoundSystemDriver::SoundSystemDriver() :
       cwptr( 0 ), cwSamples( 0 ),
       soundSystem( 0 ), WinVUInCallback( 0 ), WinVUOutCallback( 0 )
 {
-   soundSystem = QtSoundSystem::createSoundSystem();
+   soundSystem = RtAudioSoundSystem::createSoundSystem();
 }
 SoundSystemDriver::~SoundSystemDriver()
 {

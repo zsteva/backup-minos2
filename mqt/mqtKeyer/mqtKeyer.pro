@@ -18,6 +18,9 @@ CONFIG += c++11
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
 
+unix{DEFINES += __LINUX_ALSA__}
+win32{DEFINES += __WINDOWS_DS__}
+INCLUDEPATH += $$PWD/../rtaudio
 
 DEFINES += TIXML_USE_STL
 
@@ -33,7 +36,8 @@ SOURCES += main.cpp\
     soundsys.cpp \
     VKMixer.cpp \
     levelmeter.cpp \
-    windowMonitor.cpp
+    windowMonitor.cpp \
+    ../rtaudio/RtAudio.cpp
 
 HEADERS  += KeyerMain.h \
     keyerAbout.h \
@@ -49,13 +53,19 @@ HEADERS  += KeyerMain.h \
     soundsys.h \
     VKMixer.h \
     levelmeter.h \
-    windowMonitor.h
+    windowMonitor.h \
+    ../rtaudio/RtAudio.h \
+    ../rtaudio/include/dsound.h \
+    ../rtaudio/include/ginclude.h \
+    ../rtaudio/include/iasiodrv.h \
+    ../rtaudio/include/soundcard.h
 
 FORMS    += KeyerMain.ui \
     keyerAbout.ui \
     windowMonitor.ui
 
 unix{ LIBS += -lasound}
+win32{ LIBS += -lole32 -lwinmm -luuid -lksuser -ldsound}
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase

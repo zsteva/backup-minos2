@@ -10,42 +10,42 @@
 #define soundsysH
 
 #include "base_pch.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+// as we don't want to change rtaudio.h...
+#include "rtaudio.h"
+#pragma GCC diagnostic pop
 
-#include <QAudioInput>
-#include <QAudioOutput>
-#include <QIODevice>
+//#include <QAudioInput>
+//#include <QAudioOutput>
+//#include <QIODevice>
+
 #include "riff.h"
 
-class QtSoundSystem: public QObject
+class RtAudio;
+class RtAudioSoundSystem: public QObject
 {
     Q_OBJECT
 
 private slots:
-      void handleOutStateChanged(QAudio::State newState);
-      void handleInStateChanged(QAudio::State newState);
-      void handle_pushTimer_timeout();
 
 protected:
-    void writeDataToFile(QByteArray &inp);
-    void readFromFile();
-    void passThroughData(QByteArray &inp);
+    void writeDataToFile(void *inp, int nFrames);
+    void readFromFile(void *outputBuffer, unsigned int nFrames);
 
 public:
-    QtSoundSystem();
-    virtual ~QtSoundSystem();
+    RtAudioSoundSystem();
+    virtual ~RtAudioSoundSystem();
 
     virtual bool initialise( QString &errmess );
 
-    virtual void terminate();
     virtual int setRate(int rate);
 
     virtual bool startDMA( bool play, const QString &fname );
     virtual void stopDMA();
 
-    virtual bool startMicPassThrough();
-    virtual bool stopMicPassThrough();
-
-    static QtSoundSystem *createSoundSystem();
+    static RtAudioSoundSystem *createSoundSystem();
 
     void startOutput();
     void stopOutput();
@@ -53,26 +53,34 @@ public:
     void stopInput();
     bool startInput( QString fn );
 
+    virtual bool startMicPassThrough();
+    virtual bool stopMicPassThrough();
+
     void setData(int16_t *data, int len);
     void setPipData(int16_t *data, int len, int delayLen);
 
     int16_t *dataptr;
     long samples;
 
+    int audioCallback( void *outputBuffer, void *inputBuffer,
+                                    unsigned int nFrames,
+                                    double streamTime,
+                                    RtAudioStreamStatus status );
+
 private:
-    QTimer pushTimer;
 
-    QAudioOutput *qAudioOut;
-    QAudioInput *qAudioIn;
-    QIODevice *inDev;
-    QIODevice *outDev;
+    RtAudio *audio;
 
-      // internal values
-    int sampleRate;
+    // internal values
+    unsigned int sampleRate;
 
     bool playingFile;
     bool recordingFile;
     bool passThrough;
+
+    bool inputEnabled;
+    bool outputEnabled;
+    bool passThroughEnabled;
 
     qint64 m_pos;
     qint64 p_pos;
@@ -82,7 +90,6 @@ private:
 
     WaveFile outWave;
 
-    bool ignoreFirstIdle;
 };
 
 #endif

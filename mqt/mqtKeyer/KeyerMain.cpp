@@ -10,40 +10,44 @@ KeyerMain *keyerMain = 0;
 
 QString alsaStore("store");
 QString alsaRestore("restore");
+bool inhibitCallbacks = false;
 
 // texts for displaying the current mixer set
 
-const char *msets[] = {"emsUnloaded", "emsPassThroughNoPTT", "emsPassThroughPTT",
-                 "emsReplay", "emsReplayPip", "emsReplayT1", "emsReplayT2",
-                 "emsVoiceRecord",
-                 "emsCWTransmit", "emsCWPassThrough",
-                 "emsMicMonitor", "emsReplayMonitor",
-                 "emsMaxMixerSet"
+const char *msets[emsMaxMixerSet] = {"Unloaded", "PassThrough(NoPTT)", "PassThrough(PTT)",
+                 "Replay", "Replay Pip", "Replay Tone1", "Replay Tone2",
+                 "Voice Record",
+                 "CW Transmit", "CW PassThrough"
                 };
 
 void lcallback( bool pPTT, bool pkeyline, bool pPTTRef, bool pL1Ref, bool pL2Ref )
 {
-    keyerMain->setLines(pPTT, pPTTRef, pL1Ref, pL2Ref, pkeyline);
+    if (!inhibitCallbacks)
+        keyerMain->setLines(pPTT, pPTTRef, pL1Ref, pL2Ref, pkeyline);
 }
 
 //---------------------------------------------------------------------------
 void recvolcallback( unsigned int rmsvol, unsigned int peakvol, int samples )
 {
-    keyerMain->recvolcallback(rmsvol, peakvol, samples);
+    if (!inhibitCallbacks)
+        keyerMain->recvolcallback(rmsvol, peakvol, samples);
 }
 //---------------------------------------------------------------------------
 void outvolcallback( unsigned int rmsvol, unsigned int peakvol, int samples )
 {
-    keyerMain->outvolcallback(rmsvol, peakvol, samples);
+    if (!inhibitCallbacks)
+        keyerMain->outvolcallback(rmsvol, peakvol, samples);
 }
 void KeyerMain::outvolcallback( unsigned int rmsvol, unsigned int peakvol, int samples )
 {
-   ui->outputLevelMeter->levelChanged( rmsvol / 32768.0, peakvol / 32768.0, samples );
+    if (!inhibitCallbacks)
+        ui->outputLevelMeter->levelChanged( rmsvol / 32768.0, peakvol / 32768.0, samples );
 }
 //---------------------------------------------------------------------------
 void KeyerMain::recvolcallback(unsigned int rmsvol , unsigned int peakvol, int samples)
 {
-    ui->inputLevelMeter->levelChanged( rmsvol / 32768.0, peakvol / 32768.0, samples );
+    if (!inhibitCallbacks)
+        ui->inputLevelMeter->levelChanged( rmsvol / 32768.0, peakvol / 32768.0, samples );
 }
 
 //---------------------------------------------------------------------------
@@ -122,11 +126,13 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
 KeyerMain::~KeyerMain()
 {
+    inhibitCallbacks = true;
     delete ui;
 }
 
 void KeyerMain::closeEvent(QCloseEvent *event)
 {
+    inhibitCallbacks = true;
     unloadKeyers();
 
     QWidget::closeEvent(event);

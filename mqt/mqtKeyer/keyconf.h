@@ -32,7 +32,7 @@ class KeyerConfig
       enum KeyerType {ektVoiceKeyer};
       QString name;
       KeyerType type;
-      int sampleRate;
+      unsigned int sampleRate;
       int pipTone;
       bool enablePip;
       int startDelay;
