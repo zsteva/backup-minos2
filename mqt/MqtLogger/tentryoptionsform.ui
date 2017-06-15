@@ -19,6 +19,9 @@
   <property name="windowTitle">
    <string>Entry/Export Options</string>
   </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
+  </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QTableWidget" name="OptionsScrollBox">
