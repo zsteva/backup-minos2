@@ -398,7 +398,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(this, SIGNAL(checkingEndStop()), this, SLOT(checkEndStop()));
     connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(checkMoving(int)));
     //connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
-    //connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
+    connect(ui->actionExit , SIGNAL(triggered()), this, SLOT(close()));
 
     // setup antennas
     connect(ui->actionSetup_Antennas, SIGNAL(triggered()), selectRotator, SLOT(show()));
