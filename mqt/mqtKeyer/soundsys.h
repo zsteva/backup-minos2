@@ -17,10 +17,6 @@
 #include "rtaudio.h"
 #pragma GCC diagnostic pop
 
-//#include <QAudioInput>
-//#include <QAudioOutput>
-//#include <QIODevice>
-
 #include "riff.h"
 
 class RtAudio;
@@ -32,7 +28,7 @@ private slots:
 
 protected:
     void writeDataToFile(void *inp, int nFrames);
-    void readFromFile(void *outputBuffer, unsigned int nFrames);
+    void readFromFile(void *outputBuffer, unsigned int nFrames, int16_t &maxvol, qreal &rmsval);
 
 public:
     RtAudioSoundSystem();
@@ -56,6 +52,8 @@ public:
     virtual bool startMicPassThrough();
     virtual bool stopMicPassThrough();
 
+    void setVolumeMults(qreal record, qreal replay, qreal passThrough);
+
     void setData(int16_t *data, int len);
     void setPipData(int16_t *data, int len, int delayLen);
 
@@ -74,6 +72,8 @@ private:
     // internal values
     unsigned int sampleRate;
 
+    bool tone;
+
     bool playingFile;
     bool recordingFile;
     bool passThrough;
@@ -81,6 +81,10 @@ private:
     bool inputEnabled;
     bool outputEnabled;
     bool passThroughEnabled;
+
+    qreal recordMult;
+    qreal replayMult;
+    qreal passThroughMult;
 
     qint64 m_pos;
     qint64 p_pos;

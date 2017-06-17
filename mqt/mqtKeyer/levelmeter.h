@@ -112,6 +112,8 @@ private:
 
     QColor m_rmsColor;
     QColor m_peakColor;
+    QColor m_limitColor;
+    QColor m_maxColor;
 
 };
 

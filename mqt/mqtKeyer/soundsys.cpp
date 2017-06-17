@@ -8,7 +8,8 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
-#include <qendian.h>
+#include <QtEndian>
+#include <QtMath>
 
 #include "keyctrl.h"
 #include "keyconf.h"
@@ -87,6 +88,16 @@ int RtAudioSoundSystem::setRate(int rate)
    sampleRate = rate;
    return sampleRate;
 }
+
+void RtAudioSoundSystem::setVolumeMults(qreal record, qreal replay, qreal passThrough)
+{
+    // input levels are dB, so the actual multiplier is 10**(level/10)
+    // BUT level is already * 10, so we need /100
+    recordMult = qPow(10, record/100);
+    replayMult = qPow(10, replay/100);
+    passThroughMult = qPow(10, passThrough/100);
+}
+
 int audioCallback( void *outputBuffer, void *inputBuffer,
                                 unsigned int nFrames,
                                 double streamTime,
@@ -123,69 +134,76 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
         trace("Stream output overflow detected.");
     }
 
+
     if (outputBuffer != NULL && nFrames > 0)
     {
         memset(outputBuffer, 0, nFrames * 2);
     }
-    if (inputBuffer && nFrames)
+
+    if (inputBuffer && nFrames && inputEnabled)
     {
-        const int16_t * q = reinterpret_cast< const int16_t * > ( inputBuffer );
-         int16_t maxvol = 0;
-         qreal sqaccum = 0.0;
-
-         // determine max for VU meter
-        for ( unsigned int i = 0; i < nFrames; i++ )
-        {
-           int16_t sample = abs( *q++ );
-           if ( sample > maxvol )
-              maxvol = sample;
-
-           sqaccum += sample * sample;
-        }
-
-        qreal rmsval = sqrt(sqaccum/nFrames);
-        SoundSystemDriver::getSbDriver() ->WinVUInCallback( maxvol, rmsval, nFrames );   // as we are looking at abs of signed data
-    }
-    // Need to check and split:
-
-    // Recording - take input and write to file (via buffer and writer stream?)
-    // set output buffer to zeroes
-
-    if (inputEnabled && inputBuffer != NULL)
-    {
-        writeDataToFile(inputBuffer, nFrames);
-    }
-
-    // Replay - ignore input, write data to output, morph into piptone
-
-    if (outputEnabled && outputBuffer != NULL)
-    {
-        readFromFile(outputBuffer, nFrames);
-    }
-    // Passthrough - copy input to output, morph to piptone at end
-    if (passThroughEnabled && outputBuffer != NULL && inputBuffer != NULL)
-    {
-        memcpy( outputBuffer, inputBuffer, nFrames *  2 );  // frame is sint16, should be single channel
-    }
-
-    if (outputBuffer != NULL && nFrames > 0)
-    {
-        const int16_t * q = reinterpret_cast< const int16_t * > ( outputBuffer );
+        int16_t * q = reinterpret_cast< int16_t * > ( inputBuffer );
         int16_t maxvol = 0;
         qreal sqaccum = 0.0;
 
-         // determine max for VU meter
-        for ( unsigned int i = 0; i < nFrames; i++ )
+        for (unsigned int i = 0; i < nFrames; i++)
         {
-           int16_t sample = abs( *q++ );
-           if ( sample > maxvol )
-              maxvol = sample;
+            qreal val =*q * recordMult;
+            if (val > 32767.0)
+                val = 32767.0;
+            if (val < -32767.0)
+                val = -32767.0;
+            *q = static_cast<qint16>(val);
 
-           sqaccum += sample * sample;
+            int16_t sample = abs( *q++ );
+            if ( sample > maxvol )
+               maxvol = sample;
+
+            sqaccum += sample * sample;
         }
 
         qreal rmsval = sqrt(sqaccum/nFrames);
-        SoundSystemDriver::getSbDriver() ->WinVUOutCallback( maxvol, rmsval, nFrames );
+        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
+
+        writeDataToFile(inputBuffer, nFrames);
+    }
+
+    // Passthrough - copy input to output
+    if (passThroughEnabled && outputBuffer != NULL && inputBuffer != NULL)
+    {
+        // transcribe and multiply by the passThroughSlider
+        int16_t * q = reinterpret_cast<  int16_t * > ( inputBuffer );
+        int16_t * m = reinterpret_cast< int16_t * > ( outputBuffer );
+
+        int16_t maxvol = 0;
+        qreal sqaccum = 0.0;
+
+        for (unsigned int i = 0; i < nFrames; i++)
+        {
+            qreal val =*q++ * passThroughMult;
+            if (val > 32767.0)
+                val = 32767.0;
+            if (val < -32767.0)
+                val = -32767.0;
+            *m = static_cast<qint16>(val);
+
+            int16_t sample = abs( *m++ );
+            if ( sample > maxvol )
+               maxvol = sample;
+
+            sqaccum += sample * sample;
+        }
+        qreal rmsval = sqrt(sqaccum/nFrames);
+        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
+    }
+
+    if (outputBuffer != NULL && nFrames > 0 && outputEnabled )
+    {
+        int16_t maxvol = 0;
+        qreal rmsval = 0.0;
+        readFromFile(outputBuffer, nFrames, maxvol, rmsval);
+
+        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
     }
     // Normal, no PTT - ignore input, set ouput to zeroes
 
@@ -275,7 +293,7 @@ void RtAudioSoundSystem::stopOutput()
      {
         sba->actionTime = 1;    // force to stop
      }
-     SoundSystemDriver::getSbDriver() ->WinVUOutCallback( 0, 0, 0 );
+     SoundSystemDriver::getSbDriver() ->WinVUCallback( 0, 0, 0 );
 }
 void RtAudioSoundSystem::startInput()
 {
@@ -347,12 +365,13 @@ void RtAudioSoundSystem::writeDataToFile(void *inp, int nFrames)
         }
     }
 }
-void RtAudioSoundSystem::readFromFile(void *outputBuffer, unsigned int nFrames)
+void RtAudioSoundSystem::readFromFile(void *outputBuffer, unsigned int nFrames, int16_t &maxvol, qreal &rmsval)
 {
     if (outputBuffer && nFrames)
     {
+        int16_t *q = reinterpret_cast< int16_t * > ( outputBuffer );
+
         qint64 len = nFrames * 2;
-        QByteArray data;
 
         // we have to add in the pip here as well...
         qint64 total = 0;
@@ -368,7 +387,7 @@ void RtAudioSoundSystem::readFromFile(void *outputBuffer, unsigned int nFrames)
             {
                 qint64 ps = pipDelayBytes;
                 total = qMin(ps, len);
-                data.fill(0, total);
+                q += total/2;
                 pipDelayBytes -= total;
             }
             else
@@ -376,7 +395,8 @@ void RtAudioSoundSystem::readFromFile(void *outputBuffer, unsigned int nFrames)
                 if (!p_buffer.isEmpty())
                 {
                     total = qMin((p_buffer.size() - p_pos), len);
-                    data.append(p_buffer.constData() + p_pos, total);
+                    memcpy(q, p_buffer.constData() + p_pos, total);
+                    q += total/2;
                     p_pos += total;
                 }
                 else
@@ -392,8 +412,22 @@ void RtAudioSoundSystem::readFromFile(void *outputBuffer, unsigned int nFrames)
             if (!m_buffer.isEmpty())
             {
                 total = qMin((m_buffer.size() - m_pos), len);
-                data.append(m_buffer.constData() + m_pos, total);
 
+                const int16_t *m = reinterpret_cast< const int16_t * > ( &m_buffer.constData()[m_pos] );
+
+                qreal mult = replayMult;
+                if (tone)
+                    mult = 1.0;
+
+                for (int i = 0; i < total/2; i++)
+                {
+                    qreal val =*m++ * mult;
+                    if (val > 32767.0)
+                        val = 32767.0;
+                    if (val < -32767.0)
+                        val = -32767.0;
+                    *q++ = static_cast<qint16>(val);
+                }
                 m_pos += total;
             }
             else
@@ -406,9 +440,21 @@ void RtAudioSoundSystem::readFromFile(void *outputBuffer, unsigned int nFrames)
         if ( sba )
            sba->interruptOK();	// so as we do not time it out immediately
 
-        memset(outputBuffer, 0, nFrames * 2);
-        memcpy(outputBuffer, data.constData(), total);
+        // should already have any gain multiplication done
+         q = reinterpret_cast< int16_t * > ( outputBuffer );
 
+         // determine max for VU meter
+        qreal sqaccum = 0.0;
+        for ( unsigned int i = 0; i < nFrames; i++ )
+        {
+           int16_t sample = abs( *q++ );
+           if ( sample > maxvol )
+              maxvol = sample;
+
+           sqaccum += sample * sample;
+        }
+
+        rmsval = sqrt(sqaccum/nFrames);
     }
 }
 
@@ -427,6 +473,8 @@ bool RtAudioSoundSystem::startDMA( bool play, const QString &fname )
         playingFile = true;
         recordingFile = false;
         passThrough = false;
+
+        tone = fname.isEmpty();
 
         setData(dataptr, samples);
         KeyerAction * sba = KeyerAction::getCurrentAction();
@@ -475,9 +523,7 @@ void RtAudioSoundSystem::stopDMA()
     playingFile = false;
     recordingFile = false;
     passThrough = true;
-    SoundSystemDriver::getSbDriver() ->WinVUInCallback( 0, 0, 0 );
-    SoundSystemDriver::getSbDriver() ->WinVUOutCallback( 0, 0, 0 );
-
+    SoundSystemDriver::getSbDriver() ->WinVUCallback( 0, 0, 0 );
 }
 bool RtAudioSoundSystem::startMicPassThrough()
 {
@@ -491,5 +537,6 @@ bool RtAudioSoundSystem::stopMicPassThrough()
     trace("stopMicPassThrough");
 
     passThroughEnabled = false;
+    SoundSystemDriver::getSbDriver() ->WinVUCallback( 0, 0, 0 );
     return true;
 }

@@ -5,6 +5,7 @@
 #include "keyctrl.h"
 #include "KeyerRPCServer.h"
 #include "VKMixer.h"
+#include "sbdriver.h"
 
 KeyerMain *keyerMain = 0;
 
@@ -14,10 +15,15 @@ bool inhibitCallbacks = false;
 
 // texts for displaying the current mixer set
 
-const char *msets[emsMaxMixerSet] = {"Unloaded", "PassThrough(NoPTT)", "PassThrough(PTT)",
-                 "Replay", "Replay Pip", "Replay Tone1", "Replay Tone2",
+const char *msets[emsMaxMixerSet] = {"Unloaded", "No PTT", "PassThrough",
+                 "Replay", "Pip", "Replay Tone1", "Replay Tone2",
                  "Voice Record",
                  "CW Transmit", "CW PassThrough"
+                };
+const char *levelLabels[emsMaxMixerSet] = {"none", "none", "output",
+                 "output", "output", "output", "output",
+                 "input",
+                 "output", "output"
                 };
 
 void lcallback( bool pPTT, bool pkeyline, bool pPTTRef, bool pL1Ref, bool pL2Ref )
@@ -27,27 +33,24 @@ void lcallback( bool pPTT, bool pkeyline, bool pPTTRef, bool pL1Ref, bool pL2Ref
 }
 
 //---------------------------------------------------------------------------
-void recvolcallback( unsigned int rmsvol, unsigned int peakvol, int samples )
-{
-    if (!inhibitCallbacks)
-        keyerMain->recvolcallback(rmsvol, peakvol, samples);
-}
+// Actually, we only want ONE level meter -
+// input for recording
+// output for replay/passthrough
+
+// And we want gain control
+// on input level for recording
+// on output level from recording
+// on transfer level for pasthrough
 //---------------------------------------------------------------------------
-void outvolcallback( unsigned int rmsvol, unsigned int peakvol, int samples )
+void volcallback( unsigned int rmsvol, unsigned int peakvol, int samples )
 {
     if (!inhibitCallbacks)
-        keyerMain->outvolcallback(rmsvol, peakvol, samples);
+        keyerMain->volcallback(rmsvol, peakvol, samples);
 }
-void KeyerMain::outvolcallback( unsigned int rmsvol, unsigned int peakvol, int samples )
+void KeyerMain::volcallback(unsigned int rmsvol , unsigned int peakvol, int samples)
 {
     if (!inhibitCallbacks)
-        ui->outputLevelMeter->levelChanged( rmsvol / 32768.0, peakvol / 32768.0, samples );
-}
-//---------------------------------------------------------------------------
-void KeyerMain::recvolcallback(unsigned int rmsvol , unsigned int peakvol, int samples)
-{
-    if (!inhibitCallbacks)
-        ui->inputLevelMeter->levelChanged( rmsvol / 32768.0, peakvol / 32768.0, samples );
+        ui->levelMeter->levelChanged( rmsvol / 32768.0, peakvol / 32768.0, samples );
 }
 
 //---------------------------------------------------------------------------
@@ -88,6 +91,18 @@ KeyerMain::KeyerMain(QWidget *parent) :
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
+    inVolChange = true;
+
+    int recordLevel = settings.value("RecordLevel", 0).toInt();
+    int replayLevel = settings.value("ReplayLevel", 0).toInt();
+    int passThroughLevel = settings.value("PassThroughLevel", 0).toInt();
+
+    ui->recordSlider->setValue(recordLevel);
+    ui->replaySlider->setValue(replayLevel);
+    ui->passThroughSlider->setValue(passThroughLevel);
+
+    inVolChange = false;
+
     enableTrace( "./TraceLog", "MinosKeyer_" );
 
     createCloseEvent();
@@ -98,13 +113,16 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
     runAlsaScript(alsaFileName, alsaRestore);
 
+
     mixer = VKMixer::OpenMixer();
 
     keyerMain = this;
     setLineCallBack( lcallback );
-    setVUCallBack( &::recvolcallback, &::outvolcallback );
+    setVUCallBack( &::volcallback );
 
     loadKeyers();
+
+    setVolumeMults();
 
     connect(&LineTimer, SIGNAL(timeout()), this, SLOT(LineTimerTimer()));
     LineTimer.start(100);
@@ -171,7 +189,7 @@ void KeyerMain::LineTimerTimer( )
        }
     }
 
-    syncSetLines();
+   syncSetLines();
    bool PTT = getPTT();
    if ( recordWait && PTT )
    {
@@ -188,6 +206,8 @@ void KeyerMain::LineTimerTimer( )
       }
    KeyerServer::publishCommand( ui->recind->text() );
    eMixerSets m = mixer->GetCurrentMixerSet();
+
+   ui->levelLabel->setText(levelLabels[m]);
 
    QString astate;
    getActionState( astate );
@@ -349,8 +369,6 @@ void KeyerMain::on_started()
 void KeyerMain::on_finished(int err, QProcess::ExitStatus exitStatus)
 {
     trace("AlsaCtl :finished:" + QString::number(err) + ":" + QString::number(exitStatus));
-
-    // we need to delete runner sometime - but not yet?
 }
 
 void KeyerMain::on_error(QProcess::ProcessError error)
@@ -413,4 +431,74 @@ void KeyerMain::on_restoreAlsaButton_clicked()
 {
     QString alsaFileName = ui->setupScriptEdit->text();
     runAlsaScript(alsaFileName, alsaRestore);
+}
+
+void KeyerMain::setVolumeMults()
+{
+    int record = ui->recordSlider->value();
+    int replay = ui->replaySlider->value();
+    int passThrough = ui->passThroughSlider->value();
+    SoundSystemDriver::getSbDriver()->setVolumeMults(record, replay, passThrough);
+
+    inVolChange = true;
+
+    ui->recordValue->setValue(record/10.0);
+    ui->replayValue->setValue(replay/10.0);
+    ui->passThroughValue->setValue(passThrough/10.0);
+
+    inVolChange = false;
+}
+
+void KeyerMain::on_recordSlider_valueChanged(int position)
+{
+    if (!inVolChange)
+    {
+        QSettings settings;
+        settings.setValue("RecordLevel", position);
+    }
+    setVolumeMults();
+}
+
+void KeyerMain::on_replaySlider_valueChanged(int position)
+{
+    if (!inVolChange)
+    {
+        QSettings settings;
+        settings.setValue("ReplayLevel", position);
+    }
+    setVolumeMults();
+}
+
+void KeyerMain::on_passThroughSlider_valueChanged(int position)
+{
+    if (!inVolChange)
+    {
+        QSettings settings;
+        settings.setValue("PassThroughLevel", position);
+    }
+    setVolumeMults();
+}
+
+void KeyerMain::on_recordValue_valueChanged(double arg1)
+{
+    if (!inVolChange)
+    {
+        ui->recordSlider->setValue(arg1 * 10);
+    }
+}
+
+void KeyerMain::on_replayValue_valueChanged(double arg1)
+{
+    if (!inVolChange)
+    {
+        ui->replaySlider->setValue(arg1 * 10);
+    }
+}
+
+void KeyerMain::on_passThroughValue_valueChanged(double arg1)
+{
+    if (!inVolChange)
+    {
+        ui->passThroughSlider->setValue(arg1 * 10);
+    }
 }

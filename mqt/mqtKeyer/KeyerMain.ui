@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>883</width>
+    <width>892</width>
     <height>587</height>
    </rect>
   </property>
@@ -14,7 +14,7 @@
    <string>Minos Voice Keyer</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout_15">
     <item>
      <widget class="QTabWidget" name="KeyerTabs">
       <property name="currentIndex">
@@ -391,11 +391,11 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout_14">
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="LevelMeter" name="inputLevelMeter" native="true">
+          <widget class="LevelMeter" name="levelMeter" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -405,9 +405,19 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_8">
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>Metering</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="levelLabel">
            <property name="text">
             <string>Input</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -416,19 +426,268 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="LevelMeter" name="outputLevelMeter" native="true">
+          <widget class="QDoubleSpinBox" name="recordValue">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="decimals">
+            <number>1</number>
+           </property>
+           <property name="minimum">
+            <double>-10.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.100000000000000</double>
+           </property>
           </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>1</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QSlider" name="recordSlider">
+             <property name="minimum">
+              <number>-100</number>
+             </property>
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::TicksBelow</enum>
+             </property>
+             <property name="tickInterval">
+              <number>10</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_10">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>1</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>
+Record</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <item>
+          <widget class="QDoubleSpinBox" name="replayValue">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="decimals">
+            <number>1</number>
+           </property>
+           <property name="minimum">
+            <double>-10.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.100000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <spacer name="horizontalSpacer_12">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>1</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QSlider" name="replaySlider">
+             <property name="minimum">
+              <number>-100</number>
+             </property>
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::TicksBelow</enum>
+             </property>
+             <property name="tickInterval">
+              <number>10</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_11">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>1</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>
+Replay</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <widget class="QDoubleSpinBox" name="passThroughValue">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="decimals">
+            <number>1</number>
+           </property>
+           <property name="minimum">
+            <double>-10.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.100000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_13">
+           <item>
+            <spacer name="horizontalSpacer_13">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>1</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QSlider" name="passThroughSlider">
+             <property name="minimum">
+              <number>-100</number>
+             </property>
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::TicksBelow</enum>
+             </property>
+             <property name="tickInterval">
+              <number>10</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_14">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>1</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
          <item>
           <widget class="QLabel" name="label_9">
            <property name="text">
-            <string>Output</string>
+            <string>Pass
+Through</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

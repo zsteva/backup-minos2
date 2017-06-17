@@ -67,7 +67,7 @@ bool getPTT();
 
 void getActionState( QString & );    // returns current keyer action state string
 
-void setVUCallBack( VUCallBack in, VUCallBack out );
+void setVUCallBack(VUCallBack cb);
 
 void startRecordDVPFile( int fileno );
 void finishRecordDVPFile( void );

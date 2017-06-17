@@ -300,6 +300,10 @@ bool SoundSystemDriver::stopMicPassThrough()
 {
     return soundSystem->stopMicPassThrough();
 }
+void SoundSystemDriver::setVolumeMults(int record, int replay, int passThrough)
+{
+    soundSystem->setVolumeMults(record, replay, passThrough);
+}
 
 bool SoundSystemDriver::sbdvp_init( QString &errmess, int srate, int pipTone, int pipVolume, int pipLength )
 {
@@ -508,7 +512,7 @@ SoundSystemDriver::SoundSystemDriver() :
       cwTone( -1 ), ready( false ),
       lastCWRate( 0 ), t1ptr( 0 ), t2ptr( 0 ), toneSamples( 0 ),
       cwptr( 0 ), cwSamples( 0 ),
-      soundSystem( 0 ), WinVUInCallback( 0 ), WinVUOutCallback( 0 )
+      soundSystem( 0 ), WinVUCallback( 0 )
 {
    soundSystem = RtAudioSoundSystem::createSoundSystem();
 }

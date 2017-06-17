@@ -22,8 +22,7 @@ public:
     ~KeyerMain();
 
     void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool key );
-    void recvolcallback( unsigned int rmsvol , unsigned int peakvol, int samples );
-    void outvolcallback(unsigned int rmsvol , unsigned int peakvol, int samples);
+    void volcallback( unsigned int rmsvol , unsigned int peakvol, int samples );
 
 private slots:
 
@@ -66,6 +65,18 @@ private slots:
 
     void on_restoreAlsaButton_clicked();
 
+    void on_recordSlider_valueChanged(int position);
+
+    void on_replaySlider_valueChanged(int position);
+
+    void on_passThroughSlider_valueChanged(int position);
+
+    void on_recordValue_valueChanged(double arg1);
+
+    void on_replayValue_valueChanged(double arg1);
+
+    void on_passThroughValue_valueChanged(double arg1);
+
 private:
     void syncSetLines();
     QTimer LineTimer;
@@ -85,6 +96,8 @@ private:
     bool inVolChange;
 
     QProcess *runner;
+
+    void setVolumeMults();
 
 
     void runAlsaScript(const QString &alsaFileName, const QString &command);

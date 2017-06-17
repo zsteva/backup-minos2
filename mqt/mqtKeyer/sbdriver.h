@@ -68,8 +68,9 @@ class SoundSystemDriver
 
       unsigned int rate;   /* rate in Hertz -- this gets reset to nearest available value */
 
-      VUCallBack WinVUInCallback;
-      VUCallBack WinVUOutCallback;
+      VUCallBack WinVUCallback;
+
+      void setVolumeMults(int record, int replay, int passThrough);
 
       bool dofile( int i, int clipRecord = 0 );
       void stoprec();

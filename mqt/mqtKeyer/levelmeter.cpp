@@ -61,8 +61,10 @@ LevelMeter::LevelMeter(QWidget *parent)
     ,   m_peakDecayRate(PeakDecayRate)
     ,   m_peakHoldLevel(0.0)
     ,   m_redrawTimer(new QTimer(this))
-    ,   m_rmsColor(Qt::red)
+    ,   m_rmsColor(Qt::green)
     ,   m_peakColor(255, 200, 200, 255)
+    ,   m_limitColor(Qt::red)
+    ,   m_maxColor(Qt::yellow)
 {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     setMinimumWidth(30);
@@ -80,6 +82,7 @@ void LevelMeter::reset()
 {
     m_rmsLevel = 0.0;
     m_peakLevel = 0.0;
+    m_decayedPeakLevel = 0.0;
     update();
 }
 
@@ -104,12 +107,8 @@ void LevelMeter::levelChanged(qreal rmsLevel, qreal peakLevel, int numSamples)
     }
     else
     {
-        m_peakLevel = 0.0;
-        m_decayedPeakLevel = 0.0;
-        m_peakHoldLevel = 0.0;
+        reset();
     }
-
-    //update();
 }
 
 void LevelMeter::redrawTimerExpired()
@@ -133,22 +132,52 @@ void LevelMeter::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)
 
-    // decibels = 20 * log(ratio);  // so ratio of 1 is 0db
+    // NB levels have already been normalised to 0.0->1.0
+    // so their logs are all negative
+
+    // mult by 1,000.000 and THEN take log (or take log and add 6 == log (1,000,000)), they will be positive.
+    // ten divide by 6 to scale back to 0 - 1.0
+
+    qreal maxLevel = (log(0.5) + 6.0)/6.0;
+
+    qreal peakHoldLevel = (log(m_peakHoldLevel) + 6.0)/6.0;
+    qreal decayedPeakLevel = (log(m_decayedPeakLevel) + 6.0)/6.0;
+    qreal rmsLevel = (log(m_rmsLevel) + 6.0)/6.0;
+
+    if (peakHoldLevel < 0)
+        peakHoldLevel = 0;
+    if (decayedPeakLevel < 0)
+        decayedPeakLevel = 0;
+    if (rmsLevel < 0)
+        rmsLevel = 0;
 
     QPainter painter(this);
     painter.fillRect(rect(), Qt::black);
 
     QRect bar = rect();
 
-    bar.setTop(rect().top() + (1.0 - m_peakHoldLevel) * rect().height());
-    bar.setBottom(bar.top() + 5);
-    painter.fillRect(bar, m_rmsColor);
+
+    if (peakHoldLevel > 0.98)
+    {
+        bar.setTop(rect().top());
+        bar.setBottom(bar.top() + 15);   //depth for peak hold bar
+        painter.fillRect(bar, m_limitColor);
+    }
+    else
+    {
+        bar.setTop(rect().top() + (1.0 - peakHoldLevel) * rect().height());
+        bar.setBottom(bar.top() + 5);   // depth for peak hold bar
+        painter.fillRect(bar, m_rmsColor);
+    }
     bar.setBottom(rect().bottom());
 
-    bar.setTop(rect().top() + (1.0 - m_decayedPeakLevel) * rect().height());
-    painter.fillRect(bar, m_peakColor);
+//    bar.setTop(rect().top() + (1.0 - decayedPeakLevel) * rect().height());
+//    painter.fillRect(bar, m_peakColor);
 
-    bar.setTop(rect().top() + (1.0 - m_rmsLevel) * rect().height());
+    bar.setTop(rect().top() + (1.0 - rmsLevel) * rect().height());
     painter.fillRect(bar, m_rmsColor);
 
+    bar.setTop(rect().top() + (1.0 - maxLevel) * rect().height());
+    bar.setBottom(bar.top() + 5);   // why 5? 5 pixels depth for peak hold bar
+    painter.fillRect(bar, m_maxColor);
 }

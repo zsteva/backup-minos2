@@ -256,10 +256,9 @@ void setLineCallBack( LineCallBack lcallback )
    WinMonitor::WinLineCallback = lcallback;
    LineEventsPort::WinLineCallback = lcallback;
 }
-void setVUCallBack( VUCallBack in, VUCallBack out )
+void setVUCallBack( VUCallBack cb )
 {
-   SoundSystemDriver::getSbDriver() ->WinVUInCallback = in;
-   SoundSystemDriver::getSbDriver() ->WinVUOutCallback = out;
+   SoundSystemDriver::getSbDriver() ->WinVUCallback = cb;
 }
 int getAutoRepeatDelay()
 {
