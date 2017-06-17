@@ -248,7 +248,7 @@ void TMinosChatForm::keyPressEvent( QKeyEvent* event )
 {
     int Key = event->key();
 
-    if (Key == Qt::Key_Return)
+    if (Key == Qt::Key_Return || Key == Qt::Key_Enter)
     {
         ui->SendButton->clicked();
     }

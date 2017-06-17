@@ -121,7 +121,7 @@ bool QSOLogFrame::doKeyPressEvent( QKeyEvent* event )
     bool ctrl = mods & Qt::ControlModifier;
     //bool alt = mods & Qt::AltModifier;
 
-    if (Key == Qt::Key_Return)
+    if (Key == Qt::Key_Return || Key == Qt::Key_Enter)
     {
         QMetaObject::invokeMethod(ui->GJVOKButton, "clicked", Qt::QueuedConnection);
         return true;
