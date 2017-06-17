@@ -23,7 +23,7 @@
 #pragma GCC diagnostic ignored "-Wunused-result"
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 // as we don't want to change rtaudio.h...
-#include "rtaudio.h"
+#include "RtAudio.h"
 #pragma GCC diagnostic pop
 /*static*/
 RtAudioSoundSystem *RtAudioSoundSystem::createSoundSystem()
