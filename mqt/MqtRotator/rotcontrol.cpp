@@ -41,6 +41,13 @@ RotControl::RotControl()
     rot_azimuth = 0.0;
     rot_elevation = 0.0;
 
+    // set callback for debug messages
+    // NB callback is the C function, not the class method.
+    // user_data is used to point to our class.
+
+    rig_set_debug_callback (::rig_message_cb, static_cast<rig_ptr_t>(this));
+
+
 }
 
 
@@ -401,6 +408,31 @@ int RotControl::calcSouthBearing(int rotatorBearing)
 
 }
 
+
+
+
+
+// which passes the call to this method
+int RotControl::rig_message_cb(enum rig_debug_level_e debug_level, const char *fmt, va_list ap)
+{
+    char buf[1024];
+//    rig_debug_level_e dbl = debug_level;
+
+    vsprintf (buf, fmt, ap);
+    QString s = QString::fromLatin1(buf);
+    emit debug_protocol(s);
+
+    return RIG_OK;
+}
+
+
+
+int rig_message_cb(enum rig_debug_level_e debug_level, rig_ptr_t user_data, const char *fmt, va_list ap)
+{
+    RotControl *rt = static_cast<RotControl *>(user_data);
+    return rt->rig_message_cb(debug_level, fmt, ap);
+
+}
 
 bool model_Sort(const rot_caps *caps1,const rot_caps *caps2)
 {

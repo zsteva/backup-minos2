@@ -398,7 +398,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(this, SIGNAL(checkingEndStop()), this, SLOT(checkEndStop()));
     connect(rotator, SIGNAL(bearing_updated(int)), this, SLOT(checkMoving(int)));
     //connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(closeSerialPort()));
-    connect(ui->actionExit , SIGNAL(triggered()), this, SLOT(close()));
+
 
     // setup antennas
     connect(ui->actionSetup_Antennas, SIGNAL(triggered()), selectRotator, SLOT(show()));
@@ -413,6 +413,7 @@ void RotatorMainWindow::initActionsConnections()
     connect(setupLog, SIGNAL(bearingLogConfigChanged()), rotlog, SLOT(getBearingLogConfig()));
     connect(rotator, SIGNAL(bearing_updated(int)), rotlog, SLOT(saveBearingLog(int)));
 
+    connect(rotator, SIGNAL(debug_protocol(QString)), this, SLOT(logMessage(QString)));
 
     // Message from Logger
     connect(msg, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));
@@ -420,7 +421,7 @@ void RotatorMainWindow::initActionsConnections()
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     //connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-
+    connect(ui->actionExit , SIGNAL(triggered()), this, SLOT(close()));
 
 
 

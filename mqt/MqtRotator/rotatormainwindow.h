@@ -154,7 +154,7 @@ private:
 
     void hamlibError(int errorCode);
 
-    void logMessage( QString s );
+
 
     void sleepFor(qint64 milliseconds);
 
@@ -166,6 +166,7 @@ public slots:
     void displayBearing(int);
     void updatePresetLabels();
     void clickedPreset(int buttonNumber);
+    void logMessage( QString s );
 
 protected slots:
     void upDateAntenna();
