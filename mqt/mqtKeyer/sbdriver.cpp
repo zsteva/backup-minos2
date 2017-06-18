@@ -57,10 +57,10 @@ class dvkFile
             frec = false;
             fsample = inWave.NumSamples();
 
-            if ( rate == static_cast<unsigned int>(sampleRate) && BitsPerSample == 16 && NumChannels == 1 )
+            if ( rate == static_cast<unsigned int>(sampleRate) && BitsPerSample == 16 && NumChannels == 2 )
             {
-               fptr = new int16_t[ fsample ];
-               if ( inWave.ReadData( fptr, fsample ) == DDC_SUCCESS )
+               fptr = new int16_t[ fsample * 2 ];
+               if ( inWave.ReadData( fptr, fsample * 2 ) == DDC_SUCCESS )
                {
                   if ( sblog )
                   {
@@ -117,7 +117,7 @@ bool SoundSystemDriver::dofile( int i, int clipRecord )
       {
          return false;
       }
-      samples = recfil[ ihand ] ->fsample - clipRecord * ( rate / 1000.0 );
+      samples = (recfil[ ihand ] ->fsample - clipRecord * ( rate / 1000.0 )) * 2;
       ptr = recfil[ ihand ] ->fptr;
 
       if ( sblog )
@@ -130,29 +130,29 @@ bool SoundSystemDriver::dofile( int i, int clipRecord )
       {
          // set mic off, wave out on
          ptr = pipptr;
-         samples = pipSamples;
+         samples = pipSamples * 2;
          if ( sblog )
          {
-            trace( "pipSamples = " + QString::number( samples ) );
+            trace( "pipSamples = " + QString::number( pipSamples ) );
          }
       }
       else
          if ( play && ihand == DOFILE_T1 )
          {
             ptr = t1ptr;
-            samples = toneSamples;
+            samples = toneSamples * 2;
          }
          else
             if ( play && ihand == DOFILE_T2 )
             {
                ptr = t2ptr;
-               samples = toneSamples;
+               samples = toneSamples * 2;
             }
             else
                if ( play && ihand == DOFILE_CW )
                {
                   ptr = cwptr;
-                  samples = cwSamples;
+                  samples = cwSamples * 2;
                }
    soundSystem->samples = samples;
    soundSystem->dataptr = ptr;
@@ -413,7 +413,7 @@ void SoundSystemDriver::unload( void )
 //==============================================================================
 
 void SoundSystemDriver::genTone(int16_t *dest, bool add
-                           , int tone, int samples, int rtime, double volmult )
+                           , int tone, int samples, int rtime, double volmult, int16_t *enddest )
 {
    if ( sblog )
    {
@@ -432,48 +432,72 @@ void SoundSystemDriver::genTone(int16_t *dest, bool add
 
    int16_t *buff = new int16_t [ CHUNKSIZE ];
 
-   int16_t *sourceptr = buff;
-   int16_t * destptr = dest;
 
-   for ( int buffstart = 0; buffstart < samples; buffstart += CHUNKSIZE )
+   for ( int buffstart = 0; buffstart < samples * 2; buffstart += CHUNKSIZE * 2 )
    {
+      int16_t * destptr = dest + buffstart;
       int i;
-      for ( i = 0; i < CHUNKSIZE && buffstart + i < samples; i++ )
+      for ( i = 0; i < CHUNKSIZE && buffstart + i*2 < samples * 2; i++ )
       {
          double y3 = yk * y2 - y1;
          y1 = y2;
          y2 = y3;
-         if ( buffstart + i < rtime )
-            buff[ i ] = int16_t( y3 * ( ( volmult * ( buffstart + i ) ) / rtime ) );	// not full volume
+         if ( buffstart + i * 2 < rtime * 2 )
+         {
+            buff[ i ] = int16_t( y3 * ( ( volmult * (( buffstart + i )/2) ) / rtime ) );	// not full volume
+            if (abs(buff[i]) > 32767)
+            {
+               mShowMessage( "Big sum...", 0 );
+            }
+         }
          else
-            if ( buffstart + i > ( samples - rtime ) )
-               buff[ i ] = int16_t( y3 * ( ( volmult * ( samples - ( buffstart + i ) ) ) / rtime ) );	// not full volume
+         {
+            if ( buffstart + i * 2 > ( samples - rtime ) * 2 )
+            {
+               buff[ i ] = int16_t( y3 * ( ( volmult * (( samples * 2 - ( buffstart + i*2 ) )/2) ) / rtime ) );	// not full volume
+               if (abs(buff[i]) > 32767)
+               {
+                  mShowMessage( "Big sum...", 0 );
+               }
+            }
             else
+            {
                buff[ i ] = int16_t( y3 * volmult );	// not full volume
+               if (abs(buff[i]) > 32767)
+               {
+                  mShowMessage( "Big sum...", 0 );
+               }
+            }
+         }
 
       }
       // write (or add in place) i bytes to the handle
 
-      if ( add
-            )
+      if ( add )
          {
-            for ( int j = 0; j < i; j++ )
+            for ( int j = 0; j < i ; j++ )
             {
-               if ( destptr[ j ] + sourceptr[ j ] > 32767 || destptr[ j ] + sourceptr[ j ] < -32768 )
+               if ( destptr[ j * 2 ] + buff[ j ] > 32767 || destptr[ j * 2] + buff[ j ] < -32768 )
                {
                   mShowMessage( "Big sum...", 0 );
                }
-               destptr[ j ] = destptr[ j ] + sourceptr[ j ];
+               destptr[ j * 2 ] = destptr[ j * 2 ] + buff[ j ];
+               destptr[ j * 2 + 1] = destptr[ j * 2 + 1] + buff[ j ];
             }
          }
       else
       {
-         memcpy( destptr, sourceptr, i * 2 );
+          for (int j = 0; j < i; j++)
+          {
+              if (&destptr[j * 2 + 1] > enddest)
+                  mShowMessage( "bad data...", 0 );
+              destptr[j * 2] = buff[j];
+              destptr[j * 2 + 1] = buff[j];
+          }
       }
-      destptr += i;
-
    }
    delete [] buff;
+   buff = 0;
 }
 bool SoundSystemDriver::createPipTone( QString &/*errmess*/, int pipTone, int pipVolume, int pipLength )
 {
@@ -487,10 +511,10 @@ bool SoundSystemDriver::createPipTone( QString &/*errmess*/, int pipTone, int pi
 
       pipSamples = rate * ( pipLength / 1000.0 );
       int ramptime = pipSamples / 6;
-      pipptr = new int16_t [ pipSamples ];
+      pipptr = new int16_t [ pipSamples * 2 ];
 
       const double volmult = 32767.0 * pipVolume / 100.0;
-      genTone( pipptr, false, pipTone, pipSamples, ramptime, volmult );
+      genTone( pipptr, false, pipTone, pipSamples, ramptime, volmult, &pipptr[pipSamples * 2 - 1] );
    }
    return true;
 }
@@ -530,21 +554,21 @@ void SoundSystemDriver::initTone1( int t1 )
    delete [] t1ptr;
    toneSamples = rate * static_cast<long>(tuneTime);
 
-   t1ptr = new int16_t [ toneSamples ];
+   t1ptr = new int16_t [ toneSamples * 2 ];
 
-   genTone( t1ptr, false, t1, toneSamples, 5000 /* ramp time*/, ( tuneLevel / 100 ) * 32767.0 );
+   genTone( t1ptr, false, t1, toneSamples, 5000 /* ramp time*/, ( tuneLevel / 100 ) * 32767.0, &t1ptr[toneSamples * 2 - 1] );
 }
 void SoundSystemDriver::initTone2( int t1, int t2 )
 {
    delete [] t2ptr;
 
    toneSamples = rate * static_cast<long>(tuneTime);
-   t2ptr = new int16_t [ toneSamples ];
+   t2ptr = new int16_t [ toneSamples * 2 ];
    // ((tuneLevel/100) * 32767.0) / sqrt( 2 ) is an attempt to get equal power - but it can result
    // in peak levels that are out of range, so what to do? Flat top it?
    // Or insist on lower levels?
-   genTone( t2ptr, false, t1, toneSamples, 5000 /* ramp time*/, ( ( tuneLevel / 100 ) * 32767.0 ) / 2 );
-   genTone( t2ptr, true, t2, toneSamples, 5000 /* ramp time*/, ( ( tuneLevel / 100 ) * 32767.0 ) / 2 );
+   genTone( t2ptr, false, t1, toneSamples, 5000 /* ramp time*/, ( ( tuneLevel / 100 ) * 32767.0 ) / 2, &t2ptr[toneSamples * 2 - 1] );
+   genTone( t2ptr, true, t2, toneSamples, 5000 /* ramp time*/, ( ( tuneLevel / 100 ) * 32767.0 ) / 2, &t2ptr[toneSamples * 2 - 1] );
 }
 void SoundSystemDriver::startTone1()
 {
@@ -593,8 +617,8 @@ void SoundSystemDriver::createCWBuffer( const char *message, int speed, int tone
    int16_t *dahbuff = new int16_t [ fulldah * 2 ];
    memset ( dahbuff, 0, fulldah * 2 );
 
-   genTone( ditbuff, false, tone, ditlength, ramptime, 32767.0 * 0.9 );
-   genTone( dahbuff, false, tone, dahlength, ramptime, 32767.0 * 0.9 );
+   genTone( ditbuff, false, tone, ditlength, ramptime, 32767.0 * 0.9, &ditbuff[fulldit * 2 - 1] );
+   genTone( dahbuff, false, tone, dahlength, ramptime, 32767.0 * 0.9, &dahbuff[fulldah * 2 - 1] );
 
    size_t messlen = strlen( message );
    int messsamples = 0;

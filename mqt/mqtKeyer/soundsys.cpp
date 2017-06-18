@@ -26,9 +26,20 @@
 #include "RtAudio.h"
 #pragma GCC diagnostic pop
 /*static*/
+//==============================================================================
 RtAudioSoundSystem *RtAudioSoundSystem::createSoundSystem()
 {
    return new RtAudioSoundSystem();
+}
+//==============================================================================
+int audioCallback( void *outputBuffer, void *inputBuffer,
+                                unsigned int nFrames,
+                                double streamTime,
+                                RtAudioStreamStatus status,
+                                void *userData )
+{
+    RtAudioSoundSystem *qss = static_cast<RtAudioSoundSystem *>(userData);
+    return qss->audioCallback(outputBuffer, inputBuffer, nFrames, streamTime, status);
 }
 //==============================================================================
 RtAudioSoundSystem::RtAudioSoundSystem() :
@@ -83,133 +94,6 @@ RtAudioSoundSystem::~RtAudioSoundSystem()
    }
    delete audio;
 }
-int RtAudioSoundSystem::setRate(int rate)
-{
-   sampleRate = rate;
-   return sampleRate;
-}
-
-void RtAudioSoundSystem::setVolumeMults(qreal record, qreal replay, qreal passThrough)
-{
-    // input levels are dB, so the actual multiplier is 10**(level/10)
-    // BUT level is already * 10, so we need /100
-    recordMult = qPow(10, record/100);
-    replayMult = qPow(10, replay/100);
-    passThroughMult = qPow(10, passThrough/100);
-}
-
-int audioCallback( void *outputBuffer, void *inputBuffer,
-                                unsigned int nFrames,
-                                double streamTime,
-                                RtAudioStreamStatus status,
-                                void *userData )
-{
-    RtAudioSoundSystem *qss = static_cast<RtAudioSoundSystem *>(userData);
-    return qss->audioCallback(outputBuffer, inputBuffer, nFrames, streamTime, status);
-}
-int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
-                                unsigned int nFrames,
-                                double /*streamTime*/,
-                                RtAudioStreamStatus status )
-{
-    if (outputBuffer == NULL && inputBuffer == NULL)
-    {
-        return 0;   // no data
-    }
-
-    /*
-   To continue normal stream operation, the RtAudioCallback function
-   should return a value of zero.  To stop the stream and drain the
-   output buffer, the function should return a value of one.  To abort
-   the stream immediately, the client should return a value of two.      */
-
-    // Since the number of input and output channels is equal, we can do
-    // a simple buffer copy operation here.
-    if ( status == RTAUDIO_INPUT_OVERFLOW)
-    {
-        trace("Stream input underflow detected.");
-    }
-    if (status == RTAUDIO_OUTPUT_UNDERFLOW)
-    {
-        trace("Stream output overflow detected.");
-    }
-
-
-    if (outputBuffer != NULL && nFrames > 0)
-    {
-        memset(outputBuffer, 0, nFrames * 2);
-    }
-
-    if (inputBuffer && nFrames && inputEnabled)
-    {
-        int16_t * q = reinterpret_cast< int16_t * > ( inputBuffer );
-        int16_t maxvol = 0;
-        qreal sqaccum = 0.0;
-
-        for (unsigned int i = 0; i < nFrames; i++)
-        {
-            qreal val =*q * recordMult;
-            if (val > 32767.0)
-                val = 32767.0;
-            if (val < -32767.0)
-                val = -32767.0;
-            *q = static_cast<qint16>(val);
-
-            int16_t sample = abs( *q++ );
-            if ( sample > maxvol )
-               maxvol = sample;
-
-            sqaccum += sample * sample;
-        }
-
-        qreal rmsval = sqrt(sqaccum/nFrames);
-        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
-
-        writeDataToFile(inputBuffer, nFrames);
-    }
-
-    // Passthrough - copy input to output
-    if (passThroughEnabled && outputBuffer != NULL && inputBuffer != NULL)
-    {
-        // transcribe and multiply by the passThroughSlider
-        int16_t * q = reinterpret_cast<  int16_t * > ( inputBuffer );
-        int16_t * m = reinterpret_cast< int16_t * > ( outputBuffer );
-
-        int16_t maxvol = 0;
-        qreal sqaccum = 0.0;
-
-        for (unsigned int i = 0; i < nFrames; i++)
-        {
-            qreal val =*q++ * passThroughMult;
-            if (val > 32767.0)
-                val = 32767.0;
-            if (val < -32767.0)
-                val = -32767.0;
-            *m = static_cast<qint16>(val);
-
-            int16_t sample = abs( *m++ );
-            if ( sample > maxvol )
-               maxvol = sample;
-
-            sqaccum += sample * sample;
-        }
-        qreal rmsval = sqrt(sqaccum/nFrames);
-        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
-    }
-
-    if (outputBuffer != NULL && nFrames > 0 && outputEnabled )
-    {
-        int16_t maxvol = 0;
-        qreal rmsval = 0.0;
-        readFromFile(outputBuffer, nFrames, maxvol, rmsval);
-
-        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
-    }
-    // Normal, no PTT - ignore input, set ouput to zeroes
-
-    return 0;
-}
-
 bool RtAudioSoundSystem::initialise( QString &/*errmess*/ )
 {
     /*
@@ -248,11 +132,11 @@ void openStream( RtAudio::StreamParameters *outputParameters,
 
         outParams.deviceId = 0;
         outParams.firstChannel = 0;
-        outParams.nChannels = 1;
+        outParams.nChannels = 2;
 
         inParams.deviceId = 0;
         inParams.firstChannel = 0;
-        inParams.nChannels = 1;
+        inParams.nChannels = 2;
 
         soptions.flags = 0;
         soptions.numberOfBuffers = 16;//4;
@@ -278,6 +162,125 @@ void openStream( RtAudio::StreamParameters *outputParameters,
 
     return true;
 }
+int RtAudioSoundSystem::setRate(int rate)
+{
+   sampleRate = rate;
+   return sampleRate;
+}
+
+void RtAudioSoundSystem::setVolumeMults(qreal record, qreal replay, qreal passThrough)
+{
+    // input levels are dB, so the actual multiplier is 10**(level/10)
+    // BUT level is already * 10, so we need /100
+    recordMult = qPow(10, record/100);
+    replayMult = qPow(10, replay/100);
+    passThroughMult = qPow(10, passThrough/100);
+}
+
+
+int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
+                                unsigned int nFrames,
+                                double /*streamTime*/,
+                                RtAudioStreamStatus status )
+{
+    if (outputBuffer == NULL && inputBuffer == NULL)
+    {
+        return 0;   // no data
+    }
+
+    /*
+   To continue normal stream operation, the RtAudioCallback function
+   should return a value of zero.  To stop the stream and drain the
+   output buffer, the function should return a value of one.  To abort
+   the stream immediately, the client should return a value of two.      */
+
+    // Since the number of input and output channels is equal, we can do
+    // a simple buffer copy operation here.
+    if ( status == RTAUDIO_INPUT_OVERFLOW)
+    {
+        trace("Stream input underflow detected.");
+    }
+    if (status == RTAUDIO_OUTPUT_UNDERFLOW)
+    {
+        trace("Stream output overflow detected.");
+    }
+
+
+    if (outputBuffer != NULL && nFrames > 0)
+    {
+        memset(outputBuffer, 0, nFrames * 2 * 2);   // 2 bytes, 2 channels
+    }
+
+    if (inputBuffer && nFrames && inputEnabled)
+    {
+        int16_t * q = reinterpret_cast< int16_t * > ( inputBuffer );
+        int16_t maxvol = 0;
+        qreal sqaccum = 0.0;
+
+        for (unsigned int i = 0; i < nFrames * 2; i++)  // 2 channels
+        {
+            qreal val =*q * recordMult;
+            if (val > 32767.0)
+                val = 32767.0;
+            if (val < -32767.0)
+                val = -32767.0;
+            *q = static_cast<qint16>(val);
+
+            int16_t sample = abs( *q++ );
+            if ( sample > maxvol )
+               maxvol = sample;
+
+            sqaccum += sample * sample;
+        }
+
+        qreal rmsval = sqrt(sqaccum/nFrames);
+        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
+
+        writeDataToFile(inputBuffer, nFrames);
+    }
+
+    // Passthrough - copy input to output
+    if (passThroughEnabled && outputBuffer != NULL && inputBuffer != NULL)
+    {
+        // transcribe and multiply by the passThroughSlider
+        int16_t * q = reinterpret_cast<  int16_t * > ( inputBuffer );
+        int16_t * m = reinterpret_cast< int16_t * > ( outputBuffer );
+
+        int16_t maxvol = 0;
+        qreal sqaccum = 0.0;
+
+        for (unsigned int i = 0; i < nFrames * 2; i++)
+        {
+            qreal val =*q++ * passThroughMult;
+            if (val > 32767.0)
+                val = 32767.0;
+            if (val < -32767.0)
+                val = -32767.0;
+            *m = static_cast<qint16>(val);
+
+            int16_t sample = abs( *m++ );
+            if ( sample > maxvol )
+               maxvol = sample;
+
+            sqaccum += sample * sample;
+        }
+        qreal rmsval = sqrt(sqaccum/nFrames);
+        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
+    }
+
+    if (outputBuffer != NULL && nFrames > 0 && outputEnabled )
+    {
+        int16_t maxvol = 0;
+        qreal rmsval = 0.0;
+        readFromFile(outputBuffer, nFrames, maxvol, rmsval);
+
+        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
+    }
+    // Normal, no PTT - ignore input, set ouput to zeroes
+
+    return 0;
+}
+
 
 void RtAudioSoundSystem::startOutput()
 {
@@ -314,7 +317,7 @@ bool RtAudioSoundSystem::startInput( QString fn )
 {
     // open fname, assign a text(?)
     // startInput() will also be called later
-    if ( outWave.OpenForWrite( fn.toLatin1(), sampleRate, 16, 1 ) == DDC_SUCCESS )
+    if ( outWave.OpenForWrite( fn.toLatin1(), sampleRate, 16, 2 ) == DDC_SUCCESS )
        return true;
 
     return false;
@@ -358,7 +361,7 @@ void RtAudioSoundSystem::writeDataToFile(void *inp, int nFrames)
     if (inp && nFrames)
     {
         const int16_t *q = reinterpret_cast< const int16_t * > ( inp );
-        DDCRET ret = outWave.WriteData ( q, nFrames );   // size is samples
+        DDCRET ret = outWave.WriteData ( q, nFrames * 2 );   // size is numdata
         if ( ret != DDC_SUCCESS )
         {
             return;
@@ -371,7 +374,7 @@ void RtAudioSoundSystem::readFromFile(void *outputBuffer, unsigned int nFrames, 
     {
         int16_t *q = reinterpret_cast< int16_t * > ( outputBuffer );
 
-        qint64 len = nFrames * 2;
+        qint64 len = nFrames * 2 * 2;
 
         // we have to add in the pip here as well...
         qint64 total = 0;

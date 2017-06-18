@@ -84,7 +84,7 @@ class SoundSystemDriver
       bool rdenv( QString &errmess, QString &in );
 
       void genTone(int16_t *tptr, bool add
-                       , int tone, int samples, int ramptime, double vmult );
+                       , int tone, int samples, int ramptime, double vmult , int16_t *enddest);
       bool createPipTone( QString &errmess, int pipTone, int pipVolume, int pipLength );
       static void sbdvp_unload( void );
       void initTone1( int );
