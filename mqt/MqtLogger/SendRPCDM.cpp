@@ -202,31 +202,31 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
    // called whenever frequency changes
    if ( an.getOK() )
    {
-      if ( an.getCategory() == rpcConstants::KeyerCategory && an.getKey() == "Report" )
+      if ( an.getCategory() == rpcConstants::KeyerCategory && an.getKey() == rpcConstants::keyerKeyReport )
       {
          LogContainer->setKeyerLoaded();
          LogContainer->setCaption( an.getValue() );
          logMessage( "KeyerReport " + an.getValue() );
       }
-      if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == "Mode" )
+      if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyMode )
       {
          LogContainer->setMode( an.getValue() );
          logMessage( "RigMode " + an.getValue() );
       }
-      if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == "Frequency" )
+      if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyFrequency )
       {
          LogContainer->setFreq( an.getValue() );
       }
-      if ( an.getCategory() == rpcConstants::BandMapCategory && an.getKey() == "Loaded" )
+      if ( an.getCategory() == rpcConstants::BandMapCategory && an.getKey() == rpcConstants::bandmapKeyLoaded )
       {
          LogContainer->setBandMapLoaded();
       }
-      if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "State")
+      if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorKeyState)
       {
          LogContainer->setRotatorLoaded();
          LogContainer->setRotatorState(an.getValue());
       }
-      if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "Bearing")
+      if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorBearing)
       {
 
          LogContainer->setRotatorBearing(an.getValue());

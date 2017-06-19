@@ -46,7 +46,7 @@ void KeyerServer::doPublishState( const QString &state )
   if ( state != old )
   {
      old = state;
-     RPCPubSub::publish( "Keyer", "Report", state, psPublished );
+     RPCPubSub::publish( rpcConstants::KeyerCategory, rpcConstants::keyerKeyReport, state, psPublished );
   }
 }
 /*static*/void KeyerServer::publishState(  const QString &state )
