@@ -15,6 +15,11 @@ public:
     explicit keyerAbout(QWidget *parent = 0);
     ~keyerAbout();
 
+private slots:
+    void on_pushButton_clicked();
+
+    void on_AboutMemo_linkActivated(const QString &link);
+
 private:
     Ui::keyerAbout *ui;
 };

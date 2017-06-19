@@ -1,5 +1,6 @@
 #include <QFileDialog>
 
+#include "keyerAbout.h"
 #include "KeyerMain.h"
 #include "ui_KeyerMain.h"
 #include "keyctrl.h"
@@ -91,6 +92,10 @@ KeyerMain::KeyerMain(QWidget *parent) :
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
+    enableTrace( "./TraceLog", "MinosKeyer_" );
+
+    createCloseEvent();
+
     inVolChange = true;
 
     int recordLevel = settings.value("RecordLevel", 0).toInt();
@@ -103,9 +108,6 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
     inVolChange = false;
 
-    enableTrace( "./TraceLog", "MinosKeyer_" );
-
-    createCloseEvent();
 
     QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
     QString alsaFileName = keyerSettings.value("AlsaCtlFile", "").toString();
@@ -335,7 +337,8 @@ void KeyerMain::on_twoToneButton_clicked()
 
 void KeyerMain::on_aboutButton_clicked()
 {
-
+    keyerAbout ka;
+    ka.exec();
 }
 
 void KeyerMain::runAlsaScript(const QString &alsaFileName, const QString &command)

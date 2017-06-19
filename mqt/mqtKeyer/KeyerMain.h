@@ -19,7 +19,7 @@ class KeyerMain : public QMainWindow
 
 public:
     explicit KeyerMain(QWidget *parent = 0);
-    ~KeyerMain();
+    virtual ~KeyerMain();
 
     void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool key );
     void volcallback( unsigned int rmsvol , unsigned int peakvol, int samples );
