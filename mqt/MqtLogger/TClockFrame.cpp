@@ -31,7 +31,7 @@ void TClockFrame::RecheckTimerTimer(  )
    bool timeOK = false;
    if (contest)
    {
-        timeOK = contest->checkTime(time);
+        timeOK = contest->checkTime(t);
    }
    QString colour;
 
