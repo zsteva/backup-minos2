@@ -120,6 +120,7 @@ private:
     bool overLapOnflag;
     bool overLapActiveflag;
     bool southStopActiveflag;
+    bool supportCwCcwCmd;
     int rotatorBearing;
     int currentBearingOffset;
     int rotatorMinAzimuth;
@@ -207,6 +208,7 @@ private:
 
     void toggleOverLapDisplay(bool toggle);
 
+    bool getCwCcwCmdFlag(int rotatorNumber);
 };
 
 #endif // ROTATORMAINWINDOW_H

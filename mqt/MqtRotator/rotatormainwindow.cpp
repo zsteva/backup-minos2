@@ -697,6 +697,10 @@ void RotatorMainWindow::upDateAntenna()
 
        southStopActiveflag = selectRotator->currentAntenna.southStopFlag;
 
+       // flag if rotator supports CW and CCW commands
+       supportCwCcwCmd = getCwCcwCmdFlag(selectRotator->currentAntenna.rotatorModelNumber);
+
+
         rotatorBearing = 9999;      // force display update
        // update logger
        msg->publishAntennaName(selectRotator->currentAntenna.antennaName);
@@ -717,6 +721,7 @@ void RotatorMainWindow::upDateAntenna()
        logMessage("Current Min Azimuth = " + QString::number(currentMinAzimuth));
        logMessage("South Stop Flag = " + QString::number(selectRotator->currentAntenna.southStopFlag));
        logMessage("Overrun flag = " + QString::number(selectRotator->currentAntenna.overRunFlag));
+       logMessage("Support CW and CCW Commands = " + QString::number(supportCwCcwCmd));
        logMessage("Rotator Max Baudrate = " + QString::number(rotator->getMaxBaudRate()));
        logMessage("Rotator Min Baud rate = " + QString::number(rotator->getMinBaudRate()));
     }
@@ -1055,6 +1060,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
         {
             hamlibError(retCode);
             sendStatusToLogError();
+            logMessage("stopcmd hamlib error " + QString::number(retCode));
         }
     }
     ui->rot_left_button->setChecked(false);
@@ -1066,6 +1072,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
     movingCW = false;
     movingCCW = false;
     stopCmdflag = false;
+    logMessage("Stop Cmd Successful");
 
 }
 
@@ -1093,18 +1100,29 @@ void RotatorMainWindow::rotateCW(bool toggle)
         int retCode = 0;
         if (rotator->get_serialConnected())
         {
-            retCode = rotator->rotateClockwise(rotator->get_rotatorSpeed());
+            if (supportCwCcwCmd)
+            {
+                logMessage("Send CW rotator command, rotator speed = " + QString::number(rotator->get_rotatorSpeed()));
+                retCode = rotator->rotateClockwise(rotator->get_rotatorSpeed());
+            }
+            else
+            {
+                logMessage("Send rotate to maxAzimuth instead of CW rotator command, maxAzimuth = " + QString::number(rotator->getMaxAzimuth()));
+                retCode = rotator->rotate_to_bearing(rotator->getMaxAzimuth());
+            }
             if (retCode < 0)
             {
                 hamlibError(retCode);
                 movingCW = false;
                 sendStatusToLogError();
+                logMessage("CW hamlib error = " + QString::number(retCode));
             }
             else
             {
                 ui->rot_right_button->setChecked(true);
                 movingCW = true;
                 sendStatusToLogRotCW();
+                logMessage("RotateCW Successful");
             }
             cwCcwCmdflag = false;
         }
@@ -1138,18 +1156,30 @@ void RotatorMainWindow::rotateCCW(bool toggle)
         int retCode = 0;
         if (rotator->get_serialConnected())
         {
-            retCode = rotator->rotateCClockwise(rotator->get_rotatorSpeed());
+            if (supportCwCcwCmd)
+            {
+                logMessage("Send CCW rotator command, rotator speed = " + QString::number(rotator->get_rotatorSpeed()));
+                retCode = rotator->rotateCClockwise(rotator->get_rotatorSpeed());
+            }
+            else
+            {
+                logMessage("Send rotate to minAzimuth, instead of CCW rotator command, minAzimuth = " + QString::number(rotator->getMinAzimuth()));
+                retCode = rotator->rotate_to_bearing(rotator->getMinAzimuth());
+            }
+
             if (retCode < 0)
             {
                 hamlibError(retCode);
                 movingCCW = false;
                 sendStatusToLogError();
+                logMessage("CCW hamlib error = " + QString::number(retCode));
             }
             else
             {
                 ui->rot_left_button->setChecked(true);
                 movingCCW = true;
                 sendStatusToLogRotCCW();
+                logMessage("RotateCCW Successful");
             }
 
         }
@@ -1254,6 +1284,19 @@ void RotatorMainWindow::saveTraceLogFlag()
     config.setValue("TraceLog", ui->actionTraceLog->isChecked());
 
     config.endGroup();
+}
+
+
+bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
+{
+    QSettings config("./Configuration/SupportRotateCommands.ini", QSettings::IniFormat);
+    config.beginGroup("support_rotate");
+
+    bool value = config.value(QString::number(rotatorNumber), false).toBool();
+    config.endGroup();
+
+    return value;
+
 }
 
 
