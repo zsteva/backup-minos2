@@ -13,12 +13,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->configFrame->initialise(this, &::closeCallback);
+    ui->configFrame->initialise(this, &::closeCallback, true);
     createCloseEvent();
     QSettings settings;
     QByteArray geometry = settings.value("geometry").toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
+
 }
 
 MainWindow::~MainWindow()

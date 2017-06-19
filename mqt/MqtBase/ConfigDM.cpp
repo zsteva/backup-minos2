@@ -11,6 +11,7 @@
 #include "base_pch.h"
 
 #include "ConfigDM.h"
+#include "ConfigFile.h"
 //---------------------------------------------------------------------------
 
 bool terminated = false;
@@ -37,7 +38,7 @@ bool TConfigElement::initialise( QString sect )
     if (!configExists)
         return false;
 
-    QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
+    QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
 
     name = sect;
     QString noprog = "nOpRoGrAm";
@@ -59,7 +60,7 @@ bool TConfigElement::initialise( QString sect )
 }
 void TConfigElement::setRun(bool state)
 {
-    QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
+    QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
    config.setValue(name + "/Run", state?"Yes":"No");
    //and if we are started, modify this elements state
 }
@@ -126,10 +127,10 @@ void TConfigElement::on_readyReadStandardOutput()
 TMConfigDM::TMConfigDM( QWidget* Owner )
       : QObject( Owner )
 {
-   if ( FileExists( "./Configuration/MinosConfig.ini" ) )
+   if ( FileExists( ConfigFile::getConfigIniName() ) )
    {
        configExists = true;
-       QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
+       QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
       QStringList lsect = config.childGroups();
 
       for ( int i = 0; i < lsect.count(); i++ )
@@ -138,6 +139,11 @@ TMConfigDM::TMConfigDM( QWidget* Owner )
          if ( sect.compare("CIRCLEOFHELL", Qt::CaseInsensitive ) == 0)
          {
             getCircleOfHell();
+         }
+         if ( sect.compare("Settings", Qt::CaseInsensitive ) == 0)
+         {
+            getAutoStart();
+            getHideServers();
          }
          else
          {
@@ -204,7 +210,7 @@ void TMConfigDM::setCircleOfHell( const QString &circle )
       return ;
    }
    circleOfHell = circle;
-   QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
+   QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
    config.setValue("CircleOfHell/Name", circleOfHell);
 }
 QString TMConfigDM::getCircleOfHell()
@@ -213,8 +219,46 @@ QString TMConfigDM::getCircleOfHell()
    {
       return "";
    }
-   QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
+   QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
    circleOfHell = config.value( "CircleOfHell/Name", "" ).toString().trimmed();
    return circleOfHell;
+}
+bool TMConfigDM::getAutoStart()
+{
+   if ( !configExists )
+   {
+      return false;
+   }
+   QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
+   autoStart = config.value( "Settings/Autostart", false ).toBool();
+   return autoStart;
+}
+void TMConfigDM::setAutoStart(bool s)
+{
+   if ( !configExists )
+   {
+      return;
+   }
+   QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
+   config.setValue( "Settings/Autostart", s );
+}
+bool TMConfigDM::getHideServers()
+{
+   if ( !configExists )
+   {
+      return false;
+   }
+   QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
+   hideServers = config.value( "Settings/HideServers", false ).toBool();
+   return hideServers;
+}
+void TMConfigDM::setHideServers(bool s)
+{
+   if ( !configExists )
+   {
+      return;
+   }
+   QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
+   config.setValue( "Settings/HideServers", s );
 }
 

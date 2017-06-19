@@ -9,6 +9,8 @@
 
 #include "logger_pch.h"
 
+#include "ConfigFile.h"
+
 #include "ServerEvent.h"
 #include "LogEvents.h"
 #include "XMPPRPCParams.h"
@@ -27,7 +29,7 @@ TSendDM *SendDM = 0;
 TSendDM::TSendDM( QWidget* Owner )
       : QObject( Owner )
 {
-    QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
+    QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
     QString circleOfHell = config.value( "CircleOfHell/Name", "No_name_in_config" ).toString().trimmed();
     serverName = circleOfHell;
 

@@ -2,6 +2,7 @@
 #define TCONFIGFRAME_H
 
 #include <QFrame>
+#include <QTimer>
 
 namespace Ui {
 class TConfigFrame;
@@ -13,15 +14,19 @@ class TConfigFrame : public QFrame
 {
     Q_OBJECT
 
+    QTimer startTimer;
+
 public:
     explicit TConfigFrame(QWidget *parent = 0);
     ~TConfigFrame();
-    void initialise(QWidget *parent, ConfigCloseCallBack);
+    void initialise(QWidget *parent, ConfigCloseCallBack, bool doAutoStart);
     void setup(bool started);
 
     void start();
 
 private slots:
+    void startTimer_Timeout();
+
     void on_StartButton_clicked();
 
     void on_StopButton_clicked();
@@ -35,6 +40,8 @@ private slots:
     void on_ModifyButton_clicked();
 
     void on_CancelButton_clicked();
+
+    void on_autoStartCheckBox_clicked();
 
 private:
     Ui::TConfigFrame *ui;
