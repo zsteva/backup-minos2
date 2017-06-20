@@ -1,71 +1,47 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-09-16T11:01:45
+# Project created by QtCreator 2017-02-13T17:38:22
 #
 #-------------------------------------------------
 
-QT       += core gui network widgets multimedia
+QT       += core gui
+QT       += widgets
+QT       += network
 
-TARGET = mqtKeyer
+TARGET = MqtAppStarter
 TEMPLATE = app
 
 VERSION=0.5.0.0
+win32:RC_ICONS += ../minos.ico
+
 DEFINES += VERSION=\\\"$$VERSION\\\"
 
+# The following define makes your compiler emit warnings if you use
+# any feature of Qt which as been marked as deprecated (the exact warnings
+# depend on your compiler). Please consult the documentation of the
+# deprecated API in order to know how to port your code away from it.
+DEFINES += QT_DEPRECATED_WARNINGS
+
+# You can also make your code fail to compile if you use deprecated APIs.
+# In order to do so, uncomment the following line.
+# You can also select to disable deprecated APIs only up to a certain version of Qt.
+#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
 
-unix{DEFINES += __LINUX_ALSA__}
-win32{DEFINES += __WINDOWS_DS__}
-INCLUDEPATH += $$PWD/../rtaudio
 
 DEFINES += TIXML_USE_STL
 
+
 SOURCES += main.cpp\
-        KeyerMain.cpp \
-    keyerAbout.cpp \
-    keyconf.cpp \
-    KeyerRPCServer.cpp \
-    keyers.cpp \
-    portcon.cpp \
-    riff.cpp \
-    sbdriver.cpp \
-    soundsys.cpp \
-    VKMixer.cpp \
-    levelmeter.cpp \
-    windowMonitor.cpp \
-    ../rtaudio/RtAudio.cpp
+        MainWindow.cpp
 
-HEADERS  += KeyerMain.h \
-    keyerAbout.h \
-    ddc.h \
-    keyconf.h \
-    keyctrl.h \
-    keyerlog.h \
-    KeyerRPCServer.h \
-    keyers.h \
-    portcon.h \
-    riff.h \
-    sbdriver.h \
-    soundsys.h \
-    VKMixer.h \
-    levelmeter.h \
-    windowMonitor.h \
-    ../rtaudio/RtAudio.h \
-    ../rtaudio/include/dsound.h \
-    ../rtaudio/include/ginclude.h \
-    ../rtaudio/include/iasiodrv.h \
-    ../rtaudio/include/soundcard.h
+HEADERS  += MainWindow.h
 
-FORMS    += KeyerMain.ui \
-    keyerAbout.ui \
-    windowMonitor.ui
-
-unix{ LIBS += -lasound}
-win32{ LIBS += -lole32 -lwinmm -luuid -lksuser -ldsound}
+FORMS    += MainWindow.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase
