@@ -240,8 +240,17 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
     }
 
     // Passthrough - copy input to output
+    if (passThroughEnabled && inputBuffer == NULL)
+    {
+        trace("PassThru no input");
+    }
+    if (passThroughEnabled && outputBuffer == NULL)
+    {
+        trace("PassThru no output");
+    }
     if (passThroughEnabled && outputBuffer != NULL && inputBuffer != NULL)
     {
+        trace("PassThru good buffers");
         // transcribe and multiply by the passThroughSlider
         int16_t * q = reinterpret_cast<  int16_t * > ( inputBuffer );
         int16_t * m = reinterpret_cast< int16_t * > ( outputBuffer );
@@ -483,7 +492,7 @@ bool RtAudioSoundSystem::startDMA( bool play, const QString &fname )
         KeyerAction * sba = KeyerAction::getCurrentAction();
         if (sba && sba->tailWithPip)
         {
-            long psamples = SoundSystemDriver::getSbDriver() ->pipSamples;
+            long psamples = SoundSystemDriver::getSbDriver() ->pipSamples * 2;
             int16_t *pdataptr = SoundSystemDriver::getSbDriver() ->pipptr;
             setPipData(pdataptr, psamples, sba->pipStartDelaySamples);
         }
