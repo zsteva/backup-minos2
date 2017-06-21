@@ -224,6 +224,34 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
         memset(outputBuffer, 0, nFrames * 2 * 2);   // 2 bytes, 2 channels
     }
 
+    if (inputBuffer && nFrames && (inputEnabled || passThroughEnabled))
+    {
+        // apply compressor to input
+        int16_t * q = reinterpret_cast<  int16_t * > ( inputBuffer );
+
+        for (unsigned int i = 0; i < nFrames ; i++)
+        {
+            double initi1 = q[i * 2];
+            double initi2 = q[i * 2 + 1];
+
+            double s1 = initi1;
+            double s2 = initi2;
+
+            s1 /= 32768.0;
+            s2 /= 32768.0;
+
+            compressor.process(s1, s2);
+
+            s1 *= 32768.0;
+            s2 *= 32768.0;
+
+            int i1 = int16_t(s1);
+            int i2 = int16_t(s2);
+
+            q[i * 2] = i1;
+            q[i * 2 + 1] = i2;
+        }
+    }
     if (inputBuffer && nFrames && inputEnabled)
     {
         int16_t * q = reinterpret_cast< int16_t * > ( inputBuffer );
@@ -259,28 +287,6 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
         int16_t * q = reinterpret_cast<  int16_t * > ( inputBuffer );
         int16_t * m = reinterpret_cast< int16_t * > ( outputBuffer );
 
-        for (unsigned int i = 0; i < nFrames ; i++)
-        {
-            double initi1 = q[i * 2];
-            double initi2 = q[i * 2 + 1];
-
-            double s1 = initi1;
-            double s2 = initi2;
-
-            s1 /= 32768.0;
-            s2 /= 32768.0;
-
-            compressor.process(s1, s2);
-
-            s1 *= 32768.0;
-            s2 *= 32768.0;
-
-            int i1 = int16_t(s1);
-            int i2 = int16_t(s2);
-
-            q[i * 2] = i1;
-            q[i * 2 + 1] = i2;
-        }
         int16_t maxvol = 0;
         qreal sqaccum = 0.0;
 
