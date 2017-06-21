@@ -136,13 +136,23 @@ void LevelMeter::paintEvent(QPaintEvent *event)
     // so their logs are all negative
 
     // mult by 1,000.000 and THEN take log (or take log and add 6 == log (1,000,000)), they will be positive.
-    // ten divide by 6 to scale back to 0 - 1.0
+    // then divide by 6 to scale back to 0 - 1.0
 
-    qreal maxLevel = (log(0.5) + 6.0)/6.0;
+    qreal minLevel = 0.4; //Used to scale so this bottom of meter
+    //m_rmsLevel = 1000.0/32768.0;    // gives about 0.418
+    //m_rmsLevel = 32000.0/32768.0;    // gives about 0.996
+
+    qreal maxLevel = ((log(0.5) + 6.0)/6.0 -  minLevel)/(1 - minLevel);
 
     qreal peakHoldLevel = (log(m_peakHoldLevel) + 6.0)/6.0;
+    peakHoldLevel = (peakHoldLevel - minLevel)/(1 - minLevel);
+
     qreal decayedPeakLevel = (log(m_decayedPeakLevel) + 6.0)/6.0;
+    decayedPeakLevel = (decayedPeakLevel - minLevel)/(1 - minLevel);
+
     qreal rmsLevel = (log(m_rmsLevel) + 6.0)/6.0;
+    rmsLevel = (rmsLevel - minLevel)/(1 - minLevel);
+
 
     if (peakHoldLevel < 0)
         peakHoldLevel = 0;
