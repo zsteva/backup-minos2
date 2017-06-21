@@ -21,6 +21,7 @@ else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -
 unix{DEFINES += __LINUX_ALSA__}
 win32{DEFINES += __WINDOWS_DS__}
 INCLUDEPATH += $$PWD/../rtaudio
+INCLUDEPATH += $$PWD/../Chunkware
 
 DEFINES += TIXML_USE_STL
 
@@ -37,7 +38,10 @@ SOURCES += main.cpp\
     VKMixer.cpp \
     levelmeter.cpp \
     windowMonitor.cpp \
-    ../rtaudio/RtAudio.cpp
+    ../rtaudio/RtAudio.cpp \
+    ../Chunkware/SimpleComp.cpp \
+    ../Chunkware/SimpleCompProcess.inl \
+    ../Chunkware/SimpleEnvelope.cpp
 
 HEADERS  += KeyerMain.h \
     keyerAbout.h \
@@ -58,7 +62,11 @@ HEADERS  += KeyerMain.h \
     ../rtaudio/include/dsound.h \
     ../rtaudio/include/ginclude.h \
     ../rtaudio/include/iasiodrv.h \
-    ../rtaudio/include/soundcard.h
+    ../rtaudio/include/soundcard.h \
+    ../Chunkware/SimpleComp.h \
+    ../Chunkware/SimpleEnvelope.h \
+    ../Chunkware/SimpleGain.h \
+    ../Chunkware/SimpleHeader.h
 
 FORMS    += KeyerMain.ui \
     keyerAbout.ui \

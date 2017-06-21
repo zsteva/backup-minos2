@@ -10,6 +10,7 @@
 
 #include <QtEndian>
 #include <QtMath>
+#include <numeric>
 
 #include "keyctrl.h"
 #include "keyconf.h"
@@ -25,6 +26,10 @@
 // as we don't want to change rtaudio.h...
 #include "RtAudio.h"
 #pragma GCC diagnostic pop
+
+#include "SimpleComp.h"
+
+
 /*static*/
 //==============================================================================
 RtAudioSoundSystem *RtAudioSoundSystem::createSoundSystem()
@@ -96,6 +101,14 @@ RtAudioSoundSystem::~RtAudioSoundSystem()
 }
 bool RtAudioSoundSystem::initialise( QString &/*errmess*/ )
 {
+
+    compressor.setSampleRate(sampleRate);
+    compressor.setWindow(10);       // milliseconds
+    compressor.setThresh( -10 );
+    compressor.setRatio( 0.1 );
+    compressor.setAttack( 1.0 );     // 1ms seems like a good look-ahead to me
+    compressor.setRelease( 10.0 ); // 10ms release is good
+    compressor.initRuntime();
     /*
 
   struct StreamOptions {
@@ -240,21 +253,34 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
     }
 
     // Passthrough - copy input to output
-    if (passThroughEnabled && inputBuffer == NULL)
-    {
-        trace("PassThru no input");
-    }
-    if (passThroughEnabled && outputBuffer == NULL)
-    {
-        trace("PassThru no output");
-    }
     if (passThroughEnabled && outputBuffer != NULL && inputBuffer != NULL)
     {
-        trace("PassThru good buffers");
         // transcribe and multiply by the passThroughSlider
         int16_t * q = reinterpret_cast<  int16_t * > ( inputBuffer );
         int16_t * m = reinterpret_cast< int16_t * > ( outputBuffer );
 
+        for (unsigned int i = 0; i < nFrames ; i++)
+        {
+            double initi1 = q[i * 2];
+            double initi2 = q[i * 2 + 1];
+
+            double s1 = initi1;
+            double s2 = initi2;
+
+            s1 /= 32768.0;
+            s2 /= 32768.0;
+
+            compressor.process(s1, s2);
+
+            s1 *= 32768.0;
+            s2 *= 32768.0;
+
+            int i1 = int16_t(s1);
+            int i2 = int16_t(s2);
+
+            q[i * 2] = i1;
+            q[i * 2 + 1] = i2;
+        }
         int16_t maxvol = 0;
         qreal sqaccum = 0.0;
 

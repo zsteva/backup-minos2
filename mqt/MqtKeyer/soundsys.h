@@ -18,11 +18,14 @@
 #pragma GCC diagnostic pop
 
 #include "riff.h"
+#include "SimpleComp.h"
 
 class RtAudio;
 class RtAudioSoundSystem: public QObject
 {
     Q_OBJECT
+
+    chunkware_simple::SimpleCompRms compressor;
 
 private slots:
 
