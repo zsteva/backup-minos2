@@ -6,7 +6,7 @@
 
 QT       += core gui network widgets
 
-TARGET = mqtControl
+TARGET = MqtControl
 TEMPLATE = app
 
 VERSION=0.5.0.0
