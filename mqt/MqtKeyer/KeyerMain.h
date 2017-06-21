@@ -35,8 +35,6 @@ private slots:
 
     void on_playButton_clicked();
 
-    void on_showButton_clicked();
-
     void on_stopButton_clicked();
 
     void on_AutoRepeatCheckBox_clicked();

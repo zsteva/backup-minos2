@@ -261,27 +261,6 @@ void KeyerMain::on_playButton_clicked()
     KeyerServer::publishCommand( ui->recind->text() );
 }
 
-void KeyerMain::on_showButton_clicked()
-{
-    trace("Show Button");
-    /*
-    if ( !WaveShowForm )
-     {
-        WaveShowForm = new TWaveShowForm( this );
-        WaveShowForm->Top = Top + 50;
-        WaveShowForm->Left = Left + 50;
-        int fno = KeyCombo->Text.ToIntDef( 1 );
-        WaveShowForm->setSamples( fno );
-        WaveShowForm->Show();
-     }
-     else
-     {
-        WaveShowForm->Close();
-        delete WaveShowForm;
-     }
-     */
-}
-
 void KeyerMain::on_stopButton_clicked()
 {
     trace("Stop Button");
