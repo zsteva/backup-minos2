@@ -1121,6 +1121,10 @@ void RotatorMainWindow::rotateCW(bool toggle)
             {
                 ui->rot_right_button->setChecked(true);
                 movingCW = true;
+                if (!supportCwCcwCmd)
+                {
+                    moving = true;
+                }
                 sendStatusToLogRotCW();
                 logMessage("RotateCW Successful");
             }
@@ -1178,6 +1182,10 @@ void RotatorMainWindow::rotateCCW(bool toggle)
             {
                 ui->rot_left_button->setChecked(true);
                 movingCCW = true;
+                if (!supportCwCcwCmd)
+                {
+                    moving = true;
+                }
                 sendStatusToLogRotCCW();
                 logMessage("RotateCCW Successful");
             }
@@ -1289,8 +1297,8 @@ void RotatorMainWindow::saveTraceLogFlag()
 
 bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
 {
-    QSettings config("./Configuration/SupportRotateCommands.ini", QSettings::IniFormat);
-    config.beginGroup("support_rotate");
+    QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
+    config.beginGroup("Support_rotate");
 
     bool value = config.value(QString::number(rotatorNumber), false).toBool();
     config.endGroup();
