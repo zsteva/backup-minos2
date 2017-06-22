@@ -60,8 +60,14 @@ bool TConfigElement::initialise( QString sect )
 }
 void TConfigElement::setRun(bool state)
 {
-    QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
-   config.setValue(name + "/Run", state?"Yes":"No");
+    {
+        QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
+        config.setValue(name + "/Run", state?"Yes":"No");
+        config.sync();
+    }
+#ifdef Q_OS_UNIX
+    sync();         // as just turning machine off can clear the ini file
+#endif
    //and if we are started, modify this elements state
 }
 void TConfigElement::createProcess()
@@ -210,8 +216,14 @@ void TMConfigDM::setCircleOfHell( const QString &circle )
       return ;
    }
    circleOfHell = circle;
-   QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
-   config.setValue("CircleOfHell/Name", circleOfHell);
+   {
+       QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
+       config.setValue("CircleOfHell/Name", circleOfHell);
+       config.sync();
+    }
+#ifdef Q_OS_UNIX
+    sync();         // as just turning machine off can clear the ini file
+#endif
 }
 QString TMConfigDM::getCircleOfHell()
 {
@@ -239,8 +251,15 @@ void TMConfigDM::setAutoStart(bool s)
    {
       return;
    }
-   QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
-   config.setValue( "Settings/Autostart", s );
+   {
+        QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
+        config.setValue( "Settings/Autostart", s );
+        config.sync();
+    }
+#ifdef Q_OS_UNIX
+    sync();         // as just turning machine off can clear the ini file
+#endif
+
 }
 bool TMConfigDM::getHideServers()
 {
@@ -258,7 +277,14 @@ void TMConfigDM::setHideServers(bool s)
    {
       return;
    }
-   QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
-   config.setValue( "Settings/HideServers", s );
+   {
+       QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
+       config.setValue( "Settings/HideServers", s );
+       config.sync();
+   }
+#ifdef Q_OS_UNIX
+   sync();         // as just turning machine off can clear the ini file
+#endif
+
 }
 

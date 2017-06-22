@@ -396,8 +396,15 @@ void KeyerMain::on_setupBrowseButton_clicked()
 
         ui->setupScriptEdit->setText(alsaFileName);
 
-        QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
-        keyerSettings.setValue("AlsaCtlFile", alsaFileName);
+        {
+            QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
+            keyerSettings.setValue("AlsaCtlFile", alsaFileName);
+            keyerSettings.sync();
+        }
+    #ifdef Q_OS_UNIX
+        sync();         // as just turning machine off can clear the ini file
+    #endif
+
 
         runAlsaScript(alsaFileName, alsaRestore);
     }
