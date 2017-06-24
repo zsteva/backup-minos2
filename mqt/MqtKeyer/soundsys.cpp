@@ -201,14 +201,6 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
         return 0;   // no data
     }
 
-    /*
-   To continue normal stream operation, the RtAudioCallback function
-   should return a value of zero.  To stop the stream and drain the
-   output buffer, the function should return a value of one.  To abort
-   the stream immediately, the client should return a value of two.      */
-
-    // Since the number of input and output channels is equal, we can do
-    // a simple buffer copy operation here.
     if ( status == RTAUDIO_INPUT_OVERFLOW)
     {
         trace("Stream input underflow detected.");
@@ -224,9 +216,9 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
         memset(outputBuffer, 0, nFrames * 2 * 2);   // 2 bytes, 2 channels
     }
 
-    if (inputBuffer && nFrames && (inputEnabled || passThroughEnabled))
+    if (inputBuffer && nFrames)
     {
-        // apply compressor to input
+        // ALWAYS apply compressor to input, so it continues to adapt
         int16_t * q = reinterpret_cast<  int16_t * > ( inputBuffer );
         int16_t * m = reinterpret_cast< int16_t * > ( outputBuffer );
         int16_t maxvol = 0;
@@ -249,15 +241,6 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
             s1 *= 32768.0;
             s2 *= 32768.0;
 
-            /*
-            int i1 = int16_t(s1);
-            int i2 = int16_t(s2);
-
-            q[i * 2] = i1;
-            q[i * 2 + 1] = i2;
-            */
-
-            // And we should be able to do EVERYTHING else here...
             qreal val1 = s1 * volmult;
             qreal val2 = s2 * volmult;
 
@@ -288,73 +271,17 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
 
             sqaccum += sample * sample;
         }
-        qreal rmsval = sqrt(sqaccum/nFrames);
-        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
+        if (inputEnabled || passThroughEnabled)
+        {
+            qreal rmsval = sqrt(sqaccum/nFrames);
+            SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
+        }
 
         if (inputEnabled)
         {
             writeDataToFile(inputBuffer, nFrames);
         }
     }
-    /*
-    if (inputBuffer && nFrames && inputEnabled)
-    {
-        int16_t * q = reinterpret_cast< int16_t * > ( inputBuffer );
-        int16_t maxvol = 0;
-        qreal sqaccum = 0.0;
-
-        for (unsigned int i = 0; i < nFrames * 2; i++)  // 2 channels
-        {
-            qreal val =*q * recordMult;
-            if (val > 32767.0)
-                val = 32767.0;
-            if (val < -32767.0)
-                val = -32767.0;
-            *q = static_cast<qint16>(val);
-
-            int16_t sample = abs( *q++ );
-            if ( sample > maxvol )
-               maxvol = sample;
-
-            sqaccum += sample * sample;
-        }
-
-        qreal rmsval = sqrt(sqaccum/nFrames);
-        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
-
-        writeDataToFile(inputBuffer, nFrames);
-    }
-    */
-/*
-    // Passthrough - copy input to output
-    if (passThroughEnabled && outputBuffer != NULL && inputBuffer != NULL)
-    {
-        // transcribe and multiply by the passThroughSlider
-        int16_t * q = reinterpret_cast<  int16_t * > ( inputBuffer );
-        int16_t * m = reinterpret_cast< int16_t * > ( outputBuffer );
-
-        int16_t maxvol = 0;
-        qreal sqaccum = 0.0;
-
-        for (unsigned int i = 0; i < nFrames * 2; i++)
-        {
-            qreal val =*q++ * passThroughMult;
-            if (val > 32767.0)
-                val = 32767.0;
-            if (val < -32767.0)
-                val = -32767.0;
-            *m = static_cast<qint16>(val);
-
-            int16_t sample = abs( *m++ );
-            if ( sample > maxvol )
-               maxvol = sample;
-
-            sqaccum += sample * sample;
-        }
-        qreal rmsval = sqrt(sqaccum/nFrames);
-        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
-    }
-*/
     if (outputBuffer != NULL && nFrames > 0 && outputEnabled )
     {
         int16_t maxvol = 0;
@@ -363,8 +290,12 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
 
         SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
     }
-    // Normal, no PTT - ignore input, set ouput to zeroes
 
+    /*
+   To continue normal stream operation, the RtAudioCallback function
+   should return a value of zero.  To stop the stream and drain the
+   output buffer, the function should return a value of one.  To abort
+   the stream immediately, the client should return a value of two.      */
     return 0;
 }
 
