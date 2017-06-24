@@ -228,6 +228,10 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
     {
         // apply compressor to input
         int16_t * q = reinterpret_cast<  int16_t * > ( inputBuffer );
+        int16_t * m = reinterpret_cast< int16_t * > ( outputBuffer );
+        int16_t maxvol = 0;
+        qreal sqaccum = 0.0;
+        qreal volmult = (inputEnabled?recordMult:passThroughMult);
 
         for (unsigned int i = 0; i < nFrames ; i++)
         {
@@ -245,13 +249,54 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
             s1 *= 32768.0;
             s2 *= 32768.0;
 
+            /*
             int i1 = int16_t(s1);
             int i2 = int16_t(s2);
 
             q[i * 2] = i1;
             q[i * 2 + 1] = i2;
+            */
+
+            // And we should be able to do EVERYTHING else here...
+            qreal val1 = s1 * volmult;
+            qreal val2 = s2 * volmult;
+
+            if (val1 > 32767.0)
+                val1 = 32767.0;
+            if (val1 < -32767.0)
+                val1 = -32767.0;
+
+            if (val2 > 32767.0)
+                val2 = 32767.0;
+            if (val2 < -32767.0)
+                val2 = -32767.0;
+
+            if (passThroughEnabled)
+            {
+                m[i * 2] = static_cast<qint16>(val1);
+                m[i * 2 + 1] = static_cast<qint16>(val2);
+            }
+            if (inputEnabled)
+            {
+                q[i * 2] = static_cast<qint16>(val1);
+                q[i * 2 + 1] = static_cast<qint16>(val2);
+            }
+
+            int16_t sample = abs( (val1 + val2)/2 );
+            if ( sample > maxvol )
+               maxvol = sample;
+
+            sqaccum += sample * sample;
+        }
+        qreal rmsval = sqrt(sqaccum/nFrames);
+        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
+
+        if (inputEnabled)
+        {
+            writeDataToFile(inputBuffer, nFrames);
         }
     }
+    /*
     if (inputBuffer && nFrames && inputEnabled)
     {
         int16_t * q = reinterpret_cast< int16_t * > ( inputBuffer );
@@ -279,7 +324,8 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
 
         writeDataToFile(inputBuffer, nFrames);
     }
-
+    */
+/*
     // Passthrough - copy input to output
     if (passThroughEnabled && outputBuffer != NULL && inputBuffer != NULL)
     {
@@ -308,7 +354,7 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
         qreal rmsval = sqrt(sqaccum/nFrames);
         SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
     }
-
+*/
     if (outputBuffer != NULL && nFrames > 0 && outputEnabled )
     {
         int16_t maxvol = 0;
