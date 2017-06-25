@@ -67,7 +67,7 @@ void RiffWriter::run()
             break;
 
         if (inBuffs[writeIndex%RINGBUFFERSIZE].frameCount > 0)
-            ss->writeDataToFile(inBuffs[writeIndex%RINGBUFFERSIZE].buff, inBuffs[writeIndex].frameCount);
+            ss->writeDataToFile(inBuffs[writeIndex%RINGBUFFERSIZE].buff, inBuffs[writeIndex%RINGBUFFERSIZE].frameCount);
         else
         {
             ss->outWave.Close();
@@ -378,7 +378,7 @@ void RtAudioSoundSystem::stopInput()
          bufferNotFull.wait(&mutex);
      mutex.unlock();
 
-     inBuffs[recIndex].frameCount = 0;  // mark to close
+     inBuffs[recIndex%RINGBUFFERSIZE].frameCount = 0;  // mark to close
 
      mutex.lock();
      ++recIndex;
