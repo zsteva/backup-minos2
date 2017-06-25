@@ -11,6 +11,7 @@
 #include <QtEndian>
 #include <QtMath>
 #include <numeric>
+#include <QtCore>
 
 #include "keyctrl.h"
 #include "keyconf.h"
@@ -29,6 +30,59 @@
 
 #include "SimpleComp.h"
 
+#define FRAMES 16
+#define FRAMESAMPLES 256
+#define RINGBUFFERSIZE 1024
+
+QWaitCondition bufferNotEmpty;
+QWaitCondition bufferNotFull;
+QMutex mutex;
+
+class InBuff
+{
+public:
+    int frameCount;
+    int16_t buff[FRAMESAMPLES * 2];
+};
+
+InBuff inBuffs[RINGBUFFERSIZE];
+int recIndex = 0;
+int writeIndex = 0;
+
+RiffWriter::RiffWriter(RtAudioSoundSystem *parent) : QThread(parent), ss(parent), terminated(false)
+{
+}
+RiffWriter::~RiffWriter(){}
+
+void RiffWriter::run()
+{
+    for (;;)
+    {
+        mutex.lock();
+        if (writeIndex == recIndex)
+            bufferNotEmpty.wait(&mutex);
+        mutex.unlock();
+
+        if (terminated)
+            break;
+
+        if (inBuffs[writeIndex%RINGBUFFERSIZE].frameCount > 0)
+            ss->writeDataToFile(inBuffs[writeIndex%RINGBUFFERSIZE].buff, inBuffs[writeIndex].frameCount);
+        else
+        {
+            ss->outWave.Close();
+#ifdef Q_OS_UNIX
+            sync();     // make sure it goes to disk
+#endif
+        }
+
+        mutex.lock();
+        ++writeIndex;
+
+        bufferNotFull.wakeAll();
+        mutex.unlock();
+    }
+}
 
 /*static*/
 //==============================================================================
@@ -58,19 +112,20 @@ RtAudioSoundSystem::RtAudioSoundSystem() :
   , inputEnabled(false)
   , outputEnabled(false)
   , passThroughEnabled(false)
+  , wThread(0)
 {
     try
     {
        audio = new RtAudio();
 
-       // Determine the number of devices available
+       wThread = new RiffWriter(this);
+       wThread->start();
+
        unsigned int devices = audio->getDeviceCount();
-       // Scan through devices for various capabilities
        RtAudio::DeviceInfo info;
        for ( unsigned int i=0; i<devices; i++ ) {
          info = audio->getDeviceInfo( i );
          if ( info.probed == true ) {
-           // Print, for example, the maximum number of output channels for each device
            trace( "device = "  + QString::number(i) +  " " + info.name.c_str());
            trace( "Maximum output channels = " + QString::number(info.outputChannels) + " Maximum input channels = " + QString::number(info.inputChannels));
          }
@@ -88,6 +143,10 @@ RtAudioSoundSystem::~RtAudioSoundSystem()
 {
    passThroughEnabled = false;
    stopDMA();
+
+   wThread->terminated = true;
+   bufferNotEmpty.wakeAll();
+   wThread->wait();
    try
    {
       // Stop the stream.
@@ -109,39 +168,13 @@ bool RtAudioSoundSystem::initialise( QString &/*errmess*/ )
     compressor.setAttack( 1.0 );     // 1ms seems like a good look-ahead to me
     compressor.setRelease( 10.0 ); // 10ms release is good
     compressor.initRuntime();
-    /*
-
-  struct StreamOptions {
-    RtAudioStreamFlags flags;      // A bit-mask of stream flags (RTAUDIO_NONINTERLEAVED, RTAUDIO_MINIMIZE_LATENCY, RTAUDIO_HOG_DEVICE, RTAUDIO_ALSA_USE_DEFAULT)
-    unsigned int numberOfBuffers;  // Number of stream buffers.
-    std::string streamName;        // A stream name (currently used only in Jack).
-    int priority;                  // Scheduling priority of callback thread (only used with flag RTAUDIO_SCHEDULE_REALTIME)
-
-  };
-
-struct StreamParameters {
-  unsigned int deviceId;     // Device index (0 to getDeviceCount() - 1).
-  unsigned int nChannels;    // Number of channels.
-  unsigned int firstChannel; // First channel index on device (default = 0).
-
-};
-
-void openStream( RtAudio::StreamParameters *outputParameters,
-               RtAudio::StreamParameters *inputParameters,
-               RtAudioFormat format, unsigned int sampleRate,
-               unsigned int *bufferFrames, RtAudioCallback callback,
-               void *userData = NULL,
-               RtAudio::StreamOptions *options = NULL,
-               RtAudioErrorCallback errorCallback = NULL
-               );
-*/
     try
     {
         RtAudio::StreamParameters outParams;
         RtAudio::StreamParameters inParams;
         RtAudio::StreamOptions soptions;
 
-        unsigned int bufferFrames = 256;//0;    // 0 is choose minimum
+        unsigned int bufferFrames = FRAMESAMPLES;
 
         outParams.deviceId = 0;
         outParams.firstChannel = 0;
@@ -152,7 +185,7 @@ void openStream( RtAudio::StreamParameters *outputParameters,
         inParams.nChannels = 2;
 
         soptions.flags = 0;
-        soptions.numberOfBuffers = 16;//4;
+        soptions.numberOfBuffers = FRAMES;
         soptions.priority = 0;
         soptions.streamName = "";
 
@@ -170,7 +203,6 @@ void openStream( RtAudio::StreamParameters *outputParameters,
     catch (RtAudioError &error)
     {
         trace(error.getMessage().c_str());
-      // Perhaps try other parameters?
     }
 
     return true;
@@ -279,7 +311,19 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
 
         if (inputEnabled)
         {
-            writeDataToFile(inputBuffer, nFrames);
+            mutex.lock();
+            if (recIndex - writeIndex >= RINGBUFFERSIZE - 1)
+                bufferNotFull.wait(&mutex);
+            mutex.unlock();
+
+            inBuffs[recIndex % RINGBUFFERSIZE].frameCount = nFrames;
+            memcpy(inBuffs[recIndex % RINGBUFFERSIZE].buff, inputBuffer, nFrames * 4);
+
+            mutex.lock();
+            ++recIndex;
+            bufferNotEmpty.wakeAll();
+            mutex.unlock();
+//            writeDataToFile(inputBuffer, nFrames);
         }
     }
     if (outputBuffer != NULL && nFrames > 0 && outputEnabled )
@@ -329,12 +373,28 @@ void RtAudioSoundSystem::stopInput()
      {
         sba->queueFinished();
      }
-    outWave.Close();
+     mutex.lock();
+     if (recIndex - writeIndex >= RINGBUFFERSIZE - 1)     // not correct... we want "caught up"
+         bufferNotFull.wait(&mutex);
+     mutex.unlock();
+
+     inBuffs[recIndex].frameCount = 0;  // mark to close
+
+     mutex.lock();
+     ++recIndex;
+
+     bufferNotEmpty.wakeAll();
+     mutex.unlock();
 }
 bool RtAudioSoundSystem::startInput( QString fn )
 {
     // open fname, assign a text(?)
     // startInput() will also be called later
+
+    // Should we do this in the writer thread?
+    recIndex = 0;
+    writeIndex = 0;
+
     if ( outWave.OpenForWrite( fn.toLatin1(), sampleRate, 16, 2 ) == DDC_SUCCESS )
        return true;
 
@@ -374,7 +434,6 @@ void RtAudioSoundSystem::setPipData(int16_t *data, int len, int delayLen)
 void RtAudioSoundSystem::writeDataToFile(void *inp, int nFrames)
 {
     // data arrives here; we need to write it to the (already open) file,
-
 
     if (inp && nFrames)
     {

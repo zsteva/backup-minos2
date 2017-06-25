@@ -21,6 +21,21 @@
 #include "SimpleComp.h"
 
 class RtAudio;
+class RtAudioSoundSystem;
+
+class RiffWriter : public QThread
+{
+    Q_OBJECT
+
+     RtAudioSoundSystem *ss;
+public:
+     bool terminated;
+    RiffWriter(RtAudioSoundSystem *parent = NULL) ;
+    virtual ~RiffWriter();
+
+    virtual void run() Q_DECL_OVERRIDE;
+
+};
 class RtAudioSoundSystem: public QObject
 {
     Q_OBJECT
@@ -30,7 +45,6 @@ class RtAudioSoundSystem: public QObject
 private slots:
 
 protected:
-    void writeDataToFile(void *inp, int nFrames);
     void readFromFile(void *outputBuffer, unsigned int nFrames, int16_t &maxvol, qreal &rmsval);
 
 public:
@@ -63,6 +77,10 @@ public:
     int16_t *dataptr;
     long samples;
 
+    WaveFile outWave;
+    void writeDataToFile(void *inp, int nFrames);
+    RiffWriter *wThread;
+
     int audioCallback( void *outputBuffer, void *inputBuffer,
                                     unsigned int nFrames,
                                     double streamTime,
@@ -94,8 +112,6 @@ private:
     QByteArray m_buffer;
     QByteArray p_buffer;
     long pipDelayBytes;
-
-    WaveFile outWave;
 
 };
 

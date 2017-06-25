@@ -185,7 +185,7 @@ void unloadKeyers()
    }
 
    // close down the SB card
-   //sbDriver::sbdvp_unload();
+   SoundSystemDriver::sbdvp_unload();
    // unload everything - destructors SHOULD sort the mess out!
    portChain.freeAll();
 
