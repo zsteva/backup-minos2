@@ -59,6 +59,7 @@ void TConfigFrame::setup(bool started)
 }
 void TConfigFrame::startTimer_Timeout()
 {
+    startTimer.stop();
     start();
 }
 
