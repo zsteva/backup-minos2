@@ -146,11 +146,13 @@ bool RotControl::getRotatorList(QComboBox *cb)
     {
         QString t;
         t= QString::number(capsList.at(i)->rot_model);
-        t=t.rightJustified(5,' ')+" ";
+        t=t.rightJustified(5,' ')+", ";
         t+= capsList.at(i)->mfg_name;
-        t+=",";
+        t+=", ";
         t+=capsList.at(i)->model_name;
         sl << t;
+        std::sort(sl.begin(), sl.end());
+
     }
     cb->addItems(sl);
     return true;

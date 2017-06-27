@@ -173,27 +173,10 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     // tell logger that rotator is active, antenna name and maxRotation
 
-
+    logMessage("*** Rotator Started ***");
     sendStatusToLogReady();
     upDateAntenna();
-    trace("MinosRotator Started");
-    trace("Rotator Name = " + selectRotator->currentAntenna.antennaName);
-    trace("Rotator Model = " + selectRotator->currentAntenna.rotatorModel);
-    trace("Rotator Number = " + QString::number(selectRotator->currentAntenna.rotatorModelNumber));
-    trace("Rotator Comport = " + selectRotator->currentAntenna.comport);
-    trace("Baudrate = " + QString::number(selectRotator->currentAntenna.baudrate));
-    trace("Databits = " + QString::number(selectRotator->currentAntenna.databits));
-    trace("Stop bits = " + QString::number(selectRotator->currentAntenna.stopbits));
-    trace("Handshake = " + QString::number(selectRotator->currentAntenna.handshake));
-//    trace("Rotator Max Azimuth = " + QString::number(rotatorMaxAzimuth));
-//    trace("Rotator Min Azimuth = " + QString::number(rotatorMinAzimuth));
-    trace("Antenna Offset = " + QString::number(selectRotator->currentAntenna.antennaOffset));
-    trace("Current Max Azimuth = " + QString::number(currentMaxAzimuth));
-    trace("Current Min Azimuth = " + QString::number(currentMinAzimuth));
-    trace("South Stop Flag = " + QString::number(selectRotator->currentAntenna.southStopFlag));
-    trace("Overrun flag = " + QString::number(selectRotator->currentAntenna.overRunFlag));
-    trace("Rotator Max Baudrate = " + QString::number(rotator->getMaxBaudRate()));
-    trace("Rotator Min Baud rate = " + QString::number(rotator->getMinBaudRate()));
+
 
 }
 
@@ -651,8 +634,11 @@ void RotatorMainWindow::upDateAntenna()
         antennaIndex -= 1;
 
         selectRotator->currentAntenna.antennaName = selectRotator->availAntennas[antennaIndex].antennaName;
+        selectRotator->currentAntenna.antennaNumber = selectRotator->availAntennas[antennaIndex].antennaNumber;
         selectRotator->currentAntenna.rotatorModel = selectRotator->availAntennas[antennaIndex].rotatorModel;
+        selectRotator->currentAntenna.rotatorManufacturer = selectRotator->availAntennas[antennaIndex].rotatorManufacturer;
         selectRotator->currentAntenna.rotatorModelNumber = selectRotator->availAntennas[antennaIndex].rotatorModelNumber;
+        selectRotator->currentAntenna.rotatorModelName = selectRotator->availAntennas[antennaIndex].rotatorModelName;
         selectRotator->currentAntenna.southStopFlag = selectRotator->availAntennas[antennaIndex].southStopFlag;
         selectRotator->currentAntenna.overRunFlag = selectRotator->availAntennas[antennaIndex].overRunFlag;
         selectRotator->currentAntenna.antennaOffset = selectRotator->availAntennas[antennaIndex].antennaOffset;
@@ -709,8 +695,10 @@ void RotatorMainWindow::upDateAntenna()
 
        logMessage("*** Antenna Updated ***");
        logMessage("Rotator Name = " + selectRotator->currentAntenna.antennaName);
+       logMessage("Antenna Number = " + selectRotator->currentAntenna.antennaNumber);
        logMessage("Rotator Model = " + selectRotator->currentAntenna.rotatorModel);
        logMessage("Rotator Number = " + QString::number(selectRotator->currentAntenna.rotatorModelNumber));
+       logMessage("Rotator Manufacturer = " + selectRotator->currentAntenna.rotatorManufacturer);
        logMessage("Rotator Comport = " + selectRotator->currentAntenna.comport);
        logMessage("Baudrate = " + QString::number(selectRotator->currentAntenna.baudrate));
        logMessage("Databits = " + QString::number(selectRotator->currentAntenna.databits));

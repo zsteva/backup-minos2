@@ -311,11 +311,21 @@ void SetupDialog::antennaNameFinished(int boxNumber)
 
 void SetupDialog::rotatorModelSelected(int boxNumber)
 {
+
+    bool ok;
+
     if (rotatorModel[boxNumber]->currentText() != availAntennas[boxNumber].rotatorModel)
     {
-        availAntennas[boxNumber].rotatorModel = rotatorModel[boxNumber]->currentText();
-        availAntennas[boxNumber].rotatorModelNumber = rotator->getModelNumber(rotatorModel[boxNumber]->currentIndex());
-        availAntennas[boxNumber].rotatorModelName = rotator->getModel_Name(rotatorModel[boxNumber]->currentIndex());
+        QString s = rotatorModel[boxNumber]->currentText().trimmed();
+        QStringList antdetails = s.split(',');
+        availAntennas[boxNumber].rotatorModel = s;
+        s = antdetails[0];
+        availAntennas[boxNumber].rotatorModelNumber = s.toInt(&ok, 10);
+        s = antdetails[1];
+        availAntennas[boxNumber].rotatorManufacturer = s.trimmed();
+        s = antdetails[2];
+        availAntennas[boxNumber].rotatorModelName = s.trimmed();
+
         antennaValueChanged[boxNumber] = true;
         antennaChanged = true;
 
@@ -627,9 +637,11 @@ void SetupDialog::saveSettings()
             {
                 config.beginGroup("Antenna" + QString::number(i+1));
                 config.setValue("antennaName", availAntennas[i].antennaName);
+                config.setValue("antennaNumber", QString::number(i+1));
                 config.setValue("rotatorModel", availAntennas[i].rotatorModel);
                 config.setValue("rotatorModelName", availAntennas[i].rotatorModelName);
                 config.setValue("rotatorModelNumber", availAntennas[i].rotatorModelNumber);
+                config.setValue("rotatorManufacturer", availAntennas[i].rotatorManufacturer);
                 config.setValue("southStop", availAntennas[i].southStopFlag);
                 config.setValue("overRun", availAntennas[i].overRunFlag);
                 config.setValue("antennaOffset", availAntennas[i].antennaOffset);
@@ -660,9 +672,11 @@ void SetupDialog::readSettings()
     {
         config.beginGroup("Antenna" + QString::number(i+1));
         availAntennas[i].antennaName = config.value("antennaName", "").toString();
+        availAntennas[i].antennaNumber = config.value("antennaNumber", QString::number(i+1)).toString();
         availAntennas[i].rotatorModel = config.value("rotatorModel", "").toString();
         availAntennas[i].rotatorModelName = config.value("rotatorModelName", "").toString();
         availAntennas[i].rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
+        availAntennas[i].rotatorManufacturer = config.value("rotatorManfacturer", "").toString();
         availAntennas[i].southStopFlag = config.value("southStop", true).toBool();
         availAntennas[i].overRunFlag = config.value("overRun", false).toBool();
         availAntennas[i].antennaOffset = config.value("antennaOffset", "").toInt();
@@ -686,8 +700,10 @@ void SetupDialog::clearAvailRotators()
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
         availAntennas[i].antennaName = "";
+        availAntennas[i].antennaNumber = "";
         availAntennas[i].rotatorModelName = "";
         availAntennas[i].rotatorModelNumber = 0;
+        availAntennas[i].rotatorManufacturer = "";
         availAntennas[i].southStopFlag = false;
         availAntennas[i].overRunFlag = false;
         availAntennas[i].antennaOffset = 0;
@@ -706,8 +722,10 @@ void SetupDialog::clearCurrentRotator()
 {
 
     currentAntenna.antennaName = "";
+    currentAntenna.antennaNumber = "";
     currentAntenna.rotatorModelName = "";
     currentAntenna.rotatorModelNumber = 0;
+    currentAntenna.rotatorManufacturer = "";
     currentAntenna.southStopFlag = false;
     currentAntenna.overRunFlag = false;
     currentAntenna.antennaOffset = 0;
@@ -721,40 +739,6 @@ void SetupDialog::clearCurrentRotator()
 
 
 
-
-/*
-int SetupDialog::getRotatorId(QString rotator)
-{
-
-    for (int i = 0; i < NUM_ROTATOR_PROTOCOLS; i++)
-    {
-        if (rotProtocol[i]->protocol == rotator)
-        {
-            return rotProtocol[i]->id;
-        }
-    }
-
-    return -1; // error, none found
-
-}
-
-
-QString SetupDialog::getRotatorProtocol(QString antennaName)
-{
-
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        if (availAntennas[i].name == antennaName)
-        {
-            return availAntennas[i].rotator.protocol;
-        }
-    }
-
-    return ""; // error, none found
-
-}
-
-*/
 
 QString SetupDialog::getRotatorComPort(QString antennaName)
 {
@@ -782,8 +766,11 @@ void SetupDialog::saveCurrentAntenna()
 
     config.beginGroup("CurrentAntenna");
     config.setValue("antennaName", currentAntenna.antennaName);
+    config.setValue("antennaNumber", currentAntenna.antennaNumber);
     config.setValue("rotatorModel", currentAntenna.rotatorModel);
     config.setValue("rotatorModelNumber", currentAntenna.rotatorModelNumber);
+    config.setValue("rotatorModelName", currentAntenna.rotatorModelName);
+    config.setValue("rotatorManufacturer", currentAntenna.rotatorManufacturer);
     config.setValue("southStop", currentAntenna.southStopFlag);
     config.setValue("overRun", currentAntenna.overRunFlag);
     config.setValue("antennaOffset", currentAntenna.antennaOffset);
@@ -809,8 +796,10 @@ void SetupDialog::readCurrentAntenna()
     {
         config.beginGroup("CurrentAntenna");
         currentAntenna.antennaName = config.value("antennaName", "").toString();
+        currentAntenna.antennaNumber = config.value("antennaNumber", "").toString();
         currentAntenna.rotatorModel = config.value("rotatorModel", "").toString();
         currentAntenna.rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
+        currentAntenna.rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
         currentAntenna.southStopFlag = config.value("southStop", false).toBool();
         currentAntenna.overRunFlag = config.value("overRun", false).toBool();
         currentAntenna.antennaOffset = config.value("antennaOffset", "").toInt();

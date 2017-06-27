@@ -18,7 +18,7 @@
 #include <QStringList>
 #include "rotcontrol.h"
 
-#define NUM_ROTATOR_PROTOCOLS 2
+//#define NUM_ROTATOR_PROTOCOLS 2
 #define NUM_ANTENNAS 5
 
 

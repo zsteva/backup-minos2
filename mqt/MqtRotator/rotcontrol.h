@@ -64,9 +64,11 @@ const QStringList hamlibErrorMsg = {"No Error, operation completed sucessfully",
 struct srotParams
 {
   QString antennaName;
+  QString antennaNumber;
   QString configLabel;
   QString comport;
   QString rotatorModel;
+  QString rotatorManufacturer;
   QString rotatorModelName;
   int rotatorModelNumber;
   azimuth_t min_azimuth;
