@@ -17,9 +17,9 @@
 #include <QtSerialPort/QSerialPort>
 #include <QStringList>
 #include "rotcontrol.h"
+#include "rotatorCommonConstants.h"
 
-//#define NUM_ROTATOR_PROTOCOLS 2
-#define NUM_ANTENNAS 5
+
 
 
 class QIntValidator;
@@ -58,6 +58,10 @@ public:
     void readCurrentAntenna();
     QString getRotatorComPort(QString);
     void saveCurrentAntenna();
+
+signals:
+
+    void currentAntennaSettingChanged(QString);
 
 protected slots:
 
@@ -114,6 +118,7 @@ private:
 
 
 
+    void clearAntennaValueChanged();
 };
 
 #endif // SETUPDIALOG_H

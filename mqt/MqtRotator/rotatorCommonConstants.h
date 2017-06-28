@@ -18,6 +18,8 @@
 #define DEGREE_SYMBOL '\xB0'
 #define ROTATE_MOVE_TIMEOUT 5
 
+#define NUM_ANTENNAS 5
+
 // Rotator Keys
 
 #define ROTATE_CW_KEY "Ctrl+r"

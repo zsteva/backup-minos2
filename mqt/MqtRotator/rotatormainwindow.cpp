@@ -385,11 +385,12 @@ void RotatorMainWindow::initActionsConnections()
 
     // setup antennas
     connect(ui->actionSetup_Antennas, SIGNAL(triggered()), selectRotator, SLOT(show()));
-    connect(ui->actionEdit_Presets, SIGNAL(triggered()), editPresets, SLOT(loadPresetEditFieldsShow()));
+    connect(selectRotator, SIGNAL(currentAntennaSettingChanged(QString)), this, SLOT(currentAntennaSettingChanged(QString)));
+
     // setup presets
     connect(editPresets, SIGNAL(showEditPresetDialog()), editPresets, SLOT(show()));
     connect(editPresets, SIGNAL(updatePresetButtonLabels()), this, SLOT(updatePresetLabels()));
-
+    connect(ui->actionEdit_Presets, SIGNAL(triggered()), editPresets, SLOT(loadPresetEditFieldsShow()));
     // Bearing Log
     connect(ui->actionLog_Heading, SIGNAL(triggered()), setupLog, SLOT(loadLogConfig()));
     connect(setupLog, SIGNAL(showLogDialog()), setupLog, SLOT(show()));
@@ -1354,6 +1355,39 @@ void RotatorMainWindow::toggleOverLapDisplay(bool toggle)
     ui->overlap->setVisible(toggle);
     ui->overlaplineEdit->setVisible(toggle);
 
+}
+
+
+void RotatorMainWindow::currentAntennaSettingChanged(QString antennaName)
+{
+
+    switch( QMessageBox::question(
+                        this,
+                        tr("Minos Rotator"),
+                        tr("The settings for the current antenna have been changed. \nDo you want to reload the settings for the antenna now?"),
+                        QMessageBox::Yes |
+                        QMessageBox::No |
+                        QMessageBox::Cancel,
+                         QMessageBox::Cancel ) )
+    {
+        case QMessageBox::Yes:
+            if (selectAntenna->currentText() != antennaName)
+            {
+                bool ok;
+                selectAntenna->setCurrentIndex(selectRotator->currentAntenna.antennaNumber.toInt(&ok, 10));
+            }
+            upDateAntenna();
+            break;
+        case QMessageBox::No:
+
+            break;
+        case QMessageBox::Cancel:
+
+            break;
+        default:
+
+            break;
+    }
 }
 
 

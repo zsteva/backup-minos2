@@ -267,8 +267,11 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     fillHandShakeInfo();
     clearAvailRotators(); // clear the AvailRotator table, also init with default serial parameters
     clearCurrentRotator(); // clear the currently selected Rotator table, also init with default serial parameters
+    clearAntennaValueChanged();
+
 
     readSettings();
+
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
         antennaName[i]->setText(availAntennas[i].antennaName);
@@ -316,9 +319,10 @@ void SetupDialog::rotatorModelSelected(int boxNumber)
 
     if (rotatorModel[boxNumber]->currentText() != availAntennas[boxNumber].rotatorModel)
     {
-        QString s = rotatorModel[boxNumber]->currentText().trimmed();
-        QStringList antdetails = s.split(',');
+        QString s = rotatorModel[boxNumber]->currentText();
         availAntennas[boxNumber].rotatorModel = s;
+        s = s.trimmed();
+        QStringList antdetails = s.split(',');
         s = antdetails[0];
         availAntennas[boxNumber].rotatorModelNumber = s.toInt(&ok, 10);
         s = antdetails[1];
@@ -624,6 +628,26 @@ void SetupDialog::cancelButtonPushed()
 
 void SetupDialog::saveSettings()
 {
+    // have the current antenna settings been changed?
+    bool currentAntennaChanged = false;
+    int ca = -1;
+    bool ok;
+    ca = currentAntenna.antennaNumber.toInt(&ok, 10);
+    if (ok  && ca >= 0 && ca < NUM_ANTENNAS)
+    {
+        if (currentAntenna.antennaNumber != "")
+        {
+            if (antennaValueChanged[ca-1])
+            {
+               currentAntennaChanged = true;
+            }
+        }
+    }
+    else
+    {
+        ca = -1;
+    }
+
 
     if (antennaChanged)
     {
@@ -637,7 +661,7 @@ void SetupDialog::saveSettings()
             {
                 config.beginGroup("Antenna" + QString::number(i+1));
                 config.setValue("antennaName", availAntennas[i].antennaName);
-                config.setValue("antennaNumber", QString::number(i+1));
+                config.setValue("antennaNumber", i+1);
                 config.setValue("rotatorModel", availAntennas[i].rotatorModel);
                 config.setValue("rotatorModelName", availAntennas[i].rotatorModelName);
                 config.setValue("rotatorModelNumber", availAntennas[i].rotatorModelNumber);
@@ -660,7 +684,15 @@ void SetupDialog::saveSettings()
 
    }
    antennaChanged = false;
+
+   if (currentAntennaChanged && ca != -1)
+   {
+
+      emit currentAntennaSettingChanged(availAntennas[ca].antennaName);
+
+   }
 }
+
 
 
 void SetupDialog::readSettings()
@@ -738,6 +770,13 @@ void SetupDialog::clearCurrentRotator()
 }
 
 
+void SetupDialog::clearAntennaValueChanged()
+{
+    for (int i = 0; i < NUM_ANTENNAS; i++)
+    {
+        antennaValueChanged[i] = false;
+    }
+}
 
 
 QString SetupDialog::getRotatorComPort(QString antennaName)
@@ -820,10 +859,6 @@ srotParams SetupDialog::getCurrentAntenna() const
 {
     return currentAntenna;
 }
-
-
-
-
 
 
 
