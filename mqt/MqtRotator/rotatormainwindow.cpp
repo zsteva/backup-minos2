@@ -238,7 +238,7 @@ void RotatorMainWindow::LogTimerTimer(  )
 void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
 {
 
-    logMessage("Command From Logger direction = " + QString::number(direction) + "angle = " + QString::number(angle));
+    logMessage("Command From Logger command number = " + QString::number(direction) + ", angle = " + QString::number(angle));
     int dirCommand = direction;
     if (dirCommand == rpcConstants::eRotateDirect)
     {
@@ -674,8 +674,23 @@ void RotatorMainWindow::upDateAntenna()
        }
        else
        {
-            currentMaxAzimuth = COMPASS_MAX360; //+ selectRotator->currentAntenna.antennaOffset;
-            currentMinAzimuth = COMPASS_MIN0;  //+ selectRotator->currentAntenna.antennaOffset;
+            if (rotator->getMaxAzimuth() > COMPASS_MAX360 && !selectRotator->currentAntenna.overRunFlag)
+            {
+                currentMaxAzimuth = COMPASS_MAX360 - ROTATE_TOLERANCE; // stop rotator overrunning
+            }
+            else
+            {
+                currentMaxAzimuth = COMPASS_MAX360;
+            }
+            if (rotator->getMinAzimuth() < COMPASS_MIN0 && ! selectRotator->currentAntenna.overRunFlag)
+            {
+                currentMinAzimuth = COMPASS_MIN0 + ROTATE_TOLERANCE; // stop rotator overrunning
+            }
+            else
+            {
+                currentMinAzimuth = COMPASS_MIN0;
+            }
+
             overLapActiveflag = false;
        }
 
@@ -910,7 +925,7 @@ void RotatorMainWindow::rotateTo(int bearing)
 int RotatorMainWindow::northCalcTarget(int targetBearing)
 {
 
-    int target = 0;
+    int target = rotatorBearing;
     logMessage("northCalcTarget - targetBearing = " + QString::number(targetBearing));
     logMessage("northCalcTarget - rotatorBearing = " + QString::number(rotatorBearing));
 

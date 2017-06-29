@@ -33,6 +33,8 @@
 #define COMPASS_HALF 180
 #define COMPASS_MIN0 0
 
+#define ROTATE_TOLERANCE 4
+
 
 // Status messages sent to minos logger
 #define STATUS_READY "Ready"
