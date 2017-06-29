@@ -1,0 +1,799 @@
+﻿<!--- Minos Rotator help --->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        table, td, th {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1><strong>Minos Rotator Help</strong></h1>
+
+
+
+        <div class="row row-offcanvas row-offcanvas-left">
+
+            <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
+                <div class="list-group">
+                    <div class="list-group-item active">Contents</div>
+                    <div class="list-group-item"><a href="#Top">Introduction</a></div>
+                    <div class="list-group-item"><a href="#starting_minos_rotator">Starting Minos Rotator</a></div>
+                    <div class="list-group-item"><a href="#configure_menus">Configure Menu</a></div>
+                    <div class="list-group-item"><a href="#setup_antennas">Setup Antennas</a></div>
+                    <div class="list-group-item"><a href="#configuring_presets">Configuring Presets</a></div>
+                    <div class="list-group-item"><a href="#rotator_control_screen">Rotator Control Screen</a></div>
+                    <div class="list-group-item"><a href="#Rotator Support CW/CCW Commands">Rotator Support CW/CCW Commands</a></div>
+                    <div class="list-group-item"><a href="#logger_control_screen">Logger Rotator Controls</a></div>
+                    <div class="list-group-item"><a href="#rotator_position_log">Rotator Position Log</a></div>
+                    <div class="list-group-item"><a href="#trace_log">Trace Log</a></div>
+                    <div class="list-group-item"><a href="#short_cut_keys">Rotator ShortCut Keys</a></div>
+                    <div class="list-group-item"><a href="#rotator_protocols">Rotator Protocols</a></div>
+                    <div class="list-group-item"><a href="#rotator_controllers">Rotator Controllers</a></div>
+
+
+
+                </div>
+            </div><!--/.sidebar-offcanvas-->
+
+
+            <div class="col-xs-12 col-sm-9">
+
+
+                <!--- Introduction --->
+
+
+                <h2>Introduction</h2>
+                <ul>
+                    <li>Minos Rotator is a standalone application that connects to a rotator controller via a Serial Port.</li>
+                    <li>Connects to Minos Logger Application. Currently only connects with one contest log.</li>
+                    <li>Can control a family of rotators using the hamlib library.</li>
+                    <li>Five Antennas can be configured and selected from a pull down menu, one antenna can be selected for control.</li>
+                    <li>Antenna can be controlled from the rotator panel or from the buttons in the logger application.</li>
+                    <li>Overlap rotators are supported in line with hamlib library.</li>
+                    <li>Control buttons in application and logger - Left (CCW), Right (CW), Stop and Turn (Rotate to bearing)</li>
+                    <li>Rotator Application Displays Bearing, Backbearing, Overlap Status, Antenna Offset and actual rotator bearing.</li>
+                    <li>Logger shows rotator status - Rotating CW, Rotating CCW, Rotating to bearing, Stop, Disconnected, Ready.</li>
+                    <li>Logger Shows Bearing - red indicates Overlap.</li>
+                    <li>Logger calculates bearing from archive or by entering a locator.</li>
+                    <li>Rotator application calculates shortest distance to bearing, using overlap.</li>
+                    <li>Rotator application can log bearing changes against time in a text log.</li>
+                </ul>
+
+                <p><a href="#top">top</a></p>
+
+                <!--- Starting Minos Rotator  --->
+
+                <hr id="starting_minos_rotator" class="help-hr" />
+                <h2>Starting Minos Rotator</h2>
+                <p></p>
+                <p></p>
+                <p>The Rotator application and Server Application needs to be selected in the Minos 2 Server program to allow the Rotator application to start. If you wish to stop the rotator application from starting, then deselect Rotator from the Server application as described below.</p>
+                <img src='img/Welcome screen.jpg'>
+                <p></p>
+                <p>Start the Minos 2 Program. When the splash screen appears, select Auto Start Configuration.</p>
+                <p></p>
+                <img src='img/AutoStart Config.jpg'>
+                <p>In the Auto Start Configuration, you should see Rotator and Server with a checkbox. Click in the checkbox to select the Rotator controller and Server application. Click Ok and restart Minos 2, then click OK on the splash screen. The logger and rotator applications should start.</p>
+                <p>If you have deselected the rotator from the server application, restart Minos 2 for the change to take be applied.</p>
+                <p></p>
+                <img src='img/Minos Desktop.jpg'>
+                <p></p>
+                <p>NOTE! The rotator control buttons will now appear in the log application if the rotator control application starts correctly.</p>
+                <p>NOTE! If you quit the Rotator application while logger and its server are running, then the server will restart Rotator automatically.</p>
+                <p>NOTE! If there is a communication error with the rotator controller, an error message will be displayed in Minos Rotator. Correct connection, or select another antenna, or modify communication settings.</p>
+
+                <p><a href="#top">top</a></p>
+
+                <!--- Configure Menu --->
+
+
+                <hr id="configure_menus" class="help-hr" />
+                <h2>Configure Menu</h2>
+                <img src='img/configure menu.jpg'>
+                <p></p>
+                <p>Menu Items to Configure Rotator</p>
+                <p></p>
+                <p>Edit Presets - <a href="#configuring_presets">Configuring Presets</a> Change name and target bearing for each Bearing Preset.</p>
+                <p>Setup Antennas - <a href="#setup_antennas">Setup Antennas</a>, Names and Rotator Parameters.</p>
+                <p>Log Heading - <a href="#rotator_position_log">Rotator Position Log</a> Setup Bearing Log Path, Name and Enable Log</p>
+                <p>TraceLog - <a href="#trace_log">Trace Log</a> Check item to enable tracelog, uncheck to disable tracelog.</p>
+                <p></p>
+
+
+
+
+                <p><a href="#top">top</a></p>
+
+
+                <!--- Configure Antennas --->
+
+
+                <hr id="setupg_antennas" class="help-hr" />
+                <h2>Setup Antennas</h2>
+                <p>Upto five named antennas can be configured in the Rotator Application.</p>
+                <p>From the Configure drop down menu, select Setup Antennas. The dialog box below should appear.</p>
+                <p></p>
+                <img src='img/Setup Antennas.jpg'>
+                <p></p>
+                <h3>Antenna Name</h3>
+                <p></p>
+                <p>Enter the name to be given to a rotator configuration, for example 6 metre or 70cm.</p>
+                <p>Note! A name is required to allow an antenna to be selected.</p>
+                <h3>Rotator Model</h3>
+                <p></p>
+                <p>The drop down shows a list of the rotator models (controller protocols) that are currently supported. Note not all rotator models have been tested with this program. A list of tested rotator models is shown here <a href="#supported_rotators">Supported Rotators</a>. If your model is not on the list please help to test and provide feedback on possible errors.</p>
+                <p></p>
+                <img src='img/select rotator model.jpg'>
+                <h3>S Stop - Check box</h3>
+                <p></p>
+                <p>Check box if your rotator is set to South Stop. Future Feature, if you require to control a rotator with a south stop, please contact the developers.</p>
+                <h3>Overlap - Check box</h3>
+                <p></p>
+                <p>Check box to support rotator overlap. Some rototor models do not support overlap and the rotator in the library may not support overlap either. Beta testers required.</p>
+                <p>Unchecked to turn off overlap. Rotator will only rotate between 0 - 360 degrees.</p>
+                <p>Note! If Overlap is unchecked then the Overlap box will not be displayed on the Rotator Display.</p>
+                <p>Note! If Overlap is unchecked and an antenna is sitting in an overlap region, you may not be able to rotate the antenna. The antenna will need to be manually moved < 360 or > 0</p>
+                <p></p>
+                <h3>Offset</h3>
+                <p></p>
+                <p>Enter an antenna offset value if required. Value can be max +90/-90. To support antenna mounted offset from rotator bearing. Rotator bearing is always shown in Actual on status line.</p>
+                <h3>Comport</h3>
+                <p></p>
+                <p>Drop down box to select Serial Comport Rotator is connected to on the computer</p>
+                <h3>Speed</h3>
+                <p></p>
+                <p>Drop down list to select Serial Port Baud Rate</p>
+                <h3>Data Bits</h3>
+                <p></p>
+                <p>Drop down list to select Serial Port Number of Data Bits.</p>
+                <h3>Stop Bits</h3>
+                <p></p>
+                <p>Drop down list to select Serial Port Stop Bit value.</p>
+                <h3>Parity</h3>
+                <p></p>
+                <p>Drop down list to select Serial Port Parity Bit value.</p>
+                <h3>Handshake</h3>
+                <p></p>
+                <p>Drop down list to select Serial Port Handshake.</p>
+                <p></p>
+                <p>Click OK to save the Antenna Settings, Cancel to quit without saving.</p>
+                <p></p>
+                <p></p>
+                <p><a href="#top">top</a></p>
+
+                <!--- Configure Preset --->
+
+
+                <hr id="configuring_presets" class="help-hr" />
+                <h2>Configuring Presets</h2>
+                <p></p>
+                <img src='img/Edit Preset Keys.jpg'>
+                <p></p>
+                <p>Enter a name or callsign in the name box and the target bearing in the bearing box.</p>
+                <p></p>
+                <p>Click Save or Enter to close and Save</p>
+                <p></p>
+                <p>Click Cancel or ESC to close with no save.</p>
+                <p></p>
+
+
+
+                <p><a href="#top">top</a></p>
+
+
+
+                <!--- Rotator Control Screen --->
+                <hr id="rotator_control_screen" class="help-hr" />
+                <h2>Rotator Control Screen</h2>
+                <p></p>
+                <img src='img/rotator main window.jpg'>
+                <p></p>
+                <h2>Screen Functions</h2>
+                <h3>Bearing Display</h3>
+                <p></p>
+                <h3>Main</h3>
+                <p></p>
+                <p>Shows the forward compass bearing.</p>
+                <h3>Back</h3>
+                <p></p>
+                <p>Shows the reverse compass bearing.</p>
+                <h3>Overlap</h3>
+                <p></p>
+                <p>When the rotator is in an overlap region, the indicator shows red.</p>
+                <p>Note! If Overlap is unchecked in Antenna Setup then the Overlap box will not be displayed on the Rotator Display.</p>></p>
+                <p></p>
+                <h3>Antenna Select</h3>
+                <p></p>
+                <p>Antenna Select drop down box. Shows list of antennas, select to connect to rotator controller. If an error occurs reselect the antenna to try connection again.</p>
+                <p>Note! Minos Rotator will automatically connect to a named antenna. If an error occurs, a disconnection will occur, please reselect the antenna via the drop down to try again. If communication fails again, please verify settings in rotator controller or Minos Rotator.</p>
+                <p>Note! If a change to settings is made to the current selected antenna, then you will be prompted to reload the settings.</p>
+                <p>Note! An antenna must have a name to allow selection.</p>
+                <p></p>
+                <img src='img/main window select antenna.jpg'>
+                <p></p>
+                <h3>Bearing</h3>
+                <p></p>
+                <p>Manually type in a target bearing. Will only allow values that the selected rotator will support. Hit Enter to initiate rotate to, or Control T. The bearing will be highlighted to allow quick entry of new bearings.</p>
+                <p></p>
+                <img src='img/bearing entry.jpg'>
+                <p></p>
+                <h3>Turn Button</h3>
+                <p></p>
+                <p>Press button to rotate antenna to target bearing. Shortcut key is Control T or Enter.</p>
+                <p></p>
+                <h3>Stop Button</h3>
+                <p></p>
+                <p>Press button to stop rotation. Shortcut key is Control S.</p>
+                <p></p>
+                <h3>Left (CCW) Button</h3>
+                <p></p>
+                <p>Press button to start counter-clockwise rotation. Shortcut key is Control L. NOTE! This is a latch button and turns light blue when active. Press again to stop.</p>
+                <p>While rotating the bearing is checked for end stop, if reached a stop will be automatically issued.</p>
+                <p></p>
+                <h3>Right (CW) Button</h3>
+                <p></p>
+                <p>Press button to start clockwise rotation. Shortcut key is Control R. NOTE! This is a latch button and turns light blue when active. Press again to stop.</p>
+                <p>While rotating the bearing is checked for end stop, if reached a stop will be automatically issued.</p>
+                <p></p>
+                <p>NOTE! If a control button is selected while the rotator is moving, a stop command is issued before the selected command is issued.</p>
+                <p></p>
+                <img src='img/Left CCW.jpg'>
+                <p></p>
+                <h3>Preset Buttons</h3>
+                <p></p>
+                <p>Upto ten headings can be preset with the callsign of station or heading name.</p>
+                <p>Press Preset to turn to heading. Shortcut key is Control -number of preset- Preset 10 is Control 0</p>
+                <p></p>
+                <h3>Compass Dial</h3>
+                <p></p>
+                <p>Provides graphical indication of compass bearing.</p>
+                <p></p>
+                <h3>Status Bar</h3>
+                <p></p>
+                <p>Provides status information</p>
+                <p>Shows Rotator connection status and serial parameters.</p>
+                <p>Offset - Shows antenna Offset set.</p>
+                <p>Actual - Shows the actual rotator bearing.</p>
+                <p></p>
+                <p></p>
+                <p><a href="#top">top</a></p>
+
+
+
+                <!--- Rotator Support CW/CCW Commands --->
+                <hr id="Rotator Support CW/CCW Commands" class="help-hr" />
+                <h2>Rotator Support CW/CCW Commands</h2>
+                <p></p>
+                <p>Some rotator controllers do not support a Rotate Left (CW - Clockwise) or Rotate Right (CCW - Counter clockwise) Command. See table <a href="#supported_rotators">below</a></p>
+                <p>To allow the CW and CCW buttons to function, the command rotate to minAzimuth (typically 0 degrees) is sent for CCW command and the command rotate to maxAzimuth (typcially 360 degrees) is sent for CW. The CW and CCW buttons are latching, selecting the buttons again will stop rotation. Rotation will also stop when the rotator reaches the endstop if a stop command is not sent first.</p>
+                <p></p>
+                <p></p>
+                <p><a href="#top">top</a></p>
+
+                <!--- Logger Control Screen --->
+                <hr id="logger_control_screen" class="help-hr" />
+                <h2>Logger Rotator Controls</h2>
+                <p></p>
+                <img src='img/Logger Rotator keys.jpg'>
+                <p></p>
+                <p>The rotator buttons will only appear when the Rotator application has connected to the logger.</p>
+                <p></p>
+                <p>From left to right the rotator controls are as follows.</p>
+                <p></p>
+                <p>Bearing entry box. Enter a bearing into this box and click the Turn button to rotate to the bearing. Only bearings supported by the rotator can be entered. If a QRA locator is entered into the Locator box, the calculated bearing can also be used. If a callsign is entered and found in the archive, the locator can be transfered using F12 and this bearing can be used by the rotator application. In both cases click the Turn button or Control-T to rotate to the bearing.</p>
+                <p></p>
+                <p>The rotator bearing is shown next. When the rotator is in an overlap region, the rotator bearing will be red.</p>
+                <p></p>
+                <p>Left (CCW) Button - Rotate counterclockwise. If rotator is at endstop, no action is taken. Shortcut key is Control-L. Note! This is a latching button and will turn light blue when clicked. Press button to cancel or Stop button.</p>
+                <p></p>
+                <p>Turn - Turn to the bearing in the bearing box.Shortcut key is Control T. </p>
+                <p></p>
+                <p>Left (CW) Button - Rotate clockwise. If rotator is at endstop, no action is taken. Shortcut key is Control-R. Note! This is a latching button and will turn light blue when clicked. Press button to cancel or Stop button.</p>
+                <p></p>
+                <p>Left Stop Button - Stop all rotation. Shortcut key is Control S. </p>
+                <p></p>
+                <p>NOTE! If a button is selected when rotator is moving, a Stop command is issued before the selected command is issued.</p>
+                <p></p>
+                <p>Rotator Status Messages.</p>
+                <p></p>
+                <img src='img/Logger Rotator keys rotating message.jpg'>
+                <p></p>
+                <p>Above the row of boxes is the selected Antenna Name.</p>
+
+                <p></p>
+                <p><a href="#top">top</a></p>
+
+                <!--- Bearing Log --->
+
+
+                <hr id="rotator_position_log" class="help-hr" />
+                <h2>Rotator Position Log</h2>
+                <img src='img/rotator position log setup.jpg'>
+                <p></p>
+                <p>The Rotator bearing can be logged during a contest. Select Log Heading from the Configure Menu.</p>
+                <p>Log Directory - sets the directory to log the bearing.</p>
+                <p>Log Filename - sets the filename of the log.</p>
+                <p>Bearing Difference - The bearing difference before a new bearing is logged.</p>
+                <p>Logging Enabled - Checked bearings will be logged, Unchecked, no logging of bearings.</p>
+                <p>OK - Save settings.</p>
+                <p>Cancel - Quit without saving settings.</p>
+                <p></p>
+
+                <p>Example Log</p>
+                <p></p>
+                <p>Mon Jun 12 18:19:46 2017 Bearing is 320 Degrees</p>
+                <p>Mon Jun 12 18:19:47 2017 Bearing is 324 Degrees</p>
+                <p>Mon Jun 12 18:19:48 2017 Bearing is 326 Degrees</p>
+                <p>Mon Jun 12 18:19:49 2017 Bearing is 326 Degrees</p>
+                <p></p>
+
+
+                <p><a href="#top">top</a></p>
+
+                <!--- Bearing Log --->
+
+
+                <hr id="trace_log" class="help-hr" />
+                <h2>Trace Log</h2>
+                <img src='img/configure menu.jpg'>
+
+                <p></p>
+                <p>A tracelog is available for diagnostic purposes. This can be enabled from the Configure menu where the TraceLog line can be enabled or disabled by checking the menu item. It is suggested that this should be disabled in normal operation.</p>
+                <p></p>
+                <p>Example tracelog with current antenna settings.</p>
+                <p></p>
+                <p>09:28:07.731 *** Antenna Updated ***</p>
+                <p>09:28:07.731 Rotator Name = Test Antenna</p>
+                <p>09:28:07.731 Rotator Model =   603 Yaesu,GS-232B</p>
+                <p>09:28:07.731 Rotator Number = 603</p>
+                <p>09:28:07.731 Rotator Comport = COM8</p>
+                <p>09:28:07.731 Baudrate = 19200</p>
+                <p>09:28:07.731 Databits = 8</p>
+                <p>09:28:07.731 Stop bits = 1</p>
+                <p>09:28:07.731 Handshake = 0</p>
+                <p>09:28:07.731 Antenna Offset = 0</p>
+                <p>09:28:07.731 Current Max Azimuth = 450</p>
+                <p>09:28:07.731 Current Min Azimuth = 0</p>
+                <p>09:28:07.731 South Stop Flag = 0</p>
+                <p>09:28:07.731 Overrun flag = 1</p>
+                <p>09:28:07.731 Rotator Max Baudrate = 9600</p>
+                <p>09:28:07.731 Rotator Min Baud rate = 150</p>
+                <p></p>
+                <p><a href="#top">top</a></p>
+
+
+
+                <!--- Short Cut Keys --->
+                <hr id="short_cut_keys" class="help-hr" />
+                <h2>ShortCut Keys</h2>
+                <p></p>
+                <h3>Rotator Application</h3>
+                <table>
+                    <tr>
+                        <th>Function</th>
+                        <th>Shortcut</th>
+                    </tr>
+                    <tr>
+                        <td>Stop</td>
+                        <td>Control S</td>
+                    </tr>
+                    <tr>
+                        <td>Rotate Left (CCW)</td>
+                        <td>Control L</td>
+                    </tr>
+                    <tr>
+                        <td>Rotate Right (CW)</td>
+                        <td>Control R</td>
+                    </tr>
+                    <tr>
+                        <td>Rotate to Bearing - Turn</td>
+                        <td>Control T</td>
+                    </tr>
+                    <tr>
+                        <td>Rotate to Bearing - Turn</td>
+                        <td>Enter (When focus is in bearing box)</td>
+                    </tr>
+                    <tr>
+                        <td>Preset 1</td>
+                        <td>Control 1</td>
+                    </tr>
+                    <tr>
+                        <td>Preset 2</td>
+                        <td>Control 2</td>
+                    </tr>
+                    <tr>
+                        <td>Preset 3</td>
+                        <td>Control 3</td>
+                    </tr>
+                    <tr>
+                        <td>Preset 4</td>
+                        <td>Control 4</td>
+                    </tr>
+                    <tr>
+                        <td>Preset 5</td>
+                        <td>Control 5</td>
+                    </tr>
+                    <tr>
+                        <td>Preset 6</td>
+                        <td>Control 6</td>
+                    </tr>
+                    <tr>
+                        <td>Preset 7</td>
+                        <td>Control 7</td>
+                    </tr>
+                    <tr>
+                        <td>Preset 8</td>
+                        <td>Control 8</td>
+                    </tr>
+                    <tr>
+                        <td>Preset 9</td>
+                        <td>Control 9</td>
+                    </tr>
+                    <tr>
+                        <td>Preset 10</td>
+                        <td>Control 0</td>
+                    </tr>
+
+                </table>
+                <p></p>
+                <p></p>
+                <h3>Logger Application</h3>
+                <p></p>
+                <table>
+                    <tr>
+                        <th>Function</th>
+                        <th>Shortcut</th>
+                    </tr>
+                    <tr>
+                        <td>Stop</td>
+                        <td>Control S</td>
+                    </tr>
+                    <tr>
+                        <td>Rotate Left (CCW)</td>
+                        <td>Control L</td>
+                    </tr>
+                    <tr>
+                        <td>Rotate Right (CW)</td>
+                        <td>Control R</td>
+                    </tr>
+                    <tr>
+                        <td>Rotate to Bearing - Turn</td>
+                        <td>Control T</td>
+                    </tr>
+                </table>
+                <p></p>
+                <p></p>
+                <p><a href="#top">top</a></p>
+
+                <!--- Rotator Protocols --->
+                <hr id="rotator_protocols" class="help-hr" />
+                <h2>Rotator Protocols</h2>
+                <p></p>
+                <p>The Minos Rotator Status untested means that the protocol has not been tested with Minos Rotator. It doesn't mean it will not work. Users should proceed with caution and any issues reported back to the developers. If tests are successful, please report this back to the developers so the table can be updated.</p>
+                <p></p>
+                <table>
+                    <tr>
+                        <th>Rig #</th>
+                        <th>Mfg</th>
+                        <th>Model</th>
+                        <th>Version</th>
+                        <th>Support CW/CCW Cmds</th>
+                        <th>Hamlib Status</th>
+                        <th>Minos Rotator Status</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Hamlib</td>
+                        <td>Dummy </td>
+                        <td>0.2</td>
+                        <td>Yes</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Hamlib</td>
+                        <td>NET rotctl </td>
+                        <td>0.3</td>
+                        <td>Yes</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Hamlib</td>
+                        <td>EasycommI</td>
+                        <td>0.4</td>
+                        <td>Yes</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>202</td>
+                        <td>Hamlib</td>
+                        <td>EasycommII</td>
+                        <td>0.4</td>
+                        <td>Yes</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>204</td>
+                        <td>Hamlib</td>
+                        <td>EasycommIII</td>
+                        <td>0.4</td>
+                        <td>Yes</td>
+                        <td>Alpha</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>301</td>
+                        <td>XQ2FOD</td>
+                        <td>Fodtrack</td>
+                        <td>0.2</td>
+                        <td>No</td>
+                        <td>Stable</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>401</td>
+                        <td>Idiom Press</td>
+                        <td>Rotor-EZ</td>
+                        <td>2010-02-14</td>
+                        <td>No</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>402</td>
+                        <td>Idiom Press</td>
+                        <td>RotorCard</td>
+                        <td>2010-02-14</td>
+                        <td>No</td>
+                        <td>Untested</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>403</td>
+                        <td>Hy-Gain</td>
+                        <td>DCU-1/DCU-1X</td>
+                        <td>2010-08-23</td>
+                        <td>No</td>
+                        <td>Untested</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>404</td>
+                        <td>DF9GR</td>
+                        <td>ERC</td>
+                        <td>2010-08-23b</td>
+                        <td>No</td>
+                        <td>Alpha</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>405</td>
+                        <td>Green Heron</td>
+                        <td>RT-21</td>
+                        <td>2014-09-14</td>
+                        <td>No</td>
+                        <td>Alpha</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>501</td>
+                        <td>SARtek</td>
+                        <td>SARtek-1</td>
+                        <td>0.2</td>
+                        <td>No</td>
+                        <td>Untested</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>601</td>
+                        <td>Yaesu</td>
+                        <td>GS-232A </td>
+                        <td>0.3</td>
+                        <td>Yes</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>602</td>
+                        <td>Yaesu</td>
+                        <td>GS-232</td>
+                        <td>0.1</td>
+                        <td>No</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>603</td>
+                        <td>Yaesu</td>
+                        <td>GS-232B</td>
+                        <td>0.2</td>
+                        <td>Yes</td>
+                        <td>Beta</td>
+                        <td>Beta</td>
+                    </tr>
+                    <tr>
+                        <td>604</td>
+                        <td>F1TE</td>
+                        <td>GS232/F1TE Tracker</td>
+                        <td>0.1</td>
+                        <td>No</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>701</td>
+                        <td>WA6UFQ</td>
+                        <td>PcRotor</td>
+                        <td>0.1</td>
+                        <td>No</td>
+                        <td>Untested</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>801</td>
+                        <td>Heathkit</td>
+                        <td>HD 1780 Intellirotor</td>
+                        <td>0.1</td>
+                        <td>No</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>901</td>
+                        <td>SPID</td>
+                        <td>Rot2Prog</td>
+                        <td>1.0</td>
+                        <td>Yes</td>
+                        <td>Stable</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>902</td>
+                        <td>SPID</td>
+                        <td>Rot1Prog</td>
+                        <td>1.0</td>
+                        <td>Yes</td>
+                        <td>Stable</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>1001</td>
+                        <td>M2</td>
+                        <td>RC2800</td>
+                        <td>0.1.1</td>
+                        <td>No</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>1101</td>
+                        <td>EA4TX</td>
+                        <td>ARS RCI AZ</td>
+                        <td>0.1</td>
+                        <td>Yes</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>1201</td>
+                        <td>AMSAT</td>
+                        <td>IF-100</td>
+                        <td>0.1</td>
+                        <td>No</td>
+                        <td>Untested</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>1301</td>
+                        <td>LA7LKA</td>
+                        <td>ts7400</td>
+                        <td>0.1</td>
+                        <td>Yes</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>1401</td>
+                        <td>Celestron</td>
+                        <td>NexStar</td>
+                        <td>0.1</td>
+                        <td>No</td>
+                        <td>Untested</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>1501</td>
+                        <td>DG9OAA</td>
+                        <td>Ether6 (via ethernet)</td>
+                        <td>0.1</td>
+                        <td>Yes</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>1601</td>
+                        <td>CNCTRK</td>
+                        <td>CNCTRK</td>
+                        <td>0.1</td>
+                        <td>No</td>
+                        <td>Untested</td>
+                        <td>Untested</td>
+                    </tr>
+                    <tr>
+                        <td>1701</td>
+                        <td>Prosistel</td>
+                        <td>Prosistel D</td>
+                        <td>0.3</td>
+                        <td>No</td>
+                        <td>Beta</td>
+                        <td>Untested</td>
+                    </tr>
+                </table>
+                <p></p>
+                <p></p>
+                <p><a href="#top">top</a></p>
+
+                <!--- Rotator Controllers --->
+                <hr id="rotator_controllers" class="help-hr" />
+                <h2>Rotator Controllers</h2>
+                <p></p>
+                <p>A Rotator Controller may support multiple rotator protocols, and while it may support a particular rotator protocol, it may not support all the commands. It is also possible that the hamlib library may only support a limited set of commands. This section notes rotator controllers that have been tested working, the protocol used and other relevant settings. If the rotator controller you are using is not listed here and Minos Rotator works succesfully, please forward the details so they can be added to the table. </p>
+                <p></p>
+                <table>
+                    <tr>
+                        <th>Controller Model</th>
+                        <th>Protocol Number</th>
+                        <th>Manufacturer</th>
+                        <th>Procotol Name</th>
+                        <th>Baud Rate</th>
+                        <th>Data Bits</th>
+                        <th>Stop Bits</th>
+                        <th>Parity</th>
+                        <th>Handshake</th>
+                        <th>Notes</th>
+                        <th>Minos Rotator Status</th>
+                    </tr>
+                    <tr>
+                        <td>Easy Rotator Control</td>
+                        <td>603</td>
+                        <td>Yaesu</td>
+                        <td>GS232B</td>
+                        <td>9600</td>
+                        <td>8</td>
+                        <td>1</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>Requires V4.0 firmware to support CW and CCW commands</td>
+                        <td>Tested</td>
+                    </tr>
+                </table>
+                <p></p>
+                    <p></p>
+                    <p><a href="#top">top</a></p>
+
+</div><!--/row-->
+
+
+            <hr>
+
+
+
+
+        </div> <!-- /container -->
+
+</body>
