@@ -351,6 +351,7 @@ void RotatorMainWindow::initActionsConnections()
 {
 
     connect(ui->selectAntennaBox, SIGNAL(activated(int)), this, SLOT(upDateAntenna()));
+    connect(selectRotator, SIGNAL(antennaNameChange()), this, SLOT(updateSelectAntennaBox()));
     connect(ui->actionTraceLog, SIGNAL(changed()), this, SLOT(saveTraceLogFlag()));
     connect(ui->turnButton, SIGNAL(clicked(bool)), this, SLOT(rotateToController()));
     connect(ui->bearingEdit, SIGNAL(returnPressed()), this, SLOT(rotateToController()));
@@ -1391,4 +1392,10 @@ void RotatorMainWindow::currentAntennaSettingChanged(QString antennaName)
 }
 
 
-
+void RotatorMainWindow::updateSelectAntennaBox()
+{
+    int curidx = selectAntenna->currentIndex();
+    selectAntenna->clear();
+    initSelectAntennaBox();
+    selectAntenna->setCurrentIndex(curidx);
+}

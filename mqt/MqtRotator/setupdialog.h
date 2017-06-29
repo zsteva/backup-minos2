@@ -62,6 +62,7 @@ public:
 signals:
 
     void currentAntennaSettingChanged(QString);
+    void antennaNameChange();
 
 protected slots:
 
@@ -99,6 +100,7 @@ private:
     QComboBox *comHandShake[NUM_ANTENNAS];
     QIntValidator *intValidator;
     bool antennaValueChanged[NUM_ANTENNAS];
+    bool antennaNameChanged[NUM_ANTENNAS];
     bool antennaChanged;
     const int minOffset = -90;
     const int maxOffset = 90;

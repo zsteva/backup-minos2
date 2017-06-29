@@ -306,6 +306,7 @@ void SetupDialog::antennaNameFinished(int boxNumber)
     {
         availAntennas[boxNumber].antennaName = antennaName[boxNumber]->text();
         antennaValueChanged[boxNumber] = true;
+        antennaNameChanged[boxNumber] = true;
         antennaChanged = true;
 
     }
@@ -628,6 +629,7 @@ void SetupDialog::cancelButtonPushed()
 
 void SetupDialog::saveSettings()
 {
+    bool antennaNameChg = false;
     // have the current antenna settings been changed?
     bool currentAntennaChanged = false;
     int ca = -1;
@@ -661,6 +663,11 @@ void SetupDialog::saveSettings()
             {
                 config.beginGroup("Antenna" + QString::number(i+1));
                 config.setValue("antennaName", availAntennas[i].antennaName);
+                if (antennaNameChanged[i])
+                {
+                    antennaNameChg = true;
+                    antennaNameChanged[i] = false;
+                }
                 config.setValue("antennaNumber", i+1);
                 config.setValue("rotatorModel", availAntennas[i].rotatorModel);
                 config.setValue("rotatorModelName", availAntennas[i].rotatorModelName);
@@ -684,6 +691,11 @@ void SetupDialog::saveSettings()
 
    }
    antennaChanged = false;
+
+   if (antennaNameChg)
+   {
+       emit antennaNameChange();
+   }
 
    if (currentAntennaChanged && ca != -1)
    {

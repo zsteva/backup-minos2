@@ -200,6 +200,7 @@ private slots:
     void saveTraceLogFlag();
     void overLapDisplayBox(bool status);
     void currentAntennaSettingChanged(QString);
+    void updateSelectAntennaBox();
 private:
     void rotateTo(int bearing);
     int northCalcTarget(int targetBearing);
