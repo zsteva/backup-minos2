@@ -1125,11 +1125,8 @@ QSharedPointer<BaseContact> BaseContestLog::findNextUnfilledContact()
    return QSharedPointer<BaseContact>();
 }
 //====================================================================
-bool BaseContestLog::checkTime(const dtg &t) const
+bool BaseContestLog::checkTime(const QDateTime &check) const
 {
-      QString dtgstr = t.getDate(DTGFULL) + t.getTime(DTGLOG);
-
-      QDateTime check = CanonicalToTDT( dtgstr );
       QString t1 = DTGStart.getValue();
       QDateTime start = CanonicalToTDT( t1 );
       t1 = DTGEnd.getValue();
@@ -1144,6 +1141,14 @@ bool BaseContestLog::checkTime(const dtg &t) const
          return false;
       }
       return true;
+}
+bool BaseContestLog::checkTime(const dtg &t) const
+{
+    QString dtgstr = t.getDate(DTGFULL) + t.getTime(DTGLOG);
+
+    QDateTime check = CanonicalToTDT( dtgstr );
+
+    return checkTime(check);
 }
 static bool loadCalYear ( Calendar &cal, int year )
 {

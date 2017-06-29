@@ -49,9 +49,12 @@ class TMConfigDM : public QObject
     Q_OBJECT
    private:  	// User declarations
       static TMConfigDM *thisDM;
+      TMConfigDM( QWidget* Owner );
+
       QVector <QProcess *> guardv;
       QString circleOfHell;
-      TMConfigDM( QWidget* Owner );
+      bool hideServers;
+      bool autoStart;
    public:  		// User declarations
       ~TMConfigDM();
 
@@ -62,6 +65,10 @@ class TMConfigDM : public QObject
       void setCircleOfHell( const QString &circle );
       QString getCircleOfHell();
 
+      bool getAutoStart();
+      void setAutoStart(bool);
+      bool getHideServers();
+      void setHideServers(bool);
       static TMConfigDM *getConfigDM( QWidget* Owner );
 };
 //---------------------------------------------------------------------------

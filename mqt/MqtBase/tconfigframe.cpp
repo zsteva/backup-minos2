@@ -16,8 +16,11 @@ TConfigFrame::~TConfigFrame()
 {
     delete ui;
 }
-void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb)
+void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool doAutoStart)
 {
+    if (!doAutoStart)
+        ui->autoStartCheckBox->setVisible(false);
+
     closeCb = ccb;
     parent = p;
 
@@ -39,12 +42,27 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb)
        }
     }
     ui->StationIdEdit->setText(TMConfigDM::getConfigDM( 0 ) ->getCircleOfHell());
+    ui->HideCheckBox->setChecked(TMConfigDM::getConfigDM( 0 )->getHideServers());
+    ui->autoStartCheckBox->setChecked(TMConfigDM::getConfigDM( 0 )->getAutoStart());
+
+    if (doAutoStart && TMConfigDM::getConfigDM( 0 )->getAutoStart())
+    {
+        connect(&startTimer, SIGNAL(timeout()), this, SLOT(startTimer_Timeout()));
+        startTimer.start(100);
+    }
+    ui->HideCheckBox->setChecked(TMConfigDM::getConfigDM( 0 )->getHideServers());
 }
 void TConfigFrame::setup(bool started)
 {
     ui->StartButton->setEnabled(!started);
     ui->StopButton->setVisible(false);
 }
+void TConfigFrame::startTimer_Timeout()
+{
+    startTimer.stop();
+    start();
+}
+
 void TConfigFrame::start()
 {
     on_SetButton_clicked();    // set the circle of hell
@@ -68,9 +86,14 @@ void TConfigFrame::on_StopButton_clicked()
 
 void TConfigFrame::on_HideCheckBox_clicked()
 {
+    TMConfigDM::getConfigDM( 0 ) ->setHideServers(ui->HideCheckBox->isChecked());
     // Make this active - need a hide/show event that is signalled for show
     // and then all "server" apps need to honour this.
     setShowServers(!ui->HideCheckBox->isChecked());
+}
+void TConfigFrame::on_autoStartCheckBox_clicked()
+{
+    TMConfigDM::getConfigDM( 0 ) ->setAutoStart(ui->autoStartCheckBox->isChecked());
 }
 
 void TConfigFrame::on_SetButton_clicked()
@@ -102,4 +125,5 @@ void TConfigFrame::on_CancelButton_clicked()
     // need to pass up to parent
     closeCb(parent);
 }
+
 

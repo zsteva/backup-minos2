@@ -9,6 +9,8 @@
 
 #include "logger_pch.h"
 
+#include "ConfigFile.h"
+
 #include "ServerEvent.h"
 #include "LogEvents.h"
 #include "XMPPRPCParams.h"
@@ -27,7 +29,7 @@ TSendDM *SendDM = 0;
 TSendDM::TSendDM( QWidget* Owner )
       : QObject( Owner )
 {
-    QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
+    QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
     QString circleOfHell = config.value( "CircleOfHell/Name", "No_name_in_config" ).toString().trimmed();
     serverName = circleOfHell;
 
@@ -200,31 +202,31 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
    // called whenever frequency changes
    if ( an.getOK() )
    {
-      if ( an.getCategory() == rpcConstants::KeyerCategory && an.getKey() == "Report" )
+      if ( an.getCategory() == rpcConstants::KeyerCategory && an.getKey() == rpcConstants::keyerKeyReport )
       {
          LogContainer->setKeyerLoaded();
          LogContainer->setCaption( an.getValue() );
          logMessage( "KeyerReport " + an.getValue() );
       }
-      if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == "Mode" )
+      if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyMode )
       {
          LogContainer->setMode( an.getValue() );
          logMessage( "RigMode " + an.getValue() );
       }
-      if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == "Frequency" )
+      if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyFrequency )
       {
          LogContainer->setFreq( an.getValue() );
       }
-      if ( an.getCategory() == rpcConstants::BandMapCategory && an.getKey() == "Loaded" )
+      if ( an.getCategory() == rpcConstants::BandMapCategory && an.getKey() == rpcConstants::bandmapKeyLoaded )
       {
          LogContainer->setBandMapLoaded();
       }
-      if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "State")
+      if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorKeyState)
       {
          LogContainer->setRotatorLoaded();
          LogContainer->setRotatorState(an.getValue());
       }
-      if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "Bearing")
+      if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorBearing)
       {
 
          LogContainer->setRotatorBearing(an.getValue());

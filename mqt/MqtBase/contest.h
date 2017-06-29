@@ -313,6 +313,7 @@ class BaseContestLog: public BaseLogList
       QSharedPointer<BaseContact> getBestDX( void );
       QString dateRange( DTG dstyle );
       bool checkTime(const dtg &t) const;
+      bool checkTime(const QDateTime &t) const;
 
 };
 class ContestScore

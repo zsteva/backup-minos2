@@ -9,6 +9,8 @@
 //---------------------------------------------------------------------------
 #include "minos_pch.h"
 
+#include "ConfigFile.h"
+
 #include "MinosLink.h"
 #include "clientThread.h"
 #include "serverThread.h"
@@ -27,7 +29,7 @@ MinosServer *MinosServer::getMinosServer()
 
 MinosServer::MinosServer() : serverName( DEFAULT_SERVER_NAME )
 {
-  QSettings config("./Configuration/MinosConfig.ini", QSettings::IniFormat);
+  QSettings config(ConfigFile::getConfigIniName(), QSettings::IniFormat);
   QString circleOfHell = config.value( "CircleOfHell/Name", "No_name_in_config" ).toString().trimmed();
   serverName = circleOfHell;
 

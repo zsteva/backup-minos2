@@ -3,6 +3,8 @@
 
 #include <QFrame>
 
+class BaseContestLog;
+
 namespace Ui {
 class TClockFrame;
 }
@@ -14,9 +16,11 @@ class TClockFrame : public QFrame
 public:
     explicit TClockFrame(QWidget *parent = 0);
     ~TClockFrame();
+    void setContest(BaseContestLog *contest);
 
 private:
     Ui::TClockFrame *ui;
+    BaseContestLog *contest;
 
 private slots:
     void RecheckTimerTimer( );

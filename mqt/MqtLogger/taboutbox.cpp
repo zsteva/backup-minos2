@@ -1,6 +1,7 @@
 #include "logger_pch.h"
 #include <QDesktopServices>
 
+#include "ConfigFile.h"
 #include "taboutbox.h"
 #include "ui_taboutbox.h"
 
@@ -38,7 +39,7 @@ QString MinosText =
 
 /*static*/bool TAboutBox::ShowAboutBox(QWidget *Owner,  bool onStartup )
 {
-   TAboutBox aboutBox( Owner, onStartup );
+   TAboutBox aboutBox( Owner, onStartup);
 
 
    int ret = aboutBox.exec();
@@ -78,7 +79,7 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
-    ui->ConfigFrame->initialise(this, &::closeCallback);
+    ui->ConfigFrame->initialise(this, &::closeCallback, false);
     ui->PageControl1->setCurrentWidget(ui->AboutTabSheet);
 
     ui->AboutMemo->setText(QString("<h1>Welcome to Minos 2 Version ") + VERSION + " Beta" + "</h1><br><a href=\"http://minos.sourceforge.net/\">http://minos.sourceforge.net</a>");
@@ -87,7 +88,7 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
 
     ui->MinosMemo->setText(MinosText);
 
-    if ( !FileExists( "./Configuration/MinosConfig.ini" ) /*|| !onStartup || checkServerReady()*/ )
+    if ( !FileExists( ConfigFile::getConfigIniName() ) /*|| !onStartup || checkServerReady()*/ )
     {
        ui->AutoStartTabSheet->setVisible(false);
        ui->LoggerOnlyButton->setVisible(false);

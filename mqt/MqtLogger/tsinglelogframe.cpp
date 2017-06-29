@@ -149,8 +149,9 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     ui->districtFrame->setContest(contest);
     ui->StatsFrame->setContest(contest);
     ui->locFrame->setContest(contest);
-    ui->StatsButton->setChecked(true);
-    ui->StackedMults->setCurrentIndex(4);
+    ui->clockFrame->setContest(contest);
+    ui->ClockButton->setChecked(true);
+    ui->StackedMults->setCurrentIndex(5);   // start up on the clock - useful outside the contest!
 }
 
 TSingleLogFrame::~TSingleLogFrame()
