@@ -1089,6 +1089,10 @@ void RotatorMainWindow::rotateCW(bool toggle)
         {
             logMessage("Rotator Bearing > currentMaxAzimuth");
             cwCcwCmdflag = false;
+            if (ui->rot_right_button->isChecked())
+            {
+                ui->rot_right_button->setChecked(false);
+            }
             return;
         }
 
@@ -1111,7 +1115,7 @@ void RotatorMainWindow::rotateCW(bool toggle)
             else
             {
                 logMessage("Send rotate to maxAzimuth instead of CW rotator command, maxAzimuth = " + QString::number(rotator->getMaxAzimuth()));
-                retCode = rotator->rotate_to_bearing(rotator->getMaxAzimuth());
+                retCode = rotator->rotate_to_bearing(currentMaxAzimuth);
             }
             if (retCode < 0)
             {
@@ -1155,10 +1159,14 @@ void RotatorMainWindow::rotateCCW(bool toggle)
     if (toggle)
     {
 
-        if (rotatorBearing <= COMPASS_MIN0)
+        if (rotatorBearing <= currentMinAzimuth)
         {
             logMessage("Rotator Bearing < currentMinAzimuth");
             cwCcwCmdflag = false;
+            if (ui->rot_left_button->isChecked())
+            {
+                ui->rot_left_button->setChecked(false);
+            }
             return;
         }
 
@@ -1181,7 +1189,7 @@ void RotatorMainWindow::rotateCCW(bool toggle)
             else
             {
                 logMessage("Send rotate to minAzimuth, instead of CCW rotator command, minAzimuth = " + QString::number(rotator->getMinAzimuth()));
-                retCode = rotator->rotate_to_bearing(rotator->getMinAzimuth());
+                retCode = rotator->rotate_to_bearing(currentMinAzimuth);
             }
 
             if (retCode < 0)
