@@ -2080,9 +2080,20 @@ void QSOLogFrame::on_ValidateError (int mess_no )
 int QSOLogFrame::getAngle()
 {
     QString brgSt = ui->BrgSt->text();
-
+    bool ok;
     int brg = 0;
+    brg = brgSt.toInt(&ok, 10);
 
+    if (ok)
+    {
+       return brg;
+    }
+    else
+    {
+        return COMPASS_ERROR;
+    }
+
+/*
     for (int i = 0;i < brgSt.length(); i++)
     {
         if (brgSt[i].isDigit())
@@ -2100,12 +2111,20 @@ int QSOLogFrame::getAngle()
             return brg;
         }
     }
+*/
     return brg;
 }
 
 void QSOLogFrame::on_Rotate_clicked()
 {
     int angle = getAngle();
+
+    if (angle == COMPASS_ERROR)
+    {
+        QString msg = "<font color='Red'>Bearing empty or invalid</font>";
+        ui->rotatorState->setText(msg);
+        return;
+    }
 
 
     if (angle > maxAzimuth)
@@ -2120,7 +2139,7 @@ void QSOLogFrame::on_Rotate_clicked()
     }
     else
     {
-        TSendDM::sendRotator(rpcConstants::eRotateDirect, getAngle());
+        TSendDM::sendRotator(rpcConstants::eRotateDirect, angle);
         moving = true;
     }
 
@@ -2128,6 +2147,8 @@ void QSOLogFrame::on_Rotate_clicked()
 
 void QSOLogFrame::on_RotateLeft_clicked(bool toggle)
 {
+    int angle = 0;
+
     if (currentBearing <= minAzimuth)
     {
         ui->RotateLeft->setChecked(false);
@@ -2143,7 +2164,7 @@ void QSOLogFrame::on_RotateLeft_clicked(bool toggle)
     if (toggle)
     {
         ui->RotateLeft->setChecked(true);
-        TSendDM::sendRotator(rpcConstants::eRotateLeft, getAngle());
+        TSendDM::sendRotator(rpcConstants::eRotateLeft, angle);
         movingCW = true;
     }
     else
@@ -2156,6 +2177,8 @@ void QSOLogFrame::on_RotateLeft_clicked(bool toggle)
 
 void QSOLogFrame::on_RotateRight_clicked(bool toggle)
 {
+    int angle = 0;
+
     if (currentBearing >= maxAzimuth)
     {
         ui->RotateRight->setChecked(false);
@@ -2172,7 +2195,7 @@ void QSOLogFrame::on_RotateRight_clicked(bool toggle)
     if (toggle)
     {
         ui->RotateRight->setChecked(true);
-        TSendDM::sendRotator(rpcConstants::eRotateRight, getAngle());
+        TSendDM::sendRotator(rpcConstants::eRotateRight, angle);
         movingCCW = true;
     }
     else
