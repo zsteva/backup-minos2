@@ -676,7 +676,7 @@ void RotatorMainWindow::upDateAntenna()
        {
             if (rotator->getMaxAzimuth() > COMPASS_MAX360 && !selectRotator->currentAntenna.overRunFlag)
             {
-                currentMaxAzimuth = COMPASS_MAX360 - ROTATE_TOLERANCE; // stop rotator overrunning
+                currentMaxAzimuth = COMPASS_MAX360 - ROTATE_ENDSTOP_TOLERANCE; // stop rotator overrunning
             }
             else
             {
@@ -684,7 +684,7 @@ void RotatorMainWindow::upDateAntenna()
             }
             if (rotator->getMinAzimuth() < COMPASS_MIN0 && ! selectRotator->currentAntenna.overRunFlag)
             {
-                currentMinAzimuth = COMPASS_MIN0 + ROTATE_TOLERANCE; // stop rotator overrunning
+                currentMinAzimuth = COMPASS_MIN0 + ROTATE_ENDSTOP_TOLERANCE; // stop rotator overrunning
             }
             else
             {
@@ -725,7 +725,7 @@ void RotatorMainWindow::upDateAntenna()
        logMessage("Current Max Azimuth = " + QString::number(currentMaxAzimuth));
        logMessage("Current Min Azimuth = " + QString::number(currentMinAzimuth));
        logMessage("South Stop Flag = " + QString::number(selectRotator->currentAntenna.southStopFlag));
-       logMessage("Overrun flag = " + QString::number(selectRotator->currentAntenna.overRunFlag));
+       logMessage("Overrun flag = " + QString::number(overLapActiveflag));
        logMessage("Support CW and CCW Commands = " + QString::number(supportCwCcwCmd));
        logMessage("Rotator Max Baudrate = " + QString::number(rotator->getMaxBaudRate()));
        logMessage("Rotator Min Baud rate = " + QString::number(rotator->getMinBaudRate()));
@@ -1016,6 +1016,17 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
         target = targetBearing;
         logMessage("target11 = " + QString::number(target));
         return target;
+    }
+    // this is to handle situation when rotator can handle overlap, but it is turned off in rotator
+    // and rotator has overrun current max and min azimuth at current endstop
+    else if (!overLapActiveflag)
+    {
+        if ((rotatorBearing < currentMinAzimuth || rotatorBearing > currentMaxAzimuth) && targetBearing <= currentMaxAzimuth && targetBearing >= currentMinAzimuth)
+        {
+            target = targetBearing;
+            logMessage("target12 = " + QString::number(target));
+            return target;
+        }
     }
 
     logMessage("target12 (error?) = " + QString::number(target));

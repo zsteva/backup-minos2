@@ -34,7 +34,7 @@
 #define COMPASS_MIN0 0
 #define COMPASS_ERROR 999
 
-#define ROTATE_TOLERANCE 4
+#define ROTATE_ENDSTOP_TOLERANCE 0
 
 
 // Status messages sent to minos logger
