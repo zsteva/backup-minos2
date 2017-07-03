@@ -720,7 +720,7 @@ void SetupDialog::readSettings()
         availAntennas[i].rotatorModel = config.value("rotatorModel", "").toString();
         availAntennas[i].rotatorModelName = config.value("rotatorModelName", "").toString();
         availAntennas[i].rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
-        availAntennas[i].rotatorManufacturer = config.value("rotatorManfacturer", "").toString();
+        availAntennas[i].rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
         availAntennas[i].southStopFlag = config.value("southStop", true).toBool();
         availAntennas[i].overRunFlag = config.value("overRun", false).toBool();
         availAntennas[i].antennaOffset = config.value("antennaOffset", "").toInt();
