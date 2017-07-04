@@ -29,12 +29,28 @@ RotatorLog::RotatorLog()
 
 void RotatorLog::saveBearingLog(int bearing)
 {
-    static int oldbearing = -1;
-    if (oldbearing == bearing && !bearingLogEnabled)
-        return;
-    oldbearing = bearing;
+    static int oldbearing = COMPASS_ERROR;
 
-    writeLog(bearing);
+    if (oldbearing != bearing && bearingLogEnabled)
+    {
+        if (oldbearing > bearing)
+        {
+            if ((oldbearing - bearing) > bearingLogBearingDiff)
+            {
+                oldbearing = bearing;
+                writeLog(bearing);
+            }
+        }
+        else
+        {
+            if ((bearing - oldbearing) > bearingLogBearingDiff)
+            {
+                oldbearing = bearing;
+                writeLog(bearing);
+            }
+        }
+    }
+
 
 }
 
