@@ -2077,23 +2077,12 @@ void QSOLogFrame::on_ValidateError (int mess_no )
       // add the message into the error list
       errs.insert( &errDefs[ mess_no ], &errDefs[ mess_no ] );
 }
+
+
 int QSOLogFrame::getAngle()
 {
     QString brgSt = ui->BrgSt->text();
-    bool ok;
-    int brg = 0;
-    brg = brgSt.toInt(&ok, 10);
 
-    if (ok)
-    {
-       return brg;
-    }
-    else
-    {
-        return COMPASS_ERROR;
-    }
-
-/*
     for (int i = 0;i < brgSt.length(); i++)
     {
         if (brgSt[i].isDigit())
@@ -2111,7 +2100,7 @@ int QSOLogFrame::getAngle()
             return brg;
         }
     }
-*/
+
     return brg;
 }
 

@@ -1354,8 +1354,17 @@ bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
 {
     QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
     config.beginGroup("Support_rotate");
+    bool value = false;
 
-    bool value = config.value(QString::number(rotatorNumber), false).toBool();
+    if (!config.contains(QString::number(rotatorNumber)))
+    {
+        logMessage("Rotator Number = " + QString::number(rotatorNumber) + " does not exist in config file!");
+    }
+    else
+    {
+       value = config.value(QString::number(rotatorNumber), false).toBool();
+    }
+
     config.endGroup();
 
     return value;
