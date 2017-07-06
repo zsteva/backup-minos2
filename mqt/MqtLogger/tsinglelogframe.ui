@@ -139,7 +139,7 @@
             <enum>QFrame::NoFrame</enum>
            </property>
            <property name="currentIndex">
-            <number>5</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="DXCCPage">
             <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -235,6 +235,9 @@
                     </property>
                     <item>
                      <widget class="QCheckBox" name="WorkedCB">
+                      <property name="focusPolicy">
+                       <enum>Qt::NoFocus</enum>
+                      </property>
                       <property name="text">
                        <string>Worked</string>
                       </property>
@@ -242,6 +245,9 @@
                     </item>
                     <item>
                      <widget class="QCheckBox" name="UnworkedCB">
+                      <property name="focusPolicy">
+                       <enum>Qt::NoFocus</enum>
+                      </property>
                       <property name="text">
                        <string>Unworked</string>
                       </property>
@@ -256,6 +262,9 @@
                     </property>
                     <item>
                      <widget class="QCheckBox" name="ContEU">
+                      <property name="focusPolicy">
+                       <enum>Qt::NoFocus</enum>
+                      </property>
                       <property name="text">
                        <string>Europe</string>
                       </property>
@@ -263,6 +272,9 @@
                     </item>
                     <item>
                      <widget class="QCheckBox" name="ContOC">
+                      <property name="focusPolicy">
+                       <enum>Qt::NoFocus</enum>
+                      </property>
                       <property name="text">
                        <string>Oceania</string>
                       </property>
@@ -277,6 +289,9 @@
                     </property>
                     <item>
                      <widget class="QCheckBox" name="ContAS">
+                      <property name="focusPolicy">
+                       <enum>Qt::NoFocus</enum>
+                      </property>
                       <property name="text">
                        <string>Asia</string>
                       </property>
@@ -284,6 +299,9 @@
                     </item>
                     <item>
                      <widget class="QCheckBox" name="ContSA">
+                      <property name="focusPolicy">
+                       <enum>Qt::NoFocus</enum>
+                      </property>
                       <property name="text">
                        <string>S America</string>
                       </property>
@@ -298,6 +316,9 @@
                     </property>
                     <item>
                      <widget class="QCheckBox" name="ContAF">
+                      <property name="focusPolicy">
+                       <enum>Qt::NoFocus</enum>
+                      </property>
                       <property name="text">
                        <string>Africa</string>
                       </property>
@@ -305,6 +326,9 @@
                     </item>
                     <item>
                      <widget class="QCheckBox" name="ContNA">
+                      <property name="focusPolicy">
+                       <enum>Qt::NoFocus</enum>
+                      </property>
                       <property name="text">
                        <string>N America</string>
                       </property>
@@ -448,6 +472,9 @@
             </property>
             <item>
              <widget class="QRadioButton" name="ClockButton">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
               <property name="text">
                <string>Clock</string>
               </property>
@@ -755,15 +782,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MinosSplitter</class>
-   <extends>QSplitter</extends>
-   <header>minossplitter.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>QSOLogFrame</class>
    <extends>QFrame</extends>
    <header>qsologframe.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MinosSplitter</class>
+   <extends>QSplitter</extends>
+   <header>minossplitter.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
