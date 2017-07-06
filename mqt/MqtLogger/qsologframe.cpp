@@ -1784,15 +1784,15 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
             ui->TimeEdit->setStyleSheet(ss);
         }
     }
-    ui->bandMapFrame->setVisible( LogContainer->isBandMapLoaded());
+    ui->bandMapFrame->setVisible( !edit && LogContainer->isBandMapLoaded());
 
-    ui->Rotate->setVisible(LogContainer->isRotatorLoaded());
-    ui->RotateLeft->setVisible(LogContainer->isRotatorLoaded());
-    ui->RotateRight->setVisible(LogContainer->isRotatorLoaded());
-    ui->StopRotate->setVisible(LogContainer->isRotatorLoaded());
-    ui->RotBrg->setVisible(LogContainer->isRotatorLoaded());
-    ui->rotatorState->setVisible(LogContainer->isRotatorLoaded());
-    ui->rotatorState->setVisible(LogContainer->isRotatorLoaded());
+    ui->Rotate->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->RotateLeft->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->RotateRight->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->StopRotate->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->RotBrg->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->rotatorState->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->rotatorState->setVisible(!edit && LogContainer->isRotatorLoaded());
 }
 
 void QSOLogFrame::transferDetails(const QSharedPointer<BaseContact> lct, const BaseContestLog *matct )
