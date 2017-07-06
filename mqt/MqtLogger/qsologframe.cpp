@@ -576,7 +576,9 @@ void QSOLogFrame::on_GJVForceButton_clicked()
     ui->SerTXEdit->setReadOnly(true);
 //    SerTXEdit->Color = clBtnFace;
     MinosLoggerEvents::SendShowErrorList();
-    dlgForced();
+    if (dlgForced())
+        emit QSOFrameCancelled();
+
 }
 bool QSOLogFrame::savePartial()
 {
@@ -1644,7 +1646,7 @@ void QSOLogFrame::logScreenEntry( )
    bool contactmodeCW = ( screenContact.reps.size() == 3 && screenContact.repr.size() == 3 );
    bool curmodeCW = ( screenContact.mode.compare( "A1A", Qt::CaseInsensitive ) == 0 );
 
-   if ( contactmodeCW != curmodeCW )
+   if ( !edit && contactmodeCW != curmodeCW )
    {
       // ask if change...
       if ( !curmodeCW )
@@ -1678,7 +1680,9 @@ void QSOLogFrame::logScreenEntry( )
    killPartial();
 
    MinosLoggerEvents::SendAfterLogContact(ct);
-   startNextEntry( );	// select the "next"
+
+   if (!edit || catchup )
+        startNextEntry( );	// select the "next"
 }
 //---------------------------------------------------------------------------
 void QSOLogFrame::getScreenContactTime()
