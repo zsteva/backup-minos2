@@ -585,7 +585,9 @@ void QSOLogFrame::on_GJVForceButton_clicked()
     ui->SerTXEdit->setReadOnly(true);
 //    SerTXEdit->Color = clBtnFace;
     MinosLoggerEvents::SendShowErrorList();
-    dlgForced();
+    if (dlgForced())
+        emit QSOFrameCancelled();
+
 }
 bool QSOLogFrame::savePartial()
 {
@@ -1653,7 +1655,7 @@ void QSOLogFrame::logScreenEntry( )
    bool contactmodeCW = ( screenContact.reps.size() == 3 && screenContact.repr.size() == 3 );
    bool curmodeCW = ( screenContact.mode.compare( "A1A", Qt::CaseInsensitive ) == 0 );
 
-   if ( contactmodeCW != curmodeCW )
+   if ( !edit && contactmodeCW != curmodeCW )
    {
       // ask if change...
       if ( !curmodeCW )
@@ -1687,6 +1689,8 @@ void QSOLogFrame::logScreenEntry( )
    killPartial();
 
    MinosLoggerEvents::SendAfterLogContact(ct);
+
+   if (!edit || catchup )
    startNextEntry( );	// select the "next"
 }
 //---------------------------------------------------------------------------
@@ -1789,18 +1793,15 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
             ui->TimeEdit->setStyleSheet(ss);
         }
     }
-
-    ui->bandMapFrame->setVisible( LogContainer->isBandMapLoaded());
-
-    ui->Rotate->setVisible(LogContainer->isRotatorLoaded());
-    ui->RotateLeft->setVisible(LogContainer->isRotatorLoaded());
-    ui->RotateRight->setVisible(LogContainer->isRotatorLoaded());
-    ui->StopRotate->setVisible(LogContainer->isRotatorLoaded());
-    ui->RotBrg->setVisible(LogContainer->isRotatorLoaded());
-    ui->rotatorState->setVisible(LogContainer->isRotatorLoaded());
-    ui->antennaName->setVisible(LogContainer->isRotatorLoaded());
-    ui->BrgSt->setFrame(LogContainer->isRotatorLoaded());
-    ui->BrgSt->setReadOnly(!LogContainer->isRotatorLoaded());
+    ui->bandMapFrame->setVisible( !edit && LogContainer->isBandMapLoaded());
+    ui->antennaName->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->Rotate->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->RotateLeft->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->RotateRight->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->StopRotate->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->RotBrg->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->rotatorState->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->rotatorState->setVisible(!edit && LogContainer->isRotatorLoaded());
 
 }
 

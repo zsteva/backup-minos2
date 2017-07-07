@@ -95,7 +95,7 @@ TEntryOptionsForm::TEntryOptionsForm( QWidget* Owner, LoggerContestLog * cnt, bo
     opsEntryLine1 = r;
     ui->OptionsScrollBox->setItem(r++, 0, new QTableWidgetItem(ct->ops1.getValue()));
     opsEntryLine2 = r;
-    ui->OptionsScrollBox->setItem(r++, 0, new QTableWidgetItem(ct->ops1.getValue()));
+    ui->OptionsScrollBox->setItem(r++, 0, new QTableWidgetItem(ct->ops2.getValue()));
 
     ui->OptionsScrollBox->setItem(r++, 0, new QTableWidgetItem(ct->entCondx1.getValue()));
     ui->OptionsScrollBox->setItem(r++, 0, new QTableWidgetItem(ct->entCondx2.getValue()));

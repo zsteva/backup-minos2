@@ -364,7 +364,7 @@ int LoggerContestLog::writeBlock(QSharedPointer<QFile> fd, int bno )
    if ( n != bno )
       MinosParameters::getMinosParameters() ->mshowMessage( "Invalid block number for write!!" );
 
-   bool sres = GJVcontestFile->seek(bno * bsize);
+   bool sres = fd->seek(bno * bsize);
    if ( !sres )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "(write) seek failed!" );
