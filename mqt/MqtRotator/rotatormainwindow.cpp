@@ -758,6 +758,8 @@ void RotatorMainWindow::request_bearing()
 
 void RotatorMainWindow::checkEndStop()
 {
+
+
     logMessage("Check EndStop");
     logMessage("currentBearingOffset = " + QString::number(currentBearingOffset));
     logMessage("rotatorBearing = " + QString::number(rotatorBearing));
@@ -767,6 +769,7 @@ void RotatorMainWindow::checkEndStop()
     {
         if (rotatorBearing >= currentMaxAzimuth)
         {
+            logMessage("Max Endstop reached!");
             stopButton();
         }
     }
@@ -774,6 +777,7 @@ void RotatorMainWindow::checkEndStop()
     {
         if (rotatorBearing <= currentMinAzimuth)
         {
+            logMessage("Min Endstop reached!");
             stopButton();
         }
     }
@@ -790,6 +794,7 @@ void RotatorMainWindow::rotatingTimer()
 
 void RotatorMainWindow::checkMoving(int bearing)
 {
+
     static int oldBearing;
 
     if (!moving)
@@ -1107,7 +1112,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
 void RotatorMainWindow::rotateCW(bool toggle)
 {
     cwCcwCmdflag = true;
-    logMessage("RotateCW");
+    logMessage("Start rotateCW");
 
     if (toggle)
     {
@@ -1181,7 +1186,7 @@ void RotatorMainWindow::rotateCW(bool toggle)
 void RotatorMainWindow::rotateCCW(bool toggle)
 {
     cwCcwCmdflag = true;
-    logMessage("RotateCCW");
+    logMessage("Start rotateCCW");
 
     if (toggle)
     {
@@ -1352,8 +1357,8 @@ void RotatorMainWindow::saveTraceLogFlag()
 
 bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
 {
-    QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
-    config.beginGroup("Support_rotate");
+    QSettings config("./Configuration/MinosRot_CW_CCW.ini", QSettings::IniFormat);
+    config.beginGroup("Support_CW_CCW");
 
     bool value = config.value(QString::number(rotatorNumber), false).toBool();
     config.endGroup();
