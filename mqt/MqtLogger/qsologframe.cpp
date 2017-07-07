@@ -2078,10 +2078,18 @@ void QSOLogFrame::on_ValidateError (int mess_no )
       errs.insert( &errDefs[ mess_no ], &errDefs[ mess_no ] );
 }
 
+<<<<<<< HEAD
 
 int QSOLogFrame::getAngle()
 {
     QString brgSt = ui->BrgSt->text();
+=======
+int QSOLogFrame::getAngle()
+{
+    QString brgSt = ui->BrgSt->text();
+
+    int brg = 0;
+>>>>>>> add_difference_check_to_rotator_log
 
     for (int i = 0;i < brgSt.length(); i++)
     {
@@ -2100,7 +2108,10 @@ int QSOLogFrame::getAngle()
             return brg;
         }
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> add_difference_check_to_rotator_log
     return brg;
 }
 
