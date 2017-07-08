@@ -54,6 +54,8 @@ BandMapMainWindow::BandMapMainWindow(QWidget *parent) :
 
 
 
+
+
 }
 
 BandMapMainWindow::~BandMapMainWindow()
