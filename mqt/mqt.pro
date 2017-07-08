@@ -12,6 +12,10 @@ SUBDIRS += \
     MqtKeyer \
     MqtLogger \
     MqtServer
+
+greaterThan(QT_MAJOR_VERSION, 4) : greaterThan(QT_MINOR_VERSION, 6) {
+   SUBDIRS += mqtKeyerTest
+}
 !unix{
     SUBDIRS += \
     MqtRotator \
