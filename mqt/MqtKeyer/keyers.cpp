@@ -1192,7 +1192,7 @@ void InterruptingPTTAction::timeOut()
       case einterPTTWaitDelay:
          {
             actionState = einterPTTWaitDelayFinish;
-            actionTime = currentKeyer->kconf.playPTTDelay/55;
+            actionTime = currentKeyer->kconf.playPTTDelay;
             if ( actionTime < 1 )
                actionTime = 1;
             break;
@@ -1381,7 +1381,7 @@ void PlayAction::timeOut()
             }
             else
             {
-               actionTime = 1000/55;	// 1 sec to first interrupt ought to be enough
+               actionTime = 1000;	// 1 sec to first interrupt ought to be enough
             }
             break;
          }
@@ -1480,7 +1480,7 @@ void PipAction::timeOut()
    {
       case epipasInitial:
          // start up the pip tone
-         actionTime = (currentKeyer->kconf.pipStartDelay + 50)/55;
+         actionTime = currentKeyer->kconf.pipStartDelay;
          if ( actionTime < 1 )
             actionTime = 1;
          actionState = epipasPip;
@@ -1492,7 +1492,7 @@ void PipAction::timeOut()
          SoundSystemDriver::getSbDriver() ->recording = false;
          SoundSystemDriver::getSbDriver() ->dofile( DOFILE_PIP );
          actionState = epipasEndPip;
-         actionTime = 1000/55;	// safety net! 1 sec to first interrupt
+         actionTime = 1000;	// safety net! 1 sec to first interrupt
          break;
 
       case epipasEndPip:
@@ -1607,7 +1607,7 @@ void RecordAction::timeOut()
        trace("timeout erasStopRec");
          // stop recording
          actionState = erasRecFinished;
-         actionTime = 1000/55 ;			// safety net to finish buffer return
+         actionTime = 1000 ;			// safety net to finish buffer return
          SoundSystemDriver::getSbDriver() ->stoprec();
          currentKeyer->recPending = false;
          break;
