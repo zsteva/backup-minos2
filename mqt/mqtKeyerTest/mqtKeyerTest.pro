@@ -22,13 +22,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+INCLUDEPATH += $$PWD/../Chunkware
 
 SOURCES += \
         main.cpp \
-        mqtktMainWindow.cpp
+        mqtktMainWindow.cpp \
+    ../Chunkware/SimpleComp.cpp \
+    ../Chunkware/SimpleCompProcess.inl \
+    ../Chunkware/SimpleEnvelope.cpp
 
 HEADERS += \
-        mqtktMainWindow.h
+        mqtktMainWindow.h \
+    ../Chunkware/SimpleComp.h \
+    ../Chunkware/SimpleEnvelope.h \
+    ../Chunkware/SimpleGain.h \
+    ../Chunkware/SimpleHeader.h
 
 FORMS += \
         mqtktMainWindow.ui
