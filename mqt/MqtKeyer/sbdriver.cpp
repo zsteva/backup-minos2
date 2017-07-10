@@ -305,7 +305,7 @@ void SoundSystemDriver::setVolumeMults(int record, int replay, int passThrough)
     soundSystem->setVolumeMults(record, replay, passThrough);
 }
 
-bool SoundSystemDriver::sbdvp_init( QString &errmess, int srate, int pipTone, int pipVolume, int pipLength )
+bool SoundSystemDriver::sbdvp_init( QString &errmess, int srate, int pipTone, int pipVolume, int pipLength, int filterCorner )
 {
    // should be done from config when the sb is defined as in use.
 
@@ -325,6 +325,7 @@ bool SoundSystemDriver::sbdvp_init( QString &errmess, int srate, int pipTone, in
       // should be in each sound class
 
       rate = soundSystem->setRate(srate);
+      soundSystem->setFilter(filterCorner);
 
       if ( !soundSystem->initialise( errmess ) )
          return false;

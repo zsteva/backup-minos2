@@ -210,7 +210,7 @@ class sbKeyer
       sbKeyer();
       virtual ~sbKeyer();
       void sbTickEvent();       // this will often be an interrupt routine
-      bool sbInitialise( int rate, int pipTone, int pipVolume, int pipLength );
+      bool sbInitialise(int rate, int pipTone, int pipVolume, int pipLength , int filterCorner);
       void sbInitTone1( int );
       void sbInitTone2( int, int );
       void sbStartTone1();

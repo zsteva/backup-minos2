@@ -93,7 +93,7 @@ class SoundSystemDriver
       void startTone2();
       void createCWBuffer( const char *message, int speed, int tone );
 
-      bool sbdvp_init( QString &errmess, int rate, int pipTone, int pipVolume, int pipLength );
+      bool sbdvp_init(QString &errmess, int rate, int pipTone, int pipVolume, int pipLength , int filterCorner);
       SoundSystemDriver();
       ~SoundSystemDriver();
 

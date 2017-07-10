@@ -57,9 +57,6 @@ class RtAudioSoundSystem: public QObject
 {
     Q_OBJECT
 
-    chunkware_simple::SimpleCompRms compressor;
-    LPFilter lpFilter;
-
 private slots:
 
 protected:
@@ -72,6 +69,7 @@ public:
     virtual bool initialise( QString &errmess );
 
     virtual int setRate(int rate);
+    virtual void setFilter(int cf);
 
     virtual bool startDMA( bool play, const QString &fname );
     virtual void stopDMA();
@@ -107,6 +105,11 @@ public:
 private:
 
     RtAudio *audio;
+
+    chunkware_simple::SimpleCompRms compressor;
+    LPFilter lpFilter;
+
+    int filterCorner;
 
     // internal values
     unsigned int sampleRate;

@@ -212,7 +212,7 @@ bool RtAudioSoundSystem::initialise( QString &/*errmess*/ )
     compressor.setRelease( 10.0 ); // 10ms release is good
     compressor.initRuntime();
 
-    lpFilter.initialise(2, 2500, sampleRate);
+    lpFilter.initialise(2, filterCorner, sampleRate);
 
     try
     {
@@ -257,6 +257,10 @@ int RtAudioSoundSystem::setRate(int rate)
 {
    sampleRate = rate;
    return sampleRate;
+}
+void RtAudioSoundSystem::setFilter(int fc)
+{
+   filterCorner = fc;
 }
 
 void RtAudioSoundSystem::setVolumeMults(qreal record, qreal replay, qreal passThrough)
@@ -332,8 +336,11 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
             if (val2 < -32767.0)
                 val2 = -32767.0;
 
-            val1 = lpFilter.filterSample(val1, 0);
-            val2 = lpFilter.filterSample(val2, 1);
+            if (filterCorner > 0)
+            {
+                val1 = lpFilter.filterSample(val1, 0);
+                val2 = lpFilter.filterSample(val2, 1);
+            }
 
             if (passThroughEnabled)
             {
