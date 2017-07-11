@@ -14,6 +14,8 @@
 #include "VKMixer.h"
 #include "sbdriver.h"
 
+#define TIMER_INTERVAL 55U         // 55-millisecond target interval
+
 //==============================================================================
 
 QMap <char, QString> MORSECODE;    // . is 0x40, - is 0x80
@@ -105,7 +107,7 @@ bool keyer_init( QString &errmess )
       trace( "newkeyer_init called" );   // make sure file is open
    }
 
-   currTick = QDateTime::currentMSecsSinceEpoch()/55;
+   currTick = QDateTime::currentMSecsSinceEpoch()/TIMER_INTERVAL;
 //   basetick = QDateTime::currentMSecsSinceEpoch();
 
    // Use the mixer as it is - don't attempt to save/reset
@@ -383,7 +385,7 @@ void lineMonitor::key( int state )
 timerTicker::timerTicker()
 {
     connect(&b, SIGNAL(timeout()), this, SLOT(tick()));
-    b.start(1);
+    b.start(TIMER_INTERVAL);
 }
 timerTicker::~timerTicker()
 {
@@ -415,7 +417,7 @@ void commonKeyer::tickEvent()
    {
       started = ( --startcount < 0 );
    }
-   currTick = QDateTime::currentMSecsSinceEpoch()/55;
+   currTick = QDateTime::currentMSecsSinceEpoch()/TIMER_INTERVAL;
 }
 bool commonKeyer::getPTT( void )
 {
@@ -839,9 +841,7 @@ void sbKeyer::sbStartTone2()
 KeyerAction::KeyerAction() : actionTime( -1 ), deleteAtTick( false ),
       pipStartDelaySamples( 0 ), tailWithPip( false )
 {
-   //disableInterrupts guard;
    KeyerAction::currentAction.push_back( this );
-   //startTick = currTick;
    lastTick = currTick;
 }
 KeyerAction::~KeyerAction()
@@ -852,7 +852,6 @@ KeyerAction::~KeyerAction()
 
 /*static*/ KeyerAction *KeyerAction::getCurrentAction()
 {
-   //disableInterrupts guard;
    if ( currentAction.begin() == currentAction.end() )
       return 0;
    return *currentAction.begin();
@@ -876,7 +875,7 @@ void KeyerAction::checkTimer()
       }
 
       //      long intime = actionTime;
-      actionTime -=  (thisTick - lastTick);
+      actionTime -=  (thisTick - lastTick) * TIMER_INTERVAL;
       lastTick = thisTick;
       if ( actionTime <= 0 )
       {
@@ -965,7 +964,7 @@ void ToneAction::timeOut()
 
       case etasPTTDelay:
          currentKeyer->ptt( 1 );
-         actionTime = delayTicks;
+         actionTime = delayTime;
          actionState = etasStartTone;
          break;
 
@@ -1008,9 +1007,9 @@ ToneAction::ToneAction( int n, long pdelayStart ) : actionState( etasInitial ), 
    {
       trace( "new ToneAction" );
    }
-   delayTicks = (pdelayStart + 55)/55;
-   if ( delayTicks <= 0 )
-      delayTicks = 1;	// so it starts on next tick
+   delayTime = pdelayStart;
+   if ( delayTime <= 0 )
+      delayTime = 1;	// so it starts on next tick
    actionTime = 1;
 }
 ToneAction::~ToneAction()
@@ -1252,18 +1251,18 @@ PlayAction::PlayAction( const QString &pfileName, bool noPTT, long pdelayStart,
    }
    fileName = pfileName;
 
-   delayTicks = (pdelayStart + 55)/55;
-   if ( delayTicks <= 0 )
-      delayTicks = 1;	// so it starts on next tick
+   delayTime = pdelayStart;
+   if ( delayTime <= 0 )
+      delayTime = 1;	// so it starts on next tick
 
-   repeatTicks = (prepeatDelay * 1000)/55;
+   repeatTime = prepeatDelay * 1000;
    actionTime = 1;
 
    if ( testMode )
    {
       actionState = epasPlayFile;	// no PTT, no linear, no repeat
-      repeatTicks = -1;
-      delayTicks = -1;
+      repeatTime = -1;
+      delayTime = -1;
    }
    else
    {
@@ -1345,7 +1344,7 @@ void PlayAction::timeOut()
 
       case epasWaitRepeat:
          // state 0 wait for repeat delay
-         actionTime = repeatTicks;
+         actionTime = repeatTime;
          ActionStateString = "Auto Repeat gap";
          actionState = epasWaitLinear;
          break;
@@ -1355,7 +1354,7 @@ void PlayAction::timeOut()
          if ( !testMode )
          {
             currentKeyer->ptt( 1 );
-            actionTime = delayTicks;
+            actionTime = delayTime;
             ActionStateString = "Starting";
             actionState = epasPlayFile;
          }

@@ -15,6 +15,7 @@
 #include "keyerlog.h"
 
 #include <deque>
+
 template < class qe >
 class my_deque : public std::deque < qe >
 {
@@ -308,7 +309,7 @@ class ToneAction: public KeyerAction
       enum ToneActionStates {etasInitial = -1, etasPTTDelay, etasStartTone, etasStopTone} actionState;
       int nTone;
    public:
-      long delayTicks;
+      long delayTime;
 
       virtual void getActionState( QString &s );
       virtual void LxChanged( int line, bool state );
@@ -375,8 +376,8 @@ class InterruptingPTTAction: public VoiceAction
 class PlayAction: public VoiceAction
 {
       QString fileName;
-      long delayTicks;
-      long repeatTicks;
+      long delayTime;
+      long repeatTime;
       bool testMode;
       bool CW;
       enum PlayActionStates {epasInitial = -1, epasWaitRepeat, epasWaitLinear, epasPlayFile,
