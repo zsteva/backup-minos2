@@ -7,6 +7,7 @@
 #include "ui_bandmapmainwindow.h"
 #include <QTimer>
 #include <QMessageBox>
+#include <QDebug>
 
 BandMapMainWindow::BandMapMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -26,7 +27,12 @@ BandMapMainWindow::BandMapMainWindow(QWidget *parent) :
     bandmap = new Bandmap();
     dial = new FreqDial();
 
-    ui->bandmapView->setAlignment(Qt::AlignTop|Qt::AlignLeft);
+//    ui->bandmapView->setAlignment(Qt::AlignTop|Qt::AlignLeft);
+
+    bandmapScene->addItem(dial);
+
+
+
 
 
     radio->set_serialConnected(false);
@@ -43,13 +49,18 @@ BandMapMainWindow::BandMapMainWindow(QWidget *parent) :
     openRadio();
 
 
-    bandmapScene->addItem(dial);
-    callSignText = new TextMarker(80,150, "G8FKH");
+
+
+
+    callSignText = new TextMarker(80,150, "G8FKH", Qt::red);
     bandmapScene->addItem(callSignText);
-    bandmapScene->addItem(new TextMarker(80,160, "M0ICR"));
-    bandmapScene->addItem(new TextMarker(80,200, "GD8EXI"));
-    bandmapScene->addItem(new TextMarker(80,250, "M0SAT"));
+    bandmapScene->addItem(new TextMarker(80,160, "M0ICR", Qt::yellow));
+    bandmapScene->addItem(new TextMarker(80,200, "GD8EXI", Qt::black));
+    bandmapScene->addItem(new TextMarker(80,250, "M0SAT", Qt::blue));
 //    dial->setPos(-100,-50);
+    bandmap->addCallsignMarker(144000000.00, "G8FKH", "12:30", 0, 120);
+    bandmap->addCallsignMarker(144000000.00, "G8LZE", "12:50", 0, 200);
+    bandmap->addCallsignMarker(144000000.00, "M0ICR", "12:55", 0, 140);
 
 
 
@@ -71,8 +82,9 @@ void BandMapMainWindow::initActionsConnections()
     connect(ui->actionSetup_Radios, SIGNAL(triggered()), selectRig, SLOT(show()));
 
     connect(timer, SIGNAL(timeout()), this, SLOT(getFrequency()));
-    connect(radio, SIGNAL(frequency_updated(double)), this, SLOT(displayFreq(const double)));
-    connect(radio, SIGNAL(frequency_updated(double)), this, SLOT(drawDial(double)));
+    connect(radio, SIGNAL(frequency_updated(double)), this, SLOT(updateFreq(const double)));
+    connect(this, SIGNAL(frequency_updated(double)), this, SLOT(displayFreq(const double)));
+    connect(this, SIGNAL(frequency_updated(double)), this, SLOT(drawDial(double)));
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
     //connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     //connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
@@ -208,6 +220,21 @@ void BandMapMainWindow::getFrequency()
 }
 
 
+void BandMapMainWindow::updateFreq(double frequency)
+{
+    if (curFreq == frequency)
+    {
+        return;
+    }
+    else
+    {
+        curFreq = frequency;
+    }
+    emit frequency_updated(frequency);
+}
+
+
+
 void BandMapMainWindow::displayFreq(double frequency)
 {
 
@@ -219,12 +246,15 @@ void BandMapMainWindow::displayFreq(double frequency)
 
 void BandMapMainWindow::drawDial(double frequency)
 {
-//    currentFreq = frequency;
+
+
     if (frequency != dial->getCurFreq())
     {
         dial->setCurFreq(frequency);
+        dial->setCurHeight(ui->bandmapView->height());
         dial->update();
     }
+
 }
 
 
@@ -288,5 +318,34 @@ void BandMapMainWindow::hamlibError(int errorCode)
 
     QMessageBox::critical(this, "hamlib Error", QString::number(errCode) + " - " + errorMsg);
 
+
+}
+
+
+
+
+
+void BandMapMainWindow::resizeEvent(QResizeEvent *event)
+{
+    mapViewHeight = ui->bandmapView->height() - 2;
+    if (dial->getCurHeight() != mapViewHeight)
+    {
+        dial->changeBoundingRect(mapViewHeight);
+        bandmapScene->setSceneRect(bandmapScene->itemsBoundingRect());
+    }
+    qDebug() << "view height" << mapViewHeight;
+    qDebug() << "dial height" << dial->boundingRect().height();
+
+    dial->setCurFreq(curFreq);
+    //dial->setCurHeight(mapViewHeight);
+    dial->update();
+
+    QWidget::resizeEvent(event);
+}
+
+
+
+void BandMapMainWindow::paintEvent(QPaintEvent *event)
+{
 
 }

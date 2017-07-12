@@ -40,7 +40,9 @@ private:
     TextMarker *callSignText;
     int pollTime;
     QString sfreq;
-    double oldFreq = 0;
+//    double oldFreq = 0;
+    double curFreq = 0;
+    int mapViewHeight = 0;
 
     void initActionsConnections();
     void initSelectRadioBox();
@@ -53,7 +55,9 @@ private:
     void showStatusMessage(const QString &);
     void hamlibError(int errorCode);
 
-
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 protected slots:
 
@@ -61,6 +65,13 @@ protected slots:
     void getFrequency();
     void displayFreq(double);
     void drawDial(double frequency);
+
+private slots:
+    void updateFreq(double frequency);
+
+signals:
+    void frequency_updated(double frequency);
+
 
 };
 

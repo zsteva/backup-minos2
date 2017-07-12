@@ -17,7 +17,7 @@ const int XCOORD = 80;
 class TextMarker: public QGraphicsItem
 {
 public:
-    TextMarker( int x, int y, QString callsign);
+    TextMarker( int x, int y, QString callsign, QColor colour);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QRectF boundingRect() const;
 
@@ -29,6 +29,7 @@ private:
     int xCoord;
     int yCoord;
     QString callSign;
+    QColor colour;
 
 
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);

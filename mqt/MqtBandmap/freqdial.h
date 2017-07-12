@@ -21,8 +21,7 @@ const int fMinMrkXStart = 60;
 const int fMinMrkXEnd = 70;
 
 const int MAXSCALEY = 675;
-
-
+//const int MAXSCALEY = 775;
 
 }
 
@@ -40,9 +39,11 @@ public:
 
     void setCurFreq(double frequency);
     double getCurFreq();
+    void setCurHeight(int height);
+    int getCurHeight();
 
 
-
+    void changeBoundingRect(int height);
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
 private:
@@ -55,7 +56,7 @@ private:
     double scaleEndFreq = 0;
 
 //    QPainter  *painter;
-    void drawScale(QPainter *painter, double frequency);
+    void drawScale(QPainter *painter, double frequency, int scaleHeight);
     void drawCursor(QPainter *painter, double frequency);
 
 };

@@ -25,7 +25,8 @@ class Bandmap
 //    Q_OBJECT
 public:
     explicit Bandmap();
-
+    void addCallsignMarker(double frequency, QString callsign, QString time, int spotType, int callBearing);
+    void addCallsignToDial(QPainter *painter);
 
 signals:
 
@@ -35,10 +36,9 @@ private:
 
     QMap<double, QVector<CallsignMarker>> markers;
 
-    QMultiMap<double, QString> mapMarkers;
+//    QMultiMap<double, QString> mapMarkers;
 
-    void addCallsignMarker(double frequency, QString callsign, QString time, int spotType, int callBearing);
-    void addCallsignToDial(QPainter *painter);
+
 };
 
 #endif // BANDMAP_H

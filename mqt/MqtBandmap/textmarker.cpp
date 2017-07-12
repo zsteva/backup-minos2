@@ -1,17 +1,19 @@
 #include "textmarker.h"
 #include <QDebug>
 
-TextMarker::TextMarker(int x, int y, QString callsign)
+TextMarker::TextMarker(int x, int y, QString callsign, QColor txt_colour)
 {
     xCoord = x;
     yCoord = y;
     callSign = callsign;
+    colour = txt_colour;
     setAcceptHoverEvents(true);
 
 }
 
 void TextMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    painter->setPen(colour);
     painter->drawText(xCoord, yCoord, callSign);
     //painter->drawRect(0,0,40,10);
 }

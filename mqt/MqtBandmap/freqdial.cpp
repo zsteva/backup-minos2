@@ -12,9 +12,18 @@ QRectF FreqDial::boundingRect() const
 {
     qreal penwidth = 1;
 //    return QRectF(-10 - penwidth/2, -10 - penwidth/2, 20 + penwidth, 20 + penwidth );
-    return QRectF(0, 0, 100, dialData::MAXSCALEY );
+//    return QRectF(0, 0, 100, dialData::MAXSCALEY );
+      return QRectF(0, 0, 100, maxScaleY );
 }
 
+
+
+void FreqDial::changeBoundingRect(int height)
+{
+    prepareGeometryChange();
+    setCurHeight(height);
+    boundingRect();
+}
 
 
 
@@ -27,9 +36,9 @@ void FreqDial::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
 
 
-    zoomLevel = 16;
+    zoomLevel = 8;
 
-    drawScale(painter, currentFreq);
+    drawScale(painter, currentFreq, maxScaleY);
     drawCursor(painter, currentFreq);
 
 
@@ -41,14 +50,26 @@ void FreqDial::setCurFreq(double frequency)
     currentFreq = frequency;
 }
 
+
 double FreqDial::getCurFreq()
 {
    return currentFreq;
 }
 
-void FreqDial::drawScale(QPainter *painter, double frequency)
-{
 
+void FreqDial::setCurHeight(int height)
+{
+    maxScaleY = height;
+}
+
+int FreqDial::getCurHeight()
+{
+    return maxScaleY;
+}
+
+void FreqDial::drawScale(QPainter *painter, double frequency, int scaleHeight)
+{
+    maxScaleY = scaleHeight;
     qint32 freq = 0;
     freq = frequency/1000;
     int freqRange = maxScaleY / dialData::khzPixelStep[zoomLevel];
@@ -56,7 +77,8 @@ void FreqDial::drawScale(QPainter *painter, double frequency)
     scaleStartFreq = freq - mid_freqRange;
     scaleEndFreq = scaleStartFreq + freqRange;
 
-    QRect scaleRec(0,0,70,dialData::MAXSCALEY);
+    //QRect scaleRec(0,0,70,dialData::MAXSCALEY);
+    QRect scaleRec(0,0,70, maxScaleY);
     QBrush scaleBackGndBrush(Qt::lightGray, Qt::SolidPattern);
 
     QPen scalePen(Qt::black);
@@ -65,8 +87,8 @@ void FreqDial::drawScale(QPainter *painter, double frequency)
 
     painter->fillRect(scaleRec, scaleBackGndBrush);
 
-    painter->drawLine(QPoint(70,0),QPoint(70,dialData::MAXSCALEY));
-
+    //painter->drawLine(QPoint(70,0),QPoint(70,dialData::MAXSCALEY));
+    painter->drawLine(QPoint(70,0),QPoint(70,maxScaleY));
 
     QPen markerPen(Qt::blue);
     markerPen.setWidth(1);
