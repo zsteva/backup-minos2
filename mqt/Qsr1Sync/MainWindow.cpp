@@ -342,8 +342,8 @@ void MainWindow::timer1Timeout()
 void MainWindow::timer2Timeout()
 {
     // Poll the QS1R
-//    QString mess = ">UpdateRxFreq\n?fHz\n?tf\n";
-//    ClientSocket1->Socket->SendBuf( mess.c_str(), mess.Length() );
+    QString mess = ">UpdateRxFreq\n?fHz\n?tf\n";
+    ClientSocket1.write( mess.toLatin1().data(), mess.length() );
 }
 
 void MainWindow::onSocketConnect()
