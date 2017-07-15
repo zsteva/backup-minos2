@@ -17,9 +17,9 @@
 #include <QtSerialPort/QSerialPort>
 #include <QStringList>
 #include "rotcontrol.h"
+#include "rotatorCommonConstants.h"
 
-#define NUM_ROTATOR_PROTOCOLS 2
-#define NUM_ANTENNAS 5
+
 
 
 class QIntValidator;
@@ -59,13 +59,18 @@ public:
     QString getRotatorComPort(QString);
     void saveCurrentAntenna();
 
+signals:
+
+    void currentAntennaSettingChanged(QString);
+    void antennaNameChange();
+
 protected slots:
 
     void antennaNameFinished(int);
     void rotatorModelSelected(int);
     void southStopFlagSelected(int);
     void overRunFlagSelected(int);
-    void rotatorOffsetFinished(int);
+    void antennaOffsetFinished(int);
     void comportSelected(int);
     void comSpeedSelected(int);
     void comDataBitsSelected(int);
@@ -86,7 +91,7 @@ private:
     QComboBox *rotatorModel[NUM_ANTENNAS];
     QCheckBox *southStopFlag[NUM_ANTENNAS];
     QCheckBox *overRunFlag[NUM_ANTENNAS];
-    QLineEdit *rotatorOffset[NUM_ANTENNAS];
+    QLineEdit *antennaOffset[NUM_ANTENNAS];
     QComboBox *comPorts[NUM_ANTENNAS];
     QComboBox *comSpeed[NUM_ANTENNAS];
     QComboBox *comDataBits[NUM_ANTENNAS];
@@ -95,7 +100,10 @@ private:
     QComboBox *comHandShake[NUM_ANTENNAS];
     QIntValidator *intValidator;
     bool antennaValueChanged[NUM_ANTENNAS];
+    bool antennaNameChanged[NUM_ANTENNAS];
     bool antennaChanged;
+    const int minOffset = -90;
+    const int maxOffset = 90;
     void saveSettings();
     void readSettings();
     void fillAntennaModelInfo();
@@ -112,6 +120,7 @@ private:
 
 
 
+    void clearAntennaValueChanged();
 };
 
 #endif // SETUPDIALOG_H

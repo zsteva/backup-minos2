@@ -47,6 +47,9 @@ public:
 
     void setRotatorState( QString );
     void setRotatorBearing( QString );
+    void setRotatorMaxAzimuth( QString);
+    void setRotatorMinAzimuth( QString);
+    void setRotatorAntennaName( QString );
 
     void setBandMapLoaded();
     bool isBandMapLoaded();

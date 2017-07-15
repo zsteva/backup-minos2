@@ -21,7 +21,7 @@
 #include "rotcontrol.h"
 #include <hamlib/rotator.h>
 //#include "rotctl_parse.h"
-
+#include "rotatorCommonConstants.h"
 
 QList<const rot_caps *> capsList;
 bool rotatorlistLoaded=false;
@@ -41,6 +41,13 @@ RotControl::RotControl()
     rot_azimuth = 0.0;
     rot_elevation = 0.0;
 
+    // set callback for debug messages
+    // NB callback is the C function, not the class method.
+    // user_data is used to point to our class.
+
+    rig_set_debug_callback (::rig_message_cb, static_cast<rig_ptr_t>(this));
+
+
 }
 
 
@@ -50,55 +57,55 @@ RotControl::~RotControl()
     rot_cleanup(my_rot); /* if you care about memory */
 }
 
-int RotControl::init(srotParams currentAntenna)
+int RotControl::init(srotParams selectedAntenna)
 {
     int retcode;
     QString comport = "\\\\.\\";
-    comport.append(currentAntenna.comport);
+    comport.append(selectedAntenna.comport);
 
-    my_rot = rot_init(currentAntenna.rotatorModelNumber);
+    my_rot = rot_init(selectedAntenna.rotatorModelNumber);
     if (!my_rot)
     {
-        qDebug() << "Error init rotator";
+        //logMessage("Error init rotator");
     }
 
 
     // get rotator parameters
-    rotParams.antennaName = currentAntenna.antennaName;
-    rotParams.baudrate =  currentAntenna.baudrate;
+    curRotParams.antennaName = selectedAntenna.antennaName;
+    curRotParams.baudrate =  selectedAntenna.baudrate;
+    curRotParams.antennaOffset = selectedAntenna.antennaOffset;
     //rotParams.comport =
-    rotParams.databits = currentAntenna.databits;
-    rotParams.stopbits = currentAntenna.stopbits;
-    rotParams.parity = getSerialParityCode(currentAntenna.parity);
-    rotParams.handshake = getSerialHandshakeCode(currentAntenna.handshake);
-    rotParams.serial_rate_max = my_rot->caps->serial_rate_max;
-    rotParams.serial_rate_min = my_rot->caps->serial_rate_min;
-    rotParams.max_azimuth = my_rot->caps->max_az;
-    rotParams.max_elevation = my_rot->caps->max_el;
-
-
-
-
+    curRotParams.databits = selectedAntenna.databits;
+    curRotParams.stopbits = selectedAntenna.stopbits;
+    curRotParams.parity = getSerialParityCode(selectedAntenna.parity);
+    curRotParams.handshake = getSerialHandshakeCode(selectedAntenna.handshake);
+    curRotParams.serial_rate_max = my_rot->caps->serial_rate_max;
+    curRotParams.serial_rate_min = my_rot->caps->serial_rate_min;
 
 
     // load rotator params to open
-    strncpy(my_rot->state.rotport.pathname, (const char*)comport.toLatin1(), FILPATHLEN);
-    my_rot->state.rotport.parm.serial.rate = currentAntenna.baudrate;
-    my_rot->state.rotport.parm.serial.data_bits = currentAntenna.databits;
-    my_rot->state.rotport.parm.serial.stop_bits = currentAntenna.stopbits;
-    my_rot->state.rotport.parm.serial.parity = getSerialParityCode(currentAntenna.parity);
-    my_rot->state.rotport.parm.serial.handshake = getSerialHandshakeCode(currentAntenna.handshake);
+    strncpy(my_rot->state.rotport.pathname, comport.toLatin1().data(), FILPATHLEN);
+    my_rot->state.rotport.parm.serial.rate = selectedAntenna.baudrate;
+    my_rot->state.rotport.parm.serial.data_bits = selectedAntenna.databits;
+    my_rot->state.rotport.parm.serial.stop_bits = selectedAntenna.stopbits;
+    my_rot->state.rotport.parm.serial.parity = getSerialParityCode(selectedAntenna.parity);
+    my_rot->state.rotport.parm.serial.handshake = getSerialHandshakeCode(selectedAntenna.handshake);
 
 
     retcode = rot_open(my_rot);
     if (retcode >= 0)
     {
-        qDebug() << "rotator opened ok";
+        //logMessage("rotator opened ok");
         set_serialConnected(true);
+        // update rotator specific parameters
+        curRotParams.max_azimuth = my_rot->caps->max_az;
+        curRotParams.min_azimuth = my_rot->caps->min_az;
+        curRotParams.serial_rate_max = my_rot->caps->serial_rate_max;
+        curRotParams.serial_rate_min = my_rot->caps->serial_rate_min;
     }
     else
     {
-        qDebug() << "rotator open error";
+        //logMessage("rotator open error");
         set_serialConnected(false);
     }
 
@@ -139,11 +146,13 @@ bool RotControl::getRotatorList(QComboBox *cb)
     {
         QString t;
         t= QString::number(capsList.at(i)->rot_model);
-        t=t.rightJustified(5,' ')+" ";
+        t=t.rightJustified(5,' ')+", ";
         t+= capsList.at(i)->mfg_name;
-        t+=",";
+        t+=", ";
         t+=capsList.at(i)->model_name;
         sl << t;
+        std::sort(sl.begin(), sl.end());
+
     }
     cb->addItems(sl);
     return true;
@@ -176,7 +185,7 @@ const char * RotControl::getModel_Name(int idx)
 int RotControl::getRotatorModelIndex()
 {
     int i;
-    QString t=rotParams.rotatorModel;
+    QString t=curRotParams.rotatorModel;
     t=t.remove(0,5);
     t=t.simplified();
     QStringList sl=t.split(",");
@@ -192,25 +201,41 @@ int RotControl::getRotatorModelIndex()
 }
 
 
-
-
-
-
-
-int RotControl::getMaxAzimuth()
+azimuth_t RotControl::getMinAzimuth()
 {
-    return (int)rotParams.max_azimuth;
+    return curRotParams.min_azimuth;
 }
 
 
 
 
-int RotControl::getMaxElevation()
+azimuth_t RotControl::getMaxAzimuth()
 {
-    return (int)rotParams.max_elevation;
+
+    return curRotParams.max_azimuth;
+}
+
+elevation_t RotControl::getMinElevation()
+{
+    return curRotParams.min_elevation;
 }
 
 
+elevation_t RotControl::getMaxElevation()
+{
+    return curRotParams.max_elevation;
+}
+
+int RotControl::getMaxBaudRate()
+{
+    return curRotParams.serial_rate_max;
+}
+
+
+int RotControl::getMinBaudRate()
+{
+    return curRotParams.serial_rate_min;
+}
 
 // stop azimuth rotation
 
@@ -220,7 +245,7 @@ int RotControl::stop_rotation()
     int retCode = RIG_OK;
     retCode = rot_stop(my_rot);
 
-    qDebug() << "stop message" ;
+    //logMessage("stop message");
     return retCode;
 }
 
@@ -231,12 +256,12 @@ int RotControl::stop_rotation()
 int RotControl::request_bearing()
 {
     int retCode = RIG_OK;
-    QString bearing;
+
     retCode = rot_get_position (my_rot, &rot_azimuth, &rot_elevation);
+
     if (retCode == RIG_OK)
     {
-        bearing.setNum(rot_azimuth);
-        emit bearing_updated(bearing);
+        emit bearing_updated(rot_azimuth);
     }
 
     return retCode;
@@ -256,7 +281,7 @@ int RotControl::rotateClockwise(int speed)
 
     int retCode = RIG_OK;
     retCode = rot_move(my_rot, ROT_MOVE_RIGHT , speed);
-    qDebug() << "rotate CW message";
+    //logMessage("rotate CW message");
     return retCode;
 }
 
@@ -264,7 +289,7 @@ int RotControl::rotateCClockwise(int speed)
 {
     int retCode = RIG_OK;
     retCode = rot_move(my_rot, ROT_MOVE_LEFT , speed);
-    qDebug() << "rotate CCW message";
+    //logMessage("rotate CCW message");
     return retCode;
 }
 
@@ -273,11 +298,9 @@ int RotControl::rotate_to_bearing(int bearing)
 {
     int retCode = RIG_OK;
     float rotbearing = bearing;
-    qDebug() << "got to rotate bearing";
-
+    //logMessage("send rotate message to serial " + QString::number(bearing);
     retCode = rot_set_position(my_rot, rotbearing, 0.0);
 
-    qDebug() << "rotate message to serial ";
     return retCode;
 
 }
@@ -364,8 +387,54 @@ QStringList RotControl::gethamlibErrorMsg()
     return serialData::hamlibErrorMsg;
 }
 
+// not tested........
+int RotControl::calcSouthBearing(int rotatorBearing)
+{
+
+    // convert rotator bearing to actual bearing for rotator with southstop
+
+    if (rotatorBearing >= getMinAzimuth() && rotatorBearing < COMPASS_HALF)
+    {
+        return rotatorBearing + COMPASS_HALF;
+    }
+    else if (rotatorBearing >= COMPASS_HALF && rotatorBearing <= getMinAzimuth())
+    {
+        return rotatorBearing - COMPASS_HALF;
+    }
+    else
+    {
+        // error
+        return 2000;     // need an error code define....
+    }
 
 
+}
+
+
+
+
+
+// which passes the call to this method
+int RotControl::rig_message_cb(enum rig_debug_level_e debug_level, const char *fmt, va_list ap)
+{
+    char buf[1024];
+//    rig_debug_level_e dbl = debug_level;
+
+    vsprintf (buf, fmt, ap);
+    QString s = QString::fromLatin1(buf);
+    emit debug_protocol(s);
+
+    return RIG_OK;
+}
+
+
+
+int rig_message_cb(enum rig_debug_level_e debug_level, rig_ptr_t user_data, const char *fmt, va_list ap)
+{
+    RotControl *rt = static_cast<RotControl *>(user_data);
+    return rt->rig_message_cb(debug_level, fmt, ap);
+
+}
 
 bool model_Sort(const rot_caps *caps1,const rot_caps *caps2)
 {
@@ -377,3 +446,4 @@ bool model_Sort(const rot_caps *caps1,const rot_caps *caps2)
     if (QString::compare(caps1->mfg_name,caps2->mfg_name)<0) return true;
     return false;
 }
+

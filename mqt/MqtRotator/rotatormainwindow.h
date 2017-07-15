@@ -28,17 +28,18 @@
 
 
 #define NUM_PRESETS 10
-#define NUM_ROTATOR_PROTOCOLS 2
+//#define NUM_ROTATOR_PROTOCOLS 2
+
 
 class QLabel;
 class QComboBox;
 class SetupDialog;
 class MinosCompass;
-//class Yaesu;
 class RotControl;
 class EditPresetsDialog;
 class RotatorRpc;
 class RotatorLog;
+class LogDialog;
 
 namespace Ui {
 class RotatorMainWindow;
@@ -61,9 +62,24 @@ public:
     // setup connections
     void initActionsConnections();
 
+
+
 signals:
+
     void escapePressed();
+    void rotate_cwKeyPressed();
+    void rotate_ccwKeyPressed();
+    void rotateStopKeyPressed();
+    void rotateTurnKeyPressed();
+    void rotateFunctionKeyPressed(int);
+
+    void sendBearing(QString);
+    void sendCompassDial(int);
+    void displayOverlap(bool);
+    void checkingEndStop();
     void sendBackBearing(QString);
+//   void displayOverlapBearing(QString);
+    void displayActualBearing(QString);
     void presetRotateTo();
 
 private:
@@ -73,38 +89,63 @@ private:
     RotatorRpc *msg;
 
     QTimer LogTimer;
+    QTimer RotateTimer;
 
     QComboBox *selectAntenna;
     QPushButton* presetButtons[NUM_PRESETS];
-    MinosCompass* compassDial;
+//    MinosCompass* compassDial;
     RotControl  *rotator;
     QLabel *status;
+    QLabel *offSetlbl;
+    QLabel *offSetDisplay;
+    QLabel *actualRotatorlbl;
+    QLabel *actualRotatorDisplay;
     SetupDialog *selectRotator;
     EditPresetsDialog *editPresets;
+    LogDialog *setupLog;
     RotatorLog *rotlog;
     bool rotLogFlg;
     QTimer *pollTimer;
     int pollTime;
+    int rotTimeCount;
     int brakedelay;
     bool brakeflag;
     bool moving;
-    bool cwCcwflag;     // command sent
+    bool movingCW;
+    bool movingCCW;
+    bool cwCcwCmdflag;     // command sentflag
     bool stopCmdflag;
     bool rotCmdflag;
-    int bearing;
-    int min_azimuth;
-    int max_azimuth;
+    bool reqBearCmdflag;
+    bool overLapOnflag;
+    bool overLapActiveflag;
+    bool southStopActiveflag;
+    bool supportCwCcwCmd;
+    int rotatorBearing;
+    int currentBearingOffset;
+    int rotatorMinAzimuth;
+    int rotatorMaxAzimuth;
+    int currentMinAzimuth;
+    int currentMaxAzimuth;
     QString backBearingmsg;
     QString presetName[NUM_PRESETS];
     QString presetBearing[NUM_PRESETS];
+
+    QStringList presetShortCut = {"Ctrl+1","Ctrl+2",
+                                "Ctrl+3", "Ctrl+4",
+                                "Ctrl+5", "Ctrl+6",
+                                "Ctrl+7", "Ctrl+8",
+                                "Ctrl+9", "Ctrl+0"};
+
 
     void openRotator();
     void closeRotator();
 
     void refreshPresetLabels();
     void showStatusMessage(const QString &);
-    void sndStatusLoggger(const QString &);
+    void sendStatusLogger(const QString &);
     void readPresets();
+
 
     void initSelectAntennaBox();
 
@@ -114,17 +155,19 @@ private:
 
     void hamlibError(int errorCode);
 
-    void logMessage( QString s );
+
 
     void sleepFor(qint64 milliseconds);
 
     void rotatorActive();
 
+
 public slots:
     void rotateToController();
-    void displayBackBearing(const QString);
+    void displayBearing(int);
     void updatePresetLabels();
     void clickedPreset(int buttonNumber);
+    void logMessage( QString s );
 
 protected slots:
     void upDateAntenna();
@@ -132,17 +175,42 @@ protected slots:
     void rotateCW(bool toogle);
     void rotateCCW(bool toogle);
     void stopButton();
-    void stopRotation();
+    void stop_rotation();
+    void stopRotation(bool);
+    void sendStatusToLogReady();
+    void sendStatusToLogRotCCW();
+    void sendStatusToLogRotCW();
+    void sendStatusToLogStop();
+    void sendStatusToLogTurn();
+    void sendStatusToLogDisConnected();
+    void sendStatusToLogError();
+
+
 
 private slots:
     void LogTimerTimer( );
-    void logBearing(const QString bearing);
-    void sendBearingLogger(const QString bearing);
+
+
     void onLoggerSetRotation(int direction, int angle);
-//    void on_pushButton_2_clicked();
-//   void on_pushButton_clicked();
+    void checkEndStop();
+    void checkMoving(int bearing);
+
+    void rotatingTimer();
+    void about();
+    void saveTraceLogFlag();
+    void overLapDisplayBox(bool status);
+    void currentAntennaSettingChanged(QString);
+    void updateSelectAntennaBox();
+private:
+    void rotateTo(int bearing);
+    int northCalcTarget(int targetBearing);
+
+    void readTraceLogFlag();
 
 
+    void toggleOverLapDisplay(bool toggle);
+
+    bool getCwCcwCmdFlag(int rotatorNumber);
 };
 
 #endif // ROTATORMAINWINDOW_H

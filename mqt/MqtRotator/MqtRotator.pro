@@ -38,7 +38,8 @@ SOURCES += \
     editpresetsdialog.cpp \
     rotcontrol.cpp \
     rotatorlog.cpp \
-    rotatorRpc.cpp
+    rotatorRpc.cpp \
+    overlapwidget.cpp
 
 HEADERS  += \
     skyscandialog.h \
@@ -49,14 +50,16 @@ HEADERS  += \
     editpresetsdialog.h \
     rotcontrol.h \
     rotatorlog.h \
-    rotatorRpc.h
+    rotatorRpc.h \
+    overlapwidget.h \
+    rotatorCommonConstants.h
 
 FORMS    += \
     skyscandialog.ui \
     setupdialog.ui \
-    rotatormainwindow.ui \
     logdialog.ui \
-    editpresetsdialog.ui
+    editpresetsdialog.ui \
+    rotatormainwindow.ui
 
 RC_FILE = MqtRotator.rc
 

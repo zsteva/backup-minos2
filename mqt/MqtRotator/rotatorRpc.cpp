@@ -53,7 +53,46 @@ void RotatorRpc::publishState(const QString &state)
 }
 
 
-void RotatorRpc::publishBearing(const QString &bearing)
+void RotatorRpc::publishAntennaName(const QString &antennaName)
+{
+    static QString old;
+
+    if ( antennaName != old )
+    {
+       old = antennaName;
+       MinosRPC *rpc = MinosRPC::getMinosRPC();
+       rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorAntennaName, antennaName, psPublished );
+    }
+}
+
+
+void RotatorRpc::publishMaxAzimuth(const QString maxAzimuth)
+{
+    static QString old;
+
+    if ( maxAzimuth != old )
+    {
+       old = maxAzimuth;
+       MinosRPC *rpc = MinosRPC::getMinosRPC();
+       rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorMaxAzimuth, maxAzimuth, psPublished );
+    }
+}
+
+void RotatorRpc::publishMinAzimuth(const QString minAzimuth)
+{
+    static QString old;
+
+    if ( minAzimuth != old )
+    {
+       old = minAzimuth;
+       MinosRPC *rpc = MinosRPC::getMinosRPC();
+       rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorMinAzimuth, minAzimuth, psPublished );
+    }
+}
+
+
+
+void RotatorRpc::publishBearing(const QString bearing)
 {
     static QString old;
 

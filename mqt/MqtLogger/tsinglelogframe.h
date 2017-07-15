@@ -244,10 +244,13 @@ private slots:
     void on_OtherMatchTree_doubleClicked(const QModelIndex &index);
     void on_ArchiveMatchTree_doubleClicked(const QModelIndex &index);
 
-    void on_SetMode(QString,BaseContestLog*);
-    void on_SetFreq(QString,BaseContestLog*);
-    void on_RotatorState(QString,BaseContestLog*);
-    void on_RotatorBearing(QString,BaseContestLog*);
+    void on_SetMode(QString, BaseContestLog*);
+    void on_SetFreq(QString, BaseContestLog*);
+    void on_RotatorState(QString, BaseContestLog*);
+    void on_RotatorBearing(QString, BaseContestLog*);
+    void on_RotatorMaxAzimuth(QString, BaseContestLog *);
+    void on_RotatorMinAzimuth(QString, BaseContestLog *);
+    void on_RotatorAntennaName(QString, BaseContestLog *);
     void onArchiveMatchTreeFocused(QObject *, bool, QFocusEvent * );
     void onOtherMatchTreeFocused(QObject *, bool, QFocusEvent * );
 };

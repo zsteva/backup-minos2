@@ -1489,6 +1489,22 @@ void TLogContainer::setRotatorBearing( QString f )
     BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
     MinosLoggerEvents::SendRotatorBearing(f, ct);
 }
+void TLogContainer::setRotatorMaxAzimuth( QString f )
+{
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    MinosLoggerEvents::SendRotatorMaxAzimuth(f, ct);
+}
+void TLogContainer::setRotatorMinAzimuth( QString f )
+{
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    MinosLoggerEvents::SendRotatorMinAzimuth(f, ct);
+}
+void TLogContainer::setRotatorAntennaName( QString f )
+{
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    MinosLoggerEvents::SendRotatorAntennaName(f, ct);
+}
+
 
 //---------------------------------------------------------------------------
 TSingleLogFrame *TLogContainer::findContest(const QString &pubname )

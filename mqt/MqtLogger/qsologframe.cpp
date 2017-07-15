@@ -8,6 +8,8 @@
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
 
+#include "rotatorCommonConstants.h"
+
 QSOLogFrame::QSOLogFrame(QWidget *parent) :
     QFrame(parent)
     , ui(new Ui::QSOLogFrame)
@@ -91,6 +93,13 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
 
     QFontMetrics metrics(QApplication::font());
     ui->BrgSt->setFixedWidth(metrics.width("(8888)MT"));
+
+    ui->RotateLeft->setShortcut(QKeySequence(ROTATE_CCW_KEY));
+    ui->RotateRight->setShortcut(QKeySequence(ROTATE_CW_KEY));
+    ui->Rotate->setShortcut(QKeySequence(ROTATE_TURN_KEY));
+    ui->StopRotate->setShortcut(QKeySequence(ROTATE_STOP_KEY));
+
+
 }
 bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
 {
@@ -1682,7 +1691,7 @@ void QSOLogFrame::logScreenEntry( )
    MinosLoggerEvents::SendAfterLogContact(ct);
 
    if (!edit || catchup )
-        startNextEntry( );	// select the "next"
+   startNextEntry( );	// select the "next"
 }
 //---------------------------------------------------------------------------
 void QSOLogFrame::getScreenContactTime()
@@ -1785,7 +1794,7 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
         }
     }
     ui->bandMapFrame->setVisible( !edit && LogContainer->isBandMapLoaded());
-
+    ui->antennaName->setVisible(!edit && LogContainer->isRotatorLoaded());
     ui->Rotate->setVisible(!edit && LogContainer->isRotatorLoaded());
     ui->RotateLeft->setVisible(!edit && LogContainer->isRotatorLoaded());
     ui->RotateRight->setVisible(!edit && LogContainer->isRotatorLoaded());
@@ -1793,6 +1802,7 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
     ui->RotBrg->setVisible(!edit && LogContainer->isRotatorLoaded());
     ui->rotatorState->setVisible(!edit && LogContainer->isRotatorLoaded());
     ui->rotatorState->setVisible(!edit && LogContainer->isRotatorLoaded());
+
 }
 
 void QSOLogFrame::transferDetails(const QSharedPointer<BaseContact> lct, const BaseContestLog *matct )
@@ -2068,6 +2078,9 @@ void QSOLogFrame::on_ValidateError (int mess_no )
       // add the message into the error list
       errs.insert( &errDefs[ mess_no ], &errDefs[ mess_no ] );
 }
+
+
+
 int QSOLogFrame::getAngle()
 {
     QString brgSt = ui->BrgSt->text();
@@ -2091,53 +2104,225 @@ int QSOLogFrame::getAngle()
             return brg;
         }
     }
-    return brg;
-}
 
-void QSOLogFrame::on_RotateLeft_clicked()
-{
-    TSendDM::sendRotator(rpcConstants::eRotateLeft, getAngle());
+    return brg;
 }
 
 void QSOLogFrame::on_Rotate_clicked()
 {
-    TSendDM::sendRotator(rpcConstants::eRotateDirect, getAngle());
+    int angle = getAngle();
+
+    if (angle == COMPASS_ERROR)
+    {
+        QString msg = "<font color='Red'>Bearing empty or invalid</font>";
+        ui->rotatorState->setText(msg);
+        return;
+    }
+
+
+    if (angle > maxAzimuth)
+    {
+        QString msg = "<font color='Red'>Bearing too large - " + QString::number(angle) + "</font>";
+        ui->rotatorState->setText(msg);
+    }
+    else if (angle < minAzimuth)
+    {
+        QString msg = "<font color='Red'>Bearing too small - " + QString::number(angle) + "</font>";
+        ui->rotatorState->setText(msg);
+    }
+    else
+    {
+        TSendDM::sendRotator(rpcConstants::eRotateDirect, angle);
+        moving = true;
+    }
+
 }
 
-void QSOLogFrame::on_RotateRight_clicked()
+void QSOLogFrame::on_RotateLeft_clicked(bool toggle)
 {
-    TSendDM::sendRotator(rpcConstants::eRotateRight, getAngle());
+    int angle = 0;
+
+    if (currentBearing <= minAzimuth)
+    {
+        ui->RotateLeft->setChecked(false);
+        return;
+    }
+
+    if (moving || movingCW || movingCCW)
+    {
+        on_StopRotate_clicked();
+    }
+
+
+    if (toggle)
+    {
+        ui->RotateLeft->setChecked(true);
+        TSendDM::sendRotator(rpcConstants::eRotateLeft, angle);
+        movingCW = true;
+    }
+    else
+    {
+        ui->RotateRight->setChecked(false);
+        //TSendDM::sendRotator(rpcConstants::eRotateStop, getAngle());
+    }
+}
+
+
+void QSOLogFrame::on_RotateRight_clicked(bool toggle)
+{
+    int angle = 0;
+
+    if (currentBearing >= maxAzimuth)
+    {
+        ui->RotateRight->setChecked(false);
+        return;
+    }
+
+    if (moving || movingCW || movingCCW)
+    {
+        on_StopRotate_clicked();
+    }
+
+
+
+    if (toggle)
+    {
+        ui->RotateRight->setChecked(true);
+        TSendDM::sendRotator(rpcConstants::eRotateRight, angle);
+        movingCCW = true;
+    }
+    else
+    {
+        ui->RotateRight->setChecked(false);
+        //TSendDM::sendRotator(rpcConstants::eRotateStop, getAngle());
+    }
+
 }
 
 void QSOLogFrame::on_StopRotate_clicked()
 {
     TSendDM::sendRotator(rpcConstants::eRotateStop, 0);
+    clearRotatorFlags();
+
 }
+
+void QSOLogFrame::clearRotatorFlags()
+{
+    ui->RotateLeft->setChecked(false);
+    ui->RotateRight->setChecked(false);
+    moving = false;
+    movingCCW = false;
+    movingCW = false;
+}
+
+
 void QSOLogFrame::setRotatorState(const QString &s)
 {
        ui->rotatorState->setText(s);
+       if (s == STATUS_STOP)
+       {
+           clearRotatorFlags();
+       }
+       else if (s == STATUS_ROTATE_CCW)
+       {
+           moving = false;
+           movingCW = false;
+           movingCCW = true;
+          // clearRotatorFlags();
+           ui->RotateLeft->setChecked(true);
+       }
+       else if (s == STATUS_ROTATE_CW)
+       {
+           moving = false;
+           movingCW = true;
+           movingCCW = false;
+           //clearRotatorFlags();
+           ui->RotateRight->setChecked(true);
+       }
+       else if (s == STATUS_TURN_TO)
+       {
+           moving = true;
+           movingCW = false;
+           movingCCW = false;
+           //clearRotatorFlags();
+
+       }
+
 }
+
+void QSOLogFrame::setRotatorAntennaName(const QString &s)
+{
+       ui->antennaName->setText(s);
+}
+
 void QSOLogFrame::setRotatorBearing(const QString &s)
 {
+    bool ok;
+    bool overlap = false;
+    int iBearing = s.toInt(&ok, 10);
+    currentBearing = iBearing;
+    if (!ok) return;
+
+    if (iBearing > COMPASS_MAX360)
+    {
+        iBearing -= COMPASS_MAX360;
+        overlap = true;
+    }
+    QString bearing = bearing.number(iBearing);
     QString brg;
-    QChar degsym = QChar('\xB0');
-    int len = s.length();
+    QChar degsym = QChar(DEGREE_SYMBOL);
+    int len = bearing.length();
 
     if (len < 2)
     {
         brg = QString("%1%2%3")
-        .arg("  ").arg(s).arg(degsym);
+        .arg("00").arg(bearing).arg(degsym);
     }
     else if (len < 3)
     {
         brg = QString("%1%2%3")
-        .arg(" ").arg(s).arg(degsym);
+        .arg("0").arg(bearing).arg(degsym);
     }
     else
     {
         brg = QString("%1%2")
-        .arg(s).arg(degsym);
+        .arg(bearing).arg(degsym);
     }
 
-    ui->RotBrg->setText(brg);
+    brg.append("</font>");
+
+    if (overlap)
+    {
+        brg.prepend("<font color='Red'>");
+        ui->RotBrg->setText(brg);
+    }
+    else
+    {
+        brg.prepend("<font color='Black'>");
+        ui->RotBrg->setText(brg);
+    }
+
+}
+
+void QSOLogFrame::setRotatorMaxAzimuth(const QString &s)
+{
+    bool ok;
+    int max_azimuth = 0;
+    max_azimuth = s.toInt(&ok, 10);
+    if (ok)
+    {
+        maxAzimuth = max_azimuth;
+    }
+}
+
+
+void QSOLogFrame::setRotatorMinAzimuth(const QString &s)
+{
+    bool ok;
+    int min_azimuth = 0;
+    min_azimuth = s.toInt(&ok, 10);
+    if (ok)
+    {
+        minAzimuth = min_azimuth;
+    }
 }

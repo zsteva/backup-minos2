@@ -6,510 +6,444 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1137</width>
-    <height>202</height>
+    <width>930</width>
+    <height>210</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Antenna Setup</string>
+  <property name="minimumSize">
+   <size>
+    <width>930</width>
+    <height>210</height>
+   </size>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>750</x>
-     <y>160</y>
-     <width>341</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>135</width>
-     <height>145</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Antenna Name</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="antennaNameEdit1">
-      <property name="maxLength">
-       <number>20</number>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="antennaNameEdit2">
-      <property name="inputMask">
-       <string/>
-      </property>
-      <property name="maxLength">
-       <number>20</number>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="antennaNameEdit3">
-      <property name="maxLength">
-       <number>20</number>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="antennaNameEdit4">
-      <property name="maxLength">
-       <number>20</number>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="antennaNameEdit5">
-      <property name="maxLength">
-       <number>20</number>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>700</x>
-     <y>10</y>
-     <width>71</width>
-     <height>145</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_4">
-    <item>
-     <widget class="QLabel" name="label_4">
-      <property name="text">
-       <string>Speed</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comSpeedBox1"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comSpeedBox2"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comSpeedBox3"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comSpeedBox4"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comSpeedBox5"/>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>10</y>
-     <width>241</width>
-     <height>145</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Rotator Model</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="rotatorModelBox1"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="rotatorModelBox2"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="rotatorModelBox3"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="rotatorModelBox4"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="rotatorModelBox5"/>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>620</x>
-     <y>10</y>
-     <width>71</width>
-     <height>145</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_3">
-    <item>
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Comport</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comPortBox1"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comPortBox2"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comPortBox3"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comPortBox4"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comPortBox5"/>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget_2">
-   <property name="geometry">
-    <rect>
-     <x>780</x>
-     <y>10</y>
-     <width>71</width>
-     <height>145</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_5">
-    <item>
-     <widget class="QLabel" name="label_5">
-      <property name="text">
-       <string>Data Bits</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comDataBitsBox1"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comDataBitsBox2"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comDataBitsBox3"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comDataBitsBox4"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comDataBitsBox5"/>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget_3">
-   <property name="geometry">
-    <rect>
-     <x>860</x>
-     <y>10</y>
-     <width>71</width>
-     <height>145</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_6">
-    <item>
-     <widget class="QLabel" name="label_6">
-      <property name="text">
-       <string>Stop Bits</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comStopBitsBox1"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comStopBitsBox2"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comStopBitsBox3"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comStopBitsBox4"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comStopBitsBox5"/>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget_4">
-   <property name="geometry">
-    <rect>
-     <x>940</x>
-     <y>10</y>
-     <width>71</width>
-     <height>145</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_7">
-    <item>
-     <widget class="QLabel" name="label_7">
-      <property name="text">
-       <string>Parity</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comParityBox1"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comParityBox2"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comParityBox3"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comParityBox4"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comParityBox5"/>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget_5">
-   <property name="geometry">
-    <rect>
-     <x>1020</x>
-     <y>10</y>
-     <width>71</width>
-     <height>145</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_8">
-    <item>
-     <widget class="QLabel" name="label_8">
-      <property name="text">
-       <string>Handshake</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comHandShakeBox1"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comHandShakeBox2"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comHandShakeBox3"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comHandShakeBox4"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comHandShakeBox5"/>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>400</x>
-     <y>10</y>
-     <width>218</width>
-     <height>145</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_9">
-      <property name="text">
-       <string>S Stop</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLabel" name="label_10">
-      <property name="text">
-       <string>Overrun</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QLabel" name="label_11">
-      <property name="text">
-       <string>Offset</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QCheckBox" name="chkSstop1">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QCheckBox" name="chkOverrun1">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QCheckBox" name="chkSstop2">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QCheckBox" name="chkOverrun2">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QCheckBox" name="chkSstop3">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QCheckBox" name="chkOverrun3">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QCheckBox" name="chkSstop4">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QCheckBox" name="chkOverrun4">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QCheckBox" name="chkSstop5">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="1">
-     <widget class="QCheckBox" name="chkOverrun5">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QLineEdit" name="lEditOffset1">
-      <property name="inputMask">
-       <string/>
-      </property>
-      <property name="maxLength">
-       <number>3</number>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="2">
-     <widget class="QLineEdit" name="lEditOffset2">
-      <property name="inputMask">
-       <string/>
-      </property>
-      <property name="maxLength">
-       <number>3</number>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2">
-     <widget class="QLineEdit" name="lEditOffset3">
-      <property name="inputMask">
-       <string/>
-      </property>
-      <property name="maxLength">
-       <number>3</number>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="2">
-     <widget class="QLineEdit" name="lEditOffset4">
-      <property name="inputMask">
-       <string/>
-      </property>
-      <property name="maxLength">
-       <number>3</number>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="2">
-     <widget class="QLineEdit" name="lEditOffset5">
-      <property name="inputMask">
-       <string/>
-      </property>
-      <property name="maxLength">
-       <number>3</number>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+  <property name="windowTitle">
+   <string>Setup Antenna </string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_9">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Antenna Name</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="antennaNameEdit1">
+         <property name="maxLength">
+          <number>20</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="antennaNameEdit2">
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="maxLength">
+          <number>20</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="antennaNameEdit3">
+         <property name="maxLength">
+          <number>20</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="antennaNameEdit4">
+         <property name="maxLength">
+          <number>20</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="antennaNameEdit5">
+         <property name="maxLength">
+          <number>20</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Rotator Model</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="rotatorModelBox1"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="rotatorModelBox2"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="rotatorModelBox3"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="rotatorModelBox4"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="rotatorModelBox5"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="S_stoplbl">
+         <property name="text">
+          <string>S Stop</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Overlap</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Offset</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="chkSstop1">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="chkOverrun1">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="chkSstop2">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QCheckBox" name="chkOverrun2">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="chkSstop3">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QCheckBox" name="chkOverrun3">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QCheckBox" name="chkSstop4">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QCheckBox" name="chkOverrun4">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QCheckBox" name="chkSstop5">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QCheckBox" name="chkOverrun5">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLineEdit" name="lEditOffset1">
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="maxLength">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLineEdit" name="lEditOffset2">
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="maxLength">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QLineEdit" name="lEditOffset3">
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="maxLength">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2">
+        <widget class="QLineEdit" name="lEditOffset4">
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="maxLength">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QLineEdit" name="lEditOffset5">
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="maxLength">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Comport</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comPortBox1"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comPortBox2"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comPortBox3"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comPortBox4"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comPortBox5"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Speed</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comSpeedBox1"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comSpeedBox2"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comSpeedBox3"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comSpeedBox4"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comSpeedBox5"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Data Bits</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comDataBitsBox1"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comDataBitsBox2"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comDataBitsBox3"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comDataBitsBox4"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comDataBitsBox5"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Stop Bits</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comStopBitsBox1"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comStopBitsBox2"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comStopBitsBox3"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comStopBitsBox4"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comStopBitsBox5"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Parity</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comParityBox1"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comParityBox2"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comParityBox3"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comParityBox4"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comParityBox5"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Handshake</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comHandShakeBox1"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comHandShakeBox2"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comHandShakeBox3"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comHandShakeBox4"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comHandShakeBox5"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections>

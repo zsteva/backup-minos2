@@ -19,18 +19,49 @@
 #include "minoscompass.h"
 #include <QtDebug>
 
+/*
+// for test
+#include <QTimer>
+#include <QString>
+// for test
+*/
+
 MinosCompass::MinosCompass(QWidget *parent)
 
-    : QWidget(parent)
+    : QDial(parent)
 
 {
 
    compassDialBearing = 0;
-
-
+   setSizePolicy(QSizePolicy:: Preferred, QSizePolicy:: Preferred);
+/*
+   // for test...
+   QTimer *timer = new QTimer(this);
+   connect(this, SIGNAL(bearing_updated(QString)), this, SLOT(compassDialUpdate(const QString &)));
+   connect(timer, SIGNAL(timeout()), this, SLOT(upDateDial()));
+    timer->start();
+   // for test
+*/
 }
 
 
+/*
+// for test
+void MinosCompass::upDateDial()
+{
+
+    static int bearing = 0;
+
+    bearing += 1;
+    if (bearing > 359)
+    {
+        bearing = 0;
+    }
+    QString s = QString::number(bearing);
+    emit bearing_updated(s);
+}
+// for test
+*/
 void MinosCompass::paintEvent(QPaintEvent *)
 {
 
@@ -137,9 +168,6 @@ void MinosCompass::paintEvent(QPaintEvent *)
         painter.rotate(90);
     }
 
-    painter.setPen( Qt::red );
-    painter.drawEllipse( QRect( -10, 30, 15, 15 ) );
-
 
 }
 
@@ -157,15 +185,11 @@ void MinosCompass::mousePressEvent(QMouseEvent *event)
 
 
 
-void MinosCompass::compassDialUpdate(const QString bearing)
+void MinosCompass::compassDialUpdate(int bearing)
 {
-    bool ok;
-    qDebug() << "bearing to compass " << bearing;
-    compassDialBearing = bearing.toInt(&ok, 10);
-    qDebug() << "int bearing to compass " << compassDialBearing;
-    if (ok)
-    {
-        update();
-    }
+
+    compassDialBearing = bearing;
+    update();
+
 }
 

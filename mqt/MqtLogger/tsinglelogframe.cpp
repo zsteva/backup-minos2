@@ -96,8 +96,14 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 
     connect(&MinosLoggerEvents::mle, SIGNAL(SetMode(QString, BaseContestLog*)), this, SLOT(on_SetFreq(QString, BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(SetFreq(QString, BaseContestLog*)), this, SLOT(on_SetMode(QString, BaseContestLog*)));
+
+    // Rotator updates
     connect(&MinosLoggerEvents::mle, SIGNAL(RotatorState(QString,BaseContestLog*)), this, SLOT(on_RotatorState(QString, BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(RotatorBearing(QString,BaseContestLog*)), this, SLOT(on_RotatorBearing(QString, BaseContestLog*)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(RotatorMaxAzimuth(QString,BaseContestLog*)), this, SLOT(on_RotatorMaxAzimuth(QString, BaseContestLog*)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(RotatorMinAzimuth(QString,BaseContestLog*)), this, SLOT(on_RotatorMinAzimuth(QString, BaseContestLog*)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(RotatorAntennaName(QString,BaseContestLog*)), this, SLOT(on_RotatorAntennaName(QString, BaseContestLog*)));
+
 
     // Connect up the stats etc display
     QSignalMapper* sm = new QSignalMapper(this);
@@ -953,6 +959,23 @@ void TSingleLogFrame::on_RotatorState(QString s, BaseContestLog * /*ct*/)
 void TSingleLogFrame::on_RotatorBearing(QString s, BaseContestLog * /*ct*/)
 {
     ui->GJVQSOLogFrame->setRotatorBearing(s);
+}
+
+
+void TSingleLogFrame::on_RotatorMaxAzimuth(QString s, BaseContestLog * /*ct*/)
+{
+    ui->GJVQSOLogFrame->setRotatorMaxAzimuth(s);
+}
+
+void TSingleLogFrame::on_RotatorMinAzimuth(QString s, BaseContestLog * /*ct*/)
+{
+    ui->GJVQSOLogFrame->setRotatorMinAzimuth(s);
+}
+
+
+void TSingleLogFrame::on_RotatorAntennaName(QString s, BaseContestLog * /*ct*/)
+{
+    ui->GJVQSOLogFrame->setRotatorAntennaName(s);
 }
 
 //=============================================================================

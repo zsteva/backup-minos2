@@ -23,6 +23,7 @@
 #include <QStringList>
 
 #include <hamlib/rotator.h>
+#include <hamlib/rig.h>         // for debug
 
 #define MAXCONFLEN 128
 
@@ -30,7 +31,7 @@ extern "C" int write_block(hamlib_port_t *p, const char *txbuffer, size_t count)
 extern "C" int read_block(hamlib_port_t *p, char *rxbuffer, size_t count);
 
 bool model_Sort(const rot_caps *caps1,const rot_caps *caps2);
-
+int rig_message_cb(enum rig_debug_level_e, rig_ptr_t, const char*, va_list);
 
 namespace serialData
 {
@@ -63,20 +64,24 @@ const QStringList hamlibErrorMsg = {"No Error, operation completed sucessfully",
 struct srotParams
 {
   QString antennaName;
+  QString antennaNumber;
   QString configLabel;
-  QString comport; /**<  serial port device*/
+  QString comport;
   QString rotatorModel;
+  QString rotatorManufacturer;
   QString rotatorModelName;
   int rotatorModelNumber;
+  azimuth_t min_azimuth;
   azimuth_t max_azimuth;
+  elevation_t min_elevation;
   elevation_t max_elevation;
   bool southStopFlag = false;
   bool overRunFlag = false;
-  int rotatorOffset = 0;
+  int antennaOffset = 0;
   bool moving;
   int serial_rate_max;
   int serial_rate_min;
-  int baudrate; /**<  serial port baudrate*/
+  int baudrate;
   int parity;
   int stopbits;
   int databits;
@@ -126,12 +131,22 @@ public:
     QString gethamlibErrorMsg(int errorCode);
 //    QString initError;
 
-    int getMaxAzimuth();
-    int getMaxElevation();
+    azimuth_t getMaxAzimuth();
+    azimuth_t getMinAzimuth();
+    elevation_t getMaxElevation();
+    elevation_t getMinElevation();
 
+    int calcSouthBearing(int rotatorBearing);
+
+    int rig_message_cb(enum rig_debug_level_e debug_level, const char *fmt, va_list ap);
+
+
+    int getMaxBaudRate();
+    int getMinBaudRate();
 signals:
-   void bearing_updated(QString);
+   void bearing_updated(int);
    void request_bearingError(int);
+   void debug_protocol(QString);
 
 
 private:
@@ -146,8 +161,9 @@ private:
     void errorMessage(int errorCode,QString command);
     void getRotatorList();
     bool rotatorlistLoaded=false;
-    srotParams rotParams;
+    srotParams curRotParams;
     int serialP;
+
 
 
     int retcode;		/* generic return code from functions */

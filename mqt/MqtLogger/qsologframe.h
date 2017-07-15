@@ -5,7 +5,7 @@
 
 #include "focuswatcher.h"
 #include "validators.h"
-
+#include "rotatorCommonConstants.h"
 
 namespace Ui {
 class QSOLogFrame;
@@ -22,7 +22,9 @@ public:
     void setAsEdit();
     void setRotatorState(const QString &s);
     void setRotatorBearing(const QString &s);
-
+    void setRotatorAntennaName(const QString &s);
+    void setRotatorMaxAzimuth(const QString &s);
+    void setRotatorMinAzimuth(const QString &s);
 private:
     ScreenContact *partialContact; // contact being edited on screen
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
@@ -49,7 +51,18 @@ private:
      QSharedPointer<BaseContact> getPriorContact();
      QSharedPointer<BaseContact> getNextContact();
 
+     // rotator
      int getAngle();
+//     int maxAzimuth = COMPASS_MAX360;
+//     int minAzimuth = COMPASS_MIN0;
+     int maxAzimuth = 0;
+     int minAzimuth = 0;
+     int currentBearing = 0;
+     bool moving = false;
+     bool movingCW = false;
+     bool movingCCW = false;
+     void clearRotatorFlags();
+
 
   protected: 	// User declarations
      QVector <ValidatedControl *> vcs;
@@ -142,8 +155,11 @@ private:
     ValidatedControl *qthIl;
     ValidatedControl *cmntIl;
 
+
+
     void MainOpComboBox_Exit();
     void SecondOpComboBox_Exit();
+
 signals:
     void QSOFrameCancelled();
 private slots:
@@ -171,9 +187,11 @@ private slots:
     void on_ShowOperators();
 
     void on_ModeComboBoxGJV_currentIndexChanged(int index);
-    void on_RotateLeft_clicked();
     void on_Rotate_clicked();
-    void on_RotateRight_clicked();
+    void on_RotateLeft_clicked(bool);
+    void on_RotateRight_clicked(bool);
+//    void on_RotateLeft_toggled(bool);
+//    void on_RotateRight_toggled(bool);
     void on_StopRotate_clicked();
 };
 

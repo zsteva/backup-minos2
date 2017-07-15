@@ -27,6 +27,7 @@ EditPresetsDialog::EditPresetsDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     presetNameLineEdit[0] = ui->presetNameEdit1;
     presetNameLineEdit[1] = ui->presetNameEdit2;
@@ -95,13 +96,13 @@ EditPresetsDialog::~EditPresetsDialog()
 
 void EditPresetsDialog::nameReturnPressed(int boxNumber)
 {
-    qDebug() << "name lineedit" << boxNumber;
+
     if (presetNameLineEdit[boxNumber]->text() != presetName[boxNumber])
     {
         presetName[boxNumber] = presetNameLineEdit[boxNumber]->text();
         presetNameUpdated[boxNumber] = true;
         presetValueChanged = true;
-        qDebug() << "name is" << presetNameLineEdit[boxNumber]->text();
+
     }
 }
 
@@ -110,7 +111,7 @@ void EditPresetsDialog::nameReturnPressed(int boxNumber)
 void EditPresetsDialog::bearingReturnPressed(int boxNumber)
 {
     bool ok;
-    qDebug() << "bearing return pressed";
+
     if (presetBearingLineEdit[boxNumber]->text() != "")
     {
         int bearing = presetBearingLineEdit[boxNumber]->text().toInt(&ok, 10);
@@ -152,13 +153,12 @@ void EditPresetsDialog:: savePresets()
     {
         if (presetNameUpdated[i])
         {
-            qDebug() << "save name" << "preset" + QString::number(i+1);
+
             config.setValue("preset" + QString::number(i+1), presetName[i]);
         }
 
         if (presetBearingUpdated[i])
         {
-           qDebug() << "save bearing" << i;
            config.setValue("bearing" + QString::number(i+1), presetBearing[i]);
         }
 
@@ -171,8 +171,6 @@ void EditPresetsDialog:: savePresets()
 
 void EditPresetsDialog::lineEditReturn()
 {
-    qDebug() << "line edit return";
-
     if (presetValueChanged)
     {
         savePresets();
@@ -218,7 +216,6 @@ void EditPresetsDialog::loadPresetEditFieldsShow()
 
 void EditPresetsDialog::saveButtonPushed()
 {
-    qDebug() << "save button pushed";
     savePresets();
 }
 
@@ -236,7 +233,7 @@ void EditPresetsDialog::clearPresets()
 
     for (int i = 0; i < NUM_PRESETS; i++)
     {
-        presetName[i] = "";
+        presetName[i] = EMPTY_PRESET_NAME;
         presetNameUpdated[i] = false;
         presetBearing[i] = "";
         presetBearingUpdated[i] = false;

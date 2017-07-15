@@ -12,9 +12,13 @@
 
 
 #include "rotatorlog.h"
+#include "rotatorCommonConstants.h"
 #include <QFile>
+#include <QDir>
+#include <QFileInfo>
 #include <QtDebug>
 #include <QDateTime>
+#include <QSettings>
 
 RotatorLog::RotatorLog()
 {
@@ -23,54 +27,112 @@ RotatorLog::RotatorLog()
     moving = false;
 }
 
-
-
-int RotatorLog::writeLog(const QString bearing)
+void RotatorLog::saveBearingLog(int bearing)
 {
+    static int oldbearing = COMPASS_ERROR;
 
-    if (oldBearing != bearing && !firstBearing)
+    if (oldbearing != bearing && bearingLogEnabled)
     {
-        oldBearing = bearing;
-        writeBearing(bearing);
-        firstBearing = true;
-        return 0;
-    }
-    if (oldBearing != bearing && firstBearing)
-    {
-        oldBearing = bearing;
-        moving = true;
-        return 0;
-    }
-    if (moving)
-    {
-        if (oldBearing == bearing && firstBearing)
+        if (oldbearing > bearing)
         {
-            moving = false;
-            writeBearing(bearing);
+            if ((oldbearing - bearing) > bearingLogBearingDiff)
+            {
+                oldbearing = bearing;
+                writeLog(bearing);
+            }
+        }
+        else
+        {
+            if ((bearing - oldbearing) > bearingLogBearingDiff)
+            {
+                oldbearing = bearing;
+                writeLog(bearing);
+            }
         }
     }
+
+
+}
+
+
+
+int RotatorLog::writeLog(int bearing)
+{
+    int compassBearing = bearing;
+    if (compassBearing > COMPASS_MAX360)
+    {
+        compassBearing -= COMPASS_MAX360;
+    }
+    QString fileName = bearingLogDir;
+    if (!QDir(fileName).exists())
+    {
+        QDir().mkdir(fileName);
+    }
+
+
+    if (bearingLogEnabled)
+    {
+
+       fileName.append('/');
+       fileName.append(bearingLogFileName);
+       fileName.append(BEARINGLOG_FILETYPE);
+
+       QString sbearing = QString::number(compassBearing);
+
+
+        if (oldBearing != sbearing && !firstBearing && !moving)
+        {
+            oldBearing = sbearing;
+            writeBearing(sbearing, fileName);
+            firstBearing = true;
+            moving = true;
+            return 0;
+        }
+
+
+
+        if (moving && firstBearing)
+        {
+            if (oldBearing != sbearing)
+            {
+                oldBearing = sbearing;
+                writeBearing(sbearing, fileName);
+                return 0;
+            }
+
+
+            if (oldBearing == sbearing)
+            {
+                moving = false;
+                firstBearing = false;
+                writeBearing(sbearing, fileName);
+                return 0;
+            }
+        }
+     }
+
     return 0;
 }
 
 
 
-int RotatorLog::writeBearing(const QString bearing)
+int RotatorLog::writeBearing(const QString bearing, QString filename)
 {
         QDateTime t = QDateTime::currentDateTime();
         QString t_str = t.toString();
 
-        QFile file( "testfile.txt" );
+        QFile file( filename );
         if( !file.exists() )
         {
-            qDebug() << "The file" << file.fileName() << "does not exist.";
+            //logMessage("The file" + file.fileName() + "does not exist.");
             //return -1;
         }
         if( !file.open( QIODevice::Append | QIODevice::Text) )
         {
-            qDebug() << "Could not open" << file.fileName() << "for writing.";
+            //logMessage("Could not open" + file.fileName() + "for writing.");
             //return -1;
         }
-        qDebug() << "The file opened.";
+
 
         QTextStream stream(&file);
 
@@ -79,6 +141,21 @@ int RotatorLog::writeBearing(const QString bearing)
         file.close();
         return 0;
 }
+
+
+void RotatorLog::getBearingLogConfig()
+{
+    QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
+    config.beginGroup("BearingLog");
+
+    bearingLogDir = config.value("directory", "./BearingLog").toString();
+    bearingLogFileName = config.value("filename", "bearing").toString();
+    bearingLogBearingDiff = config.value("bearing_difference", 0).toInt();
+    bearingLogEnabled = config.value("loggingEnabled", false).toBool();
+
+    config.endGroup();
+}
+
 
 
 
