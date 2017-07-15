@@ -22,15 +22,6 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
     radio = radio;
 
-    radioName[NUM_RADIOS] = new QLineEdit;
-    radioModel[NUM_RADIOS] = new  QComboBox;
-    civAddress[NUM_RADIOS] = new QLineEdit;
-    comPorts[NUM_RADIOS] = new  QComboBox;
-    comSpeed[NUM_RADIOS] = new QComboBox;
-    comDataBits[NUM_RADIOS] = new QComboBox;
-    comStopBits[NUM_RADIOS] = new QComboBox;
-    comParity[NUM_RADIOS] = new QComboBox;
-    comHandShake[NUM_RADIOS] = new QComboBox;
 
 
     radioName[0] = ui->radioNameEdit1;

@@ -40,17 +40,6 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
     rotator = rotator;
 
-    antennaName[NUM_ANTENNAS] = new QLineEdit;
-    rotatorModel[NUM_ANTENNAS] = new  QComboBox;
-    southStopFlag[NUM_ANTENNAS] = new QCheckBox;
-    overRunFlag[NUM_ANTENNAS] = new QCheckBox;
-    antennaOffset[NUM_ANTENNAS] = new QLineEdit;
-    comPorts[NUM_ANTENNAS] = new  QComboBox;
-    comSpeed[NUM_ANTENNAS] = new QComboBox;
-    comDataBits[NUM_ANTENNAS] = new QComboBox;
-    comStopBits[NUM_ANTENNAS] = new QComboBox;
-    comParity[NUM_ANTENNAS] = new QComboBox;
-    comHandShake[NUM_ANTENNAS] = new QComboBox;
 
 
     antennaName[0] = ui->antennaNameEdit1;

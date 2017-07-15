@@ -39,5 +39,6 @@ void TextMarker::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     int a =0;
     qDebug() << x() << " " << y();
+    qDebug() << callSign;
     QGraphicsItem::mousePressEvent(event);
 }

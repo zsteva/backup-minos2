@@ -8,6 +8,8 @@
 #include <QVector>
 #include <QVectorIterator>
 
+// holds all the callsigns added to the bandmap
+
 
 Bandmap::Bandmap()
 {
