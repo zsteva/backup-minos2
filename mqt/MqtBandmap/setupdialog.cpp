@@ -255,7 +255,7 @@ void SetupDialog::civAddressFinished(int boxNumber)
 {
     bool ok;
     int value = civAddress[boxNumber]->text().toInt(&ok, 16);
-    if (!ok or value < 0 or value > 255)
+    if (!ok || value < 0 || value > 255)
     {
          QMessageBox::critical(this, "CIV Error", QString(civAddress[boxNumber]->text()) + " Not a valid CIV value");
          civAddress[boxNumber]->text() = "";

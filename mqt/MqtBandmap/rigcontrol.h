@@ -109,7 +109,7 @@ public:
   QString gethamlibErrorMsg(int errorCode);
 
 signals:
-  frequency_updated(double);
+  void frequency_updated(double);
 
 private:
   hamlib_port_t myport;

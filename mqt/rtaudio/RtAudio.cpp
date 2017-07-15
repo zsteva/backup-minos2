@@ -38,6 +38,10 @@
 */
 /************************************************************************/
 
+#pragma GCC diagnostic ignored "-Wunused-result"
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wunused-function"
+
 // RtAudio: Version 4.1.2
 
 #include "RtAudio.h"
