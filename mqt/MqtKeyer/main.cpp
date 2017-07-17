@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    a.setOrganizationName( "G0GJV" );
+    a.setOrganizationName( "Minos2Qt" );
     a.setOrganizationDomain( "g0gjv.org.uk" );
     a.QCoreApplication::setApplicationName( "MinosQtKeyer" );
 

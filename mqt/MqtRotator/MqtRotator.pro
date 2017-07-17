@@ -10,8 +10,12 @@ QT       += core gui network widgets serialport
 TARGET = MqtRotator
 TEMPLATE = app
 
+VERSION=0.6.0.0
 DEFINES += VERSION=\\\"$$VERSION\\\"
 
+win32:RC_ICONS += antenna_icon.ico
+
+#RC_FILE = MqtRotator.rc
 
 CONFIG += c++11
 
@@ -61,8 +65,6 @@ FORMS    += \
     logdialog.ui \
     editpresetsdialog.ui \
     rotatormainwindow.ui
-
-RC_FILE = MqtRotator.rc
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase
