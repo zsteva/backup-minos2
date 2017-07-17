@@ -12,7 +12,8 @@ CONFIG += c++11
 
 win32: INCLUDEPATH += C:/Projects/hamlib-w32-3.1/include
 
-win32: LIBS += -LC:/Projects/hamlib-w32-3.1/lib/gcc/ -llibhamlib
+win32-g++: LIBS += -LC:/Projects/hamlib-w32-3.1/lib/gcc/ -llibhamlib
+msvc: LIBS += -LC:/Projects/hamlib-w32-3.1/lib/msvc/ -llibhamlib-2
 
 TARGET = MqtBandmap
 TEMPLATE = app

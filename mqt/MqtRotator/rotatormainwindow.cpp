@@ -43,6 +43,12 @@
 
 RotatorMainWindow *MinosRotatorForm;
 
+static QStringList presetShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
+                            QString("Ctrl+3"), QString("Ctrl+4"),
+                            QString("Ctrl+5"), QString("Ctrl+6"),
+                            QString("Ctrl+7"), QString("Ctrl+8"),
+                            QString("Ctrl+9"), QString("Ctrl+0")};
+
 
 RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     QMainWindow(parent), msg(0),
