@@ -1,5 +1,9 @@
 #include <QFileDialog>
 
+#ifdef Q_OS_UNIX
+#include <unistd.h>
+#endif
+
 #include "keyerAbout.h"
 #include "KeyerMain.h"
 #include "ui_KeyerMain.h"

@@ -1,6 +1,8 @@
 #include <QSettings>
 #include <QHostInfo>
-
+#ifdef Q_OS_UNIX
+#include <unistd.h>
+#endif
 #include "fileutils.h"
 #include "ConfigFile.h"
 
@@ -210,7 +212,7 @@ MinosConfig::MinosConfig( QWidget* Owner )
                  QString h = QHostInfo::localHostName();
                  thisServerName = h;
              }
-            autoStart = config.value( "Settings/Autostart", false ).toBool();
+            autoStart = config.value( "Settings/AutoStart", false ).toBool();
             hideServers = config.value( "Settings/HideServers", false ).toBool();
          }
          else
