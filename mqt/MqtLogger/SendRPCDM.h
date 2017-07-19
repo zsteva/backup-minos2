@@ -16,6 +16,8 @@
 #include <QString>
 #include <QTimer>
 
+#include "ConfigFile.h"
+
 class MinosRPCObj;
 //---------------------------------------------------------------------------
 class MinosRPCObj;
@@ -29,11 +31,11 @@ class TSendDM : public QObject
     //QTimer SubscribeTimer;
 //      bool connected;
 //      bool subscribed;
-      QString serverName;
-      QString keyerServerName;
-      QString rigServerName;
-      QString bandMapServerName;
-      QString rotatorServerName;
+//      QString serverName;
+      Connectable keyerServerName;
+      Connectable rigServerName;
+      Connectable bandMapServerName;
+      Connectable rotatorServerName;
 
       void logMessage( QString s );
    public:  		// User declarations

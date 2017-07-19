@@ -88,7 +88,7 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
 
     ui->MinosMemo->setText(MinosText);
 
-    if ( !FileExists( ConfigFile::getConfigIniName() ) /*|| !onStartup || checkServerReady()*/ )
+    if ( !MinosConfig::doesConfigExist() )
     {
        ui->AutoStartTabSheet->setVisible(false);
        ui->LoggerOnlyButton->setVisible(false);

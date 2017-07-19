@@ -4,6 +4,9 @@
 #
 #-------------------------------------------------
 
+QT       += core gui
+QT       += widgets
+QT       += network
 QT       -= gui
 
 TARGET = MqtUtils

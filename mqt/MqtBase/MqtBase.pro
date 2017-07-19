@@ -52,9 +52,9 @@ SOURCES += \
     minoskeyboard.cpp \
     MinosLines.cpp \
     Calendar.cpp \
-    ConfigDM.cpp \
     tconfigframe.cpp \
-    MinosTableView.cpp
+    MinosTableView.cpp \
+    ConfigElementFrame.cpp
 
 HEADERS += \
     BandList.h \
@@ -88,9 +88,9 @@ HEADERS += \
     MinosLines.h \
     Calendar.h \
     waitcursor.h \
-    ConfigDM.h \
     tconfigframe.h \
-    MinosTableView.h
+    MinosTableView.h \
+    ConfigElementFrame.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
@@ -101,4 +101,5 @@ DISTFILES += \
 
 FORMS += \
     minoskeyboard.ui \
-    tconfigframe.ui
+    tconfigframe.ui \
+    ConfigElementFrame.ui
