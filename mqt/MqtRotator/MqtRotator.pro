@@ -38,8 +38,7 @@ SOURCES += \
     editpresetsdialog.cpp \
     rotcontrol.cpp \
     rotatorlog.cpp \
-    rotatorRpc.cpp \
-    overlapwidget.cpp
+    rotatorRpc.cpp
 
 HEADERS  += \
     skyscandialog.h \
@@ -51,7 +50,6 @@ HEADERS  += \
     rotcontrol.h \
     rotatorlog.h \
     rotatorRpc.h \
-    overlapwidget.h \
     rotatorCommonConstants.h
 
 FORMS    += \
