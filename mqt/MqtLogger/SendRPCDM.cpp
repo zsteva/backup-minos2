@@ -41,7 +41,7 @@ TSendDM::TSendDM( QWidget* Owner )
     connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request (bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
-    rpc->setAppName("Logger");
+    rpc->setAppName(rpcConstants::loggerApp);
     rpc->subscribeRemote( rigServerName.serverName, rpcConstants::RigControlCategory );
     rpc->subscribeRemote( keyerServerName.serverName, rpcConstants::KeyerCategory );
     rpc->subscribeRemote( bandMapServerName.serverName, rpcConstants::BandMapCategory );

@@ -17,6 +17,8 @@ static const QString clientNotify       = QT_TR_NOOP("Minos:PubSub:ClientNotify"
 static const QString StationCategory    = QT_TR_NOOP("Station");
 // station name is the key, IP is the value
 
+// Logger
+static const QString loggerApp         = QT_TR_NOOP("Logger");
 
 // bandmap
 static const QString bandmapApp         = QT_TR_NOOP("BandMap");
