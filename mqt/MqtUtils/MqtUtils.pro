@@ -21,11 +21,15 @@ else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -
 
 SOURCES += \
     fileutils.cpp \
-    ConfigFile.cpp
+    ConfigFile.cpp \
+    AppStartup.cpp \
+    StdInReader.cpp
 
 HEADERS += \
     fileutils.h \
-    ConfigFile.h
+    ConfigFile.h \
+    AppStartup.h \
+    StdInReader.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
