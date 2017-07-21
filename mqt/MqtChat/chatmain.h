@@ -46,6 +46,7 @@ private:
 
 private slots:
     void SyncTimerTimer( );
+    void onStdInRead(QString);
 
     void on_SendButton_clicked();
 

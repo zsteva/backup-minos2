@@ -11,9 +11,6 @@ StdInReader::StdInReader()
         trace(arg);
     }
     trace("End of Arguments");
-
-    start();
-
 }
 
 void StdInReader::run()
@@ -24,10 +21,6 @@ void StdInReader::run()
     for (;;)
     {
         line = stdinStream.readLine();
-        trace("StdIn");
-        trace(line);
         emit stdinLine(line);
-        trace("End of StdIn");
     }
-    trace("Thread exiting");
 }

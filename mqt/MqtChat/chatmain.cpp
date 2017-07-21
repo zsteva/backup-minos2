@@ -1,4 +1,5 @@
 #include "base_pch.h"
+#include <QProcessEnvironment>
 
 #include "MinosRPC.h"
 
@@ -11,6 +12,19 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    QString rpcName = env.value("MQTRPCNAME", rpcConstants::chatApp);
+
+    trace("Value of MQTRPCNAME is " + rpcName);
+
+
+    connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
+    stdinReader.start();
+
+    // And we REALLY would like to get the initial stdin data back before we carry on...
+    // it tells us the actual rpc name that we should be using
+
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     createCloseEvent();
@@ -39,6 +53,11 @@ TMinosChatForm::~TMinosChatForm()
 {
     delete ui;
 }
+void TMinosChatForm::onStdInRead(QString cmd)
+{
+    trace("Command read from stdin: " + cmd);
+}
+
 //---------------------------------------------------------------------------
 
 void TMinosChatForm::logMessage( QString s )
