@@ -23,6 +23,17 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     }
     trace("End of Arguments");
 
+    trace("StdIn");
+    QTextStream stream(stdin);
+    QString line;
+    while (stream.readLineInto(&line))
+    {
+        trace(line);
+        if (line.compare("CloseStdin", Qt::CaseInsensitive) == 0)
+            break;
+    }
+    trace("End of StdIn");
+
     createCloseEvent();
 
     QSettings settings;

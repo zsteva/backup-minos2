@@ -3,6 +3,7 @@
 # Project created by QtCreator 2015-11-30T19:20:34
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
 
 QT       += core gui
 QT       += widgets
@@ -12,9 +13,6 @@ TARGET = MqtLogger
 TEMPLATE = app
 
 VERSION=0.6.0.0
-win32:RC_ICONS += ../minos.ico
-
-DEFINES += VERSION=\\\"$$VERSION\\\"
 
 android {
     CONFIG_INSTALL_PATH=/assets/Configuration
@@ -25,8 +23,6 @@ android {
 
     INSTALLS += config
 }
-
-CONFIG += c++11
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast

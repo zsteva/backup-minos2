@@ -3,7 +3,7 @@
 # Project created by QtCreator 2015-12-30T14:59:17
 #
 #-------------------------------------------------
-
+include($$PWD/../mqt.pri)
 
 QT       += core gui
 QT       += widgets
@@ -13,17 +13,10 @@ QT       += network
 TARGET = MqtServer
 TEMPLATE = app
 
-VERSION=0.6.0.0
 win32:RC_ICONS += ../minos.ico
-
-DEFINES += VERSION=\\\"$$VERSION\\\"
-
-
-CONFIG += c++11
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
-
 
 DEFINES += TIXML_USE_STL
 

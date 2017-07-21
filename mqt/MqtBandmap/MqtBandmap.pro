@@ -3,17 +3,14 @@
 # Project created by QtCreator 2016-11-10T21:16:20
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
 
 QT       += core gui serialport
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += widgets
 
 VERSION=0.6.0.0
+
 win32:RC_ICONS += ../minos.ico
-
-DEFINES += VERSION=\\\"$$VERSION\\\"
-
-CONFIG += c++11
 
 win32: INCLUDEPATH += C:/Projects/hamlib-w32-3.1/include
 

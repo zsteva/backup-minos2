@@ -3,6 +3,7 @@
 # Project created by QtCreator 2015-11-27T23:58:51
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
 
 QT       += core gui
 QT       += widgets
@@ -11,7 +12,6 @@ QT       += network
 TARGET = MqtBase
 TEMPLATE = lib
 CONFIG += staticlib
-CONFIG += c++11
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast

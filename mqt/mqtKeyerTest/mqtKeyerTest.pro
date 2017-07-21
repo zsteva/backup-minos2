@@ -3,10 +3,10 @@
 # Project created by QtCreator 2017-07-05T13:31:47
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
 
 QT       += core gui charts
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += widgets
 
 TARGET = mqtKeyerTest
 TEMPLATE = app
