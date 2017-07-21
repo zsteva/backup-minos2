@@ -5,8 +5,9 @@
 #-------------------------------------------------
 include($$PWD/../mqt.pri)
 
+QT       += core gui
+QT       += widgets
 QT       += network
-QT       -= gui
 
 TARGET = XMPPLib
 TEMPLATE = lib
@@ -23,9 +24,6 @@ DEFINES += TIXML_USE_STL
 
 SOURCES += \
     Dispatcher.cpp \
-    LogEvents.cpp \
-    MLogFile.cpp \
-    MTrace.cpp \
     PortIds.cpp \
     PubSubClient.cpp \
     RPCPubSub.cpp \
@@ -40,9 +38,6 @@ SOURCES += \
 
 HEADERS += \
     Dispatcher.h \
-    LogEvents.h \
-    MLogFile.h \
-    MTrace.h \
     PortIds.h \
     PubSubClient.h \
     RPCPubSub.h \

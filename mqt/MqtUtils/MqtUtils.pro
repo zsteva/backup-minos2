@@ -8,7 +8,6 @@ include($$PWD/../mqt.pri)
 QT       += core gui
 QT       += widgets
 QT       += network
-QT       -= gui
 
 TARGET = MqtUtils
 TEMPLATE = lib
@@ -22,13 +21,20 @@ SOURCES += \
     fileutils.cpp \
     ConfigFile.cpp \
     AppStartup.cpp \
-    StdInReader.cpp
+    StdInReader.cpp \
+    MLogFile.cpp \
+    MTrace.cpp \
+    LogEvents.cpp
 
 HEADERS += \
     fileutils.h \
     ConfigFile.h \
     AppStartup.h \
-    StdInReader.h
+    StdInReader.h \
+    MLogFile.h \
+    MTrace.h \
+    LogEvents.h \
+    mqtUtils_pch.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

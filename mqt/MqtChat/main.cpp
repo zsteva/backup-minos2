@@ -1,7 +1,5 @@
 #include "base_pch.h"
 #include "chatmain.h"
-#include <QApplication>
-#include "AppStartup.h"
 
 int main(int argc, char *argv[])
 {

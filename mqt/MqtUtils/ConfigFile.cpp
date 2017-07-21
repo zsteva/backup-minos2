@@ -1,19 +1,9 @@
+#include "mqtUtils_pch.h"
+
 #include <QSettings>
 #include <QHostInfo>
-#ifdef Q_OS_UNIX
-#include <unistd.h>
-#endif
 #include "fileutils.h"
 #include "ConfigFile.h"
-
-static void trace(const QString &)
-{
-
-}
-static void logMessage(const QString &, const QString &)
-{
-
-}
 
 //---------------------------------------------------------------------------
 
@@ -136,18 +126,16 @@ void TConfigElement::createProcess()
     if ( runType && !runner)
     {
         runner = new QProcess(parent());
-/*
+
         QString program = commandLine;
         if (!FileExists(program))
         {
             trace(name + ":program doesn't exist:" + program);
         }
-            runner->setProgram(program);
 
-        QStringList args;
-        args.append(params);
-        runner->setArguments(args);
-*/
+        commandLine += " ";
+        commandLine += params;
+
         QString wdir = rundir;
         runner->setWorkingDirectory(wdir);
 
@@ -159,6 +147,14 @@ void TConfigElement::createProcess()
         connect (runner, SIGNAL(readyReadStandardOutput()), this, SLOT(on_readyReadStandardOutput()));
 
         runner->start(commandLine);
+
+        // pass the RPC name to those apps that can understand it
+        // and we can add in hideServers, and anything else useful
+        // ?? simple text, XML/XMPP or JSON ??
+        // Whatever, we need a standard startup routine to be linked into everything
+        // keep the link pen - we may want to send hideServers etc later
+        QByteArray command = (name + "\nCloseStdin\n").toUtf8();
+        runner->write( command );
     }
 }
 
@@ -170,7 +166,7 @@ void TConfigElement::on_started()
 void TConfigElement::on_finished(int err, QProcess::ExitStatus exitStatus)
 {
     trace(name + ":finished:" + QString::number(err) + ":" + QString::number(exitStatus));
-    runner->start();    // but we have to be careul when we close!
+    runner->start();    // but we have to be careful when we close!
 }
 
 void TConfigElement::on_error(QProcess::ProcessError error)
