@@ -19,7 +19,6 @@ ControlMain::ControlMain(QWidget *parent) :
     monitor(parent),
     ui(new Ui::ControlMain)
 {
-    enableTrace( "./TraceLog", "MinosControl_" );
     createCloseEvent();
 
     LineSet *ls = LineSet::GetLineSet();

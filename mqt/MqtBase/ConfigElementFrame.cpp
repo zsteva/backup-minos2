@@ -77,7 +77,6 @@ bool ConfigElementFrame::saveElement()
 
     return true;
 }
-
 void ConfigElementFrame::on_programBrowseButton_clicked()
 {
     // We need
@@ -85,19 +84,25 @@ void ConfigElementFrame::on_programBrowseButton_clicked()
     QString InitialDir = ExtractFileDir(ui->programNameEdit->text());
 
     // how do we search for executable files on Linux?
+    // This MIGHT work
     QString Filter = "Executable Files (*.exe);;"
                      "All Files (*.*)" ;
 
-    QString progName = QFileDialog::getOpenFileName( this,
-                       "Minos 2 Component Program",
-                       InitialDir,                   // opendir
-                       Filter );
+    QFileDialog dialog(this, "Minos 2 Component Program", InitialDir);
+    const QStringList schemes = QStringList(QStringLiteral("file"));
 
-    // need to make path relative
-    if ( !progName.isEmpty() )
+    dialog.setSupportedSchemes(schemes);
+    dialog.setNameFilter(Filter);
+    dialog.setFilter(QDir::Files | QDir::Executable);
+    dialog.setFileMode(QFileDialog::ExistingFile);
+
+    if (dialog.exec() == QDialog::Accepted)
     {
+        // need to make path relative
+        QString progName = dialog.selectedUrls().value(0).toLocalFile();
         QString rpath = cdir.relativeFilePath(progName);
         ui->programNameEdit->setText(rpath);
+
     }
 
 }

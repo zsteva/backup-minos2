@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    enableTrace( "./TraceLog", "MqtAppStarter_" );
 
     ui->configFrame->initialise(this, &::closeCallback, true);
     createCloseEvent();

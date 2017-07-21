@@ -34,5 +34,6 @@
 #include "MTrace.h"
 #include "MLogFile.h"
 #include "AppStartup.h"
+#include "StdInReader.h"
 
 #endif

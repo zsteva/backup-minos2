@@ -1,7 +1,9 @@
 #include "mqtUtils_pch.h"
+#include <QTextStream>
+
 #include "StdInReader.h"
 
-StdInReader::StdInReader():stream(stdin, QIODevice::ReadOnly)
+StdInReader::StdInReader()
 {
     trace("Arguments");
     foreach (QString arg, QCoreApplication::instance()->arguments())
@@ -10,14 +12,22 @@ StdInReader::StdInReader():stream(stdin, QIODevice::ReadOnly)
     }
     trace("End of Arguments");
 
-    trace("StdIn");
+    start();
+
+}
+
+void StdInReader::run()
+{
+    QTextStream stdinStream(stdin, QIODevice::ReadOnly);
 
     QString line;
-    while (stream.readLineInto(&line))
+    for (;;)
     {
+        line = stdinStream.readLine();
+        trace("StdIn");
         trace(line);
-        if (line.compare("CloseStdin", Qt::CaseInsensitive) == 0)
-            break;
+        emit stdinLine(line);
+        trace("End of StdIn");
     }
-    trace("End of StdIn");
+    trace("Thread exiting");
 }

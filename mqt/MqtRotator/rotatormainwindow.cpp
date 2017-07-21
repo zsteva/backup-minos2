@@ -57,7 +57,6 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    enableTrace( "./TraceLog", "MqtRotator_" );
     createCloseEvent();
     MinosRotatorForm = this;
     connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));

@@ -142,7 +142,8 @@ bool TContestApp::initialise()
 #endif
    }
    // delay opening the trace file until we know where to put it
-   enableTrace( "./TraceLog", "MinosLogger_" );
+   enableTrace( "./TraceLog", "MinosQtLogger_" );
+
    // we need to open our bundles...
    // and we need to discover the defaults from the initial splash screen
 

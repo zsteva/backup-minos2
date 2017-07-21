@@ -20,6 +20,8 @@ class TMinosChatForm : public QMainWindow
 {
     Q_OBJECT
 
+    StdInReader stdinReader;
+
 public:
     explicit TMinosChatForm(QWidget *parent = 0);
     ~TMinosChatForm();

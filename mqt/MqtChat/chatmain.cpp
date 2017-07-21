@@ -4,7 +4,6 @@
 
 #include "chatmain.h"
 #include "ui_chatmain.h"
-
 TMinosChatForm *MinosChatForm = 0;
 
 TMinosChatForm::TMinosChatForm(QWidget *parent) :
@@ -13,26 +12,6 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-
-    enableTrace( "./TraceLog", "MinosChat_" );
-
-    trace("Arguments");
-    foreach (QString arg, QCoreApplication::instance()->arguments())
-    {
-        trace(arg);
-    }
-    trace("End of Arguments");
-
-    trace("StdIn");
-    QTextStream stream(stdin);
-    QString line;
-    while (stream.readLineInto(&line))
-    {
-        trace(line);
-        if (line.compare("CloseStdin", Qt::CaseInsensitive) == 0)
-            break;
-    }
-    trace("End of StdIn");
 
     createCloseEvent();
 

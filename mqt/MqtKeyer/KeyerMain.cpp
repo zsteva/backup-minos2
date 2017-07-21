@@ -92,8 +92,6 @@ KeyerMain::KeyerMain(QWidget *parent) :
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
-    enableTrace( "./TraceLog", "MinosKeyer_" );
-
     createCloseEvent();
 
     inVolChange = true;

@@ -3,6 +3,6 @@
 
 #include <QApplication>
 
-extern void appStartup(QApplication &a, const QString &appName);
+extern void appStartup(QApplication &a, const QString &appName, bool startLog = true);
 
 #endif // APPSTARTUP_H

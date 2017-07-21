@@ -21,8 +21,6 @@ ServerMain::ServerMain(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    enableTrace( "./TraceLog", "MinosServer_" );
-
     createCloseEvent();
     QSettings settings;
     QByteArray geometry = settings.value("geometry").toByteArray();

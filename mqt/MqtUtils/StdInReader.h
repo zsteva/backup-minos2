@@ -1,12 +1,17 @@
 #ifndef STDINREADER_H
 #define STDINREADER_H
-#include <QTextStream>
+#include <QThread>
 
-class StdInReader
+class StdInReader: public QThread
 {
-    QTextStream stream;
+    Q_OBJECT
+
+    virtual void run();
 public:
     StdInReader();
+
+signals:
+    void stdinLine(QString);
 };
 
 #endif // STDINREADER_H
