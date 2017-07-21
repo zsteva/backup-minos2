@@ -12,7 +12,7 @@ QT       += network
 TARGET = MqtLogger
 TEMPLATE = app
 
-VERSION=0.6.0.0
+win32:RC_ICONS += ../minos.ico
 
 android {
     CONFIG_INSTALL_PATH=/assets/Configuration
