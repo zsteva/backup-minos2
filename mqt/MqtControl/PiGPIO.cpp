@@ -30,7 +30,11 @@ GPIOLine::~GPIOLine()
 
     spin = QString::number(pin);
     QByteArray apin = spin.toUtf8();
-    write(fd, apin.data(), apin.length());
+    size_t written = write(fd, apin.data(), apin.length());
+    if (written != static_cast<unsigned int>(apin.length()))
+    {
+        trace("GPIO destructor: short write");
+    }
     close(fd);
 }
 bool GPIOLine::initialise()
@@ -46,7 +50,11 @@ bool GPIOLine::initialise()
 
     spin = QString::number(pin);
     QByteArray apin = spin.toUtf8();
-    write(fd, apin.data(), apin.length());
+    size_t written = write(fd, apin.data(), apin.length());
+    if (written != static_cast<unsigned int>(apin.length()))
+    {
+        trace("GPIO initialise: short write");
+    }
     close(fd);
 
     QThread::msleep(100);
