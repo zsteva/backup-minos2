@@ -5,11 +5,29 @@
 #include <QSettings>
 //---------------------------------------------------------------------------
 enum RunType{rtNone, rtLocal, rtServer, rtMax};
-enum AppType{atOther, atServer, atAppStarter, atLogger, atChat, atKeyer, atBandMap, atRotator, atMonitor, atRotatorControl, atRigControl, atMax};
+enum AppType{
+    atNone,
+    atAppStarter,
+    atBandMap,
+    atChat,
+    atKeyer,
+    atLineControl,
+    atLogger,
+    atMonitor,
+    atOther,
+    atRigControl,
+    atRotator,
+    atRotatorControl,
+    atServer,
+    atMax};
 
 class Connectable
 {
 public:
+    Connectable(): runType(rtNone), appType(atNone)
+    {
+
+    }
     QString serverName;
     QString appName;
     RunType runType;

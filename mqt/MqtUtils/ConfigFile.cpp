@@ -10,7 +10,21 @@
 bool terminated = false;
 bool configExists = false;
 static QStringList runTypes{"None", "RunLocal", "ConnectServer"};
-static QStringList appTypes{"Other", "Server", "AppStarter", "Logger", "Chat", "Keyer", "BandMap", "Rotator", "Monitor", "RotatorControl", "RigControl"};
+static QStringList appTypes{
+    "None",
+    "AppStarter",
+    "BandMap",
+    "Chat",
+    "Keyer",
+    "LineControl",
+    "Logger",
+    "Monitor",
+    "Other",
+    "RigControl",
+    "Rotator",
+    "RotatorControl",
+    "Server"
+};
 
 /*static*/
 MinosConfig *MinosConfig::thisDM = 0;
@@ -116,14 +130,14 @@ Connectable TConfigElement::connectable()
     if (runType == rtServer)
         res.serverName = server;
     else
-        res.serverName = "localhost";
+        res.serverName = name + "@localhost";
 
     return res;
 }
 
 void TConfigElement::createProcess()
 {
-    if ( runType && !runner)
+    if ( runType == rtLocal && !runner)
     {
         runner = new QProcess(parent());
 
