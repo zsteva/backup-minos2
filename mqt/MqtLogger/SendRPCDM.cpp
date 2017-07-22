@@ -31,21 +31,24 @@ TSendDM::TSendDM( QWidget* Owner )
 {
     MinosConfig *config = MinosConfig::getMinosConfig(Owner);
 
-    rigServerName = config->getApp(atRigControl, "");
-    keyerServerName = config->getApp(atKeyer, "");
-    bandMapServerName = config->getApp(atBandMap, "");
-    rotatorServerName = config->getApp(atRotator, "");
+    rigServerConnectable = config->getApp(atRigControl, "");
+    keyerServerConnectable = config->getApp(atKeyer, "");
+    bandMapServerConnectable = config->getApp(atBandMap, "");
+    rotatorServerConnectable = config->getApp(atRotator, "");
 
-    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request (bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
-    rpc->setAppName(rpcConstants::loggerApp);
-    rpc->subscribeRemote( rigServerName.serverName, rpcConstants::RigControlCategory );
-    rpc->subscribeRemote( keyerServerName.serverName, rpcConstants::KeyerCategory );
-    rpc->subscribeRemote( bandMapServerName.serverName, rpcConstants::BandMapCategory );
-    rpc->subscribeRemote( rotatorServerName.serverName, rpcConstants::RotatorCategory );
+    if (rigServerConnectable.appType != atNone)
+        rpc->subscribeRemote( rigServerConnectable.serverName, rpcConstants::RigControlCategory );
+    if (keyerServerConnectable.appType != atNone)
+        rpc->subscribeRemote( keyerServerConnectable.serverName, rpcConstants::KeyerCategory );
+    if (bandMapServerConnectable.appType != atNone)
+        rpc->subscribeRemote( bandMapServerConnectable.serverName, rpcConstants::BandMapCategory );
+    if (rotatorServerConnectable.appType != atNone)
+        rpc->subscribeRemote( rotatorServerConnectable.serverName, rpcConstants::RotatorCategory );
 }
 TSendDM::~TSendDM()
 {
@@ -72,7 +75,7 @@ void TSendDM::doSendKeyerPlay(  int fno )
    st->addMember( sName, "Name" );
    st->addMember( iValue, "Value" );
    rpc.getCallArgs() ->addParam( st );
-   rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerName.serverName );
+   rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerConnectable.serverName );
 }
 /*static*/ void TSendDM::sendKeyerRecord(  int fno )
 {
@@ -89,7 +92,7 @@ void TSendDM::doSendKeyerRecord(  int fno )
    st->addMember( sName, "Name" );
    st->addMember( iValue, "Value" );
    rpc.getCallArgs() ->addParam( st );
-   rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerName.serverName );
+   rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerConnectable.serverName );
 }
 
 /*static*/ void TSendDM::sendKeyerTone()
@@ -106,7 +109,7 @@ void TSendDM::doSendKeyerTone()
     st->addMember( sName, "Name" );
     st->addMember( iValue, "Value" );
     rpc.getCallArgs() ->addParam( st );
-    rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerName.serverName );
+    rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerConnectable.serverName );
 }
 /*static*/ void TSendDM::sendKeyerTwoTone()
 {
@@ -123,7 +126,7 @@ void TSendDM::doSendKeyerTwoTone()
     st->addMember( sName, "Name" );
     st->addMember( iValue, "Value" );
     rpc.getCallArgs() ->addParam( st );
-    rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerName.serverName );
+    rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerConnectable.serverName );
 }
 /*static*/ void TSendDM::sendKeyerStop()
 {
@@ -140,7 +143,7 @@ void TSendDM::doSendKeyerStop()
     st->addMember( sName, "Name" );
     st->addMember( iValue, "Value" );
     rpc.getCallArgs() ->addParam( st );
-    rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerName.serverName );
+    rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerConnectable.serverName );
 }
 //---------------------------------------------------------------------------
 void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const QString &utc,   const QString &loc,   const QString &qth )
@@ -162,7 +165,7 @@ void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const 
    st->addMember( qth, rpcConstants::bandmapParamQTH );
 
    rpc.getCallArgs() ->addParam( st );
-   rpc.queueCall( rpcConstants::bandmapApp + "@" + bandMapServerName.serverName );
+   rpc.queueCall( rpcConstants::bandmapApp + "@" + bandMapServerConnectable.serverName );
 }
 
 /*static*/ void TSendDM::sendRotator(rpcConstants::RotateDirection direction, int angle )
@@ -180,7 +183,7 @@ void TSendDM::doSendRotator( rpcConstants::RotateDirection direction,  int angle
    st->addMember( angle, rpcConstants::rotatorParamAngle );
    rpc.getCallArgs() ->addParam( st );
 
-   rpc.queueCall( rpcConstants::rotatorApp + "@" + rotatorServerName.serverName );
+   rpc.queueCall( rpcConstants::rotatorApp + "@" + rotatorServerConnectable.serverName );
 }
 
 //---------------------------------------------------------------------------

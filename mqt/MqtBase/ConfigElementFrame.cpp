@@ -27,9 +27,9 @@ void ConfigElementFrame::setElement(QSharedPointer<TConfigElement> c)
 
     if (c->runType == rtNone)
         ui->rbNoAction->setChecked(true);
-    if (c->runType == rtLocal)
+    if (c->runType == rtRunLocal)
         ui->rbRunLocally->setChecked(true);
-    if (c->runType == rtServer)
+    if (c->runType == rtConnectServer)
         ui->rbConnectRemote->setChecked(true);
 
     QStringList appTypes = MinosConfig::getAppTypes();
@@ -54,9 +54,11 @@ bool ConfigElementFrame::saveElement()
     if (ui->rbNoAction->isChecked())
         c->runType = rtNone;
     if (ui->rbRunLocally->isChecked())
-        c->runType = rtLocal;
+        c->runType = rtRunLocal;
+    if (ui->rbConnectLocal->isChecked())
+        c->runType = rtConnectLocal;
     if (ui->rbConnectRemote->isChecked())
-        c->runType = rtServer;
+        c->runType = rtConnectServer;
 
     QString S = ui->appTypeCombo->currentText();
     QStringList appTypes = MinosConfig::getAppTypes();
@@ -144,6 +146,11 @@ void ConfigElementFrame::checkEnabled()
         ui->programFrame->setEnabled(true);
         ui->serverFrame->setEnabled(false);
     }
+    else if (ui->rbConnectLocal->isChecked())
+    {
+        ui->programFrame->setEnabled(false);
+        ui->serverFrame->setEnabled(false);
+    }
     else if (ui->rbConnectRemote->isChecked())
     {
         ui->programFrame->setEnabled(false);
@@ -162,6 +169,11 @@ void ConfigElementFrame::on_rbRunLocally_clicked()
 }
 
 void ConfigElementFrame::on_rbConnectRemote_clicked()
+{
+    checkEnabled();
+}
+
+void ConfigElementFrame::on_rbConnectLocal_clicked()
 {
     checkEnabled();
 }

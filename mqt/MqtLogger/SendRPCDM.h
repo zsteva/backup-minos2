@@ -32,10 +32,10 @@ class TSendDM : public QObject
 //      bool connected;
 //      bool subscribed;
 //      QString serverName;
-      Connectable keyerServerName;
-      Connectable rigServerName;
-      Connectable bandMapServerName;
-      Connectable rotatorServerName;
+      Connectable keyerServerConnectable;
+      Connectable rigServerConnectable;
+      Connectable bandMapServerConnectable;
+      Connectable rotatorServerConnectable;
 
       void logMessage( QString s );
    public:  		// User declarations

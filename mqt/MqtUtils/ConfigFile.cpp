@@ -9,7 +9,7 @@
 
 bool terminated = false;
 bool configExists = false;
-static QStringList runTypes{"None", "RunLocal", "ConnectServer"};
+static QStringList runTypes{"None", "RunLocal", "ConnectLocal", "ConnectServer"};
 static QStringList appTypes{
     "None",
     "AppStarter",
@@ -127,7 +127,7 @@ Connectable TConfigElement::connectable()
     res.appName = name;
     res.appType = appType;
     res.runType = runType;
-    if (runType == rtServer)
+    if (runType == rtConnectServer)
         res.serverName = server;
     else
         res.serverName = name + "@localhost";
@@ -137,7 +137,7 @@ Connectable TConfigElement::connectable()
 
 void TConfigElement::createProcess()
 {
-    if ( runType == rtLocal && !runner)
+    if ( runType == rtRunLocal && !runner)
     {
         runner = new QProcess(parent());
 

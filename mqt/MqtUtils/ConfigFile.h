@@ -4,7 +4,7 @@
 #include <QProcess>
 #include <QSettings>
 //---------------------------------------------------------------------------
-enum RunType{rtNone, rtLocal, rtServer, rtMax};
+enum RunType{rtNone, rtRunLocal, rtConnectLocal, rtConnectServer, rtMax};
 enum AppType{
     atNone,
     atAppStarter,

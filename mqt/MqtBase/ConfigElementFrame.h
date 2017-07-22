@@ -36,6 +36,8 @@ private slots:
 
     void on_rbConnectRemote_clicked();
 
+    void on_rbConnectLocal_clicked();
+
 private:
     Ui::ConfigElementFrame *ui;
 };
