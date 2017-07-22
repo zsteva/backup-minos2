@@ -1,5 +1,4 @@
 #include "base_pch.h"
-#include <QProcessEnvironment>
 
 #include "MinosRPC.h"
 
@@ -12,12 +11,6 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    QString rpcName = env.value("MQTRPCNAME", rpcConstants::chatApp);
-
-    trace("Value of MQTRPCNAME is " + rpcName);
-
 
     connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
     stdinReader.start();
@@ -39,13 +32,12 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     connect(&SyncTimer, SIGNAL(timeout()), this, SLOT(SyncTimerTimer()));
     SyncTimer.start(100);
 
-    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::chatApp, false);    // DO NOT use the environment variable - use "Chat" everywhere
 
     connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
-    rpc->setAppName(rpcConstants::chatApp);
     rpc->subscribe(rpcConstants::StationCategory);
 }
 

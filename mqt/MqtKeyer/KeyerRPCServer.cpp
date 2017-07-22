@@ -18,13 +18,11 @@ KeyerServer *KS = 0;
 //---------------------------------------------------------------------------
 KeyerServer::KeyerServer()
 {
-    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::keyerApp);
 
 //    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(keyerClientCallback(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(keyerCallback(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(notifyCallback(bool,QSharedPointer<MinosRPCObj>,QString)));
-
-    rpc->setAppName(rpcConstants::keyerApp);
 
     RPCPubSub::subscribe( "LineControl" );
 }

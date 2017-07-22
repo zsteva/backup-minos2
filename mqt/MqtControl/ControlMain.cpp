@@ -28,7 +28,7 @@ ControlMain::ControlMain(QWidget *parent) :
     controlMain = this;
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::controlApp);
 
     connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(controlClientCallback(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(controlServerCallback(bool,QSharedPointer<MinosRPCObj>,QString)));
@@ -37,8 +37,6 @@ ControlMain::ControlMain(QWidget *parent) :
     formShowTimer.setSingleShot(true);
     connect(&formShowTimer, SIGNAL(timeout()), this, SLOT(on_formShown()));
     formShowTimer.start(100);
-
-    rpc->setAppName(rpcConstants::controlApp);
 
 
 }

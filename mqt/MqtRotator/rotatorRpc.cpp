@@ -27,13 +27,11 @@ RotatorRpc::RotatorRpc(RotatorMainWindow *parent) : QObject(parent), parent(pare
 {
     rotatorRpc = this;
 
-    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::rotatorApp);
 
     connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
-
-    rpc->setAppName(rpcConstants::rotatorApp);
 
     // we aren't subscribing to anything!
 
