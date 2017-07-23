@@ -11,9 +11,16 @@ windowMonitor::windowMonitor(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 
-    setPosTimer.setSingleShot(true);
-    connect(&setPosTimer, SIGNAL(timeout()), this, SLOT(setPosition()));
-    setPosTimer.start(100);
+    QSettings settings;
+    QByteArray geometry = settings.value("monitorGeometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
+    else
+    {
+        setPosTimer.setSingleShot(true);
+        connect(&setPosTimer, SIGNAL(timeout()), this, SLOT(setPosition()));
+        setPosTimer.start(100);
+    }
 }
 void windowMonitor::setPosition()
 {
@@ -26,7 +33,26 @@ windowMonitor::~windowMonitor()
 {
     delete ui;
 }
-
+void windowMonitor::moveEvent(QMoveEvent * event)
+{
+    QSettings settings;
+    settings.setValue("monitorGeometry", saveGeometry());
+    QWidget::moveEvent(event);
+}
+void windowMonitor::resizeEvent(QResizeEvent * event)
+{
+    QSettings settings;
+    settings.setValue("monitorGeometry", saveGeometry());
+    QWidget::resizeEvent(event);
+}
+void windowMonitor::changeEvent( QEvent* e )
+{
+    if( e->type() == QEvent::WindowStateChange )
+    {
+        QSettings settings;
+        settings.setValue("monitorGeometry", saveGeometry());
+    }
+}
 bool windowMonitor::L1Checked()
 {
     return ui->L1CheckBox->isChecked();

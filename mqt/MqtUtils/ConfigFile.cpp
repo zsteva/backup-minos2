@@ -284,6 +284,7 @@ void MinosConfig::start()
    {
        (*i)->createProcess();
    }
+   setHideServers(hideServers);
 }
 
 void MinosConfig::stop()
