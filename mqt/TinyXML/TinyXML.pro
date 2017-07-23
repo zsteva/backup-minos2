@@ -5,7 +5,7 @@
 #-------------------------------------------------
 include($$PWD/../mqt.pri)
 
-QT       -= core gui
+QT       += core
 
 TARGET = TinyXML
 TEMPLATE = lib
@@ -19,9 +19,11 @@ else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 
 SOURCES += tinyxml.cpp \
     tinyxmlerror.cpp \
-    tinyxmlparser.cpp
+    tinyxmlparser.cpp \
+    TinyUtils.cpp
 
-HEADERS += tinyxml.h
+HEADERS += tinyxml.h \
+    TinyUtils.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

@@ -14,9 +14,6 @@
 
 #include "mqtUtils_pch.h"
 
-#include "tinyxml.h"
-#include "TinyUtils.h"
-
 #include "PortIds.h"
 
 #include "ServerEvent.h"

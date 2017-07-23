@@ -7,7 +7,9 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
-#include "XMPP_pch.h"
+#include <QString>
+#include "tinyxml.h"
+#include "TinyUtils.h"
 
 bool checkElementName( TiXmlElement *e, const QString &expected )
 {

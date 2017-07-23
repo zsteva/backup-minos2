@@ -9,6 +9,7 @@
 
 #ifndef DispatcherH
 #define DispatcherH
+#include "tinyxml.h"
 
 class TiXmlElement;
 class XStanza;

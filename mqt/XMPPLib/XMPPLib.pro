@@ -28,7 +28,6 @@ SOURCES += \
     PubSubClient.cpp \
     RPCPubSub.cpp \
     ServerEvent.cpp \
-    TinyUtils.cpp \
     XMPPEvents.cpp \
     XMPPRPCObj.cpp \
     XMPPRPCParams.cpp \
