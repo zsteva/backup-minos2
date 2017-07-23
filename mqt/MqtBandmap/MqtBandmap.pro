@@ -7,6 +7,7 @@ include($$PWD/../mqt.pri)
 
 QT       += core gui serialport
 QT       += widgets
+QT       += network
 
 VERSION=0.6.0.0
 

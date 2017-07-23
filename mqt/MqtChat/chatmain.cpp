@@ -15,9 +15,6 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
     stdinReader.start();
 
-    // And we REALLY would like to get the initial stdin data back before we carry on...
-    // it tells us the actual rpc name that we should be using
-
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     createCloseEvent();
@@ -48,6 +45,10 @@ TMinosChatForm::~TMinosChatForm()
 void TMinosChatForm::onStdInRead(QString cmd)
 {
     trace("Command read from stdin: " + cmd);
+    if (cmd.indexOf("ShowServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(true);
+    if (cmd.indexOf("HideServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(false);
 }
 
 //---------------------------------------------------------------------------

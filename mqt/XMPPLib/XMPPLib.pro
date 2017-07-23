@@ -41,7 +41,6 @@ HEADERS += \
     PubSubClient.h \
     RPCPubSub.h \
     ServerEvent.h \
-    TinyUtils.h \
     XMPP_pch.h \
     XMPPEvents.h \
     XMPPRPCObj.h \

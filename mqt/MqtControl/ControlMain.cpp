@@ -27,6 +27,10 @@ ControlMain::ControlMain(QWidget *parent) :
 
     controlMain = this;
     ui->setupUi(this);
+
+    connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
+    stdinReader.start();
+
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::controlApp);
 
@@ -38,6 +42,15 @@ ControlMain::ControlMain(QWidget *parent) :
     connect(&formShowTimer, SIGNAL(timeout()), this, SLOT(on_formShown()));
     formShowTimer.start(100);
 
+
+}
+void ControlMain::onStdInRead(QString cmd)
+{
+    trace("Command read from stdin: " + cmd);
+    if (cmd.indexOf("ShowServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(true);
+    if (cmd.indexOf("HideServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(false);
 
 }
 void ControlMain::on_formShown( )

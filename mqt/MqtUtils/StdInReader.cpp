@@ -11,6 +11,8 @@ StdInReader::StdInReader()
         trace(arg);
     }
     trace("End of Arguments");
+
+    start();
 }
 
 void StdInReader::run()
@@ -23,4 +25,13 @@ void StdInReader::run()
         line = stdinStream.readLine();
         emit stdinLine(line);
     }
+}
+static bool showServers = true;
+bool getShowServers()
+{
+    return showServers;
+}
+void setShowServers(bool state)
+{
+    showServers = state;
 }

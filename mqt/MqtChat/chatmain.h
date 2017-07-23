@@ -20,8 +20,6 @@ class TMinosChatForm : public QMainWindow
 {
     Q_OBJECT
 
-    StdInReader stdinReader;
-
 public:
     explicit TMinosChatForm(QWidget *parent = 0);
     ~TMinosChatForm();
@@ -32,6 +30,7 @@ private:
 
     QTimer SyncTimer;
 
+    StdInReader stdinReader;
     QVector<Server> serverList;
 
     virtual void closeEvent(QCloseEvent *event) override;

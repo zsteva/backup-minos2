@@ -72,8 +72,6 @@ void KeyerMain::syncSetLines()
    ui->L2ReflectCheckBox->setChecked(L2Ref);
 }
 
-
-
 KeyerMain::KeyerMain(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KeyerMain),
@@ -86,6 +84,9 @@ KeyerMain::KeyerMain(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
+    connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
+    stdinReader.start();
 
     QSettings settings;
     QByteArray geometry = settings.value("KeyerMain/geometry").toByteArray();
@@ -146,6 +147,14 @@ KeyerMain::~KeyerMain()
 {
     inhibitCallbacks = true;
     delete ui;
+}
+void KeyerMain::onStdInRead(QString cmd)
+{
+    trace("Command read from stdin: " + cmd);
+    if (cmd.indexOf("ShowServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(true);
+    if (cmd.indexOf("HideServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(false);
 }
 
 void KeyerMain::closeEvent(QCloseEvent *event)

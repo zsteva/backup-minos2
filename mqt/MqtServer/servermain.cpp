@@ -21,6 +21,9 @@ ServerMain::ServerMain(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
+    connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
+    stdinReader.start();
+
     createCloseEvent();
     QSettings settings;
     QByteArray geometry = settings.value("geometry").toByteArray();
@@ -57,6 +60,15 @@ void ServerMain::logMessage( const QString &s )
 {
    trace( s );
 }
+void ServerMain::onStdInRead(QString cmd)
+{
+    trace("Command read from stdin: " + cmd);
+    if (cmd.indexOf("ShowServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(true);
+    if (cmd.indexOf("HideServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(false);
+}
+
 void ServerMain::LogTimerTimer( )
 {
 

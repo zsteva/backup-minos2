@@ -26,6 +26,8 @@ public:
 
 private slots:
 
+    void onStdInRead(QString);
+
     void CaptionTimerTimer();
 
     void LineTimerTimer();
@@ -80,6 +82,7 @@ private:
     QTimer LineTimer;
     QTimer CaptionTimer;
 
+    StdInReader stdinReader;
     VKMixer *mixer;
 
     bool PTT;

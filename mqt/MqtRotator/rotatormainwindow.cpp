@@ -12,12 +12,6 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
-
-
 #include "base_pch.h"
 #include "RPCCommandConstants.h"
 #include "rotatorCommonConstants.h"
@@ -56,6 +50,9 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
+    connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
+    stdinReader.start();
 
     createCloseEvent();
     MinosRotatorForm = this;
@@ -197,7 +194,14 @@ void RotatorMainWindow::logMessage( QString s )
         trace( s );
 }
 
-
+void RotatorMainWindow::onStdInRead(QString cmd)
+{
+    trace("Command read from stdin: " + cmd);
+    if (cmd.indexOf("ShowServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(true);
+    if (cmd.indexOf("HideServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(false);
+}
 
 void RotatorMainWindow::closeEvent(QCloseEvent *event)
 {

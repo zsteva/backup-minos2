@@ -32,10 +32,13 @@ private:
     void doProcLineEvents( );
     void closeEvent(QCloseEvent *event);
 
+    StdInReader stdinReader;
     QTimer LogTimer;
     QTimer formShowTimer;
 
 private slots:
+    void onStdInRead(QString);
+
     void on_formShown();
     void controlClientCallback( bool /*err*/, QSharedPointer<MinosRPCObj>/*mro*/, const QString &/*from*/ );
     void controlServerCallback(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );

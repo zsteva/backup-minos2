@@ -85,6 +85,7 @@ signals:
 private:
     Ui::RotatorMainWindow *ui;
 
+    StdInReader stdinReader;
 
     RotatorRpc *msg;
 
@@ -183,6 +184,7 @@ protected slots:
 private slots:
     void LogTimerTimer( );
 
+    void onStdInRead(QString);
 
     void onLoggerSetRotation(int direction, int angle);
     void checkEndStop();

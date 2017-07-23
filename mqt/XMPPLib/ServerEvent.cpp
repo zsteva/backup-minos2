@@ -57,16 +57,4 @@ bool checkServerReady()
     }
     return false;
 }
-void makeServerShowEvent( )
-{
-
-}
-bool getShowServers()
-{
-
-    return true;
-}
-void setShowServers(bool /*state*/)
-{
-}
 

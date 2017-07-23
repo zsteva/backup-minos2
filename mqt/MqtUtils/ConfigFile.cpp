@@ -166,12 +166,13 @@ void TConfigElement::createProcess()
 
         runner->start(commandLine);
 
-        // pass the RPC name to those apps that can understand it
-        // and we can add in hideServers, and anything else useful
-        // ?? simple text, XML/XMPP or JSON ??
-        // Whatever, we need a standard startup routine to be linked into everything
-        // keep the link pen - we may want to send hideServers etc later
-        QByteArray command = (name + "\nCloseStdin\n").toUtf8();
+    }
+}
+void TConfigElement::sendCommand(const QString & cmd)
+{
+    if (runner)
+    {
+        QByteArray command = (cmd + "\n").toUtf8();
         runner->write( command );
     }
 }
@@ -328,6 +329,18 @@ bool MinosConfig::getHideServers()
 void MinosConfig::setHideServers(bool s)
 {
     hideServers = s;
+    // pass the RPC name to those apps that can understand it
+    // and we can add in hideServers, and anything else useful
+    // ?? simple text, XML/XMPP or JSON ??
+    // Whatever, we need a standard startup routine to be linked into everything
+    // keep the link pen - we may want to send hideServers etc later
+    for ( QVector <QSharedPointer<TConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
+    {
+        if (hideServers)
+            (*i)->sendCommand("HideServers");
+        else
+            (*i)->sendCommand("ShowServers");
+    }
 }
 
 Connectable MinosConfig::getApp(AppType a, QString appName)

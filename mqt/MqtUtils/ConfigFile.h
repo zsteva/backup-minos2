@@ -57,6 +57,7 @@ public:  		// User declarations
     Connectable connectable();
 
     void createProcess();
+    void sendCommand(const QString & cmd);
 private slots:
     void	on_started();
     void    on_finished(int, QProcess::ExitStatus exitStatus);

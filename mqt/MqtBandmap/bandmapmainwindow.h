@@ -2,7 +2,7 @@
 #define BANDMAPMAINWINDOW_H
 
 #include <QMainWindow>
-
+#include "mqtUtils_pch.h"
 
 class QLabel;
 class QComboBox;
@@ -26,9 +26,9 @@ public:
     explicit BandMapMainWindow(QWidget *parent = 0);
     ~BandMapMainWindow();
 
-
 private:
     Ui::BandMapMainWindow *ui;
+    StdInReader stdinReader;
     QGraphicsScene *bandmapScene;
     FreqDial *dial;
     QComboBox *selectRadio;
@@ -55,7 +55,9 @@ private:
 
 
 
-protected slots:
+private slots:
+
+    void onStdInRead(QString);
 
     void upDateRadio();
     void getFrequency();
