@@ -38,7 +38,7 @@ class MinosRPC: public QObject
 {
     Q_OBJECT
 
-    MinosRPC(const QString &defaultName);
+    MinosRPC(const QString &defaultName, bool useEnvVar);
 
     static MinosRPC *rpc;
 
@@ -63,7 +63,7 @@ public:
     {
         if (!rpc && !defaultName.isEmpty())
         {
-            rpc = new MinosRPC(defaultName);
+            rpc = new MinosRPC(defaultName, useEnvVar);
         }
         return rpc;
     }
