@@ -9,8 +9,8 @@
 
 bool terminated = false;
 bool configExists = false;
-static QStringList runTypes{"None", "RunLocal", "ConnectLocal", "ConnectServer"};
-static QStringList appTypes{
+static QStringList runTypeList{"None", "RunLocal", "ConnectLocal", "ConnectServer"};
+static QStringList appTypeList{
     "None",
     "AppStarter",
     "BandMap",
@@ -25,6 +25,47 @@ static QStringList appTypes{
     "RotatorControl",
     "Server"
 };
+static QStringList defaultAppList{
+    "",
+    "./mqtAppStarter",
+    "./mqtBandMap",
+    "./mqtChat",
+    "./mqtKeyer",
+    "./mqtControl",
+    "./mqtLogger",
+    "./mqtMonitor",
+    "",
+    "./mqtRigControl",
+    "./mqtRotator",
+    "./mqtRotatorControl",
+    "./mqtServer"
+};
+
+QString getRunType(RunType r)
+{
+    QString res;
+    if (r < rtMax)
+        res = runTypeList[r];
+    return res;
+}
+QString getAppType(AppType r)
+{
+    QString res;
+    if (r < atMax)
+        res = appTypeList[r];
+    return res;
+}
+QString getDefaultApp(AppType r)
+{
+    QString res;
+    if (r < atMax)
+        res = defaultAppList[r];
+#ifdef Q_OS_WIN
+    if (!res.isEmpty())
+        res += ".exe";
+#endif
+    return res;
+}
 
 /*static*/
 MinosConfig *MinosConfig::thisDM = 0;
@@ -63,12 +104,12 @@ QString MinosConfig::getThisServerName()
 /*static*/
 QStringList MinosConfig::getAppTypes()
 {
-    return appTypes;
+    return appTypeList;
 }
 
 //---------------------------------------------------------------------------
 TConfigElement::TConfigElement()
-      : runType( rtNone ), appType(atOther), runner(0)
+      : runType( rtNone ), appType(atOther), runner(0), stopping(false)
 {}
 //---------------------------------------------------------------------------
 bool TConfigElement::initialise( QSettings &config, QString sect )
@@ -83,27 +124,29 @@ bool TConfigElement::initialise( QSettings &config, QString sect )
     params = config.value( sect + "/Params", "" ).toString();
     rundir = config.value( sect + "/Directory", "" ).toString().trimmed();
 
-    QString S = config.value( sect + "/RunType", runTypes[rtNone] ) .toString().trimmed();
+    QString S = config.value( sect + "/RunType", getRunType(rtNone) ) .toString().trimmed();
 
     runType = rtNone;
     for (int i = 0; i < rtMax; i++)
     {
-        if (S.compare(runTypes[i], Qt::CaseInsensitive) == 0)
+        RunType rt = static_cast<RunType>(i);
+        if (S.compare(getRunType(rt), Qt::CaseInsensitive) == 0)
         {
-            runType = static_cast<RunType>(i);
+            runType = rt;
             break;
         }
 
     }
 
-    S = config.value( sect + "/AppType", appTypes[atOther] ) .toString().trimmed();
+    S = config.value( sect + "/AppType", getAppType(atOther) ) .toString().trimmed();
 
     appType = atOther;
     for (int i = 0; i < atMax; i++)
     {
-        if (S.compare(appTypes[i], Qt::CaseInsensitive) == 0)
+        AppType at = static_cast<AppType>(i);
+        if (S.compare(getAppType(at), Qt::CaseInsensitive) == 0)
         {
-            appType = static_cast<AppType>(i);
+            appType = at;
             break;
         }
     }
@@ -111,14 +154,18 @@ bool TConfigElement::initialise( QSettings &config, QString sect )
 }
 void TConfigElement::save(QSettings &config)
 {
-    if (!name.isEmpty() && name.compare("<Deleted>", Qt::CaseInsensitive) != 0)
+    if (name.isEmpty())
+    {
+        name = getAppType(appType);
+    }
+    if (name.compare("<Deleted>", Qt::CaseInsensitive) != 0)
     {
         config.setValue(name + "/Program", commandLine);
         config.setValue(name + "/Params", params);
         config.setValue(name + "/Directory", rundir);
         config.setValue(name + "/Server", server);
-        config.setValue(name + "/RunType", runTypes[runType]);
-        config.setValue(name + "/AppType", appTypes[appType]);
+        config.setValue(name + "/RunType", getRunType(runType));
+        config.setValue(name + "/AppType", getAppType(appType));
     }
 }
 Connectable TConfigElement::connectable()
@@ -168,6 +215,15 @@ void TConfigElement::createProcess()
 
     }
 }
+void TConfigElement::stopProcess()
+{
+    if (runner)
+    {
+        stopping = true;
+        runner->terminate();
+    }
+}
+
 void TConfigElement::sendCommand(const QString & cmd)
 {
     if (runner)
@@ -185,7 +241,21 @@ void TConfigElement::on_started()
 void TConfigElement::on_finished(int err, QProcess::ExitStatus exitStatus)
 {
     trace(name + ":finished:" + QString::number(err) + ":" + QString::number(exitStatus));
-    runner->start();    // but we have to be careful when we close!
+    if (runner)
+    {
+
+        if (stopping)
+        {
+            stopping = false;
+            runner->deleteLater();
+            runner = 0;
+
+        }
+        else
+        {
+            runner->start();    // but we have to be careful when we close!
+        }
+    }
 }
 
 void TConfigElement::on_error(QProcess::ProcessError error)
@@ -195,14 +265,20 @@ void TConfigElement::on_error(QProcess::ProcessError error)
 
 void TConfigElement::on_readyReadStandardError()
 {
-    QString r = runner->readAllStandardError();
-    trace(name + ":stdErr:" + r);
+    if (runner)
+    {
+        QString r = runner->readAllStandardError();
+        trace(name + ":stdErr:" + r);
+    }
 }
 
 void TConfigElement::on_readyReadStandardOutput()
 {
-    QString r = runner->readAllStandardOutput();
-    trace(name + ":stdOut:" + r);
+    if (runner)
+    {
+        QString r = runner->readAllStandardOutput();
+        trace(name + ":stdOut:" + r);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -296,19 +372,15 @@ void MinosConfig::stop()
    terminated = true;
 //   signalCloseEvent();
 
-   for ( QVector <QProcess *> ::iterator i = guardv.begin(); i != guardv.end(); i++ )
+   for ( QVector <QSharedPointer<TConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
    {
       if ( ( *i ) )
       {
          logMessage( "Killing subProcess", "" );
-         ( *i ) ->terminate();
+         ( *i ) ->stopProcess();
          logMessage( "subProcess killed", "" );
-         delete ( *i );
       }
    }
-   logMessage( "All guardian threads finished", "" );
-   guardv.clear();
-
 }
 void MinosConfig::setThisServerName( const QString &circle )
 {

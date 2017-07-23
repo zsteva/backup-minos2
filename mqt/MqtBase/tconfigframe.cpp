@@ -76,13 +76,12 @@ void TConfigFrame::startTimer_Timeout()
 
 void TConfigFrame::start()
 {
-    on_saveButton_clicked();
-
     MinosConfig::getMinosConfig( 0 ) ->start();
 }
 
 void TConfigFrame::on_StartButton_clicked()
 {
+    saveAll();
     start();
 }
 
@@ -109,13 +108,7 @@ void TConfigFrame::on_SetButton_clicked()
     MinosConfig::getMinosConfig( 0 ) ->setThisServerName( coh );
 }
 
-void TConfigFrame::on_CancelButton_clicked()
-{
-    // need to pass up to parent
-    closeCb(parent);
-}
-
-void TConfigFrame::on_saveButton_clicked()
+void TConfigFrame::saveAll()
 {
     for (int i = 0; i < elementFrames.size(); i++)
     {
@@ -124,7 +117,17 @@ void TConfigFrame::on_saveButton_clicked()
 
     on_SetButton_clicked();
     on_autoStartCheckBox_clicked();
-    MinosConfig::getMinosConfig( 0 )->saveAll();    // which clears the config file
+    MinosConfig::getMinosConfig( 0 )->saveAll();    // which clears the config file before saving
+}
+
+void TConfigFrame::on_OKButton_clicked()
+{
+    saveAll();
+    closeCb(parent);
+}
+void TConfigFrame::on_CancelButton_clicked()
+{
+    closeCb(parent);
 }
 
 void TConfigFrame::on_newElementButton_clicked()

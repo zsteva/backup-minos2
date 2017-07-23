@@ -17,6 +17,7 @@
 #include "tclockdlg.h"
 #include "tloccalcform.h"
 #include "TSessionManager.h"
+#include "StartConfig.h"
 
 TLogContainer *LogContainer = 0;
 
@@ -246,9 +247,11 @@ void TLogContainer::setupMenus()
     NextUnfilledAction = newAction("Goto First Unfilled Contact", ui->menuSearch, SLOT(NextUnfilledActionExecute()));
 // end of search menu
 
+    startConfigAction = newAction("Startup Apps Configuration", ui->menuTools, SLOT(StartConfigActionExecute()));
+    ui->menuTools->addSeparator();
     LocCalcAction = newAction("Locator Calculator", ui->menuTools, SLOT(LocCalcActionExecute()));
     AnalyseMinosLogAction = newAction("Analyse Minos Log", ui->menuTools, SLOT(AnalyseMinosLogActionExecute()));
-    ui->menuFile->addSeparator();
+    ui->menuTools->addSeparator();
 
     FontEditAcceptAction = newAction("Select &Font...", ui->menuTools, SLOT(FontEditAcceptActionExecute()));
     ReportAutofillAction = newCheckableAction("Signal Report AutoFill", ui->menuTools, SLOT(ReportAutofillActionExecute()));
@@ -888,6 +891,12 @@ void TLogContainer::menuLogsActionExecute()
     }
 }
 
+void TLogContainer::StartConfigActionExecute()
+{
+    StartConfig configBox( this);
+    configBox.exec();
+}
+
 void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
 {
     enableActions();
@@ -899,6 +908,15 @@ void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
 
     ui->menuLogs->clear();
     menuLogsActions.clear();
+
+    ui->menuLogs->addAction(FileOpenAction);
+    ui->menuLogs->addAction(FileCloseAction);
+    ui->menuLogs->addAction(CloseAllAction);
+    ui->menuLogs->addAction(CloseAllButAction);
+    ui->menuLogs->addSeparator();
+
+//    sessionsMenu->addSeparator();
+
 
     sessionsMenu = ui->menuLogs->addMenu("Contest Sets");
     updateSessionActions();
@@ -1085,8 +1103,6 @@ void TLogContainer::updateSessionActions()
     sessionsMenu->clear();
 
     sessionManagerAction  = newAction("&Manage Contest Sets...", sessionsMenu, SLOT(sessionManageExecute()));
-    sessionsMenu->addSeparator();
-
     QStringList sessionlst = getSessions();
     for (int i = 0; i < sessionlst.size(); ++i)
     {

@@ -38,6 +38,8 @@ private slots:
 
     void on_rbConnectLocal_clicked();
 
+    void on_appTypeCombo_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::ConfigElementFrame *ui;
 };

@@ -122,6 +122,7 @@ private:
     QAction *ShiftTabLeftAction;
     QAction *ShiftTabRightAction;
 
+    QAction *startConfigAction;
     QAction *LocCalcAction;
     QAction *AnalyseMinosLogAction;
     QAction *CorrectDateTimeAction;
@@ -198,6 +199,8 @@ private slots:
     void KeyerPlaybackActionExecute();
 
     void menuLogsActionExecute();
+
+    void StartConfigActionExecute();
 
     void on_ContestPageControl_currentChanged(int index);
     void on_ContestPageControl_tabBarDoubleClicked(int index);

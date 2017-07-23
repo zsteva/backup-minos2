@@ -41,7 +41,7 @@ private slots:
 
     void on_autoStartCheckBox_clicked();
 
-    void on_saveButton_clicked();
+    void on_OKButton_clicked();
 
     void on_newElementButton_clicked();
 
@@ -51,5 +51,7 @@ private:
     QVector<ConfigElementFrame *> elementFrames;
 
     ConfigCloseCallBack closeCb;
+
+    void saveAll();
 };
 #endif // TTCONFIGFRAME_H

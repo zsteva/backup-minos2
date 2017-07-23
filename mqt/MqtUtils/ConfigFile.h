@@ -33,6 +33,9 @@ public:
     RunType runType;
     AppType appType;
 };
+QString getRunType(RunType r);
+QString getAppType(AppType r);
+QString getDefaultApp(AppType r);
 
 class TConfigElement: public QObject
 {
@@ -49,6 +52,8 @@ public:  		// User declarations
     RunType runType;
     AppType appType;
 
+    bool stopping;
+
     TConfigElement();
     bool initialise( QSettings &, QString sect );
 
@@ -57,6 +62,7 @@ public:  		// User declarations
     Connectable connectable();
 
     void createProcess();
+    void stopProcess();
     void sendCommand(const QString & cmd);
 private slots:
     void	on_started();
@@ -76,7 +82,6 @@ private:  	// User declarations
 
     MinosConfig( QWidget* Owner );
 
-    QVector <QProcess *> guardv;
     QString thisServerName;
     bool hideServers;
     bool autoStart;

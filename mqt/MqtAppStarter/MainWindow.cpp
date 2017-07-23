@@ -3,7 +3,7 @@
 #include "ui_MainWindow.h"
 
 
-void closeCallback(QWidget *w)
+static void closeCallback(QWidget *w)
 {
     w->close();
 }

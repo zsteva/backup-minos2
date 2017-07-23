@@ -32,8 +32,7 @@ void ConfigElementFrame::setElement(QSharedPointer<TConfigElement> c)
     if (c->runType == rtConnectServer)
         ui->rbConnectRemote->setChecked(true);
 
-    QStringList appTypes = MinosConfig::getAppTypes();
-    QString at = appTypes[c->appType];
+    QString at = getAppType(c->appType);
     ui->appTypeCombo->setCurrentText(at);
 
     ui->elementNameEdit->setText(c->name);
@@ -65,7 +64,8 @@ bool ConfigElementFrame::saveElement()
 
     for (int i = 0; i < atMax; i++)
     {
-        if (S.compare(appTypes[i], Qt::CaseInsensitive) == 0)
+        QString at = getAppType(static_cast<AppType>(i));
+        if (S.compare(at, Qt::CaseInsensitive) == 0)
         {
             c->appType = static_cast<AppType>(i);
         }
@@ -176,4 +176,16 @@ void ConfigElementFrame::on_rbConnectRemote_clicked()
 void ConfigElementFrame::on_rbConnectLocal_clicked()
 {
     checkEnabled();
+}
+
+void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &/*arg1*/)
+{
+    AppType at = static_cast<AppType>(ui->appTypeCombo->currentIndex());
+
+    if (ui->elementNameEdit->text().isEmpty())
+        ui->elementNameEdit->setText(getAppType(at));
+    if (ui->programNameEdit->text().isEmpty())
+        ui->programNameEdit->setText(getDefaultApp(at));
+    if (ui->homeDirectoryEdit->text().isEmpty())
+        ui->homeDirectoryEdit->setText(".");
 }
