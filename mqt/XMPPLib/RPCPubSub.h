@@ -41,6 +41,7 @@ class RPCPubSub : public MinosRPCClient
 
 class AnalysePubSubNotify
 {
+      QString publisher;
       QString server;
       QString category;
       QString key;
@@ -50,6 +51,10 @@ class AnalysePubSubNotify
       bool OK;
    public:
       AnalysePubSubNotify( bool err, QSharedPointer<MinosRPCObj>mro );
+      QString getPublisher()
+      {
+         return publisher;
+      }
       QString getServer()
       {
          return server;

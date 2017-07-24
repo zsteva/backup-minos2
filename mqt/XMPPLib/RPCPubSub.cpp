@@ -79,6 +79,7 @@ AnalysePubSubNotify::AnalysePubSubNotify(bool err, QSharedPointer<MinosRPCObj> m
 {
    if ( !err )
    {
+      QSharedPointer<RPCParam> psPublisher;
       QSharedPointer<RPCParam> psServer;
       QSharedPointer<RPCParam> psCategory;
       QSharedPointer<RPCParam> psKey;
@@ -86,7 +87,8 @@ AnalysePubSubNotify::AnalysePubSubNotify(bool err, QSharedPointer<MinosRPCObj> m
       QSharedPointer<RPCParam> psState;
       RPCArgs *args = mro->getCallArgs();
       if (
-         args->getStructArgMember( 0, "Server", psServer )
+         args->getStructArgMember( 0, "Publisher", psPublisher )
+         && args->getStructArgMember( 0, "Server", psServer )
          && args->getStructArgMember( 0, "Category", psCategory )
          && args->getStructArgMember( 0, "Key", psKey )
          && args->getStructArgMember( 0, "Value", psValue )
@@ -95,6 +97,7 @@ AnalysePubSubNotify::AnalysePubSubNotify(bool err, QSharedPointer<MinosRPCObj> m
       {
          int stemp;
          if (
+            psPublisher->getString(publisher) &&
             psServer->getString( server ) &&
             psCategory->getString( category ) &&
             psKey->getString( key ) &&
