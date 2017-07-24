@@ -177,7 +177,7 @@ Connectable TConfigElement::connectable()
     if (runType == rtConnectServer)
         res.serverName = server;
     else
-        res.serverName = name + "@localhost";
+        res.serverName = /* name + "@" + */ "localhost";
 
     return res;
 }
