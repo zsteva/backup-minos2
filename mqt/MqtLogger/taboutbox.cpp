@@ -1,6 +1,7 @@
 #include "logger_pch.h"
 #include <QDesktopServices>
 
+#include "StartConfig.h"
 #include "ConfigFile.h"
 #include "taboutbox.h"
 #include "ui_taboutbox.h"
@@ -83,22 +84,12 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
 
     ui->MinosMemo->setText(MinosText);
 
-    if ( !MinosConfig::doesConfigExist() )
+    ui->ExitButton->setVisible(onStartup);
+    ui->LoggerOnlyButton->setVisible(onStartup);
+
+    if (  onStartup && !checkServerReady() )
     {
-       ui->LoggerOnlyButton->setVisible(false);
-       ui->ExitButton->setVisible(onStartup);
-    }
-    else
-    {
-       if (  !onStartup || checkServerReady() )
-       {
-          ui->LoggerOnlyButton->setVisible(false); // as we are started we cannot now be logger only
-          ui->ExitButton->setVisible(false);
-       }
-       else
-       {
-          doStartup = true; // click the start button on form close
-       }
+        doStartup = true; // click the start button on form close
     }
 }
 
@@ -143,3 +134,9 @@ void TAboutBox::on_LoggerOnlyButton_clicked()
     accept();
 }
 
+
+void TAboutBox::on_AppsButton_clicked()
+{
+    StartConfig configBox( this);
+    configBox.exec();
+}

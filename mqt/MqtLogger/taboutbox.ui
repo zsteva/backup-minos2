@@ -55,7 +55,7 @@
             <x>0</x>
             <y>0</y>
             <width>320</width>
-            <height>205</height>
+            <height>175</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -84,9 +84,16 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <spacer name="horizontalSpacer">
+      <widget class="QPushButton" name="LoggerOnlyButton">
+       <property name="text">
+        <string>Logger Only</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -105,8 +112,12 @@
        </property>
       </widget>
      </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <spacer name="horizontalSpacer_2">
+      <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -142,9 +153,9 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="LoggerOnlyButton">
+      <widget class="QPushButton" name="AppsButton">
        <property name="text">
-        <string>Logger Only</string>
+        <string>Apps</string>
        </property>
       </widget>
      </item>
