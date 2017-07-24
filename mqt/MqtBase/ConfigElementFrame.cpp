@@ -91,9 +91,11 @@ void ConfigElementFrame::on_programBrowseButton_clicked()
                      "All Files (*.*)" ;
 
     QFileDialog dialog(this, "Minos 2 Component Program", InitialDir);
+#if QT_VERSION >= 0x050600
     const QStringList schemes = QStringList(QStringLiteral("file"));
 
     dialog.setSupportedSchemes(schemes);
+#endif
     dialog.setNameFilter(Filter);
     dialog.setFilter(QDir::Files | QDir::Executable);
     dialog.setFileMode(QFileDialog::ExistingFile);
