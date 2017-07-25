@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>516</width>
-    <height>138</height>
+    <height>142</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -306,6 +306,16 @@
           <property name="bottomMargin">
            <number>1</number>
           </property>
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Remote App Name</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="remoteAppNameEdit"/>
+          </item>
           <item>
            <widget class="QLabel" name="label_3">
             <property name="text">

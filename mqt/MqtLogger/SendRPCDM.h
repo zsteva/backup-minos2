@@ -27,11 +27,7 @@ class TSendDM : public QObject
 {
     Q_OBJECT
    private:  	// User declarations
-    //QTimer ConnectTimer;
-    //QTimer SubscribeTimer;
-//      bool connected;
-//      bool subscribed;
-//      QString serverName;
+
       Connectable keyerServerConnectable;
       Connectable rigServerConnectable;
       Connectable bandMapServerConnectable;

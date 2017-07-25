@@ -61,6 +61,7 @@ TLogContainer::TLogContainer(QWidget *parent) :
 TLogContainer::~TLogContainer()
 {
     delete ui;
+    delete SendDM;
 }
 bool TLogContainer::show(int argc, char *argv[])
 {

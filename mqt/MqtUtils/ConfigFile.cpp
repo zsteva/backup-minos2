@@ -121,8 +121,9 @@ bool TConfigElement::initialise( QSettings &config, QString sect )
 
     commandLine = config.value( sect + "/Program", "" ).toString().trimmed();
     server = config.value( sect + "/Server", "localhost" ).toString().trimmed();
-    params = config.value( sect + "/Params", "" ).toString();
+    params = config.value( sect + "/Params", "" ).toString().trimmed();
     rundir = config.value( sect + "/Directory", "" ).toString().trimmed();
+    remoteApp = config.value(sect + "/RemoteApp", name).toString().trimmed();
 
     QString S = config.value( sect + "/RunType", getRunType(rtNone) ) .toString().trimmed();
 
@@ -164,6 +165,7 @@ void TConfigElement::save(QSettings &config)
         config.setValue(name + "/Params", params);
         config.setValue(name + "/Directory", rundir);
         config.setValue(name + "/Server", server);
+        config.setValue(name + "/RemoteApp", remoteApp);
         config.setValue(name + "/RunType", getRunType(runType));
         config.setValue(name + "/AppType", getAppType(appType));
     }
@@ -175,10 +177,15 @@ Connectable TConfigElement::connectable()
     res.appType = appType;
     res.runType = runType;
     if (runType == rtConnectServer)
+    {
         res.serverName = server;
+        res.remoteAppName = remoteApp;
+    }
     else
-        res.serverName = /* name + "@" + */ "localhost";
-
+    {
+        res.serverName = "localhost";
+        res.remoteAppName = name;
+    }
     return res;
 }
 
@@ -402,11 +409,7 @@ bool MinosConfig::getHideServers()
 void MinosConfig::setHideServers(bool s)
 {
     hideServers = s;
-    // pass the RPC name to those apps that can understand it
-    // and we can add in hideServers, and anything else useful
-    // ?? simple text, XML/XMPP or JSON ??
-    // Whatever, we need a standard startup routine to be linked into everything
-    // keep the link pen - we may want to send hideServers etc later
+
     for ( QVector <QSharedPointer<TConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
     {
         if (hideServers)
@@ -423,8 +426,11 @@ Connectable MinosConfig::getApp(AppType a, QString appName)
     {
         if ((*i)->appType == a)
         {
-            res = (*i)->connectable();
-            break;
+            if (!appName.isEmpty() || appName.compare((*i)->name, Qt::CaseInsensitive) == 0)
+            {
+                res = (*i)->connectable();
+                break;
+            }
         }
     }
     return res;

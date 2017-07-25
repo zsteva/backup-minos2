@@ -30,6 +30,7 @@ class MinosTestExport
       void exportStation( QSharedPointer<QFile> expfd );
       void exportCurrent(QSharedPointer<QFile> expfd );
       void exportOperators( QSharedPointer<QFile> expfd );
+      void exportApps(QSharedPointer<QFile> expfd);
       void exportBundles(QSharedPointer<QFile> expfd );
 
    public:

@@ -75,6 +75,15 @@ class LoggerContestLog : public BaseContestLog
       SettingsBundle stationBundle;    // individual station
       MinosItem<QString> stationBundleName;
 
+      SettingsBundle appBundle;    // individual apps
+      MinosItem<QString> appBundleName;
+
+      MinosItem<QString> appRigControl;
+      MinosItem<QString> appBandMap;
+      MinosItem<QString> appRotator;
+      MinosItem<QString> appVoiceKeyer;
+
+
       MinosItem<QString> VHFContestName;
 
       // Most of this info is bundle related, and not relevant when monitored (?)

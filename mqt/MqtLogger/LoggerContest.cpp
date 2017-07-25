@@ -36,15 +36,23 @@ void LoggerContestLog::initialiseINI()
    entryBundle.setProfile( BundleFile::bundleFiles[ epENTRYPROFILE ] );
    QTHBundle.setProfile( BundleFile::bundleFiles[ epQTHPROFILE ] );
    stationBundle.setProfile( BundleFile::bundleFiles[ epSTATIONPROFILE ] );
+   appBundle.setProfile( BundleFile::bundleFiles[ epAPPPFROFILE ] );
    entryBundleName.setValue( entryBundle.getSection() );
    QTHBundleName.setValue( QTHBundle.getSection() );
    stationBundleName.setValue( stationBundle.getSection() );
+   appBundleName.setValue(appBundle.getSection());
 }
 void LoggerContestLog::clearDirty()
 {
    entryBundleName.clearDirty();
    QTHBundleName.clearDirty();
    stationBundleName.clearDirty();
+   appBundleName.clearDirty();
+
+   appRigControl.clearDirty();
+   appBandMap.clearDirty();
+   appRotator.clearDirty();
+   appVoiceKeyer.clearDirty();
 
    entrant.clearDirty();
    sqth1.clearDirty();
@@ -79,6 +87,12 @@ void LoggerContestLog::setDirty()
    entryBundleName.setDirty();
    QTHBundleName.setDirty();
    stationBundleName.setDirty();
+   appBundleName.setDirty();
+
+   appRigControl.setDirty();
+   appBandMap.setDirty();
+   appRotator.setDirty();
+   appVoiceKeyer.setDirty();
 
    entrant.setDirty();
    sqth1.setDirty();
@@ -214,6 +228,7 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
                entryBundle.openSection( entryBundleName.getValue() );
                QTHBundle.openSection( QTHBundleName.getValue() );
                stationBundle.openSection( stationBundleName.getValue() );
+               appBundle.openSection(appBundleName.getValue());
                loadOK = true;
             }
          }
@@ -1352,18 +1367,27 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
                            mt->getStructArgMemberValue( "entryBundle", entryBundleName );
                            mt->getStructArgMemberValue( "QTHBundle", QTHBundleName );
                            mt->getStructArgMemberValue( "stationBundle", stationBundleName );
+                           mt->getStructArgMemberValue( "appBundle", appBundleName );
 
                         }
                         else
-                           if ( methodName == "MinosLogComment" )
+                           if ( methodName == "MinosApps" )
                            {
-                              // should have been dealt with in BaseContest
+                               mt->getStructArgMemberValue( "appRigControl", appRigControl);
+                               mt->getStructArgMemberValue( "appBandMap", appBandMap);
+                               mt->getStructArgMemberValue( "appRotator", appRotator);
+                               mt->getStructArgMemberValue( "appVoiceKeyer", appVoiceKeyer);
                            }
-                           else
-                              if ( methodName == "MinosLogQSO" )
-                              {
-                                 // should have been dealt with in BaseContest
-                              }
+                            else
+                               if ( methodName == "MinosLogComment" )
+                               {
+                                  // should have been dealt with in BaseContest
+                               }
+                               else
+                                  if ( methodName == "MinosLogQSO" )
+                                  {
+                                     // should have been dealt with in BaseContest
+                                  }
 }
 //====================================================================
 void LoggerContestLog::setStanza(int stanza, int stanzaStart )

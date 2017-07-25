@@ -42,7 +42,7 @@ class BundleFile
       QSharedPointer<INIFile> iniFile;
       QVector<QSharedPointer<ProfileEntry> > entries;
 
-      static QSharedPointer<BundleFile>bundleFiles[ epLOCSQUARESPROFILE + 1 ];
+      static QSharedPointer<BundleFile>bundleFiles[ epMAXPROFILE ];
       BundleFile( PROFILES p );
       ~BundleFile();
       static QSharedPointer<BundleFile> getBundleFile( PROFILES p );

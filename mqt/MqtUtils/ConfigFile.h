@@ -29,6 +29,7 @@ public:
 
     }
     QString serverName;
+    QString remoteAppName;
     QString appName;
     RunType runType;
     AppType appType;
@@ -48,6 +49,7 @@ public:  		// User declarations
     QString commandLine;
     QString params;
     QString server;
+    QString remoteApp;
 
     RunType runType;
     AppType appType;

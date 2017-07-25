@@ -18,7 +18,9 @@ enum LOGGERPROFILE {
    elpListDirectory, elpLogDirectory,
    elpLocsFile,
    elpEntryFile,
-   elpStationFile, elpQTHFile,
+   elpStationFile,
+   elpAppFile,
+   elpQTHFile,
    elpAutoFill
 };
 enum PRELOADPROFILE {eppSession, eppCurrent, eppDefSession};
@@ -40,7 +42,9 @@ enum ENTRYPROFILE {eepCall, eepEntrant, eepMyName, eepMyCall,
                    eepMyPhone, eepMyEmail};
 enum QTHPROFILE {eqpLocator, eqpDistrict, eqpLocation, eqpStationQTH1, eqpStationQTH2, eqpASL};
 enum STATIONPROFILE {espPower, espTransmitter, espReceiver, espAntenna, espAGL, espOffset};
+enum APPPROFILE {eapRigControl, eapBandMap, eapRotator, eapVoiceKeyer};
 
 enum PROFILES {epLOGGERPROFILE, epPRELOADPROFILE, epLISTSPROFILE, epDISPLAYPROFILE,
-			   epENTRYPROFILE, epQTHPROFILE, epSTATIONPROFILE, epLOCSQUARESPROFILE};
+               epENTRYPROFILE, epQTHPROFILE, epSTATIONPROFILE, epLOCSQUARESPROFILE,
+              epAPPPFROFILE, epMAXPROFILE};
 #endif
