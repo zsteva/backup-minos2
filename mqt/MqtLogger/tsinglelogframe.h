@@ -5,6 +5,7 @@
 #include <QAbstractItemModel>
 #include <QTreeView>
 #include <QTreeWidget>
+#include "RPCCommandConstants.h"
 namespace Ui {
 class TSingleLogFrame;
 }
@@ -20,6 +21,7 @@ class BaseContact;
 class ContactList;
 class ListContact;
 class FocusWatcher;
+class TSendDM;
 
 // We may need to define our own validation controls with valid methods
 // for each needed type...
@@ -165,6 +167,7 @@ private:
 
     int splitterHandleWidth;
 
+    TSendDM *sendDM;
     BaseContestLog * contest;
     QSOGridModel qsoModel;
 
@@ -253,6 +256,15 @@ private slots:
     void on_RotatorAntennaName(QString, BaseContestLog *);
     void onArchiveMatchTreeFocused(QObject *, bool, QFocusEvent * );
     void onOtherMatchTreeFocused(QObject *, bool, QFocusEvent * );
+
+    void sendKeyerPlay( int fno );
+    void sendKeyerRecord( int fno );
+    void sendBandMap( QString freq, QString call, QString utc, QString loc, QString qth );
+    void sendKeyerTone();
+    void sendKeyerTwoTone();
+    void sendKeyerStop();
+    void sendRotator(rpcConstants::RotateDirection direction, int angle );
+
 };
 
 #endif // TSINGLELOGFRAME_H

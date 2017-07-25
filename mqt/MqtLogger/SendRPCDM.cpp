@@ -24,35 +24,25 @@
 #include "tsinglelogframe.h"
 #include "tlogcontainer.h"
 
-TSendDM *SendDM = 0;
 //---------------------------------------------------------------------------
-TSendDM::TSendDM( QWidget* Owner )
+TSendDM::TSendDM(QWidget* Owner , LoggerContestLog *ct)
       : QObject( Owner )
 {
     MinosConfig *config = MinosConfig::getMinosConfig(Owner);
 
-    rigServerConnectable = config->getApp(atRigControl, "");
-    keyerServerConnectable = config->getApp(atKeyer, "");
-    bandMapServerConnectable = config->getApp(atBandMap, "");
-    rotatorServerConnectable = config->getApp(atRotator, "");
+    rigServerConnectable = config->getApp(atRigControl, ct?ct->appRigControl.getValue():QString());
+    keyerServerConnectable = config->getApp(atKeyer, ct?ct->appVoiceKeyer.getValue():QString());
+    bandMapServerConnectable = config->getApp(atBandMap, ct?ct->appBandMap.getValue():QString());
+    rotatorServerConnectable = config->getApp(atRotator, ct?ct->appRotator.getValue():QString());
 
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request (bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
-    if (rigServerConnectable.appType != atNone)
-        rpc->subscribeRemote( rigServerConnectable.serverName, rpcConstants::RigControlCategory );
-    if (keyerServerConnectable.appType != atNone)
-        rpc->subscribeRemote( keyerServerConnectable.serverName, rpcConstants::KeyerCategory );
-    if (bandMapServerConnectable.appType != atNone)
-        rpc->subscribeRemote( bandMapServerConnectable.serverName, rpcConstants::BandMapCategory );
-    if (rotatorServerConnectable.appType != atNone)
-        rpc->subscribeRemote( rotatorServerConnectable.serverName, rpcConstants::RotatorCategory );
 }
 TSendDM::~TSendDM()
 {
-   SendDM = 0;
 }
 //---------------------------------------------------------------------------
 void TSendDM::logMessage( QString s )
@@ -60,10 +50,9 @@ void TSendDM::logMessage( QString s )
    trace( s );
 }
 //---------------------------------------------------------------------------
-/*static*/ void TSendDM::sendKeyerPlay(  int fno )
+void TSendDM::sendKeyerPlay(  int fno )
 {
-    if (SendDM)
-        SendDM->doSendKeyerPlay(fno);
+    doSendKeyerPlay(fno);
 }
 
 void TSendDM::doSendKeyerPlay(  int fno )
@@ -77,10 +66,9 @@ void TSendDM::doSendKeyerPlay(  int fno )
    rpc.getCallArgs() ->addParam( st );
    rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerConnectable.serverName );
 }
-/*static*/ void TSendDM::sendKeyerRecord(  int fno )
+void TSendDM::sendKeyerRecord(  int fno )
 {
-    if (SendDM)
-        SendDM->doSendKeyerRecord(fno);
+    doSendKeyerRecord(fno);
 }
 
 void TSendDM::doSendKeyerRecord(  int fno )
@@ -95,10 +83,9 @@ void TSendDM::doSendKeyerRecord(  int fno )
    rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerConnectable.serverName );
 }
 
-/*static*/ void TSendDM::sendKeyerTone()
+void TSendDM::sendKeyerTone()
 {
-    if (SendDM)
-        SendDM->doSendKeyerTone();
+    doSendKeyerTone();
 }
 void TSendDM::doSendKeyerTone()
 {
@@ -111,10 +98,9 @@ void TSendDM::doSendKeyerTone()
     rpc.getCallArgs() ->addParam( st );
     rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerConnectable.serverName );
 }
-/*static*/ void TSendDM::sendKeyerTwoTone()
+void TSendDM::sendKeyerTwoTone()
 {
-    if (SendDM)
-        SendDM->doSendKeyerTwoTone();
+    doSendKeyerTwoTone();
 }
 
 void TSendDM::doSendKeyerTwoTone()
@@ -128,10 +114,9 @@ void TSendDM::doSendKeyerTwoTone()
     rpc.getCallArgs() ->addParam( st );
     rpc.queueCall( rpcConstants::keyerApp + "@" + keyerServerConnectable.serverName );
 }
-/*static*/ void TSendDM::sendKeyerStop()
+void TSendDM::sendKeyerStop()
 {
-    if (SendDM)
-        SendDM->doSendKeyerStop();
+    doSendKeyerStop();
 }
 
 void TSendDM::doSendKeyerStop()
@@ -148,11 +133,10 @@ void TSendDM::doSendKeyerStop()
 //---------------------------------------------------------------------------
 void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const QString &utc,   const QString &loc,   const QString &qth )
 {
-    if (SendDM)
-        SendDM->doSendBandMap(freq, call, utc, loc, qth);
+    doSendBandMap(freq, call, utc, loc, qth);
 }
 
-/*static*/ void TSendDM::doSendBandMap(  const QString &freq,   const QString &call,   const QString &utc,   const QString &loc,   const QString &qth )
+void TSendDM::doSendBandMap(  const QString &freq,   const QString &call,   const QString &utc,   const QString &loc,   const QString &qth )
 {
     RPCGeneralClient rpc(rpcConstants::bandmapMethod);
    QSharedPointer<RPCParam>st(new RPCParamStruct);
@@ -168,10 +152,9 @@ void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const 
    rpc.queueCall( rpcConstants::bandmapApp + "@" + bandMapServerConnectable.serverName );
 }
 
-/*static*/ void TSendDM::sendRotator(rpcConstants::RotateDirection direction, int angle )
+void TSendDM::sendRotator(rpcConstants::RotateDirection direction, int angle )
 {
-    if (SendDM)
-        SendDM->doSendRotator(direction, angle);
+    doSendRotator(direction, angle);
 }
 
 void TSendDM::doSendRotator( rpcConstants::RotateDirection direction,  int angle )

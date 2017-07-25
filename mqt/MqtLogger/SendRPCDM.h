@@ -28,22 +28,23 @@ class TSendDM : public QObject
     Q_OBJECT
    private:  	// User declarations
 
+      void logMessage( QString s );
+
       Connectable keyerServerConnectable;
       Connectable rigServerConnectable;
       Connectable bandMapServerConnectable;
       Connectable rotatorServerConnectable;
 
-      void logMessage( QString s );
    public:  		// User declarations
-      TSendDM( QWidget* Owner );
+      TSendDM( QWidget* Owner, LoggerContestLog *ct );
       ~TSendDM();
-      static void sendKeyerPlay( int fno );
-      static void sendKeyerRecord( int fno );
-      static void sendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
-      static void sendKeyerTone();
-      static void sendKeyerTwoTone();
-      static void sendKeyerStop();
-      static void sendRotator(rpcConstants::RotateDirection direction, int angle );
+      void sendKeyerPlay( int fno );
+      void sendKeyerRecord( int fno );
+      void sendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
+      void sendKeyerTone();
+      void sendKeyerTwoTone();
+      void sendKeyerStop();
+      void sendRotator(rpcConstants::RotateDirection direction, int angle );
       void doSendKeyerPlay( int fno );
       void doSendKeyerRecord( int fno );
       void doSendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
@@ -56,7 +57,4 @@ class TSendDM : public QObject
       void on_response( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
       void on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
 };
-//---------------------------------------------------------------------------
-extern TSendDM *SendDM;
-//---------------------------------------------------------------------------
 #endif

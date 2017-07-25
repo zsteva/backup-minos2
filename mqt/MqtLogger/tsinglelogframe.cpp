@@ -9,6 +9,7 @@
 #include "tsinglelogframe.h"
 #include "ui_tsinglelogframe.h"
 
+#include "SendRPCDM.h"
 #include "tlogcontainer.h"
 #include "focuswatcher.h"
 #include "htmldelegate.h"
@@ -152,11 +153,29 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     ui->clockFrame->setContest(contest);
     ui->ClockButton->setChecked(true);
     ui->StackedMults->setCurrentIndex(5);   // start up on the clock - useful outside the contest!
+
+    LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+
+    sendDM = new TSendDM( this, ct );
+
+    connect(LogContainer, SIGNAL(sendKeyerPlay( int )), this, SLOT(sendKeyerPlay(int)));
+    connect(LogContainer, SIGNAL(sendKeyerRecord( int)), this, SLOT(sendKeyerRecord(int)));
+    connect(LogContainer, SIGNAL(sendKeyerTone()), this, SLOT(sendKeyerTone()));
+    connect(LogContainer, SIGNAL(sendKeyerTwoTone()), this, SLOT(sendKeyerTwoTone()));
+    connect(LogContainer, SIGNAL(sendKeyerStop()), this, SLOT(sendKeyerStop()));
+
+    connect(ui->GJVQSOLogFrame, SIGNAL(sendBandMap( QString, QString, QString, QString, QString )),
+            this, SLOT(sendBandMap(QString,QString,QString,QString,QString)));
+    connect(ui->GJVQSOLogFrame, SIGNAL(sendRotator(rpcConstants::RotateDirection , int  )),
+            this, SLOT(sendRotator(rpcConstants::RotateDirection , int  )));
+
 }
 
 TSingleLogFrame::~TSingleLogFrame()
 {
     delete ui;
+    delete sendDM;
+
     ui = nullptr;
     contest = nullptr;
 }
@@ -976,6 +995,48 @@ void TSingleLogFrame::on_RotatorMinAzimuth(QString s, BaseContestLog * /*ct*/)
 void TSingleLogFrame::on_RotatorAntennaName(QString s, BaseContestLog * /*ct*/)
 {
     ui->GJVQSOLogFrame->setRotatorAntennaName(s);
+}
+
+void TSingleLogFrame::sendKeyerPlay( int fno )
+{
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+        sendDM->sendKeyerPlay(fno);
+}
+
+void TSingleLogFrame::sendKeyerRecord( int fno )
+{
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+        sendDM->sendKeyerRecord(fno);
+}
+
+void TSingleLogFrame::sendBandMap( QString freq, QString call, QString utc, QString loc, QString qth )
+{
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+        sendDM->sendBandMap(freq, call, utc, loc, qth);
+}
+
+void TSingleLogFrame::sendKeyerTone()
+{
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+        sendDM->sendKeyerTone();
+}
+
+void TSingleLogFrame::sendKeyerTwoTone()
+{
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+        sendDM->sendKeyerTwoTone();
+}
+
+void TSingleLogFrame::sendKeyerStop()
+{
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+        sendDM->sendKeyerStop();
+}
+
+void TSingleLogFrame::sendRotator(rpcConstants::RotateDirection direction, int angle )
+{
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+        sendDM->sendRotator(direction, angle);
 }
 
 //=============================================================================

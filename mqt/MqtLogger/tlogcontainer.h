@@ -208,6 +208,14 @@ private slots:
 
     void on_TimeDisplayTimer( );
     void on_ReportOverstrike(bool , BaseContestLog * );
+
+signals:
+    void sendKeyerPlay( int fno );
+    void sendKeyerRecord( int fno );
+    void sendKeyerTone();
+    void sendKeyerTwoTone();
+    void sendKeyerStop();
+
 };
 extern TLogContainer *LogContainer;
 

@@ -2132,7 +2132,7 @@ void QSOLogFrame::on_Rotate_clicked()
     }
     else
     {
-        TSendDM::sendRotator(rpcConstants::eRotateDirect, angle);
+        emit sendRotator(rpcConstants::eRotateDirect, angle);
         moving = true;
     }
 
@@ -2157,7 +2157,7 @@ void QSOLogFrame::on_RotateLeft_clicked(bool toggle)
     if (toggle)
     {
         ui->RotateLeft->setChecked(true);
-        TSendDM::sendRotator(rpcConstants::eRotateLeft, angle);
+        emit sendRotator(rpcConstants::eRotateLeft, angle);
         movingCW = true;
     }
     else
@@ -2188,7 +2188,7 @@ void QSOLogFrame::on_RotateRight_clicked(bool toggle)
     if (toggle)
     {
         ui->RotateRight->setChecked(true);
-        TSendDM::sendRotator(rpcConstants::eRotateRight, angle);
+        emit sendRotator(rpcConstants::eRotateRight, angle);
         movingCCW = true;
     }
     else
@@ -2201,7 +2201,7 @@ void QSOLogFrame::on_RotateRight_clicked(bool toggle)
 
 void QSOLogFrame::on_StopRotate_clicked()
 {
-    TSendDM::sendRotator(rpcConstants::eRotateStop, 0);
+    emit sendRotator(rpcConstants::eRotateStop, 0);
     clearRotatorFlags();
 
 }

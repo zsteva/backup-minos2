@@ -59,6 +59,7 @@ public:  		// User declarations
     TConfigElement();
     bool initialise( QSettings &, QString sect );
 
+
     void save(QSettings &);
 
     Connectable connectable();
@@ -89,6 +90,7 @@ private:  	// User declarations
     bool autoStart;
 public:  		// User declarations
     ~MinosConfig();
+    void subscribeAll();
 
     static bool doesConfigExist();
     static QString getThisServerName();

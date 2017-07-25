@@ -12,12 +12,13 @@
 #include "CalendarList.h"
 #include "contestdetails.h"
 #include "tmanagelistsdlg.h"
-#include "SendRPCDM.h"
 #include "tsettingseditdlg.h"
 #include "tclockdlg.h"
 #include "tloccalcform.h"
 #include "TSessionManager.h"
 #include "StartConfig.h"
+#include "RPCPubSub.h"
+#include "ConfigFile.h"
 
 TLogContainer *LogContainer = 0;
 
@@ -56,12 +57,39 @@ TLogContainer::TLogContainer(QWidget *parent) :
     statusBar() ->addWidget( sblabel1, 1 );
     sblabel2 = new QLabel( "" );
     statusBar() ->addWidget( sblabel2, 2 );
-}
 
+    MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
+    MinosConfig *config = MinosConfig::getMinosConfig(parent);
+
+    for ( QVector <QSharedPointer<TConfigElement> >::iterator i = config->elelist.begin(); i != config->elelist.end(); i++ )
+    {
+        Connectable res = (*i)->connectable();
+        switch (res.appType)
+        {
+        case atRigControl:
+            rpc->subscribeRemote( res.serverName, rpcConstants::RigControlCategory );
+            break;
+
+        case atKeyer:
+            rpc->subscribeRemote( res.serverName, rpcConstants::KeyerCategory );
+            break;
+
+        case atBandMap:
+            rpc->subscribeRemote( res.serverName, rpcConstants::BandMapCategory );
+            break;
+
+        case atRotator:
+            rpc->subscribeRemote( res.serverName, rpcConstants::RotatorCategory );
+            break;
+
+        default:
+            break;
+        }
+    }
+}
 TLogContainer::~TLogContainer()
 {
     delete ui;
-    delete SendDM;
 }
 bool TLogContainer::show(int argc, char *argv[])
 {
@@ -83,7 +111,6 @@ bool TLogContainer::show(int argc, char *argv[])
     connect(&MinosLoggerEvents::mle, SIGNAL(ReportOverstrike(bool , BaseContestLog * )),
             this, SLOT(on_ReportOverstrike(bool , BaseContestLog * )), Qt::QueuedConnection);
 
-    SendDM = new TSendDM( this );
     QMainWindow::show();
     if ( TAboutBox::ShowAboutBox( this, true ) == false )
     {
@@ -848,17 +875,17 @@ void TLogContainer::NextContactDetailsOnLeftActionExecute()
 }
 void TLogContainer::KeyerToneActionExecute()
 {
-    TSendDM::sendKeyerTone( );
+    emit sendKeyerTone( );
 }
 
 void TLogContainer::KeyerTwoToneActionExecute()
 {
-    TSendDM::sendKeyerTwoTone( );
+    emit sendKeyerTwoTone( );
 }
 
 void TLogContainer::KeyerStopActionExecute()
 {
-    TSendDM::sendKeyerStop( );
+    emit sendKeyerStop( );
 }
 void TLogContainer::KeyerRecordActionExecute()
 {
@@ -866,7 +893,7 @@ void TLogContainer::KeyerRecordActionExecute()
     if (qa)
     {
         int k = qa->data().toInt();
-        TSendDM::sendKeyerRecord( k );
+        emit sendKeyerRecord( k );
     }
 }
 void TLogContainer::KeyerPlaybackActionExecute()
@@ -875,7 +902,7 @@ void TLogContainer::KeyerPlaybackActionExecute()
     if (qa)
     {
         int k = qa->data().toInt();
-        TSendDM::sendKeyerPlay( k );
+        emit sendKeyerPlay( k );
     }
 }
 

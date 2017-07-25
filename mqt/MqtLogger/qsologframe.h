@@ -162,6 +162,9 @@ private:
 
 signals:
     void QSOFrameCancelled();
+    void sendRotator(rpcConstants::RotateDirection direction, int angle );
+    void sendBandMap( QString freq, QString call, QString utc, QString loc, QString qth );
+
 private slots:
     void focusChange(QObject *, bool, QFocusEvent *event);
     void on_CatchupButton_clicked();
