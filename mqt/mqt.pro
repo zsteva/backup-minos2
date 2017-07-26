@@ -11,7 +11,8 @@ SUBDIRS += \
     MqtChat \
     MqtKeyer \
     MqtLogger \
-    MqtServer
+    MqtServer \
+    MqtCluster
 !unix{
     SUBDIRS += \
     MqtRotator \
