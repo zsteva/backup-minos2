@@ -926,9 +926,10 @@ void TPubSubMain::serverNotifyCallback(bool err, QSharedPointer<MinosRPCObj> mro
       QString category = an.getCategory();
       QString key = an.getKey();
       QString value = an.getValue();
-      QString publisher = an.getPublisher();
+      QString publisherProgram = an.getPublisherProgram();
+      QString publisherServer = an.getPublisherServer();
       PublishState state = an.getState();
-      serverPublish( /*from*/publisher, server, category, key, value, state );       // but we mustn't publish this back to any remote servers
+      serverPublish( /*from*/publisherProgram + "@" + publisherServer, server, category, key, value, state );       // but we mustn't publish this back to any remote servers
       // even if they ARE subscribed
       mro->clearCallArgs();
       QSharedPointer<RPCParam>st(new RPCParamStruct);

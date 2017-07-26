@@ -395,6 +395,7 @@ int MinosTestExport::exportAllDetails(QSharedPointer<QFile> minosContestFile, bo
    exportStation( minosContestFile );
    exportCurrent( minosContestFile );
    exportOperators( minosContestFile );
+   exportApps(minosContestFile);
    exportBundles( minosContestFile );
 
    return stanzaCount;
@@ -420,6 +421,7 @@ int MinosTestExport::exportTest( QSharedPointer<QFile> expfd, int mindump, int m
    exportStation( expfd );
    exportCurrent( expfd );
    exportOperators( expfd );     // not right... we need to log op changes
+   exportApps(expfd);
    exportBundles( expfd );
 
    bool inDump = false;

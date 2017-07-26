@@ -24,7 +24,7 @@ TLogContainer *LogContainer = 0;
 
 TLogContainer::TLogContainer(QWidget *parent) :
     QMainWindow(parent),
-    rotatorLoaded(false), keyerLoaded(false), bandMapLoaded(false),
+    //keyerLoaded(false), //bandMapLoaded(false),
     lastSessionSelected(0),
     ui(new Ui::TLogContainer)
 {
@@ -162,7 +162,14 @@ void TLogContainer::on_TimeDisplayTimer( )
       }
       sblabel0->setText( statbuf );
 
-      ui->menuKeyer->menuAction()->setVisible(isKeyerLoaded());
+      if (ct)
+      {
+          TSingleLogFrame * lf = LogContainer ->findContest( ct );
+          ui->menuKeyer->menuAction()->setVisible(lf && lf->isKeyerLoaded());
+      }
+      else
+          ui->menuKeyer->menuAction()->setVisible(false);
+
    }
 
 }
@@ -179,8 +186,6 @@ void TLogContainer::closeEvent(QCloseEvent *event)
 {
     TimerUpdateQSOTimer.stop();
     closeContestApp();
-//    QSettings settings;
-//    settings.setValue("geometry", saveGeometry());
     QWidget::closeEvent(event);
 }
 void TLogContainer::moveEvent(QMoveEvent *event)
@@ -203,19 +208,6 @@ void TLogContainer::changeEvent( QEvent* e )
         settings.setValue("geometry", saveGeometry());
     }
 }
-/*
-
-ContestPageControl
-    OnChange = ContestPageControlChange
-    OnDrawTab = ContestPageControlDrawTab
-    OnMouseDown = ContestPageControlMouseDown
-    OnMouseMove = ContestPageControlMouseMove
-
-StatusBar1
-    Hint = 'Click to correct date/time'
-    Action = CorrectDateTimeAction
-    OnDblClick = CorrectDateTimeActionExecute
-*/
 QAction *TLogContainer::newAction( const QString &text, QMenu *m, const char *atype )
 {
     QAction * newAct = new QAction( text, this );
@@ -232,11 +224,6 @@ QAction *TLogContainer::newCheckableAction( const QString &text, QMenu *m, const
     return newAct;
 }
 
-/*
-
-private slots:
-
-*/
 void TLogContainer::setupMenus()
 {
     FileOpenAction = newAction("&Open Contest...", ui->menuFile, SLOT(FileOpenActionExecute()));
@@ -943,9 +930,6 @@ void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
     ui->menuLogs->addAction(CloseAllButAction);
     ui->menuLogs->addSeparator();
 
-//    sessionsMenu->addSeparator();
-
-
     sessionsMenu = ui->menuLogs->addMenu("Contest Sets");
     updateSessionActions();
 
@@ -1474,24 +1458,7 @@ void TLogContainer::selectContest( BaseContestLog *pc, QSharedPointer<BaseContac
     }
 }
 //---------------------------------------------------------------------------
-void TLogContainer::setBandMapLoaded()
-{
-   bandMapLoaded = true;
-}
-bool TLogContainer::isBandMapLoaded()
-{
-   return bandMapLoaded;
-}
-//---------------------------------------------------------------------------
-void TLogContainer::setRotatorLoaded()
-{
-   rotatorLoaded = true;
-}
-bool TLogContainer::isRotatorLoaded()
-{
-   return rotatorLoaded;
-}
-//---------------------------------------------------------------------------
+/*
 void TLogContainer::setKeyerLoaded()
 {
    keyerLoaded = true;
@@ -1500,6 +1467,7 @@ bool TLogContainer::isKeyerLoaded()
 {
    return keyerLoaded;
 }
+*/
 //---------------------------------------------------------------------------
 void TLogContainer::setCaption(QString captionToSet)
 {
@@ -1512,44 +1480,6 @@ void TLogContainer::setCaption(QString captionToSet)
       if ( windowTitle() != "Minos contest Logger Application" )
          setWindowTitle("Minos contest Logger Application");
 }
-
-void TLogContainer::setMode( QString m )
-{
-    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-    MinosLoggerEvents::SendSetMode(m, ct);
-}
-void TLogContainer::setFreq( QString f )
-{
-    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-    MinosLoggerEvents::SendSetFreq(f, ct);
-}
-void TLogContainer::setRotatorState( QString f )
-{
-    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-    MinosLoggerEvents::SendRotatorState(f, ct);
-}
-void TLogContainer::setRotatorBearing( QString f )
-{
-    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-    MinosLoggerEvents::SendRotatorBearing(f, ct);
-}
-void TLogContainer::setRotatorMaxAzimuth( QString f )
-{
-    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-    MinosLoggerEvents::SendRotatorMaxAzimuth(f, ct);
-}
-void TLogContainer::setRotatorMinAzimuth( QString f )
-{
-    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-    MinosLoggerEvents::SendRotatorMinAzimuth(f, ct);
-}
-void TLogContainer::setRotatorAntennaName( QString f )
-{
-    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-    MinosLoggerEvents::SendRotatorAntennaName(f, ct);
-}
-
-
 //---------------------------------------------------------------------------
 TSingleLogFrame *TLogContainer::findContest(const QString &pubname )
 {
@@ -1559,6 +1489,22 @@ TSingleLogFrame *TLogContainer::findContest(const QString &pubname )
        if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( ctab ) )
        {
            if ( f->getContest() ->publishedName == pubname )
+           {
+              return f;
+           }
+       }
+   }
+
+   return 0;
+}
+TSingleLogFrame *TLogContainer::findContest(BaseContestLog *ct )
+{
+   for ( int j = 0; j < ui->ContestPageControl->count(); j++ )
+   {
+       QWidget *ctab = ui->ContestPageControl->widget(j);
+       if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( ctab ) )
+       {
+           if ( f->getContest() == ct )
            {
               return f;
            }

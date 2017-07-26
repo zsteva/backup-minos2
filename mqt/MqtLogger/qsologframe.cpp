@@ -20,6 +20,9 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     , edit(false)
     , overstrike(false)
     , oldTimeOK(true)
+    , rotatorLoaded(false)
+    , bandMapLoaded(false)
+    , keyerLoaded(false)
 {
     ui->setupUi(this);
 
@@ -724,14 +727,6 @@ void QSOLogFrame::mouseDoubleClickEvent(QObject *w)
         ui->TimeEdit->setReadOnly(false);
         ui->DateEdit->setReadOnly(false);
     }
-    /*
-    if ( contest->isReadOnly() )
-    {
-       return ;
-    }
-    SerTXEdit->ReadOnly = false;
-    SerTXEdit->Color = clWindow;
-    */
 }
 void QSOLogFrame::setActiveControl( int *Key )
 {
@@ -1181,37 +1176,6 @@ void QSOLogFrame::selectField( QWidget *v )
     }
     MinosLoggerEvents::SendShowErrorList();
 
-/*
-   if ( v == 0 )
-   {
-      v = ui->CallsignEdit;
-
-   }
-   if ( !v || ( current == v ) )
-   {
-      if (v)
-         v->setFocus();
-      return ;
-   }
-
-   if ( ( current == ui->CallsignEdit ) || ( current == ui->LocEdit ) )
-   {
-      valid( cmCheckValid ); // make sure all single and cross field
-      doAutofill();
-   }
-
-   if ( v == ui->SerTXEdit )
-   {
-      ( ( QLineEdit * ) v ) ->setReadOnly(false);
-//      ( ( QLineEdit * ) v ) ->Color = clWindow;
-   }
-   if ( v->isEnabled() )
-   {
-      v->setFocus();
-      current = v;
-   }
-   MinosLoggerEvents::SendShowErrorList();
-   */
 }
 //==============================================================================
 // check for embedded space or empty number
@@ -1793,15 +1757,16 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
             ui->TimeEdit->setStyleSheet(ss);
         }
     }
-    ui->bandMapFrame->setVisible( !edit && LogContainer->isBandMapLoaded());
-    ui->antennaName->setVisible(!edit && LogContainer->isRotatorLoaded());
-    ui->Rotate->setVisible(!edit && LogContainer->isRotatorLoaded());
-    ui->RotateLeft->setVisible(!edit && LogContainer->isRotatorLoaded());
-    ui->RotateRight->setVisible(!edit && LogContainer->isRotatorLoaded());
-    ui->StopRotate->setVisible(!edit && LogContainer->isRotatorLoaded());
-    ui->RotBrg->setVisible(!edit && LogContainer->isRotatorLoaded());
-    ui->rotatorState->setVisible(!edit && LogContainer->isRotatorLoaded());
-    ui->rotatorState->setVisible(!edit && LogContainer->isRotatorLoaded());
+    ui->bandMapFrame->setVisible( !edit && isBandMapLoaded());
+
+    ui->antennaName->setVisible(!edit && isRotatorLoaded());
+    ui->Rotate->setVisible(!edit && isRotatorLoaded());
+    ui->RotateLeft->setVisible(!edit && isRotatorLoaded());
+    ui->RotateRight->setVisible(!edit && isRotatorLoaded());
+    ui->StopRotate->setVisible(!edit && isRotatorLoaded());
+    ui->RotBrg->setVisible(!edit && isRotatorLoaded());
+    ui->rotatorState->setVisible(!edit && isRotatorLoaded());
+    ui->rotatorState->setVisible(!edit && isRotatorLoaded());
 
 }
 
@@ -2215,6 +2180,14 @@ void QSOLogFrame::clearRotatorFlags()
     movingCW = false;
 }
 
+void QSOLogFrame::setRotatorLoaded()
+{
+    rotatorLoaded = true;
+}
+bool QSOLogFrame::isRotatorLoaded()
+{
+    return rotatorLoaded;
+}
 
 void QSOLogFrame::setRotatorState(const QString &s)
 {
@@ -2325,4 +2298,30 @@ void QSOLogFrame::setRotatorMinAzimuth(const QString &s)
     {
         minAzimuth = min_azimuth;
     }
+}
+
+void QSOLogFrame::setKeyerLoaded()
+{
+    keyerLoaded = true;
+}
+bool QSOLogFrame::isKeyerLoaded()
+{
+    return keyerLoaded;
+}
+
+void QSOLogFrame::setBandMapLoaded()
+{
+    bandMapLoaded = true;
+}
+bool QSOLogFrame::isBandMapLoaded()
+{
+    return bandMapLoaded;
+}
+
+
+// Mode is already handled.
+
+void QSOLogFrame::setFreq(QString /*f*/)
+{
+
 }

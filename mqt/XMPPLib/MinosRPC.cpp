@@ -10,7 +10,7 @@ MinosRPC::MinosRPC(const QString &defaultName, bool useEnvVar):
     if (useEnvVar)
     {
         QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-        QString rpcName = env.value("MQTRPCNAME", defaultName);
+        rpcName = env.value("MQTRPCNAME", defaultName);
 
         trace("Value of MQTRPCNAME for " + defaultName + " is " + rpcName);
     }

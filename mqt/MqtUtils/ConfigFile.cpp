@@ -183,7 +183,7 @@ Connectable TConfigElement::connectable()
     }
     else
     {
-        res.serverName = "localhost";
+        res.serverName = MinosConfig::getThisServerName();
         res.remoteAppName = name;
     }
     return res;
@@ -426,7 +426,7 @@ Connectable MinosConfig::getApp(AppType a, QString appName)
     {
         if ((*i)->appType == a)
         {
-            if (appName.isEmpty() || appName.compare((*i)->name, Qt::CaseInsensitive) == 0)
+            if (appName.compare((*i)->name, Qt::CaseInsensitive) == 0)
             {
                 res = (*i)->connectable();
                 break;
