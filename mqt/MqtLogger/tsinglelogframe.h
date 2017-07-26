@@ -143,8 +143,15 @@ public:
     bool logColumnsChanged;
     bool splittersChanged;
 
-    void setMode( QString m );
-    void setFreq( QString f );
+    bool isBandMapLoaded();
+    bool bandMapLoaded;
+
+    bool rotatorLoaded;
+    bool isRotatorLoaded();
+
+    bool keyerLoaded;
+    bool isKeyerLoaded();
+
     void setRotatorState( QString f );
     void setRotatorBearing( QString f );
 
@@ -153,7 +160,6 @@ public:
 
     bool getStanza( unsigned int stanza, QString &stanzaData );
 
-//    QModelIndex QSOTreeClickIndex;
     QModelIndex matchTreeClickIndex;
     QModelIndex otherTreeClickIndex;
     QModelIndex archiveTreeClickIndex;
@@ -247,13 +253,18 @@ private slots:
     void on_OtherMatchTree_doubleClicked(const QModelIndex &index);
     void on_ArchiveMatchTree_doubleClicked(const QModelIndex &index);
 
-    void on_SetMode(QString, BaseContestLog*);
-    void on_SetFreq(QString, BaseContestLog*);
-    void on_RotatorState(QString, BaseContestLog*);
-    void on_RotatorBearing(QString, BaseContestLog*);
-    void on_RotatorMaxAzimuth(QString, BaseContestLog *);
-    void on_RotatorMinAzimuth(QString, BaseContestLog *);
-    void on_RotatorAntennaName(QString, BaseContestLog *);
+    void on_KeyerLoaded();
+
+    void on_BandMapLoaded();
+    void on_SetMode(QString m);
+    void on_SetFreq(QString);
+
+    void on_RotatorLoaded();
+    void on_RotatorState(QString);
+    void on_RotatorBearing(QString);
+    void on_RotatorMaxAzimuth(QString);
+    void on_RotatorMinAzimuth(QString);
+    void on_RotatorAntennaName(QString);
     void onArchiveMatchTreeFocused(QObject *, bool, QFocusEvent * );
     void onOtherMatchTreeFocused(QObject *, bool, QFocusEvent * );
 

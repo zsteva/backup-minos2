@@ -35,6 +35,8 @@ public:
     QLabel *sblabel2;
 
     TSingleLogFrame *findContest( const QString &pubname );
+    TSingleLogFrame *findContest(BaseContestLog *ct );
+
     QString getDefaultDirectory( bool IsList );
 
     bool isShowOperators();
@@ -42,26 +44,6 @@ public:
     bool isScrollingContestTabs();
 
     void setCaption( QString );
-    void setMode( QString );
-    void setFreq( QString );
-
-    void setRotatorState( QString );
-    void setRotatorBearing( QString );
-    void setRotatorMaxAzimuth( QString);
-    void setRotatorMinAzimuth( QString);
-    void setRotatorAntennaName( QString );
-
-    void setBandMapLoaded();
-    bool isBandMapLoaded();
-    bool bandMapLoaded;
-
-    void setKeyerLoaded();
-    bool isKeyerLoaded();
-    bool keyerLoaded;
-
-    void setRotatorLoaded();
-    bool isRotatorLoaded();
-    bool rotatorLoaded;
 
     void getCurrSession();
     QStringList getSessions();

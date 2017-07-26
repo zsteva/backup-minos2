@@ -45,16 +45,24 @@ class TSendDM : public QObject
       void sendKeyerTwoTone();
       void sendKeyerStop();
       void sendRotator(rpcConstants::RotateDirection direction, int angle );
-      void doSendKeyerPlay( int fno );
-      void doSendKeyerRecord( int fno );
-      void doSendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
-      void doSendKeyerTone();
-      void doSendKeyerTwoTone();
-      void doSendKeyerStop();
-      void doSendRotator(rpcConstants::RotateDirection, int angle );
-     private slots:
+   private slots:
       void on_request( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
       void on_response( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
       void on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
+signals:
+      void RotatorLoaded();
+
+      void RotatorState(QString);
+      void RotatorBearing(QString);
+      void RotatorMaxAzimuth(QString);
+      void RotatorMinAzimuth(QString);
+      void RotatorAntennaName(QString);
+
+      void setBandMapLoaded();
+      void setMode(QString);
+      void setFreq(QString);
+
+      void setKeyerLoaded();
+
 };
 #endif

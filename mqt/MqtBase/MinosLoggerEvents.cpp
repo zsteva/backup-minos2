@@ -81,41 +81,6 @@ void MinosLoggerEvents::SendFormKey(unsigned int *key, BaseContestLog *c)
     emit mle.FormKey(key, c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendSetMode(QString mode, BaseContestLog *c)
-{
-    emit mle.SetMode(mode, c);
-}
-//---------------------------------------------------------------------------
-void MinosLoggerEvents::SendSetFreq(QString freq, BaseContestLog *c)
-{
-    emit mle.SetFreq(freq, c);
-}
-//---------------------------------------------------------------------------
-void MinosLoggerEvents::SendRotatorState(QString s, BaseContestLog *c)
-{
-    emit mle.RotatorState(s, c);
-}
-//---------------------------------------------------------------------------
-void MinosLoggerEvents::SendRotatorBearing(QString bearing, BaseContestLog *c)
-{
-    emit mle.RotatorBearing(bearing, c);
-}
-//---------------------------------------------------------------------------
-void MinosLoggerEvents::SendRotatorMaxAzimuth(QString maxAzimuth, BaseContestLog *c)
-{
-    emit mle.RotatorMaxAzimuth(maxAzimuth, c);
-}
-//---------------------------------------------------------------------------
-void MinosLoggerEvents::SendRotatorMinAzimuth(QString minAzimuth, BaseContestLog *c)
-{
-    emit mle.RotatorMinAzimuth(minAzimuth, c);
-}
-//---------------------------------------------------------------------------
-void MinosLoggerEvents::SendRotatorAntennaName(QString antennaName, BaseContestLog *c)
-{
-    emit mle.RotatorAntennaName(antennaName, c);
-}
-//---------------------------------------------------------------------------
 void MinosLoggerEvents::SendEditMatchContact(BaseContestLog *c)
 {
     emit mle.EditMatchContact(c);
@@ -154,16 +119,6 @@ void MinosLoggerEvents::SendScrollToDistrict(QString prefix, BaseContestLog *c)
 void MinosLoggerEvents::SendMatchStarting( BaseContestLog *c)
 {
     emit mle.MatchStarting(c);
-}
-//---------------------------------------------------------------------------
-void MinosLoggerEvents::SendOp1Change(QString op, BaseContestLog *c)
-{
-    emit mle.Op1Change(op, c);
-}
-//---------------------------------------------------------------------------
-void MinosLoggerEvents::SendOp2Change(QString op, BaseContestLog *c)
-{
-    emit mle.Op2Change(op, c);
 }
 //---------------------------------------------------------------------------
 void MinosLoggerEvents::SendShowOperators()
