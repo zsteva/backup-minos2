@@ -3,16 +3,14 @@
 # Project created by QtCreator 2016-09-16T11:01:18
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
 
 QT       += core gui network widgets
 
 TARGET = MqtControl
 TEMPLATE = app
 
-VERSION=0.5.0.0
-DEFINES += VERSION=\\\"$$VERSION\\\"
-
-CONFIG += c++11
+win32:RC_ICONS += ../minos.ico
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast

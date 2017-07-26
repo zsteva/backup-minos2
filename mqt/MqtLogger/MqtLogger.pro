@@ -3,6 +3,7 @@
 # Project created by QtCreator 2015-11-30T19:20:34
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
 
 QT       += core gui
 QT       += widgets
@@ -11,10 +12,7 @@ QT       += network
 TARGET = MqtLogger
 TEMPLATE = app
 
-VERSION=0.5.0.0
 win32:RC_ICONS += ../minos.ico
-
-DEFINES += VERSION=\\\"$$VERSION\\\"
 
 android {
     CONFIG_INSTALL_PATH=/assets/Configuration
@@ -25,8 +23,6 @@ android {
 
     INSTALLS += config
 }
-
-CONFIG += c++11
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
@@ -67,7 +63,8 @@ SOURCES += main.cpp \
     locframe.cpp \
     SendRPCDM.cpp \
     TSessionManager.cpp \
-    TClockFrame.cpp
+    TClockFrame.cpp \
+    StartConfig.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -104,7 +101,8 @@ HEADERS  += \
     locframe.h \
     SendRPCDM.h \
     TSessionManager.h \
-    TClockFrame.h
+    TClockFrame.h \
+    StartConfig.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
@@ -127,7 +125,8 @@ FORMS    += tlogcontainer.ui \
     districtframe.ui \
     locframe.ui \
     TSessionManager.ui \
-    TClockFrame.ui
+    TClockFrame.ui \
+    StartConfig.ui
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase

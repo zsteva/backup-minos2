@@ -85,6 +85,7 @@ signals:
 private:
     Ui::RotatorMainWindow *ui;
 
+    StdInReader stdinReader;
 
     RotatorRpc *msg;
 
@@ -130,13 +131,6 @@ private:
     QString backBearingmsg;
     QString presetName[NUM_PRESETS];
     QString presetBearing[NUM_PRESETS];
-
-    QStringList presetShortCut = {"Ctrl+1","Ctrl+2",
-                                "Ctrl+3", "Ctrl+4",
-                                "Ctrl+5", "Ctrl+6",
-                                "Ctrl+7", "Ctrl+8",
-                                "Ctrl+9", "Ctrl+0"};
-
 
     void openRotator();
     void closeRotator();
@@ -190,6 +184,7 @@ protected slots:
 private slots:
     void LogTimerTimer( );
 
+    void onStdInRead(QString);
 
     void onLoggerSetRotation(int direction, int angle);
     void checkEndStop();

@@ -8,6 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 #include "XMPP_pch.h"
+#include "ConfigFile.h"
 
 //---------------------------------------------------------------------------
 bool RPCPubSub::connected = false;
@@ -79,6 +80,7 @@ AnalysePubSubNotify::AnalysePubSubNotify(bool err, QSharedPointer<MinosRPCObj> m
 {
    if ( !err )
    {
+      QSharedPointer<RPCParam> psPublisher;
       QSharedPointer<RPCParam> psServer;
       QSharedPointer<RPCParam> psCategory;
       QSharedPointer<RPCParam> psKey;
@@ -86,7 +88,10 @@ AnalysePubSubNotify::AnalysePubSubNotify(bool err, QSharedPointer<MinosRPCObj> m
       QSharedPointer<RPCParam> psState;
       RPCArgs *args = mro->getCallArgs();
       if (
-         args->getStructArgMember( 0, "Server", psServer )
+              // NB publisher is initiated by the "from" from the publisher
+              // and persists with the publihe entity
+         args->getStructArgMember( 0, "Publisher", psPublisher )
+         && args->getStructArgMember( 0, "Server", psServer )
          && args->getStructArgMember( 0, "Category", psCategory )
          && args->getStructArgMember( 0, "Key", psKey )
          && args->getStructArgMember( 0, "Value", psValue )
@@ -94,7 +99,9 @@ AnalysePubSubNotify::AnalysePubSubNotify(bool err, QSharedPointer<MinosRPCObj> m
       )
       {
          int stemp;
+         QString pub;
          if (
+            psPublisher->getString(pub) &&
             psServer->getString( server ) &&
             psCategory->getString( category ) &&
             psKey->getString( key ) &&
@@ -102,6 +109,16 @@ AnalysePubSubNotify::AnalysePubSubNotify(bool err, QSharedPointer<MinosRPCObj> m
             psState->getInt( stemp )
          )
          {
+            QStringList p = pub.split(QChar('@'), QString::KeepEmptyParts);
+            if (p.size() > 1)
+            {
+                publisherServer = p[1];
+            }
+            if (publisherServer == "localhost")
+            {
+                publisherServer == MinosConfig::getThisServerName();
+            }
+            publisherProgram = p[0];
             state = static_cast<PublishState>(stemp);
             OK = true;
          }

@@ -31,6 +31,11 @@ public:
 private:
     Ui::windowMonitor *ui;
     QTimer setPosTimer;
+
+    virtual void resizeEvent(QResizeEvent *event) override;
+    virtual void moveEvent(QMoveEvent *event) override;
+    virtual void changeEvent( QEvent* e ) override;
+
 private slots:
     void setPosition();
 

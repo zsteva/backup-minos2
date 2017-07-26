@@ -5,6 +5,7 @@
 #include <QAbstractItemModel>
 #include <QTreeView>
 #include <QTreeWidget>
+#include "RPCCommandConstants.h"
 namespace Ui {
 class TSingleLogFrame;
 }
@@ -20,6 +21,7 @@ class BaseContact;
 class ContactList;
 class ListContact;
 class FocusWatcher;
+class TSendDM;
 
 // We may need to define our own validation controls with valid methods
 // for each needed type...
@@ -141,8 +143,15 @@ public:
     bool logColumnsChanged;
     bool splittersChanged;
 
-    void setMode( QString m );
-    void setFreq( QString f );
+    bool isBandMapLoaded();
+    bool bandMapLoaded;
+
+    bool rotatorLoaded;
+    bool isRotatorLoaded();
+
+    bool keyerLoaded;
+    bool isKeyerLoaded();
+
     void setRotatorState( QString f );
     void setRotatorBearing( QString f );
 
@@ -151,7 +160,6 @@ public:
 
     bool getStanza( unsigned int stanza, QString &stanzaData );
 
-//    QModelIndex QSOTreeClickIndex;
     QModelIndex matchTreeClickIndex;
     QModelIndex otherTreeClickIndex;
     QModelIndex archiveTreeClickIndex;
@@ -165,6 +173,7 @@ private:
 
     int splitterHandleWidth;
 
+    TSendDM *sendDM;
     BaseContestLog * contest;
     QSOGridModel qsoModel;
 
@@ -244,15 +253,29 @@ private slots:
     void on_OtherMatchTree_doubleClicked(const QModelIndex &index);
     void on_ArchiveMatchTree_doubleClicked(const QModelIndex &index);
 
-    void on_SetMode(QString, BaseContestLog*);
-    void on_SetFreq(QString, BaseContestLog*);
-    void on_RotatorState(QString, BaseContestLog*);
-    void on_RotatorBearing(QString, BaseContestLog*);
-    void on_RotatorMaxAzimuth(QString, BaseContestLog *);
-    void on_RotatorMinAzimuth(QString, BaseContestLog *);
-    void on_RotatorAntennaName(QString, BaseContestLog *);
+    void on_KeyerLoaded();
+
+    void on_BandMapLoaded();
+    void on_SetMode(QString m);
+    void on_SetFreq(QString);
+
+    void on_RotatorLoaded();
+    void on_RotatorState(QString);
+    void on_RotatorBearing(QString);
+    void on_RotatorMaxAzimuth(QString);
+    void on_RotatorMinAzimuth(QString);
+    void on_RotatorAntennaName(QString);
     void onArchiveMatchTreeFocused(QObject *, bool, QFocusEvent * );
     void onOtherMatchTreeFocused(QObject *, bool, QFocusEvent * );
+
+    void sendKeyerPlay( int fno );
+    void sendKeyerRecord( int fno );
+    void sendBandMap( QString freq, QString call, QString utc, QString loc, QString qth );
+    void sendKeyerTone();
+    void sendKeyerTwoTone();
+    void sendKeyerStop();
+    void sendRotator(rpcConstants::RotateDirection direction, int angle );
+
 };
 
 #endif // TSINGLELOGFRAME_H

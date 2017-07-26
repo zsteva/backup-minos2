@@ -3,7 +3,7 @@
 #include "ui_MainWindow.h"
 
 
-void closeCallback(QWidget *w)
+static void closeCallback(QWidget *w)
 {
     w->close();
 }
@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    enableTrace( "./TraceLog", "MqtAppStarter_" );
 
     ui->configFrame->initialise(this, &::closeCallback, true);
     createCloseEvent();

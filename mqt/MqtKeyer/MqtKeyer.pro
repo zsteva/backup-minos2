@@ -3,17 +3,14 @@
 # Project created by QtCreator 2016-09-16T11:01:45
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
 
 QT       += core gui network widgets multimedia
 
 TARGET = MqtKeyer
 TEMPLATE = app
 
-VERSION=0.5.0.0
-DEFINES += VERSION=\\\"$$VERSION\\\"
-
-
-CONFIG += c++11
+win32:RC_ICONS += ../minos.ico
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
@@ -73,7 +70,7 @@ FORMS    += KeyerMain.ui \
     windowMonitor.ui
 
 unix{ LIBS += -lasound}
-win32{ LIBS += -lole32 -lwinmm -luuid -lksuser -ldsound}
+win32{ LIBS += -lole32 -lwinmm -luuid -lksuser -ldsound -lUser32}
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase

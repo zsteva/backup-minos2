@@ -3,13 +3,12 @@
 # Project created by QtCreator 2015-11-30T15:50:02
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
 
 QT       += testlib
 QT       += core gui
 QT       += widgets
 QT       += network
-
-CONFIG += c++11
 
 TARGET = tst_rpctesttest
 CONFIG   += console

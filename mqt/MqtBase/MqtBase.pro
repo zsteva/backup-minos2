@@ -3,6 +3,7 @@
 # Project created by QtCreator 2015-11-27T23:58:51
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
 
 QT       += core gui
 QT       += widgets
@@ -11,7 +12,6 @@ QT       += network
 TARGET = MqtBase
 TEMPLATE = lib
 CONFIG += staticlib
-CONFIG += c++11
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
@@ -52,9 +52,9 @@ SOURCES += \
     minoskeyboard.cpp \
     MinosLines.cpp \
     Calendar.cpp \
-    ConfigDM.cpp \
     tconfigframe.cpp \
-    MinosTableView.cpp
+    MinosTableView.cpp \
+    ConfigElementFrame.cpp
 
 HEADERS += \
     BandList.h \
@@ -88,9 +88,9 @@ HEADERS += \
     MinosLines.h \
     Calendar.h \
     waitcursor.h \
-    ConfigDM.h \
     tconfigframe.h \
-    MinosTableView.h
+    MinosTableView.h \
+    ConfigElementFrame.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
@@ -101,4 +101,5 @@ DISTFILES += \
 
 FORMS += \
     minoskeyboard.ui \
-    tconfigframe.ui
+    tconfigframe.ui \
+    ConfigElementFrame.ui

@@ -19,9 +19,6 @@ class commonLineControl;
 class LineConfig;
 class PortConfig;
 
-//#define TARGET_RESOLUTION 55U         // 55-millisecond target resolution
-//#define TIMER_INTERVAL 55U         // 55-millisecond target interval
-
 void setLines(bool PTTOut, bool PTTIn, bool L1, bool L2 , bool L3, bool L4);
 
 class timerTicker: public QObject

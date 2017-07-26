@@ -2,7 +2,7 @@
 #include "tlogcontainer.h"
 
 #include "fileutils.h"
-
+#include "AppStartup.h"
 
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
@@ -77,9 +77,7 @@ int main(int argc, char *argv[])
     {
         QApplication a(argc, argv);
 
-        a.setOrganizationName( "G0GJV" );
-        a.setOrganizationDomain( "g0gjv.org.uk" );
-        a.QCoreApplication::setApplicationName( "MinosQtLogger" );
+        appStartup(a, "MinosQtLogger", false);  // don't start logging as we may not be in the correct working directory
 
 #ifdef Q_OS_ANDROID
         QString sdCard = getenv("EXTERNAL_STORAGE")+ QString("/uk.org.g0gjv.minos");
@@ -100,6 +98,11 @@ int main(int argc, char *argv[])
         if ( qfont != QVariant() )
         {
             a.setFont( qfont.value<QFont>() );
+        }
+        else
+        {
+            QFont sys("Tahoma");
+            a.setFont(sys);
         }
         /*
         QSharedMemory mem( "MinosQtLoggerSingleApplication" );

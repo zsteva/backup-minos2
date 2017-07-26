@@ -21,7 +21,8 @@ ServerMain::ServerMain(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    enableTrace( "./TraceLog", "MinosServer_" );
+    connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
+    stdinReader.start();
 
     createCloseEvent();
     QSettings settings;
@@ -59,6 +60,15 @@ void ServerMain::logMessage( const QString &s )
 {
    trace( s );
 }
+void ServerMain::onStdInRead(QString cmd)
+{
+    trace("Command read from stdin: " + cmd);
+    if (cmd.indexOf("ShowServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(true);
+    if (cmd.indexOf("HideServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(false);
+}
+
 void ServerMain::LogTimerTimer( )
 {
 

@@ -148,6 +148,33 @@ void TSettingsEditDlg::showDetails()
 }
 void TSettingsEditDlg::getDetails()
 {
+    /*
+
+      from
+
+https://stackoverflow.com/questions/1332110/selecting-qcombobox-in-qtablewidget
+
+for (each row in table ... ) {
+   QComboBox* combo = new QComboBox();
+   table->setCellWidget(row,col,combo);
+   combo->setCurrentIndex(node.type());
+   connect(combo, SIGNAL(currentIndexChanged(int)),this, SLOT(changed(int)));
+   ....
+}
+
+Also
+When the combobox is created you can simply add two custom properties to it:
+
+combo->setProperty("row", (int) nRow);
+combo->setProperty("col", (int) nCol);
+In the handler function you can get a pointer back to the sender of the signal (your combobox).
+
+Now by asking for the properties you can have your row/col back:
+
+int nRow = sender()->property("row").toInt();
+int nCol = sender()->property("col").toInt();
+      */
+
    int offset = ui->SectionsList->currentRow();
    if (( offset > 0 || currSectionOnly) && ui->OptionsTable->rowCount())  // ************* >= ?
    {

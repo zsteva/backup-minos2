@@ -17,11 +17,13 @@
 #include "CommonMonitor.h"
 #include "MinosLines.h"
 
+#define TIMER_INTERVAL 55U         // 55-millisecond target interval
+
 //==============================================================================
 timerTicker::timerTicker()
 {
     connect(&b, SIGNAL(timeout()), this, SLOT(tick()));
-    b.start(55);
+    b.start(TIMER_INTERVAL);
 }
 timerTicker::~timerTicker()
 {

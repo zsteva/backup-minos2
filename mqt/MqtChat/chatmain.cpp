@@ -4,7 +4,6 @@
 
 #include "chatmain.h"
 #include "ui_chatmain.h"
-
 TMinosChatForm *MinosChatForm = 0;
 
 TMinosChatForm::TMinosChatForm(QWidget *parent) :
@@ -12,16 +11,11 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
+    stdinReader.start();
+
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-
-    enableTrace( "./TraceLog", "MinosChat_" );
-
-    trace("Arguments");
-    foreach (QString arg, QCoreApplication::instance()->arguments())
-    {
-        trace(arg);
-    }
-    trace("End of Arguments");
 
     createCloseEvent();
 
@@ -35,13 +29,12 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     connect(&SyncTimer, SIGNAL(timeout()), this, SLOT(SyncTimerTimer()));
     SyncTimer.start(100);
 
-    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::chatApp, false);    // DO NOT use the environment variable - use "Chat" everywhere
 
     connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
-    rpc->setAppName(rpcConstants::chatApp);
     rpc->subscribe(rpcConstants::StationCategory);
 }
 
@@ -49,6 +42,15 @@ TMinosChatForm::~TMinosChatForm()
 {
     delete ui;
 }
+void TMinosChatForm::onStdInRead(QString cmd)
+{
+    trace("Command read from stdin: " + cmd);
+    if (cmd.indexOf("ShowServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(true);
+    if (cmd.indexOf("HideServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(false);
+}
+
 //---------------------------------------------------------------------------
 
 void TMinosChatForm::logMessage( QString s )

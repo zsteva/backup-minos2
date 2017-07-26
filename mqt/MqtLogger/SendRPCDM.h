@@ -16,6 +16,8 @@
 #include <QString>
 #include <QTimer>
 
+#include "ConfigFile.h"
+
 class MinosRPCObj;
 //---------------------------------------------------------------------------
 class MinosRPCObj;
@@ -25,40 +27,42 @@ class TSendDM : public QObject
 {
     Q_OBJECT
    private:  	// User declarations
-    //QTimer ConnectTimer;
-    //QTimer SubscribeTimer;
-//      bool connected;
-//      bool subscribed;
-      QString serverName;
-      QString keyerServerName;
-      QString rigServerName;
-      QString bandMapServerName;
-      QString rotatorServerName;
 
       void logMessage( QString s );
+
+      Connectable keyerServerConnectable;
+      Connectable rigServerConnectable;
+      Connectable bandMapServerConnectable;
+      Connectable rotatorServerConnectable;
+
    public:  		// User declarations
-      TSendDM( QWidget* Owner );
+      TSendDM( QWidget* Owner, LoggerContestLog *ct );
       ~TSendDM();
-      static void sendKeyerPlay( int fno );
-      static void sendKeyerRecord( int fno );
-      static void sendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
-      static void sendKeyerTone();
-      static void sendKeyerTwoTone();
-      static void sendKeyerStop();
-      static void sendRotator(rpcConstants::RotateDirection direction, int angle );
-      void doSendKeyerPlay( int fno );
-      void doSendKeyerRecord( int fno );
-      void doSendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
-      void doSendKeyerTone();
-      void doSendKeyerTwoTone();
-      void doSendKeyerStop();
-      void doSendRotator(rpcConstants::RotateDirection, int angle );
-     private slots:
+      void sendKeyerPlay( int fno );
+      void sendKeyerRecord( int fno );
+      void sendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
+      void sendKeyerTone();
+      void sendKeyerTwoTone();
+      void sendKeyerStop();
+      void sendRotator(rpcConstants::RotateDirection direction, int angle );
+   private slots:
       void on_request( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
       void on_response( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
       void on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
+signals:
+      void RotatorLoaded();
+
+      void RotatorState(QString);
+      void RotatorBearing(QString);
+      void RotatorMaxAzimuth(QString);
+      void RotatorMinAzimuth(QString);
+      void RotatorAntennaName(QString);
+
+      void setBandMapLoaded();
+      void setMode(QString);
+      void setFreq(QString);
+
+      void setKeyerLoaded();
+
 };
-//---------------------------------------------------------------------------
-extern TSendDM *SendDM;
-//---------------------------------------------------------------------------
 #endif

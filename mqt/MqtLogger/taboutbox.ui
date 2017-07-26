@@ -20,7 +20,7 @@
    <item>
     <widget class="QTabWidget" name="PageControl1">
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="AboutTabSheet">
       <attribute name="title">
@@ -55,7 +55,7 @@
             <x>0</x>
             <y>0</y>
             <width>320</width>
-            <height>205</height>
+            <height>175</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -81,47 +81,19 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="AutoStartTabSheet">
-      <attribute name="title">
-       <string>Auto Start Configuration</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="TConfigFrame" name="ConfigFrame">
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <property name="lineWidth">
-          <number>0</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <spacer name="horizontalSpacer">
+      <widget class="QPushButton" name="LoggerOnlyButton">
+       <property name="text">
+        <string>Logger Only</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -140,8 +112,12 @@
        </property>
       </widget>
      </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <spacer name="horizontalSpacer_2">
+      <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -177,9 +153,9 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="LoggerOnlyButton">
+      <widget class="QPushButton" name="AppsButton">
        <property name="text">
-        <string>Logger Only</string>
+        <string>Apps</string>
        </property>
       </widget>
      </item>
@@ -200,14 +176,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>TConfigFrame</class>
-   <extends>QFrame</extends>
-   <header location="global">tconfigframe.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

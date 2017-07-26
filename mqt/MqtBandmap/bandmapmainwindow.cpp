@@ -14,6 +14,8 @@ BandMapMainWindow::BandMapMainWindow(QWidget *parent) :
     ui(new Ui::BandMapMainWindow)
 {
     ui->setupUi(this);
+    connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
+    stdinReader.start();
 
     radio = new RigControl();
     selectRig = new SetupDialog(radio);
@@ -74,6 +76,14 @@ BandMapMainWindow::~BandMapMainWindow()
     delete ui;
 }
 
+void BandMapMainWindow::onStdInRead(QString cmd)
+{
+    trace("Command read from stdin: " + cmd);
+    if (cmd.indexOf("ShowServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(true);
+    if (cmd.indexOf("HideServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(false);
+}
 
 void BandMapMainWindow::initActionsConnections()
 {

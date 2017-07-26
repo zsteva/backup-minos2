@@ -11,7 +11,6 @@
 #ifdef Q_OS_WIN
 #include <ws2tcpip.h>
 #else
-#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

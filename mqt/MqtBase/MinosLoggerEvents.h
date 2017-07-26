@@ -36,13 +36,6 @@ signals:
    void MakeEntry(BaseContestLog *);
    void NextUnfilled(BaseContestLog *);
    void FormKey(unsigned int *, BaseContestLog *);
-   void SetMode(QString, BaseContestLog *);
-   void SetFreq(QString, BaseContestLog *);
-   void RotatorState(QString, BaseContestLog *);
-   void RotatorBearing(QString, BaseContestLog *);
-   void RotatorMaxAzimuth(QString, BaseContestLog *);
-   void RotatorMinAzimuth(QString, BaseContestLog *);
-   void RotatorAntennaName(QString, BaseContestLog *);
    void EditMatchContact(BaseContestLog *);
    void ScreenContactChanged(ScreenContact *, BaseContestLog *);
    void ReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);
@@ -51,8 +44,6 @@ signals:
    void ScrollToCountry(QString prefix, BaseContestLog *);
    void ScrollToDistrict(QString prefix, BaseContestLog *);
    void MatchStarting(BaseContestLog *);
-   void Op1Change(QString op1, BaseContestLog *);
-   void Op2Change(QString op2, BaseContestLog *);
    void ShowOperators();
    void XferPressed();
    void BandMapPressed();
@@ -81,13 +72,7 @@ public:
    static void SendMakeEntry(BaseContestLog *);
    static void SendNextUnfilled(BaseContestLog *);
    static void SendFormKey(unsigned int *, BaseContestLog *);
-   static void SendSetMode(QString, BaseContestLog *);
-   static void SendSetFreq(QString, BaseContestLog *);
-   static void SendRotatorState(QString, BaseContestLog *);
-   static void SendRotatorBearing(QString, BaseContestLog *c);
-   static void SendRotatorMaxAzimuth(QString, BaseContestLog *c);
-   static void SendRotatorMinAzimuth(QString, BaseContestLog *c);
-   static void SendRotatorAntennaName(QString, BaseContestLog *c);
+
    static void SendEditMatchContact(BaseContestLog *);
    static void SendScreenContactChanged(ScreenContact *, BaseContestLog *);
    static void SendReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);
@@ -96,8 +81,6 @@ public:
    static void SendScrollToCountry(QString prefix, BaseContestLog *);
    static void SendScrollToDistrict(QString prefix, BaseContestLog *);
    static void SendMatchStarting(BaseContestLog *);
-   static void SendOp1Change(QString op1, BaseContestLog *);
-   static void SendOp2Change(QString op2, BaseContestLog *);
    static void SendShowOperators();
    static void SendXferPressed();
    static void SendBandMapPressed();

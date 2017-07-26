@@ -3,22 +3,16 @@
 # Project created by QtCreator 2016-01-01T15:22:33
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
 
 QT       += core gui
 QT       += network
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += widgets
 
 TARGET = MqtChat
 TEMPLATE = app
 
-VERSION=0.5.0.0
 win32:RC_ICONS += ../minos.ico
-
-DEFINES += VERSION=\\\"$$VERSION\\\"
-
-
-CONFIG += c++11
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast

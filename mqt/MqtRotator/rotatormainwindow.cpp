@@ -12,12 +12,6 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
-
-
 #include "base_pch.h"
 #include "RPCCommandConstants.h"
 #include "rotatorCommonConstants.h"
@@ -43,6 +37,12 @@
 
 RotatorMainWindow *MinosRotatorForm;
 
+static QStringList presetShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
+                            QString("Ctrl+3"), QString("Ctrl+4"),
+                            QString("Ctrl+5"), QString("Ctrl+6"),
+                            QString("Ctrl+7"), QString("Ctrl+8"),
+                            QString("Ctrl+9"), QString("Ctrl+0")};
+
 
 RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     QMainWindow(parent), msg(0),
@@ -51,7 +51,9 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    enableTrace( "./TraceLog", "MqtRotator_" );
+    connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
+    stdinReader.start();
+
     createCloseEvent();
     MinosRotatorForm = this;
     connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
@@ -192,7 +194,14 @@ void RotatorMainWindow::logMessage( QString s )
         trace( s );
 }
 
-
+void RotatorMainWindow::onStdInRead(QString cmd)
+{
+    trace("Command read from stdin: " + cmd);
+    if (cmd.indexOf("ShowServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(true);
+    if (cmd.indexOf("HideServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(false);
+}
 
 void RotatorMainWindow::closeEvent(QCloseEvent *event)
 {

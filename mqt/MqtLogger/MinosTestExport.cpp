@@ -240,6 +240,30 @@ void MinosTestExport::exportOperators(QSharedPointer<QFile> expfd )
    }
 
 }
+void MinosTestExport::exportApps(QSharedPointer<QFile> expfd)
+{
+    RPCParamStruct * st = new RPCParamStruct;
+    makeHeader( st, 1 );
+
+    // This wants "useBundles"(?) and the bundle names selected
+    bool dirty = false;
+
+    ct->appRigControl.addIfDirty( st, "appRigControl", dirty );
+    ct->appBandMap.addIfDirty( st, "appBandMap", dirty );
+    ct->appRotator.addIfDirty( st, "appRotator", dirty );
+    ct->appVoiceKeyer.addIfDirty( st, "appVoiceKeyer", dirty );
+
+    if ( dirty )
+    {
+       sendRequest( expfd, "MinosApps", st );
+       stanzaCount++;
+    }
+    else
+    {
+       delete st;
+    }
+}
+
 void MinosTestExport::exportBundles( QSharedPointer<QFile> expfd )
 {
    RPCParamStruct * st = new RPCParamStruct;
@@ -251,6 +275,7 @@ void MinosTestExport::exportBundles( QSharedPointer<QFile> expfd )
    ct->entryBundleName.addIfDirty( st, "entryBundle", dirty );
    ct->QTHBundleName.addIfDirty( st, "QTHBundle", dirty );
    ct->stationBundleName.addIfDirty( st, "stationBundle", dirty );
+   ct->appBundleName.addIfDirty( st, "appBundle", dirty );
    ct->VHFContestName.addIfDirty(st, "VHFContestName", dirty );
 
    if ( dirty )
@@ -370,6 +395,7 @@ int MinosTestExport::exportAllDetails(QSharedPointer<QFile> minosContestFile, bo
    exportStation( minosContestFile );
    exportCurrent( minosContestFile );
    exportOperators( minosContestFile );
+   exportApps(minosContestFile);
    exportBundles( minosContestFile );
 
    return stanzaCount;
@@ -395,6 +421,7 @@ int MinosTestExport::exportTest( QSharedPointer<QFile> expfd, int mindump, int m
    exportStation( expfd );
    exportCurrent( expfd );
    exportOperators( expfd );     // not right... we need to log op changes
+   exportApps(expfd);
    exportBundles( expfd );
 
    bool inDump = false;

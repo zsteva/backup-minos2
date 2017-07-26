@@ -30,6 +30,7 @@ private:
 
     QTimer SyncTimer;
 
+    StdInReader stdinReader;
     QVector<Server> serverList;
 
     virtual void closeEvent(QCloseEvent *event) override;
@@ -44,6 +45,7 @@ private:
 
 private slots:
     void SyncTimerTimer( );
+    void onStdInRead(QString);
 
     void on_SendButton_clicked();
 

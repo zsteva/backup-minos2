@@ -19,17 +19,26 @@ ControlMain::ControlMain(QWidget *parent) :
     monitor(parent),
     ui(new Ui::ControlMain)
 {
-    enableTrace( "./TraceLog", "MinosControl_" );
-    createCloseEvent();
-
     LineSet *ls = LineSet::GetLineSet();
     ls->lsLog = LineLog;
     connect(ls, SIGNAL(linesChanged()), this, SLOT(linesChangedEvent()));
 
     controlMain = this;
     ui->setupUi(this);
+
+    createCloseEvent();
+
+    QSettings settings;
+    QByteArray geometry = settings.value("geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
+
+
+    connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
+    stdinReader.start();
+
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::controlApp);
 
     connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(controlClientCallback(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(controlServerCallback(bool,QSharedPointer<MinosRPCObj>,QString)));
@@ -39,8 +48,15 @@ ControlMain::ControlMain(QWidget *parent) :
     connect(&formShowTimer, SIGNAL(timeout()), this, SLOT(on_formShown()));
     formShowTimer.start(100);
 
-    rpc->setAppName(rpcConstants::controlApp);
 
+}
+void ControlMain::onStdInRead(QString cmd)
+{
+    trace("Command read from stdin: " + cmd);
+    if (cmd.indexOf("ShowServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(true);
+    if (cmd.indexOf("HideServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(false);
 
 }
 void ControlMain::on_formShown( )
@@ -68,6 +84,26 @@ void ControlMain::closeEvent(QCloseEvent * event)
 {
     monitor.closeDown();
     QWidget::closeEvent(event);
+}
+void ControlMain::moveEvent(QMoveEvent * event)
+{
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
+    QWidget::moveEvent(event);
+}
+void ControlMain::resizeEvent(QResizeEvent * event)
+{
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
+    QWidget::resizeEvent(event);
+}
+void ControlMain::changeEvent( QEvent* e )
+{
+    if( e->type() == QEvent::WindowStateChange )
+    {
+        QSettings settings;
+        settings.setValue("geometry", saveGeometry());
+    }
 }
 void ControlMain::LogTimerTimer( )
 {

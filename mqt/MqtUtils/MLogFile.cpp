@@ -8,7 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 
-#include "XMPP_pch.h"
+#include "mqtUtils_pch.h"
 #include "fileutils.h"
 
 QMutex CsGuard::m_mutex(QMutex::Recursive);

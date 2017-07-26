@@ -120,6 +120,7 @@ void KeyerConfigure::SetKeyers( TiXmlElement *e )
          int voxHangTime;
          int pipVolume;
          int ClipRecord;
+         int filterCorner;
 
          if ( GetStringAttribute( c, "name", name ) == TIXML_SUCCESS )
          {
@@ -135,10 +136,11 @@ void KeyerConfigure::SetKeyers( TiXmlElement *e )
             GetIntAttribute( c, "playPTTDelay", PlayPTTDelay, 0 );
             GetIntAttribute( c, "voxHangTime", voxHangTime, 0 );
             GetIntAttribute( c, "clipRecord", ClipRecord, 0 );
+            GetIntAttribute( c, "filterCorner", filterCorner, 0 );
 
             KeyerConfig k( name, sampleRate, PipTone, pipVolume, PipLength, EnablePip, StartDelay,
                            AutoRepeatDelay, EnableAutoRepeat, PipStartDelay, PlayPTTDelay, voxHangTime,
-                           ClipRecord );
+                           ClipRecord, filterCorner );
             keyermap[ name ] = k;
          }
       }

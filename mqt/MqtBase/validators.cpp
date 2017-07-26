@@ -210,7 +210,6 @@ bool Validator::validNumber( const QString &str, bool trailingAlphaAllowed)
    bool NonZ = false;
    bool invCharFound = false;
 
-// bool zallowed = false, bool zerror = true )
    for ( i = 0; i < maxi; i++ )
    {
       if (str[i] != ' ' && !str[ i ].isDigit())
@@ -250,19 +249,19 @@ bool Validator::validNumber( const QString &str, bool trailingAlphaAllowed)
 }
 /*static*/bool Validator::validateRST(  const QString &t )
 {
-   int l = t.size();
+   int sz = t.size();
    bool picvalid = false;
-   if ( l >= 1 )
+   if ( sz >= 1 )
    {
       if ( strchr( " 54321", t[ 0 ].toLatin1() ) )
       {
-         if ( l >= 2 )
+         if ( sz >= 2 )
          {
-            if ( strchr( " 987654321", t[ 0 ].toLatin1() ) )
+            if ( strchr( " 987654321", t[ 1 ].toLatin1() ) )
             {
-               if ( l >= 3 )
+               if ( sz >= 3 )
                {
-                  if ( strchr( " 987654321A", t[ 0 ].toLatin1() ) )
+                  if ( strchr( " 987654321A", t[ 2 ].toLatin1() ) )
                   {
                      picvalid = true;
                   }
@@ -280,13 +279,13 @@ bool Validator::validNumber( const QString &str, bool trailingAlphaAllowed)
    if ( picvalid )
    {
       // must be more than one digit in a RST
-      int rst = t.toInt();
+      int rst = atoi( t.toLatin1().data() );
       if ( rst < 10 )
          picvalid = false;
 
       // allow strength 0 to be typed, but it is still an error!
 
-      if (l > 1 && t[ 1 ] == '0' )
+      if (sz > 1 && t[ sz - 1 ] == '0' )
          picvalid = false;
    }
    return picvalid;
@@ -299,11 +298,6 @@ bool ValidatedControl::valid( validTypes cmd )
 {
    if ( wc->isVisible() )
    {
-      /*
-            if ( cmd == cmValid )
-               return (validator.GetStatus());
-            else
-      */
       if ( cmd == cmValidStatus )
       {
          return tIfValid;

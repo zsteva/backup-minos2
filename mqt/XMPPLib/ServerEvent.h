@@ -16,8 +16,5 @@ extern QString makeUuid();
 extern QString getServerId();
 extern void makeServerEvent( bool create );
 extern bool checkServerReady();
-extern void makeServerShowEvent( );
-extern bool getShowServers();
-extern void setShowServers(bool state);
 #endif
 

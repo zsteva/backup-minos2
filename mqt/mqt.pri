@@ -1,0 +1,3 @@
+VERSION=0.6.0.0
+DEFINES += VERSION=\\\"$$VERSION\\\"
+CONFIG += c++11

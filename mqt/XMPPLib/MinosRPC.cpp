@@ -1,10 +1,21 @@
 #include "MinosRPC.h"
+#include <QProcessEnvironment>
 
 /*static*/ MinosRPC *MinosRPC::rpc = 0;
 
-MinosRPC::MinosRPC():
+MinosRPC::MinosRPC(const QString &defaultName, bool useEnvVar):
     connected(false), subscribed(false)
 {
+    QString rpcName = defaultName;
+    if (useEnvVar)
+    {
+        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+        rpcName = env.value("MQTRPCNAME", defaultName);
+
+        trace("Value of MQTRPCNAME for " + defaultName + " is " + rpcName);
+    }
+    setAppName(rpcName);
+
     connect(&connectTimer, SIGNAL(timeout()), this, SLOT(on_connectedTimeout()));
     connectTimer.start(100);
 }

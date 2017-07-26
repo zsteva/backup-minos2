@@ -3,14 +3,15 @@
 # Project created by QtCreator 2015-12-31T18:31:13
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
 
-QT       -= gui
+QT       += core gui
+QT       += widgets
+QT       += network
 
 TARGET = MqtUtils
 TEMPLATE = lib
 CONFIG += staticlib
-
-CONFIG += c++11
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
@@ -18,11 +19,22 @@ else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -
 
 SOURCES += \
     fileutils.cpp \
-    ConfigFile.cpp
+    ConfigFile.cpp \
+    AppStartup.cpp \
+    StdInReader.cpp \
+    MLogFile.cpp \
+    MTrace.cpp \
+    LogEvents.cpp
 
 HEADERS += \
     fileutils.h \
-    ConfigFile.h
+    ConfigFile.h \
+    AppStartup.h \
+    StdInReader.h \
+    MLogFile.h \
+    MTrace.h \
+    LogEvents.h \
+    mqtUtils_pch.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

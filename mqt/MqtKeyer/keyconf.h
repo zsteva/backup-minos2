@@ -44,14 +44,15 @@ class KeyerConfig
       int pipVolume;
       int pipLength;
       int clipRecord;
+      int filterCorner;
 
       KeyerConfig()
       {}
       KeyerConfig( const QString &name, int rate, int pipTone, int pipVolume, int pipLength, bool enablePip, int startDelay,
-                   int autoRepeatDelay, bool enableAutoRepeat, int pipStartDelay, int playPTTDelay, int voxHangTime, int clipRecord )
+                   int autoRepeatDelay, bool enableAutoRepeat, int pipStartDelay, int playPTTDelay, int voxHangTime, int clipRecord, int filterCorner )
             : name( name ), type( ektVoiceKeyer ), sampleRate(rate), pipTone( pipTone ), enablePip( enablePip ), startDelay( startDelay ),
             autoRepeatDelay( autoRepeatDelay ), enableAutoRepeat( enableAutoRepeat ), pipStartDelay( pipStartDelay ), playPTTDelay( playPTTDelay ),
-            voxHangTime( voxHangTime ), pipVolume( pipVolume ), clipRecord( clipRecord ), pipLength( pipLength )
+            voxHangTime( voxHangTime ), pipVolume( pipVolume ), clipRecord( clipRecord ), pipLength( pipLength ), filterCorner(filterCorner)
       {}
 }
 ;

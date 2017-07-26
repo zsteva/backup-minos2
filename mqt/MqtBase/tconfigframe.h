@@ -3,12 +3,14 @@
 
 #include <QFrame>
 #include <QTimer>
+#include <QVector>
 
 namespace Ui {
 class TConfigFrame;
 }
 
 typedef void ( *ConfigCloseCallBack ) ( QWidget *w );
+class ConfigElementFrame;
 
 class TConfigFrame : public QFrame
 {
@@ -35,17 +37,21 @@ private slots:
 
     void on_SetButton_clicked();
 
-    void on_ClearAllButton_clicked();
-
-    void on_ModifyButton_clicked();
-
     void on_CancelButton_clicked();
 
     void on_autoStartCheckBox_clicked();
 
+    void on_OKButton_clicked();
+
+    void on_newElementButton_clicked();
+
 private:
     Ui::TConfigFrame *ui;
     QWidget *parent;
+    QVector<ConfigElementFrame *> elementFrames;
+
     ConfigCloseCallBack closeCb;
+
+    void saveAll();
 };
 #endif // TTCONFIGFRAME_H

@@ -8,6 +8,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 #include "XMPP_pch.h"
+#include "tinyxml.h"
+#include "TinyUtils.h"
 
 void dispatchResponse( RPCDispatcher *RPCDisp, XStanza *xs )
 {

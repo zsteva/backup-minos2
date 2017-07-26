@@ -190,8 +190,7 @@ class PublishedKey: public Published
       PublishedKey();
 
       QString server;  // published from server
-      QString client;  // published from client - should we combine client and server into MinosId?
-                           // or is this Published::pubId ?
+      QString client;  // not used at the moment, but it should be?
       QString key;
       QString value;
       PublishState state;
@@ -248,12 +247,14 @@ void Subscriber::SendTo ( const PublishedKey &pk )
 
    // local - no server
    QSharedPointer<RPCParam>sServer(new RPCStringParam( "" ));
+   QSharedPointer<RPCParam>sPubId(new RPCStringParam( pk.getPubId() ));
    QSharedPointer<RPCParam>sCategory(new RPCStringParam( pk.getPubCat() ->getCategory() ));
    QSharedPointer<RPCParam>sKey(new RPCStringParam( pk.getPubKey() ));
    QSharedPointer<RPCParam>sValue(new RPCStringParam( pk.getPubValue() ));
    QSharedPointer<RPCParam>sState(new RPCIntParam( pk.getPubState() ));
 
    st->addMember( sServer, "Server" );
+   st->addMember( sPubId, "Publisher" );
    st->addMember( sCategory, "Category" );
    st->addMember( sKey, "Key" );
    st->addMember( sValue, "Value" );
@@ -271,12 +272,14 @@ void RemoteSubscriber::SendTo ( const PublishedKey &pk )
 
    // server is remote server name (as published)
    QSharedPointer<RPCParam>sServer(new RPCStringParam( pk.getServer() ));
+   QSharedPointer<RPCParam>sPubId(new RPCStringParam( pk.getPubId() ));
    QSharedPointer<RPCParam>sCategory(new RPCStringParam( pk.getPubCat() ->getCategory() ));
    QSharedPointer<RPCParam>sKey(new RPCStringParam( pk.getPubKey() ));
    QSharedPointer<RPCParam>sValue(new RPCStringParam( pk.getPubValue() ));
    QSharedPointer<RPCParam>sState(new RPCIntParam( pk.getPubState() ));
 
    st->addMember( sServer, "Server" );
+   st->addMember( sPubId, "Publisher" );
    st->addMember( sCategory, "Category" );
    st->addMember( sKey, "Key" );
    st->addMember( sValue, "Value" );
@@ -307,11 +310,13 @@ void ServerSubscriber::SendTo ( const PublishedKey &pk )
    {
       // sCategory = 0;
    }
+   QSharedPointer<RPCParam>sPubId(new RPCStringParam( pk.getPubId() ));
    QSharedPointer<RPCParam>sKey(new RPCStringParam( pk.getPubKey() ));
    QSharedPointer<RPCParam>sValue(new RPCStringParam( pk.getPubValue() ));
    QSharedPointer<RPCParam>sState(new RPCIntParam( pk.getPubState() ));
 
    st->addMember( sServer, "Server" );
+   st->addMember( sPubId, "Publisher" );
    st->addMember( sCategory, "Category" );
    st->addMember( sKey, "Key" );
    st->addMember( sValue, "Value" );
@@ -921,8 +926,10 @@ void TPubSubMain::serverNotifyCallback(bool err, QSharedPointer<MinosRPCObj> mro
       QString category = an.getCategory();
       QString key = an.getKey();
       QString value = an.getValue();
+      QString publisherProgram = an.getPublisherProgram();
+      QString publisherServer = an.getPublisherServer();
       PublishState state = an.getState();
-      serverPublish( from, server, category, key, value, state );       // but we mustn't publish this back to any remote servers
+      serverPublish( /*from*/publisherProgram + "@" + publisherServer, server, category, key, value, state );       // but we mustn't publish this back to any remote servers
       // even if they ARE subscribed
       mro->clearCallArgs();
       QSharedPointer<RPCParam>st(new RPCParamStruct);

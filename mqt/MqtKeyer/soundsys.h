@@ -36,11 +36,26 @@ public:
     virtual void run() Q_DECL_OVERRIDE;
 
 };
+class LPFilter
+{
+    int mNumChannels;
+    // past data
+    double mZx[4];
+    double mZy[4];
+    // filter coefficients
+    double a0;
+    double a1;
+    double a2;
+    double b1;
+    double b2;
+public:
+    LPFilter(){}
+    void initialise(int channels, double corner, double sampleRate);
+    inline double filterSample (const double inSample, const int channel);
+};
 class RtAudioSoundSystem: public QObject
 {
     Q_OBJECT
-
-    chunkware_simple::SimpleCompRms compressor;
 
 private slots:
 
@@ -54,6 +69,7 @@ public:
     virtual bool initialise( QString &errmess );
 
     virtual int setRate(int rate);
+    virtual void setFilter(int cf);
 
     virtual bool startDMA( bool play, const QString &fname );
     virtual void stopDMA();
@@ -89,6 +105,11 @@ public:
 private:
 
     RtAudio *audio;
+
+    chunkware_simple::SimpleCompRms compressor;
+    LPFilter lpFilter;
+
+    int filterCorner;
 
     // internal values
     unsigned int sampleRate;

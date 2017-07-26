@@ -3,28 +3,17 @@
 # Project created by QtCreator 2016-03-26T21:27:38
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
 
 QT       += core gui network widgets serialport
-
 
 TARGET = MqtRotator
 TEMPLATE = app
 
-DEFINES += VERSION=\\\"$$VERSION\\\"
-
-
-CONFIG += c++11
+win32:RC_ICONS += antenna_icon.ico
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
-
-win32: INCLUDEPATH += C:/Projects/hamlib-w32-3.1/include
-
-win32: LIBS += -LC:/Projects/hamlib-w32-3.1/lib/gcc/ -llibhamlib
-
-win32-g++:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
-else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
-
 
 DEFINES += TIXML_USE_STL
 
@@ -59,7 +48,13 @@ FORMS    += \
     editpresetsdialog.ui \
     rotatormainwindow.ui
 
-RC_FILE = MqtRotator.rc
+win32: INCLUDEPATH += C:/Projects/hamlib-w32-3.1/include
+
+win32-g++: LIBS += -LC:/Projects/hamlib-w32-3.1/lib/gcc/ -llibhamlib
+msvc: LIBS += -LC:/Projects/hamlib-w32-3.1/lib/msvc/ -llibhamlib-2
+
+win32-g++:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
+else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/release/ -lMqtBase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtBase/debug/ -lMqtBase

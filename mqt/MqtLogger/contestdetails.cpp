@@ -5,7 +5,6 @@
 #include "tentryoptionsform.h"
 #include "tminoshelpform.h"
 #include "tcalendarform.h"
-
 #include "tlogcontainer.h"
 
 #include "contestdetails.h"
@@ -80,6 +79,7 @@ int ContestDetails::exec()
     ui->QTHBundleFrame->initialise( this, "QTH", &contest->QTHBundle, &contest->QTHBundleName );
     ui->StationBundleFrame->initialise(this,  "Station", &contest->stationBundle, &contest->stationBundleName );
     ui->EntryBundleFrame->initialise(this,  "Entry", &contest->entryBundle, &contest->entryBundleName );
+    ui->AppsBundleFrame->initialise(this,  "Apps", &contest->appBundle, &contest->appBundleName );
     ui->ContestNameSelected->setText(contest->VHFContestName.getValue());
 
     contest->initialiseINI();

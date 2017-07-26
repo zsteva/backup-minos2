@@ -3,15 +3,15 @@
 # Project created by QtCreator 2015-11-27T19:15:23
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
 
+QT       += core gui
+QT       += widgets
 QT       += network
-QT       -= gui
 
 TARGET = XMPPLib
 TEMPLATE = lib
 CONFIG += staticlib
-
-CONFIG += c++11
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
@@ -24,14 +24,10 @@ DEFINES += TIXML_USE_STL
 
 SOURCES += \
     Dispatcher.cpp \
-    LogEvents.cpp \
-    MLogFile.cpp \
-    MTrace.cpp \
     PortIds.cpp \
     PubSubClient.cpp \
     RPCPubSub.cpp \
     ServerEvent.cpp \
-    TinyUtils.cpp \
     XMPPEvents.cpp \
     XMPPRPCObj.cpp \
     XMPPRPCParams.cpp \
@@ -41,14 +37,10 @@ SOURCES += \
 
 HEADERS += \
     Dispatcher.h \
-    LogEvents.h \
-    MLogFile.h \
-    MTrace.h \
     PortIds.h \
     PubSubClient.h \
     RPCPubSub.h \
     ServerEvent.h \
-    TinyUtils.h \
     XMPP_pch.h \
     XMPPEvents.h \
     XMPPRPCObj.h \

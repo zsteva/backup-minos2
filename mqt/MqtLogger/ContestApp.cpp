@@ -142,7 +142,8 @@ bool TContestApp::initialise()
 #endif
    }
    // delay opening the trace file until we know where to put it
-   enableTrace( "./TraceLog", "MinosLogger_" );
+   enableTrace( "./TraceLog", "MinosQtLogger_" );
+
    // we need to open our bundles...
    // and we need to discover the defaults from the initial splash screen
 
@@ -159,6 +160,7 @@ bool TContestApp::initialise()
    BundleFile::bundleFiles[ epENTRYPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epENTRYPROFILE ) );
    BundleFile::bundleFiles[ epQTHPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epQTHPROFILE ) );
    BundleFile::bundleFiles[ epSTATIONPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epSTATIONPROFILE ) );
+   BundleFile::bundleFiles[ epAPPPFROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epAPPPFROFILE ) );
    BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLOCSQUARESPROFILE ) );
 
    //----------------------------------
@@ -212,6 +214,11 @@ bool TContestApp::initialise()
    QString stationfile;
    loggerBundle.getStringProfile( elpStationFile, stationfile );
    BundleFile::bundleFiles[ epSTATIONPROFILE ] ->openProfile( stationfile, "Station details" );
+   //----------------------------------
+
+   QString appfile;
+   loggerBundle.getStringProfile( elpAppFile, appfile );
+   BundleFile::bundleFiles[ epAPPPFROFILE ] ->openProfile( appfile, "aps" );
    //----------------------------------
 
    QString locsfile;

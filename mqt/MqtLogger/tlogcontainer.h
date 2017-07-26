@@ -35,6 +35,8 @@ public:
     QLabel *sblabel2;
 
     TSingleLogFrame *findContest( const QString &pubname );
+    TSingleLogFrame *findContest(BaseContestLog *ct );
+
     QString getDefaultDirectory( bool IsList );
 
     bool isShowOperators();
@@ -42,26 +44,6 @@ public:
     bool isScrollingContestTabs();
 
     void setCaption( QString );
-    void setMode( QString );
-    void setFreq( QString );
-
-    void setRotatorState( QString );
-    void setRotatorBearing( QString );
-    void setRotatorMaxAzimuth( QString);
-    void setRotatorMinAzimuth( QString);
-    void setRotatorAntennaName( QString );
-
-    void setBandMapLoaded();
-    bool isBandMapLoaded();
-    bool bandMapLoaded;
-
-    void setKeyerLoaded();
-    bool isKeyerLoaded();
-    bool keyerLoaded;
-
-    void setRotatorLoaded();
-    bool isRotatorLoaded();
-    bool rotatorLoaded;
 
     void getCurrSession();
     QStringList getSessions();
@@ -122,6 +104,7 @@ private:
     QAction *ShiftTabLeftAction;
     QAction *ShiftTabRightAction;
 
+    QAction *startConfigAction;
     QAction *LocCalcAction;
     QAction *AnalyseMinosLogAction;
     QAction *CorrectDateTimeAction;
@@ -199,12 +182,22 @@ private slots:
 
     void menuLogsActionExecute();
 
+    void StartConfigActionExecute();
+
     void on_ContestPageControl_currentChanged(int index);
     void on_ContestPageControl_tabBarDoubleClicked(int index);
     void on_ContestPageControl_customContextMenuRequested(const QPoint &pos);
 
     void on_TimeDisplayTimer( );
     void on_ReportOverstrike(bool , BaseContestLog * );
+
+signals:
+    void sendKeyerPlay( int fno );
+    void sendKeyerRecord( int fno );
+    void sendKeyerTone();
+    void sendKeyerTwoTone();
+    void sendKeyerStop();
+
 };
 extern TLogContainer *LogContainer;
 

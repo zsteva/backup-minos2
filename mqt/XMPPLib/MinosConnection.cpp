@@ -70,6 +70,7 @@ bool XMPPInitialise( const QString &pmyId )
       logMessage( "Minos", "XMPP Already initialised" );
       return false;
    }
+   logMessage( "Minos", "XMPP minosAppConnection initialised with " + myId );
    MinosAppConnection::minosAppConnection = new MinosAppConnection( myId );
 
    MinosAppConnection::minosAppConnection->startConnection();

@@ -1,6 +1,7 @@
 #include "logger_pch.h"
 #include <QDesktopServices>
 
+#include "StartConfig.h"
 #include "ConfigFile.h"
 #include "taboutbox.h"
 #include "ui_taboutbox.h"
@@ -57,15 +58,11 @@ int TAboutBox::exec()
     if ( !started && doStartup )
     {
        // auto start on first run, but only if we gave that option
-       ui->ConfigFrame->start();
+       MinosConfig::getMinosConfig( 0 ) ->start();
     }
     return ret;
 }
-void closeCallback(QWidget *w)
-{
-    TAboutBox *tab = dynamic_cast<TAboutBox *>(w);
-    tab->reject();
-}
+
 TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
     QDialog(parent),
     ui(new Ui::TAboutBox),
@@ -79,7 +76,6 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
-    ui->ConfigFrame->initialise(this, &::closeCallback, false);
     ui->PageControl1->setCurrentWidget(ui->AboutTabSheet);
 
     ui->AboutMemo->setText(QString("<h1>Welcome to Minos 2 Version ") + VERSION + " Beta" + "</h1><br><a href=\"http://minos.sourceforge.net/\">http://minos.sourceforge.net</a>");
@@ -88,24 +84,12 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
 
     ui->MinosMemo->setText(MinosText);
 
-    if ( !FileExists( ConfigFile::getConfigIniName() ) /*|| !onStartup || checkServerReady()*/ )
+    ui->ExitButton->setVisible(onStartup);
+    ui->LoggerOnlyButton->setVisible(onStartup);
+
+    if (  onStartup && !checkServerReady() )
     {
-       ui->AutoStartTabSheet->setVisible(false);
-       ui->LoggerOnlyButton->setVisible(false);
-       ui->ExitButton->setVisible(onStartup);
-    }
-    else
-    {
-        ui->ConfigFrame->setup(started);
-       if (  !onStartup || checkServerReady() )
-       {
-          ui->LoggerOnlyButton->setVisible(false); // as we are started we cannot now be logger only
-          ui->ExitButton->setVisible(false);
-       }
-       else
-       {
-          doStartup = true; // click the start button on form close
-       }
+        doStartup = true; // click the start button on form close
     }
 }
 
@@ -150,3 +134,9 @@ void TAboutBox::on_LoggerOnlyButton_clicked()
     accept();
 }
 
+
+void TAboutBox::on_AppsButton_clicked()
+{
+    StartConfig configBox( this);
+    configBox.exec();
+}
