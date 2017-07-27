@@ -10,7 +10,7 @@ QT       += core gui network widgets serialport
 TARGET = MqtRotator
 TEMPLATE = app
 
-win32:RC_ICONS += antenna_icon.ico
+win32:RC_ICONS += ../MinosRotator.ico
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
