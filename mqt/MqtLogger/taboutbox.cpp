@@ -82,6 +82,10 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
     ui->AboutMemo->setTextFormat(Qt::RichText);
     ui->AboutMemo->setTextInteractionFlags(Qt::TextBrowserInteraction);
 
+    ui->CreditsMemo->setTextFormat(Qt::RichText);
+    ui->CreditsMemo->setText(QString("<h2>Credits</h2><br>Mike Goodey G0GJV; David Balharrie M0DGB/G8FKH; Neil Yorke M0NKE; Dave Sergeant G3YMC;"
+                                     "Ken Punshon G4APJ"));
+
     ui->MinosMemo->setText(MinosText);
 
     ui->ExitButton->setVisible(onStartup);
