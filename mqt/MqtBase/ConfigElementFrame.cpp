@@ -75,19 +75,21 @@ void ConfigElementFrame::on_programBrowseButton_clicked()
     QDir cdir(GetCurrentDir());
     QString InitialDir = ExtractFileDir(ui->programNameEdit->text());
 
-    // how do we search for executable files on Linux?
-    // This MIGHT work
-    QString Filter = "Executable Files (*.exe);;"
-                     "All Files (*.*)" ;
-
     QFileDialog dialog(this, "Minos 2 Component Program", InitialDir);
 #if QT_VERSION >= 0x050600
     const QStringList schemes = QStringList(QStringLiteral("file"));
 
     dialog.setSupportedSchemes(schemes);
 #endif
+
+#ifdef Q_OS_WIN
+    QString Filter = "Executable Files (*.exe);;"
+                     "All Files (*.*)" ;
     dialog.setNameFilter(Filter);
-    dialog.setFilter(QDir::Files | QDir::Executable);
+#else
+    dialog.setFilter(QDir::AllDirs | QDir::Files | QDir::Executable);
+#endif
+
     dialog.setFileMode(QFileDialog::ExistingFile);
 
     if (dialog.exec() == QDialog::Accepted)
