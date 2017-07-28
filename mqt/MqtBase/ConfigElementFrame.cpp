@@ -87,7 +87,7 @@ void ConfigElementFrame::on_programBrowseButton_clicked()
                      "All Files (*.*)" ;
     dialog.setNameFilter(Filter);
 #else
-    dialog.setFilter(QDir::AllDirs | QDir::Files | QDir::Executable);
+    dialog.setFilter(QDir::AllDirs | QDir::Files | QDir::Dirs /*| QDir::Executable*/); //executable doesn't seem to work
 #endif
 
     dialog.setFileMode(QFileDialog::ExistingFile);
