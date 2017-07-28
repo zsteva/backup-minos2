@@ -1055,6 +1055,7 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
 
 void RotatorMainWindow::stopButton()
 {
+
     logMessage("StopButton");
     if (ui->rot_left_button->isChecked())
     {
@@ -1067,14 +1068,15 @@ void RotatorMainWindow::stopButton()
         //return;
     }
 
-    stopRotation(true);
+
+    stopRotation(rotator->get_serialConnected());
 
 
 }
 
 void RotatorMainWindow::stop_rotation()
 {
-    stopRotation(true);
+    stopRotation(rotator->get_serialConnected());
 }
 
 void RotatorMainWindow::stopRotation(bool sendStop)
@@ -1122,6 +1124,11 @@ void RotatorMainWindow::rotateCW(bool toggle)
 {
     cwCcwCmdflag = true;
     logMessage("Start rotateCW");
+    if (!rotator->get_serialConnected())
+    {
+        logMessage("rotateCW - Rotator not connected!");
+        return;
+    }
 
     if (toggle)
     {
@@ -1196,6 +1203,13 @@ void RotatorMainWindow::rotateCCW(bool toggle)
 {
     cwCcwCmdflag = true;
     logMessage("Start rotateCCW");
+    // check connected
+    if (!rotator->get_serialConnected())
+    {
+        logMessage("rotateCCW - Rotator not connected!");
+        return;
+    }
+
 
     if (toggle)
     {
@@ -1253,6 +1267,7 @@ void RotatorMainWindow::rotateCCW(bool toggle)
             }
 
         }
+
 
     }
 
