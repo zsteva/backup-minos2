@@ -197,13 +197,13 @@ void TSettingsEditDlg::on_NewSectionButton_clicked()
 {
     getDetails();  // save what is set already
     QString Value = "new section";
-//    if ( enquireDialog( this, "Please give a name for the new section", Value ) )
-    {
-       bundle->newSection( Value );
-       bundle->openSection( Value );
-       showSections(Value);
-       showDetails();
-    }
+
+    bundle->newSection( Value );
+    bundle->openSection( Value );
+    showSections(Value);
+    showDetails();
+
+    on_renameButton_clicked();
 }
 
 void TSettingsEditDlg::on_CopyButton_clicked()
