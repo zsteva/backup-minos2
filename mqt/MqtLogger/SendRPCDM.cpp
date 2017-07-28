@@ -28,12 +28,12 @@
 TSendDM::TSendDM(QWidget* Owner , LoggerContestLog *ct)
       : QObject( Owner )
 {
-    MinosConfig *config = MinosConfig::getMinosConfig(Owner);
+    MinosConfig *config = MinosConfig::getMinosConfig();
 
-    rigServerConnectable = config->getApp(atRigControl, ct->appRigControl.getValue());
-    keyerServerConnectable = config->getApp(atKeyer, ct->appVoiceKeyer.getValue());
-    bandMapServerConnectable = config->getApp(atBandMap, ct->appBandMap.getValue());
-    rotatorServerConnectable = config->getApp(atRotator, ct->appRotator.getValue());
+    rigServerConnectable = config->getApp(ct->appRigControl.getValue());
+    keyerServerConnectable = config->getApp(ct->appVoiceKeyer.getValue());
+    bandMapServerConnectable = config->getApp(ct->appBandMap.getValue());
+    rotatorServerConnectable = config->getApp(ct->appRotator.getValue());
 
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));

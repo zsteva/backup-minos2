@@ -20,12 +20,19 @@
 ======================================================================================*/
 
 #include "base_pch.h"
+#include <QSpacerItem>
+#include <QGridLayout>
 
 //---------------------------------------------------------------------------
 void mShowMessage( const QString &mess, QWidget *Owner )
 {
     QMessageBox msgBox(Owner);
     msgBox.setText( mess );
+
+    QSpacerItem* horizontalSpacer = new QSpacerItem(Owner->width()*2/3, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    QGridLayout* layout = dynamic_cast<QGridLayout*>(msgBox.layout());
+    if (layout)
+        layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
     msgBox.exec();
 }
 

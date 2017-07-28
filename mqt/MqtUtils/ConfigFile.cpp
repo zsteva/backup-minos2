@@ -8,73 +8,35 @@
 //---------------------------------------------------------------------------
 
 bool terminated = false;
-bool configExists = false;
-static QStringList runTypeList{"None", "RunLocal", "ConnectLocal", "ConnectServer"};
-static QStringList appTypeList{
-    "None",
-    "AppStarter",
-    "BandMap",
-    "Chat",
-    "Keyer",
-    "LineControl",
-    "Logger",
-    "Monitor",
-    "Other",
-    "RigControl",
-    "Rotator",
-    "RotatorControl",
-    "Server"
-};
-static QStringList defaultAppList{
-    "",
-    "./mqtAppStarter",
-    "./mqtBandMap",
-    "./mqtChat",
-    "./mqtKeyer",
-    "./mqtControl",
-    "./mqtLogger",
-    "./mqtMonitor",
-    "",
-    "./mqtRigControl",
-    "./mqtRotator",
-    "./mqtRotatorControl",
-    "./mqtServer"
-};
 
-QString getRunType(RunType r)
+QString RunTypeNone("None");
+QString RunLocal("RunLocal");
+QString ConnectLocal("ConnectLocal");
+QString ConnectServer("ConnectServer");
+
+bool checkGoodRunType(const QString &s)
 {
-    QString res;
-    if (r < rtMax)
-        res = runTypeList[r];
-    return res;
-}
-QString getAppType(AppType r)
-{
-    QString res;
-    if (r < atMax)
-        res = appTypeList[r];
-    return res;
-}
-QString getDefaultApp(AppType r)
-{
-    QString res;
-    if (r < atMax)
-        res = defaultAppList[r];
-#ifdef Q_OS_WIN
-    if (!res.isEmpty())
-        res += ".exe";
-#endif
-    return res;
+    if (s.compare(RunTypeNone) == 0)
+        return true;
+    if (s.compare(RunLocal) == 0)
+        return true;
+    if (s.compare(ConnectLocal) == 0)
+        return true;
+    if (s.compare(ConnectServer) == 0)
+        return true;
+
+    return false;
 }
 
 /*static*/
 MinosConfig *MinosConfig::thisDM = 0;
 /*static*/
-MinosConfig *MinosConfig::getMinosConfig(QWidget *Owner )
+MinosConfig *MinosConfig::getMinosConfig()
 {
    if ( !thisDM )
    {
-      thisDM = new MinosConfig( Owner );
+      thisDM = new MinosConfig();
+      thisDM->initialise();
    }
    return thisDM;
 }
@@ -82,11 +44,6 @@ MinosConfig *MinosConfig::getMinosConfig(QWidget *Owner )
 QString MinosConfig::getConfigIniName()
 {
     return "./Configuration/MinosConfig.ini";
-}
-/*static*/
-bool MinosConfig::doesConfigExist()
-{
-    return FileExists( getConfigIniName());
 }
 /*static*/
 QString MinosConfig::getThisServerName()
@@ -101,22 +58,14 @@ QString MinosConfig::getThisServerName()
     }
     return serverName;
 }
-/*static*/
-QStringList MinosConfig::getAppTypes()
-{
-    return appTypeList;
-}
 
 //---------------------------------------------------------------------------
-TConfigElement::TConfigElement()
-      : runType( rtNone ), appType(atOther), runner(0), stopping(false)
+RunConfigElement::RunConfigElement()
+      : runner(0), stopping(false)
 {}
 //---------------------------------------------------------------------------
-bool TConfigElement::initialise( QSettings &config, QString sect )
+bool RunConfigElement::initialise( QSettings &config, QString sect )
 {
-    if (!configExists)
-        return false;
-
     name = sect;
 
     commandLine = config.value( sect + "/Program", "" ).toString().trimmed();
@@ -125,40 +74,24 @@ bool TConfigElement::initialise( QSettings &config, QString sect )
     rundir = config.value( sect + "/Directory", "" ).toString().trimmed();
     remoteApp = config.value(sect + "/RemoteApp", name).toString().trimmed();
 
-    QString S = config.value( sect + "/RunType", getRunType(rtNone) ) .toString().trimmed();
+    QString S = config.value( sect + "/RunType", "None" ) .toString().trimmed();
 
-    runType = rtNone;
-    for (int i = 0; i < rtMax; i++)
-    {
-        RunType rt = static_cast<RunType>(i);
-        if (S.compare(getRunType(rt), Qt::CaseInsensitive) == 0)
-        {
-            runType = rt;
-            break;
-        }
+    runType = S;
 
-    }
+    appType = config.value( sect + "/AppType", QString() ) .toString().trimmed();
 
-    S = config.value( sect + "/AppType", getAppType(atOther) ) .toString().trimmed();
+    AppConfigElement ace = MinosConfig::getMinosConfig()->getAppConfigElement(appType);
+    requires = ace.requires;
 
-    appType = atOther;
-    for (int i = 0; i < atMax; i++)
-    {
-        AppType at = static_cast<AppType>(i);
-        if (S.compare(getAppType(at), Qt::CaseInsensitive) == 0)
-        {
-            appType = at;
-            break;
-        }
-    }
     return true;
 }
-void TConfigElement::save(QSettings &config)
+void RunConfigElement::save(QSettings &config)
 {
     if (name.isEmpty())
     {
-        name = getAppType(appType);
+        name = appType;
     }
+
     if (name.compare("<Deleted>", Qt::CaseInsensitive) != 0)
     {
         config.setValue(name + "/Program", commandLine);
@@ -166,17 +99,17 @@ void TConfigElement::save(QSettings &config)
         config.setValue(name + "/Directory", rundir);
         config.setValue(name + "/Server", server);
         config.setValue(name + "/RemoteApp", remoteApp);
-        config.setValue(name + "/RunType", getRunType(runType));
-        config.setValue(name + "/AppType", getAppType(appType));
+        config.setValue(name + "/RunType", runType);
+        config.setValue(name + "/AppType", appType);
     }
 }
-Connectable TConfigElement::connectable()
+Connectable RunConfigElement::connectable()
 {
     Connectable res;
     res.appName = name;
     res.appType = appType;
     res.runType = runType;
-    if (runType == rtConnectServer)
+    if (runType == "ConnectServer")
     {
         res.serverName = server;
         res.remoteAppName = remoteApp;
@@ -189,9 +122,9 @@ Connectable TConfigElement::connectable()
     return res;
 }
 
-void TConfigElement::createProcess()
+void RunConfigElement::createProcess()
 {
-    if ( runType == rtRunLocal && !runner)
+    if ( runType == "RunLocal" && !runner)
     {
         runner = new QProcess(parent());
 
@@ -222,7 +155,7 @@ void TConfigElement::createProcess()
 
     }
 }
-void TConfigElement::stopProcess()
+void RunConfigElement::stopProcess()
 {
     if (runner)
     {
@@ -231,7 +164,7 @@ void TConfigElement::stopProcess()
     }
 }
 
-void TConfigElement::sendCommand(const QString & cmd)
+void RunConfigElement::sendCommand(const QString & cmd)
 {
     if (runner)
     {
@@ -240,12 +173,12 @@ void TConfigElement::sendCommand(const QString & cmd)
     }
 }
 
-void TConfigElement::on_started()
+void RunConfigElement::on_started()
 {
     trace(name + ":started");
 }
 
-void TConfigElement::on_finished(int err, QProcess::ExitStatus exitStatus)
+void RunConfigElement::on_finished(int err, QProcess::ExitStatus exitStatus)
 {
     trace(name + ":finished:" + QString::number(err) + ":" + QString::number(exitStatus));
     if (runner)
@@ -265,12 +198,12 @@ void TConfigElement::on_finished(int err, QProcess::ExitStatus exitStatus)
     }
 }
 
-void TConfigElement::on_error(QProcess::ProcessError error)
+void RunConfigElement::on_error(QProcess::ProcessError error)
 {
     trace(name + ":error:" + QString::number(error));
 }
 
-void TConfigElement::on_readyReadStandardError()
+void RunConfigElement::on_readyReadStandardError()
 {
     if (runner)
     {
@@ -279,7 +212,7 @@ void TConfigElement::on_readyReadStandardError()
     }
 }
 
-void TConfigElement::on_readyReadStandardOutput()
+void RunConfigElement::on_readyReadStandardOutput()
 {
     if (runner)
     {
@@ -289,41 +222,42 @@ void TConfigElement::on_readyReadStandardOutput()
 }
 
 //---------------------------------------------------------------------------
-MinosConfig::MinosConfig( QWidget* Owner )
-      : QObject( Owner )
+MinosConfig::MinosConfig( )
+    : QObject( 0 )
 {
-   if ( FileExists( getConfigIniName() ) )
-   {
-       configExists = true;
-       QSettings config(getConfigIniName(), QSettings::IniFormat);
-      QStringList lsect = config.childGroups();
+}
+void MinosConfig::initialise()
+{
+    buildAppConfigList();
+    QSettings config(getConfigIniName(), QSettings::IniFormat);
+    QStringList lsect = config.childGroups();
 
-      for ( int i = 0; i < lsect.count(); i++ )
-      {
-         QString sect = lsect[ i ].trimmed();
-         if ( sect.compare("Settings", Qt::CaseInsensitive ) == 0)
-         {
-             thisServerName = config.value( "Settings/ServerName", "" ).toString().trimmed();
+    for ( int i = 0; i < lsect.count(); i++ )
+    {
+        QString sect = lsect[ i ].trimmed();
+        if ( sect.compare("Settings", Qt::CaseInsensitive ) == 0)
+        {
+            thisServerName = config.value( "Settings/ServerName", "" ).toString().trimmed();
 
-             if ( thisServerName.size() == 0 )
-             {
-                 QString h = QHostInfo::localHostName();
-                 thisServerName = h;
-             }
+            if ( thisServerName.size() == 0 )
+            {
+                QString h = QHostInfo::localHostName();
+                thisServerName = h;
+            }
             autoStart = config.value( "Settings/AutoStart", false ).toBool();
             hideServers = config.value( "Settings/HideServers", false ).toBool();
-         }
-         else
-         {
-            QSharedPointer<TConfigElement> tce = QSharedPointer<TConfigElement>(new TConfigElement());
+        }
+        else
+        {
+            QSharedPointer<RunConfigElement> tce = QSharedPointer<RunConfigElement>(new RunConfigElement());
             if ( tce->initialise( config, sect ) )
             {
-               elelist.push_back( tce );
+                elelist.push_back( tce );
             }
-         }
-      }
-   }
+        }
+    }
 }
+
 //---------------------------------------------------------------------------
 MinosConfig::~MinosConfig()
 {
@@ -340,7 +274,7 @@ void MinosConfig::saveAll()
 
         config.clear();
 
-        for ( QVector <QSharedPointer<TConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
+        for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
         {
             (*i)->save(config);
         }
@@ -356,14 +290,9 @@ void MinosConfig::saveAll()
 }
 void MinosConfig::start()
 {
-   if ( !configExists )
-   {
-      return ;
-   }
    terminated = false;
-//   resetCloseEvent();
 
-   for ( QVector <QSharedPointer<TConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
+   for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
    {
        (*i)->createProcess();
    }
@@ -372,14 +301,9 @@ void MinosConfig::start()
 
 void MinosConfig::stop()
 {
-   if ( !configExists )
-   {
-      return ;
-   }
    terminated = true;
-//   signalCloseEvent();
 
-   for ( QVector <QSharedPointer<TConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
+   for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
    {
       if ( ( *i ) )
       {
@@ -410,7 +334,7 @@ void MinosConfig::setHideServers(bool s)
 {
     hideServers = s;
 
-    for ( QVector <QSharedPointer<TConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
+    for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
     {
         if (hideServers)
             (*i)->sendCommand("HideServers");
@@ -419,19 +343,139 @@ void MinosConfig::setHideServers(bool s)
     }
 }
 
-Connectable MinosConfig::getApp(AppType a, QString appName)
+Connectable MinosConfig::getApp(QString appName)
 {
     Connectable res;
-    for ( QVector <QSharedPointer<TConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
+    for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
     {
-        if ((*i)->appType == a)
+        if (appName.compare((*i)->name, Qt::CaseInsensitive) == 0)
         {
-            if (appName.compare((*i)->name, Qt::CaseInsensitive) == 0)
-            {
-                res = (*i)->connectable();
-                break;
-            }
+            res = (*i)->connectable();
+            break;
         }
     }
     return res;
+}
+
+QStringList MinosConfig::getAppTypes()
+{
+    QStringList apps;
+    for (int i = 0; i < appConfigList.size(); i++)
+    {
+        apps.append(appConfigList[i].appType);
+    }
+    apps.sort();
+    apps.removeDuplicates();
+    return apps;
+}
+void MinosConfig::buildAppConfigList()
+{
+    QSettings appConfig("./Configuration/AppConfig.ini", QSettings::IniFormat);
+    /*
+[BandMap]
+Path=./mqtBandMap
+Enabled=false
+Requires=Server
+Server=false
+
+   */
+    QStringList apps = appConfig.childGroups();
+    for (int i = 0; i < apps.size(); i++)
+    {
+        if (appConfig.value(apps[i] + "/Enabled", false).toBool())
+        {
+            AppConfigElement ac;
+
+            ac.appType = apps[i].trimmed();
+            ac.appPath = appConfig.value(apps[i] + "/Path").toString().trimmed();
+            ac.server = appConfig.value(apps[i] + "/Server").toBool();
+
+            // NB using comma in value give a string list! Single value will also go to list if desired
+            ac.requires = appConfig.value(apps[i] + "/Requires").toStringList();
+
+            for(auto& str : ac.requires)    // trim all elements of leading and trailing spaces
+                str = str.trimmed();
+
+            appConfigList.append(ac);
+        }
+    }
+
+}
+QString MinosConfig::checkConfig()
+{
+    QString reqErrs;
+
+    bool serverPresent = false;
+    for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
+    {
+        QSharedPointer<RunConfigElement> ele = (*i);
+        if (ele->appType == "Server" && ele->runType == RunLocal)
+        {
+            serverPresent = true;
+            break;
+        }
+    }
+    // Go through the configured elements, and check that their requirements are also present
+    for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
+    {
+        QSharedPointer<RunConfigElement> ele = (*i);
+
+        if (ele->runType == RunLocal)
+        {
+            if ( ele->requires.size() > 0)
+            {
+                // "Requires" elements must be present
+                foreach(QString req, ele->requires)
+                {
+                    if (req.isEmpty())
+                        continue;
+
+                    bool reqFound = false;
+                    for ( QVector <QSharedPointer<RunConfigElement> >::iterator j = elelist.begin(); j != elelist.end(); j++ )
+                    {
+                        if ((*j)->appType == req)
+                        {
+                            reqFound = true;
+                            continue;
+                        }
+                    }
+                    if (!reqFound)
+                    {
+                        reqErrs += ele->appType + " requires a local " + req + "\n\n";
+                    }
+                }
+            }
+            if (!FileExists(ele->commandLine))
+            {
+                reqErrs += ele->appType + " Executable path does not exist\n\n";
+            }
+            if (!FileExists(ele->rundir + "/Configuration/MinosConfig.ini"))
+            {
+                reqErrs += ele->appType + " Working directory is not valid - no Configuration/MinosConfig.ini\n\n";
+            }
+        }
+        if (ele->runType == ConnectServer)
+        {
+            // Server must be present
+            if (!serverPresent)
+            {
+                // Server required
+                reqErrs += ele->appType + " requires a local Server\n\n";
+            }
+        }
+    }
+    return reqErrs;
+}
+AppConfigElement MinosConfig::getAppConfigElement(QString appType)
+{
+    AppConfigElement ace;
+    for ( QVector <AppConfigElement >::iterator j = appConfigList.begin(); j != appConfigList.end(); j++ )
+    {
+        if ((*j).appType == appType)
+        {
+            ace = (*j);
+            break;
+        }
+    }
+    return ace;
 }

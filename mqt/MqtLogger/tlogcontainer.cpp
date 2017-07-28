@@ -59,32 +59,23 @@ TLogContainer::TLogContainer(QWidget *parent) :
     statusBar() ->addWidget( sblabel2, 2 );
 
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
-    MinosConfig *config = MinosConfig::getMinosConfig(parent);
+    MinosConfig *config = MinosConfig::getMinosConfig();
 
-    for ( QVector <QSharedPointer<TConfigElement> >::iterator i = config->elelist.begin(); i != config->elelist.end(); i++ )
+    QStringList servers;
+    for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = config->elelist.begin(); i != config->elelist.end(); i++ )
     {
         Connectable res = (*i)->connectable();
-        switch (res.appType)
-        {
-        case atRigControl:
-            rpc->subscribeRemote( res.serverName, rpcConstants::RigControlCategory );
-            break;
+        servers.append(res.serverName);
+    }
+    servers.sort();
+    servers.removeDuplicates();
 
-        case atKeyer:
-            rpc->subscribeRemote( res.serverName, rpcConstants::KeyerCategory );
-            break;
-
-        case atBandMap:
-            rpc->subscribeRemote( res.serverName, rpcConstants::BandMapCategory );
-            break;
-
-        case atRotator:
-            rpc->subscribeRemote( res.serverName, rpcConstants::RotatorCategory );
-            break;
-
-        default:
-            break;
-        }
+    for (int i = 0; i < servers.size(); i++)
+    {
+        rpc->subscribeRemote( servers[i], rpcConstants::RigControlCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::KeyerCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::BandMapCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::RotatorCategory );
     }
 }
 TLogContainer::~TLogContainer()

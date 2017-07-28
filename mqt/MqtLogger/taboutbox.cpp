@@ -58,7 +58,13 @@ int TAboutBox::exec()
     if ( !started && doStartup )
     {
        // auto start on first run, but only if we gave that option
-       MinosConfig::getMinosConfig( 0 ) ->start();
+
+       QString reqErrs = MinosConfig::getMinosConfig() ->checkConfig();
+
+       if (reqErrs.isEmpty())
+            MinosConfig::getMinosConfig() ->start();
+       else
+           mShowMessage(reqErrs, this);
     }
     return ret;
 }

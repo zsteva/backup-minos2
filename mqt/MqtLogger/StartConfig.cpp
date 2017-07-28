@@ -12,12 +12,13 @@ StartConfig::StartConfig(QWidget *parent) :
     ui(new Ui::StartConfig)
 {
     ui->setupUi(this);
-    ui->configFrame->initialise(this, &::configCloseCallback, false);
 
     QSettings settings;
-    QByteArray geometry = settings.value("starConfigGeometry").toByteArray();
+    QByteArray geometry = settings.value("startConfigGeometry").toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
+
+    ui->configFrame->initialise(this, &::configCloseCallback, false);
 }
 
 StartConfig::~StartConfig()
@@ -28,13 +29,13 @@ StartConfig::~StartConfig()
 void StartConfig::moveEvent(QMoveEvent *event)
 {
     QSettings settings;
-    settings.setValue("starConfigGeometry", saveGeometry());
+    settings.setValue("startConfigGeometry", saveGeometry());
     QDialog::moveEvent(event);
 }
 void StartConfig::resizeEvent(QResizeEvent * event)
 {
     QSettings settings;
-    settings.setValue("starConfigGeometry", saveGeometry());
+    settings.setValue("startConfigGeometry", saveGeometry());
     QDialog::resizeEvent(event);
 }
 void StartConfig::changeEvent( QEvent* e )
@@ -42,6 +43,6 @@ void StartConfig::changeEvent( QEvent* e )
     if( e->type() == QEvent::WindowStateChange )
     {
         QSettings settings;
-        settings.setValue("starConfigGeometry", saveGeometry());
+        settings.setValue("startConfigGeometry", saveGeometry());
     }
 }
