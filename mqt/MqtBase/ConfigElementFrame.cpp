@@ -12,7 +12,7 @@ ConfigElementFrame::ConfigElementFrame(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QStringList appTypes = MinosConfig::getAppTypes();
+    QStringList appTypes = MinosConfig::getMinosConfig()->getAppTypes();
     ui->appTypeCombo->addItems(appTypes);
 }
 
@@ -21,18 +21,18 @@ ConfigElementFrame::~ConfigElementFrame()
     delete ui;
 }
 
-void ConfigElementFrame::setElement(QSharedPointer<TConfigElement> c)
+void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
 {
     this->c = c;
 
-    if (c->runType == rtNone)
+    if (c->runType.isEmpty())
         ui->rbNoAction->setChecked(true);
-    if (c->runType == rtRunLocal)
+    if (c->runType == "RunLocal")
         ui->rbRunLocally->setChecked(true);
-    if (c->runType == rtConnectServer)
+    if (c->runType == "ConnectServer")
         ui->rbConnectRemote->setChecked(true);
 
-    QString at = getAppType(c->appType);
+    QString at = c->appType;
     ui->appTypeCombo->setCurrentText(at);
 
     ui->elementNameEdit->setText(c->name);
@@ -51,25 +51,15 @@ void ConfigElementFrame::setNameFocus()
 bool ConfigElementFrame::saveElement()
 {
     if (ui->rbNoAction->isChecked())
-        c->runType = rtNone;
+        c->runType = RunTypeNone;
     if (ui->rbRunLocally->isChecked())
-        c->runType = rtRunLocal;
+        c->runType = RunLocal;
     if (ui->rbConnectLocal->isChecked())
-        c->runType = rtConnectLocal;
+        c->runType = ConnectLocal;
     if (ui->rbConnectRemote->isChecked())
-        c->runType = rtConnectServer;
+        c->runType = ConnectServer;
 
-    QString S = ui->appTypeCombo->currentText();
-    QStringList appTypes = MinosConfig::getAppTypes();
-
-    for (int i = 0; i < atMax; i++)
-    {
-        QString at = getAppType(static_cast<AppType>(i));
-        if (S.compare(at, Qt::CaseInsensitive) == 0)
-        {
-            c->appType = static_cast<AppType>(i);
-        }
-    }
+    c->appType = ui->appTypeCombo->currentText();
 
     c->name = ui->elementNameEdit->text();
     c->rundir = ui->homeDirectoryEdit->text();
@@ -180,14 +170,12 @@ void ConfigElementFrame::on_rbConnectLocal_clicked()
     checkEnabled();
 }
 
-void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &/*arg1*/)
+void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &value)
 {
-    AppType at = static_cast<AppType>(ui->appTypeCombo->currentIndex());
-
     if (ui->elementNameEdit->text().isEmpty())
-        ui->elementNameEdit->setText(getAppType(at));
+        ui->elementNameEdit->setText(value);
     if (ui->programNameEdit->text().isEmpty())
-        ui->programNameEdit->setText(getDefaultApp(at));
+        ui->programNameEdit->setText(value);
     if (ui->homeDirectoryEdit->text().isEmpty())
         ui->homeDirectoryEdit->setText(".");
 }

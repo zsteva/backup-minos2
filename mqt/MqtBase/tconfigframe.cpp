@@ -31,7 +31,9 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool doAutoSt
     ui->scrollAreaWidgetContents->setLayout(vbl);
 
     elementFrames.clear();
-    for (int i = 0; i < MinosConfig::getMinosConfig( 0 ) ->elelist.size(); i++)
+    MinosConfig *minosConfig = MinosConfig::getMinosConfig();
+
+    for (int i = 0; i <  minosConfig->elelist.size(); i++)
     {
         ConfigElementFrame *cef = new ConfigElementFrame();
 
@@ -48,20 +50,28 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool doAutoSt
 
         vbl->addWidget(cef);
 
-        QSharedPointer<TConfigElement> c = MinosConfig::getMinosConfig( 0 ) ->elelist[i];
+        QSharedPointer<RunConfigElement> c = minosConfig->elelist[i];
         cef->setElement(c);
         elementFrames.append(cef);
     }
-    ui->StationIdEdit->setText(MinosConfig::getMinosConfig( 0 ) ->getThisServerName());
-    ui->HideCheckBox->setChecked(MinosConfig::getMinosConfig( 0 )->getHideServers());
-    ui->autoStartCheckBox->setChecked(MinosConfig::getMinosConfig( 0 )->getAutoStart());
+    ui->StationIdEdit->setText(minosConfig->getThisServerName());
+    ui->HideCheckBox->setChecked(minosConfig->getHideServers());
+    ui->autoStartCheckBox->setChecked(minosConfig->getAutoStart());
 
-    if (doAutoStart && MinosConfig::getMinosConfig( 0 )->getAutoStart())
+    QString reqErrs = MinosConfig::getMinosConfig() ->checkConfig();
+
+    if (reqErrs.isEmpty())
     {
-        connect(&startTimer, SIGNAL(timeout()), this, SLOT(startTimer_Timeout()));
-        startTimer.start(100);
+        if (doAutoStart && minosConfig->getAutoStart())
+        {
+            connect(&startTimer, SIGNAL(timeout()), this, SLOT(startTimer_Timeout()));
+            startTimer.start(100);
+        }
     }
-    ui->HideCheckBox->setChecked(MinosConfig::getMinosConfig( 0 )->getHideServers());
+    else
+        mShowMessage(reqErrs, p);
+
+    ui->HideCheckBox->setChecked(minosConfig->getHideServers());
 }
 void TConfigFrame::setup(bool started)
 {
@@ -76,7 +86,7 @@ void TConfigFrame::startTimer_Timeout()
 
 void TConfigFrame::start()
 {
-    MinosConfig::getMinosConfig( 0 ) ->start();
+    MinosConfig::getMinosConfig() ->start();
 }
 
 void TConfigFrame::on_StartButton_clicked()
@@ -87,25 +97,25 @@ void TConfigFrame::on_StartButton_clicked()
 
 void TConfigFrame::on_StopButton_clicked()
 {
-    MinosConfig::getMinosConfig( 0 ) ->stop();
+    MinosConfig::getMinosConfig() ->stop();
 }
 
 void TConfigFrame::on_HideCheckBox_clicked()
 {
-    MinosConfig::getMinosConfig( 0 ) ->setHideServers(ui->HideCheckBox->isChecked());
+    MinosConfig::getMinosConfig() ->setHideServers(ui->HideCheckBox->isChecked());
     // Make this active - need a hide/show event that is signalled for show
     // and then all "server" apps need to honour this.
     setShowServers(!ui->HideCheckBox->isChecked());
 }
 void TConfigFrame::on_autoStartCheckBox_clicked()
 {
-    MinosConfig::getMinosConfig( 0 ) ->setAutoStart(ui->autoStartCheckBox->isChecked());
+    MinosConfig::getMinosConfig() ->setAutoStart(ui->autoStartCheckBox->isChecked());
 }
 
 void TConfigFrame::on_SetButton_clicked()
 {
     QString coh = ui->StationIdEdit->text();
-    MinosConfig::getMinosConfig( 0 ) ->setThisServerName( coh );
+    MinosConfig::getMinosConfig() ->setThisServerName( coh );
 }
 
 void TConfigFrame::saveAll()
@@ -117,13 +127,20 @@ void TConfigFrame::saveAll()
 
     on_SetButton_clicked();
     on_autoStartCheckBox_clicked();
-    MinosConfig::getMinosConfig( 0 )->saveAll();    // which clears the config file before saving
+    MinosConfig::getMinosConfig()->saveAll();    // which clears the config file before saving
 }
 
 void TConfigFrame::on_OKButton_clicked()
 {
     saveAll();
-    closeCb(parent);
+
+    QString reqErrs = MinosConfig::getMinosConfig() ->checkConfig();
+
+    if (reqErrs.isEmpty())
+        closeCb(parent);
+    else
+        mShowMessage(reqErrs, parent);
+
 }
 void TConfigFrame::on_CancelButton_clicked()
 {
@@ -149,8 +166,10 @@ void TConfigFrame::on_newElementButton_clicked()
 
     ui->scrollAreaWidgetContents->layout()->addWidget(cef);
 
-    MinosConfig::getMinosConfig( 0 ) ->elelist.append(QSharedPointer<TConfigElement> (new TConfigElement) );
-    QSharedPointer<TConfigElement> c = MinosConfig::getMinosConfig( 0 ) ->elelist[i + 1];
+    MinosConfig::getMinosConfig() ->elelist.append(QSharedPointer<RunConfigElement> (new RunConfigElement) );
+    QSharedPointer<RunConfigElement> c = MinosConfig::getMinosConfig() ->elelist[i + 1];
+    c->appType = RunTypeNone;
+
     cef->setElement(c);
     elementFrames.append(cef);
 

@@ -10,7 +10,7 @@ QT       += core gui network widgets multimedia
 TARGET = MqtKeyer
 TEMPLATE = app
 
-win32:RC_ICONS += ../minos.ico
+win32:RC_ICONS += ../MinosKeyer.ico
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast

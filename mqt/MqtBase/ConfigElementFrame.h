@@ -12,14 +12,14 @@ class ConfigElementFrame : public QFrame
 {
     Q_OBJECT
 
-    QSharedPointer<TConfigElement> c;
+    QSharedPointer<RunConfigElement> c;
     void checkEnabled();
 
 public:
     explicit ConfigElementFrame(QWidget *parent = 0);
     ~ConfigElementFrame();
 
-    void setElement(QSharedPointer<TConfigElement> c);
+    void setElement(QSharedPointer<RunConfigElement> c);
     bool saveElement();
     void setNameFocus();
 

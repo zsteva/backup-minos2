@@ -14,6 +14,7 @@ keyerAbout::keyerAbout(QWidget *parent) :
                            " Beta" + "</h1><br><a href=\"http://minos.sourceforge.net/\">http://minos.sourceforge.net</a>");
     ui->AboutMemo->setTextFormat(Qt::RichText);
     ui->AboutMemo->setTextInteractionFlags(Qt::TextBrowserInteraction);
+
 }
 
 keyerAbout::~keyerAbout()

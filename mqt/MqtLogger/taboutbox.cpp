@@ -58,7 +58,13 @@ int TAboutBox::exec()
     if ( !started && doStartup )
     {
        // auto start on first run, but only if we gave that option
-       MinosConfig::getMinosConfig( 0 ) ->start();
+
+       QString reqErrs = MinosConfig::getMinosConfig() ->checkConfig();
+
+       if (reqErrs.isEmpty())
+            MinosConfig::getMinosConfig() ->start();
+       else
+           mShowMessage(reqErrs, this);
     }
     return ret;
 }
@@ -81,6 +87,10 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
     ui->AboutMemo->setText(QString("<h1>Welcome to Minos 2 Version ") + VERSION + " Beta" + "</h1><br><a href=\"http://minos.sourceforge.net/\">http://minos.sourceforge.net</a>");
     ui->AboutMemo->setTextFormat(Qt::RichText);
     ui->AboutMemo->setTextInteractionFlags(Qt::TextBrowserInteraction);
+
+    ui->CreditsMemo->setTextFormat(Qt::RichText);
+    ui->CreditsMemo->setText(QString("<h2>Credits</h2><br>Mike Goodey G0GJV; David Balharrie M0DGB/G8FKH; Neil Yorke M0NKE; Dave Sergeant G3YMC;"
+                                     "Ken Punshon G4APJ"));
 
     ui->MinosMemo->setText(MinosText);
 

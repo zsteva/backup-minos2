@@ -4,41 +4,37 @@
 #include <QProcess>
 #include <QSettings>
 //---------------------------------------------------------------------------
-enum RunType{rtNone, rtRunLocal, rtConnectLocal, rtConnectServer, rtMax};
-enum AppType{
-    atNone,
-    atAppStarter,
-    atBandMap,
-    atChat,
-    atKeyer,
-    atLineControl,
-    atLogger,
-    atMonitor,
-    atOther,
-    atRigControl,
-    atRotator,
-    atRotatorControl,
-    atServer,
-    atMax};
+extern QString RunTypeNone;
+extern QString RunLocal;
+extern QString ConnectLocal;
+extern QString ConnectServer;
+
+extern bool checkGoodRunType(const QString &s);
+
+class AppConfigElement
+{
+public:
+    AppConfigElement(){}
+
+    QString appType;
+    QString appPath;
+    QStringList requires;
+    bool server;
+};
 
 class Connectable
 {
 public:
-    Connectable(): runType(rtNone), appType(atNone)
-    {
+    Connectable(){}
 
-    }
     QString serverName;
     QString remoteAppName;
     QString appName;
-    RunType runType;
-    AppType appType;
+    QString runType;
+    QString appType;
 };
-QString getRunType(RunType r);
-QString getAppType(AppType r);
-QString getDefaultApp(AppType r);
 
-class TConfigElement: public QObject
+class RunConfigElement: public QObject
 {
     Q_OBJECT
 private:  	// User declarations
@@ -51,14 +47,15 @@ public:  		// User declarations
     QString server;
     QString remoteApp;
 
-    RunType runType;
-    AppType appType;
+    QString runType;
+    QString appType;
+
+    QStringList requires;
 
     bool stopping;
 
-    TConfigElement();
+    RunConfigElement();
     bool initialise( QSettings &, QString sect );
-
 
     void save(QSettings &);
 
@@ -80,25 +77,29 @@ class MinosConfig : public QObject
     Q_OBJECT
 private:  	// User declarations
     static MinosConfig *thisDM;
-
     static QString getConfigIniName();
+    MinosConfig();
+    void initialise();
 
-    MinosConfig( QWidget* Owner );
+    QVector<AppConfigElement> appConfigList;
+
+    void buildAppConfigList();
 
     QString thisServerName;
     bool hideServers;
     bool autoStart;
 public:  		// User declarations
+    static MinosConfig *getMinosConfig( );
+
     ~MinosConfig();
-    void subscribeAll();
 
-    static bool doesConfigExist();
+    QVector <QSharedPointer<RunConfigElement> > elelist;
+
     static QString getThisServerName();
-    static QStringList getAppTypes();
 
-    Connectable getApp(AppType a, QString appName);
-
-    QVector <QSharedPointer<TConfigElement> > elelist;
+    QStringList getAppTypes();
+    Connectable getApp(QString appName);
+    AppConfigElement getAppConfigElement(QString appType);
 
     void saveAll();
 
@@ -111,7 +112,8 @@ public:  		// User declarations
     bool getHideServers();
     void setHideServers(bool);
 
-    static MinosConfig *getMinosConfig( QWidget* Owner );
+    QString checkConfig();
+
 };
 //---------------------------------------------------------------------------
 
