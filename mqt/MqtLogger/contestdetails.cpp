@@ -891,6 +891,7 @@ void ContestDetails::enableControls()
    ui->QTHBundleFrame->enableBundle(!protectedChecked);
    ui->StationBundleFrame->enableBundle(!protectedChecked);
    ui->EntryBundleFrame->enableBundle(!protectedChecked);
+   ui->AppsBundleFrame->enableBundle(!protectedChecked);
 
    ui->SectionComboBox->setEnabled(!protectedChecked);
    ui->StartTimeCombo->setEnabled(!protectedChecked);

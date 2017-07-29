@@ -134,8 +134,8 @@ void RunConfigElement::createProcess()
             trace(name + ":program doesn't exist:" + program);
         }
 
-        commandLine += " ";
-        commandLine += params;
+        program += " ";
+        program += params;
 
         QString wdir = rundir;
         runner->setWorkingDirectory(wdir);
@@ -151,7 +151,7 @@ void RunConfigElement::createProcess()
         connect (runner, SIGNAL(readyReadStandardError()), this, SLOT(on_readyReadStandardError()));
         connect (runner, SIGNAL(readyReadStandardOutput()), this, SLOT(on_readyReadStandardOutput()));
 
-        runner->start(commandLine);
+        runner->start(program);
 
     }
 }
@@ -388,6 +388,9 @@ Server=false
 
             ac.appType = apps[i].trimmed();
             ac.appPath = appConfig.value(apps[i] + "/Path").toString().trimmed();
+#ifdef Q_OS_WIN
+            ac.appPath += ".exe";
+#endif
             ac.server = appConfig.value(apps[i] + "/Server").toBool();
 
             // NB using comma in value give a string list! Single value will also go to list if desired

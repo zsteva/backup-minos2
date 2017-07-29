@@ -40,6 +40,7 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
     ui->homeDirectoryEdit->setText(c->rundir);
     ui->parametersEdit->setText(c->params);
     ui->serverNameEdit->setText(c->server);
+    ui->remoteAppNameEdit->setText(c->name);
 
     checkEnabled();
 }
@@ -61,11 +62,12 @@ bool ConfigElementFrame::saveElement()
 
     c->appType = ui->appTypeCombo->currentText();
 
-    c->name = ui->elementNameEdit->text();
-    c->rundir = ui->homeDirectoryEdit->text();
-    c->commandLine = ui->programNameEdit->text();
-    c->params = ui->parametersEdit->text();
-    c->server = ui->serverNameEdit->text();
+    c->name = ui->elementNameEdit->text().trimmed();
+    c->rundir = ui->homeDirectoryEdit->text().trimmed();
+    c->commandLine = ui->programNameEdit->text().trimmed();
+    c->params = ui->parametersEdit->text().trimmed();
+    c->server = ui->serverNameEdit->text().trimmed();
+    c->remoteApp = ui->remoteAppNameEdit->text().trimmed();
 
     return true;
 }
@@ -126,6 +128,7 @@ void ConfigElementFrame::on_deleteButton_clicked()
 {
     // mark the element as deleted
     ui->elementNameEdit->setText("<Deleted>");
+    ui->rbNoAction->setChecked(true);
 }
 
 void ConfigElementFrame::checkEnabled()
@@ -176,8 +179,16 @@ void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &valu
 {
     if (ui->elementNameEdit->text().isEmpty())
         ui->elementNameEdit->setText(value);
+
+    if (ui->remoteAppNameEdit->text().isEmpty())
+        ui->remoteAppNameEdit->setText(value);
+
     if (ui->programNameEdit->text().isEmpty())
-        ui->programNameEdit->setText(value);
+    {
+        AppConfigElement ace = MinosConfig::getMinosConfig()->getAppConfigElement(value);
+        ui->programNameEdit->setText(ace.appPath);
+    }
+
     if (ui->homeDirectoryEdit->text().isEmpty())
         ui->homeDirectoryEdit->setText(".");
 }
