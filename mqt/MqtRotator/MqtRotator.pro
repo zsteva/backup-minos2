@@ -48,10 +48,13 @@ FORMS    += \
     editpresetsdialog.ui \
     rotatormainwindow.ui
 
-win32: INCLUDEPATH += ../hamlib-w32-3.1/include
+HAMLIBDIR = $$absolute_path(../../../hamlib-w32-3.1)
 
-win32-g++: LIBS += -L../hamlib-w32-3.1/lib/gcc/ -llibhamlib
-msvc: LIBS += -L../hamlib-w32-3.1/lib/msvc/ -llibhamlib-2
+win32: INCLUDEPATH += $$HAMLIBDIR/include
+
+win32-g++: LIBS += -L$$HAMLIBDIR/lib/gcc/ -llibhamlib
+msvc: LIBS += -L$$HAMLIBDIR/lib/msvc/ -llibhamlib-2
+unix: LIBS += -llibhamlib
 
 win32-g++:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
