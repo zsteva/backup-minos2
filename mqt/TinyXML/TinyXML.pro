@@ -11,11 +11,8 @@ TARGET = TinyXML
 TEMPLATE = lib
 CONFIG += staticlib
 
-DEFINES += TIXML_USE_STL
-
-*g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -DNDEBUG
-else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
-
+*g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON -= -Wold-style-cast
+else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON -= -Wold-style-cast
 
 SOURCES += tinyxml.cpp \
     tinyxmlerror.cpp \

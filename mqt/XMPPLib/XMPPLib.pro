@@ -13,14 +13,8 @@ TARGET = XMPPLib
 TEMPLATE = lib
 CONFIG += staticlib
 
-*g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
-else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
-
-
 INCLUDEPATH += ../TinyXML
 INCLUDEPATH += ../MqtUtils
-
-DEFINES += TIXML_USE_STL
 
 SOURCES += \
     Dispatcher.cpp \
