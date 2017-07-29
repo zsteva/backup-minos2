@@ -54,7 +54,7 @@ win32: INCLUDEPATH += $$HAMLIBDIR/include
 
 win32-g++: LIBS += -L$$HAMLIBDIR/lib/gcc/ -llibhamlib
 msvc: LIBS += -L$$HAMLIBDIR/lib/msvc/ -llibhamlib-2
-unix: LIBS += -llibhamlib
+unix: LIBS += -lhamlib
 
 win32-g++:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder
 else:win32-g++:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder

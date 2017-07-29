@@ -13,10 +13,6 @@ VERSION=0.6.0.0
 
 win32:RC_ICONS += ../minos.ico
 
-win32: INCLUDEPATH += C:/Projects/hamlib-w32-3.1/include
-
-win32-g++: LIBS += -LC:/Projects/hamlib-w32-3.1/lib/gcc/ -llibhamlib
-msvc: LIBS += -LC:/Projects/hamlib-w32-3.1/lib/msvc/ -llibhamlib-2
 
 TARGET = MqtBandmap
 TEMPLATE = app
@@ -41,6 +37,14 @@ HEADERS  += bandmapmainwindow.h \
 
 FORMS    += bandmapmainwindow.ui \
     setupdialog.ui
+
+HAMLIBDIR = $$absolute_path(../../../hamlib-w32-3.1)
+
+win32: INCLUDEPATH += $$HAMLIBDIR/include
+
+win32-g++: LIBS += -L$$HAMLIBDIR/lib/gcc/ -llibhamlib
+msvc: LIBS += -L$$HAMLIBDIR/lib/msvc/ -llibhamlib-2
+unix: LIBS += -lhamlib
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MqtUtils/release/ -lMqtUtils
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MqtUtils/debug/ -lMqtUtils
