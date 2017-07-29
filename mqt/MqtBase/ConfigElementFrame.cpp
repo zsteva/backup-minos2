@@ -40,7 +40,7 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
     ui->homeDirectoryEdit->setText(c->rundir);
     ui->parametersEdit->setText(c->params);
     ui->serverNameEdit->setText(c->server);
-    ui->remoteAppNameEdit->setText(c->name);
+    ui->remoteAppNameEdit->setText(c->remoteApp);
 
     checkEnabled();
 }

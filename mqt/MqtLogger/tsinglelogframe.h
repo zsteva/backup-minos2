@@ -139,6 +139,7 @@ public:
     void QSOTreeSelectContact( QSharedPointer<BaseContact> lct );
 
     void refreshMults();
+    TSendDM *sendDM;
 
     bool logColumnsChanged;
     bool splittersChanged;
@@ -173,7 +174,6 @@ private:
 
     int splitterHandleWidth;
 
-    TSendDM *sendDM;
     BaseContestLog * contest;
     QSOGridModel qsoModel;
 

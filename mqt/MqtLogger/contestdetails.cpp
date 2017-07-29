@@ -90,7 +90,9 @@ int ContestDetails::exec()
        nextD->setFocus();
     }
 
-    return QDialog::exec();
+    int res = QDialog::exec();
+
+    return res;
 }
 
 ContestDetails::~ContestDetails()

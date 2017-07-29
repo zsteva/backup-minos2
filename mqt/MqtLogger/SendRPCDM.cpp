@@ -28,12 +28,7 @@
 TSendDM::TSendDM(QWidget* Owner , LoggerContestLog *ct)
       : QObject( Owner )
 {
-    MinosConfig *config = MinosConfig::getMinosConfig();
-
-    rigServerConnectable = config->getApp(ct->appRigControl.getValue());
-    keyerServerConnectable = config->getApp(ct->appVoiceKeyer.getValue());
-    bandMapServerConnectable = config->getApp(ct->appBandMap.getValue());
-    rotatorServerConnectable = config->getApp(ct->appRotator.getValue());
+    resetConnectables(ct);
 
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
@@ -44,6 +39,18 @@ TSendDM::TSendDM(QWidget* Owner , LoggerContestLog *ct)
 TSendDM::~TSendDM()
 {
 }
+
+void TSendDM::resetConnectables(LoggerContestLog *ct)
+{
+    MinosConfig *config = MinosConfig::getMinosConfig();
+
+    rigServerConnectable = config->getApp(ct->appRigControl.getValue());
+    keyerServerConnectable = config->getApp(ct->appVoiceKeyer.getValue());
+    bandMapServerConnectable = config->getApp(ct->appBandMap.getValue());
+    rotatorServerConnectable = config->getApp(ct->appRotator.getValue());
+
+}
+
 //---------------------------------------------------------------------------
 void TSendDM::logMessage( QString s )
 {
@@ -138,6 +145,9 @@ void TSendDM::sendRotator(rpcConstants::RotateDirection direction, int angle )
 //---------------------------------------------------------------------------
 void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
+
+    // Does each SendDm get a notification??
+
     // PubSub notifications
     logMessage( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
     AnalysePubSubNotify an( err, mro );

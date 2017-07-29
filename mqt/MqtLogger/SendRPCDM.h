@@ -38,6 +38,8 @@ class TSendDM : public QObject
    public:  		// User declarations
       TSendDM( QWidget* Owner, LoggerContestLog *ct );
       ~TSendDM();
+      void resetConnectables(LoggerContestLog *ct);
+
       void sendKeyerPlay( int fno );
       void sendKeyerRecord( int fno );
       void sendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
