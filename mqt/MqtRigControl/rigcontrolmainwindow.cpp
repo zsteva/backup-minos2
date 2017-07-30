@@ -33,9 +33,38 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     setPolltime(250);
 
     openRadio();
+/*
+    rmode_t currMode;
+    pbwidth_t width;
+    if (radio->getMode(RIG_VFO_A, &currMode, &width) == RIG_OK)
+    {
+        qDebug() << "mode = " << currMode << "width = " << width;
+    }
+    else
+    {
+        qDebug() << "mode fail";
+    }
 
+    qDebug() << "The mode is " << radio->convertModeQstr(currMode);
+
+    radio->setVfo(RIG_VFO_B);
+
+
+    vfo_t vfo;
+    if (radio->getVfo(&vfo) == RIG_OK)
+    {
+        qDebug() << "vfo = " << radio->convertVfoQStr(vfo);
+
+    }
+    else
+    {
+        qDebug() << "vfo fail";
+    }
+*/
 
 }
+
+
 
 RigControlMainWindow::~RigControlMainWindow()
 {
@@ -187,7 +216,7 @@ void RigControlMainWindow::getFrequency()
     if (radio->get_serialConnected())
     {
         int retCode = 0;
-        retCode = radio->getFrequency();
+//        retCode = radio->getFrequency();
         if (retCode < 0)
         {
             hamlibError(retCode);

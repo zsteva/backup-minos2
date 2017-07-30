@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "mqtUtils_pch.h"
+#include "rigcontrol.h"
 
 class QLabel;
 class QComboBox;
@@ -37,8 +38,16 @@ private:
 //    double oldFreq = 0;
     double curFreq = 0;
     vfo_t curVFO;
+    freq_t frequency;            // frequency
+    rmode_t rmode;          // radio mode of operation
+    pbwidth_t width;
+    vfo_t vfo;              // vfo selection
+    int strength;           // S-Meter level
+    int retcode;            // generic return code from functions
+
     double curVfoFrq[NUM_VFO];
     rmode_t curMode[NUM_VFO];
+    pbwidth_t curRxWidth[NUM_VFO];
 
 
 

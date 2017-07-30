@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>385</width>
+    <height>295</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,14 +19,14 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>201</width>
+      <width>341</width>
       <height>80</height>
      </rect>
     </property>
     <property name="title">
      <string>VFO-A</string>
     </property>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="FreqTitleA">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -62,7 +62,7 @@
       <string>0000.000.000</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="TVertTitleA">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -98,20 +98,72 @@
       <string>0000.000.000</string>
      </property>
     </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>20</y>
+       <width>71</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="vfoTitleA">
+        <property name="text">
+         <string>VFO:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="vfoA_Activelbl">
+        <property name="text">
+         <string>Off</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>50</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QLabel" name="modeATitle">
+        <property name="text">
+         <string>Mode:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>USB</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>140</y>
-      <width>201</width>
+      <y>150</y>
+      <width>341</width>
       <height>80</height>
      </rect>
     </property>
     <property name="title">
      <string>VFO-B</string>
     </property>
-    <widget class="QLabel" name="label_5">
+    <widget class="QLabel" name="FreqTitleB">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -147,7 +199,7 @@
       <string>0000.000.000</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_6">
+    <widget class="QLabel" name="TVertTitleB">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -183,8 +235,60 @@
       <string>0000.000.000</string>
      </property>
     </widget>
+    <widget class="QWidget" name="layoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>20</y>
+       <width>71</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="vfoTitleB">
+        <property name="text">
+         <string>VFO:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="vfoB_Activelbl">
+        <property name="text">
+         <string>Off</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>50</y>
+       <width>57</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>Mode:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="modeBlbl">
+        <property name="text">
+         <string>USB</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -195,7 +299,7 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label_7">
+      <widget class="QLabel" name="SelectRadioTitle">
        <property name="text">
         <string>Select Radio</string>
        </property>
@@ -212,7 +316,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>385</width>
      <height>21</height>
     </rect>
    </property>

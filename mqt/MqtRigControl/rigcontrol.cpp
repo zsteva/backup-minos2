@@ -88,45 +88,62 @@ int RigControl::closeRig()
 }
 
 
-int RigControl::getFrequency()
+int RigControl::getFrequency(vfo_t *vfo, freq_t *frequency)
 {
-    int retCode = 0;
-
-    retCode = rig_get_freq(my_rig, RIG_VFO_CURR, &frequency);
-    if (retCode == RIG_OK)
-    {
-        qDebug() << frequency ;
-        emit frequency_updated(frequency);
-    }
-    return retCode;
+    return rig_get_freq(my_rig, *vfo, frequency);
 }
 
 
 int RigControl::setFrequency(double frequency, vfo_t vfo)
 {
-
-    return (rig_set_freq	(my_rig, vfo, frequency));
-
+    return (rig_set_freq(my_rig, vfo, frequency));
 }
 
+/* ---------------------- Mode ------------------------------------ */
 
-bool RigControl::getMode(vfo_t vfo, rmode_t *mode, pbwidth_t *width)
+int RigControl::getMode(vfo_t vfo, rmode_t *mode, pbwidth_t *width)
 {
-    int retCode = 0;
-
-    retCode = rig_get_mode (myrig, vfo, mode, width);
-    if (retCode == RIG_OK)
-    {
-        qDebug() << mode ;
-        emit mode_updated(vfo, mode, width);
-    }
-    return retCode;
+    return rig_get_mode (my_rig, vfo, mode, width);
 }
 
-bool RigControl::setMode(vfo_t vfo, rmode_t mode, pbwidth_t width)
+int RigControl::setMode(vfo_t vfo, rmode_t mode, pbwidth_t width)
 {
-    return (rig_set_mode(myrig, vfo, mode, width));
+    return (rig_set_mode(my_rig, vfo, mode, width));
 }
+
+
+QString RigControl::convertModeQstr(rmode_t mode)
+{
+    return QString::fromLatin1(rig_strrmode(mode));
+}
+
+
+/* ---------------------- VFO ------------------------------------ */
+
+
+int RigControl::getVfo(vfo_t *vfo)
+{
+    return rig_get_vfo(my_rig, vfo);
+}
+
+
+
+int RigControl::setVfo(vfo_t vfo)
+{
+    return rig_set_vfo(my_rig, vfo);
+}
+
+
+
+
+QString RigControl::convertVfoQStr(vfo_t vfo)
+{
+    return QString::fromLatin1(rig_strvfo(vfo));
+}
+
+
+
+
 
 void RigControl::getRigList()
 {
@@ -139,6 +156,13 @@ void RigControl::getRigList()
         riglistLoaded=true;
     }
 }
+
+
+
+
+
+
+
 
 bool RigControl::getRigList(QComboBox *cb)
 {

@@ -80,11 +80,18 @@ public:
     ~RigControl();
     int init(scatParams currentRadio);
     bool enabled() {return rigControlEnabled;}
-    int getFrequency();
-    bool setFrequency(double frequency, vfo_t vfo);
 
-    bool getMode(QString &mode);
-    bool setMode(QString mode);
+    int getFrequency(vfo_t *vfo, freq_t *frequency);
+    int setFrequency(double frequency, vfo_t vfo);
+
+    int getMode(vfo_t vfo, rmode_t *mode, pbwidth_t *width);
+    int setMode(vfo_t vfo, rmode_t mode, pbwidth_t width);
+    QString convertModeQstr(rmode_t mode);
+
+    int getVfo(vfo_t *vfo);
+    int setVfo(vfo_t vfo);
+    QString convertVfoQStr(vfo_t vfo);
+
     int getModelNumber(int idx);
     int getRigModelIndex();
     void getRigList();
@@ -116,12 +123,12 @@ public:
   private:
     hamlib_port_t myport;
     RIG *my_rig;            // handle to rig (nstance)
-    freq_t frequency;            // frequency
-    rmode_t rmode;          // radio mode of operation
-    pbwidth_t width;
-    vfo_t vfo;              // vfo selection
-    int strength;           // S-Meter level
-    int retcode;            // generic return code from functions
+//    freq_t frequency;            // frequency
+//    rmode_t rmode;          // radio mode of operation
+//    pbwidth_t width;
+//    vfo_t vfo;              // vfo selection
+//    int strength;           // S-Meter level
+//    int retcode;            // generic return code from functions
     rig_model_t myrig_model;
     bool rigControlEnabled;
     bool serialConnected;
