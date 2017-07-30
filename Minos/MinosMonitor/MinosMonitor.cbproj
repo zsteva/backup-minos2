@@ -45,8 +45,7 @@
     <DCC_UnitSearchPath>..\MinosLogger;.\;$(BDS)\lib;$(BDS)\lib\obj</DCC_UnitSearchPath>
     <BRCC_UserSuppliedOptions> ..\iksemel\src;c:\vcl;..\iksemel;$(BDS)\include;$(BDS)\include\vcl;..\XMPPLib;..\iksemel\include;$(BDS)\include\dinkumware</BRCC_UserSuppliedOptions>
     <BCC_GenerateMultithreaded>true</BCC_GenerateMultithreaded>
-    <PackageLibs>
-    </PackageLibs>
+    <PackageLibs>IndyCore.lib;IndySystem.lib;IndyProtocols.lib</PackageLibs>
     <DCC_DcuOutput>obj\</DCC_DcuOutput>
     <BCC_PCHCache>true</BCC_PCHCache>
     <IncludePath>$(VTV)\Source;$(TINYXML);..\..\vcl\RADStudio2007;..\WhisperSplitter</IncludePath>
@@ -54,7 +53,7 @@
     <TASM_IncludePath>..\iksemel\src;c:\vcl;..\iksemel;$(BDS)\include;$(BDS)\include\vcl;..\XMPPLib;..\iksemel\include;$(BDS)\include\dinkumware</TASM_IncludePath>
     <DCC_IncludePath>..\MinosLogger;.\;$(BDS)\lib;$(BDS)\lib\obj</DCC_IncludePath>
     <BCC_IncludePath>..\XMPPLib;$(GJVVCL);$(BOOST)\include;$(BDS)\include;$(BDS)\include\vcl;$(BDS)\include\dinkumware;..\minoslogger;..\minosbase;..\minosdisplay</BCC_IncludePath>
-    <AllPackageLibs>vcl.lib;rtl.lib;VTV.lib;vcldb.lib;dbrtl.lib;vclx.lib</AllPackageLibs>
+    <AllPackageLibs>vcl.lib;rtl.lib;vcldb.lib;dbrtl.lib;vclx.lib;vclactnband.lib;VTV.lib;GJVControls.lib;IndyCore.lib;IndySystem.lib;IndyProtocols.lib</AllPackageLibs>
     <ILINK_LibraryPath>..\MinosLogger;..\XMPPLib;$(GJVVCL);$(BDS)\lib\obj;$(BDS)\lib\psdk;$(BDS)\lib;$(BOOST)\lib;..\minosbase;..\minosdisplay;$(TINYXML);..\WhisperSplitter</ILINK_LibraryPath>
     <BCC_InternalDefines>NO_STRICT</BCC_InternalDefines>
     <BCC_DisableOptimizations>true</BCC_DisableOptimizations>
