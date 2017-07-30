@@ -99,11 +99,6 @@ int main(int argc, char *argv[])
         {
             a.setFont( qfont.value<QFont>() );
         }
-        else
-        {
-            QFont sys("Tahoma");
-            a.setFont(sys);
-        }
         /*
         QSharedMemory mem( "MinosQtLoggerSingleApplication" );
         if ( !mem.create( 1 ) )
