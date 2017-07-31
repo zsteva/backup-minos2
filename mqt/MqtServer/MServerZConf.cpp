@@ -297,13 +297,13 @@ void TZConf::publishServer( const QString &uuid, const QString &name,
    }
    if ( s->local )
    {
-      PubSubMain->publish( "", "LocalStation", name, hosttarget, psPublished );
+      PubSubMain->publish( "", rpcConstants::LocalStationCategory, name, hosttarget, psPublished );
    }
    else
    {
       MinosServerListener::getListener() ->checkServerConnected(s, true);
    }
-   PubSubMain->publish( "", "Station", name, hosttarget, psPublished );
+   PubSubMain->publish( "", rpcConstants::StationCategory, name, hosttarget, psPublished );
 //   PubSubMain->publish( "", uuid, "Name", name );
 //   PubSubMain->publish( "", uuid, "State", state?"true":"false" );
    trace("publishServer finished");
@@ -314,7 +314,7 @@ void TZConf::publishDisconnect(const QString &name)
    Server *s = findStation( name );
    if ( s )
    {
-      PubSubMain->publish( "", "Station", name, s->host, psNotConnected );
+      PubSubMain->publish( "", rpcConstants::StationCategory, name, s->host, psNotConnected );
    }
 }
 //==============================================================================
