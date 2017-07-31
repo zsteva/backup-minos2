@@ -93,12 +93,6 @@ int main(int argc, char *argv[])
             QFile::setPermissions(sdCard + "/Configuration/MinosLogger.ini",QFile::ReadOwner|QFile::WriteOwner);
         }
 #endif
-        QSettings settings; // we may want to force to an INI file
-        QVariant qfont = settings.value( "font" );
-        if ( qfont != QVariant() )
-        {
-            a.setFont( qfont.value<QFont>() );
-        }
         /*
         QSharedMemory mem( "MinosQtLoggerSingleApplication" );
         if ( !mem.create( 1 ) )

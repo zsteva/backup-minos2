@@ -6,6 +6,13 @@ void appStartup(QApplication &a, const QString &appName, bool startLog)
     a.setOrganizationDomain( "g0gjv.org.uk" );
     a.QCoreApplication::setApplicationName( appName );
 
+    QSettings settings;
+    QVariant qfont = settings.value( "font" );
+    if ( qfont != QVariant() )
+    {
+        a.setFont( qfont.value<QFont>() );
+    }
+
     if (startLog)
     {
         enableTrace( "./TraceLog", appName + "_" );
