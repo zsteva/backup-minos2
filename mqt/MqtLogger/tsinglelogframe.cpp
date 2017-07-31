@@ -78,6 +78,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(XferPressed()), this, SLOT(on_XferPressed()));
     connect(&MinosLoggerEvents::mle, SIGNAL(BandMapPressed()), this, SLOT(on_BandMapPressed()));
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(NextContactDetailsTimerTimer()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(PublishTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(MatchStarting(BaseContestLog*)), this, SLOT(on_MatchStarting(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(MakeEntry(BaseContestLog*)), this, SLOT(on_MakeEntry(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)), this, SLOT(on_AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)));
@@ -341,6 +342,24 @@ void TSingleLogFrame::NextContactDetailsTimerTimer( )
         }
     }
 }
+void TSingleLogFrame::PublishTimerTimer(  )
+{
+   LoggerContestLog * ct = dynamic_cast<LoggerContestLog *>( contest );
+   if ( ct && ct->isMinosFile() && !ct->isUnwriteable() && !ct->isProtected())
+   {
+      int stanzaCount = contest->getStanzaCount();
+      if ( lastStanzaCount != stanzaCount )
+      {
+         // publish this contest details - what to use?
+         // category LoggerContestLog
+         // name filename(?)
+         // value stanzaCount
+         RPCPubSub::publish( rpcConstants::monitorLogCategory, contest->publishedName, QString::number( stanzaCount ), psPublished );
+         lastStanzaCount = stanzaCount;
+      }
+   }
+}
+
 void TSingleLogFrame::on_NextContactDetailsOnLeft()
 {
     doNextContactDetailsOnLeftClick();

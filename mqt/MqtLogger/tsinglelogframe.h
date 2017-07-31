@@ -211,6 +211,7 @@ private slots:
     void on_XferPressed();
     void on_BandMapPressed();
     void NextContactDetailsTimerTimer();
+    void PublishTimerTimer();
     void on_MakeEntry(BaseContestLog*);
     void on_QSOTable_doubleClicked(const QModelIndex &index);
     void on_MatchStarting(BaseContestLog*);
