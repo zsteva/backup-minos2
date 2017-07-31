@@ -27,9 +27,14 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
 
     if (c->runType.isEmpty())
         ui->rbNoAction->setChecked(true);
-    if (c->runType == "RunLocal")
+
+    if (c->runType == RunTypeNone)
+        ui->rbNoAction->setChecked(true);
+    if (c->runType == RunLocal)
         ui->rbRunLocally->setChecked(true);
-    if (c->runType == "ConnectServer")
+    if (c->runType == ConnectLocal)
+        ui->rbConnectLocal->setChecked(true);
+    if (c->runType == ConnectServer)
         ui->rbConnectRemote->setChecked(true);
 
     QString at = c->appType;

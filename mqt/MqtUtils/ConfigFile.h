@@ -9,8 +9,6 @@ extern QString RunLocal;
 extern QString ConnectLocal;
 extern QString ConnectServer;
 
-extern bool checkGoodRunType(const QString &s);
-
 class AppConfigElement
 {
 public:
