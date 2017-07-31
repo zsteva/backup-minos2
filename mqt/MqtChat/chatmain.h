@@ -3,9 +3,6 @@
 
 #include "base_pch.h"
 
-#include <QMainWindow>
-#include <QTimer>
-
 namespace Ui {
 class MainWindow;
 }
