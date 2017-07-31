@@ -223,6 +223,7 @@ void TSendDM::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
 {
    // responds to pull calls from the monitoring client
    logMessage( "request callback from " + from + ( err ? ":Error" : ":Normal" ) );
+   logMessage("method is " + mro->getMethodName());
 
    // need to check "from" is correct
    if ( !err )
@@ -230,6 +231,10 @@ void TSendDM::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
       QSharedPointer<RPCParam> psLogName;
       QSharedPointer<RPCParam>psStanza;
       RPCArgs *args = mro->getCallArgs();
+
+      //QSharedPointer<RPCParam> psMess;
+      //if (args->getStructArgMember(0, rpcConstants::loggerStanzaRequest, psMess))
+
       if ( args->getStructArgMember( 0, "LogName", psLogName )
            && args->getStructArgMember( 0, "Stanza", psStanza ) )
       {
