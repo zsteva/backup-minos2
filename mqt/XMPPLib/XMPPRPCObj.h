@@ -90,6 +90,11 @@ class MinosRPCObj
           return general;
       }
 
+      virtual QString getMethodName()
+      {
+          return methodName;
+      }
+
       QString id;
       TRPCFunctor *callback;
 
