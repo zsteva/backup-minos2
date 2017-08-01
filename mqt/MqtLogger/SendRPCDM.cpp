@@ -31,8 +31,8 @@ TSendDM::TSendDM(QWidget* Owner , LoggerContestLog *ct)
     resetConnectables(ct);
 
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
-    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
-    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request (bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_clientCall (bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
 }
@@ -213,13 +213,13 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
 
 }
 //---------------------------------------------------------------------------
-void TSendDM::on_response( bool err, QSharedPointer<MinosRPCObj> /*mro*/, const QString &from )
+void TSendDM::on_clientCall( bool err, QSharedPointer<MinosRPCObj> /*mro*/, const QString &from )
 {
    logMessage( "response callback from " + from + ( err ? ":Error" : ":Normal" ) );
 }
 
 //---------------------------------------------------------------------------
-void TSendDM::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
+void TSendDM::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
    // responds to pull calls from the monitoring client
    logMessage( "request callback from " + from + ( err ? ":Error" : ":Normal" ) );

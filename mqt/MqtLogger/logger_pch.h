@@ -17,6 +17,8 @@
 #include <QAbstractItemModel>
 #include <QTableView>
 #include <QTableWidgetItem>
+#include <QTreeView>
+
 
 #include "profiles.h"
 #include "LoggerContest.h"

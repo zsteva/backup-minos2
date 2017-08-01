@@ -1,6 +1,6 @@
 #include "MonitoredContestLog.h"
 #include "MonitoredLog.h"
-
+#include "MonitoringFrame.h"
 
 MonitoredLog::MonitoredLog() : contest( 0 ), expectedStanzaCount( 0 ), monitorEnabled( false ),
       inStanzaRequest( false ), frame( 0 ), lastScannedStanza( -1 ), mt( 0 )
@@ -111,5 +111,8 @@ void MonitoredLog::processLogStanza( int stanza, const QString &stanzaData )
    {
       // we have a stanza - so pass it into the contest object
       contest->stanzaCount = mt->importTestBuffer( stanzaData );
+      stanzasPulled.insert(stanza);
+
+      frame->update();
    }
 }

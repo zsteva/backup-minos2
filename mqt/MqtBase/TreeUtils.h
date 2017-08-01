@@ -10,6 +10,11 @@
 
 #ifndef TreeUtilsH
 #define TreeUtilsH
+
+#include "base_pch.h"
+#include <QAbstractItemModel>
+//#include <QTreeView>
+//#include <QTreeWidget>
 //---------------------------------------------------------------------------
 enum TAlignment { taLeftJustify, taRightJustify, taCenter };
 class GridColumn
@@ -38,5 +43,26 @@ enum eLogGridCols {egTime,
 #define OTHERMATCHTREECOLS egLogMaxCol - 5
 #define ARCHIVEMATCHTREECOLS egLogMaxCol - 5
 extern GridColumn QSOTreeColumns[ LOGTREECOLS ];
+
+class QSOGridModel: public QAbstractItemModel
+{
+    protected:
+        BaseContestLog *contest;
+    public:
+        QSOGridModel();
+        ~QSOGridModel();
+
+        void reset();
+        void initialise( BaseContestLog * pcontest );
+        QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;
+        QVariant headerData( int section, Qt::Orientation orientation,
+                             int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
+        QModelIndex index( int row, int column,
+                           const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+        QModelIndex parent( const QModelIndex &index ) const Q_DECL_OVERRIDE;
+
+        int rowCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+        int columnCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+};
 
 #endif

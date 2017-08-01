@@ -9,6 +9,6 @@ public:
    MonitoredContestLog();
    virtual ~MonitoredContestLog();
 
-   virtual void makeContact( bool time_now, BaseContact *& );
+   virtual void makeContact( bool time_now, QSharedPointer<BaseContact>& ) override;
 };
 #endif // MONITOREDCONTESTLOG_H

@@ -1,11 +1,8 @@
 #ifndef TSINGLELOGFRAME_H
 #define TSINGLELOGFRAME_H
 
-#include <QFrame>
-#include <QAbstractItemModel>
-#include <QTreeView>
-#include <QTreeWidget>
-#include "RPCCommandConstants.h"
+#include "logger_pch.h"
+
 namespace Ui {
 class TSingleLogFrame;
 }
@@ -27,26 +24,7 @@ class TSendDM;
 // for each needed type...
 //==========================================================
 
-class QSOGridModel: public QAbstractItemModel
-{
-    protected:
-        BaseContestLog *contest;
-    public:
-        QSOGridModel();
-        ~QSOGridModel();
 
-        void reset();
-        void initialise( BaseContestLog * pcontest );
-        QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;
-        QVariant headerData( int section, Qt::Orientation orientation,
-                             int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
-        QModelIndex index( int row, int column,
-                           const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
-        QModelIndex parent( const QModelIndex &index ) const Q_DECL_OVERRIDE;
-
-        int rowCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
-        int columnCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
-};
 class BaseMatchContest;
 class MatchContact;
 

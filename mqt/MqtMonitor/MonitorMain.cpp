@@ -378,8 +378,8 @@ MonitorMain::MonitorMain(QWidget *parent) :
 
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::monitorApp, true);
 
-    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
-    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_clientCall(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
     rpc->subscribe(rpcConstants::StationCategory);
@@ -530,12 +530,12 @@ void MonitorMain::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QSt
 }
 //---------------------------------------------------------------------------
 
-void MonitorMain::on_response( bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*/, const QString & /*from*/ )
+void MonitorMain::on_serverCall( bool err, QSharedPointer<MinosRPCObj> /*mro*/, const QString & from )
 {
-   // call back says OK/not OK
+    logMessage( "logger server callback from " + from + ( err ? ":Error" : ":Normal" ) );
 }
 //---------------------------------------------------------------------------
-void MonitorMain::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
+void MonitorMain::on_clientCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
     logMessage( "logger subscribe client callback from " + from + ( err ? ":Error" : ":Normal" ) );
     if ( !err )
@@ -687,6 +687,7 @@ void MonitorMain::on_monitorTimeout()
              // take it out of the slot list and close it
              // and we need to redo the list
              delete (*j);
+             (*j) = 0;
              (*i)->slotList.erase(j);
              syncstat = true;
 

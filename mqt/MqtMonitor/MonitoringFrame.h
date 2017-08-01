@@ -1,7 +1,7 @@
 #ifndef MONITORINGFRAME_H
 #define MONITORINGFRAME_H
 
-#include <QFrame>
+#include "base_pch.h"
 
 namespace Ui {
 class MonitoringFrame;
@@ -23,10 +23,14 @@ public:
        return contest;
     }
 
+    void update();
 
 private:
     Ui::MonitoringFrame *ui;
     BaseContestLog *contest;
+
+    QSOGridModel qsoModel;
+
 };
 
 #endif // MONITORINGFRAME_H
