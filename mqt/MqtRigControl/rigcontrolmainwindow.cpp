@@ -1,18 +1,47 @@
+/////////////////////////////////////////////////////////////////////////////
+// $Id$
+//
+// PROJECT NAME 		Minos Amateur Radio Control and Logging System
+//                      Rotator Control
+// Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2017
+//
+// Interprocess Control Logic
+// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2007
+//
+// Hamlib Library
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#include "base_pch.h"
+#include "RPCCommandConstants.h"
 #include "rigcontrolmainwindow.h"
 #include "ui_rigcontrolmainwindow.h"
 #include "rigcontrol.h"
 #include "setupdialog.h"
+#include "rigcontrolrpc.h"
 #include <QTimer>
 #include <QMessageBox>
 #include <QDebug>
+
 
 RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::RigControlMainWindow)
 {
     ui->setupUi(this);
+
     connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
     stdinReader.start();
+
+    createCloseEvent();
+
+    msg = new RigControlRpc(this);
+
+    QSettings settings;
+    QByteArray geometry = settings.value("geometry").toByteArray();
+    if (geometry.size() > 0)
+        restoreGeometry(geometry);
+
 
     radio = new RigControl();
     selectRig = new SetupDialog(radio);
@@ -33,34 +62,10 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     setPolltime(250);
 
     openRadio();
-/*
-    rmode_t currMode;
-    pbwidth_t width;
-    if (radio->getMode(RIG_VFO_A, &currMode, &width) == RIG_OK)
-    {
-        qDebug() << "mode = " << currMode << "width = " << width;
-    }
-    else
-    {
-        qDebug() << "mode fail";
-    }
-
-    qDebug() << "The mode is " << radio->convertModeQstr(currMode);
-
-    radio->setVfo(RIG_VFO_B);
 
 
-    vfo_t vfo;
-    if (radio->getVfo(&vfo) == RIG_OK)
-    {
-        qDebug() << "vfo = " << radio->convertVfoQStr(vfo);
 
-    }
-    else
-    {
-        qDebug() << "vfo fail";
-    }
-*/
+
 
 }
 
@@ -69,6 +74,12 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 RigControlMainWindow::~RigControlMainWindow()
 {
     delete ui;
+}
+
+void RigControlMainWindow::logMessage( QString s )
+{
+   if (ui->actionTraceLog->isChecked())
+        trace( s );
 }
 
 
@@ -87,10 +98,14 @@ void RigControlMainWindow::initActionsConnections()
 
     connect(ui->actionSetup_Radios, SIGNAL(triggered()), selectRig, SLOT(show()));
 
-    connect(timer, SIGNAL(timeout()), this, SLOT(getFrequency()));
-    connect(radio, SIGNAL(frequency_updated(double)), this, SLOT(updateFreq(const double)));
-    connect(this, SIGNAL(frequency_updated(double)), this, SLOT(displayFreq(const double)));
-    connect(this, SIGNAL(frequency_updated(double)), this, SLOT(drawDial(double)));
+    connect(timer, SIGNAL(timeout()), this, SLOT(getCurFreq()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(getCurMode()));
+    //connect(radio, SIGNAL(frequency_updated(double)), this, SLOT(updateFreq(const double)));
+//    connect(this, SIGNAL(frequency_updated(double)), this, SLOT(displayFreqA(const double)));
+    connect(this, SIGNAL(mode_updated(QString)), this, SLOT(displayModeVfoA(QString)));
+
+
+    //connect(this, SIGNAL(frequency_updated(double)), this, SLOT(drawDial(double)));
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
     //connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     //connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
@@ -211,20 +226,76 @@ int RigControlMainWindow::getPolltime()
 }
 
 
-void RigControlMainWindow::getFrequency()
+void RigControlMainWindow::getFrequency(vfo_t vfo)
 {
+
+    int retCode = 0;
     if (radio->get_serialConnected())
     {
-        int retCode = 0;
-//        retCode = radio->getFrequency();
-        if (retCode < 0)
+        retCode = radio->getFrequency(vfo, &rfrequency);
+        if (retCode == RIG_OK)
+        {
+            if (rfrequency != curVfoFrq[0])
+            {
+                curVfoFrq[0] = rfrequency;
+                displayFreqVfoA(rfrequency);
+            }
+            else
+            {
+                return;
+            }
+        }
+        else
         {
             hamlibError(retCode);
         }
     }
+
+
+}
+
+void RigControlMainWindow::getCurFreq()
+{
+    getFrequency(RIG_VFO_CURR);
 }
 
 
+void RigControlMainWindow::getMode(vfo_t vfo)
+{
+
+    int retCode = 0;
+
+    if (radio->get_serialConnected())
+    {
+        retCode = radio->getMode(vfo, &rmode, &rwidth);
+        if (retCode == RIG_OK)
+        {
+            if (rmode != curMode[0])
+            {
+                curMode[0] = rmode;
+                displayModeVfoA(radio->convertModeQstr(rmode));
+            }
+            else
+            {
+                return;
+            }
+
+        }
+        else
+        {
+            hamlibError(retCode);
+        }
+    }
+
+}
+
+void RigControlMainWindow::getCurMode()
+{
+    getMode(RIG_VFO_CURR);
+}
+
+
+/*
 void RigControlMainWindow::updateFreq(double frequency)
 {
     if (curFreq == frequency)
@@ -238,15 +309,30 @@ void RigControlMainWindow::updateFreq(double frequency)
     emit frequency_updated(frequency);
 }
 
+*/
 
-
-void RigControlMainWindow::displayFreq(double frequency)
+void RigControlMainWindow::displayFreqVfoA(double frequency)
 {
 
+    qDebug() << "Got freq " << frequency;
     ui->radioFreqA->setText(convertStringFreq(frequency));
 }
 
+void RigControlMainWindow::displayFreqVfoB(double frequency)
+{
 
+    ui->radioFreqB->setText(convertStringFreq(frequency));
+}
+
+void RigControlMainWindow::displayModeVfoA(QString mode)
+{
+    ui->modeA->setText(mode);
+}
+
+void RigControlMainWindow::displayModeVfoB(QString mode)
+{
+    ui->modeB->setText(mode);
+}
 
 QString RigControlMainWindow::convertStringFreq(double frequency)
 {
@@ -311,3 +397,31 @@ void RigControlMainWindow::hamlibError(int errorCode)
 
 
 
+void RigControlMainWindow::readTraceLogFlag()
+{
+    QSettings config(RIG_CONTROL_CONFIG, QSettings::IniFormat);
+    config.beginGroup("TraceLog");
+
+
+    ui->actionTraceLog->setChecked(config.value("TraceLog", false).toBool());
+
+    config.endGroup();
+}
+
+void RigControlMainWindow::saveTraceLogFlag()
+{
+    QSettings config(RIG_CONTROL_CONFIG, QSettings::IniFormat);
+    config.beginGroup("TraceLog");
+
+    config.setValue("TraceLog", ui->actionTraceLog->isChecked());
+
+    config.endGroup();
+}
+
+
+
+
+void RigControlMainWindow::about()
+{
+    QMessageBox::about(this, "Minos RigControl", "Minos QT RigControl\nCopyright D Balharrie G8FKH/M0DGB 2017\nVersion 0.1");
+}

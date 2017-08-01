@@ -28,7 +28,7 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QSignalMapper>
-#include <QtSerialPort/QSerialPort>
+//#include <QtSerialPort/QSerialPort>
 #include <QTimer>
 #include <QTime>
 #include <QSettings>
@@ -86,9 +86,11 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     presetButtons[7] = ui->presetButton8;
     presetButtons[8] = ui->presetButton9;
     presetButtons[9] = ui->presetButton10;
+
+
     QSignalMapper *preset_mapper = new QSignalMapper(this);
 
-        for (int i = 0; i < NUM_PRESETS; i++ )
+    for (int i = 0; i < NUM_PRESETS; i++ )
     {
         preset_mapper->setMapping(presetButtons[i], i);
         connect(presetButtons[i], SIGNAL(clicked()), preset_mapper, SLOT(map()));

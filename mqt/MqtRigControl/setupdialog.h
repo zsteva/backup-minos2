@@ -1,3 +1,17 @@
+/////////////////////////////////////////////////////////////////////////////
+// $Id$
+//
+// PROJECT NAME 		Minos Amateur Radio Control and Logging System
+//                      Rig Control
+// Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2017
+//
+//
+//
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
+
 #ifndef SETUPDIALOG_H
 #define SETUPDIALOG_H
 
@@ -7,9 +21,12 @@
 
 #define NUM_RADIOS 5
 
+#define RIG_CONTROL_CONFIG "./Configuration/MinosRigControlConfig.ini"
+
 class QIntValidator;
 class QComboBox;
 class QLineEdit;
+class QCheckBox;
 
 
 
@@ -54,6 +71,8 @@ protected slots:
     void comStopBitsSelected(int);
     void comParitySelected(int);
     void comHandShakeSelected(int);
+    void transVertChecked(int);
+    void transVertEditFinished(int);
 
     void saveButtonPushed();
     void cancelButtonPushed();
@@ -73,6 +92,8 @@ private:
     QComboBox *comStopBits[NUM_RADIOS];
     QComboBox *comParity[NUM_RADIOS];
     QComboBox *comHandShake[NUM_RADIOS];
+    QCheckBox *transVertCheck[NUM_RADIOS];
+    QLineEdit *transVertEdit[NUM_RADIOS];
     QIntValidator *intValidator;
     bool radioValueChanged[NUM_RADIOS];
     bool radioChanged;
@@ -85,6 +106,7 @@ private:
     void fillStopBitsInfo();
     void fillParityInfo();
     void fillHandShakeInfo();
+
     void clearAvailRadio();
     void clearCurrentRadio();
 //    void enableCIVbox();

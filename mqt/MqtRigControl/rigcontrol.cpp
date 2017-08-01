@@ -1,12 +1,29 @@
+/////////////////////////////////////////////////////////////////////////////
+// $Id$
+//
+// PROJECT NAME 		Minos Amateur Radio Control and Logging System
+//                      Rig Control
+// Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2017
+//
+//
+// Hamlib Library
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
+
 #include <QList>
 #include <QDebug>
 #include <QStringList>
 #include "rigcontrol.h"
-#include <hamlib/rotator.h>
+#include <hamlib/rig.h>
 
 
 QList<const rig_caps *> capsList;
 bool riglistLoaded=false;
+
+
+
 
 
 int collect(const rig_caps *caps,rig_ptr_t)
@@ -20,6 +37,13 @@ int collect(const rig_caps *caps,rig_ptr_t)
 RigControl::RigControl(QObject *parent) : QObject(parent)
 {
     getRigList();
+
+    // set callback for debug messages
+    // NB callback is the C function, not the class method.
+    // user_data is used to point to our class.
+
+    rig_set_debug_callback (::rig_message_cb, static_cast<rig_ptr_t>(this));
+
 }
 
 
@@ -88,13 +112,13 @@ int RigControl::closeRig()
 }
 
 
-int RigControl::getFrequency(vfo_t *vfo, freq_t *frequency)
+int RigControl::getFrequency(vfo_t vfo, freq_t *frequency)
 {
-    return rig_get_freq(my_rig, *vfo, frequency);
+    return rig_get_freq(my_rig, vfo, frequency);
 }
 
 
-int RigControl::setFrequency(double frequency, vfo_t vfo)
+int RigControl::setFrequency(freq_t frequency, vfo_t vfo)
 {
     return (rig_set_freq(my_rig, vfo, frequency));
 }
@@ -103,7 +127,7 @@ int RigControl::setFrequency(double frequency, vfo_t vfo)
 
 int RigControl::getMode(vfo_t vfo, rmode_t *mode, pbwidth_t *width)
 {
-    return rig_get_mode (my_rig, vfo, mode, width);
+    return rig_get_mode(my_rig, vfo, mode, width);
 }
 
 int RigControl::setMode(vfo_t vfo, rmode_t mode, pbwidth_t width)
@@ -119,10 +143,11 @@ QString RigControl::convertModeQstr(rmode_t mode)
 
 
 /* ---------------------- VFO ------------------------------------ */
-
+// Note not all radios support reading the VFO
 
 int RigControl::getVfo(vfo_t *vfo)
 {
+
     return rig_get_vfo(my_rig, vfo);
 }
 
@@ -312,4 +337,26 @@ bool model_Sort(const rig_caps *caps1,const rig_caps *caps2)
     }
     if (QString::compare(caps1->mfg_name,caps2->mfg_name)<0) return true;
     return false;
+}
+
+
+// which passes the call to this method
+int RigControl::rig_message_cb(enum rig_debug_level_e debug_level, const char *fmt, va_list ap)
+{
+    char buf[1024];
+//    rig_debug_level_e dbl = debug_level;
+
+    vsprintf (buf, fmt, ap);
+    QString s = QString::fromLatin1(buf);
+    emit debug_protocol(s);
+
+    return RIG_OK;
+}
+
+
+int rig_message_cb(enum rig_debug_level_e debug_level, rig_ptr_t user_data, const char *fmt, va_list ap)
+{
+    RigControl *rt = static_cast<RigControl *>(user_data);
+    return rt->rig_message_cb(debug_level, fmt, ap);
+
 }

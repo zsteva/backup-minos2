@@ -1,3 +1,17 @@
+/////////////////////////////////////////////////////////////////////////////
+// $Id$
+//
+// PROJECT NAME 		Minos Amateur Radio Control and Logging System
+//                      Rig Control
+// Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2017
+//
+//
+//
+// Hamlib Library
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
 #ifndef RIGCONTROL_H
 #define RIGCONTROL_H
 
@@ -7,13 +21,14 @@
 
 #include <hamlib/rig.h>
 
+
 #define MAXCONFLEN 128
 
 extern "C" int write_block(hamlib_port_t *p, const char *txbuffer, size_t count);
 extern "C" int read_block(hamlib_port_t *p, char *rxbuffer, size_t count);
 
 bool model_Sort(const rig_caps *caps1,const rig_caps *caps2);
-
+int rig_message_cb(enum rig_debug_level_e, rig_ptr_t, const char*, va_list);
 
 namespace serialData
 {
@@ -40,7 +55,8 @@ const QStringList hamlibErrorMsg = {"No Error, operation completed sucessfully",
 
 }
 
-
+// This was the hamlib catParams structure, other fields have been added
+// to support other functions.
 
 struct scatParams
 {
@@ -68,6 +84,8 @@ struct scatParams
 //  bool enableXMLRPC;
 //  int XMLRPCPort;
   double txOnDelay;
+  freq_t transVertOffset;
+  bool transVertEnable;
 
 };
 
@@ -81,8 +99,8 @@ public:
     int init(scatParams currentRadio);
     bool enabled() {return rigControlEnabled;}
 
-    int getFrequency(vfo_t *vfo, freq_t *frequency);
-    int setFrequency(double frequency, vfo_t vfo);
+    int getFrequency(vfo_t vfo, freq_t *frequency);
+    int setFrequency(freq_t frequency, vfo_t vfo);
 
     int getMode(vfo_t vfo, rmode_t *mode, pbwidth_t *width);
     int setMode(vfo_t vfo, rmode_t mode, pbwidth_t width);
@@ -117,12 +135,15 @@ public:
     QStringList gethamlibErrorMsg();
     QString gethamlibErrorMsg(int errorCode);
 
+    int rig_message_cb(enum rig_debug_level_e debug_level, const char *fmt, va_list ap);
+
   signals:
     void frequency_updated(double);
+    void debug_protocol(QString);
 
   private:
     hamlib_port_t myport;
-    RIG *my_rig;            // handle to rig (nstance)
+    RIG *my_rig;            // handle to rig instance
 //    freq_t frequency;            // frequency
 //    rmode_t rmode;          // radio mode of operation
 //    pbwidth_t width;
@@ -134,11 +155,16 @@ public:
     bool serialConnected;
     void errorMessage(int errorCode,QString command);
     void getRadioList();
+
+
+
     scatParams catParams;
     int serialP;
     bool setPTT(bool On);
     double lastFrequency;
     QStringList xmlModes;
+
+
 
 
 };

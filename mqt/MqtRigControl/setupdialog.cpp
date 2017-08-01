@@ -1,3 +1,17 @@
+/////////////////////////////////////////////////////////////////////////////
+// $Id$
+//
+// PROJECT NAME 		Minos Amateur Radio Control and Logging System
+//                      Rig Control
+// Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2017
+//
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
 #include "setupdialog.h"
 #include "ui_setupdialog.h"
 #include "rigcontrol.h"
@@ -5,6 +19,7 @@
 #include <QComboBox>
 #include <QMessageBox>
 #include <QLineEdit>
+#include <QCheckBox>
 #include <QtSerialPort/QSerialPort>
 #include <QSerialPortInfo>
 #include <QSettings>
@@ -78,6 +93,19 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     comHandShake[3] = ui->comHandShakeBox4;
     comHandShake[4] = ui->comHandShakeBox5;
 
+    transVertCheck[0] = ui->TransVCheck1;
+    transVertCheck[1] = ui->TransVCheck2;
+    transVertCheck[2] = ui->TransVCheck3;
+    transVertCheck[3] = ui->TransVCheck4;
+    transVertCheck[4] = ui->TransVCheck5;
+
+    transVertEdit[0] = ui->TransVertEdit1;
+    transVertEdit[1] = ui->TransVertEdit2;
+    transVertEdit[2] = ui->TransVertEdit3;
+    transVertEdit[3] = ui->TransVertEdit4;
+    transVertEdit[4] = ui->TransVertEdit5;
+
+/******************** Map radioName EditBoxes *****************************************/
 
     QSignalMapper *radioName_mapper = new QSignalMapper(this);
 
@@ -88,6 +116,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     }
     connect(radioName_mapper, SIGNAL(mapped(int)), this, SLOT(radioNameFinished(int)));
 
+/******************** Map radioModel dropboxes *****************************************/
 
     QSignalMapper *radioModel_mapper = new QSignalMapper(this);
 
@@ -98,6 +127,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     }
     connect(radioModel_mapper, SIGNAL(mapped(int)), this, SLOT(radioModelSelected(int)));
 
+/******************** Map CIV Address Editboxes *****************************************/
 
     QSignalMapper *civAddress_mapper = new QSignalMapper(this);
 
@@ -108,7 +138,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     }
     connect(civAddress_mapper, SIGNAL(mapped(int)), this, SLOT(civAddressFinished(int)));
 
-
+/******************** Map comport dropboxes *****************************************/
 
     QSignalMapper *comPorts_mapper = new QSignalMapper(this);
     for (int i = 0; i < NUM_RADIOS; i++ )
@@ -119,6 +149,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
     connect(comPorts_mapper, SIGNAL(mapped(int)), this, SLOT(comportSelected(int)));
 
+/******************** Map comspeed dropboxes *****************************************/
 
     QSignalMapper *comSpeed_mapper = new QSignalMapper(this);
     for (int i = 0; i < NUM_RADIOS; i++ )
@@ -129,6 +160,8 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
     connect(comSpeed_mapper, SIGNAL(mapped(int)), this, SLOT(comSpeedSelected(int)));
 
+/******************** Map databits dropboxes *****************************************/
+
     QSignalMapper *comDataBits_mapper = new QSignalMapper(this);
     for (int i = 0; i < NUM_RADIOS; i++ )
     {
@@ -137,6 +170,8 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     }
 
     connect(comDataBits_mapper, SIGNAL(mapped(int)), this, SLOT(comDataBitsSelected(int)));
+
+/******************** Map stopbits dropboxes *****************************************/
 
     QSignalMapper *comStopBits_mapper = new QSignalMapper(this);
     for (int i = 0; i < NUM_RADIOS; i++ )
@@ -147,6 +182,8 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
     connect(comStopBits_mapper, SIGNAL(mapped(int)), this, SLOT(comStopBitsSelected(int)));
 
+/******************** Map parity dropboxes *****************************************/
+
     QSignalMapper *comParity_mapper = new QSignalMapper(this);
     for (int i = 0; i < NUM_RADIOS; i++ )
     {
@@ -156,6 +193,8 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
     connect(comParity_mapper, SIGNAL(mapped(int)), this, SLOT(comParitySelected(int)));
 
+/******************** Map handshake dropboxes *****************************************/
+
     QSignalMapper *comHandShake_mapper = new QSignalMapper(this);
     for (int i = 0; i < NUM_RADIOS; i++ )
     {
@@ -164,6 +203,32 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     }
 
     connect(comHandShake_mapper, SIGNAL(mapped(int)), this, SLOT(comHandShakeSelected(int)));
+
+/******************** Map transvert checkboxes *****************************************/
+
+
+    QSignalMapper *transVertCheck_mapper = new QSignalMapper(this);
+    for (int i = 0; i < NUM_RADIOS; i++ )
+    {
+        transVertCheck_mapper->setMapping(transVertCheck[i], i);
+        connect(transVertCheck[i], SIGNAL(checked(int)), transVertCheck_mapper, SLOT(map()));
+    }
+
+    connect(transVertCheck_mapper, SIGNAL(mapped(int)), this, SLOT(transVertChecked(int)));
+
+
+
+/******************** Map transvert editboxes *****************************************/
+
+
+    QSignalMapper *transVertEdit_mapper = new QSignalMapper(this);
+    for (int i = 0; i < NUM_RADIOS; i++ )
+    {
+        transVertEdit_mapper->setMapping(transVertEdit[i], i);
+        connect(transVertEdit[i], SIGNAL(editingFinished(int)), transVertEdit_mapper, SLOT(map()));
+    }
+
+    connect(transVertEdit_mapper, SIGNAL(mapped(int)), this, SLOT(transVertEditFinished(int)));
 
 
 
@@ -205,6 +270,8 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
         comStopBits[i]->setCurrentIndex(comStopBits[i]->findText(QString::number(availRadios[i].stopbits)));
         comParity[i]->setCurrentIndex(availRadios[i].parity);
         comHandShake[i]->setCurrentIndex(availRadios[i].handshake);
+        transVertCheck[i]->setEnabled(availRadios[i].transVertEnable);
+        transVertEdit[i]->setEnabled(availRadios[i].transVertEnable);
 
     }
 
@@ -351,6 +418,39 @@ void SetupDialog::comHandShakeSelected(int boxNumber)
 
 
 
+void SetupDialog::transVertChecked(int boxNumber)
+{
+
+    if (transVertCheck[boxNumber]->isChecked())
+    {
+        availRadios[boxNumber].transVertEnable = true;
+        transVertEdit[boxNumber]->setEnabled(true);
+    }
+    else
+    {
+        availRadios[boxNumber].transVertEnable = false;
+        transVertEdit[boxNumber]->setEnabled(false);
+    }
+}
+
+
+
+void SetupDialog::transVertEditFinished(int boxNumber)
+{
+    bool ok;
+    int value = transVertEdit[boxNumber]->text().toDouble(&ok);
+    if (!ok )
+    {
+         QMessageBox::critical(this, "TransVert Error", QString(transVertEdit[boxNumber]->text()) + " Not a valid TransVert Offset value");
+         transVertEdit[boxNumber]->text() = "";
+    }
+    else if (value != availRadios[boxNumber].transVertOffset)
+    {
+        availRadios[boxNumber].transVertOffset = value;
+        radioValueChanged[boxNumber] = true;
+        radioChanged = true;
+    }
+}
 
 
 
@@ -535,7 +635,7 @@ void SetupDialog::saveSettings()
     if (radioChanged)
     {
 
-        QSettings config("./Configuration/rigControl.ini", QSettings::IniFormat);
+        QSettings config(RIG_CONTROL_CONFIG, QSettings::IniFormat);
 
         for (int i = 0; i < NUM_RADIOS; i++)
         {
@@ -555,6 +655,8 @@ void SetupDialog::saveSettings()
                 config.setValue("parity", availRadios[i].parity);
                 config.setValue("stopbits", availRadios[i].stopbits);
                 config.setValue("handshake", availRadios[i].handshake);
+                config.setValue("transVertOffSet", availRadios[i].transVertOffset);
+                config.setValue("transVertEnable", availRadios[i].transVertEnable);
                 config.endGroup();
                 radioValueChanged[i] = false;
 
@@ -570,7 +672,7 @@ void SetupDialog::saveSettings()
 void SetupDialog::readSettings()
 {
 
-    QSettings config("./Configuration/rigControl.ini", QSettings::IniFormat);
+    QSettings config(RIG_CONTROL_CONFIG, QSettings::IniFormat);
 
     for (int i = 0; i < NUM_RADIOS; i++)
     {
@@ -587,6 +689,8 @@ void SetupDialog::readSettings()
         availRadios[i].parity = config.value("parity", 0).toInt();
         availRadios[i].stopbits = config.value("stopbits", 1).toInt();
         availRadios[i].handshake = config.value("handshake", 0).toInt();
+        availRadios[i].transVertOffset = config.value("transVertOffSet", 0).toDouble();
+        availRadios[i].transVertEnable = config.value("transVertEnable", false).toBool();
         config.endGroup();
     }
 
@@ -610,6 +714,8 @@ void SetupDialog::clearAvailRadio()
         availRadios[i].databits = 8;
         availRadios[i].parity = radio->getSerialParityCode(0);
         availRadios[i].handshake = radio->getSerialHandshakeCode(0);
+        availRadios[i].transVertOffset = 0;
+        availRadios[i].transVertEnable = false;
     }
 
 
@@ -629,6 +735,8 @@ void SetupDialog::clearCurrentRadio()
     currentRadio.databits = 8;
     currentRadio.parity = radio->getSerialParityCode(0);
     currentRadio.handshake = radio->getSerialHandshakeCode(0);
+    currentRadio.transVertOffset = 0;
+    currentRadio.transVertEnable = false;
 
 }
 
@@ -690,7 +798,7 @@ void SetupDialog::saveCurrentRadio()
 {
 
 
-    QSettings config("./Configuration/rigControl.ini", QSettings::IniFormat);
+    QSettings config(RIG_CONTROL_CONFIG, QSettings::IniFormat);
 
 
     config.beginGroup("CurrentRadio");
@@ -705,6 +813,8 @@ void SetupDialog::saveCurrentRadio()
     config.setValue("parity", currentRadio.parity);
     config.setValue("stopbits", currentRadio.stopbits);
     config.setValue("handshake", currentRadio.handshake);
+    config.setValue("transVertOffSet", currentRadio.transVertOffset);
+    config.setValue("transVertEnable", currentRadio.transVertEnable);
     config.endGroup();
 
 
@@ -715,7 +825,7 @@ void SetupDialog::saveCurrentRadio()
 void SetupDialog::readCurrentRadio()
 {
 
-    QSettings config("./Configuration/rigControl.ini", QSettings::IniFormat);
+    QSettings config(RIG_CONTROL_CONFIG, QSettings::IniFormat);
 
 
     {
@@ -731,6 +841,8 @@ void SetupDialog::readCurrentRadio()
         currentRadio.parity = config.value("parity", 0).toInt();
         currentRadio.stopbits = config.value("stopbits", 0).toInt();
         currentRadio.handshake = config.value("handshake", 0).toInt();
+        currentRadio.transVertOffset = config.value("transVertOffSet", 0).toDouble();
+        currentRadio.transVertEnable = config.value("transVertEnable", false).toBool();
         config.endGroup();
     }
 
