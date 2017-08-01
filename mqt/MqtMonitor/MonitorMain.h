@@ -19,6 +19,9 @@ class MonitorMain : public QMainWindow
 public:
     explicit MonitorMain(QWidget *parent = 0);
     ~MonitorMain();
+
+    QVector<MonitoredStation *> stationList;
+
     void logMessage( const QString &s );
     void notifyCallback( bool err, MinosRPCObj *mro, const QString &from );
     void loggerSubscribeClientCallback( bool err, MinosRPCObj *mro, const QString &from );
@@ -29,13 +32,16 @@ private slots:
     void on_clientCall( bool err, QSharedPointer<MinosRPCObj> , const QString &from );
     void on_serverCall( bool err, QSharedPointer<MinosRPCObj>, const QString &from );
 
+    void onStdInRead(QString cmd);
+
     void on_monitorTimeout();
 
-
     void on_monitorTree_doubleClicked(const QModelIndex &index);
+    void on_monitorSplitter_splitterMoved(int /*pos*/, int /*index*/);
 
 private:
     Ui::MonitorMain *ui;
+    int splitterHandleWidth;
 
     virtual void closeEvent(QCloseEvent *event) override;
     virtual void resizeEvent(QResizeEvent *event) override;
@@ -48,9 +54,6 @@ private:
     MonitorTreeModel *treeModel;
 
     QTimer *monitorTimer;
-
-    QVector<MonitoredStation *> stationList;
-//    PVirtualNode MonitorTreeClickNode;
 
     bool syncstat;
     void syncStations();

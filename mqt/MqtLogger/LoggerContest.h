@@ -13,7 +13,7 @@
 class DisplayContestContact;
 struct StanzaPos
 {
-   int stanza;
+   unsigned int stanza;
    long stanzaStart;
 };
 class LoggerContestLog : public BaseContestLog

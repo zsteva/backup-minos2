@@ -1414,7 +1414,7 @@ void LoggerContestLog::setStanza(unsigned int stanza, int stanzaStart )
 //====================================================================
 bool LoggerContestLog::getStanza( unsigned int stanza, QString &stanzaData )
 {
-   if ( stanza - 1 >= stanzaLocations.size() )
+   if ( static_cast<int>(stanza) > stanzaLocations.size() )
    {
       return false;
    }

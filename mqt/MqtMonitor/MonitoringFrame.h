@@ -31,6 +31,12 @@ private:
 
     QSOGridModel qsoModel;
 
+    void restoreColumns();
+
+private slots:
+    void on_sectionResized(int, int, int);
+
+
 };
 
 #endif // MONITORINGFRAME_H

@@ -13,8 +13,9 @@ MonitoringFrame::MonitoringFrame(QWidget *parent) :
 
     ui->QSOTable->resizeColumnsToContents();
     ui->QSOTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
-//    connect( ui->QSOTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
-//             this, SLOT( on_sectionResized(int, int , int)));
+    connect( ui->QSOTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
+             this, SLOT( on_sectionResized(int, int , int)));
+
 }
 
 MonitoringFrame::~MonitoringFrame()
@@ -32,9 +33,27 @@ void MonitoringFrame::initialise( BaseContestLog * pcontest )
 
 void MonitoringFrame::showQSOs()
 {
-   //LogMonitorFrame->showQSOs();
+    restoreColumns();
 }
 void MonitoringFrame::update()
 {
     qsoModel.reset();
+}
+void MonitoringFrame::on_sectionResized(int, int, int)
+{
+    QSettings settings;
+    QByteArray state;
+
+    state = ui->QSOTable->horizontalHeader()->saveState();
+    settings.setValue("QSOTable/state", state);
+}
+void MonitoringFrame::restoreColumns()
+{
+    QSettings settings;
+    QByteArray state;
+
+    state = settings.value("QSOTable/state").toByteArray();
+    ui->QSOTable->horizontalHeader()->restoreState(state);
+
+
 }

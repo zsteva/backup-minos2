@@ -9,6 +9,7 @@
 #include "MonitorMain.h"
 #include "ui_MonitorMain.h"
 
+
 //=============================================================================================
 class MonitorParameters : public MinosParametersAdapter
 {
@@ -53,6 +54,23 @@ void MonitorParameters::mshowMessage( const QString &mess, QWidget* Owner )
    mShowMessage( mess, Owner );
 }
 //=============================================================================================
+class MonitoredStation
+{
+   private:
+
+      // Plus we want the control (keyer) state, frequency, ?bandmap etc
+
+   public:
+      QString stationName;
+      PublishState state;
+      QVector< MonitoredLog *> slotList;
+
+      MonitoredStation()
+      {}
+      ~MonitoredStation()
+      {}   // need to delete slots...
+};
+//=============================================================================================
 enum NodeType{entRoot, entServer, entLog};
 class TreeNode
 {
@@ -63,7 +81,9 @@ protected:
     TreeNode *parentItem;
 
 public:
-    TreeNode(NodeType sn, TreeNode *parent, QString name):ntype(sn), NodeName(name), parentItem(parent)
+    MonitorMain *monmain;
+
+    TreeNode(NodeType sn, TreeNode *parent, QString name, MonitorMain *mm):ntype(sn), NodeName(name), parentItem(parent), monmain(mm)
     {
         if (parent)
             parent->nodes.push_back(this);
@@ -98,7 +118,7 @@ public:
 class RootTreeNode:public TreeNode
 {
 public:
-    RootTreeNode(QString name):TreeNode(entRoot, 0, "Root")
+    RootTreeNode(MonitorMain *mm):TreeNode(entRoot, 0, "Root", mm)
     {
 
     }
@@ -107,18 +127,16 @@ public:
 class ServerTreeNode:public TreeNode
 {
 public:
-    ServerTreeNode(TreeNode *parent, QString name):TreeNode(entServer, parent, name)
+    ServerTreeNode(TreeNode *parent, QString name):TreeNode(entServer, parent, name, parent->monmain)
     {
-
     }
     virtual QString data( int column );
 };
 class LogTreeNode:public TreeNode
 {
 public:
-    LogTreeNode(TreeNode *parent, QString name):TreeNode(entLog, parent, name)
+    LogTreeNode(TreeNode *parent, QString name):TreeNode(entLog, parent, name, parent->monmain)
     {
-
     }
     virtual QString data( int column );
 };
@@ -165,25 +183,35 @@ int TreeNode::childNumber() const
     }
     return 0;
 }
-QString RootTreeNode::data(int column)
+QString RootTreeNode::data(int /*column*/)
 {
     return Name();
 }
 QString ServerTreeNode::data(int column)
 {
-    return Name();
+    if (column == 0)
+        return Name();
+    return "";
 }
-QString LogTreeNode::data(int column)
-{
-    return Name();
-}
-/*
-char *stateList[] =
+QStringList stateList =
 {
    "P",
    "R",
    "NC"
 };
+QString LogTreeNode::data(int column)
+{
+    if (column == 0)
+        return Name();
+
+    if (column == 1)
+    {
+        QString state = QString(stateList[monmain->stationList[ parent()->childNumber() ] ->slotList[ childNumber() ] ->getState()]);
+        return state;
+    }
+    return "";
+}
+/*
 
 if ( *( int * ) Sender->GetNodeData( Node ) == 0 )
    CellText = (stationList[ Node->Index ] ->stationName + " " + stateList[stationList[ Node->Index ] ->state]).c_str();
@@ -203,6 +231,8 @@ public:
     void clear();
 
     QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;
+    QVariant headerData( int section, Qt::Orientation orientation,
+                         int role ) const Q_DECL_OVERRIDE;
     QModelIndex index( int row, int column,
                        const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
     QModelIndex parent( const QModelIndex &index ) const Q_DECL_OVERRIDE;
@@ -236,17 +266,19 @@ void MonitorTreeModel::setRoot(  TreeNode *root )
     endResetModel();
 }
 
-int MonitorTreeModel::columnCount( const QModelIndex & /* parent */ ) const
+int MonitorTreeModel::columnCount( const QModelIndex & parent  ) const
 {
-    return 1;
+    TreeNode *parentItem = getItem( parent );
+    if (parentItem && parentItem->GetNodeType() == entServer)
+        return 2;
+
+    return 2;
 }
 
 QVariant MonitorTreeModel::data( const QModelIndex &index, int role ) const
 {
     if ( !index.isValid() )
         return QVariant();
-
-    TreeNode *tni =  static_cast< TreeNode * >( index.internalPointer());
 
     if ( role != Qt::DisplayRole && role != Qt::EditRole )
         return QVariant();
@@ -256,6 +288,30 @@ QVariant MonitorTreeModel::data( const QModelIndex &index, int role ) const
     return item->data( index.column() );
 }
 
+QVariant MonitorTreeModel::headerData( int section, Qt::Orientation orientation,
+                     int role ) const
+{
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+    {
+        QString cell;
+        switch (section)
+        {
+        case 0:
+            cell = "Contest Name";
+            break;
+
+        case 1:
+            cell = "State";
+            break;
+
+        default:
+            break;
+        }
+
+        return cell;
+    }
+    return QVariant();
+}
 
 QModelIndex MonitorTreeModel::index( int row, int column, const QModelIndex &parent ) const
 {
@@ -305,22 +361,7 @@ TreeNode *MonitorTreeModel::getItem( const QModelIndex &index ) const
     return rootData;
 }
 
-class MonitoredStation
-{
-   private:
 
-      // Plus we want the control (keyer) state, frequency, ?bandmap etc
-
-   public:
-      QString stationName;
-      PublishState state;
-      QVector< MonitoredLog *> slotList;
-
-      MonitoredStation()
-      {}
-      ~MonitoredStation()
-      {}   // need to delete slots...
-};
 //=============================================================================================
 struct MonitoredStationCmp
 {
@@ -358,7 +399,11 @@ MonitorMain::MonitorMain(QWidget *parent) :
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     createCloseEvent();
-
+#ifdef Q_OS_ANDROID
+    splitterHandleWidth = 20;
+#else
+    splitterHandleWidth = 6;
+#endif
     QSettings settings;
     QByteArray geometry = settings.value("geometry").toByteArray();
     if (geometry.size() > 0)
@@ -368,6 +413,7 @@ MonitorMain::MonitorMain(QWidget *parent) :
 
     treeModel = new MonitorTreeModel();
     ui->monitorTree->setModel(treeModel);
+    ui->monitorTree->header()->show();
 
     monitorTimer = new QTimer();
 
@@ -385,7 +431,19 @@ MonitorMain::MonitorMain(QWidget *parent) :
     rpc->subscribe(rpcConstants::StationCategory);
     rpc->subscribe(rpcConstants::LocalStationCategory);
 
-}
+    QByteArray state;
+
+    state = settings.value("MonitorSplitter/state").toByteArray();
+    if (state.size())
+    {
+        ui->monitorSplitter->restoreState(state);
+    }
+    else
+    {
+        QList<int> split{200, 600};
+        ui->monitorSplitter->setSizes(split);
+    }
+    ui->monitorSplitter->setHandleWidth(splitterHandleWidth);}
 
 MonitorMain::~MonitorMain()
 {
@@ -430,6 +488,21 @@ void MonitorMain::changeEvent( QEvent* e )
         QSettings settings;
         settings.setValue("geometry", saveGeometry());
     }
+}
+void MonitorMain::onStdInRead(QString cmd)
+{
+    trace("Command read from stdin: " + cmd);
+    if (cmd.indexOf("ShowServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(true);
+    if (cmd.indexOf("HideServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(false);
+}
+
+void MonitorMain::on_monitorSplitter_splitterMoved(int /*pos*/, int /*index*/)
+{
+    QByteArray state = ui->monitorSplitter->saveState();
+    QSettings settings;
+    settings.setValue("MonitorSplitter/state", state);
 }
 
 void MonitorMain::on_closeButton_clicked()
@@ -608,16 +681,17 @@ void MonitorMain::syncStations()
    {
       syncstat = false;
 
-      TreeNode *root = new RootTreeNode("Root");
+      TreeNode *root = new RootTreeNode(this);
       for ( QVector<MonitoredStation *>::iterator i = stationList.begin(); i != stationList.end(); i++ )
       {
           TreeNode *snode = new ServerTreeNode(root, (*i)->stationName);
           for ( QVector<MonitoredLog *>::iterator j = ( *i ) ->slotList.begin(); j != ( *i ) ->slotList.end(); j++ )
           {
-              TreeNode *lnode = new LogTreeNode(snode, (*j)->getPublishedName());
+              /*TreeNode *lnode =*/ new LogTreeNode(snode, (*j)->getPublishedName());
           }
       }
       treeModel->setRoot(root);
+      ui->monitorTree->expandAll();
    }
 }
 void MonitorMain::addSlot( MonitoredLog *ct )
