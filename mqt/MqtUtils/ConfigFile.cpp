@@ -14,19 +14,6 @@ QString RunLocal("RunLocal");
 QString ConnectLocal("ConnectLocal");
 QString ConnectServer("ConnectServer");
 
-bool checkGoodRunType(const QString &s)
-{
-    if (s.compare(RunTypeNone) == 0)
-        return true;
-    if (s.compare(RunLocal) == 0)
-        return true;
-    if (s.compare(ConnectLocal) == 0)
-        return true;
-    if (s.compare(ConnectServer) == 0)
-        return true;
-
-    return false;
-}
 
 /*static*/
 MinosConfig *MinosConfig::thisDM = 0;
@@ -74,7 +61,7 @@ bool RunConfigElement::initialise( QSettings &config, QString sect )
     rundir = config.value( sect + "/Directory", "" ).toString().trimmed();
     remoteApp = config.value(sect + "/RemoteApp", name).toString().trimmed();
 
-    QString S = config.value( sect + "/RunType", "None" ) .toString().trimmed();
+    QString S = config.value( sect + "/RunType", RunTypeNone ) .toString().trimmed();
 
     runType = S;
 
@@ -109,7 +96,7 @@ Connectable RunConfigElement::connectable()
     res.appName = name;
     res.appType = appType;
     res.runType = runType;
-    if (runType == "ConnectServer")
+    if (runType == ConnectServer)
     {
         res.serverName = server;
         res.remoteAppName = remoteApp;
@@ -124,7 +111,7 @@ Connectable RunConfigElement::connectable()
 
 void RunConfigElement::createProcess()
 {
-    if ( runType == "RunLocal" && !runner)
+    if ( runType == RunLocal && !runner)
     {
         runner = new QProcess(parent());
 
@@ -134,8 +121,8 @@ void RunConfigElement::createProcess()
             trace(name + ":program doesn't exist:" + program);
         }
 
-        commandLine += " ";
-        commandLine += params;
+        program += " ";
+        program += params;
 
         QString wdir = rundir;
         runner->setWorkingDirectory(wdir);
@@ -151,7 +138,7 @@ void RunConfigElement::createProcess()
         connect (runner, SIGNAL(readyReadStandardError()), this, SLOT(on_readyReadStandardError()));
         connect (runner, SIGNAL(readyReadStandardOutput()), this, SLOT(on_readyReadStandardOutput()));
 
-        runner->start(commandLine);
+        runner->start(program);
 
     }
 }
@@ -388,6 +375,9 @@ Server=false
 
             ac.appType = apps[i].trimmed();
             ac.appPath = appConfig.value(apps[i] + "/Path").toString().trimmed();
+#ifdef Q_OS_WIN
+            ac.appPath += ".exe";
+#endif
             ac.server = appConfig.value(apps[i] + "/Server").toBool();
 
             // NB using comma in value give a string list! Single value will also go to list if desired

@@ -8,6 +8,14 @@
 
 bool started = false;
 
+QString welcomeText = QString("<br><h1>Welcome to Minos 2 Version ") + VERSION + " Beta" + "</h1>"
+                               "<br><a href=\"http://minos.sourceforge.net/\">http://minos.sourceforge.net</a>"
+                               "<br><br>";
+
+QString creditsText = QString("<br><h2>Credits</h2>"
+                              "<br>Mike Goodey G0GJV; David Balharrie M0DGB/G8FKH; Neil Yorke M0NKE"
+                              "<br>Dave Sergeant G3YMC; Ken Punshon G4APJ"
+                              "<br><br>");
 QString MinosText =
    "The Inferno, Dante, (trans Dorothy L Sayers, Penguin Classics); Canto 5.\r\n"
    "\r\n"
@@ -84,13 +92,12 @@ TAboutBox::TAboutBox(QWidget *parent, bool onStartup) :
 
     ui->PageControl1->setCurrentWidget(ui->AboutTabSheet);
 
-    ui->AboutMemo->setText(QString("<h1>Welcome to Minos 2 Version ") + VERSION + " Beta" + "</h1><br><a href=\"http://minos.sourceforge.net/\">http://minos.sourceforge.net</a>");
+    ui->AboutMemo->setText(welcomeText);
     ui->AboutMemo->setTextFormat(Qt::RichText);
     ui->AboutMemo->setTextInteractionFlags(Qt::TextBrowserInteraction);
 
     ui->CreditsMemo->setTextFormat(Qt::RichText);
-    ui->CreditsMemo->setText(QString("<h2>Credits</h2><br>Mike Goodey G0GJV; David Balharrie M0DGB/G8FKH; Neil Yorke M0NKE; Dave Sergeant G3YMC;"
-                                     "Ken Punshon G4APJ"));
+    ui->CreditsMemo->setText(creditsText);
 
     ui->MinosMemo->setText(MinosText);
 

@@ -33,13 +33,18 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool doAutoSt
     elementFrames.clear();
     MinosConfig *minosConfig = MinosConfig::getMinosConfig();
 
+    int offset = 0;
     for (int i = 0; i <  minosConfig->elelist.size(); i++)
     {
+        QSharedPointer<RunConfigElement> c = minosConfig->elelist[i];
+        if (c->name.compare("<Deleted>", Qt::CaseInsensitive) == 0)
+            continue;
+
         ConfigElementFrame *cef = new ConfigElementFrame();
 
         // set alternating background
 
-        if (i%2)
+        if (offset++%2)
         {
             cef->setStyleSheet("QFrame { background-color: lightBlue; }");
         }
@@ -50,7 +55,6 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool doAutoSt
 
         vbl->addWidget(cef);
 
-        QSharedPointer<RunConfigElement> c = minosConfig->elelist[i];
         cef->setElement(c);
         elementFrames.append(cef);
     }

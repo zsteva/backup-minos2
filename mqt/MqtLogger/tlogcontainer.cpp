@@ -19,6 +19,7 @@
 #include "StartConfig.h"
 #include "RPCPubSub.h"
 #include "ConfigFile.h"
+#include "SendRPCDM.h"
 
 TLogContainer *LogContainer = 0;
 
@@ -58,6 +59,14 @@ TLogContainer::TLogContainer(QWidget *parent) :
     sblabel2 = new QLabel( "" );
     statusBar() ->addWidget( sblabel2, 2 );
 
+    subscribeApps();
+}
+TLogContainer::~TLogContainer()
+{
+    delete ui;
+}
+void TLogContainer::subscribeApps()
+{
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
     MinosConfig *config = MinosConfig::getMinosConfig();
 
@@ -78,10 +87,7 @@ TLogContainer::TLogContainer(QWidget *parent) :
         rpc->subscribeRemote( servers[i], rpcConstants::RotatorCategory );
     }
 }
-TLogContainer::~TLogContainer()
-{
-    delete ui;
-}
+
 bool TLogContainer::show(int argc, char *argv[])
 {
      bool mlpa = isScrollingContestTabs();
@@ -676,6 +682,8 @@ void TLogContainer::ContestDetailsActionExecute()
             pced.setDetails( ct );
             if ( pced.exec() == QDialog::Accepted )
             {
+                f->sendDM->resetConnectables(ct);
+                subscribeApps();
                 // and we need to do some re-init on the display
                 //updateQSODisplay();
                 ct->scanContest();
@@ -985,6 +993,11 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
          {
             if ( ced->exec() == QDialog::Accepted )
             {
+                QWidget *tw = ui->ContestPageControl->currentWidget();
+                TSingleLogFrame *f = dynamic_cast<TSingleLogFrame *>( tw );
+
+                f->sendDM->resetConnectables(contest);
+                subscribeApps();
                contest->scanContest();
                show = true;
             }

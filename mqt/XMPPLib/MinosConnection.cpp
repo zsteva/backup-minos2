@@ -208,7 +208,7 @@ void MinosAppConnection::on_readyRead()
                     {
                         char * ec;
                         int packetlen = strtol( packetbuff.c_str() + 2, &ec, 10 );
-                        if ( *ec == '<' && packetlen <= static_cast<int> (strlen( ec )) + 2 && packetbuff.find( ">&&" ) )
+                        if ( *ec == '<' && packetlen <= static_cast<int> (strlen( ec )) + 2 && packetbuff.find( ">&&" ) != std::string::npos )
                         {
                             TIXML_STRING packet = packetbuff.substr( packetoffset, packetlen );
                             packetbuff = packetbuff.substr( packetoffset + packetlen + 2, strlen( ec + packetlen ) );

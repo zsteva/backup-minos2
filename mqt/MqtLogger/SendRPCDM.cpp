@@ -28,6 +28,20 @@
 TSendDM::TSendDM(QWidget* Owner , LoggerContestLog *ct)
       : QObject( Owner )
 {
+    resetConnectables(ct);
+
+    MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
+    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_clientCall (bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
+
+}
+TSendDM::~TSendDM()
+{
+}
+
+void TSendDM::resetConnectables(LoggerContestLog *ct)
+{
     MinosConfig *config = MinosConfig::getMinosConfig();
 
     rigServerConnectable = config->getApp(ct->appRigControl.getValue());
@@ -35,15 +49,8 @@ TSendDM::TSendDM(QWidget* Owner , LoggerContestLog *ct)
     bandMapServerConnectable = config->getApp(ct->appBandMap.getValue());
     rotatorServerConnectable = config->getApp(ct->appRotator.getValue());
 
-    MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
-    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
-    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request (bool,QSharedPointer<MinosRPCObj>,QString)));
-    connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
+}
 
-}
-TSendDM::~TSendDM()
-{
-}
 //---------------------------------------------------------------------------
 void TSendDM::logMessage( QString s )
 {
@@ -138,6 +145,9 @@ void TSendDM::sendRotator(rpcConstants::RotateDirection direction, int angle )
 //---------------------------------------------------------------------------
 void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
+
+    // Does each SendDm get a notification??
+
     // PubSub notifications
     logMessage( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
     AnalysePubSubNotify an( err, mro );
@@ -203,16 +213,17 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
 
 }
 //---------------------------------------------------------------------------
-void TSendDM::on_response( bool err, QSharedPointer<MinosRPCObj> /*mro*/, const QString &from )
+void TSendDM::on_clientCall( bool err, QSharedPointer<MinosRPCObj> /*mro*/, const QString &from )
 {
    logMessage( "response callback from " + from + ( err ? ":Error" : ":Normal" ) );
 }
 
 //---------------------------------------------------------------------------
-void TSendDM::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
+void TSendDM::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
    // responds to pull calls from the monitoring client
    logMessage( "request callback from " + from + ( err ? ":Error" : ":Normal" ) );
+   logMessage("method is " + mro->getMethodName());
 
    // need to check "from" is correct
    if ( !err )
@@ -220,6 +231,10 @@ void TSendDM::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
       QSharedPointer<RPCParam> psLogName;
       QSharedPointer<RPCParam>psStanza;
       RPCArgs *args = mro->getCallArgs();
+
+      //QSharedPointer<RPCParam> psMess;
+      //if (args->getStructArgMember(0, rpcConstants::loggerStanzaRequest, psMess))
+
       if ( args->getStructArgMember( 0, "LogName", psLogName )
            && args->getStructArgMember( 0, "Stanza", psStanza ) )
       {

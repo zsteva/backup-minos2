@@ -757,7 +757,7 @@ BundleFile::BundleFile( PROFILES p )
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eapBandMap, "Band Map", "BandMap", "Band Map App", "Band Map App", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eapRigControl, "Rig Control", "RigControl", "Rig Control App", "Rig Control App", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eapRotator, "Rotator", "Rotator", "Rotator App", "Rotator App", false ) ) );
-        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eapVoiceKeyer, "Voice Keyer", "VoiceKeyer", "Voice Keyer App", "Voice Keyer App", false ) ) );
+        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eapVoiceKeyer, "Voice Keyer", "Keyer", "Voice Keyer App", "Voice Keyer App", false ) ) );
         break;
 
     case epLOCSQUARESPROFILE:

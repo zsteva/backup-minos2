@@ -400,7 +400,7 @@ commonKeyer::commonKeyer( const KeyerConfig &keyer, const PortConfig &port )
       recPending( false ),
       L1State( false ), L2State( false ),
       pttState( false ),
-      cwRate( 0.0 ), tickcount( -1 ), lastIntCount( 0 ),
+      cwRate( 0.0 ), lastIntCount( 0 ),
       tone1( 650 ), tone2( 1250 ), inTone( false )
 {}
 commonKeyer::~commonKeyer()

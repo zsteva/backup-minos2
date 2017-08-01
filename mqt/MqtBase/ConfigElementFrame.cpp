@@ -27,9 +27,14 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
 
     if (c->runType.isEmpty())
         ui->rbNoAction->setChecked(true);
-    if (c->runType == "RunLocal")
+
+    if (c->runType == RunTypeNone)
+        ui->rbNoAction->setChecked(true);
+    if (c->runType == RunLocal)
         ui->rbRunLocally->setChecked(true);
-    if (c->runType == "ConnectServer")
+    if (c->runType == ConnectLocal)
+        ui->rbConnectLocal->setChecked(true);
+    if (c->runType == ConnectServer)
         ui->rbConnectRemote->setChecked(true);
 
     QString at = c->appType;
@@ -40,6 +45,7 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
     ui->homeDirectoryEdit->setText(c->rundir);
     ui->parametersEdit->setText(c->params);
     ui->serverNameEdit->setText(c->server);
+    ui->remoteAppNameEdit->setText(c->remoteApp);
 
     checkEnabled();
 }
@@ -61,11 +67,12 @@ bool ConfigElementFrame::saveElement()
 
     c->appType = ui->appTypeCombo->currentText();
 
-    c->name = ui->elementNameEdit->text();
-    c->rundir = ui->homeDirectoryEdit->text();
-    c->commandLine = ui->programNameEdit->text();
-    c->params = ui->parametersEdit->text();
-    c->server = ui->serverNameEdit->text();
+    c->name = ui->elementNameEdit->text().trimmed();
+    c->rundir = ui->homeDirectoryEdit->text().trimmed();
+    c->commandLine = ui->programNameEdit->text().trimmed();
+    c->params = ui->parametersEdit->text().trimmed();
+    c->server = ui->serverNameEdit->text().trimmed();
+    c->remoteApp = ui->remoteAppNameEdit->text().trimmed();
 
     return true;
 }
@@ -75,19 +82,21 @@ void ConfigElementFrame::on_programBrowseButton_clicked()
     QDir cdir(GetCurrentDir());
     QString InitialDir = ExtractFileDir(ui->programNameEdit->text());
 
-    // how do we search for executable files on Linux?
-    // This MIGHT work
-    QString Filter = "Executable Files (*.exe);;"
-                     "All Files (*.*)" ;
-
     QFileDialog dialog(this, "Minos 2 Component Program", InitialDir);
 #if QT_VERSION >= 0x050600
     const QStringList schemes = QStringList(QStringLiteral("file"));
 
     dialog.setSupportedSchemes(schemes);
 #endif
+
+#ifdef Q_OS_WIN
+    QString Filter = "Executable Files (*.exe);;"
+                     "All Files (*.*)" ;
     dialog.setNameFilter(Filter);
-    dialog.setFilter(QDir::Files | QDir::Executable);
+#else
+    dialog.setFilter(QDir::AllDirs | QDir::Files | QDir::Dirs /*| QDir::Executable*/); //executable doesn't seem to work
+#endif
+
     dialog.setFileMode(QFileDialog::ExistingFile);
 
     if (dialog.exec() == QDialog::Accepted)
@@ -124,6 +133,7 @@ void ConfigElementFrame::on_deleteButton_clicked()
 {
     // mark the element as deleted
     ui->elementNameEdit->setText("<Deleted>");
+    ui->rbNoAction->setChecked(true);
 }
 
 void ConfigElementFrame::checkEnabled()
@@ -174,8 +184,16 @@ void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &valu
 {
     if (ui->elementNameEdit->text().isEmpty())
         ui->elementNameEdit->setText(value);
+
+    if (ui->remoteAppNameEdit->text().isEmpty())
+        ui->remoteAppNameEdit->setText(value);
+
     if (ui->programNameEdit->text().isEmpty())
-        ui->programNameEdit->setText(value);
+    {
+        AppConfigElement ace = MinosConfig::getMinosConfig()->getAppConfigElement(value);
+        ui->programNameEdit->setText(ace.appPath);
+    }
+
     if (ui->homeDirectoryEdit->text().isEmpty())
         ui->homeDirectoryEdit->setText(".");
 }

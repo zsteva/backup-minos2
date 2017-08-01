@@ -38,6 +38,8 @@ class TSendDM : public QObject
    public:  		// User declarations
       TSendDM( QWidget* Owner, LoggerContestLog *ct );
       ~TSendDM();
+      void resetConnectables(LoggerContestLog *ct);
+
       void sendKeyerPlay( int fno );
       void sendKeyerRecord( int fno );
       void sendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
@@ -46,8 +48,8 @@ class TSendDM : public QObject
       void sendKeyerStop();
       void sendRotator(rpcConstants::RotateDirection direction, int angle );
    private slots:
-      void on_request( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
-      void on_response( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
+      void on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
+      void on_clientCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
       void on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
 signals:
       void RotatorLoaded();

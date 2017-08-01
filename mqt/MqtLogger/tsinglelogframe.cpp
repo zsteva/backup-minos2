@@ -78,6 +78,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(XferPressed()), this, SLOT(on_XferPressed()));
     connect(&MinosLoggerEvents::mle, SIGNAL(BandMapPressed()), this, SLOT(on_BandMapPressed()));
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(NextContactDetailsTimerTimer()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(PublishTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(MatchStarting(BaseContestLog*)), this, SLOT(on_MatchStarting(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(MakeEntry(BaseContestLog*)), this, SLOT(on_MakeEntry(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)), this, SLOT(on_AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)));
@@ -214,6 +215,7 @@ void TSingleLogFrame::closeContest()
 {
     if ( TContestApp::getContestApp() )
     {
+       RPCPubSub::publish( rpcConstants::monitorLogCategory, contest->publishedName, QString::number( 0 ), psRevoked );
        qsoModel.initialise(0);
        TContestApp::getContestApp() ->closeFile( contest );
        ui->GJVQSOLogFrame->closeContest();
@@ -341,6 +343,24 @@ void TSingleLogFrame::NextContactDetailsTimerTimer( )
         }
     }
 }
+void TSingleLogFrame::PublishTimerTimer(  )
+{
+   LoggerContestLog * ct = dynamic_cast<LoggerContestLog *>( contest );
+   if ( ct && ct->isMinosFile() && !ct->isUnwriteable() && !ct->isProtected())
+   {
+      int stanzaCount = contest->getStanzaCount();
+      if ( lastStanzaCount != stanzaCount )
+      {
+         // publish this contest details - what to use?
+         // category LoggerContestLog
+         // name filename(?)
+         // value stanzaCount
+         RPCPubSub::publish( rpcConstants::monitorLogCategory, contest->publishedName, QString::number( stanzaCount ), psPublished );
+         lastStanzaCount = stanzaCount;
+      }
+   }
+}
+
 void TSingleLogFrame::on_NextContactDetailsOnLeft()
 {
     doNextContactDetailsOnLeftClick();
@@ -965,6 +985,7 @@ void TSingleLogFrame::on_GoToSerial(BaseContestLog *ct)
 //---------------------------------------------------------------------------
 void TSingleLogFrame::on_KeyerLoaded()
 {
+    trace ("KeyerLoaded in " + contest->name.getValue() );
    keyerLoaded = true;
    ui->GJVQSOLogFrame->setKeyerLoaded();
 }
@@ -1068,140 +1089,6 @@ void TSingleLogFrame::sendRotator(rpcConstants::RotateDirection direction, int a
 }
 
 //=============================================================================
-QSOGridModel::QSOGridModel():contest(0)
-{}
-QSOGridModel::~QSOGridModel()
-{}
-void QSOGridModel::reset()
-{
-    beginResetModel();
-    endResetModel();
-}
-
-void QSOGridModel::initialise(BaseContestLog * pcontest )
-{
-   contest = pcontest;
-}
-QVariant QSOGridModel::data( const QModelIndex &index, int role ) const
-{
-    int row = index.row();
-    int column = index.column();
-
-    if ( row >= rowCount() )
-        return QVariant();
-
-    QSharedPointer<BaseContact> ct = contest->pcontactAt( row);
-    if (!ct)
-        return QVariant();
-
-    if (role == Qt::BackgroundRole)
-    {
-        if ( ct->contactFlags.getValue() & FORCE_LOG )
-        {
-           return static_cast< QColor> ( 0x00FF80C0 );        // Pink(ish)
-        }
-        else
-        {
-           if ( ct->getModificationCount() > 1 )
-           {
-               return static_cast< QColor> ( 0x00C0DCC0 );    // "money green"
-           }
-        }
-        return QVariant();
-    }
-    if ( role != Qt::DisplayRole && role != Qt::EditRole )
-        return QVariant();
-
-    if (role == Qt::DisplayRole)
-    {
-        if ( ct && column >= 0 && column < columnCount())
-        {
-           QString line = ct->getField( QSOTreeColumns[ column ].fieldId, contest );
-           QColor multhighlight = Qt::red;
-           bool setHighlight = false;
-           switch ( QSOTreeColumns[ column ].fieldId )
-           {
-              case egTime:
-                 if (!contest->checkTime(ct->time))
-                 {
-                    setHighlight = true;
-                 }
-                 break;
-              case egCall:
-                 if ( contest->countryMult.getValue() && ct->newCtry )
-                     setHighlight = true;
-                 break;
-              case egExchange:
-                 if ( contest->districtMult.getValue() && ct->newDistrict )
-                     setHighlight = true;
-                 break;
-              case egLoc:
-                 if ( contest->locMult.getValue() && ct->locCount > 0)
-                 {
-                     setHighlight = true;
-                 }
-                 else if ( contest->usesBonus.getValue() && ct->bonus > 0)
-                 {
-                     switch (ct->bonus)
-                     {
-                     case 500:  //blue
-                         multhighlight = Qt::blue;
-                         break;
-                     case 1000: //green
-                         multhighlight = Qt::darkGreen;
-                         break;
-                     case 2000: //red
-                         multhighlight = Qt::red;
-                         break;
-                     }
-
-                     setHighlight = true;
-                 }
-                 break;
-           }
-           if (setHighlight)
-               line = HtmlFontColour(multhighlight) + "<b>" + line;
-           return line;
-        }
-    }
-    return QVariant();
-}
-QVariant QSOGridModel::headerData( int section, Qt::Orientation orientation,
-                     int role ) const
-{
-    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-    {
-        QString h = QSOTreeColumns[ section ].title;
-        return h;
-    }
-    return QVariant();
-}
-
-QModelIndex QSOGridModel::index( int row, int column, const QModelIndex &parent) const
-{
-    if ( row < 0 || row >= rowCount() || ( parent.isValid() && parent.column() != 0 ) )
-        return QModelIndex();
-
-    return createIndex( row, column );
-}
-
-QModelIndex QSOGridModel::parent( const QModelIndex &/*index*/ ) const
-{
-    return QModelIndex();
-}
-
-int QSOGridModel::rowCount( const QModelIndex &/*parent*/ ) const
-{
-    if (!contest)
-        return 0;
-
-    return contest->ctList.size() + 1;
-}
-
-int QSOGridModel::columnCount( const QModelIndex &/*parent*/ ) const
-{
-    return  LOGTREECOLS;
-}
 //=============================================================================
 static GridColumn ThisMatchTreeColumns[ THISMATCHTREECOLS ] =
    {

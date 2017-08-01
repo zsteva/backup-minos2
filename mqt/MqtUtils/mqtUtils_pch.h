@@ -9,6 +9,7 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QFile>
+#include <QFont>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QSettings>

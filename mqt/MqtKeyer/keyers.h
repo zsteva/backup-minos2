@@ -196,7 +196,6 @@ class commonKeyer: public lineMonitor, public timerTicker
       bool recPending;
 
       double cwRate;
-      int tickcount;
       unsigned long lastIntCount;
 
       int tone1;

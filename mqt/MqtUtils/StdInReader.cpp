@@ -23,6 +23,8 @@ void StdInReader::run()
     for (;;)
     {
         line = stdinStream.readLine();
+        if (line.isNull())
+            break;          // catch stdin being closed by the other end
         emit stdinLine(line);
     }
 }

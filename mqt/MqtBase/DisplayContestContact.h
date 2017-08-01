@@ -20,7 +20,7 @@ class DisplayContestContact: public BaseContact
       DisplayContestContact& operator =( const DisplayContestContact & );
    public:
 
-      virtual void setLogSequence( unsigned long ul )
+      virtual void setLogSequence( unsigned long ul ) override
       {
          logSequence = ul;
       }
