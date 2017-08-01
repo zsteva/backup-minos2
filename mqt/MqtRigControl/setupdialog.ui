@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTabWidget" name="negCheckbox5">
+    <widget class="QTabWidget" name="setupTab">
      <property name="currentIndex">
       <number>4</number>
      </property>
@@ -930,7 +930,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="negCheckbox5_2">
+         <widget class="QCheckBox" name="negCheckbox5">
           <property name="text">
            <string>Negative offset</string>
           </property>

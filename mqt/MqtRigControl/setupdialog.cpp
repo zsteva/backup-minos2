@@ -465,6 +465,10 @@ void SetupDialog::transVertChecked(int boxNumber)
 void SetupDialog::transVertEditFinished(int boxNumber)
 {
     bool ok;
+
+
+    qDebug() << "offset = " << transVertEdit[boxNumber]->text();
+
     int value = transVertEdit[boxNumber]->text().toDouble(&ok);
     if (!ok )
     {

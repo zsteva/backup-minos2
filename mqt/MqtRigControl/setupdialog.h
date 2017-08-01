@@ -77,6 +77,7 @@ protected slots:
 
     void saveButtonPushed();
     void cancelButtonPushed();
+    void transNegChecked(int boxNumber);
 
 
 private:
