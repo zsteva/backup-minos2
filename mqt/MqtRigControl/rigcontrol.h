@@ -86,6 +86,7 @@ struct scatParams
   double txOnDelay;
   freq_t transVertOffset;
   bool transVertEnable;
+  bool transVertNegative;
 
 };
 

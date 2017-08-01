@@ -27,6 +27,7 @@ class QIntValidator;
 class QComboBox;
 class QLineEdit;
 class QCheckBox;
+class QRadioButton;
 
 
 
@@ -94,6 +95,7 @@ private:
     QComboBox *comHandShake[NUM_RADIOS];
     QCheckBox *transVertCheck[NUM_RADIOS];
     QLineEdit *transVertEdit[NUM_RADIOS];
+    QCheckBox *transNegCheck[NUM_RADIOS];
     QIntValidator *intValidator;
     bool radioValueChanged[NUM_RADIOS];
     bool radioChanged;

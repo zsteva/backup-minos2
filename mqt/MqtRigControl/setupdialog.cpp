@@ -105,6 +105,13 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     transVertEdit[3] = ui->TransVertEdit4;
     transVertEdit[4] = ui->TransVertEdit5;
 
+    transNegCheck[0] =ui->negCheckbox1;
+    transNegCheck[1] =ui->negCheckbox2;
+    transNegCheck[2] =ui->negCheckbox3;
+    transNegCheck[3] =ui->negCheckbox4;
+    transNegCheck[4] =ui->negCheckbox5;
+
+
 /******************** Map radioName EditBoxes *****************************************/
 
     QSignalMapper *radioName_mapper = new QSignalMapper(this);
@@ -211,7 +218,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     for (int i = 0; i < NUM_RADIOS; i++ )
     {
         transVertCheck_mapper->setMapping(transVertCheck[i], i);
-        connect(transVertCheck[i], SIGNAL(checked(int)), transVertCheck_mapper, SLOT(map()));
+        connect(transVertCheck[i], SIGNAL(stateChanged(int)), transVertCheck_mapper, SLOT(map()));
     }
 
     connect(transVertCheck_mapper, SIGNAL(mapped(int)), this, SLOT(transVertChecked(int)));
@@ -225,7 +232,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     for (int i = 0; i < NUM_RADIOS; i++ )
     {
         transVertEdit_mapper->setMapping(transVertEdit[i], i);
-        connect(transVertEdit[i], SIGNAL(editingFinished(int)), transVertEdit_mapper, SLOT(map()));
+        connect(transVertEdit[i], SIGNAL(editingFinished()), transVertEdit_mapper, SLOT(map()));
     }
 
     connect(transVertEdit_mapper, SIGNAL(mapped(int)), this, SLOT(transVertEditFinished(int)));
@@ -234,6 +241,26 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveButtonPushed()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
+
+
+/******************** Map trans negative offset checkbox *****************************************/
+
+
+    QSignalMapper *transNegCheck_mapper = new QSignalMapper(this);
+    for (int i = 0; i < NUM_RADIOS; i++ )
+    {
+        transNegCheck_mapper->setMapping(transNegCheck[i], i);
+        connect(transNegCheck[i], SIGNAL(stateChanged(int)), transNegCheck_mapper, SLOT(map()));
+    }
+
+    connect(transNegCheck_mapper, SIGNAL(mapped(int)), this, SLOT(transNegChecked(int)));
+
+
+
+    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveButtonPushed()));
+    connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
+
+
 
 
 
@@ -270,9 +297,9 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
         comStopBits[i]->setCurrentIndex(comStopBits[i]->findText(QString::number(availRadios[i].stopbits)));
         comParity[i]->setCurrentIndex(availRadios[i].parity);
         comHandShake[i]->setCurrentIndex(availRadios[i].handshake);
-        transVertCheck[i]->setEnabled(availRadios[i].transVertEnable);
-        transVertEdit[i]->setEnabled(availRadios[i].transVertEnable);
-
+        transVertCheck[i]->setChecked(availRadios[i].transVertEnable);
+        transVertEdit[i]->setEnabled(transVertCheck[i]->isChecked());
+        transNegCheck[i]->setEnabled(transVertCheck[i]->isChecked());
     }
 
 
@@ -451,6 +478,17 @@ void SetupDialog::transVertEditFinished(int boxNumber)
         radioChanged = true;
     }
 }
+
+
+
+void SetupDialog::transNegChecked(int boxNumber)
+{
+
+
+
+
+}
+
 
 
 
@@ -657,6 +695,7 @@ void SetupDialog::saveSettings()
                 config.setValue("handshake", availRadios[i].handshake);
                 config.setValue("transVertOffSet", availRadios[i].transVertOffset);
                 config.setValue("transVertEnable", availRadios[i].transVertEnable);
+                config.setValue("transVertNegative", availRadios[i].transVertNegative);
                 config.endGroup();
                 radioValueChanged[i] = false;
 
@@ -691,6 +730,7 @@ void SetupDialog::readSettings()
         availRadios[i].handshake = config.value("handshake", 0).toInt();
         availRadios[i].transVertOffset = config.value("transVertOffSet", 0).toDouble();
         availRadios[i].transVertEnable = config.value("transVertEnable", false).toBool();
+        availRadios[i].transVertNegative = config.value("transVertNegative", false).toBool();
         config.endGroup();
     }
 
@@ -716,6 +756,7 @@ void SetupDialog::clearAvailRadio()
         availRadios[i].handshake = radio->getSerialHandshakeCode(0);
         availRadios[i].transVertOffset = 0;
         availRadios[i].transVertEnable = false;
+        availRadios[i].transVertNegative = false;
     }
 
 
@@ -737,6 +778,7 @@ void SetupDialog::clearCurrentRadio()
     currentRadio.handshake = radio->getSerialHandshakeCode(0);
     currentRadio.transVertOffset = 0;
     currentRadio.transVertEnable = false;
+    currentRadio.transVertNegative = false;
 
 }
 
@@ -815,6 +857,7 @@ void SetupDialog::saveCurrentRadio()
     config.setValue("handshake", currentRadio.handshake);
     config.setValue("transVertOffSet", currentRadio.transVertOffset);
     config.setValue("transVertEnable", currentRadio.transVertEnable);
+    config.setValue("transVertNegative", currentRadio.transVertNegative);
     config.endGroup();
 
 
@@ -843,6 +886,7 @@ void SetupDialog::readCurrentRadio()
         currentRadio.handshake = config.value("handshake", 0).toInt();
         currentRadio.transVertOffset = config.value("transVertOffSet", 0).toDouble();
         currentRadio.transVertEnable = config.value("transVertEnable", false).toBool();
+        currentRadio.transVertNegative = config.value("transVertNegative", false).toBool();
         config.endGroup();
     }
 
