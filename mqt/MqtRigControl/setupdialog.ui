@@ -17,927 +17,872 @@
    <item>
     <widget class="QTabWidget" name="setupTab">
      <property name="currentIndex">
-      <number>4</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="radioTab1">
       <attribute name="title">
        <string>Radio 1</string>
       </attribute>
-      <widget class="QWidget" name="layoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>90</y>
-         <width>411</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QLabel" name="label_11">
-          <property name="text">
-           <string>Transvert. Enable</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="TransVCheck1">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_10">
-          <property name="text">
-           <string>Transvert Offset</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="TransVertEdit1">
-          <property name="inputMask">
-           <string>99.999.999.999</string>
-          </property>
-          <property name="text">
-           <string>00.000.000.000</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="negCheckbox1">
-          <property name="text">
-           <string>Negative offset</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="gridLayoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>671</width>
-         <height>80</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="2" column="5">
-         <widget class="QComboBox" name="comDataBitsBox1"/>
-        </item>
-        <item row="2" column="6">
-         <widget class="QComboBox" name="comStopBitsBox1"/>
-        </item>
-        <item row="0" column="7">
-         <widget class="QLabel" name="label_7">
-          <property name="text">
-           <string>Parity</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="6">
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>Stop Bits</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="5">
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Data Bits</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Radio Name</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="4">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Speed</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Comport</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLineEdit" name="CIVlineEdit1"/>
-        </item>
-        <item row="0" column="8">
-         <widget class="QLabel" name="label_8">
-          <property name="text">
-           <string>Handshake</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Radio Model</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLineEdit" name="radioNameEdit1"/>
-        </item>
-        <item row="2" column="1">
-         <widget class="QComboBox" name="radioModelBox1"/>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="label_9">
-          <property name="text">
-           <string>CIV</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="7">
-         <widget class="QComboBox" name="comParityBox1"/>
-        </item>
-        <item row="2" column="8">
-         <widget class="QComboBox" name="comHandShakeBox1"/>
-        </item>
-        <item row="2" column="3">
-         <widget class="QComboBox" name="comPortBox1"/>
-        </item>
-        <item row="2" column="4">
-         <widget class="QComboBox" name="comSpeedBox1"/>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="2" column="5">
+          <widget class="QComboBox" name="comDataBitsBox1"/>
+         </item>
+         <item row="2" column="6">
+          <widget class="QComboBox" name="comStopBitsBox1"/>
+         </item>
+         <item row="0" column="7">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Parity</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="6">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Stop Bits</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Data Bits</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Radio Name</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Speed</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Comport</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLineEdit" name="CIVlineEdit1"/>
+         </item>
+         <item row="0" column="8">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Handshake</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Radio Model</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLineEdit" name="radioNameEdit1"/>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="radioModelBox1"/>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>CIV</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="7">
+          <widget class="QComboBox" name="comParityBox1"/>
+         </item>
+         <item row="2" column="8">
+          <widget class="QComboBox" name="comHandShakeBox1"/>
+         </item>
+         <item row="2" column="3">
+          <widget class="QComboBox" name="comPortBox1"/>
+         </item>
+         <item row="2" column="4">
+          <widget class="QComboBox" name="comSpeedBox1"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Transvert. Enable</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="TransVCheck1">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>Transvert Offset</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="TransVertEdit1">
+           <property name="inputMask">
+            <string>99.999.999.999</string>
+           </property>
+           <property name="text">
+            <string>00.000.000.000</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="negCheckbox1">
+           <property name="text">
+            <string>Negative offset</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="radioTab2">
       <attribute name="title">
        <string>Radio 2</string>
       </attribute>
-      <widget class="QWidget" name="gridLayoutWidget_2">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>671</width>
-         <height>80</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="2" column="5">
-         <widget class="QComboBox" name="comDataBitsBox2"/>
-        </item>
-        <item row="2" column="6">
-         <widget class="QComboBox" name="comStopBitsBox2"/>
-        </item>
-        <item row="0" column="7">
-         <widget class="QLabel" name="label_24">
-          <property name="text">
-           <string>Parity</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="6">
-         <widget class="QLabel" name="label_25">
-          <property name="text">
-           <string>Stop Bits</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="5">
-         <widget class="QLabel" name="label_26">
-          <property name="text">
-           <string>Data Bits</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_27">
-          <property name="text">
-           <string>Radio Name</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="4">
-         <widget class="QLabel" name="label_28">
-          <property name="text">
-           <string>Speed</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="label_29">
-          <property name="text">
-           <string>Comport</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLineEdit" name="CIVlineEdit2"/>
-        </item>
-        <item row="0" column="8">
-         <widget class="QLabel" name="label_30">
-          <property name="text">
-           <string>Handshake</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_31">
-          <property name="text">
-           <string>Radio Model</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLineEdit" name="radioNameEdit2"/>
-        </item>
-        <item row="2" column="1">
-         <widget class="QComboBox" name="radioModelBox2"/>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="label_32">
-          <property name="text">
-           <string>CIV</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="7">
-         <widget class="QComboBox" name="comParityBox2"/>
-        </item>
-        <item row="2" column="8">
-         <widget class="QComboBox" name="comHandShakeBox2"/>
-        </item>
-        <item row="2" column="3">
-         <widget class="QComboBox" name="comPortBox2"/>
-        </item>
-        <item row="2" column="4">
-         <widget class="QComboBox" name="comSpeedBox2"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>90</y>
-         <width>358</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
-         <widget class="QLabel" name="label_12">
-          <property name="text">
-           <string>Transvert. Enable</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="TransVCheck2">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_13">
-          <property name="text">
-           <string>Transvert Offset</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="TransVertEdit2">
-          <property name="inputMask">
-           <string>99.999.999.999</string>
-          </property>
-          <property name="text">
-           <string>00.000.000.000</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="negCheckbox2">
-          <property name="text">
-           <string>Negative offset</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="2" column="5">
+          <widget class="QComboBox" name="comDataBitsBox2"/>
+         </item>
+         <item row="2" column="6">
+          <widget class="QComboBox" name="comStopBitsBox2"/>
+         </item>
+         <item row="0" column="7">
+          <widget class="QLabel" name="label_24">
+           <property name="text">
+            <string>Parity</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="6">
+          <widget class="QLabel" name="label_25">
+           <property name="text">
+            <string>Stop Bits</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
+          <widget class="QLabel" name="label_26">
+           <property name="text">
+            <string>Data Bits</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_27">
+           <property name="text">
+            <string>Radio Name</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QLabel" name="label_28">
+           <property name="text">
+            <string>Speed</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QLabel" name="label_29">
+           <property name="text">
+            <string>Comport</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLineEdit" name="CIVlineEdit2"/>
+         </item>
+         <item row="0" column="8">
+          <widget class="QLabel" name="label_30">
+           <property name="text">
+            <string>Handshake</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_31">
+           <property name="text">
+            <string>Radio Model</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLineEdit" name="radioNameEdit2"/>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="radioModelBox2"/>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="label_32">
+           <property name="text">
+            <string>CIV</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="7">
+          <widget class="QComboBox" name="comParityBox2"/>
+         </item>
+         <item row="2" column="8">
+          <widget class="QComboBox" name="comHandShakeBox2"/>
+         </item>
+         <item row="2" column="3">
+          <widget class="QComboBox" name="comPortBox2"/>
+         </item>
+         <item row="2" column="4">
+          <widget class="QComboBox" name="comSpeedBox2"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>Transvert. Enable</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="TransVCheck2">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string>Transvert Offset</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="TransVertEdit2">
+           <property name="inputMask">
+            <string>99.999.999.999</string>
+           </property>
+           <property name="text">
+            <string>00.000.000.000</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="negCheckbox2">
+           <property name="text">
+            <string>Negative offset</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="radioTab3">
       <attribute name="title">
        <string>Radio 3</string>
       </attribute>
-      <widget class="QWidget" name="gridLayoutWidget_3">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>671</width>
-         <height>80</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="2" column="5">
-         <widget class="QComboBox" name="comDataBitsBox3"/>
-        </item>
-        <item row="2" column="6">
-         <widget class="QComboBox" name="comStopBitsBox3"/>
-        </item>
-        <item row="0" column="7">
-         <widget class="QLabel" name="label_33">
-          <property name="text">
-           <string>Parity</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="6">
-         <widget class="QLabel" name="label_34">
-          <property name="text">
-           <string>Stop Bits</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="5">
-         <widget class="QLabel" name="label_35">
-          <property name="text">
-           <string>Data Bits</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_36">
-          <property name="text">
-           <string>Radio Name</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="4">
-         <widget class="QLabel" name="label_37">
-          <property name="text">
-           <string>Speed</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="label_38">
-          <property name="text">
-           <string>Comport</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLineEdit" name="CIVlineEdit3"/>
-        </item>
-        <item row="0" column="8">
-         <widget class="QLabel" name="label_39">
-          <property name="text">
-           <string>Handshake</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_40">
-          <property name="text">
-           <string>Radio Model</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLineEdit" name="radioNameEdit3"/>
-        </item>
-        <item row="2" column="1">
-         <widget class="QComboBox" name="radioModelBox3"/>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="label_41">
-          <property name="text">
-           <string>CIV</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="7">
-         <widget class="QComboBox" name="comParityBox3"/>
-        </item>
-        <item row="2" column="8">
-         <widget class="QComboBox" name="comHandShakeBox3"/>
-        </item>
-        <item row="2" column="3">
-         <widget class="QComboBox" name="comPortBox3"/>
-        </item>
-        <item row="2" column="4">
-         <widget class="QComboBox" name="comSpeedBox3"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_2">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>90</y>
-         <width>358</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <widget class="QLabel" name="label_14">
-          <property name="text">
-           <string>Transvert. Enable</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="TransVCheck3">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_15">
-          <property name="text">
-           <string>Transvert Offset</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="TransVertEdit3">
-          <property name="inputMask">
-           <string>99.999.999.999</string>
-          </property>
-          <property name="text">
-           <string>00.000.000.000</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="negCheckbox3">
-          <property name="text">
-           <string>Negative offset</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="2" column="5">
+          <widget class="QComboBox" name="comDataBitsBox3"/>
+         </item>
+         <item row="2" column="6">
+          <widget class="QComboBox" name="comStopBitsBox3"/>
+         </item>
+         <item row="0" column="7">
+          <widget class="QLabel" name="label_33">
+           <property name="text">
+            <string>Parity</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="6">
+          <widget class="QLabel" name="label_34">
+           <property name="text">
+            <string>Stop Bits</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
+          <widget class="QLabel" name="label_35">
+           <property name="text">
+            <string>Data Bits</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_36">
+           <property name="text">
+            <string>Radio Name</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QLabel" name="label_37">
+           <property name="text">
+            <string>Speed</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QLabel" name="label_38">
+           <property name="text">
+            <string>Comport</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLineEdit" name="CIVlineEdit3"/>
+         </item>
+         <item row="0" column="8">
+          <widget class="QLabel" name="label_39">
+           <property name="text">
+            <string>Handshake</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_40">
+           <property name="text">
+            <string>Radio Model</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLineEdit" name="radioNameEdit3"/>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="radioModelBox3"/>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="label_41">
+           <property name="text">
+            <string>CIV</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="7">
+          <widget class="QComboBox" name="comParityBox3"/>
+         </item>
+         <item row="2" column="8">
+          <widget class="QComboBox" name="comHandShakeBox3"/>
+         </item>
+         <item row="2" column="3">
+          <widget class="QComboBox" name="comPortBox3"/>
+         </item>
+         <item row="2" column="4">
+          <widget class="QComboBox" name="comSpeedBox3"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>Transvert. Enable</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="TransVCheck3">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_15">
+           <property name="text">
+            <string>Transvert Offset</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="TransVertEdit3">
+           <property name="inputMask">
+            <string>99.999.999.999</string>
+           </property>
+           <property name="text">
+            <string>00.000.000.000</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="negCheckbox3">
+           <property name="text">
+            <string>Negative offset</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="radioTab4">
       <attribute name="title">
        <string>Radio 4</string>
       </attribute>
-      <widget class="QWidget" name="gridLayoutWidget_4">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>671</width>
-         <height>80</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_5">
-        <item row="2" column="5">
-         <widget class="QComboBox" name="comDataBitsBox4"/>
-        </item>
-        <item row="2" column="6">
-         <widget class="QComboBox" name="comStopBitsBox4"/>
-        </item>
-        <item row="0" column="7">
-         <widget class="QLabel" name="label_42">
-          <property name="text">
-           <string>Parity</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="6">
-         <widget class="QLabel" name="label_43">
-          <property name="text">
-           <string>Stop Bits</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="5">
-         <widget class="QLabel" name="label_44">
-          <property name="text">
-           <string>Data Bits</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_45">
-          <property name="text">
-           <string>Radio Name</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="4">
-         <widget class="QLabel" name="label_46">
-          <property name="text">
-           <string>Speed</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="label_47">
-          <property name="text">
-           <string>Comport</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLineEdit" name="CIVlineEdit4"/>
-        </item>
-        <item row="0" column="8">
-         <widget class="QLabel" name="label_48">
-          <property name="text">
-           <string>Handshake</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_49">
-          <property name="text">
-           <string>Radio Model</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLineEdit" name="radioNameEdit4"/>
-        </item>
-        <item row="2" column="1">
-         <widget class="QComboBox" name="radioModelBox4"/>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="label_50">
-          <property name="text">
-           <string>CIV</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="7">
-         <widget class="QComboBox" name="comParityBox4"/>
-        </item>
-        <item row="2" column="8">
-         <widget class="QComboBox" name="comHandShakeBox4"/>
-        </item>
-        <item row="2" column="4">
-         <widget class="QComboBox" name="comSpeedBox4"/>
-        </item>
-        <item row="2" column="3">
-         <widget class="QComboBox" name="comPortBox4"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_3">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>90</y>
-         <width>358</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
-        <item>
-         <widget class="QLabel" name="label_16">
-          <property name="text">
-           <string>Transvert. Enable</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="TransVCheck4">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_17">
-          <property name="text">
-           <string>Transvert Offset</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="TransVertEdit4">
-          <property name="inputMask">
-           <string>99.999.999.999</string>
-          </property>
-          <property name="text">
-           <string>00.000.000.000</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="negCheckbox4">
-          <property name="text">
-           <string>Negative offset</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="2" column="5">
+          <widget class="QComboBox" name="comDataBitsBox4"/>
+         </item>
+         <item row="2" column="6">
+          <widget class="QComboBox" name="comStopBitsBox4"/>
+         </item>
+         <item row="0" column="7">
+          <widget class="QLabel" name="label_42">
+           <property name="text">
+            <string>Parity</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="6">
+          <widget class="QLabel" name="label_43">
+           <property name="text">
+            <string>Stop Bits</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
+          <widget class="QLabel" name="label_44">
+           <property name="text">
+            <string>Data Bits</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_45">
+           <property name="text">
+            <string>Radio Name</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QLabel" name="label_46">
+           <property name="text">
+            <string>Speed</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QLabel" name="label_47">
+           <property name="text">
+            <string>Comport</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLineEdit" name="CIVlineEdit4"/>
+         </item>
+         <item row="0" column="8">
+          <widget class="QLabel" name="label_48">
+           <property name="text">
+            <string>Handshake</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_49">
+           <property name="text">
+            <string>Radio Model</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLineEdit" name="radioNameEdit4"/>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="radioModelBox4"/>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="label_50">
+           <property name="text">
+            <string>CIV</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="7">
+          <widget class="QComboBox" name="comParityBox4"/>
+         </item>
+         <item row="2" column="8">
+          <widget class="QComboBox" name="comHandShakeBox4"/>
+         </item>
+         <item row="2" column="4">
+          <widget class="QComboBox" name="comSpeedBox4"/>
+         </item>
+         <item row="2" column="3">
+          <widget class="QComboBox" name="comPortBox4"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLabel" name="label_16">
+           <property name="text">
+            <string>Transvert. Enable</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="TransVCheck4">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_17">
+           <property name="text">
+            <string>Transvert Offset</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="TransVertEdit4">
+           <property name="inputMask">
+            <string>99.999.999.999</string>
+           </property>
+           <property name="text">
+            <string>00.000.000.000</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="negCheckbox4">
+           <property name="text">
+            <string>Negative offset</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="radioTab5">
       <attribute name="title">
        <string>Radio 5</string>
       </attribute>
-      <widget class="QWidget" name="gridLayoutWidget_5">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>671</width>
-         <height>80</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_6">
-        <item row="2" column="5">
-         <widget class="QComboBox" name="comDataBitsBox5"/>
-        </item>
-        <item row="2" column="6">
-         <widget class="QComboBox" name="comStopBitsBox5"/>
-        </item>
-        <item row="0" column="7">
-         <widget class="QLabel" name="label_51">
-          <property name="text">
-           <string>Parity</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="6">
-         <widget class="QLabel" name="label_52">
-          <property name="text">
-           <string>Stop Bits</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="5">
-         <widget class="QLabel" name="label_53">
-          <property name="text">
-           <string>Data Bits</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_54">
-          <property name="text">
-           <string>Radio Name</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="4">
-         <widget class="QLabel" name="label_55">
-          <property name="text">
-           <string>Speed</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="label_56">
-          <property name="text">
-           <string>Comport</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLineEdit" name="CIVlineEdit5"/>
-        </item>
-        <item row="0" column="8">
-         <widget class="QLabel" name="label_57">
-          <property name="text">
-           <string>Handshake</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_58">
-          <property name="text">
-           <string>Radio Model</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLineEdit" name="radioNameEdit5"/>
-        </item>
-        <item row="2" column="1">
-         <widget class="QComboBox" name="radioModelBox5"/>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="label_59">
-          <property name="text">
-           <string>CIV</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="7">
-         <widget class="QComboBox" name="comParityBox5"/>
-        </item>
-        <item row="2" column="8">
-         <widget class="QComboBox" name="comHandShakeBox5"/>
-        </item>
-        <item row="2" column="3">
-         <widget class="QComboBox" name="comPortBox5"/>
-        </item>
-        <item row="2" column="4">
-         <widget class="QComboBox" name="comSpeedBox5"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_4">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>90</y>
-         <width>358</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_8">
-        <item>
-         <widget class="QLabel" name="label_20">
-          <property name="text">
-           <string>Transvert. Enable</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="TransVCheck5">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_21">
-          <property name="text">
-           <string>Transvert Offset</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="TransVertEdit5">
-          <property name="inputMask">
-           <string>99.999.999.999</string>
-          </property>
-          <property name="text">
-           <string>00.000.000.000</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="negCheckbox5">
-          <property name="text">
-           <string>Negative offset</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="2" column="5">
+          <widget class="QComboBox" name="comDataBitsBox5"/>
+         </item>
+         <item row="2" column="6">
+          <widget class="QComboBox" name="comStopBitsBox5"/>
+         </item>
+         <item row="0" column="7">
+          <widget class="QLabel" name="label_51">
+           <property name="text">
+            <string>Parity</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="6">
+          <widget class="QLabel" name="label_52">
+           <property name="text">
+            <string>Stop Bits</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
+          <widget class="QLabel" name="label_53">
+           <property name="text">
+            <string>Data Bits</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_54">
+           <property name="text">
+            <string>Radio Name</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QLabel" name="label_55">
+           <property name="text">
+            <string>Speed</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QLabel" name="label_56">
+           <property name="text">
+            <string>Comport</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLineEdit" name="CIVlineEdit5"/>
+         </item>
+         <item row="0" column="8">
+          <widget class="QLabel" name="label_57">
+           <property name="text">
+            <string>Handshake</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_58">
+           <property name="text">
+            <string>Radio Model</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLineEdit" name="radioNameEdit5"/>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="radioModelBox5"/>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="label_59">
+           <property name="text">
+            <string>CIV</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="7">
+          <widget class="QComboBox" name="comParityBox5"/>
+         </item>
+         <item row="2" column="8">
+          <widget class="QComboBox" name="comHandShakeBox5"/>
+         </item>
+         <item row="2" column="3">
+          <widget class="QComboBox" name="comPortBox5"/>
+         </item>
+         <item row="2" column="4">
+          <widget class="QComboBox" name="comSpeedBox5"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="label_20">
+           <property name="text">
+            <string>Transvert. Enable</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="TransVCheck5">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_21">
+           <property name="text">
+            <string>Transvert Offset</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="TransVertEdit5">
+           <property name="inputMask">
+            <string>99.999.999.999</string>
+           </property>
+           <property name="text">
+            <string>00.000.000.000</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="negCheckbox5">
+           <property name="text">
+            <string>Negative offset</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>

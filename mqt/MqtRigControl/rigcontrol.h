@@ -84,6 +84,7 @@ struct scatParams
 //  bool enableXMLRPC;
 //  int XMLRPCPort;
   double txOnDelay;
+  QString transVertOffsetStr;
   freq_t transVertOffset;
   bool transVertEnable;
   bool transVertNegative;

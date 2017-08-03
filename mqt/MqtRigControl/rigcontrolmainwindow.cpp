@@ -102,7 +102,7 @@ void RigControlMainWindow::initActionsConnections()
 
     connect(ui->actionSetup_Radios, SIGNAL(triggered()), selectRig, SLOT(show()));
 
-    connect(pollTimer, SIGNAL(timeout()), this, SLOT(getCurFreq()));
+    connect(pollTimer, SIGNAL(timeout()), this, SLOT(getRadioInfo()));
     //connect(pollTimer, SIGNAL(timeout()), this, SLOT(getCurMode()));
     //connect(radio, SIGNAL(frequency_updated(double)), this, SLOT(updateFreq(const double)));
 //    connect(this, SIGNAL(frequency_updated(double)), this, SLOT(displayFreqA(const double)));
@@ -151,6 +151,10 @@ void RigControlMainWindow::upDateRadio()
         selectRig->currentRadio.stopbits = selectRig->availRadios[radioIndex].stopbits;
         selectRig->currentRadio.parity = selectRig->availRadios[radioIndex].parity;
         selectRig->currentRadio.handshake = selectRig->availRadios[radioIndex].handshake;
+        selectRig->currentRadio.transVertEnable = selectRig->availRadios[radioIndex].transVertEnable;
+        selectRig->currentRadio.transVertNegative = selectRig->availRadios[radioIndex].transVertNegative;
+        selectRig->currentRadio.transVertOffset = selectRig->availRadios[radioIndex].transVertOffset;
+        selectRig->currentRadio.transVertOffsetStr = selectRig->availRadios[radioIndex].transVertOffsetStr;
         selectRig->saveCurrentRadio();
         if (radio->get_serialConnected())
        {
@@ -230,9 +234,19 @@ int RigControlMainWindow::getPolltime()
 }
 
 
+
+void RigControlMainWindow::getRadioInfo()
+{
+    getFrequency(RIG_VFO_CURR);
+
+    getMode(RIG_VFO_CURR);
+
+}
+
+
 void RigControlMainWindow::getFrequency(vfo_t vfo)
 {
-
+    double transVertF = 0;
     int retCode = 0;
     if (radio->get_serialConnected())
     {
@@ -242,7 +256,26 @@ void RigControlMainWindow::getFrequency(vfo_t vfo)
             if (rfrequency != curVfoFrq[0])
             {
                 curVfoFrq[0] = rfrequency;
+                qDebug() << "Trans Enable = " << selectRig->currentRadio.transVertEnable;
+                if (selectRig->currentRadio.transVertEnable)
+                {
+                    qDebug() << "Transvert enabled";
+                    if (selectRig->currentRadio.transVertNegative)
+                    {
+                        transVertF = rfrequency - selectRig->currentRadio.transVertOffset;
+
+                    }
+                    else
+                    {
+                        transVertF = rfrequency + selectRig->currentRadio.transVertOffset;
+                    }
+                    qDebug() << "Transvert f " << transVertF;
+                    curTransVertFrq[0] = transVertF;
+                    displayTransVertVfoA(transVertF);
+                }
                 displayFreqVfoA(rfrequency);
+
+
             }
             else
             {
@@ -258,10 +291,7 @@ void RigControlMainWindow::getFrequency(vfo_t vfo)
 
 }
 
-void RigControlMainWindow::getCurFreq()
-{
-    getFrequency(RIG_VFO_CURR);
-}
+
 
 
 void RigControlMainWindow::getMode(vfo_t vfo)
@@ -326,6 +356,18 @@ void RigControlMainWindow::displayFreqVfoB(double frequency)
 {
 
     ui->radioFreqB->setText(convertStringFreq(frequency));
+}
+
+
+void RigControlMainWindow::displayTransVertVfoA(double frequency)
+{
+    ui->transVertFreqA->setText(convertStringFreq(frequency));
+}
+
+
+void RigControlMainWindow::displayTransVertVfoB(double frequency)
+{
+    ui->transVertFreqB->setText(convertStringFreq(frequency));
 }
 
 void RigControlMainWindow::displayModeVfoA(QString mode)

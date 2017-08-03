@@ -28,6 +28,10 @@ class RigControl;
 class RigControlRpc;
 
 #define NUM_VFO 2
+#define VFOA 0
+#define VFOB 1
+#define CURVFO VFOA
+
 
 
 namespace Ui {
@@ -66,6 +70,7 @@ private:
     int retcode;            // generic return code from functions
 
     double curVfoFrq[NUM_VFO];
+    double curTransVertFrq[NUM_VFO];
     rmode_t curMode[NUM_VFO];
     pbwidth_t curRxWidth[NUM_VFO];
 
@@ -89,24 +94,26 @@ private:
     void displayFreqVfoB(double);
     void displayModeVfoA(QString);
     void displayModeVfoB(QString);
-
+    void displayTransVertVfoA(double frequency);
+    void displayTransVertVfoB(double frequency);
 
 
     void logMessage(QString s);
     void readTraceLogFlag();
     void saveTraceLogFlag();
     void about();
+
 private slots:
 
     void onStdInRead(QString);
 
     void upDateRadio();
-    void getCurFreq();
     void getCurMode();
-
+    void getRadioInfo();
 
 //private slots:
 //    void updateFreq(double frequency);
+
 
 signals:
 

@@ -302,7 +302,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
         transNegCheck[i]->setEnabled(transVertCheck[i]->isChecked());
     }
 
-
+    ui->setupTab->setCurrentIndex(0);       // set first tab
 }
 
 
@@ -467,19 +467,24 @@ void SetupDialog::transVertChecked(int boxNumber)
 void SetupDialog::transVertEditFinished(int boxNumber)
 {
     bool ok;
+    QString offsetStr = transVertEdit[boxNumber]->text();
+    offsetStr.remove(QChar('.'));
 
+    qDebug() << "offset = " << offsetStr;
 
-    qDebug() << "offset = " << transVertEdit[boxNumber]->text();
-
-    int value = transVertEdit[boxNumber]->text().toDouble(&ok);
+    double value = offsetStr.toDouble(&ok);
     if (!ok )
     {
-         QMessageBox::critical(this, "TransVert Error", QString(transVertEdit[boxNumber]->text()) + " Not a valid TransVert Offset value");
-         transVertEdit[boxNumber]->text() = "";
+         QMessageBox::critical(this, "TransVert Error", offsetStr + " Not a valid TransVert Offset value");
+         transVertEdit[boxNumber]->text() = "<font color='Red'>" + offsetStr + "</font>";
+
     }
     else if (value != availRadios[boxNumber].transVertOffset)
     {
+        qDebug() << "foffset = " << value;
+        transVertEdit[boxNumber]->text() = "<font color='Black'>" + offsetStr + "</font>";
         availRadios[boxNumber].transVertOffset = value;
+        availRadios[boxNumber].transVertOffsetStr = offsetStr;
         radioValueChanged[boxNumber] = true;
         radioChanged = true;
     }
@@ -701,6 +706,7 @@ void SetupDialog::saveSettings()
                 config.setValue("stopbits", availRadios[i].stopbits);
                 config.setValue("handshake", availRadios[i].handshake);
                 config.setValue("transVertOffSet", availRadios[i].transVertOffset);
+                config.setValue("transVertOffSetStr", availRadios[i].transVertOffsetStr);
                 config.setValue("transVertEnable", availRadios[i].transVertEnable);
                 config.setValue("transVertNegative", availRadios[i].transVertNegative);
                 config.endGroup();
@@ -736,6 +742,7 @@ void SetupDialog::readSettings()
         availRadios[i].stopbits = config.value("stopbits", 1).toInt();
         availRadios[i].handshake = config.value("handshake", 0).toInt();
         availRadios[i].transVertOffset = config.value("transVertOffSet", 0).toDouble();
+        availRadios[i].transVertOffsetStr = config.value("transVertOffSetStr", "00.000.000.000").toString();
         availRadios[i].transVertEnable = config.value("transVertEnable", false).toBool();
         availRadios[i].transVertNegative = config.value("transVertNegative", false).toBool();
         config.endGroup();
@@ -762,6 +769,7 @@ void SetupDialog::clearAvailRadio()
         availRadios[i].parity = radio->getSerialParityCode(0);
         availRadios[i].handshake = radio->getSerialHandshakeCode(0);
         availRadios[i].transVertOffset = 0;
+        availRadios[i].transVertOffsetStr = "00.000.000.000";
         availRadios[i].transVertEnable = false;
         availRadios[i].transVertNegative = false;
     }
@@ -784,6 +792,7 @@ void SetupDialog::clearCurrentRadio()
     currentRadio.parity = radio->getSerialParityCode(0);
     currentRadio.handshake = radio->getSerialHandshakeCode(0);
     currentRadio.transVertOffset = 0;
+    currentRadio.transVertOffsetStr = "00.000.000.000";
     currentRadio.transVertEnable = false;
     currentRadio.transVertNegative = false;
 
@@ -863,6 +872,7 @@ void SetupDialog::saveCurrentRadio()
     config.setValue("stopbits", currentRadio.stopbits);
     config.setValue("handshake", currentRadio.handshake);
     config.setValue("transVertOffSet", currentRadio.transVertOffset);
+    config.setValue("transVertOffSetStr", currentRadio.transVertOffsetStr);
     config.setValue("transVertEnable", currentRadio.transVertEnable);
     config.setValue("transVertNegative", currentRadio.transVertNegative);
     config.endGroup();
@@ -892,6 +902,7 @@ void SetupDialog::readCurrentRadio()
         currentRadio.stopbits = config.value("stopbits", 0).toInt();
         currentRadio.handshake = config.value("handshake", 0).toInt();
         currentRadio.transVertOffset = config.value("transVertOffSet", 0).toDouble();
+        currentRadio.transVertOffsetStr = config.value("transVertOffSetStr", "00.000.000.000").toString();
         currentRadio.transVertEnable = config.value("transVertEnable", false).toBool();
         currentRadio.transVertNegative = config.value("transVertNegative", false).toBool();
         config.endGroup();

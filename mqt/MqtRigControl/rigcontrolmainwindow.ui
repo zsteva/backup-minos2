@@ -44,7 +44,7 @@
       <rect>
        <x>70</x>
        <y>20</y>
-       <width>131</width>
+       <width>141</width>
        <height>21</height>
       </rect>
      </property>
@@ -59,7 +59,7 @@
       <enum>QFrame::Box</enum>
      </property>
      <property name="text">
-      <string>0000.000.000</string>
+      <string>00.000.000.000</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -83,7 +83,7 @@
       <rect>
        <x>70</x>
        <y>50</y>
-       <width>131</width>
+       <width>141</width>
        <height>21</height>
       </rect>
      </property>
@@ -98,7 +98,7 @@
       <enum>QFrame::Box</enum>
      </property>
      <property name="text">
-      <string>0000.000.000</string>
+      <string>00.000.000.000</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -187,7 +187,7 @@
       <rect>
        <x>70</x>
        <y>20</y>
-       <width>131</width>
+       <width>141</width>
        <height>21</height>
       </rect>
      </property>
@@ -202,7 +202,7 @@
       <enum>QFrame::Box</enum>
      </property>
      <property name="text">
-      <string>0000.000.000</string>
+      <string>00.000.000.000</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -226,7 +226,7 @@
       <rect>
        <x>70</x>
        <y>50</y>
-       <width>131</width>
+       <width>141</width>
        <height>21</height>
       </rect>
      </property>
@@ -241,7 +241,7 @@
       <enum>QFrame::Box</enum>
      </property>
      <property name="text">
-      <string>0000.000.000</string>
+      <string>00.000.000.000</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
