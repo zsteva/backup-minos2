@@ -458,6 +458,8 @@ void SetupDialog::transVertChecked(int boxNumber)
         availRadios[boxNumber].transVertEnable = false;
         transVertEdit[boxNumber]->setEnabled(false);
     }
+    radioValueChanged[boxNumber] = true;
+    radioChanged = true;
 }
 
 
@@ -488,8 +490,9 @@ void SetupDialog::transVertEditFinished(int boxNumber)
 void SetupDialog::transNegChecked(int boxNumber)
 {
 
-
-
+    availRadios[boxNumber].transVertNegative = transNegCheck[boxNumber]->isChecked();
+    radioValueChanged[boxNumber] = true;
+    radioChanged = true;
 
 }
 

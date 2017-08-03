@@ -52,7 +52,7 @@ private:
     SetupDialog *selectRig;
     RigControl  *radio;
     QLabel *status;
-    QTimer *timer;
+    QTimer *pollTimer;
     int pollTime;
     QString sfreq;
 //    double oldFreq = 0;

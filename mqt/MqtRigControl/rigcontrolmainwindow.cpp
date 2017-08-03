@@ -45,9 +45,13 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
     radio = new RigControl();
     selectRig = new SetupDialog(radio);
-    timer = new QTimer(this);
-    status = new QLabel;
     selectRadio = new QComboBox;
+    pollTimer = new QTimer(this);
+
+    status = new QLabel;
+    ui->statusBar->addWidget(status);
+
+
 
 
     radio->set_serialConnected(false);
@@ -98,8 +102,8 @@ void RigControlMainWindow::initActionsConnections()
 
     connect(ui->actionSetup_Radios, SIGNAL(triggered()), selectRig, SLOT(show()));
 
-    connect(timer, SIGNAL(timeout()), this, SLOT(getCurFreq()));
-    connect(timer, SIGNAL(timeout()), this, SLOT(getCurMode()));
+    connect(pollTimer, SIGNAL(timeout()), this, SLOT(getCurFreq()));
+    //connect(pollTimer, SIGNAL(timeout()), this, SLOT(getCurMode()));
     //connect(radio, SIGNAL(frequency_updated(double)), this, SLOT(updateFreq(const double)));
 //    connect(this, SIGNAL(frequency_updated(double)), this, SLOT(displayFreqA(const double)));
     connect(this, SIGNAL(mode_updated(QString)), this, SLOT(displayModeVfoA(QString)));
@@ -192,7 +196,7 @@ void RigControlMainWindow::openRadio()
     if (radio->get_serialConnected())
     {
 
-        timer->start(pollTime);             // start timer to send message to controller
+        pollTimer->start(pollTime);             // start timer to send message to controller
         showStatusMessage(tr("Connected to Radio: %1 - %2, %3, %4, %5, %6, %7, %8")
                               .arg(p.radioName).arg(p.radioModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
                               .arg(p.stopbits).arg(radio->getParityCodeNames()[p.parity]).arg(radio->getHandShakeNames()[p.handshake]));
@@ -381,6 +385,9 @@ void RigControlMainWindow::showStatusMessage(const QString &message)
 
 void RigControlMainWindow::hamlibError(int errorCode)
 {
+
+    pollTimer->stop();
+
     int errCode = errorCode;
     if ( errCode >= 0)
     {
@@ -392,6 +399,7 @@ void RigControlMainWindow::hamlibError(int errorCode)
 
     QMessageBox::critical(this, "hamlib Error", QString::number(errCode) + " - " + errorMsg);
 
+    closeRadio();
 
 }
 
@@ -417,6 +425,7 @@ void RigControlMainWindow::saveTraceLogFlag()
 
     config.endGroup();
 }
+
 
 
 

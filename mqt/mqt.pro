@@ -12,18 +12,10 @@ SUBDIRS += \
     MqtKeyer \
     MqtLogger \
     MqtServer \
-	MqtRotator \
-	MqtBandmap \
-	MqtMonitor \
-	MqtRigControl<<<<<<< .mine
-    MqtCluster \
-    MqtRigControl
-
-=======
     MqtRotator \
     MqtBandmap \
-    MqtMonitor
->>>>>>> .theirs
+    MqtMonitor \
+    MqtRigControl
 
 greaterThan(QT_MAJOR_VERSION, 4) : greaterThan(QT_MINOR_VERSION, 6) {
    SUBDIRS += mqtKeyerTest
