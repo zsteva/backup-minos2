@@ -79,11 +79,19 @@ protected:
     QString NodeName;
     int childNo;
     TreeNode *parentItem;
+    MonitoredLog *mlog;
 
 public:
     MonitorMain *monmain;
 
-    TreeNode(NodeType sn, TreeNode *parent, QString name, MonitorMain *mm):ntype(sn), NodeName(name), parentItem(parent), monmain(mm)
+    TreeNode(NodeType sn, TreeNode *parent, QString name, MonitorMain *mm):
+        ntype(sn), NodeName(name), parentItem(parent), monmain(mm), mlog(0)
+    {
+        if (parent)
+            parent->nodes.push_back(this);
+    }
+    TreeNode(NodeType sn, TreeNode *parent, MonitoredLog *log, MonitorMain *mm):
+        ntype(sn), NodeName(log->getPublishedName()), parentItem(parent), monmain(mm), mlog(log)
     {
         if (parent)
             parent->nodes.push_back(this);
@@ -113,6 +121,14 @@ public:
     TreeNode *parent();
     TreeNode *child( int number );
     int childCount() const;
+    MonitoredLog *getLog()
+    {
+        return mlog;
+    }
+    void setLog(MonitoredLog *l)
+    {
+        mlog = l;
+    }
 
 };
 class RootTreeNode:public TreeNode
@@ -135,7 +151,7 @@ public:
 class LogTreeNode:public TreeNode
 {
 public:
-    LogTreeNode(TreeNode *parent, QString name):TreeNode(entLog, parent, name, parent->monmain)
+    LogTreeNode(TreeNode *parent, MonitoredLog *log):TreeNode(entLog, parent, log, parent->monmain)
     {
     }
     virtual QString data( int column );
@@ -206,7 +222,9 @@ QString LogTreeNode::data(int column)
 
     if (column == 1)
     {
-        QString state = QString(stateList[monmain->stationList[ parent()->childNumber() ] ->slotList[ childNumber() ] ->getState()]);
+        QString state;
+        if (mlog->getFrame())
+            state = "Monitoring";
         return state;
     }
     return "";
@@ -687,7 +705,7 @@ void MonitorMain::syncStations()
           TreeNode *snode = new ServerTreeNode(root, (*i)->stationName);
           for ( QVector<MonitoredLog *>::iterator j = ( *i ) ->slotList.begin(); j != ( *i ) ->slotList.end(); j++ )
           {
-              /*TreeNode *lnode =*/ new LogTreeNode(snode, (*j)->getPublishedName());
+              /*TreeNode *lnode =*/ new LogTreeNode(snode, (*j));
           }
       }
       treeModel->setRoot(root);
@@ -806,6 +824,8 @@ void MonitorMain::on_monitorTree_doubleClicked(const QModelIndex &index)
       {
          ml->startMonitor();
          addSlot( ml );
+         sel->setLog(ml);
+         syncstat = true;
       }
       else
       {

@@ -50,6 +50,11 @@ class MonitoredLog
       {
          frame = f;
       }
+      MonitoringFrame *getFrame()
+      {
+          return frame;
+      }
+
       void setState(PublishState s)
       {
          state = s;
