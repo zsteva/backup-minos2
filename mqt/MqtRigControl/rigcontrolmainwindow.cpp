@@ -42,6 +42,8 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
+    double f = 320000;
+    convertStringFreq(f);
 
     radio = new RigControl();
     selectRig = new SetupDialog(radio);
@@ -62,6 +64,9 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     initSelectRadioBox();
     selectRig->readCurrentRadio();
     selectRadio->setCurrentIndex(selectRadio->findText(selectRig->currentRadio.radioName));
+
+
+
 
     setPolltime(250);
 
@@ -141,6 +146,7 @@ void RigControlMainWindow::upDateRadio()
             return;
         }
         selectRig->currentRadio.radioName = selectRig->availRadios[radioIndex].radioName;
+        selectRig->currentRadio.radioNumber = selectRig->availRadios[radioIndex].radioNumber;
         selectRig->currentRadio.radioMfg_Name = selectRig->availRadios[radioIndex].radioMfg_Name;
         selectRig->currentRadio.radioModel = selectRig->availRadios[radioIndex].radioModel;
         selectRig->currentRadio.radioModelNumber = selectRig->availRadios[radioIndex].radioModelNumber;
@@ -383,31 +389,25 @@ void RigControlMainWindow::displayModeVfoB(QString mode)
 QString RigControlMainWindow::convertStringFreq(double frequency)
 {
     double freq = frequency;
-    sfreq = "";
-    qint32 f = 0;
-    f = freq/1000000;
-    sfreq = QString::number(f) + ".";
-    freq = freq - (f*1000000);
-    f = freq/1000;
-    if (f < 10)
+    sfreq = sfreq = QString::number(freq,'f', 0);
+    int len = sfreq.length();
+
+    if (len > 9)
     {
-        sfreq = sfreq + "00";
+        sfreq = sfreq.insert(7, '.');
+        sfreq = sfreq.insert(4, '.');
+        sfreq = sfreq.insert(1, '.');
     }
-    else if (f < 100)
+    else if (len > 6)
     {
-        sfreq = sfreq + "0";
+        sfreq = sfreq.insert(6, '.');
+        sfreq = sfreq.insert(3, '.');
     }
-    sfreq = sfreq + QString::number(f) + ".";
-    freq = freq - (f*1000);
-    if (freq < 10)
+    else if (len > 3)
     {
-        sfreq = sfreq + "00";
+        sfreq = sfreq.insert(3,'.');
     }
-    else if (freq < 100)
-    {
-        sfreq = sfreq + "0";
-    }
-    sfreq = sfreq + QString::number(freq);
+
 
     return sfreq;
 }

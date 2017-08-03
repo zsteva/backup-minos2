@@ -62,6 +62,7 @@ struct scatParams
 {
 //  QString configLabel;
   QString radioName;
+  QString radioNumber;
   QString comport; /**<  serial port device*/
   QString radioMfg_Name;
   QString radioModel;

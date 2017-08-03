@@ -61,6 +61,13 @@ public:
     QString getRadioComPort(QString);
     void saveCurrentRadio();
 
+signals:
+
+    void radioNameChange();
+    void currentRadioSettingChanged(QString);
+
+
+
 protected slots:
 
     void radioNameFinished(int);
@@ -97,8 +104,9 @@ private:
     QCheckBox *transVertCheck[NUM_RADIOS];
     QLineEdit *transVertEdit[NUM_RADIOS];
     QCheckBox *transNegCheck[NUM_RADIOS];
-    QIntValidator *intValidator;
+//    QIntValidator *intValidator;
     bool radioValueChanged[NUM_RADIOS];
+    bool radioNameChanged[NUM_RADIOS];
     bool radioChanged;
     void saveSettings();
     void readSettings();

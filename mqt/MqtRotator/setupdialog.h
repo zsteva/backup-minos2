@@ -98,7 +98,7 @@ private:
     QComboBox *comStopBits[NUM_ANTENNAS];
     QComboBox *comParity[NUM_ANTENNAS];
     QComboBox *comHandShake[NUM_ANTENNAS];
-    QIntValidator *intValidator;
+//    QIntValidator *intValidator;
     bool antennaValueChanged[NUM_ANTENNAS];
     bool antennaNameChanged[NUM_ANTENNAS];
     bool antennaChanged;

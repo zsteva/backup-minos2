@@ -682,6 +682,31 @@ void SetupDialog::cancelButtonPushed()
 void SetupDialog::saveSettings()
 {
 
+
+    bool radioNameChg = false;
+    // have the current antenna settings been changed?
+    bool currentRadioChanged = false;
+    int ca = -1;
+    bool ok;
+    ca = currentRadio.radioNumber.toInt(&ok, 10);
+    if (ok  && ca >= 0 && ca < NUM_RADIOS)
+    {
+        if (currentRadio.radioNumber != "")
+        {
+            if (radioValueChanged[ca-1])
+            {
+               currentRadioChanged = true;
+            }
+        }
+    }
+    else
+    {
+        ca = -1;
+    }
+
+
+
+
     if (radioChanged)
     {
 
@@ -694,6 +719,11 @@ void SetupDialog::saveSettings()
             {
                 config.beginGroup("Radio" + QString::number(i+1));
                 config.setValue("radioName", availRadios[i].radioName);
+                if (radioNameChanged[i])
+                {
+                    radioNameChg = true;
+                    radioNameChanged[i] = false;
+                }
                 config.setValue("radioMfgName", availRadios[i].radioMfg_Name);
                 config.setValue("radioModel", availRadios[i].radioModel);
                 config.setValue("radioModelName", availRadios[i].radioModelName);
@@ -718,6 +748,15 @@ void SetupDialog::saveSettings()
 
    }
    radioChanged = false;
+
+   if (radioNameChg)
+   {
+       emit radioNameChange();
+   }
+   if (currentRadioChanged && ca != -1)
+   {
+       emit currentRadioSettingChanged(availRadios[ca].radioName);
+   }
 }
 
 
@@ -730,6 +769,7 @@ void SetupDialog::readSettings()
     {
         config.beginGroup("Radio" + QString::number(i+1));
         availRadios[i].radioName = config.value("radioName", "").toString();
+        availRadios[i].radioNumber = config.value("radioNumber", QString::number(i+1)).toString();
         availRadios[i].radioMfg_Name = config.value("radioMfgName", "").toString();
         availRadios[i].radioModel = config.value("radioModel", "").toString();
         availRadios[i].radioModelName = config.value("radioModelName", "").toString();
@@ -759,6 +799,7 @@ void SetupDialog::clearAvailRadio()
     for (int i = 0; i < NUM_RADIOS; i++)
     {
         availRadios[i].radioName = "";
+        availRadios[i].radioNumber = "";
         availRadios[i].radioMfg_Name = "";
         availRadios[i].radioModelName = "";
         availRadios[i].radioModelNumber = 0;
@@ -782,6 +823,7 @@ void SetupDialog::clearCurrentRadio()
 {
 
     currentRadio.radioName = "";
+    currentRadio.radioNumber = "";
     currentRadio.radioMfg_Name = "";
     currentRadio.radioModelName = "";
     currentRadio.radioModelNumber = 0;
@@ -861,6 +903,7 @@ void SetupDialog::saveCurrentRadio()
 
     config.beginGroup("CurrentRadio");
     config.setValue("radioName", currentRadio.radioName);
+    config.setValue("radioNumber", currentRadio.radioNumber);
     config.setValue("radioMfgName", currentRadio.radioMfg_Name);
     config.setValue("radioModel", currentRadio.radioModel);
     config.setValue("radioModelNumber", currentRadio.radioModelNumber);
@@ -891,6 +934,7 @@ void SetupDialog::readCurrentRadio()
     {
         config.beginGroup("CurrentRadio");
         currentRadio.radioName = config.value("radioName", "").toString();
+        currentRadio.radioNumber = config.value("radioNumber", "").toString();
         currentRadio.radioMfg_Name = config.value("radioMfgName", "").toString();
         currentRadio.radioModel = config.value("radioModel", "").toString();
         currentRadio.radioModelNumber = config.value("radioModelNumber", "").toInt();
