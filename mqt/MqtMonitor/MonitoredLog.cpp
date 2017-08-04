@@ -26,7 +26,7 @@ void MonitoredLog::initialise( const QString &srv, const QString &name )
 void MonitoredLog::startMonitor()
 {
    monitorEnabled = true;
-   lastScannedStanza = -1;
+   //lastScannedStanza = -1;
 }
 void MonitoredLog::stopMonitor()
 {
@@ -74,34 +74,6 @@ void MonitoredLog::checkMonitor()
          getLogStanza( curCount + 1 );
       }
    }
-   // this is off a timer, so it is safe to access VCL from here
-   /*
-   if ( frame->LogMonitorFrame->QSOTree->RootNodeCount != ( unsigned int ) contest->getContactCount() )
-   {
-      PVirtualNode f = frame->LogMonitorFrame->QSOTree->FocusedNode;
-      PVirtualNode l = frame->LogMonitorFrame->QSOTree->GetLastChild( frame->LogMonitorFrame->QSOTree->RootNode );
-
-      frame->LogMonitorFrame->QSOTree->RootNodeCount = contest->getContactCount();  // The magic of virtual displays...
-      frame->LogMonitorFrame->QSOTree->Invalidate();
-
-      if ( l == f )
-      {
-         l = frame->LogMonitorFrame->QSOTree->GetLastChild( frame->LogMonitorFrame->QSOTree->RootNode );
-         frame->LogMonitorFrame->QSOTree->FocusedNode = l;
-         frame->LogMonitorFrame->QSOTree->Selected[ l ] = true;
-      }
-   }
-   if ( expectedStanzaCount == curCount && lastScannedStanza != curCount )
-   {
-      contest->scanContest();
-      frame->LogMonitorFrame->showQSOs();
-      frame->MultDispFrame->refreshMults();
-      frame->LogMonitorFrame->Repaint();
-
-      lastScannedStanza = curCount;
-
-   }
-   */
 }
 void MonitoredLog::processLogStanza( int stanza, const QString &stanzaData )
 {
@@ -113,6 +85,7 @@ void MonitoredLog::processLogStanza( int stanza, const QString &stanzaData )
       contest->stanzaCount = mt->importTestBuffer( stanzaData );
       stanzasPulled.insert(stanza);
 
-      frame->update();
+      if (frame)
+          frame->update();
    }
 }

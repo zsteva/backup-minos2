@@ -32,6 +32,10 @@ class MonitoredLog
       {
          return monitorEnabled;
       }
+      void setEnabled(bool s)
+      {
+          monitorEnabled = s;
+      }
 
       void initialise( const QString &server, const QString &name );
       BaseContestLog * getContest() const

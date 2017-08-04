@@ -2,6 +2,8 @@
 #define MONITORMAIN_H
 
 #include "base_pch.h"
+#include <QAction>
+#include <QMenu>
 
 class MonitoredStation;
 class MonitoringFrame;
@@ -26,6 +28,8 @@ public:
     void notifyCallback( bool err, MinosRPCObj *mro, const QString &from );
     void loggerSubscribeClientCallback( bool err, MinosRPCObj *mro, const QString &from );
 
+    void closeTab(MonitoringFrame *tab);
+
 private slots:
     void on_closeButton_clicked();
     void on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );
@@ -38,9 +42,18 @@ private slots:
 
     void on_monitorTree_doubleClicked(const QModelIndex &index);
     void on_monitorSplitter_splitterMoved(int /*pos*/, int /*index*/);
+    void on_closeMonitoredLog();
+    void on_contestPageControl_customContextMenuRequested(const QPoint &pos);
+    void CancelClick();
 
 private:
     Ui::MonitorMain *ui;
+
+    QAction *newAction( const QString &text, QMenu *m, const char *atype );
+    QMenu TabPopup;
+    QAction *closeMonitoredLog;
+
+
     int splitterHandleWidth;
 
     virtual void closeEvent(QCloseEvent *event) override;

@@ -217,10 +217,10 @@ QStringList stateList =
 };
 QString LogTreeNode::data(int column)
 {
-    if (column == 0)
+    if (column == 1)
         return Name();
 
-    if (column == 1)
+    if (column == 0)
     {
         QString state;
         if (mlog->getFrame())
@@ -314,11 +314,11 @@ QVariant MonitorTreeModel::headerData( int section, Qt::Orientation orientation,
         QString cell;
         switch (section)
         {
-        case 0:
+        case 1:
             cell = "Contest Name";
             break;
 
-        case 1:
+        case 0:
             cell = "State";
             break;
 
@@ -461,7 +461,12 @@ MonitorMain::MonitorMain(QWidget *parent) :
         QList<int> split{200, 600};
         ui->monitorSplitter->setSizes(split);
     }
-    ui->monitorSplitter->setHandleWidth(splitterHandleWidth);}
+    ui->monitorSplitter->setHandleWidth(splitterHandleWidth);
+    ui->contestPageControl->setContextMenuPolicy( Qt::CustomContextMenu );
+
+    closeMonitoredLog = newAction("Close tab", &TabPopup, SLOT(on_closeMonitoredLog()));
+    newAction( "Cancel", &TabPopup, SLOT( CancelClick() ) );
+}
 
 MonitorMain::~MonitorMain()
 {
@@ -531,6 +536,51 @@ void MonitorMain::logMessage( const QString &s )
 {
    trace( s );
 }
+void MonitorMain::closeTab(MonitoringFrame *cttab)
+{
+    for ( QVector<MonitoredStation *>::iterator i = stationList.begin(); i != stationList.end(); i++ )
+    {
+        for ( QVector<MonitoredLog *>::iterator j = ( *i ) ->slotList.begin(); j != ( *i ) ->slotList.end(); j++ )
+        {
+            if ((*j)->getFrame() == cttab)
+            {
+                // take it out of the slot list and close it
+                // and we need to redo the list
+                //treeModel->clear();
+                (*j)->setEnabled(false);
+                (*j)->setFrame(0);
+                ui->contestPageControl->removeTab(ui->contestPageControl->indexOf(cttab));
+                delete cttab;
+                return;
+            }
+        }
+    }
+
+}
+void MonitorMain::on_contestPageControl_customContextMenuRequested(const QPoint &pos)
+{
+    QPoint globalPos = ui->contestPageControl->mapToGlobal( pos );
+
+    closeMonitoredLog->setEnabled(findCurrentLogFrame() != 0);
+
+    TabPopup.popup( globalPos );
+}
+QAction *MonitorMain::newAction( const QString &text, QMenu *m, const char *atype )
+{
+    QAction * newAct = new QAction( text, this );
+    m->addAction( newAct );
+    connect( newAct, SIGNAL( triggered() ), this, atype );
+    return newAct;
+}
+void MonitorMain::on_closeMonitoredLog()
+{
+    closeTab(findCurrentLogFrame());
+}
+void MonitorMain::CancelClick()
+{
+    // do nothing...
+}
+
 void MonitorMain::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
     // pubsub notify
@@ -661,7 +711,7 @@ void MonitorMain::on_clientCall(bool err, QSharedPointer<MinosRPCObj> mro, const
                 {
                    for ( QVector<MonitoredLog *>::iterator j = ( *i ) ->slotList.begin(); j != ( *i ) ->slotList.end(); j++ )
                    {
-                      if ( ( *j ) ->getPublishedName() == logName )
+                      if ((*j) && ( *j ) ->getPublishedName() == logName )
                       {
                          logMessage( "||" + stanzaData + "||" );
                          ( *j ) ->processLogStanza( stanza, stanzaData );
