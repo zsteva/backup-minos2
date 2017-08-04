@@ -13,6 +13,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "base_pch.h"
+#include "mqtUtils_pch.h"
 #include "RPCCommandConstants.h"
 #include "rigcontrolmainwindow.h"
 #include "ui_rigcontrolmainwindow.h"
@@ -42,8 +43,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
-    double f = 320000;
-    convertStringFreq(f);
+
 
     radio = new RigControl();
     selectRig = new SetupDialog(radio);
@@ -72,6 +72,11 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
     openRadio();
 
+    readTraceLogFlag();
+
+    trace("*** Rig Started ***");
+
+    upDateRadio();
 
 
 
@@ -106,6 +111,7 @@ void RigControlMainWindow::initActionsConnections()
     connect(ui->selectRadioBox, SIGNAL(activated(int)), this, SLOT(upDateRadio()));
 
     connect(ui->actionSetup_Radios, SIGNAL(triggered()), selectRig, SLOT(show()));
+    connect(ui->actionTraceLog, SIGNAL(changed()), this, SLOT(saveTraceLogFlag()));
 
     connect(pollTimer, SIGNAL(timeout()), this, SLOT(getRadioInfo()));
     //connect(pollTimer, SIGNAL(timeout()), this, SLOT(getCurMode()));
@@ -167,6 +173,20 @@ void RigControlMainWindow::upDateRadio()
                 closeRadio();
        }
        openRadio();
+       trace("*** Radio Update ***");
+       trace("Radio Name = " + selectRig->currentRadio.radioName);
+       trace("Radio Number = " + selectRig->currentRadio.radioNumber);
+       trace("Radio Model = " + selectRig->currentRadio.radioModel);
+       trace("Radio Number = " + QString::number(selectRig->currentRadio.radioModelNumber));
+       trace("Radio Manufacturer = " + selectRig->currentRadio.radioMfg_Name);
+       trace("Radio Comport = " + selectRig->currentRadio.comport);
+       trace("Baudrate = " + QString::number(selectRig->currentRadio.databits));
+       trace("Stop bits = " + QString::number(selectRig->currentRadio.stopbits));
+       trace("Handshake = " + QString::number(selectRig->currentRadio.handshake));
+       trace("TransVert Enable = " + QString::number(selectRig->currentRadio.transVertEnable));
+       trace("TransVert Negative = " + QString::number(selectRig->currentRadio.transVertNegative));
+       trace("TransVert Offset = " + QString::number(selectRig->currentRadio.transVertOffset));
+
 
     }
 
@@ -392,20 +412,43 @@ QString RigControlMainWindow::convertStringFreq(double frequency)
     sfreq = sfreq = QString::number(freq,'f', 0);
     int len = sfreq.length();
 
-    if (len > 9)
+
+    switch(len)
     {
-        sfreq = sfreq.insert(7, '.');
-        sfreq = sfreq.insert(4, '.');
-        sfreq = sfreq.insert(1, '.');
-    }
-    else if (len > 6)
-    {
-        sfreq = sfreq.insert(6, '.');
-        sfreq = sfreq.insert(3, '.');
-    }
-    else if (len > 3)
-    {
-        sfreq = sfreq.insert(3,'.');
+        case 11:
+            sfreq = sfreq.insert(8, '.');
+            sfreq = sfreq.insert(5, '.');
+            sfreq = sfreq.insert(2, '.');
+            break;
+        case 10:
+            sfreq = sfreq.insert(7, '.');
+            sfreq = sfreq.insert(4, '.');
+            sfreq = sfreq.insert(1, '.');
+            break;
+        case 9:
+            sfreq = sfreq.insert(3, '.');
+            sfreq = sfreq.insert(7, '.');
+            break;
+        case 8:
+            sfreq = sfreq.insert(2, '.');
+            sfreq = sfreq.insert(6, '.');
+            break;
+        case 7:
+            sfreq = sfreq.insert(4, '.');
+            sfreq = sfreq.insert(1, '.');
+            break;
+        case 6:
+            sfreq = sfreq.insert(3,'.');
+            break;
+        case 5:
+            sfreq = sfreq.insert(2,'.');
+            break;
+        case 4:
+            sfreq = sfreq.insert(1,'.');
+            break;
+        default:
+            sfreq = "??.???.???.???";    // error
+
     }
 
 
@@ -460,6 +503,7 @@ void RigControlMainWindow::readTraceLogFlag()
 
 void RigControlMainWindow::saveTraceLogFlag()
 {
+    qDebug() << "traceLog selected";
     QSettings config(RIG_CONTROL_CONFIG, QSettings::IniFormat);
     config.beginGroup("TraceLog");
 

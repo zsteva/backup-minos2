@@ -22,6 +22,7 @@
 #define NUM_RADIOS 5
 
 #define RIG_CONTROL_CONFIG "./Configuration/MinosRigControlConfig.ini"
+#define RADIO_CONFIG "./Configuration/MinosRadioConfig.ini"
 
 class QIntValidator;
 class QComboBox;

@@ -710,7 +710,7 @@ void SetupDialog::saveSettings()
     if (radioChanged)
     {
 
-        QSettings config(RIG_CONTROL_CONFIG, QSettings::IniFormat);
+        QSettings config(RADIO_CONFIG, QSettings::IniFormat);
 
         for (int i = 0; i < NUM_RADIOS; i++)
         {
@@ -763,7 +763,7 @@ void SetupDialog::saveSettings()
 void SetupDialog::readSettings()
 {
 
-    QSettings config(RIG_CONTROL_CONFIG, QSettings::IniFormat);
+    QSettings config(RADIO_CONFIG, QSettings::IniFormat);
 
     for (int i = 0; i < NUM_RADIOS; i++)
     {
@@ -898,7 +898,7 @@ void SetupDialog::saveCurrentRadio()
 {
 
 
-    QSettings config(RIG_CONTROL_CONFIG, QSettings::IniFormat);
+    QSettings config(RADIO_CONFIG, QSettings::IniFormat);
 
 
     config.beginGroup("CurrentRadio");
@@ -928,7 +928,7 @@ void SetupDialog::saveCurrentRadio()
 void SetupDialog::readCurrentRadio()
 {
 
-    QSettings config(RIG_CONTROL_CONFIG, QSettings::IniFormat);
+    QSettings config(RADIO_CONFIG, QSettings::IniFormat);
 
 
     {

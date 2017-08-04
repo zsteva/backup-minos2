@@ -100,13 +100,13 @@ private:
 
     void logMessage(QString s);
     void readTraceLogFlag();
-    void saveTraceLogFlag();
+
     void about();
 
 private slots:
 
     void onStdInRead(QString);
-
+    void saveTraceLogFlag();
     void upDateRadio();
     void getCurMode();
     void getRadioInfo();
