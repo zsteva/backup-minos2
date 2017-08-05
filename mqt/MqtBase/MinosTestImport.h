@@ -27,7 +27,7 @@ class MinosTestImport: public RPCDispatcher
 
       QSharedPointer<RPCParam> body;
 
-      int stanzaCount;
+      int imp_stanzaCount;
 
       bool getStructArgMemberValueDTG( QSharedPointer<RPCParam> rpm, const QString &name, QString &val );
       bool getStructArgMemberValueDTG( QSharedPointer<RPCParam>rpm, const QString &name, MinosItem<QString> &val );

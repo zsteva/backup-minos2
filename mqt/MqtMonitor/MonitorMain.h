@@ -73,7 +73,6 @@ private:
     void addSlot( MonitoredLog *ct );
     MonitoringFrame *findCurrentLogFrame();
     MonitoringFrame *findContestPage( BaseContestLog *ct );
-    void showContestScore( const QString &score );
 };
 
 #endif // MONITORMAIN_H

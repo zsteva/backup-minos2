@@ -725,10 +725,6 @@ void MonitorMain::on_clientCall(bool err, QSharedPointer<MinosRPCObj> mro, const
        }
     }
 }
-void MonitorMain::showContestScore( const QString &score )
-{
-   ui->scoreLabel->setText(score);
-}
 
 
 void MonitorMain::syncStations()
@@ -845,12 +841,11 @@ void MonitorMain::on_monitorTimeout()
        }
     }
     MonitoringFrame *f = findCurrentLogFrame();
-    QString statbuf;
-    if ( f && f->getContest() )
+    if ( f )
     {
-       f->getContest() ->setScore( statbuf );
+        f->getContest()->scanContest();
+        f->setScore();
     }
-    showContestScore( statbuf );
 }
 void MonitorMain::on_monitorTree_doubleClicked(const QModelIndex &index)
 {

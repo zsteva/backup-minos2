@@ -20,7 +20,7 @@ class MinosTestExport
    private:
       LoggerContestLog *ct;
 
-      int stanzaCount;
+      int exp_stanzaCount;
       void makeHeader( RPCParamStruct * st, unsigned long ts );
       void sendRequest( QSharedPointer<QFile> expfd, const QString &cmd, RPCParamStruct *st );
       void exportMode( QSharedPointer<QFile> expfd );
@@ -32,6 +32,7 @@ class MinosTestExport
       void exportOperators( QSharedPointer<QFile> expfd );
       void exportApps(QSharedPointer<QFile> expfd);
       void exportBundles(QSharedPointer<QFile> expfd );
+      void exportComment( QSharedPointer<QFile> expfd, const QSharedPointer<BaseContact> lct );
 
    public:
       MinosTestExport( LoggerContestLog * const ct );
@@ -41,7 +42,6 @@ class MinosTestExport
       int exportAllDetails( QSharedPointer<QFile> expfd, bool newfile );
       int exportTest(QSharedPointer<QFile> expfd, int mindump, int maxdump );
 
-      int exportComment( QSharedPointer<QFile> expfd, const QSharedPointer<BaseContact> lct );
       int exportQSO( QSharedPointer<QFile> expfd, const QSharedPointer<BaseContact>lct );
 
 };

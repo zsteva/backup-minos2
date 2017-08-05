@@ -35,6 +35,14 @@ void MonitoringFrame::showQSOs()
 {
     restoreColumns();
 }
+void MonitoringFrame::setScore()
+{
+    QString statbuf;
+    if (contest)
+        contest->setScore( statbuf );
+    ui->scoreLabel->setText(statbuf);
+}
+
 void MonitoringFrame::update()
 {
     qsoModel.reset();

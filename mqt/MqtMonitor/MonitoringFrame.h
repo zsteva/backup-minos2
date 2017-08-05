@@ -21,6 +21,7 @@ public:
 
     void initialise( BaseContestLog * contest );
     void showQSOs();
+    void setScore();
     BaseContestLog * getContest()
     {
        return contest;

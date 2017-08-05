@@ -348,7 +348,7 @@ void TSingleLogFrame::PublishTimerTimer(  )
    LoggerContestLog * ct = dynamic_cast<LoggerContestLog *>( contest );
    if ( ct && ct->isMinosFile() && !ct->isUnwriteable() && !ct->isProtected())
    {
-      int stanzaCount = contest->getStanzaCount();
+      int stanzaCount = contest->getCtStanzaCount();
       if ( lastStanzaCount != stanzaCount )
       {
          // publish this contest details - what to use?

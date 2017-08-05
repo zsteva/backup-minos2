@@ -93,19 +93,6 @@
            </property>
           </spacer>
          </item>
-         <item>
-          <widget class="QLabel" name="scoreLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Contest Score</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
       </layout>

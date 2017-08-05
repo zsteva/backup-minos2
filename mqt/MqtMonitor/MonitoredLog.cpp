@@ -9,7 +9,9 @@ MonitoredLog::~MonitoredLog()
 {
    mt->endImportTest();
    delete mt;
+   mt = 0;
    delete contest;
+   contest = 0;
 }
 void MonitoredLog::initialise( const QString &srv, const QString &name )
 {
@@ -61,11 +63,11 @@ void MonitoredLog::checkMonitor()
 {
    // here we need to check that we haven't got any gaps in the received log
    // and re-request the lot as necessary
-   if ( !contest || !frame )
+   if ( !contest || !frame || state != psPublished )
    {
       return ;
    }
-   int curCount = contest->getStanzaCount();
+   int curCount = contest->getCtStanzaCount();
    qint64 tick = QDateTime::currentMSecsSinceEpoch();
    if ( monitorEnabled && ( inStanzaRequest == 0 || ( tick - inStanzaRequest > 10000 ) ) )
    {
@@ -82,7 +84,7 @@ void MonitoredLog::processLogStanza( int stanza, const QString &stanzaData )
    if ( stanzasPulled.find( stanza ) == stanzasPulled.end() )
    {
       // we have a stanza - so pass it into the contest object
-      contest->stanzaCount = mt->importTestBuffer( stanzaData );
+      contest->ct_stanzaCount = mt->importTestBuffer( stanzaData );
       stanzasPulled.insert(stanza);
 
       if (frame)

@@ -75,7 +75,7 @@ class BaseContestLog: public BaseLogList
 
 
    protected:
-      int stanzaCount;
+      int ct_stanzaCount;
       unsigned long nextBlock;
       bool suppressProtected;
       bool unwriteable;
@@ -88,9 +88,9 @@ class BaseContestLog: public BaseLogList
       BaseContestLog();
       virtual ~BaseContestLog();
 
-      int getStanzaCount()
+      int getCtStanzaCount()
       {
-         return stanzaCount;
+         return ct_stanzaCount;
       }
 
       // The contest details
@@ -343,7 +343,7 @@ class ContestScore
       int nbonus;
       int totalScore;
 
-      ContestScore(BaseContestLog *, QDateTime limit);
+      ContestScore(BaseContestLog *);
       QString disp();
 };
 Q_DECLARE_METATYPE(BaseContestLog)
