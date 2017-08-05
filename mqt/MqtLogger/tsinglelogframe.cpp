@@ -985,7 +985,6 @@ void TSingleLogFrame::on_GoToSerial(BaseContestLog *ct)
 //---------------------------------------------------------------------------
 void TSingleLogFrame::on_KeyerLoaded()
 {
-    trace ("KeyerLoaded in " + contest->name.getValue() );
    keyerLoaded = true;
    ui->GJVQSOLogFrame->setKeyerLoaded();
 }
