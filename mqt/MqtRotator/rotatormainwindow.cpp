@@ -44,12 +44,14 @@ static QStringList presetShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
                             QString("Ctrl+9"), QString("Ctrl+0")};
 
 
-RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
+RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
     QMainWindow(parent), msg(0),
     ui(new Ui::RotatorMainWindow)
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
+    loggerAntenna = _loggerAntenna;
 
     connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
     stdinReader.start();
@@ -138,11 +140,23 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     selectAntenna = ui->selectAntennaBox;
 
+
+
+
     initSelectAntennaBox();
 
-    selectRotator->readCurrentAntenna();
-
-    selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
+    if (selectAntenna->findText(loggerAntenna) >= 0)
+    {
+        int a = selectAntenna->findText(loggerAntenna);
+        selectAntenna->setCurrentIndex(a);
+        selectRotator->readSettings();      // get antenna settings
+        selectRotator->copyAntennaToCurrent(a);
+    }
+    else
+    {
+        selectRotator->readCurrentAntenna();
+        selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
+    }
 
 
 

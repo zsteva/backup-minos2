@@ -771,6 +771,25 @@ void SetupDialog::clearCurrentRotator()
 }
 
 
+void SetupDialog::copyAntennaToCurrent(int antennaNumber)
+{
+    currentAntenna.antennaName = availAntennas[antennaNumber].antennaName;
+    currentAntenna.antennaNumber = availAntennas[antennaNumber].antennaNumber;
+    currentAntenna.rotatorModel = availAntennas[antennaNumber].rotatorModel;
+    currentAntenna.rotatorModelNumber = availAntennas[antennaNumber].rotatorModelNumber;
+    currentAntenna.rotatorModelName = availAntennas[antennaNumber].rotatorModelName;
+    currentAntenna.rotatorManufacturer = availAntennas[antennaNumber].rotatorManufacturer;
+    currentAntenna.southStopFlag = availAntennas[antennaNumber].southStopFlag;
+    currentAntenna.overRunFlag = availAntennas[antennaNumber].overRunFlag;
+    currentAntenna.antennaOffset = availAntennas[antennaNumber].antennaOffset;
+    currentAntenna.comport = availAntennas[antennaNumber].comport;
+    currentAntenna.baudrate = availAntennas[antennaNumber].baudrate;
+    currentAntenna.databits = availAntennas[antennaNumber].databits;
+    currentAntenna.parity = availAntennas[antennaNumber].parity;
+    currentAntenna.stopbits = availAntennas[antennaNumber].stopbits;
+    currentAntenna.handshake = availAntennas[antennaNumber].handshake;
+}
+
 void SetupDialog::clearAntennaValueChanged()
 {
     for (int i = 0; i < NUM_ANTENNAS; i++)

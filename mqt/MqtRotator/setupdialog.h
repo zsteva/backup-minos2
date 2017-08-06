@@ -58,6 +58,8 @@ public:
     void readCurrentAntenna();
     QString getRotatorComPort(QString);
     void saveCurrentAntenna();
+    void readSettings();
+    void copyAntennaToCurrent(int antennaNumber);
 
 signals:
 

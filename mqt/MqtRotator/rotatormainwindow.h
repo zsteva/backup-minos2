@@ -27,6 +27,7 @@
 
 
 
+
 #define NUM_PRESETS 10
 //#define NUM_ROTATOR_PROTOCOLS 2
 
@@ -52,7 +53,7 @@ class RotatorMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit RotatorMainWindow(QWidget *parent = 0);
+    explicit RotatorMainWindow(QString, QWidget *parent = 0);
     ~RotatorMainWindow();
 
 
@@ -94,6 +95,7 @@ private:
 
     QComboBox *selectAntenna;
     QPushButton* presetButtons[NUM_PRESETS];
+    QString loggerAntenna = "";
 //    MinosCompass* compassDial;
     RotControl  *rotator;
     QLabel *status;

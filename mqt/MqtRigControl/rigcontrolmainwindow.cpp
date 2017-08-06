@@ -25,7 +25,7 @@
 #include <QDebug>
 
 
-RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
+RigControlMainWindow::RigControlMainWindow( QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::RigControlMainWindow)
 {

@@ -14,15 +14,24 @@
 
 #include "rotatormainwindow.h"
 #include <QApplication>
+#include <QCommandLineOption>
+#include <QCommandLineParser>
+#include <QDebug>
+#include <QString>
+#include <QStringList>
+
 #include "AppStartup.h"
 
 int main(int argc, char *argv[])
 {
+
     QApplication a(argc, argv);
 
     appStartup(a, "MinosQtRotator");
 
-    RotatorMainWindow w;
+    QString loggerAntenna = QCoreApplication::arguments().at(1);
+
+    RotatorMainWindow w(loggerAntenna);
     w.show();
 
     return a.exec();
