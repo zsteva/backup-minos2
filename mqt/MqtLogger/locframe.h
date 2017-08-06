@@ -1,10 +1,7 @@
 #ifndef LOCFRAME_H
 #define LOCFRAME_H
 
-#include <QFrame>
-#include <QAbstractItemModel>
-#include <QModelIndex>
-
+#include "base_pch.h"
 
 namespace Ui {
 class LocFrame;

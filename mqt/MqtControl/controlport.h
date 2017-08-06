@@ -118,7 +118,7 @@ class PiGPIOPort: public commonPort
       bool getLine( commonLineControl * );
       void getLineState();
 };
-#ifdef RUBBISH
+#ifdef K8055PORT
 class K8055Port: public commonPort
 {
    private:

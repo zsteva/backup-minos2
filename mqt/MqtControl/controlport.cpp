@@ -249,7 +249,7 @@ void PiGPIOPort::getLineState()
 //   nothing to do
 }
 //==============================================================================
-#ifdef RUBBISH
+#ifdef K8055PORT
 K8055Port::K8055Port( const PortConfig &port ) : commonPort( port ),
       addr( 0 ), dig( 0 )
 {

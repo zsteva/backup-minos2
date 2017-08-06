@@ -9,7 +9,7 @@
 
 #ifndef K8055ContainerH
 #define K8055ContainerH 
-#ifdef RUBBISH
+#ifdef K8055PORT
 
 //---------------------------------------------------------------------------
 #include <Classes.hpp>

@@ -175,27 +175,7 @@ int GetLocalIPAddressList( QVector<QHostAddress> &addrList )
     }
     return addrList.size();
 }
-#ifdef RUBBISH
-int ILibGetLocalIPAddressList( int** pp_int )
-{
-   //
-   // Use an Ioctl call to fetch the IPAddress list
-   //
-   int i;
-   char buffer[ 16 * sizeof( SOCKET_ADDRESS_LIST ) ];
-   DWORD bufferSize;
-   SOCKET TempSocket = socket( AF_INET, SOCK_DGRAM, 0 );
-   WSAIoctl( TempSocket, SIO_ADDRESS_LIST_QUERY, NULL, 0, buffer, 16 * sizeof( SOCKET_ADDRESS_LIST ), &bufferSize, NULL, NULL );
-   *pp_int = ( int* ) malloc( sizeof( int ) * ( 1 + ( ( SOCKET_ADDRESS_LIST* ) buffer ) ->iAddressCount ) );
-   for ( i = 0;i < ( ( SOCKET_ADDRESS_LIST* ) buffer ) ->iAddressCount;++i )
-   {
-      ( *pp_int ) [ i ] = ( ( struct sockaddr_in* ) ( ( ( SOCKET_ADDRESS_LIST* ) buffer ) ->Address[ i ].lpSockaddr ) ) ->sin_addr.s_addr;
-   }
-   ( *pp_int ) [ i ] = inet_addr( "127.0.0.1" );
-   closesocket( TempSocket );
-   return ( 1 + ( ( SOCKET_ADDRESS_LIST* ) buffer ) ->iAddressCount );
-}
-#endif
+
 bool MCReadSocket::setupRO()
 {
     state = new UPnPDataObject();
