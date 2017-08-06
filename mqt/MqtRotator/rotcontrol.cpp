@@ -20,8 +20,9 @@
 #include <QStringList>
 #include "rotcontrol.h"
 #include <hamlib/rotator.h>
-//#include "rotctl_parse.h"
 #include "rotatorCommonConstants.h"
+
+
 
 QList<const rot_caps *> capsList;
 bool rotatorlistLoaded=false;
@@ -33,22 +34,22 @@ int collect(const rot_caps *caps,rig_ptr_t)
     return 1;
 }
 
-
-
-RotControl::RotControl()
+RotControl::RotControl(QObject *parent) : QObject(parent)
 {
-    getRotatorList();
-    rot_azimuth = 0.0;
-    rot_elevation = 0.0;
 
-    // set callback for debug messages
-    // NB callback is the C function, not the class method.
-    // user_data is used to point to our class.
+//   getRotatorList();
+   rot_azimuth = 0.0;
+   rot_elevation = 0.0;
 
-    rig_set_debug_callback (::rig_message_cb, static_cast<rig_ptr_t>(this));
+   // set callback for debug messages
+   // NB callback is the C function, not the class method.
+   // user_data is used to point to our class.
 
+   rig_set_debug_callback (::rig_message_cb, static_cast<rig_ptr_t>(this));
 
 }
+
+
 
 
 RotControl::~RotControl()
@@ -56,6 +57,9 @@ RotControl::~RotControl()
     rot_close(my_rot); /* close port */
     rot_cleanup(my_rot); /* if you care about memory */
 }
+
+
+
 
 int RotControl::init(srotParams selectedAntenna)
 {
@@ -127,6 +131,7 @@ int RotControl::closeRotator()
 
 void RotControl::getRotatorList()
 {
+    int a =0;
     if(!rotatorlistLoaded)
     {
         capsList.clear();
@@ -446,4 +451,5 @@ bool model_Sort(const rot_caps *caps1,const rot_caps *caps2)
     if (QString::compare(caps1->mfg_name,caps2->mfg_name)<0) return true;
     return false;
 }
+
 

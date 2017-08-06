@@ -100,13 +100,15 @@ struct srotParams
 class RotControl: public QObject
 {
     Q_OBJECT
+
 public:
-    RotControl();
+    explicit RotControl(QObject *parent = 0);
     ~RotControl();
     int init(srotParams currentAntenna);
     int closeRotator();
     int getModelNumber(int idx);
     int getRotatorModelIndex();
+    void getRotatorList();
     bool getRotatorList(QComboBox *cb);
     const char * getMfg_Name(int idx);
     const char * getModel_Name(int idx);
@@ -159,7 +161,6 @@ private:
     bool rotControlEnabled;
     bool serialConnected;
     void errorMessage(int errorCode,QString command);
-    void getRotatorList();
     bool rotatorlistLoaded=false;
     srotParams curRotParams;
     int serialP;

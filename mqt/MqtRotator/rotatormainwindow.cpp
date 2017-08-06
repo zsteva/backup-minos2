@@ -35,6 +35,7 @@
 #include <QtDebug>
 
 
+
 RotatorMainWindow *MinosRotatorForm;
 
 static QStringList presetShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
@@ -51,7 +52,7 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    loggerAntenna = _loggerAntenna;
+    loggerAntenna = _loggerAntenna.trimmed();
 
     connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
     stdinReader.start();
@@ -106,6 +107,7 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
         presetButtons[i]->setShortcut(presetShortCut[i]);
     }
 
+
     rotator = new RotControl();
     selectRotator = new SetupDialog(rotator);
     editPresets = new EditPresetsDialog;
@@ -141,22 +143,7 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
     selectAntenna = ui->selectAntennaBox;
 
 
-
-
-    initSelectAntennaBox();
-
-    if (selectAntenna->findText(loggerAntenna) >= 0)
-    {
-        int a = selectAntenna->findText(loggerAntenna);
-        selectAntenna->setCurrentIndex(a);
-        selectRotator->readSettings();      // get antenna settings
-        selectRotator->copyAntennaToCurrent(a);
-    }
-    else
-    {
-        selectRotator->readCurrentAntenna();
-        selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
-    }
+    rotator->getRotatorList();
 
 
 
@@ -177,7 +164,7 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
 
 
 
-    openRotator();
+    //openRotator();
 
     setPolltime(1000);   // to allow variable controller polltime - not implemented!
     rotTimeCount = 0;
@@ -188,11 +175,43 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
     rotlog->getBearingLogConfig();
     readTraceLogFlag();
 
-    // tell logger that rotator is active, antenna name and maxRotation
+    logAntError = false;
+    initSelectAntennaBox();
+
+    if (loggerAntenna.length() >= 0)
+    {
+        int a = selectAntenna->findText(loggerAntenna);
+        if (a == -1)
+        {
+            showStatusMessage("<font color='Red'>Invalid antenna name from logger!</font>");
+            logAntError = true;
+        }
+        else
+        {
+            selectAntenna->setCurrentIndex(a);
+            selectRotator->readSettings();      // get antenna settings
+            selectRotator->copyAntennaToCurrent(a);
+        }
+
+    }
+    else
+    {
+        selectRotator->readCurrentAntenna();
+        selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
+    }
+
+
+
+    if (!logAntError)
+    {
+        upDateAntenna();
+        // tell logger that rotator is active, antenna name and maxRotation
+        sendStatusToLogReady();
+    }
 
     trace("*** Rotator Started ***");
-    sendStatusToLogReady();
-    upDateAntenna();
+
+
 
 
 }
@@ -680,10 +699,14 @@ void RotatorMainWindow::upDateAntenna()
 
        if (rotator->get_serialConnected())
        {
-                closeRotator();
+           closeRotator();
+           this->setWindowTitle("Minos 2 Rotator");
+
        }
 
        openRotator();
+
+       this->setWindowTitle("Minos 2 Rotator - " + selectRotator->currentAntenna.antennaName);
 
        offSetDisplay->setText(QString::number(selectRotator->currentAntenna.antennaOffset));
 

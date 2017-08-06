@@ -25,11 +25,16 @@
 int main(int argc, char *argv[])
 {
 
+    QString loggerAntenna = "";
+
     QApplication a(argc, argv);
 
     appStartup(a, "MinosQtRotator");
 
-    QString loggerAntenna = QCoreApplication::arguments().at(1);
+    if (argc == 2)
+    {
+        loggerAntenna = QCoreApplication::arguments().at(1);
+    }
 
     RotatorMainWindow w(loggerAntenna);
     w.show();

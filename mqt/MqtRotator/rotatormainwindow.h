@@ -42,6 +42,7 @@ class RotatorRpc;
 class RotatorLog;
 class LogDialog;
 
+
 namespace Ui {
 class RotatorMainWindow;
 }
@@ -124,6 +125,7 @@ private:
     bool overLapActiveflag;
     bool southStopActiveflag;
     bool supportCwCcwCmd;
+    bool logAntError;
     int rotatorBearing;
     int currentBearingOffset;
     int rotatorMinAzimuth;
