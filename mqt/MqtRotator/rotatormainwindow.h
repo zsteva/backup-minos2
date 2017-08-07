@@ -29,7 +29,8 @@
 
 
 #define NUM_PRESETS 10
-//#define NUM_ROTATOR_PROTOCOLS 2
+#define OFF false
+#define ON true
 
 
 class QLabel;
@@ -113,6 +114,8 @@ private:
     int pollTime;
     int rotTimeCount;
     int brakedelay;
+    bool rot_left_button_status;
+    bool rot_right_button_status;
     bool brakeflag;
     bool moving;
     bool movingCW;

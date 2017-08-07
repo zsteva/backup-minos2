@@ -135,6 +135,9 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
 
     ui->overlaplineEdit->setFixedSize(60,20);
 
+    rot_left_button_status = OFF;
+    rot_right_button_status = OFF;
+
     rotator->set_serialConnected(false);
 
     refreshPresetLabels();
@@ -160,7 +163,6 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
     movingCCW = false;
     rotLogFlg = true;
     rotatorBearing = COMPASS_ERROR; // force first update
-
 
 
 
@@ -304,7 +306,8 @@ void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
     }
     else if (dirCommand == rpcConstants::eRotateStop)
     {
-            stopRotation(true);
+
+        stopRotation(true);
 
     }
 
@@ -358,6 +361,7 @@ void RotatorMainWindow::openRotator()
     {
 //        QMessageBox::critical(this, tr("Error"), serial->errorString());
         pollTimer->stop();
+
         stopRotation(false);           // clear flags
         showStatusMessage(tr("Rotator Open error"));
     }
@@ -409,8 +413,8 @@ void RotatorMainWindow::initActionsConnections()
     connect(ui->bearingEdit, SIGNAL(returnPressed()), ui->bearingEdit, SLOT(setFocus()));
     connect(ui->bearingEdit, SIGNAL(returnPressed()), ui->bearingEdit, SLOT(selectAll()));
     connect(ui->stopButton, SIGNAL(clicked(bool)), this, SLOT(stopButton()));
-    connect(ui->rot_right_button, SIGNAL(toggled(bool)), this, SLOT(rotateCW(bool)));
-    connect(ui->rot_left_button, SIGNAL(toggled(bool)), this, SLOT(rotateCCW(bool)));
+    connect(ui->rot_right_button, SIGNAL(clicked(bool)), this, SLOT(rotateCW(bool)));
+    connect(ui->rot_left_button, SIGNAL(clicked(bool)), this, SLOT(rotateCCW(bool)));
     connect(this, SIGNAL(escapePressed()), this, SLOT(stop_rotation()));
 
     // display bearing
@@ -672,8 +676,10 @@ void RotatorMainWindow::upDateAntenna()
 {
 
     if (moving  || movingCCW || movingCW)
-        stopRotation(true);
+    {
 
+        stopRotation(true);
+    }
     int antennaIndex = ui->selectAntennaBox->currentIndex();
     if (antennaIndex > 0)
     {
@@ -940,6 +946,7 @@ void RotatorMainWindow::rotateTo(int bearing)
 
     if (movingCW || movingCCW)
     {
+
         stopRotation(true);
     }
 
@@ -1096,6 +1103,7 @@ void RotatorMainWindow::stopButton()
 {
 
     logMessage("StopButton");
+/*
     if (ui->rot_left_button->isChecked())
     {
         ui->rot_left_button->setChecked(false);
@@ -1106,8 +1114,7 @@ void RotatorMainWindow::stopButton()
         ui->rot_right_button->setChecked(false);
         //return;
     }
-
-
+*/
     stopRotation(rotator->get_serialConnected());
 
 
@@ -1115,6 +1122,7 @@ void RotatorMainWindow::stopButton()
 
 void RotatorMainWindow::stop_rotation()
 {
+
     stopRotation(rotator->get_serialConnected());
 }
 
@@ -1135,8 +1143,8 @@ void RotatorMainWindow::stopRotation(bool sendStop)
             logMessage("stopcmd hamlib error " + QString::number(retCode));
         }
     }
-    //ui->rot_left_button->setChecked(false);
-    //ui->rot_right_button->setChecked(false);
+
+/*
     if (ui->rot_left_button->isChecked())
     {
         ui->rot_left_button->setChecked(false);
@@ -1147,6 +1155,16 @@ void RotatorMainWindow::stopRotation(bool sendStop)
         ui->rot_right_button->setChecked(false);
         //return;
     }
+*/
+    if (rot_left_button_status)
+    {
+        rot_left_button_status = OFF;
+    }
+    if (rot_right_button_status)
+    {
+        rot_right_button_status = OFF;
+    }
+
     sendStatusToLogStop();
     sleepFor(brakedelay);
     brakeflag = false;
@@ -1159,27 +1177,29 @@ void RotatorMainWindow::stopRotation(bool sendStop)
 }
 
 
-void RotatorMainWindow::rotateCW(bool toggle)
+void RotatorMainWindow::rotateCW(bool clicked)
 {
     cwCcwCmdflag = true;
     logMessage("Start rotateCW");
     if (!rotator->get_serialConnected())
     {
         logMessage("rotateCW - Rotator not connected!");
-        return;
-    }
 
-    if (toggle)
+    }
+    else if (rot_right_button_status)
     {
+        // button on, turn off
+        rot_right_button_status = OFF;
+        stopButton();
+    }
+    else
+    {
+        // button off
 
         if (rotatorBearing >= currentMaxAzimuth)
         {
             logMessage("Rotator Bearing > currentMaxAzimuth");
             cwCcwCmdflag = false;
-            if (ui->rot_right_button->isChecked())
-            {
-                ui->rot_right_button->setChecked(false);
-            }
             return;
         }
 
@@ -1213,21 +1233,17 @@ void RotatorMainWindow::rotateCW(bool toggle)
             }
             else
             {
-                ui->rot_right_button->setChecked(true);
+
                 movingCW = true;
                 if (!supportCwCcwCmd)
                 {
                     moving = true;
                 }
                 sendStatusToLogRotCW();
+                rot_right_button_status = ON;
                 logMessage("RotateCW Successful");
             }
-
         }
-    }
-    else if (movingCW)
-    {
-        stopButton();
     }
 
 
@@ -1246,26 +1262,27 @@ void RotatorMainWindow::rotateCCW(bool toggle)
     if (!rotator->get_serialConnected())
     {
         logMessage("rotateCCW - Rotator not connected!");
-        return;
+
     }
-
-
-    if (toggle)
+    else if (rot_left_button_status)
     {
+        // button on, turn off
+        rot_left_button_status = OFF;
+        stopButton();
+    }
+    else
+    {
+        // button off
 
-        if (rotatorBearing <= currentMinAzimuth)
+        if (rotatorBearing >= currentMaxAzimuth)
         {
-            logMessage("Rotator Bearing < currentMinAzimuth");
+            logMessage("CCW - Rotator Bearing > currentMaxAzimuth");
             cwCcwCmdflag = false;
-            if (ui->rot_left_button->isChecked())
-            {
-                ui->rot_left_button->setChecked(false);
-            }
             return;
         }
 
 
-        if (moving  || movingCW || movingCCW)
+        if (moving || movingCW || movingCCW)
         {
             logMessage("RotateCCW - rotator already moving - stop");
             stopButton();
@@ -1285,7 +1302,6 @@ void RotatorMainWindow::rotateCCW(bool toggle)
                 logMessage("Send rotate to minAzimuth, instead of CCW rotator command, minAzimuth = " + QString::number(rotator->getMinAzimuth()));
                 retCode = rotator->rotate_to_bearing(currentMinAzimuth);
             }
-
             if (retCode < 0)
             {
                 hamlibError(retCode);
@@ -1295,24 +1311,17 @@ void RotatorMainWindow::rotateCCW(bool toggle)
             }
             else
             {
-                ui->rot_left_button->setChecked(true);
+
                 movingCCW = true;
                 if (!supportCwCcwCmd)
                 {
                     moving = true;
                 }
                 sendStatusToLogRotCCW();
+                rot_left_button_status = ON;
                 logMessage("RotateCCW Successful");
             }
-
         }
-
-
-    }
-
-    else if (movingCCW)
-    {
-        stopButton();
     }
 
     cwCcwCmdflag = false;
