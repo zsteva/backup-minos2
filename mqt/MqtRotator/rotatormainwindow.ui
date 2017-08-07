@@ -248,7 +248,7 @@
           <item>
            <widget class="QPushButton" name="rot_left_button">
             <property name="text">
-             <string>Left (CCW)</string>
+             <string/>
             </property>
             <property name="checkable">
              <bool>false</bool>
@@ -258,7 +258,7 @@
           <item>
            <widget class="QPushButton" name="rot_right_button">
             <property name="text">
-             <string>Right (CW)</string>
+             <string/>
             </property>
             <property name="checkable">
              <bool>false</bool>

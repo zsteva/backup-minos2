@@ -213,6 +213,10 @@ private:
     void toggleOverLapDisplay(bool toggle);
 
     bool getCwCcwCmdFlag(int rotatorNumber);
+    void rot_right_button_off();
+    void rot_right_button_on();
+    void rot_left_button_off();
+    void rot_left_button_on();
 };
 
 #endif // ROTATORMAINWINDOW_H

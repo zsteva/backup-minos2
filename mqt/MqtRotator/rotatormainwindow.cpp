@@ -109,6 +109,7 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
 
 
     rotator = new RotControl();
+    rotator->getRotatorList();
     selectRotator = new SetupDialog(rotator);
     editPresets = new EditPresetsDialog;
     setupLog = new LogDialog;
@@ -135,8 +136,8 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
 
     ui->overlaplineEdit->setFixedSize(60,20);
 
-    rot_left_button_status = OFF;
-    rot_right_button_status = OFF;
+    rot_left_button_off();
+    rot_right_button_off();
 
     rotator->set_serialConnected(false);
 
@@ -144,10 +145,6 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
     initActionsConnections();
 
     selectAntenna = ui->selectAntennaBox;
-
-
-    rotator->getRotatorList();
-
 
 
     brakedelay = 1 * 1000;
@@ -180,7 +177,7 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
     logAntError = false;
     initSelectAntennaBox();
 
-    if (loggerAntenna.length() >= 0)
+    if (loggerAntenna.length() > 0)
     {
         int a = selectAntenna->findText(loggerAntenna);
         if (a == -1)
@@ -712,7 +709,14 @@ void RotatorMainWindow::upDateAntenna()
 
        openRotator();
 
-       this->setWindowTitle("Minos 2 Rotator - " + selectRotator->currentAntenna.antennaName);
+       if (loggerAntenna.length() > 0)
+       {
+           this->setWindowTitle("Minos 2 Rotator - " + selectRotator->currentAntenna.antennaName + " - Logger");
+       }
+       else
+       {
+           this->setWindowTitle("Minos 2 Rotator - " + selectRotator->currentAntenna.antennaName + " - Local");
+       }
 
        offSetDisplay->setText(QString::number(selectRotator->currentAntenna.antennaOffset));
 
@@ -1158,11 +1162,11 @@ void RotatorMainWindow::stopRotation(bool sendStop)
 */
     if (rot_left_button_status)
     {
-        rot_left_button_status = OFF;
+        rot_left_button_off();
     }
     if (rot_right_button_status)
     {
-        rot_right_button_status = OFF;
+        rot_right_button_off();
     }
 
     sendStatusToLogStop();
@@ -1179,6 +1183,9 @@ void RotatorMainWindow::stopRotation(bool sendStop)
 
 void RotatorMainWindow::rotateCW(bool clicked)
 {
+
+
+
     cwCcwCmdflag = true;
     logMessage("Start rotateCW");
     if (!rotator->get_serialConnected())
@@ -1189,7 +1196,6 @@ void RotatorMainWindow::rotateCW(bool clicked)
     else if (rot_right_button_status)
     {
         // button on, turn off
-        rot_right_button_status = OFF;
         stopButton();
     }
     else
@@ -1240,7 +1246,8 @@ void RotatorMainWindow::rotateCW(bool clicked)
                     moving = true;
                 }
                 sendStatusToLogRotCW();
-                rot_right_button_status = ON;
+                rot_right_button_on();
+
                 logMessage("RotateCW Successful");
             }
         }
@@ -1267,7 +1274,6 @@ void RotatorMainWindow::rotateCCW(bool toggle)
     else if (rot_left_button_status)
     {
         // button on, turn off
-        rot_left_button_status = OFF;
         stopButton();
     }
     else
@@ -1318,7 +1324,7 @@ void RotatorMainWindow::rotateCCW(bool toggle)
                     moving = true;
                 }
                 sendStatusToLogRotCCW();
-                rot_left_button_status = ON;
+                rot_left_button_on();
                 logMessage("RotateCCW Successful");
             }
         }
@@ -1326,6 +1332,33 @@ void RotatorMainWindow::rotateCCW(bool toggle)
 
     cwCcwCmdflag = false;
 }
+
+
+
+void RotatorMainWindow::rot_left_button_on()
+{
+    rot_left_button_status = ON;
+    ui->rot_left_button->setText("<<--   (CCW) Left");
+}
+
+void RotatorMainWindow::rot_left_button_off()
+{
+    rot_left_button_status = OFF;
+    ui->rot_left_button->setText("(CCW) Left");
+}
+
+void RotatorMainWindow::rot_right_button_on()
+{
+    rot_right_button_status = ON;
+    ui->rot_right_button->setText("(CW) Right   -->>");
+}
+
+void RotatorMainWindow::rot_right_button_off()
+{
+    rot_right_button_status = OFF;
+    ui->rot_right_button->setText("(CW) Right");
+}
+
 
 
 void RotatorMainWindow::setPolltime(int interval)
