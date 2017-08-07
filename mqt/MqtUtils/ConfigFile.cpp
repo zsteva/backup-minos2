@@ -5,6 +5,7 @@
 #include "fileutils.h"
 #include "ConfigFile.h"
 
+
 //---------------------------------------------------------------------------
 
 bool terminated = false;
@@ -435,6 +436,8 @@ QString MinosConfig::checkConfig()
                     }
                 }
             }
+
+
             if (!FileExists(ele->commandLine))
             {
                 reqErrs += ele->appType + " Executable path does not exist\n\n";
