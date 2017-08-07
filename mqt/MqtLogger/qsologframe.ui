@@ -354,10 +354,10 @@
                 <enum>Qt::NoFocus</enum>
                </property>
                <property name="text">
-                <string> Left (CCW)</string>
+                <string/>
                </property>
                <property name="checkable">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
               </widget>
              </item>
@@ -377,10 +377,10 @@
                 <enum>Qt::NoFocus</enum>
                </property>
                <property name="text">
-                <string>Right (CW)</string>
+                <string/>
                </property>
                <property name="checkable">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
               </widget>
              </item>

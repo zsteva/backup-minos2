@@ -102,6 +102,9 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     ui->Rotate->setShortcut(QKeySequence(ROTATE_TURN_KEY));
     ui->StopRotate->setShortcut(QKeySequence(ROTATE_STOP_KEY));
 
+    rot_left_button_off();
+    rot_right_button_off();
+
 
 }
 bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
@@ -2103,13 +2106,12 @@ void QSOLogFrame::on_Rotate_clicked()
 
 }
 
-void QSOLogFrame::on_RotateLeft_clicked(bool toggle)
+void QSOLogFrame::on_RotateLeft_clicked(bool clicked)
 {
     int angle = 0;
 
     if (currentBearing <= minAzimuth)
     {
-        ui->RotateLeft->setChecked(false);
         return;
     }
 
@@ -2119,15 +2121,15 @@ void QSOLogFrame::on_RotateLeft_clicked(bool toggle)
     }
 
 
-    if (toggle)
+    if (!rot_left_button_status)
     {
-        ui->RotateLeft->setChecked(true);
+        rot_left_button_on();
         emit sendRotator(rpcConstants::eRotateLeft, angle);
         movingCW = true;
     }
     else
     {
-        ui->RotateRight->setChecked(false);
+        rot_left_button_off();
         //TSendDM::sendRotator(rpcConstants::eRotateStop, getAngle());
     }
 }
@@ -2139,7 +2141,6 @@ void QSOLogFrame::on_RotateRight_clicked(bool toggle)
 
     if (currentBearing >= maxAzimuth)
     {
-        ui->RotateRight->setChecked(false);
         return;
     }
 
@@ -2150,19 +2151,50 @@ void QSOLogFrame::on_RotateRight_clicked(bool toggle)
 
 
 
-    if (toggle)
+    if (!rot_right_button_status)
     {
-        ui->RotateRight->setChecked(true);
+        rot_right_button_on();
         emit sendRotator(rpcConstants::eRotateRight, angle);
         movingCCW = true;
     }
     else
     {
-        ui->RotateRight->setChecked(false);
+        rot_right_button_off();
         //TSendDM::sendRotator(rpcConstants::eRotateStop, getAngle());
     }
 
 }
+
+
+
+void QSOLogFrame::rot_left_button_on()
+{
+    rot_left_button_status = true;
+    ui->RotateLeft->setText("<<--   (CCW) Left");
+}
+
+void QSOLogFrame::rot_left_button_off()
+{
+    rot_left_button_status = false;
+    ui->RotateLeft->setText("(CCW) Left");
+}
+
+void QSOLogFrame::rot_right_button_on()
+{
+    rot_right_button_status = true;
+    ui->RotateRight->setText("(CW) Right   -->>");
+}
+
+void QSOLogFrame::rot_right_button_off()
+{
+    rot_right_button_status = false;
+    ui->RotateRight->setText("(CW) Right");
+}
+
+
+
+
+
 
 void QSOLogFrame::on_StopRotate_clicked()
 {
@@ -2173,8 +2205,8 @@ void QSOLogFrame::on_StopRotate_clicked()
 
 void QSOLogFrame::clearRotatorFlags()
 {
-    ui->RotateLeft->setChecked(false);
-    ui->RotateRight->setChecked(false);
+    rot_left_button_off();
+    rot_right_button_off();
     moving = false;
     movingCCW = false;
     movingCW = false;

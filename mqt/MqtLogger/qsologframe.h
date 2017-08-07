@@ -104,6 +104,8 @@ private:
     bool moving = false;
     bool movingCW = false;
     bool movingCCW = false;
+    bool rot_left_button_status;
+    bool rot_right_button_status;
     void clearRotatorFlags();
 
 
@@ -171,6 +173,11 @@ private:
 
     void MainOpComboBox_Exit();
     void SecondOpComboBox_Exit();
+
+    void rot_left_button_on();
+    void rot_left_button_off();
+    void rot_right_button_on();
+    void rot_right_button_off();
 
 signals:
     void QSOFrameCancelled();
