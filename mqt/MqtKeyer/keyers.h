@@ -16,6 +16,26 @@
 
 #include <deque>
 
+enum LINEMODES{
+    elmNone = 0,
+    elmRecord,
+    elmPlayPip,
+    elmPlayNoPip,
+    elmTestPlay,
+    elmTones,   //5
+    elm6,
+    elm7,
+    elm8,
+    elm9,
+    elm10,
+    elm11,
+    elm12,
+    elmMGM,                 // 13
+    elmAppsRestartClose,    // 14
+    elmOSRestartClose,      // 15
+    elmMax                  // 16
+};
+
 template < class qe >
 class my_deque : public std::deque < qe >
 {

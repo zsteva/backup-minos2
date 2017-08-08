@@ -17,6 +17,25 @@
 #define TIMER_INTERVAL 55U         // 55-millisecond target interval
 
 //==============================================================================
+QStringList lineModeStrings = {
+    "None",
+    "Record",
+    "Play - Pip",
+    "Play - No Pip",
+    "Test Play - no PTT",
+    "Tuning Tones",
+    "Mode 6",
+    "Mode 7",
+    "Mode 8",
+    "Mode 9",
+    "Mode 10",
+    "Mode 11",
+    "Mode 12",
+    "MGM - Disable keyer",
+    "Apps - Restart/Close",
+    "OS - Restart/Close"
+};
+//==============================================================================
 
 QMap <char, QString> MORSECODE;    // . is 0x40, - is 0x80
 QMap <int, MORSEMSG> MORSEMSGS;
@@ -431,6 +450,8 @@ void commonKeyer::getActionState( QString &s )
       sba->getActionState( s );
    else
       s = "No current actions";
+
+   s = "<" + lineModeStrings[linesMode] + "> " + s;
 }
 
 bool commonKeyer::getStatus( QString &buff )
