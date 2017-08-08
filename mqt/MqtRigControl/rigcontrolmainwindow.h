@@ -46,6 +46,7 @@ public:
     explicit RigControlMainWindow(QString, QWidget *parent = 0);
     ~RigControlMainWindow();
 
+
 private:
 
     Ui::RigControlMainWindow *ui;
@@ -103,6 +104,13 @@ private:
     void readTraceLogFlag();
 
     void about();
+
+    void sendStatusLogger(const QString &message);
+    void sendStatusToLogDisConnected();
+    void sendStatusToLogReady();
+    void sendStatusToLogError();
+    void sendFreqToLog(freq_t freq);
+    void sendModeToLog(QString mode);
 
 private slots:
 

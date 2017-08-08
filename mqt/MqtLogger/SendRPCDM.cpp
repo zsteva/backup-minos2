@@ -169,7 +169,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             {
                 emit setMode( an.getValue() );
             }
-            if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyFrequency )
+            if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyFreq )
             {
                 emit setFreq( an.getValue() );
             }

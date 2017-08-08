@@ -1384,37 +1384,37 @@ void RotatorMainWindow::hamlibError(int errorCode)
 
 void RotatorMainWindow::sendStatusToLogReady()
 {
-    sendStatusLogger(STATUS_READY);
+    sendStatusLogger(ROT_STATUS_READY);
 }
 
 void RotatorMainWindow::sendStatusToLogRotCCW()
 {
-    sendStatusLogger(STATUS_ROTATE_CCW);
+    sendStatusLogger(ROT_STATUS_ROTATE_CCW);
 }
 
 void RotatorMainWindow::sendStatusToLogRotCW()
 {
-    sendStatusLogger(STATUS_ROTATE_CW);
+    sendStatusLogger(ROT_STATUS_ROTATE_CW);
 }
 
 void RotatorMainWindow::sendStatusToLogStop()
 {
-    sendStatusLogger(STATUS_STOP);
+    sendStatusLogger(ROT_STATUS_STOP);
 }
 
 void RotatorMainWindow::sendStatusToLogTurn()
 {
-    sendStatusLogger(STATUS_TURN_TO);
+    sendStatusLogger(ROT_STATUS_TURN_TO);
 }
 
 void RotatorMainWindow::sendStatusToLogDisConnected()
 {
-    sendStatusLogger(STATUS_DISCONNECTED);
+    sendStatusLogger(ROT_STATUS_DISCONNECTED);
 }
 
 void RotatorMainWindow::sendStatusToLogError()
 {
-    sendStatusLogger(STATUS_ERROR);
+    sendStatusLogger(ROT_STATUS_ERROR);
 }
 
 void RotatorMainWindow::sleepFor(qint64 milliseconds)

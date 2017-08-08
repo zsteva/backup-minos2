@@ -15,6 +15,7 @@
 #include "base_pch.h"
 #include "mqtUtils_pch.h"
 #include "RPCCommandConstants.h"
+#include "rigcontrolcommonconstants.h"
 #include "rigcontrolmainwindow.h"
 #include "ui_rigcontrolmainwindow.h"
 #include "rigcontrol.h"
@@ -108,15 +109,15 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
 
     readTraceLogFlag();
 
-    trace("*** Rig Started ***");
+
 
     if (!logRadError)
     {
         upDateRadio();
-
+        sendStatusToLogReady();
     }
 
-
+    trace("*** Rig Started ***");
 
 
 }
@@ -126,6 +127,7 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
 RigControlMainWindow::~RigControlMainWindow()
 {
     delete ui;
+    delete msg;
 }
 
 void RigControlMainWindow::logMessage( QString s )
@@ -205,12 +207,26 @@ void RigControlMainWindow::upDateRadio()
         selectRig->currentRadio.transVertNegative = selectRig->availRadios[radioIndex].transVertNegative;
         selectRig->currentRadio.transVertOffset = selectRig->availRadios[radioIndex].transVertOffset;
         selectRig->currentRadio.transVertOffsetStr = selectRig->availRadios[radioIndex].transVertOffsetStr;
+
         selectRig->saveCurrentRadio();
+
         if (radio->get_serialConnected())
-       {
+        {
                 closeRadio();
-       }
-       openRadio();
+                this->setWindowTitle("Minos 2 RigControl");
+        }
+
+        openRadio();
+
+        if (loggerRadio.length() > 0)
+        {
+            this->setWindowTitle("Minos 2 RigControl - " + selectRig->currentRadio.radioName + " - Logger");
+        }
+        else
+        {
+            this->setWindowTitle("Minos 2 RotControl - " + selectRig->currentRadio.radioName + " - Local");
+        }
+
        trace("*** Radio Update ***");
        trace("Radio Name = " + selectRig->currentRadio.radioName);
        trace("Radio Number = " + selectRig->currentRadio.radioNumber);
@@ -225,6 +241,8 @@ void RigControlMainWindow::upDateRadio()
        trace("TransVert Negative = " + QString::number(selectRig->currentRadio.transVertNegative));
        trace("TransVert Offset = " + convertStringFreq(selectRig->currentRadio.transVertOffset));
 
+       // update logger
+       msg->publishRadioName(selectRig->currentRadio.radioName);
 
     }
 
@@ -283,7 +301,12 @@ void RigControlMainWindow::closeRadio()
 {
     radio->closeRig();
     showStatusMessage(tr("Disconnected"));
+    sendStatusToLogDisConnected();
+    logMessage("Radio Closed");
 }
+
+
+
 
 
 void RigControlMainWindow::setPolltime(int interval)
@@ -336,10 +359,18 @@ void RigControlMainWindow::getFrequency(vfo_t vfo)
                     qDebug() << "Transvert f " << transVertF;
                     curTransVertFrq[0] = transVertF;
                     displayTransVertVfoA(transVertF);
+
                 }
                 displayFreqVfoA(rfrequency);
 
-
+                if (selectRig->currentRadio.transVertEnable)
+                {
+                    sendFreqToLog(transVertF);
+                }
+                else
+                {
+                    sendFreqToLog(rfrequency);
+                }
             }
             else
             {
@@ -372,6 +403,7 @@ void RigControlMainWindow::getMode(vfo_t vfo)
             {
                 curMode[0] = rmode;
                 displayModeVfoA(radio->convertModeQstr(rmode));
+                sendModeToLog(radio->convertModeQstr(rmode));
             }
             else
             {
@@ -557,4 +589,39 @@ void RigControlMainWindow::saveTraceLogFlag()
 void RigControlMainWindow::about()
 {
     QMessageBox::about(this, "Minos RigControl", "Minos QT RigControl\nCopyright D Balharrie G8FKH/M0DGB 2017\nVersion 0.1");
+}
+
+
+
+void RigControlMainWindow::sendStatusLogger(const QString &message)
+{
+    msg->publishState(message);
+}
+
+
+void RigControlMainWindow::sendStatusToLogReady()
+{
+    sendStatusLogger(RIG_STATUS_READY);
+}
+
+void RigControlMainWindow::sendStatusToLogDisConnected()
+{
+    sendStatusLogger(RIG_STATUS_DISCONNECTED);
+}
+
+
+void RigControlMainWindow::sendStatusToLogError()
+{
+    sendStatusLogger(RIG_STATUS_ERROR);
+}
+
+void RigControlMainWindow::sendFreqToLog(freq_t freq)
+{
+
+    msg->publishFreq(convertStringFreq(freq));
+}
+
+void RigControlMainWindow::sendModeToLog(QString mode)
+{
+    msg->publishMode(mode);
 }

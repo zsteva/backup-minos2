@@ -38,13 +38,13 @@
 
 
 // Status messages sent to minos logger
-#define STATUS_READY "Ready"
-#define STATUS_ROTATE_CCW "Rotating CCW"
-#define STATUS_ROTATE_CW "Rotating CW"
-#define STATUS_STOP "Stop"
-#define STATUS_TURN_TO "Turning to bearing"
-#define STATUS_DISCONNECTED "Disconnected"
-#define STATUS_ERROR "Error"
+#define ROT_STATUS_READY "Ready"
+#define ROT_STATUS_ROTATE_CCW "Rotating CCW"
+#define ROT_STATUS_ROTATE_CW "Rotating CW"
+#define ROT_STATUS_STOP "Stop"
+#define ROT_STATUS_TURN_TO "Turning to bearing"
+#define ROT_STATUS_DISCONNECTED "Disconnected"
+#define ROT_STATUS_ERROR "Error"
 
 // Bearing Log
 #define BEARINGLOG_FILETYPE ".log"

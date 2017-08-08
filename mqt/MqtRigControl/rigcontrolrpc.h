@@ -34,6 +34,10 @@ class RigControlRpc : public QObject
 public:
     explicit RigControlRpc(RigControlMainWindow *parent);
 
+    void publishState(const QString &state);
+    void publishRadioName(const QString &radioName);
+    void publishFreq(const QString &freq);
+    void publishMode(const QString &mode);
 signals:
 
 public slots:
