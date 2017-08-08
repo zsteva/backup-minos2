@@ -25,11 +25,13 @@
 #include <QDebug>
 
 
-RigControlMainWindow::RigControlMainWindow( QWidget *parent) :
-    QMainWindow(parent),
+RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent) :
+    QMainWindow(parent), msg(0),
     ui(new Ui::RigControlMainWindow)
 {
     ui->setupUi(this);
+
+    loggerRadio  = _loggerRadio.trimmed();
 
     connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
     stdinReader.start();
@@ -39,6 +41,12 @@ RigControlMainWindow::RigControlMainWindow( QWidget *parent) :
     msg = new RigControlRpc(this);
 
     QSettings settings;
+    geoStr = "geometry";
+    if (loggerRadio.length() > 0)
+    {
+        geoStr = geoStr + loggerRadio;
+    }
+
     QByteArray geometry = settings.value("geometry").toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
@@ -61,22 +69,52 @@ RigControlMainWindow::RigControlMainWindow( QWidget *parent) :
 
     selectRadio = ui->selectRadioBox;
 
-    initSelectRadioBox();
-    selectRig->readCurrentRadio();
-    selectRadio->setCurrentIndex(selectRadio->findText(selectRig->currentRadio.radioName));
+    if (loggerRadio.length() > 0)
+    {
+        ui->selectRadioBox->hide();
+        ui->SelectRadioTitle->hide();
+    }
 
+    initSelectRadioBox();
+
+    if (loggerRadio.length() > 0)
+    {
+        int a = selectRadio->findText(loggerRadio);
+        if (a == -1)
+        {
+            showStatusMessage("<font color='Red'>Invalid radio name from logger!</font>");
+            logRadError = true;
+        }
+        else
+        {
+            selectRadio->setCurrentIndex(a);
+            selectRig->readSettings();      // get antenna settings
+            selectRig->copyRadioToCurrent(a);
+        }
+
+    }
+    else
+    {
+
+        selectRig->readCurrentRadio();
+        selectRadio->setCurrentIndex(selectRadio->findText(selectRig->currentRadio.radioName));
+    }
 
 
 
     setPolltime(250);
 
-    openRadio();
+ //   openRadio();
 
     readTraceLogFlag();
 
     trace("*** Rig Started ***");
 
-    upDateRadio();
+    if (!logRadError)
+    {
+        upDateRadio();
+
+    }
 
 
 
@@ -185,7 +223,7 @@ void RigControlMainWindow::upDateRadio()
        trace("Handshake = " + QString::number(selectRig->currentRadio.handshake));
        trace("TransVert Enable = " + QString::number(selectRig->currentRadio.transVertEnable));
        trace("TransVert Negative = " + QString::number(selectRig->currentRadio.transVertNegative));
-       trace("TransVert Offset = " + QString::number(selectRig->currentRadio.transVertOffset));
+       trace("TransVert Offset = " + convertStringFreq(selectRig->currentRadio.transVertOffset));
 
 
     }

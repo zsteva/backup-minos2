@@ -64,7 +64,12 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
     msg = new RotatorRpc(this);
 
     QSettings settings;
-    QByteArray geometry = settings.value("geometry").toByteArray();
+    geoStr = "geometry";
+    if (loggerAntenna.length() > 0)
+    {
+        geoStr = geoStr + loggerAntenna;
+    }
+    QByteArray geometry = settings.value(geoStr).toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
@@ -146,6 +151,12 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
 
     selectAntenna = ui->selectAntennaBox;
 
+    if (loggerAntenna.length() > 0)
+    {
+        ui->selectAntennaBox->hide();
+        ui->antennaSelectlbl->hide();
+        ui->antennaSelectln->hide();
+    }
 
     brakedelay = 1 * 1000;
 
@@ -245,7 +256,7 @@ void RotatorMainWindow::closeEvent(QCloseEvent *event)
     // and tidy up all loose ends
 
     QSettings settings;
-    settings.setValue("geometry", saveGeometry());
+    settings.setValue(geoStr, saveGeometry());
     trace("MinosRotator Closing");
     QWidget::closeEvent(event);
 }
@@ -256,7 +267,7 @@ void RotatorMainWindow::resizeEvent(QResizeEvent * event)
 {
 
     QSettings settings;
-    settings.setValue("geometry", saveGeometry());
+    settings.setValue(geoStr, saveGeometry());
 
     QWidget::resizeEvent(event);
 }
@@ -769,6 +780,7 @@ void RotatorMainWindow::upDateAntenna()
        msg->publishMinAzimuth(QString::number(currentMinAzimuth));
 
        trace("*** Antenna Updated ***");
+       trace("logger Antenna = " + loggerAntenna);
        trace("Rotator Name = " + selectRotator->currentAntenna.antennaName);
        trace("Antenna Number = " + selectRotator->currentAntenna.antennaNumber);
        trace("Rotator Model = " + selectRotator->currentAntenna.rotatorModel);
@@ -1107,21 +1119,8 @@ void RotatorMainWindow::stopButton()
 {
 
     logMessage("StopButton");
-/*
-    if (ui->rot_left_button->isChecked())
-    {
-        ui->rot_left_button->setChecked(false);
-        //return;
-    }
-    else if (ui->rot_right_button->isChecked())
-    {
-        ui->rot_right_button->setChecked(false);
-        //return;
-    }
-*/
+
     stopRotation(rotator->get_serialConnected());
-
-
 }
 
 void RotatorMainWindow::stop_rotation()
@@ -1148,18 +1147,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
         }
     }
 
-/*
-    if (ui->rot_left_button->isChecked())
-    {
-        ui->rot_left_button->setChecked(false);
-        //return;
-    }
-    else if (ui->rot_right_button->isChecked())
-    {
-        ui->rot_right_button->setChecked(false);
-        //return;
-    }
-*/
+
     if (rot_left_button_status)
     {
         rot_left_button_off();

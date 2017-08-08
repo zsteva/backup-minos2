@@ -510,12 +510,8 @@ void SetupDialog::fillRadioModelInfo()
     for (int i = 0; i < NUM_RADIOS; i++)
     {
         radioModel[i]->clear();
-    }
-
-     for (int i = 0; i < NUM_RADIOS; i++)
-     {
         radio->getRigList(radioModel[i]);
-     }
+    }
 
 
 }
@@ -523,19 +519,16 @@ void SetupDialog::fillRadioModelInfo()
 
 void SetupDialog::fillPortsInfo()
 {
-    for (int i = 0; i < NUM_RADIOS; i++)
-    {
-        comPorts[i]->clear();
-    }
-
     QString description;
     QString manufacturer;
     QString serialNumber;
 
     for (int i = 0; i < NUM_RADIOS; i++)
     {
+        comPorts[i]->clear();
         comPorts[i]->addItem("");
     }
+
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
         description = info.description();
@@ -571,13 +564,8 @@ void SetupDialog::fillSpeedInfo()
     for (int i = 0; i < NUM_RADIOS; i++)
     {
         comSpeed[i]->clear();
-    }
-
-     for (int i = 0; i < NUM_RADIOS; i++)
-     {
         comSpeed[i]->addItems(baudrateStr);
-     }
-
+    }
 
 }
 
@@ -589,13 +577,8 @@ void SetupDialog::fillDataBitsInfo()
     for (int i = 0; i < NUM_RADIOS; i++)
     {
         comDataBits[i]->clear();
-    }
-
-     for (int i = 0; i < NUM_RADIOS; i++)
-     {
         comDataBits[i]->addItems(databitsStr);
-     }
-
+    }
 
 }
 
@@ -606,13 +589,8 @@ void SetupDialog::fillStopBitsInfo()
     for (int i = 0; i < NUM_RADIOS; i++)
     {
         comStopBits[i]->clear();
-    }
-
-     for (int i = 0; i < NUM_RADIOS; i++)
-     {
         comStopBits[i]->addItems(stopbitsStr);
-     }
-
+    }
 
 }
 
@@ -626,13 +604,8 @@ void SetupDialog::fillParityInfo()
     for (int i = 0; i < NUM_RADIOS; i++)
     {
         comParity[i]->clear();
-    }
-
-     for (int i = 0; i < NUM_RADIOS; i++)
-     {
         comParity[i]->addItems(parityStr);
-     }
-
+    }
 
 }
 
@@ -646,13 +619,8 @@ void SetupDialog::fillHandShakeInfo()
     for (int i = 0; i < NUM_RADIOS; i++)
     {
         comHandShake[i]->clear();
-    }
-
-     for (int i = 0; i < NUM_RADIOS; i++)
-     {
         comHandShake[i]->addItems(handshakeStr);
-     }
-
+    }
 
 }
 
@@ -841,41 +809,31 @@ void SetupDialog::clearCurrentRadio()
 }
 
 
-
-
-/*
-int SetupDialog::getRotatorId(QString rotator)
+void SetupDialog::copyRadioToCurrent(int radioNumber)
 {
 
-    for (int i = 0; i < NUM_ROTATOR_PROTOCOLS; i++)
-    {
-        if (rotProtocol[i]->protocol == rotator)
-        {
-            return rotProtocol[i]->id;
-        }
-    }
+    currentRadio.radioName = availRadios[radioNumber].radioName;
+    currentRadio.radioNumber = availRadios[radioNumber].radioNumber;
+    currentRadio.radioModel = availRadios[radioNumber].radioModel;
+    currentRadio.radioModelNumber = availRadios[radioNumber].radioModelNumber;
+    currentRadio.radioModelName = availRadios[radioNumber].radioModelName;
+    currentRadio.radioMfg_Name = availRadios[radioNumber].radioMfg_Name;
+    currentRadio.comport = availRadios[radioNumber].comport;
+    currentRadio.baudrate = availRadios[radioNumber].baudrate;
+    currentRadio.databits = availRadios[radioNumber].databits;
+    currentRadio.parity = availRadios[radioNumber].parity;
+    currentRadio.stopbits = availRadios[radioNumber].stopbits;
+    currentRadio.handshake = availRadios[radioNumber].handshake;
+    currentRadio.transVertOffset = availRadios[radioNumber].transVertOffset;
+    currentRadio.transVertOffsetStr = availRadios[radioNumber].transVertOffsetStr;
+    currentRadio.transVertEnable  = availRadios[radioNumber].transVertEnable;
+    currentRadio.transVertNegative  = availRadios[radioNumber].transVertNegative;
 
-    return -1; // error, none found
 
 }
 
 
-QString SetupDialog::getRotatorProtocol(QString antennaName)
-{
 
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        if (availAntennas[i].name == antennaName)
-        {
-            return availAntennas[i].rotator.protocol;
-        }
-    }
-
-    return ""; // error, none found
-
-}
-
-*/
 
 QString SetupDialog::getRadioComPort(QString radioName)
 {

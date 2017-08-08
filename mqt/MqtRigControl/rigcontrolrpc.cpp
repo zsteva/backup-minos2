@@ -39,7 +39,60 @@ RigControlRpc::RigControlRpc(RigControlMainWindow *parent) : QObject(parent), pa
 
 }
 
+//--------------------------------------------------------------------------------------------------//
 
+
+
+void RotatorRpc::publishState(const QString &state)
+{
+    static QString old;
+
+    if ( state != old )
+    {
+       old = state;
+       MinosRPC *rpc = MinosRPC::getMinosRPC();
+       rpc->publish( rpcConstants::RigControlCategory, rpcConstants::rigControlState, state, psPublished );
+    }
+}
+
+
+void RigControlRpc::publishRadioName(const QString &radioName)
+{
+    static QString old;
+
+    if ( radioName != old )
+    {
+       old = radioName;
+       MinosRPC *rpc = MinosRPC::getMinosRPC();
+       rpc->publish( rpcConstants::RigControlCategory, rpcConstants::rigControlRadioName, radioName, psPublished );
+    }
+}
+
+
+void RigControlRpc::publishFreq(const QString &freq)
+{
+    static QString old;
+
+    if ( freq != old )
+    {
+       old = freq;
+       MinosRPC *rpc = MinosRPC::getMinosRPC();
+       rpc->publish( rpcConstants::RigControlCategory, rpcConstants::rigControlFreq, freq, psPublished );
+    }
+}
+
+
+void RigControlRpc::publishMode(const QString &mode)
+{
+    static QString old;
+
+    if ( mode != old )
+    {
+       old = mode;
+       MinosRPC *rpc = MinosRPC::getMinosRPC();
+       rpc->publish( rpcConstants::RigControlCategory, rpcConstants::rigControlMode, mode, psPublished );
+    }
+}
 
 
 

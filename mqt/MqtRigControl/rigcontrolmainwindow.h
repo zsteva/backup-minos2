@@ -43,7 +43,7 @@ class RigControlMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit RigControlMainWindow(QWidget *parent = 0);
+    explicit RigControlMainWindow(QString, QWidget *parent = 0);
     ~RigControlMainWindow();
 
 private:
@@ -55,6 +55,7 @@ private:
     QComboBox *selectRadio;
     SetupDialog *selectRig;
     RigControl  *radio;
+    QString loggerRadio = "";
     QLabel *status;
     QTimer *pollTimer;
     int pollTime;
@@ -68,13 +69,13 @@ private:
     vfo_t rvfo;              // read vfo
     int strength;           // S-Meter level
     int retcode;            // generic return code from functions
-
+    bool logRadError;
     double curVfoFrq[NUM_VFO];
     double curTransVertFrq[NUM_VFO];
     rmode_t curMode[NUM_VFO];
     pbwidth_t curRxWidth[NUM_VFO];
 
-
+    QString geoStr;         // geometry registry location
 
     void initActionsConnections();
     void initSelectRadioBox();

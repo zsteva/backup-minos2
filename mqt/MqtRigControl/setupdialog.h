@@ -62,11 +62,12 @@ public:
     QString getRadioComPort(QString);
     void saveCurrentRadio();
 
+    void copyRadioToCurrent(int radioNumber);
 signals:
 
     void radioNameChange();
     void currentRadioSettingChanged(QString);
-
+    void readSettings();
 
 
 protected slots:
@@ -110,7 +111,7 @@ private:
     bool radioNameChanged[NUM_RADIOS];
     bool radioChanged;
     void saveSettings();
-    void readSettings();
+
     void fillRadioModelInfo();
     void fillPortsInfo();
     void fillSpeedInfo();

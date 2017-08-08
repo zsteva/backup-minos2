@@ -182,7 +182,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QLabel" name="label_5">
+         <widget class="QLabel" name="antennaSelectlbl">
           <property name="font">
            <font>
             <weight>75</weight>
@@ -201,7 +201,7 @@
          <widget class="QComboBox" name="selectAntennaBox"/>
         </item>
         <item>
-         <widget class="Line" name="line_2">
+         <widget class="Line" name="antennaSelectln">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>

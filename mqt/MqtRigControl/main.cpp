@@ -20,12 +20,17 @@
 
 int main(int argc, char *argv[])
 {
+   QString loggerRadio = "";
+
     QApplication a(argc, argv);
     appStartup(a, "MinosQtRigControl");
 
+    if (argc == 2)
+    {
+        loggerRadio = QCoreApplication::arguments().at(1);
+    }
 
-
-    RigControlMainWindow w;
+    RigControlMainWindow w(loggerRadio);
     w.show();
 
     return a.exec();

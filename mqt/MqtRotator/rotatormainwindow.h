@@ -98,7 +98,6 @@ private:
     QComboBox *selectAntenna;
     QPushButton* presetButtons[NUM_PRESETS];
     QString loggerAntenna = "";
-//    MinosCompass* compassDial;
     RotControl  *rotator;
     QLabel *status;
     QLabel *offSetlbl;
@@ -138,6 +137,8 @@ private:
     QString backBearingmsg;
     QString presetName[NUM_PRESETS];
     QString presetBearing[NUM_PRESETS];
+
+    QString geoStr;         // geometry registry location
 
     void openRotator();
     void closeRotator();
