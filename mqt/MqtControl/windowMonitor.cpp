@@ -72,6 +72,16 @@ bool windowMonitor::L4Checked()
     return ui->L4CheckBox->isChecked();
 }
 
+bool windowMonitor::L5Checked()
+{
+    return ui->L5CheckBox->isChecked();
+}
+
+bool windowMonitor::L6Checked()
+{
+    return ui->L6CheckBox->isChecked();
+}
+
 bool windowMonitor::PTTChecked()
 {
     return ui->PTTInCheckBox->isChecked();
@@ -95,6 +105,16 @@ void windowMonitor::checkL3(bool checked)
 void windowMonitor::checkL4(bool checked)
 {
     ui->L4CheckBox->setChecked(checked);
+}
+
+void windowMonitor::checkL5(bool checked)
+{
+    ui->L5CheckBox->setChecked(checked);
+}
+
+void windowMonitor::checkL6(bool checked)
+{
+    ui->L6CheckBox->setChecked(checked);
 }
 
 void windowMonitor::checkPTT(bool checked)

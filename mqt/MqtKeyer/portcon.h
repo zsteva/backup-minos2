@@ -67,10 +67,14 @@ class commonPort : public QObject
       virtual void pttChanged( int state );
       virtual void L1Changed( int state );
       virtual void L2Changed( int state );
+      virtual void linesModeChanged(int lmode);
 
       bool lastPttState;
       bool lastL1State;
       bool lastL2State;
+      int lastLinesMode;
+
+      virtual int getlinesMode() = 0;
 
       virtual void checkControls( void ) = 0;
 
@@ -97,6 +101,7 @@ class WindowsMonitorPort: public commonPort
       static bool PTTInState;
       static bool L1State;
       static bool L2State;
+      static int linesMode;
 
       static LineCallBack WinLineCallback;
 
@@ -110,6 +115,10 @@ class WindowsMonitorPort: public commonPort
 
       virtual void ptt( int state );
       virtual void key( int state );
+      virtual int getlinesMode()
+      {
+          return linesMode;
+      }
 
       virtual void checkControls( void );
 
@@ -125,10 +134,12 @@ class WinMonitor: public lineMonitor
       bool lastPttState;
       bool lastL1State;
       bool lastL2State;
+      int lastLinesMode;
    public:
       static bool PTTInState;
       static bool L1State;
       static bool L2State;
+      static int linesMode;
 
       static LineCallBack WinLineCallback;
 
@@ -141,10 +152,15 @@ class WinMonitor: public lineMonitor
       virtual bool pttChanged( int state );
       virtual bool L1Changed( int state );
       virtual bool L2Changed( int state );
+      virtual bool linesModeChanged(int lmode);
 
       virtual bool initialise( const KeyerConfig &keyer, const PortConfig &port );
 
       virtual void checkControls( void );
+      virtual int getlinesMode()
+      {
+          return linesMode;
+      }
 };
 //==============================================================================
 
@@ -158,12 +174,14 @@ class LineEventsPort: public commonPort
       bool linePTTState;
       bool lineL1State;
       bool lineL2State;
+      int linesMode;
       bool closing;
    public:
 
       bool lastPTTState;
       bool lastL1State;
       bool lastL2State;
+      int lastLinesMode;
 
       static LineCallBack WinLineCallback;
 
@@ -178,7 +196,11 @@ class LineEventsPort: public commonPort
       virtual void ptt( int state );
       virtual void key( int state );
 
-      virtual void checkControls( void );
+      virtual void checkControls( );
+      virtual int getlinesMode()
+      {
+          return linesMode;
+      }
 private slots:
       void linesChangedEvent();
 };

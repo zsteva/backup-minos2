@@ -21,7 +21,7 @@ public:
     explicit KeyerMain(QWidget *parent = 0);
     virtual ~KeyerMain();
 
-    void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool key );
+    void setLines(bool PTTOut, bool PTTIn, bool L1, bool L2, bool key , int lmode);
     void volcallback( unsigned int rmsvol , unsigned int peakvol, int samples );
 
 private slots:
@@ -90,6 +90,7 @@ private:
     bool PTTRef;
     bool L1Ref;
     bool L2Ref;
+    int linesMode;
 
     bool recordWait;
     bool recording;

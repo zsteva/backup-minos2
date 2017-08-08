@@ -399,7 +399,7 @@ commonKeyer::commonKeyer( const KeyerConfig &keyer, const PortConfig &port )
       boxRecPending( false ),
       recPending( false ),
       L1State( false ), L2State( false ),
-      pttState( false ),
+      pttState( false ), linesMode(0),
       cwRate( 0.0 ), lastIntCount( 0 ),
       tone1( 650 ), tone2( 1250 ), inTone( false )
 {}
@@ -488,6 +488,15 @@ bool commonKeyer::pttChanged( int state )
       trace( "pttChanged(" + QString::number( state ) + ")" );
    }
    pttState = state;
+   return true;
+}
+bool commonKeyer::linesModeChanged( int state )
+{
+   if ( sblog )
+   {
+      trace( "linesModeChanged(" + QString::number( state ) + ")" );
+   }
+   linesMode = state;
    return true;
 }
 void commonKeyer::queueFinished()
@@ -600,6 +609,24 @@ bool voiceKeyer::getInfo( KeyerInfo *ki )
    ki->CWSpeed = CWSpeed;
    return true;
 }
+bool voiceKeyer::linesModeChanged( int state )
+{
+   commonKeyer::linesModeChanged( state );
+   if ( started && currentKeyer == this )
+   {
+       KeyerAction * sba = KeyerAction::getCurrentAction();
+       if ( sba )
+          sba->linesModeChanged( state );
+       else
+          if ( state )
+          {
+             // no current action...
+             new InitialPTTAction();
+             KeyerAction::getCurrentAction() ->timeOut();
+          }
+   }
+   return true;
+}
 bool voiceKeyer::pttChanged( int state )
 {
    commonKeyer::pttChanged( state );
@@ -630,6 +657,8 @@ bool voiceKeyer::L1Changed( int state )
    commonKeyer::L1Changed( state );
    if ( started && currentKeyer == this )
    {
+       // Look at linesMode, switch what L1 does accordingly
+
       if ( !state && !recPending && !boxRecPending )
       {
          // will be CQ1 or dit paddle	 RELEASED
@@ -668,6 +697,8 @@ bool voiceKeyer::L2Changed( int state )
    commonKeyer::L2Changed( state );
    if ( started && currentKeyer == this )
    {
+       // Look at linesMode, switch what L1 does accordingly
+
       if ( !state && !recPending && !boxRecPending )
       {
          // will be CQ2 or dah paddle
@@ -944,6 +975,23 @@ void ToneAction::pttChanged( bool state )
    VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
    deleteAtTick = true;
 }
+void ToneAction::linesModeChanged( int state )
+{
+   if ( sblog )
+   {
+      trace( "ToneAction::linesModeChanged(" + QString::number( state ) + ")" );
+   }
+   // kill tone
+   //disableInterrupts guard;
+   KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
+
+   SoundSystemDriver::getSbDriver() ->stopDMA();
+   SoundSystemDriver::getSbDriver() ->CW_ACTIVE = false;
+   if ( currentKeyer )
+      currentKeyer->ptt( 0 );
+   VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
+   deleteAtTick = true;
+}
 void ToneAction::queueFinished()
 {
    actionTime = 1;
@@ -1040,6 +1088,8 @@ void InitialPTTAction::getActionState( QString &s )
    s = "Initial PTT";
 }
 void InitialPTTAction::LxChanged( int /*line*/, bool /*state*/ )
+{}
+void InitialPTTAction::linesModeChanged( int /*state*/ )
 {}
 void InitialPTTAction::pttChanged( bool state )
 {
@@ -1156,6 +1206,9 @@ void InterruptingPTTAction::getActionState( QString &s )
 }
 void InterruptingPTTAction::LxChanged( int /*line*/, bool /*state*/ )
 {}
+void InterruptingPTTAction::linesModeChanged( int /*state*/ )
+{
+}
 void InterruptingPTTAction::pttChanged( bool state )
 {
    if ( sblog )
@@ -1321,6 +1374,20 @@ void PlayAction::pttChanged( bool state )
       // how did we release PTT? Anyway, ignore it
    }
 }
+void PlayAction::linesModeChanged( int state )
+{
+   if ( sblog )
+   {
+      trace( "PlayAction::linesModeChanged(" + QString::number( state ) + ")" );
+   }
+  // kill playback      //disableInterrupts guard;
+  KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
+
+  SoundSystemDriver::getSbDriver() ->stopDMA();
+  SoundSystemDriver::getSbDriver() ->CW_ACTIVE = false;
+  //      currentKeyer->ptt( 0 );
+  deleteAtTick = true;
+}
 void PlayAction::queueFinished()
 {
    actionTime = 1;
@@ -1440,6 +1507,11 @@ PipAction::~PipAction()
 }
 void PipAction::LxChanged( int /*line*/, bool /*state*/ )
 {}
+void PipAction::linesModeChanged( int /*state*/ )
+{
+
+}
+
 void PipAction::getActionState( QString &s )
 {
    s = "Pip";
@@ -1532,6 +1604,15 @@ void RecordAction::getActionState( QString &s )
 }
 void RecordAction::LxChanged( int /*line*/, bool /*state*/ )
 {}
+void RecordAction::linesModeChanged( int state )
+{
+   if ( sblog )
+   {
+      trace( "RecordAction::linesModeChanged(" + QString::number( state ) + ")" );
+   }
+   deleteAtTick = true;
+   timeOut();
+}
 void RecordAction::pttChanged( bool state )
 {
    if ( sblog )
@@ -1665,6 +1746,14 @@ void BoxRecordAction::pttChanged( bool state )
    if ( sblog )
    {
       trace( "BoxRecordAction::pttChanged(" + makeStr( state ) + ")" );
+   }
+   deleteAtTick = true;
+}
+void BoxRecordAction::linesModeChanged( int state )
+{
+   if ( sblog )
+   {
+      trace( "BoxRecordAction::linesModeChanged(" + QString::number( state ) + ")" );
    }
    deleteAtTick = true;
 }

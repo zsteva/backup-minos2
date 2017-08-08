@@ -132,6 +132,7 @@ class lineMonitor
       virtual bool pttChanged( int state ) = 0;
       virtual bool L1Changed( int state ) = 0;
       virtual bool L2Changed( int state ) = 0;
+      virtual bool linesModeChanged(int lmode) = 0;
 
       virtual bool initialise( const KeyerConfig &keyer, const PortConfig &port ) = 0;
 
@@ -162,6 +163,7 @@ class commonKeyer: public lineMonitor, public timerTicker
       virtual bool pttChanged( int state );
       virtual bool L1Changed( int state );
       virtual bool L2Changed( int state );
+      virtual bool linesModeChanged(int lmode);
 
       virtual void tickEvent();       // this will often be an interrupt routine
       virtual bool getInfo( KeyerInfo * ) = 0;
@@ -190,6 +192,7 @@ class commonKeyer: public lineMonitor, public timerTicker
       bool L1State;
       bool L2State;
       bool pttState;
+      int linesMode;
       virtual void enableQueue( bool /*b*/ )
       {}
       bool boxRecPending;
@@ -229,6 +232,7 @@ class voiceKeyer: public commonKeyer, public sbKeyer
       virtual bool pttChanged( int state );
       virtual bool L1Changed( int state );
       virtual bool L2Changed( int state );
+      virtual bool linesModeChanged(int lmode);
       virtual bool initialise( const KeyerConfig &keyer, const PortConfig &port );
       virtual void select( bool );
       virtual bool sendCW( const char *message, int speed, int tone );
@@ -280,6 +284,7 @@ class KeyerAction
 
       virtual void LxChanged( int line, bool state ) = 0;
       virtual void pttChanged( bool state ) = 0;
+      virtual void linesModeChanged(int lmode) = 0;
       virtual void queueFinished() = 0;
       virtual void timeOut() = 0;
       virtual void stopTransmit();
@@ -313,6 +318,7 @@ class ToneAction: public KeyerAction
       virtual void getActionState( QString &s );
       virtual void LxChanged( int line, bool state );
       virtual void pttChanged( bool state );
+      virtual void linesModeChanged(int lmode);
       virtual void queueFinished();
       virtual void timeOut();
       virtual void interruptOK( void );
@@ -330,6 +336,7 @@ class VoiceAction: public KeyerAction
       virtual void getActionState( QString &s ) = 0;
       virtual void LxChanged( int line, bool state ) = 0;
       virtual void pttChanged( bool state ) = 0;
+      virtual void linesModeChanged(int lmode) = 0;
       virtual void queueFinished() = 0;
       virtual void timeOut() = 0;
       virtual void interruptOK( void );
@@ -344,6 +351,7 @@ class InitialPTTAction: public VoiceAction
       virtual void getActionState( QString &s );
       virtual void LxChanged( int line, bool state );
       virtual void pttChanged( bool state );
+      virtual void linesModeChanged(int lmode);
       virtual void queueFinished();
       virtual void timeOut();
       InitialPTTAction();
@@ -362,6 +370,7 @@ class InterruptingPTTAction: public VoiceAction
       virtual void getActionState( QString &s );
       virtual void LxChanged( int line, bool state );
       virtual void pttChanged( bool state );
+      virtual void linesModeChanged(int lmode);
       virtual void queueFinished();
       virtual void timeOut();
       InterruptingPTTAction();
@@ -386,6 +395,7 @@ class PlayAction: public VoiceAction
       virtual void getActionState( QString &s );
       virtual void LxChanged( int line, bool state );
       virtual void pttChanged( bool state );
+      virtual void linesModeChanged(int lmode);
       virtual void queueFinished();
       virtual void timeOut();
       PlayAction( const QString &fileName, bool noPTT, long delayStart, long repeatDelay, bool firstTime, bool CW );
@@ -404,6 +414,7 @@ class PipAction: public VoiceAction
       virtual void getActionState( QString &s );
       virtual void LxChanged( int line, bool state );
       virtual void pttChanged( bool state );
+      virtual void linesModeChanged(int lmode);
       virtual void queueFinished();
       virtual void timeOut();
       PipAction();
@@ -422,6 +433,7 @@ class RecordAction: public VoiceAction
       virtual void getActionState( QString &s );
       virtual void LxChanged( int line, bool state );
       virtual void pttChanged( bool state );
+      virtual void linesModeChanged(int lmode);
       virtual void queueFinished();
       virtual void timeOut();
       RecordAction( const QString &fileName );
@@ -439,6 +451,7 @@ class BoxRecordAction: public VoiceAction
       virtual void getActionState( QString &s );
       virtual void LxChanged( int line, bool state );
       virtual void pttChanged( bool state );
+      virtual void linesModeChanged(int lmode);
       virtual void queueFinished();
       virtual void timeOut();
       BoxRecordAction();

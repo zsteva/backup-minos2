@@ -265,8 +265,16 @@ void ControlMain::setL4(bool s)
 {
     ui->L4CheckBox->setChecked(s);
 }
+void ControlMain::setL5(bool s)
+{
+    ui->L5CheckBox->setChecked(s);
+}
+void ControlMain::setL6(bool s)
+{
+    ui->L6CheckBox->setChecked(s);
+}
 
-void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool L3, bool L4 )
+void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool L3, bool L4, bool L5, bool L6 )
 {
    // This ought to be synchronised...
    controlMain->setPTTOut(PTTOut);
@@ -275,4 +283,6 @@ void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool L3, bool L4 )
    controlMain->setL2(L2);
    controlMain->setL3(L3);
    controlMain->setL4(L4);
+   controlMain->setL5(L5);
+   controlMain->setL6(L6);
 }

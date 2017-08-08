@@ -18,6 +18,10 @@ public:
 
     bool L1Checked();
     bool L2Checked();
+    bool L3Checked();
+    bool L4Checked();
+    bool L5Checked();
+    bool L6Checked();
     bool PTTChecked();
 
     void checkL1(bool checked);

@@ -25,6 +25,8 @@ public:
     void setL2(bool s);
     void setL3(bool s);
     void setL4(bool s);
+    void setL5(bool s);
+    void setL6(bool s);
 
 private:
     Ui::ControlMain *ui;

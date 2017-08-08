@@ -180,6 +180,14 @@ bool WindowsMonitorPort::getLine( commonLineControl *line )
    {
       return WindowsMonitorForm->L4Checked();
    }
+   if ( line->portLineName == "L5" )
+   {
+      return WindowsMonitorForm->L5Checked();
+   }
+   if ( line->portLineName == "L6" )
+   {
+      return WindowsMonitorForm->L6Checked();
+   }
    return false;
 }
 void WindowsMonitorPort::getLineState()
