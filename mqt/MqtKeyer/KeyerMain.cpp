@@ -27,10 +27,10 @@ const char *levelLabels[emsMaxMixerSet] = {"none", "none", "output",
                  "output", "output"
                 };
 
-void lcallback( bool pPTT, bool pkeyline, bool pPTTRef, bool pL1Ref, bool pL2Ref )
+void lcallback( bool pPTT, bool pkeyline, bool pPTTRef, bool pL1Ref, bool pL2Ref, int lmode )
 {
     if (!inhibitCallbacks)
-        keyerMain->setLines(pPTT, pPTTRef, pL1Ref, pL2Ref, pkeyline);
+        keyerMain->setLines(pPTT, pPTTRef, pL1Ref, pL2Ref, pkeyline, lmode);
 }
 
 //---------------------------------------------------------------------------
@@ -55,13 +55,14 @@ void KeyerMain::volcallback(unsigned int rmsvol , unsigned int peakvol, int samp
 }
 
 //---------------------------------------------------------------------------
-void KeyerMain::setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool key )
+void KeyerMain::setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool key, int lmode )
 {
     PTT = PTTOut;
     PTTRef = PTTIn;
     L1Ref = L1;
     L2Ref = L2;
     keyline = key;
+    linesMode = lmode;
 }
 void KeyerMain::syncSetLines()
 {
@@ -70,6 +71,8 @@ void KeyerMain::syncSetLines()
    ui->PTTReflectCheckBox->setChecked(PTTRef);
    ui->L1ReflectCheckBox->setChecked(L1Ref);
    ui->L2ReflectCheckBox->setChecked(L2Ref);
+
+   ui->modeLabel->setText(QString::number(linesMode));
 }
 
 KeyerMain::KeyerMain(QWidget *parent) :

@@ -23,6 +23,9 @@
 #include <QAbstractTextDocumentLayout>
 #include <QPainter>
 #include <QStyle>
+#include <QAbstractItemModel>
+#include <QModelIndex>
+#include <QSortFilterProxyModel>
 
 template <class itemtype>
 class MapWrapper

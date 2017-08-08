@@ -1,4 +1,4 @@
-#ifdef RUBBISH
+#ifdef K8055PORT
 #define NO_WIN32_LEAN_AND_MEAN
 #include "MinosControl_pch.h"
 #pragma hdrstop

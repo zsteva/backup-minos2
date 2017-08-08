@@ -1,10 +1,7 @@
 #ifndef DXCCFRAME_H
 #define DXCCFRAME_H
 
-#include <QFrame>
-#include <QAbstractItemModel>
-#include <QModelIndex>
-#include <QSortFilterProxyModel>
+#include "base_pch.h"
 
 namespace Ui {
 class DXCCFrame;

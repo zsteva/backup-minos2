@@ -1,10 +1,7 @@
 #ifndef DISTRICTFRAME_H
 #define DISTRICTFRAME_H
 
-#include <QFrame>
-#include <QAbstractItemModel>
-#include <QModelIndex>
-#include <QSortFilterProxyModel>
+#include "base_pch.h"
 
 namespace Ui {
 class DistrictFrame;

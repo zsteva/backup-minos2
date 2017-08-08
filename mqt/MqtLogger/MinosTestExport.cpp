@@ -21,9 +21,9 @@ QString fileHeader = "<!--\r\n"
                          "-->\r\n";
 //==============================================================================
 MinosTestExport::MinosTestExport( LoggerContestLog * const ct ) : ct( ct ),
-      stanzaCount( ct->getStanzaCount() )
+      exp_stanzaCount( ct->getCtStanzaCount() )
 {}
-MinosTestExport::MinosTestExport( ) : ct( 0 ), stanzaCount( 0 )
+MinosTestExport::MinosTestExport( ) : ct( 0 ), exp_stanzaCount( 0 )
 {}
 MinosTestExport::~MinosTestExport()
 {}
@@ -52,7 +52,9 @@ void MinosTestExport::sendRequest(QSharedPointer<QFile> expfd, const QString &cm
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
    }
    // set the stanza into the contest so we can monitor it later
-   ct->setStanza( stanzaCount + 1, fpos );
+   exp_stanzaCount += 1;
+   ct->setStanza( exp_stanzaCount, fpos );
+
 
    delete m;
    delete MArgs;
@@ -74,7 +76,6 @@ void MinosTestExport::exportMode(QSharedPointer<QFile> expfd )
    if ( dirty )
    {
       sendRequest( expfd, "MinosLogMode", st );
-      stanzaCount++;
    }
    else
    {
@@ -115,7 +116,6 @@ void MinosTestExport::exportContest( QSharedPointer<QFile> expfd )
    if ( dirty )
    {
       sendRequest( expfd, "MinosLogContest", st );
-      stanzaCount++;
    }
    else
    {
@@ -138,7 +138,6 @@ void MinosTestExport::exportQTH(QSharedPointer<QFile> expfd )
    if ( dirty )
    {
       sendRequest( expfd, "MinosLogQTH", st );
-      stanzaCount++;
    }
    else
    {
@@ -166,7 +165,6 @@ void MinosTestExport::exportEntry( QSharedPointer<QFile> expfd )
    if ( dirty )
    {
       sendRequest( expfd, "MinosLogEntry", st );
-      stanzaCount++;
    }
    else
    {
@@ -189,7 +187,6 @@ void MinosTestExport::exportStation(QSharedPointer<QFile> expfd )
    if ( dirty )
    {
       sendRequest( expfd, "MinosLogStation", st );
-      stanzaCount++;
    }
    else
    {
@@ -210,7 +207,6 @@ void MinosTestExport::exportCurrent( QSharedPointer<QFile> expfd )
    if ( dirty )
    {
       sendRequest( expfd, "MinosLogCurrent", st );
-      stanzaCount++;
    }
    else
    {
@@ -232,7 +228,6 @@ void MinosTestExport::exportOperators(QSharedPointer<QFile> expfd )
    if ( dirty )
    {
       sendRequest( expfd, "MinosLogOperators", st );
-      stanzaCount++;
    }
    else
    {
@@ -256,7 +251,6 @@ void MinosTestExport::exportApps(QSharedPointer<QFile> expfd)
     if ( dirty )
     {
        sendRequest( expfd, "MinosApps", st );
-       stanzaCount++;
     }
     else
     {
@@ -281,7 +275,6 @@ void MinosTestExport::exportBundles( QSharedPointer<QFile> expfd )
    if ( dirty )
    {
       sendRequest( expfd, "MinosLogBundles", st );
-      stanzaCount++;
    }
    else
    {
@@ -289,7 +282,7 @@ void MinosTestExport::exportBundles( QSharedPointer<QFile> expfd )
    }
 
 }
-int MinosTestExport::exportComment(QSharedPointer<QFile> expfd, const QSharedPointer<BaseContact> lct )
+void MinosTestExport::exportComment(QSharedPointer<QFile> expfd, const QSharedPointer<BaseContact> lct )
 {
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, 1 );
@@ -309,13 +302,10 @@ int MinosTestExport::exportComment(QSharedPointer<QFile> expfd, const QSharedPoi
    if ( dirty )
    {
       sendRequest( expfd, "MinosLogComment", st );
-      stanzaCount++;
-      return 1;
    }
    else
    {
       delete st;
-      return 0;
    }
 }
 int MinosTestExport::exportQSO(QSharedPointer<QFile> expfd, const QSharedPointer<BaseContact> lct )
@@ -364,19 +354,15 @@ int MinosTestExport::exportQSO(QSharedPointer<QFile> expfd, const QSharedPointer
    if ( dirty )
    {
       sendRequest( expfd, "MinosLogQSO", st );
-      stanzaCount++;
-      return 1;
    }
    else
    {
       delete st;
-      return 0;
    }
-
+   return exp_stanzaCount;
 }
 int MinosTestExport::exportAllDetails(QSharedPointer<QFile> minosContestFile, bool newfile )
 {
-   stanzaCount = 0;
    if ( newfile )
    {
       //      QString lbuff = "<?xml version='1.0'?><stream:stream xmlns:stream='http://etherx.jabber.org/streams' xmlns='jabber:client' version='1.0'>" ;
@@ -398,12 +384,12 @@ int MinosTestExport::exportAllDetails(QSharedPointer<QFile> minosContestFile, bo
    exportApps(minosContestFile);
    exportBundles( minosContestFile );
 
-   return stanzaCount;
+   return exp_stanzaCount;
 }
 // AND we need an export operator change
 int MinosTestExport::exportTest( QSharedPointer<QFile> expfd, int mindump, int maxdump )
 {
-   stanzaCount = 0;
+   exp_stanzaCount = 0;
    QString lbuff = "<?xml version='1.0'?><stream:stream xmlns:stream='http://minos.goodey.org.uk/streams' xmlns='minos:client' version='1.0'>" ;
    lbuff += "\r\n" + fileHeader;
    int ret = expfd->write(lbuff.toStdString().c_str(), lbuff.length());
@@ -450,7 +436,7 @@ int MinosTestExport::exportTest( QSharedPointer<QFile> expfd, int mindump, int m
       // the whole contest
    }
 
-   return stanzaCount;
+   return exp_stanzaCount;
 }
 //=============================================================================
 

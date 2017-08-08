@@ -17,13 +17,15 @@ SOURCES += \
         MonitorMain.cpp \
     MonitoringFrame.cpp \
     MonitoredLog.cpp \
-    MonitoredContestLog.cpp
+    MonitoredContestLog.cpp \
+    MonitorParameters.cpp
 
 HEADERS += \
         MonitorMain.h \
     MonitoringFrame.h \
     MonitoredLog.h \
-    MonitoredContestLog.h
+    MonitoredContestLog.h \
+    MonitorParameters.h
 
 FORMS += \
         MonitorMain.ui \

@@ -14,7 +14,7 @@ BaseContestLog::BaseContestLog( void ) :
       protectedContest( false ), suppressProtected(false),  unwriteable(false),
       nextBlock( 1 ),
       unfilledCount(0),
-      stanzaCount( 0 ), cslotno( -1 ), locValid( false ),
+      ct_stanzaCount( 0 ), cslotno( -1 ), locValid( false ),
       ode( 0.0 ), odn( 0.0 ), sinodn( 0.0 ), cosodn( 0.0 ),
       allowLoc8( false ), allowLoc4 ( false ),
       RSTField( true ), serialField( true ), locatorField( true ), QTHField( true ),
@@ -533,7 +533,7 @@ QString BaseContestLog::dateRange( DTG dstyle )
 
 void BaseContestLog::setScore( QString &buff )
 {
-   ContestScore cs(this, QDateTime::currentDateTime());
+   ContestScore cs(this);
    getScoresTo(cs, QDateTime::currentDateTime());
    buff = cs.disp();
 }
@@ -1237,7 +1237,7 @@ int BaseContestLog::getSquareBonus(QString sloc)
 }
 
 //====================================================================
-ContestScore::ContestScore(BaseContestLog *ct, QDateTime limit)
+ContestScore::ContestScore(BaseContestLog *ct)
 {
    brcc1 = '(';
    brcc2 = ')';
@@ -1248,7 +1248,6 @@ ContestScore::ContestScore(BaseContestLog *ct, QDateTime limit)
    brbonus1 = '(';
    brbonus2 = ')';
 
-   ct->getScoresTo(*this, limit);
    name = ct->publishedName;
    usesBonus = ct->usesBonus.getValue();
 }

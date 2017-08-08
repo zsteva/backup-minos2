@@ -11,9 +11,9 @@
 #include "TinyUtils.h"
 
 MinosTestImport::MinosTestImport( BaseContestLog * const ct ) : ct( ct ),
-      stanzaCount( ct->getStanzaCount() ), curfpos( 0 )
+      imp_stanzaCount( ct->getCtStanzaCount() ), curfpos( 0 )
 {}
-MinosTestImport::MinosTestImport( ) : ct( 0 ), stanzaCount( 0 ), curfpos( 0 )
+MinosTestImport::MinosTestImport( ) : ct( 0 ), imp_stanzaCount( 0 ), curfpos( 0 )
 {}
 MinosTestImport::~MinosTestImport()
 {}
@@ -161,13 +161,13 @@ void MinosTestImport::processMinosStanza( RPCRequest *rq )
    // This needs to be "inverted" and passed to the contest object to get the bits it
    // understands
 
-   stanzaCount++;
+   imp_stanzaCount++;
 
    //   fpos is a COUNT not a position - so why do we end up 1 short?
 
    body = rq->args[ 0 ];
 
-   ct->setStanza( stanzaCount, curfpos );
+   ct->setStanza( imp_stanzaCount, curfpos );
    ct->processMinosStanza( rq->methodName, this );
 
 }
@@ -187,7 +187,7 @@ int MinosTestImport::importTestBuffer( const QString &buffer )
 
    dispatchCallback = oldcall;
 
-   return stanzaCount;
+   return imp_stanzaCount;
 }
 void MinosTestImport::endImportTest()
 {}
@@ -276,12 +276,12 @@ int MinosTestImport::readTestFile(QSharedPointer<QFile> ctfile )
 //=============================================================================
 int MinosTestImport::importTest(QSharedPointer<QFile> ctfile )
 {
-   stanzaCount = 0;
+   imp_stanzaCount = 0;
 
    dispatchCallback = &MinosTestImport::analyseImportTest;
 
    if ( readTestFile( ctfile ) )
-      return stanzaCount;
+      return imp_stanzaCount;
 
    return 0;
 }

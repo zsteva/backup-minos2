@@ -32,6 +32,10 @@ class MonitoredLog
       {
          return monitorEnabled;
       }
+      void setEnabled(bool s)
+      {
+          monitorEnabled = s;
+      }
 
       void initialise( const QString &server, const QString &name );
       BaseContestLog * getContest() const
@@ -50,6 +54,11 @@ class MonitoredLog
       {
          frame = f;
       }
+      MonitoringFrame *getFrame()
+      {
+          return frame;
+      }
+
       void setState(PublishState s)
       {
          state = s;

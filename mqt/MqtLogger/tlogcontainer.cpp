@@ -993,11 +993,6 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
          {
             if ( ced->exec() == QDialog::Accepted )
             {
-                QWidget *tw = ui->ContestPageControl->currentWidget();
-                TSingleLogFrame *f = dynamic_cast<TSingleLogFrame *>( tw );
-
-                f->sendDM->resetConnectables(contest);
-                subscribeApps();
                contest->scanContest();
                show = true;
             }
@@ -1028,6 +1023,9 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
 
          f->logColumnsChanged = true;  // also causes show QSOs
          f->splittersChanged = true;
+
+         f->sendDM->resetConnectables(contest);
+         subscribeApps();
 
          on_ContestPageControl_currentChanged(tno);
 

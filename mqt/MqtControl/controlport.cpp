@@ -180,6 +180,14 @@ bool WindowsMonitorPort::getLine( commonLineControl *line )
    {
       return WindowsMonitorForm->L4Checked();
    }
+   if ( line->portLineName == "L5" )
+   {
+      return WindowsMonitorForm->L5Checked();
+   }
+   if ( line->portLineName == "L6" )
+   {
+      return WindowsMonitorForm->L6Checked();
+   }
    return false;
 }
 void WindowsMonitorPort::getLineState()
@@ -249,7 +257,7 @@ void PiGPIOPort::getLineState()
 //   nothing to do
 }
 //==============================================================================
-#ifdef RUBBISH
+#ifdef K8055PORT
 K8055Port::K8055Port( const PortConfig &port ) : commonPort( port ),
       addr( 0 ), dig( 0 )
 {

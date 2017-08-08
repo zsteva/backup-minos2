@@ -7,17 +7,21 @@ namespace Ui {
 class MonitoringFrame;
 }
 class BaseContestLog;
+class MonitorMain;
 
 class MonitoringFrame : public QFrame
 {
     Q_OBJECT
 
+    MonitorMain *mparent;
+
 public:
-    explicit MonitoringFrame(QWidget *parent = 0);
+    explicit MonitoringFrame(MonitorMain *parent = 0);
     ~MonitoringFrame();
 
     void initialise( BaseContestLog * contest );
     void showQSOs();
+    void setScore();
     BaseContestLog * getContest()
     {
        return contest;
@@ -35,7 +39,6 @@ private:
 
 private slots:
     void on_sectionResized(int, int, int);
-
 
 };
 

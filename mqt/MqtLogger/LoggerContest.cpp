@@ -221,8 +221,8 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
          {
             minosContestFile = contestFile;
             MinosTestImport mt( this );
-            stanzaCount = mt.importTest( minosContestFile );
-            if ( stanzaCount > 0 )
+            ct_stanzaCount = mt.importTest( minosContestFile );
+            if ( ct_stanzaCount > 0 )
             {
                // set the bundles accordingly
                entryBundle.openSection( entryBundleName.getValue() );
@@ -539,14 +539,14 @@ bool LoggerContestLog::commonSave( bool newfile )
 bool LoggerContestLog::minosSaveFile( bool newfile )
 {
    MinosTestExport mt( this );
-   stanzaCount += mt.exportAllDetails( minosContestFile, newfile );
+   ct_stanzaCount = mt.exportAllDetails( minosContestFile, newfile );
    clearDirty();
    return true;
 }
 bool LoggerContestLog::minosSaveContestContact( const QSharedPointer<BaseContact> lct )
 {
    MinosTestExport mt( this );
-   stanzaCount += mt.exportQSO( minosContestFile, lct );
+   ct_stanzaCount = mt.exportQSO( minosContestFile, lct );
    return true;
 }
 //==========================================================================

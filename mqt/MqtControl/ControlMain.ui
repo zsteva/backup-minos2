@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>ControlMain</class>
  <widget class="QMainWindow" name="ControlMain">
+  <property name="enabled">
+   <bool>false</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -62,6 +65,20 @@
       </property>
       <property name="text">
        <string>L4</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="L5CheckBox">
+      <property name="text">
+       <string>L5</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="L6CheckBox">
+      <property name="text">
+       <string>L6</string>
       </property>
      </widget>
     </item>

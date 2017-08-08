@@ -9,7 +9,7 @@
 #ifndef keyctrlH
 #define keyctrlH
 
-typedef void ( *LineCallBack ) ( bool PTT, bool keyline, bool pPTTRef, bool pL1Ref, bool pL2Ref );
+typedef void ( *LineCallBack ) ( bool PTT, bool keyline, bool pPTTRef, bool pL1Ref, bool pL2Ref, int lineMode );
 typedef void ( *VUCallBack ) ( unsigned int rmsvol, unsigned int peakvol, int samples  );
 
 enum KEYER_COMMAND {eKEYER_STOPRECORD,    		// kill record

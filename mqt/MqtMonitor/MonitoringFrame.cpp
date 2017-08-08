@@ -1,11 +1,12 @@
 #include "base_pch.h"
 #include "htmldelegate.h"
 
+#include "MonitorMain.h"
 #include "MonitoringFrame.h"
 #include "ui_MonitoringFrame.h"
 
-MonitoringFrame::MonitoringFrame(QWidget *parent) :
-    QFrame(parent),
+MonitoringFrame::MonitoringFrame(MonitorMain *parent) :
+    QFrame(parent), mparent(parent),
     ui(new Ui::MonitoringFrame)
 {
     ui->setupUi(this);
@@ -22,19 +23,26 @@ MonitoringFrame::~MonitoringFrame()
 {
     delete ui;
 }
-
 void MonitoringFrame::initialise( BaseContestLog * pcontest )
 {
     // we don't currently have the required structures to include here...
    contest = pcontest;
    qsoModel.initialise(contest);
    ui->QSOTable->setModel(&qsoModel);
-}
 
+}
 void MonitoringFrame::showQSOs()
 {
     restoreColumns();
 }
+void MonitoringFrame::setScore()
+{
+    QString statbuf;
+    if (contest)
+        contest->setScore( statbuf );
+    ui->scoreLabel->setText(statbuf);
+}
+
 void MonitoringFrame::update()
 {
     qsoModel.reset();

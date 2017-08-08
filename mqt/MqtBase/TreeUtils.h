@@ -12,9 +12,6 @@
 #define TreeUtilsH
 
 #include "base_pch.h"
-#include <QAbstractItemModel>
-//#include <QTreeView>
-//#include <QTreeWidget>
 //---------------------------------------------------------------------------
 enum TAlignment { taLeftJustify, taRightJustify, taCenter };
 class GridColumn

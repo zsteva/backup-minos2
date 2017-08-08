@@ -20,12 +20,16 @@ public:
     bool L2Checked();
     bool L3Checked();
     bool L4Checked();
+    bool L5Checked();
+    bool L6Checked();
     bool PTTChecked();
 
     void checkL1(bool checked);
     void checkL2(bool checked);
     void checkL3(bool checked);
     void checkL4(bool checked);
+    void checkL5(bool checked);
+    void checkL6(bool checked);
     void checkPTT(bool checked);
 
 private:

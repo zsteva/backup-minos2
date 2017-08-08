@@ -133,9 +133,11 @@ void commonController::lineChange( commonLineControl *line )
    commonLineControl *l2 = findLine( "L2", true );
    commonLineControl *l3 = findLine( "L3", true );
    commonLineControl *l4 = findLine( "L4", true );
-   if ( pttout && pttin && l1 && l2 &&l3 && l4 )
+   commonLineControl *l5 = findLine( "L5", true );
+   commonLineControl *l6 = findLine( "L6", true );
+   if ( pttout && pttin && l1 && l2 && l3 && l4 && l5 && l6 )
    {
-      setLines( pttout->getState(), pttin->getState(), l1->getState(), l2->getState(), l3->getState(), l4->getState() );
+      setLines( pttout->getState(), pttin->getState(), l1->getState(), l2->getState(), l3->getState(), l4->getState(), l5->getState(), l6->getState() );
    }
    LineSet *ls = LineSet::GetLineSet();
    ls->publish( line->lineName, line->getState() );
