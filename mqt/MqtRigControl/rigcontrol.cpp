@@ -36,7 +36,7 @@ int collect(const rig_caps *caps,rig_ptr_t)
 
 RigControl::RigControl(QObject *parent) : QObject(parent)
 {
-    getRigList();
+
 
     // set callback for debug messages
     // NB callback is the C function, not the class method.

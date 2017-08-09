@@ -213,6 +213,7 @@ private slots:
     void on_RotateLeft_clicked(bool);
     void on_RotateRight_clicked(bool);
     void on_StopRotate_clicked();
+
 };
 
 #endif // QSOLOGFRAME_H

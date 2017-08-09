@@ -62,7 +62,7 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
     status = new QLabel;
     ui->statusBar->addWidget(status);
 
-
+    radio->getRigList();
 
 
     radio->set_serialConnected(false);
@@ -80,6 +80,8 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
 
     if (loggerRadio.length() > 0)
     {
+
+        qDebug() << "loggerRadio is " << loggerRadio;
         int a = selectRadio->findText(loggerRadio);
         if (a == -1)
         {

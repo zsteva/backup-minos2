@@ -99,8 +99,12 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(GoToSerial(BaseContestLog*)), this, SLOT(on_GoToSerial(BaseContestLog*)));
 
     connect(sendDM, SIGNAL(setBandMapLoaded()), this, SLOT(on_BandMapLoaded()));
-    connect(sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetFreq(QString)));
-    connect(sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetMode(QString)));
+
+
+    // RigControl Updates
+
+    connect(sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetMode(QString)));
+    connect(sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetFreq(QString)));
 
     // Rotator updates
     connect(sendDM, SIGNAL(RotatorLoaded()), this, SLOT(on_RotatorLoaded()));

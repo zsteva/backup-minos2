@@ -53,6 +53,7 @@ class TSendDM : public QObject
       void on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
 signals:
       void RotatorLoaded();
+      void setBandMapLoaded();
 
       void RotatorState(QString);
       void RotatorBearing(QString);
@@ -60,7 +61,7 @@ signals:
       void RotatorMinAzimuth(QString);
       void RotatorAntennaName(QString);
 
-      void setBandMapLoaded();
+
       void setMode(QString);
       void setFreq(QString);
 

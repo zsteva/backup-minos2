@@ -107,6 +107,9 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
 
 
 }
+
+
+
 bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress)
@@ -1410,8 +1413,11 @@ bool QSOLogFrame::checkLogEntry(bool checkDTG)
 
 void QSOLogFrame::setMode( QString m )
 {
-   ui->ModeComboBoxGJV->setCurrentText(m);
+   //ui->ModeComboBoxGJV->setCurrentText(m);
+    ui->ModeButton->setText(m);
    // make sure the mode button shows the correct "flip" value
+
+/*
    if (ui->ModeComboBoxGJV->currentText() == "A1A")
    {
       ui->ModeButton->setText("J3E");
@@ -1420,6 +1426,8 @@ void QSOLogFrame::setMode( QString m )
    {
       ui->ModeButton->setText("A1A");
    }
+
+*/
 }
 
 void QSOLogFrame::clearCurrentField()
@@ -2353,7 +2361,7 @@ bool QSOLogFrame::isBandMapLoaded()
 
 // Mode is already handled.
 
-void QSOLogFrame::setFreq(QString /*f*/)
+void QSOLogFrame::setFreq(QString f)
 {
-
+    ui->freqDisplay->setText(f);
 }
