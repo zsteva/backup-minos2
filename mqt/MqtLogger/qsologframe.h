@@ -20,21 +20,21 @@ public:
     ~QSOLogFrame();
 
     void setAsEdit();
-    void setRotatorLoaded();
+    //void setRotatorLoaded();
 
-    void setRotatorState(const QString &s);
-    void setRotatorBearing(const QString &s);
-    void setRotatorAntennaName(const QString &s);
-    void setRotatorMaxAzimuth(const QString &s);
-    void setRotatorMinAzimuth(const QString &s);
+    //void setRotatorState(const QString &s);
+    //void setRotatorBearing(const QString &s);
+    //void setRotatorAntennaName(const QString &s);
+    //void setRotatorMaxAzimuth(const QString &s);
+    //void setRotatorMinAzimuth(const QString &s);
 
     void setBandMapLoaded();
 
-    void setRadioLoaded();
-    void setMode(QString);
-    void setFreq(QString);
-    void setRadioName(QString);
-    void setRadioState(QString);
+    //void setRadioLoaded();
+    //void setMode(QString);
+    //void setFreq(QString);
+    //void setRadioName(QString);
+    //void setRadioState(QString);
 
     void setKeyerLoaded();
 
@@ -99,7 +99,7 @@ private:
     QSharedPointer<BaseContact> getPriorContact();
     QSharedPointer<BaseContact> getNextContact();
 
-    // rotator
+/*    // rotator
     int getAngle();
     //     int maxAzimuth = COMPASS_MAX360;
     //     int minAzimuth = COMPASS_MIN0;
@@ -112,7 +112,7 @@ private:
     bool rot_left_button_status;
     bool rot_right_button_status;
     void clearRotatorFlags();
-
+*/
 
     QVector <ValidatedControl *> vcs;
 
@@ -167,8 +167,8 @@ private:
     ValidatedControl *qthIl;
     ValidatedControl *cmntIl;
 
-    bool rotatorLoaded;
-    bool isRotatorLoaded();
+    //bool rotatorLoaded;
+    //bool isRotatorLoaded();
 
     bool bandMapLoaded;
     bool isBandMapLoaded();
@@ -176,20 +176,21 @@ private:
     bool keyerLoaded;
     bool isKeyerLoaded();
 
-    bool radioLoaded;
-    bool isRadioLoaded();
+   //bool radioLoaded;
+    //bool isRadioLoaded();
 
     void MainOpComboBox_Exit();
     void SecondOpComboBox_Exit();
-
+/*
     void rot_left_button_on();
     void rot_left_button_off();
     void rot_right_button_on();
     void rot_right_button_off();
+*/
 
 signals:
     void QSOFrameCancelled();
-    void sendRotator(rpcConstants::RotateDirection direction, int angle );
+    //void sendRotator(rpcConstants::RotateDirection direction, int angle );
     void sendBandMap( QString freq, QString call, QString utc, QString loc, QString qth );
 
 private slots:
@@ -216,12 +217,14 @@ private slots:
     void on_ValidateError (int mess_no );
     void on_ShowOperators();
 
+/*
     void on_ModeComboBoxGJV_currentIndexChanged(int index);
+
     void on_Rotate_clicked();
     void on_RotateLeft_clicked(bool);
     void on_RotateRight_clicked(bool);
     void on_StopRotate_clicked();
-
+*/
 };
 
 #endif // QSOLOGFRAME_H

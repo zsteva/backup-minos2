@@ -8,7 +8,7 @@
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
 
-#include "rotatorCommonConstants.h"
+//#include "rotatorCommonConstants.h"
 
 QSOLogFrame::QSOLogFrame(QWidget *parent) :
     QFrame(parent)
@@ -20,10 +20,10 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     , edit(false)
     , overstrike(false)
     , oldTimeOK(true)
-    , rotatorLoaded(false)
+    //, rotatorLoaded(false)
     , bandMapLoaded(false)
     , keyerLoaded(false)
-    , radioLoaded(false)
+    //, radioLoaded(false)
 {
     ui->setupUi(this);
 
@@ -83,12 +83,12 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(SecondOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
 
     ui->TimeEdit->installEventFilter(this);
-
+/*
     ui->ModeComboBoxGJV->addItem("A1A");
     ui->ModeComboBoxGJV->addItem("J3E");
     ui->ModeComboBoxGJV->addItem("F3E");
     ui->ModeComboBoxGJV->addItem("MGM");
-
+*/
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(on_TimeDisplayTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterTabFocusIn(QLineEdit*)), this, SLOT(on_AfterTabFocusIn(QLineEdit*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(Validated()), this, SLOT(on_Validated()));
@@ -97,7 +97,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
 
     QFontMetrics metrics(QApplication::font());
     ui->BrgSt->setFixedWidth(metrics.width("(8888)MT"));
-
+/*
     ui->RotateLeft->setShortcut(QKeySequence(ROTATE_CCW_KEY));
     ui->RotateRight->setShortcut(QKeySequence(ROTATE_CW_KEY));
     ui->Rotate->setShortcut(QKeySequence(ROTATE_TURN_KEY));
@@ -105,7 +105,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
 
     rot_left_button_off();
     rot_right_button_off();
-
+*/
 
 }
 
@@ -2040,7 +2040,7 @@ void QSOLogFrame::on_ValidateError (int mess_no )
 }
 
 //--------------------------------------------------------------
-
+/*
 // Rotator
 
 int QSOLogFrame::getAngle()
@@ -2325,7 +2325,7 @@ void QSOLogFrame::setRotatorMinAzimuth(const QString &s)
         minAzimuth = min_azimuth;
     }
 }
-
+*/
 //----------------------------------------------------------------
 
 // keyer
@@ -2352,6 +2352,7 @@ bool QSOLogFrame::isBandMapLoaded()
     return bandMapLoaded;
 }
 
+/*
 //--------------------------------------------------------
 // RigControl
 
@@ -2379,17 +2380,7 @@ void QSOLogFrame::setMode( QString m )
     ui->ModeButton->setText(m);
    // make sure the mode button shows the correct "flip" value
 
-/*
-   if (ui->ModeComboBoxGJV->currentText() == "A1A")
-   {
-      ui->ModeButton->setText("J3E");
-   }
-   else
-   {
-      ui->ModeButton->setText("A1A");
-   }
 
-*/
 }
 
 void QSOLogFrame::setRadioName(QString n)
@@ -2402,3 +2393,4 @@ void QSOLogFrame::setRadioState(QString s)
 {
     ui->rigState->setText(s);
 }
+*/

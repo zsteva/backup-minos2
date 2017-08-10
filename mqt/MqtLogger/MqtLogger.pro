@@ -63,7 +63,8 @@ SOURCES += main.cpp \
     TSessionManager.cpp \
     TClockFrame.cpp \
     StartConfig.cpp \
-    rigcontrolframe.cpp
+    rigcontrolframe.cpp \
+    rotcontrolframe.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -102,7 +103,8 @@ HEADERS  += \
     TSessionManager.h \
     TClockFrame.h \
     StartConfig.h \
-    rigcontrolframe.h
+    rigcontrolframe.h \
+    rotcontrolframe.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
@@ -126,7 +128,9 @@ FORMS    += tlogcontainer.ui \
     locframe.ui \
     TSessionManager.ui \
     TClockFrame.ui \
-    StartConfig.ui
+    StartConfig.ui \
+    rigcontrolframe.ui \
+    rotcontrolframe.ui
 
 DISTFILES += \
     AndroidTemplate/AndroidManifest.xml \
