@@ -62,7 +62,8 @@ SOURCES += main.cpp \
     SendRPCDM.cpp \
     TSessionManager.cpp \
     TClockFrame.cpp \
-    StartConfig.cpp
+    StartConfig.cpp \
+    rigcontrolframe.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -100,7 +101,8 @@ HEADERS  += \
     SendRPCDM.h \
     TSessionManager.h \
     TClockFrame.h \
-    StartConfig.h
+    StartConfig.h \
+    rigcontrolframe.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
