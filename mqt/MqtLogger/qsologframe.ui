@@ -338,7 +338,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="rigStatus">
+                  <widget class="QLabel" name="rigState">
                    <property name="text">
                     <string>Disconnected</string>
                    </property>

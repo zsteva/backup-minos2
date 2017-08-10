@@ -38,7 +38,8 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     filterClickEnabled( false ),
     rotatorLoaded(false),
     bandMapLoaded(false),
-    keyerLoaded(false)
+    keyerLoaded(false),
+    radioLoaded(false)
 
 {
     ui->setupUi(this);
@@ -98,13 +99,18 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(NextUnfilled(BaseContestLog*)), this, SLOT(on_NextUnfilled(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(GoToSerial(BaseContestLog*)), this, SLOT(on_GoToSerial(BaseContestLog*)));
 
+    // BandMap Updates
+
     connect(sendDM, SIGNAL(setBandMapLoaded()), this, SLOT(on_BandMapLoaded()));
 
 
     // RigControl Updates
 
+    connect(sendDM, SIGNAL(setRadioLoaded()), this, SLOT(on_RadioLoaded()));
     connect(sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetMode(QString)));
     connect(sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetFreq(QString)));
+    connect(sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
+    connect(sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
 
     // Rotator updates
     connect(sendDM, SIGNAL(RotatorLoaded()), this, SLOT(on_RotatorLoaded()));
@@ -996,58 +1002,7 @@ bool TSingleLogFrame::isKeyerLoaded()
 {
    return keyerLoaded;
 }
-//---------------------------------------------------------------------------
-void TSingleLogFrame::on_BandMapLoaded()
-{
-   bandMapLoaded = true;
-   ui->GJVQSOLogFrame->setBandMapLoaded();
-}
-bool TSingleLogFrame::isBandMapLoaded()
-{
-   return bandMapLoaded;
-}
 
-void TSingleLogFrame::on_SetMode(QString m)
-{
-    ui->GJVQSOLogFrame->setMode(m);
-}
-
-void TSingleLogFrame::on_SetFreq(QString f)
-{
-    ui->GJVQSOLogFrame->setFreq(f);
-}
-void TSingleLogFrame::on_RotatorLoaded()
-{
-   rotatorLoaded = true;
-   ui->GJVQSOLogFrame->setRotatorLoaded();
-}
-
-void TSingleLogFrame::on_RotatorState(QString s)
-{
-    ui->GJVQSOLogFrame->setRotatorState(s);
-}
-
-void TSingleLogFrame::on_RotatorBearing(QString s)
-{
-    ui->GJVQSOLogFrame->setRotatorBearing(s);
-}
-
-
-void TSingleLogFrame::on_RotatorMaxAzimuth(QString s)
-{
-    ui->GJVQSOLogFrame->setRotatorMaxAzimuth(s);
-}
-
-void TSingleLogFrame::on_RotatorMinAzimuth(QString s)
-{
-    ui->GJVQSOLogFrame->setRotatorMinAzimuth(s);
-}
-
-
-void TSingleLogFrame::on_RotatorAntennaName(QString s)
-{
-    ui->GJVQSOLogFrame->setRotatorAntennaName(s);
-}
 
 void TSingleLogFrame::sendKeyerPlay( int fno )
 {
@@ -1090,6 +1045,105 @@ void TSingleLogFrame::sendRotator(rpcConstants::RotateDirection direction, int a
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         sendDM->sendRotator(direction, angle);
 }
+
+
+//---------------------------------------------------------------------------
+
+// Bandmap
+
+void TSingleLogFrame::on_BandMapLoaded()
+{
+   bandMapLoaded = true;
+   ui->GJVQSOLogFrame->setBandMapLoaded();
+}
+bool TSingleLogFrame::isBandMapLoaded()
+{
+   return bandMapLoaded;
+}
+
+//---------------------------------------------------------------------------
+
+// RigControl
+
+void TSingleLogFrame::on_SetMode(QString m)
+{
+    ui->GJVQSOLogFrame->setMode(m);
+}
+
+void TSingleLogFrame::on_SetFreq(QString f)
+{
+    ui->GJVQSOLogFrame->setFreq(f);
+}
+
+
+void TSingleLogFrame::on_RadioLoaded()
+{
+    ui->GJVQSOLogFrame->setRadioLoaded();
+}
+
+bool TSingleLogFrame::isRadioLoaded()
+{
+   return radioLoaded;
+}
+
+void TSingleLogFrame::on_SetRadioName(QString n)
+{
+
+    ui->GJVQSOLogFrame->setRadioName(n);
+
+}
+
+void TSingleLogFrame::on_SetRadioState(QString s)
+{
+    ui->GJVQSOLogFrame->setRadioState(s);
+}
+
+//---------------------------------------------------------------------------
+
+// RotatorControl
+
+
+
+void TSingleLogFrame::on_RotatorLoaded()
+{
+   rotatorLoaded = true;
+   ui->GJVQSOLogFrame->setRotatorLoaded();
+}
+
+bool TSingleLogFrame::isRotatorLoaded()
+{
+   return rotatorLoaded;
+}
+
+void TSingleLogFrame::on_RotatorState(QString s)
+{
+    ui->GJVQSOLogFrame->setRotatorState(s);
+}
+
+void TSingleLogFrame::on_RotatorBearing(QString s)
+{
+    ui->GJVQSOLogFrame->setRotatorBearing(s);
+}
+
+
+void TSingleLogFrame::on_RotatorMaxAzimuth(QString s)
+{
+    ui->GJVQSOLogFrame->setRotatorMaxAzimuth(s);
+}
+
+void TSingleLogFrame::on_RotatorMinAzimuth(QString s)
+{
+    ui->GJVQSOLogFrame->setRotatorMinAzimuth(s);
+}
+
+
+void TSingleLogFrame::on_RotatorAntennaName(QString s)
+{
+    ui->GJVQSOLogFrame->setRotatorAntennaName(s);
+}
+
+
+
 
 //=============================================================================
 //=============================================================================

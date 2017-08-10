@@ -29,8 +29,12 @@ public:
     void setRotatorMinAzimuth(const QString &s);
 
     void setBandMapLoaded();
-    void setMode(QString m);
-    void setFreq(QString f);
+
+    void setRadioLoaded();
+    void setMode(QString);
+    void setFreq(QString);
+    void setRadioName(QString);
+    void setRadioState(QString);
 
     void setKeyerLoaded();
 
@@ -67,6 +71,7 @@ public:
 
     void setFirstUnfilledButtonEnabled(bool);
     void logTabChanged();
+
 
 private:
     ScreenContact *partialContact; // contact being edited on screen
@@ -170,6 +175,9 @@ private:
 
     bool keyerLoaded;
     bool isKeyerLoaded();
+
+    bool radioLoaded;
+    bool isRadioLoaded();
 
     void MainOpComboBox_Exit();
     void SecondOpComboBox_Exit();

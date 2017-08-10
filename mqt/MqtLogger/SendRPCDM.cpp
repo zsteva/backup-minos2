@@ -165,6 +165,11 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
         }
         if (an.getPublisherProgram() == rigServerConnectable.remoteAppName && an.getPublisherServer() == rigServerConnectable.serverName)
         {
+            if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyState )
+            {
+                emit setRadioLoaded();
+                emit setRadioState( an.getValue() );
+            }
             if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyMode )
             {
                 emit setMode( an.getValue() );
@@ -172,6 +177,10 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyFreq )
             {
                 emit setFreq( an.getValue() );
+            }
+            if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyRadioName )
+            {
+                emit setRadioName( an.getValue() );
             }
         }
         if (an.getPublisherProgram() == bandMapServerConnectable.remoteAppName && an.getPublisherServer() == bandMapServerConnectable.serverName)

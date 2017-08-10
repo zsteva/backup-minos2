@@ -23,6 +23,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     , rotatorLoaded(false)
     , bandMapLoaded(false)
     , keyerLoaded(false)
+    , radioLoaded(false)
 {
     ui->setupUi(this);
 
@@ -1411,24 +1412,7 @@ bool QSOLogFrame::checkLogEntry(bool checkDTG)
    return retval;
 }
 
-void QSOLogFrame::setMode( QString m )
-{
-   //ui->ModeComboBoxGJV->setCurrentText(m);
-    ui->ModeButton->setText(m);
-   // make sure the mode button shows the correct "flip" value
 
-/*
-   if (ui->ModeComboBoxGJV->currentText() == "A1A")
-   {
-      ui->ModeButton->setText("J3E");
-   }
-   else
-   {
-      ui->ModeButton->setText("A1A");
-   }
-
-*/
-}
 
 void QSOLogFrame::clearCurrentField()
 {
@@ -2055,7 +2039,9 @@ void QSOLogFrame::on_ValidateError (int mess_no )
       errs.insert( &errDefs[ mess_no ], &errDefs[ mess_no ] );
 }
 
+//--------------------------------------------------------------
 
+// Rotator
 
 int QSOLogFrame::getAngle()
 {
@@ -2340,6 +2326,11 @@ void QSOLogFrame::setRotatorMinAzimuth(const QString &s)
     }
 }
 
+//----------------------------------------------------------------
+
+// keyer
+
+
 void QSOLogFrame::setKeyerLoaded()
 {
     keyerLoaded = true;
@@ -2348,6 +2339,9 @@ bool QSOLogFrame::isKeyerLoaded()
 {
     return keyerLoaded;
 }
+
+//---------------------------------------------------------
+
 
 void QSOLogFrame::setBandMapLoaded()
 {
@@ -2358,10 +2352,53 @@ bool QSOLogFrame::isBandMapLoaded()
     return bandMapLoaded;
 }
 
+//--------------------------------------------------------
+// RigControl
 
 // Mode is already handled.
+
+void QSOLogFrame::setRadioLoaded()
+{
+    radioLoaded = true;
+}
+
+bool QSOLogFrame::isRadioLoaded()
+{
+    return radioLoaded;
+}
 
 void QSOLogFrame::setFreq(QString f)
 {
     ui->freqDisplay->setText(f);
+}
+
+
+void QSOLogFrame::setMode( QString m )
+{
+   //ui->ModeComboBoxGJV->setCurrentText(m);
+    ui->ModeButton->setText(m);
+   // make sure the mode button shows the correct "flip" value
+
+/*
+   if (ui->ModeComboBoxGJV->currentText() == "A1A")
+   {
+      ui->ModeButton->setText("J3E");
+   }
+   else
+   {
+      ui->ModeButton->setText("A1A");
+   }
+
+*/
+}
+
+void QSOLogFrame::setRadioName(QString n)
+{
+    ui->radioName->setText(n);
+}
+
+
+void QSOLogFrame::setRadioState(QString s)
+{
+    ui->rigState->setText(s);
 }

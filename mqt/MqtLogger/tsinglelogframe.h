@@ -131,6 +131,9 @@ public:
     bool keyerLoaded;
     bool isKeyerLoaded();
 
+    bool radioLoaded;
+    bool isRadioLoaded();
+
     void setRotatorState( QString f );
     void setRotatorBearing( QString f );
 
@@ -235,8 +238,12 @@ private slots:
     void on_KeyerLoaded();
 
     void on_BandMapLoaded();
-    void on_SetMode(QString m);
+
+    void on_SetMode(QString);
     void on_SetFreq(QString);
+    void on_RadioLoaded();
+    void on_SetRadioName(QString);
+    void on_SetRadioState(QString);
 
     void on_RotatorLoaded();
     void on_RotatorState(QString);
@@ -244,6 +251,8 @@ private slots:
     void on_RotatorMaxAzimuth(QString);
     void on_RotatorMinAzimuth(QString);
     void on_RotatorAntennaName(QString);
+
+
     void onArchiveMatchTreeFocused(QObject *, bool, QFocusEvent * );
     void onOtherMatchTreeFocused(QObject *, bool, QFocusEvent * );
 
