@@ -1067,18 +1067,18 @@ bool TSingleLogFrame::isBandMapLoaded()
 
 void TSingleLogFrame::on_SetMode(QString m)
 {
-    ui->GJVQSOLogFrame->setMode(m);
+    ui->FKHRigControlFrame->setMode(m);
 }
 
 void TSingleLogFrame::on_SetFreq(QString f)
 {
-    ui->GJVQSOLogFrame->setFreq(f);
+    ui->FKHRigControlFrame->setFreq(f);
 }
 
 
 void TSingleLogFrame::on_RadioLoaded()
 {
-    ui->GJVQSOLogFrame->setRadioLoaded();
+    ui->FKHRigControlFrame->setRadioLoaded();
 }
 
 bool TSingleLogFrame::isRadioLoaded()
@@ -1089,13 +1089,13 @@ bool TSingleLogFrame::isRadioLoaded()
 void TSingleLogFrame::on_SetRadioName(QString n)
 {
 
-    ui->GJVQSOLogFrame->setRadioName(n);
+    ui->FKHRigControlFrame->setRadioName(n);
 
 }
 
 void TSingleLogFrame::on_SetRadioState(QString s)
 {
-    ui->GJVQSOLogFrame->setRadioState(s);
+    ui->FKHRigControlFrame->setRadioState(s);
 }
 
 //---------------------------------------------------------------------------
@@ -1107,7 +1107,7 @@ void TSingleLogFrame::on_SetRadioState(QString s)
 void TSingleLogFrame::on_RotatorLoaded()
 {
    rotatorLoaded = true;
-   ui->GJVQSOLogFrame->setRotatorLoaded();
+   ui->FKHRotControlFrame->setRotatorLoaded();
 }
 
 bool TSingleLogFrame::isRotatorLoaded()
@@ -1117,29 +1117,29 @@ bool TSingleLogFrame::isRotatorLoaded()
 
 void TSingleLogFrame::on_RotatorState(QString s)
 {
-    ui->GJVQSOLogFrame->setRotatorState(s);
+    ui->FKHRotControlFrame->setRotatorState(s);
 }
 
 void TSingleLogFrame::on_RotatorBearing(QString s)
 {
-    ui->GJVQSOLogFrame->setRotatorBearing(s);
+    ui->FKHRotControlFrame->setRotatorBearing(s);
 }
 
 
 void TSingleLogFrame::on_RotatorMaxAzimuth(QString s)
 {
-    ui->GJVQSOLogFrame->setRotatorMaxAzimuth(s);
+    ui->FKHRotControlFrame->setRotatorMaxAzimuth(s);
 }
 
 void TSingleLogFrame::on_RotatorMinAzimuth(QString s)
 {
-    ui->GJVQSOLogFrame->setRotatorMinAzimuth(s);
+    ui->FKHRotControlFrame->setRotatorMinAzimuth(s);
 }
 
 
 void TSingleLogFrame::on_RotatorAntennaName(QString s)
 {
-    ui->GJVQSOLogFrame->setRotatorAntennaName(s);
+    ui->FKHRotControlFrame->setRotatorAntennaName(s);
 }
 
 

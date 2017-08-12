@@ -2,7 +2,7 @@
 
 #include "rigcontrolframe.h"
 #include "ui_rigcontrolframe.h"
-#include "rotatorCommonConstants.h"
+#include "rigControlcommonconstants.h"
 
 RigControlFrame::rigControlFrame(QWidget *parent):
     QFrame(parent)

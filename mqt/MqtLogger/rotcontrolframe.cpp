@@ -13,6 +13,11 @@ RotControlFrame::RotControlFrame(QWidget *parent):
 {
     ui->setupUi(this);
 
+    ui->BrgSt->setFixedWidth(metrics.width("(8888)MT"));
+
+    ui->BrgSt->clear();
+    ui->DistSt->clear();
+
     ui->RotateLeft->setShortcut(QKeySequence(ROTATE_CCW_KEY));
     ui->RotateRight->setShortcut(QKeySequence(ROTATE_CW_KEY));
     ui->Rotate->setShortcut(QKeySequence(ROTATE_TURN_KEY));

@@ -96,8 +96,9 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(ShowOperators()), this, SLOT(on_ShowOperators()));
 
     QFontMetrics metrics(QApplication::font());
-    ui->BrgSt->setFixedWidth(metrics.width("(8888)MT"));
 /*
+    ui->BrgSt->setFixedWidth(metrics.width("(8888)MT"));
+
     ui->RotateLeft->setShortcut(QKeySequence(ROTATE_CCW_KEY));
     ui->RotateRight->setShortcut(QKeySequence(ROTATE_CW_KEY));
     ui->Rotate->setShortcut(QKeySequence(ROTATE_TURN_KEY));
@@ -309,8 +310,10 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
    cmntIl = new ValidatedControl( ui->CommentsEdit, vtComments );
    vcs.push_back( cmntIl );
 
+/*
    ui->BrgSt->clear();
    ui->DistSt->clear();
+*/
 
    if (!edit)
    {
@@ -356,9 +359,9 @@ void QSOLogFrame::setXferEnabled(bool s)
 
 void QSOLogFrame::on_CatchupButton_clicked()
 {
-    QString mode = ui->ModeComboBoxGJV->currentText();
+    // QString mode = ui->ModeComboBoxGJV->currentText();   ****** Need to do something with this.....
     TQSOEditDlg qdlg(this, true, false );
-    qdlg.selectCatchup( contest, mode );
+    //qdlg.selectCatchup( contest, mode );   ****** Need to do something with this.....
 
     qdlg.exec();
 
@@ -550,7 +553,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
         {
             LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
             int ctmax = ct->maxSerial + 1;
-            QString mode = ui->ModeComboBoxGJV->currentText();
+            //QString mode = ui->ModeComboBoxGJV->currentText();   ******** need to do something with this........
             QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup, mode );
             selectEntry( lct );
         }
@@ -789,7 +792,7 @@ void QSOLogFrame::getScreenEntry()
    screenContact.extraText = ui->QTHEdit->text().trimmed();
    screenContact.comments = ui->CommentsEdit->text().trimmed();
 
-   screenContact.mode = ui->ModeComboBoxGJV->currentText().trimmed();
+   //screenContact.mode = ui->ModeComboBoxGJV->currentText().trimmed(); ********** need to do something with this....
    screenContact.contactFlags &= ~NON_SCORING;
 
    // op1/op2 get set when the attached combos change - I hope :)
@@ -833,7 +836,7 @@ void QSOLogFrame::showScreenEntry( void )
       ui->NonScoreCheckBox->setChecked(temp.contactFlags & NON_SCORING);
       ui->DeletedCheckBox->setChecked(temp.contactFlags & DONT_PRINT);
 
-      setMode(temp.mode.trimmed());
+      // setMode(temp.mode.trimmed());   ********* need to do something with this......
 
       // and now we want to put the selection on each at the END of the text
       for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
@@ -969,7 +972,7 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
       doAutofill();           // should only be time to be filled
    }
    MinosLoggerEvents::SendShowErrorList();
-
+/* ********************* Need to do something with this????
    // make sure the mode button shows the correct "flip" value
    if (ui->ModeComboBoxGJV->currentText() == "A1A")
    {
@@ -979,6 +982,7 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
    {
       ui->ModeButton->setText("A1A");
    }
+*/
 }
     //---------------------------------------------------------------------------
 void QSOLogFrame::setScoreText( int dist, bool partial, bool xband )
@@ -995,7 +999,7 @@ void QSOLogFrame::setScoreText( int dist, bool partial, bool xband )
    if ( xband )
       b += "X";
    b += "  ";
-   ui->DistSt->setText(b);
+   // ui->DistSt->setText(b);  *********** need to do something with this????
 }
 //---------------------------------------------------------------------------
 void QSOLogFrame::calcLoc( )
@@ -1021,7 +1025,7 @@ void QSOLogFrame::calcLoc( )
       {
          int thisscore = sct.contactScore;
          setScoreText( thisscore, false, sct.contactFlags & XBAND );
-         ui->BrgSt->setText("MANUAL");
+         // ui->BrgSt->setText("MANUAL");  *********** need to do something with this???
 
       }
       else
@@ -1067,12 +1071,12 @@ void QSOLogFrame::calcLoc( )
             {
                 brgbuff = QString( "%1%2%3").arg(vb).arg(degreeChar).arg(rev );
             }
-            ui->BrgSt->setText(brgbuff);
+            // ui->BrgSt->setText(brgbuff); **** need to do something with this....
          }
          else
          {
-            ui->DistSt->clear();
-            ui->BrgSt->clear();
+           // ui->DistSt->clear(); ******** need to do something with this....
+           // ui->BrgSt->clear();  ******** need to do something with this....
             sct.contactScore = -1;
             sct.bearing = -1;
          }
@@ -1437,7 +1441,7 @@ void QSOLogFrame::updateQSODisplay()
    //LocEdit->Enabled = false;
    //QTHEdit->Enabled = false;
    ui->CommentsEdit->setEnabled(!contest->isReadOnly());
-   ui->ModeComboBoxGJV->setEnabled(!contest->isReadOnly());
+   //ui->ModeComboBoxGJV->setEnabled(!contest->isReadOnly());  ***** need to do something with this........
    ui->NonScoreCheckBox->setEnabled(!contest->isReadOnly());
    ui->DeletedCheckBox->setEnabled(!contest->isReadOnly());
    ui->GJVOKButton->setEnabled(!contest->isReadOnly());
@@ -1445,7 +1449,7 @@ void QSOLogFrame::updateQSODisplay()
 
    ui->QTHEdit->setEnabled( contest->otherExchange .getValue() || contest->districtMult.getValue() );
 
-   ui->ModeButton->setEnabled(!contest->isReadOnly());
+   //ui->ModeButton->setEnabled(!contest->isReadOnly());    ***** need to do something with this..........
    ui->SecondOpComboBox->setEnabled(!contest->isReadOnly());
    ui->MainOpComboBox->setEnabled(!contest->isReadOnly());
 
@@ -1587,8 +1591,9 @@ void QSOLogFrame::doGJVEditChange( QObject *Sender )
 
 void QSOLogFrame::on_ModeButton_clicked()
 {
-    ui->ModeComboBoxGJV->setCurrentText(ui->ModeButton->text());
-    EditControlExit(ui->ModeButton);
+    // **************** need to do something with these........
+    //ui->ModeComboBoxGJV->setCurrentText(ui->ModeButton->text());
+    //EditControlExit(ui->ModeButton);
 }
 void QSOLogFrame::logScreenEntry( )
 {
@@ -1696,7 +1701,7 @@ void QSOLogFrame::logCurrentContact( )
          {
             // last child is "current contact", and we need to add TO IT
             LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-            QString mode = ui->ModeComboBoxGJV->currentText();
+            //QString mode = ui->ModeComboBoxGJV->currentText();  ******** need to do something with this............
             ct->addContact( nct_no, orflag, true, false, mode ); // last contact
             nct_no++;
          }
@@ -1752,6 +1757,11 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
             ui->TimeEdit->setStyleSheet(ss);
         }
     }
+
+/*
+
+   *********************
+   *********************  need to do something with this...........
     ui->bandMapFrame->setVisible( !edit && isBandMapLoaded());
 
     ui->antennaName->setVisible(!edit && isRotatorLoaded());
@@ -1762,7 +1772,7 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
     ui->RotBrg->setVisible(!edit && isRotatorLoaded());
     ui->rotatorState->setVisible(!edit && isRotatorLoaded());
     ui->rotatorState->setVisible(!edit && isRotatorLoaded());
-
+*/
 }
 
 void QSOLogFrame::transferDetails(const QSharedPointer<BaseContact> lct, const BaseContestLog *matct )
@@ -2016,8 +2026,13 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
     selectEntry(newct);
 }
 
-void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int /*index*/)
-{
+
+// Don't think we need this.........
+//void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int /*index*/)
+//{
+
+    /*********************************** need to do something with this.......
+
     if (ui->ModeComboBoxGJV->currentText() == "A1A")
     {
        ui->ModeButton->setText("J3E");
@@ -2026,7 +2041,10 @@ void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int /*index*/)
     {
        ui->ModeButton->setText("A1A");
     }
-}
+*/
+
+//}
+
 void QSOLogFrame::on_ValidateError (int mess_no )
 {
       if ( mess_no == -1 )

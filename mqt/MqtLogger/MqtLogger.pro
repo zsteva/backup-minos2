@@ -27,6 +27,10 @@ android {
 
 INCLUDEPATH += $$PWD/../MqtRotator
 #DEPENDPATH += $$PWD/../MqtRotator
+INCLUDEPATH += $$PWD/../MqtRigControl
+#DEPENDPATH += $$PWD/../MqtRigControl
+INCLUDEPATH += $$PWD/../MqtBandMap
+#DEPENDPATH += $$PWD/../MqtBandMap
 
 SOURCES += main.cpp \
     tlogcontainer.cpp \
@@ -64,7 +68,8 @@ SOURCES += main.cpp \
     TClockFrame.cpp \
     StartConfig.cpp \
     rigcontrolframe.cpp \
-    rotcontrolframe.cpp
+    rotcontrolframe.cpp \
+    bandmapframe.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -104,7 +109,8 @@ HEADERS  += \
     TClockFrame.h \
     StartConfig.h \
     rigcontrolframe.h \
-    rotcontrolframe.h
+    rotcontrolframe.h \
+    bandmapframe.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
@@ -130,7 +136,8 @@ FORMS    += tlogcontainer.ui \
     TClockFrame.ui \
     StartConfig.ui \
     rigcontrolframe.ui \
-    rotcontrolframe.ui
+    rotcontrolframe.ui \
+    bandmapframe.ui
 
 DISTFILES += \
     AndroidTemplate/AndroidManifest.xml \
