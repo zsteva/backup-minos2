@@ -5,7 +5,7 @@
 
 #include "focuswatcher.h"
 #include "validators.h"
-#include "rotatorCommonConstants.h"
+//#include "rotatorCommonConstants.h"
 
 namespace Ui {
 class QSOLogFrame;
@@ -187,6 +187,10 @@ private:
     void rot_right_button_on();
     void rot_right_button_off();
 */
+
+    QString mode;
+    QString curFreq;
+
 
 signals:
     void QSOFrameCancelled();

@@ -13,7 +13,8 @@ RotControlFrame::RotControlFrame(QWidget *parent):
 {
     ui->setupUi(this);
 
-    ui->BrgSt->setFixedWidth(metrics.width("(8888)MT"));
+    // need to fix metrics ***************************************
+    //ui->BrgSt->setFixedWidth(metrics.width("(8888)MT"));
 
     ui->BrgSt->clear();
     ui->DistSt->clear();

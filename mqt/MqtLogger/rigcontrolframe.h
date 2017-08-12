@@ -4,7 +4,7 @@
 #include "logger_pch.h"
 
 namespace Ui {
-class RigControlFrame;
+    class RigControlFrame;
 }
 
 class RigControlFrame : public QFrame

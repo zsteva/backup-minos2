@@ -2,9 +2,10 @@
 
 #include "rigcontrolframe.h"
 #include "ui_rigcontrolframe.h"
+#include "SendRPCDM.h"
 #include "rigControlcommonconstants.h"
 
-RigControlFrame::rigControlFrame(QWidget *parent):
+RigControlFrame::RigControlFrame(QWidget *parent):
     QFrame(parent)
     , ui(new Ui::RigControlFrame)
     , radioLoaded(false)
@@ -70,9 +71,9 @@ void RigControlFrame::setRadioState(QString s)
 
 
 
+// needto sort this **************************************
 
-
-ui->ModeComboBoxGJV->addItem("A1A");
-ui->ModeComboBoxGJV->addItem("J3E");
-ui->ModeComboBoxGJV->addItem("F3E");
-ui->ModeComboBoxGJV->addItem("MGM");
+//ui->ModeComboBoxGJV->addItem("A1A");
+//ui->ModeComboBoxGJV->addItem("J3E");
+//ui->ModeComboBoxGJV->addItem("F3E");
+//ui->ModeComboBoxGJV->addItem("MGM");
