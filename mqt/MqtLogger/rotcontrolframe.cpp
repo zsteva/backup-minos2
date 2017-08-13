@@ -30,7 +30,16 @@ RotControlFrame::RotControlFrame(QWidget *parent):
 }
 
 
-// Rotator
+
+RotControlFrame::~RotControlFrame()
+{
+    delete ui;
+
+}
+
+
+
+
 
 int RotControlFrame::getAngle()
 {

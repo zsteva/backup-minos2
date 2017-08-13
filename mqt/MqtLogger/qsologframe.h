@@ -221,9 +221,9 @@ private slots:
     void on_ValidateError (int mess_no );
     void on_ShowOperators();
 
-/*
-    void on_ModeComboBoxGJV_currentIndexChanged(int index);
 
+    void on_ModeComboBoxGJV_currentIndexChanged(int index);
+/*
     void on_Rotate_clicked();
     void on_RotateLeft_clicked(bool);
     void on_RotateRight_clicked(bool);

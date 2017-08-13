@@ -19,17 +19,17 @@
   <property name="frameShadow">
    <enum>QFrame::Plain</enum>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QSplitter" name="LogAreaSplitter">
+    <widget class="MinosSplitter" name="LogAreaSplitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QSplitter" name="TopSplitter">
+     <widget class="MinosSplitter" name="TopSplitter">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QSplitter" name="MultSplitter">
+      <widget class="MinosSplitter" name="MultSplitter">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -88,7 +88,7 @@
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="DXCCPage">
           <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -517,7 +517,7 @@
         </widget>
        </widget>
       </widget>
-      <widget class="QSplitter" name="Controlsplitter">
+      <widget class="MinosSplitter" name="Controlsplitter">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -529,7 +529,7 @@
          <enum>QFrame::Raised</enum>
         </property>
        </widget>
-       <widget class="BandMapFrame" name="FKHBandMap">
+       <widget class="RotControlFrame" name="FKHRotControlFrame">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
@@ -537,7 +537,7 @@
          <enum>QFrame::Raised</enum>
         </property>
        </widget>
-       <widget class="RotControlFrame" name="FKHRotControlFrame">
+       <widget class="BandMapFrame" name="FKHBandMapFrame">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>

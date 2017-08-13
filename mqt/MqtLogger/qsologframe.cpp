@@ -310,10 +310,10 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
    cmntIl = new ValidatedControl( ui->CommentsEdit, vtComments );
    vcs.push_back( cmntIl );
 
-/*
+
    ui->BrgSt->clear();
    ui->DistSt->clear();
-*/
+
 
    if (!edit)
    {
@@ -328,9 +328,9 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
    else
    {
        ui->MatchXferButton->setVisible(false);
-       ui->AutoBandmapTime->setVisible(false);
-       ui->AutoBandmapTune->setVisible(false);
-       ui->BandMapButton->setVisible(false);
+      // ui->AutoBandmapTime->setVisible(false);
+      // ui->AutoBandmapTune->setVisible(false);
+      // ui->BandMapButton->setVisible(false);
    }
 
    updateQSODisplay();
@@ -972,7 +972,7 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
       doAutofill();           // should only be time to be filled
    }
    MinosLoggerEvents::SendShowErrorList();
-/* ********************* Need to do something with this????
+
    // make sure the mode button shows the correct "flip" value
    if (ui->ModeComboBoxGJV->currentText() == "A1A")
    {
@@ -982,7 +982,7 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
    {
       ui->ModeButton->setText("A1A");
    }
-*/
+
 }
     //---------------------------------------------------------------------------
 void QSOLogFrame::setScoreText( int dist, bool partial, bool xband )
@@ -999,7 +999,7 @@ void QSOLogFrame::setScoreText( int dist, bool partial, bool xband )
    if ( xband )
       b += "X";
    b += "  ";
-   // ui->DistSt->setText(b);  *********** need to do something with this????
+   ui->DistSt->setText(b);
 }
 //---------------------------------------------------------------------------
 void QSOLogFrame::calcLoc( )
@@ -1025,7 +1025,7 @@ void QSOLogFrame::calcLoc( )
       {
          int thisscore = sct.contactScore;
          setScoreText( thisscore, false, sct.contactFlags & XBAND );
-         // ui->BrgSt->setText("MANUAL");  *********** need to do something with this???
+         ui->BrgSt->setText("MANUAL");
 
       }
       else
@@ -1071,12 +1071,12 @@ void QSOLogFrame::calcLoc( )
             {
                 brgbuff = QString( "%1%2%3").arg(vb).arg(degreeChar).arg(rev );
             }
-            // ui->BrgSt->setText(brgbuff); **** need to do something with this....
+            ui->BrgSt->setText(brgbuff);
          }
          else
          {
-           // ui->DistSt->clear(); ******** need to do something with this....
-           // ui->BrgSt->clear();  ******** need to do something with this....
+           ui->DistSt->clear();
+           ui->BrgSt->clear();
             sct.contactScore = -1;
             sct.bearing = -1;
          }
@@ -2027,11 +2027,10 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
 }
 
 
-// Don't think we need this.........
-//void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int /*index*/)
-//{
+void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
+{
 
-    /*********************************** need to do something with this.......
+
 
     if (ui->ModeComboBoxGJV->currentText() == "A1A")
     {
@@ -2041,9 +2040,9 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
     {
        ui->ModeButton->setText("A1A");
     }
-*/
 
-//}
+
+}
 
 void QSOLogFrame::on_ValidateError (int mess_no )
 {
