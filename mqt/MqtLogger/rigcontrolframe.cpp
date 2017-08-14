@@ -13,6 +13,13 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 
     ui->setupUi(this);
 
+    for (int i = 0; i < hamlibData::supModeList.count(); i++)
+    {
+        ui->ModeComboBoxGJV->addItem(hamlibData::supModeList[i]);
+    }
+
+    setMode(hamlibData::USB);
+
 
 }
 
@@ -41,21 +48,21 @@ void RigControlFrame::setFreq(QString f)
 
 void RigControlFrame::setMode(QString m)
 {
-   //ui->ModeComboBoxGJV->setCurrentText(m);
+   ui->ModeComboBoxGJV->setCurrentText(m);
     ui->ModeButton->setText(m);
    // make sure the mode button shows the correct "flip" value
 
-/*
-   if (ui->ModeComboBoxGJV->currentText() == "A1A")
+
+   if (ui->ModeComboBoxGJV->currentText() == "CW")
    {
-      ui->ModeButton->setText("J3E");
+      ui->ModeButton->setText("USB");
    }
    else
    {
-      ui->ModeButton->setText("A1A");
+      ui->ModeButton->setText("CW");
    }
 
-*/
+
 }
 
 void RigControlFrame::setRadioName(QString n)

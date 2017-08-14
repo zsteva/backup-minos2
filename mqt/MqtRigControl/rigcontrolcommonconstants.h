@@ -13,35 +13,35 @@ namespace hamlibData
 
 // Hamlib Modes
 
-#define AM  "AM"            // Amplitude Modulation
-#define CW  "CW"            //  "normal" sideband
-#define USB "USB"           // Upper Side Band
-#define LSB "LSB"           // Lower Side Band
-#define RTTY "RTTY"         //  Radio Teletype
-#define FM   "FM"           // "narrow" band FM
-#define WFM  "WFM"          // broadcast wide FM
-#define CWR  "CW"           //  "reverse" sideband
-#define RTTYR "RTTYR"       // RTTY "reverse" sideband
-#define AMS  "AMS"          // Amplitude Modulation Synchronous
-#define PKTLSB "PKTLSB"     // Packet/Digital LSB mode (dedicated port)
-#define PKTUSB "PKTUSB"     // Packet/Digital USB mode (dedicated port)
-#define PKTFM "PKTFM"       // Packet/Digital FM mode (dedicated port)
-#define ECSSUSB "ECSSUSB"   // Exalted Carrier Single Sideband USB
-#define ECSSLSB "ECSSLSB"   // Exalted Carrier Single Sideband LSB
-#define FAX     "FAX"       // Facsimile Mode
-#define SAM "SAM"           // Synchronous AM double sideband
-#define SAL "SAL"           // Synchronous AM lower sideband
-#define SAH "SAH"           // Synchronous AM upper (higher) sideband
-#define DSB "DSB"           // Double sideband suppressed carrier
-#define FMN "FMN"           // FM Narrow Kenwood ts990s
+const QString AM = "AM";             // Amplitude Modulation
+const QString CW =  "CW";            //  normal sideband
+const QString USB = "USB";           // Upper Side Band
+const QString LSB = "LSB";           // Lower Side Band
+const QString RTTY = "RTTY";         //  Radio Teletype
+const QString FM = "FM";             // "narrow" band FM
+const QString WFM = "WFM";           // broadcast wide FM
+const QString CWR = "CW";            //  "reverse" sideband
+const QString RTTYR = "RTTYR";       // RTTY "reverse" sideband
+const QString AMS = "AMS";           // Amplitude Modulation Synchronous
+const QString PKTLSB = "PKTLSB";     // Packet/Digital LSB mode (dedicated port)
+const QString PKTUSB = "PKTUSB";     // Packet/Digital USB mode (dedicated port)
+const QString PKTFM = "PKTFM";       // Packet/Digital FM mode (dedicated port)
+const QString ECSSUSB = "ECSSUSB";   // Exalted Carrier Single Sideband USB
+const QString ECSSLSB = "ECSSLSB";   // Exalted Carrier Single Sideband LSB
+const QString FAX = "FAX";           // Facsimile Mode
+const QString SAM = "SAM";           // Synchronous AM double sideband
+const QString SAL = "SAL";           // Synchronous AM lower sideband
+const QString SAH = "SAH";           // Synchronous AM upper (higher) sideband
+const QString DSB = "DSB";           // Double sideband suppressed carrier
+const QString FMN = "FMN";           // FM Narrow Kenwood ts990s
 
 
-QStringList  modeList = { AM, CW, USB, LSB, RTTY, FM, WFM, CWR, RTTYR, AMS,
+const QStringList  modeList = {AM, CW, USB, LSB, RTTY, FM, WFM, CWR, RTTYR, AMS,
                           PKTLSB, PKTUSB, PKTFM, ECSSUSB, ECSSLSB, FAX, SAM,
                           SAL, SAH, DSB, FMN };
 
 
-QStringList supModeList = { AM, CW, USB, LSB, RTTY, FM, WFM, CWR, RTTYR, PKTLSB, PKTUSB};
+const QStringList supModeList = { AM, CW, USB, LSB, RTTY, FM, WFM, CWR, RTTYR, PKTLSB, PKTUSB};
 
 }
 

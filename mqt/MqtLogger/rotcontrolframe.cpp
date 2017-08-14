@@ -17,7 +17,7 @@ RotControlFrame::RotControlFrame(QWidget *parent):
     //ui->BrgSt->setFixedWidth(metrics.width("(8888)MT"));
 
     ui->BrgSt->clear();
-    ui->DistSt->clear();
+    //ui->DistSt->clear();
 
     ui->RotateLeft->setShortcut(QKeySequence(ROTATE_CCW_KEY));
     ui->RotateRight->setShortcut(QKeySequence(ROTATE_CW_KEY));
@@ -162,7 +162,7 @@ void RotControlFrame::on_RotateRight_clicked(bool toggle)
 void RotControlFrame::rot_left_button_on()
 {
     rot_left_button_status = true;
-    ui->RotateLeft->setText("<<--   (CCW) Left");
+    ui->RotateLeft->setText("<<-- (CCW) Left");
 }
 
 void RotControlFrame::rot_left_button_off()
@@ -174,7 +174,7 @@ void RotControlFrame::rot_left_button_off()
 void RotControlFrame::rot_right_button_on()
 {
     rot_right_button_status = true;
-    ui->RotateRight->setText("(CW) Right   -->>");
+    ui->RotateRight->setText("(CW) Right -->>");
 }
 
 void RotControlFrame::rot_right_button_off()
@@ -219,6 +219,8 @@ void RotControlFrame::setRotatorState(const QString &s)
        if (s == ROT_STATUS_STOP)
        {
            clearRotatorFlags();
+           ui->RotateLeft->setText("(CCW) Left");
+           ui->RotateRight->setText("(CW) Right");
        }
        else if (s == ROT_STATUS_ROTATE_CCW)
        {
@@ -226,7 +228,7 @@ void RotControlFrame::setRotatorState(const QString &s)
            movingCW = false;
            movingCCW = true;
           // clearRotatorFlags();
-           ui->RotateLeft->setChecked(true);
+           ui->RotateLeft->setText("<<-- (CCW) Left");
        }
        else if (s == ROT_STATUS_ROTATE_CW)
        {
@@ -234,7 +236,7 @@ void RotControlFrame::setRotatorState(const QString &s)
            movingCW = true;
            movingCCW = false;
            //clearRotatorFlags();
-           ui->RotateRight->setChecked(true);
+           ui->RotateRight->setText("(CW) Right -->>");
        }
        else if (s == ROT_STATUS_TURN_TO)
        {

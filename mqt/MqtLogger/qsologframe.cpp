@@ -8,7 +8,8 @@
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
 
-//#include "rotatorCommonConstants.h"
+#include "rotatorCommonConstants.h"
+#include "rigcontrolcommonconstants.h"
 
 QSOLogFrame::QSOLogFrame(QWidget *parent) :
     QFrame(parent)
@@ -83,12 +84,15 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(SecondOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
 
     ui->TimeEdit->installEventFilter(this);
-/*
-    ui->ModeComboBoxGJV->addItem("A1A");
-    ui->ModeComboBoxGJV->addItem("J3E");
-    ui->ModeComboBoxGJV->addItem("F3E");
-    ui->ModeComboBoxGJV->addItem("MGM");
-*/
+
+
+    for (int i = 0; i < hamlibData::supModeList.count(); i++)
+    {
+        ui->ModeComboBoxGJV->addItem(hamlibData::supModeList[i]);
+    }
+
+    ui->ModeComboBoxGJV->setCurrentText(hamlibData::USB);
+
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(on_TimeDisplayTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterTabFocusIn(QLineEdit*)), this, SLOT(on_AfterTabFocusIn(QLineEdit*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(Validated()), this, SLOT(on_Validated()));
@@ -359,9 +363,9 @@ void QSOLogFrame::setXferEnabled(bool s)
 
 void QSOLogFrame::on_CatchupButton_clicked()
 {
-    // QString mode = ui->ModeComboBoxGJV->currentText();   ****** Need to do something with this.....
+    QString mode = ui->ModeComboBoxGJV->currentText();
     TQSOEditDlg qdlg(this, true, false );
-    //qdlg.selectCatchup( contest, mode );   ****** Need to do something with this.....
+    qdlg.selectCatchup( contest, mode );
 
     qdlg.exec();
 
@@ -553,7 +557,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
         {
             LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
             int ctmax = ct->maxSerial + 1;
-            //QString mode = ui->ModeComboBoxGJV->currentText();   ******** need to do something with this........
+            QString mode = ui->ModeComboBoxGJV->currentText();
             QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup, mode );
             selectEntry( lct );
         }
@@ -836,7 +840,7 @@ void QSOLogFrame::showScreenEntry( void )
       ui->NonScoreCheckBox->setChecked(temp.contactFlags & NON_SCORING);
       ui->DeletedCheckBox->setChecked(temp.contactFlags & DONT_PRINT);
 
-      // setMode(temp.mode.trimmed());   ********* need to do something with this......
+      setMode(temp.mode.trimmed());
 
       // and now we want to put the selection on each at the END of the text
       for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
@@ -974,13 +978,13 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
    MinosLoggerEvents::SendShowErrorList();
 
    // make sure the mode button shows the correct "flip" value
-   if (ui->ModeComboBoxGJV->currentText() == "A1A")
+   if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
    {
-      ui->ModeButton->setText("J3E");
+      ui->ModeButton->setText(hamlibData::USB);
    }
    else
    {
-      ui->ModeButton->setText("A1A");
+      ui->ModeButton->setText(hamlibData::CW);
    }
 
 }
@@ -1591,9 +1595,9 @@ void QSOLogFrame::doGJVEditChange( QObject *Sender )
 
 void QSOLogFrame::on_ModeButton_clicked()
 {
-    // **************** need to do something with these........
-    //ui->ModeComboBoxGJV->setCurrentText(ui->ModeButton->text());
-    //EditControlExit(ui->ModeButton);
+
+    ui->ModeComboBoxGJV->setCurrentText(ui->ModeButton->text());
+    EditControlExit(ui->ModeButton);
 }
 void QSOLogFrame::logScreenEntry( )
 {
