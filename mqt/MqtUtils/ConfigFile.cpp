@@ -210,7 +210,7 @@ void RunConfigElement::on_readyReadStandardOutput()
 
 //---------------------------------------------------------------------------
 MinosConfig::MinosConfig( )
-    : QObject( 0 )
+    : QObject( 0 ), autoStart(false), hideServers(false)
 {
 }
 void MinosConfig::initialise()

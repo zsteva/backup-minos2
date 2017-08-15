@@ -74,8 +74,6 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool doAutoSt
     }
     else
         mShowMessage(reqErrs, p);
-
-    ui->HideCheckBox->setChecked(minosConfig->getHideServers());
 }
 void TConfigFrame::setup(bool started)
 {
