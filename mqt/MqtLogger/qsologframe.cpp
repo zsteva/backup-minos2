@@ -446,7 +446,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
        bool pastCurrent = false;
        for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
        {
-          if ( /*( *vcp ) ->wc->ReadOnly ||*/ !( *vcp ) ->wc->isVisible() )
+          if ( !( *vcp ) ->wc->isVisible() )
           {
  //         #error but if date or time are invalid...
              continue;
@@ -455,7 +455,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
              pastCurrent = true;
           if ( ( *vcp ) ->wc == current )
              onCurrent = true;
-          if ( !( *vcp ) ->valid( cmValidStatus ) )
+          if ( !( *vcp ) ->valid( cmValidStatus, screenContact ) )
           {
              if ( !firstInvalid )
                 firstInvalid = ( *vcp ) ->wc;
@@ -714,6 +714,17 @@ void QSOLogFrame::on_LocEdit_textChanged(const QString &/*arg1*/)
    calcLoc();
    doGJVEditChange( ui->LocEdit );
 }
+
+void QSOLogFrame::on_RSTTXEdit_textChanged(const QString &/*arg1*/)
+{
+    doGJVEditChange( ui->RSTTXEdit );
+}
+
+void QSOLogFrame::on_RSTRXEdit_textChanged(const QString &/*arg1*/)
+{
+    doGJVEditChange( ui->RSTRXEdit );
+}
+
 void QSOLogFrame::mouseDoubleClickEvent(QObject *w)
 {
     // How to find what was double clicked?
@@ -814,7 +825,7 @@ void QSOLogFrame::showScreenEntry( void )
       ScreenContact temp;
       temp.copyFromArg( screenContact ); // as screen contact gets corrupted by auto changes
       // op1, op2 in ScreenContact ge corrupted as well
-      showScreenContactTime(temp);
+      showScreenContactTime();
       ui->CallsignEdit->setText(temp.cs.fullCall.getValue().trimmed());
       ui->RSTTXEdit->setText(temp.reps.trimmed());
       ui->SerTXEdit->setText(temp.serials.trimmed());
@@ -958,6 +969,7 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
    }
    if ( ( current == ui->CallsignEdit ) || ( current == ui->LocEdit ) )
    {
+      getScreenEntry(); // make sure it is saved
       valid( cmCheckValid ); // make sure all single and cross field
       doAutofill();           // should only be time to be filled
    }
@@ -1077,12 +1089,62 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
    // spin round all controls, and validate them
    // return true if all valid
 
-   for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
+    bool ret = true;
+
+    for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
    {
-      if ( !( *vcp ) ->valid( command ) )
-         return false;
+        QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; }");
+        if ( !( *vcp ) ->valid( command, screenContact ) )
+        {
+            QString text = (*vcp)->wc->text().trimmed();
+            if (!text.isEmpty())
+            {
+                if ((*vcp) == csIl)
+                {
+                    if ( screenContact.cs.valRes == ERR_DUPCS)
+                    {
+                        ss = "QLineEdit { background-color: orange ; border-style: outset ; border-width: 2px ; border-color: red ; }";
+                    }
+                    else
+                    {
+                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 2px ; border-color: red ; }";
+                    }
+                }
+                else if ((*vcp) == rsIl && text == "5")
+                {
+                    // leave as no error
+                }
+                else if ((*vcp) == rrIl && text == "5")
+                {
+                    // leave as no error
+                }
+                else if ((*vcp) == locIl)
+                {
+                    // leave as no error
+                    if (screenContact.loc.valRes == ERR_LOC_RANGE && screenContact.loc.loc.getValue().size() > 4)
+                    {
+                        ss = "QLineEdit { background-color: orange ; border-style: outset ; border-width: 2px ; border-color: red ; }";
+                    }
+                    else if (screenContact.loc.valRes != LOC_OK)
+                    {
+                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 2px ; border-color: red ; }";
+                    }
+                }
+                else
+                {
+                    ss = "QLineEdit { background-color: orange ; border-style: outset ; border-width: 2px ; border-color: red ; }";
+                }
+            }
+            ret = false;
+        }
+        else
+        {
+            ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; }";
+        }
+        (*vcp)->wc->setStyleSheet(ss);
+
    }
-   return true;
+   return ret;
 }
 //---------------------------------------------------------------------------
 bool QSOLogFrame::valid( validTypes command )
@@ -1564,22 +1626,6 @@ void QSOLogFrame::doGJVEditChange( QObject *Sender )
          // clear the error list
          contest->DupSheet.clearCurDup();	// as edited, no longer a dup(?)
 
-         if ( ( current == ui->CallsignEdit ))
-         {
-            valid( cmCheckValid ); // make sure all single and cross field
-
-            if (screenContact.cs.valRes == ERR_DUPCS)
-            {
-                QString ss("QLineEdit { background-color: red ; border-style: outset ; border-width: 1px ; border-color: black ; }");
-                ui->CallsignEdit->setStyleSheet(ss);
-            }
-            else
-            {
-                QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; }");
-                ui->CallsignEdit->setStyleSheet(ss);
-            }
-         }
-
       }
       if ( current == ui->LocEdit || Sender == ui->LocEdit )
       {
@@ -1587,6 +1633,7 @@ void QSOLogFrame::doGJVEditChange( QObject *Sender )
          calcLoc();
       }
       MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest);
+      valid( cmCheckValid ); // make sure all single and cross field
    }
 }
 
@@ -1665,12 +1712,10 @@ void QSOLogFrame::getScreenContactTime()
    screenContact.time.setTime( ui->TimeEdit->text(), DTGDISP );
 }
 //---------------------------------------------------------------------------
-void QSOLogFrame::showScreenContactTime( ScreenContact &temp )
+void QSOLogFrame::showScreenContactTime()
 {
-   // display the contents of the contest->screenContact
-
-   ui->DateEdit->setText(temp.time.getDate( DTGDISP ));
-   ui->TimeEdit->setText(temp.time.getTime( DTGDISP ));
+   ui->DateEdit->setText(screenContact.time.getDate( DTGDISP ));
+   ui->TimeEdit->setText(screenContact.time.getTime( DTGDISP ));
 }
 //==============================================================================
 void QSOLogFrame::logCurrentContact( )
