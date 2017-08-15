@@ -388,7 +388,6 @@ void SoundSystemDriver::unload( void )
    if ( init_done && init_OK )
    {
 
-      //disableInterrupts guard;
       init_done = false;
       init_OK = false;
 
