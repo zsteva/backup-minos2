@@ -13,12 +13,12 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 
     ui->setupUi(this);
 
-    for (int i = 0; i < hamlibData::supModeList.count(); i++)
-    {
-        ui->ModeComboBoxGJV->addItem(hamlibData::supModeList[i]);
-    }
+//   for (int i = 0; i < hamlibData::supModeList.count(); i++)
+//    {
+//        ui->ModeComboBoxGJV->addItem(hamlibData::supModeList[i]);
+//    }
 
-    setMode(hamlibData::USB);
+//    setMode(hamlibData::USB);
 
 
 }
@@ -42,10 +42,10 @@ bool RigControlFrame::isRadioLoaded()
 
 void RigControlFrame::setFreq(QString f)
 {
-    ui->freqDisplay->setText(f);
+    ui->freqDispVFOA->setText(f);
 }
 
-
+/*
 void RigControlFrame::setMode(QString m)
 {
    ui->ModeComboBoxGJV->setCurrentText(m);
@@ -64,7 +64,7 @@ void RigControlFrame::setMode(QString m)
 
 
 }
-
+*/
 void RigControlFrame::setRadioName(QString n)
 {
     ui->radioName->setText(n);

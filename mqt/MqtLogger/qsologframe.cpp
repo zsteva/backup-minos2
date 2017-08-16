@@ -978,9 +978,10 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
    MinosLoggerEvents::SendShowErrorList();
 
    // make sure the mode button shows the correct "flip" value
+
    if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
    {
-      ui->ModeButton->setText(hamlibData::USB);
+      ui->ModeButton->setText(oldMode);
    }
    else
    {
@@ -1420,7 +1421,28 @@ bool QSOLogFrame::checkLogEntry(bool checkDTG)
    return retval;
 }
 
+void QSOLogFrame::setMode(QString m)
+{
 
+    oldMode = ui->ModeComboBoxGJV->currentText();
+
+    ui->ModeComboBoxGJV->setCurrentText(m);
+    //ui->ModeButton->setText(m);
+
+    // make sure the mode button shows the correct "flip" value
+
+
+   if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
+   {
+      ui->ModeButton->setText(oldMode);
+   }
+   else
+   {
+      ui->ModeButton->setText(hamlibData::CW);
+   }
+
+
+}
 
 void QSOLogFrame::clearCurrentField()
 {
@@ -1595,8 +1617,9 @@ void QSOLogFrame::doGJVEditChange( QObject *Sender )
 
 void QSOLogFrame::on_ModeButton_clicked()
 {
-
+    oldMode = ui->ModeComboBoxGJV->currentText();
     ui->ModeComboBoxGJV->setCurrentText(ui->ModeButton->text());
+
     EditControlExit(ui->ModeButton);
 }
 void QSOLogFrame::logScreenEntry( )
@@ -2036,14 +2059,16 @@ void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
 
 
 
-    if (ui->ModeComboBoxGJV->currentText() == "A1A")
+    if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
     {
-       ui->ModeButton->setText("J3E");
+       ui->ModeButton->setText(oldMode);
     }
     else
     {
-       ui->ModeButton->setText("A1A");
+       ui->ModeButton->setText(hamlibData::CW);
     }
+
+    oldMode = ui->ModeComboBoxGJV->currentText();
 
 
 }

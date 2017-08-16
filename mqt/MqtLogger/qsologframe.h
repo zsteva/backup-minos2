@@ -189,9 +189,11 @@ private:
 */
 
     QString mode;
+    QString oldMode;
     QString curFreq;
 
 
+    void setMode(QString m);
 signals:
     void QSOFrameCancelled();
     //void sendRotator(rpcConstants::RotateDirection direction, int angle );

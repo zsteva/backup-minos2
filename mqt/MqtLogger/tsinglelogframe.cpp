@@ -1067,7 +1067,7 @@ bool TSingleLogFrame::isBandMapLoaded()
 
 void TSingleLogFrame::on_SetMode(QString m)
 {
-    ui->FKHRigControlFrame->setMode(m);
+    //ui->FKHRigControlFrame->setMode(m);
 }
 
 void TSingleLogFrame::on_SetFreq(QString f)
