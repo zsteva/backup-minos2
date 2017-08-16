@@ -11,6 +11,7 @@ QT       += core gui network widgets
 TARGET = MqtMonitor
 TEMPLATE = app
 
+win32:RC_ICONS += ../minos.ico
 
 SOURCES += \
         main.cpp \
