@@ -54,7 +54,7 @@ Validator::Validator( validatorTypes vt ) : vt( vt ), status( false )
 //enum validTypes {cmNone, cmCancel, cmValid, cmCheckValid, cmValidStatus, cmReleasedFocus};
 //enum validatorTypes {vtNone, vtNotEmpty, vtNumeric, vtDate, vtTime, vtCallsign,
 //                      vtSN, vtRST, vtLoc, vtQTH, vtComments};
-bool Validator::validate(const QString &str )
+bool Validator::validate(const QString &str, ScreenContact &screenContact )
 {
    switch ( vt )
    {
@@ -138,12 +138,19 @@ bool Validator::validate(const QString &str )
          }
 
       case vtCallsign:
-         if ( allSpaces( str ) )
-         {
+
+        if (screenContact.cs.valRes == ERR_DUPCS)
+        {
+            setError(ERR_12);
+            return false;
+        }
+
+        if ( allSpaces( str ) )
+        {
             setError( ERR_11 ); // No CS
             return false;
-         }
-         return true;
+        }
+        return true;
 
       case vtSN:
          if ( validNumber( str ) || str == "-" )
@@ -265,6 +272,14 @@ bool Validator::validNumber( const QString &str, bool trailingAlphaAllowed)
                   {
                      picvalid = true;
                   }
+                  if (sz >= 4)
+                  {
+                      picvalid = false;
+                  }
+                  if (t[2] !=  ' ' && t[2] != 'A' && t[2] != '9')
+                  {
+                      picvalid = false;
+                  }
                }
                else
                {
@@ -294,7 +309,7 @@ bool Validator::validNumber( const QString &str, bool trailingAlphaAllowed)
 ValidatedControl::ValidatedControl(QLineEdit *c, validatorTypes vt ) :
       wc( c ), tIfValid( false ), validator( vt )
 {}
-bool ValidatedControl::valid( validTypes cmd )
+bool ValidatedControl::valid( validTypes cmd, ScreenContact &screenContact )
 {
    if ( wc->isVisible() )
    {
@@ -304,7 +319,7 @@ bool ValidatedControl::valid( validTypes cmd )
       }
       else //if ( cmd != cmCancel )
       {
-         if ( ! validator.validate( wc->text() ) )
+         if ( ! validator.validate( wc->text(), screenContact ) )
          {
             tIfValid = false;
             return true; //( cmd == cmCheckValid ); // lie about it, or it stops on firstthat

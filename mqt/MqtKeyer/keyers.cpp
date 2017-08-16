@@ -17,12 +17,30 @@
 #define TIMER_INTERVAL 55U         // 55-millisecond target interval
 
 //==============================================================================
+// ??? add up/down on volume sliders, and reload/save ALSA?
+QStringList lineModeStrings = {
+    "None",
+    "Record 1/2",
+    "Play 1/2 - Pip",
+    "Play 1/2 - No Pip",
+    "Test Play 1/2 - no PTT",
+    "Tuning Tones 1/2",
+    "Mode 6",
+    "Mode 7",
+    "Mode 8",
+    "Mode 9",
+    "Mode 10",
+    "Mode 11",
+    "Mode 12",
+    "MGM - Disable keyer",
+    "Apps - Restart(1)/Close(2)",
+    "OS - Restart(1)/Close(2)"
+};
+//==============================================================================
 
 QMap <char, QString> MORSECODE;    // . is 0x40, - is 0x80
 QMap <int, MORSEMSG> MORSEMSGS;
 
-//CRITICAL_SECTION disableInterrupts::intCriticalSection;
-//bool disableInterrupts::terminated = true;
 //==============================================================================
 
 // some of these might not belong here, but they were in sbdvp or tlkeyer
@@ -38,7 +56,6 @@ int CWTone = 1000;
 int CWSpeed = 12;
 
 qint64 currTick;
-//qint64 basetick;
 my_deque < KeyerAction *> KeyerAction::currentAction;
 //=============================================================================
 
@@ -101,14 +118,12 @@ bool keyer_config( QString & /*errmess*/ )
 }
 bool keyer_init( QString &errmess )
 {
-   //disableInterrupts::initialise();
    if ( sblog )
    {
       trace( "newkeyer_init called" );   // make sure file is open
    }
 
    currTick = QDateTime::currentMSecsSinceEpoch()/TIMER_INTERVAL;
-//   basetick = QDateTime::currentMSecsSinceEpoch();
 
    // Use the mixer as it is - don't attempt to save/reset
    // If needed, use the mixer utility program for that!
@@ -172,10 +187,7 @@ void unloadKeyers()
       trace( "newkeyer_unload" );
    }
 
-   //disableInterrupts guard;
    KeyerAction::currentAction.freeAll();
-   // stop each linemonitor and ticker
-   //baseTimer::killTimer();
 
    currentKeyer = 0;
 
@@ -191,8 +203,6 @@ void unloadKeyers()
    // unload everything - destructors SHOULD sort the mess out!
    portChain.freeAll();
 
-   // Use the mixer utility if we need to save/reset mixer settings
-   //disableInterrupts::terminate();
 }
 bool getPTT()
 {
@@ -391,7 +401,6 @@ timerTicker::~timerTicker()
 {
 }
 
-
 //==============================================================================
 
 commonKeyer::commonKeyer( const KeyerConfig &keyer, const PortConfig &port )
@@ -425,17 +434,17 @@ bool commonKeyer::getPTT( void )
 }
 void commonKeyer::getActionState( QString &s )
 {
-   //disableInterrupts guard;
    KeyerAction * sba = KeyerAction::getCurrentAction();
    if ( sba )
       sba->getActionState( s );
    else
       s = "No current actions";
+
+   s = "<" + lineModeStrings[linesMode] + "> " + s;
 }
 
 bool commonKeyer::getStatus( QString &buff )
 {
-   //disableInterrupts guard;
    buff = "[";
    buff += ( pttState ? "PTT " : "" );
    buff += ( L1State ? "1 " : "" );
@@ -458,7 +467,6 @@ bool commonKeyer::initialise( const KeyerConfig &keyer, const PortConfig &port )
          kconf.pipTone = 1500;
    }
    bool ret = lineMonitor::initialise( keyer, port );
-   //timerTicker::ready = true;
    return ret;
 }
 void commonKeyer::select( bool /*sel*/ )
@@ -520,7 +528,6 @@ bool voiceKeyer::docommand( const KeyerCtrl &dvp_ctrl )
    {
       trace( "docommand(" + QString::number( dvp_ctrl.command ) + ")" );
    }
-   //disableInterrupts guard;
    switch ( dvp_ctrl.command )
    {
       case eKEYER_STOPALL:      /* kill audio */
@@ -617,13 +624,6 @@ bool voiceKeyer::linesModeChanged( int state )
        KeyerAction * sba = KeyerAction::getCurrentAction();
        if ( sba )
           sba->linesModeChanged( state );
-       else
-          if ( state )
-          {
-             // no current action...
-             new InitialPTTAction();
-             KeyerAction::getCurrentAction() ->timeOut();
-          }
    }
    return true;
 }
@@ -637,7 +637,6 @@ bool voiceKeyer::pttChanged( int state )
 
       // we need to also take note of PTT being used as a record trigger
 
-      //disableInterrupts guard;
       KeyerAction * sba = KeyerAction::getCurrentAction();
       if ( sba )
          sba->pttChanged( state );
@@ -653,7 +652,6 @@ bool voiceKeyer::pttChanged( int state )
 }
 bool voiceKeyer::L1Changed( int state )
 {
-   // This should be part of the keyer...
    commonKeyer::L1Changed( state );
    if ( started && currentKeyer == this )
    {
@@ -662,9 +660,7 @@ bool voiceKeyer::L1Changed( int state )
       if ( !state && !recPending && !boxRecPending )
       {
          // will be CQ1 or dit paddle	 RELEASED
-         // NB called within the serial interrupt routine
 
-         //disableInterrupts guard;
          KeyerAction * ca = KeyerAction::getCurrentAction();
          if ( !ca || !ca->playingFile( "CQF1.WAV" ) )
          {
@@ -702,9 +698,6 @@ bool voiceKeyer::L2Changed( int state )
       if ( !state && !recPending && !boxRecPending )
       {
          // will be CQ2 or dah paddle
-         // NB called within the serial interrupt routine
-
-         //disableInterrupts guard;
          KeyerAction * ca = KeyerAction::getCurrentAction();
          if ( !ca || !ca->playingFile( "CQF2.WAV" ) )
          {
@@ -773,7 +766,6 @@ void voiceKeyer::startTone2()
 }
 bool voiceKeyer::sendCW( const char *message, int speed, int tone )
 {
-   //disableInterrupts guard;
    KeyerAction * ca = KeyerAction::getCurrentAction();
    if ( !ca && !recPending && !boxRecPending && started && currentKeyer == this )
    {
@@ -807,12 +799,8 @@ sbKeyer::~sbKeyer()
 }
 void sbKeyer::sbTickEvent()           // this will often be an interrupt routine
 {
-   // most of this WAS TXInt, but it should only get called as a tick
-   // and it should all be in the keyer, not here - sb shouldn't get
-   // time interrupts.
    if ( currentKeyer && currentKeyer->started )
    {
-      //disableInterrupts guard;
       KeyerAction * sba = KeyerAction::getCurrentAction();
       if ( sba )
       {
@@ -890,7 +878,6 @@ KeyerAction::~KeyerAction()
 
 KeyerAction *KeyerAction::getNextAction()
 {
-   //disableInterrupts guard;
    return KeyerAction::currentAction.next_element( this );
 }
 
@@ -948,7 +935,6 @@ void ToneAction::LxChanged( int /*line*/, bool state )
    {
       trace( "ToneAction::LxChanged(" + makeStr( state ) + ")" );
    }
-   //disableInterrupts guard;
    KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
 
    SoundSystemDriver::getSbDriver() ->stopDMA();
@@ -965,15 +951,9 @@ void ToneAction::pttChanged( bool state )
       trace( "ToneAction::pttChanged(" + makeStr( state ) + ")" );
    }
    // PTT pressed, so kill tone
-   //disableInterrupts guard;
    KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
-
-   SoundSystemDriver::getSbDriver() ->stopDMA();
-   SoundSystemDriver::getSbDriver() ->CW_ACTIVE = false;
-   if ( currentKeyer )
-      currentKeyer->ptt( 0 );
-   VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
-   deleteAtTick = true;
+   actionState = etasStopTone;
+   timeOut();
 }
 void ToneAction::linesModeChanged( int state )
 {
@@ -982,15 +962,9 @@ void ToneAction::linesModeChanged( int state )
       trace( "ToneAction::linesModeChanged(" + QString::number( state ) + ")" );
    }
    // kill tone
-   //disableInterrupts guard;
    KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
-
-   SoundSystemDriver::getSbDriver() ->stopDMA();
-   SoundSystemDriver::getSbDriver() ->CW_ACTIVE = false;
-   if ( currentKeyer )
-      currentKeyer->ptt( 0 );
-   VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
-   deleteAtTick = true;
+   actionState = etasStopTone;
+   timeOut();
 }
 void ToneAction::queueFinished()
 {
@@ -1090,7 +1064,11 @@ void InitialPTTAction::getActionState( QString &s )
 void InitialPTTAction::LxChanged( int /*line*/, bool /*state*/ )
 {}
 void InitialPTTAction::linesModeChanged( int /*state*/ )
-{}
+{
+    KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
+    actionState = einitPTTEnd;
+    timeOut();
+}
 void InitialPTTAction::pttChanged( bool state )
 {
    if ( sblog )
@@ -1104,7 +1082,6 @@ void InitialPTTAction::pttChanged( bool state )
    else
    {
       // PTT released, start pip - after debounce if needed
-      //disableInterrupts guard;
       KeyerAction * sba = KeyerAction::getCurrentAction();
       if ( sba )
          sba->timeOut();
@@ -1208,6 +1185,9 @@ void InterruptingPTTAction::LxChanged( int /*line*/, bool /*state*/ )
 {}
 void InterruptingPTTAction::linesModeChanged( int /*state*/ )
 {
+    KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
+    actionState = einterPTTQuickRelease;
+    timeOut();
 }
 void InterruptingPTTAction::pttChanged( bool state )
 {
@@ -1222,7 +1202,6 @@ void InterruptingPTTAction::pttChanged( bool state )
    else
    {
       // PTT released, start pip
-      //disableInterrupts guard;
       KeyerAction * sba = KeyerAction::getCurrentAction();
       if ( sba )
          sba->timeOut();
@@ -1342,7 +1321,6 @@ void PlayAction::LxChanged( int line, bool state )
    {
       trace( "PlayAction::LxChanged(" + QString::number( line ) + ", " + QString::number( state ) + ")" );
    }
-   //disableInterrupts guard;
    if ( KeyerAction::currentAction.next_element( this ) && ( actionState != epasEndPlayFile ) )    	// something waiting, but not actually playing
    {
       // start the next action instantly
@@ -1358,12 +1336,11 @@ void PlayAction::pttChanged( bool state )
    if ( state )
    {
       // PTT pressed, so kill playback and chain PTT action
-      //disableInterrupts guard;
       KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
 
       SoundSystemDriver::getSbDriver() ->stopDMA();
       SoundSystemDriver::getSbDriver() ->CW_ACTIVE = false;
-      //      currentKeyer->ptt( 0 );
+
       // start a PTT action, but don't pip unless it is "long"
       InterruptingPTTAction *ptta = new InterruptingPTTAction();
       ptta->actionTime = 1;
@@ -1380,13 +1357,10 @@ void PlayAction::linesModeChanged( int state )
    {
       trace( "PlayAction::linesModeChanged(" + QString::number( state ) + ")" );
    }
-  // kill playback      //disableInterrupts guard;
-  KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
-
-  SoundSystemDriver::getSbDriver() ->stopDMA();
-  SoundSystemDriver::getSbDriver() ->CW_ACTIVE = false;
-  //      currentKeyer->ptt( 0 );
-  deleteAtTick = true;
+  // kill playback
+   KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
+   actionState = epasEndPlayFile;
+   timeOut();
 }
 void PlayAction::queueFinished()
 {
@@ -1453,24 +1427,14 @@ void PlayAction::timeOut()
          }
 
       case epasEndPlayFile:
-         // state 3 chain PIP and chain next repeat; start in state 1
+         // state 3 chain next repeat
          ActionStateString = "Ending";
-         /*
-         if ( currentKeyer->kconf.enablePip )
-         {
-            if ( !sbn && !CW )
-               new PipAction();
-            // leave mixer alone until next action sets it
-         }
-         else
-         */
-         {
-            SoundSystemDriver::getSbDriver() ->stopDMA();
-            SoundSystemDriver::getSbDriver() ->CW_ACTIVE = false;
-            if ( currentKeyer )
-               currentKeyer->ptt( 0 );
-            VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
-         }
+         SoundSystemDriver::getSbDriver() ->stopDMA();
+         SoundSystemDriver::getSbDriver() ->CW_ACTIVE = false;
+         if ( currentKeyer )
+            currentKeyer->ptt( 0 );
+         VKMixer::GetVKMixer()->SetCurrentMixerSet( emsPassThroughNoPTT );
+
          KeyerAction *sbn = getNextAction();
          if ( !testMode && currentKeyer->kconf.enableAutoRepeat && currentKeyer->kconf.autoRepeatDelay && !sbn && !CW )
          {
@@ -1509,7 +1473,9 @@ void PipAction::LxChanged( int /*line*/, bool /*state*/ )
 {}
 void PipAction::linesModeChanged( int /*state*/ )
 {
-
+    KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
+    actionState = epipasEndPip;
+    timeOut();
 }
 
 void PipAction::getActionState( QString &s )
@@ -1525,7 +1491,6 @@ void PipAction::pttChanged( bool state )
    if ( state )
    {
       // PTT pressed, so kill playback and chain PTT action
-      //disableInterrupts guard;
       KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
       new InterruptingPTTAction();
       deleteAtTick = true;
@@ -1610,7 +1575,9 @@ void RecordAction::linesModeChanged( int state )
    {
       trace( "RecordAction::linesModeChanged(" + QString::number( state ) + ")" );
    }
-   deleteAtTick = true;
+   KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
+   actionState = erasRecFinished;
+   SoundSystemDriver::getSbDriver() ->stopall();
    timeOut();
 }
 void RecordAction::pttChanged( bool state )
@@ -1755,7 +1722,8 @@ void BoxRecordAction::linesModeChanged( int state )
    {
       trace( "BoxRecordAction::linesModeChanged(" + QString::number( state ) + ")" );
    }
-   deleteAtTick = true;
+   KeyerAction::currentAction.clear_after( KeyerAction::getCurrentAction() );
+   timeOut();
 }
 void BoxRecordAction::queueFinished()
 {}

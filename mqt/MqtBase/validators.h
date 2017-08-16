@@ -105,7 +105,7 @@ class Validator
       validatorTypes vt;
    public:
       Validator( validatorTypes vt );
-      bool validate( const QString &);
+      bool validate( const QString &, ScreenContact &screenContact);
       static bool validateRST( const QString &t );
       bool getStatus()
       {
@@ -121,7 +121,7 @@ class ValidatedControl
       bool tIfValid;
       ValidatedControl( QLineEdit *c, validatorTypes vt );
       virtual ~ValidatedControl(){}
-      virtual bool valid( validTypes cmd );
+      virtual bool valid( validTypes cmd, ScreenContact &screenContact );
 };
 //---------------------------------------------------------------------------
 #endif

@@ -126,7 +126,7 @@ private:
     void fillRst(QLineEdit *rIl, QString &rep, const QString &mode );
     virtual void showScreenEntry( );
     virtual void getScreenContactTime();
-    virtual void showScreenContactTime( ScreenContact &);
+    virtual void showScreenContactTime( );
     bool checkLogEntry(bool checkDTG );
     Ui::QSOLogFrame *ui;
 
@@ -230,7 +230,12 @@ private slots:
     void on_RotateLeft_clicked(bool);
     void on_RotateRight_clicked(bool);
     void on_StopRotate_clicked();
+
 */
+
+    void on_RSTTXEdit_textChanged(const QString &arg1);
+    void on_RSTRXEdit_textChanged(const QString &arg1);
+
 };
 
 #endif // QSOLOGFRAME_H

@@ -16,6 +16,26 @@
 
 #include <deque>
 
+enum LINEMODES{
+    elmNone = 0,
+    elmRecord,
+    elmPlayPip,
+    elmPlayNoPip,
+    elmTestPlay,
+    elmTones,   //5
+    elm6,
+    elm7,
+    elm8,
+    elm9,
+    elm10,
+    elm11,
+    elm12,
+    elmMGM,                 // 13
+    elmAppsRestartClose,    // 14
+    elmOSRestartClose,      // 15
+    elmMax                  // 16
+};
+
 template < class qe >
 class my_deque : public std::deque < qe >
 {
@@ -27,7 +47,6 @@ class my_deque : public std::deque < qe >
 
       void freeAll()
       {
-         //disableInterrupts fred;
           for (typename  my_deque::iterator i = this->begin(); i != this->end(); i++ )
             delete ( *i );
           my_deque::clear();
@@ -35,7 +54,6 @@ class my_deque : public std::deque < qe >
 
       qe find( const QString &s )
       {
-         //disableInterrupts fred;
          for (typename  my_deque::iterator i = this->begin(); i != this->end(); i++ )
             if ( ( *i ) ->pName.compare(s, Qt::CaseInsensitive ) == 0 )
                return ( *i );
@@ -44,7 +62,6 @@ class my_deque : public std::deque < qe >
 
       void clear_after ( qe e )
       {
-         //disableInterrupts fred;
          typename my_deque::iterator i = std::find( this->begin(), this->end(), e );
          if ( i == this->end() )
             return ;
@@ -59,7 +76,6 @@ class my_deque : public std::deque < qe >
       }
       void free_element ( qe e )
       {
-         //disableInterrupts fred;
          if ( e )
          {
             typename my_deque::iterator i = std::find( this->begin(), this->end(), e );
@@ -73,7 +89,6 @@ class my_deque : public std::deque < qe >
 
       qe next_element( qe q )
       {
-         //disableInterrupts fred;
          typename my_deque::iterator i = std::find( this->begin(), this->end(), q );
          if ( i != this->end() )
          {
@@ -87,7 +102,6 @@ class my_deque : public std::deque < qe >
 
 extern unsigned long MORSEINTCOUNT;
 extern qint64 currTick;
-//extern qint64 basetick;
 
 class SoundSystemDriver;
 
