@@ -48,6 +48,10 @@ Compression=lzma
 SolidCompression=yes
 MinVersion=0,6.1
 
+[Dirs]
+Name: {code:GetLogsDir}; Check: not LogsDirExists; Flags: uninsneveruninstall; Permissions: users-modify
+
+
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
@@ -67,3 +71,53 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Fil
 
 [Run]
 Filename: "{app}\Bin\{#MyAppExeName}";WorkingDir: "{app}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+[Code]
+// global vars
+var
+  LogsDirPage: TInputDirWizardPage;
+  SampleLogsPage: TInputOptionWizardPage;
+  LogsDirVal: String;
+ 
+function GetLogsDir(Param: String): String;
+begin
+  { Return the selected DataDir }
+  Result := LogsDirPage.Values[0];
+end;
+ 
+function GetDefaultLogsDirectory() : String;
+begin
+  Result := WizardDirValue() + '\Logs';
+end;
+ 
+function GetIniFilename() : String;
+begin
+    Result :=  WizardDirValue() + '\Configuration\MinosLogger.ini';
+end;
+ 
+  // custom wizard page setup, for data dir.
+procedure InitializeWizard;
+var
+  myLocalAppData: String;
+begin
+  LogsDirPage := CreateInputDirPage(
+    wpSelectDir,
+    'Minos 2 Logs Directory',
+    '',
+    'Please Select the directory for Minos Logs.',
+    False,
+    'Minos 2'
+  );
+  LogsDirPage.Add('');
+ 
+  LogsDirPage.Values[0] := GetIniString('Default', 'Log Directory', GetDefaultLogsDirectory(), GetIniFilename());
+end;
+ 
+function LogsDirExists(): Boolean;
+begin
+  { Find out if data dir already exists }
+  Result := DirExists(GetLogsDir(''));
+end;
+
+[INI]
+Filename: "{app}\Configuration\MinosLogger.ini"; Section: "Default"; Key: "Log Directory"; String: "{code:GetLogsDir}"; Flags: createkeyifdoesntexist
