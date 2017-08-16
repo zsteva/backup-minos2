@@ -11,13 +11,13 @@
 #define MyAppMinor ""
 #define MyAppRev ""
 #define MyAppBuild ""
-#define MyFullVersion ParseVersion(AddBackslash(SourcePath) + MyAppExeName, MyAppMajor, MyAppMinor, MyAppRev, MyAppBuild)
+#define MyFullVersion ParseVersion(AddBackslash(SourcePath) + "Bin\" + MyAppExeName, MyAppMajor, MyAppMinor, MyAppRev, MyAppBuild)
 #define MyAppVersion Str(MyAppMajor) + "." + Str(MyAppMinor) + "." + Str(MyAppRev)
 #define MyAppName "Minos2"
 
 #define MainBinaryName  "MqtLogger.exe"
 #define SetupBaseName   "Minos2Install_"
-#define AppVersion      GetFileVersion(AddBackslash(SourcePath) + MainBinaryName)
+#define AppVersion      GetFileVersion(AddBackslash(SourcePath) + "Bin\" + MainBinaryName)
 #define AVF1            Copy(AppVersion, 1, Pos(".", AppVersion) - 1) + "_" + Copy(AppVersion, Pos(".", AppVersion) + 1)
 #define AVF2            Copy(AVF1,       1, Pos(".", AVF1      ) - 1) + "_" + Copy(AVF1      , Pos(".", AVF1      ) + 1)
 #define AppVersionFile  Copy(AVF2,       1, Pos(".", AVF2      ) - 1)
