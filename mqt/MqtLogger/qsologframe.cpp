@@ -1092,6 +1092,7 @@ void QSOLogFrame::calcLoc( )
                 brgbuff = QString( "%1%2%3").arg(vb).arg(degreeChar).arg(rev );
             }
             ui->BrgSt->setText(brgbuff);
+            MinosLoggerEvents::SendBrgStrToRot(brgbuff);
          }
          else
          {

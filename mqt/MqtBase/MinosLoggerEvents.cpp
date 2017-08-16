@@ -172,4 +172,7 @@ void MinosLoggerEvents::SendLocSelect(QString loc, BaseContestLog *c)
     emit mle.LocSelect(loc, c);
 }
 //---------------------------------------------------------------------------
-
+void MinosLoggerEvents::SendBrgStrToRot(QString bearing)
+{
+    emit mle.BrgStrToRot(bearing);
+}

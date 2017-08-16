@@ -1,6 +1,7 @@
 #include "logger_pch.h"
 #include "tlogcontainer.h"
 #include "rotcontrolframe.h"
+#include "qsologframe.h"
 #include "ui_rotcontrolframe.h"
 #include "SendRPCDM.h"
 #include "rotatorCommonConstants.h"
@@ -23,6 +24,9 @@ RotControlFrame::RotControlFrame(QWidget *parent):
     ui->RotateRight->setShortcut(QKeySequence(ROTATE_CW_KEY));
     ui->Rotate->setShortcut(QKeySequence(ROTATE_TURN_KEY));
     ui->StopRotate->setShortcut(QKeySequence(ROTATE_STOP_KEY));
+
+
+    connect(&MinosLoggerEvents::mle, SIGNAL(BrgStrToRot(QString)), this, SLOT(getBrgFrmQSOLog(QString)));
 
     rot_left_button_off();
     rot_right_button_off();
@@ -67,6 +71,13 @@ int RotControlFrame::getAngle()
 
     return brg;
 }
+
+
+void RotControlFrame::getBrgFrmQSOLog(QString Brg)
+{
+    ui->BrgSt->setText(Brg);
+}
+
 
 void RotControlFrame::on_Rotate_clicked()
 {

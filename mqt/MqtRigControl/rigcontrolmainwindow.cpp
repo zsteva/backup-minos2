@@ -39,6 +39,9 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
 
     createCloseEvent();
 
+    connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
+    LogTimer.start(100);
+
     msg = new RigControlRpc(this);
 
     QSettings settings;
@@ -136,6 +139,33 @@ void RigControlMainWindow::logMessage( QString s )
 {
    if (ui->actionTraceLog->isChecked())
         trace( s );
+}
+
+
+void RigControlMainWindow::LogTimerTimer(  )
+{
+   static bool closed = false;
+   if ( !closed )
+   {
+      if ( checkCloseEvent() )
+      {
+         closed = true;
+         close();
+      }
+   }
+}
+
+void RigControlMainWindow::closeEvent(QCloseEvent *event)
+{
+    MinosRPCObj::clearRPCObjects();
+    XMPPClosedown();
+    LogTimerTimer( );
+    // and tidy up all loose ends
+
+    QSettings settings;
+    settings.setValue(geoStr, saveGeometry());
+    trace("MinosRigControl Closing");
+    QWidget::closeEvent(event);
 }
 
 

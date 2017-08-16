@@ -170,15 +170,15 @@ public slots:
     void updatePresetLabels();
     void clickedPreset(int buttonNumber);
     void logMessage( QString s );
-
+/*
 protected slots:
     void upDateAntenna();
     void request_bearing();
-    void rotateCW(bool toogle);
-    void rotateCCW(bool toogle);
+    void rotateCW();
+    void rotateCCW();
     void stopButton();
     void stop_rotation();
-    void stopRotation(bool);
+    void stopRotation();
     void sendStatusToLogReady();
     void sendStatusToLogRotCCW();
     void sendStatusToLogRotCW();
@@ -186,7 +186,7 @@ protected slots:
     void sendStatusToLogTurn();
     void sendStatusToLogDisConnected();
     void sendStatusToLogError();
-
+*/
 
 
 private slots:
@@ -204,6 +204,22 @@ private slots:
     void overLapDisplayBox(bool status);
     void currentAntennaSettingChanged(QString);
     void updateSelectAntennaBox();
+
+    void upDateAntenna();
+    void request_bearing();
+    void rotateCW(bool);
+    void rotateCCW(bool);
+    void stopButton();
+    void stop_rotation();
+    void stopRotation(bool);
+    void sendStatusToLogReady();
+    void sendStatusToLogRotCCW();
+    void sendStatusToLogRotCW();
+    void sendStatusToLogStop();
+    void sendStatusToLogTurn();
+    void sendStatusToLogDisConnected();
+    void sendStatusToLogError();
+
 private:
     void rotateTo(int bearing);
     int northCalcTarget(int targetBearing);

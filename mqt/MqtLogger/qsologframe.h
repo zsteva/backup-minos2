@@ -73,6 +73,7 @@ public:
     void logTabChanged();
 
 
+
 private:
     ScreenContact *partialContact; // contact being edited on screen
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
