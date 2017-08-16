@@ -207,7 +207,6 @@ private slots:
     void on_GJVForceButton_clicked();
     void on_GJVCancelButton_clicked();
     void on_MatchXferButton_clicked();
-    void on_BandMapButton_clicked();
     void on_QTHEdit_textChanged(const QString &arg1);
     void on_CallsignEdit_textChanged(const QString &arg1);
     void on_LocEdit_textChanged(const QString &arg1);

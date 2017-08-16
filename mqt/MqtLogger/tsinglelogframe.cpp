@@ -177,9 +177,11 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(LogContainer, SIGNAL(sendKeyerTwoTone()), this, SLOT(sendKeyerTwoTone()));
     connect(LogContainer, SIGNAL(sendKeyerStop()), this, SLOT(sendKeyerStop()));
 
-    connect(ui->GJVQSOLogFrame, SIGNAL(sendBandMap( QString, QString, QString, QString, QString )),
+/*
+    connect(ui->FKHBandMapFrame, SIGNAL(sendBandMap( QString, QString, QString, QString, QString )),
             this, SLOT(sendBandMap(QString,QString,QString,QString,QString)));
-    connect(ui->GJVQSOLogFrame, SIGNAL(sendRotator(rpcConstants::RotateDirection , int  )),
+*/
+    connect(ui->FKHRotControlFrame, SIGNAL(sendRotator(rpcConstants::RotateDirection , int  )),
             this, SLOT(sendRotator(rpcConstants::RotateDirection , int  )));
 
 }

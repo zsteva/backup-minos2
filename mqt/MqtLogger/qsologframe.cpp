@@ -99,8 +99,11 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(ValidateError(int)), this, SLOT(on_ValidateError(int)));
     connect(&MinosLoggerEvents::mle, SIGNAL(ShowOperators()), this, SLOT(on_ShowOperators()));
 
+    ui->qsoFrame->setStyleSheet(" #qsoFrame { border: 5px solid blue; }");
+
+    /*
     QFontMetrics metrics(QApplication::font());
-/*
+
     ui->BrgSt->setFixedWidth(metrics.width("(8888)MT"));
 
     ui->RotateLeft->setShortcut(QKeySequence(ROTATE_CCW_KEY));
@@ -705,12 +708,12 @@ void QSOLogFrame::on_MatchXferButton_clicked()
 {
     MinosLoggerEvents::SendXferPressed();
 }
-
+/*
 void QSOLogFrame::on_BandMapButton_clicked()
 {
     MinosLoggerEvents::SendBandMapPressed();
 }
-
+*/
 void QSOLogFrame::on_QTHEdit_textChanged(const QString &/*arg1*/)
 {
     doGJVEditChange( ui->QTHEdit );

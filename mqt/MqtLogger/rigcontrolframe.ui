@@ -102,11 +102,6 @@
        </item>
        <item>
         <widget class="QLineEdit" name="freqInputA">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
          <property name="inputMask">
           <string>99.999.999.999</string>
          </property>
@@ -120,11 +115,6 @@
        </item>
        <item>
         <widget class="QLabel" name="freqDispVFOA">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
          <property name="text">
           <string>00.000.000.000</string>
          </property>
@@ -172,11 +162,6 @@
        </item>
        <item>
         <widget class="QLabel" name="freqDispVFOB">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
          <property name="text">
           <string>00.000.000.000</string>
          </property>
