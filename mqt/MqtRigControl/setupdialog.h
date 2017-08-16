@@ -63,12 +63,12 @@ public:
     void saveCurrentRadio();
 
     void copyRadioToCurrent(int radioNumber);
+
+    void readSettings();
 signals:
 
     void radioNameChange();
     void currentRadioSettingChanged(QString);
-    void readSettings();
-
 
 protected slots:
 
@@ -123,11 +123,6 @@ private:
     void clearAvailRadio();
     void clearCurrentRadio();
 //    void enableCIVbox();
-
-
-
-
-
 };
 
 #endif // SETUPDIALOG_H
