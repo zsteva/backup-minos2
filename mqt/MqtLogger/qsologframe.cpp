@@ -99,7 +99,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(ValidateError(int)), this, SLOT(on_ValidateError(int)));
     connect(&MinosLoggerEvents::mle, SIGNAL(ShowOperators()), this, SLOT(on_ShowOperators()));
 
-    ui->qsoFrame->setStyleSheet(" #qsoFrame { border: 5px solid blue; }");
+    ui->qsoFrame->setStyleSheet(" #qsoFrame { border: 2px solid blue; }");
 
     /*
     QFontMetrics metrics(QApplication::font());
@@ -1122,11 +1122,11 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
                 {
                     if ( screenContact.cs.valRes == ERR_DUPCS)
                     {
-                        ss = "QLineEdit { background-color: orange ; border-style: outset ; border-width: 2px ; border-color: red ; }";
+                        ss = "QLineEdit { background-color: orange ; border-style: outset ; border-width: 1px ; border-color: red ; }";
                     }
                     else
                     {
-                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 2px ; border-color: red ; }";
+                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: red ; }";
                     }
                 }
                 else if ((*vcp) == rsIl && text == "5")
@@ -1142,16 +1142,16 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
                     // leave as no error
                     if (screenContact.loc.valRes == ERR_LOC_RANGE && screenContact.loc.loc.getValue().size() > 4)
                     {
-                        ss = "QLineEdit { background-color: orange ; border-style: outset ; border-width: 2px ; border-color: red ; }";
+                        ss = "QLineEdit { background-color: orange ; border-style: outset ; border-width: 1px ; border-color: red ; }";
                     }
                     else if (screenContact.loc.valRes != LOC_OK)
                     {
-                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 2px ; border-color: red ; }";
+                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: red ; }";
                     }
                 }
                 else
                 {
-                    ss = "QLineEdit { background-color: orange ; border-style: outset ; border-width: 2px ; border-color: red ; }";
+                    ss = "QLineEdit { background-color: orange ; border-style: outset ; border-width: 1px ; border-color: red ; }";
                 }
             }
             ret = false;
