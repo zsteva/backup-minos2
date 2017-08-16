@@ -3,7 +3,7 @@
 #include "rigcontrolframe.h"
 #include "ui_rigcontrolframe.h"
 #include "SendRPCDM.h"
-#include "rigControlcommonconstants.h"
+#include "rigcontrolcommonconstants.h"
 
 RigControlFrame::RigControlFrame(QWidget *parent):
     QFrame(parent)
