@@ -2102,11 +2102,8 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
 }
 
 
-void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
+void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int /*index*/)
 {
-
-
-
     if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
     {
        ui->ModeButton->setText(oldMode);
@@ -2117,8 +2114,6 @@ void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
     }
 
     oldMode = ui->ModeComboBoxGJV->currentText();
-
-
 }
 
 void QSOLogFrame::on_ValidateError (int mess_no )
