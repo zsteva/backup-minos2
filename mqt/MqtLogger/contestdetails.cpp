@@ -36,10 +36,10 @@ ContestDetails::ContestDetails(QWidget *parent) :
     ui->BonusComboBox->addItem("UKAC Bonuses");
     ui->BonusComboBox->addItem("NAC Bonuses");
 
-    ui->ModeComboBox->addItem("A1A");
-    ui->ModeComboBox->addItem("J3E");
-    ui->ModeComboBox->addItem("F3E");
-    ui->ModeComboBox->addItem("MGM");
+    ui->ModeComboBox->addItem(hamlibData::CW);
+    ui->ModeComboBox->addItem(hamlibData::USB);
+    ui->ModeComboBox->addItem(hamlibData::FM);
+    ui->ModeComboBox->addItem(hamlibData::MGM);
 
     for ( int i = 0; i < 24; i++ )
     {
@@ -392,7 +392,7 @@ void ContestDetails::setDetails( const IndividualContest &ic )
     QString mode = ic.mode;
     if (mode.isEmpty())
     {
-       mode = "J3E";
+       mode = hamlibData::USB;
     }
     int m = ui->ModeComboBox->findText( mode );
 

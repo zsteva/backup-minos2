@@ -72,6 +72,7 @@ template <class itemtype >inline bool operator == (const MapWrapper<itemtype> &k
 #include "MatchContact.h"
 #include "ListContact.h"
 
+#include "rigcontrolcommonconstants.h"
 #include "MinosTestImport.h"
 
 #include "MShowMessageDlg.h"

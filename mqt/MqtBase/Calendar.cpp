@@ -853,15 +853,15 @@ bool Calendar::parseContest ( TiXmlElement * tix )
                                                                                 mode = e->GetText();
                                                                                 if (mode == "SSB")
                                                                                 {
-                                                                                   mode = "J3E";
+                                                                                   mode = hamlibData::USB;
                                                                                 }
                                                                                 if (mode == "CW")
                                                                                 {
-                                                                                   mode = "A1A";
+                                                                                   mode = hamlibData::CW;
                                                                                 }
                                                                                 if (mode == "FM")
                                                                                 {
-                                                                                   mode = "F3E";
+                                                                                   mode = hamlibData::FM;
                                                                                 }
                                                                                 c.mode = mode;
                                                                             }

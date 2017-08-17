@@ -44,6 +44,8 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 {
     ui->setupUi(this);
 
+    ui->Controlsplitter->setVisible(false);
+
     splitterHandleWidth = ui->ArchiveSplitter->handleWidth();
 #ifdef Q_OS_ANDROID
     splitterHandleWidth = 20;
@@ -80,6 +82,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(BandMapPressed()), this, SLOT(on_BandMapPressed()));
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(NextContactDetailsTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(PublishTimerTimer()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(HideTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(MatchStarting(BaseContestLog*)), this, SLOT(on_MatchStarting(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(MakeEntry(BaseContestLog*)), this, SLOT(on_MakeEntry(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)), this, SLOT(on_AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)));
@@ -372,7 +375,12 @@ void TSingleLogFrame::PublishTimerTimer(  )
       }
    }
 }
+void TSingleLogFrame::HideTimerTimer(  )
+{
+    bool controlsLoaded = isBandMapLoaded() || isRadioLoaded() || isRotatorLoaded();
 
+    ui->Controlsplitter->setVisible(controlsLoaded);
+}
 void TSingleLogFrame::on_NextContactDetailsOnLeft()
 {
     doNextContactDetailsOnLeftClick();

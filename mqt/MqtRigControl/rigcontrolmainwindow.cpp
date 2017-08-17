@@ -245,18 +245,18 @@ void RigControlMainWindow::upDateRadio()
         if (radio->get_serialConnected())
         {
                 closeRadio();
-                this->setWindowTitle("Minos 2 RigControl");
+                this->setWindowTitle("Minos Rig Control");
         }
 
         openRadio();
 
         if (loggerRadio.length() > 0)
         {
-            this->setWindowTitle("Minos 2 RigControl - " + selectRig->currentRadio.radioName + " - Logger");
+            this->setWindowTitle("Minos Rig Control - " + selectRig->currentRadio.radioName + " - Logger");
         }
         else
         {
-            this->setWindowTitle("Minos 2 RotControl - " + selectRig->currentRadio.radioName + " - Local");
+            this->setWindowTitle("Minos Rig Control - " + selectRig->currentRadio.radioName + " - Local");
         }
 
        trace("*** Radio Update ***");
