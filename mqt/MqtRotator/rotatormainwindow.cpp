@@ -714,7 +714,7 @@ void RotatorMainWindow::upDateAntenna()
        if (rotator->get_serialConnected())
        {
            closeRotator();
-           this->setWindowTitle("Minos 2 Rotator");
+           this->setWindowTitle("Minos Rotator");
 
        }
 
@@ -722,11 +722,11 @@ void RotatorMainWindow::upDateAntenna()
 
        if (loggerAntenna.length() > 0)
        {
-           this->setWindowTitle("Minos 2 Rotator - " + selectRotator->currentAntenna.antennaName + " - Logger");
+           this->setWindowTitle("Minos Rotator - " + selectRotator->currentAntenna.antennaName + " - Logger");
        }
        else
        {
-           this->setWindowTitle("Minos 2 Rotator - " + selectRotator->currentAntenna.antennaName + " - Local");
+           this->setWindowTitle("Minos Rotator - " + selectRotator->currentAntenna.antennaName + " - Local");
        }
 
        offSetDisplay->setText(QString::number(selectRotator->currentAntenna.antennaOffset));

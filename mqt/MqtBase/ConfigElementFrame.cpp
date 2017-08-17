@@ -82,7 +82,7 @@ void ConfigElementFrame::on_programBrowseButton_clicked()
     QDir cdir(GetCurrentDir());
     QString InitialDir = ExtractFileDir(ui->programNameEdit->text());
 
-    QFileDialog dialog(this, "Minos 2 Component Program", InitialDir);
+    QFileDialog dialog(this, "Minos Component Program", InitialDir);
 #if QT_VERSION >= 0x050600
     const QStringList schemes = QStringList(QStringLiteral("file"));
 
