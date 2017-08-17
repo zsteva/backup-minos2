@@ -18,6 +18,7 @@
 #define RIGCONTROLMAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
 #include "mqtUtils_pch.h"
 #include "rigcontrol.h"
 
@@ -26,7 +27,7 @@ class QComboBox;
 class SetupDialog;
 class RigControl;
 class RigControlRpc;
-class QTimer;
+
 
 #define NUM_VFO 2
 #define VFOA 0
@@ -54,13 +55,14 @@ private:
     StdInReader stdinReader;
     RigControlRpc *msg;
 
-    QTimer LogTimer;
+
     QComboBox *selectRadio;
     SetupDialog *selectRig;
     RigControl  *radio;
     QString loggerRadio = "";
     QLabel *status;
     QTimer *pollTimer;
+    class QTimer LogTimer;
     int pollTime;
     QString sfreq;
 //    double oldFreq = 0;
