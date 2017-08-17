@@ -18,10 +18,12 @@
 #include <QTableWidgetItem>
 #include <QTreeView>
 
+#include "rotatorCommonConstants.h"
 
 #include "profiles.h"
 #include "LoggerContest.h"
 #include "LoggerContacts.h"
 #include "ContestApp.h"
+
 
 #endif

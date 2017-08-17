@@ -36,7 +36,7 @@ BaseContestLog::BaseContestLog( void ) :
       bonusYearLoaded(0)
 {
    bearingOffset.setValue(0);
-   currentMode.setValue( "J3E" );
+   currentMode.setValue( "USB" );
    int i;
 
    int nc = MultLists::getMultLists() ->getCtryListSize();

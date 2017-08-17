@@ -8,9 +8,6 @@
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
 
-#include "rotatorCommonConstants.h"
-#include "rigcontrolcommonconstants.h"
-
 QSOLogFrame::QSOLogFrame(QWidget *parent) :
     QFrame(parent)
     , ui(new Ui::QSOLogFrame)
@@ -92,6 +89,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     }
 
     ui->ModeComboBoxGJV->setCurrentText(hamlibData::USB);
+    ui->ModeButton->setText(hamlibData::CW);
 
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(on_TimeDisplayTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterTabFocusIn(QLineEdit*)), this, SLOT(on_AfterTabFocusIn(QLineEdit*)), Qt::QueuedConnection);
@@ -1281,7 +1279,7 @@ void QSOLogFrame::fillRst( QLineEdit *rIl, QString &rep, const QString &fmode )
             }
          }
       }
-      if ( ( fmode.compare( "A1A", Qt::CaseInsensitive ) == 0 ) && Validator::validateRST( rIl->text().trimmed() )
+      if ( ( fmode.compare( hamlibData::CW, Qt::CaseInsensitive ) == 0 ) && Validator::validateRST( rIl->text().trimmed() )
            && ( rep.size() == 2 ) )
       {
          newrep = rep[ 0 ];
@@ -1489,10 +1487,12 @@ bool QSOLogFrame::checkLogEntry(bool checkDTG)
 void QSOLogFrame::setMode(QString m)
 {
 
-    oldMode = ui->ModeComboBoxGJV->currentText();
+    QString myOldMode = ui->ModeComboBoxGJV->currentText();
 
     ui->ModeComboBoxGJV->setCurrentText(m);
-    //ui->ModeButton->setText(m);
+
+    oldMode = myOldMode;
+
 
     // make sure the mode button shows the correct "flip" value
 
@@ -1667,9 +1667,10 @@ void QSOLogFrame::doGJVEditChange( QObject *Sender )
 
 void QSOLogFrame::on_ModeButton_clicked()
 {
-    oldMode = ui->ModeComboBoxGJV->currentText();
+    QString myOldMode = ui->ModeComboBoxGJV->currentText();
     ui->ModeComboBoxGJV->setCurrentText(ui->ModeButton->text());
 
+    oldMode = myOldMode;
     EditControlExit(ui->ModeButton);
 }
 void QSOLogFrame::logScreenEntry( )
@@ -1694,23 +1695,23 @@ void QSOLogFrame::logScreenEntry( )
    }
 
    bool contactmodeCW = ( screenContact.reps.size() == 3 && screenContact.repr.size() == 3 );
-   bool curmodeCW = ( screenContact.mode.compare( "A1A", Qt::CaseInsensitive ) == 0 );
+   bool curmodeCW = ( screenContact.mode.compare( hamlibData::CW, Qt::CaseInsensitive ) == 0 );
 
    if ( !edit && contactmodeCW != curmodeCW )
    {
       // ask if change...
       if ( !curmodeCW )
       {
-         if ( MinosParameters::getMinosParameters() ->yesNoMessage( this, "Change mode to A1A?" ) )
+         if ( MinosParameters::getMinosParameters() ->yesNoMessage( this, "Change mode to CW?" ) )
          {
-            screenContact.mode = "A1A";
+            screenContact.mode = hamlibData::CW;
          }
       }
       else
       {
-         if ( MinosParameters::getMinosParameters() ->yesNoMessage( this, "Change mode to J3E?" ) )
+         if ( MinosParameters::getMinosParameters() ->yesNoMessage( this, "Change mode to USB?" ) )
          {
-            screenContact.mode = "J3E";
+            screenContact.mode = hamlibData::USB;
          }
       }
    }
@@ -2129,293 +2130,6 @@ void QSOLogFrame::on_ValidateError (int mess_no )
 }
 
 //--------------------------------------------------------------
-/*
-// Rotator
-
-int QSOLogFrame::getAngle()
-{
-    QString brgSt = ui->BrgSt->text();
-
-    int brg = 0;
-
-    for (int i = 0;i < brgSt.length(); i++)
-    {
-        if (brgSt[i].isDigit())
-        {
-            int j = 0;
-            for (j = i; j < brgSt.length(); j++)
-            {
-                if (!brgSt[j].isDigit())
-                {
-                    break;
-                }
-            }
-            brgSt = brgSt.mid(i, j - i);
-            brg = brgSt.toInt();
-            return brg;
-        }
-    }
-
-    return brg;
-}
-
-void QSOLogFrame::on_Rotate_clicked()
-{
-    int angle = getAngle();
-
-    if (angle == COMPASS_ERROR)
-    {
-        QString msg = "<font color='Red'>Bearing empty or invalid</font>";
-        ui->rotatorState->setText(msg);
-        return;
-    }
-
-
-    if (angle > maxAzimuth)
-    {
-        QString msg = "<font color='Red'>Bearing too large - " + QString::number(angle) + "</font>";
-        ui->rotatorState->setText(msg);
-    }
-    else if (angle < minAzimuth)
-    {
-        QString msg = "<font color='Red'>Bearing too small - " + QString::number(angle) + "</font>";
-        ui->rotatorState->setText(msg);
-    }
-    else
-    {
-        emit sendRotator(rpcConstants::eRotateDirect, angle);
-        moving = true;
-    }
-
-}
-
-void QSOLogFrame::on_RotateLeft_clicked(bool clicked)
-{
-    int angle = 0;
-
-    if (currentBearing <= minAzimuth)
-    {
-        return;
-    }
-
-    if (moving || movingCW || movingCCW)
-    {
-        on_StopRotate_clicked();
-    }
-
-
-    if (!rot_left_button_status)
-    {
-        rot_left_button_on();
-        emit sendRotator(rpcConstants::eRotateLeft, angle);
-        movingCW = true;
-    }
-    else
-    {
-        rot_left_button_off();
-        //TSendDM::sendRotator(rpcConstants::eRotateStop, getAngle());
-    }
-}
-
-
-void QSOLogFrame::on_RotateRight_clicked(bool toggle)
-{
-    int angle = 0;
-
-    if (currentBearing >= maxAzimuth)
-    {
-        return;
-    }
-
-    if (moving || movingCW || movingCCW)
-    {
-        on_StopRotate_clicked();
-    }
-
-
-
-    if (!rot_right_button_status)
-    {
-        rot_right_button_on();
-        emit sendRotator(rpcConstants::eRotateRight, angle);
-        movingCCW = true;
-    }
-    else
-    {
-        rot_right_button_off();
-        //TSendDM::sendRotator(rpcConstants::eRotateStop, getAngle());
-    }
-
-}
-
-
-
-void QSOLogFrame::rot_left_button_on()
-{
-    rot_left_button_status = true;
-    ui->RotateLeft->setText("<<--   (CCW) Left");
-}
-
-void QSOLogFrame::rot_left_button_off()
-{
-    rot_left_button_status = false;
-    ui->RotateLeft->setText("(CCW) Left");
-}
-
-void QSOLogFrame::rot_right_button_on()
-{
-    rot_right_button_status = true;
-    ui->RotateRight->setText("(CW) Right   -->>");
-}
-
-void QSOLogFrame::rot_right_button_off()
-{
-    rot_right_button_status = false;
-    ui->RotateRight->setText("(CW) Right");
-}
-
-
-
-
-
-
-void QSOLogFrame::on_StopRotate_clicked()
-{
-    emit sendRotator(rpcConstants::eRotateStop, 0);
-    clearRotatorFlags();
-
-}
-
-void QSOLogFrame::clearRotatorFlags()
-{
-    rot_left_button_off();
-    rot_right_button_off();
-    moving = false;
-    movingCCW = false;
-    movingCW = false;
-}
-
-void QSOLogFrame::setRotatorLoaded()
-{
-    rotatorLoaded = true;
-}
-bool QSOLogFrame::isRotatorLoaded()
-{
-    return rotatorLoaded;
-}
-
-void QSOLogFrame::setRotatorState(const QString &s)
-{
-       ui->rotatorState->setText(s);
-       if (s == ROT_STATUS_STOP)
-       {
-           clearRotatorFlags();
-       }
-       else if (s == ROT_STATUS_ROTATE_CCW)
-       {
-           moving = false;
-           movingCW = false;
-           movingCCW = true;
-          // clearRotatorFlags();
-           ui->RotateLeft->setChecked(true);
-       }
-       else if (s == ROT_STATUS_ROTATE_CW)
-       {
-           moving = false;
-           movingCW = true;
-           movingCCW = false;
-           //clearRotatorFlags();
-           ui->RotateRight->setChecked(true);
-       }
-       else if (s == ROT_STATUS_TURN_TO)
-       {
-           moving = true;
-           movingCW = false;
-           movingCCW = false;
-           //clearRotatorFlags();
-
-       }
-
-}
-
-void QSOLogFrame::setRotatorAntennaName(const QString &s)
-{
-       ui->antennaName->setText(s);
-}
-
-void QSOLogFrame::setRotatorBearing(const QString &s)
-{
-    bool ok;
-    bool overlap = false;
-    int iBearing = s.toInt(&ok, 10);
-    currentBearing = iBearing;
-    if (!ok) return;
-
-    if (iBearing > COMPASS_MAX360)
-    {
-        iBearing -= COMPASS_MAX360;
-        overlap = true;
-    }
-    QString bearing = bearing.number(iBearing);
-    QString brg;
-    QChar degsym = QChar(DEGREE_SYMBOL);
-    int len = bearing.length();
-
-    if (len < 2)
-    {
-        brg = QString("%1%2%3")
-        .arg("00").arg(bearing).arg(degsym);
-    }
-    else if (len < 3)
-    {
-        brg = QString("%1%2%3")
-        .arg("0").arg(bearing).arg(degsym);
-    }
-    else
-    {
-        brg = QString("%1%2")
-        .arg(bearing).arg(degsym);
-    }
-
-    brg.append("</font>");
-
-    if (overlap)
-    {
-        brg.prepend("<font color='Red'>");
-        ui->RotBrg->setText(brg);
-    }
-    else
-    {
-        brg.prepend("<font color='Black'>");
-        ui->RotBrg->setText(brg);
-    }
-
-}
-
-void QSOLogFrame::setRotatorMaxAzimuth(const QString &s)
-{
-    bool ok;
-    int max_azimuth = 0;
-    max_azimuth = s.toInt(&ok, 10);
-    if (ok)
-    {
-        maxAzimuth = max_azimuth;
-    }
-}
-
-
-void QSOLogFrame::setRotatorMinAzimuth(const QString &s)
-{
-    bool ok;
-    int min_azimuth = 0;
-    min_azimuth = s.toInt(&ok, 10);
-    if (ok)
-    {
-        minAzimuth = min_azimuth;
-    }
-}
-*/
-//----------------------------------------------------------------
 
 // keyer
 
@@ -2440,46 +2154,3 @@ bool QSOLogFrame::isBandMapLoaded()
 {
     return bandMapLoaded;
 }
-
-/*
-//--------------------------------------------------------
-// RigControl
-
-// Mode is already handled.
-
-void QSOLogFrame::setRadioLoaded()
-{
-    radioLoaded = true;
-}
-
-bool QSOLogFrame::isRadioLoaded()
-{
-    return radioLoaded;
-}
-
-void QSOLogFrame::setFreq(QString f)
-{
-    ui->freqDisplay->setText(f);
-}
-
-
-void QSOLogFrame::setMode( QString m )
-{
-   //ui->ModeComboBoxGJV->setCurrentText(m);
-    ui->ModeButton->setText(m);
-   // make sure the mode button shows the correct "flip" value
-
-
-}
-
-void QSOLogFrame::setRadioName(QString n)
-{
-    ui->radioName->setText(n);
-}
-
-
-void QSOLogFrame::setRadioState(QString s)
-{
-    ui->rigState->setText(s);
-}
-*/

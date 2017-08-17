@@ -263,16 +263,16 @@ void ContestContact::getReg1TestText(QString &sdest , bool noSerials)
    sdest += ';';
 
    QString smode = mode.getValue().toUpper();
-   if (  smode.compare( "A1A") == 0 )
+   if (  smode.compare( hamlibData::CW) == 0 )
       sdest += "2";
    else
-      if ( smode.compare("J3E" ) == 0 )
+      if ( smode.compare(hamlibData::USB ) == 0 )
          sdest += "1";
       else
-         if ( smode.compare( "F3E" ) == 0 )
+         if ( smode.compare( hamlibData::FM ) == 0 )
             sdest += "6";
          else
-            if ( smode.compare( "MGM" ) == 0 )
+            if ( smode.compare( hamlibData::MGM ) == 0 )
                sdest += "7";
              else
                 sdest += "0";
@@ -423,13 +423,13 @@ QString ContestContact::getADIFLine()
 
 
    QString smode = mode.getValue().toUpper();
-   if (  smode.compare( "A1A" ) == 0 )
+   if (  smode.compare( hamlibData::CW ) == 0 )
       outstr += makeADIFField( "MODE", "CW" );
    else
-      if ( smode.compare( "J3E" ) == 0 )
+      if ( smode.compare( hamlibData::USB ) == 0 )
          outstr += makeADIFField( "MODE", "SSB" );
       else
-         if ( smode.compare( "F3E" ) == 0 )
+         if ( smode.compare( hamlibData::FM ) == 0 )
             outstr += makeADIFField( "MODE", "FM" );
          else
             outstr += makeADIFField( "MODE", mode.getValue() );
