@@ -18,7 +18,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 
     ui->setupUi(this);
     ui->modelbl->setText(MODE_ERROR);
-    Connect(ui->freqInput, SIGNAL(receivedFocus()), this, SLOT(freqLineEditInFocus()));
+    connect(ui->freqInput, SIGNAL(receivedFocus()), this, SLOT(freqLineEditInFocus()));
 
 }
 
@@ -94,7 +94,7 @@ void RigControlFrame::setRadioState(QString s)
 
 void RigControlFrame::freqLineEditInFocus()
 {
-    freqLineEditBkgnd(true);
+    freqLineEditFrameColour(true);
 }
 
 
@@ -102,11 +102,12 @@ void RigControlFrame::freqLineEditInFocus()
 
 void RigControlFrame::freqLineEditBkgnd(bool status)
 {
+
     QPalette palette;
 
     if (status)
     {
-        palette.setColor(QPalette::Base,Qt::lightGray);
+        palette.setColor(QPalette::Base,Qt::yellow);
     }
     else
     {
@@ -114,13 +115,33 @@ void RigControlFrame::freqLineEditBkgnd(bool status)
     }
 
     ui->freqInput->setPalette(palette);
+
+}
+
+
+void RigControlFrame::freqLineEditFrameColour(bool status)
+{
+    int curPos = ui->freqInput->cursorPosition();
+    if (status)
+    {
+        ui->freqInput->setStyleSheet("border: 1px solid red");
+        // restore cursor selection
+        ui->freqInput->setSelection(curPos, 1);
+    }
+    else
+    {
+        ui->freqInput->setStyleSheet("border: 1px solid white");
+
+    }
+
 }
 
 
 
 //********************************************//
 
-FreqLineEdit::FreqLineEdit()
+FreqLineEdit::FreqLineEdit(QWidget *parent):
+    QLineEdit(parent)
 {
 
 }
@@ -135,5 +156,5 @@ FreqLineEdit::~FreqLineEdit()
 void FreqLineEdit::focusInEvent( QFocusEvent * ev )
 {
     emit receivedFocus() ;
-    return FALSE ;
+
 }

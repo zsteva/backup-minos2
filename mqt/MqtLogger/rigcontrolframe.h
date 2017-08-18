@@ -22,10 +22,15 @@ const QStringList freqMask = { "9.999",
 
 class FreqLineEdit : public QLineEdit
 {
-    FreqLineEdit();
+    Q_OBJECT
+
+public:
+
+    FreqLineEdit(QWidget *parent);
     ~FreqLineEdit();
 
-    void focusInEvent( QFocusEvent ) ;
+
+    void focusInEvent( QFocusEvent* ) ;
 
 signals:
     void receivedFocus() ;
@@ -69,6 +74,7 @@ private:
 
 
     void freqLineEditBkgnd(bool status);
+    void freqLineEditFrameColour(bool status);
 };
 
 #endif // RIGCONTROLFRAME_H
