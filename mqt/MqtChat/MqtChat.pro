@@ -13,7 +13,7 @@ QT       += widgets
 TARGET = MqtChat
 TEMPLATE = app
 
-win32:RC_ICONS += ../minos.ico
+win32:RC_ICONS += ../MinosChat.ico
 
 SOURCES += main.cpp \
     chatmain.cpp
