@@ -99,6 +99,10 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
 
     ui->qsoFrame->setStyleSheet(" #qsoFrame { border: 2px solid blue; }");
 
+    QString ss("QLineEdit { background-color: white ; border: none ; color: black ; }");
+    ui->DateEdit->setStyleSheet(ss);
+    ui->TimeEdit->setStyleSheet(ss);
+
     /*
     QFontMetrics metrics(QApplication::font());
 
@@ -207,7 +211,7 @@ bool QSOLogFrame::doKeyPressEvent( QKeyEvent* event )
         }
         if (ed == ui->CallsignEdit)
         {
-            QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; }");
+            QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; color : black ; }");
             ui->CallsignEdit->setStyleSheet(ss);
         }
     }
@@ -1110,7 +1114,7 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
 
     for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
    {
-        QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; }");
+        QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; color : black }");
         if ( !( *vcp ) ->valid( command, screenContact ) )
         {
             QString text = (*vcp)->wc->text().trimmed();
@@ -1120,11 +1124,11 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
                 {
                     if ( screenContact.cs.valRes == ERR_DUPCS)
                     {
-                        ss = "QLineEdit { background-color: orange ; border-style: outset ; border-width: 1px ; border-color: red ; }";
+                        ss = "QLineEdit { background-color: red ; border-style: outset ; border-width: 1px ; border-color: red ; color : white }";
                     }
                     else
                     {
-                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: red ; }";
+                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: red ; color : black}";
                     }
                 }
                 else if ((*vcp) == rsIl && text == "5")
@@ -1140,16 +1144,16 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
                     // leave as no error
                     if (screenContact.loc.valRes == ERR_LOC_RANGE && screenContact.loc.loc.getValue().size() > 4)
                     {
-                        ss = "QLineEdit { background-color: orange ; border-style: outset ; border-width: 1px ; border-color: red ; }";
+                        ss = "QLineEdit { background-color: red ; border-style: outset ; border-width: 1px ; border-color: red ; color : white; }";
                     }
                     else if (screenContact.loc.valRes != LOC_OK)
                     {
-                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: red ; }";
+                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: red ; color : black; }";
                     }
                 }
                 else
                 {
-                    ss = "QLineEdit { background-color: orange ; border-style: outset ; border-width: 1px ; border-color: red ; }";
+                    ss = "QLineEdit { background-color: red ; border-style: outset ; border-width: 1px ; border-color: red ; color : white; }";
                 }
             }
             ret = false;
