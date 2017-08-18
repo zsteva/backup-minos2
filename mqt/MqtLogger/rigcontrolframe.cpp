@@ -18,7 +18,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 
     ui->setupUi(this);
     ui->modelbl->setText(MODE_ERROR);
-
+    Connect(ui->freqInput, SIGNAL(receivedFocus()), this, SLOT(freqLineEditInFocus()));
 
 }
 
@@ -91,3 +91,49 @@ void RigControlFrame::setRadioState(QString s)
     radioState = s;
 }
 
+
+void RigControlFrame::freqLineEditInFocus()
+{
+    freqLineEditBkgnd(true);
+}
+
+
+
+
+void RigControlFrame::freqLineEditBkgnd(bool status)
+{
+    QPalette palette;
+
+    if (status)
+    {
+        palette.setColor(QPalette::Base,Qt::lightGray);
+    }
+    else
+    {
+        palette.setColor(QPalette::Base,Qt::white);
+    }
+
+    ui->freqInput->setPalette(palette);
+}
+
+
+
+//********************************************//
+
+FreqLineEdit::FreqLineEdit()
+{
+
+}
+
+
+FreqLineEdit::~FreqLineEdit()
+{
+
+
+}
+
+void FreqLineEdit::focusInEvent( QFocusEvent * ev )
+{
+    emit receivedFocus() ;
+    return FALSE ;
+}

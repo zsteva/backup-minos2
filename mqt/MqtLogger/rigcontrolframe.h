@@ -20,6 +20,22 @@ const QStringList freqMask = { "9.999",
 }
 
 
+class FreqLineEdit : public QLineEdit
+{
+    FreqLineEdit();
+    ~FreqLineEdit();
+
+    void focusInEvent( QFocusEvent ) ;
+
+signals:
+    void receivedFocus() ;
+
+} ;
+
+
+
+
+
 class RigControlFrame : public QFrame
 {
     Q_OBJECT
@@ -40,6 +56,8 @@ signals:
 
     void sendModeLogFrame(QString);
 
+private slots:
+    void freqLineEditInFocus();
 private:
 
     bool radioLoaded;
@@ -50,6 +68,7 @@ private:
     QString radioState;
 
 
+    void freqLineEditBkgnd(bool status);
 };
 
 #endif // RIGCONTROLFRAME_H

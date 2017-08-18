@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>423</width>
+    <width>504</width>
     <height>158</height>
    </rect>
   </property>
@@ -103,7 +103,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="freqInput">
+          <widget class="FreqLineEdit" name="freqInput">
            <property name="inputMask">
             <string>99.999.999.999</string>
            </property>
@@ -205,6 +205,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FreqLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>rigcontrolframe.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
