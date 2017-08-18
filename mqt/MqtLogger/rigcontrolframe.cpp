@@ -9,6 +9,10 @@
 RigControlFrame::RigControlFrame(QWidget *parent):
     QFrame(parent)
     , ui(new Ui::RigControlFrame)
+    , curFreq("")
+    , curMode("")
+    , radioName("")
+    , radioState("")
     , radioLoaded(false)
 {
 
@@ -37,7 +41,17 @@ bool RigControlFrame::isRadioLoaded()
 
 void RigControlFrame::setFreq(QString f)
 {
-    ui->freqInput->setText(f);
+    QString freq = f;
+
+    freq.remove('.');
+    if (freq.count() >= 4)
+    {
+        ui->freqInput->setInputMask(maskData::freqMask[freq.count() - 4]);
+        ui->freqInput->setText(freq);
+        curFreq = freq;
+    }
+    // an error here
+
 }
 
 
@@ -50,6 +64,7 @@ void RigControlFrame::setMode(QString m)
             if (m == hamlibData::supModeList[i])
             {
                 ui->modelbl->setText(m);
+                curMode = m;
                 emit sendModeLogFrame(m);
                 return;
             }
@@ -66,11 +81,13 @@ void RigControlFrame::setMode(QString m)
 void RigControlFrame::setRadioName(QString n)
 {
     ui->radioName->setText(n);
+    radioName = n;
 }
 
 
 void RigControlFrame::setRadioState(QString s)
 {
     ui->rigState->setText(s);
+    radioState = s;
 }
 

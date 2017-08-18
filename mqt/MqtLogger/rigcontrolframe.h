@@ -7,6 +7,19 @@ namespace Ui {
     class RigControlFrame;
 }
 
+namespace maskData {
+
+const QStringList freqMask = { "9.999",
+                         "99.999",
+                         "999.999",
+                         "9.999.999",
+                         "99.999.999",
+                         "999.999.999",
+                         "9.999.999.999",
+                         "99.999.999.999"};
+}
+
+
 class RigControlFrame : public QFrame
 {
     Q_OBJECT
@@ -31,6 +44,10 @@ private:
 
     bool radioLoaded;
     bool isRadioLoaded();
+    QString curFreq;
+    QString curMode;
+    QString radioName;
+    QString radioState;
 
 
 };

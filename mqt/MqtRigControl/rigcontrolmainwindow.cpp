@@ -27,9 +27,11 @@
 
 
 RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent) :
-    QMainWindow(parent), msg(0),
-    ui(new Ui::RigControlMainWindow)
+    QMainWindow(parent)
+    , msg(0)
+    , ui(new Ui::RigControlMainWindow)
 {
+
     ui->setupUi(this);
 
     loggerRadio  = _loggerRadio.trimmed();
@@ -434,6 +436,7 @@ void RigControlMainWindow::getMode(vfo_t vfo)
             if (rmode != curMode[0])
             {
                 curMode[0] = rmode;
+
                 displayModeVfo(radio->convertModeQstr(rmode));
                 sendModeToLog(radio->convertModeQstr(rmode));
             }
@@ -476,7 +479,6 @@ void RigControlMainWindow::updateFreq(double frequency)
 void RigControlMainWindow::displayFreqVfo(double frequency)
 {
 
-    qDebug() << "Got freq " << frequency;
     ui->radioFreqA->setText(convertStringFreq(frequency));
 }
 
@@ -501,7 +503,7 @@ void RigControlMainWindow::displayModeVfo(QString mode)
 QString RigControlMainWindow::convertStringFreq(double frequency)
 {
     double freq = frequency;
-    sfreq = sfreq = QString::number(freq,'f', 0);
+    sfreq = QString::number(freq,'f', 0);
     int len = sfreq.length();
 
 
@@ -639,7 +641,6 @@ void RigControlMainWindow::sendStatusToLogError()
 
 void RigControlMainWindow::sendFreqToLog(freq_t freq)
 {
-
     msg->publishFreq(convertStringFreq(freq));
 }
 
