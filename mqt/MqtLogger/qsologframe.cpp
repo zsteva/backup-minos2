@@ -522,11 +522,11 @@ void QSOLogFrame::on_GJVOKButton_clicked()
     // so do it!
 
     // we have to check if we need to save it
-    // checkLogEntry does the log action as well
+    // checkAndLogEntry does the log action as well
 
     if ( !was_unfilled && !catchup && selectedContact )  // AND if we are logging "current" then we don't want to do this
     {
-       if ( !checkLogEntry(true) )  // if it is the same, then don't log
+       if ( !checkAndLogEntry(true) )  // if it is the same, then don't log
        {
           return;
        }
@@ -674,7 +674,7 @@ void QSOLogFrame::doGJVCancelButton_clicked()
     if (edit)
     {
         catchup = false;
-        checkLogEntry(false);
+        checkAndLogEntry(false);
 
         emit QSOFrameCancelled();
 
@@ -810,7 +810,7 @@ void QSOLogFrame::getScreenEntry()
    screenContact.extraText = ui->QTHEdit->text().trimmed();
    screenContact.comments = ui->CommentsEdit->text().trimmed();
 
-   //screenContact.mode = ui->ModeComboBoxGJV->currentText().trimmed(); ********** need to do something with this....
+   screenContact.mode = ui->ModeComboBoxGJV->currentText().trimmed();
    screenContact.contactFlags &= ~NON_SCORING;
 
    // op1/op2 get set when the attached combos change - I hope :)
@@ -1440,7 +1440,7 @@ void QSOLogFrame::contactValid( void )
 }
 
 //---------------------------------------------------------------------------
-bool QSOLogFrame::checkLogEntry(bool checkDTG)
+bool QSOLogFrame::checkAndLogEntry(bool checkDTG)
 {
 
    if ( contest->isReadOnly() )
@@ -1530,7 +1530,7 @@ void QSOLogFrame::updateQSODisplay()
    //LocEdit->Enabled = false;
    //QTHEdit->Enabled = false;
    ui->CommentsEdit->setEnabled(!contest->isReadOnly());
-   //ui->ModeComboBoxGJV->setEnabled(!contest->isReadOnly());  ***** need to do something with this........
+   ui->ModeComboBoxGJV->setEnabled(!contest->isReadOnly());
    ui->NonScoreCheckBox->setEnabled(!contest->isReadOnly());
    ui->DeletedCheckBox->setEnabled(!contest->isReadOnly());
    ui->GJVOKButton->setEnabled(!contest->isReadOnly());
@@ -1538,7 +1538,7 @@ void QSOLogFrame::updateQSODisplay()
 
    ui->QTHEdit->setEnabled( contest->otherExchange .getValue() || contest->districtMult.getValue() );
 
-   //ui->ModeButton->setEnabled(!contest->isReadOnly());    ***** need to do something with this..........
+   ui->ModeButton->setEnabled(!contest->isReadOnly());
    ui->SecondOpComboBox->setEnabled(!contest->isReadOnly());
    ui->MainOpComboBox->setEnabled(!contest->isReadOnly());
 
@@ -1731,7 +1731,7 @@ void QSOLogFrame::logScreenEntry( )
    MinosLoggerEvents::SendAfterLogContact(ct);
 
    if (!edit || catchup )
-   startNextEntry( );	// select the "next"
+        startNextEntry( );	// select the "next"
 }
 //---------------------------------------------------------------------------
 void QSOLogFrame::getScreenContactTime()
@@ -1775,8 +1775,8 @@ void QSOLogFrame::logCurrentContact( )
          {
             // last child is "current contact", and we need to add TO IT
             LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-            //QString mode = ui->ModeComboBoxGJV->currentText();  ******** need to do something with this............
-            ct->addContact( nct_no, orflag, true, false, mode ); // last contact
+            QString currmode = ui->ModeComboBoxGJV->currentText();
+            ct->addContact( nct_no, orflag, true, false, currmode ); // last contact
             nct_no++;
          }
          while ( nct_no < ctno ) ;
@@ -2032,7 +2032,7 @@ QSharedPointer<BaseContact> QSOLogFrame::getPriorContact()
 void QSOLogFrame::on_PriorButton_clicked()
 {
    current = 0;            // make sure the focus moves off this button
-   if ( !checkLogEntry(true) )
+   if ( !checkAndLogEntry(true) )
    {
       return ;
    }
@@ -2067,7 +2067,7 @@ QSharedPointer<BaseContact> QSOLogFrame::getNextContact()
 void QSOLogFrame::on_NextButton_clicked()
 {
    current = 0;            // make sure the focus moves off this button
-   if ( !checkLogEntry(true) )
+   if ( !checkAndLogEntry(true) )
    {
       return ;
    }
