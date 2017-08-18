@@ -26,7 +26,6 @@ signals:
    void LogColumnsChanged();
    void SplittersChanged();
    void ValidateError(int err);
-   void ShowErrorList();
    void ReportOverstrike(bool ov, BaseContestLog *c);
    void AfterLogContact(BaseContestLog *ct);
    void AfterSelectContact(QSharedPointer<BaseContact> ct, BaseContestLog *);
@@ -62,7 +61,6 @@ public:
    static void SendLogColumnsChanged();
    static void SendSplittersChanged();
    static void SendValidateError(int err);
-   static void SendShowErrorList();
    static void SendReportOverstrike(bool ov, BaseContestLog *c);
    static void SendAfterLogContact(BaseContestLog *ct);
    static void SendAfterSelectContact(QSharedPointer<BaseContact> ct, BaseContestLog *);

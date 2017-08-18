@@ -497,15 +497,20 @@ void QSOLogFrame::on_GJVOKButton_clicked()
           if ( nextf == current )
           {
              if ( firstInvalid != nextf )
+             {
                 selectField( firstInvalid );
+             }
              else
-                dlgForced();   // repeated attack on same faulty field
+             {
+                 if (dlgForced())              // repeated attack on same faulty field
+                 {
+                     emit QSOFrameCancelled();  // so edit dialog can close
+                 }
+             }
           }
           else
              selectField( nextf );
        }
-       // Show on errList on multdisp frame
-       MinosLoggerEvents::SendShowErrorList();
        return;
     }
     else
@@ -601,8 +606,7 @@ void QSOLogFrame::on_GJVForceButton_clicked()
        return;
     }
     ui->SerTXEdit->setReadOnly(true);
-//    SerTXEdit->Color = clBtnFace;
-    MinosLoggerEvents::SendShowErrorList();
+
     if (dlgForced())
         emit QSOFrameCancelled();
 
@@ -692,8 +696,6 @@ void QSOLogFrame::doGJVCancelButton_clicked()
 
         if ( temp )
            partialContact = temp;
-
-        MinosLoggerEvents::SendShowErrorList();
     }
 }
 
@@ -870,7 +872,6 @@ void QSOLogFrame::showScreenEntry( void )
          selectField( 0 );
 
       ui->SerTXEdit->setReadOnly(true);
-      MinosLoggerEvents::SendShowErrorList();
       MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest);
    }
 }
@@ -988,7 +989,6 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
       valid( cmCheckValid ); // make sure all single and cross field
       doAutofill();           // should only be time to be filled
    }
-   MinosLoggerEvents::SendShowErrorList();
 
    // make sure the mode button shows the correct "flip" value
 
@@ -1253,8 +1253,6 @@ void QSOLogFrame::selectField( QWidget *v )
        v->setFocus();
        current = v;
     }
-    MinosLoggerEvents::SendShowErrorList();
-
 }
 //==============================================================================
 // check for embedded space or empty number
