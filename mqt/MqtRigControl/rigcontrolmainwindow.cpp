@@ -390,10 +390,10 @@ void RigControlMainWindow::getFrequency(vfo_t vfo)
                     }
                     qDebug() << "Transvert f " << transVertF;
                     curTransVertFrq[0] = transVertF;
-                    displayTransVertVfoA(transVertF);
+                    displayTransVertVfo(transVertF);
 
                 }
-                displayFreqVfoA(rfrequency);
+                displayFreqVfo(rfrequency);
 
                 if (selectRig->currentRadio.transVertEnable)
                 {
@@ -434,7 +434,7 @@ void RigControlMainWindow::getMode(vfo_t vfo)
             if (rmode != curMode[0])
             {
                 curMode[0] = rmode;
-                displayModeVfoA(radio->convertModeQstr(rmode));
+                displayModeVfo(radio->convertModeQstr(rmode));
                 sendModeToLog(radio->convertModeQstr(rmode));
             }
             else
@@ -473,40 +473,30 @@ void RigControlMainWindow::updateFreq(double frequency)
 
 */
 
-void RigControlMainWindow::displayFreqVfoA(double frequency)
+void RigControlMainWindow::displayFreqVfo(double frequency)
 {
 
     qDebug() << "Got freq " << frequency;
     ui->radioFreqA->setText(convertStringFreq(frequency));
 }
 
-void RigControlMainWindow::displayFreqVfoB(double frequency)
-{
-
-    ui->radioFreqB->setText(convertStringFreq(frequency));
-}
 
 
-void RigControlMainWindow::displayTransVertVfoA(double frequency)
+
+void RigControlMainWindow::displayTransVertVfo(double frequency)
 {
     ui->transVertFreqA->setText(convertStringFreq(frequency));
 }
 
 
-void RigControlMainWindow::displayTransVertVfoB(double frequency)
-{
-    ui->transVertFreqB->setText(convertStringFreq(frequency));
-}
 
-void RigControlMainWindow::displayModeVfoA(QString mode)
+
+void RigControlMainWindow::displayModeVfo(QString mode)
 {
     ui->modeA->setText(mode);
 }
 
-void RigControlMainWindow::displayModeVfoB(QString mode)
-{
-    ui->modeB->setText(mode);
-}
+
 
 QString RigControlMainWindow::convertStringFreq(double frequency)
 {
@@ -584,7 +574,7 @@ void RigControlMainWindow::hamlibError(int errorCode)
     errCode *= -1;
     QString errorMsg = radio->gethamlibErrorMsg(errCode);
 
-    QMessageBox::critical(this, "hamlib Error", QString::number(errCode) + " - " + errorMsg);
+    QMessageBox::critical(this, "hamlib Error - " + selectRig->currentRadio.radioName, QString::number(errCode) + " - " + errorMsg);
 
     closeRadio();
 

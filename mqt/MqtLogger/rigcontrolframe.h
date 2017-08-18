@@ -23,6 +23,10 @@ public:
     void setRadioName(QString);
     void setRadioState(QString);
 
+signals:
+
+    void sendModeLogFrame(QString);
+
 private:
 
     bool radioLoaded;

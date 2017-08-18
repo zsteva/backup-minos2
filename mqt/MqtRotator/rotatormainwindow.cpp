@@ -1375,7 +1375,7 @@ void RotatorMainWindow::hamlibError(int errorCode)
     errCode *= -1;
     QString errorMsg = rotator->gethamlibErrorMsg(errCode);
 
-    QMessageBox::critical(this, "hamlib Error", QString::number(errCode) + " - " + errorMsg);
+    QMessageBox::critical(this, "Rotator hamlib Error - " + selectRotator->currentAntenna.antennaName, QString::number(errCode) + " - " + errorMsg);
 
     closeRotator();
 

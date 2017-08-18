@@ -96,12 +96,12 @@ private:
     void hamlibError(int errorCode);
 //    void frequency_updated(double frequency);
 //    void mode_updated(QString);
-    void displayFreqVfoA(double);
-    void displayFreqVfoB(double);
-    void displayModeVfoA(QString);
-    void displayModeVfoB(QString);
-    void displayTransVertVfoA(double frequency);
-    void displayTransVertVfoB(double frequency);
+    void displayFreqVfo(double);
+
+    void displayModeVfo(QString);
+
+    void displayTransVertVfo(double frequency);
+
 
 
     void logMessage(QString s);
