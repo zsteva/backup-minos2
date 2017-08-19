@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>504</width>
-    <height>158</height>
+    <width>501</width>
+    <height>124</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -116,17 +116,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_6">
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>50</height>
-            </size>
-           </property>
+          <widget class="QLabel" name="bandSellbl">
            <property name="text">
-            <string>Set</string>
+            <string>Quick Sel</string>
            </property>
           </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="bandSelCombo"/>
          </item>
          <item>
           <widget class="QLabel" name="modelbl">

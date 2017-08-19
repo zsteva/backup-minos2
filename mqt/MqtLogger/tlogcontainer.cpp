@@ -81,7 +81,7 @@ void TLogContainer::subscribeApps()
 
     for (int i = 0; i < servers.size(); i++)
     {
-        rpc->subscribeRemote( servers[i], rpcConstants::RigControlCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::rigControlCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::KeyerCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::BandMapCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::RotatorCategory );

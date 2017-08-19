@@ -1,3 +1,23 @@
+/////////////////////////////////////////////////////////////////////////////
+// $Id$
+//
+// PROJECT NAME 		Minos Amateur Radio Control and Logging System
+//                      Rotator Control
+// Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2017
+//
+// Interprocess Control Logic
+// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2017
+//
+//
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
 #include "logger_pch.h"
 
 #include "rigcontrolframe.h"
@@ -14,11 +34,12 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     , radioName("")
     , radioState("")
     , radioLoaded(false)
+    , freqEditOn(false)
 {
 
     ui->setupUi(this);
-    ui->modelbl->setText(MODE_ERROR);
-    connect(ui->freqInput, SIGNAL(receivedFocus()), this, SLOT(freqLineEditInFocus()));
+
+    initRigFrame();
 
 }
 
@@ -27,6 +48,24 @@ RigControlFrame::~RigControlFrame()
     delete ui;
 
 }
+
+
+void RigControlFrame::initRigFrame()
+{
+
+    ui->modelbl->setText(MODE_ERROR);
+    connect(ui->freqInput, SIGNAL(receivedFocus()), this, SLOT(freqLineEditInFocus()));
+    connect(ui->freqInput, SIGNAL(returnPressed()), this, SLOT(changeRadioFreq()));
+    connect(this, SIGNAL(escapePressed()), this, SLOT(exitFreqEdit()));
+
+    for (int i = 0; i < bandSelData::bandNames.count(); i++)
+    {
+        ui->bandSelCombo->addItem(bandSelData::bandNames[i]);
+    }
+
+    connect(ui->bandSelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(radioBandFreq(int)));
+}
+
 
 
 void RigControlFrame::setRadioLoaded()
@@ -46,11 +85,72 @@ void RigControlFrame::setFreq(QString f)
     freq.remove('.');
     if (freq.count() >= 4)
     {
-        ui->freqInput->setInputMask(maskData::freqMask[freq.count() - 4]);
-        ui->freqInput->setText(freq);
+        if (!freqEditOn)
+        {
+            ui->freqInput->setInputMask(maskData::freqMask[freq.count() - 4]);
+            ui->freqInput->setText(freq);
+        }
         curFreq = freq;
     }
     // an error here
+
+}
+
+
+void RigControlFrame::changeRadioFreq()
+{
+    QString freq = "";
+    if (ui->freqInput->isModified())
+    {
+        freq = ui->freqInput->text();
+        if (freq.count() >=4)
+        {
+            emit sendFreqControl(freq);
+        }
+    }
+
+    exitFreqEdit();
+}
+
+
+
+void RigControlFrame::radioBandFreq(int index)
+{
+    if (index > 0 && index < bandSelData::bandFreq.count())
+    {
+        ui->freqInput->setInputMask(maskData::freqMask[bandSelData::bandMaskIdx[index]]);
+        ui->freqInput->setText(bandSelData::freqDialZero[index]);
+        emit sendFreqControl(bandSelData::bandFreq[index]);
+    }
+}
+
+
+void RigControlFrame::exitFreqEdit()
+{
+
+    setFreq(curFreq);
+    freqLineEditFrameColour(false);
+    ui->freqInput->clearFocus();
+    freqEditOn = false;
+
+}
+
+
+void RigControlFrame::keyPressEvent(QKeyEvent *event)
+{
+
+    int Key = event->key();
+
+/*
+    Qt::KeyboardModifiers mods = event->modifiers();
+    bool shift = mods & Qt::ShiftModifier;
+    bool ctrl = mods & Qt::ControlModifier;
+    bool alt = mods & Qt::AltModifier;
+*/
+    if (Key == Qt::Key_Escape)
+    {
+        emit escapePressed();
+    }
 
 }
 
@@ -77,6 +177,12 @@ void RigControlFrame::setMode(QString m)
 }
 
 
+void RigControlFrame::sendModeToRadio(QString m)
+{
+    sendModeToControl(m);
+}
+
+
 
 void RigControlFrame::setRadioName(QString n)
 {
@@ -94,6 +200,8 @@ void RigControlFrame::setRadioState(QString s)
 
 void RigControlFrame::freqLineEditInFocus()
 {
+
+    freqEditOn = true;
     freqLineEditFrameColour(true);
 }
 
@@ -130,7 +238,7 @@ void RigControlFrame::freqLineEditFrameColour(bool status)
     }
     else
     {
-        ui->freqInput->setStyleSheet("border: 1px solid white");
+        ui->freqInput->setStyleSheet("border: 1px solid black");
 
     }
 

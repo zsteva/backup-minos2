@@ -6,7 +6,7 @@
 // Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2017
 //
 // Interprocess Control Logic
-// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2007
+// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2017
 //
 // Hamlib Library
 //
@@ -96,6 +96,7 @@ private:
     void hamlibError(int errorCode);
 //    void frequency_updated(double frequency);
 //    void mode_updated(QString);
+    void setFreq(QString, vfo_t vfo);
     void displayFreqVfo(double);
 
     void displayModeVfo(QString);
@@ -128,6 +129,8 @@ private slots:
 //private slots:
 //    void updateFreq(double frequency);
 
+
+    void loggerSetFreq(QString freq);
 
 signals:
 

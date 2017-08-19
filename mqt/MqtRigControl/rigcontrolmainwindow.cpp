@@ -6,7 +6,7 @@
 // Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2017
 //
 // Interprocess Control Logic
-// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2007
+// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2017
 //
 // Hamlib Library
 //
@@ -193,6 +193,8 @@ void RigControlMainWindow::initActionsConnections()
 //    connect(this, SIGNAL(frequency_updated(double)), this, SLOT(displayFreqA(const double)));
     connect(this, SIGNAL(mode_updated(QString)), this, SLOT(displayModeVfoA(QString)));
 
+    // Message from Logger
+    connect(msg, SIGNAL(setFreq(QString)), this, SLOT(loggerSetFreq(QString)));
 
     //connect(this, SIGNAL(frequency_updated(double)), this, SLOT(drawDial(double)));
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
@@ -364,6 +366,56 @@ void RigControlMainWindow::getRadioInfo()
 
 }
 
+
+void RigControlMainWindow::loggerSetFreq(QString freq)
+{
+    setFreq(freq, RIG_VFO_CURR);
+}
+
+
+void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
+{
+    bool ok = false;
+    int retCode = 0;
+    QString sfreq = freq.remove('.');
+
+    double f = sfreq.toDouble(&ok);
+
+    if (ok)
+    {
+        if (selectRig->currentRadio.transVertEnable)
+        {
+            if (selectRig->currentRadio.transVertNegative)
+            {
+                f = f + selectRig->currentRadio.transVertOffset;
+            }
+            else
+            {
+                f = f - selectRig->currentRadio.transVertOffset;
+            }
+        }
+        if (radio->get_serialConnected())
+        {
+            retCode = radio->setFrequency(f, vfo);
+            if (retCode == RIG_OK)
+            {
+                qDebug() << "frequency changed!";
+            }
+            else
+            {
+                qDebug() << "frequency fail to changed";
+            }
+        }
+        else
+        {
+            qDebug() << "radio not conntected";
+        }
+    }
+    else
+    {
+        qDebug() << "freq conversion from string failed";
+    }
+}
 
 void RigControlMainWindow::getFrequency(vfo_t vfo)
 {

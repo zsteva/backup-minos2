@@ -264,7 +264,7 @@ private slots:
     void sendKeyerTwoTone();
     void sendKeyerStop();
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
-
+    void sendRadioFreq(QString);
 };
 
 #endif // TSINGLELOGFRAME_H

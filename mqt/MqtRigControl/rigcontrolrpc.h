@@ -39,7 +39,8 @@ public:
     void publishFreq(const QString &freq);
     void publishMode(const QString &mode);
 signals:
-
+    void setFreq(QString);
+    void setMode(QString);
 public slots:
 
 
