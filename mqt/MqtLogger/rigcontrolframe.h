@@ -19,6 +19,9 @@
 
 #include "logger_pch.h"
 #include "RPCCommandConstants.h"
+#include "rigmempushbutton.h"
+
+#define NUM_MEMORIES 6
 
 namespace Ui {
     class RigControlFrame;
@@ -135,8 +138,12 @@ private slots:
     void freqLineEditInFocus();
     void changeRadioFreq();
     void radioBandFreq(int index);
+
+    void clickedMemory(int);
+
 private:
 
+    QPushButton* memButtons[NUM_MEMORIES];
     bool radioLoaded;
     bool isRadioLoaded();
     bool freqEditOn;
@@ -152,6 +159,7 @@ private:
     void keyPressEvent(QKeyEvent *event);
 
     void initRigFrame();
+    void initMemoryButtons();
 signals:
     void escapePressed();
 

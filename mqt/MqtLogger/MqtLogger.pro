@@ -69,7 +69,8 @@ SOURCES += main.cpp \
     StartConfig.cpp \
     rigcontrolframe.cpp \
     rotcontrolframe.cpp \
-    bandmapframe.cpp
+    bandmapframe.cpp \
+    rigmempushbutton.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -110,7 +111,8 @@ HEADERS  += \
     StartConfig.h \
     rigcontrolframe.h \
     rotcontrolframe.h \
-    bandmapframe.h
+    bandmapframe.h \
+    rigmempushbutton.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \

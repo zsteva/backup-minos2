@@ -606,6 +606,20 @@ void RotatorMainWindow::displayBearing(int bearing)
 
 
 
+void RotatorMainWindow::clickedPreset(int buttonNumber)
+{
+
+    if (presetName[buttonNumber] != "")
+    {
+        if (presetBearing[buttonNumber] != "")
+        {
+           ui->bearingEdit->setText(presetBearing[buttonNumber]);
+           emit presetRotateTo();
+        }
+    }
+}
+
+
 
 
 
@@ -652,18 +666,7 @@ void RotatorMainWindow::updatePresetLabels()
 
 
 
-void RotatorMainWindow::clickedPreset(int buttonNumber)
-{
 
-    if (presetName[buttonNumber] != "")
-    {
-        if (presetBearing[buttonNumber] != "")
-        {
-           ui->bearingEdit->setText(presetBearing[buttonNumber]);
-           emit presetRotateTo();
-        }
-    }
-}
 
 
 

@@ -16,7 +16,7 @@
 
 
 
-
+#include <QSignalMapper>
 
 #include "logger_pch.h"
 
@@ -134,6 +134,49 @@ void RigControlFrame::exitFreqEdit()
     freqEditOn = false;
 
 }
+
+
+void RigControlFrame::initMemoryButtons()
+{
+    memButtons[0] = ui->mem1pb;
+    memButtons[1] = ui->mem2pb;
+    memButtons[2] = ui->mem3pb;
+    memButtons[3] = ui->mem4pb;
+    memButtons[4] = ui->mem5pb;
+    memButtons[5] = ui->mem6pb;
+
+    QSignalMapper *memButton_mapper = new QSignalMapper(this);
+
+    for (int i = 0; i < NUM_MEMORIES; i++ )
+    {
+        memButton_mapper->setMapping(memButtons[i], i);
+        connect(memButtons[i], SIGNAL(clicked()), memButton_mapper, SLOT(map()));
+
+    }
+    connect(memButton_mapper, SIGNAL(mapped(int)), this, SLOT(clickedMemory(int)));
+
+
+}
+
+
+void RigControlFrame::clickedMemory(int buttonNumber)
+{
+
+
+    qDebug() << "rightclicked button " << buttonNumber;
+/*
+
+    if (presetName[buttonNumber] != "")
+    {
+        if (presetBearing[buttonNumber] != "")
+        {
+           ui->bearingEdit->setText(presetBearing[buttonNumber]);
+           emit presetRotateTo();
+        }
+    }
+*/
+}
+
 
 
 void RigControlFrame::keyPressEvent(QKeyEvent *event)
