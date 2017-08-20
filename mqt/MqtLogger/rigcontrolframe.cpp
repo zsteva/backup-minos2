@@ -18,6 +18,7 @@
 
 #include <QSignalMapper>
 
+
 #include "logger_pch.h"
 
 #include "rigcontrolframe.h"
@@ -41,7 +42,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     ui->setupUi(this);
 
     initRigFrame();
-
+    initMemoryButtons();
 }
 
 RigControlFrame::~RigControlFrame()
@@ -139,12 +140,24 @@ void RigControlFrame::exitFreqEdit()
 
 void RigControlFrame::initMemoryButtons()
 {
-    memButtons[0] = ui->mem1pb;
-    memButtons[1] = ui->mem2pb;
-    memButtons[2] = ui->mem3pb;
-    memButtons[3] = ui->mem4pb;
-    memButtons[4] = ui->mem5pb;
-    memButtons[5] = ui->mem6pb;
+    memButtons[0] = ui->memButton1;
+    memButtons[1] = ui->memButton2;
+    memButtons[2] = ui->memButton3;
+    memButtons[3] = ui->memButton4;
+    memButtons[4] = ui->memButton5;
+    memButtons[5] = ui->memButton6;
+
+    for (int i = 0; i < NUM_MEMORIES; i++)
+    {
+        memButtons[i]->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        memButtons[i]->setText(memoryData::memoryTitle[i] + memoryData::memTitleBlank);
+        memButtons[i]->setPopupMode(QToolButton::InstantPopup);
+        memoryMenu[i] = new QMenu(memButtons[i]);
+        memoryMenu[i]->addAction(new QAction("Read", this));
+        memoryMenu[i]->addAction(new QAction("Write", this));
+        memoryMenu[i]->addAction(new QAction("Clear", this));
+        memButtons[i]->setMenu(memoryMenu[i]);
+    }
 
     QSignalMapper *memButton_mapper = new QSignalMapper(this);
 
@@ -156,9 +169,6 @@ void RigControlFrame::initMemoryButtons()
     }
     connect(memButton_mapper, SIGNAL(mapped(int)), this, SLOT(clickedMemory(int)));
 
-    connect(ui->memReadSel, SIGNAL(clicked(bool)), this, SLOT(memRadioButtonClicked(bool)));
-
-    connect(ui->memWriteSel, SIGNAL(clicked(bool)), this, SLOT(memRadioButtonClicked(bool)));
 
 
 
@@ -168,16 +178,7 @@ void RigControlFrame::initMemoryButtons()
 void RigControlFrame::memRadioButtonClicked(bool)
 {
 
-    if (ui->memReadSel->isChecked())
-    {
-        memReadFlag = true;
-        ui->memReadSel->setStyleSheet("border: 1px solid black");
-    }
-    else if (ui->memWriteSel->isChecked())
-    {
-       memReadFlag = false;
-       ui->memWriteSel->setStyleSheet("border: 1px solid red");
-    }
+
 
 
 }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>577</width>
-    <height>170</height>
+    <width>581</width>
+    <height>167</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
   <property name="frameShadow">
    <enum>QFrame::Raised</enum>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout_3">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
@@ -118,7 +118,7 @@
          <item>
           <widget class="QLabel" name="bandSellbl">
            <property name="text">
-            <string>Quick Sel</string>
+            <string>Quick Sel'</string>
            </property>
           </widget>
          </item>
@@ -148,81 +148,82 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QGroupBox" name="groupBox">
-           <property name="title">
-            <string>Memory</string>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Mem.</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_4">
-                <item>
-                 <widget class="QRadioButton" name="memReadSel">
-                  <property name="text">
-                   <string>MR</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="memWriteSel">
-                  <property name="text">
-                   <string>MW</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QPushButton" name="mem1pb">
-                <property name="text">
-                 <string>M1:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="mem2pb">
-                <property name="text">
-                 <string>M2:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="mem3pb">
-                <property name="text">
-                 <string>M3:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="mem4pb">
-                <property name="text">
-                 <string>M4:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="mem5pb">
-                <property name="text">
-                 <string>M5:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="mem6pb">
-                <property name="text">
-                 <string>M6:</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="memButton1">
+           <property name="text">
+            <string>M1:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="memButton2">
+           <property name="text">
+            <string>M2:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="memButton3">
+           <property name="text">
+            <string>M3:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="memButton4">
+           <property name="text">
+            <string>M4:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="memButton5">
+           <property name="text">
+            <string>M5:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="memButton6">
+           <property name="text">
+            <string>M6:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="memButton7">
+           <property name="text">
+            <string>M7:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="memButton8">
+           <property name="text">
+            <string>M8:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="memButton9">
+           <property name="text">
+            <string>M9:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="memButton10">
+           <property name="text">
+            <string>M10:</string>
+           </property>
           </widget>
          </item>
         </layout>

@@ -17,9 +17,12 @@
 #ifndef RIGCONTROLFRAME_H
 #define RIGCONTROLFRAME_H
 
+#include <QMenu>
+#include <QAction>
+#include <QToolButton>
 #include "logger_pch.h"
 #include "RPCCommandConstants.h"
-#include "rigmempushbutton.h"
+
 
 #define NUM_MEMORIES 6
 
@@ -92,6 +95,23 @@ const maskData::freqMask_lookup bandMaskIdx[] = { maskData::MHZ99,      /* Not u
 
 }
 
+namespace memoryData {
+
+const QStringList memoryTitle = { "M1:",
+                                  "M2:",
+                                  "M3:",
+                                  "M4:",
+                                  "M5:",
+                                  "M6:",
+                                  "M7:",
+                                  "M8:",
+                                  "M9:",
+                                  "M10:"};
+
+const QString memTitleBlank = "        ";
+
+}
+
 class FreqLineEdit : public QLineEdit
 {
     Q_OBJECT
@@ -144,7 +164,8 @@ private slots:
     void memRadioButtonClicked(bool);
 private:
 
-    QPushButton* memButtons[NUM_MEMORIES];
+    QToolButton* memButtons[NUM_MEMORIES];
+    QMenu* memoryMenu[NUM_MEMORIES];
     bool radioLoaded;
     bool isRadioLoaded();
     bool freqEditOn;
