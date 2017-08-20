@@ -141,12 +141,14 @@ private slots:
 
     void clickedMemory(int);
 
+    void memRadioButtonClicked(bool);
 private:
 
     QPushButton* memButtons[NUM_MEMORIES];
     bool radioLoaded;
     bool isRadioLoaded();
     bool freqEditOn;
+    bool memReadFlag;
     QString curFreq;
     QString curMode;
     QString radioName;

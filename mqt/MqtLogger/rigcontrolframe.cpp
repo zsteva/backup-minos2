@@ -35,6 +35,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     , radioState("")
     , radioLoaded(false)
     , freqEditOn(false)
+    , memReadFlag(true)
 {
 
     ui->setupUi(this);
@@ -155,8 +156,35 @@ void RigControlFrame::initMemoryButtons()
     }
     connect(memButton_mapper, SIGNAL(mapped(int)), this, SLOT(clickedMemory(int)));
 
+    connect(ui->memReadSel, SIGNAL(clicked(bool)), this, SLOT(memRadioButtonClicked(bool)));
+
+    connect(ui->memWriteSel, SIGNAL(clicked(bool)), this, SLOT(memRadioButtonClicked(bool)));
+
+
 
 }
+
+
+void RigControlFrame::memRadioButtonClicked(bool)
+{
+
+    if (ui->memReadSel->isChecked())
+    {
+        memReadFlag = true;
+        ui->memReadSel->setStyleSheet("border: 1px solid black");
+    }
+    else if (ui->memWriteSel->isChecked())
+    {
+       memReadFlag = false;
+       ui->memWriteSel->setStyleSheet("border: 1px solid red");
+    }
+
+
+}
+
+
+
+
 
 
 void RigControlFrame::clickedMemory(int buttonNumber)
