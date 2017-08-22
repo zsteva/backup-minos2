@@ -25,6 +25,9 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->BrgSt->setFixedSize(ui->BrgSt->size());
+    ui->DistSt->setFixedSize(ui->DistSt->size());
+
     CallsignFW = new FocusWatcher(ui->CallsignEdit);
     CallsignLabelString = ui->Callsignlabel->text();
     ui->CallsignEdit->setValidator(new UpperCaseValidator(true));
@@ -102,21 +105,6 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     QString ss("QLineEdit { background-color: white ; border: none ; color: black ; }");
     ui->DateEdit->setStyleSheet(ss);
     ui->TimeEdit->setStyleSheet(ss);
-
-    /*
-    QFontMetrics metrics(QApplication::font());
-
-    ui->BrgSt->setFixedWidth(metrics.width("(8888)MT"));
-
-    ui->RotateLeft->setShortcut(QKeySequence(ROTATE_CCW_KEY));
-    ui->RotateRight->setShortcut(QKeySequence(ROTATE_CW_KEY));
-    ui->Rotate->setShortcut(QKeySequence(ROTATE_TURN_KEY));
-    ui->StopRotate->setShortcut(QKeySequence(ROTATE_STOP_KEY));
-
-    rot_left_button_off();
-    rot_right_button_off();
-*/
-
 }
 
 
@@ -337,15 +325,11 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
    else
    {
        ui->MatchXferButton->setVisible(false);
-      // ui->AutoBandmapTime->setVisible(false);
-      // ui->AutoBandmapTune->setVisible(false);
-      // ui->BandMapButton->setVisible(false);
    }
 
    updateQSODisplay();
    refreshOps();
 
-//   SerTXEdit->Color = clBtnFace;
    QString ss("QLineEdit { background-color: silver ; border-style: outset ; border-width: 1px ; border-color: black ; }");
    ui->SerTXEdit->setStyleSheet(ss);
    current = 0;

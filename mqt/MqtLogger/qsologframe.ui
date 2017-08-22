@@ -213,22 +213,13 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="BrgSt">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
-           </property>
-           <property name="maxLength">
-            <number>5</number>
-           </property>
-           <property name="frame">
-            <bool>true</bool>
-           </property>
+          <widget class="QLabel" name="BrgSt">
+          <property name="text">
+           <string>1234</string>
+          </property>
+          <property name="margin">
+           <number>0</number>
+          </property>
           </widget>
          </item>
         </layout>
