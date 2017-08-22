@@ -19,6 +19,7 @@
 #define ROTCONTROLFRAME_H
 
 #include "logger_pch.h"
+#include "rigmemdialog.h"
 
 namespace Ui {
 class RotControlFrame;
@@ -43,6 +44,8 @@ public:
 
 
 private:
+
+    RigMemDialog *memDialog;
 
     int getAngle();
 

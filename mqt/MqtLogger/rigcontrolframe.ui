@@ -118,7 +118,7 @@
          <item>
           <widget class="QLabel" name="bandSellbl">
            <property name="text">
-            <string>Quick Sel'</string>
+            <string>Quick Sel.</string>
            </property>
           </widget>
          </item>

@@ -20,7 +20,6 @@
 
 
 #include "logger_pch.h"
-
 #include "rigcontrolframe.h"
 #include "ui_rigcontrolframe.h"
 #include "SendRPCDM.h"
@@ -138,6 +137,7 @@ void RigControlFrame::exitFreqEdit()
 }
 
 
+
 void RigControlFrame::initMemoryButtons()
 {
     memButtons[0] = ui->memButton1;
@@ -146,65 +146,91 @@ void RigControlFrame::initMemoryButtons()
     memButtons[3] = ui->memButton4;
     memButtons[4] = ui->memButton5;
     memButtons[5] = ui->memButton6;
+    memButtons[6] = ui->memButton7;
+    memButtons[7] = ui->memButton8;
+    memButtons[8] = ui->memButton9;
+    memButtons[9] = ui->memButton10;
 
-    for (int i = 0; i < NUM_MEMORIES; i++)
+
+
+    for (int i = 0; i < memoryData::NUM_MEMORIES; i++)
     {
         memButtons[i]->setToolButtonStyle(Qt::ToolButtonTextOnly);
         memButtons[i]->setText(memoryData::memoryTitle[i] + memoryData::memTitleBlank);
         memButtons[i]->setPopupMode(QToolButton::InstantPopup);
+
         memoryMenu[i] = new QMenu(memButtons[i]);
-        memoryMenu[i]->addAction(new QAction("Read", this));
-        memoryMenu[i]->addAction(new QAction("Write", this));
-        memoryMenu[i]->addAction(new QAction("Clear", this));
+
+        readAction[i] = new QAction("Read", this);
+        writeAction[i] = new QAction("Write", this);
+        clearAction[i] = new QAction("Clear", this);
+
+        memoryMenu[i]->addAction(readAction[i]);
+        memoryMenu[i]->addAction(writeAction[i]);
+        memoryMenu[i]->addAction(clearAction[i]);
+
         memButtons[i]->setMenu(memoryMenu[i]);
     }
 
-    QSignalMapper *memButton_mapper = new QSignalMapper(this);
+    // map read Action
 
-    for (int i = 0; i < NUM_MEMORIES; i++ )
+    QSignalMapper *readAction_mapper = new QSignalMapper(this);
+
+    for (int i = 0; i < memoryData::NUM_MEMORIES; i++ )
     {
-        memButton_mapper->setMapping(memButtons[i], i);
-        connect(memButtons[i], SIGNAL(clicked()), memButton_mapper, SLOT(map()));
+        readAction_mapper->setMapping(readAction[i], i);
+        connect(readAction[i], SIGNAL(triggered()), readAction_mapper, SLOT(map()));
 
     }
-    connect(memButton_mapper, SIGNAL(mapped(int)), this, SLOT(clickedMemory(int)));
+    connect(readAction_mapper, SIGNAL(mapped(int)), this, SLOT(readActionSelected(int)));
 
+    // map write Action
 
+    QSignalMapper *writeAction_mapper = new QSignalMapper(this);
 
-
-}
-
-
-void RigControlFrame::memRadioButtonClicked(bool)
-{
-
-
-
-
-}
-
-
-
-
-
-
-void RigControlFrame::clickedMemory(int buttonNumber)
-{
-
-
-    qDebug() << "rightclicked button " << buttonNumber;
-/*
-
-    if (presetName[buttonNumber] != "")
+    for (int i = 0; i < memoryData::NUM_MEMORIES; i++ )
     {
-        if (presetBearing[buttonNumber] != "")
-        {
-           ui->bearingEdit->setText(presetBearing[buttonNumber]);
-           emit presetRotateTo();
-        }
+        writeAction_mapper->setMapping(writeAction[i], i);
+        connect(writeAction[i], SIGNAL(triggered()), writeAction_mapper, SLOT(map()));
+
     }
-*/
+    connect(writeAction_mapper, SIGNAL(mapped(int)), this, SLOT(writeActionSelected(int)));
+
+
+    // map Clear Action
+
+    QSignalMapper *clearAction_mapper = new QSignalMapper(this);
+
+    for (int i = 0; i < memoryData::NUM_MEMORIES; i++ )
+    {
+        clearAction_mapper->setMapping(clearAction[i], i);
+        connect(clearAction[i], SIGNAL(triggered()), clearAction_mapper, SLOT(map()));
+
+    }
+    connect(clearAction_mapper, SIGNAL(mapped(int)), this, SLOT(clearActionSelected(int)));
+
+
 }
+
+
+
+void RigControlFrame::readActionSelected(int buttonNumber)
+{
+    qDebug() << "read action selected, button number = " << buttonNumber;
+}
+
+void RigControlFrame::writeActionSelected(int buttonNumber)
+{
+    qDebug() << "write action selected, button number = " << buttonNumber;
+}
+
+void RigControlFrame::clearActionSelected(int buttonNumber)
+{
+     qDebug() << "clear action selected, button number = " << buttonNumber;
+}
+
+
+
 
 
 

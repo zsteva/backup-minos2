@@ -69,7 +69,8 @@ SOURCES += main.cpp \
     StartConfig.cpp \
     rigcontrolframe.cpp \
     rotcontrolframe.cpp \
-    bandmapframe.cpp
+    bandmapframe.cpp \
+    rigmemdialog.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -110,7 +111,9 @@ HEADERS  += \
     StartConfig.h \
     rigcontrolframe.h \
     rotcontrolframe.h \
-    bandmapframe.h
+    bandmapframe.h \
+    rigmemcommondata.h \
+    rigmemdialog.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
@@ -137,7 +140,8 @@ FORMS    += tlogcontainer.ui \
     StartConfig.ui \
     rigcontrolframe.ui \
     rotcontrolframe.ui \
-    bandmapframe.ui
+    bandmapframe.ui \
+    rigmemdialog.ui
 
 DISTFILES += \
     AndroidTemplate/AndroidManifest.xml \

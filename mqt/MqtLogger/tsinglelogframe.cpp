@@ -116,8 +116,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
 
     // To rig controller
-    connect(ui->FKHRigControlFrame, SIGNAL(sendFreqControl(QString)),
-            this, SLOT(sendRadioFreq(QString)));
+    connect(ui->FKHRigControlFrame, SIGNAL(sendFreqControl(QString)), this, SLOT(sendRadioFreq(QString)));
 
     // Rotator updates
     // From rotator controller
