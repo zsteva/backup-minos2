@@ -71,7 +71,9 @@ void CsvReader::checkString(QString &temp, QChar character, QList<QStringList> &
             itemList.clear();
         }
         temp.clear();
-    } else {
+    }
+    else
+    {
         temp.append(character);
     }
 }
@@ -139,6 +141,10 @@ bool ContactList::cslLoad( void )
        for ( int i = 0; i < readData.size(); ++i )
        {
            const QStringList &parts = readData.at(i);
+
+           if (parts.size() == 0 || parts[0].size() == 0 ||  !(parts[0][0].isLetter() || parts[0][0].isNumber()))
+               continue;
+
            if ( i == 0 && parts.size() > 2 && parts[0].size() == 0 && parts[1].size() == 0 )
            {
                name = parts[ 2 ];              // first line of file gives the list name
