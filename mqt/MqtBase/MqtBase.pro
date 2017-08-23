@@ -85,7 +85,8 @@ HEADERS += \
     waitcursor.h \
     tconfigframe.h \
     MinosTableView.h \
-    ConfigElementFrame.h
+    ConfigElementFrame.h \
+    rigcontrolcommonconstants.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

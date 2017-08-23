@@ -128,7 +128,7 @@ private:
     virtual void showScreenEntry( );
     virtual void getScreenContactTime();
     virtual void showScreenContactTime( );
-    bool checkLogEntry(bool checkDTG );
+    bool checkAndLogEntry(bool checkDTG );
     Ui::QSOLogFrame *ui;
 
     bool edit;

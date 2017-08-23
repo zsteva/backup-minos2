@@ -31,11 +31,6 @@ void MinosLoggerEvents::SendValidateError(int err)
     emit mle.ValidateError(err);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendShowErrorList()
-{
-    emit mle.ShowErrorList();
-}
-//---------------------------------------------------------------------------
 void MinosLoggerEvents::SendReportOverstrike(bool ov, BaseContestLog *c)
 {
     emit mle.ReportOverstrike(ov, c);
