@@ -105,3 +105,9 @@ void RigMemDialog::clearMemory(int memoryLoc)
     memoryList[memoryLoc].bearing = "";
     memoryList[memoryLoc].time = "";
 }
+
+
+void RigMemDialog::setDialogTitle(QString number)
+{
+    this->setWindowTitle("Memory " + number);
+}

@@ -21,6 +21,7 @@
 
 #include "logger_pch.h"
 #include "rigcontrolframe.h"
+//#include "rigmemdialog.h"
 #include "ui_rigcontrolframe.h"
 #include "SendRPCDM.h"
 
@@ -42,6 +43,8 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 
     initRigFrame();
     initMemoryButtons();
+
+
 }
 
 RigControlFrame::~RigControlFrame()
@@ -65,6 +68,10 @@ void RigControlFrame::initRigFrame()
     }
 
     connect(ui->bandSelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(radioBandFreq(int)));
+
+    memDialog = new RigMemDialog(radioName, radioState);
+
+
 }
 
 
@@ -222,6 +229,8 @@ void RigControlFrame::readActionSelected(int buttonNumber)
 void RigControlFrame::writeActionSelected(int buttonNumber)
 {
     qDebug() << "write action selected, button number = " << buttonNumber;
+    memDialog->setDialogTitle(QString::number(buttonNumber));
+    memDialog->show();
 }
 
 void RigControlFrame::clearActionSelected(int buttonNumber)

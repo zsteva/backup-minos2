@@ -17,6 +17,7 @@ public:
     explicit RigMemDialog(QString radioName, QString radioState, QWidget *parent = 0);
     ~RigMemDialog();
 
+    void setDialogTitle(QString number);
 private:
     Ui::RigMemDialog *ui;
     memoryData::memData memoryList[memoryData::NUM_MEMORIES];

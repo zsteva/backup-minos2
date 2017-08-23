@@ -23,34 +23,13 @@
 #include "logger_pch.h"
 #include "RPCCommandConstants.h"
 #include "rigmemcommondata.h"
+#include "rigmemdialog.h"
 
 
 
 namespace Ui {
     class RigControlFrame;
 }
-
-
-
-class FreqLineEdit : public QLineEdit
-{
-    Q_OBJECT
-
-public:
-
-    FreqLineEdit(QWidget *parent);
-    ~FreqLineEdit();
-
-
-    void focusInEvent( QFocusEvent* ) ;
-
-signals:
-    void receivedFocus() ;
-
-} ;
-
-
-
 
 
 class RigControlFrame : public QFrame
@@ -85,6 +64,7 @@ private slots:
     void readActionSelected(int);
     void writeActionSelected(int);
     void clearActionSelected(int);
+
 private:
 
     QToolButton* memButtons[memoryData::NUM_MEMORIES];
@@ -92,6 +72,8 @@ private:
     QAction* readAction[memoryData::NUM_MEMORIES];
     QAction* writeAction[memoryData::NUM_MEMORIES];
     QAction* clearAction[memoryData::NUM_MEMORIES];
+    RigMemDialog* memDialog;
+
     bool radioLoaded;
     bool isRadioLoaded();
     bool freqEditOn;
@@ -113,5 +95,27 @@ signals:
     void escapePressed();
 
 };
+
+
+class FreqLineEdit : public QLineEdit
+{
+    Q_OBJECT
+
+public:
+
+    FreqLineEdit(QWidget *parent);
+    ~FreqLineEdit();
+
+
+    void focusInEvent( QFocusEvent* ) ;
+
+signals:
+    void receivedFocus() ;
+
+private:
+
+
+} ;
+
 
 #endif // RIGCONTROLFRAME_H
