@@ -547,6 +547,8 @@ ScreenContact &TSingleLogFrame::getScreenEntry()
 {
     ui->GJVQSOLogFrame->getScreenEntry();
 
+    ui->GJVQSOLogFrame->calcLoc();
+
     return ui->GJVQSOLogFrame->screenContact;
 }
 //---------------------------------------------------------------------------

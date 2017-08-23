@@ -1277,7 +1277,7 @@ void QSOLogFrame::fillRst( QLineEdit *rIl, QString &rep, const QString &fmode )
    }
 }
 //==============================================================================
-void QSOLogFrame::doAutofill( void )
+void QSOLogFrame::doAutofill()
 {
    if ( contest->isReadOnly() )
       return ;

@@ -5,7 +5,6 @@
 
 #include "focuswatcher.h"
 #include "validators.h"
-//#include "rotatorCommonConstants.h"
 
 namespace Ui {
 class QSOLogFrame;
@@ -20,22 +19,7 @@ public:
     ~QSOLogFrame();
 
     void setAsEdit();
-    //void setRotatorLoaded();
-
-    //void setRotatorState(const QString &s);
-    //void setRotatorBearing(const QString &s);
-    //void setRotatorAntennaName(const QString &s);
-    //void setRotatorMaxAzimuth(const QString &s);
-    //void setRotatorMinAzimuth(const QString &s);
-
     void setBandMapLoaded();
-
-    //void setRadioLoaded();
-    //void setMode(QString);
-    //void setFreq(QString);
-    //void setRadioName(QString);
-    //void setRadioState(QString);
-
     void setKeyerLoaded();
 
     bool savePartial( void );
@@ -48,6 +32,8 @@ public:
 
     virtual void getScreenEntry();
     ScreenContact screenContact;  // contact being edited on screen
+    void calcLoc( );
+
     QSharedPointer<BaseContact> selectedContact;   // contact from log list selected
     bool catchup;
     bool unfilled;
@@ -99,21 +85,6 @@ private:
     QSharedPointer<BaseContact> getPriorContact();
     QSharedPointer<BaseContact> getNextContact();
 
-/*    // rotator
-    int getAngle();
-    //     int maxAzimuth = COMPASS_MAX360;
-    //     int minAzimuth = COMPASS_MIN0;
-    int maxAzimuth = 0;
-    int minAzimuth = 0;
-    int currentBearing = 0;
-    bool moving = false;
-    bool movingCW = false;
-    bool movingCCW = false;
-    bool rot_left_button_status;
-    bool rot_right_button_status;
-    void clearRotatorFlags();
-*/
-
     QVector <ValidatedControl *> vcs;
 
     BaseContestLog * contest;
@@ -121,8 +92,7 @@ private:
     QWidget *current;
     bool updateTimeAllowed;
     bool valid( validTypes command );
-    void calcLoc( void );
-    void doAutofill( void );
+    void doAutofill( );
     void fillRst(QLineEdit *rIl, QString &rep, const QString &mode );
     virtual void showScreenEntry( );
     virtual void getScreenContactTime();
@@ -176,22 +146,12 @@ private:
     bool keyerLoaded;
     bool isKeyerLoaded();
 
-   //bool radioLoaded;
-    //bool isRadioLoaded();
-
     void MainOpComboBox_Exit();
     void SecondOpComboBox_Exit();
-/*
-    void rot_left_button_on();
-    void rot_left_button_off();
-    void rot_right_button_on();
-    void rot_right_button_off();
-*/
 
     QString mode;
     QString oldMode;
     QString curFreq;
-
 
     void setMode(QString m);
 signals:
@@ -222,16 +182,7 @@ private slots:
     void on_ValidateError (int mess_no );
     void on_ShowOperators();
 
-
     void on_ModeComboBoxGJV_currentIndexChanged(int index);
-/*
-    void on_Rotate_clicked();
-    void on_RotateLeft_clicked(bool);
-    void on_RotateRight_clicked(bool);
-    void on_StopRotate_clicked();
-
-*/
-
     void on_RSTTXEdit_textChanged(const QString &arg1);
     void on_RSTRXEdit_textChanged(const QString &arg1);
 
