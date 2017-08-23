@@ -445,23 +445,6 @@ void TSingleLogFrame::transferDetails(MatchTreeItem *MatchTreeIndex )
 }
 //---------------------------------------------------------------------------
 
-void TSingleLogFrame::on_BandMapPressed()
-{
-    ui->GJVQSOLogFrame->getScreenEntry();
-
-    QString call = ui->GJVQSOLogFrame->screenContact.cs.fullCall.getValue();
-    QString loc = ui->GJVQSOLogFrame->screenContact.loc.loc.getValue();
-    QString utc = dtg( true ).getIsoDTG();
-    QString qth = ui->GJVQSOLogFrame->screenContact.extraText;
-    QString freq = sCurrFreq;
-
-    if ( call.size() || loc.size() || qth.size() )
-    {
-       // Transfer to band map app
-//       TSendDM::sendBandMap( freq, call, utc, loc, qth );
-       ui->GJVQSOLogFrame->doGJVCancelButton_clicked();
-    }
-}
 void TSingleLogFrame::QSOTreeSelectContact( QSharedPointer<BaseContact> lct )
 {
    if (lct)
@@ -558,6 +541,13 @@ void TSingleLogFrame::showMatchList( TMatchCollection *matchCollection )
     }
     connect(ui->ArchiveMatchTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(on_ArchiveMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &)), Qt::UniqueConnection);
+}
+//---------------------------------------------------------------------------
+ScreenContact &TSingleLogFrame::getScreenEntry()
+{
+    ui->GJVQSOLogFrame->getScreenEntry();
+
+    return ui->GJVQSOLogFrame->screenContact;
 }
 //---------------------------------------------------------------------------
 void TSingleLogFrame::on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* )

@@ -116,6 +116,8 @@ public:
     void EditMatchContact();
     void QSOTreeSelectContact( QSharedPointer<BaseContact> lct );
 
+    ScreenContact &getScreenEntry();
+
     void refreshMults();
     TSendDM *sendDM;
 
@@ -190,7 +192,6 @@ private:
 private slots:
     void on_ContestPageChanged();
     void on_XferPressed();
-    void on_BandMapPressed();
     void NextContactDetailsTimerTimer();
     void PublishTimerTimer();
     void HideTimerTimer();
