@@ -2,13 +2,13 @@
 
 cd ~
 
-if [ -d ./minos_runtime ]; then
-  rm -rf ./minos_runtime
+if [ -d ./minos-runtime ]; then
+  rm -rf ./minos-runtime
 fi
 
-mkdir ./minos_runtime
+mkdir ./minos-runtime
 
-cd ./minos_runtime
+cd ./minos-runtime
 
 mkdir Configuration
 mkdir Lists
@@ -24,6 +24,7 @@ cp ~/Minos2/build-mqt-Desktop-Release/MqtMonitor/MqtMonitor Bin
 cp ~/Minos2/build-mqt-Desktop-Release/MqtServer/MqtServer Bin
 
 cp ~/Minos2/mqt/ControlFiles/Configuration/* ./Configuration
+cp ~/Minos2/mqt/Installer/Minos.sh . 
 
 cd Configuration
 
