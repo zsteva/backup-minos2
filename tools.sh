@@ -13,11 +13,11 @@ apt-get install qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plu
 apt-get install libqt5serialport5 -y
 apt-get install libqt5serialport5-dev -y
 
-apt-get install libhamlib2
-apt-get install libhamlib-dev
+apt-get install libhamlib2 -y
+apt-get install libhamlib-dev -y
 
-apt-get install libasound2
-apt-get install libasound2-dev
+apt-get install libasound2 -y
+apt-get install libasound2-dev -y
 
 apt-get autoremove -y
 
