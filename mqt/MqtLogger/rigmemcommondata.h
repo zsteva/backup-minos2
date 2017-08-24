@@ -76,7 +76,7 @@ struct  memData {
     QString callsign;
     QString freq;
     QString locator;
-    QString bearing;
+    int bearing;
     QString time;
 };
 

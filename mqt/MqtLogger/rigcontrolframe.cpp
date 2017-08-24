@@ -21,7 +21,8 @@
 
 #include "logger_pch.h"
 #include "rigcontrolframe.h"
-//#include "rigmemdialog.h"
+#include "tlogcontainer.h"
+#include "tsinglelogframe.h"
 #include "ui_rigcontrolframe.h"
 #include "SendRPCDM.h"
 
@@ -40,6 +41,13 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 {
 
     ui->setupUi(this);
+
+    logData.callsign = "";
+    logData.freq = "";
+    logData.locator = "";
+    logData.bearing = 0;
+    logData.time = "";
+
 
     initRigFrame();
     initMemoryButtons();
@@ -69,7 +77,8 @@ void RigControlFrame::initRigFrame()
 
     connect(ui->bandSelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(radioBandFreq(int)));
 
-    memDialog = new RigMemDialog(radioName, radioState);
+    memDialog = new RigMemDialog();
+    connect(memDialog, SIGNAL(memorySaved(int)), this, SLOT(memoryUpdate(int)));
 
 
 }
@@ -216,6 +225,9 @@ void RigControlFrame::initMemoryButtons()
     }
     connect(clearAction_mapper, SIGNAL(mapped(int)), this, SLOT(clearActionSelected(int)));
 
+    // load button labels
+
+    loadMemoryButtonLabels();
 
 }
 
@@ -228,8 +240,21 @@ void RigControlFrame::readActionSelected(int buttonNumber)
 
 void RigControlFrame::writeActionSelected(int buttonNumber)
 {
-    qDebug() << "write action selected, button number = " << buttonNumber;
-    memDialog->setDialogTitle(QString::number(buttonNumber));
+
+    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+    // get contest information
+    //TSingleLogFrame *tslf = dynamic_cast<TSingleLogFrame *>(p);
+    ScreenContact sc = tslf->getScreenEntry();
+    logData.callsign = sc.cs.fullCall.getValue();
+    logData.locator = sc.loc.loc.getValue();
+    logData.time = dtg( true ).getIsoDTG();
+    // time now, other formats
+    // are available QString qth = sc.extraText;
+
+    logData.bearing = sc.bearing;
+
+    memDialog->setLogData(&logData, buttonNumber, curFreq);
+    memDialog->setDialogTitle(QString::number(buttonNumber + 1));
     memDialog->show();
 }
 
@@ -293,15 +318,36 @@ void RigControlFrame::sendModeToRadio(QString m)
 
 void RigControlFrame::setRadioName(QString n)
 {
-    ui->radioName->setText(n);
-    radioName = n;
+    if (n != "" && radioName != n)
+    {
+        ui->radioName->setText(n);
+        radioName = n;
+        memDialog->setRadioName(n);
+        memDialog->readAllMemories();
+        loadMemoryButtonLabels();
+    }
+
+
+
+
+
+
+
+
+
+
 }
 
 
 void RigControlFrame::setRadioState(QString s)
 {
-    ui->rigState->setText(s);
-    radioState = s;
+    if (s !="" && radioState != s)
+    {
+        ui->rigState->setText(s);
+        radioState = s;
+        memDialog->setRadioState(s);
+    }
+
 }
 
 
@@ -350,6 +396,24 @@ void RigControlFrame::freqLineEditFrameColour(bool status)
     }
 
 }
+
+void RigControlFrame::loadMemoryButtonLabels()
+{
+    for (int i = 0; i < memoryData::NUM_MEMORIES; i++)
+    {
+        memoryUpdate(i);
+    }
+}
+
+
+void RigControlFrame::memoryUpdate(int buttonNumber)
+{
+    memoryData::memData m = memDialog->getMemoryData(buttonNumber);
+    memButtons[buttonNumber]->setText("M" + QString::number(buttonNumber + 1) + ": " + m.callsign + " ");
+    QString tTipStr = "Callsign: " + m.callsign + "\n" + "Freq: " + m.freq + "\n" + "Locator: " + m.locator + "\n" + "Bearing: " + "\n" + "Time: " + m.time;
+    memButtons[buttonNumber]->setToolTip(tTipStr);
+}
+
 
 
 

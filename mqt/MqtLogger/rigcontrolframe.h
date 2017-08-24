@@ -58,7 +58,7 @@ private slots:
     void changeRadioFreq();
     void radioBandFreq(int index);
 
-
+    void memoryUpdate(int);
 
 
     void readActionSelected(int);
@@ -83,6 +83,8 @@ private:
     QString radioName;
     QString radioState;
 
+    memoryData::memData logData;
+
     void sendModeToRadio(QString);
     void freqLineEditBkgnd(bool status);
     void freqLineEditFrameColour(bool status);
@@ -91,6 +93,7 @@ private:
 
     void initRigFrame();
     void initMemoryButtons();
+    void loadMemoryButtonLabels();
 signals:
     void escapePressed();
 
