@@ -1,0 +1,51 @@
+If or when you know what you are doing, a lot of this will be
+overly prescriptive.
+
+And when it comes to "installation" at the end a Linux guru will probably be 
+horrified. If so, please take it over and fix it for me!
+
+At the moment, Minos under Linux has to count as "advanced", as you do need to 
+know your way around Linux. 
+
+Building under Linux
+====================
+
+Currently, these instructions work under Ubuntu, and also on the Raspberry Pi
+where the default oS is similar enough to Ubuntu. There shouldn't be any
+problem with other variants, but all the package stuff may be different.
+
+
+sudo apt-get install git
+
+
+Go to your home directory and check out Minos
+
+
+git clone https://git.code.sf.net/p/minos/minos Minos2
+
+If git isn't installed, you need to install it:
+
+then you need to make sure all the pre-requesites are installed:
+
+cd Minos2
+sudo ./tools.sh 
+
+Run QtCreator using
+
+qtcreator
+
+Open ~/Minos2/mqt/mqt.pro; first time you may need to configure it - everything 
+should be set up, just hit "Configure Project".
+
+Choose Qt 5.6.2, "Release"
+
+Build - the hammer icon at bottom left. This should run to completion, with a 
+few warnings. On a Pi, this will take literally hours, so be warned.
+
+To get a runnable system, run ~/Minos2/mqt/Installer/buildInstall.sh
+
+which will put a runnable system into ~/minos-runtime.
+
+To run it, from the command line type
+
+~/minos-runtime/Minos.sh &
