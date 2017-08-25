@@ -19,6 +19,7 @@
 
 #include <QMainWindow>
 #include <QTimer>
+
 #include "mqtUtils_pch.h"
 #include "rigcontrol.h"
 
@@ -29,10 +30,7 @@ class RigControl;
 class RigControlRpc;
 
 
-#define NUM_VFO 2
-#define VFOA 0
-#define VFOB 1
-#define CURVFO VFOA
+
 
 
 
@@ -118,6 +116,9 @@ private:
     void sendFreqToLog(freq_t freq);
     void sendModeToLog(QString mode);
 
+    void setCurMode(QString mode);
+    void setMode(QString mode, vfo_t vfo);
+    void displayPassband(pbwidth_t width);
 private slots:
 
     void onStdInRead(QString);
@@ -132,6 +133,7 @@ private slots:
 
     void loggerSetFreq(QString freq);
 
+    void loggerSetMode(QString mode);
 signals:
 
 

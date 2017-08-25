@@ -159,6 +159,7 @@ signals:
     void QSOFrameCancelled();
     //void sendRotator(rpcConstants::RotateDirection direction, int angle );
     void sendBandMap( QString freq, QString call, QString utc, QString loc, QString qth );
+    void sendModeControl(QString);
 
 private slots:
     void focusChange(QObject *, bool, QFocusEvent *event);

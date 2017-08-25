@@ -18,7 +18,7 @@
 #include "rigcontrolcommonconstants.h"
 #include "rigcontrolmainwindow.h"
 #include "ui_rigcontrolmainwindow.h"
-#include "rigcontrol.h"
+//#include "rigcontrol.h"
 #include "setupdialog.h"
 #include "rigcontrolrpc.h"
 #include <QTimer>
@@ -195,7 +195,7 @@ void RigControlMainWindow::initActionsConnections()
 
     // Message from Logger
     connect(msg, SIGNAL(setFreq(QString)), this, SLOT(loggerSetFreq(QString)));
-
+    connect(msg, SIGNAL(setMode(QString)), this, SLOT(loggerSetMode(QString)));
     //connect(this, SIGNAL(frequency_updated(double)), this, SLOT(drawDial(double)));
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
     //connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
@@ -364,6 +364,9 @@ void RigControlMainWindow::getRadioInfo()
 
     getMode(RIG_VFO_CURR);
 
+    qDebug() << "Narrow passband USB = " << radio->passbandNarrow( radio->convertQStrMode("CW"));
+    qDebug() << "Normal passband USB = " << radio->passbandNormal(  radio->convertQStrMode("CW"));
+    qDebug() << "Wide passband USB = " << radio->passbandWide(  radio->convertQStrMode("CW"));
 }
 
 
@@ -490,7 +493,9 @@ void RigControlMainWindow::getMode(vfo_t vfo)
                 curMode[0] = rmode;
 
                 displayModeVfo(radio->convertModeQstr(rmode));
+                displayPassband(rwidth);
                 sendModeToLog(radio->convertModeQstr(rmode));
+
             }
             else
             {
@@ -509,6 +514,55 @@ void RigControlMainWindow::getMode(vfo_t vfo)
 void RigControlMainWindow::getCurMode()
 {
     getMode(RIG_VFO_CURR);
+}
+
+
+void RigControlMainWindow::loggerSetMode(QString mode)
+{
+    setCurMode(mode);
+}
+
+
+
+
+void RigControlMainWindow::setCurMode(QString mode)
+{
+    setMode(mode, RIG_VFO_CURR);
+}
+
+
+void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
+{
+    rmode_t mCode = radio->convertQStrMode(mode);
+    int retCode = 0;
+    // get hamlib mode code
+//    for (int i = 0; i < hamlibData::modeList.count(); i++)
+//    {
+//        if (hamlibData::modeList[i] == mode)
+//        {
+//            mCode = i;
+//        }
+//    }
+
+
+
+
+    if (radio->get_serialConnected())
+    {
+         retCode = radio->setMode(vfo, mCode);
+         if (retCode == RIG_OK)
+         {
+             qDebug() << "mode changed!";
+         }
+         else
+         {
+             qDebug() << "mode fail to change";
+         }
+    }
+    else
+    {
+        qDebug() << "radio not conntected";
+    }
 }
 
 
@@ -550,6 +604,11 @@ void RigControlMainWindow::displayModeVfo(QString mode)
     ui->modeA->setText(mode);
 }
 
+
+void RigControlMainWindow::displayPassband(pbwidth_t width)
+{
+    ui->passBandlbl->setText(QString::number(width));
+}
 
 
 QString RigControlMainWindow::convertStringFreq(double frequency)

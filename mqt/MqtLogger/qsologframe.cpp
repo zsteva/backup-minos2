@@ -8,6 +8,7 @@
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
 
+
 QSOLogFrame::QSOLogFrame(QWidget *parent) :
     QFrame(parent)
     , ui(new Ui::QSOLogFrame)
@@ -2090,8 +2091,16 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
 }
 
 
-void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int /*index*/)
+void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
 {
+    // send mode change to radio
+    if (index < hamlibData::supModeList.count())
+    {
+
+         emit sendModeControl(hamlibData::supModeList[index]);
+    }
+
+
     if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
     {
        ui->ModeButton->setText(oldMode);

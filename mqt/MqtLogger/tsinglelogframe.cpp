@@ -117,6 +117,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 
     // To rig controller
     connect(ui->FKHRigControlFrame, SIGNAL(sendFreqControl(QString)), this, SLOT(sendRadioFreq(QString)));
+    connect(ui->GJVQSOLogFrame, SIGNAL(sendModeControl(QString)), this , SLOT(sendRadioMode(QString)));
 
     // Rotator updates
     // From rotator controller
@@ -1107,6 +1108,12 @@ void TSingleLogFrame::sendRadioFreq(QString freq)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         sendDM->sendRigControlFreq(freq);
+}
+
+void TSingleLogFrame::sendRadioMode(QString mode)
+{
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+        sendDM->sendRigControlMode(mode);
 }
 
 

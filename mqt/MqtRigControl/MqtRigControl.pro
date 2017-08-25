@@ -28,7 +28,7 @@ HEADERS  += rigcontrolmainwindow.h \
     rigcontrol.h \
     setupdialog.h \
     rigcontrolrpc.h \
-    rigcontrolcommonconstants.h
+#    rigcontrolcommonconstants.h
 
 FORMS    += rigcontrolmainwindow.ui \
     setupdialog.ui

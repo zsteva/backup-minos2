@@ -19,6 +19,7 @@
 #include <QTreeView>
 
 #include "rotatorCommonConstants.h"
+#include "rigcontrolcommonconstants.h"
 
 #include "profiles.h"
 #include "LoggerContest.h"
