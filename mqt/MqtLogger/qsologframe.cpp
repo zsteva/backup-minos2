@@ -1664,6 +1664,35 @@ void QSOLogFrame::on_ModeButton_clicked()
     oldMode = myOldMode;
     EditControlExit(ui->ModeButton);
 }
+
+void QSOLogFrame::modeSentFromRig(QString mode)
+{
+    for (int i = 0; i < hamlibData::supModeList.count(); i++)
+    {
+        if (mode == hamlibData::supModeList[i])
+        {
+            QString oldmode = ui->ModeComboBoxGJV->currentText();
+            if (mode != ui->ModeComboBoxGJV->currentText())
+            {
+                // set index to new mode
+                ui->ModeComboBoxGJV->setCurrentIndex(ui->ModeComboBoxGJV->findText(mode));
+            }
+
+            // ensure flip mode is shown on mode button
+            if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
+            {
+               ui->ModeButton->setText(oldmode);
+            }
+            else
+            {
+               ui->ModeButton->setText(hamlibData::CW);
+            }
+            // finished..
+            return;
+        }
+    }
+}
+
 void QSOLogFrame::logScreenEntry( )
 {
    if (!contest || contest->isReadOnly() )
@@ -2096,6 +2125,7 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
 
 void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
 {
+
     // send mode change to radio
     if (index < hamlibData::supModeList.count())
     {
@@ -2114,6 +2144,9 @@ void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
     }
 
     oldMode = ui->ModeComboBoxGJV->currentText();
+
+
+
 }
 
 void QSOLogFrame::on_ValidateError (int mess_no )

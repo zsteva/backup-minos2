@@ -51,7 +51,7 @@ public:
 signals:
     void sendFreqControl(QString);
     void sendModeToControl(QString);
-    void sendModeLogFrame(QString);
+
 
 private slots:
     void freqLineEditInFocus();

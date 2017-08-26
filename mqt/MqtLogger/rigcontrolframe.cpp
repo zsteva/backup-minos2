@@ -297,8 +297,7 @@ void RigControlFrame::setMode(QString m)
             {
                 ui->modelbl->setText(m);
                 curMode = m;
-                emit sendModeLogFrame(m);
-                return;
+               return;
             }
     }
 

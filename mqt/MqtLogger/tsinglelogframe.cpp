@@ -1061,6 +1061,7 @@ void TSingleLogFrame::on_BandMapLoaded()
    bandMapLoaded = true;
    ui->GJVQSOLogFrame->setBandMapLoaded();
 }
+
 bool TSingleLogFrame::isBandMapLoaded()
 {
    return bandMapLoaded;
@@ -1073,6 +1074,7 @@ bool TSingleLogFrame::isBandMapLoaded()
 void TSingleLogFrame::on_SetMode(QString m)
 {
     ui->FKHRigControlFrame->setMode(m);
+    ui->GJVQSOLogFrame->modeSentFromRig(m);
 }
 
 void TSingleLogFrame::on_SetFreq(QString f)

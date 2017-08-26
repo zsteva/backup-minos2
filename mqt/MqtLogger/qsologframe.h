@@ -60,6 +60,7 @@ public:
 
 
 
+    void modeSentFromRig(QString mode);
 private:
     ScreenContact *partialContact; // contact being edited on screen
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
@@ -185,6 +186,7 @@ private slots:
     void on_ShowOperators();
 
     void on_ModeComboBoxGJV_currentIndexChanged(int index);
+//    void on_ModeComboBoxGJV_activated(int index);
     void on_RSTTXEdit_textChanged(const QString &arg1);
     void on_RSTRXEdit_textChanged(const QString &arg1);
 
