@@ -20,6 +20,7 @@ public:
 
     bool Modal;
     QString S1Loc;
+    QString S2Loc;
     QString Distance;
 
 private slots:

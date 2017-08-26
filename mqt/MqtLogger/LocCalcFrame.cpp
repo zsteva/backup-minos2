@@ -5,12 +5,13 @@
 #include "latlong.h"
 
 LocCalcFrame::LocCalcFrame(QWidget *parent) :
-    QFrame(parent), Modal(false),
+    QFrame(parent), Modal(true),
     ui(new Ui::LocCalcFrame)
 {
     ui->setupUi(this);
 
     S1LocFW = new FocusWatcher(ui->S1Loc);
+    ui->S1Loc->setValidator(new UpperCaseValidator(true));
     ui->S1Loc->installEventFilter(this);
     connect(S1LocFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
 
@@ -23,6 +24,7 @@ LocCalcFrame::LocCalcFrame(QWidget *parent) :
     connect(S1NGRFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
 
     S2LocFW = new FocusWatcher(ui->S2Loc);
+    ui->S2Loc->setValidator(new UpperCaseValidator(true));
     ui->S2Loc->installEventFilter(this);
     connect(S2LocFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
 
@@ -33,6 +35,7 @@ LocCalcFrame::LocCalcFrame(QWidget *parent) :
     S2NGRFW = new FocusWatcher(ui->S2NGR);
     ui->S2NGR->installEventFilter(this);
     connect(S2NGRFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+
 }
 
 LocCalcFrame::~LocCalcFrame()
@@ -41,7 +44,13 @@ LocCalcFrame::~LocCalcFrame()
 }
 void LocCalcFrame::doExec()
 {
+    if (!Modal)
+    {
+        ui->CancelButton->setVisible(false);
+        ui->ExitButton->setVisible(false);
+    }
     ui->S1Loc->setText(S1Loc);
+    ui->S2Loc->setText(S2Loc);
     on_CalcButton_clicked();
 }
 
@@ -63,10 +72,11 @@ void LocCalcFrame::on_CalcButton_clicked()
        if ( lonlat( ui->S2Loc->text().toUpper(), longitude, latitude ) == LOC_OK )
        {
           cnt.disbear( longitude, latitude, dist, brg );
+          int idist = dist;
           if ( Modal )
-             ui->Distance->setText( QString::number( dist ));
+             ui->Distance->setText( QString::number( idist ));
           else
-             ui->Distance->setText(QString( "Dist " ) + QString::number( dist ) + " km " + QString::number(brg) + " degrees");
+             ui->Distance->setText(QString( "Dist " ) + QString::number( idist ) + " km " + QString::number(brg) + " degrees");
        }
     }
 
