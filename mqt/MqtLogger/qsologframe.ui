@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>642</width>
-    <height>222</height>
+    <width>643</width>
+    <height>228</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -190,6 +190,30 @@
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>dist</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="BrgSt">
+           <property name="text">
+            <string>1234</string>
+           </property>
+           <property name="margin">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>brg</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer_4">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -210,16 +234,6 @@
            <property name="margin">
             <number>0</number>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="BrgSt">
-          <property name="text">
-           <string>1234</string>
-          </property>
-          <property name="margin">
-           <number>0</number>
-          </property>
           </widget>
          </item>
         </layout>
