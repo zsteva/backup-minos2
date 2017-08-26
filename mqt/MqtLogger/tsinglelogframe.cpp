@@ -65,15 +65,19 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     ui->QSOTable->resizeColumnsToContents();
     ui->QSOTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
 
+    ui->ThisMatchTree->setModel(&thisMatchModel);
     ui->ThisMatchTree->header()->setSectionResizeMode(QHeaderView::Interactive);
     ui->ThisMatchTree->setItemDelegate( new HtmlDelegate );
 
+    ui->OtherMatchTree->setModel(&otherMatchModel);
     ui->OtherMatchTree->header()->setSectionResizeMode(QHeaderView::Interactive);
     ui->OtherMatchTree->setItemDelegate( new HtmlDelegate );
 
+    ui->ArchiveMatchTree->setModel(&archiveMatchModel);
     ui->ArchiveMatchTree->header()->setSectionResizeMode(QHeaderView::Interactive);
     ui->ArchiveMatchTree->setItemDelegate( new HtmlDelegate );
 
+    restoreColumns();
 
     ui->GJVQSOLogFrame->initialise( contest, false );
 
@@ -93,6 +97,9 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceListList(TMatchCollection*,BaseContestLog*)), this, SLOT(on_ReplaceListList(TMatchCollection*,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToCountry(QString,BaseContestLog*)), this, SLOT(on_ScrollToCountry(QString,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToDistrict(QString,BaseContestLog*)), this, SLOT(on_ScrollToDistrict(QString,BaseContestLog*)), Qt::QueuedConnection);
+
+    doNextContactDetailsOnLeftClick( true);  // but the sizes are zero...
+    getSplitters();
 
     connect(&MinosLoggerEvents::mle, SIGNAL(LogColumnsChanged()), this, SLOT(onLogColumnsChanged()));
     connect(&MinosLoggerEvents::mle, SIGNAL(SplittersChanged()), this, SLOT(onSplittersChanged()));
@@ -133,6 +140,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(ui->FilterButton, SIGNAL(clicked()), sm, SLOT(map()));
     connect(ui->DistrictButton, SIGNAL(clicked()), sm, SLOT(map()));
     connect(ui->LocatorButton, SIGNAL(clicked()), sm, SLOT(map()));
+    connect(ui->locCalcButton, SIGNAL(clicked()), sm, SLOT(map()));
     connect(ui->StatsButton, SIGNAL(clicked()), sm, SLOT(map()));
 
     // setMapping on each button to the QStackedWidget index we'd like to switch to
@@ -143,6 +151,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     sm->setMapping(ui->LocatorButton, 3);
     sm->setMapping(ui->StatsButton, 4);
     sm->setMapping(ui->ClockButton, 5);
+    sm->setMapping(ui->locCalcButton, 6);
 
     // finally, connect the mapper to the stacked widget
     connect(sm, SIGNAL(mapped(int)), ui->StackedMults, SLOT(setCurrentIndex(int)));
@@ -300,14 +309,18 @@ void TSingleLogFrame::on_ContestPageChanged ()
     ui->GJVQSOLogFrame->logTabChanged();
 
 //    MultDispFrame->setContest( contest );
-    doNextContactDetailsOnLeftClick( );
+    doNextContactDetailsOnLeftClick( false );
     MinosLoggerEvents::SendShowOperators();
 
     updateQSODisplay();
 
 }
-void TSingleLogFrame::doNextContactDetailsOnLeftClick( )
+void TSingleLogFrame::doNextContactDetailsOnLeftClick(bool keepSizes )
 {
+    QList<int> sizes = ui->CribSplitter->sizes();
+
+    bool isOnLeft = (ui->CribSplitter->widget(0) == ui->CribSheet);
+
     bool conleft = LogContainer->isNextContactDetailsOnLeft();
 
     if (conleft)
@@ -318,7 +331,18 @@ void TSingleLogFrame::doNextContactDetailsOnLeftClick( )
     {
         ui->CribSplitter->insertWidget(1, ui->CribSheet);
     }
-    on_CribSplitter_splitterMoved(0, 0);    // preserve the splitter position
+
+    bool nowOnLeft = (ui->CribSplitter->widget(0) == ui->CribSheet);
+    if (isOnLeft != nowOnLeft)
+    {
+        //they have flipped
+        std::reverse(sizes.begin(), sizes.end());
+    }
+    if (!keepSizes)
+    {
+        ui->CribSplitter->setSizes(sizes);
+        on_CribSplitter_splitterMoved(0, 0);    // preserve the splitter position
+    }
 }
 void TSingleLogFrame::NextContactDetailsTimerTimer( )
 {
@@ -382,7 +406,7 @@ void TSingleLogFrame::HideTimerTimer(  )
 }
 void TSingleLogFrame::on_NextContactDetailsOnLeft()
 {
-    doNextContactDetailsOnLeftClick();
+    doNextContactDetailsOnLeftClick(false);
 }
 void TSingleLogFrame::updateQSODisplay()
 {
@@ -776,8 +800,15 @@ void TSingleLogFrame::onSplittersChanged()
     splittersChanged = true;
 }
 
-void TSingleLogFrame::on_StackedMults_currentChanged(int /*arg1*/)
+void TSingleLogFrame::on_StackedMults_currentChanged(int arg1)
 {
+    if (arg1 == 6)
+    {
+        ui->locCalcFrame->S1Loc = contest->myloc.loc.getValue();
+        ui->locCalcFrame->S2Loc = getScreenEntry().loc.loc.getValue();
+        ui->locCalcFrame->Modal = false;
+        ui->locCalcFrame->doExec();
+    }
     ui->StatsFrame->reInitialiseStats();
 }
 
@@ -1456,19 +1487,22 @@ QVariant QSOMatchGridModel::headerData( int section, Qt::Orientation orientation
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
     {
         QString cell;
-        switch (type)
+        if (section < columnCount())
         {
-        case ThisMatch:
-            cell = ThisMatchTreeColumns[ section ].title;
-            break;
+            switch (type)
+            {
+            case ThisMatch:
+                cell = ThisMatchTreeColumns[ section ].title;
+                break;
 
-        case OtherMatch:
-            cell = OtherMatchTreeColumns[ section ].title;
-            break;
+            case OtherMatch:
+                cell = OtherMatchTreeColumns[ section ].title;
+                break;
 
-        case ArchiveMatch:
-            cell = ArchiveMatchTreeColumns[ section ].title;
-            break;
+            case ArchiveMatch:
+                cell = ArchiveMatchTreeColumns[ section ].title;
+                break;
+            }
         }
 
         return cell;

@@ -150,7 +150,7 @@ public:
     QTreeView *xferTree;
 
     void goNextUnfilled();
-    void doNextContactDetailsOnLeftClick( );
+    void doNextContactDetailsOnLeftClick(bool keepSizes);
 
 private:
     Ui::TSingleLogFrame *ui;

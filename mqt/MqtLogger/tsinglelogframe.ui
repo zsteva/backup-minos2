@@ -118,7 +118,7 @@
                <enum>QFrame::NoFrame</enum>
               </property>
               <property name="currentIndex">
-               <number>1</number>
+               <number>6</number>
               </property>
               <widget class="QWidget" name="DXCCPage">
                <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -423,6 +423,20 @@
                 </item>
                </layout>
               </widget>
+              <widget class="QWidget" name="LocCalcPage">
+               <layout class="QVBoxLayout" name="verticalLayout_4">
+                <item>
+                 <widget class="LocCalcFrame" name="locCalcFrame">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
              </widget>
             </item>
            </layout>
@@ -437,6 +451,21 @@
             <enum>QFrame::Plain</enum>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>1</number>
+            </property>
+            <property name="topMargin">
+             <number>1</number>
+            </property>
+            <property name="rightMargin">
+             <number>2</number>
+            </property>
+            <property name="bottomMargin">
+             <number>1</number>
+            </property>
             <item>
              <widget class="QRadioButton" name="ClockButton">
               <property name="focusPolicy">
@@ -496,6 +525,19 @@
               </property>
               <property name="text">
                <string>Locator</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">buttonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="locCalcButton">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Loc Calc</string>
               </property>
               <attribute name="buttonGroup">
                <string notr="true">buttonGroup</string>
@@ -694,9 +736,6 @@
        <attribute name="headerDefaultSectionSize">
         <number>150</number>
        </attribute>
-       <attribute name="headerMinimumSectionSize">
-        <number>33</number>
-       </attribute>
       </widget>
       <widget class="QTreeView" name="OtherMatchTree">
        <property name="sizePolicy">
@@ -834,7 +873,17 @@
    <header>bandmapframe.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>LocCalcFrame</class>
+   <extends>QFrame</extends>
+   <header location="global">LocCalcFrame.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>StatsButton</tabstop>
+  <tabstop>locCalcButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
  <buttongroups>
