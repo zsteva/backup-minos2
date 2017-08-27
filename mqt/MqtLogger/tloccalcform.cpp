@@ -4,7 +4,7 @@
 #include "latlong.h"
 
 TLocCalcForm::TLocCalcForm(QWidget *parent) :
-    QDialog(parent), Modal(false), Distance(-1),
+    QDialog(parent), Distance(-1),
     ui(new Ui::TLocCalcForm)
 {
     ui->setupUi(this);
@@ -23,7 +23,7 @@ TLocCalcForm::~TLocCalcForm()
 int TLocCalcForm::exec()
 {
     ui->locFrame->S1Loc = S1Loc;
-    ui->locFrame->Modal = Modal;
+    ui->locFrame->Modal = true;
 
     ui->locFrame->doExec();
 

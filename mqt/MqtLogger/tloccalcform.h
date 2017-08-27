@@ -25,7 +25,6 @@ private slots:
 
 private:
     Ui::TLocCalcForm *ui;
-    bool Modal;
     void doCloseEvent();
 
 public Q_SLOTS:

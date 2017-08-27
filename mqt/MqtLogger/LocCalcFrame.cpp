@@ -79,10 +79,11 @@ void LocCalcFrame::on_CalcButton_clicked()
        {
           cnt.disbear( longitude, latitude, dist, brg );
           int idist = dist;
+          Distance = QString::number( idist );
           if ( Modal )
-             ui->Distance->setText( QString::number( idist ));
+             ui->Distance->setText( Distance);
           else
-             ui->Distance->setText(QString( "Dist " ) + QString::number( idist ) + " km " + QString::number(brg) + " degrees");
+             ui->Distance->setText(QString( "Dist " ) + Distance + " km " + QString::number(brg) + " degrees");
        }
     }
 
