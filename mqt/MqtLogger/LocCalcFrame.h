@@ -1,8 +1,7 @@
 #ifndef LOCCALCFRAME_H
 #define LOCCALCFRAME_H
 
-#include <QFrame>
-#include <QLineEdit>
+#include "logger_pch.h"
 #include "focuswatcher.h"
 
 namespace Ui {
@@ -17,6 +16,7 @@ public:
     explicit LocCalcFrame(QWidget *parent = 0);
     ~LocCalcFrame();
     void doExec();
+    void setContest(BaseContestLog *contest);
 
     bool Modal;
     QString S1Loc;
@@ -34,6 +34,8 @@ private:
     Ui::LocCalcFrame *ui;
     void doCloseEvent();
     bool handleExit( QLineEdit *Edit );
+
+    BaseContestLog *contest;
 
     FocusWatcher *S1LocFW;
     FocusWatcher *S1LatLongFW;

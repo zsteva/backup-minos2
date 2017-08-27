@@ -6,6 +6,7 @@
 
 LocCalcFrame::LocCalcFrame(QWidget *parent) :
     QFrame(parent), Modal(true),
+    contest(0),
     ui(new Ui::LocCalcFrame)
 {
     ui->setupUi(this);
@@ -42,6 +43,11 @@ LocCalcFrame::~LocCalcFrame()
 {
     delete ui;
 }
+void LocCalcFrame::setContest(BaseContestLog *ct)
+{
+    contest = ct;
+}
+
 void LocCalcFrame::doExec()
 {
     if (!Modal)
