@@ -239,11 +239,23 @@ void StackedInfoFrame::getSplitters()
     state = settings.value("LocatorSplitter/state").toByteArray();
     locatorSplitter->restoreState(state);
     locatorSplitter->setHandleWidth(splitterHandleWidth);
+
+    state = settings.value("InfoChoiceSplitter/state").toByteArray();
+    ui->infoChoiceSplitter->restoreState(state);
+    ui->infoChoiceSplitter->setHandleWidth(splitterHandleWidth);
+
 }
 void StackedInfoFrame::on_LocatorSplitterMoved(int /*pos*/, int /*index*/)
 {
     QByteArray state = ui->locFrame->getLocatorSplitter()->saveState();
     QSettings settings;
     settings.setValue("LocatorSplitter/state", state);
+    MinosLoggerEvents::SendSplittersChanged();
+}
+void StackedInfoFrame::on_infoChoiceSplitterMoved(int /*pos*/, int /*index*/)
+{
+    QByteArray state = ui->infoChoiceSplitter->saveState();
+    QSettings settings;
+    settings.setValue("InfoChoiceSplitter/state", state);
     MinosLoggerEvents::SendSplittersChanged();
 }

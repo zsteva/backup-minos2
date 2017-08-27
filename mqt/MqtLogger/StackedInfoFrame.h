@@ -43,6 +43,7 @@ private slots:
 
     void on_StackedMults_currentChanged(int arg1);
     void on_LocatorSplitterMoved(int /*pos*/, int /*index*/);
+    void on_infoChoiceSplitterMoved(int /*pos*/, int /*index*/);
     void onFiltersChanged();
 };
 

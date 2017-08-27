@@ -14,14 +14,29 @@
    <string>Frame</string>
   </property>
   <property name="frameShape">
-   <enum>QFrame::StyledPanel</enum>
+   <enum>QFrame::NoFrame</enum>
   </property>
   <property name="frameShadow">
    <enum>QFrame::Raised</enum>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_6">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="MinosSplitter" name="splitter">
+    <widget class="MinosSplitter" name="infoChoiceSplitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -48,7 +63,7 @@
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>6</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="DXCCPage">
           <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -110,7 +125,7 @@
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="10">
               <property name="spacing">
                <number>0</number>
               </property>
@@ -127,7 +142,7 @@
                <number>0</number>
               </property>
               <item>
-               <layout class="QVBoxLayout" name="verticalLayout_6">
+               <layout class="QVBoxLayout" name="filterLayout" stretch="10,10,10,10,10">
                 <property name="spacing">
                  <number>0</number>
                 </property>
@@ -137,6 +152,20 @@
                 <property name="rightMargin">
                  <number>10</number>
                 </property>
+                <item>
+                 <widget class="QLabel" name="label">
+                  <property name="text">
+                   <string>Filters only apply to DXCC and District
+Continents only apply to DXCC</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_2">
                   <property name="spacing">
@@ -383,13 +412,13 @@
         <number>0</number>
        </property>
        <property name="leftMargin">
-        <number>1</number>
+        <number>9</number>
        </property>
        <property name="topMargin">
         <number>1</number>
        </property>
        <property name="rightMargin">
-        <number>2</number>
+        <number>9</number>
        </property>
        <property name="bottomMargin">
         <number>1</number>
