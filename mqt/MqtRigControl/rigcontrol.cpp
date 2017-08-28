@@ -423,7 +423,7 @@ bool model_Sort(const rig_caps *caps1,const rig_caps *caps2)
 
 
 // which passes the call to this method
-int RigControl::rig_message_cb(enum rig_debug_level_e debug_level, const char *fmt, va_list ap)
+int RigControl::rig_message_cb(enum rig_debug_level_e /*debug_level*/, const char *fmt, va_list ap)
 {
     char buf[1024];
 //    rig_debug_level_e dbl = debug_level;

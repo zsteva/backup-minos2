@@ -445,7 +445,7 @@ FreqLineEdit::~FreqLineEdit()
 
 }
 
-void FreqLineEdit::focusInEvent( QFocusEvent * ev )
+void FreqLineEdit::focusInEvent( QFocusEvent * /*ev*/ )
 {
     emit receivedFocus() ;
 
