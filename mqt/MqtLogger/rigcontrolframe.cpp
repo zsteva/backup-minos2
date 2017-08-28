@@ -43,7 +43,9 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     ui->setupUi(this);
 
     logData.callsign = "";
-    logData.freq = "";
+    logData.freq = "00.000.000.000";
+    logData.mode = "";
+    logData.passBand = "2.200";
     logData.locator = "";
     logData.bearing = 0;
     logData.time = "";
@@ -235,7 +237,10 @@ void RigControlFrame::initMemoryButtons()
 
 void RigControlFrame::readActionSelected(int buttonNumber)
 {
-    qDebug() << "read action selected, button number = " << buttonNumber;
+    memoryData::memData m = memDialog->getMemoryData(buttonNumber);
+
+    emit sendFreqControl(m.freq);
+
 }
 
 void RigControlFrame::writeActionSelected(int buttonNumber)
@@ -247,12 +252,13 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
     ScreenContact sc = tslf->getScreenEntry();
     logData.callsign = sc.cs.fullCall.getValue();
     logData.locator = sc.loc.loc.getValue();
+    logData.mode = curMode;
     logData.time = dtg( true ).getIsoDTG();
     // time now, other formats
     // are available QString qth = sc.extraText;
 
     logData.bearing = sc.bearing;
-
+    // load log data into memory
     memDialog->setLogData(&logData, buttonNumber, curFreq);
     memDialog->setDialogTitle(QString::number(buttonNumber + 1));
     memDialog->show();
@@ -260,7 +266,9 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
 
 void RigControlFrame::clearActionSelected(int buttonNumber)
 {
-     qDebug() << "clear action selected, button number = " << buttonNumber;
+     memDialog->clearMemory(buttonNumber);
+     memDialog->setDialogTitle(QString::number(buttonNumber + 1));
+     memDialog->show();
 }
 
 
@@ -409,7 +417,13 @@ void RigControlFrame::memoryUpdate(int buttonNumber)
 {
     memoryData::memData m = memDialog->getMemoryData(buttonNumber);
     memButtons[buttonNumber]->setText("M" + QString::number(buttonNumber + 1) + ": " + m.callsign + " ");
-    QString tTipStr = "Callsign: " + m.callsign + "\n" + "Freq: " + m.freq + "\n" + "Locator: " + m.locator + "\n" + "Bearing: " + "\n" + "Time: " + m.time;
+    QString tTipStr = "Callsign: " + m.callsign + "\n"
+            + "Freq: " + m.freq + "\n"
+            + "Mode: " + m.mode + "\n"
+            + "Passband: " + m.passBand + "\n"
+            + "Locator: " + m.locator + "\n"
+            + "Bearing: " + "\n"
+            + "Time: " + m.time;
     memButtons[buttonNumber]->setToolTip(tTipStr);
 }
 

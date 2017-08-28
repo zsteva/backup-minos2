@@ -101,7 +101,7 @@ int RigControl::init(scatParams currentRadio)
     {
         if(!currentRadio.civAddress.isEmpty())
         {
-            rig_set_conf(my_rig, rig_token_lookup(my_rig, "civaddr"),currentRadio.civAddress.toLatin1());
+            retcode = rig_set_conf(my_rig, rig_token_lookup(my_rig, "civaddr"),currentRadio.civAddress.toLatin1());
         }
     }
     strncpy(my_rig->state.rigport.pathname, (const char*)comport.toLatin1(), FILPATHLEN);
