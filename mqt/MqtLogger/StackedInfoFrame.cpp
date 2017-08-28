@@ -33,6 +33,9 @@ StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
     splitterHandleWidth = 6;
 #endif
 
+    ui->StackedMults->setCurrentIndex(5);   // start up on the clock - useful outside the contest!
+    ui->ClockButton->setChecked(true);
+
     // Connect up the stats etc display
     QSignalMapper* sm = new QSignalMapper(this);
 
@@ -80,9 +83,6 @@ void StackedInfoFrame::setContest(BaseContestLog *ct)
     ui->StatsFrame->setContest(contest);
     ui->locFrame->setContest(contest);
     ui->clockFrame->setContest(contest);
-    ui->ClockButton->setChecked(true);
-    ui->StackedMults->setCurrentIndex(5);   // start up on the clock - useful outside the contest!
-
 }
 void StackedInfoFrame::on_ScrollToDistrict( const QString &qth, BaseContestLog* )
 {
