@@ -66,6 +66,7 @@ void RigControlFrame::initRigFrame()
 {
 
     ui->modelbl->setText(MODE_ERROR);
+    ui->normalRb->setChecked(true);
     connect(ui->freqInput, SIGNAL(receivedFocus()), this, SLOT(freqLineEditInFocus()));
     connect(ui->freqInput, SIGNAL(returnPressed()), this, SLOT(changeRadioFreq()));
     connect(this, SIGNAL(escapePressed()), this, SLOT(exitFreqEdit()));
