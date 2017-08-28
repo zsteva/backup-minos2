@@ -127,7 +127,7 @@ void RotControlFrame::on_Rotate_clicked()
 
 }
 
-void RotControlFrame::on_RotateLeft_clicked(bool clicked)
+void RotControlFrame::on_RotateLeft_clicked(bool /*clicked*/)
 {
     int angle = 0;
 
@@ -156,7 +156,7 @@ void RotControlFrame::on_RotateLeft_clicked(bool clicked)
 }
 
 
-void RotControlFrame::on_RotateRight_clicked(bool toggle)
+void RotControlFrame::on_RotateRight_clicked(bool /*toggle*/)
 {
     int angle = 0;
 

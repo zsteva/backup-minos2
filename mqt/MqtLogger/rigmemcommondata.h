@@ -75,6 +75,8 @@ const int  NUM_MEMORIES = 10;
 struct  memData {
     QString callsign;
     QString freq;
+    QString mode;
+    QString passBand;
     QString locator;
     int bearing;
     QString time;

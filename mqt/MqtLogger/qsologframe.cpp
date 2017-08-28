@@ -1655,6 +1655,8 @@ void QSOLogFrame::doGJVEditChange( QObject *Sender )
 
 void QSOLogFrame::on_ModeButton_clicked()
 {
+    qsoLogModeFlag = true;  // stop updates from rigcontrol
+
     // send mode change to radio
     emit sendModeControl(ui->ModeButton->text());
 
@@ -1667,6 +1669,12 @@ void QSOLogFrame::on_ModeButton_clicked()
 
 void QSOLogFrame::modeSentFromRig(QString mode)
 {
+    if (qsoLogModeFlag)
+    {
+         qsoLogModeFlag = false;
+         return;
+    }
+
     for (int i = 0; i < hamlibData::supModeList.count(); i++)
     {
         if (mode == hamlibData::supModeList[i])
@@ -2123,9 +2131,10 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
 }
 
 
-void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
+//void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
+void QSOLogFrame::on_ModeComboBoxGJV_activated(int index)
 {
-
+    qsoLogModeFlag = true;
     // send mode change to radio
     if (index < hamlibData::supModeList.count())
     {

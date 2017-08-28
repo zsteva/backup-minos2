@@ -1172,7 +1172,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
 }
 
 
-void RotatorMainWindow::rotateCW(bool clicked)
+void RotatorMainWindow::rotateCW(bool /*clicked*/)
 {
 
 
@@ -1252,7 +1252,7 @@ void RotatorMainWindow::rotateCW(bool clicked)
 
 
 
-void RotatorMainWindow::rotateCCW(bool toggle)
+void RotatorMainWindow::rotateCCW(bool /*toggle*/)
 {
     cwCcwCmdflag = true;
     logMessage("Start rotateCCW");

@@ -30,6 +30,9 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
     QMainWindow(parent)
     , msg(0)
     , ui(new Ui::RigControlMainWindow)
+    , loggerWidth(0)
+    , logRadError(false)
+    , useLogWidth(false)
 {
 
     ui->setupUi(this);
@@ -60,6 +63,8 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
 
 
     radio = new RigControl();
+    radio->getRigList();
+
     selectRig = new SetupDialog(radio);
     selectRadio = new QComboBox;
     pollTimer = new QTimer(this);
@@ -67,7 +72,7 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
     status = new QLabel;
     ui->statusBar->addWidget(status);
 
-    radio->getRigList();
+
 
 
     radio->set_serialConnected(false);
@@ -198,8 +203,11 @@ void RigControlMainWindow::initActionsConnections()
     connect(msg, SIGNAL(setMode(QString)), this, SLOT(loggerSetMode(QString)));
     //connect(this, SIGNAL(frequency_updated(double)), this, SLOT(drawDial(double)));
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
-    //connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
+    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     //connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
+    connect(radio, SIGNAL(debug_protocol(QString)), this, SLOT(logMessage(QString)));
+
 }
 
 
@@ -269,6 +277,10 @@ void RigControlMainWindow::upDateRadio()
        trace("Radio Model = " + selectRig->currentRadio.radioModel);
        trace("Radio Number = " + QString::number(selectRig->currentRadio.radioModelNumber));
        trace("Radio Manufacturer = " + selectRig->currentRadio.radioMfg_Name);
+       if (selectRig->currentRadio.radioMfg_Name == "Icom")
+       {
+           trace("Icom CIV address = " + selectRig->currentRadio.civAddress);
+       }
        trace("Radio Comport = " + selectRig->currentRadio.comport);
        trace("Baudrate = " + QString::number(selectRig->currentRadio.databits));
        trace("Stop bits = " + QString::number(selectRig->currentRadio.stopbits));

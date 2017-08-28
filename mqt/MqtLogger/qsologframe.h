@@ -153,6 +153,7 @@ private:
 
     QString mode;
     QString oldMode;
+    bool qsoLogModeFlag = false;
     QString curFreq;
 
     void setMode(QString m);
@@ -185,8 +186,8 @@ private slots:
     void on_ValidateError (int mess_no );
     void on_ShowOperators();
 
-    void on_ModeComboBoxGJV_currentIndexChanged(int index);
-//    void on_ModeComboBoxGJV_activated(int index);
+//    void on_ModeComboBoxGJV_currentIndexChanged(int index);
+    void on_ModeComboBoxGJV_activated(int index);
     void on_RSTTXEdit_textChanged(const QString &arg1);
     void on_RSTRXEdit_textChanged(const QString &arg1);
 

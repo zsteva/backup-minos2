@@ -69,6 +69,8 @@ private:
     freq_t rfrequency;       // read frequency
     rmode_t rmode;          // read radio mode
     pbwidth_t rwidth;        // read radio rx bw
+    pbwidth_t loggerWidth;      // passband from logger
+    bool useLogWidth;
     vfo_t rvfo;              // read vfo
     int strength;           // S-Meter level
     int retcode;            // generic return code from functions
@@ -103,7 +105,7 @@ private:
 
 
 
-    void logMessage(QString s);
+
     void readTraceLogFlag();
 
     void about();
@@ -126,7 +128,7 @@ private slots:
     void upDateRadio();
     void getCurMode();
     void getRadioInfo();
-
+    void logMessage(QString s);
 //private slots:
 //    void updateFreq(double frequency);
 

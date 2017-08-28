@@ -24,6 +24,7 @@ public:
 
     int readAllMemories();
     memoryData::memData getMemoryData(int memoryNumber);
+    void clearMemory(int memoryLoc);
 signals:
     void memorySaved(int);
 
@@ -42,7 +43,7 @@ private:
     int saveMemory(int memoryLoc);
     int readMemory(int memoryLoc);
 
-    void clearMemory(int memoryLoc);
+
 };
 
 #endif // RIGMEMDIALOG_H
