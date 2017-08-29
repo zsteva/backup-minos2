@@ -30,7 +30,8 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
     QMainWindow(parent)
     , msg(0)
     , ui(new Ui::RigControlMainWindow)
-    , loggerWidth(0)
+    , loggerPbWidth(0)
+    , bandWidthState(1)
     , logRadError(false)
     , useLogWidth(false)
 {
@@ -101,7 +102,7 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
         else
         {
             selectRadio->setCurrentIndex(a);
-            selectRig->readSettings();      // get antenna settings
+            selectRig->readSettings();      // get radio settings
             selectRig->copyRadioToCurrent(a);
         }
 
@@ -128,6 +129,8 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
         upDateRadio();
         sendStatusToLogReady();
     }
+
+    radio->buildPassBandTable();
 
     trace("*** Rig Started ***");
 
@@ -201,8 +204,11 @@ void RigControlMainWindow::initActionsConnections()
     // Message from Logger
     connect(msg, SIGNAL(setFreq(QString)), this, SLOT(loggerSetFreq(QString)));
     connect(msg, SIGNAL(setMode(QString)), this, SLOT(loggerSetMode(QString)));
+    connect(msg, SIGNAL(setPassBand(int)), this, SLOT(loggerSetPassBand(int)));
+
     //connect(this, SIGNAL(frequency_updated(double)), this, SLOT(drawDial(double)));
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
+
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     //connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
@@ -376,9 +382,7 @@ void RigControlMainWindow::getRadioInfo()
 
     getMode(RIG_VFO_CURR);
 
-    qDebug() << "Narrow passband USB = " << radio->passbandNarrow( radio->convertQStrMode("CW"));
-    qDebug() << "Normal passband USB = " << radio->passbandNormal(  radio->convertQStrMode("CW"));
-    qDebug() << "Wide passband USB = " << radio->passbandWide(  radio->convertQStrMode("CW"));
+
 }
 
 
@@ -575,6 +579,15 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
     {
         qDebug() << "radio not conntected";
     }
+}
+
+
+
+void RigControlMainWindow::loggerSetPassBand(int state)
+{
+    bandWidthState = state;
+    //loggerPbWidth = radio->lookUpPassBand(curMode, state); ******************************
+    ui->passBandState->setText(hamlibData::pBandStateStr[state]);
 }
 
 

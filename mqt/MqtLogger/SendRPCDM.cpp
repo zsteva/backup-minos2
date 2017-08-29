@@ -167,6 +167,16 @@ void TSendDM::sendRigControlMode(const QString &mode)
 }
 
 
+void TSendDM::sendRigControlPassBandState(const int passBandState)
+{
+   RPCGeneralClient rpc(rpcConstants::rigControlMethod);
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
+
+   st->addMember( passBandState, rpcConstants::rigControlKeyPBandState );
+   rpc.getCallArgs() ->addParam( st );
+
+   rpc.queueCall( rigServerConnectable.remoteAppName + "@" + rigServerConnectable.serverName );
+}
 
 
 //---------------------------------------------------------------------------

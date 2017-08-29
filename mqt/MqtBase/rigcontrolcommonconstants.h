@@ -48,8 +48,9 @@ const QStringList  modeList = {AM, CW, USB, LSB, RTTY, FM, WFM, CWR, RTTYR, AMS,
 
 const QStringList supModeList = { CW, USB, FM, MGM};
 
-enum pBand {NAR, NOR, WIDE};
+enum pBandState {NAR, NOR, WIDE};
 
+const QStringList pBandStateStr = {"NAR", "NOR", "WIDE"};
 
 
 

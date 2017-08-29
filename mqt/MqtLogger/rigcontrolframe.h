@@ -20,6 +20,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QToolButton>
+#include <QRadioButton>
 #include "logger_pch.h"
 #include "RPCCommandConstants.h"
 #include "rigmemcommondata.h"
@@ -51,7 +52,7 @@ public:
 signals:
     void sendFreqControl(QString);
     void sendModeToControl(QString);
-
+    void sendPassBandStateToControl(int);
 
 private slots:
     void freqLineEditInFocus();
@@ -64,6 +65,7 @@ private slots:
     void readActionSelected(int);
     void writeActionSelected(int);
     void clearActionSelected(int);
+    void passBandRadioSelected(int button);
 
 private:
 
@@ -72,6 +74,8 @@ private:
     QAction* readAction[memoryData::NUM_MEMORIES];
     QAction* writeAction[memoryData::NUM_MEMORIES];
     QAction* clearAction[memoryData::NUM_MEMORIES];
+
+    QRadioButton* pBandButton[3];
     RigMemDialog* memDialog;
 
     bool radioLoaded;
@@ -94,6 +98,7 @@ private:
     void initRigFrame();
     void initMemoryButtons();
     void loadMemoryButtonLabels();
+    void initPassBandRadioButtons();
 signals:
     void escapePressed();
 

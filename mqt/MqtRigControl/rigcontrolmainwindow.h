@@ -68,8 +68,10 @@ private:
     vfo_t curVFO;
     freq_t rfrequency;       // read frequency
     rmode_t rmode;          // read radio mode
+
+    int bandWidthState;
     pbwidth_t rwidth;        // read radio rx bw
-    pbwidth_t loggerWidth;      // passband from logger
+    pbwidth_t loggerPbWidth;      // passband from logger
     bool useLogWidth;
     vfo_t rvfo;              // read vfo
     int strength;           // S-Meter level
@@ -129,13 +131,13 @@ private slots:
     void getCurMode();
     void getRadioInfo();
     void logMessage(QString s);
-//private slots:
+
 //    void updateFreq(double frequency);
 
 
     void loggerSetFreq(QString freq);
-
     void loggerSetMode(QString mode);
+    void loggerSetPassBand(int);
 signals:
 
 

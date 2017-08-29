@@ -93,10 +93,11 @@ static const QString rotatorMinAzimuth  = QT_TR_NOOP("MinAzimuth");
 static const QString rigControlApp         = QT_TR_NOOP("RigControl");
 static const QString rigControlResult      = QT_TR_NOOP("RigControlResult");
 static const QString rigControlMethod      = QT_TR_NOOP("Minos:RigControl");
-static const QString rigControlCategory = QT_TR_NOOP("RigControl");
+static const QString rigControlCategory    = QT_TR_NOOP("RigControl");
 static const QString rigControlKeyMode     = QT_TR_NOOP("Mode");
 static const QString rigControlKeyState    = QT_TR_NOOP("State");
 static const QString rigControlKeyFreq     = QT_TR_NOOP("Frequency");
+static const QString rigControlKeyPBandState = QT_TR_NOOP("PassBandState");
 static const QString rigControlKeyRadioName = QT_TR_NOOP("RadioName");
 
 

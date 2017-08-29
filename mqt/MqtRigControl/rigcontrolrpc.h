@@ -41,6 +41,7 @@ public:
 signals:
     void setFreq(QString);
     void setMode(QString);
+    void setPassBand(int);
 public slots:
 
 

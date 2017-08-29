@@ -127,6 +127,7 @@ void RigControlRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const 
     {
         QSharedPointer<RPCParam> psFreq;
         QSharedPointer<RPCParam> psMode;
+        QSharedPointer<RPCParam> psPBandState;
         RPCArgs *args = mro->getCallArgs();
         if ( args->getStructArgMember( 0, rpcConstants::rigControlKeyFreq, psFreq ))
         {
@@ -136,32 +137,49 @@ void RigControlRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const 
             if ( psFreq->getString( freq ) )
             {
                 // here you handle what the logger has sent to us
-
+                trace("Freq Command From Logger = " + freq);
                 emit (setFreq(freq));
 
                 QSharedPointer<RPCParam>st(new RPCParamStruct);
-                st->addMember( true, rpcConstants::rotatorResult );
+                st->addMember( true, rpcConstants::rigControlResult );
                 mro->clearCallArgs();
                 mro->getCallArgs() ->addParam( st );
                 mro->queueResponse( from );
             }
         }
         else if ( args->getStructArgMember( 0, rpcConstants::rigControlKeyMode, psMode ) )
-             {
+        {
                  QString mode;
 
                  if ( psMode->getString( mode ) )
                  {
                      // here you handle what the logger has sent to us
-
+                    trace("Mode Command From Logger = " + mode);
                     emit (setMode(mode));
 
                      QSharedPointer<RPCParam>st(new RPCParamStruct);
-                     st->addMember( true, rpcConstants::rotatorResult );
+                     st->addMember( true, rpcConstants::rigControlResult );
                      mro->clearCallArgs();
                      mro->getCallArgs() ->addParam( st );
                      mro->queueResponse( from );
                  }
-             }
+        }
+        else if ( args->getStructArgMember( 0, rpcConstants::rigControlKeyPBandState, psPBandState ) )
+        {
+                 int passBandState;
+
+                 if ( psPBandState->getInt( passBandState ) )
+                 {
+                     // here you handle what the logger has sent to us
+                    trace("PassBandState Command From Logger = " + passBandState);
+                    emit (setPassBand(passBandState));
+
+                     QSharedPointer<RPCParam>st(new RPCParamStruct);
+                     st->addMember( true, rpcConstants::rigControlResult );
+                     mro->clearCallArgs();
+                     mro->getCallArgs() ->addParam( st );
+                     mro->queueResponse( from );
+                 }
+        }
     }
 }

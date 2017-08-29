@@ -53,6 +53,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 
     initRigFrame();
     initMemoryButtons();
+    initPassBandRadioButtons();
 
 
 }
@@ -236,6 +237,29 @@ void RigControlFrame::initMemoryButtons()
 
 
 
+void RigControlFrame::initPassBandRadioButtons()
+{
+    pBandButton[0] = ui->narRb;
+    pBandButton[1] = ui->normalRb;
+    pBandButton[2] = ui->wideRb;
+
+    // map passband radio button
+
+    QSignalMapper *passBand_mapper = new QSignalMapper(this);
+
+    for (int i = 0; i < 3; i++ )
+    {
+        passBand_mapper->setMapping(pBandButton[i], i);
+        connect(pBandButton[i], SIGNAL(clicked()), passBand_mapper, SLOT(map()));
+
+    }
+    connect(passBand_mapper, SIGNAL(mapped(int)), this, SLOT(passBandRadioSelected(int)));
+
+
+}
+
+
+
 void RigControlFrame::readActionSelected(int buttonNumber)
 {
     memoryData::memData m = memDialog->getMemoryData(buttonNumber);
@@ -274,7 +298,10 @@ void RigControlFrame::clearActionSelected(int buttonNumber)
 
 
 
-
+void RigControlFrame::passBandRadioSelected(int button)
+{
+    emit sendPassBandStateToControl(button);
+}
 
 
 void RigControlFrame::keyPressEvent(QKeyEvent *event)

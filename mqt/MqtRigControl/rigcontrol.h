@@ -149,13 +149,16 @@ public:
 
     rmode_t convertQStrMode(QString mode);
 
+    int passBandState;
     pbwidth_t passbandNarrow(rmode_t mode);
     pbwidth_t passbandNormal(rmode_t mode);
     pbwidth_t passbandWide(rmode_t mode);
-    pbwidth_t lookUpPassBand(QString, hamlibData::pBand);
-    void setPassBand(pbwidth_t width);
+    pbwidth_t lookUpPassBand(QString, int);
+    void setPassBand(QString mode, int modeState);
     pbwidth_t getPassBand();
+    void buildPassBandTable();
 
+    int rigConvertQStrMode(QString mode);
 signals:
     void frequency_updated(double);
     void debug_protocol(QString);
@@ -170,6 +173,34 @@ signals:
 //    vfo_t vfo;              // vfo selection
 //    int strength;           // S-Meter level
 //    int retcode;            // generic return code from functions
+
+
+    pbwidth_t CW_PASSBAND_NAR = 500;
+    pbwidth_t CW_PASSBAND_NOR = 2200;
+    pbwidth_t CW_PASSBAND_WID = 0;
+
+    pbwidth_t USB_PASSBAND_NAR = 0;
+    pbwidth_t USB_PASSBAND_NOR = 2200;
+    pbwidth_t USB_PASSBAND_WID = 0;
+
+    pbwidth_t FM_PASSBAND_NAR = 0;
+    pbwidth_t FM_PASSBAND_NOR = 9000;
+    pbwidth_t FM_PASSBAND_WID = 0;
+
+    pbwidth_t MGM_PASSBAND_NAR = 0;
+    pbwidth_t MGM_PASSBAND_NOR = 2200;
+    pbwidth_t MGM_PASSBAND_WID = 0;
+
+    pbwidth_t passBandWidth[3][4]; /*= {
+                                      {CW_PASSBAND_NAR, CW_PASSBAND_NOR, CW_PASSBAND_WID},
+                                      {USB_PASSBAND_NAR, USB_PASSBAND_NOR, USB_PASSBAND_WID},
+                                      {FM_PASSBAND_NAR, FM_PASSBAND_NOR, FM_PASSBAND_WID},
+                                      {MGM_PASSBAND_NAR, MGM_PASSBAND_NOR, MGM_PASSBAND_WID}
+                                   };*/
+
+
+
+
     rig_model_t myrig_model;
     bool rigControlEnabled;
     bool serialConnected;
@@ -183,6 +214,8 @@ signals:
     bool setPTT(bool On);
     double lastFrequency;
     QStringList xmlModes;
+
+
 
 
 
