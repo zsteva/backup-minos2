@@ -27,8 +27,7 @@ SOURCES += main.cpp\
 HEADERS  += rigcontrolmainwindow.h \
     rigcontrol.h \
     setupdialog.h \
-    rigcontrolrpc.h \
-    rigcontrolcommonconstants.h
+    rigcontrolrpc.h
 
 FORMS    += rigcontrolmainwindow.ui \
     setupdialog.ui
