@@ -76,6 +76,12 @@ void ContestDetails::accept()
 
 int ContestDetails::exec()
 {
+    // If someone has created them by hand, make sure we reread them1
+    contest->QTHBundle.checkLoaded();
+    contest->stationBundle.checkLoaded();
+    contest->entryBundle.checkLoaded();
+    contest->appBundle.checkLoaded();
+
     ui->QTHBundleFrame->initialise( this, "QTH", &contest->QTHBundle, &contest->QTHBundleName );
     ui->StationBundleFrame->initialise(this,  "Station", &contest->stationBundle, &contest->stationBundleName );
     ui->EntryBundleFrame->initialise(this,  "Entry", &contest->entryBundle, &contest->entryBundleName );

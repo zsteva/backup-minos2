@@ -813,7 +813,15 @@ QString SettingsBundle::getBundle()
 {
    return bundleFile->getBundle();
 }
-
+void SettingsBundle::checkLoaded()
+{
+    if ( !bundleFile )
+    {
+       return ;
+    }
+    // force a reload if necessary
+    bundleFile->iniFile->getPrivateProfileInt( "dummy", "dummy",  true );
+}
 void SettingsBundle::setProfile( QSharedPointer<BundleFile> b )
 {
    bundleFile = b;

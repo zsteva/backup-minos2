@@ -12,28 +12,48 @@ Ken
 certain paranoid combinations. Try DD8DDD/MM with locator DD88DD (in bold
 for first contact)
 
+[mjg] sizeHint in HtmlDelegate is giving what is used as the size, but it is wrong
+trying mult by 1.7 - or is this something to do with highres screen?
+
 .          Edit QSO, Catch-up (Post Entry), and top right of Data entry all
 have the same problem. This data is displayed in the correct order, but the
 labels for the fields are still in the wrong order. All three could do with
 some repositioning of the fields/data for clarity.
 
+[mjg]ordering done; asked Ken for more on repositioning.
+
 .          If the installation selects a non-standard directory, logs
 default back to C: rather than sub-folder of selected directory
 
+[mjg] I had told inno "don't overwrite" INI key!
+
 .          If in catch-up cannot select an entry from CSL panel
+
+[mjg] look at this again! Why not have this match/other match/archive match? But need 
+to stop signals being acted on by main QSO area. 
 
 .          No error message if try to re-open a file that no longer there.
 (Unchanged from V1.early, is it intentional?)
 
+[mjg] Asked Ken if this really matters 
+
 .          Bottom left panel, comments does not have a right sidebar.
+
+[mjg] stretch last column - just not visible but it is there and works.
 
 .          Change font initially screws up locator stats display, restart
 required for it to reset.
 
+[mjg] Looks OK here
+
 .          Font size increase compounds the column sizing issues of course
+
+[mjg] yes
 
 .          Programme needs restart to see Station.ini (Entry and QTH are
 seen without restarting)
+
+[mjg] fixed
 
 .          File/Options shows  Autofill as  false initially; set autofill
 changes it to 1, clear autofill then resets it to 0.
