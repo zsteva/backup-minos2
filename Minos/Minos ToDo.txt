@@ -1,3 +1,88 @@
+from: "Ken Punshon" <Ken@Kesnue.org>
+
+Mike,
+
+This is my complete list, some of which may duplicate previous messages. I
+thought it better to get them all in one place.
+
+Ken
+ 
+
+.          Callsign and locator width and comments in log NOT fixed for
+certain paranoid combinations. Try DD8DDD/MM with locator DD88DD (in bold
+for first contact)
+
+.          Edit QSO, Catch-up (Post Entry), and top right of Data entry all
+have the same problem. This data is displayed in the correct order, but the
+labels for the fields are still in the wrong order. All three could do with
+some repositioning of the fields/data for clarity.
+
+.          If the installation selects a non-standard directory, logs
+default back to C: rather than sub-folder of selected directory
+
+.          If in catch-up cannot select an entry from CSL panel
+
+.          No error message if try to re-open a file that no longer there.
+(Unchanged from V1.early, is it intentional?)
+
+.          Bottom left panel, comments does not have a right sidebar.
+
+.          Change font initially screws up locator stats display, restart
+required for it to reset.
+
+.          Font size increase compounds the column sizing issues of course
+
+.          Programme needs restart to see Station.ini (Entry and QTH are
+seen without restarting)
+
+.          File/Options shows  Autofill as  false initially; set autofill
+changes it to 1, clear autofill then resets it to 0.
+
+.          Edit of Entry and QTH does not force upper case; appears as upper
+case in the details. If contest details manually entered then 'Section' can
+be set to lower case, which remains lower case in details. I think this is
+not important since submission process picks section?
+
+.          'Matches in this contest' UTC is 'right justified' - if you
+double click size it then look for a match then no time info is displayed.
+If you resize with matches displayed then slight overlap.
+
+.          'Matches other contests' uses contest name, which doesn't fully
+distinguish (in Christmas Cumulatives at least); better to use Minos log
+file name?
+
+.          'Matches other contests' also doesn't have time of the QSO (so
+have to switch to that contest to find entry)
+
+.          Matches in CSL selector bar is initial grey, turns blue once you
+click on an entry
+
+.          "If the contest band is entered as 50 MHz  then the locator
+calculator will work out the closest point for a 4 figure locator  e.g.
+JO88." Don't think this is still true, not least because calculations not
+done until full 6 characters entered!
+
+.          If hit CR with blank locator then calculator wipes the other
+formats, so you CAN'T use it to convert e.g. NGR to locator.
+
+.          Catch-up: What are Insert Before and Insert After ACTUALLY meant
+to do?
+
+.          Catch-up: Managed to produce programme crash by entering QSO
+1,2,6 - yes to create missing (created order looks odd); then click Insert
+Before; could not edit sequence number sent; click Force.
+
+.          Locator Calculator can also be invoked from the LOG/Force of e.g.
+a duplicate. Is this intentional, or a left-over?
+
+.          Got another programme crash closing multiple tabs from Christmas
+Cumulatives. Possibly something to do with having matches open - continuing
+to investigate.
+
+.          Beware right click on non-selected (red) contest tab; actions
+apply to red tab, not the 'blue' one (the one which the right-click was on).
+Don't know that can do anything other than warn people? (It's what caught me
+on a couple of 'faults' that weren't actually there!)
 ==================================================================    
 To be tested
 ------------
