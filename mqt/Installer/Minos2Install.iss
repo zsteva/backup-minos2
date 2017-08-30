@@ -102,11 +102,11 @@ var
 begin
   LogsDirPage := CreateInputDirPage(
     wpSelectDir,
-    'Minos 2 Logs Directory',
+    'Minos Logs Directory',
     '',
     'Please Select the directory for Minos Logs.',
     False,
-    'Minos 2'
+    'Minos'
   );
   LogsDirPage.Add('');
  
@@ -120,4 +120,4 @@ begin
 end;
 
 [INI]
-Filename: "{app}\Configuration\MinosLogger.ini"; Section: "Default"; Key: "Log Directory"; String: "{code:GetLogsDir}"; Flags: createkeyifdoesntexist
+Filename: "{app}\Configuration\MinosLogger.ini"; Section: "Default"; Key: "Log Directory"; String: "{code:GetLogsDir}"
