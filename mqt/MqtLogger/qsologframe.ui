@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>643</width>
+    <width>690</width>
     <height>228</height>
    </rect>
   </property>
@@ -197,9 +197,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="BrgSt">
+          <widget class="QLabel" name="DistSt">
            <property name="text">
-            <string>1234</string>
+            <string>(12345)</string>
            </property>
            <property name="margin">
             <number>0</number>
@@ -227,9 +227,9 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="DistSt">
+          <widget class="QLabel" name="BrgSt">
            <property name="text">
-            <string>(12345)</string>
+            <string>1234</string>
            </property>
            <property name="margin">
             <number>0</number>
