@@ -58,6 +58,8 @@ seen without restarting)
 .          File/Options shows  Autofill as  false initially; set autofill
 changes it to 1, clear autofill then resets it to 0.
 
+[mjg] fixed - now starts as 0
+
 .          Edit of Entry and QTH does not force upper case; appears as upper
 case in the details. If contest details manually entered then 'Section' can
 be set to lower case, which remains lower case in details. I think this is
