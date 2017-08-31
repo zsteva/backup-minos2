@@ -216,13 +216,9 @@ int transform( Location *fingrid, Location *foutgrid )
 {
    int status;
    int frl = 0;
-   Location *ig, * og;
 
-   ig = &p_ingrid;
-   memmove( ig, fingrid, sizeof( Location ) );
-
-   og = &p_outgrid;
-   memmove( og, foutgrid, sizeof( Location ) );
+   p_ingrid = *fingrid;
+   p_outgrid = *foutgrid;
 
    incentre = p_ingrid.centremeridian;
    outcentre = p_outgrid.centremeridian;
@@ -239,9 +235,7 @@ int transform( Location *fingrid, Location *foutgrid )
    if ( status == GRIDOK )
       status = ( * datatransform[ outstyle ][ 1 ] ) ( &p_outgrid );
 
-   og = &p_outgrid;
-
-   memmove( foutgrid, og, sizeof( Location ) );
+   *foutgrid = p_outgrid;
    return ( status );
 }
 /**********************************************************************/

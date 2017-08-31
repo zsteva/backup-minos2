@@ -1,0 +1,65 @@
+If or when you know what you are doing, a lot of this will be
+overly prescriptive.
+
+Building under Windows
+======================
+
+Create a master directory - I use C:\projects
+
+c:
+cd \
+mkdir projects
+cd projects
+
+Check out Minos
+
+git clone https://git.code.sf.net/p/minos/minos minos2
+
+Install hamlib from https://sourceforge.net/projects/hamlib/ into a directory under C:\projects`
+(it has to be in the correct position relative to Minos, or the build won't find the corect files).
+
+Install qt - get either 5.6.2 (which we need to stay compatible with for Linux); under "tools" make
+ sure that MinGW 4.9.2 is ticked. 
+
+Using MSVC and/or more recent Qt versions counts as an "advanced" option, but is quite possible.
+
+Run QtCreator
+
+Open C:\Projects\Minos2\mqt\mqt.pro; first time you may need to configure it.
+
+Choose Qt 5.6.2, "Release"
+
+Build - the hammer icon at bottom left. This should run to completion, with a few warnings.
+
+To get a runnable system, 
+
+cd C:\Projects\minos2\mqt\Installer
+
+and run
+
+buildInstall.bat
+
+This will fail near the end unless you have wget and Inno Setup installed
+
+wget - https://eternallybored.org/misc/wget/
+
+Inno Setup - http://www.jrsoftware.org/isinfo.php
+ 
+(only needed if you want to build an installer), but you will find a runnable system
+installed in 
+
+C:\temp\mqtInstaller\installFiles
+
+which you can copy to wherever you wish to run from. To change the way this works, 
+copy buildInstall.bat to another filename, and edit as you wish.
+
+To set up an icon for the logger, the logger executable is
+
+ C:\temp\mqtInstaller\installFiles\Bin\MqtLogger.exe, 
+
+and you need to modify the "start in" directory to be C:\temp\mqtInstaller\installFiles 
+
+(leaving off the "\Bin" of the executable).
+
+If you wish to debug (advanced!), then you need to build as "Debug", and set the working directory for running
+under the debugger as for the icon above.

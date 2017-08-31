@@ -711,7 +711,6 @@ BundleFile::BundleFile( PROFILES p )
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowWorked, "ShowWorked", true, "", "hint", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowUnworked, "ShowUnworked", true, "", "hint", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpNextContactDetailsOnLeft, "ShowNextContactDetailsOnLeft", false, "", "hint", false ) ) );
-        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpScrollingContestTabs, "ScrollingContestTabs", false, "", "hint", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowOperators, "ShowOperators", true, "", "hint", false ) ) );
 
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpEditor, "Editor", "Notepad.exe", "", "Default editor", false ) ) );

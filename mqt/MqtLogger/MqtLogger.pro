@@ -70,7 +70,9 @@ SOURCES += main.cpp \
     rigcontrolframe.cpp \
     rotcontrolframe.cpp \
     bandmapframe.cpp \
-    rigmemdialog.cpp
+    rigmemdialog.cpp \
+    LocCalcFrame.cpp \
+    StackedInfoFrame.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -113,7 +115,9 @@ HEADERS  += \
     rotcontrolframe.h \
     bandmapframe.h \
     rigmemcommondata.h \
-    rigmemdialog.h
+    rigmemdialog.h \
+    LocCalcFrame.h \
+    StackedInfoFrame.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
@@ -139,9 +143,12 @@ FORMS    += tlogcontainer.ui \
     TClockFrame.ui \
     StartConfig.ui \
     rigcontrolframe.ui \
+    rigmemdialog.ui \
     rotcontrolframe.ui \
     bandmapframe.ui \
-    rigmemdialog.ui
+    LocCalcFrame.ui \
+    StackedInfoFrame.ui
+
 
 DISTFILES += \
     AndroidTemplate/AndroidManifest.xml \

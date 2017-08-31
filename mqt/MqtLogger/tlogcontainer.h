@@ -43,7 +43,6 @@ public:
 
     bool isShowOperators();
     bool isNextContactDetailsOnLeft();
-    bool isScrollingContestTabs();
 
     void setCaption( QString );
 
@@ -107,10 +106,8 @@ private:
     QAction *ShiftTabRightAction;
 
     QAction *startConfigAction;
-    QAction *LocCalcAction;
     QAction *AnalyseMinosLogAction;
     QAction *CorrectDateTimeAction;
-    QAction *ScrollingContestTabsAction;
     QAction *ShowOperatorsAction;
     QAction *OptionsAction;
     QAction *FontEditAcceptAction;
@@ -162,10 +159,8 @@ private slots:
     void ShiftTabLeftActionExecute();
     void ShiftTabRightActionExecute();
 
-    void LocCalcActionExecute();
     void AnalyseMinosLogActionExecute();
     void CorrectDateTimeActionExecute();
-    void ScrollingContestTabsActionExecute();
     void ShowOperatorsActionExecute();
     void OptionsActionExecute();
     void FontEditAcceptActionExecute();

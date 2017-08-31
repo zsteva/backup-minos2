@@ -90,10 +90,6 @@ void TLogContainer::subscribeApps()
 
 bool TLogContainer::show(int argc, char *argv[])
 {
-     bool mlpa = isScrollingContestTabs();
-    ScrollingContestTabsAction->setChecked(mlpa);
-    ui->ContestPageControl->setUsesScrollButtons(!mlpa);
-
     bool so = isShowOperators();
     ShowOperatorsAction->setChecked(so);
 
@@ -261,9 +257,8 @@ void TLogContainer::setupMenus()
 
     startConfigAction = newAction("Startup Apps Configuration", ui->menuTools, SLOT(StartConfigActionExecute()));
     ui->menuTools->addSeparator();
-    LocCalcAction = newAction("Locator Calculator", ui->menuTools, SLOT(LocCalcActionExecute()));
-    AnalyseMinosLogAction = newAction("Analyse Minos Log", ui->menuTools, SLOT(AnalyseMinosLogActionExecute()));
-    ui->menuTools->addSeparator();
+//    AnalyseMinosLogAction = newAction("Analyse Minos Log", ui->menuTools, SLOT(AnalyseMinosLogActionExecute()));
+//    ui->menuTools->addSeparator();
 
     FontEditAcceptAction = newAction("Select &Font...", ui->menuTools, SLOT(FontEditAcceptActionExecute()));
     ReportAutofillAction = newCheckableAction("Signal Report AutoFill", ui->menuTools, SLOT(ReportAutofillActionExecute()));
@@ -288,7 +283,6 @@ void TLogContainer::setupMenus()
     TabPopup.addSeparator();
 
     NextContactDetailsOnLeftAction = newCheckableAction("&Next Contact Details On Left", &TabPopup, SLOT(NextContactDetailsOnLeftActionExecute()));
-    ScrollingContestTabsAction = newCheckableAction("Scrolling contest tabs", &TabPopup, SLOT(ScrollingContestTabsActionExecute()));
     ShowOperatorsAction = newCheckableAction("Show Operators", &TabPopup, SLOT(ShowOperatorsActionExecute()));
     TabPopup.addSeparator();
 
@@ -297,7 +291,7 @@ void TLogContainer::setupMenus()
     TabPopup.addAction(CorrectDateTimeAction);
     TabPopup.addSeparator();
 
-    TabPopup.addAction(AnalyseMinosLogAction);
+    //TabPopup.addAction(AnalyseMinosLogAction);
     newAction( "Cancel", &TabPopup, SLOT( CancelClick() ) );
 
     keyerRecordMenu = ui->menuKeyer->addMenu("Record");
@@ -322,7 +316,6 @@ void TLogContainer::enableActions()
 {
    bool f = ( ui->ContestPageControl->currentIndex() >= 0 );
 
-   LocCalcAction->setEnabled(true);
    FileNewAction->setEnabled(true);
    HelpAboutAction->setEnabled(true);
 
@@ -358,13 +351,6 @@ bool TLogContainer::isNextContactDetailsOnLeft()
 {
    bool ncdol;
    TContestApp::getContestApp() ->displayBundle.getBoolProfile( edpNextContactDetailsOnLeft, ncdol );
-   return ncdol;
-}
-
-bool TLogContainer::isScrollingContestTabs()
-{
-   bool ncdol;
-   TContestApp::getContestApp() ->displayBundle.getBoolProfile( edpScrollingContestTabs, ncdol );
    return ncdol;
 }
 
@@ -742,17 +728,6 @@ void TLogContainer::MakeEntryActionExecute()
     MinosLoggerEvents::SendMakeEntry(ct);
 }
 
-void TLogContainer::LocCalcActionExecute()
-{
-    TLocCalcForm loccalc( this );
-    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-    if (ct)
-    {
-       loccalc.S1Loc = ct->myloc.loc.getValue();
-    }
-    loccalc.exec();
-}
-
 void TLogContainer::AnalyseMinosLogActionExecute()
 {
     QString InitialDir = getDefaultDirectory( false );
@@ -792,11 +767,6 @@ void TLogContainer::CorrectDateTimeActionExecute()
 {
     TClockDlg cdlg(this);
     cdlg.exec();
-}
-
-void TLogContainer::ScrollingContestTabsActionExecute()
-{
-
 }
 
 void TLogContainer::ShowOperatorsActionExecute()

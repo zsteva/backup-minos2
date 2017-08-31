@@ -22,8 +22,8 @@ ErrEntry errDefs[] =
       ErrEntry( 9, "Invalid power(-40 - +40 dBW)" ),      //ERR_7
       ErrEntry( 10, "Invalid district" ),      //ERR_8
       ErrEntry( 10, "Invalid band" ),        //ERR_9
-      ErrEntry( 12, "!!! CS not validated !!!" ),   //ERR_10
-      ErrEntry( 12, "!!! No CS present !!!" ),   //ERR_11
+      ErrEntry( 12, "!!! Callsign not validated !!!" ),   //ERR_10
+      ErrEntry( 12, "!!! No Callsign present !!!" ),   //ERR_11
       ErrEntry( 1, "!!! Duplicate Callsign !!!" ),   //ERR_12
       ErrEntry( 8, "Invalid Callsign!" ),         //ERR_13
       ErrEntry( 10, "No RX Serial Number" ),      //ERR_14
