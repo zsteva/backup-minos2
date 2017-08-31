@@ -98,8 +98,8 @@ QVariant DistrictGridModel::data( const QModelIndex &index, int role ) const
     {
         return QVariant();
     }
-    if ( role != Qt::DisplayRole && role != Qt::EditRole )
-        return QVariant();
+    if (role == Qt::TextAlignmentRole)
+        return Qt::AlignLeft;
 
     if (role == Qt::DisplayRole)
     {
@@ -119,6 +119,8 @@ QVariant DistrictGridModel::headerData( int section, Qt::Orientation orientation
 
         return cell;
     }
+    if (role == Qt::TextAlignmentRole)
+        return Qt::AlignLeft;
     return QVariant();
 }
 

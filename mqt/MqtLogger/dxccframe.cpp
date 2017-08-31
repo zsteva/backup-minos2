@@ -109,6 +109,8 @@ QVariant DXCCGridModel::data( const QModelIndex &index, int role ) const
         QString disp = MultLists::getMultLists() ->getCtryListText( index.row(), CountryTreeColumns[ index.column() ].fieldId, ct );
         return disp;
     }
+    if (role == Qt::TextAlignmentRole)
+        return Qt::AlignLeft;
     return QVariant();
 }
 QVariant DXCCGridModel::headerData( int section, Qt::Orientation orientation,
@@ -122,6 +124,8 @@ QVariant DXCCGridModel::headerData( int section, Qt::Orientation orientation,
 
         return cell;
     }
+    if (role == Qt::TextAlignmentRole)
+        return Qt::AlignLeft;
     return QVariant();
 }
 
