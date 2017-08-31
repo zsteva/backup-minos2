@@ -1,3 +1,28 @@
+Still to do from Ken's points
+
+idealWidth of HTML fields - 1.7 mult is a bodge
+
+Repositioning (again) of dist/brg
+
+cSL access from QSOEditDialog - why not add the "match" stuff? 
+Positioning in "this" contest?
+
+setup and log directory
+[Ken >>>] For the destination location I set U:\Minos2 and would expect the
+logs directory to then default to U:\Minos2\Logs, but instead I get
+C:\Minos\Logs
+
+Double click column sizing on UTC column with no data - can I make sure SOMETHING shows?
+
+Contest name in other match - add band on front?
+
+Time column in other match
+ 
+.          Catch-up: Managed to produce programme crash by entering QSO
+1,2,6 - yes to create missing (created order looks odd); then click Insert
+Before; could not edit sequence number sent; click Force.
+
+//==================================================================    
 from: "Ken Punshon" <Ken@Kesnue.org>
 
 Mike,
@@ -27,6 +52,7 @@ default back to C: rather than sub-folder of selected directory
 
 [mjg] I had told inno "don't overwrite" INI key!
 
+
 .          If in catch-up cannot select an entry from CSL panel
 
 [mjg] look at this again! Why not have this match/other match/archive match? But need 
@@ -44,11 +70,10 @@ to stop signals being acted on by main QSO area.
 .          Change font initially screws up locator stats display, restart
 required for it to reset.
 
-[mjg] Looks OK here
 
 .          Font size increase compounds the column sizing issues of course
 
-[mjg] yes
+[mjg] Font changing now works (style sheets)
 
 .          Programme needs restart to see Station.ini (Entry and QTH are
 seen without restarting)
@@ -65,9 +90,14 @@ case in the details. If contest details manually entered then 'Section' can
 be set to lower case, which remains lower case in details. I think this is
 not important since submission process picks section?
 
+[mjg] not sure...
+
 .          'Matches in this contest' UTC is 'right justified' - if you
 double click size it then look for a match then no time info is displayed.
 If you resize with matches displayed then slight overlap.
+
+[mjg] Actually LEFT justified, but first column of a tree is a bit odd. Not sure
+WHAT I should do if you resize a header when there is no data!
 
 .          'Matches other contests' uses contest name, which doesn't fully
 distinguish (in Christmas Cumulatives at least); better to use Minos log
@@ -76,35 +106,57 @@ file name?
 .          'Matches other contests' also doesn't have time of the QSO (so
 have to switch to that contest to find entry)
 
+[mjg] I took the opinion that it was wasted space when the contest was past
+but yes, in Xmas cums it is relevant
+
 .          Matches in CSL selector bar is initial grey, turns blue once you
 click on an entry
+
+[mjg] Usual Windows - selected control gets a different colour 
 
 .          "If the contest band is entered as 50 MHz  then the locator
 calculator will work out the closest point for a 4 figure locator  e.g.
 JO88." Don't think this is still true, not least because calculations not
 done until full 6 characters entered!
 
+[mjg] on the contest details set "Allow 4 figure locators"
+
 .          If hit CR with blank locator then calculator wipes the other
 formats, so you CAN'T use it to convert e.g. NGR to locator.
 
+[mjg] Oh yes you can :) go to NGR, enter an NGR and hit return - which is I 
+think how you would usually do it
+
 .          Catch-up: What are Insert Before and Insert After ACTUALLY meant
 to do?
+
+[mjg] What they say - insert a new contact either before this one or after 
+this one. Useful when you have messed it all up!
 
 .          Catch-up: Managed to produce programme crash by entering QSO
 1,2,6 - yes to create missing (created order looks odd); then click Insert
 Before; could not edit sequence number sent; click Force.
 
+[mjg] need to look at this one
+
 .          Locator Calculator can also be invoked from the LOG/Force of e.g.
 a duplicate. Is this intentional, or a left-over?
+
+[mjg] Intentional - allows calculation of distance when station doesn't know locator
 
 .          Got another programme crash closing multiple tabs from Christmas
 Cumulatives. Possibly something to do with having matches open - continuing
 to investigate.
 
+[mjg] please do; these are buggers to reproduce when they happen.
+
 .          Beware right click on non-selected (red) contest tab; actions
 apply to red tab, not the 'blue' one (the one which the right-click was on).
 Don't know that can do anything other than warn people? (It's what caught me
 on a couple of 'faults' that weren't actually there!)
+
+[mjg] in Minos 1, I selected the tab on right click; I'll have to look as it
+periodically annoys me to
 ==================================================================    
 To be tested
 ------------

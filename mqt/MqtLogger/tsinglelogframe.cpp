@@ -1264,7 +1264,9 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
                         return "Current contest" + TMatchThread::getThisMatchStatus();
                     if (type == OtherMatch)
                     {
-                        QString cell = contest->name.getValue();
+                        QString name = contest->name.getValue();
+                        QString band = contest->band.getValue();
+                        QString cell = "[" + band + "] " + name;
                         if (currentModel)
                         {
                             cell = HtmlFontColour(lightRed) + "<b>" + cell;
