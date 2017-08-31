@@ -31,9 +31,9 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
     , msg(0)
     , ui(new Ui::RigControlMainWindow)
     , loggerPbWidth(0)
-    , bandWidthState(1)
+    , logger_bw_state(hamlibData::NOR)
     , logRadError(false)
-    , useLogWidth(false)
+    , useLogWidth(true)
 {
 
     ui->setupUi(this);
@@ -131,6 +131,10 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
     }
 
     radio->buildPassBandTable();
+
+    // initialise rig state
+    logger_mode = "USB";
+    loggerSetPassBand(hamlibData::NOR );
 
     trace("*** Rig Started ***");
 
@@ -388,6 +392,7 @@ void RigControlMainWindow::getRadioInfo()
 
 void RigControlMainWindow::loggerSetFreq(QString freq)
 {
+    logger_freq = freq;
     setFreq(freq, RIG_VFO_CURR);
 }
 
@@ -445,9 +450,9 @@ void RigControlMainWindow::getFrequency(vfo_t vfo)
         retCode = radio->getFrequency(vfo, &rfrequency);
         if (retCode == RIG_OK)
         {
-            if (rfrequency != curVfoFrq[0])
+            if (rfrequency != curVfoFrq)
             {
-                curVfoFrq[0] = rfrequency;
+                curVfoFrq = rfrequency;
                 qDebug() << "Trans Enable = " << selectRig->currentRadio.transVertEnable;
                 if (selectRig->currentRadio.transVertEnable)
                 {
@@ -462,7 +467,7 @@ void RigControlMainWindow::getFrequency(vfo_t vfo)
                         transVertF = rfrequency + selectRig->currentRadio.transVertOffset;
                     }
                     qDebug() << "Transvert f " << transVertF;
-                    curTransVertFrq[0] = transVertF;
+                    curTransVertFrq = transVertF;
                     displayTransVertVfo(transVertF);
 
                 }
@@ -504,9 +509,9 @@ void RigControlMainWindow::getMode(vfo_t vfo)
         retCode = radio->getMode(vfo, &rmode, &rwidth);
         if (retCode == RIG_OK)
         {
-            if (rmode != curMode[0])
+            if (rmode != curMode)
             {
-                curMode[0] = rmode;
+                curMode = rmode;
 
                 displayModeVfo(radio->convertModeQstr(rmode));
                 displayPassband(rwidth);
@@ -535,6 +540,7 @@ void RigControlMainWindow::getCurMode()
 
 void RigControlMainWindow::loggerSetMode(QString mode)
 {
+    logger_mode = mode;
     setCurMode(mode);
 }
 
@@ -551,21 +557,19 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
 {
     rmode_t mCode = radio->convertQStrMode(mode);
     int retCode = 0;
-    // get hamlib mode code
-//    for (int i = 0; i < hamlibData::modeList.count(); i++)
-//    {
-//        if (hamlibData::modeList[i] == mode)
-//        {
-//            mCode = i;
-//        }
-//    }
-
-
-
+    pbwidth_t passBand;
+    if (useLogWidth)
+    {
+        passBand = loggerPbWidth;
+    }
+    else
+    {
+        passBand = rwidth;
+    }
 
     if (radio->get_serialConnected())
     {
-         retCode = radio->setMode(vfo, mCode);
+         retCode = radio->setMode(vfo, mCode, passBand);
          if (retCode == RIG_OK)
          {
              qDebug() << "mode changed!";
@@ -585,10 +589,17 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
 
 void RigControlMainWindow::loggerSetPassBand(int state)
 {
-    bandWidthState = state;
-    //loggerPbWidth = radio->lookUpPassBand(curMode, state); ******************************
+    logger_bw_state = state;
+    loggerPbWidth = radio->lookUpPassBand(logger_mode, state);
     ui->passBandState->setText(hamlibData::pBandStateStr[state]);
+    ui->logpbwidthlbl->setText(QString::number(loggerPbWidth));
+    setMode(logger_mode, RIG_VFO_CURR);
 }
+
+
+
+
+
 
 
 /*

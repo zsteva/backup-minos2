@@ -134,9 +134,9 @@ int RigControl::getMode(vfo_t vfo, rmode_t *mode, pbwidth_t *width)
     return rig_get_mode(my_rig, vfo, mode, width);
 }
 
-int RigControl::setMode(vfo_t vfo, rmode_t mode)
+int RigControl::setMode(vfo_t vfo, rmode_t mode, pbwidth_t passBandwidth)
 {
-    return (rig_set_mode(my_rig, vfo, mode, pbwidth));
+    return (rig_set_mode(my_rig, vfo, mode, passBandwidth));
 }
 
 // Hamlib conversion

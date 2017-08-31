@@ -62,25 +62,25 @@ private:
     QTimer *pollTimer;
     class QTimer LogTimer;
     int pollTime;
-    QString sfreq;
-//    double oldFreq = 0;
-    double curFreq = 0;
-    vfo_t curVFO;
-    freq_t rfrequency;       // read frequency
-    rmode_t rmode;          // read radio mode
-
-    int bandWidthState;
-    pbwidth_t rwidth;        // read radio rx bw
-    pbwidth_t loggerPbWidth;      // passband from logger
     bool useLogWidth;
-    vfo_t rvfo;              // read vfo
-    int strength;           // S-Meter level
-    int retcode;            // generic return code from functions
     bool logRadError;
-    double curVfoFrq[NUM_VFO];
-    double curTransVertFrq[NUM_VFO];
-    rmode_t curMode[NUM_VFO];
-    pbwidth_t curRxWidth[NUM_VFO];
+    // data from logger
+    QString logger_freq;
+    QString logger_mode;
+    int logger_bw_state;
+    rmode_t log_currMode;
+    pbwidth_t loggerPbWidth;      // passband from logger
+
+
+    // data from radio
+    freq_t rfrequency;       // read frequency
+    QString sfreq;          // read freq converted to string
+    rmode_t rmode;          // read radio mode
+    pbwidth_t rwidth;        // read radio rx bw
+    double curVfoFrq;
+    double curTransVertFrq;
+    rmode_t curMode;
+
 
     QString geoStr;         // geometry registry location
 
@@ -123,6 +123,7 @@ private:
     void setCurMode(QString mode);
     void setMode(QString mode, vfo_t vfo);
     void displayPassband(pbwidth_t width);
+
 private slots:
 
     void onStdInRead(QString);

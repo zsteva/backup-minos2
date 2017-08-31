@@ -113,7 +113,7 @@ public:
     int setFrequency(freq_t frequency, vfo_t vfo);
 
     int getMode(vfo_t vfo, rmode_t *mode, pbwidth_t *width);
-    int setMode(vfo_t, rmode_t);
+    setMode(vfo_t vfo, rmode_t mode, pbwidth_t passBandwidth);
     QString convertModeQstr(rmode_t);
 
     int getVfo(vfo_t*);
