@@ -990,6 +990,7 @@ static GridColumn ThisMatchTreeColumns[ THISMATCHTREECOLS ] =
 //---------------------------------------------------------------------------
 static GridColumn OtherMatchTreeColumns[ OTHERMATCHTREECOLS ] =
    {
+      GridColumn( egTime, "XXXXXXXXXX", "UTC", taLeftJustify ),               // time
       GridColumn( egCall, "MMMMMMMMMMM", "Callsign", taLeftJustify ),         // call
       GridColumn( egLoc, "MM00MM00X", "Loc", taLeftJustify ),            // LOC
       GridColumn( egBrg, "3601X", "brg", taLeftJustify ),                // bearing
