@@ -54,6 +54,8 @@ signals:
    void CountrySelect(QString cty, BaseContestLog *c);
    void DistrictSelect(QString dist, BaseContestLog *c);
    void LocSelect(QString loc, BaseContestLog *c);
+
+   void FontChanged();
 public:
    static MinosLoggerEvents mle;
 
@@ -91,6 +93,7 @@ public:
    static void SendDistrictSelect(QString dist, BaseContestLog *c);
    static void SendLocSelect(QString loc, BaseContestLog *c);
 
+   static void SendFontChanged();
 };
 //---------------------------------------------------------------------------
 #endif

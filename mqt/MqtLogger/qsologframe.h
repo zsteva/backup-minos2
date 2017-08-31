@@ -154,6 +154,22 @@ private:
     QString curFreq;
 
     void setMode(QString m);
+
+    QString ssQsoFrameBlue = " #qsoFrame { border: 2px solid blue; }";
+    QString ssRed = "color:red";
+
+    QString ssDtgWhite = "QLineEdit { background-color: white ; border: none ; color: black ; }";
+    QString ssDtgRed = "QLineEdit { background-color: white ; border: none ; color: red ; }";
+
+    QString ssLineEditNoFrame = "QLineEdit {  border: none ; }";
+    QString ssLineEditGreyBackground = "QLineEdit { background-color: silver ; border-style: outset ; border-width: 1px ; border-color: black ; color : black ;}";
+    QString ssLineEditOK = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; color : black ; }";
+
+    QString ssLineEditFrRedBkRed = "QLineEdit { background-color: red ; border-style: outset ; border-width: 1px ; border-color: red ; color : white }";
+    QString ssLineEditFrRedBkWhite = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: red ; color : black}";
+
+    QMap<QWidget *, QString> widgetStyles;
+
 signals:
     void QSOFrameCancelled();
     //void sendRotator(rpcConstants::RotateDirection direction, int angle );
@@ -186,6 +202,7 @@ private slots:
     void on_RSTTXEdit_textChanged(const QString &arg1);
     void on_RSTRXEdit_textChanged(const QString &arg1);
 
+    void on_FontChanged();
 };
 
 #endif // QSOLOGFRAME_H

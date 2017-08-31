@@ -66,6 +66,7 @@ StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
 
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToCountry(QString,BaseContestLog*)), this, SLOT(on_ScrollToCountry(QString,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToDistrict(QString,BaseContestLog*)), this, SLOT(on_ScrollToDistrict(QString,BaseContestLog*)), Qt::QueuedConnection);
+    connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
 }
 
 StackedInfoFrame::~StackedInfoFrame()
@@ -112,6 +113,11 @@ void StackedInfoFrame::refreshMults()
     ui->dxccFrame->reInitialiseCountries();
     ui->districtFrame->reInitialiseDistricts();
 }
+void StackedInfoFrame::on_FontChanged()
+{
+    refreshMults();
+}
+
 void StackedInfoFrame::initFilters()
 {
    filterClickEnabled = false;  // stop them being saved while we are setting up

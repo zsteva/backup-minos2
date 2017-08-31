@@ -167,4 +167,10 @@ void MinosLoggerEvents::SendLocSelect(QString loc, BaseContestLog *c)
     emit mle.LocSelect(loc, c);
 }
 //---------------------------------------------------------------------------
+void MinosLoggerEvents::SendFontChanged()
+{
+    emit mle.FontChanged();
+}
+//---------------------------------------------------------------------------
+
 

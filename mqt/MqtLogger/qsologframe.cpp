@@ -99,15 +99,24 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(Validated()), this, SLOT(on_Validated()));
     connect(&MinosLoggerEvents::mle, SIGNAL(ValidateError(int)), this, SLOT(on_ValidateError(int)));
     connect(&MinosLoggerEvents::mle, SIGNAL(ShowOperators()), this, SLOT(on_ShowOperators()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
 
-    ui->qsoFrame->setStyleSheet(" #qsoFrame { border: 2px solid blue; }");
-
-    QString ss("QLineEdit { background-color: white ; border: none ; color: black ; }");
-    ui->DateEdit->setStyleSheet(ss);
-    ui->TimeEdit->setStyleSheet(ss);
+    ui->qsoFrame->setStyleSheet(ssQsoFrameBlue);
+    ui->DateEdit->setStyleSheet(ssDtgWhite);
+    ui->TimeEdit->setStyleSheet(ssDtgWhite);
+    widgetStyles[ui->qsoFrame] = ssQsoFrameBlue;
+    widgetStyles[ui->DateEdit] = ssDtgWhite;
+    widgetStyles[ui->TimeEdit] = ssDtgWhite;
 }
 
-
+void QSOLogFrame::on_FontChanged()
+{
+    for (QMap<QWidget *, QString>::iterator i = widgetStyles.begin(); i != widgetStyles.end(); i++)
+    {
+        QWidget *w = i.key();
+        w->setStyleSheet(i.value());
+    }
+}
 
 bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
 {
@@ -199,8 +208,8 @@ bool QSOLogFrame::doKeyPressEvent( QKeyEvent* event )
         }
         if (ed == ui->CallsignEdit)
         {
-            QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; color : black ; }");
-            ui->CallsignEdit->setStyleSheet(ss);
+            ui->CallsignEdit->setStyleSheet(ssLineEditOK);
+            widgetStyles[ui->CallsignEdit] = ssLineEditOK;
         }
     }
     return false;
@@ -316,9 +325,11 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
    {
        ui->EditFrame->setVisible(false);
 
-       QString ss("QLineEdit {  border: none ; }");
-       ui->DateEdit->setStyleSheet(ss);
-       ui->TimeEdit->setStyleSheet(ss);
+       ui->DateEdit->setStyleSheet(ssLineEditNoFrame);
+       ui->TimeEdit->setStyleSheet(ssLineEditNoFrame);
+       widgetStyles[ui->DateEdit] = ssLineEditNoFrame;
+       widgetStyles[ui->TimeEdit] = ssLineEditNoFrame;
+
        ui->DateEdit->setReadOnly(true);
        ui->TimeEdit->setReadOnly(true);
    }
@@ -330,8 +341,9 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
    updateQSODisplay();
    refreshOps();
 
-   QString ss("QLineEdit { background-color: silver ; border-style: outset ; border-width: 1px ; border-color: black ; }");
-   ui->SerTXEdit->setStyleSheet(ss);
+   ui->SerTXEdit->setStyleSheet(ssLineEditGreyBackground);
+   widgetStyles[ui->SerTXEdit] = ssLineEditGreyBackground;
+
    current = 0;
    updateTimeAllowed = true;
    oldTimeOK = true;
@@ -344,10 +356,10 @@ void QSOLogFrame::setXferEnabled(bool s)
     ui->MatchXferButton->setEnabled(s);
     QString ss;
     if (s)
-        ss = "color:red";
-    else
-        ss = "";
+        ss = ssRed;
+
     ui->MatchXferButton->setStyleSheet(ss);
+    widgetStyles[ui->MatchXferButton] = ss;
 }
 
 void QSOLogFrame::on_CatchupButton_clicked()
@@ -1098,7 +1110,10 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
 
     for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
    {
-        QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; color : black }");
+        QString ss = ssLineEditOK;
+        if ((*vcp) == ssIl)
+            ss = ssLineEditGreyBackground;
+
         if ( !( *vcp ) ->valid( command, screenContact ) )
         {
             QString text = (*vcp)->wc->text().trimmed();
@@ -1108,11 +1123,11 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
                 {
                     if ( screenContact.cs.valRes == ERR_DUPCS)
                     {
-                        ss = "QLineEdit { background-color: red ; border-style: outset ; border-width: 1px ; border-color: red ; color : white }";
+                        ss = ssLineEditFrRedBkRed;
                     }
                     else
                     {
-                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: red ; color : black}";
+                        ss = ssLineEditFrRedBkWhite;
                     }
                 }
                 else if ((*vcp) == rsIl && text == "5")
@@ -1128,25 +1143,23 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
                     // leave as no error
                     if (screenContact.loc.valRes == ERR_LOC_RANGE && screenContact.loc.loc.getValue().size() > 4)
                     {
-                        ss = "QLineEdit { background-color: red ; border-style: outset ; border-width: 1px ; border-color: red ; color : white; }";
+                        ss = ssLineEditFrRedBkRed;
                     }
                     else if (screenContact.loc.valRes != LOC_OK)
                     {
-                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: red ; color : black; }";
+                        ss = ssLineEditFrRedBkWhite;
                     }
                 }
                 else
                 {
-                    ss = "QLineEdit { background-color: red ; border-style: outset ; border-width: 1px ; border-color: red ; color : white; }";
+                    ss = ssLineEditFrRedBkRed;
                 }
             }
             ret = false;
         }
-        else
-        {
-            ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; }";
-        }
+
         (*vcp)->wc->setStyleSheet(ss);
+        widgetStyles[(*vcp)->wc] = ss;
 
    }
    return ret;
@@ -1808,15 +1821,17 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
         oldTimeOK = timeOK;
         if (timeOK)
         {
-            QString ss("QLineEdit { background-color: white ; border: none ; color: black ; }");
-            ui->DateEdit->setStyleSheet(ss);
-            ui->TimeEdit->setStyleSheet(ss);
+            ui->DateEdit->setStyleSheet(ssDtgWhite);
+            ui->TimeEdit->setStyleSheet(ssDtgWhite);
+            widgetStyles[ui->DateEdit] = ssDtgWhite;
+            widgetStyles[ui->TimeEdit] = ssDtgWhite;
         }
         else
         {
-            QString ss("QLineEdit { background-color: white ; border: none ; color: red ; }");
-            ui->DateEdit->setStyleSheet(ss);
-            ui->TimeEdit->setStyleSheet(ss);
+            ui->DateEdit->setStyleSheet(ssDtgRed);
+            ui->TimeEdit->setStyleSheet(ssDtgRed);
+            widgetStyles[ui->DateEdit] = ssDtgRed;
+            widgetStyles[ui->TimeEdit] = ssDtgRed;
         }
     }
 
