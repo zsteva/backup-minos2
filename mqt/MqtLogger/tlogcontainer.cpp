@@ -1214,7 +1214,9 @@ BaseContestLog *TLogContainer::loadSession( QString sessName)
         {
             if ( curSlot >= 0 && curSlot < app ->getContestSlotCount())
             {
-                ct = app ->contestSlotList[ curSlot ] ->slot;
+                BaseContestLog *c = app ->contestSlotList[ curSlot ] ->slot;
+                if (c)
+                    ct = c;
             }
         }
     }
