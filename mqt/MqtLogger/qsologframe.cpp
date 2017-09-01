@@ -7,7 +7,7 @@
 
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
-
+#include <QDebug>
 
 QSOLogFrame::QSOLogFrame(QWidget *parent) :
     QFrame(parent)
@@ -22,7 +22,8 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     //, rotatorLoaded(false)
     , bandMapLoaded(false)
     , keyerLoaded(false)
-    //, radioLoaded(false)
+    , radioLoaded(false)
+    , curFreq("00:000:000:000")
 {
     ui->setupUi(this);
 
@@ -1471,14 +1472,14 @@ bool QSOLogFrame::checkAndLogEntry(bool checkDTG)
    }
    return retval;
 }
-
+//---------------------------------------------------------------------------
 void QSOLogFrame::setMode(QString m)
 {
 
     QString myOldMode = ui->ModeComboBoxGJV->currentText();
 
     ui->ModeComboBoxGJV->setCurrentText(m);
-
+    mode = m;
     oldMode = myOldMode;
 
 
@@ -1496,7 +1497,17 @@ void QSOLogFrame::setMode(QString m)
 
 
 }
+//---------------------------------------------------------------------------
+void QSOLogFrame::setFreq(QString f)
+{
+    if (curFreq != f)
+    {
+        curFreq = f;
+        qDebug() << "freq = " << f << " mode = " << mode;
+    }
+}
 
+//---------------------------------------------------------------------------
 void QSOLogFrame::clearCurrentField()
 {
    current = 0;
@@ -2138,7 +2149,7 @@ void QSOLogFrame::on_ModeComboBoxGJV_activated(int index)
     // send mode change to radio
     if (index < hamlibData::supModeList.count())
     {
-
+         mode = hamlibData::supModeList[index];
          emit sendModeControl(hamlibData::supModeList[index]);
     }
 

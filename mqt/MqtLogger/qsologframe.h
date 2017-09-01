@@ -61,6 +61,7 @@ public:
 
 
     void modeSentFromRig(QString mode);
+    void setFreq(QString freq);
     QString getBearing();
 private:
     ScreenContact *partialContact; // contact being edited on screen
@@ -142,6 +143,8 @@ private:
 
     //bool rotatorLoaded;
     //bool isRotatorLoaded();
+    bool radioLoaded;
+    bool isRadioLoaded();
 
     bool bandMapLoaded;
     bool isBandMapLoaded();

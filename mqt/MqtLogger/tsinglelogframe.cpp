@@ -919,6 +919,7 @@ void TSingleLogFrame::on_SetMode(QString m)
 void TSingleLogFrame::on_SetFreq(QString f)
 {
     ui->FKHRigControlFrame->setFreq(f);
+    ui->GJVQSOLogFrame->setFreq(f);
 }
 
 
