@@ -75,8 +75,6 @@ Filename: "{app}\Bin\{#MyAppExeName}";WorkingDir: "{app}"; Description: "{cm:Lau
 [Code]
 // global vars
 var
-  LogsDirPage: TInputDirWizardPage;
-  SampleLogsPage: TInputOptionWizardPage;
   LogsDirVal: String;
  
 function GetLogsDir(Param: String): String;
@@ -97,8 +95,6 @@ end;
  
   // custom wizard page setup, for data dir.
 procedure InitializeWizard;
-var
-  myLocalAppData: String;
 begin
   LogsDirPage := CreateInputDirPage(
     wpSelectDir,
@@ -110,7 +106,15 @@ begin
   );
   LogsDirPage.Add('');
  
-  LogsDirPage.Values[0] := GetIniString('Default', 'Log Directory', GetDefaultLogsDirectory(), GetIniFilename());
+  LogsDirPage.Values[0] := GetDefaultLogsDirectory();
+end;
+
+function NextButtonClick(CurPageID: Integer): Boolean;
+begin
+  if CurPageID = wpSelectDir then
+    LogsDirPage.Values[0] := GetIniString('Default', 'Log Directory', GetDefaultLogsDirectory(), GetIniFilename());
+    
+    result := true;
 end;
  
 function LogsDirExists(): Boolean;
