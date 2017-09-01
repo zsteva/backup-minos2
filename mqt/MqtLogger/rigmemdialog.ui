@@ -68,11 +68,20 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="modeLineEdit">
-         <property name="maxLength">
-          <number>4</number>
+        <widget class="QComboBox" name="modecb"/>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
-        </widget>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -86,14 +95,20 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="passBandLineEdit">
-         <property name="inputMask">
-          <string>99999</string>
+        <widget class="QComboBox" name="pbStateCb"/>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
-         <property name="maxLength">
-          <number>5</number>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
          </property>
-        </widget>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -109,7 +124,13 @@
        <item>
         <widget class="QLineEdit" name="locatorLineEdit">
          <property name="inputMask">
-          <string>AA99aa</string>
+          <string/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="cursorPosition">
+          <number>0</number>
          </property>
         </widget>
        </item>

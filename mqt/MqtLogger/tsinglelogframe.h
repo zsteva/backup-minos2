@@ -117,6 +117,7 @@ public:
     void QSOTreeSelectContact( QSharedPointer<BaseContact> lct );
 
     ScreenContact &getScreenEntry();
+    int getBearingFrmQSOLog();
 
     void refreshMults();
     TSendDM *sendDM;

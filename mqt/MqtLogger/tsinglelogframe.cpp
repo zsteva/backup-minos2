@@ -537,6 +537,12 @@ ScreenContact &TSingleLogFrame::getScreenEntry()
     return ui->GJVQSOLogFrame->screenContact;
 }
 //---------------------------------------------------------------------------
+int TSingleLogFrame::getBearingFrmQSOLog()
+{
+    return ui->FKHRotControlFrame->getAngle(ui->GJVQSOLogFrame->getBearing());
+}
+
+//---------------------------------------------------------------------------
 void TSingleLogFrame::on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* )
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())

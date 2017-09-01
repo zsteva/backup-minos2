@@ -41,13 +41,14 @@ public:
     void setRotatorAntennaName(const QString &s);
     void setRotatorMaxAzimuth(const QString &s);
     void setRotatorMinAzimuth(const QString &s);
+    int getAngle(QString);
 
-
+    QString getBrgTxtFrmFrame();
 private:
 
     RigMemDialog *memDialog;
 
-    int getAngle();
+
 
     int maxAzimuth = 0;
     int minAzimuth = 0;

@@ -63,9 +63,9 @@ RotControlFrame::~RotControlFrame()
 
 
 
-int RotControlFrame::getAngle()
+int RotControlFrame::getAngle(QString brgSt)
 {
-    QString brgSt = ui->BrgSt->text();
+
 
     int brg = 0;
 
@@ -97,9 +97,17 @@ void RotControlFrame::getBrgFrmQSOLog(QString Brg)
 }
 
 
+QString RotControlFrame::getBrgTxtFrmFrame()
+{
+    return ui->BrgSt->text();
+}
+
+
 void RotControlFrame::on_Rotate_clicked()
 {
-    int angle = getAngle();
+    QString brgSt = ui->BrgSt->text();
+
+    int angle = getAngle(brgSt);
 
     if (angle == COMPASS_ERROR)
     {

@@ -49,6 +49,8 @@ signals:
 private slots:
     void saveButtonPushed();
     void cancelButtonPushed();
+    void callSignToUpper(QString callSign);
+    void locatorToUpper(QString locator);
 private:
     Ui::RigMemDialog *ui;
     memoryData::memData memoryList[memoryData::NUM_MEMORIES];

@@ -2195,3 +2195,10 @@ bool QSOLogFrame::isBandMapLoaded()
 {
     return bandMapLoaded;
 }
+
+//----------------------------------------------------------------
+
+QString QSOLogFrame::getBearing()
+{
+    return ui->BrgSt->text();
+}

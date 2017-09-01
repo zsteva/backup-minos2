@@ -38,6 +38,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     , radioLoaded(false)
     , freqEditOn(false)
     , memReadFlag(true)
+
 {
 
     ui->setupUi(this);
@@ -239,6 +240,7 @@ void RigControlFrame::initMemoryButtons()
 
 void RigControlFrame::initPassBandRadioButtons()
 {
+    curpbState = hamlibData::NOR;
     pBandButton[0] = ui->narRb;
     pBandButton[1] = ui->normalRb;
     pBandButton[2] = ui->wideRb;
@@ -270,19 +272,24 @@ void RigControlFrame::readActionSelected(int buttonNumber)
 
 void RigControlFrame::writeActionSelected(int buttonNumber)
 {
-
-    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
     // get contest information
-    //TSingleLogFrame *tslf = dynamic_cast<TSingleLogFrame *>(p);
+    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+
+
     ScreenContact sc = tslf->getScreenEntry();
     logData.callsign = sc.cs.fullCall.getValue();
     logData.locator = sc.loc.loc.getValue();
     logData.mode = curMode;
-    logData.time = dtg( true ).getIsoDTG();
+    logData.passBand = hamlibData::pBandStateStr[curpbState];
+
+    QStringList dt = dtg( true ).getIsoDTG().split('T');
+    logData.time = dt[1];
     // time now, other formats
     // are available QString qth = sc.extraText;
 
-    logData.bearing = sc.bearing;
+    //logData.bearing = sc.bearing;
+
+    logData.bearing = tslf->getBearingFrmQSOLog();
     // load log data into memory
     memDialog->setLogData(&logData, buttonNumber, curFreq);
     memDialog->setDialogTitle(QString::number(buttonNumber + 1));
@@ -300,6 +307,7 @@ void RigControlFrame::clearActionSelected(int buttonNumber)
 
 void RigControlFrame::passBandRadioSelected(int button)
 {
+    curpbState = button;
     emit sendPassBandStateToControl(button);
 }
 
@@ -450,7 +458,7 @@ void RigControlFrame::memoryUpdate(int buttonNumber)
             + "Mode: " + m.mode + "\n"
             + "Passband: " + m.passBand + "\n"
             + "Locator: " + m.locator + "\n"
-            + "Bearing: " + "\n"
+            + "Bearing: " + QString::number(m.bearing) + "\n"
             + "Time: " + m.time;
     memButtons[buttonNumber]->setToolTip(tTipStr);
 }

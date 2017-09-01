@@ -19,6 +19,7 @@
 #include "rigmemdialog.h"
 #include "ui_rigmemdialog.h"
 #include "rigmemcommondata.h"
+#include "rigcontrolcommonconstants.h"
 
 
 RigMemDialog::RigMemDialog(QWidget *parent) :
@@ -32,8 +33,22 @@ RigMemDialog::RigMemDialog(QWidget *parent) :
 
     radioName = "";
     radioState = "";
+
+    for (int i = 0; i < hamlibData::supModeList.count(); i++)
+    {
+        ui->modecb->addItem(hamlibData::supModeList[i]);
+    }
+
+    for (int i = 0; i < hamlibData::pBandStateStr.count(); i++)
+    {
+        ui->pbStateCb->addItem(hamlibData::pBandStateStr[i]);
+    }
+
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveButtonPushed()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
+    connect(ui->callSignLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(callSignToUpper(const QString &)));
+    connect(ui->locatorLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(locatorToUpper(const QString &)));
+
 }
 
 RigMemDialog::~RigMemDialog()
@@ -138,8 +153,8 @@ void RigMemDialog::clearMemory(int memoryLoc)
 
     ui->callSignLineEdit->setText(memoryList[memoryLoc].callsign = "");
     ui->freqLineEdit->setText( memoryList[memoryLoc].freq = "00.000.000.000");
-    ui->modeLineEdit->setText( memoryList[memoryLoc].mode = "");
-    ui->passBandLineEdit->setText(memoryList[memoryLoc].passBand = "2200");
+    ui->modecb->setCurrentText( memoryList[memoryLoc].mode = "USB");
+    ui->pbStateCb->setCurrentText(memoryList[memoryLoc].passBand = "NOR");
     ui->locatorLineEdit->setText(memoryList[memoryLoc].locator = "");
     ui->bearingLineEdit->setText(QString::number(memoryList[memoryLoc].bearing = 0));
     ui->timeLineEdit->setText(memoryList[memoryLoc].time = "");
@@ -164,6 +179,12 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber, QStr
     logData.locator = ldata->locator;
     logData.bearing = ldata->bearing;
     logData.time = ldata->time;
+
+
+    ui->modecb->setCurrentText(logData.mode);
+
+
+    ui->pbStateCb->setCurrentText(logData.passBand);
 
     readMemory(memoryNumber);
 
@@ -194,8 +215,8 @@ void RigMemDialog::saveButtonPushed()
    // update memory data
    memoryList[memoryNumber].callsign = ui->callSignLineEdit->text();
    memoryList[memoryNumber].freq = ui->freqLineEdit->text();
-   memoryList[memoryNumber].mode = ui->modeLineEdit->text();
-   memoryList[memoryNumber].passBand = ui->passBandLineEdit->text();
+   memoryList[memoryNumber].mode = ui->modecb->currentText();
+   memoryList[memoryNumber].passBand = ui->pbStateCb->currentText();
    memoryList[memoryNumber].locator = ui->locatorLineEdit->text();
    memoryList[memoryNumber].bearing = ui->bearingLineEdit->text().toInt();
    memoryList[memoryNumber].time = ui->timeLineEdit->text();
@@ -228,3 +249,22 @@ memoryData::memData RigMemDialog::getMemoryData(int memoryNumber)
     return m;
 }
 
+
+void RigMemDialog::callSignToUpper(QString callSign)
+{
+
+    if (callSign != "")
+    {
+        ui->callSignLineEdit->setText(callSign.toUpper());
+    }
+}
+
+
+void RigMemDialog::locatorToUpper(QString locator)
+{
+
+    if (locator != "")
+    {
+        ui->locatorLineEdit->setText(locator.toUpper());
+    }
+}

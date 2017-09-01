@@ -84,6 +84,7 @@ private:
     bool memReadFlag;
     QString curFreq;
     QString curMode;
+    int curpbState;
     QString radioName;
     QString radioState;
 
