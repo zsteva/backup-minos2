@@ -564,7 +564,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
             LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
             int ctmax = ct->maxSerial + 1;
             QString mode = ui->ModeComboBoxGJV->currentText();
-            QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup, mode );
+            QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup, mode, screenContact.time );
             selectEntry( lct );
         }
     }
@@ -1690,7 +1690,7 @@ void QSOLogFrame::logScreenEntry( )
    QSharedPointer<BaseContact> lct = selectedContact;
    if (!lct)
    {
-        lct = ct->addContact( ctmax, 0, false, false, screenContact.mode );	// "current" doesn't get flag, don't save ContestLog yet
+        lct = ct->addContact( ctmax, 0, false, false, screenContact.mode, dtg(true) );	// "current" doesn't get flag, don't save ContestLog yet
    }
 
    bool contactmodeCW = ( screenContact.reps.size() == 3 && screenContact.repr.size() == 3 );
@@ -1764,6 +1764,23 @@ void QSOLogFrame::logCurrentContact( )
 
       if ( mShowYesNoMessage( this, "Serial sent is too high - should I create the missing contacts?") )
       {
+          dtg ctTime(screenContact.time);
+          QSharedPointer<BaseContact> pct = contest->pcontactAt(contest->getContactCount() - 1);
+          if ( pct )
+          {
+             ctTime = pct->time;
+          }
+          else
+          {
+             // use contest start time
+             QDateTime DTGStart = CanonicalToTDT(contest->DTGStart.getValue());
+             QString d = DTGStart.toString("dd/MM/yy");
+             QString t = DTGStart.toString("hh:mm");
+             ctTime.setDate( d, DTGDISP );
+             ctTime.setTime( t.left(5), DTGDISP );
+             ctTime = time;
+          }
+
          int orflag = 0;
 
          if ( mShowYesNoMessage( this, "Do you want to enter these contacts later?" ) )
@@ -1777,7 +1794,7 @@ void QSOLogFrame::logCurrentContact( )
             // last child is "current contact", and we need to add TO IT
             LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
             QString currmode = ui->ModeComboBoxGJV->currentText();
-            ct->addContact( nct_no, orflag, true, false, currmode ); // last contact
+            ct->addContact( nct_no, orflag, true, false, currmode, ctTime ); // last contact
             nct_no++;
          }
          while ( nct_no < ctno ) ;
@@ -2089,7 +2106,13 @@ void QSOLogFrame::on_InsertBeforeButton_clicked()
 {
     QSharedPointer<BaseContact> pct = getPriorContact();
     LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-    QSharedPointer<BaseContact> newct = ct->addContactBetween(pct, selectedContact);
+
+    dtg ctTime = selectedContact->time;
+
+    if (pct)
+        ctTime = pct->time;
+
+    QSharedPointer<BaseContact> newct = ct->addContactBetween(pct, selectedContact, ctTime);
     newct->contactFlags.setValue(newct->contactFlags.getValue()|TO_BE_ENTERED);
     selectEntry(newct);
 }
@@ -2098,7 +2121,9 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
 {
     QSharedPointer<BaseContact> nct = getNextContact();
     LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-    QSharedPointer<BaseContact> newct = ct->addContactBetween(selectedContact, nct);
+    dtg ctTime = selectedContact->time;
+
+    QSharedPointer<BaseContact> newct = ct->addContactBetween(selectedContact, nct, ctTime);
     newct->contactFlags.setValue(newct->contactFlags.getValue()|TO_BE_ENTERED);
     selectEntry(newct);
 }

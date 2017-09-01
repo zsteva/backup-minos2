@@ -605,6 +605,11 @@ BaseContestLog * TContestApp::getCurrentContest()
 }
 void TContestApp::setCurrentContest( BaseContestLog * c )
 {
+    if (c == 0)
+    {
+        mshowMessage("Trying to set current contest to null. Please inform G0GJV of what you were doing!");
+        return;
+    }
    currentContest = c;
    if (!TContestApp::getContestApp() ->suppressWritePreload)
    {

@@ -434,16 +434,22 @@ void LoggerContestLog::closeFile( void )
    adifContestFile.reset();
    ediContestFile.reset();
 }
-QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, int extraFlags, bool saveNew, bool catchup, QString mode )
+QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, int extraFlags, bool saveNew, bool catchup, QString mode, dtg ctTime )
 {
    // add the contact number as an new empty contact, with disk block and log_seq
 
    bool timenow = true;
    if ( ( extraFlags & TO_BE_ENTERED ) || catchup )
+   {
       timenow = false;
+   }
 
    QSharedPointer<BaseContact> bct;
    makeContact( timenow, bct );
+   if (timenow == false)
+   {
+       bct->time = ctTime;
+   }
 
    QString temp = QString( "%1" ).arg(newctno, 3, 10, QChar('0') );  //leading zeros
    bct->serials.setValue( temp );
@@ -474,7 +480,7 @@ QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, int extra
 
    return bct;
 }
-QSharedPointer<BaseContact> LoggerContestLog::addContactBetween(QSharedPointer<BaseContact> prior, QSharedPointer<BaseContact> next )
+QSharedPointer<BaseContact> LoggerContestLog::addContactBetween(QSharedPointer<BaseContact> prior, QSharedPointer<BaseContact> next, dtg ctTime )
 {
    // add the contact number as an new empty contact, with disk block and log_seq
 
@@ -488,6 +494,7 @@ QSharedPointer<BaseContact> LoggerContestLog::addContactBetween(QSharedPointer<B
    QSharedPointer<BaseContact> bct;
    makeContact( timenow, bct );
 
+   bct->time = ctTime;
    bct->serials.setValue( "" );
    bct->mode.setValue(prior->mode.getValue());
 

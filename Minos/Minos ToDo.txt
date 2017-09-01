@@ -1,26 +1,25 @@
 Still to do from Ken's points
 
 idealWidth of HTML fields - 1.7 mult is a bodge
+Double click column sizing on UTC column with no data - can I make sure SOMETHING shows?
 
 Repositioning (again) of dist/brg
 
+Done (again)
+
 cSL access from QSOEditDialog - why not add the "match" stuff? 
-Positioning in "this" contest?
+  Positioning in "this" contest?
 
 setup and log directory
 [Ken >>>] For the destination location I set U:\Minos2 and would expect the
 logs directory to then default to U:\Minos2\Logs, but instead I get
 C:\Minos\Logs
-
-Double click column sizing on UTC column with no data - can I make sure SOMETHING shows?
-
-Contest name in other match - add band on front?
-
-Time column in other match
  
 .          Catch-up: Managed to produce programme crash by entering QSO
 1,2,6 - yes to create missing (created order looks odd); then click Insert
 Before; could not edit sequence number sent; click Force.
+
+Maybe fixed... I now always set a time, anyway
 
 //==================================================================    
 from: "Ken Punshon" <Ken@Kesnue.org>

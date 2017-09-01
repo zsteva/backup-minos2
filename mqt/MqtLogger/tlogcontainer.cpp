@@ -973,6 +973,7 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
             {
                TContestApp::getContestApp() ->closeFile( contest );
                contest = 0;
+               show = false;
             }
          }
       }
@@ -1220,7 +1221,8 @@ BaseContestLog *TLogContainer::loadSession( QString sessName)
             }
         }
     }
-    app->setCurrentContest(ct);
+    if (ct)
+        app->setCurrentContest(ct);
 
     preloadBundle.openSection(app->preloadsect);
     preloadBundle.setStringProfile(eppSession, sessName);

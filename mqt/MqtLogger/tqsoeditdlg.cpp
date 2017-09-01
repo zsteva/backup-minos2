@@ -156,7 +156,7 @@ void TQSOEditDlg::selectCatchup(BaseContestLog * c , QString mode)
 
    int ctmax = ct->maxSerial + 1;
 
-   QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup, mode );
+   QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup, mode, dtg(true) );
    selectContact(c, lct);
    ui->GJVQSOEditFrame->setFirstUnfilledButtonEnabled(false);
 }
