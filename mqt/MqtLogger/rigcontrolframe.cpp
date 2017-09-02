@@ -278,6 +278,7 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
 
     ScreenContact sc = tslf->getScreenEntry();
     logData.callsign = sc.cs.fullCall.getValue();
+    logData.freq = curFreq;
     logData.locator = sc.loc.loc.getValue();
     logData.mode = curMode;
     logData.passBand = hamlibData::pBandStateStr[curpbState];
@@ -291,15 +292,23 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
 
     logData.bearing = tslf->getBearingFrmQSOLog();
     // load log data into memory
-    memDialog->setLogData(&logData, buttonNumber, curFreq);
-    memDialog->setDialogTitle(QString::number(buttonNumber + 1));
+    memDialog->setLogData(&logData, buttonNumber);
+    memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Write");
     memDialog->show();
 }
 
 void RigControlFrame::clearActionSelected(int buttonNumber)
 {
-     memDialog->clearMemory(buttonNumber);
-     memDialog->setDialogTitle(QString::number(buttonNumber + 1));
+     logData.callsign = "";
+     logData.freq = curFreq;
+     logData.locator = "";
+     logData.mode = curMode;
+     logData.passBand = hamlibData::pBandStateStr[curpbState];
+     QStringList dt = dtg( true ).getIsoDTG().split('T');
+     logData.time = dt[1];
+     logData.bearing = 0;
+     memDialog->clearMemory(&logData, buttonNumber);
+     memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Clear");
      memDialog->show();
 }
 

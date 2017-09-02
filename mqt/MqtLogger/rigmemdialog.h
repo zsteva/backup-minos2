@@ -35,13 +35,13 @@ public:
     ~RigMemDialog();
 
     void setDialogTitle(QString number);
-    void setLogData(memoryData::memData*, int, QString);
+    void setLogData(memoryData::memData*, int buttonNumber);
     void setRadioName(QString);
     void setRadioState(QString);
 
     int readAllMemories();
     memoryData::memData getMemoryData(int memoryNumber);
-    void clearMemory(int memoryLoc);
+    void clearMemory(memoryData::memData* ldata, int memoryLoc);
 signals:
     void memorySaved(int);
 
@@ -57,7 +57,7 @@ private:
     QString radioName;
     QString radioState;
     int memoryNumber;
-    memoryData::memData logData;
+    //memoryData::memData logData;
     int readSettings();
     int saveMemory(int memoryLoc);
     int readMemory(int memoryLoc);

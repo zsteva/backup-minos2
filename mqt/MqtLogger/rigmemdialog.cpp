@@ -148,16 +148,18 @@ int RigMemDialog::saveMemory(int memoryLoc)
 }
 
 
-void RigMemDialog::clearMemory(int memoryLoc)
+void RigMemDialog::clearMemory(memoryData::memData* ldata, int memoryLoc)
 {
 
-    ui->callSignLineEdit->setText(memoryList[memoryLoc].callsign = "");
-    ui->freqLineEdit->setText( memoryList[memoryLoc].freq = "00.000.000.000");
-    ui->modecb->setCurrentText( memoryList[memoryLoc].mode = "USB");
-    ui->pbStateCb->setCurrentText(memoryList[memoryLoc].passBand = "NOR");
-    ui->locatorLineEdit->setText(memoryList[memoryLoc].locator = "");
-    ui->bearingLineEdit->setText(QString::number(memoryList[memoryLoc].bearing = 0));
-    ui->timeLineEdit->setText(memoryList[memoryLoc].time = "");
+
+    ui->callSignLineEdit->setText(memoryList[memoryLoc].callsign = ldata->callsign);
+    ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.count() - 4]);
+    ui->freqLineEdit->setText( memoryList[memoryLoc].freq = ldata->freq);
+    ui->modecb->setCurrentText( memoryList[memoryLoc].mode = ldata->mode);
+    ui->pbStateCb->setCurrentText(memoryList[memoryLoc].passBand = ldata->passBand);
+    ui->locatorLineEdit->setText(memoryList[memoryLoc].locator = ldata->locator);
+    ui->bearingLineEdit->setText(QString::number(memoryList[memoryLoc].bearing = ldata->bearing));
+    ui->timeLineEdit->setText(memoryList[memoryLoc].time = ldata->time);
 }
 
 
@@ -168,41 +170,41 @@ void RigMemDialog::setDialogTitle(QString number)
 }
 
 
-void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber, QString f)
+void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
 {
 
     memoryNumber = buttonNumber;
-    logData.callsign = ldata->callsign;
-    logData.freq = ldata->freq;
-    logData.mode = ldata->mode;
-    logData.passBand = ldata->passBand;
-    logData.locator = ldata->locator;
-    logData.bearing = ldata->bearing;
-    logData.time = ldata->time;
+//    logData.callsign = ldata->callsign;
+//    logData.freq = ldata->freq;
+//    logData.mode = ldata->mode;
+//    logData.passBand = ldata->passBand;
+//    logData.locator = ldata->locator;
+//    logData.bearing = ldata->bearing;
+//    logData.time = ldata->time;
 
 
-    ui->modecb->setCurrentText(logData.mode);
+    ui->modecb->setCurrentText(ldata->mode);
 
 
-    ui->pbStateCb->setCurrentText(logData.passBand);
+    ui->pbStateCb->setCurrentText(ldata->passBand);
 
     readMemory(memoryNumber);
 
 //    if (logData.callsign != memoryList[memoryNumber].callsign)
 //    {
-        ui->callSignLineEdit->setText(logData.callsign);
+        ui->callSignLineEdit->setText(ldata->callsign);
 //    }
-    if (logData.locator != memoryList[memoryNumber].locator)
+    if (ldata->locator != memoryList[memoryNumber].locator)
     {
-        ui->locatorLineEdit->setText(logData.locator);
+        ui->locatorLineEdit->setText(ldata->locator);
     }
+    int a = ldata->freq.count();
+    ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.count() - 4]);
+    ui->freqLineEdit->setText(ldata->freq);
 
-    ui->freqLineEdit->setInputMask(maskData::freqMask[f.count() - 4]);
-    ui->freqLineEdit->setText(f);
-
-    if (logData.bearing != memoryList[memoryNumber].bearing)
+    if (ldata->bearing != memoryList[memoryNumber].bearing)
     {
-        ui->bearingLineEdit->setText(QString::number(logData.bearing));
+        ui->bearingLineEdit->setText(QString::number(ldata->bearing));
     }
 
     ui->timeLineEdit->setText(ldata->time);
