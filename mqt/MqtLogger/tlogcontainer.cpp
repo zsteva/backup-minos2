@@ -248,6 +248,8 @@ void TLogContainer::setupMenus()
     ui->menuFile->addSeparator();
 
     OptionsAction = newAction("Options...", ui->menuFile, SLOT(OptionsActionExecute()));
+    ExitClearAction = newAction("E&xit MinosQt and Clear registry", ui->menuFile, SLOT(ExitClearActionExecute()));
+    ui->menuFile->addSeparator();
     ExitAction = newAction("E&xit MinosQt", ui->menuFile, SLOT(ExitActionExecute()));
 // end of file menu
 
@@ -720,6 +722,27 @@ void TLogContainer::CloseAllButActionExecute()
 
 void TLogContainer::ExitActionExecute()
 {
+    close();
+}
+void TLogContainer::ExitClearActionExecute()
+{
+    // Confirm...
+
+    if (!mShowYesNoMessage(this, "This action will clear registry entries for the Minos V2 Logger.\r\n"
+                                  "Please confirm this action by pressing \"Yes\"." ))
+    {
+       return;
+    }
+
+    // clear registry
+
+    QSettings reg;
+    reg.clear();
+
+    QSettings regOld("G0GJV", "MinosQtLogger");
+    regOld.clear();
+
+    // and exit
     close();
 }
 void TLogContainer::MakeEntryActionExecute()
