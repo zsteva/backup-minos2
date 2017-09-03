@@ -45,7 +45,6 @@ StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
     connect(ui->FilterButton, SIGNAL(clicked()), sm, SLOT(map()));
     connect(ui->DistrictButton, SIGNAL(clicked()), sm, SLOT(map()));
     connect(ui->LocatorButton, SIGNAL(clicked()), sm, SLOT(map()));
-    connect(ui->locCalcButton, SIGNAL(clicked()), sm, SLOT(map()));
     connect(ui->StatsButton, SIGNAL(clicked()), sm, SLOT(map()));
 
     // setMapping on each button to the QStackedWidget index we'd like to switch to
@@ -56,7 +55,6 @@ StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
     sm->setMapping(ui->LocatorButton, 3);
     sm->setMapping(ui->StatsButton, 4);
     sm->setMapping(ui->ClockButton, 5);
-    sm->setMapping(ui->locCalcButton, 6);
 
     // finally, connect the mapper to the stacked widget
     connect(sm, SIGNAL(mapped(int)), ui->StackedMults, SLOT(setCurrentIndex(int)));
@@ -78,7 +76,6 @@ void StackedInfoFrame::setContest(BaseContestLog *ct)
 {
     contest = ct;
 
-    ui->locCalcFrame->setContest(contest);
     ui->dxccFrame->setContest(contest);
     ui->districtFrame->setContest(contest);
     ui->StatsFrame->setContest(contest);
@@ -225,14 +222,6 @@ void StackedInfoFrame::on_ContNA_clicked()
 }
 void StackedInfoFrame::on_StackedMults_currentChanged(int arg1)
 {
-    if (arg1 == 6)
-    {
-        TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
-        ui->locCalcFrame->S1Loc = contest->myloc.loc.getValue();
-        ui->locCalcFrame->S2Loc = tslf->getScreenEntry().loc.loc.getValue();
-        ui->locCalcFrame->Modal = false;
-        ui->locCalcFrame->doExec();
-    }
     ui->StatsFrame->reInitialiseStats();
 }
 
