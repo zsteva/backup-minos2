@@ -46,7 +46,6 @@ public:
     void setActiveControl( int *Key );
     QString makeEntry( bool saveMinos );
     void exportContest();
-    void EditMatchContact();
     void QSOTreeSelectContact( QSharedPointer<BaseContact> lct );
 
     ScreenContact &getScreenEntry();

@@ -76,11 +76,6 @@ void MinosLoggerEvents::SendFormKey(unsigned int *key, BaseContestLog *c)
     emit mle.FormKey(key, c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendEditMatchContact(BaseContestLog *c)
-{
-    emit mle.EditMatchContact(c);
-}
-//---------------------------------------------------------------------------
 void MinosLoggerEvents::SendScreenContactChanged(ScreenContact *sct, BaseContestLog *c)
 {
     emit mle.ScreenContactChanged(sct, c);

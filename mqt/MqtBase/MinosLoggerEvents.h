@@ -35,7 +35,6 @@ signals:
    void MakeEntry(BaseContestLog *);
    void NextUnfilled(BaseContestLog *);
    void FormKey(unsigned int *, BaseContestLog *);
-   void EditMatchContact(BaseContestLog *);
    void ScreenContactChanged(ScreenContact *, BaseContestLog *);
    void ReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);
    void ReplaceOtherLogList(TMatchCollection *matchCollection, BaseContestLog *);
@@ -72,7 +71,6 @@ public:
    static void SendNextUnfilled(BaseContestLog *);
    static void SendFormKey(unsigned int *, BaseContestLog *);
 
-   static void SendEditMatchContact(BaseContestLog *);
    static void SendScreenContactChanged(ScreenContact *, BaseContestLog *);
    static void SendReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);
    static void SendReplaceOtherLogList(TMatchCollection *matchCollection, BaseContestLog *);
