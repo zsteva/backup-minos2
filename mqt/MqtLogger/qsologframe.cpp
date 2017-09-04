@@ -1778,7 +1778,6 @@ void QSOLogFrame::logCurrentContact( )
              QString t = DTGStart.toString("hh:mm");
              ctTime.setDate( d, DTGDISP );
              ctTime.setTime( t.left(5), DTGDISP );
-             ctTime = time;
           }
 
          int orflag = 0;
