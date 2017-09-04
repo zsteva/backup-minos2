@@ -500,6 +500,9 @@ void RtAudioSoundSystem::writeDataToFile(void *inp, int nFrames)
         {
             return;
         }
+        KeyerAction * sba = KeyerAction::getCurrentAction();
+        if ( sba )
+           sba->interruptOK();	// so as we do not time it out immediately
     }
 }
 void RtAudioSoundSystem::readFromFile(void *outputBuffer, unsigned int nFrames, int16_t &maxvol, qreal &rmsval)
