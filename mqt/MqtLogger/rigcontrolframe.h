@@ -67,6 +67,8 @@ private slots:
     void clearActionSelected(int);
     void passBandRadioSelected(int button);
 
+
+    //void test();
 private:
 
     QToolButton* memButtons[memoryData::NUM_MEMORIES];
@@ -74,6 +76,8 @@ private:
     QAction* readAction[memoryData::NUM_MEMORIES];
     QAction* writeAction[memoryData::NUM_MEMORIES];
     QAction* clearAction[memoryData::NUM_MEMORIES];
+
+
 
     QRadioButton* pBandButton[3];
     RigMemDialog* memDialog;

@@ -28,6 +28,14 @@
 
 #define MODE_ERROR "<font color='Red'>Mode Error</font>"
 
+static QStringList memoryShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
+                            QString("Ctrl+3"), QString("Ctrl+4"),
+                            QString("Ctrl+5"), QString("Ctrl+6"),
+                            QString("Ctrl+7"), QString("Ctrl+8"),
+                            QString("Ctrl+9"), QString("Ctrl+0")};
+
+
+
 RigControlFrame::RigControlFrame(QWidget *parent):
     QFrame(parent)
     , ui(new Ui::RigControlFrame)
@@ -85,10 +93,27 @@ void RigControlFrame::initRigFrame()
     memDialog = new RigMemDialog();
     connect(memDialog, SIGNAL(memorySaved(int)), this, SLOT(memoryUpdate(int)));
 
+    // test toolbutton
+    //QToolButton* tb = ui->toolButton;
+    //tb->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    //tb->setPopupMode(QToolButton::InstantPopup);
+    //tb->setShortcut(QString("Ctrl+1"));
+    //QMenu* testMenu = new QMenu(tb);
+
+    //QAction* act = new QAction("&Read", this);
+    //testMenu->addAction(act);
+    //tb->setMenu(testMenu);
+
+    //connect(ui->toolButton, SIGNAL(triggered(QAction* act)), this, SLOT(test()));
+
+
 
 }
 
-
+//void RigControlFrame::test()
+//{
+//    qDebug() << "toolbutton clicked";
+//}
 
 void RigControlFrame::setRadioLoaded()
 {
@@ -170,26 +195,26 @@ void RigControlFrame::initMemoryButtons()
     memButtons[8] = ui->memButton9;
     memButtons[9] = ui->memButton10;
 
-
-
     for (int i = 0; i < memoryData::NUM_MEMORIES; i++)
     {
-        memButtons[i]->setToolButtonStyle(Qt::ToolButtonTextOnly);
-        memButtons[i]->setText(memoryData::memoryTitle[i] + memoryData::memTitleBlank);
-        memButtons[i]->setPopupMode(QToolButton::InstantPopup);
 
+        memButtons[i]->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        memButtons[i]->setPopupMode(QToolButton::InstantPopup);
+        memButtons[i]->setText(memoryData::memoryTitle[i] + memoryData::memTitleBlank);
+        memButtons[i]->setShortcut(memoryShortCut[i]);
         memoryMenu[i] = new QMenu(memButtons[i]);
 
-        readAction[i] = new QAction("Read", this);
-        writeAction[i] = new QAction("Write", this);
-        clearAction[i] = new QAction("Clear", this);
-
+        readAction[i] = new QAction("&Read", this);
+        writeAction[i] = new QAction("&Write",this);
+        clearAction[i] = new QAction("&Clear",this);
         memoryMenu[i]->addAction(readAction[i]);
         memoryMenu[i]->addAction(writeAction[i]);
         memoryMenu[i]->addAction(clearAction[i]);
-
         memButtons[i]->setMenu(memoryMenu[i]);
     }
+
+
+
 
     // map read Action
 
