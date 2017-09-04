@@ -44,7 +44,6 @@ signals:
    void ScrollToDistrict(QString prefix, BaseContestLog *);
    void MatchStarting(BaseContestLog *);
    void ShowOperators();
-   void XferPressed();
    void BandMapPressed();
    void TimerDistribution();
    void FiltersChanged();
@@ -82,7 +81,6 @@ public:
    static void SendScrollToDistrict(QString prefix, BaseContestLog *);
    static void SendMatchStarting(BaseContestLog *);
    static void SendShowOperators();
-   static void SendXferPressed();
    static void SendBandMapPressed();
    static void SendTimerDistribution();
    static void SendFiltersChanged();

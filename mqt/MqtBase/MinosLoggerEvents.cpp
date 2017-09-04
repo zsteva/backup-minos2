@@ -121,12 +121,6 @@ void MinosLoggerEvents::SendShowOperators()
     emit mle.ShowOperators();
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendXferPressed()
-{
-    emit mle.XferPressed();
-}
-
-//---------------------------------------------------------------------------
 void MinosLoggerEvents::SendBandMapPressed()
 {
     emit mle.BandMapPressed();

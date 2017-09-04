@@ -28,7 +28,6 @@ public:
     void startNextEntry( );
     bool doKeyPressEvent( QKeyEvent* event );
     virtual void selectEntry(QSharedPointer<BaseContact> lct );
-    void setXferEnabled(bool);
 
     virtual void getScreenEntry();
     ScreenContact screenContact;  // contact being edited on screen
@@ -174,6 +173,7 @@ signals:
     void QSOFrameCancelled();
     //void sendRotator(rpcConstants::RotateDirection direction, int angle );
     void sendBandMap( QString freq, QString call, QString utc, QString loc, QString qth );
+    void xferPressed();
 
 private slots:
     void focusChange(QObject *, bool, QFocusEvent *event);
@@ -203,6 +203,9 @@ private slots:
     void on_RSTRXEdit_textChanged(const QString &arg1);
 
     void on_FontChanged();
+
+public slots:
+    void setXferEnabled(bool);
 };
 
 #endif // QSOLOGFRAME_H

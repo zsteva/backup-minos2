@@ -706,7 +706,7 @@ void QSOLogFrame::on_GJVCancelButton_clicked()
 
 void QSOLogFrame::on_MatchXferButton_clicked()
 {
-    MinosLoggerEvents::SendXferPressed();
+    emit xferPressed();;
 }
 /*
 void QSOLogFrame::on_BandMapButton_clicked()
@@ -786,7 +786,7 @@ void QSOLogFrame::setActiveControl( int *Key )
          break;
    case Qt::Key_F12:
        if (ui->MatchXferButton->isEnabled())
-            MinosLoggerEvents::SendXferPressed();
+           emit xferPressed();;
       *Key = 0;
       break;
    }

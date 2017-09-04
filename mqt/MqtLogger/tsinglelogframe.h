@@ -12,6 +12,7 @@ extern bool showUnworked;
 
 class TMatchCollection;
 class MatchNodeData;
+class MatchTreeItem;
 class ProtoContest;
 class BaseContestLog;
 class BaseContact;
@@ -28,73 +29,6 @@ class TSendDM;
 class BaseMatchContest;
 class MatchContact;
 
-enum MatchType {ThisMatch, OtherMatch, ArchiveMatch};
-class MatchTreeItem
-{
-    BaseMatchContest *matchContest;
-    QSharedPointer<MatchContact> matchContact;
-
-    MatchTreeItem *parent;
-    QVector<MatchTreeItem *> children;
-    int row;
-
-public:
-    MatchTreeItem(MatchTreeItem *parent, BaseMatchContest *matchContest, QSharedPointer<MatchContact> matchContact);
-    ~MatchTreeItem();
-
-    void addChild(MatchTreeItem *mi)
-    {
-        children.push_back(mi);
-        mi->setRow(children.size() - 1);
-    }
-    int childCount()
-    {
-        return children.size();
-    }
-
-    bool isMatchLine();
-    QSharedPointer<MatchContact> getMatchContact();
-    BaseMatchContest *getMatchContest();
-    MatchTreeItem *getParent();
-    MatchTreeItem *child(int i)
-    {
-        return children[i];
-    }
-    int getRow()
-    {
-        return row;
-    }
-    void setRow(int r)
-    {
-        row = r;
-    }
-};
-
-class QSOMatchGridModel: public QAbstractItemModel
-{
-    protected:
-        TMatchCollection *match;
-        MatchTreeItem * rootItem;
-        MatchType type;
-
-    public:
-        QSOMatchGridModel();
-        ~QSOMatchGridModel();
-
-        QModelIndex firstIndex;
-        bool currentModel;
-
-        void initialise( MatchType, TMatchCollection *pmatch );
-        QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;
-        QVariant headerData( int section, Qt::Orientation orientation,
-                             int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
-        QModelIndex index( int row, int column,
-                           const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
-        QModelIndex parent( const QModelIndex &index ) const Q_DECL_OVERRIDE;
-
-        int rowCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
-        int columnCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
-};
 class TSingleLogFrame : public QFrame
 {
     Q_OBJECT
@@ -112,7 +46,6 @@ public:
     void setActiveControl( int *Key );
     QString makeEntry( bool saveMinos );
     void exportContest();
-    void EditContact(QSharedPointer<BaseContact> lct );
     void EditMatchContact();
     void QSOTreeSelectContact( QSharedPointer<BaseContact> lct );
 
@@ -144,28 +77,15 @@ public:
 
     bool getStanza( unsigned int stanza, QString &stanzaData );
 
-    QModelIndex matchTreeClickIndex;
-    QModelIndex otherTreeClickIndex;
-    QModelIndex archiveTreeClickIndex;
-    QTreeView *xferTree;
-
     void goNextUnfilled();
     void doNextContactDetailsOnLeftClick(bool keepSizes);
 
 private:
     Ui::TSingleLogFrame *ui;
 
-    int splitterHandleWidth;
-
     BaseContestLog * contest;
     QSOGridModel qsoModel;
-
-    QSOMatchGridModel thisMatchModel;
-    QSOMatchGridModel otherMatchModel;
-    QSOMatchGridModel archiveMatchModel;
-
-    FocusWatcher *OtherMatchTreeFW;
-    FocusWatcher *ArchiveMatchTreeFW;
+    int splitterHandleWidth;
 
     int lastStanzaCount;
 
@@ -178,9 +98,6 @@ private:
 
     void keyPressEvent( QKeyEvent* event );
 
-    void showThisMatchQSOs( TMatchCollection *matchCollection );
-    void showOtherMatchQSOs( TMatchCollection *matchCollection );
-    void showMatchList( TMatchCollection *matchCollection );
     void restoreColumns();
 
 
@@ -192,10 +109,6 @@ private slots:
     void HideTimerTimer();
     void on_MakeEntry(BaseContestLog*);
     void on_QSOTable_doubleClicked(const QModelIndex &index);
-    void on_MatchStarting(BaseContestLog*);
-    void on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* );
-    void on_ReplaceOtherLogList( TMatchCollection *matchCollection, BaseContestLog* );
-    void on_ReplaceListList( TMatchCollection *matchCollection, BaseContestLog* );
     void on_AfterSelectContact(QSharedPointer<BaseContact> lct, BaseContestLog *contest);
     void on_AfterLogContact( BaseContestLog *ct);
     void on_NextContactDetailsOnLeft();
@@ -205,17 +118,11 @@ private slots:
     void onLogColumnsChanged();
     void onSplittersChanged();
     void on_LogAreaSplitter_splitterMoved(int pos, int index);
-    void on_ArchiveSplitter_splitterMoved(int pos, int index);
     void on_TopSplitter_splitterMoved(int pos, int index);
     void on_CribSplitter_splitterMoved(int pos, int index);
     void on_MultSplitter_splitterMoved(int pos, int index);
     void on_sectionResized(int, int, int);
-
-    void on_OtherMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &);
-    void on_ArchiveMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &);
-    void on_ThisMatchTree_doubleClicked(const QModelIndex &index);
-    void on_OtherMatchTree_doubleClicked(const QModelIndex &index);
-    void on_ArchiveMatchTree_doubleClicked(const QModelIndex &index);
+    void EditContact(QSharedPointer<BaseContact> lct );
 
     void on_KeyerLoaded();
 
@@ -233,10 +140,6 @@ private slots:
     void on_RotatorMaxAzimuth(QString);
     void on_RotatorMinAzimuth(QString);
     void on_RotatorAntennaName(QString);
-
-
-    void onArchiveMatchTreeFocused(QObject *, bool, QFocusEvent * );
-    void onOtherMatchTreeFocused(QObject *, bool, QFocusEvent * );
 
     void sendKeyerPlay( int fno );
     void sendKeyerRecord( int fno );

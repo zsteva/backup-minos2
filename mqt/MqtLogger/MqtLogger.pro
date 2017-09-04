@@ -71,7 +71,8 @@ SOURCES += main.cpp \
     rotcontrolframe.cpp \
     bandmapframe.cpp \
     LocCalcFrame.cpp \
-    StackedInfoFrame.cpp
+    StackedInfoFrame.cpp \
+    MatchTreesFrame.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -114,7 +115,8 @@ HEADERS  += \
     rotcontrolframe.h \
     bandmapframe.h \
     LocCalcFrame.h \
-    StackedInfoFrame.h
+    StackedInfoFrame.h \
+    MatchTreesFrame.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
@@ -143,7 +145,8 @@ FORMS    += tlogcontainer.ui \
     rotcontrolframe.ui \
     bandmapframe.ui \
     LocCalcFrame.ui \
-    StackedInfoFrame.ui
+    StackedInfoFrame.ui \
+    MatchTreesFrame.ui
 
 DISTFILES += \
     AndroidTemplate/AndroidManifest.xml \

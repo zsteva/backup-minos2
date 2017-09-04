@@ -220,7 +220,7 @@ void StackedInfoFrame::on_ContNA_clicked()
 {
     saveFilters();
 }
-void StackedInfoFrame::on_StackedMults_currentChanged(int arg1)
+void StackedInfoFrame::on_StackedMults_currentChanged(int /*arg1*/)
 {
     ui->StatsFrame->reInitialiseStats();
 }

@@ -12,6 +12,7 @@
 #include "focuswatcher.h"
 #include "htmldelegate.h"
 #include "enqdlg.h"
+#include "MatchTreesFrame.h"
 
 TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     QFrame(parent),
@@ -20,7 +21,6 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     splittersChanged(false),
     currFreq( 0 ), oldFreq( 0 ),
     lastStanzaCount( 0 ),
-    xferTree( 0 ),
     rotatorLoaded(false),
     bandMapLoaded(false),
     keyerLoaded(false),
@@ -48,36 +48,17 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     ui->QSOTable->resizeColumnsToContents();
     ui->QSOTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
 
-    ui->ThisMatchTree->setModel(&thisMatchModel);
-    ui->ThisMatchTree->header()->setSectionResizeMode(QHeaderView::Interactive);
-    ui->ThisMatchTree->setItemDelegate( new HtmlDelegate );
-
-    ui->OtherMatchTree->setModel(&otherMatchModel);
-    ui->OtherMatchTree->header()->setSectionResizeMode(QHeaderView::Interactive);
-    ui->OtherMatchTree->setItemDelegate( new HtmlDelegate );
-
-    ui->ArchiveMatchTree->setModel(&archiveMatchModel);
-    ui->ArchiveMatchTree->header()->setSectionResizeMode(QHeaderView::Interactive);
-    ui->ArchiveMatchTree->setItemDelegate( new HtmlDelegate );
-
     restoreColumns();
 
     ui->GJVQSOLogFrame->initialise( contest, false );
 
     connect(&MinosLoggerEvents::mle, SIGNAL(ContestPageChanged()), this, SLOT(on_ContestPageChanged()));
-    connect(&MinosLoggerEvents::mle, SIGNAL(XferPressed()), this, SLOT(on_XferPressed()));
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(NextContactDetailsTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(PublishTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(HideTimerTimer()));
-    connect(&MinosLoggerEvents::mle, SIGNAL(MatchStarting(BaseContestLog*)), this, SLOT(on_MatchStarting(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(MakeEntry(BaseContestLog*)), this, SLOT(on_MakeEntry(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)), this, SLOT(on_AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterLogContact(BaseContestLog *)), this, SLOT(on_AfterLogContact(BaseContestLog *)));
-
-
-    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceThisLogList(TMatchCollection*,BaseContestLog*)), this, SLOT(on_ReplaceThisLogList(TMatchCollection*,BaseContestLog*)), Qt::QueuedConnection);
-    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceOtherLogList(TMatchCollection*,BaseContestLog*)), this, SLOT(on_ReplaceOtherLogList(TMatchCollection*,BaseContestLog*)), Qt::QueuedConnection);
-    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceListList(TMatchCollection*,BaseContestLog*)), this, SLOT(on_ReplaceListList(TMatchCollection*,BaseContestLog*)), Qt::QueuedConnection);
 
     doNextContactDetailsOnLeftClick( true);  // but the sizes are zero...
     getSplitters();
@@ -87,6 +68,12 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(NextContactDetailsOnLeft()), this, SLOT(on_NextContactDetailsOnLeft()));
     connect(&MinosLoggerEvents::mle, SIGNAL(NextUnfilled(BaseContestLog*)), this, SLOT(on_NextUnfilled(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(GoToSerial(BaseContestLog*)), this, SLOT(on_GoToSerial(BaseContestLog*)));
+
+    connect(ui->GJVQSOLogFrame, SIGNAL(xferPressed()), this, SLOT(on_XferPressed()));
+    connect(ui->matchTreesFrame, SIGNAL(xferPressed()), this, SLOT(on_XferPressed()));
+    connect(ui->matchTreesFrame, SIGNAL(editContact(QSharedPointer<BaseContact>)), this, SLOT(EditContact(QSharedPointer<BaseContact>)));
+    connect(ui->matchTreesFrame, SIGNAL(setXferEnabled(bool)), ui->GJVQSOLogFrame, SLOT(setXferEnabled(bool)));
+
 
     // BandMap Updates
 
@@ -114,19 +101,6 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 
     connect( ui->QSOTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
              this, SLOT( on_sectionResized(int, int , int)));
-
-    connect( ui->ThisMatchTree->header(), SIGNAL(sectionResized(int, int , int)),
-             this, SLOT( on_sectionResized(int, int , int)));
-    connect( ui->OtherMatchTree->header(), SIGNAL(sectionResized(int, int , int)),
-             this, SLOT( on_sectionResized(int, int , int)));
-    connect( ui->ArchiveMatchTree->header(), SIGNAL(sectionResized(int, int , int)),
-             this, SLOT( on_sectionResized(int, int , int)));
-
-
-    OtherMatchTreeFW = new FocusWatcher(ui->OtherMatchTree);
-    connect(OtherMatchTreeFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(onOtherMatchTreeFocused(QObject *, bool, QFocusEvent *)));
-    ArchiveMatchTreeFW = new FocusWatcher(ui->ArchiveMatchTree);
-    connect(ArchiveMatchTreeFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(onArchiveMatchTreeFocused(QObject *, bool, QFocusEvent *)));
 
     connect(LogContainer, SIGNAL(sendKeyerPlay( int )), this, SLOT(sendKeyerPlay(int)));
     connect(LogContainer, SIGNAL(sendKeyerRecord( int)), this, SLOT(sendKeyerRecord(int)));
@@ -199,14 +173,7 @@ void TSingleLogFrame::restoreColumns()
     state = settings.value("QSOTable/state").toByteArray();
     ui->QSOTable->horizontalHeader()->restoreState(state);
 
-    state = settings.value("ThisMatchTree/state").toByteArray();
-    ui->ThisMatchTree->header()->restoreState(state);
-
-    state = settings.value("OtherMatchTree/state").toByteArray();
-    ui->OtherMatchTree->header()->restoreState(state);
-
-    state = settings.value("ArchiveMatchTree/state").toByteArray();
-    ui->ArchiveMatchTree->header()->restoreState(state);
+    ui->matchTreesFrame->restoreColumns();
 
     logColumnsChanged = false;
 
@@ -236,6 +203,7 @@ void TSingleLogFrame::on_ContestPageChanged ()
 
     BaseContestLog * ct = getContest();
     TContestApp::getContestApp() ->setCurrentContest( ct );
+    ui->matchTreesFrame->setContest(ct);
     ui->stackedInfoFrame->setContest(ct);
 
     if ( logColumnsChanged )
@@ -365,23 +333,9 @@ void TSingleLogFrame::on_XferPressed()
    if (!contest || contest->isReadOnly() )
       return ;
 
-   // copy relevant parts of match contact to screen contact
-   if ( archiveTreeClickIndex.isValid() && ( xferTree == 0 || xferTree == ui->ArchiveMatchTree ) )
-   {
-      MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem * >(archiveTreeClickIndex.internalPointer());
+   MatchTreeItem *mi = ui->matchTreesFrame->getXferItem();
 
-      transferDetails( MatchTreeIndex );
-
-   }
-   else
-   {
-      if ( otherTreeClickIndex.isValid() && ( xferTree == 0 || xferTree == ui->OtherMatchTree ) )
-      {
-         MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem * > (otherTreeClickIndex.internalPointer());
-
-         transferDetails( MatchTreeIndex );
-      }
-   }
+   transferDetails(mi);
 }
 //==============================================================================
 void TSingleLogFrame::transferDetails(MatchTreeItem *MatchTreeIndex )
@@ -440,78 +394,6 @@ void TSingleLogFrame::EditContact( QSharedPointer<BaseContact> lct )
    ui->GJVQSOLogFrame->startNextEntry();
 
 }
-void TSingleLogFrame::on_MatchStarting(BaseContestLog *ct)
-{
-      // clear down match trees
-    if (contest == ct)
-    {
-      xferTree = 0;
-
-      thisMatchModel.currentModel = false;
-      otherMatchModel.currentModel = false;
-      archiveMatchModel.currentModel = true;
-
-      //ui->ArchiveMatchTree->setBackgroundColor(Qt::lightGray);
-
-      matchTreeClickIndex = QModelIndex();
-      otherTreeClickIndex = QModelIndex();
-      archiveTreeClickIndex = QModelIndex();
-
-      ui->GJVQSOLogFrame->setXferEnabled(false);
-    }
-}
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-void TSingleLogFrame::showThisMatchQSOs( TMatchCollection *matchCollection )
-{
-    thisMatchModel.initialise(ThisMatch, matchCollection);
-    ui->ThisMatchTree->setModel(&thisMatchModel);
-    ui->ThisMatchTree->setFirstColumnSpanned( 0, QModelIndex(), true );
-    ui->ThisMatchTree->expandAll();
-    restoreColumns();
-}
-void TSingleLogFrame::showOtherMatchQSOs( TMatchCollection *matchCollection )
-{
-    if (matchCollection->contactCount())
-        ui->GJVQSOLogFrame->setXferEnabled(true);
-    otherMatchModel.initialise(OtherMatch, matchCollection);
-    ui->OtherMatchTree->setModel(&otherMatchModel);
-    ui->OtherMatchTree->expandAll();
-    restoreColumns();
-    int rc = otherMatchModel.rowCount();
-    for(int i = 0; i < rc; i++)
-    {
-        ui->OtherMatchTree->setFirstColumnSpanned( i, QModelIndex(), true );
-    }
-
-    if (otherMatchModel.firstIndex.isValid())
-    {
-        QItemSelectionModel *m = ui->OtherMatchTree->selectionModel();
-        m->select(otherMatchModel.firstIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
-    }
-    connect(ui->OtherMatchTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            this, SLOT(on_OtherMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &)), Qt::UniqueConnection);
-}
-void TSingleLogFrame::showMatchList( TMatchCollection *matchCollection )
-{
-    if (matchCollection->contactCount())
-        ui->GJVQSOLogFrame->setXferEnabled(true);
-    archiveMatchModel.initialise(ArchiveMatch, matchCollection);
-    ui->ArchiveMatchTree->setModel(&archiveMatchModel);
-    ui->ArchiveMatchTree->expandAll();
-    restoreColumns();
-    for(int i = 0; i < archiveMatchModel.rowCount(); i++)
-    {
-        ui->ArchiveMatchTree->setFirstColumnSpanned( i, QModelIndex(), true );
-    }
-    if (archiveMatchModel.firstIndex.isValid())
-    {
-        QItemSelectionModel *m = ui->ArchiveMatchTree->selectionModel();
-        m->select(archiveMatchModel.firstIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
-    }
-    connect(ui->ArchiveMatchTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            this, SLOT(on_ArchiveMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &)), Qt::UniqueConnection);
-}
 //---------------------------------------------------------------------------
 ScreenContact &TSingleLogFrame::getScreenEntry()
 {
@@ -522,22 +404,6 @@ ScreenContact &TSingleLogFrame::getScreenEntry()
     return ui->GJVQSOLogFrame->screenContact;
 }
 //---------------------------------------------------------------------------
-void TSingleLogFrame::on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* )
-{
-    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        showThisMatchQSOs( matchCollection );
-}
-void TSingleLogFrame::on_ReplaceOtherLogList( TMatchCollection *matchCollection, BaseContestLog* )
-{
-    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        showOtherMatchQSOs( matchCollection );
-}
-
-void TSingleLogFrame::on_ReplaceListList(TMatchCollection *matchCollection , BaseContestLog *)
-{
-    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        showMatchList( matchCollection );
-}
 //---------------------------------------------------------------------------
 
 
@@ -593,10 +459,6 @@ void TSingleLogFrame::getSplitters()
     ui->LogAreaSplitter->restoreState(state);
     ui->LogAreaSplitter->setHandleWidth(splitterHandleWidth);
 
-    state = settings.value("ArchiveSplitter/state").toByteArray();
-    ui->ArchiveSplitter->restoreState(state);
-    ui->ArchiveSplitter->setHandleWidth(splitterHandleWidth);
-
     state = settings.value("TopSplitter/state").toByteArray();
     ui->TopSplitter->restoreState(state);
     ui->TopSplitter->setHandleWidth(splitterHandleWidth);
@@ -610,6 +472,7 @@ void TSingleLogFrame::getSplitters()
     ui->MultSplitter->setHandleWidth(splitterHandleWidth);
 
     ui->stackedInfoFrame->getSplitters();
+    ui->matchTreesFrame->getSplitters();
 }
 void TSingleLogFrame::onSplittersChanged()
 {
@@ -621,14 +484,6 @@ void TSingleLogFrame::on_LogAreaSplitter_splitterMoved(int /*pos*/, int /*index*
     QByteArray state = ui->LogAreaSplitter->saveState();
     QSettings settings;
     settings.setValue("LogAreaSplitter/state", state);
-    MinosLoggerEvents::SendSplittersChanged();
-}
-
-void TSingleLogFrame::on_ArchiveSplitter_splitterMoved(int /*pos*/, int /*index*/)
-{
-    QByteArray state = ui->ArchiveSplitter->saveState();
-    QSettings settings;
-    settings.setValue("ArchiveSplitter/state", state);
     MinosLoggerEvents::SendSplittersChanged();
 }
 
@@ -664,92 +519,11 @@ void TSingleLogFrame::on_sectionResized(int, int, int)
     state = ui->QSOTable->horizontalHeader()->saveState();
     settings.setValue("QSOTable/state", state);
 
-    state = ui->ThisMatchTree->header()->saveState();
-    settings.setValue("ThisMatchTree/state", state);
-
-    state = ui->OtherMatchTree->header()->saveState();
-    settings.setValue("OtherMatchTree/state", state);
-
-    state = ui->ArchiveMatchTree->header()->saveState();
-    settings.setValue("ArchiveMatchTree/state", state);
-
     MinosLoggerEvents::SendLogColumnsChanged();
 }
 void TSingleLogFrame::onLogColumnsChanged()
 {
     logColumnsChanged = true;
-}
-void TSingleLogFrame::on_OtherMatchTreeSelectionChanged(const QItemSelection &selected, const QItemSelection &)
-{
-    xferTree = ui->OtherMatchTree;
-    otherMatchModel.currentModel = true;
-    archiveMatchModel.currentModel = false;
-
-    otherTreeClickIndex = selected.indexes().at(0);
-    ui->ArchiveMatchTree->repaint();
-}
-void TSingleLogFrame::onOtherMatchTreeFocused(QObject *, bool in, QFocusEvent * )
-{
-    if (!in)
-    {
-        ui->ArchiveMatchTree->viewport()->repaint();
-        ui->OtherMatchTree->viewport()->repaint();
-        return;
-    }
-
-    xferTree = ui->OtherMatchTree;
-    otherMatchModel.currentModel = true;
-    archiveMatchModel.currentModel = false;
-
-    ui->ArchiveMatchTree->viewport()->repaint();
-}
-
-void TSingleLogFrame::on_ArchiveMatchTreeSelectionChanged(const QItemSelection &selected, const QItemSelection &)
-{
-    xferTree = ui->ArchiveMatchTree;
-    archiveMatchModel.currentModel = true;
-    otherMatchModel.currentModel = false;
-
-    archiveTreeClickIndex = selected.indexes().at(0);
-     ui->OtherMatchTree->viewport()->repaint();
-}
-void TSingleLogFrame::onArchiveMatchTreeFocused(QObject *, bool in, QFocusEvent * )
-{
-    if (!in)
-    {
-        ui->ArchiveMatchTree->viewport()->repaint();
-        ui->OtherMatchTree->viewport()->repaint();
-        return;
-    }
-
-    xferTree = ui->ArchiveMatchTree;
-    archiveMatchModel.currentModel = true;
-    otherMatchModel.currentModel = false;
-
-     ui->OtherMatchTree->viewport()->repaint();
-}
-
-void TSingleLogFrame::on_ThisMatchTree_doubleClicked(const QModelIndex &index)
-{
-    MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem *>(index.internalPointer());
-
-    QSharedPointer<MatchContact> mc = MatchTreeIndex->getMatchContact();
-    QSharedPointer<BaseContact> bct = mc->getBaseContact();
-
-    if ( bct )
-    {
-       EditContact( bct );
-    }
-}
-
-void TSingleLogFrame::on_OtherMatchTree_doubleClicked(const QModelIndex &/*index*/)
-{
-    MinosLoggerEvents::SendXferPressed();;
-}
-
-void TSingleLogFrame::on_ArchiveMatchTree_doubleClicked(const QModelIndex &/*index*/)
-{
-    MinosLoggerEvents::SendXferPressed();
 }
 void TSingleLogFrame::goNextUnfilled()
 {
