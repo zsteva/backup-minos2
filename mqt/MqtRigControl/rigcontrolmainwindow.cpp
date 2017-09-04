@@ -447,6 +447,7 @@ void RigControlMainWindow::getFrequency(vfo_t vfo)
     int retCode = 0;
     if (radio->get_serialConnected())
     {
+
         retCode = radio->getFrequency(vfo, &rfrequency);
         if (retCode == RIG_OK)
         {

@@ -151,7 +151,7 @@ int RigMemDialog::saveMemory(int memoryLoc)
 void RigMemDialog::clearMemory(memoryData::memData* ldata, int memoryLoc)
 {
 
-
+    memoryNumber = memoryLoc;
     ui->callSignLineEdit->setText(memoryList[memoryLoc].callsign = ldata->callsign);
     ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.count() - 4]);
     ui->freqLineEdit->setText( memoryList[memoryLoc].freq = ldata->freq);
