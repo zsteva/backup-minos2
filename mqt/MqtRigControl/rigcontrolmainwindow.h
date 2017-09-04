@@ -110,9 +110,9 @@ private:
 
     void readTraceLogFlag();
 
-    void about();
+
     void closeEvent(QCloseEvent *event);
-    void LogTimerTimer(  );
+
     void sendStatusLogger(const QString &message);
     void sendStatusToLogDisConnected();
     void sendStatusToLogReady();
@@ -132,7 +132,8 @@ private slots:
     void getCurMode();
     void getRadioInfo();
     void logMessage(QString s);
-
+    void about();
+    void LogTimerTimer();
 //    void updateFreq(double frequency);
 
 

@@ -149,12 +149,10 @@ void RigControlFrame::radioBandFreq(int index)
 
 void RigControlFrame::exitFreqEdit()
 {
-
+    freqEditOn = false;
     setFreq(curFreq);
     freqLineEditFrameColour(false);
     ui->freqInput->clearFocus();
-    freqEditOn = false;
-
 }
 
 

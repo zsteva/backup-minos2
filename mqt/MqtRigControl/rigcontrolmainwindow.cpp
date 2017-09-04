@@ -156,7 +156,7 @@ void RigControlMainWindow::logMessage( QString s )
 }
 
 
-void RigControlMainWindow::LogTimerTimer(  )
+void RigControlMainWindow::LogTimerTimer()
 {
    static bool closed = false;
    if ( !closed )
@@ -203,7 +203,7 @@ void RigControlMainWindow::initActionsConnections()
     //connect(pollTimer, SIGNAL(timeout()), this, SLOT(getCurMode()));
     //connect(radio, SIGNAL(frequency_updated(double)), this, SLOT(updateFreq(const double)));
 //    connect(this, SIGNAL(frequency_updated(double)), this, SLOT(displayFreqA(const double)));
-    connect(this, SIGNAL(mode_updated(QString)), this, SLOT(displayModeVfoA(QString)));
+    //connect(this, SIGNAL(mode_updated(QString)), this, SLOT(displayModeVfoA(QString)));
 
     // Message from Logger
     connect(msg, SIGNAL(setFreq(QString)), this, SLOT(loggerSetFreq(QString)));

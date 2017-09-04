@@ -61,7 +61,7 @@ private slots:
 
     void memoryUpdate(int);
 
-
+    void exitFreqEdit();
     void readActionSelected(int);
     void writeActionSelected(int);
     void clearActionSelected(int);
@@ -93,7 +93,6 @@ private:
     void sendModeToRadio(QString);
     void freqLineEditBkgnd(bool status);
     void freqLineEditFrameColour(bool status);
-    void exitFreqEdit();
     void keyPressEvent(QKeyEvent *event);
 
     void initRigFrame();
