@@ -33,6 +33,11 @@ TQSOEditDlg::TQSOEditDlg(QWidget *parent, bool catchup, bool unfilled )
 
     connect(ui->GJVQSOEditFrame, SIGNAL(QSOFrameCancelled()), this, SLOT(on_EditFrameCancelled()));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)), this, SLOT(on_AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)));
+    connect(ui->GJVQSOEditFrame, SIGNAL(xferPressed()), this, SLOT(onXferPressed()));
+    connect(ui->matchTreesFrame, SIGNAL(xferPressed()), this, SLOT(onXferPressed()));
+    connect(ui->matchTreesFrame, SIGNAL(setXferEnabled(bool)), ui->GJVQSOEditFrame, SLOT(setXferEnabled(bool)));
+
+    ui->GJVQSOEditFrame->setXferEnabled(false);
 }
 TQSOEditDlg::~TQSOEditDlg()
 {
@@ -67,6 +72,8 @@ int TQSOEditDlg::exec()
        setWindowTitle("Editting QSO");
     }
     firstContact.reset();
+
+    ui->matchTreesFrame->setContest(contest);
 
     int ret = QDialog::exec();
 
@@ -174,4 +181,45 @@ void TQSOEditDlg::accept()
 {
     doCloseEvent();
     QDialog::accept();
+}
+void TQSOEditDlg::onXferPressed()
+{
+   // transfer from current match
+   if (!contest || contest->isReadOnly() )
+      return ;
+
+   MatchTreeItem *mi = ui->matchTreesFrame->getXferItem();
+
+   if (mi)
+       transferDetails(mi);
+}
+//==============================================================================
+void TQSOEditDlg::transferDetails(MatchTreeItem *MatchTreeIndex )
+{
+    if ( !contest  )
+    {
+       return ;
+    }
+   // needs to be transferred into QSOLogFrame.cpp
+   QSharedPointer<MatchContact> mc = MatchTreeIndex->getMatchContact();
+
+   if (mc)
+   {
+       QSharedPointer<BaseContact> bct = mc->getBaseContact();
+
+       if ( bct )
+       {
+          BaseContestLog *matct = mc->getContactLog();
+          ui->GJVQSOEditFrame->transferDetails( bct, matct );
+       }
+       else
+       {
+           ListContact *lct = mc->getListContact();
+           if (lct)
+           {
+               ContactList *matct = mc->getContactList();
+               ui->GJVQSOEditFrame->transferDetails( lct, matct );
+           }
+       }
+   }
 }

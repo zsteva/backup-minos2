@@ -10,6 +10,10 @@
 #ifndef ContactsH
 #define ContactsH 
 //----------------------------------------------------------------------------
+#include "mwin.h"
+class  BaseContestLog;
+class MinosTestImport;
+
 // This header covers the structure of contests, logs, etc
 
 namespace ContactBuffs

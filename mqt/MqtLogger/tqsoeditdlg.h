@@ -8,6 +8,7 @@ class BaseContestLog;
 class ScreenContact;
 class DisplayContestContact;
 class QTreeWidgetItem;
+class MatchTreeItem;
 
 namespace Ui {
 class TQSOEditDlg;
@@ -39,6 +40,7 @@ private:
     void addTreeRoot(QSharedPointer<BaseContact> lct);
     void addTreeChild(QTreeWidgetItem *parent, QString text);
     void doCloseEvent();
+    void transferDetails(MatchTreeItem *MatchTreeIndex );
 
 
  public: 		// User declarations
@@ -55,6 +57,8 @@ private:
 private slots:
     void on_EditFrameCancelled();
     void on_AfterSelectContact(QSharedPointer<BaseContact> lct, BaseContestLog *contest);
+    void onXferPressed();
+
 public Q_SLOTS:
     virtual void accept() override;
     virtual void reject() override;

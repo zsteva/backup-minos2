@@ -53,7 +53,7 @@ public:
 class QSOMatchGridModel: public QAbstractItemModel
 {
     protected:
-        TMatchCollection *match;
+        SharedMatchCollection match;
         MatchTreeItem * rootItem;
         MatchType type;
 
@@ -64,7 +64,7 @@ class QSOMatchGridModel: public QAbstractItemModel
         QModelIndex firstIndex;
         bool currentModel;
 
-        void initialise( MatchType, TMatchCollection *pmatch );
+        void initialise( MatchType, SharedMatchCollection pmatch );
         QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;
         QVariant headerData( int section, Qt::Orientation orientation,
                              int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
@@ -109,14 +109,14 @@ private:
     FocusWatcher *OtherMatchTreeFW;
     FocusWatcher *ArchiveMatchTreeFW;
 
-    void showThisMatchQSOs( TMatchCollection *matchCollection );
-    void showOtherMatchQSOs( TMatchCollection *matchCollection );
-    void showMatchList( TMatchCollection *matchCollection );
+    void showThisMatchQSOs(SharedMatchCollection matchCollection );
+    void showOtherMatchQSOs( SharedMatchCollection matchCollection );
+    void showMatchList(SharedMatchCollection matchCollection );
 private slots:
     void on_MatchStarting(BaseContestLog*);
-    void on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* );
-    void on_ReplaceOtherLogList( TMatchCollection *matchCollection, BaseContestLog* );
-    void on_ReplaceListList( TMatchCollection *matchCollection, BaseContestLog* );
+    void on_ReplaceThisLogList( SharedMatchCollection matchCollection, BaseContestLog* );
+    void on_ReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog* );
+    void on_ReplaceListList( SharedMatchCollection matchCollection, BaseContestLog* );
     void on_ArchiveSplitter_splitterMoved(int pos, int index);
     void on_sectionResized(int, int, int);
 

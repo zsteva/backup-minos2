@@ -31,4 +31,17 @@
 #include "PubSubClient.h"
 
 #include "MinosConnection.h"
+
+template <class itemtype>
+class MapWrapper
+{
+public:
+    QSharedPointer<itemtype> wt;
+    MapWrapper(itemtype *mp):wt(mp){}
+    MapWrapper(QSharedPointer<itemtype> mp):wt(mp){}
+    MapWrapper(const MapWrapper &m)
+    {
+        wt = m.wt;
+    }
+};
 #endif

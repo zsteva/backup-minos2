@@ -333,10 +333,6 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
        ui->DateEdit->setReadOnly(true);
        ui->TimeEdit->setReadOnly(true);
    }
-   else
-   {
-       ui->MatchXferButton->setVisible(false);
-   }
 
    updateQSODisplay();
    refreshOps();
@@ -785,10 +781,9 @@ void QSOLogFrame::setActiveControl( int *Key )
          *Key = 0;
          break;
    case Qt::Key_F12:
-       if (ui->MatchXferButton->isEnabled())
-           emit xferPressed();;
-      *Key = 0;
-      break;
+         emit xferPressed();
+         *Key = 0;
+         break;
    }
 }
 //---------------------------------------------------------------------------

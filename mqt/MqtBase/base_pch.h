@@ -27,18 +27,7 @@
 #include <QModelIndex>
 #include <QSortFilterProxyModel>
 
-template <class itemtype>
-class MapWrapper
-{
-public:
-    QSharedPointer<itemtype> wt;
-    MapWrapper(itemtype *mp):wt(mp){}
-    MapWrapper(QSharedPointer<itemtype> mp):wt(mp){}
-    MapWrapper(const MapWrapper &m)
-    {
-        wt = m.wt;
-    }
-};
+
 template <class itemtype >inline bool operator < (const MapWrapper<itemtype> &key1, const MapWrapper<itemtype> &key2)
 {
     itemtype *i1 = key1.wt.data();
@@ -55,8 +44,6 @@ template <class itemtype >inline bool operator == (const MapWrapper<itemtype> &k
 #include <time.h>
 
 #include "fileutils.h"
-#include "MinosLoggerEvents.h"
-#include "validators.h"
 #include "MinosParameters.h"
 #include "ProfileEnums.h"
 #include "mwin.h"
@@ -71,6 +58,9 @@ template <class itemtype >inline bool operator == (const MapWrapper<itemtype> &k
 #include "ScreenContact.h"
 #include "MatchContact.h"
 #include "ListContact.h"
+#include "MatchCollection.h"
+#include "MinosLoggerEvents.h"
+#include "validators.h"
 
 #include "rigcontrolcommonconstants.h"
 #include "MinosTestImport.h"

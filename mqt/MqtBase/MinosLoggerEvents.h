@@ -10,6 +10,7 @@
 #define MinosLoggerEventsH
 
 #include "XMPP_pch.h"
+#include "MatchCollection.h"
 //---------------------------------------------------------------------------
 class BaseContestLog;
 class BaseContact;
@@ -36,9 +37,9 @@ signals:
    void NextUnfilled(BaseContestLog *);
    void FormKey(unsigned int *, BaseContestLog *);
    void ScreenContactChanged(ScreenContact *, BaseContestLog *);
-   void ReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);
-   void ReplaceOtherLogList(TMatchCollection *matchCollection, BaseContestLog *);
-   void ReplaceListList(TMatchCollection *matchCollection, BaseContestLog *);
+   void ReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog *);
+   void ReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog *);
+   void ReplaceListList(SharedMatchCollection matchCollection, BaseContestLog *);
    void ScrollToCountry(QString prefix, BaseContestLog *);
    void ScrollToDistrict(QString prefix, BaseContestLog *);
    void MatchStarting(BaseContestLog *);
@@ -72,9 +73,9 @@ public:
    static void SendFormKey(unsigned int *, BaseContestLog *);
 
    static void SendScreenContactChanged(ScreenContact *, BaseContestLog *);
-   static void SendReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);
-   static void SendReplaceOtherLogList(TMatchCollection *matchCollection, BaseContestLog *);
-   static void SendReplaceListList(TMatchCollection *matchCollection, BaseContestLog *);
+   static void SendReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog *);
+   static void SendReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog *);
+   static void SendReplaceListList(SharedMatchCollection matchCollection, BaseContestLog *);
    static void SendScrollToCountry(QString prefix, BaseContestLog *);
    static void SendScrollToDistrict(QString prefix, BaseContestLog *);
    static void SendMatchStarting(BaseContestLog *);

@@ -81,17 +81,17 @@ void MinosLoggerEvents::SendScreenContactChanged(ScreenContact *sct, BaseContest
     emit mle.ScreenContactChanged(sct, c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *c)
+void MinosLoggerEvents::SendReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog *c)
 {
     emit mle.ReplaceThisLogList(matchCollection, c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendReplaceOtherLogList(TMatchCollection *matchCollection, BaseContestLog *c)
+void MinosLoggerEvents::SendReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog *c)
 {
     emit mle.ReplaceOtherLogList(matchCollection, c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendReplaceListList(TMatchCollection *matchCollection, BaseContestLog *c)
+void MinosLoggerEvents::SendReplaceListList(SharedMatchCollection matchCollection, BaseContestLog *c)
 {
     emit mle.ReplaceListList(matchCollection, c);
 }

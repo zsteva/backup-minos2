@@ -40,6 +40,11 @@ bool MatchContactList::operator<( const BaseMatchContest& rhs ) const
 
     return false;
 }
+ContactList *MatchContactList::getContactList() const
+{
+  return dynamic_cast<ContactList * >(matchedContest);
+}
+
 bool MatchContactLog::operator<( const BaseMatchContest& rhs ) const
 {
    // p1 is from list; p2 is the one being searched for
@@ -61,6 +66,10 @@ bool MatchContactLog::operator<( const BaseMatchContest& rhs ) const
 
    return false;
 
+}
+const BaseContestLog * MatchContactLog::getContactLog() const
+{
+   return dynamic_cast<BaseContestLog* >(matchedContest);
 }
 
 MatchContact::MatchContact( )
@@ -235,4 +244,3 @@ bool MatchListContact::operator!=( const MatchContact& rhs ) const
    return ( getContactList() != rhs.getContactList() );
 }
 //==============================================================================
-

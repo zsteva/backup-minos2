@@ -9,8 +9,8 @@
 //----------------------------------------------------------------------------
 #ifndef CutilsH
 #define CutilsH
-
-#include "MinosLoggerEvents.h"
+#include "XMPP_pch.h"
+#include "QValidator"
 
 //----------------------------------------------------------------------------
 extern const double pi /* = (double )3.141592653 */;  /* pi */
@@ -76,20 +76,7 @@ class UpperCaseValidator:public QValidator
 {
     bool makeSignal;
 public:
-    UpperCaseValidator(bool makeSignal = false):makeSignal(makeSignal)
-    {
-
-    }
-
-    State validate(QString & input, int & /*pos*/) const
-    {
-        input = input.toUpper();
-
-        if (makeSignal)
-        {
-            MinosLoggerEvents::SendValidated();
-        }
-        return Acceptable;
-    }
+    UpperCaseValidator(bool makeSignal = false);
+    QValidator::State validate(QString & input, int & /*pos*/) const;
 };
 #endif

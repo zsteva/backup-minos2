@@ -31,9 +31,9 @@ MatchTreesFrame::MatchTreesFrame(QWidget *parent) :
     ui->ArchiveMatchTree->setItemDelegate( new HtmlDelegate );
 
     connect(&MinosLoggerEvents::mle, SIGNAL(MatchStarting(BaseContestLog*)), this, SLOT(on_MatchStarting(BaseContestLog*)));
-    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceThisLogList(TMatchCollection*,BaseContestLog*)), this, SLOT(on_ReplaceThisLogList(TMatchCollection*,BaseContestLog*)), Qt::QueuedConnection);
-    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceOtherLogList(TMatchCollection*,BaseContestLog*)), this, SLOT(on_ReplaceOtherLogList(TMatchCollection*,BaseContestLog*)), Qt::QueuedConnection);
-    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceListList(TMatchCollection*,BaseContestLog*)), this, SLOT(on_ReplaceListList(TMatchCollection*,BaseContestLog*)), Qt::QueuedConnection);
+    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceThisLogList(SharedMatchCollection,BaseContestLog*)), this, SLOT(on_ReplaceThisLogList(SharedMatchCollection,BaseContestLog*)), Qt::QueuedConnection);
+    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceOtherLogList(SharedMatchCollection,BaseContestLog*)), this, SLOT(on_ReplaceOtherLogList(SharedMatchCollection,BaseContestLog*)), Qt::QueuedConnection);
+    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceListList(SharedMatchCollection,BaseContestLog*)), this, SLOT(on_ReplaceListList(SharedMatchCollection,BaseContestLog*)), Qt::QueuedConnection);
 
     connect( ui->ThisMatchTree->header(), SIGNAL(sectionResized(int, int , int)),
              this, SLOT( on_sectionResized(int, int , int)));
@@ -115,7 +115,7 @@ void MatchTreesFrame::on_MatchStarting(BaseContestLog *ct)
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-void MatchTreesFrame::showThisMatchQSOs( TMatchCollection *matchCollection )
+void MatchTreesFrame::showThisMatchQSOs( SharedMatchCollection matchCollection )
 {
     thisMatchModel.initialise(ThisMatch, matchCollection);
     ui->ThisMatchTree->setModel(&thisMatchModel);
@@ -123,7 +123,7 @@ void MatchTreesFrame::showThisMatchQSOs( TMatchCollection *matchCollection )
     ui->ThisMatchTree->expandAll();
     restoreColumns();
 }
-void MatchTreesFrame::showOtherMatchQSOs( TMatchCollection *matchCollection )
+void MatchTreesFrame::showOtherMatchQSOs(SharedMatchCollection matchCollection )
 {
     if (matchCollection->contactCount())
         emit setXferEnabled(true);
@@ -137,15 +137,16 @@ void MatchTreesFrame::showOtherMatchQSOs( TMatchCollection *matchCollection )
         ui->OtherMatchTree->setFirstColumnSpanned( i, QModelIndex(), true );
     }
 
+    connect(ui->OtherMatchTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(on_OtherMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &)), Qt::UniqueConnection);
+
     if (otherMatchModel.firstIndex.isValid())
     {
         QItemSelectionModel *m = ui->OtherMatchTree->selectionModel();
         m->select(otherMatchModel.firstIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
     }
-    connect(ui->OtherMatchTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            this, SLOT(on_OtherMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &)), Qt::UniqueConnection);
 }
-void MatchTreesFrame::showMatchList( TMatchCollection *matchCollection )
+void MatchTreesFrame::showMatchList( SharedMatchCollection matchCollection )
 {
     if (matchCollection->contactCount())
         emit setXferEnabled(true);
@@ -157,26 +158,28 @@ void MatchTreesFrame::showMatchList( TMatchCollection *matchCollection )
     {
         ui->ArchiveMatchTree->setFirstColumnSpanned( i, QModelIndex(), true );
     }
+
+    connect(ui->ArchiveMatchTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(on_ArchiveMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &)), Qt::UniqueConnection);
+
     if (archiveMatchModel.firstIndex.isValid())
     {
         QItemSelectionModel *m = ui->ArchiveMatchTree->selectionModel();
         m->select(archiveMatchModel.firstIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
     }
-    connect(ui->ArchiveMatchTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            this, SLOT(on_ArchiveMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &)), Qt::UniqueConnection);
 }
-void MatchTreesFrame::on_ReplaceThisLogList( TMatchCollection *matchCollection, BaseContestLog* )
+void MatchTreesFrame::on_ReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog* )
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         showThisMatchQSOs( matchCollection );
 }
-void MatchTreesFrame::on_ReplaceOtherLogList( TMatchCollection *matchCollection, BaseContestLog* )
+void MatchTreesFrame::on_ReplaceOtherLogList( SharedMatchCollection matchCollection, BaseContestLog* )
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         showOtherMatchQSOs( matchCollection );
 }
 
-void MatchTreesFrame::on_ReplaceListList(TMatchCollection *matchCollection , BaseContestLog *)
+void MatchTreesFrame::on_ReplaceListList(SharedMatchCollection matchCollection , BaseContestLog *)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         showMatchList( matchCollection );
@@ -362,30 +365,25 @@ QSOMatchGridModel::QSOMatchGridModel():rootItem(0), match(0), type(ThisMatch), c
 QSOMatchGridModel::~QSOMatchGridModel()
 {
     delete rootItem;
-    delete match;
 }
 
-void QSOMatchGridModel::initialise(MatchType t, TMatchCollection *pmatch )
+void QSOMatchGridModel::initialise(MatchType t, SharedMatchCollection pmatch )
 {
    beginResetModel();
    type = t;
    firstIndex = QModelIndex();
 
-   if (match)
-   {
-       delete match;
-       match = 0;
-   }
+   match.reset();
+
    if (rootItem)
    {
        delete rootItem;
        rootItem = 0;
    }
 
-   if (pmatch == 0 || pmatch->contactCount() == 0)
+   if (pmatch->contactCount() == 0)
    {
        endResetModel();
-       delete pmatch;
        return;
    }
 
