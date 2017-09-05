@@ -45,7 +45,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     , radioState("")
     , radioLoaded(false)
     , freqEditOn(false)
-    , memReadFlag(true)
+
 
 {
 
@@ -92,6 +92,9 @@ void RigControlFrame::initRigFrame()
 
     memDialog = new RigMemDialog();
     connect(memDialog, SIGNAL(memorySaved(int)), this, SLOT(memoryUpdate(int)));
+
+    rxPBFlag = false;
+
 
     // test toolbutton
     //QToolButton* tb = ui->toolButton;
@@ -295,6 +298,12 @@ void RigControlFrame::readActionSelected(int buttonNumber)
 
 void RigControlFrame::writeActionSelected(int buttonNumber)
 {
+    if (memDialog->getMemoryFlag())
+       return;
+
+    memDialog->setMemoryFlag(true);
+
+
     // get contest information
     TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
 
@@ -317,11 +326,18 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
     // load log data into memory
     memDialog->setLogData(&logData, buttonNumber);
     memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Write");
+    memDialog->setFocusCallsign();
     memDialog->show();
 }
 
 void RigControlFrame::clearActionSelected(int buttonNumber)
 {
+
+     if (memDialog->getMemoryFlag())
+        return;
+
+     memDialog->setMemoryFlag(true);
+
      logData.callsign = "";
      logData.freq = curFreq;
      logData.locator = "";
@@ -332,6 +348,7 @@ void RigControlFrame::clearActionSelected(int buttonNumber)
      logData.bearing = 0;
      memDialog->clearMemory(&logData, buttonNumber);
      memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Clear");
+     memDialog->setFocusCallsign();
      memDialog->show();
 }
 
@@ -402,15 +419,6 @@ void RigControlFrame::setRadioName(QString n)
         loadMemoryButtonLabels();
     }
 
-
-
-
-
-
-
-
-
-
 }
 
 
@@ -470,6 +478,18 @@ void RigControlFrame::freqLineEditFrameColour(bool status)
 
     }
 
+}
+
+
+void RigControlFrame::setRxPBFlag(QString flag)
+{
+    bool fl = (flag == "set") ? true: false;
+
+    rxPBFlag = fl;
+    ui->narRb->setVisible(!fl);
+    ui->normalRb->setVisible(!fl);
+    ui->wideRb->setVisible(!fl);
+    ui->groupBox->setVisible(!fl);
 }
 
 void RigControlFrame::loadMemoryButtonLabels()

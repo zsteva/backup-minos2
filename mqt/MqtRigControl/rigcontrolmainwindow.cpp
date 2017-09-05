@@ -26,6 +26,8 @@
 #include <QDebug>
 
 
+
+
 RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent) :
     QMainWindow(parent)
     , msg(0)
@@ -33,7 +35,7 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
     , loggerPbWidth(0)
     , logger_bw_state(hamlibData::NOR)
     , logRadError(false)
-    , useLogWidth(true)
+
 {
 
     ui->setupUi(this);
@@ -136,10 +138,12 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
     logger_mode = "USB";
     loggerSetPassBand(hamlibData::NOR );
 
+
     trace("*** Rig Started ***");
 
 
 }
+
 
 
 
@@ -261,6 +265,7 @@ void RigControlMainWindow::upDateRadio()
         selectRig->currentRadio.transVertNegative = selectRig->availRadios[radioIndex].transVertNegative;
         selectRig->currentRadio.transVertOffset = selectRig->availRadios[radioIndex].transVertOffset;
         selectRig->currentRadio.transVertOffsetStr = selectRig->availRadios[radioIndex].transVertOffsetStr;
+        selectRig->currentRadio.useRxPassBand = selectRig->availRadios[radioIndex].useRxPassBand;
 
         selectRig->saveCurrentRadio();
 
@@ -298,6 +303,7 @@ void RigControlMainWindow::upDateRadio()
        trace("TransVert Enable = " + QString::number(selectRig->currentRadio.transVertEnable));
        trace("TransVert Negative = " + QString::number(selectRig->currentRadio.transVertNegative));
        trace("TransVert Offset = " + convertStringFreq(selectRig->currentRadio.transVertOffset));
+       trace("Use RX Passband = " + QString::number(selectRig->currentRadio.useRxPassBand));
 
        // update logger
        msg->publishRadioName(selectRig->currentRadio.radioName);
@@ -385,6 +391,8 @@ void RigControlMainWindow::getRadioInfo()
     getFrequency(RIG_VFO_CURR);
 
     getMode(RIG_VFO_CURR);
+
+    sendRxPbFlagToLog();
 
 
 }
@@ -559,7 +567,7 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
     rmode_t mCode = radio->convertQStrMode(mode);
     int retCode = 0;
     pbwidth_t passBand;
-    if (useLogWidth)
+    if (selectRig->currentRadio.useRxPassBand)
     {
         passBand = loggerPbWidth;
     }
@@ -795,4 +803,20 @@ void RigControlMainWindow::sendFreqToLog(freq_t freq)
 void RigControlMainWindow::sendModeToLog(QString mode)
 {
     msg->publishMode(mode);
+}
+
+void RigControlMainWindow::sendRxPbFlagToLog()
+{
+
+    QString s;
+    if (selectRig->currentRadio.useRxPassBand)
+    {
+        s = "set";
+    }
+    else
+    {
+        s = "clear";
+    }
+
+    msg->publishRxPbFlag(s);
 }

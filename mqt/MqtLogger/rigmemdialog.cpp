@@ -33,6 +33,7 @@ RigMemDialog::RigMemDialog(QWidget *parent) :
 
     radioName = "";
     radioState = "";
+    setMemoryFlag(false);
 
     for (int i = 0; i < hamlibData::supModeList.count(); i++)
     {
@@ -54,6 +55,16 @@ RigMemDialog::RigMemDialog(QWidget *parent) :
 RigMemDialog::~RigMemDialog()
 {
     delete ui;
+}
+
+void RigMemDialog::setMemoryFlag(bool state)
+{
+    memOnFlag = state;
+}
+
+bool RigMemDialog::getMemoryFlag()
+{
+    return memOnFlag;
 }
 
 void RigMemDialog::setRadioName(QString name)
@@ -223,6 +234,9 @@ void RigMemDialog::saveButtonPushed()
    memoryList[memoryNumber].bearing = ui->bearingLineEdit->text().toInt();
    memoryList[memoryNumber].time = ui->timeLineEdit->text();
    saveMemory(memoryNumber);
+
+   setMemoryFlag(false);
+
    emit memorySaved(memoryNumber);
 
 }
@@ -232,8 +246,7 @@ void RigMemDialog::saveButtonPushed()
 void RigMemDialog::cancelButtonPushed()
 {
 
-
-
+    setMemoryFlag(false);
 
 }
 
@@ -269,4 +282,10 @@ void RigMemDialog::locatorToUpper(QString locator)
     {
         ui->locatorLineEdit->setText(locator.toUpper());
     }
+}
+
+
+void RigMemDialog::setFocusCallsign()
+{
+    ui->callSignLineEdit->setFocus();
 }

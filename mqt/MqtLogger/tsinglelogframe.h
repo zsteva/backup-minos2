@@ -224,6 +224,7 @@ private slots:
 
     void on_SetMode(QString);
     void on_SetFreq(QString);
+    void on_SetRxPBFlag(QString);
     void on_RadioLoaded();
     void on_SetRadioName(QString);
     void on_SetRadioState(QString);
@@ -249,6 +250,7 @@ private slots:
     void sendRadioFreq(QString);
     void sendRadioMode(QString);
     void sendRadioPassBandState(int);
+
 };
 
 #endif // TSINGLELOGFRAME_H

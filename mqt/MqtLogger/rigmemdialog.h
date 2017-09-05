@@ -42,6 +42,9 @@ public:
     int readAllMemories();
     memoryData::memData getMemoryData(int memoryNumber);
     void clearMemory(memoryData::memData* ldata, int memoryLoc);
+    void setFocusCallsign();
+    void setMemoryFlag(bool state);
+    bool getMemoryFlag();
 signals:
     void memorySaved(int);
 
@@ -57,6 +60,7 @@ private:
     QString radioName;
     QString radioState;
     int memoryNumber;
+    bool memOnFlag;
     //memoryData::memData logData;
     int readSettings();
     int saveMemory(int memoryLoc);

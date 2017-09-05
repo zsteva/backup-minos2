@@ -48,6 +48,7 @@ public:
     void setFreq(QString);
     void setRadioName(QString);
     void setRadioState(QString);
+    void setRxPBFlag(QString);
 
 signals:
     void sendFreqControl(QString);
@@ -68,7 +69,7 @@ private slots:
     void passBandRadioSelected(int button);
 
 
-    //void test();
+
 private:
 
     QToolButton* memButtons[memoryData::NUM_MEMORIES];
@@ -85,12 +86,13 @@ private:
     bool radioLoaded;
     bool isRadioLoaded();
     bool freqEditOn;
-    bool memReadFlag;
+    //bool memFlag;
     QString curFreq;
     QString curMode;
     int curpbState;
     QString radioName;
     QString radioState;
+    bool rxPBFlag;
 
     memoryData::memData logData;
 

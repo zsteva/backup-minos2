@@ -89,16 +89,17 @@ struct scatParams
   freq_t transVertOffset;
   bool transVertEnable;
   bool transVertNegative;
+  bool useRxPassBand;
 
 };
 
 
 
 
-#define NUM_VFO 2
-#define VFOA 0
-#define VFOB 1
-#define CURVFO VFOA
+//#define NUM_VFO 2
+//#define VFOA 0
+//#define VFOB 1
+//#define CURVFO VFOA
 
 class RigControl : public QObject
 {
@@ -126,13 +127,13 @@ public:
     bool getRigList(QComboBox *cb);
     const char * getMfg_Name(int idx);
     const char * getModel_Name(int idx);
-    void disable();
+    //void disable();
     int closeRig();
     scatParams* params() {return &catParams;}
-    void activatePTT(bool b);
-    double getTxDelay() {return catParams.txOnDelay;}
-    int rawCommand(QByteArray ba);
-  //  QString initError;
+    //void activatePTT(bool b);
+    //double getTxDelay() {return catParams.txOnDelay;}
+    //int rawCommand(QByteArray ba);
+    //QString initError;
     serial_parity_e getSerialParityCode(int index);
     serial_handshake_e getSerialHandshakeCode(int index);
     QStringList getParityCodeNames();
@@ -210,10 +211,10 @@ signals:
 
 
     scatParams catParams;
-    int serialP;
-    bool setPTT(bool On);
-    double lastFrequency;
-    QStringList xmlModes;
+    //int serialP;
+    //bool setPTT(bool On);
+    //double lastFrequency;
+    //QStringList xmlModes;
 
 
 
