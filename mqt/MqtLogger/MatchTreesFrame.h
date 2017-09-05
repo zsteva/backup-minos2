@@ -84,6 +84,7 @@ public:
     explicit MatchTreesFrame(QWidget *parent = 0);
     ~MatchTreesFrame();
 
+    void setBaseName(QString);
     void setContest(BaseContestLog *);
     void restoreColumns();
     void getSplitters();
@@ -99,6 +100,7 @@ public:
 
 private:
     Ui::MatchTreesFrame *ui;
+    QString baseName;
     int splitterHandleWidth;
     BaseContestLog *contest;
 
@@ -114,9 +116,9 @@ private:
     void showMatchList(SharedMatchCollection matchCollection );
 private slots:
     void on_MatchStarting(BaseContestLog*);
-    void on_ReplaceThisLogList( SharedMatchCollection matchCollection, BaseContestLog* );
-    void on_ReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog* );
-    void on_ReplaceListList( SharedMatchCollection matchCollection, BaseContestLog* );
+    void on_ReplaceThisLogList( SharedMatchCollection matchCollection, BaseContestLog*, QString );
+    void on_ReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog*, QString );
+    void on_ReplaceListList( SharedMatchCollection matchCollection, BaseContestLog*, QString );
     void on_ArchiveSplitter_splitterMoved(int pos, int index);
     void on_sectionResized(int, int, int);
 

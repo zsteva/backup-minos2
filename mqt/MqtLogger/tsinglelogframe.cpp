@@ -29,6 +29,10 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 {
     ui->setupUi(this);
 
+    ui->GJVQSOLogFrame->setAsEdit(false, "Log");
+
+    ui->matchTreesFrame->setBaseName("Log");
+
     ui->Controlsplitter->setVisible(false);
 
 #ifdef Q_OS_ANDROID
@@ -61,6 +65,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterLogContact(BaseContestLog *)), this, SLOT(on_AfterLogContact(BaseContestLog *)));
 
     doNextContactDetailsOnLeftClick( true);  // but the sizes are zero...
+
     getSplitters();
 
     connect(&MinosLoggerEvents::mle, SIGNAL(LogColumnsChanged()), this, SLOT(onLogColumnsChanged()));

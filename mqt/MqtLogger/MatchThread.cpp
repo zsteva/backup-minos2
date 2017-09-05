@@ -83,7 +83,7 @@ TMatchThread::TMatchThread()
    thisLogMatch = new ThisLogMatcher();
    otherLogMatch = new OtherLogMatcher();
    listMatch = new ListMatcher();
-   connect(&MinosLoggerEvents::mle, SIGNAL(ScreenContactChanged(ScreenContact*,BaseContestLog*)), this, SLOT(on_ScreenContactChanged(ScreenContact*,BaseContestLog*)));
+   connect(&MinosLoggerEvents::mle, SIGNAL(ScreenContactChanged(ScreenContact*,BaseContestLog*,QString)), this, SLOT(on_ScreenContactChanged(ScreenContact*,BaseContestLog*,QString)));
 
    connect(&MinosLoggerEvents::mle, SIGNAL(CountrySelect(QString,BaseContestLog*)), this, SLOT(on_CountrySelect(QString,BaseContestLog*)));
    connect(&MinosLoggerEvents::mle, SIGNAL(DistrictSelect(QString,BaseContestLog*)), this, SLOT(on_DistrictSelect(QString,BaseContestLog*)));
@@ -107,11 +107,12 @@ void TMatchThread::InitialiseMatchThread()
       matchThread->start(LowPriority);
    }
 }
-void TMatchThread::on_ScreenContactChanged(ScreenContact *sct, BaseContestLog *context)
+void TMatchThread::on_ScreenContactChanged(ScreenContact *sct, BaseContestLog *context, QString b)
 {
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    if (context == ct)
    {
+       baseName = b;
        mct = sct;
       if (mct)
       {
@@ -204,20 +205,20 @@ void TMatchThread::replaceThisContestList( SharedMatchCollection matchCollection
 {
    myThisMatches = matchCollection;
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-   MinosLoggerEvents::SendReplaceThisLogList(myThisMatches, ct);
+   MinosLoggerEvents::SendReplaceThisLogList(myThisMatches, ct, baseName);
 }
 void TMatchThread::replaceOtherContestList( SharedMatchCollection matchCollection )
 {
    myOtherMatches = matchCollection;
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-   MinosLoggerEvents::SendReplaceOtherLogList(myOtherMatches, ct);
+   MinosLoggerEvents::SendReplaceOtherLogList(myOtherMatches, ct, baseName);
 }
 //---------------------------------------------------------------------------
 void TMatchThread::replaceListList(SharedMatchCollection matchCollection )
 {
    myListMatches = matchCollection;
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-   MinosLoggerEvents::SendReplaceListList(myListMatches, ct);
+   MinosLoggerEvents::SendReplaceListList(myListMatches, ct, baseName);
 }
 //---------------------------------------------------------------------------
 void TMatchThread::ShowThisMatchStatus( QString mess )

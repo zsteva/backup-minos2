@@ -31,9 +31,9 @@ MatchTreesFrame::MatchTreesFrame(QWidget *parent) :
     ui->ArchiveMatchTree->setItemDelegate( new HtmlDelegate );
 
     connect(&MinosLoggerEvents::mle, SIGNAL(MatchStarting(BaseContestLog*)), this, SLOT(on_MatchStarting(BaseContestLog*)));
-    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceThisLogList(SharedMatchCollection,BaseContestLog*)), this, SLOT(on_ReplaceThisLogList(SharedMatchCollection,BaseContestLog*)), Qt::QueuedConnection);
-    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceOtherLogList(SharedMatchCollection,BaseContestLog*)), this, SLOT(on_ReplaceOtherLogList(SharedMatchCollection,BaseContestLog*)), Qt::QueuedConnection);
-    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceListList(SharedMatchCollection,BaseContestLog*)), this, SLOT(on_ReplaceListList(SharedMatchCollection,BaseContestLog*)), Qt::QueuedConnection);
+    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceThisLogList(SharedMatchCollection,BaseContestLog*,QString)), this, SLOT(on_ReplaceThisLogList(SharedMatchCollection,BaseContestLog*,QString)), Qt::QueuedConnection);
+    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceOtherLogList(SharedMatchCollection,BaseContestLog*,QString)), this, SLOT(on_ReplaceOtherLogList(SharedMatchCollection,BaseContestLog*,QString)), Qt::QueuedConnection);
+    connect(&MinosLoggerEvents::mle, SIGNAL(ReplaceListList(SharedMatchCollection,BaseContestLog*,QString)), this, SLOT(on_ReplaceListList(SharedMatchCollection,BaseContestLog*,QString)), Qt::QueuedConnection);
 
     connect( ui->ThisMatchTree->header(), SIGNAL(sectionResized(int, int , int)),
              this, SLOT( on_sectionResized(int, int , int)));
@@ -54,6 +54,11 @@ MatchTreesFrame::~MatchTreesFrame()
 {
     delete ui;
 }
+void MatchTreesFrame::setBaseName(QString b)
+{
+    baseName = b;
+}
+
 void MatchTreesFrame::setContest(BaseContestLog *ct)
 {
     contest = ct;
@@ -63,13 +68,13 @@ void MatchTreesFrame::restoreColumns()
     QSettings settings;
     QByteArray state;
 
-    state = settings.value("ThisMatchTree/state").toByteArray();
+    state = settings.value(baseName + "/ThisMatchTree/state").toByteArray();
     ui->ThisMatchTree->header()->restoreState(state);
 
-    state = settings.value("OtherMatchTree/state").toByteArray();
+    state = settings.value(baseName + "/OtherMatchTree/state").toByteArray();
     ui->OtherMatchTree->header()->restoreState(state);
 
-    state = settings.value("ArchiveMatchTree/state").toByteArray();
+    state = settings.value(baseName + "/ArchiveMatchTree/state").toByteArray();
     ui->ArchiveMatchTree->header()->restoreState(state);
 }
 MatchTreeItem * MatchTreesFrame::getXferItem()
@@ -168,20 +173,20 @@ void MatchTreesFrame::showMatchList( SharedMatchCollection matchCollection )
         m->select(archiveMatchModel.firstIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
     }
 }
-void MatchTreesFrame::on_ReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog* )
+void MatchTreesFrame::on_ReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog*, QString b )
 {
-    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+    if (b == baseName && contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         showThisMatchQSOs( matchCollection );
 }
-void MatchTreesFrame::on_ReplaceOtherLogList( SharedMatchCollection matchCollection, BaseContestLog* )
+void MatchTreesFrame::on_ReplaceOtherLogList( SharedMatchCollection matchCollection, BaseContestLog*, QString b )
 {
-    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+    if (b == baseName && contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         showOtherMatchQSOs( matchCollection );
 }
 
-void MatchTreesFrame::on_ReplaceListList(SharedMatchCollection matchCollection , BaseContestLog *)
+void MatchTreesFrame::on_ReplaceListList(SharedMatchCollection matchCollection , BaseContestLog *, QString b)
 {
-    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+    if (b == baseName && contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         showMatchList( matchCollection );
 }
 void MatchTreesFrame::getSplitters()
@@ -189,7 +194,7 @@ void MatchTreesFrame::getSplitters()
     QSettings settings;
     QByteArray state;
 
-    state = settings.value("ArchiveSplitter/state").toByteArray();
+    state = settings.value(baseName + "/ArchiveSplitter/state").toByteArray();
     ui->ArchiveSplitter->restoreState(state);
     ui->ArchiveSplitter->setHandleWidth(splitterHandleWidth);
 }
@@ -197,7 +202,7 @@ void MatchTreesFrame::on_ArchiveSplitter_splitterMoved(int /*pos*/, int /*index*
 {
     QByteArray state = ui->ArchiveSplitter->saveState();
     QSettings settings;
-    settings.setValue("ArchiveSplitter/state", state);
+    settings.setValue(baseName + "/ArchiveSplitter/state", state);
     MinosLoggerEvents::SendSplittersChanged();
 }
 void MatchTreesFrame::on_sectionResized(int, int, int)
@@ -206,13 +211,13 @@ void MatchTreesFrame::on_sectionResized(int, int, int)
     QByteArray state;
 
     state = ui->ThisMatchTree->header()->saveState();
-    settings.setValue("ThisMatchTree/state", state);
+    settings.setValue(baseName + "/ThisMatchTree/state", state);
 
     state = ui->OtherMatchTree->header()->saveState();
-    settings.setValue("OtherMatchTree/state", state);
+    settings.setValue(baseName + "/OtherMatchTree/state", state);
 
     state = ui->ArchiveMatchTree->header()->saveState();
-    settings.setValue("ArchiveMatchTree/state", state);
+    settings.setValue(baseName + "/ArchiveMatchTree/state", state);
 
     MinosLoggerEvents::SendLogColumnsChanged();
 }

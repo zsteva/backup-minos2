@@ -28,8 +28,7 @@ public:
 private:
     Ui::TQSOEditDlg *ui;
 
-//    MinosEventListener  EL_AfterSelectContact;
-//    void AfterSelectContact_Event ( MinosEventBase & Event );
+    int splitterHandleWidth;
 
     BaseContestLog * contest;
     QSharedPointer<BaseContact> firstContact;
@@ -41,6 +40,7 @@ private:
     void addTreeChild(QTreeWidgetItem *parent, QString text);
     void doCloseEvent();
     void transferDetails(MatchTreeItem *MatchTreeIndex );
+    void getSplitters();
 
 
  public: 		// User declarations
@@ -55,6 +55,7 @@ private:
        firstContact = c;
     }
 private slots:
+    void on_editSplitter_splitterMoved(int pos, int index);
     void on_EditFrameCancelled();
     void on_AfterSelectContact(QSharedPointer<BaseContact> lct, BaseContestLog *contest);
     void onXferPressed();

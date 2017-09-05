@@ -286,10 +286,14 @@ void QSOLogFrame::focusChange(QObject *obj, bool in, QFocusEvent *event)
         SecondOpComboBox_Exit();
     }
 }
-void QSOLogFrame::setAsEdit()
+void QSOLogFrame::setAsEdit(bool s, QString b)
 {
-    edit = true;
-    ui->GJVCancelButton->setText("Return to Log");
+    baseName = b;
+    if (s)
+    {
+        edit = true;
+        ui->GJVCancelButton->setText("Return to Log");
+    }
 }
 
 void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
@@ -823,7 +827,7 @@ void QSOLogFrame::getScreenEntry()
 //---------------------------------------------------------------------------
 void QSOLogFrame::logTabChanged()
 {
-    MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest);
+    MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest, baseName);
 }
 void QSOLogFrame::showScreenEntry( void )
 {
@@ -867,7 +871,7 @@ void QSOLogFrame::showScreenEntry( void )
          selectField( 0 );
 
       ui->SerTXEdit->setReadOnly(true);
-      MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest);
+      MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest, baseName);
    }
 }
 //---------------------------------------------------------------------------
@@ -1654,7 +1658,7 @@ void QSOLogFrame::doGJVEditChange( QObject *Sender )
          // force bearing calc
          calcLoc();
       }
-      MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest);
+      MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest, baseName);
       valid( cmCheckValid ); // make sure all single and cross field
    }
 }

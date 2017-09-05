@@ -76,24 +76,24 @@ void MinosLoggerEvents::SendFormKey(unsigned int *key, BaseContestLog *c)
     emit mle.FormKey(key, c);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendScreenContactChanged(ScreenContact *sct, BaseContestLog *c)
+void MinosLoggerEvents::SendScreenContactChanged(ScreenContact *sct, BaseContestLog *c, QString b)
 {
-    emit mle.ScreenContactChanged(sct, c);
+    emit mle.ScreenContactChanged(sct, c, b);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog *c)
+void MinosLoggerEvents::SendReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog *c, QString b)
 {
-    emit mle.ReplaceThisLogList(matchCollection, c);
+    emit mle.ReplaceThisLogList(matchCollection, c, b);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog *c)
+void MinosLoggerEvents::SendReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog *c, QString b)
 {
-    emit mle.ReplaceOtherLogList(matchCollection, c);
+    emit mle.ReplaceOtherLogList(matchCollection, c, b);
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendReplaceListList(SharedMatchCollection matchCollection, BaseContestLog *c)
+void MinosLoggerEvents::SendReplaceListList(SharedMatchCollection matchCollection, BaseContestLog *c, QString b)
 {
-    emit mle.ReplaceListList(matchCollection, c);
+    emit mle.ReplaceListList(matchCollection, c, b);
 }
 //---------------------------------------------------------------------------
 void MinosLoggerEvents::SendScrollToCountry(QString prefix, BaseContestLog *c)

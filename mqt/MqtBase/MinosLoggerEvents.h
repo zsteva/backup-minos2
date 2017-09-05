@@ -36,10 +36,10 @@ signals:
    void MakeEntry(BaseContestLog *);
    void NextUnfilled(BaseContestLog *);
    void FormKey(unsigned int *, BaseContestLog *);
-   void ScreenContactChanged(ScreenContact *, BaseContestLog *);
-   void ReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog *);
-   void ReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog *);
-   void ReplaceListList(SharedMatchCollection matchCollection, BaseContestLog *);
+   void ScreenContactChanged(ScreenContact *, BaseContestLog *, QString b);
+   void ReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog *, QString b);
+   void ReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog *, QString b);
+   void ReplaceListList(SharedMatchCollection matchCollection, BaseContestLog *, QString b);
    void ScrollToCountry(QString prefix, BaseContestLog *);
    void ScrollToDistrict(QString prefix, BaseContestLog *);
    void MatchStarting(BaseContestLog *);
@@ -72,10 +72,10 @@ public:
    static void SendNextUnfilled(BaseContestLog *);
    static void SendFormKey(unsigned int *, BaseContestLog *);
 
-   static void SendScreenContactChanged(ScreenContact *, BaseContestLog *);
-   static void SendReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog *);
-   static void SendReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog *);
-   static void SendReplaceListList(SharedMatchCollection matchCollection, BaseContestLog *);
+   static void SendScreenContactChanged(ScreenContact *, BaseContestLog *, QString);
+   static void SendReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog *, QString b);
+   static void SendReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog *, QString b);
+   static void SendReplaceListList(SharedMatchCollection matchCollection, BaseContestLog *, QString b);
    static void SendScrollToCountry(QString prefix, BaseContestLog *);
    static void SendScrollToDistrict(QString prefix, BaseContestLog *);
    static void SendMatchStarting(BaseContestLog *);

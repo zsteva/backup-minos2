@@ -24,12 +24,20 @@ TQSOEditDlg::TQSOEditDlg(QWidget *parent, bool catchup, bool unfilled )
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
+#ifdef Q_OS_ANDROID
+    splitterHandleWidth = 20;
+#else
+    splitterHandleWidth = 6;
+#endif
+
     QSettings settings;
     QByteArray geometry = settings.value("QSOEditDialog/geometry").toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
-    ui->GJVQSOEditFrame->setAsEdit();
+    ui->matchTreesFrame->setBaseName("Edit");
+    ui->GJVQSOEditFrame->setAsEdit(true, "Edit");
+    getSplitters();
 
     connect(ui->GJVQSOEditFrame, SIGNAL(QSOFrameCancelled()), this, SLOT(on_EditFrameCancelled()));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)), this, SLOT(on_AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)));
@@ -98,7 +106,23 @@ void TQSOEditDlg::on_EditFrameCancelled()
 {
     accept();
 }
+void TQSOEditDlg::getSplitters()
+{
+    QSettings settings;
+    QByteArray state;
 
+    state = settings.value("editSplitter/state").toByteArray();
+    ui->editSplitter->restoreState(state);
+    ui->editSplitter->setHandleWidth(splitterHandleWidth);
+
+    ui->matchTreesFrame->getSplitters();
+}
+void TQSOEditDlg::on_editSplitter_splitterMoved(int, int)
+{
+    QByteArray state = ui->editSplitter->saveState();
+    QSettings settings;
+    settings.setValue("editSplitter/state", state);
+}
 //---------------------------------------------------------------------------
 
 void TQSOEditDlg::selectContact( BaseContestLog * ccontest, QSharedPointer<BaseContact> lct )

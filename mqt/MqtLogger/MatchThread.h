@@ -112,6 +112,7 @@ private:
       static TMatchThread *matchThread;
       TMatchThread();
 
+      QString baseName;
       ThisLogMatcher *thisLogMatch;
       OtherLogMatcher *otherLogMatch;
       ListMatcher *listMatch;
@@ -158,7 +159,7 @@ private:
 protected:
       virtual void run() override;
 private slots:
-      void on_ScreenContactChanged(ScreenContact *mct, BaseContestLog *context);
+      void on_ScreenContactChanged(ScreenContact *mct, BaseContestLog *context, QString b);
       void on_CountrySelect(QString cty, BaseContestLog *c);
       void on_DistrictSelect(QString dist, BaseContestLog *c);
       void on_LocatorSelect(QString dist, BaseContestLog *c);

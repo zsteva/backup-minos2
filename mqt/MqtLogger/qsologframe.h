@@ -18,7 +18,7 @@ public:
     explicit QSOLogFrame(QWidget *parent);
     ~QSOLogFrame();
 
-    void setAsEdit();
+    void setAsEdit(bool s, QString b);
     void setBandMapLoaded();
     void setKeyerLoaded();
 
@@ -62,7 +62,7 @@ private:
     ScreenContact *partialContact; // contact being edited on screen
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
 
-
+    QString baseName;
     QString oldloc;
     bool locValid;
 
