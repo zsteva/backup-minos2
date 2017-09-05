@@ -1757,7 +1757,7 @@ void QSOLogFrame::logCurrentContact( )
    if ( ctno > contest->maxSerial + 1 )
    {
 
-      if ( mShowYesNoMessage( this, "Serial sent is too high - should I create the missing contacts?") )
+      if ( mShowYesNoMessage( this, "\"Serial sent\" is too high - please confirm that this is correct?") )
       {
           dtg ctTime(screenContact.time);
           QSharedPointer<BaseContact> pct = contest->pcontactAt(contest->getContactCount() - 1);
@@ -1777,7 +1777,7 @@ void QSOLogFrame::logCurrentContact( )
 
          int orflag = 0;
 
-         if ( mShowYesNoMessage( this, "Do you want to enter these contacts later?" ) )
+         if ( mShowYesNoMessage( this, "Do you want to enter the missing contacts later?" ) )
          {
             orflag = TO_BE_ENTERED;
          }
