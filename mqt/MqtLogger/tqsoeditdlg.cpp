@@ -77,7 +77,7 @@ int TQSOEditDlg::exec()
     }
     else
     {
-       setWindowTitle("Editting QSO");
+       setWindowTitle("Editing QSO");
     }
     firstContact.reset();
 
