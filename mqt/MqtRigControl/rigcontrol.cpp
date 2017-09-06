@@ -222,25 +222,25 @@ void RigControl::buildPassBandTable()
     USB_PASSBAND_NOR = passbandNormal(convertQStrMode("USB"));
     FM_PASSBAND_NOR = passbandNormal(convertQStrMode("FM"));
 
-    CW_PASSBAND_NOR = passbandWide(convertQStrMode("CW"));
-    USB_PASSBAND_NOR = passbandWide(convertQStrMode("USB"));
-    FM_PASSBAND_NOR = passbandWide(convertQStrMode("FM"));
+    CW_PASSBAND_WID = passbandWide(convertQStrMode("CW"));
+    USB_PASSBAND_WID = passbandWide(convertQStrMode("USB"));
+    FM_PASSBAND_WID = passbandWide(convertQStrMode("FM"));
 
     passBandWidth[0][0] = CW_PASSBAND_NAR;
-    passBandWidth[1][0] = CW_PASSBAND_NOR;
-    passBandWidth[2][0] = CW_PASSBAND_WID;
+    passBandWidth[0][1] = CW_PASSBAND_NOR;
+    passBandWidth[0][2] = CW_PASSBAND_WID;
 
-    passBandWidth[0][1] = USB_PASSBAND_NAR;
+    passBandWidth[1][0] = USB_PASSBAND_NAR;
     passBandWidth[1][1] = USB_PASSBAND_NOR;
-    passBandWidth[2][1] = USB_PASSBAND_WID;
+    passBandWidth[1][2] = USB_PASSBAND_WID;
 
-    passBandWidth[0][2] = FM_PASSBAND_NAR;
-    passBandWidth[1][2] = FM_PASSBAND_NOR;
+    passBandWidth[2][0] = FM_PASSBAND_NAR;
+    passBandWidth[2][1] = FM_PASSBAND_NOR;
     passBandWidth[2][2] = FM_PASSBAND_WID;
 
-    passBandWidth[0][3] = MGM_PASSBAND_NAR;
-    passBandWidth[1][3] = MGM_PASSBAND_NOR;
-    passBandWidth[2][3] = MGM_PASSBAND_WID;
+    passBandWidth[3][0] = MGM_PASSBAND_NAR;
+    passBandWidth[3][1] = MGM_PASSBAND_NOR;
+    passBandWidth[3][2] = MGM_PASSBAND_WID;
 
 
 }
@@ -262,7 +262,7 @@ pbwidth_t RigControl::lookUpPassBand(QString mode, int modeState)
     }
     else
     {
-       return passBandWidth[modeState][m];
+       return passBandWidth[m][modeState];
     }
 }
 
@@ -276,7 +276,7 @@ void RigControl::setPassBand(QString mode, int modeState)
     }
     else
     {
-        pbwidth = passBandWidth[modeState][imode];
+        pbwidth = passBandWidth[imode][modeState];
     }
 
 }

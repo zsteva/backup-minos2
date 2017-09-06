@@ -18,7 +18,7 @@
 #include "rigcontrolcommonconstants.h"
 #include "rigcontrolmainwindow.h"
 #include "ui_rigcontrolmainwindow.h"
-//#include "rigcontrol.h"
+#include "rigcontrol.h"
 #include "setupdialog.h"
 #include "rigcontrolrpc.h"
 #include <QTimer>
@@ -521,7 +521,6 @@ void RigControlMainWindow::getMode(vfo_t vfo)
             if (rmode != curMode)
             {
                 curMode = rmode;
-
                 displayModeVfo(radio->convertModeQstr(rmode));
                 displayPassband(rwidth);
                 sendModeToLog(radio->convertModeQstr(rmode));
@@ -569,11 +568,11 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
     pbwidth_t passBand;
     if (selectRig->currentRadio.useRxPassBand)
     {
-        passBand = loggerPbWidth;
+        passBand = rwidth;
     }
     else
     {
-        passBand = rwidth;
+        passBand = loggerPbWidth;
     }
 
     if (radio->get_serialConnected())
@@ -652,6 +651,7 @@ void RigControlMainWindow::displayModeVfo(QString mode)
 
 void RigControlMainWindow::displayPassband(pbwidth_t width)
 {
+
     ui->passBandlbl->setText(QString::number(width));
 }
 

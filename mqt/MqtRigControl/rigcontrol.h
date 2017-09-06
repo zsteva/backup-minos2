@@ -192,12 +192,7 @@ signals:
     pbwidth_t MGM_PASSBAND_NOR = 2200;
     pbwidth_t MGM_PASSBAND_WID = 0;
 
-    pbwidth_t passBandWidth[3][4]; /*= {
-                                      {CW_PASSBAND_NAR, CW_PASSBAND_NOR, CW_PASSBAND_WID},
-                                      {USB_PASSBAND_NAR, USB_PASSBAND_NOR, USB_PASSBAND_WID},
-                                      {FM_PASSBAND_NAR, FM_PASSBAND_NOR, FM_PASSBAND_WID},
-                                      {MGM_PASSBAND_NAR, MGM_PASSBAND_NOR, MGM_PASSBAND_WID}
-                                   };*/
+    pbwidth_t passBandWidth[4][3];
 
 
 
