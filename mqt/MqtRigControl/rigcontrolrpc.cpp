@@ -28,7 +28,7 @@ RigControlRpc::RigControlRpc(RigControlMainWindow *parent) : QObject(parent), pa
     rigControlRpc = this;
 
 
-    MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::RigControlCategory);
+    MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::rigControlApp);
 
     connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
@@ -51,7 +51,7 @@ void RigControlRpc::publishState(const QString &state)
     {
        old = state;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::RigControlCategory, rpcConstants::rigControlKeyState, state, psPublished );
+       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyState, state, psPublished );
     }
 }
 
@@ -64,7 +64,7 @@ void RigControlRpc::publishRadioName(const QString &radioName)
     {
        old = radioName;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::RigControlCategory, rpcConstants::rigControlKeyRadioName, radioName, psPublished );
+       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyRadioName, radioName, psPublished );
     }
 }
 
@@ -77,7 +77,7 @@ void RigControlRpc::publishFreq(const QString &freq)
     {
        old = freq;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::RigControlCategory, rpcConstants::rigControlKeyFreq, freq, psPublished );
+       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyFreq, freq, psPublished );
     }
 }
 
@@ -90,7 +90,7 @@ void RigControlRpc::publishMode(const QString &mode)
     {
        old = mode;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::RigControlCategory, rpcConstants::rigControlKeyMode, mode, psPublished );
+       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyMode, mode, psPublished );
     }
 }
 
@@ -121,31 +121,65 @@ void RigControlRpc::on_response(bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*
 //---------------------------------------------------------------------------
 void RigControlRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
-    //trace( "rotator callback from " + from + ( err ? ":Error" : ":Normal" ) );
+    trace( "rigcontrol callback from " + from + ( err ? ":Error" : ":Normal" ) );
 
     if ( !err )
     {
-        QSharedPointer<RPCParam> psDirection;
-        QSharedPointer<RPCParam> psAngle;
+        QSharedPointer<RPCParam> psFreq;
+        QSharedPointer<RPCParam> psMode;
+        QSharedPointer<RPCParam> psPBandState;
         RPCArgs *args = mro->getCallArgs();
-        if ( args->getStructArgMember( 0, rpcConstants::rotatorParamDirection, psDirection )
-             && args->getStructArgMember( 0, rpcConstants::rotatorParamAngle, psAngle ) )
+        if ( args->getStructArgMember( 0, rpcConstants::rigControlKeyFreq, psFreq ))
         {
-            int direction;
-            int angle;
+            QString freq;
 
-            if ( psDirection->getInt( direction ) && psAngle->getInt( angle ) )
+
+            if ( psFreq->getString( freq ) )
             {
                 // here you handle what the logger has sent to us
-
-               // emit (setRotation(direction, angle));
+                trace("Freq Command From Logger = " + freq);
+                emit (setFreq(freq));
 
                 QSharedPointer<RPCParam>st(new RPCParamStruct);
-                st->addMember( true, rpcConstants::rotatorResult );
+                st->addMember( true, rpcConstants::rigControlResult );
                 mro->clearCallArgs();
                 mro->getCallArgs() ->addParam( st );
                 mro->queueResponse( from );
             }
+        }
+        else if ( args->getStructArgMember( 0, rpcConstants::rigControlKeyMode, psMode ) )
+        {
+                 QString mode;
+
+                 if ( psMode->getString( mode ) )
+                 {
+                     // here you handle what the logger has sent to us
+                    trace("Mode Command From Logger = " + mode);
+                    emit (setMode(mode));
+
+                     QSharedPointer<RPCParam>st(new RPCParamStruct);
+                     st->addMember( true, rpcConstants::rigControlResult );
+                     mro->clearCallArgs();
+                     mro->getCallArgs() ->addParam( st );
+                     mro->queueResponse( from );
+                 }
+        }
+        else if ( args->getStructArgMember( 0, rpcConstants::rigControlKeyPBandState, psPBandState ) )
+        {
+                 int passBandState;
+
+                 if ( psPBandState->getInt( passBandState ) )
+                 {
+                     // here you handle what the logger has sent to us
+                    trace("PassBandState Command From Logger = " + passBandState);
+                    emit (setPassBand(passBandState));
+
+                     QSharedPointer<RPCParam>st(new RPCParamStruct);
+                     st->addMember( true, rpcConstants::rigControlResult );
+                     mro->clearCallArgs();
+                     mro->getCallArgs() ->addParam( st );
+                     mro->queueResponse( from );
+                 }
         }
     }
 }

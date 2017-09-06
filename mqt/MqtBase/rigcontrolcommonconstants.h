@@ -3,6 +3,7 @@
 
 #include <QStringList>
 
+
 // Status messages sent to minos logger
 #define RIG_STATUS_READY "Ready"
 #define RIG_STATUS_DISCONNECTED "Disconnected"
@@ -38,12 +39,22 @@ const QString FMN = "FMN";           // FM Narrow Kenwood ts990s
 const QString MGM = "MGM";           // MGM generically
 
 
+
+
 const QStringList  modeList = {AM, CW, USB, LSB, RTTY, FM, WFM, CWR, RTTYR, AMS,
                           PKTLSB, PKTUSB, PKTFM, ECSSUSB, ECSSLSB, FAX, SAM,
                           SAL, SAH, DSB, FMN };
 
 
 const QStringList supModeList = { CW, USB, FM, MGM};
+
+enum pBandState {NAR, NOR, WIDE};
+
+const QStringList pBandStateStr = {"NAR", "NOR", "WIDE"};
+
+
+
+
 
 }
 

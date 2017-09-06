@@ -49,4 +49,11 @@
 // Bearing Log
 #define BEARINGLOG_FILETYPE ".log"
 
+
+
+
+
+
+
+
 #endif // ROTATORCOMMON_H

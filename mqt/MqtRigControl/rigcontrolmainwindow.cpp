@@ -6,7 +6,7 @@
 // Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2017
 //
 // Interprocess Control Logic
-// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2007
+// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2017
 //
 // Hamlib Library
 //
@@ -18,7 +18,7 @@
 #include "rigcontrolcommonconstants.h"
 #include "rigcontrolmainwindow.h"
 #include "ui_rigcontrolmainwindow.h"
-#include "rigcontrol.h"
+//#include "rigcontrol.h"
 #include "setupdialog.h"
 #include "rigcontrolrpc.h"
 #include <QTimer>
@@ -27,9 +27,15 @@
 
 
 RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent) :
-    QMainWindow(parent), msg(0),
-    ui(new Ui::RigControlMainWindow)
+    QMainWindow(parent)
+    , msg(0)
+    , ui(new Ui::RigControlMainWindow)
+    , loggerPbWidth(0)
+    , logger_bw_state(hamlibData::NOR)
+    , logRadError(false)
+    , useLogWidth(true)
 {
+
     ui->setupUi(this);
 
     loggerRadio  = _loggerRadio.trimmed();
@@ -38,6 +44,9 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
     stdinReader.start();
 
     createCloseEvent();
+
+    connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
+    LogTimer.start(100);
 
     msg = new RigControlRpc(this);
 
@@ -55,6 +64,8 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
 
 
     radio = new RigControl();
+    radio->getRigList();
+
     selectRig = new SetupDialog(radio);
     selectRadio = new QComboBox;
     pollTimer = new QTimer(this);
@@ -62,7 +73,7 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
     status = new QLabel;
     ui->statusBar->addWidget(status);
 
-    radio->getRigList();
+
 
 
     radio->set_serialConnected(false);
@@ -91,7 +102,7 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
         else
         {
             selectRadio->setCurrentIndex(a);
-            selectRig->readSettings();      // get antenna settings
+            selectRig->readSettings();      // get radio settings
             selectRig->copyRadioToCurrent(a);
         }
 
@@ -119,6 +130,12 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
         sendStatusToLogReady();
     }
 
+    radio->buildPassBandTable();
+
+    // initialise rig state
+    logger_mode = "USB";
+    loggerSetPassBand(hamlibData::NOR );
+
     trace("*** Rig Started ***");
 
 
@@ -136,6 +153,33 @@ void RigControlMainWindow::logMessage( QString s )
 {
    if (ui->actionTraceLog->isChecked())
         trace( s );
+}
+
+
+void RigControlMainWindow::LogTimerTimer()
+{
+   static bool closed = false;
+   if ( !closed )
+   {
+      if ( checkCloseEvent() )
+      {
+         closed = true;
+         close();
+      }
+   }
+}
+
+void RigControlMainWindow::closeEvent(QCloseEvent *event)
+{
+    MinosRPCObj::clearRPCObjects();
+    XMPPClosedown();
+    LogTimerTimer( );
+    // and tidy up all loose ends
+
+    QSettings settings;
+    settings.setValue(geoStr, saveGeometry());
+    trace("MinosRigControl Closing");
+    QWidget::closeEvent(event);
 }
 
 
@@ -159,13 +203,21 @@ void RigControlMainWindow::initActionsConnections()
     //connect(pollTimer, SIGNAL(timeout()), this, SLOT(getCurMode()));
     //connect(radio, SIGNAL(frequency_updated(double)), this, SLOT(updateFreq(const double)));
 //    connect(this, SIGNAL(frequency_updated(double)), this, SLOT(displayFreqA(const double)));
-    connect(this, SIGNAL(mode_updated(QString)), this, SLOT(displayModeVfoA(QString)));
+    //connect(this, SIGNAL(mode_updated(QString)), this, SLOT(displayModeVfoA(QString)));
 
+    // Message from Logger
+    connect(msg, SIGNAL(setFreq(QString)), this, SLOT(loggerSetFreq(QString)));
+    connect(msg, SIGNAL(setMode(QString)), this, SLOT(loggerSetMode(QString)));
+    connect(msg, SIGNAL(setPassBand(int)), this, SLOT(loggerSetPassBand(int)));
 
     //connect(this, SIGNAL(frequency_updated(double)), this, SLOT(drawDial(double)));
     //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
-    //connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
+
+    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     //connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
+    connect(radio, SIGNAL(debug_protocol(QString)), this, SLOT(logMessage(QString)));
+
 }
 
 
@@ -235,6 +287,10 @@ void RigControlMainWindow::upDateRadio()
        trace("Radio Model = " + selectRig->currentRadio.radioModel);
        trace("Radio Number = " + QString::number(selectRig->currentRadio.radioModelNumber));
        trace("Radio Manufacturer = " + selectRig->currentRadio.radioMfg_Name);
+       if (selectRig->currentRadio.radioMfg_Name == "Icom")
+       {
+           trace("Icom CIV address = " + selectRig->currentRadio.civAddress);
+       }
        trace("Radio Comport = " + selectRig->currentRadio.comport);
        trace("Baudrate = " + QString::number(selectRig->currentRadio.databits));
        trace("Stop bits = " + QString::number(selectRig->currentRadio.stopbits));
@@ -330,8 +386,60 @@ void RigControlMainWindow::getRadioInfo()
 
     getMode(RIG_VFO_CURR);
 
+
 }
 
+
+void RigControlMainWindow::loggerSetFreq(QString freq)
+{
+    logger_freq = freq;
+    setFreq(freq, RIG_VFO_CURR);
+}
+
+
+void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
+{
+    bool ok = false;
+    int retCode = 0;
+    QString sfreq = freq.remove('.');
+
+    double f = sfreq.toDouble(&ok);
+
+    if (ok)
+    {
+        if (selectRig->currentRadio.transVertEnable)
+        {
+            if (selectRig->currentRadio.transVertNegative)
+            {
+                f = f + selectRig->currentRadio.transVertOffset;
+            }
+            else
+            {
+                f = f - selectRig->currentRadio.transVertOffset;
+            }
+        }
+        if (radio->get_serialConnected())
+        {
+            retCode = radio->setFrequency(f, vfo);
+            if (retCode == RIG_OK)
+            {
+                qDebug() << "frequency changed!";
+            }
+            else
+            {
+                qDebug() << "frequency fail to changed";
+            }
+        }
+        else
+        {
+            qDebug() << "radio not conntected";
+        }
+    }
+    else
+    {
+        qDebug() << "freq conversion from string failed";
+    }
+}
 
 void RigControlMainWindow::getFrequency(vfo_t vfo)
 {
@@ -339,12 +447,13 @@ void RigControlMainWindow::getFrequency(vfo_t vfo)
     int retCode = 0;
     if (radio->get_serialConnected())
     {
+
         retCode = radio->getFrequency(vfo, &rfrequency);
         if (retCode == RIG_OK)
         {
-            if (rfrequency != curVfoFrq[0])
+            if (rfrequency != curVfoFrq)
             {
-                curVfoFrq[0] = rfrequency;
+                curVfoFrq = rfrequency;
                 qDebug() << "Trans Enable = " << selectRig->currentRadio.transVertEnable;
                 if (selectRig->currentRadio.transVertEnable)
                 {
@@ -359,11 +468,11 @@ void RigControlMainWindow::getFrequency(vfo_t vfo)
                         transVertF = rfrequency + selectRig->currentRadio.transVertOffset;
                     }
                     qDebug() << "Transvert f " << transVertF;
-                    curTransVertFrq[0] = transVertF;
-                    displayTransVertVfoA(transVertF);
+                    curTransVertFrq = transVertF;
+                    displayTransVertVfo(transVertF);
 
                 }
-                displayFreqVfoA(rfrequency);
+                displayFreqVfo(rfrequency);
 
                 if (selectRig->currentRadio.transVertEnable)
                 {
@@ -401,11 +510,14 @@ void RigControlMainWindow::getMode(vfo_t vfo)
         retCode = radio->getMode(vfo, &rmode, &rwidth);
         if (retCode == RIG_OK)
         {
-            if (rmode != curMode[0])
+            if (rmode != curMode)
             {
-                curMode[0] = rmode;
-                displayModeVfoA(radio->convertModeQstr(rmode));
+                curMode = rmode;
+
+                displayModeVfo(radio->convertModeQstr(rmode));
+                displayPassband(rwidth);
                 sendModeToLog(radio->convertModeQstr(rmode));
+
             }
             else
             {
@@ -427,6 +539,70 @@ void RigControlMainWindow::getCurMode()
 }
 
 
+void RigControlMainWindow::loggerSetMode(QString mode)
+{
+    logger_mode = mode;
+    setCurMode(mode);
+}
+
+
+
+
+void RigControlMainWindow::setCurMode(QString mode)
+{
+    setMode(mode, RIG_VFO_CURR);
+}
+
+
+void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
+{
+    rmode_t mCode = radio->convertQStrMode(mode);
+    int retCode = 0;
+    pbwidth_t passBand;
+    if (useLogWidth)
+    {
+        passBand = loggerPbWidth;
+    }
+    else
+    {
+        passBand = rwidth;
+    }
+
+    if (radio->get_serialConnected())
+    {
+         retCode = radio->setMode(vfo, mCode, passBand);
+         if (retCode == RIG_OK)
+         {
+             qDebug() << "mode changed!";
+         }
+         else
+         {
+             qDebug() << "mode fail to change";
+         }
+    }
+    else
+    {
+        qDebug() << "radio not conntected";
+    }
+}
+
+
+
+void RigControlMainWindow::loggerSetPassBand(int state)
+{
+    logger_bw_state = state;
+    loggerPbWidth = radio->lookUpPassBand(logger_mode, state);
+    ui->passBandState->setText(hamlibData::pBandStateStr[state]);
+    ui->logpbwidthlbl->setText(QString::number(loggerPbWidth));
+    setMode(logger_mode, RIG_VFO_CURR);
+}
+
+
+
+
+
+
+
 /*
 void RigControlMainWindow::updateFreq(double frequency)
 {
@@ -443,45 +619,39 @@ void RigControlMainWindow::updateFreq(double frequency)
 
 */
 
-void RigControlMainWindow::displayFreqVfoA(double frequency)
+void RigControlMainWindow::displayFreqVfo(double frequency)
 {
 
-    qDebug() << "Got freq " << frequency;
     ui->radioFreqA->setText(convertStringFreq(frequency));
 }
 
-void RigControlMainWindow::displayFreqVfoB(double frequency)
-{
-
-    ui->radioFreqB->setText(convertStringFreq(frequency));
-}
 
 
-void RigControlMainWindow::displayTransVertVfoA(double frequency)
+
+void RigControlMainWindow::displayTransVertVfo(double frequency)
 {
     ui->transVertFreqA->setText(convertStringFreq(frequency));
 }
 
 
-void RigControlMainWindow::displayTransVertVfoB(double frequency)
-{
-    ui->transVertFreqB->setText(convertStringFreq(frequency));
-}
 
-void RigControlMainWindow::displayModeVfoA(QString mode)
+
+void RigControlMainWindow::displayModeVfo(QString mode)
 {
     ui->modeA->setText(mode);
 }
 
-void RigControlMainWindow::displayModeVfoB(QString mode)
+
+void RigControlMainWindow::displayPassband(pbwidth_t width)
 {
-    ui->modeB->setText(mode);
+    ui->passBandlbl->setText(QString::number(width));
 }
+
 
 QString RigControlMainWindow::convertStringFreq(double frequency)
 {
     double freq = frequency;
-    sfreq = sfreq = QString::number(freq,'f', 0);
+    sfreq = QString::number(freq,'f', 0);
     int len = sfreq.length();
 
 
@@ -554,7 +724,7 @@ void RigControlMainWindow::hamlibError(int errorCode)
     errCode *= -1;
     QString errorMsg = radio->gethamlibErrorMsg(errCode);
 
-    QMessageBox::critical(this, "hamlib Error", QString::number(errCode) + " - " + errorMsg);
+    QMessageBox::critical(this, "hamlib Error - " + selectRig->currentRadio.radioName, QString::number(errCode) + " - " + errorMsg);
 
     closeRadio();
 
@@ -619,7 +789,6 @@ void RigControlMainWindow::sendStatusToLogError()
 
 void RigControlMainWindow::sendFreqToLog(freq_t freq)
 {
-
     msg->publishFreq(convertStringFreq(freq));
 }
 

@@ -606,6 +606,20 @@ void RotatorMainWindow::displayBearing(int bearing)
 
 
 
+void RotatorMainWindow::clickedPreset(int buttonNumber)
+{
+
+    if (presetName[buttonNumber] != "")
+    {
+        if (presetBearing[buttonNumber] != "")
+        {
+           ui->bearingEdit->setText(presetBearing[buttonNumber]);
+           emit presetRotateTo();
+        }
+    }
+}
+
+
 
 
 
@@ -652,18 +666,7 @@ void RotatorMainWindow::updatePresetLabels()
 
 
 
-void RotatorMainWindow::clickedPreset(int buttonNumber)
-{
 
-    if (presetName[buttonNumber] != "")
-    {
-        if (presetBearing[buttonNumber] != "")
-        {
-           ui->bearingEdit->setText(presetBearing[buttonNumber]);
-           emit presetRotateTo();
-        }
-    }
-}
 
 
 
@@ -1169,7 +1172,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
 }
 
 
-void RotatorMainWindow::rotateCW(bool clicked)
+void RotatorMainWindow::rotateCW(bool /*clicked*/)
 {
 
 
@@ -1249,7 +1252,7 @@ void RotatorMainWindow::rotateCW(bool clicked)
 
 
 
-void RotatorMainWindow::rotateCCW(bool toggle)
+void RotatorMainWindow::rotateCCW(bool /*toggle*/)
 {
     cwCcwCmdflag = true;
     logMessage("Start rotateCCW");
@@ -1375,7 +1378,7 @@ void RotatorMainWindow::hamlibError(int errorCode)
     errCode *= -1;
     QString errorMsg = rotator->gethamlibErrorMsg(errCode);
 
-    QMessageBox::critical(this, "hamlib Error", QString::number(errCode) + " - " + errorMsg);
+    QMessageBox::critical(this, "Rotator hamlib Error - " + selectRotator->currentAntenna.antennaName, QString::number(errCode) + " - " + errorMsg);
 
     closeRotator();
 
