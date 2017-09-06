@@ -64,6 +64,8 @@ class SettingsBundle
       ~SettingsBundle();
       QString getBundle();
 
+      void checkLoaded();
+
       void setProfile( QSharedPointer<BundleFile> b );
 
       void openSection( const QString &psect );

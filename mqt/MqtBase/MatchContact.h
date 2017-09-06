@@ -14,7 +14,8 @@
 class ListContact;
 class ContactList;
 class BaseMatchContest;
-
+class BaseContestLog;
+class MatchContact;
 
 typedef QMap < MapWrapper<BaseMatchContest>, MapWrapper<BaseMatchContest> > ContestMatchList;
 typedef ContestMatchList::iterator ContestMatchIterator;
@@ -73,19 +74,13 @@ public:
 class MatchContactList : public BaseMatchContest
 {
 public:
-   virtual ContactList *getContactList() const override
-   {
-      return dynamic_cast<ContactList * >(matchedContest);
-   }
+   virtual ContactList *getContactList() const override;
    virtual bool operator<( const BaseMatchContest& rhs ) const override;
 };
 class MatchContactLog : public BaseMatchContest
 {
 public:
-   virtual const BaseContestLog * getContactLog() const override
-   {
-      return dynamic_cast<BaseContestLog* >(matchedContest);
-   }
+   virtual const BaseContestLog * getContactLog() const override;
    virtual bool operator<( const BaseMatchContest& rhs ) const override;
 };
 

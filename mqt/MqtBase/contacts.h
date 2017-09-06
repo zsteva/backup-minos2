@@ -10,6 +10,10 @@
 #ifndef ContactsH
 #define ContactsH 
 //----------------------------------------------------------------------------
+#include "mwin.h"
+class  BaseContestLog;
+class MinosTestImport;
+
 // This header covers the structure of contests, logs, etc
 
 namespace ContactBuffs
@@ -67,7 +71,7 @@ class BaseContact
       BaseContestLog *contest;
    public:
       BaseContact( const BaseContact & );
-      BaseContact( BaseContestLog *contest, bool time_now );
+      BaseContact(BaseContestLog *contest, dtg time_now );
       BaseContact& operator =( const BaseContact & );
       bool operator<( const BaseContact& rhs ) const;
       virtual ~BaseContact(){}

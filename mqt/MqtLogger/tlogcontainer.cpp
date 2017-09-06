@@ -248,6 +248,8 @@ void TLogContainer::setupMenus()
     ui->menuFile->addSeparator();
 
     OptionsAction = newAction("Options...", ui->menuFile, SLOT(OptionsActionExecute()));
+    ExitClearAction = newAction("E&xit MinosQt and Clear registry", ui->menuFile, SLOT(ExitClearActionExecute()));
+    ui->menuFile->addSeparator();
     ExitAction = newAction("E&xit MinosQt", ui->menuFile, SLOT(ExitActionExecute()));
 // end of file menu
 
@@ -722,6 +724,27 @@ void TLogContainer::ExitActionExecute()
 {
     close();
 }
+void TLogContainer::ExitClearActionExecute()
+{
+    // Confirm...
+
+    if (!mShowYesNoMessage(this, "This action will clear registry entries for the Minos V2 Logger.\r\n"
+                                  "Please confirm this action by pressing \"Yes\"." ))
+    {
+       return;
+    }
+
+    // clear registry
+
+    QSettings reg;
+    reg.clear();
+
+    QSettings regOld("G0GJV", "MinosQtLogger");
+    regOld.clear();
+
+    // and exit
+    close();
+}
 void TLogContainer::MakeEntryActionExecute()
 {
     BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
@@ -791,13 +814,16 @@ void TLogContainer::OptionsActionExecute()
 
 void TLogContainer::FontEditAcceptActionExecute()
 {
-    QApplication::setFont( QFontDialog::getFont( 0, font() ) );
+    QFont f = QFontDialog::getFont( 0, font() );
+    QApplication::setFont( f );
 
     foreach ( QWidget * widget, QApplication::allWidgets() )
-    widget->update();
+        widget->update();
 
     QSettings settings;
     settings.setValue( "font", font() );
+
+    MinosLoggerEvents::SendFontChanged();
 }
 
 void TLogContainer::ReportAutofillActionExecute()
@@ -970,6 +996,7 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
             {
                TContestApp::getContestApp() ->closeFile( contest );
                contest = 0;
+               show = false;
             }
          }
       }
@@ -1211,11 +1238,14 @@ BaseContestLog *TLogContainer::loadSession( QString sessName)
         {
             if ( curSlot >= 0 && curSlot < app ->getContestSlotCount())
             {
-                ct = app ->contestSlotList[ curSlot ] ->slot;
+                BaseContestLog *c = app ->contestSlotList[ curSlot ] ->slot;
+                if (c)
+                    ct = c;
             }
         }
     }
-    app->setCurrentContest(ct);
+    if (ct)
+        app->setCurrentContest(ct);
 
     preloadBundle.openSection(app->preloadsect);
     preloadBundle.setStringProfile(eppSession, sessName);

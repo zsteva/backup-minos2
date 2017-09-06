@@ -643,7 +643,7 @@ ProfileEntry::ProfileEntry(int id, const char *name, int def, const char *dispna
       : id( id ), name( name ), idefaultval( def ), sdefaultval( QString::number( def ) ), hint( hint ), pt( petInteger ), dispname(dispname), RO(RO)
 {}
 ProfileEntry::ProfileEntry(int id, const char *name, bool def, const char *dispname, const char *hint, bool RO )
-      : id( id ), name( name ), bdefaultval( def ), sdefaultval( makeStr( def ) ), hint( hint ), pt( petBool ), dispname(dispname), RO(RO)
+      : id( id ), name( name ), bdefaultval( def ), sdefaultval( def?"1":"0" ), hint( hint ), pt( petBool ), dispname(dispname), RO(RO)
 {}
 void ProfileEntry::createEntry( SettingsBundle *s )
 {
@@ -813,7 +813,15 @@ QString SettingsBundle::getBundle()
 {
    return bundleFile->getBundle();
 }
-
+void SettingsBundle::checkLoaded()
+{
+    if ( !bundleFile )
+    {
+       return ;
+    }
+    // force a reload if necessary
+    bundleFile->iniFile->getPrivateProfileInt( "dummy", "dummy",  true );
+}
 void SettingsBundle::setProfile( QSharedPointer<BundleFile> b )
 {
    bundleFile = b;

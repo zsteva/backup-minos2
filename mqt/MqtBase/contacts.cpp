@@ -21,8 +21,8 @@ namespace ContactBuffs
 }
 //==========================================================================
 //==========================================================================
-BaseContact::BaseContact( BaseContestLog * contest, bool time_now ) :
-      contest( contest ), contactScore( -1 ), time( time_now ), updtime( time_now ),
+BaseContact::BaseContact( BaseContestLog * contest, dtg time_now ) :
+      contest( contest ), contactScore( -1 ), time( time_now ), updtime( true ),
       contactFlags( 0 ), multCount( 0 ),
       bearing( -1 ),
       QSOValid( false ),

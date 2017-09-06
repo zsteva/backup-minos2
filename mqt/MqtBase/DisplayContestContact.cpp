@@ -152,6 +152,22 @@ void DisplayContestContact::checkContact( )
 
    if ( contactFlags.getValue() & ( LOCAL_COMMENT | COMMENT_ONLY ) )
       return ;
+
+   // calc the bearing and score anyway; otherwise dups get a bearing of -1
+
+   if ( bearing < 0 )
+   {
+      double lon = 0.0;
+      double lat = 0.0;
+      int brg;
+
+      if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
+      {
+         clp->disbear( lon, lat, dist, brg );
+         bearing = brg;
+      }
+   }
+
    if ( contactFlags.getValue() & NON_SCORING )
       return ;
 
@@ -241,20 +257,6 @@ void DisplayContestContact::checkContact( )
          }
       }
 
-   // calc the bearing and score anyway; otherwise dups get a bearing of -1
-
-   if ( bearing < 0 )
-   {
-      double lon = 0.0;
-      double lat = 0.0;
-      int brg;
-
-      if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
-      {
-         clp->disbear( lon, lat, dist, brg );
-         bearing = brg;
-      }
-   }
 
    if ( checkret )
       return ;

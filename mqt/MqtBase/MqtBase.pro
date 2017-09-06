@@ -49,7 +49,8 @@ SOURCES += \
     Calendar.cpp \
     tconfigframe.cpp \
     MinosTableView.cpp \
-    ConfigElementFrame.cpp
+    ConfigElementFrame.cpp \
+    MatchCollection.cpp
 
 HEADERS += \
     BandList.h \
@@ -86,7 +87,8 @@ HEADERS += \
     tconfigframe.h \
     MinosTableView.h \
     ConfigElementFrame.h \
-    rigcontrolcommonconstants.h
+    rigcontrolcommonconstants.h \
+    MatchCollection.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

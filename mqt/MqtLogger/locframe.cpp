@@ -303,6 +303,9 @@ QVariant LocGridModel::data( const QModelIndex &index, int role ) const
     if (role == Qt::UserRole)
         return disp;
 
+    if (role == Qt::TextAlignmentRole)
+        return Qt::AlignLeft; // but HtmlDelegate overrides
+
     if (role == Qt::DisplayRole)
     {
         QMap<QString, LocCount * >::const_iterator lci = locMap.find(disp);

@@ -18,7 +18,7 @@ public:
     explicit QSOLogFrame(QWidget *parent);
     ~QSOLogFrame();
 
-    void setAsEdit();
+    void setAsEdit(bool s, QString b);
     void setBandMapLoaded();
     void setKeyerLoaded();
 
@@ -28,7 +28,6 @@ public:
     void startNextEntry( );
     bool doKeyPressEvent( QKeyEvent* event );
     virtual void selectEntry(QSharedPointer<BaseContact> lct );
-    void setXferEnabled(bool);
 
     virtual void getScreenEntry();
     ScreenContact screenContact;  // contact being edited on screen
@@ -67,7 +66,7 @@ private:
     ScreenContact *partialContact; // contact being edited on screen
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
 
-
+    QString baseName;
     QString oldloc;
     bool locValid;
 
@@ -161,10 +160,27 @@ private:
     QString curFreq;
 
     void setMode(QString m);
+
+    QString ssQsoFrameBlue = " #qsoFrame { border: 2px solid blue; }";
+    QString ssRed = "color:red";
+
+    QString ssDtgWhite = "QLineEdit { background-color: white ; border: none ; color: black ; }";
+    QString ssDtgRed = "QLineEdit { background-color: white ; border: none ; color: red ; }";
+
+    QString ssLineEditNoFrame = "QLineEdit {  border: none ; }";
+    QString ssLineEditGreyBackground = "QLineEdit { background-color: silver ; border-style: outset ; border-width: 1px ; border-color: black ; color : black ;}";
+    QString ssLineEditOK = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; color : black ; }";
+
+    QString ssLineEditFrRedBkRed = "QLineEdit { background-color: red ; border-style: outset ; border-width: 1px ; border-color: red ; color : white }";
+    QString ssLineEditFrRedBkWhite = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: red ; color : black}";
+
+    QMap<QWidget *, QString> widgetStyles;
+
 signals:
     void QSOFrameCancelled();
     //void sendRotator(rpcConstants::RotateDirection direction, int angle );
     void sendBandMap( QString freq, QString call, QString utc, QString loc, QString qth );
+    void xferPressed();
     void sendModeControl(QString);
 
 private slots:
@@ -195,6 +211,10 @@ private slots:
     void on_RSTTXEdit_textChanged(const QString &arg1);
     void on_RSTRXEdit_textChanged(const QString &arg1);
 
+    void on_FontChanged();
+
+public slots:
+    void setXferEnabled(bool);
 };
 
 #endif // QSOLOGFRAME_H

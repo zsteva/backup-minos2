@@ -16,33 +16,8 @@
 #define SET_CHANGED 1
 #define SET_NOT_GREATER 2
 
-class MatchContact;
-class matchElement
-{
-   public:
-      bool match;
-      bool empty;
-      //      bool trimmed;
-      QString mstr;
-      QString rawstr;
 
-      matchElement( void );
-      unsigned char set
-         ( const QString & );
-      unsigned char checkGreater( const QString & );
-      bool checkMatch( const QString & );
-};
 
-class TMatchCollection
-{
-   public:
-      ContestMatchList contestMatchList;
-      int contactCount();
-      TMatchCollection( void );
-      ~TMatchCollection();
-      int getContestCount( void );
-      QSharedPointer<BaseMatchContest> pcontestAt( int );
-};
 class Matcher
 {
       bool matchRequired;  // use getter and setter below
@@ -72,7 +47,7 @@ class Matcher
 
       Matcher( );
       virtual ~Matcher();
-      TMatchCollection *matchCollection;
+      SharedMatchCollection matchCollection;
 
       void startMatch(QSharedPointer<CountryEntry> ce = QSharedPointer<CountryEntry>() );
       void initMatch( void );
@@ -137,13 +112,14 @@ private:
       static TMatchThread *matchThread;
       TMatchThread();
 
+      QString baseName;
       ThisLogMatcher *thisLogMatch;
       OtherLogMatcher *otherLogMatch;
       ListMatcher *listMatch;
 
-      TMatchCollection *myThisMatches;        // used to pass the match list out
-      TMatchCollection *myOtherMatches;        // used to pass the match list out
-      TMatchCollection *myListMatches;    // used to pass the match list out
+      SharedMatchCollection myThisMatches;       // used to pass the match list out
+      SharedMatchCollection myOtherMatches;      // used to pass the match list out
+      SharedMatchCollection myListMatches;       // used to pass the match list out
 
       QString ctrymatch;
       QString distmatch;
@@ -162,9 +138,9 @@ private:
           Terminated = true;
       }
 
-      void replaceThisContestList( TMatchCollection *matchCollection );
-      void replaceOtherContestList( TMatchCollection *matchCollection );
-      void replaceListList( TMatchCollection *matchCollection );
+      void replaceThisContestList(SharedMatchCollection matchCollection );
+      void replaceOtherContestList( SharedMatchCollection matchCollection );
+      void replaceListList( SharedMatchCollection matchCollection );
       void matchCountry( QString cs );
       void matchDistrict( QString dist );
 
@@ -183,7 +159,7 @@ private:
 protected:
       virtual void run() override;
 private slots:
-      void on_ScreenContactChanged(ScreenContact *mct, BaseContestLog *context);
+      void on_ScreenContactChanged(ScreenContact *mct, BaseContestLog *context, QString b);
       void on_CountrySelect(QString cty, BaseContestLog *c);
       void on_DistrictSelect(QString dist, BaseContestLog *c);
       void on_LocatorSelect(QString dist, BaseContestLog *c);

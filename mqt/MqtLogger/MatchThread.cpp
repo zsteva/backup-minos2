@@ -83,7 +83,7 @@ TMatchThread::TMatchThread()
    thisLogMatch = new ThisLogMatcher();
    otherLogMatch = new OtherLogMatcher();
    listMatch = new ListMatcher();
-   connect(&MinosLoggerEvents::mle, SIGNAL(ScreenContactChanged(ScreenContact*,BaseContestLog*)), this, SLOT(on_ScreenContactChanged(ScreenContact*,BaseContestLog*)));
+   connect(&MinosLoggerEvents::mle, SIGNAL(ScreenContactChanged(ScreenContact*,BaseContestLog*,QString)), this, SLOT(on_ScreenContactChanged(ScreenContact*,BaseContestLog*,QString)));
 
    connect(&MinosLoggerEvents::mle, SIGNAL(CountrySelect(QString,BaseContestLog*)), this, SLOT(on_CountrySelect(QString,BaseContestLog*)));
    connect(&MinosLoggerEvents::mle, SIGNAL(DistrictSelect(QString,BaseContestLog*)), this, SLOT(on_DistrictSelect(QString,BaseContestLog*)));
@@ -107,11 +107,12 @@ void TMatchThread::InitialiseMatchThread()
       matchThread->start(LowPriority);
    }
 }
-void TMatchThread::on_ScreenContactChanged(ScreenContact *sct, BaseContestLog *context)
+void TMatchThread::on_ScreenContactChanged(ScreenContact *sct, BaseContestLog *context, QString b)
 {
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    if (context == ct)
    {
+       baseName = b;
        mct = sct;
       if (mct)
       {
@@ -200,24 +201,24 @@ void TMatchThread::run()
 
 }
 //---------------------------------------------------------------------------
-void TMatchThread::replaceThisContestList( TMatchCollection *matchCollection )
+void TMatchThread::replaceThisContestList( SharedMatchCollection matchCollection )
 {
    myThisMatches = matchCollection;
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-   MinosLoggerEvents::SendReplaceThisLogList(myThisMatches, ct);
+   MinosLoggerEvents::SendReplaceThisLogList(myThisMatches, ct, baseName);
 }
-void TMatchThread::replaceOtherContestList( TMatchCollection *matchCollection )
+void TMatchThread::replaceOtherContestList( SharedMatchCollection matchCollection )
 {
    myOtherMatches = matchCollection;
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-   MinosLoggerEvents::SendReplaceOtherLogList(myOtherMatches, ct);
+   MinosLoggerEvents::SendReplaceOtherLogList(myOtherMatches, ct, baseName);
 }
 //---------------------------------------------------------------------------
-void TMatchThread::replaceListList( TMatchCollection *matchCollection )
+void TMatchThread::replaceListList(SharedMatchCollection matchCollection )
 {
    myListMatches = matchCollection;
    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
-   MinosLoggerEvents::SendReplaceListList(myListMatches, ct);
+   MinosLoggerEvents::SendReplaceListList(myListMatches, ct, baseName);
 }
 //---------------------------------------------------------------------------
 void TMatchThread::ShowThisMatchStatus( QString mess )
@@ -261,34 +262,6 @@ void  TMatchThread::matchDistrict( QString dist )
 }
 
 //=============================================================================
-TMatchCollection::TMatchCollection( void )
-{}
-TMatchCollection::~TMatchCollection( void )
-{
-}
-int TMatchCollection::getContestCount( void )
-{
-   return contestMatchList.size();
-}
-
-QSharedPointer<BaseMatchContest> TMatchCollection::pcontestAt( int i )
-{
-    if (i > contestMatchList.size())
-        return QSharedPointer<BaseMatchContest>();
-
-    return std::next(contestMatchList.begin(), i)->wt;
-}
-
-int TMatchCollection::contactCount()
-{
-    int cc = 0;
-    for (ContestMatchIterator i = contestMatchList.begin(); i != contestMatchList.end(); i++ )
-    {
-        cc += i->wt->contactMatchList.size();
-    }
-    return cc;
-}
-
 //=============================================================================
 matchElement::matchElement( void ) : match( false ), empty( true )
 {
@@ -370,15 +343,13 @@ bool matchElement::checkMatch( const QString &s )
 
 Matcher::Matcher() : contestIndex( -1 ), contactIndex( -1 ), mp( Exact ),
       matchStarted( false ), firstMatch( Starting ), tickct( 0 ), ce( 0 ),
-      matchCollection( 0 ), matchRequired( false )
+      matchRequired( false )
 {
-   matchCollection = new TMatchCollection;
+   matchCollection = SharedMatchCollection(new TMatchCollection);
 }
 Matcher::~Matcher()
 {
    clearmatchall();
-   delete matchCollection;
-   matchCollection = 0;
 }
 
 void Matcher::clearmatchall( )
@@ -818,7 +789,7 @@ bool ThisLogMatcher::idleMatch( int limit )
 void ThisLogMatcher::replaceList(  )
 {
    TMatchThread::getMatchThread() ->replaceThisContestList( matchCollection );
-   matchCollection = new TMatchCollection;  // pass ownership
+   matchCollection = SharedMatchCollection(new TMatchCollection);
 }
 //==============================================================================
 OtherLogMatcher::OtherLogMatcher()
@@ -1147,7 +1118,7 @@ bool OtherLogMatcher::idleMatch( int limit )
 void OtherLogMatcher::replaceList( )
 {
    TMatchThread::getMatchThread() ->replaceOtherContestList( matchCollection );
-   matchCollection = new TMatchCollection;  // pass ownership
+   matchCollection = SharedMatchCollection(new TMatchCollection);
 
 }
 
@@ -1423,7 +1394,7 @@ bool ListMatcher::idleMatch( int limit )
 void ListMatcher::replaceList( )
 {
    TMatchThread::getMatchThread() ->replaceListList( matchCollection );
-   matchCollection = new TMatchCollection;  // pass ownership
+   matchCollection = SharedMatchCollection(new TMatchCollection);  // pass ownership
 
 }
 

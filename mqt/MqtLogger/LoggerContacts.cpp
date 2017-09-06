@@ -666,7 +666,7 @@ bool ContestContact::GJVload( int diskBlock )
 }
 bool ContestContact::setField(QSharedPointer<BaseContact> tct, int ACol, const QString Value )
 {
-//#warning never used! There to allow grid editting
+//#warning never used! There to allow grid editing
    // This really ought to validate it first...
    switch ( ACol )
    {

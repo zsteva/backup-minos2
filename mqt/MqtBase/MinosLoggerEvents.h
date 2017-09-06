@@ -10,6 +10,7 @@
 #define MinosLoggerEventsH
 
 #include "XMPP_pch.h"
+#include "MatchCollection.h"
 //---------------------------------------------------------------------------
 class BaseContestLog;
 class BaseContact;
@@ -35,16 +36,14 @@ signals:
    void MakeEntry(BaseContestLog *);
    void NextUnfilled(BaseContestLog *);
    void FormKey(unsigned int *, BaseContestLog *);
-   void EditMatchContact(BaseContestLog *);
-   void ScreenContactChanged(ScreenContact *, BaseContestLog *);
-   void ReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);
-   void ReplaceOtherLogList(TMatchCollection *matchCollection, BaseContestLog *);
-   void ReplaceListList(TMatchCollection *matchCollection, BaseContestLog *);
+   void ScreenContactChanged(ScreenContact *, BaseContestLog *, QString b);
+   void ReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog *, QString b);
+   void ReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog *, QString b);
+   void ReplaceListList(SharedMatchCollection matchCollection, BaseContestLog *, QString b);
    void ScrollToCountry(QString prefix, BaseContestLog *);
    void ScrollToDistrict(QString prefix, BaseContestLog *);
    void MatchStarting(BaseContestLog *);
    void ShowOperators();
-   void XferPressed();
    void BandMapPressed();
    void TimerDistribution();
    void FiltersChanged();
@@ -56,6 +55,8 @@ signals:
    void CountrySelect(QString cty, BaseContestLog *c);
    void DistrictSelect(QString dist, BaseContestLog *c);
    void LocSelect(QString loc, BaseContestLog *c);
+
+   void FontChanged();
 public:
    static MinosLoggerEvents mle;
 
@@ -73,16 +74,14 @@ public:
    static void SendNextUnfilled(BaseContestLog *);
    static void SendFormKey(unsigned int *, BaseContestLog *);
 
-   static void SendEditMatchContact(BaseContestLog *);
-   static void SendScreenContactChanged(ScreenContact *, BaseContestLog *);
-   static void SendReplaceThisLogList(TMatchCollection *matchCollection, BaseContestLog *);
-   static void SendReplaceOtherLogList(TMatchCollection *matchCollection, BaseContestLog *);
-   static void SendReplaceListList(TMatchCollection *matchCollection, BaseContestLog *);
+   static void SendScreenContactChanged(ScreenContact *, BaseContestLog *, QString);
+   static void SendReplaceThisLogList(SharedMatchCollection matchCollection, BaseContestLog *, QString b);
+   static void SendReplaceOtherLogList(SharedMatchCollection matchCollection, BaseContestLog *, QString b);
+   static void SendReplaceListList(SharedMatchCollection matchCollection, BaseContestLog *, QString b);
    static void SendScrollToCountry(QString prefix, BaseContestLog *);
    static void SendScrollToDistrict(QString prefix, BaseContestLog *);
    static void SendMatchStarting(BaseContestLog *);
    static void SendShowOperators();
-   static void SendXferPressed();
    static void SendBandMapPressed();
    static void SendTimerDistribution();
    static void SendFiltersChanged();
@@ -93,6 +92,7 @@ public:
    static void SendDistrictSelect(QString dist, BaseContestLog *c);
    static void SendLocSelect(QString loc, BaseContestLog *c);
 
+   static void SendFontChanged();
    static void SendBrgStrToRot(QString);
 
 };

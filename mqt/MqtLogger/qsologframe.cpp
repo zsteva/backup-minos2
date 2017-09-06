@@ -101,15 +101,24 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(Validated()), this, SLOT(on_Validated()));
     connect(&MinosLoggerEvents::mle, SIGNAL(ValidateError(int)), this, SLOT(on_ValidateError(int)));
     connect(&MinosLoggerEvents::mle, SIGNAL(ShowOperators()), this, SLOT(on_ShowOperators()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
 
-    ui->qsoFrame->setStyleSheet(" #qsoFrame { border: 2px solid blue; }");
-
-    QString ss("QLineEdit { background-color: white ; border: none ; color: black ; }");
-    ui->DateEdit->setStyleSheet(ss);
-    ui->TimeEdit->setStyleSheet(ss);
+    ui->qsoFrame->setStyleSheet(ssQsoFrameBlue);
+    ui->DateEdit->setStyleSheet(ssDtgWhite);
+    ui->TimeEdit->setStyleSheet(ssDtgWhite);
+    widgetStyles[ui->qsoFrame] = ssQsoFrameBlue;
+    widgetStyles[ui->DateEdit] = ssDtgWhite;
+    widgetStyles[ui->TimeEdit] = ssDtgWhite;
 }
 
-
+void QSOLogFrame::on_FontChanged()
+{
+    for (QMap<QWidget *, QString>::iterator i = widgetStyles.begin(); i != widgetStyles.end(); i++)
+    {
+        QWidget *w = i.key();
+        w->setStyleSheet(i.value());
+    }
+}
 
 bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
 {
@@ -201,8 +210,8 @@ bool QSOLogFrame::doKeyPressEvent( QKeyEvent* event )
         }
         if (ed == ui->CallsignEdit)
         {
-            QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; color : black ; }");
-            ui->CallsignEdit->setStyleSheet(ss);
+            ui->CallsignEdit->setStyleSheet(ssLineEditOK);
+            widgetStyles[ui->CallsignEdit] = ssLineEditOK;
         }
     }
     return false;
@@ -279,10 +288,14 @@ void QSOLogFrame::focusChange(QObject *obj, bool in, QFocusEvent *event)
         SecondOpComboBox_Exit();
     }
 }
-void QSOLogFrame::setAsEdit()
+void QSOLogFrame::setAsEdit(bool s, QString b)
 {
-    edit = true;
-    ui->GJVCancelButton->setText("Return to Log");
+    baseName = b;
+    if (s)
+    {
+        edit = true;
+        ui->GJVCancelButton->setText("Return to Log");
+    }
 }
 
 void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
@@ -318,22 +331,21 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
    {
        ui->EditFrame->setVisible(false);
 
-       QString ss("QLineEdit {  border: none ; }");
-       ui->DateEdit->setStyleSheet(ss);
-       ui->TimeEdit->setStyleSheet(ss);
+       ui->DateEdit->setStyleSheet(ssLineEditNoFrame);
+       ui->TimeEdit->setStyleSheet(ssLineEditNoFrame);
+       widgetStyles[ui->DateEdit] = ssLineEditNoFrame;
+       widgetStyles[ui->TimeEdit] = ssLineEditNoFrame;
+
        ui->DateEdit->setReadOnly(true);
        ui->TimeEdit->setReadOnly(true);
-   }
-   else
-   {
-       ui->MatchXferButton->setVisible(false);
    }
 
    updateQSODisplay();
    refreshOps();
 
-   QString ss("QLineEdit { background-color: silver ; border-style: outset ; border-width: 1px ; border-color: black ; }");
-   ui->SerTXEdit->setStyleSheet(ss);
+   ui->SerTXEdit->setStyleSheet(ssLineEditGreyBackground);
+   widgetStyles[ui->SerTXEdit] = ssLineEditGreyBackground;
+
    current = 0;
    updateTimeAllowed = true;
    oldTimeOK = true;
@@ -346,10 +358,10 @@ void QSOLogFrame::setXferEnabled(bool s)
     ui->MatchXferButton->setEnabled(s);
     QString ss;
     if (s)
-        ss = "color:red";
-    else
-        ss = "";
+        ss = ssRed;
+
     ui->MatchXferButton->setStyleSheet(ss);
+    widgetStyles[ui->MatchXferButton] = ss;
 }
 
 void QSOLogFrame::on_CatchupButton_clicked()
@@ -554,7 +566,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
             LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
             int ctmax = ct->maxSerial + 1;
             QString mode = ui->ModeComboBoxGJV->currentText();
-            QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup, mode );
+            QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup, mode, screenContact.time );
             selectEntry( lct );
         }
     }
@@ -696,7 +708,7 @@ void QSOLogFrame::on_GJVCancelButton_clicked()
 
 void QSOLogFrame::on_MatchXferButton_clicked()
 {
-    MinosLoggerEvents::SendXferPressed();
+    emit xferPressed();;
 }
 /*
 void QSOLogFrame::on_BandMapButton_clicked()
@@ -775,10 +787,9 @@ void QSOLogFrame::setActiveControl( int *Key )
          *Key = 0;
          break;
    case Qt::Key_F12:
-       if (ui->MatchXferButton->isEnabled())
-            MinosLoggerEvents::SendXferPressed();
-      *Key = 0;
-      break;
+         emit xferPressed();
+         *Key = 0;
+         break;
    }
 }
 //---------------------------------------------------------------------------
@@ -818,7 +829,7 @@ void QSOLogFrame::getScreenEntry()
 //---------------------------------------------------------------------------
 void QSOLogFrame::logTabChanged()
 {
-    MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest);
+    MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest, baseName);
 }
 void QSOLogFrame::showScreenEntry( void )
 {
@@ -862,7 +873,7 @@ void QSOLogFrame::showScreenEntry( void )
          selectField( 0 );
 
       ui->SerTXEdit->setReadOnly(true);
-      MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest);
+      MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest, baseName);
    }
 }
 //---------------------------------------------------------------------------
@@ -1101,7 +1112,10 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
 
     for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
    {
-        QString ss("QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; color : black }");
+        QString ss = ssLineEditOK;
+        if ((*vcp) == ssIl)
+            ss = ssLineEditGreyBackground;
+
         if ( !( *vcp ) ->valid( command, screenContact ) )
         {
             QString text = (*vcp)->wc->text().trimmed();
@@ -1111,11 +1125,11 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
                 {
                     if ( screenContact.cs.valRes == ERR_DUPCS)
                     {
-                        ss = "QLineEdit { background-color: red ; border-style: outset ; border-width: 1px ; border-color: red ; color : white }";
+                        ss = ssLineEditFrRedBkRed;
                     }
                     else
                     {
-                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: red ; color : black}";
+                        ss = ssLineEditFrRedBkWhite;
                     }
                 }
                 else if ((*vcp) == rsIl && text == "5")
@@ -1131,25 +1145,23 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
                     // leave as no error
                     if (screenContact.loc.valRes == ERR_LOC_RANGE && screenContact.loc.loc.getValue().size() > 4)
                     {
-                        ss = "QLineEdit { background-color: red ; border-style: outset ; border-width: 1px ; border-color: red ; color : white; }";
+                        ss = ssLineEditFrRedBkRed;
                     }
                     else if (screenContact.loc.valRes != LOC_OK)
                     {
-                        ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: red ; color : black; }";
+                        ss = ssLineEditFrRedBkWhite;
                     }
                 }
                 else
                 {
-                    ss = "QLineEdit { background-color: red ; border-style: outset ; border-width: 1px ; border-color: red ; color : white; }";
+                    ss = ssLineEditFrRedBkRed;
                 }
             }
             ret = false;
         }
-        else
-        {
-            ss = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; }";
-        }
+
         (*vcp)->wc->setStyleSheet(ss);
+        widgetStyles[(*vcp)->wc] = ss;
 
    }
    return ret;
@@ -1659,7 +1671,7 @@ void QSOLogFrame::doGJVEditChange( QObject *Sender )
          // force bearing calc
          calcLoc();
       }
-      MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest);
+      MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest, baseName);
       valid( cmCheckValid ); // make sure all single and cross field
    }
 }
@@ -1730,7 +1742,7 @@ void QSOLogFrame::logScreenEntry( )
    QSharedPointer<BaseContact> lct = selectedContact;
    if (!lct)
    {
-        lct = ct->addContact( ctmax, 0, false, false, screenContact.mode );	// "current" doesn't get flag, don't save ContestLog yet
+        lct = ct->addContact( ctmax, 0, false, false, screenContact.mode, dtg(true) );	// "current" doesn't get flag, don't save ContestLog yet
    }
 
    bool contactmodeCW = ( screenContact.reps.size() == 3 && screenContact.repr.size() == 3 );
@@ -1802,11 +1814,27 @@ void QSOLogFrame::logCurrentContact( )
    if ( ctno > contest->maxSerial + 1 )
    {
 
-      if ( mShowYesNoMessage( this, "Serial sent is too high - should I create the missing contacts?") )
+      if ( mShowYesNoMessage( this, "\"Serial sent\" is too high - please confirm that this is correct?") )
       {
+          dtg ctTime(screenContact.time);
+          QSharedPointer<BaseContact> pct = contest->pcontactAt(contest->getContactCount() - 1);
+          if ( pct )
+          {
+             ctTime = pct->time;
+          }
+          else
+          {
+             // use contest start time
+             QDateTime DTGStart = CanonicalToTDT(contest->DTGStart.getValue());
+             QString d = DTGStart.toString("dd/MM/yy");
+             QString t = DTGStart.toString("hh:mm");
+             ctTime.setDate( d, DTGDISP );
+             ctTime.setTime( t.left(5), DTGDISP );
+          }
+
          int orflag = 0;
 
-         if ( mShowYesNoMessage( this, "Do you want to enter these contacts later?" ) )
+         if ( mShowYesNoMessage( this, "Do you want to enter the missing contacts later?" ) )
          {
             orflag = TO_BE_ENTERED;
          }
@@ -1817,7 +1845,7 @@ void QSOLogFrame::logCurrentContact( )
             // last child is "current contact", and we need to add TO IT
             LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
             QString currmode = ui->ModeComboBoxGJV->currentText();
-            ct->addContact( nct_no, orflag, true, false, currmode ); // last contact
+            ct->addContact( nct_no, orflag, true, false, currmode, ctTime ); // last contact
             nct_no++;
          }
          while ( nct_no < ctno ) ;
@@ -1861,15 +1889,17 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
         oldTimeOK = timeOK;
         if (timeOK)
         {
-            QString ss("QLineEdit { background-color: white ; border: none ; color: black ; }");
-            ui->DateEdit->setStyleSheet(ss);
-            ui->TimeEdit->setStyleSheet(ss);
+            ui->DateEdit->setStyleSheet(ssDtgWhite);
+            ui->TimeEdit->setStyleSheet(ssDtgWhite);
+            widgetStyles[ui->DateEdit] = ssDtgWhite;
+            widgetStyles[ui->TimeEdit] = ssDtgWhite;
         }
         else
         {
-            QString ss("QLineEdit { background-color: white ; border: none ; color: red ; }");
-            ui->DateEdit->setStyleSheet(ss);
-            ui->TimeEdit->setStyleSheet(ss);
+            ui->DateEdit->setStyleSheet(ssDtgRed);
+            ui->TimeEdit->setStyleSheet(ssDtgRed);
+            widgetStyles[ui->DateEdit] = ssDtgRed;
+            widgetStyles[ui->TimeEdit] = ssDtgRed;
         }
     }
 
@@ -2127,7 +2157,13 @@ void QSOLogFrame::on_InsertBeforeButton_clicked()
 {
     QSharedPointer<BaseContact> pct = getPriorContact();
     LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-    QSharedPointer<BaseContact> newct = ct->addContactBetween(pct, selectedContact);
+
+    dtg ctTime = selectedContact->time;
+
+    if (pct)
+        ctTime = pct->time;
+
+    QSharedPointer<BaseContact> newct = ct->addContactBetween(pct, selectedContact, ctTime);
     newct->contactFlags.setValue(newct->contactFlags.getValue()|TO_BE_ENTERED);
     selectEntry(newct);
 }
@@ -2136,7 +2172,9 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
 {
     QSharedPointer<BaseContact> nct = getNextContact();
     LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-    QSharedPointer<BaseContact> newct = ct->addContactBetween(selectedContact, nct);
+    dtg ctTime = selectedContact->time;
+
+    QSharedPointer<BaseContact> newct = ct->addContactBetween(selectedContact, nct, ctTime);
     newct->contactFlags.setValue(newct->contactFlags.getValue()|TO_BE_ENTERED);
     selectEntry(newct);
 }

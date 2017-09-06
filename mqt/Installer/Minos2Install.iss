@@ -75,8 +75,6 @@ Filename: "{app}\Bin\{#MyAppExeName}";WorkingDir: "{app}"; Description: "{cm:Lau
 [Code]
 // global vars
 var
-  LogsDirPage: TInputDirWizardPage;
-  SampleLogsPage: TInputOptionWizardPage;
   LogsDirVal: String;
  
 function GetLogsDir(Param: String): String;
@@ -97,20 +95,26 @@ end;
  
   // custom wizard page setup, for data dir.
 procedure InitializeWizard;
-var
-  myLocalAppData: String;
 begin
   LogsDirPage := CreateInputDirPage(
     wpSelectDir,
-    'Minos 2 Logs Directory',
+    'Minos Logs Directory',
     '',
     'Please Select the directory for Minos Logs.',
     False,
-    'Minos 2'
+    'Minos'
   );
   LogsDirPage.Add('');
  
-  LogsDirPage.Values[0] := GetIniString('Default', 'Log Directory', GetDefaultLogsDirectory(), GetIniFilename());
+  LogsDirPage.Values[0] := GetDefaultLogsDirectory();
+end;
+
+function NextButtonClick(CurPageID: Integer): Boolean;
+begin
+  if CurPageID = wpSelectDir then
+    LogsDirPage.Values[0] := GetIniString('Default', 'Log Directory', GetDefaultLogsDirectory(), GetIniFilename());
+    
+    result := true;
 end;
  
 function LogsDirExists(): Boolean;
@@ -120,4 +124,4 @@ begin
 end;
 
 [INI]
-Filename: "{app}\Configuration\MinosLogger.ini"; Section: "Default"; Key: "Log Directory"; String: "{code:GetLogsDir}"; Flags: createkeyifdoesntexist
+Filename: "{app}\Configuration\MinosLogger.ini"; Section: "Default"; Key: "Log Directory"; String: "{code:GetLogsDir}"

@@ -45,6 +45,7 @@ private slots:
     void on_LocatorSplitterMoved(int /*pos*/, int /*index*/);
     void on_infoChoiceSplitterMoved(int /*pos*/, int /*index*/);
     void onFiltersChanged();
+    void on_FontChanged();
 };
 
 #endif // STACKEDINFOFRAME_H

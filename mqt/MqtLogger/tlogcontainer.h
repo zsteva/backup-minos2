@@ -98,6 +98,7 @@ private:
     QAction *sessionManagerAction;
 
     QAction *ExitAction;
+    QAction *ExitClearAction;
     QAction *MakeEntryAction;
     QAction *FileNewAction;
     QAction *ListOpenAction;
@@ -150,6 +151,7 @@ private slots:
     void FileCloseActionExecute();
     void CloseAllActionExecute();
     void CloseAllButActionExecute();
+    void ExitClearActionExecute();
     void ExitActionExecute();
 
     void sessionManageExecute();
