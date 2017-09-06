@@ -64,9 +64,11 @@ private slots:
 
     void exitFreqEdit();
     void readActionSelected(int);
+    void editActionSelected(int buttonNumber);
     void writeActionSelected(int);
     void clearActionSelected(int);
     void passBandRadioSelected(int button);
+
 
 
 
@@ -76,6 +78,7 @@ private:
     QMenu* memoryMenu[memoryData::NUM_MEMORIES];
     QAction* readAction[memoryData::NUM_MEMORIES];
     QAction* writeAction[memoryData::NUM_MEMORIES];
+    QAction* editAction[memoryData::NUM_MEMORIES];
     QAction* clearAction[memoryData::NUM_MEMORIES];
 
 

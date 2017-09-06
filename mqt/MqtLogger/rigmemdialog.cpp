@@ -49,13 +49,37 @@ RigMemDialog::RigMemDialog(QWidget *parent) :
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
     connect(ui->callSignLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(callSignToUpper(const QString &)));
     connect(ui->locatorLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(locatorToUpper(const QString &)));
-
+    connect(this, SIGNAL(escapePressed()), this, SLOT(escapePushed()));
+    connect(this , SIGNAL(rejected()), this, SLOT(close()));
 }
 
 RigMemDialog::~RigMemDialog()
 {
     delete ui;
 }
+
+
+void RigMemDialog::keyPressEvent(QKeyEvent *event)
+{
+
+    int Key = event->key();
+
+/*
+    Qt::KeyboardModifiers mods = event->modifiers();
+    bool shift = mods & Qt::ShiftModifier;
+    bool ctrl = mods & Qt::ControlModifier;
+    bool alt = mods & Qt::AltModifier;
+*/
+    if (Key == Qt::Key_Escape)
+    {
+        emit escapePressed();
+    }
+
+}
+
+
+
+
 
 void RigMemDialog::setMemoryFlag(bool state)
 {
@@ -159,10 +183,36 @@ int RigMemDialog::saveMemory(int memoryLoc)
 }
 
 
+void RigMemDialog::editMemory(int memoryLoc)
+{
+    ui->callSignLineEdit->setText(memoryList[memoryLoc].callsign);
+    QString a = memoryList[memoryLoc].freq;
+    ui->freqLineEdit->setInputMask(maskData::freqMask[memoryList[memoryLoc].freq.remove('.').count() - 4]);
+    ui->freqLineEdit->setText( memoryList[memoryLoc].freq);
+    ui->modecb->setCurrentText( memoryList[memoryLoc].mode);
+    ui->pbStateCb->setCurrentText(memoryList[memoryLoc].passBand);
+    ui->locatorLineEdit->setText(memoryList[memoryLoc].locator);
+    ui->bearingLineEdit->setText(QString::number(memoryList[memoryLoc].bearing));
+    ui->timeLineEdit->setText(memoryList[memoryLoc].time);
+}
+
+
+
 void RigMemDialog::clearMemory(memoryData::memData* ldata, int memoryLoc)
 {
 
+
     memoryNumber = memoryLoc;
+    memoryList[memoryLoc].callsign = ldata->callsign;
+    memoryList[memoryLoc].freq = ldata->freq;
+    memoryList[memoryLoc].mode = ldata->mode;
+    memoryList[memoryLoc].passBand = ldata->passBand;
+    memoryList[memoryLoc].locator = ldata->locator;
+    memoryList[memoryLoc].bearing = ldata->bearing;
+    memoryList[memoryLoc].bearing = ldata->bearing;
+    memoryList[memoryLoc].time = ldata->time;
+    saveButtonPushed();
+/*
     ui->callSignLineEdit->setText(memoryList[memoryLoc].callsign = ldata->callsign);
     ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.count() - 4]);
     ui->freqLineEdit->setText( memoryList[memoryLoc].freq = ldata->freq);
@@ -171,6 +221,7 @@ void RigMemDialog::clearMemory(memoryData::memData* ldata, int memoryLoc)
     ui->locatorLineEdit->setText(memoryList[memoryLoc].locator = ldata->locator);
     ui->bearingLineEdit->setText(QString::number(memoryList[memoryLoc].bearing = ldata->bearing));
     ui->timeLineEdit->setText(memoryList[memoryLoc].time = ldata->time);
+*/
 }
 
 
@@ -205,11 +256,12 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
 //    {
         ui->callSignLineEdit->setText(ldata->callsign);
 //    }
-    if (ldata->locator != memoryList[memoryNumber].locator)
+
+    if (ldata->locator == "" && ldata->locator != memoryList[memoryNumber].locator)
     {
         ui->locatorLineEdit->setText(ldata->locator);
     }
-    int a = ldata->freq.count();
+    QString a = ldata->freq;
     ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.count() - 4]);
     ui->freqLineEdit->setText(ldata->freq);
 
@@ -220,6 +272,9 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
 
     ui->timeLineEdit->setText(ldata->time);
 }
+
+
+
 
 
 void RigMemDialog::saveButtonPushed()
@@ -250,6 +305,19 @@ void RigMemDialog::cancelButtonPushed()
 
 }
 
+
+void RigMemDialog::escapePushed()
+{
+
+    setMemoryFlag(false);
+
+}
+
+
+void RigMemDialog::close()
+{
+    setMemoryFlag(false);
+}
 
 memoryData::memData RigMemDialog::getMemoryData(int memoryNumber)
 {

@@ -209,9 +209,11 @@ void RigControlFrame::initMemoryButtons()
 
         readAction[i] = new QAction("&Read", this);
         writeAction[i] = new QAction("&Write",this);
+        editAction[i] = new QAction("&Edit", this);
         clearAction[i] = new QAction("&Clear",this);
         memoryMenu[i]->addAction(readAction[i]);
         memoryMenu[i]->addAction(writeAction[i]);
+        memoryMenu[i]->addAction(editAction[i]);
         memoryMenu[i]->addAction(clearAction[i]);
         memButtons[i]->setMenu(memoryMenu[i]);
     }
@@ -231,6 +233,8 @@ void RigControlFrame::initMemoryButtons()
     }
     connect(readAction_mapper, SIGNAL(mapped(int)), this, SLOT(readActionSelected(int)));
 
+//----------------------------------------------------------------------------------------
+
     // map write Action
 
     QSignalMapper *writeAction_mapper = new QSignalMapper(this);
@@ -243,6 +247,21 @@ void RigControlFrame::initMemoryButtons()
     }
     connect(writeAction_mapper, SIGNAL(mapped(int)), this, SLOT(writeActionSelected(int)));
 
+//-----------------------------------------------------------------------------------------
+
+    // map edit Action
+
+    QSignalMapper *editAction_mapper = new QSignalMapper(this);
+
+    for (int i = 0; i < memoryData::NUM_MEMORIES; i++ )
+    {
+        editAction_mapper->setMapping(editAction[i], i);
+        connect(editAction[i], SIGNAL(triggered()), editAction_mapper, SLOT(map()));
+
+    }
+    connect(editAction_mapper, SIGNAL(mapped(int)), this, SLOT(editActionSelected(int)));
+
+//-----------------------------------------------------------------------------------------
 
     // map Clear Action
 
@@ -255,6 +274,8 @@ void RigControlFrame::initMemoryButtons()
 
     }
     connect(clearAction_mapper, SIGNAL(mapped(int)), this, SLOT(clearActionSelected(int)));
+
+//-----------------------------------------------------------------------------------------
 
     // load button labels
 
@@ -330,11 +351,28 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
     memDialog->show();
 }
 
+
+void RigControlFrame::editActionSelected(int buttonNumber)
+{
+    if (memDialog->getMemoryFlag())
+       return;
+
+    memDialog->setMemoryFlag(true);
+
+    memDialog->editMemory(buttonNumber);
+
+    memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Edit");
+    memDialog->setFocusCallsign();
+    memDialog->show();
+
+}
+
+
 void RigControlFrame::clearActionSelected(int buttonNumber)
 {
 
-     if (memDialog->getMemoryFlag())
-        return;
+     //if (memDialog->getMemoryFlag())
+     //  return;
 
      memDialog->setMemoryFlag(true);
 
@@ -347,9 +385,10 @@ void RigControlFrame::clearActionSelected(int buttonNumber)
      logData.time = dt[1];
      logData.bearing = 0;
      memDialog->clearMemory(&logData, buttonNumber);
-     memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Clear");
-     memDialog->setFocusCallsign();
-     memDialog->show();
+
+     //memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Clear");
+     //memDialog->setFocusCallsign();
+     //memDialog->show();
 }
 
 
