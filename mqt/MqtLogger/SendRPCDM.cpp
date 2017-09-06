@@ -142,6 +142,43 @@ void TSendDM::sendRotator(rpcConstants::RotateDirection direction, int angle )
    rpc.queueCall( rotatorServerConnectable.remoteAppName + "@" + rotatorServerConnectable.serverName );
 }
 
+
+void TSendDM::sendRigControlFreq(const QString &freq)
+{
+   RPCGeneralClient rpc(rpcConstants::rigControlMethod);
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
+
+   st->addMember( freq, rpcConstants::rigControlKeyFreq );
+   rpc.getCallArgs() ->addParam( st );
+
+   rpc.queueCall( rigServerConnectable.remoteAppName + "@" + rigServerConnectable.serverName );
+}
+
+
+void TSendDM::sendRigControlMode(const QString &mode)
+{
+   RPCGeneralClient rpc(rpcConstants::rigControlMethod);
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
+
+   st->addMember( mode, rpcConstants::rigControlKeyMode );
+   rpc.getCallArgs() ->addParam( st );
+
+   rpc.queueCall( rigServerConnectable.remoteAppName + "@" + rigServerConnectable.serverName );
+}
+
+
+void TSendDM::sendRigControlPassBandState(const int passBandState)
+{
+   RPCGeneralClient rpc(rpcConstants::rigControlMethod);
+   QSharedPointer<RPCParam>st(new RPCParamStruct);
+
+   st->addMember( passBandState, rpcConstants::rigControlKeyPBandState );
+   rpc.getCallArgs() ->addParam( st );
+
+   rpc.queueCall( rigServerConnectable.remoteAppName + "@" + rigServerConnectable.serverName );
+}
+
+
 //---------------------------------------------------------------------------
 void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
@@ -165,20 +202,20 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
         }
         if (an.getPublisherProgram() == rigServerConnectable.remoteAppName && an.getPublisherServer() == rigServerConnectable.serverName)
         {
-            if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyState )
+            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyState )
             {
                 emit setRadioLoaded();
                 emit setRadioState( an.getValue() );
             }
-            if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyMode )
+            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyMode )
             {
                 emit setMode( an.getValue() );
             }
-            if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyFreq )
+            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyFreq )
             {
                 emit setFreq( an.getValue() );
             }
-            if ( an.getCategory() == rpcConstants::RigControlCategory && an.getKey() == rpcConstants::rigControlKeyRadioName )
+            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyRadioName )
             {
                 emit setRadioName( an.getValue() );
             }

@@ -47,6 +47,9 @@ class TSendDM : public QObject
       void sendKeyerTwoTone();
       void sendKeyerStop();
       void sendRotator(rpcConstants::RotateDirection direction, int angle );
+      void sendRigControlFreq(const QString &freq);
+      void sendRigControlMode(const QString &mode);
+      void sendRigControlPassBandState(const int state);
    private slots:
       void on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
       void on_clientCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );

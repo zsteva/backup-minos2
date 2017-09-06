@@ -107,7 +107,7 @@ private:
     const int minOffset = -90;
     const int maxOffset = 90;
     void saveSettings();
-    void fillAntennaModelInfo();
+    void fillRotatorModelInfo();
     void fillPortsInfo();
     void fillSpeedInfo();
     void fillDataBitsInfo();

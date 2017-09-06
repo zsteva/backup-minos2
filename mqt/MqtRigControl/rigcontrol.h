@@ -18,7 +18,7 @@
 #include <QObject>
 #include <QComboBox>
 #include <QStringList>
-
+#include "base_pch.h"
 #include <hamlib/rig.h>
 
 
@@ -93,6 +93,13 @@ struct scatParams
 };
 
 
+
+
+#define NUM_VFO 2
+#define VFOA 0
+#define VFOB 1
+#define CURVFO VFOA
+
 class RigControl : public QObject
 {
     Q_OBJECT
@@ -102,16 +109,16 @@ public:
     int init(scatParams currentRadio);
     bool enabled() {return rigControlEnabled;}
 
-    int getFrequency(vfo_t vfo, freq_t *frequency);
+    int getFrequency(vfo_t vfo, freq_t*);
     int setFrequency(freq_t frequency, vfo_t vfo);
 
     int getMode(vfo_t vfo, rmode_t *mode, pbwidth_t *width);
-    int setMode(vfo_t vfo, rmode_t mode, pbwidth_t width);
-    QString convertModeQstr(rmode_t mode);
+    setMode(vfo_t vfo, rmode_t mode, pbwidth_t passBandwidth);
+    QString convertModeQstr(rmode_t);
 
-    int getVfo(vfo_t *vfo);
-    int setVfo(vfo_t vfo);
-    QString convertVfoQStr(vfo_t vfo);
+    int getVfo(vfo_t*);
+    int setVfo(vfo_t);
+    QString convertVfoQStr(vfo_t);
 
     int getModelNumber(int idx);
     int getRigModelIndex();
@@ -140,7 +147,19 @@ public:
 
     int rig_message_cb(enum rig_debug_level_e debug_level, const char *fmt, va_list ap);
 
-  signals:
+    rmode_t convertQStrMode(QString mode);
+
+    int passBandState;
+    pbwidth_t passbandNarrow(rmode_t mode);
+    pbwidth_t passbandNormal(rmode_t mode);
+    pbwidth_t passbandWide(rmode_t mode);
+    pbwidth_t lookUpPassBand(QString, int);
+    void setPassBand(QString mode, int modeState);
+    pbwidth_t getPassBand();
+    void buildPassBandTable();
+
+    int rigConvertQStrMode(QString mode);
+signals:
     void frequency_updated(double);
     void debug_protocol(QString);
 
@@ -149,10 +168,39 @@ public:
     RIG *my_rig;            // handle to rig instance
 //    freq_t frequency;            // frequency
 //    rmode_t rmode;          // radio mode of operation
-//    pbwidth_t width;
+    pbwidth_t pbwidth;
+
 //    vfo_t vfo;              // vfo selection
 //    int strength;           // S-Meter level
 //    int retcode;            // generic return code from functions
+
+
+    pbwidth_t CW_PASSBAND_NAR = 500;
+    pbwidth_t CW_PASSBAND_NOR = 2200;
+    pbwidth_t CW_PASSBAND_WID = 0;
+
+    pbwidth_t USB_PASSBAND_NAR = 0;
+    pbwidth_t USB_PASSBAND_NOR = 2200;
+    pbwidth_t USB_PASSBAND_WID = 0;
+
+    pbwidth_t FM_PASSBAND_NAR = 0;
+    pbwidth_t FM_PASSBAND_NOR = 9000;
+    pbwidth_t FM_PASSBAND_WID = 0;
+
+    pbwidth_t MGM_PASSBAND_NAR = 0;
+    pbwidth_t MGM_PASSBAND_NOR = 2200;
+    pbwidth_t MGM_PASSBAND_WID = 0;
+
+    pbwidth_t passBandWidth[3][4]; /*= {
+                                      {CW_PASSBAND_NAR, CW_PASSBAND_NOR, CW_PASSBAND_WID},
+                                      {USB_PASSBAND_NAR, USB_PASSBAND_NOR, USB_PASSBAND_WID},
+                                      {FM_PASSBAND_NAR, FM_PASSBAND_NOR, FM_PASSBAND_WID},
+                                      {MGM_PASSBAND_NAR, MGM_PASSBAND_NOR, MGM_PASSBAND_WID}
+                                   };*/
+
+
+
+
     rig_model_t myrig_model;
     bool rigControlEnabled;
     bool serialConnected;
@@ -166,6 +214,9 @@ public:
     bool setPTT(bool On);
     double lastFrequency;
     QStringList xmlModes;
+
+
+
 
 
 

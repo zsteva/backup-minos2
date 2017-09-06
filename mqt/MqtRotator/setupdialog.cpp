@@ -247,7 +247,7 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
 
 
 
-    fillAntennaModelInfo();  // add rotator models to drop down
+    fillRotatorModelInfo();  // add rotator models to drop down
     fillPortsInfo();     // add comports to drop down
     fillSpeedInfo();
     fillDataBitsInfo();
@@ -440,7 +440,7 @@ void SetupDialog::comHandShakeSelected(int boxNumber)
 
 
 
-void SetupDialog::fillAntennaModelInfo()
+void SetupDialog::fillRotatorModelInfo()
 {
 
     for (int i = 0; i < NUM_ANTENNAS; i++)

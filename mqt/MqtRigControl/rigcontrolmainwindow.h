@@ -6,7 +6,7 @@
 // Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2017
 //
 // Interprocess Control Logic
-// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2007
+// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2017
 //
 // Hamlib Library
 //
@@ -18,6 +18,8 @@
 #define RIGCONTROLMAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
+
 #include "mqtUtils_pch.h"
 #include "rigcontrol.h"
 
@@ -27,10 +29,8 @@ class SetupDialog;
 class RigControl;
 class RigControlRpc;
 
-#define NUM_VFO 2
-#define VFOA 0
-#define VFOB 1
-#define CURVFO VFOA
+
+
 
 
 
@@ -53,28 +53,34 @@ private:
     StdInReader stdinReader;
     RigControlRpc *msg;
 
+
     QComboBox *selectRadio;
     SetupDialog *selectRig;
     RigControl  *radio;
     QString loggerRadio = "";
     QLabel *status;
     QTimer *pollTimer;
+    class QTimer LogTimer;
     int pollTime;
-    QString sfreq;
-//    double oldFreq = 0;
-    double curFreq = 0;
-    vfo_t curVFO;
+    bool useLogWidth;
+    bool logRadError;
+    // data from logger
+    QString logger_freq;
+    QString logger_mode;
+    int logger_bw_state;
+    rmode_t log_currMode;
+    pbwidth_t loggerPbWidth;      // passband from logger
+
+
+    // data from radio
     freq_t rfrequency;       // read frequency
+    QString sfreq;          // read freq converted to string
     rmode_t rmode;          // read radio mode
     pbwidth_t rwidth;        // read radio rx bw
-    vfo_t rvfo;              // read vfo
-    int strength;           // S-Meter level
-    int retcode;            // generic return code from functions
-    bool logRadError;
-    double curVfoFrq[NUM_VFO];
-    double curTransVertFrq[NUM_VFO];
-    rmode_t curMode[NUM_VFO];
-    pbwidth_t curRxWidth[NUM_VFO];
+    double curVfoFrq;
+    double curTransVertFrq;
+    rmode_t curMode;
+
 
     QString geoStr;         // geometry registry location
 
@@ -92,18 +98,20 @@ private:
     void hamlibError(int errorCode);
 //    void frequency_updated(double frequency);
 //    void mode_updated(QString);
-    void displayFreqVfoA(double);
-    void displayFreqVfoB(double);
-    void displayModeVfoA(QString);
-    void displayModeVfoB(QString);
-    void displayTransVertVfoA(double frequency);
-    void displayTransVertVfoB(double frequency);
+    void setFreq(QString, vfo_t vfo);
+    void displayFreqVfo(double);
+
+    void displayModeVfo(QString);
+
+    void displayTransVertVfo(double frequency);
 
 
-    void logMessage(QString s);
+
+
     void readTraceLogFlag();
 
-    void about();
+
+    void closeEvent(QCloseEvent *event);
 
     void sendStatusLogger(const QString &message);
     void sendStatusToLogDisConnected();
@@ -112,6 +120,10 @@ private:
     void sendFreqToLog(freq_t freq);
     void sendModeToLog(QString mode);
 
+    void setCurMode(QString mode);
+    void setMode(QString mode, vfo_t vfo);
+    void displayPassband(pbwidth_t width);
+
 private slots:
 
     void onStdInRead(QString);
@@ -119,11 +131,15 @@ private slots:
     void upDateRadio();
     void getCurMode();
     void getRadioInfo();
-
-//private slots:
+    void logMessage(QString s);
+    void about();
+    void LogTimerTimer();
 //    void updateFreq(double frequency);
 
 
+    void loggerSetFreq(QString freq);
+    void loggerSetMode(QString mode);
+    void loggerSetPassBand(int);
 signals:
 
 

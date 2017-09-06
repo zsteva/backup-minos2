@@ -50,6 +50,8 @@ signals:
    void AfterTabFocusIn(QLineEdit *tle);
    void Validated();
 
+   void BrgStrToRot(QString);
+
    void CountrySelect(QString cty, BaseContestLog *c);
    void DistrictSelect(QString dist, BaseContestLog *c);
    void LocSelect(QString loc, BaseContestLog *c);
@@ -91,6 +93,8 @@ public:
    static void SendLocSelect(QString loc, BaseContestLog *c);
 
    static void SendFontChanged();
+   static void SendBrgStrToRot(QString);
+
 };
 //---------------------------------------------------------------------------
 #endif

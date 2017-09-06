@@ -1,7 +1,25 @@
+/////////////////////////////////////////////////////////////////////////////
+// $Id$
+//
+// PROJECT NAME 		Minos Amateur Radio Control and Logging System
+//                      Rotator Control
+// Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2017
+//
+// Interprocess Control Logic
+// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2017
+//
+//
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+
 #ifndef ROTCONTROLFRAME_H
 #define ROTCONTROLFRAME_H
 
 #include "logger_pch.h"
+#include "rigmemdialog.h"
 
 namespace Ui {
 class RotControlFrame;
@@ -23,11 +41,14 @@ public:
     void setRotatorAntennaName(const QString &s);
     void setRotatorMaxAzimuth(const QString &s);
     void setRotatorMinAzimuth(const QString &s);
+    int getAngle(QString);
 
-
+    QString getBrgTxtFrmFrame();
 private:
 
-    int getAngle();
+    RigMemDialog *memDialog;
+
+
 
     int maxAzimuth = 0;
     int minAzimuth = 0;
@@ -58,7 +79,7 @@ private slots:
     void on_RotateLeft_clicked(bool);
     void on_RotateRight_clicked(bool);
     void on_StopRotate_clicked();
-
+    void getBrgFrmQSOLog(QString);
 
 };
 

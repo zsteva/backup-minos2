@@ -19,6 +19,9 @@
 #include <hamlib/rig.h>
 
 
+
+
+
 QList<const rig_caps *> capsList;
 bool riglistLoaded=false;
 
@@ -57,6 +60,7 @@ RigControl::~RigControl()
 int RigControl::init(scatParams currentRadio)
 {
     int retcode;
+    passBandState = hamlibData::NOR;
     QString comport = "\\\\.\\";
     comport.append(currentRadio.comport);
 
@@ -72,7 +76,7 @@ int RigControl::init(scatParams currentRadio)
     {
         if(!currentRadio.civAddress.isEmpty())
         {
-            rig_set_conf(my_rig, rig_token_lookup(my_rig, "civaddr"),currentRadio.civAddress.toLatin1());
+            retcode = rig_set_conf(my_rig, rig_token_lookup(my_rig, "civaddr"),currentRadio.civAddress.toLatin1());
         }
     }
     strncpy(my_rig->state.rigport.pathname, (const char*)comport.toLatin1(), FILPATHLEN);
@@ -130,17 +134,36 @@ int RigControl::getMode(vfo_t vfo, rmode_t *mode, pbwidth_t *width)
     return rig_get_mode(my_rig, vfo, mode, width);
 }
 
-int RigControl::setMode(vfo_t vfo, rmode_t mode, pbwidth_t width)
+int RigControl::setMode(vfo_t vfo, rmode_t mode, pbwidth_t passBandwidth)
 {
-    return (rig_set_mode(my_rig, vfo, mode, width));
+    return (rig_set_mode(my_rig, vfo, mode, passBandwidth));
 }
 
-
+// Hamlib conversion
 QString RigControl::convertModeQstr(rmode_t mode)
 {
     return QString::fromLatin1(rig_strrmode(mode));
 }
 
+rmode_t RigControl::convertQStrMode(QString mode)
+{
+    return rig_parse_mode(mode.toLatin1());
+
+}
+
+// rigControl conversion
+
+int RigControl::rigConvertQStrMode(QString mode)
+{
+    for (int i = 0; i < hamlibData::supModeList.count(); i++)
+    {
+        if (mode == hamlibData::supModeList[i])
+        {
+            return i;
+        }
+    }
+    return -1; //not found
+}
 
 /* ---------------------- VFO ------------------------------------ */
 // Note not all radios support reading the VFO
@@ -167,8 +190,101 @@ QString RigControl::convertVfoQStr(vfo_t vfo)
 }
 
 
+/*************** Passband ********************************/
 
 
+
+
+
+pbwidth_t RigControl::passbandNarrow(rmode_t mode)
+{
+    return rig_passband_narrow(my_rig, mode);
+}
+
+pbwidth_t RigControl::passbandNormal(rmode_t mode)
+{
+    return rig_passband_normal(my_rig, mode);
+}
+
+pbwidth_t RigControl::passbandWide(rmode_t mode)
+{
+    return rig_passband_wide(my_rig, mode);
+}
+
+
+void RigControl::buildPassBandTable()
+{
+    CW_PASSBAND_NAR = passbandNarrow(convertQStrMode("CW"));
+    USB_PASSBAND_NAR = passbandNarrow(convertQStrMode("USB"));
+    FM_PASSBAND_NAR = passbandNarrow(convertQStrMode("FM"));
+
+    CW_PASSBAND_NOR = passbandNormal(convertQStrMode("CW"));
+    USB_PASSBAND_NOR = passbandNormal(convertQStrMode("USB"));
+    FM_PASSBAND_NOR = passbandNormal(convertQStrMode("FM"));
+
+    CW_PASSBAND_NOR = passbandWide(convertQStrMode("CW"));
+    USB_PASSBAND_NOR = passbandWide(convertQStrMode("USB"));
+    FM_PASSBAND_NOR = passbandWide(convertQStrMode("FM"));
+
+    passBandWidth[0][0] = CW_PASSBAND_NAR;
+    passBandWidth[1][0] = CW_PASSBAND_NOR;
+    passBandWidth[2][0] = CW_PASSBAND_WID;
+
+    passBandWidth[0][1] = USB_PASSBAND_NAR;
+    passBandWidth[1][1] = USB_PASSBAND_NOR;
+    passBandWidth[2][1] = USB_PASSBAND_WID;
+
+    passBandWidth[0][2] = FM_PASSBAND_NAR;
+    passBandWidth[1][2] = FM_PASSBAND_NOR;
+    passBandWidth[2][2] = FM_PASSBAND_WID;
+
+    passBandWidth[0][3] = MGM_PASSBAND_NAR;
+    passBandWidth[1][3] = MGM_PASSBAND_NOR;
+    passBandWidth[2][3] = MGM_PASSBAND_WID;
+
+
+}
+
+
+pbwidth_t RigControl::lookUpPassBand(QString mode, int modeState)
+{
+    int m = -1;
+    for (int i=0; i < hamlibData::supModeList.count(); i++)
+    {
+        if (mode == hamlibData::supModeList[i])
+        {
+            m = i;
+        }
+    }
+    if (m < 0)
+    {
+        return 0;
+    }
+    else
+    {
+       return passBandWidth[modeState][m];
+    }
+}
+
+
+void RigControl::setPassBand(QString mode, int modeState)
+{
+    int imode = rigConvertQStrMode(mode);
+    if (imode == -1)
+    {
+        return;
+    }
+    else
+    {
+        pbwidth = passBandWidth[modeState][imode];
+    }
+
+}
+
+pbwidth_t RigControl::getPassBand()
+{
+    return pbwidth;
+}
 
 void RigControl::getRigList()
 {
@@ -341,7 +457,7 @@ bool model_Sort(const rig_caps *caps1,const rig_caps *caps2)
 
 
 // which passes the call to this method
-int RigControl::rig_message_cb(enum rig_debug_level_e debug_level, const char *fmt, va_list ap)
+int RigControl::rig_message_cb(enum rig_debug_level_e /*debug_level*/, const char *fmt, va_list ap)
 {
     char buf[1024];
 //    rig_debug_level_e dbl = debug_level;

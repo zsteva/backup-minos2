@@ -58,6 +58,10 @@ public:
     void logTabChanged();
 
 
+
+    void modeSentFromRig(QString mode);
+    void setFreq(QString freq);
+    QString getBearing();
 private:
     ScreenContact *partialContact; // contact being edited on screen
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
@@ -138,6 +142,8 @@ private:
 
     //bool rotatorLoaded;
     //bool isRotatorLoaded();
+    bool radioLoaded;
+    bool isRadioLoaded();
 
     bool bandMapLoaded;
     bool isBandMapLoaded();
@@ -150,6 +156,7 @@ private:
 
     QString mode;
     QString oldMode;
+    bool qsoLogModeFlag = false;
     QString curFreq;
 
     void setMode(QString m);
@@ -174,6 +181,7 @@ signals:
     //void sendRotator(rpcConstants::RotateDirection direction, int angle );
     void sendBandMap( QString freq, QString call, QString utc, QString loc, QString qth );
     void xferPressed();
+    void sendModeControl(QString);
 
 private slots:
     void focusChange(QObject *, bool, QFocusEvent *event);
@@ -198,7 +206,8 @@ private slots:
     void on_ValidateError (int mess_no );
     void on_ShowOperators();
 
-    void on_ModeComboBoxGJV_currentIndexChanged(int index);
+//    void on_ModeComboBoxGJV_currentIndexChanged(int index);
+    void on_ModeComboBoxGJV_activated(int index);
     void on_RSTTXEdit_textChanged(const QString &arg1);
     void on_RSTRXEdit_textChanged(const QString &arg1);
 

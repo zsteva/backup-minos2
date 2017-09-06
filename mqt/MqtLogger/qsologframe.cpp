@@ -7,6 +7,7 @@
 
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
+#include <QDebug>
 
 QSOLogFrame::QSOLogFrame(QWidget *parent) :
     QFrame(parent)
@@ -21,7 +22,8 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     //, rotatorLoaded(false)
     , bandMapLoaded(false)
     , keyerLoaded(false)
-    //, radioLoaded(false)
+    , radioLoaded(false)
+    , curFreq("00:000:000:000")
 {
     ui->setupUi(this);
 
@@ -1089,6 +1091,7 @@ void QSOLogFrame::calcLoc( )
                 brgbuff = QString( "%1%2%3").arg(vb).arg(degreeChar).arg(rev );
             }
             ui->BrgSt->setText(brgbuff);
+            MinosLoggerEvents::SendBrgStrToRot(brgbuff);
          }
          else
          {
@@ -1481,14 +1484,14 @@ bool QSOLogFrame::checkAndLogEntry(bool checkDTG)
    }
    return retval;
 }
-
+//---------------------------------------------------------------------------
 void QSOLogFrame::setMode(QString m)
 {
 
     QString myOldMode = ui->ModeComboBoxGJV->currentText();
 
     ui->ModeComboBoxGJV->setCurrentText(m);
-
+    mode = m;
     oldMode = myOldMode;
 
 
@@ -1506,7 +1509,17 @@ void QSOLogFrame::setMode(QString m)
 
 
 }
+//---------------------------------------------------------------------------
+void QSOLogFrame::setFreq(QString f)
+{
+    if (curFreq != f)
+    {
+        curFreq = f;
+        qDebug() << "freq = " << f << " mode = " << mode;
+    }
+}
 
+//---------------------------------------------------------------------------
 void QSOLogFrame::clearCurrentField()
 {
    current = 0;
@@ -1665,12 +1678,52 @@ void QSOLogFrame::doGJVEditChange( QObject *Sender )
 
 void QSOLogFrame::on_ModeButton_clicked()
 {
+    qsoLogModeFlag = true;  // stop updates from rigcontrol
+
+    // send mode change to radio
+    emit sendModeControl(ui->ModeButton->text());
+
     QString myOldMode = ui->ModeComboBoxGJV->currentText();
     ui->ModeComboBoxGJV->setCurrentText(ui->ModeButton->text());
 
     oldMode = myOldMode;
     EditControlExit(ui->ModeButton);
 }
+
+void QSOLogFrame::modeSentFromRig(QString mode)
+{
+    if (qsoLogModeFlag)
+    {
+         qsoLogModeFlag = false;
+         return;
+    }
+
+    for (int i = 0; i < hamlibData::supModeList.count(); i++)
+    {
+        if (mode == hamlibData::supModeList[i])
+        {
+            QString oldmode = ui->ModeComboBoxGJV->currentText();
+            if (mode != ui->ModeComboBoxGJV->currentText())
+            {
+                // set index to new mode
+                ui->ModeComboBoxGJV->setCurrentIndex(ui->ModeComboBoxGJV->findText(mode));
+            }
+
+            // ensure flip mode is shown on mode button
+            if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
+            {
+               ui->ModeButton->setText(oldmode);
+            }
+            else
+            {
+               ui->ModeButton->setText(hamlibData::CW);
+            }
+            // finished..
+            return;
+        }
+    }
+}
+
 void QSOLogFrame::logScreenEntry( )
 {
    if (!contest || contest->isReadOnly() )
@@ -2127,8 +2180,18 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
 }
 
 
-void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int /*index*/)
+//void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
+void QSOLogFrame::on_ModeComboBoxGJV_activated(int index)
 {
+    qsoLogModeFlag = true;
+    // send mode change to radio
+    if (index < hamlibData::supModeList.count())
+    {
+         mode = hamlibData::supModeList[index];
+         emit sendModeControl(hamlibData::supModeList[index]);
+    }
+
+
     if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
     {
        ui->ModeButton->setText(oldMode);
@@ -2139,6 +2202,9 @@ void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int /*index*/)
     }
 
     oldMode = ui->ModeComboBoxGJV->currentText();
+
+
+
 }
 
 void QSOLogFrame::on_ValidateError (int mess_no )
@@ -2177,4 +2243,11 @@ void QSOLogFrame::setBandMapLoaded()
 bool QSOLogFrame::isBandMapLoaded()
 {
     return bandMapLoaded;
+}
+
+//----------------------------------------------------------------
+
+QString QSOLogFrame::getBearing()
+{
+    return ui->BrgSt->text();
 }

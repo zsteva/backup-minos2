@@ -49,6 +49,7 @@ public:
     void QSOTreeSelectContact( QSharedPointer<BaseContact> lct );
 
     ScreenContact &getScreenEntry();
+    int getBearingFrmQSOLog();
 
     void refreshMults();
     TSendDM *sendDM;
@@ -147,7 +148,9 @@ private slots:
     void sendKeyerTwoTone();
     void sendKeyerStop();
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
-
+    void sendRadioFreq(QString);
+    void sendRadioMode(QString);
+    void sendRadioPassBandState(int);
 };
 
 #endif // TSINGLELOGFRAME_H

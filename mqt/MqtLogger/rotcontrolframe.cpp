@@ -1,6 +1,25 @@
+/////////////////////////////////////////////////////////////////////////////
+// $Id$
+//
+// PROJECT NAME 		Minos Amateur Radio Control and Logging System
+//                      Rotator Control
+// Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2017
+//
+// Interprocess Control Logic
+// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2017
+//
+//
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
 #include "logger_pch.h"
 #include "tlogcontainer.h"
 #include "rotcontrolframe.h"
+#include "qsologframe.h"
 #include "ui_rotcontrolframe.h"
 #include "SendRPCDM.h"
 #include "rotatorCommonConstants.h"
@@ -24,6 +43,9 @@ RotControlFrame::RotControlFrame(QWidget *parent):
     ui->Rotate->setShortcut(QKeySequence(ROTATE_TURN_KEY));
     ui->StopRotate->setShortcut(QKeySequence(ROTATE_STOP_KEY));
 
+
+    connect(&MinosLoggerEvents::mle, SIGNAL(BrgStrToRot(QString)), this, SLOT(getBrgFrmQSOLog(QString)));
+
     rot_left_button_off();
     rot_right_button_off();
 
@@ -41,9 +63,9 @@ RotControlFrame::~RotControlFrame()
 
 
 
-int RotControlFrame::getAngle()
+int RotControlFrame::getAngle(QString brgSt)
 {
-    QString brgSt = ui->BrgSt->text();
+
 
     int brg = 0;
 
@@ -68,9 +90,24 @@ int RotControlFrame::getAngle()
     return brg;
 }
 
+
+void RotControlFrame::getBrgFrmQSOLog(QString Brg)
+{
+    ui->BrgSt->setText(Brg);
+}
+
+
+QString RotControlFrame::getBrgTxtFrmFrame()
+{
+    return ui->BrgSt->text();
+}
+
+
 void RotControlFrame::on_Rotate_clicked()
 {
-    int angle = getAngle();
+    QString brgSt = ui->BrgSt->text();
+
+    int angle = getAngle(brgSt);
 
     if (angle == COMPASS_ERROR)
     {
@@ -98,7 +135,7 @@ void RotControlFrame::on_Rotate_clicked()
 
 }
 
-void RotControlFrame::on_RotateLeft_clicked(bool clicked)
+void RotControlFrame::on_RotateLeft_clicked(bool /*clicked*/)
 {
     int angle = 0;
 
@@ -127,7 +164,7 @@ void RotControlFrame::on_RotateLeft_clicked(bool clicked)
 }
 
 
-void RotControlFrame::on_RotateRight_clicked(bool toggle)
+void RotControlFrame::on_RotateRight_clicked(bool /*toggle*/)
 {
     int angle = 0;
 

@@ -163,3 +163,7 @@ void MinosLoggerEvents::SendFontChanged()
 //---------------------------------------------------------------------------
 
 
+void MinosLoggerEvents::SendBrgStrToRot(QString bearing)
+{
+    emit mle.BrgStrToRot(bearing);
+}
