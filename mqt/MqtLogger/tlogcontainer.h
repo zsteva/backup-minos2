@@ -79,6 +79,7 @@ private:
     BaseContestLog * addSlot(ContestDetails *ced, const QString &fname, bool newfile, int slotno );
     void closeSlot(int t, bool addToMRU );
     TSingleLogFrame *findLogFrame(int t);
+    void selectTab(int t);
 
     QAction *lastSessionSelected;
 
