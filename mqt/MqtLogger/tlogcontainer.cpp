@@ -46,6 +46,9 @@ TLogContainer::TLogContainer(QWidget *parent) :
     setupMenus();
 
     ui->ContestPageControl->setContextMenuPolicy( Qt::CustomContextMenu );
+    ui->ContestPageControl->setTabsClosable(true);
+    connect(ui->ContestPageControl->tabBar(), SIGNAL(tabCloseRequested(int)), this, SLOT(onTabClosebutton(int)));
+    connect(ui->ContestPageControl->tabBar(), SIGNAL(tabMoved(int,int)), this, SLOT(onTabMoved(int,int)));
 
     QSettings settings;
     QByteArray geometry = settings.value("geometry").toByteArray();
@@ -687,7 +690,10 @@ void TLogContainer::FileCloseActionExecute()
    int t = ui->ContestPageControl->currentIndex();
    closeSlot(t, true);
 }
-
+void TLogContainer::onTabClosebutton(int t)
+{
+    closeSlot(t, true);
+}
 //---------------------------------------------------------------------------
 
 void TLogContainer::CloseAllActionExecute()
@@ -1417,6 +1423,50 @@ void TLogContainer::ShiftTabRightActionExecute( )
 
       enableActions();
    }
+}
+void TLogContainer::onTabMoved(int from, int to)
+{
+
+    while (from < to)
+    {
+        if ( from < ui->ContestPageControl->count() - 1 )
+        {
+           QSharedPointer<ContestSlot> cs = TContestApp::getContestApp() ->contestSlotList[ from ];
+           int s = cs->slotno;
+
+           QSharedPointer<ContestSlot> csp1 = TContestApp::getContestApp() ->contestSlotList[ from + 1 ];
+           int sp1 = csp1->slotno;
+
+           TContestApp::getContestApp() ->contestSlotList[ from ] = csp1;
+           csp1->slotno = s;
+
+           TContestApp::getContestApp() ->contestSlotList[ from + 1 ] = cs;
+           cs->slotno = sp1;
+       }
+       from++;
+    }
+    while (from > to)
+    {
+
+        if ( from > 1 )
+        {
+           QSharedPointer<ContestSlot> cs = TContestApp::getContestApp() ->contestSlotList[ from ];
+           int s = cs->slotno;
+
+           QSharedPointer<ContestSlot> csp1 = TContestApp::getContestApp() ->contestSlotList[ from - 1 ];
+           int sp1 = csp1->slotno;
+
+           TContestApp::getContestApp() ->contestSlotList[ from ] = csp1;
+           csp1->slotno = s;
+
+           TContestApp::getContestApp() ->contestSlotList[ from - 1 ] = cs;
+           cs->slotno = sp1;
+       }
+       from--;
+    }
+    TContestApp::getContestApp() ->writeContestList();
+
+    enableActions();
 }
 //---------------------------------------------------------------------------
 
