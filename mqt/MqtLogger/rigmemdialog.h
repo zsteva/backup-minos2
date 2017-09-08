@@ -32,7 +32,7 @@ class RigMemDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit RigMemDialog(QWidget *parent = 0);
+    explicit RigMemDialog(QString, QString, QWidget *parent = 0);
     ~RigMemDialog();
 
     void setDialogTitle(QString number);

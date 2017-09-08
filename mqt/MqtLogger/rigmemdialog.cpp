@@ -22,17 +22,18 @@
 #include "rigcontrolcommonconstants.h"
 
 
-RigMemDialog::RigMemDialog(QWidget *parent) :
+RigMemDialog::RigMemDialog(QString _radioName, QString _radioState, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::RigMemDialog)
+    ,radioName(_radioName)
+    ,radioState(_radioState)
 
 
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    radioName = "";
-    radioState = "";
+
     setMemoryFlag(false);
 
     for (int i = 0; i < hamlibData::supModeList.count(); i++)
@@ -222,17 +223,13 @@ void RigMemDialog::clearMemory(memoryData::memData* ldata, int memoryLoc)
     memoryList[memoryLoc].bearing = ldata->bearing;
     memoryList[memoryLoc].bearing = ldata->bearing;
     memoryList[memoryLoc].time = ldata->time;
-    saveButtonPushed();
-/*
-    ui->callSignLineEdit->setText(memoryList[memoryLoc].callsign = ldata->callsign);
-    ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.count() - 4]);
-    ui->freqLineEdit->setText( memoryList[memoryLoc].freq = ldata->freq);
-    ui->modecb->setCurrentText( memoryList[memoryLoc].mode = ldata->mode);
-    ui->pbStateCb->setCurrentText(memoryList[memoryLoc].passBand = ldata->passBand);
-    ui->locatorLineEdit->setText(memoryList[memoryLoc].locator = ldata->locator);
-    ui->bearingLineEdit->setText(QString::number(memoryList[memoryLoc].bearing = ldata->bearing));
-    ui->timeLineEdit->setText(memoryList[memoryLoc].time = ldata->time);
-*/
+    saveMemory(memoryNumber);
+
+    setMemoryFlag(false);
+
+    emit memorySaved(memoryNumber);
+
+
 }
 
 
@@ -268,10 +265,10 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
         ui->callSignLineEdit->setText(ldata->callsign);
 //    }
 
-    if (ldata->locator == "" && ldata->locator != memoryList[memoryNumber].locator)
-    {
+//    if (ldata->locator == "" && ldata->locator != memoryList[memoryNumber].locator)
+//    {
         ui->locatorLineEdit->setText(ldata->locator);
-    }
+//    }
     if (ldata->freq.remove('.').count() < 4)
     {
         ui->freqLineEdit->setInputMask(maskData::freqMask[7]);

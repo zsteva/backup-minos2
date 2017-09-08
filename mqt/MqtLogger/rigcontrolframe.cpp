@@ -41,6 +41,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     , ui(new Ui::RigControlFrame)
     , curFreq(memDefData::DEFAULT_FREQ)
     , curMode(memDefData::DEFAULT_MODE)
+    , curpbState(memDefData::DEFAULT_PBAND_STATE)
     , radioName("NoRadio")
     , radioState("None")
     , radioLoaded(false)
@@ -64,6 +65,11 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     initRigFrame();
     initMemoryButtons();
     initPassBandRadioButtons();
+
+    setRxPBFlag("set");
+
+    // init memory button data before radio connection
+    setRadioName(radioName);
 
 
 }
@@ -91,13 +97,16 @@ void RigControlFrame::initRigFrame()
 
     connect(ui->bandSelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(radioBandFreq(int)));
 
-    memDialog = new RigMemDialog();
+    memDialog = new RigMemDialog(radioName, radioState);
     connect(memDialog, SIGNAL(memorySaved(int)), this, SLOT(memoryUpdate(int)));
 
-    rxPBFlag = false;
+    setRxPBFlag("set");
+    if (!isRadioLoaded())
+    {
+        ui->modelbl->setVisible(false);
+    }
 
-    // init memory buttons with before radio connection
-    setRadioName(radioName);
+
 
 
     // test toolbutton
@@ -125,6 +134,7 @@ void RigControlFrame::initRigFrame()
 void RigControlFrame::setRadioLoaded()
 {
     radioLoaded = true;
+    ui->modelbl->setVisible(true);
 }
 
 bool RigControlFrame::isRadioLoaded()
@@ -283,7 +293,7 @@ void RigControlFrame::initMemoryButtons()
 
     // load button labels
 
-    loadMemoryButtonLabels();
+//    loadMemoryButtonLabels();
 
 }
 
@@ -454,7 +464,7 @@ void RigControlFrame::sendModeToRadio(QString m)
 
 void RigControlFrame::setRadioName(QString n)
 {
-    if (n != "" && radioName != n)
+    if (n != "" /*&& radioName != n*/)
     {
         ui->radioName->setText(n);
         radioName = n;
