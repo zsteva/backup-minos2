@@ -17,6 +17,7 @@
 #ifndef RIGMEMCOMMONDATA_H
 #define RIGMEMCOMMONDATA_H
 
+#include "rigcontrolcommonconstants.h"
 
 namespace maskData {
 
@@ -83,6 +84,20 @@ const maskData::freqMask_lookup bandMaskIdx[] = { maskData::MHZ99,      /* Not u
 
 }
 
+
+namespace memDefData {
+
+const QString DEFAULT_CALLSIGN = "";
+const QString DEFAULT_FREQ = "00.000.000.000";
+const QString DEFAULT_MODE = "USB";
+//const QString DEFAULT_PBAND = "2200";
+const int DEFAULT_PBAND_STATE = hamlibData::NOR;
+const QString DEFAULT_LOCATOR = "";
+const int DEFAULT_BEARING = 0;
+const QString DEFAULT_TIME = "00:00";
+
+}
+
 namespace memoryData {
 
 const int  NUM_MEMORIES = 10;
@@ -92,7 +107,8 @@ struct  memData {
     QString callsign;
     QString freq;
     QString mode;
-    QString passBand;
+    //QString passBand;
+    int pBandState;
     QString locator;
     int bearing;
     QString time;

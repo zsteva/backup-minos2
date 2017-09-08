@@ -39,10 +39,10 @@ static QStringList memoryShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
 RigControlFrame::RigControlFrame(QWidget *parent):
     QFrame(parent)
     , ui(new Ui::RigControlFrame)
-    , curFreq("")
-    , curMode("")
-    , radioName("")
-    , radioState("")
+    , curFreq(memDefData::DEFAULT_FREQ)
+    , curMode(memDefData::DEFAULT_MODE)
+    , radioName("NoRadio")
+    , radioState("None")
     , radioLoaded(false)
     , freqEditOn(false)
 
@@ -51,13 +51,14 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 
     ui->setupUi(this);
 
-    logData.callsign = "";
-    logData.freq = "00.000.000.000";
-    logData.mode = "";
-    logData.passBand = "2.200";
-    logData.locator = "";
-    logData.bearing = 0;
-    logData.time = "";
+    logData.callsign = memDefData::DEFAULT_CALLSIGN;
+    logData.freq = memDefData::DEFAULT_FREQ;
+    logData.mode = memDefData::DEFAULT_MODE;
+    //logData.passBand = memDefData::DEFAULT_PBAND;
+    logData.pBandState = memDefData::DEFAULT_PBAND_STATE;
+    logData.locator = memDefData::DEFAULT_LOCATOR;
+    logData.bearing = memDefData::DEFAULT_BEARING;
+    logData.time = memDefData::DEFAULT_TIME;
 
 
     initRigFrame();
@@ -94,6 +95,9 @@ void RigControlFrame::initRigFrame()
     connect(memDialog, SIGNAL(memorySaved(int)), this, SLOT(memoryUpdate(int)));
 
     rxPBFlag = false;
+
+    // init memory buttons with before radio connection
+    setRadioName(radioName);
 
 
     // test toolbutton
@@ -334,7 +338,7 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
     logData.freq = curFreq;
     logData.locator = sc.loc.loc.getValue();
     logData.mode = curMode;
-    logData.passBand = hamlibData::pBandStateStr[curpbState];
+    logData.pBandState = curpbState;
 
     QStringList dt = dtg( true ).getIsoDTG().split('T');
     logData.time = dt[1];
@@ -376,11 +380,12 @@ void RigControlFrame::clearActionSelected(int buttonNumber)
 
      memDialog->setMemoryFlag(true);
 
-     logData.callsign = "";
-     logData.freq = curFreq;
-     logData.locator = "";
-     logData.mode = curMode;
-     logData.passBand = hamlibData::pBandStateStr[curpbState];
+     logData.callsign = memDefData::DEFAULT_CALLSIGN;
+     logData.freq = memDefData::DEFAULT_FREQ;
+     logData.locator = memDefData::DEFAULT_LOCATOR;
+     logData.mode = memDefData::DEFAULT_MODE;
+     //logData.passBand = memDefData::DEFAULT_PBAND;
+     logData.pBandState = memDefData::DEFAULT_PBAND_STATE;
      QStringList dt = dtg( true ).getIsoDTG().split('T');
      logData.time = dt[1];
      logData.bearing = 0;
@@ -547,7 +552,7 @@ void RigControlFrame::memoryUpdate(int buttonNumber)
     QString tTipStr = "Callsign: " + m.callsign + "\n"
             + "Freq: " + m.freq + "\n"
             + "Mode: " + m.mode + "\n"
-            + "Passband: " + m.passBand + "\n"
+            + "Passband: " + hamlibData::pBandStateStr[m.pBandState] + "\n"
             + "Locator: " + m.locator + "\n"
             + "Bearing: " + QString::number(m.bearing) + "\n"
             + "Time: " + m.time;
