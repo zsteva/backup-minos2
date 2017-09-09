@@ -80,6 +80,8 @@ public:
     void goNextUnfilled();
     void doNextContactDetailsOnLeftClick(bool keepSizes);
 
+    void on_NoRadioSetFreq(QString);
+
 private:
     Ui::TSingleLogFrame *ui;
 

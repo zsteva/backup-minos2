@@ -52,6 +52,7 @@ public:
 
 signals:
     void sendFreqControl(QString);
+    void noRadioSendFreq(QString);
     void sendModeToControl(QString);
     void sendPassBandStateToControl(int);
 
@@ -59,6 +60,7 @@ private slots:
     void freqLineEditInFocus();
     void changeRadioFreq();
     void radioBandFreq(int index);
+    void noRadioSetFreq(QString);
 
     void memoryUpdate(int);
 
@@ -108,6 +110,7 @@ private:
     void initMemoryButtons();
     void loadMemoryButtonLabels();
     void initPassBandRadioButtons();
+    void noRadioSendOutFreq(QString f);
 signals:
     void escapePressed();
 

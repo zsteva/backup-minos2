@@ -89,6 +89,8 @@ void RigControlFrame::initRigFrame()
     connect(ui->freqInput, SIGNAL(receivedFocus()), this, SLOT(freqLineEditInFocus()));
     connect(ui->freqInput, SIGNAL(returnPressed()), this, SLOT(changeRadioFreq()));
     connect(this, SIGNAL(escapePressed()), this, SLOT(exitFreqEdit()));
+    // when no radio is connected
+    connect(this, SIGNAL(noRadioSendFreq(QString)), this, SLOT(noRadioSetFreq(QString)));
 
     for (int i = 0; i < bandSelData::bandNames.count(); i++)
     {
@@ -142,6 +144,11 @@ bool RigControlFrame::isRadioLoaded()
     return radioLoaded;
 }
 
+void RigControlFrame::noRadioSetFreq(QString f)
+{
+    setFreq(f);
+}
+
 void RigControlFrame::setFreq(QString f)
 {
     QString freq = f;
@@ -169,7 +176,14 @@ void RigControlFrame::changeRadioFreq()
         freq = ui->freqInput->text();
         if (freq.count() >=4)
         {
-            emit sendFreqControl(freq);
+            if (isRadioLoaded())
+            {
+                emit sendFreqControl(freq);
+            }
+            else
+            {
+                noRadioSendOutFreq(freq);
+            }
         }
     }
 
@@ -184,8 +198,25 @@ void RigControlFrame::radioBandFreq(int index)
     {
         ui->freqInput->setInputMask(maskData::freqMask[bandSelData::bandMaskIdx[index]]);
         ui->freqInput->setText(bandSelData::freqDialZero[index]);
-        emit sendFreqControl(bandSelData::bandFreq[index]);
+        if (isRadioLoaded())
+        {
+            emit sendFreqControl(bandSelData::bandFreq[index]);
+        }
+        else
+        {
+            noRadioSendOutFreq(bandSelData::bandFreq[index]);
+        }
     }
+}
+
+
+void RigControlFrame::noRadioSendOutFreq(QString f)
+{
+    // update rigframe
+    emit noRadioSendFreq(f);
+    // update logger
+    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+    tslf->on_NoRadioSetFreq(f);
 }
 
 
@@ -327,8 +358,14 @@ void RigControlFrame::readActionSelected(int buttonNumber)
 {
     memoryData::memData m = memDialog->getMemoryData(buttonNumber);
 
-    emit sendFreqControl(m.freq);
-
+    if (isRadioLoaded())
+    {
+        emit sendFreqControl(m.freq);
+    }
+    else
+    {
+        noRadioSendOutFreq(m.freq);
+    }
 }
 
 void RigControlFrame::writeActionSelected(int buttonNumber)
