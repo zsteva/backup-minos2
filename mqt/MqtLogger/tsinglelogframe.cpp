@@ -711,6 +711,7 @@ void TSingleLogFrame::on_SetRxPBFlag(QString flag)
 void TSingleLogFrame::on_RadioLoaded()
 {
     ui->FKHRigControlFrame->setRadioLoaded();
+    ui->GJVQSOLogFrame->setRadioLoaded();
 }
 
 bool TSingleLogFrame::isRadioLoaded()
@@ -722,6 +723,7 @@ void TSingleLogFrame::on_SetRadioName(QString n)
 {
 
     ui->FKHRigControlFrame->setRadioName(n);
+
 
 }
 
@@ -760,6 +762,7 @@ void TSingleLogFrame::on_RotatorLoaded()
 {
    rotatorLoaded = true;
    ui->FKHRotControlFrame->setRotatorLoaded();
+   ui->GJVQSOLogFrame->setRotatorLoaded();
 }
 
 bool TSingleLogFrame::isRotatorLoaded()

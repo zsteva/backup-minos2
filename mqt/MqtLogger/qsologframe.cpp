@@ -19,7 +19,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     , edit(false)
     , overstrike(false)
     , oldTimeOK(true)
-    //, rotatorLoaded(false)
+    , rotatorLoaded(false)
     , bandMapLoaded(false)
     , keyerLoaded(false)
     , radioLoaded(false)
@@ -1678,14 +1678,16 @@ void QSOLogFrame::doGJVEditChange( QObject *Sender )
 
 void QSOLogFrame::on_ModeButton_clicked()
 {
-    qsoLogModeFlag = true;  // stop updates from rigcontrol
-
-    // send mode change to radio
-    emit sendModeControl(ui->ModeButton->text());
+    if (isRadioLoaded())
+    {
+        qsoLogModeFlag = true;  // stop updates from rigcontrol
+        // send mode change to radio
+        emit sendModeControl(ui->ModeButton->text());
+    }
 
     QString myOldMode = ui->ModeComboBoxGJV->currentText();
     ui->ModeComboBoxGJV->setCurrentText(ui->ModeButton->text());
-
+    mode = ui->ModeButton->text();
     oldMode = myOldMode;
     EditControlExit(ui->ModeButton);
 }
@@ -2183,14 +2185,19 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
 //void QSOLogFrame::on_ModeComboBoxGJV_currentIndexChanged(int index)
 void QSOLogFrame::on_ModeComboBoxGJV_activated(int index)
 {
-    qsoLogModeFlag = true;
-    // send mode change to radio
+
     if (index < hamlibData::supModeList.count())
     {
-         mode = hamlibData::supModeList[index];
-         emit sendModeControl(hamlibData::supModeList[index]);
-    }
+        mode = hamlibData::supModeList[index];
 
+        // send mode change to radio
+        if (isRadioLoaded())
+        {
+
+            qsoLogModeFlag = true;  // stop updates from radio here
+            emit sendModeControl(hamlibData::supModeList[index]);
+        }
+    }
 
     if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
     {
@@ -2245,8 +2252,33 @@ bool QSOLogFrame::isBandMapLoaded()
     return bandMapLoaded;
 }
 
+//---------------------------------------------------------
+void QSOLogFrame::setRadioLoaded()
+{
+    radioLoaded = true;
+
+}
+
+bool QSOLogFrame::isRadioLoaded()
+{
+    return radioLoaded;
+}
+
 //----------------------------------------------------------------
 
+void QSOLogFrame::setRotatorLoaded()
+{
+    rotatorLoaded = true;
+}
+
+bool QSOLogFrame::isRotatorLoaded()
+{
+    return rotatorLoaded;
+}
+
+
+
+//----------------------------------------------------------------
 QString QSOLogFrame::getBearing()
 {
     return ui->BrgSt->text();
