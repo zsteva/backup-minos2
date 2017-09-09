@@ -44,6 +44,7 @@ public:
     int getAngle(QString);
 
     QString getBrgTxtFrmFrame();
+    void setBrgFromRigFrmMemory(QString Brg);
 private:
 
     RigMemDialog *memDialog;
