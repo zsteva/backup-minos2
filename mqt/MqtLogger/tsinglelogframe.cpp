@@ -95,6 +95,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(sendDM, SIGNAL(setRadioLoaded()), this, SLOT(on_RadioLoaded()));
     connect(sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetMode(QString)));
     connect(sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetFreq(QString)));
+    connect(sendDM, SIGNAL(setRxPBFlag(QString)),this, SLOT(on_SetRxPBFlag(QString)));
     connect(sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
     connect(sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
 
@@ -430,7 +431,6 @@ int TSingleLogFrame::getBearingFrmQSOLog()
 }
 //---------------------------------------------------------------------------
 
-
 void TSingleLogFrame::on_MakeEntry(BaseContestLog *ct)
 {
     if (ct == contest)
@@ -696,10 +696,21 @@ void TSingleLogFrame::on_SetFreq(QString f)
     ui->GJVQSOLogFrame->setFreq(f);
 }
 
+void TSingleLogFrame::on_NoRadioSetFreq(QString f)
+{
+    ui->GJVQSOLogFrame->setFreq(f);
+}
+
+
+void TSingleLogFrame::on_SetRxPBFlag(QString flag)
+{
+    ui->FKHRigControlFrame->setRxPBFlag(flag);
+}
 
 void TSingleLogFrame::on_RadioLoaded()
 {
     ui->FKHRigControlFrame->setRadioLoaded();
+    ui->GJVQSOLogFrame->setRadioLoaded();
 }
 
 bool TSingleLogFrame::isRadioLoaded()
@@ -711,6 +722,7 @@ void TSingleLogFrame::on_SetRadioName(QString n)
 {
 
     ui->FKHRigControlFrame->setRadioName(n);
+
 
 }
 
@@ -749,6 +761,7 @@ void TSingleLogFrame::on_RotatorLoaded()
 {
    rotatorLoaded = true;
    ui->FKHRotControlFrame->setRotatorLoaded();
+   ui->GJVQSOLogFrame->setRotatorLoaded();
 }
 
 bool TSingleLogFrame::isRotatorLoaded()
@@ -788,6 +801,12 @@ void TSingleLogFrame::sendRotator(rpcConstants::RotateDirection direction, int a
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         sendDM->sendRotator(direction, angle);
+}
+
+
+void TSingleLogFrame::setBearingFrmRigMemory(QString brg)
+{
+    ui->FKHRotControlFrame->setBrgFromRigFrmMemory(brg);
 }
 
 

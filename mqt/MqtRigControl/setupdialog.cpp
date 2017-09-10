@@ -105,11 +105,18 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     transVertEdit[3] = ui->TransVertEdit4;
     transVertEdit[4] = ui->TransVertEdit5;
 
-    transNegCheck[0] =ui->negCheckbox1;
-    transNegCheck[1] =ui->negCheckbox2;
-    transNegCheck[2] =ui->negCheckbox3;
-    transNegCheck[3] =ui->negCheckbox4;
-    transNegCheck[4] =ui->negCheckbox5;
+    transNegCheck[0] = ui->negCheckbox1;
+    transNegCheck[1] = ui->negCheckbox2;
+    transNegCheck[2] = ui->negCheckbox3;
+    transNegCheck[3] = ui->negCheckbox4;
+    transNegCheck[4] = ui->negCheckbox5;
+
+    rxPassBandCheck[0] = ui->useRigPbChk1;
+    rxPassBandCheck[1] = ui->useRigPbChk2;
+    rxPassBandCheck[2] = ui->useRigPbChk3;
+    rxPassBandCheck[3] = ui->useRigPbChk4;
+    rxPassBandCheck[4] = ui->useRigPbChk5;
+
 
 
 /******************** Map radioName EditBoxes *****************************************/
@@ -223,8 +230,6 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
     connect(transVertCheck_mapper, SIGNAL(mapped(int)), this, SLOT(transVertChecked(int)));
 
-
-
 /******************** Map transvert editboxes *****************************************/
 
 
@@ -238,11 +243,6 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     connect(transVertEdit_mapper, SIGNAL(mapped(int)), this, SLOT(transVertEditFinished(int)));
 
 
-
-    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveButtonPushed()));
-    connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
-
-
 /******************** Map trans negative offset checkbox *****************************************/
 
 
@@ -254,6 +254,19 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     }
 
     connect(transNegCheck_mapper, SIGNAL(mapped(int)), this, SLOT(transNegChecked(int)));
+
+
+/******************** Map Use Rx Passband checkbox *****************************************/
+
+
+    QSignalMapper *rxPassbandCheck_mapper = new QSignalMapper(this);
+    for (int i = 0; i < NUM_RADIOS; i++ )
+    {
+        rxPassbandCheck_mapper->setMapping(rxPassBandCheck[i], i);
+        connect(rxPassBandCheck[i], SIGNAL(stateChanged(int)), rxPassbandCheck_mapper, SLOT(map()));
+    }
+
+    connect(rxPassbandCheck_mapper, SIGNAL(mapped(int)), this, SLOT(rxPassBandChecked(int)));
 
 
 
@@ -300,6 +313,8 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
         transVertCheck[i]->setChecked(availRadios[i].transVertEnable);
         transVertEdit[i]->setEnabled(transVertCheck[i]->isChecked());
         transNegCheck[i]->setEnabled(transVertCheck[i]->isChecked());
+        rxPassBandCheck[i]->setChecked(availRadios[i].useRxPassBand);
+
     }
 
     ui->setupTab->setCurrentIndex(0);       // set first tab
@@ -502,7 +517,14 @@ void SetupDialog::transNegChecked(int boxNumber)
 }
 
 
+void SetupDialog::rxPassBandChecked(int boxNumber)
+{
 
+    availRadios[boxNumber].useRxPassBand = rxPassBandCheck[boxNumber]->isChecked();
+    radioValueChanged[boxNumber] = true;
+    radioChanged = true;
+
+}
 
 void SetupDialog::fillRadioModelInfo()
 {
@@ -707,6 +729,7 @@ void SetupDialog::saveSettings()
                 config.setValue("transVertOffSetStr", availRadios[i].transVertOffsetStr);
                 config.setValue("transVertEnable", availRadios[i].transVertEnable);
                 config.setValue("transVertNegative", availRadios[i].transVertNegative);
+                config.setValue("useRXPassBand", availRadios[i].useRxPassBand);
                 config.endGroup();
                 radioValueChanged[i] = false;
 
@@ -753,6 +776,7 @@ void SetupDialog::readSettings()
         availRadios[i].transVertOffsetStr = config.value("transVertOffSetStr", "00.000.000.000").toString();
         availRadios[i].transVertEnable = config.value("transVertEnable", false).toBool();
         availRadios[i].transVertNegative = config.value("transVertNegative", false).toBool();
+        availRadios[i].useRxPassBand = config.value("useRXPassBand", false).toBool();
         config.endGroup();
     }
 
@@ -781,6 +805,7 @@ void SetupDialog::clearAvailRadio()
         availRadios[i].transVertOffsetStr = "00.000.000.000";
         availRadios[i].transVertEnable = false;
         availRadios[i].transVertNegative = false;
+        availRadios[i].useRxPassBand = false;
     }
 
 
@@ -805,6 +830,7 @@ void SetupDialog::clearCurrentRadio()
     currentRadio.transVertOffsetStr = "00.000.000.000";
     currentRadio.transVertEnable = false;
     currentRadio.transVertNegative = false;
+    currentRadio.useRxPassBand = false;
 
 }
 
@@ -828,6 +854,7 @@ void SetupDialog::copyRadioToCurrent(int radioNumber)
     currentRadio.transVertOffsetStr = availRadios[radioNumber].transVertOffsetStr;
     currentRadio.transVertEnable  = availRadios[radioNumber].transVertEnable;
     currentRadio.transVertNegative  = availRadios[radioNumber].transVertNegative;
+    currentRadio.useRxPassBand = availRadios[radioNumber].useRxPassBand;
 
 
 }
@@ -876,6 +903,7 @@ void SetupDialog::saveCurrentRadio()
     config.setValue("transVertOffSetStr", currentRadio.transVertOffsetStr);
     config.setValue("transVertEnable", currentRadio.transVertEnable);
     config.setValue("transVertNegative", currentRadio.transVertNegative);
+    config.setValue("useRXPassBand", currentRadio.useRxPassBand);
     config.endGroup();
 
 
@@ -907,6 +935,7 @@ void SetupDialog::readCurrentRadio()
         currentRadio.transVertOffsetStr = config.value("transVertOffSetStr", "00.000.000.000").toString();
         currentRadio.transVertEnable = config.value("transVertEnable", false).toBool();
         currentRadio.transVertNegative = config.value("transVertNegative", false).toBool();
+        currentRadio.useRxPassBand = config.value("useRXPassBand", false).toBool();
         config.endGroup();
     }
 

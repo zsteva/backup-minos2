@@ -20,6 +20,7 @@
 
 #include <QDialog>
 #include <QSettings>
+#include <QKeyEvent>
 #include "rigmemcommondata.h"
 
 namespace Ui {
@@ -31,7 +32,7 @@ class RigMemDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit RigMemDialog(QWidget *parent = 0);
+    explicit RigMemDialog(QString, QString, QWidget *parent = 0);
     ~RigMemDialog();
 
     void setDialogTitle(QString number);
@@ -42,6 +43,11 @@ public:
     int readAllMemories();
     memoryData::memData getMemoryData(int memoryNumber);
     void clearMemory(memoryData::memData* ldata, int memoryLoc);
+    void setFocusCallsign();
+    void setMemoryFlag(bool state);
+    bool getMemoryFlag();
+
+    void editMemory(int memoryLoc);
 signals:
     void memorySaved(int);
 
@@ -51,18 +57,26 @@ private slots:
     void cancelButtonPushed();
     void callSignToUpper(QString callSign);
     void locatorToUpper(QString locator);
+    void escapePushed();
+    void close();
+
 private:
     Ui::RigMemDialog *ui;
     memoryData::memData memoryList[memoryData::NUM_MEMORIES];
     QString radioName;
     QString radioState;
     int memoryNumber;
+    bool memOnFlag;
     //memoryData::memData logData;
     int readSettings();
     int saveMemory(int memoryLoc);
     int readMemory(int memoryLoc);
 
 
+    void keyPressEvent(QKeyEvent*);
+
+signals:
+    void escapePressed();
 };
 
 #endif // RIGMEMDIALOG_H

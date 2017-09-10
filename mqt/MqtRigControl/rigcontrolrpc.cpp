@@ -94,7 +94,17 @@ void RigControlRpc::publishMode(const QString &mode)
     }
 }
 
+void RigControlRpc::publishRxPbFlag(const QString flag)
+{
+    static QString old;
 
+    if (flag != old)
+    {
+        old = flag;
+        MinosRPC *rpc = MinosRPC::getMinosRPC();
+        rpc->publish(rpcConstants::rigControlCategory, rpcConstants::rigControlKeyRxPbFlag, flag, psPublished);
+    }
+}
 
 
 void RigControlRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )

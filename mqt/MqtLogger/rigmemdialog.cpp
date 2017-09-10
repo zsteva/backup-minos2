@@ -22,17 +22,19 @@
 #include "rigcontrolcommonconstants.h"
 
 
-RigMemDialog::RigMemDialog(QWidget *parent) :
+RigMemDialog::RigMemDialog(QString _radioName, QString _radioState, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::RigMemDialog)
+    ,radioName(_radioName)
+    ,radioState(_radioState)
 
 
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    radioName = "";
-    radioState = "";
+
+    setMemoryFlag(false);
 
     for (int i = 0; i < hamlibData::supModeList.count(); i++)
     {
@@ -48,12 +50,46 @@ RigMemDialog::RigMemDialog(QWidget *parent) :
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
     connect(ui->callSignLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(callSignToUpper(const QString &)));
     connect(ui->locatorLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(locatorToUpper(const QString &)));
-
+    connect(this, SIGNAL(escapePressed()), this, SLOT(escapePushed()));
+    connect(this , SIGNAL(rejected()), this, SLOT(close()));
 }
 
 RigMemDialog::~RigMemDialog()
 {
     delete ui;
+}
+
+
+void RigMemDialog::keyPressEvent(QKeyEvent *event)
+{
+
+    int Key = event->key();
+
+/*
+    Qt::KeyboardModifiers mods = event->modifiers();
+    bool shift = mods & Qt::ShiftModifier;
+    bool ctrl = mods & Qt::ControlModifier;
+    bool alt = mods & Qt::AltModifier;
+*/
+    if (Key == Qt::Key_Escape)
+    {
+        emit escapePressed();
+    }
+
+}
+
+
+
+
+
+void RigMemDialog::setMemoryFlag(bool state)
+{
+    memOnFlag = state;
+}
+
+bool RigMemDialog::getMemoryFlag()
+{
+    return memOnFlag;
 }
 
 void RigMemDialog::setRadioName(QString name)
@@ -81,13 +117,14 @@ int RigMemDialog::readAllMemories()
     for (int i = 0; i < memoryData::NUM_MEMORIES; i++)
     {
         config.beginGroup("MemoryLoc" + QString::number(i));
-        memoryList[i].callsign= config.value("Callsign", "").toString();
-        memoryList[i].freq = config.value("Frequency", "00.000.000.000").toString();
-        memoryList[i].mode = config.value("Mode", "").toString();
-        memoryList[i].passBand = config.value("PassBand", "2200").toString();
-        memoryList[i].locator = config.value("Locator", "").toString();
-        memoryList[i].bearing = config.value("Bearing", 0).toInt();
-        memoryList[i].time = config.value("Time", "").toString();
+        memoryList[i].callsign= config.value("Callsign", memDefData::DEFAULT_CALLSIGN).toString();
+        memoryList[i].freq = config.value("Frequency", memDefData::DEFAULT_FREQ).toString();
+        memoryList[i].mode = config.value("Mode", memDefData::DEFAULT_MODE).toString();
+        //memoryList[i].passBand = config.value("PassBand", memDefData::DEFAULT_PBAND).toString();
+        memoryList[i].pBandState = config.value("PBandState", memDefData::DEFAULT_PBAND_STATE).toInt();
+        memoryList[i].locator = config.value("Locator", memDefData::DEFAULT_LOCATOR).toString();
+        memoryList[i].bearing = config.value("Bearing", memDefData::DEFAULT_BEARING).toInt();
+        memoryList[i].time = config.value("Time", memDefData::DEFAULT_TIME).toString();
         config.endGroup();
     }
 
@@ -109,13 +146,14 @@ int RigMemDialog::readMemory(int memoryLoc)
     QSettings config(fileName, QSettings::IniFormat);
 
     config.beginGroup("MemoryLoc" + QString::number(memoryLoc));
-    memoryList[memoryLoc].callsign = config.value("Callsign", "").toString();
-    memoryList[memoryLoc].freq = config.value("Frequency", "00.000.000.000").toString();
-    memoryList[memoryLoc].mode = config.value("Mode", "").toString();
-    memoryList[memoryLoc].passBand = config.value("PassBand", "2200").toString();
-    memoryList[memoryLoc].locator = config.value("Locator", "").toString();
-    memoryList[memoryLoc].bearing = config.value("Bearing", 0).toInt();
-    memoryList[memoryLoc].time = config.value("Time", "").toString();
+    memoryList[memoryLoc].callsign = config.value("Callsign", memDefData::DEFAULT_CALLSIGN).toString();
+    memoryList[memoryLoc].freq = config.value("Frequency", memDefData::DEFAULT_FREQ).toString();
+    memoryList[memoryLoc].mode = config.value("Mode", memDefData::DEFAULT_MODE).toString();
+    //memoryList[memoryLoc].passBand = config.value("PassBand", memDefData::DEFAULT_PBAND).toString();
+    memoryList[memoryLoc].pBandState = config.value("PBandState", memDefData::DEFAULT_PBAND_STATE).toInt();
+    memoryList[memoryLoc].locator = config.value("Locator", memDefData::DEFAULT_LOCATOR).toString();
+    memoryList[memoryLoc].bearing = config.value("Bearing", memDefData::DEFAULT_BEARING).toInt();
+    memoryList[memoryLoc].time = config.value("Time", memDefData::DEFAULT_TIME).toString();
     config.endGroup();
 
 
@@ -137,7 +175,8 @@ int RigMemDialog::saveMemory(int memoryLoc)
     config.setValue("Callsign", memoryList[memoryLoc].callsign);
     config.setValue("Frequency", memoryList[memoryLoc].freq);
     config.setValue("Mode", memoryList[memoryLoc].mode);
-    config.setValue("PassBand", memoryList[memoryLoc].passBand);
+    //config.setValue("PassBand", memoryList[memoryLoc].passBand);
+    config.setValue("PBandState", memoryList[memoryLoc].pBandState);
     config.setValue("Locator", memoryList[memoryLoc].locator);
     config.setValue("Bearing", memoryList[memoryLoc].bearing);
     config.setValue("Time", memoryList[memoryLoc].time);
@@ -148,18 +187,49 @@ int RigMemDialog::saveMemory(int memoryLoc)
 }
 
 
+void RigMemDialog::editMemory(int memoryLoc)
+{
+    ui->callSignLineEdit->setText(memoryList[memoryLoc].callsign);
+    QString a = memoryList[memoryLoc].freq;
+    if (memoryList[memoryLoc].freq.remove('.').count() < 4)
+    {
+        ui->freqLineEdit->setInputMask(maskData::freqMask[7]);
+    }
+    else
+    {
+        ui->freqLineEdit->setInputMask(maskData::freqMask[memoryList[memoryLoc].freq.remove('.').count() - 4]);
+    }
+    ui->freqLineEdit->setText( memoryList[memoryLoc].freq);
+    ui->modecb->setCurrentText( memoryList[memoryLoc].mode);
+    ui->pbStateCb->setCurrentText(hamlibData::pBandStateStr[memoryList[memoryLoc].pBandState]);
+    ui->locatorLineEdit->setText(memoryList[memoryLoc].locator);
+    ui->bearingLineEdit->setText(QString::number(memoryList[memoryLoc].bearing));
+    ui->timeLineEdit->setText(memoryList[memoryLoc].time);
+}
+
+
+
 void RigMemDialog::clearMemory(memoryData::memData* ldata, int memoryLoc)
 {
 
+
     memoryNumber = memoryLoc;
-    ui->callSignLineEdit->setText(memoryList[memoryLoc].callsign = ldata->callsign);
-    ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.count() - 4]);
-    ui->freqLineEdit->setText( memoryList[memoryLoc].freq = ldata->freq);
-    ui->modecb->setCurrentText( memoryList[memoryLoc].mode = ldata->mode);
-    ui->pbStateCb->setCurrentText(memoryList[memoryLoc].passBand = ldata->passBand);
-    ui->locatorLineEdit->setText(memoryList[memoryLoc].locator = ldata->locator);
-    ui->bearingLineEdit->setText(QString::number(memoryList[memoryLoc].bearing = ldata->bearing));
-    ui->timeLineEdit->setText(memoryList[memoryLoc].time = ldata->time);
+    memoryList[memoryLoc].callsign = ldata->callsign;
+    memoryList[memoryLoc].freq = ldata->freq;
+    memoryList[memoryLoc].mode = ldata->mode;
+    //memoryList[memoryLoc].passBand = ldata->passBand;
+    memoryList[memoryLoc].pBandState = ldata->pBandState;
+    memoryList[memoryLoc].locator = ldata->locator;
+    memoryList[memoryLoc].bearing = ldata->bearing;
+    memoryList[memoryLoc].bearing = ldata->bearing;
+    memoryList[memoryLoc].time = ldata->time;
+    saveMemory(memoryNumber);
+
+    setMemoryFlag(false);
+
+    emit memorySaved(memoryNumber);
+
+
 }
 
 
@@ -186,7 +256,7 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
     ui->modecb->setCurrentText(ldata->mode);
 
 
-    ui->pbStateCb->setCurrentText(ldata->passBand);
+    ui->pbStateCb->setCurrentIndex(ldata->pBandState);
 
     readMemory(memoryNumber);
 
@@ -194,12 +264,19 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
 //    {
         ui->callSignLineEdit->setText(ldata->callsign);
 //    }
-    if (ldata->locator != memoryList[memoryNumber].locator)
-    {
+
+//    if (ldata->locator == "" && ldata->locator != memoryList[memoryNumber].locator)
+//    {
         ui->locatorLineEdit->setText(ldata->locator);
+//    }
+    if (ldata->freq.remove('.').count() < 4)
+    {
+        ui->freqLineEdit->setInputMask(maskData::freqMask[7]);
     }
-    int a = ldata->freq.count();
-    ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.count() - 4]);
+    else
+    {
+        ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.remove('.').count() - 4]);
+    }
     ui->freqLineEdit->setText(ldata->freq);
 
     if (ldata->bearing != memoryList[memoryNumber].bearing)
@@ -211,6 +288,9 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
 }
 
 
+
+
+
 void RigMemDialog::saveButtonPushed()
 {
 
@@ -218,11 +298,14 @@ void RigMemDialog::saveButtonPushed()
    memoryList[memoryNumber].callsign = ui->callSignLineEdit->text();
    memoryList[memoryNumber].freq = ui->freqLineEdit->text();
    memoryList[memoryNumber].mode = ui->modecb->currentText();
-   memoryList[memoryNumber].passBand = ui->pbStateCb->currentText();
+   memoryList[memoryNumber].pBandState = ui->pbStateCb->currentIndex();
    memoryList[memoryNumber].locator = ui->locatorLineEdit->text();
    memoryList[memoryNumber].bearing = ui->bearingLineEdit->text().toInt();
    memoryList[memoryNumber].time = ui->timeLineEdit->text();
    saveMemory(memoryNumber);
+
+   setMemoryFlag(false);
+
    emit memorySaved(memoryNumber);
 
 }
@@ -232,11 +315,23 @@ void RigMemDialog::saveButtonPushed()
 void RigMemDialog::cancelButtonPushed()
 {
 
-
-
+    setMemoryFlag(false);
 
 }
 
+
+void RigMemDialog::escapePushed()
+{
+
+    setMemoryFlag(false);
+
+}
+
+
+void RigMemDialog::close()
+{
+    setMemoryFlag(false);
+}
 
 memoryData::memData RigMemDialog::getMemoryData(int memoryNumber)
 {
@@ -244,7 +339,7 @@ memoryData::memData RigMemDialog::getMemoryData(int memoryNumber)
     m.callsign = memoryList[memoryNumber].callsign;
     m.freq = memoryList[memoryNumber].freq;
     m.mode = memoryList[memoryNumber].mode;
-    m.passBand = memoryList[memoryNumber].passBand;
+    m.pBandState = memoryList[memoryNumber].pBandState;
     m.locator = memoryList[memoryNumber].locator;
     m.bearing = memoryList[memoryNumber].bearing;
     m.time = memoryList[memoryNumber].time;
@@ -269,4 +364,10 @@ void RigMemDialog::locatorToUpper(QString locator)
     {
         ui->locatorLineEdit->setText(locator.toUpper());
     }
+}
+
+
+void RigMemDialog::setFocusCallsign()
+{
+    ui->callSignLineEdit->setFocus();
 }

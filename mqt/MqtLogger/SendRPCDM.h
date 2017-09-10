@@ -67,6 +67,7 @@ signals:
       void setRadioLoaded();
       void setMode(QString);
       void setFreq(QString);
+      void setRxPBFlag(QString);
       void setRadioName(QString);
       void setRadioState(QString);
 
