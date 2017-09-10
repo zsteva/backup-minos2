@@ -91,15 +91,20 @@ int RotControlFrame::getAngle(QString brgSt)
 }
 
 
-void RotControlFrame::getBrgFrmQSOLog(QString Brg)
+void RotControlFrame::getBrgFrmQSOLog(QString brg)
 {
-    ui->BrgSt->setText(Brg);
+    ui->BrgSt->setText(brg);
 }
 
 
 QString RotControlFrame::getBrgTxtFrmFrame()
 {
     return ui->BrgSt->text();
+}
+
+void RotControlFrame::setBrgFromRigFrmMemory(QString brg)
+{
+    ui->BrgSt->setText(brg);
 }
 
 

@@ -39,30 +39,37 @@ static QStringList memoryShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
 RigControlFrame::RigControlFrame(QWidget *parent):
     QFrame(parent)
     , ui(new Ui::RigControlFrame)
-    , curFreq("")
-    , curMode("")
-    , radioName("")
-    , radioState("")
+    , curFreq(memDefData::DEFAULT_FREQ)
+    , curMode(memDefData::DEFAULT_MODE)
+    , curpbState(memDefData::DEFAULT_PBAND_STATE)
+    , radioName("NoRadio")
+    , radioState("None")
     , radioLoaded(false)
     , freqEditOn(false)
-    , memReadFlag(true)
+
 
 {
 
     ui->setupUi(this);
 
-    logData.callsign = "";
-    logData.freq = "00.000.000.000";
-    logData.mode = "";
-    logData.passBand = "2.200";
-    logData.locator = "";
-    logData.bearing = 0;
-    logData.time = "";
+    logData.callsign = memDefData::DEFAULT_CALLSIGN;
+    logData.freq = memDefData::DEFAULT_FREQ;
+    logData.mode = memDefData::DEFAULT_MODE;
+    //logData.passBand = memDefData::DEFAULT_PBAND;
+    logData.pBandState = memDefData::DEFAULT_PBAND_STATE;
+    logData.locator = memDefData::DEFAULT_LOCATOR;
+    logData.bearing = memDefData::DEFAULT_BEARING;
+    logData.time = memDefData::DEFAULT_TIME;
 
 
     initRigFrame();
     initMemoryButtons();
     initPassBandRadioButtons();
+
+    setRxPBFlag("set");
+
+    // init memory button data before radio connection
+    setRadioName(radioName);
 
 
 }
@@ -82,6 +89,8 @@ void RigControlFrame::initRigFrame()
     connect(ui->freqInput, SIGNAL(receivedFocus()), this, SLOT(freqLineEditInFocus()));
     connect(ui->freqInput, SIGNAL(returnPressed()), this, SLOT(changeRadioFreq()));
     connect(this, SIGNAL(escapePressed()), this, SLOT(exitFreqEdit()));
+    // when no radio is connected
+    connect(this, SIGNAL(noRadioSendFreq(QString)), this, SLOT(noRadioSetFreq(QString)));
 
     for (int i = 0; i < bandSelData::bandNames.count(); i++)
     {
@@ -90,8 +99,17 @@ void RigControlFrame::initRigFrame()
 
     connect(ui->bandSelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(radioBandFreq(int)));
 
-    memDialog = new RigMemDialog();
+    memDialog = new RigMemDialog(radioName, radioState);
     connect(memDialog, SIGNAL(memorySaved(int)), this, SLOT(memoryUpdate(int)));
+
+    setRxPBFlag("set");
+    if (!isRadioLoaded())
+    {
+        ui->modelbl->setVisible(false);
+    }
+
+
+
 
     // test toolbutton
     //QToolButton* tb = ui->toolButton;
@@ -118,11 +136,17 @@ void RigControlFrame::initRigFrame()
 void RigControlFrame::setRadioLoaded()
 {
     radioLoaded = true;
+    ui->modelbl->setVisible(true);
 }
 
 bool RigControlFrame::isRadioLoaded()
 {
     return radioLoaded;
+}
+
+void RigControlFrame::noRadioSetFreq(QString f)
+{
+    setFreq(f);
 }
 
 void RigControlFrame::setFreq(QString f)
@@ -152,7 +176,14 @@ void RigControlFrame::changeRadioFreq()
         freq = ui->freqInput->text();
         if (freq.count() >=4)
         {
-            emit sendFreqControl(freq);
+            if (isRadioLoaded())
+            {
+                emit sendFreqControl(freq);
+            }
+            else
+            {
+                noRadioSendOutFreq(freq);
+            }
         }
     }
 
@@ -167,8 +198,25 @@ void RigControlFrame::radioBandFreq(int index)
     {
         ui->freqInput->setInputMask(maskData::freqMask[bandSelData::bandMaskIdx[index]]);
         ui->freqInput->setText(bandSelData::freqDialZero[index]);
-        emit sendFreqControl(bandSelData::bandFreq[index]);
+        if (isRadioLoaded())
+        {
+            emit sendFreqControl(bandSelData::bandFreq[index]);
+        }
+        else
+        {
+            noRadioSendOutFreq(bandSelData::bandFreq[index]);
+        }
     }
+}
+
+
+void RigControlFrame::noRadioSendOutFreq(QString f)
+{
+    // update rigframe
+    emit noRadioSendFreq(f);
+    // update logger
+    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+    tslf->on_NoRadioSetFreq(f);
 }
 
 
@@ -206,9 +254,11 @@ void RigControlFrame::initMemoryButtons()
 
         readAction[i] = new QAction("&Read", this);
         writeAction[i] = new QAction("&Write",this);
+        editAction[i] = new QAction("&Edit", this);
         clearAction[i] = new QAction("&Clear",this);
         memoryMenu[i]->addAction(readAction[i]);
         memoryMenu[i]->addAction(writeAction[i]);
+        memoryMenu[i]->addAction(editAction[i]);
         memoryMenu[i]->addAction(clearAction[i]);
         memButtons[i]->setMenu(memoryMenu[i]);
     }
@@ -228,6 +278,8 @@ void RigControlFrame::initMemoryButtons()
     }
     connect(readAction_mapper, SIGNAL(mapped(int)), this, SLOT(readActionSelected(int)));
 
+//----------------------------------------------------------------------------------------
+
     // map write Action
 
     QSignalMapper *writeAction_mapper = new QSignalMapper(this);
@@ -240,6 +292,21 @@ void RigControlFrame::initMemoryButtons()
     }
     connect(writeAction_mapper, SIGNAL(mapped(int)), this, SLOT(writeActionSelected(int)));
 
+//-----------------------------------------------------------------------------------------
+
+    // map edit Action
+
+    QSignalMapper *editAction_mapper = new QSignalMapper(this);
+
+    for (int i = 0; i < memoryData::NUM_MEMORIES; i++ )
+    {
+        editAction_mapper->setMapping(editAction[i], i);
+        connect(editAction[i], SIGNAL(triggered()), editAction_mapper, SLOT(map()));
+
+    }
+    connect(editAction_mapper, SIGNAL(mapped(int)), this, SLOT(editActionSelected(int)));
+
+//-----------------------------------------------------------------------------------------
 
     // map Clear Action
 
@@ -253,9 +320,11 @@ void RigControlFrame::initMemoryButtons()
     }
     connect(clearAction_mapper, SIGNAL(mapped(int)), this, SLOT(clearActionSelected(int)));
 
+//-----------------------------------------------------------------------------------------
+
     // load button labels
 
-    loadMemoryButtonLabels();
+//    loadMemoryButtonLabels();
 
 }
 
@@ -289,12 +358,31 @@ void RigControlFrame::readActionSelected(int buttonNumber)
 {
     memoryData::memData m = memDialog->getMemoryData(buttonNumber);
 
-    emit sendFreqControl(m.freq);
-
+    if (isRadioLoaded())
+    {
+        emit sendFreqControl(m.freq);
+    }
+    else
+    {
+        noRadioSendOutFreq(m.freq);
+    }
+    int brg = m.bearing;
+    if (brg > 0 || brg < 360)
+    {
+        // send bearing to rotator control frame
+        TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+        tslf->setBearingFrmRigMemory(QString::number(brg));
+    }
 }
 
 void RigControlFrame::writeActionSelected(int buttonNumber)
 {
+    if (memDialog->getMemoryFlag())
+       return;
+
+    memDialog->setMemoryFlag(true);
+
+
     // get contest information
     TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
 
@@ -304,7 +392,7 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
     logData.freq = curFreq;
     logData.locator = sc.loc.loc.getValue();
     logData.mode = curMode;
-    logData.passBand = hamlibData::pBandStateStr[curpbState];
+    logData.pBandState = curpbState;
 
     QStringList dt = dtg( true ).getIsoDTG().split('T');
     logData.time = dt[1];
@@ -317,22 +405,49 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
     // load log data into memory
     memDialog->setLogData(&logData, buttonNumber);
     memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Write");
+    memDialog->setFocusCallsign();
     memDialog->show();
 }
 
+
+void RigControlFrame::editActionSelected(int buttonNumber)
+{
+    if (memDialog->getMemoryFlag())
+       return;
+
+    memDialog->setMemoryFlag(true);
+
+    memDialog->editMemory(buttonNumber);
+
+    memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Edit");
+    memDialog->setFocusCallsign();
+    memDialog->show();
+
+}
+
+
 void RigControlFrame::clearActionSelected(int buttonNumber)
 {
-     logData.callsign = "";
-     logData.freq = curFreq;
-     logData.locator = "";
-     logData.mode = curMode;
-     logData.passBand = hamlibData::pBandStateStr[curpbState];
+
+     //if (memDialog->getMemoryFlag())
+     //  return;
+
+     memDialog->setMemoryFlag(true);
+
+     logData.callsign = memDefData::DEFAULT_CALLSIGN;
+     logData.freq = memDefData::DEFAULT_FREQ;
+     logData.locator = memDefData::DEFAULT_LOCATOR;
+     logData.mode = memDefData::DEFAULT_MODE;
+     //logData.passBand = memDefData::DEFAULT_PBAND;
+     logData.pBandState = memDefData::DEFAULT_PBAND_STATE;
      QStringList dt = dtg( true ).getIsoDTG().split('T');
      logData.time = dt[1];
      logData.bearing = 0;
      memDialog->clearMemory(&logData, buttonNumber);
-     memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Clear");
-     memDialog->show();
+
+     //memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Clear");
+     //memDialog->setFocusCallsign();
+     //memDialog->show();
 }
 
 
@@ -393,7 +508,7 @@ void RigControlFrame::sendModeToRadio(QString m)
 
 void RigControlFrame::setRadioName(QString n)
 {
-    if (n != "" && radioName != n)
+    if (n != "" /*&& radioName != n*/)
     {
         ui->radioName->setText(n);
         radioName = n;
@@ -401,15 +516,6 @@ void RigControlFrame::setRadioName(QString n)
         memDialog->readAllMemories();
         loadMemoryButtonLabels();
     }
-
-
-
-
-
-
-
-
-
 
 }
 
@@ -472,6 +578,18 @@ void RigControlFrame::freqLineEditFrameColour(bool status)
 
 }
 
+
+void RigControlFrame::setRxPBFlag(QString flag)
+{
+    bool fl = (flag == "set") ? true: false;
+
+    rxPBFlag = fl;
+    ui->narRb->setVisible(!fl);
+    ui->normalRb->setVisible(!fl);
+    ui->wideRb->setVisible(!fl);
+    ui->groupBox->setVisible(!fl);
+}
+
 void RigControlFrame::loadMemoryButtonLabels()
 {
     for (int i = 0; i < memoryData::NUM_MEMORIES; i++)
@@ -488,7 +606,7 @@ void RigControlFrame::memoryUpdate(int buttonNumber)
     QString tTipStr = "Callsign: " + m.callsign + "\n"
             + "Freq: " + m.freq + "\n"
             + "Mode: " + m.mode + "\n"
-            + "Passband: " + m.passBand + "\n"
+            + "Passband: " + hamlibData::pBandStateStr[m.pBandState] + "\n"
             + "Locator: " + m.locator + "\n"
             + "Bearing: " + QString::number(m.bearing) + "\n"
             + "Time: " + m.time;

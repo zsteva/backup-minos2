@@ -99,7 +99,7 @@ static const QString rigControlKeyState    = QT_TR_NOOP("State");
 static const QString rigControlKeyFreq     = QT_TR_NOOP("Frequency");
 static const QString rigControlKeyPBandState = QT_TR_NOOP("PassBandState");
 static const QString rigControlKeyRadioName = QT_TR_NOOP("RadioName");
-
+static const QString rigControlKeyRxPbFlag = QT_TR_NOOP("RxPassBandFlag");
 
 
 }

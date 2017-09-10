@@ -21,6 +21,8 @@ public:
     void setAsEdit(bool s, QString b);
     void setBandMapLoaded();
     void setKeyerLoaded();
+    void setRadioLoaded();
+    void setRotatorLoaded();
 
     bool savePartial( void );
     bool restorePartial( void );
@@ -140,8 +142,9 @@ private:
     ValidatedControl *qthIl;
     ValidatedControl *cmntIl;
 
-    //bool rotatorLoaded;
-    //bool isRotatorLoaded();
+    bool rotatorLoaded;
+    bool isRotatorLoaded();
+
     bool radioLoaded;
     bool isRadioLoaded();
 

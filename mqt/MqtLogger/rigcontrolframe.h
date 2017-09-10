@@ -49,9 +49,11 @@ public:
     void setRadioName(QString);
     void setRadioState(QString);
     bool isRadioLoaded();
+    void setRxPBFlag(QString);
 
 signals:
     void sendFreqControl(QString);
+    void noRadioSendFreq(QString);
     void sendModeToControl(QString);
     void sendPassBandStateToControl(int);
 
@@ -59,23 +61,27 @@ private slots:
     void freqLineEditInFocus();
     void changeRadioFreq();
     void radioBandFreq(int index);
+    void noRadioSetFreq(QString);
 
     void memoryUpdate(int);
 
     void exitFreqEdit();
     void readActionSelected(int);
+    void editActionSelected(int buttonNumber);
     void writeActionSelected(int);
     void clearActionSelected(int);
     void passBandRadioSelected(int button);
 
 
-    //void test();
+
+
 private:
 
     QToolButton* memButtons[memoryData::NUM_MEMORIES];
     QMenu* memoryMenu[memoryData::NUM_MEMORIES];
     QAction* readAction[memoryData::NUM_MEMORIES];
     QAction* writeAction[memoryData::NUM_MEMORIES];
+    QAction* editAction[memoryData::NUM_MEMORIES];
     QAction* clearAction[memoryData::NUM_MEMORIES];
 
 
@@ -85,12 +91,13 @@ private:
 
     bool radioLoaded;
     bool freqEditOn;
-    bool memReadFlag;
+    //bool memFlag;
     QString curFreq;
     QString curMode;
     int curpbState;
     QString radioName;
     QString radioState;
+    bool rxPBFlag;
 
     memoryData::memData logData;
 
@@ -103,6 +110,7 @@ private:
     void initMemoryButtons();
     void loadMemoryButtonLabels();
     void initPassBandRadioButtons();
+    void noRadioSendOutFreq(QString f);
 signals:
     void escapePressed();
 

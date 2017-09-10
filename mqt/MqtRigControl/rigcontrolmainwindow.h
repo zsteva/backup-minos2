@@ -62,7 +62,6 @@ private:
     QTimer *pollTimer;
     class QTimer LogTimer;
     int pollTime;
-    bool useLogWidth;
     bool logRadError;
     // data from logger
     QString logger_freq;
@@ -119,10 +118,12 @@ private:
     void sendStatusToLogError();
     void sendFreqToLog(freq_t freq);
     void sendModeToLog(QString mode);
+    void sendRxPbFlagToLog();
 
     void setCurMode(QString mode);
     void setMode(QString mode, vfo_t vfo);
     void displayPassband(pbwidth_t width);
+
 
 private slots:
 
@@ -134,7 +135,7 @@ private slots:
     void logMessage(QString s);
     void about();
     void LogTimerTimer();
-//    void updateFreq(double frequency);
+
 
 
     void loggerSetFreq(QString freq);

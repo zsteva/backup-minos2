@@ -70,7 +70,7 @@ signals:
     void radioNameChange();
     void currentRadioSettingChanged(QString);
 
-protected slots:
+private slots:
 
     void radioNameFinished(int);
     void radioModelSelected(int);
@@ -87,7 +87,7 @@ protected slots:
     void saveButtonPushed();
     void cancelButtonPushed();
     void transNegChecked(int boxNumber);
-
+    void rxPassBandChecked(int boxNumber);
 
 private:
     Ui::SetupDialog *ui;
@@ -106,6 +106,7 @@ private:
     QCheckBox *transVertCheck[NUM_RADIOS];
     QLineEdit *transVertEdit[NUM_RADIOS];
     QCheckBox *transNegCheck[NUM_RADIOS];
+    QCheckBox *rxPassBandCheck[NUM_RADIOS];
 //    QIntValidator *intValidator;
     bool radioValueChanged[NUM_RADIOS];
     bool radioNameChanged[NUM_RADIOS];
