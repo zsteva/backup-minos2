@@ -1,12 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QTimer>
-#include <QTcpSocket>
-#include <QHostAddress>
-
-#include "omnirig.h"
+#include "base_pch.h"
 
 namespace Ui {
 class MainWindow;
@@ -21,23 +16,14 @@ public:
     ~MainWindow();
 
 public slots:
-    void handle_visibleChange();
-    void handle_rigTypeChange(int);
-    void handle_statusChange(int);
-    void handle_paramsChange(int, int);
 
 private slots:
-    void on_selectButton_clicked();
-
     void on_connectQS1RButton_clicked();
-
     void on_closeButton_clicked();
-
     void on_transfer12Button_clicked();
-
     void on_transfer21Button_clicked();
 
-    void timer1Timeout();
+    void SyncTimerTimer();
     void timer2Timeout();
 
     void onSocketConnect();
@@ -45,21 +31,30 @@ private slots:
     void onError(QAbstractSocket::SocketError);
     void onReadyRead();
 
+    void on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
+    void on_clientCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
+    void on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
+
 private:
     Ui::MainWindow *ui;
+    StdInReader stdinReader;
 
-    QTimer timer1;
+    QTimer SyncTimer;
     QTimer timer2;
 
     QTcpSocket ClientSocket1;
-
-    QScopedPointer<OmniRig::OmniRigX> omni_rig;
 
     bool muted;
     long getQS1RFreq();
     QString lastF;
     int fCentre;
     int ftf;
+
+    QString state;
+    QString mode;
+    QString freq;
+    QString radioName;
+
 };
 
 #endif // MAINWINDOW_H
