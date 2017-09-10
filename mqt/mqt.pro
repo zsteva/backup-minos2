@@ -15,7 +15,8 @@ SUBDIRS += \
     MqtRotator \
     MqtBandmap \
     MqtMonitor \
-    MqtRigControl
+    MqtRigControl \
+    MqtCluster
 
 greaterThan(QT_MAJOR_VERSION, 4) : greaterThan(QT_MINOR_VERSION, 6) {
    SUBDIRS += mqtKeyerTest
@@ -31,3 +32,5 @@ MqtKeyer.depends = MqtUtils TinyXML XMPPLib MqtBase
 MqtLogger.depends = MqtUtils TinyXML XMPPLib MqtBase
 MqtServer.depends = MqtUtils TinyXML XMPPLib MqtBase
 MqtRotator.depends = MqtUtils TinyXML XMPPLib MqtBase
+MqtRigControl.depends = MqtUtils TinyXML XMPPLib MqtBase
+MqtCluster.depends = MqtUtils TinyXML XMPPLib MqtBase
