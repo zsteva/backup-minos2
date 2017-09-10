@@ -89,6 +89,36 @@ void MainWindow::onStdInRead(QString cmd)
         setShowServers(false);
 
 }
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    // and tidy up all loose ends
+
+    MinosRPCObj::clearRPCObjects();
+    XMPPClosedown();
+    SyncTimerTimer( );
+
+    QWidget::closeEvent(event);
+}
+void MainWindow::moveEvent(QMoveEvent * event)
+{
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
+    QWidget::moveEvent(event);
+}
+void MainWindow::resizeEvent(QResizeEvent * event)
+{
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
+    QWidget::resizeEvent(event);
+}
+void MainWindow::changeEvent( QEvent* e )
+{
+    if( e->type() == QEvent::WindowStateChange )
+    {
+        QSettings settings;
+        settings.setValue("geometry", saveGeometry());
+    }
+}
 void MainWindow::SyncTimerTimer(  )
 {
    static bool closed = false;
@@ -100,15 +130,14 @@ void MainWindow::SyncTimerTimer(  )
          close();
       }
    }
+   ui->QF1Label->setText(freq);
    if (qs1rConnected)
    {
-       ui->QF1Label->setText(freq);
        ui->QS1RFLabel->setText(lastF);
    }
    else
    {
-       ui->QF1Label->setText("Not connected");
-       ui->QS1RFLabel->setText("");
+       ui->QS1RFLabel->setText("Not connected");
    }
 }
 
@@ -116,12 +145,12 @@ void MainWindow::SyncTimerTimer(  )
 void MainWindow::timer2Timeout()
 {
     // Poll the QS1R
-    if (ClientSocket1.isOpen())
+    if (qs1rConnected)
     {
         QString mess = ">UpdateRxFreq\n?fHz\n?tf\n";
         ClientSocket1.write( mess.toLatin1().data(), mess.length() );
     }
-    else if (qs1rConnected)
+    else if (!ClientSocket1.isOpen())
     {
         ClientSocket1.connectToHost(QHostAddress::LocalHost, RX1_CMD_SERV_TCP_PORT + 2);
     }
@@ -139,7 +168,8 @@ void MainWindow::onSocketDisconnect()
 }
 void MainWindow::onError(QAbstractSocket::SocketError /*err*/)
 {
-
+    ClientSocket1.close();
+    qs1rConnected = false;
 }
 
 void MainWindow::onReadyRead()
