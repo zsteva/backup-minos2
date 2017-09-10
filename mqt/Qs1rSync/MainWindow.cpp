@@ -69,8 +69,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     MinosRPC *rpc = MinosRPC::getMinosRPC("Qs1rSync", false);    // DO NOT use the environment variable - use "Chat" everywhere
 
-    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
-    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_clientCall(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
     rpc->subscribe( rpcConstants::rigControlCategory );
@@ -79,6 +79,15 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+void MainWindow::onStdInRead(QString cmd)
+{
+    trace("Command read from stdin: " + cmd);
+    if (cmd.indexOf("ShowServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(true);
+    if (cmd.indexOf("HideServers", Qt::CaseInsensitive) >= 0)
+        setShowServers(false);
+
 }
 void MainWindow::SyncTimerTimer(  )
 {
@@ -91,24 +100,42 @@ void MainWindow::SyncTimerTimer(  )
          close();
       }
    }
+   if (qs1rConnected)
+   {
+       ui->QF1Label->setText(freq);
+       ui->QS1RFLabel->setText(lastF);
+   }
+   else
+   {
+       ui->QF1Label->setText("Not connected");
+       ui->QS1RFLabel->setText("");
+   }
 }
 
 
 void MainWindow::timer2Timeout()
 {
     // Poll the QS1R
-    QString mess = ">UpdateRxFreq\n?fHz\n?tf\n";
-    ClientSocket1.write( mess.toLatin1().data(), mess.length() );
+    if (ClientSocket1.isOpen())
+    {
+        QString mess = ">UpdateRxFreq\n?fHz\n?tf\n";
+        ClientSocket1.write( mess.toLatin1().data(), mess.length() );
+    }
+    else if (qs1rConnected)
+    {
+        ClientSocket1.connectToHost(QHostAddress::LocalHost, RX1_CMD_SERV_TCP_PORT + 2);
+    }
+
 }
 
 void MainWindow::onSocketConnect()
 {
-
+    qs1rConnected = true;
 }
 
 void MainWindow::onSocketDisconnect()
 {
-
+    qs1rConnected = false;
 }
 void MainWindow::onError(QAbstractSocket::SocketError /*err*/)
 {
@@ -156,18 +183,6 @@ void MainWindow::onReadyRead()
     }
 }
 
-void MainWindow::on_connectQS1RButton_clicked()
-{
-    if (ClientSocket1.isOpen())
-    {
-        ClientSocket1.close();
-    }
-    else
-    {
-        ClientSocket1.connectToHost(QHostAddress::LocalHost, RX1_CMD_SERV_TCP_PORT + 2);
-    }
-}
-
 void MainWindow::on_closeButton_clicked()
 {
     close();
@@ -192,7 +207,7 @@ void MainWindow::on_transfer21Button_clicked()
     st->addMember( QString::number(freq), rpcConstants::rigControlKeyFreq );
     rpc.getCallArgs() ->addParam( st );
 
-    rpc.queueCall( rpcConstants::rigControlApp);
+    rpc.queueCall( rpcConstants::rigControlApp + "@localhost");
 }
 
 void MainWindow::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
@@ -214,6 +229,7 @@ void MainWindow::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QSt
         if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyFreq )
         {
             freq = an.getValue();
+            freq = freq.replace(".", "");
             ui->QF1Label->setText(freq);
         }
         if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyRadioName )

@@ -12,6 +12,7 @@ class StdInReader: public QThread
     virtual void run();
 public:
     StdInReader();
+    ~StdInReader();
 
 signals:
     void stdinLine(QString);

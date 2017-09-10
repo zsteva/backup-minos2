@@ -14,6 +14,11 @@ StdInReader::StdInReader()
 
     start();
 }
+StdInReader::~StdInReader()
+{
+    terminate();
+    wait();
+}
 
 void StdInReader::run()
 {

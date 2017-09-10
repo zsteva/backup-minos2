@@ -18,13 +18,14 @@ public:
 public slots:
 
 private slots:
-    void on_connectQS1RButton_clicked();
     void on_closeButton_clicked();
     void on_transfer12Button_clicked();
     void on_transfer21Button_clicked();
 
     void SyncTimerTimer();
     void timer2Timeout();
+
+    void onStdInRead(QString);
 
     void onSocketConnect();
     void onSocketDisconnect();
@@ -43,6 +44,8 @@ private:
     QTimer timer2;
 
     QTcpSocket ClientSocket1;
+
+    bool qs1rConnected = false;
 
     bool muted;
     long getQS1RFreq();

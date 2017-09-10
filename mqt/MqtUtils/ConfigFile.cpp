@@ -128,9 +128,12 @@ void RunConfigElement::createProcess()
         QString wdir = rundir;
         runner->setWorkingDirectory(wdir);
 
-        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-        env.insert("MQTRPCNAME", name); // Add an environment variable for the RPC name to use
-        runner->setProcessEnvironment(env);
+        if (appType != "None" )
+        {
+            QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+            env.insert("MQTRPCNAME", name); // Add an environment variable for the RPC name to use
+            runner->setProcessEnvironment(env);
+        }
 
         connect (runner, SIGNAL(started()), this, SLOT(on_started()));
         connect (runner, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(on_finished(int, QProcess::ExitStatus)));
@@ -154,7 +157,7 @@ void RunConfigElement::stopProcess()
 
 void RunConfigElement::sendCommand(const QString & cmd)
 {
-    if (runner)
+    if (runner && appType != "None" )
     {
         QByteArray command = (cmd + "\n").toUtf8();
         runner->write( command );
@@ -442,7 +445,7 @@ QString MinosConfig::checkConfig()
             {
                 reqErrs += ele->appType + " Executable path does not exist\n\n";
             }
-            if (!FileExists(ele->rundir + "/Configuration/MinosConfig.ini"))
+            if (ele->appType != "None" && !FileExists(ele->rundir + "/Configuration/MinosConfig.ini"))
             {
                 reqErrs += ele->appType + " Working directory is not valid - no Configuration/MinosConfig.ini\n\n";
             }
