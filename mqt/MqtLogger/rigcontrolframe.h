@@ -48,6 +48,7 @@ public:
     void setFreq(QString);
     void setRadioName(QString);
     void setRadioState(QString);
+    bool isRadioLoaded();
 
 signals:
     void sendFreqControl(QString);
@@ -83,7 +84,6 @@ private:
     RigMemDialog* memDialog;
 
     bool radioLoaded;
-    bool isRadioLoaded();
     bool freqEditOn;
     bool memReadFlag;
     QString curFreq;
