@@ -704,7 +704,7 @@ void TSingleLogFrame::on_RadioLoaded()
 
 bool TSingleLogFrame::isRadioLoaded()
 {
-   return radioLoaded;
+   return ui->FKHRigControlFrame->isRadioLoaded();
 }
 
 void TSingleLogFrame::on_SetRadioName(QString n)
