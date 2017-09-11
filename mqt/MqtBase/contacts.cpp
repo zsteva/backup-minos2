@@ -52,6 +52,9 @@ BaseContact& BaseContact::operator =( const BaseContact &ct )
    comments = ct.comments;
    contactFlags = ct.contactFlags;
    forcedMult = ct.forcedMult;
+   frequency = ct.frequency;
+   rotatorHeading = ct.rotatorHeading;
+   rigName = ct.rigName;
 
    op1 = ct.op1;         // current main op - derived from contacts
    op2 = ct.op2;         // current second op - derived from contacts
@@ -82,6 +85,9 @@ void BaseContact::clearDirty()
    comments.clearDirty();
    contactFlags.clearDirty();
    forcedMult.clearDirty();
+   frequency.clearDirty();
+   rotatorHeading.clearDirty();
+   rigName.clearDirty();
    op1.clearDirty();
    op2.clearDirty();
    contactScore.clearDirty();
@@ -101,6 +107,9 @@ void BaseContact::setDirty()
    comments.setDirty();
    contactFlags.setDirty();
    forcedMult.setDirty();
+   frequency.setDirty();
+   rotatorHeading.setDirty();
+   rigName.setDirty();
    op1.setDirty();
    op2.setDirty();
    contactScore.setDirty();

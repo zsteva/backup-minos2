@@ -59,10 +59,11 @@ public:
     void setFirstUnfilledButtonEnabled(bool);
     void logTabChanged();
 
-
-
     void modeSentFromRig(QString mode);
     void setFreq(QString freq);
+    void setRadioName(QString);
+    void setRotatorBearing(const QString &s);
+
     QString getBearing();
 private:
     ScreenContact *partialContact; // contact being edited on screen
@@ -102,6 +103,8 @@ private:
     virtual void showScreenEntry( );
     virtual void getScreenContactTime();
     virtual void showScreenContactTime( );
+    virtual void getScreenRigData();
+    virtual void getscreenRotatorData();
     bool checkAndLogEntry(bool checkDTG );
     Ui::QSOLogFrame *ui;
 
@@ -161,6 +164,8 @@ private:
     QString oldMode;
     bool qsoLogModeFlag = false;
     QString curFreq;
+    QString curRadioName;
+    QString curRotatorBearing;
 
     void setMode(QString m);
 
@@ -218,6 +223,7 @@ private slots:
 
 public slots:
     void setXferEnabled(bool);
+
 };
 
 #endif // QSOLOGFRAME_H

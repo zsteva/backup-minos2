@@ -666,52 +666,61 @@ bool ContestContact::GJVload( int diskBlock )
 }
 bool ContestContact::setField(QSharedPointer<BaseContact> tct, int ACol, const QString Value )
 {
-//#warning never used! There to allow grid editing
-   // This really ought to validate it first...
-   switch ( ACol )
-   {
-         /*case egDate:
+    //#warning never used! There to allow grid editing
+    // This really ought to validate it first...
+    switch ( ACol )
+    {
+    /*case egDate:
             break;
          */
-      case egTime:
-         time.setTime( Value, DTGDISP );  // VALIDATE!
-         break;
-      case egCall:
-         cs.valRes = CS_NOT_VALIDATED;
-         cs = callsign( Value );
-         cs.validate( );
-         break;
-      case egRSTTx:
-         reps.setValue( Value );
-         break;
-      case egSNTx:
-         serials.setValue( Value );
-         break;
-      case egRSTRx:
-         repr.setValue( Value );
-         break;
-      case egSNRx:
-         serialr.setValue( Value );
-         break;
-      case egLoc:
-         loc.loc.setValue( Value );
-         loc.valRes = LOC_NOT_VALIDATED;
-         loc.validate();
-         break;
-      case egBrg:
-         return false;
-      case egScore:
-         return false;
-      case egExchange:
-         extraText.setValue( Value );
-         break;
-      case egComments:
-         comments.setValue( Value );
-         break;
-   }
-   // here we should save the contact
-   commonSave(tct);
-   return true;
+    case egTime:
+        time.setTime( Value, DTGDISP );  // VALIDATE!
+        break;
+    case egCall:
+        cs.valRes = CS_NOT_VALIDATED;
+        cs = callsign( Value );
+        cs.validate( );
+        break;
+    case egRSTTx:
+        reps.setValue( Value );
+        break;
+    case egSNTx:
+        serials.setValue( Value );
+        break;
+    case egRSTRx:
+        repr.setValue( Value );
+        break;
+    case egSNRx:
+        serialr.setValue( Value );
+        break;
+    case egLoc:
+        loc.loc.setValue( Value );
+        loc.valRes = LOC_NOT_VALIDATED;
+        loc.validate();
+        break;
+    case egBrg:
+        return false;
+    case egScore:
+        return false;
+    case egExchange:
+        extraText.setValue( Value );
+        break;
+    case egComments:
+        comments.setValue( Value );
+        break;
+    case egRigName:
+        rigName.setValue(Value);
+        break;
+    case egFrequency:
+        frequency.setValue(Value);
+        break;
+    case egRotatorHeading:
+        rotatorHeading.setValue(Value);
+        break;
+    }
+    // here we should save the contact
+    commonSave(tct);
+    return true;
 }
 void ContestContact::processMinosStanza( const QString &methodName, MinosTestImport * const mt )
 {

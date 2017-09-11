@@ -330,6 +330,7 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
    if (!edit)
    {
        ui->EditFrame->setVisible(false);
+       ui->radioDetailsFrame->setVisible(false);
 
        ui->DateEdit->setStyleSheet(ssLineEditNoFrame);
        ui->TimeEdit->setStyleSheet(ssLineEditNoFrame);
@@ -796,6 +797,8 @@ void QSOLogFrame::setActiveControl( int *Key )
 void QSOLogFrame::getScreenEntry()
 {
    getScreenContactTime();
+   getScreenRigData();
+   getscreenRotatorData();
    screenContact.cs.fullCall.setValue( ui->CallsignEdit->text().trimmed() );
    screenContact.cs.valRes = CS_NOT_VALIDATED;
    screenContact.cs.validate( );
@@ -810,6 +813,9 @@ void QSOLogFrame::getScreenEntry()
    screenContact.loc.validate();
    screenContact.extraText = ui->QTHEdit->text().trimmed();
    screenContact.comments = ui->CommentsEdit->text().trimmed();
+   screenContact.rigName = ui->radioEdit->text().trimmed();
+   screenContact.frequency = ui->frequencyEdit->text().trimmed();
+   screenContact.rotatorHeading = ui->rotatorHeadingEdit->text().trimmed();
 
    screenContact.mode = ui->ModeComboBoxGJV->currentText().trimmed();
    screenContact.contactFlags &= ~NON_SCORING;
@@ -854,6 +860,9 @@ void QSOLogFrame::showScreenEntry( void )
       ui->CommentsEdit->setText(temp.comments.trimmed());;
       ui->NonScoreCheckBox->setChecked(temp.contactFlags & NON_SCORING);
       ui->DeletedCheckBox->setChecked(temp.contactFlags & DONT_PRINT);
+      ui->radioEdit->setText(curRadioName);
+      ui->frequencyEdit->setText(curFreq);
+      ui->rotatorHeadingEdit->setText(curRotatorBearing);
 
       setMode(temp.mode.trimmed());
 
@@ -1518,6 +1527,22 @@ void QSOLogFrame::setFreq(QString f)
         qDebug() << "freq = " << f << " mode = " << mode;
     }
 }
+//---------------------------------------------------------------------------
+void QSOLogFrame::setRadioName(QString n)
+{
+    if (curRadioName != n)
+    {
+        curRadioName = n;
+    }
+}
+//---------------------------------------------------------------------------
+void QSOLogFrame::setRotatorBearing(const QString &s)
+{
+    if (curRotatorBearing != s)
+    {
+        curRotatorBearing = s;
+    }
+}
 
 //---------------------------------------------------------------------------
 void QSOLogFrame::clearCurrentField()
@@ -1539,7 +1564,7 @@ void QSOLogFrame::updateQSODisplay()
    ui->SerTXEdit->setEnabled(!contest->isReadOnly());
    ui->RSTRXEdit->setEnabled(!contest->isReadOnly());
    ui->SerRXEdit->setEnabled(!contest->isReadOnly());
-   //CallsignEdit->Enabled = false;
+   //CallsignEdit->Enabled = false; // leave these to allow searching
    //LocEdit->Enabled = false;
    //QTHEdit->Enabled = false;
    ui->CommentsEdit->setEnabled(!contest->isReadOnly());
@@ -1548,6 +1573,9 @@ void QSOLogFrame::updateQSODisplay()
    ui->DeletedCheckBox->setEnabled(!contest->isReadOnly());
    ui->GJVOKButton->setEnabled(!contest->isReadOnly());
    ui->GJVForceButton->setEnabled(!contest->isReadOnly());
+   ui->radioEdit->setEnabled(!contest->isReadOnly());
+   ui->frequencyEdit->setEnabled(!contest->isReadOnly());
+   ui->rotatorHeadingEdit->setEnabled(!contest->isReadOnly());
 
    ui->QTHEdit->setEnabled( contest->otherExchange .getValue() || contest->districtMult.getValue() );
 
@@ -1801,6 +1829,22 @@ void QSOLogFrame::showScreenContactTime()
    ui->DateEdit->setText(screenContact.time.getDate( DTGDISP ));
    ui->TimeEdit->setText(screenContact.time.getTime( DTGDISP ));
 }
+void QSOLogFrame::getScreenRigData()
+{
+    if (!edit)
+    {
+        screenContact.rigName = curRadioName;
+        screenContact.frequency = curFreq;
+    }
+}
+void QSOLogFrame::getscreenRotatorData()
+{
+    if (!edit)
+    {
+        screenContact.rotatorHeading = curRotatorBearing;
+    }
+}
+
 //==============================================================================
 void QSOLogFrame::logCurrentContact( )
 {

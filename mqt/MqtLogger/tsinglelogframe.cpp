@@ -720,10 +720,8 @@ bool TSingleLogFrame::isRadioLoaded()
 
 void TSingleLogFrame::on_SetRadioName(QString n)
 {
-
     ui->FKHRigControlFrame->setRadioName(n);
-
-
+    ui->GJVQSOLogFrame->setRadioName(n);
 }
 
 void TSingleLogFrame::on_SetRadioState(QString s)

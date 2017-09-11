@@ -32,13 +32,14 @@ enum eLogGridCols {egTime,
                    egRSTTx, egSNTx, egRSTRx, egSNRx,
                    egLoc, egBrg, egScore,
                    egExchange, egComments,
+                   egRigName, egFrequency, egRotatorHeading,
                    egLogMaxCol
                   };
 //---------------------------------------------------------------------------
 #define LOGTREECOLS egLogMaxCol
 #define THISMATCHTREECOLS egLogMaxCol
 #define OTHERMATCHTREECOLS egLogMaxCol - 4
-#define ARCHIVEMATCHTREECOLS egLogMaxCol - 5
+#define ARCHIVEMATCHTREECOLS egLogMaxCol - 8
 extern GridColumn QSOTreeColumns[ LOGTREECOLS ];
 
 class QSOGridModel: public QAbstractItemModel
