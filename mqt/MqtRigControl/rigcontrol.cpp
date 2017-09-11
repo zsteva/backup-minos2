@@ -79,7 +79,7 @@ int RigControl::init(scatParams currentRadio)
             retcode = rig_set_conf(my_rig, rig_token_lookup(my_rig, "civaddr"),currentRadio.civAddress.toLatin1());
         }
     }
-    strncpy(my_rig->state.rigport.pathname, (const char*)comport.toLatin1(), FILPATHLEN);
+    strncpy(my_rig->state.rigport.pathname, comport.toLatin1().data(), FILPATHLEN);
     my_rig->state.rigport.parm.serial.rate = currentRadio.baudrate;
     my_rig->state.rigport.parm.serial.data_bits = currentRadio.databits;
     my_rig->state.rigport.parm.serial.stop_bits = currentRadio.stopbits;
