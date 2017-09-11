@@ -65,9 +65,7 @@ RotControlFrame::~RotControlFrame()
 
 int RotControlFrame::getAngle(QString brgSt)
 {
-
-
-    int brg = 0;
+    int brg = COMPASS_ERROR;
 
     for (int i = 0;i < brgSt.length(); i++)
     {

@@ -1112,6 +1112,7 @@ void QSOLogFrame::calcLoc( )
            ui->BrgSt->clear();
             sct.contactScore = -1;
             sct.bearing = -1;
+            MinosLoggerEvents::SendBrgStrToRot("");
          }
    }
 }
