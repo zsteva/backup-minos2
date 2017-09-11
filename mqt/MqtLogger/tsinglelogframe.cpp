@@ -775,6 +775,7 @@ void TSingleLogFrame::on_RotatorState(QString s)
 void TSingleLogFrame::on_RotatorBearing(QString s)
 {
     ui->FKHRotControlFrame->setRotatorBearing(s);
+    ui->GJVQSOLogFrame->setRotatorBearing(s);
 }
 
 

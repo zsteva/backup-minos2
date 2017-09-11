@@ -813,10 +813,12 @@ void QSOLogFrame::getScreenEntry()
    screenContact.loc.validate();
    screenContact.extraText = ui->QTHEdit->text().trimmed();
    screenContact.comments = ui->CommentsEdit->text().trimmed();
-   screenContact.rigName = ui->radioEdit->text().trimmed();
-   screenContact.frequency = ui->frequencyEdit->text().trimmed();
-   screenContact.rotatorHeading = ui->rotatorHeadingEdit->text().trimmed();
-
+   if (edit)
+   {
+       screenContact.rigName = ui->radioEdit->text().trimmed();
+       screenContact.frequency = ui->frequencyEdit->text().trimmed();
+       screenContact.rotatorHeading = ui->rotatorHeadingEdit->text().trimmed();
+   }
    screenContact.mode = ui->ModeComboBoxGJV->currentText().trimmed();
    screenContact.contactFlags &= ~NON_SCORING;
 
@@ -860,10 +862,12 @@ void QSOLogFrame::showScreenEntry( void )
       ui->CommentsEdit->setText(temp.comments.trimmed());;
       ui->NonScoreCheckBox->setChecked(temp.contactFlags & NON_SCORING);
       ui->DeletedCheckBox->setChecked(temp.contactFlags & DONT_PRINT);
-      ui->radioEdit->setText(curRadioName);
-      ui->frequencyEdit->setText(curFreq);
-      ui->rotatorHeadingEdit->setText(curRotatorBearing);
-
+      if (edit)
+      {
+          ui->radioEdit->setText(curRadioName);
+          ui->frequencyEdit->setText(curFreq);
+          ui->rotatorHeadingEdit->setText(curRotatorBearing);
+      }
       setMode(temp.mode.trimmed());
 
       // and now we want to put the selection on each at the END of the text
