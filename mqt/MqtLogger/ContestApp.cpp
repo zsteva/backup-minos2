@@ -573,30 +573,19 @@ void TContestApp::closeFile(BaseContestLog * contest)
 {
    if ( contest )
    {
-      removeContest( contest ); 		// must remove LoggerContestLog from its slot
+      removeContest( contest );
       delete contest;
    }
 
    writeContestList();
 }
-// Predicate function for remove_if
-bool noslot( ListSlot *ip )
-{
-   if ( ip == 0 )
-      return true;
-   else
-      return false;
-}
 void TContestApp::closeListFile( ContactList *list )
 {
-    int lpos = -1;
    if ( list )
    {
-      lpos = removeList( list ); 		// must remove LoggerContestLog from its slot
+      removeList( list );
       delete list;
    }
-   ListSlotIterator lsi = listSlotList.find(lpos);
-   listSlotList.erase( lsi );
    writeListsList();
 }
 BaseContestLog * TContestApp::getCurrentContest()
