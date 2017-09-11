@@ -19,6 +19,8 @@ copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtControl\release\MqtControl.exe B
 copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtKeyer\release\MqtKeyer.exe Bin
 copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtLogger\release\MqtLogger.exe Bin
 copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtMonitor\release\MqtMonitor.exe Bin
+copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtServer\release\MqtRigControl.exe Bin
+copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtServer\release\MqtRotator.exe Bin
 copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtServer\release\MqtServer.exe Bin
 
 xcopy /E /F /Y C:\Projects\sfMinos\mqt\ControlFiles\Configuration .\Configuration
@@ -37,6 +39,8 @@ C:\Qt\5.6\mingw49_32\bin\windeployqt.exe MqtControl.exe
 C:\Qt\5.6\mingw49_32\bin\windeployqt.exe MqtKeyer.exe
 C:\Qt\5.6\mingw49_32\bin\windeployqt.exe MqtLogger.exe
 C:\Qt\5.6\mingw49_32\bin\windeployqt.exe MqtMonitor.exe
+C:\Qt\5.6\mingw49_32\bin\windeployqt.exe MqtRigControl.exe
+C:\Qt\5.6\mingw49_32\bin\windeployqt.exe MqtRotator.exe
 C:\Qt\5.6\mingw49_32\bin\windeployqt.exe MqtServer.exe
 
 cd ../..

@@ -21,12 +21,16 @@
 #include "keyers.h"
 #include "keyerlog.h"
 #include "riff.h"
+#if !defined (_MSC_VER)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-result"
 #pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
 // as we don't want to change rtaudio.h...
 #include "RtAudio.h"
+#if !defined (_MSC_VER)
 #pragma GCC diagnostic pop
+#endif
 
 #include "SimpleComp.h"
 

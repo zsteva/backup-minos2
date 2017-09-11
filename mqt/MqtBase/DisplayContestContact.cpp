@@ -54,6 +54,9 @@ void DisplayContestContact::copyFromArg( ScreenContact &cct )
    ctryMult = cct.ctryMult;
    multCount = cct.multCount;
    forcedMult.setValue( cct.forcedMult );
+   frequency.setValue(cct.frequency);
+   rotatorHeading.setValue(cct.rotatorHeading);
+   rigName.setValue(cct.rigName);
    bonus = cct.bonus;
    newBonus = cct.newBonus;
 
@@ -125,6 +128,15 @@ bool DisplayContestContact::ne( const ScreenContact &mct, bool checkDTG ) const
       return true; // i.e. not equal
 
    if ( strcmpsp( mct.forcedMult, forcedMult.getValue() ) )
+      return true; // i.e. not equal
+
+   if ( strcmpsp( mct.frequency, frequency.getValue() ) )
+      return true; // i.e. not equal
+
+   if ( strcmpsp( mct.rotatorHeading, rotatorHeading.getValue() ) )
+      return true; // i.e. not equal
+
+   if ( strcmpsp( mct.rigName, rigName.getValue() ) )
       return true; // i.e. not equal
 
    if ( strcmpsp( mct.op1, op1.getValue() ) )
@@ -630,6 +642,16 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
                res += comments.getValue();
             }
             break;
+      case egRigName:
+          res = rigName.getValue();
+          break;
+      case egFrequency:
+          res = frequency.getValue();
+          break;
+      case egRotatorHeading:
+          res = rotatorHeading.getValue();
+          break;
+
       }
    }
    return res;
@@ -714,6 +736,9 @@ void DisplayContestContact::processMinosStanza( const QString &methodName, Minos
          mt->getStructArgMemberValue( "band", contest->band );
          mt->getStructArgMemberValue( "claimedScore", contactScore );
          mt->getStructArgMemberValue( "forcedMult", forcedMult );
+         mt->getStructArgMemberValue( "frequency", frequency );
+         mt->getStructArgMemberValue( "rotatorHeading", rotatorHeading );
+         mt->getStructArgMemberValue( "rigName", rigName );
 
          mt->getStructArgMemberValue( "op1", op1 );
          mt->getStructArgMemberValue( "op2", op2 );

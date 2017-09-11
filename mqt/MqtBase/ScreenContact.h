@@ -47,6 +47,9 @@ class ScreenContact
       QString comments;
       unsigned short contactFlags;
       QString forcedMult;
+      QString frequency;
+      QString rotatorHeading;
+      QString rigName;
 
       QString op1;
       QString op2;

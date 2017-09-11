@@ -114,7 +114,7 @@ public:
     int setFrequency(freq_t frequency, vfo_t vfo);
 
     int getMode(vfo_t vfo, rmode_t *mode, pbwidth_t *width);
-    setMode(vfo_t vfo, rmode_t mode, pbwidth_t passBandwidth);
+    int setMode(vfo_t vfo, rmode_t mode, pbwidth_t passBandwidth);
     QString convertModeQstr(rmode_t);
 
     int getVfo(vfo_t*);
@@ -166,7 +166,7 @@ signals:
 
   private:
     hamlib_port_t myport;
-    RIG *my_rig;            // handle to rig instance
+    RIG *my_rig = 0;            // handle to rig instance
 //    freq_t frequency;            // frequency
 //    rmode_t rmode;          // radio mode of operation
     pbwidth_t pbwidth;

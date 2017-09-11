@@ -3,56 +3,27 @@
 # Project created by QtCreator 2017-07-12T16:19:05
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
+include($$PWD/../mqtapplibs.pri)
 
-QT       += core gui network
-QT       += axcontainer
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += core gui
+QT       += network
+QT       += widgets
 
 TARGET = Qs1rSync
 TEMPLATE = app
 
 win32:RC_ICONS += ../minos.ico
-VERSION=0.5.0.0
-DEFINES += VERSION=\\\"$$VERSION\\\"
 
-# The following define makes your compiler emit warnings if you use
-# any feature of Qt which as been marked as deprecated (the exact warnings
-# depend on your compiler). Please consult the documentation of the
-# deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
 
-# You can also make your code fail to compile if you use deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
-TYPELIBS = $$system(dumpcpp OmniRig.tlb)
 SOURCES += \
         main.cpp \
-        MainWindow.cpp \
-    OmniWrapper.cpp
+        MainWindow.cpp
 
 HEADERS += \
         MainWindow.h \
-    qs_defines.h \
-    OmniWrapper.h
+        qs_defines.h
 
 FORMS += \
         MainWindow.ui
 
-DISTFILES += \
-    OmniRig.tlb
-
-#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../XMPPLib/release/ -lXMPPLib
-#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../XMPPLib/debug/ -lXMPPLib
-#else:unix: LIBS += -L$$OUT_PWD/../XMPPLib/ -lXMPPLib
-
-#INCLUDEPATH += $$PWD/../XMPPLib
-#DEPENDPATH += $$PWD/../XMPPLib
-
-#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPLib/release/libXMPPLib.a
-#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPLib/debug/libXMPPLib.a
-#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPLib/release/XMPPLib.lib
-#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../XMPPLib/debug/XMPPLib.lib
-#else:unix: PRE_TARGETDEPS += $$OUT_PWD/../XMPPLib/libXMPPLib.a

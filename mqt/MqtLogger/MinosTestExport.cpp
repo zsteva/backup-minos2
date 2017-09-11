@@ -347,6 +347,9 @@ int MinosTestExport::exportQSO(QSharedPointer<QFile> expfd, const QSharedPointer
    ct->power.addIfDirty( st, "power", dirty );
    ct->band.addIfDirty( st, "band", dirty );
    lct->forcedMult.addIfDirty( st, "forcedMult", dirty );
+   lct->frequency.addIfDirty( st, "frequency", dirty );
+   lct->rotatorHeading.addIfDirty( st, "rotatorHeading", dirty );
+   lct->rigName.addIfDirty( st, "rigName", dirty );
    lct->contactScore.addIfDirty( st, "claimedScore", dirty );
    lct->op1.addIfDirty( st, "op1", dirty );
    lct->op2.addIfDirty( st, "op2", dirty );

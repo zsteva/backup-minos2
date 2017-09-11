@@ -306,7 +306,10 @@ static GridColumn ThisMatchTreeColumns[ THISMATCHTREECOLS ] =
       GridColumn( egBrg, "3601X", "brg", taLeftJustify ),                // bearing
       GridColumn( egScore, "12345XX", "dist", taLeftJustify /*taRightJustify*/ ),  // score
       GridColumn( egExchange, "XXXXXXXXXXXXXXXX", "Exchange", taLeftJustify ),    // QTH
-      GridColumn( egComments, "XXXXXXXXXXXXXXXX", "Comments", taLeftJustify )     // comments
+      GridColumn( egComments, "XXXXXXXXXXXXXXXX", "Comments", taLeftJustify ),     // comments
+      GridColumn( egRigName, "XXXXXX", "Rig", taLeftJustify ),
+      GridColumn( egFrequency, "1.296.123.456XXX", "Freq", taLeftJustify ),
+      GridColumn( egRotatorHeading, "XXXXXX", "Rot Heading", taLeftJustify )
    };
 //---------------------------------------------------------------------------
 static GridColumn OtherMatchTreeColumns[ OTHERMATCHTREECOLS ] =
@@ -317,7 +320,10 @@ static GridColumn OtherMatchTreeColumns[ OTHERMATCHTREECOLS ] =
       GridColumn( egBrg, "3601X", "brg", taLeftJustify ),                // bearing
       GridColumn( egScore, "12345XX", "dist", taLeftJustify /*taRightJustify*/ ),  // score
       GridColumn( egExchange, "XXXXXXXXXXXXXXXX", "Exchange", taLeftJustify ),    // QTH
-      GridColumn( egComments, "XXXXXXXXXXXXXXXX", "Comments", taLeftJustify )     // comments
+      GridColumn( egComments, "XXXXXXXXXXXXXXXX", "Comments", taLeftJustify ),     // comments
+      GridColumn( egRigName, "XXXXXX", "Rig", taLeftJustify ),
+      GridColumn( egFrequency, "1.296.123.456XXX", "Freq", taLeftJustify ),
+      GridColumn( egRotatorHeading, "XXXXXX", "Rot Heading", taLeftJustify )
    };
 //---------------------------------------------------------------------------
 static GridColumn ArchiveMatchTreeColumns[ ARCHIVEMATCHTREECOLS ] =

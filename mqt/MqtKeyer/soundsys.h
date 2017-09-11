@@ -10,12 +10,17 @@
 #define soundsysH
 
 #include "base_pch.h"
+#if !defined (_MSC_VER)
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-result"
 #pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
 // as we don't want to change rtaudio.h...
 #include "RtAudio.h"
+#if !defined (_MSC_VER)
 #pragma GCC diagnostic pop
+#endif
 
 #include "riff.h"
 #include "SimpleComp.h"

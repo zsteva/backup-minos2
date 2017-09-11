@@ -79,6 +79,7 @@ private:
     BaseContestLog * addSlot(ContestDetails *ced, const QString &fname, bool newfile, int slotno );
     void closeSlot(int t, bool addToMRU );
     TSingleLogFrame *findLogFrame(int t);
+    void selectTab(int t);
 
     QAction *lastSessionSelected;
 
@@ -186,9 +187,11 @@ private slots:
     void on_ContestPageControl_currentChanged(int index);
     void on_ContestPageControl_tabBarDoubleClicked(int index);
     void on_ContestPageControl_customContextMenuRequested(const QPoint &pos);
+    void onTabClosebutton(int);
 
     void on_TimeDisplayTimer( );
     void on_ReportOverstrike(bool , BaseContestLog * );
+    void onTabMoved(int, int);
 
 signals:
     void sendKeyerPlay( int fno );

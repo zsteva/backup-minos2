@@ -97,7 +97,7 @@ void FreqDial::drawScale(QPainter *painter, double frequency, int scaleHeight)
 
     int markStep = dialData::khzStep[zoomLevel] * dialData::khzPixelStep[zoomLevel];
     int markCount = 0;
-    int markFreq = (int) scaleStartFreq;
+    int markFreq = scaleStartFreq;
 
     if (dialData::minorMarker[zoomLevel] == 0)
     {

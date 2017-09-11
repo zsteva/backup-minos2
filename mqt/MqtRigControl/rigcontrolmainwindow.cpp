@@ -69,7 +69,8 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
     radio->getRigList();
 
     selectRig = new SetupDialog(radio);
-    selectRadio = new QComboBox;
+    selectRadio = ui->selectRadioBox;
+
     pollTimer = new QTimer(this);
 
     status = new QLabel;
@@ -81,7 +82,6 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
     radio->set_serialConnected(false);
     initActionsConnections();
 
-    selectRadio = ui->selectRadioBox;
 
     if (loggerRadio.length() > 0)
     {
