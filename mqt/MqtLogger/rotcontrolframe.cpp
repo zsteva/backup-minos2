@@ -105,13 +105,8 @@ void RotControlFrame::setBrgFromRigFrmMemory(QString brg)
     ui->BrgSt->setText(brg);
 }
 
-
-void RotControlFrame::on_Rotate_clicked()
+void RotControlFrame::turnTo(int angle)
 {
-    QString brgSt = ui->BrgSt->text();
-
-    int angle = getAngle(brgSt);
-
     if (angle == COMPASS_ERROR)
     {
         QString msg = "<font color='Red'>Bearing empty or invalid</font>";
@@ -135,7 +130,25 @@ void RotControlFrame::on_Rotate_clicked()
         emit sendRotator(rpcConstants::eRotateDirect, angle);
         moving = true;
     }
+}
 
+void RotControlFrame::on_Rotate_clicked()
+{
+    QString brgSt = ui->BrgSt->text();
+
+    int angle = getAngle(brgSt);
+
+    turnTo(angle);
+}
+
+void RotControlFrame::on_nudgeLeft_clicked()
+{
+    turnTo(currentBearing - 1);
+}
+
+void RotControlFrame::on_nudgeRight_clicked()
+{
+    turnTo(currentBearing + 1);
 }
 
 void RotControlFrame::on_RotateLeft_clicked(bool /*clicked*/)

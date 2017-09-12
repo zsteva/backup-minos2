@@ -69,6 +69,8 @@ private:
     void rot_right_button_on();
     void rot_right_button_off();
 
+    void turnTo(int angle);
+
 signals:
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
 
@@ -82,6 +84,8 @@ private slots:
     void on_StopRotate_clicked();
     void getBrgFrmQSOLog(QString);
 
+    void on_nudgeLeft_clicked();
+    void on_nudgeRight_clicked();
 };
 
 #endif // ROTCONTROLFRAME_H
