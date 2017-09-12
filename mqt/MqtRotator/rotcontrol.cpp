@@ -131,7 +131,7 @@ int RotControl::closeRotator()
 
 void RotControl::getRotatorList()
 {
-    int a =0;
+
     if(!rotatorlistLoaded)
     {
         capsList.clear();
@@ -420,7 +420,7 @@ int RotControl::calcSouthBearing(int rotatorBearing)
 
 
 // which passes the call to this method
-int RotControl::rig_message_cb(enum rig_debug_level_e debug_level, const char *fmt, va_list ap)
+int RotControl::rig_message_cb(enum rig_debug_level_e /*debug_level*/, const char *fmt, va_list ap)
 {
     char buf[1024];
 //    rig_debug_level_e dbl = debug_level;

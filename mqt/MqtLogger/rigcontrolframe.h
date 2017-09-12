@@ -21,6 +21,7 @@
 #include <QAction>
 #include <QToolButton>
 #include <QRadioButton>
+#include <QShortcut>
 #include "logger_pch.h"
 #include "RPCCommandConstants.h"
 #include "rigmemcommondata.h"
@@ -66,19 +67,21 @@ private slots:
     void memoryUpdate(int);
 
     void exitFreqEdit();
+    void memoryShortCutSelected(int buttonNumber);
     void readActionSelected(int);
     void editActionSelected(int buttonNumber);
     void writeActionSelected(int);
     void clearActionSelected(int);
     void passBandRadioSelected(int button);
 
-
+    void test();
 
 
 private:
 
     QToolButton* memButtons[memoryData::NUM_MEMORIES];
     QMenu* memoryMenu[memoryData::NUM_MEMORIES];
+    QShortcut* shortKey[memoryData::NUM_MEMORIES];
     QAction* readAction[memoryData::NUM_MEMORIES];
     QAction* writeAction[memoryData::NUM_MEMORIES];
     QAction* editAction[memoryData::NUM_MEMORIES];
@@ -107,10 +110,11 @@ private:
     void keyPressEvent(QKeyEvent *event);
 
     void initRigFrame();
-    void initMemoryButtons();
+    void initMemoryButtons(QWidget *parent);
     void loadMemoryButtonLabels();
     void initPassBandRadioButtons();
     void noRadioSendOutFreq(QString f);
+
 signals:
     void escapePressed();
 

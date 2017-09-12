@@ -3,10 +3,13 @@
 # Project created by QtCreator 2017-07-22T09:59:47
 #
 #-------------------------------------------------
+include($$PWD/../mqt.pri)
+include($$PWD/../mqtapplibs.pri)
+
 
 QT       += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += widgets
+QT       += network
 
 TARGET = MqtCluster
 TEMPLATE = app
@@ -26,6 +29,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         clustermainwindow.cpp
 
-HEADERS  += clustermainwindow.h
+HEADERS  += clustermainwindow.h \
+
 
 FORMS    += clustermainwindow.ui

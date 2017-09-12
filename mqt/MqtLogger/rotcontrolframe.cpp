@@ -32,11 +32,16 @@ RotControlFrame::RotControlFrame(QWidget *parent):
 {
     ui->setupUi(this);
 
-    // need to fix metrics ***************************************
-    //ui->BrgSt->setFixedWidth(metrics.width("(8888)MT"));
-
     ui->BrgSt->clear();
-    //ui->DistSt->clear();
+
+    nudgeRight1 = new QShortcut(QKeySequence("Ctrl++"), parent);   // Ctrl +
+    connect(nudgeRight1, SIGNAL(activated()), ui->nudgeRight, SLOT(click()));
+
+    nudgeRight2 = new QShortcut(QKeySequence("Ctrl+="), parent);   // Ctrl +
+    connect(nudgeRight2, SIGNAL(activated()), ui->nudgeRight, SLOT(click()));
+
+    nudgeLeft = new QShortcut(QKeySequence::ZoomOut, parent);   // Ctrl -
+    connect(nudgeLeft, SIGNAL(activated()), ui->nudgeLeft, SLOT(click()));
 
     ui->RotateLeft->setShortcut(QKeySequence(ROTATE_CCW_KEY));
     ui->RotateRight->setShortcut(QKeySequence(ROTATE_CW_KEY));
@@ -105,13 +110,8 @@ void RotControlFrame::setBrgFromRigFrmMemory(QString brg)
     ui->BrgSt->setText(brg);
 }
 
-
-void RotControlFrame::on_Rotate_clicked()
+void RotControlFrame::turnTo(int angle)
 {
-    QString brgSt = ui->BrgSt->text();
-
-    int angle = getAngle(brgSt);
-
     if (angle == COMPASS_ERROR)
     {
         QString msg = "<font color='Red'>Bearing empty or invalid</font>";
@@ -135,7 +135,25 @@ void RotControlFrame::on_Rotate_clicked()
         emit sendRotator(rpcConstants::eRotateDirect, angle);
         moving = true;
     }
+}
 
+void RotControlFrame::on_Rotate_clicked()
+{
+    QString brgSt = ui->BrgSt->text();
+
+    int angle = getAngle(brgSt);
+
+    turnTo(angle);
+}
+
+void RotControlFrame::on_nudgeLeft_clicked()
+{
+    turnTo(currentBearing - 3);
+}
+
+void RotControlFrame::on_nudgeRight_clicked()
+{
+    turnTo(currentBearing + 3);
 }
 
 void RotControlFrame::on_RotateLeft_clicked(bool /*clicked*/)
