@@ -32,7 +32,7 @@ RigMemDialog::RigMemDialog(QString _radioName, QString _radioState, QWidget *par
 
 {
     ui->setupUi(this);
-    this->setWindowModality(Qt::ApplicationModal);
+    //this->setWindowModality(Qt::ApplicationModal);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
 
