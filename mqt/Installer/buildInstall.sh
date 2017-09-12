@@ -21,6 +21,8 @@ cp ~/Minos2/build-mqt-Desktop-Release/MqtControl/MqtControl Bin
 cp ~/Minos2/build-mqt-Desktop-Release/MqtKeyer/MqtKeyer Bin
 cp ~/Minos2/build-mqt-Desktop-Release/MqtLogger/MqtLogger Bin
 cp ~/Minos2/build-mqt-Desktop-Release/MqtMonitor/MqtMonitor Bin
+cp ~/Minos2/build-mqt-Desktop-Release/MqtRigControl/MqtRigControl Bin
+cp ~/Minos2/build-mqt-Desktop-Release/MqtRotator/MqtRotator Bin
 cp ~/Minos2/build-mqt-Desktop-Release/MqtServer/MqtServer Bin
 
 cp ~/Minos2/mqt/ControlFiles/Configuration/* ./Configuration
