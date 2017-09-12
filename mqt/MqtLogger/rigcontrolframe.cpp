@@ -444,7 +444,7 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
     memDialog->setLogData(&logData, buttonNumber);
     memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Write");
     memDialog->setFocusCallsign();
-    memDialog->show();
+    memDialog->exec();
 }
 
 
@@ -459,7 +459,7 @@ void RigControlFrame::editActionSelected(int buttonNumber)
 
     memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Edit");
     memDialog->setFocusCallsign();
-    memDialog->show();
+    memDialog->exec();
 
 }
 

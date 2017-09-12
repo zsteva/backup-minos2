@@ -58,7 +58,7 @@ private slots:
     void callSignToUpper(QString callSign);
     void locatorToUpper(QString locator);
     void escapePushed();
-    void close();
+    void closeMemory();
 
 private:
     Ui::RigMemDialog *ui;
@@ -77,6 +77,7 @@ private:
 
 signals:
     void escapePressed();
+    void returnPressed();
 };
 
 #endif // RIGMEMDIALOG_H
