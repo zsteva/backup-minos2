@@ -28,12 +28,24 @@
 
 #define MODE_ERROR "<font color='Red'>Mode Error</font>"
 
-static QStringList memoryShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
+/*static QStringList memoryShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
                             QString("Ctrl+3"), QString("Ctrl+4"),
                             QString("Ctrl+5"), QString("Ctrl+6"),
                             QString("Ctrl+7"), QString("Ctrl+8"),
                             QString("Ctrl+9"), QString("Ctrl+0")};
 
+
+*/
+static QKeySequence memoryShortCut[] = {QKeySequence(Qt::CTRL + Qt::Key_1),
+                                       QKeySequence(Qt::CTRL + Qt::Key_2),
+                                       QKeySequence(Qt::CTRL + Qt::Key_3),
+                                       QKeySequence(Qt::CTRL + Qt::Key_4),
+                                       QKeySequence(Qt::CTRL + Qt::Key_5),
+                                       QKeySequence(Qt::CTRL + Qt::Key_6),
+                                       QKeySequence(Qt::CTRL + Qt::Key_7),
+                                       QKeySequence(Qt::CTRL + Qt::Key_8),
+                                       QKeySequence(Qt::CTRL + Qt::Key_9),
+                                       QKeySequence(Qt::CTRL + Qt::Key_0)};
 
 
 RigControlFrame::RigControlFrame(QWidget *parent):
@@ -63,7 +75,8 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 
 
     initRigFrame();
-    initMemoryButtons();
+
+    initMemoryButtons(parent);
     initPassBandRadioButtons();
 
     setRxPBFlag("set");
@@ -111,27 +124,32 @@ void RigControlFrame::initRigFrame()
 
 
 
+
+
+/*
     // test toolbutton
-    //QToolButton* tb = ui->toolButton;
-    //tb->setToolButtonStyle(Qt::ToolButtonTextOnly);
-    //tb->setPopupMode(QToolButton::InstantPopup);
-    //tb->setShortcut(QString("Ctrl+1"));
-    //QMenu* testMenu = new QMenu(tb);
+    QToolButton* tb = ui->memButton1;;
+    tb->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    tb->setPopupMode(QToolButton::InstantPopup);
+    tb->setShortcut(QString("Ctrl+1"));
+    QMenu* testMenu = new QMenu(tb);
 
-    //QAction* act = new QAction("&Read", this);
-    //testMenu->addAction(act);
-    //tb->setMenu(testMenu);
+    QAction* act = new QAction("&Read", this);
+    testMenu->addAction(act);
+    tb->setMenu(testMenu);
 
-    //connect(ui->toolButton, SIGNAL(triggered(QAction* act)), this, SLOT(test()));
+    connect(ui->memButton1, SIGNAL(triggered(QAction* act)), this, SLOT(test()));
 
-
+*/
 
 }
 
-//void RigControlFrame::test()
-//{
-//    qDebug() << "toolbutton clicked";
-//}
+
+void RigControlFrame::test()
+{
+    qDebug() << "toolbutton clicked";
+}
+
 
 void RigControlFrame::setRadioLoaded()
 {
@@ -230,7 +248,7 @@ void RigControlFrame::exitFreqEdit()
 
 
 
-void RigControlFrame::initMemoryButtons()
+void RigControlFrame::initMemoryButtons(QWidget *parent)
 {
     memButtons[0] = ui->memButton1;
     memButtons[1] = ui->memButton2;
@@ -243,13 +261,16 @@ void RigControlFrame::initMemoryButtons()
     memButtons[8] = ui->memButton9;
     memButtons[9] = ui->memButton10;
 
+
+
     for (int i = 0; i < memoryData::NUM_MEMORIES; i++)
     {
 
+        shortKey[i] = new QShortcut(memoryShortCut[i], parent);
         memButtons[i]->setToolButtonStyle(Qt::ToolButtonTextOnly);
         memButtons[i]->setPopupMode(QToolButton::InstantPopup);
         memButtons[i]->setText(memoryData::memoryTitle[i] + memoryData::memTitleBlank);
-        memButtons[i]->setShortcut(memoryShortCut[i]);
+        //memButtons[i]->setShortcut(QKeySequence(memoryShortCut[i]));
         memoryMenu[i] = new QMenu(memButtons[i]);
 
         readAction[i] = new QAction("&Read", this);
@@ -264,7 +285,18 @@ void RigControlFrame::initMemoryButtons()
     }
 
 
+    // map shortcut keys
+    QSignalMapper *shortKey_mapper = new QSignalMapper(this);
 
+    for (int i = 0; i < memoryData::NUM_MEMORIES; i++ )
+    {
+        shortKey_mapper->setMapping(shortKey[i], i);
+        connect(shortKey[i], SIGNAL(activated()), shortKey_mapper, SLOT(map()));
+
+    }
+    connect(shortKey_mapper, SIGNAL(mapped(int)), this, SLOT(memoryShortCutSelected(int)));
+
+//----------------------------------------------------------------------------------------
 
     // map read Action
 
@@ -350,6 +382,12 @@ void RigControlFrame::initPassBandRadioButtons()
     connect(passBand_mapper, SIGNAL(mapped(int)), this, SLOT(passBandRadioSelected(int)));
 
 
+}
+
+
+void RigControlFrame::memoryShortCutSelected(int buttonNumber)
+{
+    memButtons[buttonNumber]->showMenu();
 }
 
 
