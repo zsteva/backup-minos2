@@ -355,7 +355,7 @@ void BandMapMainWindow::resizeEvent(QResizeEvent *event)
 
 
 
-void BandMapMainWindow::paintEvent(QPaintEvent *event)
+void BandMapMainWindow::paintEvent(QPaintEvent  * /*event */)
 {
 
 }

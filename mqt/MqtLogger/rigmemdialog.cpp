@@ -20,6 +20,7 @@
 #include "ui_rigmemdialog.h"
 #include "rigmemcommondata.h"
 #include "rigcontrolcommonconstants.h"
+#include "rotatorCommonConstants.h"
 
 
 RigMemDialog::RigMemDialog(QString _radioName, QString _radioState, QWidget *parent) :
@@ -281,7 +282,15 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
 
     if (ldata->bearing != memoryList[memoryNumber].bearing)
     {
-        ui->bearingLineEdit->setText(QString::number(ldata->bearing));
+        if (ldata->bearing == COMPASS_ERROR)
+        {
+            ui->bearingLineEdit->setText("");
+        }
+        else
+        {
+            ui->bearingLineEdit->setText(QString::number(ldata->bearing));
+        }
+
     }
 
     ui->timeLineEdit->setText(ldata->time);
