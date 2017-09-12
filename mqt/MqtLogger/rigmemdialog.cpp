@@ -32,6 +32,7 @@ RigMemDialog::RigMemDialog(QString _radioName, QString _radioState, QWidget *par
 
 {
     ui->setupUi(this);
+    this->setWindowModality(Qt::ApplicationModal);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
 
@@ -51,6 +52,7 @@ RigMemDialog::RigMemDialog(QString _radioName, QString _radioState, QWidget *par
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
     connect(ui->callSignLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(callSignToUpper(const QString &)));
     connect(ui->locatorLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(locatorToUpper(const QString &)));
+    connect(this, SIGNAL(returnPressed()), this, SLOT(saveButtonPushed()));
     connect(this, SIGNAL(escapePressed()), this, SLOT(escapePushed()));
     connect(this , SIGNAL(rejected()), this, SLOT(close()));
 }
@@ -72,10 +74,17 @@ void RigMemDialog::keyPressEvent(QKeyEvent *event)
     bool ctrl = mods & Qt::ControlModifier;
     bool alt = mods & Qt::AltModifier;
 */
+
+
     if (Key == Qt::Key_Escape)
     {
         emit escapePressed();
     }
+    else if (Key == Qt::Key_Return)
+    {
+        emit returnPressed();
+    }
+
 
 }
 
@@ -324,7 +333,7 @@ void RigMemDialog::saveButtonPushed()
 void RigMemDialog::cancelButtonPushed()
 {
 
-    setMemoryFlag(false);
+    closeMemory();
 
 }
 
@@ -332,14 +341,16 @@ void RigMemDialog::cancelButtonPushed()
 void RigMemDialog::escapePushed()
 {
 
-    setMemoryFlag(false);
+
+    closeMemory();
 
 }
 
 
-void RigMemDialog::close()
+void RigMemDialog::closeMemory()
 {
     setMemoryFlag(false);
+    this->close();
 }
 
 memoryData::memData RigMemDialog::getMemoryData(int memoryNumber)
