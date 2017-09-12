@@ -59,7 +59,7 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
         geoStr = geoStr + loggerRadio;
     }
 
-    QByteArray geometry = settings.value("geometry").toByteArray();
+    QByteArray geometry = settings.value(geoStr).toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
