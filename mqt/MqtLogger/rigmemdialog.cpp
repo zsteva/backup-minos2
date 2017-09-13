@@ -199,6 +199,8 @@ int RigMemDialog::saveMemory(int memoryLoc)
 
 void RigMemDialog::editMemory(int memoryLoc)
 {
+    memoryNumber = memoryLoc;
+
     ui->callSignLineEdit->setText(memoryList[memoryLoc].callsign);
     QString a = memoryList[memoryLoc].freq;
     if (memoryList[memoryLoc].freq.remove('.').count() < 4)
