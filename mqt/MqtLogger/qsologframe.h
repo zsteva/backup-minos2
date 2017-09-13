@@ -55,6 +55,7 @@ public:
 
     void transferDetails(const QSharedPointer<BaseContact> lct, const BaseContestLog *matct );
     void transferDetails(const ListContact *lct, const ContactList *matct );
+    void transferDetails(QString cs, const QString loc );
 
     void setFirstUnfilledButtonEnabled(bool);
     void logTabChanged();

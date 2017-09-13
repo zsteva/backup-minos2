@@ -388,6 +388,15 @@ void TSingleLogFrame::transferDetails(MatchTreeItem *MatchTreeIndex )
        }
    }
 }
+void TSingleLogFrame::transferDetails(QString cs, const QString loc )
+{
+    if ( !contest  )
+    {
+       return ;
+    }
+    ui->GJVQSOLogFrame->transferDetails( cs, loc );
+}
+
 //---------------------------------------------------------------------------
 
 void TSingleLogFrame::QSOTreeSelectContact( QSharedPointer<BaseContact> lct )
@@ -800,12 +809,6 @@ void TSingleLogFrame::sendRotator(rpcConstants::RotateDirection direction, int a
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         sendDM->sendRotator(direction, angle);
-}
-
-
-void TSingleLogFrame::setBearingFrmRigMemory(QString brg)
-{
-    ui->FKHRotControlFrame->setBrgFromRigFrmMemory(brg);
 }
 
 

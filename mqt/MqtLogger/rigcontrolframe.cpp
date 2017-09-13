@@ -414,13 +414,9 @@ void RigControlFrame::readActionSelected(int buttonNumber)
     {
         noRadioSendOutFreq(m.freq);
     }
-    int brg = m.bearing;
-    if (brg > 0 || brg < 360)
-    {
-        // send bearing to rotator control frame
-        TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
-        tslf->setBearingFrmRigMemory(QString::number(brg));
-    }
+    // send detail to rotator control frame, locator will give bearing
+    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+    tslf->transferDetails(m.callsign, m.locator);
 }
 
 void RigControlFrame::writeActionSelected(int buttonNumber)
