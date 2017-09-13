@@ -131,10 +131,21 @@ private slots:
     void on_OtherMatchTree_doubleClicked(const QModelIndex &index);
     void on_ArchiveMatchTree_doubleClicked(const QModelIndex &index);
 
+    void on_ThisMatchTree_clicked(const QModelIndex &index);
+    void on_OtherMatchTree_clicked(const QModelIndex &index);
+    void on_ArchiveMatchTree_clicked(const QModelIndex &index);
+
+    void afterThisTreeClicked();
+    void afterMatchTreeClicked();
+    void afterArchiveTreeClicked();
 signals:
     void setXferEnabled(bool);
     void editContact(QSharedPointer<BaseContact> bct);
     void xferPressed();
+
+    void thisTreeClicked();
+    void matchTreeClicked();
+    void archiveTreeClicked();
 
 };
 
