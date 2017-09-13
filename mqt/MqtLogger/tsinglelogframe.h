@@ -82,7 +82,7 @@ public:
 
     void on_NoRadioSetFreq(QString);
 
-    void setBearingFrmRigMemory(QString brg);
+    void transferDetails(QString cs, const QString loc );
 private:
     Ui::TSingleLogFrame *ui;
 

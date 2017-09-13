@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>690</width>
-    <height>278</height>
+    <height>246</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,6 +23,12 @@
    <number>1</number>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="topMargin">
+    <number>1</number>
+   </property>
+   <property name="bottomMargin">
+    <number>1</number>
+   </property>
    <item>
     <widget class="QFrame" name="radioDetailsFrame">
      <property name="frameShape">
@@ -32,6 +38,12 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_13">
+      <property name="topMargin">
+       <number>1</number>
+      </property>
+      <property name="bottomMargin">
+       <number>1</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_10">
         <item>

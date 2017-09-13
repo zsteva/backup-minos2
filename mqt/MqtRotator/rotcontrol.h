@@ -153,7 +153,7 @@ signals:
 
 private:
     hamlib_port_t myport;
-    ROT *my_rot;            // handle to rig (nstance)
+    ROT *my_rot = 0;            // handle to rig (nstance)
     azimuth_t rot_azimuth;  // azimuth from rotator
     elevation_t rot_elevation; // not used
 

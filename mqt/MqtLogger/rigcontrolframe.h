@@ -73,6 +73,7 @@ private slots:
     void writeActionSelected(int);
     void clearActionSelected(int);
     void passBandRadioSelected(int button);
+    void on_FontChanged();
 
     void test();
 

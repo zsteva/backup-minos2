@@ -2039,6 +2039,24 @@ void QSOLogFrame::transferDetails( const ListContact *lct, const ContactList * /
    doGJVEditChange(ui->LocEdit);
    doGJVEditChange(ui->QTHEdit);
 }
+
+void QSOLogFrame::transferDetails(QString cs, const QString loc )
+{
+    ui->CallsignEdit->setText(cs);
+    ui->LocEdit->setText(loc);
+
+    valid( cmCheckValid ); // make sure all single and cross field
+    // validation has been done
+
+    // make sure dtg gets entered if needed
+    ui->CallsignEdit->setFocus();
+    doAutofill();
+    ui->CallsignEdit->setFocus();
+
+    doGJVEditChange(ui->CallsignEdit);
+    doGJVEditChange(ui->LocEdit);
+}
+
 void QSOLogFrame::selectEntry( QSharedPointer<BaseContact> slct )
 {
    selectedContact = slct;   // contact from log list selected

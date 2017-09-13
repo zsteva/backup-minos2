@@ -19,7 +19,7 @@
 #define ROTCONTROLFRAME_H
 
 #include "logger_pch.h"
-#include "rigmemdialog.h"
+#include <QShortcut>
 
 namespace Ui {
 class RotControlFrame;
@@ -47,9 +47,9 @@ public:
     void setBrgFromRigFrmMemory(QString Brg);
 private:
 
-    RigMemDialog *memDialog;
-
-
+    QShortcut *nudgeRight1;
+    QShortcut *nudgeRight2;
+    QShortcut *nudgeLeft;
 
     int maxAzimuth = 0;
     int minAzimuth = 0;
