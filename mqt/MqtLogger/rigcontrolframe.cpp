@@ -63,6 +63,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 {
 
     ui->setupUi(this);
+    connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
 
     logData.callsign = memDefData::DEFAULT_CALLSIGN;
     logData.freq = memDefData::DEFAULT_FREQ;
@@ -84,7 +85,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     // init memory button data before radio connection
     setRadioName(radioName);
 
-
+    on_FontChanged();
 }
 
 RigControlFrame::~RigControlFrame()
@@ -262,7 +263,6 @@ void RigControlFrame::initMemoryButtons(QWidget *parent)
     memButtons[9] = ui->memButton10;
 
 
-
     for (int i = 0; i < memoryData::NUM_MEMORIES; i++)
     {
 
@@ -360,6 +360,16 @@ void RigControlFrame::initMemoryButtons(QWidget *parent)
 
 }
 
+void RigControlFrame::on_FontChanged()
+{
+    QFontMetrics fm = ui->memButton1->fontMetrics();
+    int w = fm.width("M20: MM/MM0WWW/MM");
+    for (int i = 0; i < memoryData::NUM_MEMORIES; i++)
+    {
+        memButtons[i]->setMinimumWidth(w);
+    }
+
+}
 
 
 void RigControlFrame::initPassBandRadioButtons()
