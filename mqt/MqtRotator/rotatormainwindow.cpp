@@ -525,7 +525,8 @@ void RotatorMainWindow::displayBearing(int bearing)
     // send Bearing to displays
 
     // send to minos logger
-    QString s = QString::number(displayBearing);
+    //QString s = QString::number(displayBearing);
+    QString s = QString::number(currentBearingOffset);
     msg->publishBearing(s);
 
 
@@ -1271,9 +1272,9 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
     {
         // button off
 
-        if (rotatorBearing >= currentMaxAzimuth)
+        if (rotatorBearing < currentMinAzimuth)
         {
-            logMessage("CCW - Rotator Bearing > currentMaxAzimuth");
+            logMessage("CCW - Rotator Bearing < currentMinAzimuth");
             cwCcwCmdflag = false;
             return;
         }
