@@ -19,9 +19,11 @@ copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtControl\release\MqtControl.exe B
 copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtKeyer\release\MqtKeyer.exe Bin
 copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtLogger\release\MqtLogger.exe Bin
 copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtMonitor\release\MqtMonitor.exe Bin
-copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtServer\release\MqtRigControl.exe Bin
-copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtServer\release\MqtRotator.exe Bin
+copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtRigControl\release\MqtRigControl.exe Bin
+copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtRotator\release\MqtRotator.exe Bin
 copy C:\Projects\sfMinos\QTbuild\gcc\562\mqt\MqtServer\release\MqtServer.exe Bin
+
+copy C:\Projects\hamlib-w32-3.1\bin\*.dll Bin
 
 xcopy /E /F /Y C:\Projects\sfMinos\mqt\ControlFiles\Configuration .\Configuration
 

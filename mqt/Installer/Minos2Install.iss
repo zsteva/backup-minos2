@@ -75,7 +75,7 @@ Filename: "{app}\Bin\{#MyAppExeName}";WorkingDir: "{app}"; Description: "{cm:Lau
 [Code]
 // global vars
 var
-  LogsDirVal: String;
+  LogsDirPage: TInputDirWizardPage;
  
 function GetLogsDir(Param: String): String;
 begin
