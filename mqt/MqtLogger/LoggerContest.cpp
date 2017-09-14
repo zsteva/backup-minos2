@@ -350,20 +350,20 @@ void LoggerContestLog::setINIDetails()
 	  stationBundle.getStringProfile( espAGL, entAGL );
 	  stationBundle.getIntProfile(espOffset, bearingOffset);
    }
-   if ( appBundle.getSection() != noneBundle )
-   {
+//   if ( appBundle.getSection() != noneBundle )
+//   {
         appBundle.getStringProfile(eapBandMap, appBandMap);
         appBundle.getStringProfile(eapRigControl, appRigControl);
         appBundle.getStringProfile(eapRotator, appRotator);
         appBundle.getStringProfile(eapVoiceKeyer, appVoiceKeyer);
-   }
-   else
-   {
-       appBandMap.setValue("");
-       appRigControl.setValue("");
-       appRotator.setValue("");
-       appVoiceKeyer.setValue("");
-   }
+//   }
+//   else
+//   {
+//       appBandMap.setValue("");
+//       appRigControl.setValue("");
+//       appRotator.setValue("");
+//       appVoiceKeyer.setValue("");
+//   }
 }
 
 int LoggerContestLog::readBlock( int bno )
