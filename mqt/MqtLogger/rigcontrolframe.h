@@ -75,7 +75,7 @@ private slots:
     void passBandRadioSelected(int button);
     void on_FontChanged();
 
-    void test();
+
 
 
 private:
@@ -88,7 +88,8 @@ private:
     QAction* editAction[memoryData::NUM_MEMORIES];
     QAction* clearAction[memoryData::NUM_MEMORIES];
 
-
+    QShortcut *freqEditKey;
+    QLabel *freqLabel;
 
     QRadioButton* pBandButton[3];
     RigMemDialog* memDialog;
@@ -110,12 +111,13 @@ private:
     void freqLineEditFrameColour(bool status);
     void keyPressEvent(QKeyEvent *event);
 
-    void initRigFrame();
+    void initRigFrame(QWidget *parent);
     void initMemoryButtons(QWidget *parent);
     void loadMemoryButtonLabels();
     void initPassBandRadioButtons();
     void noRadioSendOutFreq(QString f);
 
+    void traceMsg(QString msg);
 signals:
     void escapePressed();
 

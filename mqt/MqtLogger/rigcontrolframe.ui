@@ -33,18 +33,12 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="QLabel" name="freqlblA">
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
+          <widget class="QLabel" name="label">
            <property name="text">
-            <string>Freq.</string>
+            <string>&amp;Freq</string>
            </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
+           <property name="buddy">
+            <cstring>freqInput</cstring>
            </property>
           </widget>
          </item>
@@ -240,6 +234,23 @@
    <header>rigcontrolframe.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>freqInput</tabstop>
+  <tabstop>memButton1</tabstop>
+  <tabstop>memButton2</tabstop>
+  <tabstop>memButton3</tabstop>
+  <tabstop>memButton4</tabstop>
+  <tabstop>memButton5</tabstop>
+  <tabstop>memButton6</tabstop>
+  <tabstop>memButton7</tabstop>
+  <tabstop>memButton8</tabstop>
+  <tabstop>memButton9</tabstop>
+  <tabstop>memButton10</tabstop>
+  <tabstop>bandSelCombo</tabstop>
+  <tabstop>wideRb</tabstop>
+  <tabstop>normalRb</tabstop>
+  <tabstop>narRb</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

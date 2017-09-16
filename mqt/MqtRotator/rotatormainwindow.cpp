@@ -398,7 +398,10 @@ void RotatorMainWindow::showStatusMessage(const QString &message)
 
 void RotatorMainWindow::sendStatusLogger(const QString &message)
 {
-    msg->publishState(message);
+   if (loggerAntenna.length() > 0)
+   {
+        msg->publishState(message);
+   }
 }
 
 
@@ -526,8 +529,11 @@ void RotatorMainWindow::displayBearing(int bearing)
 
     // send to minos logger
     //QString s = QString::number(displayBearing);
-    QString s = QString::number(currentBearingOffset);
-    msg->publishBearing(s);
+    if (loggerAntenna.length() > 0)
+    {
+        QString s = QString::number(currentBearingOffset);
+        msg->publishBearing(s);
+    }
 
 
 
@@ -779,9 +785,12 @@ void RotatorMainWindow::upDateAntenna()
 
         rotatorBearing = 9999;      // force display update
        // update logger
-       msg->publishAntennaName(selectRotator->currentAntenna.antennaName);
-       msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
-       msg->publishMinAzimuth(QString::number(currentMinAzimuth));
+       if (loggerAntenna.length() > 0)
+       {
+           msg->publishAntennaName(selectRotator->currentAntenna.antennaName);
+           msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
+           msg->publishMinAzimuth(QString::number(currentMinAzimuth));
+       }
 
        trace("*** Antenna Updated ***");
        trace("logger Antenna = " + loggerAntenna);

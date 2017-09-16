@@ -17,7 +17,8 @@
 
 
 #include <QSignalMapper>
-
+#include <QLabel>
+#include <QtWidgets>
 
 #include "logger_pch.h"
 #include "rigcontrolframe.h"
@@ -75,7 +76,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     logData.time = memDefData::DEFAULT_TIME;
 
 
-    initRigFrame();
+    initRigFrame(parent);
 
     initMemoryButtons(parent);
     initPassBandRadioButtons();
@@ -95,7 +96,7 @@ RigControlFrame::~RigControlFrame()
 }
 
 
-void RigControlFrame::initRigFrame()
+void RigControlFrame::initRigFrame(QWidget */*parent*/)
 {
 
     ui->modelbl->setText(MODE_ERROR);
@@ -116,44 +117,31 @@ void RigControlFrame::initRigFrame()
     memDialog = new RigMemDialog(radioName, radioState);
     connect(memDialog, SIGNAL(memorySaved(int)), this, SLOT(memoryUpdate(int)));
 
+
+
     setRxPBFlag("set");
     if (!isRadioLoaded())
     {
         ui->modelbl->setVisible(false);
     }
 
-
-
-
-
-
 /*
-    // test toolbutton
-    QToolButton* tb = ui->memButton1;;
-    tb->setToolButtonStyle(Qt::ToolButtonTextOnly);
-    tb->setPopupMode(QToolButton::InstantPopup);
-    tb->setShortcut(QString("Ctrl+1"));
-    QMenu* testMenu = new QMenu(tb);
-
-    QAction* act = new QAction("&Read", this);
-    testMenu->addAction(act);
-    tb->setMenu(testMenu);
-
-    connect(ui->memButton1, SIGNAL(triggered(QAction* act)), this, SLOT(test()));
-
+    freqLabel = new QLabel(parent);
+    ui->horizontalLayout_4->addWidget(freqLabel);
+    freqLabel->setFrameStyle(QFrame::Panel);
+    freqLabel->setText("&Freq");
+    freqLabel->setAlignment(Qt::AlignBottom | Qt::AlignRight);
+    //Here is how to change position:
+    //freqLabel->setGeometry(QRectF(1,1,30,49));
+    freqLabel->setBuddy(ui->freqInput);   // CTR-f for Freq Edit
 */
-
 }
 
-
-void RigControlFrame::test()
-{
-    qDebug() << "toolbutton clicked";
-}
 
 
 void RigControlFrame::setRadioLoaded()
 {
+    traceMsg("Set Radio Loaded");
     radioLoaded = true;
     ui->modelbl->setVisible(true);
 }
@@ -165,11 +153,13 @@ bool RigControlFrame::isRadioLoaded()
 
 void RigControlFrame::noRadioSetFreq(QString f)
 {
+    traceMsg("No Radio SetFreq");
     setFreq(f);
 }
 
 void RigControlFrame::setFreq(QString f)
 {
+    traceMsg("Set Freq - ui, curFreq");
     QString freq = f;
 
     freq.remove('.');
@@ -189,6 +179,7 @@ void RigControlFrame::setFreq(QString f)
 
 void RigControlFrame::changeRadioFreq()
 {
+    traceMsg("Change Radio Freq");
     QString freq = "";
     if (ui->freqInput->isModified())
     {
@@ -213,6 +204,7 @@ void RigControlFrame::changeRadioFreq()
 
 void RigControlFrame::radioBandFreq(int index)
 {
+    traceMsg("Radio Band Freq");
     if (index > 0 && index < bandSelData::bandFreq.count())
     {
         ui->freqInput->setInputMask(maskData::freqMask[bandSelData::bandMaskIdx[index]]);
@@ -231,6 +223,7 @@ void RigControlFrame::radioBandFreq(int index)
 
 void RigControlFrame::noRadioSendOutFreq(QString f)
 {
+    traceMsg("No Radio Send Freq to Radio");
     // update rigframe
     emit noRadioSendFreq(f);
     // update logger
@@ -241,6 +234,7 @@ void RigControlFrame::noRadioSendOutFreq(QString f)
 
 void RigControlFrame::exitFreqEdit()
 {
+    traceMsg("Exit Edit Freq");
     freqEditOn = false;
     setFreq(curFreq);
     freqLineEditFrameColour(false);
@@ -397,6 +391,7 @@ void RigControlFrame::initPassBandRadioButtons()
 
 void RigControlFrame::memoryShortCutSelected(int buttonNumber)
 {
+    traceMsg("Memory Button Selected");
     memButtons[buttonNumber]->showMenu();
 }
 
@@ -404,6 +399,7 @@ void RigControlFrame::memoryShortCutSelected(int buttonNumber)
 
 void RigControlFrame::readActionSelected(int buttonNumber)
 {
+    traceMsg("Memory Read Selected");
     memoryData::memData m = memDialog->getMemoryData(buttonNumber);
 
     if (isRadioLoaded())
@@ -421,8 +417,7 @@ void RigControlFrame::readActionSelected(int buttonNumber)
 
 void RigControlFrame::writeActionSelected(int buttonNumber)
 {
-    if (memDialog->getMemoryFlag())
-       return;
+    traceMsg("Memory Write Selected");
 
     memDialog->setMemoryFlag(true);
 
@@ -456,6 +451,7 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
 
 void RigControlFrame::editActionSelected(int buttonNumber)
 {
+    traceMsg("Memory Edit Selected");
     if (memDialog->getMemoryFlag())
        return;
 
@@ -473,9 +469,7 @@ void RigControlFrame::editActionSelected(int buttonNumber)
 void RigControlFrame::clearActionSelected(int buttonNumber)
 {
 
-     //if (memDialog->getMemoryFlag())
-     //  return;
-
+    traceMsg("Memory Clear Selected");
      memDialog->setMemoryFlag(true);
 
      logData.callsign = memDefData::DEFAULT_CALLSIGN;
@@ -498,6 +492,7 @@ void RigControlFrame::clearActionSelected(int buttonNumber)
 
 void RigControlFrame::passBandRadioSelected(int button)
 {
+    traceMsg("Memory Clear Selected");
     curpbState = button;
     emit sendPassBandStateToControl(button);
 }
@@ -525,7 +520,7 @@ void RigControlFrame::keyPressEvent(QKeyEvent *event)
 void RigControlFrame::setMode(QString m)
 {
 
-
+    traceMsg("Set mode, ui etc");
     for (int i = 0; i < hamlibData::supModeList.count(); i++)
     {
             if (m == hamlibData::supModeList[i])
@@ -545,6 +540,7 @@ void RigControlFrame::setMode(QString m)
 
 void RigControlFrame::sendModeToRadio(QString m)
 {
+    traceMsg("Send Mode to Radio");
     sendModeToControl(m);
 }
 
@@ -552,6 +548,7 @@ void RigControlFrame::sendModeToRadio(QString m)
 
 void RigControlFrame::setRadioName(QString n)
 {
+    traceMsg("Set RadioName");
     if (n != "" /*&& radioName != n*/)
     {
         ui->radioName->setText(n);
@@ -566,6 +563,7 @@ void RigControlFrame::setRadioName(QString n)
 
 void RigControlFrame::setRadioState(QString s)
 {
+    traceMsg("Set RadioState");
     if (s !="" && radioState != s)
     {
         ui->rigState->setText(s);
@@ -578,7 +576,7 @@ void RigControlFrame::setRadioState(QString s)
 
 void RigControlFrame::freqLineEditInFocus()
 {
-
+    traceMsg("Freq LineEdit in Focus");
     freqEditOn = true;
     freqLineEditFrameColour(true);
 }
@@ -658,7 +656,10 @@ void RigControlFrame::memoryUpdate(int buttonNumber)
 }
 
 
-
+void RigControlFrame::traceMsg(QString msg)
+{
+    trace("Rigcontrol: " + msg);
+}
 
 //********************************************//
 
