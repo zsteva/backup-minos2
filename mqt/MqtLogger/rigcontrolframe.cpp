@@ -87,6 +87,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     setRadioName(radioName);
 
     on_FontChanged();
+    traceMsg("RigControl Frame Started");
 }
 
 RigControlFrame::~RigControlFrame()

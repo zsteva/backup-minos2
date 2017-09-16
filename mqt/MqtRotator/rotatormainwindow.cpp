@@ -79,6 +79,11 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
     ui->turnButton->setShortcut(QKeySequence(ROTATE_TURN_KEY));
     ui->stopButton->setShortcut(QKeySequence(ROTATE_STOP_KEY));
 
+    redText = new QPalette();
+    blackText = new QPalette();
+    redText->setColor(QPalette::ButtonText, Qt::red);
+    blackText->setColor(QPalette::ButtonText, Qt::black);
+
     // disable some menus for now
     ui->actionHelp->setVisible(false);
     ui->actionSkyScan->setVisible(false);
@@ -1339,24 +1344,28 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
 void RotatorMainWindow::rot_left_button_on()
 {
     rot_left_button_status = ON;
-    ui->rot_left_button->setText("<<--   (CCW) Left");
+    ui->rot_left_button->setPalette(*redText);
+    ui->rot_left_button->setText("(CCW) Left");
 }
 
 void RotatorMainWindow::rot_left_button_off()
 {
     rot_left_button_status = OFF;
+    ui->rot_left_button->setPalette(*blackText);
     ui->rot_left_button->setText("(CCW) Left");
 }
 
 void RotatorMainWindow::rot_right_button_on()
 {
     rot_right_button_status = ON;
-    ui->rot_right_button->setText("(CW) Right   -->>");
+    ui->rot_right_button->setPalette(*redText);
+    ui->rot_right_button->setText("(CW) Right");
 }
 
 void RotatorMainWindow::rot_right_button_off()
 {
     rot_right_button_status = OFF;
+    ui->rot_right_button->setPalette(*blackText);
     ui->rot_right_button->setText("(CW) Right");
 }
 

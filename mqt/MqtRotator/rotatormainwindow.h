@@ -104,6 +104,8 @@ private:
     QLabel *offSetDisplay;
     QLabel *actualRotatorlbl;
     QLabel *actualRotatorDisplay;
+    QPalette *redText;
+    QPalette *blackText;
     SetupDialog *selectRotator;
     EditPresetsDialog *editPresets;
     LogDialog *setupLog;
