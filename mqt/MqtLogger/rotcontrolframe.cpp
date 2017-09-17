@@ -169,72 +169,77 @@ void RotControlFrame::on_nudgeRight_clicked()
 
 void RotControlFrame::on_RotateLeft_clicked(bool /*clicked*/)
 {
-    traceMsg("RotLeft Clicked - Current Bearing = " + QString::number(currentBearing));
-    traceMsg("RotLeft Status = " + QString::number(rot_left_button_status));
-    int angle = 0;
+    traceMsg("RotLeft Button Clicked");
 
-    if (currentBearing <= minAzimuth)
+    if (rot_left_button_status)
     {
-        traceMsg("Current Bearing = " + QString::number(currentBearing) + " <= minAzimuth" + QString::number(minAzimuth));
-        return;
-    }
-
-    if (moving || movingCW || movingCCW)
-    {
-        traceMsg("RotLeft Stopping");
+        traceMsg("RotLeft Button On - Stop and Turn Off");
         on_StopRotate_clicked();
+        rot_left_button_off();
+
     }
-
-
-    if (!rot_left_button_status)
+    else
     {
+        traceMsg("Current Bearing = " + QString::number(currentBearing));
+        traceMsg("RotLeft Status = " + QString::number(rot_left_button_status));
+        int angle = 0;
+
+        if (currentBearing <= minAzimuth)
+        {
+            traceMsg("Current Bearing = " + QString::number(currentBearing) + " <= minAzimuth" + QString::number(minAzimuth));
+            return;
+        }
+
+        if (moving || movingCW || movingCCW)
+        {
+            traceMsg("RotLeft Stopping");
+            on_StopRotate_clicked();
+        }
+
         rot_left_button_on();
         traceMsg("Send RotLeft to Rototor Control");
         emit sendRotator(rpcConstants::eRotateLeft, angle);
         movingCW = true;
-    }
-    else
-    {
-        traceMsg("RotLeft Turn Button Off");
-        rot_left_button_off();
-        //TSendDM::sendRotator(rpcConstants::eRotateStop, getAngle());
-    }
+        }
+
 }
 
 
 void RotControlFrame::on_RotateRight_clicked(bool /*toggle*/)
 {
-    traceMsg("RotRight Clicked - Current Bearing = " + QString::number(currentBearing));
-    traceMsg("RotRight Status = " + QString::number(rot_right_button_status));
-    int angle = 0;
 
-    if (currentBearing >= maxAzimuth)
-    {
-        traceMsg("Current Bearing = " + QString::number(currentBearing) + " >= maxAzimuth" + QString::number(maxAzimuth));
-        return;
-    }
+    traceMsg("RotRight Button Clicked");
 
-    if (moving || movingCW || movingCCW)
+    if (rot_right_button_status)
     {
-        traceMsg("RotRight Stopping");
+        traceMsg("RotRight Button On - Stop and Turn Off");
         on_StopRotate_clicked();
+        rot_right_button_off();
+
     }
-
-
-
-    if (!rot_right_button_status)
+    else
     {
+        traceMsg("Current Bearing = " + QString::number(currentBearing));
+        traceMsg("RotRight Status = " + QString::number(rot_right_button_status));
+        int angle = 0;
+
+        if (currentBearing >= maxAzimuth)
+        {
+            traceMsg("Current Bearing = " + QString::number(currentBearing) + " >= maxAzimuth" + QString::number(maxAzimuth));
+            return;
+        }
+
+        if (moving || movingCW || movingCCW)
+        {
+            traceMsg("RotRight Stopping");
+            on_StopRotate_clicked();
+        }
+
         rot_right_button_on();
         traceMsg("Send RotRight to Rotator Control");
         emit sendRotator(rpcConstants::eRotateRight, angle);
         movingCCW = true;
-    }
-    else
-    {
-        traceMsg("RotRight Turn Button Off");
-        rot_right_button_off();
-        //TSendDM::sendRotator(rpcConstants::eRotateStop, getAngle());
-    }
+        }
 
 }
 
