@@ -141,6 +141,7 @@ void RotControlFrame::turnTo(int angle)
     else
     {
         emit sendRotator(rpcConstants::eRotateDirect, angle);
+        showTurnButOn();
         moving = true;
     }
 }
@@ -270,6 +271,21 @@ void RotControlFrame::rot_right_button_off()
 }
 
 
+void RotControlFrame::showTurnButOn()
+{
+    ui->Rotate->setPalette(*redText);
+    ui->Rotate->setText("Turn");
+}
+
+void RotControlFrame::showTurnButOff()
+{
+    ui->Rotate->setPalette(*blackText);
+    ui->Rotate->setText("Turn");
+}
+
+
+
+
 void RotControlFrame::showRotLeftButOn()
 {
     ui->RotateLeft->setPalette(*redText);
@@ -328,6 +344,7 @@ void RotControlFrame::setRotatorState(const QString &s)
            clearRotatorFlags();
            showRotLeftButOff();
            showRotRightButOff();
+           showTurnButOff();
        }
        else if (s == ROT_STATUS_ROTATE_CCW)
        {
@@ -350,6 +367,7 @@ void RotControlFrame::setRotatorState(const QString &s)
            moving = true;
            movingCW = false;
            movingCCW = false;
+           showTurnButOn();
            //clearRotatorFlags();
 
        }

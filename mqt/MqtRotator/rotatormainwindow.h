@@ -236,6 +236,10 @@ private:
     void rot_right_button_on();
     void rot_left_button_off();
     void rot_left_button_on();
+    void turn_button_on();
+    void turn_button_off();
+    void stop_button_on();
+    void stop_button_off();
 };
 
 #endif // ROTATORMAINWINDOW_H

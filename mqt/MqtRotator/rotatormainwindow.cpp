@@ -911,7 +911,10 @@ void RotatorMainWindow::checkMoving(int bearing)
 void RotatorMainWindow::rotateToController()
 {
 
-    if (reqBearCmdflag) return;
+    if (reqBearCmdflag || brakeflag)
+    {
+        return;
+    }
     bool ok;
     int intBearing;
 
@@ -936,6 +939,7 @@ void RotatorMainWindow::rotateToController()
 
 void RotatorMainWindow::rotateTo(int bearing)
 {
+
     int retCode = 0;
     int rotateTo = bearing;
     logMessage("RotateTo Bearing = " +QString::number(bearing));
@@ -1152,6 +1156,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
 
     logMessage("Stop Rotation");
     int retCode = 0;
+    stop_button_on();
     brakeflag = true;
     stopCmdflag = true;
     if (sendStop)
@@ -1182,6 +1187,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
     movingCW = false;
     movingCCW = false;
     stopCmdflag = false;
+    stop_button_off();
     logMessage("Stop Cmd Successful");
 
 }
@@ -1190,7 +1196,10 @@ void RotatorMainWindow::stopRotation(bool sendStop)
 void RotatorMainWindow::rotateCW(bool /*clicked*/)
 {
 
-
+    if (brakeflag)
+    {
+        return;
+    }
 
     cwCcwCmdflag = true;
     logMessage("Start rotateCW");
@@ -1269,6 +1278,11 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
 
 void RotatorMainWindow::rotateCCW(bool /*toggle*/)
 {
+    if (brakeflag)
+    {
+        return;
+    }
+
     cwCcwCmdflag = true;
     logMessage("Start rotateCCW");
     // check connected
@@ -1340,6 +1354,20 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
 }
 
 
+void RotatorMainWindow::turn_button_on()
+{
+
+    ui->turnButton->setPalette(*redText);
+    ui->turnButton->setText("Turn");
+}
+
+void RotatorMainWindow::turn_button_off()
+{
+
+    ui->turnButton->setPalette(*blackText);
+    ui->turnButton->setText("Turn");
+}
+
 
 void RotatorMainWindow::rot_left_button_on()
 {
@@ -1367,6 +1395,20 @@ void RotatorMainWindow::rot_right_button_off()
     rot_right_button_status = OFF;
     ui->rot_right_button->setPalette(*blackText);
     ui->rot_right_button->setText("(CW) Right");
+}
+
+void RotatorMainWindow::stop_button_on()
+{
+
+    ui->stopButton->setPalette(*redText);
+    ui->stopButton->setText("Stop");
+}
+
+void RotatorMainWindow::stop_button_off()
+{
+
+    ui->stopButton->setPalette(*blackText);
+    ui->stopButton->setText("Stop");
 }
 
 

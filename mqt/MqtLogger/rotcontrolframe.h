@@ -78,6 +78,8 @@ private:
     void showRotRightButOn();
     void showRotRightButOff();
     void traceMsg(QString msg);
+    void showTurnButOn();
+    void showTurnButOff();
 signals:
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
 
