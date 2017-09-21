@@ -44,15 +44,22 @@ const QStringList databitsStr = (QStringList() << "" << "7" << "8" );
 const QStringList stopbitsStr = (QStringList()<< "" << "1" << "2");
 
 const QStringList hamlibErrorMsg = {"No Error, operation completed sucessfully",
-                                "Invalid parameter", "Invalid configuration",
+                                "Invalid parameter",
+                                "Invalid configuration",
                                 "Memory shortage", "Function not implemented",
-                                "Communication timed out", "IO error, including open failed",
-                                "Internal Hamlib error", "Protocol error",
-                                "Command rejected by the rig", "Command performed, but arg truncated",
-                                "Function not available", "VFO not targetable",
-                                "Error talking on the bus", "Collision on the bus",
+                                "Communication timed out",
+                                "IO error, including open failed",
+                                "Internal Hamlib error",
+                                "Protocol error",
+                                "Command rejected by the rig",
+                                "Command performed, but arg truncated",
+                                "Function not available",
+                                "VFO not targetable",
+                                "Error talking on the bus",
+                                "Collision on the bus",
                                 "NULL RIG handle or any invalid pointer parameter in get arg",
-                                "Invalid VFO", "RIG_EDOM"};
+                                "Invalid VFO",
+                                "RIG_EDOM"};
 
 
 }
