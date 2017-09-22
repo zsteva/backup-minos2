@@ -94,7 +94,7 @@ private:
     void setPolltime(int);
     int getPolltime();
     void showStatusMessage(const QString &);
-    void hamlibError(int errorCode);
+    void hamlibError(int errorCode, QString cmd);
 //    void frequency_updated(double frequency);
 //    void mode_updated(QString);
     void setFreq(QString, vfo_t vfo);
