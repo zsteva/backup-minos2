@@ -73,7 +73,8 @@ SOURCES += main.cpp \
     rigmemdialog.cpp \
     LocCalcFrame.cpp \
     StackedInfoFrame.cpp \
-    MatchTreesFrame.cpp
+    MatchTreesFrame.cpp \
+    runbuttondialog.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -119,7 +120,8 @@ HEADERS  += \
     rigmemdialog.h \
     LocCalcFrame.h \
     StackedInfoFrame.h \
-    MatchTreesFrame.h
+    MatchTreesFrame.h \
+    runbuttondialog.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
@@ -150,7 +152,8 @@ FORMS    += tlogcontainer.ui \
     bandmapframe.ui \
     LocCalcFrame.ui \
     StackedInfoFrame.ui \
-    MatchTreesFrame.ui
+    MatchTreesFrame.ui \
+    runbuttondialog.ui
 
 
 DISTFILES += \
