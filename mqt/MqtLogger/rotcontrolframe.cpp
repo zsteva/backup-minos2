@@ -51,8 +51,13 @@ RotControlFrame::RotControlFrame(QWidget *parent):
 
     connect(&MinosLoggerEvents::mle, SIGNAL(BrgStrToRot(QString)), this, SLOT(getBrgFrmQSOLog(QString)));
 
+    redText = new QPalette();
+    blackText = new QPalette();
+    redText->setColor(QPalette::ButtonText, Qt::red);
+    blackText->setColor(QPalette::ButtonText, Qt::black);
     rot_left_button_off();
     rot_right_button_off();
+    traceMsg("RotControlFrame Started");
 
 }
 
@@ -96,6 +101,7 @@ int RotControlFrame::getAngle(QString brgSt)
 
 void RotControlFrame::getBrgFrmQSOLog(QString brg)
 {
+    traceMsg("Bearing from QSO Log" + brg);
     ui->BrgSt->setText(brg);
 }
 
@@ -107,11 +113,13 @@ QString RotControlFrame::getBrgTxtFrmFrame()
 
 void RotControlFrame::setBrgFromRigFrmMemory(QString brg)
 {
+    traceMsg("Set Bearing from memory " + brg);
     ui->BrgSt->setText(brg);
 }
 
 void RotControlFrame::turnTo(int angle)
 {
+    traceMsg("Turn to - " + QString::number(angle));
     if (angle == COMPASS_ERROR)
     {
         QString msg = "<font color='Red'>Bearing empty or invalid</font>";
@@ -133,12 +141,14 @@ void RotControlFrame::turnTo(int angle)
     else
     {
         emit sendRotator(rpcConstants::eRotateDirect, angle);
+        showTurnButOn();
         moving = true;
     }
 }
 
 void RotControlFrame::on_Rotate_clicked()
 {
+    traceMsg("Turn to button Clicked");
     QString brgSt = ui->BrgSt->text();
 
     int angle = getAngle(brgSt);
@@ -148,70 +158,89 @@ void RotControlFrame::on_Rotate_clicked()
 
 void RotControlFrame::on_nudgeLeft_clicked()
 {
+    traceMsg("Nudge Left Clicked");
     turnTo(currentBearing - 3);
 }
 
 void RotControlFrame::on_nudgeRight_clicked()
 {
+    traceMsg("Nudge Right Clicked");
     turnTo(currentBearing + 3);
 }
 
 void RotControlFrame::on_RotateLeft_clicked(bool /*clicked*/)
 {
-    int angle = 0;
+    traceMsg("RotLeft Button Clicked");
 
-    if (currentBearing <= minAzimuth)
+    if (rot_left_button_status)
     {
-        return;
-    }
-
-    if (moving || movingCW || movingCCW)
-    {
+        traceMsg("RotLeft Button On - Stop and Turn Off");
         on_StopRotate_clicked();
-    }
+        rot_left_button_off();
 
-
-    if (!rot_left_button_status)
-    {
-        rot_left_button_on();
-        emit sendRotator(rpcConstants::eRotateLeft, angle);
-        movingCW = true;
     }
     else
     {
-        rot_left_button_off();
-        //TSendDM::sendRotator(rpcConstants::eRotateStop, getAngle());
-    }
+        traceMsg("Current Bearing = " + QString::number(currentBearing));
+        traceMsg("RotLeft Status = " + QString::number(rot_left_button_status));
+        int angle = 0;
+
+        if (currentBearing <= minAzimuth)
+        {
+            traceMsg("Current Bearing = " + QString::number(currentBearing) + " <= minAzimuth" + QString::number(minAzimuth));
+            return;
+        }
+
+        if (moving || movingCW || movingCCW)
+        {
+            traceMsg("RotLeft Stopping");
+            on_StopRotate_clicked();
+        }
+
+        rot_left_button_on();
+        traceMsg("Send RotLeft to Rototor Control");
+        emit sendRotator(rpcConstants::eRotateLeft, angle);
+        movingCW = true;
+        }
+
 }
 
 
 void RotControlFrame::on_RotateRight_clicked(bool /*toggle*/)
 {
-    int angle = 0;
 
-    if (currentBearing >= maxAzimuth)
-    {
-        return;
-    }
+    traceMsg("RotRight Button Clicked");
 
-    if (moving || movingCW || movingCCW)
+    if (rot_right_button_status)
     {
+        traceMsg("RotRight Button On - Stop and Turn Off");
         on_StopRotate_clicked();
-    }
+        rot_right_button_off();
 
-
-
-    if (!rot_right_button_status)
-    {
-        rot_right_button_on();
-        emit sendRotator(rpcConstants::eRotateRight, angle);
-        movingCCW = true;
     }
     else
     {
-        rot_right_button_off();
-        //TSendDM::sendRotator(rpcConstants::eRotateStop, getAngle());
-    }
+        traceMsg("Current Bearing = " + QString::number(currentBearing));
+        traceMsg("RotRight Status = " + QString::number(rot_right_button_status));
+        int angle = 0;
+
+        if (currentBearing >= maxAzimuth)
+        {
+            traceMsg("Current Bearing = " + QString::number(currentBearing) + " >= maxAzimuth" + QString::number(maxAzimuth));
+            return;
+        }
+
+        if (moving || movingCW || movingCCW)
+        {
+            traceMsg("RotRight Stopping");
+            on_StopRotate_clicked();
+        }
+
+        rot_right_button_on();
+        traceMsg("Send RotRight to Rotator Control");
+        emit sendRotator(rpcConstants::eRotateRight, angle);
+        movingCCW = true;
+        }
 
 }
 
@@ -220,31 +249,66 @@ void RotControlFrame::on_RotateRight_clicked(bool /*toggle*/)
 void RotControlFrame::rot_left_button_on()
 {
     rot_left_button_status = true;
-    ui->RotateLeft->setText("<<-- (CCW) Left");
+    showRotLeftButOn();
 }
 
 void RotControlFrame::rot_left_button_off()
 {
     rot_left_button_status = false;
-    ui->RotateLeft->setText("(CCW) Left");
+    showRotLeftButOff();
 }
 
 void RotControlFrame::rot_right_button_on()
 {
     rot_right_button_status = true;
-    ui->RotateRight->setText("(CW) Right -->>");
+    showRotRightButOn();
 }
 
 void RotControlFrame::rot_right_button_off()
 {
     rot_right_button_status = false;
-    ui->RotateRight->setText("(CW) Right");
+    showRotRightButOff();
+}
+
+
+void RotControlFrame::showTurnButOn()
+{
+    ui->Rotate->setPalette(*redText);
+    ui->Rotate->setText("Turn");
+}
+
+void RotControlFrame::showTurnButOff()
+{
+    ui->Rotate->setPalette(*blackText);
+    ui->Rotate->setText("Turn");
 }
 
 
 
 
+void RotControlFrame::showRotLeftButOn()
+{
+    ui->RotateLeft->setPalette(*redText);
+    ui->RotateLeft->setText("(CCW) Left");
+}
 
+void RotControlFrame::showRotLeftButOff()
+{
+    ui->RotateLeft->setPalette(*blackText);
+    ui->RotateLeft->setText("(CCW) Left");
+}
+
+void RotControlFrame::showRotRightButOn()
+{
+    ui->RotateRight->setPalette(*redText);
+    ui->RotateRight->setText("(CW) Right");
+}
+
+void RotControlFrame::showRotRightButOff()
+{
+    ui->RotateRight->setPalette(*blackText);
+    ui->RotateRight->setText("(CW) Right");
+}
 
 void RotControlFrame::on_StopRotate_clicked()
 {
@@ -273,12 +337,14 @@ bool RotControlFrame::isRotatorLoaded()
 
 void RotControlFrame::setRotatorState(const QString &s)
 {
+       traceMsg("Set Rotator State = " + s);
        ui->rotatorState->setText(s);
        if (s == ROT_STATUS_STOP)
        {
            clearRotatorFlags();
-           ui->RotateLeft->setText("(CCW) Left");
-           ui->RotateRight->setText("(CW) Right");
+           showRotLeftButOff();
+           showRotRightButOff();
+           showTurnButOff();
        }
        else if (s == ROT_STATUS_ROTATE_CCW)
        {
@@ -286,7 +352,7 @@ void RotControlFrame::setRotatorState(const QString &s)
            movingCW = false;
            movingCCW = true;
           // clearRotatorFlags();
-           ui->RotateLeft->setText("<<-- (CCW) Left");
+           showRotLeftButOn();
        }
        else if (s == ROT_STATUS_ROTATE_CW)
        {
@@ -294,13 +360,14 @@ void RotControlFrame::setRotatorState(const QString &s)
            movingCW = true;
            movingCCW = false;
            //clearRotatorFlags();
-           ui->RotateRight->setText("(CW) Right -->>");
+           showRotRightButOn();
        }
        else if (s == ROT_STATUS_TURN_TO)
        {
            moving = true;
            movingCW = false;
            movingCCW = false;
+           showTurnButOn();
            //clearRotatorFlags();
 
        }
@@ -309,11 +376,13 @@ void RotControlFrame::setRotatorState(const QString &s)
 
 void RotControlFrame::setRotatorAntennaName(const QString &s)
 {
-       ui->antennaName->setText(s);
+   traceMsg("Set Antenna Name = " + s);
+    ui->antennaName->setText(s);
 }
 
 void RotControlFrame::setRotatorBearing(const QString &s)
 {
+    traceMsg("Set Rotator Bearing = " + s);
     bool ok;
     bool overlap = false;
     int iBearing = s.toInt(&ok, 10);
@@ -363,6 +432,7 @@ void RotControlFrame::setRotatorBearing(const QString &s)
 
 void RotControlFrame::setRotatorMaxAzimuth(const QString &s)
 {
+    traceMsg("Set MaxAzimuth = " + s);
     bool ok;
     int max_azimuth = 0;
     max_azimuth = s.toInt(&ok, 10);
@@ -375,6 +445,7 @@ void RotControlFrame::setRotatorMaxAzimuth(const QString &s)
 
 void RotControlFrame::setRotatorMinAzimuth(const QString &s)
 {
+    traceMsg("Set MinAzimuth = " + s);
     bool ok;
     int min_azimuth = 0;
     min_azimuth = s.toInt(&ok, 10);
@@ -382,4 +453,10 @@ void RotControlFrame::setRotatorMinAzimuth(const QString &s)
     {
         minAzimuth = min_azimuth;
     }
+}
+
+
+void RotControlFrame::traceMsg(QString msg)
+{
+    trace("Rotcontrol: " + msg);
 }

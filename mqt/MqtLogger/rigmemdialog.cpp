@@ -324,9 +324,10 @@ void RigMemDialog::saveButtonPushed()
    memoryList[memoryNumber].time = ui->timeLineEdit->text();
    saveMemory(memoryNumber);
 
-   setMemoryFlag(false);
+   //setMemoryFlag(false);
 
    emit memorySaved(memoryNumber);
+   closeMemory();
 
 }
 

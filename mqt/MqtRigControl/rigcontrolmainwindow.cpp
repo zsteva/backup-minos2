@@ -306,7 +306,11 @@ void RigControlMainWindow::upDateRadio()
        trace("Use RX Passband = " + QString::number(selectRig->currentRadio.useRxPassBand));
 
        // update logger
-       msg->publishRadioName(selectRig->currentRadio.radioName);
+
+       if (loggerRadio.length() > 0)
+       {
+            msg->publishRadioName(selectRig->currentRadio.radioName);
+       }
 
     }
 
@@ -775,18 +779,25 @@ void RigControlMainWindow::about()
 
 void RigControlMainWindow::sendStatusLogger(const QString &message)
 {
-    msg->publishState(message);
+    if (loggerRadio.length() > 0)
+    {
+        msg->publishState(message);
+    }
 }
 
 
 void RigControlMainWindow::sendStatusToLogReady()
 {
-    sendStatusLogger(RIG_STATUS_READY);
+
+        sendStatusLogger(RIG_STATUS_READY);
+
 }
 
 void RigControlMainWindow::sendStatusToLogDisConnected()
 {
-    sendStatusLogger(RIG_STATUS_DISCONNECTED);
+
+        sendStatusLogger(RIG_STATUS_DISCONNECTED);
+
 }
 
 
@@ -797,26 +808,34 @@ void RigControlMainWindow::sendStatusToLogError()
 
 void RigControlMainWindow::sendFreqToLog(freq_t freq)
 {
-    msg->publishFreq(convertStringFreq(freq));
+    if (loggerRadio.length() > 0)
+    {
+        msg->publishFreq(convertStringFreq(freq));
+    }
 }
 
 void RigControlMainWindow::sendModeToLog(QString mode)
 {
-    msg->publishMode(mode);
+    if (loggerRadio.length() > 0)
+    {
+        msg->publishMode(mode);
+    }
 }
 
 void RigControlMainWindow::sendRxPbFlagToLog()
 {
-
-    QString s;
-    if (selectRig->currentRadio.useRxPassBand)
+    if (loggerRadio.length() > 0)
     {
-        s = "set";
-    }
-    else
-    {
-        s = "clear";
-    }
+        QString s;
+        if (selectRig->currentRadio.useRxPassBand)
+        {
+            s = "set";
+        }
+        else
+        {
+            s = "clear";
+        }
 
-    msg->publishRxPbFlag(s);
+        msg->publishRxPbFlag(s);
+    }
 }

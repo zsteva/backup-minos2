@@ -50,6 +50,8 @@ private:
     QShortcut *nudgeRight1;
     QShortcut *nudgeRight2;
     QShortcut *nudgeLeft;
+    QPalette *redText;
+    QPalette *blackText;
 
     int maxAzimuth = 0;
     int minAzimuth = 0;
@@ -71,6 +73,13 @@ private:
 
     void turnTo(int angle);
 
+    void showRotLeftButOn();
+    void showRotLeftButOff();
+    void showRotRightButOn();
+    void showRotRightButOff();
+    void traceMsg(QString msg);
+    void showTurnButOn();
+    void showTurnButOff();
 signals:
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
 

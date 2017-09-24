@@ -79,6 +79,11 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
     ui->turnButton->setShortcut(QKeySequence(ROTATE_TURN_KEY));
     ui->stopButton->setShortcut(QKeySequence(ROTATE_STOP_KEY));
 
+    redText = new QPalette();
+    blackText = new QPalette();
+    redText->setColor(QPalette::ButtonText, Qt::red);
+    blackText->setColor(QPalette::ButtonText, Qt::black);
+
     // disable some menus for now
     ui->actionHelp->setVisible(false);
     ui->actionSkyScan->setVisible(false);
@@ -398,7 +403,10 @@ void RotatorMainWindow::showStatusMessage(const QString &message)
 
 void RotatorMainWindow::sendStatusLogger(const QString &message)
 {
-    msg->publishState(message);
+   if (loggerAntenna.length() > 0)
+   {
+        msg->publishState(message);
+   }
 }
 
 
@@ -526,8 +534,11 @@ void RotatorMainWindow::displayBearing(int bearing)
 
     // send to minos logger
     //QString s = QString::number(displayBearing);
-    QString s = QString::number(currentBearingOffset);
-    msg->publishBearing(s);
+    if (loggerAntenna.length() > 0)
+    {
+        QString s = QString::number(currentBearingOffset);
+        msg->publishBearing(s);
+    }
 
 
 
@@ -779,9 +790,12 @@ void RotatorMainWindow::upDateAntenna()
 
         rotatorBearing = 9999;      // force display update
        // update logger
-       msg->publishAntennaName(selectRotator->currentAntenna.antennaName);
-       msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
-       msg->publishMinAzimuth(QString::number(currentMinAzimuth));
+       if (loggerAntenna.length() > 0)
+       {
+           msg->publishAntennaName(selectRotator->currentAntenna.antennaName);
+           msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
+           msg->publishMinAzimuth(QString::number(currentMinAzimuth));
+       }
 
        trace("*** Antenna Updated ***");
        trace("logger Antenna = " + loggerAntenna);
@@ -897,7 +911,10 @@ void RotatorMainWindow::checkMoving(int bearing)
 void RotatorMainWindow::rotateToController()
 {
 
-    if (reqBearCmdflag) return;
+    if (reqBearCmdflag || brakeflag)
+    {
+        return;
+    }
     bool ok;
     int intBearing;
 
@@ -922,6 +939,7 @@ void RotatorMainWindow::rotateToController()
 
 void RotatorMainWindow::rotateTo(int bearing)
 {
+
     int retCode = 0;
     int rotateTo = bearing;
     logMessage("RotateTo Bearing = " +QString::number(bearing));
@@ -1138,6 +1156,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
 
     logMessage("Stop Rotation");
     int retCode = 0;
+    stop_button_on();
     brakeflag = true;
     stopCmdflag = true;
     if (sendStop)
@@ -1168,6 +1187,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
     movingCW = false;
     movingCCW = false;
     stopCmdflag = false;
+    stop_button_off();
     logMessage("Stop Cmd Successful");
 
 }
@@ -1176,7 +1196,10 @@ void RotatorMainWindow::stopRotation(bool sendStop)
 void RotatorMainWindow::rotateCW(bool /*clicked*/)
 {
 
-
+    if (brakeflag)
+    {
+        return;
+    }
 
     cwCcwCmdflag = true;
     logMessage("Start rotateCW");
@@ -1255,6 +1278,11 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
 
 void RotatorMainWindow::rotateCCW(bool /*toggle*/)
 {
+    if (brakeflag)
+    {
+        return;
+    }
+
     cwCcwCmdflag = true;
     logMessage("Start rotateCCW");
     // check connected
@@ -1326,29 +1354,61 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
 }
 
 
+void RotatorMainWindow::turn_button_on()
+{
+
+    ui->turnButton->setPalette(*redText);
+    ui->turnButton->setText("Turn");
+}
+
+void RotatorMainWindow::turn_button_off()
+{
+
+    ui->turnButton->setPalette(*blackText);
+    ui->turnButton->setText("Turn");
+}
+
 
 void RotatorMainWindow::rot_left_button_on()
 {
     rot_left_button_status = ON;
-    ui->rot_left_button->setText("<<--   (CCW) Left");
+    ui->rot_left_button->setPalette(*redText);
+    ui->rot_left_button->setText("(CCW) Left");
 }
 
 void RotatorMainWindow::rot_left_button_off()
 {
     rot_left_button_status = OFF;
+    ui->rot_left_button->setPalette(*blackText);
     ui->rot_left_button->setText("(CCW) Left");
 }
 
 void RotatorMainWindow::rot_right_button_on()
 {
     rot_right_button_status = ON;
-    ui->rot_right_button->setText("(CW) Right   -->>");
+    ui->rot_right_button->setPalette(*redText);
+    ui->rot_right_button->setText("(CW) Right");
 }
 
 void RotatorMainWindow::rot_right_button_off()
 {
     rot_right_button_status = OFF;
+    ui->rot_right_button->setPalette(*blackText);
     ui->rot_right_button->setText("(CW) Right");
+}
+
+void RotatorMainWindow::stop_button_on()
+{
+
+    ui->stopButton->setPalette(*redText);
+    ui->stopButton->setText("Stop");
+}
+
+void RotatorMainWindow::stop_button_off()
+{
+
+    ui->stopButton->setPalette(*blackText);
+    ui->stopButton->setText("Stop");
 }
 
 
