@@ -605,6 +605,15 @@ bool nolog( MonitoredLog *ip )
 
 void MonitorMain::on_monitorTimeout()
 {
+    static bool closed = false;
+    if ( !closed )
+    {
+       if ( checkCloseEvent() )
+       {
+          closed = true;
+          close();
+       }
+    }
     for ( QVector<MonitoredStation *>::iterator i = stationList.begin(); i != stationList.end(); i++ )
     {
        for ( QVector<MonitoredLog *>::iterator j = ( *i ) ->slotList.begin(); j != ( *i ) ->slotList.end(); j++ )
