@@ -864,9 +864,9 @@ void QSOLogFrame::showScreenEntry( void )
       ui->DeletedCheckBox->setChecked(temp.contactFlags & DONT_PRINT);
       if (edit)
       {
-          ui->radioEdit->setText(curRadioName);
-          ui->frequencyEdit->setText(curFreq);
-          ui->rotatorHeadingEdit->setText(curRotatorBearing);
+          ui->radioEdit->setText(temp.rigName);
+          ui->frequencyEdit->setText(temp.frequency);
+          ui->rotatorHeadingEdit->setText(temp.rotatorHeading);
       }
       setMode(temp.mode.trimmed());
 
