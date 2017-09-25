@@ -65,6 +65,7 @@ int RigControl::init(scatParams currentRadio)
     comport.append(currentRadio.comport);
 
     my_rig = rig_init(currentRadio.radioModelNumber);
+
     if (!my_rig)
     {
         qDebug() << "Error init rig";
@@ -107,6 +108,7 @@ int RigControl::init(scatParams currentRadio)
 int RigControl::closeRig()
 {
     int retcode;
+
     retcode = rig_close(my_rig);
 
     retcode = rig_cleanup(my_rig);

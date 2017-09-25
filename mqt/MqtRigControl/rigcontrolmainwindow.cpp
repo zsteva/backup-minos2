@@ -345,7 +345,7 @@ void RigControlMainWindow::openRadio()
     retCode = radio->init(selectRig->currentRadio);
     if (retCode < 0)
     {
-        hamlibError(retCode);
+        hamlibError(retCode, "Open Radio");
     }
     if (radio->get_serialConnected())
     {
@@ -392,12 +392,14 @@ int RigControlMainWindow::getPolltime()
 
 void RigControlMainWindow::getRadioInfo()
 {
-    getFrequency(RIG_VFO_CURR);
+    if (radio->get_serialConnected())
+    {
+        getFrequency(RIG_VFO_CURR);
 
-    getMode(RIG_VFO_CURR);
+        getMode(RIG_VFO_CURR);
 
-    sendRxPbFlagToLog();
-
+        sendRxPbFlagToLog();
+    }
 
 }
 
@@ -439,7 +441,7 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
             }
             else
             {
-                qDebug() << "frequency fail to changed";
+                hamlibError(retCode, "SetFreq");
             }
         }
         else
@@ -502,7 +504,7 @@ void RigControlMainWindow::getFrequency(vfo_t vfo)
         }
         else
         {
-            hamlibError(retCode);
+            hamlibError(retCode, "GetFreq");
         }
     }
 
@@ -538,7 +540,7 @@ void RigControlMainWindow::getMode(vfo_t vfo)
         }
         else
         {
-            hamlibError(retCode);
+            hamlibError(retCode, "Get Mode");
         }
     }
 
@@ -588,7 +590,7 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
          }
          else
          {
-             qDebug() << "mode fail to change";
+             hamlibError(retCode, "Set Mode");
          }
     }
     else
@@ -722,21 +724,22 @@ void RigControlMainWindow::showStatusMessage(const QString &message)
 
 
 
-void RigControlMainWindow::hamlibError(int errorCode)
+void RigControlMainWindow::hamlibError(int errorCode, QString cmd)
 {
 
     pollTimer->stop();
 
-    int errCode = errorCode;
-    if ( errCode >= 0)
+
+    if ( errorCode >= 0)
     {
         return;
     }
 
-    errCode *= -1;
-    QString errorMsg = radio->gethamlibErrorMsg(errCode);
+    errorCode *= -1;
+    QString errorMsg = radio->gethamlibErrorMsg(errorCode);
+    logMessage("Hamlib Error - Code = " + QString::number(errorCode) + " " + errorMsg);
 
-    QMessageBox::critical(this, "hamlib Error - " + selectRig->currentRadio.radioName, QString::number(errCode) + " - " + errorMsg);
+    QMessageBox::critical(this, "RigControl hamlib Error - " + selectRig->currentRadio.radioName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
 
     closeRadio();
 

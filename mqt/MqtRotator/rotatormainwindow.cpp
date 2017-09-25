@@ -359,7 +359,7 @@ void RotatorMainWindow::openRotator()
     retCode = rotator->init(selectRotator->currentAntenna);
     if (retCode < 0)
     {
-        hamlibError(retCode);
+        hamlibError(retCode, "Open Rotator");
     }
     if (rotator->get_serialConnected())
     {
@@ -837,7 +837,7 @@ void RotatorMainWindow::request_bearing()
         retCode = rotator->request_bearing();
         if (retCode < 0)
         {
-            hamlibError(retCode);
+            hamlibError(retCode, "Request Bearing");
         }
     }
     reqBearCmdflag = false;
@@ -1006,7 +1006,7 @@ void RotatorMainWindow::rotateTo(int bearing)
         retCode = rotator->rotate_to_bearing(rotateTo);
         if (retCode < 0)
         {
-            hamlibError(retCode);
+            hamlibError(retCode, "Rotate to Bearing");
         }
         else
         {
@@ -1164,9 +1164,9 @@ void RotatorMainWindow::stopRotation(bool sendStop)
         retCode = rotator->stop_rotation();
         if (retCode < 0)
         {
-            hamlibError(retCode);
+            hamlibError(retCode, "Stop Rotation");
             sendStatusToLogError();
-            logMessage("stopcmd hamlib error " + QString::number(retCode));
+
         }
     }
 
@@ -1247,10 +1247,10 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
             }
             if (retCode < 0)
             {
-                hamlibError(retCode);
+                hamlibError(retCode, "Rotate CW");
                 movingCW = false;
                 sendStatusToLogError();
-                logMessage("CW hamlib error = " + QString::number(retCode));
+
             }
             else
             {
@@ -1330,10 +1330,10 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
             }
             if (retCode < 0)
             {
-                hamlibError(retCode);
+                hamlibError(retCode, "Rotate CCW");
                 movingCCW = false;
                 sendStatusToLogError();
-                logMessage("CCW hamlib error = " + QString::number(retCode));
+
             }
             else
             {
@@ -1425,21 +1425,22 @@ int RotatorMainWindow::getPolltime()
 }
 
 
-void RotatorMainWindow::hamlibError(int errorCode)
+void RotatorMainWindow::hamlibError(int errorCode, QString cmd )
 {
 
     pollTimer->stop();
 
-    int errCode = errorCode;
-    if ( errCode >= 0)
+
+    if ( errorCode >= 0)
     {
         return;
     }
 
-    errCode *= -1;
-    QString errorMsg = rotator->gethamlibErrorMsg(errCode);
+    errorCode *= -1;
+    QString errorMsg = rotator->gethamlibErrorMsg(errorCode);
+    logMessage("Hamlib Error - Code = " + QString::number(errorCode) + " " + errorMsg);
 
-    QMessageBox::critical(this, "Rotator hamlib Error - " + selectRotator->currentAntenna.antennaName, QString::number(errCode) + " - " + errorMsg);
+    QMessageBox::critical(this, "Rotator hamlib Error - " + selectRotator->currentAntenna.antennaName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
 
     closeRotator();
 

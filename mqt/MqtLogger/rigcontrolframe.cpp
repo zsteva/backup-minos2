@@ -37,16 +37,28 @@
 
 
 */
-static QKeySequence memoryShortCut[] = {QKeySequence(Qt::CTRL + Qt::Key_1),
-                                       QKeySequence(Qt::CTRL + Qt::Key_2),
-                                       QKeySequence(Qt::CTRL + Qt::Key_3),
-                                       QKeySequence(Qt::CTRL + Qt::Key_4),
-                                       QKeySequence(Qt::CTRL + Qt::Key_5),
-                                       QKeySequence(Qt::CTRL + Qt::Key_6),
-                                       QKeySequence(Qt::CTRL + Qt::Key_7),
-                                       QKeySequence(Qt::CTRL + Qt::Key_8),
-                                       QKeySequence(Qt::CTRL + Qt::Key_9),
-                                       QKeySequence(Qt::CTRL + Qt::Key_0)};
+static QKeySequence memoryShortCut[] = {
+
+    QKeySequence(Qt::CTRL + Qt::Key_1),
+    QKeySequence(Qt::CTRL + Qt::Key_2),
+    QKeySequence(Qt::CTRL + Qt::Key_3),
+    QKeySequence(Qt::CTRL + Qt::Key_4),
+    QKeySequence(Qt::CTRL + Qt::Key_5),
+    QKeySequence(Qt::CTRL + Qt::Key_6),
+    QKeySequence(Qt::CTRL + Qt::Key_7),
+    QKeySequence(Qt::CTRL + Qt::Key_8),
+    QKeySequence(Qt::CTRL + Qt::Key_9),
+    QKeySequence(Qt::CTRL + Qt::Key_0)
+};
+
+
+
+static QKeySequence runButShortCut[] {
+    QKeySequence(Qt::CTRL + Qt::Key_BracketLeft),
+    QKeySequence(Qt::CTRL + Qt::Key_BracketRight)
+
+};
+
 
 
 RigControlFrame::RigControlFrame(QWidget *parent):
@@ -79,12 +91,14 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     initRigFrame(parent);
 
     initMemoryButtons(parent);
+    initRunMemoryButton(parent);
     initPassBandRadioButtons();
 
     setRxPBFlag("set");
 
     // init memory button data before radio connection
     setRadioName(radioName);
+
 
     on_FontChanged();
     traceMsg("RigControl Frame Started");
@@ -118,7 +132,8 @@ void RigControlFrame::initRigFrame(QWidget */*parent*/)
     memDialog = new RigMemDialog(radioName, radioState);
     connect(memDialog, SIGNAL(memorySaved(int)), this, SLOT(memoryUpdate(int)));
 
-
+    runDialog = new RunButtonDialog(radioName, radioState);
+    connect(runDialog, SIGNAL(runButtonSaved(int)), this, SLOT(runButtonUpdate(int)));
 
     setRxPBFlag("set");
     if (!isRadioLoaded())
@@ -281,7 +296,7 @@ void RigControlFrame::initMemoryButtons(QWidget *parent)
 
 
     // map shortcut keys
-    QSignalMapper *shortKey_mapper = new QSignalMapper(this);
+   QSignalMapper *shortKey_mapper = new QSignalMapper(this);
 
     for (int i = 0; i < memoryData::NUM_MEMORIES; i++ )
     {
@@ -392,7 +407,7 @@ void RigControlFrame::initPassBandRadioButtons()
 
 void RigControlFrame::memoryShortCutSelected(int buttonNumber)
 {
-    traceMsg("Memory Button Selected");
+    traceMsg(QString("Memory Button Selected = %1").arg(QString::number(buttonNumber +1)));
     memButtons[buttonNumber]->showMenu();
 }
 
@@ -400,7 +415,7 @@ void RigControlFrame::memoryShortCutSelected(int buttonNumber)
 
 void RigControlFrame::readActionSelected(int buttonNumber)
 {
-    traceMsg("Memory Read Selected");
+    traceMsg(QString("Memory Read Selected = %1").arg(QString::number(buttonNumber +1)));
     memoryData::memData m = memDialog->getMemoryData(buttonNumber);
 
     if (isRadioLoaded())
@@ -418,7 +433,7 @@ void RigControlFrame::readActionSelected(int buttonNumber)
 
 void RigControlFrame::writeActionSelected(int buttonNumber)
 {
-    traceMsg("Memory Write Selected");
+    traceMsg(QString("Memory Write Selected %1 = ").arg(QString::number(buttonNumber +1)));
 
     memDialog->setMemoryFlag(true);
 
@@ -444,7 +459,7 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
     logData.bearing = tslf->getBearingFrmQSOLog();
     // load log data into memory
     memDialog->setLogData(&logData, buttonNumber);
-    memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Write");
+    memDialog->setDialogTitle(QString("M%1 - Write").arg(QString::number(buttonNumber + 1)));
     memDialog->setFocusCallsign();
     memDialog->exec();
 }
@@ -452,7 +467,7 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
 
 void RigControlFrame::editActionSelected(int buttonNumber)
 {
-    traceMsg("Memory Edit Selected");
+    traceMsg(QString("Memory Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
     if (memDialog->getMemoryFlag())
        return;
 
@@ -460,7 +475,7 @@ void RigControlFrame::editActionSelected(int buttonNumber)
 
     memDialog->editMemory(buttonNumber);
 
-    memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Edit");
+    memDialog->setDialogTitle(QString("M%1 - Edit").arg(QString::number(buttonNumber + 1)));
     memDialog->setFocusCallsign();
     memDialog->exec();
 
@@ -470,7 +485,7 @@ void RigControlFrame::editActionSelected(int buttonNumber)
 void RigControlFrame::clearActionSelected(int buttonNumber)
 {
 
-    traceMsg("Memory Clear Selected");
+    traceMsg(QString("Memory Clear Selected = %1").arg(QString::number(buttonNumber + 1)));
      memDialog->setMemoryFlag(true);
 
      logData.callsign = memDefData::DEFAULT_CALLSIGN;
@@ -550,15 +565,22 @@ void RigControlFrame::sendModeToRadio(QString m)
 void RigControlFrame::setRadioName(QString n)
 {
     traceMsg("Set RadioName");
-    if (n != "" /*&& radioName != n*/)
-    {
-        ui->radioName->setText(n);
-        radioName = n;
-        memDialog->setRadioName(n);
-        memDialog->readAllMemories();
-        loadMemoryButtonLabels();
-    }
+    ui->radioName->setText(n);
+    radioName = n;
+    memDialog->setRadioName(n);
+    runDialog->setRadioName(n);
+    loadMemories();
 
+}
+
+
+
+void RigControlFrame::loadMemories()
+{
+    memDialog->readAllMemories();
+    loadMemoryButtonLabels();
+    runDialog->readAllMemories();
+    loadRunButtonLabels();
 }
 
 
@@ -657,10 +679,226 @@ void RigControlFrame::memoryUpdate(int buttonNumber)
 }
 
 
+
 void RigControlFrame::traceMsg(QString msg)
 {
     trace("Rigcontrol: " + msg);
 }
+
+
+//********************** Run Buttons *******************************
+
+
+void RigControlFrame::initRunMemoryButton(QWidget *parent)
+{
+
+        runButton[0] = ui->RunButton1;
+        runButton[1] = ui->RunButton2;
+
+        for (int i = 0; i < runButData::NUM_RUNBUTTONS; i++)
+        {
+            runButShortKey[i] = new QShortcut(runButShortCut[i], parent);
+            runButton[i]->setToolButtonStyle(Qt::ToolButtonTextOnly);
+            runButton[i]->setPopupMode(QToolButton::InstantPopup);
+            runButton[i]->setText(runButData::runButTitle[i]);
+            runButMenu[i] = new QMenu(runButton[i]);
+
+            runButReadAct[i] = new QAction("&Read", this);
+            runButWriteAct[i] = new QAction("&Write",this);
+            runButEditAct[i] = new QAction("&Edit", this);
+            runButClearAct[i] = new QAction("&Clear",this);
+            runButMenu[i]->addAction(runButReadAct[i]);
+            runButMenu[i]->addAction(runButWriteAct[i]);
+            runButMenu[i]->addAction(runButEditAct[i]);
+            runButMenu[i]->addAction(runButClearAct[i]);
+            runButton[i]->setMenu(runButMenu[i]);
+        }
+
+
+        // map shortcut keys
+       QSignalMapper *runButShortKey_mapper = new QSignalMapper(this);
+
+        for (int i = 0; i < runButData::NUM_RUNBUTTONS; i++ )
+        {
+            runButShortKey_mapper->setMapping(runButShortKey[i], i);
+            connect(runButShortKey[i], SIGNAL(activated()), runButShortKey_mapper, SLOT(map()));
+
+        }
+        connect(runButShortKey_mapper, SIGNAL(mapped(int)), this, SLOT(runButShortCutSel(int)));
+
+    //----------------------------------------------------------------------------------------
+
+        // map read Action
+
+        QSignalMapper *runButReadAct_mapper = new QSignalMapper(this);
+
+        for (int i = 0; i < runButData::NUM_RUNBUTTONS; i++ )
+        {
+            runButReadAct_mapper->setMapping(runButReadAct[i], i);
+            connect(runButReadAct[i], SIGNAL(triggered()), runButReadAct_mapper, SLOT(map()));
+
+        }
+        connect(runButReadAct_mapper, SIGNAL(mapped(int)), this, SLOT(runButReadActSel(int)));
+
+    //----------------------------------------------------------------------------------------
+
+        // map write Action
+
+        QSignalMapper *runButWriteAct_mapper = new QSignalMapper(this);
+
+        for (int i = 0; i < runButData::NUM_RUNBUTTONS; i++ )
+        {
+            runButWriteAct_mapper->setMapping(runButWriteAct[i], i);
+            connect(runButWriteAct[i], SIGNAL(triggered()), runButWriteAct_mapper, SLOT(map()));
+
+        }
+        connect(runButWriteAct_mapper, SIGNAL(mapped(int)), this, SLOT(runButWriteActSel(int)));
+
+    //-----------------------------------------------------------------------------------------
+
+        // map edit Action
+
+        QSignalMapper *runButEditAct_mapper = new QSignalMapper(this);
+
+        for (int i = 0; i < runButData::NUM_RUNBUTTONS; i++ )
+        {
+            runButEditAct_mapper->setMapping(runButEditAct[i], i);
+            connect(runButEditAct[i], SIGNAL(triggered()), runButEditAct_mapper, SLOT(map()));
+
+        }
+        connect(runButEditAct_mapper, SIGNAL(mapped(int)), this, SLOT(runButEditActSel(int)));
+
+    //-----------------------------------------------------------------------------------------
+
+        // map Clear Action
+
+        QSignalMapper *runButClearAct_mapper = new QSignalMapper(this);
+
+        for (int i = 0; i < runButData::NUM_RUNBUTTONS; i++ )
+        {
+            runButClearAct_mapper->setMapping(runButClearAct[i], i);
+            connect(runButClearAct[i], SIGNAL(triggered()), runButClearAct_mapper, SLOT(map()));
+
+        }
+        connect(runButClearAct_mapper, SIGNAL(mapped(int)), this, SLOT(runButClearActSel(int)));
+
+
+
+}
+
+
+
+void RigControlFrame::runButShortCutSel(int buttonNumber)
+{
+    traceMsg(QString("Run Button Selected = %1").arg(QString::number(buttonNumber + 1)));
+    runButton[buttonNumber]->showMenu();
+}
+
+void RigControlFrame::runButReadActSel(int buttonNumber)
+{
+    traceMsg(QString("Run Button Read Selected = %1").arg(QString::number(buttonNumber + 1)));
+    memoryData::memData m = runDialog->getMemoryData(buttonNumber);
+    if (isRadioLoaded())
+    {
+        emit sendFreqControl(m.freq);
+    }
+    else
+    {
+        noRadioSendOutFreq(m.freq);
+    }
+
+}
+
+void RigControlFrame::runButWriteActSel(int buttonNumber)
+{
+    traceMsg(QString("Memory Write Selected %1 = ").arg(QString::number(buttonNumber + 1)));
+    runData.callsign = "Run" + QString::number(buttonNumber + 1);
+    runData.freq = curFreq;
+    runData.locator = "";
+    runData.mode = curMode;
+    runData.pBandState = curpbState;
+    runData.bearing = COMPASS_ERROR;
+    runData.time = "00:00";
+    // load run data into run memory
+    runDialog->setLogData(&runData, buttonNumber);
+    runDialog->setDialogTitle(QString("Run%1 - Write").arg(QString::number(buttonNumber + 1)));
+    runDialog->setFocus();
+    runDialog->exec();
+
+}
+
+void RigControlFrame::runButEditActSel(int buttonNumber)
+{
+    traceMsg(QString("Run Button Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
+    runDialog->editMemory(buttonNumber);
+    runDialog->setDialogTitle(QString("Run%1 - Edit").arg(QString::number(buttonNumber + 1)));
+    runDialog->setFocusFreq();
+    runDialog->exec();
+}
+
+void RigControlFrame::runButClearActSel(int buttonNumber)
+{
+    traceMsg(QString("Run Button Clear Selected = %1").arg(QString::number(buttonNumber + 1)));
+
+    runData.callsign = memDefData::DEFAULT_CALLSIGN;
+    runData.freq = memDefData::DEFAULT_FREQ;
+    runData.locator = memDefData::DEFAULT_LOCATOR;
+    runData.mode = memDefData::DEFAULT_MODE;
+    //logData.passBand = memDefData::DEFAULT_PBAND;
+    runData.pBandState = memDefData::DEFAULT_PBAND_STATE;
+    runData.time = "00:00";
+    runData.bearing = 0;
+    runDialog->clearMemory(&runData, buttonNumber);
+}
+
+
+void RigControlFrame::loadRunButtonLabels()
+{
+    for (int i = 0; i < runButData::NUM_RUNBUTTONS; i++)
+    {
+        runButtonUpdate(i);
+    }
+}
+
+
+void RigControlFrame::runButtonUpdate(int buttonNumber)
+{
+    memoryData::memData m = runDialog->getMemoryData(buttonNumber);
+    runButton[buttonNumber]->setText("R" + QString::number(buttonNumber + 1) + ": " + extractKhz(m.freq) + " ");
+    QString tTipStr = "Freq: " + m.freq + "\n"
+            + "Mode: " + m.mode + "\n"
+            + "Passband: " + hamlibData::pBandStateStr[m.pBandState];
+    runButton[buttonNumber]->setToolTip(tTipStr);
+}
+
+QString RigControlFrame::extractKhz(QString f)
+{
+    QString khz = "000";
+
+    if (f.contains('.'))
+    {
+        QStringList k = f.split('.');
+        int i = k.length();
+        if (i >=2)
+        {
+            return k[i-2];
+        }
+    }
+    else
+    {
+        int i = f.length();
+        if (i >= 6)
+        {
+            khz = f.mid(i - 6, 3);
+            return khz;
+        }
+    }
+
+    return khz;
+}
+
+
+
 
 //********************************************//
 

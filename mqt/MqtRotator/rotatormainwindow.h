@@ -157,7 +157,7 @@ private:
     void resizeEvent(QResizeEvent *event);
     void keyPressEvent(QKeyEvent *);
 
-    void hamlibError(int errorCode);
+    void hamlibError(int errorCode, QString cmd);
 
 
 

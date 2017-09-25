@@ -32,7 +32,7 @@ RigMemDialog::RigMemDialog(QString _radioName, QString _radioState, QWidget *par
 
 {
     ui->setupUi(this);
-    //this->setWindowModality(Qt::ApplicationModal);
+
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
 
@@ -199,10 +199,9 @@ int RigMemDialog::saveMemory(int memoryLoc)
 
 void RigMemDialog::editMemory(int memoryLoc)
 {
-    memoryNumber = memoryLoc;
 
     ui->callSignLineEdit->setText(memoryList[memoryLoc].callsign);
-    QString a = memoryList[memoryLoc].freq;
+
     if (memoryList[memoryLoc].freq.remove('.').count() < 4)
     {
         ui->freqLineEdit->setInputMask(maskData::freqMask[7]);
@@ -245,9 +244,9 @@ void RigMemDialog::clearMemory(memoryData::memData* ldata, int memoryLoc)
 }
 
 
-void RigMemDialog::setDialogTitle(QString number)
+void RigMemDialog::setDialogTitle(QString title)
 {
-    this->setWindowTitle("M" + number);
+    this->setWindowTitle(title);
 
 }
 
