@@ -820,16 +820,21 @@ void TLogContainer::OptionsActionExecute()
 
 void TLogContainer::FontEditAcceptActionExecute()
 {
-    QFont f = QFontDialog::getFont( 0, font() );
-    QApplication::setFont( f );
+    QFont f = font();
+    bool ok;
+    f = QFontDialog::getFont( &ok, f );
+    if (ok)
+    {
+        QApplication::setFont( f );
 
-    foreach ( QWidget * widget, QApplication::allWidgets() )
-        widget->update();
+        foreach ( QWidget * widget, QApplication::allWidgets() )
+            widget->update();
 
-    QSettings settings;
-    settings.setValue( "font", font() );
+        QSettings settings;
+        settings.setValue( "font", font() );
 
-    MinosLoggerEvents::SendFontChanged();
+        MinosLoggerEvents::SendFontChanged();
+    }
 }
 
 void TLogContainer::ReportAutofillActionExecute()
