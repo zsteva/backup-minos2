@@ -41,6 +41,13 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_6">
      <item>
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>App Instance Name</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLineEdit" name="elementNameEdit">
        <property name="readOnly">
         <bool>false</bool>
