@@ -23,10 +23,12 @@ ConfigElementFrame::~ConfigElementFrame()
 
 void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
 {
-    this->c = c;
+    this->configElement = c;
 
     if (c->runType.isEmpty())
+    {
         ui->rbNoAction->setChecked(true);
+    }
 
     if (c->runType == RunTypeNone)
         ui->rbNoAction->setChecked(true);
@@ -47,6 +49,8 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
     ui->serverNameEdit->setText(c->server);
     ui->remoteAppNameEdit->setText(c->remoteApp);
 
+    ui->advancedCheckbox->setChecked(c->showAdvanced);
+
     checkEnabled();
 }
 void ConfigElementFrame::setNameFocus()
@@ -57,22 +61,24 @@ void ConfigElementFrame::setNameFocus()
 bool ConfigElementFrame::saveElement()
 {
     if (ui->rbNoAction->isChecked())
-        c->runType = RunTypeNone;
+        configElement->runType = RunTypeNone;
     if (ui->rbRunLocally->isChecked())
-        c->runType = RunLocal;
+        configElement->runType = RunLocal;
     if (ui->rbConnectLocal->isChecked())
-        c->runType = ConnectLocal;
+        configElement->runType = ConnectLocal;
     if (ui->rbConnectRemote->isChecked())
-        c->runType = ConnectServer;
+        configElement->runType = ConnectServer;
 
-    c->appType = ui->appTypeCombo->currentText();
+    configElement->showAdvanced = ui->advancedCheckbox->isChecked();
 
-    c->name = ui->elementNameEdit->text().trimmed();
-    c->rundir = ui->homeDirectoryEdit->text().trimmed();
-    c->commandLine = ui->programNameEdit->text().trimmed();
-    c->params = ui->parametersEdit->text().trimmed();
-    c->server = ui->serverNameEdit->text().trimmed();
-    c->remoteApp = ui->remoteAppNameEdit->text().trimmed();
+    configElement->appType = ui->appTypeCombo->currentText();
+
+    configElement->name = ui->elementNameEdit->text().trimmed();
+    configElement->rundir = ui->homeDirectoryEdit->text().trimmed();
+    configElement->commandLine = ui->programNameEdit->text().trimmed();
+    configElement->params = ui->parametersEdit->text().trimmed();
+    configElement->server = ui->serverNameEdit->text().trimmed();
+    configElement->remoteApp = ui->remoteAppNameEdit->text().trimmed();
 
     return true;
 }
@@ -138,6 +144,8 @@ void ConfigElementFrame::on_deleteButton_clicked()
 
 void ConfigElementFrame::checkEnabled()
 {
+    ui->enabledCheckbox->setChecked(!ui->rbNoAction->isChecked());
+
     if (ui->rbNoAction->isChecked())
     {
         ui->programFrame->setEnabled(false);
@@ -158,6 +166,8 @@ void ConfigElementFrame::checkEnabled()
         ui->programFrame->setEnabled(false);
         ui->serverFrame->setEnabled(true);
     }
+
+    ui->advancedGroup->setVisible( ui->advancedCheckbox->isChecked());
 }
 
 void ConfigElementFrame::on_rbNoAction_clicked()
@@ -196,4 +206,22 @@ void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &valu
 
     if (ui->homeDirectoryEdit->text().isEmpty())
         ui->homeDirectoryEdit->setText(".");
+}
+
+void ConfigElementFrame::on_advancedCheckbox_clicked()
+{
+    checkEnabled();
+}
+
+void ConfigElementFrame::on_enabledCheckbox_clicked()
+{
+    if (ui->enabledCheckbox->isChecked())
+    {
+        ui->rbRunLocally->setChecked(true);
+    }
+    else
+    {
+        ui->rbNoAction->setChecked(true);
+    }
+    checkEnabled();
 }

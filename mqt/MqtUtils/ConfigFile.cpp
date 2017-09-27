@@ -61,6 +61,7 @@ bool RunConfigElement::initialise( QSettings &config, QString sect )
     params = config.value( sect + "/Params", "" ).toString().trimmed();
     rundir = config.value( sect + "/Directory", "" ).toString().trimmed();
     remoteApp = config.value(sect + "/RemoteApp", name).toString().trimmed();
+    showAdvanced = config.value(sect + "/ShowAdvanced", false).toBool();
 
     QString S = config.value( sect + "/RunType", RunTypeNone ) .toString().trimmed();
 
@@ -89,6 +90,7 @@ void RunConfigElement::save(QSettings &config)
         config.setValue(name + "/RemoteApp", remoteApp);
         config.setValue(name + "/RunType", runType);
         config.setValue(name + "/AppType", appType);
+        config.setValue(name + "/ShowAdvanced", showAdvanced);
     }
 }
 Connectable RunConfigElement::connectable()

@@ -50,6 +50,8 @@ public:  		// User declarations
 
     QStringList requires;
 
+    bool showAdvanced = false;
+
     bool stopping;
 
     RunConfigElement();
