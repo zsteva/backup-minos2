@@ -79,11 +79,11 @@ void TBundleFrame::enableBundle( bool state )
 
 void TBundleFrame::on_BundleEdit_clicked()
 {
-    doEdit();
+    bool ok = doEdit();
 
     // And we need to call back to the contest detail form
 
-    if (cd)
+    if (ok && cd)
     {
         cd->bundleChanged();
     }

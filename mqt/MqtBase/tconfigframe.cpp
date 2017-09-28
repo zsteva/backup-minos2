@@ -156,8 +156,8 @@ void TConfigFrame::on_newElementButton_clicked()
 
     // set alternating background
 
-    int i = elementFrames.size() - 1;
-    if (i%2)
+    int j = elementFrames.size() - 1;   // will be position of frame in list
+    if (j%2)
     {
         cef->setStyleSheet("QFrame { background-color: lightBlue; }");
     }
@@ -169,8 +169,11 @@ void TConfigFrame::on_newElementButton_clicked()
     ui->scrollAreaWidgetContents->layout()->addWidget(cef);
 
     MinosConfig::getMinosConfig() ->elelist.append(QSharedPointer<RunConfigElement> (new RunConfigElement) );
-    QSharedPointer<RunConfigElement> c = MinosConfig::getMinosConfig() ->elelist[i + 1];
-    c->appType = RunTypeNone;
+
+    int i = MinosConfig::getMinosConfig() ->elelist.size() - 1; // position of element in list
+    QSharedPointer<RunConfigElement> c = MinosConfig::getMinosConfig() ->elelist[i];
+    c->appType = RunLocal;
+    c->enabled = true;
 
     cef->setElement(c);
     elementFrames.append(cef);

@@ -12,14 +12,14 @@ class ConfigElementFrame : public QFrame
 {
     Q_OBJECT
 
-    QSharedPointer<RunConfigElement> c;
+    QSharedPointer<RunConfigElement> configElement;
     void checkEnabled();
 
 public:
     explicit ConfigElementFrame(QWidget *parent = 0);
     ~ConfigElementFrame();
 
-    void setElement(QSharedPointer<RunConfigElement> c);
+    void setElement(QSharedPointer<RunConfigElement> configElement);
     bool saveElement();
     void setNameFocus();
 
@@ -39,6 +39,10 @@ private slots:
     void on_rbConnectLocal_clicked();
 
     void on_appTypeCombo_currentIndexChanged(const QString &arg1);
+
+    void on_advancedCheckbox_clicked();
+
+    void on_enabledCheckbox_clicked();
 
 private:
     Ui::ConfigElementFrame *ui;

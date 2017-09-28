@@ -23,19 +23,19 @@ ConfigElementFrame::~ConfigElementFrame()
 
 void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
 {
-    this->c = c;
+    this->configElement = c;
 
-    if (c->runType.isEmpty())
-        ui->rbNoAction->setChecked(true);
+    ui->enabledCheckbox->setChecked(c->enabled);
 
-    if (c->runType == RunTypeNone)
-        ui->rbNoAction->setChecked(true);
     if (c->runType == RunLocal)
         ui->rbRunLocally->setChecked(true);
-    if (c->runType == ConnectLocal)
+    else if (c->runType == ConnectLocal)
         ui->rbConnectLocal->setChecked(true);
-    if (c->runType == ConnectServer)
+    else if (c->runType == ConnectServer)
         ui->rbConnectRemote->setChecked(true);
+    else
+        ui->rbRunLocally->setChecked(true);
+
 
     QString at = c->appType;
     ui->appTypeCombo->setCurrentText(at);
@@ -47,6 +47,9 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
     ui->serverNameEdit->setText(c->server);
     ui->remoteAppNameEdit->setText(c->remoteApp);
 
+    ui->advancedCheckbox->setChecked(c->showAdvanced);
+    ui->enabledCheckbox->setChecked(c->enabled);
+
     checkEnabled();
 }
 void ConfigElementFrame::setNameFocus()
@@ -56,23 +59,24 @@ void ConfigElementFrame::setNameFocus()
 
 bool ConfigElementFrame::saveElement()
 {
-    if (ui->rbNoAction->isChecked())
-        c->runType = RunTypeNone;
     if (ui->rbRunLocally->isChecked())
-        c->runType = RunLocal;
+        configElement->runType = RunLocal;
     if (ui->rbConnectLocal->isChecked())
-        c->runType = ConnectLocal;
+        configElement->runType = ConnectLocal;
     if (ui->rbConnectRemote->isChecked())
-        c->runType = ConnectServer;
+        configElement->runType = ConnectServer;
 
-    c->appType = ui->appTypeCombo->currentText();
+    configElement->showAdvanced = ui->advancedCheckbox->isChecked();
+    configElement->enabled = ui->enabledCheckbox->isChecked();
 
-    c->name = ui->elementNameEdit->text().trimmed();
-    c->rundir = ui->homeDirectoryEdit->text().trimmed();
-    c->commandLine = ui->programNameEdit->text().trimmed();
-    c->params = ui->parametersEdit->text().trimmed();
-    c->server = ui->serverNameEdit->text().trimmed();
-    c->remoteApp = ui->remoteAppNameEdit->text().trimmed();
+    configElement->appType = ui->appTypeCombo->currentText();
+
+    configElement->name = ui->elementNameEdit->text().trimmed();
+    configElement->rundir = ui->homeDirectoryEdit->text().trimmed();
+    configElement->commandLine = ui->programNameEdit->text().trimmed();
+    configElement->params = ui->parametersEdit->text().trimmed();
+    configElement->server = ui->serverNameEdit->text().trimmed();
+    configElement->remoteApp = ui->remoteAppNameEdit->text().trimmed();
 
     return true;
 }
@@ -133,31 +137,37 @@ void ConfigElementFrame::on_deleteButton_clicked()
 {
     // mark the element as deleted
     ui->elementNameEdit->setText("<Deleted>");
-    ui->rbNoAction->setChecked(true);
+    ui->enabledCheckbox->setChecked(false);
 }
 
 void ConfigElementFrame::checkEnabled()
 {
-    if (ui->rbNoAction->isChecked())
+    if (!ui->enabledCheckbox->isChecked())
     {
         ui->programFrame->setEnabled(false);
         ui->serverFrame->setEnabled(false);
+        ui->actionsGroup->setEnabled(false);
     }
     else if (ui->rbRunLocally->isChecked())
     {
         ui->programFrame->setEnabled(true);
         ui->serverFrame->setEnabled(false);
+        ui->actionsGroup->setEnabled(true);
     }
     else if (ui->rbConnectLocal->isChecked())
     {
         ui->programFrame->setEnabled(false);
         ui->serverFrame->setEnabled(false);
+        ui->actionsGroup->setEnabled(true);
     }
     else if (ui->rbConnectRemote->isChecked())
     {
         ui->programFrame->setEnabled(false);
         ui->serverFrame->setEnabled(true);
+        ui->actionsGroup->setEnabled(true);
     }
+
+    ui->advancedGroup->setVisible( ui->advancedCheckbox->isChecked());
 }
 
 void ConfigElementFrame::on_rbNoAction_clicked()
@@ -196,4 +206,14 @@ void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &valu
 
     if (ui->homeDirectoryEdit->text().isEmpty())
         ui->homeDirectoryEdit->setText(".");
+}
+
+void ConfigElementFrame::on_advancedCheckbox_clicked()
+{
+    checkEnabled();
+}
+
+void ConfigElementFrame::on_enabledCheckbox_clicked()
+{
+    checkEnabled();
 }

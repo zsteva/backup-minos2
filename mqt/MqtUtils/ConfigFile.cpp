@@ -10,7 +10,6 @@
 
 bool terminated = false;
 
-QString RunTypeNone("None");
 QString RunLocal("RunLocal");
 QString ConnectLocal("ConnectLocal");
 QString ConnectServer("ConnectServer");
@@ -61,8 +60,10 @@ bool RunConfigElement::initialise( QSettings &config, QString sect )
     params = config.value( sect + "/Params", "" ).toString().trimmed();
     rundir = config.value( sect + "/Directory", "" ).toString().trimmed();
     remoteApp = config.value(sect + "/RemoteApp", name).toString().trimmed();
+    showAdvanced = config.value(sect + "/ShowAdvanced", false).toBool();
+    enabled = config.value(sect + "/Enabled", false).toBool();
 
-    QString S = config.value( sect + "/RunType", RunTypeNone ) .toString().trimmed();
+    QString S = config.value( sect + "/RunType", RunLocal ) .toString().trimmed();
 
     runType = S;
 
@@ -89,6 +90,8 @@ void RunConfigElement::save(QSettings &config)
         config.setValue(name + "/RemoteApp", remoteApp);
         config.setValue(name + "/RunType", runType);
         config.setValue(name + "/AppType", appType);
+        config.setValue(name + "/ShowAdvanced", showAdvanced);
+        config.setValue(name + "/Enabled", enabled);
     }
 }
 Connectable RunConfigElement::connectable()
@@ -112,7 +115,7 @@ Connectable RunConfigElement::connectable()
 
 void RunConfigElement::createProcess()
 {
-    if ( runType == RunLocal && !runner)
+    if (enabled && runType == RunLocal && !runner)
     {
         runner = new QProcess(parent());
 
@@ -403,7 +406,7 @@ QString MinosConfig::checkConfig()
     for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
     {
         QSharedPointer<RunConfigElement> ele = (*i);
-        if (ele->appType == "Server" && ele->runType == RunLocal)
+        if (ele->appType == "Server" && ele->enabled && ele->runType == RunLocal)
         {
             serverPresent = true;
             break;
@@ -414,7 +417,7 @@ QString MinosConfig::checkConfig()
     {
         QSharedPointer<RunConfigElement> ele = (*i);
 
-        if (ele->runType == RunLocal)
+        if (ele->enabled && ele->runType == RunLocal)
         {
             if ( ele->requires.size() > 0)
             {
@@ -450,7 +453,7 @@ QString MinosConfig::checkConfig()
                 reqErrs += ele->appType + " Working directory is not valid - no Configuration/MinosConfig.ini\n\n";
             }
         }
-        if (ele->runType == ConnectServer)
+        if (ele->enabled && ele->runType == ConnectServer)
         {
             // Server must be present
             if (!serverPresent)
