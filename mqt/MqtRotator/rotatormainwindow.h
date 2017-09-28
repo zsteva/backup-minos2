@@ -55,7 +55,7 @@ class RotatorMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit RotatorMainWindow(QString, QWidget *parent = 0);
+    explicit RotatorMainWindow(QWidget *parent = 0);
     ~RotatorMainWindow();
 
 

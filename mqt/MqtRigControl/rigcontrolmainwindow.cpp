@@ -23,12 +23,13 @@
 #include "rigcontrolrpc.h"
 #include <QTimer>
 #include <QMessageBox>
+#include <QProcessEnvironment>
 #include <QDebug>
 
 
 
 
-RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent) :
+RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     QMainWindow(parent)
     , msg(0)
     , ui(new Ui::RigControlMainWindow)
@@ -40,10 +41,14 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
 
     ui->setupUi(this);
 
-    loggerRadio  = _loggerRadio.trimmed();
+
 
     connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
     stdinReader.start();
+
+    // get the antenna name from host process
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    loggerRadio = env.value("MQTRPCNAME", "") ;
 
     createCloseEvent();
 
