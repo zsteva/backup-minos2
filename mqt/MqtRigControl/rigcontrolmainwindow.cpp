@@ -23,12 +23,13 @@
 #include "rigcontrolrpc.h"
 #include <QTimer>
 #include <QMessageBox>
+#include <QProcessEnvironment>
 #include <QDebug>
 
 
 
 
-RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent) :
+RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     QMainWindow(parent)
     , msg(0)
     , ui(new Ui::RigControlMainWindow)
@@ -40,10 +41,14 @@ RigControlMainWindow::RigControlMainWindow(QString _loggerRadio, QWidget *parent
 
     ui->setupUi(this);
 
-    loggerRadio  = _loggerRadio.trimmed();
+
 
     connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
     stdinReader.start();
+
+    // get the antenna name from host process
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    loggerRadio = env.value("MQTRPCNAME", "") ;
 
     createCloseEvent();
 
@@ -262,6 +267,12 @@ void RigControlMainWindow::upDateRadio()
         selectRig->currentRadio.parity = selectRig->availRadios[radioIndex].parity;
         selectRig->currentRadio.handshake = selectRig->availRadios[radioIndex].handshake;
         selectRig->currentRadio.transVertEnable = selectRig->availRadios[radioIndex].transVertEnable;
+        if (!selectRig->currentRadio.transVertEnable)
+        {
+            // only show transvert freq box is enabled
+            ui->transVertFreqA->setVisible(selectRig->currentRadio.transVertEnable);
+            ui->TVertTitleA->setVisible(selectRig->currentRadio.transVertEnable);
+        }
         selectRig->currentRadio.transVertNegative = selectRig->availRadios[radioIndex].transVertNegative;
         selectRig->currentRadio.transVertOffset = selectRig->availRadios[radioIndex].transVertOffset;
         selectRig->currentRadio.transVertOffsetStr = selectRig->availRadios[radioIndex].transVertOffsetStr;

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>153</width>
+    <width>174</width>
     <height>207</height>
    </rect>
   </property>
@@ -67,7 +67,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
-        <widget class="QLabel" name="label_7">
+        <widget class="QLabel" name="passbandlbl">
          <property name="text">
           <string>PassBand:</string>
          </property>

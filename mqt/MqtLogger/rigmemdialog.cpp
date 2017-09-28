@@ -28,7 +28,7 @@ RigMemDialog::RigMemDialog(QString _radioName, QString _radioState, QWidget *par
     ui(new Ui::RigMemDialog)
     ,radioName(_radioName)
     ,radioState(_radioState)
-
+    ,rxPbFlag(false)
 
 {
     ui->setupUi(this);
@@ -89,7 +89,12 @@ void RigMemDialog::keyPressEvent(QKeyEvent *event)
 }
 
 
-
+void RigMemDialog::setRxPbFlag(bool flag)
+{
+    rxPbFlag = flag;
+    ui->pbStateCb->setVisible(!flag);
+    ui->passbandlbl->setVisible(!flag);
+}
 
 
 void RigMemDialog::setMemoryFlag(bool state)
@@ -120,7 +125,7 @@ int RigMemDialog::readAllMemories()
         return -1;
     }
 
-    QString fileName = "./RadioMemoryData/" + radioName + "MemoryData.ini";
+    QString fileName = "./Configuration/RadioMemoryData/" + radioName + "MemoryData.ini";
 
     QSettings config(fileName, QSettings::IniFormat);
 
@@ -151,7 +156,7 @@ int RigMemDialog::readMemory(int memoryLoc)
         return -1;
     }
 
-    QString fileName = "./RadioMemoryData/" + radioName + "MemoryData.ini";
+    QString fileName = "./Configuration/RadioMemoryData/" + radioName + "MemoryData.ini";
 
     QSettings config(fileName, QSettings::IniFormat);
 
@@ -179,7 +184,7 @@ int RigMemDialog::saveMemory(int memoryLoc)
         return -1;
     }
 
-    QString fileName = "./RadioMemoryData/" + radioName + "MemoryData.ini";
+    QString fileName = "./Configuration/RadioMemoryData/" + radioName + "MemoryData.ini";
     QSettings config(fileName, QSettings::IniFormat);
     config.beginGroup("MemoryLoc" + QString::number(memoryLoc));
     config.setValue("Callsign", memoryList[memoryLoc].callsign);

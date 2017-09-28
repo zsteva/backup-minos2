@@ -32,6 +32,7 @@
 #include <QTimer>
 #include <QTime>
 #include <QSettings>
+#include <QProcessEnvironment>
 #include <QtDebug>
 
 
@@ -45,17 +46,22 @@ static QStringList presetShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
                             QString("Ctrl+9"), QString("Ctrl+0")};
 
 
-RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
+RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     QMainWindow(parent), msg(0),
     ui(new Ui::RotatorMainWindow)
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    loggerAntenna = _loggerAntenna.trimmed();
 
     connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
     stdinReader.start();
+
+    // get the antenna name from host process
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    loggerAntenna = env.value("MQTRPCNAME", "") ;
+
+
 
     createCloseEvent();
     MinosRotatorForm = this;
@@ -195,9 +201,11 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
 
     if (loggerAntenna.length() > 0)
     {
+        logMessage(QString("Antenna Name %1 from logger").arg(loggerAntenna));
         int a = selectAntenna->findText(loggerAntenna);
         if (a == -1)
         {
+            logMessage("Invalid Antenna Name from logger");
             showStatusMessage("<font color='Red'>Invalid antenna name from logger!</font>");
             logAntError = true;
         }
@@ -225,6 +233,7 @@ RotatorMainWindow::RotatorMainWindow(QString _loggerAntenna, QWidget *parent) :
     }
 
     trace("*** Rotator Started ***");
+
 
 
 
@@ -403,6 +412,7 @@ void RotatorMainWindow::showStatusMessage(const QString &message)
 
 void RotatorMainWindow::sendStatusLogger(const QString &message)
 {
+   logMessage(QString("Send %1 message to logger").arg(message));
    if (loggerAntenna.length() > 0)
    {
         msg->publishState(message);
@@ -1243,7 +1253,7 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
             else
             {
                 logMessage("Send rotate to maxAzimuth instead of CW rotator command, maxAzimuth = " + QString::number(rotator->getMaxAzimuth()));
-                retCode = rotator->rotate_to_bearing(currentMaxAzimuth);
+                retCode = rotator->rotate_to_bearing(currentMaxAzimuth - 1);
             }
             if (retCode < 0)
             {
@@ -1428,21 +1438,25 @@ int RotatorMainWindow::getPolltime()
 void RotatorMainWindow::hamlibError(int errorCode, QString cmd )
 {
 
-    pollTimer->stop();
-
-
     if ( errorCode >= 0)
     {
         return;
     }
 
     errorCode *= -1;
+    // log all errors
     QString errorMsg = rotator->gethamlibErrorMsg(errorCode);
     logMessage("Hamlib Error - Code = " + QString::number(errorCode) + " " + errorMsg);
 
-    QMessageBox::critical(this, "Rotator hamlib Error - " + selectRotator->currentAntenna.antennaName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
+    if (errorCode != 10)
+    {
+        pollTimer->stop();
 
-    closeRotator();
+        QMessageBox::critical(this, "Rotator hamlib Error - " + selectRotator->currentAntenna.antennaName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
+
+        closeRotator();
+    }
+
 
 }
 

@@ -45,6 +45,7 @@ public:
     void clearMemory(memoryData::memData* ldata, int memoryLoc);
     void setFocusFreq();
     void editMemory(int memoryLoc);
+    void setRxPbFlag(bool flag);
 
 signals:
     void runButtonSaved(int memoryNumber);
@@ -62,6 +63,7 @@ private:
     QString radioName;
     QString radioState;
     int memoryNumber;
+    bool  rxPbFlag;
     int readSettings();
     int saveMemory(int memoryLoc);
     int readMemory(int memoryLoc);

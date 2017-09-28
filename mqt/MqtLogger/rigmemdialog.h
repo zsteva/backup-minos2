@@ -46,6 +46,7 @@ public:
     void setFocusCallsign();
     void setMemoryFlag(bool state);
     bool getMemoryFlag();
+    void setRxPbFlag(bool);
 
     void editMemory(int memoryLoc);
 signals:
@@ -67,6 +68,7 @@ private:
     QString radioState;
     int memoryNumber;
     bool memOnFlag;
+    bool rxPbFlag = false;
     //memoryData::memData logData;
     int readSettings();
     int saveMemory(int memoryLoc);

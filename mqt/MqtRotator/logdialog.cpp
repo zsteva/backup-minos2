@@ -114,7 +114,7 @@ void LogDialog::readLogConfig()
     QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
     config.beginGroup("BearingLog");
 
-    directory = config.value("directory", "./Configuration/BearingLog").toString();
+    directory = config.value("directory", "./BearingLog").toString();
     filename = config.value("filename", "bearingLog").toString();
     bearingDiff = config.value("bearing_difference", 0).toInt();
     logEnabled = config.value("loggingEnabled", false).toBool();

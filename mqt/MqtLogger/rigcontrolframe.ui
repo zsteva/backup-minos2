@@ -66,6 +66,13 @@
           <widget class="QComboBox" name="bandSelCombo"/>
          </item>
          <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Mode:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QLabel" name="modelbl">
            <property name="text">
             <string>USB</string>

@@ -25,7 +25,8 @@ RunButtonDialog::RunButtonDialog(QString _radioName, QString _radioState, QWidge
     QDialog(parent),
     ui(new Ui::RunButtonDialog),
     radioName(_radioName),
-    radioState(_radioState)
+    radioState(_radioState),
+    rxPbFlag(false)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -83,6 +84,14 @@ void RunButtonDialog::keyPressEvent(QKeyEvent *event)
 
 }
 
+void RunButtonDialog::setRxPbFlag(bool flag)
+{
+    rxPbFlag = flag;
+    ui->pbStateCb->setVisible(!flag);
+    ui->passbandlbl->setVisible(!flag);
+}
+
+
 
 void RunButtonDialog::setRadioName(QString name)
 {
@@ -103,7 +112,7 @@ int RunButtonDialog::readAllMemories()
         return -1;
     }
 
-    QString fileName = "./RadioMemoryData/" + radioName + "RunData.ini";
+    QString fileName = "./Configuration/RadioMemoryData/" + radioName + "RunData.ini";
 
     QSettings config(fileName, QSettings::IniFormat);
 
@@ -129,7 +138,7 @@ int RunButtonDialog::readMemory(int memoryLoc)
         return -1;
     }
 
-    QString fileName = "./RadioMemoryData/" + radioName + "RunData.ini";
+    QString fileName = "./Configuration/RadioMemoryData/" + radioName + "RunData.ini";
 
     QSettings config(fileName, QSettings::IniFormat);
 
@@ -152,7 +161,7 @@ int RunButtonDialog::saveMemory(int memoryLoc)
         return -1;
     }
 
-    QString fileName = "./RadioMemoryData/" + radioName + "RunData.ini";
+    QString fileName = "./Configuration/RadioMemoryData/" + radioName + "RunData.ini";
     QSettings config(fileName, QSettings::IniFormat);
     config.beginGroup("RunLoc" + QString::number(memoryLoc));
     config.setValue("Frequency", memoryList[memoryLoc].freq);

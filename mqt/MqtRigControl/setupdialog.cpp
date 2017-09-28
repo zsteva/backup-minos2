@@ -369,19 +369,40 @@ void SetupDialog::radioModelSelected(int boxNumber)
 
 void SetupDialog::civAddressFinished(int boxNumber)
 {
-    bool ok;
-    int value = civAddress[boxNumber]->text().toInt(&ok, 16);
-    if (!ok || value < 0 || value > 255)
+
+    bool Ok;
+
+    civAddress[boxNumber]->setText(civAddress[boxNumber]->text().trimmed());
+
+    if (!civAddress[boxNumber]->text().isEmpty())
     {
-         QMessageBox::critical(this, "CIV Error", QString(civAddress[boxNumber]->text()) + " Not a valid CIV value");
-         civAddress[boxNumber]->text() = "";
+        if (!civAddress[boxNumber]->text().contains('x'))
+        {
+            QMessageBox::critical(this, "CIV Error", QString(civAddress[boxNumber]->text()) + " Is not a valid CIV value\nPlease enter the CIV as a Hex number in the form of 0xnn");
+            civAddress[boxNumber]->setText("");
+        }
+        else
+        {
+            int hexValue = civAddress[boxNumber]->text().toInt(&Ok, 16);
+            if (Ok &&  (hexValue < 0 || hexValue > 255))
+            {
+                QMessageBox::critical(this, "CIV Error", QString(civAddress[boxNumber]->text()) + " CIV number out of range 0 - FF");
+                civAddress[boxNumber]->setText("");
+            }
+        }
     }
-    else if (civAddress[boxNumber]->text() != availRadios[boxNumber].civAddress)
+    else
+    {
+        civAddress[boxNumber]->setText("");
+    }
+
+    if (civAddress[boxNumber]->text() != availRadios[boxNumber].civAddress)
     {
         availRadios[boxNumber].civAddress = civAddress[boxNumber]->text();
         radioValueChanged[boxNumber] = true;
         radioChanged = true;
     }
+
 }
 
 

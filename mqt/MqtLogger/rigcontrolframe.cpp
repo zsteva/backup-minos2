@@ -136,6 +136,7 @@ void RigControlFrame::initRigFrame(QWidget */*parent*/)
     connect(runDialog, SIGNAL(runButtonSaved(int)), this, SLOT(runButtonUpdate(int)));
 
     setRxPBFlag("set");
+
     if (!isRadioLoaded())
     {
         ui->modelbl->setVisible(false);
@@ -421,6 +422,11 @@ void RigControlFrame::readActionSelected(int buttonNumber)
     if (isRadioLoaded())
     {
         emit sendFreqControl(m.freq);
+        sendModeToRadio(m.mode);
+        if (!rxPBFlag)
+        {
+            sendPassBandStateToControl(m.pBandState);
+        }
     }
     else
     {
@@ -557,7 +563,7 @@ void RigControlFrame::setMode(QString m)
 void RigControlFrame::sendModeToRadio(QString m)
 {
     traceMsg("Send Mode to Radio");
-    sendModeToControl(m);
+    emit sendModeToControl(m);
 }
 
 
@@ -653,6 +659,8 @@ void RigControlFrame::setRxPBFlag(QString flag)
     ui->normalRb->setVisible(!fl);
     ui->wideRb->setVisible(!fl);
     ui->groupBox->setVisible(!fl);
+    memDialog->setRxPbFlag(fl);         // tell dialogs to hide Passband
+    runDialog->setRxPbFlag(fl);
 }
 
 void RigControlFrame::loadMemoryButtonLabels()
@@ -801,6 +809,11 @@ void RigControlFrame::runButReadActSel(int buttonNumber)
     if (isRadioLoaded())
     {
         emit sendFreqControl(m.freq);
+        sendModeToRadio(m.mode);
+        if (!rxPBFlag)
+        {
+            sendPassBandStateToControl(m.pBandState);
+        }
     }
     else
     {
