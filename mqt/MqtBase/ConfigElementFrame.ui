@@ -127,7 +127,7 @@
          <number>1</number>
         </property>
         <item>
-         <widget class="QGroupBox" name="groupBox">
+         <widget class="QGroupBox" name="actionsGroup">
           <property name="title">
            <string>Action</string>
           </property>
@@ -147,16 +147,6 @@
            <property name="bottomMargin">
             <number>1</number>
            </property>
-           <item>
-            <widget class="QRadioButton" name="rbNoAction">
-             <property name="text">
-              <string>No Action</string>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">actionButtonGroup</string>
-             </attribute>
-            </widget>
-           </item>
            <item>
             <widget class="QRadioButton" name="rbRunLocally">
              <property name="text">
@@ -360,7 +350,6 @@
   <tabstop>elementNameEdit</tabstop>
   <tabstop>appTypeCombo</tabstop>
   <tabstop>deleteButton</tabstop>
-  <tabstop>rbNoAction</tabstop>
   <tabstop>rbRunLocally</tabstop>
   <tabstop>rbConnectLocal</tabstop>
   <tabstop>rbConnectRemote</tabstop>

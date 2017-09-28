@@ -25,19 +25,17 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
 {
     this->configElement = c;
 
-    if (c->runType.isEmpty())
-    {
-        ui->rbNoAction->setChecked(true);
-    }
+    ui->enabledCheckbox->setChecked(c->enabled);
 
-    if (c->runType == RunTypeNone)
-        ui->rbNoAction->setChecked(true);
     if (c->runType == RunLocal)
         ui->rbRunLocally->setChecked(true);
-    if (c->runType == ConnectLocal)
+    else if (c->runType == ConnectLocal)
         ui->rbConnectLocal->setChecked(true);
-    if (c->runType == ConnectServer)
+    else if (c->runType == ConnectServer)
         ui->rbConnectRemote->setChecked(true);
+    else
+        ui->rbRunLocally->setChecked(true);
+
 
     QString at = c->appType;
     ui->appTypeCombo->setCurrentText(at);
@@ -50,6 +48,7 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
     ui->remoteAppNameEdit->setText(c->remoteApp);
 
     ui->advancedCheckbox->setChecked(c->showAdvanced);
+    ui->enabledCheckbox->setChecked(c->enabled);
 
     checkEnabled();
 }
@@ -60,8 +59,6 @@ void ConfigElementFrame::setNameFocus()
 
 bool ConfigElementFrame::saveElement()
 {
-    if (ui->rbNoAction->isChecked())
-        configElement->runType = RunTypeNone;
     if (ui->rbRunLocally->isChecked())
         configElement->runType = RunLocal;
     if (ui->rbConnectLocal->isChecked())
@@ -70,6 +67,7 @@ bool ConfigElementFrame::saveElement()
         configElement->runType = ConnectServer;
 
     configElement->showAdvanced = ui->advancedCheckbox->isChecked();
+    configElement->enabled = ui->enabledCheckbox->isChecked();
 
     configElement->appType = ui->appTypeCombo->currentText();
 
@@ -139,32 +137,34 @@ void ConfigElementFrame::on_deleteButton_clicked()
 {
     // mark the element as deleted
     ui->elementNameEdit->setText("<Deleted>");
-    ui->rbNoAction->setChecked(true);
+    ui->enabledCheckbox->setChecked(false);
 }
 
 void ConfigElementFrame::checkEnabled()
 {
-    ui->enabledCheckbox->setChecked(!ui->rbNoAction->isChecked());
-
-    if (ui->rbNoAction->isChecked())
+    if (!ui->enabledCheckbox->isChecked())
     {
         ui->programFrame->setEnabled(false);
         ui->serverFrame->setEnabled(false);
+        ui->actionsGroup->setEnabled(false);
     }
     else if (ui->rbRunLocally->isChecked())
     {
         ui->programFrame->setEnabled(true);
         ui->serverFrame->setEnabled(false);
+        ui->actionsGroup->setEnabled(true);
     }
     else if (ui->rbConnectLocal->isChecked())
     {
         ui->programFrame->setEnabled(false);
         ui->serverFrame->setEnabled(false);
+        ui->actionsGroup->setEnabled(true);
     }
     else if (ui->rbConnectRemote->isChecked())
     {
         ui->programFrame->setEnabled(false);
         ui->serverFrame->setEnabled(true);
+        ui->actionsGroup->setEnabled(true);
     }
 
     ui->advancedGroup->setVisible( ui->advancedCheckbox->isChecked());
@@ -215,13 +215,5 @@ void ConfigElementFrame::on_advancedCheckbox_clicked()
 
 void ConfigElementFrame::on_enabledCheckbox_clicked()
 {
-    if (ui->enabledCheckbox->isChecked())
-    {
-        ui->rbRunLocally->setChecked(true);
-    }
-    else
-    {
-        ui->rbNoAction->setChecked(true);
-    }
     checkEnabled();
 }

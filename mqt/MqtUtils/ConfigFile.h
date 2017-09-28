@@ -4,7 +4,6 @@
 #include <QProcess>
 #include <QSettings>
 //---------------------------------------------------------------------------
-extern QString RunTypeNone;
 extern QString RunLocal;
 extern QString ConnectLocal;
 extern QString ConnectServer;
@@ -51,6 +50,7 @@ public:  		// User declarations
     QStringList requires;
 
     bool showAdvanced = false;
+    bool enabled = false;
 
     bool stopping;
 
