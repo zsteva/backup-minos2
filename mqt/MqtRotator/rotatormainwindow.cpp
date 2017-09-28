@@ -62,6 +62,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     loggerAntenna = env.value("MQTRPCNAME", "") ;
 
 
+
     createCloseEvent();
     MinosRotatorForm = this;
     connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
@@ -200,9 +201,11 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     if (loggerAntenna.length() > 0)
     {
+        logMessage(QString("Antenna Name %1 from logger").arg(loggerAntenna));
         int a = selectAntenna->findText(loggerAntenna);
         if (a == -1)
         {
+            logMessage("Invalid Antenna Name from logger");
             showStatusMessage("<font color='Red'>Invalid antenna name from logger!</font>");
             logAntError = true;
         }
@@ -409,6 +412,7 @@ void RotatorMainWindow::showStatusMessage(const QString &message)
 
 void RotatorMainWindow::sendStatusLogger(const QString &message)
 {
+   logMessage(QString("Send %1 message to logger").arg(message));
    if (loggerAntenna.length() > 0)
    {
         msg->publishState(message);
