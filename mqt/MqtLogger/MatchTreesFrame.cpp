@@ -705,13 +705,13 @@ void MatchTreesFrame::on_ThisMatchTree_clicked(const QModelIndex &index)
     emit thisTreeClicked();
 }
 
-void MatchTreesFrame::on_OtherMatchTree_clicked(const QModelIndex &index)
+void MatchTreesFrame::on_OtherMatchTree_clicked(const QModelIndex &/*index*/)
 {
     // let "selected" sort things out
     emit matchTreeClicked();
 }
 
-void MatchTreesFrame::on_ArchiveMatchTree_clicked(const QModelIndex &index)
+void MatchTreesFrame::on_ArchiveMatchTree_clicked(const QModelIndex &/*index*/)
 {
     // let "selected" sort things out
     emit archiveTreeClicked();

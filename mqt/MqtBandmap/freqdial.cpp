@@ -10,7 +10,7 @@ FreqDial::FreqDial()
 
 QRectF FreqDial::boundingRect() const
 {
-    qreal penwidth = 1;
+//    qreal penwidth = 1;
 //    return QRectF(-10 - penwidth/2, -10 - penwidth/2, 20 + penwidth, 20 + penwidth );
 //    return QRectF(0, 0, 100, dialData::MAXSCALEY );
       return QRectF(0, 0, 100, maxScaleY );
@@ -27,15 +27,10 @@ void FreqDial::changeBoundingRect(int height)
 
 
 
-void FreqDial::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void FreqDial::paint(QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/)
 {
 
 // painter =  new QPainter( this );
-
-
-
-
-
     zoomLevel = 8;
 
     drawScale(painter, currentFreq, maxScaleY);
@@ -218,6 +213,5 @@ void FreqDial::drawCursor(QPainter *painter, double frequency)
 
 void FreqDial::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    int a =0;
     QGraphicsItem::mousePressEvent(event);
 }

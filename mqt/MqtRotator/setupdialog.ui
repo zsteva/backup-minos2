@@ -29,7 +29,7 @@
       <attribute name="title">
        <string>Antenna 1</string>
       </attribute>
-      <widget class="QWidget" name="layoutWidget_13">
+      <widget class="QWidget" name="layoutWidget_1">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -259,7 +259,7 @@
       <attribute name="title">
        <string>Antenna 2</string>
       </attribute>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget_2">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -489,7 +489,7 @@
       <attribute name="title">
        <string>Antenna 3</string>
       </attribute>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget_3">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -716,7 +716,7 @@
       <attribute name="title">
        <string>Antenna 4</string>
       </attribute>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget_4">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -943,7 +943,7 @@
       <attribute name="title">
        <string>Antenna 5</string>
       </attribute>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget_5">
        <property name="geometry">
         <rect>
          <x>0</x>
