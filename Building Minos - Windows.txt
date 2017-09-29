@@ -11,25 +11,51 @@ cd \
 mkdir projects
 cd projects
 
-Check out Minos
+Install git; I use a GUI tool TortoiseGit from
+
+https://tortoisegit.org/
+
+This also requires a command line git from https://git-for-windows.github.io/
+
+There are other distributions and tools that can be used.
+
+Check out Minos:
 
 git clone https://git.code.sf.net/p/minos/minos minos2
 
 Install hamlib from https://sourceforge.net/projects/hamlib/ into a directory under C:\projects`
 (it has to be in the correct position relative to Minos, or the build won't find the corect files).
 
-Install qt - get either 5.6.2 (which we need to stay compatible with for Linux); under "tools" make
- sure that MinGW 4.9.2 is ticked. 
+ 
+To get Qt, go to
+
+https://www1.qt.io/download-open-source
+
+and click "Download now"; this gets you the "online installer", which is a small program that manages
+the rest of the download. using this also sets up the Qt Maintenance tool, which makes subsequent
+updates of Qt and its tools far easier.  It also installs icons for the main tools.
+
+Click through until it updates its meta information, then under "select components" choose the required components
+
+Get 5.6.3 (which we need to stay compatible with for Linux); under "tools" make sure that MinGW 4.9.2 is ticked. 
+If you want to do any debugging, you also need the "Qt Creator CDB Debugger".
 
 Using MSVC and/or more recent Qt versions counts as an "advanced" option, but is quite possible.
 
+If you aren't going to be running under QT Creator then you will need to add the Qt bin directory to your path; something like
+
+path C:\Qt\Qt5.6.3\Tools\mingw492_32\bin;%path% 
+
+is required. I use an excellent tool called the "Rapid Environment Editor" from 
+https://www.rapidee.com to manage this and other environment variables.
+
 Run QtCreator
 
-Open C:\Projects\Minos2\mqt\mqt.pro; first time you may need to configure it.
+Open C:\Projects\Minos2\mqt\mqt.pro; first time will need to configure it. It will
+automatically bring up a dialog to let you do this.
 
-Choose Qt 5.6.2, "Release"
-
-Build - the hammer icon at bottom left. This should run to completion, with a few warnings.
+Choose Qt 5.6.2, "Release" Build - the hammer icon at bottom left. This should run to completion, 
+with a few warnings.
 
 To get a runnable system, 
 
