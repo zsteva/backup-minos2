@@ -845,6 +845,7 @@ void RotatorMainWindow::request_bearing()
     if (rotator->get_serialConnected())
     {
         retCode = rotator->request_bearing();
+        logMessage(QString("Sent request bearing cmd - retcode = %1").arg(QString::number(retCode)));
         if (retCode < 0)
         {
             hamlibError(retCode, "Request Bearing");
@@ -894,7 +895,7 @@ void RotatorMainWindow::checkMoving(int bearing)
 {
 
     static int oldBearing;
-
+    logMessage(QString("Check Moving"));
     if (!moving)
     {
         return;
@@ -904,12 +905,14 @@ void RotatorMainWindow::checkMoving(int bearing)
     {
             oldBearing = bearing;
             rotTimeCount = 0;
+            logMessage(QString("Rotator is moving"));
             return;
     }
     else
     {
         if (rotTimeCount > ROTATE_MOVE_TIMEOUT)
         {
+            logMessage(QString("Rotator has stoped moving"));
             stopButton();
             sendStatusToLogStop();
         }
@@ -1172,6 +1175,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
     if (sendStop)
     {
         retCode = rotator->stop_rotation();
+        logMessage(QString("Stop cmd sent to rotator - retcode = %1").arg(QString::number(retCode)));
         if (retCode < 0)
         {
             hamlibError(retCode, "Stop Rotation");
@@ -1446,7 +1450,7 @@ void RotatorMainWindow::hamlibError(int errorCode, QString cmd )
     errorCode *= -1;
     // log all errors
     QString errorMsg = rotator->gethamlibErrorMsg(errorCode);
-    logMessage("Hamlib Error - Code = " + QString::number(errorCode) + " " + errorMsg);
+    logMessage(QString("Hamlib Error - Code = %1 - %2").arg(QString::number(errorCode), errorMsg));
 
     if (errorCode != 10)
     {
@@ -1535,7 +1539,7 @@ bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
 
     if (!config.contains(QString::number(rotatorNumber)))
     {
-        logMessage("Rotator Number = " + QString::number(rotatorNumber) + " does not exist in config file!");
+        logMessage(QString("Rotator Number = %1, does not exist in config file!").arg(QString::number(rotatorNumber)));
     }
     else
     {
@@ -1551,7 +1555,7 @@ bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
 
 void RotatorMainWindow::about()
 {
-    QMessageBox::about(this, "Minos Rotator", "Minos QT Rotator\nCopyright D Balharrie G8FKH/M0DGB 2017\nVersion 0.1");
+    QMessageBox::about(this, "Minos Rotator", "Minos QT Rotator\nCopyright D Balharrie G8FKH/M0DGB 2017");
 }
 
 
