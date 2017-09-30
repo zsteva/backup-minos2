@@ -55,9 +55,10 @@ public:
 
 
     QString getRotatorProtocol(QString );
-    void readCurrentAntenna();
+    void readCurrentAntenna(QString);
+    void saveCurrentAntenna(QString);
     QString getRotatorComPort(QString);
-    void saveCurrentAntenna();
+
     void readSettings();
     void copyAntennaToCurrent(int antennaNumber);
 

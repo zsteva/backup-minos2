@@ -97,7 +97,7 @@ private:
 
     QComboBox *selectAntenna;
     QPushButton* presetButtons[NUM_PRESETS];
-    QString loggerAntenna = "";
+    QString appName = "";
     RotControl  *rotator;
     QLabel *status;
     QLabel *offSetlbl;

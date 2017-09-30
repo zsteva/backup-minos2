@@ -647,7 +647,7 @@ void SetupDialog::saveSettings()
     if (antennaChanged)
     {
 
-        QSettings config("./Configuration/MinosRotatorAntenna.ini", QSettings::IniFormat);
+        QSettings config("./Configuration/Antenna/AvailAntenna.ini", QSettings::IniFormat);
 
         for (int i = 0; i < NUM_ANTENNAS; i++)
         {
@@ -703,7 +703,7 @@ void SetupDialog::saveSettings()
 void SetupDialog::readSettings()
 {
 
-    QSettings config("./Configuration/MinosRotatorAntenna.ini", QSettings::IniFormat);
+    QSettings config("./Configuration/Antenna/AvailAntenna.ini", QSettings::IniFormat);
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
@@ -820,11 +820,11 @@ QString SetupDialog::getRotatorComPort(QString antennaName)
 
 
 
-void SetupDialog::saveCurrentAntenna()
+void SetupDialog::saveCurrentAntenna(QString name)
 {
 
 
-    QSettings config("./Configuration/MinosRotatorAntenna.ini", QSettings::IniFormat);
+    QSettings config("./Configuration/Antenna/" + name + "CurrentAntenna.ini", QSettings::IniFormat);
 
 
     config.beginGroup("CurrentAntenna");
@@ -850,10 +850,10 @@ void SetupDialog::saveCurrentAntenna()
 
 }
 
-void SetupDialog::readCurrentAntenna()
+void SetupDialog::readCurrentAntenna(QString name)
 {
 
-    QSettings config("./Configuration/MinosRotatorAntenna.ini", QSettings::IniFormat);
+    QSettings config("./Configuration/Antenna/" + name + "CurrentAntenna.ini", QSettings::IniFormat);
 
 
     {

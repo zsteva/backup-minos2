@@ -50,7 +50,7 @@
 #define BEARINGLOG_FILETYPE ".log"
 
 
-
+const QString LOCAL_ANTENNA = "Local";
 
 
 
