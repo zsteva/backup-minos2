@@ -59,7 +59,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     // get the antenna name from host process
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    loggerAntenna = env.value("MQTRPCNAME", "") ;
+    appName = env.value("MQTRPCNAME", "") ;
 
 
 
@@ -71,9 +71,9 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     QSettings settings;
     geoStr = "geometry";
-    if (loggerAntenna.length() > 0)
+    if (appName.length() > 0)
     {
-        geoStr = geoStr + loggerAntenna;
+        geoStr = geoStr + appName;
     }
     QByteArray geometry = settings.value(geoStr).toByteArray();
     if (geometry.size() > 0)
@@ -161,14 +161,14 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     initActionsConnections();
 
     selectAntenna = ui->selectAntennaBox;
-
+/*
     if (loggerAntenna.length() > 0)
     {
         ui->selectAntennaBox->hide();
         ui->antennaSelectlbl->hide();
         ui->antennaSelectln->hide();
     }
-
+*/
     brakedelay = 1 * 1000;
 
     brakeflag = false;
@@ -198,15 +198,15 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     logAntError = false;
     initSelectAntennaBox();
-
-    if (loggerAntenna.length() > 0)
+/*
+    if (appName.length() > 0)
     {
-        logMessage(QString("Antenna Name %1 from logger").arg(loggerAntenna));
+        logMessage(QString("AppName %1 from logger").arg(appName));
         int a = selectAntenna->findText(loggerAntenna);
         if (a == -1)
         {
-            logMessage("Invalid Antenna Name from logger");
-            showStatusMessage("<font color='Red'>Invalid antenna name from logger!</font>");
+            logMessage("Select an antenna in rotator control");
+            showStatusMessage("<font color='Red'>Please select an antenna!</font>");
             logAntError = true;
         }
         else
@@ -223,14 +223,36 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
         selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
     }
 
+*/
 
 
-    if (!logAntError)
+
+    if (appName.length() > 0)
     {
-        upDateAntenna();
-        // tell logger that rotator is active, antenna name and maxRotation
-        sendStatusToLogReady();
+        logMessage((QString("Read Current Antenna for AppName %1 from logger").arg(appName)));
+        selectRotator->readCurrentAntenna(appName);
     }
+    else
+    {
+        logMessage((QString("Read Current Antenna for Local selection")));
+        selectRotator->readCurrentAntenna(LOCAL_ANTENNA);
+    }
+
+
+    if (selectRotator->currentAntenna.antennaName == "")
+    {
+        logMessage(QString("No antenna selected for this appName, %1").arg(appName));
+        QString errmsg = "<font color='Red'>Please select an antenna!</font>";
+        showStatusMessage(errmsg);
+        sendStatusLogger(errmsg);
+    }
+    else
+    {
+        selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
+    }
+
+    upDateAntenna();
+
 
     trace("*** Rotator Started ***");
 
@@ -413,7 +435,7 @@ void RotatorMainWindow::showStatusMessage(const QString &message)
 void RotatorMainWindow::sendStatusLogger(const QString &message)
 {
    logMessage(QString("Send %1 message to logger").arg(message));
-   if (loggerAntenna.length() > 0)
+   if (appName.length() > 0)
    {
         msg->publishState(message);
    }
@@ -544,7 +566,7 @@ void RotatorMainWindow::displayBearing(int bearing)
 
     // send to minos logger
     //QString s = QString::number(displayBearing);
-    if (loggerAntenna.length() > 0)
+    if (appName.length() > 0)
     {
         QString s = QString::number(currentBearingOffset);
         msg->publishBearing(s);
@@ -734,7 +756,15 @@ void RotatorMainWindow::upDateAntenna()
         selectRotator->currentAntenna.parity = selectRotator->availAntennas[antennaIndex].parity;
         selectRotator->currentAntenna.handshake = selectRotator->availAntennas[antennaIndex].handshake;
 
-        selectRotator->saveCurrentAntenna();
+        if (appName > 0)
+        {
+            selectRotator->saveCurrentAntenna(appName);
+        }
+        else
+        {
+            selectRotator->saveCurrentAntenna(LOCAL_ANTENNA);
+        }
+
 
        if (rotator->get_serialConnected())
        {
@@ -745,13 +775,13 @@ void RotatorMainWindow::upDateAntenna()
 
        openRotator();
 
-       if (loggerAntenna.length() > 0)
+       if (appName.length() > 0)
        {
-           this->setWindowTitle("Minos Rotator - " + selectRotator->currentAntenna.antennaName + " - Logger");
+           this->setWindowTitle("Minos Rotator Control - " + appName + " - Logger");
        }
        else
        {
-           this->setWindowTitle("Minos Rotator - " + selectRotator->currentAntenna.antennaName + " - Local");
+           this->setWindowTitle("Minos Rotator Control - Local");
        }
 
        offSetDisplay->setText(QString::number(selectRotator->currentAntenna.antennaOffset));
@@ -800,7 +830,7 @@ void RotatorMainWindow::upDateAntenna()
 
         rotatorBearing = 9999;      // force display update
        // update logger
-       if (loggerAntenna.length() > 0)
+       if (appName.length() > 0)
        {
            msg->publishAntennaName(selectRotator->currentAntenna.antennaName);
            msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
@@ -808,8 +838,8 @@ void RotatorMainWindow::upDateAntenna()
        }
 
        trace("*** Antenna Updated ***");
-       trace("logger Antenna = " + loggerAntenna);
-       trace("Rotator Name = " + selectRotator->currentAntenna.antennaName);
+       trace("App Instance Name  = " + appName);
+       trace("Antenna Name = " + selectRotator->currentAntenna.antennaName);
        trace("Antenna Number = " + selectRotator->currentAntenna.antennaNumber);
        trace("Rotator Model = " + selectRotator->currentAntenna.rotatorModel);
        trace("Rotator Number = " + QString::number(selectRotator->currentAntenna.rotatorModelNumber));
@@ -845,6 +875,7 @@ void RotatorMainWindow::request_bearing()
     if (rotator->get_serialConnected())
     {
         retCode = rotator->request_bearing();
+        logMessage(QString("Sent request bearing cmd - retcode = %1").arg(QString::number(retCode)));
         if (retCode < 0)
         {
             hamlibError(retCode, "Request Bearing");
@@ -894,7 +925,7 @@ void RotatorMainWindow::checkMoving(int bearing)
 {
 
     static int oldBearing;
-
+    logMessage(QString("Check Moving"));
     if (!moving)
     {
         return;
@@ -904,12 +935,14 @@ void RotatorMainWindow::checkMoving(int bearing)
     {
             oldBearing = bearing;
             rotTimeCount = 0;
+            logMessage(QString("Rotator is moving"));
             return;
     }
     else
     {
         if (rotTimeCount > ROTATE_MOVE_TIMEOUT)
         {
+            logMessage(QString("Rotator has stoped moving"));
             stopButton();
             sendStatusToLogStop();
         }
@@ -1172,6 +1205,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
     if (sendStop)
     {
         retCode = rotator->stop_rotation();
+        logMessage(QString("Stop cmd sent to rotator - retcode = %1").arg(QString::number(retCode)));
         if (retCode < 0)
         {
             hamlibError(retCode, "Stop Rotation");
@@ -1446,7 +1480,7 @@ void RotatorMainWindow::hamlibError(int errorCode, QString cmd )
     errorCode *= -1;
     // log all errors
     QString errorMsg = rotator->gethamlibErrorMsg(errorCode);
-    logMessage("Hamlib Error - Code = " + QString::number(errorCode) + " " + errorMsg);
+    logMessage(QString("Hamlib Error - Code = %1 - %2").arg(QString::number(errorCode), errorMsg));
 
     if (errorCode != 10)
     {
@@ -1535,7 +1569,7 @@ bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
 
     if (!config.contains(QString::number(rotatorNumber)))
     {
-        logMessage("Rotator Number = " + QString::number(rotatorNumber) + " does not exist in config file!");
+        logMessage(QString("Rotator Number = %1, does not exist in config file!").arg(QString::number(rotatorNumber)));
     }
     else
     {
@@ -1551,7 +1585,7 @@ bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
 
 void RotatorMainWindow::about()
 {
-    QMessageBox::about(this, "Minos Rotator", "Minos QT Rotator\nCopyright D Balharrie G8FKH/M0DGB 2017\nVersion 0.1");
+    QMessageBox::about(this, "Minos Rotator", "Minos QT Rotator\nCopyright D Balharrie G8FKH/M0DGB 2017");
 }
 
 

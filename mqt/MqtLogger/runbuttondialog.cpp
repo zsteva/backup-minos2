@@ -183,6 +183,7 @@ void RunButtonDialog::setDialogTitle(QString title)
 void RunButtonDialog::editMemory(int memoryLoc)
 {
 
+    memoryNumber = memoryLoc;
     //ui->callSignLineEdit->setText(memoryList[memoryLoc].callsign);
 
     if (memoryList[memoryLoc].freq.remove('.').count() < 4)

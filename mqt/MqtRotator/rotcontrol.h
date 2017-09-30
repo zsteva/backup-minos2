@@ -177,6 +177,7 @@ private:
     int retcode;		/* generic return code from functions */
     int exitcode;
 
+
 };
 
 #endif // ROTCONTROL_H
