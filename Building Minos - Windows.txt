@@ -57,7 +57,15 @@ automatically bring up a dialog to let you do this.
 Choose Qt 5.6.2, "Release" Build - the hammer icon at bottom left. This should run to completion, 
 with a few warnings.
 
-To get a runnable system, 
+To get a runnable system, install wget and Inno Setup:
+
+wget - https://eternallybored.org/misc/wget/
+
+(I use the 32 bit binary on a 64 bit system)
+
+Inno Setup - http://www.jrsoftware.org/isinfo.php
+ 
+Then
 
 cd C:\Projects\minos2\mqt\Installer
 
@@ -65,14 +73,7 @@ and run
 
 buildInstall.bat
 
-This will fail near the end unless you have wget and Inno Setup installed
-
-wget - https://eternallybored.org/misc/wget/
-
-Inno Setup - http://www.jrsoftware.org/isinfo.php
- 
-(only needed if you want to build an installer), but you will find a runnable system
-installed in 
+and you will find a runnable system installed in 
 
 C:\temp\mqtInstaller\installFiles
 
