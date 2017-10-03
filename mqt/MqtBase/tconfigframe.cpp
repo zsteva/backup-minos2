@@ -172,7 +172,8 @@ void TConfigFrame::on_newElementButton_clicked()
 
     int i = MinosConfig::getMinosConfig() ->elelist.size() - 1; // position of element in list
     QSharedPointer<RunConfigElement> c = MinosConfig::getMinosConfig() ->elelist[i];
-    c->appType = RunLocal;
+    c->runType = RunLocal;
+    c->appType = "None";
     c->enabled = true;
 
     cef->setElement(c);

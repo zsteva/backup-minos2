@@ -30,8 +30,6 @@ private slots:
 
     void on_deleteButton_clicked();
 
-    void on_rbNoAction_clicked();
-
     void on_rbRunLocally_clicked();
 
     void on_rbConnectRemote_clicked();

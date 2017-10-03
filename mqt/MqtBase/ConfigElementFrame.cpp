@@ -170,11 +170,6 @@ void ConfigElementFrame::checkEnabled()
     ui->advancedGroup->setVisible( ui->advancedCheckbox->isChecked());
 }
 
-void ConfigElementFrame::on_rbNoAction_clicked()
-{
-    checkEnabled();
-}
-
 void ConfigElementFrame::on_rbRunLocally_clicked()
 {
     checkEnabled();

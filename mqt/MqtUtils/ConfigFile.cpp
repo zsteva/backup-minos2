@@ -267,7 +267,10 @@ void MinosConfig::saveAll()
         QSettings config(getConfigIniName(), QSettings::IniFormat);
 
         config.clear();
-
+        config.sync();
+    }
+    {
+        QSettings config(getConfigIniName(), QSettings::IniFormat);
         for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
         {
             (*i)->save(config);
