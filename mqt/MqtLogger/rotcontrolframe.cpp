@@ -128,12 +128,14 @@ void RotControlFrame::turnTo(int angle)
     }
 
 
-    if (angle > maxAzimuth)
+    //if (angle > maxAzimuth)
+    if (angle > COMPASS_MAX360)
     {
         QString msg = "<font color='Red'>Bearing too large - " + QString::number(angle) + "</font>";
         ui->rotatorState->setText(msg);
     }
-    else if (angle < minAzimuth)
+    //else if (angle < minAzimuth)
+    else if (angle < COMPASS_MIN0)
     {
         QString msg = "<font color='Red'>Bearing too small - " + QString::number(angle) + "</font>";
         ui->rotatorState->setText(msg);
@@ -154,6 +156,8 @@ void RotControlFrame::on_Rotate_clicked()
     int angle = getAngle(brgSt);
 
     turnTo(angle);
+    ui->BrgSt->selectAll();
+
 }
 
 void RotControlFrame::on_nudgeLeft_clicked()

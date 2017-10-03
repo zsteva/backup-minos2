@@ -121,6 +121,7 @@ private:
     int brakedelay;
     bool rot_left_button_status;
     bool rot_right_button_status;
+    bool turn_button_status;
     bool brakeflag;
     bool moving;
     bool movingCW;

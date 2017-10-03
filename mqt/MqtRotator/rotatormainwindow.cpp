@@ -51,6 +51,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     ui(new Ui::RotatorMainWindow),
     rot_left_button_status(OFF),
     rot_right_button_status(OFF),
+    turn_button_status(OFF),
     brakeflag(false),
     moving(false),
     movingCW(false),
@@ -416,7 +417,7 @@ void RotatorMainWindow::openRotator()
     {
 
         pollTimer->start(pollTime);             // start timer to send message to controller
-        showStatusMessage(tr("Connected to Antenna: %1 - %2, %3, %4, %5, %6, %7, %8")
+        showStatusMessage(tr("Connected to: %1 - %2, %3, %4, %5, %6, %7, %8")
                               .arg(p.antennaName).arg(p.rotatorModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
                               .arg(p.stopbits).arg(rotator->getParityCodeNames()[p.parity]).arg(rotator->getHandShakeNames()[p.handshake]));
         sendStatusToLogReady();
@@ -1134,6 +1135,8 @@ void RotatorMainWindow::rotateTo(int bearing)
         stopRotation(true);
     }
 
+    turn_button_on();
+
     if (rotator->get_serialConnected())
     {
 
@@ -1447,6 +1450,10 @@ void RotatorMainWindow::stopRotation(bool sendStop)
     {
         rot_right_button_off();
     }
+    if (turn_button_status)
+    {
+        turn_button_off();
+    }
 
     sendStatusToLogStop();
     sleepFor(brakedelay);
@@ -1641,14 +1648,14 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
 
 void RotatorMainWindow::turn_button_on()
 {
-
+    turn_button_status = ON;
     ui->turnButton->setPalette(*redText);
     ui->turnButton->setText("Turn");
 }
 
 void RotatorMainWindow::turn_button_off()
 {
-
+    turn_button_status = OFF;
     ui->turnButton->setPalette(*blackText);
     ui->turnButton->setText("Turn");
 }
