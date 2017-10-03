@@ -60,17 +60,12 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     southStopFlag[3] = ui->chkSstop4;
     southStopFlag[4] = ui->chkSstop5;
 
-    // set southStop invisible
-    ui->chkSstop1->setVisible(false);
-    ui->chkSstop2->setVisible(false);
-    ui->chkSstop3->setVisible(false);
-    ui->chkSstop4->setVisible(false);
-    ui->chkSstop5->setVisible(false);
-    ui->s_StopLbl1->setVisible(false);
-    ui->s_StopLbl2->setVisible(false);
-    ui->s_StopLbl3->setVisible(false);
-    ui->s_StopLbl4->setVisible(false);
-    ui->s_StopLbl5->setVisible(false);
+    southStopLabel[0] = ui->s_StopLbl1;
+    southStopLabel[1] = ui->s_StopLbl2;
+    southStopLabel[2] = ui->s_StopLbl3;
+    southStopLabel[3] = ui->s_StopLbl4;
+    southStopLabel[4] = ui->s_StopLbl5;
+
 
 
     overRunFlag[0] = ui->chkOverrun1;
@@ -78,6 +73,23 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     overRunFlag[2] = ui->chkOverrun3;
     overRunFlag[3] = ui->chkOverrun4;
     overRunFlag[4] = ui->chkOverrun5;
+
+
+    overRunLabel[0] = ui->overLapLbl1;
+    overRunLabel[1] = ui->overLapLbl2;
+    overRunLabel[2] = ui->overLapLbl3;
+    overRunLabel[3] = ui->overLapLbl4;
+    overRunLabel[4] = ui->overLapLbl5;
+
+    for (int i = 0; i < NUM_ANTENNAS; i++)
+    {
+        southStopFlag[i]->setVisible(false);
+        southStopLabel[i]->setVisible(false);
+        overRunFlag[i]->setVisible(false);
+        overRunLabel[i]->setVisible(false);
+    }
+
+
 
     antennaOffset[0] = ui->lEditOffset1;
     antennaOffset[1] = ui->lEditOffset2;
@@ -270,6 +282,30 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
         antennaName[i]->setText(availAntennas[i].antennaName);
         rotatorModel[i]->setCurrentIndex(rotatorModel[i]->findText(availAntennas[i].rotatorModel));
         southStopFlag[i]->setChecked(availAntennas[i].southStopFlag);
+
+        // set southstop visible if rotator is 0 - 360
+        int minRot = 0;
+        int maxRot = 0;
+        if (getMaxMinRotationData(availAntennas[i].rotatorModelNumber, &maxRot, &minRot) >= 0)
+        {
+            if (minRot == 0 && maxRot == 360)
+            {
+                southStopFlag[i]->setVisible(true);
+                southStopLabel[i]->setVisible(true);
+            }
+            else if (minRot == 0 && maxRot == 450)
+            {
+                overRunFlag[i]->setVisible(true);
+                overRunLabel[i]->setVisible(true);
+            }
+            else
+            {
+                southStopFlag[i]->setVisible(false);
+                southStopLabel[i]->setVisible(false);
+                overRunFlag[i]->setVisible(false);
+                overRunLabel[i]->setVisible(false);
+            }
+        }
         overRunFlag[i]->setChecked(availAntennas[i].overRunFlag);
         antennaOffset[i]->setText(QString::number(availAntennas[i].antennaOffset));
         comPorts[i]->setCurrentIndex(comPorts[i]->findText(availAntennas[i].comport));
@@ -323,6 +359,39 @@ void SetupDialog::rotatorModelSelected(int boxNumber)
         availAntennas[boxNumber].rotatorManufacturer = s.trimmed();
         s = antdetails[2];
         availAntennas[boxNumber].rotatorModelName = s.trimmed();
+
+        // set southstop visible if rotator is 0 - 360
+        int minRot = 0;
+        int maxRot = 0;
+        if (getMaxMinRotationData(availAntennas[boxNumber].rotatorModelNumber, &maxRot, &minRot) >= 0)
+        {
+            if (minRot == 0 && maxRot == 360)
+            {
+                southStopFlag[boxNumber]->setVisible(true);
+                southStopLabel[boxNumber]->setVisible(true);
+                overRunFlag[boxNumber]->setVisible(false);
+                overRunFlag[boxNumber]->setChecked(false);
+                overRunLabel[boxNumber]->setVisible(false);
+            }
+            else if (minRot == 0 && maxRot == 450)
+            {
+                overRunFlag[boxNumber]->setVisible(true);
+                overRunFlag[boxNumber]->setChecked(true);
+                overRunLabel[boxNumber]->setVisible(true);
+                southStopFlag[boxNumber]->setVisible(false);
+                southStopFlag[boxNumber]->setChecked(false);
+                southStopLabel[boxNumber]->setVisible(false);
+            }
+            else
+            {
+                overRunFlag[boxNumber]->setVisible(false);
+                overRunFlag[boxNumber]->setChecked(false);
+                overRunLabel[boxNumber]->setVisible(false);
+                southStopFlag[boxNumber]->setVisible(false);
+                southStopFlag[boxNumber]->setChecked(false);
+                southStopLabel[boxNumber]->setVisible(false);
+            }
+        }
 
         antennaValueChanged[boxNumber] = true;
         antennaChanged = true;
@@ -646,8 +715,17 @@ void SetupDialog::saveSettings()
 
     if (antennaChanged)
     {
+        QString fileName;
+        if (appName == "")
+        {
+            fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
+        }
+        else
+        {
+            fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
+        }
 
-        QSettings config("./Configuration/Antenna/AvailAntenna.ini", QSettings::IniFormat);
+        QSettings config(fileName, QSettings::IniFormat);
 
         for (int i = 0; i < NUM_ANTENNAS; i++)
         {
@@ -703,7 +781,17 @@ void SetupDialog::saveSettings()
 void SetupDialog::readSettings()
 {
 
-    QSettings config("./Configuration/Antenna/AvailAntenna.ini", QSettings::IniFormat);
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
+    }
+    else
+    {
+        fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
+    }
+
+    QSettings config(fileName, QSettings::IniFormat);
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
@@ -714,7 +802,7 @@ void SetupDialog::readSettings()
         availAntennas[i].rotatorModelName = config.value("rotatorModelName", "").toString();
         availAntennas[i].rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
         availAntennas[i].rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
-        availAntennas[i].southStopFlag = config.value("southStop", true).toBool();
+        availAntennas[i].southStopFlag = config.value("southStop", false).toBool();
         availAntennas[i].overRunFlag = config.value("overRun", false).toBool();
         availAntennas[i].antennaOffset = config.value("antennaOffset", "").toInt();
         availAntennas[i].comport = config.value("comport", "").toString();
@@ -820,11 +908,20 @@ QString SetupDialog::getRotatorComPort(QString antennaName)
 
 
 
-void SetupDialog::saveCurrentAntenna(QString name)
+void SetupDialog::saveCurrentAntenna()
 {
 
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = ANTENNA_PATH_LOCAL + LOCAL_ANTENNA + FILENAME_CURRENT_ANTENNA;
+    }
+    else
+    {
+        fileName = ANTENNA_PATH_LOGGER + appName + FILENAME_CURRENT_ANTENNA;
+    }
 
-    QSettings config("./Configuration/Antenna/" + name + "CurrentAntenna.ini", QSettings::IniFormat);
+    QSettings config(fileName, QSettings::IniFormat);
 
 
     config.beginGroup("CurrentAntenna");
@@ -850,11 +947,20 @@ void SetupDialog::saveCurrentAntenna(QString name)
 
 }
 
-void SetupDialog::readCurrentAntenna(QString name)
+void SetupDialog::readCurrentAntenna()
 {
 
-    QSettings config("./Configuration/Antenna/" + name + "CurrentAntenna.ini", QSettings::IniFormat);
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = ANTENNA_PATH_LOCAL + LOCAL_ANTENNA + FILENAME_CURRENT_ANTENNA;
+    }
+    else
+    {
+        fileName = ANTENNA_PATH_LOGGER + appName + FILENAME_CURRENT_ANTENNA;
+    }
 
+    QSettings config(fileName, QSettings::IniFormat);
 
     {
         config.beginGroup("CurrentAntenna");
@@ -878,6 +984,10 @@ void SetupDialog::readCurrentAntenna(QString name)
 }
 
 
+void SetupDialog::setAppName(QString name)
+{
+    appName = name;
+}
 
 srotParams SetupDialog::getCurrentAntenna() const
 {
@@ -886,7 +996,41 @@ srotParams SetupDialog::getCurrentAntenna() const
 
 
 
+int SetupDialog::getMaxMinRotationData(int rotatorNumber, int *maxRot, int *minRot)
+{
+    int retCode = 0;
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = CONFIGURATION_FILEPATH_LOCAL + ROTATOR_DATA_FILE;
+    }
+    else
+    {
+        fileName = CONFIGURATION_FILEPATH_LOGGER + ROTATOR_DATA_FILE;
+    }
 
+    QSettings config(fileName, QSettings::IniFormat);
+
+
+    config.beginGroup(QString::number(rotatorNumber));
+
+
+    if (!config.contains("rotatorModelNumber"))
+    {
+        //trace(QString("Rotator Number = %1, does not exist in rotators config file!").arg(QString::number(rotatorNumber)));
+        retCode = -1; // error
+    }
+    else
+    {
+       *maxRot = config.value("max_azimuth", false).toInt();
+       *minRot = config.value("min_azimuth", false).toInt();
+    }
+
+    config.endGroup();
+
+    return retCode;
+
+}
 
 
 

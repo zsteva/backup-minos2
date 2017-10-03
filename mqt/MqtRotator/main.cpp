@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    appStartup(a, "MinosQtRotator");
+    appStartup(a, "MinosQt Rotator");
 
     RotatorMainWindow w;
     w.show();

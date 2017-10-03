@@ -49,11 +49,28 @@
 // Bearing Log
 #define BEARINGLOG_FILETYPE ".log"
 
+// File Name Constants
 
 const QString LOCAL_ANTENNA = "Local";
 
+const QString CONFIGURATION_FILEPATH_LOGGER = "./Configuration/";
+const QString CONFIGURATION_FILEPATH_LOCAL = "./Configuration/";
+
+const QString MINOS_ROTATOR_CONFIG_FILE = "MinosRotatorConfig.ini";
+const QString ROTATOR_DATA_FILE = "rotators.ini";
+
+const QString ANTENNA_PATH_LOGGER = "./Configuration/Antenna/";
+const QString ANTENNA_PATH_LOCAL = "./Configuration/Antenna/";
+const QString FILENAME_AVAIL_ANTENNAS = "AvailAntenna.ini";
+const QString FILENAME_CURRENT_ANTENNA = "CurrentAntenna.ini";
+
+// Rotator Types
+
+enum endStop {ROT_NEG180_180, ROT_0_360, ROT_0_450, ROT_NEG180_540, ROT_180_180};
 
 
+// Overlap Status
 
+enum overlapStat { NO_OVERLAP, NEG_OVERLAP, POS_OVERLAP};
 
 #endif // ROTATORCOMMON_H

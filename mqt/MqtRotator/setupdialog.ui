@@ -205,7 +205,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_130">
+             <widget class="QLabel" name="overLapLbl1">
               <property name="text">
                <string>Overlap</string>
               </property>
@@ -435,7 +435,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_43">
+             <widget class="QLabel" name="overLapLbl2">
               <property name="text">
                <string>Overlap</string>
               </property>
@@ -662,7 +662,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_53">
+             <widget class="QLabel" name="overLapLbl3">
               <property name="text">
                <string>Overlap</string>
               </property>
@@ -889,7 +889,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_63">
+             <widget class="QLabel" name="overLapLbl4">
               <property name="text">
                <string>Overlap</string>
               </property>
@@ -1116,7 +1116,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_75">
+             <widget class="QLabel" name="overLapLbl5">
               <property name="text">
                <string>Overlap</string>
               </property>
