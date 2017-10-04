@@ -251,14 +251,15 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     if (appName.length() > 0)
     {
         logMessage((QString("Read Current Antenna for AppName %1 from logger").arg(appName)));
-        selectRotator->readCurrentAntenna();
+
     }
     else
     {
         logMessage((QString("Read Current Antenna for Local selection")));
-        selectRotator->readCurrentAntenna();
+
     }
 
+    selectRotator->readCurrentAntenna();
 
     if (selectRotator->currentAntenna.antennaName == "")
     {

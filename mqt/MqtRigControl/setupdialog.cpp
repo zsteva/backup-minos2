@@ -14,6 +14,7 @@
 
 #include "setupdialog.h"
 #include "ui_setupdialog.h"
+#include "rigcontrolcommonconstants.h"
 #include "rigcontrol.h"
 #include <QSignalMapper>
 #include <QComboBox>
@@ -720,8 +721,17 @@ void SetupDialog::saveSettings()
 
     if (radioChanged)
     {
+        QString fileName;
+        if (appName == "")
+        {
+            fileName = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
+        }
+        else
+        {
+            fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
+        }
 
-        QSettings config(RADIO_CONFIG, QSettings::IniFormat);
+        QSettings config(fileName, QSettings::IniFormat);
 
         for (int i = 0; i < NUM_RADIOS; i++)
         {
@@ -775,7 +785,19 @@ void SetupDialog::saveSettings()
 void SetupDialog::readSettings()
 {
 
-    QSettings config(RADIO_CONFIG, QSettings::IniFormat);
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
+    }
+    else
+    {
+        fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
+    }
+
+
+
+    QSettings config(fileName, QSettings::IniFormat);
 
     for (int i = 0; i < NUM_RADIOS; i++)
     {
@@ -903,8 +925,18 @@ QString SetupDialog::getRadioComPort(QString radioName)
 void SetupDialog::saveCurrentRadio()
 {
 
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = RADIO_PATH_LOCAL + LOCAL_RADIO + FILENAME_CURRENT_RADIO;
+    }
+    else
+    {
+        fileName = RADIO_PATH_LOGGER + appName + FILENAME_CURRENT_RADIO;
+    }
 
-    QSettings config(RADIO_CONFIG, QSettings::IniFormat);
+
+    QSettings config(fileName, QSettings::IniFormat);
 
 
     config.beginGroup("CurrentRadio");
@@ -935,7 +967,18 @@ void SetupDialog::saveCurrentRadio()
 void SetupDialog::readCurrentRadio()
 {
 
-    QSettings config(RADIO_CONFIG, QSettings::IniFormat);
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = RADIO_PATH_LOCAL + LOCAL_RADIO + FILENAME_CURRENT_RADIO;
+    }
+    else
+    {
+        fileName = RADIO_PATH_LOGGER + appName + FILENAME_CURRENT_RADIO;
+    }
+
+
+    QSettings config(fileName, QSettings::IniFormat);
 
 
     {
@@ -962,6 +1005,11 @@ void SetupDialog::readCurrentRadio()
 
 }
 
+
+void SetupDialog::setAppName(QString name)
+{
+    appName = name;
+}
 
 
 scatParams SetupDialog::getCurrentRadio() const

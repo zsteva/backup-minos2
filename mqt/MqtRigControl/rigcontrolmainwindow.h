@@ -57,7 +57,7 @@ private:
     QComboBox *selectRadio;
     SetupDialog *selectRig;
     RigControl  *radio;
-    QString loggerRadio = "";
+    QString appName = "";
     QLabel *status;
     QTimer *pollTimer;
     class QTimer LogTimer;

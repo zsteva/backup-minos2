@@ -120,12 +120,17 @@ void RigMemDialog::setRadioState(QString state)
 int RigMemDialog::readAllMemories()
 {
 
+    QString fileName;
+
     if (radioName == "")
     {
-        return -1;
+        fileName = RADIO_MEMORIES_PATH_LOCAL + LOCAL_RADIO + FILENAME_MEMORY_RADIO;
+    }
+    else
+    {
+        fileName = RADIO_MEMORIES_PATH_LOGGER + radioName + FILENAME_MEMORY_RADIO;
     }
 
-    QString fileName = "./Configuration/RadioMemoryData/" + radioName + "MemoryData.ini";
 
     QSettings config(fileName, QSettings::IniFormat);
 
@@ -151,12 +156,16 @@ int RigMemDialog::readAllMemories()
 int RigMemDialog::readMemory(int memoryLoc)
 {
 
+    QString fileName;
+
     if (radioName == "")
     {
-        return -1;
+        fileName = RADIO_MEMORIES_PATH_LOCAL + LOCAL_RADIO + FILENAME_MEMORY_RADIO;
     }
-
-    QString fileName = "./Configuration/RadioMemoryData/" + radioName + "MemoryData.ini";
+    else
+    {
+        fileName = RADIO_MEMORIES_PATH_LOGGER + radioName + FILENAME_MEMORY_RADIO;
+    }
 
     QSettings config(fileName, QSettings::IniFormat);
 
@@ -179,12 +188,18 @@ int RigMemDialog::readMemory(int memoryLoc)
 
 int RigMemDialog::saveMemory(int memoryLoc)
 {
+    QString fileName;
+
     if (radioName == "")
     {
-        return -1;
+        fileName = RADIO_MEMORIES_PATH_LOCAL + LOCAL_RADIO + FILENAME_MEMORY_RADIO;
+    }
+    else
+    {
+        fileName = RADIO_MEMORIES_PATH_LOGGER + radioName + FILENAME_MEMORY_RADIO;
     }
 
-    QString fileName = "./Configuration/RadioMemoryData/" + radioName + "MemoryData.ini";
+
     QSettings config(fileName, QSettings::IniFormat);
     config.beginGroup("MemoryLoc" + QString::number(memoryLoc));
     config.setValue("Callsign", memoryList[memoryLoc].callsign);

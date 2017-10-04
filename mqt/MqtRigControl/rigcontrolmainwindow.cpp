@@ -48,7 +48,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
     // get the antenna name from host process
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    loggerRadio = env.value("MQTRPCNAME", "") ;
+    appName = env.value("MQTRPCNAME", "") ;
 
     createCloseEvent();
 
@@ -59,9 +59,9 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
     QSettings settings;
     geoStr = "geometry";
-    if (loggerRadio.length() > 0)
+    if (appName.length() > 0)
     {
-        geoStr = geoStr + loggerRadio;
+        geoStr = geoStr + appName;
     }
 
     QByteArray geometry = settings.value(geoStr).toByteArray();
@@ -74,6 +74,8 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     radio->getRigList();
 
     selectRig = new SetupDialog(radio);
+    selectRig->setAppName(appName);
+
     selectRadio = ui->selectRadioBox;
 
     pollTimer = new QTimer(this);
@@ -87,15 +89,17 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     radio->set_serialConnected(false);
     initActionsConnections();
 
-
+/*
     if (loggerRadio.length() > 0)
     {
         ui->selectRadioBox->hide();
         ui->SelectRadioTitle->hide();
     }
+*/
 
     initSelectRadioBox();
 
+/*
     if (loggerRadio.length() > 0)
     {
 
@@ -121,21 +125,48 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
         selectRadio->setCurrentIndex(selectRadio->findText(selectRig->currentRadio.radioName));
     }
 
+*/
+
+
+    if (appName.length() > 0)
+    {
+        logMessage((QString("Read Current Radio for AppName %1 from logger").arg(appName)));
+
+    }
+    else
+    {
+        logMessage((QString("Read Current Antenna for Local selection")));
+
+    }
+
+    selectRig->readCurrentRadio();
+
+    if (selectRig->currentRadio.radioName == "")
+    {
+        logMessage(QString("No radio selected for this appName, %1").arg(appName));
+        QString errmsg = "<font color='Red'>Please select a radio!</font>";
+        showStatusMessage(errmsg);
+        sendStatusLogger(errmsg);
+    }
+    else
+    {
+        selectRadio->setCurrentIndex(selectRadio->findText(selectRig->currentRadio.radioName));
+    }
+
+
+
 
 
     setPolltime(250);
 
- //   openRadio();
+
 
     readTraceLogFlag();
 
 
+    upDateRadio();
+    sendStatusToLogReady();
 
-    if (!logRadError)
-    {
-        upDateRadio();
-        sendStatusToLogReady();
-    }
 
     radio->buildPassBandTable();
 
@@ -288,16 +319,17 @@ void RigControlMainWindow::upDateRadio()
 
         openRadio();
 
-        if (loggerRadio.length() > 0)
+        if (appName.length() > 0)
         {
-            this->setWindowTitle("Minos Rig Control - " + selectRig->currentRadio.radioName + " - Logger");
+            this->setWindowTitle("Minos Rig Control - " + appName + " - Logger");
         }
         else
         {
-            this->setWindowTitle("Minos Rig Control - " + selectRig->currentRadio.radioName + " - Local");
+            this->setWindowTitle("Minos Rig Control - Local");
         }
 
        trace("*** Radio Update ***");
+       trace("App Instance Name  = " + appName);
        trace("Radio Name = " + selectRig->currentRadio.radioName);
        trace("Radio Number = " + selectRig->currentRadio.radioNumber);
        trace("Radio Model = " + selectRig->currentRadio.radioModel);
@@ -318,7 +350,7 @@ void RigControlMainWindow::upDateRadio()
 
        // update logger
 
-       if (loggerRadio.length() > 0)
+       if (appName.length() > 0)
        {
             msg->publishRadioName(selectRig->currentRadio.radioName);
        }
@@ -760,7 +792,18 @@ void RigControlMainWindow::hamlibError(int errorCode, QString cmd)
 
 void RigControlMainWindow::readTraceLogFlag()
 {
-    QSettings config(RIG_CONTROL_CONFIG, QSettings::IniFormat);
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = RIG_CONFIGURATION_FILEPATH_LOCAL + MINOS_RADIO_CONFIG_FILE;
+    }
+    else
+    {
+        fileName = RIG_CONFIGURATION_FILEPATH_LOGGER + MINOS_RADIO_CONFIG_FILE;
+    }
+
+
+    QSettings config(fileName, QSettings::IniFormat);
     config.beginGroup("TraceLog");
 
 
@@ -771,8 +814,19 @@ void RigControlMainWindow::readTraceLogFlag()
 
 void RigControlMainWindow::saveTraceLogFlag()
 {
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = RIG_CONFIGURATION_FILEPATH_LOCAL + MINOS_RADIO_CONFIG_FILE;
+    }
+    else
+    {
+        fileName = RIG_CONFIGURATION_FILEPATH_LOGGER + MINOS_RADIO_CONFIG_FILE;
+    }
+
+
     qDebug() << "traceLog selected";
-    QSettings config(RIG_CONTROL_CONFIG, QSettings::IniFormat);
+    QSettings config(fileName, QSettings::IniFormat);
     config.beginGroup("TraceLog");
 
     config.setValue("TraceLog", ui->actionTraceLog->isChecked());
@@ -786,14 +840,14 @@ void RigControlMainWindow::saveTraceLogFlag()
 
 void RigControlMainWindow::about()
 {
-    QMessageBox::about(this, "Minos RigControl", "Minos QT RigControl\nCopyright D Balharrie G8FKH/M0DGB 2017\nVersion 0.1");
+    QMessageBox::about(this, "Minos RigControl", "Minos QT RigControl\nCopyright D Balharrie G8FKH/M0DGB 2017");
 }
 
 
 
 void RigControlMainWindow::sendStatusLogger(const QString &message)
 {
-    if (loggerRadio.length() > 0)
+    if (appName.length() > 0)
     {
         msg->publishState(message);
     }
@@ -822,7 +876,7 @@ void RigControlMainWindow::sendStatusToLogError()
 
 void RigControlMainWindow::sendFreqToLog(freq_t freq)
 {
-    if (loggerRadio.length() > 0)
+    if (appName.length() > 0)
     {
         msg->publishFreq(convertStringFreq(freq));
     }
@@ -830,7 +884,7 @@ void RigControlMainWindow::sendFreqToLog(freq_t freq)
 
 void RigControlMainWindow::sendModeToLog(QString mode)
 {
-    if (loggerRadio.length() > 0)
+    if (appName.length() > 0)
     {
         msg->publishMode(mode);
     }
@@ -838,7 +892,7 @@ void RigControlMainWindow::sendModeToLog(QString mode)
 
 void RigControlMainWindow::sendRxPbFlagToLog()
 {
-    if (loggerRadio.length() > 0)
+    if (appName.length() > 0)
     {
         QString s;
         if (selectRig->currentRadio.useRxPassBand)

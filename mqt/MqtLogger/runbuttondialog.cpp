@@ -107,12 +107,17 @@ void RunButtonDialog::setRadioState(QString state)
 int RunButtonDialog::readAllMemories()
 {
 
+    QString fileName;
+
     if (radioName == "")
     {
-        return -1;
+        fileName = RADIO_MEMORIES_PATH_LOCAL + LOCAL_RADIO + FILENAME_RUN_MEMORY;
+    }
+    else
+    {
+        fileName = RADIO_MEMORIES_PATH_LOGGER + radioName + FILENAME_RUN_MEMORY;
     }
 
-    QString fileName = "./Configuration/RadioMemoryData/" + radioName + "RunData.ini";
 
     QSettings config(fileName, QSettings::IniFormat);
 
@@ -132,13 +137,16 @@ int RunButtonDialog::readAllMemories()
 
 int RunButtonDialog::readMemory(int memoryLoc)
 {
+    QString fileName;
 
     if (radioName == "")
     {
-        return -1;
+        fileName = RADIO_MEMORIES_PATH_LOCAL + LOCAL_RADIO + FILENAME_RUN_MEMORY;
     }
-
-    QString fileName = "./Configuration/RadioMemoryData/" + radioName + "RunData.ini";
+    else
+    {
+        fileName = RADIO_MEMORIES_PATH_LOGGER + radioName + FILENAME_RUN_MEMORY;
+    }
 
     QSettings config(fileName, QSettings::IniFormat);
 
@@ -156,12 +164,17 @@ int RunButtonDialog::readMemory(int memoryLoc)
 
 int RunButtonDialog::saveMemory(int memoryLoc)
 {
+    QString fileName;
+
     if (radioName == "")
     {
-        return -1;
+        fileName = RADIO_MEMORIES_PATH_LOCAL + LOCAL_RADIO + FILENAME_RUN_MEMORY;
+    }
+    else
+    {
+        fileName = RADIO_MEMORIES_PATH_LOGGER + radioName + FILENAME_RUN_MEMORY;
     }
 
-    QString fileName = "./Configuration/RadioMemoryData/" + radioName + "RunData.ini";
     QSettings config(fileName, QSettings::IniFormat);
     config.beginGroup("RunLoc" + QString::number(memoryLoc));
     config.setValue("Frequency", memoryList[memoryLoc].freq);
