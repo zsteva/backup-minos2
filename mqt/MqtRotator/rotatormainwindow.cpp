@@ -1285,6 +1285,7 @@ int RotatorMainWindow::calclRot_0_450_Neg180_540(int targetBearing)
                     .arg(QString::number(rotatorBearing), QString::number(targetBearing), QString::number(target))));
         return target;
     }
+    return target;
 }
 
 
