@@ -415,6 +415,10 @@ QString MinosConfig::checkConfig()
             break;
         }
     }
+
+    //Check that the name is not blank, and only has allowed characters
+    //Check that the names aren't duplicates
+
     // Go through the configured elements, and check that their requirements are also present
     for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
     {

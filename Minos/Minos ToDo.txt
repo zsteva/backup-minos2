@@ -1,3 +1,9 @@
+
+If I use 'export printable' in Minos (pre V2) I get all the columns, 
+going left to right, up to 'bearing' but not the next one 'distance'. 
+Does anyone know if there is a way to add the distance column to the 
+printable file?
+//=============================================================================
 Still to do from Ken's points
 
 idealWidth of HTML fields - 1.7 mult is a bodge
