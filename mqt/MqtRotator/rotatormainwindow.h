@@ -19,6 +19,7 @@
 
 #include "base_pch.h"
 #include "rotatorRpc.h"
+#include "rotatorCommonConstants.h"
 #include <QMainWindow>
 #include <QObject>
 #include <QtSerialPort/QSerialPort>
@@ -32,6 +33,7 @@
 #define OFF false
 #define ON true
 
+const int POLLTIME = 500;
 
 class QLabel;
 class QComboBox;
@@ -78,7 +80,7 @@ signals:
 
     void sendBearing(QString);
     void sendCompassDial(int);
-    void displayOverlap(bool);
+    void displayOverlap(overlapStat);
     void checkingEndStop();
     void sendBackBearing(QString);
 //   void displayOverlapBearing(QString);
@@ -104,6 +106,8 @@ private:
     QLabel *offSetDisplay;
     QLabel *actualRotatorlbl;
     QLabel *actualRotatorDisplay;
+    QLabel *rawRotatorlbl;
+    QLabel *rawRotatorDisplay;
     QPalette *redText;
     QPalette *blackText;
     SetupDialog *selectRotator;
@@ -117,6 +121,7 @@ private:
     int brakedelay;
     bool rot_left_button_status;
     bool rot_right_button_status;
+    bool turn_button_status;
     bool brakeflag;
     bool moving;
     bool movingCW;
@@ -125,17 +130,21 @@ private:
     bool stopCmdflag;
     bool rotCmdflag;
     bool reqBearCmdflag;
-    bool overLapOnflag;
+    endStop endStopType;
+    overlapStat overLapStatus;
     bool overLapActiveflag;
     bool southStopActiveflag;
+    bool negAzFlag;
     bool supportCwCcwCmd;
-    bool logAntError;
+    //bool logAntError;
     int rotatorBearing;
-    int currentBearingOffset;
+    int curBearingWithOffset;
     int rotatorMinAzimuth;
     int rotatorMaxAzimuth;
     int currentMinAzimuth;
     int currentMaxAzimuth;
+    int rotatorCWEndStop;
+    int rotatorCCWEndStop;
     QString backBearingmsg;
     QString presetName[NUM_PRESETS];
     QString presetBearing[NUM_PRESETS];
@@ -172,23 +181,6 @@ public slots:
     void updatePresetLabels();
     void clickedPreset(int buttonNumber);
     void logMessage( QString s );
-/*
-protected slots:
-    void upDateAntenna();
-    void request_bearing();
-    void rotateCW();
-    void rotateCCW();
-    void stopButton();
-    void stop_rotation();
-    void stopRotation();
-    void sendStatusToLogReady();
-    void sendStatusToLogRotCCW();
-    void sendStatusToLogRotCW();
-    void sendStatusToLogStop();
-    void sendStatusToLogTurn();
-    void sendStatusToLogDisConnected();
-    void sendStatusToLogError();
-*/
 
 
 private slots:
@@ -203,7 +195,7 @@ private slots:
     void rotatingTimer();
     void about();
     void saveTraceLogFlag();
-    void overLapDisplayBox(bool status);
+    void overLapDisplayBox(overlapStat status);
     void currentAntennaSettingChanged(QString);
     void updateSelectAntennaBox();
 
@@ -240,6 +232,10 @@ private:
     void turn_button_off();
     void stop_button_on();
     void stop_button_off();
+    void dispRawRotBearing(int);
+    int calcRotZero360(int targetBearing);
+    int calcRotNeg180_180(int targetBearing);
+    int calclRot_0_450_Neg180_540(int targetBearing);
 };
 
 #endif // ROTATORMAINWINDOW_H

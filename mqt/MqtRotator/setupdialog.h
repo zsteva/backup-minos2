@@ -16,6 +16,7 @@
 #include <QDialog>
 #include <QtSerialPort/QSerialPort>
 #include <QStringList>
+#include <QLabel>
 #include "rotcontrol.h"
 #include "rotatorCommonConstants.h"
 
@@ -55,13 +56,14 @@ public:
 
 
     QString getRotatorProtocol(QString );
-    void readCurrentAntenna(QString);
-    void saveCurrentAntenna(QString);
+    void readCurrentAntenna();
+    void saveCurrentAntenna();
     QString getRotatorComPort(QString);
 
     void readSettings();
     void copyAntennaToCurrent(int antennaNumber);
 
+    void setAppName(QString name);
 signals:
 
     void currentAntennaSettingChanged(QString);
@@ -93,7 +95,9 @@ private:
     QLineEdit *antennaName[NUM_ANTENNAS];
     QComboBox *rotatorModel[NUM_ANTENNAS];
     QCheckBox *southStopFlag[NUM_ANTENNAS];
+    QLabel *southStopLabel[NUM_ANTENNAS];
     QCheckBox *overRunFlag[NUM_ANTENNAS];
+    QLabel *overRunLabel[NUM_ANTENNAS];
     QLineEdit *antennaOffset[NUM_ANTENNAS];
     QComboBox *comPorts[NUM_ANTENNAS];
     QComboBox *comSpeed[NUM_ANTENNAS];
@@ -105,6 +109,7 @@ private:
     bool antennaValueChanged[NUM_ANTENNAS];
     bool antennaNameChanged[NUM_ANTENNAS];
     bool antennaChanged;
+    QString appName = "";
     const int minOffset = -90;
     const int maxOffset = 90;
     void saveSettings();
@@ -123,6 +128,7 @@ private:
 
 
     void clearAntennaValueChanged();
+    int getMaxMinRotationData(int rotatorNumber, int *maxRot, int *minRot);
 };
 
 #endif // SETUPDIALOG_H
