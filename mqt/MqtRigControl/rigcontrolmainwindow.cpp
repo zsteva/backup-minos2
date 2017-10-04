@@ -832,6 +832,7 @@ void RigControlMainWindow::saveTraceLogFlag()
     config.setValue("TraceLog", ui->actionTraceLog->isChecked());
 
     config.endGroup();
+    trace("Tracelog Changed = " + QString::number(ui->actionTraceLog->isChecked()));
 }
 
 
