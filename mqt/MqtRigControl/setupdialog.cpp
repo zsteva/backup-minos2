@@ -259,7 +259,6 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
 /******************** Map Use Rx Passband checkbox *****************************************/
 
-
     QSignalMapper *rxPassbandCheck_mapper = new QSignalMapper(this);
     for (int i = 0; i < NUM_RADIOS; i++ )
     {
@@ -268,6 +267,8 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     }
 
     connect(rxPassbandCheck_mapper, SIGNAL(mapped(int)), this, SLOT(rxPassBandChecked(int)));
+
+
 
 
 
@@ -289,6 +290,8 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     fillHandShakeInfo();
     clearAvailRadio(); // clear the AvailRadio table, also init with default serial parameters
     clearCurrentRadio(); // clear the currently selected Radio table, also init with default serial parameters
+    clearRadioValueChanged();
+    clearRadioNameChanged();
 
     readSettings();   // get available radio settings from file
 
@@ -331,11 +334,12 @@ SetupDialog::~SetupDialog()
 
 void SetupDialog::radioNameFinished(int boxNumber)
 {
-    qDebug() << "finished name";
+
     if (radioName[boxNumber]->text() != availRadios[boxNumber].radioName)
     {
         availRadios[boxNumber].radioName = radioName[boxNumber]->text();
         radioValueChanged[boxNumber] = true;
+        radioNameChanged[boxNumber] = true;
         radioChanged = true;
 
     }
@@ -484,19 +488,24 @@ void SetupDialog::comHandShakeSelected(int boxNumber)
 
 void SetupDialog::transVertChecked(int boxNumber)
 {
+    if (!chkloadflg)
+    {
+        if (transVertCheck[boxNumber]->isChecked())
+        {
+            availRadios[boxNumber].transVertEnable = true;
+            transVertEdit[boxNumber]->setEnabled(true);
+        }
+        else
+        {
+            availRadios[boxNumber].transVertEnable = false;
+            transVertEdit[boxNumber]->setEnabled(false);
+        }
+        radioValueChanged[boxNumber] = true;
+        radioChanged = true;
 
-    if (transVertCheck[boxNumber]->isChecked())
-    {
-        availRadios[boxNumber].transVertEnable = true;
-        transVertEdit[boxNumber]->setEnabled(true);
+
     }
-    else
-    {
-        availRadios[boxNumber].transVertEnable = false;
-        transVertEdit[boxNumber]->setEnabled(false);
-    }
-    radioValueChanged[boxNumber] = true;
-    radioChanged = true;
+
 }
 
 
@@ -531,21 +540,26 @@ void SetupDialog::transVertEditFinished(int boxNumber)
 
 void SetupDialog::transNegChecked(int boxNumber)
 {
+    if (!chkloadflg)
+    {
+        availRadios[boxNumber].transVertNegative = transNegCheck[boxNumber]->isChecked();
+        radioValueChanged[boxNumber] = true;
+        radioChanged = true;
 
-    availRadios[boxNumber].transVertNegative = transNegCheck[boxNumber]->isChecked();
-    radioValueChanged[boxNumber] = true;
-    radioChanged = true;
+    }
+
 
 }
 
 
 void SetupDialog::rxPassBandChecked(int boxNumber)
 {
-
-    availRadios[boxNumber].useRxPassBand = rxPassBandCheck[boxNumber]->isChecked();
-    radioValueChanged[boxNumber] = true;
-    radioChanged = true;
-
+    if (!chkloadflg)
+    {
+        availRadios[boxNumber].useRxPassBand = rxPassBandCheck[boxNumber]->isChecked();
+        radioValueChanged[boxNumber] = true;
+        radioChanged = true;
+    }
 }
 
 void SetupDialog::fillRadioModelInfo()
@@ -694,9 +708,9 @@ void SetupDialog::cancelButtonPushed()
 void SetupDialog::saveSettings()
 {
 
-
+    // have the current radio settings been changed?
     bool radioNameChg = false;
-    // have the current antenna settings been changed?
+
     bool currentRadioChanged = false;
     int ca = -1;
     bool ok;
@@ -715,8 +729,6 @@ void SetupDialog::saveSettings()
     {
         ca = -1;
     }
-
-
 
 
     if (radioChanged)
@@ -782,8 +794,27 @@ void SetupDialog::saveSettings()
 }
 
 
+void SetupDialog::clearRadioValueChanged()
+{
+    for (int i = 0; i < NUM_RADIOS; i++)
+    {
+        radioValueChanged[i] = false;
+    }
+}
+
+void SetupDialog::clearRadioNameChanged()
+{
+    for (int i = 0; i < NUM_RADIOS; i++)
+    {
+        radioNameChanged[i] = false;
+    }
+}
+
+
 void SetupDialog::readSettings()
 {
+
+    chkloadflg = true;      // stop loading check values tiggering mapper signals
 
     QString fileName;
     if (appName == "")
@@ -822,7 +853,7 @@ void SetupDialog::readSettings()
         availRadios[i].useRxPassBand = config.value("useRXPassBand", false).toBool();
         config.endGroup();
     }
-
+    chkloadflg = false;
 }
 
 

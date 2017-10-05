@@ -245,6 +245,10 @@ void RigControlMainWindow::initActionsConnections()
 //    connect(this, SIGNAL(frequency_updated(double)), this, SLOT(displayFreqA(const double)));
     //connect(this, SIGNAL(mode_updated(QString)), this, SLOT(displayModeVfoA(QString)));
 
+    // configure antenna dialog
+    connect(selectRig, SIGNAL(currentRadioSettingChanged(QString)), this, SLOT(currentRadioSettingChanged(QString)));
+    connect(selectRig, SIGNAL(radioNameChange()), this, SLOT(updateSelectRadioBox()));
+
     // Message from Logger
     connect(msg, SIGNAL(setFreq(QString)), this, SLOT(loggerSetFreq(QString)));
     connect(msg, SIGNAL(setMode(QString)), this, SLOT(loggerSetMode(QString)));
@@ -258,6 +262,48 @@ void RigControlMainWindow::initActionsConnections()
 
     connect(radio, SIGNAL(debug_protocol(QString)), this, SLOT(logMessage(QString)));
 
+}
+
+
+void RigControlMainWindow::currentRadioSettingChanged(QString radioName)
+{
+
+    switch( QMessageBox::question(
+                        this,
+                        tr("Minos RigControl"),
+                        tr("The settings for the current radio have been changed. \nDo you want to reload the settings for the radio now?"),
+                        QMessageBox::Yes |
+                        QMessageBox::No |
+                        QMessageBox::Cancel,
+                         QMessageBox::Cancel ) )
+    {
+        case QMessageBox::Yes:
+            if (selectRadio->currentText() != radioName)
+            {
+                bool ok;
+                selectRadio->setCurrentIndex(selectRig->currentRadio.radioNumber.toInt(&ok, 10));
+            }
+            upDateRadio();
+            break;
+        case QMessageBox::No:
+
+            break;
+        case QMessageBox::Cancel:
+
+            break;
+        default:
+
+            break;
+    }
+}
+
+
+void RigControlMainWindow::updateSelectRadioBox()
+{
+    int curidx = selectRadio->currentIndex();
+    selectRadio->clear();
+    initSelectRadioBox();
+    selectRadio->setCurrentIndex(curidx);
 }
 
 
@@ -322,42 +368,52 @@ void RigControlMainWindow::upDateRadio()
         if (appName.length() > 0)
         {
             this->setWindowTitle("Minos Rig Control - " + appName + " - Logger");
+            msg->publishRadioName(selectRig->currentRadio.radioName);
         }
         else
         {
             this->setWindowTitle("Minos Rig Control - Local");
         }
 
-       trace("*** Radio Update ***");
-       trace("App Instance Name  = " + appName);
-       trace("Radio Name = " + selectRig->currentRadio.radioName);
-       trace("Radio Number = " + selectRig->currentRadio.radioNumber);
-       trace("Radio Model = " + selectRig->currentRadio.radioModel);
-       trace("Radio Number = " + QString::number(selectRig->currentRadio.radioModelNumber));
-       trace("Radio Manufacturer = " + selectRig->currentRadio.radioMfg_Name);
-       if (selectRig->currentRadio.radioMfg_Name == "Icom")
-       {
-           trace("Icom CIV address = " + selectRig->currentRadio.civAddress);
-       }
-       trace("Radio Comport = " + selectRig->currentRadio.comport);
-       trace("Baudrate = " + QString::number(selectRig->currentRadio.databits));
-       trace("Stop bits = " + QString::number(selectRig->currentRadio.stopbits));
-       trace("Handshake = " + QString::number(selectRig->currentRadio.handshake));
-       trace("TransVert Enable = " + QString::number(selectRig->currentRadio.transVertEnable));
-       trace("TransVert Negative = " + QString::number(selectRig->currentRadio.transVertNegative));
-       trace("TransVert Offset = " + convertStringFreq(selectRig->currentRadio.transVertOffset));
-       trace("Use RX Passband = " + QString::number(selectRig->currentRadio.useRxPassBand));
 
-       // update logger
+    }
+    else
+    {   // no radio selected
+        trace("No radio selected");
+        closeRadio();
+        if (appName.length() > 0)
+        {
+            this->setWindowTitle("Minos Rig Control - - Logger");
+            msg->publishRadioName("No radio");
 
-       if (appName.length() > 0)
-       {
-            msg->publishRadioName(selectRig->currentRadio.radioName);
-       }
-
+        }
+        else
+        {
+            this->setWindowTitle("Minos Rig Control - - Local");
+        }
     }
 
 
+
+    trace("*** Radio Update ***");
+    trace("App Instance Name  = " + appName);
+    trace("Radio Name = " + selectRig->currentRadio.radioName);
+    trace("Radio Number = " + selectRig->currentRadio.radioNumber);
+    trace("Radio Model = " + selectRig->currentRadio.radioModel);
+    trace("Radio Number = " + QString::number(selectRig->currentRadio.radioModelNumber));
+    trace("Radio Manufacturer = " + selectRig->currentRadio.radioMfg_Name);
+    if (selectRig->currentRadio.radioMfg_Name == "Icom")
+    {
+        trace("Icom CIV address = " + selectRig->currentRadio.civAddress);
+    }
+    trace("Radio Comport = " + selectRig->currentRadio.comport);
+    trace("Baudrate = " + QString::number(selectRig->currentRadio.databits));
+    trace("Stop bits = " + QString::number(selectRig->currentRadio.stopbits));
+    trace("Handshake = " + QString::number(selectRig->currentRadio.handshake));
+    trace("TransVert Enable = " + QString::number(selectRig->currentRadio.transVertEnable));
+    trace("TransVert Negative = " + QString::number(selectRig->currentRadio.transVertNegative));
+    trace("TransVert Offset = " + convertStringFreq(selectRig->currentRadio.transVertOffset));
+    trace("Use RX Passband = " + QString::number(selectRig->currentRadio.useRxPassBand));
 }
 
 void RigControlMainWindow::openRadio()

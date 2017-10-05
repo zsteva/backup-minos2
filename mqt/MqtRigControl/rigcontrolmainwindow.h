@@ -141,6 +141,8 @@ private slots:
     void loggerSetFreq(QString freq);
     void loggerSetMode(QString mode);
     void loggerSetPassBand(int);
+    void currentRadioSettingChanged(QString radioName);
+    void updateSelectRadioBox();
 signals:
 
 

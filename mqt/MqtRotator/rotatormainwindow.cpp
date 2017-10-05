@@ -941,7 +941,7 @@ void RotatorMainWindow::upDateAntenna()
     }
     else
     {   // no antenna selected
-
+        trace("No antenna selected");
         closeRotator();
         if (appName.length() > 0)
         {

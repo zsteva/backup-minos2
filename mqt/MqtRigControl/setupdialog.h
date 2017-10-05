@@ -110,6 +110,7 @@ private:
     bool radioValueChanged[NUM_RADIOS];
     bool radioNameChanged[NUM_RADIOS];
     bool radioChanged;
+    bool chkloadflg = false;
     QString appName = "";
     void saveSettings();
 
@@ -123,7 +124,9 @@ private:
 
     void clearAvailRadio();
     void clearCurrentRadio();
-//    void enableCIVbox();
+    //    void enableCIVbox();
+    void clearRadioValueChanged();
+    void clearRadioNameChanged();
 };
 
 #endif // SETUPDIALOG_H

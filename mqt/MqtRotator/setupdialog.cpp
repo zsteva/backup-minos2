@@ -273,6 +273,7 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     clearAvailRotators(); // clear the AvailRotator table, also init with default serial parameters
     clearCurrentRotator(); // clear the currently selected Rotator table, also init with default serial parameters
     clearAntennaValueChanged();
+    clearAntennaNameChanged();
 
 
     readSettings();
@@ -402,22 +403,33 @@ void SetupDialog::rotatorModelSelected(int boxNumber)
 
 void SetupDialog::southStopFlagSelected(int boxNumber)
 {
-    if (southStopFlag[boxNumber]->isChecked() != availAntennas[boxNumber].southStopFlag)
+    if (!chkloadflg)
     {
-        availAntennas[boxNumber].southStopFlag = southStopFlag[boxNumber]->isChecked();
-        antennaValueChanged[boxNumber] = true;
-        antennaChanged = true;
+        if (southStopFlag[boxNumber]->isChecked() != availAntennas[boxNumber].southStopFlag)
+        {
+            availAntennas[boxNumber].southStopFlag = southStopFlag[boxNumber]->isChecked();
+            antennaValueChanged[boxNumber] = true;
+            antennaChanged = true;
+        }
+
     }
+
 }
 
 void SetupDialog::overRunFlagSelected(int boxNumber)
 {
-    if (overRunFlag[boxNumber]->isChecked() != availAntennas[boxNumber].overRunFlag)
+    if (!chkloadflg)
     {
-        availAntennas[boxNumber].overRunFlag = overRunFlag[boxNumber]->isChecked();
-        antennaValueChanged[boxNumber] = true;
-        antennaChanged = true;
+        if (overRunFlag[boxNumber]->isChecked() != availAntennas[boxNumber].overRunFlag)
+        {
+            availAntennas[boxNumber].overRunFlag = overRunFlag[boxNumber]->isChecked();
+            antennaValueChanged[boxNumber] = true;
+            antennaChanged = true;
+        }
+
     }
+
+
 }
 
 void SetupDialog::antennaOffsetFinished(int boxNumber)
@@ -691,8 +703,9 @@ void SetupDialog::cancelButtonPushed()
 
 void SetupDialog::saveSettings()
 {
-    bool antennaNameChg = false;
     // have the current antenna settings been changed?
+    bool antennaNameChg = false;
+
     bool currentAntennaChanged = false;
     int ca = -1;
     bool ok;
@@ -780,6 +793,7 @@ void SetupDialog::saveSettings()
 
 void SetupDialog::readSettings()
 {
+    chkloadflg = true;      // stop loading check values tiggering mapper signals
 
     QString fileName;
     if (appName == "")
@@ -813,7 +827,7 @@ void SetupDialog::readSettings()
         availAntennas[i].handshake = config.value("handshake", 0).toInt();
         config.endGroup();
     }
-
+    chkloadflg = false;
 }
 
 
@@ -887,6 +901,14 @@ void SetupDialog::clearAntennaValueChanged()
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
         antennaValueChanged[i] = false;
+    }
+}
+
+void SetupDialog::clearAntennaNameChanged()
+{
+    for (int i = 0; i < NUM_ANTENNAS; i++)
+    {
+        antennaNameChanged[i] = false;
     }
 }
 
