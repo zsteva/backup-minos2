@@ -318,7 +318,9 @@ void RotControlFrame::on_StopRotate_clicked()
 {
     emit sendRotator(rpcConstants::eRotateStop, 0);
     clearRotatorFlags();
-
+    showTurnButOff();
+    showRotLeftButOff();
+    showRotRightButOff();
 }
 
 void RotControlFrame::clearRotatorFlags()
@@ -328,6 +330,9 @@ void RotControlFrame::clearRotatorFlags()
     moving = false;
     movingCCW = false;
     movingCW = false;
+    showTurnButOff();
+    showRotLeftButOff();
+    showRotRightButOff();
 }
 
 void RotControlFrame::setRotatorLoaded()

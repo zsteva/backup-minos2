@@ -38,7 +38,7 @@
 
 
 // Status messages sent to minos logger
-#define ROT_STATUS_READY "Ready"
+#define ROT_STATUS_CONNECTED "Connected"
 #define ROT_STATUS_ROTATE_CCW "Rotating CCW"
 #define ROT_STATUS_ROTATE_CW "Rotating CW"
 #define ROT_STATUS_STOP "Stop"

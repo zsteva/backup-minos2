@@ -1777,7 +1777,7 @@ void RotatorMainWindow::hamlibError(int errorCode, QString cmd )
 
 void RotatorMainWindow::sendStatusToLogReady()
 {
-    sendStatusLogger(ROT_STATUS_READY);
+    sendStatusLogger(ROT_STATUS_CONNECTED);
 }
 
 void RotatorMainWindow::sendStatusToLogRotCCW()
