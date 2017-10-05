@@ -59,6 +59,33 @@ RotControl::~RotControl()
 }
 
 
+bool RotControl::getSupportCwCcwCmd(int rotNumber)
+{
+    ROT *my_rot;
+    bool value = false;
+    my_rot = rot_init(rotNumber);
+    if (my_rot->caps->move == 0)
+    {
+        value = false;
+    }
+    else
+    {
+        value = true;
+    }
+
+    return value;
+}
+
+int RotControl::getMaxMinRotation(int rotNumber, int *maxRot, int *minRot)
+{
+    int retCode = 0;
+    ROT *my_rot;
+    my_rot = rot_init(rotNumber);
+    *maxRot = my_rot->caps->max_az;
+    *minRot = my_rot->caps->min_az;
+
+    return retCode;
+}
 
 
 int RotControl::init(srotParams selectedAntenna)

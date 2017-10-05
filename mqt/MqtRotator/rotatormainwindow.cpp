@@ -419,7 +419,7 @@ void RotatorMainWindow::openRotator()
     retCode = rotator->init(selectRotator->currentAntenna);
     if (retCode < 0)
     {
-        hamlibError(retCode, "Open Rotator");
+        hamlibError(retCode, "Rotator Init");
     }
     if (rotator->get_serialConnected())
     {
@@ -962,26 +962,27 @@ void RotatorMainWindow::upDateAntenna()
 
 
     trace("*** Antenna Updated ***");
-    trace("App Instance Name  = " + appName);
-    trace("Antenna Name = " + selectRotator->currentAntenna.antennaName);
-    trace("Antenna Number = " + selectRotator->currentAntenna.antennaNumber);
-    trace("Rotator Model = " + selectRotator->currentAntenna.rotatorModel);
-    trace("Rotator Number = " + QString::number(selectRotator->currentAntenna.rotatorModelNumber));
-    trace("Rotator Manufacturer = " + selectRotator->currentAntenna.rotatorManufacturer);
-    trace("Rotator Comport = " + selectRotator->currentAntenna.comport);
-    trace("Baudrate = " + QString::number(selectRotator->currentAntenna.baudrate));
-    trace("Databits = " + QString::number(selectRotator->currentAntenna.databits));
-    trace("Stop bits = " + QString::number(selectRotator->currentAntenna.stopbits));
-    trace("Handshake = " + QString::number(selectRotator->currentAntenna.handshake));
-    trace("Antenna Offset = " + QString::number(selectRotator->currentAntenna.antennaOffset));
-    trace("Current Max Azimuth = " + QString::number(currentMaxAzimuth));
-    trace("Current Min Azimuth = " + QString::number(currentMinAzimuth));
-    trace("South Stop Flag = " + QString::number(selectRotator->currentAntenna.southStopFlag));
-    trace("Overrun flag = " + QString::number(overLapActiveflag));
-    trace("Support CW and CCW Commands = " + QString::number(supportCwCcwCmd));
-    trace("Rotator Max Baudrate = " + QString::number(rotator->getMaxBaudRate()));
-    trace("Rotator Min Baud rate = " + QString::number(rotator->getMinBaudRate()));
-    trace("Tracelog = " + QString::number(ui->actionTraceLog->isChecked()));
+    trace(QString("App Instance Name  = %1").arg(appName));
+    trace(QString("Antenna Name = %1").arg(selectRotator->currentAntenna.antennaName));
+    trace(QString("Antenna Number = %1").arg(selectRotator->currentAntenna.antennaNumber));
+    trace(QString("Rotator Model = %1").arg(selectRotator->currentAntenna.rotatorModel));
+    trace(QString("Rotator Number = %1").arg(QString::number(selectRotator->currentAntenna.rotatorModelNumber)));
+    trace(QString("Rotator Manufacturer = %1").arg(selectRotator->currentAntenna.rotatorManufacturer));
+    trace(QString("Rotator Comport = %1").arg(selectRotator->currentAntenna.comport));
+    trace(QString("Baudrate = %1").arg(QString::number(selectRotator->currentAntenna.baudrate)));
+    trace(QString("Databits = %1").arg(QString::number(selectRotator->currentAntenna.databits)));
+    trace(QString("Stop bits = %1").arg(QString::number(selectRotator->currentAntenna.stopbits)));
+    trace(QString("Handshake = %1").arg(QString::number(selectRotator->currentAntenna.handshake)));
+    trace(QString("Antenna Offset = %1").arg(QString::number(selectRotator->currentAntenna.antennaOffset)));
+    trace(QString("Current Max Azimuth = %1").arg(QString::number(currentMaxAzimuth)));
+    trace(QString("Current Min Azimuth = %1").arg(QString::number(currentMinAzimuth)));
+    trace(QString("Current CW EndStop = %1").arg(QString::number(rotatorCWEndStop)));
+    trace(QString("South Stop Flag = %1").arg(QString::number(selectRotator->currentAntenna.southStopFlag)));
+    trace(QString("Overrun flag = %1").arg(QString::number(overLapActiveflag)));
+    trace(QString("Support CW and CCW Commands = %1").arg(QString::number(supportCwCcwCmd)));
+    trace(QString("Rotator Max Baudrate = %1").arg(QString::number(rotator->getMaxBaudRate())));
+    trace(QString("Rotator Min Baud rate = %1").arg(QString::number(rotator->getMinBaudRate())));
+    trace(QString("Tracelog = %1").arg(QString::number(ui->actionTraceLog->isChecked())));
 
 
 }
@@ -1869,32 +1870,10 @@ void RotatorMainWindow::saveTraceLogFlag()
 
 bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
 {
-    QString fileName;
-    if (appName == "")
-    {
-        fileName = CONFIGURATION_FILEPATH_LOCAL + ROTATOR_DATA_FILE;
-    }
-    else
-    {
-        fileName = CONFIGURATION_FILEPATH_LOGGER + ROTATOR_DATA_FILE;
-    }
 
-    QSettings config(fileName, QSettings::IniFormat);
-
-    //QSettings config("./Configuration/MinosRot_CW_CCW.ini", QSettings::IniFormat);
-    config.beginGroup(QString::number(rotatorNumber));
     bool value = false;
+    value = rotator->getSupportCwCcwCmd(rotatorNumber);
 
-    if (!config.contains("rotatorModelNumber"))
-    {
-        logMessage(QString("Rotator Number = %1, does not exist in rotators config file!").arg(QString::number(rotatorNumber)));
-    }
-    else
-    {
-       value = config.value("support_cw_ccw", false).toBool();
-    }
-
-    config.endGroup();
 
     return value;
 

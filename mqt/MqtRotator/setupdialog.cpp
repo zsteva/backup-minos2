@@ -998,35 +998,9 @@ srotParams SetupDialog::getCurrentAntenna() const
 
 int SetupDialog::getMaxMinRotationData(int rotatorNumber, int *maxRot, int *minRot)
 {
+
     int retCode = 0;
-    QString fileName;
-    if (appName == "")
-    {
-        fileName = CONFIGURATION_FILEPATH_LOCAL + ROTATOR_DATA_FILE;
-    }
-    else
-    {
-        fileName = CONFIGURATION_FILEPATH_LOGGER + ROTATOR_DATA_FILE;
-    }
-
-    QSettings config(fileName, QSettings::IniFormat);
-
-
-    config.beginGroup(QString::number(rotatorNumber));
-
-
-    if (!config.contains("rotatorModelNumber"))
-    {
-        //trace(QString("Rotator Number = %1, does not exist in rotators config file!").arg(QString::number(rotatorNumber)));
-        retCode = -1; // error
-    }
-    else
-    {
-       *maxRot = config.value("max_azimuth", false).toInt();
-       *minRot = config.value("min_azimuth", false).toInt();
-    }
-
-    config.endGroup();
+    retCode = rotator->getMaxMinRotation(rotatorNumber, maxRot, minRot);
 
     return retCode;
 
