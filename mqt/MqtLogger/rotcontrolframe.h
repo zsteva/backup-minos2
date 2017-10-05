@@ -56,6 +56,7 @@ private:
     int maxAzimuth = 0;
     int minAzimuth = 0;
     int currentBearing = 0;
+    int rotatorBearing = 0;
     bool moving = false;
     bool movingCW = false;
     bool movingCCW = false;

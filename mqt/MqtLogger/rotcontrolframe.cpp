@@ -391,44 +391,64 @@ void RotControlFrame::setRotatorAntennaName(const QString &s)
 
 void RotControlFrame::setRotatorBearing(const QString &s)
 {
-    traceMsg("Set Rotator Bearing = " + s);
-    bool ok;
-    bool overlap = false;
-    int iBearing = s.toInt(&ok, 10);
-    currentBearing = iBearing;
-    if (!ok) return;
+    traceMsg("Bearings from rotator control");
+    // extract displayBearing:rotatorBearing:overlapstatus
+    QStringList sl = s.split(':');
+    traceMsg("Display Bearing = " + sl[0]);
+    traceMsg("Rotator Bearing = " + sl[1]);
+    traceMsg("OverlapStatus = " + sl[2]);
 
-    if (iBearing > COMPASS_MAX360)
+    // save rotatorBearing
+    bool ok;
+    rotatorBearing = sl[1].toInt(&ok, 10);
+
+    if (!ok)
     {
-        iBearing -= COMPASS_MAX360;
-        overlap = true;
+        trace("Error converting rotatorBearing to int");
+        return;
     }
-    QString bearing = bearing.number(iBearing);
+
+    int iBearing = sl[0].toInt(&ok, 10);
+    currentBearing = iBearing;
+
+    if (!ok)
+    {
+        trace("Error converting displayBearing to int");
+        return;
+    }
+
+
+    //QString bearing = bearing.number(iBearing);
     QString brg;
     QChar degsym = QChar(DEGREE_SYMBOL);
-    int len = bearing.length();
-
+    //int len = bearing.length();
+    int len = sl[0].length();
     if (len < 2)
     {
         brg = QString("%1%2%3")
-        .arg("00").arg(bearing).arg(degsym);
+        .arg("00").arg(sl[0]).arg(degsym);
     }
     else if (len < 3)
     {
         brg = QString("%1%2%3")
-        .arg("0").arg(bearing).arg(degsym);
+        .arg("0").arg(sl[0]).arg(degsym);
     }
     else
     {
         brg = QString("%1%2")
-        .arg(bearing).arg(degsym);
+        .arg(sl[0]).arg(degsym);
     }
 
     brg.append("</font>");
 
-    if (overlap)
+    if (rotatorBearing > COMPASS_MAX360 && sl[2] == "1")
     {
         brg.prepend("<font color='Red'>");
+        ui->RotBrg->setText(brg);
+    }
+    else if (rotatorBearing < COMPASS_MIN0 && sl[2] == "1")
+    {
+        brg.prepend("<font color='Blue'>");
         ui->RotBrg->setText(brg);
     }
     else
