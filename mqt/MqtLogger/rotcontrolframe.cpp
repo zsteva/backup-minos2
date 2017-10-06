@@ -122,6 +122,7 @@ void RotControlFrame::turnTo(int angle)
     traceMsg("Turn to - " + QString::number(angle));
     if (angle == COMPASS_ERROR)
     {
+        traceMsg("Bearing empty or invalid");
         QString msg = "<font color='Red'>Bearing empty or invalid</font>";
         ui->rotatorState->setText(msg);
         return;
@@ -131,17 +132,20 @@ void RotControlFrame::turnTo(int angle)
     //if (angle > maxAzimuth)
     if (angle > COMPASS_MAX360)
     {
+        traceMsg("Bearing too large");
         QString msg = "<font color='Red'>Bearing too large - " + QString::number(angle) + "</font>";
         ui->rotatorState->setText(msg);
     }
     //else if (angle < minAzimuth)
     else if (angle < COMPASS_MIN0)
     {
+        traceMsg("Bearing too small");
         QString msg = "<font color='Red'>Bearing too small - " + QString::number(angle) + "</font>";
         ui->rotatorState->setText(msg);
     }
     else
     {
+        traceMsg(QString("Send Bearing %1 to Rotator Control").arg(QString::number(angle)));
         emit sendRotator(rpcConstants::eRotateDirect, angle);
         showTurnButOn();
         moving = true;
@@ -186,12 +190,13 @@ void RotControlFrame::on_RotateLeft_clicked(bool /*clicked*/)
     else
     {
         traceMsg("Current Bearing = " + QString::number(currentBearing));
+        traceMsg("Rotator Bearing = " + QString::number(rotatorBearing));
         traceMsg("RotLeft Status = " + QString::number(rot_left_button_status));
         int angle = 0;
 
-        if (currentBearing <= minAzimuth)
+        if (rotatorBearing <= minAzimuth)
         {
-            traceMsg("Current Bearing = " + QString::number(currentBearing) + " <= minAzimuth" + QString::number(minAzimuth));
+            traceMsg(QString("Current Bearing = %1 <= minAzimuth %2").arg(QString::number(rotatorBearing), QString::number(minAzimuth)));
             return;
         }
 
@@ -225,12 +230,13 @@ void RotControlFrame::on_RotateRight_clicked(bool /*toggle*/)
     else
     {
         traceMsg("Current Bearing = " + QString::number(currentBearing));
+        traceMsg("Rotator Bearing = " + QString::number(rotatorBearing));
         traceMsg("RotRight Status = " + QString::number(rot_right_button_status));
         int angle = 0;
 
-        if (currentBearing >= maxAzimuth)
+        if (rotatorBearing >= maxAzimuth)
         {
-            traceMsg("Current Bearing = " + QString::number(currentBearing) + " >= maxAzimuth" + QString::number(maxAzimuth));
+            traceMsg(QString("Current Bearing = %1 >= maxAzimuth %2").arg(QString::number(currentBearing), QString::number(maxAzimuth)));
             return;
         }
 
