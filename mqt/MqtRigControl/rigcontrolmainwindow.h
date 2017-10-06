@@ -62,7 +62,7 @@ private:
     QTimer *pollTimer;
     class QTimer LogTimer;
     int pollTime;
-    bool logRadError;
+    bool rotErrorFlag;
     // data from logger
     QString logger_freq;
     QString logger_mode;
@@ -114,7 +114,7 @@ private:
 
     void sendStatusLogger(const QString &message);
     void sendStatusToLogDisConnected();
-    void sendStatusToLogReady();
+    void sendStatusToLogConnected();
     void sendStatusToLogError();
     void sendFreqToLog(freq_t freq);
     void sendModeToLog(QString mode);

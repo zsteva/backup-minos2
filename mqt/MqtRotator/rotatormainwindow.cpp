@@ -428,7 +428,7 @@ void RotatorMainWindow::openRotator()
         showStatusMessage(tr("Connected to: %1 - %2, %3, %4, %5, %6, %7, %8")
                               .arg(p.antennaName).arg(p.rotatorModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
                               .arg(p.stopbits).arg(rotator->getParityCodeNames()[p.parity]).arg(rotator->getHandShakeNames()[p.handshake]));
-        sendStatusToLogReady();
+        sendStatusToLogConnected();
     }
     else
     {
@@ -597,7 +597,17 @@ void RotatorMainWindow::displayBearing(int bearing)
     //QString s = QString::number(displayBearing);
     if (appName.length() > 0)
     {
-        QString s = QString::number(displayBearing);
+        // send bearings to logger
+        QString ol = "";
+        if (overLapActiveflag)
+        {
+            ol = "1";
+        }
+        else
+        {
+            ol = "0";
+        }
+        QString s = QString("%1:%2:%3").arg(QString::number(displayBearing),QString::number(rotatorBearing), ol);
         msg->publishBearing(s);
     }
 
@@ -1759,6 +1769,11 @@ void RotatorMainWindow::hamlibError(int errorCode, QString cmd )
     }
 
     errorCode *= -1;
+    rotErrorFlag = true;
+    if (appName.length() >0)
+    {
+        sendStatusToLogError();
+    }
     // log all errors
     QString errorMsg = rotator->gethamlibErrorMsg(errorCode);
     logMessage(QString("Hamlib Error - Code = %1 - %2").arg(QString::number(errorCode), errorMsg));
@@ -1769,15 +1784,21 @@ void RotatorMainWindow::hamlibError(int errorCode, QString cmd )
      QMessageBox::critical(this, "Rotator hamlib Error - " + selectRotator->currentAntenna.antennaName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
 
      closeRotator();
+     rotErrorFlag = false;
+     if (appName.length() >0)
+     {
+         sendStatusToLogDisConnected();
+     }
+
 
 
 
 }
 
 
-void RotatorMainWindow::sendStatusToLogReady()
+void RotatorMainWindow::sendStatusToLogConnected()
 {
-    sendStatusLogger(ROT_STATUS_READY);
+    sendStatusLogger(ROT_STATUS_CONNECTED);
 }
 
 void RotatorMainWindow::sendStatusToLogRotCCW()

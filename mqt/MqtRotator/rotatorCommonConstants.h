@@ -38,11 +38,11 @@
 
 
 // Status messages sent to minos logger
-#define ROT_STATUS_READY "Ready"
-#define ROT_STATUS_ROTATE_CCW "Rotating CCW"
-#define ROT_STATUS_ROTATE_CW "Rotating CW"
+#define ROT_STATUS_CONNECTED "Connected"
+#define ROT_STATUS_ROTATE_CCW "<font color='Green'>Rotating CCW</font>"
+#define ROT_STATUS_ROTATE_CW "<font color='Green'>Rotating CW</font>"
 #define ROT_STATUS_STOP "Stop"
-#define ROT_STATUS_TURN_TO "Turning to bearing"
+#define ROT_STATUS_TURN_TO "<font color='Green'>Turning to bearing</font>"
 #define ROT_STATUS_DISCONNECTED "Disconnected"
 #define ROT_STATUS_ERROR "Error"
 

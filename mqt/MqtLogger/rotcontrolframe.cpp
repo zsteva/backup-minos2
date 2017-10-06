@@ -122,6 +122,7 @@ void RotControlFrame::turnTo(int angle)
     traceMsg("Turn to - " + QString::number(angle));
     if (angle == COMPASS_ERROR)
     {
+        traceMsg("Bearing empty or invalid");
         QString msg = "<font color='Red'>Bearing empty or invalid</font>";
         ui->rotatorState->setText(msg);
         return;
@@ -131,17 +132,20 @@ void RotControlFrame::turnTo(int angle)
     //if (angle > maxAzimuth)
     if (angle > COMPASS_MAX360)
     {
+        traceMsg("Bearing too large");
         QString msg = "<font color='Red'>Bearing too large - " + QString::number(angle) + "</font>";
         ui->rotatorState->setText(msg);
     }
     //else if (angle < minAzimuth)
     else if (angle < COMPASS_MIN0)
     {
+        traceMsg("Bearing too small");
         QString msg = "<font color='Red'>Bearing too small - " + QString::number(angle) + "</font>";
         ui->rotatorState->setText(msg);
     }
     else
     {
+        traceMsg(QString("Send Bearing %1 to Rotator Control").arg(QString::number(angle)));
         emit sendRotator(rpcConstants::eRotateDirect, angle);
         showTurnButOn();
         moving = true;
@@ -186,12 +190,13 @@ void RotControlFrame::on_RotateLeft_clicked(bool /*clicked*/)
     else
     {
         traceMsg("Current Bearing = " + QString::number(currentBearing));
+        traceMsg("Rotator Bearing = " + QString::number(rotatorBearing));
         traceMsg("RotLeft Status = " + QString::number(rot_left_button_status));
         int angle = 0;
 
-        if (currentBearing <= minAzimuth)
+        if (rotatorBearing <= minAzimuth)
         {
-            traceMsg("Current Bearing = " + QString::number(currentBearing) + " <= minAzimuth" + QString::number(minAzimuth));
+            traceMsg(QString("Current Bearing = %1 <= minAzimuth %2").arg(QString::number(rotatorBearing), QString::number(minAzimuth)));
             return;
         }
 
@@ -225,12 +230,13 @@ void RotControlFrame::on_RotateRight_clicked(bool /*toggle*/)
     else
     {
         traceMsg("Current Bearing = " + QString::number(currentBearing));
+        traceMsg("Rotator Bearing = " + QString::number(rotatorBearing));
         traceMsg("RotRight Status = " + QString::number(rot_right_button_status));
         int angle = 0;
 
-        if (currentBearing >= maxAzimuth)
+        if (rotatorBearing >= maxAzimuth)
         {
-            traceMsg("Current Bearing = " + QString::number(currentBearing) + " >= maxAzimuth" + QString::number(maxAzimuth));
+            traceMsg(QString("Current Bearing = %1 >= maxAzimuth %2").arg(QString::number(currentBearing), QString::number(maxAzimuth)));
             return;
         }
 
@@ -318,7 +324,9 @@ void RotControlFrame::on_StopRotate_clicked()
 {
     emit sendRotator(rpcConstants::eRotateStop, 0);
     clearRotatorFlags();
-
+    showTurnButOff();
+    showRotLeftButOff();
+    showRotRightButOff();
 }
 
 void RotControlFrame::clearRotatorFlags()
@@ -328,6 +336,9 @@ void RotControlFrame::clearRotatorFlags()
     moving = false;
     movingCCW = false;
     movingCW = false;
+    showTurnButOff();
+    showRotLeftButOff();
+    showRotRightButOff();
 }
 
 void RotControlFrame::setRotatorLoaded()
@@ -386,44 +397,64 @@ void RotControlFrame::setRotatorAntennaName(const QString &s)
 
 void RotControlFrame::setRotatorBearing(const QString &s)
 {
-    traceMsg("Set Rotator Bearing = " + s);
-    bool ok;
-    bool overlap = false;
-    int iBearing = s.toInt(&ok, 10);
-    currentBearing = iBearing;
-    if (!ok) return;
+    traceMsg("Bearings from rotator control");
+    // extract displayBearing:rotatorBearing:overlapstatus
+    QStringList sl = s.split(':');
+    traceMsg("Display Bearing = " + sl[0]);
+    traceMsg("Rotator Bearing = " + sl[1]);
+    traceMsg("OverlapStatus = " + sl[2]);
 
-    if (iBearing > COMPASS_MAX360)
+    // save rotatorBearing
+    bool ok;
+    rotatorBearing = sl[1].toInt(&ok, 10);
+
+    if (!ok)
     {
-        iBearing -= COMPASS_MAX360;
-        overlap = true;
+        trace("Error converting rotatorBearing to int");
+        return;
     }
-    QString bearing = bearing.number(iBearing);
+
+    int iBearing = sl[0].toInt(&ok, 10);
+    currentBearing = iBearing;
+
+    if (!ok)
+    {
+        trace("Error converting displayBearing to int");
+        return;
+    }
+
+
+    //QString bearing = bearing.number(iBearing);
     QString brg;
     QChar degsym = QChar(DEGREE_SYMBOL);
-    int len = bearing.length();
-
+    //int len = bearing.length();
+    int len = sl[0].length();
     if (len < 2)
     {
         brg = QString("%1%2%3")
-        .arg("00").arg(bearing).arg(degsym);
+        .arg("00").arg(sl[0]).arg(degsym);
     }
     else if (len < 3)
     {
         brg = QString("%1%2%3")
-        .arg("0").arg(bearing).arg(degsym);
+        .arg("0").arg(sl[0]).arg(degsym);
     }
     else
     {
         brg = QString("%1%2")
-        .arg(bearing).arg(degsym);
+        .arg(sl[0]).arg(degsym);
     }
 
     brg.append("</font>");
 
-    if (overlap)
+    if (rotatorBearing > COMPASS_MAX360 && sl[2] == "1")
     {
         brg.prepend("<font color='Red'>");
+        ui->RotBrg->setText(brg);
+    }
+    else if (rotatorBearing < COMPASS_MIN0 && sl[2] == "1")
+    {
+        brg.prepend("<font color='Blue'>");
         ui->RotBrg->setText(brg);
     }
     else

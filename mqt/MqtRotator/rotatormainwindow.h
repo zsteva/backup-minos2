@@ -137,7 +137,6 @@ private:
     bool southStopActiveflag;
     bool rotErrorFlag;
     bool supportCwCcwCmd;
-    //bool logAntError;
     int rotatorBearing;
     int curBearingWithOffset;
     int rotatorMinAzimuth;
@@ -207,7 +206,7 @@ private slots:
     void stopButton();
     void stop_rotation();
     void stopRotation(bool);
-    void sendStatusToLogReady();
+    void sendStatusToLogConnected();
     void sendStatusToLogRotCCW();
     void sendStatusToLogRotCW();
     void sendStatusToLogStop();

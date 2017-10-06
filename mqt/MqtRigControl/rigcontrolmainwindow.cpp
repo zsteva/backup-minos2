@@ -35,7 +35,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     , ui(new Ui::RigControlMainWindow)
     , loggerPbWidth(0)
     , logger_bw_state(hamlibData::NOR)
-    , logRadError(false)
+    , rotErrorFlag(false)
 
 {
 
@@ -165,7 +165,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
 
     upDateRadio();
-    sendStatusToLogReady();
+    sendStatusToLogConnected();
 
 
     radio->buildPassBandTable();
@@ -505,8 +505,12 @@ void RigControlMainWindow::getRadioInfo()
 
 void RigControlMainWindow::loggerSetFreq(QString freq)
 {
-    logger_freq = freq;
-    setFreq(freq, RIG_VFO_CURR);
+    if (radio->get_serialConnected() && !rotErrorFlag)
+    {
+        logger_freq = freq;
+        setFreq(freq, RIG_VFO_CURR);
+    }
+
 }
 
 
@@ -653,8 +657,12 @@ void RigControlMainWindow::getCurMode()
 
 void RigControlMainWindow::loggerSetMode(QString mode)
 {
-    logger_mode = mode;
-    setCurMode(mode);
+    if (radio->get_serialConnected() && !rotErrorFlag)
+    {
+        logger_mode = mode;
+        setCurMode(mode);
+    }
+
 }
 
 
@@ -702,11 +710,15 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
 
 void RigControlMainWindow::loggerSetPassBand(int state)
 {
-    logger_bw_state = state;
-    loggerPbWidth = radio->lookUpPassBand(logger_mode, state);
-    ui->passBandState->setText(hamlibData::pBandStateStr[state]);
-    ui->logpbwidthlbl->setText(QString::number(loggerPbWidth));
-    setMode(logger_mode, RIG_VFO_CURR);
+    if (radio->get_serialConnected() && !rotErrorFlag)
+    {
+        logger_bw_state = state;
+        loggerPbWidth = radio->lookUpPassBand(logger_mode, state);
+        ui->passBandState->setText(hamlibData::pBandStateStr[state]);
+        ui->logpbwidthlbl->setText(QString::number(loggerPbWidth));
+        setMode(logger_mode, RIG_VFO_CURR);
+    }
+
 }
 
 
@@ -833,6 +845,12 @@ void RigControlMainWindow::hamlibError(int errorCode, QString cmd)
     {
         return;
     }
+    if(appName > 0)
+    {
+        sendStatusToLogError();
+    }
+
+    rotErrorFlag = true;
 
     errorCode *= -1;
     QString errorMsg = radio->gethamlibErrorMsg(errorCode);
@@ -841,6 +859,11 @@ void RigControlMainWindow::hamlibError(int errorCode, QString cmd)
     QMessageBox::critical(this, "RigControl hamlib Error - " + selectRig->currentRadio.radioName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
 
     closeRadio();
+    rotErrorFlag = false;
+    if (appName.length() >0)
+    {
+        sendStatusToLogDisConnected();
+    }
 
 }
 
@@ -911,10 +934,10 @@ void RigControlMainWindow::sendStatusLogger(const QString &message)
 }
 
 
-void RigControlMainWindow::sendStatusToLogReady()
+void RigControlMainWindow::sendStatusToLogConnected()
 {
 
-        sendStatusLogger(RIG_STATUS_READY);
+        sendStatusLogger(RIG_STATUS_CONNECTED);
 
 }
 
