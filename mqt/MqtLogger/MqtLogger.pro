@@ -69,7 +69,6 @@ SOURCES += main.cpp \
     StartConfig.cpp \
     rigcontrolframe.cpp \
     rotcontrolframe.cpp \
-    bandmapframe.cpp \
     rigmemdialog.cpp \
     LocCalcFrame.cpp \
     StackedInfoFrame.cpp \
@@ -115,7 +114,6 @@ HEADERS  += \
     StartConfig.h \
     rigcontrolframe.h \
     rotcontrolframe.h \
-    bandmapframe.h \
     rigmemcommondata.h \
     rigmemdialog.h \
     LocCalcFrame.h \
@@ -149,7 +147,6 @@ FORMS    += tlogcontainer.ui \
     rigcontrolframe.ui \
     rigmemdialog.ui \
     rotcontrolframe.ui \
-    bandmapframe.ui \
     LocCalcFrame.ui \
     StackedInfoFrame.ui \
     MatchTreesFrame.ui \

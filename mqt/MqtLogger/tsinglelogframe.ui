@@ -121,14 +121,6 @@
          <enum>QFrame::Raised</enum>
         </property>
        </widget>
-       <widget class="BandMapFrame" name="FKHBandMapFrame">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-       </widget>
       </widget>
       <widget class="MinosSplitter" name="CribSplitter">
        <property name="sizePolicy">
@@ -277,12 +269,6 @@
    <class>RotControlFrame</class>
    <extends>QFrame</extends>
    <header>rotcontrolframe.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>BandMapFrame</class>
-   <extends>QFrame</extends>
-   <header>bandmapframe.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
