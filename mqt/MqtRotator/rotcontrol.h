@@ -154,6 +154,8 @@ public:
     int getMinBaudRate();
     int getSupportCwCcwCmd(int rotNumber, bool *flag);
     int getMaxMinRotation(int rotNumber, int *maxRot, int *minRot);
+    int getPortType(int rotNumber, rig_port_e *portType);
+
 signals:
    void bearing_updated(int);
    void request_bearingError(int);
@@ -178,6 +180,7 @@ private:
 
     int retcode;		/* generic return code from functions */
     int exitcode;
+
 
 
 };

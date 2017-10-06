@@ -160,6 +160,7 @@ public:
     void buildPassBandTable();
 
     int rigConvertQStrMode(QString mode);
+    int getPortType(int rigNumber, rig_port_e *portType);
 signals:
     void frequency_updated(double);
     void debug_protocol(QString);

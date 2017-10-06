@@ -310,21 +310,50 @@ void RigControl::getRigList()
 bool RigControl::getRigList(QComboBox *cb)
 {
     int i;
+    rig_port_e portType = RIG_PORT_NONE;
+
     if(capsList.count()==0) return false;
     QStringList sl;
     for (i=0;i<capsList.count();i++)
     {
-        QString t;
-        t= QString::number(capsList.at(i)->rig_model);
-        t=t.rightJustified(5,' ')+" ";
-        t+= capsList.at(i)->mfg_name;
-        t+=",";
-        t+=capsList.at(i)->model_name;
-        sl << t;
+        if (getPortType(capsList.at(i)->rig_model, &portType) != -1)
+        {
+            if (portType == RIG_PORT_NONE ||portType == RIG_PORT_SERIAL || portType == RIG_PORT_USB)
+            {
+
+                QString t;
+                t= QString::number(capsList.at(i)->rig_model);
+                t=t.rightJustified(5,' ')+" ";
+                t+= capsList.at(i)->mfg_name;
+                t+=",";
+                t+=capsList.at(i)->model_name;
+                sl << t;
+            }
+        }
     }
     cb->addItems(sl);
     return true;
 }
+
+
+int RigControl::getPortType(int rigNumber, rig_port_e *portType)
+{
+
+    int retCode = 0;
+    RIG *my_rig;
+    my_rig = rig_init(rigNumber);
+    if (!my_rig == 0)
+    {
+        *portType = my_rig->caps->port_type;
+        return retCode;
+    }
+
+    retCode = -1;
+    return retCode;
+
+}
+
+
 
 int RigControl::getModelNumber(int idx)
 {

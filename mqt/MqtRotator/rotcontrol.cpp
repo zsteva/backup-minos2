@@ -188,22 +188,47 @@ void RotControl::getRotatorList()
 bool RotControl::getRotatorList(QComboBox *cb)
 {
     int i;
+    rig_port_e portType = RIG_PORT_NONE;
+
     if(capsList.count()==0) return false;
     QStringList sl;
     for (i=0;i<capsList.count();i++)
     {
-        QString t;
-        t= QString::number(capsList.at(i)->rot_model);
-        t=t.rightJustified(5,' ')+", ";
-        t+= capsList.at(i)->mfg_name;
-        t+=", ";
-        t+=capsList.at(i)->model_name;
-        sl << t;
-        std::sort(sl.begin(), sl.end());
-
+        if (getPortType(capsList.at(i)->rot_model, &portType) != -1)
+        {
+            if (portType == RIG_PORT_NONE ||portType == RIG_PORT_SERIAL || portType == RIG_PORT_USB)
+            {
+                QString t;
+                t= QString::number(capsList.at(i)->rot_model);
+                t=t.rightJustified(5,' ')+", ";
+                t+= capsList.at(i)->mfg_name;
+                t+=", ";
+                t+=capsList.at(i)->model_name;
+                sl << t;
+                std::sort(sl.begin(), sl.end());
+            }
+        }
     }
     cb->addItems(sl);
     return true;
+}
+
+
+int RotControl::getPortType(int rotNumber, rig_port_e *portType)
+{
+
+    int retCode = 0;
+    ROT *my_rot;
+    my_rot = rot_init(rotNumber);
+    if (!my_rot == 0)
+    {
+        *portType = my_rot->caps->port_type;
+        return retCode;
+    }
+
+    retCode = -1;
+    return retCode;
+
 }
 
 int RotControl::getModelNumber(int idx)

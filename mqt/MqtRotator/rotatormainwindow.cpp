@@ -395,7 +395,7 @@ void RotatorMainWindow::openRotator()
 {
 
     int retCode = 0;
-
+/*
     if (selectRotator->currentAntenna.antennaName == "")
     {
         showStatusMessage("Please select an Antenna");
@@ -411,7 +411,7 @@ void RotatorMainWindow::openRotator()
         showStatusMessage("Please select a rotator protcol");
         return;
     }
-
+*/
 
 
     srotParams p = selectRotator->getCurrentAntenna();
