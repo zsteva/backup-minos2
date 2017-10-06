@@ -14,6 +14,7 @@
 
 #include "setupdialog.h"
 #include "ui_setupdialog.h"
+#include "rigcontrolcommonconstants.h"
 #include "rigcontrol.h"
 #include <QSignalMapper>
 #include <QComboBox>
@@ -258,7 +259,6 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
 /******************** Map Use Rx Passband checkbox *****************************************/
 
-
     QSignalMapper *rxPassbandCheck_mapper = new QSignalMapper(this);
     for (int i = 0; i < NUM_RADIOS; i++ )
     {
@@ -267,6 +267,8 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     }
 
     connect(rxPassbandCheck_mapper, SIGNAL(mapped(int)), this, SLOT(rxPassBandChecked(int)));
+
+
 
 
 
@@ -288,6 +290,8 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     fillHandShakeInfo();
     clearAvailRadio(); // clear the AvailRadio table, also init with default serial parameters
     clearCurrentRadio(); // clear the currently selected Radio table, also init with default serial parameters
+    clearRadioValueChanged();
+    clearRadioNameChanged();
 
     readSettings();   // get available radio settings from file
 
@@ -330,11 +334,12 @@ SetupDialog::~SetupDialog()
 
 void SetupDialog::radioNameFinished(int boxNumber)
 {
-    qDebug() << "finished name";
+
     if (radioName[boxNumber]->text() != availRadios[boxNumber].radioName)
     {
         availRadios[boxNumber].radioName = radioName[boxNumber]->text();
         radioValueChanged[boxNumber] = true;
+        radioNameChanged[boxNumber] = true;
         radioChanged = true;
 
     }
@@ -483,19 +488,24 @@ void SetupDialog::comHandShakeSelected(int boxNumber)
 
 void SetupDialog::transVertChecked(int boxNumber)
 {
+    if (!chkloadflg)
+    {
+        if (transVertCheck[boxNumber]->isChecked())
+        {
+            availRadios[boxNumber].transVertEnable = true;
+            transVertEdit[boxNumber]->setEnabled(true);
+        }
+        else
+        {
+            availRadios[boxNumber].transVertEnable = false;
+            transVertEdit[boxNumber]->setEnabled(false);
+        }
+        radioValueChanged[boxNumber] = true;
+        radioChanged = true;
 
-    if (transVertCheck[boxNumber]->isChecked())
-    {
-        availRadios[boxNumber].transVertEnable = true;
-        transVertEdit[boxNumber]->setEnabled(true);
+
     }
-    else
-    {
-        availRadios[boxNumber].transVertEnable = false;
-        transVertEdit[boxNumber]->setEnabled(false);
-    }
-    radioValueChanged[boxNumber] = true;
-    radioChanged = true;
+
 }
 
 
@@ -530,21 +540,26 @@ void SetupDialog::transVertEditFinished(int boxNumber)
 
 void SetupDialog::transNegChecked(int boxNumber)
 {
+    if (!chkloadflg)
+    {
+        availRadios[boxNumber].transVertNegative = transNegCheck[boxNumber]->isChecked();
+        radioValueChanged[boxNumber] = true;
+        radioChanged = true;
 
-    availRadios[boxNumber].transVertNegative = transNegCheck[boxNumber]->isChecked();
-    radioValueChanged[boxNumber] = true;
-    radioChanged = true;
+    }
+
 
 }
 
 
 void SetupDialog::rxPassBandChecked(int boxNumber)
 {
-
-    availRadios[boxNumber].useRxPassBand = rxPassBandCheck[boxNumber]->isChecked();
-    radioValueChanged[boxNumber] = true;
-    radioChanged = true;
-
+    if (!chkloadflg)
+    {
+        availRadios[boxNumber].useRxPassBand = rxPassBandCheck[boxNumber]->isChecked();
+        radioValueChanged[boxNumber] = true;
+        radioChanged = true;
+    }
 }
 
 void SetupDialog::fillRadioModelInfo()
@@ -693,9 +708,9 @@ void SetupDialog::cancelButtonPushed()
 void SetupDialog::saveSettings()
 {
 
-
+    // have the current radio settings been changed?
     bool radioNameChg = false;
-    // have the current antenna settings been changed?
+
     bool currentRadioChanged = false;
     int ca = -1;
     bool ok;
@@ -716,12 +731,19 @@ void SetupDialog::saveSettings()
     }
 
 
-
-
     if (radioChanged)
     {
+        QString fileName;
+        if (appName == "")
+        {
+            fileName = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
+        }
+        else
+        {
+            fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
+        }
 
-        QSettings config(RADIO_CONFIG, QSettings::IniFormat);
+        QSettings config(fileName, QSettings::IniFormat);
 
         for (int i = 0; i < NUM_RADIOS; i++)
         {
@@ -772,10 +794,41 @@ void SetupDialog::saveSettings()
 }
 
 
+void SetupDialog::clearRadioValueChanged()
+{
+    for (int i = 0; i < NUM_RADIOS; i++)
+    {
+        radioValueChanged[i] = false;
+    }
+}
+
+void SetupDialog::clearRadioNameChanged()
+{
+    for (int i = 0; i < NUM_RADIOS; i++)
+    {
+        radioNameChanged[i] = false;
+    }
+}
+
+
 void SetupDialog::readSettings()
 {
 
-    QSettings config(RADIO_CONFIG, QSettings::IniFormat);
+    chkloadflg = true;      // stop loading check values tiggering mapper signals
+
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
+    }
+    else
+    {
+        fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
+    }
+
+
+
+    QSettings config(fileName, QSettings::IniFormat);
 
     for (int i = 0; i < NUM_RADIOS; i++)
     {
@@ -800,7 +853,7 @@ void SetupDialog::readSettings()
         availRadios[i].useRxPassBand = config.value("useRXPassBand", false).toBool();
         config.endGroup();
     }
-
+    chkloadflg = false;
 }
 
 
@@ -903,8 +956,18 @@ QString SetupDialog::getRadioComPort(QString radioName)
 void SetupDialog::saveCurrentRadio()
 {
 
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = RADIO_PATH_LOCAL + LOCAL_RADIO + FILENAME_CURRENT_RADIO;
+    }
+    else
+    {
+        fileName = RADIO_PATH_LOGGER + appName + FILENAME_CURRENT_RADIO;
+    }
 
-    QSettings config(RADIO_CONFIG, QSettings::IniFormat);
+
+    QSettings config(fileName, QSettings::IniFormat);
 
 
     config.beginGroup("CurrentRadio");
@@ -935,7 +998,18 @@ void SetupDialog::saveCurrentRadio()
 void SetupDialog::readCurrentRadio()
 {
 
-    QSettings config(RADIO_CONFIG, QSettings::IniFormat);
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = RADIO_PATH_LOCAL + LOCAL_RADIO + FILENAME_CURRENT_RADIO;
+    }
+    else
+    {
+        fileName = RADIO_PATH_LOGGER + appName + FILENAME_CURRENT_RADIO;
+    }
+
+
+    QSettings config(fileName, QSettings::IniFormat);
 
 
     {
@@ -962,6 +1036,11 @@ void SetupDialog::readCurrentRadio()
 
 }
 
+
+void SetupDialog::setAppName(QString name)
+{
+    appName = name;
+}
 
 
 scatParams SetupDialog::getCurrentRadio() const

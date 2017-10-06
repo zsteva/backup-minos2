@@ -64,7 +64,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     overLapStatus(NO_OVERLAP),
     southStopActiveflag(false),
     endStopType(ROT_0_360),
-    negAzFlag(false),
+    rotErrorFlag(false),
     supportCwCcwCmd(false),
     rotLogFlg(true)
 
@@ -251,14 +251,15 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     if (appName.length() > 0)
     {
         logMessage((QString("Read Current Antenna for AppName %1 from logger").arg(appName)));
-        selectRotator->readCurrentAntenna();
+
     }
     else
     {
         logMessage((QString("Read Current Antenna for Local selection")));
-        selectRotator->readCurrentAntenna();
+
     }
 
+    selectRotator->readCurrentAntenna();
 
     if (selectRotator->currentAntenna.antennaName == "")
     {
@@ -351,29 +352,36 @@ void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
 
     logMessage("Command From Logger command number = " + QString::number(direction) + ", angle = " + QString::number(angle));
     int dirCommand = direction;
-    if (dirCommand == rpcConstants::eRotateDirect)
+    if (rotator->get_serialConnected() && !rotErrorFlag)
     {
-        ui->bearingEdit->setText(QString::number(angle));
-        rotateTo(angle);
-        sendStatusToLogTurn();
-    }
-    else if (dirCommand == rpcConstants::eRotateLeft)
+        if (dirCommand == rpcConstants::eRotateDirect)
+        {
+            ui->bearingEdit->setText(QString::number(angle));
+            rotateTo(angle);
+            sendStatusToLogTurn();
+        }
+        else if (dirCommand == rpcConstants::eRotateLeft)
+        {
+            rotateCCW(true);
+
+
+        }
+        else if (dirCommand == rpcConstants::eRotateRight)
+        {
+            rotateCW(true);
+
+
+        }
+        else if (dirCommand == rpcConstants::eRotateStop)
+        {
+
+            stopRotation(true);
+
+        }
+     }
+    else
     {
-        rotateCCW(true);
-
-
-    }
-    else if (dirCommand == rpcConstants::eRotateRight)
-    {
-        rotateCW(true);
-
-
-    }
-    else if (dirCommand == rpcConstants::eRotateStop)
-    {
-
-        stopRotation(true);
-
+        logMessage("Logger command discarded - no rotator connected or error");
     }
 
 
@@ -411,7 +419,7 @@ void RotatorMainWindow::openRotator()
     retCode = rotator->init(selectRotator->currentAntenna);
     if (retCode < 0)
     {
-        hamlibError(retCode, "Open Rotator");
+        hamlibError(retCode, "Rotator Init");
     }
     if (rotator->get_serialConnected())
     {
@@ -783,6 +791,7 @@ void RotatorMainWindow::upDateAntenna()
 
         stopRotation(true);
     }
+
     int antennaIndex = ui->selectAntennaBox->currentIndex();
     if (antennaIndex > 0)
     {
@@ -804,14 +813,14 @@ void RotatorMainWindow::upDateAntenna()
         selectRotator->currentAntenna.parity = selectRotator->availAntennas[antennaIndex].parity;
         selectRotator->currentAntenna.handshake = selectRotator->availAntennas[antennaIndex].handshake;
 
-        if (appName > 0)
-        {
+        //if (appName > 0)
+        //{
+        selectRotator->saveCurrentAntenna();
+        //}
+        //else
+        //{
             selectRotator->saveCurrentAntenna();
-        }
-        else
-        {
-            selectRotator->saveCurrentAntenna();
-        }
+        //}
 
 
        if (rotator->get_serialConnected())
@@ -911,6 +920,7 @@ void RotatorMainWindow::upDateAntenna()
        }
 
 */
+
        // don't display overlap if rotator doesn't support or user turned off overlap
        toggleOverLapDisplay(overLapActiveflag);
 
@@ -928,29 +938,51 @@ void RotatorMainWindow::upDateAntenna()
            msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
            msg->publishMinAzimuth(QString::number(currentMinAzimuth));
        }
-
-       trace("*** Antenna Updated ***");
-       trace("App Instance Name  = " + appName);
-       trace("Antenna Name = " + selectRotator->currentAntenna.antennaName);
-       trace("Antenna Number = " + selectRotator->currentAntenna.antennaNumber);
-       trace("Rotator Model = " + selectRotator->currentAntenna.rotatorModel);
-       trace("Rotator Number = " + QString::number(selectRotator->currentAntenna.rotatorModelNumber));
-       trace("Rotator Manufacturer = " + selectRotator->currentAntenna.rotatorManufacturer);
-       trace("Rotator Comport = " + selectRotator->currentAntenna.comport);
-       trace("Baudrate = " + QString::number(selectRotator->currentAntenna.baudrate));
-       trace("Databits = " + QString::number(selectRotator->currentAntenna.databits));
-       trace("Stop bits = " + QString::number(selectRotator->currentAntenna.stopbits));
-       trace("Handshake = " + QString::number(selectRotator->currentAntenna.handshake));
-       trace("Antenna Offset = " + QString::number(selectRotator->currentAntenna.antennaOffset));
-       trace("Current Max Azimuth = " + QString::number(currentMaxAzimuth));
-       trace("Current Min Azimuth = " + QString::number(currentMinAzimuth));
-       trace("South Stop Flag = " + QString::number(selectRotator->currentAntenna.southStopFlag));
-       trace("Overrun flag = " + QString::number(overLapActiveflag));
-       trace("Support CW and CCW Commands = " + QString::number(supportCwCcwCmd));
-       trace("Rotator Max Baudrate = " + QString::number(rotator->getMaxBaudRate()));
-       trace("Rotator Min Baud rate = " + QString::number(rotator->getMinBaudRate()));
-       trace("Tracelog = " + QString::number(ui->actionTraceLog->isChecked()));
     }
+    else
+    {   // no antenna selected
+        trace("No antenna selected");
+        closeRotator();
+        if (appName.length() > 0)
+        {
+           this->setWindowTitle("Minos Rotator - - Logger");
+            msg->publishAntennaName("No rotator");
+            msg->publishMaxAzimuth(QString::number(0));
+            msg->publishMinAzimuth(QString::number(0));
+        }
+        else
+        {
+            this->setWindowTitle("Minos Rotator - - Local");
+        }
+
+
+
+    }
+
+
+
+    trace("*** Antenna Updated ***");
+    trace(QString("App Instance Name  = %1").arg(appName));
+    trace(QString("Antenna Name = %1").arg(selectRotator->currentAntenna.antennaName));
+    trace(QString("Antenna Number = %1").arg(selectRotator->currentAntenna.antennaNumber));
+    trace(QString("Rotator Model = %1").arg(selectRotator->currentAntenna.rotatorModel));
+    trace(QString("Rotator Number = %1").arg(QString::number(selectRotator->currentAntenna.rotatorModelNumber)));
+    trace(QString("Rotator Manufacturer = %1").arg(selectRotator->currentAntenna.rotatorManufacturer));
+    trace(QString("Rotator Comport = %1").arg(selectRotator->currentAntenna.comport));
+    trace(QString("Baudrate = %1").arg(QString::number(selectRotator->currentAntenna.baudrate)));
+    trace(QString("Databits = %1").arg(QString::number(selectRotator->currentAntenna.databits)));
+    trace(QString("Stop bits = %1").arg(QString::number(selectRotator->currentAntenna.stopbits)));
+    trace(QString("Handshake = %1").arg(QString::number(selectRotator->currentAntenna.handshake)));
+    trace(QString("Antenna Offset = %1").arg(QString::number(selectRotator->currentAntenna.antennaOffset)));
+    trace(QString("Current Max Azimuth = %1").arg(QString::number(currentMaxAzimuth)));
+    trace(QString("Current Min Azimuth = %1").arg(QString::number(currentMinAzimuth)));
+    trace(QString("Current CW EndStop = %1").arg(QString::number(rotatorCWEndStop)));
+    trace(QString("South Stop Flag = %1").arg(QString::number(selectRotator->currentAntenna.southStopFlag)));
+    trace(QString("Overrun flag = %1").arg(QString::number(overLapActiveflag)));
+    trace(QString("Support CW and CCW Commands = %1").arg(QString::number(supportCwCcwCmd)));
+    trace(QString("Rotator Max Baudrate = %1").arg(QString::number(rotator->getMaxBaudRate())));
+    trace(QString("Rotator Min Baud rate = %1").arg(QString::number(rotator->getMinBaudRate())));
+    trace(QString("Tracelog = %1").arg(QString::number(ui->actionTraceLog->isChecked())));
 
 
 }
@@ -1731,14 +1763,13 @@ void RotatorMainWindow::hamlibError(int errorCode, QString cmd )
     QString errorMsg = rotator->gethamlibErrorMsg(errorCode);
     logMessage(QString("Hamlib Error - Code = %1 - %2").arg(QString::number(errorCode), errorMsg));
 
-    if (errorCode != 10)
-    {
-        pollTimer->stop();
 
-        QMessageBox::critical(this, "Rotator hamlib Error - " + selectRotator->currentAntenna.antennaName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
+     pollTimer->stop();
 
-        closeRotator();
-    }
+     QMessageBox::critical(this, "Rotator hamlib Error - " + selectRotator->currentAntenna.antennaName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
+
+     closeRotator();
+
 
 
 }
@@ -1833,37 +1864,16 @@ void RotatorMainWindow::saveTraceLogFlag()
     config.setValue("TraceLog", ui->actionTraceLog->isChecked());
 
     config.endGroup();
+    trace("Tracelog Changed = " + QString::number(ui->actionTraceLog->isChecked()));
 }
 
 
 bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
 {
-    QString fileName;
-    if (appName == "")
-    {
-        fileName = CONFIGURATION_FILEPATH_LOCAL + ROTATOR_DATA_FILE;
-    }
-    else
-    {
-        fileName = CONFIGURATION_FILEPATH_LOGGER + ROTATOR_DATA_FILE;
-    }
 
-    QSettings config(fileName, QSettings::IniFormat);
-
-    //QSettings config("./Configuration/MinosRot_CW_CCW.ini", QSettings::IniFormat);
-    config.beginGroup(QString::number(rotatorNumber));
     bool value = false;
+    value = rotator->getSupportCwCcwCmd(rotatorNumber);
 
-    if (!config.contains("rotatorModelNumber"))
-    {
-        logMessage(QString("Rotator Number = %1, does not exist in rotators config file!").arg(QString::number(rotatorNumber)));
-    }
-    else
-    {
-       value = config.value("support_cw_ccw", false).toBool();
-    }
-
-    config.endGroup();
 
     return value;
 

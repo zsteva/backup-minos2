@@ -21,8 +21,6 @@
 
 #define NUM_RADIOS 5
 
-#define RIG_CONTROL_CONFIG "./Configuration/MinosRigControlConfig.ini"
-#define RADIO_CONFIG "./Configuration/MinosRadioConfig.ini"
 
 class QIntValidator;
 class QComboBox;
@@ -65,6 +63,7 @@ public:
     void copyRadioToCurrent(int radioNumber);
 
     void readSettings();
+    void setAppName(QString name);
 signals:
 
     void radioNameChange();
@@ -111,6 +110,8 @@ private:
     bool radioValueChanged[NUM_RADIOS];
     bool radioNameChanged[NUM_RADIOS];
     bool radioChanged;
+    bool chkloadflg = false;
+    QString appName = "";
     void saveSettings();
 
     void fillRadioModelInfo();
@@ -123,7 +124,9 @@ private:
 
     void clearAvailRadio();
     void clearCurrentRadio();
-//    void enableCIVbox();
+    //    void enableCIVbox();
+    void clearRadioValueChanged();
+    void clearRadioNameChanged();
 };
 
 #endif // SETUPDIALOG_H

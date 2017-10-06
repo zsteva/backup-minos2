@@ -130,11 +130,12 @@ private:
     bool stopCmdflag;
     bool rotCmdflag;
     bool reqBearCmdflag;
+
     endStop endStopType;
     overlapStat overLapStatus;
     bool overLapActiveflag;
     bool southStopActiveflag;
-    bool negAzFlag;
+    bool rotErrorFlag;
     bool supportCwCcwCmd;
     //bool logAntError;
     int rotatorBearing;

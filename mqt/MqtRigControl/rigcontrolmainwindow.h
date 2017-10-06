@@ -57,7 +57,7 @@ private:
     QComboBox *selectRadio;
     SetupDialog *selectRig;
     RigControl  *radio;
-    QString loggerRadio = "";
+    QString appName = "";
     QLabel *status;
     QTimer *pollTimer;
     class QTimer LogTimer;
@@ -141,6 +141,8 @@ private slots:
     void loggerSetFreq(QString freq);
     void loggerSetMode(QString mode);
     void loggerSetPassBand(int);
+    void currentRadioSettingChanged(QString radioName);
+    void updateSelectRadioBox();
 signals:
 
 

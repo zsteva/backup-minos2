@@ -152,6 +152,8 @@ public:
 
     int getMaxBaudRate();
     int getMinBaudRate();
+    bool getSupportCwCcwCmd(int rotNumber);
+    int getMaxMinRotation(int rotNumber, int *maxRot, int *minRot);
 signals:
    void bearing_updated(int);
    void request_bearingError(int);
@@ -160,7 +162,7 @@ signals:
 
 private:
     hamlib_port_t myport;
-    ROT *my_rot = 0;            // handle to rig (nstance)
+    ROT *my_rot = 0;            // handle to rig instance)
     azimuth_t rot_azimuth;  // azimuth from rotator
     elevation_t rot_elevation; // not used
 

@@ -109,6 +109,7 @@ private:
     bool antennaValueChanged[NUM_ANTENNAS];
     bool antennaNameChanged[NUM_ANTENNAS];
     bool antennaChanged;
+    bool chkloadflg = false;
     QString appName = "";
     const int minOffset = -90;
     const int maxOffset = 90;
@@ -129,6 +130,7 @@ private:
 
     void clearAntennaValueChanged();
     int getMaxMinRotationData(int rotatorNumber, int *maxRot, int *minRot);
+    void clearAntennaNameChanged();
 };
 
 #endif // SETUPDIALOG_H
