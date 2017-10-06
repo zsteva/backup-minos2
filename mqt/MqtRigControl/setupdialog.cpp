@@ -58,6 +58,9 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     civAddress[3] = ui->CIVlineEdit4;
     civAddress[4] = ui->CIVlineEdit5;
 
+    civSetToolTip();
+
+
     comPorts[0] = ui->comPortBox1;
     comPorts[1] = ui->comPortBox2;
     comPorts[2] = ui->comPortBox3;
@@ -1035,6 +1038,16 @@ void SetupDialog::readCurrentRadio()
     }
 
 }
+
+
+void SetupDialog::civSetToolTip()
+{
+    for (int i = 0; i < NUM_RADIOS; i++)
+    {
+        civAddress[i]->setToolTip(civToolTip);
+    }
+}
+
 
 
 void SetupDialog::setAppName(QString name)
