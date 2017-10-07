@@ -33,6 +33,37 @@ namespace Ui {
     class RigControlFrame;
 }
 
+class RigControlFrame;
+class RigMemoryButton : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit RigMemoryButton(QWidget *parent, RigControlFrame *rcf, int no);
+    ~RigMemoryButton();
+
+    RigControlFrame *rigControlFrame;
+    QToolButton* memButton;
+    QMenu* memoryMenu;
+    QShortcut* shortKey;
+    QAction* readAction;
+    QAction* writeAction;
+    QAction* editAction;
+    QAction* clearAction;
+
+    int memNo;
+private slots:
+    void memoryUpdate();
+
+    void memoryShortCutSelected();
+    void readActionSelected();
+    void editActionSelected();
+    void writeActionSelected();
+    void clearActionSelected();
+signals:
+    void clearActionSelected(int);
+
+};
 
 class RigControlFrame : public QFrame
 {
@@ -64,15 +95,7 @@ private slots:
     void radioBandFreq(int index);
     void noRadioSetFreq(QString);
 
-    void memoryUpdate(int);
-
     void exitFreqEdit();
-    void memoryShortCutSelected(int buttonNumber);
-    void readActionSelected(int);
-    void editActionSelected(int buttonNumber);
-    void writeActionSelected(int);
-    void clearActionSelected(int);
-    void passBandRadioSelected(int button);
 
     void runButShortCutSel(int buttonNumber);
     void runButReadActSel(int buttonNumber);
@@ -81,16 +104,23 @@ private slots:
     void runButClearActSel(int buttonNumber);
     void runButtonUpdate(int buttonNumber);
 
-
-
     void on_FontChanged();
 
+    void on_newMemoryButton_clicked();
+public slots:
+    void memoryUpdate(int);
 
-
-
+    void memoryShortCutSelected(int buttonNumber);
+    void readActionSelected(int);
+    void editActionSelected(int buttonNumber);
+    void writeActionSelected(int);
+    void clearActionSelected(int);
+    void passBandRadioSelected(int button);
 private:
 
     // memory buttons
+
+    QMap<int, RigMemoryButton *> memButtonMap;
 
     QToolButton* memButtons[memoryData::NUM_MEMORIES];
     QMenu* memoryMenu[memoryData::NUM_MEMORIES];

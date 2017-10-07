@@ -12,13 +12,10 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
 #include <QSignalMapper>
-#include <QLabel>
-#include <QtWidgets>
+//#include <QLabel>
+//#include <QtWidgets>
+#include <QLayoutItem>
 
 #include "logger_pch.h"
 #include "rigcontrolframe.h"
@@ -262,6 +259,7 @@ void RigControlFrame::exitFreqEdit()
 
 void RigControlFrame::initMemoryButtons(QWidget *parent)
 {
+    /*
     memButtons[0] = ui->memButton1;
     memButtons[1] = ui->memButton2;
     memButtons[2] = ui->memButton3;
@@ -368,18 +366,20 @@ void RigControlFrame::initMemoryButtons(QWidget *parent)
     // load button labels
 
 //    loadMemoryButtonLabels();
+*/
 
 }
 
 void RigControlFrame::on_FontChanged()
 {
+    /*
     QFontMetrics fm = ui->memButton1->fontMetrics();
     int w = fm.width("M20: MM/MM0WWW/MM");
     for (int i = 0; i < memoryData::NUM_MEMORIES; i++)
     {
         memButtons[i]->setMinimumWidth(w);
     }
-
+*/
 }
 
 
@@ -508,6 +508,29 @@ void RigControlFrame::clearActionSelected(int buttonNumber)
      //memDialog->setDialogTitle(QString::number(buttonNumber + 1) + " - Clear");
      //memDialog->setFocusCallsign();
      //memDialog->show();
+
+     if (memButtonMap.contains(buttonNumber))
+     {
+         RigMemoryButton *rmb = memButtonMap[buttonNumber];
+
+         QGridLayout *gl = qobject_cast<QGridLayout *>(ui->scrollAreaWidgetContents->layout());
+
+         int i = 0;
+         QLayoutItem *child1;
+         while(( child1 = gl->itemAt(i)) != 0)
+         {
+             if (child1->widget() == rmb->memButton)
+             {
+                 QLayoutItem *child2 = gl->takeAt(i);
+                 delete child2->widget();
+                 delete child2;
+                 break;
+             }
+             i++;
+         }
+         memButtonMap.remove(buttonNumber);
+         delete rmb;
+     }
 }
 
 
@@ -675,15 +698,33 @@ void RigControlFrame::loadMemoryButtonLabels()
 void RigControlFrame::memoryUpdate(int buttonNumber)
 {
     memoryData::memData m = memDialog->getMemoryData(buttonNumber);
-    memButtons[buttonNumber]->setText("M" + QString::number(buttonNumber + 1) + ": " + m.callsign + " ");
-    QString tTipStr = "Callsign: " + m.callsign + "\n"
-            + "Freq: " + m.freq + "\n"
-            + "Mode: " + m.mode + "\n"
-            + "Passband: " + hamlibData::pBandStateStr[m.pBandState] + "\n"
-            + "Locator: " + m.locator + "\n"
-            + "Bearing: " + QString::number(m.bearing) + "\n"
-            + "Time: " + m.time;
-    memButtons[buttonNumber]->setToolTip(tTipStr);
+
+    if (!m.callsign.isEmpty())
+    {
+        int row = buttonNumber%2;
+        int col = buttonNumber/2;
+        memButtonMap[buttonNumber] = new RigMemoryButton(ui->scrollArea, this, buttonNumber);
+        connect( memButtonMap[buttonNumber], SIGNAL( clearActionSelected(int)) , this, SLOT(clearActionSelected(int)), Qt::QueuedConnection );
+
+        QGridLayout *gl = qobject_cast<QGridLayout *>(ui->scrollAreaWidgetContents->layout());
+        gl->addWidget(memButtonMap[buttonNumber]->memButton, row, col);
+    }
+
+    if (memButtonMap.contains(buttonNumber))
+    {
+
+        QToolButton *mb = memButtonMap[buttonNumber]->memButton;
+
+        mb->setText("M" + QString::number(buttonNumber + 1) + ": " + m.callsign + " ");
+        QString tTipStr = "Callsign: " + m.callsign + "\n"
+                + "Freq: " + m.freq + "\n"
+                + "Mode: " + m.mode + "\n"
+                + "Passband: " + hamlibData::pBandStateStr[m.pBandState] + "\n"
+                + "Locator: " + m.locator + "\n"
+                + "Bearing: " + QString::number(m.bearing) + "\n"
+                + "Time: " + m.time;
+        mb->setToolTip(tTipStr);
+    }
 }
 
 
@@ -932,4 +973,90 @@ void FreqLineEdit::focusInEvent( QFocusEvent * /*ev*/ )
 {
     emit receivedFocus() ;
 
+}
+
+void RigControlFrame::on_newMemoryButton_clicked()
+{
+    int n = -1;
+
+    for (int i = 0; i < memButtonMap.size() + 1; i++)
+    {
+        if  (!memButtonMap.contains(i))
+        {
+            n = i;
+            break;
+        }
+    }
+    if (n == -1)
+    {
+        mShowMessage("Panic", this);
+        return;
+    }
+    if (n >= memoryData::NUM_MEMORIES)
+    {
+        mShowMessage("Too many memories defined", this);
+        return;
+    }
+
+    writeActionSelected(n); // which creates the button as well
+
+}
+RigMemoryButton::RigMemoryButton(QWidget *parent, RigControlFrame *rcf, int no)
+{
+    memNo = no;
+    rigControlFrame = rcf;
+
+    memButton = new QToolButton(parent);
+
+    memoryMenu = new QMenu(memButton);
+
+    memButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    memButton->setPopupMode(QToolButton::InstantPopup);
+    memButton->setText(memoryData::memoryTitle[memNo] + memoryData::memTitleBlank);
+
+    shortKey = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_1 + memNo), memButton);
+    readAction = new QAction("&Read", memButton);
+    writeAction = new QAction("&Write",memButton);
+    editAction = new QAction("&Edit", memButton);
+    clearAction = new QAction("&Clear",memButton);
+    memoryMenu->addAction(readAction);
+    memoryMenu->addAction(writeAction);
+    memoryMenu->addAction(editAction);
+    memoryMenu->addAction(clearAction);
+    memButton->setMenu(memoryMenu);
+
+    connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()) );
+    connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()) );
+    connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()) );
+    connect( clearAction, SIGNAL( triggered() ), this, SLOT(clearActionSelected()) );
+}
+RigMemoryButton::~RigMemoryButton()
+{
+//    delete memButton;
+}
+void RigMemoryButton::memoryUpdate()
+{
+    rigControlFrame->memoryUpdate(memNo);
+}
+
+void RigMemoryButton::memoryShortCutSelected()
+{
+//    rigControlFrame->memoryShortCutSelected(memNo);
+    memButton->showMenu();
+}
+void RigMemoryButton::readActionSelected()
+{
+    rigControlFrame->readActionSelected(memNo);
+}
+void RigMemoryButton::editActionSelected()
+{
+    rigControlFrame->editActionSelected(memNo);
+}
+void RigMemoryButton::writeActionSelected()
+{
+    rigControlFrame->writeActionSelected(memNo);
+}
+void RigMemoryButton::clearActionSelected()
+{
+    emit clearActionSelected(memNo);
 }
