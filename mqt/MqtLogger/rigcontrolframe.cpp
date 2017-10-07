@@ -1011,7 +1011,8 @@ RigMemoryButton::RigMemoryButton(QWidget *parent, RigControlFrame *rcf, int no)
     memoryMenu = new QMenu(memButton);
 
     memButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
-    memButton->setPopupMode(QToolButton::InstantPopup);
+    memButton->setPopupMode(QToolButton::MenuButtonPopup);
+    memButton->setFocusPolicy(Qt::NoFocus);
     memButton->setText(memoryData::memoryTitle[memNo] + memoryData::memTitleBlank);
 
     shortKey = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_1 + memNo), memButton);
@@ -1025,6 +1026,7 @@ RigMemoryButton::RigMemoryButton(QWidget *parent, RigControlFrame *rcf, int no)
     memoryMenu->addAction(clearAction);
     memButton->setMenu(memoryMenu);
 
+    connect(memButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
     connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()) );
     connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()) );
     connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()) );
