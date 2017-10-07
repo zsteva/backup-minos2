@@ -806,6 +806,12 @@ void RotatorMainWindow::upDateAntenna()
     if (antennaIndex > 0)
     {
         antennaIndex -= 1;
+        if (selectRotator->availAntennas[antennaIndex].rotatorModelNumber == 0)
+        {
+            closeRotator();
+            QMessageBox::critical(this, tr("Antenna Error"), "Please configure a antenna name and rotator model");
+            return;
+        }
 
         selectRotator->currentAntenna.antennaName = selectRotator->availAntennas[antennaIndex].antennaName;
         selectRotator->currentAntenna.antennaNumber = selectRotator->availAntennas[antennaIndex].antennaNumber;
@@ -1177,7 +1183,7 @@ void RotatorMainWindow::rotateTo(int bearing)
         stopRotation(true);
     }
 
-    turn_button_on();
+
 
     if (rotator->get_serialConnected())
     {
@@ -1190,6 +1196,7 @@ void RotatorMainWindow::rotateTo(int bearing)
         else
         {
             moving = true;
+            turn_button_on();
             sendStatusToLogTurn();
             rotTimeCount = 0;           // clear timer count
         }
@@ -1891,10 +1898,13 @@ void RotatorMainWindow::saveTraceLogFlag()
 
 bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
 {
-
+    int retCode = 0;
     bool value = false;
-    value = rotator->getSupportCwCcwCmd(rotatorNumber);
-
+    retCode = rotator->getSupportCwCcwCmd(rotatorNumber, &value);
+    if (retCode < 0)
+    {
+        logMessage(QString("Error getting CwCcwSupport flag for rotator number %1").arg(QString::number(rotatorNumber)));
+    }
 
     return value;
 

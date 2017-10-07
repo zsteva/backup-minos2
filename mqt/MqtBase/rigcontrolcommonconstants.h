@@ -84,7 +84,9 @@ const QString FILENAME_RUN_MEMORY = "RunMemory.ini";
 
 
 
+// Tooltips
 
+const QString civToolTip = "Leave field blank for default radio CIV,\nor enter in the form 0xnn where nn is the radio CIV address.";
 
 
 

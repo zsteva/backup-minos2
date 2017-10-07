@@ -152,7 +152,7 @@ public:
 
     int getMaxBaudRate();
     int getMinBaudRate();
-    bool getSupportCwCcwCmd(int rotNumber);
+    int getSupportCwCcwCmd(int rotNumber, bool *flag);
     int getMaxMinRotation(int rotNumber, int *maxRot, int *minRot);
 signals:
    void bearing_updated(int);

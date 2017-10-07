@@ -165,7 +165,15 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
 
     upDateRadio();
-    sendStatusToLogConnected();
+    if (radio->get_serialConnected())
+    {
+        sendStatusToLogConnected();
+    }
+    else
+    {
+        sendStatusToLogDisConnected();
+    }
+
 
 
     radio->buildPassBandTable();
@@ -328,7 +336,7 @@ void RigControlMainWindow::upDateRadio()
         if (selectRig->availRadios[radioIndex].radioModelNumber == 0)
         {
             closeRadio();
-            QMessageBox::critical(this, tr("Radio Error"), "Please select a radio model");
+            QMessageBox::critical(this, tr("Radio Error"), "Please configure a radio name and model");
             return;
         }
         selectRig->currentRadio.radioName = selectRig->availRadios[radioIndex].radioName;

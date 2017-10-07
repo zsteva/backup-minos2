@@ -127,6 +127,7 @@ private:
     //    void enableCIVbox();
     void clearRadioValueChanged();
     void clearRadioNameChanged();
+    void civSetToolTip();
 };
 
 #endif // SETUPDIALOG_H
