@@ -196,7 +196,8 @@ bool RotControl::getRotatorList(QComboBox *cb)
     {
         if (getPortType(capsList.at(i)->rot_model, &portType) != -1)
         {
-            if (portType == RIG_PORT_NONE ||portType == RIG_PORT_SERIAL || portType == RIG_PORT_USB)
+            //qDebug() << capsList.at(i)->rot_model << capsList.at(i)->model_name << portType;
+            if (portType != RIG_PORT_PARALLEL)
             {
                 QString t;
                 t= QString::number(capsList.at(i)->rot_model);

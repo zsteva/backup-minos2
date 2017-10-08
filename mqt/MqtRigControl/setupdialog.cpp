@@ -67,11 +67,24 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     comPorts[3] = ui->comPortBox4;
     comPorts[4] = ui->comPortBox5;
 
+    comPortLbl[0] = ui->comportLbl1;
+    comPortLbl[1] = ui->comportLbl2;
+    comPortLbl[2] = ui->comportLbl3;
+    comPortLbl[3] = ui->comportLbl4;
+    comPortLbl[4] = ui->comportLbl5;
+
     comSpeed[0] = ui->comSpeedBox1;
     comSpeed[1] = ui->comSpeedBox2;
     comSpeed[2] = ui->comSpeedBox3;
     comSpeed[3] = ui->comSpeedBox4;
     comSpeed[4] = ui->comSpeedBox5;
+
+    comSpeedLbl[0] = ui->speedLbl1;
+    comSpeedLbl[1] = ui->speedLbl2;
+    comSpeedLbl[2] = ui->speedLbl3;
+    comSpeedLbl[3] = ui->speedLbl4;
+    comSpeedLbl[4] = ui->speedLbl5;
+
 
     comDataBits[0] = ui->comDataBitsBox1;
     comDataBits[1] = ui->comDataBitsBox2;
@@ -79,11 +92,23 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     comDataBits[3] = ui->comDataBitsBox4;
     comDataBits[4] = ui->comDataBitsBox5;
 
+    comDataLbl[0] = ui->dataLbll1;
+    comDataLbl[1] = ui->dataLbll2;
+    comDataLbl[2] = ui->dataLbll3;
+    comDataLbl[3] = ui->dataLbll4;
+    comDataLbl[4] = ui->dataLbll5;
+
     comStopBits[0] = ui->comStopBitsBox1;
     comStopBits[1] = ui->comStopBitsBox2;
     comStopBits[2] = ui->comStopBitsBox3;
     comStopBits[3] = ui->comStopBitsBox4;
     comStopBits[4] = ui->comStopBitsBox5;
+
+    comStopLbl[0] = ui->stopLbl1;
+    comStopLbl[1] = ui->stopLbl2;
+    comStopLbl[2] = ui->stopLbl3;
+    comStopLbl[3] = ui->stopLbl4;
+    comStopLbl[4] = ui->stopLbl5;
 
     comParity[0] = ui->comParityBox1;
     comParity[1] = ui->comParityBox2;
@@ -91,11 +116,50 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     comParity[3] = ui->comParityBox4;
     comParity[4] = ui->comParityBox5;
 
+    comParityLbl[0] = ui->parityLbl1;
+    comParityLbl[1] = ui->parityLbl2;
+    comParityLbl[2] = ui->parityLbl3;
+    comParityLbl[3] = ui->parityLbl4;
+    comParityLbl[4] = ui->parityLbl5;
+
+
     comHandShake[0] = ui->comHandShakeBox1;
     comHandShake[1] = ui->comHandShakeBox2;
     comHandShake[2] = ui->comHandShakeBox3;
     comHandShake[3] = ui->comHandShakeBox4;
     comHandShake[4] = ui->comHandShakeBox5;
+
+    comHandLbl[0] = ui->handshakeLbl1;
+    comHandLbl[1] = ui->handshakeLbl2;
+    comHandLbl[2] = ui->handshakeLbl3;
+    comHandLbl[3] = ui->handshakeLbl4;
+    comHandLbl[4] = ui->handshakeLbl5;
+
+    netAddress[0] = ui->networkAddBox1;
+    netAddress[1] = ui->networkAddBox2;
+    netAddress[2] = ui->networkAddBox3;
+    netAddress[3] = ui->networkAddBox4;
+    netAddress[4] = ui->networkAddBox4;
+
+    netAddLbl[0] = ui->networkAddLbl1;
+    netAddLbl[1] = ui->networkAddLbl2;
+    netAddLbl[2] = ui->networkAddLbl2;
+    netAddLbl[3] = ui->networkAddLbl3;
+    netAddLbl[4] = ui->networkAddLbl5;
+
+    netPort[0] = ui->netPortBox1;
+    netPort[1] = ui->netPortBox2;
+    netPort[2] = ui->netPortBox3;
+    netPort[3] = ui->netPortBox4;
+    netPort[4] = ui->netPortBox5;
+
+    netPortLbl[0] = ui->netPortLbl1;
+    netPortLbl[1] = ui->netPortLbl2;
+    netPortLbl[2] = ui->netPortLbl3;
+    netPortLbl[3] = ui->netPortLbl4;
+    netPortLbl[4] = ui->netPortLbl5;
+
+
 
     transVertCheck[0] = ui->TransVCheck1;
     transVertCheck[1] = ui->TransVCheck2;
@@ -271,6 +335,30 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
     connect(rxPassbandCheck_mapper, SIGNAL(mapped(int)), this, SLOT(rxPassBandChecked(int)));
 
+    //--------------------------------------------------------------------------------------------------
+
+        QSignalMapper *networkAddress_mapper = new QSignalMapper(this);
+        for (int i = 0; i < NUM_RADIOS; i++ )
+        {
+            networkAddress_mapper->setMapping(netAddress[i], i);
+            connect(netAddress[i], SIGNAL(editingFinished()), networkAddress_mapper, SLOT(map()));
+        }
+
+        connect(networkAddress_mapper, SIGNAL(mapped(int)), this, SLOT(networkAddressSelected(int)));
+
+    //--------------------------------------------------------------------------------------------------
+
+        QSignalMapper *networkPort_mapper = new QSignalMapper(this);
+        for (int i = 0; i < NUM_RADIOS; i++ )
+        {
+            networkPort_mapper->setMapping(netPort[i], i);
+            connect(netPort[i], SIGNAL(editingFinished()), networkPort_mapper, SLOT(map()));
+        }
+
+        connect(networkPort_mapper, SIGNAL(mapped(int)), this, SLOT(networkPortSelected(int)));
+
+    //--------------------------------------------------------------------------------------------------
+
 
 
 
@@ -295,6 +383,11 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     clearCurrentRadio(); // clear the currently selected Radio table, also init with default serial parameters
     clearRadioValueChanged();
     clearRadioNameChanged();
+
+    for (int i = 0; i < NUM_RADIOS; i++)
+    {
+        networkDataEntryVisible(i, false);
+    }
 
     readSettings();   // get available radio settings from file
 
@@ -321,6 +414,19 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
         transVertEdit[i]->setEnabled(transVertCheck[i]->isChecked());
         transNegCheck[i]->setEnabled(transVertCheck[i]->isChecked());
         rxPassBandCheck[i]->setChecked(availRadios[i].useRxPassBand);
+        netAddress[i]->setText(availRadios[i].networkAdd);
+        netPort[i]->setText(availRadios[i].networkPort);
+        if (rig_port_e(availRadios[i].portType) == RIG_PORT_NETWORK)
+        {
+            serialDataEntryVisible(i, false);
+            networkDataEntryVisible(i, true);
+        }
+        else
+        {
+            serialDataEntryVisible(i, true);
+            networkDataEntryVisible(i, false);
+        }
+
 
     }
 
@@ -365,6 +471,24 @@ void SetupDialog::radioModelSelected(int boxNumber)
         {
             civAddress[boxNumber]->setDisabled(true);
         }
+
+        rig_port_e portType = RIG_PORT_NONE;
+
+        if (radio->getPortType(availRadios[boxNumber].radioModelNumber, &portType) != -1)
+        {
+            availRadios[boxNumber].portType = int(portType);
+            if (portType == RIG_PORT_NETWORK)
+            {
+               serialDataEntryVisible(boxNumber, false);
+               networkDataEntryVisible(boxNumber, true);
+            }
+            else
+            {
+                serialDataEntryVisible(boxNumber, true);
+                networkDataEntryVisible(boxNumber, false);
+            }
+        }
+
         radioValueChanged[boxNumber] = true;
         radioChanged = true;
 
@@ -564,6 +688,23 @@ void SetupDialog::rxPassBandChecked(int boxNumber)
         radioChanged = true;
     }
 }
+
+
+void SetupDialog::networkAddressSelected(int boxNumber)
+{
+
+    availRadios[boxNumber].networkAdd = netAddress[boxNumber]->text();
+    radioValueChanged[boxNumber] = true;
+    radioChanged = true;
+}
+
+void SetupDialog::networkPortSelected(int boxNumber)
+{
+    availRadios[boxNumber].networkPort = netPort[boxNumber]->text();
+    radioValueChanged[boxNumber] = true;
+    radioChanged = true;
+}
+
 
 void SetupDialog::fillRadioModelInfo()
 {
@@ -765,6 +906,7 @@ void SetupDialog::saveSettings()
                 config.setValue("radioModelName", availRadios[i].radioModelName);
                 config.setValue("radioModelNumber", availRadios[i].radioModelNumber);
                 config.setValue("civAddress", availRadios[i].civAddress);
+                config.setValue("portType", availRadios[i].portType);
                 config.setValue("comport", availRadios[i].comport);
                 config.setValue("baudrate", availRadios[i].baudrate);
                 config.setValue("databits", availRadios[i].databits);
@@ -776,6 +918,8 @@ void SetupDialog::saveSettings()
                 config.setValue("transVertEnable", availRadios[i].transVertEnable);
                 config.setValue("transVertNegative", availRadios[i].transVertNegative);
                 config.setValue("useRXPassBand", availRadios[i].useRxPassBand);
+                config.setValue("netAddress", availRadios[i].networkAdd);
+                config.setValue("netPort", availRadios[i].networkPort);
                 config.endGroup();
                 radioValueChanged[i] = false;
 
@@ -843,6 +987,7 @@ void SetupDialog::readSettings()
         availRadios[i].radioModelName = config.value("radioModelName", "").toString();
         availRadios[i].radioModelNumber = config.value("radioModelNumber", "").toInt();
         availRadios[i].civAddress = config.value("civAddress", "").toString();
+        availRadios[i].portType = config.value("portType", int(RIG_PORT_NONE)).toInt();
         availRadios[i].comport = config.value("comport", "").toString();
         availRadios[i].baudrate = config.value("baudrate", 9600).toInt();
         availRadios[i].databits = config.value("databits", 8).toInt();
@@ -854,6 +999,8 @@ void SetupDialog::readSettings()
         availRadios[i].transVertEnable = config.value("transVertEnable", false).toBool();
         availRadios[i].transVertNegative = config.value("transVertNegative", false).toBool();
         availRadios[i].useRxPassBand = config.value("useRXPassBand", false).toBool();
+        availRadios[i].networkAdd = config.value("netAddress", "").toString();
+        availRadios[i].networkPort = config.value("netPort", "").toString();
         config.endGroup();
     }
     chkloadflg = false;
@@ -873,6 +1020,7 @@ void SetupDialog::clearAvailRadio()
         availRadios[i].radioModelName = "";
         availRadios[i].radioModelNumber = 0;
         availRadios[i].civAddress = "0x00";
+        availRadios[i].portType = int(RIG_PORT_NONE);
         availRadios[i].comport = "";
         availRadios[i].baudrate = 9600;
         availRadios[i].databits = 8;
@@ -883,6 +1031,8 @@ void SetupDialog::clearAvailRadio()
         availRadios[i].transVertEnable = false;
         availRadios[i].transVertNegative = false;
         availRadios[i].useRxPassBand = false;
+        availRadios[i].networkAdd = "";
+        availRadios[i].networkPort = "";
     }
 
 
@@ -898,6 +1048,7 @@ void SetupDialog::clearCurrentRadio()
     currentRadio.radioModelName = "";
     currentRadio.radioModelNumber = 0;
     currentRadio.civAddress = "0x00";
+    currentRadio.portType = int(RIG_PORT_NONE);
     currentRadio.comport = "";
     currentRadio.baudrate = 9600;
     currentRadio.databits = 8;
@@ -908,6 +1059,8 @@ void SetupDialog::clearCurrentRadio()
     currentRadio.transVertEnable = false;
     currentRadio.transVertNegative = false;
     currentRadio.useRxPassBand = false;
+    currentRadio.networkAdd = "";
+    currentRadio.networkPort = "";
 
 }
 
@@ -921,6 +1074,7 @@ void SetupDialog::copyRadioToCurrent(int radioNumber)
     currentRadio.radioModelNumber = availRadios[radioNumber].radioModelNumber;
     currentRadio.radioModelName = availRadios[radioNumber].radioModelName;
     currentRadio.radioMfg_Name = availRadios[radioNumber].radioMfg_Name;
+    currentRadio.portType = availRadios[radioNumber].portType;
     currentRadio.comport = availRadios[radioNumber].comport;
     currentRadio.baudrate = availRadios[radioNumber].baudrate;
     currentRadio.databits = availRadios[radioNumber].databits;
@@ -932,6 +1086,8 @@ void SetupDialog::copyRadioToCurrent(int radioNumber)
     currentRadio.transVertEnable  = availRadios[radioNumber].transVertEnable;
     currentRadio.transVertNegative  = availRadios[radioNumber].transVertNegative;
     currentRadio.useRxPassBand = availRadios[radioNumber].useRxPassBand;
+    currentRadio.networkAdd = availRadios[radioNumber].networkAdd;
+    currentRadio.networkPort = availRadios[radioNumber].networkPort;
 
 
 }
@@ -980,6 +1136,7 @@ void SetupDialog::saveCurrentRadio()
     config.setValue("radioModel", currentRadio.radioModel);
     config.setValue("radioModelNumber", currentRadio.radioModelNumber);
     config.setValue("civAddress", currentRadio.civAddress);
+    config.setValue("portType", currentRadio.portType);
     config.setValue("comport", currentRadio.comport);
     config.setValue("baudrate", currentRadio.baudrate);
     config.setValue("databits", currentRadio.databits);
@@ -991,6 +1148,8 @@ void SetupDialog::saveCurrentRadio()
     config.setValue("transVertEnable", currentRadio.transVertEnable);
     config.setValue("transVertNegative", currentRadio.transVertNegative);
     config.setValue("useRXPassBand", currentRadio.useRxPassBand);
+    config.setValue("netAddress", currentRadio.networkAdd);
+    config.setValue("netPort", currentRadio.networkPort);
     config.endGroup();
 
 
@@ -1023,6 +1182,7 @@ void SetupDialog::readCurrentRadio()
         currentRadio.radioModel = config.value("radioModel", "").toString();
         currentRadio.radioModelNumber = config.value("radioModelNumber", "").toInt();
         currentRadio.civAddress = config.value("civAddress", "").toString();
+        currentRadio.portType = config.value("portType", int(RIG_PORT_NONE)).toInt();
         currentRadio.comport = config.value("comport", "").toString();
         currentRadio.baudrate = config.value("baudrate", 0).toInt();
         currentRadio.databits = config.value("databits", 0).toInt();
@@ -1034,6 +1194,8 @@ void SetupDialog::readCurrentRadio()
         currentRadio.transVertEnable = config.value("transVertEnable", false).toBool();
         currentRadio.transVertNegative = config.value("transVertNegative", false).toBool();
         currentRadio.useRxPassBand = config.value("useRXPassBand", false).toBool();
+        currentRadio.networkAdd = config.value("netAddress", "").toString();
+        currentRadio.networkPort = config.value("netPort", "").toString();
         config.endGroup();
     }
 
@@ -1060,3 +1222,35 @@ scatParams SetupDialog::getCurrentRadio() const
 {
     return currentRadio;
 }
+
+
+
+void SetupDialog::serialDataEntryVisible(int radioNumber, bool visible)
+{
+
+    comPorts[radioNumber]->setVisible(visible);
+    comPortLbl[radioNumber]->setVisible(visible);
+    comSpeed[radioNumber]->setVisible(visible);
+    comSpeedLbl[radioNumber]->setVisible(visible);
+    comDataBits[radioNumber]->setVisible(visible);
+    comDataLbl[radioNumber]->setVisible(visible);
+    comStopBits[radioNumber]->setVisible(visible);
+    comStopLbl[radioNumber]->setVisible(visible);
+    comParity[radioNumber]->setVisible(visible);
+    comParityLbl[radioNumber]->setVisible(visible);
+    comHandShake[radioNumber]->setVisible(visible);
+    comHandLbl[radioNumber]->setVisible(visible);
+
+}
+
+
+
+void SetupDialog::networkDataEntryVisible(int radioNumber, bool visible)
+{
+
+    netAddress[radioNumber]->setVisible(visible);
+    netAddLbl[radioNumber]->setVisible(visible);
+    netPort[radioNumber]->setVisible(visible);
+    netPortLbl[radioNumber]->setVisible(visible);
+}
+

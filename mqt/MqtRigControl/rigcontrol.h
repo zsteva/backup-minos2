@@ -74,6 +74,9 @@ struct scatParams
   int stopbits;
   int databits;
   int handshake;
+  int portType = int(RIG_PORT_NONE);
+  QString networkAdd;
+  QString networkPort;
   bool enableCAT;
   bool enableSerialPTT;
   QString pttSerialPort;

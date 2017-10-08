@@ -86,6 +86,9 @@ struct srotParams
   bool overRunFlag = false;
   int antennaOffset = 0;
   bool moving;
+  int portType = int(RIG_PORT_NONE);
+  QString networkAdd;
+  QString networkPort;
   int serial_rate_max;
   int serial_rate_min;
   int baudrate;

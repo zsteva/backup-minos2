@@ -290,6 +290,7 @@ pbwidth_t RigControl::getPassBand()
 
 void RigControl::getRigList()
 {
+
     if(!riglistLoaded)
     {
         capsList.clear();
@@ -318,7 +319,8 @@ bool RigControl::getRigList(QComboBox *cb)
     {
         if (getPortType(capsList.at(i)->rig_model, &portType) != -1)
         {
-            if (portType == RIG_PORT_NONE ||portType == RIG_PORT_SERIAL || portType == RIG_PORT_USB)
+            //qDebug() << capsList.at(i)->rig_model << capsList.at(i)->model_name << portType;
+            if (portType == RIG_PORT_NONE ||portType == RIG_PORT_SERIAL || portType == RIG_PORT_USB || portType == RIG_PORT_NETWORK || portType == RIG_PORT_UDP_NETWORK)
             {
 
                 QString t;

@@ -21,9 +21,9 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="netPortLedt4">
      <property name="currentIndex">
-      <number>4</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -76,7 +76,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_91">
            <item>
-            <widget class="QLabel" name="label_123">
+            <widget class="QLabel" name="comporLbl1">
              <property name="text">
               <string>Comport</string>
              </property>
@@ -88,12 +88,29 @@
            <item>
             <widget class="QComboBox" name="comPortBox1"/>
            </item>
+           <item>
+            <widget class="QLabel" name="netAddressLbl1">
+             <property name="text">
+              <string>Network Address</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="netAddressBox1">
+             <property name="inputMask">
+              <string>000.000.000.000;_</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_92">
            <item>
-            <widget class="QLabel" name="label_124">
+            <widget class="QLabel" name="speedLbl1">
              <property name="text">
               <string>Speed</string>
              </property>
@@ -105,12 +122,29 @@
            <item>
             <widget class="QComboBox" name="comSpeedBox1"/>
            </item>
+           <item>
+            <widget class="QLabel" name="portLbl1">
+             <property name="text">
+              <string>Port</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="netPortBox1">
+             <property name="inputMask">
+              <string>9999</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_93">
            <item>
-            <widget class="QLabel" name="label_125">
+            <widget class="QLabel" name="dBitsLbl1">
              <property name="text">
               <string>Data Bits</string>
              </property>
@@ -127,7 +161,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_94">
            <item>
-            <widget class="QLabel" name="label_126">
+            <widget class="QLabel" name="stopLbl1">
              <property name="text">
               <string>Stop Bits</string>
              </property>
@@ -144,7 +178,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_95">
            <item>
-            <widget class="QLabel" name="label_127">
+            <widget class="QLabel" name="parityLbl1">
              <property name="text">
               <string>Parity</string>
              </property>
@@ -161,7 +195,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_96">
            <item>
-            <widget class="QLabel" name="label_128">
+            <widget class="QLabel" name="handLbl1">
              <property name="text">
               <string>HandShake</string>
              </property>
@@ -296,7 +330,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_27">
            <item>
-            <widget class="QLabel" name="label_35">
+            <widget class="QLabel" name="comporLbl2">
              <property name="text">
               <string>Comport</string>
              </property>
@@ -308,12 +342,29 @@
            <item>
             <widget class="QComboBox" name="comPortBox2"/>
            </item>
+           <item>
+            <widget class="QLabel" name="netAddressLbl2">
+             <property name="text">
+              <string>Network Address</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="netAddressBox2">
+             <property name="inputMask">
+              <string>000.000.000.000;_</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_28">
            <item>
-            <widget class="QLabel" name="label_36">
+            <widget class="QLabel" name="speedLbl2">
              <property name="text">
               <string>Speed</string>
              </property>
@@ -325,12 +376,29 @@
            <item>
             <widget class="QComboBox" name="comSpeedBox2"/>
            </item>
+           <item>
+            <widget class="QLabel" name="portLbl2">
+             <property name="text">
+              <string>Port</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="netPortBox2">
+             <property name="inputMask">
+              <string>9999</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_29">
            <item>
-            <widget class="QLabel" name="label_37">
+            <widget class="QLabel" name="dBitsLbl2">
              <property name="text">
               <string>Data Bits</string>
              </property>
@@ -347,7 +415,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_30">
            <item>
-            <widget class="QLabel" name="label_38">
+            <widget class="QLabel" name="stopLbl2">
              <property name="text">
               <string>Stop Bits</string>
              </property>
@@ -364,7 +432,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_31">
            <item>
-            <widget class="QLabel" name="label_39">
+            <widget class="QLabel" name="parityLbl2">
              <property name="text">
               <string>Parity</string>
              </property>
@@ -381,7 +449,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_32">
            <item>
-            <widget class="QLabel" name="label_40">
+            <widget class="QLabel" name="handLbl2">
              <property name="text">
               <string>HandShake</string>
              </property>
@@ -513,7 +581,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_35">
            <item>
-            <widget class="QLabel" name="label_46">
+            <widget class="QLabel" name="comporLbl3">
              <property name="text">
               <string>Comport</string>
              </property>
@@ -525,12 +593,29 @@
            <item>
             <widget class="QComboBox" name="comPortBox3"/>
            </item>
+           <item>
+            <widget class="QLabel" name="netAddressLbl3">
+             <property name="text">
+              <string>Network Address</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="netAddressBox3">
+             <property name="inputMask">
+              <string>000.000.000.000;_</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_36">
            <item>
-            <widget class="QLabel" name="label_47">
+            <widget class="QLabel" name="speedLbl3">
              <property name="text">
               <string>Speed</string>
              </property>
@@ -542,12 +627,29 @@
            <item>
             <widget class="QComboBox" name="comSpeedBox3"/>
            </item>
+           <item>
+            <widget class="QLabel" name="portLbl3">
+             <property name="text">
+              <string>Port</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="netPortBox3">
+             <property name="inputMask">
+              <string>9999</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_37">
            <item>
-            <widget class="QLabel" name="label_48">
+            <widget class="QLabel" name="dBitsLbl3">
              <property name="text">
               <string>Data Bits</string>
              </property>
@@ -564,7 +666,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_38">
            <item>
-            <widget class="QLabel" name="label_49">
+            <widget class="QLabel" name="stopLbl3">
              <property name="text">
               <string>Stop Bits</string>
              </property>
@@ -581,7 +683,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_39">
            <item>
-            <widget class="QLabel" name="label_50">
+            <widget class="QLabel" name="parityLbl3">
              <property name="text">
               <string>Parity</string>
              </property>
@@ -598,7 +700,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_40">
            <item>
-            <widget class="QLabel" name="label_51">
+            <widget class="QLabel" name="handLbl3">
              <property name="text">
               <string>Handshake</string>
              </property>
@@ -730,7 +832,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_43">
            <item>
-            <widget class="QLabel" name="label_57">
+            <widget class="QLabel" name="comporLbl4">
              <property name="text">
               <string>Comport</string>
              </property>
@@ -742,12 +844,29 @@
            <item>
             <widget class="QComboBox" name="comPortBox4"/>
            </item>
+           <item>
+            <widget class="QLabel" name="netAddressLbl4">
+             <property name="text">
+              <string>Network Address</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="netAddressBox4">
+             <property name="inputMask">
+              <string>000.000.000.000;_</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_44">
            <item>
-            <widget class="QLabel" name="label_58">
+            <widget class="QLabel" name="speedLbl4">
              <property name="text">
               <string>Speed</string>
              </property>
@@ -759,12 +878,29 @@
            <item>
             <widget class="QComboBox" name="comSpeedBox4"/>
            </item>
+           <item>
+            <widget class="QLabel" name="portLbl4">
+             <property name="text">
+              <string>Port</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="netPortBox4">
+             <property name="inputMask">
+              <string>9999</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_45">
            <item>
-            <widget class="QLabel" name="label_59">
+            <widget class="QLabel" name="dBitsLbl4">
              <property name="text">
               <string>Data Bits</string>
              </property>
@@ -781,7 +917,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_46">
            <item>
-            <widget class="QLabel" name="label_60">
+            <widget class="QLabel" name="stopLbl4">
              <property name="text">
               <string>Stop Bits</string>
              </property>
@@ -798,7 +934,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_47">
            <item>
-            <widget class="QLabel" name="label_61">
+            <widget class="QLabel" name="parityLbl4">
              <property name="text">
               <string>Parity</string>
              </property>
@@ -815,7 +951,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_48">
            <item>
-            <widget class="QLabel" name="label_65">
+            <widget class="QLabel" name="handLbl4">
              <property name="text">
               <string>Handshake</string>
              </property>
@@ -947,7 +1083,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_51">
            <item>
-            <widget class="QLabel" name="label_68">
+            <widget class="QLabel" name="comporLbl5">
              <property name="text">
               <string>Comport</string>
              </property>
@@ -959,12 +1095,29 @@
            <item>
             <widget class="QComboBox" name="comPortBox5"/>
            </item>
+           <item>
+            <widget class="QLabel" name="netAddressLbl5">
+             <property name="text">
+              <string>Network Address</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="netAddressBox5">
+             <property name="inputMask">
+              <string>000.000.000.000;_</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_52">
            <item>
-            <widget class="QLabel" name="label_69">
+            <widget class="QLabel" name="speedLbl5">
              <property name="text">
               <string>Speed</string>
              </property>
@@ -976,12 +1129,29 @@
            <item>
             <widget class="QComboBox" name="comSpeedBox5"/>
            </item>
+           <item>
+            <widget class="QLabel" name="portLbl5">
+             <property name="text">
+              <string>Port</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="netPortBox5">
+             <property name="inputMask">
+              <string>9999</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_53">
            <item>
-            <widget class="QLabel" name="label_70">
+            <widget class="QLabel" name="dBitsLbl5">
              <property name="text">
               <string>Data Bits</string>
              </property>
@@ -998,7 +1168,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_54">
            <item>
-            <widget class="QLabel" name="label_71">
+            <widget class="QLabel" name="stopLbl5">
              <property name="text">
               <string>Stop Bits</string>
              </property>
@@ -1015,7 +1185,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_55">
            <item>
-            <widget class="QLabel" name="label_72">
+            <widget class="QLabel" name="parityLbl5">
              <property name="text">
               <string>Parity</string>
              </property>
@@ -1032,7 +1202,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_56">
            <item>
-            <widget class="QLabel" name="label_73">
+            <widget class="QLabel" name="handLbl5">
              <property name="text">
               <string>Handshake</string>
              </property>
