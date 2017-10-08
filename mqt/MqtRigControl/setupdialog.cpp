@@ -139,12 +139,12 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     netAddress[1] = ui->networkAddBox2;
     netAddress[2] = ui->networkAddBox3;
     netAddress[3] = ui->networkAddBox4;
-    netAddress[4] = ui->networkAddBox4;
+    netAddress[4] = ui->networkAddBox5;
 
     netAddLbl[0] = ui->networkAddLbl1;
     netAddLbl[1] = ui->networkAddLbl2;
-    netAddLbl[2] = ui->networkAddLbl2;
-    netAddLbl[3] = ui->networkAddLbl3;
+    netAddLbl[2] = ui->networkAddLbl3;
+    netAddLbl[3] = ui->networkAddLbl4;
     netAddLbl[4] = ui->networkAddLbl5;
 
     netPort[0] = ui->netPortBox1;
@@ -184,6 +184,12 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     rxPassBandCheck[2] = ui->useRigPbChk3;
     rxPassBandCheck[3] = ui->useRigPbChk4;
     rxPassBandCheck[4] = ui->useRigPbChk5;
+
+    mgmModeSel[0] = ui->mgmBox1;
+    mgmModeSel[1] = ui->mgmBox2;
+    mgmModeSel[2] = ui->mgmBox3;
+    mgmModeSel[3] = ui->mgmBox4;
+    mgmModeSel[4] = ui->mgmBox5;
 
 
 
@@ -335,7 +341,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
     connect(rxPassbandCheck_mapper, SIGNAL(mapped(int)), this, SLOT(rxPassBandChecked(int)));
 
-    //--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
 
         QSignalMapper *networkAddress_mapper = new QSignalMapper(this);
         for (int i = 0; i < NUM_RADIOS; i++ )
@@ -346,7 +352,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
         connect(networkAddress_mapper, SIGNAL(mapped(int)), this, SLOT(networkAddressSelected(int)));
 
-    //--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
 
         QSignalMapper *networkPort_mapper = new QSignalMapper(this);
         for (int i = 0; i < NUM_RADIOS; i++ )
@@ -357,8 +363,20 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
         connect(networkPort_mapper, SIGNAL(mapped(int)), this, SLOT(networkPortSelected(int)));
 
-    //--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
 
+
+
+        QSignalMapper *mgmMode_mapper = new QSignalMapper(this);
+        for (int i = 0; i < NUM_RADIOS; i++ )
+        {
+            mgmMode_mapper->setMapping(mgmModeSel[i], i);
+            connect(mgmModeSel[i], SIGNAL(activated(int)), mgmMode_mapper, SLOT(map()));
+        }
+
+        connect(mgmMode_mapper, SIGNAL(mapped(int)), this, SLOT(mgmModeSelected(int)));
+
+//--------------------------------------------------------------------------------------------------
 
 
 
@@ -383,6 +401,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     clearCurrentRadio(); // clear the currently selected Radio table, also init with default serial parameters
     clearRadioValueChanged();
     clearRadioNameChanged();
+    loadMgmModes();
 
     for (int i = 0; i < NUM_RADIOS; i++)
     {
@@ -703,6 +722,14 @@ void SetupDialog::networkPortSelected(int boxNumber)
     availRadios[boxNumber].networkPort = netPort[boxNumber]->text();
     radioValueChanged[boxNumber] = true;
     radioChanged = true;
+}
+
+
+void SetupDialog::mgmModeSelected(int boxNumber)
+{
+
+
+
 }
 
 
@@ -1253,4 +1280,63 @@ void SetupDialog::networkDataEntryVisible(int radioNumber, bool visible)
     netPort[radioNumber]->setVisible(visible);
     netPortLbl[radioNumber]->setVisible(visible);
 }
+
+
+void SetupDialog::saveMgmList()
+{
+    const QStringList  mList = {"USB", "LSB", "RTTY", "PKTLSB", "PKTUSB", "PKTFM" };
+
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = RIG_CONFIGURATION_FILEPATH_LOCAL + MINOS_RADIO_CONFIG_FILE;
+    }
+    else
+    {
+        fileName = RIG_CONFIGURATION_FILEPATH_LOGGER + MINOS_RADIO_CONFIG_FILE;
+    }
+
+
+
+    QSettings config(fileName, QSettings::IniFormat);
+    config.beginGroup("MGM_Modes");
+
+    config.setValue("MgmModes", mList);
+
+    config.endGroup();
+
+
+}
+
+void SetupDialog::loadMgmModes()
+{
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = RIG_CONFIGURATION_FILEPATH_LOCAL + MINOS_RADIO_CONFIG_FILE;
+    }
+    else
+    {
+        fileName = RIG_CONFIGURATION_FILEPATH_LOGGER + MINOS_RADIO_CONFIG_FILE;
+    }
+
+
+    QSettings config(fileName, QSettings::IniFormat);
+    config.beginGroup("MGM_Modes");
+
+
+    QStringList mgmModes = config.value("MgmModes", "").toStringList();
+
+    config.endGroup();
+
+    for (int i = 0; i < NUM_RADIOS; i++)
+    {
+        mgmModeSel[i]->clear();
+        mgmModeSel[i]->addItems(mgmModes);
+    }
+
+
+}
+
+
 

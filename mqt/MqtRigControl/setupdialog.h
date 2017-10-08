@@ -90,6 +90,7 @@ private slots:
 
     void networkAddressSelected(int boxNumber);
     void networkPortSelected(int boxNumber);
+    void mgmModeSelected(int boxNumber);
 private:
     Ui::SetupDialog *ui;
 
@@ -128,6 +129,9 @@ private:
     QLineEdit *transVertEdit[NUM_RADIOS];
     QCheckBox *transNegCheck[NUM_RADIOS];
     QCheckBox *rxPassBandCheck[NUM_RADIOS];
+
+    QComboBox *mgmModeSel[NUM_RADIOS];
+
 //    QIntValidator *intValidator;
     bool radioValueChanged[NUM_RADIOS];
     bool radioNameChanged[NUM_RADIOS];
@@ -152,6 +156,8 @@ private:
     void civSetToolTip();
     void networkDataEntryVisible(int radioNumber, bool visible);
     void serialDataEntryVisible(int radioNumber, bool visible);
+    void loadMgmModes();
+    void saveMgmList();
 };
 
 #endif // SETUPDIALOG_H
