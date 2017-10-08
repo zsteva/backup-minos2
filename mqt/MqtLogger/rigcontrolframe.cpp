@@ -699,7 +699,7 @@ void RigControlFrame::memoryUpdate(int buttonNumber)
 {
     memoryData::memData m = memDialog->getMemoryData(buttonNumber);
 
-    if (!m.callsign.isEmpty())
+    if (m.callsign != memDefData::DEFAULT_CALLSIGN)
     {
         int row = buttonNumber%2;
         int col = buttonNumber/2;
