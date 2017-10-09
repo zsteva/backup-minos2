@@ -29,11 +29,15 @@ class RotControlFrame : public QFrame
 {
     Q_OBJECT
 
+    LoggerContestLog *ct;
 public:
     explicit RotControlFrame(QWidget *parent);
     ~RotControlFrame();
 
     Ui::RotControlFrame *ui;
+
+    void setContest(BaseContestLog *);
+
     void setRotatorLoaded();
 
     void setRotatorState(const QString &s);

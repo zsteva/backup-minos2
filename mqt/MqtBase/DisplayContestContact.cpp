@@ -316,7 +316,7 @@ void DisplayContestContact::checkContact( )
       {
          dist = clp->CalcNearest( loc.loc.getValue() ); // deal with 4 char locs
       }
-      contactScore.setValue( dist );
+      contactScore.setValue( static_cast<int>(dist) );
    }
 
    if ( !clp->locatorField.getValue() || contactScore.getValue() >= 0 )   		// don't add -1 scores in, but DO add zero km
@@ -752,6 +752,5 @@ void DisplayContestContact::processMinosStanza( const QString &methodName, Minos
          QSharedPointer<BaseContact> bc( new BaseContact(*this) );   // this should get it now??
          getHistory().push_back( bc );
       }
-
 }
 

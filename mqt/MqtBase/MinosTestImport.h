@@ -30,9 +30,9 @@ class MinosTestImport: public RPCDispatcher
       int imp_stanzaCount;
 
       bool getStructArgMemberValueDTG( QSharedPointer<RPCParam> rpm, const QString &name, QString &val );
-      bool getStructArgMemberValueDTG( QSharedPointer<RPCParam>rpm, const QString &name, MinosItem<QString> &val );
+      bool getStructArgMemberValueDTG( QSharedPointer<RPCParam>rpm, const QString &name, MinosStringItem<QString> &val );
       bool getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, QString &val );
-      bool getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, MinosItem<QString> &val );
+      bool getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, MinosStringItem<QString> &val );
       bool getStructArgMemberValue(QSharedPointer<RPCParam>rpm, const QString &name, int &val );
       bool getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, MinosItem<int> &val );
       bool getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, bool &val );
@@ -53,9 +53,9 @@ class MinosTestImport: public RPCDispatcher
       int readTestFile( QSharedPointer<QFile> ctfile );
 
       bool getStructArgMemberValueDTG( const QString &name, QString &val );
-      bool getStructArgMemberValueDTG( const QString &name, MinosItem<QString> &val );
+      bool getStructArgMemberValueDTG( const QString &name, MinosStringItem<QString> &val );
       bool getStructArgMemberValue( const QString &name, QString &val );
-      bool getStructArgMemberValue( const QString &name, MinosItem<QString> &val );
+      bool getStructArgMemberValue( const QString &name, MinosStringItem<QString> &val );
       bool getStructArgMemberValue( const QString &name, int &val );
       bool getStructArgMemberValue( const QString &name, MinosItem<int> &val );
       bool getStructArgMemberValue( const QString &name, bool &val );

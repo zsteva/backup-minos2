@@ -69,9 +69,10 @@ RotControlFrame::~RotControlFrame()
 
 }
 
-
-
-
+void RotControlFrame::setContest(BaseContestLog *c)
+{
+    ct = dynamic_cast<LoggerContestLog *>( c);
+}
 
 int RotControlFrame::getAngle(QString brgSt)
 {

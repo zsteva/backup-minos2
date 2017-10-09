@@ -33,48 +33,22 @@ class RunButtonDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit RunButtonDialog(QString, QString, QWidget *parent = 0);
+    explicit RunButtonDialog(QWidget *parent = 0);
     ~RunButtonDialog();
 
-    void setDialogTitle(QString number);
     void setLogData(memoryData::memData*, int buttonNumber);
-    void setRadioName(QString);
-    void setRadioState(QString);
-    int readAllMemories();
-    memoryData::memData getMemoryData(int memoryNumber);
-    void clearMemory(memoryData::memData* ldata, int memoryLoc);
-    void setFocusFreq();
-    void editMemory(int memoryLoc);
     void setRxPbFlag(bool flag);
 
-signals:
-    void runButtonSaved(int memoryNumber);
-
 private slots:
-    void saveButtonPushed();
-    void cancelButtonPushed();
-
-    void escapePushed();
-    void closeMemory();
+    void on_okButton_clicked();
+    void on_cancelbutton_clicked();
 
 private:
     Ui::RunButtonDialog *ui;
-    memoryData::memData memoryList[runButData::NUM_RUNBUTTONS];
-    QString radioName;
-    QString radioState;
+    memoryData::memData *logdata = 0;
     int memoryNumber;
+
     bool  rxPbFlag;
-    int readSettings();
-    int saveMemory(int memoryLoc);
-    int readMemory(int memoryLoc);
-
-
-    void keyPressEvent(QKeyEvent*);
-
-signals:
-    void escapePressed();
-    void returnPressed();
-
 };
 
 #endif // RUNBUTTONDIALOG_H

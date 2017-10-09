@@ -993,7 +993,7 @@ void SettingsBundle::getStringProfile( int enumkey, QString &value )
    getStringProfile( p->name, value, p->sdefaultval );
 }
 
-void SettingsBundle::getStringProfile(int enumkey, MinosItem<QString> &value )
+void SettingsBundle::getStringProfile(int enumkey, MinosStringItem<QString> &value )
 {
    QString temp;
    getStringProfile( enumkey, temp );

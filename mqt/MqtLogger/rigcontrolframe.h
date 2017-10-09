@@ -64,16 +64,50 @@ signals:
     void clearActionSelected(int);
 
 };
+class RunMemoryButton : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit RunMemoryButton(QToolButton *b, RigControlFrame *rcf, int no);
+    ~RunMemoryButton();
+
+    RigControlFrame *rigControlFrame;
+    QToolButton* memButton;
+    QMenu* memoryMenu;
+    QShortcut* shortKey;
+    QAction* readAction;
+    QAction* writeAction;
+    QAction* editAction;
+    QAction* clearAction;
+
+    int memNo;
+private slots:
+    void memoryUpdate();
+
+    void memoryShortCutSelected();
+    void readActionSelected();
+    void editActionSelected();
+    void writeActionSelected();
+    void clearActionSelected();
+signals:
+    void clearActionSelected(int);
+
+};
 
 class RigControlFrame : public QFrame
 {
     Q_OBJECT
+
+    LoggerContestLog *ct;
 
 public:
     explicit RigControlFrame(QWidget *parent);
     ~RigControlFrame();
 
     Ui::RigControlFrame *ui;
+
+    void setContest(BaseContestLog *);
 
     void setRadioLoaded();
     void setMode(QString);
@@ -97,59 +131,45 @@ private slots:
 
     void exitFreqEdit();
 
-    void runButShortCutSel(int buttonNumber);
-    void runButReadActSel(int buttonNumber);
-    void runButWriteActSel(int buttonNumber);
-    void runButEditActSel(int buttonNumber);
-    void runButClearActSel(int buttonNumber);
-    void runButtonUpdate(int buttonNumber);
-
     void on_FontChanged();
 
     void on_newMemoryButton_clicked();
 public slots:
     void memoryUpdate(int);
 
-    void memoryShortCutSelected(int buttonNumber);
     void readActionSelected(int);
     void editActionSelected(int buttonNumber);
     void writeActionSelected(int);
     void clearActionSelected(int);
+
+    void runButtonUpdate(int);
+
+    void runButReadActSel(int buttonNumber);
+    void runButWriteActSel(int buttonNumber);
+    void runButEditActSel(int buttonNumber);
+    void runButClearActSel(int buttonNumber);
+
     void passBandRadioSelected(int button);
 private:
 
     // memory buttons
+    memoryData::memData getRigMemoryData(int memoryNumber);
+    memoryData::memData getRunMemoryData(int memoryNumber);
+
+    void setRigMemoryData(int memoryNumber, memoryData::memData m);
+    void setRunMemoryData(int memoryNumber, memoryData::memData m);
 
     QMap<int, RigMemoryButton *> memButtonMap;
-
-    QToolButton* memButtons[memoryData::NUM_MEMORIES];
-    QMenu* memoryMenu[memoryData::NUM_MEMORIES];
-    QShortcut* shortKey[memoryData::NUM_MEMORIES];
-    QAction* readAction[memoryData::NUM_MEMORIES];
-    QAction* writeAction[memoryData::NUM_MEMORIES];
-    QAction* editAction[memoryData::NUM_MEMORIES];
-    QAction* clearAction[memoryData::NUM_MEMORIES];
-
-    // run button
-    QToolButton* runButton[runButData::NUM_RUNBUTTONS];
-    QMenu* runButMenu[runButData::NUM_RUNBUTTONS];
-    QShortcut* runButShortKey[runButData::NUM_RUNBUTTONS];
-    QAction* runButReadAct[runButData::NUM_RUNBUTTONS];
-    QAction* runButWriteAct[runButData::NUM_RUNBUTTONS];
-    QAction* runButEditAct[runButData::NUM_RUNBUTTONS];
-    QAction* runButClearAct[runButData::NUM_RUNBUTTONS];
+    QMap<int, RunMemoryButton *> runButtonMap;
 
 
     QShortcut *freqEditKey;
     QLabel *freqLabel;
 
     QRadioButton* pBandButton[3];
-    RigMemDialog* memDialog;
-    RunButtonDialog* runDialog;
 
     bool radioLoaded;
     bool freqEditOn;
-    //bool memFlag;
     QString curFreq;
     QString curMode;
     int curpbState;
@@ -157,25 +177,20 @@ private:
     QString radioState;
     bool rxPBFlag;
 
-    memoryData::memData logData;
-    memoryData::memData runData;
-
     void sendModeToRadio(QString);
     void freqLineEditBkgnd(bool status);
     void freqLineEditFrameColour(bool status);
     void keyPressEvent(QKeyEvent *event);
 
     void initRigFrame(QWidget *parent);
-    void initMemoryButtons(QWidget *parent);
     void loadMemoryButtonLabels();
     void initPassBandRadioButtons();
     void noRadioSendOutFreq(QString f);
 
-    void initRunMemoryButton(QWidget *parent);
-
+    void initRunMemoryButton();
+    void loadRunButtonLabels();
 
     void traceMsg(QString msg);
-    void loadRunButtonLabels();
 
     QString extractKhz(QString f);
     void loadMemories();

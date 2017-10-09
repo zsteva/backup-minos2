@@ -25,11 +25,11 @@ private:
    ContestDetails *cd;
    bool suppressChange;
    SettingsBundle *bundle;
-   MinosItem<QString> *bname;
+   MinosStringItem<QString> *bname;
 
 public:  		// User declarations
    void initialise();
-   void initialise( ContestDetails *cd, const QString &cap, SettingsBundle *bundle, MinosItem<QString> *name );
+   void initialise( ContestDetails *cd, const QString &cap, SettingsBundle *bundle, MinosStringItem<QString> *name );
    bool doEdit( );
    void enableBundle( bool );
 

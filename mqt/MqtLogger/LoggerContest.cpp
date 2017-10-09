@@ -525,6 +525,44 @@ void LoggerContestLog::removeContact( QSharedPointer<BaseContact> lct )
     }
 }
 //==========================================================================
+void LoggerContestLog::saveRunMemory(int memno, const memoryData::memData &mem)
+{
+    if (runMemories.size() < memno + 1)
+    {
+        runMemories.resize(memno + 1);
+    }
+    runMemories[memno ].setValue(mem);
+    commonSave(false);
+}
+void LoggerContestLog::saveInitialRunMemory(int memno, const memoryData::memData &mem)
+{
+    if (runMemories.size() < memno + 1)
+    {
+        runMemories.resize(memno + 1);
+    }
+    runMemories[memno].setInitialValue(mem);
+
+}
+//==========================================================================
+void LoggerContestLog::saveRigMemory(int memno, const memoryData::memData &mem)
+{
+    if (rigMemories.size() < memno + 1)
+    {
+        rigMemories.resize(memno + 1);
+    }
+    rigMemories[memno].setValue(mem);
+    commonSave(false);
+}
+void LoggerContestLog::saveInitialRigMemory(int memno, const memoryData::memData &mem)
+{
+    if (rigMemories.size() < memno + 1)
+    {
+        rigMemories.resize(memno + 1);
+    }
+    rigMemories[memno].setInitialValue(mem);
+}
+
+//==========================================================================
 bool LoggerContestLog::commonSave( bool newfile )
 {
    if ( !isReadOnly() )
@@ -1399,16 +1437,44 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
                                mt->getStructArgMemberValue( "appRotator", appRotator);
                                mt->getStructArgMemberValue( "appVoiceKeyer", appVoiceKeyer);
                            }
-                            else
-                               if ( methodName == "MinosLogComment" )
+                           else
+                               if (methodName == "MinosRigMemory")
                                {
-                                  // should have been dealt with in BaseContest
+                                   memoryData::memData mem;
+                                   int memno;
+                                   mt->getStructArgMemberValue( "memno", memno);
+                                   mt->getStructArgMemberValue( "callsign", mem.callsign);
+                                   mt->getStructArgMemberValue( "freq", mem.freq);
+                                   mt->getStructArgMemberValue( "mode", mem.mode);
+                                   mt->getStructArgMemberValue( "locator", mem.locator);
+                                   mt->getStructArgMemberValue( "bandstate", mem.pBandState);
+
+                                   saveInitialRigMemory(memno, mem);
+
                                }
                                else
-                                  if ( methodName == "MinosLogQSO" )
-                                  {
-                                     // should have been dealt with in BaseContest
-                                  }
+                                   if (methodName == "MinosRunMemory")
+                                   {
+                                       memoryData::memData mem;
+                                       int memno;
+                                       mt->getStructArgMemberValue( "memno", memno);
+                                       mt->getStructArgMemberValue( "freq", mem.freq);
+                                       mt->getStructArgMemberValue( "mode", mem.mode);
+                                       mt->getStructArgMemberValue( "bandstate", mem.pBandState);
+
+                                       saveInitialRunMemory(memno, mem);
+
+                                   }
+                                   else
+                                       if ( methodName == "MinosLogComment" )
+                                       {
+                                          // should have been dealt with in BaseContest
+                                       }
+                                       else
+                                          if ( methodName == "MinosLogQSO" )
+                                          {
+                                             // should have been dealt with in BaseContest
+                                          }
 }
 //====================================================================
 void LoggerContestLog::setStanza(unsigned int stanza, int stanzaStart )

@@ -117,21 +117,21 @@ class BaseContact
       locator loc;   //CONTAIN MinosItem
       dtg time;      //CONTAIN MinosItem
 
-      MinosItem<QString> extraText;
-      MinosItem<QString> mode;
-      MinosItem<QString> reps;
-      MinosItem<QString> serials;
-      MinosItem<QString> repr;
-      MinosItem<QString> serialr;
-      MinosItem<QString> comments;
+      MinosStringItem<QString> extraText;
+      MinosStringItem<QString> mode;
+      MinosStringItem<QString> reps;
+      MinosStringItem<QString> serials;
+      MinosStringItem<QString> repr;
+      MinosStringItem<QString> serialr;
+      MinosStringItem<QString> comments;
       MinosItem<unsigned short> contactFlags;
-      MinosItem<QString> forcedMult;
-      MinosItem<QString> rigName;
-      MinosItem<QString> frequency;
-      MinosItem<QString> rotatorHeading;
+      MinosStringItem<QString> forcedMult;
+      MinosStringItem<QString> rigName;
+      MinosStringItem<QString> frequency;
+      MinosStringItem<QString> rotatorHeading;
 
-      MinosItem<QString> op1;         // current main op - derived from contacts
-      MinosItem<QString> op2;         // current second op - derived from contacts
+      MinosStringItem<QString> op1;         // current main op - derived from contacts
+      MinosStringItem<QString> op2;         // current second op - derived from contacts
 
       MinosItem<int> contactScore;
 
