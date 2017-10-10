@@ -69,7 +69,8 @@ signals:
     void currentAntennaSettingChanged(QString);
     void antennaNameChange();
 
-protected slots:
+
+private slots:
 
     void antennaNameFinished(int);
     void rotatorModelSelected(int);
@@ -85,6 +86,8 @@ protected slots:
 
     void saveButtonPushed();
     void cancelButtonPushed();
+    void networkAddressSelected(int boxNumber);
+    void networkPortSelected(int boxNumber);
 
 
 private:
@@ -94,17 +97,39 @@ private:
 
     QLineEdit *antennaName[NUM_ANTENNAS];
     QComboBox *rotatorModel[NUM_ANTENNAS];
+
     QCheckBox *southStopFlag[NUM_ANTENNAS];
     QLabel *southStopLabel[NUM_ANTENNAS];
+
     QCheckBox *overRunFlag[NUM_ANTENNAS];
     QLabel *overRunLabel[NUM_ANTENNAS];
+
     QLineEdit *antennaOffset[NUM_ANTENNAS];
+
     QComboBox *comPorts[NUM_ANTENNAS];
+    QLabel *comPortLbl[NUM_ANTENNAS];
+
     QComboBox *comSpeed[NUM_ANTENNAS];
+    QLabel *comSpeedLbl[NUM_ANTENNAS];
+
     QComboBox *comDataBits[NUM_ANTENNAS];
+    QLabel *comDataLbl[NUM_ANTENNAS];
+
     QComboBox *comStopBits[NUM_ANTENNAS];
+    QLabel *comStopLbl[NUM_ANTENNAS];
+
     QComboBox *comParity[NUM_ANTENNAS];
+    QLabel *comParityLbl[NUM_ANTENNAS];
+
     QComboBox *comHandShake[NUM_ANTENNAS];
+    QLabel *comHandLbl[NUM_ANTENNAS];
+
+    QLineEdit *netAddress[NUM_ANTENNAS];
+    QLabel *netAddLbl[NUM_ANTENNAS];
+
+    QLineEdit *netPort[NUM_ANTENNAS];
+    QLabel *netPortLbl[NUM_ANTENNAS];
+
 //    QIntValidator *intValidator;
     bool antennaValueChanged[NUM_ANTENNAS];
     bool antennaNameChanged[NUM_ANTENNAS];
@@ -131,6 +156,8 @@ private:
     void clearAntennaValueChanged();
     int getMaxMinRotationData(int rotatorNumber, int *maxRot, int *minRot);
     void clearAntennaNameChanged();
+    void serialDataEntryVisible(int antNumber, bool visible);
+    void networkDataEntryVisible(int antNumber, bool visible);
 };
 
 #endif // SETUPDIALOG_H

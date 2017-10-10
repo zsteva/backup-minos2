@@ -104,11 +104,25 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     comPorts[3] = ui->comPortBox4;
     comPorts[4] = ui->comPortBox5;
 
+    comPortLbl[0] = ui->comporLbl1;
+    comPortLbl[1] = ui->comporLbl2;
+    comPortLbl[2] = ui->comporLbl3;
+    comPortLbl[3] = ui->comporLbl4;
+    comPortLbl[4] = ui->comporLbl5;
+
+
     comSpeed[0] = ui->comSpeedBox1;
     comSpeed[1] = ui->comSpeedBox2;
     comSpeed[2] = ui->comSpeedBox3;
     comSpeed[3] = ui->comSpeedBox4;
     comSpeed[4] = ui->comSpeedBox5;
+
+    comSpeedLbl[0] = ui->speedLbl1;
+    comSpeedLbl[1] = ui->speedLbl2;
+    comSpeedLbl[2] = ui->speedLbl3;
+    comSpeedLbl[3] = ui->speedLbl4;
+    comSpeedLbl[4] = ui->speedLbl5;
+
 
     comDataBits[0] = ui->comDataBitsBox1;
     comDataBits[1] = ui->comDataBitsBox2;
@@ -116,11 +130,23 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     comDataBits[3] = ui->comDataBitsBox4;
     comDataBits[4] = ui->comDataBitsBox5;
 
+    comDataLbl[0] = ui->dBitsLbl1;
+    comDataLbl[1] = ui->dBitsLbl2;
+    comDataLbl[2] = ui->dBitsLbl3;
+    comDataLbl[3] = ui->dBitsLbl4;
+    comDataLbl[4] = ui->dBitsLbl5;
+
     comStopBits[0] = ui->comStopBitsBox1;
     comStopBits[1] = ui->comStopBitsBox2;
     comStopBits[2] = ui->comStopBitsBox3;
     comStopBits[3] = ui->comStopBitsBox4;
     comStopBits[4] = ui->comStopBitsBox5;
+
+    comStopLbl[0] = ui->stopLbl1;
+    comStopLbl[1] = ui->stopLbl2;
+    comStopLbl[2] = ui->stopLbl3;
+    comStopLbl[3] = ui->stopLbl4;
+    comStopLbl[4] = ui->stopLbl5;
 
     comParity[0] = ui->comParityBox1;
     comParity[1] = ui->comParityBox2;
@@ -128,11 +154,48 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     comParity[3] = ui->comParityBox4;
     comParity[4] = ui->comParityBox5;
 
+    comParityLbl[0] = ui->parityLbl1;
+    comParityLbl[1] = ui->parityLbl2;
+    comParityLbl[2] = ui->parityLbl3;
+    comParityLbl[3] = ui->parityLbl4;
+    comParityLbl[4] = ui->parityLbl5;
+
     comHandShake[0] = ui->comHandShakeBox1;
     comHandShake[1] = ui->comHandShakeBox2;
     comHandShake[2] = ui->comHandShakeBox3;
     comHandShake[3] = ui->comHandShakeBox4;
     comHandShake[4] = ui->comHandShakeBox5;
+
+    comHandLbl[0] = ui->handLbl1;
+    comHandLbl[1] = ui->handLbl2;
+    comHandLbl[2] = ui->handLbl3;
+    comHandLbl[3] = ui->handLbl4;
+    comHandLbl[4] = ui->handLbl5;
+
+    netAddress[0] = ui->netAddressBox1;
+    netAddress[1] = ui->netAddressBox2;
+    netAddress[2] = ui->netAddressBox3;
+    netAddress[3] = ui->netAddressBox4;
+    netAddress[4] = ui->netAddressBox5;
+
+    netAddLbl[0] = ui->netAddressLbl1;
+    netAddLbl[1] = ui->netAddressLbl2;
+    netAddLbl[2] = ui->netAddressLbl3;
+    netAddLbl[3] = ui->netAddressLbl4;
+    netAddLbl[4] = ui->netAddressLbl5;
+
+    netPort[0] = ui->netPortBox1;
+    netPort[1] = ui->netPortBox2;
+    netPort[2] = ui->netPortBox3;
+    netPort[3] = ui->netPortBox4;
+    netPort[4] = ui->netPortBox5;
+
+    netPortLbl[0] = ui->portLbl1;
+    netPortLbl[1] = ui->portLbl2;
+    netPortLbl[2] = ui->portLbl3;
+    netPortLbl[3] = ui->portLbl4;
+    netPortLbl[4] = ui->portLbl5;
+
 
 //--------------------------------------------------------------------------------------------------
 
@@ -257,6 +320,31 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
 
 //--------------------------------------------------------------------------------------------------
 
+    QSignalMapper *networkAddress_mapper = new QSignalMapper(this);
+    for (int i = 0; i < NUM_ANTENNAS; i++ )
+    {
+        networkAddress_mapper->setMapping(netAddress[i], i);
+        connect(netAddress[i], SIGNAL(editingFinished()), networkAddress_mapper, SLOT(map()));
+    }
+
+    connect(networkAddress_mapper, SIGNAL(mapped(int)), this, SLOT(networkAddressSelected(int)));
+
+//--------------------------------------------------------------------------------------------------
+
+    QSignalMapper *networkPort_mapper = new QSignalMapper(this);
+    for (int i = 0; i < NUM_ANTENNAS; i++ )
+    {
+        networkPort_mapper->setMapping(netPort[i], i);
+        connect(netPort[i], SIGNAL(editingFinished()), networkPort_mapper, SLOT(map()));
+    }
+
+    connect(networkPort_mapper, SIGNAL(mapped(int)), this, SLOT(networkPortSelected(int)));
+
+//--------------------------------------------------------------------------------------------------
+
+
+
+
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveButtonPushed()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
 
@@ -274,6 +362,11 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     clearCurrentRotator(); // clear the currently selected Rotator table, also init with default serial parameters
     clearAntennaValueChanged();
     clearAntennaNameChanged();
+
+    for (int i = 0; i < NUM_ANTENNAS; i++)
+    {
+        networkDataEntryVisible(i, false);
+    }
 
 
     readSettings();
@@ -315,6 +408,18 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
         comStopBits[i]->setCurrentIndex(comStopBits[i]->findText(QString::number(availAntennas[i].stopbits)));
         comParity[i]->setCurrentIndex(availAntennas[i].parity);
         comHandShake[i]->setCurrentIndex(availAntennas[i].handshake);
+        netAddress[i]->setText(availAntennas[i].networkAdd);
+        netPort[i]->setText(availAntennas[i].networkPort);
+        if (rig_port_e(availAntennas[i].portType) == RIG_PORT_NETWORK)
+        {
+            serialDataEntryVisible(i, false);
+            networkDataEntryVisible(i, true);
+        }
+        else
+        {
+            serialDataEntryVisible(i, true);
+            networkDataEntryVisible(i, false);
+        }
 
     }
 
@@ -391,6 +496,23 @@ void SetupDialog::rotatorModelSelected(int boxNumber)
                 southStopFlag[boxNumber]->setVisible(false);
                 southStopFlag[boxNumber]->setChecked(false);
                 southStopLabel[boxNumber]->setVisible(false);
+            }
+        }
+
+        rig_port_e portType = RIG_PORT_NONE;
+
+        if (rotator->getPortType(availAntennas[boxNumber].rotatorModelNumber, &portType) != -1)
+        {
+            availAntennas[boxNumber].portType = int(portType);
+            if (portType == RIG_PORT_NETWORK)
+            {
+               serialDataEntryVisible(boxNumber, false);
+               networkDataEntryVisible(boxNumber, true);
+            }
+            else
+            {
+                serialDataEntryVisible(boxNumber, true);
+                networkDataEntryVisible(boxNumber, false);
             }
         }
 
@@ -521,9 +643,20 @@ void SetupDialog::comHandShakeSelected(int boxNumber)
 }
 
 
+void SetupDialog::networkAddressSelected(int boxNumber)
+{
 
+    availAntennas[boxNumber].networkAdd = netAddress[boxNumber]->text();
+    antennaValueChanged[boxNumber] = true;
+    antennaChanged = true;
+}
 
-
+void SetupDialog::networkPortSelected(int boxNumber)
+{
+    availAntennas[boxNumber].networkPort = netPort[boxNumber]->text();
+    antennaValueChanged[boxNumber] = true;
+    antennaChanged = true;
+}
 
 void SetupDialog::fillRotatorModelInfo()
 {
@@ -760,12 +893,15 @@ void SetupDialog::saveSettings()
                 config.setValue("southStop", availAntennas[i].southStopFlag);
                 config.setValue("overRun", availAntennas[i].overRunFlag);
                 config.setValue("antennaOffset", availAntennas[i].antennaOffset);
+                config.setValue("portType", availAntennas[i].portType);
                 config.setValue("comport", availAntennas[i].comport);
                 config.setValue("baudrate", availAntennas[i].baudrate);
                 config.setValue("databits", availAntennas[i].databits);
                 config.setValue("parity", availAntennas[i].parity);
                 config.setValue("stopbits", availAntennas[i].stopbits);
                 config.setValue("handshake", availAntennas[i].handshake);
+                config.setValue("netAddress", availAntennas[i].networkAdd);
+                config.setValue("netPort", availAntennas[i].networkPort);
                 config.endGroup();
                 antennaValueChanged[i] = false;
 
@@ -819,12 +955,15 @@ void SetupDialog::readSettings()
         availAntennas[i].southStopFlag = config.value("southStop", false).toBool();
         availAntennas[i].overRunFlag = config.value("overRun", false).toBool();
         availAntennas[i].antennaOffset = config.value("antennaOffset", "").toInt();
+        availAntennas[i].portType = config.value("portType", int(RIG_PORT_NONE)).toInt();
         availAntennas[i].comport = config.value("comport", "").toString();
         availAntennas[i].baudrate = config.value("baudrate", 9600).toInt();
         availAntennas[i].databits = config.value("databits", 8).toInt();
         availAntennas[i].parity = config.value("parity", 0).toInt();
         availAntennas[i].stopbits = config.value("stopbits", 1).toInt();
         availAntennas[i].handshake = config.value("handshake", 0).toInt();
+        availAntennas[i].networkAdd = config.value("netAddress", "").toString();
+        availAntennas[i].networkPort = config.value("netPort", "").toString();
         config.endGroup();
     }
     chkloadflg = false;
@@ -846,11 +985,14 @@ void SetupDialog::clearAvailRotators()
         availAntennas[i].southStopFlag = false;
         availAntennas[i].overRunFlag = false;
         availAntennas[i].antennaOffset = 0;
+        availAntennas[i].portType = int(RIG_PORT_NONE);
         availAntennas[i].comport = "";
         availAntennas[i].baudrate = 9600;
         availAntennas[i].databits = 8;
         availAntennas[i].parity = rotator->getSerialParityCode(0);
         availAntennas[i].handshake = rotator->getSerialHandshakeCode(0);
+        availAntennas[i].networkAdd = "";
+        availAntennas[i].networkPort = "";
     }
 
 
@@ -868,11 +1010,14 @@ void SetupDialog::clearCurrentRotator()
     currentAntenna.southStopFlag = false;
     currentAntenna.overRunFlag = false;
     currentAntenna.antennaOffset = 0;
+    currentAntenna.portType = int(RIG_PORT_NONE);
     currentAntenna.comport = "";
     currentAntenna.baudrate = 9600;
     currentAntenna.databits = 8;
     currentAntenna.parity = rotator->getSerialParityCode(0);
     currentAntenna.handshake = rotator->getSerialHandshakeCode(0);
+    currentAntenna.networkAdd = "";
+    currentAntenna.networkPort = "";
 
 }
 
@@ -888,12 +1033,15 @@ void SetupDialog::copyAntennaToCurrent(int antennaNumber)
     currentAntenna.southStopFlag = availAntennas[antennaNumber].southStopFlag;
     currentAntenna.overRunFlag = availAntennas[antennaNumber].overRunFlag;
     currentAntenna.antennaOffset = availAntennas[antennaNumber].antennaOffset;
+    currentAntenna.portType = availAntennas[antennaNumber].portType;
     currentAntenna.comport = availAntennas[antennaNumber].comport;
     currentAntenna.baudrate = availAntennas[antennaNumber].baudrate;
     currentAntenna.databits = availAntennas[antennaNumber].databits;
     currentAntenna.parity = availAntennas[antennaNumber].parity;
     currentAntenna.stopbits = availAntennas[antennaNumber].stopbits;
     currentAntenna.handshake = availAntennas[antennaNumber].handshake;
+    currentAntenna.networkAdd = availAntennas[antennaNumber].networkAdd;
+    currentAntenna.networkPort = availAntennas[antennaNumber].networkPort;
 }
 
 void SetupDialog::clearAntennaValueChanged()
@@ -956,12 +1104,15 @@ void SetupDialog::saveCurrentAntenna()
     config.setValue("southStop", currentAntenna.southStopFlag);
     config.setValue("overRun", currentAntenna.overRunFlag);
     config.setValue("antennaOffset", currentAntenna.antennaOffset);
+    config.setValue("portType", currentAntenna.portType);
     config.setValue("comport", currentAntenna.comport);
     config.setValue("baudrate", currentAntenna.baudrate);
     config.setValue("databits", currentAntenna.databits);
     config.setValue("parity", currentAntenna.parity);
     config.setValue("stopbits", currentAntenna.stopbits);
     config.setValue("handshake", currentAntenna.handshake);
+    config.setValue("netAddress", currentAntenna.networkAdd);
+    config.setValue("netPort", currentAntenna.networkPort);
     config.endGroup();
 
 
@@ -994,12 +1145,15 @@ void SetupDialog::readCurrentAntenna()
         currentAntenna.southStopFlag = config.value("southStop", false).toBool();
         currentAntenna.overRunFlag = config.value("overRun", false).toBool();
         currentAntenna.antennaOffset = config.value("antennaOffset", "").toInt();
+        currentAntenna.portType = config.value("portType", int(RIG_PORT_NONE)).toInt();
         currentAntenna.comport = config.value("comport", "").toString();
         currentAntenna.baudrate = config.value("baudrate", 0).toInt();
         currentAntenna.databits = config.value("databits", 0).toInt();
         currentAntenna.parity = config.value("parity", 0).toInt();
         currentAntenna.stopbits = config.value("stopbits", 0).toInt();
         currentAntenna.handshake = config.value("handshake", 0).toInt();
+        currentAntenna.networkAdd = config.value("netAddress", "").toString();
+        currentAntenna.networkPort = config.value("netPort", "").toString();
         config.endGroup();
     }
 
@@ -1028,6 +1182,35 @@ int SetupDialog::getMaxMinRotationData(int rotatorNumber, int *maxRot, int *minR
 
 }
 
+
+void SetupDialog::serialDataEntryVisible(int antNumber, bool visible)
+{
+
+    comPorts[antNumber]->setVisible(visible);
+    comPortLbl[antNumber]->setVisible(visible);
+    comSpeed[antNumber]->setVisible(visible);
+    comSpeedLbl[antNumber]->setVisible(visible);
+    comDataBits[antNumber]->setVisible(visible);
+    comDataLbl[antNumber]->setVisible(visible);
+    comStopBits[antNumber]->setVisible(visible);
+    comStopLbl[antNumber]->setVisible(visible);
+    comParity[antNumber]->setVisible(visible);
+    comParityLbl[antNumber]->setVisible(visible);
+    comHandShake[antNumber]->setVisible(visible);
+    comHandLbl[antNumber]->setVisible(visible);
+
+}
+
+
+
+void SetupDialog::networkDataEntryVisible(int antNumber, bool visible)
+{
+
+    netAddress[antNumber]->setVisible(visible);
+    netAddLbl[antNumber]->setVisible(visible);
+    netPort[antNumber]->setVisible(visible);
+    netPortLbl[antNumber]->setVisible(visible);
+}
 
 
 

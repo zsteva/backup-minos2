@@ -88,6 +88,9 @@ private slots:
     void transNegChecked(int boxNumber);
     void rxPassBandChecked(int boxNumber);
 
+    void networkAddressSelected(int boxNumber);
+    void networkPortSelected(int boxNumber);
+    void mgmModeSelected(int boxNumber);
 private:
     Ui::SetupDialog *ui;
 
@@ -96,16 +99,39 @@ private:
     QLineEdit *radioName[NUM_RADIOS];
     QComboBox *radioModel[NUM_RADIOS];
     QLineEdit *civAddress[NUM_RADIOS];
+
     QComboBox *comPorts[NUM_RADIOS];
+    QLabel *comPortLbl[NUM_RADIOS];
+
     QComboBox *comSpeed[NUM_RADIOS];
+    QLabel *comSpeedLbl[NUM_RADIOS];
+
     QComboBox *comDataBits[NUM_RADIOS];
+    QLabel *comDataLbl[NUM_RADIOS];
+
     QComboBox *comStopBits[NUM_RADIOS];
+    QLabel *comStopLbl[NUM_RADIOS];
+
     QComboBox *comParity[NUM_RADIOS];
+    QLabel *comParityLbl[NUM_RADIOS];
+
     QComboBox *comHandShake[NUM_RADIOS];
+    QLabel *comHandLbl[NUM_RADIOS];
+
+    QLineEdit *netAddress[NUM_RADIOS];
+    QLabel *netAddLbl[NUM_RADIOS];
+
+    QLineEdit *netPort[NUM_RADIOS];
+    QLabel *netPortLbl[NUM_RADIOS];
+
+
     QCheckBox *transVertCheck[NUM_RADIOS];
     QLineEdit *transVertEdit[NUM_RADIOS];
     QCheckBox *transNegCheck[NUM_RADIOS];
     QCheckBox *rxPassBandCheck[NUM_RADIOS];
+
+    QComboBox *mgmModeSel[NUM_RADIOS];
+
 //    QIntValidator *intValidator;
     bool radioValueChanged[NUM_RADIOS];
     bool radioNameChanged[NUM_RADIOS];
@@ -128,6 +154,10 @@ private:
     void clearRadioValueChanged();
     void clearRadioNameChanged();
     void civSetToolTip();
+    void networkDataEntryVisible(int radioNumber, bool visible);
+    void serialDataEntryVisible(int radioNumber, bool visible);
+    void loadMgmModes();
+    void saveMgmList();
 };
 
 #endif // SETUPDIALOG_H

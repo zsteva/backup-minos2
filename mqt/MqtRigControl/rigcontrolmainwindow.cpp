@@ -183,6 +183,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     loggerSetPassBand(hamlibData::NOR );
 
 
+
     trace("*** Rig Started ***");
 
 
@@ -995,3 +996,6 @@ void RigControlMainWindow::sendRxPbFlagToLog()
         msg->publishRxPbFlag(s);
     }
 }
+
+
+

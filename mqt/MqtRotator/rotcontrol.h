@@ -86,6 +86,9 @@ struct srotParams
   bool overRunFlag = false;
   int antennaOffset = 0;
   bool moving;
+  int portType = int(RIG_PORT_NONE);
+  QString networkAdd;
+  QString networkPort;
   int serial_rate_max;
   int serial_rate_min;
   int baudrate;
@@ -154,6 +157,8 @@ public:
     int getMinBaudRate();
     int getSupportCwCcwCmd(int rotNumber, bool *flag);
     int getMaxMinRotation(int rotNumber, int *maxRot, int *minRot);
+    int getPortType(int rotNumber, rig_port_e *portType);
+
 signals:
    void bearing_updated(int);
    void request_bearingError(int);
@@ -178,6 +183,7 @@ private:
 
     int retcode;		/* generic return code from functions */
     int exitcode;
+
 
 
 };

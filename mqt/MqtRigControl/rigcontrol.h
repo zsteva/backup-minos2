@@ -74,6 +74,9 @@ struct scatParams
   int stopbits;
   int databits;
   int handshake;
+  int portType = int(RIG_PORT_NONE);
+  QString networkAdd;
+  QString networkPort;
   bool enableCAT;
   bool enableSerialPTT;
   QString pttSerialPort;
@@ -160,6 +163,7 @@ public:
     void buildPassBandTable();
 
     int rigConvertQStrMode(QString mode);
+    int getPortType(int rigNumber, rig_port_e *portType);
 signals:
     void frequency_updated(double);
     void debug_protocol(QString);
