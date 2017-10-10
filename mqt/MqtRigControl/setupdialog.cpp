@@ -440,9 +440,14 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
             serialDataEntryVisible(i, false);
             networkDataEntryVisible(i, true);
         }
-        else
+        else if (rig_port_e(availRadios[i].portType) == RIG_PORT_SERIAL)
         {
             serialDataEntryVisible(i, true);
+            networkDataEntryVisible(i, false);
+        }
+        else if (rig_port_e(availRadios[i].portType) == RIG_PORT_NONE)
+        {
+            serialDataEntryVisible(i, false);
             networkDataEntryVisible(i, false);
         }
 
@@ -496,14 +501,19 @@ void SetupDialog::radioModelSelected(int boxNumber)
         if (radio->getPortType(availRadios[boxNumber].radioModelNumber, &portType) != -1)
         {
             availRadios[boxNumber].portType = int(portType);
-            if (portType == RIG_PORT_NETWORK)
+            if (portType == RIG_PORT_NETWORK || portType == RIG_PORT_UDP_NETWORK)
             {
                serialDataEntryVisible(boxNumber, false);
                networkDataEntryVisible(boxNumber, true);
             }
-            else
+            else if (portType == RIG_PORT_SERIAL)
             {
                 serialDataEntryVisible(boxNumber, true);
+                networkDataEntryVisible(boxNumber, false);
+            }
+            else // RIG_PORT_NONE
+            {
+                serialDataEntryVisible(boxNumber, false);
                 networkDataEntryVisible(boxNumber, false);
             }
         }

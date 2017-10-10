@@ -346,6 +346,9 @@ void RigControlMainWindow::upDateRadio()
         selectRig->currentRadio.radioModel = selectRig->availRadios[radioIndex].radioModel;
         selectRig->currentRadio.radioModelNumber = selectRig->availRadios[radioIndex].radioModelNumber;
         selectRig->currentRadio.civAddress = selectRig->availRadios[radioIndex].civAddress;
+        selectRig->currentRadio.portType = selectRig->availRadios[radioIndex].portType;
+        selectRig->currentRadio.networkAdd = selectRig->availRadios[radioIndex].networkAdd;
+        selectRig->currentRadio.networkPort = selectRig->availRadios[radioIndex].networkPort;
         selectRig->currentRadio.comport = selectRig->availRadios[radioIndex].comport;
         selectRig->currentRadio.baudrate = selectRig->availRadios[radioIndex].baudrate;
         selectRig->currentRadio.databits = selectRig->availRadios[radioIndex].databits;
@@ -405,24 +408,39 @@ void RigControlMainWindow::upDateRadio()
 
 
     trace("*** Radio Update ***");
-    trace("App Instance Name  = " + appName);
-    trace("Radio Name = " + selectRig->currentRadio.radioName);
-    trace("Radio Number = " + selectRig->currentRadio.radioNumber);
-    trace("Radio Model = " + selectRig->currentRadio.radioModel);
-    trace("Radio Number = " + QString::number(selectRig->currentRadio.radioModelNumber));
-    trace("Radio Manufacturer = " + selectRig->currentRadio.radioMfg_Name);
+    trace(QString("App Instance Name  = %1").arg(appName));
+    trace(QString("Radio Name = %1").arg(selectRig->currentRadio.radioName));
+    trace(QString("Radio Number = %1").arg(selectRig->currentRadio.radioNumber));
+    trace(QString("Radio Model = %1").arg(selectRig->currentRadio.radioModel));
+    trace(QString("Radio Number = %1").arg(QString::number(selectRig->currentRadio.radioModelNumber)));
+    trace(QString("Radio Manufacturer = %1").arg(selectRig->currentRadio.radioMfg_Name));
     if (selectRig->currentRadio.radioMfg_Name == "Icom")
     {
-        trace("Icom CIV address = " + selectRig->currentRadio.civAddress);
+        trace(QSting("Icom CIV address = %1").arg(selectRig->currentRadio.civAddress));
     }
-    trace("Radio Comport = " + selectRig->currentRadio.comport);
-    trace("Baudrate = " + QString::number(selectRig->currentRadio.databits));
-    trace("Stop bits = " + QString::number(selectRig->currentRadio.stopbits));
-    trace("Handshake = " + QString::number(selectRig->currentRadio.handshake));
-    trace("TransVert Enable = " + QString::number(selectRig->currentRadio.transVertEnable));
-    trace("TransVert Negative = " + QString::number(selectRig->currentRadio.transVertNegative));
-    trace("TransVert Offset = " + convertStringFreq(selectRig->currentRadio.transVertOffset));
-    trace("Use RX Passband = " + QString::number(selectRig->currentRadio.useRxPassBand));
+    trace(QString("Radio PortType = %1").arg(selectRig->currentRadio.portType);
+    trace(QString("Network Address = %1").arg(selectRig->currentRadio.networkAdd));
+    trace(QString("Network Port = %1").arg(selectRig->currentRadio.networkPort));
+    trace(QString("Radio Comport = %1").arg(selectRig->currentRadio.comport));
+    trace(QString("Baudrate = %1").arg(QString::number(selectRig->currentRadio.databits)));
+    trace(QString("Stop bits = %1").arg(QString::number(selectRig->currentRadio.stopbits)));
+    trace(QString("Handshake = %1").arg(QString::number(selectRig->currentRadio.handshake)));
+    trace(QString("TransVert Enable = %1").arg(QString::number(selectRig->currentRadio.transVertEnable)));
+    trace(QString("TransVert Negative = %1").arg(QString::number(selectRig->currentRadio.transVertNegative)));
+    trace(QString("TransVert Offset = %1").arg(convertStringFreq(selectRig->currentRadio.transVertOffset)));
+    trace(QString("Use RX Passband = %1").arg(QString::number(selectRig->currentRadio.useRxPassBand)));
+    trace(QString("Radio Passband CW NAR = %1").arg(QString::number(int(passBandWidth[0][0]))));
+    trace(QString("Radio Passband CW NOR = %1").arg(QString::number(int(passBandWidth[0][1]))));
+    trace(QString("Radio Passband CW WID = %1").arg(QString::number(int(passBandWidth[0][2]))));
+    trace(QString("Radio Passband USB NAR = %1").arg(QString::number(int(passBandWidth[1][0]))));
+    trace(QString("Radio Passband USB NOR = %1").arg(QString::number(int(passBandWidth[1][1]))));
+    trace(QString("Radio Passband USB WID = %1").arg(QString::number(int(passBandWidth[1][2]))));
+    trace(QString("Radio Passband FM NAR = %1").arg(QString::number(int(passBandWidth[2][0]))));
+    trace(QString("Radio Passband FM NOR = %1").arg(QString::number(int(passBandWidth[2][1]))));
+    trace(QString("Radio Passband FM WID = %1").arg(QString::number(int(passBandWidth[2][2]))));
+    trace(QString("Radio Passband MGM NAR = %1").arg(QString::number(int(passBandWidth[3][0]))));
+    trace(QString("Radio Passband MGM NOR = %1").arg(QString::number(int(passBandWidth[3][1]))));
+    trace(QString("Radio Passband MGM WID = %1").arg(QString::number(int(passBandWidth[3][2]))));
 }
 
 void RigControlMainWindow::openRadio()
@@ -435,10 +453,19 @@ void RigControlMainWindow::openRadio()
         showStatusMessage("Please select a Radio");
         return;
     }
-    if(selectRig->currentRadio.comport == "")
+    if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL && selectRig->currentRadio.comport == "")
     {
         showStatusMessage("Please select a Comport");
         return;
+    }
+    if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(selectRig->currentRadio.portType == RIG_PORT_UDP_NETWORK))
+    {
+        if (selectRig->currentRadio.networkAdd == "" || (selectRig->currentRadio.networkPort == "")
+        {
+            showStatusMessage("Please enter a network Address and Port Number");
+            return;
+        }
+
     }
     if (selectRig->currentRadio.radioModel == "")
     {
@@ -446,9 +473,6 @@ void RigControlMainWindow::openRadio()
         return;
     }
 
-
-
-    scatParams p = selectRig->getCurrentRadio();
 
     retCode = radio->init(selectRig->currentRadio);
     if (retCode < 0)
@@ -459,9 +483,20 @@ void RigControlMainWindow::openRadio()
     {
 
         pollTimer->start(pollTime);             // start timer to send message to controller
-        showStatusMessage(tr("Connected to Radio: %1 - %2, %3, %4, %5, %6, %7, %8")
-                              .arg(p.radioName).arg(p.radioModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
-                              .arg(p.stopbits).arg(radio->getParityCodeNames()[p.parity]).arg(radio->getHandShakeNames()[p.handshake]));
+        if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL)
+        {
+                showStatusMessage(tr(QString("Connected to Radio: %1 - %2, %3, %4, %5, %6, %7, %8")
+                                     .arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel, selectRig->currentRadio.comport, selectRig->currentRadio.baudrate, selectRig->currentRadio.databits, selectRig->currentRadio.stopbits, radio->getParityCodeNames()[selectRig->currentRadio.parity], radio->getHandShakeNames()[selectRig->currentRadio.handshake])));
+        }
+        else if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_UDP_NETWORK)
+        {
+                showStatusMessage(tr(QString("Connected to Radio: %1 - %2, %3").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel, selectRig->currentRadio.networkAdd + ":" + selectRig->currentRadio.networkPort)));
+        }
+        else if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NONE)
+        {
+                showStatusMessage(tr(QString("Connected to Radio: %1 - %2").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel)));
+        }
+
 
     }
     else

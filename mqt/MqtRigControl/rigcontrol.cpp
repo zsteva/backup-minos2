@@ -62,7 +62,20 @@ int RigControl::init(scatParams currentRadio)
     int retcode;
     passBandState = hamlibData::NOR;
     QString comport = "\\\\.\\";
-    comport.append(currentRadio.comport);
+    if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL)
+    {
+        comport.append(currentRadio.comport);
+        strncpy(my_rig->state.rigport.pathname, comport.toLatin1().data(), FILPATHLEN);
+    }
+    else if (rig_port_e(currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(currentRadio.portType) == RIG_PORT_UDP_NETWORK)
+    {
+        strncpy(my_rig->state.rigport.pathname, QString(currentRadio.networkAdd + ":" + currentRadio.networkPort).toLatin1().data(), FILPATHLEN);
+    }
+    else if (rig_port_e(currentRadio.portType) == RIG_PORT_NONE)
+    {
+        strncpy(my_rig->state.rigport.pathname, QString("").toLatin1().data(), FILPATHLEN);
+    }
+
 
     my_rig = rig_init(currentRadio.radioModelNumber);
 
@@ -80,7 +93,10 @@ int RigControl::init(scatParams currentRadio)
             retcode = rig_set_conf(my_rig, rig_token_lookup(my_rig, "civaddr"),currentRadio.civAddress.toLatin1());
         }
     }
-    strncpy(my_rig->state.rigport.pathname, comport.toLatin1().data(), FILPATHLEN);
+
+
+
+    //strncpy(my_rig->state.rigport.pathname, comport.toLatin1().data(), FILPATHLEN);
     my_rig->state.rigport.parm.serial.rate = currentRadio.baudrate;
     my_rig->state.rigport.parm.serial.data_bits = currentRadio.databits;
     my_rig->state.rigport.parm.serial.stop_bits = currentRadio.stopbits;
@@ -320,7 +336,7 @@ bool RigControl::getRigList(QComboBox *cb)
         if (getPortType(capsList.at(i)->rig_model, &portType) != -1)
         {
             //qDebug() << capsList.at(i)->rig_model << capsList.at(i)->model_name << portType;
-            if (portType == RIG_PORT_NONE ||portType == RIG_PORT_SERIAL || portType == RIG_PORT_USB || portType == RIG_PORT_NETWORK || portType == RIG_PORT_UDP_NETWORK)
+            if (portType == RIG_PORT_NONE || portType == RIG_PORT_SERIAL  || portType == RIG_PORT_NETWORK || portType == RIG_PORT_UDP_NETWORK)
             {
 
                 QString t;
