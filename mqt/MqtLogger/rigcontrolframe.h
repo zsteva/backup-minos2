@@ -115,6 +115,16 @@ public:
     bool isRadioLoaded();
     void setRxPBFlag(QString);
 
+    void exitFreqEdit();
+    void memoryUpdate(int);
+    void readActionSelected(int);
+    void editActionSelected(int buttonNumber);
+    void writeActionSelected(int);
+    void runButtonUpdate(int);
+    void runButReadActSel(int buttonNumber);
+    void runButWriteActSel(int buttonNumber);
+    void runButEditActSel(int buttonNumber);
+
 signals:
     void sendFreqControl(QString);
     void noRadioSendFreq(QString);
@@ -129,20 +139,11 @@ private slots:
 
     void on_newMemoryButton_clicked();
 public slots:
-    void exitFreqEdit();
     void changeRadioFreq();
-    void memoryUpdate(int);
 
-    void readActionSelected(int);
-    void editActionSelected(int buttonNumber);
-    void writeActionSelected(int);
     void clearActionSelected(int);
 
-    void runButtonUpdate(int);
 
-    void runButReadActSel(int buttonNumber);
-    void runButWriteActSel(int buttonNumber);
-    void runButEditActSel(int buttonNumber);
     void runButClearActSel(int buttonNumber);
 
     void passBandRadioSelected(int button);
@@ -192,9 +193,6 @@ private:
 
     QString extractKhz(QString f);
     void loadMemories();
-signals:
-    void escapePressed();
-
 };
 
 #endif // RIGCONTROLFRAME_H
