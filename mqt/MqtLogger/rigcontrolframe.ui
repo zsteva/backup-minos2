@@ -43,7 +43,10 @@
           </widget>
          </item>
          <item>
-          <widget class="FreqLineEdit" name="freqInput">
+          <widget class="QLineEdit" name="freqInput">
+           <property name="focusPolicy">
+            <enum>Qt::ClickFocus</enum>
+           </property>
            <property name="inputMask">
             <string>99.999.999.999</string>
            </property>
@@ -63,7 +66,11 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="bandSelCombo"/>
+          <widget class="QComboBox" name="bandSelCombo">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QLabel" name="label_2">
@@ -130,6 +137,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QScrollArea" name="scrollArea">
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="widgetResizable">
           <bool>true</bool>
          </property>
@@ -230,17 +240,7 @@
     </widget>
    </item>
   </layout>
-  <zorder>newMemoryButton</zorder>
-  <zorder>groupBox</zorder>
-  <zorder>groupBox</zorder>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>FreqLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>rigcontrolframe.h</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>freqInput</tabstop>
   <tabstop>bandSelCombo</tabstop>

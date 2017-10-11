@@ -99,8 +99,6 @@ class RigControlFrame : public QFrame
 {
     Q_OBJECT
 
-    LoggerContestLog *ct;
-
 public:
     explicit RigControlFrame(QWidget *parent);
     ~RigControlFrame();
@@ -151,6 +149,7 @@ public slots:
 
     void passBandRadioSelected(int button);
 private:
+    virtual bool eventFilter(QObject *obj, QEvent *event) override;
 
     // memory buttons
     memoryData::memData getRigMemoryData(int memoryNumber);
@@ -158,6 +157,8 @@ private:
 
     void setRigMemoryData(int memoryNumber, memoryData::memData m);
     void setRunMemoryData(int memoryNumber, memoryData::memData m);
+
+    LoggerContestLog *ct;
 
     QMap<int, RigMemoryButton *> memButtonMap;
     QMap<int, RunMemoryButton *> runButtonMap;
@@ -180,7 +181,6 @@ private:
     void sendModeToRadio(QString);
     void freqLineEditBkgnd(bool status);
     void freqLineEditFrameColour(bool status);
-    void keyPressEvent(QKeyEvent *event);
 
     void initRigFrame(QWidget *parent);
     void loadMemoryButtonLabels();
@@ -198,27 +198,5 @@ signals:
     void escapePressed();
 
 };
-
-
-class FreqLineEdit : public QLineEdit
-{
-    Q_OBJECT
-
-public:
-
-    FreqLineEdit(QWidget *parent);
-    ~FreqLineEdit();
-
-
-    void focusInEvent( QFocusEvent* ) ;
-
-signals:
-    void receivedFocus() ;
-
-private:
-
-
-} ;
-
 
 #endif // RIGCONTROLFRAME_H

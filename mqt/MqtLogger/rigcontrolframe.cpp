@@ -75,6 +75,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     ui->setupUi(this);
     connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
 
+    ui->freqInput->installEventFilter(this  );
     initRigFrame(parent);
 
     initRunMemoryButton();
@@ -108,9 +109,8 @@ void RigControlFrame::initRigFrame(QWidget */*parent*/)
 
     ui->modelbl->setText(MODE_ERROR);
     ui->normalRb->setChecked(true);
-    connect(ui->freqInput, SIGNAL(receivedFocus()), this, SLOT(freqLineEditInFocus()));
     connect(ui->freqInput, SIGNAL(returnPressed()), this, SLOT(changeRadioFreq()));
-    connect(ui->freqInput, SIGNAL(escapePressed()), this, SLOT(exitFreqEdit()));
+
     // when no radio is connected
     connect(this, SIGNAL(noRadioSendFreq(QString)), this, SLOT(noRadioSetFreq(QString)));
 
@@ -127,17 +127,6 @@ void RigControlFrame::initRigFrame(QWidget */*parent*/)
     {
         ui->modelbl->setVisible(false);
     }
-
-/*
-    freqLabel = new QLabel(parent);
-    ui->horizontalLayout_4->addWidget(freqLabel);
-    freqLabel->setFrameStyle(QFrame::Panel);
-    freqLabel->setText("&Freq");
-    freqLabel->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-    //Here is how to change position:
-    //freqLabel->setGeometry(QRectF(1,1,30,49));
-    freqLabel->setBuddy(ui->freqInput);   // CTR-f for Freq Edit
-*/
 }
 
 
@@ -234,6 +223,19 @@ void RigControlFrame::noRadioSendOutFreq(QString f)
     tslf->on_NoRadioSetFreq(f);
 }
 
+bool RigControlFrame::eventFilter(QObject *obj, QEvent *event)
+{
+   Q_UNUSED(obj)
+
+   QFocusEvent *fEvent = dynamic_cast<QFocusEvent *>(event);
+
+   if (event->type() == QEvent::FocusIn)
+      freqLineEditInFocus();
+   else if (event->type() == QEvent::FocusOut)
+      exitFreqEdit();
+
+   return false;
+}
 
 void RigControlFrame::exitFreqEdit()
 {
@@ -401,26 +403,6 @@ void RigControlFrame::passBandRadioSelected(int button)
     curpbState = button;
     emit sendPassBandStateToControl(button);
 }
-
-
-void RigControlFrame::keyPressEvent(QKeyEvent *event)
-{
-
-    int Key = event->key();
-
-/*
-    Qt::KeyboardModifiers mods = event->modifiers();
-    bool shift = mods & Qt::ShiftModifier;
-    bool ctrl = mods & Qt::ControlModifier;
-    bool alt = mods & Qt::AltModifier;
-*/
-    if (Key == Qt::Key_Escape)
-    {
-        emit escapePressed();
-    }
-
-}
-
 
 void RigControlFrame::setMode(QString m)
 {
@@ -714,24 +696,6 @@ QString RigControlFrame::extractKhz(QString f)
 
 //********************************************//
 
-FreqLineEdit::FreqLineEdit(QWidget *parent):
-    QLineEdit(parent)
-{
-
-}
-
-
-FreqLineEdit::~FreqLineEdit()
-{
-
-
-}
-
-void FreqLineEdit::focusInEvent( QFocusEvent * /*ev*/ )
-{
-    emit receivedFocus() ;
-
-}
 memoryData::memData RigControlFrame::getRigMemoryData(int memoryNumber)
 {
     memoryData::memData m;
