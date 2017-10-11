@@ -401,6 +401,9 @@ void RotControlFrame::setRotatorBearing(const QString &s)
     traceMsg("Bearings from rotator control");
     // extract displayBearing:rotatorBearing:overlapstatus
     QStringList sl = s.split(':');
+    if (sl.size() < 3)
+        return;
+
     traceMsg("Display Bearing = " + sl[0]);
     traceMsg("Rotator Bearing = " + sl[1]);
     traceMsg("OverlapStatus = " + sl[2]);
