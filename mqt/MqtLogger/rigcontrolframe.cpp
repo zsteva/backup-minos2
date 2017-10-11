@@ -73,7 +73,6 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 {
 
     ui->setupUi(this);
-    connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
 
     ui->freqInput->installEventFilter(this  );
     initRigFrame(parent);
@@ -86,8 +85,6 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     // init memory button data before radio connection
     setRadioName(radioName);
 
-
-    on_FontChanged();
     traceMsg("RigControl Frame Started");
 }
 
@@ -227,8 +224,6 @@ bool RigControlFrame::eventFilter(QObject *obj, QEvent *event)
 {
    Q_UNUSED(obj)
 
-   QFocusEvent *fEvent = dynamic_cast<QFocusEvent *>(event);
-
    if (event->type() == QEvent::FocusIn)
       freqLineEditInFocus();
    else if (event->type() == QEvent::FocusOut)
@@ -245,19 +240,6 @@ void RigControlFrame::exitFreqEdit()
     freqLineEditFrameColour(false);
     ui->freqInput->clearFocus();
 }
-
-void RigControlFrame::on_FontChanged()
-{
-    /*
-    QFontMetrics fm = ui->memButton1->fontMetrics();
-    int w = fm.width("M20: MM/MM0WWW/MM");
-    for (int i = 0; i < memoryData::NUM_MEMORIES; i++)
-    {
-        memButtons[i]->setMinimumWidth(w);
-    }
-*/
-}
-
 
 void RigControlFrame::initPassBandRadioButtons()
 {
@@ -521,7 +503,8 @@ void RigControlFrame::setRxPBFlag(QString flag)
 
 void RigControlFrame::loadMemoryButtonLabels()
 {
-    for (int i = 0; i < memoryData::NUM_MEMORIES; i++)
+    int mcount = ct->rigMemories.size();
+    for (int i = 0; i < mcount; i ++)
     {
         memoryUpdate(i);
     }
@@ -737,11 +720,6 @@ void RigControlFrame::on_newMemoryButton_clicked()
         mShowMessage("Panic", this);
         return;
     }
-    if (n >= memoryData::NUM_MEMORIES)
-    {
-        mShowMessage("Too many memories defined", this);
-        return;
-    }
 
     writeActionSelected(n); // which creates the button as well
 
@@ -758,7 +736,7 @@ RigMemoryButton::RigMemoryButton(QWidget *parent, RigControlFrame *rcf, int no)
     memButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
     memButton->setPopupMode(QToolButton::MenuButtonPopup);
     memButton->setFocusPolicy(Qt::NoFocus);
-    memButton->setText(memoryData::memoryTitle[memNo] + memoryData::memTitleBlank);
+    memButton->setText("M" + QString::number(memNo + 1) );
 
     shortKey = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_1 + memNo), memButton);
     readAction = new QAction("&Read", memButton);

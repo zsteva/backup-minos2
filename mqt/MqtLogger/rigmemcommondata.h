@@ -100,9 +100,6 @@ const QString DEFAULT_TIME = "00:00";
 
 namespace memoryData {
 
-const int  NUM_MEMORIES = 10;
-
-
 class  memData
 {
 public:
@@ -136,19 +133,6 @@ public:
         return !(*this == rhs);
     }
 };
-
-const QStringList memoryTitle = { "M1:",
-                                  "M2:",
-                                  "M3:",
-                                  "M4:",
-                                  "M5:",
-                                  "M6:",
-                                  "M7:",
-                                  "M8:",
-                                  "M9:",
-                                  "M10:"};
-
-const QString memTitleBlank = "        ";
 
 
 }

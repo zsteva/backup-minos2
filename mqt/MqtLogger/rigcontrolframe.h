@@ -123,16 +123,14 @@ signals:
 
 private slots:
     void freqLineEditInFocus();
-    void changeRadioFreq();
     void radioBandFreq(int index);
     void noRadioSetFreq(QString);
 
-    void exitFreqEdit();
-
-    void on_FontChanged();
 
     void on_newMemoryButton_clicked();
 public slots:
+    void exitFreqEdit();
+    void changeRadioFreq();
     void memoryUpdate(int);
 
     void readActionSelected(int);
