@@ -131,7 +131,7 @@ int RotControl::init(srotParams selectedAntenna)
 
 
     // load rotator params to open
-    strncpy(my_rot->state.rotport.pathname, comport.toLatin1().data(), FILPATHLEN);
+    strncpy(my_rot->state.rotport.pathname, comport.toLatin1().data(), comport.length());
     my_rot->state.rotport.parm.serial.rate = selectedAntenna.baudrate;
     my_rot->state.rotport.parm.serial.data_bits = selectedAntenna.databits;
     my_rot->state.rotport.parm.serial.stop_bits = selectedAntenna.stopbits;

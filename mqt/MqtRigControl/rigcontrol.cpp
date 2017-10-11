@@ -62,7 +62,17 @@ int RigControl::init(scatParams currentRadio)
     int retcode;
     passBandState = hamlibData::NOR;
     QString comport = "\\\\.\\";
-    if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL)
+
+    my_rig = rig_init(currentRadio.radioModelNumber);
+
+    if (!my_rig)
+    {
+        qDebug() << "Error init rig";
+    }
+
+    // load cat params
+/*
+    if (rig_port_e(currentRadio.portType) == RIG_PORT_SERIAL)
     {
         comport.append(currentRadio.comport);
         strncpy(my_rig->state.rigport.pathname, comport.toLatin1().data(), FILPATHLEN);
@@ -77,14 +87,6 @@ int RigControl::init(scatParams currentRadio)
     }
 
 
-    my_rig = rig_init(currentRadio.radioModelNumber);
-
-    if (!my_rig)
-    {
-        qDebug() << "Error init rig";
-    }
-
-    // load cat params
 
     if(QString(my_rig->caps->mfg_name) == "Icom")
     {
@@ -94,9 +96,9 @@ int RigControl::init(scatParams currentRadio)
         }
     }
 
-
-
-    //strncpy(my_rig->state.rigport.pathname, comport.toLatin1().data(), FILPATHLEN);
+*/
+    comport.append(currentRadio.comport);
+    strncpy(my_rig->state.rigport.pathname, comport.toLatin1().data(), FILPATHLEN);
     my_rig->state.rigport.parm.serial.rate = currentRadio.baudrate;
     my_rig->state.rigport.parm.serial.data_bits = currentRadio.databits;
     my_rig->state.rigport.parm.serial.stop_bits = currentRadio.stopbits;
@@ -132,6 +134,8 @@ int RigControl::closeRig()
     return retcode;
 
 }
+
+/* ---------------------- Freq ------------------------------------ */
 
 
 int RigControl::getFrequency(vfo_t vfo, freq_t *frequency)
@@ -232,33 +236,22 @@ pbwidth_t RigControl::passbandWide(rmode_t mode)
 
 void RigControl::buildPassBandTable()
 {
-    CW_PASSBAND_NAR = passbandNarrow(convertQStrMode("CW"));
-    USB_PASSBAND_NAR = passbandNarrow(convertQStrMode("USB"));
-    FM_PASSBAND_NAR = passbandNarrow(convertQStrMode("FM"));
 
-    CW_PASSBAND_NOR = passbandNormal(convertQStrMode("CW"));
-    USB_PASSBAND_NOR = passbandNormal(convertQStrMode("USB"));
-    FM_PASSBAND_NOR = passbandNormal(convertQStrMode("FM"));
+    passBandWidth[0][0] = passbandNarrow(convertQStrMode("CW"));
+    passBandWidth[0][1] = passbandNormal(convertQStrMode("CW"));
+    passBandWidth[0][2] = passbandWide(convertQStrMode("CW"));
 
-    CW_PASSBAND_WID = passbandWide(convertQStrMode("CW"));
-    USB_PASSBAND_WID = passbandWide(convertQStrMode("USB"));
-    FM_PASSBAND_WID = passbandWide(convertQStrMode("FM"));
+    passBandWidth[1][0] = passbandNarrow(convertQStrMode("USB"));
+    passBandWidth[1][1] = passbandNormal(convertQStrMode("USB"));
+    passBandWidth[1][2] = passbandWide(convertQStrMode("FM"));
 
-    passBandWidth[0][0] = CW_PASSBAND_NAR;
-    passBandWidth[0][1] = CW_PASSBAND_NOR;
-    passBandWidth[0][2] = CW_PASSBAND_WID;
+    passBandWidth[2][0] = passbandNarrow(convertQStrMode("FM"));
+    passBandWidth[2][1] = passbandNormal(convertQStrMode("FM"));
+    passBandWidth[2][2] = passbandWide(convertQStrMode("FM"));
 
-    passBandWidth[1][0] = USB_PASSBAND_NAR;
-    passBandWidth[1][1] = USB_PASSBAND_NOR;
-    passBandWidth[1][2] = USB_PASSBAND_WID;
-
-    passBandWidth[2][0] = FM_PASSBAND_NAR;
-    passBandWidth[2][1] = FM_PASSBAND_NOR;
-    passBandWidth[2][2] = FM_PASSBAND_WID;
-
-    passBandWidth[3][0] = MGM_PASSBAND_NAR;
-    passBandWidth[3][1] = MGM_PASSBAND_NOR;
-    passBandWidth[3][2] = MGM_PASSBAND_WID;
+    passBandWidth[3][0] = mgmPassbandNar;
+    passBandWidth[3][1] = mgmPassbandNor;
+    passBandWidth[3][2] = mgmPassbandWide;
 
 
 }
@@ -267,6 +260,7 @@ void RigControl::buildPassBandTable()
 pbwidth_t RigControl::lookUpPassBand(QString mode, int modeState)
 {
     int m = -1;
+
     for (int i=0; i < hamlibData::supModeList.count(); i++)
     {
         if (mode == hamlibData::supModeList[i])
@@ -276,11 +270,12 @@ pbwidth_t RigControl::lookUpPassBand(QString mode, int modeState)
     }
     if (m < 0)
     {
-        return 0;
+        return 0; //error
     }
     else
     {
-       return passBandWidth[m][modeState];
+
+        return passBandWidth[m][modeState];
     }
 }
 
@@ -319,10 +314,39 @@ void RigControl::getRigList()
 
 
 
+bool RigControl::getRigList(QComboBox *cb)
+{
+    int i;
+    rig_port_e portType = RIG_PORT_NONE;
+
+    if(capsList.count()==0) return false;
+    QStringList sl;
+    for (i=0;i<capsList.count();i++)
+    {
+
+        QString t;
+        t= QString::number(capsList.at(i)->rig_model);
+        t=t.rightJustified(5,' ')+", ";
+        t+= capsList.at(i)->mfg_name;
+        t+=", ";
+        t+=capsList.at(i)->model_name;
+        if (getPortType(capsList.at(i)->rig_model, &portType) != -1)
+        {
+            if (portType == RIG_PORT_NONE || portType == RIG_PORT_SERIAL  || portType == RIG_PORT_NETWORK || portType == RIG_PORT_UDP_NETWORK)
+            {
+                sl << t;        // only add these portTypes
+            }
+        }
 
 
 
+    }
+    cb->addItems(sl);
+    return true;
+}
 
+
+/*
 
 bool RigControl::getRigList(QComboBox *cb)
 {
@@ -352,7 +376,7 @@ bool RigControl::getRigList(QComboBox *cb)
     cb->addItems(sl);
     return true;
 }
-
+*/
 
 int RigControl::getPortType(int rigNumber, rig_port_e *portType)
 {
@@ -372,12 +396,14 @@ int RigControl::getPortType(int rigNumber, rig_port_e *portType)
 }
 
 
-
+/*
 int RigControl::getModelNumber(int idx)
 {
     if(idx<0) return 0;
-    return capsList.at(idx)->rig_model;
+    int num = capsList.at(idx)->rig_model;
+    return num;
 }
+
 
 const char * RigControl::getMfg_Name(int idx)
 {
@@ -385,6 +411,51 @@ const char * RigControl::getMfg_Name(int idx)
     if(idx<0) return 0;
     return capsList.at(idx)->mfg_name;
 }
+
+
+
+
+const char * RigControl::getModel_Name(int idx)
+{
+
+    if(idx<0) return 0;
+    return capsList.at(idx)->model_name;
+}
+*/
+
+
+
+
+
+int RigControl::getModelInfo(QString radioModel, int *radioModelNumber, QString *radioMfgName, QString *radioModelName)
+{
+    bool ok;
+    int number;
+    QStringList modelInfo = radioModel.remove('\x20').split(',');
+    if (modelInfo.length() == 3)
+    {
+        number = modelInfo[0].toInt(&ok);
+        if (!ok)
+        {
+           return -1;
+        }
+
+        *radioModelNumber = number;
+
+        //modelInfo = modelInfo[1].split(',');
+        //if (modelInfo.length() > 0)
+
+        *radioMfgName = modelInfo[1].trimmed();
+        *radioModelName = modelInfo[2].trimmed();
+        return 0;
+
+
+    }
+
+    return -1;
+
+}
+
 
 
 

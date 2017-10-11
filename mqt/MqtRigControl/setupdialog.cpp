@@ -481,12 +481,27 @@ void SetupDialog::radioNameFinished(int boxNumber)
 
 void SetupDialog::radioModelSelected(int boxNumber)
 {
+    int rm;
+    QString radioModelName;
+    QString radioMfgName;
     if (radioModel[boxNumber]->currentText() != availRadios[boxNumber].radioModel)
     {
         availRadios[boxNumber].radioModel = radioModel[boxNumber]->currentText();
-        availRadios[boxNumber].radioModelNumber = radio->getModelNumber(radioModel[boxNumber]->currentIndex());
-        availRadios[boxNumber].radioModelName = radio->getModel_Name(radioModel[boxNumber]->currentIndex());
-        availRadios[boxNumber].radioMfg_Name = radio->getMfg_Name(radioModel[boxNumber]->currentIndex());
+        if (radio->getModelInfo(availRadios[boxNumber].radioModel, &rm, &radioMfgName, &radioModelName) == -1)
+        {
+            // error
+            availRadios[boxNumber].radioModelNumber = 0;
+            availRadios[boxNumber].radioModelName = "";
+            availRadios[boxNumber].radioMfg_Name = "";
+        }
+        else
+        {
+            availRadios[boxNumber].radioModelNumber = rm;
+            availRadios[boxNumber].radioModelName = radioModelName;
+            availRadios[boxNumber].radioMfg_Name = radioMfgName;
+
+        }
+
         if (availRadios[boxNumber].radioMfg_Name == "Icom")
         {
             civAddress[boxNumber]->setEnabled(true);
@@ -1024,7 +1039,7 @@ void SetupDialog::readSettings()
         availRadios[i].radioModelName = config.value("radioModelName", "").toString();
         availRadios[i].radioModelNumber = config.value("radioModelNumber", "").toInt();
         availRadios[i].civAddress = config.value("civAddress", "").toString();
-        availRadios[i].portType = config.value("portType", int(RIG_PORT_NONE)).toInt();
+        availRadios[i].portType = config.value("portType", int(RIG_PORT_SERIAL)).toInt();
         availRadios[i].comport = config.value("comport", "").toString();
         availRadios[i].baudrate = config.value("baudrate", 9600).toInt();
         availRadios[i].databits = config.value("databits", 8).toInt();

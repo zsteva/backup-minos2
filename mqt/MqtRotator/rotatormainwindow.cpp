@@ -1018,6 +1018,7 @@ void RotatorMainWindow::request_bearing()
         logMessage(QString("Sent request bearing cmd - retcode = %1").arg(QString::number(retCode)));
         if (retCode < 0)
         {
+            logMessage("Request bearing: error");
             hamlibError(retCode, "Request Bearing");
         }
     }

@@ -176,12 +176,6 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
 
 
-    radio->buildPassBandTable();
-
-    // initialise rig state
-    logger_mode = "USB";
-    loggerSetPassBand(hamlibData::NOR );
-
 
 
     trace("*** Rig Started ***");
@@ -330,6 +324,7 @@ void RigControlMainWindow::initSelectRadioBox()
 
 void RigControlMainWindow::upDateRadio()
 {
+    int retCode = 0;
     int radioIndex = ui->selectRadioBox->currentIndex();
     if (radioIndex > 0)
     {
@@ -388,6 +383,24 @@ void RigControlMainWindow::upDateRadio()
         }
 
 
+        // get freq to see if comms are working
+        if (radio->get_serialConnected())
+        {
+            retCode = getFrequency(RIG_VFO_CURR);
+            if (retCode != RIG_OK)
+            {
+                logMessage(QString("Update Radio: Get Freq error %1").arg(QString::number(retCode)));
+                hamlibError(retCode, "Update Radio");
+            }
+        }
+
+        //radio->buildPassBandTable();
+
+        // initialise rig state
+        //logger_mode = "USB";
+        //loggerSetPassBand(hamlibData::NOR );
+
+
     }
     else
     {   // no radio selected
@@ -416,31 +429,72 @@ void RigControlMainWindow::upDateRadio()
     trace(QString("Radio Manufacturer = %1").arg(selectRig->currentRadio.radioMfg_Name));
     if (selectRig->currentRadio.radioMfg_Name == "Icom")
     {
-        trace(QSting("Icom CIV address = %1").arg(selectRig->currentRadio.civAddress));
+        if (selectRig->currentRadio.civAddress == "")
+        {
+            trace(QString("Icom CIV address = Using Default Rig Address"));
+        }
+        else
+        {
+            trace(QString("Icom CIV address = %1").arg(selectRig->currentRadio.civAddress));
+        }
+
     }
-    trace(QString("Radio PortType = %1").arg(selectRig->currentRadio.portType);
+    trace(QString("Radio PortType = %1").arg(hamlibData::portTypeList[selectRig->currentRadio.portType]));
     trace(QString("Network Address = %1").arg(selectRig->currentRadio.networkAdd));
     trace(QString("Network Port = %1").arg(selectRig->currentRadio.networkPort));
     trace(QString("Radio Comport = %1").arg(selectRig->currentRadio.comport));
-    trace(QString("Baudrate = %1").arg(QString::number(selectRig->currentRadio.databits)));
+    trace(QString("Baudrate = %1").arg(selectRig->currentRadio.baudrate));
     trace(QString("Stop bits = %1").arg(QString::number(selectRig->currentRadio.stopbits)));
-    trace(QString("Handshake = %1").arg(QString::number(selectRig->currentRadio.handshake)));
-    trace(QString("TransVert Enable = %1").arg(QString::number(selectRig->currentRadio.transVertEnable)));
-    trace(QString("TransVert Negative = %1").arg(QString::number(selectRig->currentRadio.transVertNegative)));
+    trace(QString("Parity = %1").arg(radio->getParityCodeNames()[selectRig->currentRadio.parity]));
+    trace(QString("Handshake = %1").arg(radio->getHandShakeNames()[selectRig->currentRadio.handshake]));
+    QString f = "";
+    if (selectRig->currentRadio.transVertEnable)
+    {
+        f = "True";
+    }
+    else
+    {
+        f = "False";
+    }
+    trace(QString("TransVert Enable = %1").arg(f));
+    if (selectRig->currentRadio.transVertNegative)
+    {
+        f = "True";
+    }
+    else
+    {
+        f = "False";
+    }
+    trace(QString("TransVert Negative = %1").arg(f));
     trace(QString("TransVert Offset = %1").arg(convertStringFreq(selectRig->currentRadio.transVertOffset)));
-    trace(QString("Use RX Passband = %1").arg(QString::number(selectRig->currentRadio.useRxPassBand)));
-    trace(QString("Radio Passband CW NAR = %1").arg(QString::number(int(passBandWidth[0][0]))));
-    trace(QString("Radio Passband CW NOR = %1").arg(QString::number(int(passBandWidth[0][1]))));
-    trace(QString("Radio Passband CW WID = %1").arg(QString::number(int(passBandWidth[0][2]))));
-    trace(QString("Radio Passband USB NAR = %1").arg(QString::number(int(passBandWidth[1][0]))));
-    trace(QString("Radio Passband USB NOR = %1").arg(QString::number(int(passBandWidth[1][1]))));
-    trace(QString("Radio Passband USB WID = %1").arg(QString::number(int(passBandWidth[1][2]))));
-    trace(QString("Radio Passband FM NAR = %1").arg(QString::number(int(passBandWidth[2][0]))));
-    trace(QString("Radio Passband FM NOR = %1").arg(QString::number(int(passBandWidth[2][1]))));
-    trace(QString("Radio Passband FM WID = %1").arg(QString::number(int(passBandWidth[2][2]))));
-    trace(QString("Radio Passband MGM NAR = %1").arg(QString::number(int(passBandWidth[3][0]))));
-    trace(QString("Radio Passband MGM NOR = %1").arg(QString::number(int(passBandWidth[3][1]))));
-    trace(QString("Radio Passband MGM WID = %1").arg(QString::number(int(passBandWidth[3][2]))));
+    if (selectRig->currentRadio.useRxPassBand)
+    {
+        f = "True";
+    }
+    else
+    {
+        f = "False";
+    }
+    trace(QString("Use RX Passband = %1").arg(f));
+    trace(QString("Radio Passband CW NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NAR))));
+    trace(QString("Radio Passband CW NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NOR))));
+    trace(QString("Radio Passband CW WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::WIDE))));
+    trace(QString("Radio Passband USB NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::NAR))));
+    trace(QString("Radio Passband USB NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::NOR))));
+    trace(QString("Radio Passband USB WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::WIDE))));
+    trace(QString("Radio Passband FM NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::NAR))));
+    trace(QString("Radio Passband FM NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::NOR))));
+    trace(QString("Radio Passband FM WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::WIDE))));
+    trace(QString("Radio Passband MGM NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NAR))));
+    trace(QString("Radio Passband MGM NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NOR))));
+    trace(QString("Radio Passband MGM WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::WIDE))));
+
+    if (radio->get_serialConnected())
+    {
+        pollTimer->start(pollTime);             // start timer to send message to controller
+    }
+
+
 }
 
 void RigControlMainWindow::openRadio()
@@ -450,18 +504,21 @@ void RigControlMainWindow::openRadio()
 
     if (selectRig->currentRadio.radioName == "")
     {
+        logMessage(QString("Open Radio: No radio name!"));
         showStatusMessage("Please select a Radio");
         return;
     }
     if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL && selectRig->currentRadio.comport == "")
     {
+        logMessage(QString("Open Radio: No comport"));
         showStatusMessage("Please select a Comport");
         return;
     }
     if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(selectRig->currentRadio.portType == RIG_PORT_UDP_NETWORK))
     {
-        if (selectRig->currentRadio.networkAdd == "" || (selectRig->currentRadio.networkPort == "")
+        if (selectRig->currentRadio.networkAdd == "" || (selectRig->currentRadio.networkPort == ""))
         {
+            logMessage(QString("Open Radio: No network or Port Number"));
             showStatusMessage("Please enter a network Address and Port Number");
             return;
         }
@@ -469,39 +526,47 @@ void RigControlMainWindow::openRadio()
     }
     if (selectRig->currentRadio.radioModel == "")
     {
+        logMessage(QString("Open Radio: No radio model"));
         showStatusMessage("Please select a radio model");
         return;
     }
 
+    scatParams p = selectRig->getCurrentRadio();
 
     retCode = radio->init(selectRig->currentRadio);
     if (retCode < 0)
     {
+        logMessage(QString("Error Opening Radio Error Code = $1").arg(QString::number(retCode)));
         hamlibError(retCode, "Open Radio");
     }
     if (radio->get_serialConnected())
     {
 
-        pollTimer->start(pollTime);             // start timer to send message to controller
+        //pollTimer->start(pollTime);             // start timer to send message to controller
         if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL)
         {
-                showStatusMessage(tr(QString("Connected to Radio: %1 - %2, %3, %4, %5, %6, %7, %8")
-                                     .arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel, selectRig->currentRadio.comport, selectRig->currentRadio.baudrate, selectRig->currentRadio.databits, selectRig->currentRadio.stopbits, radio->getParityCodeNames()[selectRig->currentRadio.parity], radio->getHandShakeNames()[selectRig->currentRadio.handshake])));
+                showStatusMessage(QString("Connected to Radio: %1 - %2, %3, %4, %5, %6, %7, %8")
+                                  //.arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel, selectRig->currentRadio.comport, selectRig->currentRadio.baudrate, selectRig->currentRadio.databits, selectRig->currentRadio.stopbits, radio->getParityCodeNames()[selectRig->currentRadio.parity], radio->getHandShakeNames()[selectRig->currentRadio.handshake]));
+                                  .arg(p.radioName).arg(p.radioModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
+                                  .arg(p.stopbits).arg(radio->getParityCodeNames()[p.parity]).arg(radio->getHandShakeNames()[p.handshake]));
+
+
         }
         else if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_UDP_NETWORK)
         {
-                showStatusMessage(tr(QString("Connected to Radio: %1 - %2, %3").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel, selectRig->currentRadio.networkAdd + ":" + selectRig->currentRadio.networkPort)));
+                showStatusMessage(QString("Connected to Radio: %1 - %2, %3").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel, selectRig->currentRadio.networkAdd + ":" + selectRig->currentRadio.networkPort));
         }
         else if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NONE)
         {
-                showStatusMessage(tr(QString("Connected to Radio: %1 - %2").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel)));
+                showStatusMessage(QString("Connected to Radio: %1 - %2").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel));
         }
 
 
     }
     else
     {
-//        QMessageBox::critical(this, tr("Error"), serial->errorString());
+
+        logMessage(QString("Radio Open Error"));
         showStatusMessage(tr("Radio Open error"));
     }
 
@@ -535,11 +600,27 @@ int RigControlMainWindow::getPolltime()
 
 void RigControlMainWindow::getRadioInfo()
 {
+    logMessage("Request radio info");
+    int retCode;
     if (radio->get_serialConnected())
     {
-        getFrequency(RIG_VFO_CURR);
+        retCode = getFrequency(RIG_VFO_CURR);
+        if (retCode < 0)
+        {
+            // error
+            logMessage("Get radioInfo: Get Freq error");
+            hamlibError(retCode, "Request Bearing");
 
-        getMode(RIG_VFO_CURR);
+        }
+
+        retCode = getMode(RIG_VFO_CURR);
+        if (retCode < 0)
+        {
+            // error
+            logMessage("Get radioInfo: Get Mode error");
+            hamlibError(retCode, "Request Mode");
+
+        }
 
         sendRxPbFlagToLog();
     }
@@ -602,58 +683,59 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
     }
 }
 
-void RigControlMainWindow::getFrequency(vfo_t vfo)
+int RigControlMainWindow::getFrequency(vfo_t vfo)
 {
     double transVertF = 0;
     int retCode = 0;
-    if (radio->get_serialConnected())
+
+
+    retCode = radio->getFrequency(vfo, &rfrequency);
+    if (retCode == RIG_OK)
     {
-
-        retCode = radio->getFrequency(vfo, &rfrequency);
-        if (retCode == RIG_OK)
+        if (rfrequency != curVfoFrq)
         {
-            if (rfrequency != curVfoFrq)
+            curVfoFrq = rfrequency;
+            logMessage(QString("Trans Enable = %1").arg(QString::number(selectRig->currentRadio.transVertEnable)));
+            if (selectRig->currentRadio.transVertEnable)
             {
-                curVfoFrq = rfrequency;
-                qDebug() << "Trans Enable = " << selectRig->currentRadio.transVertEnable;
-                if (selectRig->currentRadio.transVertEnable)
+                logMessage("Transvert enabled");
+                if (selectRig->currentRadio.transVertNegative)
                 {
-                    qDebug() << "Transvert enabled";
-                    if (selectRig->currentRadio.transVertNegative)
-                    {
-                        transVertF = rfrequency - selectRig->currentRadio.transVertOffset;
-
-                    }
-                    else
-                    {
-                        transVertF = rfrequency + selectRig->currentRadio.transVertOffset;
-                    }
-                    qDebug() << "Transvert f " << transVertF;
-                    curTransVertFrq = transVertF;
-                    displayTransVertVfo(transVertF);
-
-                }
-                displayFreqVfo(rfrequency);
-
-                if (selectRig->currentRadio.transVertEnable)
-                {
-                    sendFreqToLog(transVertF);
+                    logMessage("Negative Transvert");
+                    transVertF = rfrequency - selectRig->currentRadio.transVertOffset;
+                    logMessage(QString("Transvert F = %1").arg(QString::number(transVertF)));
                 }
                 else
                 {
-                    sendFreqToLog(rfrequency);
+                    logMessage(("Positive Transvert"));
+                    transVertF = rfrequency + selectRig->currentRadio.transVertOffset;
+
                 }
+                logMessage(QString("Transvert Freq. = %1").arg(QString::number(transVertF)));
+                curTransVertFrq = transVertF;
+                displayTransVertVfo(transVertF);
+
+            }
+            displayFreqVfo(rfrequency);
+
+            if (selectRig->currentRadio.transVertEnable)
+            {
+                sendFreqToLog(transVertF);
             }
             else
             {
-                return;
+                sendFreqToLog(rfrequency);
             }
         }
-        else
-        {
-            hamlibError(retCode, "GetFreq");
-        }
+        //else
+        //{
+        //    return retCode;
+       // }
     }
+    //else
+    //{
+    return retCode;
+
 
 
 }
@@ -661,36 +743,24 @@ void RigControlMainWindow::getFrequency(vfo_t vfo)
 
 
 
-void RigControlMainWindow::getMode(vfo_t vfo)
+int RigControlMainWindow::getMode(vfo_t vfo)
 {
 
     int retCode = 0;
 
-    if (radio->get_serialConnected())
+    retCode = radio->getMode(vfo, &rmode, &rwidth);
+    if (retCode == RIG_OK)
     {
-        retCode = radio->getMode(vfo, &rmode, &rwidth);
-        if (retCode == RIG_OK)
+        if (rmode != curMode)
         {
-            if (rmode != curMode)
-            {
-                curMode = rmode;
-                displayModeVfo(radio->convertModeQstr(rmode));
-                displayPassband(rwidth);
-                sendModeToLog(radio->convertModeQstr(rmode));
-
-            }
-            else
-            {
-                return;
-            }
-
+            curMode = rmode;
+            displayModeVfo(radio->convertModeQstr(rmode));
+            displayPassband(rwidth);
+            sendModeToLog(radio->convertModeQstr(rmode));
         }
-        else
-        {
-            hamlibError(retCode, "Get Mode");
-        }
-    }
+   }
 
+    return retCode;
 }
 
 void RigControlMainWindow::getCurMode()

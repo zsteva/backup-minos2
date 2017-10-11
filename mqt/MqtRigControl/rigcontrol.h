@@ -172,6 +172,7 @@ public:
 
     int rigConvertQStrMode(QString mode);
     int getPortType(int rigNumber, rig_port_e *portType);
+    int getModelInfo(QString radioModel, int *radioModelNumber, QString *radioMfgName, QString *radioModelName);
 signals:
     void frequency_updated(double);
     void debug_protocol(QString);
@@ -188,21 +189,21 @@ signals:
 //    int retcode;            // generic return code from functions
 
 
-    pbwidth_t CW_PASSBAND_NAR = 500;
-    pbwidth_t CW_PASSBAND_NOR = 2200;
-    pbwidth_t CW_PASSBAND_WID = 0;
+    pbwidth_t cwPassbandNar = 500;
+    pbwidth_t cwPassbandNor = 2200;
+    pbwidth_t cwPassbandWide = 0;
 
-    pbwidth_t USB_PASSBAND_NAR = 0;
-    pbwidth_t USB_PASSBAND_NOR = 2200;
-    pbwidth_t USB_PASSBAND_WID = 0;
+    pbwidth_t usbPassbandNar = 0;
+    pbwidth_t usbPassbandNor = 2200;
+    pbwidth_t usbPassbandWide = 0;
 
-    pbwidth_t FM_PASSBAND_NAR = 0;
-    pbwidth_t FM_PASSBAND_NOR = 9000;
-    pbwidth_t FM_PASSBAND_WID = 0;
+    pbwidth_t fmPassbandNar = 0;
+    pbwidth_t fmPassbandNor = 9000;
+    pbwidth_t fmPassbandWide = 0;
 
-    pbwidth_t MGM_PASSBAND_NAR = 0;
-    pbwidth_t MGM_PASSBAND_NOR = 2200;
-    pbwidth_t MGM_PASSBAND_WID = 0;
+    pbwidth_t mgmPassbandNar = 0;
+    pbwidth_t mgmPassbandNor = 2200;
+    pbwidth_t mgmPassbandWide = 0;
 
     pbwidth_t passBandWidth[4][3];
 

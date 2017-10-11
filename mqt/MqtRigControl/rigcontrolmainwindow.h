@@ -87,8 +87,8 @@ private:
     void initSelectRadioBox();
     void openRadio();
     void closeRadio();
-    void getFrequency(vfo_t vfo);
-    void getMode(vfo_t vfo);
+    int getFrequency(vfo_t vfo);
+    int getMode(vfo_t vfo);
     QString convertStringFreq(double);
 
     void setPolltime(int);
