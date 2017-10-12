@@ -450,6 +450,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
             serialDataEntryVisible(i, false);
             networkDataEntryVisible(i, false);
         }
+        mgmModeSel[i]->setCurrentIndex(mgmModeSel[i]->findText(availRadios[i].mgmMode));
 
 
     }
@@ -752,9 +753,9 @@ void SetupDialog::networkPortSelected(int boxNumber)
 
 void SetupDialog::mgmModeSelected(int boxNumber)
 {
-
-
-
+    availRadios[boxNumber].mgmMode = mgmModeSel[boxNumber]->currentText();
+    radioValueChanged[boxNumber] = true;
+    radioChanged = true;
 }
 
 
@@ -766,8 +767,6 @@ void SetupDialog::fillRadioModelInfo()
         radioModel[i]->clear();
         radio->getRigList(radioModel[i]);
     }
-
-
 }
 
 
@@ -972,6 +971,7 @@ void SetupDialog::saveSettings()
                 config.setValue("useRXPassBand", availRadios[i].useRxPassBand);
                 config.setValue("netAddress", availRadios[i].networkAdd);
                 config.setValue("netPort", availRadios[i].networkPort);
+                config.setValue("mgmMode", availRadios[i].mgmMode);
                 config.endGroup();
                 radioValueChanged[i] = false;
 
@@ -1053,6 +1053,7 @@ void SetupDialog::readSettings()
         availRadios[i].useRxPassBand = config.value("useRXPassBand", false).toBool();
         availRadios[i].networkAdd = config.value("netAddress", "").toString();
         availRadios[i].networkPort = config.value("netPort", "").toString();
+        availRadios[i].mgmMode = config.value("mgmMode", hamlibData::USB).toString();
         config.endGroup();
     }
     chkloadflg = false;
@@ -1085,6 +1086,7 @@ void SetupDialog::clearAvailRadio()
         availRadios[i].useRxPassBand = false;
         availRadios[i].networkAdd = "";
         availRadios[i].networkPort = "";
+        availRadios[i].mgmMode = hamlibData::USB;
     }
 
 
@@ -1113,6 +1115,7 @@ void SetupDialog::clearCurrentRadio()
     currentRadio.useRxPassBand = false;
     currentRadio.networkAdd = "";
     currentRadio.networkPort = "";
+    currentRadio.mgmMode = hamlibData::USB;
 
 }
 
@@ -1140,6 +1143,7 @@ void SetupDialog::copyRadioToCurrent(int radioNumber)
     currentRadio.useRxPassBand = availRadios[radioNumber].useRxPassBand;
     currentRadio.networkAdd = availRadios[radioNumber].networkAdd;
     currentRadio.networkPort = availRadios[radioNumber].networkPort;
+    currentRadio.mgmMode = availRadios[radioNumber].mgmMode;
 
 
 }
@@ -1202,6 +1206,7 @@ void SetupDialog::saveCurrentRadio()
     config.setValue("useRXPassBand", currentRadio.useRxPassBand);
     config.setValue("netAddress", currentRadio.networkAdd);
     config.setValue("netPort", currentRadio.networkPort);
+    config.setValue("mgmMode", currentRadio.mgmMode);
     config.endGroup();
 
 
@@ -1248,6 +1253,7 @@ void SetupDialog::readCurrentRadio()
         currentRadio.useRxPassBand = config.value("useRXPassBand", false).toBool();
         currentRadio.networkAdd = config.value("netAddress", "").toString();
         currentRadio.networkPort = config.value("netPort", "").toString();
+        currentRadio.mgmMode = config.value("mgmMode", hamlibData::USB).toString();
         config.endGroup();
     }
 

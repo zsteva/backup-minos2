@@ -62,7 +62,7 @@ private:
     QTimer *pollTimer;
     class QTimer LogTimer;
     int pollTime;
-    bool rotErrorFlag;
+    bool rigErrorFlag;
     // data from logger
     QString logger_freq;
     QString logger_mode;
@@ -79,6 +79,7 @@ private:
     double curVfoFrq;
     double curTransVertFrq;
     rmode_t curMode;
+    bool mgmModeFlag;
 
 
     QString geoStr;         // geometry registry location
@@ -125,6 +126,7 @@ private:
     void displayPassband(pbwidth_t width);
 
 
+    void chkRadioMgmModeChanged();
 private slots:
 
     void onStdInRead(QString);
