@@ -35,7 +35,8 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     , ui(new Ui::RigControlMainWindow)
     , loggerPbWidth(0)
     , logger_bw_state(hamlibData::NOR)
-    , rotErrorFlag(false)
+    , rigErrorFlag(false)
+    , mgmModeFlag(false)
 
 {
 
@@ -361,6 +362,7 @@ void RigControlMainWindow::upDateRadio()
         selectRig->currentRadio.transVertOffset = selectRig->availRadios[radioIndex].transVertOffset;
         selectRig->currentRadio.transVertOffsetStr = selectRig->availRadios[radioIndex].transVertOffsetStr;
         selectRig->currentRadio.useRxPassBand = selectRig->availRadios[radioIndex].useRxPassBand;
+        selectRig->currentRadio.mgmMode = selectRig->availRadios[radioIndex].mgmMode;
 
         selectRig->saveCurrentRadio();
 
@@ -601,6 +603,9 @@ int RigControlMainWindow::getPolltime()
 void RigControlMainWindow::getRadioInfo()
 {
     logMessage("Request radio info");
+
+    chkRadioMgmModeChanged();
+
     int retCode;
     if (radio->get_serialConnected())
     {
@@ -630,7 +635,7 @@ void RigControlMainWindow::getRadioInfo()
 
 void RigControlMainWindow::loggerSetFreq(QString freq)
 {
-    if (radio->get_serialConnected() && !rotErrorFlag)
+    if (radio->get_serialConnected() && !rigErrorFlag)
     {
         logger_freq = freq;
         setFreq(freq, RIG_VFO_CURR);
@@ -740,7 +745,14 @@ int RigControlMainWindow::getFrequency(vfo_t vfo)
 
 }
 
-
+void RigControlMainWindow::chkRadioMgmModeChanged()
+{
+    static QString mgmMode;
+    if (selectRig->currentRadio.mgmMode != mgmMode)
+    {
+        ui->mgmMode->setText(selectRig->currentRadio.mgmMode);
+    }
+}
 
 
 int RigControlMainWindow::getMode(vfo_t vfo)
@@ -751,13 +763,45 @@ int RigControlMainWindow::getMode(vfo_t vfo)
     retCode = radio->getMode(vfo, &rmode, &rwidth);
     if (retCode == RIG_OK)
     {
-        if (rmode != curMode)
+        curMode = rmode;
+        if (!mgmModeFlag)
+        {
+            displayModeVfo(radio->convertModeQstr(rmode));
+            displayPassband(rwidth);
+            sendModeToLog(radio->convertModeQstr(rmode));
+        }
+        else
+        {
+            displayModeVfo(hamlibData::MGM);
+            sendModeToLog(hamlibData::MGM);
+        }
+
+
+
+
+ /*
+        if (!mgmModeFlag && rmode != curMode)
         {
             curMode = rmode;
             displayModeVfo(radio->convertModeQstr(rmode));
             displayPassband(rwidth);
             sendModeToLog(radio->convertModeQstr(rmode));
         }
+        else if (mgmModeFlag && rmode != curMode)
+        {
+            // mode changed on radio
+            mgmModeFlag = false;
+            curMode = rmode;
+            displayModeVfo(radio->convertModeQstr(rmode));
+            displayPassband(rwidth);
+            sendModeToLog(radio->convertModeQstr(rmode));
+        }
+        else if (mgmModeFlag)
+        {
+            displayModeVfo(hamlibData::MGM);
+            sendModeToLog(hamlibData::MGM);
+        }
+ */
    }
 
     return retCode;
@@ -771,10 +815,30 @@ void RigControlMainWindow::getCurMode()
 
 void RigControlMainWindow::loggerSetMode(QString mode)
 {
-    if (radio->get_serialConnected() && !rotErrorFlag)
+    if (radio->get_serialConnected() && !rigErrorFlag)
     {
         logger_mode = mode;
-        setCurMode(mode);
+        if (logger_mode == hamlibData::MGM)
+        {
+            if (mgmModeFlag)
+            {
+                if (curMode !=  radio->convertQStrMode(selectRig->currentRadio.mgmMode))
+                {
+                    setCurMode(selectRig->currentRadio.mgmMode);
+                }
+            }
+            else
+            {
+                mgmModeFlag = true;
+                setCurMode(selectRig->currentRadio.mgmMode);
+            }
+        }
+        else
+        {
+            mgmModeFlag = false;
+            setCurMode(logger_mode);
+        }
+
     }
 
 }
@@ -807,16 +871,17 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
          retCode = radio->setMode(vfo, mCode, passBand);
          if (retCode == RIG_OK)
          {
-             qDebug() << "mode changed!";
+             logMessage(QString("Mode changed! Mode = %1, PassBand = %2").arg(radio->convertModeQstr(rmode), QString::number(passBand)));
          }
          else
          {
+             logMessage(QString("Mode Change Error Code = %1, Mode = %1, PassBand = %2").arg(QString::number(retCode), radio->convertModeQstr(rmode), QString::number(passBand)));
              hamlibError(retCode, "Set Mode");
          }
     }
     else
     {
-        qDebug() << "radio not conntected";
+        qDebug() << "radio not connected";
     }
 }
 
@@ -824,7 +889,7 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
 
 void RigControlMainWindow::loggerSetPassBand(int state)
 {
-    if (radio->get_serialConnected() && !rotErrorFlag)
+    if (radio->get_serialConnected() && !rigErrorFlag)
     {
         logger_bw_state = state;
         loggerPbWidth = radio->lookUpPassBand(logger_mode, state);
@@ -964,7 +1029,7 @@ void RigControlMainWindow::hamlibError(int errorCode, QString cmd)
         sendStatusToLogError();
     }
 
-    rotErrorFlag = true;
+    rigErrorFlag = true;
 
     errorCode *= -1;
     QString errorMsg = radio->gethamlibErrorMsg(errorCode);
@@ -973,7 +1038,7 @@ void RigControlMainWindow::hamlibError(int errorCode, QString cmd)
     QMessageBox::critical(this, "RigControl hamlib Error - " + selectRig->currentRadio.radioName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
 
     closeRadio();
-    rotErrorFlag = false;
+    rigErrorFlag = false;
     if (appName.length() >0)
     {
         sendStatusToLogDisConnected();
