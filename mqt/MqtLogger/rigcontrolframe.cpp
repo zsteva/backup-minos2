@@ -745,6 +745,7 @@ RigMemoryButton::RigMemoryButton(QWidget *parent, RigControlFrame *rcf, int no)
         shortKey = new QShortcut(QKeySequence(memoryShortCut[memNo]), memButton);
         connect(shortKey, SIGNAL(activated()), this, SLOT(memoryShortCutSelected()));
     }
+    connect(memButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
     connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()) );
     connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()) );
     connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()) );
