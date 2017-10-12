@@ -159,6 +159,7 @@ public:
     int getMaxMinRotation(int rotNumber, int *maxRot, int *minRot);
     int getPortType(int rotNumber, rig_port_e *portType);
 
+    int getModelInfo(QString rotModel, int *rotModelNumber, QString *rotMfgName, QString *rotModelName);
 signals:
    void bearing_updated(int);
    void request_bearingError(int);

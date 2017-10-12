@@ -337,46 +337,14 @@ bool RigControl::getRigList(QComboBox *cb)
                 sl << t;        // only add these portTypes
             }
         }
-
-
-
-    }
-    cb->addItems(sl);
-    return true;
+   }
+   std::sort(sl.begin(), sl.end());
+   cb->addItems(sl);
+   return true;
 }
 
 
-/*
 
-bool RigControl::getRigList(QComboBox *cb)
-{
-    int i;
-    rig_port_e portType = RIG_PORT_NONE;
-
-    if(capsList.count()==0) return false;
-    QStringList sl;
-    for (i=0;i<capsList.count();i++)
-    {
-        if (getPortType(capsList.at(i)->rig_model, &portType) != -1)
-        {
-            //qDebug() << capsList.at(i)->rig_model << capsList.at(i)->model_name << portType;
-            if (portType == RIG_PORT_NONE || portType == RIG_PORT_SERIAL  || portType == RIG_PORT_NETWORK || portType == RIG_PORT_UDP_NETWORK)
-            {
-
-                QString t;
-                t= QString::number(capsList.at(i)->rig_model);
-                t=t.rightJustified(5,' ')+" ";
-                t+= capsList.at(i)->mfg_name;
-                t+=",";
-                t+=capsList.at(i)->model_name;
-                sl << t;
-            }
-        }
-    }
-    cb->addItems(sl);
-    return true;
-}
-*/
 
 int RigControl::getPortType(int rigNumber, rig_port_e *portType)
 {
@@ -458,7 +426,7 @@ int RigControl::getModelInfo(QString radioModel, int *radioModelNumber, QString 
 
 
 
-
+/*
 
 const char * RigControl::getModel_Name(int idx)
 {
@@ -487,7 +455,7 @@ int RigControl::getRigModelIndex()
 }
 
 
-
+*/
 
 
 void RigControl::set_serialConnected(bool connectFlag)

@@ -451,10 +451,14 @@ void SetupDialog::antennaNameFinished(int boxNumber)
 void SetupDialog::rotatorModelSelected(int boxNumber)
 {
 
-    bool ok;
+    //bool ok;
+    int rm;
+    QString rotModelName;
+    QString rotMfgName;
 
     if (rotatorModel[boxNumber]->currentText() != availAntennas[boxNumber].rotatorModel)
     {
+        /*
         QString s = rotatorModel[boxNumber]->currentText();
         availAntennas[boxNumber].rotatorModel = s;
         s = s.trimmed();
@@ -465,7 +469,23 @@ void SetupDialog::rotatorModelSelected(int boxNumber)
         availAntennas[boxNumber].rotatorManufacturer = s.trimmed();
         s = antdetails[2];
         availAntennas[boxNumber].rotatorModelName = s.trimmed();
+        */
 
+        availAntennas[boxNumber].rotatorModel = rotatorModel[boxNumber]->currentText();
+        if (rotator->getModelInfo(availAntennas[boxNumber].rotatorModel, &rm, &rotMfgName, &rotModelName) == -1)
+        {
+            // error
+            availAntennas[boxNumber].rotatorModelNumber = 0;
+            availAntennas[boxNumber].rotatorModelName = "";
+            availAntennas[boxNumber].rotatorManufacturer = "";
+        }
+        else
+        {
+            availAntennas[boxNumber].rotatorModelNumber = rm;
+            availAntennas[boxNumber].rotatorModelName = rotModelName;
+            availAntennas[boxNumber].rotatorManufacturer = rotMfgName;
+
+        }
         // set southstop visible if rotator is 0 - 360
         int minRot = 0;
         int maxRot = 0;
