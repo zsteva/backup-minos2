@@ -143,8 +143,8 @@ namespace runButData {
 const int NUM_RUNBUTTONS = 2;
 
 const QStringList runButTitle = {
-    "Run 1  ",
-    "Run 2  "
+    "Run 1 ([) ",
+    "Run 2 (]) "
 
 };
 

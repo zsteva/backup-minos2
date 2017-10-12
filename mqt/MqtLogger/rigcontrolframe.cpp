@@ -26,14 +26,6 @@
 
 #define MODE_ERROR "<font color='Red'>Mode Error</font>"
 
-/*static QStringList memoryShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
-                            QString("Ctrl+3"), QString("Ctrl+4"),
-                            QString("Ctrl+5"), QString("Ctrl+6"),
-                            QString("Ctrl+7"), QString("Ctrl+8"),
-                            QString("Ctrl+9"), QString("Ctrl+0")};
-
-
-*/
 static QKeySequence memoryShortCut[] = {
 
     QKeySequence(Qt::CTRL + Qt::Key_1),
@@ -47,8 +39,6 @@ static QKeySequence memoryShortCut[] = {
     QKeySequence(Qt::CTRL + Qt::Key_9),
     QKeySequence(Qt::CTRL + Qt::Key_0)
 };
-
-
 
 static QKeySequence runButShortCut[] {
     QKeySequence(Qt::CTRL + Qt::Key_BracketLeft),
@@ -641,7 +631,9 @@ void RigControlFrame::loadRunButtonLabels()
 void RigControlFrame::runButtonUpdate(int buttonNumber)
 {
     memoryData::memData m = getRunMemoryData(buttonNumber);
-    runButtonMap[buttonNumber]->memButton->setText("R" + QString::number(buttonNumber + 1) + ": " + extractKhz(m.freq) + " ");
+    QString sc = ((buttonNumber == 0)?QString("["):QString("]"));
+
+    runButtonMap[buttonNumber]->memButton->setText("R" + QString::number(buttonNumber + 1) + "(" + sc + ") " + extractKhz(m.freq) + " ");
     QString tTipStr = "Freq: " + m.freq + "\n"
             + "Mode: " + m.mode + "\n"
             + "Passband: " + hamlibData::pBandStateStr[m.pBandState];
@@ -738,7 +730,6 @@ RigMemoryButton::RigMemoryButton(QWidget *parent, RigControlFrame *rcf, int no)
     memButton->setFocusPolicy(Qt::NoFocus);
     memButton->setText("M" + QString::number(memNo + 1) );
 
-    shortKey = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_1 + memNo), memButton);
     readAction = new QAction("&Read", memButton);
     writeAction = new QAction("&Write",memButton);
     editAction = new QAction("&Edit", memButton);
@@ -749,7 +740,11 @@ RigMemoryButton::RigMemoryButton(QWidget *parent, RigControlFrame *rcf, int no)
     memoryMenu->addAction(clearAction);
     memButton->setMenu(memoryMenu);
 
-    connect(memButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
+    if (memNo  < 10)
+    {
+        shortKey = new QShortcut(QKeySequence(memoryShortCut[memNo]), memButton);
+        connect(shortKey, SIGNAL(activated()), this, SLOT(memoryShortCutSelected()));
+    }
     connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()) );
     connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()) );
     connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()) );
@@ -799,7 +794,7 @@ RunMemoryButton::RunMemoryButton(QToolButton *b, RigControlFrame *rcf, int no)
     memButton->setFocusPolicy(Qt::NoFocus);
     memButton->setText(runButData::runButTitle[memNo]);
 
-    shortKey = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_1 + memNo), memButton);
+    shortKey = new QShortcut(QKeySequence(runButShortCut[memNo]), memButton);
     readAction = new QAction("&Read", memButton);
     writeAction = new QAction("&Write",memButton);
     editAction = new QAction("&Edit", memButton);
@@ -810,6 +805,7 @@ RunMemoryButton::RunMemoryButton(QToolButton *b, RigControlFrame *rcf, int no)
     memoryMenu->addAction(clearAction);
     memButton->setMenu(memoryMenu);
 
+    connect(shortKey, SIGNAL(activated()), this, SLOT(memoryShortCutSelected()));
     connect(memButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
     connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()) );
     connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()) );
