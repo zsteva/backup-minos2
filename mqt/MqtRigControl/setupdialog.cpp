@@ -440,9 +440,14 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
             serialDataEntryVisible(i, false);
             networkDataEntryVisible(i, true);
         }
-        else
+        else if (rig_port_e(availRadios[i].portType) == RIG_PORT_SERIAL)
         {
             serialDataEntryVisible(i, true);
+            networkDataEntryVisible(i, false);
+        }
+        else if (rig_port_e(availRadios[i].portType) == RIG_PORT_NONE)
+        {
+            serialDataEntryVisible(i, false);
             networkDataEntryVisible(i, false);
         }
 
@@ -476,12 +481,27 @@ void SetupDialog::radioNameFinished(int boxNumber)
 
 void SetupDialog::radioModelSelected(int boxNumber)
 {
+    int rm;
+    QString radioModelName;
+    QString radioMfgName;
     if (radioModel[boxNumber]->currentText() != availRadios[boxNumber].radioModel)
     {
         availRadios[boxNumber].radioModel = radioModel[boxNumber]->currentText();
-        availRadios[boxNumber].radioModelNumber = radio->getModelNumber(radioModel[boxNumber]->currentIndex());
-        availRadios[boxNumber].radioModelName = radio->getModel_Name(radioModel[boxNumber]->currentIndex());
-        availRadios[boxNumber].radioMfg_Name = radio->getMfg_Name(radioModel[boxNumber]->currentIndex());
+        if (radio->getModelInfo(availRadios[boxNumber].radioModel, &rm, &radioMfgName, &radioModelName) == -1)
+        {
+            // error
+            availRadios[boxNumber].radioModelNumber = 0;
+            availRadios[boxNumber].radioModelName = "";
+            availRadios[boxNumber].radioMfg_Name = "";
+        }
+        else
+        {
+            availRadios[boxNumber].radioModelNumber = rm;
+            availRadios[boxNumber].radioModelName = radioModelName;
+            availRadios[boxNumber].radioMfg_Name = radioMfgName;
+
+        }
+
         if (availRadios[boxNumber].radioMfg_Name == "Icom")
         {
             civAddress[boxNumber]->setEnabled(true);
@@ -496,14 +516,19 @@ void SetupDialog::radioModelSelected(int boxNumber)
         if (radio->getPortType(availRadios[boxNumber].radioModelNumber, &portType) != -1)
         {
             availRadios[boxNumber].portType = int(portType);
-            if (portType == RIG_PORT_NETWORK)
+            if (portType == RIG_PORT_NETWORK || portType == RIG_PORT_UDP_NETWORK)
             {
                serialDataEntryVisible(boxNumber, false);
                networkDataEntryVisible(boxNumber, true);
             }
-            else
+            else if (portType == RIG_PORT_SERIAL)
             {
                 serialDataEntryVisible(boxNumber, true);
+                networkDataEntryVisible(boxNumber, false);
+            }
+            else // RIG_PORT_NONE
+            {
+                serialDataEntryVisible(boxNumber, false);
                 networkDataEntryVisible(boxNumber, false);
             }
         }
@@ -1014,7 +1039,7 @@ void SetupDialog::readSettings()
         availRadios[i].radioModelName = config.value("radioModelName", "").toString();
         availRadios[i].radioModelNumber = config.value("radioModelNumber", "").toInt();
         availRadios[i].civAddress = config.value("civAddress", "").toString();
-        availRadios[i].portType = config.value("portType", int(RIG_PORT_NONE)).toInt();
+        availRadios[i].portType = config.value("portType", int(RIG_PORT_SERIAL)).toInt();
         availRadios[i].comport = config.value("comport", "").toString();
         availRadios[i].baudrate = config.value("baudrate", 9600).toInt();
         availRadios[i].databits = config.value("databits", 8).toInt();

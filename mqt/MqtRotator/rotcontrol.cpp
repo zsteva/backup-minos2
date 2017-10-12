@@ -131,7 +131,7 @@ int RotControl::init(srotParams selectedAntenna)
 
 
     // load rotator params to open
-    strncpy(my_rot->state.rotport.pathname, comport.toLatin1().data(), FILPATHLEN);
+    strncpy(my_rot->state.rotport.pathname, comport.toLatin1().data(), comport.length());
     my_rot->state.rotport.parm.serial.rate = selectedAntenna.baudrate;
     my_rot->state.rotport.parm.serial.data_bits = selectedAntenna.databits;
     my_rot->state.rotport.parm.serial.stop_bits = selectedAntenna.stopbits;
@@ -194,22 +194,23 @@ bool RotControl::getRotatorList(QComboBox *cb)
     QStringList sl;
     for (i=0;i<capsList.count();i++)
     {
+
+        QString t;
+        t= QString::number(capsList.at(i)->rot_model);
+        t=t.rightJustified(5,' ')+", ";
+        t+= capsList.at(i)->mfg_name;
+        t+=", ";
+        t+=capsList.at(i)->model_name;
         if (getPortType(capsList.at(i)->rot_model, &portType) != -1)
         {
             //qDebug() << capsList.at(i)->rot_model << capsList.at(i)->model_name << portType;
             if (portType != RIG_PORT_PARALLEL)
             {
-                QString t;
-                t= QString::number(capsList.at(i)->rot_model);
-                t=t.rightJustified(5,' ')+", ";
-                t+= capsList.at(i)->mfg_name;
-                t+=", ";
-                t+=capsList.at(i)->model_name;
                 sl << t;
-                std::sort(sl.begin(), sl.end());
             }
         }
     }
+    std::sort(sl.begin(), sl.end());
     cb->addItems(sl);
     return true;
 }
@@ -231,6 +232,41 @@ int RotControl::getPortType(int rotNumber, rig_port_e *portType)
     return retCode;
 
 }
+
+
+int RotControl::getModelInfo(QString rotModel, int *rotModelNumber, QString *rotMfgName, QString *rotModelName)
+{
+    bool ok;
+    int number;
+    QStringList modelInfo = rotModel.remove('\x20').split(',');
+    if (modelInfo.length() == 3)
+    {
+        number = modelInfo[0].toInt(&ok);
+        if (!ok)
+        {
+           return -1;
+        }
+
+        *rotModelNumber = number;
+
+        //modelInfo = modelInfo[1].split(',');
+        //if (modelInfo.length() > 0)
+
+        *rotMfgName = modelInfo[1].trimmed();
+        *rotModelName = modelInfo[2].trimmed();
+        return 0;
+
+
+    }
+
+    return -1;
+
+}
+
+
+
+
+/*
 
 int RotControl::getModelNumber(int idx)
 {
@@ -273,6 +309,9 @@ int RotControl::getRotatorModelIndex()
     }
     return -1;
 }
+
+*/
+
 
 
 azimuth_t RotControl::getMinAzimuth()
