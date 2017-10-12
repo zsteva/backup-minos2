@@ -524,16 +524,23 @@ void SetupDialog::rotatorModelSelected(int boxNumber)
         if (rotator->getPortType(availAntennas[boxNumber].rotatorModelNumber, &portType) != -1)
         {
             availAntennas[boxNumber].portType = int(portType);
-            if (portType == RIG_PORT_NETWORK)
+            if (portType == RIG_PORT_NETWORK || portType == RIG_PORT_UDP_NETWORK)
             {
                serialDataEntryVisible(boxNumber, false);
                networkDataEntryVisible(boxNumber, true);
             }
-            else
+            else if (portType == RIG_PORT_SERIAL)
             {
                 serialDataEntryVisible(boxNumber, true);
                 networkDataEntryVisible(boxNumber, false);
             }
+            else // RIG_PORT_NONE
+            {
+                serialDataEntryVisible(boxNumber, false);
+                networkDataEntryVisible(boxNumber, false);
+            }
+
+
         }
 
         antennaValueChanged[boxNumber] = true;

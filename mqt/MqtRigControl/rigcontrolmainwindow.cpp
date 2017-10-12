@@ -90,43 +90,11 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     radio->set_serialConnected(false);
     initActionsConnections();
 
-/*
-    if (loggerRadio.length() > 0)
-    {
-        ui->selectRadioBox->hide();
-        ui->SelectRadioTitle->hide();
-    }
-*/
+
 
     initSelectRadioBox();
 
-/*
-    if (loggerRadio.length() > 0)
-    {
 
-        qDebug() << "loggerRadio is " << loggerRadio;
-        int a = selectRadio->findText(loggerRadio);
-        if (a == -1)
-        {
-            showStatusMessage("<font color='Red'>Invalid radio name from logger!</font>");
-            logRadError = true;
-        }
-        else
-        {
-            selectRadio->setCurrentIndex(a);
-            selectRig->readSettings();      // get radio settings
-            selectRig->copyRadioToCurrent(a);
-        }
-
-    }
-    else
-    {
-
-        selectRig->readCurrentRadio();
-        selectRadio->setCurrentIndex(selectRadio->findText(selectRig->currentRadio.radioName));
-    }
-
-*/
 
 
     if (appName.length() > 0)
@@ -396,11 +364,13 @@ void RigControlMainWindow::upDateRadio()
             }
         }
 
-        //radio->buildPassBandTable();
+        radio->buildPassBandTable();
 
         // initialise rig state
-        //logger_mode = "USB";
-        //loggerSetPassBand(hamlibData::NOR );
+        logger_mode = "USB";
+        loggerSetPassBand(hamlibData::NOR );
+
+        dumpRadioToTraceLog();
 
 
     }
@@ -422,74 +392,7 @@ void RigControlMainWindow::upDateRadio()
 
 
 
-    trace("*** Radio Update ***");
-    trace(QString("App Instance Name  = %1").arg(appName));
-    trace(QString("Radio Name = %1").arg(selectRig->currentRadio.radioName));
-    trace(QString("Radio Number = %1").arg(selectRig->currentRadio.radioNumber));
-    trace(QString("Radio Model = %1").arg(selectRig->currentRadio.radioModel));
-    trace(QString("Radio Number = %1").arg(QString::number(selectRig->currentRadio.radioModelNumber)));
-    trace(QString("Radio Manufacturer = %1").arg(selectRig->currentRadio.radioMfg_Name));
-    if (selectRig->currentRadio.radioMfg_Name == "Icom")
-    {
-        if (selectRig->currentRadio.civAddress == "")
-        {
-            trace(QString("Icom CIV address = Using Default Rig Address"));
-        }
-        else
-        {
-            trace(QString("Icom CIV address = %1").arg(selectRig->currentRadio.civAddress));
-        }
 
-    }
-    trace(QString("Radio PortType = %1").arg(hamlibData::portTypeList[selectRig->currentRadio.portType]));
-    trace(QString("Network Address = %1").arg(selectRig->currentRadio.networkAdd));
-    trace(QString("Network Port = %1").arg(selectRig->currentRadio.networkPort));
-    trace(QString("Radio Comport = %1").arg(selectRig->currentRadio.comport));
-    trace(QString("Baudrate = %1").arg(selectRig->currentRadio.baudrate));
-    trace(QString("Stop bits = %1").arg(QString::number(selectRig->currentRadio.stopbits)));
-    trace(QString("Parity = %1").arg(radio->getParityCodeNames()[selectRig->currentRadio.parity]));
-    trace(QString("Handshake = %1").arg(radio->getHandShakeNames()[selectRig->currentRadio.handshake]));
-    QString f = "";
-    if (selectRig->currentRadio.transVertEnable)
-    {
-        f = "True";
-    }
-    else
-    {
-        f = "False";
-    }
-    trace(QString("TransVert Enable = %1").arg(f));
-    if (selectRig->currentRadio.transVertNegative)
-    {
-        f = "True";
-    }
-    else
-    {
-        f = "False";
-    }
-    trace(QString("TransVert Negative = %1").arg(f));
-    trace(QString("TransVert Offset = %1").arg(convertStringFreq(selectRig->currentRadio.transVertOffset)));
-    if (selectRig->currentRadio.useRxPassBand)
-    {
-        f = "True";
-    }
-    else
-    {
-        f = "False";
-    }
-    trace(QString("Use RX Passband = %1").arg(f));
-    trace(QString("Radio Passband CW NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NAR))));
-    trace(QString("Radio Passband CW NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NOR))));
-    trace(QString("Radio Passband CW WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::WIDE))));
-    trace(QString("Radio Passband USB NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::NAR))));
-    trace(QString("Radio Passband USB NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::NOR))));
-    trace(QString("Radio Passband USB WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::WIDE))));
-    trace(QString("Radio Passband FM NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::NAR))));
-    trace(QString("Radio Passband FM NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::NOR))));
-    trace(QString("Radio Passband FM WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::WIDE))));
-    trace(QString("Radio Passband MGM NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NAR))));
-    trace(QString("Radio Passband MGM NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NOR))));
-    trace(QString("Radio Passband MGM WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::WIDE))));
 
     if (radio->get_serialConnected())
     {
@@ -545,7 +448,7 @@ void RigControlMainWindow::openRadio()
     {
 
         //pollTimer->start(pollTime);             // start timer to send message to controller
-        if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL)
+        if (rig_port_e(selectRig->currentRadio.portType == RIG_PORT_SERIAL))
         {
                 showStatusMessage(QString("Connected to Radio: %1 - %2, %3, %4, %5, %6, %7, %8")
                                   //.arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel, selectRig->currentRadio.comport, selectRig->currentRadio.baudrate, selectRig->currentRadio.databits, selectRig->currentRadio.stopbits, radio->getParityCodeNames()[selectRig->currentRadio.parity], radio->getHandShakeNames()[selectRig->currentRadio.handshake]));
@@ -1167,5 +1070,75 @@ void RigControlMainWindow::sendRxPbFlagToLog()
     }
 }
 
+void RigControlMainWindow::dumpRadioToTraceLog()
+{
+    trace("*** Radio Update ***");
+    trace(QString("App Instance Name  = %1").arg(appName));
+    trace(QString("Radio Name = %1").arg(selectRig->currentRadio.radioName));
+    trace(QString("Radio Number = %1").arg(selectRig->currentRadio.radioNumber));
+    trace(QString("Rig Model = %1").arg(selectRig->currentRadio.radioModel).trimmed());
+    trace(QString("Rig Number = %1").arg(QString::number(selectRig->currentRadio.radioModelNumber)));
+    trace(QString("Rig Manufacturer = %1").arg(selectRig->currentRadio.radioMfg_Name));
+    if (selectRig->currentRadio.radioMfg_Name == "Icom")
+    {
+        if (selectRig->currentRadio.civAddress == "")
+        {
+            trace(QString("Icom CIV address = Using Default Rig Address"));
+        }
+        else
+        {
+            trace(QString("Icom CIV address = %1").arg(selectRig->currentRadio.civAddress));
+        }
 
+    }
+    trace(QString("Rig PortType = %1").arg(hamlibData::portTypeList[selectRig->currentRadio.portType]));
+    trace(QString("Network Address = %1").arg(selectRig->currentRadio.networkAdd));
+    trace(QString("Network Port = %1").arg(selectRig->currentRadio.networkPort));
+    trace(QString("Comport = %1").arg(selectRig->currentRadio.comport));
+    trace(QString("Baudrate = %1").arg(selectRig->currentRadio.baudrate));
+    trace(QString("Stop bits = %1").arg(QString::number(selectRig->currentRadio.stopbits)));
+    trace(QString("Parity = %1").arg(radio->getParityCodeNames()[selectRig->currentRadio.parity]));
+    trace(QString("Handshake = %1").arg(radio->getHandShakeNames()[selectRig->currentRadio.handshake]));
+    QString f = "";
+    if (selectRig->currentRadio.transVertEnable)
+    {
+        f = "True";
+    }
+    else
+    {
+        f = "False";
+    }
+    trace(QString("TransVert Enable = %1").arg(f));
+    if (selectRig->currentRadio.transVertNegative)
+    {
+        f = "True";
+    }
+    else
+    {
+        f = "False";
+    }
+    trace(QString("TransVert Negative = %1").arg(f));
+    trace(QString("TransVert Offset = %1").arg(convertStringFreq(selectRig->currentRadio.transVertOffset)));
+    if (selectRig->currentRadio.useRxPassBand)
+    {
+        f = "True";
+    }
+    else
+    {
+        f = "False";
+    }
+    trace(QString("Use RX Passband = %1").arg(f));
+    trace(QString("Radio Passband CW NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NAR))));
+    trace(QString("Radio Passband CW NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NOR))));
+    trace(QString("Radio Passband CW WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::WIDE))));
+    trace(QString("Radio Passband USB NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::NAR))));
+    trace(QString("Radio Passband USB NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::NOR))));
+    trace(QString("Radio Passband USB WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::WIDE))));
+    trace(QString("Radio Passband FM NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::NAR))));
+    trace(QString("Radio Passband FM NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::NOR))));
+    trace(QString("Radio Passband FM WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::WIDE))));
+    trace(QString("Radio Passband MGM NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NAR))));
+    trace(QString("Radio Passband MGM NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NOR))));
+    trace(QString("Radio Passband MGM WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::WIDE))));
 
+}

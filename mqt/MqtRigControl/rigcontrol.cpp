@@ -67,15 +67,20 @@ int RigControl::init(scatParams currentRadio)
 
     if (!my_rig)
     {
-        qDebug() << "Error init rig";
+        return retcode = -14;
     }
 
     // load cat params
-/*
+
     if (rig_port_e(currentRadio.portType) == RIG_PORT_SERIAL)
     {
         comport.append(currentRadio.comport);
         strncpy(my_rig->state.rigport.pathname, comport.toLatin1().data(), FILPATHLEN);
+        my_rig->state.rigport.parm.serial.rate = currentRadio.baudrate;
+        my_rig->state.rigport.parm.serial.data_bits = currentRadio.databits;
+        my_rig->state.rigport.parm.serial.stop_bits = currentRadio.stopbits;
+        my_rig->state.rigport.parm.serial.parity = getSerialParityCode(currentRadio.parity);
+        my_rig->state.rigport.parm.serial.handshake = getSerialHandshakeCode(currentRadio.handshake);
     }
     else if (rig_port_e(currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(currentRadio.portType) == RIG_PORT_UDP_NETWORK)
     {
@@ -96,14 +101,7 @@ int RigControl::init(scatParams currentRadio)
         }
     }
 
-*/
-    comport.append(currentRadio.comport);
-    strncpy(my_rig->state.rigport.pathname, comport.toLatin1().data(), FILPATHLEN);
-    my_rig->state.rigport.parm.serial.rate = currentRadio.baudrate;
-    my_rig->state.rigport.parm.serial.data_bits = currentRadio.databits;
-    my_rig->state.rigport.parm.serial.stop_bits = currentRadio.stopbits;
-    my_rig->state.rigport.parm.serial.parity = getSerialParityCode(currentRadio.parity);
-    my_rig->state.rigport.parm.serial.handshake = getSerialHandshakeCode(currentRadio.handshake);
+
 
 
     retcode = rig_open(my_rig);

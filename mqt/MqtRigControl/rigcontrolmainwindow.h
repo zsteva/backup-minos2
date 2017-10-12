@@ -127,6 +127,7 @@ private:
 
 
     void chkRadioMgmModeChanged();
+    void dumpRadioToTraceLog();
 private slots:
 
     void onStdInRead(QString);
