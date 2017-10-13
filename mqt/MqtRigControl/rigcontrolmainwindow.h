@@ -80,7 +80,9 @@ private:
     double curTransVertFrq;
     rmode_t curMode;
     bool mgmModeFlag;
-
+    shortfreq_t rRitFreq;
+    QString sRitFreq;
+    bool supRitFlag;
 
     QString geoStr;         // geometry registry location
 
@@ -128,6 +130,9 @@ private:
 
     void chkRadioMgmModeChanged();
     void dumpRadioToTraceLog();
+    void enableRitDisplay(bool state);
+    int getRitFreq(vfo_t vfo);
+    int setRitFreq(vfo_t vfo, shortfreq_t ritFreq);
 private slots:
 
     void onStdInRead(QString);

@@ -37,6 +37,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     , logger_bw_state(hamlibData::NOR)
     , rigErrorFlag(false)
     , mgmModeFlag(false)
+    , supRitFlag(false)
 
 {
 
@@ -368,6 +369,13 @@ void RigControlMainWindow::upDateRadio()
 
         // initialise rig state
         logger_mode = "USB";
+
+        retCode = radio->supportRit(selectRig->currentRadio.radioModelNumber, &supRitFlag);
+        if (retCode == RIG_OK)
+        {
+            enableRitDisplay(supRitFlag);
+        }
+
         loggerSetPassBand(hamlibData::NOR );
 
         dumpRadioToTraceLog();
@@ -516,19 +524,30 @@ void RigControlMainWindow::getRadioInfo()
         if (retCode < 0)
         {
             // error
-            logMessage("Get radioInfo: Get Freq error");
+            logMessage(QString("Get radioInfo: Get Freq error, code = ").arg(QString::number(retCode)));
             hamlibError(retCode, "Request Bearing");
-
         }
 
         retCode = getMode(RIG_VFO_CURR);
         if (retCode < 0)
         {
             // error
-            logMessage("Get radioInfo: Get Mode error");
+            logMessage(QString("Get radioInfo: Get Mode error").arg(QString::number(retCode)));
             hamlibError(retCode, "Request Mode");
 
         }
+
+        if (supRitFlag)
+        {
+            retCode = getRitFreq(RIG_VFO_CURR);
+            if (retCode < 0)
+            {
+                // error
+                logMessage(QString("Get radioInfo: Get RIT error").arg(QString::number(retCode)));
+                hamlibError(retCode, "Request RIT");
+            }
+        }
+
 
         sendRxPbFlagToLog();
     }
@@ -788,7 +807,34 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
     }
 }
 
+void RigControlMainWindow::enableRitDisplay(bool state)
+{
+    ui->ritLbl->setVisible(state);
+    ui->ritFreq->setVisible(state);
+}
 
+
+int RigControlMainWindow::getRitFreq(vfo_t vfo)
+{
+    int retCode = 0;
+
+
+    retCode = radio->getRit(vfo, &rRitFreq);
+    if (retCode = RIG_OK)
+    {
+        sRitFreq = QString::number(rRitFreq);
+        ui->ritFreq->setText(sRitFreq);
+    }
+    return retCode;
+}
+
+
+int RigControlMainWindow::setRitFreq(vfo_t vfo, shortfreq_t ritFreq)
+{
+
+    return radio->setRit(vfo, ritFreq);
+
+}
 
 void RigControlMainWindow::loggerSetPassBand(int state)
 {

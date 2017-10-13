@@ -210,6 +210,46 @@ QString RigControl::convertVfoQStr(vfo_t vfo)
 }
 
 
+/*************** RIT ********************************/
+
+
+
+
+
+int RigControl::getRit(vfo_t vfo, shortfreq_t *ritfreq)
+{
+    return rig_get_rit(my_rig, vfo, ritfreq);
+}
+
+int RigControl::setRit(vfo_t vfo, shortfreq_t ritfreq)
+{
+    return rig_set_rit(my_rig, vfo, ritfreq);
+}
+
+int RigControl::supportRit(int rigNumber, bool *ritFlag)
+{
+    int retCode = RIG_OK;
+    RIG *myRig;
+    myRig = rig_init(rigNumber);
+    if (myRig)
+    {
+        if (myRig->caps->get_rit == 0 && myRig->caps->set_rit == 0)
+        {
+            *ritFlag = false;
+            return retCode;
+        }
+        else
+        {
+            *ritFlag = true;
+            return retCode;
+        }
+    }
+
+    return retCode = -14;
+
+}
+
+
 /*************** Passband ********************************/
 
 
