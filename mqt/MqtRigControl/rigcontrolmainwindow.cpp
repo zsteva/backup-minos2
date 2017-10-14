@@ -138,16 +138,6 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
 
     upDateRadio();
-    if (radio->get_serialConnected())
-    {
-        sendStatusToLogConnected();
-    }
-    else
-    {
-        sendStatusToLogDisConnected();
-    }
-
-
 
 
 
@@ -368,22 +358,34 @@ void RigControlMainWindow::upDateRadio()
             }
         }
 
-        radio->buildPassBandTable();
-
-        // initialise rig state
-        logger_mode = "USB";
-
-        retCode = radio->supportRit(selectRig->currentRadio.radioModelNumber, &supRitFlag);
-        if (retCode == RIG_OK)
+        if (radio->get_serialConnected())
         {
-            enableRitDisplay(supRitFlag);
+            radio->buildPassBandTable();
+
+            // initialise rig state
+            logger_mode = "USB";
+
+            retCode = radio->supportRit(selectRig->currentRadio.radioModelNumber, &supRitFlag);
+            if (retCode == RIG_OK)
+            {
+                enableRitDisplay(supRitFlag);
+            }
+
+            loggerSetPassBand(hamlibData::NOR );
+
+            sendStatusToLogConnected();
+
+
+        }
+        else
+        {
+            trace(QString("#### Radio Failed to connect ####"));
+            sendStatusToLogDisConnected();
         }
 
-        loggerSetPassBand(hamlibData::NOR );
+
 
         dumpRadioToTraceLog();
-
-
     }
     else
     {   // no radio selected
@@ -424,12 +426,24 @@ void RigControlMainWindow::openRadio()
         showStatusMessage("Please select a Radio");
         return;
     }
-    if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL && selectRig->currentRadio.comport == "")
+    if (rig_port_e(selectRig->currentRadio.portType == RIG_PORT_SERIAL))
     {
-        logMessage(QString("Open Radio: No comport"));
-        showStatusMessage("Please select a Comport");
-        return;
+        if(selectRig->comportAvial(selectRig->currentRadio.radioNumber.toInt(), selectRig->currentRadio.comport) == -1)
+        {
+            logMessage(QString("Open Radio: Check comport - defined port %1 not available on computer").arg(selectRig->currentRadio.comport));
+            showStatusMessage(QString("Comport %1 no longer configured on computer?").arg(selectRig->currentRadio.comport));
+            return;
+        }
+
+        if (selectRig->currentRadio.comport == "")
+        {
+            logMessage(QString("Open Radio: No comport"));
+            showStatusMessage("Please select a Comport");
+            return;
+        }
+
     }
+
     if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(selectRig->currentRadio.portType == RIG_PORT_UDP_NETWORK))
     {
         if (selectRig->currentRadio.networkAdd == "" || (selectRig->currentRadio.networkPort == ""))
@@ -1178,6 +1192,15 @@ void RigControlMainWindow::dumpRadioToTraceLog()
         f = "False";
     }
     trace(QString("Use RX Passband = %1").arg(f));
+    if (supRitFlag)
+    {
+        f = "True";
+    }
+    else
+    {
+        f = "False";
+    }
+    trace(QString("Radio Supports RIT = ").arg(f));
     trace(QString("Radio Passband CW NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NAR))));
     trace(QString("Radio Passband CW NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NOR))));
     trace(QString("Radio Passband CW WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::WIDE))));

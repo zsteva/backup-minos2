@@ -402,11 +402,22 @@ void RotatorMainWindow::openRotator()
         showStatusMessage("Please select an Antenna");
         return;
     }
-    if (rig_port_e(selectRotator->currentAntenna.portType) == RIG_PORT_SERIAL && selectRotator->currentAntenna.comport == "")
+    if (rig_port_e(selectRotator->currentAntenna.portType == RIG_PORT_SERIAL))
     {
-        logMessage(QString("Open Rotator: No comport"));
-        showStatusMessage("Please select a Comport");
-        return;
+        if(selectRotator->comportAvial(selectRotator->currentAntenna.antennaNumber.toInt(), selectRotator->currentAntenna.comport) == -1)
+        {
+            logMessage(QString("Open Rotator: Check comport - defined port %1 not available on computer").arg(selectRotator->currentAntenna.comport));
+            showStatusMessage(QString("Comport %1 no longer configured on computer?").arg(selectRotator->currentAntenna.comport));
+            return;
+        }
+
+        if (selectRotator->currentAntenna.comport == "")
+        {
+            logMessage(QString("Open Rotator: No comport"));
+            showStatusMessage("Please select a Comport");
+            return;
+        }
+
     }
     if (rig_port_e(selectRotator->currentAntenna.portType) == RIG_PORT_NETWORK || rig_port_e(selectRotator->currentAntenna.portType == RIG_PORT_UDP_NETWORK))
     {

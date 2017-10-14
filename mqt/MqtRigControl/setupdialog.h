@@ -64,6 +64,7 @@ public:
 
     void readSettings();
     void setAppName(QString name);
+    int comportAvial(int radioNum, QString comport);
 signals:
 
     void radioNameChange();
