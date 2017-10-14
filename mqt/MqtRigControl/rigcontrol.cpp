@@ -233,7 +233,7 @@ int RigControl::supportRit(int rigNumber, bool *ritFlag)
     myRig = rig_init(rigNumber);
     if (myRig)
     {
-        if (myRig->caps->get_rit == 0 && myRig->caps->set_rit == 0)
+        if (myRig->caps->get_rit == 0 || myRig->caps->set_rit == 0)
         {
             *ritFlag = false;
             return retCode;

@@ -38,6 +38,9 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     , rigErrorFlag(false)
     , mgmModeFlag(false)
     , supRitFlag(false)
+    , curVfoFrq(0)
+    , curTransVertFrq(0)
+    , rRitFreq(0)
 
 {
 
@@ -520,6 +523,7 @@ void RigControlMainWindow::getRadioInfo()
     int retCode;
     if (radio->get_serialConnected())
     {
+
         retCode = getFrequency(RIG_VFO_CURR);
         if (retCode < 0)
         {
@@ -820,7 +824,7 @@ int RigControlMainWindow::getRitFreq(vfo_t vfo)
 
 
     retCode = radio->getRit(vfo, &rRitFreq);
-    if (retCode = RIG_OK)
+    if (retCode == RIG_OK)
     {
         sRitFreq = QString::number(rRitFreq);
         ui->ritFreq->setText(sRitFreq);
