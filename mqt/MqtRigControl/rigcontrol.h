@@ -174,6 +174,9 @@ public:
     int rigConvertQStrMode(QString mode);
     int getPortType(int rigNumber, rig_port_e *portType);
     int getModelInfo(QString radioModel, int *radioModelNumber, QString *radioMfgName, QString *radioModelName);
+    int getRit(vfo_t vfo, shortfreq_t *ritfreq);
+    int setRit(vfo_t vfo, shortfreq_t ritfreq);
+    int supportRit(int rigNumber, bool *ritFlag);
 signals:
     void frequency_updated(double);
     void debug_protocol(QString);

@@ -395,23 +395,35 @@ void RotatorMainWindow::openRotator()
 {
 
     int retCode = 0;
-/*
+
     if (selectRotator->currentAntenna.antennaName == "")
     {
+        logMessage(QString("Open Rotator: No rotator name!"));
         showStatusMessage("Please select an Antenna");
         return;
     }
-    if(selectRotator->currentAntenna.comport == "")
+    if (rig_port_e(selectRotator->currentAntenna.portType) == RIG_PORT_SERIAL && selectRotator->currentAntenna.comport == "")
     {
+        logMessage(QString("Open Rotator: No comport"));
         showStatusMessage("Please select a Comport");
         return;
     }
+    if (rig_port_e(selectRotator->currentAntenna.portType) == RIG_PORT_NETWORK || rig_port_e(selectRotator->currentAntenna.portType == RIG_PORT_UDP_NETWORK))
+    {
+        if (selectRotator->currentAntenna.networkAdd == "" || (selectRotator->currentAntenna.networkPort == ""))
+        {
+            logMessage(QString("Open Rotator: No network or Port Number"));
+            showStatusMessage("Please enter a network Address and Port Number");
+            return;
+        }
+
+    }
     if (selectRotator->currentAntenna.rotatorModel == "")
     {
-        showStatusMessage("Please select a rotator protcol");
+        logMessage(QString("Open Rotator: No rotator model"));
+        showStatusMessage("Please select a rotator model");
         return;
     }
-*/
 
 
     srotParams p = selectRotator->getCurrentAntenna();
@@ -425,9 +437,21 @@ void RotatorMainWindow::openRotator()
     {
 
         pollTimer->start(pollTime);             // start timer to send message to controller
-        showStatusMessage(tr("Connected to: %1 - %2, %3, %4, %5, %6, %7, %8")
-                              .arg(p.antennaName).arg(p.rotatorModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
-                              .arg(p.stopbits).arg(rotator->getParityCodeNames()[p.parity]).arg(rotator->getHandShakeNames()[p.handshake]));
+        if (rig_port_e(selectRotator->currentAntenna.portType == RIG_PORT_SERIAL))
+        {
+            showStatusMessage(tr("Connected to: %1 - %2, %3, %4, %5, %6, %7, %8")
+                                  .arg(p.antennaName).arg(p.rotatorModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
+                                  .arg(p.stopbits).arg(rotator->getParityCodeNames()[p.parity]).arg(rotator->getHandShakeNames()[p.handshake]));
+        }
+        else if (rig_port_e(selectRotator->currentAntenna.portType == RIG_PORT_NETWORK || rig_port_e(selectRotator->currentAntenna.portType == RIG_PORT_UDP_NETWORK)))
+        {
+            showStatusMessage(QString("Connected to Antenna: %1 - %2, %3").arg(selectRotator->currentAntenna.antennaName, selectRotator->currentAntenna.rotatorModel, selectRotator->currentAntenna.networkAdd + ":" + selectRotator->currentAntenna.networkPort));
+        }
+        else if (rig_port_e(selectRotator->currentAntenna.portType) == RIG_PORT_NONE)
+        {
+                showStatusMessage(QString("Connected to Antenna: %1 - %2").arg(selectRotator->currentAntenna.antennaName, selectRotator->currentAntenna.rotatorModel));
+        }
+
         sendStatusToLogConnected();
     }
     else

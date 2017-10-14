@@ -59,7 +59,8 @@ const QStringList hamlibErrorMsg = {"No Error, operation completed sucessfully",
                                 "Collision on the bus",
                                 "NULL RIG handle or any invalid pointer parameter in get arg",
                                 "Invalid VFO",
-                                "RIG_EDOM"};
+                                "RIG_EDOM",
+                                "Hamlib Init Fail"};
 
 
 }

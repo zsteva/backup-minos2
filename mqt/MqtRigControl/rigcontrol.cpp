@@ -67,15 +67,20 @@ int RigControl::init(scatParams currentRadio)
 
     if (!my_rig)
     {
-        qDebug() << "Error init rig";
+        return retcode = -14;
     }
 
     // load cat params
-/*
+
     if (rig_port_e(currentRadio.portType) == RIG_PORT_SERIAL)
     {
         comport.append(currentRadio.comport);
         strncpy(my_rig->state.rigport.pathname, comport.toLatin1().data(), FILPATHLEN);
+        my_rig->state.rigport.parm.serial.rate = currentRadio.baudrate;
+        my_rig->state.rigport.parm.serial.data_bits = currentRadio.databits;
+        my_rig->state.rigport.parm.serial.stop_bits = currentRadio.stopbits;
+        my_rig->state.rigport.parm.serial.parity = getSerialParityCode(currentRadio.parity);
+        my_rig->state.rigport.parm.serial.handshake = getSerialHandshakeCode(currentRadio.handshake);
     }
     else if (rig_port_e(currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(currentRadio.portType) == RIG_PORT_UDP_NETWORK)
     {
@@ -96,14 +101,7 @@ int RigControl::init(scatParams currentRadio)
         }
     }
 
-*/
-    comport.append(currentRadio.comport);
-    strncpy(my_rig->state.rigport.pathname, comport.toLatin1().data(), FILPATHLEN);
-    my_rig->state.rigport.parm.serial.rate = currentRadio.baudrate;
-    my_rig->state.rigport.parm.serial.data_bits = currentRadio.databits;
-    my_rig->state.rigport.parm.serial.stop_bits = currentRadio.stopbits;
-    my_rig->state.rigport.parm.serial.parity = getSerialParityCode(currentRadio.parity);
-    my_rig->state.rigport.parm.serial.handshake = getSerialHandshakeCode(currentRadio.handshake);
+
 
 
     retcode = rig_open(my_rig);
@@ -209,6 +207,46 @@ int RigControl::setVfo(vfo_t vfo)
 QString RigControl::convertVfoQStr(vfo_t vfo)
 {
     return QString::fromLatin1(rig_strvfo(vfo));
+}
+
+
+/*************** RIT ********************************/
+
+
+
+
+
+int RigControl::getRit(vfo_t vfo, shortfreq_t *ritfreq)
+{
+    return rig_get_rit(my_rig, vfo, ritfreq);
+}
+
+int RigControl::setRit(vfo_t vfo, shortfreq_t ritfreq)
+{
+    return rig_set_rit(my_rig, vfo, ritfreq);
+}
+
+int RigControl::supportRit(int rigNumber, bool *ritFlag)
+{
+    int retCode = RIG_OK;
+    RIG *myRig;
+    myRig = rig_init(rigNumber);
+    if (myRig)
+    {
+        if (myRig->caps->get_rit == 0 && myRig->caps->set_rit == 0)
+        {
+            *ritFlag = false;
+            return retCode;
+        }
+        else
+        {
+            *ritFlag = true;
+            return retCode;
+        }
+    }
+
+    return retCode = -14;
+
 }
 
 

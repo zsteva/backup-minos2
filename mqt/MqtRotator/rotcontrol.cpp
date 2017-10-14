@@ -113,7 +113,7 @@ int RotControl::init(srotParams selectedAntenna)
     my_rot = rot_init(selectedAntenna.rotatorModelNumber);
     if (!my_rot)
     {
-        //rotLogMessage("Error init rotator");
+        return retcode = -14;
     }
 
 
@@ -131,12 +131,23 @@ int RotControl::init(srotParams selectedAntenna)
 
 
     // load rotator params to open
-    strncpy(my_rot->state.rotport.pathname, comport.toLatin1().data(), comport.length());
-    my_rot->state.rotport.parm.serial.rate = selectedAntenna.baudrate;
-    my_rot->state.rotport.parm.serial.data_bits = selectedAntenna.databits;
-    my_rot->state.rotport.parm.serial.stop_bits = selectedAntenna.stopbits;
-    my_rot->state.rotport.parm.serial.parity = getSerialParityCode(selectedAntenna.parity);
-    my_rot->state.rotport.parm.serial.handshake = getSerialHandshakeCode(selectedAntenna.handshake);
+    if (rig_port_e(selectedAntenna.portType) == RIG_PORT_SERIAL)
+    {
+        strncpy(my_rot->state.rotport.pathname, comport.toLatin1().data(), comport.length());
+        my_rot->state.rotport.parm.serial.rate = selectedAntenna.baudrate;
+        my_rot->state.rotport.parm.serial.data_bits = selectedAntenna.databits;
+        my_rot->state.rotport.parm.serial.stop_bits = selectedAntenna.stopbits;
+        my_rot->state.rotport.parm.serial.parity = getSerialParityCode(selectedAntenna.parity);
+        my_rot->state.rotport.parm.serial.handshake = getSerialHandshakeCode(selectedAntenna.handshake);
+    }
+    else if (rig_port_e(selectedAntenna.portType) == RIG_PORT_NETWORK || rig_port_e(selectedAntenna.portType) == RIG_PORT_UDP_NETWORK)
+    {
+        strncpy(my_rot->state.rotport.pathname, QString(selectedAntenna.networkAdd + ":" + selectedAntenna.networkPort).toLatin1().data(), FILPATHLEN);
+    }
+    else if (rig_port_e(selectedAntenna.portType) == RIG_PORT_NONE)
+    {
+        strncpy(my_rot->state.rotport.pathname, QString("").toLatin1().data(), FILPATHLEN);
+    }
 
 
     retcode = rot_open(my_rot);
@@ -204,7 +215,7 @@ bool RotControl::getRotatorList(QComboBox *cb)
         if (getPortType(capsList.at(i)->rot_model, &portType) != -1)
         {
             //qDebug() << capsList.at(i)->rot_model << capsList.at(i)->model_name << portType;
-            if (portType != RIG_PORT_PARALLEL)
+            if (portType == RIG_PORT_SERIAL || portType == RIG_PORT_NETWORK || portType == RIG_PORT_UDP_NETWORK || portType == RIG_PORT_NONE)
             {
                 sl << t;
             }
