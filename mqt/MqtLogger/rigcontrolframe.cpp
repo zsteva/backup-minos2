@@ -117,8 +117,10 @@ void RigControlFrame::initRigFrame(QWidget */*parent*/)
     ui->modelbl->setText(MODE_ERROR);
     ui->normalRb->setChecked(true);
     connect(ui->freqInput, SIGNAL(receivedFocus()), this, SLOT(freqLineEditInFocus()));
+    connect(ui->freqInput, SIGNAL(lostFocus()), this, SLOT(exitFreqEdit()));
     connect(ui->freqInput, SIGNAL(returnPressed()), this, SLOT(returnChangeRadioFreq()));
     connect(ui->freqInput, SIGNAL(newFreq()), this, SLOT(changeRadioFreq()));
+
     connect(this, SIGNAL(escapePressed()), this, SLOT(exitFreqEdit()));
     // when no radio is connected
     connect(this, SIGNAL(noRadioSendFreq(QString)), this, SLOT(noRadioSetFreq(QString)));
@@ -189,6 +191,7 @@ void RigControlFrame::setFreq(QString f)
             ui->freqInput->setText(freq);
         }
         curFreq = freq;
+
     }
     // an error here
 
@@ -200,7 +203,7 @@ void RigControlFrame::changeRadioFreq()
     traceMsg("Change Radio Freq");
     static QString freq = "";
 
-    QString newfreq = ui->freqInput->text();
+    QString newfreq = ui->freqInput->text().trimmed();
     if (newfreq != freq)
     {
         freq = newfreq;
@@ -214,6 +217,7 @@ void RigControlFrame::changeRadioFreq()
             {
                 noRadioSendOutFreq(freq);
             }
+
         }
     }
 
@@ -257,15 +261,6 @@ void RigControlFrame::noRadioSendOutFreq(QString f)
     tslf->on_NoRadioSetFreq(f);
 }
 
-
-void RigControlFrame::exitFreqEdit()
-{
-    traceMsg("Exit Edit Freq");
-    freqEditOn = false;
-    setFreq(curFreq);
-    freqLineEditFrameColour(false);
-    ui->freqInput->clearFocus();
-}
 
 
 
@@ -616,7 +611,20 @@ void RigControlFrame::freqLineEditInFocus()
 {
     traceMsg("Freq LineEdit in Focus");
     freqEditOn = true;
+    ui->freqInput->setReadOnly(false);
     freqLineEditFrameColour(true);
+}
+
+
+
+void RigControlFrame::exitFreqEdit()
+{
+    traceMsg("Exit Edit Freq");
+    freqEditOn = false;
+    setFreq(curFreq);
+    freqLineEditFrameColour(false);
+    ui->freqInput->clearFocus();
+    ui->freqInput->setReadOnly(true);
 }
 
 
@@ -947,6 +955,7 @@ void FreqLineEdit::focusInEvent( QFocusEvent * /*ev*/ )
 void FreqLineEdit::focusOutEvent(QFocusEvent * /*ev*/)
 {
     inFocus = false;
+    emit lostFocus();
 }
 
 
@@ -988,38 +997,7 @@ void FreqLineEdit::keyPressEvent(QKeyEvent *event)
     }
 }
 
-/*
-void FreqLineEdit::changeFreq(bool direction)
-{
-    QString freq = text();
-    int pos = cursorPosition();
-    int d = freq[pos].digitValue();
-    QChar di = QChar(0);
 
-    if (direction)
-    {
-        d++;
-        if (d > 9)
-        {
-            d = 0;
-        }
-    }
-    else
-    {
-        d--;
-        if (d < 0)
-        {
-            d = 9;
-        }
-    }
-    di = QChar(d + 48);
-    insert(di);
-    setCursorPosition(pos);
-
-    emit newFreq();
-}
-
-*/
 
 
 void FreqLineEdit::changeFreq(bool direction)

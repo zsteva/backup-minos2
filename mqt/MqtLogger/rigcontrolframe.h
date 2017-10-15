@@ -169,6 +169,7 @@ public:
 
 signals:
     void receivedFocus() ;
+    void lostFocus();
     void newFreq();
 private:
     bool inFocus;
