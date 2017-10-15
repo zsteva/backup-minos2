@@ -92,7 +92,7 @@ private:
     void closeRadio();
     int getFrequency(vfo_t vfo);
     int getMode(vfo_t vfo);
-    QString convertStringFreq(double);
+    QString convertFreqString(double);
 
     void setPolltime(int);
     int getPolltime();

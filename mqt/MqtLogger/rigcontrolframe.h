@@ -88,6 +88,7 @@ private slots:
 
 
 
+    void returnChangeRadioFreq();
 private:
 
     // memory buttons
@@ -165,15 +166,26 @@ public:
     ~FreqLineEdit();
 
 
-    void focusInEvent( QFocusEvent* ) ;
 
 signals:
     void receivedFocus() ;
-
+    void newFreq();
 private:
+    bool inFocus;
 
 
+    void changeFreq(bool direction);
+    void focusInEvent(QFocusEvent *);
+    void focusOutEvent(QFocusEvent *);
+    void wheelEvent(QWheelEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+    QString convertFreqString(double frequency);
 } ;
+
+
+
+
+
 
 
 #endif // RIGCONTROLFRAME_H

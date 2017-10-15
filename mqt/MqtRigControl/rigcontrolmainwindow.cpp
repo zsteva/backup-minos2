@@ -892,7 +892,7 @@ void RigControlMainWindow::updateFreq(double frequency)
 void RigControlMainWindow::displayFreqVfo(double frequency)
 {
 
-    ui->radioFreqA->setText(convertStringFreq(frequency));
+    ui->radioFreqA->setText(convertFreqString(frequency));
 }
 
 
@@ -900,7 +900,7 @@ void RigControlMainWindow::displayFreqVfo(double frequency)
 
 void RigControlMainWindow::displayTransVertVfo(double frequency)
 {
-    ui->transVertFreqA->setText(convertStringFreq(frequency));
+    ui->transVertFreqA->setText(convertFreqString(frequency));
 }
 
 
@@ -919,7 +919,7 @@ void RigControlMainWindow::displayPassband(pbwidth_t width)
 }
 
 
-QString RigControlMainWindow::convertStringFreq(double frequency)
+QString RigControlMainWindow::convertFreqString(double frequency)
 {
     double freq = frequency;
     sfreq = QString::number(freq,'f', 0);
@@ -1104,7 +1104,7 @@ void RigControlMainWindow::sendFreqToLog(freq_t freq)
 {
     if (appName.length() > 0)
     {
-        msg->publishFreq(convertStringFreq(freq));
+        msg->publishFreq(convertFreqString(freq));
     }
 }
 
@@ -1182,7 +1182,7 @@ void RigControlMainWindow::dumpRadioToTraceLog()
         f = "False";
     }
     trace(QString("TransVert Negative = %1").arg(f));
-    trace(QString("TransVert Offset = %1").arg(convertStringFreq(selectRig->currentRadio.transVertOffset)));
+    trace(QString("TransVert Offset = %1").arg(convertFreqString(selectRig->currentRadio.transVertOffset)));
     if (selectRig->currentRadio.useRxPassBand)
     {
         f = "True";

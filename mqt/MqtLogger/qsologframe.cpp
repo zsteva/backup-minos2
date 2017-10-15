@@ -1529,7 +1529,7 @@ void QSOLogFrame::setFreq(QString f)
     if (curFreq != f)
     {
         curFreq = f;
-        qDebug() << "freq = " << f << " mode = " << mode;
+
     }
 }
 //---------------------------------------------------------------------------
