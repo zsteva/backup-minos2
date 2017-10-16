@@ -62,23 +62,10 @@ class RPCParamStruct;
 template < class itemtype >
 class MinosItem
 {
-   private:
+   protected:
       bool dirty;
       itemtype val;
       itemtype operator = ( const itemtype& ); // make it inaccessible
-
-      QString miTrim(const QString & s)
-      {
-         return s.trimmed();
-      }
-      int miTrim(const int & s)
-      {
-         return s;
-      }
-      bool miTrim(const bool & s)
-      {
-         return s;
-      }
 
    public:
 
@@ -96,7 +83,7 @@ class MinosItem
          if ( val != t )        // so all item classes need != operator
          {
             dirty = true;
-            val = miTrim(t);
+            val = t;
          }
       }
       void setValue( MinosItem<itemtype> t )
@@ -110,7 +97,7 @@ class MinosItem
       void setInitialValue( itemtype t )
       {
          dirty = false;
-         val = miTrim(t);
+         val = t;
       }
       bool isDirty() const
       {
@@ -140,13 +127,39 @@ class MinosItem
          }
       }
 };
+template < class QString >
+class MinosStringItem : public MinosItem<QString>
+{
+public:
+    virtual void setValue( QString t )
+    {
+       if ( MinosItem<QString>::val != t )        // so all item classes need != operator
+       {
+          MinosItem<QString>::dirty = true;
+          MinosItem<QString>::val = t.trimmed();
+       }
+    }
+    void setValue( MinosStringItem<QString> t )
+    {
+       if ( MinosItem<QString>::val != t.getValue() )        // so all item classes need != operator
+       {
+          MinosItem<QString>::dirty = true;
+          MinosItem<QString>::val = t.getValue();
+       }
+    }
+    virtual void setInitialValue( QString t )
+    {
+       MinosItem<QString>::dirty = false;
+       MinosItem<QString>::val = t;
+    }
+};
 //---------------------------------------------------------------------------
 enum DTG {DTGLOG, DTGDISP, DTGReg1Test, DTGFULL, DTGPRINT, DTGACCURATE};
 class dtg
 {
    private:
-      MinosItem<QString> sdate;
-      MinosItem<QString> stime;
+      MinosStringItem<QString> sdate;
+      MinosStringItem<QString> stime;
 
       bool baddtg;
    public:
@@ -212,7 +225,7 @@ class callsign
 	#define NUMBITLENGTH 4
 	#define TRAILBITLENGTH 3
    public:
-      MinosItem<QString> fullCall; // full call
+      MinosStringItem<QString> fullCall; // full call
       // eg for <pe/f0ctt/mm> (g0gjv/p) [F6CTT/RVI/P]
       QString prefix; // <pe> (g) [/RVI]country of location
       QString prefix2;  // <f> (g) [F]country of issue
@@ -233,7 +246,7 @@ class callsign
 class locator
 {
    public:
-      MinosItem<QString> loc;	// allowing for Microwave locs
+      MinosStringItem<QString> loc;	// allowing for Microwave locs
 
       mutable char valRes;
 

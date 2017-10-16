@@ -33,6 +33,67 @@ namespace Ui {
     class RigControlFrame;
 }
 
+class RigControlFrame;
+class RigMemoryButton : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit RigMemoryButton(QWidget *parent, RigControlFrame *rcf, int no);
+    ~RigMemoryButton();
+
+    RigControlFrame *rigControlFrame;
+    QToolButton* memButton;
+    QMenu* memoryMenu;
+    QShortcut* shortKey;
+    QAction* readAction;
+    QAction* writeAction;
+    QAction* editAction;
+    QAction* clearAction;
+
+    int memNo;
+private slots:
+    void memoryUpdate();
+
+    void memoryShortCutSelected();
+    void readActionSelected();
+    void editActionSelected();
+    void writeActionSelected();
+    void clearActionSelected();
+signals:
+    void clearActionSelected(int);
+
+};
+class RunMemoryButton : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit RunMemoryButton(QToolButton *b, RigControlFrame *rcf, int no);
+    ~RunMemoryButton();
+
+    RigControlFrame *rigControlFrame;
+    QToolButton* memButton;
+    QMenu* memoryMenu;
+    QShortcut* shortKey;
+    QAction* readAction;
+    QAction* writeAction;
+    QAction* editAction;
+    QAction* clearAction;
+
+    int memNo;
+private slots:
+    void memoryUpdate();
+
+    void memoryShortCutSelected();
+    void readActionSelected();
+    void editActionSelected();
+    void writeActionSelected();
+    void clearActionSelected();
+signals:
+    void clearActionSelected(int);
+
+};
 
 class RigControlFrame : public QFrame
 {
@@ -44,6 +105,8 @@ public:
 
     Ui::RigControlFrame *ui;
 
+    void setContest(BaseContestLog *);
+
     void setRadioLoaded();
     void setMode(QString);
     void setFreq(QString);
@@ -51,6 +114,16 @@ public:
     void setRadioState(QString);
     bool isRadioLoaded();
     void setRxPBFlag(QString);
+
+    void exitFreqEdit();
+    void memoryUpdate(int);
+    void readActionSelected(int);
+    void editActionSelected(int buttonNumber);
+    void writeActionSelected(int);
+    void runButtonUpdate(int);
+    void runButReadActSel(int buttonNumber);
+    void runButWriteActSel(int buttonNumber);
+    void runButEditActSel(int buttonNumber);
 
 signals:
     void sendFreqControl(QString);
@@ -60,67 +133,44 @@ signals:
 
 private slots:
     void freqLineEditInFocus();
-    void changeRadioFreq();
     void radioBandFreq(int index);
     void noRadioSetFreq(QString);
 
-    void memoryUpdate(int);
 
-    void exitFreqEdit();
-    void memoryShortCutSelected(int buttonNumber);
-    void readActionSelected(int);
-    void editActionSelected(int buttonNumber);
-    void writeActionSelected(int);
-    void clearActionSelected(int);
-    void passBandRadioSelected(int button);
-
-    void runButShortCutSel(int buttonNumber);
-    void runButReadActSel(int buttonNumber);
-    void runButWriteActSel(int buttonNumber);
-    void runButEditActSel(int buttonNumber);
-    void runButClearActSel(int buttonNumber);
-    void runButtonUpdate(int buttonNumber);
-
-
-
-    void on_FontChanged();
-
-
-
+    void on_newMemoryButton_clicked();
+public slots:
+    void changeRadioFreq();
 
     void returnChangeRadioFreq();
+
+    void clearActionSelected(int);
+
+    void runButClearActSel(int buttonNumber);
+
+    void passBandRadioSelected(int button);
 private:
+    virtual bool eventFilter(QObject *obj, QEvent *event) override;
 
     // memory buttons
+    memoryData::memData getRigMemoryData(int memoryNumber);
+    memoryData::memData getRunMemoryData(int memoryNumber);
 
-    QToolButton* memButtons[memoryData::NUM_MEMORIES];
-    QMenu* memoryMenu[memoryData::NUM_MEMORIES];
-    QShortcut* shortKey[memoryData::NUM_MEMORIES];
-    QAction* readAction[memoryData::NUM_MEMORIES];
-    QAction* writeAction[memoryData::NUM_MEMORIES];
-    QAction* editAction[memoryData::NUM_MEMORIES];
-    QAction* clearAction[memoryData::NUM_MEMORIES];
+    void setRigMemoryData(int memoryNumber, memoryData::memData m);
+    void setRunMemoryData(int memoryNumber, memoryData::memData m);
 
-    // run button
-    QToolButton* runButton[runButData::NUM_RUNBUTTONS];
-    QMenu* runButMenu[runButData::NUM_RUNBUTTONS];
-    QShortcut* runButShortKey[runButData::NUM_RUNBUTTONS];
-    QAction* runButReadAct[runButData::NUM_RUNBUTTONS];
-    QAction* runButWriteAct[runButData::NUM_RUNBUTTONS];
-    QAction* runButEditAct[runButData::NUM_RUNBUTTONS];
-    QAction* runButClearAct[runButData::NUM_RUNBUTTONS];
+    LoggerContestLog *ct;
+
+    QMap<int, RigMemoryButton *> memButtonMap;
+    QMap<int, RunMemoryButton *> runButtonMap;
 
 
     QShortcut *freqEditKey;
     QLabel *freqLabel;
 
     QRadioButton* pBandButton[3];
-    RigMemDialog* memDialog;
-    RunButtonDialog* runDialog;
 
     bool radioLoaded;
     bool freqEditOn;
-    //bool memFlag;
     QString curFreq;
     QString curMode;
     int curpbState;
@@ -128,34 +178,24 @@ private:
     QString radioState;
     bool rxPBFlag;
 
-    memoryData::memData logData;
-    memoryData::memData runData;
-
     void sendModeToRadio(QString);
     void freqLineEditBkgnd(bool status);
     void freqLineEditFrameColour(bool status);
-    void keyPressEvent(QKeyEvent *event);
 
     void initRigFrame(QWidget *parent);
-    void initMemoryButtons(QWidget *parent);
     void loadMemoryButtonLabels();
     void initPassBandRadioButtons();
     void noRadioSendOutFreq(QString f);
 
-    void initRunMemoryButton(QWidget *parent);
-
+    void initRunMemoryButton();
+    void loadRunButtonLabels();
 
     void traceMsg(QString msg);
-    void loadRunButtonLabels();
 
     QString extractKhz(QString f);
     void loadMemories();
-signals:
-    void escapePressed();
-
+    void mgmLabelVisible(bool state);
 };
-
-
 class FreqLineEdit : public QLineEdit
 {
     Q_OBJECT
@@ -165,28 +205,16 @@ public:
     FreqLineEdit(QWidget *parent);
     ~FreqLineEdit();
 
-
-
 signals:
     void receivedFocus() ;
     void lostFocus();
     void newFreq();
 private:
-    bool inFocus;
-
 
     void changeFreq(bool direction);
-    void focusInEvent(QFocusEvent *);
-    void focusOutEvent(QFocusEvent *);
     void wheelEvent(QWheelEvent *event);
     void keyPressEvent(QKeyEvent *event);
     QString convertFreqString(double frequency);
 } ;
-
-
-
-
-
-
 
 #endif // RIGCONTROLFRAME_H

@@ -100,10 +100,13 @@ const QString DEFAULT_TIME = "00:00";
 
 namespace memoryData {
 
-const int  NUM_MEMORIES = 10;
+class  memData
+{
+public:
+    memData():pBandState(memDefData::DEFAULT_PBAND_STATE), bearing(memDefData::DEFAULT_BEARING)
+    {
+    }
 
-
-struct  memData {
     QString callsign;
     QString freq;
     QString mode;
@@ -112,23 +115,24 @@ struct  memData {
     QString locator;
     int bearing;
     QString time;
+
+    bool operator==( const memData& rhs ) const
+    {
+        if (callsign.compare(rhs.callsign, Qt::CaseInsensitive) == 0
+                && freq.compare(rhs.freq, Qt::CaseInsensitive) == 0
+                && mode.compare(rhs.mode, Qt::CaseInsensitive) == 0
+                && locator.compare(rhs.locator, Qt::CaseInsensitive) == 0
+                && pBandState == rhs.pBandState)
+        {
+            return true;
+        }
+        return false;
+    }
+    bool operator!=( const memData& rhs ) const
+    {
+        return !(*this == rhs);
+    }
 };
-
-
-
-
-const QStringList memoryTitle = { "M1:",
-                                  "M2:",
-                                  "M3:",
-                                  "M4:",
-                                  "M5:",
-                                  "M6:",
-                                  "M7:",
-                                  "M8:",
-                                  "M9:",
-                                  "M10:"};
-
-const QString memTitleBlank = "        ";
 
 
 }
@@ -139,27 +143,10 @@ namespace runButData {
 const int NUM_RUNBUTTONS = 2;
 
 const QStringList runButTitle = {
-    "Run 1  ",
-    "Run 2  "
+    "Run 1 ([) ",
+    "Run 2 (]) "
 
 };
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #endif // RIGMEMCOMMONDATA_H

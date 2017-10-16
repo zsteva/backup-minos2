@@ -24,7 +24,7 @@ void strtobuf( const QString &str )
 {
    buffpt += strcpysp( &diskBuffer[ buffpt ], str, str.length() ) + 1;
 }
-void strtobuf( const MinosItem<QString> &str )
+void strtobuf( const MinosStringItem<QString> &str )
 {
    strtobuf( str.getValue() );
 }
@@ -60,7 +60,7 @@ void buftostr( QString &str )
    }
    buffpt += len + 1;   // step past null terminator
 }
-void buftostr( MinosItem<QString> &str )
+void buftostr( MinosStringItem<QString> &str )
 {
    QString temp;
    buftostr( temp );

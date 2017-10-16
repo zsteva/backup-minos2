@@ -10,6 +10,8 @@
 #ifndef LoggerContestH
 #define LoggerContestH 
 //----------------------------------------------------------------------------
+#include "rigmemcommondata.h"
+
 class DisplayContestContact;
 struct StanzaPos
 {
@@ -69,50 +71,59 @@ class LoggerContestLog : public BaseContestLog
       // Bundles are specific to the off disk logs, not the monitored logs
 
       SettingsBundle entryBundle;      // individual LoggerContestLog
-      MinosItem<QString> entryBundleName;
+      MinosStringItem<QString> entryBundleName;
       SettingsBundle QTHBundle;        // individual QTH
-      MinosItem<QString> QTHBundleName;
+      MinosStringItem<QString> QTHBundleName;
       SettingsBundle stationBundle;    // individual station
-      MinosItem<QString> stationBundleName;
+      MinosStringItem<QString> stationBundleName;
 
       SettingsBundle appBundle;    // individual apps
-      MinosItem<QString> appBundleName;
+      MinosStringItem<QString> appBundleName;
 
-      MinosItem<QString> appRigControl;
-      MinosItem<QString> appBandMap;
-      MinosItem<QString> appRotator;
-      MinosItem<QString> appVoiceKeyer;
+      MinosStringItem<QString> appRigControl;
+      MinosStringItem<QString> appBandMap;
+      MinosStringItem<QString> appRotator;
+      MinosStringItem<QString> appVoiceKeyer;
 
 
-      MinosItem<QString> VHFContestName;
+      MinosStringItem<QString> VHFContestName;
 
       // Most of this info is bundle related, and not relevant when monitored (?)
 
-      MinosItem<QString> entrant;
-      MinosItem<QString> entSect;
-      MinosItem<QString> sqth1;
-      MinosItem<QString> sqth2;
-      MinosItem<QString> entTx;
-      MinosItem<QString> entRx;
-      MinosItem<QString> entAnt;
-      MinosItem<QString> entAGL;
-      MinosItem<QString> entASL;
-      MinosItem<QString> ops1;        // list of ops for contest
-      MinosItem<QString> ops2;        // list of ops for contest
-      MinosItem<QString> entCondx1;
-      MinosItem<QString> entCondx2;
-      MinosItem<QString> entCondx3;
-      MinosItem<QString> entCondx4;
-      MinosItem<QString> entName;
-      MinosItem<QString> entCall;
-      MinosItem<QString> entAddr1;
-      MinosItem<QString> entAddr2;
-      MinosItem<QString> entPostCode;
-      MinosItem<QString> entCity;
-      MinosItem<QString> entCountry;
-      MinosItem<QString> entPhone;
-      MinosItem<QString> entEMail;
-      MinosItem<QString> sectionList; // needed to be carried forward
+      MinosStringItem<QString> entrant;
+      MinosStringItem<QString> entSect;
+      MinosStringItem<QString> sqth1;
+      MinosStringItem<QString> sqth2;
+      MinosStringItem<QString> entTx;
+      MinosStringItem<QString> entRx;
+      MinosStringItem<QString> entAnt;
+      MinosStringItem<QString> entAGL;
+      MinosStringItem<QString> entASL;
+      MinosStringItem<QString> ops1;        // list of ops for contest
+      MinosStringItem<QString> ops2;        // list of ops for contest
+      MinosStringItem<QString> entCondx1;
+      MinosStringItem<QString> entCondx2;
+      MinosStringItem<QString> entCondx3;
+      MinosStringItem<QString> entCondx4;
+      MinosStringItem<QString> entName;
+      MinosStringItem<QString> entCall;
+      MinosStringItem<QString> entAddr1;
+      MinosStringItem<QString> entAddr2;
+      MinosStringItem<QString> entPostCode;
+      MinosStringItem<QString> entCity;
+      MinosStringItem<QString> entCountry;
+      MinosStringItem<QString> entPhone;
+      MinosStringItem<QString> entEMail;
+      MinosStringItem<QString> sectionList; // needed to be carried forward
+
+      QVector<MinosItem<memoryData::memData> > runMemories;
+      QVector<MinosItem<memoryData::memData> > rigMemories;
+
+      void saveRunMemory(int memno, const memoryData::memData &mem);
+      void saveRigMemory(int memno, const memoryData::memData &mem);
+      void saveInitialRunMemory(int memno, const memoryData::memData &mem);
+      void saveInitialRigMemory(int memno, const memoryData::memData &mem);
+
 
       // dirty info is only relevant when it is being editted
       // but needs to stay with the data

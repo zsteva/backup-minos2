@@ -1725,13 +1725,19 @@ void QSOLogFrame::on_ModeButton_clicked()
     EditControlExit(ui->ModeButton);
 }
 
-void QSOLogFrame::modeSentFromRig(QString mode)
+void QSOLogFrame::modeSentFromRig(QString m)
 {
     if (qsoLogModeFlag)
     {
          qsoLogModeFlag = false;
          return;
     }
+    QStringList mlist = m.split(':');
+    if (mlist.length() != 2 )
+    {
+        return;
+    }
+    QString mode = mlist[0];
 
     for (int i = 0; i < hamlibData::supModeList.count(); i++)
     {

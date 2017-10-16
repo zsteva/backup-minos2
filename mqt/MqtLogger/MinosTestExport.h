@@ -33,6 +33,10 @@ class MinosTestExport
       void exportApps(QSharedPointer<QFile> expfd);
       void exportBundles(QSharedPointer<QFile> expfd );
       void exportComment( QSharedPointer<QFile> expfd, const QSharedPointer<BaseContact> lct );
+      void exportRigMemory(QSharedPointer<QFile> expfd, int memno );
+      void exportRunMemory(QSharedPointer<QFile> expfd, int memno );
+      void exportAllMemories(QSharedPointer<QFile> expfd);
+
 
    public:
       MinosTestExport( LoggerContestLog * const ct );

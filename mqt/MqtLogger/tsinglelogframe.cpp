@@ -29,6 +29,9 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 {
     ui->setupUi(this);
 
+    ui->FKHRigControlFrame->setContest(contest);
+    ui->FKHRotControlFrame->setContest(contest);
+
     ui->GJVQSOLogFrame->setAsEdit(false, "Log");
 
     ui->matchTreesFrame->setBaseName("Log");

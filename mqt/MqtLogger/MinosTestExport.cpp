@@ -364,6 +364,52 @@ int MinosTestExport::exportQSO(QSharedPointer<QFile> expfd, const QSharedPointer
    }
    return exp_stanzaCount;
 }
+void MinosTestExport::exportRigMemory(QSharedPointer<QFile> expfd, int memno )
+{
+    MinosItem<memoryData::memData> mem = ct->rigMemories[memno];
+    if (mem.isDirty())
+    {
+        RPCParamStruct * st = new RPCParamStruct;
+        makeHeader( st, 1 );
+
+        st->addMember(memno, "memno");
+        st->addMember(mem.getValue().callsign, "callsign");
+        st->addMember(mem.getValue().freq, "freq");
+        st->addMember(mem.getValue().mode, "mode");
+        st->addMember(mem.getValue().locator, "locator");
+        st->addMember(mem.getValue().pBandState, "bandstate");
+
+        sendRequest(expfd, "MinosRigMemory", st);
+    }
+}
+void MinosTestExport::exportRunMemory(QSharedPointer<QFile> expfd, int memno )
+{
+    MinosItem<memoryData::memData> mem = ct->runMemories[memno];
+    if (mem.isDirty())
+    {
+        RPCParamStruct * st = new RPCParamStruct;
+        makeHeader( st, 1 );
+
+        st->addMember(memno, "memno");
+        st->addMember(mem.getValue().freq, "freq");
+        st->addMember(mem.getValue().mode, "mode");
+        st->addMember(mem.getValue().pBandState, "bandstate");
+
+        sendRequest(expfd, "MinosRunMemory", st);
+    }
+}
+void MinosTestExport::exportAllMemories(QSharedPointer<QFile> expfd )
+{
+    for (int i = 0; i < ct->runMemories.size(); i++)
+    {
+        exportRunMemory( expfd, i);
+    }
+    for (int i = 0; i < ct->rigMemories.size(); i++)
+    {
+        exportRigMemory( expfd, i);
+    }
+}
+
 int MinosTestExport::exportAllDetails(QSharedPointer<QFile> minosContestFile, bool newfile )
 {
    if ( newfile )
@@ -386,6 +432,7 @@ int MinosTestExport::exportAllDetails(QSharedPointer<QFile> minosContestFile, bo
    exportOperators( minosContestFile );
    exportApps(minosContestFile);
    exportBundles( minosContestFile );
+   exportAllMemories(minosContestFile);
 
    return exp_stanzaCount;
 }
@@ -412,6 +459,7 @@ int MinosTestExport::exportTest( QSharedPointer<QFile> expfd, int mindump, int m
    exportOperators( expfd );     // not right... we need to log op changes
    exportApps(expfd);
    exportBundles( expfd );
+   exportAllMemories(expfd);
 
    bool inDump = false;
    foreach(MapWrapper<BaseContact> dct, ct->ctList)

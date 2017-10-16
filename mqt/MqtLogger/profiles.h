@@ -88,10 +88,10 @@ class SettingsBundle
       void setBoolProfile( int enumkey, bool value );
 
       void getStringProfile( const QString &key, QString &value, const QString &def );
-      void getStringProfile( const QString &key, MinosItem<QString> &value, const QString &def );
+      void getStringProfile( const QString &key, MinosStringItem<QString> &value, const QString &def );
       void setStringProfile(const QString &key, const QString &value );
       void getStringProfile( int enumkey, QString &value );
-      void getStringProfile( int enumkey, MinosItem<QString> &value );
+      void getStringProfile( int enumkey, MinosStringItem<QString> &value );
       void setStringProfile( int enumkey, const QString &value );
 
       void getIntProfile(const QString &key, int &value, int def );

@@ -31,7 +31,7 @@ bool MinosTestImport::getStructArgMemberValueDTG( QSharedPointer<RPCParam>rpm, c
    }
    return false;
 }
-bool MinosTestImport::getStructArgMemberValueDTG( QSharedPointer<RPCParam>rpm, const QString &name, MinosItem<QString> &val )
+bool MinosTestImport::getStructArgMemberValueDTG( QSharedPointer<RPCParam>rpm, const QString &name, MinosStringItem<QString> &val )
 {
    QString temp;
    bool ret = getStructArgMemberValueDTG( rpm, name, temp );
@@ -55,7 +55,7 @@ bool MinosTestImport::getStructArgMemberValue( QSharedPointer<RPCParam>rpm, cons
    }
    return false;
 }
-bool MinosTestImport::getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, MinosItem<QString> &val )
+bool MinosTestImport::getStructArgMemberValue( QSharedPointer<RPCParam>rpm, const QString &name, MinosStringItem<QString> &val )
 {
    QString temp;
    bool ret = getStructArgMemberValue( rpm, name, temp );
@@ -117,7 +117,7 @@ bool MinosTestImport::getStructArgMemberValueDTG( const QString &name, QString &
 {
    return getStructArgMemberValueDTG( body, name, val );
 }
-bool MinosTestImport::getStructArgMemberValueDTG( const QString &name, MinosItem<QString> &val )
+bool MinosTestImport::getStructArgMemberValueDTG( const QString &name, MinosStringItem<QString> &val )
 {
    return getStructArgMemberValueDTG( body, name, val );
 }
@@ -125,7 +125,7 @@ bool MinosTestImport::getStructArgMemberValue( const QString &name, QString &val
 {
    return getStructArgMemberValue( body, name, val );
 }
-bool MinosTestImport::getStructArgMemberValue( const QString &name, MinosItem<QString> &val )
+bool MinosTestImport::getStructArgMemberValue( const QString &name, MinosStringItem<QString> &val )
 {
    return getStructArgMemberValue( body, name, val );
 }

@@ -484,11 +484,11 @@ void RigControlMainWindow::openRadio()
         }
         else if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_UDP_NETWORK)
         {
-                showStatusMessage(QString("Connected to Radio: %1 - %2, %3").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel, selectRig->currentRadio.networkAdd + ":" + selectRig->currentRadio.networkPort));
+                showStatusMessage(QString("Connected to: %1 - %2, %3").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel, selectRig->currentRadio.networkAdd + ":" + selectRig->currentRadio.networkPort));
         }
         else if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NONE)
         {
-                showStatusMessage(QString("Connected to Radio: %1 - %2").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel));
+                showStatusMessage(QString("Connected to: %1 - %2").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel));
         }
 
 
@@ -708,12 +708,12 @@ int RigControlMainWindow::getMode(vfo_t vfo)
         {
             displayModeVfo(radio->convertModeQstr(rmode));
             displayPassband(rwidth);
-            sendModeToLog(radio->convertModeQstr(rmode));
+            sendModeToLog(radio->convertModeQstr(rmode) + ":" + " ");
         }
         else
         {
             displayModeVfo(hamlibData::MGM);
-            sendModeToLog(hamlibData::MGM);
+            sendModeToLog(hamlibData::MGM + ":" + selectRig->currentRadio.mgmMode);
         }
 
 

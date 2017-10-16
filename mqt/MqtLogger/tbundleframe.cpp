@@ -45,7 +45,7 @@ void TBundleFrame::initialise()
    }
    suppressChange = false;
 }
-void TBundleFrame::initialise(ContestDetails *cdp, const QString &cap, SettingsBundle *b, MinosItem<QString> *name )
+void TBundleFrame::initialise(ContestDetails *cdp, const QString &cap, SettingsBundle *b, MinosStringItem<QString> *name )
 {
     cd = cdp;
    if ( b )

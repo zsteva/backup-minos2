@@ -100,8 +100,8 @@ class BaseContestLog: public BaseLogList
 
       MinosItem<bool> protectedContest;
 
-      MinosItem<QString> name;         // name of contest
-      MinosItem<QString> location;
+      MinosStringItem<QString> name;         // name of contest
+      MinosStringItem<QString> location;
 
       callsign mycall;  // CONTAINS MinosItem
       locator myloc;  // CONTAINS MinosItem
@@ -114,10 +114,10 @@ class BaseContestLog: public BaseLogList
       MinosItem<bool> locatorField;
       MinosItem<bool> QTHField;
 
-      MinosItem<QString> power;
-      MinosItem<QString> currentMode;
+      MinosStringItem<QString> power;
+      MinosStringItem<QString> currentMode;
 
-      MinosItem<QString> band;
+      MinosStringItem<QString> band;
       MinosItem<bool> otherExchange;
       MinosItem<bool> countryMult;
       MinosItem<bool> nonGCountryMult;
@@ -128,12 +128,12 @@ class BaseContestLog: public BaseLogList
       MinosItem<bool> M7Mults;
 
       MinosItem<bool> usesBonus;
-      MinosItem<QString> bonusType;
+      MinosStringItem<QString> bonusType;
 
       MinosItem<bool> powerWatts;
       MinosItem<int> scoreMode;
-      MinosItem<QString> DTGStart;
-      MinosItem<QString> DTGEnd;
+      MinosStringItem<QString> DTGStart;
+      MinosStringItem<QString> DTGEnd;
 
 	  MinosItem<int> bearingOffset;
 
@@ -186,8 +186,8 @@ class BaseContestLog: public BaseLogList
 
       // Ancilliary variables
 
-      MinosItem<QString> currentOp1;         // current main op - derived from contacts
-      MinosItem<QString> currentOp2;         // current second op - derived from contacts
+      MinosStringItem<QString> currentOp1;         // current main op - derived from contacts
+      MinosStringItem<QString> currentOp2;         // current second op - derived from contacts
 
       OperatorList oplist;
 

@@ -18,14 +18,14 @@ extern const double dr /* = pi/180.0*/;      			  // degree to radian conversion
 
 extern void clearBuffer( void );
 extern void strtobuf( const QString &str );
-extern void strtobuf( const MinosItem<QString> &str );
+extern void strtobuf( const MinosStringItem<QString> &str );
 extern void strtobuf();
 QString strupr( const QString &s );
 extern int strnicmp( const QString &s1, const QString &s2, unsigned int len );
 extern void opyn( bool b );
 void opyn( const MinosItem<bool> &b );
 extern void buftostr( QString &str );
-extern void buftostr( MinosItem<QString> &str );
+extern void buftostr( MinosStringItem<QString> &str );
 extern bool inyn();
 extern size_t strcpysp( char *s1, const QString &s2, int maxlen = 255 );
 extern int strcpysp( QString &s1, const QString &s2, int maxlen = 255 );
