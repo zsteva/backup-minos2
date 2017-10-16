@@ -141,8 +141,9 @@ private slots:
 public slots:
     void changeRadioFreq();
 
-    void clearActionSelected(int);
+    void returnChangeRadioFreq();
 
+    void clearActionSelected(int);
 
     void runButClearActSel(int buttonNumber);
 
@@ -194,5 +195,24 @@ private:
     QString extractKhz(QString f);
     void loadMemories();
 };
+class FreqLineEdit : public QLineEdit
+{
+    Q_OBJECT
+
+public:
+
+    FreqLineEdit(QWidget *parent);
+    ~FreqLineEdit();
+
+signals:
+    void receivedFocus() ;
+    void newFreq();
+private:
+
+    void changeFreq(bool direction);
+    void wheelEvent(QWheelEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+    QString convertFreqString(double frequency);
+} ;
 
 #endif // RIGCONTROLFRAME_H

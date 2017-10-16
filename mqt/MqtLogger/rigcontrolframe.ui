@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>455</width>
+    <width>467</width>
     <height>122</height>
    </rect>
   </property>
@@ -43,7 +43,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="freqInput">
+          <widget class="FreqLineEdit" name="freqInput">
            <property name="focusPolicy">
             <enum>Qt::ClickFocus</enum>
            </property>
@@ -174,7 +174,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>261</width>
+            <width>273</width>
             <height>76</height>
            </rect>
           </property>
@@ -267,6 +267,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FreqLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>rigcontrolframe.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>freqInput</tabstop>
   <tabstop>bandSelCombo</tabstop>

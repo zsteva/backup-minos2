@@ -96,7 +96,8 @@ void RigControlFrame::initRigFrame(QWidget */*parent*/)
 
     ui->modelbl->setText(MODE_ERROR);
     ui->normalRb->setChecked(true);
-    connect(ui->freqInput, SIGNAL(returnPressed()), this, SLOT(changeRadioFreq()));
+    connect(ui->freqInput, SIGNAL(returnPressed()), this, SLOT(returnChangeRadioFreq()));
+    connect(ui->freqInput, SIGNAL(newFreq()), this, SLOT(changeRadioFreq()));
 
     // when no radio is connected
     connect(this, SIGNAL(noRadioSendFreq(QString)), this, SLOT(noRadioSetFreq(QString)));
@@ -159,10 +160,12 @@ void RigControlFrame::setFreq(QString f)
 void RigControlFrame::changeRadioFreq()
 {
     traceMsg("Change Radio Freq");
-    QString freq = "";
-    if (ui->freqInput->isModified())
+    static QString freq = "";
+
+    QString newfreq = ui->freqInput->text();
+    if (newfreq != freq)
     {
-        freq = ui->freqInput->text();
+        freq = newfreq;
         if (freq.count() >=4)
         {
             if (isRadioLoaded())
@@ -175,11 +178,13 @@ void RigControlFrame::changeRadioFreq()
             }
         }
     }
-
-    exitFreqEdit();
 }
 
-
+void RigControlFrame::returnChangeRadioFreq()
+{
+    changeRadioFreq();
+    //exitFreqEdit();
+}
 
 void RigControlFrame::radioBandFreq(int index)
 {
@@ -842,4 +847,166 @@ void RunMemoryButton::writeActionSelected()
 void RunMemoryButton::clearActionSelected()
 {
     emit clearActionSelected(memNo);
+}
+//********************************************//
+
+FreqLineEdit::FreqLineEdit(QWidget *parent):
+    QLineEdit(parent)
+{
+
+}
+
+
+FreqLineEdit::~FreqLineEdit()
+{
+
+
+}
+
+void FreqLineEdit::wheelEvent(QWheelEvent *event)
+{
+    int numDegrees = event->delta() / 8;
+    int numTicks = numDegrees / 15;
+
+    if (numTicks = 1)
+    {
+       changeFreq(true);
+    }
+    else
+    {
+        changeFreq(false);
+    }
+
+    event->accept();
+}
+
+
+void FreqLineEdit::keyPressEvent(QKeyEvent *event)
+{
+
+    if(event->key() == Qt::Key_Up)
+    {
+        changeFreq(true);
+    }
+    else if(event->key() == Qt::Key_Down)
+    {
+        changeFreq(false);
+
+    }
+    else
+    {
+        // default handler for event
+        QLineEdit::keyPressEvent(event);
+    }
+}
+
+
+void FreqLineEdit::changeFreq(bool direction)
+{
+    static const double tuningData[][14] =
+                                        {
+                                        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                                        {10, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                                        {100, 10, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                                        {1000, 0, 100, 10, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                                        {10000, 1000, 0, 100, 10, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+                                        {100000, 10000, 1000, 0, 100, 10, 1, 0, 0, 0, 0, 0, 0, 0},
+                                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                                        {1000000, 0, 100000, 10000, 1000, 0, 100, 10, 1, 0, 0, 0, 0, 0},
+                                        {10000000, 1000000, 0, 100000, 10000, 1000, 0, 100, 10, 1, 0, 0, 0, 0},
+                                        {100000000, 10000000, 1000000, 0, 100000, 10000, 1000, 0, 100, 10, 1, 0, 0, 0},
+                                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                                        {1000000000, 0, 100000000, 10000000, 1000000, 0, 100000, 10000, 1000, 0, 100, 10, 1, 0},
+                                        {10000000000, 1000000000, 0, 100000000, 10000000, 1000000, 0, 100000, 10000, 1000, 0, 100, 10, 1}
+                                        };
+
+
+
+    bool ok = false;
+    QString sfreq = text();
+    int sfreqLen = sfreq.length();
+    int pos = cursorPosition();
+    if (sfreqLen < 0 || sfreqLen > 13 || pos < 0 || pos > sfreqLen)
+    {
+        return;
+    }
+    const double tuneStep = tuningData[sfreqLen - 1][pos];
+
+
+    sfreq = sfreq.trimmed().remove('.');
+    double freq = sfreq.toDouble(&ok);
+
+    if (!ok)
+    {
+        return;
+
+    }
+
+    if (direction)
+    {
+        freq = freq + tuneStep;
+    }
+    else
+    {
+        freq = freq - tuneStep;
+    }
+
+
+    sfreq = convertFreqString(freq);
+    setText(sfreq);
+    setCursorPosition(pos);
+
+    emit newFreq();
+
+}
+
+QString FreqLineEdit::convertFreqString(double frequency)
+{
+    QString sfreq;
+    double freq = frequency;
+    sfreq = QString::number(freq,'f', 0);
+    int len = sfreq.length();
+
+
+    switch(len)
+    {
+        case 11:
+            sfreq = sfreq.insert(8, '.');
+            sfreq = sfreq.insert(5, '.');
+            sfreq = sfreq.insert(2, '.');
+            break;
+        case 10:
+            sfreq = sfreq.insert(7, '.');
+            sfreq = sfreq.insert(4, '.');
+            sfreq = sfreq.insert(1, '.');
+            break;
+        case 9:
+            sfreq = sfreq.insert(3, '.');
+            sfreq = sfreq.insert(7, '.');
+            break;
+        case 8:
+            sfreq = sfreq.insert(2, '.');
+            sfreq = sfreq.insert(6, '.');
+            break;
+        case 7:
+            sfreq = sfreq.insert(4, '.');
+            sfreq = sfreq.insert(1, '.');
+            break;
+        case 6:
+            sfreq = sfreq.insert(3,'.');
+            break;
+        case 5:
+            sfreq = sfreq.insert(2,'.');
+            break;
+        case 4:
+            sfreq = sfreq.insert(1,'.');
+            break;
+        default:
+            sfreq = "??.???.???.???";    // error
+
+    }
+
+
+    return sfreq;
 }
