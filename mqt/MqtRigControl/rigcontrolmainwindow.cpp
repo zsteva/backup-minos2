@@ -206,10 +206,7 @@ void RigControlMainWindow::initActionsConnections()
     connect(ui->actionTraceLog, SIGNAL(changed()), this, SLOT(saveTraceLogFlag()));
 
     connect(pollTimer, SIGNAL(timeout()), this, SLOT(getRadioInfo()));
-    //connect(pollTimer, SIGNAL(timeout()), this, SLOT(getCurMode()));
-    //connect(radio, SIGNAL(frequency_updated(double)), this, SLOT(updateFreq(const double)));
-//    connect(this, SIGNAL(frequency_updated(double)), this, SLOT(displayFreqA(const double)));
-    //connect(this, SIGNAL(mode_updated(QString)), this, SLOT(displayModeVfoA(QString)));
+
 
     // configure antenna dialog
     connect(selectRig, SIGNAL(currentRadioSettingChanged(QString)), this, SLOT(currentRadioSettingChanged(QString)));
@@ -220,11 +217,10 @@ void RigControlMainWindow::initActionsConnections()
     connect(msg, SIGNAL(setMode(QString)), this, SLOT(loggerSetMode(QString)));
     connect(msg, SIGNAL(setPassBand(int)), this, SLOT(loggerSetPassBand(int)));
 
-    //connect(this, SIGNAL(frequency_updated(double)), this, SLOT(drawDial(double)));
-    //connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
+
 
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
-    //connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
 
     connect(radio, SIGNAL(debug_protocol(QString)), this, SLOT(logMessage(QString)));
 
