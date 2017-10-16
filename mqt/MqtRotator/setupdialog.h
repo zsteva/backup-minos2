@@ -64,6 +64,7 @@ public:
     void copyAntennaToCurrent(int antennaNumber);
 
     void setAppName(QString name);
+    int comportAvial(int antennaNum, QString comport);
 signals:
 
     void currentAntennaSettingChanged(QString);

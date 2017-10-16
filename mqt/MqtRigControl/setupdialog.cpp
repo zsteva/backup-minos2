@@ -613,7 +613,10 @@ void SetupDialog::comportSelected(int boxNumber)
     }
 }
 
-
+int SetupDialog::comportAvial(int radioNum, QString comport)
+{
+    return comPorts[radioNum]->findText(comport);
+}
 
 void SetupDialog::comSpeedSelected(int boxNumber)
 {

@@ -62,6 +62,7 @@ const QStringList portTypeList = { "RIG_PORT_NONE", "RIG_PORT_SERIAL", "RIG_PORT
 
 
 
+
 // File Name Constants
 
 

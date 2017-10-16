@@ -627,6 +627,12 @@ void SetupDialog::comportSelected(int boxNumber)
 }
 
 
+int SetupDialog::comportAvial(int antennaNum, QString comport)
+{
+    return comPorts[antennaNum]->findText(comport);
+}
+
+
 
 void SetupDialog::comSpeedSelected(int boxNumber)
 {
