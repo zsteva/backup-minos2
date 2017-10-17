@@ -262,6 +262,7 @@ void TLogContainer::setupMenus()
 
     startConfigAction = newAction("Startup Apps Configuration", ui->menuTools, SLOT(StartConfigActionExecute()));
     ui->menuTools->addSeparator();
+    LocCalcAction = newAction("Locator Calculator", ui->menuTools, SLOT(LocCalcActionExecute()));
 //    AnalyseMinosLogAction = newAction("Analyse Minos Log", ui->menuTools, SLOT(AnalyseMinosLogActionExecute()));
 //    ui->menuTools->addSeparator();
 
@@ -321,6 +322,7 @@ void TLogContainer::enableActions()
 {
    bool f = ( ui->ContestPageControl->currentIndex() >= 0 );
 
+   LocCalcAction->setEnabled(true);
    FileNewAction->setEnabled(true);
    HelpAboutAction->setEnabled(true);
 
@@ -756,7 +758,16 @@ void TLogContainer::MakeEntryActionExecute()
     BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
     MinosLoggerEvents::SendMakeEntry(ct);
 }
-
+void TLogContainer::LocCalcActionExecute()
+{
+    TLocCalcForm loccalc( this );
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    if (ct)
+    {
+       loccalc.S1Loc = ct->myloc.loc.getValue();
+    }
+    loccalc.exec();
+}
 void TLogContainer::AnalyseMinosLogActionExecute()
 {
     QString InitialDir = getDefaultDirectory( false );

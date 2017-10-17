@@ -108,6 +108,7 @@ private:
     QAction *ShiftTabRightAction;
 
     QAction *startConfigAction;
+    QAction *LocCalcAction;
     QAction *AnalyseMinosLogAction;
     QAction *CorrectDateTimeAction;
     QAction *ShowOperatorsAction;
@@ -162,6 +163,7 @@ private slots:
     void ShiftTabLeftActionExecute();
     void ShiftTabRightActionExecute();
 
+    void LocCalcActionExecute();
     void AnalyseMinosLogActionExecute();
     void CorrectDateTimeActionExecute();
     void ShowOperatorsActionExecute();
