@@ -1006,26 +1006,11 @@ void SetupDialog::readSettings()
 
 void SetupDialog::clearAvailRotators()
 {
-
+    srotParams nulParam;
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
     {
-        availAntennas[i].antennaName = "";
-        availAntennas[i].antennaNumber = "";
-        availAntennas[i].rotatorModelName = "";
-        availAntennas[i].rotatorModelNumber = 0;
-        availAntennas[i].rotatorManufacturer = "";
-        availAntennas[i].southStopFlag = false;
-        availAntennas[i].overRunFlag = false;
-        availAntennas[i].antennaOffset = 0;
-        availAntennas[i].portType = int(RIG_PORT_NONE);
-        availAntennas[i].comport = "";
-        availAntennas[i].baudrate = 9600;
-        availAntennas[i].databits = 8;
-        availAntennas[i].parity = rotator->getSerialParityCode(0);
-        availAntennas[i].handshake = rotator->getSerialHandshakeCode(0);
-        availAntennas[i].networkAdd = "";
-        availAntennas[i].networkPort = "";
+        availAntennas[i] = nulParam;
     }
 
 
@@ -1034,47 +1019,14 @@ void SetupDialog::clearAvailRotators()
 
 void SetupDialog::clearCurrentRotator()
 {
-
-    currentAntenna.antennaName = "";
-    currentAntenna.antennaNumber = "";
-    currentAntenna.rotatorModelName = "";
-    currentAntenna.rotatorModelNumber = 0;
-    currentAntenna.rotatorManufacturer = "";
-    currentAntenna.southStopFlag = false;
-    currentAntenna.overRunFlag = false;
-    currentAntenna.antennaOffset = 0;
-    currentAntenna.portType = int(RIG_PORT_NONE);
-    currentAntenna.comport = "";
-    currentAntenna.baudrate = 9600;
-    currentAntenna.databits = 8;
-    currentAntenna.parity = rotator->getSerialParityCode(0);
-    currentAntenna.handshake = rotator->getSerialHandshakeCode(0);
-    currentAntenna.networkAdd = "";
-    currentAntenna.networkPort = "";
-
+    srotParams nulParam;
+    currentAntenna = nulParam;
 }
 
 
 void SetupDialog::copyAntennaToCurrent(int antennaNumber)
 {
-    currentAntenna.antennaName = availAntennas[antennaNumber].antennaName;
-    currentAntenna.antennaNumber = availAntennas[antennaNumber].antennaNumber;
-    currentAntenna.rotatorModel = availAntennas[antennaNumber].rotatorModel;
-    currentAntenna.rotatorModelNumber = availAntennas[antennaNumber].rotatorModelNumber;
-    currentAntenna.rotatorModelName = availAntennas[antennaNumber].rotatorModelName;
-    currentAntenna.rotatorManufacturer = availAntennas[antennaNumber].rotatorManufacturer;
-    currentAntenna.southStopFlag = availAntennas[antennaNumber].southStopFlag;
-    currentAntenna.overRunFlag = availAntennas[antennaNumber].overRunFlag;
-    currentAntenna.antennaOffset = availAntennas[antennaNumber].antennaOffset;
-    currentAntenna.portType = availAntennas[antennaNumber].portType;
-    currentAntenna.comport = availAntennas[antennaNumber].comport;
-    currentAntenna.baudrate = availAntennas[antennaNumber].baudrate;
-    currentAntenna.databits = availAntennas[antennaNumber].databits;
-    currentAntenna.parity = availAntennas[antennaNumber].parity;
-    currentAntenna.stopbits = availAntennas[antennaNumber].stopbits;
-    currentAntenna.handshake = availAntennas[antennaNumber].handshake;
-    currentAntenna.networkAdd = availAntennas[antennaNumber].networkAdd;
-    currentAntenna.networkPort = availAntennas[antennaNumber].networkPort;
+    currentAntenna = availAntennas[antennaNumber];
 }
 
 void SetupDialog::clearAntennaValueChanged()

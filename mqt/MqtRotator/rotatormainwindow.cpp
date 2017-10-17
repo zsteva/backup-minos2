@@ -402,7 +402,7 @@ void RotatorMainWindow::openRotator()
         showStatusMessage("Please select an Antenna");
         return;
     }
-    if (rig_port_e(selectRotator->currentAntenna.portType == RIG_PORT_SERIAL))
+    if (rig_port_e(selectRotator->currentAntenna.portType) == RIG_PORT_SERIAL)
     {
         if(selectRotator->comportAvial(selectRotator->currentAntenna.antennaNumber.toInt(), selectRotator->currentAntenna.comport) == -1)
         {
@@ -448,7 +448,7 @@ void RotatorMainWindow::openRotator()
     {
 
         pollTimer->start(pollTime);             // start timer to send message to controller
-        if (rig_port_e(selectRotator->currentAntenna.portType == RIG_PORT_SERIAL))
+        if (rig_port_e(selectRotator->currentAntenna.portType) == RIG_PORT_SERIAL)
         {
             showStatusMessage(tr("Connected to: %1 - %2, %3, %4, %5, %6, %7, %8")
                                   .arg(p.antennaName).arg(p.rotatorModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
@@ -848,25 +848,11 @@ void RotatorMainWindow::upDateAntenna()
             return;
         }
 
-        selectRotator->currentAntenna.antennaName = selectRotator->availAntennas[antennaIndex].antennaName;
-        selectRotator->currentAntenna.antennaNumber = selectRotator->availAntennas[antennaIndex].antennaNumber;
-        selectRotator->currentAntenna.rotatorModel = selectRotator->availAntennas[antennaIndex].rotatorModel;
-        selectRotator->currentAntenna.rotatorManufacturer = selectRotator->availAntennas[antennaIndex].rotatorManufacturer;
-        selectRotator->currentAntenna.rotatorModelNumber = selectRotator->availAntennas[antennaIndex].rotatorModelNumber;
-        selectRotator->currentAntenna.rotatorModelName = selectRotator->availAntennas[antennaIndex].rotatorModelName;
-        selectRotator->currentAntenna.southStopFlag = selectRotator->availAntennas[antennaIndex].southStopFlag;
-        selectRotator->currentAntenna.overRunFlag = selectRotator->availAntennas[antennaIndex].overRunFlag;
-        selectRotator->currentAntenna.antennaOffset = selectRotator->availAntennas[antennaIndex].antennaOffset;
-        selectRotator->currentAntenna.comport = selectRotator->availAntennas[antennaIndex].comport;
-        selectRotator->currentAntenna.baudrate = selectRotator->availAntennas[antennaIndex].baudrate;
-        selectRotator->currentAntenna.databits = selectRotator->availAntennas[antennaIndex].databits;
-        selectRotator->currentAntenna.stopbits = selectRotator->availAntennas[antennaIndex].stopbits;
-        selectRotator->currentAntenna.parity = selectRotator->availAntennas[antennaIndex].parity;
-        selectRotator->currentAntenna.handshake = selectRotator->availAntennas[antennaIndex].handshake;
+        selectRotator->currentAntenna = selectRotator->availAntennas[antennaIndex];
 
         //if (appName > 0)
         //{
-        selectRotator->saveCurrentAntenna();
+        //selectRotator->saveCurrentAntenna();
         //}
         //else
         //{
