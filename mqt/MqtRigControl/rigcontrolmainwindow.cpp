@@ -422,7 +422,7 @@ void RigControlMainWindow::openRadio()
         showStatusMessage("Please select a Radio");
         return;
     }
-    if (rig_port_e(selectRig->currentRadio.portType == RIG_PORT_SERIAL))
+    if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL)
     {
         if(selectRig->comportAvial(selectRig->currentRadio.radioNumber.toInt(), selectRig->currentRadio.comport) == -1)
         {
@@ -469,7 +469,7 @@ void RigControlMainWindow::openRadio()
     {
 
         //pollTimer->start(pollTime);             // start timer to send message to controller
-        if (rig_port_e(selectRig->currentRadio.portType == RIG_PORT_SERIAL))
+        if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL)
         {
                 showStatusMessage(QString("Connected to Radio: %1 - %2, %3, %4, %5, %6, %7, %8")
                                   //.arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel, selectRig->currentRadio.comport, selectRig->currentRadio.baudrate, selectRig->currentRadio.databits, selectRig->currentRadio.stopbits, radio->getParityCodeNames()[selectRig->currentRadio.parity], radio->getHandShakeNames()[selectRig->currentRadio.handshake]));

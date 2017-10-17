@@ -69,8 +69,9 @@ const QStringList hamlibErrorMsg = {"No Error, operation completed sucessfully",
 
 
 
-struct srotParams
+class srotParams
 {
+public:
   QString antennaName;
   QString antennaNumber;
   QString configLabel;
@@ -79,29 +80,29 @@ struct srotParams
   QString rotatorManufacturer;
   QString rotatorModelName;
   int rotatorModelNumber;
-  azimuth_t min_azimuth;
-  azimuth_t max_azimuth;
-  elevation_t min_elevation;
-  elevation_t max_elevation;
+  azimuth_t min_azimuth = 0.0;
+  azimuth_t max_azimuth = 0.0;
+  elevation_t min_elevation = 0.0;
+  elevation_t max_elevation = 0.0;
   bool southStopFlag = false;
   bool overRunFlag = false;
   int antennaOffset = 0;
-  bool moving;
+  bool moving = false;
   int portType = int(RIG_PORT_NONE);
   QString networkAdd;
   QString networkPort;
-  int serial_rate_max;
-  int serial_rate_min;
-  int baudrate;
-  int parity;
-  int stopbits;
-  int databits;
-  int handshake;
-  bool enableRot;
-  bool activeRTS;
-  bool activeDTR;
-  bool nactiveRTS;
-  bool nactiveDTR;
+  int serial_rate_max = 0;
+  int serial_rate_min = 0;
+  int baudrate = 0;
+  int parity = 0;
+  int stopbits = 0;
+  int databits = 0;
+  int handshake = 0;
+  bool enableRot = false;
+  bool activeRTS = false;
+  bool activeDTR = false;
+  bool nactiveRTS = false;
+  bool nactiveDTR = false;
 
 };
 
