@@ -71,14 +71,14 @@ void RigControlRpc::publishRadioName(const QString &radioName)
 
 void RigControlRpc::publishFreq(const QString &freq)
 {
-    static QString old;
+    //static QString old;
 
-    if ( freq != old )
-    {
-       old = freq;
+    //if ( freq != old )
+    //{
+       //old = freq;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
        rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyFreq, freq, psPublished );
-    }
+    //}
 }
 
 

@@ -539,7 +539,7 @@ void RigControlMainWindow::getRadioInfo()
         {
             // error
             logMessage(QString("Get radioInfo: Get Freq error, code = ").arg(QString::number(retCode)));
-            hamlibError(retCode, "Request Bearing");
+            hamlibError(retCode, "Request Frequency");
         }
 
         retCode = getMode(RIG_VFO_CURR);
@@ -587,6 +587,7 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
     QString sfreq = freq.remove('.');
 
     double f = sfreq.toDouble(&ok);
+    logMessage(QString("SetFreq: Change to Freq = %1").arg(QString::number(f)));
 
     if (ok)
     {
@@ -595,32 +596,44 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
             if (selectRig->currentRadio.transVertNegative)
             {
                 f = f + selectRig->currentRadio.transVertOffset;
+                logMessage(QString("SetFreq: Negative Transvert Enabled Freq = %1").arg(QString::number(f)));
             }
             else
             {
                 f = f - selectRig->currentRadio.transVertOffset;
+                logMessage(QString("SetFreq: Transvert Enabled Freq = %1").arg(QString::number(f)));
             }
+
         }
         if (radio->get_serialConnected())
         {
-            retCode = radio->setFrequency(f, vfo);
-            if (retCode == RIG_OK)
+            // validate freq for this rig
+            if (radio->checkFreqValid(f, curMode))
             {
-                qDebug() << "frequency changed!";
+                retCode = radio->setFrequency(f, vfo);
+                if (retCode != RIG_OK)
+                {
+                    logMessage(QString("SetFreq: Error Setting Freq Code = %1").arg(retCode));
+                    hamlibError(retCode, "SetFreq");
+                }
+                else
+                {
+                    logMessage(QString("SetFreq: Rig set to Freq = %1").arg(QString::number(f)));
+                }
             }
             else
             {
-                hamlibError(retCode, "SetFreq");
+                logMessage(QString("SetFreq: Invalid Tx Freq for Radio, Freq = %1").arg(QString::number(f)));
             }
         }
         else
         {
-            qDebug() << "radio not conntected";
+            logMessage(QString("SetFreq: Radio is not connected"));
         }
     }
     else
     {
-        qDebug() << "freq conversion from string failed";
+        logMessage(QString("SetFreq:: Freq conversion from string %1 failed").arg(sfreq));
     }
 }
 
@@ -633,8 +646,8 @@ int RigControlMainWindow::getFrequency(vfo_t vfo)
     retCode = radio->getFrequency(vfo, &rfrequency);
     if (retCode == RIG_OK)
     {
-        if (rfrequency != curVfoFrq)
-        {
+        //if (rfrequency != curVfoFrq)
+        //{
             curVfoFrq = rfrequency;
             logMessage(QString("Trans Enable = %1").arg(QString::number(selectRig->currentRadio.transVertEnable)));
             if (selectRig->currentRadio.transVertEnable)
@@ -667,14 +680,10 @@ int RigControlMainWindow::getFrequency(vfo_t vfo)
             {
                 sendFreqToLog(rfrequency);
             }
-        }
-        //else
-        //{
-        //    return retCode;
-       // }
+        //}
+
     }
-    //else
-    //{
+
     return retCode;
 
 

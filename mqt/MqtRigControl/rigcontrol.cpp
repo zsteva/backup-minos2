@@ -147,6 +147,21 @@ int RigControl::setFrequency(freq_t frequency, vfo_t vfo)
     return (rig_set_freq(my_rig, vfo, frequency));
 }
 
+
+
+bool RigControl::checkFreqValid(freq_t freq, rmode_t mode)
+{
+
+    const freq_range_t* freq_range = rig_get_range(my_rig->caps->tx_range_list1, freq, mode);
+    return (freq_range != 0)? true:false;
+
+}
+
+
+
+
+
+
 /* ---------------------- Mode ------------------------------------ */
 
 int RigControl::getMode(vfo_t vfo, rmode_t *mode, pbwidth_t *width)

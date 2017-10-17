@@ -177,6 +177,7 @@ public:
     int getRit(vfo_t vfo, shortfreq_t *ritfreq);
     int setRit(vfo_t vfo, shortfreq_t ritfreq);
     int supportRit(int rigNumber, bool *ritFlag);
+    bool checkFreqValid(freq_t freq, rmode_t mode);
 signals:
     void frequency_updated(double);
     void debug_protocol(QString);
