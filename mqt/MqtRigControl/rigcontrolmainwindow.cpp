@@ -533,7 +533,7 @@ void RigControlMainWindow::getRadioInfo()
     int retCode;
     if (radio->get_serialConnected())
     {
-
+        logMessage("Get radio frequency");
         retCode = getFrequency(RIG_VFO_CURR);
         if (retCode < 0)
         {
@@ -542,6 +542,8 @@ void RigControlMainWindow::getRadioInfo()
             hamlibError(retCode, "Request Frequency");
         }
 
+        logMessage(QString("Got Frequency = %1").arg(QString::number(rfrequency)));
+        logMessage("Get radio mode");
         retCode = getMode(RIG_VFO_CURR);
         if (retCode < 0)
         {
@@ -551,8 +553,12 @@ void RigControlMainWindow::getRadioInfo()
 
         }
 
+        logMessage(QString("Got Mode = %1").arg(radio->convertModeQstr(rmode)));
+
+/*
         if (supRitFlag)
         {
+            logMessage((QString("Get RIT")));
             retCode = getRitFreq(RIG_VFO_CURR);
             if (retCode < 0)
             {
@@ -562,7 +568,7 @@ void RigControlMainWindow::getRadioInfo()
             }
         }
 
-
+*/
         sendRxPbFlagToLog();
     }
 
@@ -607,24 +613,24 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
         }
         if (radio->get_serialConnected())
         {
-            // validate freq for this rig
-            if (radio->checkFreqValid(f, curMode))
+
+            retCode = radio->setFrequency(f, vfo);
+            if (retCode != RIG_OK)
             {
-                retCode = radio->setFrequency(f, vfo);
-                if (retCode != RIG_OK)
+                if (retCode == -9)
                 {
-                    logMessage(QString("SetFreq: Error Setting Freq Code = %1").arg(retCode));
-                    hamlibError(retCode, "SetFreq");
+                    logMessage(QString("SetFreq: Invalid Tx Freq for Radio, Freq = %1").arg(QString::number(f)));
+                    return;
                 }
-                else
-                {
-                    logMessage(QString("SetFreq: Rig set to Freq = %1").arg(QString::number(f)));
-                }
+
+                logMessage(QString("SetFreq: Error Setting Freq Code = %1").arg(retCode));
+                hamlibError(retCode, "SetFreq");
             }
             else
             {
-                logMessage(QString("SetFreq: Invalid Tx Freq for Radio, Freq = %1").arg(QString::number(f)));
+                logMessage(QString("SetFreq: Rig set to Freq = %1").arg(QString::number(f)));
             }
+
         }
         else
         {
@@ -648,38 +654,38 @@ int RigControlMainWindow::getFrequency(vfo_t vfo)
     {
         //if (rfrequency != curVfoFrq)
         //{
-            curVfoFrq = rfrequency;
-            logMessage(QString("Trans Enable = %1").arg(QString::number(selectRig->currentRadio.transVertEnable)));
-            if (selectRig->currentRadio.transVertEnable)
+        curVfoFrq = rfrequency;
+        logMessage(QString("Trans Enable = %1").arg(QString::number(selectRig->currentRadio.transVertEnable)));
+        if (selectRig->currentRadio.transVertEnable)
+        {
+            logMessage("Transvert enabled");
+            if (selectRig->currentRadio.transVertNegative)
             {
-                logMessage("Transvert enabled");
-                if (selectRig->currentRadio.transVertNegative)
-                {
-                    logMessage("Negative Transvert");
-                    transVertF = rfrequency - selectRig->currentRadio.transVertOffset;
-                    logMessage(QString("Transvert F = %1").arg(QString::number(transVertF)));
-                }
-                else
-                {
-                    logMessage(("Positive Transvert"));
-                    transVertF = rfrequency + selectRig->currentRadio.transVertOffset;
-
-                }
-                logMessage(QString("Transvert Freq. = %1").arg(QString::number(transVertF)));
-                curTransVertFrq = transVertF;
-                displayTransVertVfo(transVertF);
-
-            }
-            displayFreqVfo(rfrequency);
-
-            if (selectRig->currentRadio.transVertEnable)
-            {
-                sendFreqToLog(transVertF);
+                logMessage("Negative Transvert");
+                transVertF = rfrequency - selectRig->currentRadio.transVertOffset;
+                logMessage(QString("Transvert F = %1").arg(QString::number(transVertF)));
             }
             else
             {
-                sendFreqToLog(rfrequency);
+                logMessage(("Positive Transvert"));
+                transVertF = rfrequency + selectRig->currentRadio.transVertOffset;
+
             }
+            logMessage(QString("Transvert Freq. = %1").arg(QString::number(transVertF)));
+            curTransVertFrq = transVertF;
+            displayTransVertVfo(transVertF);
+
+        }
+        displayFreqVfo(rfrequency);
+
+        if (selectRig->currentRadio.transVertEnable)
+        {
+            sendFreqToLog(transVertF);
+        }
+        else
+        {
+            sendFreqToLog(rfrequency);
+        }
         //}
 
     }
@@ -1054,8 +1060,6 @@ void RigControlMainWindow::saveTraceLogFlag()
         fileName = RIG_CONFIGURATION_FILEPATH_LOGGER + MINOS_RADIO_CONFIG_FILE;
     }
 
-
-    qDebug() << "traceLog selected";
     QSettings config(fileName, QSettings::IniFormat);
     config.beginGroup("TraceLog");
 
@@ -1080,6 +1084,7 @@ void RigControlMainWindow::sendStatusLogger(const QString &message)
 {
     if (appName.length() > 0)
     {
+        logMessage(QString("Send status to logger = %1").arg(message));
         msg->publishState(message);
     }
 }
@@ -1087,14 +1092,14 @@ void RigControlMainWindow::sendStatusLogger(const QString &message)
 
 void RigControlMainWindow::sendStatusToLogConnected()
 {
-
+        logMessage(QString("Send status to logger connected"));
         sendStatusLogger(RIG_STATUS_CONNECTED);
 
 }
 
 void RigControlMainWindow::sendStatusToLogDisConnected()
 {
-
+        logMessage(QString("Send status to logger disconnected"));
         sendStatusLogger(RIG_STATUS_DISCONNECTED);
 
 }
@@ -1102,13 +1107,16 @@ void RigControlMainWindow::sendStatusToLogDisConnected()
 
 void RigControlMainWindow::sendStatusToLogError()
 {
+    logMessage(QString("Send error message to logger"));
     sendStatusLogger(RIG_STATUS_ERROR);
 }
 
 void RigControlMainWindow::sendFreqToLog(freq_t freq)
 {
+
     if (appName.length() > 0)
     {
+        logMessage(QString("Send freq to logger = %1").arg(QString::number(freq)));
         msg->publishFreq(convertFreqString(freq));
     }
 }
@@ -1117,6 +1125,7 @@ void RigControlMainWindow::sendModeToLog(QString mode)
 {
     if (appName.length() > 0)
     {
+        logMessage(QString("Send mode to logger = %1").arg(mode));
         msg->publishMode(mode);
     }
 }
@@ -1134,7 +1143,7 @@ void RigControlMainWindow::sendRxPbFlagToLog()
         {
             s = "clear";
         }
-
+        logMessage((QString("Send RxPbFlagToLog = %1").arg(s)));
         msg->publishRxPbFlag(s);
     }
 }
