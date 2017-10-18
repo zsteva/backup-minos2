@@ -40,6 +40,21 @@ static QKeySequence memoryShortCut[] = {
     QKeySequence(Qt::CTRL + Qt::Key_0)
 };
 
+static QKeySequence memoryShiftShortCut[] = {
+
+    QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_1),
+    QKeySequence(Qt::CTRL + Qt::SHIFT +  Qt::Key_2),
+    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_3),
+    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_4),
+    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_5),
+    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_6),
+    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_7),
+    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_8),
+    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_9),
+    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_0)
+
+};
+
 static QKeySequence runButShortCut[] {
     QKeySequence(Qt::CTRL + Qt::Key_BracketLeft),
     QKeySequence(Qt::CTRL + Qt::Key_BracketRight)
@@ -75,6 +90,9 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 
     // init memory button data before radio connection
     setRadioName(radioName);
+
+    freqEditShortKey = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_F), parent);
+    connect(freqEditShortKey, SIGNAL(activated()), this, SLOT(freqEditSelected()));
 
     traceMsg("RigControl Frame Started");
 }
@@ -263,6 +281,14 @@ void RigControlFrame::initPassBandRadioButtons()
 
 }
 
+
+
+void RigControlFrame::freqEditSelected()
+{
+    qDebug() << "Freq Edit Selected";
+}
+
+
 void RigControlFrame::readActionSelected(int buttonNumber)
 {
     traceMsg(QString("Memory Read Selected = %1").arg(QString::number(buttonNumber +1)));
@@ -318,6 +344,7 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
 
     RigMemDialog memDialog(this);
     memDialog.setLogData(&logData, buttonNumber);
+    memDialog.setWindowTitle(QString("M%1 - Write").arg(QString::number(buttonNumber + 1)));
    if ( memDialog.exec() == QDialog::Accepted)
    {
        setRigMemoryData(buttonNumber, logData);
@@ -335,6 +362,7 @@ void RigControlFrame::editActionSelected(int buttonNumber)
     RigMemDialog memDialog(this);
 
     memDialog.setLogData(&logData, buttonNumber);
+    memDialog.setWindowTitle(QString("M%1 - Edit").arg(QString::number(buttonNumber + 1)));
 
     if ( memDialog.exec() == QDialog::Accepted)
     {
@@ -775,7 +803,10 @@ RigMemoryButton::RigMemoryButton(QWidget *parent, RigControlFrame *rcf, int no)
     if (memNo  < 10)
     {
         shortKey = new QShortcut(QKeySequence(memoryShortCut[memNo]), memButton);
-        connect(shortKey, SIGNAL(activated()), this, SLOT(memoryShortCutSelected()));
+        connect(shortKey, SIGNAL(activated()), this, SLOT(readActionSelected()));
+        // shift shortcut
+        shiftShortKey = new QShortcut(QKeySequence(memoryShiftShortCut[memNo]), memButton);
+        connect(shiftShortKey, SIGNAL(activated()), this, SLOT(memoryShortCutSelected()));
     }
     connect(memButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
     connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()) );

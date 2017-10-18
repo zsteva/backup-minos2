@@ -87,7 +87,7 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
         ui->bearingLineEdit->setText(QString::number(ldata->bearing));
     }
     ui->timeLineEdit->setText(ldata->time);
-    setWindowTitle(QString("M%1 - Edit").arg(QString::number(buttonNumber + 1)));
+    //setWindowTitle(QString("M%1 - Edit").arg(QString::number(buttonNumber + 1)));
 }
 
 void RigMemDialog::on_okButton_clicked()

@@ -46,6 +46,7 @@ public:
     QToolButton* memButton;
     QMenu* memoryMenu;
     QShortcut* shortKey;
+    QShortcut* shiftShortKey;
     QAction* readAction;
     QAction* writeAction;
     QAction* editAction;
@@ -138,6 +139,7 @@ private slots:
 
 
     void on_newMemoryButton_clicked();
+    void freqEditSelected();
 public slots:
     void changeRadioFreq();
 
@@ -164,7 +166,8 @@ private:
     QMap<int, RunMemoryButton *> runButtonMap;
 
 
-    QShortcut *freqEditKey;
+    QShortcut* freqEditShortKey;
+
     QLabel *freqLabel;
 
     QRadioButton* pBandButton[3];
