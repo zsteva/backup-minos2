@@ -194,6 +194,7 @@ private:
 
     QString extractKhz(QString f);
     void loadMemories();
+    void mgmLabelVisible(bool state);
 };
 class FreqLineEdit : public QLineEdit
 {
@@ -206,6 +207,7 @@ public:
 
 signals:
     void receivedFocus() ;
+    void lostFocus();
     void newFreq();
 private:
 

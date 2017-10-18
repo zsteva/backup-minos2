@@ -71,6 +71,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     initPassBandRadioButtons();
 
     setRxPBFlag("set");
+    mgmLabelVisible(false);
 
     // init memory button data before radio connection
     setRadioName(radioName);
@@ -96,6 +97,7 @@ void RigControlFrame::initRigFrame(QWidget */*parent*/)
 
     ui->modelbl->setText(MODE_ERROR);
     ui->normalRb->setChecked(true);
+    //connect(ui->freqInput, SIGNAL(lostFocus()), this, SLOT(exitFreqEdit()));
     connect(ui->freqInput, SIGNAL(returnPressed()), this, SLOT(returnChangeRadioFreq()));
     connect(ui->freqInput, SIGNAL(newFreq()), this, SLOT(changeRadioFreq()));
 
@@ -151,6 +153,7 @@ void RigControlFrame::setFreq(QString f)
             ui->freqInput->setText(freq);
         }
         curFreq = freq;
+
     }
     // an error here
 
@@ -162,7 +165,7 @@ void RigControlFrame::changeRadioFreq()
     traceMsg("Change Radio Freq");
     static QString freq = "";
 
-    QString newfreq = ui->freqInput->text();
+    QString newfreq = ui->freqInput->text().trimmed();
     if (newfreq != freq)
     {
         freq = newfreq;
@@ -176,6 +179,7 @@ void RigControlFrame::changeRadioFreq()
             {
                 noRadioSendOutFreq(freq);
             }
+
         }
     }
 }
@@ -218,6 +222,7 @@ void RigControlFrame::noRadioSendOutFreq(QString f)
 bool RigControlFrame::eventFilter(QObject *obj, QEvent *event)
 {
    Q_UNUSED(obj)
+
 
    if (event->type() == QEvent::FocusIn)
       freqLineEditInFocus();
@@ -385,19 +390,33 @@ void RigControlFrame::setMode(QString m)
 {
 
     traceMsg("Set mode, ui etc");
-    for (int i = 0; i < hamlibData::supModeList.count(); i++)
+    QStringList mode = m.split(':');
+    if (mode.length() == 2 )
     {
-            if (m == hamlibData::supModeList[i])
-            {
-                ui->modelbl->setText(m);
-                curMode = m;
-               return;
-            }
+        for (int i = 0; i < hamlibData::supModeList.count(); i++)
+        {
+                if (mode[0] == hamlibData::supModeList[i])
+                {
+                    ui->modelbl->setText(mode[0]);
+                    curMode = mode[0];
+                    if (mode[0] == hamlibData::MGM)
+                    {
+                        mgmLabelVisible(true);
+                        ui->mgmLbl->setText(mode[1]);
+                    }
+                    else
+                    {
+                       mgmLabelVisible(false);
+                    }
+                   return;
+                }
+        }
+
+
+        // mode not supported by minos
+        ui->modelbl->setText(MODE_ERROR);
     }
 
-
-    // mode not supported by minos
-    ui->modelbl->setText(MODE_ERROR);
 
 }
 
@@ -442,8 +461,10 @@ void RigControlFrame::freqLineEditInFocus()
 {
     traceMsg("Freq LineEdit in Focus");
     freqEditOn = true;
+    ui->freqInput->setReadOnly(false);
     freqLineEditFrameColour(true);
 }
+
 
 
 
@@ -505,6 +526,12 @@ void RigControlFrame::loadMemoryButtonLabels()
     }
 }
 
+
+void RigControlFrame::mgmLabelVisible(bool state)
+{
+    ui->mgmbreak->setVisible(state);
+    ui->mgmLbl->setVisible(state);
+}
 
 void RigControlFrame::memoryUpdate(int buttonNumber)
 {
@@ -636,7 +663,7 @@ void RigControlFrame::loadRunButtonLabels()
 void RigControlFrame::runButtonUpdate(int buttonNumber)
 {
     memoryData::memData m = getRunMemoryData(buttonNumber);
-    QString sc = ((buttonNumber == 0)?QString("["):QString("]"));
+    QString sc = ((buttonNumber == 0)?QString(" [ "):QString( " ] "));
 
     runButtonMap[buttonNumber]->memButton->setText("R" + QString::number(buttonNumber + 1) + "(" + sc + ") " + extractKhz(m.freq) + " ");
     QString tTipStr = "Freq: " + m.freq + "\n"
@@ -831,6 +858,7 @@ void RunMemoryButton::memoryShortCutSelected()
 {
 //    rigControlFrame->memoryShortCutSelected(memNo);
     memButton->showMenu();
+    //emit lostFocus();
 }
 void RunMemoryButton::readActionSelected()
 {
@@ -899,6 +927,7 @@ void FreqLineEdit::keyPressEvent(QKeyEvent *event)
         QLineEdit::keyPressEvent(event);
     }
 }
+
 
 
 void FreqLineEdit::changeFreq(bool direction)
