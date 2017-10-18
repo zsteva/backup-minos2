@@ -361,11 +361,14 @@ void RigControlMainWindow::upDateRadio()
             // initialise rig state
             logger_mode = "USB";
 
-            retCode = radio->supportRit(selectRig->currentRadio.radioModelNumber, &supRitFlag);
-            if (retCode == RIG_OK)
-            {
-                enableRitDisplay(supRitFlag);
-            }
+            //retCode = radio->supportRit(selectRig->currentRadio.radioModelNumber, &supRitFlag);
+            //if (retCode == RIG_OK)
+            //{
+            //    enableRitDisplay(supRitFlag);
+            //}
+
+            // disable RIT Display
+            enableRitDisplay(false);
 
             loggerSetPassBand(hamlibData::NOR );
 

@@ -155,32 +155,62 @@ void RotControlFrame::turnTo(int angle)
 
 void RotControlFrame::on_Rotate_clicked()
 {
-    traceMsg("Turn to button Clicked");
-    QString brgSt = ui->BrgSt->text();
+    if (rotConnected && !rotError)
+    {
+        traceMsg("Turn to button Clicked");
+        QString brgSt = ui->BrgSt->text();
 
-    int angle = getAngle(brgSt);
+        int angle = getAngle(brgSt);
 
-    turnTo(angle);
-    ui->BrgSt->selectAll();
+        turnTo(angle);
+        ui->BrgSt->selectAll();
+    }
+    else
+    {
+        traceMsg(QString("On Rotate:Rotconnected = %1, RotError = %2").arg(rotConnected, rotError));
+    }
+
 
 }
 
 void RotControlFrame::on_nudgeLeft_clicked()
 {
-    traceMsg("Nudge Left Clicked");
-    turnTo(currentBearing - 3);
+    if (rotConnected && !rotError)
+    {
+        traceMsg("Nudge Left Clicked");
+        turnTo(currentBearing - 3);
+    }
+    else
+    {
+        traceMsg(QString("NudgeLeft:Rotconnected = %1, RotError = %2").arg(rotConnected, rotError));
+    }
 }
 
 void RotControlFrame::on_nudgeRight_clicked()
 {
-    traceMsg("Nudge Right Clicked");
-    turnTo(currentBearing + 3);
+
+    if (rotConnected && !rotError)
+    {
+        traceMsg("Nudge Right Clicked");
+        turnTo(currentBearing + 3);
+    }
+    else
+    {
+        traceMsg(QString("NudgeRight:Rotconnected = %1, RotError = %2").arg(rotConnected, rotError));
+    }
+
 }
 
 void RotControlFrame::on_RotateLeft_clicked(bool /*clicked*/)
 {
-    traceMsg("RotLeft Button Clicked");
 
+    if (!rotConnected || rotError)
+    {
+        traceMsg(QString("On Rotate Left:Rotconnected = %1, RotError = %2").arg(rotConnected, rotError));
+        return;
+    }
+
+    traceMsg("RotLeft Button Clicked");
     if (rot_left_button_status)
     {
         traceMsg("RotLeft Button On - Stop and Turn Off");
@@ -218,6 +248,13 @@ void RotControlFrame::on_RotateLeft_clicked(bool /*clicked*/)
 
 void RotControlFrame::on_RotateRight_clicked(bool /*toggle*/)
 {
+
+    if (!rotConnected || rotError)
+    {
+        traceMsg(QString("On Rotate Right:Rotconnected = %1, RotError = %2").arg(rotConnected, rotError));
+        return;
+    }
+
 
     traceMsg("RotRight Button Clicked");
 
@@ -357,6 +394,7 @@ void RotControlFrame::setRotatorState(const QString &s)
        ui->rotatorState->setText(s);
        if (s == ROT_STATUS_STOP)
        {
+           rotError = false;
            clearRotatorFlags();
            showRotLeftButOff();
            showRotRightButOff();
@@ -364,6 +402,7 @@ void RotControlFrame::setRotatorState(const QString &s)
        }
        else if (s == ROT_STATUS_ROTATE_CCW)
        {
+           rotError = false;
            moving = false;
            movingCW = false;
            movingCCW = true;
@@ -372,6 +411,7 @@ void RotControlFrame::setRotatorState(const QString &s)
        }
        else if (s == ROT_STATUS_ROTATE_CW)
        {
+           rotError = false;
            moving = false;
            movingCW = true;
            movingCCW = false;
@@ -380,12 +420,27 @@ void RotControlFrame::setRotatorState(const QString &s)
        }
        else if (s == ROT_STATUS_TURN_TO)
        {
+           rotError = false;
            moving = true;
            movingCW = false;
            movingCCW = false;
            showTurnButOn();
            //clearRotatorFlags();
 
+       }
+       else if (s == ROT_STATUS_CONNECTED)
+       {
+           rotError = false;
+           rotConnected = true;
+       }
+       else if (s == ROT_STATUS_DISCONNECTED)
+       {
+           rotError = false;
+           rotConnected = false;
+       }
+       else if (s == ROT_STATUS_ERROR)
+       {
+           rotError = true;
        }
 
 }
