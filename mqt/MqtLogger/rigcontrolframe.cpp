@@ -285,7 +285,14 @@ void RigControlFrame::initPassBandRadioButtons()
 
 void RigControlFrame::freqEditSelected()
 {
-    qDebug() << "Freq Edit Selected";
+    ui->freqInput->setFocus();
+    int len = ui->freqInput->text().length();
+    if (len > 5)
+    {
+       ui->freqInput->setCursorPosition(len - 5);
+    }
+
+
 }
 
 

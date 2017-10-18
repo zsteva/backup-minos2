@@ -75,33 +75,33 @@ struct scatParams
   QString radioMfg_Name;
   QString radioModel;
   QString radioModelName;
-  int radioModelNumber;
+  int radioModelNumber = 0;
   QString civAddress;
-  int baudrate; /**<  serial port baudrate*/
-  int parity;
-  int stopbits;
-  int databits;
-  int handshake;
+  int baudrate = 0; /**<  serial port baudrate*/
+  int parity = 0;
+  int stopbits = 0;
+  int databits = 0;
+  int handshake = 0;
   int portType = int(RIG_PORT_NONE);
   QString networkAdd;
   QString networkPort;
-  bool enableCAT;
-  bool enableSerialPTT;
+  bool enableCAT = false;
+  bool enableSerialPTT  = false;
   QString pttSerialPort;
-  bool activeRTS;
-  bool activeDTR;
-  bool nactiveRTS;
-  bool nactiveDTR;
-  QString mgmMode;
+  bool activeRTS  = false;
+  bool activeDTR  = false;
+  bool nactiveRTS  = false;
+  bool nactiveDTR  = false;
+  QString mgmMode  = false;
   ptt_type_t pttType;
 //  bool enableXMLRPC;
 //  int XMLRPCPort;
-  double txOnDelay;
+//  double txOnDelay;
   QString transVertOffsetStr;
-  freq_t transVertOffset;
-  bool transVertEnable;
-  bool transVertNegative;
-  bool useRxPassBand;
+  freq_t transVertOffset = 0.0;
+  bool transVertEnable  = false;
+  bool transVertNegative  = false;
+  bool useRxPassBand  = false;
 
 };
 
