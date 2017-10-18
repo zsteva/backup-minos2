@@ -108,7 +108,7 @@ void ContestContact::getPrintFileText( QString &sdest, short maxlen )
                thisscore = 0;
             ContactBuffs::scorebuff = QString::number(thisscore );
          }
-      ContactBuffs::scorebuff.truncate(4);;
+      ContactBuffs::scorebuff.truncate(5);;
       multbuff.clear();
 
       if ( multCount )
@@ -151,16 +151,35 @@ void ContestContact::getPrintFileText( QString &sdest, short maxlen )
          placestr( ContactBuffs::buff2, districtMult->districtCode, next + 1, 3 );
       }
       next += 4;
-      next = placestr( ContactBuffs::buff2, ContactBuffs::scorebuff, next + 1, -5 );
+      next = placestr( ContactBuffs::buff2, ContactBuffs::scorebuff, next + 1, -6 );
+/*
+  // looks like bearing is normally good
+      if ( bearing < 0 )
+      {
+         double lon = 0.0;
+         double lat = 0.0;
+         double dist = 0.0;
+         int brg;
+
+         if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
+         {
+            clp->disbear( lon, lat, dist, brg );
+            bearing = brg;
+         }
+      }
+*/
+      const QChar degreeChar(0260); // octal value
+      QString sbrg = QString::number(bearing) + degreeChar;
+      next = placestr( ContactBuffs::buff2, sbrg, next + 1, -6 );
 
       ContactBuffs::qthbuff += extraText.getValue().trimmed();
       ContactBuffs::qthbuff.truncate( EXTRALENGTH);
       next = placestr( ContactBuffs::buff2, ContactBuffs::qthbuff, next + 1, ContactBuffs::qthbuff.length() );
 
       next = placestr( ContactBuffs::buff2, ContactBuffs::buff, next + 1, ContactBuffs::buff.length() );
+
    }
    dest += ContactBuffs::buff2;
-   // return value is point score for this line, for accumulation
 
    sdest = dest.left( maxlen );
 
