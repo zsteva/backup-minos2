@@ -85,6 +85,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(MainOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
     connect(SecondOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
 
+
     ui->TimeEdit->installEventFilter(this);
 
 
