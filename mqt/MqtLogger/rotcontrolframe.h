@@ -66,6 +66,8 @@ private:
     bool movingCCW = false;
     bool rot_left_button_status;
     bool rot_right_button_status;
+    bool rotConnected = false;
+    bool rotError = false;
     void clearRotatorFlags();
 
     bool rotatorLoaded;

@@ -472,6 +472,7 @@ void RotatorMainWindow::openRotator()
 
         stopRotation(false);           // clear flags
         showStatusMessage(tr("Rotator Open error"));
+        sendStatusToLogDisConnected();
     }
 
 

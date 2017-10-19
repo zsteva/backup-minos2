@@ -1066,30 +1066,11 @@ void SetupDialog::readSettings()
 
 void SetupDialog::clearAvailRadio()
 {
-
+    scatParams nulParam;
 
     for (int i = 0; i < NUM_RADIOS; i++)
     {
-        availRadios[i].radioName = "";
-        availRadios[i].radioNumber = "";
-        availRadios[i].radioMfg_Name = "";
-        availRadios[i].radioModelName = "";
-        availRadios[i].radioModelNumber = 0;
-        availRadios[i].civAddress = "0x00";
-        availRadios[i].portType = int(RIG_PORT_NONE);
-        availRadios[i].comport = "";
-        availRadios[i].baudrate = 9600;
-        availRadios[i].databits = 8;
-        availRadios[i].parity = radio->getSerialParityCode(0);
-        availRadios[i].handshake = radio->getSerialHandshakeCode(0);
-        availRadios[i].transVertOffset = 0;
-        availRadios[i].transVertOffsetStr = "00.000.000.000";
-        availRadios[i].transVertEnable = false;
-        availRadios[i].transVertNegative = false;
-        availRadios[i].useRxPassBand = false;
-        availRadios[i].networkAdd = "";
-        availRadios[i].networkPort = "";
-        availRadios[i].mgmMode = hamlibData::USB;
+        availRadios[i] = nulParam;
     }
 
 
@@ -1098,57 +1079,14 @@ void SetupDialog::clearAvailRadio()
 
 void SetupDialog::clearCurrentRadio()
 {
-
-    currentRadio.radioName = "";
-    currentRadio.radioNumber = "";
-    currentRadio.radioMfg_Name = "";
-    currentRadio.radioModelName = "";
-    currentRadio.radioModelNumber = 0;
-    currentRadio.civAddress = "0x00";
-    currentRadio.portType = int(RIG_PORT_NONE);
-    currentRadio.comport = "";
-    currentRadio.baudrate = 9600;
-    currentRadio.databits = 8;
-    currentRadio.parity = radio->getSerialParityCode(0);
-    currentRadio.handshake = radio->getSerialHandshakeCode(0);
-    currentRadio.transVertOffset = 0;
-    currentRadio.transVertOffsetStr = "00.000.000.000";
-    currentRadio.transVertEnable = false;
-    currentRadio.transVertNegative = false;
-    currentRadio.useRxPassBand = false;
-    currentRadio.networkAdd = "";
-    currentRadio.networkPort = "";
-    currentRadio.mgmMode = hamlibData::USB;
-
+    scatParams nulParam;
+    currentRadio = nulParam;
 }
 
 
 void SetupDialog::copyRadioToCurrent(int radioNumber)
 {
-
-    currentRadio.radioName = availRadios[radioNumber].radioName;
-    currentRadio.radioNumber = availRadios[radioNumber].radioNumber;
-    currentRadio.radioModel = availRadios[radioNumber].radioModel;
-    currentRadio.radioModelNumber = availRadios[radioNumber].radioModelNumber;
-    currentRadio.radioModelName = availRadios[radioNumber].radioModelName;
-    currentRadio.radioMfg_Name = availRadios[radioNumber].radioMfg_Name;
-    currentRadio.portType = availRadios[radioNumber].portType;
-    currentRadio.comport = availRadios[radioNumber].comport;
-    currentRadio.baudrate = availRadios[radioNumber].baudrate;
-    currentRadio.databits = availRadios[radioNumber].databits;
-    currentRadio.parity = availRadios[radioNumber].parity;
-    currentRadio.stopbits = availRadios[radioNumber].stopbits;
-    currentRadio.handshake = availRadios[radioNumber].handshake;
-    currentRadio.transVertOffset = availRadios[radioNumber].transVertOffset;
-    currentRadio.transVertOffsetStr = availRadios[radioNumber].transVertOffsetStr;
-    currentRadio.transVertEnable  = availRadios[radioNumber].transVertEnable;
-    currentRadio.transVertNegative  = availRadios[radioNumber].transVertNegative;
-    currentRadio.useRxPassBand = availRadios[radioNumber].useRxPassBand;
-    currentRadio.networkAdd = availRadios[radioNumber].networkAdd;
-    currentRadio.networkPort = availRadios[radioNumber].networkPort;
-    currentRadio.mgmMode = availRadios[radioNumber].mgmMode;
-
-
+    currentRadio = availRadios[radioNumber];
 }
 
 
