@@ -435,7 +435,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
         rxPassBandCheck[i]->setChecked(availRadios[i].useRxPassBand);
         netAddress[i]->setText(availRadios[i].networkAdd);
         netPort[i]->setText(availRadios[i].networkPort);
-        if (rig_port_e(availRadios[i].portType) == RIG_PORT_NETWORK)
+        if (rig_port_e(availRadios[i].portType) == RIG_PORT_NETWORK || rig_port_e(availRadios[i].portType) == RIG_PORT_UDP_NETWORK)
         {
             serialDataEntryVisible(i, false);
             networkDataEntryVisible(i, true);

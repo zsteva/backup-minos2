@@ -410,12 +410,17 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
         comHandShake[i]->setCurrentIndex(availAntennas[i].handshake);
         netAddress[i]->setText(availAntennas[i].networkAdd);
         netPort[i]->setText(availAntennas[i].networkPort);
-        if (rig_port_e(availAntennas[i].portType) == RIG_PORT_NETWORK)
+        if (rig_port_e(availAntennas[i].portType) == RIG_PORT_NETWORK || rig_port_e(availAntennas[i].portType) == RIG_PORT_UDP_NETWORK)
         {
             serialDataEntryVisible(i, false);
             networkDataEntryVisible(i, true);
         }
-        else
+        else if (rig_port_e(availAntennas[i].portType) == RIG_PORT_NONE)
+        {
+            serialDataEntryVisible(i, false);
+            networkDataEntryVisible(i, false);
+        }
+        else if (rig_port_e(availAntennas[i].portType) == RIG_PORT_SERIAL)
         {
             serialDataEntryVisible(i, true);
             networkDataEntryVisible(i, false);
