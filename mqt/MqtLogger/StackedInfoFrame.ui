@@ -63,7 +63,7 @@
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>6</number>
          </property>
          <widget class="QWidget" name="DXCCPage">
           <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -345,6 +345,21 @@ Continents only apply to DXCC</string>
          </widget>
          <widget class="QWidget" name="ClockPage">
           <layout class="QVBoxLayout" name="verticalLayout_11">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
            <item>
             <widget class="TClockFrame" name="clockFrame">
              <property name="frameShape">
@@ -352,6 +367,35 @@ Continents only apply to DXCC</string>
              </property>
              <property name="frameShadow">
               <enum>QFrame::Plain</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="rigMemPage">
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="RigMemoryFrame" name="rigMemFrame">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
              </property>
             </widget>
            </item>
@@ -437,6 +481,19 @@ Continents only apply to DXCC</string>
         </widget>
        </item>
        <item>
+        <widget class="QRadioButton" name="rigMemButton">
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string>Memories</string>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroup</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
         <widget class="QRadioButton" name="LocatorButton">
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
@@ -503,6 +560,12 @@ Continents only apply to DXCC</string>
    <class>TClockFrame</class>
    <extends>QFrame</extends>
    <header>TClockFrame.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RigMemoryFrame</class>
+   <extends>QFrame</extends>
+   <header>RigMemoryFrame.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

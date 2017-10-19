@@ -392,15 +392,19 @@ void TSingleLogFrame::transferDetails(MatchTreeItem *MatchTreeIndex )
        }
    }
 }
-void TSingleLogFrame::transferDetails(QString cs, const QString loc )
+void TSingleLogFrame::transferDetails(memoryData::memData &m )
 {
     if ( !contest  )
     {
        return ;
     }
-    ui->GJVQSOLogFrame->transferDetails( cs, loc );
+    ui->GJVQSOLogFrame->transferDetails( m.callsign, m.locator );
+    ui->FKHRigControlFrame->transferDetails(m);
 }
-
+void TSingleLogFrame::getDetails(memoryData::memData &m)
+{
+    ui->FKHRigControlFrame->getDetails(m);
+}
 //---------------------------------------------------------------------------
 
 void TSingleLogFrame::QSOTreeSelectContact( QSharedPointer<BaseContact> lct )

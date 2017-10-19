@@ -82,7 +82,9 @@ public:
 
     void on_NoRadioSetFreq(QString);
 
-    void transferDetails(QString cs, const QString loc );
+    void transferDetails(memoryData::memData &m);
+    void getDetails(memoryData::memData &m);
+
 private:
     Ui::TSingleLogFrame *ui;
 

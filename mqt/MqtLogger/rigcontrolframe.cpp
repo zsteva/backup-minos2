@@ -13,47 +13,18 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <QSignalMapper>
-//#include <QLabel>
-//#include <QtWidgets>
-#include <QLayoutItem>
 
 #include "logger_pch.h"
-#include "rigcontrolframe.h"
 #include "tlogcontainer.h"
 #include "tsinglelogframe.h"
-#include "ui_rigcontrolframe.h"
 #include "SendRPCDM.h"
+#include "runbuttondialog.h"
+
+#include "rigcontrolframe.h"
+#include "ui_rigcontrolframe.h"
 
 #define MODE_ERROR "<font color='Red'>Mode Error</font>"
 
-static QKeySequence memoryShortCut[] = {
-
-    QKeySequence(Qt::CTRL + Qt::Key_1),
-    QKeySequence(Qt::CTRL + Qt::Key_2),
-    QKeySequence(Qt::CTRL + Qt::Key_3),
-    QKeySequence(Qt::CTRL + Qt::Key_4),
-    QKeySequence(Qt::CTRL + Qt::Key_5),
-    QKeySequence(Qt::CTRL + Qt::Key_6),
-    QKeySequence(Qt::CTRL + Qt::Key_7),
-    QKeySequence(Qt::CTRL + Qt::Key_8),
-    QKeySequence(Qt::CTRL + Qt::Key_9),
-    QKeySequence(Qt::CTRL + Qt::Key_0)
-};
-
-static QKeySequence memoryShiftShortCut[] = {
-
-    QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_1),
-    QKeySequence(Qt::CTRL + Qt::SHIFT +  Qt::Key_2),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_3),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_4),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_5),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_6),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_7),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_8),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_9),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_0)
-
-};
 
 static QKeySequence runButShortCut[] {
     QKeySequence(Qt::CTRL + Qt::Key_BracketLeft),
@@ -294,13 +265,8 @@ void RigControlFrame::freqEditSelected()
 
 
 }
-
-
-void RigControlFrame::readActionSelected(int buttonNumber)
+void RigControlFrame::transferDetails(memoryData::memData &m)
 {
-    traceMsg(QString("Memory Read Selected = %1").arg(QString::number(buttonNumber +1)));
-    memoryData::memData m = getRigMemoryData(buttonNumber);
-
     if (isRadioLoaded())
     {
         emit sendFreqControl(m.freq);
@@ -314,25 +280,13 @@ void RigControlFrame::readActionSelected(int buttonNumber)
     {
         noRadioSendOutFreq(m.freq);
     }
-    // send detail to rotator control frame, locator will give bearing
-    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
-    tslf->transferDetails(m.callsign, m.locator);
 }
-
-void RigControlFrame::writeActionSelected(int buttonNumber)
+void RigControlFrame::getDetails(memoryData::memData &logData)
 {
-    traceMsg(QString("Memory Write Selected %1 = ").arg(QString::number(buttonNumber +1)));
-
-    //memDialog->setMemoryFlag(true);
-
-
     // get contest information
     TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
-
-
     ScreenContact sc = tslf->getScreenEntry();
 
-    memoryData::memData logData;
     logData.callsign = sc.cs.fullCall.getValue();
     logData.freq = curFreq;
     logData.locator = sc.loc.loc.getValue();
@@ -348,71 +302,7 @@ void RigControlFrame::writeActionSelected(int buttonNumber)
 
     logData.bearing = tslf->getBearingFrmQSOLog();
     // load log data into memory
-
-    RigMemDialog memDialog(this);
-    memDialog.setLogData(&logData, buttonNumber);
-    memDialog.setWindowTitle(QString("M%1 - Write").arg(QString::number(buttonNumber + 1)));
-   if ( memDialog.exec() == QDialog::Accepted)
-   {
-       setRigMemoryData(buttonNumber, logData);
-       memoryUpdate(buttonNumber);
-   }
 }
-
-
-void RigControlFrame::editActionSelected(int buttonNumber)
-{
-    traceMsg(QString("Memory Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
-
-    memoryData::memData logData = getRigMemoryData(buttonNumber);
-
-    RigMemDialog memDialog(this);
-
-    memDialog.setLogData(&logData, buttonNumber);
-    memDialog.setWindowTitle(QString("M%1 - Edit").arg(QString::number(buttonNumber + 1)));
-
-    if ( memDialog.exec() == QDialog::Accepted)
-    {
-        setRigMemoryData(buttonNumber, logData);
-        memoryUpdate(buttonNumber);
-    }
-
-}
-
-
-void RigControlFrame::clearActionSelected(int buttonNumber)
-{
-
-    traceMsg(QString("Memory Clear Selected = %1").arg(QString::number(buttonNumber + 1)));
-
-    memoryData::memData m;
-    setRigMemoryData(buttonNumber, m);
-
-     if (memButtonMap.contains(buttonNumber))
-     {
-         RigMemoryButton *rmb = memButtonMap[buttonNumber];
-
-         QGridLayout *gl = qobject_cast<QGridLayout *>(ui->scrollAreaWidgetContents->layout());
-
-         int i = 0;
-         QLayoutItem *child1;
-         while(( child1 = gl->itemAt(i)) != 0)
-         {
-             if (child1->widget() == rmb->memButton)
-             {
-                 QLayoutItem *child2 = gl->takeAt(i);
-                 delete child2->widget();
-                 delete child2;
-                 break;
-             }
-             i++;
-         }
-         memButtonMap.remove(buttonNumber);
-         delete rmb;
-     }
-}
-
-
 
 void RigControlFrame::passBandRadioSelected(int button)
 {
@@ -475,7 +365,6 @@ void RigControlFrame::setRadioName(QString n)
 
 void RigControlFrame::loadMemories()
 {
-    loadMemoryButtonLabels();
     loadRunButtonLabels();
 }
 
@@ -552,55 +441,11 @@ void RigControlFrame::setRxPBFlag(QString flag)
     ui->groupBox->setVisible(!fl);
 }
 
-void RigControlFrame::loadMemoryButtonLabels()
-{
-    int mcount = ct->rigMemories.size();
-    for (int i = 0; i < mcount; i ++)
-    {
-        memoryUpdate(i);
-    }
-}
-
-
 void RigControlFrame::mgmLabelVisible(bool state)
 {
     ui->mgmbreak->setVisible(state);
     ui->mgmLbl->setVisible(state);
 }
-
-void RigControlFrame::memoryUpdate(int buttonNumber)
-{
-    memoryData::memData m = getRigMemoryData(buttonNumber);
-
-    if (!memButtonMap.contains(buttonNumber) && m.callsign != memDefData::DEFAULT_CALLSIGN)
-    {
-        int row = buttonNumber%2;
-        int col = buttonNumber/2;
-        memButtonMap[buttonNumber] = new RigMemoryButton(ui->scrollArea, this, buttonNumber);
-        connect( memButtonMap[buttonNumber], SIGNAL( clearActionSelected(int)) , this, SLOT(clearActionSelected(int)), Qt::QueuedConnection );
-
-        QGridLayout *gl = qobject_cast<QGridLayout *>(ui->scrollAreaWidgetContents->layout());
-        gl->addWidget(memButtonMap[buttonNumber]->memButton, row, col);
-    }
-
-    if (memButtonMap.contains(buttonNumber))
-    {
-
-        QToolButton *mb = memButtonMap[buttonNumber]->memButton;
-
-        mb->setText("M" + QString::number(buttonNumber + 1) + ": " + m.callsign + " ");
-        QString tTipStr = "Callsign: " + m.callsign + "\n"
-                + "Freq: " + m.freq + "\n"
-                + "Mode: " + m.mode + "\n"
-                + "Passband: " + hamlibData::pBandStateStr[m.pBandState] + "\n"
-                + "Locator: " + m.locator + "\n"
-                + "Bearing: " + QString::number(m.bearing) + "\n"
-                + "Time: " + m.time;
-        mb->setToolTip(tTipStr);
-    }
-}
-
-
 
 void RigControlFrame::traceMsg(QString msg)
 {
@@ -733,18 +578,7 @@ QString RigControlFrame::extractKhz(QString f)
     return khz;
 }
 
-
-
-
 //********************************************//
-
-memoryData::memData RigControlFrame::getRigMemoryData(int memoryNumber)
-{
-    memoryData::memData m;
-    if (ct->rigMemories.size() > memoryNumber)
-        m = ct->rigMemories[memoryNumber].getValue();
-    return m;
-}
 memoryData::memData RigControlFrame::getRunMemoryData(int memoryNumber)
 {
     memoryData::memData m;
@@ -753,104 +587,11 @@ memoryData::memData RigControlFrame::getRunMemoryData(int memoryNumber)
         m = ct->runMemories[memoryNumber].getValue();
     return m;
 }
-void RigControlFrame::setRigMemoryData(int memoryNumber, memoryData::memData m)
-{
-    ct->saveRigMemory(memoryNumber, m);
-}
 void RigControlFrame::setRunMemoryData(int memoryNumber, memoryData::memData m)
 {
     ct->saveRunMemory(memoryNumber, m);
 }
 
-void RigControlFrame::on_newMemoryButton_clicked()
-{
-    int n = -1;
-
-    for (int i = 0; i < memButtonMap.size() + 1; i++)
-    {
-        if  (!memButtonMap.contains(i))
-        {
-            n = i;
-            break;
-        }
-    }
-    if (n == -1)
-    {
-        mShowMessage("Panic", this);
-        return;
-    }
-
-    writeActionSelected(n); // which creates the button as well
-
-}
-RigMemoryButton::RigMemoryButton(QWidget *parent, RigControlFrame *rcf, int no)
-{
-    memNo = no;
-    rigControlFrame = rcf;
-
-    memButton = new QToolButton(parent);
-
-    memoryMenu = new QMenu(memButton);
-
-    memButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
-    memButton->setPopupMode(QToolButton::MenuButtonPopup);
-    memButton->setFocusPolicy(Qt::NoFocus);
-    memButton->setText("M" + QString::number(memNo + 1) );
-
-    readAction = new QAction("&Read", memButton);
-    writeAction = new QAction("&Write",memButton);
-    editAction = new QAction("&Edit", memButton);
-    clearAction = new QAction("&Clear",memButton);
-    memoryMenu->addAction(readAction);
-    memoryMenu->addAction(writeAction);
-    memoryMenu->addAction(editAction);
-    memoryMenu->addAction(clearAction);
-    memButton->setMenu(memoryMenu);
-
-    if (memNo  < 10)
-    {
-        shortKey = new QShortcut(QKeySequence(memoryShortCut[memNo]), memButton);
-        connect(shortKey, SIGNAL(activated()), this, SLOT(readActionSelected()));
-        // shift shortcut
-        shiftShortKey = new QShortcut(QKeySequence(memoryShiftShortCut[memNo]), memButton);
-        connect(shiftShortKey, SIGNAL(activated()), this, SLOT(memoryShortCutSelected()));
-    }
-    connect(memButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
-    connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()) );
-    connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()) );
-    connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()) );
-    connect( clearAction, SIGNAL( triggered() ), this, SLOT(clearActionSelected()) );
-}
-RigMemoryButton::~RigMemoryButton()
-{
-//    delete memButton;
-}
-void RigMemoryButton::memoryUpdate()
-{
-    rigControlFrame->memoryUpdate(memNo);
-}
-
-void RigMemoryButton::memoryShortCutSelected()
-{
-//    rigControlFrame->memoryShortCutSelected(memNo);
-    memButton->showMenu();
-}
-void RigMemoryButton::readActionSelected()
-{
-    rigControlFrame->readActionSelected(memNo);
-}
-void RigMemoryButton::editActionSelected()
-{
-    rigControlFrame->editActionSelected(memNo);
-}
-void RigMemoryButton::writeActionSelected()
-{
-    rigControlFrame->writeActionSelected(memNo);
-}
-void RigMemoryButton::clearActionSelected()
-{
-    emit clearActionSelected(memNo);
-}
 RunMemoryButton::RunMemoryButton(QToolButton *b, RigControlFrame *rcf, int no)
 {
     memNo = no;

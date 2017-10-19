@@ -46,6 +46,7 @@ StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
     connect(ui->DistrictButton, SIGNAL(clicked()), sm, SLOT(map()));
     connect(ui->LocatorButton, SIGNAL(clicked()), sm, SLOT(map()));
     connect(ui->StatsButton, SIGNAL(clicked()), sm, SLOT(map()));
+    connect(ui->rigMemButton, SIGNAL(clicked()), sm, SLOT(map()));
 
     // setMapping on each button to the QStackedWidget index we'd like to switch to
     // note: this affects the value passed via QSignalMapper::mapped(int) signal
@@ -55,6 +56,7 @@ StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
     sm->setMapping(ui->LocatorButton, 3);
     sm->setMapping(ui->StatsButton, 4);
     sm->setMapping(ui->ClockButton, 5);
+    sm->setMapping(ui->rigMemButton, 6);
 
     // finally, connect the mapper to the stacked widget
     connect(sm, SIGNAL(mapped(int)), ui->StackedMults, SLOT(setCurrentIndex(int)));
@@ -81,6 +83,7 @@ void StackedInfoFrame::setContest(BaseContestLog *ct)
     ui->StatsFrame->setContest(contest);
     ui->locFrame->setContest(contest);
     ui->clockFrame->setContest(contest);
+    ui->rigMemFrame->setContest(contest);
 }
 void StackedInfoFrame::on_ScrollToDistrict( const QString &qth, BaseContestLog* )
 {
@@ -150,6 +153,7 @@ void StackedInfoFrame::onFiltersChanged()
         ui->districtFrame->reInitialiseDistricts();
         ui->locFrame->reInitialiseLocators();
         ui->StatsFrame->reInitialiseStats();
+        ui->rigMemFrame->reInitialiseMemories();
     }
 }
 

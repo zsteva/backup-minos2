@@ -25,8 +25,6 @@
 #include "logger_pch.h"
 #include "RPCCommandConstants.h"
 #include "rigmemcommondata.h"
-#include "rigmemdialog.h"
-#include "runbuttondialog.h"
 
 
 namespace Ui {
@@ -34,37 +32,6 @@ namespace Ui {
 }
 
 class RigControlFrame;
-class RigMemoryButton : public QObject
-{
-    Q_OBJECT
-
-public:
-    explicit RigMemoryButton(QWidget *parent, RigControlFrame *rcf, int no);
-    ~RigMemoryButton();
-
-    RigControlFrame *rigControlFrame;
-    QToolButton* memButton;
-    QMenu* memoryMenu;
-    QShortcut* shortKey;
-    QShortcut* shiftShortKey;
-    QAction* readAction;
-    QAction* writeAction;
-    QAction* editAction;
-    QAction* clearAction;
-
-    int memNo;
-private slots:
-    void memoryUpdate();
-
-    void memoryShortCutSelected();
-    void readActionSelected();
-    void editActionSelected();
-    void writeActionSelected();
-    void clearActionSelected();
-signals:
-    void clearActionSelected(int);
-
-};
 class RunMemoryButton : public QObject
 {
     Q_OBJECT
@@ -108,6 +75,10 @@ public:
 
     void setContest(BaseContestLog *);
 
+    void transferDetails(memoryData::memData &m);
+    void getDetails(memoryData::memData &m);
+
+
     void setRadioLoaded();
     void setMode(QString);
     void setFreq(QString);
@@ -117,10 +88,6 @@ public:
     void setRxPBFlag(QString);
 
     void exitFreqEdit();
-    void memoryUpdate(int);
-    void readActionSelected(int);
-    void editActionSelected(int buttonNumber);
-    void writeActionSelected(int);
     void runButtonUpdate(int);
     void runButReadActSel(int buttonNumber);
     void runButWriteActSel(int buttonNumber);
@@ -136,16 +103,11 @@ private slots:
     void freqLineEditInFocus();
     void radioBandFreq(int index);
     void noRadioSetFreq(QString);
-
-
-    void on_newMemoryButton_clicked();
     void freqEditSelected();
 public slots:
     void changeRadioFreq();
 
     void returnChangeRadioFreq();
-
-    void clearActionSelected(int);
 
     void runButClearActSel(int buttonNumber);
 
@@ -154,15 +116,12 @@ private:
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
 
     // memory buttons
-    memoryData::memData getRigMemoryData(int memoryNumber);
     memoryData::memData getRunMemoryData(int memoryNumber);
 
-    void setRigMemoryData(int memoryNumber, memoryData::memData m);
     void setRunMemoryData(int memoryNumber, memoryData::memData m);
 
     LoggerContestLog *ct;
 
-    QMap<int, RigMemoryButton *> memButtonMap;
     QMap<int, RunMemoryButton *> runButtonMap;
 
 
@@ -186,7 +145,6 @@ private:
     void freqLineEditFrameColour(bool status);
 
     void initRigFrame(QWidget *parent);
-    void loadMemoryButtonLabels();
     void initPassBandRadioButtons();
     void noRadioSendOutFreq(QString f);
 
