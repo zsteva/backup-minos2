@@ -81,7 +81,7 @@ void RigControlFrame::setContest(BaseContestLog *c)
     loadMemories();                 // mem and run should be independant of the radio!
 }
 
-void RigControlFrame::initRigFrame(QWidget */*parent*/)
+void RigControlFrame::initRigFrame(QWidget * /*parent*/)
 {
 
     ui->modelbl->setText(MODE_ERROR);

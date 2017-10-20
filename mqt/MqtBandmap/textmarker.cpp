@@ -11,7 +11,7 @@ TextMarker::TextMarker(int x, int y, QString callsign, QColor txt_colour)
 
 }
 
-void TextMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/)
+void TextMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*option*/, QWidget * /*widget*/)
 {
     painter->setPen(colour);
     painter->drawText(xCoord, yCoord, callSign);

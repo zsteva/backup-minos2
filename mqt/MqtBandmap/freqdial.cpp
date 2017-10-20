@@ -27,7 +27,7 @@ void FreqDial::changeBoundingRect(int height)
 
 
 
-void FreqDial::paint(QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/)
+void FreqDial::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*option*/, QWidget * /*widget*/)
 {
 
 // painter =  new QPainter( this );

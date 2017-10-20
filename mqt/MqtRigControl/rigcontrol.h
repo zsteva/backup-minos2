@@ -92,7 +92,7 @@ struct scatParams
   bool activeDTR  = false;
   bool nactiveRTS  = false;
   bool nactiveDTR  = false;
-  QString mgmMode  = false;
+  QString mgmMode;
   ptt_type_t pttType;
 //  bool enableXMLRPC;
 //  int XMLRPCPort;
