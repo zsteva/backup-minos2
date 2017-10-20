@@ -34,7 +34,7 @@
 #include <QProcessEnvironment>
 #include <QtDebug>
 
-
+// QPushButton:clicked{\n	background-color: red;\n	border-style: outset;\n	border-width: 1px;\n	border-radius: 5px;\n	border-color: black;\n	min-width: 5em;\n	padding: 3px;\n}
 
 RotatorMainWindow *MinosRotatorForm;
 
@@ -106,10 +106,10 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     ui->turnButton->setShortcut(QKeySequence(ROTATE_TURN_KEY));
     ui->stopButton->setShortcut(QKeySequence(ROTATE_STOP_KEY));
 
-    redText = new QPalette();
-    blackText = new QPalette();
-    redText->setColor(QPalette::ButtonText, Qt::red);
-    blackText->setColor(QPalette::ButtonText, Qt::black);
+    //redText = new QPalette();
+    //blackText = new QPalette();
+    //redText->setColor(QPalette::ButtonText, Qt::red);
+    //blackText->setColor(QPalette::ButtonText, Qt::black);
 
     // disable some menus for now
     ui->actionHelp->setVisible(false);
@@ -1722,14 +1722,16 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
 void RotatorMainWindow::turn_button_on()
 {
     turn_button_status = ON;
-    ui->turnButton->setPalette(*redText);
+    //ui->turnButton->setPalette(*redText);
+    ui->turnButton->setStyleSheet(BUTTON_ON_STYLE);
     ui->turnButton->setText("Turn");
 }
 
 void RotatorMainWindow::turn_button_off()
 {
     turn_button_status = OFF;
-    ui->turnButton->setPalette(*blackText);
+    //ui->turnButton->setPalette(*blackText);
+    ui->turnButton->setStyleSheet(BUTTON_OFF_STYLE);
     ui->turnButton->setText("Turn");
 }
 
@@ -1737,42 +1739,49 @@ void RotatorMainWindow::turn_button_off()
 void RotatorMainWindow::rot_left_button_on()
 {
     rot_left_button_status = ON;
-    ui->rot_left_button->setPalette(*redText);
+    //ui->rot_left_button->setPalette(*redText);
+    ui->rot_left_button->setStyleSheet(BUTTON_ON_STYLE);
     ui->rot_left_button->setText("(CCW) Left");
 }
 
 void RotatorMainWindow::rot_left_button_off()
 {
     rot_left_button_status = OFF;
-    ui->rot_left_button->setPalette(*blackText);
+    //ui->rot_left_button->setPalette(*blackText);
+    ui->rot_left_button->setStyleSheet(BUTTON_OFF_STYLE);
     ui->rot_left_button->setText("(CCW) Left");
 }
 
 void RotatorMainWindow::rot_right_button_on()
 {
     rot_right_button_status = ON;
-    ui->rot_right_button->setPalette(*redText);
+    //ui->rot_right_button->setPalette(*redText);
+
+    ui->rot_right_button->setStyleSheet(BUTTON_ON_STYLE);
     ui->rot_right_button->setText("(CW) Right");
 }
 
 void RotatorMainWindow::rot_right_button_off()
 {
     rot_right_button_status = OFF;
-    ui->rot_right_button->setPalette(*blackText);
+    //ui->rot_right_button->setPalette(*blackText);
+    ui->rot_right_button->setStyleSheet(BUTTON_OFF_STYLE);
     ui->rot_right_button->setText("(CW) Right");
 }
 
 void RotatorMainWindow::stop_button_on()
 {
 
-    ui->stopButton->setPalette(*redText);
+    //ui->stopButton->setPalette(*redText);
+    ui->stopButton->setStyleSheet(BUTTON_ON_STYLE);
     ui->stopButton->setText("Stop");
 }
 
 void RotatorMainWindow::stop_button_off()
 {
 
-    ui->stopButton->setPalette(*blackText);
+    //ui->stopButton->setPalette(*blackText);
+    ui->stopButton->setStyleSheet(BUTTON_OFF_STYLE);
     ui->stopButton->setText("Stop");
 }
 

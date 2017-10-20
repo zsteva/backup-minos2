@@ -808,9 +808,11 @@ void RigControlMainWindow::setCurMode(QString mode)
 
 void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
 {
+    logMessage(QString("Setmode: Mode Requested = %1").arg(mode));
     rmode_t mCode = radio->convertQStrMode(mode);
     int retCode = 0;
     pbwidth_t passBand;
+
     if (selectRig->currentRadio.useRxPassBand)
     {
         passBand = rwidth;
@@ -819,23 +821,23 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
     {
         passBand = loggerPbWidth;
     }
-
+    logMessage(QString("SetMode: Use RxPassband = %1, Passband = %2").arg(QString::number(selectRig->currentRadio.useRxPassBand), QString::number(passBand)));
     if (radio->get_serialConnected())
     {
          retCode = radio->setMode(vfo, mCode, passBand);
          if (retCode == RIG_OK)
          {
-             logMessage(QString("Mode changed! Mode = %1, PassBand = %2").arg(radio->convertModeQstr(rmode), QString::number(passBand)));
+             logMessage(QString("SetMode: changed! Mode = %1, PassBand = %2").arg(radio->convertModeQstr(mCode), QString::number(passBand)));
          }
          else
          {
-             logMessage(QString("Mode Change Error Code = %1, Mode = %1, PassBand = %2").arg(QString::number(retCode), radio->convertModeQstr(rmode), QString::number(passBand)));
+             logMessage(QString("SetMode: Change Error Code = %1, Mode = %2, PassBand = %3").arg(QString::number(retCode), radio->convertModeQstr(mCode), QString::number(passBand)));
              hamlibError(retCode, "Set Mode");
          }
     }
     else
     {
-        qDebug() << "radio not connected";
+        logMessage(QString("Set Mode: radio not connected"));
     }
 }
 

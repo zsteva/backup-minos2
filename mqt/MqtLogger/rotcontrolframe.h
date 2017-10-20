@@ -54,8 +54,8 @@ private:
     QShortcut *nudgeRight1;
     QShortcut *nudgeRight2;
     QShortcut *nudgeLeft;
-    QPalette *redText;
-    QPalette *blackText;
+    //QPalette *redText;
+    //QPalette *blackText;
 
     int maxAzimuth = 0;
     int minAzimuth = 0;
