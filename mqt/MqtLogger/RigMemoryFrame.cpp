@@ -44,6 +44,7 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     ui(new Ui::RigMemoryFrame)
 {
     ui->setupUi(this);
+    ui->scrollAreaWidgetContents->setStyleSheet("background-color:white;");
 }
 
 RigMemoryFrame::~RigMemoryFrame()
