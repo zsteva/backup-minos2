@@ -438,7 +438,7 @@ void RigControlFrame::setRxPBFlag(QString flag)
     ui->narRb->setVisible(!fl);
     ui->normalRb->setVisible(!fl);
     ui->wideRb->setVisible(!fl);
-    ui->groupBox->setVisible(!fl);
+    ui->filterBox->setVisible(!fl);
 }
 
 void RigControlFrame::mgmLabelVisible(bool state)
