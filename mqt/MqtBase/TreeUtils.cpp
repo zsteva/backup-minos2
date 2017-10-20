@@ -17,8 +17,8 @@ GridColumn QSOTreeColumns[ LOGTREECOLS ] =
       GridColumn( egRSTRx, "599XXX", "RepRx", taLeftJustify ),                 // RST
       GridColumn( egSNRx, "1234X", "SnRx", taLeftJustify /*taRightJustify*/ ),   // Serial
       GridColumn( egLoc, "MM00MM00X", "Loc", taLeftJustify ),            // LOC
-      GridColumn( egBrg, "3601X", "brg", taLeftJustify ),                // bearing
       GridColumn( egScore, "12345XX", "dist", taLeftJustify /*taRightJustify*/ ),  // score
+      GridColumn( egBrg, "3601X", "brg", taLeftJustify ),                // bearing
       GridColumn( egExchange, "XXXXXXXXXXXXXXXX", "Exchange", taLeftJustify ),    // QTH
       GridColumn( egComments, "XXXXXXXXXXXXXXXX", "Comments", taLeftJustify ),     // comments
       GridColumn( egFrequency, "1.296.123.456XXX", "Freq", taLeftJustify ),
