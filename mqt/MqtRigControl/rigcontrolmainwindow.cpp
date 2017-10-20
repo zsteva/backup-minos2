@@ -825,17 +825,17 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
          retCode = radio->setMode(vfo, mCode, passBand);
          if (retCode == RIG_OK)
          {
-             logMessage(QString("Mode changed! Mode = %1, PassBand = %2").arg(radio->convertModeQstr(rmode), QString::number(passBand)));
+             logMessage(QString("Mode changed! Mode = %1, PassBand = %2").arg(radio->convertModeQstr(mCode), QString::number(passBand)));
          }
          else
          {
-             logMessage(QString("Mode Change Error Code = %1, Mode = %1, PassBand = %2").arg(QString::number(retCode), radio->convertModeQstr(rmode), QString::number(passBand)));
+             logMessage(QString("Mode Change Error Code = %1, Mode = %2, PassBand = %3").arg(QString::number(retCode), radio->convertModeQstr(mCode), QString::number(passBand)));
              hamlibError(retCode, "Set Mode");
          }
     }
     else
     {
-        qDebug() << "radio not connected";
+        logMessage(QString("Set Mode: radio not connected"));
     }
 }
 
