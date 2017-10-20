@@ -73,7 +73,9 @@ enum endStop {ROT_NEG180_180, ROT_0_360, ROT_0_450, ROT_NEG180_540, ROT_180_180}
 
 enum overlapStat { NO_OVERLAP, NEG_OVERLAP, POS_OVERLAP};
 
+// Pushbutton Styles
 
-
+const QString BUTTON_ON_STYLE = QString("background-color: Sandybrown ; border-style: outset; border-width: 1px; border-color: black; min-width: 5em; padding: 3px;\n");
+const QString BUTTON_OFF_STYLE = QString("background-color: Gainsboro ; border-style: outset; border-width: 1px; border-color: black; min-width: 5em; padding: 3px;\n");
 
 #endif // ROTATORCOMMON_H

@@ -51,12 +51,14 @@ RotControlFrame::RotControlFrame(QWidget *parent):
 
     connect(&MinosLoggerEvents::mle, SIGNAL(BrgStrToRot(QString)), this, SLOT(getBrgFrmQSOLog(QString)));
 
-    redText = new QPalette();
-    blackText = new QPalette();
-    redText->setColor(QPalette::ButtonText, Qt::red);
-    blackText->setColor(QPalette::ButtonText, Qt::black);
+    //redText = new QPalette();
+    //blackText = new QPalette();
+    //redText->setColor(QPalette::ButtonText, Qt::red);
+    //blackText->setColor(QPalette::ButtonText, Qt::black);
+
     rot_left_button_off();
     rot_right_button_off();
+    showTurnButOff();
     traceMsg("RotControlFrame Started");
 
 }
@@ -328,13 +330,15 @@ void RotControlFrame::rot_right_button_off()
 
 void RotControlFrame::showTurnButOn()
 {
-    ui->Rotate->setPalette(*redText);
+    //ui->Rotate->setPalette(*redText);
+    ui->Rotate->setStyleSheet(BUTTON_ON_STYLE);
     ui->Rotate->setText("Turn");
 }
 
 void RotControlFrame::showTurnButOff()
 {
-    ui->Rotate->setPalette(*blackText);
+    //ui->Rotate->setPalette(*blackText);
+    ui->Rotate->setStyleSheet(BUTTON_OFF_STYLE);
     ui->Rotate->setText("Turn");
 }
 
@@ -343,25 +347,29 @@ void RotControlFrame::showTurnButOff()
 
 void RotControlFrame::showRotLeftButOn()
 {
-    ui->RotateLeft->setPalette(*redText);
+    //ui->RotateLeft->setPalette(*redText);
+    ui->RotateLeft->setStyleSheet(BUTTON_ON_STYLE);
     ui->RotateLeft->setText("(CCW) Left");
 }
 
 void RotControlFrame::showRotLeftButOff()
 {
-    ui->RotateLeft->setPalette(*blackText);
+    //ui->RotateLeft->setPalette(*blackText);
+    ui->RotateLeft->setStyleSheet(BUTTON_OFF_STYLE);
     ui->RotateLeft->setText("(CCW) Left");
 }
 
 void RotControlFrame::showRotRightButOn()
 {
-    ui->RotateRight->setPalette(*redText);
+    //ui->RotateRight->setPalette(*redText);
+    ui->RotateRight->setStyleSheet(BUTTON_ON_STYLE);
     ui->RotateRight->setText("(CW) Right");
 }
 
 void RotControlFrame::showRotRightButOff()
 {
-    ui->RotateRight->setPalette(*blackText);
+    //ui->RotateRight->setPalette(*blackText);
+    ui->RotateRight->setStyleSheet(BUTTON_OFF_STYLE);
     ui->RotateRight->setText("(CW) Right");
 }
 
