@@ -101,7 +101,7 @@
         </property>
        </widget>
       </widget>
-      <widget class="MinosSplitter" name="Controlsplitter">
+      <widget class="MinosSplitter" name="ControlSplitter">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>

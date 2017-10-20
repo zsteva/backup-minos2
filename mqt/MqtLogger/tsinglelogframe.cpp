@@ -36,7 +36,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 
     ui->matchTreesFrame->setBaseName("Log");
 
-    ui->Controlsplitter->setVisible(false);
+    ui->ControlSplitter->setVisible(false);
 
 #ifdef Q_OS_ANDROID
     splitterHandleWidth = 20;
@@ -342,7 +342,13 @@ void TSingleLogFrame::HideTimerTimer(  )
 {
     bool controlsLoaded = isBandMapLoaded() || isRadioLoaded() || isRotatorLoaded();
 
-    ui->Controlsplitter->setVisible(controlsLoaded);
+    ui->ControlSplitter->setVisible(controlsLoaded);
+
+    if (controlsLoaded)
+    {
+        ui->FKHRigControlFrame->setVisible(isRadioLoaded());
+        ui->FKHRotControlFrame->setVisible(isRotatorLoaded());
+    }
 }
 void TSingleLogFrame::on_NextContactDetailsOnLeft()
 {
@@ -512,6 +518,10 @@ void TSingleLogFrame::getSplitters()
     ui->MultSplitter->restoreState(state);
     ui->MultSplitter->setHandleWidth(splitterHandleWidth);
 
+    state = settings.value("ControlSplitter/state").toByteArray();
+    ui->ControlSplitter->restoreState(state);
+    ui->ControlSplitter->setHandleWidth(splitterHandleWidth);
+
     ui->stackedInfoFrame->getSplitters();
     ui->matchTreesFrame->getSplitters();
 }
@@ -552,6 +562,13 @@ void TSingleLogFrame::on_MultSplitter_splitterMoved(int /*pos*/, int /*index*/)
     MinosLoggerEvents::SendSplittersChanged();
 }
 
+void TSingleLogFrame::on_ControlSplitter_splitterMoved(int /*pos*/, int /*index*/)
+{
+    QByteArray state = ui->ControlSplitter->saveState();
+    QSettings settings;
+    settings.setValue("ControlSplitter/state", state);
+    MinosLoggerEvents::SendSplittersChanged();
+}
 void TSingleLogFrame::on_sectionResized(int, int, int)
 {
     QSettings settings;
@@ -818,6 +835,3 @@ void TSingleLogFrame::sendRotator(rpcConstants::RotateDirection direction, int a
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         sendDM->sendRotator(direction, angle);
 }
-
-
-//=============================================================================

@@ -158,6 +158,7 @@ private slots:
     void sendRadioMode(QString);
     void sendRadioPassBandState(int);
 
+    void on_ControlSplitter_splitterMoved(int pos, int index);
 };
 
 #endif // TSINGLELOGFRAME_H
