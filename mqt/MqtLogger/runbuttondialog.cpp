@@ -61,7 +61,7 @@ void RunButtonDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
     memoryNumber = buttonNumber;
     logdata = ldata;
 
-    setWindowTitle(QString("Run%1 - Edit").arg(QString::number(buttonNumber + 1)));
+    //setWindowTitle(QString("Run%1 - Edit").arg(QString::number(buttonNumber + 1)));
 
     ui->modecb->setCurrentText(ldata->mode);
     ui->pbStateCb->setCurrentIndex(ldata->pBandState);

@@ -38,6 +38,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     , rigErrorFlag(false)
     , mgmModeFlag(false)
     , supRitFlag(false)
+    , cmdLockFlag(false)
     , curVfoFrq(0)
     , curTransVertFrq(0)
     , rRitFreq(0)
@@ -530,7 +531,11 @@ int RigControlMainWindow::getPolltime()
 void RigControlMainWindow::getRadioInfo()
 {
     logMessage("Request radio info");
-
+    if (cmdLockFlag)
+    {
+        trace(QString("GetRadioInfo: Command Lock on"));
+        return;
+    }
     chkRadioMgmModeChanged();
 
     int retCode;
@@ -591,6 +596,7 @@ void RigControlMainWindow::loggerSetFreq(QString freq)
 
 void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
 {
+    cmdLockFlag = true;    // lock get radio info
     bool ok = false;
     int retCode = 0;
     QString sfreq = freq.remove('.');
@@ -644,6 +650,8 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
     {
         logMessage(QString("SetFreq:: Freq conversion from string %1 failed").arg(sfreq));
     }
+
+    cmdLockFlag = false;
 }
 
 int RigControlMainWindow::getFrequency(vfo_t vfo)
@@ -802,12 +810,15 @@ void RigControlMainWindow::loggerSetMode(QString mode)
 
 void RigControlMainWindow::setCurMode(QString mode)
 {
+
     setMode(mode, RIG_VFO_CURR);
+
 }
 
 
 void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
 {
+    cmdLockFlag = true;      // lock get radio info
     logMessage(QString("Setmode: Mode Requested = %1").arg(mode));
     rmode_t mCode = radio->convertQStrMode(mode);
     int retCode = 0;
@@ -839,6 +850,7 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
     {
         logMessage(QString("Set Mode: radio not connected"));
     }
+    cmdLockFlag = false;
 }
 
 void RigControlMainWindow::enableRitDisplay(bool state)
@@ -865,8 +877,12 @@ int RigControlMainWindow::getRitFreq(vfo_t vfo)
 
 int RigControlMainWindow::setRitFreq(vfo_t vfo, shortfreq_t ritFreq)
 {
+    int retCode = 0;
+    cmdLockFlag = true;
+    retCode = radio->setRit(vfo, ritFreq);
 
-    return radio->setRit(vfo, ritFreq);
+    cmdLockFlag = false;
+    return retCode;
 
 }
 

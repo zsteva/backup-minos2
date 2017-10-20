@@ -44,6 +44,7 @@ public:
     QToolButton* memButton;
     QMenu* memoryMenu;
     QShortcut* shortKey;
+    QShortcut* shiftShortKey;
     QAction* readAction;
     QAction* writeAction;
     QAction* editAction;

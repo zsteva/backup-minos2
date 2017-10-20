@@ -32,6 +32,12 @@ static QKeySequence runButShortCut[] {
 
 };
 
+static QKeySequence runButShiftShortCut[] {
+    QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_BracketLeft),
+    QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_BracketRight)
+
+};
+
 
 
 RigControlFrame::RigControlFrame(QWidget *parent):
@@ -501,6 +507,7 @@ void RigControlFrame::runButWriteActSel(int buttonNumber)
     // load run data into run memory
 
     RunButtonDialog runDialog(this);
+    runDialog.setWindowTitle(QString("Run %1 - Write").arg(QString::number(buttonNumber + 1)));
     runDialog.setLogData(&runData, buttonNumber);
     if (runDialog.exec() == QDialog::Accepted)
     {
@@ -516,6 +523,7 @@ void RigControlFrame::runButEditActSel(int buttonNumber)
 
     traceMsg(QString("Run Button Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
     RunButtonDialog runDialog(this);
+    runDialog.setWindowTitle(QString("Run %1 - Edit").arg(QString::number(buttonNumber + 1)));
     runDialog.setLogData(&runData, buttonNumber);
     if (runDialog.exec() == QDialog::Accepted)
     {
@@ -530,6 +538,7 @@ void RigControlFrame::runButClearActSel(int buttonNumber)
 
     memoryData::memData m;
     setRunMemoryData(buttonNumber, m);
+    runButtonUpdate(buttonNumber);
 }
 void RigControlFrame::loadRunButtonLabels()
 {
@@ -554,28 +563,36 @@ void RigControlFrame::runButtonUpdate(int buttonNumber)
 
 QString RigControlFrame::extractKhz(QString f)
 {
-    QString khz = "000";
+    QString khz = "***";
+    QString sf = f.remove('.');
+    bool ok = false;
+    double df = sf.toDouble(&ok);
+    if (ok && df != 0.0)
+    {
+        if (f.contains('.'))
+        {
+            QStringList k = f.split('.');
+            int i = k.length();
+            if (i >=2)
+            {
+                return k[i-2];
+            }
+        }
+        else
+        {
+            int i = f.length();
+            if (i >= 6)
+            {
+                khz = f.mid(i - 6, 3);
+                return khz;
+            }
+        }
+    }
 
-    if (f.contains('.'))
-    {
-        QStringList k = f.split('.');
-        int i = k.length();
-        if (i >=2)
-        {
-            return k[i-2];
-        }
-    }
-    else
-    {
-        int i = f.length();
-        if (i >= 6)
-        {
-            khz = f.mid(i - 6, 3);
-            return khz;
-        }
-    }
 
     return khz;
+
+
 }
 
 //********************************************//
@@ -607,6 +624,7 @@ RunMemoryButton::RunMemoryButton(QToolButton *b, RigControlFrame *rcf, int no)
     memButton->setText(runButData::runButTitle[memNo]);
 
     shortKey = new QShortcut(QKeySequence(runButShortCut[memNo]), memButton);
+    shiftShortKey = new QShortcut(QKeySequence(runButShiftShortCut[memNo]), memButton);
     readAction = new QAction("&Read", memButton);
     writeAction = new QAction("&Write",memButton);
     editAction = new QAction("&Edit", memButton);
@@ -617,7 +635,8 @@ RunMemoryButton::RunMemoryButton(QToolButton *b, RigControlFrame *rcf, int no)
     memoryMenu->addAction(clearAction);
     memButton->setMenu(memoryMenu);
 
-    connect(shortKey, SIGNAL(activated()), this, SLOT(memoryShortCutSelected()));
+    connect(shortKey, SIGNAL(activated()), this, SLOT(readActionSelected()));
+    connect(shiftShortKey, SIGNAL(activated()), this, SLOT(memoryShortCutSelected()));
     connect(memButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
     connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()) );
     connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()) );
