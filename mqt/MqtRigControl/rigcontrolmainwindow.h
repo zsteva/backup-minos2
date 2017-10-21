@@ -63,6 +63,7 @@ private:
     class QTimer LogTimer;
     int pollTime;
     bool rigErrorFlag;
+    bool cmdLockFlag;
     // data from logger
     QString logger_freq;
     QString logger_mode;
