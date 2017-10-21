@@ -18,10 +18,9 @@ TConfigFrame::~TConfigFrame()
 {
     delete ui;
 }
-void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool doAutoStart)
+void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool showAutoStart)
 {
-    if (!doAutoStart)
-        ui->autoStartCheckBox->setVisible(false);
+    ui->autoStartCheckBox->setVisible(showAutoStart);
 
     closeCb = ccb;
     parent = p;
@@ -64,37 +63,20 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool doAutoSt
 
     QString reqErrs = MinosConfig::getMinosConfig() ->checkConfig();
 
-    if (reqErrs.isEmpty())
+    if (!reqErrs.isEmpty())
     {
-        if (doAutoStart && minosConfig->getAutoStart())
-        {
-            connect(&startTimer, SIGNAL(timeout()), this, SLOT(startTimer_Timeout()));
-            startTimer.start(100);
-        }
-    }
-    else
         mShowMessage(reqErrs, p);
+    }
 }
 void TConfigFrame::setup(bool started)
 {
     ui->StartButton->setEnabled(!started);
     ui->StopButton->setVisible(false);
 }
-void TConfigFrame::startTimer_Timeout()
-{
-    startTimer.stop();
-    start();
-}
-
-void TConfigFrame::start()
-{
-    MinosConfig::getMinosConfig() ->start();
-}
-
 void TConfigFrame::on_StartButton_clicked()
 {
     saveAll();
-    start();
+    MinosConfig::getMinosConfig() ->start();
 }
 
 void TConfigFrame::on_StopButton_clicked()

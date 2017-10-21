@@ -66,7 +66,6 @@ SOURCES += main.cpp \
     SendRPCDM.cpp \
     TSessionManager.cpp \
     TClockFrame.cpp \
-    StartConfig.cpp \
     rigcontrolframe.cpp \
     rotcontrolframe.cpp \
     rigmemdialog.cpp \
@@ -112,7 +111,6 @@ HEADERS  += \
     SendRPCDM.h \
     TSessionManager.h \
     TClockFrame.h \
-    StartConfig.h \
     rigcontrolframe.h \
     rotcontrolframe.h \
     rigmemcommondata.h \
@@ -145,7 +143,6 @@ FORMS    += tlogcontainer.ui \
     locframe.ui \
     TSessionManager.ui \
     TClockFrame.ui \
-    StartConfig.ui \
     rigcontrolframe.ui \
     rigmemdialog.ui \
     rotcontrolframe.ui \

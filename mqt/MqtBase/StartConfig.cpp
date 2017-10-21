@@ -7,7 +7,7 @@ static void configCloseCallback(QWidget *w)
     w->close();
 }
 
-StartConfig::StartConfig(QWidget *parent) :
+StartConfig::StartConfig(QWidget *parent, bool showAutoStart) :
     QDialog(parent),
     ui(new Ui::StartConfig)
 {
@@ -18,7 +18,7 @@ StartConfig::StartConfig(QWidget *parent) :
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
-    ui->configFrame->initialise(this, &::configCloseCallback, false);
+    ui->configFrame->initialise(this, &::configCloseCallback, showAutoStart);
 }
 
 StartConfig::~StartConfig()

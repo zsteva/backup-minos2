@@ -12,7 +12,7 @@ class StartConfig : public QDialog
     Q_OBJECT
 
 public:
-    explicit StartConfig(QWidget *parent = 0);
+    explicit StartConfig(QWidget *parent, bool showAutoStart);
     ~StartConfig();
 
 private:

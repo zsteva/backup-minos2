@@ -922,7 +922,7 @@ void TLogContainer::menuLogsActionExecute()
 
 void TLogContainer::StartConfigActionExecute()
 {
-    StartConfig configBox( this);
+    StartConfig configBox( this, false);
     configBox.exec();
 }
 
