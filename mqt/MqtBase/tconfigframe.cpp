@@ -39,7 +39,7 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool showAuto
         if (c->name.compare("<Deleted>", Qt::CaseInsensitive) == 0)
             continue;
 
-        ConfigElementFrame *cef = new ConfigElementFrame();
+        ConfigElementFrame *cef = new ConfigElementFrame(false);
 
         // set alternating background
 
@@ -134,7 +134,7 @@ void TConfigFrame::on_CancelButton_clicked()
 void TConfigFrame::on_newElementButton_clicked()
 {
     // Create new element
-    ConfigElementFrame *cef = new ConfigElementFrame();
+    ConfigElementFrame *cef = new ConfigElementFrame(true); // mark as new element
 
     // set alternating background
 
@@ -150,10 +150,7 @@ void TConfigFrame::on_newElementButton_clicked()
 
     ui->scrollAreaWidgetContents->layout()->addWidget(cef);
 
-    MinosConfig::getMinosConfig() ->elelist.append(QSharedPointer<RunConfigElement> (new RunConfigElement) );
-
-    int i = MinosConfig::getMinosConfig() ->elelist.size() - 1; // position of element in list
-    QSharedPointer<RunConfigElement> c = MinosConfig::getMinosConfig() ->elelist[i];
+    QSharedPointer<RunConfigElement> c = QSharedPointer<RunConfigElement> (new RunConfigElement);
     c->runType = RunLocal;
     c->appType = "None";
     c->enabled = true;

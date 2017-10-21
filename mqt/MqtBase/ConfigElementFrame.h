@@ -13,10 +13,11 @@ class ConfigElementFrame : public QFrame
     Q_OBJECT
 
     QSharedPointer<RunConfigElement> configElement;
+    bool newElement = false;
     void checkEnabled();
 
 public:
-    explicit ConfigElementFrame(QWidget *parent = 0);
+    explicit ConfigElementFrame(bool nele);
     ~ConfigElementFrame();
 
     void setElement(QSharedPointer<RunConfigElement> configElement);
