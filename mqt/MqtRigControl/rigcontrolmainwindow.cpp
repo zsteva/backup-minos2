@@ -311,12 +311,11 @@ void RigControlMainWindow::upDateRadio()
         selectRig->currentRadio.parity = selectRig->availRadios[radioIndex].parity;
         selectRig->currentRadio.handshake = selectRig->availRadios[radioIndex].handshake;
         selectRig->currentRadio.transVertEnable = selectRig->availRadios[radioIndex].transVertEnable;
-        if (!selectRig->currentRadio.transVertEnable)
-        {
-            // only show transvert freq box is enabled
-            ui->transVertFreqA->setVisible(selectRig->currentRadio.transVertEnable);
+
+        // only show transvert freq box is enabled
+        ui->transVertFreqA->setVisible(selectRig->currentRadio.transVertEnable);
             ui->TVertTitleA->setVisible(selectRig->currentRadio.transVertEnable);
-        }
+
         selectRig->currentRadio.transVertNegative = selectRig->availRadios[radioIndex].transVertNegative;
         selectRig->currentRadio.transVertOffset = selectRig->availRadios[radioIndex].transVertOffset;
         selectRig->currentRadio.transVertOffsetStr = selectRig->availRadios[radioIndex].transVertOffsetStr;
