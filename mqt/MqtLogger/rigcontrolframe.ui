@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>530</width>
-    <height>123</height>
+    <height>134</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -89,7 +89,7 @@
           <widget class="FreqLineEdit" name="freqInput">
            <property name="font">
             <font>
-             <pointsize>16</pointsize>
+             <pointsize>12</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>

@@ -833,9 +833,9 @@ void FreqLineEdit::changeFreq(bool direction)
             }
         }
 
-        qDebug() << "freq = " << QString::number(freq);
-        sfreq = convertFreqString(freq);
 
+        sfreq = convertFreqString(freq);
+        trace(QString("Change Freq: Freq Tuning = %1").arg(freq));
         if (bandOK)
         {
             setText(sfreq);

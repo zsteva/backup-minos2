@@ -127,7 +127,7 @@ void RotControlFrame::turnTo(int angle)
     {
         traceMsg(QString("TurnTo: Bearing empty or invalid"));
         QString msg = "<font color='Red'>Bearing empty or invalid</font>";
-        ui->rotatorState->setText(msg);
+        ui->rotatorStatMsg->setText(msg);
         return;
     }
 
@@ -137,7 +137,7 @@ void RotControlFrame::turnTo(int angle)
     {
         traceMsg(QString("TurnTo: Bearing too large"));
         QString msg = "<font color='Red'>Bearing too large - " + QString::number(angle) + "</font>";
-        ui->rotatorState->setText(msg);
+        ui->rotatorStatMsg->setText(msg);
         return;
     }
     //else if (angle < minAzimuth)
@@ -145,7 +145,7 @@ void RotControlFrame::turnTo(int angle)
     {
         traceMsg(QString("TurnTo: Bearing too small"));
         QString msg = "<font color='Red'>Bearing too small - " + QString::number(angle) + "</font>";
-        ui->rotatorState->setText(msg);
+        ui->rotatorStatMsg->setText(msg);
         return;
     }
     else if (angle == currentBearing)
@@ -406,9 +406,10 @@ bool RotControlFrame::isRotatorLoaded()
 void RotControlFrame::setRotatorState(const QString &s)
 {
        traceMsg("Set Rotator State = " + s);
-       ui->rotatorState->setText(s);
+       //ui->rotatorState->setText(s);
        if (s == ROT_STATUS_STOP)
        {
+           ui->rotatorStatMsg->setText(s);
            rotError = false;
            clearRotatorFlags();
            showRotLeftButOff();
@@ -417,6 +418,7 @@ void RotControlFrame::setRotatorState(const QString &s)
        }
        else if (s == ROT_STATUS_ROTATE_CCW)
        {
+           ui->rotatorStatMsg->setText(s);
            rotError = false;
            moving = false;
            movingCW = false;
@@ -426,6 +428,7 @@ void RotControlFrame::setRotatorState(const QString &s)
        }
        else if (s == ROT_STATUS_ROTATE_CW)
        {
+           ui->rotatorStatMsg->setText(s);
            rotError = false;
            moving = false;
            movingCW = true;
@@ -435,6 +438,7 @@ void RotControlFrame::setRotatorState(const QString &s)
        }
        else if (s == ROT_STATUS_TURN_TO)
        {
+           ui->rotatorStatMsg->setText(s);
            rotError = false;
            moving = true;
            movingCW = false;
@@ -445,16 +449,19 @@ void RotControlFrame::setRotatorState(const QString &s)
        }
        else if (s == ROT_STATUS_CONNECTED)
        {
+           ui->rotConnectState->setText(s);
            rotError = false;
            rotConnected = true;
        }
        else if (s == ROT_STATUS_DISCONNECTED)
        {
+           ui->rotConnectState->setText(s);
            rotError = false;
            rotConnected = false;
        }
        else if (s == ROT_STATUS_ERROR)
        {
+           ui->rotatorStatMsg->setText(s);
            rotError = true;
        }
 
