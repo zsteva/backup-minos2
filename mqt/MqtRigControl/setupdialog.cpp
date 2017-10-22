@@ -429,6 +429,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
         comStopBits[i]->setCurrentIndex(comStopBits[i]->findText(QString::number(availRadios[i].stopbits)));
         comParity[i]->setCurrentIndex(availRadios[i].parity);
         comHandShake[i]->setCurrentIndex(availRadios[i].handshake);
+        transVertEdit[i]->setText(availRadios[i].transVertOffsetStr);
         transVertCheck[i]->setChecked(availRadios[i].transVertEnable);
         transVertEdit[i]->setEnabled(transVertCheck[i]->isChecked());
         transNegCheck[i]->setEnabled(transVertCheck[i]->isChecked());

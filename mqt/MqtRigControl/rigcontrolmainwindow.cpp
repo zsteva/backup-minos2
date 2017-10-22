@@ -140,7 +140,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
     upDateRadio();
 
-
+    ui->selectRadioBox->clearFocus();
 
     trace("*** Rig Started ***");
 
@@ -401,7 +401,9 @@ void RigControlMainWindow::upDateRadio()
         {
             this->setWindowTitle("Minos Rig Control - - Local");
         }
+
     }
+
 
 
 
