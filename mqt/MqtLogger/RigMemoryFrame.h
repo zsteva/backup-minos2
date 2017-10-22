@@ -51,6 +51,8 @@ class RigMemoryFrame : public QFrame
 {
     Q_OBJECT
 
+    void clean();
+
 public:
     explicit RigMemoryFrame(QWidget *parent = 0);
     ~RigMemoryFrame();

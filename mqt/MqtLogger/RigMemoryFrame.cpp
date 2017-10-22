@@ -130,6 +130,7 @@ void RigMemoryFrame::writeActionSelected(int buttonNumber)
    {
        setRigMemoryData(buttonNumber, logData);
        memoryUpdate(buttonNumber);
+       clean();
    }
 }
 
@@ -149,6 +150,7 @@ void RigMemoryFrame::editActionSelected(int buttonNumber)
     {
         setRigMemoryData(buttonNumber, logData);
         memoryUpdate(buttonNumber);
+        clean();
     }
 
 }
@@ -183,6 +185,8 @@ void RigMemoryFrame::clearActionSelected(int buttonNumber)
          }
          memButtonMap.remove(buttonNumber);
          delete rmb;
+
+         clean();
      }
 }
 void RigMemoryFrame::loadMemoryButtonLabels()
@@ -192,8 +196,30 @@ void RigMemoryFrame::loadMemoryButtonLabels()
     {
         memoryUpdate(i);
     }
+    clean();
 }
 
+void RigMemoryFrame::clean()
+{
+    QGridLayout *gl = qobject_cast<QGridLayout *>(ui->scrollAreaWidgetContents->layout());
+    int i = 0;
+    QLayoutItem *child1;
+    while(( child1 = gl->itemAt(i)) != 0)
+    {
+        gl->takeAt(i);
+        i++;
+    }
+
+    i = 0;
+    foreach(RigMemoryButton *rmb, memButtonMap)
+    {
+        QToolButton *rmbb = rmb->memButton;
+        int row = i/2;
+        int col = i%2;
+        gl->addWidget(rmbb, row, col);
+        i++;
+    }
+}
 void RigMemoryFrame::memoryUpdate(int buttonNumber)
 {
     memoryData::memData m = getRigMemoryData(buttonNumber);
@@ -207,6 +233,16 @@ void RigMemoryFrame::memoryUpdate(int buttonNumber)
 
         QGridLayout *gl = qobject_cast<QGridLayout *>(ui->scrollAreaWidgetContents->layout());
         gl->addWidget(memButtonMap[buttonNumber]->memButton, row, col);
+
+        memButtonMap[buttonNumber]->memButton->setStyleSheet("border: 1px solid black; background-color: #DFDFDF");
+
+        // This works - recipe from internet - but not sure why!
+
+        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(memButtonMap[buttonNumber]->memButton->sizePolicy().hasHeightForWidth());
+        memButtonMap[buttonNumber]->memButton->setSizePolicy(sizePolicy);
     }
 
     if (memButtonMap.contains(buttonNumber))
@@ -214,7 +250,8 @@ void RigMemoryFrame::memoryUpdate(int buttonNumber)
 
         QToolButton *mb = memButtonMap[buttonNumber]->memButton;
 
-        mb->setText("M" + QString::number(buttonNumber + 1) + ": " + m.callsign + " ");
+        mb->setText("M" + QString::number(buttonNumber + 1) + ": " + m.callsign);
+
         QString tTipStr = "Callsign: " + m.callsign + "\n"
                 + "Freq: " + m.freq + "\n"
                 + "Mode: " + m.mode + "\n"
@@ -224,6 +261,7 @@ void RigMemoryFrame::memoryUpdate(int buttonNumber)
                 + "Time: " + m.time;
         mb->setToolTip(tTipStr);
     }
+
 }
 
 
