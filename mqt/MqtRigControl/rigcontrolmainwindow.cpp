@@ -526,7 +526,17 @@ int RigControlMainWindow::getPolltime()
     return pollTime;
 }
 
+void RigControlMainWindow::cmdLockOn()
+{
+    cmdLockFlag = true;
+    logMessage("Lockon: Command Lock On");
+}
 
+void RigControlMainWindow::cmdLockOff()
+{
+    cmdLockFlag = false;
+    logMessage("Lockoff: Command Lock Off");
+}
 
 void RigControlMainWindow::getRadioInfo()
 {
@@ -596,7 +606,7 @@ void RigControlMainWindow::loggerSetFreq(QString freq)
 
 void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
 {
-    cmdLockFlag = true;    // lock get radio info
+    cmdLockOn();    // lock get radio info
     bool ok = false;
     int retCode = 0;
     QString sfreq = freq.remove('.');
@@ -629,6 +639,7 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
                 if (retCode == -9)
                 {
                     logMessage(QString("SetFreq: Invalid Tx Freq for Radio, Freq = %1").arg(QString::number(f)));
+                    cmdLockOff();
                     return;
                 }
 
@@ -651,7 +662,7 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
         logMessage(QString("SetFreq:: Freq conversion from string %1 failed").arg(sfreq));
     }
 
-    cmdLockFlag = false;
+    cmdLockOff();
 }
 
 int RigControlMainWindow::getFrequency(vfo_t vfo)
@@ -818,7 +829,7 @@ void RigControlMainWindow::setCurMode(QString mode)
 
 void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
 {
-    cmdLockFlag = true;      // lock get radio info
+    cmdLockOn();      // lock get radio info
     logMessage(QString("Setmode: Mode Requested = %1").arg(mode));
     rmode_t mCode = radio->convertQStrMode(mode);
     int retCode = 0;
@@ -850,7 +861,7 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
     {
         logMessage(QString("Set Mode: radio not connected"));
     }
-    cmdLockFlag = false;
+    cmdLockOff();
 }
 
 void RigControlMainWindow::enableRitDisplay(bool state)
@@ -878,10 +889,10 @@ int RigControlMainWindow::getRitFreq(vfo_t vfo)
 int RigControlMainWindow::setRitFreq(vfo_t vfo, shortfreq_t ritFreq)
 {
     int retCode = 0;
-    cmdLockFlag = true;
+    cmdLockOn();
     retCode = radio->setRit(vfo, ritFreq);
 
-    cmdLockFlag = false;
+    cmdLockOff();
     return retCode;
 
 }
