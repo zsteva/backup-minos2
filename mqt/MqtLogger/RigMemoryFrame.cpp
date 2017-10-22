@@ -238,10 +238,10 @@ void RigMemoryFrame::memoryUpdate(int buttonNumber)
 
         // This works - recipe from internet - but not sure why!
 
-        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(memButtonMap[buttonNumber]->memButton->sizePolicy().hasHeightForWidth());
+        sizePolicy.setHeightForWidth(false);
         memButtonMap[buttonNumber]->memButton->setSizePolicy(sizePolicy);
     }
 
