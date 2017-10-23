@@ -67,6 +67,8 @@ const QString FILENAME_CURRENT_ANTENNA = "CurrentAntenna.ini";
 // Rotator Types
 
 enum endStop {ROT_NEG180_180, ROT_0_360, ROT_0_450, ROT_NEG180_540, ROT_180_180};
+const QStringList endStopNames =  {"ROT_NEG180_180", "ROT_0_360", "ROT_0_450", "ROT_NEG180_540", "ROT_180_180"};
+
 
 
 // Overlap Status
