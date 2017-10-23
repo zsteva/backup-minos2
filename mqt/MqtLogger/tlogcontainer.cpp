@@ -612,9 +612,11 @@ void TLogContainer::FileNewActionExecute()
        }
        else
        {
-             ContestDetails pced( this);
-             c = addSlot( &pced, initName, false, -1 );
-             repeatDialog = (c != 0);
+            repeatDialog = false;   // never go back to the dialog
+            if ( !QFile::remove( initName ) )
+            {
+                MinosParameters::getMinosParameters() ->mshowMessage( QString( "Failed to delete " ) + initName );
+            }
        }
     }
     selectContest(c, QSharedPointer<BaseContact>());
@@ -939,6 +941,8 @@ void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
     menuLogsActions.clear();
 
     ui->menuLogs->addAction(FileOpenAction);
+    ui->menuLogs->addMenu(recentFilesMenu);
+    ui->menuLogs->addAction(FileNewAction);
     ui->menuLogs->addAction(FileCloseAction);
     ui->menuLogs->addAction(CloseAllAction);
     ui->menuLogs->addAction(CloseAllButAction);
