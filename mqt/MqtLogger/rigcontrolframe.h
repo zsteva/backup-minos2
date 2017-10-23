@@ -101,6 +101,8 @@ signals:
     void sendPassBandStateToControl(int);
 
 private slots:
+    void on_FontChanged();
+
     void freqLineEditInFocus();
     void radioBandFreq(int index);
     void noRadioSetFreq(QString);

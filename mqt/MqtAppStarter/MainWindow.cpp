@@ -1,12 +1,8 @@
 #include "base_pch.h"
+#include "ConfigFile.h"
+#include "StartConfig.h"
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-
-
-static void closeCallback(QWidget *w)
-{
-    w->close();
-}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,13 +10,17 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->configFrame->initialise(this, &::closeCallback, true);
     createCloseEvent();
     QSettings settings;
     QByteArray geometry = settings.value("geometry").toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
+    if (MinosConfig::getMinosConfig() ->getAutoStart())
+    {
+        connect(&startTimer, SIGNAL(timeout()), this, SLOT(startTimer_Timeout()));
+        startTimer.start(100);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -51,3 +51,26 @@ void MainWindow::changeEvent( QEvent* e )
         settings.setValue("geometry", saveGeometry());
     }
 }
+
+void MainWindow::on_appsButton_clicked()
+{
+
+    StartConfig startConfig(this, true);
+    startConfig.exec();
+}
+
+void MainWindow::on_closeButton_clicked()
+{
+    close();
+}
+void MainWindow::startTimer_Timeout()
+{
+    startTimer.stop();
+    start();
+}
+
+void MainWindow::start()
+{
+    MinosConfig::getMinosConfig() ->start();
+}
+

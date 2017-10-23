@@ -112,6 +112,7 @@ void StackedInfoFrame::refreshMults()
     ui->locFrame->reInitialiseLocators();
     ui->dxccFrame->reInitialiseCountries();
     ui->districtFrame->reInitialiseDistricts();
+    ui->rigMemFrame->reInitialiseMemories();
 }
 void StackedInfoFrame::on_FontChanged()
 {

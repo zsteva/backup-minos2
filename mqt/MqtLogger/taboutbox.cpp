@@ -154,6 +154,6 @@ void TAboutBox::on_LoggerOnlyButton_clicked()
 
 void TAboutBox::on_AppsButton_clicked()
 {
-    StartConfig configBox( this);
+    StartConfig configBox( this, false);
     configBox.exec();
 }

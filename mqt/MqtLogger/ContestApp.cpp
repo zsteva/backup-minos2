@@ -218,7 +218,7 @@ bool TContestApp::initialise()
 
    QString appfile;
    loggerBundle.getStringProfile( elpAppFile, appfile );
-   BundleFile::bundleFiles[ epAPPPFROFILE ] ->openProfile( appfile, "aps" );
+   BundleFile::bundleFiles[ epAPPPFROFILE ] ->openProfile( appfile, "Apps" );
    //----------------------------------
 
    QString locsfile;

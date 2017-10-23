@@ -16,19 +16,15 @@ class TConfigFrame : public QFrame
 {
     Q_OBJECT
 
-    QTimer startTimer;
-
 public:
     explicit TConfigFrame(QWidget *parent = 0);
     ~TConfigFrame();
-    void initialise(QWidget *parent, ConfigCloseCallBack, bool doAutoStart);
+    void initialise(QWidget *parent, ConfigCloseCallBack, bool showAutoStart);
     void setup(bool started);
 
     void start();
 
 private slots:
-    void startTimer_Timeout();
-
     void on_StartButton_clicked();
 
     void on_StopButton_clicked();

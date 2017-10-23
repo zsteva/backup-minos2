@@ -6,8 +6,9 @@
 #include "ui_ConfigElementFrame.h"
 #include "ConfigElementFrame.h"
 
-ConfigElementFrame::ConfigElementFrame(QWidget *parent) :
-    QFrame(parent),
+ConfigElementFrame::ConfigElementFrame(bool nele) :
+    QFrame(0),
+    newElement(nele),
     ui(new Ui::ConfigElementFrame)
 {
     ui->setupUi(this);
@@ -77,6 +78,12 @@ bool ConfigElementFrame::saveElement()
     configElement->params = ui->parametersEdit->text().trimmed();
     configElement->server = ui->serverNameEdit->text().trimmed();
     configElement->remoteApp = ui->remoteAppNameEdit->text().trimmed();
+
+    if (newElement)
+    {
+        MinosConfig::getMinosConfig() ->elelist.append(configElement );
+        newElement = false;
+    }
 
     return true;
 }
@@ -187,17 +194,12 @@ void ConfigElementFrame::on_rbConnectLocal_clicked()
 
 void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &value)
 {
-    if (ui->elementNameEdit->text().isEmpty())
-        ui->elementNameEdit->setText(value);
+    ui->elementNameEdit->setText(value);
 
-    if (ui->remoteAppNameEdit->text().isEmpty())
-        ui->remoteAppNameEdit->setText(value);
+    ui->remoteAppNameEdit->setText(value);
 
-    if (ui->programNameEdit->text().isEmpty())
-    {
-        AppConfigElement ace = MinosConfig::getMinosConfig()->getAppConfigElement(value);
-        ui->programNameEdit->setText(ace.appPath);
-    }
+    AppConfigElement ace = MinosConfig::getMinosConfig()->getAppConfigElement(value);
+    ui->programNameEdit->setText(ace.appPath);
 
     if (ui->homeDirectoryEdit->text().isEmpty())
         ui->homeDirectoryEdit->setText(".");

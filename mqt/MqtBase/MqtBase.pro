@@ -48,6 +48,7 @@ SOURCES += \
     MinosLines.cpp \
     Calendar.cpp \
     tconfigframe.cpp \
+    StartConfig.cpp \
     MinosTableView.cpp \
     ConfigElementFrame.cpp \
     MatchCollection.cpp
@@ -85,6 +86,7 @@ HEADERS += \
     Calendar.h \
     waitcursor.h \
     tconfigframe.h \
+    StartConfig.h \
     MinosTableView.h \
     ConfigElementFrame.h \
     rigcontrolcommonconstants.h \
@@ -100,4 +102,5 @@ DISTFILES += \
 FORMS += \
     minoskeyboard.ui \
     tconfigframe.ui \
+    StartConfig.ui \
     ConfigElementFrame.ui
