@@ -203,15 +203,8 @@ bool RigControlFrame::checkValidFreq(QString freq)
     if (ok)
     {
         bandOK = blist.findBand(dfreq, bi);
-        if (bandOK)
-        {
-            return true;
-        }
     }
-    else
-    {
-        return false;
-    }
+    return bandOK;
 }
 
 void RigControlFrame::returnChangeRadioFreq()
