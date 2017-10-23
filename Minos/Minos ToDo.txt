@@ -1,6 +1,6 @@
 Bearings in memories
 OK/Cancel/Save/exit on apps/appstarter. 
-Make apps display on appstarter a dialog, so it is the same as logger?
+Apps - <None> should be <Default> and have all apps present
 
 Linux build (mainly for Ian)
 Pi build?
@@ -14,14 +14,6 @@ Run on multiple screens; dialog to folow parents screen?
 
 //==================================================================    
 from: "Ken Punshon" <Ken@Kesnue.org>
-
-Mike,
-
-This is my complete list, some of which may duplicate previous messages. I
-thought it better to get them all in one place.
-
-Ken
- 
 
 .          Callsign and locator width and comments in log NOT fixed for
 certain paranoid combinations. Try DD8DDD/MM with locator DD88DD (in bold
@@ -81,13 +73,6 @@ We should just need to use logSequence, and maintain a "max" value for it.
 Then cancelled catch ups wouldn't keep incrementing it.
 ==================================================================    
 ==================================================================    
-Programs
-
-Rig control
-Voice keyer (Linux)
-Band map
-Rotator control of Spid
-Qs1R control via Minos (currently stand alone)
 ==================================================================
 Need a "snagging list" - such things as 
 - "ops list" rows in details aren't RO (or at least don't show as such)
@@ -111,9 +96,6 @@ more flexible and useful than KML,  It would be nice if Minos was
 able to export QSOs as CSVs, including lat/lon so they can be both
 easily imported into My Maps and also easily edited and maybe analysed
 by spreadsheet
-==============================================================================
-> I was also going to raise an issue regarding catch up mode and ask if it is
-> possible to make the archive files active when working in catch up mode.
 ==================================================================
 ==================================================================
 Button(?) on details for export

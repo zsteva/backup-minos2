@@ -194,17 +194,12 @@ void ConfigElementFrame::on_rbConnectLocal_clicked()
 
 void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &value)
 {
-    if (ui->elementNameEdit->text().isEmpty())
-        ui->elementNameEdit->setText(value);
+    ui->elementNameEdit->setText(value);
 
-    if (ui->remoteAppNameEdit->text().isEmpty())
-        ui->remoteAppNameEdit->setText(value);
+    ui->remoteAppNameEdit->setText(value);
 
-    if (ui->programNameEdit->text().isEmpty())
-    {
-        AppConfigElement ace = MinosConfig::getMinosConfig()->getAppConfigElement(value);
-        ui->programNameEdit->setText(ace.appPath);
-    }
+    AppConfigElement ace = MinosConfig::getMinosConfig()->getAppConfigElement(value);
+    ui->programNameEdit->setText(ace.appPath);
 
     if (ui->homeDirectoryEdit->text().isEmpty())
         ui->homeDirectoryEdit->setText(".");
