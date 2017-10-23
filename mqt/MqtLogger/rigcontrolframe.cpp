@@ -183,7 +183,8 @@ void RigControlFrame::changeRadioFreq()
             {
                 if (isRadioLoaded())
                 {
-                    emit sendFreqControl(freq);
+                    sendFreq(freq);
+
                 }
                 else
                 {
@@ -234,7 +235,7 @@ void RigControlFrame::radioBandFreq(int index)
         ui->freqInput->setText(bandSelData::freqDialZero[index]);
         if (isRadioLoaded())
         {
-            emit sendFreqControl(bandSelData::bandFreq[index]);
+            sendFreq(bandSelData::bandFreq[index]);
         }
         else
         {
@@ -243,6 +244,20 @@ void RigControlFrame::radioBandFreq(int index)
     }
 }
 
+void RigControlFrame::sendFreq(QString f)
+{
+
+    bool ok = false;
+    QString sf = f.remove('.');
+    if (curFreq.remove('.') != sf)
+    {
+        double df = sf.toDouble(&ok);
+        if (ok && df > 0.0)
+        {
+            emit sendFreqControl(f);
+        }
+    }
+}
 
 void RigControlFrame::noRadioSendOutFreq(QString f)
 {
@@ -315,13 +330,7 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
 {
     if (isRadioLoaded())
     {
-        bool ok = false;
-        QString sf = m.freq.remove('.');
-        double df = sf.toDouble(&ok);
-        if (ok && df > 0.0)
-        {
-            emit sendFreqControl(m.freq);
-        }
+        sendFreq(m.freq);
 
         if (m.mode != curMode)
         {
@@ -537,13 +546,8 @@ void RigControlFrame::runButReadActSel(int buttonNumber)
     memoryData::memData m = getRunMemoryData(buttonNumber);
     if (isRadioLoaded())
     {
-        bool ok = false;
-        QString sf = m.freq.remove('.');
-        double df = sf.toDouble(&ok);
-        if (ok && df > 0.0)
-        {
-            emit sendFreqControl(m.freq);
-        }
+        sendFreq(m.freq);
+
         if (m.mode != curMode)
         {
             sendModeToRadio(m.mode);

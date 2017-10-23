@@ -160,6 +160,7 @@ private:
     void loadMemories();
     void mgmLabelVisible(bool state);
     bool checkValidFreq(QString freq);
+    void sendFreq(QString f);
 };
 class FreqLineEdit : public QLineEdit
 {
