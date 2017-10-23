@@ -1,4 +1,3 @@
-Bearings in memories
 OK/Cancel/Save/exit on apps/appstarter. 
 Apps - <None> should be <Default> and have all apps present
 
