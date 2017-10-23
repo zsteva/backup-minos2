@@ -310,11 +310,26 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
 {
     if (isRadioLoaded())
     {
-        emit sendFreqControl(m.freq);
-        sendModeToRadio(m.mode);
+        bool ok = false;
+        QString sf = m.freq.remove('.');
+        double df = sf.toDouble(&ok);
+        if (ok && df > 0.0)
+        {
+            emit sendFreqControl(m.freq);
+        }
+
+        if (m.mode != curMode)
+        {
+            sendModeToRadio(m.mode);
+        }
+
         if (!rxPBFlag)
         {
-            sendPassBandStateToControl(m.pBandState);
+            if (m.pBandState != curpbState)
+            {
+               sendPassBandStateToControl(m.pBandState);
+            }
+
         }
     }
     else
@@ -322,6 +337,8 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
         noRadioSendOutFreq(m.freq);
     }
 }
+
+
 void RigControlFrame::getDetails(memoryData::memData &logData)
 {
     // get contest information
@@ -499,12 +516,13 @@ void RigControlFrame::traceMsg(QString msg)
 
 void RigControlFrame::initRunMemoryButton()
 {
-
+    memoryData::memData m;
     runButtonMap[0] = new RunMemoryButton(ui->RunButton1, this, 0);
     connect( runButtonMap[0], SIGNAL( clearActionSelected(int)) , this, SLOT(runButClearActSel(int)), Qt::QueuedConnection );
 
     runButtonMap[1] = new RunMemoryButton(ui->RunButton2, this, 1);
     connect( runButtonMap[1], SIGNAL( clearActionSelected(int)) , this, SLOT(runButClearActSel(int)), Qt::QueuedConnection );
+
 }
 
 
@@ -514,11 +532,25 @@ void RigControlFrame::runButReadActSel(int buttonNumber)
     memoryData::memData m = getRunMemoryData(buttonNumber);
     if (isRadioLoaded())
     {
-        emit sendFreqControl(m.freq);
-        sendModeToRadio(m.mode);
+        bool ok = false;
+        QString sf = m.freq.remove('.');
+        double df = sf.toDouble(&ok);
+        if (ok && df > 0.0)
+        {
+            emit sendFreqControl(m.freq);
+        }
+        if (m.mode != curMode)
+        {
+            sendModeToRadio(m.mode);
+        }
+
         if (!rxPBFlag)
         {
-            sendPassBandStateToControl(m.pBandState);
+            if (m.pBandState != curpbState)
+            {
+               sendPassBandStateToControl(m.pBandState);
+            }
+
         }
     }
     else

@@ -103,7 +103,8 @@ namespace memoryData {
 class  memData
 {
 public:
-    memData():pBandState(memDefData::DEFAULT_PBAND_STATE), bearing(memDefData::DEFAULT_BEARING)
+    memData():pBandState(memDefData::DEFAULT_PBAND_STATE), bearing(memDefData::DEFAULT_BEARING),
+        freq(memDefData::DEFAULT_FREQ), mode(memDefData::DEFAULT_MODE)
     {
     }
 
@@ -113,8 +114,8 @@ public:
     //QString passBand;
     int pBandState;
     QString locator;
-    int bearing;
-    QString time;
+    int bearing = 0;
+    QString time = "00:00";
 
     bool operator==( const memData& rhs ) const
     {
