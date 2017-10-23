@@ -248,3 +248,18 @@ bool BandList::findBand(int freq, BandInfo &bi)
    }
    return false;
 }
+
+
+
+bool BandList::findBand(double freq, BandInfo &bi)
+{
+   for (QVector<BandInfo>::iterator i = bandList.begin(); i != bandList.end(); i++)
+   {
+      if ((*i).flow <= freq && (*i).fhigh >= freq)
+      {
+         bi = (*i);
+         return true;
+      }
+   }
+   return false;
+}

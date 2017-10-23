@@ -157,6 +157,7 @@ private:
     QString extractKhz(QString f);
     void loadMemories();
     void mgmLabelVisible(bool state);
+    bool checkValidFreq(QString freq);
 };
 class FreqLineEdit : public QLineEdit
 {

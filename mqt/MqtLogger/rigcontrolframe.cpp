@@ -19,6 +19,7 @@
 #include "tsinglelogframe.h"
 #include "SendRPCDM.h"
 #include "runbuttondialog.h"
+#include "BandList.h"
 
 #include "rigcontrolframe.h"
 #include "ui_rigcontrolframe.h"
@@ -164,18 +165,52 @@ void RigControlFrame::changeRadioFreq()
     if (newfreq != freq)
     {
         freq = newfreq;
-        if (freq.count() >=4)
+        if (checkValidFreq(freq))
         {
-            if (isRadioLoaded())
+            if (freq.count() >=4)
             {
-                emit sendFreqControl(freq);
-            }
-            else
-            {
-                noRadioSendOutFreq(freq);
+                if (isRadioLoaded())
+                {
+                    emit sendFreqControl(freq);
+                }
+                else
+                {
+                    noRadioSendOutFreq(freq);
+                }
+
             }
 
         }
+        else
+        {
+            ui->freqInput->setText(QString("%1 %2 %3").arg("<font color='Red'>", freq, "</font>"));
+        }
+
+    }
+}
+
+
+bool RigControlFrame::checkValidFreq(QString freq)
+{
+    bool ok = false;
+    BandList &blist = BandList::getBandList();
+    BandInfo bi;
+    bool bandOK = false;
+    QString sfreq = freq.trimmed().remove('.');
+
+    double dfreq = sfreq.toDouble(&ok);
+
+    if (ok)
+    {
+        bandOK = blist.findBand(dfreq, bi);
+        if (bandOK)
+        {
+            return true;
+        }
+    }
+    else
+    {
+        return false;
     }
 }
 
@@ -595,7 +630,9 @@ QString RigControlFrame::extractKhz(QString f)
 
 }
 
-//********************************************//
+
+
+
 memoryData::memData RigControlFrame::getRunMemoryData(int memoryNumber)
 {
     memoryData::memData m;
@@ -608,6 +645,10 @@ void RigControlFrame::setRunMemoryData(int memoryNumber, memoryData::memData m)
 {
     ct->saveRunMemory(memoryNumber, m);
 }
+
+
+//*******************Run Memory Button *************************//
+
 
 RunMemoryButton::RunMemoryButton(QToolButton *b, RigControlFrame *rcf, int no)
 {
@@ -674,7 +715,9 @@ void RunMemoryButton::clearActionSelected()
 {
     emit clearActionSelected(memNo);
 }
-//********************************************//
+
+
+//*******************Freq Line Edit *************************//
 
 FreqLineEdit::FreqLineEdit(QWidget *parent):
     QLineEdit(parent)
@@ -749,6 +792,9 @@ void FreqLineEdit::changeFreq(bool direction)
                                         };
 
 
+    BandList &blist = BandList::getBandList();
+    BandInfo bi;
+    bool bandOK = false;
 
     bool ok = false;
     QString sfreq = text();
@@ -762,30 +808,46 @@ void FreqLineEdit::changeFreq(bool direction)
 
 
     sfreq = sfreq.trimmed().remove('.');
+
+
     double freq = sfreq.toDouble(&ok);
 
-    if (!ok)
+    if (ok)
     {
-        return;
+        if (direction)
+        {
+            freq += tuneStep;
+            bandOK = blist.findBand(freq, bi);
+            if (!bandOK)
+            {
+                freq -= tuneStep;
+            }
+        }
+        else
+        {
+            freq -= tuneStep;
+            bandOK = blist.findBand(freq, bi);
+            if (!bandOK)
+            {
+                freq += tuneStep;
+            }
+        }
 
-    }
 
-    if (direction)
-    {
-        freq = freq + tuneStep;
-    }
-    else
-    {
-        freq = freq - tuneStep;
-    }
+        sfreq = convertFreqString(freq);
+        trace(QString("Change Freq: Freq Tuning = %1").arg(freq));
+        if (bandOK)
+        {
+            setText(sfreq);
+            emit newFreq();
+        }
+        else
+        {
+            setText(QString("%1 %2 %3").arg("<font color='Red'>", sfreq, "</font>"));
+        }
 
-
-    sfreq = convertFreqString(freq);
-    setText(sfreq);
-    setCursorPosition(pos);
-
-    emit newFreq();
-
+        setCursorPosition(pos);
+   }
 }
 
 QString FreqLineEdit::convertFreqString(double frequency)
