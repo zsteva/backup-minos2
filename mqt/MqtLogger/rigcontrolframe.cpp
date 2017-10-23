@@ -72,6 +72,9 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     freqEditShortKey = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_F), parent);
     connect(freqEditShortKey, SIGNAL(activated()), this, SLOT(freqEditSelected()));
 
+    connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
+
+    on_FontChanged();
     traceMsg("RigControl Frame Started");
 }
 
@@ -79,6 +82,15 @@ RigControlFrame::~RigControlFrame()
 {
     delete ui;
 
+}
+void RigControlFrame::on_FontChanged()
+{
+    QFont cf = QApplication::font();
+    qreal fs = cf.pointSizeF();
+    int fsi = fs * 1.25;
+    cf.setPointSize(fsi);
+    cf.setBold(true);
+    ui->freqInput->setFont(cf);
 }
 
 void RigControlFrame::setContest(BaseContestLog *c)

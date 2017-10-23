@@ -214,6 +214,7 @@ void RigMemoryFrame::clean()
     foreach(RigMemoryButton *rmb, memButtonMap)
     {
         QToolButton *rmbb = rmb->memButton;
+        rmbb->setStyleSheet("border: 1px solid black; background-color: #DFDFDF");
         int row = i/2;
         int col = i%2;
         gl->addWidget(rmbb, row, col);
