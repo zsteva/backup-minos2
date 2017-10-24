@@ -1566,33 +1566,36 @@ void QSOLogFrame::updateQSODisplay()
    {
 //      ui->QTHEdit->CharCase = ecNormal;
    }
-   ui->RSTTXEdit->setEnabled(!contest->isReadOnly());
-   ui->SerTXEdit->setEnabled(!contest->isReadOnly());
-   ui->RSTRXEdit->setEnabled(!contest->isReadOnly());
-   ui->SerRXEdit->setEnabled(!contest->isReadOnly());
+   bool protect = !contest->isReadOnly();
+   ui->RSTTXEdit->setEnabled(protect);
+   ui->SerTXEdit->setEnabled(protect);
+   ui->RSTRXEdit->setEnabled(protect);
+   ui->SerRXEdit->setEnabled(protect);
    //CallsignEdit->Enabled = false; // leave these to allow searching
    //LocEdit->Enabled = false;
    //QTHEdit->Enabled = false;
-   ui->CommentsEdit->setEnabled(!contest->isReadOnly());
-   ui->ModeComboBoxGJV->setEnabled(!contest->isReadOnly());
-   ui->NonScoreCheckBox->setEnabled(!contest->isReadOnly());
-   ui->DeletedCheckBox->setEnabled(!contest->isReadOnly());
-   ui->GJVOKButton->setEnabled(!contest->isReadOnly());
-   ui->GJVForceButton->setEnabled(!contest->isReadOnly());
-   ui->radioEdit->setEnabled(!contest->isReadOnly());
-   ui->frequencyEdit->setEnabled(!contest->isReadOnly());
-   ui->rotatorHeadingEdit->setEnabled(!contest->isReadOnly());
+   ui->CommentsEdit->setEnabled(protect);
+   ui->ModeComboBoxGJV->setEnabled(protect);
+   ui->NonScoreCheckBox->setEnabled(protect);
+   ui->DeletedCheckBox->setEnabled(protect);
+   ui->GJVOKButton->setEnabled(protect);
+   ui->GJVForceButton->setEnabled(protect);
+   ui->radioEdit->setEnabled(protect);
+   ui->frequencyEdit->setEnabled(protect);
+   ui->rotatorHeadingEdit->setEnabled(protect);
 
    ui->QTHEdit->setEnabled( contest->otherExchange .getValue() || contest->districtMult.getValue() );
 
-   ui->ModeButton->setEnabled(!contest->isReadOnly());
-   ui->SecondOpComboBox->setEnabled(!contest->isReadOnly());
-   ui->MainOpComboBox->setEnabled(!contest->isReadOnly());
+   ui->ModeButton->setEnabled(protect);
+   ui->SecondOpComboBox->setEnabled(protect);
+   ui->MainOpComboBox->setEnabled(protect);
 
-   ui->InsertBeforeButton->setEnabled(!contest->isReadOnly());
-   ui->InsertAfterButton->setEnabled(!contest->isReadOnly());
+   ui->InsertBeforeButton->setEnabled(protect);
+   ui->InsertAfterButton->setEnabled(protect);
 
-   on_FontChanged();    // do all style sheets
+   on_FontChanged();    // do all style sheets again
+
+   repaint();
 }
 
 //---------------------------------------------------------------------------
