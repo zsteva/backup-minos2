@@ -680,7 +680,7 @@ void TLogContainer::ContestDetailsActionExecute()
                 f->sendDM->resetConnectables(ct);
                 subscribeApps();
                 // and we need to do some re-init on the display
-                //updateQSODisplay();
+                f->updateQSODisplay();
                 ct->scanContest();
                 f->refreshMults();
             }
@@ -1128,7 +1128,7 @@ QStringList TLogContainer::getSessions()
     qSort( sessionlst);
     for (int i = 0; i < sessionlst.size(); ++i)
     {
-        if (sessionlst[i] != noneBundle && sessionlst[i] != app->preloadsect)
+        if (sessionlst[i] != app ->logsPreloadBundle.noneBundle && sessionlst[i] != app->preloadsect)
         {
             newSessionList.append(sessionlst[i]);
         }

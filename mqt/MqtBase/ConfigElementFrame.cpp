@@ -4,7 +4,6 @@
 
 #include "ConfigElementFrame.h"
 #include "ui_ConfigElementFrame.h"
-#include "ConfigElementFrame.h"
 
 ConfigElementFrame::ConfigElementFrame(bool nele) :
     QFrame(0),

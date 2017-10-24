@@ -10,7 +10,6 @@
 #ifndef ProfilesH
 #define ProfilesH 
 //----------------------------------------------------------------------------
-extern const QString noneBundle;
 class SettingsBundle;
 class ProfileEntry
 {
@@ -55,10 +54,11 @@ class BundleFile
 };
 class SettingsBundle
 {
-   private:
+   protected:
       QString currsection;
    public:
       QSharedPointer<BundleFile> bundleFile;
+      QString noneBundle;
 
       SettingsBundle( );
       ~SettingsBundle();
@@ -108,15 +108,16 @@ class SettingsBundle
       QVector<int> getBundleEntries( );
       QStringList getBundleHints( );
       QStringList getSections( );
+
+      virtual bool populateDefaultSection(){return false;}
 };
-/*
-extern ProfileEntry LoggerEntries[];
-extern ProfileEntry PreloadEntries[];
-extern ProfileEntry DisplayEntries[];
-extern ProfileEntry OperatorEntries[];
-extern ProfileEntry EntryEntries[];
-extern ProfileEntry ContestEntries[];
-extern ProfileEntry QTHEntries[];
-extern ProfileEntry StationEntries[];
-*/
+class AppSettingsBundle:public SettingsBundle
+{
+public:
+    AppSettingsBundle():SettingsBundle()
+    {
+        noneBundle = "<DefaultApps>";
+    }
+    virtual bool populateDefaultSection()override {return true;}
+};
 #endif

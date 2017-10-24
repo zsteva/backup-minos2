@@ -36,11 +36,11 @@ TSettingsEditDlg::~TSettingsEditDlg()
 {
     delete ui;
 }
-bool sectionLessThan(const QString &s1, const QString &s2)
+bool sectionLessThan(SettingsBundle *b, const QString &s1, const QString &s2)
 {
-    if (s1 == noneBundle)
+    if (s1 == b->noneBundle)
         return true;
-    if (s2 == noneBundle)
+    if (s2 == b->noneBundle)
         return false;
     return s1.toLower() < s2.toLower();
 }
@@ -59,7 +59,8 @@ void TSettingsEditDlg::showSections(QString currSection)
    }
 
 
-   qSort(sections.begin(), sections.end(), sectionLessThan);
+   qSort(sections.begin(), sections.end(),// sectionLessThan);
+             [this](const QString &first, const QString &second) { return sectionLessThan(bundle, first, second); });
    setWindowTitle(windowTitle() + " - " + bundle->getBundle() + " for " + bundle->getSection()) ;
 
    int offset = 0;
@@ -86,7 +87,8 @@ void TSettingsEditDlg::showSection()
    }
    else if ( offset >= 0 && offset < sections.size() )
    {
-      qSort(sections.begin(), sections.end(), sectionLessThan);
+      qSort(sections.begin(), sections.end(),// sectionLessThan);
+           [this](const QString &first, const QString &second) { return sectionLessThan(bundle, first, second); });
       QString sect = sections[ offset ];
       bundle->openSection( sect );
       ui->OptionsTable->setVisible(true);
@@ -96,7 +98,7 @@ void TSettingsEditDlg::showSection()
    else
    {
       ui->OptionsTable->setVisible(false);
-      bundle->openSection( noneBundle );
+      bundle->openSection( bundle->noneBundle );
    }
 
    ui->NewSectionButton->setEnabled(!currSectionOnly);
@@ -127,7 +129,7 @@ void TSettingsEditDlg::showDetails()
            labels.append(label);
 
            QString val;
-           if (offset > 0 || currSectionOnly)               // ********** >= ?
+           if (bundle->populateDefaultSection() || offset > 0 || currSectionOnly)               // ********** >= ?
             bundle->getStringProfile( entries[ i ], val );
 
            QTableWidgetItem *it = new QTableWidgetItem(val);

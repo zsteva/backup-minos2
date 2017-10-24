@@ -306,7 +306,7 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
 void LoggerContestLog::setINIDetails()
 {
    // extras that CAN come from INI file - implements bundle override
-   if ( entryBundle.getSection() != noneBundle )
+   if ( entryBundle.getSection() != entryBundle.noneBundle )
    {
       entryBundle.getStringProfile( eepCall, mycall.fullCall );
       entryBundle.getStringProfile( eepEntrant, entrant );
@@ -326,7 +326,7 @@ void LoggerContestLog::setINIDetails()
    }
 
 
-   if ( QTHBundle.getSection() != noneBundle )
+   if ( QTHBundle.getSection() != QTHBundle.noneBundle )
    {
       QTHBundle.getStringProfile( eqpLocator, myloc.loc );
 
@@ -341,7 +341,7 @@ void LoggerContestLog::setINIDetails()
 	  QTHBundle.getStringProfile( eqpASL, entASL );
    }
 
-   if ( stationBundle.getSection() != noneBundle )
+   if ( stationBundle.getSection() != stationBundle.noneBundle )
    {
 	  stationBundle.getStringProfile( espPower, power );
 	  stationBundle.getStringProfile( espTransmitter, entTx );

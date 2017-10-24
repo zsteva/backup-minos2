@@ -1591,6 +1591,8 @@ void QSOLogFrame::updateQSODisplay()
 
    ui->InsertBeforeButton->setEnabled(!contest->isReadOnly());
    ui->InsertAfterButton->setEnabled(!contest->isReadOnly());
+
+   on_FontChanged();    // do all style sheets
 }
 
 //---------------------------------------------------------------------------

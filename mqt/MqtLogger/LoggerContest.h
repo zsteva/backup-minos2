@@ -77,7 +77,7 @@ class LoggerContestLog : public BaseContestLog
       SettingsBundle stationBundle;    // individual station
       MinosStringItem<QString> stationBundleName;
 
-      SettingsBundle appBundle;    // individual apps
+      AppSettingsBundle appBundle;    // individual apps
       MinosStringItem<QString> appBundleName;
 
       MinosStringItem<QString> appRigControl;

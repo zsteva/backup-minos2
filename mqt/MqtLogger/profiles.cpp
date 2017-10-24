@@ -10,7 +10,6 @@
 #include <sys/stat.h>
 
 #include "MLogFile.h"
-const QString noneBundle = "<None>";
 
 // Here we define all the possible profile entries in a section
 // we use them for new sections in a bundle, and also to get
@@ -797,7 +796,7 @@ QSharedPointer <ProfileEntry> &BundleFile::GetKey( int p )
    return NullEntry;
 }
 //=============================================================================
-SettingsBundle::SettingsBundle()
+SettingsBundle::SettingsBundle():noneBundle("<None>")
 {}
 
 SettingsBundle::~SettingsBundle()
