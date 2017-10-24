@@ -66,11 +66,16 @@ private:
     bool cmdLockFlag;
     // data from logger
     QString logger_freq;
-    QString logger_mode;
-    int logger_bw_state;
+    QString slogMode;
+    rmode_t logMode;
+    //int logger_bw_state;
     rmode_t log_currMode;
-    pbwidth_t loggerPbWidth;      // passband from logger
-
+    //pbwidth_t loggerPbWidth;      // passband from logger
+    hamlibData::pBandState modePbState[4] = {hamlibData::NOR, //CW
+                                            hamlibData::NOR, // USB
+                                            hamlibData::NOR, // FM
+                                            hamlibData::NOR  // MGM
+                                            };
 
     // data from radio
     freq_t rfrequency;       // read frequency
@@ -136,6 +141,7 @@ private:
     int setRitFreq(vfo_t vfo, shortfreq_t ritFreq);
     void cmdLockOn();
     void cmdLockOff();
+    int getMinosModeIndex(QString mode);
 private slots:
 
     void onStdInRead(QString);

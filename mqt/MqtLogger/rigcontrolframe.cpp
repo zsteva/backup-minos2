@@ -386,7 +386,7 @@ void RigControlFrame::passBandRadioSelected(int button)
 void RigControlFrame::setMode(QString m)
 {
 
-    traceMsg("Set mode, ui etc");
+    traceMsg(QString("Set mode, ui etc = %1").arg(m));
     QStringList mode = m.split(':');
     if (mode.length() == 2 )
     {
