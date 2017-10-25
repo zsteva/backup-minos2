@@ -111,6 +111,9 @@ private:
 
     RtAudio *audio;
 
+    unsigned int inChannels;
+    unsigned int outChannels;
+
     chunkware_simple::SimpleCompRms compressor;
     LPFilter lpFilter;
 
