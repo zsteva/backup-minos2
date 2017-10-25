@@ -156,6 +156,8 @@ RtAudioSoundSystem::RtAudioSoundSystem() :
   , m_pos(0)
   , p_pos(0)
   , audio(0)
+  , inChannels(0)
+  , outChannels(0)
   , inputEnabled(false)
   , outputEnabled(false)
   , passThroughEnabled(false)
@@ -168,6 +170,8 @@ RtAudioSoundSystem::RtAudioSoundSystem() :
        wThread = new RiffWriter(this);
        wThread->start();
 
+       unsigned int defInput = audio->getDefaultInputDevice();
+       unsigned int defOutput = audio->getDefaultOutputDevice();
        unsigned int devices = audio->getDeviceCount();
        RtAudio::DeviceInfo info;
        for ( unsigned int i=0; i<devices; i++ ) {
@@ -176,8 +180,16 @@ RtAudioSoundSystem::RtAudioSoundSystem() :
            trace( "device = "  + QString::number(i) +  " " + info.name.c_str());
            trace( "Maximum output channels = " + QString::number(info.outputChannels) + " Maximum input channels = " + QString::number(info.inputChannels));
          }
+         if (i == defInput)
+         {
+             inChannels = info.inputChannels;
+         }
+         if (i == defOutput)
+         {
+             outChannels = info.outputChannels;
+         }
        }
-
+       trace( "Default output channels = " + QString::number(outChannels) + " Default input channels = " + QString::number(inChannels));
     }
     catch (RtAudioError &error)
     {
@@ -226,13 +238,13 @@ bool RtAudioSoundSystem::initialise( QString &/*errmess*/ )
 
         unsigned int bufferFrames = FRAMESAMPLES;
 
-        outParams.deviceId = 0;
+        outParams.deviceId = audio->getDefaultOutputDevice();
         outParams.firstChannel = 0;
-        outParams.nChannels = 2;
+        outParams.nChannels = outChannels;
 
-        inParams.deviceId = 0;
+        inParams.deviceId = audio->getDefaultInputDevice();
         inParams.firstChannel = 0;
-        inParams.nChannels = 2;
+        inParams.nChannels = inChannels;
 
         soptions.flags = 0;
         soptions.numberOfBuffers = FRAMES;
@@ -282,6 +294,8 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
                                 double /*streamTime*/,
                                 RtAudioStreamStatus status )
 {
+    int16_t inStageBuffer[nFrames * 2];
+
     if (outputBuffer == NULL && inputBuffer == NULL)
     {
         return 0;   // no data
@@ -299,7 +313,7 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
 
     if (outputBuffer != NULL && nFrames > 0)
     {
-        memset(outputBuffer, 0, nFrames * 2 * 2);   // 2 bytes, 2 channels
+        memset(outputBuffer, 0, nFrames * 2 * outChannels);   // 2 bytes, 2 channels
     }
 
     if (inputBuffer && nFrames)
@@ -307,14 +321,15 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
         // ALWAYS apply compressor to input, so it continues to adapt
         int16_t * q = reinterpret_cast<  int16_t * > ( inputBuffer );
         int16_t * m = reinterpret_cast< int16_t * > ( outputBuffer );
+        int16_t * p = &inStageBuffer[0];
         int16_t maxvol = 0;
         qreal sqaccum = 0.0;
         qreal volmult = (inputEnabled?recordMult:passThroughMult);
 
         for (unsigned int i = 0; i < nFrames ; i++)
         {
-            double initi1 = q[i * 2];
-            double initi2 = q[i * 2 + 1];
+            double initi1 = q[i * inChannels];
+            double initi2 = (inChannels > 1)?q[i * inChannels + 1]:q[i * inChannels];
 
             double s1 = initi1;
             double s2 = initi2;
@@ -348,14 +363,17 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
 
             if (passThroughEnabled)
             {
-                m[i * 2] = static_cast<qint16>(val1);
-                m[i * 2 + 1] = static_cast<qint16>(val2);
+                m[i * outChannels] = static_cast<qint16>(val1);
+                m[i * outChannels + 1] = static_cast<qint16>(val2);
 
             }
             if (inputEnabled)
             {
-                q[i * 2] = static_cast<qint16>(val1);
-                q[i * 2 + 1] = static_cast<qint16>(val2);
+                p[i * outChannels] = static_cast<qint16>(val1);
+                if (inChannels > 1)
+                    p[i * outChannels + 1] = static_cast<qint16>(val2);
+                else
+                    p[i * outChannels + 1] = static_cast<qint16>(val1);
             }
 
             int16_t sample = abs( (val1 + val2)/2 );
@@ -378,7 +396,7 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
             mutex.unlock();
 
             inBuffs[recIndex % RINGBUFFERSIZE].frameCount = nFrames;
-            memcpy(inBuffs[recIndex % RINGBUFFERSIZE].buff, inputBuffer, nFrames * 4);
+            memcpy(inBuffs[recIndex % RINGBUFFERSIZE].buff, inStageBuffer, nFrames * 4);
 
             mutex.lock();
             ++recIndex;
