@@ -402,7 +402,6 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
             ++recIndex;
             bufferNotEmpty.wakeAll();
             mutex.unlock();
-//            writeDataToFile(inputBuffer, nFrames);
         }
     }
     if (outputBuffer != NULL && nFrames > 0 && outputEnabled )
