@@ -26,6 +26,7 @@ cp ~/Minos2/build-mqt-Desktop-Release/MqtRotator/MqtRotator Bin
 cp ~/Minos2/build-mqt-Desktop-Release/MqtServer/MqtServer Bin
 
 cp ~/Minos2/mqt/ControlFiles/Configuration/* ./Configuration
+cp ~/Minos2/mqt/ControlFiles/Configuration/LinuxFiles/* ./Configuration
 cp ~/Minos2/mqt/Installer/Minos.sh . 
 
 cd Configuration

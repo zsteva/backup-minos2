@@ -15,8 +15,8 @@ mkdir Bin
 
 copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtAppStarter\release\MqtAppStarter.exe Bin
 copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtChat\release\MqtChat.exe Bin
-copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtControl\release\MqtControl.exe Bin
-copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtKeyer\release\MqtKeyer.exe Bin
+REM copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtControl\release\MqtControl.exe Bin
+REM copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtKeyer\release\MqtKeyer.exe Bin
 copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtLogger\release\MqtLogger.exe Bin
 copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtMonitor\release\MqtMonitor.exe Bin
 copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtRigControl\release\MqtRigControl.exe Bin
@@ -25,7 +25,8 @@ copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtServer\release\MqtServer.exe Bin
 
 copy C:\Projects\hamlib-w32-3.1\bin\*.dll Bin
 
-xcopy /E /F /Y C:\Projects\sfMinos\mqt\ControlFiles\Configuration .\Configuration
+xcopy /F /Y C:\Projects\sfMinos\mqt\ControlFiles\Configuration .\Configuration
+xcopy /F /Y C:\Projects\sfMinos\mqt\ControlFiles\Configuration\WindowsFiles .\Configuration
 
 cd Configuration
 
@@ -37,8 +38,8 @@ cd ../Bin
 
 C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtAppStarter.exe
 C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtChat.exe
-C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtControl.exe
-C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtKeyer.exe
+REM C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtControl.exe
+REM C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtKeyer.exe
 C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtLogger.exe
 C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtMonitor.exe
 C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtRigControl.exe
