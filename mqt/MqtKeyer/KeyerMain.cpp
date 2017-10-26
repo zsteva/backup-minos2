@@ -112,7 +112,7 @@ KeyerMain::KeyerMain(QWidget *parent) :
 
 
     QSettings keyerSettings( GetCurrentDir() + "/Configuration/MixerSettings.ini" , QSettings::IniFormat ) ;
-    QString alsaFileName = keyerSettings.value("AlsaCtlFile", "").toString();
+    QString alsaFileName = keyerSettings.value("AlsaCtlFile", "AlsaCtlFile.txt").toString();
     ui->setupScriptEdit->setText(alsaFileName);
 
     runAlsaScript(alsaFileName, alsaRestore);
