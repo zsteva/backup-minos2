@@ -86,7 +86,7 @@ public:
     void setRadioName(QString);
     void setRadioState(QString);
     bool isRadioLoaded();
-    void setRxPBFlag(QString);
+    //void setRxPBFlag(QString);
 
     void exitFreqEdit();
     void runButtonUpdate(int);
@@ -107,6 +107,8 @@ private slots:
     void radioBandFreq(int index);
     void noRadioSetFreq(QString);
     void freqEditSelected();
+    void freqPlusShortCut_clicked(bool);
+    void freqNegShortCut_clicked(bool);
 public slots:
     void changeRadioFreq();
 
@@ -130,6 +132,10 @@ private:
 
     QShortcut* freqEditShortKey;
 
+    QShortcut *freqPlusShortCut;
+    QShortcut *freqNegShortCut;
+
+
     QLabel *freqLabel;
 
     QRadioButton* pBandButton[3];
@@ -139,6 +145,7 @@ private:
     QString curFreq;
     QString curMode;
     int curpbState;
+    QString scurpbState;
     QString radioName;
     QString radioState;
     bool rxPBFlag;
@@ -161,6 +168,7 @@ private:
     void mgmLabelVisible(bool state);
     bool checkValidFreq(QString freq);
     void sendFreq(QString f);
+    QString calcNewFreq(double incFreq);
 };
 class FreqLineEdit : public QLineEdit
 {
@@ -171,6 +179,8 @@ public:
     FreqLineEdit(QWidget *parent);
     ~FreqLineEdit();
 
+    QString convertFreqString(double frequency);
+
 signals:
     void receivedFocus() ;
     void lostFocus();
@@ -180,7 +190,7 @@ private:
     void changeFreq(bool direction);
     void wheelEvent(QWheelEvent *event);
     void keyPressEvent(QKeyEvent *event);
-    QString convertFreqString(double frequency);
+
 } ;
 
 #endif // RIGCONTROLFRAME_H

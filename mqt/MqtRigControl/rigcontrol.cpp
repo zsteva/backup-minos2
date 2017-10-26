@@ -287,7 +287,7 @@ pbwidth_t RigControl::passbandWide(rmode_t mode)
 }
 
 
-void RigControl::buildPassBandTable()
+void RigControl::buildPassBandTable(QString mgmMode)
 {
 
     passBandWidth[0][0] = passbandNarrow(convertQStrMode("CW"));
@@ -296,15 +296,15 @@ void RigControl::buildPassBandTable()
 
     passBandWidth[1][0] = passbandNarrow(convertQStrMode("USB"));
     passBandWidth[1][1] = passbandNormal(convertQStrMode("USB"));
-    passBandWidth[1][2] = passbandWide(convertQStrMode("FM"));
+    passBandWidth[1][2] = passbandWide(convertQStrMode("USB"));
 
     passBandWidth[2][0] = passbandNarrow(convertQStrMode("FM"));
     passBandWidth[2][1] = passbandNormal(convertQStrMode("FM"));
     passBandWidth[2][2] = passbandWide(convertQStrMode("FM"));
 
-    passBandWidth[3][0] = mgmPassbandNar;
-    passBandWidth[3][1] = mgmPassbandNor;
-    passBandWidth[3][2] = mgmPassbandWide;
+    passBandWidth[3][0] = passbandNarrow(convertQStrMode(mgmMode));
+    passBandWidth[3][1] = passbandNormal(convertQStrMode(mgmMode));
+    passBandWidth[3][2] = passbandWide(convertQStrMode(mgmMode));
 
 
 }

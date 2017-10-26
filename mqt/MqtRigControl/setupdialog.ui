@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="setupTab">
      <property name="currentIndex">
-      <number>4</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="radioTab1">
       <attribute name="title">
@@ -277,13 +277,6 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_14">
-           <item>
-            <widget class="QCheckBox" name="useRigPbChk1">
-             <property name="text">
-              <string>Use Radio PassBand</string>
-             </property>
-            </widget>
-           </item>
            <item>
             <widget class="QLabel" name="label">
              <property name="text">
@@ -572,13 +565,6 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
-            <widget class="QCheckBox" name="useRigPbChk2">
-             <property name="text">
-              <string>Use Radio PassBand</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QLabel" name="label_2">
              <property name="text">
               <string>MGM Mode</string>
@@ -866,13 +852,6 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_7">
            <item>
-            <widget class="QCheckBox" name="useRigPbChk3">
-             <property name="text">
-              <string>Use Radio PassBand</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QLabel" name="label_3">
              <property name="text">
               <string>MGM Mode</string>
@@ -1159,13 +1138,6 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_9">
-           <item>
-            <widget class="QCheckBox" name="useRigPbChk4">
-             <property name="text">
-              <string>Use Radio PassBand</string>
-             </property>
-            </widget>
-           </item>
            <item>
             <widget class="QLabel" name="label_4">
              <property name="text">
@@ -1457,13 +1429,6 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_10">
-           <item>
-            <widget class="QCheckBox" name="useRigPbChk5">
-             <property name="text">
-              <string>Use Radio PassBand</string>
-             </property>
-            </widget>
-           </item>
            <item>
             <widget class="QLabel" name="label_5">
              <property name="text">

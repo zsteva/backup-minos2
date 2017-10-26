@@ -88,6 +88,11 @@ void RigControlRpc::publishMode(const QString &mode)
     }
 }
 
+
+
+
+
+
 void RigControlRpc::publishRxPbFlag(const QString flag)
 {
     static QString old;

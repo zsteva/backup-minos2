@@ -127,10 +127,10 @@ private:
     void sendStatusToLogError();
     void sendFreqToLog(freq_t freq);
     void sendModeToLog(QString mode);
-    void sendRxPbFlagToLog();
+    //void sendRxPbFlagToLog();
+    void sendPbStateToLog(QString pBstate);
 
-    void setCurMode(QString mode);
-    void setMode(QString mode, vfo_t vfo);
+    void setMode(QString mode, hamlibData::pBandState pBState, vfo_t vfo);
     void displayPassband(pbwidth_t width);
 
 
@@ -142,6 +142,8 @@ private:
     void cmdLockOn();
     void cmdLockOff();
     int getMinosModeIndex(QString mode);
+
+
 private slots:
 
     void onStdInRead(QString);
@@ -152,12 +154,13 @@ private slots:
     void logMessage(QString s);
     void about();
     void LogTimerTimer();
+    void loggerSetPassBand(int state);
 
 
 
     void loggerSetFreq(QString freq);
     void loggerSetMode(QString mode);
-    void loggerSetPassBand(int);
+    //void loggerSetPassBand(int);
     void currentRadioSettingChanged(QString radioName);
     void updateSelectRadioBox();
 signals:

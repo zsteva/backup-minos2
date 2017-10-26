@@ -738,7 +738,7 @@ void TSingleLogFrame::on_NoRadioSetFreq(QString f)
 
 void TSingleLogFrame::on_SetRxPBFlag(QString flag)
 {
-    ui->FKHRigControlFrame->setRxPBFlag(flag);
+    //ui->FKHRigControlFrame->setRxPBFlag(flag);
 }
 
 void TSingleLogFrame::on_RadioLoaded()
