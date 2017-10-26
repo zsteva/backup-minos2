@@ -47,6 +47,7 @@ OutputBaseFilename={#SetupBaseName + AppVersionFile}
 Compression=lzma
 SolidCompression=yes
 MinVersion=0,6.1
+UninstallDisplayIcon={app}\Bin\{#MainBinaryName}
 
 [Dirs]
 Name: {code:GetLogsDir}; Check: not LogsDirExists; Flags: uninsneveruninstall; Permissions: users-modify
