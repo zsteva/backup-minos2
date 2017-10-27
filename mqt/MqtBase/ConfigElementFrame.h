@@ -20,6 +20,9 @@ public:
     explicit ConfigElementFrame(bool nele);
     ~ConfigElementFrame();
 
+    bool localOK;
+    bool remoteOK;
+
     void setElement(QSharedPointer<RunConfigElement> configElement);
     bool saveElement();
     void setNameFocus();

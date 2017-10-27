@@ -25,17 +25,36 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
 {
     this->configElement = c;
 
-    ui->enabledCheckbox->setChecked(c->enabled);
+    localOK = c->localOK;
+    remoteOK = c->remoteOK;
 
-    if (c->runType == RunLocal)
+    ui->rbRunLocally->setVisible(c->localOK);
+    ui->rbConnectLocal->setVisible(c->localOK);
+    ui->rbConnectRemote->setVisible(c->remoteOK);
+
+
+    if (localOK && c->runType == RunLocal)
         ui->rbRunLocally->setChecked(true);
-    else if (c->runType == ConnectLocal)
+    else if (localOK && c->runType == ConnectLocal)
         ui->rbConnectLocal->setChecked(true);
-    else if (c->runType == ConnectServer)
+    else if (remoteOK && c->runType == ConnectServer)
+    {
         ui->rbConnectRemote->setChecked(true);
-    else
+        c->showAdvanced = true;
+    }
+    else if (localOK)
         ui->rbRunLocally->setChecked(true);
+    else if (remoteOK)
+    {
+        ui->rbConnectRemote->setChecked(true);
+        c->runType = ConnectServer;
+        c->showAdvanced = true;
+    }
+    else
+        c->enabled = false;
 
+
+    ui->enabledCheckbox->setChecked(c->enabled);
 
     QString at = c->appType;
     ui->appTypeCombo->setCurrentText(at);
@@ -202,6 +221,13 @@ void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &valu
 
     if (ui->homeDirectoryEdit->text().isEmpty())
         ui->homeDirectoryEdit->setText(".");
+
+    localOK = ace.localOK;
+    remoteOK = ace.remoteOK;
+
+    ui->rbRunLocally->setVisible(localOK);
+    ui->rbConnectLocal->setVisible(localOK);
+    ui->rbConnectRemote->setVisible(remoteOK);
 }
 
 void ConfigElementFrame::on_advancedCheckbox_clicked()

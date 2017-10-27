@@ -17,6 +17,9 @@ public:
     QString appPath;
     QStringList requires;
     bool server;
+    bool localOK;
+    bool remoteOK;
+
 };
 
 class Connectable
@@ -43,6 +46,8 @@ public:  		// User declarations
     QString params;
     QString server;
     QString remoteApp;
+    bool localOK;
+    bool remoteOK;
 
     QString runType;
     QString appType;

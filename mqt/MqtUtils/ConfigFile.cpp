@@ -62,7 +62,6 @@ bool RunConfigElement::initialise( QSettings &config, QString sect )
     remoteApp = config.value(sect + "/RemoteApp", name).toString().trimmed();
     showAdvanced = config.value(sect + "/ShowAdvanced", false).toBool();
     enabled = config.value(sect + "/Enabled", false).toBool();
-
     QString S = config.value( sect + "/RunType", RunLocal ) .toString().trimmed();
 
     runType = S;
@@ -71,6 +70,8 @@ bool RunConfigElement::initialise( QSettings &config, QString sect )
 
     AppConfigElement ace = MinosConfig::getMinosConfig()->getAppConfigElement(appType);
     requires = ace.requires;
+    localOK = ace.localOK;
+    remoteOK = ace.remoteOK;
 
     return true;
 }
@@ -389,6 +390,25 @@ Server=false
             ac.appPath += ".exe";
 #endif
             ac.server = appConfig.value(apps[i] + "/Server").toBool();
+
+            QString whereString = appConfig.value(apps[i] + "/Where", "Remote,Local").toString();
+            if (whereString.contains("local", Qt::CaseInsensitive))
+            {
+                ac.localOK = true;
+            }
+            else
+            {
+                ac.localOK = false;
+            }
+            if (whereString.contains("remote", Qt::CaseInsensitive))
+            {
+                ac.remoteOK = true;
+            }
+            else
+            {
+                ac.remoteOK = false;
+            }
+
 
             // NB using comma in value give a string list! Single value will also go to list if desired
             ac.requires = appConfig.value(apps[i] + "/Requires").toStringList();
