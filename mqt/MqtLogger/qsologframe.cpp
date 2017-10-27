@@ -1537,9 +1537,34 @@ void QSOLogFrame::setRadioName(QString n)
 //---------------------------------------------------------------------------
 void QSOLogFrame::setRotatorBearing(const QString &s)
 {
-    if (curRotatorBearing != s)
+    QStringList sl = s.split(':');
+    if (sl.size() < 3)
+        return;
+
+    QString brg;
+    QChar degsym = QChar(DEGREE_SYMBOL);
+    //int len = bearing.length();
+    int len = sl[0].length();
+    if (len < 2)
     {
-        curRotatorBearing = s;
+        brg = QString("%1%2%3")
+        .arg("00").arg(sl[0]).arg(degsym);
+    }
+    else if (len < 3)
+    {
+        brg = QString("%1%2%3")
+        .arg("0").arg(sl[0]).arg(degsym);
+    }
+    else
+    {
+        brg = QString("%1%2")
+        .arg(sl[0]).arg(degsym);
+    }
+
+
+    if (curRotatorBearing != brg)
+    {
+        curRotatorBearing = brg;
     }
 }
 
