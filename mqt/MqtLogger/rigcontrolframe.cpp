@@ -73,11 +73,11 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     connect(freqEditShortKey, SIGNAL(activated()), this, SLOT(freqEditSelected()));
 
     freqPlusShortCut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_U), parent);
-    connect(freqPlusShortCut, SIGNAL(activated()), this, SLOT(freqPlusShortCut_clicked(bool)));
+    connect(freqPlusShortCut, SIGNAL(activated()), this, SLOT(freqPlus_ShortCut()));
     connect(ui->freqUp, SIGNAL(clicked(bool)), this, SLOT(freqPlusShortCut_clicked(bool)));
 
     freqNegShortCut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_D), parent);
-    connect(freqNegShortCut, SIGNAL(activated()), this, SLOT(freqNegShortCut_clicked(bool)));
+    connect(freqNegShortCut, SIGNAL(activated()), this, SLOT(freqNeg_ShortCut()));
     connect(ui->freqDown, SIGNAL(clicked(bool)), this, SLOT(freqNegShortCut_clicked(bool)));
 
 
@@ -523,6 +523,16 @@ void RigControlFrame::freqLineEditFrameColour(bool status)
 
     }
 
+}
+
+void RigControlFrame::freqPlus_ShortCut()
+{
+    freqPlusShortCut_clicked(true);
+}
+
+void RigControlFrame::freqNeg_ShortCut()
+{
+    freqNegShortCut_clicked(true);
 }
 
 

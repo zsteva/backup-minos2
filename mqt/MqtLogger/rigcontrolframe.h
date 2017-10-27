@@ -109,6 +109,9 @@ private slots:
     void freqEditSelected();
     void freqPlusShortCut_clicked(bool);
     void freqNegShortCut_clicked(bool);
+    void freqPlus_ShortCut();
+    void freqNeg_ShortCut();
+
 public slots:
     void changeRadioFreq();
 

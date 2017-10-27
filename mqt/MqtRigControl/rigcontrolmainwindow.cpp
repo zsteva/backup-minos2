@@ -932,15 +932,27 @@ int RigControlMainWindow::setRitFreq(vfo_t vfo, shortfreq_t ritFreq)
 
 void RigControlMainWindow::loggerSetPassBand(int state)
 {
+    logMessage(QString("Log SetPassband: State received from logger = %1").arg(QString::number(state)));
+    QString mode = "";
+    logMessage(QString("Log SetPassband: Received PassBand from Logger = %1").arg(hamlibData::pBandStateStr[state]));
 
-    logMessage(QString("Received PassBand from Logger = %1").arg(hamlibData::pBandStateStr[state]));
-    if (modePbState[getMinosModeIndex(slogMode)] != hamlibData::pBandState(state))
+    if (slogMode == hamlibData::MGM)
+    {
+        mode = selectRig->currentRadio.mgmMode;
+    }
+    else
+    {
+        mode = slogMode;
+    }
+
+
+    if (modePbState[getMinosModeIndex(mode)] != hamlibData::pBandState(state))
     {
         if (radio->get_serialConnected() && !rigErrorFlag)
         {
 
-            modePbState[getMinosModeIndex(slogMode)] = hamlibData::pBandState(state);
-            setMode(slogMode, hamlibData::pBandState(state), RIG_VFO_CURR);
+            modePbState[getMinosModeIndex(mode)] = hamlibData::pBandState(state);
+            setMode(mode, hamlibData::pBandState(state), RIG_VFO_CURR);
 
             //ui->passBandState->setText(hamlibData::pBandStateStr[state]);
             //ui->logpbwidthlbl->setText(QString::number(passBand));

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>530</width>
-    <height>145</height>
+    <height>124</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -86,16 +86,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="freqDown">
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>-5</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="FreqLineEdit" name="freqInput">
            <property name="font">
             <font>
@@ -118,14 +108,28 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="freqUp">
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>+5</string>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <item>
+            <widget class="QToolButton" name="freqDown">
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="text">
+              <string>- 5</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="freqUp">
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="text">
+              <string>+5</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <widget class="QLabel" name="bandSellbl">
