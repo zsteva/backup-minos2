@@ -357,19 +357,20 @@ void RigControlMainWindow::upDateRadio()
             radio->buildPassBandTable(selectRig->currentRadio.mgmMode);
 
 
-            //retCode = radio->supportRit(selectRig->currentRadio.radioModelNumber, &supRitFlag);
-            //if (retCode == RIG_OK)
-            //{
-            //    enableRitDisplay(supRitFlag);
-            //}
-
-            // disable RIT Display
             enableRitDisplay(false);
+
+            dumpRadioToTraceLog();
+
 
 
 
             sendStatusToLogConnected();
-
+            delay(2);
+            // initialise rig state
+            slogMode = "USB";
+            // set mode and passband
+            logMode = radio->convertQStrMode("USB");
+            setMode("USB", hamlibData::NOR, RIG_VFO_CURR);
 
         }
         else
@@ -377,17 +378,6 @@ void RigControlMainWindow::upDateRadio()
             trace(QString("#### Radio Failed to connect ####"));
             sendStatusToLogDisConnected();
         }
-
-
-
-        dumpRadioToTraceLog();
-        // initialise rig state
-        slogMode = "USB"; // *****************************
-        // set mode and passband
-        logMode = radio->convertQStrMode("USB"); //*******************
-        setMode("USB", hamlibData::NOR, RIG_VFO_CURR);
-
-        //loggerSetPassBand(hamlibData::NOR);
 
 
     }
@@ -414,7 +404,7 @@ void RigControlMainWindow::upDateRadio()
 
     if (radio->get_serialConnected())
     {
-        pollTimer->start(pollTime);             // start timer to send message to controller
+        pollTimer->start(pollTime);             // start timer to send poll radio
     }
 
 
@@ -1228,7 +1218,7 @@ void RigControlMainWindow::sendPbStateToLog(QString pBstate)
     if (appName.length() > 0)
     {
         logMessage(QString("Send PassBand State to logger = %1").arg(pBstate));
-        msg->publishState(pBstate);
+        msg->publishPbandState(pBstate);
     }
 }
 
@@ -1306,4 +1296,13 @@ void RigControlMainWindow::dumpRadioToTraceLog()
     trace(QString("Radio Passband MGM NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NOR))));
     trace(QString("Radio Passband MGM WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::WIDE))));
 
+}
+
+
+
+void delay(int sec)
+{
+    QTime dieTime= QTime::currentTime().addSecs(sec);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }

@@ -94,7 +94,7 @@ void RigControlRpc::publishMode(const QString &mode)
 
 
 
-void RigControlRpc::publishRxPbFlag(const QString flag)
+void RigControlRpc::publishRxPbFlag(const QString &flag)
 {
     static QString old;
     trace(QString("Rig RPC: Publish RxPBFlag = %1").arg(flag));
@@ -105,6 +105,22 @@ void RigControlRpc::publishRxPbFlag(const QString flag)
         rpc->publish(rpcConstants::rigControlCategory, rpcConstants::rigControlKeyRxPbFlag, flag, psPublished);
     }
 }
+
+
+void RigControlRpc::publishPbandState(const QString &state)
+{
+    static QString old;
+    trace(QString("Rig RPC: Publish PassBand State = %1").arg(state));
+    if (state != old)
+    {
+        old = state;
+        MinosRPC *rpc = MinosRPC::getMinosRPC();
+        rpc->publish(rpcConstants::rigControlCategory, rpcConstants::rigControlKeyPBandState, state, psPublished);
+    }
+}
+
+
+
 
 
 void RigControlRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )

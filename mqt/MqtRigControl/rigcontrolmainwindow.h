@@ -30,7 +30,7 @@ class RigControl;
 class RigControlRpc;
 
 
-
+void delay(int sec);
 
 
 

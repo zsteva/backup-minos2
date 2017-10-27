@@ -85,6 +85,7 @@ public:
     void setFreq(QString);
     void setRadioName(QString);
     void setRadioState(QString);
+    void setRadioPassbandState(QString s);
     bool isRadioLoaded();
     //void setRxPBFlag(QString);
 
@@ -93,6 +94,7 @@ public:
     void runButReadActSel(int buttonNumber);
     void runButWriteActSel(int buttonNumber);
     void runButEditActSel(int buttonNumber);
+
 
 signals:
     void sendFreqControl(QString);

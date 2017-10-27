@@ -454,7 +454,18 @@ void RigControlFrame::loadMemories()
 void RigControlFrame::setRadioState(QString s)
 {
     traceMsg(QString("Set RadioState = %1").arg(s));
-    //extract passband state message
+
+    if (s != "")
+    {
+        ui->rigState->setText(s);
+        radioState = s;
+    }
+}
+
+
+void RigControlFrame::setRadioPassbandState(QString s)
+{
+    traceMsg(QString("Set RadioPassbandState = %1").arg(s));
     if (s != "")
     {
         for (int i = 0; i < hamlibData::pBandStateStr.count(); i++)
@@ -467,14 +478,9 @@ void RigControlFrame::setRadioState(QString s)
                 return;
             }
         }
-
-       if (radioState != s)
-       {
-            ui->rigState->setText(s);
-            radioState = s;
-       }
     }
 }
+
 
 
 void RigControlFrame::freqLineEditInFocus()
