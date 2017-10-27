@@ -68,8 +68,7 @@ private:
     QString logger_freq;
     QString slogMode;
     rmode_t logMode;
-    //int logger_bw_state;
-    rmode_t log_currMode;
+
     //pbwidth_t loggerPbWidth;      // passband from logger
     hamlibData::pBandState modePbState[4] = {hamlibData::NOR, //CW
                                             hamlibData::NOR, // USB
@@ -85,6 +84,7 @@ private:
     double curVfoFrq;
     double curTransVertFrq;
     rmode_t curMode;
+    QString sCurMode;
     bool mgmModeFlag;
     shortfreq_t rRitFreq;
     QString sRitFreq;
@@ -154,7 +154,7 @@ private slots:
     void logMessage(QString s);
     void about();
     void LogTimerTimer();
-    void loggerSetPassBand(int state);
+    void loggerSetPassBand(int pBstate);
 
 
 
