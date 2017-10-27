@@ -448,7 +448,7 @@ QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, int extra
    makeContact( timenow, bct );
    if (timenow == false)
    {
-       bct->time = ctTime;
+       bct->time.setValue(ctTime);
    }
 
    QString temp = QString( "%1" ).arg(newctno, 3, 10, QChar('0') );  //leading zeros

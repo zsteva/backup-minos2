@@ -100,14 +100,14 @@
            <item>
             <widget class="QComboBox" name="ModeComboBoxGJV">
              <property name="focusPolicy">
-              <enum>Qt::ClickFocus</enum>
+              <enum>Qt::NoFocus</enum>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QToolButton" name="ModeButton">
              <property name="focusPolicy">
-              <enum>Qt::ClickFocus</enum>
+              <enum>Qt::NoFocus</enum>
              </property>
              <property name="text">
               <string>A1A</string>
@@ -119,7 +119,7 @@
          <item>
           <widget class="QPushButton" name="CatchupButton">
            <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Catch-up (Post Entry)</string>
@@ -129,7 +129,7 @@
          <item>
           <widget class="QPushButton" name="FirstUnfilledButton">
            <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>First Unfilled QSO</string>
@@ -215,7 +215,7 @@
          <item>
           <widget class="QComboBox" name="MainOpComboBox">
            <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="editable">
             <bool>true</bool>
@@ -235,7 +235,7 @@
          <item>
           <widget class="QComboBox" name="SecondOpComboBox">
            <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="editable">
             <bool>true</bool>
@@ -318,7 +318,7 @@
          <item>
           <widget class="QCheckBox" name="NonScoreCheckBox">
            <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Non Scoring</string>
@@ -344,7 +344,7 @@
          <item>
           <widget class="QCheckBox" name="DeletedCheckBox">
            <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Deleted</string>
@@ -596,7 +596,7 @@
      <item>
       <widget class="QPushButton" name="GJVOKButton">
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
         <string>Log the QSO, or move to next unfilled field</string>
@@ -622,7 +622,7 @@
      <item>
       <widget class="QPushButton" name="GJVForceButton">
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
         <string>Force logging the QSO, even when incomplete</string>
@@ -654,7 +654,7 @@
      <item>
       <widget class="QPushButton" name="GJVCancelButton">
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
         <string>Cancel</string>
@@ -677,7 +677,7 @@
      <item>
       <widget class="QPushButton" name="MatchXferButton">
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
         <string>Get fields from current matching QSO</string>
@@ -701,7 +701,7 @@
       <item>
        <widget class="QPushButton" name="InsertBeforeButton">
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::NoFocus</enum>
         </property>
         <property name="text">
          <string>Insert Before</string>
@@ -711,7 +711,7 @@
       <item>
        <widget class="QPushButton" name="InsertAfterButton">
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::NoFocus</enum>
         </property>
         <property name="text">
          <string>Insert After</string>
@@ -734,7 +734,7 @@
       <item>
        <widget class="QPushButton" name="PriorButton">
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::NoFocus</enum>
         </property>
         <property name="text">
          <string>Prior</string>
@@ -744,7 +744,7 @@
       <item>
        <widget class="QPushButton" name="NextButton">
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::NoFocus</enum>
         </property>
         <property name="text">
          <string>Next</string>

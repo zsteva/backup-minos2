@@ -29,7 +29,8 @@ public:
     void killPartial( void );
     void startNextEntry( );
     bool doKeyPressEvent( QKeyEvent* event );
-    virtual void selectEntry(QSharedPointer<BaseContact> lct );
+    virtual void selectEntryForEdit(QSharedPointer<BaseContact> lct );
+    virtual void sortUnfilledCatchupTime( );
 
     virtual void getScreenEntry();
     ScreenContact screenContact;  // contact being edited on screen
@@ -44,7 +45,8 @@ public:
     void lgTraceerr( int err );
 
     virtual void selectField( QWidget *v );
-    virtual void initialise(BaseContestLog * contest, bool catchup );
+    virtual void initialise(BaseContestLog * contest);
+    virtual void setTimeStyles();
     virtual void refreshOps();
     virtual void refreshOps(ScreenContact &screenContact);
     virtual void updateQSOTime(bool fromTimer = false);
@@ -89,6 +91,7 @@ private:
     void contactValid( void );
 
     void mouseDoubleClickEvent(QObject *w);
+    QSharedPointer<BaseContact> getLastContact();
     QSharedPointer<BaseContact> getPriorContact();
     QSharedPointer<BaseContact> getNextContact();
 
@@ -173,10 +176,10 @@ private:
     QString ssQsoFrameBlue = " #qsoFrame { border: 2px solid blue; }";
     QString ssRed = "color:red";
 
-    QString ssDtgWhite = "QLineEdit { background-color: white ; border: none ; color: black ; }";
+    QString ssDtgWhite = "QLineEdit { background-color: white ; border-width: 1px ; border-color: black ; color: black ; }";
+    QString ssDtgWhiteNoFrame = "QLineEdit { background-color: white ; border : none ; color: black ; }";
     QString ssDtgRed = "QLineEdit { background-color: white ; border: none ; color: red ; }";
 
-    QString ssLineEditNoFrame = "QLineEdit {  border: none ; }";
     QString ssLineEditGreyBackground = "QLineEdit { background-color: silver ; border-style: outset ; border-width: 1px ; border-color: black ; color : black ;}";
     QString ssLineEditOK = "QLineEdit { background-color: white ; border-style: outset ; border-width: 1px ; border-color: black ; color : black ; }";
 

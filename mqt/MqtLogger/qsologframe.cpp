@@ -105,11 +105,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
 
     ui->qsoFrame->setStyleSheet(ssQsoFrameBlue);
-    ui->DateEdit->setStyleSheet(ssDtgWhite);
-    ui->TimeEdit->setStyleSheet(ssDtgWhite);
     widgetStyles[ui->qsoFrame] = ssQsoFrameBlue;
-    widgetStyles[ui->DateEdit] = ssDtgWhite;
-    widgetStyles[ui->TimeEdit] = ssDtgWhite;
 }
 
 void QSOLogFrame::on_FontChanged()
@@ -299,62 +295,87 @@ void QSOLogFrame::setAsEdit(bool s, QString b)
     }
 }
 
-void QSOLogFrame::initialise( BaseContestLog * pcontest, bool bf )
+void QSOLogFrame::initialise( BaseContestLog * pcontest )
 {
-   catchup = bf;
+    catchup = false;
 
-   contest = pcontest;
-   screenContact.initialise( contest ); // get ops etc correct
+    contest = pcontest;
+    screenContact.initialise( contest ); // get ops etc correct
 
-   csIl = new ValidatedControl( ui->CallsignEdit, vtCallsign );
-   vcs.push_back( csIl );
-   rsIl = new ValidatedControl( ui->RSTTXEdit, vtRST );
-   vcs.push_back( rsIl );
-   ssIl = new ValidatedControl( ui->SerTXEdit, vtSN );
-   vcs.push_back( ssIl );
-   rrIl = new ValidatedControl( ui->RSTRXEdit, vtRST );
-   vcs.push_back( rrIl );
-   srIl = new ValidatedControl( ui->SerRXEdit, vtSN );
-   vcs.push_back( srIl );
-   locIl = new ValidatedControl( ui->LocEdit, vtLoc );
-   vcs.push_back( locIl );
-   qthIl = new ValidatedControl( ui->QTHEdit, vtQTH );
-   vcs.push_back( qthIl );
-   cmntIl = new ValidatedControl( ui->CommentsEdit, vtComments );
-   vcs.push_back( cmntIl );
-
-
-   ui->BrgSt->clear();
-   ui->DistSt->clear();
+    csIl = new ValidatedControl( ui->CallsignEdit, vtCallsign );
+    vcs.push_back( csIl );
+    rsIl = new ValidatedControl( ui->RSTTXEdit, vtRST );
+    vcs.push_back( rsIl );
+    ssIl = new ValidatedControl( ui->SerTXEdit, vtSN );
+    vcs.push_back( ssIl );
+    rrIl = new ValidatedControl( ui->RSTRXEdit, vtRST );
+    vcs.push_back( rrIl );
+    srIl = new ValidatedControl( ui->SerRXEdit, vtSN );
+    vcs.push_back( srIl );
+    locIl = new ValidatedControl( ui->LocEdit, vtLoc );
+    vcs.push_back( locIl );
+    qthIl = new ValidatedControl( ui->QTHEdit, vtQTH );
+    vcs.push_back( qthIl );
+    cmntIl = new ValidatedControl( ui->CommentsEdit, vtComments );
+    vcs.push_back( cmntIl );
 
 
-   if (!edit)
-   {
-       ui->EditFrame->setVisible(false);
-       ui->radioDetailsFrame->setVisible(false);
+    ui->BrgSt->clear();
+    ui->DistSt->clear();
 
-       ui->DateEdit->setStyleSheet(ssLineEditNoFrame);
-       ui->TimeEdit->setStyleSheet(ssLineEditNoFrame);
-       widgetStyles[ui->DateEdit] = ssLineEditNoFrame;
-       widgetStyles[ui->TimeEdit] = ssLineEditNoFrame;
+    setTimeStyles();
 
-       ui->DateEdit->setReadOnly(true);
-       ui->TimeEdit->setReadOnly(true);
-   }
+    if (edit)
+    {
+        ui->radioDetailsFrame->setVisible(true);
+        ui->EditFrame->setVisible(true);
+    }
+    else
+    {
+        ui->radioDetailsFrame->setVisible(false);
+        ui->EditFrame->setVisible(false);
+    }
 
-   updateQSODisplay();
-   refreshOps();
+    updateQSODisplay();
+    refreshOps();
 
-   ui->SerTXEdit->setStyleSheet(ssLineEditGreyBackground);
-   widgetStyles[ui->SerTXEdit] = ssLineEditGreyBackground;
+    ui->SerTXEdit->setStyleSheet(ssLineEditGreyBackground);
+    widgetStyles[ui->SerTXEdit] = ssLineEditGreyBackground;
 
-   current = 0;
-   updateTimeAllowed = true;
-   oldTimeOK = true;
-   updateQSOTime();
-   MinosLoggerEvents::SendReportOverstrike(overstrike, contest);
+    current = 0;
+    updateTimeAllowed = true;
+    oldTimeOK = true;
+    updateQSOTime();
+    MinosLoggerEvents::SendReportOverstrike(overstrike, contest);
 
 }
+void QSOLogFrame::setTimeStyles()
+{
+    if (!edit)
+    {
+        if (catchup)
+        {
+            ui->DateEdit->setStyleSheet(ssDtgWhite);
+            ui->TimeEdit->setStyleSheet(ssDtgWhite);
+            widgetStyles[ui->DateEdit] = ssDtgWhite;
+            widgetStyles[ui->TimeEdit] = ssDtgWhite;
+
+            ui->DateEdit->setReadOnly(false);
+            ui->TimeEdit->setReadOnly(false);
+        }
+        else
+        {
+            ui->DateEdit->setStyleSheet(ssDtgWhiteNoFrame);
+            ui->TimeEdit->setStyleSheet(ssDtgWhiteNoFrame);
+            widgetStyles[ui->DateEdit] = ssDtgWhiteNoFrame;
+            widgetStyles[ui->TimeEdit] = ssDtgWhiteNoFrame;
+
+            ui->DateEdit->setReadOnly(true);
+            ui->TimeEdit->setReadOnly(true);
+        }
+    }
+}
+
 void QSOLogFrame::setXferEnabled(bool s)
 {
     ui->MatchXferButton->setEnabled(s);
@@ -368,20 +389,25 @@ void QSOLogFrame::setXferEnabled(bool s)
 
 void QSOLogFrame::on_CatchupButton_clicked()
 {
-    QString mode = ui->ModeComboBoxGJV->currentText();
-    TQSOEditDlg qdlg(this, true, false );
-    qdlg.selectCatchup( contest, mode );
-
-    qdlg.exec();
-
-    contest->scanContest();
-
-    screenContact.initialise(contest);
-    showScreenEntry();
-
-    refreshOps();
+    if (catchup)
+    {
+        catchup = false;
+        ui->CatchupButton->setStyleSheet("");
+        widgetStyles[ui->CatchupButton] = "";
+        ui->CatchupButton->setText("Catch-up (Post Entry)");
+    }
+    else
+    {
+        catchup = true;
+        ui->CatchupButton->setStyleSheet("background-color : coral;");
+        widgetStyles[ui->CatchupButton] = "background-color : coral;";
+        ui->CatchupButton->setText("End Catch-up");
+    }
+    screenContact.time.setDate(QString(), DTGLOG);
+    screenContact.time.setTime(QString(), DTGLOG);
+    setTimeStyles();
+    sortUnfilledCatchupTime();
     selectField( 0 );
-
 }
 
 void QSOLogFrame::on_FirstUnfilledButton_clicked()
@@ -429,13 +455,11 @@ void QSOLogFrame::SecondOpComboBox_Exit()
 void QSOLogFrame::on_GJVOKButton_clicked()
 {
     ui->SerTXEdit->setReadOnly(true);
-    //SerTXEdit->Color = clBtnFace;
 
     if ( contest->isReadOnly() )
     {
        return;
     }
-    //GJVEditChange( Sender );   // start the match thread
 
     getScreenEntry(); // make sure it is saved
 
@@ -457,7 +481,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
     }
     bool was_unfilled = screenContact.contactFlags & TO_BE_ENTERED;
     if ( !valid( cmCheckValid ) )   // make sure all single and cross field
-       // validation has been done
+                                    // validation has been done
     {
        QWidget * firstInvalid = 0;
        QWidget *nextInvalid = 0;
@@ -539,19 +563,19 @@ void QSOLogFrame::on_GJVOKButton_clicked()
     {
        logCurrentContact( );
     }
-    if (edit && !catchup && !was_unfilled)
+
+    if (edit)
     {
-        emit QSOFrameCancelled();
-    }
-    else
-    {
-        if ( edit && unfilled )
+        if (!was_unfilled)
+        {
+            emit QSOFrameCancelled();
+        }
+        else if (unfilled)
         {
            // If Uri mode then continue to the next...
            QSharedPointer<BaseContact> nuc = contest->findNextUnfilledContact( );
-           selectEntry(nuc);
+           selectEntryForEdit(nuc);
 
-//           on_FirstUnfilledButton_clicked( );
            bool stillUnfilled = screenContact.contactFlags & TO_BE_ENTERED;
 
            if (!stillUnfilled)
@@ -563,14 +587,10 @@ void QSOLogFrame::on_GJVOKButton_clicked()
                 selectField( 0 );             // make sure we move off the "Log" default button
            }
         }
-        if (edit && catchup)
-        {
-            LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-            int ctmax = ct->maxSerial + 1;
-            QString mode = ui->ModeComboBoxGJV->currentText();
-            QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup, mode, screenContact.time );
-            selectEntry( lct );
-        }
+    }
+    else
+    {
+        sortUnfilledCatchupTime();
     }
     return;
 
@@ -677,7 +697,6 @@ void QSOLogFrame::doGJVCancelButton_clicked()
 {
     if (edit)
     {
-        catchup = false;
         checkAndLogEntry(false);
 
         emit QSOFrameCancelled();
@@ -694,7 +713,7 @@ void QSOLogFrame::doGJVCancelButton_clicked()
            temp = partialContact;
            partialContact = 0;
         }
-        updateTimeAllowed = true;
+        updateTimeAllowed = !catchup;
         startNextEntry();
         ui->CallsignEdit->setFocus();
 
@@ -925,8 +944,8 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
    }
    ui->SerTXEdit->setReadOnly(true);
 
-   ui->TimeEdit->setReadOnly(!edit);
-   ui->DateEdit->setReadOnly(!edit);
+   ui->TimeEdit->setReadOnly(!edit && !catchup);
+   ui->DateEdit->setReadOnly(!edit && !catchup);
 
    if ( current == ui->LocEdit )
    {
@@ -1202,65 +1221,39 @@ bool QSOLogFrame::valid( validTypes command )
 //---------------------------------------------------------------------------
 void QSOLogFrame::selectField( QWidget *v )
 {
-    int dtgne = -1;
-
-    if ( catchup )
-    {
-       dtgne = screenContact.time.notEntered();
-       //   0;   // neither entered, will fill in when cs entered
-       //   1;   // time, no date
-       //   2;   // date, no time
-    }
-
     if ( v == 0 )
     {
-       if ( contest->isReadOnly() )
-       {
-          v = ui->CallsignEdit;
-       }
-       else
-          if ( catchup )
-          {
-             v = ( ( dtgne != -1 ) && ( dtgne <= 1 ) ) ? ui->DateEdit : ui->TimeEdit;
-          }
-          else
-             if ( screenContact.contactFlags & TO_BE_ENTERED )
-                v = ui->TimeEdit;
-             else
-                v = ui->CallsignEdit;
+        v = ui->CallsignEdit;
 
+        if ( catchup || screenContact.contactFlags & TO_BE_ENTERED )
+        {
+            int selpt = ui->TimeEdit->text().length();
+            if ( selpt > 0 )
+            {
+                ui->TimeEdit->setSelection(selpt - 1, 1);
+                v = ui->TimeEdit;
+            }
+            else
+            {
+                selpt = ui->DateEdit->text().length();
+                if ( selpt > 2 )
+                {
+                    ui->DateEdit->setSelection(1, 1);
+                }
+                v = ui->DateEdit;
+            }
+        }
     }
-    if ( !v || ( current == v ) )
+    if ( current == v )
     {
-       if (v)
-          v->setFocus();
-       return ;
+        v->setFocus();
+        return ;
     }
 
     if ( ( current == ui->CallsignEdit ) || ( current == ui->LocEdit ) )
     {
-       valid( cmCheckValid ); // make sure all single and cross field
-       doAutofill();
-    }
-
-    if ( v == ui->TimeEdit )
-    {
-       ( static_cast< QLineEdit * > (v) ) ->setReadOnly(false);
-       if (dtgne == 0 || dtgne == 1)
-       {
-//          TimeEdit->SelStart = 0;
-//          TimeEdit->SelLength = 1;
-       }
-    }
-    if ( v == ui->DateEdit )
-    {
-
-       ( static_cast< QLineEdit * > ( v) ) ->setReadOnly(false);
-       if (dtgne == 0 || dtgne == 2)
-       {
-//          DateEdit->SelStart = 0;
-//          DateEdit->SelLength = 1;
-       }
+        valid( cmCheckValid ); // make sure all single and cross field
+        doAutofill();
     }
     if ( v == ui->SerTXEdit )
     {
@@ -1268,8 +1261,8 @@ void QSOLogFrame::selectField( QWidget *v )
     }
     if ( v->isEnabled() )
     {
-       v->setFocus();
-       current = v;
+        v->setFocus();
+        current = v;
     }
 }
 //==============================================================================
@@ -1830,7 +1823,7 @@ void QSOLogFrame::logScreenEntry( )
 
    MinosLoggerEvents::SendAfterLogContact(ct);
 
-   if (!edit || catchup )
+   if (!edit )
         startNextEntry( );	// select the "next"
 }
 //---------------------------------------------------------------------------
@@ -1848,7 +1841,7 @@ void QSOLogFrame::showScreenContactTime()
 }
 void QSOLogFrame::getScreenRigData()
 {
-    if (!edit)
+    if (!edit && !catchup)
     {
         screenContact.rigName = curRadioName;
         screenContact.frequency = curFreq;
@@ -1856,7 +1849,7 @@ void QSOLogFrame::getScreenRigData()
 }
 void QSOLogFrame::getscreenRotatorData()
 {
-    if (!edit)
+    if (!edit && !catchup)
     {
         screenContact.rotatorHeading = curRotatorBearing;
     }
@@ -1926,10 +1919,11 @@ void QSOLogFrame::logCurrentContact( )
 }
 void QSOLogFrame::updateQSOTime(bool fromTimer)
 {
+    sortUnfilledCatchupTime();
     // Check if dtg is within the contest time
     // If not we wish to show as red
     // We need to do this in log displays as well
-    if (!edit)
+    if (!edit && !catchup)
     {
         dtg tnow( true );
         ui->DateEdit->setText(tnow.getDate( DTGDISP ));
@@ -1952,10 +1946,10 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
         oldTimeOK = timeOK;
         if (timeOK)
         {
-            ui->DateEdit->setStyleSheet(ssDtgWhite);
-            ui->TimeEdit->setStyleSheet(ssDtgWhite);
-            widgetStyles[ui->DateEdit] = ssDtgWhite;
-            widgetStyles[ui->TimeEdit] = ssDtgWhite;
+            ui->DateEdit->setStyleSheet(ssDtgWhiteNoFrame);
+            ui->TimeEdit->setStyleSheet(ssDtgWhiteNoFrame);
+            widgetStyles[ui->DateEdit] = ssDtgWhiteNoFrame;
+            widgetStyles[ui->TimeEdit] = ssDtgWhiteNoFrame;
         }
         else
         {
@@ -1965,22 +1959,6 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
             widgetStyles[ui->TimeEdit] = ssDtgRed;
         }
     }
-
-/*
-
-   *********************
-   *********************  need to do something with this...........
-    ui->bandMapFrame->setVisible( !edit && isBandMapLoaded());
-
-    ui->antennaName->setVisible(!edit && isRotatorLoaded());
-    ui->Rotate->setVisible(!edit && isRotatorLoaded());
-    ui->RotateLeft->setVisible(!edit && isRotatorLoaded());
-    ui->RotateRight->setVisible(!edit && isRotatorLoaded());
-    ui->StopRotate->setVisible(!edit && isRotatorLoaded());
-    ui->RotBrg->setVisible(!edit && isRotatorLoaded());
-    ui->rotatorState->setVisible(!edit && isRotatorLoaded());
-    ui->rotatorState->setVisible(!edit && isRotatorLoaded());
-*/
 }
 
 void QSOLogFrame::transferDetails(const QSharedPointer<BaseContact> lct, const BaseContestLog *matct )
@@ -2069,7 +2047,51 @@ void QSOLogFrame::transferDetails(QString cs, const QString loc )
     doGJVEditChange(ui->LocEdit);
 }
 
-void QSOLogFrame::selectEntry( QSharedPointer<BaseContact> slct )
+void QSOLogFrame::sortUnfilledCatchupTime( )
+{
+    if (contest && !contest->isReadOnly() && ((screenContact.contactFlags & TO_BE_ENTERED) || catchup))
+    {
+        // Uri Mode - catchuping QSOs from paper while logging current QSOs
+        // catchup - post contest entry of QSOs
+        // and we need to set the date/time from the previous contact
+        ui->TimeEdit->setReadOnly(false);
+        ui->DateEdit->setReadOnly(false);
+
+        int tne = screenContact.time.notEntered(); // partial dtg will give +fe
+        // full dtg gives -ve, none gives 0
+        if ( tne == 0 )
+        {
+            QSharedPointer<BaseContact> pct;
+            if (catchup)
+                pct = getLastContact();
+            else
+                pct = getPriorContact();
+            if ( pct )
+            {
+                screenContact.time = pct->time;
+                ui->DateEdit->setText(screenContact.time.getDate( DTGDISP ));
+                ui->TimeEdit->setText(screenContact.time.getTime( DTGDISP ));
+            }
+            else
+            {
+                // use contest start time
+                QDateTime DTGStart = CanonicalToTDT(contest->DTGStart.getValue());
+                ui->DateEdit->setText(DTGStart.toString("dd/MM/yy"));
+                ui->TimeEdit->setText(DTGStart.toString("hh:mm"));
+                dtg time(false);
+                time.setDate( ui->DateEdit->text(), DTGDISP );
+                time.setTime( ui->TimeEdit->text().left(5), DTGDISP );
+                screenContact.time = time;
+            }
+        }
+    }
+    else
+    {
+        ui->TimeEdit->setReadOnly(true);
+        ui->DateEdit->setReadOnly(true);
+    }
+}
+void QSOLogFrame::selectEntryForEdit( QSharedPointer<BaseContact> slct )
 {
    selectedContact = slct;   // contact from log list selected
 
@@ -2086,56 +2108,9 @@ void QSOLogFrame::selectEntry( QSharedPointer<BaseContact> slct )
 
    ui->MainOpComboBox->setCurrentText(screenContact.op1);
    ui->SecondOpComboBox->setCurrentText(screenContact.op2);
-   if ( !contest->isReadOnly() && ((screenContact.contactFlags & TO_BE_ENTERED) || catchup))
-   {
-      // Uri Mode - catchuping QSOs from paper while logging current QSOs
-      // and we need to set the date/time from the previous contact
-      ui->TimeEdit->setReadOnly(false);
-      ui->DateEdit->setReadOnly(false);
-
-      int tne = screenContact.time.notEntered(); // partial dtg will give +fe
-      // full dtg gives -ve, none gives 0
-      if ( tne == 0 )
-      {
-         QSharedPointer<BaseContact> pct = getPriorContact();
-         if ( pct )
-         {
-            screenContact.time = pct->time;
-            ui->DateEdit->setText(screenContact.time.getDate( DTGDISP ));
-            ui->TimeEdit->setText(screenContact.time.getTime( DTGDISP ));
-         }
-         else
-         {
-            // use contest start time
-            QDateTime DTGStart = CanonicalToTDT(contest->DTGStart.getValue());
-            ui->DateEdit->setText(DTGStart.toString("dd/MM/yy"));
-            ui->TimeEdit->setText(DTGStart.toString("hh:mm"));
-            dtg time(false);
-            time.setDate( ui->DateEdit->text(), DTGDISP );
-            time.setTime( ui->TimeEdit->text().left(5), DTGDISP );
-            screenContact.time = time;
-         }
-         int selpt = ui->DateEdit->text().length();
-         if ( selpt > 2 )
-         {
-            ui->DateEdit->setSelection(1, 1);
-         }
-
-         selpt = ui->TimeEdit->text().length();
-         if ( selpt > 0 )
-         {
-             ui->DateEdit->setSelection(selpt - 1, 1);
-         }
-      }
-   }
-   else
-   {
-      ui->TimeEdit->setReadOnly(true);
-      ui->DateEdit->setReadOnly(true);
-   }
+   sortUnfilledCatchupTime();
    ui->SerTXEdit->setReadOnly(true);
 
-   bool timeOK = false;
    int tne = screenContact.time.notEntered(); // partial dtg will give +fe
    // full dtg gives -ve, none gives 0
 
@@ -2144,23 +2119,23 @@ void QSOLogFrame::selectEntry( QSharedPointer<BaseContact> slct )
       dtg time(false);
       time.setDate( ui->DateEdit->text(), DTGDISP );
       time.setTime( ui->TimeEdit->text().left( 5), DTGDISP );
-
-      timeOK = contest->checkTime(time);
-   }
-
-   if (timeOK)
-   {
-//      DateEdit->Font->Color = clWindowText;
-//      TimeEdit->Font->Color = clWindowText;
-   }
-   else
-   {
-//      DateEdit->Font->Color = clRed;
-//      TimeEdit->Font->Color = clRed;
    }
 
    MinosLoggerEvents::SendAfterSelectContact(catchup?QSharedPointer<BaseContact>():slct, contest);
    selectField( 0 );
+}
+//---------------------------------------------------------------------------
+QSharedPointer<BaseContact> QSOLogFrame::getLastContact()
+{
+    LogIterator i = contest->ctList.end();
+    while (i != contest->ctList.begin())
+    {
+        i--;
+        if (i->wt->contactFlags.getValue() & DONT_PRINT)
+            continue;
+        return ( i->wt ) ;
+    }
+    return QSharedPointer<BaseContact>();
 }
 //---------------------------------------------------------------------------
 QSharedPointer<BaseContact> QSOLogFrame::getPriorContact()
@@ -2191,7 +2166,7 @@ void QSOLogFrame::on_PriorButton_clicked()
    QSharedPointer<BaseContact> lct = getPriorContact();
    if ( lct )
    {
-      selectEntry( lct );
+      selectEntryForEdit( lct );
    }
    else
    {
@@ -2226,7 +2201,7 @@ void QSOLogFrame::on_NextButton_clicked()
    QSharedPointer<BaseContact> lct = getNextContact();
    if ( lct )
    {
-      selectEntry( lct );
+      selectEntryForEdit( lct );
    }
    else
    {
@@ -2246,7 +2221,7 @@ void QSOLogFrame::on_InsertBeforeButton_clicked()
 
     QSharedPointer<BaseContact> newct = ct->addContactBetween(pct, selectedContact, ctTime);
     newct->contactFlags.setValue(newct->contactFlags.getValue()|TO_BE_ENTERED);
-    selectEntry(newct);
+    selectEntryForEdit(newct);
 }
 
 void QSOLogFrame::on_InsertAfterButton_clicked()
@@ -2257,7 +2232,7 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
 
     QSharedPointer<BaseContact> newct = ct->addContactBetween(selectedContact, nct, ctTime);
     newct->contactFlags.setValue(newct->contactFlags.getValue()|TO_BE_ENTERED);
-    selectEntry(newct);
+    selectEntryForEdit(newct);
 }
 
 

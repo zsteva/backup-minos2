@@ -57,7 +57,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 
     restoreColumns();
 
-    ui->GJVQSOLogFrame->initialise( contest, false );
+    ui->GJVQSOLogFrame->initialise( contest );
 
     connect(&MinosLoggerEvents::mle, SIGNAL(ContestPageChanged()), this, SLOT(on_ContestPageChanged()));
 

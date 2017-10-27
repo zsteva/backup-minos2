@@ -49,7 +49,6 @@ private:
     {
        contest = c;
     }
-    void selectCatchup( BaseContestLog * contest, QString mode );
     void setFirstContact( QSharedPointer<BaseContact> c )
     {
        firstContact = c;

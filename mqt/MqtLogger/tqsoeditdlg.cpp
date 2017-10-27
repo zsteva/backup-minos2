@@ -54,24 +54,11 @@ TQSOEditDlg::~TQSOEditDlg()
 int TQSOEditDlg::exec()
 {
     ui->GJVQSOEditFrame->unfilled = unfilled;
-    ui->GJVQSOEditFrame->catchup = catchup;
 
-    // we had this so that we could close the form easily on startup
-    // when the conatct was zero - not sure if still needed
-    ui->GJVQSOEditFrame->initialise( contest, catchup );
+    ui->GJVQSOEditFrame->initialise( contest );
 
-    // Supress the tabstops we weren't able to manage in the form designed
-    // to discover where they went, uncomment the top block in
-    // GJVQSOEditFrameROFieldTimerTimer
-
-//    GJVQSOEditFrame->TabStop = false;
-
-    ui->GJVQSOEditFrame->selectEntry( firstContact );   // first contact for the dialog to deal with
-    if (catchup)
-    {
-       setWindowTitle("Catch-up (Post Entry)");
-    }
-    else if ( unfilled )
+    ui->GJVQSOEditFrame->selectEntryForEdit( firstContact );   // first contact for the dialog to deal with
+    if ( unfilled )
     {
        setWindowTitle("Completing unfilled contacts");
     }
@@ -171,26 +158,6 @@ void TQSOEditDlg::refreshOps( ScreenContact &screenContact )
     ui->GJVQSOEditFrame->refreshOps(screenContact);
 }
 //---------------------------------------------------------------------------
-void TQSOEditDlg::selectCatchup(BaseContestLog * c , QString mode)
-{
-   // Kick off Post Entry/catchup
-   // We need to create a new contact, and set the "post entry" flag
-   // and then trigger the qso edit dialog on it
-
-   // Also note that we don't get a dups display doing it this way
-   // Not sure if that matters...
-
-   // OR can we build a match window into the edit dialog?
-
-   catchup = true;
-   LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( c );
-
-   int ctmax = ct->maxSerial + 1;
-
-   QSharedPointer<BaseContact> lct = ct->addContact( ctmax, 0, false, catchup, mode, dtg(true) );
-   selectContact(c, lct);
-   ui->GJVQSOEditFrame->setFirstUnfilledButtonEnabled(false);
-}
 void TQSOEditDlg::doCloseEvent()
 {
     QSettings settings;
