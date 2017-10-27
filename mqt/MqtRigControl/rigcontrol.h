@@ -101,7 +101,7 @@ struct scatParams
   freq_t transVertOffset = 0.0;
   bool transVertEnable  = false;
   bool transVertNegative  = false;
-  bool useRxPassBand  = false;
+
 
 };
 
@@ -169,7 +169,7 @@ public:
     pbwidth_t lookUpPassBand(QString, int);
     void setPassBand(QString mode, int modeState);
     pbwidth_t getPassBand();
-    void buildPassBandTable();
+    void buildPassBandTable(QString);
 
     int rigConvertQStrMode(QString mode);
     int getPortType(int rigNumber, rig_port_e *portType);

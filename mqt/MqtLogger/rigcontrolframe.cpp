@@ -63,7 +63,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     initRunMemoryButton();
     initPassBandRadioButtons();
 
-    setRxPBFlag("set");
+    //setRxPBFlag("set");
     mgmLabelVisible(false);
 
     // init memory button data before radio connection
@@ -71,6 +71,15 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 
     freqEditShortKey = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_F), parent);
     connect(freqEditShortKey, SIGNAL(activated()), this, SLOT(freqEditSelected()));
+
+    freqPlusShortCut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_U), parent);
+    connect(freqPlusShortCut, SIGNAL(activated()), this, SLOT(freqPlus_ShortCut()));
+    connect(ui->freqUp, SIGNAL(clicked(bool)), this, SLOT(freqPlusShortCut_clicked(bool)));
+
+    freqNegShortCut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_D), parent);
+    connect(freqNegShortCut, SIGNAL(activated()), this, SLOT(freqNeg_ShortCut()));
+    connect(ui->freqDown, SIGNAL(clicked(bool)), this, SLOT(freqNegShortCut_clicked(bool)));
+
 
     connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
 
@@ -104,7 +113,7 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
 {
 
     ui->modelbl->setText(MODE_ERROR);
-    ui->normalRb->setChecked(true);
+    //ui->normalRb->setChecked(true);
     //connect(ui->freqInput, SIGNAL(lostFocus()), this, SLOT(exitFreqEdit()));
     connect(ui->freqInput, SIGNAL(returnPressed()), this, SLOT(returnChangeRadioFreq()));
     connect(ui->freqInput, SIGNAL(newFreq()), this, SLOT(changeRadioFreq()));
@@ -119,7 +128,7 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
 
     connect(ui->bandSelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(radioBandFreq(int)));
 
-    setRxPBFlag("set");
+    //setRxPBFlag("set");
 
     if (!isRadioLoaded())
     {
@@ -337,14 +346,14 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
             sendModeToRadio(m.mode);
         }
 
-        if (!rxPBFlag)
-        {
-            if (m.pBandState != curpbState)
-            {
-               sendPassBandStateToControl(m.pBandState);
-            }
+        //if (!rxPBFlag)
+        //{
+        //    if (m.pBandState != curpbState)
+        //    {
+        //       sendPassBandStateToControl(m.pBandState);
+        //    }
 
-        }
+       // }
     }
     else
     {
@@ -386,7 +395,7 @@ void RigControlFrame::passBandRadioSelected(int button)
 void RigControlFrame::setMode(QString m)
 {
 
-    traceMsg("Set mode, ui etc");
+    traceMsg(QString("Set mode, ui etc = %1").arg(m));
     QStringList mode = m.split(':');
     if (mode.length() == 2 )
     {
@@ -420,8 +429,9 @@ void RigControlFrame::setMode(QString m)
 
 void RigControlFrame::sendModeToRadio(QString m)
 {
-    traceMsg("Send Mode to Radio");
-    emit sendModeToControl(m);
+    traceMsg(QString("Send Mode to Radio - Mode = %1").arg(m));
+    emit sendModeToControl(QString("%1").arg(m));
+
 }
 
 
@@ -443,14 +453,34 @@ void RigControlFrame::loadMemories()
 
 void RigControlFrame::setRadioState(QString s)
 {
-    traceMsg("Set RadioState");
-    if (s !="" && radioState != s)
+    traceMsg(QString("Set RadioState = %1").arg(s));
+
+    if (s != "")
     {
         ui->rigState->setText(s);
         radioState = s;
     }
-
 }
+
+
+void RigControlFrame::setRadioPassbandState(QString s)
+{
+    traceMsg(QString("Set RadioPassbandState = %1").arg(s));
+    if (s != "")
+    {
+        for (int i = 0; i < hamlibData::pBandStateStr.count(); i++)
+        {
+            if (s == hamlibData::pBandStateStr[i])
+            {
+                pBandButton[i]->setChecked(true);
+                curpbState = i;
+                scurpbState = s;
+                return;
+            }
+        }
+    }
+}
+
 
 
 void RigControlFrame::freqLineEditInFocus()
@@ -501,7 +531,78 @@ void RigControlFrame::freqLineEditFrameColour(bool status)
 
 }
 
+void RigControlFrame::freqPlus_ShortCut()
+{
+    freqPlusShortCut_clicked(true);
+}
 
+void RigControlFrame::freqNeg_ShortCut()
+{
+    freqNegShortCut_clicked(true);
+}
+
+
+void RigControlFrame::freqPlusShortCut_clicked(bool /*click*/)
+{
+    QString freq = calcNewFreq(5000.0);
+    if (freq != "")
+    {
+        emit sendFreqControl(freq);
+    }
+
+}
+
+
+
+void RigControlFrame::freqNegShortCut_clicked(bool /*click*/)
+{
+
+   QString freq = calcNewFreq(-5000.0);
+   if (freq != "")
+   {
+       ui->freqInput->setText(freq);
+       emit sendFreqControl(freq);
+   }
+
+}
+
+
+QString RigControlFrame::calcNewFreq(double incFreq)
+{
+
+    BandList &blist = BandList::getBandList();
+    BandInfo bi;
+    bool ok = false;
+    bool bandOk = false;
+    QString sfreq = "";
+    sfreq = curFreq.trimmed().remove('.');
+
+    double freq = sfreq.toDouble(&ok);
+    if (ok)
+    {
+        freq += incFreq;
+        bandOk = blist.findBand(freq, bi);
+        if (!bandOk)
+        {
+            freq -= incFreq;
+        }
+        else
+        {
+            sfreq = ui->freqInput->convertFreqString(freq);
+            trace(QString("CalcNewFreq: Freq  = %1").arg(sfreq));
+
+        }
+    }
+
+    return sfreq;
+
+}
+
+
+
+
+
+/*
 void RigControlFrame::setRxPBFlag(QString flag)
 {
     bool fl = (flag == "set") ? true: false;
@@ -512,6 +613,7 @@ void RigControlFrame::setRxPBFlag(QString flag)
     ui->wideRb->setVisible(!fl);
     ui->filterBox->setVisible(!fl);
 }
+*/
 
 void RigControlFrame::mgmLabelVisible(bool state)
 {
@@ -553,14 +655,14 @@ void RigControlFrame::runButReadActSel(int buttonNumber)
             sendModeToRadio(m.mode);
         }
 
-        if (!rxPBFlag)
-        {
-            if (m.pBandState != curpbState)
-            {
-               sendPassBandStateToControl(m.pBandState);
-            }
+        //if (!rxPBFlag)
+        //{
+        //    if (m.pBandState != curpbState)
+        //    {
+        //       sendPassBandStateToControl(m.pBandState);
+        //    }
 
-        }
+        //}
     }
     else
     {

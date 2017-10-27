@@ -70,6 +70,7 @@ signals:
       void setRxPBFlag(QString);
       void setRadioName(QString);
       void setRadioState(QString);
+      void setPassBandState(QString);
 
       void setKeyerLoaded();
 

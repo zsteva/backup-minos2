@@ -87,7 +87,7 @@ private slots:
     void saveButtonPushed();
     void cancelButtonPushed();
     void transNegChecked(int boxNumber);
-    void rxPassBandChecked(int boxNumber);
+    //void rxPassBandChecked(int boxNumber);
 
     void networkAddressSelected(int boxNumber);
     void networkPortSelected(int boxNumber);
@@ -129,7 +129,7 @@ private:
     QCheckBox *transVertCheck[NUM_RADIOS];
     QLineEdit *transVertEdit[NUM_RADIOS];
     QCheckBox *transNegCheck[NUM_RADIOS];
-    QCheckBox *rxPassBandCheck[NUM_RADIOS];
+
 
     QComboBox *mgmModeSel[NUM_RADIOS];
 

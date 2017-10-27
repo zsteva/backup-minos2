@@ -223,6 +223,10 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             {
                 emit setRxPBFlag( an.getValue() );
             }
+            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyPBandState )
+            {
+                emit setPassBandState( an.getValue() );
+            }
         }
         if (an.getPublisherProgram() == bandMapServerConnectable.remoteAppName && an.getPublisherServer() == bandMapServerConnectable.serverName)
         {

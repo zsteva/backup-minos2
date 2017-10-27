@@ -30,7 +30,7 @@ class RigControl;
 class RigControlRpc;
 
 
-
+void delay(int sec);
 
 
 
@@ -66,11 +66,15 @@ private:
     bool cmdLockFlag;
     // data from logger
     QString logger_freq;
-    QString logger_mode;
-    int logger_bw_state;
-    rmode_t log_currMode;
-    pbwidth_t loggerPbWidth;      // passband from logger
+    QString slogMode;
+    rmode_t logMode;
 
+    //pbwidth_t loggerPbWidth;      // passband from logger
+    hamlibData::pBandState modePbState[4] = {hamlibData::NOR, //CW
+                                            hamlibData::NOR, // USB
+                                            hamlibData::NOR, // FM
+                                            hamlibData::NOR  // MGM
+                                            };
 
     // data from radio
     freq_t rfrequency;       // read frequency
@@ -80,6 +84,7 @@ private:
     double curVfoFrq;
     double curTransVertFrq;
     rmode_t curMode;
+    QString sCurMode;
     bool mgmModeFlag;
     shortfreq_t rRitFreq;
     QString sRitFreq;
@@ -122,10 +127,10 @@ private:
     void sendStatusToLogError();
     void sendFreqToLog(freq_t freq);
     void sendModeToLog(QString mode);
-    void sendRxPbFlagToLog();
+    //void sendRxPbFlagToLog();
+    void sendPbStateToLog(QString pBstate);
 
-    void setCurMode(QString mode);
-    void setMode(QString mode, vfo_t vfo);
+    void setMode(QString mode, hamlibData::pBandState pBState, vfo_t vfo);
     void displayPassband(pbwidth_t width);
 
 
@@ -136,6 +141,9 @@ private:
     int setRitFreq(vfo_t vfo, shortfreq_t ritFreq);
     void cmdLockOn();
     void cmdLockOff();
+    int getMinosModeIndex(QString mode);
+
+
 private slots:
 
     void onStdInRead(QString);
@@ -146,12 +154,13 @@ private slots:
     void logMessage(QString s);
     void about();
     void LogTimerTimer();
+    void loggerSetPassBand(int pBstate);
 
 
 
     void loggerSetFreq(QString freq);
     void loggerSetMode(QString mode);
-    void loggerSetPassBand(int);
+    //void loggerSetPassBand(int);
     void currentRadioSettingChanged(QString radioName);
     void updateSelectRadioBox();
 signals:

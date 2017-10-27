@@ -139,6 +139,7 @@ private slots:
     void on_RadioLoaded();
     void on_SetRadioName(QString);
     void on_SetRadioState(QString);
+    void on_SetRadioPassbandState(QString s);
 
     void on_RotatorLoaded();
     void on_RotatorState(QString);
@@ -159,6 +160,7 @@ private slots:
     void sendRadioPassBandState(int);
 
     void on_ControlSplitter_splitterMoved(int pos, int index);
+
 };
 
 #endif // TSINGLELOGFRAME_H

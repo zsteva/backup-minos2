@@ -179,12 +179,6 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     transNegCheck[3] = ui->negCheckbox4;
     transNegCheck[4] = ui->negCheckbox5;
 
-    rxPassBandCheck[0] = ui->useRigPbChk1;
-    rxPassBandCheck[1] = ui->useRigPbChk2;
-    rxPassBandCheck[2] = ui->useRigPbChk3;
-    rxPassBandCheck[3] = ui->useRigPbChk4;
-    rxPassBandCheck[4] = ui->useRigPbChk5;
-
     mgmModeSel[0] = ui->mgmBox1;
     mgmModeSel[1] = ui->mgmBox2;
     mgmModeSel[2] = ui->mgmBox3;
@@ -330,16 +324,6 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     connect(transNegCheck_mapper, SIGNAL(mapped(int)), this, SLOT(transNegChecked(int)));
 
 
-/******************** Map Use Rx Passband checkbox *****************************************/
-
-    QSignalMapper *rxPassbandCheck_mapper = new QSignalMapper(this);
-    for (int i = 0; i < NUM_RADIOS; i++ )
-    {
-        rxPassbandCheck_mapper->setMapping(rxPassBandCheck[i], i);
-        connect(rxPassBandCheck[i], SIGNAL(stateChanged(int)), rxPassbandCheck_mapper, SLOT(map()));
-    }
-
-    connect(rxPassbandCheck_mapper, SIGNAL(mapped(int)), this, SLOT(rxPassBandChecked(int)));
 
 //--------------------------------------------------------------------------------------------------
 
@@ -433,7 +417,6 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
         transVertCheck[i]->setChecked(availRadios[i].transVertEnable);
         transVertEdit[i]->setEnabled(transVertCheck[i]->isChecked());
         transNegCheck[i]->setEnabled(transVertCheck[i]->isChecked());
-        rxPassBandCheck[i]->setChecked(availRadios[i].useRxPassBand);
         netAddress[i]->setText(availRadios[i].networkAdd);
         netPort[i]->setText(availRadios[i].networkPort);
         if (rig_port_e(availRadios[i].portType) == RIG_PORT_NETWORK || rig_port_e(availRadios[i].portType) == RIG_PORT_UDP_NETWORK)
@@ -728,16 +711,6 @@ void SetupDialog::transNegChecked(int boxNumber)
 }
 
 
-void SetupDialog::rxPassBandChecked(int boxNumber)
-{
-    if (!chkloadflg)
-    {
-        availRadios[boxNumber].useRxPassBand = rxPassBandCheck[boxNumber]->isChecked();
-        radioValueChanged[boxNumber] = true;
-        radioChanged = true;
-    }
-}
-
 
 void SetupDialog::networkAddressSelected(int boxNumber)
 {
@@ -972,7 +945,6 @@ void SetupDialog::saveSettings()
                 config.setValue("transVertOffSetStr", availRadios[i].transVertOffsetStr);
                 config.setValue("transVertEnable", availRadios[i].transVertEnable);
                 config.setValue("transVertNegative", availRadios[i].transVertNegative);
-                config.setValue("useRXPassBand", availRadios[i].useRxPassBand);
                 config.setValue("netAddress", availRadios[i].networkAdd);
                 config.setValue("netPort", availRadios[i].networkPort);
                 config.setValue("mgmMode", availRadios[i].mgmMode);
@@ -1054,7 +1026,6 @@ void SetupDialog::readSettings()
         availRadios[i].transVertOffsetStr = config.value("transVertOffSetStr", "00.000.000.000").toString();
         availRadios[i].transVertEnable = config.value("transVertEnable", false).toBool();
         availRadios[i].transVertNegative = config.value("transVertNegative", false).toBool();
-        availRadios[i].useRxPassBand = config.value("useRXPassBand", false).toBool();
         availRadios[i].networkAdd = config.value("netAddress", "").toString();
         availRadios[i].networkPort = config.value("netPort", "").toString();
         availRadios[i].mgmMode = config.value("mgmMode", hamlibData::USB).toString();
@@ -1145,7 +1116,6 @@ void SetupDialog::saveCurrentRadio()
     config.setValue("transVertOffSetStr", currentRadio.transVertOffsetStr);
     config.setValue("transVertEnable", currentRadio.transVertEnable);
     config.setValue("transVertNegative", currentRadio.transVertNegative);
-    config.setValue("useRXPassBand", currentRadio.useRxPassBand);
     config.setValue("netAddress", currentRadio.networkAdd);
     config.setValue("netPort", currentRadio.networkPort);
     config.setValue("mgmMode", currentRadio.mgmMode);
@@ -1192,7 +1162,6 @@ void SetupDialog::readCurrentRadio()
         currentRadio.transVertOffsetStr = config.value("transVertOffSetStr", "00.000.000.000").toString();
         currentRadio.transVertEnable = config.value("transVertEnable", false).toBool();
         currentRadio.transVertNegative = config.value("transVertNegative", false).toBool();
-        currentRadio.useRxPassBand = config.value("useRXPassBand", false).toBool();
         currentRadio.networkAdd = config.value("netAddress", "").toString();
         currentRadio.networkPort = config.value("netPort", "").toString();
         currentRadio.mgmMode = config.value("mgmMode", hamlibData::USB).toString();

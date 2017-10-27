@@ -101,6 +101,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(sendDM, SIGNAL(setRxPBFlag(QString)),this, SLOT(on_SetRxPBFlag(QString)));
     connect(sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
     connect(sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
+    connect(sendDM, SIGNAL(setPassBandState(QString)), this, SLOT(on_SetRadioPassbandState(QString)));
 
     // To rig controller
     connect(ui->FKHRigControlFrame, SIGNAL(sendFreqControl(QString)), this, SLOT(sendRadioFreq(QString)));
@@ -736,9 +737,9 @@ void TSingleLogFrame::on_NoRadioSetFreq(QString f)
 }
 
 
-void TSingleLogFrame::on_SetRxPBFlag(QString flag)
+void TSingleLogFrame::on_SetRxPBFlag(QString /*flag*/)
 {
-    ui->FKHRigControlFrame->setRxPBFlag(flag);
+    //ui->FKHRigControlFrame->setRxPBFlag(flag);
 }
 
 void TSingleLogFrame::on_RadioLoaded()
@@ -761,6 +762,12 @@ void TSingleLogFrame::on_SetRadioName(QString n)
 void TSingleLogFrame::on_SetRadioState(QString s)
 {
     ui->FKHRigControlFrame->setRadioState(s);
+}
+
+
+void TSingleLogFrame::on_SetRadioPassbandState(QString s)
+{
+    ui->FKHRigControlFrame->setRadioPassbandState(s);
 }
 
 

@@ -46,7 +46,7 @@ RigControlRpc::RigControlRpc(RigControlMainWindow *parent) : QObject(parent), pa
 void RigControlRpc::publishState(const QString &state)
 {
     static QString old;
-
+    trace(QString("Rig RPC: Publish State = %1").arg(state));
     if ( state != old )
     {
        old = state;
@@ -59,7 +59,7 @@ void RigControlRpc::publishState(const QString &state)
 void RigControlRpc::publishRadioName(const QString &radioName)
 {
     static QString old;
-
+    trace(QString("Rig RPC: Publish Name = %1").arg(radioName));
     if ( radioName != old )
     {
        old = radioName;
@@ -71,6 +71,7 @@ void RigControlRpc::publishRadioName(const QString &radioName)
 
 void RigControlRpc::publishFreq(const QString &freq)
 {
+    trace(QString("Rig RPC: Publish Freq = %1").arg(freq));
     MinosRPC *rpc = MinosRPC::getMinosRPC();
     rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyFreq, freq, psPublished );
 }
@@ -79,7 +80,7 @@ void RigControlRpc::publishFreq(const QString &freq)
 void RigControlRpc::publishMode(const QString &mode)
 {
     static QString old;
-
+    trace(QString("Rig RPC: Publish Mode = %1").arg(mode));
     if ( mode != old )
     {
        old = mode;
@@ -88,10 +89,15 @@ void RigControlRpc::publishMode(const QString &mode)
     }
 }
 
-void RigControlRpc::publishRxPbFlag(const QString flag)
+
+
+
+
+
+void RigControlRpc::publishRxPbFlag(const QString &flag)
 {
     static QString old;
-
+    trace(QString("Rig RPC: Publish RxPBFlag = %1").arg(flag));
     if (flag != old)
     {
         old = flag;
@@ -99,6 +105,22 @@ void RigControlRpc::publishRxPbFlag(const QString flag)
         rpc->publish(rpcConstants::rigControlCategory, rpcConstants::rigControlKeyRxPbFlag, flag, psPublished);
     }
 }
+
+
+void RigControlRpc::publishPbandState(const QString &state)
+{
+    static QString old;
+    trace(QString("Rig RPC: Publish PassBand State = %1").arg(state));
+    if (state != old)
+    {
+        old = state;
+        MinosRPC *rpc = MinosRPC::getMinosRPC();
+        rpc->publish(rpcConstants::rigControlCategory, rpcConstants::rigControlKeyPBandState, state, psPublished);
+    }
+}
+
+
+
 
 
 void RigControlRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
@@ -125,7 +147,7 @@ void RigControlRpc::on_response(bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*
 //---------------------------------------------------------------------------
 void RigControlRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
-    trace( "rigcontrol callback from " + from + ( err ? ":Error" : ":Normal" ) );
+    trace("Rig RPC: Rigcontrol callback from " + from + ( err ? ":Error" : ":Normal" ) );
 
     if ( !err )
     {
@@ -141,7 +163,7 @@ void RigControlRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const 
             if ( psFreq->getString( freq ) )
             {
                 // here you handle what the logger has sent to us
-                trace("Freq Command From Logger = " + freq);
+                trace(QString("Rig RPC: Freq Command From Logger = $1").arg(freq));
                 emit (setFreq(freq));
 
                 QSharedPointer<RPCParam>st(new RPCParamStruct);
@@ -158,7 +180,7 @@ void RigControlRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const 
                  if ( psMode->getString( mode ) )
                  {
                      // here you handle what the logger has sent to us
-                    trace("Mode Command From Logger = " + mode);
+                    trace(QString("Rig RPC: Mode Command From Logger = %1").arg(mode));
                     emit (setMode(mode));
 
                      QSharedPointer<RPCParam>st(new RPCParamStruct);
@@ -175,7 +197,7 @@ void RigControlRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const 
                  if ( psPBandState->getInt( passBandState ) )
                  {
                      // here you handle what the logger has sent to us
-                    trace("PassBandState Command From Logger = " + passBandState);
+                    trace(QString("Rig RPC: PassBandState Command From Logger = %1").arg(QString::number(passBandState)));
                     emit (setPassBand(passBandState));
 
                      QSharedPointer<RPCParam>st(new RPCParamStruct);
