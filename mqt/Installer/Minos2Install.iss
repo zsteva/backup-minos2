@@ -64,6 +64,12 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 Source: "*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
+[InstallDelete]
+Type: files; Name: "{app}\Bin\MqtControl.exe"
+Type: files; Name: "{app}\Bin\MqtKeyer.exe"
+Type: files; Name: "{app}\Configuration\MinosKeyer.ini"
+Type: files; Name: "{app}\Configuration\MinosControl.ini"
+
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\Bin\{#MyAppExeName}";WorkingDir: "{app}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
