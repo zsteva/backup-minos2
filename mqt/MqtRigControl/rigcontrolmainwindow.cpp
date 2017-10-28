@@ -72,8 +72,6 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     if (geometry.size() > 0)
         restoreGeometry(geometry);
 
-
-
     radio = new RigControl();
     radio->getRigList();
 
@@ -87,17 +85,10 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     status = new QLabel;
     ui->statusBar->addWidget(status);
 
-
-
-
     radio->set_serialConnected(false);
     initActionsConnections();
 
-
-
     initSelectRadioBox();
-
-
 
 
     if (appName.length() > 0)
@@ -125,16 +116,9 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
         selectRadio->setCurrentIndex(selectRadio->findText(selectRig->currentRadio.radioName));
     }
 
-
-
-
-
     setPolltime(250);
 
-
-
     readTraceLogFlag();
-
 
     upDateRadio();
 
@@ -371,6 +355,12 @@ void RigControlMainWindow::upDateRadio()
             // set mode and passband
             logMode = radio->convertQStrMode("USB");
             setMode("USB", hamlibData::NOR, RIG_VFO_CURR);
+
+
+            loggerSetMode("MGM");
+
+            loggerSetMode("USB");
+
 
         }
         else
@@ -670,8 +660,7 @@ int RigControlMainWindow::getFrequency(vfo_t vfo)
     retCode = radio->getFrequency(vfo, &rfrequency);
     if (retCode == RIG_OK)
     {
-        //if (rfrequency != curVfoFrq)
-        //{
+
         curVfoFrq = rfrequency;
         logMessage(QString("Trans Enable = %1").arg(QString::number(selectRig->currentRadio.transVertEnable)));
         if (selectRig->currentRadio.transVertEnable)
@@ -704,14 +693,8 @@ int RigControlMainWindow::getFrequency(vfo_t vfo)
         {
             sendFreqToLog(rfrequency);
         }
-        //}
-
     }
-
     return retCode;
-
-
-
 }
 
 void RigControlMainWindow::chkRadioMgmModeChanged()
@@ -769,18 +752,7 @@ void RigControlMainWindow::loggerSetMode(QString mode)
 {
     logMessage(QString("Log SetMode:: Mode Recieved from Logger = %1").arg(mode));
 
-    //bool ok = false;
-    //hamlibData::pBandState pBstate = hamlibData::NOR;
-    //QStringList m = modeMsg.split(':');
-    //if (m.count() == 2)
-    //{
-    //    QString mode = m[0].trimmed();
-    //    pBstate = hamlibData::pBandState(m[1].toInt(&ok) - 48);
-    //    if (!ok)
-    //    {
-    //        return;
-    //    }
-
+    hamlibData::pBandState pBstate = modePbState[getMinosModeIndex(mode)];
 
     if (slogMode != mode)
     {
@@ -798,13 +770,13 @@ void RigControlMainWindow::loggerSetMode(QString mode)
                     logMessage(QString("Log SetMode: Mgm flag is set"));
                     if (curMode !=  radio->convertQStrMode(selectRig->currentRadio.mgmMode))
                     {
-                        setMode(selectRig->currentRadio.mgmMode, modePbState[getMinosModeIndex(selectRig->currentRadio.mgmMode)], RIG_VFO_CURR);
+                        setMode(selectRig->currentRadio.mgmMode, pBstate, RIG_VFO_CURR);
                     }
                 }
                 else
                 {
                     mgmModeFlag = true;
-                    setMode(selectRig->currentRadio.mgmMode, modePbState[getMinosModeIndex(selectRig->currentRadio.mgmMode)], RIG_VFO_CURR);
+                    setMode(selectRig->currentRadio.mgmMode, pBstate, RIG_VFO_CURR);
                     logMessage((QString("Log SetMode: Set MgmMode Flag, Selected MGM Mode = %1").arg(selectRig->currentRadio.mgmMode)));
                 }
             }
@@ -812,15 +784,10 @@ void RigControlMainWindow::loggerSetMode(QString mode)
             {
                 mgmModeFlag = false;
                 logMessage(QString("Log SetMode: Clear mgmModeFlag, Set mode = %1, Set Passband = %2").arg(mode, modePbState[getMinosModeIndex(mode)]));
-                setMode(mode, modePbState[getMinosModeIndex(mode)], RIG_VFO_CURR);
+                setMode(mode, pBstate, RIG_VFO_CURR);
             }
-
         }
-
     }
-
-
-
 }
 
 
@@ -834,18 +801,6 @@ void RigControlMainWindow::setMode(QString mode, hamlibData::pBandState pBstate,
 
     logMessage(QString("Setmode: Requested Mode = %1, Passband = %2").arg(mode, hamlibData::pBandStateStr[pBstate]));
     rmode_t mCode = radio->convertQStrMode(mode);
-
-
-    if (slogMode != mode)
-    {
-        slogMode = mode;
-    }
-
-    if (modePbState[getMinosModeIndex(mode)] != pBstate)
-    {
-        modePbState[getMinosModeIndex(mode)] = pBstate;
-    }
-
 
 
     //hamlibData::pBandState pBState = modePbState[getMinosModeIndex(mode)];
@@ -929,27 +884,28 @@ int RigControlMainWindow::setRitFreq(vfo_t vfo, shortfreq_t ritFreq)
 
 void RigControlMainWindow::loggerSetPassBand(int state)
 {
-    logMessage(QString("Log SetPassband: State received from logger = %1").arg(QString::number(state)));
+    logMessage(QString("Log SetPassband: State received from logger = %1, state = %2").arg(QString::number(state), hamlibData::pBandStateStr[state]));
     QString mode = "";
     hamlibData::pBandState pBstate = hamlibData::pBandState(state);
-    logMessage(QString("Log SetPassband: Received PassBand from Logger = %1").arg(hamlibData::pBandStateStr[pBstate]));
 
-    if (slogMode == hamlibData::MGM)
-    {
-        mode = selectRig->currentRadio.mgmMode;
-    }
-    else
-    {
-        mode = slogMode;
-    }
-
-
-    if (modePbState[getMinosModeIndex(mode)] != pBstate)
+    if (modePbState[getMinosModeIndex(slogMode)] != state)
     {
         if (radio->get_serialConnected() && !rigErrorFlag)
         {
+            if (slogMode == hamlibData::MGM)
+            {
+                mode = selectRig->currentRadio.mgmMode;
+                modePbState[getMinosModeIndex(hamlibData::MGM)] = pBstate ;
+            }
+            else
+            {
+                mode = slogMode;
+                modePbState[getMinosModeIndex(mode)] = pBstate;
+            }
 
-            //modePbState[getMinosModeIndex(mode)] = pBstate;
+
+
+            logMessage(QString("Log SetPassband: SetMode mode = %1, passBand State = %2").arg(mode, hamlibData::pBandStateStr[pBstate]));
             setMode(mode, pBstate, RIG_VFO_CURR);
 
             //ui->passBandState->setText(hamlibData::pBandStateStr[state]);
@@ -963,25 +919,6 @@ void RigControlMainWindow::loggerSetPassBand(int state)
 
 
 
-
-
-
-
-/*
-void RigControlMainWindow::updateFreq(double frequency)
-{
-    if (curFreq == frequency)
-    {
-        return;
-    }
-    else
-    {
-        curFreq = frequency;
-    }
-    emit frequency_updated(frequency);
-}
-
-*/
 
 void RigControlMainWindow::displayFreqVfo(double frequency)
 {

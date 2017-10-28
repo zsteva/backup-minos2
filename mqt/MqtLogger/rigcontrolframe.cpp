@@ -46,7 +46,6 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     , ui(new Ui::RigControlFrame)
     , curFreq(memDefData::DEFAULT_FREQ)
     , curMode(memDefData::DEFAULT_MODE)
-    , curpbState(memDefData::DEFAULT_PBAND_STATE)
     , radioName("NoRadio")
     , radioState("None")
     , radioLoaded(false)
@@ -302,7 +301,7 @@ void RigControlFrame::exitFreqEdit()
 
 void RigControlFrame::initPassBandRadioButtons()
 {
-    curpbState = hamlibData::NOR;
+    //curpbState = hamlibData::NOR;
     pBandButton[0] = ui->narRb;
     pBandButton[1] = ui->normalRb;
     pBandButton[2] = ui->wideRb;
@@ -354,7 +353,7 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
         }
 
 
-        if (m.pBandState != curpbState)
+        if (m.pBandState != curpbState[calcMinosMode(m.mode)])
         {
             sendPassBandStateToControl(m.pBandState);
         }
@@ -378,7 +377,7 @@ void RigControlFrame::getDetails(memoryData::memData &logData)
     logData.freq = curFreq;
     logData.locator = sc.loc.loc.getValue();
     logData.mode = curMode;
-    logData.pBandState = curpbState;
+    logData.pBandState = curpbState[calcMinosMode(curMode)];
 
     QStringList dt = dtg( true ).getIsoDTG().split('T');
     logData.time = dt[1];
@@ -394,7 +393,7 @@ void RigControlFrame::getDetails(memoryData::memData &logData)
 void RigControlFrame::passBandRadioSelected(int button)
 {
     traceMsg("Memory Clear Selected");
-    curpbState = button;
+    //curpbState = button;
     emit sendPassBandStateToControl(button);
 }
 
@@ -479,8 +478,7 @@ void RigControlFrame::setRadioPassbandState(QString s)
             if (s == hamlibData::pBandStateStr[i])
             {
                 pBandButton[i]->setChecked(true);
-                curpbState = i;
-                scurpbState = s;
+                storePassBandState(s);
                 return;
             }
         }
@@ -488,6 +486,70 @@ void RigControlFrame::setRadioPassbandState(QString s)
 }
 
 
+void RigControlFrame::storePassBandState(QString state)
+{
+    int iMode = calcMinosMode(curMode);
+    int iState = calcMinosPBState(state);
+    if (iMode < 0 || iState < 0)
+    {
+        return;
+    }
+    curpbState[iMode] = iState;
+    scurpbState[iMode] = state;
+}
+
+int RigControlFrame::getIntPassBandState(QString mode)
+{
+    int iMode = calcMinosMode(mode);
+    if (iMode > 0)
+    {
+        return curpbState[iMode];
+    }
+
+    return iMode;
+
+}
+
+QString RigControlFrame::getStrPassBandState(QString mode)
+{
+    int iMode = calcMinosMode(mode);
+    if (iMode > 0)
+    {
+        return scurpbState[iMode];
+    }
+
+    return "";
+}
+
+int RigControlFrame::calcMinosMode(QString mode)
+{
+    int iMode = -1;
+    for (int i = 0; i < hamlibData::supModeList.count(); i++ )
+    {
+        if (mode == hamlibData::supModeList[i])
+        {
+            iMode = i;
+            return iMode;
+        }
+    }
+    return iMode;
+}
+
+
+int RigControlFrame::calcMinosPBState(QString state)
+{
+    int iState = -1;
+    for (int i = 0; i < hamlibData::pBandStateStr.count(); i++)
+    {
+        if (state == hamlibData::pBandStateStr[i])
+        {
+            iState = i;
+            return iState;
+        }
+    }
+
+    return iState;
+}
 
 void RigControlFrame::freqLineEditInFocus()
 {
@@ -607,20 +669,6 @@ QString RigControlFrame::calcNewFreq(double incFreq)
 
 
 
-
-/*
-void RigControlFrame::setRxPBFlag(QString flag)
-{
-    bool fl = (flag == "set") ? true: false;
-
-    rxPBFlag = fl;
-    ui->narRb->setVisible(!fl);
-    ui->normalRb->setVisible(!fl);
-    ui->wideRb->setVisible(!fl);
-    ui->filterBox->setVisible(!fl);
-}
-*/
-
 void RigControlFrame::mgmLabelVisible(bool state)
 {
     ui->mgmbreak->setVisible(state);
@@ -667,7 +715,7 @@ void RigControlFrame::runButReadActSel(int buttonNumber)
 
 
 
-        if (m.pBandState != curpbState)
+        if (m.pBandState != curpbState[calcMinosMode(m.mode)])
         {
             sendPassBandStateToControl(m.pBandState);
         }
@@ -689,7 +737,7 @@ void RigControlFrame::runButWriteActSel(int buttonNumber)
     runData.freq = curFreq;
     runData.locator = "";
     runData.mode = curMode;
-    runData.pBandState = curpbState;
+    runData.pBandState = curpbState[calcMinosMode(curMode)];
     runData.bearing = COMPASS_ERROR;
     runData.time = "00:00";
     // load run data into run memory
