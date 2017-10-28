@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-<class>MainWindow</class>
-<widget class="QMainWindow" name="MainWindow">
- <property name="geometry">
- <rect>
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
     <x>0</x>
     <y>0</y>
-    <width>215</width>
-    <height>98</height>
+    <width>218</width>
+    <height>102</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Mqt Server</string>
+   <string>Minos Server</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">
