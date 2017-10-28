@@ -342,8 +342,10 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
 {
     if (isRadioLoaded())
     {
+        ui->freqInput->clearFocus();
         if (m.freq.remove('.') != curFreq.remove('.'))
         {
+
             sendFreq(m.freq);
         }
 
@@ -702,8 +704,10 @@ void RigControlFrame::runButReadActSel(int buttonNumber)
     memoryData::memData m = getRunMemoryData(buttonNumber);
     if (isRadioLoaded())
     {
+        ui->freqInput->clearFocus();
         if (m.freq.remove('.') != curFreq.remove('.'))
         {
+            ;
             sendFreq(m.freq);
         }
 
