@@ -24,8 +24,6 @@
 RigMemDialog::RigMemDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::RigMemDialog)
-    ,rxPbFlag(false)
-
 {
     ui->setupUi(this);
 
@@ -51,12 +49,7 @@ RigMemDialog::~RigMemDialog()
 {
     delete ui;
 }
-void RigMemDialog::setRxPbFlag(bool flag)
-{
-    rxPbFlag = flag;
-    ui->pbStateCb->setVisible(!flag);
-    ui->passbandlbl->setVisible(!flag);
-}
+
 
 void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
 {

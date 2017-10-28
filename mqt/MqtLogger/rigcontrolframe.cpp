@@ -335,25 +335,31 @@ void RigControlFrame::freqEditSelected()
 
 
 }
+
+
+// this is the routine called from read memory
+
 void RigControlFrame::transferDetails(memoryData::memData &m)
 {
     if (isRadioLoaded())
     {
-        sendFreq(m.freq);
+        if (m.freq.remove('.') != curFreq.remove('.'))
+        {
+            sendFreq(m.freq);
+        }
 
         if (m.mode != curMode)
         {
             sendModeToRadio(m.mode);
         }
 
-        //if (!rxPBFlag)
-        //{
-        //    if (m.pBandState != curpbState)
-        //    {
-        //       sendPassBandStateToControl(m.pBandState);
-        //    }
 
-       // }
+        if (m.pBandState != curpbState)
+        {
+            sendPassBandStateToControl(m.pBandState);
+        }
+
+
     }
     else
     {
@@ -648,21 +654,25 @@ void RigControlFrame::runButReadActSel(int buttonNumber)
     memoryData::memData m = getRunMemoryData(buttonNumber);
     if (isRadioLoaded())
     {
-        sendFreq(m.freq);
+        if (m.freq.remove('.') != curFreq.remove('.'))
+        {
+            sendFreq(m.freq);
+        }
+
 
         if (m.mode != curMode)
         {
             sendModeToRadio(m.mode);
         }
 
-        //if (!rxPBFlag)
-        //{
-        //    if (m.pBandState != curpbState)
-        //    {
-        //       sendPassBandStateToControl(m.pBandState);
-        //    }
 
-        //}
+
+        if (m.pBandState != curpbState)
+        {
+            sendPassBandStateToControl(m.pBandState);
+        }
+
+
     }
     else
     {
@@ -858,6 +868,8 @@ void RunMemoryButton::clearActionSelected()
 {
     emit clearActionSelected(memNo);
 }
+
+
 
 
 //*******************Freq Line Edit *************************//

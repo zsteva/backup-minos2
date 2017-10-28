@@ -22,8 +22,7 @@
 
 RunButtonDialog::RunButtonDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::RunButtonDialog),
-    rxPbFlag(false)
+    ui(new Ui::RunButtonDialog)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -48,12 +47,8 @@ RunButtonDialog::~RunButtonDialog()
     delete ui;
 }
 
-void RunButtonDialog::setRxPbFlag(bool flag)
-{
-    rxPbFlag = flag;
-    ui->pbStateCb->setVisible(!flag);
-    ui->passbandlbl->setVisible(!flag);
-}
+
+
 
 void RunButtonDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
 {
@@ -89,4 +84,11 @@ void RunButtonDialog::on_okButton_clicked()
 void RunButtonDialog::on_cancelbutton_clicked()
 {
     reject();
+}
+
+
+
+void RunButtonDialog::setFreqCurPos(int pos)
+{
+    ui->freqLineEdit->setCursorPosition(pos);
 }

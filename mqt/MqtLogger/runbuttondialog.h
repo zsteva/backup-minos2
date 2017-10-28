@@ -37,8 +37,9 @@ public:
     ~RunButtonDialog();
 
     void setLogData(memoryData::memData*, int buttonNumber);
-    void setRxPbFlag(bool flag);
 
+
+    void setFreqCurPos(int pos);
 private slots:
     void on_okButton_clicked();
     void on_cancelbutton_clicked();
