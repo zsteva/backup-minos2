@@ -96,6 +96,8 @@ public:
     void runButEditActSel(int buttonNumber);
 
 
+    QString getStrPassBandState(QString mode);
+    int getIntPassBandState(QString mode);
 signals:
     void sendFreqControl(QString);
     void noRadioSendFreq(QString);
@@ -149,8 +151,15 @@ private:
     bool freqEditOn;
     QString curFreq;
     QString curMode;
-    int curpbState;
-    QString scurpbState;
+    int curpbState[4] = { hamlibData::NOR,   // CW
+                          hamlibData::NOR,   // USB
+                          hamlibData::NOR,   // FM
+                          hamlibData::NOR};  // MGM
+    QStringList scurpbState = (QStringList()
+                                << hamlibData::pBandStateStr[hamlibData::NOR]   // CW
+                                << hamlibData::pBandStateStr[hamlibData::NOR]   // USB
+                                << hamlibData::pBandStateStr[hamlibData::NOR]   // FM
+                                << hamlibData::pBandStateStr[hamlibData::NOR]); // MGM
     QString radioName;
     QString radioState;
     bool rxPBFlag;
@@ -174,6 +183,9 @@ private:
     bool checkValidFreq(QString freq);
     void sendFreq(QString f);
     QString calcNewFreq(double incFreq);
+    int calcMinosPBState(QString state);
+    int calcMinosMode(QString mode);
+    void storePassBandState(QString state);
 };
 class FreqLineEdit : public QLineEdit
 {
