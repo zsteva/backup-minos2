@@ -139,8 +139,6 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(ui->FKHBandMapFrame, SIGNAL(sendBandMap( QString, QString, QString, QString, QString )),
             this, SLOT(sendBandMap(QString,QString,QString,QString,QString)));
 */
-
-
 }
 
 TSingleLogFrame::~TSingleLogFrame()
@@ -523,7 +521,6 @@ void TSingleLogFrame::getSplitters()
     ui->ControlSplitter->restoreState(state);
     ui->ControlSplitter->setHandleWidth(splitterHandleWidth);
 
-    ui->stackedInfoFrame->getSplitters();
     ui->matchTreesFrame->getSplitters();
 }
 void TSingleLogFrame::onSplittersChanged()

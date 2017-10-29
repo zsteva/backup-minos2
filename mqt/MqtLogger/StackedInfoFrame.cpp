@@ -1,5 +1,6 @@
 #include "StackedInfoFrame.h"
 #include <QSignalMapper>
+#include <QSplitter>
 #include "tlogcontainer.h"
 #include "tsinglelogframe.h"
 
@@ -33,45 +34,35 @@ StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
     splitterHandleWidth = 6;
 #endif
 
-    ui->StackedMults->setCurrentIndex(5);   // start up on the clock - useful outside the contest!
-    ui->ClockButton->setChecked(true);
-
-    // Connect up the stats etc display
-    QSignalMapper* sm = new QSignalMapper(this);
-
-    // connect to `clicked' on all buttons
-    connect(ui->ClockButton, SIGNAL(clicked()), sm, SLOT(map()));
-    connect(ui->DXCCButton, SIGNAL(clicked()), sm, SLOT(map()));
-    connect(ui->FilterButton, SIGNAL(clicked()), sm, SLOT(map()));
-    connect(ui->DistrictButton, SIGNAL(clicked()), sm, SLOT(map()));
-    connect(ui->LocatorButton, SIGNAL(clicked()), sm, SLOT(map()));
-    connect(ui->StatsButton, SIGNAL(clicked()), sm, SLOT(map()));
-    connect(ui->rigMemButton, SIGNAL(clicked()), sm, SLOT(map()));
-
-    // setMapping on each button to the QStackedWidget index we'd like to switch to
-    // note: this affects the value passed via QSignalMapper::mapped(int) signal
-    sm->setMapping(ui->DXCCButton, 0);
-    sm->setMapping(ui->FilterButton, 1);
-    sm->setMapping(ui->DistrictButton, 2);
-    sm->setMapping(ui->LocatorButton, 3);
-    sm->setMapping(ui->StatsButton, 4);
-    sm->setMapping(ui->ClockButton, 5);
-    sm->setMapping(ui->rigMemButton, 6);
-
-    // finally, connect the mapper to the stacked widget
-    connect(sm, SIGNAL(mapped(int)), ui->StackedMults, SLOT(setCurrentIndex(int)));
-
-    connect( ui->locFrame->getLocatorSplitter(), SIGNAL(splitterMoved(int,int)), this, SLOT(on_LocatorSplitterMoved(int,int)));
+    QStringList infoList =
+    {
+        "Clock",
+        "DXCC",
+        "District",
+        "Filter",
+        "Memories",
+        "Locator Map",
+        "Locator Tree",
+        "Stats"
+    };
+    ui->infoCombo->addItems(infoList);
     connect(&MinosLoggerEvents::mle, SIGNAL(FiltersChanged()), this, SLOT(onFiltersChanged()));
 
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToCountry(QString,BaseContestLog*)), this, SLOT(on_ScrollToCountry(QString,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToDistrict(QString,BaseContestLog*)), this, SLOT(on_ScrollToDistrict(QString,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
+
+    ui->infoCombo->setCurrentIndex(0);   // start up on the clock - useful outside the contest!
+
 }
 
 StackedInfoFrame::~StackedInfoFrame()
 {
     delete ui;
+}
+void StackedInfoFrame::on_infoCombo_currentIndexChanged(int arg1)
+{
+    ui->StackedMults-> setCurrentIndex(arg1);
 }
 
 void StackedInfoFrame::setContest(BaseContestLog *ct)
@@ -82,6 +73,7 @@ void StackedInfoFrame::setContest(BaseContestLog *ct)
     ui->districtFrame->setContest(contest);
     ui->StatsFrame->setContest(contest);
     ui->locFrame->setContest(contest);
+    ui->locTreeFrame->setContest(contest);
     ui->clockFrame->setContest(contest);
     ui->rigMemFrame->setContest(contest);
 }
@@ -110,6 +102,7 @@ void StackedInfoFrame::on_ScrollToCountry( const QString &csCs, BaseContestLog* 
 void StackedInfoFrame::refreshMults()
 {
     ui->locFrame->reInitialiseLocators();
+    ui->locTreeFrame->reInitialiseLocators();
     ui->dxccFrame->reInitialiseCountries();
     ui->districtFrame->reInitialiseDistricts();
     ui->rigMemFrame->reInitialiseMemories();
@@ -153,6 +146,7 @@ void StackedInfoFrame::onFiltersChanged()
         ui->dxccFrame->reInitialiseCountries();
         ui->districtFrame->reInitialiseDistricts();
         ui->locFrame->reInitialiseLocators();
+        ui->locTreeFrame->reInitialiseLocators();
         ui->StatsFrame->reInitialiseStats();
         ui->rigMemFrame->reInitialiseMemories();
     }
@@ -228,34 +222,4 @@ void StackedInfoFrame::on_ContNA_clicked()
 void StackedInfoFrame::on_StackedMults_currentChanged(int /*arg1*/)
 {
     ui->StatsFrame->reInitialiseStats();
-}
-
-void StackedInfoFrame::getSplitters()
-{
-    QSettings settings;
-    QByteArray state;
-
-    QSplitter *locatorSplitter = ui->locFrame->getLocatorSplitter();
-    state = settings.value("LocatorSplitter/state").toByteArray();
-    locatorSplitter->restoreState(state);
-    locatorSplitter->setHandleWidth(splitterHandleWidth);
-
-    state = settings.value("InfoChoiceSplitter/state").toByteArray();
-    ui->infoChoiceSplitter->restoreState(state);
-    ui->infoChoiceSplitter->setHandleWidth(splitterHandleWidth);
-
-}
-void StackedInfoFrame::on_LocatorSplitterMoved(int /*pos*/, int /*index*/)
-{
-    QByteArray state = ui->locFrame->getLocatorSplitter()->saveState();
-    QSettings settings;
-    settings.setValue("LocatorSplitter/state", state);
-    MinosLoggerEvents::SendSplittersChanged();
-}
-void StackedInfoFrame::on_infoChoiceSplitterMoved(int /*pos*/, int /*index*/)
-{
-    QByteArray state = ui->infoChoiceSplitter->saveState();
-    QSettings settings;
-    settings.setValue("InfoChoiceSplitter/state", state);
-    MinosLoggerEvents::SendSplittersChanged();
 }

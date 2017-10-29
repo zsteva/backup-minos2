@@ -1,6 +1,6 @@
 #include "logger_pch.h"
-#include "locframe.h"
-#include "ui_locframe.h"
+#include "locTreeFrame.h"
+#include "ui_locTreeFrame.h"
 #include "htmldelegate.h"
 
 static QString lConv(const QString &tlsq, int col, int row)
@@ -101,41 +101,29 @@ static QString l_sub(const QString &sq, int x, int y)
 }
 
 
-LocFrame::LocFrame(QWidget *parent) :
+LocTreeFrame::LocTreeFrame(QWidget *parent) :
     QFrame(parent),
-    ui(new Ui::LocFrame), ct(0)
+    ui(new Ui::LocTreeFrame), ct(0)
 {
     ui->setupUi(this);
 
-    currentCentre = "IO91";
-
-    ui->LocView->setItemDelegate(new HtmlDelegate);
-
-    model = new LocGridModel();
-    ui->LocView->setModel(model);
-
-    connect(ui->LocView, SIGNAL(minosViewScrolled()), this, SLOT(on_minosViewScrolled()));
+    ui->LocTree->setItemDelegate(new HtmlDelegate);
 }
-
-LocFrame::~LocFrame()
+LocTreeFrame::~LocTreeFrame()
 {
     delete ui;
     ct = nullptr;
-    delete model;
 }
-void LocFrame::setContest(BaseContestLog *contest)
+void LocTreeFrame::setContest(BaseContestLog *contest)
 {
-    model->ct = contest;
     ct = contest;
-    currentCentre = ct->myloc.loc.getValue().left(4);
 
     reInitialiseLocators();
 }
 
-void LocFrame::reInitialiseLocators()
+void LocTreeFrame::reInitialiseLocators()
 {
-    model->beginReset();
-    model->locMap.clear();
+    ui->LocTree->clear();
 
     //initialise these to a range round the contest location
     QString ctLoc = ct->myloc.loc.getValue();
@@ -154,7 +142,10 @@ void LocFrame::reInitialiseLocators()
 
     for (int k = 0; k < ct->locs.llist.size(); k++)
     {
+        QTreeWidgetItem *it = new QTreeWidgetItem(ui->LocTree);
         QString locStart = ct->locs.itemAt(k) ->loc;
+        it->setText(0, locStart);
+        it->setExpanded(true);
 
         for (int j = 0; j < 10; j++)
         {
@@ -166,7 +157,6 @@ void LocFrame::reInitialiseLocators()
 
                 if ( lc && (lc->UKLocCount || lc->nonUKLocCount))
                 {
-                    model->locMap[locStart + disp] = lc;
                     if (ct->usesBonus.getValue())
                     {
                         QColor multhighlight = Qt::black;
@@ -209,144 +199,15 @@ void LocFrame::reInitialiseLocators()
                         ELoc = col;
                 }
             }
-        }
-    }
-
-    int rows = (NLoc[0].toLatin1() - SLoc[0].toLatin1()) * 10 + (NLoc[1].toLatin1() - SLoc[1].toLatin1()) + 1;
-    model->rows = rows;
-
-    int cols = (ELoc[0].toLatin1() - WLoc[0].toLatin1()) * 10 + (ELoc[1].toLatin1() - WLoc[1].toLatin1()) + 1;
-    model->cols = cols;
-
-    QString tl = QString(WLoc[0]) + NLoc[0] + WLoc[1] + NLoc[1];
-    model->setTl(tl);
-
-    model->endReset();
-
-    // don't resize earlier, or there won't be NY DATA TO RESIZE TO...
-   // ui->LocView->resizeColumnsToContents();
-   // ui->LocView->resizeRowsToContents();
-
-    QFontMetrics fm = ui->LocView->fontMetrics();
-    int width=fm.width("OO80") * 5/4;
-    int height=fm.height() * 5/4;
-
-    ui->LocView->horizontalHeader()->setDefaultSectionSize(width);
-    ui->LocView->verticalHeader()->setDefaultSectionSize(height);
-
-    for(int i = 0; i < model->rowCount(); i++)
-    {
-        for(int j = 0; j < model->columnCount(); j++)
-        {
-            const QModelIndex index = model->index(i, j);
-            QString cell = model->data(index, Qt::UserRole).toString();
-            if (cell == currentCentre)
+            if (dispLine.size())
             {
-                ui->LocView->scrollTo(index, QAbstractItemView::PositionAtCenter);
+                QTreeWidgetItem *treeItem = new QTreeWidgetItem();
+
+                treeItem->setText(0, dispLine);
+
+                it->addChild(treeItem);
             }
         }
     }
 }
 
-
-void LocFrame::on_minosViewScrolled()
-{
-    QModelIndex index = ui->LocView->indexAt(ui->LocView->rect().center());
-    currentCentre = ui->LocView->model()->data(index, Qt::UserRole).toString();
-}
-
-LocGridModel::LocGridModel():ct(0), rows(10), cols(10)
-{}
-LocGridModel::~LocGridModel()
-{
-}
-
-void LocGridModel::beginReset()
-{
-    beginResetModel();
-}
-
-void LocGridModel::endReset()
-{
-    endResetModel();
-}
-
-QVariant LocGridModel::data( const QModelIndex &index, int role ) const
-{
-    if ((tlLoc.isEmpty()))
-        return QVariant();
-
-    QString disp = lConv(tlLoc, index.column(), index.row());
-
-    if (role == Qt::UserRole)
-        return disp;
-
-    if (role == Qt::TextAlignmentRole)
-        return Qt::AlignLeft; // but HtmlDelegate overrides
-
-    if (role == Qt::DisplayRole)
-    {
-        QMap<QString, LocCount * >::const_iterator lci = locMap.find(disp);
-        if (lci != locMap.end())
-            disp = /*HtmlFontColour(multhighlight) +*/ "<b>" + disp ;
-        return disp;
-    }
-
-    if (role == Qt::BackgroundRole)
-    {
-        QColor multhighlight = Qt::darkGray;
-        if (ct->usesBonus.getValue())
-        {
-            switch (ct->getSquareBonus(disp))
-            {
-            case 500:  //blue
-                multhighlight = Qt::blue;
-                break;
-            case 1000: //green
-                multhighlight = Qt::green;
-                break;
-            case 2000: //red
-                multhighlight = Qt::red;
-                break;
-            }
-        }
-        QMap<QString, LocCount * >::const_iterator lci = locMap.find(disp);
-        if (lci == locMap.end())
-        {
-            return multhighlight.lighter(180);
-        }
-        else
-        {
-            return multhighlight.lighter(140);
-        }
-    }
-    return QVariant();
-}
-
-QModelIndex LocGridModel::index( int row, int column, const QModelIndex &/*parent*/) const
-{
-    if ( row < 0 || row >= rowCount()  )
-        return QModelIndex();
-
-    if ( column < 0 || column >= columnCount()  )
-        return QModelIndex();
-
-    return createIndex( row, column );
-}
-
-QModelIndex LocGridModel::parent( const QModelIndex &/*index*/ ) const
-{
-    return QModelIndex();
-}
-
-int LocGridModel::rowCount( const QModelIndex &/*parent*/ ) const
-{
-//    return 10;
-    return rows;
-}
-
-int LocGridModel::columnCount( const QModelIndex &/*parent*/ ) const
-{
-//    return 10;
-    return cols;
-}

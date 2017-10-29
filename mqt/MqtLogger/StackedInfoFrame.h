@@ -17,7 +17,6 @@ public:
 
     void setContest(BaseContestLog *contest);
     void refreshMults();
-    void getSplitters();
 
 private:
     Ui::StackedInfoFrame *ui;
@@ -42,10 +41,9 @@ private slots:
     void on_ContNA_clicked();
 
     void on_StackedMults_currentChanged(int arg1);
-    void on_LocatorSplitterMoved(int /*pos*/, int /*index*/);
-    void on_infoChoiceSplitterMoved(int /*pos*/, int /*index*/);
     void onFiltersChanged();
     void on_FontChanged();
+    void on_infoCombo_currentIndexChanged(int arg1);
 };
 
 #endif // STACKEDINFOFRAME_H

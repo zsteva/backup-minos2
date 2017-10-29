@@ -44,7 +44,7 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     ui(new Ui::RigMemoryFrame)
 {
     ui->setupUi(this);
-    ui->scrollAreaWidgetContents->setStyleSheet("background-color:white;");
+    ui->memFrame->setStyleSheet("background-color:white;");
 }
 
 RigMemoryFrame::~RigMemoryFrame()
@@ -168,7 +168,7 @@ void RigMemoryFrame::clearActionSelected(int buttonNumber)
      {
          RigMemoryButton *rmb = memButtonMap[buttonNumber];
 
-         QGridLayout *gl = qobject_cast<QGridLayout *>(ui->scrollAreaWidgetContents->layout());
+         QGridLayout *gl = qobject_cast<QGridLayout *>(ui->memFrame->layout());
 
          int i = 0;
          QLayoutItem *child1;
@@ -201,7 +201,7 @@ void RigMemoryFrame::loadMemoryButtonLabels()
 
 void RigMemoryFrame::clean()
 {
-    QGridLayout *gl = qobject_cast<QGridLayout *>(ui->scrollAreaWidgetContents->layout());
+    QGridLayout *gl = qobject_cast<QGridLayout *>(ui->memFrame->layout());
     int i = 0;
     QLayoutItem *child1;
     while(( child1 = gl->itemAt(i)) != 0)
@@ -232,7 +232,7 @@ void RigMemoryFrame::memoryUpdate(int buttonNumber)
         memButtonMap[buttonNumber] = new RigMemoryButton(ui->scrollArea, this, buttonNumber);
         connect( memButtonMap[buttonNumber], SIGNAL( clearActionSelected(int)) , this, SLOT(clearActionSelected(int)), Qt::QueuedConnection );
 
-        QGridLayout *gl = qobject_cast<QGridLayout *>(ui->scrollAreaWidgetContents->layout());
+        QGridLayout *gl = qobject_cast<QGridLayout *>(ui->memFrame->layout());
         gl->addWidget(memButtonMap[buttonNumber]->memButton, row, col);
 
         memButtonMap[buttonNumber]->memButton->setStyleSheet("border: 1px solid black; background-color: #DFDFDF");

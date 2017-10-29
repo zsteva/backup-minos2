@@ -8,7 +8,6 @@ class LocFrame;
 }
 class BaseContestLog;
 class LocCount;
-class QSplitter;
 
 class LocGridModel: public QAbstractItemModel
 {
@@ -50,7 +49,6 @@ public:
 
     void reInitialiseLocators();
     void setContest(BaseContestLog *contest);
-    QSplitter *getLocatorSplitter();
 
 private:
     Ui::LocFrame *ui;
@@ -59,7 +57,6 @@ private:
     QString currentCentre;
 
 private slots:
-    void on_LocView_clicked(const QModelIndex &index);
     void on_minosViewScrolled();
 
 };
