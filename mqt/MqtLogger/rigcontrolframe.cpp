@@ -464,9 +464,34 @@ void RigControlFrame::setRadioState(QString s)
 
     if (s != "")
     {
+        if (s == RIG_STATUS_CONNECTED)
+        {
+            radioConnected = true;
+        }
+        else if (s == RIG_STATUS_DISCONNECTED)
+        {
+           radioConnected = false;
+           radioError = false;
+        }
+        else if (s == RIG_STATUS_ERROR)
+        {
+           radioError = true;
+        }
+
         ui->rigState->setText(s);
         radioState = s;
     }
+}
+
+
+bool RigControlFrame::checkRadioState()
+{
+    if (radioLoaded && radioConnected && !radioError)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 

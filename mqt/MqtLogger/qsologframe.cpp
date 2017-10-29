@@ -4,7 +4,7 @@
 #include "tqsoeditdlg.h"
 #include "tforcelogdlg.h"
 #include "SendRPCDM.h"
-
+#include "rigcontrolcommonconstants.h"
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
 #include <QDebug>
@@ -24,6 +24,8 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     , keyerLoaded(false)
     , radioLoaded(false)
     , curFreq("00:000:000:000")
+    , radioConnected(false)
+    , radioError(false)
 {
     ui->setupUi(this);
 
@@ -1542,6 +1544,26 @@ void QSOLogFrame::setRadioName(QString n)
     }
 }
 //---------------------------------------------------------------------------
+void QSOLogFrame::setRadioState(QString s)
+{
+    if (s != "")
+    {
+        if (s == RIG_STATUS_CONNECTED)
+        {
+            radioConnected = true;
+        }
+        else if (s == RIG_STATUS_DISCONNECTED)
+        {
+           radioConnected = false;
+           radioError = false;
+        }
+        else if (s == RIG_STATUS_ERROR)
+        {
+           radioError = true;
+        }
+    }
+}
+//---------------------------------------------------------------------------
 void QSOLogFrame::setRotatorBearing(const QString &s)
 {
     if (curRotatorBearing != s)
@@ -1712,7 +1734,7 @@ void QSOLogFrame::doGJVEditChange( QObject *Sender )
 
 void QSOLogFrame::on_ModeButton_clicked()
 {
-    if (isRadioLoaded())
+    if (isRadioLoaded() && radioConnected && !radioError)
     {
         qsoLogModeFlag = true;  // stop updates from rigcontrol
         // send mode change to radio
@@ -2265,7 +2287,7 @@ void QSOLogFrame::on_ModeComboBoxGJV_activated(int index)
         mode = hamlibData::supModeList[index];
 
         // send mode change to radio
-        if (isRadioLoaded())
+        if (isRadioLoaded() && radioConnected && !radioError)
         {
 
             qsoLogModeFlag = true;  // stop updates from radio here

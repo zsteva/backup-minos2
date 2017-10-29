@@ -98,6 +98,8 @@ public:
 
     QString getStrPassBandState(QString mode);
     int getIntPassBandState(QString mode);
+    bool checkRadioState();
+
 signals:
     void sendFreqControl(QString);
     void noRadioSendFreq(QString);
@@ -148,6 +150,8 @@ private:
     QRadioButton* pBandButton[3];
 
     bool radioLoaded;
+    bool radioConnected = false;
+    bool radioError = false;
     bool freqEditOn;
     QString curFreq;
     QString curMode;
@@ -162,7 +166,7 @@ private:
                                 << hamlibData::pBandStateStr[hamlibData::NOR]); // MGM
     QString radioName;
     QString radioState;
-    bool rxPBFlag;
+
 
     void sendModeToRadio(QString);
     void freqLineEditBkgnd(bool status);
