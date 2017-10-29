@@ -48,6 +48,7 @@ RotControlFrame::RotControlFrame(QWidget *parent):
     ui->Rotate->setShortcut(QKeySequence(ROTATE_TURN_KEY));
     ui->StopRotate->setShortcut(QKeySequence(ROTATE_STOP_KEY));
 
+    connect(ui->BrgSt, SIGNAL(returnPressed()), this, SLOT(on_Rotate_clicked()));
 
     connect(&MinosLoggerEvents::mle, SIGNAL(BrgStrToRot(QString)), this, SLOT(getBrgFrmQSOLog(QString)));
 

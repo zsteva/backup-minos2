@@ -149,7 +149,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>Bearing</string>
+                 <string>Target</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>

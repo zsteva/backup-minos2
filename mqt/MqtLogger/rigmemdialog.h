@@ -47,6 +47,7 @@ private:
     memoryData::memData *logData;
     int memoryNumber;
 
+
 };
 
 #endif // RIGMEMDIALOG_H

@@ -765,6 +765,7 @@ void RigControlFrame::runButEditActSel(int buttonNumber)
     RunButtonDialog runDialog(this);
     runDialog.setWindowTitle(QString("Run %1 - Edit").arg(QString::number(buttonNumber + 1)));
     runDialog.setLogData(&runData, buttonNumber);
+
     if (runDialog.exec() == QDialog::Accepted)
     {
         setRunMemoryData(buttonNumber, runData);

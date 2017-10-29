@@ -37,6 +37,7 @@ RunButtonDialog::RunButtonDialog(QWidget *parent) :
         ui->pbStateCb->addItem(hamlibData::pBandStateStr[i]);
     }
     ui->freqLineEdit->setFocus();
+
 }
 
 
@@ -70,6 +71,8 @@ void RunButtonDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
         ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.remove('.').count() - 4]);
     }
     ui->freqLineEdit->setText(ldata->freq);
+
+    //ui->freqLineEdit->setCursorPosition(ui->freqLineEdit->text().count() - 3);
 }
 
 void RunButtonDialog::on_okButton_clicked()
@@ -87,8 +90,3 @@ void RunButtonDialog::on_cancelbutton_clicked()
 }
 
 
-
-void RunButtonDialog::setFreqCurPos(int pos)
-{
-    ui->freqLineEdit->setCursorPosition(pos);
-}
