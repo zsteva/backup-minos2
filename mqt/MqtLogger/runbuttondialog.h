@@ -39,7 +39,6 @@ public:
     void setLogData(memoryData::memData*, int buttonNumber);
 
 
-    void setFreqCurPos(int pos);
 private slots:
     void on_okButton_clicked();
     void on_cancelbutton_clicked();

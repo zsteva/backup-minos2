@@ -286,6 +286,10 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
 RotatorMainWindow::~RotatorMainWindow()
 {
+    stop_rotation();
+    rotator->closeRotator();
+    sendStatusToLogDisConnected();
+
     delete msg;
     delete ui;
 }

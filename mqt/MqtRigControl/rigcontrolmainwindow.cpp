@@ -90,6 +90,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
     initSelectRadioBox();
 
+    setTransVertDisplayVisible(selectRig->currentRadio.transVertEnable);
 
     if (appName.length() > 0)
     {
@@ -134,6 +135,8 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
 RigControlMainWindow::~RigControlMainWindow()
 {
+    sendStatusToLogDisConnected();
+    radio->closeRig();
     delete ui;
     delete msg;
 }
@@ -295,9 +298,7 @@ void RigControlMainWindow::upDateRadio()
         selectRig->currentRadio.transVertEnable = selectRig->availRadios[radioIndex].transVertEnable;
 
         // only show transvert freq box is enabled
-        ui->transVertFreqA->setVisible(selectRig->currentRadio.transVertEnable);
-            ui->TVertTitleA->setVisible(selectRig->currentRadio.transVertEnable);
-
+        setTransVertDisplayVisible(selectRig->currentRadio.transVertEnable);
         selectRig->currentRadio.transVertNegative = selectRig->availRadios[radioIndex].transVertNegative;
         selectRig->currentRadio.transVertOffset = selectRig->availRadios[radioIndex].transVertOffset;
         selectRig->currentRadio.transVertOffsetStr = selectRig->availRadios[radioIndex].transVertOffsetStr;
@@ -696,6 +697,17 @@ int RigControlMainWindow::getFrequency(vfo_t vfo)
     }
     return retCode;
 }
+
+
+
+void RigControlMainWindow::setTransVertDisplayVisible(bool visible)
+{
+    ui->transVertFreqA->setVisible(visible);
+    ui->TVertTitleA->setVisible(visible);
+}
+
+
+
 
 void RigControlMainWindow::chkRadioMgmModeChanged()
 {

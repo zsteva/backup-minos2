@@ -144,6 +144,7 @@ private:
     int getMinosModeIndex(QString mode);
 
 
+    void setTransVertDisplayVisible(bool visible);
 private slots:
 
     void onStdInRead(QString);

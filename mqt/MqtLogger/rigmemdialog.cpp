@@ -43,6 +43,7 @@ RigMemDialog::RigMemDialog(QWidget *parent) :
     ui->locatorLineEdit->setValidator(new UpperCaseValidator(true));
 
     ui->callSignLineEdit->setFocus();
+
 }
 
 RigMemDialog::~RigMemDialog()
@@ -99,3 +100,5 @@ void RigMemDialog::on_cancelButton_clicked()
 {
     reject();
 }
+
+
