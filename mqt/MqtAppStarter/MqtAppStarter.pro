@@ -14,7 +14,7 @@ QT       += network
 TARGET = MqtAppStarter
 TEMPLATE = app
 
-win32:RC_ICONS += ../minos.ico
+win32:RC_ICONS += ../MinosAppStarter.ico
 
 
 SOURCES += main.cpp\

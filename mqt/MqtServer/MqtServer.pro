@@ -14,7 +14,7 @@ QT       += network
 TARGET = MqtServer
 TEMPLATE = app
 
-win32:RC_ICONS += ../minos.ico
+win32:RC_ICONS += ../MinosServer.ico
 
 win32:LIBS += -lws2_32
 
