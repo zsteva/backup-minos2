@@ -158,7 +158,6 @@ void LocFrame::reInitialiseLocators()
 
         for (int j = 0; j < 10; j++)
         {
-            QString dispLine;
             for (int i = 0; i < 10; i++)
             {
                 LocCount *lc = ct->locs.itemAt(k) ->map( j * 10 + i );
@@ -167,34 +166,9 @@ void LocFrame::reInitialiseLocators()
                 if ( lc && (lc->UKLocCount || lc->nonUKLocCount))
                 {
                     model->locMap[locStart + disp] = lc;
-                    if (ct->usesBonus.getValue())
-                    {
-                        QColor multhighlight = Qt::black;
-                        switch (ct->getSquareBonus(locStart + disp))
-                        {
-                        case 500:  //blue
-                            multhighlight = Qt::blue;
-                            break;
-                        case 1000: //green
-                            multhighlight = Qt::darkGreen;
-                            break;
-                        case 2000: //red
-                            multhighlight = Qt::red;
-                            break;
-                        }
-
-                        dispLine += HtmlFontColour(multhighlight) + "<b>" + disp + "</b>" + " (" + QString::number(lc->UKLocCount + lc->nonUKLocCount) + ") ";
-                    }
-                    else
-                    {
-                        dispLine += disp + " (" + QString::number(lc->UKLocCount)
-                                    + (lc->nonUKLocCount?("/" + QString::number(lc->nonUKLocCount)):QString("")) + ") ";
-                    }
 
                     QString col = QString(locStart[0]) + disp[0];
                     QString row = QString(locStart[1]) + disp[1];
-
-                    QString loc = locStart + disp;
 
                     if (row < SLoc || SLoc.isEmpty())
                         SLoc = row;
