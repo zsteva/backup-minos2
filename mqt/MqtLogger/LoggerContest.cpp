@@ -146,6 +146,13 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
    // open the settings bundle files
    initialiseINI();
 
+   // and preset the apps
+
+   appBundle.getStringProfile(eapBandMap, appBandMap);
+   appBundle.getStringProfile(eapRigControl, appRigControl);
+   appBundle.getStringProfile(eapRotator, appRotator);
+   appBundle.getStringProfile(eapVoiceKeyer, appVoiceKeyer);
+
    // open the LoggerContestLog file
 
    cfileName = fn;
