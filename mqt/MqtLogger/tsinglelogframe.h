@@ -122,8 +122,7 @@ private slots:
 
     void onLogColumnsChanged();
     void onSplittersChanged();
-    void on_LogAreaSplitter_splitterMoved(int pos, int index);
-    void on_TopSplitter_splitterMoved(int pos, int index);
+    void on_logFrameSplitter_splitterMoved(int pos, int index);
     void on_CribSplitter_splitterMoved(int pos, int index);
     void on_MultSplitter_splitterMoved(int pos, int index);
     void on_sectionResized(int, int, int);

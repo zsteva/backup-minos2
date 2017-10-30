@@ -139,6 +139,11 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(ui->FKHBandMapFrame, SIGNAL(sendBandMap( QString, QString, QString, QString, QString )),
             this, SLOT(sendBandMap(QString,QString,QString,QString,QString)));
 */
+    ui->logFrameSplitter->setStretchFactor(0, 1);
+    ui->logFrameSplitter->setStretchFactor(1, 0);
+    ui->logFrameSplitter->setStretchFactor(2, 0);
+    ui->logFrameSplitter->setStretchFactor(3, 1);
+    ui->logFrameSplitter->setChildrenCollapsible(false);
 }
 
 TSingleLogFrame::~TSingleLogFrame()
@@ -501,13 +506,17 @@ void TSingleLogFrame::getSplitters()
     QSettings settings;
     QByteArray state;
 
-    state = settings.value("LogAreaSplitter/state").toByteArray();
-    ui->LogAreaSplitter->restoreState(state);
-    ui->LogAreaSplitter->setHandleWidth(splitterHandleWidth);
+    state = settings.value("logFrameSplitter/state").toByteArray();
+    ui->logFrameSplitter->restoreState(state);
+    ui->logFrameSplitter->setHandleWidth(splitterHandleWidth);
 
-    state = settings.value("TopSplitter/state").toByteArray();
-    ui->TopSplitter->restoreState(state);
-    ui->TopSplitter->setHandleWidth(splitterHandleWidth);
+    // and reset some of the saved state
+    ui->logFrameSplitter->setStretchFactor(0, 1);
+    ui->logFrameSplitter->setStretchFactor(1, 0);
+    ui->logFrameSplitter->setStretchFactor(2, 0);
+    ui->logFrameSplitter->setStretchFactor(3, 1);
+    ui->logFrameSplitter->setChildrenCollapsible(false);
+
 
     state = settings.value("CribSplitter/state").toByteArray();
     ui->CribSplitter->restoreState(state);
@@ -528,19 +537,11 @@ void TSingleLogFrame::onSplittersChanged()
     splittersChanged = true;
 }
 
-void TSingleLogFrame::on_LogAreaSplitter_splitterMoved(int /*pos*/, int /*index*/)
+void TSingleLogFrame::on_logFrameSplitter_splitterMoved(int /*pos*/, int /*index*/)
 {
-    QByteArray state = ui->LogAreaSplitter->saveState();
+    QByteArray state = ui->logFrameSplitter->saveState();
     QSettings settings;
-    settings.setValue("LogAreaSplitter/state", state);
-    MinosLoggerEvents::SendSplittersChanged();
-}
-
-void TSingleLogFrame::on_TopSplitter_splitterMoved(int /*pos*/, int /*index*/)
-{
-    QByteArray state = ui->TopSplitter->saveState();
-    QSettings settings;
-    settings.setValue("TopSplitter/state", state);
+    settings.setValue("logFrameSplitter/state", state);
     MinosLoggerEvents::SendSplittersChanged();
 }
 
