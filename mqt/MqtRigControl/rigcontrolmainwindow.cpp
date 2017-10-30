@@ -1203,34 +1203,13 @@ void RigControlMainWindow::dumpRadioToTraceLog()
     trace(QString("Parity = %1").arg(radio->getParityCodeNames()[selectRig->currentRadio.parity]));
     trace(QString("Handshake = %1").arg(radio->getHandShakeNames()[selectRig->currentRadio.handshake]));
     QString f = "";
-    if (selectRig->currentRadio.transVertEnable)
-    {
-        f = "True";
-    }
-    else
-    {
-        f = "False";
-    }
+    selectRig->currentRadio.transVertEnable ? f = "True" : f = "False";
     trace(QString("TransVert Enable = %1").arg(f));
-    if (selectRig->currentRadio.transVertNegative)
-    {
-        f = "True";
-    }
-    else
-    {
-        f = "False";
-    }
+    selectRig->currentRadio.transVertNegative ? f = "True" : f = "False";
     trace(QString("TransVert Negative = %1").arg(f));
     trace(QString("TransVert Offset = %1").arg(convertFreqString(selectRig->currentRadio.transVertOffset)));
     trace(QString("Use RX Passband = %1").arg(f));
-    if (supRitFlag)
-    {
-        f = "True";
-    }
-    else
-    {
-        f = "False";
-    }
+    supRitFlag ? f = "True" : f = "False";
     trace(QString("Radio Supports RIT = ").arg(f));
     trace(QString("Radio Passband CW NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NAR))));
     trace(QString("Radio Passband CW NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NOR))));
@@ -1244,7 +1223,8 @@ void RigControlMainWindow::dumpRadioToTraceLog()
     trace(QString("Radio Passband MGM NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NAR))));
     trace(QString("Radio Passband MGM NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NOR))));
     trace(QString("Radio Passband MGM WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::WIDE))));
-
+    ui->actionTraceLog->isChecked() ? f = "True" : f = "False";
+    trace(QString("Tracelog = %1").arg(f));
 }
 
 
