@@ -58,6 +58,12 @@
      </item>
      <item>
       <widget class="QComboBox" name="infoCombo">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="focusPolicy">
         <enum>Qt::NoFocus</enum>
        </property>
