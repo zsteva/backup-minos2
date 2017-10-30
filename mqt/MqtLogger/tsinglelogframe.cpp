@@ -759,6 +759,7 @@ void TSingleLogFrame::on_SetRadioName(QString n)
 void TSingleLogFrame::on_SetRadioState(QString s)
 {
     ui->FKHRigControlFrame->setRadioState(s);
+    ui->GJVQSOLogFrame->setRadioState(s);
 }
 
 

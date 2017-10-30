@@ -65,9 +65,11 @@ public:
     void modeSentFromRig(QString mode);
     void setFreq(QString freq);
     void setRadioName(QString);
+    void setRadioState(QString s);
     void setRotatorBearing(const QString &s);
 
     QString getBearing();
+
 private:
     ScreenContact *partialContact; // contact being edited on screen
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
@@ -160,6 +162,9 @@ private:
 
     bool keyerLoaded;
     bool isKeyerLoaded();
+
+    bool radioConnected;
+    bool radioError;
 
     void MainOpComboBox_Exit();
     void SecondOpComboBox_Exit();

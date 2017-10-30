@@ -460,11 +460,11 @@ void RotatorMainWindow::openRotator()
         }
         else if (rig_port_e(selectRotator->currentAntenna.portType == RIG_PORT_NETWORK || rig_port_e(selectRotator->currentAntenna.portType == RIG_PORT_UDP_NETWORK)))
         {
-            showStatusMessage(QString("Connected to Antenna: %1 - %2, %3").arg(selectRotator->currentAntenna.antennaName, selectRotator->currentAntenna.rotatorModel, selectRotator->currentAntenna.networkAdd + ":" + selectRotator->currentAntenna.networkPort));
+            showStatusMessage(QString("Connected to: %1 - %2, %3").arg(selectRotator->currentAntenna.antennaName, selectRotator->currentAntenna.rotatorModel, selectRotator->currentAntenna.networkAdd + ":" + selectRotator->currentAntenna.networkPort));
         }
         else if (rig_port_e(selectRotator->currentAntenna.portType) == RIG_PORT_NONE)
         {
-                showStatusMessage(QString("Connected to Antenna: %1 - %2").arg(selectRotator->currentAntenna.antennaName, selectRotator->currentAntenna.rotatorModel));
+                showStatusMessage(QString("Connected to: %1 - %2").arg(selectRotator->currentAntenna.antennaName, selectRotator->currentAntenna.rotatorModel));
         }
 
         sendStatusToLogConnected();
