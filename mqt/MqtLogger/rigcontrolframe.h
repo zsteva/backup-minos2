@@ -150,8 +150,8 @@ private:
     QRadioButton* pBandButton[3];
 
     bool radioLoaded;
-    bool radioConnected = false;
-    bool radioError = false;
+    bool radioConnected;
+    bool radioError;
     bool freqEditOn;
     QString curFreq;
     QString curMode;

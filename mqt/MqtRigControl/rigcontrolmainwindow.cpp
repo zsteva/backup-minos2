@@ -461,20 +461,20 @@ void RigControlMainWindow::openRadio()
         //pollTimer->start(pollTime);             // start timer to send message to controller
         if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL)
         {
-                showStatusMessage(QString("Connected to Radio: %1 - %2, %3, %4, %5, %6, %7, %8")
+                showStatusMessage(QString("Connected to: %1 - %2, %3, %4, %5, %6, %7, %8")
                                   //.arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel, selectRig->currentRadio.comport, selectRig->currentRadio.baudrate, selectRig->currentRadio.databits, selectRig->currentRadio.stopbits, radio->getParityCodeNames()[selectRig->currentRadio.parity], radio->getHandShakeNames()[selectRig->currentRadio.handshake]));
-                                  .arg(p.radioName).arg(p.radioModel).arg(p.comport).arg(p.baudrate).arg(p.databits)
+                                  .arg(p.radioName).arg(p.radioModel).trimmed().arg(p.comport).arg(p.baudrate).arg(p.databits)
                                   .arg(p.stopbits).arg(radio->getParityCodeNames()[p.parity]).arg(radio->getHandShakeNames()[p.handshake]));
 
 
         }
         else if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_UDP_NETWORK)
         {
-                showStatusMessage(QString("Connected to: %1 - %2, %3").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel, selectRig->currentRadio.networkAdd + ":" + selectRig->currentRadio.networkPort));
+                showStatusMessage(QString("Connected to: %1 - %2, %3").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel.trimmed(), selectRig->currentRadio.networkAdd + ":" + selectRig->currentRadio.networkPort));
         }
         else if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NONE)
         {
-                showStatusMessage(QString("Connected to: %1 - %2").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel));
+                showStatusMessage(QString("Connected to: %1 - %2").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel.trimmed()));
         }
 
 
