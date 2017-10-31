@@ -164,6 +164,7 @@ private slots:
     //void loggerSetPassBand(int);
     void currentRadioSettingChanged(QString radioName);
     void updateSelectRadioBox();
+    void aboutRigConfig();
 signals:
 
 

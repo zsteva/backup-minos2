@@ -355,6 +355,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Radio_Config"/>
    </widget>
    <addaction name="menuConfigure"/>
    <addaction name="menuAbout"/>
@@ -395,6 +396,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionAbout_Radio_Config">
+   <property name="text">
+    <string>About Radio Config</string>
    </property>
   </action>
  </widget>

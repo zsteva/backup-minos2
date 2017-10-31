@@ -206,7 +206,7 @@ void RigControlMainWindow::initActionsConnections()
 
 
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
-
+    connect(ui->actionAbout_Radio_Config, SIGNAL(triggered()), this, SLOT(aboutRigConfig()));
 
     connect(radio, SIGNAL(debug_protocol(QString)), this, SLOT(logMessage(QString)));
 
@@ -1172,6 +1172,66 @@ void RigControlMainWindow::sendPbStateToLog(QString pBstate)
 }
 
 
+void RigControlMainWindow::aboutRigConfig()
+{
+    QString msg = QString("*** Rig Configuration ***\n\n");
+    msg.append(QString("App Instance Name  = %1\n").arg(appName));
+    msg.append(QString("Radio Name = %1\n").arg(selectRig->currentRadio.radioName));
+    msg.append(QString("Radio Number = %1\n").arg(selectRig->currentRadio.radioNumber));
+    msg.append(QString("Rig Model = %1\n").arg(selectRig->currentRadio.radioModel));
+    msg.append(QString("Rig Number = %1\n").arg(QString::number(selectRig->currentRadio.radioModelNumber)));
+    msg.append(QString("Rig Manufacturer = %1\n").arg(selectRig->currentRadio.radioMfg_Name));
+    if (selectRig->currentRadio.radioMfg_Name == "Icom")
+    {
+        if (selectRig->currentRadio.civAddress == "")
+        {
+            msg.append(QString("Icom CIV address = Using Default CIV Address\n"));
+        }
+        else
+        {
+            msg.append(QString("Icom CIV address = %1\n").arg(selectRig->currentRadio.civAddress));
+        }
+
+    }
+    msg.append(QString("Rig PortType = %1\n").arg(hamlibData::portTypeList[selectRig->currentRadio.portType]));
+    msg.append(QString("Network Address = %1\n").arg(selectRig->currentRadio.networkAdd));
+    msg.append(QString("Network Port = %1\n").arg(selectRig->currentRadio.networkPort));
+    msg.append(QString("Comport = %1\n").arg(selectRig->currentRadio.comport));
+    msg.append(QString("Baudrate = %1\n").arg(selectRig->currentRadio.baudrate));
+    msg.append(QString("Stop bits = %1\n").arg(QString::number(selectRig->currentRadio.stopbits)));
+    msg.append(QString("Parity = %1\n").arg(radio->getParityCodeNames()[selectRig->currentRadio.parity]));
+    msg.append(QString("Handshake = %1\n").arg(radio->getHandShakeNames()[selectRig->currentRadio.handshake]));
+    QString f = "";
+    selectRig->currentRadio.transVertEnable ? f = "True" : f = "False";
+    msg.append(QString("TransVert Enable = %1\n").arg(f));
+    selectRig->currentRadio.transVertNegative ? f = "True" : f = "False";
+    msg.append(QString("TransVert Negative = %1\n").arg(f));
+    msg.append(QString("TransVert Offset = %1\n").arg(convertFreqString(selectRig->currentRadio.transVertOffset)));
+    msg.append(QString("Use RX Passband = %1\n").arg(f));
+    supRitFlag ? f = "True" : f = "False";
+    msg.append(QString("Radio Supports RIT = %1\n").arg(f));
+    msg.append(QString("Radio Passband CW NAR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NAR))));
+    msg.append(QString("Radio Passband CW NOR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NOR))));
+    msg.append(QString("Radio Passband CW WID = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::WIDE))));
+    msg.append(QString("Radio Passband USB NAR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::NAR))));
+    msg.append(QString("Radio Passband USB NOR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::NOR))));
+    msg.append(QString("Radio Passband USB WID = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::WIDE))));
+    msg.append(QString("Radio Passband FM NAR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::NAR))));
+    msg.append(QString("Radio Passband FM NOR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::NOR))));
+    msg.append(QString("Radio Passband FM WID = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::WIDE))));
+    msg.append(QString("Radio Passband MGM NAR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NAR))));
+    msg.append(QString("Radio Passband MGM NOR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NOR))));
+    msg.append(QString("Radio Passband MGM WID = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::WIDE))));
+    ui->actionTraceLog->isChecked() ? f = "True" : f = "False";
+    msg.append(QString("Tracelog = %1\n").arg(f));
+
+
+
+    QMessageBox::about(this, "Minos Rotator", msg);
+}
+
+
+
 
 void RigControlMainWindow::dumpRadioToTraceLog()
 {
@@ -1186,7 +1246,7 @@ void RigControlMainWindow::dumpRadioToTraceLog()
     {
         if (selectRig->currentRadio.civAddress == "")
         {
-            trace(QString("Icom CIV address = Using Default Rig Address"));
+            trace(QString("Icom CIV address = Using Default CIV Address"));
         }
         else
         {
@@ -1210,7 +1270,7 @@ void RigControlMainWindow::dumpRadioToTraceLog()
     trace(QString("TransVert Offset = %1").arg(convertFreqString(selectRig->currentRadio.transVertOffset)));
     trace(QString("Use RX Passband = %1").arg(f));
     supRitFlag ? f = "True" : f = "False";
-    trace(QString("Radio Supports RIT = ").arg(f));
+    trace(QString("Radio Supports RIT = %1").arg(f));
     trace(QString("Radio Passband CW NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NAR))));
     trace(QString("Radio Passband CW NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NOR))));
     trace(QString("Radio Passband CW WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::WIDE))));

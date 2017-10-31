@@ -214,6 +214,8 @@ private slots:
     void sendStatusToLogDisConnected();
     void sendStatusToLogError();
 
+
+    void aboutRotatorConfig();
 private:
     void rotateTo(int bearing);
     int northCalcTarget(int targetBearing);
