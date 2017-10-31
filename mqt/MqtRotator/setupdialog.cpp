@@ -498,11 +498,13 @@ void SetupDialog::rotatorModelSelected(int boxNumber)
         {
             if (minRot == 0 && maxRot == 360)
             {
-                southStopFlag[boxNumber]->setVisible(true);
-                southStopLabel[boxNumber]->setVisible(true);
                 overRunFlag[boxNumber]->setVisible(false);
                 overRunFlag[boxNumber]->setChecked(false);
                 overRunLabel[boxNumber]->setVisible(false);
+                southStopFlag[boxNumber]->setVisible(true);
+                southStopLabel[boxNumber]->setVisible(true);
+
+
             }
             else if (minRot == 0 && maxRot == 450)
             {

@@ -643,6 +643,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionHelp"/>
+    <addaction name="actionAbout_Rotator_Config"/>
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
@@ -699,6 +700,11 @@
    </property>
    <property name="text">
     <string>TraceLog</string>
+   </property>
+  </action>
+  <action name="actionAbout_Rotator_Config">
+   <property name="text">
+    <string>About Rotator Config</string>
    </property>
   </action>
  </widget>

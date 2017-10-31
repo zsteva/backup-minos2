@@ -41,7 +41,7 @@ RotatorRpc::RotatorRpc(RotatorMainWindow *parent) : QObject(parent), parent(pare
 void RotatorRpc::publishState(const QString &state)
 {
     static QString old;
-    trace(QString("Rot RPC: Publish State = $1").arg(state));
+    trace(QString("Rot RPC: Publish State = %1").arg(state));
     if ( state != old )
     {
        old = state;
@@ -54,7 +54,7 @@ void RotatorRpc::publishState(const QString &state)
 void RotatorRpc::publishAntennaName(const QString &antennaName)
 {
     static QString old;
-    trace(QString("Rot RPC: Publish Antenna Name = $1").arg(antennaName));
+    trace(QString("Rot RPC: Publish Antenna Name = %1").arg(antennaName));
     if ( antennaName != old )
     {
        old = antennaName;
@@ -67,7 +67,7 @@ void RotatorRpc::publishAntennaName(const QString &antennaName)
 void RotatorRpc::publishMaxAzimuth(const QString maxAzimuth)
 {
     static QString old;
-    trace(QString("Rot RPC: Publish MaxAzimuth = $1").arg(maxAzimuth));
+    trace(QString("Rot RPC: Publish MaxAzimuth = %1").arg(maxAzimuth));
     if ( maxAzimuth != old )
     {
        old = maxAzimuth;
@@ -79,7 +79,7 @@ void RotatorRpc::publishMaxAzimuth(const QString maxAzimuth)
 void RotatorRpc::publishMinAzimuth(const QString minAzimuth)
 {
     static QString old;
-    trace(QString("Rot RPC: Publish MinAzimuth = $1").arg(minAzimuth));
+    trace(QString("Rot RPC: Publish MinAzimuth = %1").arg(minAzimuth));
     if ( minAzimuth != old )
     {
        old = minAzimuth;
@@ -93,7 +93,7 @@ void RotatorRpc::publishMinAzimuth(const QString minAzimuth)
 void RotatorRpc::publishBearing(const QString bearing)
 {
     static QString old;
-    trace(QString("Rot RPC: Publish Bearing = $1").arg(bearing));
+    trace(QString("Rot RPC: Publish Bearing = %1").arg(bearing));
     if ( bearing != old )
     {
        old = bearing;

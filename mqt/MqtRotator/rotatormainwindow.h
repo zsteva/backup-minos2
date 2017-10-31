@@ -214,6 +214,8 @@ private slots:
     void sendStatusToLogDisConnected();
     void sendStatusToLogError();
 
+
+    void aboutRotatorConfig();
 private:
     void rotateTo(int bearing);
     int northCalcTarget(int targetBearing);
@@ -236,6 +238,7 @@ private:
     int calcRotZero360(int targetBearing);
     int calcRotNeg180_180(int targetBearing);
     int calclRot_0_450_Neg180_540(int targetBearing);
+    void dumpRotatorToTraceLog();
 };
 
 #endif // ROTATORMAINWINDOW_H
