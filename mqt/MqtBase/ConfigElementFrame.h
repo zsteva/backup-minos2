@@ -46,6 +46,8 @@ private slots:
 
     void on_enabledCheckbox_clicked();
 
+    void on_hideAppCheckBox_clicked();
+
 private:
     Ui::ConfigElementFrame *ui;
 };

@@ -62,6 +62,7 @@ bool RunConfigElement::initialise( QSettings &config, QString sect )
     remoteApp = config.value(sect + "/RemoteApp", name).toString().trimmed();
     showAdvanced = config.value(sect + "/ShowAdvanced", false).toBool();
     enabled = config.value(sect + "/Enabled", false).toBool();
+    hideApp = config.value(sect + "/HideApp", false).toBool();
     QString S = config.value( sect + "/RunType", RunLocal ) .toString().trimmed();
 
     runType = S;
@@ -93,6 +94,7 @@ void RunConfigElement::save(QSettings &config)
         config.setValue(name + "/AppType", appType);
         config.setValue(name + "/ShowAdvanced", showAdvanced);
         config.setValue(name + "/Enabled", enabled);
+        config.setValue(name + "/HideApp", hideApp);
     }
 }
 Connectable RunConfigElement::connectable()
@@ -147,6 +149,12 @@ void RunConfigElement::createProcess()
         connect (runner, SIGNAL(readyReadStandardOutput()), this, SLOT(on_readyReadStandardOutput()));
 
         runner->start(program);
+
+        if (hideApp)
+            sendCommand("HideServers");
+        else
+            sendCommand("ShowServers");
+
 
     }
 }
@@ -218,7 +226,7 @@ void RunConfigElement::on_readyReadStandardOutput()
 
 //---------------------------------------------------------------------------
 MinosConfig::MinosConfig( )
-    : QObject( 0 ), autoStart(false), hideServers(false)
+    : QObject( 0 ), autoStart(false)
 {
 }
 void MinosConfig::initialise()
@@ -240,7 +248,6 @@ void MinosConfig::initialise()
                 thisServerName = h;
             }
             autoStart = config.value( "Settings/AutoStart", false ).toBool();
-            hideServers = config.value( "Settings/HideServers", false ).toBool();
         }
         else
         {
@@ -277,7 +284,6 @@ void MinosConfig::saveAll()
             (*i)->save(config);
         }
         config.setValue("Settings/ServerName", thisServerName);
-        config.setValue( "Settings/HideServers", hideServers );
         config.setValue( "Settings/AutoStart", autoStart );
 
         config.sync();
@@ -294,7 +300,6 @@ void MinosConfig::start()
    {
        (*i)->createProcess();
    }
-   setHideServers(hideServers);
 }
 
 void MinosConfig::stop()
@@ -324,6 +329,7 @@ void MinosConfig::setAutoStart(bool s)
 {
     autoStart = s;
 }
+/*
 bool MinosConfig::getHideServers()
 {
    return hideServers;
@@ -340,7 +346,7 @@ void MinosConfig::setHideServers(bool s)
             (*i)->sendCommand("ShowServers");
     }
 }
-
+*/
 Connectable MinosConfig::getApp(QString appName)
 {
     Connectable res;
@@ -389,7 +395,8 @@ Server=false
 #ifdef Q_OS_WIN
             ac.appPath += ".exe";
 #endif
-            ac.server = appConfig.value(apps[i] + "/Server").toBool();
+            ac.server = appConfig.value(apps[i] + "/Server", false).toBool();
+            ac.defaultHide = appConfig.value(apps[i] + "/HideApp", false).toBool();
 
             QString whereString = appConfig.value(apps[i] + "/Where", "Remote,Local").toString();
             if (whereString.contains("local", Qt::CaseInsensitive))

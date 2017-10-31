@@ -58,7 +58,6 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool showAuto
         elementFrames.append(cef);
     }
     ui->StationIdEdit->setText(minosConfig->getThisServerName());
-    ui->HideCheckBox->setChecked(minosConfig->getHideServers());
     ui->autoStartCheckBox->setChecked(minosConfig->getAutoStart());
 
     QString reqErrs = MinosConfig::getMinosConfig() ->checkConfig();
@@ -84,13 +83,6 @@ void TConfigFrame::on_StopButton_clicked()
     MinosConfig::getMinosConfig() ->stop();
 }
 
-void TConfigFrame::on_HideCheckBox_clicked()
-{
-    MinosConfig::getMinosConfig() ->setHideServers(ui->HideCheckBox->isChecked());
-    // Make this active - need a hide/show event that is signalled for show
-    // and then all "server" apps need to honour this.
-    setShowServers(!ui->HideCheckBox->isChecked());
-}
 void TConfigFrame::on_autoStartCheckBox_clicked()
 {
     MinosConfig::getMinosConfig() ->setAutoStart(ui->autoStartCheckBox->isChecked());
@@ -138,8 +130,7 @@ void TConfigFrame::on_newElementButton_clicked()
 
     // set alternating background
 
-    int j = elementFrames.size() - 1;   // will be position of frame in list
-    if (j%2)
+    if (elementFrames.size()%2)
     {
         cef->setStyleSheet("QFrame { background-color: lightBlue; }");
     }

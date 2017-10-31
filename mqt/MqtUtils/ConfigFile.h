@@ -19,6 +19,7 @@ public:
     bool server;
     bool localOK;
     bool remoteOK;
+    bool defaultHide;
 
 };
 
@@ -56,6 +57,7 @@ public:  		// User declarations
 
     bool showAdvanced = false;
     bool enabled = false;
+    bool hideApp = false;
 
     bool stopping;
 
@@ -91,8 +93,8 @@ private:  	// User declarations
     void buildAppConfigList();
 
     QString thisServerName;
-    bool hideServers;
     bool autoStart;
+
 public:  		// User declarations
     static MinosConfig *getMinosConfig( );
 
@@ -114,8 +116,6 @@ public:  		// User declarations
 
     bool getAutoStart();
     void setAutoStart(bool);
-    bool getHideServers();
-    void setHideServers(bool);
 
     QString checkConfig();
 

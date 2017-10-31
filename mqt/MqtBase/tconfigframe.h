@@ -29,8 +29,6 @@ private slots:
 
     void on_StopButton_clicked();
 
-    void on_HideCheckBox_clicked();
-
     void on_SetButton_clicked();
 
     void on_CancelButton_clicked();
