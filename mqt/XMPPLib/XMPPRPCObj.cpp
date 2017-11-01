@@ -63,35 +63,45 @@ void MinosRPCObj::clearCallArgs()
 /*static*/ QSharedPointer<MinosRPCObj> MinosRPCObj::makeClientObj(  QString call )
 {
    QMap <QString, QSharedPointer<MinosRPCObj> >::iterator mo = getClientMethodMap().find( call );
+   QSharedPointer<MinosRPCObj> res;
    if ( mo != getClientMethodMap().end() )
    {
-      return mo.value()->makeObj();
+      res = mo.value()->makeObj();
+      res->methodName = call;
+      return res;
    }
    for (mo = getClientMethodMap().begin(); mo != getClientMethodMap().end(); mo++)
    {
        if (mo.value()->isGeneralObject())
        {
-           return mo.value()->makeObj();
+           res = mo.value()->makeObj();
+           res->methodName = call;
+           return res;
        }
    }
-   return QSharedPointer<MinosRPCObj>();
+   return res;
 }
 
 /*static*/ QSharedPointer<MinosRPCObj> MinosRPCObj::makeServerObj(  QString call )
 {
    QMap <QString, QSharedPointer<MinosRPCObj> >::iterator mo = getServerMethodMap().find( call );
+   QSharedPointer<MinosRPCObj> res;
    if ( mo != getServerMethodMap().end() )
    {
-      return mo.value()->makeObj();
+      res = mo.value()->makeObj();
+      res->methodName = call;
+      return res;
    }
    for (mo = getServerMethodMap().begin(); mo != getServerMethodMap().end(); mo++)
    {
        if (mo.value()->isGeneralObject())
        {
-           return mo.value()->makeObj();
+           res = mo.value()->makeObj();
+           res->methodName = call;
+           return res;
        }
    }
-   return QSharedPointer<MinosRPCObj>();
+   return res;
 }
 //==============================================================================
 void MinosRPCClient::queueCall( QString to )

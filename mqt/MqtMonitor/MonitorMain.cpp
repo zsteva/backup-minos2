@@ -465,61 +465,65 @@ void MonitorMain::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QSt
 }
 //---------------------------------------------------------------------------
 
-void MonitorMain::on_serverCall( bool err, QSharedPointer<MinosRPCObj> /*mro*/, const QString & from )
-{
-    logMessage( "logger server callback from " + from + ( err ? ":Error" : ":Normal" ) );
-}
-//---------------------------------------------------------------------------
-void MonitorMain::on_clientCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
+void MonitorMain::on_clientCall( bool err, QSharedPointer<MinosRPCObj> /*mro*/, const QString & from )
 {
     logMessage( "logger subscribe client callback from " + from + ( err ? ":Error" : ":Normal" ) );
+}
+//---------------------------------------------------------------------------
+void MonitorMain::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
+{
+    logMessage( "logger server callback from " + from + ( err ? ":Error" : ":Normal" ) );
     if ( !err )
     {
-       // This will return stanza id, pubname, and stanza content
-       QSharedPointer<RPCParam> psLogName;
-       QSharedPointer<RPCParam> psStanzaData;
-       QSharedPointer<RPCParam> psStanza;
-       QSharedPointer<RPCParam> psResult;
-       RPCArgs *args = mro->getCallArgs();
-       if ( args->getStructArgMember( 0, "LogName", psLogName )
-            && args->getStructArgMember( 0, "LoggerResult", psResult )
-            && args->getStructArgMember( 0, "Stanza", psStanza )
-            && args->getStructArgMember( 0, "StanzaData", psStanzaData )
-          )
-       {
-          QString logName;
-          QString stanzaData;
-          bool result;
-          int stanza;
+        // This will return stanza id, pubname, and stanza content
+        QString call = mro->getMethodName();
+        if (call == rpcConstants::loggerStanzaResponse)
+        {
 
-          if ( psLogName->getString( logName ) && psStanzaData->getString( stanzaData )
-               && psStanza->getInt( stanza ) && psResult->getBoolean( result )
-             )
-          {
-             logMessage( "Name " + logName + " stanza " + QString::number( stanza ) );
-             // Find the matching MonitoredLog and send the stanza their for processing
-             for ( QVector<MonitoredStation *>::iterator i = stationList.begin(); i != stationList.end(); i++ )
-             {
-                // "from" is something like Logger@dev-station
-                if ( "Logger@" + ( *i ) ->stationName == from )
+            QSharedPointer<RPCParam> psLogName;
+            QSharedPointer<RPCParam> psStanzaData;
+            QSharedPointer<RPCParam> psStanza;
+            QSharedPointer<RPCParam> psResult;
+            RPCArgs *args = mro->getCallArgs();
+            if ( args->getStructArgMember( 0, "LogName", psLogName )
+                 && args->getStructArgMember( 0, "LoggerResult", psResult )
+                 && args->getStructArgMember( 0, "Stanza", psStanza )
+                 && args->getStructArgMember( 0, "StanzaData", psStanzaData )
+                 )
+            {
+                QString logName;
+                QString stanzaData;
+                bool result;
+                int stanza;
+
+                if ( psLogName->getString( logName ) && psStanzaData->getString( stanzaData )
+                     && psStanza->getInt( stanza ) && psResult->getBoolean( result )
+                     )
                 {
-                   for ( QVector<MonitoredLog *>::iterator j = ( *i ) ->slotList.begin(); j != ( *i ) ->slotList.end(); j++ )
-                   {
-                      if ((*j) && ( *j ) ->getPublishedName() == logName )
-                      {
-                         logMessage( "||" + stanzaData + "||" );
-                         ( *j ) ->processLogStanza( stanza, stanzaData );
-                         return ;
-                      }
-                   }
-                }
-             }
+                    logMessage( "Name " + logName + " stanza " + QString::number( stanza ) );
+                    // Find the matching MonitoredLog and send the stanza their for processing
+                    for ( QVector<MonitoredStation *>::iterator i = stationList.begin(); i != stationList.end(); i++ )
+                    {
+                        // "from" is something like Logger@dev-station
+                        if ( "Logger@" + ( *i ) ->stationName == from )
+                        {
+                            for ( QVector<MonitoredLog *>::iterator j = ( *i ) ->slotList.begin(); j != ( *i ) ->slotList.end(); j++ )
+                            {
+                                if ((*j) && ( *j ) ->getPublishedName() == logName )
+                                {
+                                    logMessage( "||" + stanzaData + "||" );
+                                    ( *j ) ->processLogStanza( stanza, stanzaData );
+                                    return ;
+                                }
+                            }
+                        }
+                    }
 
-          }
-       }
+                }
+            }
+        }
     }
 }
-
 
 void MonitorMain::syncStations()
 {
