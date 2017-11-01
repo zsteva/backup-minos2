@@ -31,8 +31,8 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
 
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::chatApp, false);    // DO NOT use the environment variable - use "Chat" everywhere
 
-    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
-    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_clientCall(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
     rpc->subscribe(rpcConstants::StationCategory);
@@ -192,12 +192,12 @@ void TMinosChatForm::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const 
 }
 //---------------------------------------------------------------------------
 
-void TMinosChatForm::on_response( bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*/, const QString & /*from*/ )
+void TMinosChatForm::on_clientCall( bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*/, const QString & /*from*/ )
 {
    // call back says OK/not OK
 }
 //---------------------------------------------------------------------------
-void TMinosChatForm::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
+void TMinosChatForm::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
    trace( "chat callback from " + from + ( err ? ":Error" : ":Normal" ) );
 

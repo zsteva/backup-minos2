@@ -46,9 +46,9 @@ private slots:
 
     void on_SendButton_clicked();
 
-    void on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );
-    void on_response( bool err, QSharedPointer<MinosRPCObj> , const QString &from );
-    void on_request( bool err, QSharedPointer<MinosRPCObj>, const QString &from );
+    void on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );
+    void on_clientCall( bool err, QSharedPointer<MinosRPCObj> , const QString &from );
+    void on_notify( bool err, QSharedPointer<MinosRPCObj>, const QString &from );
 };
 
 #endif // MAINWINDOW_H

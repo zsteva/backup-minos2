@@ -40,8 +40,8 @@ ControlMain::ControlMain(QWidget *parent) :
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::controlApp);
 
-    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(controlClientCallback(bool,QSharedPointer<MinosRPCObj>,QString)));
-    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(controlServerCallback(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_clientCall(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
 //    connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
     formShowTimer.setSingleShot(true);
@@ -145,12 +145,12 @@ void ControlMain::linesChangedEvent( )
     }
 }
 //---------------------------------------------------------------------------
-void ControlMain::controlClientCallback(bool /*err*/, QSharedPointer<MinosRPCObj>/*mro*/, const QString &/*from*/ )
+void ControlMain::on_clientCall(bool /*err*/, QSharedPointer<MinosRPCObj>/*mro*/, const QString &/*from*/ )
 {
    // call back says OK/not OK
 }
 //---------------------------------------------------------------------------
-void ControlMain::controlServerCallback(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
+void ControlMain::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
    trace( "control callback from " + from + ( err ? ":Error" : ":Normal" ) );
 
