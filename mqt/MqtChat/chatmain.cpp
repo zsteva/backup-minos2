@@ -31,7 +31,6 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
 
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::chatApp, false);    // DO NOT use the environment variable - use "Chat" everywhere
 
-    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_clientCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
@@ -189,12 +188,6 @@ void TMinosChatForm::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const 
          }
       }
    }
-}
-//---------------------------------------------------------------------------
-
-void TMinosChatForm::on_clientCall( bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*/, const QString & /*from*/ )
-{
-   // call back says OK/not OK
 }
 //---------------------------------------------------------------------------
 void TMinosChatForm::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )

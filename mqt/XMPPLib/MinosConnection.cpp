@@ -36,7 +36,7 @@
 
 *///---------------------------------------------------------------------------
 MinosAppConnection *MinosAppConnection::minosAppConnection = 0;
-QString myId;
+
 bool connected = false;
 static bool terminated = false;
 
@@ -48,7 +48,7 @@ bool XMPPInitialise( const QString &pmyId )
       return false;
    }
 
-   myId = QString( pmyId ) + "@localhost";
+   QString myId = QString( pmyId ) + "@localhost";
 
    if ( MinosAppConnection::minosAppConnection )
    {
@@ -81,7 +81,7 @@ bool XMPPClosedown()
    return true;
 }
 //---------------------------------------------------------------------------
-MinosAppConnection::MinosAppConnection(const QString &jid ) : jabberId(jid), sock( new QTcpSocket ), user_data( this )
+MinosAppConnection::MinosAppConnection( const QString &myid ) : myId(myid), sock( new QTcpSocket ), user_data( this )
 {
     connect(&waitConnectTimer, SIGNAL(timeout()), this, SLOT(on_waitConnectTimeout()));
     connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_readyRead()));
@@ -134,7 +134,7 @@ bool MinosAppConnection::closeConnection()
 {
    // close down the socket connection
     sock->close();
-//    sock->waitForDisconnected();
+
     return true;
 }
 //---------------------------------------------------------------------------

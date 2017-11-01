@@ -29,7 +29,6 @@ RotatorRpc::RotatorRpc(RotatorMainWindow *parent) : QObject(parent), parent(pare
 
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::rotatorApp);
 
-    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_clientCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
@@ -123,11 +122,6 @@ void RotatorRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QStr
 //         trace( "LineControl" + an.getKey() + ":" + an.getValue() );
 //      }
    }
-}
-//---------------------------------------------------------------------------
-void RotatorRpc::on_clientCall(bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*/, const QString &/*from*/ )
-{
-   // call back says OK/not OK, and we ignore it
 }
 //---------------------------------------------------------------------------
 void RotatorRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )

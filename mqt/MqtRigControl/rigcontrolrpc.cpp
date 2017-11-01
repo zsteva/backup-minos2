@@ -30,7 +30,6 @@ RigControlRpc::RigControlRpc(RigControlMainWindow *parent) : QObject(parent), pa
 
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::rigControlApp);
 
-    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_clientCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
@@ -138,11 +137,6 @@ void RigControlRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const Q
 //         trace( "LineControl" + an.getKey() + ":" + an.getValue() );
 //      }
    }
-}
-//---------------------------------------------------------------------------
-void RigControlRpc::on_clientCall(bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*/, const QString &/*from*/ )
-{
-   // call back says OK/not OK, and we ignore it
 }
 //---------------------------------------------------------------------------
 void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )

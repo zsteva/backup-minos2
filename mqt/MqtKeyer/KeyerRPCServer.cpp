@@ -20,7 +20,6 @@ KeyerServer::KeyerServer()
 {
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::keyerApp);
 
-//    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_clientCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 

@@ -18,40 +18,7 @@ void dispatchResponse( RPCDispatcher *RPCDisp, XStanza *xs )
       RPCDisp->dispatchResponse( xs );
    }
 }
-/*
-<?xml version='1.0'?>
-<stream:stream xmlns:stream='http://etherx.jabber.org/streams' xmlns='jabber:client' to='localhost' version='1.0'>*/ 
-/*
-<iq type='set' id='1'>
-   <query xmlns='minos:iq:rpc'>
-      <methodCall>
-         <methodName>SetFromId</methodName>
-         <params><param><value><string>Logger@localhost</string></value></param></params>
-      </methodCall>
-   </query></iq>
-*/
 
-/*
-<iq type='set' to='Logger@dev-Station' id='4' from='dev-Station'>
-   <query xmlns='minos:iq:rpc'>
-      <methodCall>
-         <methodName>Minos:PubSub:ClientNotify</methodName>
-         <params><param><value><struct><member><name>Server</name><value><string/></value></member><member><name>Category</name><value><string>Keyer</string></value></member><member><name>Key</name><value><string>Report</string></value></member><member><name>Value</name><value><string>emsReplayPip : Pip : [P]</string></value></member></struct></value></param>
-         </params>
-      </methodCall>
-   </query>
-</iq>
-*/ 
-/*
-<iq type='result' to='Logger@dev-Station' id='2' from='dev-Station'>
-   <query xmlns='minos:iq:rpc'>
-      <methodResponse>
-         <methodName>Minos:PubSub:Publish</methodName>
-         <params><param><value><struct><member><name>PublishResult</name><value><boolean>1</boolean></value></member></struct></value></param></params>
-      </methodResponse>
-   </query>
-</iq>
-*/
 bool analyseNode( RPCDispatcher *RPCDisp, TiXmlElement *tix )
 {
    if ( !tix || !checkElementName( tix, "iq" ) )

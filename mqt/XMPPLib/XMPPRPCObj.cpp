@@ -18,18 +18,12 @@ QMap <QString, QSharedPointer<MinosRPCObj>> &getServerMethodMap()
    static QMap <QString, QSharedPointer<MinosRPCObj> > serverMethodMap;
    return serverMethodMap;
 }
-QMap <QString, QSharedPointer<MinosRPCObj> > &getClientMethodMap()
-{
-   static QMap <QString, QSharedPointer<MinosRPCObj> > clientMethodMap;
-   return clientMethodMap;
-}
 //==============================================================================
 MinosRPCObj::MinosRPCObj(const QString &methodName, TRPCFunctor *cb , bool gen)
       : methodName( methodName ), callback( cb ), general(gen)
 {}
 MinosRPCObj::~MinosRPCObj()
 {
-   //delete callArgs;
 }
 void MinosRPCObj::clearCallArgs()
 {
@@ -43,43 +37,11 @@ void MinosRPCObj::clearCallArgs()
       i.value().reset();
    }
    getServerMethodMap().clear();
-   for ( QMap <QString, QSharedPointer<MinosRPCObj> >::iterator i = getClientMethodMap().begin(); i != getClientMethodMap().end(); i++ )
-   {
-       delete i.value()->callback;
-       i.value().reset();
-   }
-   getClientMethodMap().clear();
 }
 
-/*static*/ void MinosRPCObj::addClientObj(QSharedPointer<MinosRPCObj> mro )
-{
-   getClientMethodMap().insert(  mro->methodName, mro  );
-}
 /*static*/ void MinosRPCObj::addServerObj(  QSharedPointer<MinosRPCObj> mro )
 {
    getServerMethodMap().insert( mro->methodName, mro );
-}
-
-/*static*/ QSharedPointer<MinosRPCObj> MinosRPCObj::makeClientObj(  QString call )
-{
-   QMap <QString, QSharedPointer<MinosRPCObj> >::iterator mo = getClientMethodMap().find( call );
-   QSharedPointer<MinosRPCObj> res;
-   if ( mo != getClientMethodMap().end() )
-   {
-      res = mo.value()->makeObj();
-      res->methodName = call;
-      return res;
-   }
-   for (mo = getClientMethodMap().begin(); mo != getClientMethodMap().end(); mo++)
-   {
-       if (mo.value()->isGeneralObject())
-       {
-           res = mo.value()->makeObj();
-           res->methodName = call;
-           return res;
-       }
-   }
-   return res;
 }
 
 /*static*/ QSharedPointer<MinosRPCObj> MinosRPCObj::makeServerObj(  QString call )

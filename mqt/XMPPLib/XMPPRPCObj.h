@@ -104,10 +104,8 @@ class MinosRPCObj
 
       virtual QSharedPointer<MinosRPCObj>makeObj() = 0;
 
-      static QSharedPointer<MinosRPCObj> makeClientObj( QString call );
       static QSharedPointer<MinosRPCObj> makeServerObj( QString call );
 
-      static void addClientObj( QSharedPointer<MinosRPCObj> mro );
       static void addServerObj( QSharedPointer<MinosRPCObj> mro );
 
       virtual void queueCall( QString /* to*/ )
