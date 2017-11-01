@@ -165,12 +165,6 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
                 // here you handle what the logger has sent to us
                 trace(QString("Rig RPC: Freq Command From Logger = $1").arg(freq));
                 emit (setFreq(freq));
-
-                QSharedPointer<RPCParam>st(new RPCParamStruct);
-                st->addMember( true, rpcConstants::rigControlResult );
-                mro->clearCallArgs();
-                mro->getCallArgs() ->addParam( st );
-                mro->queueResponse( from );
             }
         }
         else if ( args->getStructArgMember( 0, rpcConstants::rigControlKeyMode, psMode ) )
@@ -182,12 +176,6 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
                      // here you handle what the logger has sent to us
                     trace(QString("Rig RPC: Mode Command From Logger = %1").arg(mode));
                     emit (setMode(mode));
-
-                     QSharedPointer<RPCParam>st(new RPCParamStruct);
-                     st->addMember( true, rpcConstants::rigControlResult );
-                     mro->clearCallArgs();
-                     mro->getCallArgs() ->addParam( st );
-                     mro->queueResponse( from );
                  }
         }
         else if ( args->getStructArgMember( 0, rpcConstants::rigControlKeyPBandState, psPBandState ) )
@@ -199,12 +187,6 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
                      // here you handle what the logger has sent to us
                     trace(QString("Rig RPC: PassBandState Command From Logger = %1").arg(QString::number(passBandState)));
                     emit (setPassBand(passBandState));
-
-                     QSharedPointer<RPCParam>st(new RPCParamStruct);
-                     st->addMember( true, rpcConstants::rigControlResult );
-                     mro->clearCallArgs();
-                     mro->getCallArgs() ->addParam( st );
-                     mro->queueResponse( from );
                  }
         }
     }

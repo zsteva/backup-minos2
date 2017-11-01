@@ -113,19 +113,4 @@ void MinosRPCClient::queueCall( QString to )
    delete m;
 }
 //==============================================================================
-// server...
-void MinosRPCServer::queueResponse( QString to )
-{
-   RPCResponse * m = new RPCResponse( to, id, methodName );
-   m->args = callArgs.args;     // copy vector of pointers
-   sendAction( m );
-   delete m;
-}
-void MinosRPCServer::queueErrorResponse( QString to )
-{
-   RPCResponse * m = new RPCResponse( to, id, methodName );
-   sendAction( m );
-   delete m;
-}
-//==============================================================================
 

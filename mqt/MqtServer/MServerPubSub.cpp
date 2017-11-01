@@ -519,7 +519,6 @@ PublishedKeyListIterator PublishedCategory::findPubKey( const QString &svr, cons
       f = PublishedCategory::findPubCategory( category );
    }
    ( *f ) ->publish( pubId, key, value, pState );
-   // queue the response
    return true;
 }
 //---------------------------------------------------------------------------
@@ -564,7 +563,6 @@ void PublishedCategory::publish( const QString &pubId, const QString &k, const Q
       f = PublishedCategory::findPubCategory( category );
    }
    ( *f ) ->serverPublish( pubId, svr, key, value, pState );
-   // queue the response
    return true;
 }
 //---------------------------------------------------------------------------
@@ -740,22 +738,7 @@ void TPubSubMain::publishCallback( bool err, QSharedPointer<MinosRPCObj>mro, con
                   && psValue->getString( Value )  && psState->getInt( temps ))
          {
             State = static_cast<PublishState>(temps);
-            QSharedPointer<RPCParam>st(new RPCParamStruct);
-            if ( TPubSubMain::publish( from, Category, Key, Value, State ) )
-            {
-               st->addMember( true, "PublishResult" );
-               mro->clearCallArgs();
-               mro->getCallArgs() ->addParam( st );
-               mro->queueResponse( from );
-            }
-            else
-            {
-               st->addMember( "RPC error", "PublishResult" );
-               mro->clearCallArgs();
-               mro->getCallArgs() ->addParam( st );
-               mro->queueErrorResponse( from );
-
-            }
+            TPubSubMain::publish( from, Category, Key, Value, State );
          }
       }
    }
@@ -779,26 +762,7 @@ void TPubSubMain::subscribeCallback(bool err, QSharedPointer<MinosRPCObj> mro, c
          if ( resc )
          {
             PublishedCategory::clientSubscribe( from, Category );
-
-            st->addMember( true, "ClientSubscribeResult" );
-            mro->clearCallArgs();
-            mro->getCallArgs() ->addParam( st );
-            mro->queueResponse( from );
          }
-         else
-         {
-            st->addMember( "Bad Params", "ClientSubscribeResult" );
-            mro->clearCallArgs();
-            mro->getCallArgs() ->addParam( st );
-            mro->queueErrorResponse( from );
-         }
-      }
-      else
-      {
-         st->addMember( "ClientSubscribeResult", "Bad Params" );
-         mro->clearCallArgs();
-         mro->getCallArgs() ->addParam( st );
-         mro->queueErrorResponse( from );
       }
    }
 }
@@ -831,25 +795,7 @@ void TPubSubMain::remoteSubscribeCallback( bool err, QSharedPointer<MinosRPCObj>
             }
 
             PublishedCategory::remoteSubscribe( from, Server, Category );
-
-            mro->clearCallArgs();
-            st->addMember( true, "RemoteSubscribeResult" );
-            mro->getCallArgs() ->addParam( st );
-            mro->queueResponse( from );
          }
-         else
-         {
-            mro->clearCallArgs();
-            st->addMember( "Bad Params", "RemoteSubscribeResult" );
-            mro->getCallArgs() ->addParam( st );
-            mro->queueErrorResponse( from );
-         }
-      }
-      else
-      {
-         st->addMember( "RemoteSubscribeResult", "Bad Params" );
-         mro->getCallArgs() ->addParam( st );
-         mro->queueErrorResponse( from );
       }
    }
 }
@@ -876,26 +822,7 @@ void TPubSubMain::serverSubscribeCallback(bool err, QSharedPointer<MinosRPCObj> 
          if ( ress && resc )
          {
             PublishedCategory::serverSubscribe( from, Server, Category );
-
-            mro->clearCallArgs();
-            st->addMember( true, "ServerSubscribeResult" );
-            mro->getCallArgs() ->addParam( st );
-            mro->queueResponse( from );
          }
-         else
-         {
-            st->addMember( "Bad Params", "ServerSubscribeResult" );
-            mro->clearCallArgs();
-            mro->getCallArgs() ->addParam( st );
-            mro->queueErrorResponse( from );
-         }
-      }
-      else
-      {
-         st->addMember( "ServerSubscribeResult", "Bad Params" );
-         mro->clearCallArgs();
-         mro->getCallArgs() ->addParam( st );
-         mro->queueErrorResponse( from );
       }
    }
 }
@@ -931,11 +858,6 @@ void TPubSubMain::serverNotifyCallback(bool err, QSharedPointer<MinosRPCObj> mro
       PublishState state = an.getState();
       serverPublish( /*from*/publisherProgram + "@" + publisherServer, server, category, key, value, state );       // but we mustn't publish this back to any remote servers
       // even if they ARE subscribed
-      mro->clearCallArgs();
-      QSharedPointer<RPCParam>st(new RPCParamStruct);
-      st->addMember( true, "ServerNotifyResult" );
-      mro->getCallArgs() ->addParam( st );
-      mro->queueResponse( from );
    }
 }
 bool nopub( PublishedKey *ip )

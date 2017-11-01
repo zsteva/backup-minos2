@@ -20,7 +20,6 @@ public:
 
     virtual void dispatchResponse( XStanza *a );
     void analyseRequestTest( XStanza * );
-    void analyseResponseTest( XStanza * );
 
 private Q_SLOTS:
     void testCase1();
@@ -37,7 +36,6 @@ private Q_SLOTS:
     void testAddParams();
 
     void testRequest();
-    void testResponse();
 
     void testParse();
     void testBands();
@@ -411,56 +409,6 @@ void RPCTestTest::analyseRequestTest( XStanza *xs )
    QVERIFY( i == 1 );
 }
 //---------------------------------------------------------------------------
-
-void
-RPCTestTest::testResponse()
-{
-   QString toId = "256";
-   QString to = "toMe";
-   RPCResponse *xm = new RPCResponse( to, toId, "testResponse" );
-
-   QString s1( "BarPosition" );
-   QString s2( "HOVenue" );
-   int i1 = 1;
-
-   xm->addParam( s1 );
-   xm->addParam( s2 );
-   xm->addParam( i1 );
-
-   TIXML_STRING UTF8XML = xm->getActionMessage();
-
-   delete xm;
-
-   dispatchCallback = &RPCTestTest::analyseResponseTest;
-
-   bool ret = analyseNode( this, UTF8XML );
-
-   QVERIFY( true == ret );
-
-}
-void RPCTestTest::analyseResponseTest( XStanza *xs )
-{
-   RPCResponse * req = dynamic_cast<RPCResponse *>( xs );
-   QVERIFY(  req != 0 );
-   QVERIFY(  req->getId() == "256" );
-
-   // and now analyse req
-   QVERIFY( req->methodName == "testResponse" );
-
-   QString s;
-   bool pOK = req->getStringArg( 0, s );
-   QVERIFY( true == pOK );
-   QVERIFY( s == "BarPosition" );
-
-   pOK = req->getStringArg( 1, s );
-   QVERIFY( pOK );
-   QVERIFY( s == "HOVenue" );
-
-   int i;
-   pOK = req->getIntArg( 2, i );
-   QVERIFY( true == pOK );
-   QVERIFY( i == 1 );
-}
 void RPCTestTest::testParse()
 {
    BandList blist;

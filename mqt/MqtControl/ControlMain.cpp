@@ -234,9 +234,6 @@ void ControlMain::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const
                   }
 
                }
-            mro->clearCallArgs();
-            mro->getCallArgs() ->addParam( st );
-            mro->queueResponse( from );
          }
       }
    }

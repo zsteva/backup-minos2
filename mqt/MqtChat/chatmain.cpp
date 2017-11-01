@@ -220,12 +220,6 @@ void TMinosChatForm::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, co
                    // add to chat window
                    QString mess = from + " : " + pmess;
                    addChat( mess );
-
-                   QSharedPointer<RPCParam>st(new RPCParamStruct);
-                   st->addMember( true, rpcConstants::ChatResult );
-                   mro->clearCallArgs();
-                   mro->getCallArgs() ->addParam( st );
-                   mro->queueResponse( from );
                 }
             }
       }

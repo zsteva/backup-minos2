@@ -33,8 +33,6 @@ class MinosServer
       bool forwardStanza( MinosCommonConnection *, TiXmlElement *pak );
       virtual bool analyseNode( MinosCommonConnection *il, TiXmlElement * pak );
       virtual void dispatchStanza( MinosCommonConnection *il, RPCRequest *a );
-      virtual void dispatchStanza( MinosCommonConnection *il, RPCResponse *a );
-      //      virtual void dispatchStanza( MinosCommonConnection *il, RPCEvent *a );
 
       MinosServer();
       ~MinosServer();

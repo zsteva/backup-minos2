@@ -76,7 +76,6 @@ bool analyseNode( RPCDispatcher *RPCDisp, TiXmlElement *tix )
    }
 
    TiXmlElement *mcall = findNode( query, "methodCall" );
-   TiXmlElement *mresp = findNode( query, "methodResponse" );
 
    if ( subtype == "set" && mcall )
    {
@@ -86,15 +85,6 @@ bool analyseNode( RPCDispatcher *RPCDisp, TiXmlElement *tix )
       delete xs;
       return true;
    }
-   else
-      if ( subtype == "result" && mresp )
-      {
-         RPCResponse * rr = new RPCResponse( from, mresp );
-         rr->setId( id );
-         dispatchResponse( RPCDisp, rr );
-         delete rr;
-         return true;
-      }
    return false;
 }
 bool analyseNode(RPCDispatcher *RPCDisp, TIXML_STRING UTF8XML )

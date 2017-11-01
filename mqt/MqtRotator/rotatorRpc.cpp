@@ -150,12 +150,6 @@ void RotatorRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const 
                 // here you handle what the logger has sent to us
                 trace(QString("Rot RPC: Direction = %1, Angle = %2").arg(QString::number(direction), QString::number(angle)));
                 emit (setRotation(direction, angle));
-
-                QSharedPointer<RPCParam>st(new RPCParamStruct);
-                st->addMember( true, rpcConstants::rotatorResult );
-                mro->clearCallArgs();
-                mro->getCallArgs() ->addParam( st );
-                mro->queueResponse( from );
             }
         }
     }

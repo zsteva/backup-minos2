@@ -87,55 +87,35 @@ void KeyerServer::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const
 
          if ( psName->getString( Name ) && piValue->getInt( Value ) )
          {
-
-            bool callOK = false;
             if ( Value >= 1 && Value <= 12 )
             {
                if ( Name == "PlayFile" )
                {
                   playKeyerFile( Value, true );    // do actual transmit, and repeat as required
-                  callOK = true;
                }
                else
                   if ( Name == "RecordFile" )
                   {
                      startRecordDVPFile( Value );
-                     callOK = true;
                   }
            }
                if ( Name == "Tone" )
                {
                   sendTone1();
-                  callOK = true;
                }
             else
                if ( Name == "TwoTone" )
                {
                   sendTone2();
-                  callOK = true;
                }
             else
                if ( Name == "Stop" )
                {
                   stopKeyer();
-                  callOK = true;
                }
 
             mro->clearCallArgs();
             QSharedPointer<RPCParam>st(new RPCParamStruct);
-            if ( callOK )
-            {
-               st->addMember( true, "KeyerResult" );
-               mro->getCallArgs() ->addParam( st );
-               mro->queueResponse( from );
-            }
-            else
-            {
-               st->addMember( "RPC error", "KeyerResult" );
-               mro->getCallArgs() ->addParam( st );
-               mro->queueErrorResponse( from );
-
-            }
          }
       }
    }
