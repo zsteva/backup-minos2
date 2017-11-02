@@ -135,8 +135,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
 RigControlMainWindow::~RigControlMainWindow()
 {
-    sendStatusToLogDisConnected();
-    radio->closeRig();
+    closeRadio();
     delete ui;
     delete msg;
 }
