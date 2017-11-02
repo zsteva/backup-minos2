@@ -312,9 +312,6 @@ void RotatorMainWindow::onStdInRead(QString cmd)
 
 void RotatorMainWindow::closeEvent(QCloseEvent *event)
 {
-    MinosRPCObj::clearRPCObjects();
-    XMPPClosedown();
-    LogTimerTimer( );
     // and tidy up all loose ends
 
     QSettings settings;

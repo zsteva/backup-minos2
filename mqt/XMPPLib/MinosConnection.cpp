@@ -73,7 +73,8 @@ bool XMPPClosedown()
    {
       // wait for XMPP and Request threads to finish
       MinosAppConnection::minosAppConnection->closeDaemonThread();
-      delete MinosAppConnection::minosAppConnection;
+
+      MinosAppConnection::minosAppConnection->deleteLater();
       MinosAppConnection::minosAppConnection = 0;
    }
 
@@ -89,7 +90,8 @@ MinosAppConnection::MinosAppConnection( const QString &myid ) : myId(myid), sock
     connect(sock.data(), SIGNAL(disconnected()), this, SLOT(on_disconnected()));
 }
 MinosAppConnection::~MinosAppConnection()
-{}
+{
+}
 void MinosAppConnection::startConnection()
 {
     waitConnectTimer.start(1000);
@@ -128,7 +130,8 @@ void MinosAppConnection::closeDaemonThread()
    }
    closeConnection();
 
-   startConnection();
+   if (minosAppConnection)  // cleared before closedown
+        startConnection();
 }
 bool MinosAppConnection::closeConnection()
 {

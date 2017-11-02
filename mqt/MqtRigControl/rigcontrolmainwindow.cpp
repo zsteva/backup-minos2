@@ -135,8 +135,6 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
 RigControlMainWindow::~RigControlMainWindow()
 {
-    sendStatusToLogDisConnected();
-    radio->closeRig();
     delete ui;
     delete msg;
 }
@@ -163,9 +161,9 @@ void RigControlMainWindow::LogTimerTimer()
 
 void RigControlMainWindow::closeEvent(QCloseEvent *event)
 {
-    MinosRPCObj::clearRPCObjects();
-    XMPPClosedown();
-    LogTimerTimer( );
+    sendStatusToLogDisConnected();
+    radio->closeRig();
+
     // and tidy up all loose ends
 
     QSettings settings;

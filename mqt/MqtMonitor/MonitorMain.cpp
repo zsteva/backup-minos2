@@ -280,9 +280,6 @@ void MonitorMain::closeEvent(QCloseEvent *event)
 {
     // and tidy up all loose ends
 
-    MinosRPCObj::clearRPCObjects();
-    XMPPClosedown();
-
     QWidget::closeEvent(event);
 }
 void MonitorMain::moveEvent(QMoveEvent * event)

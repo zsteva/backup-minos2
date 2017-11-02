@@ -61,8 +61,6 @@ void TMinosChatForm::closeEvent(QCloseEvent *event)
 {
     // and tidy up all loose ends
 
-    MinosRPCObj::clearRPCObjects();
-    XMPPClosedown();
     SyncTimerTimer( );
 
     QWidget::closeEvent(event);
