@@ -23,7 +23,6 @@ void MinosRPC::on_connectedTimeout()
 {
     if ( !connected && checkServerReady() )
     {
-        MinosRPCObj::addClientObj( QSharedPointer<MinosRPCObj>(new RPCGeneralClient( new TRPCCallback <MinosRPC> ( this, &MinosRPC::clientCallback ) ) ) );
         MinosRPCObj::addServerObj( QSharedPointer<MinosRPCObj>(new RPCGeneralServer( new TRPCCallback <MinosRPC> ( this, &MinosRPC::serverCallback ) ) ) );
         XMPPInitialise( appName );
         connected = true;
@@ -79,13 +78,7 @@ void MinosRPC::notifyCallback( bool err, QSharedPointer<MinosRPCObj>mro, const Q
 
     emit notify(err, mro, from);
 }
-//---------------------------------------------------------------------------
-void MinosRPC::clientCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
-{
-    trace( "rpc client callback from " + from + ( err ? ":Error" : ":Normal" ) );
-   // call back says OK/not OK
-    emit clientCall(err, mro, from);
-}
+
 //---------------------------------------------------------------------------
 void MinosRPC::serverCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {

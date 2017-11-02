@@ -81,7 +81,7 @@ void MinosServerConnection::on_connected()
     RPCRequest *rpa = new RPCRequest( clientServer, MinosServer::getMinosServer() ->getServerName(), "ServerSetFromId" );   // for our local server, this one MUST have a from
     rpa->addParam( MinosServer::getMinosServer() ->getServerName() );
     rpa->addParam( TZConf::getZConf()->getZConfString(true ) );
-    sendAction( rpa );               // This wants to be a queue response...
+    sendAction( rpa );
     delete rpa;
 }
 

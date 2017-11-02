@@ -45,7 +45,7 @@ class XStanza
       virtual QString analyse() = 0;
 };
 //---------------------------------------------------------------------------
-// RPC actions. NB that calls, events and responses can come from either end!
+// RPC actions. NB that calls and events can come from either end!
 
 // RPC base action
 class RPCAction: public XStanza, public RPCArgs
@@ -91,30 +91,5 @@ class RPCRequest: public RPCAction
       virtual QString analyse();
 };
 
-// Do an RPC action (normally the receiver!)
-class RPCResponse: public RPCAction
-{
-   public:
-      QString methodName;
-      QSharedPointer<RPCParam> fault;
-
-      RPCResponse( const QString &to, const QString &id, const QString &mname );
-      RPCResponse( const QString &to, const QString &from, const QString &id, const QString &mname );
-      RPCResponse( const QString &from, TiXmlElement *node );
-      RPCResponse();
-
-      void addFault( QSharedPointer<RPCParam> );
-      void addFault( TiXmlElement & );
-      virtual ~RPCResponse();
-      // Build up the DOM tree for the action, and send it
-      virtual TIXML_STRING getActionMessage( );
-
-      virtual QString print();
-      virtual QString analyse()
-      {
-         return "";
-      }
-
-};
 //---------------------------------------------------------------------------
 #endif

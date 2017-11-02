@@ -28,32 +28,16 @@
 
    WE ONLY WORK HERE WITH UTF-8 ENCODINGS.
 
-   The top level node is either <request>, <response>, or <event>.
+   The top level node is either <request> or <event>.
 
-   In practice, requests all come from content, responses from minos.
+   In practice, requests all come from content from minos.
    events come from either side.
 
-   Requests and responses are tied together by the "id" attribute; it is the
-   responsability of the requester to provide a unique id string (we normally
-   use numbers, but this is not required.
-
-   <request requestName='name of request' id='1234'>
-      <XML/RPC parameter body/>
-   </request>
-
-   <event eventName='name of event'>
-      <XML/RPC parameter body/>
-   </event>
-
-   <response id='1234'>
-      <XML/RPC parameter body/>
-   </response>
 
 *///---------------------------------------------------------------------------
 MinosAppConnection *MinosAppConnection::minosAppConnection = 0;
-QString myId;
+
 bool connected = false;
-static bool terminated = false;
 
 bool XMPPInitialise( const QString &pmyId )
 {
@@ -63,7 +47,7 @@ bool XMPPInitialise( const QString &pmyId )
       return false;
    }
 
-   myId = QString( pmyId ) + "@localhost";
+   QString myId = QString( pmyId ) + "@localhost";
 
    if ( MinosAppConnection::minosAppConnection )
    {
@@ -78,25 +62,7 @@ bool XMPPInitialise( const QString &pmyId )
    return true;
 }
 //---------------------------------------------------------------------------
-bool XMPPClosedown()
-{
-   // signal to close down all boilerplate threads
-
-   terminated = true;
-
-   if ( MinosAppConnection::minosAppConnection )
-   {
-      // wait for XMPP and Request threads to finish
-      MinosAppConnection::minosAppConnection->closeDaemonThread();
-      delete MinosAppConnection::minosAppConnection;
-      MinosAppConnection::minosAppConnection = 0;
-   }
-
-   RPCPubSub::close();
-   return true;
-}
-//---------------------------------------------------------------------------
-MinosAppConnection::MinosAppConnection(const QString &jid ) : jabberId(jid), sock( new QTcpSocket ), user_data( this )
+MinosAppConnection::MinosAppConnection( const QString &myid ) : myId(myid), sock( new QTcpSocket ), user_data( this )
 {
     connect(&waitConnectTimer, SIGNAL(timeout()), this, SLOT(on_waitConnectTimeout()));
     connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_readyRead()));
@@ -104,7 +70,8 @@ MinosAppConnection::MinosAppConnection(const QString &jid ) : jabberId(jid), soc
     connect(sock.data(), SIGNAL(disconnected()), this, SLOT(on_disconnected()));
 }
 MinosAppConnection::~MinosAppConnection()
-{}
+{
+}
 void MinosAppConnection::startConnection()
 {
     waitConnectTimer.start(1000);
@@ -143,13 +110,14 @@ void MinosAppConnection::closeDaemonThread()
    }
    closeConnection();
 
-   startConnection();
+   if (minosAppConnection)  // cleared before closedown
+        startConnection();
 }
 bool MinosAppConnection::closeConnection()
 {
    // close down the socket connection
     sock->close();
-//    sock->waitForDisconnected();
+
     return true;
 }
 //---------------------------------------------------------------------------
@@ -267,27 +235,7 @@ void MinosAppConnection::dispatchResponse( XStanza *xs )
    RPCRequest * req = dynamic_cast<RPCRequest *>( xs );
    if ( req )
    {
-      makeXMPPEvent( req );
-   }
-   else
-   {
-      RPCResponse * rr = dynamic_cast<RPCResponse *>( xs );
-      if ( rr )
-      {
-         if ( rr->methodName == "ClientSetFromId" )
-         {
-            // server will return the REAL Jid
-            QString ouraddr;
-            QString from;
-            if ( rr->getStringArg( 0, from ) )
-            {
-               // check that from is what connected to us...
-               setJid( ouraddr );
-            }
-         }
-         else
-            makeXMPPEvent( rr );
-      }
+       makeXMPPEvent( req );
    }
 }
 //---------------------------------------------------------------------------

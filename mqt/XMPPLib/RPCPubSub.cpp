@@ -21,8 +21,6 @@ void RPCPubSub::initialisePubSub( TRPCFunctor *notifycb )
    if ( !objAdded )
    {
       objAdded = true;
-      MinosRPCObj::addClientObj( QSharedPointer<MinosRPCObj>(new RPCSubscribeClient( 0 ) ) );
-      MinosRPCObj::addClientObj( QSharedPointer<MinosRPCObj>(new RPCPublishClient( 0 ) ) );
       MinosRPCObj::addServerObj( QSharedPointer<MinosRPCObj>(new RPCNotifyServer( notifycb )) );
    }
 }

@@ -15,7 +15,7 @@ QT       += network
 TARGET = MqtRigControl
 TEMPLATE = app
 
-win32:RC_ICONS += ../minos.ico
+win32:RC_ICONS += ../MinosRig.ico
 
 
 SOURCES += main.cpp\

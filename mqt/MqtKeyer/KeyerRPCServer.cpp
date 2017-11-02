@@ -20,9 +20,8 @@ KeyerServer::KeyerServer()
 {
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::keyerApp);
 
-//    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(keyerClientCallback(bool,QSharedPointer<MinosRPCObj>,QString)));
-    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(keyerCallback(bool,QSharedPointer<MinosRPCObj>,QString)));
-    connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(notifyCallback(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
     RPCPubSub::subscribe( "LineControl" );
 }
@@ -71,7 +70,7 @@ void KeyerServer::doPublishCommand( const QString &cmd )
     KS->doPublishCommand( cmd );
 }
 //---------------------------------------------------------------------------
-void KeyerServer::keyerCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
+void KeyerServer::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
    trace( "Keyer callback from " + from + ( err ? ":Error" : ":Normal" ) );
 
@@ -87,61 +86,41 @@ void KeyerServer::keyerCallback( bool err, QSharedPointer<MinosRPCObj>mro, const
 
          if ( psName->getString( Name ) && piValue->getInt( Value ) )
          {
-
-            bool callOK = false;
             if ( Value >= 1 && Value <= 12 )
             {
                if ( Name == "PlayFile" )
                {
                   playKeyerFile( Value, true );    // do actual transmit, and repeat as required
-                  callOK = true;
                }
                else
                   if ( Name == "RecordFile" )
                   {
                      startRecordDVPFile( Value );
-                     callOK = true;
                   }
            }
                if ( Name == "Tone" )
                {
                   sendTone1();
-                  callOK = true;
                }
             else
                if ( Name == "TwoTone" )
                {
                   sendTone2();
-                  callOK = true;
                }
             else
                if ( Name == "Stop" )
                {
                   stopKeyer();
-                  callOK = true;
                }
 
             mro->clearCallArgs();
             QSharedPointer<RPCParam>st(new RPCParamStruct);
-            if ( callOK )
-            {
-               st->addMember( true, "KeyerResult" );
-               mro->getCallArgs() ->addParam( st );
-               mro->queueResponse( from );
-            }
-            else
-            {
-               st->addMember( "RPC error", "KeyerResult" );
-               mro->getCallArgs() ->addParam( st );
-               mro->queueErrorResponse( from );
-
-            }
          }
       }
    }
 }
 //---------------------------------------------------------------------------
-void KeyerServer::notifyCallback(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
+void KeyerServer::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
    trace( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
    AnalysePubSubNotify an( err, mro );

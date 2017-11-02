@@ -172,15 +172,14 @@ public:
     QVector<MonitoredStation *> stationList;
 
     void logMessage( const QString &s );
-    void notifyCallback( bool err, MinosRPCObj *mro, const QString &from );
-    void loggerSubscribeClientCallback( bool err, MinosRPCObj *mro, const QString &from );
+//    void notifyCallback( bool err, MinosRPCObj *mro, const QString &from );
+//    void loggerSubscribeClientCallback( bool err, MinosRPCObj *mro, const QString &from );
 
     void closeTab(MonitoringFrame *tab);
 
 private slots:
     void on_closeButton_clicked();
     void on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );
-    void on_clientCall( bool err, QSharedPointer<MinosRPCObj> , const QString &from );
     void on_serverCall( bool err, QSharedPointer<MinosRPCObj>, const QString &from );
 
     void onStdInRead(QString cmd);

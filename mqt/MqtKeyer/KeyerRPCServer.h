@@ -32,8 +32,8 @@ class KeyerServer:public QObject
       bool getState( const QString &line );
 
 private slots:
-      void keyerCallback(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );
-      void notifyCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
+      void on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );
+      void on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
 };
 extern KeyerServer *KS;
 #endif

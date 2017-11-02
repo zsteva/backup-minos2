@@ -30,8 +30,7 @@ RigControlRpc::RigControlRpc(RigControlMainWindow *parent) : QObject(parent), pa
 
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::rigControlApp);
 
-    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
-    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
     // we aren't subscribing to anything!
@@ -140,12 +139,7 @@ void RigControlRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const Q
    }
 }
 //---------------------------------------------------------------------------
-void RigControlRpc::on_response(bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*/, const QString &/*from*/ )
-{
-   // call back says OK/not OK, and we ignore it
-}
-//---------------------------------------------------------------------------
-void RigControlRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
+void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
     trace("Rig RPC: Rigcontrol callback from " + from + ( err ? ":Error" : ":Normal" ) );
 
@@ -165,12 +159,6 @@ void RigControlRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const 
                 // here you handle what the logger has sent to us
                 trace(QString("Rig RPC: Freq Command From Logger = $1").arg(freq));
                 emit (setFreq(freq));
-
-                QSharedPointer<RPCParam>st(new RPCParamStruct);
-                st->addMember( true, rpcConstants::rigControlResult );
-                mro->clearCallArgs();
-                mro->getCallArgs() ->addParam( st );
-                mro->queueResponse( from );
             }
         }
         else if ( args->getStructArgMember( 0, rpcConstants::rigControlKeyMode, psMode ) )
@@ -182,12 +170,6 @@ void RigControlRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const 
                      // here you handle what the logger has sent to us
                     trace(QString("Rig RPC: Mode Command From Logger = %1").arg(mode));
                     emit (setMode(mode));
-
-                     QSharedPointer<RPCParam>st(new RPCParamStruct);
-                     st->addMember( true, rpcConstants::rigControlResult );
-                     mro->clearCallArgs();
-                     mro->getCallArgs() ->addParam( st );
-                     mro->queueResponse( from );
                  }
         }
         else if ( args->getStructArgMember( 0, rpcConstants::rigControlKeyPBandState, psPBandState ) )
@@ -199,12 +181,6 @@ void RigControlRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const 
                      // here you handle what the logger has sent to us
                     trace(QString("Rig RPC: PassBandState Command From Logger = %1").arg(QString::number(passBandState)));
                     emit (setPassBand(passBandState));
-
-                     QSharedPointer<RPCParam>st(new RPCParamStruct);
-                     st->addMember( true, rpcConstants::rigControlResult );
-                     mro->clearCallArgs();
-                     mro->getCallArgs() ->addParam( st );
-                     mro->queueResponse( from );
                  }
         }
     }

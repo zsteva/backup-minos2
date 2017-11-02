@@ -18,7 +18,6 @@
 //---------------------------------------------------------------------------
 extern bool connected;
 bool XMPPInitialise( const QString &myId );
-bool XMPPClosedown();
 //---------------------------------------------------------------------------
 
 
@@ -26,7 +25,7 @@ class MinosAppConnection:public QObject, RPCDispatcher
 {
     Q_OBJECT
    private:
-      QString jabberId;
+      QString myId;
 
       RPCDispatcher *user_data;
       QSharedPointer<QTcpSocket> sock;
@@ -39,7 +38,7 @@ class MinosAppConnection:public QObject, RPCDispatcher
       bool closeConnection();
 
    public:
-      MinosAppConnection( const QString &jid );
+      MinosAppConnection( const QString &myid );
       ~MinosAppConnection();
 
       static MinosAppConnection *minosAppConnection;
@@ -50,10 +49,7 @@ class MinosAppConnection:public QObject, RPCDispatcher
       virtual void dispatchResponse( XStanza *a );
 
       void sendAction( XStanza *a );
-      void setJid( const QString &jid )
-      {
-         jabberId = jid;
-      }
+
 private slots:
       void on_waitConnectTimeout();
       void on_readyRead();

@@ -36,7 +36,7 @@ void XStanza::setNextId()
    return buff;
 }
 //---------------------------------------------------------------------------
-// RPC actions. NB that calls, events and responses can come from either end!
+// RPC actions. NB that calls and events can come from either end!
 //---------------------------------------------------------------------------
 
 // RPC base action
@@ -169,107 +169,3 @@ QString RPCRequest::analyse()
    return s;
 }
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-// Do an RPC action (normally the receiver!)
-RPCResponse::RPCResponse( const QString &to, const QString &pid , const QString &mname ) :
-      RPCAction( to, "" ), methodName( mname )
-{
-   setId( pid );
-}
-RPCResponse::RPCResponse( const QString &to, const QString &from, const QString &pid , const QString &mname ) :
-      RPCAction( to, from ), methodName( mname )
-{
-   setId( pid );
-}
-RPCResponse::RPCResponse( const QString &from, TiXmlElement *node ) :
-      RPCAction( "", from )
-{
-   // node points to methodResponse
-   methodName = getNodeValue( node, "methodName" );
-
-   TiXmlElement * p = findNode( node, "params" );
-   if ( p )
-   {
-      parseParams( p );
-   }
-   else
-   {
-      TiXmlElement *mf = findNode( node, "fault" );
-      if ( mf )
-      {
-         TiXmlElement * mv = findNode( mf, "value" );
-         if ( mv )
-         {
-            TiXmlElement * ms = findNode( mv, "struct" );
-            if ( ms )
-            {
-               fault = QSharedPointer<RPCParam>(new RPCParamStruct( *ms ));
-            }
-         }
-      }
-   }
-}
-RPCResponse::RPCResponse()
-{}
-RPCResponse::~RPCResponse()
-{
-}
-void RPCResponse::addFault( QSharedPointer<RPCParam>p )
-{
-   fault = p;
-}
-void RPCResponse::addFault( TiXmlElement &node )
-{
-   if ( fault )
-   {
-      TiXmlElement pNode( "fault" );
-      fault->addValue( pNode );
-      RPCArgs xm;
-      xm.addParam( fault );
-      TiXmlElement *pnode = xm.makeParamsNode();
-      node.InsertEndChild( *pnode );
-      delete pnode;
-   }
-}
-// Build up the DOM tree for the action, and send it
-TIXML_STRING RPCResponse::getActionMessage( )
-{
-   TiXmlElement * x = makeIq( "result", "minos:iq:rpc" );
-   if ( to.length() )
-      x->SetAttribute( "to", to.toStdString() );
-   if ( from.length() )
-      x->SetAttribute( "from", from.toStdString() );
-   if ( getId().length() )
-      x->SetAttribute( "id", getId().toStdString() );
-
-   TiXmlElement *q = findNode( x, "query" );
-
-   TiXmlElement mrNode( "methodResponse" );
-   TiXmlElement mNode( "methodName" );
-   TiXmlText tNode( methodName.toStdString() );
-   mNode.InsertEndChild( tNode );
-   mrNode.InsertEndChild( mNode );
-
-   if ( fault )
-      addFault( mrNode );
-   else
-      addParams( mrNode );
-   q->InsertEndChild( mrNode );
-
-   TIXML_STRING s;
-   s << *x;
-   delete x;
-   return s;
-}
-QString RPCResponse::print()
-{
-   QString s = "Response\r\n";
-   if ( fault )
-      s += fault->print();
-
-   s += RPCAction::print();
-   return s;
-}
-//---------------------------------------------------------------------------
-
-

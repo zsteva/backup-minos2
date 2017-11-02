@@ -9,16 +9,15 @@
 /////////////////////////////////////////////////////////////////////////////
 
 
-
-
-#include "rotatorlog.h"
-#include "rotatorCommonConstants.h"
 #include <QFile>
 #include <QDir>
 #include <QFileInfo>
 #include <QtDebug>
 #include <QDateTime>
 #include <QSettings>
+
+#include "rotatorlog.h"
+#include "rotatorCommonConstants.h"
 
 RotatorLog::RotatorLog()
 {

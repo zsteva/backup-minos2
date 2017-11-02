@@ -54,7 +54,6 @@ class MinosRPC: public QObject
     void setAppName(const QString &);
 
     void notifyCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
-    void clientCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
     void serverCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
 
 public:
@@ -73,10 +72,8 @@ public:
 
     void publish( const QString &category, const QString &key, const QString &value, PublishState pState );
 
-
 signals:
     void notify( bool err, QSharedPointer<MinosRPCObj>, const QString &from );
-    void clientCall( bool err, QSharedPointer<MinosRPCObj>, const QString &from );
     void serverCall( bool err, QSharedPointer<MinosRPCObj>, const QString &from );
 private slots:
     void on_connectedTimeout();

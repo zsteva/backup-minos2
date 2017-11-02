@@ -69,7 +69,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     MinosRPC *rpc = MinosRPC::getMinosRPC("Qs1rSync", false);    // DO NOT use the environment variable - use "Chat" everywhere
 
-    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_clientCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
@@ -93,8 +92,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     // and tidy up all loose ends
 
-    MinosRPCObj::clearRPCObjects();
-    XMPPClosedown();
     SyncTimerTimer( );
 
     QWidget::closeEvent(event);
@@ -269,12 +266,6 @@ void MainWindow::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QSt
         }
     }
 }
-//---------------------------------------------------------------------------
-void MainWindow::on_clientCall( bool err, QSharedPointer<MinosRPCObj> /*mro*/, const QString &from )
-{
-   trace( "client callback from " + from + ( err ? ":Error" : ":Normal" ) );
-}
-
 //---------------------------------------------------------------------------
 void MainWindow::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {

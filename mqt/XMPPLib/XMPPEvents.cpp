@@ -9,8 +9,6 @@
 //---------------------------------------------------------------------------
 #include "XMPP_pch.h"
 //---------------------------------------------------------------------------
-
-//---------------------------------------------------------------------------
 void makeXMPPEvent( XStanza *xs )
 {
    // analyse the stanza and produce the correct event
@@ -24,30 +22,11 @@ void makeXMPPEvent( XStanza *xs )
             mro->setCallArgs( *rq );
             mro->id = xs->getId();
 
-            // we should be able to queue response/error response
-            // on mro (request) - how?
             if ( mro->callback )
             {
                 mro->callback->call( false, mro, rq->getFrom() );
             }
         }
-   }
-   else
-   {
-      if ( RPCResponse * rp = dynamic_cast<RPCResponse *>( xs ) )
-      {
-         // RPC response where call was not blocking
-         QSharedPointer<MinosRPCObj> mro = MinosRPCObj::makeClientObj( rp->methodName );
-         if (mro)
-         {
-            mro->id = xs->getId();
-            mro->setCallArgs( *rp );
-            if ( mro->callback )
-            {
-                 mro->callback->call( false, mro, rp->getFrom() );
-            }
-         }
-      }
    }
 }
 

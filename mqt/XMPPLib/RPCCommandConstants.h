@@ -25,6 +25,7 @@ static const QString loggerApp         = QT_TR_NOOP("Logger");
 static const QString monitorApp         = QT_TR_NOOP("Monitor");
 static const QString monitorLogCategory = QT_TR_NOOP("MonitorLog");
 static const QString loggerStanzaRequest = QT_TR_NOOP("Minos:Logger:GetStanza");
+static const QString loggerStanzaResponse = QT_TR_NOOP("Minos:Logger:StanzaReturned");
 
 // bandmap
 static const QString bandmapApp         = QT_TR_NOOP("BandMap");

@@ -31,8 +31,7 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
 
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::chatApp, false);    // DO NOT use the environment variable - use "Chat" everywhere
 
-    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
-    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
     rpc->subscribe(rpcConstants::StationCategory);
@@ -62,8 +61,6 @@ void TMinosChatForm::closeEvent(QCloseEvent *event)
 {
     // and tidy up all loose ends
 
-    MinosRPCObj::clearRPCObjects();
-    XMPPClosedown();
     SyncTimerTimer( );
 
     QWidget::closeEvent(event);
@@ -191,13 +188,7 @@ void TMinosChatForm::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const 
    }
 }
 //---------------------------------------------------------------------------
-
-void TMinosChatForm::on_response( bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*/, const QString & /*from*/ )
-{
-   // call back says OK/not OK
-}
-//---------------------------------------------------------------------------
-void TMinosChatForm::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
+void TMinosChatForm::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
    trace( "chat callback from " + from + ( err ? ":Error" : ":Normal" ) );
 
@@ -220,12 +211,6 @@ void TMinosChatForm::on_request(bool err, QSharedPointer<MinosRPCObj> mro, const
                    // add to chat window
                    QString mess = from + " : " + pmess;
                    addChat( mess );
-
-                   QSharedPointer<RPCParam>st(new RPCParamStruct);
-                   st->addMember( true, rpcConstants::ChatResult );
-                   mro->clearCallArgs();
-                   mro->getCallArgs() ->addParam( st );
-                   mro->queueResponse( from );
                 }
             }
       }

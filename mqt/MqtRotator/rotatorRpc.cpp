@@ -29,8 +29,7 @@ RotatorRpc::RotatorRpc(RotatorMainWindow *parent) : QObject(parent), parent(pare
 
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::rotatorApp);
 
-    connect(rpc, SIGNAL(clientCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_response(bool,QSharedPointer<MinosRPCObj>,QString)));
-    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_request(bool,QSharedPointer<MinosRPCObj>,QString)));
+    connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
     // we aren't subscribing to anything!
@@ -125,12 +124,7 @@ void RotatorRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QStr
    }
 }
 //---------------------------------------------------------------------------
-void RotatorRpc::on_response(bool /*err*/, QSharedPointer<MinosRPCObj> /*mro*/, const QString &/*from*/ )
-{
-   // call back says OK/not OK, and we ignore it
-}
-//---------------------------------------------------------------------------
-void RotatorRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
+void RotatorRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
     trace( "Rot RPC: rotator callback from " + from + ( err ? ":Error" : ":Normal" ) );
 
@@ -150,12 +144,6 @@ void RotatorRpc::on_request( bool err, QSharedPointer<MinosRPCObj>mro, const QSt
                 // here you handle what the logger has sent to us
                 trace(QString("Rot RPC: Direction = %1, Angle = %2").arg(QString::number(direction), QString::number(angle)));
                 emit (setRotation(direction, angle));
-
-                QSharedPointer<RPCParam>st(new RPCParamStruct);
-                st->addMember( true, rpcConstants::rotatorResult );
-                mro->clearCallArgs();
-                mro->getCallArgs() ->addParam( st );
-                mro->queueResponse( from );
             }
         }
     }

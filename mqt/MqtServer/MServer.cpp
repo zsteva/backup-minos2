@@ -76,7 +76,6 @@ bool MinosServer::analyseNode( MinosCommonConnection *il, TiXmlElement *tix )
    }
 
    TiXmlElement *mcall = findNode( query, "methodCall" );
-   TiXmlElement *mresp = findNode( query, "methodResponse" );
    if ( subtype == "set" )
    {
       RPCRequest * xs = new RPCRequest( from.fullId, mcall );
@@ -85,15 +84,6 @@ bool MinosServer::analyseNode( MinosCommonConnection *il, TiXmlElement *tix )
       delete xs;
       return true;
    }
-   else
-      if ( subtype == "result" )
-      {
-         RPCResponse * rr = new RPCResponse( from.fullId, mresp );
-         rr->setId( id );
-         dispatchStanza( il, rr );
-         delete rr;
-         return true;
-      }
    return true;      // which may not be right?
 }
 //---------------------------------------------------------------------------
@@ -116,11 +106,6 @@ void MinosServer::dispatchStanza( MinosCommonConnection *il, RPCRequest *req )
          MinosId id2( fid );
 
          il->setFromId( id2, req );
-
-         RPCResponse * m = new RPCResponse( req->getFrom(), serverName, req->getId(), req->methodName );
-         m->addParam( clientServerName );
-         il->sendAction( m );
-         delete m;
       }
    }
    else if ( req->methodName == "ClientSetFromId" )
@@ -132,19 +117,14 @@ void MinosServer::dispatchStanza( MinosCommonConnection *il, RPCRequest *req )
          MinosId id( from );
 
          QString clientServerName = ( id.server.compare("localhost", Qt::CaseInsensitive ) == 0 ) ? serverName : id.server;
+
          QString fid = QString( id.user ) + "@" + clientServerName;
 
          MinosId id2( fid );
 
          il->setFromId( id2, req );   // don't check the reply
-
-         RPCResponse * m = new RPCResponse( req->getFrom(), serverName, req->getId(), req->methodName );
-         m->addParam( clientServerName );
-         il->sendAction( m );
-         delete m;
       }
    }
-
    else if ( req->methodName == rpcConstants::publish
         || req->methodName == rpcConstants::serverSubscribe
         || req->methodName == rpcConstants::remoteSubscribe
@@ -155,12 +135,6 @@ void MinosServer::dispatchStanza( MinosCommonConnection *il, RPCRequest *req )
       makeXMPPEvent( req );
    }
 }
-//---------------------------------------------------------------------------
-void MinosServer::dispatchStanza( MinosCommonConnection * /*il*/, RPCResponse * /*resp*/ )
-{
-   // really need to go to an RPC Object factory here
-   // response to (?our) RPC call
-   logMessage( "XMPP", "RPCResponse received" );
-}
+
 //---------------------------------------------------------------------------
 

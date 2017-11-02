@@ -144,7 +144,6 @@ void ServerMain::on_CloseButton_clicked()
 {
     logMessage("Server close requested");
     closeApp = true;
-//    LogTimerTimer( );
 }
 void ServerMain::closeEvent(QCloseEvent *event)
 {

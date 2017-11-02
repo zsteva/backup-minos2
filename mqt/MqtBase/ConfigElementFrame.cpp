@@ -68,6 +68,7 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
 
     ui->advancedCheckbox->setChecked(c->showAdvanced);
     ui->enabledCheckbox->setChecked(c->enabled);
+    ui->hideAppCheckBox->setChecked(c->hideApp);
 
     checkEnabled();
 }
@@ -87,6 +88,7 @@ bool ConfigElementFrame::saveElement()
 
     configElement->showAdvanced = ui->advancedCheckbox->isChecked();
     configElement->enabled = ui->enabledCheckbox->isChecked();
+    configElement->hideApp = ui->hideAppCheckBox->isChecked();
 
     configElement->appType = ui->appTypeCombo->currentText();
 
@@ -224,6 +226,7 @@ void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &valu
 
     localOK = ace.localOK;
     remoteOK = ace.remoteOK;
+    ui->hideAppCheckBox->setChecked(ace.defaultHide);
 
     ui->rbRunLocally->setVisible(localOK);
     ui->rbConnectLocal->setVisible(localOK);
@@ -238,4 +241,15 @@ void ConfigElementFrame::on_advancedCheckbox_clicked()
 void ConfigElementFrame::on_enabledCheckbox_clicked()
 {
     checkEnabled();
+}
+
+void ConfigElementFrame::on_hideAppCheckBox_clicked()
+{
+    configElement->hideApp = ui->hideAppCheckBox->isChecked();
+
+    if (configElement->hideApp)
+        configElement->sendCommand("HideServers");
+    else
+        configElement->sendCommand("ShowServers");
+
 }

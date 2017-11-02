@@ -596,53 +596,6 @@ void RPCStringParam::addNode( TiXmlElement &node )
 {
    TiXmlElement vNode( "string" );
 
-   /*
-         QString Out;
-         int nIn = 0;
-      
-         int nInLen = value.size();
-         while ( nIn < nInLen )
-         {
-            switch ( value[ nIn ] )
-            {
-               default:
-                  {
-                     Out += value[ nIn++ ];
-                     break;
-                  }
-               case '&':
-                  {
-                     Out += "&amp;";
-                     nIn++;
-                     break;
-                  }
-      
-               case '>':
-                  {
-                     Out += "&gt;";
-                     nIn++;
-                     break;
-                  }
-      
-               case '<':
-                  {
-                     Out += "&lt;";
-                     nIn++;
-                     break;
-                  }
-      
-               case '\"':
-                  {
-                     Out += "&quot;";
-                     nIn++;
-                     break;
-                  }
-      
-            }
-         }
-         // We need to add XML character escaping here
-         TiXmlText tNode( Out );
-   */
    TiXmlText tNode( value.toStdString().c_str() );
    vNode.InsertEndChild( tNode );
    node.InsertEndChild( vNode );
