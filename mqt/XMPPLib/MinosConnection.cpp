@@ -38,7 +38,6 @@
 MinosAppConnection *MinosAppConnection::minosAppConnection = 0;
 
 bool connected = false;
-static bool terminated = false;
 
 bool XMPPInitialise( const QString &pmyId )
 {
@@ -60,25 +59,6 @@ bool XMPPInitialise( const QString &pmyId )
 
    MinosAppConnection::minosAppConnection->startConnection();
 
-   return true;
-}
-//---------------------------------------------------------------------------
-bool XMPPClosedown()
-{
-   // signal to close down all boilerplate threads
-
-   terminated = true;
-
-   if ( MinosAppConnection::minosAppConnection )
-   {
-      // wait for XMPP and Request threads to finish
-      MinosAppConnection::minosAppConnection->closeDaemonThread();
-
-      MinosAppConnection::minosAppConnection->deleteLater();
-      MinosAppConnection::minosAppConnection = 0;
-   }
-
-   RPCPubSub::close();
    return true;
 }
 //---------------------------------------------------------------------------
