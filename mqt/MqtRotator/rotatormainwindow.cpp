@@ -286,8 +286,6 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
 RotatorMainWindow::~RotatorMainWindow()
 {
-    stop_rotation();
-    closeRotator();
 
     delete msg;
     delete ui;
@@ -311,12 +309,17 @@ void RotatorMainWindow::onStdInRead(QString cmd)
 
 void RotatorMainWindow::closeEvent(QCloseEvent *event)
 {
+
+
+    closeRotator();
+
     // and tidy up all loose ends
 
     QSettings settings;
     settings.setValue(geoStr, saveGeometry());
     trace("MinosRotator Closing");
     QWidget::closeEvent(event);
+
 }
 
 
@@ -480,6 +483,10 @@ void RotatorMainWindow::openRotator()
 
 void RotatorMainWindow::closeRotator()
 {
+    if (moving || movingCW || movingCCW)
+    {
+        stop_rotation();
+    }
     rotator->closeRotator();
     showStatusMessage(tr("Disconnected"));
     sendStatusToLogDisConnected();

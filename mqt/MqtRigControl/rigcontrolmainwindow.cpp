@@ -136,7 +136,6 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 RigControlMainWindow::~RigControlMainWindow()
 {
 
-    closeRadio();
     delete ui;
     delete msg;
 }
@@ -163,8 +162,8 @@ void RigControlMainWindow::LogTimerTimer()
 
 void RigControlMainWindow::closeEvent(QCloseEvent *event)
 {
-    sendStatusToLogDisConnected();
-    radio->closeRig();
+
+    closeRadio();
 
     // and tidy up all loose ends
 
