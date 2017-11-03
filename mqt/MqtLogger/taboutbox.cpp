@@ -14,7 +14,7 @@ QString welcomeText = QString("<br><h1>Welcome to Minos Version ") + VERSION + "
 
 QString creditsText = QString("<br><h2>Credits</h2>"
                               "<br>Mike Goodey G0GJV; David Balharrie M0DGB/G8FKH; Neil Yorke M0NKE"
-                              "<br>Dave Sergeant G3YMC; Ken Punshon G4APJ"
+                              "<br>Dave Sergeant G3YMC; Peter Burton G3ZPB, Ken Punshon G4APJ"
                               "<br><br>");
 QString MinosText =
    "The Inferno, Dante, (trans Dorothy L Sayers, Penguin Classics); Canto 5.\r\n"
