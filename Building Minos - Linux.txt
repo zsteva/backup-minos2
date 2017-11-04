@@ -28,7 +28,7 @@ git clone git://git.code.sf.net/p/minos/minos Minos2
 cd Minos2
 sudo ./tools.sh 
 
-cd mqt/installer
+cd mqt/Installer
 ./buildInstall.sh
 
 

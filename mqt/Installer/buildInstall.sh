@@ -4,7 +4,7 @@ cd ~/Minos2
 
 git pull origin master
 
-if [! -d ./minos-runtime ]; then
+if [! -d ./build ]; then
    mkdir build
 fi
 
@@ -12,7 +12,7 @@ cd build
 
 qmake.exe ..\mqt\mqt.pro
 
-mingw32-make release
+make release
 
 
 
