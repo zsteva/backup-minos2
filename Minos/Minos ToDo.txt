@@ -1,43 +1,22 @@
-keyer and Control - remove from windows version; have different AppConfig.ini
-for Windows and Linux, copy over the correct one in buildscript
+//===========================================================================
+Stewart Wilkinson It does not like a couple of the older Minos Files - ones that I manged to save that have an extra dot in the filename instead of a comma (like 5.8GHz instead of 5,8GHz)
+Like · Reply · 1 · 17 hrs
+Remove
+Mike Goodey
+Mike Goodey Stewart Wilkinson Can you zip and send me those files, so I can see what is happening please?
+Like · Reply · 5 hrs
+Manage
+Stewart Wilkinson
+Stewart Wilkinson Mike - I just renamed them to replace the decimal point with a comma and they load fine - the message was something about being the wrong file.
+Like · Reply · 4 hrs
+Remove
+Stewart Wilkinson
+Stewart Wilkinson Message is 'Not a known file type (.7 GHz.Minos)
+Like · Reply · 4 hrs
+Remove
 //=============================================================================
-Catch-up - do it all on the main screen.
-
-(in response to Kens instructions) Thanks, I can now reproduce.
-
-Not sure I can fix it properly in the short term though. I need to do 
-quite  a bit of re-writing for that!
-
-What I CAN do is limit what can be done in catchup: 
-
-Stop you editting the sent serial number in catchup - so this will only 
-be possible on the "main" entry screen; otherwise you will need to 
-repeatedly insert before/after from an edit dialog. I can allow 
-changing the number, but not filling in extra values.
-
-I need to test if insert before/after, and next/prior with following 
-insert before/after will still work.
-
-What it really means is that catchup has to be a simple linear sequence 
-of additions; if you get it wrong, come out of catchup and use "normal" 
-QSO editting until you get it straight, and then go back to catchup.
-
-What do you think? 
-
-Thinking out loud, and longer term (post 0.7, anyway!), NOT using a 
-separate dialog for catchup would be ideal, and fix the coding 
-problems.
-
-I'm not sure why I don't do this anyway - I think all it needs is to 
-make the date/time editable, go to the time first rather than the 
-callsign, and have a "end catchup" button.
-
+Server needs to be auto configured if required and not present
 //=============================================================================
-OK/Cancel/Save/exit on apps/appstarter. 
-Apps - <None> should be <Default> and have all apps present
-
-Linux build (mainly for Ian)
-Pi build?
 //=============================================================================
 Still to do from Ken's points
 

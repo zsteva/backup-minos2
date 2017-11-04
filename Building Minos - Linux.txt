@@ -15,17 +15,15 @@ where the default oS is similar enough to Ubuntu. There shouldn't be any
 problem with other variants, but all the package stuff may be different.
 
 
+If git isn't installed, you need to install it:
+
 sudo apt-get install git
 
 
 Go to your home directory and check out Minos
 
+git clone git://git.code.sf.net/p/minos/minos Minos2
 
-git clone https://git.code.sf.net/p/minos/minos Minos2
-
-If git isn't installed, you need to install it:
-
-then you need to make sure all the pre-requesites are installed:
 
 cd Minos2
 sudo ./tools.sh 
@@ -41,6 +39,9 @@ should be set up, just hit "Configure Project".
 
 You may need to use "Manage Kits" to set up the GCC compiler from /usr/bin/gcc
 and to choose system gdb at usr/bin/gdb
+
+Make sure that the "computer" icon near bottom left shows "mqt" and "release" 
+If not click the right arrow and select "release" under "build"
 
 Build - the hammer icon at bottom left. This should run to completion, with a 
 few warnings. On a Pi, this will take literally hours, so be warned.
