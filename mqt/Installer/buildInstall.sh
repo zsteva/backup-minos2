@@ -4,17 +4,17 @@ cd ~/Minos2
 
 git pull origin master
 
-if [! -d ./build ]; then
+if [ ! -d ./build ]; then
    mkdir build
 fi
 
 cd build
 
-qmake.exe ..\mqt\mqt.pro
+qmake ../mqt/mqt.pro
 
-make release
+make
 
-
+cd ../..
 
 if [ -d ./minos-runtime ]; then
   rm -rf ./minos-runtime
@@ -29,15 +29,15 @@ mkdir Lists
 mkdir Logs
 mkdir Bin
 
-cp ~/Minos2/build-mqt-Desktop-Release/MqtAppStarter/MqtAppStarter Bin
-cp ~/Minos2/build-mqt-Desktop-Release/MqtChat/MqtChat Bin
-cp ~/Minos2/build-mqt-Desktop-Release/MqtControl/MqtControl Bin
-cp ~/Minos2/build-mqt-Desktop-Release/MqtKeyer/MqtKeyer Bin
-cp ~/Minos2/build-mqt-Desktop-Release/MqtLogger/MqtLogger Bin
-cp ~/Minos2/build-mqt-Desktop-Release/MqtMonitor/MqtMonitor Bin
-cp ~/Minos2/build-mqt-Desktop-Release/MqtRigControl/MqtRigControl Bin
-cp ~/Minos2/build-mqt-Desktop-Release/MqtRotator/MqtRotator Bin
-cp ~/Minos2/build-mqt-Desktop-Release/MqtServer/MqtServer Bin
+cp ~/Minos2/build/MqtAppStarter/MqtAppStarter Bin
+cp ~/Minos2/build/MqtChat/MqtChat Bin
+cp ~/Minos2/build/MqtControl/MqtControl Bin
+cp ~/Minos2/build/MqtKeyer/MqtKeyer Bin
+cp ~/Minos2/build/MqtLogger/MqtLogger Bin
+cp ~/Minos2/build/MqtMonitor/MqtMonitor Bin
+cp ~/Minos2/build/MqtRigControl/MqtRigControl Bin
+cp ~/Minos2/build/MqtRotator/MqtRotator Bin
+cp ~/Minos2/build/MqtServer/MqtServer Bin
 
 cp ~/Minos2/mqt/ControlFiles/Configuration/* ./Configuration
 cp ~/Minos2/mqt/ControlFiles/Configuration/LinuxFiles/* ./Configuration
