@@ -77,4 +77,4 @@ Having built once, if you wish to "catch up" with the current bleeding edge stat
 
 C:\Projects\Minos2\mqt\Installer\buildInstall.bat
 
-again.
+again. NB that if THAT file has changed, you'll then need to do it all again!

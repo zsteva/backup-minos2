@@ -28,28 +28,14 @@ git clone git://git.code.sf.net/p/minos/minos Minos2
 cd Minos2
 sudo ./tools.sh 
 
-Run QtCreator using
+cd mqt/installer
+./buildInstall.sh
 
-qtcreator
 
-Open ~/Minos2/mqt/mqt.pro; first time you may need to configure it - everything 
-should be set up, just hit "Configure Project".
-
-"Release"
-
-You may need to use "Manage Kits" to set up the GCC compiler from /usr/bin/gcc
-and to choose system gdb at usr/bin/gdb
-
-Make sure that the "computer" icon near bottom left shows "mqt" and "release" 
-If not click the right arrow and select "release" under "build"
-
-Build - the hammer icon at bottom left. This should run to completion, with a 
-few warnings. On a Pi, this will take literally hours, so be warned.
-
-To get a runnable system, run ~/Minos2/mqt/Installer/buildInstall.sh
-
-which will put a runnable system into ~/minos-runtime.
+which will update to the latest version of Minos, build it, and put a runnable system into ~/minos-runtime.
 
 To run it, from the command line type
 
 ~/minos-runtime/Minos.sh &
+
+To update and buid again, repeat from after "git clone"

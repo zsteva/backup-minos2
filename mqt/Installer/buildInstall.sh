@@ -1,6 +1,20 @@
 #! /bin/bash
 
-cd ~
+cd ~/Minos2
+
+git pull origin master
+
+if [! -d ./minos-runtime ]; then
+   mkdir build
+fi
+
+cd build
+
+qmake.exe ..\mqt\mqt.pro
+
+mingw32-make release
+
+
 
 if [ -d ./minos-runtime ]; then
   rm -rf ./minos-runtime
