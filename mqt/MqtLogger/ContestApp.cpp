@@ -121,8 +121,13 @@ bool TContestApp::initialise()
       {
          QDir::setCurrent(fpath);
       }
-      while (!DirectoryExists("./Configuration"))
+      int confTries = 0;
+      while (!DirectoryExists("./Configuration") )
       {
+          if (confTries++ > 5)
+          {
+              exit(-1);
+          }
          QString destDir = QFileDialog::getExistingDirectory(
                        0,
                        "Set Minos Working Directory",
