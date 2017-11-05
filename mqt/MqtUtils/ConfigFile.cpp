@@ -431,7 +431,7 @@ Server=false
 QString MinosConfig::checkConfig()
 {
     QString reqErrs;
-
+/*
     bool serverPresent = false;
     for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
     {
@@ -442,7 +442,7 @@ QString MinosConfig::checkConfig()
             break;
         }
     }
-
+*/
     //Check that the name is not blank, and only has allowed characters
     //Check that the names aren't duplicates
 
@@ -451,7 +451,7 @@ QString MinosConfig::checkConfig()
     {
         QSharedPointer<RunConfigElement> ele = (*i);
 
-        if (ele->enabled && ele->runType == RunLocal)
+        if (ele->enabled)
         {
             if ( ele->requires.size() > 0)
             {
@@ -464,7 +464,7 @@ QString MinosConfig::checkConfig()
                     bool reqFound = false;
                     for ( QVector <QSharedPointer<RunConfigElement> >::iterator j = elelist.begin(); j != elelist.end(); j++ )
                     {
-                        if ((*j)->appType == req)
+                        if ((*j)->appType == req && (*j)->enabled)
                         {
                             reqFound = true;
                             continue;
@@ -478,24 +478,29 @@ QString MinosConfig::checkConfig()
             }
 
 
-            if (!FileExists(ele->commandLine))
+            if (ele->runType == RunLocal)
             {
-                reqErrs += ele->appType + " Executable path does not exist\n\n";
-            }
-            if (ele->appType != "None" && !FileExists(ele->rundir + "/Configuration/MinosConfig.ini"))
-            {
-                reqErrs += ele->appType + " Working directory is not valid - no Configuration/MinosConfig.ini\n\n";
+                if (!FileExists(ele->commandLine))
+                {
+                    reqErrs += ele->appType + " Executable path does not exist\n\n";
+                }
+                if (ele->appType != "None" && !FileExists(ele->rundir + "/Configuration/MinosConfig.ini"))
+                {
+                    reqErrs += ele->appType + " Working directory is not valid - no Configuration/MinosConfig.ini\n\n";
+                }
             }
         }
-        if (ele->enabled && ele->runType == ConnectServer)
+        /*
+        if (ele->enabled)
         {
             // Server must be present
             if (!serverPresent)
             {
                 // Server required
-                reqErrs += ele->appType + " requires a local Server\n\n";
+                reqErrs += (ele->appType + " requires a local Server\n\n");
             }
         }
+        */
     }
     return reqErrs;
 }

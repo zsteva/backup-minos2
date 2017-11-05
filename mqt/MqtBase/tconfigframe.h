@@ -39,6 +39,13 @@ private slots:
 
     void on_newElementButton_clicked();
 
+    void afterFrameShown();
+signals:
+    void frameShown();
+
+protected:
+    virtual void showEvent(QShowEvent *ev);
+
 private:
     Ui::TConfigFrame *ui;
     QWidget *parent;
