@@ -1888,17 +1888,26 @@ void QSOLogFrame::showScreenContactTime()
 }
 void QSOLogFrame::getScreenRigData()
 {
-    if (!edit && !catchup)
+    if (!edit && !catchup && isRadioLoaded())
     {
         screenContact.rigName = curRadioName;
         screenContact.frequency = curFreq;
     }
+    else
+    {
+        screenContact.rigName.clear();
+        screenContact.frequency.clear();
+    }
 }
 void QSOLogFrame::getscreenRotatorData()
 {
-    if (!edit && !catchup)
+    if (!edit && !catchup && isRotatorLoaded())
     {
         screenContact.rotatorHeading = curRotatorBearing;
+    }
+    else
+    {
+        screenContact.rotatorHeading.clear();
     }
 }
 
