@@ -49,7 +49,7 @@ QString ExtractFileName(const QString &fname )
 QString ExtractFileExt( const QString &fname )
 {
     QFileInfo finf( fname );
-    return ( "." + finf.completeSuffix() );
+    return ( "." + finf.suffix() );
 }
 #ifdef Q_OS_WIN
 extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
