@@ -1928,39 +1928,37 @@ void QSOLogFrame::logCurrentContact( )
 
       if ( mShowYesNoMessage( this, "\"Serial sent\" is too high - please confirm that this is correct?") )
       {
-          dtg ctTime(screenContact.time);
-          QSharedPointer<BaseContact> pct = contest->pcontactAt(contest->getContactCount() - 1);
-          if ( pct )
-          {
-             ctTime = pct->time;
-          }
-          else
-          {
-             // use contest start time
-             QDateTime DTGStart = CanonicalToTDT(contest->DTGStart.getValue());
-             QString d = DTGStart.toString("dd/MM/yy");
-             QString t = DTGStart.toString("hh:mm");
-             ctTime.setDate( d, DTGDISP );
-             ctTime.setTime( t.left(5), DTGDISP );
-          }
-
-         int orflag = 0;
-
          if ( mShowYesNoMessage( this, "Do you want to enter the missing contacts later?" ) )
          {
-            orflag = TO_BE_ENTERED;
-         }
+             dtg ctTime(screenContact.time);
+             QSharedPointer<BaseContact> pct = contest->pcontactAt(contest->getContactCount() - 1);
+             if ( pct )
+             {
+                ctTime = pct->time;
+             }
+             else
+             {
+                // use contest start time
+                QDateTime DTGStart = CanonicalToTDT(contest->DTGStart.getValue());
+                QString d = DTGStart.toString("dd/MM/yy");
+                QString t = DTGStart.toString("hh:mm");
+                ctTime.setDate( d, DTGDISP );
+                ctTime.setTime( t.left(5), DTGDISP );
+             }
 
-         int nct_no = contest->maxSerial + 1;
-         do
-         {
-            // last child is "current contact", and we need to add TO IT
-            LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-            QString currmode = ui->ModeComboBoxGJV->currentText();
-            ct->addContact( nct_no, orflag, true, false, currmode, ctTime ); // last contact
-            nct_no++;
+             int orflag = TO_BE_ENTERED;
+
+             int nct_no = contest->maxSerial + 1;
+             do
+             {
+                // last child is "current contact", and we need to add TO IT
+                LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+                QString currmode = ui->ModeComboBoxGJV->currentText();
+                ct->addContact( nct_no, orflag, true, false, currmode, ctTime ); // last contact
+                nct_no++;
+             }
+             while ( nct_no < ctno ) ;
          }
-         while ( nct_no < ctno ) ;
       }
       else
       {
