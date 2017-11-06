@@ -331,18 +331,20 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest )
     {
         ui->radioDetailsFrame->setVisible(true);
         ui->EditFrame->setVisible(true);
+        ui->SerTXEdit->setStyleSheet(ssLineEditOK);
+        widgetStyles[ui->SerTXEdit] = ssLineEditOK;
     }
     else
     {
         ui->radioDetailsFrame->setVisible(false);
         ui->EditFrame->setVisible(false);
+        ui->SerTXEdit->setStyleSheet(ssLineEditGreyBackground);
+        widgetStyles[ui->SerTXEdit] = ssLineEditGreyBackground;
     }
 
     updateQSODisplay();
     refreshOps();
 
-    ui->SerTXEdit->setStyleSheet(ssLineEditGreyBackground);
-    widgetStyles[ui->SerTXEdit] = ssLineEditGreyBackground;
 
     current = 0;
     updateTimeAllowed = true;
@@ -456,12 +458,11 @@ void QSOLogFrame::SecondOpComboBox_Exit()
 
 void QSOLogFrame::on_GJVOKButton_clicked()
 {
-    ui->SerTXEdit->setReadOnly(true);
-
     if ( contest->isReadOnly() )
     {
        return;
     }
+    ui->SerTXEdit->setReadOnly(!edit);
 
     getScreenEntry(); // make sure it is saved
 
@@ -631,7 +632,7 @@ void QSOLogFrame::on_GJVForceButton_clicked()
     {
        return;
     }
-    ui->SerTXEdit->setReadOnly(true);
+    ui->SerTXEdit->setReadOnly(!edit);
 
     if (dlgForced())
         emit QSOFrameCancelled();
@@ -706,7 +707,7 @@ void QSOLogFrame::doGJVCancelButton_clicked()
     }
     else
     {
-        ui->SerTXEdit->setReadOnly(true);
+        ui->SerTXEdit->setReadOnly(!edit);
 
         ScreenContact *temp = 0;
         if ( !partialContact )
@@ -775,7 +776,7 @@ void QSOLogFrame::mouseDoubleClickEvent(QObject *w)
     {
         ui->SerTXEdit->setReadOnly(false);
     }
-    if (edit && w == ui->TimeEdit)
+    if (edit && (w == ui->TimeEdit || w == ui->DateEdit))
     {
         ui->TimeEdit->setReadOnly(false);
         ui->DateEdit->setReadOnly(false);
@@ -907,7 +908,7 @@ void QSOLogFrame::showScreenEntry( void )
       else
          selectField( 0 );
 
-      ui->SerTXEdit->setReadOnly(true);
+      ui->SerTXEdit->setReadOnly(!edit);
       MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest, baseName);
    }
 }
@@ -944,7 +945,7 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
    {
       return;
    }
-   ui->SerTXEdit->setReadOnly(true);
+   ui->SerTXEdit->setReadOnly(!edit);
 
    ui->TimeEdit->setReadOnly(!edit && !catchup);
    ui->DateEdit->setReadOnly(!edit && !catchup);
@@ -1149,7 +1150,7 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
     for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
    {
         QString ss = ssLineEditOK;
-        if ((*vcp) == ssIl)
+        if (!edit && (*vcp) == ssIl)
             ss = ssLineEditGreyBackground;
 
         if ( !( *vcp ) ->valid( command, screenContact ) )
@@ -2139,7 +2140,7 @@ void QSOLogFrame::sortUnfilledCatchupTime( )
             }
         }
     }
-    else
+    else if (!edit)
     {
         ui->TimeEdit->setReadOnly(true);
         ui->DateEdit->setReadOnly(true);
@@ -2163,7 +2164,7 @@ void QSOLogFrame::selectEntryForEdit( QSharedPointer<BaseContact> slct )
    ui->MainOpComboBox->setCurrentText(screenContact.op1);
    ui->SecondOpComboBox->setCurrentText(screenContact.op2);
    sortUnfilledCatchupTime();
-   ui->SerTXEdit->setReadOnly(true);
+   ui->SerTXEdit->setReadOnly(!edit);
 
    int tne = screenContact.time.notEntered(); // partial dtg will give +fe
    // full dtg gives -ve, none gives 0
