@@ -35,9 +35,9 @@ class MinosServerConnection: public MinosCommonConnection
       {
          return true;
       }
-      virtual bool setFromId( MinosId &from, RPCRequest *req );
+      virtual void setFromId( MinosId &from, RPCRequest *req );
 
-      virtual bool mConnect( Server *srv );
+      virtual void mConnect( Server *srv );
       virtual void sendAction( XStanza *a );
       virtual QString getIdentity()
       {

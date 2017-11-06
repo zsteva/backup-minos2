@@ -75,14 +75,11 @@ class MinosCommonConnection: public QObject
 
       virtual void analyseNode( TiXmlElement *pak );
       virtual bool tryForwardStanza( TiXmlElement *pak );
-      virtual void sendError( TiXmlElement *pak, const char *type, const char *defined_condition );
       virtual void sendAction( XStanza *a );
 
       virtual bool isServer() = 0;
       virtual bool checkFrom( TiXmlElement *pak ) = 0;
-      virtual bool setFromId( MinosId &from, RPCRequest *req ) = 0;
-
-      bool CheckLocalConnection();
+      virtual void setFromId( MinosId &from, RPCRequest *req ) = 0;
 
       virtual bool checkServer( const MinosId &s )
       {

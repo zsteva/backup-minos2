@@ -77,36 +77,6 @@ int MinosListener::getConnectionCount()
 {
     return i_array.size();
 }
-bool MinosListener::isServerConnection( const MinosId &s )
-{
-   for ( CommonIterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      if ( ( *i ) ->checkServer( s ) )
-      {
-         return false;
-      }
-      if ( ( *i ) -> checkServer( s ) )
-      {
-         return true;
-      }
-   }
-   return false;
-}
-bool MinosListener::isClientConnection( const MinosId &s )
-{
-   for ( CommonIterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      if ( ( *i ) ->checkUser( s ) )
-      {
-         return true;
-      }
-      if ( ( *i ) -> checkServer( s ) )
-      {
-         return false;
-      }
-   }
-   return false;
-}
 //==============================================================================
 // Check for activity on the sockets
 
@@ -158,19 +128,6 @@ void MinosListener::clearSockets()
       }
       i_array.clear();
 }
-bool MinosListener::checkServerConnection( const QString &sname )
-{
-   for ( CommonIterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      if ( ( *i ) ->checkServer( sname ) )
-      {
-         return true;               // we only need ONE that is right...
-      }
-   }
-   return false;
-}
-
-//==============================================================================
 //==============================================================================
 
 MinosCommonConnection *MinosServerListener::makeConnection(QTcpSocket *s)
@@ -181,70 +138,61 @@ MinosCommonConnection *MinosServerListener::makeConnection(QTcpSocket *s)
     return c;
 }
 
-bool MinosServerListener::sendServer( MinosCommonConnection *il, TiXmlElement *tix )
+bool MinosServerListener::sendServer( TiXmlElement *tix )
 {
-   MinosId to( getAttribute( tix, "to" ) );
+    MinosId to( getAttribute( tix, "to" ) );
 
-   if ( to.server.size() == 0 )
-      return false;
-   if ( to.server.compare( MinosServer::getMinosServer() ->getServerName(), Qt::CaseInsensitive) == 0 )
-      return false;
-   if ( to.server.compare( DEFAULT_SERVER_NAME, Qt::CaseInsensitive ) == 0 )
-      return false;
+    if ( to.server.size() == 0 )
+        return false;
+    if ( to.server.compare( MinosServer::getMinosServer() ->getServerName(), Qt::CaseInsensitive) == 0 )
+        return false;
+    if ( to.server.compare( DEFAULT_SERVER_NAME, Qt::CaseInsensitive ) == 0 )
+        return false;
 
-   // OK, it is not for us... look at connected servers
+    // OK, it is not for us... look at connected servers
 
-   bool connectSocket = false;
-   for ( CommonIterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      if ( ( *i ) ->checkServer( to ) && (*i) ->isTxConnection() )
-      {
-         if ( !( *i ) ->tryForwardStanza( tix ) )
-         {
-            connectSocket = false;
-            break;
-         }
-         return true;
-      }
-   }
-   // send failed; stash the message and initiate a server connection
-   // (but some stanza types should be ignored?)
-   if ( connectSocket && MinosServer::getMinosServer() ->getServerName() != DEFAULT_SERVER_NAME )
-   {
-      // We need to look at the servers vector, and try to find the relevant one
-      // If we can't find it, we refuse anyway
+    bool connectSocket = false;
+    for ( CommonIterator i = i_array.begin(); i != i_array.end(); i++ )
+    {
+        if ( ( *i ) ->checkServer( to ) && (*i) ->isTxConnection() )
+        {
+            if ( !( *i ) ->tryForwardStanza( tix ) )
+            {
+                connectSocket = false;
+                break;
+            }
+            return true;
+        }
+    }
+    // send failed; stash the message and initiate a server connection
+    // (but some stanza types should be ignored?)
+    if ( connectSocket && MinosServer::getMinosServer() ->getServerName() != DEFAULT_SERVER_NAME )
+    {
+        // We need to look at the servers vector, and try to find the relevant one
+        // If we can't find it, we refuse anyway
 
-      Server * srv = findStation( to.server );
-      if ( srv )
-      {
-         // set ourselves up to connect
-         MinosServerConnection * s = new MinosServerConnection();
-         if ( s->mConnect( srv ) )
-         {
+        Server * srv = findStation( to.server );
+        if ( srv )
+        {
+            // set ourselves up to connect
+            MinosServerConnection * s = new MinosServerConnection();
+            s->mConnect( srv );
             connectFreeSlot( s );
             // and we need to TRY to resend
             if (!s ->tryForwardStanza( tix ))
             {
-               connectSocket = false;
+                connectSocket = false;
             }
             return true;
-         }
-         else
-         {
-            delete s;
 
             // and continue to refuse the message
-         }
-      }
-   }
+        }
+    }
 
-   // server is not connected; REFUSE the message.
+// server is not connected; ignore the message.
+// The originator should retry sometime later to send message again
 
-   // The originator should retry sometime later to send message again
-
-   if ( il )
-      il->sendError( tix, "retry", "item-not-found" );  // deletes pak
-   return true;   // don't pass it on - either we have dealt with it, or its not useful
+return true;   // don't pass it on - either we have dealt with it, or its not useful
 }
 void MinosServerListener::checkServerConnected( Server *srv, bool force )
 {
@@ -264,10 +212,8 @@ void MinosServerListener::checkServerConnected( Server *srv, bool force )
    if (force || srv->autoReconnect)
    {
       MinosServerConnection * s = new MinosServerConnection();
-      if ( s->mConnect( srv ) )
-         connectFreeSlot( s );
-      else
-         delete s;
+      s->mConnect( srv );
+      connectFreeSlot( s );
    }
 }
 
@@ -305,7 +251,7 @@ MinosCommonConnection *MinosClientListener::makeConnection(QTcpSocket *s)
     return c;
 }
 //==============================================================================
-bool MinosClientListener::sendClient( MinosCommonConnection *il, TiXmlElement *tix )
+bool MinosClientListener::sendClient( TiXmlElement *tix )
 {
    MinosId from( getAttribute( tix, "from" ) );
    MinosId to( getAttribute( tix, "to" ) );
@@ -353,8 +299,6 @@ bool MinosClientListener::sendClient( MinosCommonConnection *il, TiXmlElement *t
 
    if ( !addressOK )
    {
-      if ( il )
-         il->sendError( tix, "cancel", "invalid-addressing" );  // deletes pak
       return true;   // don't pass it on - its not useful
    }
 
@@ -363,7 +307,7 @@ bool MinosClientListener::sendClient( MinosCommonConnection *il, TiXmlElement *t
    for ( CommonIterator i = i_array.begin(); i != i_array.end(); i++ )
    {
       // worry about the details
-      if ( ( *i ) ->checkUser( to ) )
+      if ((*i) && ( *i ) ->checkUser( to ) )
       {
          if ( !( *i ) ->tryForwardStanza( tix ) )
          {
@@ -374,10 +318,8 @@ bool MinosClientListener::sendClient( MinosCommonConnection *il, TiXmlElement *t
          return true;
       }
    }
-   // client is not connected; we have to ignore it (send an error)
+   // client is not connected; we have to ignore it
 
-   if ( il )
-      il->sendError( tix, "cancel", "item-not-found" );
    return true;   // don't pass it on - either we have dealt with it, or its not useful
 }
 bool MinosClientListener::checkStillClientConnection( const QString &s )

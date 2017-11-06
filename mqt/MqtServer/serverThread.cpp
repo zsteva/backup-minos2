@@ -56,7 +56,7 @@ bool MinosServerConnection::checkFrom( TiXmlElement *tix )
    return true;
 }
 
-bool MinosServerConnection::mConnect( Server *psrv )
+void MinosServerConnection::mConnect( Server *psrv )
 {
    srv = psrv;
    clientServer = srv->station;
@@ -72,7 +72,6 @@ bool MinosServerConnection::mConnect( Server *psrv )
     connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_readyRead()));
     sock->connectToHost(srv->host, srv->port);
     txConnection = true;
-   return true;
 }
 void MinosServerConnection::on_connected()
 {
@@ -86,19 +85,19 @@ void MinosServerConnection::on_connected()
 }
 
 //==============================================================================
-bool MinosServerConnection::setFromId( MinosId &id, RPCRequest *req )
+void MinosServerConnection::setFromId( MinosId &id, RPCRequest *req )
 {
    resubscribed = false;
    // and we need to check that the originator is who we think they ought to be
    if ( !id.server.size() )
    {
       logMessage( "ServerSetFromId", "No \"from\" from server " + srv->station );
-      return false;
+      return;
    }
    if ( srv && srv->station.compare( id.server, Qt::CaseInsensitive) != 0 )
    {
       logMessage( "ServerSetFromId", "Mismatch from server " + srv->station + " we received \"" + id.server + "\"" );
-      return false;
+      return;
    }
 
    if ( !srv )
@@ -126,8 +125,6 @@ bool MinosServerConnection::setFromId( MinosId &id, RPCRequest *req )
       logMessage( "ServerSetFromId", QString( "server " ) + id.server + " connected to us - srv already set up as " + srv->station );
    }
    clientServer = id.server;
-
-   return true;
 }
 //==============================================================================
 void MinosServerConnection::sendAction( XStanza *a )
