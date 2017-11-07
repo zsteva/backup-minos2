@@ -1498,8 +1498,19 @@ void RotatorMainWindow::stopRotation(bool sendStop)
     stopCmdflag = true;
     if (sendStop)
     {
-        retCode = rotator->stop_rotation();
-        logMessage(QString("Stop cmd sent to rotator - retcode = %1").arg(QString::number(retCode)));
+        // if it is a Prosistel Rotator - to stop use rotate_to_bearing = 999
+        if (selectRotator->currentAntenna.rotatorModelNumber == 1701)
+        {
+            logMessage("Stop Rotation: Prosistel Rotator");
+            //retCode = rotator->rotate_to_bearing(999);
+
+        }
+        else
+        {
+            retCode = rotator->stop_rotation();
+            logMessage(QString("Stop cmd sent to rotator - retcode = %1").arg(QString::number(retCode)));
+        }
+
         if (retCode < 0)
         {
             hamlibError(retCode, "Stop Rotation");
