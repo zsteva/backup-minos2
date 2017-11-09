@@ -62,9 +62,9 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     initRigFrame(parent);
 
     initRunMemoryButton();
-    initPassBandRadioButtons();
 
-    //setRxPBFlag("set");
+
+
     mgmLabelVisible(false);
 
     // init memory button data before radio connection
@@ -114,7 +114,7 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
 {
 
     ui->modelbl->setText(MODE_ERROR);
-    //ui->normalRb->setChecked(true);
+
     //connect(ui->freqInput, SIGNAL(lostFocus()), this, SLOT(exitFreqEdit()));
     connect(ui->freqInput, SIGNAL(returnPressed()), this, SLOT(returnChangeRadioFreq()));
     connect(ui->freqInput, SIGNAL(newFreq()), this, SLOT(changeRadioFreq()));
@@ -129,7 +129,7 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
 
     connect(ui->bandSelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(radioBandFreq(int)));
 
-    //setRxPBFlag("set");
+
 
     if (!isRadioLoaded())
     {
@@ -308,27 +308,6 @@ void RigControlFrame::exitFreqEdit()
     ui->freqInput->clearFocus();
 }
 
-void RigControlFrame::initPassBandRadioButtons()
-{
-    //curpbState = hamlibData::NOR;
-    pBandButton[0] = ui->narRb;
-    pBandButton[1] = ui->normalRb;
-    pBandButton[2] = ui->wideRb;
-
-    // map passband radio button
-
-    QSignalMapper *passBand_mapper = new QSignalMapper(this);
-
-    for (int i = 0; i < 3; i++ )
-    {
-        passBand_mapper->setMapping(pBandButton[i], i);
-        connect(pBandButton[i], SIGNAL(clicked()), passBand_mapper, SLOT(map()));
-
-    }
-    connect(passBand_mapper, SIGNAL(mapped(int)), this, SLOT(passBandRadioSelected(int)));
-
-
-}
 
 
 
@@ -365,11 +344,6 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
                 sendModeToRadio(m.mode);
             }
 
-
-            if (m.pBandState != curpbState[calcMinosMode(m.mode)])
-            {
-                sendPassBandStateToControl(m.pBandState);
-            }
         }
     }
     else
@@ -389,7 +363,6 @@ void RigControlFrame::getDetails(memoryData::memData &logData)
     logData.freq = curFreq;
     logData.locator = sc.loc.loc.getValue();
     logData.mode = curMode;
-    logData.pBandState = curpbState[calcMinosMode(curMode)];
 
     QStringList dt = dtg( true ).getIsoDTG().split('T');
     logData.time = dt[1];
@@ -402,15 +375,7 @@ void RigControlFrame::getDetails(memoryData::memData &logData)
     // load log data into memory
 }
 
-void RigControlFrame::passBandRadioSelected(int button)
-{
-    traceMsg(QString("PassBand Radio Selected button number = %1").arg(QString::number(button)));
 
-    if (isRadioLoaded() && radioConnected && !radioError)
-    {
-        emit sendPassBandStateToControl(button);
-    }
-}
 
 void RigControlFrame::setMode(QString m)
 {
@@ -508,58 +473,6 @@ bool RigControlFrame::checkRadioState()
 }
 
 
-void RigControlFrame::setRadioPassbandState(QString s)
-{
-    traceMsg(QString("Set RadioPassbandState = %1").arg(s));
-    if (s != "")
-    {
-        for (int i = 0; i < hamlibData::pBandStateStr.count(); i++)
-        {
-            if (s == hamlibData::pBandStateStr[i])
-            {
-                pBandButton[i]->setChecked(true);
-                storePassBandState(s);
-                return;
-            }
-        }
-    }
-}
-
-
-void RigControlFrame::storePassBandState(QString state)
-{
-    int iMode = calcMinosMode(curMode);
-    int iState = calcMinosPBState(state);
-    if (iMode < 0 || iState < 0)
-    {
-        return;
-    }
-    curpbState[iMode] = iState;
-    scurpbState[iMode] = state;
-}
-
-int RigControlFrame::getIntPassBandState(QString mode)
-{
-    int iMode = calcMinosMode(mode);
-    if (iMode > 0)
-    {
-        return curpbState[iMode];
-    }
-
-    return iMode;
-
-}
-
-QString RigControlFrame::getStrPassBandState(QString mode)
-{
-    int iMode = calcMinosMode(mode);
-    if (iMode > 0)
-    {
-        return scurpbState[iMode];
-    }
-
-    return "";
-}
 
 int RigControlFrame::calcMinosMode(QString mode)
 {
@@ -576,20 +489,6 @@ int RigControlFrame::calcMinosMode(QString mode)
 }
 
 
-int RigControlFrame::calcMinosPBState(QString state)
-{
-    int iState = -1;
-    for (int i = 0; i < hamlibData::pBandStateStr.count(); i++)
-    {
-        if (state == hamlibData::pBandStateStr[i])
-        {
-            iState = i;
-            return iState;
-        }
-    }
-
-    return iState;
-}
 
 void RigControlFrame::freqLineEditInFocus()
 {
@@ -762,12 +661,6 @@ void RigControlFrame::runButReadActSel(int buttonNumber)
                 sendModeToRadio(m.mode);
             }
 
-
-
-            if (m.pBandState != curpbState[calcMinosMode(m.mode)])
-            {
-                sendPassBandStateToControl(m.pBandState);
-            }
         }
     }
     else
@@ -785,7 +678,6 @@ void RigControlFrame::runButWriteActSel(int buttonNumber)
     runData.freq = curFreq;
     runData.locator = "";
     runData.mode = curMode;
-    runData.pBandState = curpbState[calcMinosMode(curMode)];
     runData.bearing = COMPASS_ERROR;
     runData.time = "00:00";
     // load run data into run memory
@@ -841,8 +733,8 @@ void RigControlFrame::runButtonUpdate(int buttonNumber)
 
     runButtonMap[buttonNumber]->memButton->setText("R" + QString::number(buttonNumber + 1) + "(" + sc + ") " + extractKhz(m.freq) + " ");
     QString tTipStr = "Freq: " + m.freq + "\n"
-            + "Mode: " + m.mode + "\n"
-            + "Passband: " + hamlibData::pBandStateStr[m.pBandState];
+            + "Mode: " + m.mode + "\n";
+
     runButtonMap[buttonNumber]->memButton->setToolTip(tTipStr);
 }
 

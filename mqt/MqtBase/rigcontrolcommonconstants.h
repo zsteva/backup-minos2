@@ -48,9 +48,9 @@ const QStringList  modeList = {AM, CW, USB, LSB, RTTY, FM, WFM, CWR, RTTYR, AMS,
 
 const QStringList supModeList = { CW, USB, FM, MGM};
 
-enum pBandState {NAR, NOR, WIDE};
+//enum pBandState {NAR, NOR, WIDE};
 
-const QStringList pBandStateStr = {"NAR", "NOR", "WIDE"};
+//const QStringList pBandStateStr = {"NAR", "NOR", "WIDE"};
 
 
 const QStringList portTypeList = { "RIG_PORT_NONE", "RIG_PORT_SERIAL", "RIG_PORT_NETWORK", "RIG_PORT_DEVICE",

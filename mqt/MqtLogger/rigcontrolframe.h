@@ -85,9 +85,9 @@ public:
     void setFreq(QString);
     void setRadioName(QString);
     void setRadioState(QString);
-    void setRadioPassbandState(QString s);
+
     bool isRadioLoaded();
-    //void setRxPBFlag(QString);
+
 
     void exitFreqEdit();
     void runButtonUpdate(int);
@@ -104,7 +104,7 @@ signals:
     void sendFreqControl(QString);
     void noRadioSendFreq(QString);
     void sendModeToControl(QString);
-    void sendPassBandStateToControl(int);
+
 
 private slots:
     void on_FontChanged();
@@ -125,7 +125,7 @@ public slots:
 
     void runButClearActSel(int buttonNumber);
 
-    void passBandRadioSelected(int button);
+
 private:
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
 
@@ -147,7 +147,6 @@ private:
 
     QLabel *freqLabel;
 
-    QRadioButton* pBandButton[3];
 
     bool radioLoaded;
     bool radioConnected;
@@ -155,15 +154,7 @@ private:
     bool freqEditOn;
     QString curFreq;
     QString curMode;
-    int curpbState[4] = { hamlibData::NOR,   // CW
-                          hamlibData::NOR,   // USB
-                          hamlibData::NOR,   // FM
-                          hamlibData::NOR};  // MGM
-    QStringList scurpbState = (QStringList()
-                                << hamlibData::pBandStateStr[hamlibData::NOR]   // CW
-                                << hamlibData::pBandStateStr[hamlibData::NOR]   // USB
-                                << hamlibData::pBandStateStr[hamlibData::NOR]   // FM
-                                << hamlibData::pBandStateStr[hamlibData::NOR]); // MGM
+
     QString radioName;
     QString radioState;
 
@@ -187,9 +178,9 @@ private:
     bool checkValidFreq(QString freq);
     void sendFreq(QString f);
     QString calcNewFreq(double incFreq);
-    int calcMinosPBState(QString state);
+
     int calcMinosMode(QString mode);
-    void storePassBandState(QString state);
+
 };
 class FreqLineEdit : public QLineEdit
 {

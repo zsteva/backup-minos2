@@ -32,10 +32,7 @@ RunButtonDialog::RunButtonDialog(QWidget *parent) :
         ui->modecb->addItem(hamlibData::supModeList[i]);
     }
 
-    for (int i = 0; i < hamlibData::pBandStateStr.count(); i++)
-    {
-        ui->pbStateCb->addItem(hamlibData::pBandStateStr[i]);
-    }
+
     ui->freqLineEdit->setFocus();
 
 }
@@ -60,7 +57,7 @@ void RunButtonDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
     //setWindowTitle(QString("Run%1 - Edit").arg(QString::number(buttonNumber + 1)));
 
     ui->modecb->setCurrentText(ldata->mode);
-    ui->pbStateCb->setCurrentIndex(ldata->pBandState);
+
 
     if (ldata->freq.remove('.').count() < 4)
     {
@@ -80,7 +77,7 @@ void RunButtonDialog::on_okButton_clicked()
     // update run data
     logdata->freq = ui->freqLineEdit->text();
     logdata->mode = ui->modecb->currentText();
-    logdata->pBandState = ui->pbStateCb->currentIndex();
+
     accept();
 }
 

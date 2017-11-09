@@ -34,11 +34,6 @@ RigMemDialog::RigMemDialog(QWidget *parent) :
         ui->modecb->addItem(hamlibData::supModeList[i]);
     }
 
-    for (int i = 0; i < hamlibData::pBandStateStr.count(); i++)
-    {
-        ui->pbStateCb->addItem(hamlibData::pBandStateStr[i]);
-    }
-
     ui->callSignLineEdit->setValidator(new UpperCaseValidator(true));
     ui->locatorLineEdit->setValidator(new UpperCaseValidator(true));
 
@@ -57,7 +52,7 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
     memoryNumber = buttonNumber;
     logData = ldata;
     ui->modecb->setCurrentText(ldata->mode);
-    ui->pbStateCb->setCurrentIndex(ldata->pBandState);
+
 
     ui->callSignLineEdit->setText(ldata->callsign);
     ui->locatorLineEdit->setText(ldata->locator);
@@ -89,7 +84,6 @@ void RigMemDialog::on_okButton_clicked()
     logData->callsign = ui->callSignLineEdit->text();
     logData->freq = ui->freqLineEdit->text();
     logData->mode = ui->modecb->currentText();
-    logData->pBandState = ui->pbStateCb->currentIndex();
     logData->locator = ui->locatorLineEdit->text();
     logData->bearing = ui->bearingLineEdit->text().toInt();
     logData->time = ui->timeLineEdit->text();

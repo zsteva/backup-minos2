@@ -200,7 +200,7 @@ void RigControlMainWindow::initActionsConnections()
     // Message from Logger
     connect(msg, SIGNAL(setFreq(QString)), this, SLOT(loggerSetFreq(QString)));
     connect(msg, SIGNAL(setMode(QString)), this, SLOT(loggerSetMode(QString)));
-    connect(msg, SIGNAL(setPassBand(int)), this, SLOT(loggerSetPassBand(int)));
+
 
 
 
@@ -354,10 +354,7 @@ void RigControlMainWindow::upDateRadio()
             slogMode = "USB";
             // set mode and passband
             logMode = radio->convertQStrMode("USB");
-            setMode("USB", hamlibData::NOR, RIG_VFO_CURR);
-
-
-            loggerSetMode("MGM");
+            setMode("USB", RIG_VFO_CURR);
 
             loggerSetMode("USB");
 
@@ -763,15 +760,13 @@ void RigControlMainWindow::loggerSetMode(QString mode)
 {
     logMessage(QString("Log SetMode:: Mode Recieved from Logger = %1").arg(mode));
 
-    hamlibData::pBandState pBstate = modePbState[getMinosModeIndex(mode)];
-
     if (slogMode != mode)
     {
         if (radio->get_serialConnected() && !rigErrorFlag)
         {
             slogMode = mode;
             logMode = radio->convertQStrMode(mode);
-            //modePbState[getMinosModeIndex(mode)] = pBstate;
+
 
             if (slogMode == hamlibData::MGM)
             {
@@ -781,21 +776,21 @@ void RigControlMainWindow::loggerSetMode(QString mode)
                     logMessage(QString("Log SetMode: Mgm flag is set"));
                     if (curMode !=  radio->convertQStrMode(selectRig->currentRadio.mgmMode))
                     {
-                        setMode(selectRig->currentRadio.mgmMode, pBstate, RIG_VFO_CURR);
+                        setMode(selectRig->currentRadio.mgmMode, RIG_VFO_CURR);
                     }
                 }
                 else
                 {
                     mgmModeFlag = true;
-                    setMode(selectRig->currentRadio.mgmMode, pBstate, RIG_VFO_CURR);
+                    setMode(selectRig->currentRadio.mgmMode, RIG_VFO_CURR);
                     logMessage((QString("Log SetMode: Set MgmMode Flag, Selected MGM Mode = %1").arg(selectRig->currentRadio.mgmMode)));
                 }
             }
             else
             {
                 mgmModeFlag = false;
-                logMessage(QString("Log SetMode: Clear mgmModeFlag, Set mode = %1, Set Passband = %2").arg(mode, modePbState[getMinosModeIndex(mode)]));
-                setMode(mode, pBstate, RIG_VFO_CURR);
+                logMessage(QString("Log SetMode: Clear mgmModeFlag, Set mode = %1").arg(mode));
+                setMode(mode, RIG_VFO_CURR);
             }
         }
     }
@@ -804,33 +799,29 @@ void RigControlMainWindow::loggerSetMode(QString mode)
 
 
 
-void RigControlMainWindow::setMode(QString mode, hamlibData::pBandState pBstate, vfo_t vfo)
+void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
 {
     int retCode = 0;
 
     cmdLockOn();      // lock get radio info
 
-    logMessage(QString("Setmode: Requested Mode = %1, Passband = %2").arg(mode, hamlibData::pBandStateStr[pBstate]));
+    logMessage(QString("Setmode: Requested Mode = %1").arg(mode));
     rmode_t mCode = radio->convertQStrMode(mode);
 
 
-    //hamlibData::pBandState pBState = modePbState[getMinosModeIndex(mode)];
-    pbwidth_t passBand = radio->lookUpPassBand(mode, pBstate);
-    logMessage(QString("SetMode: Using PassbandState = %1 Passband = %2").arg(hamlibData::pBandStateStr[pBstate],QString::number(passBand)));
+
 
     if (radio->get_serialConnected())
     {
-         retCode = radio->setMode(vfo, mCode, passBand);
+         retCode = radio->setMode(vfo, mCode, PASSBAND_NOCHANGE);
          if (retCode == RIG_OK)
          {
-             logMessage(QString("SetMode: changed! Mode = %1, PassBand = %2").arg(radio->convertModeQstr(mCode), QString::number(passBand)));
-             sendPbStateToLog(hamlibData::pBandStateStr[pBstate]);
-             ui->passBandState->setText(hamlibData::pBandStateStr[pBstate]);
-             ui->logpbwidthlbl->setText(QString::number(passBand));
+             logMessage(QString("SetMode: changed! Mode = %1").arg(radio->convertModeQstr(mCode)));
+
          }
          else
          {
-             logMessage(QString("SetMode: Change Error Code = %1, Mode = %2, PassBand = %3").arg(QString::number(retCode), radio->convertModeQstr(mCode), QString::number(passBand)));
+             logMessage(QString("SetMode: Change Error Code = %1, Mode = %2").arg(QString::number(retCode), radio->convertModeQstr(mCode)));
              hamlibError(retCode, "Set Mode");
          }
 
@@ -893,39 +884,10 @@ int RigControlMainWindow::setRitFreq(vfo_t vfo, shortfreq_t ritFreq)
 }
 
 
-void RigControlMainWindow::loggerSetPassBand(int state)
+void RigControlMainWindow::displayPassband(pbwidth_t width)
 {
-    logMessage(QString("Log SetPassband: State received from logger = %1, state = %2").arg(QString::number(state), hamlibData::pBandStateStr[state]));
-    QString mode = "";
-    hamlibData::pBandState pBstate = hamlibData::pBandState(state);
 
-    if (modePbState[getMinosModeIndex(slogMode)] != state)
-    {
-        if (radio->get_serialConnected() && !rigErrorFlag)
-        {
-            if (slogMode == hamlibData::MGM)
-            {
-                mode = selectRig->currentRadio.mgmMode;
-                modePbState[getMinosModeIndex(hamlibData::MGM)] = pBstate ;
-            }
-            else
-            {
-                mode = slogMode;
-                modePbState[getMinosModeIndex(mode)] = pBstate;
-            }
-
-
-
-            logMessage(QString("Log SetPassband: SetMode mode = %1, passBand State = %2").arg(mode, hamlibData::pBandStateStr[pBstate]));
-            setMode(mode, pBstate, RIG_VFO_CURR);
-
-            //ui->passBandState->setText(hamlibData::pBandStateStr[state]);
-            //ui->logpbwidthlbl->setText(QString::number(passBand));
-
-        }
-    }
-
-
+    ui->passBandlbl->setText(QString::number(width));
 }
 
 
@@ -953,12 +915,6 @@ void RigControlMainWindow::displayModeVfo(QString mode)
     ui->modeA->setText(mode);
 }
 
-
-void RigControlMainWindow::displayPassband(pbwidth_t width)
-{
-
-    ui->passBandlbl->setText(QString::number(width));
-}
 
 
 QString RigControlMainWindow::convertFreqString(double frequency)
@@ -1161,14 +1117,7 @@ void RigControlMainWindow::sendModeToLog(QString mode)
     }
 }
 
-void RigControlMainWindow::sendPbStateToLog(QString pBstate)
-{
-    if (appName.length() > 0)
-    {
-        logMessage(QString("Send PassBand State to logger = %1").arg(pBstate));
-        msg->publishPbandState(pBstate);
-    }
-}
+
 
 
 void RigControlMainWindow::aboutRigConfig()
@@ -1209,18 +1158,6 @@ void RigControlMainWindow::aboutRigConfig()
     msg.append(QString("Use RX Passband = %1\n").arg(f));
     supRitFlag ? f = "True" : f = "False";
     msg.append(QString("Radio Supports RIT = %1\n").arg(f));
-    msg.append(QString("Radio Passband CW NAR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NAR))));
-    msg.append(QString("Radio Passband CW NOR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NOR))));
-    msg.append(QString("Radio Passband CW WID = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::WIDE))));
-    msg.append(QString("Radio Passband USB NAR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::NAR))));
-    msg.append(QString("Radio Passband USB NOR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::NOR))));
-    msg.append(QString("Radio Passband USB WID = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::WIDE))));
-    msg.append(QString("Radio Passband FM NAR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::NAR))));
-    msg.append(QString("Radio Passband FM NOR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::NOR))));
-    msg.append(QString("Radio Passband FM WID = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::WIDE))));
-    msg.append(QString("Radio Passband MGM NAR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NAR))));
-    msg.append(QString("Radio Passband MGM NOR = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NOR))));
-    msg.append(QString("Radio Passband MGM WID = %1\n").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::WIDE))));
     ui->actionTraceLog->isChecked() ? f = "True" : f = "False";
     msg.append(QString("Tracelog = %1\n").arg(f));
 
@@ -1270,18 +1207,7 @@ void RigControlMainWindow::dumpRadioToTraceLog()
     trace(QString("Use RX Passband = %1").arg(f));
     supRitFlag ? f = "True" : f = "False";
     trace(QString("Radio Supports RIT = %1").arg(f));
-    trace(QString("Radio Passband CW NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NAR))));
-    trace(QString("Radio Passband CW NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::NOR))));
-    trace(QString("Radio Passband CW WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::CW, hamlibData::WIDE))));
-    trace(QString("Radio Passband USB NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::NAR))));
-    trace(QString("Radio Passband USB NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::NOR))));
-    trace(QString("Radio Passband USB WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::USB, hamlibData::WIDE))));
-    trace(QString("Radio Passband FM NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::NAR))));
-    trace(QString("Radio Passband FM NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::NOR))));
-    trace(QString("Radio Passband FM WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::FM, hamlibData::WIDE))));
-    trace(QString("Radio Passband MGM NAR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NAR))));
-    trace(QString("Radio Passband MGM NOR = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::NOR))));
-    trace(QString("Radio Passband MGM WID = %1").arg(QString::number(radio->lookUpPassBand(hamlibData::MGM, hamlibData::WIDE))));
+
     ui->actionTraceLog->isChecked() ? f = "True" : f = "False";
     trace(QString("Tracelog = %1").arg(f));
 }
