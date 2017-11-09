@@ -431,18 +431,23 @@ Server=false
 QString MinosConfig::checkConfig()
 {
     QString reqErrs;
-/*
+
     bool serverPresent = false;
     for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
     {
         QSharedPointer<RunConfigElement> ele = (*i);
-        if (ele->appType == "Server" && ele->enabled && ele->runType == RunLocal)
+        if (ele->appType == "Server" && ele->enabled && (ele->runType == RunLocal || ele->runType == ConnectLocal))
         {
             serverPresent = true;
             break;
         }
     }
-*/
+
+    if (elelist.size() && !serverPresent)
+    {
+        reqErrs += "A local server is required." ;
+    }
+
     //Check that the name is not blank, and only has allowed characters
     //Check that the names aren't duplicates
 
@@ -453,7 +458,7 @@ QString MinosConfig::checkConfig()
 
         if (ele->enabled)
         {
-            if ( ele->requires.size() > 0)
+            if ( ele->requires.size() > 0 && (ele->runType == RunLocal || ele->runType == ConnectLocal))
             {
                 // "Requires" elements must be present
                 foreach(QString req, ele->requires)
@@ -461,10 +466,14 @@ QString MinosConfig::checkConfig()
                     if (req.isEmpty())
                         continue;
 
+                    if (req == "Server")
+                        continue;
+
+
                     bool reqFound = false;
                     for ( QVector <QSharedPointer<RunConfigElement> >::iterator j = elelist.begin(); j != elelist.end(); j++ )
                     {
-                        if ((*j)->appType == req && (*j)->enabled)
+                        if ((*j)->appType == req && (*j)->enabled && ((*j)->runType == RunLocal || (*j)->runType == ConnectLocal))
                         {
                             reqFound = true;
                             continue;
