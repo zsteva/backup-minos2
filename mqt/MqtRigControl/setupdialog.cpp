@@ -653,11 +653,13 @@ void SetupDialog::transVertChecked(int boxNumber)
         {
             availRadios[boxNumber].transVertEnable = true;
             transVertEdit[boxNumber]->setEnabled(true);
+            transNegCheck[boxNumber]->setEnabled(true);
         }
         else
         {
             availRadios[boxNumber].transVertEnable = false;
             transVertEdit[boxNumber]->setEnabled(false);
+            transNegCheck[boxNumber]->setEnabled(false);
         }
         radioValueChanged[boxNumber] = true;
         radioChanged = true;
