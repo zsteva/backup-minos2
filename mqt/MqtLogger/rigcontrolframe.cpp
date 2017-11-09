@@ -116,7 +116,7 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
     ui->modelbl->setText(MODE_ERROR);
 
     //connect(ui->freqInput, SIGNAL(lostFocus()), this, SLOT(exitFreqEdit()));
-    connect(ui->freqInput, SIGNAL(returnPressed()), this, SLOT(returnChangeRadioFreq()));
+    connect(ui->freqInput, SIGNAL(freqEditReturn()), this, SLOT(returnChangeRadioFreq()));
     connect(ui->freqInput, SIGNAL(newFreq()), this, SLOT(changeRadioFreq()));
 
     // when no radio is connected
@@ -236,7 +236,7 @@ bool RigControlFrame::checkValidFreq(QString freq)
 void RigControlFrame::returnChangeRadioFreq()
 {
     changeRadioFreq();
-    //exitFreqEdit();
+    exitFreqEdit();
 }
 
 void RigControlFrame::radioBandFreq(int index)
@@ -905,6 +905,11 @@ void FreqLineEdit::keyPressEvent(QKeyEvent *event)
     {
         changeFreq(false);
 
+    }
+    else if (event->key() == Qt::Key_Return)
+    {
+        emit freqEditReturn();
+        return;
     }
     else
     {

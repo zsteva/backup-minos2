@@ -87,9 +87,11 @@ private:
     void traceMsg(QString msg);
     void showTurnButOn();
     void showTurnButOff();
+
+
 signals:
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
-
+    void turnBearingReturn();
 
 
 private slots:

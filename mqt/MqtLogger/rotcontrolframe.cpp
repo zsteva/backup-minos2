@@ -573,6 +573,9 @@ void RotControlFrame::setRotatorMinAzimuth(const QString &s)
 }
 
 
+
+
+
 void RotControlFrame::traceMsg(QString msg)
 {
     trace("Rotcontrol: " + msg);

@@ -197,6 +197,7 @@ signals:
     void receivedFocus() ;
     void lostFocus();
     void newFreq();
+    void freqEditReturn();
 private:
 
     void changeFreq(bool direction);
