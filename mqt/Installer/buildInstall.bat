@@ -1,7 +1,30 @@
 C:
-if not exist \temp mkdir \temp
 
-cd \temp
+setlocal
+
+set QtTools=C:\Qt\Tools\mingw530_32\bin
+set QtKit="C:\Qt\5.9.2\mingw53_32\bin"
+
+set PATH=%QtKit%;%QtTools%;%PATH%
+
+REM go up from the batch file directory to the "root"
+
+set MROOT=%~dp0..\..
+cd %MROOT%
+
+git pull origin master
+
+if not exist build mkdir build
+cd build
+
+qmake.exe ..\mqt\mqt.pro
+
+mingw32-make release
+
+cd \
+if not exist temp mkdir temp
+cd temp
+
 if exist mqtInstaller rmdir /Q /S mqtInstaller
 mkdir mqtInstaller
 cd mqtInstaller
@@ -13,20 +36,20 @@ mkdir Lists
 mkdir Logs
 mkdir Bin
 
-copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtAppStarter\release\MqtAppStarter.exe Bin
-copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtChat\release\MqtChat.exe Bin
-REM copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtControl\release\MqtControl.exe Bin
-REM copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtKeyer\release\MqtKeyer.exe Bin
-copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtLogger\release\MqtLogger.exe Bin
-copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtMonitor\release\MqtMonitor.exe Bin
-copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtRigControl\release\MqtRigControl.exe Bin
-copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtRotator\release\MqtRotator.exe Bin
-copy C:\Projects\sfMinos\QTbuild\gcc\592\mqt\MqtServer\release\MqtServer.exe Bin
+copy %MROOT%\build\MqtAppStarter\release\MqtAppStarter.exe Bin
+copy %MROOT%\build\MqtChat\release\MqtChat.exe Bin
+REM copy %MROOT%\build\MqtControl\release\MqtControl.exe Bin
+REM copy %MROOT%\build\MqtKeyer\release\MqtKeyer.exe Bin
+copy %MROOT%\build\MqtLogger\release\MqtLogger.exe Bin
+copy %MROOT%\build\MqtMonitor\release\MqtMonitor.exe Bin
+copy %MROOT%\build\MqtRigControl\release\MqtRigControl.exe Bin
+copy %MROOT%\build\MqtRotator\release\MqtRotator.exe Bin
+copy %MROOT%\build\MqtServer\release\MqtServer.exe Bin
 
 copy C:\Projects\hamlib-w32-3.1\bin\*.dll Bin
 
-xcopy /F /Y C:\Projects\sfMinos\mqt\ControlFiles\Configuration .\Configuration
-xcopy /F /Y C:\Projects\sfMinos\mqt\ControlFiles\Configuration\WindowsFiles .\Configuration
+xcopy /F /Y %MROOT%\mqt\ControlFiles\Configuration .\Configuration
+xcopy /F /Y %MROOT%\mqt\ControlFiles\Configuration\WindowsFiles .\Configuration
 
 cd Configuration
 
@@ -36,22 +59,22 @@ cd Configuration
 
 cd ../Bin
 
-C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtAppStarter.exe
-C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtChat.exe
-REM C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtControl.exe
-REM C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtKeyer.exe
-C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtLogger.exe
-C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtMonitor.exe
-C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtRigControl.exe
-C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtRotator.exe
-C:\Qt\5.9.2\mingw53_32\bin\windeployqt.exe MqtServer.exe
+windeployqt.exe MqtAppStarter.exe
+windeployqt.exe MqtChat.exe
+REM windeployqt.exe MqtControl.exe
+REM windeployqt.exe MqtKeyer.exe
+windeployqt.exe MqtLogger.exe
+windeployqt.exe MqtMonitor.exe
+windeployqt.exe MqtRigControl.exe
+windeployqt.exe MqtRotator.exe
+windeployqt.exe MqtServer.exe
 
 cd ../..
 mkdir Installer
 
-xcopy /E /F /Y C:\Projects\sfMinos\mqt\Installer .\Installer
+xcopy /E /F /Y %MROOT%\mqt\Installer .\Installer
 
 C:\"Program Files (x86)\Inno Setup 5\ISCC.exe" Installer\Minos2Install.iss
 
 
-cd C:\Projects\sfMinos\mqt\Installer
+cd %MROOT%\mqt\Installer

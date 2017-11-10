@@ -105,7 +105,8 @@ void MinosServer::dispatchStanza( MinosCommonConnection *il, RPCRequest *req )
 
          MinosId id2( fid );
 
-         il->setFromId( id2, req );
+         if (il)
+             il->setFromId( id2, req );
       }
    }
    else if ( req->methodName == "ClientSetFromId" )
@@ -122,7 +123,8 @@ void MinosServer::dispatchStanza( MinosCommonConnection *il, RPCRequest *req )
 
          MinosId id2( fid );
 
-         il->setFromId( id2, req );   // don't check the reply
+         if (il)
+             il->setFromId( id2, req );   // don't check the reply
       }
    }
    else if ( req->methodName == rpcConstants::publish

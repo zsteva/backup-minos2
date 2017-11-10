@@ -35,6 +35,9 @@
       <enum>Qt::Vertical</enum>
      </property>
      <widget class="QTreeWidget" name="QSOHistoryTree">
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
       <attribute name="headerVisible">
        <bool>false</bool>
       </attribute>

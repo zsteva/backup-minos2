@@ -40,10 +40,6 @@ class MinosListener:public QObject
       virtual bool initialise( QString type, int port );
       virtual QString getIdentity() = 0;
 
-      bool isServerConnection( const MinosId &s );
-      bool isClientConnection( const MinosId &s );
-      bool checkServerConnection( const QString &sname );
-
       virtual void closeDown() = 0;
 
 private slots:
@@ -73,7 +69,7 @@ class MinosServerListener: public MinosListener
          MSL = 0;
       }
 //      virtual void process() override;
-      bool sendServer( MinosCommonConnection *il, TiXmlElement *pak );
+      bool sendServer(TiXmlElement *pak );
       void checkServerConnected( Server *s, bool force );
       bool checkStillServerConnection( const QString &s );
       virtual QString getIdentity() override
@@ -99,7 +95,7 @@ class MinosClientListener: public MinosListener
       }
       MinosClientListener();
       ~MinosClientListener() override;
-      bool sendClient( MinosCommonConnection *il, TiXmlElement *pak );
+      bool sendClient(TiXmlElement *pak );
       virtual QString getIdentity()
       {
          return "MinosClientListener";

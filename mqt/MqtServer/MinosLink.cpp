@@ -79,31 +79,6 @@ MinosCommonConnection::MinosCommonConnection()
 }
 MinosCommonConnection::~MinosCommonConnection()
 {}
-bool MinosCommonConnection::CheckLocalConnection()
-{
-   if ( !connchecked )
-   {
-      QString sname = MinosServer::getMinosServer() ->getServerName();
-      if ( ( clientServer.compare( "localhost", Qt::CaseInsensitive ) != 0 ) &&
-           ( clientServer.compare( sname, Qt::CaseInsensitive) != 0 ) )
-      {
-         return false;        // not a good host name in from
-      }
-      if ( isHostLocal(connectHost))
-      {
-         connchecked = true;
-         return true;             // connection address is 127.0.0.1
-      }
-      Server *serv = findStation( sname );
-      if ( serv )
-      {
-         connchecked = true;
-         return true;          // connection address is one we own
-      }
-      return false;
-   }
-   return true;
-}
 QString MinosCommonConnection::makeJid()
 {
    QString id;
@@ -153,53 +128,6 @@ bool MinosCommonConnection::tryForwardStanza( TiXmlElement *tix )
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-
-void MinosCommonConnection::sendError( TiXmlElement *tix,const  char * /*type*/, const char *defined_condition )
-{
-   /*
-   <stanza-kind to='sender' type='error'>
-     [RECOMMENDED to include sender XML here]
-     <error type='error-type'>
-       <defined-condition xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-       <text xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'
-             xml:lang='langcode'>
-         OPTIONAL descriptive text
-       </text>
-       [OPTIONAL application-specific condition element]
-     </error>
-   </stanza-kind>
-   */
-
-   // to a server, we might have to include our own "from" - or it might reject
-   // as no "from"
-
-   // we need to check if this is an error response already...
-   // and if so, we cannot send an error(again)
-
-   QString from = getAttribute( tix, "from" );
-   QString to = getAttribute( tix, "to" );
-   QString id = getAttribute( tix, "id" );
-   QString subtype = getAttribute( tix, "type" );
-
-   if ( subtype.compare("error", Qt::CaseInsensitive ) == 0 )
-      return ;
-
-   TiXmlElement x( "iq" );
-
-   x.SetAttribute( "type", "error" );
-   x.SetAttribute ( "id", id.toStdString() );
-
-   TiXmlElement condition( "error_condition" );
-   TiXmlText t( defined_condition );
-   condition.InsertEndChild( t );
-   x.InsertEndChild( condition );
-
-   TIXML_STRING s;
-   s << x;
-
-   sendRaw ( s );
-}
-//---------------------------------------------------------------------------
 void MinosCommonConnection::sendAction( XStanza *a )
 {
    // use the stanza to send itself
@@ -240,12 +168,11 @@ void sendAction( XStanza *a )
 
    if ( !MinosServer::getMinosServer() ->forwardStanza( 0, x ) )              // our own services
    {
-      if ( !MinosClientListener::getListener() ->sendClient( 0, x ) )         // look at real and potential clients
+      if ( !MinosClientListener::getListener() ->sendClient( x ) )         // look at real and potential clients
       {
-         if ( !MinosServerListener::getListener() ->sendServer( 0, x ) )         // look at real and potential servers
+         if ( !MinosServerListener::getListener() ->sendServer( x ) )         // look at real and potential servers
          {
             // or no valid destination found
-            //sendError( pak, "cancel", "item-not-found" );
             return ;
          }
       }
@@ -333,10 +260,6 @@ void MinosCommonConnection::analyseNode( TiXmlElement *tix )
          trace("Bad checkFrom in MinosCommonConnection::analyseNode; remove_socket = true");
          remove_socket = true;
       }
-      else
-      {
-         sendError( tix, "cancel", "invalid-from" );
-      }
       return ;
    }
    // Dispatch to its destination
@@ -347,12 +270,11 @@ void MinosCommonConnection::analyseNode( TiXmlElement *tix )
    // - don't need a decent "to", just the server name
    if ( !MinosServer::getMinosServer() ->forwardStanza( this, tix ) )              // our own services
    {
-      if ( !MinosClientListener::getListener() ->sendClient( this, tix ) )         // look at real and potential clients
+      if ( !MinosClientListener::getListener() ->sendClient( tix ) )         // look at real and potential clients
       {
-         if ( !MinosServerListener::getListener() ->sendServer( this, tix ) )         // look at real and potential servers
+         if ( !MinosServerListener::getListener() ->sendServer( tix ) )         // look at real and potential servers
          {
             // or no valid destination found
-            sendError( tix, "cancel", "item-not-found" );
             return ;
          }
       }

@@ -1,8 +1,15 @@
 If or when you know what you are doing, a lot of this will be
 overly prescriptive.
 
+And if you wish to take an active part in development then a more detailed
+understanding of the build process will be required.
+
 Building under Windows
 ======================
+
+Install git from https://git-for-windows.github.io/
+
+(There are other distributions and tools that can be used.)
 
 Create a master directory - I use C:\projects
 
@@ -11,23 +18,15 @@ cd \
 mkdir projects
 cd projects
 
-Install git; I use a GUI tool TortoiseGit from
-
-https://tortoisegit.org/
-
-This also requires a command line git from https://git-for-windows.github.io/
-
-There are other distributions and tools that can be used.
-
 Check out Minos:
 
-git clone https://git.code.sf.net/p/minos/minos minos2
+git clone git://git.code.sf.net/p/minos/minos Minos2
 
 Install hamlib from https://sourceforge.net/projects/hamlib/ into a directory under C:\projects`
 (it has to be in the correct position relative to Minos, or the build won't find the corect files).
 
  
-To get Qt, go to
+To get Qt, go to (NB This really needs some pictures!)
 
 https://www1.qt.io/download-open-source
 
@@ -35,29 +34,15 @@ and click "Download now"; this gets you the "online installer", which is a small
 the rest of the download. using this also sets up the Qt Maintenance tool, which makes subsequent
 updates of Qt and its tools far easier.  It also installs icons for the main tools.
 
+Let Qt install into its "natural" home c:\Qt
+
 Click through until it updates its meta information, then under "select components" choose the required components
 
-Get 5.6.3 (which we need to stay compatible with for Linux); under "tools" make sure that MinGW 4.9.2 is ticked. 
-If you want to do any debugging, you also need the "Qt Creator CDB Debugger".
+Get Qt version 5.9.2 ; under "tools" make sure that MinGW 5.3.0 is ticked. 
 
 Using MSVC and/or more recent Qt versions counts as an "advanced" option, but is quite possible.
 
-If you aren't going to be running under QT Creator then you will need to add the Qt bin directory to your path; something like
-
-path C:\Qt\Qt5.6.3\Tools\mingw492_32\bin;%path% 
-
-is required. I use an excellent tool called the "Rapid Environment Editor" from 
-https://www.rapidee.com to manage this and other environment variables.
-
-Run QtCreator
-
-Open C:\Projects\Minos2\mqt\mqt.pro; first time will need to configure it. It will
-automatically bring up a dialog to let you do this.
-
-Choose Qt 5.6.2, "Release" Build - the hammer icon at bottom left. This should run to completion, 
-with a few warnings.
-
-To get a runnable system, install wget and Inno Setup:
+Install wget and Inno Setup:
 
 wget - https://eternallybored.org/misc/wget/
 
@@ -65,17 +50,14 @@ wget - https://eternallybored.org/misc/wget/
 
 Inno Setup - http://www.jrsoftware.org/isinfo.php
  
-Then
+Then to fetch and build the current "bleeding edge" of the project (which will usually be safe to run,
+but may contain unfinished facilities)
 
-cd C:\Projects\minos2\mqt\Installer
-
-and run
-
-buildInstall.bat
+C:\Projects\Minos2\mqt\Installer\buildInstall.bat
 
 and you will find a runnable system installed in 
 
-C:\temp\mqtInstaller\installFiles
+C:\Projects\Minos2\mqtInstaller\installFiles
 
 which you can copy to wherever you wish to run from. To change the way this works, 
 copy buildInstall.bat to another filename, and edit as you wish.
@@ -90,3 +72,9 @@ and you need to modify the "start in" directory to be C:\temp\mqtInstaller\insta
 
 If you wish to debug (advanced!), then you need to build as "Debug", and set the working directory for running
 under the debugger as for the icon above.
+
+Having built once, if you wish to "catch up" with the current bleeding edge state of the project, run
+
+C:\Projects\Minos2\mqt\Installer\buildInstall.bat
+
+again. NB that if THAT file has changed, you'll then need to do it all again!

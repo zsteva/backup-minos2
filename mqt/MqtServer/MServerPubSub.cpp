@@ -513,6 +513,12 @@ PublishedKeyListIterator PublishedCategory::findPubKey( const QString &svr, cons
    PublishedCategoryListIterator f = PublishedCategory::findPubCategory( category );
    if ( f == publist.end() )
    {
+       if (pState == psRevoked)
+       {
+           // not found, but revoked - do nothing
+           // revocation is in a loop on publist, so we don't want to change it
+           return false;
+       }
       // create it...
       PublishedCategory * p = new PublishedCategory( pubId, category );
       publist.push_back( p );

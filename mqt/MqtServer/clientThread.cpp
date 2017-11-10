@@ -73,19 +73,12 @@ bool MinosClientConnection::checkFrom( TiXmlElement *tix )
    return true;
 }
 //==============================================================================
-bool MinosClientConnection::setFromId( MinosId &from, RPCRequest * /*req*/ )
+void MinosClientConnection::setFromId( MinosId &from, RPCRequest * /*req*/ )
 {
    // this should always be a local client
    clientServer = from.server;
    clientUser = from.user;
    fromIdSet = true;
-
-   bool con = CheckLocalConnection();
-   if (!con)
-   {
-       assert(con);
-   }
-   return true;
 }
 //==============================================================================
 

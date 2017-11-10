@@ -15,40 +15,27 @@ where the default oS is similar enough to Ubuntu. There shouldn't be any
 problem with other variants, but all the package stuff may be different.
 
 
+If git isn't installed, you need to install it:
+
 sudo apt-get install git
 
 
 Go to your home directory and check out Minos
 
+git clone git://git.code.sf.net/p/minos/minos Minos2
 
-git clone https://git.code.sf.net/p/minos/minos Minos2
-
-If git isn't installed, you need to install it:
-
-then you need to make sure all the pre-requesites are installed:
 
 cd Minos2
 sudo ./tools.sh 
 
-Run QtCreator using
+cd mqt/Installer
+./buildInstall.sh
 
-qtcreator
 
-Open ~/Minos2/mqt/mqt.pro; first time you may need to configure it - everything 
-should be set up, just hit "Configure Project".
-
-"Release"
-
-You may need to use "Manage Kits" to set up the GCC compiler from /usr/bin/gcc
-and to choose system gdb at usr/bin/gdb
-
-Build - the hammer icon at bottom left. This should run to completion, with a 
-few warnings. On a Pi, this will take literally hours, so be warned.
-
-To get a runnable system, run ~/Minos2/mqt/Installer/buildInstall.sh
-
-which will put a runnable system into ~/minos-runtime.
+which will update to the latest version of Minos, build it, and put a runnable system into ~/minos-runtime.
 
 To run it, from the command line type
 
 ~/minos-runtime/Minos.sh &
+
+To update and buid again, repeat from after "git clone"

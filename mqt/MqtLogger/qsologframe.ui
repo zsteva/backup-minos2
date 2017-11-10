@@ -54,7 +54,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="radioEdit"/>
+         <widget class="QLineEdit" name="radioEdit">
+          <property name="focusPolicy">
+           <enum>Qt::ClickFocus</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -68,7 +72,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="frequencyEdit"/>
+         <widget class="QLineEdit" name="frequencyEdit">
+          <property name="focusPolicy">
+           <enum>Qt::ClickFocus</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -82,7 +90,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="rotatorHeadingEdit"/>
+         <widget class="QLineEdit" name="rotatorHeadingEdit">
+          <property name="focusPolicy">
+           <enum>Qt::ClickFocus</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -215,7 +227,7 @@
          <item>
           <widget class="QComboBox" name="MainOpComboBox">
            <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
+            <enum>Qt::ClickFocus</enum>
            </property>
            <property name="editable">
             <bool>true</bool>
@@ -235,7 +247,7 @@
          <item>
           <widget class="QComboBox" name="SecondOpComboBox">
            <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
+            <enum>Qt::ClickFocus</enum>
            </property>
            <property name="editable">
             <bool>true</bool>

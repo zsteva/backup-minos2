@@ -60,12 +60,23 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool showAuto
     ui->StationIdEdit->setText(minosConfig->getThisServerName());
     ui->autoStartCheckBox->setChecked(minosConfig->getAutoStart());
 
+    connect(this, SIGNAL(frameShown()), this, SLOT(afterFrameShown()), Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
+}
+
+void TConfigFrame::showEvent(QShowEvent *ev)
+{
+    emit frameShown();
+    QFrame::showEvent(ev);
+}
+void TConfigFrame::afterFrameShown()
+{
     QString reqErrs = MinosConfig::getMinosConfig() ->checkConfig();
 
     if (!reqErrs.isEmpty())
     {
-        mShowMessage(reqErrs, p);
+        mShowMessage(reqErrs, this);
     }
+
 }
 void TConfigFrame::setup(bool started)
 {

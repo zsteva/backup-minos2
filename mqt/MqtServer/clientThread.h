@@ -25,7 +25,7 @@ class MinosClientConnection: public MinosCommonConnection
       virtual bool initialise( bool conn) override;
       ~MinosClientConnection();
       virtual bool checkFrom( TiXmlElement *pak );
-      virtual bool setFromId( MinosId &from, RPCRequest *req );
+      virtual void setFromId( MinosId &from, RPCRequest *req );
       virtual bool isServer()
       {
          return false;
