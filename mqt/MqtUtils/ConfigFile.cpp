@@ -11,7 +11,6 @@
 bool terminated = false;
 
 QString RunLocal("RunLocal");
-QString ConnectLocal("ConnectLocal");
 QString ConnectServer("ConnectServer");
 
 
@@ -45,14 +44,23 @@ QString MinosConfig::getThisServerName()
     }
     return serverName;
 }
+void MinosConfig::cleanElementsOnCancel()
+{
+    for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
+    {
+        QSharedPointer<RunConfigElement> ele = (*i);
+        if (ele->newElement)
+        {
+            ele->name = "<Deleted>";
+        }
+    }
+}
 
-//---------------------------------------------------------------------------
-RunConfigElement::RunConfigElement()
-      : runner(0), stopping(false)
-{}
 //---------------------------------------------------------------------------
 bool RunConfigElement::initialise( QSettings &config, QString sect )
 {
+    // config should refer to ./Configuration/MinosConfig.ini
+
     name = sect;
 
     commandLine = config.value( sect + "/Program", "" ).toString().trimmed();
@@ -61,7 +69,7 @@ bool RunConfigElement::initialise( QSettings &config, QString sect )
     rundir = config.value( sect + "/Directory", "" ).toString().trimmed();
     remoteApp = config.value(sect + "/RemoteApp", name).toString().trimmed();
     showAdvanced = config.value(sect + "/ShowAdvanced", false).toBool();
-    enabled = config.value(sect + "/Enabled", false).toBool();
+    rEnabled = config.value(sect + "/Enabled", false).toBool();
     hideApp = config.value(sect + "/HideApp", false).toBool();
     QString S = config.value( sect + "/RunType", RunLocal ) .toString().trimmed();
 
@@ -78,6 +86,8 @@ bool RunConfigElement::initialise( QSettings &config, QString sect )
 }
 void RunConfigElement::save(QSettings &config)
 {
+    newElement = false;
+
     if (name.isEmpty())
     {
         name = appType;
@@ -93,7 +103,7 @@ void RunConfigElement::save(QSettings &config)
         config.setValue(name + "/RunType", runType);
         config.setValue(name + "/AppType", appType);
         config.setValue(name + "/ShowAdvanced", showAdvanced);
-        config.setValue(name + "/Enabled", enabled);
+        config.setValue(name + "/Enabled", rEnabled);
         config.setValue(name + "/HideApp", hideApp);
     }
 }
@@ -118,7 +128,7 @@ Connectable RunConfigElement::connectable()
 
 void RunConfigElement::createProcess()
 {
-    if (enabled && runType == RunLocal && !runner)
+    if (rEnabled && runType == RunLocal && !runner)
     {
         runner = new QProcess(parent());
 
@@ -369,6 +379,7 @@ QStringList MinosConfig::getAppTypes()
         apps.append(appConfigList[i].appType);
     }
     apps.sort();
+    apps.insert(0, "None");
     apps.removeDuplicates();
     return apps;
 }
@@ -386,7 +397,7 @@ Server=false
     QStringList apps = appConfig.childGroups();
     for (int i = 0; i < apps.size(); i++)
     {
-        if (appConfig.value(apps[i] + "/Enabled", false).toBool())
+        if (appConfig.value(apps[i] + "/Enabled", false).toBool())  // only include those elements we are allowed to as possibilities
         {
             AppConfigElement ac;
 
@@ -433,19 +444,24 @@ QString MinosConfig::checkConfig()
     QString reqErrs;
 
     bool serverPresent = false;
+    int eleListSize = 0;
     for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
     {
+        eleListSize++;
         QSharedPointer<RunConfigElement> ele = (*i);
-        if (ele->appType == "Server" && ele->enabled && (ele->runType == RunLocal || ele->runType == ConnectLocal))
+        if (ele->rEnabled)
         {
-            serverPresent = true;
-            break;
+            if (ele->appType == "Server" && ele->runType == RunLocal )
+            {
+                serverPresent = true;
+                break;
+            }
         }
     }
 
-    if (elelist.size() && !serverPresent)
+    if (eleListSize && !serverPresent)
     {
-        reqErrs += "A local server is required." ;
+        reqErrs += "A local server is required.\r\n\r\n" ;
     }
 
     //Check that the name is not blank, and only has allowed characters
@@ -456,9 +472,9 @@ QString MinosConfig::checkConfig()
     {
         QSharedPointer<RunConfigElement> ele = (*i);
 
-        if (ele->enabled)
+        if (ele->rEnabled)
         {
-            if ( ele->requires.size() > 0 && (ele->runType == RunLocal || ele->runType == ConnectLocal))
+            if ( ele->requires.size() > 0 && ele->runType == RunLocal)
             {
                 // "Requires" elements must be present
                 foreach(QString req, ele->requires)
@@ -473,7 +489,7 @@ QString MinosConfig::checkConfig()
                     bool reqFound = false;
                     for ( QVector <QSharedPointer<RunConfigElement> >::iterator j = elelist.begin(); j != elelist.end(); j++ )
                     {
-                        if ((*j)->appType == req && (*j)->enabled && ((*j)->runType == RunLocal || (*j)->runType == ConnectLocal))
+                        if ((*j)->appType == req && (*j)->rEnabled && (*j)->runType == RunLocal)
                         {
                             reqFound = true;
                             continue;
@@ -499,17 +515,6 @@ QString MinosConfig::checkConfig()
                 }
             }
         }
-        /*
-        if (ele->enabled)
-        {
-            // Server must be present
-            if (!serverPresent)
-            {
-                // Server required
-                reqErrs += (ele->appType + " requires a local Server\n\n");
-            }
-        }
-        */
     }
     return reqErrs;
 }

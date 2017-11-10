@@ -5,7 +5,6 @@
 #include <QSettings>
 //---------------------------------------------------------------------------
 extern QString RunLocal;
-extern QString ConnectLocal;
 extern QString ConnectServer;
 
 class AppConfigElement
@@ -16,10 +15,10 @@ public:
     QString appType;
     QString appPath;
     QStringList requires;
-    bool server;
-    bool localOK;
-    bool remoteOK;
-    bool defaultHide;
+    bool server = false;
+    bool localOK = false;
+    bool remoteOK = false;
+    bool defaultHide = false;
 
 };
 
@@ -39,16 +38,18 @@ class RunConfigElement: public QObject
 {
     Q_OBJECT
 private:  	// User declarations
-    QProcess *runner;
+    QProcess *runner = 0;
 public:  		// User declarations
+    bool newElement = false;
+
     QString name;
     QString rundir;
     QString commandLine;
     QString params;
     QString server;
     QString remoteApp;
-    bool localOK;
-    bool remoteOK;
+    bool localOK = false;
+    bool remoteOK = false;
 
     QString runType;
     QString appType;
@@ -56,12 +57,12 @@ public:  		// User declarations
     QStringList requires;
 
     bool showAdvanced = false;
-    bool enabled = false;
+    bool rEnabled = false;
     bool hideApp = false;
 
-    bool stopping;
+    bool stopping = false;
 
-    RunConfigElement();
+    RunConfigElement(){}
     bool initialise( QSettings &, QString sect );
 
     void save(QSettings &);
@@ -108,6 +109,7 @@ public:  		// User declarations
     Connectable getApp(QString appName);
     AppConfigElement getAppConfigElement(QString appType);
 
+    void cleanElementsOnCancel();
     void saveAll();
 
     void start();

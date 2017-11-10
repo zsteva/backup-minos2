@@ -12,8 +12,11 @@ ConfigElementFrame::ConfigElementFrame(bool nele) :
 {
     ui->setupUi(this);
 
+    inhibitIndexChange = true;
     QStringList appTypes = MinosConfig::getMinosConfig()->getAppTypes();
     ui->appTypeCombo->addItems(appTypes);
+    ui->appTypeCombo->setCurrentIndex(appTypes.indexOf("None"));
+    inhibitIndexChange = false;
 }
 
 ConfigElementFrame::~ConfigElementFrame()
@@ -29,14 +32,11 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
     remoteOK = c->remoteOK;
 
     ui->rbRunLocally->setVisible(c->localOK);
-    ui->rbConnectLocal->setVisible(c->localOK);
     ui->rbConnectRemote->setVisible(c->remoteOK);
 
 
     if (localOK && c->runType == RunLocal)
         ui->rbRunLocally->setChecked(true);
-    else if (localOK && c->runType == ConnectLocal)
-        ui->rbConnectLocal->setChecked(true);
     else if (remoteOK && c->runType == ConnectServer)
     {
         ui->rbConnectRemote->setChecked(true);
@@ -51,13 +51,15 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
         c->showAdvanced = true;
     }
     else
-        c->enabled = false;
+        c->rEnabled = false;
 
 
-    ui->enabledCheckbox->setChecked(c->enabled);
+    ui->enabledCheckbox->setChecked(c->rEnabled);
 
+    inhibitIndexChange = true;
     QString at = c->appType;
     ui->appTypeCombo->setCurrentText(at);
+    inhibitIndexChange = false;
 
     ui->elementNameEdit->setText(c->name);
     ui->programNameEdit->setText(c->commandLine);
@@ -67,7 +69,7 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
     ui->remoteAppNameEdit->setText(c->remoteApp);
 
     ui->advancedCheckbox->setChecked(c->showAdvanced);
-    ui->enabledCheckbox->setChecked(c->enabled);
+    ui->enabledCheckbox->setChecked(c->rEnabled);
     ui->hideAppCheckBox->setChecked(c->hideApp);
 
     checkEnabled();
@@ -77,35 +79,36 @@ void ConfigElementFrame::setNameFocus()
     ui->elementNameEdit->setFocus();
 }
 
-bool ConfigElementFrame::saveElement()
+void ConfigElementFrame::saveElement()
 {
-    if (ui->rbRunLocally->isChecked())
-        configElement->runType = RunLocal;
-    if (ui->rbConnectLocal->isChecked())
-        configElement->runType = ConnectLocal;
-    if (ui->rbConnectRemote->isChecked())
-        configElement->runType = ConnectServer;
-
-    configElement->showAdvanced = ui->advancedCheckbox->isChecked();
-    configElement->enabled = ui->enabledCheckbox->isChecked();
-    configElement->hideApp = ui->hideAppCheckBox->isChecked();
-
-    configElement->appType = ui->appTypeCombo->currentText();
-
-    configElement->name = ui->elementNameEdit->text().trimmed();
-    configElement->rundir = ui->homeDirectoryEdit->text().trimmed();
-    configElement->commandLine = ui->programNameEdit->text().trimmed();
-    configElement->params = ui->parametersEdit->text().trimmed();
-    configElement->server = ui->serverNameEdit->text().trimmed();
-    configElement->remoteApp = ui->remoteAppNameEdit->text().trimmed();
-
-    if (newElement)
+    if (configElement)
     {
-        MinosConfig::getMinosConfig() ->elelist.append(configElement );
-        newElement = false;
-    }
+        if (ui->rbRunLocally->isChecked())
+            configElement->runType = RunLocal;
+        if (ui->rbConnectRemote->isChecked())
+            configElement->runType = ConnectServer;
 
-    return true;
+        configElement->showAdvanced = ui->advancedCheckbox->isChecked();
+        configElement->rEnabled = ui->enabledCheckbox->isChecked();
+        configElement->hideApp = ui->hideAppCheckBox->isChecked();
+
+        configElement->appType = ui->appTypeCombo->currentText();
+
+        configElement->name = ui->elementNameEdit->text().trimmed();
+        configElement->rundir = ui->homeDirectoryEdit->text().trimmed();
+        configElement->commandLine = ui->programNameEdit->text().trimmed();
+        configElement->params = ui->parametersEdit->text().trimmed();
+        configElement->server = ui->serverNameEdit->text().trimmed();
+        configElement->remoteApp = ui->remoteAppNameEdit->text().trimmed();
+
+        configElement->newElement = newElement;
+
+        if (newElement)
+        {
+            MinosConfig::getMinosConfig() ->elelist.append(configElement );
+            newElement = false;
+        }
+    }
 }
 void ConfigElementFrame::on_programBrowseButton_clicked()
 {
@@ -181,12 +184,6 @@ void ConfigElementFrame::checkEnabled()
         ui->serverFrame->setEnabled(false);
         ui->actionsGroup->setEnabled(true);
     }
-    else if (ui->rbConnectLocal->isChecked())
-    {
-        ui->programFrame->setEnabled(false);
-        ui->serverFrame->setEnabled(false);
-        ui->actionsGroup->setEnabled(true);
-    }
     else if (ui->rbConnectRemote->isChecked())
     {
         ui->programFrame->setEnabled(false);
@@ -207,30 +204,38 @@ void ConfigElementFrame::on_rbConnectRemote_clicked()
     checkEnabled();
 }
 
-void ConfigElementFrame::on_rbConnectLocal_clicked()
-{
-    checkEnabled();
-}
-
 void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &value)
 {
-    ui->elementNameEdit->setText(value);
+    if (!inhibitIndexChange)
+    {
+        ui->elementNameEdit->setText(value);
 
-    ui->remoteAppNameEdit->setText(value);
+        ui->remoteAppNameEdit->setText(value);
 
-    AppConfigElement ace = MinosConfig::getMinosConfig()->getAppConfigElement(value);
-    ui->programNameEdit->setText(ace.appPath);
+        AppConfigElement ace = MinosConfig::getMinosConfig()->getAppConfigElement(value);
+        ui->programNameEdit->setText(ace.appPath);
 
-    if (ui->homeDirectoryEdit->text().isEmpty())
-        ui->homeDirectoryEdit->setText(".");
+        if (ui->homeDirectoryEdit->text().isEmpty())
+            ui->homeDirectoryEdit->setText(".");
 
-    localOK = ace.localOK;
-    remoteOK = ace.remoteOK;
-    ui->hideAppCheckBox->setChecked(ace.defaultHide);
+        localOK = ace.localOK;
+        remoteOK = ace.remoteOK;
+        ui->hideAppCheckBox->setChecked(ace.defaultHide);
+        ui->enabledCheckbox->setChecked(true);
+        ui->advancedCheckbox->setChecked(true);
 
-    ui->rbRunLocally->setVisible(localOK);
-    ui->rbConnectLocal->setVisible(localOK);
-    ui->rbConnectRemote->setVisible(remoteOK);
+        ui->rbRunLocally->setVisible(localOK);
+        ui->rbConnectRemote->setVisible(remoteOK);
+
+        if (localOK)
+            ui->rbRunLocally->setChecked(true);
+        else if (remoteOK)
+            ui->rbConnectRemote->setChecked(true);
+
+        saveElement();
+
+        checkEnabled();
+    }
 }
 
 void ConfigElementFrame::on_advancedCheckbox_clicked()

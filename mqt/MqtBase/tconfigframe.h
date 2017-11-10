@@ -31,8 +31,6 @@ private slots:
 
     void on_SetButton_clicked();
 
-    void on_CancelButton_clicked();
-
     void on_autoStartCheckBox_clicked();
 
     void on_OKButton_clicked();
@@ -40,6 +38,10 @@ private slots:
     void on_newElementButton_clicked();
 
     void afterFrameShown();
+
+public slots:
+    void on_CancelButton_clicked();
+
 signals:
     void frameShown();
 

@@ -14,6 +14,9 @@ class ConfigElementFrame : public QFrame
 
     QSharedPointer<RunConfigElement> configElement;
     bool newElement = false;
+
+    bool inhibitIndexChange = false;
+
     void checkEnabled();
 
 public:
@@ -24,7 +27,7 @@ public:
     bool remoteOK;
 
     void setElement(QSharedPointer<RunConfigElement> configElement);
-    bool saveElement();
+    void saveElement();
     void setNameFocus();
 
 private slots:
@@ -37,8 +40,6 @@ private slots:
     void on_rbRunLocally_clicked();
 
     void on_rbConnectRemote_clicked();
-
-    void on_rbConnectLocal_clicked();
 
     void on_appTypeCombo_currentIndexChanged(const QString &arg1);
 

@@ -25,7 +25,18 @@ StartConfig::~StartConfig()
 {
     delete ui;
 }
+void StartConfig::closeEvent(QCloseEvent * /*event*/)
+{
+    static bool inClose = false;
+    if (!inClose)
+    {
+        inClose = true;
+        // cancel will do a close callback
+        ui->configFrame->on_CancelButton_clicked();
 
+        inClose = false;
+    }
+}
 void StartConfig::moveEvent(QMoveEvent *event)
 {
     QSettings settings;

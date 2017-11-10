@@ -156,16 +156,6 @@
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="rbConnectLocal">
-             <property name="text">
-              <string>Connect Local</string>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">actionButtonGroup</string>
-             </attribute>
-            </widget>
-           </item>
-           <item>
             <widget class="QRadioButton" name="rbConnectRemote">
              <property name="text">
               <string>Connect Remote</string>
@@ -349,7 +339,6 @@
   <tabstop>appTypeCombo</tabstop>
   <tabstop>deleteButton</tabstop>
   <tabstop>rbRunLocally</tabstop>
-  <tabstop>rbConnectLocal</tabstop>
   <tabstop>rbConnectRemote</tabstop>
   <tabstop>programNameEdit</tabstop>
   <tabstop>programBrowseButton</tabstop>

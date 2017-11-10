@@ -131,6 +131,7 @@ void TConfigFrame::on_OKButton_clicked()
 }
 void TConfigFrame::on_CancelButton_clicked()
 {
+    MinosConfig::getMinosConfig() ->cleanElementsOnCancel();
     closeCb(parent);
 }
 
@@ -155,7 +156,7 @@ void TConfigFrame::on_newElementButton_clicked()
     QSharedPointer<RunConfigElement> c = QSharedPointer<RunConfigElement> (new RunConfigElement);
     c->runType = RunLocal;
     c->appType = "None";
-    c->enabled = true;
+    c->rEnabled = true;
 
     cef->setElement(c);
     elementFrames.append(cef);
