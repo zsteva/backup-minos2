@@ -48,7 +48,7 @@ RotControlFrame::RotControlFrame(QWidget *parent):
     ui->Rotate->setShortcut(QKeySequence(ROTATE_TURN_KEY));
     ui->StopRotate->setShortcut(QKeySequence(ROTATE_STOP_KEY));
 
-    connect(ui->BrgSt, SIGNAL(returnPressed()), this, SLOT(on_Rotate_clicked()));
+    connect(this, SIGNAL(bearingEditReturn()), this, SLOT(on_Rotate_clicked()));
 
     connect(&MinosLoggerEvents::mle, SIGNAL(BrgStrToRot(QString)), this, SLOT(getBrgFrmQSOLog(QString)));
 
@@ -301,6 +301,27 @@ void RotControlFrame::on_RotateRight_clicked(bool /*toggle*/)
         }
 
 }
+
+
+void RotControlFrame::keyPressEvent(QKeyEvent *event)
+{
+
+    int Key = event->key();
+
+/*
+    Qt::KeyboardModifiers mods = event->modifiers();
+    bool shift = mods & Qt::ShiftModifier;
+    bool ctrl = mods & Qt::ControlModifier;
+    bool alt = mods & Qt::AltModifier;
+*/
+
+    if (Key == Qt::Key_Return && ui->BrgSt->hasFocus())
+    {
+        emit bearingEditReturn();
+    }
+
+}
+
 
 
 

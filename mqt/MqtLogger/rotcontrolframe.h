@@ -89,9 +89,11 @@ private:
     void showTurnButOff();
 
 
+    void keyPressEvent(QKeyEvent *event);
 signals:
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
     void turnBearingReturn();
+    void bearingEditReturn();
 
 
 private slots:
