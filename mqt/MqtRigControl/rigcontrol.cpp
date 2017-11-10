@@ -60,7 +60,7 @@ RigControl::~RigControl()
 int RigControl::init(scatParams currentRadio)
 {
     int retcode;
-    passBandState = hamlibData::NOR;
+
     QString comport = "\\\\.\\";
 
     my_rig = rig_init(currentRadio.radioModelNumber);

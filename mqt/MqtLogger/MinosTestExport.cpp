@@ -377,7 +377,7 @@ void MinosTestExport::exportRigMemory(QSharedPointer<QFile> expfd, int memno )
         st->addMember(mem.getValue().freq, "freq");
         st->addMember(mem.getValue().mode, "mode");
         st->addMember(mem.getValue().locator, "locator");
-        st->addMember(mem.getValue().pBandState, "bandstate");
+        //st->addMember(mem.getValue().pBandState, "bandstate");
 
         sendRequest(expfd, "MinosRigMemory", st);
     }
@@ -393,7 +393,7 @@ void MinosTestExport::exportRunMemory(QSharedPointer<QFile> expfd, int memno )
         st->addMember(memno, "memno");
         st->addMember(mem.getValue().freq, "freq");
         st->addMember(mem.getValue().mode, "mode");
-        st->addMember(mem.getValue().pBandState, "bandstate");
+        //st->addMember(mem.getValue().pBandState, "bandstate");
 
         sendRequest(expfd, "MinosRunMemory", st);
     }

@@ -98,14 +98,14 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(sendDM, SIGNAL(setRadioLoaded()), this, SLOT(on_RadioLoaded()));
     connect(sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetMode(QString)));
     connect(sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetFreq(QString)));
-    //connect(sendDM, SIGNAL(setRxPBFlag(QString)),this, SLOT(on_SetRxPBFlag(QString)));
+//    connect(sendDM, SIGNAL(setRxPBFlag(QString)),this, SLOT(on_SetRxPBFlag(QString)));
     connect(sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
     connect(sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
-    connect(sendDM, SIGNAL(setPassBandState(QString)), this, SLOT(on_SetRadioPassbandState(QString)));
+    //connect(sendDM, SIGNAL(setPassBandState(QString)), this, SLOT(on_SetRadioPassbandState(QString)));
 
     // To rig controller
     connect(ui->FKHRigControlFrame, SIGNAL(sendFreqControl(QString)), this, SLOT(sendRadioFreq(QString)));
-    connect(ui->FKHRigControlFrame, SIGNAL(sendPassBandStateToControl(int)), this, SLOT(sendRadioPassBandState(int)));
+    //connect(ui->FKHRigControlFrame, SIGNAL(sendPassBandStateToControl(int)), this, SLOT(sendRadioPassBandState(int)));
     connect(ui->FKHRigControlFrame, SIGNAL(sendModeToControl(QString)), this, SLOT(sendRadioMode(QString)));
     connect(ui->GJVQSOLogFrame, SIGNAL(sendModeControl(QString)), this , SLOT(sendRadioMode(QString)));
 
@@ -763,12 +763,12 @@ void TSingleLogFrame::on_SetRadioState(QString s)
     ui->GJVQSOLogFrame->setRadioState(s);
 }
 
-
+/*
 void TSingleLogFrame::on_SetRadioPassbandState(QString s)
 {
     ui->FKHRigControlFrame->setRadioPassbandState(s);
 }
-
+*/
 
 void TSingleLogFrame::sendRadioFreq(QString freq)
 {
@@ -782,12 +782,14 @@ void TSingleLogFrame::sendRadioMode(QString mode)
         sendDM->sendRigControlMode(mode);
 }
 
+
+/*
 void TSingleLogFrame::sendRadioPassBandState(int state)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         sendDM->sendRigControlPassBandState(state);
 }
-
+*/
 
 //---------------------------------------------------------------------------
 

@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>572</width>
-    <height>166</height>
+    <width>623</width>
+    <height>175</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Minos Rig Control</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_11">
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -211,6 +211,26 @@
                </widget>
               </item>
               <item>
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>RX BW:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="passBandlbl">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>0000</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <spacer name="horizontalSpacer_3">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -254,78 +274,6 @@
             </item>
            </layout>
           </item>
-          <item row="2" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Passband:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="passBandState">
-              <property name="font">
-               <font>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>NOR</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
-              <item>
-               <widget class="QLabel" name="label_5">
-                <property name="text">
-                 <string>Logger BW:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="logpbwidthlbl">
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>0000</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_6">
-                <item>
-                 <widget class="QLabel" name="label_2">
-                  <property name="text">
-                   <string>RX BW:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="passBandlbl">
-                  <property name="font">
-                   <font>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>0000</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
          </layout>
         </item>
        </layout>
@@ -339,7 +287,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>572</width>
+     <width>623</width>
      <height>21</height>
     </rect>
    </property>

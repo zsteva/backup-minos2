@@ -166,16 +166,7 @@ void TSendDM::sendRigControlMode(const QString &mode)
 }
 
 
-void TSendDM::sendRigControlPassBandState(const int passBandState)
-{
-   RPCGeneralClient rpc(rpcConstants::rigControlMethod);
-   QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-   st->addMember( passBandState, rpcConstants::rigControlKeyPBandState );
-   rpc.getCallArgs() ->addParam( st );
-
-   rpc.queueCall( rigServerConnectable.remoteAppName + "@" + rigServerConnectable.serverName );
-}
 
 
 //---------------------------------------------------------------------------
@@ -218,14 +209,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             {
                 emit setRadioName( an.getValue() );
             }
-            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyRxPbFlag )
-            {
-                emit setRxPBFlag( an.getValue() );
-            }
-            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyPBandState )
-            {
-                emit setPassBandState( an.getValue() );
-            }
+
         }
         if (an.getPublisherProgram() == bandMapServerConnectable.remoteAppName && an.getPublisherServer() == bandMapServerConnectable.serverName)
         {

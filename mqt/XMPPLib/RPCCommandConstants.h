@@ -98,9 +98,8 @@ static const QString rigControlCategory    = QT_TR_NOOP("RigControl");
 static const QString rigControlKeyMode     = QT_TR_NOOP("Mode");
 static const QString rigControlKeyState    = QT_TR_NOOP("State");
 static const QString rigControlKeyFreq     = QT_TR_NOOP("Frequency");
-static const QString rigControlKeyPBandState = QT_TR_NOOP("PassBandState"); // Note from rigcontrol frame state is an int, from rigcontrol app state is a QString
 static const QString rigControlKeyRadioName = QT_TR_NOOP("RadioName");
-static const QString rigControlKeyRxPbFlag = QT_TR_NOOP("RxPassBandFlag");
+
 
 
 }

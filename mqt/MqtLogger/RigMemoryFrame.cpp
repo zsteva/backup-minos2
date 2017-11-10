@@ -256,7 +256,6 @@ void RigMemoryFrame::memoryUpdate(int buttonNumber)
         QString tTipStr = "Callsign: " + m.callsign + "\n"
                 + "Freq: " + m.freq + "\n"
                 + "Mode: " + m.mode + "\n"
-                + "Passband: " + hamlibData::pBandStateStr[m.pBandState] + "\n"
                 + "Locator: " + m.locator + "\n"
                 + "Bearing: " + QString::number(m.bearing) + "\n"
                 + "Time: " + m.time;

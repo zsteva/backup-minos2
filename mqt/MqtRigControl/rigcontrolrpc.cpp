@@ -89,39 +89,6 @@ void RigControlRpc::publishMode(const QString &mode)
 }
 
 
-
-
-
-
-void RigControlRpc::publishRxPbFlag(const QString &flag)
-{
-    static QString old;
-    trace(QString("Rig RPC: Publish RxPBFlag = %1").arg(flag));
-    if (flag != old)
-    {
-        old = flag;
-        MinosRPC *rpc = MinosRPC::getMinosRPC();
-        rpc->publish(rpcConstants::rigControlCategory, rpcConstants::rigControlKeyRxPbFlag, flag, psPublished);
-    }
-}
-
-
-void RigControlRpc::publishPbandState(const QString &state)
-{
-    static QString old;
-    trace(QString("Rig RPC: Publish PassBand State = %1").arg(state));
-    if (state != old)
-    {
-        old = state;
-        MinosRPC *rpc = MinosRPC::getMinosRPC();
-        rpc->publish(rpcConstants::rigControlCategory, rpcConstants::rigControlKeyPBandState, state, psPublished);
-    }
-}
-
-
-
-
-
 void RigControlRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
    trace( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
@@ -147,7 +114,7 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
     {
         QSharedPointer<RPCParam> psFreq;
         QSharedPointer<RPCParam> psMode;
-        QSharedPointer<RPCParam> psPBandState;
+
         RPCArgs *args = mro->getCallArgs();
         if ( args->getStructArgMember( 0, rpcConstants::rigControlKeyFreq, psFreq ))
         {
@@ -172,16 +139,6 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
                     emit (setMode(mode));
                  }
         }
-        else if ( args->getStructArgMember( 0, rpcConstants::rigControlKeyPBandState, psPBandState ) )
-        {
-                 int passBandState;
 
-                 if ( psPBandState->getInt( passBandState ) )
-                 {
-                     // here you handle what the logger has sent to us
-                    trace(QString("Rig RPC: PassBandState Command From Logger = %1").arg(QString::number(passBandState)));
-                    emit (setPassBand(passBandState));
-                 }
-        }
     }
 }

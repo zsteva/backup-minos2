@@ -69,12 +69,7 @@ private:
     QString slogMode;
     rmode_t logMode;
 
-    //pbwidth_t loggerPbWidth;      // passband from logger
-    hamlibData::pBandState modePbState[4] = {hamlibData::NOR, //CW
-                                            hamlibData::NOR, // USB
-                                            hamlibData::NOR, // FM
-                                            hamlibData::NOR  // MGM
-                                            };
+    const int PASSBAND_NOCHANGE = -1;
 
     // data from radio
     freq_t rfrequency;       // read frequency
@@ -111,6 +106,7 @@ private:
 
     void displayModeVfo(QString);
 
+
     void displayTransVertVfo(double frequency);
 
 
@@ -128,9 +124,8 @@ private:
     void sendFreqToLog(freq_t freq);
     void sendModeToLog(QString mode);
     //void sendRxPbFlagToLog();
-    void sendPbStateToLog(QString pBstate);
 
-    void setMode(QString mode, hamlibData::pBandState pBState, vfo_t vfo);
+    void setMode(QString mode, vfo_t vfo);
     void displayPassband(pbwidth_t width);
 
 
@@ -155,13 +150,11 @@ private slots:
     void logMessage(QString s);
     void about();
     void LogTimerTimer();
-    void loggerSetPassBand(int pBstate);
 
 
 
     void loggerSetFreq(QString freq);
     void loggerSetMode(QString mode);
-    //void loggerSetPassBand(int);
     void currentRadioSettingChanged(QString radioName);
     void updateSelectRadioBox();
     void aboutRigConfig();

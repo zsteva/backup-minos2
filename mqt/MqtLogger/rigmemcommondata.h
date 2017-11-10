@@ -90,8 +90,6 @@ namespace memDefData {
 const QString DEFAULT_CALLSIGN = "";
 const QString DEFAULT_FREQ = "00.000.000.000";
 const QString DEFAULT_MODE = "USB";
-//const QString DEFAULT_PBAND = "2200";
-const int DEFAULT_PBAND_STATE = hamlibData::NOR;
 const QString DEFAULT_LOCATOR = "";
 const int DEFAULT_BEARING = 0;
 const QString DEFAULT_TIME = "00:00";
@@ -103,7 +101,7 @@ namespace memoryData {
 class  memData
 {
 public:
-    memData():pBandState(memDefData::DEFAULT_PBAND_STATE), bearing(memDefData::DEFAULT_BEARING),
+    memData():bearing(memDefData::DEFAULT_BEARING),
         freq(memDefData::DEFAULT_FREQ), mode(memDefData::DEFAULT_MODE)
     {
     }
@@ -111,9 +109,7 @@ public:
     QString callsign;
     QString freq;
     QString mode;
-    //QString passBand;
-    int pBandState;
-    QString locator;
+QString locator;
     int bearing = 0;
     QString time = "00:00";
 
@@ -122,8 +118,8 @@ public:
         if (callsign.compare(rhs.callsign, Qt::CaseInsensitive) == 0
                 && freq.compare(rhs.freq, Qt::CaseInsensitive) == 0
                 && mode.compare(rhs.mode, Qt::CaseInsensitive) == 0
-                && locator.compare(rhs.locator, Qt::CaseInsensitive) == 0
-                && pBandState == rhs.pBandState)
+                && locator.compare(rhs.locator, Qt::CaseInsensitive) == 0)
+
         {
             return true;
         }

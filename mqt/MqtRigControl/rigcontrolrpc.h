@@ -39,11 +39,11 @@ public:
     void publishRxPbFlag(const QString &flag);
     void publishFreq(const QString &freq);
     void publishMode(const QString &mode);
-    void publishPbandState(const QString &state);
+
 signals:
     void setFreq(QString);
     void setMode(QString);
-    void setPassBand(int);
+
 public slots:
 
 
