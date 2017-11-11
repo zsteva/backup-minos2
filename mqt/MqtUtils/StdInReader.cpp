@@ -11,8 +11,6 @@ StdInReader::StdInReader()
         trace(arg);
     }
     trace("End of Arguments");
-
-    start();
 }
 StdInReader::~StdInReader()
 {

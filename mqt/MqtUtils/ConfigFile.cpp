@@ -1,5 +1,6 @@
 #include "mqtUtils_pch.h"
 
+#include <QTimer>
 #include <QSettings>
 #include <QHostInfo>
 #include "fileutils.h"
@@ -182,7 +183,15 @@ void RunConfigElement::sendCommand(const QString & cmd)
     if (runner && appType != "None" )
     {
         QByteArray command = (cmd + "\n").toUtf8();
-        runner->write( command );
+        qint64 res = runner->write( command );
+        if (res < 0)
+        {
+            trace("Failed to write " + cmd + " to runner");
+        }
+        else
+        {
+            trace("Wrote " + cmd + " to runner");
+        }
     }
 }
 
@@ -197,16 +206,18 @@ void RunConfigElement::on_finished(int err, QProcess::ExitStatus exitStatus)
     if (runner)
     {
 
+        runner->closeWriteChannel();
+        runner->deleteLater();
+        runner = 0;
         if (stopping)
         {
             stopping = false;
-            runner->deleteLater();
-            runner = 0;
 
         }
         else
         {
-            runner->start();    // but we have to be careful when we close!
+            createProcess();
+//            runner->start();    // but we have to be careful when we close!
         }
     }
 }
@@ -339,24 +350,6 @@ void MinosConfig::setAutoStart(bool s)
 {
     autoStart = s;
 }
-/*
-bool MinosConfig::getHideServers()
-{
-   return hideServers;
-}
-void MinosConfig::setHideServers(bool s)
-{
-    hideServers = s;
-
-    for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
-    {
-        if (hideServers)
-            (*i)->sendCommand("HideServers");
-        else
-            (*i)->sendCommand("ShowServers");
-    }
-}
-*/
 Connectable MinosConfig::getApp(QString appName)
 {
     Connectable res;
