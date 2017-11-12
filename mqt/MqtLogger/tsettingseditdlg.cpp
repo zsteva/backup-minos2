@@ -19,6 +19,8 @@ TSettingsEditDlg::TSettingsEditDlg(QWidget *parent, SettingsBundle *bundle) :
     QByteArray geometry = settings.value("EntrySettings/geometry").toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
+
+    baseTitle = windowTitle();
 }
 void TSettingsEditDlg::ShowCurrentSectionOnly()
 {
@@ -61,7 +63,7 @@ void TSettingsEditDlg::showSections(QString currSection)
 
    qSort(sections.begin(), sections.end(),// sectionLessThan);
              [this](const QString &first, const QString &second) { return sectionLessThan(bundle, first, second); });
-   setWindowTitle(windowTitle() + " - " + bundle->getBundle() + " for " + bundle->getSection()) ;
+   setWindowTitle(baseTitle + " - " + bundle->getBundle() + " for " + bundle->getSection()) ;
 
    int offset = 0;
    for ( int i = 0; i < sections.size(); i++ )

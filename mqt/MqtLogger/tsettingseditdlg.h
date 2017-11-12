@@ -18,6 +18,8 @@ class TSettingsEditDlg : public QDialog
     SettingsBundle *bundle;
     bool currSectionOnly;
     QString initialSection;
+
+    QString baseTitle;
     void showSections(QString currSection);
     void showSection();
     void showDetails();
