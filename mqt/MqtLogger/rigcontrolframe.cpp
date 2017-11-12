@@ -127,7 +127,8 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
         ui->bandSelCombo->addItem(bandSelData::bandNames[i]);
     }
 
-    connect(ui->bandSelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(radioBandFreq(int)));
+    //connect(ui->bandSelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(radioBandFreq(int)));
+    connect(ui->bandSelCombo, SIGNAL(activated(int)), this, SLOT(radioBandFreq(int)));
 
 
 
@@ -241,23 +242,29 @@ void RigControlFrame::returnChangeRadioFreq()
 
 void RigControlFrame::radioBandFreq(int index)
 {
-    traceMsg("Radio Band Freq");
+    traceMsg(QString("Radio Band Freq Index = %1").arg(QString::number(index)));
+    QString f = bandSelData::bandFreq[index];
     if (index > 0 && index < bandSelData::bandFreq.count())
     {
-        ui->freqInput->setInputMask(maskData::freqMask[bandSelData::bandMaskIdx[index]]);
-        ui->freqInput->setText(bandSelData::freqDialZero[index]);
-        if (isRadioLoaded())
+        if (f.remove('.') != curFreq.remove('.'))
         {
-            if (radioConnected && !radioError)
+            ui->freqInput->setInputMask(maskData::freqMask[bandSelData::bandMaskIdx[index]]);
+            ui->freqInput->setText(bandSelData::freqDialZero[index]);
+            if (isRadioLoaded())
             {
-                sendFreq(bandSelData::bandFreq[index]);
+                if (radioConnected && !radioError)
+                {
+                    sendFreq(f);
+                }
             }
-        }
-        else
-        {
-            noRadioSendOutFreq(bandSelData::bandFreq[index]);
-        }
+            else
+            {
+                noRadioSendOutFreq(f);
+            }
+       }
+
     }
+    traceMsg(QString("Freq the same or index out of range"));
 }
 
 void RigControlFrame::sendFreq(QString f)
