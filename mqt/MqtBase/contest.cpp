@@ -989,7 +989,7 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
       if (usesBonus.getValue())
       {
           if (bonusType.getValue().isEmpty())
-              bonusType.setValue("B2"); // cope with old Minos files
+              bonusType.setValue("B4"); // cope with old Minos files
           loadBonusList();
       }
       mt->getStructArgMemberValue( "M7Mults", M7Mults);
@@ -1170,39 +1170,56 @@ static bool loadCalYear ( Calendar &cal, int year )
 }
 void BaseContestLog::loadBonusList()
 {
-    if (usesBonus.getValue() && bonusType.getValue() == "B2")
+    if (usesBonus.getValue() && (bonusType.getValue() == "B2" || bonusType.getValue() == "B4"))
     {
         QDateTime  contestStart = CanonicalToTDT(DTGStart.getValue());
         int year = contestStart.date().year();
-        if (year != bonusYearLoaded)
+        if (year != bonusYearLoaded || bonusType.getValue() != bonusTypeLoaded)
         {
-
             Calendar vhf(year, ectVHF);
             bool loaded = loadCalYear ( vhf, year );
 
             if (loaded)
             {
                 bonusYearLoaded = year;
-            }
-
-            MultType B2 = vhf.mults["B2"];
-
-            if (B2.bonuses.size() == 0)
-            {
-                // load from ./Configuration/B2Mults.xml
-                vhf = Calendar(year, ectVHF);
-                loaded = vhf.parseFile ( "./Configuration/B2Mults.xml" );
-                B2 = vhf.mults["B2"];
+                bonusTypeLoaded = bonusType.getValue();
             }
 
             locBonuses.clear();
-
-            for (QMap<QString, int>::iterator i = B2.bonuses.begin(); i != B2.bonuses.end(); i++)
+            if (bonusType.getValue() == "B2")
             {
-                QString name = i.key().toUpper();
-                int value = i.value();
+                MultType B2 = vhf.mults["B2"];
 
-                locBonuses[name] = value;
+                if (B2.bonuses.size() == 0)
+                {
+                    // load from ./Configuration/B2Mults.xml
+                    vhf = Calendar(year, ectVHF);
+                    loaded = vhf.parseFile ( "./Configuration/B2Mults.xml" );
+                    B2 = vhf.mults["B2"];
+                }
+                for (QMap<QString, int>::iterator i = B2.bonuses.begin(); i != B2.bonuses.end(); i++)
+                {
+                    QString name = i.key().toUpper();
+                    int value = i.value();
+
+                    locBonuses[name] = value;
+                }
+            }
+            if (bonusType.getValue() == "B4")
+            {
+                MultType B4 = vhf.mults["B4"];
+
+                if (B4.bonuses.size() == 0)
+                {
+                    B4.bonuses["DEFAULT"] = 500;
+                }
+                for (QMap<QString, int>::iterator i = B4.bonuses.begin(); i != B4.bonuses.end(); i++)
+                {
+                    QString name = i.key().toUpper();
+                    int value = i.value();
+
+                    locBonuses[name] = value;
+                }
             }
         }
     }

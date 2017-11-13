@@ -56,6 +56,7 @@ cd Configuration
 \bin\wget\wget http://www.country-files.com/cty/cty.dat -O cty.dat
 \bin\wget\wget http://www.rsgbcc.org/vhf/vhfcontests16.xml -O vhfcontests16.xml
 \bin\wget\wget http://www.rsgbcc.org/vhf/vhfcontests17.xml -O vhfcontests17.xml
+\bin\wget\wget http://www.rsgbcc.org/vhf/vhfcontests18.xml -O vhfcontests18.xml
 
 cd ../Bin
 

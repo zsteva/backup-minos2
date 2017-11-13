@@ -33,7 +33,8 @@ ContestDetails::ContestDetails(QWidget *parent) :
     ui->ExchangeComboBox->addItem("Exchange Required (no multiplier)");
 
     ui->BonusComboBox->addItem("None");
-    ui->BonusComboBox->addItem("UKAC Bonuses");
+    ui->BonusComboBox->addItem("UKAC Bonuses (B2)");
+    ui->BonusComboBox->addItem("UKAC Bonuses (B4)");
     ui->BonusComboBox->addItem("NAC Bonuses");
 
     ui->ModeComboBox->addItem(hamlibData::CW);
@@ -306,8 +307,10 @@ void ContestDetails::setDetails(  )
    {
        if (bonusType == "B2")
            ui->BonusComboBox->setCurrentIndex(1);
-       else if (bonusType == "NAC")
+       else if (bonusType == "B4")
            ui->BonusComboBox->setCurrentIndex(2);
+       else if (bonusType == "NAC")
+           ui->BonusComboBox->setCurrentIndex(3);
        else
            ui->BonusComboBox->setCurrentIndex(0);
 
@@ -589,6 +592,24 @@ void ContestDetails::setDetails( const IndividualContest &ic )
        contest->UKloc_multiplier = 0;
        contest->NonUKloc_multiplier = 0;
    }
+   else if ( ic.mults == "B4" )
+   {
+       contest->usesBonus.setValue(true);
+       contest->bonusType.setValue("B4");
+
+       contest->districtMult.setValue( false );
+       contest->countryMult.setValue( false );
+       contest->locMult.setValue( false );
+       contest->GLocMult.setValue( false );
+       contest->nonGCountryMult.setValue( false );
+
+       contest->M7Mults.setValue(false);
+
+       contest->UKloc_mult = false;
+       contest->NonUKloc_mult = false;
+       contest->UKloc_multiplier = 0;
+       contest->NonUKloc_multiplier = 0;
+   }
    else
    {
       contest->usesBonus.setValue(false);
@@ -637,7 +658,18 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    ui->M7LocatorMults->setChecked(contest->M7Mults.getValue()) ;
 
    bool UKACBonus = contest->usesBonus.getValue();
-   ui->BonusComboBox->setCurrentIndex(UKACBonus?1:0);
+   if (!UKACBonus)
+   {
+       ui->BonusComboBox->setCurrentIndex(0);
+   }
+   else
+   {
+       QString bonusType = contest->bonusType.getValue();
+       if (bonusType == "B2")
+            ui->BonusComboBox->setCurrentIndex(1);
+       if (bonusType == "B4")
+            ui->BonusComboBox->setCurrentIndex(2);
+   }
 
 
    ui->RSTField->setChecked(true) ;
@@ -731,6 +763,11 @@ QWidget * ContestDetails::getDetails( )
             contest->loadBonusList();
         }
         else if (bt == 2)
+        {
+            contest->bonusType.setValue("B4");
+            contest->loadBonusList();
+        }
+        else if (bt == 3)
         {
             contest->bonusType.setValue("NAC");
             contest->loadBonusList();

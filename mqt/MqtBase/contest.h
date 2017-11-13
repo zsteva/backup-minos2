@@ -226,6 +226,7 @@ class BaseContestLog: public BaseLogList
 
       int multsAsBonuses;
       int bonusYearLoaded;
+      QString bonusTypeLoaded;
       QMap<QString, int> locBonuses;
       void loadBonusList();
       int getSquareBonus(QString sloc);
