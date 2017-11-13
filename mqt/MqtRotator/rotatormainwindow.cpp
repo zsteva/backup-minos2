@@ -594,6 +594,7 @@ void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
     bool ctrl = mods & Qt::ControlModifier;
     bool alt = mods & Qt::AltModifier;
 */
+
     if (Key == Qt::Key_Escape)
     {
         emit escapePressed();
