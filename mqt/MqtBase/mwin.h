@@ -178,6 +178,13 @@ class dtg
       QString getIsoDTG( ) const;
       void setIsoDTG( const QString & );
 
+      QDate getDate();
+      QTime getTime();
+
+      void setDate(QDate);
+      void setTime(QTime);
+      void setDateTime(QDateTime tdt);
+
       void setValue( const dtg &d )
       {
          sdate.setValue( d.sdate.getValue() );

@@ -385,6 +385,32 @@ dtg& dtg::operator =(const dtg&rhs)
 }
 dtg::~dtg()
 {}
+QDate dtg::getDate()
+{
+    QString dtgstr = getDate(DTGFULL) + getTime(DTGLOG);
+    QDateTime check = CanonicalToTDT( dtgstr );
+
+    return check.date();
+
+}
+QTime dtg::getTime()
+{
+    QString dtgstr = getDate(DTGFULL) + getTime(DTGLOG);
+    QDateTime check = CanonicalToTDT( dtgstr );
+
+    return check.time();
+}
+void dtg::setDate(QDate tdt)
+{
+    QString d = tdt.toString("yyMMdd");
+    sdate.setValue(d);
+}
+void dtg::setTime(QTime tdt)
+{
+    QString t = tdt.toString("hhmmss");
+    stime.setValue(t);
+}
+
 //============================================================
 callsign::callsign( ) : valRes( CS_NOT_VALIDATED )
 {

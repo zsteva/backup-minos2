@@ -173,9 +173,12 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="DateEdit">
-           <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+          <widget class="QDateEdit" name="dateEdit">
+           <property name="currentSection">
+            <enum>QDateTimeEdit::DaySection</enum>
+           </property>
+           <property name="displayFormat">
+            <string>dd/MM/yy</string>
            </property>
           </widget>
          </item>
@@ -187,9 +190,12 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="TimeEdit">
-           <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+          <widget class="QTimeEdit" name="timeEdit">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::UpDownArrows</enum>
+           </property>
+           <property name="currentSection">
+            <enum>QDateTimeEdit::MinuteSection</enum>
            </property>
           </widget>
          </item>

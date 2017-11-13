@@ -88,7 +88,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(SecondOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
 
 
-    ui->TimeEdit->installEventFilter(this);
+    ui->timeEdit->installEventFilter(this);
 
 
     for (int i = 0; i < hamlibData::supModeList.count(); i++)
@@ -128,7 +128,7 @@ bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
     }
     else if (event->type() == QEvent::MouseButtonDblClick)
     {
-        if (obj == ui->SerTXEdit || (edit && (obj == ui->TimeEdit)))
+        if (obj == ui->SerTXEdit || (edit && (obj == ui->timeEdit)))
         {
             mouseDoubleClickEvent(obj);
         }
@@ -359,23 +359,27 @@ void QSOLogFrame::setTimeStyles()
     {
         if (catchup)
         {
-            ui->DateEdit->setStyleSheet(ssDtgWhite);
-            ui->TimeEdit->setStyleSheet(ssDtgWhite);
-            widgetStyles[ui->DateEdit] = ssDtgWhite;
-            widgetStyles[ui->TimeEdit] = ssDtgWhite;
+            ui->dateEdit->setStyleSheet(ssDtgWhite);
+            ui->timeEdit->setStyleSheet(ssDtgWhite);
+            widgetStyles[ui->dateEdit] = ssDtgWhite;
+            widgetStyles[ui->timeEdit] = ssDtgWhite;
 
-            ui->DateEdit->setReadOnly(false);
-            ui->TimeEdit->setReadOnly(false);
+            ui->dateEdit->setReadOnly(false);
+            ui->timeEdit->setReadOnly(false);
+            ui->dateEdit->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
+            ui->timeEdit->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
         }
         else
         {
-            ui->DateEdit->setStyleSheet(ssDtgWhiteNoFrame);
-            ui->TimeEdit->setStyleSheet(ssDtgWhiteNoFrame);
-            widgetStyles[ui->DateEdit] = ssDtgWhiteNoFrame;
-            widgetStyles[ui->TimeEdit] = ssDtgWhiteNoFrame;
+            ui->dateEdit->setStyleSheet(ssDtgWhiteNoFrame);
+            ui->timeEdit->setStyleSheet(ssDtgWhiteNoFrame);
+            widgetStyles[ui->dateEdit] = ssDtgWhiteNoFrame;
+            widgetStyles[ui->timeEdit] = ssDtgWhiteNoFrame;
 
-            ui->DateEdit->setReadOnly(true);
-            ui->TimeEdit->setReadOnly(true);
+            ui->dateEdit->setReadOnly(true);
+            ui->timeEdit->setReadOnly(true);
+            ui->dateEdit->setButtonSymbols(QAbstractSpinBox::NoButtons);
+            ui->timeEdit->setButtonSymbols(QAbstractSpinBox::NoButtons);
         }
     }
 }
@@ -407,6 +411,7 @@ void QSOLogFrame::on_CatchupButton_clicked()
         widgetStyles[ui->CatchupButton] = "background-color : coral;";
         ui->CatchupButton->setText("End Catch-up");
     }
+    // set the screencontact dtg as not entered
     screenContact.time.setDate(QString(), DTGLOG);
     screenContact.time.setTime(QString(), DTGLOG);
     setTimeStyles();
@@ -776,10 +781,12 @@ void QSOLogFrame::mouseDoubleClickEvent(QObject *w)
     {
         ui->SerTXEdit->setReadOnly(false);
     }
-    if (edit && (w == ui->TimeEdit || w == ui->DateEdit))
+    if (edit && (w == ui->timeEdit || w == ui->dateEdit))
     {
-        ui->TimeEdit->setReadOnly(false);
-        ui->DateEdit->setReadOnly(false);
+        ui->timeEdit->setReadOnly(false);
+        ui->dateEdit->setReadOnly(false);
+        ui->dateEdit->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
+        ui->timeEdit->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
     }
 }
 void QSOLogFrame::setActiveControl( int *Key )
@@ -947,9 +954,25 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
    }
    ui->SerTXEdit->setReadOnly(!edit);
 
-   ui->TimeEdit->setReadOnly(!edit && !catchup);
-   ui->DateEdit->setReadOnly(!edit && !catchup);
 
+   if (!edit && !catchup)
+   {
+       ui->timeEdit->setReadOnly(true);
+       ui->dateEdit->setReadOnly(true);
+
+       ui->dateEdit->setButtonSymbols(QAbstractSpinBox::NoButtons);
+       ui->timeEdit->setButtonSymbols(QAbstractSpinBox::NoButtons);
+
+   }
+   else
+   {
+       ui->timeEdit->setReadOnly(false);
+       ui->dateEdit->setReadOnly(false);
+
+       ui->dateEdit->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
+       ui->timeEdit->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
+
+   }
    if ( current == ui->LocEdit )
    {
       // do any required character substitutions, but only when we have a full
@@ -1230,23 +1253,11 @@ void QSOLogFrame::selectField( QWidget *v )
 
         if ( catchup || screenContact.contactFlags & TO_BE_ENTERED )
         {
-            int selpt = ui->TimeEdit->text().length();
-            if ( selpt > 0 )
-            {
-                ui->TimeEdit->setSelection(selpt - 1, 1);
-                v = ui->TimeEdit;
-            }
-            else
-            {
-                selpt = ui->DateEdit->text().length();
-                if ( selpt > 2 )
-                {
-                    ui->DateEdit->setSelection(1, 1);
-                }
-                v = ui->DateEdit;
-            }
+            v = ui->timeEdit;
         }
     }
+    ui->timeEdit->setCurrentSection(QDateTimeEdit::MinuteSection);
+    ui->dateEdit->setCurrentSection(QDateTimeEdit::DaySection);
     if ( current == v )
     {
         v->setFocus();
@@ -1878,14 +1889,14 @@ void QSOLogFrame::logScreenEntry( )
 void QSOLogFrame::getScreenContactTime()
 {
    updateQSOTime();
-   screenContact.time.setDate( ui->DateEdit->text(), DTGDISP );
-   screenContact.time.setTime( ui->TimeEdit->text(), DTGDISP );
+   screenContact.time.setDate( ui->dateEdit->date() );
+   screenContact.time.setTime( ui->timeEdit->time() );
 }
 //---------------------------------------------------------------------------
 void QSOLogFrame::showScreenContactTime()
 {
-   ui->DateEdit->setText(screenContact.time.getDate( DTGDISP ));
-   ui->TimeEdit->setText(screenContact.time.getTime( DTGDISP ));
+   ui->dateEdit->setDate(screenContact.time.getDate( ));
+   ui->timeEdit->setTime(screenContact.time.getTime( ));
 }
 void QSOLogFrame::getScreenRigData()
 {
@@ -1981,13 +1992,12 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
     if (!edit && !catchup)
     {
         dtg tnow( true );
-        ui->DateEdit->setText(tnow.getDate( DTGDISP ));
-        QString t = tnow.getTime( DTGDISP );
-        ui->TimeEdit->setText(t);
+        ui->dateEdit->setDate(tnow.getDate( ));
+        ui->timeEdit->setTime(tnow.getTime( ));
     }
     dtg time(false);
-    time.setDate( ui->DateEdit->text(), DTGDISP );
-    time.setTime( ui->TimeEdit->text().left( 5), DTGDISP );
+    time.setDate( ui->dateEdit->date() );
+    time.setTime( ui->timeEdit->time() );
 
     bool timeOK = false;
 
@@ -2001,17 +2011,17 @@ void QSOLogFrame::updateQSOTime(bool fromTimer)
         oldTimeOK = timeOK;
         if (timeOK)
         {
-            ui->DateEdit->setStyleSheet(ssDtgWhiteNoFrame);
-            ui->TimeEdit->setStyleSheet(ssDtgWhiteNoFrame);
-            widgetStyles[ui->DateEdit] = ssDtgWhiteNoFrame;
-            widgetStyles[ui->TimeEdit] = ssDtgWhiteNoFrame;
+            ui->dateEdit->setStyleSheet(ssDtgWhiteNoFrame);
+            ui->timeEdit->setStyleSheet(ssDtgWhiteNoFrame);
+            widgetStyles[ui->dateEdit] = ssDtgWhiteNoFrame;
+            widgetStyles[ui->timeEdit] = ssDtgWhiteNoFrame;
         }
         else
         {
-            ui->DateEdit->setStyleSheet(ssDtgRed);
-            ui->TimeEdit->setStyleSheet(ssDtgRed);
-            widgetStyles[ui->DateEdit] = ssDtgRed;
-            widgetStyles[ui->TimeEdit] = ssDtgRed;
+            ui->dateEdit->setStyleSheet(ssDtgRed);
+            ui->timeEdit->setStyleSheet(ssDtgRed);
+            widgetStyles[ui->dateEdit] = ssDtgRed;
+            widgetStyles[ui->timeEdit] = ssDtgRed;
         }
     }
 }
@@ -2109,8 +2119,10 @@ void QSOLogFrame::sortUnfilledCatchupTime( )
         // Uri Mode - catchuping QSOs from paper while logging current QSOs
         // catchup - post contest entry of QSOs
         // and we need to set the date/time from the previous contact
-        ui->TimeEdit->setReadOnly(false);
-        ui->DateEdit->setReadOnly(false);
+        ui->timeEdit->setReadOnly(false);
+        ui->dateEdit->setReadOnly(false);
+        ui->dateEdit->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
+        ui->timeEdit->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
 
         int tne = screenContact.time.notEntered(); // partial dtg will give +fe
         // full dtg gives -ve, none gives 0
@@ -2124,27 +2136,32 @@ void QSOLogFrame::sortUnfilledCatchupTime( )
             if ( pct )
             {
                 screenContact.time = pct->time;
-                ui->DateEdit->setText(screenContact.time.getDate( DTGDISP ));
-                ui->TimeEdit->setText(screenContact.time.getTime( DTGDISP ));
+                ui->dateEdit->setDate(screenContact.time.getDate( ));
+                ui->timeEdit->setTime(screenContact.time.getTime( ));
             }
             else
             {
                 // use contest start time
                 QDateTime DTGStart = CanonicalToTDT(contest->DTGStart.getValue());
-                ui->DateEdit->setText(DTGStart.toString("dd/MM/yy"));
-                ui->TimeEdit->setText(DTGStart.toString("hh:mm"));
+                ui->dateEdit->setDate(DTGStart.date());
+                ui->timeEdit->setTime(DTGStart.time());
                 dtg time(false);
-                time.setDate( ui->DateEdit->text(), DTGDISP );
-                time.setTime( ui->TimeEdit->text().left(5), DTGDISP );
+                time.setDate( ui->dateEdit->date());
+                time.setTime( ui->timeEdit->time() );
                 screenContact.time = time;
             }
         }
     }
     else if (!edit)
     {
-        ui->TimeEdit->setReadOnly(true);
-        ui->DateEdit->setReadOnly(true);
+        ui->timeEdit->setReadOnly(true);
+        ui->dateEdit->setReadOnly(true);
+        ui->dateEdit->setButtonSymbols(QAbstractSpinBox::NoButtons);
+        ui->timeEdit->setButtonSymbols(QAbstractSpinBox::NoButtons);
     }
+    ui->timeEdit->setCurrentSection(QDateTimeEdit::MinuteSection);
+    ui->dateEdit->setCurrentSection(QDateTimeEdit::DaySection);
+
 }
 void QSOLogFrame::selectEntryForEdit( QSharedPointer<BaseContact> slct )
 {
@@ -2172,8 +2189,8 @@ void QSOLogFrame::selectEntryForEdit( QSharedPointer<BaseContact> slct )
    if (tne < 0)
    {
       dtg time(false);
-      time.setDate( ui->DateEdit->text(), DTGDISP );
-      time.setTime( ui->TimeEdit->text().left( 5), DTGDISP );
+      time.setDate( ui->dateEdit->date() );
+      time.setTime( ui->timeEdit->time() );
    }
 
    MinosLoggerEvents::SendAfterSelectContact(catchup?QSharedPointer<BaseContact>():slct, contest);
