@@ -1,4 +1,12 @@
 //===========================================================================
+//===========================================================================
+//===========================================================================
+//===========================================================================
+//===========================================================================
+//===========================================================================
+Publish only has key and category; when it comes to (e.g.) multiple rig control programs
+we need do distinguish further - e.g. publisher (program/server)
+//===========================================================================
 Stewart Wilkinson It does not like a couple of the older Minos Files - ones that I manged to save that have an extra dot in the filename instead of a comma (like 5.8GHz instead of 5,8GHz)
 Like · Reply · 1 · 17 hrs
 Remove

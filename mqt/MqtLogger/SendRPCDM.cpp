@@ -172,12 +172,9 @@ void TSendDM::sendRigControlMode(const QString &mode)
 //---------------------------------------------------------------------------
 void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
-
-    // Does each SendDm get a notification??
-
     // PubSub notifications
-    logMessage( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
     AnalysePubSubNotify an( err, mro );
+    logMessage( "Notify callback from " + from + ( err ? ":Error " : ":Normal " ) +  an.getPublisherProgram() + "@" + an.getPublisherServer());
 
     if ( an.getOK() )
     {

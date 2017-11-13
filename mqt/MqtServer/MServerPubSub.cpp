@@ -169,7 +169,7 @@ class PublishedCategory: public Published
       static PublishedCategoryListIterator findPubCategory( const QString &category );
 
       // find a published item
-      PublishedKeyListIterator findPubKey( const QString &svr, const QString &key );
+      PublishedKeyListIterator findPubKey( const QString &svr, const QString &pid, const QString &key );
 
       PublishedCategory( const QString &pubId, const QString &category );
       ~PublishedCategory();
@@ -190,7 +190,6 @@ class PublishedKey: public Published
       PublishedKey();
 
       QString server;  // published from server
-      QString client;  // not used at the moment, but it should be?
       QString key;
       QString value;
       PublishState state;
@@ -497,12 +496,12 @@ int PublishedCategory::GetSubscribedCount()
 
 //---------------------------------------------------------------------------
 // return entry for this Name
-PublishedKeyListIterator PublishedCategory::findPubKey( const QString &svr, const QString &key )
+PublishedKeyListIterator PublishedCategory::findPubKey(const QString &svr, const QString &pid, const QString &key )
 {
    for ( PublishedKeyListIterator i = pubkeylist.begin(); i != pubkeylist.end(); i++ )
    {
       PublishedKey *pk = (*i);
-      if (pk && key == pk ->getPubKey() && pk ->getServer() == svr )
+      if (pk && key == pk ->getPubKey() && pk->getPubId() == pid && pk ->getServer() == svr )
          return i;
    }
    return pubkeylist.end();
@@ -530,19 +529,19 @@ PublishedKeyListIterator PublishedCategory::findPubKey( const QString &svr, cons
 //---------------------------------------------------------------------------
 void PublishedCategory::publish( const QString &pubId, const QString &k, const QString &v , PublishState pState)
 {
-   PublishedKeyListIterator kl = findPubKey( "", k );
+   PublishedKeyListIterator kl = findPubKey( "", pubId, k );
    bool doPub = false;
    if ( kl == pubkeylist.end() && pState == psPublished)
    {
       PublishedKey * p = new PublishedKey( false, pubId, "", this, k, pState );
       pubkeylist.push_back( p );
-      kl = findPubKey( "", k );
+      kl = findPubKey( "", pubId, k );
       doPub = true;
    }
 
    if ( ( kl != pubkeylist.end() ) && ( doPub || ( *kl ) ->getPubValue() != v || (*kl)->getPubState() != pState) )     // first time, force broadcast anyway
    {
-      ( *kl ) ->setPubId( pubId );
+      //( *kl ) ->setPubId( pubId );
       ( *kl ) ->setPubValue( v );
       ( *kl ) ->setPubState( pState );
       for ( SubscriberListIterator i = subscribedLocal.begin(); i != subscribedLocal.end(); i++ )
@@ -576,19 +575,19 @@ void PublishedCategory::serverPublish( const QString &pubId, const QString &svr,
 {
 
 //#warning What happens here? Why do remote contestlogs get reported with no server to the local monitor?
-   PublishedKeyListIterator kl = findPubKey( svr, k );
+   PublishedKeyListIterator kl = findPubKey( svr, pubId, k );
    bool doPub = false;
    if ( kl == pubkeylist.end() )
    {
       PublishedKey * p = new PublishedKey( true, pubId, svr, this, k, pState );
       pubkeylist.push_back( p );
-      kl = findPubKey( svr, k );
+      kl = findPubKey( svr, pubId, k );
       doPub = true;
    }
 
    if ( ( kl != pubkeylist.end() ) && ( doPub || ( *kl ) ->getPubValue() != v || ( *kl) ->getPubState() != pState ) )     // first time, force broadcast anyway
    {
-      ( *kl ) ->setPubId( pubId );
+//      ( *kl ) ->setPubId( pubId );
       ( *kl ) ->setPubValue( v );
       ( *kl ) ->setPubState( pState );
       for ( RemoteSubscriberListIterator i = subscribedRemote.begin(); i != subscribedRemote.end(); i++ )
