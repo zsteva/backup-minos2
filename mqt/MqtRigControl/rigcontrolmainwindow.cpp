@@ -316,7 +316,7 @@ void RigControlMainWindow::upDateRadio()
         if (appName.length() > 0)
         {
             writeWindowTitle(appName);
-            msg->publishRadioName(selectRig->currentRadio.radioName);
+            sendRadioNameLogger(selectRig->currentRadio.radioName);
         }
         else
         {
@@ -375,8 +375,7 @@ void RigControlMainWindow::upDateRadio()
         if (appName.length() > 0)
         {
             writeWindowTitle(appName);
-            msg->publishRadioName("No radio");
-
+            sendRadioNameLogger("No Radio");
         }
         else
         {
@@ -1075,6 +1074,22 @@ void RigControlMainWindow::about()
 {
     QMessageBox::about(this, "Minos RigControl", "Minos QT RigControl\nCopyright D Balharrie G8FKH/M0DGB 2017");
 }
+
+
+void RigControlMainWindow::sendRadioNameLogger(const QString radioName)
+{
+    if (appName.trimmed() == radioName.trimmed() || appName.length() == 0)
+    {
+        msg->publishRadioName(radioName);
+    }
+    else
+    {
+        msg->publishRadioName(QString("%1 : %2").arg(appName, radioName));
+    }
+
+}
+
+
 
 
 

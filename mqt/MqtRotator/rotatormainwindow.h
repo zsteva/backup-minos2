@@ -240,6 +240,7 @@ private:
     int calclRot_0_450_Neg180_540(int targetBearing);
     void dumpRotatorToTraceLog();
     void writeWindowTitle(QString appName);
+    void sendAntennaNameLogger(const QString antennaName);
 };
 
 #endif // ROTATORMAINWINDOW_H
