@@ -243,7 +243,7 @@ void MainWindow::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QSt
     trace( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
     AnalysePubSubNotify an( err, mro );
 
-    if ( an.getOK() )
+    if ( an.getOK() && an.getPublisherProgram() == rpcConstants::rigControlApp )
     {
         if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyState )
         {
