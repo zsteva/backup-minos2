@@ -838,11 +838,16 @@ void QSOLogFrame::getScreenEntry()
    screenContact.repr = ui->RSTRXEdit->text().trimmed();
    screenContact.serialr = ui->SerRXEdit->text().trimmed();
 
-   screenContact.loc.loc.setValue( ui->LocEdit->text().trimmed() );
+   QString loc = ui->LocEdit->text().trimmed();
+   screenContact.loc.loc.setValue( loc );
    screenContact.bearing = -1;		// force a recalc
    screenContact.loc.validate();
-   screenContact.extraText = ui->QTHEdit->text().trimmed();
-   screenContact.comments = ui->CommentsEdit->text().trimmed();
+
+   QString extra = ui->QTHEdit->text().trimmed();
+   screenContact.extraText = extra;
+
+   QString comments = ui->CommentsEdit->text().trimmed();
+   screenContact.comments = comments;
    if (edit)
    {
        screenContact.rigName = ui->radioEdit->text().trimmed();
@@ -1211,6 +1216,10 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
                     {
                         ss = ssLineEditFrRedBkWhite;
                     }
+                }
+                else if ((*vcp) == qthIl)
+                {
+                    // leave as no error except if exchange is wrong??
                 }
                 else
                 {
@@ -1645,8 +1654,7 @@ void QSOLogFrame::updateQSODisplay()
    ui->rotatorHeadingEdit->setEnabled(notProtected);
 
    bool exchangeNeeded = contest->otherExchange .getValue() || contest->districtMult.getValue();
-   ui->QTHEdit->setEnabled( exchangeNeeded && notProtected );
-   //ui->QTHEdit->setReadOnly(!(exchangeNeeded && notProtected) );
+   ui->QTHEdit->setEnabled( exchangeNeeded );
 
    ui->ModeButton->setEnabled(notProtected);
    ui->SecondOpComboBox->setEnabled(notProtected);
