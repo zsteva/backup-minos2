@@ -1,6 +1,7 @@
 #include "mqtUtils_pch.h"
+#include <QPalette>
 
-void appStartup(QApplication &/*a*/, const QString &appName, bool startLog)
+void appStartup(const QString &appName, bool startLog)
 {
     QApplication::setOrganizationName( "Minos2Qt" );
     QApplication::setOrganizationDomain( "g0gjv.org.uk" );
@@ -12,6 +13,8 @@ void appStartup(QApplication &/*a*/, const QString &appName, bool startLog)
     {
         QApplication::setFont( qfont.value<QFont>() );
     }
+
+    qApp->setStyleSheet(QString("[readOnly=\"true\"] { background-color: %0 }").arg(qApp->palette().color(QPalette::Window).name(QColor::HexRgb)));
 
     if (startLog)
     {

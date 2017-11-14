@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    appStartup(a, "Qs1rSync");
+    appStartup("Qs1rSync");
 
     MainWindow w;
     w.show();

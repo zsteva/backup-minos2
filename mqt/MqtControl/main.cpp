@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    appStartup(a, "MinosQtControl");
+    appStartup("MinosQtControl");
 
     ControlMain w;
     w.show();

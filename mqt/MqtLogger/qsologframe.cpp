@@ -1220,9 +1220,17 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
             ret = false;
         }
 
-        (*vcp)->wc->setStyleSheet(ss);
-        widgetStyles[(*vcp)->wc] = ss;
-
+        if ((*vcp)->wc->isEnabled())
+        {
+            (*vcp)->wc->setStyleSheet(ss);
+            widgetStyles[(*vcp)->wc] = ss;
+        }
+        else
+        {
+            QString ss = QString("[readOnly=\"true\"] { background-color: %0 }").arg(qApp->palette().color(QPalette::Window).name(QColor::HexRgb));
+            (*vcp)->wc->setStyleSheet(ss);
+            widgetStyles[(*vcp)->wc] = ss;
+        }
    }
    return ret;
 }
@@ -1618,32 +1626,34 @@ void QSOLogFrame::updateQSODisplay()
    {
 //      ui->QTHEdit->CharCase = ecNormal;
    }
-   bool protect = !contest->isReadOnly();
-   ui->RSTTXEdit->setEnabled(protect);
-   ui->SerTXEdit->setEnabled(protect);
-   ui->RSTRXEdit->setEnabled(protect);
-   ui->SerRXEdit->setEnabled(protect);
+   bool notProtected = !contest->isReadOnly();
+   ui->RSTTXEdit->setEnabled(notProtected);
+   ui->SerTXEdit->setEnabled(notProtected);
+   ui->RSTRXEdit->setEnabled(notProtected);
+   ui->SerRXEdit->setEnabled(notProtected);
    //CallsignEdit->Enabled = false; // leave these to allow searching
    //LocEdit->Enabled = false;
    //QTHEdit->Enabled = false;
-   ui->CommentsEdit->setEnabled(protect);
-   ui->ModeComboBoxGJV->setEnabled(protect);
-   ui->NonScoreCheckBox->setEnabled(protect);
-   ui->DeletedCheckBox->setEnabled(protect);
-   ui->GJVOKButton->setEnabled(protect);
-   ui->GJVForceButton->setEnabled(protect);
-   ui->radioEdit->setEnabled(protect);
-   ui->frequencyEdit->setEnabled(protect);
-   ui->rotatorHeadingEdit->setEnabled(protect);
+   ui->CommentsEdit->setEnabled(notProtected);
+   ui->ModeComboBoxGJV->setEnabled(notProtected);
+   ui->NonScoreCheckBox->setEnabled(notProtected);
+   ui->DeletedCheckBox->setEnabled(notProtected);
+   ui->GJVOKButton->setEnabled(notProtected);
+   ui->GJVForceButton->setEnabled(notProtected);
+   ui->radioEdit->setEnabled(notProtected);
+   ui->frequencyEdit->setEnabled(notProtected);
+   ui->rotatorHeadingEdit->setEnabled(notProtected);
 
-   ui->QTHEdit->setEnabled( contest->otherExchange .getValue() || contest->districtMult.getValue() );
+   bool exchangeNeeded = contest->otherExchange .getValue() || contest->districtMult.getValue();
+   ui->QTHEdit->setEnabled( exchangeNeeded && notProtected );
+   //ui->QTHEdit->setReadOnly(!(exchangeNeeded && notProtected) );
 
-   ui->ModeButton->setEnabled(protect);
-   ui->SecondOpComboBox->setEnabled(protect);
-   ui->MainOpComboBox->setEnabled(protect);
+   ui->ModeButton->setEnabled(notProtected);
+   ui->SecondOpComboBox->setEnabled(notProtected);
+   ui->MainOpComboBox->setEnabled(notProtected);
 
-   ui->InsertBeforeButton->setEnabled(protect);
-   ui->InsertAfterButton->setEnabled(protect);
+   ui->InsertBeforeButton->setEnabled(notProtected);
+   ui->InsertAfterButton->setEnabled(notProtected);
 
    on_FontChanged();    // do all style sheets again
 

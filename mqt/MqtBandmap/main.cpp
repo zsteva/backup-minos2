@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    appStartup(a, "MinosQtBandmap");
+    appStartup("MinosQtBandmap");
 
     BandMapMainWindow w;
     w.show();
