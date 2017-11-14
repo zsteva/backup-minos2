@@ -564,6 +564,7 @@ void RigControlFrame::freqPlusShortCut_clicked(bool /*click*/)
         QString freq = calcNewFreq(5000.0);
         if (freq != "")
         {
+            ui->freqInput->setText(freq);
             emit sendFreqControl(freq);
         }
 

@@ -1008,7 +1008,7 @@ void RigControlMainWindow::hamlibError(int errorCode, QString cmd)
 
     errorCode *= -1;
     QString errorMsg = radio->gethamlibErrorMsg(errorCode);
-    logMessage("Hamlib Error - Code = " + QString::number(errorCode) + " " + errorMsg);
+    logMessage(QString("Hamlib Error - Code = %1 - %2").arg(QString::number(errorCode), errorMsg));
 
     QMessageBox::critical(this, "RigControl hamlib Error - " + selectRig->currentRadio.radioName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
 
