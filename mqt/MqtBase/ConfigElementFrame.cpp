@@ -222,7 +222,6 @@ void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &valu
         remoteOK = ace.remoteOK;
         ui->hideAppCheckBox->setChecked(ace.defaultHide);
         ui->enabledCheckbox->setChecked(true);
-        ui->advancedCheckbox->setChecked(true);
 
         ui->rbRunLocally->setVisible(localOK);
         ui->rbConnectRemote->setVisible(remoteOK);
@@ -230,7 +229,10 @@ void ConfigElementFrame::on_appTypeCombo_currentIndexChanged(const QString &valu
         if (localOK)
             ui->rbRunLocally->setChecked(true);
         else if (remoteOK)
+        {
             ui->rbConnectRemote->setChecked(true);
+            ui->advancedCheckbox->setChecked(true);
+        }
 
         saveElement();
 

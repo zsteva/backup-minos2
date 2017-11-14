@@ -129,6 +129,8 @@ Connectable RunConfigElement::connectable()
 
 void RunConfigElement::createProcess()
 {
+    if (name.compare("<Deleted>", Qt::CaseInsensitive) == 0)
+        return;
     if (rEnabled && runType == RunLocal && !runner)
     {
         runner = new QProcess(parent());
@@ -440,10 +442,12 @@ QString MinosConfig::checkConfig()
     int eleListSize = 0;
     for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
     {
-        eleListSize++;
         QSharedPointer<RunConfigElement> ele = (*i);
+        if (ele->name.compare("<Deleted>", Qt::CaseInsensitive) == 0)
+            continue;
         if (ele->rEnabled)
         {
+            eleListSize++;
             if (ele->appType == "Server" && ele->runType == RunLocal )
             {
                 serverPresent = true;
@@ -465,6 +469,9 @@ QString MinosConfig::checkConfig()
     {
         QSharedPointer<RunConfigElement> ele = (*i);
 
+        if (ele->name.compare("<Deleted>", Qt::CaseInsensitive) == 0)
+            continue;
+
         if (ele->rEnabled)
         {
             if ( ele->requires.size() > 0 && ele->runType == RunLocal)
@@ -482,6 +489,8 @@ QString MinosConfig::checkConfig()
                     bool reqFound = false;
                     for ( QVector <QSharedPointer<RunConfigElement> >::iterator j = elelist.begin(); j != elelist.end(); j++ )
                     {
+                        if ((*j)->name.compare("<Deleted>", Qt::CaseInsensitive) == 0)
+                            continue;
                         if ((*j)->appType == req && (*j)->rEnabled && (*j)->runType == RunLocal)
                         {
                             reqFound = true;
