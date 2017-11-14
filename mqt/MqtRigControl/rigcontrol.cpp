@@ -124,6 +124,10 @@ int RigControl::init(scatParams currentRadio)
 int RigControl::closeRig()
 {
     int retcode;
+    if (!my_rig)
+    {
+        return retcode = -14;
+    }
 
     retcode = rig_close(my_rig);
 

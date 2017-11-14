@@ -140,6 +140,8 @@ private:
 
 
     void setTransVertDisplayVisible(bool visible);
+    void writeWindowTitle(QString appName);
+    void sendRadioNameLogger(const QString radioName);
 private slots:
 
     void onStdInRead(QString);

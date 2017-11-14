@@ -305,22 +305,22 @@ void RigControlMainWindow::upDateRadio()
 
         selectRig->saveCurrentRadio();
 
-        if (radio->get_serialConnected())
-        {
+        //if (radio->get_serialConnected())
+        //{
                 closeRadio();
-                this->setWindowTitle("Minos Rig Control");
-        }
+
+        //}
 
         openRadio();
 
         if (appName.length() > 0)
         {
-            this->setWindowTitle("Minos Rig Control - " + appName + " - Logger");
-            msg->publishRadioName(selectRig->currentRadio.radioName);
+            writeWindowTitle(appName);
+            sendRadioNameLogger(selectRig->currentRadio.radioName);
         }
         else
         {
-            this->setWindowTitle("Minos Rig Control - Local");
+            writeWindowTitle(appName);
         }
 
         logMessage(QString("Update Radio: Get Freq"));
@@ -374,13 +374,12 @@ void RigControlMainWindow::upDateRadio()
         closeRadio();
         if (appName.length() > 0)
         {
-            this->setWindowTitle("Minos Rig Control - - Logger");
-            msg->publishRadioName("No radio");
-
+            writeWindowTitle(appName);
+            sendRadioNameLogger("No Radio");
         }
         else
         {
-            this->setWindowTitle("Minos Rig Control - - Local");
+            writeWindowTitle(appName);
         }
 
     }
@@ -494,7 +493,18 @@ void RigControlMainWindow::closeRadio()
 }
 
 
+void RigControlMainWindow::writeWindowTitle(QString appName)
+{
+    if (appName.length() > 0)
+    {
+        this->setWindowTitle("Minos Rig Control - " + appName + " - Logger");
+    }
+    else
+    {
+        this->setWindowTitle("Minos Rig Control - Local");
+    }
 
+}
 
 
 void RigControlMainWindow::setPolltime(int interval)
@@ -998,7 +1008,7 @@ void RigControlMainWindow::hamlibError(int errorCode, QString cmd)
 
     errorCode *= -1;
     QString errorMsg = radio->gethamlibErrorMsg(errorCode);
-    logMessage("Hamlib Error - Code = " + QString::number(errorCode) + " " + errorMsg);
+    logMessage(QString("Hamlib Error - Code = %1 - %2").arg(QString::number(errorCode), errorMsg));
 
     QMessageBox::critical(this, "RigControl hamlib Error - " + selectRig->currentRadio.radioName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
 
@@ -1064,6 +1074,22 @@ void RigControlMainWindow::about()
 {
     QMessageBox::about(this, "Minos RigControl", "Minos QT RigControl\nCopyright D Balharrie G8FKH/M0DGB 2017");
 }
+
+
+void RigControlMainWindow::sendRadioNameLogger(const QString radioName)
+{
+    if (appName.trimmed() == radioName.trimmed() || appName.length() == 0)
+    {
+        msg->publishRadioName(radioName);
+    }
+    else
+    {
+        msg->publishRadioName(QString("%1 : %2").arg(appName, radioName));
+    }
+
+}
+
+
 
 
 

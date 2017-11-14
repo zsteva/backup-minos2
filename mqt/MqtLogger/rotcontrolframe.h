@@ -70,6 +70,7 @@ private:
     bool rotError = false;
     void clearRotatorFlags();
 
+    QString antennaName;
     bool rotatorLoaded;
     bool isRotatorLoaded();
 

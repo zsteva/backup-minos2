@@ -493,6 +493,8 @@ void RotControlFrame::setRotatorAntennaName(const QString &s)
 {
    traceMsg("Set Antenna Name = " + s);
     ui->antennaName->setText(s);
+    antennaName = s;
+
 }
 
 void RotControlFrame::setRotatorBearing(const QString &s)
@@ -599,5 +601,5 @@ void RotControlFrame::setRotatorMinAzimuth(const QString &s)
 
 void RotControlFrame::traceMsg(QString msg)
 {
-    trace("Rotcontrol: " + msg);
+    trace(QString("Rotcontrol: %1 - %2").arg(antennaName, msg));
 }
