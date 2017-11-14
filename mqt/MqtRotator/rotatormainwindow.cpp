@@ -867,20 +867,13 @@ void RotatorMainWindow::upDateAntenna()
        if (rotator->get_serialConnected())
        {
            closeRotator();
-           this->setWindowTitle("Minos Rotator");
+
 
        }
+
+       writeWindowTitle(appName);
 
        openRotator();
-
-       if (appName.length() > 0)
-       {
-           this->setWindowTitle("Minos Rotator Control - " + appName + " - Logger");
-       }
-       else
-       {
-           this->setWindowTitle("Minos Rotator Control - Local");
-       }
 
        offSetDisplay->setText(QString::number(selectRotator->currentAntenna.antennaOffset));
 
@@ -999,14 +992,14 @@ void RotatorMainWindow::upDateAntenna()
         closeRotator();
         if (appName.length() > 0)
         {
-           this->setWindowTitle("Minos Rotator - - Logger");
+            writeWindowTitle(appName);
             msg->publishAntennaName("No rotator");
             msg->publishMaxAzimuth(QString::number(0));
             msg->publishMinAzimuth(QString::number(0));
         }
         else
         {
-            this->setWindowTitle("Minos Rotator - - Local");
+            writeWindowTitle(appName);
         }
 
 
@@ -1021,7 +1014,18 @@ void RotatorMainWindow::upDateAntenna()
 }
 
 
+void RotatorMainWindow::writeWindowTitle(QString appName)
+{
+    if (appName.length() > 0)
+    {
+        this->setWindowTitle("Minos Rotator Control - " + appName + " - Logger");
+    }
+    else
+    {
+        this->setWindowTitle("Minos Rotator Control - Local");
+    }
 
+}
 
 void RotatorMainWindow::request_bearing()
 {

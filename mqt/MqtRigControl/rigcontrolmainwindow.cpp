@@ -308,19 +308,19 @@ void RigControlMainWindow::upDateRadio()
         if (radio->get_serialConnected())
         {
                 closeRadio();
-                this->setWindowTitle("Minos Rig Control");
+
         }
 
         openRadio();
 
         if (appName.length() > 0)
         {
-            this->setWindowTitle("Minos Rig Control - " + appName + " - Logger");
+            writeWindowTitle(appName);
             msg->publishRadioName(selectRig->currentRadio.radioName);
         }
         else
         {
-            this->setWindowTitle("Minos Rig Control - Local");
+            writeWindowTitle(appName);
         }
 
         logMessage(QString("Update Radio: Get Freq"));
@@ -374,13 +374,13 @@ void RigControlMainWindow::upDateRadio()
         closeRadio();
         if (appName.length() > 0)
         {
-            this->setWindowTitle("Minos Rig Control - - Logger");
+            writeWindowTitle(appName);
             msg->publishRadioName("No radio");
 
         }
         else
         {
-            this->setWindowTitle("Minos Rig Control - - Local");
+            writeWindowTitle(appName);
         }
 
     }
@@ -494,7 +494,18 @@ void RigControlMainWindow::closeRadio()
 }
 
 
+void RigControlMainWindow::writeWindowTitle(QString appName)
+{
+    if (appName.length() > 0)
+    {
+        this->setWindowTitle("Minos Rig Control - " + appName + " - Logger");
+    }
+    else
+    {
+        this->setWindowTitle("Minos Rig Control - Local");
+    }
 
+}
 
 
 void RigControlMainWindow::setPolltime(int interval)

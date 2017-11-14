@@ -85,7 +85,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
 
     on_FontChanged();
-    traceMsg("RigControl Frame Started");
+    traceMsg(QString("Started"));
 }
 
 RigControlFrame::~RigControlFrame()
@@ -142,7 +142,7 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
 
 void RigControlFrame::setRadioLoaded()
 {
-    traceMsg("Set Radio Loaded");
+    traceMsg(QString("Set Radio Loaded"));
     radioLoaded = true;
     ui->modelbl->setVisible(true);
 }
@@ -154,13 +154,13 @@ bool RigControlFrame::isRadioLoaded()
 
 void RigControlFrame::noRadioSetFreq(QString f)
 {
-    traceMsg("No Radio SetFreq");
+    traceMsg(QString("No Radio SetFreq = %1").arg(f));
     setFreq(f);
 }
 
 void RigControlFrame::setFreq(QString f)
 {
-    traceMsg("Set Freq - ui, curFreq");
+    traceMsg(QString("Set Freq = %12").arg(f));
     QString freq = f;
 
     freq.remove('.');
@@ -181,7 +181,7 @@ void RigControlFrame::setFreq(QString f)
 
 void RigControlFrame::changeRadioFreq()
 {
-    traceMsg("Change Radio Freq");
+    traceMsg(QString("Change Radio Freq"));
     static QString freq = "";
 
     QString newfreq = ui->freqInput->text().trimmed();
@@ -285,7 +285,7 @@ void RigControlFrame::sendFreq(QString f)
 
 void RigControlFrame::noRadioSendOutFreq(QString f)
 {
-    traceMsg("No Radio Send Freq to Radio");
+    traceMsg(QString("No Radio Send Freq to Radio = %1").arg(f));
     // update rigframe
     emit noRadioSendFreq(f);
     // update logger
@@ -308,7 +308,7 @@ bool RigControlFrame::eventFilter(QObject *obj, QEvent *event)
 
 void RigControlFrame::exitFreqEdit()
 {
-    traceMsg("Exit Edit Freq");
+    traceMsg(QString("Exit Edit Freq"));
     freqEditOn = false;
     setFreq(curFreq);
     freqLineEditFrameColour(false);
@@ -320,6 +320,7 @@ void RigControlFrame::exitFreqEdit()
 
 void RigControlFrame::freqEditSelected()
 {
+    traceMsg(QString("Freq Edit Selected"));
     ui->freqInput->setFocus();
     int len = ui->freqInput->text().length();
     if (len > 5)
@@ -387,7 +388,7 @@ void RigControlFrame::getDetails(memoryData::memData &logData)
 void RigControlFrame::setMode(QString m)
 {
 
-    traceMsg(QString("Set mode, ui etc = %1").arg(m));
+    traceMsg(QString("Set Mode = %1").arg(m));
     QStringList mode = m.split(':');
     if (mode.length() == 2 )
     {
@@ -430,7 +431,7 @@ void RigControlFrame::sendModeToRadio(QString m)
 
 void RigControlFrame::setRadioName(QString n)
 {
-    traceMsg("Set RadioName");
+    traceMsg(QString("Set RadioName = %1").arg(n));
     ui->radioName->setText(n);
     radioName = n;
 }
@@ -499,7 +500,7 @@ int RigControlFrame::calcMinosMode(QString mode)
 
 void RigControlFrame::freqLineEditInFocus()
 {
-    traceMsg("Freq LineEdit in Focus");
+    traceMsg(QString("Freq LineEdit in Focus"));
     freqEditOn = true;
     ui->freqInput->setReadOnly(false);
     freqLineEditFrameColour(true);
@@ -628,7 +629,7 @@ void RigControlFrame::mgmLabelVisible(bool state)
 
 void RigControlFrame::traceMsg(QString msg)
 {
-    trace("Rigcontrol: " + msg);
+    trace(QString("RigcontrolFrame: %1 - %2 ").arg(radioName, msg));
 }
 
 

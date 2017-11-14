@@ -140,6 +140,7 @@ private:
 
 
     void setTransVertDisplayVisible(bool visible);
+    void writeWindowTitle(QString appName);
 private slots:
 
     void onStdInRead(QString);
