@@ -305,11 +305,11 @@ void RigControlMainWindow::upDateRadio()
 
         selectRig->saveCurrentRadio();
 
-        if (radio->get_serialConnected())
-        {
+        //if (radio->get_serialConnected())
+        //{
                 closeRadio();
 
-        }
+        //}
 
         openRadio();
 
