@@ -1971,7 +1971,7 @@ void QSOLogFrame::logCurrentContact( )
                 // use contest start time
                 QDateTime DTGStart = CanonicalToTDT(contest->DTGStart.getValue());
                 QString d = DTGStart.toString("dd/MM/yy");
-                QString t = DTGStart.toString("hh:mm");
+                QString t = DTGStart.toString("HH:mm");
                 ctTime.setDate( d, DTGDISP );
                 ctTime.setTime( t.left(5), DTGDISP );
              }

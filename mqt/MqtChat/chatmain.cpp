@@ -128,7 +128,7 @@ void TMinosChatForm::syncStations()
 void TMinosChatForm::addChat(const QString &mess)
 {
    QDateTime dt = QDateTime::currentDateTime();
-   QString sdt = dt.toString( "hh:MM:ss " ) + mess;
+   QString sdt = dt.toString( "HH:mm:ss " ) + mess;
    chatQueue.push_back(sdt);
 }
 void TMinosChatForm::syncChat()
