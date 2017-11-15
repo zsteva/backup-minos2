@@ -36,22 +36,29 @@ void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
 
 
     if (localOK && c->runType == RunLocal)
+    {
         ui->rbRunLocally->setChecked(true);
+    }
     else if (remoteOK && c->runType == ConnectServer)
     {
         ui->rbConnectRemote->setChecked(true);
         c->showAdvanced = true;
     }
     else if (localOK)
+    {
         ui->rbRunLocally->setChecked(true);
+        c->runType = RunLocal;
+    }
     else if (remoteOK)
     {
         ui->rbConnectRemote->setChecked(true);
         c->runType = ConnectServer;
         c->showAdvanced = true;
     }
-    else
+    else if (!localOK && !remoteOK)
+    {
         c->rEnabled = false;
+    }
 
 
     ui->enabledCheckbox->setChecked(c->rEnabled);
@@ -100,6 +107,9 @@ void ConfigElementFrame::saveElement()
         configElement->params = ui->parametersEdit->text().trimmed();
         configElement->server = ui->serverNameEdit->text().trimmed();
         configElement->remoteApp = ui->remoteAppNameEdit->text().trimmed();
+
+        configElement->localOK = localOK;
+        configElement->remoteOK = remoteOK;
 
         configElement->newElement = newElement;
 
