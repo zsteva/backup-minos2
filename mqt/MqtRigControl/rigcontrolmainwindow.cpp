@@ -92,6 +92,8 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
     setTransVertDisplayVisible(selectRig->currentRadio.transVertEnable);
 
+    enableRitDisplay(false);
+
     if (appName.length() > 0)
     {
         logMessage((QString("Read Current Radio for AppName %1 from logger").arg(appName)));
@@ -268,10 +270,17 @@ void RigControlMainWindow::initSelectRadioBox()
 
 void RigControlMainWindow::upDateRadio()
 {
-    int retCode = 0;
+    //int retCode = 0;
     int radioIndex = ui->selectRadioBox->currentIndex();
     if (radioIndex > 0)
     {
+        if (radio->get_serialConnected())
+        {
+                closeRadio();
+
+        }
+
+
         radioIndex -= 1;
         if (selectRig->availRadios[radioIndex].radioModelNumber == 0)
         {
@@ -279,6 +288,8 @@ void RigControlMainWindow::upDateRadio()
             QMessageBox::critical(this, tr("Radio Error"), "Please configure a radio name and model");
             return;
         }
+
+
         selectRig->currentRadio.radioName = selectRig->availRadios[radioIndex].radioName;
         selectRig->currentRadio.radioNumber = selectRig->availRadios[radioIndex].radioNumber;
         selectRig->currentRadio.radioMfg_Name = selectRig->availRadios[radioIndex].radioMfg_Name;
@@ -305,59 +316,27 @@ void RigControlMainWindow::upDateRadio()
 
         selectRig->saveCurrentRadio();
 
-        if (radio->get_serialConnected())
-        {
-                closeRadio();
-
-        }
+        sendRadioNameLogger(selectRig->currentRadio.radioName);
 
         openRadio();
 
-        if (appName.length() > 0)
-        {
-            writeWindowTitle(appName);
-            sendRadioNameLogger(selectRig->currentRadio.radioName);
-        }
-        else
-        {
-            writeWindowTitle(appName);
-        }
-
-        logMessage(QString("Update Radio: Get Freq"));
-        // get freq to see if comms are working
         if (radio->get_serialConnected())
         {
-            retCode = getFrequency(RIG_VFO_CURR);
-            if (retCode != RIG_OK)
-            {
-                logMessage(QString("Update Radio: Get Freq error %1").arg(QString::number(retCode)));
-                hamlibError(retCode, "Update Radio");
-            }
-        }
-
-        logMessage(QString("Update Radio: Set Mode USB and Passband NOR"));
-        if (radio->get_serialConnected())
-        {
-            radio->buildPassBandTable(selectRig->currentRadio.mgmMode);
-
-
-            enableRitDisplay(false);
-
-            dumpRadioToTraceLog();
-
-
-
-
-            sendStatusToLogConnected();
-            delay(2);
+            logMessage(QString("Update Radio: Set Mode USB and Passband NOR"));
             // initialise rig state
             slogMode = "USB";
-            // set mode and passband
+            // set mode
             logMode = radio->convertQStrMode("USB");
             setMode("USB", RIG_VFO_CURR);
+        }
 
-            loggerSetMode("USB");
-
+        if (radio->get_serialConnected())
+        {
+            // check still connected after setting mode
+            writeWindowTitle(appName);
+            sendRadioNameLogger(selectRig->currentRadio.radioName);
+            sendStatusToLogConnected();
+            dumpRadioToTraceLog();
 
         }
         else
@@ -384,10 +363,6 @@ void RigControlMainWindow::upDateRadio()
 
     }
 
-
-
-
-
     if (radio->get_serialConnected())
     {
         pollTimer->start(pollTime);             // start timer to send poll radio
@@ -407,6 +382,10 @@ void RigControlMainWindow::openRadio()
         showStatusMessage("Please select a Radio");
         return;
     }
+
+    logMessage(QString("Open Radio: Opening Radio %1 PortType %2").arg(selectRig->currentRadio.radioName, hamlibData::portTypeList[selectRig->currentRadio.portType]));
+    showStatusMessage(QString("Opening Radio: %1").arg(selectRig->currentRadio.radioName));
+
     if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL)
     {
         if(selectRig->comportAvial(selectRig->currentRadio.radioNumber.toInt(), selectRig->currentRadio.comport) == -1)
@@ -450,13 +429,18 @@ void RigControlMainWindow::openRadio()
         logMessage(QString("Error Opening Radio Error Code = $1").arg(QString::number(retCode)));
         hamlibError(retCode, "Open Radio");
     }
+
+
     if (radio->get_serialConnected())
     {
+        logMessage(QString("Open Radio: Radio Opened %1").arg(selectRig->currentRadio.radioName));
+        showStatusMessage(QString("Radio Opened: %1").arg(selectRig->currentRadio.radioName));
 
-        //pollTimer->start(pollTime);             // start timer to send message to controller
+
+
         if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL)
         {
-                showStatusMessage(QString("Connected to: %1 - %2, %3, %4, %5, %6, %7, %8")
+                showStatusMessage(QString("Connected: %1 - %2, %3, %4, %5, %6, %7, %8")
                                   //.arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel, selectRig->currentRadio.comport, selectRig->currentRadio.baudrate, selectRig->currentRadio.databits, selectRig->currentRadio.stopbits, radio->getParityCodeNames()[selectRig->currentRadio.parity], radio->getHandShakeNames()[selectRig->currentRadio.handshake]));
                                   .arg(p.radioName).arg(p.radioModel).trimmed().arg(p.comport).arg(p.baudrate).arg(p.databits)
                                   .arg(p.stopbits).arg(radio->getParityCodeNames()[p.parity]).arg(radio->getHandShakeNames()[p.handshake]));
@@ -465,12 +449,13 @@ void RigControlMainWindow::openRadio()
         }
         else if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_UDP_NETWORK)
         {
-                showStatusMessage(QString("Connected to: %1 - %2, %3").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel.trimmed(), selectRig->currentRadio.networkAdd + ":" + selectRig->currentRadio.networkPort));
+                showStatusMessage(QString("Connected: %1 - %2, %3").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel.trimmed(), selectRig->currentRadio.networkAdd + ":" + selectRig->currentRadio.networkPort));
         }
         else if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NONE)
         {
-                showStatusMessage(QString("Connected to: %1 - %2").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel.trimmed()));
+                showStatusMessage(QString("Connected: %1 - %2").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel.trimmed()));
         }
+
 
 
     }
@@ -486,10 +471,11 @@ void RigControlMainWindow::openRadio()
 
 void RigControlMainWindow::closeRadio()
 {
-    radio->closeRig();
-    showStatusMessage(tr("Disconnected"));
+
+    showStatusMessage("Disconnected");
     sendStatusToLogDisConnected();
     logMessage("Radio Closed");
+    radio->closeRig();
 }
 
 

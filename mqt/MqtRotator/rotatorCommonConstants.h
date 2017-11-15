@@ -39,12 +39,17 @@
 
 // Status messages sent to minos logger
 #define ROT_STATUS_CONNECTED "Connected"
+#define ROT_STATUS_DISCONNECTED "Disconnected"
+
 #define ROT_STATUS_ROTATE_CCW "<font color='Green'>Rotating CCW</font>"
 #define ROT_STATUS_ROTATE_CW "<font color='Green'>Rotating CW</font>"
 #define ROT_STATUS_STOP "Stop"
 #define ROT_STATUS_TURN_TO "<font color='Green'>Turning to bearing</font>"
 #define ROT_STATUS_DISCONNECTED "Disconnected"
 #define ROT_STATUS_ERROR "Error"
+
+#define ROT_ACTIVE "Rot_Active"
+#define ROT_NOT_ACTIVE "Rot_Not_Active"
 
 // Bearing Log
 #define BEARINGLOG_FILETYPE ".log"

@@ -428,64 +428,104 @@ bool RotControlFrame::isRotatorLoaded()
 void RotControlFrame::setRotatorState(const QString &s)
 {
        traceMsg("Set Rotator State = " + s);
-       //ui->rotatorState->setText(s);
-       if (s == ROT_STATUS_STOP)
+       // split the message
+       static QString connectStat;
+       static QString status;
+
+       QStringList sl = s.split(':');
+
+       if (sl.count() >= 0 && sl.count() < 3)
        {
-           ui->rotatorStatMsg->setText(s);
-           rotError = false;
-           clearRotatorFlags();
-           showRotLeftButOff();
-           showRotRightButOff();
-           showTurnButOff();
-       }
-       else if (s == ROT_STATUS_ROTATE_CCW)
-       {
-           ui->rotatorStatMsg->setText(s);
-           rotError = false;
-           moving = false;
-           movingCW = false;
-           movingCCW = true;
-          // clearRotatorFlags();
-           showRotLeftButOn();
-       }
-       else if (s == ROT_STATUS_ROTATE_CW)
-       {
-           ui->rotatorStatMsg->setText(s);
-           rotError = false;
-           moving = false;
-           movingCW = true;
-           movingCCW = false;
-           //clearRotatorFlags();
-           showRotRightButOn();
-       }
-       else if (s == ROT_STATUS_TURN_TO)
-       {
-           ui->rotatorStatMsg->setText(s);
-           rotError = false;
-           moving = true;
-           movingCW = false;
-           movingCCW = false;
-           showTurnButOn();
-           //clearRotatorFlags();
+           if (sl[0] != connectStat)
+           {
+               connectStat = sl[0];
+               if (connectStat == ROT_STATUS_CONNECTED)
+               {
+                   ui->rotConnectState->setText(connectStat);
+                   rotError = false;
+                   rotConnected = true;
+               }
+               else if (connectStat == ROT_STATUS_DISCONNECTED)
+               {
+                   ui->rotConnectState->setText(connectStat);
+                   rotError = false;
+                   rotConnected = false;
+               }
+           }
+           if (sl[1] != status)
+           {
+               status = sl[1];
+
+               if (status == ROT_STATUS_STOP)
+               {
+                   ui->rotatorStatMsg->setText(status);
+                   rotError = false;
+                   clearRotatorFlags();
+                   showRotLeftButOff();
+                   showRotRightButOff();
+                   showTurnButOff();
+               }
+               else if (status == ROT_STATUS_ROTATE_CCW)
+               {
+                   ui->rotatorStatMsg->setText(status);
+                   rotError = false;
+                   moving = false;
+                   movingCW = false;
+                   movingCCW = true;
+                  // clearRotatorFlags();
+                   showRotLeftButOn();
+               }
+               else if (status == ROT_STATUS_ROTATE_CW)
+               {
+                   ui->rotatorStatMsg->setText(status);
+                   rotError = false;
+                   moving = false;
+                   movingCW = true;
+                   movingCCW = false;
+                   //clearRotatorFlags();
+                   showRotRightButOn();
+               }
+               else if (status == ROT_STATUS_TURN_TO)
+               {
+                   ui->rotatorStatMsg->setText(status);
+                   rotError = false;
+                   moving = true;
+                   movingCW = false;
+                   movingCCW = false;
+                   showTurnButOn();
+                   //clearRotatorFlags();
+
+               }
+               else if (status == ROT_STATUS_CONNECTED)
+               {
+                   ui->rotConnectState->setText(status);
+                   rotError = false;
+                   rotConnected = true;
+               }
+               else if (status == ROT_STATUS_DISCONNECTED)
+               {
+                   ui->rotConnectState->setText(status);
+                   rotError = false;
+                   rotConnected = false;
+               }
+               else if (status == ROT_STATUS_ERROR)
+               {
+                   ui->rotatorStatMsg->setText(status);
+                   rotError = true;
+               }
+               else
+               {
+                   ui->rotatorStatMsg->setText(status);
+               }
+
+           }
+
+
 
        }
-       else if (s == ROT_STATUS_CONNECTED)
-       {
-           ui->rotConnectState->setText(s);
-           rotError = false;
-           rotConnected = true;
-       }
-       else if (s == ROT_STATUS_DISCONNECTED)
-       {
-           ui->rotConnectState->setText(s);
-           rotError = false;
-           rotConnected = false;
-       }
-       else if (s == ROT_STATUS_ERROR)
-       {
-           ui->rotatorStatMsg->setText(s);
-           rotError = true;
-       }
+
+
+
 
 }
 

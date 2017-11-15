@@ -85,7 +85,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
 
     on_FontChanged();
-    traceMsg(QString("Started"));
+    traceMsg(QString("RigControlFrame Started"));
 }
 
 RigControlFrame::~RigControlFrame()
@@ -113,7 +113,7 @@ void RigControlFrame::setContest(BaseContestLog *c)
 void RigControlFrame::initRigFrame(QWidget * /*parent*/)
 {
 
-    ui->modelbl->setText(MODE_ERROR);
+    ui->modelbl->setText(" ");
 
     //connect(ui->freqInput, SIGNAL(lostFocus()), this, SLOT(exitFreqEdit()));
     connect(ui->freqInput, SIGNAL(freqEditReturn()), this, SLOT(returnChangeRadioFreq()));

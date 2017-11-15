@@ -266,7 +266,8 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
         logMessage(QString("No antenna selected for this appName, %1").arg(appName));
         QString errmsg = "<font color='Red'>Please select an antenna!</font>";
         showStatusMessage(errmsg);
-        sendStatusLogger(errmsg);
+        statusMsg = errmsg;
+        sendStatusLogger();
     }
     else
     {
@@ -466,7 +467,7 @@ void RotatorMainWindow::openRotator()
                 showStatusMessage(QString("Connected to: %1 - %2").arg(selectRotator->currentAntenna.antennaName, selectRotator->currentAntenna.rotatorModel));
         }
 
-        sendStatusToLogConnected();
+        //sendStatusToLogConnected();
     }
     else
     {
@@ -504,9 +505,10 @@ void RotatorMainWindow::showStatusMessage(const QString &message)
 }
 
 
-void RotatorMainWindow::sendStatusLogger(const QString &message)
+void RotatorMainWindow::sendStatusLogger( )
 {
-   logMessage(QString("Send %1 message to logger").arg(message));
+   QString message = connectStat + ':' + statusMsg;
+   logMessage(QString("Send %1 message to logger, appName = %2").arg(message, appName));
    if (appName.length() > 0)
    {
         msg->publishState(message);
@@ -961,26 +963,6 @@ void RotatorMainWindow::upDateAntenna()
        }
 
 
- /*
-           currentMaxAzimuth = COMPASS_MAX360 - ROTATE_ENDSTOP_TOLERANCE; // stop rotator overrunning
-       }
-            else
-            {
-                currentMaxAzimuth = COMPASS_MAX360;
-            }
-            if (rotator->getMinAzimuth() < COMPASS_MIN0 && ! selectRotator->currentAntenna.overRunFlag)
-            {
-                currentMinAzimuth = COMPASS_MIN0 + ROTATE_ENDSTOP_TOLERANCE; // stop rotator overrunning
-            }
-            else
-            {
-                currentMinAzimuth = COMPASS_MIN0;
-            }
-
-            overLapActiveflag = false;
-       }
-
-*/
 
        // don't display overlap if rotator doesn't support or user turned off overlap
        toggleOverLapDisplay(overLapActiveflag);
@@ -990,12 +972,22 @@ void RotatorMainWindow::upDateAntenna()
        // flag if rotator supports CW and CCW commands
        supportCwCcwCmd = getCwCcwCmdFlag(selectRotator->currentAntenna.rotatorModelNumber);
 
+       if (rotator->get_serialConnected())
+       {
+           sendStatusToLogConnected();
+       }
+       else
+       {
+           sendStatusToLogDisConnected();
+       }
 
         rotatorBearing = 9999;      // force display update
        // update logger
        if (appName.length() > 0)
        {
            sendAntennaNameLogger(selectRotator->currentAntenna.antennaName);
+
+           sendStatusToLogStop();
            msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
            msg->publishMinAzimuth(QString::number(currentMinAzimuth));
        }
@@ -1008,6 +1000,8 @@ void RotatorMainWindow::upDateAntenna()
         {
             writeWindowTitle(appName);
             sendAntennaNameLogger("No rotator");
+            sendStatusToLogDisConnected();
+            sendStatusToLogStop();
             msg->publishMaxAzimuth(QString::number(0));
             msg->publishMinAzimuth(QString::number(0));
         }
@@ -1861,37 +1855,46 @@ void RotatorMainWindow::hamlibError(int errorCode, QString cmd )
 
 void RotatorMainWindow::sendStatusToLogConnected()
 {
-    sendStatusLogger(ROT_STATUS_CONNECTED);
-}
-
-void RotatorMainWindow::sendStatusToLogRotCCW()
-{
-    sendStatusLogger(ROT_STATUS_ROTATE_CCW);
-}
-
-void RotatorMainWindow::sendStatusToLogRotCW()
-{
-    sendStatusLogger(ROT_STATUS_ROTATE_CW);
-}
-
-void RotatorMainWindow::sendStatusToLogStop()
-{
-    sendStatusLogger(ROT_STATUS_STOP);
-}
-
-void RotatorMainWindow::sendStatusToLogTurn()
-{
-    sendStatusLogger(ROT_STATUS_TURN_TO);
+    connectStat = ROT_STATUS_CONNECTED;
+    sendStatusLogger();
 }
 
 void RotatorMainWindow::sendStatusToLogDisConnected()
 {
-    sendStatusLogger(ROT_STATUS_DISCONNECTED);
+    connectStat = ROT_STATUS_DISCONNECTED;
+    sendStatusLogger();
 }
+
+void RotatorMainWindow::sendStatusToLogRotCCW()
+{
+    statusMsg = ROT_STATUS_ROTATE_CCW;
+    sendStatusLogger();
+}
+
+void RotatorMainWindow::sendStatusToLogRotCW()
+{
+    statusMsg = ROT_STATUS_ROTATE_CW;
+    sendStatusLogger();
+}
+
+void RotatorMainWindow::sendStatusToLogStop()
+{
+    statusMsg = ROT_STATUS_STOP;
+    sendStatusLogger();
+}
+
+void RotatorMainWindow::sendStatusToLogTurn()
+{
+    statusMsg = ROT_STATUS_TURN_TO;
+    sendStatusLogger();
+}
+
+
 
 void RotatorMainWindow::sendStatusToLogError()
 {
-    sendStatusLogger(ROT_STATUS_ERROR);
+    statusMsg = ROT_STATUS_ERROR;
+    sendStatusLogger();
 }
 
 void RotatorMainWindow::sleepFor(qint64 milliseconds)
