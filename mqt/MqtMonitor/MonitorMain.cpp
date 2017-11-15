@@ -239,7 +239,7 @@ MonitorMain::MonitorMain(QWidget *parent) :
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
-    rpc->subscribe(rpcConstants::StationCategory);
+    //rpc->subscribe(rpcConstants::StationCategory);
     rpc->subscribe(rpcConstants::LocalStationCategory);
 
     QByteArray state;
@@ -608,10 +608,14 @@ void MonitorMain::on_monitorTimeout()
           close();
        }
     }
+    int icnt = 0;
     for ( QVector<MonitoredStation *>::iterator i = stationList.begin(); i != stationList.end(); i++ )
     {
+        icnt++;
+        int jcnt = 0;
        for ( QVector<MonitoredLog *>::iterator j = ( *i ) ->slotList.begin(); j != ( *i ) ->slotList.end(); j++ )
        {
+           jcnt++;
           if ((*j)->getState() == psRevoked)
           {
              QWidget *cttab = findContestPage( (*j)->getContest() );
@@ -625,6 +629,7 @@ void MonitorMain::on_monitorTimeout()
              (*j) = 0;
              (*i)->slotList.erase(j);
              syncstat = true;
+             break;             // as we have changed the list - don't continue
 
           }
           else
@@ -678,4 +683,13 @@ void MonitorMain::on_monitorTree_doubleClicked(const QModelIndex &index)
          }
       }
     }
+}
+
+void MonitorMain::on_contestPageControl_tabCloseRequested(int index)
+{
+    // close tab index
+    QWidget *w = ui->contestPageControl->widget(index);
+    MonitoringFrame *f = dynamic_cast<MonitoringFrame *>(w);
+
+    closeTab(f);
 }
