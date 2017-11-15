@@ -271,6 +271,8 @@ void RigControlMainWindow::initSelectRadioBox()
 void RigControlMainWindow::upDateRadio()
 {
     //int retCode = 0;
+    logMessage(QString("UpdateRadio: Index Selected = %1").arg(QString::number(ui->selectRadioBox->currentIndex())));
+
     int radioIndex = ui->selectRadioBox->currentIndex();
     if (radioIndex > 0)
     {

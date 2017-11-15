@@ -226,6 +226,7 @@ void TSingleLogFrame::on_ContestPageChanged ()
 
     if ( this != LogContainer->getCurrentLogFrame() )
     {
+
        ui->GJVQSOLogFrame->savePartial();  // we kill it on (re) entry, so not needed
        return ;
     }

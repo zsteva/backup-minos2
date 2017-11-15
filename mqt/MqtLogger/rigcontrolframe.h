@@ -101,6 +101,7 @@ public:
     int getIntPassBandState(QString mode);
     bool checkRadioState();
 
+
 signals:
     void sendFreqControl(QString);
     void noRadioSendFreq(QString);

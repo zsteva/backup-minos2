@@ -283,6 +283,9 @@ void RigControlFrame::sendFreq(QString f)
     }
 }
 
+
+
+
 void RigControlFrame::noRadioSendOutFreq(QString f)
 {
     traceMsg(QString("No Radio Send Freq to Radio = %1").arg(f));
