@@ -5,7 +5,7 @@
 #include "latlong.h"
 
 LocCalcFrame::LocCalcFrame(QWidget *parent) :
-    QFrame(parent), Modal(true),
+    QFrame(parent),
     contest(0),
     ui(new Ui::LocCalcFrame)
 {
@@ -50,11 +50,6 @@ void LocCalcFrame::setContest(BaseContestLog *ct)
 
 void LocCalcFrame::doExec()
 {
-    if (!Modal)
-    {
-        ui->CancelButton->setVisible(false);
-        ui->ExitButton->setVisible(false);
-    }
     ui->S1Loc->setText(S1Loc);
     ui->S2Loc->setText(S2Loc);
     on_CalcButton_clicked();
@@ -80,10 +75,7 @@ void LocCalcFrame::on_CalcButton_clicked()
           cnt.disbear( longitude, latitude, dist, brg );
           int idist = dist;
           Distance = QString::number( idist );
-          if ( Modal )
-             ui->Distance->setText( Distance);
-          else
-             ui->Distance->setText(QString( "Dist " ) + Distance + " km " + QString::number(brg) + " degrees");
+          ui->Distance->setText(QString( "Dist " ) + Distance + " km " + QString::number(brg) + " degrees");
        }
     }
 

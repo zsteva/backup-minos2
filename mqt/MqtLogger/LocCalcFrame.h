@@ -18,7 +18,6 @@ public:
     void doExec();
     void setContest(BaseContestLog *contest);
 
-    bool Modal;
     QString S1Loc;
     QString S2Loc;
     QString Distance;
