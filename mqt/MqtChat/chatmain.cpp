@@ -106,9 +106,9 @@ bool syncstat = false;
 QVector<QString> chatQueue;
 QString stateIndicator[] =
 {
-   "Av",
-   "NA",
-   "NC"
+   "Available",
+   "NotAvailable",
+   "NoContact"
 };
 void TMinosChatForm::syncStations()
 {
