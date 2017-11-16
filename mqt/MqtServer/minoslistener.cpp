@@ -107,8 +107,9 @@ void MinosListener::on_timeout()
         {
             // process says to finish off
             logMessage( "MinosListener::on_timeout", "deleting socket : " + ( *i ) ->getIdentity() );
-            (*i)->closeDown();
-            delete ( *i );
+            MinosCommonConnection *mcc = (*i);
+            mcc->closeDown();
+            delete mcc;
             *i = 0;
             clearup = true;
         }
