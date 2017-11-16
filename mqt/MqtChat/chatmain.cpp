@@ -35,7 +35,6 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
     rpc->subscribe(rpcConstants::LocalStationCategory);
-    rpc->subscribe(rpcConstants::ChatCategory);
 }
 
 TMinosChatForm::~TMinosChatForm()
@@ -150,6 +149,7 @@ QString stateList[] =
 };
 void TMinosChatForm::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QString &/*from*/ )
 {
+    MinosRPC *rpc = MinosRPC::getMinosRPC();
     AnalysePubSubNotify an( err, mro );
 
     if ( an.getOK() )
@@ -157,9 +157,15 @@ void TMinosChatForm::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const 
       if ( an.getCategory() == rpcConstants::LocalStationCategory)
       {
           QString s = an.getKey();
-          MinosRPC *rpc = MinosRPC::getMinosRPC();
           rpc->publish(rpcConstants::ChatCategory, rpcConstants::ChatServer, s, psPublished);
+          rpc->subscribe(rpcConstants::StationCategory);
       }
+      if (an.getCategory() == rpcConstants::StationCategory)
+      {
+          QString key = an.getKey();
+          rpc->subscribeRemote(key, rpcConstants::ChatCategory);
+      }
+
       if ( an.getCategory() == rpcConstants::ChatCategory )
       {
          logMessage( QString(stateIndicator[an.getState()]) + " " + an.getKey() + " " + an.getValue() );
