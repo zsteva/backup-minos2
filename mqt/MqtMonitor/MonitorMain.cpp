@@ -391,7 +391,12 @@ void MonitorMain::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QSt
        }
        if ( an.getCategory() == rpcConstants::StationCategory )
        {
-          logMessage( "Station " + key + " " + value );
+           RPCPubSub::subscribeRemote( key, rpcConstants::LoggerCategory );  //want ALL keys - but do it once we know who WE are!
+       }
+       if ( an.getCategory() == rpcConstants::LoggerCategory )
+       {
+
+           logMessage( "Station " + key + " " + value );
           QVector<MonitoredStation *>::iterator stat = std::find_if( stationList.begin(), stationList.end(), MonitoredStationCmp( key ) );
 
           if (state != psRevoked)

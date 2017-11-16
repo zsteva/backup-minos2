@@ -20,6 +20,7 @@ static const QString LocalStationCategory    = QT_TR_NOOP("LocalStation");
 
 // Logger
 static const QString loggerApp         = QT_TR_NOOP("Logger");
+static const QString LoggerCategory    = QT_TR_NOOP("MinosLogger");
 
 // Monitor
 static const QString monitorApp         = QT_TR_NOOP("Monitor");

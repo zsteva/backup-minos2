@@ -63,6 +63,8 @@ TLogContainer::TLogContainer(QWidget *parent) :
     statusBar() ->addWidget( sblabel2, 2 );
 
     subscribeApps();
+    QString station = MinosConfig::getThisServerName();
+    RPCPubSub::publish(rpcConstants::LoggerCategory, station, "", psPublished);
 }
 TLogContainer::~TLogContainer()
 {
