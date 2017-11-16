@@ -2,14 +2,30 @@
 #include "servermain.h"
 #include "AppStartup.h"
 
+#include "singleapplication.h"
+#include <QMessageBox>
+
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    SingleApplication a( QString("MinosServer"), argc, argv);
 
-    appStartup("MinosQtServer");
+    if (!a.isRunning())
+    {
+        appStartup("MinosQtServer");
 
-    ServerMain w;
-    w.show();
+        ServerMain w;
+        w.show();
 
-    return a.exec();
+        return a.exec();
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Minos Server is already running!");
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.addButton("Close", QMessageBox::RejectRole);
+        msgBox.exec();
+
+    }
+    return -2;
 }

@@ -1,5 +1,6 @@
 #include "mqtUtils_pch.h"
 #include <QPalette>
+#include <QApplication>
 
 void appStartup(const QString &appName, bool startLog)
 {
@@ -14,7 +15,8 @@ void appStartup(const QString &appName, bool startLog)
         QApplication::setFont( qfont.value<QFont>() );
     }
 
-    qApp->setStyleSheet(QString("[readOnly=\"true\"] { background-color: %0 }").arg(qApp->palette().color(QPalette::Window).name(QColor::HexRgb)));
+    QApplication *qa = dynamic_cast<QApplication *>(QApplication::instance());
+    qa->setStyleSheet(QString("[readOnly=\"true\"] { background-color: %0 }").arg(qa->palette().color(QPalette::Window).name(QColor::HexRgb)));
 
     if (startLog)
     {
