@@ -709,7 +709,16 @@ bool ThisLogMatcher::idleMatch( int limit )
              bool locmatch = false;
              bool qthmatch = false;
 
-             csmatch = matchcs.checkMatch( ( ( mp == Body ) ? ( cct->cs.body ) : ( cct->cs.fullCall.getValue() ) ) );
+             QString matchPart;
+             if (mp == Body)
+             {
+                 matchPart = cct->cs.body;
+             }
+             else
+             {
+                 matchPart = cct->cs.fullCall.getValue();
+             }
+             csmatch = matchcs.checkMatch( matchPart );
 
              if ( csmatch )
              {
@@ -729,14 +738,14 @@ bool ThisLogMatcher::idleMatch( int limit )
                    uprqth = uprqth.toUpper();
                    qthmatch = matchqth.checkMatch( uprqth );
 
-                   if ( bool( ccon ) && !qthmatch )
+                   if ( ccon->districtMult.getValue() )
                    {
-                      if ( ccon->districtMult.getValue() )
-                      {
+                       if ( ccon != 0 && !qthmatch )
+                       {
                          // attempt match against district code
                          if ( cct->districtMult && wildComp( cct->districtMult->districtCode, matchqth.mstr ) )
                             qthmatch = true;
-                      }
+                       }
                    }
                 }
              }
@@ -1314,7 +1323,6 @@ bool ListMatcher::idleMatch( int limit )
                matchStarted = false;
                setMatchRequired( false );
 
-               QString buff;
                // now make it display
                replaceList( );
 
@@ -1323,10 +1331,8 @@ bool ListMatcher::idleMatch( int limit )
             }
          }
 
-      ContactList * ccon;
-
       QSharedPointer<ListSlot> cs = TContestApp::getContestApp() ->listSlotList[ contestIndex ];
-      ccon = cs->slot;
+      ContactList *ccon = cs->slot;
 
       while ( limit > 0  && !ce)
       {
@@ -1368,8 +1374,18 @@ bool ListMatcher::idleMatch( int limit )
 // And why aren't we doing a QTH match here?
          bool csmatch = false;
          bool locmatch = false;
+         bool qthmatch = false;
 
-         csmatch = matchcs.checkMatch( ( ( mp == Body ) ? ( cct->cs.body ) : ( cct->cs.fullCall.getValue() ) ) );
+         QString matchPart;
+         if (mp == Body)
+         {
+             matchPart = cct->cs.body;
+         }
+         else
+         {
+             matchPart = cct->cs.fullCall.getValue();
+         }
+         csmatch = matchcs.checkMatch( matchPart );
 
          if ( csmatch )
          {
@@ -1379,9 +1395,30 @@ bool ListMatcher::idleMatch( int limit )
 
          if ( csmatch && locmatch )
          {
-            addMatch( cct, ccon );
-            if ( matchCollection->contactCount() > MATCH_LIM )
-               break;
+             if ( !matchqth.match || matchqth.empty )
+             {
+                qthmatch = true;
+             }
+             else
+             {
+                QString uprqth;
+                strcpysp( uprqth, cct->extraText, EXTRALENGTH );
+                uprqth = uprqth.toUpper();
+                qthmatch = matchqth.checkMatch( uprqth );
+
+                if ( ccon != 0 && !qthmatch )
+                {
+                  // attempt match against district code
+                  if ( wildComp( cct->extraText, matchqth.mstr ) )
+                     qthmatch = true;
+                }
+             }
+             if ( csmatch && locmatch && qthmatch )
+             {
+                addMatch( cct, ccon );
+                if ( matchCollection->contactCount() > MATCH_LIM )
+                   break;
+             }
          }
       }
    }

@@ -38,7 +38,7 @@ void MLogFile::createLogFile(const QString &path, const QString filePrefix, int 
     tidyFiles ( TidyPrefix, keepDays );
     QString fLogFileName = generateLogFileName ( path + "/" + filePrefix  );
 
-    QString dtg = QDateTime::currentDateTime().toString( "yyyy MMM dd hh:m:ss.zzz" );
+    QString dtg = QDateTime::currentDateTime().toString( "yyyy MMM dd HH:mm:ss.zzz" );
 
 	getLogFile( fLogFileName );
     QTextStream &l = log();
@@ -55,7 +55,7 @@ QTextStream &MLogFile::logT( void )
 {
     CsGuard lock;
     QDateTime dt = QDateTime::currentDateTime();
-    QString time = dt.toString( "hh:mm:ss.zzz" );
+    QString time = dt.toString( "HH:mm:ss.zzz" );
     return log() << time;
 }
 //---------------------------------------------------------------------------
@@ -81,7 +81,7 @@ QTextStream & MLogFile::log(const QString &s )
 {
    QDateTime dt = QDateTime::currentDateTime();
    QString s = prefix;
-   s += dt.toString( "yyyyMMdd_hhmmss" ) + ".log";
+   s += dt.toString( "yyyyMMdd_HHmmss" ) + ".log";
    return s;
 }
 //---------------------------------------------------------------------------

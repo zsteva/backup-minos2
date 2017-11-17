@@ -26,7 +26,7 @@ void TClockFrame::RecheckTimerTimer(  )
       return ;
 
    QDateTime t = QDateTime::currentDateTimeUtc().addSecs( MinosParameters::getMinosParameters() ->getBigClockCorrection());
-   QString disp = t.toString( "hh:mm:ss" );
+   QString disp = t.toString( "HH:mm:ss" );
 
    bool timeOK = false;
    if (contest)

@@ -142,6 +142,8 @@ class Published
       static void clearPublist();
       static int GetSubscribedCount();
       static int GetPublishedCount() ;
+      QString getPublisherServer();
+
 };
 class PublishedCategory: public Published
 {
@@ -330,6 +332,25 @@ PublishedCategoryList Published::publist;
 //---------------------------------------------------------------------------
 Published::Published( const QString &pubId, bool loc ) : pubId( pubId ), localOnly( loc )
 {}
+QString Published::getPublisherServer()
+{
+    QString publisherServer;
+    QStringList p = pubId.split(QChar('@'), QString::KeepEmptyParts);
+    if (p.size() > 1)
+    {
+        publisherServer = p[1];
+    }
+    else
+    {
+        publisherServer = pubId;
+    }
+    if (publisherServer == "localhost")
+    {
+        QString sname = MinosServer::getMinosServer()->getServerName();
+        publisherServer == sname;
+    }
+    return publisherServer;
+}
 //---------------------------------------------------------------------------
 void Published::clearPublist()
 {
@@ -900,16 +921,36 @@ void TPubSubMain::disconnectServer(const QString &pubId)
    {
       return;
    }
+   QString publisherServer;
+   QStringList p = pubId.split(QChar('@'), QString::KeepEmptyParts);
+   if (p.size() > 1)
+   {
+       publisherServer = p[1];
+   }
+   else
+   {
+       publisherServer = pubId;
+   }
+   if (publisherServer == "localhost")
+   {
+        QString sname = MinosServer::getMinosServer()->getServerName();
+        publisherServer == sname;
+   }
+
    for ( PublishedCategoryListIterator f = Published::publist.begin(); f != Published::publist.end(); f++ )
    {
       for ( PublishedKeyListIterator i = ( *f ) ->pubkeylist.begin(); i != ( *f ) ->pubkeylist.end(); i++ )
       {
-         if ((*i)->getPubId() == pubId)
+          PublishedKey *pk = (*i);
+         if (pk->getPublisherServer() == publisherServer)
          {
             // publish revoke
-            TPubSubMain::serverPublish( pubId, MinosId(pubId).server, (*f)->getCategory(), (*i)->getPubKey(), "", psNotConnected );
+            TPubSubMain::serverPublish( pk->getPubId(), publisherServer, (*f)->getCategory(), pk->getPubKey(), "", psRevoked );
+            delete (*i);
+            (*i) = 0;
          }
       }
+      (*f)->pubkeylist.erase( std::remove_if( (*f)->pubkeylist.begin(), (*f)->pubkeylist.end(), nopub ), (*f)->pubkeylist.end() );
    }
 }
 

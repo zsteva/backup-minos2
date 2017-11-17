@@ -107,8 +107,8 @@ void TCalendarForm::LoadGrid ( Calendar &cal )
         col = 0;
         ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).description ) );
         ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).bands ) );
-        ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).start.toString ( "dd/MM/yyyy hh:mm" ) ) );
-        ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).finish.toString ( "dd/MM/yyyy hh:mm" ) ) );
+        ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).start.toString ( "dd/MM/yyyy HH:mm" ) ) );
+        ui->CalendarGrid->setItem( row, col++, new QTableWidgetItem( ( *i ).finish.toString ( "dd/MM/yyyy HH:mm" ) ) );
 
         if ( cal.calType == ectVHF )
         {

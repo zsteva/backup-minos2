@@ -39,19 +39,15 @@ class Server
       QString host;
       QString station;
       int port;
-      bool autoReconnect;
-
-//      bool available;
-      bool zconf;
       bool local;
 
       Server( const QString &uuid, const QString &h, const QString &s, int p )
-            : /*available( false ),*/ zconf( true ), local( false ),
-            uuid(uuid), host( h ), station( s ), port( p ), autoReconnect(false)
+            : local( false ),
+            uuid(uuid), host( h ), station( s ), port( p )
       {}
       Server( const QString &s )
-            : /*available( false ),*/ zconf( false ), local( false ),
-            station( s ), port( -1 ), autoReconnect(false)
+            : local( false ),
+            station( s ), port( -1 )
       {}
       virtual ~Server(){}
 };
@@ -85,9 +81,8 @@ class TZConf: public QObject
     Q_OBJECT
    private:  	// User declarations
 
-      static void publishServer(const QString &uuid, const QString &name,
-                        const QString &hosttarget, int PortAsNumber, bool autoReconnect );
-      void readServerList();
+      static Server *zcPublishServer(const QString &uuid, const QString &name,
+                        const QString &hosttarget, int PortAsNumber );
       bool waitNameReply;
       QString localName;
 
@@ -114,7 +109,6 @@ class TZConf: public QObject
 
       TZConf( );
       virtual ~TZConf( );
-//      static void publishServer( const QString &name );
       static  TZConf *getZConf()
        {
            return ZConf;
@@ -133,7 +127,7 @@ class TZConf: public QObject
       QHostAddress groupAddress;
 
       QString getZConfString(bool beaconreq);
-      bool processZConfString(const QString &message,const  QString &recvAddress);
+      Server *processZConfString(const QString &message, const  QString &recvAddress, bool &beaconResponse);
       void publishDisconnect(const QString &name);
       void closeDown();
 private slots:

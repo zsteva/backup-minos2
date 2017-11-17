@@ -8,6 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 #include "minos_pch.h"
+#include "TinyUtils.h"
 
 #include "ConfigFile.h"
 
@@ -63,6 +64,11 @@ bool MinosServer::analyseNode( MinosCommonConnection *il, TiXmlElement *tix )
    // we need to sort out the "not implemented" bits here.
    // what do these stanzas mean to a service?
    // it need to be up to the individual service to see!
+
+   if (  checkElementName( tix, "keepAlive" ))
+   {
+       return false;
+   }
 
    MinosId from( getAttribute( tix, "from" ) );
    QString subtype = getAttribute( tix, "type" );

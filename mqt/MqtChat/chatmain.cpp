@@ -34,7 +34,7 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
-    rpc->subscribe(rpcConstants::StationCategory);
+    rpc->subscribe(rpcConstants::LocalStationCategory);
 }
 
 TMinosChatForm::~TMinosChatForm()
@@ -106,9 +106,9 @@ bool syncstat = false;
 QVector<QString> chatQueue;
 QString stateIndicator[] =
 {
-   "Av",
-   "NA",
-   "NC"
+   "Available",
+   "NotAvailable",
+   "NoContact"
 };
 void TMinosChatForm::syncStations()
 {
@@ -128,7 +128,7 @@ void TMinosChatForm::syncStations()
 void TMinosChatForm::addChat(const QString &mess)
 {
    QDateTime dt = QDateTime::currentDateTime();
-   QString sdt = dt.toString( "hh:MM:ss " ) + mess;
+   QString sdt = dt.toString( "HH:mm:ss " ) + mess;
    chatQueue.push_back(sdt);
 }
 void TMinosChatForm::syncChat()
@@ -153,18 +153,30 @@ void TMinosChatForm::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const 
 
     if ( an.getOK() )
     {
-      if ( an.getCategory() == rpcConstants::StationCategory )
+      if ( an.getCategory() == rpcConstants::LocalStationCategory)
+      {
+          QString s = an.getKey();
+          RPCPubSub::publish(rpcConstants::ChatCategory, rpcConstants::ChatServer, s, psPublished);
+          RPCPubSub::subscribe(rpcConstants::StationCategory);
+      }
+      if (an.getCategory() == rpcConstants::StationCategory)
+      {
+          QString key = an.getKey();
+          RPCPubSub::subscribeRemote(key, rpcConstants::ChatCategory);
+      }
+
+      if ( an.getCategory() == rpcConstants::ChatCategory )
       {
          logMessage( QString(stateIndicator[an.getState()]) + " " + an.getKey() + " " + an.getValue() );
          QVector<Server>::iterator stat;
          for ( stat = serverList.begin(); stat != serverList.end(); stat++ )
          {
-            if ((*stat).name == an.getKey())
+            if ((*stat).name == an.getPublisherServer())
             {
                if ((*stat).state != an.getState())
                {
                   (*stat).state = an.getState();
-                  QString mess = an.getKey() + " changed state to " + stateList[an.getState()];
+                  QString mess = an.getPublisherServer() + " changed state to " + stateList[an.getState()];
                   addChat( mess );
                   syncstat = true;
                }
@@ -176,11 +188,11 @@ void TMinosChatForm::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const 
          {
             // We have received notification from a previously unknown station - so report on it
             Server s;
-            s.name = an.getKey();
+            s.name = an.getPublisherServer();
             s.ip = an.getValue();
             s.state = an.getState();
             serverList.push_back( s );
-            QString mess = an.getKey() + " changed state to " + stateList[an.getState()];
+            QString mess = an.getPublisherServer() + " changed state to " + stateList[an.getState()];
             addChat( mess );
             syncstat = true;
          }

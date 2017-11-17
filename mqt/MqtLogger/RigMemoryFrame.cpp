@@ -113,9 +113,6 @@ void RigMemoryFrame::writeActionSelected(int buttonNumber)
 {
     traceMsg(QString("Memory Write Selected %1 = ").arg(QString::number(buttonNumber +1)));
 
-    //memDialog->setMemoryFlag(true);
-
-
     // get contest information
     TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
     ScreenContact sc = tslf->getScreenEntry();

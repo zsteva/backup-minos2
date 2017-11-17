@@ -192,6 +192,8 @@ private slots:
     void on_contestPageControl_customContextMenuRequested(const QPoint &pos);
     void CancelClick();
 
+    void on_contestPageControl_tabCloseRequested(int index);
+
 private:
     Ui::MonitorMain *ui;
 

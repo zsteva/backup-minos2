@@ -90,6 +90,7 @@ bool nosock( MinosCommonConnection *ip )
 }
 void MinosListener::on_newConnection()
 {
+    // called when we get a new connection from "accept" - i.e. they called us
     QTcpSocket *s = sock->nextPendingConnection();
     if (s)
     {
@@ -107,8 +108,9 @@ void MinosListener::on_timeout()
         {
             // process says to finish off
             logMessage( "MinosListener::on_timeout", "deleting socket : " + ( *i ) ->getIdentity() );
-            (*i)->closeDown();
-            delete ( *i );
+            MinosCommonConnection *mcc = (*i);
+            mcc->closeDown();
+            delete mcc;
             *i = 0;
             clearup = true;
         }
@@ -133,6 +135,7 @@ void MinosListener::clearSockets()
 MinosCommonConnection *MinosServerListener::makeConnection(QTcpSocket *s)
 {
     MinosServerConnection *c = new MinosServerConnection();
+
     c->sock = QSharedPointer<QTcpSocket>(s);
 
     return c;
@@ -154,7 +157,7 @@ bool MinosServerListener::sendServer( TiXmlElement *tix )
     bool connectSocket = false;
     for ( CommonIterator i = i_array.begin(); i != i_array.end(); i++ )
     {
-        if ( ( *i ) ->checkServer( to ) && (*i) ->isTxConnection() )
+        if ( ( *i ) ->checkServer( to ) )
         {
             if ( !( *i ) ->tryForwardStanza( tix ) )
             {
@@ -184,8 +187,6 @@ bool MinosServerListener::sendServer( TiXmlElement *tix )
                 connectSocket = false;
             }
             return true;
-
-            // and continue to refuse the message
         }
     }
 
@@ -203,13 +204,13 @@ void MinosServerListener::checkServerConnected( Server *srv, bool force )
    {
        for ( CommonIterator i = i_array.begin(); i != i_array.end(); i++ )
        {
-          if ( ( *i ) && ( *i ) ->checkServer( srv->station ) && (*i)->isTxConnection() )
+          if ( ( *i ) && ( *i ) ->checkServer( srv->station ) )
           {
              return ;
           }
        }
    }
-   if (force || srv->autoReconnect)
+   if (force )
    {
       MinosServerConnection * s = new MinosServerConnection();
       s->mConnect( srv );

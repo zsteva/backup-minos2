@@ -138,8 +138,6 @@ void TZConf::runThread(const QString &name)
 
    beaconTimer.setInterval(100);
    beaconTimer.start();
-
-   readServerList();
 }
 void TZConf::onTimeout()
 {
@@ -169,7 +167,8 @@ bool TZConf::sendMessage(bool beaconReq )
 void TZConf::onReadyRead(QString datagram, QString sender)
 {
     // from MCReadSocket
-    sendBeaconResponse = processZConfString(QString(datagram), sender);
+
+    processZConfString(QString(datagram), sender, sendBeaconResponse);
 }
 
 //---------------------------------------------------------------------------
@@ -195,57 +194,6 @@ void TZConf::ServerScan()
       trace("Server scan - checked " + (*i)->station);
    }
 }
-void TZConf::readServerList()
-{
-    /*
-   trace("Reading Server List File");
-   // Read the server override file
-   TIniFile * servers = new TIniFile( "./Configuration/Servers.ini" );
-   TStringList *sl = new TStringList;
-   TStringList *params = new TStringList;
-   servers->ReadSections( sl );
-   for ( int i = 0; i < sl->Count; i++ )
-   {
-      servers->ReadSectionValues( sl->Strings[ i ], params );
-
-      String uuid = params->Values[ "Uuid" ];
-      String host = params->Values[ "Host" ];
-      String station = params->Values[ "Station" ];
-      String port = params->Values[ "Port" ];
-
-      if ( uuid.Length() == 0 )
-      {
-         servers->WriteString( sl->Strings[ i ], "Uuid", uuid.c_str() );
-         uuid = makeUuid().c_str();
-      }
-      if ( host.Length() == 0 )
-      {
-         if ( station.Length() == 0 )
-         {
-            continue;
-         }
-         host = station;
-      }
-      else
-         if ( station.Length() == 0 )
-         {
-            station = host;
-         }
-
-      if ( port.Length() == 0 )
-      {
-         port == String(MinosServerPort);
-      }
-
-      publishServer( uuid.c_str(), station.c_str(), host.c_str(), port.ToIntDef( MinosServerPort ), true );
-
-   }
-   delete params;
-   delete servers;
-   ServerScan();
-   trace("Finished reading Server List File");
-   */
-}
 
 //---------------------------------------------------------------------------
 // uuid is the machines uuid (more unique than the server name!)
@@ -257,56 +205,40 @@ void TZConf::readServerList()
 // ONLY trouble is... clients will now address their servers by UUID!
 // when they have subscribed to stations.
 
-void TZConf::publishServer( const QString &uuid, const QString &name,
-            const QString &hosttarget, int PortAsNumber, bool autoReconnect )
+Server *TZConf::zcPublishServer( const QString &uuid, const QString &name,
+                              const QString &hosttarget, int PortAsNumber )
 {
-   trace( "publishServer Host " + hosttarget + " Station " + name +
-            " Port " + QString::number( PortAsNumber ) + " uuid " + uuid + " auto " + ( autoReconnect ? "true" : "false" ) );
-   Server *s = findStation( name );
-   if ( s )
-   {
-      trace("Station " + name + " found zconf is " + ( s->zconf ? "true" : "false" ));
-//      s->available = state;
-      // we may not have all the details... we may need to add them
-      if (!s->zconf)
-      {
-         s->uuid = uuid;
-         s->host = hosttarget;
-//      station should already be there
-         s->port = PortAsNumber;
-
-//         s->available = state;
-         s->zconf = true;;
-         if ( name == getZConf()->getName() )
-         {
+    trace( "zcPublishServer Host " + hosttarget + " Station " + name +
+           " Port " + QString::number( PortAsNumber ) + " uuid " + uuid  );
+    Server *s = findStation( name );
+    if ( s )
+    {
+        trace("Station " + name + " found");
+    }
+    else
+    {
+        trace("Station " + name + " not found");
+        s = new Server( uuid, hosttarget, name, PortAsNumber );
+        if ( name == getZConf()->getName() )
+        {
             s->local = true;
-         }
-      }
-   }
-   else
-   {
-      trace("Station " + name + " not found");
-      s = new Server( uuid, hosttarget, name, PortAsNumber );
-//      s->available = state;
-      s->autoReconnect = autoReconnect;
-      if ( name == getZConf()->getName() )
-      {
-         s->local = true;
-      }
-      serverList.push_back( s );
-   }
-   if ( s->local )
-   {
-      PubSubMain->publish( "", rpcConstants::LocalStationCategory, name, hosttarget, psPublished );
-   }
-   else
-   {
-      MinosServerListener::getListener() ->checkServerConnected(s, true);
-   }
-   PubSubMain->publish( "", rpcConstants::StationCategory, name, hosttarget, psPublished );
-//   PubSubMain->publish( "", uuid, "Name", name );
-//   PubSubMain->publish( "", uuid, "State", state?"true":"false" );
-   trace("publishServer finished");
+        }
+        else
+        {
+            MinosServerConnection *msc = new MinosServerConnection();
+            msc->mConnect(s);
+            MinosServerListener *msl = MinosServerListener::getListener();
+            msl->connectFreeSlot(msc);
+        }
+        serverList.push_back( s );
+    }
+    if ( s->local )
+    {
+        PubSubMain->publish( "", rpcConstants::LocalStationCategory, name, hosttarget, psPublished );
+    }
+    PubSubMain->publish( "", rpcConstants::StationCategory, name, hosttarget, psPublished );
+    trace("zcPublishServer finished");
+    return s;
 }
 void TZConf::publishDisconnect(const QString &name)
 {
@@ -331,42 +263,40 @@ QString TZConf::getZConfString(bool beaconreq)
                + " />";
 }
 //==============================================================================
-bool TZConf::processZConfString(const QString &message, const QString &recvHost)
+Server *TZConf::processZConfString(const QString &message, const QString &recvHost, bool &sendBeaconResponse)
 {
-   bool sendBeaconResponse = false;
+    sendBeaconResponse = false;
+    Server *srv = 0;
+    TiXmlDocument xdoc;
+    TIXML_STRING smessage = message.toStdString();// allowed conversion through TIXML_STRING
+    xdoc.Parse( smessage.c_str(), 0 );
+    TiXmlElement * tix = xdoc.RootElement();
+    if ( tix && checkElementName( tix, "minosServer" ) )
+    {
+        //"<minosServer UUID='" + Uuid + "' name='" + getName() + "' port='7778' request='true' />";
+        QString UUID = getAttribute( tix, "UUID" );
+        QString station = getAttribute( tix, "name" );
+        QString port = getAttribute( tix, "port" );
+        QString request = getAttribute( tix, "request" );
 
-   TiXmlDocument xdoc;
-   TIXML_STRING smessage = message.toStdString();// allowed conversion through TIXML_STRING
-   xdoc.Parse( smessage.c_str(), 0 );
-   TiXmlElement * tix = xdoc.RootElement();
-   if ( tix && checkElementName( tix, "minosServer" ) )
-   {
-      //"<minosServer UUID='" + Uuid + "' name='" + getName() + "' port='7778' request='true' />";
-      QString UUID = getAttribute( tix, "UUID" );
-      QString station = getAttribute( tix, "name" );
-      QString port = getAttribute( tix, "port" );
-      QString request = getAttribute( tix, "request" );
-      //if ( UUID != Uuid && station != getName() )
-      {
-         // publish what came in - possibly we should publish the XML string
-         // against the UUID?
-         bool ok;
-         iPort = port.toInt(&ok);
-         if (!ok)
-             iPort = MinosServerPort;
-         publishServer( UUID, station, recvHost, iPort, false );
-         if ( request.size() && UUID != getServerId())
-         {
+        // publish what came in - possibly we should publish the XML string
+        // against the UUID?
+        bool ok;
+        iPort = port.toInt(&ok);
+        if (!ok)
+            iPort = MinosServerPort;
+        srv = zcPublishServer( UUID, station, recvHost, iPort );
+        if ( request.size() && UUID != getServerId())
+        {
             sendBeaconResponse = true;   // delay the response, give the other end a chance...
-                        // BUT this means we could try to connect before they will recognise us.
-                        // Should we queue the publish until then as well?
+            // BUT this means we could try to connect before they will recognise us.
+            // Should we queue the publish until then as well?
 
-                        // But the UDP may fail to get there, so we need to be able to cope with new
-                        // unadvertised connectors
-         }
-      }
-   }
-   return sendBeaconResponse;
+            // But the UDP may fail to get there, so we need to be able to cope with new
+            // unadvertised connectors
+        }
+    }
+    return srv;
 }
 //==============================================================================
 

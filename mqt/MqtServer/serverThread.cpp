@@ -71,7 +71,6 @@ void MinosServerConnection::mConnect( Server *psrv )
     connect(sock.data(), SIGNAL(disconnected()), this, SLOT(on_disconnected()));
     connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_readyRead()));
     sock->connectToHost(srv->host, srv->port);
-    txConnection = true;
 }
 void MinosServerConnection::on_connected()
 {
@@ -116,7 +115,8 @@ void MinosServerConnection::setFromId( MinosId &id, RPCRequest *req )
          QString message;
          if (req->getStringArg(1, message))
          {
-            TZConf::getZConf()->processZConfString(message, connectHost);
+             bool sb;
+             srv = TZConf::getZConf()->processZConfString(message, connectHost, sb);
          }
       }
    }
@@ -138,17 +138,44 @@ void MinosServerConnection::sendAction( XStanza *a )
 //==============================================================================
 void MinosServerConnection::sendKeepAlive( )
 {
-   // Every ??? send a heartbeat to make sure the link stays open
-   if ( !resubscribed && srv )
-   {
-      if ( clientServer.size() && clientServer.compare( "localhost", Qt::CaseInsensitive ) != 0 &&
-            clientServer.compare( MinosServer::getMinosServer() ->getServerName(), Qt::CaseInsensitive) != 0 )
-      {
-         RPCServerPubSub::serverReconnectRemotePubSub( srv->station );
-         resubscribed = true;
-         return ;
-      }
-   }
+    if (srv)
+    {
+        if (!checkLastRx())
+        {
+            // abort the connection
+            trace("MinosServerConnection - checkLastRx failed, removing socket");
+            remove_socket = true;
+            return;
+        }
+        // Every ??? send a heartbeat to make sure the link stays open
+        if ( !resubscribed && srv )
+        {
+            if ( clientServer.size() && clientServer.compare( "localhost", Qt::CaseInsensitive ) != 0 &&
+                 clientServer.compare( MinosServer::getMinosServer() ->getServerName(), Qt::CaseInsensitive) != 0 )
+            {
+                RPCServerPubSub::serverReconnectRemotePubSub( srv->station );
+                resubscribed = true;
+                return ;
+            }
+        }
+        static int seqno = 0;
+        qint64 now = QDateTime::currentMSecsSinceEpoch();
+        if (now - lastKeepAlive > resubscribeTimer.interval() * 2 )
+        {
+            sendRaw(QString("<keepAlive seq='" + QString::number(seqno++) + "/>").toStdString());
+            lastKeepAlive = now;
+        }
+    }
+}
+bool MinosServerConnection::checkLastRx()
+{
+    qint64 now = QDateTime::currentMSecsSinceEpoch();
+    if (now - lastRx > resubscribeTimer.interval() * 5)
+    {
+        return false;
+    }
+
+    return true;
 }
 //==============================================================================
 

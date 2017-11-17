@@ -20,6 +20,7 @@ static const QString LocalStationCategory    = QT_TR_NOOP("LocalStation");
 
 // Logger
 static const QString loggerApp         = QT_TR_NOOP("Logger");
+static const QString LoggerCategory    = QT_TR_NOOP("MinosLogger");
 
 // Monitor
 static const QString monitorApp         = QT_TR_NOOP("Monitor");
@@ -46,6 +47,8 @@ static const QString chatApp            = QT_TR_NOOP("chat");
 static const QString chatMethod         = QT_TR_NOOP("Minos:Chat");
 static const QString SendChatMessage    = QT_TR_NOOP("SendChatMessage");
 static const QString ChatResult         = QT_TR_NOOP("ChatResult");
+static const QString ChatCategory       = QT_TR_NOOP("MinosChat");
+static const QString ChatServer         = QT_TR_NOOP("MinosChatServer");
 
 // Keyer
 static const QString keyerApp           = QT_TR_NOOP("Keyer");

@@ -209,9 +209,9 @@ void ContestDetails::setDetails(  )
    if ( contest->DTGStart.getValue().size() )
    {
       QString s = contest->DTGStart.getValue();
-      QDateTime t = QDateTime::fromString(s, "yyyyMMddhhmm");
+      QDateTime t = QDateTime::fromString(s, "yyyyMMddHHmm");
       ui->StartDateEdit->setDate(t.date());
-      QString stc = t.time().toString( "hh:mm UTC" );
+      QString stc = t.time().toString( "HH:mm UTC" );
       ui->StartTimeCombo->setCurrentText(stc);
    }
    else
@@ -222,9 +222,9 @@ void ContestDetails::setDetails(  )
    if ( contest->DTGEnd.getValue().size() )
    {
        QString s = contest->DTGEnd.getValue();
-       QDateTime t = QDateTime::fromString(s, "yyyyMMddhhmm");
+       QDateTime t = QDateTime::fromString(s, "yyyyMMddHHmm");
       ui->EndDateEdit->setDate(t.date()); // short date format, hours:minutes
-      QString etc = t.time().toString( "hh:mm UTC" );
+      QString etc = t.time().toString( "HH:mm UTC" );
       ui->EndTimeCombo->setCurrentText(etc); // short date format, hours:minutes
    }
    else
@@ -436,10 +436,10 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    }
 
    ui->StartDateEdit->setDate(ic.start.date());
-   ui->StartTimeCombo->setCurrentText(ic.start.toString( "hh:mm" ) + " UTC");
+   ui->StartTimeCombo->setCurrentText(ic.start.toString( "HH:mm" ) + " UTC");
 
    ui->EndDateEdit->setDate(ic.finish.date()); // short date format, hours:minutes
-   ui->EndTimeCombo->setCurrentText(ic.finish.toString( "hh:mm" ) + " UTC"); // short date format, hours:minutes
+   ui->EndTimeCombo->setCurrentText(ic.finish.toString( "HH:mm" ) + " UTC"); // short date format, hours:minutes
 
    if ( ic.mults == "M1" )
    {

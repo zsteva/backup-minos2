@@ -50,8 +50,8 @@ class MinosCommonConnection: public QObject
       QString rxBuff;
 
     protected:
-       bool txConnection;      // set if we can transmit on this connection
        bool connected;
+       qint64 lastRx = 0;
 
       // who is connected?
       QString clientServer;     // server name
@@ -60,6 +60,10 @@ class MinosCommonConnection: public QObject
 
       void onLog ( const char *data, size_t size, int is_incoming );
       bool sendRaw (const TIXML_STRING xmlstr );
+      virtual bool checkLastRx()
+      {
+          return true;
+      }
    public:
 
       QSharedPointer<QTcpSocket> sock;
@@ -73,7 +77,7 @@ class MinosCommonConnection: public QObject
       virtual bool initialise(bool conn ) = 0;
       virtual ~MinosCommonConnection();
 
-      virtual void analyseNode( TiXmlElement *pak );
+      virtual bool analyseNode( TiXmlElement *pak );
       virtual bool tryForwardStanza( TiXmlElement *pak );
       virtual void sendAction( XStanza *a );
 
@@ -102,10 +106,6 @@ class MinosCommonConnection: public QObject
       }
       virtual void sendKeepAlive( )
       {}
-      bool isTxConnection()
-      {
-         return txConnection;
-      }
       bool isConnected()
       {
           return connected;

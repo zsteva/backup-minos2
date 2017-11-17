@@ -23,7 +23,6 @@ TLocCalcForm::~TLocCalcForm()
 int TLocCalcForm::exec()
 {
     ui->locFrame->S1Loc = S1Loc;
-    ui->locFrame->Modal = true;
 
     ui->locFrame->doExec();
 

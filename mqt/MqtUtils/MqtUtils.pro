@@ -24,7 +24,8 @@ SOURCES += \
     StdInReader.cpp \
     MLogFile.cpp \
     MTrace.cpp \
-    LogEvents.cpp
+    LogEvents.cpp \
+    singleapplication.cpp
 
 HEADERS += \
     fileutils.h \
@@ -34,7 +35,8 @@ HEADERS += \
     MLogFile.h \
     MTrace.h \
     LogEvents.h \
-    mqtUtils_pch.h
+    mqtUtils_pch.h \
+    singleapplication.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

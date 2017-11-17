@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
-    appStartup(a, "MinosQtRigControl");
+    appStartup("MinosQtRigControl");
 
 
     RigControlMainWindow w;

@@ -57,10 +57,10 @@ dtg::dtg( bool now ): baddtg(false)
 
         QString d = tdt.toString("yyMMdd");
         sdate.setValue(d);
-        QString t = tdt.toString("hhmmss");
+        QString t = tdt.toString("HHmmss");
         stime.setValue(t);
 //        setDate( tdt.toString( "dd/MM/yy" ), DTGDISP );
-//        setTime( tdt.toString( "hh:mm:ss" ), DTGDISP );
+//        setTime( tdt.toString(hh:mm:ss" ), DTGDISP );
     }
     else
     {
@@ -260,7 +260,7 @@ bool dtg::getDtg( QDateTime &cttime, bool &d ) const
 
    dateValue  = "20" + dateValue;
 
-   QTime tm = QTime::fromString(timeValue, "hhmmss");
+   QTime tm = QTime::fromString(timeValue, "HHmmss");
 
    QDate dt = QDate::fromString(dateValue, "yyyyMMdd");
 
@@ -407,7 +407,7 @@ void dtg::setDate(QDate tdt)
 }
 void dtg::setTime(QTime tdt)
 {
-    QString t = tdt.toString("hhmmss");
+    QString t = tdt.toString("HHmmss");
     stime.setValue(t);
 }
 

@@ -63,6 +63,8 @@ TLogContainer::TLogContainer(QWidget *parent) :
     statusBar() ->addWidget( sblabel2, 2 );
 
     subscribeApps();
+    QString station = MinosConfig::getThisServerName();
+    RPCPubSub::publish(rpcConstants::LoggerCategory, station, "", psPublished);
 }
 TLogContainer::~TLogContainer()
 {
@@ -136,7 +138,7 @@ void TLogContainer::on_TimeDisplayTimer( )
    if ( TContestApp::getContestApp() )
    {
        QDateTime t = QDateTime::currentDateTimeUtc().addSecs( MinosParameters::getMinosParameters() ->getBigClockCorrection());
-       QString disp = t.toString( "dd/MM/yyyy hh:mm:ss" ) + " UTC       ";
+       QString disp = t.toString( "dd/MM/yyyy HH:mm:ss" ) + " UTC       ";
 
        sblabel2 ->setText(disp);
 

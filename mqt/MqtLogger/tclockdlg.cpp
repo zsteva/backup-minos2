@@ -74,7 +74,7 @@ void TClockDlg::on_cancelButton_clicked()
 
 void TClockDlg::on_clockTicked()
 {
-    QString rawdisp = QDateTime::currentDateTimeUtc().toString("dd/MM/yyyy hh:mm:ss");
+    QString rawdisp = QDateTime::currentDateTimeUtc().toString("dd/MM/yyyy HH:mm:ss");
     QString disp = QDateTime::currentDateTimeUtc().addSecs( MinosParameters::getMinosParameters() ->getBigClockCorrection()).toString("dd/MM/yyyy HH:mm:ss");
 
 

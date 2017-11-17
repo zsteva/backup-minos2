@@ -257,18 +257,18 @@ int strnicmp( const QString &s1, const QString &s2, unsigned int len )
 QDateTime CanonicalToTDT(QString cdtg )
 {
    QDateTime d;
-   d = QDateTime::fromString(cdtg, "yyyyMMddhhmm" );
+   d = QDateTime::fromString(cdtg, "yyyyMMddHHmm" );
    d.setTimeSpec(Qt::UTC);
    return d;
 
 }
 QString TDTToCanonical(QString d )
 {
-    // comes in as dd/MM/yyy hh:mm and maybe UTC/GMT
+    // comes in as dd/MM/yyy HH:mm and maybe UTC/GMT
    if (d.endsWith(" UTC"))
         d = d.left(d.length() - 4);
-   QDateTime dt = QDateTime::fromString(d, "dd/MM/yyyy hh:mm");
-   QString s = dt.toString( "yyyyMMddhhmm" );
+   QDateTime dt = QDateTime::fromString(d, "dd/MM/yyyy HH:mm");
+   QString s = dt.toString( "yyyyMMddHHmm" );
    return s;
 }
 //=============================================================================
