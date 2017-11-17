@@ -116,7 +116,8 @@ void MinosServerConnection::setFromId( MinosId &id, RPCRequest *req )
          QString message;
          if (req->getStringArg(1, message))
          {
-            TZConf::getZConf()->processZConfString(message, connectHost);
+             bool sb;
+             srv = TZConf::getZConf()->processZConfString(message, connectHost, sb);
          }
       }
    }
@@ -158,10 +159,11 @@ void MinosServerConnection::sendKeepAlive( )
                 return ;
             }
         }
+        static int seqno = 0;
         qint64 now = QDateTime::currentMSecsSinceEpoch();
         if (now - lastKeepAlive > resubscribeTimer.interval() * 2 )
         {
-            sendRaw("<keepAlive />");
+            sendRaw(QString("<keepAlive seq='" + QString::number(seqno++) + "/>").toStdString());
             lastKeepAlive = now;
         }
     }

@@ -118,6 +118,8 @@ void MinosCommonConnection::onLog ( const char *data, size_t /*size*/, int is_in
    logbuff += data;
    logbuff += "]";
 
+   logbuff += " : " + sock->peerAddress().toString();
+
    logMessage( "MinosCommonConnection", logbuff );
 }
 //---------------------------------------------------------------------------

@@ -90,6 +90,7 @@ bool nosock( MinosCommonConnection *ip )
 }
 void MinosListener::on_newConnection()
 {
+    // called when we get a new connection from "accept" - i.e. they called us
     QTcpSocket *s = sock->nextPendingConnection();
     if (s)
     {
@@ -134,6 +135,7 @@ void MinosListener::clearSockets()
 MinosCommonConnection *MinosServerListener::makeConnection(QTcpSocket *s)
 {
     MinosServerConnection *c = new MinosServerConnection();
+
     c->sock = QSharedPointer<QTcpSocket>(s);
 
     return c;
@@ -185,8 +187,6 @@ bool MinosServerListener::sendServer( TiXmlElement *tix )
                 connectSocket = false;
             }
             return true;
-
-            // and continue to refuse the message
         }
     }
 
