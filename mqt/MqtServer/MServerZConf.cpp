@@ -213,7 +213,7 @@ Server *TZConf::zcPublishServer( const QString &uuid, const QString &name,
     Server *s = findStation( name );
     if ( s )
     {
-        trace("Station " + name + " found zconf is " + ( s->zconf ? "true" : "false" ));
+        trace("Station " + name + " found");
     }
     else
     {
@@ -222,6 +222,13 @@ Server *TZConf::zcPublishServer( const QString &uuid, const QString &name,
         if ( name == getZConf()->getName() )
         {
             s->local = true;
+        }
+        else
+        {
+            MinosServerConnection *msc = new MinosServerConnection();
+            msc->mConnect(s);
+            MinosServerListener *msl = MinosServerListener::getListener();
+            msl->connectFreeSlot(msc);
         }
         serverList.push_back( s );
     }

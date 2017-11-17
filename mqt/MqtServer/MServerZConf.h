@@ -39,15 +39,14 @@ class Server
       QString host;
       QString station;
       int port;
-      bool zconf;
       bool local;
 
       Server( const QString &uuid, const QString &h, const QString &s, int p )
-            : zconf( true ), local( false ),
+            : local( false ),
             uuid(uuid), host( h ), station( s ), port( p )
       {}
       Server( const QString &s )
-            : zconf( false ), local( false ),
+            : local( false ),
             station( s ), port( -1 )
       {}
       virtual ~Server(){}
