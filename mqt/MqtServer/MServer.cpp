@@ -8,6 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 #include "minos_pch.h"
+#include "TinyUtils.h"
 
 #include "ConfigFile.h"
 
@@ -64,7 +65,7 @@ bool MinosServer::analyseNode( MinosCommonConnection *il, TiXmlElement *tix )
    // what do these stanzas mean to a service?
    // it need to be up to the individual service to see!
 
-   if (  findNode( tix, "keepAlive" ) != 0)
+   if (  checkElementName( tix, "keepAlive" ))
    {
        return false;
    }

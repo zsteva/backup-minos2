@@ -8,6 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
 #include "minos_pch.h"
+#include "TinyUtils.h"
 
 #include "MinosLink.h"
 #include "clientThread.h"
@@ -76,6 +77,7 @@ MinosCommonConnection::MinosCommonConnection()
     txConnection(false),
     connected(false)
 {
+    lastRx = QDateTime::currentMSecsSinceEpoch() + 5000;
 }
 MinosCommonConnection::~MinosCommonConnection()
 {}
@@ -249,7 +251,7 @@ void MinosCommonConnection::on_readyRead()
    }
 }
 //==============================================================================
-void MinosCommonConnection::analyseNode( TiXmlElement *tix )
+bool MinosCommonConnection::analyseNode( TiXmlElement *tix )
 {
    // response factory - look at the node, and build the correct response stanza object
 
@@ -257,9 +259,9 @@ void MinosCommonConnection::analyseNode( TiXmlElement *tix )
    // A server connection has to have a "from" (but it isn't necessarily correct, if its been proxied)
    // A client must either have a from address, or nothing - when checkFrom will insert it
 
-    if (  findNode( tix, "keepAlive" ) != 0)
+    if (  checkElementName( tix, "keepAlive" ) )
     {
-        return;
+        return true;
     }
 
     if ( !checkFrom( tix ) )
@@ -270,7 +272,7 @@ void MinosCommonConnection::analyseNode( TiXmlElement *tix )
          trace("Bad checkFrom in MinosCommonConnection::analyseNode; remove_socket = true");
          remove_socket = true;
       }
-      return ;
+      return false;
    }
    // Dispatch to its destination
 
@@ -285,11 +287,11 @@ void MinosCommonConnection::analyseNode( TiXmlElement *tix )
          if ( !MinosServerListener::getListener() ->sendServer( tix ) )         // look at real and potential servers
          {
             // or no valid destination found
-            return ;
+            return false;
          }
       }
    }
-
+    return true;
 }
 //=============================================================================
 void MinosCommonConnection::on_disconnected()

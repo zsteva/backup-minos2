@@ -138,29 +138,33 @@ void MinosServerConnection::sendAction( XStanza *a )
 //==============================================================================
 void MinosServerConnection::sendKeepAlive( )
 {
-    if (!checkLastRx())
+    if (srv)
     {
-        // abort the connection
-        remove_socket = true;
-        return;
+        if (!checkLastRx())
+        {
+            // abort the connection
+            trace("MinosServerConnection - checkLastRx failed, removing socket");
+            remove_socket = true;
+            return;
+        }
+        // Every ??? send a heartbeat to make sure the link stays open
+        if ( !resubscribed && srv )
+        {
+            if ( clientServer.size() && clientServer.compare( "localhost", Qt::CaseInsensitive ) != 0 &&
+                 clientServer.compare( MinosServer::getMinosServer() ->getServerName(), Qt::CaseInsensitive) != 0 )
+            {
+                RPCServerPubSub::serverReconnectRemotePubSub( srv->station );
+                resubscribed = true;
+                return ;
+            }
+        }
+        sendRaw("<keepAlive />");
     }
-   // Every ??? send a heartbeat to make sure the link stays open
-   if ( !resubscribed && srv )
-   {
-      if ( clientServer.size() && clientServer.compare( "localhost", Qt::CaseInsensitive ) != 0 &&
-            clientServer.compare( MinosServer::getMinosServer() ->getServerName(), Qt::CaseInsensitive) != 0 )
-      {
-         RPCServerPubSub::serverReconnectRemotePubSub( srv->station );
-         resubscribed = true;
-         return ;
-      }
-   }
-   sendRaw("<keepAlive>");
 }
 bool MinosServerConnection::checkLastRx()
 {
     qint64 now = QDateTime::currentMSecsSinceEpoch();
-    if (now - lastRx > resubscribeTimer.interval() * 1000 * 5)
+    if (now - lastRx > resubscribeTimer.interval() * 5)
     {
         return false;
     }
