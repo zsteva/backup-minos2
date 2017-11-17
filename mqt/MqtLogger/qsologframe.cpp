@@ -8,6 +8,7 @@
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
 #include <QDebug>
+//#include <QStringList>
 
 QSOLogFrame::QSOLogFrame(QWidget *parent) :
     QFrame(parent)
@@ -1543,9 +1544,16 @@ void QSOLogFrame::setFreq(QString f)
 //---------------------------------------------------------------------------
 void QSOLogFrame::setRadioName(QString n)
 {
-    if (curRadioName != n)
+    QStringList rNameList = n.split(':');
+    if (rNameList.count() != 2)
     {
-        curRadioName = n;
+        return;
+    }
+
+    QString radioName = rNameList[1];
+    if (curRadioName != radioName)
+    {
+        curRadioName = radioName;
     }
 }
 //---------------------------------------------------------------------------

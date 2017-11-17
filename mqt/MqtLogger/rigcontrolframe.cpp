@@ -435,8 +435,22 @@ void RigControlFrame::sendModeToRadio(QString m)
 void RigControlFrame::setRadioName(QString n)
 {
     traceMsg(QString("Set RadioName = %1").arg(n));
-    ui->radioName->setText(n);
-    radioName = n;
+    QStringList rNameList = n.split(':');
+    if (rNameList.count() != 2)
+    {
+        return;
+    }
+    rigAppName = rNameList[0];
+    radioName = rNameList[1];
+    if (rigAppName == radioName)
+    {
+        ui->radioName->setText(radioName);
+    }
+    else
+    {
+       ui->radioName->setText(n);
+    }
+
 }
 
 

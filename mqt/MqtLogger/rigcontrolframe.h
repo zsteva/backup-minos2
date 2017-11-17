@@ -158,6 +158,7 @@ private:
     QString curMode;
 
     QString radioName;
+    QString rigAppName;
     QString radioState;
 
 

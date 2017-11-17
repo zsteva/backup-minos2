@@ -1068,14 +1068,13 @@ void RigControlMainWindow::about()
 
 void RigControlMainWindow::sendRadioNameLogger(const QString radioName)
 {
-    if (appName.trimmed() == radioName.trimmed() || appName.length() == 0)
-    {
-        msg->publishRadioName(radioName);
-    }
-    else
-    {
-        msg->publishRadioName(QString("%1 : %2").arg(appName, radioName));
-    }
+    //if (appName.trimmed() == radioName.trimmed() || appName.length() == 0)
+    //{
+    //    msg->publishRadioName(radioName);
+    //}
+   // else
+    msg->publishRadioName(QString("%1 : %2").arg(appName, radioName));
+
 
 }
 
