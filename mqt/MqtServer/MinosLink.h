@@ -52,6 +52,7 @@ class MinosCommonConnection: public QObject
     protected:
        bool txConnection;      // set if we can transmit on this connection
        bool connected;
+       qint64 lastRx = 0;
 
       // who is connected?
       QString clientServer;     // server name
@@ -60,6 +61,10 @@ class MinosCommonConnection: public QObject
 
       void onLog ( const char *data, size_t size, int is_incoming );
       bool sendRaw (const TIXML_STRING xmlstr );
+      virtual bool checkLastRx()
+      {
+          return true;
+      }
    public:
 
       QSharedPointer<QTcpSocket> sock;

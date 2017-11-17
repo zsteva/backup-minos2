@@ -64,6 +64,11 @@ bool MinosServer::analyseNode( MinosCommonConnection *il, TiXmlElement *tix )
    // what do these stanzas mean to a service?
    // it need to be up to the individual service to see!
 
+   if (  findNode( tix, "keepAlive" ) != 0)
+   {
+       return false;
+   }
+
    MinosId from( getAttribute( tix, "from" ) );
    QString subtype = getAttribute( tix, "type" );
    QString id = getAttribute( tix, "id" );

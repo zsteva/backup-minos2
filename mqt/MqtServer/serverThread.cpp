@@ -138,6 +138,12 @@ void MinosServerConnection::sendAction( XStanza *a )
 //==============================================================================
 void MinosServerConnection::sendKeepAlive( )
 {
+    if (!checkLastRx())
+    {
+        // abort the connection
+        remove_socket = true;
+        return;
+    }
    // Every ??? send a heartbeat to make sure the link stays open
    if ( !resubscribed && srv )
    {
@@ -149,6 +155,17 @@ void MinosServerConnection::sendKeepAlive( )
          return ;
       }
    }
+   sendRaw("<keepAlive>");
+}
+bool MinosServerConnection::checkLastRx()
+{
+    qint64 now = QDateTime::currentMSecsSinceEpoch();
+    if (now - lastRx > resubscribeTimer.interval() * 1000 * 5)
+    {
+        return false;
+    }
+
+    return true;
 }
 //==============================================================================
 

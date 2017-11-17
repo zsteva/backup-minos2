@@ -26,6 +26,7 @@ class MinosServerConnection: public MinosCommonConnection
 
       QTimer resubscribeTimer;
    protected:
+      virtual bool checkLastRx() override;
    public:
       MinosServerConnection();
       virtual bool initialise(bool conn) override;

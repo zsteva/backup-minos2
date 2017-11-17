@@ -190,6 +190,7 @@ void MinosCommonConnection::on_readyRead()
    // documntation says this may occasionally fail on Windows
    while (sock->bytesAvailable() > 0)
    {
+
        int rxlen = sock->read(rxbuff, 4096 - 1);
        if ( rxlen > 0 )
        {
@@ -240,7 +241,11 @@ void MinosCommonConnection::on_readyRead()
            trace("Bad read in MinosCommonConnection::on_readyRead; remove_socket = true");
           remove_socket = true;
        }
-       // rxlen == 0 is valid
+       if (rxlen >= 0)
+       {
+           // rxlen == 0 is valid
+           lastRx = QDateTime::currentMSecsSinceEpoch();
+       }
    }
 }
 //==============================================================================
@@ -252,7 +257,12 @@ void MinosCommonConnection::analyseNode( TiXmlElement *tix )
    // A server connection has to have a "from" (but it isn't necessarily correct, if its been proxied)
    // A client must either have a from address, or nothing - when checkFrom will insert it
 
-   if ( !checkFrom( tix ) )
+    if (  findNode( tix, "keepAlive" ) != 0)
+    {
+        return;
+    }
+
+    if ( !checkFrom( tix ) )
    {
       if ( isServer() )
       {
