@@ -548,6 +548,9 @@ void MonitorMain::syncStations()
           }
       }
       treeModel->setRoot(root);
+      int rc = treeModel->rowCount();
+      for(int i = 0; i < rc; i++)
+      ui->monitorTree->setFirstColumnSpanned( i, QModelIndex(), true );
       ui->monitorTree->expandAll();
    }
 }
