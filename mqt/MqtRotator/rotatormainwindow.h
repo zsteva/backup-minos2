@@ -151,12 +151,16 @@ private:
 
     QString geoStr;         // geometry registry location
 
+    QString connectStat;
+    QString statusMsg;
+    QString activeMsg;
+
     void openRotator();
     void closeRotator();
 
     void refreshPresetLabels();
     void showStatusMessage(const QString &);
-    void sendStatusLogger(const QString &);
+    void sendStatusLogger();
     void readPresets();
 
 

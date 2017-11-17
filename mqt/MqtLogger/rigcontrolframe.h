@@ -22,6 +22,7 @@
 #include <QToolButton>
 #include <QRadioButton>
 #include <QShortcut>
+#include <QStringList>
 #include "logger_pch.h"
 #include "RPCCommandConstants.h"
 #include "rigmemcommondata.h"
