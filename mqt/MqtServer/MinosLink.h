@@ -50,7 +50,6 @@ class MinosCommonConnection: public QObject
       QString rxBuff;
 
     protected:
-       bool txConnection;      // set if we can transmit on this connection
        bool connected;
        qint64 lastRx = 0;
 
@@ -107,10 +106,6 @@ class MinosCommonConnection: public QObject
       }
       virtual void sendKeepAlive( )
       {}
-      bool isTxConnection()
-      {
-         return txConnection;
-      }
       bool isConnected()
       {
           return connected;

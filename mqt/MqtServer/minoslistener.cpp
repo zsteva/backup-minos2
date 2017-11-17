@@ -157,7 +157,7 @@ bool MinosServerListener::sendServer( TiXmlElement *tix )
     bool connectSocket = false;
     for ( CommonIterator i = i_array.begin(); i != i_array.end(); i++ )
     {
-        if ( ( *i ) ->checkServer( to ) && (*i) ->isTxConnection() )
+        if ( ( *i ) ->checkServer( to ) )
         {
             if ( !( *i ) ->tryForwardStanza( tix ) )
             {
@@ -204,7 +204,7 @@ void MinosServerListener::checkServerConnected( Server *srv, bool force )
    {
        for ( CommonIterator i = i_array.begin(); i != i_array.end(); i++ )
        {
-          if ( ( *i ) && ( *i ) ->checkServer( srv->station ) && (*i)->isTxConnection() )
+          if ( ( *i ) && ( *i ) ->checkServer( srv->station ) )
           {
              return ;
           }

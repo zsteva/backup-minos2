@@ -71,7 +71,6 @@ void MinosServerConnection::mConnect( Server *psrv )
     connect(sock.data(), SIGNAL(disconnected()), this, SLOT(on_disconnected()));
     connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_readyRead()));
     sock->connectToHost(srv->host, srv->port);
-    txConnection = true;
 }
 void MinosServerConnection::on_connected()
 {

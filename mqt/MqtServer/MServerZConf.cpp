@@ -225,29 +225,9 @@ Server *TZConf::zcPublishServer( const QString &uuid, const QString &name,
         }
         serverList.push_back( s );
     }
-    /*
-    // we may not have all the details... we may need to add them
-    if (!s->zconf)
-    {
-        s->uuid = uuid;
-        s->host = hosttarget;
-        //      station should already be there
-        s->port = PortAsNumber;
-
-        s->zconf = true;;
-        if ( name == getZConf()->getName() )
-        {
-            s->local = true;
-        }
-    }
-    */
     if ( s->local )
     {
         PubSubMain->publish( "", rpcConstants::LocalStationCategory, name, hosttarget, psPublished );
-    }
-    else
-    {
-        MinosServerListener::getListener() ->checkServerConnected(s, true);
     }
     PubSubMain->publish( "", rpcConstants::StationCategory, name, hosttarget, psPublished );
     trace("zcPublishServer finished");

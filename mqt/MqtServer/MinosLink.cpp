@@ -74,7 +74,6 @@ MinosCommonConnection::MinosCommonConnection()
     : fromIdSet( false ),
     connchecked( false ),
     remove_socket( false ),
-    txConnection(false),
     connected(false)
 {
     lastRx = QDateTime::currentMSecsSinceEpoch() + 5000;

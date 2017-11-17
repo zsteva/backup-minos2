@@ -18,7 +18,6 @@
 
 MinosClientConnection::MinosClientConnection()
 {
-   txConnection = true;
 }
 bool MinosClientConnection::initialise(bool conn)
 {
