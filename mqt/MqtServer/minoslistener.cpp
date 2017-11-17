@@ -210,7 +210,7 @@ void MinosServerListener::checkServerConnected( Server *srv, bool force )
           }
        }
    }
-   if (force || srv->autoReconnect)
+   if (force )
    {
       MinosServerConnection * s = new MinosServerConnection();
       s->mConnect( srv );

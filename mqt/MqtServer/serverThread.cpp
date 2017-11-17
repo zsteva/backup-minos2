@@ -158,7 +158,12 @@ void MinosServerConnection::sendKeepAlive( )
                 return ;
             }
         }
-        sendRaw("<keepAlive />");
+        qint64 now = QDateTime::currentMSecsSinceEpoch();
+        if (now - lastKeepAlive > resubscribeTimer.interval() * 2 )
+        {
+            sendRaw("<keepAlive />");
+            lastKeepAlive = now;
+        }
     }
 }
 bool MinosServerConnection::checkLastRx()

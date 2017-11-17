@@ -138,8 +138,6 @@ void TZConf::runThread(const QString &name)
 
    beaconTimer.setInterval(100);
    beaconTimer.start();
-
-   readServerList();
 }
 void TZConf::onTimeout()
 {
@@ -195,57 +193,6 @@ void TZConf::ServerScan()
       trace("Server scan - checked " + (*i)->station);
    }
 }
-void TZConf::readServerList()
-{
-    /*
-   trace("Reading Server List File");
-   // Read the server override file
-   TIniFile * servers = new TIniFile( "./Configuration/Servers.ini" );
-   TStringList *sl = new TStringList;
-   TStringList *params = new TStringList;
-   servers->ReadSections( sl );
-   for ( int i = 0; i < sl->Count; i++ )
-   {
-      servers->ReadSectionValues( sl->Strings[ i ], params );
-
-      String uuid = params->Values[ "Uuid" ];
-      String host = params->Values[ "Host" ];
-      String station = params->Values[ "Station" ];
-      String port = params->Values[ "Port" ];
-
-      if ( uuid.Length() == 0 )
-      {
-         servers->WriteString( sl->Strings[ i ], "Uuid", uuid.c_str() );
-         uuid = makeUuid().c_str();
-      }
-      if ( host.Length() == 0 )
-      {
-         if ( station.Length() == 0 )
-         {
-            continue;
-         }
-         host = station;
-      }
-      else
-         if ( station.Length() == 0 )
-         {
-            station = host;
-         }
-
-      if ( port.Length() == 0 )
-      {
-         port == String(MinosServerPort);
-      }
-
-      publishServer( uuid.c_str(), station.c_str(), host.c_str(), port.ToIntDef( MinosServerPort ), true );
-
-   }
-   delete params;
-   delete servers;
-   ServerScan();
-   trace("Finished reading Server List File");
-   */
-}
 
 //---------------------------------------------------------------------------
 // uuid is the machines uuid (more unique than the server name!)
@@ -257,11 +204,11 @@ void TZConf::readServerList()
 // ONLY trouble is... clients will now address their servers by UUID!
 // when they have subscribed to stations.
 
-void TZConf::publishServer( const QString &uuid, const QString &name,
-            const QString &hosttarget, int PortAsNumber, bool autoReconnect )
+void TZConf::zcPublishServer( const QString &uuid, const QString &name,
+            const QString &hosttarget, int PortAsNumber )
 {
-   trace( "publishServer Host " + hosttarget + " Station " + name +
-            " Port " + QString::number( PortAsNumber ) + " uuid " + uuid + " auto " + ( autoReconnect ? "true" : "false" ) );
+   trace( "zcPublishServer Host " + hosttarget + " Station " + name +
+            " Port " + QString::number( PortAsNumber ) + " uuid " + uuid  );
    Server *s = findStation( name );
    if ( s )
    {
@@ -287,8 +234,6 @@ void TZConf::publishServer( const QString &uuid, const QString &name,
    {
       trace("Station " + name + " not found");
       s = new Server( uuid, hosttarget, name, PortAsNumber );
-//      s->available = state;
-      s->autoReconnect = autoReconnect;
       if ( name == getZConf()->getName() )
       {
          s->local = true;
@@ -304,9 +249,7 @@ void TZConf::publishServer( const QString &uuid, const QString &name,
       MinosServerListener::getListener() ->checkServerConnected(s, true);
    }
    PubSubMain->publish( "", rpcConstants::StationCategory, name, hosttarget, psPublished );
-//   PubSubMain->publish( "", uuid, "Name", name );
-//   PubSubMain->publish( "", uuid, "State", state?"true":"false" );
-   trace("publishServer finished");
+   trace("zcPublishServer finished");
 }
 void TZConf::publishDisconnect(const QString &name)
 {
@@ -354,7 +297,7 @@ bool TZConf::processZConfString(const QString &message, const QString &recvHost)
          iPort = port.toInt(&ok);
          if (!ok)
              iPort = MinosServerPort;
-         publishServer( UUID, station, recvHost, iPort, false );
+         zcPublishServer( UUID, station, recvHost, iPort );
          if ( request.size() && UUID != getServerId())
          {
             sendBeaconResponse = true;   // delay the response, give the other end a chance...
