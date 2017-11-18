@@ -57,7 +57,7 @@ void TZConf::closeDown()
  * receive, and then loops through them for sending
  *
  */
-void TZConf::runThread(const QString &name)
+void TZConf::startZConf(const QString &name)
 {
     trace("TZConf::runThread()");
 
@@ -228,7 +228,7 @@ Server *TZConf::zcPublishServer( const QString &uuid, const QString &name,
             MinosServerConnection *msc = new MinosServerConnection();
             msc->mConnect(s);
             MinosServerListener *msl = MinosServerListener::getListener();
-            msl->connectFreeSlot(msc);
+            msl->addListenerSlot(msc);
         }
         serverList.push_back( s );
     }
@@ -356,9 +356,3 @@ bool UDPSocket::sendMessage(const QString &mess )
 
     return true;
 }
-/*
-void UDPSocket::onError(QAbstractSocket::SocketError socketError)
-{
-    trace("Error: " + qus->errorString());
-}
-*/

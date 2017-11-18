@@ -10,10 +10,8 @@ MinosClientListener *MinosClientListener::MCL = 0;
 //=============================================================================
 void xperror( int test_val, QString s, bool endit = true )
 {
-//   int lerrno = GetLastError();
    if ( test_val )
    {
-//      QString s = QString( mesg ); // + " : error number " + QString::number( lerrno );
       logMessage( "xperror", s );
 
       if ( endit )
@@ -35,7 +33,6 @@ MinosListener::~MinosListener()
 //-----------------------------------------------------------------------------
 bool MinosListener::initialise( QString type, int port )
 {
-
     QHostAddress::SpecialAddress addr = QHostAddress::Any;
 
     if (type == "Client")
@@ -48,30 +45,16 @@ bool MinosListener::initialise( QString type, int port )
 
    return true;
 }
-bool MinosListener::acceptFreeSlot( MinosCommonConnection *il )
+
+void MinosListener::addListenerSlot( MinosCommonConnection *il )
 {
-    // Create a new end point
     QHostAddress h = il->sock->peerAddress();
     il->connectHost = h.toString();
 
-    logMessage( "acceptFreeSlot", "from " + il->connectHost );
+    logMessage( "addListenerSlot", "from " + il->connectHost );
     i_array.push_back( il );
 
-    il->initialise(false);
-    return true;
-}
-// add a connected socket (we started the connection)
-bool MinosListener::connectFreeSlot( MinosCommonConnection *il )
-{
-  /* Create a new end point */
-    QHostAddress h = il->sock->peerAddress();
-    il->connectHost = h.toString();
-
-    logMessage( "connectFreeSlot", "from " + il->connectHost );
-  i_array.push_back( il );
-
-  il->initialise(true);
-  return true;
+    il->initialise();
 }
 int MinosListener::getConnectionCount()
 {
@@ -96,7 +79,7 @@ void MinosListener::on_newConnection()
     {
         MinosCommonConnection *cc = makeConnection(s);
 
-        acceptFreeSlot(cc);
+        addListenerSlot(cc);
     }
 }
 void MinosListener::on_timeout()
@@ -107,7 +90,6 @@ void MinosListener::on_timeout()
         if ( ( *i ) ->remove_socket )
         {
             // process says to finish off
-            logMessage( "MinosListener::on_timeout", "deleting socket : " + ( *i ) ->getIdentity() );
             MinosCommonConnection *mcc = (*i);
             mcc->closeDown();
             delete mcc;
@@ -180,7 +162,7 @@ bool MinosServerListener::sendServer( TiXmlElement *tix )
             // set ourselves up to connect
             MinosServerConnection * s = new MinosServerConnection();
             s->mConnect( srv );
-            connectFreeSlot( s );
+            addListenerSlot( s );
             // and we need to TRY to resend
             if (!s ->tryForwardStanza( tix ))
             {
@@ -214,21 +196,10 @@ void MinosServerListener::checkServerConnected( Server *srv, bool force )
    {
       MinosServerConnection * s = new MinosServerConnection();
       s->mConnect( srv );
-      connectFreeSlot( s );
+      addListenerSlot( s );
    }
 }
 
-bool MinosServerListener::checkStillServerConnection( const QString &s )
-{
-   for ( CommonIterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      if ( ( *i ) && ( *i ) ->checkServer( s ) )
-      {
-         return true;
-      }
-   }
-   return false;
-}
 void MinosServerListener::closeDown()
 {
    MSL = 0;
@@ -322,19 +293,6 @@ bool MinosClientListener::sendClient( TiXmlElement *tix )
    // client is not connected; we have to ignore it
 
    return true;   // don't pass it on - either we have dealt with it, or its not useful
-}
-bool MinosClientListener::checkStillClientConnection( const QString &s )
-{
-   MinosId id( s );
-   for ( CommonIterator i = i_array.begin(); i != i_array.end(); i++ )
-   {
-      // worry about the details
-      if ( ( *i ) ->checkUser( id ) )
-      {
-         return true;
-      }
-   }
-   return false;
 }
 void MinosClientListener::closeDown()
 {

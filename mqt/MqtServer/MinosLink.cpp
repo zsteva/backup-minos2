@@ -29,14 +29,6 @@ bool isHostLocal(const QString &host)
     return false;
 }
 //==============================================================================
-/*
-   class MinosId
-   {
-      public:
-         QString user;
-         QString server;
-         QString fullId;
-*/
 
 bool MinosId::empty()
 {
@@ -72,9 +64,7 @@ void MinosId::setId( const QString &s )
 //==============================================================================
 MinosCommonConnection::MinosCommonConnection()
     : fromIdSet( false ),
-    connchecked( false ),
-    remove_socket( false ),
-    connected(false)
+    remove_socket( false )
 {
     lastRx = QDateTime::currentMSecsSinceEpoch() + 5000;
 }
@@ -143,7 +133,6 @@ void sendAction( XStanza *a )
 {
    // stanza has a "to" - but this is internal, so we need to dispatch it
    TIXML_STRING mess = a->getActionMessage();
-   //int err;
 
    // convert from a RPCParam structure to a DOM
 

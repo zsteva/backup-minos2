@@ -44,7 +44,7 @@ ServerMain::ServerMain(QWidget *parent) :
     ZConf = QSharedPointer<TZConf>(new TZConf);
 
     PubSubMain = QSharedPointer<TPubSubMain>(new TPubSubMain);
-    ZConf->runThread (sname );
+    ZConf->startZConf (sname );
 
     LogTimer.start(100);
     ScanTimer.start(20000);

@@ -126,7 +126,6 @@ void MCReadSocket::onTimeout()
                                   reinterpret_cast< /*struct*/ sockaddr * > (& ( state->addr )), &( state->addrlen ) );
               if ( cnt < 0 )
               {
-                 trace( "recvfrom" );
                  return ;     // end of thread?
               }
               else

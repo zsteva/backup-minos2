@@ -17,7 +17,7 @@
 //==============================================================================
 MinosServerConnection::MinosServerConnection() : srv( 0 ), resubscribed( false )
 {}
-bool MinosServerConnection::initialise(bool conn)
+void MinosServerConnection::initialise()
 {
     QHostAddress h = sock->peerAddress();
     connectHost = h.toString();
@@ -26,8 +26,6 @@ bool MinosServerConnection::initialise(bool conn)
 
     connect(&resubscribeTimer, SIGNAL(timeout()), this, SLOT(sendKeepAlive()));
     resubscribeTimer.start(1000);
-
-   return conn;   // already initialised
 }
 
 MinosServerConnection::~MinosServerConnection()
@@ -74,7 +72,6 @@ void MinosServerConnection::mConnect( Server *psrv )
 }
 void MinosServerConnection::on_connected()
 {
-    connected = true;
     logMessage( "Server", QString( "Connected OK to " ) + srv->station + " host " + srv->host );
     RPCRequest *rpa = new RPCRequest( clientServer, MinosServer::getMinosServer() ->getServerName(), "ServerSetFromId" );   // for our local server, this one MUST have a from
     rpa->addParam( MinosServer::getMinosServer() ->getServerName() );

@@ -30,7 +30,7 @@ class MinosServerConnection: public MinosCommonConnection
       qint64 lastKeepAlive = 0;
    public:
       MinosServerConnection();
-      virtual bool initialise(bool conn) override;
+      virtual void initialise() override;
       ~MinosServerConnection();
       virtual bool checkFrom( TiXmlElement *pak );
       virtual bool isServer()
@@ -41,14 +41,10 @@ class MinosServerConnection: public MinosCommonConnection
 
       virtual void mConnect( Server *srv );
       virtual void sendAction( XStanza *a );
-      virtual QString getIdentity()
-      {
-         return "MinosServerConnection " + makeJid();
-      }
       void closeDown() override;
 private slots:
       void on_connected();
-      virtual void sendKeepAlive( );
+      virtual void sendKeepAlive( ) override;
 };
 //==============================================================================
 #endif

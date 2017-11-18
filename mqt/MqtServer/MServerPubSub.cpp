@@ -562,7 +562,6 @@ void PublishedCategory::publish( const QString &pubId, const QString &k, const Q
 
    if ( ( kl != pubkeylist.end() ) && ( doPub || ( *kl ) ->getPubValue() != v || (*kl)->getPubState() != pState) )     // first time, force broadcast anyway
    {
-      //( *kl ) ->setPubId( pubId );
       ( *kl ) ->setPubValue( v );
       ( *kl ) ->setPubState( pState );
       for ( SubscriberListIterator i = subscribedLocal.begin(); i != subscribedLocal.end(); i++ )
@@ -608,7 +607,6 @@ void PublishedCategory::serverPublish( const QString &pubId, const QString &svr,
 
    if ( ( kl != pubkeylist.end() ) && ( doPub || ( *kl ) ->getPubValue() != v || ( *kl) ->getPubState() != pState ) )     // first time, force broadcast anyway
    {
-//      ( *kl ) ->setPubId( pubId );
       ( *kl ) ->setPubValue( v );
       ( *kl ) ->setPubState( pState );
       for ( RemoteSubscriberListIterator i = subscribedRemote.begin(); i != subscribedRemote.end(); i++ )

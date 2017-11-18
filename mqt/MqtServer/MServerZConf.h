@@ -72,8 +72,6 @@ public:
 
 private slots:
       void onSocketStateChange(QAbstractSocket::SocketState);
-//      void onSocketStateChangeRO(QAbstractSocket::SocketState);
-//      void onError(QAbstractSocket::SocketError socketError);
 
 };
 class TZConf: public QObject
@@ -87,11 +85,8 @@ class TZConf: public QObject
       QString localName;
 
       QVector<QSharedPointer<UDPSocket> > TxSocks;
-//      QVector<QSharedPointer<UDPSocket> > RxSocks;
 
       QSharedPointer<MCReadSocket> rxSocket;
-
-      //QSharedPointer<UDPSocket>  rxSocket;
 
       QTimer beaconTimer;
       int iPort;
@@ -114,9 +109,8 @@ class TZConf: public QObject
            return ZConf;
        }
 
-      void runThread(const QString &name);
+      void startZConf(const QString &name);
 
-     // void setName(  );
       QString getName()
       {
          return localName;
