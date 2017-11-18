@@ -131,6 +131,7 @@ public slots:
 
 private:
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
+    void wheelEvent(QWheelEvent *event);
 
     // memory buttons
     memoryData::memData getRunMemoryData(int memoryNumber);
@@ -194,7 +195,7 @@ public:
 
     FreqLineEdit(QWidget *parent);
     ~FreqLineEdit();
-
+    void changeFreq(bool direction);
     //QString convertFreqString(double frequency);
 
 signals:
@@ -204,8 +205,8 @@ signals:
     void freqEditReturn();
 private:
 
-    void changeFreq(bool direction);
-    void wheelEvent(QWheelEvent *event);
+
+    //void wheelEvent(QWheelEvent *event);
     void keyPressEvent(QKeyEvent *event);
 
 } ;

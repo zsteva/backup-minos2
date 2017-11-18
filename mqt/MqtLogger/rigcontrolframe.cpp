@@ -674,6 +674,27 @@ void RigControlFrame::traceMsg(QString msg)
 }
 
 
+void RigControlFrame::wheelEvent(QWheelEvent *event)
+{
+    int numDegrees = event->delta() / 8;
+    int numTicks = numDegrees / 15;
+
+    if (numTicks == 1)
+    {
+       ui->freqInput->changeFreq(true);
+    }
+    else
+    {
+        ui->freqInput->changeFreq(false);
+    }
+
+    event->accept();
+}
+
+
+
+
+
 //********************** Run Buttons *******************************
 
 
@@ -925,6 +946,7 @@ FreqLineEdit::~FreqLineEdit()
 
 }
 
+/*
 void FreqLineEdit::wheelEvent(QWheelEvent *event)
 {
     int numDegrees = event->delta() / 8;
@@ -941,7 +963,7 @@ void FreqLineEdit::wheelEvent(QWheelEvent *event)
 
     event->accept();
 }
-
+*/
 
 void FreqLineEdit::keyPressEvent(QKeyEvent *event)
 {
@@ -1049,56 +1071,3 @@ void FreqLineEdit::changeFreq(bool direction)
 }
 
 
-/*
-
-QString FreqLineEdit::convertFreqString(double frequency)
-{
-    QString sfreq;
-    double freq = frequency;
-    sfreq = QString::number(freq,'f', 0);
-    int len = sfreq.length();
-
-
-    switch(len)
-    {
-        case 11:
-            sfreq = sfreq.insert(8, '.');
-            sfreq = sfreq.insert(5, '.');
-            sfreq = sfreq.insert(2, '.');
-            break;
-        case 10:
-            sfreq = sfreq.insert(7, '.');
-            sfreq = sfreq.insert(4, '.');
-            sfreq = sfreq.insert(1, '.');
-            break;
-        case 9:
-            sfreq = sfreq.insert(3, '.');
-            sfreq = sfreq.insert(7, '.');
-            break;
-        case 8:
-            sfreq = sfreq.insert(2, '.');
-            sfreq = sfreq.insert(6, '.');
-            break;
-        case 7:
-            sfreq = sfreq.insert(4, '.');
-            sfreq = sfreq.insert(1, '.');
-            break;
-        case 6:
-            sfreq = sfreq.insert(3,'.');
-            break;
-        case 5:
-            sfreq = sfreq.insert(2,'.');
-            break;
-        case 4:
-            sfreq = sfreq.insert(1,'.');
-            break;
-        default:
-            sfreq = "??.???.???.???";    // error
-
-    }
-
-
-    return sfreq;
-}
-
-*/
