@@ -21,6 +21,7 @@
 #include "rigcontrol.h"
 #include "setupdialog.h"
 #include "rigcontrolrpc.h"
+#include "rigutils.h"
 #include <QTimer>
 #include <QMessageBox>
 #include <QProcessEnvironment>
@@ -896,15 +897,14 @@ void RigControlMainWindow::displayPassband(pbwidth_t width)
 void RigControlMainWindow::displayFreqVfo(double frequency)
 {
 
-    ui->radioFreqA->setText(convertFreqString(frequency));
+    ui->radioFreqA->setText(convertFreqStrDisp(frequency));
 }
-
-
 
 
 void RigControlMainWindow::displayTransVertVfo(double frequency)
 {
-    ui->transVertFreqA->setText(convertFreqString(frequency));
+    ui->transVertFreqA->setText(convertFreqStrDisp(frequency));
+
 }
 
 

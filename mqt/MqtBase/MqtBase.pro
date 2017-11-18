@@ -51,7 +51,8 @@ SOURCES += \
     StartConfig.cpp \
     MinosTableView.cpp \
     ConfigElementFrame.cpp \
-    MatchCollection.cpp
+    MatchCollection.cpp \
+    rigutils.cpp
 
 HEADERS += \
     BandList.h \
@@ -90,7 +91,8 @@ HEADERS += \
     MinosTableView.h \
     ConfigElementFrame.h \
     rigcontrolcommonconstants.h \
-    MatchCollection.h
+    MatchCollection.h \
+    rigutils.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
