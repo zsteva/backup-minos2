@@ -312,6 +312,7 @@ void RigControlMainWindow::upDateRadio()
 
         // only show transvert freq box is enabled
         setTransVertDisplayVisible(selectRig->currentRadio.transVertEnable);
+        sendTransVertStatus(selectRig->currentRadio.transVertEnable);   // send to logger
         selectRig->currentRadio.transVertNegative = selectRig->availRadios[radioIndex].transVertNegative;
         selectRig->currentRadio.transVertOffset = selectRig->availRadios[radioIndex].transVertOffset;
         selectRig->currentRadio.transVertOffsetStr = selectRig->availRadios[radioIndex].transVertOffsetStr;
@@ -897,13 +898,13 @@ void RigControlMainWindow::displayPassband(pbwidth_t width)
 void RigControlMainWindow::displayFreqVfo(double frequency)
 {
 
-    ui->radioFreqA->setText(convertFreqStrDisp(frequency));
+    ui->radioFreqA->setText(convertFreqStrDisp(convertFreqToStr(frequency)));
 }
 
 
 void RigControlMainWindow::displayTransVertVfo(double frequency)
 {
-    ui->transVertFreqA->setText(convertFreqStrDisp(frequency));
+    ui->transVertFreqA->setText(convertFreqStrDisp(convertFreqToStr(frequency)));
 
 }
 
@@ -916,7 +917,7 @@ void RigControlMainWindow::displayModeVfo(QString mode)
 }
 
 
-
+/*
 QString RigControlMainWindow::convertFreqString(double frequency)
 {
     double freq = frequency;
@@ -966,7 +967,7 @@ QString RigControlMainWindow::convertFreqString(double frequency)
     return sfreq;
 }
 
-
+*/
 
 
 void RigControlMainWindow::showStatusMessage(const QString &message)
@@ -1068,14 +1069,7 @@ void RigControlMainWindow::about()
 
 void RigControlMainWindow::sendRadioNameLogger(const QString radioName)
 {
-    //if (appName.trimmed() == radioName.trimmed() || appName.length() == 0)
-    //{
-    //    msg->publishRadioName(radioName);
-    //}
-   // else
     msg->publishRadioName(QString("%1 : %2").arg(appName, radioName));
-
-
 }
 
 
@@ -1118,8 +1112,8 @@ void RigControlMainWindow::sendFreqToLog(freq_t freq)
 
     if (appName.length() > 0)
     {
-        logMessage(QString("Send freq to logger = %1").arg(QString::number(freq)));
-        msg->publishFreq(convertFreqString(freq));
+        logMessage(QString("Send freq to logger = %1").arg(convertFreqToStr(freq)));
+        msg->publishFreq(convertFreqToStr(freq));
     }
 }
 
@@ -1132,7 +1126,23 @@ void RigControlMainWindow::sendModeToLog(QString mode)
     }
 }
 
-
+void RigControlMainWindow::sendTransVertStatus(bool status)
+{
+    QString flag;
+    if (appName.length() > 0)
+    {
+        if (status)
+        {
+            flag = TXVERT_ON;
+        }
+        else
+        {
+            flag = TXVERT_OFF;
+        }
+        logMessage(QString("Send Transvert Status to logger = %1").arg(flag));
+        msg->publishTransVertStatus(flag);
+    }
+}
 
 
 void RigControlMainWindow::aboutRigConfig()
@@ -1169,7 +1179,7 @@ void RigControlMainWindow::aboutRigConfig()
     msg.append(QString("TransVert Enable = %1\n").arg(f));
     selectRig->currentRadio.transVertNegative ? f = "True" : f = "False";
     msg.append(QString("TransVert Negative = %1\n").arg(f));
-    msg.append(QString("TransVert Offset = %1\n").arg(convertFreqString(selectRig->currentRadio.transVertOffset)));
+    msg.append(QString("TransVert Offset = %1\n").arg(convertFreqStrDisp(convertFreqToStr(selectRig->currentRadio.transVertOffset))));
     msg.append(QString("Use RX Passband = %1\n").arg(f));
     supRitFlag ? f = "True" : f = "False";
     msg.append(QString("Radio Supports RIT = %1\n").arg(f));
@@ -1218,7 +1228,7 @@ void RigControlMainWindow::dumpRadioToTraceLog()
     trace(QString("TransVert Enable = %1").arg(f));
     selectRig->currentRadio.transVertNegative ? f = "True" : f = "False";
     trace(QString("TransVert Negative = %1").arg(f));
-    trace(QString("TransVert Offset = %1").arg(convertFreqString(selectRig->currentRadio.transVertOffset)));
+    trace(QString("TransVert Offset = %1").arg(convertFreqStrDisp(convertFreqToStr(selectRig->currentRadio.transVertOffset))));
     trace(QString("Use RX Passband = %1").arg(f));
     supRitFlag ? f = "True" : f = "False";
     trace(QString("Radio Supports RIT = %1").arg(f));

@@ -12,8 +12,8 @@
 
 #include <QString>
 
-extern QString convertFreqStrDisp(double frequency);
+QString convertFreqStrDisp(QString frequency);
 
-extern QString convertFreqToStr(double frequency);
+QString convertFreqToStr(double frequency);
 
 #endif // RIGUTILS_H

@@ -86,6 +86,7 @@ public:
     void setFreq(QString);
     void setRadioName(QString);
     void setRadioState(QString);
+    void setRadioTxVertState(QString s);
 
     bool isRadioLoaded();
 
@@ -194,7 +195,7 @@ public:
     FreqLineEdit(QWidget *parent);
     ~FreqLineEdit();
 
-    QString convertFreqString(double frequency);
+    //QString convertFreqString(double frequency);
 
 signals:
     void receivedFocus() ;

@@ -11,12 +11,10 @@
 
 // convert freq with delimiter for display
 
-QString convertFreqStringDisplay(double frequency)
+QString convertFreqStrDisp(QString sfreq)
 {
 
-    QString sfreq = QString::number(frequency,'f', 0);
     int len = sfreq.length();
-
 
     switch(len)
     {

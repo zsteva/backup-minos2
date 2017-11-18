@@ -20,7 +20,7 @@
 #include "SendRPCDM.h"
 #include "runbuttondialog.h"
 #include "BandList.h"
-
+#include "rigutils.h"
 #include "rigcontrolframe.h"
 #include "ui_rigcontrolframe.h"
 
@@ -66,6 +66,9 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 
 
     mgmLabelVisible(false);
+
+    ui->txvertStat->setVisible(false);
+    ui->TxVertLabel->setVisible(false);
 
     // init memory button data before radio connection
     setRadioName(radioName);
@@ -246,10 +249,11 @@ void RigControlFrame::radioBandFreq(int index)
     QString f = bandSelData::bandFreq[index];
     if (index > 0 && index < bandSelData::bandFreq.count())
     {
-        if (f.remove('.') != curFreq.remove('.'))
+
+        if (f != curFreq)
         {
-            ui->freqInput->setInputMask(maskData::freqMask[bandSelData::bandMaskIdx[index]]);
-            ui->freqInput->setText(bandSelData::freqDialZero[index]);
+            //ui->freqInput->setInputMask(maskData::freqMask[bandSelData::bandMaskIdx[index]]);
+            //ui->freqInput->setText(bandSelData::freqDialZero[index]);
             if (isRadioLoaded())
             {
                 if (radioConnected && !radioError)
@@ -272,12 +276,13 @@ void RigControlFrame::sendFreq(QString f)
 
 
     bool ok = false;
-    QString sf = f.remove('.');
-    if (curFreq.remove('.') != sf)
+    //QString sf = f.remove('.');
+    if (curFreq != f)
     {
-        double df = sf.toDouble(&ok);
+        double df = f.toDouble(&ok);
         if (ok && df > 0.0)
         {
+
             emit sendFreqControl(f);
         }
     }
@@ -487,6 +492,24 @@ void RigControlFrame::setRadioState(QString s)
 }
 
 
+void RigControlFrame::setRadioTxVertState(QString s)
+{
+    if (s == TXVERT_ON)
+    {
+        ui->txvertStat->setVisible(true);
+        ui->TxVertLabel->setVisible(true);
+        ui->txvertStat->setText("On");
+    }
+    else
+    {
+        ui->txvertStat->setVisible(false);
+        ui->TxVertLabel->setVisible(false);
+    }
+
+
+}
+
+
 bool RigControlFrame::checkRadioState()
 {
     if (radioLoaded && radioConnected && !radioError)
@@ -626,7 +649,7 @@ QString RigControlFrame::calcNewFreq(double incFreq)
         }
         else
         {
-            sfreq = ui->freqInput->convertFreqString(freq);
+            sfreq = convertFreqToStr(freq);
             trace(QString("CalcNewFreq: Freq  = %1").arg(sfreq));
 
         }
@@ -1009,21 +1032,24 @@ void FreqLineEdit::changeFreq(bool direction)
         }
 
 
-        sfreq = convertFreqString(freq);
+        sfreq = convertFreqToStr(freq);
         trace(QString("Change Freq: Freq Tuning = %1").arg(freq));
         if (bandOK)
         {
-            setText(sfreq);
+            setText(convertFreqStrDisp(sfreq));
             emit newFreq();
         }
         else
         {
-            setText(QString("%1 %2 %3").arg("<font color='Red'>", sfreq, "</font>"));
+            setText(QString("%1 %2 %3").arg("<font color='Red'>", convertFreqStrDisp(sfreq), "</font>"));
         }
 
         setCursorPosition(pos);
    }
 }
+
+
+/*
 
 QString FreqLineEdit::convertFreqString(double frequency)
 {
@@ -1074,3 +1100,5 @@ QString FreqLineEdit::convertFreqString(double frequency)
 
     return sfreq;
 }
+
+*/

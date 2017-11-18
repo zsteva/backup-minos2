@@ -76,6 +76,7 @@ void RigControlRpc::publishFreq(const QString &freq)
 }
 
 
+
 void RigControlRpc::publishMode(const QString &mode)
 {
     static QString old;
@@ -87,6 +88,24 @@ void RigControlRpc::publishMode(const QString &mode)
        rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyMode, mode, psPublished );
     }
 }
+
+
+
+
+
+void RigControlRpc::publishTransVertStatus(const QString &status)
+{
+    static QString old;
+    trace(QString("Rig RPC: Publish TransVert Status = %1").arg(status));
+    if ( status != old )
+    {
+       old = status;
+       MinosRPC *rpc = MinosRPC::getMinosRPC();
+       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyTxVertStatus, status, psPublished );
+    }
+}
+
+
 
 
 void RigControlRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )

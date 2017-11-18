@@ -5,6 +5,7 @@
 #include "tforcelogdlg.h"
 #include "SendRPCDM.h"
 #include "rigcontrolcommonconstants.h"
+#include "rigUtils.h"
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
 #include <QDebug>
@@ -24,7 +25,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     , bandMapLoaded(false)
     , keyerLoaded(false)
     , radioLoaded(false)
-    , curFreq("00:000:000:000")
+    , curFreq("00000000000")
     , radioConnected(false)
     , radioError(false)
 {
@@ -1929,7 +1930,7 @@ void QSOLogFrame::getScreenRigData()
     if (!edit && !catchup && isRadioLoaded())
     {
         screenContact.rigName = curRadioName;
-        screenContact.frequency = curFreq;
+        screenContact.frequency = convertFreqStrDisp(curFreq);
     }
     else
     {

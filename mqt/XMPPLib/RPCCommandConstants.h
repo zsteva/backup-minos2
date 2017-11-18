@@ -102,7 +102,7 @@ static const QString rigControlKeyMode     = QT_TR_NOOP("Mode");
 static const QString rigControlKeyState    = QT_TR_NOOP("State");
 static const QString rigControlKeyFreq     = QT_TR_NOOP("Frequency");
 static const QString rigControlKeyRadioName = QT_TR_NOOP("RadioName");
-
+static const QString rigControlKeyTxVertStatus = QT_TR_NOOP("TransVertStatus");
 
 
 }
