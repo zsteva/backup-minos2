@@ -131,7 +131,7 @@ public slots:
 
 private:
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
-    void wheelEvent(QWheelEvent *event);
+
 
     // memory buttons
     memoryData::memData getRunMemoryData(int memoryNumber);
@@ -206,7 +206,7 @@ signals:
 private:
 
 
-    //void wheelEvent(QWheelEvent *event);
+    void wheelEvent(QWheelEvent *event);
     void keyPressEvent(QKeyEvent *event);
 
 } ;

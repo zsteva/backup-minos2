@@ -594,7 +594,7 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
     cmdLockOn();    // lock get radio info
     bool ok = false;
     int retCode = 0;
-    QString sfreq = freq.remove('.');
+    QString sfreq = freq;
 
     double f = sfreq.toDouble(&ok);
     logMessage(QString("SetFreq: Change to Freq = %1").arg(QString::number(f)));

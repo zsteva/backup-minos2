@@ -166,7 +166,6 @@ void RigControlFrame::setFreq(QString f)
     traceMsg(QString("Set Freq = %1").arg(f));
     QString freq = f;
 
-    freq.remove('.');
     if (freq.count() >= 4)
     {
         if (!freqEditOn)
@@ -187,7 +186,7 @@ void RigControlFrame::changeRadioFreq()
     traceMsg(QString("Change Radio Freq"));
     static QString freq = "";
 
-    QString newfreq = ui->freqInput->text().trimmed();
+    QString newfreq = ui->freqInput->text().trimmed().remove('.');
     if (newfreq != freq)
     {
         freq = newfreq;
@@ -226,7 +225,7 @@ bool RigControlFrame::checkValidFreq(QString freq)
     BandList &blist = BandList::getBandList();
     BandInfo bi;
     bool bandOK = false;
-    QString sfreq = freq.trimmed().remove('.');
+    QString sfreq = freq.trimmed();
 
     double dfreq = sfreq.toDouble(&ok);
 
@@ -674,22 +673,7 @@ void RigControlFrame::traceMsg(QString msg)
 }
 
 
-void RigControlFrame::wheelEvent(QWheelEvent *event)
-{
-    int numDegrees = event->delta() / 8;
-    int numTicks = numDegrees / 15;
 
-    if (numTicks == 1)
-    {
-       ui->freqInput->changeFreq(true);
-    }
-    else
-    {
-        ui->freqInput->changeFreq(false);
-    }
-
-    event->accept();
-}
 
 
 
@@ -946,7 +930,7 @@ FreqLineEdit::~FreqLineEdit()
 
 }
 
-/*
+
 void FreqLineEdit::wheelEvent(QWheelEvent *event)
 {
     int numDegrees = event->delta() / 8;
@@ -963,7 +947,7 @@ void FreqLineEdit::wheelEvent(QWheelEvent *event)
 
     event->accept();
 }
-*/
+
 
 void FreqLineEdit::keyPressEvent(QKeyEvent *event)
 {
