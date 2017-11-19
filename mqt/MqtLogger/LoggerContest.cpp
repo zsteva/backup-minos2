@@ -1518,14 +1518,12 @@ bool LoggerContestLog::getStanza( unsigned int stanza, QString &stanzaData )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "(write) seek failed!" );
    }
-   char *buffer = new char [ 4096 + 1 ];      // it sounds a lot, but without parsing it...
-   int chRead = contestFile.read(buffer, 4096 );
+   QByteArray buffer = contestFile.read( 8192 );
 
    bool readOK = true;
-   if ( chRead > 0 )
+   if ( buffer.size() > 0 )
     {
-        buffer[ chRead ] = 0;
-        stanzaData = buffer;
+        stanzaData = QString(buffer);
         int epos = stanzaData.indexOf( "</iq>" );     // trim the excess - if there is any
         if ( epos != -1 )
         {
@@ -1535,7 +1533,6 @@ bool LoggerContestLog::getStanza( unsigned int stanza, QString &stanzaData )
     else
         readOK = false;
 
-   delete [] buffer;
    contestFile.close();
    return readOK;
 }

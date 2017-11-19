@@ -204,7 +204,7 @@ void MinosTestImport::dispatchResponse( XStanza *xs )
 int MinosTestImport::readTestFile(QSharedPointer<QFile> ctfile )
 {
     // read the stream as a sequence of Minos stanzas
-    char rdcbuffer[ IO_BUF_SIZE + 1 ];
+    QByteArray rdcbuffer;
     bool fileComplete = false;
 
     // NB - old versions might not have a proper header
@@ -212,11 +212,9 @@ int MinosTestImport::readTestFile(QSharedPointer<QFile> ctfile )
     QString buffer;
     while ( !fileComplete )
     {
-        int chRead = ctfile->read(rdcbuffer, IO_BUF_SIZE);
-        if ( chRead > 0 )
+        rdcbuffer = ctfile->read( IO_BUF_SIZE);
+        if ( rdcbuffer.size() > 0 )
         {
-            rdcbuffer[ chRead ] = '\0';
-
             QString rdbuffer(rdcbuffer);
 
             buffer += rdbuffer;
