@@ -19,7 +19,8 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     ui(new Ui::TSingleLogFrame),
     contest( contest ),
     splittersChanged(false),
-    currFreq( 0 ), oldFreq( 0 ),
+    curFreq( 0 ), oldFreq( 0 ),
+    freqUpDateCnt(0), modeUpDateCnt(0),
     lastStanzaCount( 0 ),
     rotatorLoaded(false),
     bandMapLoaded(false),
@@ -98,14 +99,13 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(sendDM, SIGNAL(setRadioLoaded()), this, SLOT(on_RadioLoaded()));
     connect(sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetMode(QString)));
     connect(sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetFreq(QString)));
-//    connect(sendDM, SIGNAL(setRxPBFlag(QString)),this, SLOT(on_SetRxPBFlag(QString)));
     connect(sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
     connect(sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
-    //connect(sendDM, SIGNAL(setPassBandState(QString)), this, SLOT(on_SetRadioPassbandState(QString)));
+    connect(sendDM, SIGNAL(setRadioTxVertStatus(QString)), this, SLOT(on_SetRadioTxVertState(QString)));
+
 
     // To rig controller
     connect(ui->FKHRigControlFrame, SIGNAL(sendFreqControl(QString)), this, SLOT(sendRadioFreq(QString)));
-    //connect(ui->FKHRigControlFrame, SIGNAL(sendPassBandStateToControl(int)), this, SLOT(sendRadioPassBandState(int)));
     connect(ui->FKHRigControlFrame, SIGNAL(sendModeToControl(QString)), this, SLOT(sendRadioMode(QString)));
     connect(ui->GJVQSOLogFrame, SIGNAL(sendModeControl(QString)), this , SLOT(sendRadioMode(QString)));
 
@@ -226,6 +226,7 @@ void TSingleLogFrame::on_ContestPageChanged ()
 
     if ( this != LogContainer->getCurrentLogFrame() )
     {
+
        ui->GJVQSOLogFrame->savePartial();  // we kill it on (re) entry, so not needed
        return ;
     }
@@ -255,6 +256,11 @@ void TSingleLogFrame::on_ContestPageChanged ()
 //    MultDispFrame->setContest( contest );
     doNextContactDetailsOnLeftClick( false );
     MinosLoggerEvents::SendShowOperators();
+
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRigControlFrame->on_ContestPageChanged(sCurFreq, sCurMode);
+    }
 
     updateQSODisplay();
 
@@ -719,14 +725,43 @@ bool TSingleLogFrame::isBandMapLoaded()
 
 void TSingleLogFrame::on_SetMode(QString m)
 {
-    ui->FKHRigControlFrame->setMode(m);
-    ui->GJVQSOLogFrame->modeSentFromRig(m);
+    if (sCurMode != m)
+    {
+        sCurMode = m;
+        if (modeUpDateCnt < 1)
+        {
+            modeUpDateCnt++;
+            ui->FKHRigControlFrame->setMode(m);
+            ui->GJVQSOLogFrame->modeSentFromRig(m);
+        }
+
+        if ( this == LogContainer->getCurrentLogFrame() )
+        {
+            ui->FKHRigControlFrame->setMode(m);
+            ui->GJVQSOLogFrame->modeSentFromRig(m);
+        }
+    }
 }
 
 void TSingleLogFrame::on_SetFreq(QString f)
 {
-    ui->FKHRigControlFrame->setFreq(f);
-    ui->GJVQSOLogFrame->setFreq(f);
+
+    if (sCurFreq != f)
+    {
+        sCurFreq = f;
+        if (freqUpDateCnt < 1)
+        {
+            freqUpDateCnt++;
+            ui->FKHRigControlFrame->setFreq(f);
+            ui->GJVQSOLogFrame->setFreq(f);
+        }
+
+        else if ( this == LogContainer->getCurrentLogFrame() )
+        {
+            ui->FKHRigControlFrame->setFreq(f);
+            ui->GJVQSOLogFrame->setFreq(f);
+        }
+    }
 }
 
 void TSingleLogFrame::on_NoRadioSetFreq(QString f)
@@ -734,12 +769,6 @@ void TSingleLogFrame::on_NoRadioSetFreq(QString f)
     ui->GJVQSOLogFrame->setFreq(f);
 }
 
-/*
-void TSingleLogFrame::on_SetRxPBFlag(QString flag)
-{
-    //ui->FKHRigControlFrame->setRxPBFlag(flag);
-}
-*/
 void TSingleLogFrame::on_RadioLoaded()
 {
     ui->FKHRigControlFrame->setRadioLoaded();
@@ -763,12 +792,12 @@ void TSingleLogFrame::on_SetRadioState(QString s)
     ui->GJVQSOLogFrame->setRadioState(s);
 }
 
-/*
-void TSingleLogFrame::on_SetRadioPassbandState(QString s)
+
+void TSingleLogFrame::on_SetRadioTxVertState(QString s)
 {
-    ui->FKHRigControlFrame->setRadioPassbandState(s);
+    ui->FKHRigControlFrame->setRadioTxVertState(s);
 }
-*/
+
 
 void TSingleLogFrame::sendRadioFreq(QString freq)
 {

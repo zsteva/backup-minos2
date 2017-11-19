@@ -36,7 +36,7 @@ public:
 
     void publishState(const QString &state);
     void publishRadioName(const QString &radioName);
-    void publishRxPbFlag(const QString &flag);
+    void publishTransVertStatus(const QString &flag);
     void publishFreq(const QString &freq);
     void publishMode(const QString &mode);
 

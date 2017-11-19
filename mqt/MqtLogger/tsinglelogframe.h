@@ -94,10 +94,15 @@ private:
 
     int lastStanzaCount;
 
-    long long currFreq;
+    long long curFreq;
     long long oldFreq;
-    QString sCurrFreq;
+    QString sCurFreq;
     QString sOldFreq;
+    QString sCurMode;
+    QString sOldMode;
+
+    int freqUpDateCnt;
+    int modeUpDateCnt;
 
     void transferDetails( MatchTreeItem *MatchTreeIndex );
 
@@ -137,7 +142,7 @@ private slots:
     void on_RadioLoaded();
     void on_SetRadioName(QString);
     void on_SetRadioState(QString);
-
+    void on_SetRadioTxVertState(QString s);
 
     void on_RotatorLoaded();
     void on_RotatorState(QString);
@@ -158,6 +163,7 @@ private slots:
 
 
     void on_ControlSplitter_splitterMoved(int pos, int index);
+
 
 };
 

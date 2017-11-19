@@ -86,6 +86,7 @@ public:
     void setFreq(QString);
     void setRadioName(QString);
     void setRadioState(QString);
+    void setRadioTxVertState(QString s);
 
     bool isRadioLoaded();
 
@@ -101,6 +102,8 @@ public:
     int getIntPassBandState(QString mode);
     bool checkRadioState();
 
+
+    void on_ContestPageChanged(QString freq, QString mode);
 signals:
     void sendFreqControl(QString);
     void noRadioSendFreq(QString);
@@ -130,6 +133,7 @@ public slots:
 private:
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
 
+
     // memory buttons
     memoryData::memData getRunMemoryData(int memoryNumber);
 
@@ -157,6 +161,7 @@ private:
     QString curMode;
 
     QString radioName;
+    QString rigAppName;
     QString radioState;
 
 
@@ -191,8 +196,8 @@ public:
 
     FreqLineEdit(QWidget *parent);
     ~FreqLineEdit();
-
-    QString convertFreqString(double frequency);
+    void changeFreq(bool direction);
+    //QString convertFreqString(double frequency);
 
 signals:
     void receivedFocus() ;
@@ -201,7 +206,7 @@ signals:
     void freqEditReturn();
 private:
 
-    void changeFreq(bool direction);
+
     void wheelEvent(QWheelEvent *event);
     void keyPressEvent(QKeyEvent *event);
 

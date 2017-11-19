@@ -206,6 +206,10 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             {
                 emit setRadioName( an.getValue() );
             }
+            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyTxVertStatus )
+            {
+                emit setRadioTxVertStatus( an.getValue() );
+            }
 
         }
         if (an.getPublisherProgram() == bandMapServerConnectable.remoteAppName && an.getPublisherServer() == bandMapServerConnectable.serverName)

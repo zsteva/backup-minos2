@@ -93,7 +93,7 @@ private:
     void closeRadio();
     int getFrequency(vfo_t vfo);
     int getMode(vfo_t vfo);
-    QString convertFreqString(double);
+    //QString convertFreqString(double);
 
     void setPolltime(int);
     int getPolltime();
@@ -142,6 +142,7 @@ private:
     void setTransVertDisplayVisible(bool visible);
     void writeWindowTitle(QString appName);
     void sendRadioNameLogger(const QString radioName);
+    void sendTransVertStatus(bool status);
 private slots:
 
     void onStdInRead(QString);

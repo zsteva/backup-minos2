@@ -55,6 +55,28 @@ const QStringList bandNames = { "",
                                 "GHz"};
 
 const QStringList bandFreq = { "",
+                               "28170000",
+                               "50170000",
+                               "70210000",
+                               "144290000",
+                               "432170000",
+                               "1296210000",
+                               "10000000000"};
+
+const QStringList freqDialZero =  { "",
+                                    "00.000.000",
+                                    "00.000.000",
+                                    "00.000.000",
+                                    "000.000.000",
+                                    "000.000.000",
+                                    "0.000.000.000",
+                                    "00.000.000.000"};
+
+
+
+/*
+
+const QStringList bandFreq = { "",
                                "28.170.000",
                                "50.170.000",
                                "70.210.000",
@@ -71,6 +93,7 @@ const QStringList freqDialZero =  { "",
                                     "000.000.000",
                                     "0.000.000.000",
                                     "00.000.000.000"};
+*/
 
 const maskData::freqMask_lookup bandMaskIdx[] = { maskData::MHZ99,      /* Not used */
                                                     maskData::MHZ99,    /* 10m  */
@@ -88,7 +111,7 @@ const maskData::freqMask_lookup bandMaskIdx[] = { maskData::MHZ99,      /* Not u
 namespace memDefData {
 
 const QString DEFAULT_CALLSIGN = "";
-const QString DEFAULT_FREQ = "00.000.000.000";
+const QString DEFAULT_FREQ = "00000000000";
 const QString DEFAULT_MODE = "USB";
 const QString DEFAULT_LOCATOR = "";
 const int DEFAULT_BEARING = 0;

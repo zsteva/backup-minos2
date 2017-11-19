@@ -20,7 +20,7 @@
 #include "SendRPCDM.h"
 #include "runbuttondialog.h"
 #include "BandList.h"
-
+#include "rigutils.h"
 #include "rigcontrolframe.h"
 #include "ui_rigcontrolframe.h"
 
@@ -66,6 +66,9 @@ RigControlFrame::RigControlFrame(QWidget *parent):
 
 
     mgmLabelVisible(false);
+
+    ui->txvertStat->setVisible(false);
+    ui->TxVertLabel->setVisible(false);
 
     // init memory button data before radio connection
     setRadioName(radioName);
@@ -163,7 +166,6 @@ void RigControlFrame::setFreq(QString f)
     traceMsg(QString("Set Freq = %1").arg(f));
     QString freq = f;
 
-    freq.remove('.');
     if (freq.count() >= 4)
     {
         if (!freqEditOn)
@@ -184,7 +186,7 @@ void RigControlFrame::changeRadioFreq()
     traceMsg(QString("Change Radio Freq"));
     static QString freq = "";
 
-    QString newfreq = ui->freqInput->text().trimmed();
+    QString newfreq = ui->freqInput->text().trimmed().remove('.');
     if (newfreq != freq)
     {
         freq = newfreq;
@@ -223,7 +225,7 @@ bool RigControlFrame::checkValidFreq(QString freq)
     BandList &blist = BandList::getBandList();
     BandInfo bi;
     bool bandOK = false;
-    QString sfreq = freq.trimmed().remove('.');
+    QString sfreq = freq.trimmed();
 
     double dfreq = sfreq.toDouble(&ok);
 
@@ -246,10 +248,11 @@ void RigControlFrame::radioBandFreq(int index)
     QString f = bandSelData::bandFreq[index];
     if (index > 0 && index < bandSelData::bandFreq.count())
     {
-        if (f.remove('.') != curFreq.remove('.'))
+
+        if (f != curFreq)
         {
-            ui->freqInput->setInputMask(maskData::freqMask[bandSelData::bandMaskIdx[index]]);
-            ui->freqInput->setText(bandSelData::freqDialZero[index]);
+            //ui->freqInput->setInputMask(maskData::freqMask[bandSelData::bandMaskIdx[index]]);
+            //ui->freqInput->setText(bandSelData::freqDialZero[index]);
             if (isRadioLoaded())
             {
                 if (radioConnected && !radioError)
@@ -272,16 +275,20 @@ void RigControlFrame::sendFreq(QString f)
 
 
     bool ok = false;
-    QString sf = f.remove('.');
-    if (curFreq.remove('.') != sf)
+    //QString sf = f.remove('.');
+//    if (curFreq != f)
+//    {
+    double df = f.toDouble(&ok);
+    if (ok && df > 0.0)
     {
-        double df = sf.toDouble(&ok);
-        if (ok && df > 0.0)
-        {
-            emit sendFreqControl(f);
-        }
+
+     emit sendFreqControl(f);
     }
+//    }
 }
+
+
+
 
 void RigControlFrame::noRadioSendOutFreq(QString f)
 {
@@ -291,6 +298,47 @@ void RigControlFrame::noRadioSendOutFreq(QString f)
     // update logger
     TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
     tslf->on_NoRadioSetFreq(f);
+}
+
+
+void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
+{
+    QStringList modelist = mode.split(':');  // unpack mode
+    QString sMode;
+
+    if (modelist.count() != 2)
+    {
+        return;
+    }
+    if (modelist[0] == hamlibData::MGM)
+    {
+        sMode = modelist[1];
+    }
+    else
+    {
+        sMode = modelist[0];
+    }
+    // contest paged changed - send freq and mode to synch
+    if (curFreq == memDefData::DEFAULT_FREQ)
+    {
+        sendFreq(freq);
+    }
+    else if (curFreq != freq)
+    {
+        sendFreq(curFreq);
+    }
+
+    if (curMode == memDefData::DEFAULT_MODE)
+    {
+        sendModeToRadio(sMode);
+    }
+    else if (curMode != sMode)
+    {
+        sendModeToRadio(curMode);
+    }
+
+
+
 }
 
 bool RigControlFrame::eventFilter(QObject *obj, QEvent *event)
@@ -432,8 +480,22 @@ void RigControlFrame::sendModeToRadio(QString m)
 void RigControlFrame::setRadioName(QString n)
 {
     traceMsg(QString("Set RadioName = %1").arg(n));
-    ui->radioName->setText(n);
-    radioName = n;
+    QStringList rNameList = n.split(':');
+    if (rNameList.count() != 2)
+    {
+        return;
+    }
+    rigAppName = rNameList[0];
+    radioName = rNameList[1];
+    if (rigAppName == radioName)
+    {
+        ui->radioName->setText(radioName);
+    }
+    else
+    {
+       ui->radioName->setText(n);
+    }
+
 }
 
 
@@ -467,6 +529,24 @@ void RigControlFrame::setRadioState(QString s)
         ui->rigState->setText(s);
         radioState = s;
     }
+}
+
+
+void RigControlFrame::setRadioTxVertState(QString s)
+{
+    if (s == TXVERT_ON)
+    {
+        ui->txvertStat->setVisible(true);
+        ui->TxVertLabel->setVisible(true);
+        ui->txvertStat->setText("On");
+    }
+    else
+    {
+        ui->txvertStat->setVisible(false);
+        ui->TxVertLabel->setVisible(false);
+    }
+
+
 }
 
 
@@ -609,7 +689,7 @@ QString RigControlFrame::calcNewFreq(double incFreq)
         }
         else
         {
-            sfreq = ui->freqInput->convertFreqString(freq);
+            sfreq = convertFreqToStr(freq);
             trace(QString("CalcNewFreq: Freq  = %1").arg(sfreq));
 
         }
@@ -632,6 +712,12 @@ void RigControlFrame::traceMsg(QString msg)
 {
     trace(QString("RigcontrolFrame: %1 - %2 ").arg(radioName, msg));
 }
+
+
+
+
+
+
 
 
 //********************** Run Buttons *******************************
@@ -885,6 +971,7 @@ FreqLineEdit::~FreqLineEdit()
 
 }
 
+
 void FreqLineEdit::wheelEvent(QWheelEvent *event)
 {
     int numDegrees = event->delta() / 8;
@@ -992,68 +1079,20 @@ void FreqLineEdit::changeFreq(bool direction)
         }
 
 
-        sfreq = convertFreqString(freq);
+        sfreq = convertFreqToStr(freq);
         trace(QString("Change Freq: Freq Tuning = %1").arg(freq));
         if (bandOK)
         {
-            setText(sfreq);
+            setText(convertFreqStrDisp(sfreq));
             emit newFreq();
         }
         else
         {
-            setText(QString("%1 %2 %3").arg("<font color='Red'>", sfreq, "</font>"));
+            setText(QString("%1 %2 %3").arg("<font color='Red'>", convertFreqStrDisp(sfreq), "</font>"));
         }
 
         setCursorPosition(pos);
    }
 }
 
-QString FreqLineEdit::convertFreqString(double frequency)
-{
-    QString sfreq;
-    double freq = frequency;
-    sfreq = QString::number(freq,'f', 0);
-    int len = sfreq.length();
 
-
-    switch(len)
-    {
-        case 11:
-            sfreq = sfreq.insert(8, '.');
-            sfreq = sfreq.insert(5, '.');
-            sfreq = sfreq.insert(2, '.');
-            break;
-        case 10:
-            sfreq = sfreq.insert(7, '.');
-            sfreq = sfreq.insert(4, '.');
-            sfreq = sfreq.insert(1, '.');
-            break;
-        case 9:
-            sfreq = sfreq.insert(3, '.');
-            sfreq = sfreq.insert(7, '.');
-            break;
-        case 8:
-            sfreq = sfreq.insert(2, '.');
-            sfreq = sfreq.insert(6, '.');
-            break;
-        case 7:
-            sfreq = sfreq.insert(4, '.');
-            sfreq = sfreq.insert(1, '.');
-            break;
-        case 6:
-            sfreq = sfreq.insert(3,'.');
-            break;
-        case 5:
-            sfreq = sfreq.insert(2,'.');
-            break;
-        case 4:
-            sfreq = sfreq.insert(1,'.');
-            break;
-        default:
-            sfreq = "??.???.???.???";    // error
-
-    }
-
-
-    return sfreq;
-}

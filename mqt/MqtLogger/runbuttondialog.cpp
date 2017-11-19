@@ -17,6 +17,7 @@
 #include "runbuttondialog.h"
 #include "ui_runbuttondialog.h"
 #include "rigmemcommondata.h"
+#include "rigutils.h"
 #include "rigcontrolcommonconstants.h"
 #include "rotatorCommonConstants.h"
 
@@ -67,6 +68,7 @@ void RunButtonDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
     {
         ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.remove('.').count() - 4]);
     }
+
     ui->freqLineEdit->setText(ldata->freq);
 
     //ui->freqLineEdit->setCursorPosition(ui->freqLineEdit->text().count() - 3);

@@ -9,6 +9,10 @@
 #define RIG_STATUS_DISCONNECTED "Disconnected"
 #define RIG_STATUS_ERROR "Error"
 
+#define TXVERT_ON "TXVERTON"
+#define TXVERT_OFF "TXVERTOFF"
+
+
 namespace hamlibData
 {
 
