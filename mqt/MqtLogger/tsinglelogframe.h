@@ -94,10 +94,15 @@ private:
 
     int lastStanzaCount;
 
-    long long currFreq;
+    long long curFreq;
     long long oldFreq;
-    QString sCurrFreq;
+    QString sCurFreq;
     QString sOldFreq;
+    QString sCurMode;
+    QString sOldMode;
+
+    int freqUpDateCnt;
+    int modeUpDateCnt;
 
     void transferDetails( MatchTreeItem *MatchTreeIndex );
 

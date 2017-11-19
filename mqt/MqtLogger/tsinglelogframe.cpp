@@ -19,7 +19,8 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     ui(new Ui::TSingleLogFrame),
     contest( contest ),
     splittersChanged(false),
-    currFreq( 0 ), oldFreq( 0 ),
+    curFreq( 0 ), oldFreq( 0 ),
+    freqUpDateCnt(0), modeUpDateCnt(0),
     lastStanzaCount( 0 ),
     rotatorLoaded(false),
     bandMapLoaded(false),
@@ -255,6 +256,11 @@ void TSingleLogFrame::on_ContestPageChanged ()
 //    MultDispFrame->setContest( contest );
     doNextContactDetailsOnLeftClick( false );
     MinosLoggerEvents::SendShowOperators();
+
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRigControlFrame->on_ContestPageChanged(sCurFreq, sCurMode);
+    }
 
     updateQSODisplay();
 
@@ -719,14 +725,43 @@ bool TSingleLogFrame::isBandMapLoaded()
 
 void TSingleLogFrame::on_SetMode(QString m)
 {
-    ui->FKHRigControlFrame->setMode(m);
-    ui->GJVQSOLogFrame->modeSentFromRig(m);
+    if (sCurMode != m)
+    {
+        sCurMode = m;
+        if (modeUpDateCnt < 1)
+        {
+            modeUpDateCnt++;
+            ui->FKHRigControlFrame->setMode(m);
+            ui->GJVQSOLogFrame->modeSentFromRig(m);
+        }
+
+        if ( this == LogContainer->getCurrentLogFrame() )
+        {
+            ui->FKHRigControlFrame->setMode(m);
+            ui->GJVQSOLogFrame->modeSentFromRig(m);
+        }
+    }
 }
 
 void TSingleLogFrame::on_SetFreq(QString f)
 {
-    ui->FKHRigControlFrame->setFreq(f);
-    ui->GJVQSOLogFrame->setFreq(f);
+
+    if (sCurFreq != f)
+    {
+        sCurFreq = f;
+        if (freqUpDateCnt < 1)
+        {
+            freqUpDateCnt++;
+            ui->FKHRigControlFrame->setFreq(f);
+            ui->GJVQSOLogFrame->setFreq(f);
+        }
+
+        else if ( this == LogContainer->getCurrentLogFrame() )
+        {
+            ui->FKHRigControlFrame->setFreq(f);
+            ui->GJVQSOLogFrame->setFreq(f);
+        }
+    }
 }
 
 void TSingleLogFrame::on_NoRadioSetFreq(QString f)
@@ -734,12 +769,6 @@ void TSingleLogFrame::on_NoRadioSetFreq(QString f)
     ui->GJVQSOLogFrame->setFreq(f);
 }
 
-/*
-void TSingleLogFrame::on_SetRxPBFlag(QString flag)
-{
-    //ui->FKHRigControlFrame->setRxPBFlag(flag);
-}
-*/
 void TSingleLogFrame::on_RadioLoaded()
 {
     ui->FKHRigControlFrame->setRadioLoaded();

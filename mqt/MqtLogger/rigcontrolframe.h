@@ -103,6 +103,7 @@ public:
     bool checkRadioState();
 
 
+    void on_ContestPageChanged(QString freq, QString mode);
 signals:
     void sendFreqControl(QString);
     void noRadioSendFreq(QString);

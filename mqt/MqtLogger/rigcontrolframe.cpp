@@ -276,15 +276,15 @@ void RigControlFrame::sendFreq(QString f)
 
     bool ok = false;
     //QString sf = f.remove('.');
-    if (curFreq != f)
+//    if (curFreq != f)
+//    {
+    double df = f.toDouble(&ok);
+    if (ok && df > 0.0)
     {
-        double df = f.toDouble(&ok);
-        if (ok && df > 0.0)
-        {
 
-            emit sendFreqControl(f);
-        }
+     emit sendFreqControl(f);
     }
+//    }
 }
 
 
@@ -298,6 +298,47 @@ void RigControlFrame::noRadioSendOutFreq(QString f)
     // update logger
     TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
     tslf->on_NoRadioSetFreq(f);
+}
+
+
+void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
+{
+    QStringList modelist = mode.split(':');  // unpack mode
+    QString sMode;
+
+    if (modelist.count() != 2)
+    {
+        return;
+    }
+    if (modelist[0] == hamlibData::MGM)
+    {
+        sMode = modelist[1];
+    }
+    else
+    {
+        sMode = modelist[0];
+    }
+    // contest paged changed - send freq and mode to synch
+    if (curFreq == memDefData::DEFAULT_FREQ)
+    {
+        sendFreq(freq);
+    }
+    else if (curFreq != freq)
+    {
+        sendFreq(curFreq);
+    }
+
+    if (curMode == memDefData::DEFAULT_MODE)
+    {
+        sendModeToRadio(sMode);
+    }
+    else if (curMode != sMode)
+    {
+        sendModeToRadio(curMode);
+    }
+
+
+
 }
 
 bool RigControlFrame::eventFilter(QObject *obj, QEvent *event)
