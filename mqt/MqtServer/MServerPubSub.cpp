@@ -684,11 +684,6 @@ PublishedKey::PublishedKey( bool local, const QString &pubId, const QString &svr
 PublishedKey::~PublishedKey()
 {}
 //---------------------------------------------------------------------------
-void TPubSubMain::logMessage( QString s )
-{
-   trace( s );
-}
-//---------------------------------------------------------------------------
 TPubSubMain::TPubSubMain( )
 {
    PubSubMain = this;
@@ -711,7 +706,7 @@ bool TPubSubMain::publish( const QString &pubId, const QString &category, const 
    {
       return false;
    }
-   logMessage("Publishing from <" + pubId + "> cat " + category + " key " + key + " state " + stateList[pState]);
+   trace("Publishing from <" + pubId + "> cat " + category + " key " + key + " state " + stateList[pState]);
    return PublishedCategory::publish( pubId, category, key, value, pState );
 }
 bool TPubSubMain::serverPublish( const QString &pubId, const QString &svr, const QString &category, const QString &key, const QString &value, PublishState pState )
@@ -720,7 +715,7 @@ bool TPubSubMain::serverPublish( const QString &pubId, const QString &svr, const
    {
       return false;
    }
-   logMessage("Server Publishing from svr <" + svr + "> pubid <" + pubId + "> cat " + category + " key " + key+ " state " + stateList[pState]);
+   trace("Server Publishing from svr <" + svr + "> pubid <" + pubId + "> cat " + category + " key " + key+ " state " + stateList[pState]);
    return PublishedCategory::serverPublish( pubId, svr, category, key, value, pState );
 }
 int GetSubscribedCount()
@@ -737,7 +732,7 @@ int GetPublishedCount()
 
 void TPubSubMain::publishCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
-   logMessage( "Publish callback from " + from + ( err ? ":Error" : ":Normal" ) );
+   trace( "Publish callback from " + from + ( err ? ":Error" : ":Normal" ) );
 
    if ( !err )
    {
@@ -773,7 +768,7 @@ void TPubSubMain::publishCallback( bool err, QSharedPointer<MinosRPCObj>mro, con
 
 void TPubSubMain::subscribeCallback(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
-   logMessage( "Client Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
+   trace( "Client Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
    if ( !err )
    {
       QSharedPointer<RPCParam>st(new RPCParamStruct);
@@ -796,7 +791,7 @@ void TPubSubMain::subscribeCallback(bool err, QSharedPointer<MinosRPCObj> mro, c
 
 void TPubSubMain::remoteSubscribeCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
-   logMessage( "Remote Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
+   trace( "Remote Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
    if ( !err )
    {
       QSharedPointer<RPCParam>st(new RPCParamStruct);
@@ -829,7 +824,7 @@ void TPubSubMain::remoteSubscribeCallback( bool err, QSharedPointer<MinosRPCObj>
 
 void TPubSubMain::serverSubscribeCallback(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
-   logMessage( "Server Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
+   trace( "Server Subscribe callback from " + from + ( err ? ":Error" : ":Normal" ) );
    if ( !err )
    {
       QSharedPointer<RPCParam>st(new RPCParamStruct);
@@ -857,7 +852,7 @@ void TPubSubMain::serverSubscribeCallback(bool err, QSharedPointer<MinosRPCObj> 
 void TPubSubMain::notifyCallback( bool err, QSharedPointer<MinosRPCObj> /*mro*/, const QString &from )
 {
    // response to pubsub calls
-   logMessage( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
+   trace( "Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
 }
 //---------------------------------------------------------------------------
 
@@ -868,7 +863,7 @@ void TPubSubMain::serverNotifyCallback(bool err, QSharedPointer<MinosRPCObj> mro
    // we need to pass it on to any of our subscribers who are interested
    // in this event from this server
    // But why aren't we sending a result?
-   logMessage( "PubSub Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
+   trace( "PubSub Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );
    AnalysePubSubNotify an( err, mro );
 
    if ( an.getOK() )

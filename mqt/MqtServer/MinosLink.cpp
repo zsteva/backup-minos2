@@ -87,11 +87,13 @@ bool MinosCommonConnection::sendRaw ( const TIXML_STRING xmlstr )
       char * xmlbuff = new char[ 10 + 1 + xmllen + 1 ];
       sprintf( xmlbuff, "&&%lu%s&&", static_cast<unsigned long>(xmllen), xmlstr.c_str() );
       xmllen = strlen( xmlbuff );
+
       int ret = sock->write ( xmlbuff, xmllen );
       onLog ( xmlbuff, xmllen, 0 );
+      delete [] xmlbuff;
+
       if ( ret == -1 )
          return false;
-      delete [] xmlbuff;
    }
    return true;
 }
@@ -109,7 +111,7 @@ void MinosCommonConnection::onLog ( const char *data, size_t /*size*/, int is_in
 
    logbuff += " : " + sock->peerAddress().toString();
 
-   logMessage( "MinosCommonConnection", logbuff );
+   trace( "MinosCommonConnection: " + logbuff );
 }
 //---------------------------------------------------------------------------
 bool MinosCommonConnection::tryForwardStanza( TiXmlElement *tix )
@@ -119,65 +121,13 @@ bool MinosCommonConnection::tryForwardStanza( TiXmlElement *tix )
    bool res = sendRaw( s );
    return res;
 }
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-void MinosCommonConnection::sendAction( XStanza *a )
-{
-   // use the stanza to send itself
-   a->setNextId();   // only happens if no Id already
-   TIXML_STRING s = a->getActionMessage();
-   sendRaw( s );
-}
-//=============================================================================
-void sendAction( XStanza *a )
-{
-   // stanza has a "to" - but this is internal, so we need to dispatch it
-   TIXML_STRING mess = a->getActionMessage();
-
-   // convert from a RPCParam structure to a DOM
-
-   TiXmlBase::SetCondenseWhiteSpace( false );
-   TiXmlDocument xdoc;
-   xdoc.Parse( mess.c_str(), 0 );
-   TiXmlElement *x = xdoc.RootElement();
-
-   if ( a->getFrom().size() == 0 )
-   {
-      // insert a from of ourselves.
-
-      QString from = MinosServer::getMinosServer() ->getServerName();
-      if ( from.length() )
-      {
-         x->SetAttribute( "from", from.toStdString().c_str() );
-      }
-   }
-   QString to = a->getTo();
-   if ( to.size() != 0 )
-   {
-      x->SetAttribute( "to", to.toStdString().c_str() );
-   }
-   // and now dispatch to its destination
-
-   if ( !MinosServer::getMinosServer() ->forwardStanza( 0, x ) )              // our own services
-   {
-      if ( !MinosClientListener::getListener() ->sendClient( x ) )         // look at real and potential clients
-      {
-         if ( !MinosServerListener::getListener() ->sendServer( x ) )         // look at real and potential servers
-         {
-            // or no valid destination found
-            return ;
-         }
-      }
-   }
-   // or no valid destination found
-}
 //=============================================================================
 
 void MinosCommonConnection::on_readyRead()
 {
    // select says we have data, so read it
    // and send the data through the parser
-   logMessage ( "XMPP test", "MinosCommonConnection::on_readyRead called to receive data from " + connectHost );
+   trace ( "MinosCommonConnection::on_readyRead called to receive data from " + connectHost );
 
    // documntation says this may occasionally fail on Windows
    while (sock->bytesAvailable() > 0)

@@ -12,7 +12,7 @@ void xperror( int test_val, QString s, bool endit = true )
 {
    if ( test_val )
    {
-      logMessage( "xperror", s );
+      trace( "xperror: " + s );
 
       if ( endit )
       {
@@ -50,8 +50,7 @@ void MinosListener::addListenerSlot( MinosCommonConnection *il )
 {
     QHostAddress h = il->sock->peerAddress();
     il->connectHost = h.toString();
-
-    logMessage( "addListenerSlot", "from " + il->connectHost );
+    trace( "addListenerSlot: from " + il->connectHost );
     i_array.push_back( il );
 
     il->initialise();

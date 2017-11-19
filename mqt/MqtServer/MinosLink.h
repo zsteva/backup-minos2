@@ -78,7 +78,6 @@ class MinosCommonConnection: public QObject
 
       virtual bool analyseNode( TiXmlElement *pak );
       virtual bool tryForwardStanza( TiXmlElement *pak );
-      virtual void sendAction( XStanza *a );
 
       virtual bool isServer() = 0;
       virtual bool checkFrom( TiXmlElement *pak ) = 0;
