@@ -282,16 +282,13 @@ bool MinosClientListener::sendClient( TiXmlElement *tix )
       {
          if ( !( *i ) ->tryForwardStanza( tix ) )
          {
-            // send failed; stash the message
-            // (but some stanza types should be ignored?)
-            break;
+            // send failed
+            break;    // OK, we can't send it, forget it
          }
-         return true;
+         break; // sent OK
       }
    }
-   // client is not connected; we have to ignore it
-
-   return true;   // don't pass it on - either we have dealt with it, or its not useful
+   return true;   // Either we have dealt with it, or its not useful
 }
 void MinosClientListener::closeDown()
 {

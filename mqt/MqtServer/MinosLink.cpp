@@ -92,7 +92,7 @@ bool MinosCommonConnection::sendRaw ( const TIXML_STRING xmlstr )
       onLog ( xmlbuff, xmllen, 0 );
       delete [] xmlbuff;
 
-      if ( ret == -1 )
+      if ( ret == -1 )  // QIOdevice::write returned an error.
          return false;
    }
    return true;
