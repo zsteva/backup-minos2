@@ -1602,23 +1602,21 @@ void QSOLogFrame::setRotatorBearing(const QString &s)
         return;
 
     QString brg;
-    QChar degsym = QChar(DEGREE_SYMBOL);
     //int len = bearing.length();
     int len = sl[0].length();
     if (len < 2)
     {
-        brg = QString("%1%2%3")
-        .arg("00").arg(sl[0]).arg(degsym);
+        brg = QString("%1%2")
+        .arg("00").arg(sl[0]);
     }
     else if (len < 3)
     {
-        brg = QString("%1%2%3")
-        .arg("0").arg(sl[0]).arg(degsym);
+        brg = QString("%1%2")
+        .arg("0").arg(sl[0]);
     }
     else
     {
-        brg = QString("%1%2")
-        .arg(sl[0]).arg(degsym);
+        brg = sl[0];
     }
 
 

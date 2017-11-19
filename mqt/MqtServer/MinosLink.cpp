@@ -121,6 +121,50 @@ bool MinosCommonConnection::tryForwardStanza( TiXmlElement *tix )
    bool res = sendRaw( s );
    return res;
 }
+//==============================================================================
+// called from XMPPRPCObj instead of the one in MinosConnection
+void sendAction( XStanza *a )
+{
+   // stanza has a "to" - but this is internal, so we need to dispatch it
+   TIXML_STRING mess = a->getActionMessage();
+
+   // convert from a RPCParam structure to a DOM
+
+   TiXmlBase::SetCondenseWhiteSpace( false );
+   TiXmlDocument xdoc;
+   xdoc.Parse( mess.c_str(), 0 );
+   TiXmlElement *x = xdoc.RootElement();
+
+   if ( a->getFrom().size() == 0 )
+   {
+      // insert a from of ourselves.
+
+      QString from = MinosServer::getMinosServer() ->getServerName();
+      if ( from.length() )
+      {
+         x->SetAttribute( "from", from.toStdString().c_str() );
+      }
+   }
+   QString to = a->getTo();
+   if ( to.size() != 0 )
+   {
+      x->SetAttribute( "to", to.toStdString().c_str() );
+   }
+   // and now dispatch to its destination
+
+   if ( !MinosServer::getMinosServer() ->forwardStanza( 0, x ) )              // our own services
+   {
+      if ( !MinosClientListener::getListener() ->sendClient( x ) )         // look at real and potential clients
+      {
+         if ( !MinosServerListener::getListener() ->sendServer( x ) )         // look at real and potential servers
+         {
+            // or no valid destination found
+            return ;
+         }
+      }
+   }
+   // or no valid destination found
+}
 //=============================================================================
 
 void MinosCommonConnection::on_readyRead()
@@ -158,10 +202,14 @@ void MinosCommonConnection::on_readyRead()
              {
                  QStringRef slen = packetbuff.midRef(2, packetoffset - 2);
                  int packetlen = slen.toInt();
-                if ( packetlen <= static_cast<int> (packetbuff.size()) - 2 && packetbuff.indexOf( ">&&" ) )
+                if ( (packetlen <= static_cast<int> (packetbuff.size()) - 2) && packetbuff.indexOf( ">&&" ) )
                 {
                    QString packet = packetbuff.mid( packetoffset, packetlen );
-                   packetbuff = packetbuff.right(  packetbuff.size() - 2 - packetlen - packetoffset );
+                   int pbsize = packetbuff.size();
+                   int rlen = pbsize - 2 - packetlen - packetoffset;
+                   if (rlen < 0)
+                       rlen = 0;    // try to fix non-utf characters, e.g. degree character
+                   packetbuff = packetbuff.right(  rlen );
 
                    TiXmlBase::SetCondenseWhiteSpace( false );
                    TiXmlDocument xdoc;
