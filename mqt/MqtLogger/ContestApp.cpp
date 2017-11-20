@@ -102,53 +102,6 @@ bool TContestApp::initialise()
 {
     suppressWritePreload = false;
 
-    // Eventually, we should have an installation system so that e.g. under Vista
-    // we can put things like config under the user directory
-
-    if (!DirectoryExists("./Configuration"))
-    {
-#ifdef Q_OS_ANDROID
-        bool createOK = CreateDir("./Configuration");
-        if (!mShowOKCancelMessage(0, createOK?"./Config created":"create ./Config failed; Cancel for abort"))
-        {
-            exit(0);
-        }
-#else
-        // try for executable directory
-        QString fpath = QCoreApplication::applicationDirPath();
-
-        if (DirectoryExists(fpath + "/../Configuration"))
-        {
-            QDir::setCurrent(fpath + "/..");
-        }
-        int confTries = 0;
-        while (!DirectoryExists("./Configuration") )
-        {
-            if (++confTries > 2)
-            {
-                exit(-1);
-            }
-            QString destDir = QFileDialog::getExistingDirectory(
-                        0,
-                        "Set Minos Working Directory",
-                        fpath,
-                        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
-                        );
-            if ( !destDir.isEmpty() )
-            {
-
-                if (destDir.toUpper().indexOf("/CONFIGURATION") == destDir.size() - QString("/Configuration").size())
-                {
-                    destDir = destDir.left(destDir.size() - QString("/Configuration").size());
-                }
-                QDir::setCurrent(destDir);
-            }
-        }
-#endif
-    }
-    // delay opening the trace file until we know where to put it
-    enableTrace( "./TraceLog", "MinosQtLogger_" );
-
     // we need to open our bundles...
     // and we need to discover the defaults from the initial splash screen
 
