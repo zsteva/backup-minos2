@@ -4,27 +4,9 @@
 //===========================================================================
 //===========================================================================
 //===========================================================================
-Publish only has key and category; when it comes to (e.g.) multiple rig control programs
-we need do distinguish further - e.g. publisher (program/server)
 //===========================================================================
-Stewart Wilkinson It does not like a couple of the older Minos Files - ones that I manged to save that have an extra dot in the filename instead of a comma (like 5.8GHz instead of 5,8GHz)
-Like · Reply · 1 · 17 hrs
-Remove
-Mike Goodey
-Mike Goodey Stewart Wilkinson Can you zip and send me those files, so I can see what is happening please?
-Like · Reply · 5 hrs
-Manage
-Stewart Wilkinson
-Stewart Wilkinson Mike - I just renamed them to replace the decimal point with a comma and they load fine - the message was something about being the wrong file.
-Like · Reply · 4 hrs
-Remove
-Stewart Wilkinson
-Stewart Wilkinson Message is 'Not a known file type (.7 GHz.Minos)
-Like · Reply · 4 hrs
-Remove
 //=============================================================================
 Server needs to be auto configured if required and not present
-//=============================================================================
 //=============================================================================
 Still to do from Ken's points
 
@@ -56,21 +38,6 @@ to investigate.
 [mjg] please do; these are buggers to reproduce when they happen.
 
 ==================================================================    
-To be tested
-------------
-
-Archive list editting
-fractional minutes in stats display 
-LatLong tool
-
-To be completed
----------------
-
-Sessions 
-Rclick on tab dosn't select it before menu shown
-Combo box of contest tabs, to allow choice of which one
-mqt - no fly by hints
-
 Nice to have
 ------------
 
@@ -78,7 +45,6 @@ Add suggested filename change to old Minos
 
 Remove (old) .gjv format - and .log?
 Add cabrillo import/export
-Tab drag/drop: Tab drag would be nice as well
 Facility to defeat fly by hints? Maybe use status bar instead (which is where they will be on Qt)?
 Time offset to a contest (Bob Offer's problem)) - to be applied post contest; not a a clock offset
 
@@ -141,15 +107,11 @@ G4DDN - editing of archive list leads to crash
 Odd crashes in lists; do I have a stack trace in the logs? Although that was on Grahams's laptop.
                                    
 Control key map tables to allow reassignment
-Rig control - Omnirig is probably adequate (but not on Linux!)
-Rotator control (don't think Omnirig does this, may need own code?)
 Voice keyer, calling freqs, etc
-Can we eliminate the voice keyer whistle? I think it is system/hardware, not software
 Disable F keys configurably (to allow voice keyer to run as well) (Qt?)
 We want an option(options?) to control visibility in a KML export
 Better header text for loc/distance in country and district display
 
-And eventually, get back into networking
 And HF? How do we go about cabrillo export in general?
 ==================================================================
 Double click on contest in Vista default directory says "already open"?
