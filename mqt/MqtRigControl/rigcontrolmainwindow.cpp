@@ -732,6 +732,15 @@ int RigControlMainWindow::getMode(vfo_t vfo)
         logMessage(QString("Get Mode: From Rx mode = %1, passband = %2").arg(radio->convertModeQstr(rmode), QString::number(rwidth)));
         curMode = rmode;
         sCurMode = radio->convertModeQstr(rmode);
+
+        if (mgmModeFlag && sCurMode != selectRig->currentRadio.mgmMode) // has mode been changed on the radio?
+        {
+            // yes clear MGM mode
+            mgmModeFlag = false;
+
+        }
+
+
         if (!mgmModeFlag)
         {
             displayModeVfo(radio->convertModeQstr(rmode));
@@ -740,12 +749,11 @@ int RigControlMainWindow::getMode(vfo_t vfo)
         }
         else
         {
+
             displayModeVfo(hamlibData::MGM);
             displayPassband(rwidth);
             sendModeToLog(QString("%1:%2").arg(hamlibData::MGM, selectRig->currentRadio.mgmMode));
         }
-
-
 
    }
 
@@ -762,40 +770,39 @@ void RigControlMainWindow::loggerSetMode(QString mode)
 {
     logMessage(QString("Log SetMode:: Mode Recieved from Logger = %1").arg(mode));
 
-    if (slogMode != mode)
+
+    if (radio->get_serialConnected() && !rigErrorFlag)
     {
-        if (radio->get_serialConnected() && !rigErrorFlag)
+        slogMode = mode;
+        logMode = radio->convertQStrMode(mode);
+
+
+        if (slogMode == hamlibData::MGM)
         {
-            slogMode = mode;
-            logMode = radio->convertQStrMode(mode);
-
-
-            if (slogMode == hamlibData::MGM)
+            logMessage(QString("Log SetMode:MGM mode Selected"));
+            if (mgmModeFlag)
             {
-                logMessage(QString("Log SetMode:MGM mode Selected"));
-                if (mgmModeFlag)
+                logMessage(QString("Log SetMode: Mgm flag is set"));
+                if (curMode !=  radio->convertQStrMode(selectRig->currentRadio.mgmMode))
                 {
-                    logMessage(QString("Log SetMode: Mgm flag is set"));
-                    if (curMode !=  radio->convertQStrMode(selectRig->currentRadio.mgmMode))
-                    {
-                        setMode(selectRig->currentRadio.mgmMode, RIG_VFO_CURR);
-                    }
-                }
-                else
-                {
-                    mgmModeFlag = true;
                     setMode(selectRig->currentRadio.mgmMode, RIG_VFO_CURR);
-                    logMessage((QString("Log SetMode: Set MgmMode Flag, Selected MGM Mode = %1").arg(selectRig->currentRadio.mgmMode)));
                 }
             }
             else
             {
-                mgmModeFlag = false;
-                logMessage(QString("Log SetMode: Clear mgmModeFlag, Set mode = %1").arg(mode));
-                setMode(mode, RIG_VFO_CURR);
+                mgmModeFlag = true;
+                setMode(selectRig->currentRadio.mgmMode, RIG_VFO_CURR);
+                logMessage((QString("Log SetMode: Set MgmMode Flag, Selected MGM Mode = %1").arg(selectRig->currentRadio.mgmMode)));
             }
         }
+        else
+        {
+            mgmModeFlag = false;
+            logMessage(QString("Log SetMode: Clear mgmModeFlag, Set mode = %1").arg(mode));
+            setMode(mode, RIG_VFO_CURR);
+        }
     }
+
 }
 
 
