@@ -49,6 +49,8 @@ SolidCompression=yes
 MinVersion=0,6.1
 UninstallDisplayIcon={app}\Bin\{#MainBinaryName}
 
+ChangesAssociations = yes
+
 [Dirs]
 Name: {code:GetLogsDir}; Check: not LogsDirExists; Flags: uninsneveruninstall; Permissions: users-modify
 
@@ -59,6 +61,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
+Name: "minosAssociation"; Description: "Associate ""minos"" extension"; GroupDescription: File extensions:
 
 [Files]
 Source: "*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs replacesameversion
@@ -132,3 +135,9 @@ end;
 
 [INI]
 Filename: "{app}\Configuration\MinosLogger.ini"; Section: "Default"; Key: "Log Directory"; String: "{code:GetLogsDir}"
+
+[Registry]
+Root: HKCR; Subkey: ".minos"; ValueType: string; ValueName: ""; ValueData: "MinosLogFile"; Flags: uninsdeletevalue; Tasks: minosAssociation
+Root: HKCR; Subkey: "MinosLogFile"; ValueType: string; ValueName: ""; ValueData: "Minos Log File"; Flags: uninsdeletekey; Tasks: minosAssociation
+Root: HKCR; Subkey: "MinosLogFile\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\Bin\{#MainBinaryName},0"; Tasks: minosAssociation
+Root: HKCR; Subkey: "MinosLogFile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\Bin\{#MainBinaryName}"" ""%1"""; Tasks: minosAssociation
