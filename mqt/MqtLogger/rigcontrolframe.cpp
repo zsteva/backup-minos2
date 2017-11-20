@@ -310,14 +310,14 @@ void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
     {
         return;
     }
-    if (modelist[0] == hamlibData::MGM)
-    {
-        sMode = modelist[1];
-    }
-    else
-    {
+    //if (modelist[0] == hamlibData::MGM)
+    //{
+    //    sMode = modelist[1];
+    //}
+    //else
+   // {
         sMode = modelist[0];
-    }
+   // }
     // contest paged changed - send freq and mode to synch
     if (curFreq == memDefData::DEFAULT_FREQ)
     {
@@ -328,9 +328,9 @@ void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
         sendFreq(curFreq);
     }
 
-    if (curMode == memDefData::DEFAULT_MODE)
+    if (curMode == memDefData::DEFAULT_MODE && curMode != sMode)
     {
-        sendModeToRadio(sMode);
+        sendModeToRadio(curMode);
     }
     else if (curMode != sMode)
     {
