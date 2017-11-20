@@ -188,7 +188,11 @@ void RotControlFrame::on_nudgeLeft_clicked()
     if (rotConnected && !rotError)
     {
         traceMsg("Nudge Left Clicked");
-        turnTo(currentBearing - 3);
+
+        int newBearing = currentBearing - 3;
+        if (newBearing < 0)
+            newBearing += 360;
+        turnTo(newBearing);
     }
     else
     {
@@ -202,7 +206,10 @@ void RotControlFrame::on_nudgeRight_clicked()
     if (rotConnected && !rotError)
     {
         traceMsg("Nudge Right Clicked");
-        turnTo(currentBearing + 3);
+        int newBearing = currentBearing + 3;
+        if (newBearing >= 360)
+            newBearing -= 360;
+        turnTo(newBearing);
     }
     else
     {
@@ -428,7 +435,6 @@ bool RotControlFrame::isRotatorLoaded()
 void RotControlFrame::setRotatorState(const QString &s)
 {
        traceMsg("Set Rotator State = " + s);
-       traceMsg(QString("setRotatorState entry:Rotconnected = %1, RotError = %2").arg(rotConnected).arg(rotError));
        // split the message
 
        QStringList sl = s.split(':');
@@ -443,14 +449,12 @@ void RotControlFrame::setRotatorState(const QString &s)
                    ui->rotConnectState->setText(lastConnectStat);
                    rotError = false;
                    rotConnected = true;
-                   trace("rotConnectState <" + ui->rotConnectState->text() + ">");
                }
                else if (lastConnectStat == ROT_STATUS_DISCONNECTED)
                {
                    ui->rotConnectState->setText(lastConnectStat);
                    rotError = false;
                    rotConnected = false;
-                   trace("rotConnectState <" + ui->rotConnectState->text() + ">");
                }
            }
            if (sl.count() > 1 && sl[1] != lastStatus)
@@ -502,14 +506,12 @@ void RotControlFrame::setRotatorState(const QString &s)
                    ui->rotConnectState->setText(lastStatus);
                    rotError = false;
                    rotConnected = true;
-                   trace("rotConnectState <" + ui->rotConnectState->text() + ">");
                }
                else if (lastStatus == ROT_STATUS_DISCONNECTED)
                {
                    ui->rotConnectState->setText(lastStatus);
                    rotError = false;
                    rotConnected = false;
-                   trace("rotConnectState <" + ui->rotConnectState->text() + ">");
                }
                else if (lastStatus == ROT_STATUS_ERROR)
                {
@@ -523,14 +525,12 @@ void RotControlFrame::setRotatorState(const QString &s)
 
            }
        }
-       if (sl.count() == 0)
+       if (sl.count() <= 1)     // will be a revoked state
        {
            ui->rotConnectState->setText("Disconnected");
            rotError = false;
            rotConnected = false;
-           trace("rotConnectState <" + ui->rotConnectState->text() + ">");
        }
-       traceMsg(QString("setRotatorState exit:Rotconnected = %1, RotError = %2").arg(rotConnected).arg(rotError));
 }
 
 void RotControlFrame::setRotatorAntennaName(const QString &s)
