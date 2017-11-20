@@ -184,27 +184,26 @@ void RigControlFrame::setFreq(QString f)
 void RigControlFrame::changeRadioFreq()
 {
     traceMsg(QString("Change Radio Freq"));
-    static QString freq = "";
 
     QString newfreq = ui->freqInput->text().trimmed().remove('.');
-    if (newfreq != freq)
+    if (newfreq != lastFreq)
     {
-        freq = newfreq;
-        if (checkValidFreq(freq))
+        lastFreq = newfreq;
+        if (checkValidFreq(lastFreq))
         {
-            if (freq.count() >=4)
+            if (lastFreq.count() >=4)
             {
                 if (isRadioLoaded())
                 {
                     if (radioConnected && !radioError)
                     {
-                        sendFreq(freq);
+                        sendFreq(lastFreq);
                     }
 
                 }
                 else
                 {
-                    noRadioSendOutFreq(freq);
+                    noRadioSendOutFreq(lastFreq);
                 }
 
             }
@@ -212,7 +211,7 @@ void RigControlFrame::changeRadioFreq()
         }
         else
         {
-            ui->freqInput->setText(QString("%1 %2 %3").arg("<font color='Red'>", freq, "</font>"));
+            ui->freqInput->setText(QString("%1 %2 %3").arg("<font color='Red'>").arg(lastFreq).arg("</font>"));
         }
 
     }
@@ -710,7 +709,7 @@ void RigControlFrame::mgmLabelVisible(bool state)
 
 void RigControlFrame::traceMsg(QString msg)
 {
-    trace(QString("RigcontrolFrame: %1 - %2 ").arg(radioName, msg));
+    trace(QString("RigcontrolFrame: %1 - %2 ").arg(radioName).arg(msg));
 }
 
 

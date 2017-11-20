@@ -164,6 +164,7 @@ private:
     QString rigAppName;
     QString radioState;
 
+    QString lastFreq;
 
     void sendModeToRadio(QString);
     void freqLineEditBkgnd(bool status);

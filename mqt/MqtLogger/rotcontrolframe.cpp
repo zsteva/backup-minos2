@@ -177,7 +177,7 @@ void RotControlFrame::on_Rotate_clicked()
     }
     else
     {
-        traceMsg(QString("On Rotate:Rotconnected = %1, RotError = %2").arg(rotConnected, rotError));
+        traceMsg(QString("On Rotate:Rotconnected = %1, RotError = %2").arg(rotConnected).arg(rotError));
     }
 
 
@@ -192,7 +192,7 @@ void RotControlFrame::on_nudgeLeft_clicked()
     }
     else
     {
-        traceMsg(QString("NudgeLeft:Rotconnected = %1, RotError = %2").arg(rotConnected, rotError));
+        traceMsg(QString("NudgeLeft:Rotconnected = %1, RotError = %2").arg(rotConnected).arg(rotError));
     }
 }
 
@@ -206,7 +206,7 @@ void RotControlFrame::on_nudgeRight_clicked()
     }
     else
     {
-        traceMsg(QString("NudgeRight:Rotconnected = %1, RotError = %2").arg(rotConnected, rotError));
+        traceMsg(QString("NudgeRight:Rotconnected = %1, RotError = %2").arg(rotConnected).arg(rotError));
     }
 
 }
@@ -216,7 +216,7 @@ void RotControlFrame::on_RotateLeft_clicked(bool /*clicked*/)
 
     if (!rotConnected || rotError)
     {
-        traceMsg(QString("On Rotate Left:Rotconnected = %1, RotError = %2").arg(rotConnected, rotError));
+        traceMsg(QString("On Rotate Left:Rotconnected = %1, RotError = %2").arg(rotConnected).arg(rotError));
         return;
     }
 
@@ -237,7 +237,7 @@ void RotControlFrame::on_RotateLeft_clicked(bool /*clicked*/)
 
         if (rotatorBearing <= minAzimuth)
         {
-            traceMsg(QString("Current Bearing = %1 <= minAzimuth %2").arg(QString::number(rotatorBearing), QString::number(minAzimuth)));
+            traceMsg(QString("Current Bearing = %1 <= minAzimuth %2").arg(QString::number(rotatorBearing)).arg( QString::number(minAzimuth)));
             return;
         }
 
@@ -261,7 +261,7 @@ void RotControlFrame::on_RotateRight_clicked(bool /*toggle*/)
 
     if (!rotConnected || rotError)
     {
-        traceMsg(QString("On Rotate Right:Rotconnected = %1, RotError = %2").arg(rotConnected, rotError));
+        traceMsg(QString("On Rotate Right:Rotconnected = %1, RotError = %2").arg(rotConnected).arg(rotError));
         return;
     }
 
@@ -284,7 +284,7 @@ void RotControlFrame::on_RotateRight_clicked(bool /*toggle*/)
 
         if (rotatorBearing >= maxAzimuth)
         {
-            traceMsg(QString("Current Bearing = %1 >= maxAzimuth %2").arg(QString::number(currentBearing), QString::number(maxAzimuth)));
+            traceMsg(QString("Current Bearing = %1 >= maxAzimuth %2").arg(QString::number(currentBearing)).arg(QString::number(maxAzimuth)));
             return;
         }
 
@@ -428,46 +428,47 @@ bool RotControlFrame::isRotatorLoaded()
 void RotControlFrame::setRotatorState(const QString &s)
 {
        traceMsg("Set Rotator State = " + s);
+       traceMsg(QString("setRotatorState entry:Rotconnected = %1, RotError = %2").arg(rotConnected).arg(rotError));
        // split the message
-       static QString connectStat;
-       static QString status;
 
        QStringList sl = s.split(':');
 
        if (sl.count() < 3)
        {
-           if (sl.count() > 0 && sl[0] != connectStat)
+           if (sl.count() > 0 && sl[0] != lastConnectStat)
            {
-               connectStat = sl[0];
-               if (connectStat == ROT_STATUS_CONNECTED)
+               lastConnectStat = sl[0];
+               if (lastConnectStat == ROT_STATUS_CONNECTED)
                {
-                   ui->rotConnectState->setText(connectStat);
+                   ui->rotConnectState->setText(lastConnectStat);
                    rotError = false;
                    rotConnected = true;
+                   trace("rotConnectState <" + ui->rotConnectState->text() + ">");
                }
-               else if (connectStat == ROT_STATUS_DISCONNECTED)
+               else if (lastConnectStat == ROT_STATUS_DISCONNECTED)
                {
-                   ui->rotConnectState->setText(connectStat);
+                   ui->rotConnectState->setText(lastConnectStat);
                    rotError = false;
                    rotConnected = false;
+                   trace("rotConnectState <" + ui->rotConnectState->text() + ">");
                }
            }
-           if (sl.count() > 1 && sl[1] != status)
+           if (sl.count() > 1 && sl[1] != lastStatus)
            {
-               status = sl[1];
+               lastStatus = sl[1];
 
-               if (status == ROT_STATUS_STOP)
+               if (lastStatus == ROT_STATUS_STOP)
                {
-                   ui->rotatorStatMsg->setText(status);
+                   ui->rotatorStatMsg->setText(lastStatus);
                    rotError = false;
                    clearRotatorFlags();
                    showRotLeftButOff();
                    showRotRightButOff();
                    showTurnButOff();
                }
-               else if (status == ROT_STATUS_ROTATE_CCW)
+               else if (lastStatus == ROT_STATUS_ROTATE_CCW)
                {
-                   ui->rotatorStatMsg->setText(status);
+                   ui->rotatorStatMsg->setText(lastStatus);
                    rotError = false;
                    moving = false;
                    movingCW = false;
@@ -475,9 +476,9 @@ void RotControlFrame::setRotatorState(const QString &s)
                   // clearRotatorFlags();
                    showRotLeftButOn();
                }
-               else if (status == ROT_STATUS_ROTATE_CW)
+               else if (lastStatus == ROT_STATUS_ROTATE_CW)
                {
-                   ui->rotatorStatMsg->setText(status);
+                   ui->rotatorStatMsg->setText(lastStatus);
                    rotError = false;
                    moving = false;
                    movingCW = true;
@@ -485,9 +486,9 @@ void RotControlFrame::setRotatorState(const QString &s)
                    //clearRotatorFlags();
                    showRotRightButOn();
                }
-               else if (status == ROT_STATUS_TURN_TO)
+               else if (lastStatus == ROT_STATUS_TURN_TO)
                {
-                   ui->rotatorStatMsg->setText(status);
+                   ui->rotatorStatMsg->setText(lastStatus);
                    rotError = false;
                    moving = true;
                    movingCW = false;
@@ -496,26 +497,28 @@ void RotControlFrame::setRotatorState(const QString &s)
                    //clearRotatorFlags();
 
                }
-               else if (status == ROT_STATUS_CONNECTED)
+               else if (lastStatus == ROT_STATUS_CONNECTED)
                {
-                   ui->rotConnectState->setText(status);
+                   ui->rotConnectState->setText(lastStatus);
                    rotError = false;
                    rotConnected = true;
+                   trace("rotConnectState <" + ui->rotConnectState->text() + ">");
                }
-               else if (status == ROT_STATUS_DISCONNECTED)
+               else if (lastStatus == ROT_STATUS_DISCONNECTED)
                {
-                   ui->rotConnectState->setText(status);
+                   ui->rotConnectState->setText(lastStatus);
                    rotError = false;
                    rotConnected = false;
+                   trace("rotConnectState <" + ui->rotConnectState->text() + ">");
                }
-               else if (status == ROT_STATUS_ERROR)
+               else if (lastStatus == ROT_STATUS_ERROR)
                {
-                   ui->rotatorStatMsg->setText(status);
+                   ui->rotatorStatMsg->setText(lastStatus);
                    rotError = true;
                }
                else
                {
-                   ui->rotatorStatMsg->setText(status);
+                   ui->rotatorStatMsg->setText(lastStatus);
                }
 
            }
@@ -525,7 +528,9 @@ void RotControlFrame::setRotatorState(const QString &s)
            ui->rotConnectState->setText("Disconnected");
            rotError = false;
            rotConnected = false;
+           trace("rotConnectState <" + ui->rotConnectState->text() + ">");
        }
+       traceMsg(QString("setRotatorState exit:Rotconnected = %1, RotError = %2").arg(rotConnected).arg(rotError));
 }
 
 void RotControlFrame::setRotatorAntennaName(const QString &s)
@@ -640,5 +645,5 @@ void RotControlFrame::setRotatorMinAzimuth(const QString &s)
 
 void RotControlFrame::traceMsg(QString msg)
 {
-    trace(QString("Rotcontrol: %1 - %2").arg(antennaName, msg));
+    trace(QString("Rotcontrol: %1 - %2").arg(antennaName).arg( msg));
 }
