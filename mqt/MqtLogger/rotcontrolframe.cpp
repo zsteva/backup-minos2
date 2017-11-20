@@ -434,9 +434,9 @@ void RotControlFrame::setRotatorState(const QString &s)
 
        QStringList sl = s.split(':');
 
-       if (sl.count() >= 0 && sl.count() < 3)
+       if (sl.count() < 3)
        {
-           if (sl[0] != connectStat)
+           if (sl.count() > 0 && sl[0] != connectStat)
            {
                connectStat = sl[0];
                if (connectStat == ROT_STATUS_CONNECTED)
@@ -452,7 +452,7 @@ void RotControlFrame::setRotatorState(const QString &s)
                    rotConnected = false;
                }
            }
-           if (sl[1] != status)
+           if (sl.count() > 1 && sl[1] != status)
            {
                status = sl[1];
 
@@ -519,14 +519,13 @@ void RotControlFrame::setRotatorState(const QString &s)
                }
 
            }
-
-
-
        }
-
-
-
-
+       if (sl.count() == 0)
+       {
+           ui->rotConnectState->setText("Disconnected");
+           rotError = false;
+           rotConnected = false;
+       }
 }
 
 void RotControlFrame::setRotatorAntennaName(const QString &s)
