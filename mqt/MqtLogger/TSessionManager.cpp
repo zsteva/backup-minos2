@@ -95,7 +95,10 @@ void TSessionManager::writeSessions()
     }
     preloadBundle.flushProfile();
     preloadBundle.openSection(app->preloadsect);
-    preloadBundle.setStringProfile(eppSession, sessionList.sessions[sessionList.currentSession].sessionName);
+    if (sessionList.sessions.count())
+    {
+        preloadBundle.setStringProfile(eppSession, sessionList.sessions[sessionList.currentSession].sessionName);
+    }
     preloadBundle.setStringProfile(eppDefSession, app ->defaultSession );
 
     for (int i = 0; i < sessionList.sessions.count(); i++)
@@ -144,34 +147,38 @@ void TSessionManager::showSession(int sess)
     if (!inShowSessions && !inShowSession)
     {
         inShowSession = true;
-        if (sessionList.sessions[sess].currentEntry >= sessionList.sessions[sess].entries.count())
-        {
-            sessionList.sessions[sess].currentEntry = sessionList.sessions[sess].entries.count() - 1;
-        }
-        if (sessionList.sessions[sess].currentEntry < 0)
-        {
-            sessionList.sessions[sess].currentEntry = 0;
-        }
-
-        sessionList.currentSession = sess;
-
-        if (sessionList.sessions.count())
-            ui->sessionsList->setCurrentRow(sessionList.currentSession);
-
+        int rowCount = 0;
         ui->sessionEntries->clear();
-
-        int rowCount = sessionList.sessions[sess].entries.count();
-        ui->sessionEntries->setColumnCount(1);
-        ui->sessionEntries->setRowCount(rowCount);
-
-        for ( int i = 0; i < rowCount; i++ )
+        if (sessionList.sessions.count())
         {
-            ui->sessionEntries->setItem(i, 0, new QTableWidgetItem(sessionList.sessions[sess].entries[i]));
+            if (sessionList.sessions[sess].currentEntry >= sessionList.sessions[sess].entries.count())
+            {
+                sessionList.sessions[sess].currentEntry = sessionList.sessions[sess].entries.count() - 1;
+            }
+            if (sessionList.sessions[sess].currentEntry < 0)
+            {
+                sessionList.sessions[sess].currentEntry = 0;
+            }
+
+            sessionList.currentSession = sess;
+
+            ui->sessionsList->setCurrentRow(sessionList.currentSession);
+            rowCount = sessionList.sessions[sess].entries.count();
+
+
+            ui->sessionEntries->setColumnCount(1);
+            ui->sessionEntries->setRowCount(rowCount);
+
+            for ( int i = 0; i < rowCount; i++ )
+            {
+                ui->sessionEntries->setItem(i, 0, new QTableWidgetItem(sessionList.sessions[sess].entries[i]));
+            }
+            if (sessionList.sessions[sess].entries.count())
+            {
+                ui->sessionEntries->selectRow(sessionList.sessions[sess].currentEntry);
+            }
         }
-        if (sessionList.sessions[sess].entries.count())
-        {
-            ui->sessionEntries->selectRow(sessionList.sessions[sess].currentEntry);
-        }
+
         enableButtons();
         inShowSession = false;
     }
