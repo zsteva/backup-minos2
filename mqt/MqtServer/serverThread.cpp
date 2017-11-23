@@ -17,7 +17,7 @@
 //==============================================================================
 MinosServerConnection::MinosServerConnection() : srv( 0 ), resubscribed( false )
 {}
-bool MinosServerConnection::initialise(bool conn)
+void MinosServerConnection::initialise()
 {
     QHostAddress h = sock->peerAddress();
     connectHost = h.toString();
@@ -26,8 +26,6 @@ bool MinosServerConnection::initialise(bool conn)
 
     connect(&resubscribeTimer, SIGNAL(timeout()), this, SLOT(sendKeepAlive()));
     resubscribeTimer.start(1000);
-
-   return conn;   // already initialised
 }
 
 MinosServerConnection::~MinosServerConnection()
@@ -35,7 +33,7 @@ MinosServerConnection::~MinosServerConnection()
 }
 void MinosServerConnection::closeDown()
 {
-   logMessage( "Server Link", "Closing" );
+   trace( "Server Link: Closing" );
 
    if (PubSubMain)
        PubSubMain->disconnectServer(makeJid());
@@ -61,7 +59,7 @@ void MinosServerConnection::mConnect( Server *psrv )
    srv = psrv;
    clientServer = srv->station;
 
-   logMessage( "Server", QString( "Connecting to " ) + srv->station + " host " + srv->host );
+   trace( QString( "Server: Connecting to " ) + srv->station + " host " + srv->host );
 
    // connect to endpoint
    // We need to connect out to the end point - looks much like a client connection!
@@ -74,8 +72,7 @@ void MinosServerConnection::mConnect( Server *psrv )
 }
 void MinosServerConnection::on_connected()
 {
-    connected = true;
-    logMessage( "Server", QString( "Connected OK to " ) + srv->station + " host " + srv->host );
+    trace( QString( "Server: Connected OK to " ) + srv->station + " host " + srv->host );
     RPCRequest *rpa = new RPCRequest( clientServer, MinosServer::getMinosServer() ->getServerName(), "ServerSetFromId" );   // for our local server, this one MUST have a from
     rpa->addParam( MinosServer::getMinosServer() ->getServerName() );
     rpa->addParam( TZConf::getZConf()->getZConfString(true ) );
@@ -90,12 +87,12 @@ void MinosServerConnection::setFromId( MinosId &id, RPCRequest *req )
    // and we need to check that the originator is who we think they ought to be
    if ( !id.server.size() )
    {
-      logMessage( "ServerSetFromId", "No \"from\" from server " + srv->station );
+      trace( "ServerSetFromId: No \"from\" from server " + srv->station );
       return;
    }
    if ( srv && srv->station.compare( id.server, Qt::CaseInsensitive) != 0 )
    {
-      logMessage( "ServerSetFromId", "Mismatch from server " + srv->station + " we received \"" + id.server + "\"" );
+      trace( "ServerSetFromId: Mismatch from server " + srv->station + " we received \"" + id.server + "\"" );
       return;
    }
 
@@ -105,11 +102,11 @@ void MinosServerConnection::setFromId( MinosId &id, RPCRequest *req )
       srv = findStation( id.server );
       if ( srv )
       {
-         logMessage( "ServerSetFromId", "server " + srv->station + " connected to us" );
+         trace( "ServerSetFromId: server " + srv->station + " connected to us" );
       }
       else
       {
-         logMessage( "ServerSetFromId", "server " + QString( id.server ) + " tried to connect to us - not recognised" );
+         trace( "ServerSetFromId: server " + QString( id.server ) + " tried to connect to us - not recognised" );
          // SO we need to set up a server
 
          QString message;
@@ -122,7 +119,7 @@ void MinosServerConnection::setFromId( MinosId &id, RPCRequest *req )
    }
    else
    {
-      logMessage( "ServerSetFromId", QString( "server " ) + id.server + " connected to us - srv already set up as " + srv->station );
+      trace( "ServerSetFromId: server " + id.server + " connected to us - srv already set up as " + srv->station );
    }
    clientServer = id.server;
 }

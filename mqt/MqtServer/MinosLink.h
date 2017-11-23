@@ -70,16 +70,14 @@ class MinosCommonConnection: public QObject
 
       bool remove_socket;
       bool fromIdSet;
-      bool connchecked;
       QString connectHost;
 
       MinosCommonConnection();
-      virtual bool initialise(bool conn ) = 0;
+      virtual void initialise( ) = 0;
       virtual ~MinosCommonConnection();
 
       virtual bool analyseNode( TiXmlElement *pak );
       virtual bool tryForwardStanza( TiXmlElement *pak );
-      virtual void sendAction( XStanza *a );
 
       virtual bool isServer() = 0;
       virtual bool checkFrom( TiXmlElement *pak ) = 0;
@@ -97,7 +95,6 @@ class MinosCommonConnection: public QObject
       {
          return ( clientUser.compare(u.user, Qt::CaseInsensitive) == 0 );
       }
-      virtual QString getIdentity() = 0;
       virtual void closeDown() = 0;
       void closeSocket()
       {
@@ -106,10 +103,6 @@ class MinosCommonConnection: public QObject
       }
       virtual void sendKeepAlive( )
       {}
-      bool isConnected()
-      {
-          return connected;
-      }
 private slots:
       void on_readyRead();
       void on_disconnected();

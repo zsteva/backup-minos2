@@ -44,7 +44,7 @@ ServerMain::ServerMain(QWidget *parent) :
     ZConf = QSharedPointer<TZConf>(new TZConf);
 
     PubSubMain = QSharedPointer<TPubSubMain>(new TPubSubMain);
-    ZConf->runThread (sname );
+    ZConf->startZConf (sname );
 
     LogTimer.start(100);
     ScanTimer.start(20000);
@@ -55,10 +55,6 @@ ServerMain::ServerMain(QWidget *parent) :
 ServerMain::~ServerMain()
 {
     delete ui;
-}
-void ServerMain::logMessage( const QString &s )
-{
-   trace( s );
 }
 void ServerMain::onStdInRead(QString cmd)
 {
@@ -142,7 +138,7 @@ void ServerMain::ScanTimerTimer( )
 
 void ServerMain::on_CloseButton_clicked()
 {
-    logMessage("Server close requested");
+    trace("Server close requested");
     closeApp = true;
 }
 void ServerMain::closeEvent(QCloseEvent *event)
@@ -151,7 +147,7 @@ void ServerMain::closeEvent(QCloseEvent *event)
     if (!closeSeen)
     {
         closeSeen = true;
-        logMessage("Server close event seen");
+        trace("Server close event seen");
         closeApp = true;
         PubSubMain->closeDown();
         ZConf->closeDown();

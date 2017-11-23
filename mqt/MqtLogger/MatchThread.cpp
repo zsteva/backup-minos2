@@ -134,7 +134,11 @@ void TMatchThread::on_CountrySelect(QString sel, BaseContestLog *c)
    }
 }
 
-void TMatchThread::on_DistrictSelect(QString sel, BaseContestLog *c)
+void TMatchThread::on_DistrictSelect(QString
+                                     #ifndef NDEBUG
+                                     sel
+                                     #endif
+                                     , BaseContestLog *c)
 {
     BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    if (c == ct)
@@ -143,7 +147,11 @@ void TMatchThread::on_DistrictSelect(QString sel, BaseContestLog *c)
    }
 }
 
-void TMatchThread::on_LocatorSelect(QString sel, BaseContestLog *c)
+void TMatchThread::on_LocatorSelect(QString
+                                    #ifndef NDEBUG
+                                    sel
+                                    #endif
+                                    , BaseContestLog *c)
 {
     BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    if (c == ct)

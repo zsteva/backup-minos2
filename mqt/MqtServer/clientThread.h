@@ -22,17 +22,13 @@ class MinosClientConnection: public MinosCommonConnection
    protected:
    public:
       MinosClientConnection();
-      virtual bool initialise( bool conn) override;
+      virtual void initialise() override;
       ~MinosClientConnection();
       virtual bool checkFrom( TiXmlElement *pak );
       virtual void setFromId( MinosId &from, RPCRequest *req );
       virtual bool isServer()
       {
          return false;
-      }
-      virtual QString getIdentity()
-      {
-         return "MinosClientConnection " + makeJid();
       }
       void closeDown() override;
 };

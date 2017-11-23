@@ -649,8 +649,15 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
           res = frequency.getValue();
           break;
       case egRotatorHeading:
-          res = rotatorHeading.getValue();
-          break;
+      {
+          QString brg = rotatorHeading.getValue();
+          if (!brg.isEmpty())
+          {
+              const QChar degreeChar(0260); // octal value
+              res = QString("%1%2").arg( brg ).arg(degreeChar);
+              break;
+          }
+      }
 
       }
    }

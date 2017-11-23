@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     {
         QApplication a(argc, argv);
 
-        appStartup("MinosQtLogger", false);  // don't start logging as we may not be in the correct working directory
+        appStartup("MinosQtLogger");
 
 #ifdef Q_OS_ANDROID
         QString sdCard = getenv("EXTERNAL_STORAGE")+ QString("/uk.org.g0gjv.minos");

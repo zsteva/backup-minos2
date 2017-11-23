@@ -115,7 +115,6 @@ class RPCRemoteSubscribeServer: public MinosRPCServer
 
 
 //---------------------------------------------------------------------------
-// Notify should be an event, not a call
 
 class RPCClientNotifyClient: public MinosRPCClient
 {
@@ -131,7 +130,6 @@ class RPCClientNotifyClient: public MinosRPCClient
 };
 
 //---------------------------------------------------------------------------
-// Notify should be an event, not a call
 
 class RPCServerNotifyClient: public MinosRPCClient
 {

@@ -96,7 +96,7 @@ bool MinosServer::analyseNode( MinosCommonConnection *il, TiXmlElement *tix )
 void MinosServer::dispatchStanza( MinosCommonConnection *il, RPCRequest *req )
 {
    // really need to go to an RPC Object factory here
-   logMessage( "XMPP", "RPCRequest received - " + req->methodName );
+   trace( "RPCRequest received - " + req->methodName );
 
    if ( req->methodName == "ServerSetFromId" )
    {

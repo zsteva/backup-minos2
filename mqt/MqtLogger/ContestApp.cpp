@@ -102,142 +102,95 @@ bool TContestApp::initialise()
 {
     suppressWritePreload = false;
 
-   // Eventually, we should have an installation system so that e.g. under Vista
-   // we can put things like config under the user directory
+    // we need to open our bundles...
+    // and we need to discover the defaults from the initial splash screen
 
-    if (!DirectoryExists("./Configuration"))
-   {
-#ifdef Q_OS_ANDROID
-             bool createOK = CreateDir("./Configuration");
-             if (!mShowOKCancelMessage(0, createOK?"./Config created":"create ./Config failed; Cancel for abort"))
-             {
-                 exit(0);
-             }
-#else
-             // try for executable directory
-      QString fpath = QCoreApplication::applicationDirPath();
-
-      if (DirectoryExists(fpath + "/Configuration"))
-      {
-         QDir::setCurrent(fpath);
-      }
-      int confTries = 0;
-      while (!DirectoryExists("./Configuration") )
-      {
-          if (confTries++ > 5)
-          {
-              exit(-1);
-          }
-         QString destDir = QFileDialog::getExistingDirectory(
-                       0,
-                       "Set Minos Working Directory",
-                       fpath,
-                       QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
-                        );
-         if ( !destDir.isEmpty() )
-         {
-
-            if (destDir.toUpper().indexOf("/CONFIGURATION") == destDir.size() - QString("/Configuration").size())
-            {
-               destDir = destDir.left(destDir.size() - QString("/Configuration").size());
-            }
-            QDir::setCurrent(destDir);
-         }
-      }
-#endif
-   }
-   // delay opening the trace file until we know where to put it
-   enableTrace( "./TraceLog", "MinosQtLogger_" );
-
-   // we need to open our bundles...
-   // and we need to discover the defaults from the initial splash screen
-
-   // Where do we get the initial defaults from? I think we need an "initial"
-   // config file that we can use to store the others...
+    // Where do we get the initial defaults from? I think we need an "initial"
+    // config file that we can use to store the others...
 
 
-   //----------------------------------
+    //----------------------------------
 
-   BundleFile::bundleFiles[ epLOGGERPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLOGGERPROFILE ) );
-   BundleFile::bundleFiles[ epPRELOADPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epPRELOADPROFILE ) );
-   BundleFile::bundleFiles[ epLISTSPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLISTSPROFILE ) );
-   BundleFile::bundleFiles[ epDISPLAYPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epDISPLAYPROFILE ) );
-   BundleFile::bundleFiles[ epENTRYPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epENTRYPROFILE ) );
-   BundleFile::bundleFiles[ epQTHPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epQTHPROFILE ) );
-   BundleFile::bundleFiles[ epSTATIONPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epSTATIONPROFILE ) );
-   BundleFile::bundleFiles[ epAPPPFROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epAPPPFROFILE ) );
-   BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLOCSQUARESPROFILE ) );
+    BundleFile::bundleFiles[ epLOGGERPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLOGGERPROFILE ) );
+    BundleFile::bundleFiles[ epPRELOADPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epPRELOADPROFILE ) );
+    BundleFile::bundleFiles[ epLISTSPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLISTSPROFILE ) );
+    BundleFile::bundleFiles[ epDISPLAYPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epDISPLAYPROFILE ) );
+    BundleFile::bundleFiles[ epENTRYPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epENTRYPROFILE ) );
+    BundleFile::bundleFiles[ epQTHPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epQTHPROFILE ) );
+    BundleFile::bundleFiles[ epSTATIONPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epSTATIONPROFILE ) );
+    BundleFile::bundleFiles[ epAPPPFROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epAPPPFROFILE ) );
+    BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLOCSQUARESPROFILE ) );
 
-   //----------------------------------
-   BundleFile::bundleFiles[ epLOGGERPROFILE ] ->openProfile( "./Configuration/MinosLogger.ini", "Logger Defaults" );
-   loggerBundle.setProfile( BundleFile::bundleFiles[ epLOGGERPROFILE ] );
-   loggerBundle.openSection( "Default" );
+    //----------------------------------
+    BundleFile::bundleFiles[ epLOGGERPROFILE ] ->openProfile( "./Configuration/MinosLogger.ini", "Logger Defaults" );
+    loggerBundle.setProfile( BundleFile::bundleFiles[ epLOGGERPROFILE ] );
+    loggerBundle.openSection( "Default" );
 
-   //----------------------------------
-   QString preloadfile;
-   loggerBundle.getStringProfile( elpPreloadFile, preloadfile );
-   BundleFile::bundleFiles[ epPRELOADPROFILE ] ->openProfile( preloadfile, "Preload options" );
+    //----------------------------------
+    QString preloadfile;
+    loggerBundle.getStringProfile( elpPreloadFile, preloadfile );
+    BundleFile::bundleFiles[ epPRELOADPROFILE ] ->openProfile( preloadfile, "Preload options" );
 
-   logsPreloadBundle.setProfile( BundleFile::bundleFiles[ epPRELOADPROFILE ] );
+    logsPreloadBundle.setProfile( BundleFile::bundleFiles[ epPRELOADPROFILE ] );
 
-//   QString preloadsect;   // moved to class
-   loggerBundle.getStringProfile( elpPreloadSection, preloadsect );
-   logsPreloadBundle.openSection( preloadsect );
-   //----------------------------------
-   QString listsfile;
-   loggerBundle.getStringProfile( elpListsFile, listsfile );
-   BundleFile::bundleFiles[ epLISTSPROFILE ] ->openProfile( listsfile, "List Preload options" );
+    //   QString preloadsect;   // moved to class
+    loggerBundle.getStringProfile( elpPreloadSection, preloadsect );
+    logsPreloadBundle.openSection( preloadsect );
+    //----------------------------------
+    QString listsfile;
+    loggerBundle.getStringProfile( elpListsFile, listsfile );
+    BundleFile::bundleFiles[ epLISTSPROFILE ] ->openProfile( listsfile, "List Preload options" );
 
-   listsPreloadBundle.setProfile( BundleFile::bundleFiles[ epLISTSPROFILE ] );
+    listsPreloadBundle.setProfile( BundleFile::bundleFiles[ epLISTSPROFILE ] );
 
-   QString listsect;
-   loggerBundle.getStringProfile( elpListsSection, listsect );
-   listsPreloadBundle.openSection( listsect );
-   //----------------------------------
+    QString listsect;
+    loggerBundle.getStringProfile( elpListsSection, listsect );
+    listsPreloadBundle.openSection( listsect );
+    //----------------------------------
 
-   QString dispfile;
-   loggerBundle.getStringProfile( elpDisplayFile, dispfile );
-   BundleFile::bundleFiles[ epDISPLAYPROFILE ] ->openProfile( dispfile, "Display defaults" );
+    QString dispfile;
+    loggerBundle.getStringProfile( elpDisplayFile, dispfile );
+    BundleFile::bundleFiles[ epDISPLAYPROFILE ] ->openProfile( dispfile, "Display defaults" );
 
-   displayBundle.setProfile( BundleFile::bundleFiles[ epDISPLAYPROFILE ] );
+    displayBundle.setProfile( BundleFile::bundleFiles[ epDISPLAYPROFILE ] );
 
-   QString dispsect;
-   loggerBundle.getStringProfile( elpDisplaySection, dispsect );
-   displayBundle.openSection( dispsect );
-   //----------------------------------
+    QString dispsect;
+    loggerBundle.getStringProfile( elpDisplaySection, dispsect );
+    displayBundle.openSection( dispsect );
+    //----------------------------------
 
-   QString entfile;
-   loggerBundle.getStringProfile( elpEntryFile, entfile );
-   BundleFile::bundleFiles[ epENTRYPROFILE ] ->openProfile( entfile, "Contest Entry details" );
-   //----------------------------------
+    QString entfile;
+    loggerBundle.getStringProfile( elpEntryFile, entfile );
+    BundleFile::bundleFiles[ epENTRYPROFILE ] ->openProfile( entfile, "Contest Entry details" );
+    //----------------------------------
 
-   QString qthfile;
-   loggerBundle.getStringProfile( elpQTHFile, qthfile );
-   BundleFile::bundleFiles[ epQTHPROFILE ] ->openProfile( qthfile, "QTH details" );
-   //----------------------------------
+    QString qthfile;
+    loggerBundle.getStringProfile( elpQTHFile, qthfile );
+    BundleFile::bundleFiles[ epQTHPROFILE ] ->openProfile( qthfile, "QTH details" );
+    //----------------------------------
 
-   QString stationfile;
-   loggerBundle.getStringProfile( elpStationFile, stationfile );
-   BundleFile::bundleFiles[ epSTATIONPROFILE ] ->openProfile( stationfile, "Station details" );
-   //----------------------------------
+    QString stationfile;
+    loggerBundle.getStringProfile( elpStationFile, stationfile );
+    BundleFile::bundleFiles[ epSTATIONPROFILE ] ->openProfile( stationfile, "Station details" );
+    //----------------------------------
 
-   QString appfile;
-   loggerBundle.getStringProfile( elpAppFile, appfile );
-   BundleFile::bundleFiles[ epAPPPFROFILE ] ->openProfile( appfile, "Apps" );
-   //----------------------------------
+    QString appfile;
+    loggerBundle.getStringProfile( elpAppFile, appfile );
+    BundleFile::bundleFiles[ epAPPPFROFILE ] ->openProfile( appfile, "Apps" );
+    //----------------------------------
 
-   QString locsfile;
-   loggerBundle.getStringProfile( elpLocsFile, locsfile );
-   BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] ->openProfile( locsfile, "Valid locator squares" );
+    QString locsfile;
+    loggerBundle.getStringProfile( elpLocsFile, locsfile );
+    BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] ->openProfile( locsfile, "Valid locator squares" );
 
-   locsBundle.setProfile( BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] );
-   //----------------------------------
+    locsBundle.setProfile( BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] );
+    //----------------------------------
 
 
-   initClock();
-   TMatchThread::InitialiseMatchThread();
+    initClock();
+    TMatchThread::InitialiseMatchThread();
 
-   return true;
+    return true;
 }
 bool contestAppLoadFiles( void )
 {

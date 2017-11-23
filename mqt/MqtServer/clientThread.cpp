@@ -14,20 +14,16 @@
 #include "serverThread.h"
 
 //==============================================================================
-//==============================================================================
 
 MinosClientConnection::MinosClientConnection()
 {
 }
-bool MinosClientConnection::initialise(bool conn)
+void MinosClientConnection::initialise()
 {
-   connected = conn;
    QHostAddress h = sock->peerAddress();
    connectHost = h.toString();
    connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_readyRead()));
    connect(sock.data(), SIGNAL(disconnected()), this, SLOT(on_disconnected()));
-
-   return true;
 }
 
 MinosClientConnection::~MinosClientConnection()
@@ -36,7 +32,7 @@ MinosClientConnection::~MinosClientConnection()
 //==============================================================================
 void MinosClientConnection::closeDown()
 {
-    logMessage( "Client Link", "Closing" );
+    trace( "Client Link: Closing" );
     // here we need to revoke all of this clients published keys
     PubSubMain->revokeClient(makeJid());
 }

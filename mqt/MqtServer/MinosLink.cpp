@@ -29,14 +29,6 @@ bool isHostLocal(const QString &host)
     return false;
 }
 //==============================================================================
-/*
-   class MinosId
-   {
-      public:
-         QString user;
-         QString server;
-         QString fullId;
-*/
 
 bool MinosId::empty()
 {
@@ -72,9 +64,7 @@ void MinosId::setId( const QString &s )
 //==============================================================================
 MinosCommonConnection::MinosCommonConnection()
     : fromIdSet( false ),
-    connchecked( false ),
-    remove_socket( false ),
-    connected(false)
+    remove_socket( false )
 {
     lastRx = QDateTime::currentMSecsSinceEpoch() + 5000;
 }
@@ -97,11 +87,13 @@ bool MinosCommonConnection::sendRaw ( const TIXML_STRING xmlstr )
       char * xmlbuff = new char[ 10 + 1 + xmllen + 1 ];
       sprintf( xmlbuff, "&&%lu%s&&", static_cast<unsigned long>(xmllen), xmlstr.c_str() );
       xmllen = strlen( xmlbuff );
+
       int ret = sock->write ( xmlbuff, xmllen );
       onLog ( xmlbuff, xmllen, 0 );
-      if ( ret == -1 )
-         return false;
       delete [] xmlbuff;
+
+      if ( ret == -1 )  // QIOdevice::write returned an error.
+         return false;
    }
    return true;
 }
@@ -119,7 +111,7 @@ void MinosCommonConnection::onLog ( const char *data, size_t /*size*/, int is_in
 
    logbuff += " : " + sock->peerAddress().toString();
 
-   logMessage( "MinosCommonConnection", logbuff );
+   trace( "MinosCommonConnection: " + logbuff );
 }
 //---------------------------------------------------------------------------
 bool MinosCommonConnection::tryForwardStanza( TiXmlElement *tix )
@@ -129,21 +121,12 @@ bool MinosCommonConnection::tryForwardStanza( TiXmlElement *tix )
    bool res = sendRaw( s );
    return res;
 }
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-void MinosCommonConnection::sendAction( XStanza *a )
-{
-   // use the stanza to send itself
-   a->setNextId();   // only happens if no Id already
-   TIXML_STRING s = a->getActionMessage();
-   sendRaw( s );
-}
-//=============================================================================
+//==============================================================================
+// called from XMPPRPCObj instead of the one in MinosConnection
 void sendAction( XStanza *a )
 {
    // stanza has a "to" - but this is internal, so we need to dispatch it
    TIXML_STRING mess = a->getActionMessage();
-   //int err;
 
    // convert from a RPCParam structure to a DOM
 
@@ -188,7 +171,7 @@ void MinosCommonConnection::on_readyRead()
 {
    // select says we have data, so read it
    // and send the data through the parser
-   logMessage ( "XMPP test", "MinosCommonConnection::on_readyRead called to receive data from " + connectHost );
+   trace ( "MinosCommonConnection::on_readyRead called to receive data from " + connectHost );
 
    // documntation says this may occasionally fail on Windows
    while (sock->bytesAvailable() > 0)
@@ -219,10 +202,14 @@ void MinosCommonConnection::on_readyRead()
              {
                  QStringRef slen = packetbuff.midRef(2, packetoffset - 2);
                  int packetlen = slen.toInt();
-                if ( packetlen <= static_cast<int> (packetbuff.size()) - 2 && packetbuff.indexOf( ">&&" ) )
+                if ( (packetlen <= static_cast<int> (packetbuff.size()) - 2) && packetbuff.indexOf( ">&&" ) )
                 {
                    QString packet = packetbuff.mid( packetoffset, packetlen );
-                   packetbuff = packetbuff.right(  packetbuff.size() - 2 - packetlen - packetoffset );
+                   int pbsize = packetbuff.size();
+                   int rlen = pbsize - 2 - packetlen - packetoffset;
+                   if (rlen < 0)
+                       rlen = 0;    // try to fix non-utf characters, e.g. degree character
+                   packetbuff = packetbuff.right(  rlen );
 
                    TiXmlBase::SetCondenseWhiteSpace( false );
                    TiXmlDocument xdoc;

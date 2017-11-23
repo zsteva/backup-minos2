@@ -68,6 +68,10 @@ private:
     bool rot_right_button_status;
     bool rotConnected = false;
     bool rotError = false;
+
+    QString lastConnectStat;
+    QString lastStatus;
+
     void clearRotatorFlags();
 
     QString antennaName;

@@ -27,7 +27,6 @@ class ServerMain : public QMainWindow
 public:
     explicit ServerMain(QWidget *parent = 0);
     ~ServerMain();
-    void logMessage( const QString &s );
     virtual void closeEvent(QCloseEvent *event) override;
     virtual void resizeEvent(QResizeEvent *event) override;
     virtual void moveEvent(QMoveEvent *event) override;
