@@ -1044,7 +1044,7 @@ void FreqLineEdit::changeFreq(bool direction)
     QString sfreq = text();
     int sfreqLen = sfreq.length();
     int pos = cursorPosition();
-    if (sfreqLen < 0 || sfreqLen > 13 || pos < 0 || pos > sfreqLen)
+    if (sfreqLen < 0 || sfreqLen > 14 || pos < 0 || pos > sfreqLen)
     {
         return;
     }

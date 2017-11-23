@@ -643,8 +643,8 @@
      <string>Help</string>
     </property>
     <addaction name="actionHelp"/>
-    <addaction name="actionAbout_Rotator_Config"/>
     <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Rotator_Config"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Configure"/>
