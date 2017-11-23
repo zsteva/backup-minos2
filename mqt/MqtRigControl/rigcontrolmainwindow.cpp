@@ -389,7 +389,7 @@ void RigControlMainWindow::openRadio()
         return;
     }
 
-    logMessage(QString("Open Radio: Opening Radio %1 PortType %2").arg(selectRig->currentRadio.radioName, hamlibData::portTypeList[selectRig->currentRadio.portType]));
+    logMessage(QString("Open Radio: Opening Radio %1 PortType %2").arg(selectRig->currentRadio.radioName.arg(hamlibData::portTypeList[selectRig->currentRadio.portType])));
     showStatusMessage(QString("Opening Radio: %1").arg(selectRig->currentRadio.radioName));
 
     if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL)
@@ -455,11 +455,11 @@ void RigControlMainWindow::openRadio()
         }
         else if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_UDP_NETWORK)
         {
-                showStatusMessage(QString("Connected: %1 - %2, %3").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel.trimmed(), selectRig->currentRadio.networkAdd + ":" + selectRig->currentRadio.networkPort));
+                showStatusMessage(QString("Connected: %1 - %2, %3:%4").arg(selectRig->currentRadio.radioName).arg(selectRig->currentRadio.radioModel.trimmed()).arg(selectRig->currentRadio.networkAdd).arg(selectRig->currentRadio.networkPort));
         }
         else if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_NONE)
         {
-                showStatusMessage(QString("Connected: %1 - %2").arg(selectRig->currentRadio.radioName, selectRig->currentRadio.radioModel.trimmed()));
+                showStatusMessage(QString("Connected: %1 - %2").arg(selectRig->currentRadio.radioName).arg(selectRig->currentRadio.radioModel.trimmed()));
         }
 
 
@@ -480,7 +480,7 @@ void RigControlMainWindow::closeRadio()
 
     showStatusMessage("Disconnected");
     sendStatusToLogDisConnected();
-    logMessage("Radio Closed");
+    logMessage(QString("Radio Closed"));
     radio->closeRig();
 }
 
@@ -513,18 +513,18 @@ int RigControlMainWindow::getPolltime()
 void RigControlMainWindow::cmdLockOn()
 {
     cmdLockFlag = true;
-    logMessage("Lockon: Command Lock On");
+    logMessage(QString("Lockon: Command Lock On"));
 }
 
 void RigControlMainWindow::cmdLockOff()
 {
     cmdLockFlag = false;
-    logMessage("Lockoff: Command Lock Off");
+    logMessage(QString("Lockoff: Command Lock Off"));
 }
 
 void RigControlMainWindow::getRadioInfo()
 {
-    logMessage("Request radio info");
+    logMessage(QString("Request radio info"));
     if (cmdLockFlag)
     {
         trace(QString("GetRadioInfo: Command Lock on"));
@@ -535,12 +535,12 @@ void RigControlMainWindow::getRadioInfo()
     int retCode;
     if (radio->get_serialConnected())
     {
-        logMessage("Get radio frequency");
+        logMessage(QString("Get radio frequency"));
         retCode = getFrequency(RIG_VFO_CURR);
         if (retCode < 0)
         {
             // error
-            logMessage(QString("Get radioInfo: Get Freq error, code = ").arg(QString::number(retCode)));
+            logMessage(QString("Get radioInfo: Get Freq error, code = %1").arg(QString::number(retCode)));
             hamlibError(retCode, "Request Frequency");
         }
 
@@ -550,7 +550,7 @@ void RigControlMainWindow::getRadioInfo()
         if (retCode < 0)
         {
             // error
-            logMessage(QString("Get radioInfo: Get Mode error").arg(QString::number(retCode)));
+            logMessage(QString("Get radioInfo: Get Mode error %1").arg(QString::number(retCode)));
             hamlibError(retCode, "Request Mode");
 
         }
@@ -664,16 +664,16 @@ int RigControlMainWindow::getFrequency(vfo_t vfo)
         logMessage(QString("Trans Enable = %1").arg(QString::number(selectRig->currentRadio.transVertEnable)));
         if (selectRig->currentRadio.transVertEnable)
         {
-            logMessage("Transvert enabled");
+            logMessage(QString("Transvert enabled"));
             if (selectRig->currentRadio.transVertNegative)
             {
-                logMessage("Negative Transvert");
+                logMessage(QString("Negative Transvert"));
                 transVertF = rfrequency - selectRig->currentRadio.transVertOffset;
                 logMessage(QString("Transvert F = %1").arg(QString::number(transVertF)));
             }
             else
             {
-                logMessage(("Positive Transvert"));
+                logMessage(QString("Positive Transvert"));
                 transVertF = rfrequency + selectRig->currentRadio.transVertOffset;
 
             }
@@ -729,7 +729,7 @@ int RigControlMainWindow::getMode(vfo_t vfo)
 
     if (retCode == RIG_OK)
     {
-        logMessage(QString("Get Mode: From Rx mode = %1, passband = %2").arg(radio->convertModeQstr(rmode), QString::number(rwidth)));
+        logMessage(QString("Get Mode: From Rx mode = %1, passband = %2").arg(radio->convertModeQstr(rmode)).arg(QString::number(rwidth)));
         curMode = rmode;
         sCurMode = radio->convertModeQstr(rmode);
 
@@ -745,14 +745,14 @@ int RigControlMainWindow::getMode(vfo_t vfo)
         {
             displayModeVfo(radio->convertModeQstr(rmode));
             displayPassband(rwidth);
-            sendModeToLog(QString("%1:%2").arg(radio->convertModeQstr(rmode), " "));
+            sendModeToLog(QString("%1:%2").arg(radio->convertModeQstr(rmode)).arg(" "));
         }
         else
         {
 
             displayModeVfo(hamlibData::MGM);
             displayPassband(rwidth);
-            sendModeToLog(QString("%1:%2").arg(hamlibData::MGM, selectRig->currentRadio.mgmMode));
+            sendModeToLog(QString("%1:%2").arg(hamlibData::MGM).arg(selectRig->currentRadio.mgmMode));
         }
 
    }
@@ -830,7 +830,7 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
          }
          else
          {
-             logMessage(QString("SetMode: Change Error Code = %1, Mode = %2").arg(QString::number(retCode), radio->convertModeQstr(mCode)));
+             logMessage(QString("SetMode: Change Error Code = %1, Mode = %2").arg(QString::number(retCode)).arg(radio->convertModeQstr(mCode)));
              hamlibError(retCode, "Set Mode");
          }
 
@@ -1006,7 +1006,7 @@ void RigControlMainWindow::hamlibError(int errorCode, QString cmd)
 
     errorCode *= -1;
     QString errorMsg = radio->gethamlibErrorMsg(errorCode);
-    logMessage(QString("Hamlib Error - Code = %1 - %2").arg(QString::number(errorCode), errorMsg));
+    logMessage(QString("Hamlib Error - Code = %1 - %2").arg(QString::number(errorCode)).arg(errorMsg));
 
     QMessageBox::critical(this, "RigControl hamlib Error - " + selectRig->currentRadio.radioName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
 
