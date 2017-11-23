@@ -536,7 +536,7 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
                            }
 						   int offset = curcon->bearingOffset.getValue();
                            const QChar degreeChar(0260); // octal value
-                           brgbuff = QString("%1%2").arg( varBrg( bearing + offset ), 3 ).arg(degreeChar);
+                           brgbuff = QString("%1%2").arg( varBrg( brg + offset ), 3 ).arg(degreeChar);
                         }
                      }
                   }
