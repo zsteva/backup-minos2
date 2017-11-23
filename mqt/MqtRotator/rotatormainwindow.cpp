@@ -508,7 +508,7 @@ void RotatorMainWindow::showStatusMessage(const QString &message)
 void RotatorMainWindow::sendStatusLogger( )
 {
    QString message = connectStat + ':' + statusMsg;
-   logMessage(QString("Send %1 message to logger, appName = %2").arg(message, appName));
+   logMessage(QString("Send %1 message to logger, appName = %2").arg(message).arg(appName));
    if (appName.length() > 0)
    {
         msg->publishState(message);
@@ -626,7 +626,7 @@ void RotatorMainWindow::keyPressEvent(QKeyEvent *event)
 void RotatorMainWindow::displayBearing(int bearing)
 {
 
-    logMessage("Bearing from Rotator " + QString::number(bearing));
+    logMessage(QString("Bearing from Rotator %1").arg(QString::number(bearing)));
 
     if (bearing == rotatorBearing)
     {
@@ -637,7 +637,7 @@ void RotatorMainWindow::displayBearing(int bearing)
 
     curBearingWithOffset = bearing + selectRotator->currentAntenna.antennaOffset;
 
-    logMessage("Current Bearing + offset = " + QString::number( curBearingWithOffset));
+    logMessage(QString("Current Bearing + offset = %1").arg(QString::number( curBearingWithOffset)));
 
     int displayBearing = curBearingWithOffset;
 
@@ -650,7 +650,7 @@ void RotatorMainWindow::displayBearing(int bearing)
     {
         displayBearing = COMPASS_MAX360 + curBearingWithOffset;
     }
-    logMessage("Display Bearing = " + QString::number(displayBearing));
+    logMessage(QString("Display Bearing = %1").arg( QString::number(displayBearing)));
 
     // send Bearing to displays
 
@@ -709,7 +709,7 @@ void RotatorMainWindow::displayBearing(int bearing)
         else
         {
             overLapStatus = NO_OVERLAP;
-            logMessage("OverLapOff - Rotator Bearing = " + QString::number(bearing));
+            logMessage(QString("OverLapOff - Rotator Bearing = %1").arg(QString::number(bearing)));
 
         }
 
@@ -1037,7 +1037,7 @@ void RotatorMainWindow::writeWindowTitle(QString appName)
 
 void RotatorMainWindow::request_bearing()
 {
-    logMessage("Request Bearing");
+    logMessage(QString("Request Bearing"));
     reqBearCmdflag = true;
     int retCode = 0;
     if (brakeflag || cwCcwCmdflag || rotCmdflag) return;
@@ -1047,7 +1047,7 @@ void RotatorMainWindow::request_bearing()
         logMessage(QString("Sent request bearing cmd - retcode = %1").arg(QString::number(retCode)));
         if (retCode < 0)
         {
-            logMessage("Request bearing: error");
+            logMessage(QString("Request bearing: error"));
             hamlibError(retCode, "Request Bearing");
         }
     }
@@ -1058,16 +1058,16 @@ void RotatorMainWindow::request_bearing()
 void RotatorMainWindow::checkEndStop()
 {
 
-    logMessage("Check EndStop");
-    logMessage("curBearingWithOffset = " + QString::number(curBearingWithOffset));
-    logMessage("rotatorBearing = " + QString::number(rotatorBearing));
-    logMessage("currentMaxAzimuth = " + QString::number(currentMaxAzimuth));
-    logMessage("currentMinAzimuth = " + QString::number(currentMinAzimuth));
+    logMessage(QString("Check EndStop"));
+    logMessage(QString("curBearingWithOffset = %1").arg(QString::number(curBearingWithOffset)));
+    logMessage(QString("rotatorBearing = %1").arg(QString::number(rotatorBearing)));
+    logMessage(QString("currentMaxAzimuth = %1").arg(QString::number(currentMaxAzimuth)));
+    logMessage(QString("currentMinAzimuth = %1").arg(QString::number(currentMinAzimuth)));
     if (movingCW)
     {
         if (rotatorBearing >= currentMaxAzimuth)
         {
-            logMessage("Max Endstop reached!");
+            logMessage(QString("Max Endstop reached!"));
             stopButton();
         }
     }
@@ -1075,7 +1075,7 @@ void RotatorMainWindow::checkEndStop()
     {
         if (rotatorBearing <= currentMinAzimuth)
         {
-            logMessage("Min Endstop reached!");
+            logMessage(QString("Min Endstop reached!"));
             stopButton();
         }
     }
@@ -1139,12 +1139,12 @@ void RotatorMainWindow::rotateToController()
     if (intBearing >= COMPASS_MIN0 && intBearing <= COMPASS_MAX360 && ok)
     {
         rotateTo(intBearing);
-        logMessage("Rotate to bearing " + bearing);
+        logMessage(QString("Rotate to bearing %1").arg(bearing));
     }
     else
     {
         //QString s = "Invalid Bearing\nPlease enter " + QString::number(currentMinAzimuth) + " - " + QString::number(currentMaxAzimuth);
-        QString s = "Invalid Bearing\nPlease enter " + QString::number(COMPASS_MIN0) + " - " + QString::number(COMPASS_MAX360);
+        QString s = QString("Invalid Bearing\nPlease enter %1 - %2").arg(QString::number(COMPASS_MIN0)).arg(QString::number(COMPASS_MAX360));
         QMessageBox::critical(this, tr("Bearing Error"), s);
     }
     rotCmdflag = false;
@@ -1184,7 +1184,7 @@ void RotatorMainWindow::rotateTo(int bearing)
     }
 
 
-    logMessage(QString("Rotate to Bearing = %1, adjusted with offset = %2").arg(QString::number(rotateTo),QString::number(selectRotator->currentAntenna.antennaOffset)));
+    logMessage(QString("Rotate to Bearing = %1, adjusted with offset = %2").arg(QString::number(rotateTo)).arg(QString::number(selectRotator->currentAntenna.antennaOffset)));
 
 
 
@@ -1199,7 +1199,7 @@ void RotatorMainWindow::rotateTo(int bearing)
     // calculate target bearing based on current position
     rotateTo  = northCalcTarget(rotateTo);
 
-    logMessage("rotateTo calculated bearing " + QString::number(rotateTo));
+    logMessage(QString("rotateTo calculated bearing %1").arg(QString::number(rotateTo)));
 
     // check if we are already at bearing
     if (rotateTo == rotatorBearing)
@@ -1271,7 +1271,7 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
 int RotatorMainWindow::calcRotZero360(int targetBearing)
 {
     logMessage(QString("NCalc - EndStop Type - ROT_0_360"));
-    logMessage(QString("NCalc - 1 - Target Bearing = %1, rotator Bearing = %2").arg(QString::number(targetBearing), QString::number(rotatorBearing)));
+    logMessage(QString("NCalc - 1 - Target Bearing = %1, rotator Bearing = %2").arg(QString::number(targetBearing)).arg(QString::number(rotatorBearing)));
     return targetBearing;
 }
 
@@ -1285,7 +1285,7 @@ int RotatorMainWindow::calcRotNeg180_180(int targetBearing)
         target = targetBearing - COMPASS_MAX360;
         logMessage(QString("NCalc - 2 - Target bearing > 180 and < 360, calculated target = %1").arg(QString::number(target)));
     }
-    logMessage(QString("Target Bearing = %1, rotator Bearing = %2").arg(QString::number(targetBearing), QString::number(rotatorBearing)));
+    logMessage(QString("Target Bearing = %1, rotator Bearing = %2").arg(QString::number(targetBearing)).arg(QString::number(rotatorBearing)));
     return target;
 
 }
@@ -1302,7 +1302,7 @@ int RotatorMainWindow::calclRot_0_450_Neg180_540(int targetBearing)
             {
                 target = targetBearing;
                 logMessage(QString("NCalc - EndStop Type - ROT_NEG180_450"));
-                logMessage(QString("NCalc - 4 - - Target Bearing = %1, rotator Bearing = %2").arg(QString::number(targetBearing), QString::number(rotatorBearing)));
+                logMessage(QString("NCalc - 4 - - Target Bearing = %1, rotator Bearing = %2").arg(QString::number(targetBearing)).arg(QString::number(rotatorBearing)));
             }
             else if (targetBearing > COMPASS_HALF && targetBearing <= COMPASS_MAX360)
             {
@@ -1311,7 +1311,7 @@ int RotatorMainWindow::calclRot_0_450_Neg180_540(int targetBearing)
                     target = targetBearing - COMPASS_MAX360;
                 }
                 logMessage(QString("NCalc - EndStop Type - ROT_NEG180_450"));
-                logMessage(QString("NCalc - 5 - - Target Bearing = %1, rotator Bearing = %2").arg(QString::number(targetBearing), QString::number(rotatorBearing)));
+                logMessage(QString("NCalc - 5 - - Target Bearing = %1, rotator Bearing = %2").arg(QString::number(targetBearing)).arg(QString::number(rotatorBearing)));
                 return target;
             }
         }
@@ -1322,7 +1322,7 @@ int RotatorMainWindow::calclRot_0_450_Neg180_540(int targetBearing)
                 target = targetBearing - COMPASS_MAX360;
             }
             logMessage(QString("NCalc - EndStop Type - ROT_NEG180_450"));
-            logMessage(QString("NCalc - 6 - - Target Bearing = %1, rotator Bearing = %2").arg(QString::number(targetBearing), QString::number(rotatorBearing)));
+            logMessage(QString("NCalc - 6 - - Target Bearing = %1, rotator Bearing = %2").arg(QString::number(targetBearing)).arg(QString::number(rotatorBearing)));
             return target;
         }
 
@@ -1332,15 +1332,15 @@ int RotatorMainWindow::calclRot_0_450_Neg180_540(int targetBearing)
     {
         target = targetBearing + COMPASS_MAX360;
         logMessage(QString("NCalc - 7 - Rotator Bearing = %1 >= 360, target bearing = %2, target bearing + 360 = %3 is < maxAzimuth = %4, calculated target = %5")
-                   .arg(QString::number(rotatorBearing), QString::number(targetBearing), QString::number(targetBearing + COMPASS_MAX360),
-                       QString::number(currentMaxAzimuth), QString::number(target)));
+                   .arg(QString::number(rotatorBearing)).arg(QString::number(targetBearing)).arg(QString::number(targetBearing + COMPASS_MAX360))
+                       .arg(QString::number(currentMaxAzimuth)).arg(QString::number(target)));
         return target;
     }
     else if (rotatorBearing >= COMPASS_MAX360 && targetBearing < COMPASS_MAX360)
     {
         target = targetBearing;
         logMessage(QString("NCalc - 8 - Rotator Bearing = %1 >= 360, target bearing = %2 is < 360, target = %3")
-                   .arg(QString::number(rotatorBearing), QString::number(targetBearing),QString::number(target)));
+                   .arg(QString::number(rotatorBearing)).arg(QString::number(targetBearing)).arg(QString::number(target)));
         return target;
     }
     else if (rotatorBearing > COMPASS_HALF && rotatorBearing <= COMPASS_MAX360)
@@ -1354,14 +1354,14 @@ int RotatorMainWindow::calclRot_0_450_Neg180_540(int targetBearing)
         }
 
         logMessage(QString("NCalc - 9 - Rotator Bearing = %1 > 180 and <= 360, target bearing = %2, target = %3")
-                   .arg(QString::number(rotatorBearing), QString::number(targetBearing), QString::number(target)));
+                   .arg(QString::number(rotatorBearing)).arg(QString::number(targetBearing)).arg(QString::number(target)));
         return target;
     }
     else if (rotatorBearing >= COMPASS_MIN0 && rotatorBearing <= COMPASS_HALF)
     {
         target = targetBearing;
-        logMessage((QString("NCalc - 10 - Rotator Bearing = %1 >= 0 and <= 180, target bearing = %2, target = %3")
-                    .arg(QString::number(rotatorBearing), QString::number(targetBearing), QString::number(target))));
+        logMessage(QString("NCalc - 10 - Rotator Bearing = %1 >= 0 and <= 180, target bearing = %2, target = %3")
+                    .arg(QString::number(rotatorBearing)).arg(QString::number(targetBearing)).arg(QString::number(target)));
         return target;
     }
     return target;
@@ -1490,7 +1490,7 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
 void RotatorMainWindow::stopButton()
 {
 
-    logMessage("StopButton");
+    logMessage(QString("StopButton"));
 
     stopRotation(rotator->get_serialConnected());
 }
@@ -1504,7 +1504,7 @@ void RotatorMainWindow::stop_rotation()
 void RotatorMainWindow::stopRotation(bool sendStop)
 {
 
-    logMessage("Stop Rotation");
+    logMessage(QString("Stop Rotation"));
     int retCode = 0;
     stop_button_on();
     brakeflag = true;
@@ -1514,7 +1514,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
         // if it is a Prosistel Rotator - to stop use rotate_to_bearing = 999
         if (selectRotator->currentAntenna.rotatorModelNumber == 1701)
         {
-            logMessage("Stop Rotation: Prosistel Rotator");
+            logMessage(QString("Stop Rotation: Prosistel Rotator"));
             //retCode = rotator->rotate_to_bearing(999);
 
         }
@@ -1554,7 +1554,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
     movingCCW = false;
     stopCmdflag = false;
     stop_button_off();
-    logMessage("Stop Cmd Successful");
+    logMessage(QString("Stop Cmd Successful"));
 
 }
 
@@ -1568,10 +1568,10 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
     }
 
     cwCcwCmdflag = true;
-    logMessage("Start rotateCW");
+    logMessage(QString("Start rotateCW"));
     if (!rotator->get_serialConnected())
     {
-        logMessage("rotateCW - Rotator not connected!");
+        logMessage(QString("rotateCW - Rotator not connected!"));
 
     }
     else if (rot_right_button_status)
@@ -1585,7 +1585,7 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
 
         if (rotatorBearing >= currentMaxAzimuth)
         {
-            logMessage("Rotator Bearing > currentMaxAzimuth");
+            logMessage(QString("Rotator Bearing > currentMaxAzimuth"));
             cwCcwCmdflag = false;
             return;
         }
@@ -1593,7 +1593,7 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
 
         if (moving || movingCW || movingCCW)
         {
-            logMessage("RotateCW - rotator already moving - stop");
+            logMessage(QString("RotateCW - rotator already moving - stop"));
             stopButton();
         }
 
@@ -1603,7 +1603,7 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
         {
             if (supportCwCcwCmd)
             {
-                logMessage("Send CW rotator command, rotator speed = " + QString::number(rotator->get_rotatorSpeed()));
+                logMessage(QString("Send CW rotator command, rotator speed = %1").arg(QString::number(rotator->get_rotatorSpeed())));
                 retCode = rotator->rotateClockwise(rotator->get_rotatorSpeed());
             }
             else
@@ -1637,7 +1637,7 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
                 sendStatusToLogRotCW();
                 rot_right_button_on();
 
-                logMessage("RotateCW Successful");
+                logMessage(QString("RotateCW Successful"));
             }
         }
     }
@@ -1658,11 +1658,11 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
     }
 
     cwCcwCmdflag = true;
-    logMessage("Start rotateCCW");
+    logMessage(QString("Start rotateCCW"));
     // check connected
     if (!rotator->get_serialConnected())
     {
-        logMessage("rotateCCW - Rotator not connected!");
+        logMessage(QString("rotateCCW - Rotator not connected!"));
 
     }
     else if (rot_left_button_status)
@@ -1676,7 +1676,7 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
 
         if (rotatorBearing < currentMinAzimuth)
         {
-            logMessage("CCW - Rotator Bearing < currentMinAzimuth");
+            logMessage(QString("CCW - Rotator Bearing < currentMinAzimuth"));
             cwCcwCmdflag = false;
             return;
         }
@@ -1684,7 +1684,7 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
 
         if (moving || movingCW || movingCCW)
         {
-            logMessage("RotateCCW - rotator already moving - stop");
+            logMessage(QString("RotateCCW - rotator already moving - stop"));
             stopButton();
         }
 
@@ -1694,7 +1694,7 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
         {
             if (supportCwCcwCmd)
             {
-                logMessage("Send CCW rotator command, rotator speed = " + QString::number(rotator->get_rotatorSpeed()));
+                logMessage(QString("Send CCW rotator command, rotator speed = " + QString::number(rotator->get_rotatorSpeed())));
                 retCode = rotator->rotateCClockwise(rotator->get_rotatorSpeed());
             }
             else
@@ -1728,7 +1728,7 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
                 }
                 sendStatusToLogRotCCW();
                 rot_left_button_on();
-                logMessage("RotateCCW Successful");
+                logMessage(QString("RotateCCW Successful"));
             }
         }
     }
@@ -1833,7 +1833,7 @@ void RotatorMainWindow::hamlibError(int errorCode, QString cmd )
     }
     // log all errors
     QString errorMsg = rotator->gethamlibErrorMsg(errorCode);
-    logMessage(QString("Hamlib Error - Code = %1 - %2").arg(QString::number(errorCode), errorMsg));
+    logMessage(QString("Hamlib Error - Code = %1 - %2").arg(QString::number(errorCode).arg(errorMsg)));
 
 
      pollTimer->stop();
