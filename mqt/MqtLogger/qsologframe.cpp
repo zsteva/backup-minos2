@@ -5,7 +5,7 @@
 #include "tforcelogdlg.h"
 #include "SendRPCDM.h"
 #include "rigcontrolcommonconstants.h"
-#include "rigUtils.h"
+#include "rigutils.h"
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
 #include <QDebug>
