@@ -31,11 +31,14 @@ DXCCFrame::~DXCCFrame()
 void DXCCFrame::setContest(BaseContestLog *contest)
 {
     model.ct = contest;
-    proxyModel.setSourceModel(&model);
-    ui->DXCCTable->setModel(&proxyModel);
-    reInitialiseCountries();
-    connect( ui->DXCCTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
-             this, SLOT( on_sectionResized(int, int , int)));
+    if (contest)
+    {
+        proxyModel.setSourceModel(&model);
+        ui->DXCCTable->setModel(&proxyModel);
+        reInitialiseCountries();
+        connect( ui->DXCCTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
+                 this, SLOT( on_sectionResized(int, int , int)), Qt::UniqueConnection);
+    }
 }
 void DXCCFrame::reInitialiseCountries()
 {

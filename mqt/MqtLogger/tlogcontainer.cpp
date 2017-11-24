@@ -1102,6 +1102,10 @@ void TLogContainer::closeSlot(int t, bool addToMRU)
              setCurrentFile( curPath );
           }
           f->closeContest();    // which should close the contest
+
+          QWidget *tab = ui->ContestPageControl->widget(t);
+          tab->deleteLater();
+
           ui->ContestPageControl->removeTab(t);
           on_ContestPageControl_currentChanged(0);
       }

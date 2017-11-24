@@ -127,9 +127,12 @@ void LocFrame::setContest(BaseContestLog *contest)
 {
     model->ct = contest;
     ct = contest;
-    currentCentre = ct->myloc.loc.getValue().left(4);
+    if (ct)
+    {
+        currentCentre = ct->myloc.loc.getValue().left(4);
 
-    reInitialiseLocators();
+        reInitialiseLocators();
+    }
 }
 
 void LocFrame::reInitialiseLocators()

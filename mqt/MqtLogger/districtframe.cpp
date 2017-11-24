@@ -28,11 +28,14 @@ DistrictFrame::~DistrictFrame()
 void DistrictFrame::setContest(BaseContestLog *contest)
 {
     model.ct = contest;
-    proxyModel.setSourceModel(&model);
-    ui->DistrictTable->setModel(&proxyModel);
-    reInitialiseDistricts();
-    connect( ui->DistrictTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
-             this, SLOT( on_sectionResized(int, int , int)));
+    if (contest)
+    {
+        proxyModel.setSourceModel(&model);
+        ui->DistrictTable->setModel(&proxyModel);
+        reInitialiseDistricts();
+        connect( ui->DistrictTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
+                 this, SLOT( on_sectionResized(int, int , int)), Qt::UniqueConnection);
+    }
 }
 void DistrictFrame::reInitialiseDistricts()
 {

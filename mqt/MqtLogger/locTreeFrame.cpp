@@ -20,7 +20,10 @@ void LocTreeFrame::setContest(BaseContestLog *contest)
 {
     ct = contest;
 
-    reInitialiseLocators();
+    if (ct)
+    {
+        reInitialiseLocators();
+    }
 }
 
 void LocTreeFrame::reInitialiseLocators()
