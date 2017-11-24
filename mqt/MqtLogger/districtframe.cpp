@@ -28,10 +28,10 @@ DistrictFrame::~DistrictFrame()
 void DistrictFrame::setContest(BaseContestLog *contest)
 {
     model.ct = contest;
+    proxyModel.setSourceModel(&model);
+    ui->DistrictTable->setModel(&proxyModel);
     if (contest)
     {
-        proxyModel.setSourceModel(&model);
-        ui->DistrictTable->setModel(&proxyModel);
         reInitialiseDistricts();
         connect( ui->DistrictTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
                  this, SLOT( on_sectionResized(int, int , int)), Qt::UniqueConnection);
@@ -106,7 +106,9 @@ QVariant DistrictGridModel::data( const QModelIndex &index, int role ) const
 
     if (role == Qt::DisplayRole)
     {
-        QString disp = MultLists::getMultLists() ->getDistListText( index.row(), DistrictTreeColumns[ index.column() ].fieldId, ct );
+        QString disp;
+        if (ct)
+            disp = MultLists::getMultLists() ->getDistListText( index.row(), DistrictTreeColumns[ index.column() ].fieldId, ct );
         return disp;
     }
     return QVariant();
@@ -154,6 +156,7 @@ bool DistrictSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelI
     if (scrolledDistrict == sourceRow)
         return true;
     BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+
     int worked = MultLists::getMultLists()->getDistWorked(sourceRow, ct) ;
 
     bool makeVisible = true;
