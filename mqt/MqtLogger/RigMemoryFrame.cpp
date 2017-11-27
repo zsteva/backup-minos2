@@ -5,7 +5,7 @@
 #include "tlogcontainer.h"
 #include "tsinglelogframe.h"
 #include "rigmemdialog.h"
-
+#include "rigutils.h"
 #include "RigMemoryFrame.h"
 #include "ui_RigMemoryFrame.h"
 
@@ -251,7 +251,7 @@ void RigMemoryFrame::memoryUpdate(int buttonNumber)
         mb->setText("M" + QString::number(buttonNumber + 1) + ": " + m.callsign);
 
         QString tTipStr = "Callsign: " + m.callsign + "\n"
-                + "Freq: " + m.freq + "\n"
+                + "Freq: " + convertFreqStrDisp(m.freq) + "\n"
                 + "Mode: " + m.mode + "\n"
                 + "Locator: " + m.locator + "\n"
                 + "Bearing: " + QString::number(m.bearing) + "\n"

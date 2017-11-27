@@ -388,7 +388,8 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
         if (radioConnected && !radioError)
         {
             ui->freqInput->clearFocus();
-            if (m.freq.remove('.') != curFreq.remove('.'))
+            //if (m.freq.remove('.') != curFreq.remove('.'))
+            if (m.freq != curFreq)
             {
 
                 sendFreq(m.freq);
@@ -826,7 +827,7 @@ void RigControlFrame::runButtonUpdate(int buttonNumber)
     QString sc = ((buttonNumber == 0)?QString(" [ "):QString( " ] "));
 
     runButtonMap[buttonNumber]->memButton->setText("R" + QString::number(buttonNumber + 1) + "(" + sc + ") " + extractKhz(m.freq) + " ");
-    QString tTipStr = "Freq: " + m.freq + "\n"
+    QString tTipStr = "Freq: " + convertFreqStrDisp(m.freq) + "\n"
             + "Mode: " + m.mode + "\n";
 
     runButtonMap[buttonNumber]->memButton->setToolTip(tTipStr);

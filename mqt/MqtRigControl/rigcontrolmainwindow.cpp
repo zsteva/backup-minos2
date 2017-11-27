@@ -326,15 +326,19 @@ void RigControlMainWindow::upDateRadio()
 
         openRadio();
 
-        if (radio->get_serialConnected())
+        if (selectRig->currentRadio.radioModelNumber != 135) // don't send USB if Ft991
         {
-            logMessage(QString("Update Radio: Set Mode USB and Passband NOR"));
-            // initialise rig state
-            slogMode = "USB";
-            // set mode
-            logMode = radio->convertQStrMode("USB");
-            setMode("USB", RIG_VFO_CURR);
+            if (radio->get_serialConnected())
+            {
+                logMessage(QString("Update Radio: Set Mode USB"));
+                // initialise rig state
+                slogMode = "USB";
+                // set mode
+                logMode = radio->convertQStrMode("USB");
+                setMode("USB", RIG_VFO_CURR);
+            }
         }
+
 
         if (radio->get_serialConnected())
         {
@@ -389,7 +393,7 @@ void RigControlMainWindow::openRadio()
         return;
     }
 
-    logMessage(QString("Open Radio: Opening Radio %1 PortType %2").arg(selectRig->currentRadio.radioName.arg(hamlibData::portTypeList[selectRig->currentRadio.portType])));
+    logMessage(QString("Open Radio: Opening Radio %1 PortType %2").arg(selectRig->currentRadio.radioName).arg(hamlibData::portTypeList[selectRig->currentRadio.portType]));
     showStatusMessage(QString("Opening Radio: %1").arg(selectRig->currentRadio.radioName));
 
     if (rig_port_e(selectRig->currentRadio.portType) == RIG_PORT_SERIAL)

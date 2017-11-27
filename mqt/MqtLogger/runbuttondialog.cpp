@@ -77,7 +77,7 @@ void RunButtonDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
 void RunButtonDialog::on_okButton_clicked()
 {
     // update run data
-    logdata->freq = ui->freqLineEdit->text();
+    logdata->freq = ui->freqLineEdit->text().remove('.');
     logdata->mode = ui->modecb->currentText();
 
     accept();
