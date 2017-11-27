@@ -26,8 +26,6 @@ StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    initFilters();
-
 #ifdef Q_OS_ANDROID
     splitterHandleWidth = 20;
 #else
@@ -46,13 +44,10 @@ StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
         "Stats"
     };
     ui->infoCombo->addItems(infoList);
-    connect(&MinosLoggerEvents::mle, SIGNAL(FiltersChanged()), this, SLOT(onFiltersChanged()));
 
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToCountry(QString,BaseContestLog*)), this, SLOT(on_ScrollToCountry(QString,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToDistrict(QString,BaseContestLog*)), this, SLOT(on_ScrollToDistrict(QString,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
-
-    ui->infoCombo->setCurrentIndex(0);   // start up on the clock - useful outside the contest!
 
 }
 
@@ -63,11 +58,17 @@ StackedInfoFrame::~StackedInfoFrame()
 void StackedInfoFrame::on_infoCombo_currentIndexChanged(int arg1)
 {
     ui->StackedMults-> setCurrentIndex(arg1);
+    if (contest)
+    {
+        contest->currentStackItem.setValue(ui->infoCombo->currentText());
+        contest->commonSave(false);
+    }
 }
 
-void StackedInfoFrame::setContest(BaseContestLog *ct)
+void StackedInfoFrame::setContest(LoggerContestLog *ct)
 {
     contest = ct;
+    initFilters();
 
     ui->dxccFrame->setContest(contest);
     ui->districtFrame->setContest(contest);
@@ -76,6 +77,10 @@ void StackedInfoFrame::setContest(BaseContestLog *ct)
     ui->locTreeFrame->setContest(contest);
     ui->clockFrame->setContest(contest);
     ui->rigMemFrame->setContest(contest);
+
+    if (contest)
+        ui->infoCombo->setCurrentText(contest->currentStackItem.getValue());   // start up on the clock - useful outside the contest!
+
 }
 void StackedInfoFrame::on_ScrollToDistrict( const QString &qth, BaseContestLog* )
 {
@@ -116,29 +121,27 @@ void StackedInfoFrame::initFilters()
 {
    filterClickEnabled = false;  // stop them being saved while we are setting up
 
-   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentEU, contlist[ 0 ].allow );
-   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentAS, contlist[ 1 ].allow );
-   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentAF, contlist[ 2 ].allow );
-   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentOC, contlist[ 3 ].allow );
-   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentSA, contlist[ 4 ].allow );
-   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentNA, contlist[ 5 ].allow );
+   if (contest)
+   {
+       contlist[ 0 ].allow = contest->showContinentEU.getValue();
+       contlist[ 1 ].allow = contest->showContinentAS.getValue();
+       contlist[ 2 ].allow = contest->showContinentAF.getValue();
+       contlist[ 3 ].allow = contest->showContinentOC.getValue();
+       contlist[ 4 ].allow = contest->showContinentSA.getValue();
+       contlist[ 5 ].allow = contest->showContinentNA.getValue();
 
-   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowWorked, showWorked );
-   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowUnworked, showUnworked );
-
-   ui->ContEU->setChecked(contlist[ 0 ].allow);
-   ui->ContAS->setChecked(contlist[ 1 ].allow);
-   ui->ContAF->setChecked(contlist[ 2 ].allow);
-   ui->ContOC->setChecked(contlist[ 3 ].allow);
-   ui->ContSA->setChecked(contlist[ 4 ].allow);
-   ui->ContNA->setChecked(contlist[ 5 ].allow);
-   ui->WorkedCB->setChecked(showWorked);
-   ui->UnworkedCB->setChecked(showUnworked);
-
-
+       ui->ContEU->setChecked(contlist[ 0 ].allow);
+       ui->ContAS->setChecked(contlist[ 1 ].allow);
+       ui->ContAF->setChecked(contlist[ 2 ].allow);
+       ui->ContOC->setChecked(contlist[ 3 ].allow);
+       ui->ContSA->setChecked(contlist[ 4 ].allow);
+       ui->ContNA->setChecked(contlist[ 5 ].allow);
+       ui->WorkedCB->setChecked(contest->showWorked.getValue());
+       ui->UnworkedCB->setChecked(contest->showUnworked.getValue());
+    }
    filterClickEnabled = true;
 }
-void StackedInfoFrame::onFiltersChanged()
+void StackedInfoFrame::filtersChanged()
 {
     if (contest)
     {
@@ -162,21 +165,18 @@ void StackedInfoFrame::saveFilters()
         contlist[ 3 ].allow = ui->ContOC->isChecked();
         contlist[ 4 ].allow = ui->ContSA->isChecked();
         contlist[ 5 ].allow = ui->ContNA->isChecked();
-        showWorked = ui->WorkedCB->isChecked();
-        showUnworked = ui->UnworkedCB->isChecked();
+        contest->showWorked.setValue(ui->WorkedCB->isChecked());
+        contest->showUnworked.setValue(ui->UnworkedCB->isChecked());
 
-        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowContinentEU, contlist[ 0 ].allow );
-        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowContinentAS, contlist[ 1 ].allow );
-        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowContinentAF, contlist[ 2 ].allow );
-        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowContinentOC, contlist[ 3 ].allow );
-        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowContinentSA, contlist[ 4 ].allow );
-        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowContinentNA, contlist[ 5 ].allow );
+        contest->showContinentEU.setValue(contlist[ 0 ].allow);
+        contest->showContinentAS.setValue(contlist[ 1 ].allow);
+        contest->showContinentAF.setValue(contlist[ 2 ].allow);
+        contest->showContinentOC.setValue(contlist[ 3 ].allow);
+        contest->showContinentSA.setValue(contlist[ 4 ].allow);
+        contest->showContinentNA.setValue(contlist[ 5 ].allow);
 
-        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowWorked, showWorked );
-        MinosParameters::getMinosParameters() ->setBoolDisplayProfile( edpShowUnworked, showUnworked );
-        MinosParameters::getMinosParameters() ->flushDisplayProfile();
-
-        MinosLoggerEvents::SendFiltersChanged();
+        contest->commonSave(false);
+        filtersChanged();
     }
 }
 

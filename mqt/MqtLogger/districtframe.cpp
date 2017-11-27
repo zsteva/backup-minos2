@@ -155,17 +155,17 @@ bool DistrictSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelI
 {
     if (scrolledDistrict == sourceRow)
         return true;
-    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    LoggerContestLog * ct = dynamic_cast<LoggerContestLog *>(TContestApp::getContestApp() ->getCurrentContest());
 
     int worked = MultLists::getMultLists()->getDistWorked(sourceRow, ct) ;
 
     bool makeVisible = true;
-    if ( worked && showUnworked && !showWorked )
+    if ( worked && ct->showUnworked.getValue() && !ct->showWorked.getValue() )
     {
        makeVisible = false;
     }
     else
-       if ( !worked && !showUnworked && showWorked )
+       if ( !worked && !ct->showUnworked.getValue() && ct->showWorked.getValue() )
        {
           makeVisible = false;
        }

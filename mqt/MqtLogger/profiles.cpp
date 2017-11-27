@@ -705,6 +705,8 @@ BundleFile::BundleFile( PROFILES p )
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowContinentNA, "ShowContinentNA", false, "", "hint", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowWorked, "ShowWorked", true, "", "hint", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowUnworked, "ShowUnworked", true, "", "hint", false ) ) );
+        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpStackFrame, "StackFrame", "Clock", "", "hint", false ) ) );
+
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpNextContactDetailsOnLeft, "ShowNextContactDetailsOnLeft", false, "", "hint", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( edpShowOperators, "ShowOperators", true, "", "hint", false ) ) );
 

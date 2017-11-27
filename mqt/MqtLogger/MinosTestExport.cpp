@@ -408,7 +408,35 @@ void MinosTestExport::exportAllMemories(QSharedPointer<QFile> expfd )
         exportRigMemory( expfd, i);
     }
 }
+int MinosTestExport::exportStackDisplay(QSharedPointer<QFile> expfd )
+{
+    RPCParamStruct * st = new RPCParamStruct;
+    makeHeader( st, 1 );
 
+    bool dirty = false;
+
+    ct->statsPeriod1.addIfDirty( st, "sp1", dirty );
+    ct->statsPeriod2.addIfDirty( st, "sp2", dirty );
+    ct->showContinentEU.addIfDirty( st, "eu", dirty );
+    ct->showContinentAS.addIfDirty( st, "as", dirty );
+    ct->showContinentAF.addIfDirty( st, "af", dirty );
+    ct->showContinentOC.addIfDirty( st, "oc", dirty );
+    ct->showContinentSA.addIfDirty( st, "sa", dirty );
+    ct->showContinentNA.addIfDirty( st, "na", dirty );
+    ct->showWorked.addIfDirty( st, "sw", dirty );
+    ct->showUnworked.addIfDirty( st, "su", dirty );
+    ct->currentStackItem.addIfDirty( st, "sitem", dirty );
+
+    if ( dirty )
+    {
+       sendRequest( expfd, "MinosStackParams", st );
+    }
+    else
+    {
+       delete st;
+    }
+    return exp_stanzaCount;
+}
 int MinosTestExport::exportAllDetails(QSharedPointer<QFile> minosContestFile, bool newfile )
 {
    if ( newfile )
@@ -432,6 +460,7 @@ int MinosTestExport::exportAllDetails(QSharedPointer<QFile> minosContestFile, bo
    exportApps(minosContestFile);
    exportBundles( minosContestFile );
    exportAllMemories(minosContestFile);
+   exportStackDisplay(minosContestFile);
 
    return exp_stanzaCount;
 }

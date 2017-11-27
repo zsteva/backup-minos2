@@ -46,7 +46,6 @@ signals:
    void ShowOperators();
    void BandMapPressed();
    void TimerDistribution();
-   void FiltersChanged();
    void AfterTabFocusIn(QLineEdit *tle);
    void Validated();
 
@@ -84,7 +83,6 @@ public:
    static void SendShowOperators();
    static void SendBandMapPressed();
    static void SendTimerDistribution();
-   static void SendFiltersChanged();
    static void SendAfterTabFocusIn(QLineEdit *tle);
    static void SendValidated();
 

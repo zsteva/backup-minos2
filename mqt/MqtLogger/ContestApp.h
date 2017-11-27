@@ -84,6 +84,8 @@ class TContestApp : public MinosParameters
       virtual void setDisplayColumnWidth( const QString &key, int val ) override;
       virtual void getBoolDisplayProfile( int enumkey, bool &value ) override;
       virtual void setBoolDisplayProfile( int enumkey, bool value ) override;
+      virtual void getStringDisplayProfile( int enumkey, QString &value ) override;
+      virtual void setStringDisplayProfile( int enumkey, QString value ) override;
       virtual void flushDisplayProfile( void ) override;
       virtual int getBigClockCorrection() override;
       virtual int getStatsPeriod1() override;

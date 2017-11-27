@@ -7,9 +7,6 @@ namespace Ui {
 class TSingleLogFrame;
 }
 
-extern bool showWorked;
-extern bool showUnworked;
-
 class TMatchCollection;
 class MatchNodeData;
 class MatchTreeItem;

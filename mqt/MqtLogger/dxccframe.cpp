@@ -28,7 +28,7 @@ DXCCFrame::~DXCCFrame()
 {
     delete ui;
 }
-void DXCCFrame::setContest(BaseContestLog *contest)
+void DXCCFrame::setContest(LoggerContestLog *contest)
 {
     model.ct = contest;
     if (contest)
@@ -161,7 +161,7 @@ bool DXCCSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
 {
     if (scrolledCountry == sourceRow)
         return true;
-    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+    LoggerContestLog * ct = dynamic_cast<LoggerContestLog *>(TContestApp::getContestApp() ->getCurrentContest());
     int worked = MultLists::getMultLists()->getCountryWorked(sourceRow, ct) ;
 
     QSharedPointer<CountryEntry> ce = MultLists::getMultLists() ->getCtryListAt( sourceRow );
@@ -175,12 +175,12 @@ bool DXCCSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
         }
     }
 
-    if ( worked && showUnworked && !showWorked )
+    if ( worked && ct->showUnworked.getValue() && !ct->showWorked.getValue() )
     {
         makeVisible = false;
     }
     else
-        if ( !worked && !showUnworked && showWorked )
+        if ( !worked && !ct->showUnworked.getValue() && ct->showWorked.getValue() )
         {
             makeVisible = false;
         }
