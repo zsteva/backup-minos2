@@ -110,7 +110,10 @@ void RigControlFrame::setContest(BaseContestLog *c)
 {
     ct = dynamic_cast<LoggerContestLog *>( c);
 
-    loadMemories();                 // mem and run should be independant of the radio!
+    if (ct)
+    {
+        loadMemories();                 // mem and run should be independant of the radio!
+    }
 }
 
 void RigControlFrame::initRigFrame(QWidget * /*parent*/)

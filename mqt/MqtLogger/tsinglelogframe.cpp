@@ -189,6 +189,10 @@ void TSingleLogFrame::closeContest()
     {
        RPCPubSub::publish( rpcConstants::monitorLogCategory, contest->publishedName, QString::number( 0 ), psRevoked );
        qsoModel.initialise(0);
+       ui->matchTreesFrame->setContest(0);
+       ui->stackedInfoFrame->setContest(0);
+       ui->FKHRigControlFrame->setContest(0);
+       ui->FKHRotControlFrame->setContest(0);
        TContestApp::getContestApp() ->closeFile( contest );
        ui->GJVQSOLogFrame->closeContest();
        contest = 0;

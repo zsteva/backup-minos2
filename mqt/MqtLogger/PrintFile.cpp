@@ -180,7 +180,7 @@ bool PrintFile::exportTest(QSharedPointer<QFile> expfd )
    wr.lwrite( "" );
 
    QString ProductName = "Minos";
-   QString Version = VERSION;
+   QString Version = QString(STRINGVERSION) + " " + PRERELEASETYPE;
 
    QString pver = "Produced by " + ProductName + " version " + Version;
    wr.lwrite( pver );

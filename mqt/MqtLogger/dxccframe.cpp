@@ -31,11 +31,14 @@ DXCCFrame::~DXCCFrame()
 void DXCCFrame::setContest(BaseContestLog *contest)
 {
     model.ct = contest;
-    proxyModel.setSourceModel(&model);
-    ui->DXCCTable->setModel(&proxyModel);
-    reInitialiseCountries();
-    connect( ui->DXCCTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
-             this, SLOT( on_sectionResized(int, int , int)));
+    if (contest)
+    {
+        proxyModel.setSourceModel(&model);
+        ui->DXCCTable->setModel(&proxyModel);
+        reInitialiseCountries();
+        connect( ui->DXCCTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
+                 this, SLOT( on_sectionResized(int, int , int)), Qt::UniqueConnection);
+    }
 }
 void DXCCFrame::reInitialiseCountries()
 {
@@ -97,20 +100,23 @@ void DXCCGridModel::initialise( )
 QVariant DXCCGridModel::data( const QModelIndex &index, int role ) const
 {
 
-    if (role == Qt::BackgroundRole)
+    if (ct)
     {
-        return QVariant();
-    }
-    if ( role != Qt::DisplayRole && role != Qt::EditRole )
-        return QVariant();
+        if (role == Qt::BackgroundRole)
+        {
+            return QVariant();
+        }
+        if ( role != Qt::DisplayRole && role != Qt::EditRole )
+            return QVariant();
 
-    if (role == Qt::DisplayRole)
-    {
-        QString disp = MultLists::getMultLists() ->getCtryListText( index.row(), CountryTreeColumns[ index.column() ].fieldId, ct );
-        return disp;
+        if (role == Qt::DisplayRole)
+        {
+            QString disp = MultLists::getMultLists() ->getCtryListText( index.row(), CountryTreeColumns[ index.column() ].fieldId, ct );
+            return disp;
+        }
+        if (role == Qt::TextAlignmentRole)
+            return Qt::AlignLeft;
     }
-    if (role == Qt::TextAlignmentRole)
-        return Qt::AlignLeft;
     return QVariant();
 }
 QVariant DXCCGridModel::headerData( int section, Qt::Orientation orientation,

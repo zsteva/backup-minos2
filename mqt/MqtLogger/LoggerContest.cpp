@@ -1454,7 +1454,7 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
                                    mt->getStructArgMemberValue( "freq", mem.freq);
                                    mt->getStructArgMemberValue( "mode", mem.mode);
                                    mt->getStructArgMemberValue( "locator", mem.locator);
-                                   //mt->getStructArgMemberValue( "bandstate", mem.pBandState);
+                                   mt->getStructArgMemberValue( "time", mem.time);
 
                                    saveInitialRigMemory(memno, mem);
 
@@ -1467,7 +1467,6 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
                                        mt->getStructArgMemberValue( "memno", memno);
                                        mt->getStructArgMemberValue( "freq", mem.freq);
                                        mt->getStructArgMemberValue( "mode", mem.mode);
-                                       //mt->getStructArgMemberValue( "bandstate", mem.pBandState);
 
                                        saveInitialRunMemory(memno, mem);
 

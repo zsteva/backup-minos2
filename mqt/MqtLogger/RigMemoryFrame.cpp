@@ -85,7 +85,10 @@ void RigMemoryFrame::setContest( BaseContestLog *pct )
 {
     ct = dynamic_cast<LoggerContestLog *>( pct);
 
-    reInitialiseMemories();
+    if (ct)
+    {
+        reInitialiseMemories();
+    }
 }
 memoryData::memData RigMemoryFrame::getRigMemoryData(int memoryNumber)
 {

@@ -127,9 +127,12 @@ void LocFrame::setContest(BaseContestLog *contest)
 {
     model->ct = contest;
     ct = contest;
-    currentCentre = ct->myloc.loc.getValue().left(4);
+    if (ct)
+    {
+        currentCentre = ct->myloc.loc.getValue().left(4);
 
-    reInitialiseLocators();
+        reInitialiseLocators();
+    }
 }
 
 void LocFrame::reInitialiseLocators()
@@ -197,13 +200,15 @@ void LocFrame::reInitialiseLocators()
 
     model->endReset();
 
-    // don't resize earlier, or there won't be NY DATA TO RESIZE TO...
+    // don't resize earlier, or there won't be ANY DATA TO RESIZE TO...
    // ui->LocView->resizeColumnsToContents();
    // ui->LocView->resizeRowsToContents();
 
-    QFontMetrics fm = ui->LocView->fontMetrics();
-    int width=fm.width("OO80") * 5/4;
-    int height=fm.height() * 5/4;
+    // We seem to have to use the application font, as Qt can give info
+    // on the wrong font if we use the widgets font
+    QFontMetricsF fm(QApplication::font());
+    int width=(fm.width("MM80") * 5)/4;
+    int height=(fm.height() * 6)/4;
 
     ui->LocView->horizontalHeader()->setDefaultSectionSize(width);
     ui->LocView->verticalHeader()->setDefaultSectionSize(height);

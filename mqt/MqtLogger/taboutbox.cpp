@@ -8,7 +8,7 @@
 
 bool started = false;
 
-QString welcomeText = QString("<br><h1>Welcome to Minos Version ") + VERSION + " Beta" + "</h1>"
+QString welcomeText = QString("<br><h1>Welcome to Minos Version ") + STRINGVERSION  + " " + PRERELEASETYPE + "</h1>"
                                "<br><a href=\"http://minos.sourceforge.net/\">http://minos.sourceforge.net</a>"
                                "<br><br>";
 

@@ -99,7 +99,7 @@ class MultList : public QMap < MapWrapper<itemtype>, MapWrapper<itemtype> >
       QString getText( int item, int Column, BaseContestLog *const ct )
       {
          QString dest;
-         if ( item >= MultList::size())
+         if ( !ct || item >= MultList::size())
             return dest;
          QSharedPointer<itemtype> ce = std::next(this->begin(), item)->wt;
          switch ( Column )
