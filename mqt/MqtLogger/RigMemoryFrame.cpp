@@ -206,7 +206,9 @@ void RigMemoryFrame::clean()
     QLayoutItem *child1;
     while(( child1 = gl->itemAt(i)) != 0)
     {
-        gl->takeAt(i);
+        QLayoutItem *child2 = gl->takeAt(i);
+//        delete child2->widget();              // don't delete it - it may be the membutton
+        delete child2;
         i++;
     }
 
