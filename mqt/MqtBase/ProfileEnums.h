@@ -25,16 +25,13 @@ enum LOGGERPROFILE {
 };
 enum PRELOADPROFILE {eppSession, eppCurrent, eppDefSession};
 
-enum DISPLAYPROFILE {edpTop, edpLeft, edpWidth, edpHeight,
-                     edpShowContinentEU, edpShowContinentAS,
+enum DISPLAYPROFILE {edpShowContinentEU, edpShowContinentAS,
                      edpShowContinentAF, edpShowContinentOC,
                      edpShowContinentSA, edpShowContinentNA,
                      edpShowWorked, edpShowUnworked,
                      edpNextContactDetailsOnLeft,
                      edpShowOperators,
-                     edpEditor, edpStatisticsPeriod1, edpStatisticsPeriod2,
-                     edpAutoBandMapTune, edpAutoBandMapTuneAmount,
-                     edpAutoBandMapTime, edpAutoBandMapTimeLapse,
+                     edpEditor, edpStatisticsPeriod1, edpStatisticsPeriod2
                     };
 enum ENTRYPROFILE {eepCall, eepEntrant, eepMyName, eepMyCall,
                    eepMyAddress1, eepMyAddress2, eepMyCity, eepMyPostCode, eepMyCountry,
