@@ -140,6 +140,9 @@ void LocFrame::reInitialiseLocators()
     model->beginReset();
     model->locMap.clear();
 
+    if (!ct)
+        return;
+
     //initialise these to a range round the contest location
     QString ctLoc = ct->myloc.loc.getValue();
 
@@ -252,7 +255,7 @@ void LocGridModel::endReset()
 
 QVariant LocGridModel::data( const QModelIndex &index, int role ) const
 {
-    if ((tlLoc.isEmpty()))
+    if (!ct || tlLoc.isEmpty())
         return QVariant();
 
     QString disp = lConv(tlLoc, index.column(), index.row());
@@ -274,7 +277,7 @@ QVariant LocGridModel::data( const QModelIndex &index, int role ) const
     if (role == Qt::BackgroundRole)
     {
         QColor multhighlight = Qt::darkGray;
-        if (ct->usesBonus.getValue())
+            if (ct->usesBonus.getValue())
         {
             switch (ct->getSquareBonus(disp))
             {

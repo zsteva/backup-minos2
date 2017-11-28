@@ -157,6 +157,9 @@ bool DistrictSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelI
         return true;
     LoggerContestLog * ct = dynamic_cast<LoggerContestLog *>(TContestApp::getContestApp() ->getCurrentContest());
 
+    if (!ct)
+        return false;
+
     int worked = MultLists::getMultLists()->getDistWorked(sourceRow, ct) ;
 
     bool makeVisible = true;

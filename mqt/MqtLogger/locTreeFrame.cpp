@@ -30,6 +30,9 @@ void LocTreeFrame::reInitialiseLocators()
 {
     ui->LocTree->clear();
 
+    if (!ct)
+        return;
+
     for (int k = 0; k < ct->locs.llist.size(); k++)
     {
         QTreeWidgetItem *it = new QTreeWidgetItem(ui->LocTree);

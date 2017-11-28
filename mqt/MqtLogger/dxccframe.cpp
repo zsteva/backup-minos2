@@ -162,6 +162,9 @@ bool DXCCSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
     if (scrolledCountry == sourceRow)
         return true;
     LoggerContestLog * ct = dynamic_cast<LoggerContestLog *>(TContestApp::getContestApp() ->getCurrentContest());
+    if (!ct)
+        return false;
+
     int worked = MultLists::getMultLists()->getCountryWorked(sourceRow, ct) ;
 
     QSharedPointer<CountryEntry> ce = MultLists::getMultLists() ->getCtryListAt( sourceRow );
