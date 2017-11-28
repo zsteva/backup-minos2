@@ -44,6 +44,8 @@ class LoggerContestLog : public BaseContestLog
       QVector<StanzaPos> stanzaLocations;
 
    protected:
+      // minos file
+      virtual bool minosSaveFile( bool newfile );
    public:
       bool isMinosFile()
       {
@@ -119,6 +121,18 @@ class LoggerContestLog : public BaseContestLog
       QVector<MinosItem<memoryData::memData> > runMemories;
       QVector<MinosItem<memoryData::memData> > rigMemories;
 
+      MinosItem<int> statsPeriod1;
+      MinosItem<int> statsPeriod2;
+      MinosItem<bool> showContinentEU;
+      MinosItem<bool> showContinentAS;
+      MinosItem<bool> showContinentAF;
+      MinosItem<bool> showContinentOC;
+      MinosItem<bool> showContinentSA;
+      MinosItem<bool> showContinentNA;
+      MinosItem<bool> showWorked;
+      MinosItem<bool> showUnworked;
+      MinosStringItem<QString> currentStackItem;
+
       void saveRunMemory(int memno, const memoryData::memData &mem);
       void saveRigMemory(int memno, const memoryData::memData &mem);
       void saveInitialRunMemory(int memno, const memoryData::memData &mem);
@@ -147,6 +161,9 @@ class LoggerContestLog : public BaseContestLog
       bool commonSave( bool newfile );
       void closeFile( void );
 
+      // minos save
+      virtual bool minosSaveContestContact(const QSharedPointer<BaseContact> lct );
+
       // GJV file manipulation
       int readBlock( int bno );
       int writeBlock(QSharedPointer<QFile> fd, int bno );
@@ -154,9 +171,6 @@ class LoggerContestLog : public BaseContestLog
       virtual bool GJVload( void );
       bool GJVloadContacts( void );
 
-      // minos file
-      virtual bool minosSaveFile( bool newfile );
-      virtual bool minosSaveContestContact(const QSharedPointer<BaseContact> lct );
       // Import/export etc
 
       bool export_contest( QSharedPointer<QFile>, ExportType, bool noSerials );

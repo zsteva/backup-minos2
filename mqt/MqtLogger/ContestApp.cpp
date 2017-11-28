@@ -587,6 +587,14 @@ void TContestApp::setBoolDisplayProfile( int enumkey, bool value )
 {
    displayBundle.setBoolProfile( enumkey, value );
 }
+void TContestApp::getStringDisplayProfile( int enumkey, QString &value )
+{
+   displayBundle.getStringProfile( enumkey, value );
+}
+void TContestApp::setStringDisplayProfile( int enumkey, QString value )
+{
+   displayBundle.setStringProfile( enumkey, value );
+}
 void TContestApp::flushDisplayProfile( void )
 {
    displayBundle.flushProfile();

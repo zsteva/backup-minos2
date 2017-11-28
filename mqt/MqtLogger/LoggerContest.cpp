@@ -80,6 +80,19 @@ void LoggerContestLog::clearDirty()
    entEMail.clearDirty();
    sectionList.clearDirty();
    bearingOffset.clearDirty();
+
+   statsPeriod1.clearDirty();
+   statsPeriod2.clearDirty();
+   showContinentEU.clearDirty();
+   showContinentAS.clearDirty();
+   showContinentAF.clearDirty();
+   showContinentOC.clearDirty();
+   showContinentSA.clearDirty();
+   showContinentNA.clearDirty();
+   showWorked.clearDirty();
+   showUnworked.clearDirty();
+   currentStackItem.clearDirty();
+
    BaseContestLog::clearDirty();
 }
 void LoggerContestLog::setDirty()
@@ -121,6 +134,19 @@ void LoggerContestLog::setDirty()
    entEMail.setDirty();
    bearingOffset.setDirty();
 
+
+   statsPeriod1.setDirty();
+   statsPeriod2.setDirty();
+   showContinentEU.setDirty();
+   showContinentAS.setDirty();
+   showContinentAF.setDirty();
+   showContinentOC.setDirty();
+   showContinentSA.setDirty();
+   showContinentNA.setDirty();
+   showWorked.setDirty();
+   showUnworked.setDirty();
+   currentStackItem.setDirty();
+
    BaseContestLog::setDirty();
 }
 bool LoggerContestLog::initialise( int sno )
@@ -146,12 +172,40 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
    // open the settings bundle files
    initialiseINI();
 
-   // and preset the apps
+   // preset the apps
 
    appBundle.getStringProfile(eapBandMap, appBandMap);
    appBundle.getStringProfile(eapRigControl, appRigControl);
    appBundle.getStringProfile(eapRotator, appRotator);
    appBundle.getStringProfile(eapVoiceKeyer, appVoiceKeyer);
+
+   // preset the stacked info
+
+   statsPeriod1.setInitialValue(MinosParameters::getMinosParameters() ->getStatsPeriod1());
+   statsPeriod2.setInitialValue(MinosParameters::getMinosParameters() ->getStatsPeriod2());
+
+   bool bTemp;
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentEU, bTemp );
+   showContinentEU.setInitialValue(bTemp);
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentAS, bTemp );
+   showContinentAS.setInitialValue(bTemp);
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentAF, bTemp );
+   showContinentAF.setInitialValue(bTemp);
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentOC, bTemp );
+   showContinentOC.setInitialValue(bTemp);
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentSA, bTemp );
+   showContinentSA.setInitialValue(bTemp);
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowContinentNA, bTemp );
+   showContinentNA.setInitialValue(bTemp);
+
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowWorked, bTemp );
+   showWorked.setInitialValue(bTemp);
+   MinosParameters::getMinosParameters() ->getBoolDisplayProfile( edpShowUnworked, bTemp );
+   showUnworked.setInitialValue(bTemp);
+
+   QString temp;
+   MinosParameters::getMinosParameters() -> getStringDisplayProfile( edpStackFrame, temp );
+   currentStackItem.setInitialValue(temp);
 
    // open the LoggerContestLog file
 
@@ -1481,6 +1535,22 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
                                           {
                                              // should have been dealt with in BaseContest
                                           }
+                                          else
+                                             if (methodName == "MinosStackParams")
+                                             {
+                                                 mt->getStructArgMemberValue( "sp1", statsPeriod1);
+                                                 mt->getStructArgMemberValue( "sp2", statsPeriod2);
+                                                 mt->getStructArgMemberValue( "eu", showContinentEU);
+                                                 mt->getStructArgMemberValue( "as", showContinentAS);
+                                                 mt->getStructArgMemberValue( "af", showContinentAF);
+                                                 mt->getStructArgMemberValue( "oc", showContinentOC);
+                                                 mt->getStructArgMemberValue( "sa", showContinentSA);
+                                                 mt->getStructArgMemberValue( "na", showContinentNA);
+                                                 mt->getStructArgMemberValue( "sw", showWorked);
+                                                 mt->getStructArgMemberValue( "su", showUnworked);
+                                                 mt->getStructArgMemberValue( "sitem", currentStackItem);
+
+                                             }
 }
 //====================================================================
 void LoggerContestLog::setStanza(unsigned int stanza, int stanzaStart )

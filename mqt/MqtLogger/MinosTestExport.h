@@ -35,6 +35,7 @@ class MinosTestExport
       void exportComment( QSharedPointer<QFile> expfd, const QSharedPointer<BaseContact> lct );
       void exportRigMemory(QSharedPointer<QFile> expfd, int memno );
       void exportRunMemory(QSharedPointer<QFile> expfd, int memno );
+      int exportStackDisplay(QSharedPointer<QFile> expfd);
       void exportAllMemories(QSharedPointer<QFile> expfd);
 
 

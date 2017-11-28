@@ -20,7 +20,7 @@ TStatsDispFrame::~TStatsDispFrame()
     delete ui;
     ct = nullptr;
 }
-void TStatsDispFrame::setContest( BaseContestLog *pct )
+void TStatsDispFrame::setContest( LoggerContestLog *pct )
 {
    ct = pct;
 }
@@ -40,18 +40,20 @@ void TStatsDispFrame::RecheckTimerTimer(  )
 
 void TStatsDispFrame::on_P1Edit_valueChanged(int arg1)
 {
-   if (!suppressPeriodChange)
+   if (!suppressPeriodChange && ct)
    {
-      MinosParameters::getMinosParameters() ->setStatsPeriod1( arg1 );
+      ct->statsPeriod1.setValue( arg1 );
+      ct->commonSave(false);
       reInitialiseStats();
    }
 }
 
 void TStatsDispFrame::on_P2Edit_valueChanged(int arg1)
 {
-   if (!suppressPeriodChange)
+   if (!suppressPeriodChange && ct)
    {
-      MinosParameters::getMinosParameters() ->setStatsPeriod2( arg1 );
+       ct->statsPeriod2.setValue( arg1 );
+       ct->commonSave(false);
       reInitialiseStats();
    }
 }
@@ -59,21 +61,22 @@ void TStatsDispFrame::on_P2Edit_valueChanged(int arg1)
 void TStatsDispFrame::reInitialiseStats()
 {
    // we need to set the operator bundle to the current contest ops
+    ui->SLabel1->clear();
+
+    if ( !ct )
+    {
+       // not there...
+       return ;
+    }
+
    if ( !ui->P1Edit->hasFocus() && !ui->P2Edit->hasFocus() )
    {
       suppressPeriodChange = true;
-      ui->P1Edit->setValue( MinosParameters::getMinosParameters() ->getStatsPeriod1() );
-      ui->P2Edit->setValue( MinosParameters::getMinosParameters() ->getStatsPeriod2() );
+      ui->P1Edit->setValue( ct->statsPeriod1.getValue() );
+      ui->P2Edit->setValue( ct->statsPeriod2.getValue() );
       suppressPeriodChange = false;
    }
 
-   ui->SLabel1->clear();
-
-   if ( !ct )
-   {
-      // not there...
-      return ;
-   }
 
    QSharedPointer<BaseContact> bestdx = ct->getBestDX();
 
@@ -88,7 +91,7 @@ void TStatsDispFrame::reInitialiseStats()
    if ( ct->locMult.getValue() )
       ltot += ct->nlocs;
 
-   ct->updateStats();
+   ct->updateStats(ct->statsPeriod1.getValue(), ct->statsPeriod2.getValue());
    int nvalid = ct->getValidQSOs();
    if (nvalid)
    {
@@ -106,8 +109,8 @@ void TStatsDispFrame::reInitialiseStats()
                            .arg("PE0/LX5ABC/P") .arg("9999") .arg( "XX99XX") .arg(29999) .arg(9999.9);
    #endif
 
-      int sp1 = MinosParameters::getMinosParameters() ->getStatsPeriod1();
-      int sp2 = MinosParameters::getMinosParameters() ->getStatsPeriod2();
+      int sp1 = ct->statsPeriod1.getValue();
+      int sp2 = ct->statsPeriod2.getValue();
       QDateTime  contestStart = CanonicalToTDT(ct->DTGStart.getValue());
       QDateTime now = QDateTime::currentDateTimeUtc().addSecs( MinosParameters::getMinosParameters() ->getBigClockCorrection());
       int fromContestStart = contestStart.secsTo(now);

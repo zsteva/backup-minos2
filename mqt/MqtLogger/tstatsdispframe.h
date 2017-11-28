@@ -4,7 +4,7 @@
 #include <QFrame>
 #include <QDateTime>
 
-class BaseContestLog;
+class LoggerContestLog;
 
 namespace Ui {
 class TStatsDispFrame;
@@ -19,7 +19,7 @@ public:
     ~TStatsDispFrame();
 
     void reInitialiseStats();
-    void setContest( BaseContestLog *ct );
+    void setContest(LoggerContestLog *ct );
 
 private slots:
     void on_P1Edit_valueChanged(int arg1);
@@ -28,7 +28,7 @@ private slots:
 
 private:
     Ui::TStatsDispFrame *ui;
-    BaseContestLog *ct;
+    LoggerContestLog *ct;
     QDateTime lastCheckTime;
     bool suppressPeriodChange;
 };

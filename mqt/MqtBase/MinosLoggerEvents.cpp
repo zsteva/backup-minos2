@@ -126,11 +126,6 @@ void MinosLoggerEvents::SendTimerDistribution()
     emit mle.TimerDistribution();
 }
 //---------------------------------------------------------------------------
-void MinosLoggerEvents::SendFiltersChanged()
-{
-    emit mle.FiltersChanged();
-}
-//---------------------------------------------------------------------------
 void MinosLoggerEvents::SendAfterTabFocusIn(QLineEdit *tle)
 {
     emit mle.AfterTabFocusIn(tle);

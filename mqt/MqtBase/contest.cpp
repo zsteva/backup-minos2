@@ -347,7 +347,7 @@ void BaseContestLog::getMatchField(QSharedPointer<BaseContact> pct, int col, QSt
 
    disp = temp.trimmed();
 }
-bool BaseContestLog::updateStat( QSharedPointer<BaseContact> cct )
+bool BaseContestLog::updateStat( QSharedPointer<BaseContact> cct, int sp1, int sp2 )
 {
    // need to check if a valid DTG
    bool acted = false;
@@ -377,8 +377,6 @@ bool BaseContestLog::updateStat( QSharedPointer<BaseContact> cct )
          break;
 
    }
-   int sp1 = MinosParameters::getMinosParameters() ->getStatsPeriod1() * 60;
-   int sp2 = MinosParameters::getMinosParameters() ->getStatsPeriod2() * 60;
 
    // find the time since the beginning of the contest
 
@@ -439,7 +437,7 @@ bool BaseContestLog::updateStat( QSharedPointer<BaseContact> cct )
 
    return acted;
 }
-void BaseContestLog::updateStats( void )
+void BaseContestLog::updateStats( int p1, int p2 )
 {
    QSO1 = 0;
    kms1 = 0;
@@ -461,7 +459,7 @@ void BaseContestLog::updateStats( void )
    auto it = ctList.end(), end = ctList.begin();
    while ( it != end ) {
        --it;
-       if ( !updateStat( it.value().wt ) )
+       if ( !updateStat( it.value().wt, p1, p2 ) )
           break;
    }
 

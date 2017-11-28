@@ -15,18 +15,19 @@ public:
     explicit StackedInfoFrame(QWidget *parent = 0);
     ~StackedInfoFrame();
 
-    void setContest(BaseContestLog *contest);
+    void setContest(LoggerContestLog *contest);
     void refreshMults();
 
 private:
     Ui::StackedInfoFrame *ui;
 
     int splitterHandleWidth;
-    BaseContestLog *contest;
+    LoggerContestLog *contest;
     bool filterClickEnabled;
 
     void initFilters();
     void saveFilters();
+    void filtersChanged();
 private slots:
     void on_ScrollToDistrict( const QString &qth, BaseContestLog* );
     void on_ScrollToCountry( const QString &csCs, BaseContestLog* );
@@ -41,7 +42,6 @@ private slots:
     void on_ContNA_clicked();
 
     void on_StackedMults_currentChanged(int arg1);
-    void onFiltersChanged();
     void on_FontChanged();
     void on_infoCombo_currentIndexChanged(int arg1);
 };

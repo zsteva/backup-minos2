@@ -29,6 +29,7 @@ enum DISPLAYPROFILE {edpShowContinentEU, edpShowContinentAS,
                      edpShowContinentAF, edpShowContinentOC,
                      edpShowContinentSA, edpShowContinentNA,
                      edpShowWorked, edpShowUnworked,
+                     edpStackFrame,
                      edpNextContactDetailsOnLeft,
                      edpShowOperators,
                      edpEditor, edpStatisticsPeriod1, edpStatisticsPeriod2

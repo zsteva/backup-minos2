@@ -235,7 +235,7 @@ void TSingleLogFrame::on_ContestPageChanged ()
        return ;
     }
 
-    BaseContestLog * ct = getContest();
+    LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( getContest() );
     TContestApp::getContestApp() ->setCurrentContest( ct );
     ui->matchTreesFrame->setContest(ct);
     ui->stackedInfoFrame->setContest(ct);

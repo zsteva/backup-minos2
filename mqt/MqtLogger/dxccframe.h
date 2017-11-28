@@ -7,7 +7,7 @@ namespace Ui {
 class DXCCFrame;
 }
 
-class BaseContestLog;
+class LoggerContestLog;
 
 class DXCCGridModel: public QAbstractItemModel
 {
@@ -15,7 +15,7 @@ class DXCCGridModel: public QAbstractItemModel
         DXCCGridModel();
         ~DXCCGridModel();
 
-        BaseContestLog *ct;
+        LoggerContestLog *ct;
 
         void reset();
         void initialise( );
@@ -50,7 +50,7 @@ public:
     explicit DXCCFrame(QWidget *parent = 0);
     ~DXCCFrame();
 
-    void setContest(BaseContestLog *contest);
+    void setContest(LoggerContestLog *contest);
     void reInitialiseCountries();
     void scrollToCountry( int ctry_ind, bool makeVisible );
 

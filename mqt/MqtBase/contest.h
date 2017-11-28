@@ -80,6 +80,11 @@ class BaseContestLog: public BaseLogList
       bool suppressProtected;
       bool unwriteable;
 
+      virtual bool minosSaveFile( bool /*newfile*/ )
+      {
+         return false;
+      }
+
    public:
       int cslotno;
       int unfilledCount;
@@ -251,8 +256,8 @@ class BaseContestLog: public BaseLogList
       long kms1, kms2, kms1p, kms2p;
       int mults1, mults2, mults1p, mults2p;
       int bonus1, bonus2, bonus1p, bonus2p;
-      bool updateStat(QSharedPointer<BaseContact> cct );
-      void updateStats();
+      bool updateStat(QSharedPointer<BaseContact> cct , int sp1, int sp2);
+      void updateStats(int p1, int p2);
       char lasttchar;
 
       // methods
@@ -262,18 +267,13 @@ class BaseContestLog: public BaseLogList
       {
          return false;
       }
+      virtual bool minosSaveContestContact( const QSharedPointer<BaseContact> /*lct*/ )
+      {
+         return false;
+      }
       virtual void closeFile( void )
       {}
       virtual bool GJVload( void )
-      {
-         return false;
-      }
-
-      virtual bool minosSaveFile( bool /*newfile*/ )
-      {
-         return false;
-      }
-      virtual bool minosSaveContestContact( const QSharedPointer<BaseContact> /*lct*/ )
       {
          return false;
       }
