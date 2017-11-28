@@ -952,6 +952,10 @@ void ContestDetails::enableControls()
    ui->MainOpComboBox->setEnabled(!protectedChecked);
    ui->SecondOpComboBox->setEnabled(!protectedChecked);
    ui->AntOffsetEdit->setEnabled(!protectedChecked);
+
+   ui->PowerEdit->setEnabled(!protectedChecked);
+   ui->ModeComboBox->setEnabled(!protectedChecked);
+   ui->BonusComboBox->setEnabled(!protectedChecked);
 }
 //---------------------------------------------------------------------------
 
