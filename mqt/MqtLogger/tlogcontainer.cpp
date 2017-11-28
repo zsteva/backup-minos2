@@ -25,7 +25,6 @@ TLogContainer *LogContainer = 0;
 
 TLogContainer::TLogContainer(QWidget *parent) :
     QMainWindow(parent),
-    //keyerLoaded(false), //bandMapLoaded(false),
     lastSessionSelected(0),
     ui(new Ui::TLogContainer)
 {
@@ -441,7 +440,8 @@ void TLogContainer::updateRecentFileActions()
 
     int numRecentFiles = qMin(files.size(), static_cast< int >(MaxRecentFiles));
 
-    for (int i = 0; i < numRecentFiles; ++i) {
+    for (int i = 0; i < numRecentFiles; ++i)
+    {
         QString text = tr("&%1 %2").arg(i + 1).arg(strippedName(files[i]));
         recentFileActs[i]->setText(text);
         recentFileActs[i]->setData(files[i]);
@@ -1049,7 +1049,6 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
          TSingleLogFrame *f = new TSingleLogFrame( this, contest );
          f->setObjectName( QString( "LogFrame" ) + QString::number(namegen++));
 
-
          int tno = ui->ContestPageControl->addTab(f, baseFName);
          ui->ContestPageControl->setCurrentWidget(ui->ContestPageControl->widget(tno));
          ui->ContestPageControl->setTabToolTip(tno, contest->cfileName);
@@ -1071,8 +1070,6 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
                addSlot( 0, expName, false, -1 );
             }
          }
-         ui->ContestPageControl->tabBar()->setTabTextColor(tno,Qt::blue);
-        // ui->ContestPageControl->tabBar()->setTabBackgroundColor(tno,Qt::red); Doesn't exist :(
          removeCurrentFile( fname );
       }
    }
@@ -1371,8 +1368,6 @@ void TLogContainer::preloadLists( )
 
 void TLogContainer::addListSlot( const QString &fname, int slotno, bool preload )
 {
-    // Is this the correct return type, or do we have an even more basic one? Or even a useful interface...
-
     // openFile ends up calling ContactList::initialise which then
     // calls TContestApp::insertList
 
@@ -1498,7 +1493,6 @@ void TLogContainer::onTabMoved(int from, int to)
 
 void TLogContainer::ShiftTabLeftActionExecute( )
 {
-   //
    if ( !ui->ContestPageControl->currentWidget() )
       return ;
    int tno = ui->ContestPageControl->currentIndex();
@@ -1516,7 +1510,6 @@ void TLogContainer::ShiftTabLeftActionExecute( )
 
       TContestApp::getContestApp() ->writeContestList();
 
-      //      ContestPageControl->ActivePage->PageIndex = tno; // BCB - this moves the tabs
       ui->ContestPageControl->tabBar()->moveTab(tno, tno - 1);
 
       enableActions();
@@ -1543,17 +1536,6 @@ void TLogContainer::selectContest( BaseContestLog *pc, QSharedPointer<BaseContac
         }
     }
 }
-//---------------------------------------------------------------------------
-/*
-void TLogContainer::setKeyerLoaded()
-{
-   keyerLoaded = true;
-}
-bool TLogContainer::isKeyerLoaded()
-{
-   return keyerLoaded;
-}
-*/
 //---------------------------------------------------------------------------
 void TLogContainer::setCaption(QString captionToSet)
 {
