@@ -188,6 +188,7 @@ private:
 
     int calcMinosMode(QString mode);
 
+    void freqPlusMinusButton(double freq);
 };
 class FreqLineEdit : public QLineEdit
 {
