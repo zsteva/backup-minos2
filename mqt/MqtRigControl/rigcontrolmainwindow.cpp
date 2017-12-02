@@ -488,7 +488,7 @@ void RigControlMainWindow::closeRadio()
     showStatusMessage("Disconnected");
     sendStatusToLogDisConnected();
     logMessage(QString("Radio Closed"));
-    if (radioIndex > 0)
+    if (selectRig->currentRadio.radioName != "" && radioIndex > 0)
     {
        radio->closeRig();
     }
