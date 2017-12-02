@@ -202,12 +202,15 @@ void RigControlFrame::changeRadioFreq()
                     {
                         sendFreq(lastFreq);
                     }
-
+                    else if (!radioConnected && radioName.trimmed() == "No RadioN")
+                    {
+                        noRadioSendOutFreq(lastFreq);
+                    }
                 }
-                else
-                {
-                    noRadioSendOutFreq(lastFreq);
-                }
+                //else
+                //{
+                //
+                //}
 
             }
 
@@ -261,10 +264,14 @@ void RigControlFrame::radioBandFreq(int index)
                 {
                     sendFreq(f);
                 }
-            }
-            else
-            {
-                noRadioSendOutFreq(f);
+                else if (!radioConnected && radioName.trimmed() == "No Radio")
+                {
+                     noRadioSendOutFreq(f);
+                }
+            //}
+            //else
+            //{
+            //    noRadioSendOutFreq(f);
             }
        }
 
@@ -404,11 +411,12 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
             }
 
         }
+        else if (!radioConnected && radioName.trimmed() == "No Radio")
+        {
+            noRadioSendOutFreq(m.freq);
+        }
     }
-    else
-    {
-        noRadioSendOutFreq(m.freq);
-    }
+
 }
 
 
@@ -642,16 +650,9 @@ void RigControlFrame::freqNeg_ShortCut()
 
 void RigControlFrame::freqPlusShortCut_clicked(bool /*click*/)
 {
-    if (isRadioLoaded() && radioConnected && !radioError)
-    {
-        QString freq = calcNewFreq(5000.0);
-        if (freq != "")
-        {
-            ui->freqInput->setText(freq);
-            emit sendFreqControl(freq);
-        }
 
-    }
+    freqPlusMinusButton(5000.0);
+
 }
 
 
@@ -659,15 +660,33 @@ void RigControlFrame::freqPlusShortCut_clicked(bool /*click*/)
 void RigControlFrame::freqNegShortCut_clicked(bool /*click*/)
 {
 
-    if (isRadioLoaded() && radioConnected && !radioError)
+    freqPlusMinusButton(-5000.0);
+
+}
+
+
+void RigControlFrame::freqPlusMinusButton(double f)
+{
+
+    if (isRadioLoaded())
     {
-        QString freq = calcNewFreq(-5000.0);
-       if (freq != "")
-       {
+        QString freq = calcNewFreq(f);
+        if (freq != "")
+        {
            ui->freqInput->setText(freq);
-           emit sendFreqControl(freq);
-       }
+
+           if (radioConnected && !radioError)
+           {
+
+               emit sendFreqControl(freq);
+           }
+           else if (!radioConnected && radioName.trimmed() == "No Radio")
+           {
+               noRadioSendOutFreq(freq);
+           }
+        }
     }
+
 }
 
 
@@ -760,13 +779,14 @@ void RigControlFrame::runButReadActSel(int buttonNumber)
             }
 
         }
+        else if (!radioConnected && radioName.trimmed() == "No Radio")
+        {
+            noRadioSendOutFreq(m.freq);
+        }
     }
-    else
-    {
-        noRadioSendOutFreq(m.freq);
-    }
-
 }
+
+
 
 void RigControlFrame::runButWriteActSel(int buttonNumber)
 {
