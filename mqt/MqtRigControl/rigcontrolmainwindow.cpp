@@ -485,13 +485,15 @@ void RigControlMainWindow::openRadio()
 void RigControlMainWindow::closeRadio()
 {
 
-    showStatusMessage("Disconnected");
-    sendStatusToLogDisConnected();
-    logMessage(QString("Radio Closed"));
-    if (selectRig->currentRadio.radioName != "" && radioIndex > 0)
+    if (radio->get_serialConnected())
     {
        radio->closeRig();
+
+       showStatusMessage("Disconnected");
+       sendStatusToLogDisConnected();
+       logMessage(QString("Radio Closed"));
     }
+
 
 }
 

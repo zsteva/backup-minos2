@@ -427,7 +427,7 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
         else if (!radioConnected && radioName.trimmed() == "No Radio")
         {
             noRadioSendOutFreq(m.freq);
-            //noRadioSendOutMode(m.mode);
+            noRadioSendOutMode(m.mode);
         }
     }
 
@@ -461,14 +461,14 @@ void RigControlFrame::noRadioSetMode(QString m)
 {
     QString mode = m;
     QStringList ml = m.split(':');
-    if (ml.count != 2)
+    if (ml.count() != 2)
     {
         return;
     }
 
     if (ml[0] == hamlibData::MGM)
     {
-        mol[1] = "N/A";
+        ml[1] = "N/A";
         mode = ml[0] + ml[1];
     }
 
