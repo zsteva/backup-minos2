@@ -516,7 +516,7 @@ void RigControlFrame::setMode(QString m)
 
 void RigControlFrame::sendModeToRadio(QString m)
 {
-    traceMsg(QString("Send Mode to Radio - Mode = %1").arg(m));
+    traceMsg(QString("Send Mode to Radio = %1").arg(m));
     emit sendModeToControl(QString("%1").arg(m));
 
 }
