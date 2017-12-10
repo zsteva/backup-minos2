@@ -18,4 +18,6 @@ QString convertFreqToStr(double frequency);
 
 double convertStrToFreq(QString frequency);
 
+QString validateFreqTxtInput(QString f, int* ok);
+
 #endif // RIGUTILS_H

@@ -8,6 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "rigutils.h"
+#include <QRegExp>
 
 // convert freq with delimiter for display
 
@@ -80,4 +81,53 @@ double convertStrToFreq(QString frequency)
     {
         return -1.0;
     }
+}
+
+
+QString validateFreqTxtInput(QString f, int* ok)
+{
+
+    if (f == "")
+    {
+        *ok = true;
+        return f;
+    }
+
+    QRegExp re = QRegExp("\\d*");
+    QRegExp f1rx = QRegExp("\\d{1,3}\\.\\d{3,3}");          // match mhz.khz
+    QRegExp f2rx = QRegExp("\\d{1,2}\\.\\d{3,3}\\.\\d{3,3}"); // match ghz.mhz.khz
+    QRegExp f3rx = QRegExp("\\d{1,3}\\.\\d{3,3}\\.\\d{3,3}"); // match mhz.khz.hz
+    QRegExp f4rx = QRegExp("\\d{1,2}\\.\\d{3,3}\\.\\d{3,3}\\.\\d{3,3}"); // match ghz.mhz.khz.hz
+
+    QString freq = f;
+    int pCount = f.count(QLatin1Char('.'));
+    QString rawFreq = f.remove('.');
+
+    QString retFreq = "";
+
+    if (!re.exactMatch(rawFreq) || pCount == 0)
+    {
+        // not all digits or no periods
+        *ok = false;
+        return retFreq;
+    }
+
+    if (f1rx.exactMatch(freq) || f2rx.exactMatch(freq))
+    {
+        *ok = true;
+        retFreq = freq + ".000";
+    }
+    else if (f3rx.exactMatch(freq) || f4rx.exactMatch(freq))
+    {
+        *ok = true;
+        retFreq = freq;
+
+    }
+    else
+    {
+        *ok = false;
+        retFreq = "error";
+    }
+
+    return retFreq;
 }

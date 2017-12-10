@@ -63,7 +63,7 @@ const QStringList bandFreq = { "",
                                "1296210000",
                                "10000000000"};
 
-const QStringList freqDialZero =  { "",
+const QStringList freqDialZero =  { "00.000.000",
                                     "00.000.000",
                                     "00.000.000",
                                     "00.000.000",
@@ -74,26 +74,7 @@ const QStringList freqDialZero =  { "",
 
 
 
-/*
 
-const QStringList bandFreq = { "",
-                               "28.170.000",
-                               "50.170.000",
-                               "70.210.000",
-                               "144.290.000",
-                               "432.170.000",
-                               "1.296.210.000",
-                               "10.000.000.000"};
-
-const QStringList freqDialZero =  { "",
-                                    "00.000.000",
-                                    "00.000.000",
-                                    "00.000.000",
-                                    "000.000.000",
-                                    "000.000.000",
-                                    "0.000.000.000",
-                                    "00.000.000.000"};
-*/
 
 const maskData::freqMask_lookup bandMaskIdx[] = { maskData::MHZ99,      /* Not used */
                                                     maskData::MHZ99,    /* 10m  */

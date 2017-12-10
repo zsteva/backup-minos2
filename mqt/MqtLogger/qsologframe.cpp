@@ -579,6 +579,23 @@ void QSOLogFrame::on_GJVOKButton_clicked()
        screenContact.contactFlags &= ~( TO_BE_ENTERED | FORCE_LOG );
     }
 
+    // validate entered/edited freq
+    int ok;
+    QString valFreq = validateFreqTxtInput(ui->frequencyEdit->text().trimmed(), &ok);
+    if (!ok)
+    {
+        // error
+        QMessageBox msgBox;
+        msgBox.setText("Frequency has invalid characters or missing periods.");
+        msgBox.exec();
+        return;
+    }
+    else
+    {
+        screenContact.frequency = valFreq;
+    }
+
+
     // all is OK (or we will have executed a return statement)
     // so do it!
 
