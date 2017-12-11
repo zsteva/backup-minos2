@@ -9,6 +9,7 @@
 
 #include "rigutils.h"
 #include <QRegExp>
+#include <QStringList>
 
 // convert freq with delimiter for display
 
@@ -93,41 +94,54 @@ QString validateFreqTxtInput(QString f, int* ok)
         return f;
     }
 
-    QRegExp re = QRegExp("\\d*");
-    QRegExp f1rx = QRegExp("\\d{1,3}\\.\\d{3,3}");          // match mhz.khz
-    QRegExp f2rx = QRegExp("\\d{1,2}\\.\\d{3,3}\\.\\d{3,3}"); // match ghz.mhz.khz
-    QRegExp f3rx = QRegExp("\\d{1,3}\\.\\d{3,3}\\.\\d{3,3}"); // match mhz.khz.hz
-    QRegExp f4rx = QRegExp("\\d{1,2}\\.\\d{3,3}\\.\\d{3,3}\\.\\d{3,3}"); // match ghz.mhz.khz.hz
 
-    QString freq = f;
-    int pCount = f.count(QLatin1Char('.'));
-    QString rawFreq = f.remove('.');
+    QRegExp f1rx = QRegExp("\\d{1,5}\\.\\d{3,6}");  // match ghz_mhz.khz_hz
 
     QString retFreq = "";
-
-    if (!re.exactMatch(rawFreq) || pCount == 0)
+    if (f.count('.') != 1)
     {
-        // not all digits or no periods
         *ok = false;
-        return retFreq;
+        return f;
     }
 
-    if (f1rx.exactMatch(freq) || f2rx.exactMatch(freq))
-    {
-        *ok = true;
-        retFreq = freq + ".000";
-    }
-    else if (f3rx.exactMatch(freq) || f4rx.exactMatch(freq))
-    {
-        *ok = true;
-        retFreq = freq;
 
+    if (f1rx.exactMatch(f))
+    {
+        QStringList sl = f.split('.');
+        if (sl[0].count() > 3)
+        {
+            retFreq = sl[0].left(sl[0].count()-3) + "." + sl[0].right(3) + ".";
+        }
+        else
+        {
+            retFreq = sl[0] + ".";
+        }
+
+        if (sl[1].count() > 3)
+        {
+           retFreq = retFreq + sl[1].left(3) + "." + sl[1].right(sl[1].count()-3);
+           if (sl[1].count() == 4)
+           {
+               retFreq = retFreq + "00";
+           }
+           else if (sl[1].count() == 5)
+           {
+               retFreq = retFreq + "0";
+           }
+        }
+        else
+        {
+           retFreq = retFreq + sl[1] + "." + "000";
+        }
+
+        *ok = true;
     }
     else
     {
+        // error
         *ok = false;
-        retFreq = "error";
     }
+
 
     return retFreq;
 }

@@ -592,6 +592,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
     }
     else
     {
+        qDebug() << valFreq;
         screenContact.frequency = valFreq;
     }
 
