@@ -586,7 +586,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
     {
         // error
         QMessageBox msgBox;
-        msgBox.setText("Frequency has invalid characters or missing periods.");
+        msgBox.setText("Frequency has invalid characters or missing periods.\r\n\r\nThe format required is (e.g.) 1296.325 or 144.290123\r\n");
         msgBox.exec();
         return;
     }
@@ -594,6 +594,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
     {
         qDebug() << valFreq;
         screenContact.frequency = valFreq;
+        ui->frequencyEdit->setText(valFreq);
     }
 
 
