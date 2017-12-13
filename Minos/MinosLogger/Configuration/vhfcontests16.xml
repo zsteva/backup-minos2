@@ -3000,7 +3000,7 @@ When applied to the VHF Championship, if a station enters some contests with hig
 </contest>
 <contest>
 <name>xmasfun</name>
-<description>50/70/144/432MHz Christmas Cumulatives Contest</description>
+<description>Christmas Cumulatives Contest</description>
 <short_description>Christmas Cumulatives</short_description>
 <time_list>
 <month_list>Dec</month_list>
