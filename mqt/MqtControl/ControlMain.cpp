@@ -81,8 +81,10 @@ ControlMain::~ControlMain()
 }
 void ControlMain::closeEvent(QCloseEvent * event)
 {
+    LogTimer.stop();
     monitor.closeDown();
-    QWidget::closeEvent(event);
+    event->accept();
+    //QWidget::closeEvent(event);
 }
 void ControlMain::moveEvent(QMoveEvent * event)
 {
@@ -137,10 +139,15 @@ void ControlMain::linesChangedEvent( )
     {
         l->setState( ls->getState( "PTTOut" ) );
     }
-    l = monitor.findLine( "Key", false );   // output line
+    l = monitor.findLine( "T1", false );   // output line
     if ( l )
     {
-        l->setState( ls->getState( "Key" ) );
+        l->setState( ls->getState( "T1" ) );
+    }
+    l = monitor.findLine( "T2", false );   // output line
+    if ( l )
+    {
+        l->setState( ls->getState( "T2" ) );
     }
 }
 //---------------------------------------------------------------------------
@@ -264,8 +271,16 @@ void ControlMain::setL6(bool s)
 {
     ui->L6CheckBox->setChecked(s);
 }
+void ControlMain::setT1(bool s)
+{
+    ui->T1CheckBox->setChecked(s);
+}
+void ControlMain::setT2(bool s)
+{
+    ui->T2CheckBox->setChecked(s);
+}
 
-void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool L3, bool L4, bool L5, bool L6 )
+void setLines(bool PTTOut, bool PTTIn, bool L1, bool L2, bool L3, bool L4, bool L5, bool L6 , bool T1, bool T2)
 {
    // This ought to be synchronised...
    controlMain->setPTTOut(PTTOut);
@@ -276,4 +291,6 @@ void setLines( bool PTTOut, bool PTTIn, bool L1, bool L2, bool L3, bool L4, bool
    controlMain->setL4(L4);
    controlMain->setL5(L5);
    controlMain->setL6(L6);
+   controlMain->setT1(T1);
+   controlMain->setT2(T2);
 }

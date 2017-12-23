@@ -19,7 +19,7 @@ class commonLineControl;
 class LineConfig;
 class PortConfig;
 
-void setLines(bool PTTOut, bool PTTIn, bool L1, bool L2 , bool L3, bool L4, bool L5, bool L6);
+void setLines(bool PTTOut, bool PTTIn, bool L1, bool L2 , bool L3, bool L4, bool L5, bool L6, bool T1, bool T2);
 
 class timerTicker: public QObject
 {
@@ -53,8 +53,6 @@ class commonController: public timerTicker
       virtual void tickEvent();       // this will often be an interrupt routine
       void checkControls( void );
 
-      //void ptt(int);
-      //void key(int);
       void lineChange( commonLineControl *line );
 };
 #endif

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>110</width>
-    <height>269</height>
+    <height>392</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -79,6 +79,20 @@
      <widget class="QCheckBox" name="L6CheckBox">
       <property name="text">
        <string>L6</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="T1CheckBox">
+      <property name="text">
+       <string>T1</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="T2CheckBox">
+      <property name="text">
+       <string>T2</string>
       </property>
      </widget>
     </item>

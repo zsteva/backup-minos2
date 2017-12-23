@@ -47,16 +47,6 @@ void commonController::closeDown()
 commonController::~commonController()
 {
 }
-/*
-void commonController::ptt(int)
-{
- 
-}
-void commonController::key(int)
-{
- 
-}
-*/
 bool commonController::initialise( )
 {
    return true;
@@ -135,9 +125,13 @@ void commonController::lineChange( commonLineControl *line )
    commonLineControl *l4 = findLine( "L4", true );
    commonLineControl *l5 = findLine( "L5", true );
    commonLineControl *l6 = findLine( "L6", true );
-   if ( pttout && pttin && l1 && l2 && l3 && l4 && l5 && l6 )
+   commonLineControl *t1 = findLine( "T1", false );
+   commonLineControl *t2 = findLine( "T2", false );
+   if ( pttout && pttin && l1 && l2 && l3 && l4 && l5 && l6 && t1 && t2 )
    {
-      setLines( pttout->getState(), pttin->getState(), l1->getState(), l2->getState(), l3->getState(), l4->getState(), l5->getState(), l6->getState() );
+      setLines( pttout->getState(), pttin->getState(),
+                l1->getState(), l2->getState(), l3->getState(), l4->getState(), l5->getState(), l6->getState(),
+                t1->getState(), t2->getState());
    }
    LineSet *ls = LineSet::GetLineSet();
    ls->publish( line->lineName, line->getState() );
