@@ -52,7 +52,6 @@ class commonPort : public QObject
       virtual bool closePort() = 0;
 
       virtual void ptt( int state ) = 0;
-      virtual void key( int state ) = 0;
 
       // These "changed" calls need to link back to the controlling
       // keyer(s), which know what to do with them!
@@ -94,7 +93,6 @@ class WindowsMonitorPort: public commonPort
     Q_OBJECT
    private:
       bool PTTState;
-      bool keyState;
       windowMonitor *winMonForm;
       QTimer LineCheck;
    public:
@@ -114,7 +112,6 @@ class WindowsMonitorPort: public commonPort
       virtual bool closePort();
 
       virtual void ptt( int state );
-      virtual void key( int state );
       virtual int getlinesMode()
       {
           return linesMode;
@@ -129,7 +126,6 @@ class WinMonitor: public lineMonitor
 {
    private:
       bool PTTState;
-      bool keyState;
 
       bool lastPttState;
       bool lastL1State;
@@ -147,7 +143,6 @@ class WinMonitor: public lineMonitor
       ~WinMonitor();
 
       virtual void ptt( int state );
-      virtual void key( int state );
 
       virtual bool pttChanged( int state );
       virtual bool L1Changed( int state );
@@ -170,7 +165,6 @@ class LineEventsPort: public commonPort
    private:
     QTimer LineTimer;
       bool PTTState;
-      bool keyState;
       bool linePTTState;
       bool lineL1State;
       bool lineL2State;
@@ -194,7 +188,6 @@ class LineEventsPort: public commonPort
       virtual bool closePort();
 
       virtual void ptt( int state );
-      virtual void key( int state );
 
       virtual void checkControls( );
       virtual int getlinesMode()

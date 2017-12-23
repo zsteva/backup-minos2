@@ -385,11 +385,6 @@ void lineMonitor::ptt( int state )
    if ( cp )
       cp->ptt( state );
 }
-void lineMonitor::key( int state )
-{
-   if ( cp )
-      cp->key( state );
-}
 
 //==============================================================================
 timerTicker::timerTicker()

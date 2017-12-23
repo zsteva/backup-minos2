@@ -21,7 +21,7 @@ public:
     explicit KeyerMain(QWidget *parent = 0);
     virtual ~KeyerMain();
 
-    void setLines(bool PTTOut, bool PTTIn, bool L1, bool L2, bool key , int lmode);
+    void setLines(bool PTTOut, bool PTTIn, bool L1, bool L2, int lmode);
     void volcallback( unsigned int rmsvol , unsigned int peakvol, int samples );
 
 private slots:
@@ -86,7 +86,6 @@ private:
     VKMixer *mixer;
 
     bool PTT;
-    bool keyline;
     bool PTTRef;
     bool L1Ref;
     bool L2Ref;

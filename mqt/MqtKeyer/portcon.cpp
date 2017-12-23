@@ -134,7 +134,7 @@ bool WindowsMonitorPort::L2State = false;
 int WindowsMonitorPort::linesMode = 0;
 
 WindowsMonitorPort::WindowsMonitorPort( const PortConfig &port ) : commonPort( port ),
-      PTTState( false ), keyState( false ), winMonForm( 0 )
+      PTTState( false ), winMonForm( 0 )
 {
 }
 WindowsMonitorPort::~WindowsMonitorPort()
@@ -180,20 +180,9 @@ void WindowsMonitorPort::ptt( int state )
    {
       PTTState = state;
       if ( WinLineCallback )
-         ( *WinLineCallback ) ( PTTState, keyState, PTTInState, L1State, L2State, linesMode );
+         ( *WinLineCallback ) ( PTTState, PTTInState, L1State, L2State, linesMode );
    }
 }
-
-void WindowsMonitorPort::key( int state )
-{
-   if ( currentKeyer && currentKeyer->started )
-   {
-      keyState = state;
-      if ( WinLineCallback )
-         ( *WinLineCallback ) ( PTTState, keyState, PTTInState, L1State, L2State, linesMode );
-   }
-}
-
 
 void WindowsMonitorPort::checkControls( void )
 {
@@ -253,7 +242,7 @@ bool WinMonitor::L2State = false;
 int WinMonitor::linesMode = false;
 
 WinMonitor::WinMonitor() : lineMonitor( "WinMon" ),
-      PTTState( false ), keyState( false )
+      PTTState( false )
 {}
 WinMonitor::~WinMonitor()
 {
@@ -274,20 +263,9 @@ void WinMonitor::ptt( int state )
    {
       PTTState = state;
       if ( WinLineCallback )
-         ( *WinLineCallback ) ( PTTState, keyState, PTTInState, L1State, L2State, linesMode );
+         ( *WinLineCallback ) ( PTTState, PTTInState, L1State, L2State, linesMode );
    }
 }
-
-void WinMonitor::key( int state )
-{
-   if ( currentKeyer && currentKeyer->started )
-   {
-      keyState = state;
-      if ( WinLineCallback )
-         ( *WinLineCallback ) ( PTTState, keyState, PTTInState, L1State, L2State, linesMode );
-   }
-}
-
 
 void WinMonitor::checkControls( void )
 {}
@@ -295,28 +273,28 @@ bool WinMonitor::L1Changed( int state )
 {
    L1State = state;
    if ( WinLineCallback )
-      ( *WinLineCallback ) ( PTTState, keyState, PTTInState, L1State, L2State, linesMode );
+      ( *WinLineCallback ) ( PTTState, PTTInState, L1State, L2State, linesMode );
    return true;
 }
 bool WinMonitor::L2Changed( int state )
 {
    L2State = state;
    if ( WinLineCallback )
-      ( *WinLineCallback ) ( PTTState, keyState, PTTInState, L1State, L2State, linesMode );
+      ( *WinLineCallback ) ( PTTState, PTTInState, L1State, L2State, linesMode );
    return true;
 }
 bool WinMonitor::pttChanged( int state )
 {
    PTTInState = state;
    if ( WinLineCallback )
-      ( *WinLineCallback ) ( PTTState, keyState, PTTInState, L1State, L2State, linesMode );
+      ( *WinLineCallback ) ( PTTState, PTTInState, L1State, L2State, linesMode );
    return true;
 }
 bool WinMonitor::linesModeChanged( int state )
 {
    linesMode = state;
    if ( WinLineCallback )
-      ( *WinLineCallback ) ( PTTState, keyState, PTTInState, L1State, L2State, linesMode );
+      ( *WinLineCallback ) ( PTTState, PTTInState, L1State, L2State, linesMode );
    return true;
 }
 //==============================================================================
@@ -382,18 +360,7 @@ void LineEventsPort::ptt( int state )
       ls->publish( "PTTOut", state );
       PTTState = state;
       if ( WinLineCallback )
-         ( *WinLineCallback ) ( PTTState, keyState, lastPTTState, lastL1State, lastL2State, lastLinesMode );
-   }
-}
-void LineEventsPort::key( int state )
-{
-   if ( currentKeyer && currentKeyer->started )
-   {
-      LineSet * ls = LineSet::GetLineSet();
-      ls->publish( "Key", state );
-      keyState = state;
-      if ( WinLineCallback )
-         ( *WinLineCallback ) ( PTTState, keyState, lastPTTState, lastL1State, lastL2State, lastLinesMode );
+         ( *WinLineCallback ) ( PTTState, lastPTTState, lastL1State, lastL2State, lastLinesMode );
    }
 }
 
@@ -404,21 +371,21 @@ void LineEventsPort::checkControls()
       lastL2State = !lastL2State;
       L2Changed( lastL2State );
       if ( WinLineCallback )
-         ( *WinLineCallback ) ( PTTState, keyState, lastPTTState, lastL1State, lastL2State, lastLinesMode );
+         ( *WinLineCallback ) ( PTTState, lastPTTState, lastL1State, lastL2State, lastLinesMode );
    }
    if ( lineL1State != lastL1State )       //L1
    {
       lastL1State = !lastL1State;
       L1Changed( lastL1State );
       if ( WinLineCallback )
-         ( *WinLineCallback ) ( PTTState, keyState, lastPTTState, lastL1State, lastL2State, lastLinesMode );
+         ( *WinLineCallback ) ( PTTState, lastPTTState, lastL1State, lastL2State, lastLinesMode );
    }
    if ( linePTTState != lastPTTState )       //PTT
    {
       lastPTTState = !lastPTTState;
       pttChanged( lastPTTState );
       if ( WinLineCallback )
-         ( *WinLineCallback ) ( PTTState, keyState, lastPTTState, lastL1State, lastL2State, lastLinesMode );
+         ( *WinLineCallback ) ( PTTState, lastPTTState, lastL1State, lastL2State, lastLinesMode );
    }
    if (linesMode != lastLinesMode)
    {
@@ -426,6 +393,6 @@ void LineEventsPort::checkControls()
        linesModeChanged( lastLinesMode );
    }
    if ( WinLineCallback )
-      ( *WinLineCallback ) ( PTTState, keyState, lastPTTState, lastL1State, lastL2State, lastLinesMode );
+      ( *WinLineCallback ) ( PTTState, lastPTTState, lastL1State, lastL2State, lastLinesMode );
 }
 //==============================================================================

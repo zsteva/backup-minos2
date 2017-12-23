@@ -141,7 +141,6 @@ class lineMonitor
       virtual ~lineMonitor();
 
       virtual void ptt( int state );
-      virtual void key( int state );
 
       virtual bool pttChanged( int state ) = 0;
       virtual bool L1Changed( int state ) = 0;
