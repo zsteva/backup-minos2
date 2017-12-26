@@ -27,9 +27,9 @@ public:
 public slots:
     virtual void reject() override;
 
-private slots:
     virtual void accept() override;
 
+private slots:
     void on_ExitButton_clicked();
 
     void on_OKButton_clicked();
