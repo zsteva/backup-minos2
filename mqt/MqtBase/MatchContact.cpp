@@ -32,7 +32,7 @@ bool MatchContactList::operator<( const BaseMatchContest& rhs ) const
     }
     if ( cn1 != cn2 )
     {
-       if ( cn1 < cn2 )
+       if ( cn1->getSlotNo() < cn2->getSlotNo() )
           return true;
        else
           return false;
@@ -58,7 +58,7 @@ bool MatchContactLog::operator<( const BaseMatchContest& rhs ) const
    }
    if ( cn1 != cn2 )
    {
-       if ( cn1 < cn2 )
+       if ( cn1->cslotno < cn2->cslotno )
           return true;
        else
           return false;
@@ -103,10 +103,10 @@ bool MatchLogContact::operator<( const MatchContact& rhs ) const
    {
       // as we now separate current contest and others...
       BaseContestLog * cc = MinosParameters::getMinosParameters() ->getCurrentContest();
-      if ( cn1 == cc )
+      if ( cn1->cslotno == cc->cslotno )
          return true;
       else
-         if ( cn2 == cc )
+         if ( cn2->cslotno == cc->cslotno )
             return false;
       if ( cn1->cslotno < cn2->cslotno )
          return true;

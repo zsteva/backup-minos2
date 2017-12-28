@@ -38,5 +38,6 @@ class ContactList : public BaseLogList
          return ctList.size();
       }
       ListContact *pcontactAt(int offset );
+      int getSlotNo() const{return slotno;}
 };
 #endif

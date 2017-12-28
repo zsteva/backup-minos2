@@ -452,7 +452,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
 
     if (role == Qt::BackgroundRole)
     {
-        if (ct)
+        if (ct && type == ThisMatch)
         {
             if ( ct->contactFlags.getValue() & FORCE_LOG )
             {
@@ -475,7 +475,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
 
     if (role == Qt::DisplayRole)
     {
-        QColor lightRed = QColor(Qt::red).lighter(140);
+        QColor lightRed = QColor(Qt::red).lighter(100);
         if (type == ArchiveMatch)
         {
             const ContactList *contactList = matchContest->getContactList();
@@ -592,6 +592,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
                     {
                         QString name = contest->name.getValue();
                         QString band = contest->band.getValue();
+
                         QString cell = "[" + band + "] " + name;
                         if (currentModel)
                         {
@@ -723,23 +724,29 @@ void MatchTreesFrame::afterThisTreeClicked()
        MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem * > (matchTreeClickIndex.internalPointer());
 
        QSharedPointer<MatchContact> mc = MatchTreeIndex->getMatchContact();
-       QSharedPointer<BaseContact> bct = mc->getBaseContact();
+       if (mc)
+       {
+           QSharedPointer<BaseContact> bct = mc->getBaseContact();
 
-       QString bearing = QString::number(bct->bearing);
-       MinosLoggerEvents::SendBrgStrToRot(bearing);
+           QString bearing = QString::number(bct->bearing);
+           MinosLoggerEvents::SendBrgStrToRot(bearing);
+       }
     }
 }
 void MatchTreesFrame::afterMatchTreeClicked()
 {
     if ( otherTreeClickIndex.isValid() )
     {
-       MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem * > (otherTreeClickIndex.internalPointer());
+        MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem * > (otherTreeClickIndex.internalPointer());
 
-       QSharedPointer<MatchContact> mc = MatchTreeIndex->getMatchContact();
-       QSharedPointer<BaseContact> bct = mc->getBaseContact();
+        QSharedPointer<MatchContact> mc = MatchTreeIndex->getMatchContact();
+        if (mc)
+        {
+            QSharedPointer<BaseContact> bct = mc->getBaseContact();
 
-       QString bearing = QString::number(bct->bearing);
-       MinosLoggerEvents::SendBrgStrToRot(bearing);
+            QString bearing = QString::number(bct->bearing);
+            MinosLoggerEvents::SendBrgStrToRot(bearing);
+        }
     }
 }
 void MatchTreesFrame::afterArchiveTreeClicked()
@@ -748,9 +755,12 @@ void MatchTreesFrame::afterArchiveTreeClicked()
     {
        MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem * >(archiveTreeClickIndex.internalPointer());
        QSharedPointer<MatchContact> mc = MatchTreeIndex->getMatchContact();
-       ListContact *lct = mc->getListContact();
+       if (mc)
+       {
+           ListContact *lct = mc->getListContact();
 
-       QString bearing = lct->getField(egBrg, contest);
-       MinosLoggerEvents::SendBrgStrToRot(bearing);
+           QString bearing = lct->getField(egBrg, contest);
+           MinosLoggerEvents::SendBrgStrToRot(bearing);
+       }
     }
 }
