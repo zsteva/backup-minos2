@@ -17,16 +17,28 @@ DisplayContestContact::DisplayContestContact( BaseContestLog * ct, bool time_now
    BaseContestLog * clp = ct;
 
    int ms = clp->maxSerial + 1;
+   QString curmode = clp->currentMode.getValue();
 
    serialr.setInitialValue( QString( SERIALLENGTH, ' ' ) );
-   repr.setInitialValue( "5  " );
-   reps.setInitialValue( "5  " );
+
+   if (curmode != hamlibData::MGM)
+   {
+       repr.setInitialValue( "5  " );
+       reps.setInitialValue( "5  " );
+   }
+   else
+   {
+       repr.setInitialValue( "   " );
+       reps.setInitialValue( "   " );
+   }
    clearDirty();
 
    QString temp = QString("%1").arg(ms, 3);
    serials.setValue( temp );
 
-   mode.setValue( clp->currentMode.getValue() );
+   mode.setValue( curmode );
+
+
 }
 DisplayContestContact::~DisplayContestContact()
 {}

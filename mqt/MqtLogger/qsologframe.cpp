@@ -1089,7 +1089,7 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
 
    // make sure the mode button shows the correct "flip" value
 
-   if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
+   if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW || ui->ModeComboBoxGJV->currentText() == hamlibData::MGM)
    {
       ui->ModeButton->setText(oldMode);
    }
@@ -1569,7 +1569,7 @@ void QSOLogFrame::setMode(QString m)
     // make sure the mode button shows the correct "flip" value
 
 
-   if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
+   if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW || ui->ModeComboBoxGJV->currentText() == hamlibData::MGM)
    {
       ui->ModeButton->setText(oldMode);
    }
@@ -1864,7 +1864,7 @@ void QSOLogFrame::modeSentFromRig(QString m)
             }
 
             // ensure flip mode is shown on mode button
-            if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
+            if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW || ui->ModeComboBoxGJV->currentText() == hamlibData::MGM)
             {
                ui->ModeButton->setText(oldmode);
             }
@@ -1899,26 +1899,29 @@ void QSOLogFrame::logScreenEntry( )
         lct = ct->addContact( ctmax, 0, false, false, screenContact.mode, dtg(true) );	// "current" doesn't get flag, don't save ContestLog yet
    }
 
-   bool contactmodeCW = ( screenContact.reps.size() == 3 && screenContact.repr.size() == 3 );
-   bool curmodeCW = ( screenContact.mode.compare( hamlibData::CW, Qt::CaseInsensitive ) == 0 );
-
-   if ( !edit && contactmodeCW != curmodeCW )
+   if ( screenContact.mode.compare( hamlibData::MGM, Qt::CaseInsensitive ) != 0 )
    {
-      // ask if change...
-      if ( !curmodeCW )
-      {
-         if ( MinosParameters::getMinosParameters() ->yesNoMessage( this, "Change mode to CW?" ) )
-         {
-            screenContact.mode = hamlibData::CW;
-         }
-      }
-      else
-      {
-         if ( MinosParameters::getMinosParameters() ->yesNoMessage( this, "Change mode to USB?" ) )
-         {
-            screenContact.mode = hamlibData::USB;
-         }
-      }
+       bool contactmodeCW = ( screenContact.reps.size() == 3 && screenContact.repr.size() == 3 );
+       bool curmodeCW = ( screenContact.mode.compare( hamlibData::CW, Qt::CaseInsensitive ) == 0 );
+
+       if ( !edit && contactmodeCW != curmodeCW )
+       {
+          // ask if change...
+          if ( !curmodeCW )
+          {
+             if ( MinosParameters::getMinosParameters() ->yesNoMessage( this, "Change mode to CW?" ) )
+             {
+                screenContact.mode = hamlibData::CW;
+             }
+          }
+          else
+          {
+             if ( MinosParameters::getMinosParameters() ->yesNoMessage( this, "Change mode to USB?" ) )
+             {
+                screenContact.mode = hamlibData::USB;
+             }
+          }
+       }
    }
    ct->currentMode.setValue( screenContact.mode );
    screenContact.op1 = ct->currentOp1.getValue() ;
@@ -2402,7 +2405,7 @@ void QSOLogFrame::on_ModeComboBoxGJV_activated(int index)
         }
     }
 
-    if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW)
+    if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW || ui->ModeComboBoxGJV->currentText() == hamlibData::MGM)
     {
        ui->ModeButton->setText(oldMode);
     }

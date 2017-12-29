@@ -22,17 +22,26 @@ void ScreenContact::initialise( BaseContestLog *ct )
 
    BaseContestLog * clp = ct;
 
-   reps = "5  ";
-
    int ms = 0;
    if ( clp )
    {
       mode = clp->currentMode.getValue();
       ms = clp->maxSerial + 1;
    }
+
+   if (mode != hamlibData::MGM)
+   {
+       reps = "5  ";
+       repr = "5  ";
+   }
+   else
+   {
+       reps = "   ";
+       repr = "   ";
+   }
+
    QString temp = QString("%1").arg(ms, 3, 10, QChar('0'));  //leading zeros
    serials = temp;
-   repr = "5  ";
    serialr = QString( SERIALLENGTH, ' ' );
    extraText = "";
    comments = "";

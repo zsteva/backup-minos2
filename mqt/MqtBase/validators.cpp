@@ -161,12 +161,22 @@ bool Validator::validate(const QString &str, ScreenContact &screenContact )
             setError( ERR_5 );
          return false;
 
-      case vtRST:
-         if ( validateRST( str ) )
-            return true;
-         else
-            setError( ERR_6 );
-         return false;
+       case vtRST:
+       {
+           QString curmode = screenContact.mode;
+           if (curmode == hamlibData::MGM)
+           {
+               return str.trimmed().length() >= 1;
+           }
+           else
+           {
+               if ( validateRST( str ) )
+                   return true;
+               else
+                   setError( ERR_6 );
+               return false;
+           }
+       }
 
       case vtLoc:
          {
