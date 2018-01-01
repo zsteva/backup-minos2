@@ -107,7 +107,13 @@ int RotControl::getMaxMinRotation(int rotNumber, int *maxRot, int *minRot)
 int RotControl::init(srotParams selectedAntenna)
 {
     int retcode;
+
+#if defined Q_OS_WIN32
     QString comport = "\\\\.\\";
+#elif defined Q_OS_LINUX
+    QString comport = "/dev/";
+#endif
+
     comport.append(selectedAntenna.comport);
 
     my_rot = rot_init(selectedAntenna.rotatorModelNumber);
