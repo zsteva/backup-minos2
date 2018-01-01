@@ -61,7 +61,11 @@ int RigControl::init(scatParams currentRadio)
 {
     int retcode;
 
+#if defined Q_OS_WIN32
     QString comport = "\\\\.\\";
+#elif defined Q_OS_Linux
+    QString comport = "/dev/";
+#endif
 
     my_rig = rig_init(currentRadio.radioModelNumber);
 
