@@ -87,6 +87,8 @@ class LoggerContestLog : public BaseContestLog
       MinosStringItem<QString> appRotator;
       MinosStringItem<QString> appVoiceKeyer;
 
+      MinosStringItem<QString> radioName;
+      MinosStringItem<QString> rotatorName;
 
       MinosStringItem<QString> VHFContestName;
 

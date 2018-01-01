@@ -62,6 +62,8 @@ void LoggerContestLog::clearDirty()
    entAnt.clearDirty();
    entAGL.clearDirty();
    entASL.clearDirty();
+   radioName.clearDirty();
+   rotatorName.clearDirty();
    ops1.clearDirty();
    ops2.clearDirty();
    entCondx1.clearDirty();
@@ -115,6 +117,8 @@ void LoggerContestLog::setDirty()
    entAnt.setDirty();
    entAGL.setDirty();
    entASL.setDirty();
+   radioName.setDirty();
+   rotatorName.setDirty();
    sectionList.setDirty();
    ops1.setDirty();
    ops2.setDirty();
@@ -410,6 +414,8 @@ void LoggerContestLog::setINIDetails()
 	  stationBundle.getStringProfile( espAntenna, entAnt );
 	  stationBundle.getStringProfile( espAGL, entAGL );
 	  stationBundle.getIntProfile(espOffset, bearingOffset);
+      stationBundle.getStringProfile( espRadioName, radioName );
+      stationBundle.getStringProfile( espRotatorName, rotatorName );
    }
 //   if ( appBundle.getSection() != noneBundle )
 //   {
@@ -1461,7 +1467,9 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
 				  mt->getStructArgMemberValue( "antenna", entAnt );
 				  mt->getStructArgMemberValue( "AGL", entAGL );
 				  mt->getStructArgMemberValue( "offset", bearingOffset);
-			   }
+                  mt->getStructArgMemberValue("radioName", radioName);
+                  mt->getStructArgMemberValue("rotatorName", rotatorName);
+               }
 			   else
 				  if ( methodName == "MinosLogOperators" )
 				  {

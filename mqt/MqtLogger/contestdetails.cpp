@@ -325,6 +325,9 @@ void ContestDetails::setDetails(  )
 
    ui->PowerEdit->setText(contest->power.getValue());
 
+   ui->radioNameEdit->setText(contest->radioName.getValue());
+   ui->antennaNameEdit->setText(contest->rotatorName.getValue());
+
    if ( contest->isMinosFile() )
    {
       suppressProtectedOnClick = true;
@@ -876,6 +879,9 @@ QWidget * ContestDetails::getDetails( )
     contest->power.setValue( ui->PowerEdit->text() );
     contest->bearingOffset.setValue(ui->AntOffsetEdit->text().toInt());	// int
 
+    contest->radioName.setValue(ui->radioNameEdit->text());
+    contest->rotatorName.setValue(ui->antennaNameEdit->text());
+
     contest->currentOp1.setValue(ui->MainOpComboBox->currentText());
     contest->currentOp2.setValue(ui->SecondOpComboBox->currentText());
     contest->oplist.insert(contest->currentOp1.getValue(), contest->currentOp1.getValue());
@@ -952,6 +958,8 @@ void ContestDetails::enableControls()
    ui->MainOpComboBox->setEnabled(!protectedChecked);
    ui->SecondOpComboBox->setEnabled(!protectedChecked);
    ui->AntOffsetEdit->setEnabled(!protectedChecked);
+   ui->radioNameEdit->setEnabled(!protectedChecked);
+   ui->antennaNameEdit->setEnabled(!protectedChecked);
 
    ui->PowerEdit->setEnabled(!protectedChecked);
    ui->ModeComboBox->setEnabled(!protectedChecked);

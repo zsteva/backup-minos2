@@ -38,7 +38,7 @@ enum ENTRYPROFILE {eepCall, eepEntrant, eepMyName, eepMyCall,
                    eepMyAddress1, eepMyAddress2, eepMyCity, eepMyPostCode, eepMyCountry,
                    eepMyPhone, eepMyEmail};
 enum QTHPROFILE {eqpLocator, eqpDistrict, eqpLocation, eqpStationQTH1, eqpStationQTH2, eqpASL};
-enum STATIONPROFILE {espPower, espTransmitter, espReceiver, espAntenna, espAGL, espOffset};
+enum STATIONPROFILE {espPower, espTransmitter, espReceiver, espAntenna, espAGL, espOffset, espRadioName, espRotatorName};
 enum APPPROFILE {eapRigControl, eapBandMap, eapRotator, eapVoiceKeyer};
 
 enum PROFILES {epLOGGERPROFILE, epPRELOADPROFILE, epLISTSPROFILE, epDISPLAYPROFILE,
