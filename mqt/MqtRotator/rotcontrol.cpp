@@ -110,7 +110,7 @@ int RotControl::init(srotParams selectedAntenna)
 
 #if defined Q_OS_WIN32
     QString comport = "\\\\.\\";
-#elif defined Q_OS_Linux
+#elif defined Q_OS_LINUX
     QString comport = "/dev/";
 #endif
 
