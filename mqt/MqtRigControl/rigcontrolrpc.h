@@ -34,6 +34,7 @@ class RigControlRpc : public QObject
 public:
     explicit RigControlRpc(RigControlMainWindow *parent);
 
+    void publishRadioNames(QStringList radios);
     void publishState(const QString &state);
     void publishRadioName(const QString &radioName);
     void publishTransVertStatus(const QString &flag);
@@ -43,6 +44,7 @@ public:
 signals:
     void setFreq(QString);
     void setMode(QString);
+    void selectLoggerRadio(QString);
 
 public slots:
 

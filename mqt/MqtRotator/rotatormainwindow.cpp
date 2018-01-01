@@ -349,6 +349,11 @@ void RotatorMainWindow::LogTimerTimer(  )
    }
 }
 
+void RotatorMainWindow::onLoggerSelectAntenna(QString s)
+{
+    ui->selectAntennaBox->setCurrentText(s);
+    upDateAntenna();
+}
 
 
 void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
@@ -528,6 +533,18 @@ void RotatorMainWindow::sendAntennaNameLogger(const QString antennaName)
     }
 
 }
+void RotatorMainWindow::sendAntennaListLogger()
+{
+    QStringList ants;
+    for (int i= 0; i < NUM_ANTENNAS; i++)
+    {
+        if (!selectRotator->availAntennas[i].antennaName.isEmpty())
+        {
+            ants.append(selectRotator->availAntennas[i].antennaName);
+        }
+    }
+    msg->publishAntennaList(ants.join(":"));
+}
 
 
 
@@ -586,6 +603,7 @@ void RotatorMainWindow::initActionsConnections()
 
     // Message from Logger
     connect(msg, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));
+    connect(msg, SIGNAL(selectAntenna(QString)), this, SLOT(onLoggerSelectAntenna(QString)));
 
 
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
@@ -668,7 +686,7 @@ void RotatorMainWindow::displayBearing(int bearing)
         {
             ol = "0";
         }
-        QString s = QString("%1:%2:%3").arg(QString::number(displayBearing)).arg(QString::number(rotatorBearing).arg(ol));
+        QString s = QString("%1:%2:%3").arg(QString::number(displayBearing)).arg(QString::number(rotatorBearing)).arg(ol);
         msg->publishBearing(s);
     }
 
@@ -850,6 +868,7 @@ void RotatorMainWindow::initSelectAntennaBox()
     {
         selectAntenna->addItem(selectRotator->availAntennas[i].antennaName);
     }
+    sendAntennaListLogger();
 }
 
 

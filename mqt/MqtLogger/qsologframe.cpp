@@ -1590,19 +1590,9 @@ void QSOLogFrame::setFreq(QString f)
     }
 }
 //---------------------------------------------------------------------------
-void QSOLogFrame::setRadioName(QString n)
+void QSOLogFrame::setRadioName(QString radioName)
 {
-    QStringList rNameList = n.split(':');
-    if (rNameList.count() != 2)
-    {
-        return;
-    }
-
-    QString radioName = rNameList[1];
-    if (curRadioName != radioName)
-    {
-        curRadioName = radioName;
-    }
+    curRadioName = radioName;
 }
 //---------------------------------------------------------------------------
 void QSOLogFrame::setRadioState(QString s)

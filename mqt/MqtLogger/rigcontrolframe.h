@@ -22,6 +22,7 @@
 #include <QToolButton>
 #include <QRadioButton>
 #include <QShortcut>
+#include <QComboBox>
 #include <QStringList>
 #include "logger_pch.h"
 #include "RPCCommandConstants.h"
@@ -62,6 +63,7 @@ private slots:
     void clearActionSelected();
 signals:
     void clearActionSelected(int);
+    void selectRadio(QString);
 
 };
 
@@ -82,6 +84,7 @@ public:
 
 
     void setRadioLoaded();
+    void setRadioList(QString);
     void setMode(QString);
     void setFreq(QString);
     void setRadioName(QString);
@@ -104,7 +107,10 @@ public:
 
 
     void on_ContestPageChanged(QString freq, QString mode);
+
 signals:
+    void selectRadio(QString);
+
     void sendFreqControl(QString);
     void noRadioSendFreq(QString);
     void noRadioSendMode(QString);
@@ -124,6 +130,8 @@ private slots:
     void freqPlus_ShortCut();
     void freqNeg_ShortCut();
 
+
+    void on_radioName_activated(const QString &arg1);
 
 public slots:
     void changeRadioFreq();

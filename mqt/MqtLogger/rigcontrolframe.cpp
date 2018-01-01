@@ -321,8 +321,11 @@ void RigControlFrame::noRadioSendOutMode(QString m)
 
 }
 
+
 void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
 {
+    emit selectRadio(ct->radioName.getValue());
+
     QStringList modelist = mode.split(':');  // unpack mode
     QString sMode;
 
@@ -521,27 +524,12 @@ void RigControlFrame::sendModeToRadio(QString m)
 
 }
 
-
-
-void RigControlFrame::setRadioName(QString n)
+void RigControlFrame::setRadioName(QString radioName)
 {
-    traceMsg(QString("Set RadioName = %1").arg(n));
-    QStringList rNameList = n.split(':');
-    if (rNameList.count() != 2)
-    {
-        return;
-    }
-    rigAppName = rNameList[0];
-    radioName = rNameList[1];
-    if (rigAppName == radioName)
-    {
-        ui->radioName->setText(radioName);
-    }
-    else
-    {
-       ui->radioName->setText(n);
-    }
+    traceMsg(QString("Set RadioName = %1").arg(radioName));
+    ui->radioName->setCurrentText(radioName);
 
+    emit selectRadio(radioName);
 }
 
 
@@ -551,7 +539,16 @@ void RigControlFrame::loadMemories()
     loadRunButtonLabels();
 }
 
+void RigControlFrame::setRadioList(QString s)
+{
+    QStringList radios = s.split(":");
 
+    ui->radioName->clear();
+    ui->radioName->addItem("");
+    ui->radioName->addItems(radios);
+
+    setRadioName(ct->radioName.getValue());
+}
 void RigControlFrame::setRadioState(QString s)
 {
     traceMsg(QString("Set RadioState = %1").arg(s));
@@ -1146,7 +1143,7 @@ void FreqLineEdit::changeFreq(bool direction)
         }
         else
         {
-            setText(QString("%1 %2 %3").arg("<font color='Red'>", convertFreqStrDisp(sfreq), "</font>"));
+            setText(QString("%1 %2 %3").arg("<font color='Red'>").arg(convertFreqStrDisp(sfreq)).arg("</font>"));
         }
 
         setCursorPosition(pos);
@@ -1154,3 +1151,14 @@ void FreqLineEdit::changeFreq(bool direction)
 }
 
 
+
+void RigControlFrame::on_radioName_activated(const QString &arg1)
+{
+    if (arg1 != radioName)
+    {
+        TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+
+        if (tslf)
+            tslf->on_SetRadioName(arg1);
+    }
+}

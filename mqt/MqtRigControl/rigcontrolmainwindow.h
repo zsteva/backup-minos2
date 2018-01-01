@@ -118,6 +118,7 @@ private:
 
     void closeEvent(QCloseEvent *event);
 
+    void sendRadioListLogger();
     void sendStatusLogger(const QString &message);
     void sendStatusToLogDisConnected();
     void sendStatusToLogConnected();
@@ -162,6 +163,8 @@ private slots:
     void currentRadioSettingChanged(QString radioName);
     void updateSelectRadioBox();
     void aboutRigConfig();
+
+    void onSelectRadio(QString);
 signals:
 
 

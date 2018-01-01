@@ -27,6 +27,7 @@ class RotatorRpc : public QObject
 public:
     explicit RotatorRpc(RotatorMainWindow *parent);
 
+    void publishAntennaList(QString ants);
     void publishState( const QString &state );
     void publishBearing( const QString bearing );
     void publishAntennaName(const QString &antennaName);
@@ -40,6 +41,7 @@ public:
 
 signals:
     void setRotation(int direction, int angle);
+    void selectAntenna(QString);
 
 private slots:
     void on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );

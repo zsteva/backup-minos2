@@ -40,14 +40,19 @@ RigControlRpc::RigControlRpc(RigControlMainWindow *parent) : QObject(parent), pa
 
 //--------------------------------------------------------------------------------------------------//
 
-
+void RigControlRpc::publishRadioNames(QStringList radios)
+{
+    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    QString nameList = radios.join(":");
+    rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlRadioList, nameList, psPublished );
+}
 
 void RigControlRpc::publishState(const QString &state)
 {
     static QString old;
-    trace(QString("Rig RPC: Publish State = %1").arg(state));
     if ( state != old )
     {
+        trace(QString("Rig RPC: Publish State = %1").arg(state));
        old = state;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
        rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyState, state, psPublished );
@@ -58,9 +63,9 @@ void RigControlRpc::publishState(const QString &state)
 void RigControlRpc::publishRadioName(const QString &radioName)
 {
     static QString old;
-    trace(QString("Rig RPC: Publish Name = %1").arg(radioName));
     if ( radioName != old )
     {
+        trace(QString("Rig RPC: Publish Name = %1").arg(radioName));
        old = radioName;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
        rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyRadioName, radioName, psPublished );
@@ -70,9 +75,14 @@ void RigControlRpc::publishRadioName(const QString &radioName)
 
 void RigControlRpc::publishFreq(const QString &freq)
 {
-    trace(QString("Rig RPC: Publish Freq = %1").arg(freq));
-    MinosRPC *rpc = MinosRPC::getMinosRPC();
-    rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyFreq, freq, psPublished );
+    static QString old;
+    if (freq != old)
+    {
+        trace(QString("Rig RPC: Publish Freq = %1").arg(freq));
+        old = freq;
+        MinosRPC *rpc = MinosRPC::getMinosRPC();
+        rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyFreq, freq, psPublished );
+    }
 }
 
 
@@ -80,9 +90,9 @@ void RigControlRpc::publishFreq(const QString &freq)
 void RigControlRpc::publishMode(const QString &mode)
 {
     static QString old;
-    trace(QString("Rig RPC: Publish Mode = %1").arg(mode));
     if ( mode != old )
     {
+        trace(QString("Rig RPC: Publish Mode = %1").arg(mode));
        old = mode;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
        rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyMode, mode, psPublished );
@@ -96,9 +106,9 @@ void RigControlRpc::publishMode(const QString &mode)
 void RigControlRpc::publishTransVertStatus(const QString &status)
 {
     static QString old;
-    trace(QString("Rig RPC: Publish TransVert Status = %1").arg(status));
     if ( status != old )
     {
+        trace(QString("Rig RPC: Publish TransVert Status = %1").arg(status));
        old = status;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
        rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyTxVertStatus, status, psPublished );
@@ -133,6 +143,7 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
     {
         QSharedPointer<RPCParam> psFreq;
         QSharedPointer<RPCParam> psMode;
+        QSharedPointer<RPCParam> psName;
 
         RPCArgs *args = mro->getCallArgs();
         if ( args->getStructArgMember( 0, rpcConstants::rigControlKeyFreq, psFreq ))
@@ -157,6 +168,14 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
                     trace(QString("Rig RPC: Mode Command From Logger = %1").arg(mode));
                     emit (setMode(mode));
                  }
+        }
+        else if (args->getStructArgMember(0, rpcConstants::rigControlRadioName, psName))
+        {
+            QString name;
+            if (psName->getString(name))
+            {
+                emit selectLoggerRadio(name);
+            }
         }
 
     }

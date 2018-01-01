@@ -140,7 +140,29 @@ void TSendDM::sendRotator(rpcConstants::RotateDirection direction, int angle )
 
    rpc.queueCall( rotatorServerConnectable.remoteAppName + "@" + rotatorServerConnectable.serverName );
 }
+void TSendDM::sendSelectRotator(QString s)
+{
+    RPCGeneralClient rpc(rpcConstants::rotatorMethod);
+    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
+    st->addMember( s, rpcConstants::rotatorAntennaName );
+    rpc.getCallArgs() ->addParam( st );
+
+    rpc.queueCall( rotatorServerConnectable.remoteAppName + "@" + rotatorServerConnectable.serverName );
+}
+
+void TSendDM::sendSelectRig(QString s)
+{
+    RPCGeneralClient rpc(rpcConstants::rigControlMethod);
+    QSharedPointer<RPCParam>st(new RPCParamStruct);
+
+    st->addMember( s, rpcConstants::rigControlRadioName );
+    rpc.getCallArgs() ->addParam( st );
+
+    if (s.isEmpty())
+        trace("sendSelectRig " + s);
+    rpc.queueCall( rigServerConnectable.remoteAppName + "@" + rigServerConnectable.serverName );
+}
 
 void TSendDM::sendRigControlFreq(const QString &freq)
 {
@@ -202,6 +224,10 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             {
                 emit setFreq( an.getValue() );
             }
+            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioList )
+            {
+                emit setRadioList(an.getValue());
+            }
             if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyRadioName )
             {
                 emit setRadioName( an.getValue() );
@@ -225,6 +251,10 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             {
                 emit RotatorLoaded();
                 emit RotatorState(an.getValue());
+            }
+            if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorList )
+            {
+                emit RotatorList(an.getValue());
             }
             if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorBearing)
             {

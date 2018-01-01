@@ -160,6 +160,7 @@ private:
 
     void refreshPresetLabels();
     void showStatusMessage(const QString &);
+    void sendAntennaListLogger();
     void sendStatusLogger();
     void readPresets();
 
@@ -192,6 +193,7 @@ private slots:
 
     void onStdInRead(QString);
 
+    void onLoggerSelectAntenna(QString);
     void onLoggerSetRotation(int direction, int angle);
     void checkEndStop();
     void checkMoving(int bearing);

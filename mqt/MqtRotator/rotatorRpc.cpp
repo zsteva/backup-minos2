@@ -49,7 +49,11 @@ void RotatorRpc::publishState(const QString &state)
     }
 }
 
-
+void RotatorRpc::publishAntennaList(QString ants)
+{
+    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorList, ants, psPublished );
+}
 void RotatorRpc::publishAntennaName(const QString &antennaName)
 {
     static QString old;
@@ -132,6 +136,7 @@ void RotatorRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const 
     {
         QSharedPointer<RPCParam> psDirection;
         QSharedPointer<RPCParam> psAngle;
+        QSharedPointer<RPCParam> psAntName;
         RPCArgs *args = mro->getCallArgs();
         if ( args->getStructArgMember( 0, rpcConstants::rotatorParamDirection, psDirection )
              && args->getStructArgMember( 0, rpcConstants::rotatorParamAngle, psAngle ) )
@@ -144,6 +149,14 @@ void RotatorRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const 
                 // here you handle what the logger has sent to us
                 trace(QString("Rot RPC: Direction = %1, Angle = %2").arg(QString::number(direction), QString::number(angle)));
                 emit (setRotation(direction, angle));
+            }
+        }
+        else if (args->getStructArgMember(0, rpcConstants::rotatorAntennaName, psAntName))
+        {
+            QString name;
+            if (psAntName->getString(name))
+            {
+                emit selectAntenna(name);
             }
         }
     }

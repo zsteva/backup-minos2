@@ -40,6 +40,7 @@ public:
 
     void setRotatorLoaded();
 
+    void setRotatorList(QString);
     void setRotatorState(const QString &s);
     void setRotatorBearing(const QString &s);
     void setRotatorAntennaName(const QString &s);
@@ -49,6 +50,8 @@ public:
 
     QString getBrgTxtFrmFrame();
     void setBrgFromRigFrmMemory(QString Brg);
+
+    void on_ContestPageChanged();
 private:
 
     QShortcut *nudgeRight1;
@@ -96,6 +99,7 @@ private:
 
     void keyPressEvent(QKeyEvent *event);
 signals:
+    void selectRotator(QString);
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
     void turnBearingReturn();
     void bearingEditReturn();
@@ -111,6 +115,7 @@ private slots:
 
     void on_nudgeLeft_clicked();
     void on_nudgeRight_clicked();
+    void on_antennaName_activated(const QString &arg1);
 };
 
 #endif // ROTCONTROLFRAME_H

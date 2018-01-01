@@ -12,12 +12,9 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
 #include "logger_pch.h"
 #include "tlogcontainer.h"
+#include "tsinglelogframe.h"
 #include "rotcontrolframe.h"
 #include "qsologframe.h"
 #include "ui_rotcontrolframe.h"
@@ -433,7 +430,15 @@ bool RotControlFrame::isRotatorLoaded()
 {
     return rotatorLoaded;
 }
+void RotControlFrame::setRotatorList(QString s)
+{
+    QStringList rots = s.split(":");
+    ui->antennaName->clear();
+    ui->antennaName->addItem("");
+    ui->antennaName->addItems(rots);
 
+    setRotatorAntennaName(ct->rotatorName.getValue());
+}
 void RotControlFrame::setRotatorState(const QString &s)
 {
        traceMsg("Set Rotator State = " + s);
@@ -538,9 +543,16 @@ void RotControlFrame::setRotatorState(const QString &s)
 void RotControlFrame::setRotatorAntennaName(const QString &s)
 {
    traceMsg("Set Antenna Name = " + s);
-    ui->antennaName->setText(s);
+    ui->antennaName->setCurrentText(s);
     antennaName = s;
+    emit selectRotator(s);
 
+}
+void RotControlFrame::on_ContestPageChanged()
+{
+    // send rotator select to rotator app
+
+    emit selectRotator(ct->rotatorName.getValue());
 }
 
 void RotControlFrame::setRotatorBearing(const QString &s)
@@ -648,4 +660,16 @@ void RotControlFrame::setRotatorMinAzimuth(const QString &s)
 void RotControlFrame::traceMsg(QString msg)
 {
     trace(QString("RotcontrolFrame: %1 - %2").arg(antennaName).arg( msg));
+}
+
+void RotControlFrame::on_antennaName_activated(const QString &arg1)
+{
+    if (arg1 != antennaName)
+    {
+        TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+
+        if (tslf)
+            tslf->on_RotatorAntennaName(arg1);
+    }
+
 }

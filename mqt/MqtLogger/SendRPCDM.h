@@ -46,17 +46,23 @@ class TSendDM : public QObject
       void sendKeyerTone();
       void sendKeyerTwoTone();
       void sendKeyerStop();
+
+      void sendSelectRotator(QString);
       void sendRotator(rpcConstants::RotateDirection direction, int angle );
+
+      void sendSelectRig(QString);
       void sendRigControlFreq(const QString &freq);
       void sendRigControlMode(const QString &mode);
       void sendRigControlPassBandState(const int state);
    private slots:
       void on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
       void on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
+
 signals:
       void setBandMapLoaded();
 
       void RotatorLoaded();
+      void RotatorList(QString);
       void RotatorState(QString);
       void RotatorBearing(QString);
       void RotatorMaxAzimuth(QString);
@@ -69,6 +75,7 @@ signals:
       void setRadioName(QString);
       void setRadioState(QString);
       void setRadioTxVertStatus(QString);
+      void setRadioList(QString);
 
 
       void setKeyerLoaded();

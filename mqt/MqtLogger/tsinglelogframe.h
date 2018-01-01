@@ -77,6 +77,9 @@ public:
     void goNextUnfilled();
     void doNextContactDetailsOnLeftClick(bool keepSizes);
 
+    void on_SetRadioName(QString);
+    void on_RotatorAntennaName(QString);
+
     void on_NoRadioSetFreq(QString);
     void on_NoRadioSetMode(QString);
 
@@ -135,19 +138,19 @@ private slots:
 
     void on_BandMapLoaded();
 
+    void on_SetRadioList(QString);
     void on_SetMode(QString);
     void on_SetFreq(QString);
     void on_RadioLoaded();
-    void on_SetRadioName(QString);
     void on_SetRadioState(QString);
     void on_SetRadioTxVertState(QString s);
 
     void on_RotatorLoaded();
+    void on_RotatorList(QString);
     void on_RotatorState(QString);
     void on_RotatorBearing(QString);
     void on_RotatorMaxAzimuth(QString);
     void on_RotatorMinAzimuth(QString);
-    void on_RotatorAntennaName(QString);
 
     void sendKeyerPlay( int fno );
     void sendKeyerRecord( int fno );
@@ -158,6 +161,9 @@ private slots:
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
     void sendRadioFreq(QString);
     void sendRadioMode(QString);
+
+    void sendSelectRadio(QString);
+    void sendSelectRotator(QString);
 
 
     void on_ControlSplitter_splitterMoved(int pos, int index);

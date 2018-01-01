@@ -204,7 +204,7 @@ void RigControlMainWindow::initActionsConnections()
     // Message from Logger
     connect(msg, SIGNAL(setFreq(QString)), this, SLOT(loggerSetFreq(QString)));
     connect(msg, SIGNAL(setMode(QString)), this, SLOT(loggerSetMode(QString)));
-
+    connect(msg, SIGNAL(selectLoggerRadio(QString)), this, SLOT(onSelectRadio(QString)));
 
 
 
@@ -265,6 +265,7 @@ void RigControlMainWindow::initSelectRadioBox()
     {
         selectRadio->addItem(selectRig->availRadios[i].radioName);
     }
+    sendRadioListLogger();
 }
 
 
@@ -588,7 +589,11 @@ void RigControlMainWindow::getRadioInfo()
     }
 
 }
-
+void RigControlMainWindow::onSelectRadio(QString s)
+{
+    ui->selectRadioBox->setCurrentText(s);
+    upDateRadio();
+}
 
 void RigControlMainWindow::loggerSetFreq(QString freq)
 {
@@ -1093,8 +1098,18 @@ void RigControlMainWindow::sendRadioNameLogger(const QString radioName)
 }
 
 
-
-
+void RigControlMainWindow::sendRadioListLogger()
+{
+    QStringList radioList;
+    for (int i= 0; i < NUM_RADIOS; i++)
+    {
+        if (!selectRig->availRadios[i].radioName.isEmpty())
+        {
+            radioList.append(selectRig->availRadios[i].radioName);
+        }
+    }
+    msg->publishRadioNames(radioList);
+}
 
 void RigControlMainWindow::sendStatusLogger(const QString &message)
 {
