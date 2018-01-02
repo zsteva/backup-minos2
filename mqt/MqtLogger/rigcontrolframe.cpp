@@ -52,6 +52,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     , freqEditOn(false)
     , radioConnected(false)
     , radioError(false)
+    , ct(0)
 
 
 {
@@ -527,9 +528,12 @@ void RigControlFrame::sendModeToRadio(QString m)
 void RigControlFrame::setRadioName(QString radioName)
 {
     traceMsg(QString("Set RadioName = %1").arg(radioName));
-    ui->radioName->setCurrentText(radioName);
+    if (ct && !ct->isProtected())
+    {
+        ui->radioName->setCurrentText(radioName);
 
-    emit selectRadio(radioName);
+        emit selectRadio(radioName);
+    }
 }
 
 

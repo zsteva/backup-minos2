@@ -840,17 +840,20 @@ void TSingleLogFrame::sendSelectRadio(QString radioName)
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
     {
         LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-        if (radioName != ct->radioName.getValue())
+        if (ct && !ct->isProtected())
         {
-            ct->radioName.setValue(radioName);
-            ct->commonSave(false);
+            if (radioName != ct->radioName.getValue())
+            {
+                ct->radioName.setValue(radioName);
+                ct->commonSave(false);
+            }
+            sendDM->sendSelectRig(radioName);
         }
-        sendDM->sendSelectRig(radioName);
     }
 }
 void TSingleLogFrame::sendSelectRotator(QString s)
 {
-    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest() && !contest->isProtected())
         sendDM->sendSelectRotator(s);
 }
 

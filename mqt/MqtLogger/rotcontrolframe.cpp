@@ -26,6 +26,7 @@ RotControlFrame::RotControlFrame(QWidget *parent):
     QFrame(parent)
     , ui(new Ui::RotControlFrame)
     , rotatorLoaded(false)
+    , ct(0)
 {
     ui->setupUi(this);
 
@@ -543,10 +544,12 @@ void RotControlFrame::setRotatorState(const QString &s)
 void RotControlFrame::setRotatorAntennaName(const QString &s)
 {
    traceMsg("Set Antenna Name = " + s);
-    ui->antennaName->setCurrentText(s);
-    antennaName = s;
-    emit selectRotator(s);
-
+   if (ct && !ct->isProtected())
+    {
+        ui->antennaName->setCurrentText(s);
+        antennaName = s;
+        emit selectRotator(s);
+    }
 }
 void RotControlFrame::on_ContestPageChanged()
 {
