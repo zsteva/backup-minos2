@@ -10,14 +10,10 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
-
 #include <QList>
 #include <QDebug>
 #include <QStringList>
+#include <QThread>
 #include "rotcontrol.h"
 #include <hamlib/rotator.h>
 #include "rotatorCommonConstants.h"
@@ -411,6 +407,10 @@ int RotControl::rotateClockwise(int speed)
 
     int retCode = RIG_OK;
     retCode = rot_move(my_rot, ROT_MOVE_RIGHT , speed);
+    if (my_rot->caps->rot_model == ROT_MODEL_SPID_ROT1PROG || my_rot->caps->rot_model == ROT_MODEL_SPID_ROT2PROG)
+    {
+        QThread::msleep(1000);
+    }
 
     return retCode;
 }
@@ -419,6 +419,10 @@ int RotControl::rotateCClockwise(int speed)
 {
     int retCode = RIG_OK;
     retCode = rot_move(my_rot, ROT_MOVE_LEFT , speed);
+    if (my_rot->caps->rot_model == ROT_MODEL_SPID_ROT1PROG || my_rot->caps->rot_model == ROT_MODEL_SPID_ROT2PROG)
+    {
+        QThread::msleep(1000);
+    }
 
     return retCode;
 }
@@ -430,6 +434,10 @@ int RotControl::rotate_to_bearing(int bearing)
     float rotbearing = bearing;
 
     retCode = rot_set_position(my_rot, rotbearing, 0.0);
+    if (my_rot->caps->rot_model == ROT_MODEL_SPID_ROT1PROG || my_rot->caps->rot_model == ROT_MODEL_SPID_ROT2PROG)
+    {
+        QThread::msleep(1000);
+    }
 
     return retCode;
 
