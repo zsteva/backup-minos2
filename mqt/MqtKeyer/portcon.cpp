@@ -306,17 +306,16 @@ void LineLog( const QString &msg )
 }
 LineEventsPort::LineEventsPort( const PortConfig &port ) : commonPort( port ),
       lastPTTState( false ), lastL1State( false ), lastL2State( false ),
-      /*portLineEventThread( 0 ),*/ closing( false ),
-      linePTTState( false ), lineL1State( false ), lineL2State( false ), linesMode(0), lastLinesMode(0)
+      closing( false ),
+      linePTTState( false ), lineL1State( false ), lineL2State( false ),
+      PTTState( false ),
+      linesMode(0), lastLinesMode(0)
 {
     /*LineSet * ls =*/ LineSet::GetLineSet();   // make sure it is initialised
 }
 LineEventsPort::~LineEventsPort()
 {
    closing = true;
-//   portLineEventThread->GJV_join();
-//   delete portLineEventThread;
-   //portLineEventThread = 0;
    closePort();
 }
 
