@@ -103,9 +103,6 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
     connect(sendDM, SIGNAL(setRadioTxVertStatus(QString)), this, SLOT(on_SetRadioTxVertState(QString)));
 
-    // name is now driven from the logger
-    //    connect(sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
-
     // To rig controller
     connect(ui->FKHRigControlFrame, SIGNAL(selectRadio(QString)), this, SLOT(sendSelectRadio(QString)));
 
@@ -121,8 +118,6 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(sendDM, SIGNAL(RotatorBearing(QString)), this, SLOT(on_RotatorBearing(QString)));
     connect(sendDM, SIGNAL(RotatorMaxAzimuth(QString)), this, SLOT(on_RotatorMaxAzimuth(QString)));
     connect(sendDM, SIGNAL(RotatorMinAzimuth(QString)), this, SLOT(on_RotatorMinAzimuth(QString)));
-// name is now driven from the logger
- //   connect(sendDM, SIGNAL(selectRotator(QString)), this, SLOT(on_RotatorAntennaName(QString)));
 
     // To rotator controller
     connect(ui->FKHRotControlFrame, SIGNAL(sendRotator(rpcConstants::RotateDirection , int  )),
@@ -364,9 +359,9 @@ void TSingleLogFrame::HideTimerTimer(  )
 {
     bool controlsLoaded = isBandMapLoaded() || isRadioLoaded() || isRotatorLoaded();
 
-    ui->ControlSplitter->setVisible(controlsLoaded);
+    ui->ControlSplitter->setVisible(controlsLoaded && !contest->isReadOnly());
 
-    if (controlsLoaded)
+    if (controlsLoaded && !contest->isReadOnly())
     {
         ui->FKHRigControlFrame->setVisible(isRadioLoaded());
         ui->FKHRotControlFrame->setVisible(isRotatorLoaded());
