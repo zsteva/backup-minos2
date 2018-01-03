@@ -951,7 +951,18 @@ void QSOLogFrame::showScreenEntry( void )
       if (edit)
       {
           ui->radioEdit->setText(temp.rigName);
-          ui->frequencyEdit->setText(temp.frequency);
+
+          QString freq;
+
+          QString newfreq = temp.frequency.trimmed().remove('.');
+          if (!newfreq.isEmpty())
+          {
+              double dfreq = convertStrToFreq(newfreq);
+              dfreq = dfreq/1000000.0;  // MHz
+
+              freq = QString::number(dfreq, 'f', 6); //MHz to 6 decimal places
+          }
+          ui->frequencyEdit->setText(freq);
           ui->rotatorHeadingEdit->setText(temp.rotatorHeading);
       }
       setMode(temp.mode.trimmed());

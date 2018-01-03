@@ -139,7 +139,13 @@ bool DisplayContestContact::ne(const ScreenContact &mct) const
    if ( strcmpsp( mct.forcedMult, forcedMult.getValue() ) )
       return true; // i.e. not equal
 
-   if ( strcmpsp( mct.frequency, frequency.getValue() ) )
+   QString newfreq = frequency.getValue();
+   QString newmctfreq = mct.frequency;
+
+   newfreq = newfreq.remove('.');
+   newmctfreq = newmctfreq.remove('.');
+
+   if ( strcmpsp( newfreq, newmctfreq ) )
       return true; // i.e. not equal
 
    if ( strcmpsp( mct.rotatorHeading, rotatorHeading.getValue() ) )
