@@ -59,20 +59,6 @@ void RigControlRpc::publishState(const QString &state)
     }
 }
 
-
-void RigControlRpc::publishRadioName(const QString &radioName)
-{
-    static QString old;
-    if ( radioName != old )
-    {
-        trace(QString("Rig RPC: Publish Name = %1").arg(radioName));
-       old = radioName;
-       MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlKeyRadioName, radioName, psPublished );
-    }
-}
-
-
 void RigControlRpc::publishFreq(const QString &freq)
 {
     static QString old;

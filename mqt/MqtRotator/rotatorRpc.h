@@ -30,14 +30,10 @@ public:
     void publishAntennaList(QString ants);
     void publishState( const QString &state );
     void publishBearing( const QString bearing );
-    void publishAntennaName(const QString &antennaName);
     void publishMaxAzimuth(const QString maxAzimuth);
     void publishMinAzimuth(const QString minAzimuth);
 
     void flagStatus(QString msg);
-
-
-
 
 signals:
     void setRotation(int direction, int angle);

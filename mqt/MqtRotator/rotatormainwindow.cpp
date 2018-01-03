@@ -520,19 +520,6 @@ void RotatorMainWindow::sendStatusLogger( )
    }
 }
 
-
-void RotatorMainWindow::sendAntennaNameLogger(const QString antennaName)
-{
-    if (appName.trimmed() == antennaName.trimmed() || appName.length() == 0)
-    {
-        msg->publishAntennaName(antennaName);
-    }
-    else
-    {
-        msg->publishAntennaName(QString("%1 : %2").arg(appName, antennaName));
-    }
-
-}
 void RotatorMainWindow::sendAntennaListLogger()
 {
     QStringList ants;
@@ -1004,8 +991,6 @@ void RotatorMainWindow::upDateAntenna()
        // update logger
        if (appName.length() > 0)
        {
-           sendAntennaNameLogger(selectRotator->currentAntenna.antennaName);
-
            sendStatusToLogStop();
            msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
            msg->publishMinAzimuth(QString::number(currentMinAzimuth));
@@ -1018,7 +1003,6 @@ void RotatorMainWindow::upDateAntenna()
         if (appName.length() > 0)
         {
             writeWindowTitle(appName);
-            sendAntennaNameLogger("No rotator");
             sendStatusToLogDisConnected();
             sendStatusToLogStop();
             msg->publishMaxAzimuth(QString::number(0));

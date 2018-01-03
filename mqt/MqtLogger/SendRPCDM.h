@@ -67,16 +67,13 @@ signals:
       void RotatorBearing(QString);
       void RotatorMaxAzimuth(QString);
       void RotatorMinAzimuth(QString);
-      void RotatorAntennaName(QString);
 
       void setRadioLoaded();
       void setMode(QString);
       void setFreq(QString);
-      void setRadioName(QString);
       void setRadioState(QString);
       void setRadioTxVertStatus(QString);
       void setRadioList(QString);
-
 
       void setKeyerLoaded();
 

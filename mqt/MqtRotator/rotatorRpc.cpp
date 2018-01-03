@@ -54,18 +54,6 @@ void RotatorRpc::publishAntennaList(QString ants)
     MinosRPC *rpc = MinosRPC::getMinosRPC();
     rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorList, ants, psPublished );
 }
-void RotatorRpc::publishAntennaName(const QString &antennaName)
-{
-    static QString old;
-    trace(QString("Rot RPC: Publish Antenna Name = %1").arg(antennaName));
-    if ( antennaName != old )
-    {
-       old = antennaName;
-       MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorAntennaName, antennaName, psPublished );
-    }
-}
-
 
 void RotatorRpc::publishMaxAzimuth(const QString maxAzimuth)
 {

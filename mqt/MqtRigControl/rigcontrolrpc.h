@@ -36,7 +36,6 @@ public:
 
     void publishRadioNames(QStringList radios);
     void publishState(const QString &state);
-    void publishRadioName(const QString &radioName);
     void publishTransVertStatus(const QString &flag);
     void publishFreq(const QString &freq);
     void publishMode(const QString &mode);

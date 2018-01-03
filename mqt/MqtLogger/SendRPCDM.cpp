@@ -228,10 +228,6 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             {
                 emit setRadioList(an.getValue());
             }
-            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyRadioName )
-            {
-                emit setRadioName( an.getValue() );
-            }
             if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyTxVertStatus )
             {
                 emit setRadioTxVertStatus( an.getValue() );
@@ -270,11 +266,6 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             {
 
                 emit RotatorMinAzimuth(an.getValue());
-            }
-            if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "AntennaName")
-            {
-
-                emit RotatorAntennaName(an.getValue());
             }
         }
     }

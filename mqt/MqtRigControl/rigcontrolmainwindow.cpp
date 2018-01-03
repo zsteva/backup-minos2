@@ -324,10 +324,6 @@ void RigControlMainWindow::upDateRadio()
 
         selectRig->saveCurrentRadio();
 
-
-        sendRadioNameLogger(selectRig->currentRadio.radioName);
-
-
         openRadio();
 
         if (selectRig->currentRadio.radioModelNumber != 135) // don't send USB if Ft991
@@ -348,7 +344,6 @@ void RigControlMainWindow::upDateRadio()
         {
             // check still connected after setting mode
             writeWindowTitle(appName);
-            sendRadioNameLogger(selectRig->currentRadio.radioName);
             sendStatusToLogConnected();
             dumpRadioToTraceLog();
 
@@ -368,7 +363,6 @@ void RigControlMainWindow::upDateRadio()
         if (appName.length() > 0)
         {
             writeWindowTitle(appName);
-            sendRadioNameLogger("No Radio");
         }
         else
         {
@@ -1090,13 +1084,6 @@ void RigControlMainWindow::about()
 {
     QMessageBox::about(this, "Minos RigControl", "Minos QT RigControl\nCopyright D Balharrie G8FKH/M0DGB 2017");
 }
-
-
-void RigControlMainWindow::sendRadioNameLogger(const QString radioName)
-{
-    msg->publishRadioName(QString("%1 : %2").arg(appName, radioName));
-}
-
 
 void RigControlMainWindow::sendRadioListLogger()
 {
