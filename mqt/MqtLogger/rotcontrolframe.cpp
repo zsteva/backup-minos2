@@ -326,6 +326,10 @@ void RotControlFrame::keyPressEvent(QKeyEvent *event)
     {
         emit bearingEditReturn();
     }
+    else
+    {
+        QFrame::keyPressEvent(event);
+    }
 
 }
 
