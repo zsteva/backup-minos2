@@ -28,7 +28,11 @@ SetupLogging=true
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
+
 AppId={{617577AD-2218-40EF-8300-431EB77CD246}
+;Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{617577AD-2218-40EF-8300-431EB77CD246}_is1
+;on a 64 bit machine; on 32 bit lose the WOW6432Node\
+ 
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
