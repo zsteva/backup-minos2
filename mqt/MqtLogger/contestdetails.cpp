@@ -52,12 +52,34 @@ ContestDetails::ContestDetails(QWidget *parent) :
         ui->EndTimeCombo->addItem( hour );
         ui->EndTimeCombo->addItem ( halfhour );
     }
+
     ui->StartDateEdit->setDate(QDate::currentDate());
     ui->EndDateEdit->setDate(QDate::currentDate());
     ui->CallsignEdit->setValidator(new UpperCaseValidator());
     ui->LocatorEdit->setValidator(new UpperCaseValidator());
     ui->MainOpComboBox->setValidator(new UpperCaseValidator(false));
     ui->SecondOpComboBox->setValidator(new UpperCaseValidator(false));
+
+    ContestNameEditFW = new FocusWatcher(ui->ContestNameEdit);
+    ui->ContestNameEdit->installEventFilter(this);
+    BandComboBoxFW = new FocusWatcher(ui->BandComboBox);
+    ui->BandComboBox->installEventFilter(this);
+    CallsignEditFW = new FocusWatcher(ui->CallsignEdit);
+    ui->CallsignEdit->installEventFilter(this);
+    LocatorEditFW = new FocusWatcher(ui->LocatorEdit);
+    ui->LocatorEdit->installEventFilter(this);
+    PowerEditFW = new FocusWatcher(ui->PowerEdit);
+    ui->PowerEdit->installEventFilter(this);
+    MainOpComboBoxFW = new FocusWatcher(ui->MainOpComboBox);
+    ui->MainOpComboBox->installEventFilter(this);
+
+    connect(ContestNameEditFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(BandComboBoxFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(CallsignEditFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(LocatorEditFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(PowerEditFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+    connect(MainOpComboBoxFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
+
 }
 void ContestDetails::doCloseEvent()
 {
@@ -91,6 +113,7 @@ int ContestDetails::exec()
 
     contest->initialiseINI();
 
+    focusChange(0, false, 0);    // higlight required fields
     QWidget *nextD = getDetails( );
     if ( nextD )
     {
@@ -347,6 +370,7 @@ void ContestDetails::setDetails(  )
    refreshOps();
 
    enableControls();
+   focusChange(0, false, 0);
 }
 void ContestDetails::refreshOps()
 {
@@ -694,6 +718,77 @@ void ContestDetails::setDetails( const IndividualContest &ic )
 //   setDetails();
 }
 //---------------------------------------------------------------------------
+QString ssLineEditFrRedBkRed = "QLineEdit { border-style: outset ; border-width: 2px ; border-color: red  }";
+QString ssComboBoxFrRedBkRed = "QComboBox { border-style: outset ; border-width: 2px ; border-color: red  }";
+
+void ContestDetails::focusChange(QObject * /*obj*/, bool in, QFocusEvent * /*event*/)
+{
+    if (!in)
+    {
+        // need to test on control exit (e.g. mouse or tab) as well as on OK
+
+        if ( ui->ContestNameEdit->text().trimmed().isEmpty() )
+        {
+            ui->ContestNameEdit->setStyleSheet(ssLineEditFrRedBkRed);
+        }
+        else
+        {
+            ui->ContestNameEdit->setStyleSheet("");
+        }
+
+        if ( ui->BandComboBox->currentText().trimmed().isEmpty() )
+        {
+            ui->BandComboBox->setStyleSheet(ssComboBoxFrRedBkRed);
+        }
+        else
+        {
+            ui->BandComboBox->setStyleSheet("");
+        }
+
+        contest->mycall.fullCall.setValue( ui->CallsignEdit->text() );
+        contest->mycall.valRes = CS_NOT_VALIDATED;
+        contest->mycall.validate();
+        if ( contest->mycall.valRes != CS_OK )
+        {
+            ui->CallsignEdit->setStyleSheet(ssLineEditFrRedBkRed);
+        }
+        else
+        {
+            ui->CallsignEdit->setStyleSheet("");
+        }
+
+        contest->myloc.loc.setValue( ui->LocatorEdit->text() );
+        contest->myloc.validate();
+        if ( contest->myloc.valRes != LOC_OK )
+        {
+            ui->LocatorEdit->setStyleSheet(ssLineEditFrRedBkRed);
+        }
+        else
+        {
+            ui->LocatorEdit->setStyleSheet("");
+        }
+
+        if ( ui->PowerEdit->text().trimmed().isEmpty() )
+        {
+            ui->PowerEdit->setStyleSheet(ssLineEditFrRedBkRed);
+        }
+        else
+        {
+            ui->PowerEdit->setStyleSheet("");
+        }
+
+
+        QString cop = ui->MainOpComboBox->currentText();
+        if ( cop.trimmed().isEmpty() )
+        {
+            ui->MainOpComboBox->setStyleSheet(ssComboBoxFrRedBkRed);
+        }
+        else
+        {
+            ui->MainOpComboBox->setStyleSheet("");
+        }
+    }
+}
 QWidget * ContestDetails::getDetails( )
 {
     QWidget *nextD = getNextFocus();
@@ -703,6 +798,21 @@ QWidget * ContestDetails::getDetails( )
     contest->entSect.setValue( ui->SectionComboBox->currentText() );
     contest->sectionList.setValue( sectionList );
 
+    if ( ui->ContestNameEdit->text().trimmed().isEmpty() )
+    {
+        if (!nextD)
+        {
+            nextD = ui->ContestNameEdit;
+        }
+    }
+
+    if ( ui->BandComboBox->currentText().trimmed().isEmpty() )
+    {
+        if (!nextD)
+        {
+            nextD = ui->BandComboBox;
+        }
+    }
 
     if (ui->StartDateEdit->text().isEmpty())
     {
@@ -722,17 +832,41 @@ QWidget * ContestDetails::getDetails( )
     contest->mycall.validate();
     if ( contest->mycall.valRes != CS_OK )
     {
-        nextD = (nextD?nextD:ui->CallsignEdit);
+        if (!nextD)
+        {
+            nextD = ui->CallsignEdit;
+        }
     }
     contest->myloc.loc.setValue( ui->LocatorEdit->text() );
     contest->myloc.validate();
     if ( contest->myloc.valRes != LOC_OK )
     {
-        nextD = (nextD?nextD:ui->LocatorField);
+        if (!nextD)
+        {
+            nextD = ui->LocatorEdit;
+        }
     }
-    if ( contest->currentOp1.getValue().size() == 0 )
+
+    if ( ui->PowerEdit->text().trimmed().isEmpty() )
     {
-        nextD = (nextD?nextD:ui->MainOpComboBox);
+        if (!nextD)
+        {
+            nextD = ui->PowerEdit;
+        }
+    }
+
+
+    contest->currentOp1.setValue(ui->MainOpComboBox->currentText());
+    contest->currentOp2.setValue(ui->SecondOpComboBox->currentText());
+    contest->oplist.insert(contest->currentOp1.getValue(), contest->currentOp1.getValue());
+    contest->oplist.insert(contest->currentOp2.getValue(), contest->currentOp2.getValue());
+
+    if ( contest->currentOp1.getValue().isEmpty() )
+    {
+        if (!nextD)
+        {
+            nextD = ui->MainOpComboBox;
+        }
     }
     contest->allowLoc4.setValue( ui->AllowLoc4CB->isChecked() );    // bool
     contest->allowLoc8.setValue( ui->AllowLoc8CB->isChecked() );    // bool
@@ -881,11 +1015,6 @@ QWidget * ContestDetails::getDetails( )
 
     contest->radioName.setValue(ui->radioNameEdit->text());
     contest->rotatorName.setValue(ui->antennaNameEdit->text());
-
-    contest->currentOp1.setValue(ui->MainOpComboBox->currentText());
-    contest->currentOp2.setValue(ui->SecondOpComboBox->currentText());
-    contest->oplist.insert(contest->currentOp1.getValue(), contest->currentOp1.getValue());
-    contest->oplist.insert(contest->currentOp2.getValue(), contest->currentOp2.getValue());
 
     contest->validateLoc();
 

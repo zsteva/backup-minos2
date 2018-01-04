@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "tbundleframe.h"
+#include "focuswatcher.h"
 
 namespace Ui {
 class ContestDetails;
@@ -31,6 +32,13 @@ private:   	// User declarations
    bool suppressProtectedOnClick;
    bool noMultRipple;
 
+   FocusWatcher *ContestNameEditFW;
+   FocusWatcher *BandComboBoxFW;
+   FocusWatcher *CallsignEditFW;
+   FocusWatcher *LocatorEditFW;
+   FocusWatcher *PowerEditFW;
+   FocusWatcher *MainOpComboBoxFW;
+
    QWidget * getNextFocus();
    void setDetails( const IndividualContest &ic );
    void setDetails( );
@@ -50,6 +58,7 @@ public:   		// User declarations
 
    virtual int exec() override;
 private slots:
+   void focusChange(QObject *, bool, QFocusEvent *event);
    void on_OKButton_clicked();
    void on_EntDetailButton_clicked();
    void on_CancelButton_clicked();
