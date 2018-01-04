@@ -204,6 +204,7 @@ private slots:
     void overLapDisplayBox(overlapStat status);
     void currentAntennaSettingChanged(QString);
     void updateSelectAntennaBox();
+    void setSelectAntennaBoxVisible(bool visible);
 
     void upDateAntenna();
     void request_bearing();
@@ -222,6 +223,7 @@ private slots:
 
 
     void aboutRotatorConfig();
+
 private:
     void rotateTo(int bearing);
     int northCalcTarget(int targetBearing);

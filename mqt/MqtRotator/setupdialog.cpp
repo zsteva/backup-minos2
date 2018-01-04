@@ -197,6 +197,15 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     netPortLbl[4] = ui->portLbl5;
 
 
+    pollInterval[0] = ui->pollInterval1;
+    pollInterval[1] = ui->pollInterval2;
+    pollInterval[2] = ui->pollInterval3;
+    pollInterval[3] = ui->pollInterval4;
+    pollInterval[4] = ui->pollInterval5;
+
+
+
+
 //--------------------------------------------------------------------------------------------------
 
     QSignalMapper *antennaName_mapper = new QSignalMapper(this);
@@ -220,6 +229,19 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     connect(rotatorModel_mapper, SIGNAL(mapped(int)), this, SLOT(rotatorModelSelected(int)));
 
 //--------------------------------------------------------------------------------------------------
+
+
+    QSignalMapper *pollInterval_mapper = new QSignalMapper(this);
+
+    for (int i = 0; i < NUM_ANTENNAS; i++ )
+    {
+        pollInterval_mapper->setMapping(pollInterval[i], i);
+        connect(pollInterval[i], SIGNAL(activated(int)), pollInterval_mapper, SLOT(map()));
+    }
+    connect(pollInterval_mapper, SIGNAL(mapped(int)), this, SLOT(pollIntervalSelected(int)));
+
+//--------------------------------------------------------------------------------------------------
+
 
     QSignalMapper *southStopFlag_mapper = new QSignalMapper(this);
 
@@ -353,6 +375,7 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
 
     fillRotatorModelInfo();  // add rotator models to drop down
     fillPortsInfo();     // add comports to drop down
+    fillPollInterValInfo();
     fillSpeedInfo();
     fillDataBitsInfo();
     fillStopBitsInfo();
@@ -375,6 +398,7 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     {
         antennaName[i]->setText(availAntennas[i].antennaName);
         rotatorModel[i]->setCurrentIndex(rotatorModel[i]->findText(availAntennas[i].rotatorModel));
+        pollInterval[i]->setCurrentIndex(pollInterval[i]->findText(availAntennas[i].pollInterval));
         southStopFlag[i]->setChecked(availAntennas[i].southStopFlag);
 
         // set southstop visible if rotator is 0 - 360
@@ -557,6 +581,19 @@ void SetupDialog::rotatorModelSelected(int boxNumber)
 }
 
 
+void SetupDialog::pollIntervalSelected(int boxNumber)
+{
+
+    if (availAntennas[boxNumber].pollInterval != pollInterval[boxNumber]->currentText())
+    {
+        availAntennas[boxNumber].pollInterval = pollInterval[boxNumber]->currentText();
+        antennaValueChanged[boxNumber] = true;
+        antennaChanged = true;
+    }
+}
+
+
+
 void SetupDialog::southStopFlagSelected(int boxNumber)
 {
     if (!chkloadflg)
@@ -713,6 +750,26 @@ void SetupDialog::fillRotatorModelInfo()
 
 
 }
+
+
+void SetupDialog::fillPollInterValInfo()
+{
+    QStringList pollTimeStr;
+    pollTimeStr << "0.5" << "1" << "2" << "3";
+
+    for (int i = 0; i < NUM_ANTENNAS; i++)
+    {
+        pollInterval[i]->clear();
+    }
+
+     for (int i = 0; i < NUM_ANTENNAS; i++)
+     {
+        pollInterval[i]->addItems(pollTimeStr);
+     }
+
+
+}
+
 
 
 void SetupDialog::fillPortsInfo()
@@ -930,6 +987,7 @@ void SetupDialog::saveSettings()
                 config.setValue("rotatorModelName", availAntennas[i].rotatorModelName);
                 config.setValue("rotatorModelNumber", availAntennas[i].rotatorModelNumber);
                 config.setValue("rotatorManufacturer", availAntennas[i].rotatorManufacturer);
+                config.setValue("rotatorPollInterval", availAntennas[i].pollInterval);
                 config.setValue("southStop", availAntennas[i].southStopFlag);
                 config.setValue("overRun", availAntennas[i].overRunFlag);
                 config.setValue("antennaOffset", availAntennas[i].antennaOffset);
@@ -992,6 +1050,7 @@ void SetupDialog::readSettings()
         availAntennas[i].rotatorModelName = config.value("rotatorModelName", "").toString();
         availAntennas[i].rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
         availAntennas[i].rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
+        availAntennas[i].pollInterval = config.value("rotatorPollInterval", "1").toString();
         availAntennas[i].southStopFlag = config.value("southStop", false).toBool();
         availAntennas[i].overRunFlag = config.value("overRun", false).toBool();
         availAntennas[i].antennaOffset = config.value("antennaOffset", "").toInt();
@@ -1093,6 +1152,7 @@ void SetupDialog::saveCurrentAntenna()
     config.setValue("rotatorModelNumber", currentAntenna.rotatorModelNumber);
     config.setValue("rotatorModelName", currentAntenna.rotatorModelName);
     config.setValue("rotatorManufacturer", currentAntenna.rotatorManufacturer);
+    config.setValue("rotatorPollInterval", currentAntenna.pollInterval);
     config.setValue("southStop", currentAntenna.southStopFlag);
     config.setValue("overRun", currentAntenna.overRunFlag);
     config.setValue("antennaOffset", currentAntenna.antennaOffset);
@@ -1134,6 +1194,7 @@ void SetupDialog::readCurrentAntenna()
         currentAntenna.rotatorModel = config.value("rotatorModel", "").toString();
         currentAntenna.rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
         currentAntenna.rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
+        currentAntenna.pollInterval = config.value("rotatorPollinterval", "1").toString();
         currentAntenna.southStopFlag = config.value("southStop", false).toBool();
         currentAntenna.overRunFlag = config.value("overRun", false).toBool();
         currentAntenna.antennaOffset = config.value("antennaOffset", "").toInt();

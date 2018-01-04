@@ -191,14 +191,13 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     selectAntenna = ui->selectAntennaBox;
 
     selectRotator->setAppName(appName);
-/*
-    if (loggerAntenna.length() > 0)
+
+    if (appName.length() > 0)
     {
-        ui->selectAntennaBox->hide();
-        ui->antennaSelectlbl->hide();
-        ui->antennaSelectln->hide();
+        // connected to logger - don't show antenna select box
+        setSelectAntennaBoxVisible(false);
     }
-*/
+
     brakedelay = 1 * 1000;
 
 
@@ -219,32 +218,6 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     //logAntError = false;
     initSelectAntennaBox();
-/*
-    if (appName.length() > 0)
-    {
-        logMessage(QString("AppName %1 from logger").arg(appName));
-        int a = selectAntenna->findText(loggerAntenna);
-        if (a == -1)
-        {
-            logMessage("Select an antenna in rotator control");
-            showStatusMessage("<font color='Red'>Please select an antenna!</font>");
-            logAntError = true;
-        }
-        else
-        {
-            selectAntenna->setCurrentIndex(a);
-            selectRotator->readSettings();      // get antenna settings
-            selectRotator->copyAntennaToCurrent(a);
-        }
-
-    }
-    else
-    {
-        selectRotator->readCurrentAntenna();
-        selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
-    }
-
-*/
 
 
 
@@ -353,6 +326,17 @@ void RotatorMainWindow::onLoggerSelectAntenna(QString s)
 {
     ui->selectAntennaBox->setCurrentText(s);
     upDateAntenna();
+}
+
+void RotatorMainWindow::setSelectAntennaBoxVisible(bool visible)
+{
+
+
+    ui->antennaSelectlbl->setVisible(visible);
+    ui->selectAntennaBox->setVisible(visible);
+    ui->antennaSelectln->setVisible(visible);
+
+
 }
 
 
