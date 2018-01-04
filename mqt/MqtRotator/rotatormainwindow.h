@@ -204,6 +204,8 @@ private slots:
     void overLapDisplayBox(overlapStat status);
     void currentAntennaSettingChanged(QString);
     void updateSelectAntennaBox();
+    void setSelectAntennaBoxVisible(bool visible);
+    void setAntennaNameLabelVisible(bool visible);
 
     void upDateAntenna();
     void request_bearing();
@@ -222,6 +224,7 @@ private slots:
 
 
     void aboutRotatorConfig();
+
 private:
     void rotateTo(int bearing);
     int northCalcTarget(int targetBearing);
@@ -246,6 +249,7 @@ private:
     int calclRot_0_450_Neg180_540(int targetBearing);
     void dumpRotatorToTraceLog();
     void writeWindowTitle(QString appName);
+
 };
 
 #endif // ROTATORMAINWINDOW_H

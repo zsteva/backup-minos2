@@ -75,6 +75,7 @@ private slots:
 
     void antennaNameFinished(int);
     void rotatorModelSelected(int);
+    void pollIntervalSelected(int boxNumber);
     void southStopFlagSelected(int);
     void overRunFlagSelected(int);
     void antennaOffsetFinished(int);
@@ -98,6 +99,8 @@ private:
 
     QLineEdit *antennaName[NUM_ANTENNAS];
     QComboBox *rotatorModel[NUM_ANTENNAS];
+
+    QComboBox *pollInterval[NUM_ANTENNAS];
 
     QCheckBox *southStopFlag[NUM_ANTENNAS];
     QLabel *southStopLabel[NUM_ANTENNAS];
@@ -131,6 +134,8 @@ private:
     QLineEdit *netPort[NUM_ANTENNAS];
     QLabel *netPortLbl[NUM_ANTENNAS];
 
+
+
 //    QIntValidator *intValidator;
     bool antennaValueChanged[NUM_ANTENNAS];
     bool antennaNameChanged[NUM_ANTENNAS];
@@ -141,6 +146,7 @@ private:
     const int maxOffset = 90;
     void saveSettings();
     void fillRotatorModelInfo();
+    void fillPollInterValInfo();
     void fillPortsInfo();
     void fillSpeedInfo();
     void fillDataBitsInfo();
@@ -159,6 +165,8 @@ private:
     void clearAntennaNameChanged();
     void serialDataEntryVisible(int antNumber, bool visible);
     void networkDataEntryVisible(int antNumber, bool visible);
+
+
 };
 
 #endif // SETUPDIALOG_H

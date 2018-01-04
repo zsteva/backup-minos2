@@ -191,14 +191,20 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     selectAntenna = ui->selectAntennaBox;
 
     selectRotator->setAppName(appName);
-/*
-    if (loggerAntenna.length() > 0)
+
+
+
+    if (appName.length() > 0)
     {
-        ui->selectAntennaBox->hide();
-        ui->antennaSelectlbl->hide();
-        ui->antennaSelectln->hide();
+        setSelectAntennaBoxVisible(false);
+        setAntennaNameLabelVisible(true);
     }
-*/
+    else
+    {
+        setSelectAntennaBoxVisible(true);
+        setAntennaNameLabelVisible(false);
+    }
+
     brakedelay = 1 * 1000;
 
 
@@ -208,7 +214,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     //openRotator();
 
-    setPolltime(POLLTIME);   // to allow variable controller polltime - not implemented!
+    //setPolltime(POLLTIME);   // to allow variable controller polltime - not implemented!
     rotTimeCount = 0;
     RotateTimer.start(200);  // to set timeout for antenna rotating
 
@@ -219,32 +225,6 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     //logAntError = false;
     initSelectAntennaBox();
-/*
-    if (appName.length() > 0)
-    {
-        logMessage(QString("AppName %1 from logger").arg(appName));
-        int a = selectAntenna->findText(loggerAntenna);
-        if (a == -1)
-        {
-            logMessage("Select an antenna in rotator control");
-            showStatusMessage("<font color='Red'>Please select an antenna!</font>");
-            logAntError = true;
-        }
-        else
-        {
-            selectAntenna->setCurrentIndex(a);
-            selectRotator->readSettings();      // get antenna settings
-            selectRotator->copyAntennaToCurrent(a);
-        }
-
-    }
-    else
-    {
-        selectRotator->readCurrentAntenna();
-        selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
-    }
-
-*/
 
 
 
@@ -355,6 +335,24 @@ void RotatorMainWindow::onLoggerSelectAntenna(QString s)
     upDateAntenna();
 }
 
+void RotatorMainWindow::setSelectAntennaBoxVisible(bool visible)
+{
+
+
+    ui->antennaSelectlbl->setVisible(visible);
+    ui->selectAntennaBox->setVisible(visible);
+
+
+
+}
+
+void RotatorMainWindow::setAntennaNameLabelVisible(bool visible)
+{
+    ui->antNameDispLbl->setVisible(visible);
+    ui->antNameDisp->setVisible(visible);
+
+}
+
 
 void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
 {
@@ -455,6 +453,15 @@ void RotatorMainWindow::openRotator()
     }
     if (rotator->get_serialConnected())
     {
+        // get poll interval timer
+       if (selectRotator->currentAntenna.pollInterval == "0.5")
+       {
+           pollTime = 500;
+       }
+       else
+       {
+           pollTime = 1000 * selectRotator->currentAntenna.pollInterval.toInt();
+       }
 
         pollTimer->start(pollTime);             // start timer to send message to controller
         if (rig_port_e(selectRotator->currentAntenna.portType) == RIG_PORT_SERIAL)
@@ -884,6 +891,8 @@ void RotatorMainWindow::upDateAntenna()
         selectRotator->currentAntenna = selectRotator->availAntennas[antennaIndex];
 
         selectRotator->saveCurrentAntenna();
+
+        ui->antNameDisp->setText(selectRotator->currentAntenna.antennaName);
 
 
        if (rotator->get_serialConnected())

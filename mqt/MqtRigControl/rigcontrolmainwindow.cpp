@@ -52,7 +52,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     connect(&stdinReader, SIGNAL(stdinLine(QString)), this, SLOT(onStdInRead(QString)));
     stdinReader.start();
 
-    // get the antenna name from host process
+
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     appName = env.value("MQTRPCNAME", "") ;
 
@@ -81,6 +81,19 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     selectRig->setAppName(appName);
 
     selectRadio = ui->selectRadioBox;
+    if (appName.length() > 0)
+    {
+        // connected to logger don't show radio selectbox
+        setSelectRadioBoxVisible(false);
+        setRadioNameLabelVisible(true);
+    }
+    else
+    {
+        setSelectRadioBoxVisible(true);
+        setRadioNameLabelVisible(false);
+    }
+
+
 
     pollTimer = new QTimer(this);
 
@@ -271,6 +284,25 @@ void RigControlMainWindow::initSelectRadioBox()
 
 
 
+void RigControlMainWindow::setSelectRadioBoxVisible(bool visible)
+{
+
+
+    ui->SelectRadioTitle->setVisible(visible);
+    ui->selectRadioBox->setVisible(visible);
+
+
+}
+
+
+void RigControlMainWindow::setRadioNameLabelVisible(bool visible)
+{
+    ui->radioNameDispLbl->setVisible(visible);
+    ui->radioNameDisp->setVisible(visible);
+
+}
+
+
 void RigControlMainWindow::upDateRadio()
 {
     //int retCode = 0;
@@ -325,6 +357,8 @@ void RigControlMainWindow::upDateRadio()
         selectRig->saveCurrentRadio();
 
         openRadio();
+
+        ui->radioNameDisp->setText(selectRig->currentRadio.radioName);
 
         if (selectRig->currentRadio.radioModelNumber != 135) // don't send USB if Ft991
         {
