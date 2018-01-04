@@ -192,18 +192,16 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     selectRotator->setAppName(appName);
 
-    if (appName.length() > 0)
-    {
-        // connected to logger - don't show antenna select box
-        setSelectAntennaBoxVisible(false);
-    }
+
 
     if (appName.length() > 0)
     {
+        setSelectAntennaBoxVisible(false);
         setAntennaNameLabelVisible(true);
     }
     else
     {
+        setSelectAntennaBoxVisible(true);
         setAntennaNameLabelVisible(false);
     }
 

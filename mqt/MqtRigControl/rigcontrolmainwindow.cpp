@@ -85,7 +85,15 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     {
         // connected to logger don't show radio selectbox
         setSelectRadioBoxVisible(false);
+        setRadioNameLabelVisible(true);
     }
+    else
+    {
+        setSelectRadioBoxVisible(true);
+        setRadioNameLabelVisible(false);
+    }
+
+
 
     pollTimer = new QTimer(this);
 
@@ -287,6 +295,14 @@ void RigControlMainWindow::setSelectRadioBoxVisible(bool visible)
 }
 
 
+void RigControlMainWindow::setRadioNameLabelVisible(bool visible)
+{
+    ui->radioNameDispLbl->setVisible(visible);
+    ui->radioNameDisp->setVisible(visible);
+
+}
+
+
 void RigControlMainWindow::upDateRadio()
 {
     //int retCode = 0;
@@ -341,6 +357,8 @@ void RigControlMainWindow::upDateRadio()
         selectRig->saveCurrentRadio();
 
         openRadio();
+
+        ui->radioNameDisp->setText(selectRig->currentRadio.radioName);
 
         if (selectRig->currentRadio.radioModelNumber != 135) // don't send USB if Ft991
         {

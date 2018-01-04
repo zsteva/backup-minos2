@@ -91,6 +91,7 @@ private:
     void initActionsConnections();
     void initSelectRadioBox();
     void setSelectRadioBoxVisible(bool visible);
+    void setRadioNameLabelVisible(bool visible);
     void openRadio();
     void closeRadio();
     int getFrequency(vfo_t vfo);
@@ -145,6 +146,7 @@ private:
     void setTransVertDisplayVisible(bool visible);
     void writeWindowTitle(QString appName);
     void sendTransVertStatus(bool status);
+
 
 
 private slots:
