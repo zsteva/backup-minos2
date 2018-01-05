@@ -144,6 +144,7 @@ public:
     QStringList getStopBitsNames();
     QStringList gethamlibErrorMsg();
     QString gethamlibErrorMsg(int errorCode);
+    QString gethamlibVersion();
 //    QString initError;
 
     azimuth_t getMaxAzimuth();
@@ -163,6 +164,7 @@ public:
     int getPortType(int rotNumber, rig_port_e *portType);
 
     int getModelInfo(QString rotModel, int *rotModelNumber, QString *rotMfgName, QString *rotModelName);
+
 signals:
    void bearing_updated(int);
    void request_bearingError(int);

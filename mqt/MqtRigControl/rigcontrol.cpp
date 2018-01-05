@@ -590,7 +590,11 @@ QStringList RigControl::gethamlibErrorMsg()
     return serialData::hamlibErrorMsg;
 }
 
-
+QString RigControl::gethamlibVersion()
+{
+    QString ver = hamlib_version;
+    return ver;
+}
 
 
 bool model_Sort(const rig_caps *caps1,const rig_caps *caps2)

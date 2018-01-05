@@ -1205,6 +1205,7 @@ void RigControlMainWindow::aboutRigConfig()
 {
     QString msg = QString("*** Rig Configuration ***\n\n");
     msg.append(QString("App Instance Name  = %1\n").arg(appName));
+    msg.append(QString("Hamlib Version = %1\n").arg(radio->gethamlibVersion()));
     msg.append(QString("Radio Name = %1\n").arg(selectRig->currentRadio.radioName));
     msg.append(QString("Radio Number = %1\n").arg(selectRig->currentRadio.radioNumber));
     msg.append(QString("Rig Model = %1\n").arg(selectRig->currentRadio.radioModel));
@@ -1244,7 +1245,7 @@ void RigControlMainWindow::aboutRigConfig()
 
 
 
-    QMessageBox::about(this, "Minos Rotator", msg);
+    QMessageBox::about(this, "Minos RigControl", msg);
 }
 
 
@@ -1254,6 +1255,7 @@ void RigControlMainWindow::dumpRadioToTraceLog()
 {
     trace("*** Radio Update ***");
     trace(QString("App Instance Name  = %1").arg(appName));
+    trace(QString("Hamlib Version = %1").arg(radio->gethamlibVersion()));
     trace(QString("Radio Name = %1").arg(selectRig->currentRadio.radioName));
     trace(QString("Radio Number = %1").arg(selectRig->currentRadio.radioNumber));
     trace(QString("Rig Model = %1").arg(selectRig->currentRadio.radioModel).trimmed());

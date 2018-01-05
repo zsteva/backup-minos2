@@ -2063,6 +2063,7 @@ void RotatorMainWindow::aboutRotatorConfig()
 {
     QString msg = QString("*** Rotator Configuration ***\n\n");
     msg.append(QString("App Instance Name  = %1\n").arg(appName));
+    msg.append(QString("Hamlib Version = %1\n").arg(rotator->gethamlibVersion()));
     msg.append(QString("Antenna Name = %1\n").arg(selectRotator->currentAntenna.antennaName));
     msg.append(QString("Antenna Number = %1\n").arg(selectRotator->currentAntenna.antennaNumber));
     msg.append(QString("Rotator Model = %1\n").arg(selectRotator->currentAntenna.rotatorModel));
@@ -2106,6 +2107,7 @@ void RotatorMainWindow::dumpRotatorToTraceLog()
 {
     trace("*** Antenna Updated ***");
     trace(QString("App Instance Name  = %1").arg(appName));
+    trace(QString("Hamlib Version = %1").arg(rotator->gethamlibVersion()));
     trace(QString("Antenna Name = %1").arg(selectRotator->currentAntenna.antennaName));
     trace(QString("Antenna Number = %1").arg(selectRotator->currentAntenna.antennaNumber));
     trace(QString("Rotator Model = %1").arg(selectRotator->currentAntenna.rotatorModel));
