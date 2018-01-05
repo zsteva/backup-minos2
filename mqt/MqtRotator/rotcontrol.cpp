@@ -549,7 +549,11 @@ int RotControl::calcSouthBearing(int rotatorBearing)
 }
 
 
-
+QString RotControl::gethamlibVersion()
+{
+    QString ver = hamlib_version;
+    return ver;
+}
 
 
 // which passes the call to this method

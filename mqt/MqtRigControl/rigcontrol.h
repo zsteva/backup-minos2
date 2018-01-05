@@ -157,6 +157,7 @@ public:
     bool get_serialConnected();
     QStringList gethamlibErrorMsg();
     QString gethamlibErrorMsg(int errorCode);
+    QString gethamlibVersion();
 
     int rig_message_cb(enum rig_debug_level_e debug_level, const char *fmt, va_list ap);
 
@@ -228,6 +229,7 @@ signals:
     //bool setPTT(bool On);
     //double lastFrequency;
     //QStringList xmlModes;
+
 
 
 
