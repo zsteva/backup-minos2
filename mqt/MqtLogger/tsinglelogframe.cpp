@@ -357,6 +357,9 @@ void TSingleLogFrame::PublishTimerTimer(  )
 }
 void TSingleLogFrame::HideTimerTimer(  )
 {
+    if (!contest)
+        return;
+
     bool controlsLoaded = isBandMapLoaded() || isRadioLoaded() || isRotatorLoaded();
 
     ui->ControlSplitter->setVisible(controlsLoaded && !contest->isReadOnly());

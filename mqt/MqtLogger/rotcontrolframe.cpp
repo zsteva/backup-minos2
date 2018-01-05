@@ -442,7 +442,8 @@ void RotControlFrame::setRotatorList(QString s)
     ui->antennaName->addItem("");
     ui->antennaName->addItems(rots);
 
-    setRotatorAntennaName(ct->rotatorName.getValue());
+    if (ct)
+        setRotatorAntennaName(ct->rotatorName.getValue());
 }
 void RotControlFrame::setRotatorState(const QString &s)
 {

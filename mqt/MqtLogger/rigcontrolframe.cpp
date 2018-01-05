@@ -551,7 +551,8 @@ void RigControlFrame::setRadioList(QString s)
     ui->radioName->addItem("");
     ui->radioName->addItems(radios);
 
-    setRadioName(ct->radioName.getValue());
+    if (ct)
+        setRadioName(ct->radioName.getValue());
 }
 void RigControlFrame::setRadioState(QString s)
 {
