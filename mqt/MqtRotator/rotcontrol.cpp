@@ -469,45 +469,7 @@ bool RotControl::get_serialConnected()
 
 
 
- enum serial_parity_e RotControl::getSerialParityCode(int index)
- {
 
-     return serialData::parityCodes[index];
-
- }
-
- enum serial_handshake_e RotControl::getSerialHandshakeCode(int index)
- {
-
-     return serialData::handshakeCodes[index];
- }
-
- QStringList RotControl::getParityCodeNames()
- {
-    return serialData::parityStr;
- }
-
- QStringList RotControl::getHandShakeNames()
- {
-     return serialData::handshakeStr;
- }
-
- QStringList RotControl::getBaudRateNames()
- {
-
-
-     return serialData::baudrateStr;
- }
-
- QStringList RotControl::getDataBitsNames()
- {
-     return serialData::databitsStr;
- }
-
- QStringList RotControl::getStopBitsNames()
- {
-     return serialData::stopbitsStr;
- }
 
 QString RotControl::gethamlibErrorMsg(int errorCode)
 {

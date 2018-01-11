@@ -17,7 +17,11 @@
 #include <QtSerialPort/QSerialPort>
 #include <QStringList>
 #include <QLabel>
+#include <QVector>
+
 #include "rotcontrol.h"
+#include "setupdialog.h"
+#include "rotsetupform.h"
 #include "rotatorCommonConstants.h"
 
 
@@ -46,16 +50,21 @@ public:
     ~SetupDialog();
 
 
+
+    QString currentAntennaName;
+    srotParams* currentAntenna;
+    int currentAntIndex;
+
+    QVector<srotParams*> availAntData;
+    QStringList availAntennas;
+    int numAvailAntennas;
+
+
+
     srotParams getCurrentAntenna() const;
     int getRotatorId(QString rotator);
 
 
-    srotParams availAntennas[NUM_ANTENNAS];
-    srotParams currentAntenna;
-
-
-
-    QString getRotatorProtocol(QString );
     void readCurrentAntenna();
     void saveCurrentAntenna();
     QString getRotatorComPort(QString);
@@ -73,23 +82,8 @@ signals:
 
 private slots:
 
-    void antennaNameFinished(int);
-    void rotatorModelSelected(int);
-    void pollIntervalSelected(int boxNumber);
-    void southStopFlagSelected(int);
-    void overRunFlagSelected(int);
-    void antennaOffsetFinished(int);
-    void comportSelected(int);
-    void comSpeedSelected(int);
-    void comDataBitsSelected(int);
-    void comStopBitsSelected(int);
-    void comParitySelected(int);
-    void comHandShakeSelected(int);
-
     void saveButtonPushed();
     void cancelButtonPushed();
-    void networkAddressSelected(int boxNumber);
-    void networkPortSelected(int boxNumber);
 
 
 private:
@@ -97,76 +91,28 @@ private:
 
     RotControl *rotator;
 
-    QLineEdit *antennaName[NUM_ANTENNAS];
-    QComboBox *rotatorModel[NUM_ANTENNAS];
-
-    QComboBox *pollInterval[NUM_ANTENNAS];
-
-    QCheckBox *southStopFlag[NUM_ANTENNAS];
-    QLabel *southStopLabel[NUM_ANTENNAS];
-
-    QCheckBox *overRunFlag[NUM_ANTENNAS];
-    QLabel *overRunLabel[NUM_ANTENNAS];
-
-    QLineEdit *antennaOffset[NUM_ANTENNAS];
-
-    QComboBox *comPorts[NUM_ANTENNAS];
-    QLabel *comPortLbl[NUM_ANTENNAS];
-
-    QComboBox *comSpeed[NUM_ANTENNAS];
-    QLabel *comSpeedLbl[NUM_ANTENNAS];
-
-    QComboBox *comDataBits[NUM_ANTENNAS];
-    QLabel *comDataLbl[NUM_ANTENNAS];
-
-    QComboBox *comStopBits[NUM_ANTENNAS];
-    QLabel *comStopLbl[NUM_ANTENNAS];
-
-    QComboBox *comParity[NUM_ANTENNAS];
-    QLabel *comParityLbl[NUM_ANTENNAS];
-
-    QComboBox *comHandShake[NUM_ANTENNAS];
-    QLabel *comHandLbl[NUM_ANTENNAS];
-
-    QLineEdit *netAddress[NUM_ANTENNAS];
-    QLabel *netAddLbl[NUM_ANTENNAS];
-
-    QLineEdit *netPort[NUM_ANTENNAS];
-    QLabel *netPortLbl[NUM_ANTENNAS];
+    QVector<rotSetupForm*> antennaTab;
 
 
 
-//    QIntValidator *intValidator;
-    bool antennaValueChanged[NUM_ANTENNAS];
-    bool antennaNameChanged[NUM_ANTENNAS];
-    bool antennaChanged;
     bool chkloadflg = false;
     QString appName = "";
     const int minOffset = -90;
     const int maxOffset = 90;
     void saveSettings();
-    void fillRotatorModelInfo();
-    void fillPollInterValInfo();
-    void fillPortsInfo();
-    void fillSpeedInfo();
-    void fillDataBitsInfo();
-    void fillStopBitsInfo();
-    void fillParityInfo();
-    void fillHandShakeInfo();
+
     void clearAvailRotators();
     void clearCurrentRotator();
-    void initRotProtocols();
-
 
 
 
     void clearAntennaValueChanged();
-    int getMaxMinRotationData(int rotatorNumber, int *maxRot, int *minRot);
     void clearAntennaNameChanged();
     void serialDataEntryVisible(int antNumber, bool visible);
     void networkDataEntryVisible(int antNumber, bool visible);
 
 
+    void getAvailAntennas();
 };
 
 #endif // SETUPDIALOG_H

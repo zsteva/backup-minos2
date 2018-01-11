@@ -17,12 +17,13 @@
 #include "setupdialog.h"
 #include "ui_setupdialog.h"
 #include "rotcontrol.h"
-#include <QSignalMapper>
+
+//#include <QSignalMapper>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QCheckBox>
-#include <QtSerialPort/QSerialPort>
-#include <QSerialPortInfo>
+//#include <QtSerialPort/QSerialPort>
+//#include <QSerialPortInfo>
 #include <QSettings>
 //#include <QIntValidator>
 #include <QMessageBox>
@@ -41,331 +42,31 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     rotator = rotator;
 
 
-
-    antennaName[0] = ui->antennaNameEdit1;
-    antennaName[1] = ui->antennaNameEdit2;
-    antennaName[2] = ui->antennaNameEdit3;
-    antennaName[3] = ui->antennaNameEdit4;
-    antennaName[4] = ui->antennaNameEdit5;
-
-    rotatorModel[0] = ui->rotatorModelBox1;
-    rotatorModel[1] = ui->rotatorModelBox2;
-    rotatorModel[2] = ui->rotatorModelBox3;
-    rotatorModel[3] = ui->rotatorModelBox4;
-    rotatorModel[4] = ui->rotatorModelBox5;
-
-    southStopFlag[0] = ui->chkSstop1;
-    southStopFlag[1] = ui->chkSstop2;
-    southStopFlag[2] = ui->chkSstop3;
-    southStopFlag[3] = ui->chkSstop4;
-    southStopFlag[4] = ui->chkSstop5;
-
-    southStopLabel[0] = ui->s_StopLbl1;
-    southStopLabel[1] = ui->s_StopLbl2;
-    southStopLabel[2] = ui->s_StopLbl3;
-    southStopLabel[3] = ui->s_StopLbl4;
-    southStopLabel[4] = ui->s_StopLbl5;
-
-
-
-    overRunFlag[0] = ui->chkOverrun1;
-    overRunFlag[1] = ui->chkOverrun2;
-    overRunFlag[2] = ui->chkOverrun3;
-    overRunFlag[3] = ui->chkOverrun4;
-    overRunFlag[4] = ui->chkOverrun5;
-
-
-    overRunLabel[0] = ui->overLapLbl1;
-    overRunLabel[1] = ui->overLapLbl2;
-    overRunLabel[2] = ui->overLapLbl3;
-    overRunLabel[3] = ui->overLapLbl4;
-    overRunLabel[4] = ui->overLapLbl5;
-
-    for (int i = 0; i < NUM_ANTENNAS; i++)
+    // get the number of available antennas
+    QString fileName;
+    if (appName == "")
     {
-        southStopFlag[i]->setVisible(false);
-        southStopLabel[i]->setVisible(false);
-        overRunFlag[i]->setVisible(false);
-        overRunLabel[i]->setVisible(false);
+        fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
+    }
+    else
+    {
+        fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
     }
 
+    QSettings settings(fileName, QSettings::IniFormat);
+    availAntennas = settings.childGroups();
+    numAvailAntennas = availAntennas.count();
 
-
-    antennaOffset[0] = ui->lEditOffset1;
-    antennaOffset[1] = ui->lEditOffset2;
-    antennaOffset[2] = ui->lEditOffset3;
-    antennaOffset[3] = ui->lEditOffset4;
-    antennaOffset[4] = ui->lEditOffset5;
-
-
-    comPorts[0] = ui->comPortBox1;
-    comPorts[1] = ui->comPortBox2;
-    comPorts[2] = ui->comPortBox3;
-    comPorts[3] = ui->comPortBox4;
-    comPorts[4] = ui->comPortBox5;
-
-    comPortLbl[0] = ui->comporLbl1;
-    comPortLbl[1] = ui->comporLbl2;
-    comPortLbl[2] = ui->comporLbl3;
-    comPortLbl[3] = ui->comporLbl4;
-    comPortLbl[4] = ui->comporLbl5;
-
-
-    comSpeed[0] = ui->comSpeedBox1;
-    comSpeed[1] = ui->comSpeedBox2;
-    comSpeed[2] = ui->comSpeedBox3;
-    comSpeed[3] = ui->comSpeedBox4;
-    comSpeed[4] = ui->comSpeedBox5;
-
-    comSpeedLbl[0] = ui->speedLbl1;
-    comSpeedLbl[1] = ui->speedLbl2;
-    comSpeedLbl[2] = ui->speedLbl3;
-    comSpeedLbl[3] = ui->speedLbl4;
-    comSpeedLbl[4] = ui->speedLbl5;
-
-
-    comDataBits[0] = ui->comDataBitsBox1;
-    comDataBits[1] = ui->comDataBitsBox2;
-    comDataBits[2] = ui->comDataBitsBox3;
-    comDataBits[3] = ui->comDataBitsBox4;
-    comDataBits[4] = ui->comDataBitsBox5;
-
-    comDataLbl[0] = ui->dBitsLbl1;
-    comDataLbl[1] = ui->dBitsLbl2;
-    comDataLbl[2] = ui->dBitsLbl3;
-    comDataLbl[3] = ui->dBitsLbl4;
-    comDataLbl[4] = ui->dBitsLbl5;
-
-    comStopBits[0] = ui->comStopBitsBox1;
-    comStopBits[1] = ui->comStopBitsBox2;
-    comStopBits[2] = ui->comStopBitsBox3;
-    comStopBits[3] = ui->comStopBitsBox4;
-    comStopBits[4] = ui->comStopBitsBox5;
-
-    comStopLbl[0] = ui->stopLbl1;
-    comStopLbl[1] = ui->stopLbl2;
-    comStopLbl[2] = ui->stopLbl3;
-    comStopLbl[3] = ui->stopLbl4;
-    comStopLbl[4] = ui->stopLbl5;
-
-    comParity[0] = ui->comParityBox1;
-    comParity[1] = ui->comParityBox2;
-    comParity[2] = ui->comParityBox3;
-    comParity[3] = ui->comParityBox4;
-    comParity[4] = ui->comParityBox5;
-
-    comParityLbl[0] = ui->parityLbl1;
-    comParityLbl[1] = ui->parityLbl2;
-    comParityLbl[2] = ui->parityLbl3;
-    comParityLbl[3] = ui->parityLbl4;
-    comParityLbl[4] = ui->parityLbl5;
-
-    comHandShake[0] = ui->comHandShakeBox1;
-    comHandShake[1] = ui->comHandShakeBox2;
-    comHandShake[2] = ui->comHandShakeBox3;
-    comHandShake[3] = ui->comHandShakeBox4;
-    comHandShake[4] = ui->comHandShakeBox5;
-
-    comHandLbl[0] = ui->handLbl1;
-    comHandLbl[1] = ui->handLbl2;
-    comHandLbl[2] = ui->handLbl3;
-    comHandLbl[3] = ui->handLbl4;
-    comHandLbl[4] = ui->handLbl5;
-
-    netAddress[0] = ui->netAddressBox1;
-    netAddress[1] = ui->netAddressBox2;
-    netAddress[2] = ui->netAddressBox3;
-    netAddress[3] = ui->netAddressBox4;
-    netAddress[4] = ui->netAddressBox5;
-
-    netAddLbl[0] = ui->netAddressLbl1;
-    netAddLbl[1] = ui->netAddressLbl2;
-    netAddLbl[2] = ui->netAddressLbl3;
-    netAddLbl[3] = ui->netAddressLbl4;
-    netAddLbl[4] = ui->netAddressLbl5;
-
-    netPort[0] = ui->netPortBox1;
-    netPort[1] = ui->netPortBox2;
-    netPort[2] = ui->netPortBox3;
-    netPort[3] = ui->netPortBox4;
-    netPort[4] = ui->netPortBox5;
-
-    netPortLbl[0] = ui->portLbl1;
-    netPortLbl[1] = ui->portLbl2;
-    netPortLbl[2] = ui->portLbl3;
-    netPortLbl[3] = ui->portLbl4;
-    netPortLbl[4] = ui->portLbl5;
-
-
-    pollInterval[0] = ui->pollInterval1;
-    pollInterval[1] = ui->pollInterval2;
-    pollInterval[2] = ui->pollInterval3;
-    pollInterval[3] = ui->pollInterval4;
-    pollInterval[4] = ui->pollInterval5;
-
-
-
-
-//--------------------------------------------------------------------------------------------------
-
-    QSignalMapper *antennaName_mapper = new QSignalMapper(this);
-
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
+    if (numAvailAntennas > 0)
     {
-       antennaName_mapper->setMapping(antennaName[i], i);
-        connect(antennaName[i], SIGNAL(editingFinished()), antennaName_mapper, SLOT(map()));
+        for (int i; i < numAvailAntennas; i++)
+        {
+            availAntData.append(new srotParams);
+            antennaTab.append(new rotSetupForm(rotator, availAntData[i]));
+
+        }
+
     }
-    connect(antennaName_mapper, SIGNAL(mapped(int)), this, SLOT(antennaNameFinished(int)));
-
-//--------------------------------------------------------------------------------------------------
-
-    QSignalMapper *rotatorModel_mapper = new QSignalMapper(this);
-
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        rotatorModel_mapper->setMapping(rotatorModel[i], i);
-        connect(rotatorModel[i], SIGNAL(activated(int)), rotatorModel_mapper, SLOT(map()));
-    }
-    connect(rotatorModel_mapper, SIGNAL(mapped(int)), this, SLOT(rotatorModelSelected(int)));
-
-//--------------------------------------------------------------------------------------------------
-
-
-    QSignalMapper *pollInterval_mapper = new QSignalMapper(this);
-
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        pollInterval_mapper->setMapping(pollInterval[i], i);
-        connect(pollInterval[i], SIGNAL(activated(int)), pollInterval_mapper, SLOT(map()));
-    }
-    connect(pollInterval_mapper, SIGNAL(mapped(int)), this, SLOT(pollIntervalSelected(int)));
-
-//--------------------------------------------------------------------------------------------------
-
-
-    QSignalMapper *southStopFlag_mapper = new QSignalMapper(this);
-
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        southStopFlag_mapper->setMapping(southStopFlag[i], i);
-        connect(southStopFlag[i], SIGNAL(stateChanged(int)), southStopFlag_mapper, SLOT(map()));
-    }
-    connect(southStopFlag_mapper, SIGNAL(mapped(int)), this, SLOT(southStopFlagSelected(int)));
-
-//---------------------------------------------------------------------------------------------------
-
-    QSignalMapper *overRunFlag_mapper = new QSignalMapper(this);
-
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        overRunFlag_mapper->setMapping(overRunFlag[i], i);
-        connect(overRunFlag[i], SIGNAL(stateChanged(int)), overRunFlag_mapper, SLOT(map()));
-    }
-    connect(overRunFlag_mapper, SIGNAL(mapped(int)), this, SLOT(overRunFlagSelected(int)));
-
-//--------------------------------------------------------------------------------------------------
-
-    QSignalMapper *antennaOffset_mapper = new QSignalMapper(this);
-
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        antennaOffset_mapper->setMapping(antennaOffset[i], i);
-        connect(antennaOffset[i], SIGNAL(editingFinished()), antennaOffset_mapper, SLOT(map()));
-    }
-    connect(antennaOffset_mapper, SIGNAL(mapped(int)), this, SLOT(antennaOffsetFinished(int)));
-
-//--------------------------------------------------------------------------------------------------
-
-    QSignalMapper *comPorts_mapper = new QSignalMapper(this);
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        comPorts_mapper->setMapping(comPorts[i], i);
-        connect(comPorts[i], SIGNAL(activated(int)), comPorts_mapper, SLOT(map()));
-    }
-
-    connect(comPorts_mapper, SIGNAL(mapped(int)), this, SLOT(comportSelected(int)));
-
-//--------------------------------------------------------------------------------------------------
-
-    QSignalMapper *comSpeed_mapper = new QSignalMapper(this);
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        comSpeed_mapper->setMapping(comSpeed[i], i);
-        connect(comSpeed[i], SIGNAL(activated(int)), comSpeed_mapper, SLOT(map()));
-    }
-
-    connect(comSpeed_mapper, SIGNAL(mapped(int)), this, SLOT(comSpeedSelected(int)));
-
-//--------------------------------------------------------------------------------------------------
-
-    QSignalMapper *comDataBits_mapper = new QSignalMapper(this);
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        comDataBits_mapper->setMapping(comDataBits[i], i);
-        connect(comDataBits[i], SIGNAL(activated(int)), comDataBits_mapper, SLOT(map()));
-    }
-
-    connect(comDataBits_mapper, SIGNAL(mapped(int)), this, SLOT(comDataBitsSelected(int)));
-
-//--------------------------------------------------------------------------------------------------
-
-    QSignalMapper *comStopBits_mapper = new QSignalMapper(this);
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        comStopBits_mapper->setMapping(comStopBits[i], i);
-        connect(comStopBits[i], SIGNAL(activated(int)), comStopBits_mapper, SLOT(map()));
-    }
-
-    connect(comStopBits_mapper, SIGNAL(mapped(int)), this, SLOT(comStopBitsSelected(int)));
-
-//--------------------------------------------------------------------------------------------------
-
-    QSignalMapper *comParity_mapper = new QSignalMapper(this);
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        comParity_mapper->setMapping(comParity[i], i);
-        connect(comParity[i], SIGNAL(activated(int)), comParity_mapper, SLOT(map()));
-    }
-
-    connect(comParity_mapper, SIGNAL(mapped(int)), this, SLOT(comParitySelected(int)));
-
-//--------------------------------------------------------------------------------------------------
-
-    QSignalMapper *comHandShake_mapper = new QSignalMapper(this);
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        comHandShake_mapper->setMapping(comHandShake[i], i);
-        connect(comHandShake[i], SIGNAL(activated(int)), comHandShake_mapper, SLOT(map()));
-    }
-
-    connect(comHandShake_mapper, SIGNAL(mapped(int)), this, SLOT(comHandShakeSelected(int)));
-
-//--------------------------------------------------------------------------------------------------
-
-    QSignalMapper *networkAddress_mapper = new QSignalMapper(this);
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        networkAddress_mapper->setMapping(netAddress[i], i);
-        connect(netAddress[i], SIGNAL(editingFinished()), networkAddress_mapper, SLOT(map()));
-    }
-
-    connect(networkAddress_mapper, SIGNAL(mapped(int)), this, SLOT(networkAddressSelected(int)));
-
-//--------------------------------------------------------------------------------------------------
-
-    QSignalMapper *networkPort_mapper = new QSignalMapper(this);
-    for (int i = 0; i < NUM_ANTENNAS; i++ )
-    {
-        networkPort_mapper->setMapping(netPort[i], i);
-        connect(netPort[i], SIGNAL(editingFinished()), networkPort_mapper, SLOT(map()));
-    }
-
-    connect(networkPort_mapper, SIGNAL(mapped(int)), this, SLOT(networkPortSelected(int)));
-
-//--------------------------------------------------------------------------------------------------
-
-
-
 
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveButtonPushed()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
@@ -373,81 +74,68 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
 
 
 
-    fillRotatorModelInfo();  // add rotator models to drop down
-    fillPortsInfo();     // add comports to drop down
-    fillPollInterValInfo();
-    fillSpeedInfo();
-    fillDataBitsInfo();
-    fillStopBitsInfo();
-    fillParityInfo();
-    fillHandShakeInfo();
-    clearAvailRotators(); // clear the AvailRotator table, also init with default serial parameters
-    clearCurrentRotator(); // clear the currently selected Rotator table, also init with default serial parameters
-    clearAntennaValueChanged();
-    clearAntennaNameChanged();
+    //clearAvailRotators(); // clear the AvailRotator table, also init with default serial parameters
+    //clearCurrentRotator(); // clear the currently selected Rotator table, also init with default serial parameters
+    //clearAntennaValueChanged();
+    //clearAntennaNameChanged();
 
-    for (int i = 0; i < NUM_ANTENNAS; i++)
+
+
+    getAvailAntennas();
+
+    for (int i = 0; i < numAvailAntennas; i++)
     {
-        networkDataEntryVisible(i, false);
-    }
-
-
-    readSettings();
-
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        antennaName[i]->setText(availAntennas[i].antennaName);
-        rotatorModel[i]->setCurrentIndex(rotatorModel[i]->findText(availAntennas[i].rotatorModel));
-        pollInterval[i]->setCurrentIndex(pollInterval[i]->findText(availAntennas[i].pollInterval));
-        southStopFlag[i]->setChecked(availAntennas[i].southStopFlag);
-
+        antennaTab[i]->setAntennaName(availAntData[i]->antennaName);
+        antennaTab[i]->setRotatorModel(availAntData[i]->rotatorModel);
+        antennaTab[i]->setPollInterval(availAntData[i]->pollInterval);
+        antennaTab[i]->setCheckStop(availAntData[i]->southStopFlag);
+/************************************************************************************
         // set southstop visible if rotator is 0 - 360
         int minRot = 0;
         int maxRot = 0;
-        if (getMaxMinRotationData(availAntennas[i].rotatorModelNumber, &maxRot, &minRot) >= 0)
+        if (getMaxMinRotationData(availAntData[i]->rotatorModelNumber, &maxRot, &minRot) >= 0)
         {
             if (minRot == 0 && maxRot == 360)
             {
-                southStopFlag[i]->setVisible(true);
-                southStopLabel[i]->setVisible(true);
+                antennaTab[i]->setCheckStopVisible(true);
+
             }
             else if (minRot == 0 && maxRot == 450)
             {
-                overRunFlag[i]->setVisible(true);
-                overRunLabel[i]->setVisible(true);
+                antennaTab[i]->setOverRunFlagVisible(true);
+
             }
             else
             {
-                southStopFlag[i]->setVisible(false);
-                southStopLabel[i]->setVisible(false);
-                overRunFlag[i]->setVisible(false);
-                overRunLabel[i]->setVisible(false);
+                antennaTab[i]->setCheckStopVisible(false);
+                antennaTab[i]->setOverRunFlagVisible(false);
             }
         }
-        overRunFlag[i]->setChecked(availAntennas[i].overRunFlag);
-        antennaOffset[i]->setText(QString::number(availAntennas[i].antennaOffset));
-        comPorts[i]->setCurrentIndex(comPorts[i]->findText(availAntennas[i].comport));
-        comSpeed[i]->setCurrentIndex(comSpeed[i]->findText(QString::number(availAntennas[i].baudrate)));
-        comDataBits[i]->setCurrentIndex(comDataBits[i]->findText(QString::number(availAntennas[i].databits)));
-        comStopBits[i]->setCurrentIndex(comStopBits[i]->findText(QString::number(availAntennas[i].stopbits)));
-        comParity[i]->setCurrentIndex(availAntennas[i].parity);
-        comHandShake[i]->setCurrentIndex(availAntennas[i].handshake);
-        netAddress[i]->setText(availAntennas[i].networkAdd);
-        netPort[i]->setText(availAntennas[i].networkPort);
-        if (rig_port_e(availAntennas[i].portType) == RIG_PORT_NETWORK || rig_port_e(availAntennas[i].portType) == RIG_PORT_UDP_NETWORK)
+*/
+        antennaTab[i]->setCheckOverrun(availAntData[i]->overRunFlag);
+        antennaTab[i]->setAntennaOffset(QString::number(availAntData[i]->antennaOffset));
+        antennaTab[i]->setComport(availAntData[i]->comport);
+        antennaTab[i]->setDataSpeed(QString::number(availAntData[i]->baudrate));
+        antennaTab[i]->setDataBits(QString::number(availAntData[i]->databits));
+        antennaTab[i]->setStopBits(QString::number(availAntData[i]->stopbits));
+//        antennaTab[i]->setParityBits(availAntData[i]->parity);
+//        antennaTab[i]->setHandshake(availAntData[i]->handshake);
+        antennaTab[i]->setNetAddress(availAntData[i]->networkAdd);
+        antennaTab[i]->setNetPortNum(availAntData[i]->networkPort);
+        if (rig_port_e(availAntData[i]->portType) == RIG_PORT_NETWORK || rig_port_e(availAntData[i]->portType) == RIG_PORT_UDP_NETWORK)
         {
-            serialDataEntryVisible(i, false);
-            networkDataEntryVisible(i, true);
+            antennaTab[i]->serialDataEntryVisible(false);
+            antennaTab[i]->networkDataEntryVisible(true);
         }
-        else if (rig_port_e(availAntennas[i].portType) == RIG_PORT_NONE)
+        else if (rig_port_e(availAntData[i]->portType) == RIG_PORT_NONE)
         {
-            serialDataEntryVisible(i, false);
-            networkDataEntryVisible(i, false);
+            antennaTab[i]->serialDataEntryVisible(false);
+            antennaTab[i]->networkDataEntryVisible(false);
         }
-        else if (rig_port_e(availAntennas[i].portType) == RIG_PORT_SERIAL)
+        else if (rig_port_e(availAntData[i]->portType) == RIG_PORT_SERIAL)
         {
-            serialDataEntryVisible(i, true);
-            networkDataEntryVisible(i, false);
+            antennaTab[i]->serialDataEntryVisible(true);
+            antennaTab[i]->networkDataEntryVisible(false);
         }
 
     }
@@ -460,451 +148,6 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
 SetupDialog::~SetupDialog()
 {
     delete ui;
-}
-
-
-void SetupDialog::antennaNameFinished(int boxNumber)
-{
-
-    if (antennaName[boxNumber]->text() != availAntennas[boxNumber].antennaName)
-    {
-        availAntennas[boxNumber].antennaName = antennaName[boxNumber]->text();
-        antennaValueChanged[boxNumber] = true;
-        antennaNameChanged[boxNumber] = true;
-        antennaChanged = true;
-
-    }
-}
-
-
-void SetupDialog::rotatorModelSelected(int boxNumber)
-{
-
-    //bool ok;
-    int rm;
-    QString rotModelName;
-    QString rotMfgName;
-
-    if (rotatorModel[boxNumber]->currentText() != availAntennas[boxNumber].rotatorModel)
-    {
-        /*
-        QString s = rotatorModel[boxNumber]->currentText();
-        availAntennas[boxNumber].rotatorModel = s;
-        s = s.trimmed();
-        QStringList antdetails = s.split(',');
-        s = antdetails[0];
-        availAntennas[boxNumber].rotatorModelNumber = s.toInt(&ok, 10);
-        s = antdetails[1];
-        availAntennas[boxNumber].rotatorManufacturer = s.trimmed();
-        s = antdetails[2];
-        availAntennas[boxNumber].rotatorModelName = s.trimmed();
-        */
-
-        availAntennas[boxNumber].rotatorModel = rotatorModel[boxNumber]->currentText();
-        if (rotator->getModelInfo(availAntennas[boxNumber].rotatorModel, &rm, &rotMfgName, &rotModelName) == -1)
-        {
-            // error
-            availAntennas[boxNumber].rotatorModelNumber = 0;
-            availAntennas[boxNumber].rotatorModelName = "";
-            availAntennas[boxNumber].rotatorManufacturer = "";
-        }
-        else
-        {
-            availAntennas[boxNumber].rotatorModelNumber = rm;
-            availAntennas[boxNumber].rotatorModelName = rotModelName;
-            availAntennas[boxNumber].rotatorManufacturer = rotMfgName;
-
-        }
-        // set southstop visible if rotator is 0 - 360
-        int minRot = 0;
-        int maxRot = 0;
-        if (getMaxMinRotationData(availAntennas[boxNumber].rotatorModelNumber, &maxRot, &minRot) >= 0)
-        {
-            if (minRot == 0 && maxRot == 360)
-            {
-                overRunFlag[boxNumber]->setVisible(false);
-                overRunFlag[boxNumber]->setChecked(false);
-                overRunLabel[boxNumber]->setVisible(false);
-                southStopFlag[boxNumber]->setVisible(true);
-                southStopLabel[boxNumber]->setVisible(true);
-
-
-            }
-            else if (minRot == 0 && maxRot == 450)
-            {
-                overRunFlag[boxNumber]->setVisible(true);
-                overRunFlag[boxNumber]->setChecked(true);
-                overRunLabel[boxNumber]->setVisible(true);
-                southStopFlag[boxNumber]->setVisible(false);
-                southStopFlag[boxNumber]->setChecked(false);
-                southStopLabel[boxNumber]->setVisible(false);
-            }
-            else
-            {
-                overRunFlag[boxNumber]->setVisible(false);
-                overRunFlag[boxNumber]->setChecked(false);
-                overRunLabel[boxNumber]->setVisible(false);
-                southStopFlag[boxNumber]->setVisible(false);
-                southStopFlag[boxNumber]->setChecked(false);
-                southStopLabel[boxNumber]->setVisible(false);
-            }
-        }
-
-        rig_port_e portType = RIG_PORT_NONE;
-
-        if (rotator->getPortType(availAntennas[boxNumber].rotatorModelNumber, &portType) != -1)
-        {
-            availAntennas[boxNumber].portType = int(portType);
-            if (portType == RIG_PORT_NETWORK || portType == RIG_PORT_UDP_NETWORK)
-            {
-               serialDataEntryVisible(boxNumber, false);
-               networkDataEntryVisible(boxNumber, true);
-            }
-            else if (portType == RIG_PORT_SERIAL)
-            {
-                serialDataEntryVisible(boxNumber, true);
-                networkDataEntryVisible(boxNumber, false);
-            }
-            else // RIG_PORT_NONE
-            {
-                serialDataEntryVisible(boxNumber, false);
-                networkDataEntryVisible(boxNumber, false);
-            }
-
-
-        }
-
-        antennaValueChanged[boxNumber] = true;
-        antennaChanged = true;
-
-    }
-}
-
-
-void SetupDialog::pollIntervalSelected(int boxNumber)
-{
-
-    if (availAntennas[boxNumber].pollInterval != pollInterval[boxNumber]->currentText())
-    {
-        availAntennas[boxNumber].pollInterval = pollInterval[boxNumber]->currentText();
-        antennaValueChanged[boxNumber] = true;
-        antennaChanged = true;
-    }
-}
-
-
-
-void SetupDialog::southStopFlagSelected(int boxNumber)
-{
-    if (!chkloadflg)
-    {
-        if (southStopFlag[boxNumber]->isChecked() != availAntennas[boxNumber].southStopFlag)
-        {
-            availAntennas[boxNumber].southStopFlag = southStopFlag[boxNumber]->isChecked();
-            antennaValueChanged[boxNumber] = true;
-            antennaChanged = true;
-        }
-
-    }
-
-}
-
-void SetupDialog::overRunFlagSelected(int boxNumber)
-{
-    if (!chkloadflg)
-    {
-        if (overRunFlag[boxNumber]->isChecked() != availAntennas[boxNumber].overRunFlag)
-        {
-            availAntennas[boxNumber].overRunFlag = overRunFlag[boxNumber]->isChecked();
-            antennaValueChanged[boxNumber] = true;
-            antennaChanged = true;
-        }
-
-    }
-
-
-}
-
-void SetupDialog::antennaOffsetFinished(int boxNumber)
-{
-
-    QMessageBox messageBox;
-
-    if (antennaOffset[boxNumber]->text() != "")
-    {
-        int offset = antennaOffset[boxNumber]->text().toInt();
-        if (offset < minOffset || offset > maxOffset)
-        {
-            antennaOffset[boxNumber]->setText("0");
-            QString msg = "Value must be between " + QString::number(minOffset) + " and " + QString::number(maxOffset);
-            messageBox.critical(this, "Antenna Offset Error", msg);
-
-        }
-        else
-        {
-
-            if (offset  != availAntennas[boxNumber].antennaOffset)
-            {
-                availAntennas[boxNumber].antennaOffset = offset;
-                antennaValueChanged[boxNumber] = true;
-                antennaChanged = true;
-            }
-
-        }
-
-
-    }
-
-}
-
-
-void SetupDialog::comportSelected(int boxNumber)
-{
-
-    if (comPorts[boxNumber]->currentText() != availAntennas[boxNumber].comport)
-    {
-        availAntennas[boxNumber].comport = comPorts[boxNumber]->currentText();
-        antennaValueChanged[boxNumber] = true;
-        antennaChanged = true;
-
-    }
-}
-
-
-int SetupDialog::comportAvial(int antennaNum, QString comport)
-{
-    return comPorts[antennaNum]->findText(comport);
-}
-
-
-
-void SetupDialog::comSpeedSelected(int boxNumber)
-{
-
-    availAntennas[boxNumber].baudrate = comSpeed[boxNumber]->currentText().toInt();
-    antennaValueChanged[boxNumber] = true;
-    antennaChanged = true;
-}
-
-void SetupDialog::comDataBitsSelected(int boxNumber)
-{
-
-    availAntennas[boxNumber].databits = comDataBits[boxNumber]->currentText().toInt();
-    antennaValueChanged[boxNumber] = true;
-    antennaChanged = true;
-}
-
-void SetupDialog::comStopBitsSelected(int boxNumber)
-{
-
-    availAntennas[boxNumber].stopbits = comStopBits[boxNumber]->currentText().toInt();
-    antennaValueChanged[boxNumber] = true;
-    antennaChanged = true;
-}
-
-void SetupDialog::comParitySelected(int boxNumber)
-{
-
-    availAntennas[boxNumber].parity = rotator->getSerialParityCode(comParity[boxNumber]->currentIndex());
-    antennaValueChanged[boxNumber] = true;
-    antennaChanged = true;
-}
-
-
-void SetupDialog::comHandShakeSelected(int boxNumber)
-{
-
-    availAntennas[boxNumber].handshake = rotator->getSerialHandshakeCode(comHandShake[boxNumber]->currentIndex());
-    antennaValueChanged[boxNumber] = true;
-    antennaChanged = true;
-}
-
-
-void SetupDialog::networkAddressSelected(int boxNumber)
-{
-
-    availAntennas[boxNumber].networkAdd = netAddress[boxNumber]->text();
-    antennaValueChanged[boxNumber] = true;
-    antennaChanged = true;
-}
-
-void SetupDialog::networkPortSelected(int boxNumber)
-{
-    availAntennas[boxNumber].networkPort = netPort[boxNumber]->text();
-    antennaValueChanged[boxNumber] = true;
-    antennaChanged = true;
-}
-
-void SetupDialog::fillRotatorModelInfo()
-{
-
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        rotatorModel[i]->clear();
-    }
-
-     for (int i = 0; i < NUM_ANTENNAS; i++)
-     {
-        rotator->getRotatorList(rotatorModel[i]);
-     }
-
-
-}
-
-
-void SetupDialog::fillPollInterValInfo()
-{
-    QStringList pollTimeStr;
-    pollTimeStr << "0.5" << "1" << "2" << "3";
-
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        pollInterval[i]->clear();
-    }
-
-     for (int i = 0; i < NUM_ANTENNAS; i++)
-     {
-        pollInterval[i]->addItems(pollTimeStr);
-     }
-
-
-}
-
-
-
-void SetupDialog::fillPortsInfo()
-{
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        comPorts[i]->clear();
-    }
-
-    QString description;
-    QString manufacturer;
-    QString serialNumber;
-
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        comPorts[i]->addItem("");
-    }
-    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
-        QStringList list;
-        description = info.description();
-        manufacturer = info.manufacturer();
-        serialNumber = info.serialNumber();
-        list << info.portName()
-             << (!description.isEmpty() ? description : blankString)
-             << (!manufacturer.isEmpty() ? manufacturer : blankString)
-             << (!serialNumber.isEmpty() ? serialNumber : blankString)
-             << info.systemLocation()
-             << (info.vendorIdentifier() ? QString::number(info.vendorIdentifier(), 16) : blankString)
-             << (info.productIdentifier() ? QString::number(info.productIdentifier(), 16) : blankString);
-
-
-        for (int i = 0; i < NUM_ANTENNAS; i++)
-        {
-
-            comPorts[i]->addItem(list.first(), list);
-        }
-    }
-
-
-}
-
-
-
-
-void SetupDialog::fillSpeedInfo()
-{
-
-    QStringList baudrateStr = rotator->getBaudRateNames();
-
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        comSpeed[i]->clear();
-    }
-
-     for (int i = 0; i < NUM_ANTENNAS; i++)
-     {
-        comSpeed[i]->addItems(baudrateStr);
-     }
-
-
-}
-
-void SetupDialog::fillDataBitsInfo()
-{
-
-    QStringList databitsStr = rotator->getDataBitsNames();
-
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        comDataBits[i]->clear();
-    }
-
-     for (int i = 0; i < NUM_ANTENNAS; i++)
-     {
-        comDataBits[i]->addItems(databitsStr);
-     }
-
-
-}
-
-void SetupDialog::fillStopBitsInfo()
-{
-    QStringList stopbitsStr = rotator->getStopBitsNames();
-
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        comStopBits[i]->clear();
-    }
-
-     for (int i = 0; i < NUM_ANTENNAS; i++)
-     {
-        comStopBits[i]->addItems(stopbitsStr);
-     }
-
-
-}
-
-
-
-void SetupDialog::fillParityInfo()
-{
-
-    QStringList parityStr = rotator->getParityCodeNames();
-
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        comParity[i]->clear();
-    }
-
-     for (int i = 0; i < NUM_ANTENNAS; i++)
-     {
-        comParity[i]->addItems(parityStr);
-     }
-
-
-}
-
-
-
-void SetupDialog::fillHandShakeInfo()
-{
-
-    QStringList handshakeStr = rotator->getHandShakeNames();
-
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        comHandShake[i]->clear();
-    }
-
-     for (int i = 0; i < NUM_ANTENNAS; i++)
-     {
-        comHandShake[i]->addItems(handshakeStr);
-     }
-
-
 }
 
 
@@ -933,16 +176,19 @@ void SetupDialog::cancelButtonPushed()
 
 void SetupDialog::saveSettings()
 {
+
+/***************************************************************
+
     // have the current antenna settings been changed?
     bool antennaNameChg = false;
 
     bool currentAntennaChanged = false;
     int ca = -1;
     bool ok;
-    ca = currentAntenna.antennaNumber.toInt(&ok, 10);
-    if (ok  && ca >= 0 && ca < NUM_ANTENNAS)
+    ca = currentAntenna->antennaNumber.toInt(&ok, 10);
+    if (ok  && ca >= 0 && ca < numAvailAntennas)
     {
-        if (currentAntenna.antennaNumber != "")
+        if (currentAntenna->antennaNumber != "")
         {
             if (antennaValueChanged[ca-1])
             {
@@ -970,36 +216,36 @@ void SetupDialog::saveSettings()
 
         QSettings config(fileName, QSettings::IniFormat);
 
-        for (int i = 0; i < NUM_ANTENNAS; i++)
+        for (int i = 0; i < numAvailAntennas; i++)
         {
 
             if (antennaValueChanged[i])
             {
                 config.beginGroup("Antenna" + QString::number(i+1));
-                config.setValue("antennaName", availAntennas[i].antennaName);
+                config.setValue("antennaName", availAntData[i]->antennaName);
                 if (antennaNameChanged[i])
                 {
                     antennaNameChg = true;
                     antennaNameChanged[i] = false;
                 }
                 config.setValue("antennaNumber", i+1);
-                config.setValue("rotatorModel", availAntennas[i].rotatorModel);
-                config.setValue("rotatorModelName", availAntennas[i].rotatorModelName);
-                config.setValue("rotatorModelNumber", availAntennas[i].rotatorModelNumber);
-                config.setValue("rotatorManufacturer", availAntennas[i].rotatorManufacturer);
-                config.setValue("rotatorPollInterval", availAntennas[i].pollInterval);
-                config.setValue("southStop", availAntennas[i].southStopFlag);
-                config.setValue("overRun", availAntennas[i].overRunFlag);
-                config.setValue("antennaOffset", availAntennas[i].antennaOffset);
-                config.setValue("portType", availAntennas[i].portType);
-                config.setValue("comport", availAntennas[i].comport);
-                config.setValue("baudrate", availAntennas[i].baudrate);
-                config.setValue("databits", availAntennas[i].databits);
-                config.setValue("parity", availAntennas[i].parity);
-                config.setValue("stopbits", availAntennas[i].stopbits);
-                config.setValue("handshake", availAntennas[i].handshake);
-                config.setValue("netAddress", availAntennas[i].networkAdd);
-                config.setValue("netPort", availAntennas[i].networkPort);
+                config.setValue("rotatorModel", availAntData[i]->rotatorModel);
+                config.setValue("rotatorModelName", availAntData[i]->rotatorModelName);
+                config.setValue("rotatorModelNumber", availAntData[i]->rotatorModelNumber);
+                config.setValue("rotatorManufacturer", availAntData[i]->rotatorManufacturer);
+                config.setValue("rotatorPollInterval", availAntData[i]->pollInterval);
+                config.setValue("southStop", availAntData[i]->southStopFlag);
+                config.setValue("overRun", availAntData[i]->overRunFlag);
+                config.setValue("antennaOffset", availAntData[i]->antennaOffset);
+                config.setValue("portType", availAntData[i]->portType);
+                config.setValue("comport", availAntData[i]->comport);
+                config.setValue("baudrate", availAntData[i]->baudrate);
+                config.setValue("databits", availAntData[i]->databits);
+                config.setValue("parity", availAntData[i]->parity);
+                config.setValue("stopbits", availAntData[i]->stopbits);
+                config.setValue("handshake", availAntData[i]->handshake);
+                config.setValue("netAddress", availAntData[i]->networkAdd);
+                config.setValue("netPort", availAntData[i]->networkPort);
                 config.endGroup();
                 antennaValueChanged[i] = false;
 
@@ -1018,14 +264,15 @@ void SetupDialog::saveSettings()
    if (currentAntennaChanged && ca != -1)
    {
 
-      emit currentAntennaSettingChanged(availAntennas[ca].antennaName);
+      emit currentAntennaSettingChanged(availAntData[ca]->antennaName);
 
    }
+
+*/
 }
 
 
-
-void SetupDialog::readSettings()
+void SetupDialog::getAvailAntennas()
 {
     chkloadflg = true;      // stop loading check values tiggering mapper signals
 
@@ -1041,85 +288,85 @@ void SetupDialog::readSettings()
 
     QSettings config(fileName, QSettings::IniFormat);
 
-    for (int i = 0; i < NUM_ANTENNAS; i++)
+    for (int i = 0; i < numAvailAntennas; i++)
     {
-        config.beginGroup("Antenna" + QString::number(i+1));
-        availAntennas[i].antennaName = config.value("antennaName", "").toString();
-        availAntennas[i].antennaNumber = config.value("antennaNumber", QString::number(i+1)).toString();
-        availAntennas[i].rotatorModel = config.value("rotatorModel", "").toString();
-        availAntennas[i].rotatorModelName = config.value("rotatorModelName", "").toString();
-        availAntennas[i].rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
-        availAntennas[i].rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
-        availAntennas[i].pollInterval = config.value("rotatorPollInterval", "1").toString();
-        availAntennas[i].southStopFlag = config.value("southStop", false).toBool();
-        availAntennas[i].overRunFlag = config.value("overRun", false).toBool();
-        availAntennas[i].antennaOffset = config.value("antennaOffset", "").toInt();
-        availAntennas[i].portType = config.value("portType", int(RIG_PORT_NONE)).toInt();
-        availAntennas[i].comport = config.value("comport", "").toString();
-        availAntennas[i].baudrate = config.value("baudrate", 9600).toInt();
-        availAntennas[i].databits = config.value("databits", 8).toInt();
-        availAntennas[i].parity = config.value("parity", 0).toInt();
-        availAntennas[i].stopbits = config.value("stopbits", 1).toInt();
-        availAntennas[i].handshake = config.value("handshake", 0).toInt();
-        availAntennas[i].networkAdd = config.value("netAddress", "").toString();
-        availAntennas[i].networkPort = config.value("netPort", "").toString();
+        config.beginGroup(availAntennas[i]);
+        availAntData[i]->antennaName = config.value("antennaName", "").toString();
+        availAntData[i]->antennaNumber = config.value("antennaNumber", QString::number(i+1)).toString();
+        availAntData[i]->rotatorModel = config.value("rotatorModel", "").toString();
+        availAntData[i]->rotatorModelName = config.value("rotatorModelName", "").toString();
+        availAntData[i]->rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
+        availAntData[i]->rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
+        availAntData[i]->pollInterval = config.value("rotatorPollInterval", "1").toString();
+        availAntData[i]->southStopFlag = config.value("southStop", false).toBool();
+        availAntData[i]->overRunFlag = config.value("overRun", false).toBool();
+        availAntData[i]->antennaOffset = config.value("antennaOffset", "").toInt();
+        availAntData[i]->portType = config.value("portType", int(RIG_PORT_NONE)).toInt();
+        availAntData[i]->comport = config.value("comport", "").toString();
+        availAntData[i]->baudrate = config.value("baudrate", 9600).toInt();
+        availAntData[i]->databits = config.value("databits", 8).toInt();
+        availAntData[i]->parity = config.value("parity", 0).toInt();
+        availAntData[i]->stopbits = config.value("stopbits", 1).toInt();
+        availAntData[i]->handshake = config.value("handshake", 0).toInt();
+        availAntData[i]->networkAdd = config.value("netAddress", "").toString();
+        availAntData[i]->networkPort = config.value("netPort", "").toString();
         config.endGroup();
     }
     chkloadflg = false;
-}
-
-
-
-void SetupDialog::clearAvailRotators()
-{
-    srotParams nulParam;
-
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        availAntennas[i] = nulParam;
-    }
-
 
 }
 
 
-void SetupDialog::clearCurrentRotator()
-{
-    srotParams nulParam;
-    currentAntenna = nulParam;
-}
+
+//void SetupDialog::clearAvailRotators()
+//{
+//    srotParams nulParam;
+
+//    for (int i = 0; i < numAvailAntennas; i++)
+//    {
+//        availAntData[i] = nulParam;
+//    }
 
 
-void SetupDialog::copyAntennaToCurrent(int antennaNumber)
-{
-    currentAntenna = availAntennas[antennaNumber];
-}
 
-void SetupDialog::clearAntennaValueChanged()
-{
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        antennaValueChanged[i] = false;
-    }
-}
 
-void SetupDialog::clearAntennaNameChanged()
-{
-    for (int i = 0; i < NUM_ANTENNAS; i++)
-    {
-        antennaNameChanged[i] = false;
-    }
-}
+//void SetupDialog::clearCurrentRotator()
+//{
+//    srotParams nulParam;
+//    currentAntenna = nulParam;
+//}
+
+
+//void SetupDialog::copyAntennaToCurrent(int antennaNumber)
+//{
+//    currentAntenna = availAntennas[antennaNumber];
+//}
+
+//void SetupDialog::clearAntennaValueChanged()
+//{
+//    for (int i = 0; i < NUM_ANTENNAS; i++)
+//    {
+//        antennaValueChanged[i] = false;
+//    }
+//}
+
+//void SetupDialog::clearAntennaNameChanged()
+//{
+//    for (int i = 0; i < NUM_ANTENNAS; i++)
+//    {
+//        antennaNameChanged[i] = false;
+//    }
+//}
 
 
 QString SetupDialog::getRotatorComPort(QString antennaName)
 {
 
-    for (int i = 0; i < NUM_ANTENNAS; i++)
+    for (int i = 0; i < numAvailAntennas ; i++)
     {
-        if (availAntennas[i].antennaName == antennaName)
+        if (availAntData[i]->antennaName == antennaName)
         {
-            return availAntennas[i].comport;
+            return availAntData[i]->comport;
         }
     }
 
@@ -1146,25 +393,25 @@ void SetupDialog::saveCurrentAntenna()
 
 
     config.beginGroup("CurrentAntenna");
-    config.setValue("antennaName", currentAntenna.antennaName);
-    config.setValue("antennaNumber", currentAntenna.antennaNumber);
-    config.setValue("rotatorModel", currentAntenna.rotatorModel);
-    config.setValue("rotatorModelNumber", currentAntenna.rotatorModelNumber);
-    config.setValue("rotatorModelName", currentAntenna.rotatorModelName);
-    config.setValue("rotatorManufacturer", currentAntenna.rotatorManufacturer);
-    config.setValue("rotatorPollInterval", currentAntenna.pollInterval);
-    config.setValue("southStop", currentAntenna.southStopFlag);
-    config.setValue("overRun", currentAntenna.overRunFlag);
-    config.setValue("antennaOffset", currentAntenna.antennaOffset);
-    config.setValue("portType", currentAntenna.portType);
-    config.setValue("comport", currentAntenna.comport);
-    config.setValue("baudrate", currentAntenna.baudrate);
-    config.setValue("databits", currentAntenna.databits);
-    config.setValue("parity", currentAntenna.parity);
-    config.setValue("stopbits", currentAntenna.stopbits);
-    config.setValue("handshake", currentAntenna.handshake);
-    config.setValue("netAddress", currentAntenna.networkAdd);
-    config.setValue("netPort", currentAntenna.networkPort);
+    config.setValue("antennaName", currentAntenna->antennaName);
+    config.setValue("antennaNumber", currentAntenna->antennaNumber);
+    config.setValue("rotatorModel", currentAntenna->rotatorModel);
+    config.setValue("rotatorModelNumber", currentAntenna->rotatorModelNumber);
+    config.setValue("rotatorModelName", currentAntenna->rotatorModelName);
+    config.setValue("rotatorManufacturer", currentAntenna->rotatorManufacturer);
+    config.setValue("rotatorPollInterval", currentAntenna->pollInterval);
+    config.setValue("southStop", currentAntenna->southStopFlag);
+    config.setValue("overRun", currentAntenna->overRunFlag);
+    config.setValue("antennaOffset", currentAntenna->antennaOffset);
+    config.setValue("portType", currentAntenna->portType);
+    config.setValue("comport", currentAntenna->comport);
+    config.setValue("baudrate", currentAntenna->baudrate);
+    config.setValue("databits", currentAntenna->databits);
+    config.setValue("parity", currentAntenna->parity);
+    config.setValue("stopbits", currentAntenna->stopbits);
+    config.setValue("handshake", currentAntenna->handshake);
+    config.setValue("netAddress", currentAntenna->networkAdd);
+    config.setValue("netPort", currentAntenna->networkPort);
     config.endGroup();
 
 
@@ -1189,24 +436,24 @@ void SetupDialog::readCurrentAntenna()
 
     {
         config.beginGroup("CurrentAntenna");
-        currentAntenna.antennaName = config.value("antennaName", "").toString();
-        currentAntenna.antennaNumber = config.value("antennaNumber", "").toString();
-        currentAntenna.rotatorModel = config.value("rotatorModel", "").toString();
-        currentAntenna.rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
-        currentAntenna.rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
-        currentAntenna.pollInterval = config.value("rotatorPollinterval", "1").toString();
-        currentAntenna.southStopFlag = config.value("southStop", false).toBool();
-        currentAntenna.overRunFlag = config.value("overRun", false).toBool();
-        currentAntenna.antennaOffset = config.value("antennaOffset", "").toInt();
-        currentAntenna.portType = config.value("portType", int(RIG_PORT_NONE)).toInt();
-        currentAntenna.comport = config.value("comport", "").toString();
-        currentAntenna.baudrate = config.value("baudrate", 0).toInt();
-        currentAntenna.databits = config.value("databits", 0).toInt();
-        currentAntenna.parity = config.value("parity", 0).toInt();
-        currentAntenna.stopbits = config.value("stopbits", 0).toInt();
-        currentAntenna.handshake = config.value("handshake", 0).toInt();
-        currentAntenna.networkAdd = config.value("netAddress", "").toString();
-        currentAntenna.networkPort = config.value("netPort", "").toString();
+        currentAntenna->antennaName = config.value("antennaName", "").toString();
+        currentAntenna->antennaNumber = config.value("antennaNumber", "").toString();
+        currentAntenna->rotatorModel = config.value("rotatorModel", "").toString();
+        currentAntenna->rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
+        currentAntenna->rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
+        currentAntenna->pollInterval = config.value("rotatorPollinterval", "1").toString();
+        currentAntenna->southStopFlag = config.value("southStop", false).toBool();
+        currentAntenna->overRunFlag = config.value("overRun", false).toBool();
+        currentAntenna->antennaOffset = config.value("antennaOffset", "").toInt();
+        currentAntenna->portType = config.value("portType", int(RIG_PORT_NONE)).toInt();
+        currentAntenna->comport = config.value("comport", "").toString();
+        currentAntenna->baudrate = config.value("baudrate", 0).toInt();
+        currentAntenna->databits = config.value("databits", 0).toInt();
+        currentAntenna->parity = config.value("parity", 0).toInt();
+        currentAntenna->stopbits = config.value("stopbits", 0).toInt();
+        currentAntenna->handshake = config.value("handshake", 0).toInt();
+        currentAntenna->networkAdd = config.value("netAddress", "").toString();
+        currentAntenna->networkPort = config.value("netPort", "").toString();
         config.endGroup();
     }
 
@@ -1220,50 +467,13 @@ void SetupDialog::setAppName(QString name)
 
 srotParams SetupDialog::getCurrentAntenna() const
 {
+/*
+
     return currentAntenna;
+*/
 }
 
 
-
-int SetupDialog::getMaxMinRotationData(int rotatorNumber, int *maxRot, int *minRot)
-{
-
-    int retCode = 0;
-    retCode = rotator->getMaxMinRotation(rotatorNumber, maxRot, minRot);
-
-    return retCode;
-
-}
-
-
-void SetupDialog::serialDataEntryVisible(int antNumber, bool visible)
-{
-
-    comPorts[antNumber]->setVisible(visible);
-    comPortLbl[antNumber]->setVisible(visible);
-    comSpeed[antNumber]->setVisible(visible);
-    comSpeedLbl[antNumber]->setVisible(visible);
-    comDataBits[antNumber]->setVisible(visible);
-    comDataLbl[antNumber]->setVisible(visible);
-    comStopBits[antNumber]->setVisible(visible);
-    comStopLbl[antNumber]->setVisible(visible);
-    comParity[antNumber]->setVisible(visible);
-    comParityLbl[antNumber]->setVisible(visible);
-    comHandShake[antNumber]->setVisible(visible);
-    comHandLbl[antNumber]->setVisible(visible);
-
-}
-
-
-
-void SetupDialog::networkDataEntryVisible(int antNumber, bool visible)
-{
-
-    netAddress[antNumber]->setVisible(visible);
-    netAddLbl[antNumber]->setVisible(visible);
-    netPort[antNumber]->setVisible(visible);
-    netPortLbl[antNumber]->setVisible(visible);
-}
 
 
 
