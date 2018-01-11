@@ -30,7 +30,7 @@
 
 #include <QDebug>
 
-static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
+
 
 
 SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :

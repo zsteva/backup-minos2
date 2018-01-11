@@ -7,6 +7,11 @@
 #include <QSerialPortInfo>
 #include <QMessageBox>
 
+
+static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
+
+
+
 rotSetupForm::rotSetupForm(RotControl* _rotator, srotParams* _antennaData, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::rotSetupForm),
