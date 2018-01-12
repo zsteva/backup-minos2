@@ -469,6 +469,47 @@ bool RotControl::get_serialConnected()
 
 
 
+enum serial_parity_e RotControl::getSerialParityCode(int index)
+{
+
+    return serialData::parityCodes[index];
+
+}
+
+enum serial_handshake_e RotControl::getSerialHandshakeCode(int index)
+{
+
+    return serialData::handshakeCodes[index];
+}
+
+QStringList RotControl::getParityCodeNames()
+{
+   return serialData::parityStr;
+}
+
+QStringList RotControl::getHandShakeNames()
+{
+    return serialData::handshakeStr;
+}
+
+QStringList RotControl::getBaudRateNames()
+{
+
+
+    return serialData::baudrateStr;
+}
+
+QStringList RotControl::getDataBitsNames()
+{
+    return serialData::databitsStr;
+}
+
+QStringList RotControl::getStopBitsNames()
+{
+    return serialData::stopbitsStr;
+}
+
+
 
 
 QString RotControl::gethamlibErrorMsg(int errorCode)
@@ -487,28 +528,7 @@ QStringList RotControl::gethamlibErrorMsg()
     return serialData::hamlibErrorMsg;
 }
 
-// not tested........
-int RotControl::calcSouthBearing(int rotatorBearing)
-{
 
-    // convert rotator bearing to actual bearing for rotator with southstop
-
-    if (rotatorBearing >= getMinAzimuth() && rotatorBearing < COMPASS_HALF)
-    {
-        return rotatorBearing + COMPASS_HALF;
-    }
-    else if (rotatorBearing >= COMPASS_HALF && rotatorBearing <= getMinAzimuth())
-    {
-        return rotatorBearing - COMPASS_HALF;
-    }
-    else
-    {
-        // error
-        return 2000;     // need an error code define....
-    }
-
-
-}
 
 
 QString RotControl::gethamlibVersion()

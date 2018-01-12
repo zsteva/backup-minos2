@@ -200,7 +200,7 @@ QString rotSetupForm::getRotatorModel()
 
 void rotSetupForm::setRotatorModel(QString m)
 {
-    ui->rotatorModelBox->setCurrentText(ui->rotatorModelBox->findText(m));
+    ui->rotatorModelBox->setCurrentIndex(ui->rotatorModelBox->findText(m));
 }
 
 /***************************** Comports *************************/
@@ -224,7 +224,7 @@ QString rotSetupForm::getComport()
 
 void rotSetupForm::setComport(QString p)
 {
-    ui->comPortBox->setCurrentText(ui->comPortBox->findText(p));
+    ui->comPortBox->setCurrentIndex(ui->comPortBox->findText(p));
 }
 
 /***************************** Data Speed *************************/
@@ -246,7 +246,7 @@ QString rotSetupForm::getDataSpeed()
 
 void rotSetupForm::setDataSpeed(QString d)
 {
-    ui->comSpeedBox->setCurrentText(ui->comSpeedBox->findText(d));
+    ui->comSpeedBox->setCurrentIndex(ui->comSpeedBox->findText(d));
 }
 
 /***************************** Data Bits *************************/
@@ -267,7 +267,7 @@ QString rotSetupForm::getDataBits()
 
 void rotSetupForm::setDataBits(QString d)
 {
-    ui->comDataBitsBox->setCurrentText(ui->comDataBitsBox->findText(d));
+    ui->comDataBitsBox->setCurrentIndex(ui->comDataBitsBox->findText(d));
 }
 
 /***************************** Stop Bits *************************/
@@ -289,7 +289,7 @@ QString rotSetupForm::getStopBits()
 
 void rotSetupForm::setStopBits(QString stop)
 {
-    ui->comStopBitsBox->setCurrentText(ui->comStopBitsBox->findText(stop));
+    ui->comStopBitsBox->setCurrentIndex(ui->comStopBitsBox->findText(stop));
 }
 
 /***************************** Parity Bits *************************/
@@ -311,7 +311,7 @@ QString rotSetupForm::getParityBits()
 
 void rotSetupForm::setParityBits(int b)
 {
-    ui->comParityBox->setCurrentText(ui->comParityBox->findText(b));
+    ui->comParityBox->setCurrentIndex(ui->comParityBox->findText(QString::number(b)));
 }
 
 /***************************** Handshake *************************/
@@ -333,7 +333,7 @@ QString rotSetupForm::getHandshake()
 
 void rotSetupForm::setHandshake(int h)
 {
-    ui->comHandShakeBox->setCurrentText(ui->comHandShakeBox->findText(h));
+    ui->comHandShakeBox->setCurrentIndex(ui->comHandShakeBox->findText(QString::number(h)));
 }
 
 
@@ -401,7 +401,7 @@ QString rotSetupForm:: getPollInterval()
 
 void rotSetupForm::setPollInterval(QString i)
 {
-    ui->pollInterval->setCurrentText(ui->pollInterval->findText(i));
+    ui->pollInterval->setCurrentIndex(ui->pollInterval->findText(i));
 }
 
 
@@ -410,8 +410,8 @@ void rotSetupForm::setPollInterval(QString i)
 
 void rotSetupForm::southStopSelected()
 {
-    if (!chkloadflg)
-    {
+//    if (!chkloadflg)
+//    {
         if (ui->chkStop->isChecked() != antennaData->southStopFlag)
         {
             antennaData->southStopFlag = ui->chkStop->isChecked();
@@ -419,7 +419,7 @@ void rotSetupForm::southStopSelected()
             antennaChanged = true;
         }
 
-    }
+//    }
 }
 
 bool rotSetupForm::getCheckStop()
@@ -442,8 +442,8 @@ void rotSetupForm::setCheckStopVisible(bool s)
 
 void rotSetupForm::overlapSelected()
 {
-    if (!chkloadflg)
-    {
+//    if (!chkloadflg)
+//    {
         if (ui->chkOverrun->isChecked() != antennaData->overRunFlag)
         {
             antennaData->overRunFlag = ui->chkOverrun->isChecked();
@@ -451,7 +451,7 @@ void rotSetupForm::overlapSelected()
             antennaChanged = true;
         }
 
-    }
+//    }
 
 
 }
@@ -550,7 +550,7 @@ void rotSetupForm::networkDataEntryVisible(bool v)
 void rotSetupForm::fillRotatorModelInfo()
 {
     ui->rotatorModelBox->clear();
-    rotator->getRotatorList(rotatorModel[i]);
+    rotator->getRotatorList(ui->rotatorModelBox);
 }
 
 

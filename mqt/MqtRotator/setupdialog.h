@@ -97,8 +97,7 @@ private:
 
     bool chkloadflg = false;
     QString appName = "";
-    const int minOffset = -90;
-    const int maxOffset = 90;
+
     void saveSettings();
 
     void clearAvailRotators();

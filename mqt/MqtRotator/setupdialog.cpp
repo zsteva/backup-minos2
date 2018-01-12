@@ -59,11 +59,11 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
 
     if (numAvailAntennas > 0)
     {
-        for (int i; i < numAvailAntennas; i++)
+        for (int i = 0; i < numAvailAntennas; i++)
         {
             availAntData.append(new srotParams);
             antennaTab.append(new rotSetupForm(rotator, availAntData[i]));
-
+            ui->antennaTab->insertTab(i, antennaTab[i], "");
         }
 
     }
@@ -82,10 +82,12 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
 
 
     getAvailAntennas();
-
+    // load current settings to each tab
     for (int i = 0; i < numAvailAntennas; i++)
     {
         antennaTab[i]->setAntennaName(availAntData[i]->antennaName);
+        // name the tab
+        ui->antennaTab->setTabText(i, availAntData[i]->antennaName);
         antennaTab[i]->setRotatorModel(availAntData[i]->rotatorModel);
         antennaTab[i]->setPollInterval(availAntData[i]->pollInterval);
         antennaTab[i]->setCheckStop(availAntData[i]->southStopFlag);

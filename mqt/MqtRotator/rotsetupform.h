@@ -78,6 +78,7 @@ private slots:
     void rotatorModelSelected();
     void comportSelected();
     void comDataSpeedSelected();
+    void comDataBitsSelected();
     void comStopBitsSelected();
     void comParityBitsSelected();
     void comHandshakeSelected();
@@ -92,6 +93,8 @@ private:
 
     RotControl *rotator;
     srotParams *antennaData;
+    const int minOffset = -90;
+    const int maxOffset = 90;
 
     void loadComports();
     void loadRotatorModels();

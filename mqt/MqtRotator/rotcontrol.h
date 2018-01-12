@@ -79,7 +79,7 @@ public:
   QString rotatorModel;
   QString rotatorManufacturer;
   QString rotatorModelName;
-  int rotatorModelNumber;
+  int rotatorModelNumber = 0;
   QString pollInterval;         // ms
   azimuth_t min_azimuth = 0.0;
   azimuth_t max_azimuth = 0.0;

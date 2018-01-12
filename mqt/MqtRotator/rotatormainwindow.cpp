@@ -212,9 +212,9 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
 
 
-    //openRotator();
+    //openRotator();  ***************** remove ?????
 
-    //setPolltime(POLLTIME);   // to allow variable controller polltime - not implemented!
+    //setPolltime(POLLTIME);   // to allow variable controller polltime - not implemented! **************** remove ????
     rotTimeCount = 0;
     RotateTimer.start(200);  // to set timeout for antenna rotating
 
@@ -239,7 +239,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     }
 
-    selectRotator->readCurrentAntenna();
+    // selectRotator->readCurrentAntenna(); ***********************************
 /*
     if (selectRotator->currentAntenna.antennaName == "")
     {
@@ -254,7 +254,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
         selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
     }
 */
-    upDateAntenna();
+    // upDateAntenna(); ****************************************************
 
 
     trace("*** Rotator Started ***");
