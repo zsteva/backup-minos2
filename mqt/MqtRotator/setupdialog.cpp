@@ -61,15 +61,15 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     {
         for (int i = 0; i < numAvailAntennas; i++)
         {
-            availAntData.append(new srotParams);
-            antennaTab.append(new rotSetupForm(rotator, availAntData[i]));
-            ui->antennaTab->insertTab(i, antennaTab[i], "");
+            addTab(i, "");
         }
 
     }
 
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveButtonPushed()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
+
+
 
 
 
@@ -154,6 +154,12 @@ SetupDialog::~SetupDialog()
 
 
 
+void SetupDialog::addTab(int tabNum, QString tabName)
+{
+    availAntData.append(new srotParams);
+    antennaTab.append(new rotSetupForm(rotator, availAntData[tabNum]));
+    ui->antennaTab->insertTab(tabNum, antennaTab[tabNum], tabName);
+}
 
 
 

@@ -112,6 +112,7 @@ private:
 
 
     void getAvailAntennas();
+    void addTab(int tabNum, QString tabName);
 };
 
 #endif // SETUPDIALOG_H

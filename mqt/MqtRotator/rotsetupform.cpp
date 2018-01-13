@@ -50,8 +50,8 @@ rotSetupForm::rotSetupForm(RotControl* _rotator, srotParams* _antennaData, QWidg
     connect(ui->netAddressBox, SIGNAL(editingFinished()), this, SLOT(comNetAddressSelected()));
     connect(ui->netPortBox, SIGNAL(editingFinished()), this, SLOT(comNetPortNumSelected()));
     connect(ui->pollInterval, SIGNAL(activated(int)), this, SLOT(pollIntervalSelected()));
-    connect(ui->chkStop, SIGNAL(stateChanged(int)), this, SLOT(checkStopSelected()));
-    connect(ui->chkOverrun, SIGNAL(stateChanged(int)), this, SLOT(checkOverrunSelected()));
+    connect(ui->chkStop, SIGNAL(stateChanged(int)), this, SLOT(southStopSelected()));
+    connect(ui->chkOverrun, SIGNAL(stateChanged(int)), this, SLOT(overlapSelected()));
     connect(ui->antOffset, SIGNAL(editingFinished()), this, SLOT(antennaOffSetSelected()));
 }
 
