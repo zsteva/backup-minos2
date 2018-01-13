@@ -312,7 +312,7 @@ QString rotSetupForm::getParityBits()
 
 void rotSetupForm::setParityBits(int b)
 {
-    ui->comParityBox->setCurrentIndex(ui->comParityBox->findText(QString::number(b)));
+    ui->comParityBox->setCurrentIndex(b);
 }
 
 /***************************** Handshake *************************/
@@ -334,7 +334,7 @@ QString rotSetupForm::getHandshake()
 
 void rotSetupForm::setHandshake(int h)
 {
-    ui->comHandShakeBox->setCurrentIndex(ui->comHandShakeBox->findText(QString::number(h)));
+    ui->comHandShakeBox->setCurrentIndex(h);
 }
 
 
