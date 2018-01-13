@@ -32,14 +32,14 @@
      <item>
       <widget class="QPushButton" name="addAntenna">
        <property name="text">
-        <string>Add</string>
+        <string>Add Antenna</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="removeAntenna">
        <property name="text">
-        <string>Remove</string>
+        <string>Remove Antenna</string>
        </property>
       </widget>
      </item>

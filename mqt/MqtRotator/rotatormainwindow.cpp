@@ -239,7 +239,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     }
 
-    // selectRotator->readCurrentAntenna(); ***********************************
+    selectRotator->readCurrentAntenna();
 /*
     if (selectRotator->currentAntenna.antennaName == "")
     {
@@ -529,17 +529,17 @@ void RotatorMainWindow::sendStatusLogger( )
 
 void RotatorMainWindow::sendAntennaListLogger()
 {
-/*
+
     QStringList ants;
-    for (int i= 0; i < NUM_ANTENNAS; i++)
+    for (int i= 0; i < selectRotator->numAvailAntennas; i++)
     {
-        if (!selectRotator->availAntennas[i].antennaName.isEmpty())
+        if (!selectRotator->availAntData[i]->antennaName.isEmpty())
         {
-            ants.append(selectRotator->availAntennas[i].antennaName);
+            ants.append(selectRotator->availAntData[i]->antennaName);
         }
     }
     msg->publishAntennaList(ants.join(":"));
-*/
+
 }
 
 

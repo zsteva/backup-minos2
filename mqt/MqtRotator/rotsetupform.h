@@ -16,7 +16,7 @@ public:
     explicit rotSetupForm(RotControl* rotator, srotParams* _antennaData, QWidget *parent = 0);
     ~rotSetupForm();
 
-
+    srotParams *antennaData;
     bool antennaValueChanged;
     bool antennaChanged;
 
@@ -72,6 +72,8 @@ public:
     void networkDataEntryVisible(bool v);
 
     int comportAvial(QString comport);
+    int getMaxMinRotationData(int rotatorNumber, int *maxRot, int *minRot);
+
 
 private slots:
     void antennaNameFinished();
@@ -92,7 +94,7 @@ private:
     Ui::rotSetupForm *ui;
 
     RotControl *rotator;
-    srotParams *antennaData;
+
     const int minOffset = -90;
     const int maxOffset = 90;
 
@@ -107,7 +109,7 @@ private:
     void fillStopBitsInfo();
     void fillParityBitsInfo();
     void fillHandShakeInfo();
-    int getMaxMinRotationData(int rotatorNumber, int *maxRot, int *minRot);
+
 
 };
 

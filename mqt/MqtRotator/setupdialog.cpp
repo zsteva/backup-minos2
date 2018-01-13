@@ -91,11 +91,11 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
         antennaTab[i]->setRotatorModel(availAntData[i]->rotatorModel);
         antennaTab[i]->setPollInterval(availAntData[i]->pollInterval);
         antennaTab[i]->setCheckStop(availAntData[i]->southStopFlag);
-/************************************************************************************
+
         // set southstop visible if rotator is 0 - 360
         int minRot = 0;
         int maxRot = 0;
-        if (getMaxMinRotationData(availAntData[i]->rotatorModelNumber, &maxRot, &minRot) >= 0)
+        if (antennaTab[i]->getMaxMinRotationData(availAntData[i]->rotatorModelNumber, &maxRot, &minRot) >= 0)
         {
             if (minRot == 0 && maxRot == 360)
             {
@@ -113,15 +113,15 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
                 antennaTab[i]->setOverRunFlagVisible(false);
             }
         }
-*/
+
         antennaTab[i]->setCheckOverrun(availAntData[i]->overRunFlag);
         antennaTab[i]->setAntennaOffset(QString::number(availAntData[i]->antennaOffset));
         antennaTab[i]->setComport(availAntData[i]->comport);
         antennaTab[i]->setDataSpeed(QString::number(availAntData[i]->baudrate));
         antennaTab[i]->setDataBits(QString::number(availAntData[i]->databits));
         antennaTab[i]->setStopBits(QString::number(availAntData[i]->stopbits));
-//        antennaTab[i]->setParityBits(availAntData[i]->parity);
-//        antennaTab[i]->setHandshake(availAntData[i]->handshake);
+        antennaTab[i]->setParityBits(availAntData[i]->parity);
+        antennaTab[i]->setHandshake(availAntData[i]->handshake);
         antennaTab[i]->setNetAddress(availAntData[i]->networkAdd);
         antennaTab[i]->setNetPortNum(availAntData[i]->networkPort);
         if (rig_port_e(availAntData[i]->portType) == RIG_PORT_NETWORK || rig_port_e(availAntData[i]->portType) == RIG_PORT_UDP_NETWORK)
@@ -444,25 +444,21 @@ void SetupDialog::readCurrentAntenna()
 
     {
         config.beginGroup("CurrentAntenna");
-        currentAntenna->antennaName = config.value("antennaName", "").toString();
-        currentAntenna->antennaNumber = config.value("antennaNumber", "").toString();
-        currentAntenna->rotatorModel = config.value("rotatorModel", "").toString();
-        currentAntenna->rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
-        currentAntenna->rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
-        currentAntenna->pollInterval = config.value("rotatorPollinterval", "1").toString();
-        currentAntenna->southStopFlag = config.value("southStop", false).toBool();
-        currentAntenna->overRunFlag = config.value("overRun", false).toBool();
-        currentAntenna->antennaOffset = config.value("antennaOffset", "").toInt();
-        currentAntenna->portType = config.value("portType", int(RIG_PORT_NONE)).toInt();
-        currentAntenna->comport = config.value("comport", "").toString();
-        currentAntenna->baudrate = config.value("baudrate", 0).toInt();
-        currentAntenna->databits = config.value("databits", 0).toInt();
-        currentAntenna->parity = config.value("parity", 0).toInt();
-        currentAntenna->stopbits = config.value("stopbits", 0).toInt();
-        currentAntenna->handshake = config.value("handshake", 0).toInt();
-        currentAntenna->networkAdd = config.value("netAddress", "").toString();
-        currentAntenna->networkPort = config.value("netPort", "").toString();
+        currentAntennaName = config.value("antennaName", "").toString();
+
         config.endGroup();
+    }
+
+    // find index to antenna data
+    for (int i = 0; i < numAvailAntennas; i++)
+    {
+        if (currentAntennaName == antennaTab[i]->antennaData->antennaName)
+        {
+            currentAntIndex = i;
+            // load current antenna data from available antennas
+            currentAntenna = antennaTab[i]->antennaData;
+            break;
+        }
     }
 
 }

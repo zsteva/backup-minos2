@@ -92,23 +92,24 @@ void rotSetupForm::setAntennaName(QString n)
 void rotSetupForm::rotatorModelSelected()
 {
     int rm;
+    bool ok;
     QString rotModelName;
     QString rotMfgName;
 
     if (ui->rotatorModelBox->currentText() != antennaData->rotatorModel)
     {
-        /*
-        QString s = rotatorModel[boxNumber]->currentText();
-        availAntennas[boxNumber].rotatorModel = s;
+
+        QString s = ui->rotatorModelBox->currentText();
+        antennaData->rotatorModel = s;
         s = s.trimmed();
         QStringList antdetails = s.split(',');
         s = antdetails[0];
-        availAntennas[boxNumber].rotatorModelNumber = s.toInt(&ok, 10);
+        antennaData->rotatorModelNumber = s.toInt(&ok, 10);
         s = antdetails[1];
-        availAntennas[boxNumber].rotatorManufacturer = s.trimmed();
+        antennaData->rotatorManufacturer = s.trimmed();
         s = antdetails[2];
-        availAntennas[boxNumber].rotatorModelName = s.trimmed();
-        */
+        antennaData->rotatorModelName = s.trimmed();
+
 
         antennaData->rotatorModel = ui->rotatorModelBox->currentText();
         if (rotator->getModelInfo(antennaData->rotatorModel, &rm, &rotMfgName, &rotModelName) == -1)
@@ -128,7 +129,7 @@ void rotSetupForm::rotatorModelSelected()
         // set southstop visible if rotator is 0 - 360
         int minRot = 0;
         int maxRot = 0;
-/***************************************************************************************
+
 
         if (getMaxMinRotationData(antennaData->rotatorModelNumber, &maxRot, &minRot) >= 0)
         {
@@ -161,7 +162,7 @@ void rotSetupForm::rotatorModelSelected()
                 ui->s_StopLbl->setVisible(false);
             }
         }
-*/
+
         rig_port_e portType = RIG_PORT_NONE;
 
         if (rotator->getPortType(antennaData->rotatorModelNumber, &portType) != -1)
@@ -652,7 +653,6 @@ int rotSetupForm::comportAvial(QString comport)
 {
     return ui->comPortBox->findText(comport);
 }
-
 
 
 
