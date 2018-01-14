@@ -171,25 +171,31 @@ bool Calendar::parseFile ( const QString &fname )
         return false;
     }
 
-    QByteArray total = file.readAll();
-
-    QString buffer = QString( total );
-
     QString buffer2;
-
-    int dtdPos = buffer.indexOf ( "<!DOCTYPE" );
-    if ( dtdPos != -1 )
     {
-        buffer2 = buffer.left (dtdPos );
+        // scoping only
+        QByteArray total = file.readAll();
 
-        int dtdEndPos = buffer.indexOf ( "]>" );
-        if ( dtdEndPos == -1 )
+        QString buffer = QString( total );
+
+
+        int dtdPos = buffer.indexOf ( "<!DOCTYPE" );
+        if ( dtdPos != -1 )
         {
-            return false;
-        }
-        buffer2 += buffer.mid ( dtdEndPos + 2, buffer.size() - dtdEndPos - 2 );
-    }
+            buffer2 = buffer.left (dtdPos );
 
+            int dtdEndPos = buffer.indexOf ( "]>" );
+            if ( dtdEndPos == -1 )
+            {
+                return false;
+            }
+            buffer2 += buffer.mid ( dtdEndPos + 2, buffer.size() - dtdEndPos - 2 );
+        }
+        else
+        {
+            buffer2 = buffer;
+        }
+    }
     TiXmlBase::SetCondenseWhiteSpace ( false );
     TiXmlDocument xdoc;
     const char *loaded = xdoc.Parse ( buffer2.toStdString().c_str() );
