@@ -39,25 +39,27 @@ void ContestContact::getPrintFileText( QString &sdest, short maxlen )
    QString multbuff;
    QString dest;
 
+   contactBuffs.clear();
+
    if ( contactFlags.getValue() & DONT_PRINT )
    {
-      placestr( ContactBuffs::buff2, time.getDate( DTGPRINT ), 0, 10 );
-      placestr( ContactBuffs::buff2, time.getTime( DTGPRINT ), 11, 5 );
-      placestr( ContactBuffs::buff2, "DON'T PRINT", 21, 14 );
+      placestr( contactBuffs.buff2, time.getDate( DTGPRINT ), 0, 10 );
+      placestr( contactBuffs.buff2, time.getTime( DTGPRINT ), 11, 5 );
+      placestr( contactBuffs.buff2, "DON'T PRINT", 21, 14 );
    }
    else if ( contactFlags.getValue() & LOCAL_COMMENT  )
    {
-      placestr( ContactBuffs::buff2, time.getDate( DTGDISP ), 0, 10 );
-      placestr( ContactBuffs::buff2, time.getTime( DTGDISP ), 11, 5 );
-      placestr( ContactBuffs::buff2, "LOCAL COMMENT", 23, 14 );
-      placestr( ContactBuffs::buff2, comments.getValue(), 31, 60 );
+      placestr( contactBuffs.buff2, time.getDate( DTGDISP ), 0, 10 );
+      placestr( contactBuffs.buff2, time.getTime( DTGDISP ), 11, 5 );
+      placestr( contactBuffs.buff2, "LOCAL COMMENT", 23, 14 );
+      placestr( contactBuffs.buff2, comments.getValue(), 31, 60 );
    }
    else if ( contactFlags.getValue() & COMMENT_ONLY )
    {
-      placestr( ContactBuffs::buff2, time.getDate( DTGDISP ), 0, 10 );
-      placestr( ContactBuffs::buff2, time.getTime( DTGDISP ), 11, 5 );
-      placestr( ContactBuffs::buff2, "LOGGED COMMENT", 23, 14 );
-      placestr( ContactBuffs::buff2, comments.getValue(), 31, 60 );
+      placestr( contactBuffs.buff2, time.getDate( DTGDISP ), 0, 10 );
+      placestr( contactBuffs.buff2, time.getTime( DTGDISP ), 11, 5 );
+      placestr( contactBuffs.buff2, "LOGGED COMMENT", 23, 14 );
+      placestr( contactBuffs.buff2, comments.getValue(), 31, 60 );
 
    }
    else
@@ -68,13 +70,13 @@ void ContestContact::getPrintFileText( QString &sdest, short maxlen )
 
       if ( contactFlags.getValue() & NON_SCORING )
       {
-         ContactBuffs::scorebuff = "0";
+         contactBuffs.scorebuff = "0";
          exp_buff = "No Score Claimed " ;
       }
       else
          if ( cs.valRes == ERR_DUPCS )
          {
-             ContactBuffs::scorebuff = "0";
+             contactBuffs.scorebuff = "0";
              exp_buff = "Duplicate ";
          }
          else
@@ -106,9 +108,9 @@ void ContestContact::getPrintFileText( QString &sdest, short maxlen )
             }
             if ( contactScore.getValue() < 0 )
                thisscore = 0;
-            ContactBuffs::scorebuff = QString::number(thisscore );
+            contactBuffs.scorebuff = QString::number(thisscore );
          }
-      ContactBuffs::scorebuff.truncate(5);;
+      contactBuffs.scorebuff.truncate(5);;
       multbuff.clear();
 
       if ( multCount )
@@ -124,34 +126,34 @@ void ContestContact::getPrintFileText( QString &sdest, short maxlen )
             catmult( multbuff, loc.loc.getValue(), 4 );
          }
       }
-      strcpysp( ContactBuffs::buff, comments.getValue(), 42 );
-      if ( !ContactBuffs::buff.isEmpty() )
+      strcpysp( contactBuffs.buff, comments.getValue(), 42 );
+      if ( !contactBuffs.buff.isEmpty() )
       {
-         strcpysp( ContactBuffs::buff2, ContactBuffs::qthbuff, 20 );
-         ContactBuffs::buff2 += " | ";
-         ContactBuffs::buff2 += ContactBuffs::buff;
+         strcpysp( contactBuffs.buff2, contactBuffs.qthbuff, 20 );
+         contactBuffs.buff2 += " | ";
+         contactBuffs.buff2 += contactBuffs.buff;
       }
       else
       {
-         strcpysp( ContactBuffs::buff2, ContactBuffs::qthbuff, 42 );
+         strcpysp( contactBuffs.buff2, contactBuffs.qthbuff, 42 );
       }
-      ContactBuffs::buff = QString("%1 %2 %3").arg(ContactBuffs::buff2).arg(exp_buff).arg(multbuff );
+      contactBuffs.buff = QString("%1 %2 %3").arg(contactBuffs.buff2).arg(exp_buff).arg(multbuff );
 
       int next = 0;
-      next = placestr( ContactBuffs::buff2, time.getDate( DTGPRINT ), next, 10 );
-      next = placestr( ContactBuffs::buff2, time.getTime( DTGPRINT ), next + 1, 5 );
-      next = placestr( ContactBuffs::buff2, cs.fullCall.getValue(), next + 1, 10 );
-      next = placestr( ContactBuffs::buff2, reps.getValue(), next + 1, 3 );
-      next = placestr( ContactBuffs::buff2, ContactBuffs::ssbuff, next, -4 );
-      next = placestr( ContactBuffs::buff2, repr.getValue(), next + 1, 3 );
-      next = placestr( ContactBuffs::buff2, ContactBuffs::srbuff, next, -4 );
-      next = placestr( ContactBuffs::buff2, loc.loc.getValue(), next + 1, clp->allowLoc8.getValue() ? 8 : 6 );
+      next = placestr( contactBuffs.buff2, time.getDate( DTGPRINT ), next, 10 );
+      next = placestr( contactBuffs.buff2, time.getTime( DTGPRINT ), next + 1, 5 );
+      next = placestr( contactBuffs.buff2, cs.fullCall.getValue(), next + 1, 10 );
+      next = placestr( contactBuffs.buff2, reps.getValue(), next + 1, 3 );
+      next = placestr( contactBuffs.buff2, contactBuffs.ssbuff, next + 1, -4 );
+      next = placestr( contactBuffs.buff2, repr.getValue(), next + 1, 3 );
+      next = placestr( contactBuffs.buff2, contactBuffs.srbuff, next + 1, -4 );
+      next = placestr( contactBuffs.buff2, loc.loc.getValue(), next + 1, clp->allowLoc8.getValue() ? 8 : 6 );
       if ( districtMult )
       {
-         placestr( ContactBuffs::buff2, districtMult->districtCode, next + 1, 3 );
+         placestr( contactBuffs.buff2, districtMult->districtCode, next + 1, 3 );
       }
       next += 4;
-      next = placestr( ContactBuffs::buff2, ContactBuffs::scorebuff, next + 1, -6 );
+      next = placestr( contactBuffs.buff2, contactBuffs.scorebuff, next + 1, -6 );
 /*
   // looks like bearing is normally good
       if ( bearing < 0 )
@@ -170,16 +172,16 @@ void ContestContact::getPrintFileText( QString &sdest, short maxlen )
 */
       const QChar degreeChar(0260); // octal value
       QString sbrg = QString::number(bearing) + degreeChar;
-      next = placestr( ContactBuffs::buff2, sbrg, next + 1, -6 );
+      next = placestr( contactBuffs.buff2, sbrg, next + 1, -6 );
 
-      ContactBuffs::qthbuff += extraText.getValue().trimmed();
-      ContactBuffs::qthbuff.truncate( EXTRALENGTH);
-      next = placestr( ContactBuffs::buff2, ContactBuffs::qthbuff, next + 1, ContactBuffs::qthbuff.length() );
+      contactBuffs.qthbuff += extraText.getValue().trimmed();
+      contactBuffs.qthbuff.truncate( EXTRALENGTH);
+      next = placestr( contactBuffs.buff2, contactBuffs.qthbuff, next + 1, contactBuffs.qthbuff.length() );
 
-      next = placestr( ContactBuffs::buff2, ContactBuffs::buff, next + 1, ContactBuffs::buff.length() );
+      next = placestr( contactBuffs.buff2, contactBuffs.buff, next + 1, contactBuffs.buff.length() );
 
    }
-   dest += ContactBuffs::buff2;
+   dest += contactBuffs.buff2;
 
    sdest = dest.left( maxlen );
 
@@ -363,8 +365,8 @@ void ContestContact::getReg1TestText(QString &sdest , bool noSerials)
    if ( contactScore.getValue() <= 0 )
       temp = 0;
 
-   ContactBuffs::scorebuff = QString::number(temp );
-   sdest += ContactBuffs::scorebuff;
+   contactBuffs.scorebuff = QString::number(temp );
+   sdest += contactBuffs.scorebuff;
 
    sdest += ';';
    if ( clp->districtMult.getValue() && newDistrict )

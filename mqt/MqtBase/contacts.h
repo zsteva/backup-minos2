@@ -16,16 +16,29 @@ class MinosTestImport;
 
 // This header covers the structure of contests, logs, etc
 
-namespace ContactBuffs
+class ContactBuffs
 {
-   extern QString scorebuff;
-   extern QString brgbuff;
-   extern QString buff2;
-   extern QString qthbuff;
-   extern QString srbuff;
-   extern QString ssbuff;
-   extern QString buff;
-}
+public:
+   QString scorebuff;
+   QString brgbuff;
+   QString buff2;
+   QString qthbuff;
+   QString srbuff;
+   QString ssbuff;
+   QString buff;
+
+   void clear()
+   {
+       scorebuff.clear();
+       brgbuff.clear();
+       buff2.clear();
+       qthbuff.clear();
+       srbuff.clear();
+       ssbuff.clear();
+       buff.clear();
+   }
+};
+    extern ContactBuffs contactBuffs;
 
 class MatchContact;
 

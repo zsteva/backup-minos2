@@ -9,17 +9,7 @@
 #include "base_pch.h"
 
 //============================================================
-namespace ContactBuffs
-{
-    QString scorebuff;
-    QString brgbuff;
-    QString buff2;
-    QString qthbuff;
-    QString srbuff;
-    QString ssbuff;
-    QString buff;
-}
-//==========================================================================
+ContactBuffs contactBuffs;
 //==========================================================================
 BaseContact::BaseContact( BaseContestLog * contest, dtg time_now ) :
       contest( contest ), contactScore( -1 ), time( time_now ), updtime( true ),
@@ -189,18 +179,18 @@ QSharedPointer<CountryEntry> findCtryPrefix( const callsign &cs )
 }
 void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) const
 {
-   ContactBuffs::scorebuff.clear();
-   ContactBuffs::scorebuff.clear();
-   ContactBuffs::brgbuff.clear();
-   ContactBuffs::buff2.clear();
-   ContactBuffs::qthbuff.clear();
-   ContactBuffs::srbuff.clear();
-   ContactBuffs::ssbuff.clear();
-   ContactBuffs::buff.clear();
+   contactBuffs.scorebuff.clear();
+   contactBuffs.scorebuff.clear();
+   contactBuffs.brgbuff.clear();
+   contactBuffs.buff2.clear();
+   contactBuffs.qthbuff.clear();
+   contactBuffs.srbuff.clear();
+   contactBuffs.ssbuff.clear();
+   contactBuffs.buff.clear();
 
    if ( contactFlags.getValue() & ( LOCAL_COMMENT | COMMENT_ONLY | DONT_PRINT ) )
    {
-      ContactBuffs::buff = QString("%1 %2 %3")
+      contactBuffs.buff = QString("%1 %2 %3")
                .arg(time.getTime( DTGDISP ), 5)
                .arg(( contactFlags.getValue() & DONT_PRINT ) ? "DELETED" : ( contactFlags.getValue() & LOCAL_COMMENT ) ? "LOCAL COMMENT" : "COMMENT FOR ADJUDICATOR")
                .arg(comments.getValue(), 60);
@@ -210,68 +200,68 @@ void BaseContact::getText( QString &dest, const BaseContestLog * const curcon ) 
       // if contest requires a serial
       makestrings( curcon ->serialField.getValue() );
 
-      ContactBuffs::qthbuff = extraText.getValue().left( 100 );
+      contactBuffs.qthbuff = extraText.getValue().left( 100 );
 
       if ( contactFlags.getValue() & MANUAL_SCORE )
-         ContactBuffs::brgbuff = "MAN";
+         contactBuffs.brgbuff = "MAN";
 
       if ( contactFlags.getValue() & DONT_PRINT )
-         ContactBuffs::scorebuff = "DEL";
+         contactBuffs.scorebuff = "DEL";
       else
          if ( contactFlags.getValue() & NON_SCORING )
-            ContactBuffs::scorebuff = "N/S";
+            contactBuffs.scorebuff = "N/S";
          else
          {
             // look at the contest dup
             if ( ( cs.valRes == ERR_DUPCS ) && ( curcon == contest ) )
-               ContactBuffs::scorebuff = "DUP";
+               contactBuffs.scorebuff = "DUP";
          }
    }
 
    if ( contactFlags.getValue() & VALID_DUPLICATE )
-      ContactBuffs::buff2 = "BP ";
+      contactBuffs.buff2 = "BP ";
    else
       if ( contactFlags.getValue() & XBAND )
-         ContactBuffs::buff2 = "XB ";
+         contactBuffs.buff2 = "XB ";
 
-   strcpysp( ContactBuffs::buff, comments.getValue(), 42 );
-   if ( !ContactBuffs::buff.isEmpty() )
+   strcpysp( contactBuffs.buff, comments.getValue(), 42 );
+   if ( !contactBuffs.buff.isEmpty() )
    {
-      strcpysp( ContactBuffs::buff2, ContactBuffs::qthbuff, 20 );
-      ContactBuffs::buff2 += " | ";
-      ContactBuffs::buff2 += ContactBuffs::buff;
+      strcpysp( contactBuffs.buff2, contactBuffs.qthbuff, 20 );
+      contactBuffs.buff2 += " | ";
+      contactBuffs.buff2 += contactBuffs.buff;
    }
    else
-      strcpysp( ContactBuffs::buff2, ContactBuffs::qthbuff, 42 );
+      strcpysp( contactBuffs.buff2, contactBuffs.qthbuff, 42 );
 
-   ContactBuffs::buff.clear();
+   contactBuffs.buff.clear();
    int next = 0;
-   next = placestr( ContactBuffs::buff, time.getDate( DTGDISP ), next, 8 );
+   next = placestr( contactBuffs.buff, time.getDate( DTGDISP ), next, 8 );
    next += 2;
-   next = placestr( ContactBuffs::buff, time.getTime( DTGDISP ), next, 5 );
+   next = placestr( contactBuffs.buff, time.getTime( DTGDISP ), next, 5 );
 
    next += 1;
-   next = placestr( ContactBuffs::buff, cs.fullCall.getValue(), next, 11 );
+   next = placestr( contactBuffs.buff, cs.fullCall.getValue(), next, 11 );
 
    if ( curcon ->RSTField.getValue() )
-      next = placestr( ContactBuffs::buff, reps.getValue(), next, 3 );
-   next = placestr( ContactBuffs::buff, ContactBuffs::ssbuff, next, -4 );
+      next = placestr( contactBuffs.buff, reps.getValue(), next, 3 );
+   next = placestr( contactBuffs.buff, contactBuffs.ssbuff, next, -4 );
    if ( curcon ->RSTField.getValue() )
-      next = placestr( ContactBuffs::buff, repr.getValue(), next + 1, 3 );
-   next = placestr( ContactBuffs::buff, ContactBuffs::srbuff, next, -4 );
+      next = placestr( contactBuffs.buff, repr.getValue(), next + 1, 3 );
+   next = placestr( contactBuffs.buff, contactBuffs.srbuff, next, -4 );
 
-   next = placestr( ContactBuffs::buff, loc.loc.getValue(), next + 1, ( curcon ->allowLoc8.getValue() ) ? 8 : 6 );
+   next = placestr( contactBuffs.buff, loc.loc.getValue(), next + 1, ( curcon ->allowLoc8.getValue() ) ? 8 : 6 );
 
-   next = placestr( ContactBuffs::buff, ContactBuffs::brgbuff, next + 1, 4 );
-   next = placestr( ContactBuffs::buff, ContactBuffs::scorebuff, next, -5 );
+   next = placestr( contactBuffs.buff, contactBuffs.brgbuff, next + 1, 4 );
+   next = placestr( contactBuffs.buff, contactBuffs.scorebuff, next, -5 );
 
-   next = placestr( ContactBuffs::buff, op1.getValue(), next, -8 );
+   next = placestr( contactBuffs.buff, op1.getValue(), next, -8 );
    next += 1;
-   next = placestr( ContactBuffs::buff, op2.getValue(), next, -8 );
+   next = placestr( contactBuffs.buff, op2.getValue(), next, -8 );
 
-   next = placestr( ContactBuffs::buff, ContactBuffs::buff2, next + 1, 90 );
+   next = placestr( contactBuffs.buff, contactBuffs.buff2, next + 1, 90 );
 
-   dest = QString( ContactBuffs::buff ).trimmed();
+   dest = QString( contactBuffs.buff ).trimmed();
 }
 
 void BaseContact::makestrings( bool sf ) const
@@ -288,13 +278,13 @@ void BaseContact::makestrings( bool sf ) const
    }
 
    if ( ss )
-      ContactBuffs::ssbuff = QString("%1 ").arg(ss, 3, 10, QChar('0')); // Leading zeroes
+      contactBuffs.ssbuff = QString("%1 ").arg(ss, 3, 10, QChar('0')); // Leading zeroes
    else
-      ContactBuffs::ssbuff.clear();
+      contactBuffs.ssbuff.clear();
 
    if ( sr && sf )
-       ContactBuffs::srbuff = srs;
+       contactBuffs.srbuff = srs;
    else
-      ContactBuffs::srbuff.clear();
+      contactBuffs.srbuff.clear();
 }
 
