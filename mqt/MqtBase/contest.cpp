@@ -122,6 +122,7 @@ void BaseContestLog::clearDirty()
    M7Mults.clearDirty();
    usesBonus.clearDirty();
    bonusType.clearDirty();
+   MGMContestRules.clearDirty();
 
    powerWatts.clearDirty();
    scoreMode.clearDirty();
@@ -158,6 +159,7 @@ void BaseContestLog::setDirty()
    M7Mults.setDirty();
    usesBonus.setDirty();
    bonusType.setDirty();
+   MGMContestRules.setDirty();
 
    powerWatts.setDirty();
    scoreMode.setDirty();
@@ -982,6 +984,11 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
       mt->getStructArgMemberValue( "AllowLoc8", allowLoc8 );
       mt->getStructArgMemberValue( "currentMode", currentMode);
 
+      mt->getStructArgMemberValue( "RSTField", RSTField);
+      mt->getStructArgMemberValue( "serialField", serialField);
+      mt->getStructArgMemberValue( "locatorField", locatorField);
+      mt->getStructArgMemberValue( "QTHField", QTHField);
+
       mt->getStructArgMemberValue( "UKACBonus", usesBonus );
       mt->getStructArgMemberValue("BonusType", bonusType);
       if (usesBonus.getValue())
@@ -1024,7 +1031,7 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
             NonUKloc_mult = false;
          }
       }
-
+      mt->getStructArgMemberValue("MGMContestRules", MGMContestRules);
    }
    else
       if ( methodName == "MinosLogMode" )

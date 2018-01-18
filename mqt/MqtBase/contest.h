@@ -135,6 +135,8 @@ class BaseContestLog: public BaseLogList
       MinosItem<bool> usesBonus;
       MinosStringItem<QString> bonusType;
 
+      MinosItem<bool> MGMContestRules;
+
       MinosItem<bool> powerWatts;
       MinosItem<int> scoreMode;
       MinosStringItem<QString> DTGStart;

@@ -72,6 +72,7 @@ private slots:
    void on_M7LocatorMults_clicked();
    void on_ProtectedOption_clicked();
    void on_BonusComboBox_currentIndexChanged(int index);
+   void on_MGMCheckBox_stateChanged(int arg1);
 };
 
 #endif // CONTESTDETAILS_H

@@ -109,9 +109,15 @@ void MinosTestExport::exportContest( QSharedPointer<QFile> expfd )
    ct->allowLoc8.addIfDirty( st, "AllowLoc8", dirty );
    ct->currentMode.addIfDirty(st, "currentMode", dirty);
 
+   ct->RSTField.addIfDirty(st, "RSTField", dirty);
+   ct->serialField.addIfDirty(st, "serialField", dirty);
+   ct->locatorField.addIfDirty(st, "locatorField", dirty);
+   ct->QTHField.addIfDirty(st, "QTHField", dirty);
+
    ct->M7Mults.addIfDirty( st, "M7Mults", dirty );
    ct->usesBonus.addIfDirty( st, "UKACBonus", dirty );
    ct->bonusType.addIfDirty( st, "BonusType", dirty );
+   ct->MGMContestRules.addIfDirty(st, "MGMContestRules", dirty);
 
    if ( dirty )
    {

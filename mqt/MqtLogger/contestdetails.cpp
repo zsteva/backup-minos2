@@ -20,7 +20,6 @@ ContestDetails::ContestDetails(QWidget *parent) :
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     ui->setupUi(this);
-    ui->FieldsGroupBox->setVisible(false); // as it isn't implemented
 
     QSettings settings;
     QByteArray geometry = settings.value("ContestDetails/geometry").toByteArray();
@@ -367,6 +366,8 @@ void ContestDetails::setDetails(  )
    ui->QTHField->setChecked( contest->QTHField.getValue()) ;   // bool                   // contest
 
    ui->AntOffsetEdit->setText(QString::number(contest->bearingOffset.getValue()));	// int
+
+   ui->MGMCheckBox->setChecked(contest->MGMContestRules.getValue());
    refreshOps();
 
    enableControls();
@@ -408,6 +409,11 @@ void ContestDetails::setDetails( const IndividualContest &ic )
 
    ui->ContestNameEdit->setText(ic.description);                      // contest
    contest->VHFContestName.setValue(ic.description);
+
+   contest->RSTField.setValue(true);
+   contest->serialField.setValue(true);
+   contest->locatorField.setValue(true);
+   contest->QTHField.setValue(true);
 
    // need to get legal bands from ContestLog
    ui->BandComboBox->clear();
@@ -655,6 +661,19 @@ void ContestDetails::setDetails( const IndividualContest &ic )
       contest->UKloc_multiplier = 0;
       contest->NonUKloc_multiplier = 0;
    }
+   if (ic.specialRules.indexOf("MGM") >= 0)
+   {
+       contest->locMult.setValue( true );
+       contest->MGMContestRules.setValue(true);
+       contest->serialField.setValue(false);
+       contest->allowLoc4.setValue(true);
+       ui->AllowLoc4CB->setChecked(true);
+   }
+   else
+   {
+       contest->MGMContestRules.setValue(false);
+   }
+   ui->MGMCheckBox->setChecked(contest->MGMContestRules.getValue());
    /*
       ExchangeComboBox:
 
@@ -699,10 +718,10 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    }
 
 
-   ui->RSTField->setChecked(true) ;
-   ui->SerialField->setChecked(true) ;
-   ui->LocatorField->setChecked(true) ;
-   ui->QTHField->setChecked(true) ;
+   ui->RSTField->setChecked(contest->RSTField.getValue()) ;
+   ui->SerialField->setChecked(contest->serialField.getValue()) ;
+   ui->LocatorField->setChecked(contest->locatorField.getValue()) ;
+   ui->QTHField->setChecked(contest->QTHField.getValue()) ;
 
    contest->scoreMode.setValue( static_cast< SCOREMODE> ( ic.ppKmScoring ? 0 : 1 ) );  // combo
 
@@ -953,6 +972,8 @@ QWidget * ContestDetails::getDetails( )
             contest->NonUKloc_multiplier = 0;
         }
     }
+    contest->MGMContestRules.setValue(ui->MGMCheckBox->isChecked());
+
     if (ui->ProtectedOption->isChecked() && contest->isProtected() && contest->isProtectedSuppressed())
     {
         contest->setProtectedSuppressed(false);
@@ -1093,6 +1114,8 @@ void ContestDetails::enableControls()
    ui->PowerEdit->setEnabled(!protectedChecked);
    ui->ModeComboBox->setEnabled(!protectedChecked);
    ui->BonusComboBox->setEnabled(!protectedChecked);
+
+   ui->MGMCheckBox->setEnabled(!protectedChecked);
 }
 //---------------------------------------------------------------------------
 
@@ -1305,6 +1328,7 @@ void ContestDetails::on_BonusComboBox_currentIndexChanged(int /*index*/)
     ui->NonGCtryMult->setChecked(false);
     ui->DXCCMult->setChecked(false);
     ui->M7LocatorMults->setChecked(false);
+    ui->MGMCheckBox->setChecked(false);
     noMultRipple = false;
 }
 
@@ -1347,3 +1371,24 @@ void ContestDetails::bundleChanged()
     }
 }
 
+
+void ContestDetails::on_MGMCheckBox_stateChanged(int)
+{
+    if (ui->MGMCheckBox->isChecked())
+    {
+        noMultRipple = true;
+
+        ui->LocatorMult->setChecked(true);
+        ui->GLocMult->setChecked(false);
+        ui->NonGCtryMult->setChecked(false);
+        ui->DXCCMult->setChecked(false);
+        ui->M7LocatorMults->setChecked(false);
+
+        ui->commencedKRB->setChecked(true);
+        ui->BonusComboBox->setCurrentIndex(0);
+
+        ui->SerialField->setChecked(false);
+
+        noMultRipple = false;
+    }
+}
