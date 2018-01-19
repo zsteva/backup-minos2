@@ -174,14 +174,28 @@ void BaseContestLog::makeContact( bool timeNow, QSharedPointer<BaseContact>&lct 
 }
 void BaseContestLog::validateLoc( void )
 {
-   if ( myloc.validate( ode, odn ) == LOC_OK )
-   {
-      cosodn = cos( odn );
-      sinodn = sin( odn );
-      locValid = true;
-   }
-   else
-      locValid = false;
+    if (MGMContestRules.getValue())
+    {
+        locator nloc;
+        nloc.loc.setValue(myloc.loc.getValue().left(4) + "MM");
+        if ( nloc.validate( ode, odn ) == LOC_OK )
+        {
+            cosodn = cos( odn );
+            sinodn = sin( odn );
+            locValid = true;
+            myloc.valRes = LOC_OK;
+        }
+        else
+            locValid = false;
+    }
+    else if ( myloc.validate( ode, odn ) == LOC_OK )
+    {
+        cosodn = cos( odn );
+        sinodn = sin( odn );
+        locValid = true;
+    }
+    else
+        locValid = false;
 
 }
 /*********************************************************************/
@@ -317,6 +331,28 @@ int BaseContestLog::CalcNearest( const QString &qscalcloc )
       }
    }
    return mindist;
+}
+//---------------------------------------------------------------------------
+int BaseContestLog::CalcCentres( const QString &qscalcloc )
+{
+   if ( qscalcloc.length() < 4 )
+      return 0;	// only valid 4 or more fig locs
+
+   // calculate the nearest point of loc2 from loc1
+
+   QString temploc = qscalcloc.left(4) + "MM";
+
+   int brg;
+   double dist = 0.0;
+   double lon = 0.0;
+   double lat = 0.0;
+
+   int lres = lonlat( temploc, lon, lat );
+   if (lres == LOC_OK)
+   {
+        disbear(lon, lat, dist, brg);
+   }
+   return dist;
 }
 void BaseContestLog::getMatchText( QSharedPointer<BaseContact> pct, QString &disp, const BaseContestLog *const ct ) const
 {

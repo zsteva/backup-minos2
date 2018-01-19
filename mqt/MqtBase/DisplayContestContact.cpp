@@ -327,11 +327,15 @@ void DisplayContestContact::checkContact( )
 
    if ( !( contactFlags.getValue() & ( MANUAL_SCORE | NON_SCORING | LOCAL_COMMENT | COMMENT_ONLY | DONT_PRINT ) ) )
    {
-      if ( loc.loc.getValue().size() == 4 && clp->allowLoc4.getValue() )
-      {
-         dist = clp->CalcNearest( loc.loc.getValue() ); // deal with 4 char locs
-      }
-      contactScore.setValue( static_cast<int>(dist) );
+       if (contest->MGMContestRules.getValue())
+       {
+            dist = clp->CalcCentres ( loc.loc.getValue() );
+       }
+       else if ( loc.loc.getValue().size() == 4 && clp->allowLoc4.getValue() )
+       {
+          dist = clp->CalcNearest( loc.loc.getValue() ); // deal with 4 char locs
+       }
+       contactScore.setValue( static_cast<int>(dist) );
    }
 
    if ( !clp->locatorField.getValue() || contactScore.getValue() >= 0 )   		// don't add -1 scores in, but DO add zero km
