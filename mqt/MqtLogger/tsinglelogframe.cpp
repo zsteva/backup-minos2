@@ -192,7 +192,7 @@ void TSingleLogFrame::closeContest()
        RPCPubSub::publish( rpcConstants::monitorLogCategory, contest->publishedName, QString::number( 0 ), psRevoked );
        qsoModel.initialise(0);
        ui->matchTreesFrame->setContest(0);
-       ui->stackedInfoFrame->setContest(0);
+       emit setStackContest(0);
        ui->FKHRigControlFrame->setContest(0);
        ui->FKHRotControlFrame->setContest(0);
        TContestApp::getContestApp() ->closeFile( contest );
@@ -240,7 +240,7 @@ void TSingleLogFrame::on_ContestPageChanged ()
     LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( getContest() );
     TContestApp::getContestApp() ->setCurrentContest( ct );
     ui->matchTreesFrame->setContest(ct);
-    ui->stackedInfoFrame->setContest(ct);
+    emit setStackContest(ct);
 
     if ( logColumnsChanged )
     {
@@ -505,7 +505,7 @@ void TSingleLogFrame::on_AfterLogContact( BaseContestLog *ct)
 }
 void TSingleLogFrame::refreshMults()
 {
-    ui->stackedInfoFrame->refreshMults();
+    emit refreshStackMults();
 }
 
 void TSingleLogFrame::updateTrees()

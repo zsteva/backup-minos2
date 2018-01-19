@@ -49,6 +49,15 @@ StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToDistrict(QString,BaseContestLog*)), this, SLOT(on_ScrollToDistrict(QString,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
 
+    QObject *thisw = parent;
+    TSingleLogFrame *tslf = 0;
+    while (thisw && tslf == 0)
+    {
+        tslf = dynamic_cast<TSingleLogFrame *>(thisw);
+        thisw = thisw->parent();
+    }
+    connect(tslf, SIGNAL(setStackContest(LoggerContestLog *)), this, SLOT(setContest(LoggerContestLog *)));
+    connect(tslf, SIGNAL(refreshStackMults()), this, SLOT(refreshMults()));
 }
 
 StackedInfoFrame::~StackedInfoFrame()

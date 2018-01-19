@@ -110,7 +110,9 @@ private:
     void keyPressEvent( QKeyEvent* event );
 
     void restoreColumns();
-
+signals:
+    void setStackContest(LoggerContestLog *contest);
+    void refreshStackMults();
 
 private slots:
     void on_ContestPageChanged();

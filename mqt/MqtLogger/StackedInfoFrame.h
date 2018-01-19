@@ -15,9 +15,6 @@ public:
     explicit StackedInfoFrame(QWidget *parent = 0);
     ~StackedInfoFrame();
 
-    void setContest(LoggerContestLog *contest);
-    void refreshMults();
-
 private:
     Ui::StackedInfoFrame *ui;
 
@@ -44,6 +41,10 @@ private slots:
     void on_StackedMults_currentChanged(int arg1);
     void on_FontChanged();
     void on_infoCombo_currentIndexChanged(int arg1);
+
+public slots:
+    void setContest(LoggerContestLog *contest);
+    void refreshMults();
 };
 
 #endif // STACKEDINFOFRAME_H

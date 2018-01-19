@@ -74,7 +74,8 @@ void DistrictFrame::on_sectionResized(int, int , int)
     settings.setValue("DistrictTable/state", state);
 }
 
-DistrictGridModel::DistrictGridModel()
+DistrictGridModel::DistrictGridModel():
+ct(0)
 {}
 DistrictGridModel::~DistrictGridModel()
 {

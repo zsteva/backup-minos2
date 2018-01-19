@@ -5,6 +5,7 @@
 
 TClockFrame::TClockFrame(QWidget *parent) :
     QFrame(parent),
+    contest(0),
     ui(new Ui::TClockFrame)
 {
     ui->setupUi(this);

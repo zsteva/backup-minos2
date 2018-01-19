@@ -77,7 +77,7 @@ void DXCCFrame::on_sectionResized(int, int , int)
     settings.setValue("DXCCTable/state", state);
 }
 
-DXCCGridModel::DXCCGridModel()
+DXCCGridModel::DXCCGridModel():ct(0)
 {}
 DXCCGridModel::~DXCCGridModel()
 {
