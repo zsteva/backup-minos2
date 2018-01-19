@@ -318,15 +318,24 @@ void RotatorMainWindow::resizeEvent(QResizeEvent * event)
 
 void RotatorMainWindow::LogTimerTimer(  )
 {
-   static bool closed = false;
-   if ( !closed )
-   {
-      if ( checkCloseEvent() )
-      {
-         closed = true;
-         close();
-      }
-   }
+    bool show = getShowServers();
+    if ( !isVisible() && show )
+    {
+        setVisible(true);
+    }
+    if ( isVisible() && !show )
+    {
+        setVisible(false);
+    }
+    static bool closed = false;
+    if ( !closed )
+    {
+        if ( checkCloseEvent() )
+        {
+            closed = true;
+            close();
+        }
+    }
 }
 
 void RotatorMainWindow::onLoggerSelectAntenna(QString s)

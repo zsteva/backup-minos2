@@ -166,15 +166,25 @@ void RigControlMainWindow::logMessage( QString s )
 
 void RigControlMainWindow::LogTimerTimer()
 {
-   static bool closed = false;
-   if ( !closed )
-   {
-      if ( checkCloseEvent() )
-      {
-         closed = true;
-         close();
-      }
-   }
+    bool show = getShowServers();
+    if ( !isVisible() && show )
+    {
+        setVisible(true);
+    }
+    if ( isVisible() && !show )
+    {
+        setVisible(false);
+    }
+
+    static bool closed = false;
+    if ( !closed )
+    {
+        if ( checkCloseEvent() )
+        {
+            closed = true;
+            close();
+        }
+    }
 }
 
 void RigControlMainWindow::closeEvent(QCloseEvent *event)

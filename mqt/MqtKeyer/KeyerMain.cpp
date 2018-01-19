@@ -188,6 +188,16 @@ void KeyerMain::changeEvent( QEvent* e )
 
 void KeyerMain::LineTimerTimer( )
 {
+    bool show = getShowServers();
+    if ( !isVisible() && show )
+    {
+       setVisible(true);
+    }
+    if ( isVisible() && !show )
+    {
+       setVisible(false);
+    }
+
     static bool closed = false;
     if ( !closed )
     {
