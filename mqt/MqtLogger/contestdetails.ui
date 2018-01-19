@@ -746,13 +746,6 @@
                   </property>
                  </widget>
                 </item>
-                <item>
-                 <widget class="QCheckBox" name="QTHField">
-                  <property name="text">
-                   <string>QTH</string>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </item>
              </layout>

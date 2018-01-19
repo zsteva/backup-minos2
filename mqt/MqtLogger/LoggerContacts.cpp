@@ -299,10 +299,13 @@ void ContestContact::getReg1TestText(QString &sdest , bool noSerials)
                 sdest += "0";
    sdest += ';';
 
-   sdest += reps.getValue();   // TX RST
+   if (contest->RSTField.getValue())
+   {
+        sdest += reps.getValue();   // TX RST
+   }
    sdest += ';';
 
-   if (noSerials)
+   if (noSerials || !contest->serialField.getValue())
    {
     // no data
    }
@@ -316,10 +319,13 @@ void ContestContact::getReg1TestText(QString &sdest , bool noSerials)
    }
    sdest += ';';
 
-   sdest += repr.getValue();   // RX RST
+   if (contest->RSTField.getValue())
+   {
+       sdest += repr.getValue();   // RX RST
+   }
    sdest += ';';
 
-   if (noSerials)
+   if (noSerials || !contest->serialField.getValue())
    {
     // no data
    }
@@ -345,7 +351,10 @@ void ContestContact::getReg1TestText(QString &sdest , bool noSerials)
          sdest += extraText.getValue();
       }
    sdest += ';';
-   sdest += loc.loc.getValue();
+   if (contest->locatorField.getValue())
+   {
+        sdest += loc.loc.getValue();
+   }
    sdest += ';';
    //points
    int temp = contactScore.getValue();
@@ -393,139 +402,147 @@ void ContestContact::getReg1TestText(QString &sdest , bool noSerials)
 
 QString ContestContact::getADIFLine()
 {
-   //band
-   //power
-   //date
-   //time
-   //call
-   //mode
-   //RST sent
-   //SN sent
-   //RST Received
-   //SN received
-   //GridSquare
-   //QTH, district, whatever
-   //Comments
-   //QSO Pts
+    //band
+    //power
+    //date
+    //time
+    //call
+    //mode
+    //RST sent
+    //SN sent
+    //RST Received
+    //SN received
+    //GridSquare
+    //QTH, district, whatever
+    //Comments
+    //QSO Pts
 
-   QString outstr;
-   BaseContestLog * clp = contest;
-   if ( !bool( clp ) )
-      return outstr;
+    QString outstr;
+    BaseContestLog * clp = contest;
+    if ( !bool( clp ) )
+        return outstr;
 
-   QString exp_buff;
+    QString exp_buff;
 
-   if ( contactFlags.getValue() & ( LOCAL_COMMENT | DONT_PRINT ) )
-      return outstr;
+    if ( contactFlags.getValue() & ( LOCAL_COMMENT | DONT_PRINT ) )
+        return outstr;
 
-   exp_buff = time.getDate( DTGLOG ).left(6 );
-   QString cent = "19";
-   if ( exp_buff.toInt() < 300000 )
-      cent = "20";
+    exp_buff = time.getDate( DTGLOG ).left(6 );
+    QString cent = "19";
+    if ( exp_buff.toInt() < 300000 )
+        cent = "20";
 
-   outstr += makeADIFField( "QSO_DATE", cent + exp_buff );
+    outstr += makeADIFField( "QSO_DATE", cent + exp_buff );
 
-   exp_buff = time.getTime( DTGLOG ).left( 4 );
+    exp_buff = time.getTime( DTGLOG ).left( 4 );
 
-   outstr += makeADIFField( "TIME_ON", exp_buff );
+    outstr += makeADIFField( "TIME_ON", exp_buff );
 
-   QString cband = clp->band.getValue();
+    QString cband = clp->band.getValue();
 
-   QString cb = cband.trimmed();
-   BandList &blist = BandList::getBandList();
-   BandInfo bi;
-   bool bandOK = blist.findBand(cb, bi);
-   if (bandOK)
-   {
-      cb = bi.adif;
-   }
+    QString cb = cband.trimmed();
+    BandList &blist = BandList::getBandList();
+    BandInfo bi;
+    bool bandOK = blist.findBand(cb, bi);
+    if (bandOK)
+    {
+        cb = bi.adif;
+    }
 
-   outstr += makeADIFField( "BAND", cb );
+    outstr += makeADIFField( "BAND", cb );
 
-   QString freq = frequency.getValue();
-   if (!freq.isEmpty())
-   {
-       QString newfreq = freq.trimmed().remove('.');
-       double dfreq = convertStrToFreq(newfreq);
-       dfreq = dfreq/1000000.0;  // MHz
+    QString freq = frequency.getValue();
+    if (!freq.isEmpty())
+    {
+        QString newfreq = freq.trimmed().remove('.');
+        double dfreq = convertStrToFreq(newfreq);
+        dfreq = dfreq/1000000.0;  // MHz
 
-       freq = QString::number(dfreq, 'f', 3); //MHz to 3 decimal places
-       outstr += makeADIFField("FREQ", freq);
-   }
+        freq = QString::number(dfreq, 'f', 3); //MHz to 3 decimal places
+        outstr += makeADIFField("FREQ", freq);
+    }
 
-   QString smode = mode.getValue().toUpper();
-   if (  smode.compare( hamlibData::CW ) == 0 )
-      outstr += makeADIFField( "MODE", "CW" );
-   else
-      if ( smode.compare( hamlibData::USB ) == 0 )
-         outstr += makeADIFField( "MODE", "SSB" );
-      else
-         if ( smode.compare( hamlibData::FM ) == 0 )
-            outstr += makeADIFField( "MODE", "FM" );
-         else
-            outstr += makeADIFField( "MODE", mode.getValue() );
+    QString smode = mode.getValue().toUpper();
+    if (  smode.compare( hamlibData::CW ) == 0 )
+        outstr += makeADIFField( "MODE", "CW" );
+    else
+        if ( smode.compare( hamlibData::USB ) == 0 )
+            outstr += makeADIFField( "MODE", "SSB" );
+        else
+            if ( smode.compare( hamlibData::FM ) == 0 )
+                outstr += makeADIFField( "MODE", "FM" );
+            else
+                outstr += makeADIFField( "MODE", mode.getValue() );
 
-   if ( contactFlags.getValue() & COMMENT_ONLY )
-   {
-      outstr += makeADIFField( "COMMENT", comments.getValue() );
-      return outstr;
-   }
-   outstr += makeADIFField( "CALL", cs.fullCall.getValue() );
+    if ( contactFlags.getValue() & COMMENT_ONLY )
+    {
+        outstr += makeADIFField( "COMMENT", comments.getValue() );
+        return outstr;
+    }
+    outstr += makeADIFField( "CALL", cs.fullCall.getValue() );
 
-   outstr += makeADIFField( "RST_SENT", reps.getValue() );
-   outstr += makeADIFField( "STX", serials.getValue() );
-   outstr += makeADIFField( "STX_STRING", serials.getValue() );
-   outstr += makeADIFField( "RST_RCVD", repr.getValue() );
-   outstr += makeADIFField( "SRX", serialr.getValue() );
-   outstr += makeADIFField( "SRX_STRING", serialr.getValue() );
+    if (contest->RSTField.getValue())
+        outstr += makeADIFField( "RST_SENT", reps.getValue() );
+    if (contest->serialField.getValue())
+    {
+        outstr += makeADIFField( "STX", serials.getValue() );
+        outstr += makeADIFField( "STX_STRING", serials.getValue() );
+    }
+    if (contest->RSTField.getValue())
+        outstr += makeADIFField( "RST_RCVD", repr.getValue() );
+    if (contest->serialField.getValue())
+    {
+        outstr += makeADIFField( "SRX", serialr.getValue() );
+        outstr += makeADIFField( "SRX_STRING", serialr.getValue() );
+    }
+    if (contest->locatorField.getValue())
+        outstr += makeADIFField( "GRIDSQUARE", loc.loc.getValue() );
+    if ( districtMult )
+        outstr += makeADIFField( "QTH", districtMult->districtCode );
+    else
+        outstr += makeADIFField( "QTH", extraText.getValue() );
 
-   outstr += makeADIFField( "GRIDSQUARE", loc.loc.getValue() );
-   if ( districtMult )
-      outstr += makeADIFField( "QTH", districtMult->districtCode );
-   else
-      outstr += makeADIFField( "QTH", extraText.getValue() );
+    outstr += makeADIFField( "TX_PWR", clp->power.getValue() );
+    outstr += makeADIFField( "COMMENT", comments.getValue() );
 
-   outstr += makeADIFField( "TX_PWR", clp->power.getValue() );
-   outstr += makeADIFField( "COMMENT", comments.getValue() );
-
-   int temp = 0;
-   if ( contactFlags.getValue() & NON_SCORING )
-   {
-      temp = 0;
-   }
-   else
-      if ( cs.valRes == ERR_DUPCS )
-      {
-         temp = 0;
-      }
-      else
-      {
-         temp = contactScore.getValue();
-         switch ( clp->scoreMode.getValue() )
-         {
+    int temp = 0;
+    if ( contactFlags.getValue() & NON_SCORING )
+    {
+        temp = 0;
+    }
+    else
+        if ( cs.valRes == ERR_DUPCS )
+        {
+            temp = 0;
+        }
+        else
+        {
+            temp = contactScore.getValue();
+            switch ( clp->scoreMode.getValue() )
+            {
             case PPKM:
-               if ( contactFlags.getValue() & XBAND )
-               {
-                  temp = ( temp + 1 ) / 2;
-               }
-               break;
+                if ( contactFlags.getValue() & XBAND )
+                {
+                    temp = ( temp + 1 ) / 2;
+                }
+                break;
 
             case PPQSO:
-               if ( temp > 0 )
-                  temp = 1;
-               else
-                  temp = 0;
-               break;
+                if ( temp > 0 )
+                    temp = 1;
+                else
+                    temp = 0;
+                break;
 
-         }
-         if ( contactScore.getValue() < 0 )
-            temp = 0;
-      }
-   outstr += makeADIFField( "OPERATOR", op1.getValue() );
-   outstr += makeADIFField( "QSO_PTS", temp );
-   outstr += makeADIFField( "QSO_COMPL", temp ? "YES" : "NO" );
+            }
+            if ( contactScore.getValue() < 0 )
+                temp = 0;
+        }
+    outstr += makeADIFField( "OPERATOR", op1.getValue() );
+    outstr += makeADIFField( "QSO_PTS", temp );
+    outstr += makeADIFField( "QSO_COMPL", temp ? "YES" : "NO" );
 
-   return outstr;
+    return outstr;
 }
 bool ContestContact::commonSave(QSharedPointer<BaseContact> tct)
 {

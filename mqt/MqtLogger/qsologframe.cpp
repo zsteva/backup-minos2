@@ -522,7 +522,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
        bool pastCurrent = false;
        for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
        {
-          if ( !( *vcp ) ->wc->isVisible() )
+          if ( !( *vcp ) ->wc->isVisible() || !( *vcp ) ->wc->isEnabled())
           {
  //         #error but if date or time are invalid...
              continue;
@@ -1224,7 +1224,7 @@ bool QSOLogFrame::validateControls( validTypes command )   // do control validat
         if (!edit && (*vcp) == ssIl)
             ss = ssLineEditGreyBackground;
 
-        if ( !( *vcp ) ->valid( command, screenContact ) )
+        if (((*vcp)->wc->isEnabled() || ((*vcp) == ssIl && contest->serialField.getValue())) && !( *vcp ) ->valid( command, screenContact ) )
         {
             QString text = (*vcp)->wc->text().trimmed();
             if (!text.isEmpty())
@@ -1674,13 +1674,12 @@ void QSOLogFrame::updateQSODisplay()
 //      ui->QTHEdit->CharCase = ecNormal;
    }
    bool notProtected = !contest->isReadOnly();
-   ui->RSTTXEdit->setEnabled(notProtected);
-   ui->SerTXEdit->setEnabled(notProtected);
-   ui->RSTRXEdit->setEnabled(notProtected);
-   ui->SerRXEdit->setEnabled(notProtected);
+   ui->RSTTXEdit->setEnabled(notProtected && contest->RSTField.getValue());
+   ui->SerTXEdit->setEnabled(notProtected && contest->serialField.getValue());
+   ui->RSTRXEdit->setEnabled(notProtected && contest->RSTField.getValue());
+   ui->SerRXEdit->setEnabled(notProtected && contest->serialField.getValue());
    //CallsignEdit->Enabled = false; // leave these to allow searching
-   //LocEdit->Enabled = false;
-   //QTHEdit->Enabled = false;
+   ui->LocEdit->setEnabled(contest->locatorField.getValue());
    ui->CommentsEdit->setEnabled(notProtected);
    ui->ModeComboBoxGJV->setEnabled(notProtected);
    ui->NonScoreCheckBox->setEnabled(notProtected);
@@ -1717,8 +1716,6 @@ void QSOLogFrame::refreshOps()
 
        QString mainOp = contest->currentOp1.getValue();
        QString secondOp = contest->currentOp2.getValue();
-//       QString mainOp = ui->MainOpComboBox->currentText();
-//       QString secondOp = ui->SecondOpComboBox->currentText();
 
        ui->MainOpComboBox->clear();
        ui->SecondOpComboBox->clear();
@@ -2122,14 +2119,11 @@ void QSOLogFrame::transferDetails(const QSharedPointer<BaseContact> lct, const B
            ( contest->otherExchange.getValue() && matct->otherExchange.getValue() )
          )
       {
-         if ( contest->QTHField.getValue() )
-         {
-            QString exch = lct->extraText.getValue();
-            if (exch.size())
-            {
-               ui->QTHEdit->setText(exch);
-            }
-         }
+        QString exch = lct->extraText.getValue();
+        if (exch.size())
+        {
+           ui->QTHEdit->setText(exch);
+        }
       }
    }
    valid( cmCheckValid ); // make sure all single and cross field
@@ -2155,14 +2149,11 @@ void QSOLogFrame::transferDetails( const ListContact *lct, const ContactList * /
    {
       if ( contest->districtMult.getValue() || contest->otherExchange.getValue() )
       {
-         if ( contest->QTHField.getValue() )
-         {
-            QString exch = lct->extraText;
-            if (exch.size())
-            {
-               ui->QTHEdit->setText(exch);
-            }
-         }
+        QString exch = lct->extraText;
+        if (exch.size())
+        {
+           ui->QTHEdit->setText(exch);
+        }
       }
    }
    valid( cmCheckValid ); // make sure all single and cross field

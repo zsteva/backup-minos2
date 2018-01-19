@@ -117,7 +117,6 @@ class BaseContestLog: public BaseLogList
       MinosItem<bool> RSTField;
       MinosItem<bool> serialField;
       MinosItem<bool> locatorField;
-      MinosItem<bool> QTHField;
 
       MinosStringItem<QString> power;
       MinosStringItem<QString> currentMode;

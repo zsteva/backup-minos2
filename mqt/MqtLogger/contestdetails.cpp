@@ -363,7 +363,6 @@ void ContestDetails::setDetails(  )
    ui->RSTField->setChecked(contest->RSTField.getValue()) ;   // bool                   // contest
    ui->SerialField->setChecked(contest->serialField.getValue()) ;   // bool             // contest
    ui->LocatorField->setChecked(contest->locatorField.getValue()) ;   // bool         // contest
-   ui->QTHField->setChecked( contest->QTHField.getValue()) ;   // bool                   // contest
 
    ui->AntOffsetEdit->setText(QString::number(contest->bearingOffset.getValue()));	// int
 
@@ -413,7 +412,6 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    contest->RSTField.setValue(true);
    contest->serialField.setValue(true);
    contest->locatorField.setValue(true);
-   contest->QTHField.setValue(true);
 
    // need to get legal bands from ContestLog
    ui->BandComboBox->clear();
@@ -431,24 +429,7 @@ void ContestDetails::setDetails( const IndividualContest &ic )
     }
     ui->BandComboBox->setCurrentIndex(0);
 
-    QString mode = ic.mode;
-    if (mode.isEmpty())
-    {
-       mode = hamlibData::USB;
-    }
-    int m = ui->ModeComboBox->findText( mode );
-
-    if ( m >= 0 )
-    {
-       ui->ModeComboBox->setCurrentIndex(m);
-    }
-    else
-    {
-       ui->ModeComboBox->setCurrentText(mode);
-    }
-    contest->currentMode.setValue(mode);
-
-   ui->SectionComboBox->clear();
+    ui->SectionComboBox->clear();
 
    sectionList = ic.sections; // the combo will then be properly set up in setDetails()
    if ( sectionList.size() )
@@ -718,10 +699,30 @@ void ContestDetails::setDetails( const IndividualContest &ic )
    }
 
 
+   QString mode = ic.mode;
+   if (mode.isEmpty())
+   {
+      if (contest->MGMContestRules.getValue())
+          mode = hamlibData::MGM;
+      else
+          mode = hamlibData::USB;
+   }
+   int m = ui->ModeComboBox->findText( mode );
+
+   if ( m >= 0 )
+   {
+      ui->ModeComboBox->setCurrentIndex(m);
+   }
+   else
+   {
+      ui->ModeComboBox->setCurrentText(mode);
+   }
+   contest->currentMode.setValue(mode);
+
+
    ui->RSTField->setChecked(contest->RSTField.getValue()) ;
    ui->SerialField->setChecked(contest->serialField.getValue()) ;
    ui->LocatorField->setChecked(contest->locatorField.getValue()) ;
-   ui->QTHField->setChecked(contest->QTHField.getValue()) ;
 
    contest->scoreMode.setValue( static_cast< SCOREMODE> ( ic.ppKmScoring ? 0 : 1 ) );  // combo
 
@@ -1029,7 +1030,6 @@ QWidget * ContestDetails::getDetails( )
     contest->RSTField.setValue( ui->RSTField->isChecked() ) ;   // bool
     contest->serialField.setValue( ui->SerialField->isChecked() ) ;   // bool
     contest->locatorField.setValue( ui->LocatorField->isChecked() ) ;   // bool
-    contest->QTHField.setValue( ui->QTHField->isChecked() ) ;   // bool
 
     contest->power.setValue( ui->PowerEdit->text() );
     contest->bearingOffset.setValue(ui->AntOffsetEdit->text().toInt());	// int
@@ -1087,7 +1087,6 @@ void ContestDetails::enableControls()
    ui->RSTField->setEnabled(!protectedChecked);
    ui->SerialField->setEnabled(!protectedChecked);
    ui->LocatorField->setEnabled(!protectedChecked);
-   ui->QTHField->setEnabled(!protectedChecked);
 
    ui->QTHBundleFrame->enableBundle(!protectedChecked);
    ui->StationBundleFrame->enableBundle(!protectedChecked);

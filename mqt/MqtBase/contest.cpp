@@ -17,7 +17,7 @@ BaseContestLog::BaseContestLog( void ) :
       ct_stanzaCount( 0 ), cslotno( -1 ), locValid( false ),
       ode( 0.0 ), odn( 0.0 ), sinodn( 0.0 ), cosodn( 0.0 ),
       allowLoc8( false ), allowLoc4 ( false ),
-      RSTField( true ), serialField( true ), locatorField( true ), QTHField( true ),
+      RSTField( true ), serialField( true ), locatorField( true ),
       otherExchange( false ), countryMult( false ), nonGCountryMult( false ),
       districtMult( false ), locMult( false ), GLocMult(false),
       M7Mults(false), NonUKloc_mult(false), NonUKloc_multiplier(0), UKloc_mult(false), UKloc_multiplier(0),
@@ -108,7 +108,6 @@ void BaseContestLog::clearDirty()
    RSTField.clearDirty();
    serialField.clearDirty();
    locatorField.clearDirty();
-   QTHField.clearDirty();
    power.clearDirty();
    currentMode.clearDirty();
    band.clearDirty();
@@ -145,7 +144,6 @@ void BaseContestLog::setDirty()
    RSTField.setDirty();
    serialField.setDirty();
    locatorField.setDirty();
-   QTHField.setDirty();
    power.setDirty();
    currentMode.setDirty();
    band.setDirty();
@@ -987,7 +985,6 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
       mt->getStructArgMemberValue( "RSTField", RSTField);
       mt->getStructArgMemberValue( "serialField", serialField);
       mt->getStructArgMemberValue( "locatorField", locatorField);
-      mt->getStructArgMemberValue( "QTHField", QTHField);
 
       mt->getStructArgMemberValue( "UKACBonus", usesBonus );
       mt->getStructArgMemberValue("BonusType", bonusType);

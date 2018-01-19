@@ -112,7 +112,6 @@ void MinosTestExport::exportContest( QSharedPointer<QFile> expfd )
    ct->RSTField.addIfDirty(st, "RSTField", dirty);
    ct->serialField.addIfDirty(st, "serialField", dirty);
    ct->locatorField.addIfDirty(st, "locatorField", dirty);
-   ct->QTHField.addIfDirty(st, "QTHField", dirty);
 
    ct->M7Mults.addIfDirty( st, "M7Mults", dirty );
    ct->usesBonus.addIfDirty( st, "UKACBonus", dirty );

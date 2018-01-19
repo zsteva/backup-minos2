@@ -707,7 +707,6 @@ bool LoggerContestLog::GJVsave( GJVParams &gp )
    opyn( !RSTField.getValue() );
    opyn( !serialField.getValue() );
    opyn( !locatorField.getValue() );
-   opyn( !QTHField.getValue() );
 
    strtobuf(); // clear tail
 
@@ -787,8 +786,6 @@ bool LoggerContestLog::GJVload( void )
    RSTField.setValue( !inyn() );
    serialField.setValue( !inyn() );
    locatorField.setValue( !inyn() );
-
-   QTHField.setValue( !inyn() );
 
    return true;
 
