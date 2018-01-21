@@ -16,7 +16,7 @@ GJVParams::GJVParams(QSharedPointer<QFile> f )
 GJVParams::~GJVParams()
 {}
 //============================================================
-locator::locator( void ) : valRes( ERR_NOLOC )
+Locator::Locator( void ) : valRes( ERR_NOLOC )
 {
    loc.setInitialValue( "        " );
 }
@@ -27,14 +27,14 @@ locator::locator( void ) : valRes( ERR_NOLOC )
 //locator& locator::operator =(const locator&)
 //{
 //}
-locator::~locator()
+Locator::~Locator()
 {}
-char locator::validate( double &lon, double &lat )
+char Locator::validate( double &lon, double &lat )
 {
    valRes = lonlat( loc.getValue(), lon, lat );
    return valRes;
 }
-char locator::validate( void )
+char Locator::validate( void )
 {
    double longitude = 0.0;
    double latitude = 0.0;
@@ -412,11 +412,11 @@ void dtg::setTime(QTime tdt)
 }
 
 //============================================================
-callsign::callsign( ) : valRes( CS_NOT_VALIDATED )
+Callsign::Callsign( ) : valRes( CS_NOT_VALIDATED )
 {
     fullCall.setValue( "" );
 }
-callsign::callsign(const QString &pcs ) : valRes( CS_NOT_VALIDATED )
+Callsign::Callsign(const QString &pcs ) : valRes( CS_NOT_VALIDATED )
 {
    fullCall.setValue( pcs );
 }
@@ -427,11 +427,11 @@ callsign::callsign(const QString &pcs ) : valRes( CS_NOT_VALIDATED )
 //callsign& callsign::operator =(const callsign&)
 //{
 //}
-callsign::~callsign()
+Callsign::~Callsign()
 {
    // nothing needed
 }
-char callsign::validate( )
+char Callsign::validate( )
 {
    if ( valRes != CS_NOT_VALIDATED )
       return valRes;
@@ -623,7 +623,7 @@ char callsign::validate( )
    return valRes ;
 }
 //============================================================
-bool callsign::isUK() const
+bool Callsign::isUK() const
 {
    if (fullCall.getValue().size() == 0)
    {
@@ -635,4 +635,40 @@ bool callsign::isUK() const
    return MultLists::getMultLists()->isUKprefix(*this);
 }
 //============================================================
+bool Callsign::operator==( const Callsign& rhs ) const
+{
+   const Callsign * c1 = this;    // search item
+   const Callsign *c2 = &rhs;    // collection item
 
+   int ret = c1->prefix2.compare(c2->prefix2, Qt::CaseInsensitive );
+   if ( ret != 0 )
+      return false;
+
+   ret = c1->number.compare(c2->number, Qt::CaseInsensitive );
+   if ( ret != 0 )
+      return false;
+
+   ret = c1->body.compare( c2->body, Qt::CaseInsensitive );
+   if ( ret != 0 )
+      return false;
+
+   return true;
+}
+
+bool Callsign::operator<( const Callsign& rhs ) const
+{
+   const Callsign * c1 = this;    // search item
+   const Callsign *c2 = &rhs;    // collection item
+    int ret = c1->prefix2.compare(c2->prefix2, Qt::CaseInsensitive );
+    if ( ret == 0 )
+    {
+       ret = c1->number.compare(c2->number, Qt::CaseInsensitive );
+       if ( ret == 0 )
+       {
+          ret = c1->body.compare( c2->body, Qt::CaseInsensitive );
+          if ( ret == 0 )
+             return false;
+       }
+    }
+    return ret < 0;
+}

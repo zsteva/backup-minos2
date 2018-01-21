@@ -56,7 +56,7 @@ class CountrySynonym;
 class CountryList;
 class ScreenContact;
 
-QSharedPointer<CountryEntry> findCtryPrefix( const callsign &cs );
+QSharedPointer<CountryEntry> findCtryPrefix( const Callsign &cs );
 
 // This is a contact, either in the log or the current screen contact
 // Various parts may be missing to allow "comment" records in the log.
@@ -126,8 +126,8 @@ class BaseContact
 
       dtg updtime;      //CONTAIN MinosItem
 
-      callsign cs;   //CONTAIN MinosItem
-      locator loc;   //CONTAIN MinosItem
+      Callsign cs;   //CONTAIN MinosItem
+      Locator loc;   //CONTAIN MinosItem
       dtg time;      //CONTAIN MinosItem
 
       MinosStringItem<QString> extraText;

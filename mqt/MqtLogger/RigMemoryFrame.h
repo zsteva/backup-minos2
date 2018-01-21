@@ -71,6 +71,8 @@ public:
 private slots:
     void on_newMemoryButton_clicked();
 
+    void on_flushMemoriesButton_clicked();
+
 public slots:
     void clearActionSelected(int);
 

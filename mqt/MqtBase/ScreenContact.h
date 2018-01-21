@@ -34,8 +34,8 @@ class ScreenContact
       void initialise( BaseContestLog *ct );
 
 
-      callsign cs;   //CONTAIN MinosItem
-      locator loc;   //CONTAIN MinosItem
+      Callsign cs;   //CONTAIN MinosItem
+      Locator loc;   //CONTAIN MinosItem
       dtg time;      //CONTAIN MinosItem
 
       QString mode;

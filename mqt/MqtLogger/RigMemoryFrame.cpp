@@ -168,6 +168,32 @@ void RigMemoryFrame::on_newMemoryButton_clicked()
     writeActionSelected(n); // which creates the button as well
 
 }
+void RigMemoryFrame::on_flushMemoriesButton_clicked()
+{
+    // scan memories and see if they have been worked
+    int mcount = ct->rigMemories.size();
+    for (int buttonNumber = 0; buttonNumber < mcount; buttonNumber ++)
+    {
+        memoryData::memData m = getRigMemoryData(buttonNumber);
+
+        if ( m.callsign != memDefData::DEFAULT_CALLSIGN)
+        {
+            Callsign mcs(m.callsign);
+            mcs.validate();
+
+            for ( LogIterator i = ct->ctList.begin(); i != ct->ctList.end(); i++ )
+            {
+                if ((*i).wt->cs == mcs)
+                {
+                    memoryData::memData m;
+                    setRigMemoryData(buttonNumber, m);
+                    break;
+                }
+            }
+        }
+    }
+    sendUpdateMemories();
+}
 
 void RigMemoryFrame::readActionSelected(int buttonNumber)
 {
@@ -298,3 +324,4 @@ void RigMemoryButton::clearActionSelected()
 {
     emit clearActionSelected(memNo);
 }
+

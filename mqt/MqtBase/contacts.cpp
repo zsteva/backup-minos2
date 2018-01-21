@@ -105,7 +105,7 @@ void BaseContact::setDirty()
    contactScore.setDirty();
 }
 //==========================================================================
-QSharedPointer<CountryEntry> findCtryPrefix( const callsign &cs )
+QSharedPointer<CountryEntry> findCtryPrefix( const Callsign &cs )
 {
    QString testpart = "/";	// look for e.g. /RVI as a country suffix
    testpart += cs.suffix;	// look for e.g. /RVI as a country suffix

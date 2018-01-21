@@ -124,7 +124,7 @@ void StackedInfoFrame::on_ScrollToCountry( const QString &csCs, BaseContestLog *
 {
     if (contest && contest == c)
     {
-        callsign cs( csCs );
+        Callsign cs( csCs );
         cs.validate( );	// we don't use the result
 
         QSharedPointer<CountryEntry> ctryMult = findCtryPrefix( cs );
@@ -155,11 +155,14 @@ void StackedInfoFrame::onUpdateMemories(BaseContestLog *ct)
 }
 void StackedInfoFrame::onRefreshMults(BaseContestLog *ct)
 {
-    ui->locFrame->reInitialiseLocators();
-    ui->locTreeFrame->reInitialiseLocators();
-    ui->dxccFrame->reInitialiseCountries();
-    ui->districtFrame->reInitialiseDistricts();
-    //ui->rigMemFrame->reInitialiseMemories();
+    if (contest == ct)
+    {
+        ui->locFrame->reInitialiseLocators();
+        ui->locTreeFrame->reInitialiseLocators();
+        ui->dxccFrame->reInitialiseCountries();
+        ui->districtFrame->reInitialiseDistricts();
+        //ui->rigMemFrame->reInitialiseMemories();
+    }
 }
 
 void StackedInfoFrame::on_FontChanged()

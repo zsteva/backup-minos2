@@ -16,8 +16,8 @@ class ListContact
       BaseContact& operator =( const BaseContact & );
 
       virtual ~ListContact(){}
-      callsign cs;   //CONTAIN MinosItem
-      locator loc;   //CONTAIN MinosItem
+      Callsign cs;   //CONTAIN MinosItem
+      Locator loc;   //CONTAIN MinosItem
       QString extraText;
       QString comments;
       virtual QString getField( int ACol, const BaseContestLog * const curcon ) const;

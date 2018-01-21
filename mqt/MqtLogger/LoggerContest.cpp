@@ -746,7 +746,7 @@ bool LoggerContestLog::GJVload( void )
    buftostr( band );
    buftostr( name );
    buftostr( temp );
-   mycall = callsign( strupr( temp ) );
+   mycall = Callsign( strupr( temp ) );
    buftostr( myloc.loc );
    buftostr( location );
 
@@ -1354,7 +1354,7 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
       strcpysp( temp, lbuff.mid(7), 4 );
       bct->time.setTime( temp, DTGLOG );
       strcpysp( temp, lbuff.mid(21), 15 );
-      bct->cs = callsign( temp.toUpper() );
+      bct->cs = Callsign( temp.toUpper() );
       bct->cs.valRes = CS_NOT_VALIDATED;
       strcpysp( temp, lbuff.mid( 37 ), 3 );
       bct->reps.setValue( temp );

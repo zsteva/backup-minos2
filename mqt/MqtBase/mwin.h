@@ -226,7 +226,7 @@ class dtg
       ~dtg();
 };
 //---------------------------------------------------------------------------
-class callsign
+class Callsign
 {
    #define BITLENGTH 4
 	#define NUMBITLENGTH 4
@@ -242,25 +242,27 @@ class callsign
 
       int valRes;   // current validation result
 
-      callsign( );
-      callsign( const QString &orig );
-      ~callsign();
+      Callsign( );
+      Callsign( const QString &orig );
+      ~Callsign();
+      bool operator==( const Callsign& rhs ) const;
+      bool operator<( const Callsign& rhs ) const;
 
       char validate( );
       bool isUK() const;
 };
 //---------------------------------------------------------------------------
-class locator
+class Locator
 {
    public:
       MinosStringItem<QString> loc;	// allowing for Microwave locs
 
       mutable char valRes;
 
-      locator();
+      Locator();
       //    locator(const locator&);
       //    locator& operator =(const locator&);
-      ~locator();
+      ~Locator();
       char validate( void );
       char validate( double &lon, double &lat );
 };

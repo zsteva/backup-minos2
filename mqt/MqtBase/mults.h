@@ -51,7 +51,7 @@ class MultEntry
 {
    public:
       int listOffset;
-      locator central;	// central point to take bearings to
+      Locator central;	// central point to take bearings to
       QString realName;
 
       MultEntry( const QString &name, const QString &cloc );
@@ -190,7 +190,7 @@ class MultLists
       virtual QSharedPointer<CountryEntry> getCtryListAt( int index ) = 0;
       virtual int getCtryListIndexOf( QSharedPointer<CountryEntry> ) = 0;
       virtual int getDistListIndexOf( QSharedPointer<DistrictEntry> ) = 0;
-      virtual bool isUKprefix(const callsign &cs) = 0;
+      virtual bool isUKprefix(const Callsign &cs) = 0;
 //      virtual DistrictEntry *getDistrictEntry(int item) = 0;
 //      virtual CountryEntry *getCountryEntry(int item) = 0;
       virtual int getDistWorked(int item, BaseContestLog *const ct ) = 0;

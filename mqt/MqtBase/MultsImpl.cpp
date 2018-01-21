@@ -885,7 +885,7 @@ int MultListsImpl::getDistListIndexOf( QSharedPointer<DistrictEntry> e )
 {
    return distList.indexOf( *e.data() );
 }
-bool MultListsImpl::isUKprefix(const callsign &cs)
+bool MultListsImpl::isUKprefix(const Callsign &cs)
 {
    QSharedPointer<CountryEntry> ctry = findCtryPrefix( cs );
    if (!ctry)

@@ -108,8 +108,8 @@ class BaseContestLog: public BaseLogList
       MinosStringItem<QString> name;         // name of contest
       MinosStringItem<QString> location;
 
-      callsign mycall;  // CONTAINS MinosItem
-      locator myloc;  // CONTAINS MinosItem
+      Callsign mycall;  // CONTAINS MinosItem
+      Locator myloc;  // CONTAINS MinosItem
 
       MinosItem<bool> allowLoc4;
       MinosItem<bool> allowLoc8;

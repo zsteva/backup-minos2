@@ -681,7 +681,7 @@ bool ContestContact::GJVload( int diskBlock )
    time.setTime( temp, DTGDISP );
 
    buftostr( temp );
-   cs = callsign( strupr( temp ) );
+   cs = Callsign( strupr( temp ) );
    cs.valRes = CS_NOT_VALIDATED;
 
    buftostr( temp );
@@ -728,7 +728,7 @@ bool ContestContact::setField(QSharedPointer<BaseContact> tct, int ACol, const Q
         break;
     case egCall:
         cs.valRes = CS_NOT_VALIDATED;
-        cs = callsign( Value );
+        cs = Callsign( Value );
         cs.validate( );
         break;
     case egRSTTx:

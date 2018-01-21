@@ -16,8 +16,8 @@ void ScreenContact::initialise( BaseContestLog *ct )
 {
    contest = ct;
    logSequence = static_cast<unsigned long> (- 1);
-   cs = callsign();
-   loc = locator();
+   cs = Callsign();
+   loc = Locator();
    time = dtg( false );
 
    BaseContestLog * clp = ct;

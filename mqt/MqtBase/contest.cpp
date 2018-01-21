@@ -176,7 +176,7 @@ void BaseContestLog::validateLoc( void )
 {
     if (MGMContestRules.getValue())
     {
-        locator nloc;
+        Locator nloc;
         nloc.loc.setValue(myloc.loc.getValue().left(4) + "MM");
         if ( nloc.validate( ode, odn ) == LOC_OK )
         {
@@ -795,8 +795,8 @@ DupContact::~DupContact()
 {}
 bool DupContact::operator<( const DupContact& rhs ) const
 {
-   callsign * c1 = 0;    // search item
-   callsign *c2 = 0;    // collection item
+   Callsign * c1 = 0;    // search item
+   Callsign *c2 = 0;    // collection item
 
    if ( dct )
    {
@@ -817,23 +817,12 @@ bool DupContact::operator<( const DupContact& rhs ) const
          c2 = &rhs.sct->cs;
       }
 
-   int ret = c1->prefix2.compare(c2->prefix2, Qt::CaseInsensitive );
-   if ( ret == 0 )
-   {
-      ret = c1->number.compare(c2->number, Qt::CaseInsensitive );
-      if ( ret == 0 )
-      {
-         ret = c1->body.compare( c2->body, Qt::CaseInsensitive );
-         if ( ret == 0 )
-            return false;
-      }
-   }
-   return ret < 0;
+   return (*c1 < *c2);
 }
 bool DupContact::operator==( const DupContact& rhs ) const
 {
-   callsign * c1 = 0;    // search item
-   callsign *c2 = 0;    // collection item
+   Callsign * c1 = 0;    // search item
+   Callsign *c2 = 0;    // collection item
 
    if ( dct )
    {
@@ -854,19 +843,7 @@ bool DupContact::operator==( const DupContact& rhs ) const
          c2 = &rhs.sct->cs;
       }
 
-   int ret = c1->prefix2.compare(c2->prefix2, Qt::CaseInsensitive );
-   if ( ret != 0 )
-      return false;
-
-   ret = c1->number.compare(c2->number, Qt::CaseInsensitive );
-   if ( ret != 0 )
-      return false;
-
-   ret = c1->body.compare( c2->body, Qt::CaseInsensitive );
-   if ( ret != 0 )
-      return false;
-
-   return true;
+   return (*c1 == *c2);
 }
 bool DupContact::operator!=( const DupContact& rhs ) const
 {

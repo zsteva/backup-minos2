@@ -52,7 +52,7 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
       if ( Fieldname.toUpper() == "CALL" )
       {
          strcpysp( temp, FieldContent, FieldLength );
-         aqso->cs = callsign( temp.toUpper() );
+         aqso->cs = Callsign( temp.toUpper() );
          aqso->cs.valRes = CS_NOT_VALIDATED;
       }
       if ( Fieldname.toUpper() == "RST_SENT" )

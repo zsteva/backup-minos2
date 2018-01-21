@@ -297,7 +297,7 @@ class MultListsImpl: public MultLists
       virtual QSharedPointer<CountryEntry>  getCtryListAt( int index );
       virtual int getCtryListIndexOf(QSharedPointer<CountryEntry> );
       virtual int getDistListIndexOf( QSharedPointer<DistrictEntry> );
-      virtual bool isUKprefix(const callsign &cs);
+      virtual bool isUKprefix(const Callsign &cs);
 //      virtual DistrictEntry *getDistrictEntry(int item);
 //      virtual CountryEntry *getCountryEntry(int item);
       virtual int getDistWorked(int item, BaseContestLog *const ct );

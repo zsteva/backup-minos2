@@ -237,7 +237,7 @@ bool reg1test::parseHeader(QString line )
       if ( code == "PCALL" )
       {
          //PCall=G4RFR/P
-         ct->mycall = callsign( a[ 1 ].toUpper() );
+         ct->mycall = Callsign( a[ 1 ].toUpper() );
          ct->mycall.valRes = CS_NOT_VALIDATED;
          ct->mycall.validate();
       }
@@ -518,7 +518,7 @@ bool reg1test::parseQSO( QString line )
       */
       aqso->time.setDate( a[ 0 ], DTGReg1Test );
       aqso->time.setTime( a[ 1 ], DTGReg1Test );
-      aqso->cs = callsign( a[ 2 ].toUpper() );
+      aqso->cs = Callsign( a[ 2 ].toUpper() );
       aqso->cs.valRes = CS_NOT_VALIDATED;
       // a[3] mode
       aqso->reps.setValue( a[ 4 ] );
