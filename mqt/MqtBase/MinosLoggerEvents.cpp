@@ -156,9 +156,28 @@ void MinosLoggerEvents::SendFontChanged()
     emit mle.FontChanged();
 }
 //---------------------------------------------------------------------------
-
-
+void MinosLoggerEvents::sendFiltersChanged(BaseContestLog *c)
+{
+    emit mle.FiltersChanged(c);
+}
+//---------------------------------------------------------------------------
+void MinosLoggerEvents::sendUpdateStats(BaseContestLog *c )
+{
+    emit mle.UpdateStats(c);
+}
+//---------------------------------------------------------------------------
+void MinosLoggerEvents::sendUpdateMemories(BaseContestLog *c )
+{
+    emit mle.UpdateMemories(c);
+}
+//---------------------------------------------------------------------------
+void MinosLoggerEvents::sendRefreshMults(BaseContestLog *c )
+{
+    emit mle.RefreshMults(c);
+}
+//---------------------------------------------------------------------------
 void MinosLoggerEvents::SendBrgStrToRot(QString bearing)
 {
     emit mle.BrgStrToRot(bearing);
 }
+//---------------------------------------------------------------------------

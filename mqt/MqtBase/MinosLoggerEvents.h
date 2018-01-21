@@ -55,6 +55,11 @@ signals:
    void DistrictSelect(QString dist, BaseContestLog *c);
    void LocSelect(QString loc, BaseContestLog *c);
 
+   void FiltersChanged(BaseContestLog *);
+   void UpdateStats(BaseContestLog *);
+   void UpdateMemories(BaseContestLog *);
+   void RefreshMults(BaseContestLog *);
+
    void FontChanged();
 public:
    static MinosLoggerEvents mle;
@@ -92,6 +97,12 @@ public:
 
    static void SendFontChanged();
    static void SendBrgStrToRot(QString);
+
+   static void sendUpdateStats(BaseContestLog *c );
+   static void sendFiltersChanged(BaseContestLog *c );
+   static void sendUpdateMemories(BaseContestLog *c );
+   static void sendRefreshMults(BaseContestLog *c );
+
 
 };
 //---------------------------------------------------------------------------

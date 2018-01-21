@@ -38,6 +38,11 @@ static QKeySequence memoryShiftShortCut[] = {
 
 };
 
+void RigMemoryFrame::traceMsg(QString msg)
+{
+    trace("RigMemoryFrame: " + msg);
+}
+
 RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     QFrame(parent),
     ct(0),
@@ -51,6 +56,96 @@ RigMemoryFrame::~RigMemoryFrame()
 {
     delete ui;
 }
+void RigMemoryFrame::setContest( BaseContestLog *pct )
+{
+    ct = dynamic_cast<LoggerContestLog *>( pct);
+
+    doMemoryUpdates();
+}
+memoryData::memData RigMemoryFrame::getRigMemoryData(int memoryNumber)
+{
+    memoryData::memData m;
+    if (ct && ct->rigMemories.size() > memoryNumber)
+        m = ct->rigMemories[memoryNumber].getValue();
+    return m;
+}
+void RigMemoryFrame::setRigMemoryData(int memoryNumber, memoryData::memData m)
+{
+    ct->saveRigMemory(memoryNumber, m);
+}
+
+void RigMemoryFrame::doMemoryUpdates()
+{
+    // called from minosLoggerEvents following sendUpdateMemories
+
+    // clear all the "old" buttons
+
+    memButtonMap.clear();
+    QGridLayout *gl = qobject_cast<QGridLayout *>(ui->memFrame->layout());
+
+    delete gl;
+
+    // and recreate the layout
+
+    gl = new QGridLayout(ui->memFrame);
+    ui->memFrame->setLayout(gl);
+
+    // get all the info from the contest
+
+    if (ct)
+    {
+        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(false);
+
+        int mcount = ct->rigMemories.size();
+        for (int buttonNumber = 0; buttonNumber < mcount; buttonNumber ++)
+        {
+            memoryData::memData m = getRigMemoryData(buttonNumber);
+
+            if ( m.callsign != memDefData::DEFAULT_CALLSIGN)
+            {
+                // create button
+
+                int row = buttonNumber/2;
+                int col = buttonNumber%2;
+
+                QSharedPointer<RigMemoryButton> rmbb(new RigMemoryButton(ui->scrollArea, this, buttonNumber));
+                memButtonMap[buttonNumber] = rmbb;
+                connect( rmbb.data(), SIGNAL( clearActionSelected(int)) , this, SLOT(clearActionSelected(int)), Qt::QueuedConnection );
+
+                gl->addWidget(rmbb->memButton, row, col);
+
+                rmbb->memButton-> setStyleSheet("border: 1px solid black; background-color: #DFDFDF");
+
+                // get the button to be a sensible size
+                // This works - recipe from internet - but not sure why!
+
+                rmbb->memButton->setSizePolicy(sizePolicy);
+
+                rmbb->memButton->setText("M" + QString::number(buttonNumber + 1) + ": " + m.callsign);
+
+                QString tTipStr = "Callsign: " + m.callsign + "\n"
+                        + "Freq: " + convertFreqStrDisp(m.freq) + "\n"
+                        + "Mode: " + m.mode + "\n"
+                        + "Locator: " + m.locator + "\n"
+                        + "Bearing: " + QString::number(m.bearing) + "\n"
+                        + "Time: " + m.time;
+                rmbb->memButton->setToolTip(tTipStr);
+            }
+        }
+    }
+}
+//======================================================================================
+void RigMemoryFrame::sendUpdateMemories()
+{
+    // go through the signal/slot mechanism so all auxiliary displays are updated
+    MinosLoggerEvents::sendUpdateMemories(ct);
+}
+//======================================================================================
+
+// responses to button actions
 
 void RigMemoryFrame::on_newMemoryButton_clicked()
 {
@@ -73,34 +168,7 @@ void RigMemoryFrame::on_newMemoryButton_clicked()
     writeActionSelected(n); // which creates the button as well
 
 }
-void RigMemoryFrame::reInitialiseMemories()
-{
-    //??
-    // Clear scroller
-    // rebuild memory buttons
 
-    loadMemoryButtonLabels();
-}
-void RigMemoryFrame::setContest( BaseContestLog *pct )
-{
-    ct = dynamic_cast<LoggerContestLog *>( pct);
-
-    if (ct)
-    {
-        reInitialiseMemories();
-    }
-}
-memoryData::memData RigMemoryFrame::getRigMemoryData(int memoryNumber)
-{
-    memoryData::memData m;
-    if (ct->rigMemories.size() > memoryNumber)
-        m = ct->rigMemories[memoryNumber].getValue();
-    return m;
-}
-void RigMemoryFrame::setRigMemoryData(int memoryNumber, memoryData::memData m)
-{
-    ct->saveRigMemory(memoryNumber, m);
-}
 void RigMemoryFrame::readActionSelected(int buttonNumber)
 {
     traceMsg(QString("Memory Read Selected = %1").arg(QString::number(buttonNumber +1)));
@@ -129,8 +197,8 @@ void RigMemoryFrame::writeActionSelected(int buttonNumber)
    if ( memDialog.exec() == QDialog::Accepted)
    {
        setRigMemoryData(buttonNumber, logData);
-       memoryUpdate(buttonNumber);
-       clean();
+
+       sendUpdateMemories();
    }
 }
 
@@ -149,8 +217,8 @@ void RigMemoryFrame::editActionSelected(int buttonNumber)
     if ( memDialog.exec() == QDialog::Accepted)
     {
         setRigMemoryData(buttonNumber, logData);
-        memoryUpdate(buttonNumber);
-        clean();
+
+        sendUpdateMemories();
     }
 
 }
@@ -164,115 +232,10 @@ void RigMemoryFrame::clearActionSelected(int buttonNumber)
     memoryData::memData m;
     setRigMemoryData(buttonNumber, m);
 
-     if (memButtonMap.contains(buttonNumber))
-     {
-         RigMemoryButton *rmb = memButtonMap[buttonNumber];
-
-         QGridLayout *gl = qobject_cast<QGridLayout *>(ui->memFrame->layout());
-
-         int i = 0;
-         QLayoutItem *child1;
-         while(( child1 = gl->itemAt(i)) != 0)
-         {
-             if (child1->widget() == rmb->memButton)
-             {
-                 QLayoutItem *child2 = gl->takeAt(i);
-                 delete child2->widget();
-                 delete child2;
-                 break;
-             }
-             i++;
-         }
-         memButtonMap.remove(buttonNumber);
-         delete rmb;
-
-         clean();
-     }
-}
-void RigMemoryFrame::loadMemoryButtonLabels()
-{
-    int mcount = ct->rigMemories.size();
-    for (int i = 0; i < mcount; i ++)
-    {
-        memoryUpdate(i);
-    }
-    clean();
+    sendUpdateMemories();
 }
 
-void RigMemoryFrame::clean()
-{
-    QGridLayout *gl = qobject_cast<QGridLayout *>(ui->memFrame->layout());
-    int i = 0;
-    QLayoutItem *child1;
-    while(( child1 = gl->itemAt(i)) != 0)
-    {
-        QLayoutItem *child2 = gl->takeAt(i);
-//        delete child2->widget();              // don't delete it - it may be the membutton
-        delete child2;
-        i++;
-    }
-
-    i = 0;
-    foreach(RigMemoryButton *rmb, memButtonMap)
-    {
-        QToolButton *rmbb = rmb->memButton;
-        rmbb->setStyleSheet("border: 1px solid black; background-color: #DFDFDF");
-        int row = i/2;
-        int col = i%2;
-        gl->addWidget(rmbb, row, col);
-        i++;
-    }
-}
-void RigMemoryFrame::memoryUpdate(int buttonNumber)
-{
-    memoryData::memData m = getRigMemoryData(buttonNumber);
-
-    if (!memButtonMap.contains(buttonNumber) && m.callsign != memDefData::DEFAULT_CALLSIGN)
-    {
-        int row = buttonNumber/2;
-        int col = buttonNumber%2;
-        memButtonMap[buttonNumber] = new RigMemoryButton(ui->scrollArea, this, buttonNumber);
-        connect( memButtonMap[buttonNumber], SIGNAL( clearActionSelected(int)) , this, SLOT(clearActionSelected(int)), Qt::QueuedConnection );
-
-        QGridLayout *gl = qobject_cast<QGridLayout *>(ui->memFrame->layout());
-        gl->addWidget(memButtonMap[buttonNumber]->memButton, row, col);
-
-        memButtonMap[buttonNumber]->memButton->setStyleSheet("border: 1px solid black; background-color: #DFDFDF");
-
-        // This works - recipe from internet - but not sure why!
-
-        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(false);
-        memButtonMap[buttonNumber]->memButton->setSizePolicy(sizePolicy);
-    }
-
-    if (memButtonMap.contains(buttonNumber))
-    {
-
-        QToolButton *mb = memButtonMap[buttonNumber]->memButton;
-
-        mb->setText("M" + QString::number(buttonNumber + 1) + ": " + m.callsign);
-
-        QString tTipStr = "Callsign: " + m.callsign + "\n"
-                + "Freq: " + convertFreqStrDisp(m.freq) + "\n"
-                + "Mode: " + m.mode + "\n"
-                + "Locator: " + m.locator + "\n"
-                + "Bearing: " + QString::number(m.bearing) + "\n"
-                + "Time: " + m.time;
-        mb->setToolTip(tTipStr);
-    }
-
-}
-
-
-
-void RigMemoryFrame::traceMsg(QString msg)
-{
-    trace("RigMemoryFrame: " + msg);
-}
-
+//============================================================================================
 RigMemoryButton::RigMemoryButton(QWidget *parent, RigMemoryFrame *rcf, int no)
 {
     memNo = no;
@@ -313,16 +276,10 @@ RigMemoryButton::RigMemoryButton(QWidget *parent, RigMemoryFrame *rcf, int no)
 }
 RigMemoryButton::~RigMemoryButton()
 {
-//    delete memButton;
+    delete memButton;
 }
-void RigMemoryButton::memoryUpdate()
-{
-    rigMemoryFrame->memoryUpdate(memNo);
-}
-
 void RigMemoryButton::memoryShortCutSelected()
 {
-//    rigControlFrame->memoryShortCutSelected(memNo);
     memButton->showMenu();
 }
 void RigMemoryButton::readActionSelected()

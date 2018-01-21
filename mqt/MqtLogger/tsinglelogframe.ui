@@ -103,13 +103,21 @@
         <bool>false</bool>
        </attribute>
       </widget>
-      <widget class="StackedInfoFrame" name="stackedInfoFrame">
+      <widget class="StackedInfoFrame" name="stackedInfoFrame1">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
+      <widget class="StackedInfoFrame" name="stackedInfoFrame2">
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>

@@ -34,8 +34,9 @@ public:
     QAction* clearAction;
 
     int memNo;
+
 private slots:
-    void memoryUpdate();
+//    void memoryUpdate();
 
     void memoryShortCutSelected();
     void readActionSelected();
@@ -51,17 +52,18 @@ class RigMemoryFrame : public QFrame
 {
     Q_OBJECT
 
-    void clean();
+    void sendUpdateMemories();
 
 public:
     explicit RigMemoryFrame(QWidget *parent = 0);
     ~RigMemoryFrame();
 
-    void reInitialiseMemories();
+//    void reInitialiseMemories();
     void setContest( BaseContestLog *ct );
-    void loadMemoryButtonLabels();
 
-    void memoryUpdate(int);
+    void doMemoryUpdates();
+    //void memoryUpdate(int);
+
     void readActionSelected(int);
     void editActionSelected(int buttonNumber);
     void writeActionSelected(int);
@@ -81,7 +83,7 @@ private:
     memoryData::memData getRigMemoryData(int memoryNumber);
     void setRigMemoryData(int memoryNumber, memoryData::memData m);
 
-    QMap<int, RigMemoryButton *> memButtonMap;
+    QMap<int, QSharedPointer<RigMemoryButton> > memButtonMap;
 
     void traceMsg(QString msg);
 

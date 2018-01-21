@@ -30,6 +30,9 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 {
     ui->setupUi(this);
 
+    ui->stackedInfoFrame1->setInstance(0);
+    ui->stackedInfoFrame2->setInstance(1);
+
     ui->FKHRigControlFrame->setContest(contest);
     ui->FKHRotControlFrame->setContest(contest);
 

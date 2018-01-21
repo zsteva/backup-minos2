@@ -94,6 +94,7 @@ void LoggerContestLog::clearDirty()
    showWorked.clearDirty();
    showUnworked.clearDirty();
    currentStackItem.clearDirty();
+   currentStack1Item.clearDirty();
 
    BaseContestLog::clearDirty();
 }
@@ -150,6 +151,7 @@ void LoggerContestLog::setDirty()
    showWorked.setDirty();
    showUnworked.setDirty();
    currentStackItem.setDirty();
+   currentStack1Item.setDirty();
 
    BaseContestLog::setDirty();
 }
@@ -210,6 +212,7 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
    QString temp;
    MinosParameters::getMinosParameters() -> getStringDisplayProfile( edpStackFrame, temp );
    currentStackItem.setInitialValue(temp);
+   currentStack1Item.setInitialValue(temp);
 
    // open the LoggerContestLog file
 
@@ -1554,6 +1557,7 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
                                                  mt->getStructArgMemberValue( "sw", showWorked);
                                                  mt->getStructArgMemberValue( "su", showUnworked);
                                                  mt->getStructArgMemberValue( "sitem", currentStackItem);
+                                                 mt->getStructArgMemberValue( "sitem1", currentStack1Item);
 
                                              }
 }

@@ -15,8 +15,15 @@ public:
     explicit StackedInfoFrame(QWidget *parent = 0);
     ~StackedInfoFrame();
 
+    void setInstance(int i)
+    {
+        stackInstance = i;
+    }
+
 private:
     Ui::StackedInfoFrame *ui;
+
+    int stackInstance = 0;
 
     int splitterHandleWidth;
     LoggerContestLog *contest;
@@ -41,6 +48,11 @@ private slots:
     void on_StackedMults_currentChanged(int arg1);
     void on_FontChanged();
     void on_infoCombo_currentIndexChanged(int arg1);
+
+    void onFiltersChanged(BaseContestLog *ct);
+    void onUpdateStats(BaseContestLog *ct);
+    void onUpdateMemories(BaseContestLog *ct);
+    void onRefreshMults(BaseContestLog *ct);
 
 public slots:
     void setContest(LoggerContestLog *contest);

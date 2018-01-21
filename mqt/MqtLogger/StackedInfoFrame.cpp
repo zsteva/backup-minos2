@@ -22,7 +22,8 @@ StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::StackedInfoFrame),
     contest(0),
-    filterClickEnabled(false)
+    filterClickEnabled(false),
+    stackInstance(-1)
 {
     ui->setupUi(this);
 
@@ -48,6 +49,10 @@ StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToCountry(QString,BaseContestLog*)), this, SLOT(on_ScrollToCountry(QString,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(ScrollToDistrict(QString,BaseContestLog*)), this, SLOT(on_ScrollToDistrict(QString,BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(FontChanged()), this, SLOT(on_FontChanged()), Qt::QueuedConnection);
+    connect(&MinosLoggerEvents::mle, SIGNAL(FiltersChanged(BaseContestLog*)), this, SLOT(onFiltersChanged(BaseContestLog*)), Qt::QueuedConnection);
+    connect(&MinosLoggerEvents::mle, SIGNAL(UpdateState(BaseContestLog*)), this, SLOT(onUpdateStats(BaseContestLog*)), Qt::QueuedConnection);
+    connect(&MinosLoggerEvents::mle, SIGNAL(UpdateMemories(BaseContestLog*)), this, SLOT(onUpdateMemories(BaseContestLog*)), Qt::QueuedConnection);
+    connect(&MinosLoggerEvents::mle, SIGNAL(RefreshMults(BaseContestLog*)), this, SLOT(onRefreshMults(BaseContestLog*)), Qt::QueuedConnection);
 
     QObject *thisw = parent;
     TSingleLogFrame *tslf = 0;
@@ -69,7 +74,13 @@ void StackedInfoFrame::on_infoCombo_currentIndexChanged(int arg1)
     ui->StackedMults-> setCurrentIndex(arg1);
     if (contest)
     {
-        contest->currentStackItem.setValue(ui->infoCombo->currentText());
+        if (contest)
+        {
+            if (stackInstance == 0)
+                contest->currentStackItem.setValue(ui->infoCombo->currentText());
+            else if (stackInstance == 1)
+                contest->currentStack1Item.setValue(ui->infoCombo->currentText());
+        }
         contest->commonSave(false);
     }
 }
@@ -77,6 +88,7 @@ void StackedInfoFrame::on_infoCombo_currentIndexChanged(int arg1)
 void StackedInfoFrame::setContest(LoggerContestLog *ct)
 {
     contest = ct;
+
     initFilters();
 
     ui->dxccFrame->setContest(contest);
@@ -88,39 +100,68 @@ void StackedInfoFrame::setContest(LoggerContestLog *ct)
     ui->rigMemFrame->setContest(contest);
 
     if (contest)
-        ui->infoCombo->setCurrentText(contest->currentStackItem.getValue());   // start up on the clock - useful outside the contest!
-
-}
-void StackedInfoFrame::on_ScrollToDistrict( const QString &qth, BaseContestLog* )
-{
-    QSharedPointer<DistrictEntry> dist = MultLists::getMultLists() ->searchDistrict( qth );
-    if ( dist )
     {
-       unsigned int district_ind = MultLists::getMultLists() ->getDistListIndexOf( dist );
-       ui->districtFrame->scrollToDistrict( district_ind, true );
+        if (stackInstance == 0)
+            ui->infoCombo->setCurrentText(contest->currentStackItem.getValue());   // start up on the clock - useful outside the contest!
+        else if (stackInstance == 1)
+            ui->infoCombo->setCurrentText(contest->currentStack1Item.getValue());   // start up on the clock - useful outside the contest!
+    }
+}
+void StackedInfoFrame::on_ScrollToDistrict( const QString &qth, BaseContestLog *c )
+{
+    if (contest && contest == c)
+    {
+        QSharedPointer<DistrictEntry> dist = MultLists::getMultLists() ->searchDistrict( qth );
+        if ( dist )
+        {
+           unsigned int district_ind = MultLists::getMultLists() ->getDistListIndexOf( dist );
+           ui->districtFrame->scrollToDistrict( district_ind, true );
+        }
     }
 }
 
-void StackedInfoFrame::on_ScrollToCountry( const QString &csCs, BaseContestLog* )
+void StackedInfoFrame::on_ScrollToCountry( const QString &csCs, BaseContestLog *c )
 {
-    callsign cs( csCs );
-    cs.validate( );	// we don't use the result
-
-    QSharedPointer<CountryEntry> ctryMult = findCtryPrefix( cs );
-    if ( ctryMult )
+    if (contest && contest == c)
     {
-       int ctry_ind = MultLists::getMultLists() ->getCtryListIndexOf( ctryMult );
-       ui->dxccFrame->scrollToCountry( ctry_ind, true );
+        callsign cs( csCs );
+        cs.validate( );	// we don't use the result
+
+        QSharedPointer<CountryEntry> ctryMult = findCtryPrefix( cs );
+        if ( ctryMult )
+        {
+           int ctry_ind = MultLists::getMultLists() ->getCtryListIndexOf( ctryMult );
+           ui->dxccFrame->scrollToCountry( ctry_ind, true );
+        }
     }
 }
 void StackedInfoFrame::refreshMults()
+{
+    MinosLoggerEvents::sendRefreshMults(contest);
+}
+void StackedInfoFrame::onUpdateStats(BaseContestLog *ct)
+{
+    if (contest == ct)
+    {
+        ui->StatsFrame->reInitialiseStats();
+    }
+}
+void StackedInfoFrame::onUpdateMemories(BaseContestLog *ct)
+{
+    if (contest == ct)
+    {
+        ui->rigMemFrame->doMemoryUpdates();
+    }
+}
+void StackedInfoFrame::onRefreshMults(BaseContestLog *ct)
 {
     ui->locFrame->reInitialiseLocators();
     ui->locTreeFrame->reInitialiseLocators();
     ui->dxccFrame->reInitialiseCountries();
     ui->districtFrame->reInitialiseDistricts();
-    ui->rigMemFrame->reInitialiseMemories();
+    //ui->rigMemFrame->reInitialiseMemories();
 }
+
 void StackedInfoFrame::on_FontChanged()
 {
     refreshMults();
@@ -154,16 +195,23 @@ void StackedInfoFrame::filtersChanged()
 {
     if (contest)
     {
+        MinosLoggerEvents::sendFiltersChanged(contest);
+    }
+}
+
+void StackedInfoFrame::onFiltersChanged(BaseContestLog *ct)
+{
+    if (contest && ct == contest)
+    {
         initFilters();
         ui->dxccFrame->reInitialiseCountries();
         ui->districtFrame->reInitialiseDistricts();
         ui->locFrame->reInitialiseLocators();
         ui->locTreeFrame->reInitialiseLocators();
         ui->StatsFrame->reInitialiseStats();
-        ui->rigMemFrame->reInitialiseMemories();
+        //ui->rigMemFrame->reInitialiseMemories();
     }
 }
-
 void StackedInfoFrame::saveFilters()
 {
     if ( filterClickEnabled )
