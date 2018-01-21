@@ -69,6 +69,10 @@ public:
     void writeActionSelected(int);
 
 private slots:
+    void checkTimerTimer();
+
+    void onRigFreqChanged(QString /*f*/, BaseContestLog *c);
+
     void on_newMemoryButton_clicked();
 
     void on_flushMemoriesButton_clicked();

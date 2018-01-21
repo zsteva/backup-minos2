@@ -771,6 +771,7 @@ void TSingleLogFrame::on_SetFreq(QString f)
         {
             ui->FKHRigControlFrame->setFreq(f);
             ui->GJVQSOLogFrame->setFreq(f);
+            MinosLoggerEvents::sendRigFreqChanged(f, contest);
         }
     }
 }

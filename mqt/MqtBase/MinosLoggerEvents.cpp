@@ -176,6 +176,12 @@ void MinosLoggerEvents::sendRefreshMults(BaseContestLog *c )
     emit mle.RefreshMults(c);
 }
 //---------------------------------------------------------------------------
+void MinosLoggerEvents::sendRigFreqChanged(QString f, BaseContestLog *c)
+{
+    emit mle.RigFreqChanged(f, c);
+}
+
+//---------------------------------------------------------------------------
 void MinosLoggerEvents::SendBrgStrToRot(QString bearing)
 {
     emit mle.BrgStrToRot(bearing);

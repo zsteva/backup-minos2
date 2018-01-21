@@ -59,6 +59,7 @@ signals:
    void UpdateStats(BaseContestLog *);
    void UpdateMemories(BaseContestLog *);
    void RefreshMults(BaseContestLog *);
+   void RigFreqChanged(QString, BaseContestLog *);
 
    void FontChanged();
 public:
@@ -103,7 +104,7 @@ public:
    static void sendUpdateMemories(BaseContestLog *c );
    static void sendRefreshMults(BaseContestLog *c );
 
-
+    static void sendRigFreqChanged(QString f, BaseContestLog *c);
 };
 //---------------------------------------------------------------------------
 #endif

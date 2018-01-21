@@ -81,7 +81,10 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
 
 void RigMemDialog::on_okButton_clicked()
 {
-    logData->callsign = ui->callSignLineEdit->text();
+    logData->callsign = ui->callSignLineEdit->text().trimmed();
+    if (logData->callsign.isEmpty())
+        logData->callsign = "??";
+
     logData->freq = ui->freqLineEdit->text().remove('.').remove( QRegExp("^[0]*")); //remove periods and leading zeros
     if (logData->freq == "")
     {

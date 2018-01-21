@@ -50,6 +50,8 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->memFrame->setStyleSheet("background-color:white;");
+    connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(checkTimerTimer()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(RigFreqChanged(double,BaseContestLog*)), this, SLOT(onRigFreqChanged(double,BaseContestLog*)));
 }
 
 RigMemoryFrame::~RigMemoryFrame()
@@ -137,6 +139,45 @@ void RigMemoryFrame::doMemoryUpdates()
         }
     }
 }
+
+void RigMemoryFrame::checkTimerTimer()
+{
+    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+    memoryData::memData logData;
+    tslf->getDetails(logData);
+
+    double rigFreq = convertStrToFreq(logData.freq);
+
+    int mcount = ct->rigMemories.size();
+    for (int buttonNumber = 0; buttonNumber < mcount; buttonNumber ++)
+    {
+        QSharedPointer<RigMemoryButton> rmbb = memButtonMap[buttonNumber];
+        if (!rmbb)
+            continue;
+
+        memoryData::memData m = getRigMemoryData(buttonNumber);
+        if (m.callsign == memDefData::DEFAULT_CALLSIGN)
+            continue;
+
+        double memFreq = convertStrToFreq(m.freq);
+
+        if (abs(rigFreq - memFreq) < 0.002)
+        {
+            rmbb->memButton-> setStyleSheet("border: 1px solid red; color: red ;background-color: #DFDFDF");
+        }
+        else
+        {
+            rmbb->memButton-> setStyleSheet("border: 1px solid black; color: black ;background-color: #DFDFDF");
+        }
+    }
+}
+void RigMemoryFrame::onRigFreqChanged(QString /*f*/, BaseContestLog *c)
+{
+    if (ct == c)
+    {
+        checkTimerTimer();
+    }
+}
 //======================================================================================
 void RigMemoryFrame::sendUpdateMemories()
 {
@@ -153,7 +194,7 @@ void RigMemoryFrame::on_newMemoryButton_clicked()
 
     for (int i = 0; i < memButtonMap.size() + 1; i++)
     {
-        if  (!memButtonMap.contains(i))
+        if  (!memButtonMap.contains(i) || !memButtonMap[i])
         {
             n = i;
             break;
