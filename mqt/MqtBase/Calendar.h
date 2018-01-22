@@ -1,6 +1,8 @@
 #ifndef CALENDAR_H
 #define CALENDAR_H
 
+#include "BandList.h"
+
 enum CalType {ectVHF, ectHF, ectMwave, ectVHFOther, ectHFOther, ectHFBARTG};
 extern QMap<QString, QString> contestNameMap;
 
@@ -140,6 +142,7 @@ class IndividualContest
         QString shortDescription;
         QString bands;
         QString reg1band;
+        double flow = 0;
         bool ppKmScoring;
         QString sections;
         QString mults;

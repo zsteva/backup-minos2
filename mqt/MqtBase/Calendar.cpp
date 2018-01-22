@@ -474,6 +474,11 @@ bool Calendar::parseFile ( const QString &fname )
                                 ic.reg1band = "1,3 GHz";
                             }
 
+                            BandList &blist = BandList::getBandList();
+                            BandInfo bi;
+                            blist.findBand(ic.reg1band, bi);
+                            ic.flow = bi.flow;
+
                             calendar.push_back ( ic );
                         }
                     }
@@ -496,11 +501,15 @@ bool IndividualContest::operator< ( const IndividualContest& rhs ) const
     {
         return start < rhs.start;
     }
-    if ( description != rhs.description )
+    if (flow != rhs.flow)
     {
-        return description < rhs.description;
+        return flow <  rhs.flow ;
     }
-    return bands < rhs.bands;
+    if ( reg1band != rhs.reg1band )
+    {
+        return reg1band < rhs.reg1band;
+    }
+    return description < rhs.description;
 }
 bool Calendar::parseVersion ( TiXmlElement * tix )
 {
