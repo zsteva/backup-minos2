@@ -110,6 +110,8 @@ public:
     {
     }
 
+    int memno = 0;
+
     QString callsign;
     QString freq;
     QString mode;

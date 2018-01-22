@@ -71,6 +71,24 @@ memoryData::memData RigMemoryFrame::getRigMemoryData(int memoryNumber)
         m = ct->rigMemories[memoryNumber].getValue();
     return m;
 }
+
+bool freqSortcompare(const memoryData::memData &mem1, const memoryData::memData &mem2)
+{
+    if (mem1.freq != mem2.freq)
+    {
+        return mem1.freq.compare(mem2.freq, Qt::CaseInsensitive) < 0;
+    }
+
+    return mem1.callsign.compare(mem2.callsign, Qt::CaseInsensitive) < 0;
+}
+
+memoryData::memData RigMemoryFrame::getSortedMemoryData(QVector<memoryData::memData > &sortedData, int memoryNumber)
+{
+    memoryData::memData m;
+    if (sortedData.size() > memoryNumber)
+        m = sortedData[memoryNumber];
+    return m;
+}
 void RigMemoryFrame::setRigMemoryData(int memoryNumber, memoryData::memData m)
 {
     ct->saveRigMemory(memoryNumber, m);
@@ -101,20 +119,31 @@ void RigMemoryFrame::doMemoryUpdates()
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(false);
 
+        QVector<memoryData::memData >sortedData;
         int mcount = ct->rigMemories.size();
+        for (int i = 0; i < mcount; i++)
+        {
+            memoryData::memData m = getRigMemoryData(i);
+            sortedData.push_back(m);
+        }
+
+        qSort(sortedData.begin(), sortedData.end(), freqSortcompare);
+
+        int bpos = 0;
         for (int buttonNumber = 0; buttonNumber < mcount; buttonNumber ++)
         {
-            memoryData::memData m = getRigMemoryData(buttonNumber);
+            memoryData::memData m = sortedData[buttonNumber];
 
             if ( m.callsign != memDefData::DEFAULT_CALLSIGN)
             {
                 // create button
 
-                int row = buttonNumber/2;
-                int col = buttonNumber%2;
+                int row = bpos/2;
+                int col = bpos%2;
+                bpos++;
 
-                QSharedPointer<RigMemoryButton> rmbb(new RigMemoryButton(ui->scrollArea, this, buttonNumber));
-                memButtonMap[buttonNumber] = rmbb;
+                QSharedPointer<RigMemoryButton> rmbb(new RigMemoryButton(ui->scrollArea, this, m.memno));
+                memButtonMap[m.memno] = rmbb;
                 connect( rmbb.data(), SIGNAL( clearActionSelected(int)) , this, SLOT(clearActionSelected(int)), Qt::QueuedConnection );
 
                 gl->addWidget(rmbb->memButton, row, col);
@@ -126,7 +155,7 @@ void RigMemoryFrame::doMemoryUpdates()
 
                 rmbb->memButton->setSizePolicy(sizePolicy);
 
-                rmbb->memButton->setText("M" + QString::number(buttonNumber + 1) + ": " + m.callsign);
+                rmbb->memButton->setText("M" + QString::number(m.memno + 1) + ": " + m.callsign);
 
                 QString tTipStr = "Callsign: " + m.callsign + "\n"
                         + "Freq: " + convertFreqStrDisp(m.freq) + "\n"

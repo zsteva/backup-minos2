@@ -620,7 +620,9 @@ void LoggerContestLog::saveRigMemory(int memno, const memoryData::memData &mem)
     {
         rigMemories.resize(memno + 1);
     }
-    rigMemories[memno].setValue(mem);
+    memoryData::memData m = mem;
+    m.memno = memno;
+    rigMemories[memno].setValue(m);
     commonSave(false);
 }
 void LoggerContestLog::saveInitialRigMemory(int memno, const memoryData::memData &mem)
@@ -629,7 +631,9 @@ void LoggerContestLog::saveInitialRigMemory(int memno, const memoryData::memData
     {
         rigMemories.resize(memno + 1);
     }
-    rigMemories[memno].setInitialValue(mem);
+    memoryData::memData m = mem;
+    m.memno = memno;
+    rigMemories[memno].setInitialValue(m);
 }
 
 //==========================================================================

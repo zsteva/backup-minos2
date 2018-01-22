@@ -88,6 +88,7 @@ private:
 
     memoryData::memData getRigMemoryData(int memoryNumber);
     void setRigMemoryData(int memoryNumber, memoryData::memData m);
+    memoryData::memData getSortedMemoryData(QVector<memoryData::memData> &sortedData, int memoryNumber);
 
     QMap<int, QSharedPointer<RigMemoryButton> > memButtonMap;
 
