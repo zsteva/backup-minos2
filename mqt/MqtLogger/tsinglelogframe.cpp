@@ -394,7 +394,7 @@ void TSingleLogFrame::on_XferPressed()
 //==============================================================================
 void TSingleLogFrame::transferDetails(MatchTreeItem *MatchTreeIndex )
 {
-    if ( !contest  )
+    if ( !contest || !MatchTreeIndex  )
     {
        return ;
     }
