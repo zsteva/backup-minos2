@@ -51,7 +51,7 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     ui->setupUi(this);
     ui->memFrame->setStyleSheet("background-color:white;");
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(checkTimerTimer()));
-    connect(&MinosLoggerEvents::mle, SIGNAL(RigFreqChanged(double,BaseContestLog*)), this, SLOT(onRigFreqChanged(double,BaseContestLog*)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(RigFreqChanged(QString,BaseContestLog*)), this, SLOT(onRigFreqChanged(QString,BaseContestLog*)));
 }
 
 RigMemoryFrame::~RigMemoryFrame()
