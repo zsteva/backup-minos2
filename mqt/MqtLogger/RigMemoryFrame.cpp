@@ -52,6 +52,7 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     ui->memFrame->setStyleSheet("background-color:white;");
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(checkTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(RigFreqChanged(QString,BaseContestLog*)), this, SLOT(onRigFreqChanged(QString,BaseContestLog*)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(RotBearingChanged(int,BaseContestLog*)), this, SLOT(onRotBearingChanged(int,BaseContestLog*)));
 }
 
 RigMemoryFrame::~RigMemoryFrame()
@@ -173,9 +174,11 @@ void RigMemoryFrame::checkTimerTimer()
 {
     TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
     memoryData::memData logData;
-    tslf->getDetails(logData);
+    tslf->getCurrentDetails(logData);
 
     double rigFreq = convertStrToFreq(logData.freq);
+    int bearing = logData.bearing;
+
 
     int mcount = ct->rigMemories.size();
     for (int buttonNumber = 0; buttonNumber < mcount; buttonNumber ++)
@@ -189,10 +192,39 @@ void RigMemoryFrame::checkTimerTimer()
             continue;
 
         double memFreq = convertStrToFreq(m.freq);
+        int memBearing = m.bearing;
 
-        if (abs(rigFreq - memFreq) < 0.002)
+        enum rTriState{rtsNotLoaded, rtsOn, rtsOff};
+        rTriState onfreq = rtsNotLoaded;
+        rTriState onbearing = rtsNotLoaded;
+
+        if (tslf->isRadioLoaded())
         {
-            rmbb->memButton-> setStyleSheet("border: 1px solid red; color: red ;background-color: #DFDFDF");
+            if (abs(rigFreq - memFreq) < 0.002)
+            {
+                onfreq = rtsOn;
+            }
+            else
+            {
+                onfreq = rtsOff;
+            }
+        }
+        if (tslf->isRotatorLoaded())
+        {
+            if (abs(bearing - memBearing) < 15)
+                onbearing = rtsOn;
+            else
+                onbearing = rtsOff;
+        }
+
+        if (onfreq == rtsOn || onbearing == rtsOn)
+        {
+            if (onfreq == rtsOn && onbearing == rtsOn)
+                rmbb->memButton-> setStyleSheet("border: 1px solid green; color: green ;background-color: #DFDFDF");
+            else if (onfreq == rtsOn)
+                rmbb->memButton-> setStyleSheet("border: 1px solid red; color: red ;background-color: #DFDFDF");
+            else
+                rmbb->memButton-> setStyleSheet("border: 1px solid blue; color: blue ;background-color: #DFDFDF");
         }
         else
         {
@@ -201,6 +233,13 @@ void RigMemoryFrame::checkTimerTimer()
     }
 }
 void RigMemoryFrame::onRigFreqChanged(QString /*f*/, BaseContestLog *c)
+{
+    if (ct == c)
+    {
+        checkTimerTimer();
+    }
+}
+void RigMemoryFrame::onRotBearingChanged(int/*f*/, BaseContestLog *c)
 {
     if (ct == c)
     {

@@ -81,6 +81,7 @@ public:
 
     void transferDetails(memoryData::memData &m);
     void getDetails(memoryData::memData &m);
+    void getRigDetails(memoryData::memData &m);
 
 
     void setRadioLoaded();

@@ -73,6 +73,8 @@ private slots:
 
     void onRigFreqChanged(QString /*f*/, BaseContestLog *c);
 
+    void onRotBearingChanged(int /*f*/, BaseContestLog *c);
+
     void on_newMemoryButton_clicked();
 
     void on_flushMemoriesButton_clicked();

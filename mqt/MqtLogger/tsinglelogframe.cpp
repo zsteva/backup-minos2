@@ -434,6 +434,11 @@ void TSingleLogFrame::getDetails(memoryData::memData &m)
 {
     ui->FKHRigControlFrame->getDetails(m);
 }
+void TSingleLogFrame::getCurrentDetails(memoryData::memData &m)
+{
+    ui->FKHRigControlFrame->getRigDetails(m);
+    ui->FKHRotControlFrame->getRotDetails(m);
+}
 //---------------------------------------------------------------------------
 
 void TSingleLogFrame::QSOTreeSelectContact( QSharedPointer<BaseContact> lct )

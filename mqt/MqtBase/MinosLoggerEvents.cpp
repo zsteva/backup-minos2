@@ -180,7 +180,11 @@ void MinosLoggerEvents::sendRigFreqChanged(QString f, BaseContestLog *c)
 {
     emit mle.RigFreqChanged(f, c);
 }
-
+//---------------------------------------------------------------------------
+void MinosLoggerEvents::sendRotBearingChanged(int f, BaseContestLog *c)
+{
+    emit mle.RotBearingChanged(f, c);
+}
 //---------------------------------------------------------------------------
 void MinosLoggerEvents::SendBrgStrToRot(QString bearing)
 {

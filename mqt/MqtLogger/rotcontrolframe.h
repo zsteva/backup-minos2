@@ -50,6 +50,7 @@ public:
 
     QString getBrgTxtFrmFrame();
     void setBrgFromRigFrmMemory(QString Brg);
+    void getRotDetails(memoryData::memData &m);
 
     void on_ContestPageChanged();
 private:

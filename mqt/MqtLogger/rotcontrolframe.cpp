@@ -681,3 +681,7 @@ void RotControlFrame::on_antennaName_activated(const QString &arg1)
     }
 
 }
+void RotControlFrame::getRotDetails(memoryData::memData &m)
+{
+    m.bearing = rotatorBearing;
+}

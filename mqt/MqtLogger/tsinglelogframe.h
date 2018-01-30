@@ -85,6 +85,7 @@ public:
 
     void transferDetails(memoryData::memData &m);
     void getDetails(memoryData::memData &m);
+    void getCurrentDetails(memoryData::memData &m);
 
 private:
     Ui::TSingleLogFrame *ui;
