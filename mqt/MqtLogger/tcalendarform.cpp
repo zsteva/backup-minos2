@@ -130,8 +130,9 @@ void TCalendarForm::LoadGrid ( Calendar &cal )
          }
          else
          {
-            if (nextContest == 0 && now <= (*i).finish)
+            if (nextContest == 0 && ((*i).start.daysTo((*i).finish) < 360) && now <= (*i).finish)
             {
+               // don't select the test contests
                nextContest = row;
             }
          }
