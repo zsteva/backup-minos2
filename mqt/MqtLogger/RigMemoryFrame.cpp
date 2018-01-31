@@ -173,6 +173,9 @@ void RigMemoryFrame::doMemoryUpdates()
 void RigMemoryFrame::checkTimerTimer()
 {
     TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+    if (!ct || !tslf)
+        return;
+
     memoryData::memData logData;
     tslf->getCurrentDetails(logData);
 
