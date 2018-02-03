@@ -18,7 +18,7 @@ win32{DEFINES += __WINDOWS_DS__}
 INCLUDEPATH += $$PWD/../rtaudio
 INCLUDEPATH += $$PWD/../Chunkware
 
-unix!macos{ LIBS += -lasound}
+unix:!macos{ LIBS += -lasound}
 win32{ LIBS += -lole32 -lwinmm -luuid -lksuser -ldsound -lUser32}
 
 SOURCES += main.cpp\
