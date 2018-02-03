@@ -21,8 +21,6 @@ int collect(const rig_caps *caps,rig_ptr_t)
 RigControl::RigControl()
 {
     getRigList();
-
-
 }
 
 
