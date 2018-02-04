@@ -1,0 +1,71 @@
+If or when you know what you are doing, a lot of this will be
+overly prescriptive.
+
+And when it comes to "installation" at the end a Linux guru will probably be 
+horrified. If so, please take it over and fix it for me!
+
+At the moment, Minos under Linux has to count as "advanced", as you do need to 
+know your way around Linux. 
+
+
+
+Building under MacOS X
+======================
+
+This is based on Xcode 9.2 on MacOS High Sierra 10.13.3 
+
+N.B. I have build other applications using this Mac, and may have hidden pre-requisites already in place.  This is entirely an 'it worked once' installation, rather than something repeatable on any Mac you can find. 
+
+
+1) Install Xcode from developer.apple.com.  You will need to register for a developer account using your apple ID.  
+2) Install the HomeBrew package manager from brew.sh
+	/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+3) Install dependencies:
+	brew install git
+
+4) Download Minos Source Code
+	NB other scripts refer to $HOME/Minos2, so you're stuck with it. 
+
+	cd ~
+	git clone git://git.code.sf.net/p/minos/minos Minos2
+	cd Minos2
+
+5) Install other required components
+
+	./mactools.sh
+
+4) Download RTaudio and compile (ended up not needing this, got the included RTaudio to build)
+
+	cd <somwhere that works for you>
+	wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.0.0.tar.gz
+	tar xfz rtaudio-5.0.0.tar.gz
+	cd rtaudio-5.0.0
+	configure && make
+	sudo make install
+
+5) There is no step 5. 
+
+6) Modify buildInstall.sh changing
+	cp ~/Minos2/build/MqtAppStarter/MqtAppStarter Bin
+to
+	cp -r ~/Minos2/build/MqtAppStarter/MqtAppStarter.app Bin
+for each app.
+
+7) You should now be able to go ahead with the build.
+
+	export PATH="/usr/local/opt/qt/bin:$PATH"
+	cd mqt/Installer
+	./buildInstall.sh
+
+8) And then run it with
+	open -a ~/minos-runtime/MqtLogger.app
+
+To update and buid again, repeat from after "git clone"
+
+
+Other files changed: 
+	mqt/MqtRigControl/rigcontrol.cpp
+	mqt/MqtRotator/rotcontrol.cpp
+	mqt/mqrhamlib.pri
+
+

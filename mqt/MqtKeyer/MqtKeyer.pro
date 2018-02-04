@@ -13,12 +13,12 @@ TEMPLATE = app
 
 win32:RC_ICONS += ../MinosKeyer.ico
 
-unix{DEFINES += __LINUX_ALSA__}
+unix:!macos{DEFINES += __LINUX_ALSA__}
 win32{DEFINES += __WINDOWS_DS__}
 INCLUDEPATH += $$PWD/../rtaudio
 INCLUDEPATH += $$PWD/../Chunkware
 
-unix{ LIBS += -lasound}
+unix:!macos{ LIBS += -lasound}
 win32{ LIBS += -lole32 -lwinmm -luuid -lksuser -ldsound -lUser32}
 
 SOURCES += main.cpp\
