@@ -69,7 +69,22 @@ memoryData::memData RigMemoryFrame::getRigMemoryData(int memoryNumber)
 {
     memoryData::memData m;
     if (ct && ct->rigMemories.size() > memoryNumber)
+    {
         m = ct->rigMemories[memoryNumber].getValue();
+        Locator loc;
+        loc.loc.setValue(m.locator);
+        loc.validate();
+        double lon = 0.0;
+        double lat = 0.0;
+
+        if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
+        {
+            double dist;
+            int brg;
+            ct->disbear( lon, lat, dist, brg );
+            m.bearing = brg;
+        }
+    }
     return m;
 }
 
@@ -87,7 +102,9 @@ memoryData::memData RigMemoryFrame::getSortedMemoryData(QVector<memoryData::memD
 {
     memoryData::memData m;
     if (sortedData.size() > memoryNumber)
+    {
         m = sortedData[memoryNumber];
+    }
     return m;
 }
 void RigMemoryFrame::setRigMemoryData(int memoryNumber, memoryData::memData m)
@@ -203,7 +220,7 @@ void RigMemoryFrame::checkTimerTimer()
 
         if (tslf->isRadioLoaded())
         {
-            if (abs(rigFreq - memFreq) < 0.002)
+            if (abs(rigFreq - memFreq) < 2000.0)
             {
                 onfreq = rtsOn;
             }
