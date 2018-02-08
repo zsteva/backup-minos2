@@ -18,12 +18,12 @@ ContList contlist[ CONTINENTS ] =
 bool showWorked = false;
 bool showUnworked = false;
 
-StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
+StackedInfoFrame::StackedInfoFrame(QWidget *parent, int instance) :
     QFrame(parent),
     ui(new Ui::StackedInfoFrame),
     contest(0),
     filterClickEnabled(false),
-    stackInstance(-1)
+    stackInstance(instance)
 {
     ui->setupUi(this);
 
@@ -53,22 +53,15 @@ StackedInfoFrame::StackedInfoFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(UpdateStats(BaseContestLog*)), this, SLOT(onUpdateStats(BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(UpdateMemories(BaseContestLog*)), this, SLOT(onUpdateMemories(BaseContestLog*)), Qt::QueuedConnection);
     connect(&MinosLoggerEvents::mle, SIGNAL(RefreshMults(BaseContestLog*)), this, SLOT(onRefreshMults(BaseContestLog*)), Qt::QueuedConnection);
-
-    QObject *thisw = parent;
-    TSingleLogFrame *tslf = 0;
-    while (thisw && tslf == 0)
-    {
-        tslf = dynamic_cast<TSingleLogFrame *>(thisw);
-        thisw = thisw->parent();
-    }
-    connect(tslf, SIGNAL(setStackContest(LoggerContestLog *)), this, SLOT(setContest(LoggerContestLog *)));
-    connect(tslf, SIGNAL(refreshStackMults()), this, SLOT(refreshMults()));
+    connect(&MinosLoggerEvents::mle, SIGNAL(setStackContest(LoggerContestLog *)), this, SLOT(setContest(LoggerContestLog *)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(refreshStackMults(LoggerContestLog *)), this, SLOT(refreshMults(LoggerContestLog *)));
 }
 
 StackedInfoFrame::~StackedInfoFrame()
 {
     delete ui;
 }
+
 void StackedInfoFrame::on_infoCombo_currentIndexChanged(int arg1)
 {
     ui->StackedMults-> setCurrentIndex(arg1);
@@ -80,6 +73,10 @@ void StackedInfoFrame::on_infoCombo_currentIndexChanged(int arg1)
                 contest->currentStackItem.setValue(ui->infoCombo->currentText());
             else if (stackInstance == 1)
                 contest->currentStack1Item.setValue(ui->infoCombo->currentText());
+            else if (stackInstance == 2)
+                contest->currentStack2Item.setValue(ui->infoCombo->currentText());
+            else if (stackInstance == 3)
+                contest->currentStack3Item.setValue(ui->infoCombo->currentText());
         }
         contest->commonSave(false);
     }
@@ -105,6 +102,10 @@ void StackedInfoFrame::setContest(LoggerContestLog *ct)
             ui->infoCombo->setCurrentText(contest->currentStackItem.getValue());   // start up on the clock - useful outside the contest!
         else if (stackInstance == 1)
             ui->infoCombo->setCurrentText(contest->currentStack1Item.getValue());   // start up on the clock - useful outside the contest!
+        else if (stackInstance == 2)
+            ui->infoCombo->setCurrentText(contest->currentStack2Item.getValue());   // start up on the clock - useful outside the contest!
+        else if (stackInstance == 3)
+            ui->infoCombo->setCurrentText(contest->currentStack3Item.getValue());   // start up on the clock - useful outside the contest!
     }
 }
 void StackedInfoFrame::on_ScrollToDistrict( const QString &qth, BaseContestLog *c )
@@ -135,9 +136,12 @@ void StackedInfoFrame::on_ScrollToCountry( const QString &csCs, BaseContestLog *
         }
     }
 }
-void StackedInfoFrame::refreshMults()
+void StackedInfoFrame::refreshMults(LoggerContestLog *ct)
 {
-    MinosLoggerEvents::sendRefreshMults(contest);
+    if (contest == ct)
+    {
+        MinosLoggerEvents::sendRefreshMults(contest);
+    }
 }
 void StackedInfoFrame::onUpdateStats(BaseContestLog *ct)
 {
@@ -167,7 +171,7 @@ void StackedInfoFrame::onRefreshMults(BaseContestLog *ct)
 
 void StackedInfoFrame::on_FontChanged()
 {
-    refreshMults();
+    refreshMults(contest);
 }
 
 void StackedInfoFrame::initFilters()

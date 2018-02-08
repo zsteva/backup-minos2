@@ -2,6 +2,7 @@
 #define TSINGLELOGFRAME_H
 
 #include "logger_pch.h"
+#include "StackedInfoFrame.h"
 
 namespace Ui {
 class TSingleLogFrame;
@@ -90,6 +91,7 @@ public:
 private:
     Ui::TSingleLogFrame *ui;
 
+    QVector< StackedInfoFrame *> auxFrames;  // NOT shared pointers - singleLogFrame owns them
     BaseContestLog * contest;
     QSOGridModel qsoModel;
     int splitterHandleWidth;
@@ -111,9 +113,6 @@ private:
     void keyPressEvent( QKeyEvent* event );
 
     void restoreColumns();
-signals:
-    void setStackContest(LoggerContestLog *contest);
-    void refreshStackMults();
 
 private slots:
     void on_ContestPageChanged();
@@ -171,6 +170,7 @@ private slots:
 
     void on_ControlSplitter_splitterMoved(int pos, int index);
 
+    void setAuxWindows();
 
 };
 

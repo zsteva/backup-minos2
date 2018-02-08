@@ -12,13 +12,8 @@ class StackedInfoFrame : public QFrame
     Q_OBJECT
 
 public:
-    explicit StackedInfoFrame(QWidget *parent = 0);
+    explicit StackedInfoFrame(QWidget *parent = 0, int instance = 0);
     ~StackedInfoFrame();
-
-    void setInstance(int i)
-    {
-        stackInstance = i;
-    }
 
 private:
     Ui::StackedInfoFrame *ui;
@@ -56,7 +51,7 @@ private slots:
 
 public slots:
     void setContest(LoggerContestLog *contest);
-    void refreshMults();
+    void refreshMults(LoggerContestLog *contest);
 };
 
 #endif // STACKEDINFOFRAME_H

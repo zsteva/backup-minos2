@@ -271,6 +271,22 @@ void TLogContainer::setupMenus()
     ReportAutofillAction = newCheckableAction("Signal Report AutoFill", ui->menuTools, SLOT(ReportAutofillActionExecute()));
     CorrectDateTimeAction = newAction("Correct Date/Time", ui->menuTools, SLOT(CorrectDateTimeActionExecute()));
 
+    NumberAuxiliaryAction = new SpinBoxAction(tr("Number of Auxiliary Displays"));
+    NumberAuxiliaryAction ->spinBox()->setMinimum(1);
+    NumberAuxiliaryAction ->spinBox()->setMaximum(4);
+    int num;
+    TContestApp::getContestApp() ->loggerBundle.getIntProfile( elpAuxWindows, num );
+
+    NumberAuxiliaryAction ->spinBox()->setValue(num);
+
+    // make a connection
+    connect(NumberAuxiliaryAction ->spinBox(), SIGNAL(valueChanged(int)),
+            this, SLOT(AuxSpinboxValueChanged(int)));
+    // add it to your menu
+    ui->menuTools->addAction(NumberAuxiliaryAction);
+
+
+
     // end of tools manu
 
     TabPopup.addAction(FileOpenAction);
@@ -923,7 +939,11 @@ void TLogContainer::menuLogsActionExecute()
         selectTab(i);
     }
 }
-
+void TLogContainer::AuxSpinboxValueChanged(int n)
+{
+    TContestApp::getContestApp() ->loggerBundle.setIntProfile( elpAuxWindows, n );
+    emit setAuxWindows();
+}
 void TLogContainer::StartConfigActionExecute()
 {
     StartConfig configBox( this, false);

@@ -21,7 +21,8 @@ enum LOGGERPROFILE {
    elpStationFile,
    elpAppFile,
    elpQTHFile,
-   elpAutoFill
+   elpAutoFill,
+   elpAuxWindows
 };
 enum PRELOADPROFILE {eppSession, eppCurrent, eppDefSession};
 

@@ -30,8 +30,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 {
     ui->setupUi(this);
 
-    ui->stackedInfoFrame1->setInstance(0);
-    ui->stackedInfoFrame2->setInstance(1);
+    setAuxWindows();
 
     ui->FKHRigControlFrame->setContest(contest);
     ui->FKHRotControlFrame->setContest(contest);
@@ -140,6 +139,8 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(LogContainer, SIGNAL(sendKeyerTwoTone()), this, SLOT(sendKeyerTwoTone()));
     connect(LogContainer, SIGNAL(sendKeyerStop()), this, SLOT(sendKeyerStop()));
 
+    connect(LogContainer, SIGNAL(setAuxWindows()), this, SLOT(setAuxWindows()));
+
 /*
     connect(ui->FKHBandMapFrame, SIGNAL(sendBandMap( QString, QString, QString, QString, QString )),
             this, SLOT(sendBandMap(QString,QString,QString,QString,QString)));
@@ -195,7 +196,7 @@ void TSingleLogFrame::closeContest()
        RPCPubSub::publish( rpcConstants::monitorLogCategory, contest->publishedName, QString::number( 0 ), psRevoked );
        qsoModel.initialise(0);
        ui->matchTreesFrame->setContest(0);
-       emit setStackContest(0);
+       MinosLoggerEvents::sendSetStackContest(0);
        ui->FKHRigControlFrame->setContest(0);
        ui->FKHRotControlFrame->setContest(0);
        TContestApp::getContestApp() ->closeFile( contest );
@@ -243,7 +244,7 @@ void TSingleLogFrame::on_ContestPageChanged ()
     LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( getContest() );
     TContestApp::getContestApp() ->setCurrentContest( ct );
     ui->matchTreesFrame->setContest(ct);
-    emit setStackContest(ct);
+    MinosLoggerEvents::sendSetStackContest(ct);
 
     if ( logColumnsChanged )
     {
@@ -302,6 +303,32 @@ void TSingleLogFrame::doNextContactDetailsOnLeftClick(bool keepSizes )
     {
         ui->CribSplitter->setSizes(sizes);
         on_CribSplitter_splitterMoved(0, 0);    // preserve the splitter position
+    }
+}
+void TSingleLogFrame::setAuxWindows()
+{
+    int num;
+    TContestApp::getContestApp() ->loggerBundle.getIntProfile( elpAuxWindows, num );
+
+    // correct the numbers...
+
+    if (auxFrames.size() > num)
+    {
+        for (int i = auxFrames.size(); i > 0; i--)
+        {
+            StackedInfoFrame *f = auxFrames[auxFrames.size() - 1];
+            auxFrames.pop_back();
+            delete f;
+        }
+    }
+    if (auxFrames.size() < num)
+    {
+        for (int i = auxFrames.size(); i < num; i++)
+        {
+            StackedInfoFrame *f = new StackedInfoFrame(0, i);
+            auxFrames.push_back(f);
+            ui->MultSplitter->addWidget(f);
+        }
     }
 }
 void TSingleLogFrame::NextContactDetailsTimerTimer( )
@@ -513,7 +540,8 @@ void TSingleLogFrame::on_AfterLogContact( BaseContestLog *ct)
 }
 void TSingleLogFrame::refreshMults()
 {
-    emit refreshStackMults();
+    LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+    MinosLoggerEvents::sendRefreshStackMults(ct);
 }
 
 void TSingleLogFrame::updateTrees()

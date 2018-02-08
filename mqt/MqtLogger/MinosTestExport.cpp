@@ -434,6 +434,8 @@ int MinosTestExport::exportStackDisplay(QSharedPointer<QFile> expfd )
     ct->showUnworked.addIfDirty( st, "su", dirty );
     ct->currentStackItem.addIfDirty( st, "sitem", dirty );
     ct->currentStack1Item.addIfDirty( st, "sitem1", dirty );
+    ct->currentStack2Item.addIfDirty( st, "sitem2", dirty );
+    ct->currentStack3Item.addIfDirty( st, "sitem3", dirty );
 
     if ( dirty )
     {

@@ -95,6 +95,8 @@ void LoggerContestLog::clearDirty()
    showUnworked.clearDirty();
    currentStackItem.clearDirty();
    currentStack1Item.clearDirty();
+   currentStack2Item.clearDirty();
+   currentStack3Item.clearDirty();
 
    BaseContestLog::clearDirty();
 }
@@ -152,6 +154,8 @@ void LoggerContestLog::setDirty()
    showUnworked.setDirty();
    currentStackItem.setDirty();
    currentStack1Item.setDirty();
+   currentStack2Item.setDirty();
+   currentStack3Item.setDirty();
 
    BaseContestLog::setDirty();
 }
@@ -213,6 +217,8 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
    MinosParameters::getMinosParameters() -> getStringDisplayProfile( edpStackFrame, temp );
    currentStackItem.setInitialValue(temp);
    currentStack1Item.setInitialValue(temp);
+   currentStack2Item.setInitialValue(temp);
+   currentStack3Item.setInitialValue(temp);
 
    // open the LoggerContestLog file
 
@@ -1562,6 +1568,8 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
                                                  mt->getStructArgMemberValue( "su", showUnworked);
                                                  mt->getStructArgMemberValue( "sitem", currentStackItem);
                                                  mt->getStructArgMemberValue( "sitem1", currentStack1Item);
+                                                 mt->getStructArgMemberValue( "sitem2", currentStack2Item);
+                                                 mt->getStructArgMemberValue( "sitem3", currentStack3Item);
 
                                              }
 }

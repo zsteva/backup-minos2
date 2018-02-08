@@ -135,6 +135,8 @@ class LoggerContestLog : public BaseContestLog
       MinosItem<bool> showUnworked;
       MinosStringItem<QString> currentStackItem;
       MinosStringItem<QString> currentStack1Item;
+      MinosStringItem<QString> currentStack2Item;
+      MinosStringItem<QString> currentStack3Item;
 
       void saveRunMemory(int memno, const memoryData::memData &mem);
       void saveRigMemory(int memno, const memoryData::memData &mem);
