@@ -71,6 +71,8 @@ public:
 private slots:
     void checkTimerTimer();
 
+    void on_AfterLogContact( BaseContestLog *ct);
+
     void onRigFreqChanged(QString /*f*/, BaseContestLog *c);
 
     void onRotBearingChanged(int /*f*/, BaseContestLog *c);
@@ -90,7 +92,6 @@ private:
 
     memoryData::memData getRigMemoryData(int memoryNumber);
     void setRigMemoryData(int memoryNumber, memoryData::memData m);
-    memoryData::memData getSortedMemoryData(QVector<memoryData::memData> &sortedData, int memoryNumber);
 
     QMap<int, QSharedPointer<RigMemoryButton> > memButtonMap;
 

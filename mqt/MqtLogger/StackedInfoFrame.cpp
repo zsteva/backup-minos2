@@ -84,28 +84,31 @@ void StackedInfoFrame::on_infoCombo_currentIndexChanged(int arg1)
 
 void StackedInfoFrame::setContest(LoggerContestLog *ct)
 {
-    contest = ct;
-
-    initFilters();
-
-    ui->dxccFrame->setContest(contest);
-    ui->districtFrame->setContest(contest);
-    ui->StatsFrame->setContest(contest);
-    ui->locFrame->setContest(contest);
-    ui->locTreeFrame->setContest(contest);
-    ui->clockFrame->setContest(contest);
-    ui->rigMemFrame->setContest(contest);
-
-    if (contest)
+    if (contest != ct)
     {
-        if (stackInstance == 0)
-            ui->infoCombo->setCurrentText(contest->currentStackItem.getValue());   // start up on the clock - useful outside the contest!
-        else if (stackInstance == 1)
-            ui->infoCombo->setCurrentText(contest->currentStack1Item.getValue());   // start up on the clock - useful outside the contest!
-        else if (stackInstance == 2)
-            ui->infoCombo->setCurrentText(contest->currentStack2Item.getValue());   // start up on the clock - useful outside the contest!
-        else if (stackInstance == 3)
-            ui->infoCombo->setCurrentText(contest->currentStack3Item.getValue());   // start up on the clock - useful outside the contest!
+        contest = ct;
+
+        initFilters();
+
+        ui->dxccFrame->setContest(contest);
+        ui->districtFrame->setContest(contest);
+        ui->StatsFrame->setContest(contest);
+        ui->locFrame->setContest(contest);
+        ui->locTreeFrame->setContest(contest);
+        ui->clockFrame->setContest(contest);
+        ui->rigMemFrame->setContest(contest);
+
+        if (contest)
+        {
+            if (stackInstance == 0)
+                ui->infoCombo->setCurrentText(contest->currentStackItem.getValue());   // start up on the clock - useful outside the contest!
+            else if (stackInstance == 1)
+                ui->infoCombo->setCurrentText(contest->currentStack1Item.getValue());   // start up on the clock - useful outside the contest!
+            else if (stackInstance == 2)
+                ui->infoCombo->setCurrentText(contest->currentStack2Item.getValue());   // start up on the clock - useful outside the contest!
+            else if (stackInstance == 3)
+                ui->infoCombo->setCurrentText(contest->currentStack3Item.getValue());   // start up on the clock - useful outside the contest!
+        }
     }
 }
 void StackedInfoFrame::on_ScrollToDistrict( const QString &qth, BaseContestLog *c )

@@ -53,6 +53,7 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(checkTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(RigFreqChanged(QString,BaseContestLog*)), this, SLOT(onRigFreqChanged(QString,BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(RotBearingChanged(int,BaseContestLog*)), this, SLOT(onRotBearingChanged(int,BaseContestLog*)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(AfterLogContact(BaseContestLog *)), this, SLOT(on_AfterLogContact(BaseContestLog *)));
 }
 
 RigMemoryFrame::~RigMemoryFrame()
@@ -62,7 +63,7 @@ RigMemoryFrame::~RigMemoryFrame()
 void RigMemoryFrame::setContest( BaseContestLog *pct )
 {
     ct = dynamic_cast<LoggerContestLog *>( pct);
-
+    on_AfterLogContact(ct);
     doMemoryUpdates();
 }
 memoryData::memData RigMemoryFrame::getRigMemoryData(int memoryNumber)
@@ -96,16 +97,6 @@ bool freqSortcompare(const memoryData::memData &mem1, const memoryData::memData 
     }
 
     return mem1.callsign.compare(mem2.callsign, Qt::CaseInsensitive) < 0;
-}
-
-memoryData::memData RigMemoryFrame::getSortedMemoryData(QVector<memoryData::memData > &sortedData, int memoryNumber)
-{
-    memoryData::memData m;
-    if (sortedData.size() > memoryNumber)
-    {
-        m = sortedData[memoryNumber];
-    }
-    return m;
 }
 void RigMemoryFrame::setRigMemoryData(int memoryNumber, memoryData::memData m)
 {
@@ -165,8 +156,6 @@ void RigMemoryFrame::doMemoryUpdates()
                 connect( rmbb.data(), SIGNAL( clearActionSelected(int)) , this, SLOT(clearActionSelected(int)), Qt::QueuedConnection );
 
                 gl->addWidget(rmbb->memButton, row, col);
-
-                rmbb->memButton-> setStyleSheet("border: 1px solid black; background-color: #DFDFDF");
 
                 // get the button to be a sensible size
                 // This works - recipe from internet - but not sure why!
@@ -237,18 +226,28 @@ void RigMemoryFrame::checkTimerTimer()
                 onbearing = rtsOff;
         }
 
-        if (onfreq == rtsOn || onbearing == rtsOn)
+        QString bgcolour = "background-color: ";
+        if (m.worked)
         {
-            if (onfreq == rtsOn && onbearing == rtsOn)
-                rmbb->memButton-> setStyleSheet("border: 1px solid green; color: green ;background-color: #DFDFDF");
-            else if (onfreq == rtsOn)
-                rmbb->memButton-> setStyleSheet("border: 1px solid red; color: red ;background-color: #DFDFDF");
-            else
-                rmbb->memButton-> setStyleSheet("border: 1px solid blue; color: blue ;background-color: #DFDFDF");
+            bgcolour += "#AFAFAF";
         }
         else
         {
-            rmbb->memButton-> setStyleSheet("border: 1px solid black; color: black ;background-color: #DFDFDF");
+            bgcolour += "#DFDFDF";
+        }
+
+        if (onfreq == rtsOn || onbearing == rtsOn)
+        {
+            if (onfreq == rtsOn && onbearing == rtsOn)
+                rmbb->memButton-> setStyleSheet("border: 1px solid green; color: green ;" + bgcolour);
+            else if (onfreq == rtsOn)
+                rmbb->memButton-> setStyleSheet("border: 1px solid red; color: red ;" + bgcolour);
+            else
+                rmbb->memButton-> setStyleSheet("border: 1px solid blue; color: blue ;" + bgcolour);
+        }
+        else
+        {
+            rmbb->memButton-> setStyleSheet("border: 1px solid black; color: black ;" + bgcolour);
         }
     }
 }
@@ -314,14 +313,42 @@ void RigMemoryFrame::on_flushMemoriesButton_clicked()
             {
                 if ((*i).wt->cs == mcs)
                 {
-                    memoryData::memData m;
-                    setRigMemoryData(buttonNumber, m);
+                    memoryData::memData mn;
+                    setRigMemoryData(buttonNumber, mn);
                     break;
                 }
             }
         }
     }
     sendUpdateMemories();
+}
+void RigMemoryFrame::on_AfterLogContact( BaseContestLog *c)
+{
+      if (c && ct == c)
+      {
+          int mcount = ct->rigMemories.size();
+          for (int buttonNumber = 0; buttonNumber < mcount; buttonNumber ++)
+          {
+              memoryData::memData m = getRigMemoryData(buttonNumber);
+
+              if ( m.callsign != memDefData::DEFAULT_CALLSIGN)
+              {
+                  Callsign mcs(m.callsign);
+                  mcs.validate();
+
+                  for ( LogIterator i = ct->ctList.begin(); i != ct->ctList.end(); i++ )
+                  {
+                      if ((*i).wt->cs == mcs)
+                      {
+                          m.worked = true;
+                          setRigMemoryData(buttonNumber, m);
+                          break;
+                      }
+                  }
+              }
+          }
+          sendUpdateMemories();
+      }
 }
 
 void RigMemoryFrame::readActionSelected(int buttonNumber)

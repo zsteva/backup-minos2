@@ -118,13 +118,16 @@ public:
     QString locator;
     int bearing = 0;
     QString time = "00:00";
+    bool worked = false;
 
     bool operator==( const memData& rhs ) const
     {
         if (callsign.compare(rhs.callsign, Qt::CaseInsensitive) == 0
                 && freq.compare(rhs.freq, Qt::CaseInsensitive) == 0
                 && mode.compare(rhs.mode, Qt::CaseInsensitive) == 0
-                && locator.compare(rhs.locator, Qt::CaseInsensitive) == 0)
+                && locator.compare(rhs.locator, Qt::CaseInsensitive) == 0
+                && worked == rhs.worked
+                && time.compare(rhs.time, Qt::CaseInsensitive) == 0)
 
         {
             return true;

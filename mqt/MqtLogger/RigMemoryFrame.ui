@@ -114,7 +114,7 @@
             <item>
              <widget class="QPushButton" name="flushMemoriesButton">
               <property name="text">
-               <string>Clear Worked Memories</string>
+               <string>Clear Worked </string>
               </property>
              </widget>
             </item>
@@ -143,7 +143,7 @@
                <enum>Qt::NoFocus</enum>
               </property>
               <property name="text">
-               <string>New Memory</string>
+               <string>New</string>
               </property>
              </widget>
             </item>

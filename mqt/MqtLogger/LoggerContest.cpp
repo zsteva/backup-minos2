@@ -1527,6 +1527,7 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
                                    mt->getStructArgMemberValue( "mode", mem.mode);
                                    mt->getStructArgMemberValue( "locator", mem.locator);
                                    mt->getStructArgMemberValue( "time", mem.time);
+                                   mt->getStructArgMemberValue( "worked", mem.worked);
 
                                    saveInitialRigMemory(memno, mem);
 
