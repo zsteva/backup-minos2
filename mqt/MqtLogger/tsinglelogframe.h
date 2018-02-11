@@ -114,6 +114,7 @@ private:
 
     void restoreColumns();
 
+    void doSetAuxWindows(bool saveSplitter);
 private slots:
     void on_ContestPageChanged();
     void on_XferPressed();

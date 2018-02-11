@@ -30,7 +30,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 {
     ui->setupUi(this);
 
-    setAuxWindows();
+    doSetAuxWindows(false);
 
     ui->FKHRigControlFrame->setContest(contest);
     ui->FKHRotControlFrame->setContest(contest);
@@ -307,6 +307,10 @@ void TSingleLogFrame::doNextContactDetailsOnLeftClick(bool keepSizes )
 }
 void TSingleLogFrame::setAuxWindows()
 {
+    doSetAuxWindows(true);
+}
+void TSingleLogFrame::doSetAuxWindows(bool saveSplitter)
+{
     int num;
     TContestApp::getContestApp() ->loggerBundle.getIntProfile( elpAuxWindows, num );
 
@@ -332,6 +336,8 @@ void TSingleLogFrame::setAuxWindows()
             f->setContest(ct);
         }
     }
+    if (saveSplitter)
+        on_MultSplitter_splitterMoved(0, 0);
 }
 void TSingleLogFrame::NextContactDetailsTimerTimer( )
 {
