@@ -328,6 +328,8 @@ void TSingleLogFrame::setAuxWindows()
             StackedInfoFrame *f = new StackedInfoFrame(0, i);
             auxFrames.push_back(f);
             ui->MultSplitter->addWidget(f);
+            LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+            f->setContest(ct);
         }
     }
 }
