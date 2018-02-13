@@ -18,7 +18,7 @@
 #include <QStringList>
 #include <QLabel>
 #include <QVector>
-
+#include <QSettings>
 #include "rotcontrol.h"
 #include "setupdialog.h"
 #include "rotsetupform.h"
@@ -85,6 +85,9 @@ private slots:
     void saveButtonPushed();
     void cancelButtonPushed();
 
+    void addAntenna(bool st);
+    void removeAntenna(bool st);
+
 
 private:
     Ui::SetupDialog *ui;
@@ -113,6 +116,9 @@ private:
 
     void getAvailAntennas();
     void addTab(int tabNum, QString tabName);
+    bool checkAntNameMatch(QString antName);
+    void saveAntenna(int i);
+
 };
 
 #endif // SETUPDIALOG_H

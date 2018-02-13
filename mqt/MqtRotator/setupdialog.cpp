@@ -24,9 +24,10 @@
 #include <QCheckBox>
 //#include <QtSerialPort/QSerialPort>
 //#include <QSerialPortInfo>
-#include <QSettings>
+
 //#include <QIntValidator>
 #include <QMessageBox>
+#include <QInputDialog>
 
 #include <QDebug>
 
@@ -40,6 +41,11 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
     rotator = rotator;
+
+    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveButtonPushed()));
+    connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
+    connect(ui->addAntenna, SIGNAL(clicked(bool)), this, SLOT(addAntenna(bool)));
+    connect(ui->removeAntenna, SIGNAL(clicked(bool)), this, SLOT(removeAntenna(bool)));
 
 
     // get the number of available antennas
@@ -66,11 +72,6 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
 
     }
 
-    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveButtonPushed()));
-    connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
-
-
-
 
 
 
@@ -82,6 +83,7 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
 
 
     getAvailAntennas();
+
     // load current settings to each tab
     for (int i = 0; i < numAvailAntennas; i++)
     {
@@ -157,7 +159,9 @@ SetupDialog::~SetupDialog()
 void SetupDialog::addTab(int tabNum, QString tabName)
 {
     availAntData.append(new srotParams);
+    availAntData[tabNum]->antennaName = tabName;
     antennaTab.append(new rotSetupForm(rotator, availAntData[tabNum]));
+    antennaTab[tabNum]->setAntennaName(tabName);
     ui->antennaTab->insertTab(tabNum, antennaTab[tabNum], tabName);
 }
 
@@ -278,6 +282,56 @@ void SetupDialog::saveSettings()
 
 */
 }
+
+
+
+
+
+
+void SetupDialog::saveAntenna(int i)
+{
+
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
+    }
+    else
+    {
+        fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
+    }
+
+    QSettings  config(fileName, QSettings::IniFormat);
+
+    config.beginGroup(availAntData[i]->antennaName);
+    config.setValue("antennaName", availAntData[i]->antennaName);
+    config.setValue("antennaNumber", i+1);
+    config.setValue("rotatorModel", availAntData[i]->rotatorModel);
+    config.setValue("rotatorModelName", availAntData[i]->rotatorModelName);
+    config.setValue("rotatorModelNumber", availAntData[i]->rotatorModelNumber);
+    config.setValue("rotatorManufacturer", availAntData[i]->rotatorManufacturer);
+    config.setValue("rotatorPollInterval", availAntData[i]->pollInterval);
+    config.setValue("southStop", availAntData[i]->southStopFlag);
+    config.setValue("overRun", availAntData[i]->overRunFlag);
+    config.setValue("antennaOffset", availAntData[i]->antennaOffset);
+    config.setValue("portType", availAntData[i]->portType);
+    config.setValue("comport", availAntData[i]->comport);
+    config.setValue("baudrate", availAntData[i]->baudrate);
+    config.setValue("databits", availAntData[i]->databits);
+    config.setValue("parity", availAntData[i]->parity);
+    config.setValue("stopbits", availAntData[i]->stopbits);
+    config.setValue("handshake", availAntData[i]->handshake);
+    config.setValue("netAddress", availAntData[i]->networkAdd);
+    config.setValue("netPort", availAntData[i]->networkPort);
+    config.endGroup();
+
+
+
+
+
+}
+
+
 
 
 void SetupDialog::getAvailAntennas()
@@ -467,6 +521,51 @@ void SetupDialog::readCurrentAntenna()
 void SetupDialog::setAppName(QString name)
 {
     appName = name;
+}
+
+
+void SetupDialog::addAntenna(bool st)
+{
+
+  QString antName = QInputDialog::getText(this, tr("Enter Antenna Name"), tr("Please enter an Antenna Name:"), QLineEdit::Normal);
+  antName = antName.trimmed();
+  if (antName.isEmpty())
+  {
+        return;
+  }
+  if (checkAntNameMatch(antName))
+  {
+      // error empty name or name already exists
+      QMessageBox::information(this, tr("Antenna Name Exists"),
+                               tr("Antenna Name: %1, already exists \nPlease enter another name").arg(antName.trimmed()),
+                                QMessageBox::Ok|QMessageBox::Default,
+                                QMessageBox::NoButton, QMessageBox::NoButton);
+      return;
+  }
+
+  // add the new antenna
+  numAvailAntennas++;
+  addTab(numAvailAntennas - 1, antName);
+  saveAntenna(numAvailAntennas - 1);
+
+}
+
+bool SetupDialog::checkAntNameMatch(QString antName)
+{
+    for (int i = 0; i < numAvailAntennas; i++)
+    {
+        if (ui->antennaTab->tabText(i) == antName)
+            return true;
+    }
+
+    return false;
+}
+
+
+void SetupDialog::removeAntenna(bool st)
+{
+
+
 }
 
 srotParams SetupDialog::getCurrentAntenna() const
