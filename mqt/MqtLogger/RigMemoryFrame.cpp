@@ -54,6 +54,7 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(RigFreqChanged(QString,BaseContestLog*)), this, SLOT(onRigFreqChanged(QString,BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(RotBearingChanged(int,BaseContestLog*)), this, SLOT(onRotBearingChanged(int,BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterLogContact(BaseContestLog *)), this, SLOT(on_AfterLogContact(BaseContestLog *)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(setMemory(BaseContestLog *, QString, QString)), this, SLOT(on_SetMemory(BaseContestLog *, QString, QString)));
 }
 
 RigMemoryFrame::~RigMemoryFrame()
@@ -265,6 +266,28 @@ void RigMemoryFrame::onRotBearingChanged(int/*f*/, BaseContestLog *c)
         checkTimerTimer();
     }
 }
+void RigMemoryFrame::on_SetMemory(BaseContestLog *c, QString call, QString loc)
+{
+    if (ct == c)
+    {
+        int n = -1;
+
+        for (int i = 0; i < memButtonMap.size() + 1; i++)
+        {
+            if  (!memButtonMap.contains(i) || !memButtonMap[i])
+            {
+                n = i;
+                break;
+            }
+        }
+        if (n == -1)
+        {
+            mShowMessage("Panic", this);
+            return;
+        }
+        setMemorySelected(n, call, loc); // which creates the button as well
+    }
+}
 //======================================================================================
 void RigMemoryFrame::sendUpdateMemories()
 {
@@ -382,6 +405,32 @@ void RigMemoryFrame::writeActionSelected(int buttonNumber)
 
        sendUpdateMemories();
    }
+}
+void RigMemoryFrame::setMemorySelected(int buttonNumber, QString call, QString loc)
+{
+    if (isVisible())
+    {
+        traceMsg(QString("Memory Write Selected %1 = ").arg(QString::number(buttonNumber +1)));
+
+        // get contest information
+        TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+        ScreenContact sc = tslf->getScreenEntry();
+
+        memoryData::memData logData;
+        tslf->getDetails(logData);
+        logData.callsign = call;
+        logData.locator = loc;
+
+        RigMemDialog memDialog(this);
+        memDialog.setLogData(&logData, buttonNumber);
+        memDialog.setWindowTitle(QString("M%1 - Write").arg(QString::number(buttonNumber + 1)));
+       if ( memDialog.exec() == QDialog::Accepted)
+       {
+           setRigMemoryData(buttonNumber, logData);
+
+           sendUpdateMemories();
+       }
+    }
 }
 
 

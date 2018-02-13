@@ -20,6 +20,7 @@
 #include "RPCPubSub.h"
 #include "ConfigFile.h"
 #include "SendRPCDM.h"
+#include "MatchTreesFrame.h"
 
 TLogContainer *LogContainer = 0;
 
@@ -212,6 +213,13 @@ QAction *TLogContainer::newAction( const QString &text, QMenu *m, const char *at
     connect( newAct, SIGNAL( triggered() ), this, atype );
     return newAct;
 }
+SetMemoryAction *TLogContainer::newMemoryAction( const QString &text, QMenu *m, const char *atype )
+{
+    SetMemoryAction * newAct = new SetMemoryAction( text, this );
+    m->addAction( newAct );
+    connect( newAct, SIGNAL( triggered() ), this, atype );
+    return newAct;
+}
 QAction *TLogContainer::newCheckableAction( const QString &text, QMenu *m, const char *atype )
 {
     QAction * newAct = new QAction( text, this );
@@ -288,6 +296,8 @@ void TLogContainer::setupMenus()
 
 
     // end of tools manu
+
+    setMemoryAction = newMemoryAction(QString("Add as new memory..."), &TabPopup, SLOT(onSetMemoryActionExecute()));
 
     TabPopup.addAction(FileOpenAction);
     TabPopup.addMenu(recentFilesMenu);
@@ -510,6 +520,13 @@ QString TLogContainer::getDefaultDirectory( bool IsList )
 
    return fileName;
 }
+void TLogContainer::onSetMemoryActionExecute()
+{
+    // look in setMemoryaction
+
+    emit MinosLoggerEvents::sendSetMemory(setMemoryAction->ct, setMemoryAction->call, setMemoryAction->loc);
+}
+
 void TLogContainer::FileNewActionExecute()
 {
     QString InitialDir = getDefaultDirectory( false );
@@ -1022,9 +1039,33 @@ void TLogContainer::selectTab(int curTab)
 }
 void TLogContainer::on_ContestPageControl_customContextMenuRequested(const QPoint &pos)
 {
+    setMemoryAction->setVisible(false);
+
     int curtab = ui->ContestPageControl->tabBar()->tabAt(pos);
+    // -1 if not on a tab
     selectTab(curtab);
+
     QPoint globalPos = ui->ContestPageControl->mapToGlobal( pos );
+
+    QApplication *qa = dynamic_cast<QApplication *>(QApplication::instance());
+    QObject *w = qa->widgetAt(globalPos);
+
+    QTreeView *qtv = 0;
+    while (w)
+    {
+        MatchTreesFrame *mtf = dynamic_cast<MatchTreesFrame *>(w);
+        if (!qtv && !mtf)
+            qtv = dynamic_cast<QTreeView *>(w);
+
+        if (mtf)
+        {
+            mtf->doCustomContextMenuRequested(qtv);
+            break;
+        }
+
+        w = w->parent();
+    }
+
     TabPopup.popup( globalPos );
 }
 BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fname, bool newfile, int slotno )

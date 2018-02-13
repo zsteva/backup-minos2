@@ -90,6 +90,7 @@ public:
     void getSplitters();
 
     MatchTreeItem * getXferItem();
+    void doCustomContextMenuRequested(QTreeView *qtv);
 
     bool logColumnsChanged;
 
@@ -125,6 +126,7 @@ private slots:
     void onArchiveMatchTreeFocused(QObject *, bool, QFocusEvent * );
     void onOtherMatchTreeFocused(QObject *, bool, QFocusEvent * );
 
+    void on_ThisMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &);
     void on_OtherMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &);
     void on_ArchiveMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &);
     void on_ThisMatchTree_doubleClicked(const QModelIndex &index);

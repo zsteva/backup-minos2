@@ -4,6 +4,7 @@
 #include "focuswatcher.h"
 #include "htmldelegate.h"
 #include "MatchThread.h"
+#include "tlogcontainer.h"
 
 MatchTreesFrame::MatchTreesFrame(QWidget *parent) :
     QFrame(parent),
@@ -130,6 +131,8 @@ void MatchTreesFrame::showThisMatchQSOs( SharedMatchCollection matchCollection )
     ui->ThisMatchTree->setFirstColumnSpanned( 0, QModelIndex(), true );
     ui->ThisMatchTree->expandAll();
     restoreColumns();
+    connect(ui->ThisMatchTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(on_ThisMatchTreeSelectionChanged(const QItemSelection &, const QItemSelection &)), Qt::UniqueConnection);
 }
 void MatchTreesFrame::showOtherMatchQSOs(SharedMatchCollection matchCollection )
 {
@@ -223,6 +226,11 @@ void MatchTreesFrame::on_sectionResized(int, int, int)
     settings.setValue(baseName + "/ArchiveMatchTree/state", state);
 
     MinosLoggerEvents::SendLogColumnsChanged();
+}
+void MatchTreesFrame::on_ThisMatchTreeSelectionChanged(const QItemSelection &selected, const QItemSelection &)
+{
+    matchTreeClickIndex = selected.indexes().at(0);
+    ui->ThisMatchTree->repaint();
 }
 void MatchTreesFrame::on_OtherMatchTreeSelectionChanged(const QItemSelection &selected, const QItemSelection &)
 {
@@ -762,5 +770,48 @@ void MatchTreesFrame::afterArchiveTreeClicked()
            QString bearing = lct->getField(egBrg, contest);
            MinosLoggerEvents::SendBrgStrToRot(bearing);
        }
+    }
+}
+void MatchTreesFrame::doCustomContextMenuRequested(QTreeView *qtv)
+{
+    QModelIndex index;
+    if (qtv == ui->ThisMatchTree)
+    {
+        index = matchTreeClickIndex;
+    }
+    else if (qtv == ui->OtherMatchTree)
+    {
+        index = otherTreeClickIndex;
+    }
+    else if (qtv == ui->ArchiveMatchTree)
+    {
+        index = archiveTreeClickIndex;
+    }
+    else
+        return;
+
+
+    if (index.isValid())
+    {
+        MatchTreeItem * MatchTreeIndex = static_cast<MatchTreeItem *>( index.internalPointer() );
+
+        QSharedPointer<MatchContact> mc = MatchTreeIndex->getMatchContact();
+        if (mc)
+        {
+            QSharedPointer<BaseContact> bct = mc->getBaseContact();
+            ListContact *lct = mc->getListContact();
+            if (bct)
+            {
+                LogContainer->setMemoryAction->call = bct->cs.fullCall.getValue();
+                LogContainer->setMemoryAction->loc = bct->loc.loc.getValue();
+            }
+            else if (lct)
+            {
+                LogContainer->setMemoryAction->call = lct->cs.fullCall.getValue();
+                LogContainer->setMemoryAction->loc = lct->loc.loc.getValue();
+            }
+            LogContainer->setMemoryAction->ct = contest;
+            LogContainer->setMemoryAction->setVisible(true);
+        }
     }
 }

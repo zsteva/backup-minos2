@@ -67,6 +67,7 @@ public:
     void readActionSelected(int);
     void editActionSelected(int buttonNumber);
     void writeActionSelected(int);
+    void setMemorySelected(int buttonNumber, QString call, QString loc);
 
 private slots:
     void checkTimerTimer();
@@ -80,6 +81,8 @@ private slots:
     void on_newMemoryButton_clicked();
 
     void on_flushMemoriesButton_clicked();
+
+    void on_SetMemory(BaseContestLog *, QString, QString);
 
 public slots:
     void clearActionSelected(int);

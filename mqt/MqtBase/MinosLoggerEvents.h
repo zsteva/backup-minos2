@@ -58,6 +58,8 @@ signals:
    void setStackContest(LoggerContestLog *contest);
    void refreshStackMults(LoggerContestLog *contest);
 
+   void setMemory(BaseContestLog *, QString call, QString loc);
+
 
    void FiltersChanged(BaseContestLog *);
    void UpdateStats(BaseContestLog *);
@@ -102,6 +104,7 @@ public:
    static void SendLocSelect(QString loc, BaseContestLog *c);
    static void sendSetStackContest(LoggerContestLog *contest);
    static void sendRefreshStackMults(LoggerContestLog *contest);
+   static void sendSetMemory(BaseContestLog *, QString call, QString loc);
 
    static void SendFontChanged();
    static void SendBrgStrToRot(QString);

@@ -161,6 +161,11 @@ void MinosLoggerEvents::sendRefreshStackMults(LoggerContestLog *contest)
     emit mle.refreshStackMults(contest);
 }
 //---------------------------------------------------------------------------
+void MinosLoggerEvents::sendSetMemory(BaseContestLog * ct, QString call, QString loc)
+{
+    emit mle.setMemory(ct, call, loc);
+}
+//---------------------------------------------------------------------------
 void MinosLoggerEvents::SendFontChanged()
 {
     emit mle.FontChanged();

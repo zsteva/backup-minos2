@@ -18,7 +18,17 @@ class BaseContact;
 class TSingleLogFrame;
 class TContactListDetails;
 class ContactList;
+class MatchContact;
 
+class SetMemoryAction: public QAction
+{
+public:
+    SetMemoryAction(QString t, QObject *p):QAction(t, p)
+    {}
+    BaseContestLog *ct = 0;
+    QString call;
+    QString loc;
+};
 class TLogContainer : public QMainWindow
 {
     Q_OBJECT
@@ -52,6 +62,7 @@ public:
     void updateSessionActions();
     void selectSession(QString sessName);
 
+    SetMemoryAction *setMemoryAction;
 private:
     Ui::TLogContainer *ui;
 
@@ -85,6 +96,7 @@ private:
     QAction *lastSessionSelected;
 
     QAction *newAction(const QString &text, QMenu *m, const char *atype );
+    SetMemoryAction *newMemoryAction(const QString &text, QMenu *m, const char *atype );
     QAction *newCheckableAction( const QString &text, QMenu *m, const char *atype );
     void setupMenus();
 
@@ -161,6 +173,7 @@ private slots:
     void sessionManageExecute();
 
     void MakeEntryActionExecute();
+    void onSetMemoryActionExecute();
     void FileNewActionExecute();
     void ShiftTabLeftActionExecute();
     void ShiftTabRightActionExecute();
