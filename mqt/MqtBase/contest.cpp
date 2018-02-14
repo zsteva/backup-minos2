@@ -33,7 +33,8 @@ BaseContestLog::BaseContestLog( void ) :
       mults1( 0 ), mults2( 0 ), mults1p( 0 ), mults2p( 0 ),
       bonus1( 0 ), bonus2( 0 ), bonus1p( 0 ), bonus2p( 0 ),
       bonus(0), nbonus(0),
-      bonusYearLoaded(0)
+      bonusYearLoaded(0),
+      MGMContestRules(false)
 {
    bearingOffset.setValue(0);
    currentMode.setValue( "USB" );
