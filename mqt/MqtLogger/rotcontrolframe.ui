@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>404</width>
-    <height>129</height>
+    <height>131</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -164,7 +164,7 @@
              <enum>Qt::NoFocus</enum>
             </property>
             <property name="text">
-             <string>-</string>
+             <string>-3</string>
             </property>
            </widget>
           </item>
@@ -203,7 +203,7 @@
              <enum>Qt::NoFocus</enum>
             </property>
             <property name="text">
-             <string>+</string>
+             <string>+3</string>
             </property>
            </widget>
           </item>
