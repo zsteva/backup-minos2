@@ -736,7 +736,7 @@ void MatchTreesFrame::afterThisTreeClicked()
        {
            QSharedPointer<BaseContact> bct = mc->getBaseContact();
 
-           QString bearing = QString::number(bct->bearing);
+           QString bearing = bct->getField(egBrg, contest);
            MinosLoggerEvents::SendBrgStrToRot(bearing);
        }
     }
@@ -752,7 +752,7 @@ void MatchTreesFrame::afterMatchTreeClicked()
         {
             QSharedPointer<BaseContact> bct = mc->getBaseContact();
 
-            QString bearing = QString::number(bct->bearing);
+            QString bearing = bct->getField(egBrg, contest);
             MinosLoggerEvents::SendBrgStrToRot(bearing);
         }
     }
