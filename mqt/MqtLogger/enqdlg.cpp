@@ -38,11 +38,11 @@ bool enquireDialog (QWidget *owner, const QString &prompt, QString &Value )
     return ok;
 }
 
-bool enquireDialog (QWidget *owner, const QString &prompt, int &Value )
+bool enquireDialog (QWidget *owner, const QString &prompt, int &Value, int minval, int maxval )
 {
     bool ok;
     int val = QInputDialog::getInt(owner, "Please supply value",
-                                          prompt, Value, -2147483647, 2147483647,
+                                          prompt, Value, minval, maxval,
                                            1, &ok );
     if ( ok )
         Value = val;

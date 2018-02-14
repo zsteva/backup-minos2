@@ -21,6 +21,7 @@
 #include "ConfigFile.h"
 #include "SendRPCDM.h"
 #include "MatchTreesFrame.h"
+#include "enqdlg.h"
 
 TLogContainer *LogContainer = 0;
 
@@ -279,21 +280,8 @@ void TLogContainer::setupMenus()
     ReportAutofillAction = newCheckableAction("Signal Report AutoFill", ui->menuTools, SLOT(ReportAutofillActionExecute()));
     CorrectDateTimeAction = newAction("Correct Date/Time", ui->menuTools, SLOT(CorrectDateTimeActionExecute()));
 
-    NumberAuxiliaryAction = new SpinBoxAction(tr("Number of Auxiliary Displays"));
-    NumberAuxiliaryAction ->spinBox()->setMinimum(1);
-    NumberAuxiliaryAction ->spinBox()->setMaximum(4);
-    int num;
-    TContestApp::getContestApp() ->loggerBundle.getIntProfile( elpAuxWindows, num );
-
-    NumberAuxiliaryAction ->spinBox()->setValue(num);
-
-    // make a connection
-    connect(NumberAuxiliaryAction ->spinBox(), SIGNAL(valueChanged(int)),
-            this, SLOT(AuxSpinboxValueChanged(int)));
-    // add it to your menu
-    ui->menuTools->addAction(NumberAuxiliaryAction);
-
-
+    ui->menuTools->addSeparator();
+    NumberAuxiliaryAction = newAction("Number of Auxiliary Displays...", ui->menuTools, SLOT(AuxDisplayAction()));
 
     // end of tools manu
 
@@ -956,9 +944,15 @@ void TLogContainer::menuLogsActionExecute()
         selectTab(i);
     }
 }
-void TLogContainer::AuxSpinboxValueChanged(int n)
+void TLogContainer::AuxDisplayAction()
 {
-    TContestApp::getContestApp() ->loggerBundle.setIntProfile( elpAuxWindows, n );
+    int num;
+    TContestApp::getContestApp() ->loggerBundle.getIntProfile( elpAuxWindows, num );
+
+    if ( !enquireDialog( this, "Please give number of auxiliary windows wanted.", num, 1, 4 ) )
+       return ;
+
+    TContestApp::getContestApp() ->loggerBundle.setIntProfile( elpAuxWindows, num );
     emit setAuxWindows();
 }
 void TLogContainer::StartConfigActionExecute()

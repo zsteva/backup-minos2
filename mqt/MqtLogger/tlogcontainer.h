@@ -6,7 +6,6 @@
 #include <QSettings>
 #include <QTimer>
 #include <QLabel>
-#include "SpinBoxAction.h"
 
 namespace Ui {
 class TLogContainer;
@@ -124,7 +123,7 @@ private:
     QAction *LocCalcAction;
     QAction *AnalyseMinosLogAction;
     QAction *CorrectDateTimeAction;
-    SpinBoxAction *NumberAuxiliaryAction;
+    QAction *NumberAuxiliaryAction;
     QAction *ShowOperatorsAction;
     QAction *OptionsAction;
     QAction *FontEditAcceptAction;
@@ -210,7 +209,7 @@ private slots:
     void on_ReportOverstrike(bool , BaseContestLog * );
     void onTabMoved(int, int);
 
-    void AuxSpinboxValueChanged(int);
+    void AuxDisplayAction();
 
 signals:
     void sendKeyerPlay( int fno );
