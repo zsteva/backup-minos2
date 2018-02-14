@@ -598,7 +598,7 @@ void SetupDialog::removeAntenna(bool /*st*/)
 
     QSettings config(fileName, QSettings::IniFormat);
     config.beginGroup(currentName);
-    config.remove(currentName);
+    config.remove("");   // remove all keys for this group
     config.endGroup();
 
     numAvailAntennas--;
