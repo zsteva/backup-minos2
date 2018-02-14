@@ -1037,6 +1037,8 @@ QWidget * ContestDetails::getDetails( )
     contest->radioName.setValue(ui->radioNameEdit->text());
     contest->rotatorName.setValue(ui->antennaNameEdit->text());
 
+    contest->currentMode.setValue(ui->ModeComboBox->currentText());
+
     contest->validateLoc();
 
     return nextD;
