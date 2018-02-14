@@ -87,7 +87,7 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     // load current settings to each tab
     for (int i = 0; i < numAvailAntennas; i++)
     {
-        antennaTab[i]->setAntennaName(availAntData[i]->antennaName);
+//        antennaTab[i]->setAntennaName(availAntData[i]->antennaName); ***************************************************************
         // name the tab
         ui->antennaTab->setTabText(i, availAntData[i]->antennaName);
         antennaTab[i]->setRotatorModel(availAntData[i]->rotatorModel);
@@ -161,7 +161,7 @@ void SetupDialog::addTab(int tabNum, QString tabName)
     availAntData.append(new srotParams);
     availAntData[tabNum]->antennaName = tabName;
     antennaTab.append(new rotSetupForm(rotator, availAntData[tabNum]));
-    antennaTab[tabNum]->setAntennaName(tabName);
+//    antennaTab[tabNum]->setAntennaName(tabName); *****************************************
     ui->antennaTab->insertTab(tabNum, antennaTab[tabNum], tabName);
 }
 
@@ -524,7 +524,7 @@ void SetupDialog::setAppName(QString name)
 }
 
 
-void SetupDialog::addAntenna(bool st)
+void SetupDialog::addAntenna(bool /*st*/)
 {
 
   QString antName = QInputDialog::getText(this, tr("Enter Antenna Name"), tr("Please enter an Antenna Name:"), QLineEdit::Normal);
@@ -548,6 +548,8 @@ void SetupDialog::addAntenna(bool st)
   addTab(numAvailAntennas - 1, antName);
   saveAntenna(numAvailAntennas - 1);
 
+
+
 }
 
 bool SetupDialog::checkAntNameMatch(QString antName)
@@ -562,8 +564,47 @@ bool SetupDialog::checkAntNameMatch(QString antName)
 }
 
 
-void SetupDialog::removeAntenna(bool st)
+void SetupDialog::removeAntenna(bool /*st*/)
 {
+
+    int currentIndex = ui->antennaTab->currentIndex();
+    QString currentName = ui->antennaTab->tabText(currentIndex);
+    int status = QMessageBox::question( this,
+                            tr("Remove Antenna"),
+                            tr("Do you really want to remove antenna - %1?")
+                            .arg(currentName),
+                            QMessageBox::Yes|QMessageBox::Default,
+                            QMessageBox::No|QMessageBox::Escape,
+                            QMessageBox::NoButton);
+
+    if (status != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    // remove this antenna
+    ui->antennaTab->removeTab(currentIndex);
+    availAntData.remove(currentIndex);
+    // remove from availantenna file
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
+    }
+    else
+    {
+        fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
+    }
+
+    QSettings config(fileName, QSettings::IniFormat);
+    config.beginGroup(currentName);
+    config.remove(currentName);
+    config.endGroup();
+
+    numAvailAntennas--;
+
+    // need to reload the selection list of availantennas ************************
+
 
 
 }

@@ -76,7 +76,7 @@ public:
 
 
 private slots:
-    void antennaNameFinished();
+//    void antennaNameFinished();
     void rotatorModelSelected();
     void comportSelected();
     void comDataSpeedSelected();

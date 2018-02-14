@@ -39,7 +39,7 @@ rotSetupForm::rotSetupForm(RotControl* _rotator, srotParams* _antennaData, QWidg
 
     networkDataEntryVisible(false);
 
-    connect(ui->antennaNameEdit, SIGNAL(editingFinished()), this, SLOT(antennaNameFinished()));
+//    connect(ui->antennaNameEdit, SIGNAL(editingFinished()), this, SLOT(antennaNameFinished()));
     connect(ui->rotatorModelBox, SIGNAL(activated(int)), this, SLOT(rotatorModelSelected()));
     connect(ui->comPortBox, SIGNAL(activated(int)), this, SLOT(comportSelected()));
     connect(ui->comSpeedBox, SIGNAL(activated(int)), this, SLOT(comDataSpeedSelected()));
@@ -62,6 +62,7 @@ rotSetupForm::~rotSetupForm()
 
 /***************************** Antenna Name *************************/
 
+/*
 void rotSetupForm::antennaNameFinished()
 {
     if (ui->antennaNameEdit->text() != antennaData->antennaName)
@@ -72,8 +73,9 @@ void rotSetupForm::antennaNameFinished()
 
     }
 }
+*/
 
-
+/*
 QString rotSetupForm::getAntennaName()
 {
     return ui->antennaNameEdit->text();
@@ -84,6 +86,8 @@ void rotSetupForm::setAntennaName(QString n)
 {
     ui->antennaNameEdit->setText(n);
 }
+
+*/
 
 /***************************** Rotator Models *************************/
 

@@ -85,8 +85,8 @@ private slots:
     void saveButtonPushed();
     void cancelButtonPushed();
 
-    void addAntenna(bool st);
-    void removeAntenna(bool st);
+    void addAntenna(bool);
+    void removeAntenna(bool);
 
 
 private:
