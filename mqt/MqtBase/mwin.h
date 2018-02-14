@@ -63,7 +63,7 @@ template < class itemtype >
 class MinosItem
 {
    protected:
-      bool dirty;
+      bool dirty = false;
       itemtype val;
       itemtype operator = ( const itemtype& ); // make it inaccessible
 
