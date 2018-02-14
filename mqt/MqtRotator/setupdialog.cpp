@@ -378,7 +378,17 @@ void SetupDialog::getAvailAntennas()
 
 }
 
-
+int SetupDialog::comportAvial(QString comport)
+{
+    if (antennaTab.count() > 0)
+    {
+        return antennaTab[0]->comportAvial(comport);
+    }
+    else
+    {
+        return -1;
+    }
+}
 
 //void SetupDialog::clearAvailRotators()
 //{
@@ -456,24 +466,6 @@ void SetupDialog::saveCurrentAntenna()
 
     config.beginGroup("CurrentAntenna");
     config.setValue("antennaName", currentAntenna->antennaName);
-    config.setValue("antennaNumber", currentAntenna->antennaNumber);
-    config.setValue("rotatorModel", currentAntenna->rotatorModel);
-    config.setValue("rotatorModelNumber", currentAntenna->rotatorModelNumber);
-    config.setValue("rotatorModelName", currentAntenna->rotatorModelName);
-    config.setValue("rotatorManufacturer", currentAntenna->rotatorManufacturer);
-    config.setValue("rotatorPollInterval", currentAntenna->pollInterval);
-    config.setValue("southStop", currentAntenna->southStopFlag);
-    config.setValue("overRun", currentAntenna->overRunFlag);
-    config.setValue("antennaOffset", currentAntenna->antennaOffset);
-    config.setValue("portType", currentAntenna->portType);
-    config.setValue("comport", currentAntenna->comport);
-    config.setValue("baudrate", currentAntenna->baudrate);
-    config.setValue("databits", currentAntenna->databits);
-    config.setValue("parity", currentAntenna->parity);
-    config.setValue("stopbits", currentAntenna->stopbits);
-    config.setValue("handshake", currentAntenna->handshake);
-    config.setValue("netAddress", currentAntenna->networkAdd);
-    config.setValue("netPort", currentAntenna->networkPort);
     config.endGroup();
 
 
@@ -547,7 +539,7 @@ void SetupDialog::addAntenna(bool /*st*/)
   numAvailAntennas++;
   addTab(numAvailAntennas - 1, antName);
   saveAntenna(numAvailAntennas - 1);
-
+  emit antennaTabChanged();
 
 
 }
@@ -603,7 +595,7 @@ void SetupDialog::removeAntenna(bool /*st*/)
 
     numAvailAntennas--;
 
-    // need to reload the selection list of availantennas ************************
+    emit antennaTabChanged();
 
 
 

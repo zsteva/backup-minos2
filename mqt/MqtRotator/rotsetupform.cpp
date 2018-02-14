@@ -652,7 +652,7 @@ void rotSetupForm::fillHandShakeInfo()
 
 }
 
-
+// returns -1 if no text found
 int rotSetupForm::comportAvial(QString comport)
 {
     return ui->comPortBox->findText(comport);

@@ -117,7 +117,7 @@ class RotControl: public QObject
 public:
     explicit RotControl(QObject *parent = 0);
     ~RotControl();
-    int init(srotParams currentAntenna);
+    int init(srotParams* currentAntenna);
     int closeRotator();
     int getModelNumber(int idx);
     int getRotatorModelIndex();

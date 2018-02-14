@@ -100,7 +100,7 @@ int RotControl::getMaxMinRotation(int rotNumber, int *maxRot, int *minRot)
 }
 
 
-int RotControl::init(srotParams selectedAntenna)
+int RotControl::init(srotParams* selectedAntenna)
 {
     int retcode;
 
@@ -110,9 +110,9 @@ int RotControl::init(srotParams selectedAntenna)
     QString comport = "/dev/";
 #endif
 
-    comport.append(selectedAntenna.comport);
+    comport.append(selectedAntenna->comport);
 
-    my_rot = rot_init(selectedAntenna.rotatorModelNumber);
+    my_rot = rot_init(selectedAntenna->rotatorModelNumber);
     if (!my_rot)
     {
         return retcode = -14;
@@ -120,33 +120,33 @@ int RotControl::init(srotParams selectedAntenna)
 
 
     // get rotator parameters
-    curRotParams.antennaName = selectedAntenna.antennaName;
-    curRotParams.baudrate =  selectedAntenna.baudrate;
-    curRotParams.antennaOffset = selectedAntenna.antennaOffset;
+    curRotParams.antennaName = selectedAntenna->antennaName;
+    curRotParams.baudrate =  selectedAntenna->baudrate;
+    curRotParams.antennaOffset = selectedAntenna->antennaOffset;
     //rotParams.comport =
-    curRotParams.databits = selectedAntenna.databits;
-    curRotParams.stopbits = selectedAntenna.stopbits;
-    curRotParams.parity = getSerialParityCode(selectedAntenna.parity);
-    curRotParams.handshake = getSerialHandshakeCode(selectedAntenna.handshake);
+    curRotParams.databits = selectedAntenna->databits;
+    curRotParams.stopbits = selectedAntenna->stopbits;
+    curRotParams.parity = getSerialParityCode(selectedAntenna->parity);
+    curRotParams.handshake = getSerialHandshakeCode(selectedAntenna->handshake);
     curRotParams.serial_rate_max = my_rot->caps->serial_rate_max;
     curRotParams.serial_rate_min = my_rot->caps->serial_rate_min;
 
 
     // load rotator params to open
-    if (rig_port_e(selectedAntenna.portType) == RIG_PORT_SERIAL)
+    if (rig_port_e(selectedAntenna->portType) == RIG_PORT_SERIAL)
     {
         strncpy(my_rot->state.rotport.pathname, comport.toLatin1().data(), comport.length());
-        my_rot->state.rotport.parm.serial.rate = selectedAntenna.baudrate;
-        my_rot->state.rotport.parm.serial.data_bits = selectedAntenna.databits;
-        my_rot->state.rotport.parm.serial.stop_bits = selectedAntenna.stopbits;
-        my_rot->state.rotport.parm.serial.parity = getSerialParityCode(selectedAntenna.parity);
-        my_rot->state.rotport.parm.serial.handshake = getSerialHandshakeCode(selectedAntenna.handshake);
+        my_rot->state.rotport.parm.serial.rate = selectedAntenna->baudrate;
+        my_rot->state.rotport.parm.serial.data_bits = selectedAntenna->databits;
+        my_rot->state.rotport.parm.serial.stop_bits = selectedAntenna->stopbits;
+        my_rot->state.rotport.parm.serial.parity = getSerialParityCode(selectedAntenna->parity);
+        my_rot->state.rotport.parm.serial.handshake = getSerialHandshakeCode(selectedAntenna->handshake);
     }
-    else if (rig_port_e(selectedAntenna.portType) == RIG_PORT_NETWORK || rig_port_e(selectedAntenna.portType) == RIG_PORT_UDP_NETWORK)
+    else if (rig_port_e(selectedAntenna->portType) == RIG_PORT_NETWORK || rig_port_e(selectedAntenna->portType) == RIG_PORT_UDP_NETWORK)
     {
-        strncpy(my_rot->state.rotport.pathname, QString(selectedAntenna.networkAdd + ":" + selectedAntenna.networkPort).toLatin1().data(), FILPATHLEN);
+        strncpy(my_rot->state.rotport.pathname, QString(selectedAntenna->networkAdd + ":" + selectedAntenna->networkPort).toLatin1().data(), FILPATHLEN);
     }
-    else if (rig_port_e(selectedAntenna.portType) == RIG_PORT_NONE)
+    else if (rig_port_e(selectedAntenna->portType) == RIG_PORT_NONE)
     {
         strncpy(my_rot->state.rotport.pathname, QString("").toLatin1().data(), FILPATHLEN);
     }

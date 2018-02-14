@@ -73,11 +73,12 @@ public:
     void copyAntennaToCurrent(int antennaNumber);
 
     void setAppName(QString name);
-    int comportAvial(int antennaNum, QString comport);
+    int comportAvial(QString comport);
 signals:
 
     void currentAntennaSettingChanged(QString);
     void antennaNameChange();
+    void antennaTabChanged();
 
 
 private slots:
@@ -118,6 +119,7 @@ private:
     void addTab(int tabNum, QString tabName);
     bool checkAntNameMatch(QString antName);
     void saveAntenna(int i);
+
 
 };
 
