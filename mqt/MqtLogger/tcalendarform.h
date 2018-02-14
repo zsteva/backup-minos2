@@ -65,6 +65,8 @@ public Q_SLOTS:
         static void downloadFiles();
 
         QString description;
+        QDateTime sdate;
+        QString band;
 
         virtual int exec() override;
 

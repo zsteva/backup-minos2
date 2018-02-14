@@ -100,7 +100,7 @@ void TCalendarForm::LoadGrid ( Calendar &cal )
         ui->CalendarGrid->setHorizontalHeaderItem( col++, new QTableWidgetItem( "Special Rules" ) );
     }
     int row = 0;
-    int nextContest = 0;
+    int nextContest = -1;
     QDateTime now = QDateTime::currentDateTime();
     for ( QVector<IndividualContest>::iterator i = cal.calendar.begin(); i != cal.calendar.end(); i++ )
     {
@@ -123,14 +123,15 @@ void TCalendarForm::LoadGrid ( Calendar &cal )
 
         if (!description.isEmpty())
          {
-            if (nextContest == 0 && description == (*i).description)
+            if (nextContest < 0 && description == (*i).description)
             {
-               nextContest = row;
+                if (((*i).start == sdate) && ((*i).reg1band == band || (*i).ukband == band))
+                    nextContest = row;
             }
          }
          else
          {
-            if (nextContest == 0 && ((*i).start.daysTo((*i).finish) < 360) && now <= (*i).finish)
+            if (nextContest < 0 && ((*i).start.daysTo((*i).finish) < 360) && now <= (*i).finish)
             {
                // don't select the test contests
                nextContest = row;
@@ -138,7 +139,7 @@ void TCalendarForm::LoadGrid ( Calendar &cal )
          }
         row++;
     }
-    if (nextContest)
+    if (nextContest >= 0)
     {
         ui->CalendarGrid->selectRow(nextContest);
     }

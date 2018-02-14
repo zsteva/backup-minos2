@@ -142,6 +142,7 @@ class IndividualContest
         QString shortDescription;
         QString bands;
         QString reg1band;
+        QString ukband;
         double flow = 0;
         bool ppKmScoring;
         QString sections;

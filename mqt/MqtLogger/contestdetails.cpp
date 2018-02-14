@@ -1210,6 +1210,10 @@ void ContestDetails::on_VHFCalendarButton_clicked()
     CalendarDlg.setWindowTitle( "VHF Calendar");
     CalendarDlg.description = ui->ContestNameSelected->text();
 
+    QString sdate = ui->StartDateEdit->date().toString("dd/MM/yyyy");
+    CalendarDlg.sdate = CanonicalToTDT(TDTToCanonical( sdate + " " + ui->StartTimeCombo->currentText())) ;
+    CalendarDlg.band = ui->BandComboBox->currentText();
+
     if ( CalendarDlg.exec() == QDialog::Accepted )
     {
        // set up all the details that we can from the calendar

@@ -478,6 +478,7 @@ bool Calendar::parseFile ( const QString &fname )
                             BandInfo bi;
                             blist.findBand(ic.reg1band, bi);
                             ic.flow = bi.flow;
+                            ic.ukband = bi.uk;
 
                             calendar.push_back ( ic );
                         }
