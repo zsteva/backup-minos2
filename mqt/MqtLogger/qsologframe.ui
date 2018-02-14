@@ -110,9 +110,31 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Curr
+Mode</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QComboBox" name="ModeComboBoxGJV">
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>Switch
+to</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
@@ -123,6 +145,9 @@
              </property>
              <property name="text">
               <string>A1A</string>
+             </property>
+             <property name="autoRaise">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
