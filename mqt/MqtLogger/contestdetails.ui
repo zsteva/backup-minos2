@@ -716,7 +716,7 @@
            <item>
             <widget class="QGroupBox" name="FieldsGroupBox">
              <property name="title">
-              <string>Optional Fields</string>
+              <string>Mandatory Fields</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_17">
               <item>
