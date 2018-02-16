@@ -121,6 +121,7 @@ private:
     void saveAntenna(int i);
 
 
+    void loadSettingsToTab(int tabNum);
 };
 
 #endif // SETUPDIALOG_H

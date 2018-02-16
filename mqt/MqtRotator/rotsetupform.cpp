@@ -132,6 +132,10 @@ void rotSetupForm::rotatorModelSelected()
                 antennaData->rotatorManufacturer = rotMfgName;
 
             }
+
+            pollIntervalVisible(true);
+            antennaOffSetVisible(true);
+
             // set southstop visible if rotator is 0 - 360
             azimuth_t minRot = 0.0;
             azimuth_t maxRot = 0.0;
@@ -217,7 +221,7 @@ void rotSetupForm::rotatorModelSelected()
 
             if (rotator->getPortType(antennaData->rotatorModelNumber, &portType) != -1)
             {
-                antennaData->portType = int(portType);
+                antennaData->portType = portType;
                 if (portType == RIG_PORT_NETWORK || portType == RIG_PORT_UDP_NETWORK)
                 {
                    serialDataEntryVisible(false);
@@ -248,6 +252,12 @@ void rotSetupForm::rotatorModelSelected()
             antennaData->rotatorModelNumber = 0;
             antennaData->rotatorModelName = "";
             antennaData->rotatorManufacturer = "";
+            networkDataEntryVisible(false);
+            setOverRunFlagVisible(false);
+            setCheckStopVisible(false);
+            pollIntervalVisible(false);
+            antennaOffSetVisible(false);
+            serialDataEntryVisible(false);
 
         }
 
@@ -470,7 +480,11 @@ void rotSetupForm::setPollInterval(QString i)
     ui->pollInterval->setCurrentIndex(ui->pollInterval->findText(i));
 }
 
-
+void rotSetupForm::pollIntervalVisible(bool s)
+{
+    ui->pollInterval->setVisible(s);
+    ui->intervallbl->setVisible(s);
+}
 
 /***************************** Check South Stop *************************/
 
@@ -597,6 +611,12 @@ QString rotSetupForm::getAntennaOffset()
 void rotSetupForm::setAntennaOffset(QString o)
 {
     ui->antOffset->setText(o);
+}
+
+void rotSetupForm::antennaOffSetVisible(bool s)
+{
+    ui->offSetLbl->setVisible(s);
+    ui->antOffset->setVisible(s);
 }
 
 /*************************** Serial Data Entry Visible ***************/

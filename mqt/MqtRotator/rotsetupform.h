@@ -75,6 +75,8 @@ public:
     int getMaxMinRotationData(int rotatorNumber, azimuth_t *maxRot, azimuth_t *minRot);
 
 
+    void antennaOffSetVisible(bool s);
+    void pollIntervalVisible(bool s);
 private slots:
 //    void antennaNameFinished();
     void rotatorModelSelected();

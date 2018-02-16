@@ -82,7 +82,7 @@ public:
   QString rotatorManufacturer;
   QString rotatorModelName;
   int rotatorModelNumber = 0;
-  QString pollInterval;         // ms
+  QString pollInterval = "1";
   azimuth_t min_azimuth = 0.0;
   azimuth_t max_azimuth = 0.0;
   endStop endStopType = ROT_0_360;
@@ -95,7 +95,7 @@ public:
   bool supportCwCcwCmd = true;
   int antennaOffset = 0;
   bool moving = false;
-  int portType = int(RIG_PORT_NONE);
+  rig_port_e portType = RIG_PORT_NONE;
   QString networkAdd;
   QString networkPort;
   int serial_rate_max = 0;

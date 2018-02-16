@@ -87,61 +87,8 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     // load current settings to each tab
     for (int i = 0; i < numAvailAntennas; i++)
     {
-//        antennaTab[i]->setAntennaName(availAntData[i]->antennaName); ***************************************************************
-        // name the tab
-        ui->antennaTab->setTabText(i, availAntData[i]->antennaName);
-        antennaTab[i]->setRotatorModel(availAntData[i]->rotatorModel);
-        antennaTab[i]->setPollInterval(availAntData[i]->pollInterval);
-        antennaTab[i]->setCheckStop(availAntData[i]->southStopFlag);
 
-        // set southstop visible if rotator is 0 - 360
-        int minRot = 0;
-        int maxRot = 0;
-/***********************************************************************
-        if (antennaTab[i]->getMaxMinRotationData(availAntData[i]->rotatorModelNumber, &maxRot, &minRot) >= 0)
-        {
-            if (minRot == 0 && maxRot == 360)
-            {
-                antennaTab[i]->setCheckStopVisible(true);
-
-            }
-            else if (minRot == 0 && maxRot == 450)
-            {
-                antennaTab[i]->setOverRunFlagVisible(true);
-
-            }
-            else
-            {
-                antennaTab[i]->setCheckStopVisible(false);
-                antennaTab[i]->setOverRunFlagVisible(false);
-            }
-        }
-*/
-        antennaTab[i]->setCheckOverrun(availAntData[i]->overRunFlag);
-        antennaTab[i]->setAntennaOffset(QString::number(availAntData[i]->antennaOffset));
-        antennaTab[i]->setComport(availAntData[i]->comport);
-        antennaTab[i]->setDataSpeed(QString::number(availAntData[i]->baudrate));
-        antennaTab[i]->setDataBits(QString::number(availAntData[i]->databits));
-        antennaTab[i]->setStopBits(QString::number(availAntData[i]->stopbits));
-        antennaTab[i]->setParityBits(availAntData[i]->parity);
-        antennaTab[i]->setHandshake(availAntData[i]->handshake);
-        antennaTab[i]->setNetAddress(availAntData[i]->networkAdd);
-        antennaTab[i]->setNetPortNum(availAntData[i]->networkPort);
-        if (rig_port_e(availAntData[i]->portType) == RIG_PORT_NETWORK || rig_port_e(availAntData[i]->portType) == RIG_PORT_UDP_NETWORK)
-        {
-            antennaTab[i]->serialDataEntryVisible(false);
-            antennaTab[i]->networkDataEntryVisible(true);
-        }
-        else if (rig_port_e(availAntData[i]->portType) == RIG_PORT_NONE)
-        {
-            antennaTab[i]->serialDataEntryVisible(false);
-            antennaTab[i]->networkDataEntryVisible(false);
-        }
-        else if (rig_port_e(availAntData[i]->portType) == RIG_PORT_SERIAL)
-        {
-            antennaTab[i]->serialDataEntryVisible(true);
-            antennaTab[i]->networkDataEntryVisible(false);
-        }
+        loadSettingsToTab(i);
 
     }
 
@@ -162,10 +109,87 @@ void SetupDialog::addTab(int tabNum, QString tabName)
     availAntData.append(new srotParams);
     availAntData[tabNum]->antennaName = tabName;
     antennaTab.append(new rotSetupForm(rotator, availAntData[tabNum]));
-//    antennaTab[tabNum]->setAntennaName(tabName); *****************************************
     ui->antennaTab->insertTab(tabNum, antennaTab[tabNum], tabName);
+
+
 }
 
+
+
+void SetupDialog::loadSettingsToTab(int tabNum)
+{
+
+
+    ui->antennaTab->setTabText(tabNum, availAntData[tabNum]->antennaName);
+
+    if (availAntData[tabNum]->rotatorModel != "")
+    {
+        antennaTab[tabNum]->setRotatorModel(availAntData[tabNum]->rotatorModel);
+        antennaTab[tabNum]->setPollInterval(availAntData[tabNum]->pollInterval);
+        antennaTab[tabNum]->pollIntervalVisible(true);
+        antennaTab[tabNum]->setCheckStop(availAntData[tabNum]->southStopFlag);
+
+        // set southstop visible if rotator is 0 - 360
+
+        if (availAntData[tabNum]->endStopType == ROT_0_360)
+        {
+           antennaTab[tabNum]->setCheckStopVisible(true);
+        }
+        else if (availAntData[tabNum]->endStopType == ROT_0_450)
+        {
+           antennaTab[tabNum]->setOverRunFlagVisible(true);
+        }
+        else
+        {
+           antennaTab[tabNum]->setCheckStopVisible(false);
+           antennaTab[tabNum]->setOverRunFlagVisible(false);
+        }
+
+        antennaTab[tabNum]->setCheckOverrun(availAntData[tabNum]->overRunFlag);
+        antennaTab[tabNum]->setAntennaOffset(QString::number(availAntData[tabNum]->antennaOffset));
+        antennaTab[tabNum]->antennaOffSetVisible(true);
+        antennaTab[tabNum]->setComport(availAntData[tabNum]->comport);
+        antennaTab[tabNum]->setDataSpeed(QString::number(availAntData[tabNum]->baudrate));
+        antennaTab[tabNum]->setDataBits(QString::number(availAntData[tabNum]->databits));
+        antennaTab[tabNum]->setStopBits(QString::number(availAntData[tabNum]->stopbits));
+        antennaTab[tabNum]->setParityBits(availAntData[tabNum]->parity);
+        antennaTab[tabNum]->setHandshake(availAntData[tabNum]->handshake);
+        antennaTab[tabNum]->setNetAddress(availAntData[tabNum]->networkAdd);
+        antennaTab[tabNum]->setNetPortNum(availAntData[tabNum]->networkPort);
+
+        if (availAntData[tabNum]->portType == RIG_PORT_NETWORK || availAntData[tabNum]->portType == RIG_PORT_UDP_NETWORK)
+        {
+            antennaTab[tabNum]->serialDataEntryVisible(false);
+            antennaTab[tabNum]->networkDataEntryVisible(true);
+        }
+        else if (availAntData[tabNum]->portType == RIG_PORT_NONE)
+        {
+            antennaTab[tabNum]->serialDataEntryVisible(false);
+            antennaTab[tabNum]->networkDataEntryVisible(false);
+        }
+        else if (availAntData[tabNum]->portType == RIG_PORT_SERIAL)
+        {
+            antennaTab[tabNum]->serialDataEntryVisible(true);
+            antennaTab[tabNum]->networkDataEntryVisible(false);
+        }
+
+
+    }
+    else
+    {
+        // no rotator model selected, hide elements on tab
+        antennaTab[tabNum]->setRotatorModel(availAntData[tabNum]->rotatorModel);
+        antennaTab[tabNum]->networkDataEntryVisible(false);
+        antennaTab[tabNum]->setOverRunFlagVisible(false);
+        antennaTab[tabNum]->setCheckStopVisible(false);
+        antennaTab[tabNum]->pollIntervalVisible(false);
+        antennaTab[tabNum]->antennaOffSetVisible(false);
+        antennaTab[tabNum]->serialDataEntryVisible(false);
+
+    }
+
+
+}
 
 
 void SetupDialog::saveButtonPushed()
@@ -364,7 +388,7 @@ void SetupDialog::getAvailAntennas()
         availAntData[i]->southStopFlag = config.value("southStop", false).toBool();
         availAntData[i]->overRunFlag = config.value("overRun", false).toBool();
         availAntData[i]->antennaOffset = config.value("antennaOffset", "").toInt();
-        availAntData[i]->portType = config.value("portType", int(RIG_PORT_NONE)).toInt();
+        availAntData[i]->portType = rig_port_e(config.value("portType", int(RIG_PORT_NONE)).toInt());
         availAntData[i]->comport = config.value("comport", "").toString();
         availAntData[i]->baudrate = config.value("baudrate", 9600).toInt();
         availAntData[i]->databits = config.value("databits", 8).toInt();
@@ -537,9 +561,11 @@ void SetupDialog::addAntenna(bool /*st*/)
   }
 
   // add the new antenna
+  int tabNum = numAvailAntennas;
+  addTab(tabNum, antName);
   numAvailAntennas++;
-  addTab(numAvailAntennas - 1, antName);
-  saveAntenna(numAvailAntennas - 1);
+  loadSettingsToTab(tabNum);
+  saveAntenna(tabNum);
   emit antennaTabChanged();
 
 

@@ -582,7 +582,7 @@ void RotatorMainWindow::initActionsConnections()
 
 
     // setup antennas
-    connect(ui->actionSetup_Antennas, SIGNAL(triggered()), setupAntenna, SLOT(show()));
+    connect(ui->actionSetup_Antennas, SIGNAL(triggered()), setupAntenna, SLOT(exec()));
     connect(setupAntenna, SIGNAL(currentAntennaSettingChanged(QString)), this, SLOT(currentAntennaSettingChanged(QString)));
     connect(setupAntenna, SIGNAL(antennaNameChange()), this, SLOT(updateSelectAntennaBox()));
     connect(setupAntenna, SIGNAL(antennaTabChanged()), this, SLOT(updateSelectAntennaBox()));
