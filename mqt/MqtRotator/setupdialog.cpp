@@ -97,6 +97,7 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
         // set southstop visible if rotator is 0 - 360
         int minRot = 0;
         int maxRot = 0;
+/***********************************************************************
         if (antennaTab[i]->getMaxMinRotationData(availAntData[i]->rotatorModelNumber, &maxRot, &minRot) >= 0)
         {
             if (minRot == 0 && maxRot == 360)
@@ -115,7 +116,7 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
                 antennaTab[i]->setOverRunFlagVisible(false);
             }
         }
-
+*/
         antennaTab[i]->setCheckOverrun(availAntData[i]->overRunFlag);
         antennaTab[i]->setAntennaOffset(QString::number(availAntData[i]->antennaOffset));
         antennaTab[i]->setComport(availAntData[i]->comport);
@@ -189,7 +190,7 @@ void SetupDialog::cancelButtonPushed()
 void SetupDialog::saveSettings()
 {
 
-/***************************************************************
+/*
 
     // have the current antenna settings been changed?
     bool antennaNameChg = false;
@@ -233,7 +234,7 @@ void SetupDialog::saveSettings()
 
             if (antennaValueChanged[i])
             {
-                config.beginGroup("Antenna" + QString::number(i+1));
+                config.beginGroup(availAntData[i]->antennaName);
                 config.setValue("antennaName", availAntData[i]->antennaName);
                 if (antennaNameChanged[i])
                 {

@@ -22,6 +22,8 @@
 #include <QComboBox>
 #include <QStringList>
 
+#include "rotatorCommonConstants.h"
+
 #include <hamlib/rotator.h>
 #include <hamlib/rig.h>         // for debug
 
@@ -83,10 +85,14 @@ public:
   QString pollInterval;         // ms
   azimuth_t min_azimuth = 0.0;
   azimuth_t max_azimuth = 0.0;
+  endStop endStopType = ROT_0_360;
+  azimuth_t rotatorCWEndStop = COMPASS_MIN0;
+  azimuth_t rotatorCCWEndStop= COMPASS_MAX360;
   elevation_t min_elevation = 0.0;
   elevation_t max_elevation = 0.0;
   bool southStopFlag = false;
   bool overRunFlag = false;
+  bool supportCwCcwCmd = true;
   int antennaOffset = 0;
   bool moving = false;
   int portType = int(RIG_PORT_NONE);
@@ -160,7 +166,7 @@ public:
     int getMaxBaudRate();
     int getMinBaudRate();
     int getSupportCwCcwCmd(int rotNumber, bool *flag);
-    int getMaxMinRotation(int rotNumber, int *maxRot, int *minRot);
+    int getMaxMinRotation(int rotNumber, azimuth_t *maxRot, azimuth_t *minRot);
     int getPortType(int rotNumber, rig_port_e *portType);
 
     int getModelInfo(QString rotModel, int *rotModelNumber, QString *rotMfgName, QString *rotModelName);

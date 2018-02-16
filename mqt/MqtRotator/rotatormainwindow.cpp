@@ -989,7 +989,7 @@ void RotatorMainWindow::upDateAntenna()
 
 
        // flag if rotator supports CW and CCW commands
-       supportCwCcwCmd = getCwCcwCmdFlag(setupAntenna->currentAntenna->rotatorModelNumber);
+//       supportCwCcwCmd = getCwCcwCmdFlag(setupAntenna->currentAntenna->rotatorModelNumber); ***********************************************
 
        if (rotator->get_serialConnected())
        {
@@ -1852,7 +1852,7 @@ void RotatorMainWindow::saveTraceLogFlag()
     trace("Tracelog Changed = " + QString::number(ui->actionTraceLog->isChecked()));
 }
 
-
+/*
 bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
 {
     int retCode = 0;
@@ -1866,7 +1866,7 @@ bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
     return value;
 
 }
-
+*/
 
 void RotatorMainWindow::about()
 {

@@ -78,7 +78,7 @@ int RotControl::getSupportCwCcwCmd(int rotNumber, bool *flag)
     return retCode;
 }
 
-int RotControl::getMaxMinRotation(int rotNumber, int *maxRot, int *minRot)
+int RotControl::getMaxMinRotation(int rotNumber, azimuth_t *maxRot, azimuth_t *minRot)
 {
     int retCode = 0;
     ROT *my_rot;
@@ -205,6 +205,8 @@ bool RotControl::getRotatorList(QComboBox *cb)
 
     if(capsList.count()==0) return false;
     QStringList sl;
+    // add blank at beginning
+    sl << "";
     for (i=0;i<capsList.count();i++)
     {
 

@@ -72,7 +72,7 @@ public:
     void networkDataEntryVisible(bool v);
 
     int comportAvial(QString comport);
-    int getMaxMinRotationData(int rotatorNumber, int *maxRot, int *minRot);
+    int getMaxMinRotationData(int rotatorNumber, azimuth_t *maxRot, azimuth_t *minRot);
 
 
 private slots:
@@ -110,6 +110,8 @@ private:
     void fillParityBitsInfo();
     void fillHandShakeInfo();
 
+
+    bool getCwCcwCmdFlag(int rotatorNumber);
 
 };
 
