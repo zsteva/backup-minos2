@@ -53,7 +53,6 @@ public:
 
     QString currentAntennaName;
     srotParams* currentAntenna;
-    int currentAntIndex;
 
     QVector<srotParams*> availAntData;
     QStringList availAntennas;
@@ -74,6 +73,7 @@ public:
 
     void setAppName(QString name);
     int comportAvial(QString comport);
+    int findCurrentAntenna(QString currentAntName);
 signals:
 
     void currentAntennaSettingChanged(QString);

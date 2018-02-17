@@ -134,7 +134,7 @@ private:
     endStop endStopType;
     overlapStat overLapStatus;
     bool overLapActiveflag;
-    bool southStopActiveflag;
+    //bool southStopActiveflag;
     bool rotErrorFlag;
     bool supportCwCcwCmd;
     int rotatorBearing;
@@ -225,6 +225,7 @@ private slots:
 
     void aboutRotatorConfig();
 
+    void onSelectAntennaBox();
 private:
     void rotateTo(int bearing);
     int northCalcTarget(int targetBearing);

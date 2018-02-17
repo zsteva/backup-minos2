@@ -214,12 +214,11 @@ void SetupDialog::cancelButtonPushed()
 void SetupDialog::saveSettings()
 {
 
-/*
 
-    // have the current antenna settings been changed?
     bool antennaNameChg = false;
-
     bool currentAntennaChanged = false;
+
+/*
     int ca = -1;
     bool ok;
     ca = currentAntenna->antennaNumber.toInt(&ok, 10);
@@ -238,74 +237,85 @@ void SetupDialog::saveSettings()
         ca = -1;
     }
 
+*/
 
-    if (antennaChanged)
+    QString fileName;
+    if (appName == "")
     {
-        QString fileName;
-        if (appName == "")
-        {
-            fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
-        }
-        else
-        {
-            fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
-        }
+        fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
+    }
+    else
+    {
+        fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
+    }
 
-        QSettings config(fileName, QSettings::IniFormat);
+    QSettings config(fileName, QSettings::IniFormat);
 
-        for (int i = 0; i < numAvailAntennas; i++)
+    for (int i = 0; i < numAvailAntennas; i++)
+    {
+
+        if (antennaTab[i]->antennaValueChanged)
         {
-
-            if (antennaValueChanged[i])
+            config.beginGroup(availAntData[i]->antennaName);
+            if (currentAntennaName == availAntData[i]->antennaName)
             {
-                config.beginGroup(availAntData[i]->antennaName);
-                config.setValue("antennaName", availAntData[i]->antennaName);
-                if (antennaNameChanged[i])
-                {
-                    antennaNameChg = true;
-                    antennaNameChanged[i] = false;
-                }
-                config.setValue("antennaNumber", i+1);
-                config.setValue("rotatorModel", availAntData[i]->rotatorModel);
-                config.setValue("rotatorModelName", availAntData[i]->rotatorModelName);
-                config.setValue("rotatorModelNumber", availAntData[i]->rotatorModelNumber);
-                config.setValue("rotatorManufacturer", availAntData[i]->rotatorManufacturer);
-                config.setValue("rotatorPollInterval", availAntData[i]->pollInterval);
-                config.setValue("southStop", availAntData[i]->southStopFlag);
-                config.setValue("overRun", availAntData[i]->overRunFlag);
-                config.setValue("antennaOffset", availAntData[i]->antennaOffset);
-                config.setValue("portType", availAntData[i]->portType);
-                config.setValue("comport", availAntData[i]->comport);
-                config.setValue("baudrate", availAntData[i]->baudrate);
-                config.setValue("databits", availAntData[i]->databits);
-                config.setValue("parity", availAntData[i]->parity);
-                config.setValue("stopbits", availAntData[i]->stopbits);
-                config.setValue("handshake", availAntData[i]->handshake);
-                config.setValue("netAddress", availAntData[i]->networkAdd);
-                config.setValue("netPort", availAntData[i]->networkPort);
-                config.endGroup();
-                antennaValueChanged[i] = false;
-
+                // settings changed in current antenna
+                currentAntennaChanged = true;
             }
 
+
+            config.setValue("antennaName", availAntData[i]->antennaName);
+            if (antennaTab[i]->antennaNameChanged)
+            {
+                antennaNameChg = true;
+                antennaTab[i]->antennaNameChanged = false;
+            }
+            config.setValue("antennaNumber", i+1);
+            config.setValue("rotatorModel", availAntData[i]->rotatorModel);
+            config.setValue("rotatorModelName", availAntData[i]->rotatorModelName);
+            config.setValue("rotatorModelNumber", availAntData[i]->rotatorModelNumber);
+            config.setValue("rotatorManufacturer", availAntData[i]->rotatorManufacturer);
+            config.setValue("rotatorMaxAzimuth", availAntData[i]->max_azimuth);
+            config.setValue("rotatorMinAzimuth", availAntData[i]->min_azimuth);
+            config.setValue("rotatorCWEndStop", availAntData[i]->rotatorCWEndStop);
+            config.setValue("rotatorCCWEndStop", availAntData[i]->rotatorCCWEndStop);
+            config.setValue("rotatorEndStopType", availAntData[i]->endStopType);
+            config.setValue("rotatorPollInterval", availAntData[i]->pollInterval);
+            config.setValue("southStop", availAntData[i]->southStopFlag);
+            config.setValue("overRun", availAntData[i]->overRunFlag);
+            config.setValue("antennaOffset", availAntData[i]->antennaOffset);
+            config.setValue("portType", availAntData[i]->portType);
+            config.setValue("comport", availAntData[i]->comport);
+            config.setValue("baudrate", availAntData[i]->baudrate);
+            config.setValue("databits", availAntData[i]->databits);
+            config.setValue("parity", availAntData[i]->parity);
+            config.setValue("stopbits", availAntData[i]->stopbits);
+            config.setValue("handshake", availAntData[i]->handshake);
+            config.setValue("netAddress", availAntData[i]->networkAdd);
+            config.setValue("netPort", availAntData[i]->networkPort);
+            config.endGroup();
+            antennaTab[i]->antennaValueChanged = false;
+
         }
 
-   }
-   antennaChanged = false;
+    }
+
+
+
 
    if (antennaNameChg)
    {
        emit antennaNameChange();
    }
 
-   if (currentAntennaChanged && ca != -1)
+   if (currentAntennaChanged)
    {
 
-      emit currentAntennaSettingChanged(availAntData[ca]->antennaName);
+      emit currentAntennaSettingChanged(currentAntennaName);
 
    }
 
-*/
+
 }
 
 
@@ -335,6 +345,12 @@ void SetupDialog::saveAntenna(int i)
     config.setValue("rotatorModelName", availAntData[i]->rotatorModelName);
     config.setValue("rotatorModelNumber", availAntData[i]->rotatorModelNumber);
     config.setValue("rotatorManufacturer", availAntData[i]->rotatorManufacturer);
+    config.setValue("rotatorMaxAzimuth", double(availAntData[i]->max_azimuth));
+    config.setValue("rotatorMinAzimuth", double(availAntData[i]->min_azimuth));
+    config.setValue("rotatorCWEndStop", availAntData[i]->rotatorCWEndStop);
+    config.setValue("rotatorCCWEndStop", availAntData[i]->rotatorCCWEndStop);
+    config.setValue("rotatorEndStopType", availAntData[i]->endStopType);
+    config.setValue("supportCwCcwCmd", availAntData[i]->supportCwCcwCmd);
     config.setValue("rotatorPollInterval", availAntData[i]->pollInterval);
     config.setValue("southStop", availAntData[i]->southStopFlag);
     config.setValue("overRun", availAntData[i]->overRunFlag);
@@ -385,6 +401,12 @@ void SetupDialog::getAvailAntennas()
         availAntData[i]->rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
         availAntData[i]->rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
         availAntData[i]->pollInterval = config.value("rotatorPollInterval", "1").toString();
+        availAntData[i]->max_azimuth = azimuth_t(config.value("rotatorMaxAzimuth", 360).toInt());
+        availAntData[i]->min_azimuth = azimuth_t(config.value("rotatorMinAzimuth", 0).toInt());
+        availAntData[i]->rotatorCWEndStop = azimuth_t(config.value("rotatorCWEndStop", 360).toInt());
+        availAntData[i]->rotatorCCWEndStop = azimuth_t(config.value("rotatorCWEndStop", 0).toInt());
+        availAntData[i]->endStopType = endStop(config.value("rotatorEndStopType", int(ROT_0_360)).toInt());
+        availAntData[i]->supportCwCcwCmd = config.value("supportCwCcwCmd", false).toBool();
         availAntData[i]->southStopFlag = config.value("southStop", false).toBool();
         availAntData[i]->overRunFlag = config.value("overRun", false).toBool();
         availAntData[i]->antennaOffset = config.value("antennaOffset", "").toInt();
@@ -490,7 +512,7 @@ void SetupDialog::saveCurrentAntenna()
 
 
     config.beginGroup("CurrentAntenna");
-    config.setValue("antennaName", currentAntenna->antennaName);
+    config.setValue("antennaName", currentAntennaName);
     config.endGroup();
 
 
@@ -520,18 +542,24 @@ void SetupDialog::readCurrentAntenna()
         config.endGroup();
     }
 
-    // find index to antenna data
+}
+
+
+
+int SetupDialog::findCurrentAntenna(QString currentAntName)
+{
+    int err = -1;
     for (int i = 0; i < numAvailAntennas; i++)
     {
-        if (currentAntennaName == antennaTab[i]->antennaData->antennaName)
+        if (currentAntName == availAntData[i]->antennaName)
         {
-            currentAntIndex = i;
-            // load current antenna data from available antennas
-            currentAntenna = antennaTab[i]->antennaData;
-            break;
+            // current antenna points to selected available antenna
+            //currentAntenna = availAntData[i];
+            return i;
         }
     }
 
+    return err;
 }
 
 

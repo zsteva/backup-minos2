@@ -18,7 +18,8 @@ public:
 
     srotParams *antennaData;
     bool antennaValueChanged;
-    bool antennaChanged;
+    bool antennaNameChanged;
+
 
 
 
@@ -77,6 +78,7 @@ public:
 
     void antennaOffSetVisible(bool s);
     void pollIntervalVisible(bool s);
+    bool setEndStopType(srotParams *antennaData);
 private slots:
 //    void antennaNameFinished();
     void rotatorModelSelected();

@@ -16,7 +16,8 @@ rotSetupForm::rotSetupForm(RotControl* _rotator, srotParams* _antennaData, QWidg
     QWidget(parent),
     ui(new Ui::rotSetupForm),
     antennaValueChanged(false),
-    antennaChanged(false)
+    antennaNameChanged(false)
+    //antennaChanged(false)
 {
     ui->setupUi(this);
     ui->netAddressBox->setVisible(false);
@@ -136,56 +137,13 @@ void rotSetupForm::rotatorModelSelected()
             pollIntervalVisible(true);
             antennaOffSetVisible(true);
 
-            // set southstop visible if rotator is 0 - 360
-            azimuth_t minRot = 0.0;
-            azimuth_t maxRot = 0.0;
 
-
-            if (getMaxMinRotationData(antennaData->rotatorModelNumber, &maxRot, &minRot) >= 0)
+            if (setEndStopType(antennaData))
             {
-                antennaData->max_azimuth = maxRot;
-                antennaData->min_azimuth = minRot;
-
-                // define type of rotator
-
-                if (maxRot == 180 && minRot == -180)
-                {
-                    antennaData->rotatorCWEndStop = COMPASS_HALF - 1;
-                    antennaData->rotatorCCWEndStop = COMPASS_HALF + 1;
-                    antennaData->endStopType = ROT_NEG180_180;
-                    antennaData->overRunFlag = false;
-                }
-
-                else if (maxRot == COMPASS_MAX360 && minRot == COMPASS_MIN0)
-                {
-                    antennaData->rotatorCWEndStop = maxRot;
-                    antennaData->rotatorCCWEndStop = minRot;
-                    antennaData->endStopType = ROT_0_360;
-
-                    antennaData->overRunFlag = false;
-                }
-                else if (maxRot > COMPASS_MAX360 && minRot == COMPASS_MIN0 )
-                {
-
-                    antennaData->endStopType = ROT_0_450;
-                    antennaData->rotatorCWEndStop = maxRot;
-                    antennaData->rotatorCCWEndStop = minRot;
-                    antennaData->overRunFlag = true;
-
-                 }
-                else if (maxRot > COMPASS_MAX360 && minRot < COMPASS_MIN0 )
-                {
-
-                    antennaData->rotatorCWEndStop = maxRot;
-                    antennaData->rotatorCCWEndStop = minRot;
-                    antennaData->endStopType = ROT_NEG180_540;
-                    antennaData->overRunFlag = true;
-                }
-
 
                 // set ui according to rotator
 
-                if (minRot == 0 && maxRot == 360)
+                if (antennaData->endStopType == ROT_0_360)
                 {
 
                     ui->chkOverrun->setVisible(false);
@@ -196,7 +154,7 @@ void rotSetupForm::rotatorModelSelected()
 
 
                 }
-                else if (minRot == 0 && maxRot == 450)
+                else if (antennaData->endStopType == ROT_0_450)
                 {
 
                     ui->chkOverrun->setVisible(true);
@@ -217,41 +175,34 @@ void rotSetupForm::rotatorModelSelected()
                 }
             }
 
-            rig_port_e portType = RIG_PORT_NONE;
 
-            if (rotator->getPortType(antennaData->rotatorModelNumber, &portType) != -1)
+            if (antennaData->portType == RIG_PORT_NETWORK || antennaData->portType == RIG_PORT_UDP_NETWORK)
             {
-                antennaData->portType = portType;
-                if (portType == RIG_PORT_NETWORK || portType == RIG_PORT_UDP_NETWORK)
-                {
-                   serialDataEntryVisible(false);
-                   networkDataEntryVisible(true);
-                }
-                else if (portType == RIG_PORT_SERIAL)
-                {
-                    serialDataEntryVisible(true);
-                    networkDataEntryVisible(false);
-                }
-                else // RIG_PORT_NONE
-                {
-                    serialDataEntryVisible(false);
-                    networkDataEntryVisible(false);
-                }
-
-
+               serialDataEntryVisible(false);
+               networkDataEntryVisible(true);
+            }
+            else if (antennaData->portType == RIG_PORT_SERIAL)
+            {
+                serialDataEntryVisible(true);
+                networkDataEntryVisible(false);
+            }
+            else if (antennaData->portType == RIG_PORT_NONE)
+            {
+                serialDataEntryVisible(false);
+                networkDataEntryVisible(false);
             }
 
-            // flag if rotator supports CW and CCW commands
-            antennaData->supportCwCcwCmd = getCwCcwCmdFlag(antennaData->rotatorModelNumber);
+
+
 
 
         }
         else
         {
             // no rotator model selected
-            antennaData->rotatorModelNumber = 0;
-            antennaData->rotatorModelName = "";
-            antennaData->rotatorManufacturer = "";
+            //antennaData->rotatorModelNumber = 0;
+            //antennaData->rotatorModelName = "";
+            //antennaData->rotatorManufacturer = "";
             networkDataEntryVisible(false);
             setOverRunFlagVisible(false);
             setCheckStopVisible(false);
@@ -263,10 +214,90 @@ void rotSetupForm::rotatorModelSelected()
 
 
         antennaValueChanged = true;
-        antennaChanged = true;
+
 
     }
 }
+
+
+bool rotSetupForm::setEndStopType(srotParams* antennaData)
+{
+
+    azimuth_t minRot = 0.0;
+    azimuth_t maxRot = 0.0;
+
+
+    if (getMaxMinRotationData(antennaData->rotatorModelNumber, &maxRot, &minRot) >= 0)
+    {
+        antennaData->max_azimuth = maxRot;
+        antennaData->min_azimuth = minRot;
+
+        // define type of rotator
+
+        if (maxRot == 180 && minRot == -180)
+        {
+            antennaData->rotatorCWEndStop = COMPASS_HALF - 1;
+            antennaData->rotatorCCWEndStop = COMPASS_HALF + 1;
+            antennaData->endStopType = ROT_NEG180_180;
+            antennaData->overRunFlag = false;
+        }
+
+        else if (maxRot == COMPASS_MAX360 && minRot == COMPASS_MIN0)
+        {
+            antennaData->rotatorCWEndStop = maxRot;
+            antennaData->rotatorCCWEndStop = minRot;
+            antennaData->endStopType = ROT_0_360;
+
+            antennaData->overRunFlag = false;
+        }
+        else if (maxRot > COMPASS_MAX360 && minRot == COMPASS_MIN0 )
+        {
+
+            antennaData->endStopType = ROT_0_450;
+            antennaData->rotatorCWEndStop = maxRot;
+            antennaData->rotatorCCWEndStop = minRot;
+            antennaData->overRunFlag = true;
+
+         }
+        else if (maxRot > COMPASS_MAX360 && minRot < COMPASS_MIN0 )
+        {
+
+            antennaData->rotatorCWEndStop = maxRot;
+            antennaData->rotatorCCWEndStop = minRot;
+            antennaData->endStopType = ROT_NEG180_540;
+            antennaData->overRunFlag = true;
+        }
+
+        // flag if rotator supports CW and CCW commands
+        antennaData->supportCwCcwCmd = getCwCcwCmdFlag(antennaData->rotatorModelNumber);
+
+        rig_port_e portType = RIG_PORT_NONE;
+
+        if (rotator->getPortType(antennaData->rotatorModelNumber, &portType) != -1)
+        {
+            antennaData->portType = portType;
+        }
+        else
+        {
+            return false; // error
+        }
+
+
+    }
+    else
+    {
+        // no rotator model selected
+        antennaData->rotatorModelNumber = 0;
+        antennaData->rotatorModelName = "";
+        antennaData->rotatorManufacturer = "";
+        return false;
+    }
+
+    return true;
+
+}
+
+
 
 QString rotSetupForm::getRotatorModel()
 {
@@ -289,7 +320,7 @@ void rotSetupForm::comportSelected()
     {
         antennaData->comport = ui->comPortBox->currentText();
         antennaValueChanged = true;
-        antennaChanged = true;
+
     }
 }
 
@@ -311,7 +342,7 @@ void rotSetupForm::comDataSpeedSelected()
     {
         antennaData->baudrate = ui->comSpeedBox->currentText().toInt();
         antennaValueChanged = true;
-        antennaChanged = true;
+
     }
 }
 
@@ -333,7 +364,7 @@ void rotSetupForm::comDataBitsSelected()
 {
     antennaData->databits = ui->comDataBitsBox->currentText().toInt();
     antennaValueChanged = true;
-    antennaChanged = true;
+
 }
 
 QString rotSetupForm::getDataBits()
@@ -354,7 +385,7 @@ void rotSetupForm::comStopBitsSelected()
     {
         antennaData->stopbits = ui->comStopBitsBox->currentText().toInt();
         antennaValueChanged = true;
-        antennaChanged = true;
+
     }
 }
 
@@ -376,7 +407,7 @@ void rotSetupForm::comParityBitsSelected()
     {
         antennaData->parity = rotator->getSerialParityCode(ui->comParityBox->currentIndex());
         antennaValueChanged = true;
-        antennaChanged = true;
+
     }
 }
 
@@ -398,7 +429,7 @@ void rotSetupForm::comHandshakeSelected()
     {
         antennaData->handshake = rotator->getSerialHandshakeCode(ui->comHandShakeBox->currentIndex());
         antennaValueChanged = true;
-        antennaChanged = true;
+
     }
 }
 
@@ -421,7 +452,7 @@ void rotSetupForm::comNetAddressSelected()
     {
         antennaData->networkAdd = ui->netAddressBox->text();
         antennaValueChanged = true;
-        antennaChanged = true;
+
     }
 
 }
@@ -443,7 +474,7 @@ void rotSetupForm::comNetPortNumSelected()
     {
         antennaData->networkPort = ui->netPortBox->text();
         antennaValueChanged = true;
-        antennaChanged = true;
+
     }
 
 }
@@ -466,7 +497,7 @@ void rotSetupForm::pollIntervalSelected()
     {
         antennaData->pollInterval = ui->pollInterval->currentText();
         antennaValueChanged = true;
-        antennaChanged = true;
+
     }
 }
 
@@ -508,8 +539,8 @@ void rotSetupForm::southStopSelected()
                 antennaData->endStopType = ROT_180_180;
             }
             antennaValueChanged = true;
-            antennaChanged = true;
         }
+
 
 //    }
 }
@@ -546,7 +577,7 @@ void rotSetupForm::overlapSelected()
                 antennaData->endStopType = ROT_0_360;
             }
             antennaValueChanged = true;
-            antennaChanged = true;
+
         }
 
 //    }
@@ -594,7 +625,7 @@ void rotSetupForm::antennaOffSetSelected()
             {
                 antennaData->antennaOffset = offset;
                 antennaValueChanged = true;
-                antennaChanged = true;
+
             }
 
         }

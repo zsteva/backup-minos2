@@ -62,7 +62,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     reqBearCmdflag(false),
     overLapActiveflag(false),
     overLapStatus(NO_OVERLAP),
-    southStopActiveflag(false),
+    //southStopActiveflag(false),
     endStopType(ROT_0_360),
     rotErrorFlag(false),
     supportCwCcwCmd(false),
@@ -240,19 +240,28 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     }
 
     setupAntenna->readCurrentAntenna();
+    //int currentAntIdx = setupAntenna->findCurrentAntenna(setupAntenna->currentAntennaName);
 
-    if (setupAntenna->currentAntenna->antennaName == "")
+    //if (setupAntenna->currentAntennaName == "" || currentAntIdx >= setupAntenna->numAvailAntennas)
+    if (setupAntenna->currentAntennaName == "")
     {
-        logMessage(QString("No antenna selected for this appName, %1").arg(appName));
-        QString errmsg = "<font color='Red'>Please select an antenna!</font>";
+        logMessage(QString("No antenna selected or no antenna found for this appName, %1").arg(appName));
+        QString errmsg = "<font color='Red'>Please select an antenna or no antenna found!</font>";
         showStatusMessage(errmsg);
         statusMsg = errmsg;
         sendStatusLogger();
     }
-    else
-    {
-        selectAntenna->setCurrentIndex(selectAntenna->findText(setupAntenna->currentAntenna->antennaName));
-    }
+    //else
+    //{
+    //    if (currentAntIdx < setupAntenna->numAvailAntennas)
+    //    {
+    //        // point available antenna to current antenna
+    //        setupAntenna->currentAntenna = setupAntenna->availAntData[i];
+    //    }
+
+
+
+    //}
 
     upDateAntenna();
 
@@ -329,9 +338,20 @@ void RotatorMainWindow::LogTimerTimer(  )
    }
 }
 
+
+void RotatorMainWindow::onSelectAntennaBox()
+{
+    setupAntenna->currentAntennaName = ui->selectAntennaBox->currentText();
+    setupAntenna->saveCurrentAntenna();
+    upDateAntenna();
+}
+
+
 void RotatorMainWindow::onLoggerSelectAntenna(QString s)
 {
     ui->selectAntennaBox->setCurrentText(s);
+    setupAntenna->currentAntennaName = s;
+    setupAntenna->saveCurrentAntenna();
     upDateAntenna();
 }
 
@@ -547,7 +567,7 @@ void RotatorMainWindow::sendAntennaListLogger()
 void RotatorMainWindow::initActionsConnections()
 {
 
-    connect(ui->selectAntennaBox, SIGNAL(activated(int)), this, SLOT(upDateAntenna()));
+    connect(ui->selectAntennaBox, SIGNAL(activated(int)), this, SLOT(onSelectAntennaBox()));
     connect(setupAntenna, SIGNAL(antennaNameChange()), this, SLOT(updateSelectAntennaBox()));
     connect(ui->actionTraceLog, SIGNAL(changed()), this, SLOT(saveTraceLogFlag()));
     connect(ui->turnButton, SIGNAL(clicked(bool)), this, SLOT(rotateToController()));
@@ -875,102 +895,128 @@ void RotatorMainWindow::initSelectAntennaBox()
 void RotatorMainWindow::upDateAntenna()
 {
 
+    int currentAntIdx = -1;
     if (moving  || movingCCW || movingCW)
     {
 
         stopRotation(true);
     }
 
-    int antennaIndex = ui->selectAntennaBox->currentIndex();
-    if (antennaIndex > 0)
+    if (setupAntenna->currentAntennaName != "")
     {
-        antennaIndex -= 1;
-        if (setupAntenna->availAntData[antennaIndex]->rotatorModelNumber == 0)
+        currentAntIdx = setupAntenna->findCurrentAntenna(setupAntenna->currentAntennaName);
+        if (currentAntIdx > -1 && currentAntIdx < setupAntenna->numAvailAntennas)  // find antenna and update current antenna pointer
         {
-            closeRotator();
-            QMessageBox::critical(this, tr("Antenna Error"), "Please configure a antenna name and rotator model");
-            return;
-        }
-
-        setupAntenna->currentAntenna = setupAntenna->availAntData[antennaIndex];
-
-        setupAntenna->saveCurrentAntenna();
-
-        ui->antNameDisp->setText(setupAntenna->currentAntenna->antennaName);
+            // found antenna, updatea currentAntenna pointer to select antennadata
+            setupAntenna->currentAntenna = setupAntenna->availAntData[currentAntIdx];
+            if (setupAntenna->currentAntenna->rotatorModelNumber == 0)
+            {
+                closeRotator();
+                QMessageBox::critical(this, tr("Antenna Error"), "Please configure a antenna name and rotator model");
+                return;
+            }
 
 
-       if (rotator->get_serialConnected())
-       {
-           closeRotator();
 
+            ui->antNameDisp->setText(setupAntenna->currentAntenna->antennaName);
 
-       }
+            if (rotator->get_serialConnected())
+            {
+                closeRotator();
+            }
 
-       writeWindowTitle(appName);
+            writeWindowTitle(appName);
+            openRotator();
+            offSetDisplay->setText(QString::number(setupAntenna->currentAntenna->antennaOffset));
 
-       openRotator();
-
-       offSetDisplay->setText(QString::number(setupAntenna->currentAntenna->antennaOffset));
-
-       southStopActiveflag = setupAntenna->currentAntenna->southStopFlag;
-
-       // open rotator to get this info...
-       rotatorMaxAzimuth = rotator->getMaxAzimuth();
-       rotatorMinAzimuth = rotator->getMinAzimuth();
-
-       if (rotatorMaxAzimuth == 180 && rotatorMinAzimuth == -180)
-       {
-           currentMaxAzimuth = rotatorMaxAzimuth;
-           currentMinAzimuth = rotatorMinAzimuth;
-           rotatorCWEndStop = COMPASS_HALF - 1;
-           rotatorCCWEndStop = COMPASS_HALF + 1;
-           endStopType = ROT_NEG180_180;
-           overLapActiveflag = false;
-       }
-       //else if (rotator->getMaxAzimuth() > COMPASS_MAX360 && selectRotator->currentAntenna.overRunFlag)
-       else if (rotatorMinAzimuth == COMPASS_MIN0 && rotatorMaxAzimuth == COMPASS_MAX360)
-       {
-           currentMaxAzimuth = rotatorMaxAzimuth; // + selectRotator->currentAntenna.antennaOffset;
-           currentMinAzimuth = rotatorMinAzimuth;
-
-           if (!southStopActiveflag)
-           {
-                // + selectRotator->currentAntenna.antennaOffset;
+            /*
+            if (setupAntenna->currentAntenna->endStopType == ROT_NEG180_180)
+            {
+                currentMaxAzimuth = setupAntenna->currentAntenna->max_azimuth;
+                currentMinAzimuth = setupAntenna->currentAntenna->min_azimuth;
+                rotatorCWEndStop = COMPASS_HALF - 1;
+                rotatorCCWEndStop = COMPASS_HALF + 1;
+                endStopType = ROT_NEG180_180;
+                overLapActiveflag = false;
+            }
+            else if (rotatorMinAzimuth < COMPASS_MIN0 && rotatorMaxAzimuth > COMPASS_MAX360)
+            {
+                currentMaxAzimuth = rotatorMaxAzimuth;
+                currentMinAzimuth = rotatorMinAzimuth;
                 rotatorCWEndStop = rotatorMaxAzimuth;
                 rotatorCCWEndStop = rotatorMinAzimuth;
-                endStopType = ROT_0_360;
-           }
-           else
-           {
-               rotatorCWEndStop = COMPASS_HALF - 1;
-               rotatorCCWEndStop = COMPASS_HALF + 1;
-               endStopType = ROT_180_180;
-           }
-
-            overLapActiveflag = false;
-       }
-       else if (rotatorMinAzimuth == COMPASS_MIN0 && rotatorMaxAzimuth > COMPASS_MAX360)
-       {
-           overLapActiveflag = setupAntenna->currentAntenna->overRunFlag;
-           if (!overLapActiveflag)
-           {
-               //override end stop and type Yaesu overlap to 360
-               rotatorMaxAzimuth = COMPASS_MAX360;
-               endStopType = ROT_0_360;
-
-           }
-           else
-           {
-               endStopType = ROT_0_450;
-           }
-           currentMaxAzimuth = rotatorMaxAzimuth;
-           currentMinAzimuth = rotatorMinAzimuth;
-           rotatorCWEndStop = rotatorMaxAzimuth;
-           rotatorCCWEndStop = rotatorMinAzimuth;
+                endStopType = ROT_NEG180_540;
+                overLapActiveflag = true;
+            }
 
 
 
-       }
+            // don't display overlap if rotator doesn't support or user turned off overlap
+            toggleOverLapDisplay(overLapActiveflag);
+
+
+
+            // flag if rotator supports CW and CCW commands
+     //       supportCwCcwCmd = getCwCcwCmdFlag(setupAntenna->currentAntenna->rotatorModelNumber); ***********************************************
+
+            if (rotator->get_serialConnected())
+            {
+                sendStatusToLogConnected();
+            }
+            else
+            {
+                sendStatusToLogDisConnected();
+            }
+
+             rotatorBearing = 9999;      // force display update
+            // update logger
+            if (appName.length() > 0)
+            {
+                sendStatusToLogStop();
+                msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
+                msg->publishMinAzimuth(QString::number(currentMinAzimuth));
+            }
+         }
+         else
+         {   // no antenna selected
+             trace("No antenna selected");
+             closeRotator();
+             if (appName.length() > 0)
+             {
+                 writeWindowTitle(appName);
+                 sendStatusToLogDisConnected();
+                 sendStatusToLogStop();
+                 msg->publishMaxAzimuth(QString::number(0));
+                 msg->publishMinAzimuth(QString::number(0));
+             }
+             else
+             {
+                 writeWindowTitle(appName);
+             }
+
+
+
+         }
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
        else if (rotatorMinAzimuth < COMPASS_MIN0 && rotatorMaxAzimuth > COMPASS_MAX360)
        {
            currentMaxAzimuth = rotatorMaxAzimuth;
@@ -981,33 +1027,31 @@ void RotatorMainWindow::upDateAntenna()
            overLapActiveflag = true;
        }
 
+*/
 
+           // don't display overlap if rotator doesn't support or user turned off overlap
+           toggleOverLapDisplay(setupAntenna->currentAntenna->overRunFlag);
 
-       // don't display overlap if rotator doesn't support or user turned off overlap
-       toggleOverLapDisplay(overLapActiveflag);
+            dumpRotatorToTraceLog();
 
+           if (rotator->get_serialConnected())
+           {
+               sendStatusToLogConnected();
+           }
+           else
+           {
+               sendStatusToLogDisConnected();
+           }
 
-
-       // flag if rotator supports CW and CCW commands
-//       supportCwCcwCmd = getCwCcwCmdFlag(setupAntenna->currentAntenna->rotatorModelNumber); ***********************************************
-
-       if (rotator->get_serialConnected())
-       {
-           sendStatusToLogConnected();
-       }
-       else
-       {
-           sendStatusToLogDisConnected();
-       }
-
-        rotatorBearing = 9999;      // force display update
-       // update logger
-       if (appName.length() > 0)
-       {
-           sendStatusToLogStop();
-           msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
-           msg->publishMinAzimuth(QString::number(currentMinAzimuth));
-       }
+            rotatorBearing = 9999;      // force display update
+           // update logger
+           if (appName.length() > 0)
+           {
+               sendStatusToLogStop();
+               msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
+               msg->publishMinAzimuth(QString::number(currentMinAzimuth));
+           }
+        }
     }
     else
     {   // no antenna selected
@@ -1025,16 +1069,7 @@ void RotatorMainWindow::upDateAntenna()
         {
             writeWindowTitle(appName);
         }
-
-
-
     }
-
-    dumpRotatorToTraceLog();
-
-
-
-
 }
 
 
