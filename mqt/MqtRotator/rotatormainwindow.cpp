@@ -240,6 +240,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     }
 
     setupAntenna->readCurrentAntenna();
+    ui->selectAntennaBox->setCurrentText(setupAntenna->currentAntennaName);
     //int currentAntIdx = setupAntenna->findCurrentAntenna(setupAntenna->currentAntennaName);
 
     //if (setupAntenna->currentAntennaName == "" || currentAntIdx >= setupAntenna->numAvailAntennas)
@@ -503,7 +504,7 @@ void RotatorMainWindow::openRotator()
     }
     else
     {
-//        QMessageBox::critical(this, tr("Error"), serial->errorString());
+        //QMessageBox::critical(this, tr("Error"), serial->errorString());
         pollTimer->stop();
 
         stopRotation(false);           // clear flags
@@ -520,7 +521,11 @@ void RotatorMainWindow::closeRotator()
     {
         stop_rotation();
     }
-    rotator->closeRotator();
+    if (rotator->get_serialConnected())
+    {
+        rotator->closeRotator();
+    }
+
     showStatusMessage(tr("Disconnected"));
     sendStatusToLogDisConnected();
     logMessage("Rotator Closed");
@@ -602,7 +607,7 @@ void RotatorMainWindow::initActionsConnections()
 
 
     // setup antennas
-    connect(ui->actionSetup_Antennas, SIGNAL(triggered()), setupAntenna, SLOT(exec()));
+    connect(ui->actionSetup_Antennas, SIGNAL(triggered()), this, SLOT(onLaunchSetup()));
     connect(setupAntenna, SIGNAL(currentAntennaSettingChanged(QString)), this, SLOT(currentAntennaSettingChanged(QString)));
     connect(setupAntenna, SIGNAL(antennaNameChange()), this, SLOT(updateSelectAntennaBox()));
     connect(setupAntenna, SIGNAL(antennaTabChanged()), this, SLOT(updateSelectAntennaBox()));
@@ -920,10 +925,7 @@ void RotatorMainWindow::upDateAntenna()
 
             ui->antNameDisp->setText(setupAntenna->currentAntenna->antennaName);
 
-            if (rotator->get_serialConnected())
-            {
-                closeRotator();
-            }
+            closeRotator();
 
             writeWindowTitle(appName);
             openRotator();
@@ -1770,9 +1772,9 @@ void RotatorMainWindow::hamlibError(int errorCode, QString cmd )
 
 
      pollTimer->stop();
-/*****************************************************************************
-     QMessageBox::critical(this, "Rotator hamlib Error - " + selectRotator->currentAntenna.antennaName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
-*/
+
+     QMessageBox::critical(this, "Rotator hamlib Error - " + setupAntenna->currentAntennaName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
+
      closeRotator();
      rotErrorFlag = false;
      if (appName.length() >0)
@@ -1887,25 +1889,11 @@ void RotatorMainWindow::saveTraceLogFlag()
     trace("Tracelog Changed = " + QString::number(ui->actionTraceLog->isChecked()));
 }
 
-/*
-bool RotatorMainWindow::getCwCcwCmdFlag(int rotatorNumber)
-{
-    int retCode = 0;
-    bool value = false;
-    retCode = rotator->getSupportCwCcwCmd(rotatorNumber, &value);
-    if (retCode < 0)
-    {
-        logMessage(QString("Error getting CwCcwSupport flag for rotator number %1").arg(QString::number(rotatorNumber)));
-    }
 
-    return value;
-
-}
-*/
 
 void RotatorMainWindow::about()
 {
-    QMessageBox::about(this, "Minos Rotator", "Minos Rotator\nCopyright D Balharrie G8FKH/M0DGB 2018");
+    QMessageBox::about(this, "Minos Rotator", "Minos Rotator\nCopyright D Balharrie G8FKH/M0DGB 2016 - 2018");
 }
 
 
@@ -1980,6 +1968,14 @@ void RotatorMainWindow::updateSelectAntennaBox()
     selectAntenna->clear();
     initSelectAntennaBox();
     selectAntenna->setCurrentIndex(curidx);
+}
+
+
+void RotatorMainWindow::onLaunchSetup()
+{
+    setupAntenna->setTabToCurrentAntenna();
+
+    setupAntenna->exec();
 }
 
 void RotatorMainWindow::aboutRotatorConfig()

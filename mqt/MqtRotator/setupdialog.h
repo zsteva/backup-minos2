@@ -74,6 +74,7 @@ public:
     void setAppName(QString name);
     int comportAvial(QString comport);
     int findCurrentAntenna(QString currentAntName);
+    void setTabToCurrentAntenna();
 signals:
 
     void currentAntennaSettingChanged(QString);

@@ -226,6 +226,7 @@ private slots:
     void aboutRotatorConfig();
 
     void onSelectAntennaBox();
+    void onLaunchSetup();
 private:
     void rotateTo(int bearing);
     int northCalcTarget(int targetBearing);

@@ -110,6 +110,7 @@ void SetupDialog::addTab(int tabNum, QString tabName)
     availAntData[tabNum]->antennaName = tabName;
     antennaTab.append(new rotSetupForm(rotator, availAntData[tabNum]));
     ui->antennaTab->insertTab(tabNum, antennaTab[tabNum], tabName);
+    ui->antennaTab->setTabColor(tabNum, Qt::darkBlue);
 
 
 }
@@ -189,6 +190,26 @@ void SetupDialog::loadSettingsToTab(int tabNum)
     }
 
 
+}
+
+
+void SetupDialog::setTabToCurrentAntenna()
+{
+
+    for (int i = 0; i < numAvailAntennas; i++)
+    {
+        if (currentAntennaName == availAntData[i]->antennaName)
+        {
+            ui->antennaTab->setTabColor(i, Qt::red);
+            ui->antennaTab->setCurrentIndex(i);
+        }
+        else
+        {
+            ui->antennaTab->setTabColor(i,Qt::darkBlue);
+        }
+
+
+    }
 }
 
 
@@ -275,10 +296,10 @@ void SetupDialog::saveSettings()
             config.setValue("rotatorModelName", availAntData[i]->rotatorModelName);
             config.setValue("rotatorModelNumber", availAntData[i]->rotatorModelNumber);
             config.setValue("rotatorManufacturer", availAntData[i]->rotatorManufacturer);
-            config.setValue("rotatorMaxAzimuth", availAntData[i]->max_azimuth);
-            config.setValue("rotatorMinAzimuth", availAntData[i]->min_azimuth);
-            config.setValue("rotatorCWEndStop", availAntData[i]->rotatorCWEndStop);
-            config.setValue("rotatorCCWEndStop", availAntData[i]->rotatorCCWEndStop);
+            config.setValue("rotatorMaxAzimuth", double(availAntData[i]->max_azimuth));
+            config.setValue("rotatorMinAzimuth", double(availAntData[i]->min_azimuth));
+            config.setValue("rotatorCWEndStop", double(availAntData[i]->rotatorCWEndStop));
+            config.setValue("rotatorCCWEndStop", double(availAntData[i]->rotatorCCWEndStop));
             config.setValue("rotatorEndStopType", availAntData[i]->endStopType);
             config.setValue("rotatorPollInterval", availAntData[i]->pollInterval);
             config.setValue("southStop", availAntData[i]->southStopFlag);
@@ -347,8 +368,8 @@ void SetupDialog::saveAntenna(int i)
     config.setValue("rotatorManufacturer", availAntData[i]->rotatorManufacturer);
     config.setValue("rotatorMaxAzimuth", double(availAntData[i]->max_azimuth));
     config.setValue("rotatorMinAzimuth", double(availAntData[i]->min_azimuth));
-    config.setValue("rotatorCWEndStop", availAntData[i]->rotatorCWEndStop);
-    config.setValue("rotatorCCWEndStop", availAntData[i]->rotatorCCWEndStop);
+    config.setValue("rotatorCWEndStop",double( availAntData[i]->rotatorCWEndStop));
+    config.setValue("rotatorCCWEndStop", double(availAntData[i]->rotatorCCWEndStop));
     config.setValue("rotatorEndStopType", availAntData[i]->endStopType);
     config.setValue("supportCwCcwCmd", availAntData[i]->supportCwCcwCmd);
     config.setValue("rotatorPollInterval", availAntData[i]->pollInterval);
@@ -401,10 +422,10 @@ void SetupDialog::getAvailAntennas()
         availAntData[i]->rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
         availAntData[i]->rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
         availAntData[i]->pollInterval = config.value("rotatorPollInterval", "1").toString();
-        availAntData[i]->max_azimuth = azimuth_t(config.value("rotatorMaxAzimuth", 360).toInt());
-        availAntData[i]->min_azimuth = azimuth_t(config.value("rotatorMinAzimuth", 0).toInt());
-        availAntData[i]->rotatorCWEndStop = azimuth_t(config.value("rotatorCWEndStop", 360).toInt());
-        availAntData[i]->rotatorCCWEndStop = azimuth_t(config.value("rotatorCWEndStop", 0).toInt());
+        availAntData[i]->max_azimuth = azimuth_t(config.value("rotatorMaxAzimuth", 360).toDouble());
+        availAntData[i]->min_azimuth = azimuth_t(config.value("rotatorMinAzimuth", 0).toDouble());
+        availAntData[i]->rotatorCWEndStop = azimuth_t(config.value("rotatorCWEndStop", 360).toDouble());
+        availAntData[i]->rotatorCCWEndStop = azimuth_t(config.value("rotatorCWEndStop", 0).toDouble());
         availAntData[i]->endStopType = endStop(config.value("rotatorEndStopType", int(ROT_0_360)).toInt());
         availAntData[i]->supportCwCcwCmd = config.value("supportCwCcwCmd", false).toBool();
         availAntData[i]->southStopFlag = config.value("southStop", false).toBool();
