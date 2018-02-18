@@ -509,7 +509,10 @@ void RotatorMainWindow::closeRotator()
     {
         stop_rotation();
     }
-    rotator->closeRotator();
+    if (rotator->get_serialConnected())
+    {
+        rotator->closeRotator();
+    }
     showStatusMessage(tr("Disconnected"));
     sendStatusToLogDisConnected();
     logMessage("Rotator Closed");
@@ -903,13 +906,7 @@ void RotatorMainWindow::upDateAntenna()
 
         ui->antNameDisp->setText(selectRotator->currentAntenna.antennaName);
 
-
-       if (rotator->get_serialConnected())
-       {
-           closeRotator();
-
-
-       }
+        closeRotator();
 
        writeWindowTitle(appName);
 

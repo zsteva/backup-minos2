@@ -17,6 +17,7 @@
 #include "rigmemdialog.h"
 #include "ui_rigmemdialog.h"
 #include "rigmemcommondata.h"
+#include "rigutils.h"
 #include "rigcontrolcommonconstants.h"
 #include "rotatorCommonConstants.h"
 
@@ -38,13 +39,30 @@ RigMemDialog::RigMemDialog(QWidget *parent) :
     ui->locatorLineEdit->setValidator(new UpperCaseValidator(true));
 
     ui->callSignLineEdit->setFocus();
-
+    // validate the input
+    connect(ui->freqLineEdit, SIGNAL(editingFinished()), this, SLOT(onFreqEditFinish()));
 }
 
 RigMemDialog::~RigMemDialog()
 {
     delete ui;
 }
+
+
+
+void RigMemDialog::onFreqEditFinish()
+{
+
+    if (!validateFreqTxtInput(ui->freqLineEdit->text().trimmed()))
+    {
+        // error
+        QMessageBox msgBox;
+        msgBox.setText("Frequency has invalid characters or missing periods.\r\n\r\nThe format required is (e.g.) 1296.325 or 144.290123\r\n");
+        msgBox.exec();
+
+    }
+}
+
 
 
 void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
@@ -57,15 +75,15 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
     ui->callSignLineEdit->setText(ldata->callsign);
     ui->locatorLineEdit->setText(ldata->locator);
 
-    if (ldata->freq.remove('.').count() < 4)
-    {
-        ui->freqLineEdit->setInputMask(maskData::freqMask[7]);
-    }
-    else
-    {
-        ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.remove('.').count() - 4]);
-    }
-    ui->freqLineEdit->setText(ldata->freq);
+//    if (ldata->freq.remove('.').count() < 4)
+//    {
+//        ui->freqLineEdit->setInputMask(maskData::freqMask[7]);
+//    }
+//    else
+//    {
+//        ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.remove('.').count() - 4]);
+//    }
+    ui->freqLineEdit->setText(convertFreqStrDispSingle(ldata->freq));
 
     if (ldata->bearing == COMPASS_ERROR)
     {
@@ -85,7 +103,8 @@ void RigMemDialog::on_okButton_clicked()
     if (logData->callsign.isEmpty())
         logData->callsign = "??";
 
-    logData->freq = ui->freqLineEdit->text().remove('.').remove( QRegExp("^[0]*")); //remove periods and leading zeros
+    QString f = convertSinglePeriodFreqToMultiPeriod(ui->freqLineEdit->text());
+    logData->freq = f.remove('.').remove( QRegExp("^[0]*")); //remove periods and leading zeros
     if (logData->freq == "")
     {
         logData->freq = "00000000000";

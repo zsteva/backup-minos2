@@ -580,9 +580,9 @@ void QSOLogFrame::on_GJVOKButton_clicked()
     }
 
     // validate entered/edited freq
-    int ok;
-    QString valFreq = validateFreqTxtInput(ui->frequencyEdit->text().trimmed(), &ok);
-    if (!ok)
+    //bool ok;
+    //QString valFreq = validateFreqTxtInput(ui->frequencyEdit->text().trimmed(), &ok);
+    if (!validateFreqTxtInput(ui->frequencyEdit->text().trimmed().remove( QRegExp("^[0]*"))))   // remove period and leading zero
     {
         // error
         QMessageBox msgBox;
@@ -592,7 +592,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
     }
     else
     {
-        qDebug() << valFreq;
+        QString valFreq = convertSinglePeriodFreqToMultiPeriod(ui->frequencyEdit->text().trimmed().remove( QRegExp("^[0]*")));
         screenContact.frequency = valFreq;
         ui->frequencyEdit->setText(valFreq);
     }
