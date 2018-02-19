@@ -179,6 +179,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     ui->statusbar->addPermanentWidget(rawRotatorDisplay);
 
     ui->overlaplineEdit->setFixedSize(60,20);
+    ui->antNameDisp->setText("");
 
     rot_left_button_off();
     rot_right_button_off();
@@ -1014,6 +1015,7 @@ void RotatorMainWindow::upDateAntenna()
     else
     {   // no antenna selected
         trace("No antenna selected");
+        ui->antNameDisp->setText("");
         closeRotator();
         if (appName.length() > 0)
         {
