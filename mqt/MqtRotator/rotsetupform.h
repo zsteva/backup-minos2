@@ -73,7 +73,7 @@ public:
     void networkDataEntryVisible(bool v);
 
     int comportAvial(QString comport);
-    int getMaxMinRotationData(int rotatorNumber, azimuth_t *maxRot, azimuth_t *minRot);
+    int getMaxMinRotationData(int rotatorNumber, int *maxRot, int *minRot);
 
 
     void antennaOffSetVisible(bool s);

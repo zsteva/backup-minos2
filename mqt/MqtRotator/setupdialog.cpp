@@ -36,7 +36,8 @@
 
 SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::SetupDialog)
+    ui(new Ui::SetupDialog),
+    currentAntenna(nullptr)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);

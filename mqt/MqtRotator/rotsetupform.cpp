@@ -223,8 +223,8 @@ void rotSetupForm::rotatorModelSelected()
 bool rotSetupForm::setEndStopType(srotParams* antennaData)
 {
 
-    azimuth_t minRot = 0.0;
-    azimuth_t maxRot = 0.0;
+    int minRot = 0.0;
+    int maxRot = 0.0;
 
 
     if (getMaxMinRotationData(antennaData->rotatorModelNumber, &maxRot, &minRot) >= 0)
@@ -790,7 +790,7 @@ int rotSetupForm::comportAvial(QString comport)
 
 
 
-int rotSetupForm::getMaxMinRotationData(int rotatorNumber, azimuth_t *maxRot, azimuth_t *minRot)
+int rotSetupForm::getMaxMinRotationData(int rotatorNumber, int *maxRot, int *minRot)
 {
 
     int retCode = 0;

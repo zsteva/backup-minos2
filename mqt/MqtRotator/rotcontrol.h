@@ -83,13 +83,13 @@ public:
   QString rotatorModelName;
   int rotatorModelNumber = 0;
   QString pollInterval = "1";
-  azimuth_t min_azimuth = 0.0;
-  azimuth_t max_azimuth = 0.0;
+  int min_azimuth = 0;
+  int max_azimuth = 0;
   endStop endStopType = ROT_0_360;
-  azimuth_t rotatorCWEndStop = COMPASS_MIN0;
-  azimuth_t rotatorCCWEndStop= COMPASS_MAX360;
-  elevation_t min_elevation = 0.0;
-  elevation_t max_elevation = 0.0;
+  int rotatorCWEndStop = COMPASS_MIN0;
+  int rotatorCCWEndStop= COMPASS_MAX360;
+  int min_elevation = 0.0;
+  int max_elevation = 0.0;
   bool southStopFlag = false;
   bool overRunFlag = false;
   bool supportCwCcwCmd = true;
@@ -98,8 +98,8 @@ public:
   rig_port_e portType = RIG_PORT_NONE;
   QString networkAdd;
   QString networkPort;
-  int serial_rate_max = 0;
-  int serial_rate_min = 0;
+  int maxBaudRate = 0;
+  int minBaudRate = 0;
   int baudrate = 0;
   int parity = 0;
   int stopbits = 0;
@@ -153,10 +153,10 @@ public:
     QString gethamlibVersion();
 //    QString initError;
 
-    azimuth_t getMaxAzimuth();
-    azimuth_t getMinAzimuth();
-    elevation_t getMaxElevation();
-    elevation_t getMinElevation();
+    //azimuth_t getMaxAzimuth();
+    //azimuth_t getMinAzimuth();
+    //elevation_t getMaxElevation();
+    //elevation_t getMinElevation();
 
     int calcSouthBearing(int rotatorBearing);
 
@@ -166,7 +166,7 @@ public:
     int getMaxBaudRate();
     int getMinBaudRate();
     int getSupportCwCcwCmd(int rotNumber, bool *flag);
-    int getMaxMinRotation(int rotNumber, azimuth_t *maxRot, azimuth_t *minRot);
+    int getMaxMinRotation(int rotNumber, int *maxRot, int *minRot);
     int getPortType(int rotNumber, rig_port_e *portType);
 
     int getModelInfo(QString rotModel, int *rotModelNumber, QString *rotMfgName, QString *rotModelName);
@@ -188,7 +188,7 @@ private:
     bool serialConnected;
     void errorMessage(int errorCode,QString command);
     bool rotatorlistLoaded=false;
-    srotParams curRotParams;
+    //srotParams curRotParams;   remove
     int serialP;
 
 

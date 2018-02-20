@@ -136,13 +136,13 @@ private:
     bool overLapActiveflag;
     //bool southStopActiveflag;
     bool rotErrorFlag;
-    bool supportCwCcwCmd;
+    //bool supportCwCcwCmd;
     int rotatorBearing;
     int curBearingWithOffset;
-    int rotatorMinAzimuth;
-    int rotatorMaxAzimuth;
-    int currentMinAzimuth;
-    int currentMaxAzimuth;
+    //int rotatorMinAzimuth;
+    //int rotatorMaxAzimuth;
+    //int currentMinAzimuth;
+    //int currentMaxAzimuth;
     int rotatorCWEndStop;
     int rotatorCCWEndStop;
     QString backBearingmsg;

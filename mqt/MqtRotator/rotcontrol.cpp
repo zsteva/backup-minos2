@@ -78,15 +78,15 @@ int RotControl::getSupportCwCcwCmd(int rotNumber, bool *flag)
     return retCode;
 }
 
-int RotControl::getMaxMinRotation(int rotNumber, azimuth_t *maxRot, azimuth_t *minRot)
+int RotControl::getMaxMinRotation(int rotNumber, int *maxRot, int *minRot)
 {
     int retCode = 0;
     ROT *my_rot;
     my_rot = rot_init(rotNumber);
     if (!my_rot == 0)
     {
-        *maxRot = my_rot->caps->max_az;
-        *minRot = my_rot->caps->min_az;
+        *maxRot = int(my_rot->caps->max_az);
+        *minRot = int(my_rot->caps->min_az);
     }
     else
     {
@@ -118,7 +118,7 @@ int RotControl::init(srotParams* selectedAntenna)
         return retcode = -14;
     }
 
-
+    /*   remove
     // get rotator parameters
     curRotParams.antennaName = selectedAntenna->antennaName;
     curRotParams.baudrate =  selectedAntenna->baudrate;
@@ -130,7 +130,7 @@ int RotControl::init(srotParams* selectedAntenna)
     curRotParams.handshake = getSerialHandshakeCode(selectedAntenna->handshake);
     curRotParams.serial_rate_max = my_rot->caps->serial_rate_max;
     curRotParams.serial_rate_min = my_rot->caps->serial_rate_min;
-
+    */
 
     // load rotator params to open
     if (rig_port_e(selectedAntenna->portType) == RIG_PORT_SERIAL)
@@ -157,11 +157,14 @@ int RotControl::init(srotParams* selectedAntenna)
     {
 
         set_serialConnected(true);
+
+        /* remove
         // update rotator specific parameters
         curRotParams.max_azimuth = my_rot->caps->max_az;
         curRotParams.min_azimuth = my_rot->caps->min_az;
         curRotParams.serial_rate_max = my_rot->caps->serial_rate_max;
         curRotParams.serial_rate_min = my_rot->caps->serial_rate_min;
+        */
     }
     else
     {
@@ -325,7 +328,7 @@ int RotControl::getRotatorModelIndex()
     return -1;
 }
 
-*/
+
 
 
 
@@ -364,6 +367,7 @@ int RotControl::getMinBaudRate()
 {
     return curRotParams.serial_rate_min;
 }
+*/
 
 // stop azimuth rotation
 
