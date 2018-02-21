@@ -99,6 +99,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
     status = new QLabel;
     ui->statusBar->addWidget(status);
+    ui->radioNameDisp->setText("");
 
     radio->set_serialConnected(false);
     initActionsConnections();
@@ -403,6 +404,7 @@ void RigControlMainWindow::upDateRadio()
     else
     {   // no radio selected
         trace("No radio selected");
+        ui->radioNameDisp->setText("");
         closeRadio();
         if (appName.length() > 0)
         {
@@ -527,11 +529,11 @@ void RigControlMainWindow::closeRadio()
     if (radio->get_serialConnected())
     {
        radio->closeRig();
-
-       showStatusMessage("Disconnected");
-       sendStatusToLogDisConnected();
-       logMessage(QString("Radio Closed"));
     }
+   showStatusMessage("Disconnected");
+   sendStatusToLogDisConnected();
+   logMessage(QString("Radio Closed"));
+
 
 
 }

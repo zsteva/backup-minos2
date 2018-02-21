@@ -13,11 +13,14 @@
 #include <QString>
 
 QString convertFreqStrDisp(QString frequency);
+QString convertFreqStrDispSingle(QString sfreq);
 
 QString convertFreqToStr(double frequency);
 
 double convertStrToFreq(QString frequency);
 
-QString validateFreqTxtInput(QString f, int* ok);
+//QString validateFreqTxtInput(QString f, bool* ok);
+bool validateFreqTxtInput(QString f);
+QString convertSinglePeriodFreqToMultiPeriod(QString f);
 
 #endif // RIGUTILS_H
