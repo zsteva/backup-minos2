@@ -13,6 +13,7 @@
 #include "htmldelegate.h"
 #include "enqdlg.h"
 #include "MatchTreesFrame.h"
+#include "rigmemdialog.h"
 
 TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     QFrame(parent),
@@ -74,6 +75,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(MakeEntry(BaseContestLog*)), this, SLOT(on_MakeEntry(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)), this, SLOT(on_AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterLogContact(BaseContestLog *)), this, SLOT(on_AfterLogContact(BaseContestLog *)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(setMemory(BaseContestLog *, QString, QString)), this, SLOT(on_SetMemory(BaseContestLog *, QString, QString)));
 
     doNextContactDetailsOnLeftClick( true);  // but the sizes are zero...
 
@@ -706,6 +708,46 @@ void TSingleLogFrame::on_GoToSerial(BaseContestLog *ct)
     if (ct == contest)
     {
        goSerial();
+    }
+}
+//---------------------------------------------------------------------------
+void TSingleLogFrame::on_SetMemory(BaseContestLog *c, QString call, QString loc)
+{
+    if (contest == c)
+    {
+        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+        int n = -1;
+        int mcount = ct->rigMemories.size();
+        for (int i = 0; i <= mcount; i ++)
+        {
+            memoryData::memData m = ct->getRigMemoryData(i);
+
+            if ( m.callsign == memDefData::DEFAULT_CALLSIGN)
+            {
+                n = i;
+                break;
+            }
+        }
+
+        if (n == -1)
+        {
+            mShowMessage("Panic", this);
+            return;
+        }
+        memoryData::memData logData;
+        getDetails(logData);
+        logData.callsign = call;
+        logData.locator = loc;
+
+        RigMemDialog memDialog(this);
+        memDialog.setLogData(&logData, n);
+        memDialog.setWindowTitle(QString("M%1 - Write").arg(QString::number(n + 1)));
+       if ( memDialog.exec() == QDialog::Accepted)
+       {
+           ct->saveRigMemory(n, logData);
+
+           MinosLoggerEvents::sendUpdateMemories(ct);
+       }
     }
 }
 

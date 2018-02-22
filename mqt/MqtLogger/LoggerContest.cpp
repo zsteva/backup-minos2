@@ -641,6 +641,28 @@ void LoggerContestLog::saveInitialRigMemory(int memno, const memoryData::memData
     m.memno = memno;
     rigMemories[memno].setInitialValue(m);
 }
+memoryData::memData LoggerContestLog::getRigMemoryData(int memoryNumber)
+{
+    memoryData::memData m;
+    if (rigMemories.size() > memoryNumber)
+    {
+        m = rigMemories[memoryNumber].getValue();
+        Locator loc;
+        loc.loc.setValue(m.locator);
+        loc.validate();
+        double lon = 0.0;
+        double lat = 0.0;
+
+        if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
+        {
+            double dist;
+            int brg;
+            disbear( lon, lat, dist, brg );
+            m.bearing = brg;
+        }
+    }
+    return m;
+}
 
 //==========================================================================
 bool LoggerContestLog::commonSave( bool newfile )

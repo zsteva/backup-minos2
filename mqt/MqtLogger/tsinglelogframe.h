@@ -128,6 +128,7 @@ private slots:
     void on_NextContactDetailsOnLeft();
     void on_NextUnfilled(BaseContestLog*);
     void on_GoToSerial(BaseContestLog*);
+    void on_SetMemory(BaseContestLog *, QString, QString);
 
     void onLogColumnsChanged();
     void onSplittersChanged();
