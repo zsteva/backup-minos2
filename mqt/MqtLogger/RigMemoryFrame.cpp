@@ -473,9 +473,6 @@ void RigMemoryFrame::clearWorkedActionSelected()
     model.endResetModel();
 }
 
-void RigMemoryFrame::on_rigMemTable_clicked(const QModelIndex &index)
-{
-}
 void RigMemoryFrame::vsectionClicked(int /*logicalIndex*/)
 {
     readActionSelected();

@@ -77,8 +77,6 @@ private slots:
 
     void on_newMemoryButton_clicked();
 
-    void on_rigMemTable_clicked(const QModelIndex &index);
-
     void vsectionClicked(int logicalIndex);
 
     void on_sectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
