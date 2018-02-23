@@ -3,7 +3,7 @@ C:
 setlocal
 
 set QtTools=C:\Qt\Tools\mingw530_32\bin
-set QtKit="C:\Qt\5.9.2\mingw53_32\bin"
+set QtKit="C:\Qt\5.10.1\mingw53_32\bin"
 
 set PATH=%QtKit%;%QtTools%;%PATH%
 
