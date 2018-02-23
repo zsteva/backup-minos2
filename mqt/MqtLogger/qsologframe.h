@@ -231,6 +231,7 @@ private slots:
 
     void on_FontChanged();
 
+    void on_FreqEditFinished();
 public slots:
     void setXferEnabled(bool);
 
