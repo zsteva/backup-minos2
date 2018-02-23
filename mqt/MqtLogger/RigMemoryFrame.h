@@ -1,50 +1,49 @@
 #ifndef RIGMEMORYFRAME_H
 #define RIGMEMORYFRAME_H
 
-#include <QFrame>
-#include <QShortcut>
-#include <QToolButton>
-#include <QMenu>
-
-class BaseContestLog;
-class LoggerContestLog;
-
+#include "base_pch.h"
 #include "rigmemcommondata.h"
 
 namespace Ui {
 class RigMemoryFrame;
 }
 class RigMemoryFrame;
-class RigMemoryButton : public QObject
+
+class RigMemoryGridModel: public QAbstractItemModel
 {
-    Q_OBJECT
+    public:
+        RigMemoryGridModel();
+        ~RigMemoryGridModel();
 
+        BaseContestLog *ct = 0;
+        RigMemoryFrame *frame = 0;
+
+        void beginResetModel(){QAbstractItemModel::beginResetModel();}
+        void endResetModel(){QAbstractItemModel::endResetModel();}
+        void reset();
+        void initialise( );
+        QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;
+        QVariant headerData( int section, Qt::Orientation orientation,
+                             int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
+        QModelIndex index( int row, int column,
+                           const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+        QModelIndex parent( const QModelIndex &index ) const Q_DECL_OVERRIDE;
+
+        int rowCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+        int columnCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+};
+class RigMemorySortFilterProxyModel : public QSortFilterProxyModel
+{
 public:
-    explicit RigMemoryButton(QWidget *parent, RigMemoryFrame *rcf, int no);
-    ~RigMemoryButton();
+    BaseContestLog *ct = 0;
 
-    RigMemoryFrame *rigMemoryFrame;
-    QToolButton* memButton;
-    QMenu* memoryMenu;
-    QShortcut* shortKey;
-    QShortcut* shiftShortKey;
-    QAction* readAction;
-    QAction* writeAction;
-    QAction* editAction;
-    QAction* clearAction;
-
-    int memNo;
-
-private slots:
-//    void memoryUpdate();
-
-    void memoryShortCutSelected();
-    void readActionSelected();
-    void editActionSelected();
-    void writeActionSelected();
-    void clearActionSelected();
-signals:
-    void clearActionSelected(int);
+    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+    RigMemorySortFilterProxyModel()
+    {
+    }
+protected:
+    virtual bool lessThan(const QModelIndex &left,
+                          const QModelIndex &right) const Q_DECL_OVERRIDE;
 
 };
 
@@ -53,21 +52,19 @@ class RigMemoryFrame : public QFrame
     Q_OBJECT
 
     void sendUpdateMemories();
+    RigMemoryGridModel model;
+    RigMemorySortFilterProxyModel proxyModel;
 
 public:
     explicit RigMemoryFrame(QWidget *parent = 0);
     ~RigMemoryFrame();
 
-//    void reInitialiseMemories();
+    QMap<QString, QString> headerVal;
+
     void setContest( BaseContestLog *ct );
 
     void doMemoryUpdates();
-    //void memoryUpdate(int);
 
-    void readActionSelected(int);
-    void editActionSelected(int buttonNumber);
-    void writeActionSelected(int);
-    void setMemorySelected(int buttonNumber, QString call, QString loc);
 
 private slots:
     void checkTimerTimer();
@@ -80,24 +77,38 @@ private slots:
 
     void on_newMemoryButton_clicked();
 
-    void on_flushMemoriesButton_clicked();
+    void vsectionClicked(int logicalIndex);
 
-    void on_SetMemory(BaseContestLog *, QString, QString);
+    void on_sectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
+    void on_sectionResized(int logicalIndex, int oldSize, int newSize);
+    void on_sortIndicatorChanged(int logicalIndex, Qt::SortOrder order);
 
-public slots:
-    void clearActionSelected(int);
-
+    void readActionSelected();
+    void editActionSelected();
+    void writeActionSelected();
+    void clearActionSelected();
+    void clearAllActionSelected();
+    void clearWorkedActionSelected();
 
 private:
     Ui::RigMemoryFrame *ui;
     LoggerContestLog *ct;
-    // memory buttons
+    bool suppressSendUpdate = false;
 
-    memoryData::memData getRigMemoryData(int memoryNumber);
+    QMenu* memoryMenu;
+
+    QAction* readAction;
+    QAction* writeAction;
+    QAction* editAction;
+    QAction* clearAction;
+    QAction* clearAllAction;
+    QAction* clearWorkedAction;
+
+    void reloadColumns();
+    void saveAllColumnWidthsAndPositions();
     void setRigMemoryData(int memoryNumber, memoryData::memData m);
-
-    QMap<int, QSharedPointer<RigMemoryButton> > memButtonMap;
-
+    void writeMemory(int n);
+    int getSelectedLine();
     void traceMsg(QString msg);
 
 };

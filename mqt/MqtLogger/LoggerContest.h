@@ -142,6 +142,7 @@ class LoggerContestLog : public BaseContestLog
       void saveRigMemory(int memno, const memoryData::memData &mem);
       void saveInitialRunMemory(int memno, const memoryData::memData &mem);
       void saveInitialRigMemory(int memno, const memoryData::memData &mem);
+      memoryData::memData getRigMemoryData(int memoryNumber);
 
 
       // dirty info is only relevant when it is being editted
