@@ -574,7 +574,6 @@ void RigControlFrame::setRadioState(QString s)
         }
         else if (s == RIG_STATUS_DISCONNECTED)
         {
-           setFreq("00000000000");
            radioConnected = false;
            radioError = false;
         }

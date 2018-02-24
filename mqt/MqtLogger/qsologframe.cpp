@@ -909,9 +909,11 @@ void QSOLogFrame::getScreenEntry()
    if (edit)
    {
        screenContact.rigName = ui->radioEdit->text().trimmed();
+
        QString f = ui->frequencyEdit->text().trimmed().remove( QRegExp("^[0]*")); //remove leading zeros
-       f = convertFreqStrDisp(convertSinglePeriodFreqToFullDigit(f.remove('.'));
+       f = convertSinglePeriodFreqToMultiPeriod(convertSinglePeriodFreqToFullDigit(f));
        screenContact.frequency = f;
+
        //screenContact.frequency = ui->frequencyEdit->text().trimmed();
        screenContact.rotatorHeading = ui->rotatorHeadingEdit->text().trimmed();
    }
@@ -972,7 +974,7 @@ void QSOLogFrame::showScreenEntry( void )
 
               freq = QString::number(dfreq, 'f', 6); //MHz to 6 decimal places
           }
-          ui->frequencyEdit->setText(freq);
+          ui->frequencyEdit->setText(freq.remove( QRegExp("0+$"))); //remove trailing zeros
           ui->rotatorHeadingEdit->setText(temp.rotatorHeading);
       }
       setMode(temp.mode.trimmed());
