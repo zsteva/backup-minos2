@@ -11,12 +11,24 @@
 #include <QRegExp>
 #include <QStringList>
 
-// convert freq with delimiter for display
+
+// add delimiter to string for display
+// input string should just be digits
 
 
 
 QString convertFreqStrDisp(QString sfreq)
 {
+
+    if (sfreq == "")
+    {
+        return sfreq;
+    }
+
+    if (sfreq.contains('.'))
+    {
+        sfreq.remove('.');
+    }
 
     int len = sfreq.length();
 
@@ -250,6 +262,12 @@ QString convertSinglePeriodFreqToMultiPeriod(QString f)
 {
 
     QString retFreq = "";
+
+    if (f == "")
+    {
+        return retFreq;
+    }
+
     QStringList sl = f.split('.');
     if (sl[0].count() > 3)
     {

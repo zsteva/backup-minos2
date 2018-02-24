@@ -93,7 +93,7 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
 //    {
 //        ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.remove('.').count() - 4]);
 //    }
-    ui->freqLineEdit->setText(convertFreqStrDispSingle(ldata->freq));
+    ui->freqLineEdit->setText(convertFreqStrDispSingle(ldata->freq).remove( QRegExp("0+$"))); //remove trailing zeros);
 
     if (ldata->bearing == COMPASS_ERROR)
     {
