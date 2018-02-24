@@ -52,12 +52,22 @@ RigMemDialog::~RigMemDialog()
 
 void RigMemDialog::onFreqEditFinish()
 {
+    QString f = ui->freqLineEdit->text().trimmed().remove( QRegExp("^[0]*"));
+    if (f.contains('.'))
+    {
+        QStringList fl = f.split('.');
+        if (fl[1].count() > 6)
+        {
+            fl[1].truncate(6);
+            f = fl[0] + "." + fl[1];
+        }
 
-    if (!validateFreqTxtInput(ui->freqLineEdit->text().trimmed()))
+    }
+    if (!validateFreqTxtInput(f))
     {
         // error
         QMessageBox msgBox;
-        msgBox.setText("Frequency has invalid characters or missing periods.\r\n\r\nThe format required is (e.g.) 1296.325 or 144.290123\r\n");
+        msgBox.setText(FREQ_EDIT_ERR_MSG);
         msgBox.exec();
 
     }
@@ -103,12 +113,27 @@ void RigMemDialog::on_okButton_clicked()
     if (logData->callsign.isEmpty())
         logData->callsign = "??";
 
-    QString f = convertSinglePeriodFreqToMultiPeriod(ui->freqLineEdit->text());
-    logData->freq = f.remove('.').remove( QRegExp("^[0]*")); //remove periods and leading zeros
-    if (logData->freq == "")
+    //QString f = convertSinglePeriodFreqToMultiPeriod(ui->freqLineEdit->text());
+    QString f = ui->freqLineEdit->text().remove( QRegExp("^[0]*")); //remove periods and leading zeros
+    if (f == "")
     {
         logData->freq = "00000000000";
     }
+    else
+    {
+        QStringList fl = f.split('.');
+        if (fl.count() == 0)
+        {
+            trace(QString("Memory Freq Edit - Missing Period - %1").arg(f));
+            return;
+        }
+
+        fl[1] = fl[1] + "0000000";
+        fl[1].truncate(6);
+
+        logData->freq = fl[0] + fl[1];
+    }
+
     logData->mode = ui->modecb->currentText();
     logData->locator = ui->locatorLineEdit->text();
     logData->bearing = ui->bearingLineEdit->text().toInt();

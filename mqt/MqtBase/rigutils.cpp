@@ -14,6 +14,7 @@
 // convert freq with delimiter for display
 
 
+
 QString convertFreqStrDisp(QString sfreq)
 {
 
@@ -209,8 +210,8 @@ QString convertFreqStrDispSingle(QString sfreq)
 bool validateFreqTxtInput(QString f)
 {
 
-    QRegExp f1rx = QRegExp("\\d{1,5}\\.\\d{3,6}");  // match ghz_mhz.khz_hz
-
+    //QRegExp f1rx = QRegExp("\\d{1,5}\\.\\d{3,6}");  // match ghz_mhz.khz_hz
+    QRegExp f1rx = QRegExp("\\d{1,5}\\.\\d{1,6}");  // match ghz_mhz.khz_hz
     if (f1rx.exactMatch(f))
     {
         return true;
@@ -224,6 +225,25 @@ bool validateFreqTxtInput(QString f)
 
 
 }
+
+
+// This will convert "144.3" etc to "144.300000"
+
+QString convertSinglePeriodFreqToFullDigit(QString f)
+{
+    if (f.contains('.'))
+    {
+        QStringList fl = f.split('.');
+        fl[1] = fl[1] + "000000";
+        fl[1].truncate(6);
+        return fl[0] + "." + fl[1];
+    }
+
+    return f;
+
+}
+
+
 
 
 QString convertSinglePeriodFreqToMultiPeriod(QString f)

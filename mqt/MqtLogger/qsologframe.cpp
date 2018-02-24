@@ -88,7 +88,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     connect(CommentsFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
     connect(MainOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
     connect(SecondOpFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
-
+    connect(ui->frequencyEdit, SIGNAL(editingFinished()), this, SLOT(on_freqEditFinished()));
 
     ui->timeEdit->installEventFilter(this);
     ui->dateEdit->installEventFilter(this);
@@ -486,6 +486,30 @@ void QSOLogFrame::SecondOpComboBox_Exit()
     }
 }
 
+
+void QSOLogFrame::on_FreqEditFinished()
+{
+    QString f = ui->frequencyEdit->text().trimmed().remove( QRegExp("^[0]*"));
+    if (f != "")
+    {
+        if (f.count('.') == 1)
+        {
+            QStringList fl = f.split('.');
+            fl[1] = fl[1] + "000000";
+            fl[1].truncate(6);
+            f = fl[0] + "." + fl[1];
+        }
+        if (!validateFreqTxtInput(f))
+        {
+            // error
+            QMessageBox msgBox;
+            msgBox.setText(FREQ_EDIT_ERR_MSG);
+            msgBox.exec();
+
+        }
+    }
+}
+
 void QSOLogFrame::on_GJVOKButton_clicked()
 {
     if ( contest->isReadOnly() )
@@ -579,23 +603,6 @@ void QSOLogFrame::on_GJVOKButton_clicked()
        screenContact.contactFlags &= ~( TO_BE_ENTERED | FORCE_LOG );
     }
 
-    // validate entered/edited freq
-    //bool ok;
-    //QString valFreq = validateFreqTxtInput(ui->frequencyEdit->text().trimmed(), &ok);
-    if (!validateFreqTxtInput(ui->frequencyEdit->text().trimmed().remove( QRegExp("^[0]*"))))   // remove period and leading zero
-    {
-        // error
-        QMessageBox msgBox;
-        msgBox.setText("Frequency has invalid characters or missing periods.\r\n\r\nThe format required is (e.g.) 1296.325 or 144.290123\r\n");
-        msgBox.exec();
-        return;
-    }
-    else
-    {
-        QString valFreq = convertSinglePeriodFreqToMultiPeriod(ui->frequencyEdit->text().trimmed().remove( QRegExp("^[0]*")));
-        screenContact.frequency = valFreq;
-        ui->frequencyEdit->setText(valFreq);
-    }
 
 
     // all is OK (or we will have executed a return statement)
@@ -902,7 +909,10 @@ void QSOLogFrame::getScreenEntry()
    if (edit)
    {
        screenContact.rigName = ui->radioEdit->text().trimmed();
-       screenContact.frequency = ui->frequencyEdit->text().trimmed();
+       QString f = ui->frequencyEdit->text().trimmed().remove( QRegExp("^[0]*")); //remove leading zeros
+       f = convertFreqStrDisp(convertSinglePeriodFreqToFullDigit(f.remove('.'));
+       screenContact.frequency = f;
+       //screenContact.frequency = ui->frequencyEdit->text().trimmed();
        screenContact.rotatorHeading = ui->rotatorHeadingEdit->text().trimmed();
    }
    screenContact.mode = ui->ModeComboBoxGJV->currentText().trimmed();

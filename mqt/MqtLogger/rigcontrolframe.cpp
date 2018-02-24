@@ -170,6 +170,10 @@ void RigControlFrame::setFreq(QString f)
 {
     traceMsg(QString("Set Freq = %1").arg(f));
     QString freq = f;
+    if (lastFreq != freq)
+    {
+        lastFreq = freq;
+    }
 
     if (freq.count() >= 4)
     {
@@ -570,6 +574,7 @@ void RigControlFrame::setRadioState(QString s)
         }
         else if (s == RIG_STATUS_DISCONNECTED)
         {
+           setFreq("00000000000");
            radioConnected = false;
            radioError = false;
         }
