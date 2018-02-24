@@ -910,7 +910,7 @@ void QSOLogFrame::getScreenEntry()
    {
        screenContact.rigName = ui->radioEdit->text().trimmed();
        QString f = ui->frequencyEdit->text().trimmed().remove( QRegExp("^[0]*")); //remove leading zeros
-       f = convertFreqStrDisp(convertSinglePeriodFreqToFullDigit(f.remove('.'));
+       f = convertFreqStrDisp(convertSinglePeriodFreqToFullDigit(f.remove('.')));
        screenContact.frequency = f;
        //screenContact.frequency = ui->frequencyEdit->text().trimmed();
        screenContact.rotatorHeading = ui->rotatorHeadingEdit->text().trimmed();
