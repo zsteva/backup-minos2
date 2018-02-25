@@ -5,6 +5,13 @@ setlocal
 set QtTools=C:\Qt\Tools\mingw530_32\bin
 set QtKit="C:\Qt\5.10.1\mingw53_32\bin"
 
+if exist %QtKit% goto kitInstalled
+
+  echo %QtKit% is not installed
+  goto endit
+
+ :kitInstalled
+
 set PATH=%QtKit%;%QtTools%;%PATH%
 
 REM go up from the batch file directory to the "root"
@@ -79,3 +86,5 @@ C:\"Program Files (x86)\Inno Setup 5\ISCC.exe" Installer\Minos2Install.iss
 
 
 cd %MROOT%\mqt\Installer
+
+:endit
