@@ -92,8 +92,11 @@ private slots:
 
 private:
     Ui::RigMemoryFrame *ui;
-    LoggerContestLog *ct;
+    LoggerContestLog *ct = 0;
     bool suppressSendUpdate = false;
+    double lastRigFreq = 0.0;
+    int lastBearing = 0;
+    bool doTimer = false;
 
     QMenu* memoryMenu;
 

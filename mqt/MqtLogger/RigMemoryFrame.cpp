@@ -189,6 +189,9 @@ void RigMemoryFrame::doMemoryUpdates()
 
 void RigMemoryFrame::checkTimerTimer()
 {
+    if (!isVisible())
+        return;
+
     TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
     if (!ct || !tslf)
         return;
@@ -201,6 +204,13 @@ void RigMemoryFrame::checkTimerTimer()
     double rigFreq = convertStrToFreq(logData.freq);
     int bearing = logData.bearing;
 
+    if (!doTimer && (rigFreq == lastRigFreq && bearing == lastBearing))
+        return;
+
+    lastRigFreq = rigFreq;
+    lastBearing = bearing;
+
+    doTimer = false;
 
     int mcount = ct->rigMemories.size();
 
@@ -276,6 +286,8 @@ void RigMemoryFrame::sendUpdateMemories()
     // go through the signal/slot mechanism so all auxiliary displays are updated
     if (!suppressSendUpdate)
         MinosLoggerEvents::sendUpdateMemories(ct);
+
+    doTimer = true;
 }
 //======================================================================================
 
@@ -562,7 +574,7 @@ QVariant RigMemoryGridModel::headerData( int section, Qt::Orientation orientatio
             {
                 // This appears to be the line that defines the width
                 // of the vertical header
-                disp = "_ " + m.callsign + " _";
+                disp = "  " + m.callsign + "  ";
             }
         }
         return disp;
