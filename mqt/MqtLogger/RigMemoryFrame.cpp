@@ -597,10 +597,14 @@ int RigMemoryGridModel::columnCount( const QModelIndex &/*parent*/ ) const
 bool RigMemorySortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &/*sourceParent*/) const
 {
     LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
-    memoryData::memData m = c->getRigMemoryData(sourceRow);
-    if (m.callsign == memDefData::DEFAULT_CALLSIGN)
-        return false;
-    return true;
+    bool ret = false;
+    if (c)
+    {
+        memoryData::memData m = c->getRigMemoryData(sourceRow);
+        if (m.callsign != memDefData::DEFAULT_CALLSIGN)
+            ret = true;
+    }
+    return ret;
 }
 bool RigMemorySortFilterProxyModel::lessThan(const QModelIndex &left,
                       const QModelIndex &right) const
