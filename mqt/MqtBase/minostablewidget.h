@@ -42,10 +42,12 @@
 #define MINOSTABLEWIDGET_H
 
 #include <QTableView>
+#include <QHeaderView>
+#include <QPainter>
 
 class QToolButton;
+class QTimer;
 
-//! [Widget definition]
 class MinosTableWidget : public QTableView {
      Q_OBJECT
 
@@ -56,18 +58,14 @@ public:
       void scrollTo(const QModelIndex &index, ScrollHint hint);
       const QModelIndex getFirstSelected() const;
 
-protected:
-      void updateStatusGeometry();
-
 private:
       QToolButton *statusSortButton;
-      bool recursionBlock;
+      QTimer *resizeTimer;
       void init();
 
 private slots:
-      void sectionCountChanged(int, int);
       void statusClicked();
+      void onResizeTimer();
 
 };
-//! [Widget definition]
 #endif // MINOSTABLEWIDGET_H
