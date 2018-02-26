@@ -81,6 +81,7 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
     logData = ldata;
     ui->modecb->setCurrentText(ldata->mode);
 
+    ui->workedCB->setChecked(ldata->worked);
 
     ui->callSignLineEdit->setText(ldata->callsign);
     ui->locatorLineEdit->setText(ldata->locator);
@@ -112,6 +113,8 @@ void RigMemDialog::on_okButton_clicked()
     logData->callsign = ui->callSignLineEdit->text().trimmed();
     if (logData->callsign.isEmpty())
         logData->callsign = "??";
+
+    logData->worked = ui->workedCB->isChecked();
 
     //QString f = convertSinglePeriodFreqToMultiPeriod(ui->freqLineEdit->text());
     QString f = ui->freqLineEdit->text().remove( QRegExp("^[0]*")); //remove periods and leading zeros
