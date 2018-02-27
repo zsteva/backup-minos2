@@ -154,6 +154,7 @@ void RigMemoryFrame::setContest( BaseContestLog *pct )
         ui->rigMemTable->setModel(&proxyModel);
         connect( ui->rigMemTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
                  this, SLOT( on_sectionResized(int, int , int)), Qt::UniqueConnection);
+
     }
 
 }
@@ -198,10 +199,10 @@ void RigMemoryFrame::checkTimerTimer()
     if (!ct || !tslf)
         return;
 
-    //headerVal.clear();
-
     memoryData::memData logData;
     tslf->getCurrentDetails(logData);
+
+    QHeaderView *hh = ui->rigMemTable->horizontalHeader();
 
     double rigFreq = convertStrToFreq(logData.freq);
     int bearing = logData.bearing;
@@ -532,10 +533,6 @@ QVariant RigMemoryGridModel::data( const QModelIndex &index, int role ) const
     int col = index.column();
     if (ct)
     {
-        if (role == Qt::BackgroundRole)
-        {
-            return QVariant();
-        }
         if ( role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::UserRole )
             return QVariant();
 
@@ -575,43 +572,51 @@ QVariant RigMemoryGridModel::data( const QModelIndex &index, int role ) const
 QVariant RigMemoryGridModel::headerData( int section, Qt::Orientation orientation,
                      int role ) const
 {
-    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+    if (orientation == Qt::Horizontal)
     {
-        QString cell;
-
-        cell = RigMemoryColumns[section].title;
-
-        return cell;
-    }
-    else if (orientation == Qt::Vertical && role == Qt::DisplayRole)
-    {
-        QString disp;
-        LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
-        if (c)
+        if (role == Qt::DisplayRole)
         {
-            memoryData::memData m = c->getRigMemoryData(section);
-            disp = frame->headerVal[m.callsign].text;
-            if (disp.isEmpty())
+            QString cell;
+
+            cell = RigMemoryColumns[section].title;
+
+            return cell;
+        }
+        else if (role == Qt::TextAlignmentRole)
+            return Qt::AlignLeft;
+    }
+    else if (orientation == Qt::Vertical)
+    {
+        if (role == Qt::DisplayRole)
+        {
+            QString disp;
+            LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
+            if (c)
             {
-                // This appears to be the line that defines the width
-                // of the vertical header
-                disp = "  " + m.callsign + "  ";
+                memoryData::memData m = c->getRigMemoryData(section);
+                disp = frame->headerVal[m.callsign].text;
+                if (disp.isEmpty())
+                {
+                    // This appears to be the line that defines the width
+                    // of the vertical header
+                    disp = "  " + m.callsign + "  ";
+                }
+            }
+            return disp;
+        }
+        else if (role == Qt::ForegroundRole)
+        {
+            LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
+            if (c)
+            {
+                memoryData::memData m = c->getRigMemoryData(section);
+                QColor colour = frame->headerVal[m.callsign].colour;
+                return colour;
             }
         }
-        return disp;
+        else if (role == Qt::TextAlignmentRole)
+            return Qt::AlignLeft;
     }
-    else if (orientation == Qt::Vertical && role == Qt::ForegroundRole)
-    {
-        LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
-        if (c)
-        {
-            memoryData::memData m = c->getRigMemoryData(section);
-            QColor colour = frame->headerVal[m.callsign].colour;
-            return colour;
-        }
-    }
-    if (role == Qt::TextAlignmentRole)
-        return Qt::AlignLeft;
     return QVariant();
 }
 
@@ -630,7 +635,10 @@ QModelIndex RigMemoryGridModel::parent( const QModelIndex &/*index*/ ) const
 
 int RigMemoryGridModel::rowCount( const QModelIndex &/*parent*/ ) const
 {
-    return ermMaxCol;
+    LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
+    if (c)
+        return c->rigMemories.size();
+    return 0;
 }
 
 int RigMemoryGridModel::columnCount( const QModelIndex &/*parent*/ ) const

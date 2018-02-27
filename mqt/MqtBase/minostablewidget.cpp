@@ -55,7 +55,9 @@ MinosTableWidget::MinosTableWidget(QWidget *parent):QTableView(parent)
 
 MinosTableWidget::~MinosTableWidget()
 {
-      delete statusSortButton;
+    resizeTimer->stop();
+    delete statusSortButton;
+    statusSortButton = 0;
 }
 void MinosTableWidget::setModel(QAbstractItemModel *model)
 {
@@ -98,7 +100,8 @@ void MinosTableWidget::onResizeTimer()
 
         // update cornerWidget
 
-    statusSortButton->setGeometry(0, 0, width, height);
+    if (statusSortButton)
+        statusSortButton->setGeometry(0, 0, width, height);
 }
 
 void MinosTableWidget::scrollTo(const QModelIndex &index, ScrollHint hint)

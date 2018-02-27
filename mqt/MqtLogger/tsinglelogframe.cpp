@@ -320,10 +320,12 @@ void TSingleLogFrame::doSetAuxWindows(bool saveSplitter)
 
     if (auxFrames.size() > num)
     {
-        for (int i = auxFrames.size(); i > 0; i--)
+        for (int i = auxFrames.size(); i > num; i--)
         {
             StackedInfoFrame *f = auxFrames[auxFrames.size() - 1];
             auxFrames.pop_back();
+            f->setParent(0);
+            f->setVisible(false);
             delete f;
         }
     }
@@ -340,6 +342,7 @@ void TSingleLogFrame::doSetAuxWindows(bool saveSplitter)
     }
     if (saveSplitter)
         on_MultSplitter_splitterMoved(0, 0);
+
 }
 void TSingleLogFrame::NextContactDetailsTimerTimer( )
 {
