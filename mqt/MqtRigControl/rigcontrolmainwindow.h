@@ -121,10 +121,14 @@ private:
     void closeEvent(QCloseEvent *event);
 
     void sendRadioListLogger();
+    void sendRadioNameLogger(QString radioName);
     void sendStatusLogger(const QString &message);
     void sendStatusToLogDisConnected();
     void sendStatusToLogConnected();
     void sendStatusToLogError();
+    void sendTransVertOffsetToLogger();
+    void sendTransVertSwitchToLogger(const QString &swNum);
+    void sendErrorMessageToLogger(QString errMsg);
     void sendFreqToLog(freq_t freq);
     void sendModeToLog(QString mode);
     //void sendRxPbFlagToLog();
@@ -146,6 +150,8 @@ private:
     void setTransVertDisplayVisible(bool visible);
     void writeWindowTitle(QString appName);
     void sendTransVertStatus(bool status);
+
+
 
 
 

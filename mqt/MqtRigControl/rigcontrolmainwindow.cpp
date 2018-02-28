@@ -139,11 +139,16 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
     readTraceLogFlag();
 
-    upDateRadio();
-
     ui->selectRadioBox->clearFocus();
 
-    trace("*** Rig Started ***");
+    if (appName.length() == 0)
+    {
+        upDateRadio();
+    }
+
+
+
+    trace("*** Rig App Started ***");
 
 
 }
@@ -191,6 +196,7 @@ void RigControlMainWindow::LogTimerTimer()
 void RigControlMainWindow::closeEvent(QCloseEvent *event)
 {
 
+    LogTimer.stop();
     closeRadio();
 
     // and tidy up all loose ends
@@ -289,7 +295,11 @@ void RigControlMainWindow::initSelectRadioBox()
     {
         selectRadio->addItem(selectRig->availRadios[i].radioName);
     }
-    sendRadioListLogger();
+
+    if (appName.length() > 0)
+    {
+        sendRadioListLogger();
+    }
 }
 
 
@@ -530,9 +540,10 @@ void RigControlMainWindow::closeRadio()
     {
        radio->closeRig();
     }
-   showStatusMessage("Disconnected");
-   sendStatusToLogDisConnected();
-   logMessage(QString("Radio Closed"));
+
+    showStatusMessage("Disconnected");
+    sendStatusToLogDisConnected();
+    logMessage(QString("Radio Closed"));
 
 
 
@@ -631,7 +642,16 @@ void RigControlMainWindow::getRadioInfo()
 }
 void RigControlMainWindow::onSelectRadio(QString s)
 {
-    ui->selectRadioBox->setCurrentText(s);
+
+
+    if (s != RELOAD)        // not reload, update the selection
+    {
+        ui->selectRadioBox->setCurrentText(s);
+    }
+    if (s == RELOAD)
+    {
+        logMessage(QString("Recieved Reload from Logger"));
+    }
     upDateRadio();
 }
 
@@ -1144,6 +1164,13 @@ void RigControlMainWindow::sendRadioListLogger()
     msg->publishRadioNames(radioList);
 }
 
+
+void RigControlMainWindow::sendRadioNameLogger(QString radioName)
+{
+    logMessage(QString("Send radioName %1 to Logger").arg(radioName));
+    msg->publishRadioName(radioName);
+}
+
 void RigControlMainWindow::sendStatusLogger(const QString &message)
 {
     if (appName.length() > 0)
@@ -1171,8 +1198,17 @@ void RigControlMainWindow::sendStatusToLogDisConnected()
 
 void RigControlMainWindow::sendStatusToLogError()
 {
-    logMessage(QString("Send error message to logger"));
+    logMessage(QString("Send error status to logger"));
     sendStatusLogger(RIG_STATUS_ERROR);
+}
+
+
+void RigControlMainWindow::sendErrorMessageToLogger(QString errMsg)
+{
+
+    logMessage(QString("Send error message to logger: %1").arg(errMsg));
+    msg->publishErrorMsg(errMsg);
+
 }
 
 void RigControlMainWindow::sendFreqToLog(freq_t freq)
@@ -1211,6 +1247,22 @@ void RigControlMainWindow::sendTransVertStatus(bool status)
         msg->publishTransVertStatus(flag);
     }
 }
+
+void RigControlMainWindow::sendTransVertOffsetToLogger()
+{
+    QString f = convertFreqToStr(selectRig->currentRadio.transVertOffset);
+    logMessage(QString("Send Transvert Offset to logger = %1%2").arg(selectRig->currentRadio.transVertEnable ? f = "-" : f = "+").arg(f));
+    msg->publishTransVertOffSetFreq(selectRig->currentRadio.transVertNegative, f);
+
+}
+
+void RigControlMainWindow::sendTransVertSwitchToLogger(const QString &swNum)
+{
+    logMessage(QString("Send Transvert Switch Number to logger = %1").arg(swNum));
+    msg->publishTransVertSwitch(swNum);
+
+}
+
 
 
 void RigControlMainWindow::aboutRigConfig()

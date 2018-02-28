@@ -97,7 +97,8 @@ const QString civToolTip = "Leave field blank for default radio CIV,\nor enter i
 
 
 
-
+// Command to reload the radio or antenna from logger
+const QString RELOAD = "*RELOAD*";
 
 
 

@@ -102,6 +102,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     // From rig controller
     connect(sendDM, SIGNAL(setRadioLoaded()), this, SLOT(on_RadioLoaded()));
     connect(sendDM, SIGNAL(setRadioList(QString)), this, SLOT(on_SetRadioList(QString)));
+    //connect(sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
     connect(sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetMode(QString)));
     connect(sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetFreq(QString)));
     connect(sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
@@ -886,6 +887,8 @@ void TSingleLogFrame::on_SetRadioList(QString s)
 {
     ui->FKHRigControlFrame->setRadioList(s);
 }
+
+// This is used to handle radioName from rigcontrol
 void TSingleLogFrame::on_SetRadioName(QString radioName)
 {
     LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
@@ -898,6 +901,9 @@ void TSingleLogFrame::on_SetRadioName(QString radioName)
     }
 }
 
+
+
+
 void TSingleLogFrame::on_SetRadioState(QString s)
 {
     ui->FKHRigControlFrame->setRadioState(s);
@@ -909,6 +915,9 @@ void TSingleLogFrame::on_SetRadioTxVertState(QString s)
 {
     ui->FKHRigControlFrame->setRadioTxVertState(s);
 }
+
+//---- Send to RigController
+
 
 
 void TSingleLogFrame::sendRadioFreq(QString freq)
@@ -927,9 +936,17 @@ void TSingleLogFrame::sendSelectRadio(QString radioName)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
     {
+
+
         LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
         if (ct && !ct->isProtected())
         {
+            if (radioName != ui->GJVQSOLogFrame->getRadioName())
+            {
+               ui->GJVQSOLogFrame->setRadioName(radioName);
+            }
+
+
             if (radioName != ct->radioName.getValue())
             {
                 ct->radioName.setValue(radioName);
@@ -937,8 +954,11 @@ void TSingleLogFrame::sendSelectRadio(QString radioName)
             }
             sendDM->sendSelectRig(radioName);
         }
+
     }
 }
+
+
 void TSingleLogFrame::sendSelectRotator(QString s)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest() && !contest->isProtected())

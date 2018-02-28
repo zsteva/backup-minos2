@@ -329,7 +329,9 @@ void RigControlFrame::noRadioSendOutMode(QString m)
 
 void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
 {
-    emit selectRadio(ct->radioName.getValue());
+    QString radioName = ct->radioName.getValue();
+
+    emit selectRadio(radioName);
 
     QStringList modelist = mode.split(':');  // unpack mode
     QString sMode;
@@ -532,6 +534,7 @@ void RigControlFrame::sendModeToRadio(QString m)
     emit sendModeToControl(QString("%1").arg(m));
 
 }
+
 
 void RigControlFrame::setRadioName(QString radioName)
 {
@@ -1167,11 +1170,13 @@ void FreqLineEdit::changeFreq(bool direction)
 
 void RigControlFrame::on_radioName_activated(const QString &arg1)
 {
-    if (arg1 != radioName)
+    QString n = arg1;
+    if (n == radioName)
     {
-        TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+        n = RELOAD;     // this forces the rigcontrol app to reload the radio with the same radioName
 
-        if (tslf)
-            tslf->on_SetRadioName(arg1);
     }
+
+    radioName = n;
+    emit selectRadio(n);
 }

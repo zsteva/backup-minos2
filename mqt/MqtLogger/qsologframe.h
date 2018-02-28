@@ -66,10 +66,12 @@ public:
     void modeSentFromRig(QString mode);
     void setFreq(QString freq);
     void setRadioName(QString);
+    QString getRadioName();
     void setRadioState(QString s);
     void setRotatorBearing(const QString &s);
 
     QString getBearing();
+
 
 private:
     ScreenContact *partialContact; // contact being edited on screen

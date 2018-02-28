@@ -255,7 +255,12 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
         selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
     }
 
-    upDateAntenna();
+
+    if (appName.length() == 0)
+    {
+        upDateAntenna();
+    }
+
 
 
     trace("*** Rotator Started ***");
@@ -292,7 +297,7 @@ void RotatorMainWindow::onStdInRead(QString cmd)
 void RotatorMainWindow::closeEvent(QCloseEvent *event)
 {
 
-
+    LogTimer.stop();
     closeRotator();
 
     // and tidy up all loose ends
@@ -341,7 +346,15 @@ void RotatorMainWindow::LogTimerTimer(  )
 
 void RotatorMainWindow::onLoggerSelectAntenna(QString s)
 {
-    ui->selectAntennaBox->setCurrentText(s);
+    if (s != RELOAD)        // not reload, update selection
+    {
+       ui->selectAntennaBox->setCurrentText(s);
+    }
+    if (s == RELOAD)
+    {
+        logMessage(QString("Received Reload from Logger"));
+    }
+
     upDateAntenna();
 }
 
@@ -514,6 +527,8 @@ void RotatorMainWindow::closeRotator()
     {
         rotator->closeRotator();
     }
+
+
     showStatusMessage(tr("Disconnected"));
     sendStatusToLogDisConnected();
     logMessage("Rotator Closed");

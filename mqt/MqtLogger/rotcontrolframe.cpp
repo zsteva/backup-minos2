@@ -672,13 +672,21 @@ void RotControlFrame::traceMsg(QString msg)
 
 void RotControlFrame::on_antennaName_activated(const QString &arg1)
 {
-    if (arg1 != antennaName)
+    QString n = arg1;
+    if (n == antennaName)
     {
-        TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+        n = RELOAD;
+    }
+
+
+    /*TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
 
         if (tslf)
             tslf->on_RotatorAntennaName(arg1);
     }
+    */
+    antennaName = n;
+    emit selectRotator(n);
 
 }
 void RotControlFrame::getRotDetails(memoryData::memData &m)

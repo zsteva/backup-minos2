@@ -228,6 +228,10 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             {
                 emit setRadioList(an.getValue());
             }
+            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioName )
+            {
+                emit setRadioName(an.getValue());
+            }
             if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyTxVertStatus )
             {
                 emit setRadioTxVertStatus( an.getValue() );
