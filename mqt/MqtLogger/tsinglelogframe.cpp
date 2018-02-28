@@ -333,11 +333,11 @@ void TSingleLogFrame::doSetAuxWindows(bool saveSplitter)
     {
         for (int i = auxFrames.size(); i < num; i++)
         {
+            LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
             StackedInfoFrame *f = new StackedInfoFrame(0, i);
+            f->setContest(ct);
             auxFrames.push_back(f);
             ui->MultSplitter->addWidget(f);
-            LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-            f->setContest(ct);
         }
     }
     if (saveSplitter)

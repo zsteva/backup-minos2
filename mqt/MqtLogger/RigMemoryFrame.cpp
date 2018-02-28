@@ -203,6 +203,12 @@ void RigMemoryFrame::checkTimerTimer()
     tslf->getCurrentDetails(logData);
 
     QHeaderView *hh = ui->rigMemTable->horizontalHeader();
+    bool hhv = hh->isVisible();
+    int hhh = hh->height();
+    int hhw = hh->width();
+
+    if (hhh == 0)
+        hh->setGeometry(0, 0, hhw, 20);
 
     double rigFreq = convertStrToFreq(logData.freq);
     int bearing = logData.bearing;
