@@ -25,17 +25,6 @@ void RigMemoryFrame::traceMsg(QString msg)
 {
     trace("RigMemoryFrame: " + msg);
 }
-void RigMemoryFrame::reloadColumns()
-{
-    QSettings settings;
-    QByteArray state = settings.value("RigMemoryTable/state").toByteArray();
-    if (state.size())
-    {
-        // this will fire signals, so... don't save at the same time
-        ui->rigMemTable->horizontalHeader()->restoreState(state);
-    }
-
-}
 RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     QFrame(parent),
     ct(0),
@@ -66,6 +55,7 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterLogContact(BaseContestLog *)), this, SLOT(on_AfterLogContact(BaseContestLog *)));
 
     reloadColumns();
+    //ui->rigMemTable->resizeColumnsToContents();
 
     connect( ui->rigMemTable->horizontalHeader(), SIGNAL(sectionMoved(int, int , int)),
              this, SLOT( on_sectionMoved(int, int , int)));
@@ -124,6 +114,16 @@ void RigMemoryFrame::saveAllColumnWidthsAndPositions()
 
     sendUpdateMemories();
 }
+void RigMemoryFrame::reloadColumns()
+{
+    QSettings settings;
+    QByteArray state = settings.value("RigMemoryTable/state").toByteArray();
+    if (state.size())
+    {
+        // this will fire signals, so... don't save at the same time
+        ui->rigMemTable->horizontalHeader()->restoreState(state);
+    }
+}
 void RigMemoryFrame:: on_sectionMoved(int /*logicalIndex*/, int /*oldVisualIndex*/, int /*newVisualIndex*/)
 {
     saveAllColumnWidthsAndPositions();
@@ -154,6 +154,7 @@ void RigMemoryFrame::setContest( BaseContestLog *pct )
         ui->rigMemTable->setModel(&proxyModel);
         connect( ui->rigMemTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
                  this, SLOT( on_sectionResized(int, int , int)), Qt::UniqueConnection);
+
     }
 
 }
@@ -172,6 +173,8 @@ void RigMemoryFrame::doMemoryUpdates()
 
     model.endResetModel();
 
+//    ui->rigMemTable->resizeColumnsToContents();
+
 
     // clear all the "old" buttons
 /*
@@ -189,18 +192,34 @@ void RigMemoryFrame::doMemoryUpdates()
 
 void RigMemoryFrame::checkTimerTimer()
 {
+    if (!isVisible())
+        return;
+
     TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
     if (!ct || !tslf)
         return;
 
-    //headerVal.clear();
-
     memoryData::memData logData;
     tslf->getCurrentDetails(logData);
+
+    QHeaderView *hh = ui->rigMemTable->horizontalHeader();
+    bool hhv = hh->isVisible();
+    int hhh = hh->height();
+    int hhw = hh->width();
+
+    if (hhh == 0)
+        hh->setGeometry(0, 0, hhw, 20);
 
     double rigFreq = convertStrToFreq(logData.freq);
     int bearing = logData.bearing;
 
+    if (!doTimer && (rigFreq == lastRigFreq && bearing == lastBearing))
+        return;
+
+    lastRigFreq = rigFreq;
+    lastBearing = bearing;
+
+    doTimer = false;
 
     int mcount = ct->rigMemories.size();
 
@@ -238,21 +257,34 @@ void RigMemoryFrame::checkTimerTimer()
         }
 
         QString ht = m.callsign;
+        QColor colour( Qt::black);
+
         if (m.worked)
         {
             ht = "(" + ht + ")";
+            colour = Qt::darkGray;
         }
 
         if (onfreq == rtsOn || onbearing == rtsOn)
         {
             if (onfreq == rtsOn && onbearing == rtsOn)
+            {
                 ht = "FB " + ht;
+                colour = Qt::darkGreen;
+            }
             else if (onfreq == rtsOn)
+            {
                 ht = "F  " + ht;
+                colour = Qt::red;
+            }
             else
+            {
                 ht = "B  " + ht;
+                colour = Qt::blue;
+            }
         }
-        headerVal[m.callsign] = ht;
+        headerVal[m.callsign].text = ht;
+        headerVal[m.callsign].colour = colour;
     }
     proxyModel.headerDataChanged(Qt::Vertical, 0, model.rowCount() - 1);
 }
@@ -276,6 +308,8 @@ void RigMemoryFrame::sendUpdateMemories()
     // go through the signal/slot mechanism so all auxiliary displays are updated
     if (!suppressSendUpdate)
         MinosLoggerEvents::sendUpdateMemories(ct);
+
+    doTimer = true;
 }
 //======================================================================================
 
@@ -505,10 +539,6 @@ QVariant RigMemoryGridModel::data( const QModelIndex &index, int role ) const
     int col = index.column();
     if (ct)
     {
-        if (role == Qt::BackgroundRole)
-        {
-            return QVariant();
-        }
         if ( role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::UserRole )
             return QVariant();
 
@@ -526,11 +556,17 @@ QVariant RigMemoryGridModel::data( const QModelIndex &index, int role ) const
                 disp = m.locator;
                 break;
             case ermBearing:
-                disp = QString::number( m.bearing);
+                disp = QString("%1").arg( m.bearing, 3, 10, QChar('0'));
                 break;
             case ermFreq:
-                disp = m.freq;
-                break;
+                {
+                    QString newfreq = m.freq.trimmed().remove('.');
+                    double dfreq = convertStrToFreq(newfreq);
+                    dfreq = dfreq/1000000.0;  // MHz
+
+                    disp = QString::number(dfreq, 'f', 3); //MHz to 3 decimal places
+                    break;
+                }
             }
             return disp;
         }
@@ -542,33 +578,51 @@ QVariant RigMemoryGridModel::data( const QModelIndex &index, int role ) const
 QVariant RigMemoryGridModel::headerData( int section, Qt::Orientation orientation,
                      int role ) const
 {
-    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+    if (orientation == Qt::Horizontal)
     {
-        QString cell;
-
-        cell = RigMemoryColumns[section].title;
-
-        return cell;
-    }
-    else if (orientation == Qt::Vertical && role == Qt::DisplayRole)
-    {
-        QString disp;
-        LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
-        if (c)
+        if (role == Qt::DisplayRole)
         {
-            memoryData::memData m = c->getRigMemoryData(section);
-            disp = frame->headerVal[m.callsign];
-            if (disp.isEmpty())
+            QString cell;
+
+            cell = RigMemoryColumns[section].title;
+
+            return cell;
+        }
+        else if (role == Qt::TextAlignmentRole)
+            return Qt::AlignLeft;
+    }
+    else if (orientation == Qt::Vertical)
+    {
+        if (role == Qt::DisplayRole)
+        {
+            QString disp;
+            LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
+            if (c)
             {
-                // This appears to be the line that defines the width
-                // of the vertical header
-                disp = "_ " + m.callsign + " _";
+                memoryData::memData m = c->getRigMemoryData(section);
+                disp = frame->headerVal[m.callsign].text;
+                if (disp.isEmpty())
+                {
+                    // This appears to be the line that defines the width
+                    // of the vertical header
+                    disp = "  " + m.callsign + "  ";
+                }
+            }
+            return disp;
+        }
+        else if (role == Qt::ForegroundRole)
+        {
+            LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
+            if (c)
+            {
+                memoryData::memData m = c->getRigMemoryData(section);
+                QColor colour = frame->headerVal[m.callsign].colour;
+                return colour;
             }
         }
-        return disp;
+        else if (role == Qt::TextAlignmentRole)
+            return Qt::AlignLeft;
     }
-    if (role == Qt::TextAlignmentRole)
-        return Qt::AlignLeft;
     return QVariant();
 }
 
@@ -587,7 +641,10 @@ QModelIndex RigMemoryGridModel::parent( const QModelIndex &/*index*/ ) const
 
 int RigMemoryGridModel::rowCount( const QModelIndex &/*parent*/ ) const
 {
-    return ermMaxCol;
+    LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
+    if (c)
+        return c->rigMemories.size();
+    return 0;
 }
 
 int RigMemoryGridModel::columnCount( const QModelIndex &/*parent*/ ) const
@@ -597,10 +654,14 @@ int RigMemoryGridModel::columnCount( const QModelIndex &/*parent*/ ) const
 bool RigMemorySortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &/*sourceParent*/) const
 {
     LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
-    memoryData::memData m = c->getRigMemoryData(sourceRow);
-    if (m.callsign == memDefData::DEFAULT_CALLSIGN)
-        return false;
-    return true;
+    bool ret = false;
+    if (c)
+    {
+        memoryData::memData m = c->getRigMemoryData(sourceRow);
+        if (m.callsign != memDefData::DEFAULT_CALLSIGN)
+            ret = true;
+    }
+    return ret;
 }
 bool RigMemorySortFilterProxyModel::lessThan(const QModelIndex &left,
                       const QModelIndex &right) const

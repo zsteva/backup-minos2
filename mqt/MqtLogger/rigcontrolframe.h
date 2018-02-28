@@ -161,10 +161,6 @@ private:
     QShortcut *freqPlusShortCut;
     QShortcut *freqNegShortCut;
 
-
-    QLabel *freqLabel;
-
-
     bool radioLoaded;
     bool radioConnected;
     bool radioError;

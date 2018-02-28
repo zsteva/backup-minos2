@@ -120,6 +120,8 @@ public:
     QString time = "00:00";
     bool worked = false;
 
+    QColor headerColor = Qt::black;
+
     bool operator==( const memData& rhs ) const
     {
         if (callsign.compare(rhs.callsign, Qt::CaseInsensitive) == 0

@@ -43,17 +43,22 @@
 #include <QScrollBar>
 #include <QHeaderView>
 #include <QToolButton>
+#include <QTimer>
 
-MinosTableWidget::MinosTableWidget(QWidget *parent):QTableView(parent), recursionBlock(false)
+MinosTableWidget::MinosTableWidget(QWidget *parent):QTableView(parent)
 {
       statusSortButton = new QToolButton(this);
+      resizeTimer = new QTimer(this);
+      connect(resizeTimer, SIGNAL(timeout()), this, SLOT(onResizeTimer()));
+      resizeTimer->start(1000);
 }
 
 MinosTableWidget::~MinosTableWidget()
 {
-      delete statusSortButton;
+    resizeTimer->stop();
+    delete statusSortButton;
+    statusSortButton = 0;
 }
-
 void MinosTableWidget::setModel(QAbstractItemModel *model)
 {
     init();
@@ -66,9 +71,6 @@ void MinosTableWidget::init()
 
       statusSortButton->setFocusPolicy(Qt::NoFocus);
       QObject::connect(statusSortButton, SIGNAL(clicked()), this, SLOT(statusClicked()));
-
-      connect(verticalHeader(), SIGNAL(sectionCountChanged(int, int)), this, SLOT(sectionCountChanged(int, int)));
-      connect(horizontalHeader(), SIGNAL(sectionCountChanged(int, int)), this, SLOT(sectionCountChanged(int, int)));
 
       statusSortButton->show();
 
@@ -91,30 +93,16 @@ void MinosTableWidget::statusClicked()
     sortByColumn(0, sortOrder?Qt::AscendingOrder:Qt::DescendingOrder);
 }
 
-void MinosTableWidget::sectionCountChanged(int, int)
+void MinosTableWidget::onResizeTimer()
 {
-    updateStatusGeometry();
-}
-
-void MinosTableWidget::updateStatusGeometry()
-{
-    // NB this sizes the button, not the colour
-    if (recursionBlock)
-        return;
-
-    recursionBlock = true;
-
-    int width = verticalHeader()->sizeHint().width();
-    int height = horizontalHeader()->sizeHint().height();
+    int width = verticalHeader()->width();
+    int height = horizontalHeader()->height();
 
         // update cornerWidget
 
-    statusSortButton->setGeometry(0, 0, width, height);
-
-    recursionBlock = false;
+    if (statusSortButton)
+        statusSortButton->setGeometry(0, 0, width, height);
 }
-
-
 
 void MinosTableWidget::scrollTo(const QModelIndex &index, ScrollHint hint)
 {

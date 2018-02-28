@@ -47,6 +47,12 @@ protected:
 
 };
 
+class HeaderData
+{
+public:
+    QString text;
+    QColor colour = Qt::black;
+};
 class RigMemoryFrame : public QFrame
 {
     Q_OBJECT
@@ -59,7 +65,7 @@ public:
     explicit RigMemoryFrame(QWidget *parent = 0);
     ~RigMemoryFrame();
 
-    QMap<QString, QString> headerVal;
+    QMap<QString, HeaderData> headerVal;
 
     void setContest( BaseContestLog *ct );
 
@@ -92,8 +98,11 @@ private slots:
 
 private:
     Ui::RigMemoryFrame *ui;
-    LoggerContestLog *ct;
+    LoggerContestLog *ct = 0;
     bool suppressSendUpdate = false;
+    double lastRigFreq = 0.0;
+    int lastBearing = 0;
+    bool doTimer = false;
 
     QMenu* memoryMenu;
 

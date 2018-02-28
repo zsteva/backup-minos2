@@ -38,6 +38,13 @@
       </layout>
      </item>
      <item>
+      <widget class="QCheckBox" name="workedCB">
+       <property name="text">
+        <string>Already Worked</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QLabel" name="label_2">
@@ -84,9 +91,6 @@
         </spacer>
        </item>
       </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_7"/>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">

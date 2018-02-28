@@ -1229,6 +1229,7 @@ void ContestDetails::on_VHFCalendarButton_clicked()
     {
        ui->OKButton->setFocus();
     }
+    focusChange(0, false, 0);
 }
 
 void ContestDetails::on_CallsignEdit_editingFinished()

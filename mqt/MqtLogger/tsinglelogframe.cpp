@@ -321,10 +321,12 @@ void TSingleLogFrame::doSetAuxWindows(bool saveSplitter)
 
     if (auxFrames.size() > num)
     {
-        for (int i = auxFrames.size(); i > 0; i--)
+        for (int i = auxFrames.size(); i > num; i--)
         {
             StackedInfoFrame *f = auxFrames[auxFrames.size() - 1];
             auxFrames.pop_back();
+            f->setParent(0);
+            f->setVisible(false);
             delete f;
         }
     }
@@ -332,15 +334,16 @@ void TSingleLogFrame::doSetAuxWindows(bool saveSplitter)
     {
         for (int i = auxFrames.size(); i < num; i++)
         {
+            LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
             StackedInfoFrame *f = new StackedInfoFrame(0, i);
+            f->setContest(ct);
             auxFrames.push_back(f);
             ui->MultSplitter->addWidget(f);
-            LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-            f->setContest(ct);
         }
     }
     if (saveSplitter)
         on_MultSplitter_splitterMoved(0, 0);
+
 }
 void TSingleLogFrame::NextContactDetailsTimerTimer( )
 {
