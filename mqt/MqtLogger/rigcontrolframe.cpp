@@ -579,6 +579,10 @@ void RigControlFrame::setRadioState(QString s)
         {
            radioConnected = false;
            radioError = false;
+           curFreq = "00000000000";
+           ui->freqInput->setInputMask(maskData::freqMask[curFreq.count() - 4]);
+           ui->freqInput->setText(curFreq);
+
         }
         else if (s == RIG_STATUS_ERROR)
         {
