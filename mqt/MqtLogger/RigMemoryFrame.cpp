@@ -202,14 +202,6 @@ void RigMemoryFrame::checkTimerTimer()
     memoryData::memData logData;
     tslf->getCurrentDetails(logData);
 
-    QHeaderView *hh = ui->rigMemTable->horizontalHeader();
-    bool hhv = hh->isVisible();
-    int hhh = hh->height();
-    int hhw = hh->width();
-
-    if (hhh == 0)
-        hh->setGeometry(0, 0, hhw, 20);
-
     double rigFreq = convertStrToFreq(logData.freq);
     int bearing = logData.bearing;
 
@@ -222,6 +214,7 @@ void RigMemoryFrame::checkTimerTimer()
     doTimer = false;
 
     int mcount = ct->rigMemories.size();
+    int firstMatch = -1;
 
     for (int buttonNumber = 0; buttonNumber < mcount; buttonNumber ++)
     {
@@ -271,6 +264,8 @@ void RigMemoryFrame::checkTimerTimer()
             {
                 ht = "FB " + ht;
                 colour = Qt::darkGreen;
+                if (firstMatch == -1)
+                    firstMatch = m.memno;
             }
             else if (onfreq == rtsOn)
             {
@@ -285,6 +280,10 @@ void RigMemoryFrame::checkTimerTimer()
         }
         headerVal[m.callsign].text = ht;
         headerVal[m.callsign].colour = colour;
+    }
+    if (firstMatch >= 0)
+    {
+        ui->rigMemTable->scrollTo(model.index(firstMatch, 0), QAbstractItemView::PositionAtCenter);
     }
     proxyModel.headerDataChanged(Qt::Vertical, 0, model.rowCount() - 1);
 }
