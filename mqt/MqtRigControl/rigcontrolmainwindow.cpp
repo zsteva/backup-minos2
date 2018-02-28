@@ -643,6 +643,7 @@ void RigControlMainWindow::getRadioInfo()
 void RigControlMainWindow::onSelectRadio(QString s)
 {
 
+
     if (s != RELOAD)        // not reload, update the selection
     {
         ui->selectRadioBox->setCurrentText(s);
