@@ -329,7 +329,9 @@ void RigControlFrame::noRadioSendOutMode(QString m)
 
 void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
 {
-    emit selectRadio(ct->radioName.getValue());
+    QString radioName = ct->radioName.getValue();
+
+    emit selectRadio(radioName);
 
     QStringList modelist = mode.split(':');  // unpack mode
     QString sMode;
@@ -541,7 +543,7 @@ void RigControlFrame::setRadioName(QString radioName)
     {
         ui->radioName->setCurrentText(radioName);
 
-        //emit selectRadio(radioName);
+        emit selectRadio(radioName);
     }
 }
 
@@ -1175,10 +1177,6 @@ void RigControlFrame::on_radioName_activated(const QString &arg1)
 
     }
 
-    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
-
-    //if (tslf)
-     //  tslf->sendSelectRadio(n);
-    //radioName = n;
-    //emit selectRadio(n);
+    radioName = n;
+    emit selectRadio(n);
 }

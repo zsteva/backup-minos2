@@ -196,6 +196,7 @@ void RigControlMainWindow::LogTimerTimer()
 void RigControlMainWindow::closeEvent(QCloseEvent *event)
 {
 
+    LogTimer.stop();
     closeRadio();
 
     // and tidy up all loose ends
@@ -540,7 +541,6 @@ void RigControlMainWindow::closeRadio()
        radio->closeRig();
     }
 
-    LogTimer.stop();
     showStatusMessage("Disconnected");
     sendStatusToLogDisConnected();
     logMessage(QString("Radio Closed"));

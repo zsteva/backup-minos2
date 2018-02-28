@@ -292,7 +292,7 @@ void RotatorMainWindow::onStdInRead(QString cmd)
 void RotatorMainWindow::closeEvent(QCloseEvent *event)
 {
 
-
+    LogTimer.stop();
     closeRotator();
 
     // and tidy up all loose ends
@@ -515,7 +515,7 @@ void RotatorMainWindow::closeRotator()
         rotator->closeRotator();
     }
 
-    LogTimer.stop();
+
     showStatusMessage(tr("Disconnected"));
     sendStatusToLogDisConnected();
     logMessage("Rotator Closed");

@@ -938,13 +938,16 @@ void TSingleLogFrame::sendSelectRadio(QString radioName)
         LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
         if (ct && !ct->isProtected())
         {
+            if (radioName != ui->GJVQSOLogFrame->getRadioName())
+            {
+               ui->GJVQSOLogFrame->setRadioName(radioName);
+            }
+
+
             if (radioName != ct->radioName.getValue())
             {
                 ct->radioName.setValue(radioName);
                 ct->commonSave(false);
-                //ui->FKHRigControlFrame->setRadioName(radioName);
-                ui->GJVQSOLogFrame->setRadioName(radioName);
-
             }
             sendDM->sendSelectRig(radioName);
         }

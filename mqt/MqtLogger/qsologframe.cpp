@@ -1618,6 +1618,11 @@ void QSOLogFrame::setRadioName(QString radioName)
     curRadioName = radioName;
 }
 //---------------------------------------------------------------------------
+QString QSOLogFrame::getRadioName()
+{
+    return curRadioName;
+}
+//---------------------------------------------------------------------------
 void QSOLogFrame::setRadioState(QString s)
 {
     if (s != "")
