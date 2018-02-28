@@ -948,11 +948,8 @@ void TLogContainer::AuxDisplayAction()
 {
     int num;
     TContestApp::getContestApp() ->loggerBundle.getIntProfile( elpAuxWindows, num );
-#ifdef NDEBUG
-    int minaux = 1;
-#else
+
     int minaux = 0;
-#endif
     if ( !enquireDialog( this, "Please give number of auxiliary windows wanted.", num, minaux, 4 ) )
        return ;
 
