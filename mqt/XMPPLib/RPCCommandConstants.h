@@ -103,10 +103,12 @@ static const QString rigControlCategory    = QT_TR_NOOP("RigControl");
 static const QString rigControlRadioList   = QT_TR_NOOP("RadioList");
 static const QString rigControlKeyMode     = QT_TR_NOOP("Mode");
 static const QString rigControlKeyState    = QT_TR_NOOP("State");
+static const QString rigControlKeyErrorMsg    = QT_TR_NOOP("ErrorMsg");
 static const QString rigControlKeyFreq     = QT_TR_NOOP("Frequency");
 static const QString rigControlKeyRadioName = QT_TR_NOOP("RadioName");
 static const QString rigControlKeyTxVertStatus = QT_TR_NOOP("TransVertStatus");
-
+static const QString rigControlKeyTxVertOffsetFreq = QT_TR_NOOP("TransVertOffSetFreq");
+static const QString rigControlKeyTxVertSwitch = QT_TR_NOOP("TransVertSwitch");
 
 }
 #endif // RPCCOMMANDRCONSTANTS_H

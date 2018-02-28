@@ -514,6 +514,8 @@ void RotatorMainWindow::closeRotator()
     {
         rotator->closeRotator();
     }
+
+    LogTimer.stop();
     showStatusMessage(tr("Disconnected"));
     sendStatusToLogDisConnected();
     logMessage("Rotator Closed");

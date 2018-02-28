@@ -111,7 +111,7 @@ public:
 
 signals:
     void selectRadio(QString);
-
+    void sendRadioName(QString);
     void sendFreqControl(QString);
     void noRadioSendFreq(QString);
     void noRadioSendMode(QString);
@@ -204,6 +204,8 @@ private:
     void freqPlusMinusButton(double freq);
 
 };
+
+
 class FreqLineEdit : public QLineEdit
 {
     Q_OBJECT
