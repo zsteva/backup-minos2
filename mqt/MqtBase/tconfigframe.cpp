@@ -46,10 +46,12 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool showAuto
         if (offset++%2)
         {
             cef->setStyleSheet("QFrame { background-color: lightBlue; }");
+            cef->fixComboStyle();
         }
         else
         {
             cef->setStyleSheet("QFrame { background-color: white; }");
+            cef->fixComboStyle();
         }
 
         vbl->addWidget(cef);

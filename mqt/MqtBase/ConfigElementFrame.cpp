@@ -85,6 +85,10 @@ void ConfigElementFrame::setNameFocus()
 {
     ui->elementNameEdit->setFocus();
 }
+void ConfigElementFrame::fixComboStyle()
+{
+    ui->appTypeCombo->setStyleSheet("");
+}
 
 void ConfigElementFrame::saveElement()
 {
