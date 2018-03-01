@@ -719,8 +719,8 @@ void TSingleLogFrame::on_SetMemory(BaseContestLog *c, QString call, QString loc)
 {
     if (contest == c)
     {
-        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
         int n = -1;
+        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
         int mcount = ct->rigMemories.size();
         for (int i = 0; i <= mcount; i ++)
         {
@@ -742,9 +742,10 @@ void TSingleLogFrame::on_SetMemory(BaseContestLog *c, QString call, QString loc)
         getDetails(logData);
         logData.callsign = call;
         logData.locator = loc;
+        logData.time = QTime::currentTime().toString("HH:mm");
 
         RigMemDialog memDialog(this);
-        memDialog.setLogData(&logData, n);
+        memDialog.setLogData(&logData, n, ct);
         memDialog.setWindowTitle(QString("M%1 - Write").arg(QString::number(n + 1)));
        if ( memDialog.exec() == QDialog::Accepted)
        {

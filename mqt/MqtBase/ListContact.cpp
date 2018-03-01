@@ -31,27 +31,14 @@ QString ListContact::getField( int ACol, const BaseContestLog *const curcon ) co
             double lon = 0.0;
             double lat = 0.0;
 
-            if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
+            int lres = lonlat( loc.loc.getValue(), lon, lat );
+            if ( lres == LOC_OK )
             {
-               // we don't have it worked out already...
-               double lon = 0.0;
-               double lat = 0.0;
                int brg;
                double dist;
 
+               curcon->disbear( lon, lat, dist, brg );
 
-
-               int lres = lonlat( loc.loc.getValue(), lon, lat );
-               if ( lres == LOC_OK )
-               {
-                  curcon->disbear( lon, lat, dist, brg );
-               }
-               else
-                  if ( lres == LOC_SHORT )
-                  {
-//#warning  what here? (lres == LOC_SHORT)
-
-                  }
 			   int offset = curcon->bearingOffset.getValue();
                const QChar degreeChar(0260); // octal value
                brgbuff = QString( "%1%2").arg( varBrg(brg + offset), 3).arg(degreeChar);

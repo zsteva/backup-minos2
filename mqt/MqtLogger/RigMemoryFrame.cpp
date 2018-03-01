@@ -10,14 +10,15 @@
 #include "htmldelegate.h"
 #include "ui_RigMemoryFrame.h"
 
-enum eRigMemGridCols {ermLocator, ermBearing, ermFreq, ermWorked,
+enum eRigMemGridCols {ermLocator, ermBearing, ermFreq, ermTime, ermWorked,
                     ermMaxCol
                    };
 static GridColumn RigMemoryColumns[ ermMaxCol ] =
    {
       GridColumn( ermLocator, "MM00MM00", "Locator", taLeftJustify ),
-      GridColumn( ermBearing, "BRGXXX", "brg", taCenter ),
-      GridColumn( ermFreq, "144.000.000", "freq", taLeftJustify ),
+      GridColumn( ermBearing, "BRGXXX", "Brg", taCenter ),
+      GridColumn( ermFreq, "144.000.000", "Freq", taLeftJustify ),
+      GridColumn( ermTime, "XX:XX", "Time", taLeftJustify ),
       GridColumn( ermWorked, "Wk CtX", "Wkd", taCenter ),
    };
 
@@ -399,13 +400,12 @@ void RigMemoryFrame::writeMemory(int buttonNumber)
 
     // get contest information
     TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
-    ScreenContact sc = tslf->getScreenEntry();
 
     memoryData::memData logData;
     tslf->getDetails(logData);
 
     RigMemDialog memDialog(this);
-    memDialog.setLogData(&logData, buttonNumber);
+    memDialog.setLogData(&logData, buttonNumber, ct);
     memDialog.setWindowTitle(QString("M%1 - Write").arg(QString::number(buttonNumber + 1)));
    if ( memDialog.exec() == QDialog::Accepted)
    {
@@ -436,7 +436,7 @@ void RigMemoryFrame::editActionSelected()
 
     RigMemDialog memDialog(this);
 
-    memDialog.setLogData(&logData, buttonNumber);
+    memDialog.setLogData(&logData, buttonNumber, ct);
     memDialog.setWindowTitle(QString("M%1 - Edit").arg(QString::number(buttonNumber + 1)));
 
     if ( memDialog.exec() == QDialog::Accepted)
@@ -564,6 +564,11 @@ QVariant RigMemoryGridModel::data( const QModelIndex &index, int role ) const
                     dfreq = dfreq/1000000.0;  // MHz
 
                     disp = QString::number(dfreq, 'f', 3); //MHz to 3 decimal places
+                    break;
+                }
+            case ermTime:
+                {
+                    disp = m.time;
                     break;
                 }
             }
