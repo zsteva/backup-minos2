@@ -556,11 +556,12 @@ void RigControlFrame::loadMemories()
 
 void RigControlFrame::setRadioList(QString s)
 {
-    QStringList radios = s.split(":");
+    listOfRadios.clear();
+    listOfRadios = s.split(":");
 
     ui->radioName->clear();
     ui->radioName->addItem("");
-    ui->radioName->addItems(radios);
+    ui->radioName->addItems(listOfRadios);
 
     if (ct)
         setRadioName(ct->radioName.getValue());

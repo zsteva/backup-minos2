@@ -31,7 +31,7 @@
         <x>0</x>
         <y>0</y>
         <width>544</width>
-        <height>540</height>
+        <height>539</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -581,7 +581,20 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="radioNameEdit"/>
+           <widget class="QComboBox" name="radioNameSel"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item>
            <widget class="QLabel" name="label_16">
@@ -591,7 +604,20 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="antennaNameEdit"/>
+           <widget class="QComboBox" name="antennaNameSel"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_8">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>

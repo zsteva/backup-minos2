@@ -1,3 +1,4 @@
+
 /////////////////////////////////////////////////////////////////////////////
 // $Id$
 //
@@ -168,6 +169,7 @@ private:
     QString curFreq;
     QString curMode;
 
+    QStringList listOfRadios;
     QString radioName;
     QString rigAppName;
     QString radioState;
