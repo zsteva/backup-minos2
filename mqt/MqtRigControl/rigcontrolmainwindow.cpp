@@ -329,6 +329,8 @@ void RigControlMainWindow::upDateRadio()
     //int retCode = 0;
     logMessage(QString("UpdateRadio: Index Selected = %1").arg(QString::number(ui->selectRadioBox->currentIndex())));
 
+    pollTimer->stop();      // stop updates
+
     int ridx = 0;
     radioIndex = ui->selectRadioBox->currentIndex();
     ridx = radioIndex;
@@ -400,6 +402,7 @@ void RigControlMainWindow::upDateRadio()
             // check still connected after setting mode
             writeWindowTitle(appName);
             sendStatusToLogConnected();
+            sendFreqToLog(0.0);             // force a freq update
             dumpRadioToTraceLog();
 
         }
