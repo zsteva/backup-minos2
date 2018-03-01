@@ -402,7 +402,7 @@ void RigControlMainWindow::upDateRadio()
             // check still connected after setting mode
             writeWindowTitle(appName);
             sendStatusToLogConnected();
-            sendFreqToLog(0.0);             // force a freq update
+            sendFreqToLog(0.0);             // force a freq update ***************************************************************
             dumpRadioToTraceLog();
 
         }

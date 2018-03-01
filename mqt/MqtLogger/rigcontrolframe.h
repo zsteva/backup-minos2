@@ -174,6 +174,7 @@ private:
     QString rigAppName;
     QString radioState;
 
+
     QString lastFreq;
 
     void sendModeToRadio(QString);

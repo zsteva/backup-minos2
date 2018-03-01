@@ -144,7 +144,26 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
     {
         ui->modelbl->setVisible(false);
     }
+
 }
+
+
+
+
+void RigControlFrame::on_radioName_activated(const QString &arg1)
+{
+    QString n = arg1;
+    if (n == radioName)
+    {
+        n = RELOAD;     // this forces the rigcontrol app to reload the radio with the same radioName
+
+    }
+
+    radioName = n;
+    emit selectRadio(n);
+}
+
+
 
 
 
@@ -168,6 +187,12 @@ void RigControlFrame::noRadioSetFreq(QString f)
 
 void RigControlFrame::setFreq(QString f)
 {
+    if (f == "0")
+    {
+        // this is force an update of freq, ignore
+        traceMsg(QString("Force Freq Update Received - Ignore!"));
+        return;
+    }
     traceMsg(QString("Set Freq = %1").arg(f));
     QString freq = f;
     if (lastFreq != freq)
@@ -329,9 +354,11 @@ void RigControlFrame::noRadioSendOutMode(QString m)
 
 void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
 {
-    QString radioName = ct->radioName.getValue();
 
+
+    QString radioName = ct->radioName.getValue();
     emit selectRadio(radioName);
+
 
     QStringList modelist = mode.split(':');  // unpack mode
     QString sMode;
@@ -575,14 +602,18 @@ void RigControlFrame::setRadioState(QString s)
         if (s == RIG_STATUS_CONNECTED)
         {
             radioConnected = true;
+
         }
         else if (s == RIG_STATUS_DISCONNECTED)
         {
            radioConnected = false;
            radioError = false;
-           curFreq = "00000000000";
-           ui->freqInput->setInputMask(maskData::freqMask[curFreq.count() - 4]);
-           ui->freqInput->setText(curFreq);
+
+               //curFreq = "00000000000";
+               //ui->freqInput->setInputMask(maskData::freqMask[curFreq.count() - 4]);
+               //ui->freqInput->setText(curFreq);
+
+
 
         }
         else if (s == RIG_STATUS_ERROR)
@@ -1171,17 +1202,3 @@ void FreqLineEdit::changeFreq(bool direction)
    }
 }
 
-
-
-void RigControlFrame::on_radioName_activated(const QString &arg1)
-{
-    QString n = arg1;
-    if (n == radioName)
-    {
-        n = RELOAD;     // this forces the rigcontrol app to reload the radio with the same radioName
-
-    }
-
-    radioName = n;
-    emit selectRadio(n);
-}
