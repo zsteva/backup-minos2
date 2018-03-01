@@ -40,23 +40,15 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     ui->rigMemTable->horizontalHeader() ->setSectionResizeMode( QHeaderView::Interactive );
     ui->rigMemTable->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-    ui->rigMemTable->verticalHeader()->setContextMenuPolicy( Qt::CustomContextMenu );
-/*
-    ui->rigMemTable->setContextMenuPolicy( Qt::CustomContextMenu );
+    proxyModel.setSourceModel(&model);
+    ui->rigMemTable->setModel(&proxyModel);
 
-    connect( ui->rigMemTable, SIGNAL( customContextMenuRequested( const QPoint& ) ),
-             this, SLOT( rigMemTable_Hdr_customContextMenuRequested( const QPoint& ) ) );
-
-    connect( ui->rigMemTable->verticalHeader(), SIGNAL( customContextMenuRequested( const QPoint& ) ),
-             this, SLOT( on_rigMemTable_customContextMenuRequested( const QPoint& ) ) );
-*/
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(checkTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(RigFreqChanged(QString,BaseContestLog*)), this, SLOT(onRigFreqChanged(QString,BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(RotBearingChanged(int,BaseContestLog*)), this, SLOT(onRotBearingChanged(int,BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterLogContact(BaseContestLog *)), this, SLOT(on_AfterLogContact(BaseContestLog *)));
 
     reloadColumns();
-    //ui->rigMemTable->resizeColumnsToContents();
 
     connect( ui->rigMemTable->horizontalHeader(), SIGNAL(sectionMoved(int, int , int)),
              this, SLOT( on_sectionMoved(int, int , int)));
@@ -121,8 +113,10 @@ void RigMemoryFrame::reloadColumns()
     QByteArray state = settings.value("RigMemoryTable/state").toByteArray();
     if (state.size())
     {
+        suppressSendUpdate = true;
         // this will fire signals, so... don't save at the same time
         ui->rigMemTable->horizontalHeader()->restoreState(state);
+        suppressSendUpdate = false;
     }
 }
 void RigMemoryFrame:: on_sectionMoved(int /*logicalIndex*/, int /*oldVisualIndex*/, int /*newVisualIndex*/)
@@ -149,15 +143,8 @@ void RigMemoryFrame::setContest( BaseContestLog *pct )
     model.frame = this;
 
     proxyModel.ct = pct;
-    if (pct)
-    {
-        proxyModel.setSourceModel(&model);
-        ui->rigMemTable->setModel(&proxyModel);
-        connect( ui->rigMemTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
-                 this, SLOT( on_sectionResized(int, int , int)), Qt::UniqueConnection);
 
-    }
-
+    model.reset();
 }
 
 void RigMemoryFrame::setRigMemoryData(int memoryNumber, memoryData::memData m)
@@ -170,13 +157,6 @@ void RigMemoryFrame::setRigMemoryData(int memoryNumber, memoryData::memData m)
 void RigMemoryFrame::doMemoryUpdates()
 {
     // called from minosLoggerEvents following sendUpdateMemories
-    model.beginResetModel();
-
-    model.endResetModel();
-
-//    ui->rigMemTable->resizeColumnsToContents();
-
-
     // clear all the "old" buttons
 /*
     QString tTipStr = "Callsign: " + m.callsign + "\n"
@@ -186,9 +166,8 @@ void RigMemoryFrame::doMemoryUpdates()
             + "Bearing: " + QString::number(m.bearing) + "\n"
             + "Time: " + m.time;
 */
-    suppressSendUpdate = true;
+    model.reset();
     reloadColumns();
-    suppressSendUpdate = false;
 }
 
 void RigMemoryFrame::checkTimerTimer()
@@ -524,14 +503,6 @@ void RigMemoryGridModel::reset()
     endResetModel();
 }
 
-void RigMemoryGridModel::initialise( )
-{
-   beginResetModel();
-
-   // pick up the correct RigMemory list
-
-   endResetModel();
-}
 QVariant RigMemoryGridModel::data( const QModelIndex &index, int role ) const
 {
     int row = index.row();

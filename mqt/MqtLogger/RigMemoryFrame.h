@@ -21,7 +21,6 @@ class RigMemoryGridModel: public QAbstractItemModel
         void beginResetModel(){QAbstractItemModel::beginResetModel();}
         void endResetModel(){QAbstractItemModel::endResetModel();}
         void reset();
-        void initialise( );
         QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;
         QVariant headerData( int section, Qt::Orientation orientation,
                              int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
