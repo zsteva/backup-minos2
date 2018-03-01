@@ -18,8 +18,8 @@ ConfigElementFrame::ConfigElementFrame(bool nele) :
     ui->appTypeCombo->setCurrentIndex(appTypes.indexOf("None"));
     inhibitIndexChange = false;
 
-    gradient.setColorAt(0.0, Qt::darkGray);
-    gradient.setColorAt(1.0, Qt::lightGray);
+    gradient.setColorAt(0.0, Qt::lightGray);
+    gradient.setColorAt(1.0, Qt::white);
 
 
 }
