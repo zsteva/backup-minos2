@@ -17,13 +17,24 @@ ConfigElementFrame::ConfigElementFrame(bool nele) :
     ui->appTypeCombo->addItems(appTypes);
     ui->appTypeCombo->setCurrentIndex(appTypes.indexOf("None"));
     inhibitIndexChange = false;
+
+    gradient.setColorAt(0.0, Qt::darkGray);
+    gradient.setColorAt(1.0, Qt::lightGray);
+
+
 }
 
 ConfigElementFrame::~ConfigElementFrame()
 {
     delete ui;
 }
-
+void ConfigElementFrame::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    gradient.setStart(rect().left(), rect().top());
+    gradient.setFinalStop(rect().left(), rect().height());
+    painter.fillRect(event->rect(), QBrush(gradient));
+}
 void ConfigElementFrame::setElement(QSharedPointer<RunConfigElement> c)
 {
     this->configElement = c;
@@ -87,7 +98,7 @@ void ConfigElementFrame::setNameFocus()
 }
 void ConfigElementFrame::fixComboStyle()
 {
-    ui->appTypeCombo->setStyleSheet("");
+   // ui->appTypeCombo->setStyleSheet("");
 }
 
 void ConfigElementFrame::saveElement()

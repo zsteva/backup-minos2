@@ -17,8 +17,11 @@ class ConfigElementFrame : public QFrame
 
     bool inhibitIndexChange = false;
 
-    void checkEnabled();
+    QLinearGradient gradient;
 
+    void checkEnabled();
+protected:
+    void paintEvent(QPaintEvent *event);
 public:
     explicit ConfigElementFrame(bool nele);
     ~ConfigElementFrame();
