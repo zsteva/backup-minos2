@@ -444,6 +444,8 @@ void RotControlFrame::setRotatorList(QString s)
 
     if (ct)
         setRotatorAntennaName(ct->rotatorName.getValue());
+        //ui->antennaName->setCurrentText(ct->rotatorName.getValue());
+
 }
 void RotControlFrame::setRotatorState(const QString &s)
 {
@@ -550,7 +552,7 @@ void RotControlFrame::setRotatorAntennaName(const QString &s)
 {
    traceMsg("Set Antenna Name = " + s);
    if (ct && !ct->isProtected())
-    {
+   {
         ui->antennaName->setCurrentText(s);
         antennaName = s;
         emit selectRotator(s);
@@ -672,12 +674,12 @@ void RotControlFrame::traceMsg(QString msg)
 
 void RotControlFrame::on_antennaName_activated(const QString &arg1)
 {
-    QString n = arg1;
+   /*QString n = arg1;
     if (n == antennaName)
     {
         n = RELOAD;
     }
-
+*/
 
     /*TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
 
@@ -685,8 +687,8 @@ void RotControlFrame::on_antennaName_activated(const QString &arg1)
             tslf->on_RotatorAntennaName(arg1);
     }
     */
-    antennaName = n;
-    emit selectRotator(n);
+    antennaName = arg1;
+    emit selectRotator(arg1);
 
 }
 void RotControlFrame::getRotDetails(memoryData::memData &m)

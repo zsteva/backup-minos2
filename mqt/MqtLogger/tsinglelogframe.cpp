@@ -962,7 +962,17 @@ void TSingleLogFrame::sendSelectRadio(QString radioName)
 void TSingleLogFrame::sendSelectRotator(QString s)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest() && !contest->isProtected())
+    {
+        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+        if (s != ct->rotatorName.getValue())
+        {
+            ct->rotatorName.setValue(s);
+            ct->commonSave(false);
+            ui->FKHRotControlFrame->setRotatorAntennaName(s);
+        }
         sendDM->sendSelectRotator(s);
+    }
+
 }
 
 /*

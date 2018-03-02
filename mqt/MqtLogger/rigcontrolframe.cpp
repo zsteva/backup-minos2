@@ -152,15 +152,15 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
 
 void RigControlFrame::on_radioName_activated(const QString &arg1)
 {
-    QString n = arg1;
-    if (n == radioName)
-    {
-        n = RELOAD;     // this forces the rigcontrol app to reload the radio with the same radioName
+//    QString n = arg1;
+//    if (n == radioName)
+//    {
+//        n = RELOAD;     // this forces the rigcontrol app to reload the radio with the same radioName
 
-    }
+//    }
 
-    radioName = n;
-    emit selectRadio(n);
+    radioName = arg1;
+    emit selectRadio(arg1);
 }
 
 

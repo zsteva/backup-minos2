@@ -611,8 +611,15 @@ void RigControlMainWindow::getRadioInfo()
             logMessage(QString("Get radioInfo: Get Freq error, code = %1").arg(QString::number(retCode)));
             hamlibError(retCode, "Request Frequency");
         }
+        else
+        {
+            logMessage(QString("Got Frequency = %1").arg(QString::number(rfrequency)));
+        }
+    }
 
-        logMessage(QString("Got Frequency = %1").arg(QString::number(rfrequency)));
+    if (radio->get_serialConnected())
+    {
+
         logMessage("Get radio mode");
         retCode = getMode(RIG_VFO_CURR);
         if (retCode < 0)
@@ -622,8 +629,13 @@ void RigControlMainWindow::getRadioInfo()
             hamlibError(retCode, "Request Mode");
 
         }
+        else
+        {
+            logMessage(QString("Got Mode = %1").arg(radio->convertModeQstr(rmode)));
+        }
+    }
 
-        logMessage(QString("Got Mode = %1").arg(radio->convertModeQstr(rmode)));
+
 
 /*
         if (supRitFlag)
@@ -640,21 +652,21 @@ void RigControlMainWindow::getRadioInfo()
 
 */
 
-    }
-
 }
+
+
 void RigControlMainWindow::onSelectRadio(QString s)
 {
 
 
-    if (s != RELOAD)        // not reload, update the selection
-    {
+//    if (s != RELOAD)        // not reload, update the selection
+//    {
         ui->selectRadioBox->setCurrentText(s);
-    }
-    if (s == RELOAD)
-    {
-        logMessage(QString("Recieved Reload from Logger"));
-    }
+//    }
+//    if (s == RELOAD)
+//    {
+        logMessage(QString("Recieved Select Radio %1 from Logger").arg(s));
+//    }
     upDateRadio();
 }
 
