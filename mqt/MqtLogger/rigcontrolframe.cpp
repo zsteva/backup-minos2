@@ -567,11 +567,16 @@ void RigControlFrame::sendModeToRadio(QString m)
 void RigControlFrame::setRadioName(QString radioName)
 {
     traceMsg(QString("Set RadioName = %1").arg(radioName));
+    if (radioName == "NoRadio")
+    {
+        return;
+    }
+    QString radNam = extractRadioName(radioName);   // remove mode if appended
     if (ct && !ct->isProtected())
     {
-        ui->radioName->setCurrentText(radioName);
+        ui->radioName->setCurrentText(extractRadioName(radNam));
 
-        emit selectRadio(radioName);
+        emit selectRadio(radioName);  // send radio and mode if appended.
     }
 }
 
@@ -594,11 +599,16 @@ void RigControlFrame::setRadioList(QString s)
     if (ct && curMode.isEmpty())        // first time called
     {
         // add mode to the radioName, only on first pass
+        QString g = ct->radioName.getValue();
+        QString h = ct->currentMode.getValue();
         QString n = QString("%1:%2").arg(ct->radioName.getValue()).arg(ct->currentMode.getValue());
         setRadioName(n);
     }
 
 }
+
+
+
 void RigControlFrame::setRadioState(QString s)
 {
     traceMsg(QString("Set RadioState = %1").arg(s));

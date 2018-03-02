@@ -14,6 +14,7 @@
 #include "enqdlg.h"
 #include "MatchTreesFrame.h"
 #include "rigmemdialog.h"
+#include "rigutils.h"
 
 TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     QFrame(parent),
@@ -934,6 +935,7 @@ void TSingleLogFrame::sendRadioMode(QString mode)
 
 void TSingleLogFrame::sendSelectRadio(QString radioName)
 {
+    QString radName = extractRadioName(radioName);    // extract radioName from message, removing mode if appended
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
     {
 
@@ -941,18 +943,18 @@ void TSingleLogFrame::sendSelectRadio(QString radioName)
         LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
         if (ct && !ct->isProtected())
         {
-            if (radioName != ui->GJVQSOLogFrame->getRadioName())
+            if (radName != ui->GJVQSOLogFrame->getRadioName())
             {
-               ui->GJVQSOLogFrame->setRadioName(radioName);
+               ui->GJVQSOLogFrame->setRadioName(radName);
             }
 
 
-            if (radioName != ct->radioName.getValue())
+            if (radName != ct->radioName.getValue())
             {
-                ct->radioName.setValue(radioName);
+                ct->radioName.setValue(radName);
                 ct->commonSave(false);
             }
-            sendDM->sendSelectRig(radioName);
+            sendDM->sendSelectRig(radioName);  // send message including mode if it has been appended.
         }
 
     }
