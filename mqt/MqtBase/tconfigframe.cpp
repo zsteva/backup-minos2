@@ -32,7 +32,7 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool showAuto
     elementFrames.clear();
     MinosConfig *minosConfig = MinosConfig::getMinosConfig();
 
-    int offset = 0;
+//    int offset = 0;
     for (int i = 0; i <  minosConfig->elelist.size(); i++)
     {
         QSharedPointer<RunConfigElement> c = minosConfig->elelist[i];
