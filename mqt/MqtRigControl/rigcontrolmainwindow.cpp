@@ -399,7 +399,7 @@ void RigControlMainWindow::upDateRadio()
             {
                 logMessage(QString("Radio Update: Got Frequency = %1").arg(QString::number(rfrequency)));
                 // send freq to logger
-                sendFreqToLog(0.0);             // force a freq update ***************************************************************
+                sendFreqToLog(0.0);             // force a freq update
                 sendFreqToLog(rfrequency);
             }
 
@@ -413,11 +413,7 @@ void RigControlMainWindow::upDateRadio()
                     if (appName.count() > 0)
                     {
                         logMessage(QString("Update Radio: Logger Set Mode to %1").arg(slogMode));
-                        if (!slogMode.isEmpty())
-                        {
-                            logMode = radio->convertQStrMode(slogMode);
-                            setMode(slogMode, RIG_VFO_CURR);
-                        }
+                        loggerSetMode(selRadioMode);
                     }
                     else
                     {
@@ -697,15 +693,33 @@ void RigControlMainWindow::upDateRadio()
     void RigControlMainWindow::onSelectRadio(QString s)
     {
 
+        logMessage(QString("Recieved SelectRadio from Logger = %1").arg(s));
 
-    //    if (s != RELOAD)        // not reload, update the selection
-    //    {
+
+        // the first time rigcontrolframe uses this message the mode is appended to the name
+        if (s.contains(':'))
+        {
+            QStringList sl = s.split(':');
+            if (sl.count() != 2)
+            {
+                logMessage(QString("OnSelectRadio Error Splitting radioName and mode %1").arg(s));
+                return;     // error
+            }
+            ui->selectRadioBox->setCurrentText(sl[0]);
+            if (sl[1] == "")
+            {
+                selRadioMode = "USB";
+            }
+            else
+            {
+                selRadioMode = sl[1];
+            }
+        }
+        else
+        {
             ui->selectRadioBox->setCurrentText(s);
-    //    }
-    //    if (s == RELOAD)
-    //    {
-            logMessage(QString("Recieved Select Radio %1 from Logger").arg(s));
-    //    }
+        }
+
         upDateRadio();
     }
 

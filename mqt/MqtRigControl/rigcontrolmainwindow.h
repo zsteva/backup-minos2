@@ -68,6 +68,7 @@ private:
     // data from logger
     QString logger_freq;
     QString slogMode;
+    QString selRadioMode;   // onSelectRadio mode from logger at startup
     rmode_t logMode;
 
     const int PASSBAND_NOCHANGE = -1;

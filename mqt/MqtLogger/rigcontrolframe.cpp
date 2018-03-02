@@ -45,7 +45,8 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     QFrame(parent)
     , ui(new Ui::RigControlFrame)
     , curFreq(memDefData::DEFAULT_FREQ)
-    , curMode(memDefData::DEFAULT_MODE)
+    //, curMode(memDefData::DEFAULT_MODE)
+    , curMode("")
     , radioName("NoRadio")
     , radioState("None")
     , radioLoaded(false)
@@ -590,9 +591,13 @@ void RigControlFrame::setRadioList(QString s)
     ui->radioName->addItem("");
     ui->radioName->addItems(listOfRadios);
 
-    if (ct)
-        setRadioName(ct->radioName.getValue());
-        //setMode(ct->currentMode.getValue());
+    if (ct && curMode.isEmpty())        // first time called
+    {
+        // add mode to the radioName, only on first pass
+        QString n = QString("%1:%2").arg(ct->radioName.getValue()).arg(ct->currentMode.getValue());
+        setRadioName(n);
+    }
+
 }
 void RigControlFrame::setRadioState(QString s)
 {
