@@ -410,12 +410,29 @@ void RigControlMainWindow::upDateRadio()
             {
                 if (radio->get_serialConnected())
                 {
-                    logMessage(QString("Update Radio: Set Mode USB"));
-                    // initialise rig state
-                    slogMode = "USB";
-                    // set mode
-                    logMode = radio->convertQStrMode("USB");
-                    setMode("USB", RIG_VFO_CURR);
+                    if (appName.count() > 0)
+                    {
+                        logMessage(QString("Update Radio: Logger Set Mode to %1").arg(slogMode));
+                        if (!slogMode.isEmpty())
+                        {
+                            logMode = radio->convertQStrMode(slogMode);
+                            setMode(slogMode, RIG_VFO_CURR);
+                        }
+                    }
+                    else
+                    {
+
+                        logMessage(QString("Update Radio: Set Mode USB Standalone"));
+                        // initialise rig state
+
+                        slogMode = "USB";
+                        // set mode
+                        logMode = radio->convertQStrMode("USB");
+                        setMode("USB", RIG_VFO_CURR);
+
+                    }
+
+
                 }
             }
 

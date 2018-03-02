@@ -592,6 +592,7 @@ void RigControlFrame::setRadioList(QString s)
 
     if (ct)
         setRadioName(ct->radioName.getValue());
+        //setMode(ct->currentMode.getValue());
 }
 void RigControlFrame::setRadioState(QString s)
 {
