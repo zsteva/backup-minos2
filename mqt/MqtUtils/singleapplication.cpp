@@ -1,6 +1,7 @@
 #include "singleapplication.h"
 #include <QLocalSocket>
 #include <QFileInfo>
+#include <QMessageBox>
 
 #define TIME_OUT                (500)    // 500ms
 
@@ -31,10 +32,12 @@ bool SingleApplication::isRunning() {
 void SingleApplication::_newLocalConnection() {
     QLocalSocket *socket = _localServer->nextPendingConnection();
     if(socket) {
-        socket->waitForReadyRead(2*TIME_OUT);
-        QByteArray dataread = socket->read(1024);
-        QString d = QString(dataread);
-        emit argsReceived(d);
+        if (socket->waitForReadyRead(2*TIME_OUT))
+        {
+            QByteArray dataread = socket->read(1024);
+            QString d = QString(dataread);
+            emit argsReceived(d);
+        }
         delete socket;
     }
 }

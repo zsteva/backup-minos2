@@ -90,8 +90,8 @@ int main(int argc, char *argv[])
                 msgBox.setIcon(QMessageBox::Critical);
                 msgBox.addButton("Close", QMessageBox::RejectRole);
                 msgBox.exec();
-                return appError;
             }
+            return appError;
         }
 
         appStartup("MinosQtLogger");
