@@ -1,4 +1,5 @@
 #include "logger_pch.h"
+#include "singleapplication.h"
 #include "tlogcontainer.h"
 
 #include "fileutils.h"
@@ -75,7 +76,23 @@ int main(int argc, char *argv[])
 
     int appError = 1;
     {
-        QApplication a(argc, argv);
+        SingleApplication a( QString("MinosLogger"), argc, argv);
+        if (a.isRunning())
+        {
+            if (argc > 1)
+            {
+                a.sendArgs();
+            }
+            else
+            {
+                QMessageBox msgBox;
+                msgBox.setText("Minos Logger is already running!");
+                msgBox.setIcon(QMessageBox::Critical);
+                msgBox.addButton("Close", QMessageBox::RejectRole);
+                msgBox.exec();
+                return appError;
+            }
+        }
 
         appStartup("MinosQtLogger");
 
@@ -105,6 +122,8 @@ int main(int argc, char *argv[])
         //a.setStyle("fusion");
 
         TLogContainer w;
+        w.connect(&a, SIGNAL(argsReceived(QString)), &w, SLOT(onArgsReceived(QString)));
+
         bool ret = w.show(argc, argv);
         if (ret == true)
         {

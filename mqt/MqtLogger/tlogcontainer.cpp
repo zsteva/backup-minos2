@@ -133,6 +133,11 @@ bool TLogContainer::show(int argc, char *argv[])
     TContestApp::getContestApp()->setPreloadComplete();
     return true;
 }
+void TLogContainer::onArgsReceived(QString conarg)
+{
+    preloadFiles( conarg );
+}
+
 void TLogContainer::on_TimeDisplayTimer( )
 {
 

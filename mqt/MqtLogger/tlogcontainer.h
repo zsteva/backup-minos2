@@ -210,6 +210,8 @@ private slots:
     void onTabMoved(int, int);
 
     void AuxDisplayAction();
+public slots:
+    void onArgsReceived(QString conarg);
 
 signals:
     void sendKeyerPlay( int fno );

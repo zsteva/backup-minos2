@@ -32,6 +32,9 @@ void SingleApplication::_newLocalConnection() {
     QLocalSocket *socket = _localServer->nextPendingConnection();
     if(socket) {
         socket->waitForReadyRead(2*TIME_OUT);
+        QByteArray dataread = socket->read(1024);
+        QString d = QString(dataread);
+        emit argsReceived(d);
         delete socket;
     }
 }
@@ -71,5 +74,17 @@ void SingleApplication::_newLocalServer() {
             QLocalServer::removeServer(_serverName); // <-- A key
             _localServer->listen(_serverName); // Listen again
         }
+    }
+}
+void SingleApplication::sendArgs()
+{
+    QLocalSocket  *socket = new QLocalSocket;
+    socket->connectToServer(_serverName);
+    if(socket->waitForConnected(TIME_OUT))
+    {
+        QString args = arguments()[1];
+        socket->write(args.toLatin1().data());
+        socket->waitForBytesWritten(TIME_OUT);
+        socket->deleteLater();
     }
 }
