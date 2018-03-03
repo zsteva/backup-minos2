@@ -47,7 +47,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     , curFreq(memDefData::DEFAULT_FREQ)
     //, curMode(memDefData::DEFAULT_MODE)
     , curMode("")
-    , radioName("NoRadio")
+    , radioName(NORADIO)
     , radioState("None")
     , radioLoaded(false)
     , freqEditOn(false)
@@ -564,19 +564,19 @@ void RigControlFrame::sendModeToRadio(QString m)
 }
 
 
-void RigControlFrame::setRadioName(QString radioName)
+void RigControlFrame::setRadioName(QString name)
 {
-    traceMsg(QString("Set RadioName = %1").arg(radioName));
-    if (radioName == "NoRadio")
+    traceMsg(QString("Set RadioName = %1").arg(name));
+    if (name == NORADIO)
     {
         return;
     }
-    QString radNam = extractRadioName(radioName);   // remove mode if appended
+    QString radNam = extractRadioName(name);   // remove mode if appended
     if (ct && !ct->isProtected())
     {
-        ui->radioName->setCurrentText(extractRadioName(radNam));
-
-        emit selectRadio(radioName);  // send radio and mode if appended.
+        ui->radioNameSel->setCurrentText(extractRadioName(radNam));
+        radioName = radNam;
+        emit selectRadio(name);  // send radio and mode if appended.
     }
 }
 
@@ -592,15 +592,17 @@ void RigControlFrame::setRadioList(QString s)
     listOfRadios.clear();
     listOfRadios = s.split(":");
 
-    ui->radioName->clear();
-    ui->radioName->addItem("");
-    ui->radioName->addItems(listOfRadios);
+    ui->radioNameSel->clear();
+    ui->radioNameSel->addItem("");
+    ui->radioNameSel->addItems(listOfRadios);
+    if (radioName != NORADIO)
+    {
+        ui->radioNameSel->setCurrentText(radioName);
+    }
 
     if (ct && curMode.isEmpty())        // first time called
     {
         // add mode to the radioName, only on first pass
-        QString g = ct->radioName.getValue();
-        QString h = ct->currentMode.getValue();
         QString n = QString("%1:%2").arg(ct->radioName.getValue()).arg(ct->currentMode.getValue());
         setRadioName(n);
     }
