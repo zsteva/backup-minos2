@@ -1034,7 +1034,7 @@ QWidget * ContestDetails::getDetails( )
     contest->power.setValue( ui->PowerEdit->text() );
     contest->bearingOffset.setValue(ui->AntOffsetEdit->text().toInt());	// int
 
-    contest->radioName.setValue(ui->radioNameEdit->text());
+    contest->radioName.setValue(ui->radioNameEdit->text().trimmed().remove(':'));
     contest->rotatorName.setValue(ui->antennaNameEdit->text());
 
     contest->currentMode.setValue(ui->ModeComboBox->currentText());
