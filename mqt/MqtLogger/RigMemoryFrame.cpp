@@ -101,7 +101,7 @@ void RigMemoryFrame::saveAllColumnWidthsAndPositions()
     QByteArray state;
 
     state = ui->rigMemTable->horizontalHeader()->saveState();
-    settings.setValue("RigMemoryTable/state", state);
+    settings.setValue("RigMem/state", state);
 
     //And we need to send this out to all other instances
 
@@ -110,7 +110,7 @@ void RigMemoryFrame::saveAllColumnWidthsAndPositions()
 void RigMemoryFrame::reloadColumns()
 {
     QSettings settings;
-    QByteArray state = settings.value("RigMemoryTable/state").toByteArray();
+    QByteArray state = settings.value("RigMem/state").toByteArray();
     if (state.size())
     {
         suppressSendUpdate = true;
