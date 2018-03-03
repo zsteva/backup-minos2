@@ -133,7 +133,7 @@ private slots:
     void freqNeg_ShortCut();
 
 
-    void on_radioName_activated(const QString &arg1);
+    void on_radioNameSel_activated(const QString &arg1);
 
 public slots:
     void changeRadioFreq();

@@ -151,7 +151,7 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
 
 
 
-void RigControlFrame::on_radioName_activated(const QString &arg1)
+void RigControlFrame::on_radioNameSel_activated(const QString &arg1)
 {
 //    QString n = arg1;
 //    if (n == radioName)
