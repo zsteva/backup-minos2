@@ -867,12 +867,18 @@ void TSingleLogFrame::on_SetFreq(QString f)
 
 void TSingleLogFrame::on_NoRadioSetFreq(QString f)
 {
-    ui->GJVQSOLogFrame->setFreq(f);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->GJVQSOLogFrame->setFreq(f);
+    }
 }
 
 void TSingleLogFrame::on_NoRadioSetMode(QString m)
 {
-    ui->GJVQSOLogFrame->modeSentFromRig(m);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->GJVQSOLogFrame->modeSentFromRig(m);
+    }
 }
 
 void TSingleLogFrame::on_RadioLoaded()
@@ -893,18 +899,17 @@ void TSingleLogFrame::on_SetRadioList(QString s)
 // This is used to handle radioName from rigcontrol
 void TSingleLogFrame::on_SetRadioName(QString radioName)
 {
-
-    LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-    if (radioName != ct->radioName.getValue())
+    if ( this == LogContainer->getCurrentLogFrame() )
     {
-        ct->radioName.setValue(radioName);
-        ct->commonSave(false);
-        ui->FKHRigControlFrame->setRadioNameFromRigControl(radioName);
-        ui->GJVQSOLogFrame->setRadioName(radioName);
+        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+        if (radioName != ct->radioName.getValue())
+        {
+            ct->radioName.setValue(radioName);
+            ct->commonSave(false);
+            ui->FKHRigControlFrame->setRadioNameFromRigControl(radioName);
+            ui->GJVQSOLogFrame->setRadioName(radioName);
+        }
     }
-
-
-
 }
 
 
@@ -912,14 +917,20 @@ void TSingleLogFrame::on_SetRadioName(QString radioName)
 
 void TSingleLogFrame::on_SetRadioState(QString s)
 {
-    ui->FKHRigControlFrame->setRadioState(s);
-    ui->GJVQSOLogFrame->setRadioState(s);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRigControlFrame->setRadioState(s);
+        ui->GJVQSOLogFrame->setRadioState(s);
+    }
 }
 
 
 void TSingleLogFrame::on_SetRadioTxVertState(QString s)
 {
-    ui->FKHRigControlFrame->setRadioTxVertState(s);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRigControlFrame->setRadioTxVertState(s);
+    }
 }
 
 //---- Send to RigController
@@ -943,8 +954,6 @@ void TSingleLogFrame::sendSelectRadio(QString radioName)
     QString radName = extractRadioName(radioName);    // extract radioName from message, removing mode if appended
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
     {
-
-
         LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
         if (ct && !ct->isProtected())
         {
@@ -1014,35 +1023,50 @@ void TSingleLogFrame::on_RotatorList(QString s)
 
 void TSingleLogFrame::on_RotatorState(QString s)
 {
-    ui->FKHRotControlFrame->setRotatorState(s);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRotControlFrame->setRotatorState(s);
+    }
 }
 
 void TSingleLogFrame::on_RotatorBearing(QString s)
 {
-    ui->FKHRotControlFrame->setRotatorBearing(s);
-    ui->GJVQSOLogFrame->setRotatorBearing(s);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRotControlFrame->setRotatorBearing(s);
+        ui->GJVQSOLogFrame->setRotatorBearing(s);
+    }
 }
 
 
 void TSingleLogFrame::on_RotatorMaxAzimuth(QString s)
 {
-    ui->FKHRotControlFrame->setRotatorMaxAzimuth(s);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRotControlFrame->setRotatorMaxAzimuth(s);
+    }
 }
 
 void TSingleLogFrame::on_RotatorMinAzimuth(QString s)
 {
-    ui->FKHRotControlFrame->setRotatorMinAzimuth(s);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRotControlFrame->setRotatorMinAzimuth(s);
+    }
 }
 
 
 void TSingleLogFrame::on_RotatorAntennaName(QString rotName)
 {
-    LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-    if (rotName != ct->rotatorName.getValue())
+    if ( this == LogContainer->getCurrentLogFrame() )
     {
-        ct->rotatorName.setValue(rotName);
-        ct->commonSave(false);
-        ui->FKHRotControlFrame->setRotatorAntennaName(rotName);
+        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+        if (rotName != ct->rotatorName.getValue())
+        {
+            ct->rotatorName.setValue(rotName);
+            ct->commonSave(false);
+            ui->FKHRotControlFrame->setRotatorAntennaName(rotName);
+        }
     }
 }
 

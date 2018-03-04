@@ -152,7 +152,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     setupLog = new LogDialog;
     pollTimer = new QTimer(this);
 
-    selectAntenna = new QComboBox;
+    selectAntennaCombo = new QComboBox;
     rotlog = new RotatorLog;
 
     status = new QLabel;
@@ -189,7 +189,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     refreshPresetLabels();
     initActionsConnections();
 
-    selectAntenna = ui->selectAntennaBox;
+    selectAntennaCombo = ui->selectAntennaBox;
 
     selectRotator->setAppName(appName);
 
@@ -252,7 +252,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     }
     else
     {
-        selectAntenna->setCurrentIndex(selectAntenna->findText(selectRotator->currentAntenna.antennaName));
+        selectAntennaCombo->setCurrentIndex(selectAntennaCombo->findText(selectRotator->currentAntenna.antennaName));
     }
 
 
@@ -890,10 +890,10 @@ void RotatorMainWindow::updatePresetLabels()
 
 void RotatorMainWindow::initSelectAntennaBox()
 {
-    selectAntenna->addItem("");
+    selectAntennaCombo->addItem("");
     for (int i= 0; i < NUM_ANTENNAS; i++)
     {
-        selectAntenna->addItem(selectRotator->availAntennas[i].antennaName);
+        selectAntennaCombo->addItem(selectRotator->availAntennas[i].antennaName);
     }
     sendAntennaListLogger();
 }
@@ -2059,10 +2059,10 @@ void RotatorMainWindow::currentAntennaSettingChanged(QString antennaName)
                          QMessageBox::Cancel ) )
     {
         case QMessageBox::Yes:
-            if (selectAntenna->currentText() != antennaName)
+            if (selectAntennaCombo->currentText() != antennaName)
             {
                 bool ok;
-                selectAntenna->setCurrentIndex(selectRotator->currentAntenna.antennaNumber.toInt(&ok, 10));
+                selectAntennaCombo->setCurrentIndex(selectRotator->currentAntenna.antennaNumber.toInt(&ok, 10));
             }
             upDateAntenna();
             break;
@@ -2081,10 +2081,10 @@ void RotatorMainWindow::currentAntennaSettingChanged(QString antennaName)
 
 void RotatorMainWindow::updateSelectAntennaBox()
 {
-    int curidx = selectAntenna->currentIndex();
-    selectAntenna->clear();
+    int curidx = selectAntennaCombo->currentIndex();
+    selectAntennaCombo->clear();
     initSelectAntennaBox();
-    selectAntenna->setCurrentIndex(curidx);
+    selectAntennaCombo->setCurrentIndex(curidx);
 }
 
 void RotatorMainWindow::aboutRotatorConfig()

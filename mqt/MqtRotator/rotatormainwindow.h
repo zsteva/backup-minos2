@@ -97,7 +97,7 @@ private:
     QTimer LogTimer;
     QTimer RotateTimer;
 
-    QComboBox *selectAntenna;
+    QComboBox *selectAntennaCombo;
     QPushButton* presetButtons[NUM_PRESETS];
     QString appName = "";
     RotControl  *rotator;

@@ -357,8 +357,8 @@ void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
 {
 
 
-    //QString radioName = ct->radioName.getValue();
-    //emit selectRadio(radioName);
+    QString radioName = ct->radioName.getValue();
+    emit selectRadio(radioName);
 
 
     QStringList modelist = mode.split(':');  // unpack mode

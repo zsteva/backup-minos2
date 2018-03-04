@@ -562,7 +562,7 @@ void RotControlFrame::on_ContestPageChanged()
 {
     // send rotator select to rotator app
 
-    //emit selectRotator(ct->rotatorName.getValue());
+    emit selectRotator(ct->rotatorName.getValue());
 }
 
 void RotControlFrame::setRotatorBearing(const QString &s)
