@@ -92,6 +92,7 @@ public:
     void setRadioName(QString);
     void setRadioState(QString);
     void setRadioTxVertState(QString s);
+    void setRadioNameFromRigControl(QString name);
 
     bool isRadioLoaded();
 
@@ -109,6 +110,7 @@ public:
 
 
     void on_ContestPageChanged(QString freq, QString mode);
+
 
 signals:
     void selectRadio(QString);

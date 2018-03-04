@@ -581,6 +581,16 @@ void RigControlFrame::setRadioName(QString name)
 }
 
 
+void RigControlFrame::setRadioNameFromRigControl(QString name)
+{
+
+    //if(name != radioName)
+    //{
+        ui->radioNameSel->setCurrentText(name);
+        radioName = name;
+    //}
+
+}
 
 void RigControlFrame::loadMemories()
 {

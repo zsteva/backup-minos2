@@ -339,7 +339,6 @@ void RigControlMainWindow::upDateRadio()
         if (radio->get_serialConnected())
         {
                 closeRadio();
-
         }
 
 
@@ -438,6 +437,7 @@ void RigControlMainWindow::upDateRadio()
 
                 writeWindowTitle(appName);
                 sendStatusToLogConnected();
+                sendRadioNameLogger(selectRig->currentRadio.radioName);
                 dumpRadioToTraceLog();
 
             }
@@ -457,6 +457,7 @@ void RigControlMainWindow::upDateRadio()
         if (appName.length() > 0)
         {
             writeWindowTitle(appName);
+            sendRadioNameLogger("");
         }
         else
         {
