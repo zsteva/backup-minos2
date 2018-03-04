@@ -27,4 +27,7 @@ double convertStrToFreq(QString frequency);
 bool validateFreqTxtInput(QString f);
 QString convertSinglePeriodFreqToMultiPeriod(QString f);
 
+QString extractRadioName(QString radioNameMessage);
+
+
 #endif // RIGUTILS_H

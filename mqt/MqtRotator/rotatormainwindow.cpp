@@ -346,6 +346,7 @@ void RotatorMainWindow::LogTimerTimer(  )
 
 void RotatorMainWindow::onLoggerSelectAntenna(QString s)
 {
+/*
     if (s != RELOAD)        // not reload, update selection
     {
        ui->selectAntennaBox->setCurrentText(s);
@@ -354,7 +355,11 @@ void RotatorMainWindow::onLoggerSelectAntenna(QString s)
     {
         logMessage(QString("Received Reload from Logger"));
     }
+*/
 
+
+    logMessage(QString("Received Select Antenna %1 from Logger").arg(s));
+    ui->selectAntennaBox->setCurrentText(s);
     upDateAntenna();
 }
 

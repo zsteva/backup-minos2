@@ -1,3 +1,4 @@
+
 /////////////////////////////////////////////////////////////////////////////
 // $Id$
 //
@@ -91,6 +92,7 @@ public:
     void setRadioName(QString);
     void setRadioState(QString);
     void setRadioTxVertState(QString s);
+    void setRadioNameFromRigControl(QString name);
 
     bool isRadioLoaded();
 
@@ -108,6 +110,7 @@ public:
 
 
     void on_ContestPageChanged(QString freq, QString mode);
+
 
 signals:
     void selectRadio(QString);
@@ -132,7 +135,7 @@ private slots:
     void freqNeg_ShortCut();
 
 
-    void on_radioName_activated(const QString &arg1);
+    void on_radioNameSel_activated(const QString &arg1);
 
 public slots:
     void changeRadioFreq();
@@ -168,9 +171,11 @@ private:
     QString curFreq;
     QString curMode;
 
+    QStringList listOfRadios;
     QString radioName;
     QString rigAppName;
     QString radioState;
+
 
     QString lastFreq;
 
@@ -198,6 +203,7 @@ private:
     int calcMinosMode(QString mode);
 
     void freqPlusMinusButton(double freq);
+
 
 };
 

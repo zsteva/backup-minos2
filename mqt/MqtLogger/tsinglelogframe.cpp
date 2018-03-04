@@ -14,6 +14,7 @@
 #include "enqdlg.h"
 #include "MatchTreesFrame.h"
 #include "rigmemdialog.h"
+#include "rigutils.h"
 
 TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     QFrame(parent),
@@ -102,7 +103,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     // From rig controller
     connect(sendDM, SIGNAL(setRadioLoaded()), this, SLOT(on_RadioLoaded()));
     connect(sendDM, SIGNAL(setRadioList(QString)), this, SLOT(on_SetRadioList(QString)));
-    //connect(sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
+    connect(sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
     connect(sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetMode(QString)));
     connect(sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetFreq(QString)));
     connect(sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
@@ -892,14 +893,18 @@ void TSingleLogFrame::on_SetRadioList(QString s)
 // This is used to handle radioName from rigcontrol
 void TSingleLogFrame::on_SetRadioName(QString radioName)
 {
+
     LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
     if (radioName != ct->radioName.getValue())
     {
         ct->radioName.setValue(radioName);
         ct->commonSave(false);
-        ui->FKHRigControlFrame->setRadioName(radioName);
+        ui->FKHRigControlFrame->setRadioNameFromRigControl(radioName);
         ui->GJVQSOLogFrame->setRadioName(radioName);
     }
+
+
+
 }
 
 
@@ -935,6 +940,7 @@ void TSingleLogFrame::sendRadioMode(QString mode)
 
 void TSingleLogFrame::sendSelectRadio(QString radioName)
 {
+    QString radName = extractRadioName(radioName);    // extract radioName from message, removing mode if appended
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
     {
 
@@ -942,18 +948,18 @@ void TSingleLogFrame::sendSelectRadio(QString radioName)
         LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
         if (ct && !ct->isProtected())
         {
-            if (radioName != ui->GJVQSOLogFrame->getRadioName())
+            if (radName != ui->GJVQSOLogFrame->getRadioName())
             {
-               ui->GJVQSOLogFrame->setRadioName(radioName);
+               ui->GJVQSOLogFrame->setRadioName(radName);
             }
 
 
-            if (radioName != ct->radioName.getValue())
+            if (radName != ct->radioName.getValue())
             {
-                ct->radioName.setValue(radioName);
+                ct->radioName.setValue(radName);
                 ct->commonSave(false);
             }
-            sendDM->sendSelectRig(radioName);
+            sendDM->sendSelectRig(radioName);  // send message including mode if it has been appended.
         }
 
     }
@@ -963,7 +969,17 @@ void TSingleLogFrame::sendSelectRadio(QString radioName)
 void TSingleLogFrame::sendSelectRotator(QString s)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest() && !contest->isProtected())
+    {
+        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+        if (s != ct->rotatorName.getValue())
+        {
+            ct->rotatorName.setValue(s);
+            ct->commonSave(false);
+            ui->FKHRotControlFrame->setRotatorAntennaName(s);
+        }
         sendDM->sendSelectRotator(s);
+    }
+
 }
 
 /*
