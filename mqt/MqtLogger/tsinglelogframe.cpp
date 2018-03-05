@@ -245,6 +245,7 @@ void TSingleLogFrame::on_ContestPageChanged ()
        return ;
     }
 
+    trace("on_ContestPageChanged to current frame");
     LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( getContest() );
     TContestApp::getContestApp() ->setCurrentContest( ct );
     ui->matchTreesFrame->setContest(ct);

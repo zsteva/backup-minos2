@@ -755,9 +755,6 @@ void RigControlMainWindow::refreshRadio()
 
         ui->selectRadioBox->setCurrentText(s);
 
-        //Can we set a "desired radio" and only if different to current do we close/reopen and set up the combo?
-        //We will also get the other details force upon us after this action.
-
         if (!s.isEmpty() && s == oldRadio)
         {
             refreshRadio();
