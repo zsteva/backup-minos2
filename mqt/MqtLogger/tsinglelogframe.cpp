@@ -271,12 +271,10 @@ void TSingleLogFrame::on_ContestPageChanged ()
     doNextContactDetailsOnLeftClick( false );
     MinosLoggerEvents::SendShowOperators();
 
-    if ( this == LogContainer->getCurrentLogFrame() )
-    {
-        ui->FKHRigControlFrame->on_ContestPageChanged(sCurFreq, sCurMode);
-        ui->FKHRotControlFrame->on_ContestPageChanged();
-    }
+    ui->FKHRigControlFrame->on_ContestPageChanged(sCurFreq, sCurMode);
+    ui->FKHRotControlFrame->on_ContestPageChanged();
 
+    LogContainer->subscribeApps();  // force everything to be (re)published
     updateQSODisplay();
 
 }
@@ -829,15 +827,9 @@ void TSingleLogFrame::on_SetMode(QString m)
 {
     if (sCurMode != m)
     {
-        sCurMode = m;
-        if (modeUpDateCnt < 1)
+        if ( this == LogContainer->getCurrentLogFrame() )
         {
-            modeUpDateCnt++;
-            ui->FKHRigControlFrame->setMode(m);
-            ui->GJVQSOLogFrame->modeSentFromRig(m);
-        }
-        else if ( this == LogContainer->getCurrentLogFrame() )
-        {
+            sCurMode = m;
             ui->FKHRigControlFrame->setMode(m);
             ui->GJVQSOLogFrame->modeSentFromRig(m);
         }
@@ -849,15 +841,9 @@ void TSingleLogFrame::on_SetFreq(QString f)
 
     if (sCurFreq != f)
     {
-        sCurFreq = f;
-        if (freqUpDateCnt < 1)
+        if ( this == LogContainer->getCurrentLogFrame() )
         {
-            freqUpDateCnt++;
-            ui->FKHRigControlFrame->setFreq(f);
-            ui->GJVQSOLogFrame->setFreq(f);
-        }
-        else if ( this == LogContainer->getCurrentLogFrame() )
-        {
+            sCurFreq = f;
             ui->FKHRigControlFrame->setFreq(f);
             ui->GJVQSOLogFrame->setFreq(f);
             MinosLoggerEvents::sendRigFreqChanged(f, contest);

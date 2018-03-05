@@ -80,7 +80,6 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     selectRig = new SetupDialog(radio);
     selectRig->setAppName(appName);
 
-    selectRadio = ui->selectRadioBox;
     if (appName.length() > 0)
     {
         // connected to logger don't show radio selectbox
@@ -117,22 +116,21 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     }
     else
     {
-        logMessage((QString("Read Current Antenna for Local selection")));
+        logMessage((QString("Read Current Radio for Local selection")));
 
-    }
+        selectRig->readCurrentRadio();
 
-    selectRig->readCurrentRadio();
-
-    if (selectRig->currentRadio.radioName == "")
-    {
-        logMessage(QString("No radio selected for this appName, %1").arg(appName));
-        QString errmsg = "<font color='Red'>Please select a radio!</font>";
-        showStatusMessage(errmsg);
-        sendStatusLogger(errmsg);
-    }
-    else
-    {
-        selectRadio->setCurrentIndex(selectRadio->findText(selectRig->currentRadio.radioName));
+        if (selectRig->currentRadio.radioName == "")
+        {
+            logMessage(QString("No radio selected for this appName, %1").arg(appName));
+            QString errmsg = "<font color='Red'>Please select a radio!</font>";
+            showStatusMessage(errmsg);
+            sendStatusLogger(errmsg);
+        }
+        else
+        {
+            ui->selectRadioBox->setCurrentIndex(ui->selectRadioBox->findText(selectRig->currentRadio.radioName));
+        }
     }
 
     setPolltime(250);
@@ -259,10 +257,10 @@ void RigControlMainWindow::currentRadioSettingChanged(QString radioName)
                          QMessageBox::Cancel ) )
     {
         case QMessageBox::Yes:
-            if (selectRadio->currentText() != radioName)
+            if (ui->selectRadioBox->currentText() != radioName)
             {
                 bool ok;
-                selectRadio->setCurrentIndex(selectRig->currentRadio.radioNumber.toInt(&ok, 10));
+                ui->selectRadioBox->setCurrentIndex(selectRig->currentRadio.radioNumber.toInt(&ok, 10));
             }
             upDateRadio();
             break;
@@ -281,19 +279,19 @@ void RigControlMainWindow::currentRadioSettingChanged(QString radioName)
 
 void RigControlMainWindow::updateSelectRadioBox()
 {
-    int curidx = selectRadio->currentIndex();
-    selectRadio->clear();
+    int curidx = ui->selectRadioBox->currentIndex();
+    ui->selectRadioBox->clear();
     initSelectRadioBox();
-    selectRadio->setCurrentIndex(curidx);
+    ui->selectRadioBox->setCurrentIndex(curidx);
 }
 
 
 void RigControlMainWindow::initSelectRadioBox()
 {
-    selectRadio->addItem("");
+    ui->selectRadioBox->addItem("");
     for (int i= 0; i < NUM_RADIOS; i++)
     {
-        selectRadio->addItem(selectRig->availRadios[i].radioName);
+        ui->selectRadioBox->addItem(selectRig->availRadios[i].radioName);
     }
 
     if (appName.length() > 0)
@@ -326,7 +324,6 @@ void RigControlMainWindow::setRadioNameLabelVisible(bool visible)
 
 void RigControlMainWindow::upDateRadio()
 {
-    int retCode = 0;
     logMessage(QString("UpdateRadio: Index Selected = %1").arg(QString::number(ui->selectRadioBox->currentIndex())));
 
     pollTimer->stop();      // stop updates
@@ -387,7 +384,8 @@ void RigControlMainWindow::upDateRadio()
 
 
             logMessage(QString("Update - Get radio frequency"));
-            retCode = getFrequency(RIG_VFO_CURR);
+            /*int retCode =*/ getAndSendFrequency(RIG_VFO_CURR);   // also sends it
+            /*
             if (retCode < 0)
             {
                 // error
@@ -397,11 +395,10 @@ void RigControlMainWindow::upDateRadio()
             else
             {
                 logMessage(QString("Radio Update: Got Frequency = %1").arg(QString::number(rfrequency)));
-                // send freq to logger
-                sendFreqToLog(0.0);             // force a freq update
-                sendFreqToLog(rfrequency);
-            }
 
+                sendFreqToLog(rfrequency, true);// force a freq update
+            }
+            */
 
 
 
@@ -474,6 +471,38 @@ void RigControlMainWindow::upDateRadio()
 
 }
 
+void RigControlMainWindow::refreshRadio()
+{
+    logMessage(QString("refreshRadio: Index Selected = %1").arg(QString::number(ui->selectRadioBox->currentIndex())));
+
+    int ridx = 0;
+    radioIndex = ui->selectRadioBox->currentIndex();
+    ridx = radioIndex;
+    if (ridx > 0)
+    {
+        if (radio->get_serialConnected())
+        {
+            openRadio();    // do everything except init it
+
+            logMessage(QString("Update - Get radio frequency"));
+            getAndSendFrequency(RIG_VFO_CURR);   // also sends
+
+            if (selectRig->currentRadio.radioModelNumber != 135) // don't send USB if Ft991
+            {
+                logMessage(QString("Update Radio: Logger Set Mode to %1").arg(slogMode));
+                loggerSetMode(selRadioMode);
+            }
+            writeWindowTitle(appName);
+            sendStatusToLogConnected();
+            sendRadioNameLogger(selectRig->currentRadio.radioName);
+            dumpRadioToTraceLog();
+        }
+        else
+        {
+            upDateRadio();
+        }
+    }
+}
     void RigControlMainWindow::openRadio()
     {
 
@@ -526,13 +555,16 @@ void RigControlMainWindow::upDateRadio()
 
         scatParams p = selectRig->getCurrentRadio();
 
-        retCode = radio->init(selectRig->currentRadio);
-        if (retCode < 0)
+        if (!radio->get_serialConnected())
         {
-            logMessage(QString("Error Opening Radio Error Code = $1").arg(QString::number(retCode)));
-            hamlibError(retCode, "Open Radio");
+            // if radio is already open, don't reinit it
+            retCode = radio->init(selectRig->currentRadio);
+            if (retCode < 0)
+            {
+                logMessage(QString("Error Opening Radio Error Code = %1").arg(QString::number(retCode)));
+                hamlibError(retCode, "Open Radio");
+            }
         }
-
 
         if (radio->get_serialConnected())
         {
@@ -640,7 +672,8 @@ void RigControlMainWindow::upDateRadio()
         if (radio->get_serialConnected())
         {
             logMessage(QString("Get radio frequency"));
-            retCode = getFrequency(RIG_VFO_CURR);
+            retCode = getAndSendFrequency(RIG_VFO_CURR);
+            /*
             if (retCode < 0)
             {
                 // error
@@ -651,13 +684,14 @@ void RigControlMainWindow::upDateRadio()
             {
                 logMessage(QString("Got Frequency = %1").arg(QString::number(rfrequency)));
             }
+            */
         }
 
         if (radio->get_serialConnected())
         {
 
             logMessage("Get radio mode");
-            retCode = getMode(RIG_VFO_CURR);
+            retCode = getAndSendMode(RIG_VFO_CURR);
             if (retCode < 0)
             {
                 // error
@@ -706,7 +740,7 @@ void RigControlMainWindow::upDateRadio()
                 logMessage(QString("OnSelectRadio Error Splitting radioName and mode %1").arg(s));
                 return;     // error
             }
-            ui->selectRadioBox->setCurrentText(sl[0]);
+            s = sl[0];
             if (sl[1] == "")
             {
                 selRadioMode = "USB";
@@ -716,12 +750,22 @@ void RigControlMainWindow::upDateRadio()
                 selRadioMode = sl[1];
             }
         }
+
+        QString oldRadio = ui->selectRadioBox->currentText();
+
+        ui->selectRadioBox->setCurrentText(s);
+
+        //Can we set a "desired radio" and only if different to current do we close/reopen and set up the combo?
+        //We will also get the other details force upon us after this action.
+
+        if (!s.isEmpty() && s == oldRadio)
+        {
+            refreshRadio();
+        }
         else
         {
-            ui->selectRadioBox->setCurrentText(s);
+            upDateRadio();
         }
-
-        upDateRadio();
     }
 
     void RigControlMainWindow::loggerSetFreq(QString freq)
@@ -797,7 +841,7 @@ void RigControlMainWindow::upDateRadio()
         cmdLockOff();
     }
 
-    int RigControlMainWindow::getFrequency(vfo_t vfo)
+    int RigControlMainWindow::getAndSendFrequency(vfo_t vfo)
     {
         double transVertF = 0;
         int retCode = 0;
@@ -840,6 +884,11 @@ void RigControlMainWindow::upDateRadio()
                 sendFreqToLog(rfrequency);
             }
         }
+        else
+        {
+            logMessage(QString("Get radioInfo: Get Freq error, code = %1").arg(QString::number(retCode)));
+            hamlibError(retCode, "Request Frequency");
+        }
         return retCode;
     }
 
@@ -864,7 +913,7 @@ void RigControlMainWindow::upDateRadio()
     }
 
 
-    int RigControlMainWindow::getMode(vfo_t vfo)
+    int RigControlMainWindow::getAndSendMode(vfo_t vfo)
     {
 
         int retCode = 0;
@@ -906,12 +955,6 @@ void RigControlMainWindow::upDateRadio()
 
         return retCode;
     }
-
-    void RigControlMainWindow::getCurMode()
-    {
-        getMode(RIG_VFO_CURR);
-    }
-
 
     void RigControlMainWindow::loggerSetMode(QString mode)
     {
@@ -1240,7 +1283,7 @@ void RigControlMainWindow::upDateRadio()
         msg->publishRadioName(radioName);
     }
 
-    void RigControlMainWindow::sendStatusLogger(const QString &message)
+    void RigControlMainWindow::sendStatusLogger(const QString &message )
     {
         if (appName.length() > 0)
         {

@@ -355,8 +355,6 @@ void RigControlFrame::noRadioSendOutMode(QString m)
 
 void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
 {
-
-
     QString radioName = ct->radioName.getValue();
     emit selectRadio(radioName);
 
@@ -368,35 +366,18 @@ void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
     {
         return;
     }
-    //if (modelist[0] == hamlibData::MGM)
-    //{
-    //    sMode = modelist[1];
-    //}
-    //else
-   // {
-        sMode = modelist[0];
-   // }
+    sMode = modelist[0];
+
     // contest paged changed - send freq and mode to synch
-    if (curFreq == memDefData::DEFAULT_FREQ)
+    if (freq != memDefData::DEFAULT_FREQ)
     {
         sendFreq(freq);
     }
-    else if (curFreq != freq)
-    {
-        sendFreq(curFreq);
-    }
 
-    if (curMode == memDefData::DEFAULT_MODE && curMode != sMode)
+    if (curMode != memDefData::DEFAULT_MODE)
     {
         sendModeToRadio(curMode);
     }
-    else if (curMode != sMode)
-    {
-        sendModeToRadio(curMode);
-    }
-
-
-
 }
 
 bool RigControlFrame::eventFilter(QObject *obj, QEvent *event)

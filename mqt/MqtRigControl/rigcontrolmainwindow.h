@@ -53,8 +53,6 @@ private:
     StdInReader stdinReader;
     RigControlRpc *msg;
 
-
-    QComboBox *selectRadio;
     SetupDialog *selectRig;
     RigControl  *radio;
     QString appName = "";
@@ -95,8 +93,8 @@ private:
     void setRadioNameLabelVisible(bool visible);
     void openRadio();
     void closeRadio();
-    int getFrequency(vfo_t vfo);
-    int getMode(vfo_t vfo);
+    int getAndSendFrequency(vfo_t vfo);
+    int getAndSendMode(vfo_t vfo);
     //QString convertFreqString(double);
 
     void setPolltime(int);
@@ -152,22 +150,17 @@ private:
     void writeWindowTitle(QString appName);
     void sendTransVertStatus(bool status);
 
-
-
-
+    void refreshRadio();
 
 private slots:
 
     void onStdInRead(QString);
     void saveTraceLogFlag();
     void upDateRadio();
-    void getCurMode();
     void getRadioInfo();
     void logMessage(QString s);
     void about();
     void LogTimerTimer();
-
-
 
     void loggerSetFreq(QString freq);
     void loggerSetMode(QString mode);
