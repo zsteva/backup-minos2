@@ -212,7 +212,7 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
             if ( psFreq->getString( freq ) )
             {
                 // here you handle what the logger has sent to us
-                trace(QString("Rig RPC: Freq Command From Logger = $1").arg(freq));
+                trace(QString("Rig RPC: Freq Command From Logger = %1").arg(freq));
                 emit (setFreq(freq));
             }
         }
