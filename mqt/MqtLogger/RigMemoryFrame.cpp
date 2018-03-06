@@ -136,15 +136,13 @@ void RigMemoryFrame::on_sortIndicatorChanged(int /*logicalIndex*/, Qt::SortOrder
 void RigMemoryFrame::setContest( BaseContestLog *pct )
 {
     ct = dynamic_cast<LoggerContestLog *>( pct);
-    on_AfterLogContact(ct);
-    doMemoryUpdates();
 
     model.ct = pct;
     model.frame = this;
 
     proxyModel.ct = pct;
 
-    model.reset();
+    doMemoryUpdates();
 }
 
 void RigMemoryFrame::setRigMemoryData(int memoryNumber, memoryData::memData m)
@@ -342,7 +340,7 @@ void RigMemoryFrame::on_AfterLogContact( BaseContestLog *c)
                   }
               }
           }
-          sendUpdateMemories();
+          //sendUpdateMemories();
       }
 }
 
