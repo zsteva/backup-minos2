@@ -99,7 +99,7 @@ private:
     Ui::RigMemoryFrame *ui;
     LoggerContestLog *ct = 0;
     bool suppressSendUpdate = false;
-    double lastRigFreq = 0.0;
+    QString lastRigFreq;
     int lastBearing = 0;
     bool doTimer = false;
 

@@ -169,7 +169,7 @@ void StackedInfoFrame::onRefreshMults(BaseContestLog *ct)
         ui->dxccFrame->reInitialiseCountries();
         ui->districtFrame->reInitialiseDistricts();
         //ui->rigMemFrame->reInitialiseMemories();
-        ui->rigMemFrame->doMemoryUpdates();
+        //ui->rigMemFrame->doMemoryUpdates();
     }
 }
 

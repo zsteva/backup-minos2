@@ -182,16 +182,16 @@ void RigMemoryFrame::checkTimerTimer()
     memoryData::memData logData;
     tslf->getCurrentDetails(logData);
 
-    double rigFreq = convertStrToFreq(logData.freq);
-    int bearing = logData.bearing;
-
-    if (!doTimer && (rigFreq == lastRigFreq && bearing == lastBearing))
+    if (!doTimer && (logData.freq == lastRigFreq && logData.bearing == lastBearing))
         return;
 
-    lastRigFreq = rigFreq;
-    lastBearing = bearing;
-
     doTimer = false;
+
+    lastRigFreq = logData.freq;
+    lastBearing = logData.bearing;
+
+    double rigFreq = convertStrToFreq(logData.freq);
+    int bearing = logData.bearing;
 
     int mcount = ct->rigMemories.size();
     int firstMatch = -1;
