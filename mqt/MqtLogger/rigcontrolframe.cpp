@@ -242,7 +242,7 @@ void RigControlFrame::changeRadioFreq()
                         {
                             sendFreq(lastFreq);
                         }
-                        else if (!radioConnected && radioName.trimmed() == "No Radio")
+                        else if (!radioConnected && radioName.trimmed() == NORADIO)
                         {
                             noRadioSendOutFreq(lastFreq);
                         }
@@ -443,7 +443,7 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
             }
 
         }
-        else if (!radioConnected && radioName.trimmed() == "No Radio")
+        else if (!radioConnected && radioName.trimmed() == NORADIO)
         {
             noRadioSendOutFreq(m.freq);
             noRadioSendOutMode(m.mode);
@@ -553,10 +553,11 @@ void RigControlFrame::setRadioName(QString name)
         return;
     }
     QString radNam = extractRadioName(name);   // remove mode if appended
-    if (ct && !ct->isProtected())
+    ui->radioNameSel->setCurrentText(extractRadioName(radNam));
+    radioName = radNam;
+
+    if (ct && !ct->isProtected() && ct == TContestApp::getContestApp() ->getCurrentContest())
     {
-        ui->radioNameSel->setCurrentText(extractRadioName(radNam));
-        radioName = radNam;
         emit selectRadio(name);  // send radio and mode if appended.
     }
 }
@@ -591,9 +592,9 @@ void RigControlFrame::setRadioList(QString s)
         ui->radioNameSel->setCurrentText(radioName);
     }
 
-    if (ct && curMode.isEmpty())        // first time called
+    if (ct && ct == TContestApp::getContestApp() ->getCurrentContest())
     {
-        // add mode to the radioName, only on first pass
+        // add mode to the radioName
         QString n = QString("%1:%2").arg(ct->radioName.getValue()).arg(ct->currentMode.getValue());
         setRadioName(n);
     }
@@ -773,7 +774,7 @@ void RigControlFrame::freqPlusMinusButton(double f)
 
                emit sendFreqControl(freq);
            }
-           else if (!radioConnected && radioName.trimmed() == "No Radio")
+           else if (!radioConnected && radioName.trimmed() == NORADIO)
            {
                noRadioSendOutFreq(freq);
            }
@@ -872,7 +873,7 @@ void RigControlFrame::runButReadActSel(int buttonNumber)
             }
 
         }
-        else if (!radioConnected && radioName.trimmed() == "No Radio")
+        else if (!radioConnected && radioName.trimmed() == NORADIO)
         {
             noRadioSendOutFreq(m.freq);
         }
