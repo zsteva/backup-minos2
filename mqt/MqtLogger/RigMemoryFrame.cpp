@@ -261,7 +261,7 @@ void RigMemoryFrame::checkTimerTimer()
     }
     if (firstMatch >= 0)
     {
-        ui->rigMemTable->scrollTo(model.index(firstMatch, 0), QAbstractItemView::PositionAtCenter);
+        scrollIntoView(firstMatch);
     }
     proxyModel.headerDataChanged(Qt::Vertical, 0, model.rowCount() - 1);
 }
@@ -489,7 +489,27 @@ void RigMemoryFrame::vsectionClicked(int /*logicalIndex*/)
     readActionSelected();
 }
 
+void RigMemoryFrame::scrollIntoView ( int firstMatch )
+{
+    QTableView *QGrid = ui->rigMemTable;
 
+    QApplication::processEvents();
+    if ( firstMatch >= 0 )
+    {
+        int row = -1;
+        while ( ++row < proxyModel.rowCount() )
+        {
+            QModelIndex nidx = proxyModel.index( row, 0 );
+            QModelIndex sourceIndex = proxyModel.mapToSource(nidx);
+
+            if ( sourceIndex.row() == firstMatch )
+            {
+                QGrid->setCurrentIndex(nidx);
+                break;
+            }
+        }
+    }
+}
 RigMemoryGridModel::RigMemoryGridModel():ct(0)
 {}
 RigMemoryGridModel::~RigMemoryGridModel()

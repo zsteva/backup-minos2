@@ -118,6 +118,7 @@ private:
     void writeMemory(int n);
     int getSelectedLine();
     void traceMsg(QString msg);
+    void scrollIntoView ( int firstMatch );
 
 };
 
