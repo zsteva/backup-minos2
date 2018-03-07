@@ -884,8 +884,9 @@ void TSingleLogFrame::on_SetRadioList(QString s)
 }
 
 // This is used to handle radioName from rigcontrol
-void TSingleLogFrame::on_SetRadioName(QString radioName)
+void TSingleLogFrame::on_SetRadioName(QString /*radioName*/)
 {
+    /*
     if ( this == LogContainer->getCurrentLogFrame() )
     {
         LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
@@ -897,6 +898,7 @@ void TSingleLogFrame::on_SetRadioName(QString radioName)
             ui->GJVQSOLogFrame->setRadioName(radioName);
         }
     }
+*/
 }
 
 
@@ -1043,8 +1045,9 @@ void TSingleLogFrame::on_RotatorMinAzimuth(QString s)
 }
 
 
-void TSingleLogFrame::on_RotatorAntennaName(QString rotName)
+void TSingleLogFrame::on_RotatorAntennaName(QString /*rotName*/)
 {
+    /*
     if ( this == LogContainer->getCurrentLogFrame() )
     {
         LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
@@ -1055,6 +1058,7 @@ void TSingleLogFrame::on_RotatorAntennaName(QString rotName)
             ui->FKHRotControlFrame->setRotatorAntennaName(rotName);
         }
     }
+*/
 }
 
 
