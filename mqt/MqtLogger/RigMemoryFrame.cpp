@@ -334,6 +334,7 @@ void RigMemoryFrame::on_AfterLogContact( BaseContestLog *c)
                       if ((*i).wt->cs == mcs)
                       {
                           m.worked = true;
+                          doTimer = true;
                           setRigMemoryData(buttonNumber, m);
                           break;
                       }
