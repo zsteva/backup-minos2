@@ -45,9 +45,9 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
 
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveButtonPushed()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
-    connect(ui->addAntenna, SIGNAL(clicked(bool)), this, SLOT(addAntenna(bool)));
-    connect(ui->removeAntenna, SIGNAL(clicked(bool)), this, SLOT(removeAntenna(bool)));
-
+    connect(ui->addAntenna, SIGNAL(clicked()), this, SLOT(addAntenna()));
+    connect(ui->removeAntenna, SIGNAL(clicked()), this, SLOT(removeAntenna()));
+    connect(ui->editAntName, SIGNAL(clicked()), this, SLOT(editAntennaName()));
 
     // get the number of available antennas
     QString fileName;
@@ -591,7 +591,7 @@ void SetupDialog::setAppName(QString name)
 }
 
 
-void SetupDialog::addAntenna(bool /*st*/)
+void SetupDialog::addAntenna()
 {
 
   QString antName = QInputDialog::getText(this, tr("Enter Antenna Name"), tr("Please enter an Antenna Name:"), QLineEdit::Normal);
@@ -633,11 +633,22 @@ bool SetupDialog::checkAntNameMatch(QString antName)
 }
 
 
-void SetupDialog::removeAntenna(bool /*st*/)
+void SetupDialog::removeAntenna()
 {
 
     int currentIndex = ui->antennaTab->currentIndex();
     QString currentName = ui->antennaTab->tabText(currentIndex);
+
+    if (currentAntennaName == ui->antennaTab->tabText(currentIndex))
+    {
+        // can't remove current antennaName
+        QMessageBox msgBox;
+        msgBox.setText("You can not remove the current antenna!");
+        msgBox.exec();
+        return;
+
+    }
+
     int status = QMessageBox::question( this,
                             tr("Remove Antenna"),
                             tr("Do you really want to remove antenna - %1?")
@@ -678,12 +689,74 @@ void SetupDialog::removeAntenna(bool /*st*/)
 
 }
 
-srotParams SetupDialog::getCurrentAntenna() const
-{
-/*
 
-    return currentAntenna;
-*/
+void SetupDialog::editAntennaName()
+{
+    int tabNum = ui->antennaTab->currentIndex();
+    QString antName = ui->antennaTab->tabText(tabNum);
+    if (currentAntennaName == antName)
+    {
+        // can't change current antennaName
+        QMessageBox msgBox;
+        msgBox.setText(QString("You can not change the name of the current antenna - %1!").arg(antName));
+        msgBox.exec();
+        return;
+    }
+
+    bool ok;
+    QString text = QInputDialog::getText(this, QString("Edit Antenna Name - %1").arg(antName),
+                                         tr("New Antenna Name:"), QLineEdit::Normal,
+                                         "", &ok);
+    if (ok && !text.isEmpty())
+    {
+        ui->antennaTab->setTabText(tabNum, text);
+        for (int i = 0; i < numAvailAntennas; i++)
+        {
+            if (antName == availAntData[i]->antennaName)
+            {
+                availAntData[i]->antennaName = text;  // update with new name
+
+                // remove from availantenna file
+                QString fileName;
+                if (appName == "")
+                {
+                    fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
+                }
+                else
+                {
+                    fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
+                }
+
+                QSettings config(fileName, QSettings::IniFormat);
+                config.beginGroup(antName);
+                config.remove("");   // remove all keys for this group
+                config.endGroup();
+
+                saveAntenna(tabNum);
+
+            }
+        }
+    }
+    else
+    {
+        return;
+    }
+
+
+    emit antennaTabChanged();
+
+
+}
+
+
+
+
+QString SetupDialog::getCurrentAntenna() const
+{
+
+
+    return currentAntennaName;
+
 }
 
 

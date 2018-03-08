@@ -60,7 +60,7 @@ public:
 
 
 
-    srotParams getCurrentAntenna() const;
+    QString getCurrentAntenna() const;
     int getRotatorId(QString rotator);
 
 
@@ -87,10 +87,9 @@ private slots:
     void saveButtonPushed();
     void cancelButtonPushed();
 
-    void addAntenna(bool);
-    void removeAntenna(bool);
-
-
+    void addAntenna();
+    void removeAntenna();
+    void editAntennaName();
 private:
     Ui::SetupDialog *ui;
 

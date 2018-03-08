@@ -40,7 +40,7 @@ rotSetupForm::rotSetupForm(RotControl* _rotator, srotParams* _antennaData, QWidg
 
     networkDataEntryVisible(false);
 
-//    connect(ui->antennaNameEdit, SIGNAL(editingFinished()), this, SLOT(antennaNameFinished()));
+    //connect(ui, SIGNAL(editingFinished()), this, SLOT(antennaNameFinished()));
     connect(ui->rotatorModelBox, SIGNAL(activated(int)), this, SLOT(rotatorModelSelected()));
     connect(ui->comPortBox, SIGNAL(activated(int)), this, SLOT(comportSelected()));
     connect(ui->comSpeedBox, SIGNAL(activated(int)), this, SLOT(comDataSpeedSelected()));
