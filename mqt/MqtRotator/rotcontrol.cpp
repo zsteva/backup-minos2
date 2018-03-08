@@ -85,8 +85,8 @@ int RotControl::getMaxMinRotation(int rotNumber, int *maxRot, int *minRot)
     my_rot = rot_init(rotNumber);
     if (!my_rot == 0)
     {
-        *maxRot = my_rot->caps->max_az;
-        *minRot = my_rot->caps->min_az;
+        *maxRot = int(my_rot->caps->max_az);
+        *minRot = int(my_rot->caps->min_az);
     }
     else
     {
@@ -100,7 +100,7 @@ int RotControl::getMaxMinRotation(int rotNumber, int *maxRot, int *minRot)
 }
 
 
-int RotControl::init(srotParams selectedAntenna)
+int RotControl::init(srotParams* selectedAntenna)
 {
     int retcode;
 
@@ -113,43 +113,43 @@ int RotControl::init(srotParams selectedAntenna)
     
 #endif
 
-    comport.append(selectedAntenna.comport);
+    comport.append(selectedAntenna->comport);
 
-    my_rot = rot_init(selectedAntenna.rotatorModelNumber);
+    my_rot = rot_init(selectedAntenna->rotatorModelNumber);
     if (!my_rot)
     {
         return retcode = -14;
     }
 
-
+    /*   remove
     // get rotator parameters
-    curRotParams.antennaName = selectedAntenna.antennaName;
-    curRotParams.baudrate =  selectedAntenna.baudrate;
-    curRotParams.antennaOffset = selectedAntenna.antennaOffset;
+    curRotParams.antennaName = selectedAntenna->antennaName;
+    curRotParams.baudrate =  selectedAntenna->baudrate;
+    curRotParams.antennaOffset = selectedAntenna->antennaOffset;
     //rotParams.comport =
-    curRotParams.databits = selectedAntenna.databits;
-    curRotParams.stopbits = selectedAntenna.stopbits;
-    curRotParams.parity = getSerialParityCode(selectedAntenna.parity);
-    curRotParams.handshake = getSerialHandshakeCode(selectedAntenna.handshake);
+    curRotParams.databits = selectedAntenna->databits;
+    curRotParams.stopbits = selectedAntenna->stopbits;
+    curRotParams.parity = getSerialParityCode(selectedAntenna->parity);
+    curRotParams.handshake = getSerialHandshakeCode(selectedAntenna->handshake);
     curRotParams.serial_rate_max = my_rot->caps->serial_rate_max;
     curRotParams.serial_rate_min = my_rot->caps->serial_rate_min;
-
+    */
 
     // load rotator params to open
-    if (rig_port_e(selectedAntenna.portType) == RIG_PORT_SERIAL)
+    if (rig_port_e(selectedAntenna->portType) == RIG_PORT_SERIAL)
     {
         strncpy(my_rot->state.rotport.pathname, comport.toLatin1().data(), comport.length());
-        my_rot->state.rotport.parm.serial.rate = selectedAntenna.baudrate;
-        my_rot->state.rotport.parm.serial.data_bits = selectedAntenna.databits;
-        my_rot->state.rotport.parm.serial.stop_bits = selectedAntenna.stopbits;
-        my_rot->state.rotport.parm.serial.parity = getSerialParityCode(selectedAntenna.parity);
-        my_rot->state.rotport.parm.serial.handshake = getSerialHandshakeCode(selectedAntenna.handshake);
+        my_rot->state.rotport.parm.serial.rate = selectedAntenna->baudrate;
+        my_rot->state.rotport.parm.serial.data_bits = selectedAntenna->databits;
+        my_rot->state.rotport.parm.serial.stop_bits = selectedAntenna->stopbits;
+        my_rot->state.rotport.parm.serial.parity = getSerialParityCode(selectedAntenna->parity);
+        my_rot->state.rotport.parm.serial.handshake = getSerialHandshakeCode(selectedAntenna->handshake);
     }
-    else if (rig_port_e(selectedAntenna.portType) == RIG_PORT_NETWORK || rig_port_e(selectedAntenna.portType) == RIG_PORT_UDP_NETWORK)
+    else if (rig_port_e(selectedAntenna->portType) == RIG_PORT_NETWORK || rig_port_e(selectedAntenna->portType) == RIG_PORT_UDP_NETWORK)
     {
-        strncpy(my_rot->state.rotport.pathname, QString(selectedAntenna.networkAdd + ":" + selectedAntenna.networkPort).toLatin1().data(), FILPATHLEN);
+        strncpy(my_rot->state.rotport.pathname, QString(selectedAntenna->networkAdd + ":" + selectedAntenna->networkPort).toLatin1().data(), FILPATHLEN);
     }
-    else if (rig_port_e(selectedAntenna.portType) == RIG_PORT_NONE)
+    else if (rig_port_e(selectedAntenna->portType) == RIG_PORT_NONE)
     {
         strncpy(my_rot->state.rotport.pathname, QString("").toLatin1().data(), FILPATHLEN);
     }
@@ -160,11 +160,14 @@ int RotControl::init(srotParams selectedAntenna)
     {
 
         set_serialConnected(true);
+
+        /* remove
         // update rotator specific parameters
         curRotParams.max_azimuth = my_rot->caps->max_az;
         curRotParams.min_azimuth = my_rot->caps->min_az;
         curRotParams.serial_rate_max = my_rot->caps->serial_rate_max;
         curRotParams.serial_rate_min = my_rot->caps->serial_rate_min;
+        */
     }
     else
     {
@@ -208,6 +211,8 @@ bool RotControl::getRotatorList(QComboBox *cb)
 
     if(capsList.count()==0) return false;
     QStringList sl;
+    // add blank at beginning
+    sl << "";
     for (i=0;i<capsList.count();i++)
     {
 
@@ -326,7 +331,7 @@ int RotControl::getRotatorModelIndex()
     return -1;
 }
 
-*/
+
 
 
 
@@ -365,6 +370,7 @@ int RotControl::getMinBaudRate()
 {
     return curRotParams.serial_rate_min;
 }
+*/
 
 // stop azimuth rotation
 
@@ -472,45 +478,48 @@ bool RotControl::get_serialConnected()
 
 
 
- enum serial_parity_e RotControl::getSerialParityCode(int index)
- {
+enum serial_parity_e RotControl::getSerialParityCode(int index)
+{
 
-     return serialData::parityCodes[index];
+    return serialData::parityCodes[index];
 
- }
+}
 
- enum serial_handshake_e RotControl::getSerialHandshakeCode(int index)
- {
+enum serial_handshake_e RotControl::getSerialHandshakeCode(int index)
+{
 
-     return serialData::handshakeCodes[index];
- }
+    return serialData::handshakeCodes[index];
+}
 
- QStringList RotControl::getParityCodeNames()
- {
-    return serialData::parityStr;
- }
+QStringList RotControl::getParityCodeNames()
+{
+   return serialData::parityStr;
+}
 
- QStringList RotControl::getHandShakeNames()
- {
-     return serialData::handshakeStr;
- }
+QStringList RotControl::getHandShakeNames()
+{
+    return serialData::handshakeStr;
+}
 
- QStringList RotControl::getBaudRateNames()
- {
+QStringList RotControl::getBaudRateNames()
+{
 
 
-     return serialData::baudrateStr;
- }
+    return serialData::baudrateStr;
+}
 
- QStringList RotControl::getDataBitsNames()
- {
-     return serialData::databitsStr;
- }
+QStringList RotControl::getDataBitsNames()
+{
+    return serialData::databitsStr;
+}
 
- QStringList RotControl::getStopBitsNames()
- {
-     return serialData::stopbitsStr;
- }
+QStringList RotControl::getStopBitsNames()
+{
+    return serialData::stopbitsStr;
+}
+
+
+
 
 QString RotControl::gethamlibErrorMsg(int errorCode)
 {
@@ -528,28 +537,7 @@ QStringList RotControl::gethamlibErrorMsg()
     return serialData::hamlibErrorMsg;
 }
 
-// not tested........
-int RotControl::calcSouthBearing(int rotatorBearing)
-{
 
-    // convert rotator bearing to actual bearing for rotator with southstop
-
-    if (rotatorBearing >= getMinAzimuth() && rotatorBearing < COMPASS_HALF)
-    {
-        return rotatorBearing + COMPASS_HALF;
-    }
-    else if (rotatorBearing >= COMPASS_HALF && rotatorBearing <= getMinAzimuth())
-    {
-        return rotatorBearing - COMPASS_HALF;
-    }
-    else
-    {
-        // error
-        return 2000;     // need an error code define....
-    }
-
-
-}
 
 
 QString RotControl::gethamlibVersion()

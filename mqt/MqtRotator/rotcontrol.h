@@ -22,6 +22,8 @@
 #include <QComboBox>
 #include <QStringList>
 
+#include "rotatorCommonConstants.h"
+
 #include <hamlib/rotator.h>
 #include <hamlib/rig.h>         // for debug
 
@@ -79,21 +81,25 @@ public:
   QString rotatorModel;
   QString rotatorManufacturer;
   QString rotatorModelName;
-  int rotatorModelNumber;
-  QString pollInterval;         // ms
-  azimuth_t min_azimuth = 0.0;
-  azimuth_t max_azimuth = 0.0;
-  elevation_t min_elevation = 0.0;
-  elevation_t max_elevation = 0.0;
+  int rotatorModelNumber = 0;
+  QString pollInterval = "1";
+  int min_azimuth = 0;
+  int max_azimuth = 0;
+  endStop endStopType = ROT_0_360;
+  int rotatorCWEndStop = COMPASS_MIN0;
+  int rotatorCCWEndStop= COMPASS_MAX360;
+  int min_elevation = 0.0;
+  int max_elevation = 0.0;
   bool southStopFlag = false;
   bool overRunFlag = false;
+  bool supportCwCcwCmd = true;
   int antennaOffset = 0;
   bool moving = false;
-  int portType = int(RIG_PORT_NONE);
+  rig_port_e portType = RIG_PORT_NONE;
   QString networkAdd;
   QString networkPort;
-  int serial_rate_max = 0;
-  int serial_rate_min = 0;
+  int maxBaudRate = 0;
+  int minBaudRate = 0;
   int baudrate = 0;
   int parity = 0;
   int stopbits = 0;
@@ -117,7 +123,7 @@ class RotControl: public QObject
 public:
     explicit RotControl(QObject *parent = 0);
     ~RotControl();
-    int init(srotParams currentAntenna);
+    int init(srotParams* currentAntenna);
     int closeRotator();
     int getModelNumber(int idx);
     int getRotatorModelIndex();
@@ -147,10 +153,10 @@ public:
     QString gethamlibVersion();
 //    QString initError;
 
-    azimuth_t getMaxAzimuth();
-    azimuth_t getMinAzimuth();
-    elevation_t getMaxElevation();
-    elevation_t getMinElevation();
+    //azimuth_t getMaxAzimuth();
+    //azimuth_t getMinAzimuth();
+    //elevation_t getMaxElevation();
+    //elevation_t getMinElevation();
 
     int calcSouthBearing(int rotatorBearing);
 
@@ -182,7 +188,7 @@ private:
     bool serialConnected;
     void errorMessage(int errorCode,QString command);
     bool rotatorlistLoaded=false;
-    srotParams curRotParams;
+    //srotParams curRotParams;   remove
     int serialP;
 
 

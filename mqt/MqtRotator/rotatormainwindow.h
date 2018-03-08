@@ -110,7 +110,7 @@ private:
     QLabel *rawRotatorDisplay;
     //QPalette *redText;
     //QPalette *blackText;
-    SetupDialog *selectRotator;
+    SetupDialog *setupAntenna;
     EditPresetsDialog *editPresets;
     LogDialog *setupLog;
     RotatorLog *rotlog;
@@ -134,15 +134,15 @@ private:
     endStop endStopType;
     overlapStat overLapStatus;
     bool overLapActiveflag;
-    bool southStopActiveflag;
+    //bool southStopActiveflag;
     bool rotErrorFlag;
-    bool supportCwCcwCmd;
+    //bool supportCwCcwCmd;
     int rotatorBearing;
     int curBearingWithOffset;
-    int rotatorMinAzimuth;
-    int rotatorMaxAzimuth;
-    int currentMinAzimuth;
-    int currentMaxAzimuth;
+    //int rotatorMinAzimuth;
+    //int rotatorMaxAzimuth;
+    //int currentMinAzimuth;
+    //int currentMaxAzimuth;
     int rotatorCWEndStop;
     int rotatorCCWEndStop;
     QString backBearingmsg;
@@ -225,6 +225,8 @@ private slots:
 
     void aboutRotatorConfig();
 
+    void onSelectAntennaBox();
+    void onLaunchSetup();
 private:
     void rotateTo(int bearing);
     int northCalcTarget(int targetBearing);
@@ -234,7 +236,7 @@ private:
 
     void toggleOverLapDisplay(bool toggle);
 
-    bool getCwCcwCmdFlag(int rotatorNumber);
+//    bool getCwCcwCmdFlag(int rotatorNumber);
     void rot_right_button_off();
     void rot_right_button_on();
     void rot_left_button_off();
