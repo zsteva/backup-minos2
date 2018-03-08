@@ -87,6 +87,8 @@ private slots:
     void on_sectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
     void on_sectionResized(int logicalIndex, int oldSize, int newSize);
     void on_sortIndicatorChanged(int logicalIndex, Qt::SortOrder order);
+    void on_rigMemTable_customContextMenuRequested( const QPoint &pos );
+    void rigMemTable_Hdr_customContextMenuRequested( const QPoint &pos );
 
     void readActionSelected();
     void editActionSelected();
@@ -94,6 +96,8 @@ private slots:
     void clearActionSelected();
     void clearAllActionSelected();
     void clearWorkedActionSelected();
+
+    void onMenuShow();
 
 private:
     Ui::RigMemoryFrame *ui;
@@ -105,6 +109,7 @@ private:
 
     QMenu* memoryMenu;
 
+    QAction *newAction;
     QAction* readAction;
     QAction* writeAction;
     QAction* editAction;

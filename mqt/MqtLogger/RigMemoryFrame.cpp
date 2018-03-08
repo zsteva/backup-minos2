@@ -64,6 +64,7 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
 
     ui->flushMemoriesButton->setFocusPolicy(Qt::NoFocus);
 
+    newAction = new QAction("&New", this);
     readAction = new QAction("&Read", this);
     writeAction = new QAction("&Write",this);
     editAction = new QAction("&Edit", this);
@@ -72,6 +73,7 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     clearAllAction = new QAction("Clear &All",this);
     clearWorkedAction = new QAction("Clear Wor&ked",this);
 
+    memoryMenu->addAction(newAction);
     memoryMenu->addAction(readAction);
     memoryMenu->addAction(writeAction);
     memoryMenu->addAction(editAction);
@@ -80,8 +82,9 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     memoryMenu->addAction(clearWorkedAction);
 
     ui->flushMemoriesButton->setMenu(memoryMenu);
+    connect(memoryMenu, SIGNAL(aboutToShow()), this, SLOT(onMenuShow()));
 
-   // connect(ui->flushMemoriesButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
+    connect( newAction, SIGNAL( triggered() ), this, SLOT(on_newMemoryButton_clicked()) );
     connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()) );
     connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()) );
     connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()) );
@@ -89,12 +92,51 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     connect( clearAllAction, SIGNAL( triggered() ), this, SLOT(clearAllActionSelected()) );
     connect( clearWorkedAction, SIGNAL( triggered() ), this, SLOT(clearWorkedActionSelected()) );
 
+    ui->rigMemTable->setContextMenuPolicy( Qt::CustomContextMenu );
+    connect( ui->rigMemTable, SIGNAL( customContextMenuRequested( const QPoint& ) ),
+             this, SLOT( on_rigMemTable_customContextMenuRequested( const QPoint& ) ) );
+
+    ui->rigMemTable->verticalHeader()->setContextMenuPolicy( Qt::CustomContextMenu );
+    connect( ui->rigMemTable->verticalHeader(), SIGNAL( customContextMenuRequested( const QPoint& ) ),
+             this, SLOT( rigMemTable_Hdr_customContextMenuRequested( const QPoint& ) ) );
 }
 
 RigMemoryFrame::~RigMemoryFrame()
 {
     delete ui;
 }
+
+void RigMemoryFrame::onMenuShow()
+{
+    int buttonNumber = getSelectedLine();
+
+    readAction->setEnabled(buttonNumber >= 0);
+    writeAction->setEnabled(buttonNumber >= 0);
+    editAction->setEnabled(buttonNumber >= 0);
+    clearAction->setEnabled(buttonNumber >= 0);
+}
+
+void RigMemoryFrame::on_rigMemTable_customContextMenuRequested( const QPoint &pos )
+{
+    QPoint globalPos = ui->rigMemTable->mapToGlobal( pos );
+    memoryMenu->popup( globalPos );
+
+}
+void RigMemoryFrame::rigMemTable_Hdr_customContextMenuRequested( const QPoint &pos )
+{
+    // use the ALREADY SELECTED rows
+    int logrow = ui->rigMemTable->verticalHeader()->logicalIndexAt(pos);
+    if (logrow >= 0)
+    {
+        QModelIndex nidx = proxyModel.index( logrow, 0 );
+        QModelIndex sourceIndex = proxyModel.mapToSource(nidx);
+
+        ui->rigMemTable->setCurrentIndex(nidx);
+    }
+
+    on_rigMemTable_customContextMenuRequested(pos);
+}
+
 void RigMemoryFrame::saveAllColumnWidthsAndPositions()
 {
     QSettings settings;
