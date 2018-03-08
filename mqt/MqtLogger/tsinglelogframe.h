@@ -78,7 +78,7 @@ public:
     void goNextUnfilled();
     void doNextContactDetailsOnLeftClick(bool keepSizes);
 
-    void on_SetRadioName(QString);
+    //void on_SetRadioName(QString);
     void on_RotatorAntennaName(QString);
 
     void on_NoRadioSetFreq(QString);
@@ -128,6 +128,7 @@ private slots:
     void on_NextContactDetailsOnLeft();
     void on_NextUnfilled(BaseContestLog*);
     void on_GoToSerial(BaseContestLog*);
+    void on_SetMemory(BaseContestLog *, QString, QString);
 
     void onLogColumnsChanged();
     void onSplittersChanged();
@@ -142,6 +143,7 @@ private slots:
     void on_BandMapLoaded();
 
     void on_SetRadioList(QString);
+    void on_SetRadioName(QString);
     void on_SetMode(QString);
     void on_SetFreq(QString);
     void on_RadioLoaded();

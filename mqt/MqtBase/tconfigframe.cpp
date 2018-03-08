@@ -32,7 +32,7 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool showAuto
     elementFrames.clear();
     MinosConfig *minosConfig = MinosConfig::getMinosConfig();
 
-    int offset = 0;
+//    int offset = 0;
     for (int i = 0; i <  minosConfig->elelist.size(); i++)
     {
         QSharedPointer<RunConfigElement> c = minosConfig->elelist[i];
@@ -42,7 +42,7 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool showAuto
         ConfigElementFrame *cef = new ConfigElementFrame(false);
 
         // set alternating background
-
+/*
         if (offset++%2)
         {
             cef->setStyleSheet("QFrame { background-color: lightBlue; }");
@@ -51,7 +51,8 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool showAuto
         {
             cef->setStyleSheet("QFrame { background-color: white; }");
         }
-
+        cef->fixComboStyle();
+*/
         vbl->addWidget(cef);
 
         cef->setElement(c);
@@ -61,6 +62,7 @@ void TConfigFrame::initialise(QWidget *p, ConfigCloseCallBack ccb, bool showAuto
     ui->autoStartCheckBox->setChecked(minosConfig->getAutoStart());
 
     connect(this, SIGNAL(frameShown()), this, SLOT(afterFrameShown()), Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
+
 }
 
 void TConfigFrame::showEvent(QShowEvent *ev)
@@ -141,7 +143,7 @@ void TConfigFrame::on_newElementButton_clicked()
     ConfigElementFrame *cef = new ConfigElementFrame(true); // mark as new element
 
     // set alternating background
-
+/*
     if (elementFrames.size()%2)
     {
         cef->setStyleSheet("QFrame { background-color: lightBlue; }");
@@ -150,7 +152,8 @@ void TConfigFrame::on_newElementButton_clicked()
     {
         cef->setStyleSheet("QFrame { background-color: white; }");
     }
-
+    cef->fixComboStyle();
+*/
     ui->scrollAreaWidgetContents->layout()->addWidget(cef);
 
     QSharedPointer<RunConfigElement> c = QSharedPointer<RunConfigElement> (new RunConfigElement);

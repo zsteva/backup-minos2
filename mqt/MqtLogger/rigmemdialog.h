@@ -23,6 +23,8 @@
 #include <QKeyEvent>
 #include "rigmemcommondata.h"
 
+class LoggerContestLog;
+
 namespace Ui {
 class RigMemDialog;
 }
@@ -35,7 +37,7 @@ public:
     explicit RigMemDialog(QWidget *parent = 0);
     ~RigMemDialog();
 
-    void setLogData(memoryData::memData*, int buttonNumber);
+    void setLogData(memoryData::memData*, int buttonNumber, LoggerContestLog *ct);
 
 
 private slots:

@@ -48,7 +48,7 @@ else
 	cp ~/Minos2/build/MqtChat/MqtChat Bin
 	cp ~/Minos2/build/MqtControl/MqtControl Bin
 	cp ~/Minos2/build/MqtKeyer/MqtKeyer Bin
-	cp ~/Minos2/build/MqtLogger/MqtLoggger Bin
+	cp ~/Minos2/build/MqtLogger/MqtLogger Bin
 	cp ~/Minos2/build/MqtMonitor/MqtMonitor Bin
 	cp ~/Minos2/build/MqtRigControl/MqtRigControl Bin
 	cp ~/Minos2/build/MqtRotator/MqtRotator Bin

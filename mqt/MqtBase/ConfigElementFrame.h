@@ -17,8 +17,11 @@ class ConfigElementFrame : public QFrame
 
     bool inhibitIndexChange = false;
 
-    void checkEnabled();
+    QLinearGradient gradient;
 
+    void checkEnabled();
+protected:
+    void paintEvent(QPaintEvent *event);
 public:
     explicit ConfigElementFrame(bool nele);
     ~ConfigElementFrame();
@@ -29,6 +32,8 @@ public:
     void setElement(QSharedPointer<RunConfigElement> configElement);
     void saveElement();
     void setNameFocus();
+    void fixComboStyle();
+
 
 private slots:
     void on_programBrowseButton_clicked();

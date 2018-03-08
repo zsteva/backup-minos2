@@ -11,11 +11,24 @@
 #include <QRegExp>
 #include <QStringList>
 
-// convert freq with delimiter for display
+
+// add delimiter to string for display
+// input string should just be digits
+
 
 
 QString convertFreqStrDisp(QString sfreq)
 {
+
+    if (sfreq == "")
+    {
+        return sfreq;
+    }
+
+    if (sfreq.contains('.'))
+    {
+        sfreq.remove('.');
+    }
 
     int len = sfreq.length();
 
@@ -209,8 +222,8 @@ QString convertFreqStrDispSingle(QString sfreq)
 bool validateFreqTxtInput(QString f)
 {
 
-    QRegExp f1rx = QRegExp("\\d{1,5}\\.\\d{3,6}");  // match ghz_mhz.khz_hz
-
+    //QRegExp f1rx = QRegExp("\\d{1,5}\\.\\d{3,6}");  // match ghz_mhz.khz_hz
+    QRegExp f1rx = QRegExp("\\d{1,5}\\.\\d{1,6}");  // match ghz_mhz.khz_hz
     if (f1rx.exactMatch(f))
     {
         return true;
@@ -226,10 +239,35 @@ bool validateFreqTxtInput(QString f)
 }
 
 
+// This will convert "144.3" etc to "144.300000"
+
+QString convertSinglePeriodFreqToFullDigit(QString f)
+{
+    if (f.contains('.'))
+    {
+        QStringList fl = f.split('.');
+        fl[1] = fl[1] + "000000";
+        fl[1].truncate(6);
+        return fl[0] + "." + fl[1];
+    }
+
+    return f;
+
+}
+
+
+
+
 QString convertSinglePeriodFreqToMultiPeriod(QString f)
 {
 
     QString retFreq = "";
+
+    if (f == "")
+    {
+        return retFreq;
+    }
+
     QStringList sl = f.split('.');
     if (sl[0].count() > 3)
     {
@@ -261,4 +299,26 @@ QString convertSinglePeriodFreqToMultiPeriod(QString f)
     return retFreq;
 
 
+}
+
+
+// When the selectRadio message contains the mode in the form radioName:mode
+// This extract the radioName from the message
+
+QString extractRadioName(QString radioNameMessage)
+{
+    if (radioNameMessage.contains(':'))
+    {
+        QStringList sl = radioNameMessage.split(':');
+        if (sl.count() == 2)
+        {
+            return sl[0];
+        }
+        else
+        {
+            return QString("");
+        }
+    }
+
+    return radioNameMessage;
 }

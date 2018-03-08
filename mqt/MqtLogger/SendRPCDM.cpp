@@ -198,7 +198,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
     AnalysePubSubNotify an( err, mro );
     logMessage( "Notify callback from " + from + ( err ? ":Error " : ":Normal " ) +  an.getPublisherProgram() + "@" + an.getPublisherServer());
 
-    if ( an.getOK() )
+    if ( an.getOK() /*&& an.getState() == psPublished*/)
     {
         if (an.getPublisherProgram() == keyerServerConnectable.remoteAppName && an.getPublisherServer() == keyerServerConnectable.serverName)
         {
@@ -213,6 +213,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
         {
             if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyState )
             {
+                // this happens for disconnected as well...
                 emit setRadioLoaded();
                 emit setRadioState( an.getValue() );
             }
@@ -227,6 +228,10 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioList )
             {
                 emit setRadioList(an.getValue());
+            }
+            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioName )
+            {
+                emit setRadioName(an.getValue());
             }
             if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyTxVertStatus )
             {

@@ -97,7 +97,8 @@ const QString civToolTip = "Leave field blank for default radio CIV,\nor enter i
 
 
 
-
+// RadioName when no radio is connected
+const QString NORADIO = "NoRadio";
 
 
 

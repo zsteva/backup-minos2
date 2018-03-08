@@ -133,6 +133,11 @@ bool TLogContainer::show(int argc, char *argv[])
     TContestApp::getContestApp()->setPreloadComplete();
     return true;
 }
+void TLogContainer::onArgsReceived(QString conarg)
+{
+    preloadFiles( conarg );
+}
+
 void TLogContainer::on_TimeDisplayTimer( )
 {
 
@@ -949,7 +954,8 @@ void TLogContainer::AuxDisplayAction()
     int num;
     TContestApp::getContestApp() ->loggerBundle.getIntProfile( elpAuxWindows, num );
 
-    if ( !enquireDialog( this, "Please give number of auxiliary windows wanted.", num, 1, 4 ) )
+    int minaux = 0;
+    if ( !enquireDialog( this, "Please give number of auxiliary windows wanted.", num, minaux, 4 ) )
        return ;
 
     TContestApp::getContestApp() ->loggerBundle.setIntProfile( elpAuxWindows, num );

@@ -7,178 +7,172 @@
 #include "rigmemdialog.h"
 #include "rigutils.h"
 #include "RigMemoryFrame.h"
+#include "htmldelegate.h"
 #include "ui_RigMemoryFrame.h"
 
-static QKeySequence memoryShortCut[] = {
-
-    QKeySequence(Qt::CTRL + Qt::Key_1),
-    QKeySequence(Qt::CTRL + Qt::Key_2),
-    QKeySequence(Qt::CTRL + Qt::Key_3),
-    QKeySequence(Qt::CTRL + Qt::Key_4),
-    QKeySequence(Qt::CTRL + Qt::Key_5),
-    QKeySequence(Qt::CTRL + Qt::Key_6),
-    QKeySequence(Qt::CTRL + Qt::Key_7),
-    QKeySequence(Qt::CTRL + Qt::Key_8),
-    QKeySequence(Qt::CTRL + Qt::Key_9),
-    QKeySequence(Qt::CTRL + Qt::Key_0)
-};
-
-static QKeySequence memoryShiftShortCut[] = {
-
-    QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_1),
-    QKeySequence(Qt::CTRL + Qt::SHIFT +  Qt::Key_2),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_3),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_4),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_5),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_6),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_7),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_8),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_9),
-    QKeySequence(Qt::CTRL + Qt::SHIFT  + Qt::Key_0)
-
-};
+enum eRigMemGridCols {ermLocator, ermBearing, ermFreq, ermTime, ermWorked,
+                    ermMaxCol
+                   };
+static GridColumn RigMemoryColumns[ ermMaxCol ] =
+   {
+      GridColumn( ermLocator, "MM00MM00", "Locator", taLeftJustify ),
+      GridColumn( ermBearing, "BRGXXX", "Brg", taCenter ),
+      GridColumn( ermFreq, "144.000.000", "Freq", taLeftJustify ),
+      GridColumn( ermTime, "XX:XX", "Time", taLeftJustify ),
+      GridColumn( ermWorked, "Wk CtX", "Wkd", taCenter ),
+   };
 
 void RigMemoryFrame::traceMsg(QString msg)
 {
     trace("RigMemoryFrame: " + msg);
 }
-
 RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     QFrame(parent),
     ct(0),
     ui(new Ui::RigMemoryFrame)
 {
     ui->setupUi(this);
-    ui->memFrame->setStyleSheet("background-color:white;");
+
+    ui->rigMemTable->setObjectName( "rigMemTable" );
+    ui->rigMemTable->setItemDelegate( new HtmlDelegate );
+    ui->rigMemTable->horizontalHeader() ->setSectionsMovable( true );
+    ui->rigMemTable->horizontalHeader() ->setSectionsClickable( true );
+    ui->rigMemTable->horizontalHeader() ->setSectionResizeMode( QHeaderView::Interactive );
+    ui->rigMemTable->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+    proxyModel.setSourceModel(&model);
+    ui->rigMemTable->setModel(&proxyModel);
+
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(checkTimerTimer()));
     connect(&MinosLoggerEvents::mle, SIGNAL(RigFreqChanged(QString,BaseContestLog*)), this, SLOT(onRigFreqChanged(QString,BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(RotBearingChanged(int,BaseContestLog*)), this, SLOT(onRotBearingChanged(int,BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterLogContact(BaseContestLog *)), this, SLOT(on_AfterLogContact(BaseContestLog *)));
-    connect(&MinosLoggerEvents::mle, SIGNAL(setMemory(BaseContestLog *, QString, QString)), this, SLOT(on_SetMemory(BaseContestLog *, QString, QString)));
+
+    reloadColumns();
+
+    connect( ui->rigMemTable->horizontalHeader(), SIGNAL(sectionMoved(int, int , int)),
+             this, SLOT( on_sectionMoved(int, int , int)));
+    connect( ui->rigMemTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
+             this, SLOT( on_sectionResized(int, int , int)));
+    connect( ui->rigMemTable->horizontalHeader(), SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)),
+             this, SLOT( on_sortIndicatorChanged(int, Qt::SortOrder)));
+
+    connect( ui->rigMemTable->verticalHeader(), SIGNAL( sectionClicked(int)),
+             this, SLOT( vsectionClicked( int ) ) );
+
+    memoryMenu = new QMenu(ui->flushMemoriesButton);
+
+    ui->flushMemoriesButton->setFocusPolicy(Qt::NoFocus);
+
+    readAction = new QAction("&Read", this);
+    writeAction = new QAction("&Write",this);
+    editAction = new QAction("&Edit", this);
+    clearAction = new QAction("&Clear",this);
+
+    clearAllAction = new QAction("Clear &All",this);
+    clearWorkedAction = new QAction("Clear Wor&ked",this);
+
+    memoryMenu->addAction(readAction);
+    memoryMenu->addAction(writeAction);
+    memoryMenu->addAction(editAction);
+    memoryMenu->addAction(clearAction);
+    memoryMenu->addAction(clearAllAction);
+    memoryMenu->addAction(clearWorkedAction);
+
+    ui->flushMemoriesButton->setMenu(memoryMenu);
+
+   // connect(ui->flushMemoriesButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
+    connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()) );
+    connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()) );
+    connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()) );
+    connect( clearAction, SIGNAL( triggered() ), this, SLOT(clearActionSelected()) );
+    connect( clearAllAction, SIGNAL( triggered() ), this, SLOT(clearAllActionSelected()) );
+    connect( clearWorkedAction, SIGNAL( triggered() ), this, SLOT(clearWorkedActionSelected()) );
+
 }
 
 RigMemoryFrame::~RigMemoryFrame()
 {
     delete ui;
 }
+void RigMemoryFrame::saveAllColumnWidthsAndPositions()
+{
+    QSettings settings;
+    QByteArray state;
+
+    state = ui->rigMemTable->horizontalHeader()->saveState();
+    settings.setValue("RigMem/state", state);
+
+    //And we need to send this out to all other instances
+
+    sendUpdateMemories();
+}
+void RigMemoryFrame::reloadColumns()
+{
+    QSettings settings;
+    QByteArray state = settings.value("RigMem/state").toByteArray();
+    if (state.size())
+    {
+        suppressSendUpdate = true;
+        // this will fire signals, so... don't save at the same time
+        ui->rigMemTable->horizontalHeader()->restoreState(state);
+        suppressSendUpdate = false;
+    }
+}
+void RigMemoryFrame:: on_sectionMoved(int /*logicalIndex*/, int /*oldVisualIndex*/, int /*newVisualIndex*/)
+{
+    saveAllColumnWidthsAndPositions();
+}
+
+void RigMemoryFrame::on_sectionResized(int /*logicalIndex*/, int /*oldSize*/, int /*newSize*/)
+{
+    saveAllColumnWidthsAndPositions();
+}
+
+void RigMemoryFrame::on_sortIndicatorChanged(int /*logicalIndex*/, Qt::SortOrder /*order*/)
+{
+    saveAllColumnWidthsAndPositions();
+}
 void RigMemoryFrame::setContest( BaseContestLog *pct )
 {
     ct = dynamic_cast<LoggerContestLog *>( pct);
-    on_AfterLogContact(ct);
+
+    model.ct = pct;
+    model.frame = this;
+
+    proxyModel.ct = pct;
+
     doMemoryUpdates();
 }
-memoryData::memData RigMemoryFrame::getRigMemoryData(int memoryNumber)
-{
-    memoryData::memData m;
-    if (ct && ct->rigMemories.size() > memoryNumber)
-    {
-        m = ct->rigMemories[memoryNumber].getValue();
-        Locator loc;
-        loc.loc.setValue(m.locator);
-        loc.validate();
-        double lon = 0.0;
-        double lat = 0.0;
 
-        if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
-        {
-            double dist;
-            int brg;
-            ct->disbear( lon, lat, dist, brg );
-            m.bearing = brg;
-        }
-    }
-    return m;
-}
-
-bool freqSortcompare(const memoryData::memData &mem1, const memoryData::memData &mem2)
-{
-    if (mem1.freq != mem2.freq)
-    {
-        return mem1.freq.compare(mem2.freq, Qt::CaseInsensitive) < 0;
-    }
-
-    return mem1.callsign.compare(mem2.callsign, Qt::CaseInsensitive) < 0;
-}
 void RigMemoryFrame::setRigMemoryData(int memoryNumber, memoryData::memData m)
 {
+    model.beginResetModel();
     ct->saveRigMemory(memoryNumber, m);
+    model.endResetModel();
 }
 
 void RigMemoryFrame::doMemoryUpdates()
 {
     // called from minosLoggerEvents following sendUpdateMemories
-
     // clear all the "old" buttons
-
-    memButtonMap.clear();
-    QGridLayout *gl = qobject_cast<QGridLayout *>(ui->memFrame->layout());
-
-    delete gl;
-
-    // and recreate the layout
-
-    gl = new QGridLayout(ui->memFrame);
-    ui->memFrame->setLayout(gl);
-
-    // get all the info from the contest
-
-    if (ct)
-    {
-        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(false);
-
-        QVector<memoryData::memData >sortedData;
-        int mcount = ct->rigMemories.size();
-        for (int i = 0; i < mcount; i++)
-        {
-            memoryData::memData m = getRigMemoryData(i);
-            sortedData.push_back(m);
-        }
-
-        qSort(sortedData.begin(), sortedData.end(), freqSortcompare);
-
-        int bpos = 0;
-        for (int buttonNumber = 0; buttonNumber < mcount; buttonNumber ++)
-        {
-            memoryData::memData m = sortedData[buttonNumber];
-
-            if ( m.callsign != memDefData::DEFAULT_CALLSIGN)
-            {
-                // create button
-
-                int row = bpos/2;
-                int col = bpos%2;
-                bpos++;
-
-                QSharedPointer<RigMemoryButton> rmbb(new RigMemoryButton(ui->scrollArea, this, m.memno));
-                memButtonMap[m.memno] = rmbb;
-                connect( rmbb.data(), SIGNAL( clearActionSelected(int)) , this, SLOT(clearActionSelected(int)), Qt::QueuedConnection );
-
-                gl->addWidget(rmbb->memButton, row, col);
-
-                // get the button to be a sensible size
-                // This works - recipe from internet - but not sure why!
-
-                rmbb->memButton->setSizePolicy(sizePolicy);
-
-                rmbb->memButton->setText("M" + QString::number(m.memno + 1) + ": " + m.callsign);
-
-                QString tTipStr = "Callsign: " + m.callsign + "\n"
-                        + "Freq: " + convertFreqStrDisp(m.freq) + "\n"
-                        + "Mode: " + m.mode + "\n"
-                        + "Locator: " + m.locator + "\n"
-                        + "Bearing: " + QString::number(m.bearing) + "\n"
-                        + "Time: " + m.time;
-                rmbb->memButton->setToolTip(tTipStr);
-            }
-        }
-    }
+/*
+    QString tTipStr = "Callsign: " + m.callsign + "\n"
+            + "Freq: " + convertFreqStrDisp(m.freq) + "\n"
+            + "Mode: " + m.mode + "\n"
+            + "Locator: " + m.locator + "\n"
+            + "Bearing: " + QString::number(m.bearing) + "\n"
+            + "Time: " + m.time;
+*/
+    model.reset();
+    reloadColumns();
 }
 
 void RigMemoryFrame::checkTimerTimer()
 {
+    if (!isVisible())
+        return;
+
     TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
     if (!ct || !tslf)
         return;
@@ -186,18 +180,24 @@ void RigMemoryFrame::checkTimerTimer()
     memoryData::memData logData;
     tslf->getCurrentDetails(logData);
 
+    if (!doTimer && (logData.freq == lastRigFreq && logData.bearing == lastBearing))
+        return;
+
+    doTimer = false;
+
+    lastRigFreq = logData.freq;
+    lastBearing = logData.bearing;
+
     double rigFreq = convertStrToFreq(logData.freq);
     int bearing = logData.bearing;
 
-
     int mcount = ct->rigMemories.size();
+    int firstMatch = -1;
+
     for (int buttonNumber = 0; buttonNumber < mcount; buttonNumber ++)
     {
-        QSharedPointer<RigMemoryButton> rmbb = memButtonMap[buttonNumber];
-        if (!rmbb)
-            continue;
 
-        memoryData::memData m = getRigMemoryData(buttonNumber);
+        memoryData::memData m = ct->getRigMemoryData(buttonNumber);
         if (m.callsign == memDefData::DEFAULT_CALLSIGN)
             continue;
 
@@ -227,30 +227,43 @@ void RigMemoryFrame::checkTimerTimer()
                 onbearing = rtsOff;
         }
 
-        QString bgcolour = "background-color: ";
+        QString ht = m.callsign;
+        QColor colour( Qt::black);
+
         if (m.worked)
         {
-            bgcolour += "#AFAFAF";
-        }
-        else
-        {
-            bgcolour += "#DFDFDF";
+            ht = "(" + ht + ")";
+            colour = Qt::darkGray;
         }
 
         if (onfreq == rtsOn || onbearing == rtsOn)
         {
             if (onfreq == rtsOn && onbearing == rtsOn)
-                rmbb->memButton-> setStyleSheet("border: 1px solid green; color: green ;" + bgcolour);
+            {
+                ht = "FB " + ht;
+                colour = Qt::darkGreen;
+                if (firstMatch == -1)
+                    firstMatch = m.memno;
+            }
             else if (onfreq == rtsOn)
-                rmbb->memButton-> setStyleSheet("border: 1px solid red; color: red ;" + bgcolour);
+            {
+                ht = "F  " + ht;
+                colour = Qt::red;
+            }
             else
-                rmbb->memButton-> setStyleSheet("border: 1px solid blue; color: blue ;" + bgcolour);
+            {
+                ht = "B  " + ht;
+                colour = Qt::blue;
+            }
         }
-        else
-        {
-            rmbb->memButton-> setStyleSheet("border: 1px solid black; color: black ;" + bgcolour);
-        }
+        headerVal[m.callsign].text = ht;
+        headerVal[m.callsign].colour = colour;
     }
+    if (firstMatch >= 0)
+    {
+        scrollIntoView(firstMatch);
+    }
+    proxyModel.headerDataChanged(Qt::Vertical, 0, model.rowCount() - 1);
 }
 void RigMemoryFrame::onRigFreqChanged(QString /*f*/, BaseContestLog *c)
 {
@@ -266,33 +279,14 @@ void RigMemoryFrame::onRotBearingChanged(int/*f*/, BaseContestLog *c)
         checkTimerTimer();
     }
 }
-void RigMemoryFrame::on_SetMemory(BaseContestLog *c, QString call, QString loc)
-{
-    if (ct == c)
-    {
-        int n = -1;
-
-        for (int i = 0; i < memButtonMap.size() + 1; i++)
-        {
-            if  (!memButtonMap.contains(i) || !memButtonMap[i])
-            {
-                n = i;
-                break;
-            }
-        }
-        if (n == -1)
-        {
-            mShowMessage("Panic", this);
-            return;
-        }
-        setMemorySelected(n, call, loc); // which creates the button as well
-    }
-}
 //======================================================================================
 void RigMemoryFrame::sendUpdateMemories()
 {
     // go through the signal/slot mechanism so all auxiliary displays are updated
-    MinosLoggerEvents::sendUpdateMemories(ct);
+    if (!suppressSendUpdate)
+        MinosLoggerEvents::sendUpdateMemories(ct);
+
+    doTimer = true;
 }
 //======================================================================================
 
@@ -301,31 +295,174 @@ void RigMemoryFrame::sendUpdateMemories()
 void RigMemoryFrame::on_newMemoryButton_clicked()
 {
     int n = -1;
-
-    for (int i = 0; i < memButtonMap.size() + 1; i++)
+    int mcount = ct->rigMemories.size();
+    for (int i = 0; i <= mcount; i ++)
     {
-        if  (!memButtonMap.contains(i) || !memButtonMap[i])
+        memoryData::memData m = ct->getRigMemoryData(i);
+
+        if ( m.callsign == memDefData::DEFAULT_CALLSIGN)
         {
             n = i;
             break;
         }
     }
+
     if (n == -1)
     {
         mShowMessage("Panic", this);
         return;
     }
 
-    writeActionSelected(n); // which creates the button as well
+    writeMemory(n); // which creates the button as well
+}
+void RigMemoryFrame::on_AfterLogContact( BaseContestLog *c)
+{
+      if (c && ct == c)
+      {
+          int mcount = ct->rigMemories.size();
+          for (int buttonNumber = 0; buttonNumber < mcount; buttonNumber ++)
+          {
+              memoryData::memData m = ct->getRigMemoryData(buttonNumber);
+
+              if ( m.callsign != memDefData::DEFAULT_CALLSIGN)
+              {
+                  Callsign mcs(m.callsign);
+                  mcs.validate();
+
+                  for ( LogIterator i = ct->ctList.begin(); i != ct->ctList.end(); i++ )
+                  {
+                      if ((*i).wt->cs == mcs)
+                      {
+                          m.worked = true;
+                          doTimer = true;
+                          setRigMemoryData(buttonNumber, m);
+                          break;
+                      }
+                  }
+              }
+          }
+          //sendUpdateMemories();
+      }
+}
+
+int RigMemoryFrame::getSelectedLine()
+{
+    QItemSelectionModel *ism = ui->rigMemTable->selectionModel();
+    QModelIndexList mil = ism->selectedRows();
+    if (mil.size() == 0)
+        return -1;
+    const QModelIndex index = proxyModel.mapToSource( mil[0] );
+    if (!index.isValid())
+        return -1;
+    int buttonNumber = index.row();
+    return buttonNumber;
+}
+
+void RigMemoryFrame::readActionSelected()
+{
+    int buttonNumber = getSelectedLine();
+    if (buttonNumber < 0)
+        return;
+
+    traceMsg(QString("Memory Read Selected = %1").arg(QString::number(buttonNumber +1)));
+    memoryData::memData m = ct->getRigMemoryData(buttonNumber);
+
+    // send detail to rotator control frame, locator will give bearing
+    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+    tslf->transferDetails(m);
 
 }
-void RigMemoryFrame::on_flushMemoriesButton_clicked()
+void RigMemoryFrame::writeMemory(int buttonNumber)
 {
-    // scan memories and see if they have been worked
+    traceMsg(QString("Memory Write Selected %1 = ").arg(QString::number(buttonNumber +1)));
+
+    // get contest information
+    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+
+    memoryData::memData logData;
+    tslf->getDetails(logData);
+
+    RigMemDialog memDialog(this);
+    memDialog.setLogData(&logData, buttonNumber, ct);
+    memDialog.setWindowTitle(QString("M%1 - Write").arg(QString::number(buttonNumber + 1)));
+   if ( memDialog.exec() == QDialog::Accepted)
+   {
+       setRigMemoryData(buttonNumber, logData);
+
+       sendUpdateMemories();
+   }
+}
+
+void RigMemoryFrame::writeActionSelected()
+{
+    int buttonNumber = getSelectedLine();
+    if (buttonNumber < 0)
+        return;
+
+    writeMemory(buttonNumber);
+}
+void RigMemoryFrame::editActionSelected()
+{
+    model.beginResetModel();
+    int buttonNumber = getSelectedLine();
+    if (buttonNumber < 0)
+        return;
+
+    traceMsg(QString("Memory Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
+
+    memoryData::memData logData = ct->getRigMemoryData(buttonNumber);
+
+    RigMemDialog memDialog(this);
+
+    memDialog.setLogData(&logData, buttonNumber, ct);
+    memDialog.setWindowTitle(QString("M%1 - Edit").arg(QString::number(buttonNumber + 1)));
+
+    if ( memDialog.exec() == QDialog::Accepted)
+    {
+        setRigMemoryData(buttonNumber, logData);
+
+        sendUpdateMemories();
+    }
+    model.endResetModel();
+}
+
+
+void RigMemoryFrame::clearActionSelected()
+{
+    model.beginResetModel();
+    int buttonNumber = getSelectedLine();
+    if (buttonNumber < 0)
+        return;
+
+    traceMsg(QString("Memory Clear Selected = %1").arg(QString::number(buttonNumber + 1)));
+
+    memoryData::memData m;
+    setRigMemoryData(buttonNumber, m);
+
+    sendUpdateMemories();
+    model.endResetModel();
+}
+void RigMemoryFrame::clearAllActionSelected()
+{
+    model.beginResetModel();
     int mcount = ct->rigMemories.size();
     for (int buttonNumber = 0; buttonNumber < mcount; buttonNumber ++)
     {
-        memoryData::memData m = getRigMemoryData(buttonNumber);
+        memoryData::memData mn;
+        setRigMemoryData(buttonNumber, mn);
+    }
+    sendUpdateMemories();
+    model.endResetModel();
+
+}
+void RigMemoryFrame::clearWorkedActionSelected()
+{
+    // scan memories and see if they have been worked
+    model.beginResetModel();
+    int mcount = ct->rigMemories.size();
+    for (int buttonNumber = 0; buttonNumber < mcount; buttonNumber ++)
+    {
+        memoryData::memData m = ct->getRigMemoryData(buttonNumber);
 
         if ( m.callsign != memDefData::DEFAULT_CALLSIGN)
         {
@@ -344,189 +481,200 @@ void RigMemoryFrame::on_flushMemoriesButton_clicked()
         }
     }
     sendUpdateMemories();
-}
-void RigMemoryFrame::on_AfterLogContact( BaseContestLog *c)
-{
-      if (c && ct == c)
-      {
-          int mcount = ct->rigMemories.size();
-          for (int buttonNumber = 0; buttonNumber < mcount; buttonNumber ++)
-          {
-              memoryData::memData m = getRigMemoryData(buttonNumber);
-
-              if ( m.callsign != memDefData::DEFAULT_CALLSIGN)
-              {
-                  Callsign mcs(m.callsign);
-                  mcs.validate();
-
-                  for ( LogIterator i = ct->ctList.begin(); i != ct->ctList.end(); i++ )
-                  {
-                      if ((*i).wt->cs == mcs)
-                      {
-                          m.worked = true;
-                          setRigMemoryData(buttonNumber, m);
-                          break;
-                      }
-                  }
-              }
-          }
-          sendUpdateMemories();
-      }
+    model.endResetModel();
 }
 
-void RigMemoryFrame::readActionSelected(int buttonNumber)
+void RigMemoryFrame::vsectionClicked(int /*logicalIndex*/)
 {
-    traceMsg(QString("Memory Read Selected = %1").arg(QString::number(buttonNumber +1)));
-    memoryData::memData m = getRigMemoryData(buttonNumber);
-
-    // send detail to rotator control frame, locator will give bearing
-    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
-    tslf->transferDetails(m);
-
+    readActionSelected();
 }
 
-void RigMemoryFrame::writeActionSelected(int buttonNumber)
+void RigMemoryFrame::scrollIntoView ( int firstMatch )
 {
-    traceMsg(QString("Memory Write Selected %1 = ").arg(QString::number(buttonNumber +1)));
+    QTableView *QGrid = ui->rigMemTable;
 
-    // get contest information
-    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
-    ScreenContact sc = tslf->getScreenEntry();
-
-    memoryData::memData logData;
-    tslf->getDetails(logData);
-
-    RigMemDialog memDialog(this);
-    memDialog.setLogData(&logData, buttonNumber);
-    memDialog.setWindowTitle(QString("M%1 - Write").arg(QString::number(buttonNumber + 1)));
-   if ( memDialog.exec() == QDialog::Accepted)
-   {
-       setRigMemoryData(buttonNumber, logData);
-
-       sendUpdateMemories();
-   }
-}
-void RigMemoryFrame::setMemorySelected(int buttonNumber, QString call, QString loc)
-{
-    if (isVisible())
+    QApplication::processEvents();
+    if ( firstMatch >= 0 )
     {
-        traceMsg(QString("Memory Write Selected %1 = ").arg(QString::number(buttonNumber +1)));
+        int row = -1;
+        while ( ++row < proxyModel.rowCount() )
+        {
+            QModelIndex nidx = proxyModel.index( row, 0 );
+            QModelIndex sourceIndex = proxyModel.mapToSource(nidx);
 
-        // get contest information
-        TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
-        ScreenContact sc = tslf->getScreenEntry();
-
-        memoryData::memData logData;
-        tslf->getDetails(logData);
-        logData.callsign = call;
-        logData.locator = loc;
-
-        RigMemDialog memDialog(this);
-        memDialog.setLogData(&logData, buttonNumber);
-        memDialog.setWindowTitle(QString("M%1 - Write").arg(QString::number(buttonNumber + 1)));
-       if ( memDialog.exec() == QDialog::Accepted)
-       {
-           setRigMemoryData(buttonNumber, logData);
-
-           sendUpdateMemories();
-       }
+            if ( sourceIndex.row() == firstMatch )
+            {
+                QGrid->setCurrentIndex(nidx);
+                break;
+            }
+        }
     }
 }
-
-
-void RigMemoryFrame::editActionSelected(int buttonNumber)
+RigMemoryGridModel::RigMemoryGridModel():ct(0)
+{}
+RigMemoryGridModel::~RigMemoryGridModel()
 {
-    traceMsg(QString("Memory Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
+}
+void RigMemoryGridModel::reset()
+{
+    beginResetModel();
 
-    memoryData::memData logData = getRigMemoryData(buttonNumber);
+    endResetModel();
+}
 
-    RigMemDialog memDialog(this);
-
-    memDialog.setLogData(&logData, buttonNumber);
-    memDialog.setWindowTitle(QString("M%1 - Edit").arg(QString::number(buttonNumber + 1)));
-
-    if ( memDialog.exec() == QDialog::Accepted)
+QVariant RigMemoryGridModel::data( const QModelIndex &index, int role ) const
+{
+    int row = index.row();
+    int col = index.column();
+    if (ct)
     {
-        setRigMemoryData(buttonNumber, logData);
+        if ( role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::UserRole )
+            return QVariant();
 
-        sendUpdateMemories();
+        if (role == Qt::DisplayRole || role == Qt::UserRole)
+        {
+            LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
+            memoryData::memData m = c->getRigMemoryData(row);
+            QString disp;
+            switch(col)
+            {
+            case ermWorked:
+                disp = m.worked?"Y":"N";
+                break;
+            case ermLocator:
+                disp = m.locator;
+                break;
+            case ermBearing:
+                disp = QString("%1").arg( m.bearing, 3, 10, QChar('0'));
+                break;
+            case ermFreq:
+                {
+                    QString newfreq = m.freq.trimmed().remove('.');
+                    double dfreq = convertStrToFreq(newfreq);
+                    dfreq = dfreq/1000000.0;  // MHz
+
+                    disp = QString::number(dfreq, 'f', 3); //MHz to 3 decimal places
+                    break;
+                }
+            case ermTime:
+                {
+                    disp = m.time;
+                    break;
+                }
+            }
+            return disp;
+        }
+        if (role == Qt::TextAlignmentRole)
+            return Qt::AlignLeft;
     }
-
+    return QVariant();
 }
-
-
-void RigMemoryFrame::clearActionSelected(int buttonNumber)
+QVariant RigMemoryGridModel::headerData( int section, Qt::Orientation orientation,
+                     int role ) const
 {
-
-    traceMsg(QString("Memory Clear Selected = %1").arg(QString::number(buttonNumber + 1)));
-
-    memoryData::memData m;
-    setRigMemoryData(buttonNumber, m);
-
-    sendUpdateMemories();
-}
-
-//============================================================================================
-RigMemoryButton::RigMemoryButton(QWidget *parent, RigMemoryFrame *rcf, int no)
-{
-    memNo = no;
-    rigMemoryFrame = rcf;
-
-    memButton = new QToolButton(parent);
-
-    memoryMenu = new QMenu(memButton);
-
-    memButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
-    memButton->setPopupMode(QToolButton::MenuButtonPopup);
-    memButton->setFocusPolicy(Qt::NoFocus);
-    memButton->setText("M" + QString::number(memNo + 1) );
-
-    readAction = new QAction("&Read", memButton);
-    writeAction = new QAction("&Write",memButton);
-    editAction = new QAction("&Edit", memButton);
-    clearAction = new QAction("&Clear",memButton);
-    memoryMenu->addAction(readAction);
-    memoryMenu->addAction(writeAction);
-    memoryMenu->addAction(editAction);
-    memoryMenu->addAction(clearAction);
-    memButton->setMenu(memoryMenu);
-
-    if (memNo  < 10)
+    if (orientation == Qt::Horizontal)
     {
-        shortKey = new QShortcut(QKeySequence(memoryShortCut[memNo]), memButton);
-        connect(shortKey, SIGNAL(activated()), this, SLOT(readActionSelected()));
-        // shift shortcut
-        shiftShortKey = new QShortcut(QKeySequence(memoryShiftShortCut[memNo]), memButton);
-        connect(shiftShortKey, SIGNAL(activated()), this, SLOT(memoryShortCutSelected()));
+        if (role == Qt::DisplayRole)
+        {
+            QString cell;
+
+            cell = RigMemoryColumns[section].title;
+
+            return cell;
+        }
+        else if (role == Qt::TextAlignmentRole)
+            return Qt::AlignLeft;
     }
-    connect(memButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
-    connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()) );
-    connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()) );
-    connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()) );
-    connect( clearAction, SIGNAL( triggered() ), this, SLOT(clearActionSelected()) );
-}
-RigMemoryButton::~RigMemoryButton()
-{
-    delete memButton;
-}
-void RigMemoryButton::memoryShortCutSelected()
-{
-    memButton->showMenu();
-}
-void RigMemoryButton::readActionSelected()
-{
-    rigMemoryFrame->readActionSelected(memNo);
-}
-void RigMemoryButton::editActionSelected()
-{
-    rigMemoryFrame->editActionSelected(memNo);
-}
-void RigMemoryButton::writeActionSelected()
-{
-    rigMemoryFrame->writeActionSelected(memNo);
-}
-void RigMemoryButton::clearActionSelected()
-{
-    emit clearActionSelected(memNo);
+    else if (orientation == Qt::Vertical)
+    {
+        if (role == Qt::DisplayRole)
+        {
+            QString disp;
+            LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
+            if (c)
+            {
+                memoryData::memData m = c->getRigMemoryData(section);
+                disp = frame->headerVal[m.callsign].text;
+                if (disp.isEmpty())
+                {
+                    // This appears to be the line that defines the width
+                    // of the vertical header
+                    disp = "  " + m.callsign + "  ";
+                }
+            }
+            return disp;
+        }
+        else if (role == Qt::ForegroundRole)
+        {
+            LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
+            if (c)
+            {
+                memoryData::memData m = c->getRigMemoryData(section);
+                QColor colour = frame->headerVal[m.callsign].colour;
+                return colour;
+            }
+        }
+        else if (role == Qt::TextAlignmentRole)
+            return Qt::AlignLeft;
+    }
+    return QVariant();
 }
 
+QModelIndex RigMemoryGridModel::index( int row, int column, const QModelIndex &/*parent*/) const
+{
+    if ( row < 0 || row >= rowCount()  )
+        return QModelIndex();
+
+    return createIndex( row, column );
+}
+
+QModelIndex RigMemoryGridModel::parent( const QModelIndex &/*index*/ ) const
+{
+    return QModelIndex();
+}
+
+int RigMemoryGridModel::rowCount( const QModelIndex &/*parent*/ ) const
+{
+    LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
+    if (c)
+        return c->rigMemories.size();
+    return 0;
+}
+
+int RigMemoryGridModel::columnCount( const QModelIndex &/*parent*/ ) const
+{
+    return ermMaxCol;
+}
+bool RigMemorySortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &/*sourceParent*/) const
+{
+    LoggerContestLog *c = dynamic_cast<LoggerContestLog *>( ct );
+    bool ret = false;
+    if (c)
+    {
+        memoryData::memData m = c->getRigMemoryData(sourceRow);
+        if (m.callsign != memDefData::DEFAULT_CALLSIGN)
+            ret = true;
+    }
+    return ret;
+}
+bool RigMemorySortFilterProxyModel::lessThan(const QModelIndex &left,
+                      const QModelIndex &right) const
+{
+    //Model Indices are to the SOURCE model
+
+    int lrow = left.row();
+    int rrow = right.row();
+
+    RigMemoryGridModel *gridModel = dynamic_cast<RigMemoryGridModel *>(this->sourceModel());
+    if (lrow >= gridModel->rowCount())
+        return false;
+    if (rrow >= gridModel->rowCount())
+        return false;
+
+    QString ws1;
+    QString ws2;
+    ws1 = gridModel->data(left, Qt::UserRole).toString();
+    ws2 = gridModel->data(right, Qt::UserRole).toString();
+
+    return ws1 < ws2;
+}

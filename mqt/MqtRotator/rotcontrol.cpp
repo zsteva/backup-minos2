@@ -182,6 +182,12 @@ int RotControl::init(srotParams* selectedAntenna)
 
 int RotControl::closeRotator()
 {
+
+    if (my_rot->caps->rot_model == ROT_MODEL_SPID_ROT1PROG || my_rot->caps->rot_model == ROT_MODEL_SPID_ROT2PROG)
+    {
+        // make sure we stop for a moment to let any last poll finish sending
+        QThread::msleep(1000);
+    }
     int retcode;
     retcode = rot_close (my_rot);
 

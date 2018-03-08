@@ -3,6 +3,7 @@
 #include <QTimer>
 #include <QSettings>
 #include <QHostInfo>
+#include <QSharedPointer>
 #include "fileutils.h"
 #include "ConfigFile.h"
 
@@ -292,6 +293,10 @@ MinosConfig::~MinosConfig()
    elelist.clear();
 }
 //---------------------------------------------------------------------------
+bool configSort( const QSharedPointer<RunConfigElement> c1, const QSharedPointer<RunConfigElement> c2)
+{
+    return c1->name < c2->name;
+}
 void MinosConfig::saveAll()
 {
     {
@@ -301,8 +306,10 @@ void MinosConfig::saveAll()
         config.sync();
     }
     {
+        QVector <QSharedPointer<RunConfigElement> > newList = elelist;
+        qSort(newList.begin(), newList.end(), configSort);
         QSettings config(getConfigIniName(), QSettings::IniFormat);
-        for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
+        for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = newList.begin(); i != newList.end(); i++ )
         {
             (*i)->save(config);
         }

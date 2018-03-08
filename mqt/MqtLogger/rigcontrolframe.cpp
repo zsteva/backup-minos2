@@ -45,8 +45,9 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     QFrame(parent)
     , ui(new Ui::RigControlFrame)
     , curFreq(memDefData::DEFAULT_FREQ)
-    , curMode(memDefData::DEFAULT_MODE)
-    , radioName("NoRadio")
+    //, curMode(memDefData::DEFAULT_MODE)
+    , curMode("")
+    , radioName(NORADIO)
     , radioState("None")
     , radioLoaded(false)
     , freqEditOn(false)
@@ -144,7 +145,26 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
     {
         ui->modelbl->setVisible(false);
     }
+
 }
+
+
+
+
+void RigControlFrame::on_radioNameSel_activated(const QString &arg1)
+{
+//    QString n = arg1;
+//    if (n == radioName)
+//    {
+//        n = RELOAD;     // this forces the rigcontrol app to reload the radio with the same radioName
+
+//    }
+
+    radioName = arg1;
+    emit selectRadio(arg1);
+}
+
+
 
 
 
@@ -168,8 +188,18 @@ void RigControlFrame::noRadioSetFreq(QString f)
 
 void RigControlFrame::setFreq(QString f)
 {
+    if (f == "0")
+    {
+        // this is force an update of freq, ignore
+        traceMsg(QString("Force Freq Update Received - Ignore!"));
+        return;
+    }
     traceMsg(QString("Set Freq = %1").arg(f));
     QString freq = f;
+    if (lastFreq != freq)
+    {
+        lastFreq = freq;
+    }
 
     if (freq.count() >= 4)
     {
@@ -212,7 +242,7 @@ void RigControlFrame::changeRadioFreq()
                         {
                             sendFreq(lastFreq);
                         }
-                        else if (!radioConnected && radioName.trimmed() == "No Radio")
+                        else if (!radioConnected && radioName.trimmed() == NORADIO)
                         {
                             noRadioSendOutFreq(lastFreq);
                         }
@@ -325,7 +355,9 @@ void RigControlFrame::noRadioSendOutMode(QString m)
 
 void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
 {
-    emit selectRadio(ct->radioName.getValue());
+    QString radioName = ct->radioName.getValue();
+    emit selectRadio(radioName);
+
 
     QStringList modelist = mode.split(':');  // unpack mode
     QString sMode;
@@ -334,35 +366,18 @@ void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
     {
         return;
     }
-    //if (modelist[0] == hamlibData::MGM)
-    //{
-    //    sMode = modelist[1];
-    //}
-    //else
-   // {
-        sMode = modelist[0];
-   // }
+    sMode = modelist[0];
+
     // contest paged changed - send freq and mode to synch
-    if (curFreq == memDefData::DEFAULT_FREQ)
+    if (freq != memDefData::DEFAULT_FREQ)
     {
         sendFreq(freq);
     }
-    else if (curFreq != freq)
-    {
-        sendFreq(curFreq);
-    }
 
-    if (curMode == memDefData::DEFAULT_MODE && curMode != sMode)
+    if (curMode != memDefData::DEFAULT_MODE)
     {
         sendModeToRadio(curMode);
     }
-    else if (curMode != sMode)
-    {
-        sendModeToRadio(curMode);
-    }
-
-
-
 }
 
 bool RigControlFrame::eventFilter(QObject *obj, QEvent *event)
@@ -428,7 +443,7 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
             }
 
         }
-        else if (!radioConnected && radioName.trimmed() == "No Radio")
+        else if (!radioConnected && radioName.trimmed() == NORADIO)
         {
             noRadioSendOutFreq(m.freq);
             noRadioSendOutMode(m.mode);
@@ -529,18 +544,35 @@ void RigControlFrame::sendModeToRadio(QString m)
 
 }
 
-void RigControlFrame::setRadioName(QString radioName)
-{
-    traceMsg(QString("Set RadioName = %1").arg(radioName));
-    if (ct && !ct->isProtected())
-    {
-        ui->radioName->setCurrentText(radioName);
 
-        emit selectRadio(radioName);
+void RigControlFrame::setRadioName(QString name)
+{
+    traceMsg(QString("Set RadioName = %1").arg(name));
+    if (name == NORADIO)
+    {
+        return;
+    }
+    QString radNam = extractRadioName(name);   // remove mode if appended
+    ui->radioNameSel->setCurrentText(extractRadioName(radNam));
+    radioName = radNam;
+
+    if (ct && !ct->isProtected() && ct == TContestApp::getContestApp() ->getCurrentContest())
+    {
+        emit selectRadio(name);  // send radio and mode if appended.
     }
 }
 
 
+void RigControlFrame::setRadioNameFromRigControl(QString name)
+{
+
+    //if(name != radioName)
+    //{
+        ui->radioNameSel->setCurrentText(name);
+        radioName = name;
+    //}
+
+}
 
 void RigControlFrame::loadMemories()
 {
@@ -549,15 +581,28 @@ void RigControlFrame::loadMemories()
 
 void RigControlFrame::setRadioList(QString s)
 {
-    QStringList radios = s.split(":");
+    listOfRadios.clear();
+    listOfRadios = s.split(":");
 
-    ui->radioName->clear();
-    ui->radioName->addItem("");
-    ui->radioName->addItems(radios);
+    ui->radioNameSel->clear();
+    ui->radioNameSel->addItem("");
+    ui->radioNameSel->addItems(listOfRadios);
+    if (radioName != NORADIO)
+    {
+        ui->radioNameSel->setCurrentText(radioName);
+    }
 
-    if (ct)
-        setRadioName(ct->radioName.getValue());
+    if (ct && ct == TContestApp::getContestApp() ->getCurrentContest())
+    {
+        // add mode to the radioName
+        QString n = QString("%1:%2").arg(ct->radioName.getValue()).arg(ct->currentMode.getValue());
+        setRadioName(n);
+    }
+
 }
+
+
+
 void RigControlFrame::setRadioState(QString s)
 {
     traceMsg(QString("Set RadioState = %1").arg(s));
@@ -567,11 +612,19 @@ void RigControlFrame::setRadioState(QString s)
         if (s == RIG_STATUS_CONNECTED)
         {
             radioConnected = true;
+
         }
         else if (s == RIG_STATUS_DISCONNECTED)
         {
            radioConnected = false;
            radioError = false;
+
+               //curFreq = "00000000000";
+               //ui->freqInput->setInputMask(maskData::freqMask[curFreq.count() - 4]);
+               //ui->freqInput->setText(curFreq);
+
+
+
         }
         else if (s == RIG_STATUS_ERROR)
         {
@@ -721,7 +774,7 @@ void RigControlFrame::freqPlusMinusButton(double f)
 
                emit sendFreqControl(freq);
            }
-           else if (!radioConnected && radioName.trimmed() == "No Radio")
+           else if (!radioConnected && radioName.trimmed() == NORADIO)
            {
                noRadioSendOutFreq(freq);
            }
@@ -820,7 +873,7 @@ void RigControlFrame::runButReadActSel(int buttonNumber)
             }
 
         }
-        else if (!radioConnected && radioName.trimmed() == "No Radio")
+        else if (!radioConnected && radioName.trimmed() == NORADIO)
         {
             noRadioSendOutFreq(m.freq);
         }
@@ -1144,7 +1197,7 @@ void FreqLineEdit::changeFreq(bool direction)
 
 
         sfreq = convertFreqToStr(freq);
-        trace(QString("Change Freq: Freq Tuning = %1").arg(freq));
+        trace(QString("Change Freq: Freq Tuning = %1").arg(sfreq));
         if (bandOK)
         {
             setText(convertFreqStrDisp(sfreq));
@@ -1159,15 +1212,3 @@ void FreqLineEdit::changeFreq(bool direction)
    }
 }
 
-
-
-void RigControlFrame::on_radioName_activated(const QString &arg1)
-{
-    if (arg1 != radioName)
-    {
-        TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
-
-        if (tslf)
-            tslf->on_SetRadioName(arg1);
-    }
-}

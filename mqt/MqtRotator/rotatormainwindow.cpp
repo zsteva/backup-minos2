@@ -152,7 +152,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     setupLog = new LogDialog;
     pollTimer = new QTimer(this);
 
-    selectAntenna = new QComboBox;
+    selectAntennaCombo = new QComboBox;
     rotlog = new RotatorLog;
 
     status = new QLabel;
@@ -189,7 +189,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     refreshPresetLabels();
     initActionsConnections();
 
-    selectAntenna = ui->selectAntennaBox;
+    selectAntennaCombo = ui->selectAntennaBox;
 
     setupAntenna->setAppName(appName);
 
@@ -227,8 +227,6 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     //logAntError = false;
     initSelectAntennaBox();
 
-
-
     if (appName.length() > 0)
     {
         logMessage((QString("Read Current Antenna for AppName %1 from logger").arg(appName)));
@@ -237,9 +235,22 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     else
     {
         logMessage((QString("Read Current Antenna for Local selection")));
+        selectRotator->readCurrentAntenna();
 
-    }
+        if (selectRotator->currentAntenna.antennaName == "")
+        {
+            logMessage(QString("No antenna selected for this appName, %1").arg(appName));
+            QString errmsg = "<font color='Red'>Please select an antenna!</font>";
+            showStatusMessage(errmsg);
+            statusMsg = errmsg;
+            sendStatusLogger();
+        }
+        else
+        {
+            selectAntennaCombo->setCurrentIndex(selectAntennaCombo->findText(selectRotator->currentAntenna.antennaName));
+        }
 
+<<<<<<< HEAD
     setupAntenna->readCurrentAntenna();
     ui->selectAntennaBox->setCurrentText(setupAntenna->currentAntennaName);
     //int currentAntIdx = setupAntenna->findCurrentAntenna(setupAntenna->currentAntennaName);
@@ -268,12 +279,12 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     upDateAntenna();
 
 
+=======
+        upDateAntenna();
+
+    }
+>>>>>>> 5a54a9a7ad685ab5e444eccb35caf1523a9ae4c5
     trace("*** Rotator Started ***");
-
-
-
-
-
 }
 
 RotatorMainWindow::~RotatorMainWindow()
@@ -302,7 +313,7 @@ void RotatorMainWindow::onStdInRead(QString cmd)
 void RotatorMainWindow::closeEvent(QCloseEvent *event)
 {
 
-
+    LogTimer.stop();
     closeRotator();
 
     // and tidy up all loose ends
@@ -360,10 +371,35 @@ void RotatorMainWindow::onSelectAntennaBox()
 
 void RotatorMainWindow::onLoggerSelectAntenna(QString s)
 {
+/*
+    if (s != RELOAD)        // not reload, update selection
+    {
+       ui->selectAntennaBox->setCurrentText(s);
+    }
+    if (s == RELOAD)
+    {
+        logMessage(QString("Received Reload from Logger"));
+    }
+*/
+
+
+    logMessage(QString("Received Select Antenna %1 from Logger").arg(s));
+    QString oldAntenna = ui->selectAntennaBox->currentText();
     ui->selectAntennaBox->setCurrentText(s);
+<<<<<<< HEAD
     setupAntenna->currentAntennaName = s;
     setupAntenna->saveCurrentAntenna();
     upDateAntenna();
+=======
+    if (!s.isEmpty() && s == oldAntenna)
+    {
+        refreshAntenna();
+    }
+    else
+    {
+        upDateAntenna();
+    }
+>>>>>>> 5a54a9a7ad685ab5e444eccb35caf1523a9ae4c5
 }
 
 void RotatorMainWindow::setSelectAntennaBoxVisible(bool visible)
@@ -477,10 +513,18 @@ void RotatorMainWindow::openRotator()
 
     //srotParams p = setupAntenna->getCurrentAntenna();
 
+<<<<<<< HEAD
     retCode = rotator->init(setupAntenna->currentAntenna);
     if (retCode < 0)
+=======
+//    if (!rotator->get_serialConnected())
+>>>>>>> 5a54a9a7ad685ab5e444eccb35caf1523a9ae4c5
     {
-        hamlibError(retCode, "Rotator Init");
+        retCode = rotator->init(selectRotator->currentAntenna);
+        if (retCode < 0)
+        {
+            hamlibError(retCode, "Rotator Init");
+        }
     }
     if (rotator->get_serialConnected())
     {
@@ -898,10 +942,17 @@ void RotatorMainWindow::updatePresetLabels()
 
 void RotatorMainWindow::initSelectAntennaBox()
 {
+<<<<<<< HEAD
     selectAntenna->addItem("");
     for (int i= 0; i < setupAntenna->numAvailAntennas; i++)
     {
         selectAntenna->addItem(setupAntenna->availAntData[i]->antennaName);
+=======
+    selectAntennaCombo->addItem("");
+    for (int i= 0; i < NUM_ANTENNAS; i++)
+    {
+        selectAntennaCombo->addItem(selectRotator->availAntennas[i].antennaName);
+>>>>>>> 5a54a9a7ad685ab5e444eccb35caf1523a9ae4c5
     }
     sendAntennaListLogger();
 }
@@ -912,7 +963,11 @@ void RotatorMainWindow::initSelectAntennaBox()
 void RotatorMainWindow::upDateAntenna()
 {
 
+<<<<<<< HEAD
     int currentAntIdx = -1;
+=======
+    trace("updateAntenna");
+>>>>>>> 5a54a9a7ad685ab5e444eccb35caf1523a9ae4c5
     if (moving  || movingCCW || movingCW)
     {
 
@@ -1094,6 +1149,31 @@ void RotatorMainWindow::upDateAntenna()
             writeWindowTitle(appName);
         }
     }
+}
+void RotatorMainWindow::refreshAntenna()
+{
+    trace("refreshAntenna");
+    int antennaIndex = ui->selectAntennaBox->currentIndex();
+    if (antennaIndex > 0)
+    {
+        antennaIndex -= 1;
+        if (selectRotator->availAntennas[antennaIndex].rotatorModelNumber == 0)
+        {
+            closeRotator();
+            QMessageBox::critical(this, tr("Antenna Error"), "Please configure a antenna name and rotator model");
+            return;
+        }
+
+        if (!rotator->get_serialConnected())
+        {
+            openRotator();
+            return;
+        }
+
+       sendStatusToLogConnected();
+
+    }
+    dumpRotatorToTraceLog();
 }
 
 
@@ -1962,12 +2042,16 @@ void RotatorMainWindow::currentAntennaSettingChanged(QString antennaName)
                          QMessageBox::Cancel ) )
     {
         case QMessageBox::Yes:
-            if (selectAntenna->currentText() != antennaName)
+            if (selectAntennaCombo->currentText() != antennaName)
             {
                 bool ok;
+<<<<<<< HEAD
 
                 selectAntenna->setCurrentIndex(setupAntenna->currentAntenna->antennaNumber.toInt(&ok, 10));
 
+=======
+                selectAntennaCombo->setCurrentIndex(selectRotator->currentAntenna.antennaNumber.toInt(&ok, 10));
+>>>>>>> 5a54a9a7ad685ab5e444eccb35caf1523a9ae4c5
             }
             upDateAntenna();
             break;
@@ -1986,10 +2070,10 @@ void RotatorMainWindow::currentAntennaSettingChanged(QString antennaName)
 
 void RotatorMainWindow::updateSelectAntennaBox()
 {
-    int curidx = selectAntenna->currentIndex();
-    selectAntenna->clear();
+    int curidx = selectAntennaCombo->currentIndex();
+    selectAntennaCombo->clear();
     initSelectAntennaBox();
-    selectAntenna->setCurrentIndex(curidx);
+    selectAntennaCombo->setCurrentIndex(curidx);
 }
 
 

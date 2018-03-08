@@ -12,6 +12,7 @@ class SingleApplication : public QApplication {
         SingleApplication(QString serverName, int &argc, char **argv);
 
         bool isRunning();                // Are there instances running
+        void sendArgs();
 
     private slots:
         // A trigger new connections
@@ -26,6 +27,9 @@ class SingleApplication : public QApplication {
         bool _isRunning;                // Are there instances running
         QLocalServer *_localServer;     // The local socket Server
         QString _serverName;            // Service name
+
+    signals:
+        void argsReceived(QString);
 };
 
 #endif // SINGLEAPPLICATION_H

@@ -29,7 +29,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_8">
      <item>
-      <widget class="QComboBox" name="radioName"/>
+      <widget class="QComboBox" name="radioNameSel"/>
      </item>
      <item>
       <widget class="QLabel" name="rigState">

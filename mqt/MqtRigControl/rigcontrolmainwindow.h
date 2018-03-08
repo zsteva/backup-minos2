@@ -53,8 +53,6 @@ private:
     StdInReader stdinReader;
     RigControlRpc *msg;
 
-
-    QComboBox *selectRadio;
     SetupDialog *selectRig;
     RigControl  *radio;
     QString appName = "";
@@ -68,6 +66,7 @@ private:
     // data from logger
     QString logger_freq;
     QString slogMode;
+    QString selRadioMode;   // onSelectRadio mode from logger at startup
     rmode_t logMode;
 
     const int PASSBAND_NOCHANGE = -1;
@@ -94,8 +93,8 @@ private:
     void setRadioNameLabelVisible(bool visible);
     void openRadio();
     void closeRadio();
-    int getFrequency(vfo_t vfo);
-    int getMode(vfo_t vfo);
+    int getAndSendFrequency(vfo_t vfo);
+    int getAndSendMode(vfo_t vfo);
     //QString convertFreqString(double);
 
     void setPolltime(int);
@@ -121,10 +120,14 @@ private:
     void closeEvent(QCloseEvent *event);
 
     void sendRadioListLogger();
+    void sendRadioNameLogger(QString radioName);
     void sendStatusLogger(const QString &message);
     void sendStatusToLogDisConnected();
     void sendStatusToLogConnected();
     void sendStatusToLogError();
+    void sendTransVertOffsetToLogger();
+    void sendTransVertSwitchToLogger(const QString &swNum);
+    void sendErrorMessageToLogger(QString errMsg);
     void sendFreqToLog(freq_t freq);
     void sendModeToLog(QString mode);
     //void sendRxPbFlagToLog();
@@ -147,20 +150,17 @@ private:
     void writeWindowTitle(QString appName);
     void sendTransVertStatus(bool status);
 
-
+    void refreshRadio();
 
 private slots:
 
     void onStdInRead(QString);
     void saveTraceLogFlag();
     void upDateRadio();
-    void getCurMode();
     void getRadioInfo();
     void logMessage(QString s);
     void about();
     void LogTimerTimer();
-
-
 
     void loggerSetFreq(QString freq);
     void loggerSetMode(QString mode);

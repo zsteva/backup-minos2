@@ -13,6 +13,8 @@
 #include "htmldelegate.h"
 #include "enqdlg.h"
 #include "MatchTreesFrame.h"
+#include "rigmemdialog.h"
+#include "rigutils.h"
 
 TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     QFrame(parent),
@@ -74,6 +76,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(&MinosLoggerEvents::mle, SIGNAL(MakeEntry(BaseContestLog*)), this, SLOT(on_MakeEntry(BaseContestLog*)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)), this, SLOT(on_AfterSelectContact(QSharedPointer<BaseContact>, BaseContestLog *)));
     connect(&MinosLoggerEvents::mle, SIGNAL(AfterLogContact(BaseContestLog *)), this, SLOT(on_AfterLogContact(BaseContestLog *)));
+    connect(&MinosLoggerEvents::mle, SIGNAL(setMemory(BaseContestLog *, QString, QString)), this, SLOT(on_SetMemory(BaseContestLog *, QString, QString)));
 
     doNextContactDetailsOnLeftClick( true);  // but the sizes are zero...
 
@@ -100,6 +103,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     // From rig controller
     connect(sendDM, SIGNAL(setRadioLoaded()), this, SLOT(on_RadioLoaded()));
     connect(sendDM, SIGNAL(setRadioList(QString)), this, SLOT(on_SetRadioList(QString)));
+    connect(sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
     connect(sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetMode(QString)));
     connect(sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetFreq(QString)));
     connect(sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
@@ -241,6 +245,7 @@ void TSingleLogFrame::on_ContestPageChanged ()
        return ;
     }
 
+    trace("on_ContestPageChanged to current frame");
     LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( getContest() );
     TContestApp::getContestApp() ->setCurrentContest( ct );
     ui->matchTreesFrame->setContest(ct);
@@ -267,12 +272,10 @@ void TSingleLogFrame::on_ContestPageChanged ()
     doNextContactDetailsOnLeftClick( false );
     MinosLoggerEvents::SendShowOperators();
 
-    if ( this == LogContainer->getCurrentLogFrame() )
-    {
-        ui->FKHRigControlFrame->on_ContestPageChanged(sCurFreq, sCurMode);
-        ui->FKHRotControlFrame->on_ContestPageChanged();
-    }
+    ui->FKHRigControlFrame->on_ContestPageChanged(sCurFreq, sCurMode);
+    ui->FKHRotControlFrame->on_ContestPageChanged();
 
+    LogContainer->subscribeApps();  // force everything to be (re)published
     updateQSODisplay();
 
 }
@@ -318,10 +321,12 @@ void TSingleLogFrame::doSetAuxWindows(bool saveSplitter)
 
     if (auxFrames.size() > num)
     {
-        for (int i = auxFrames.size(); i > 0; i--)
+        for (int i = auxFrames.size(); i > num; i--)
         {
             StackedInfoFrame *f = auxFrames[auxFrames.size() - 1];
             auxFrames.pop_back();
+            f->setParent(0);
+            f->setVisible(false);
             delete f;
         }
     }
@@ -329,15 +334,16 @@ void TSingleLogFrame::doSetAuxWindows(bool saveSplitter)
     {
         for (int i = auxFrames.size(); i < num; i++)
         {
+            LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
             StackedInfoFrame *f = new StackedInfoFrame(0, i);
+            f->setContest(ct);
             auxFrames.push_back(f);
             ui->MultSplitter->addWidget(f);
-            LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-            f->setContest(ct);
         }
     }
     if (saveSplitter)
         on_MultSplitter_splitterMoved(0, 0);
+
 }
 void TSingleLogFrame::NextContactDetailsTimerTimer( )
 {
@@ -708,6 +714,47 @@ void TSingleLogFrame::on_GoToSerial(BaseContestLog *ct)
        goSerial();
     }
 }
+//---------------------------------------------------------------------------
+void TSingleLogFrame::on_SetMemory(BaseContestLog *c, QString call, QString loc)
+{
+    if (contest == c)
+    {
+        int n = -1;
+        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+        int mcount = ct->rigMemories.size();
+        for (int i = 0; i <= mcount; i ++)
+        {
+            memoryData::memData m = ct->getRigMemoryData(i);
+
+            if ( m.callsign == memDefData::DEFAULT_CALLSIGN)
+            {
+                n = i;
+                break;
+            }
+        }
+
+        if (n == -1)
+        {
+            mShowMessage("Panic", this);
+            return;
+        }
+        memoryData::memData logData;
+        getDetails(logData);
+        logData.callsign = call;
+        logData.locator = loc;
+        logData.time = QTime::currentTime().toString("HH:mm");
+
+        RigMemDialog memDialog(this);
+        memDialog.setLogData(&logData, n, ct);
+        memDialog.setWindowTitle(QString("M%1 - Write").arg(QString::number(n + 1)));
+       if ( memDialog.exec() == QDialog::Accepted)
+       {
+           ct->saveRigMemory(n, logData);
+
+           MinosLoggerEvents::sendUpdateMemories(ct);
+       }
+    }
+}
 
 //---------------------------------------------------------------------------
 void TSingleLogFrame::on_KeyerLoaded()
@@ -781,15 +828,9 @@ void TSingleLogFrame::on_SetMode(QString m)
 {
     if (sCurMode != m)
     {
-        sCurMode = m;
-        if (modeUpDateCnt < 1)
+        if ( this == LogContainer->getCurrentLogFrame() )
         {
-            modeUpDateCnt++;
-            ui->FKHRigControlFrame->setMode(m);
-            ui->GJVQSOLogFrame->modeSentFromRig(m);
-        }
-        else if ( this == LogContainer->getCurrentLogFrame() )
-        {
+            sCurMode = m;
             ui->FKHRigControlFrame->setMode(m);
             ui->GJVQSOLogFrame->modeSentFromRig(m);
         }
@@ -801,15 +842,9 @@ void TSingleLogFrame::on_SetFreq(QString f)
 
     if (sCurFreq != f)
     {
-        sCurFreq = f;
-        if (freqUpDateCnt < 1)
+        if ( this == LogContainer->getCurrentLogFrame() )
         {
-            freqUpDateCnt++;
-            ui->FKHRigControlFrame->setFreq(f);
-            ui->GJVQSOLogFrame->setFreq(f);
-        }
-        else if ( this == LogContainer->getCurrentLogFrame() )
-        {
+            sCurFreq = f;
             ui->FKHRigControlFrame->setFreq(f);
             ui->GJVQSOLogFrame->setFreq(f);
             MinosLoggerEvents::sendRigFreqChanged(f, contest);
@@ -819,12 +854,18 @@ void TSingleLogFrame::on_SetFreq(QString f)
 
 void TSingleLogFrame::on_NoRadioSetFreq(QString f)
 {
-    ui->GJVQSOLogFrame->setFreq(f);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->GJVQSOLogFrame->setFreq(f);
+    }
 }
 
 void TSingleLogFrame::on_NoRadioSetMode(QString m)
 {
-    ui->GJVQSOLogFrame->modeSentFromRig(m);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->GJVQSOLogFrame->modeSentFromRig(m);
+    }
 }
 
 void TSingleLogFrame::on_RadioLoaded()
@@ -841,29 +882,48 @@ void TSingleLogFrame::on_SetRadioList(QString s)
 {
     ui->FKHRigControlFrame->setRadioList(s);
 }
-void TSingleLogFrame::on_SetRadioName(QString radioName)
+
+// This is used to handle radioName from rigcontrol
+void TSingleLogFrame::on_SetRadioName(QString /*radioName*/)
 {
-    LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-    if (radioName != ct->radioName.getValue())
+    /*
+    if ( this == LogContainer->getCurrentLogFrame() )
     {
-        ct->radioName.setValue(radioName);
-        ct->commonSave(false);
-        ui->FKHRigControlFrame->setRadioName(radioName);
-        ui->GJVQSOLogFrame->setRadioName(radioName);
+        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+        if (radioName != ct->radioName.getValue())
+        {
+            ct->radioName.setValue(radioName);
+            ct->commonSave(false);
+            ui->FKHRigControlFrame->setRadioNameFromRigControl(radioName);
+            ui->GJVQSOLogFrame->setRadioName(radioName);
+        }
     }
+*/
 }
+
+
+
 
 void TSingleLogFrame::on_SetRadioState(QString s)
 {
-    ui->FKHRigControlFrame->setRadioState(s);
-    ui->GJVQSOLogFrame->setRadioState(s);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRigControlFrame->setRadioState(s);
+        ui->GJVQSOLogFrame->setRadioState(s);
+    }
 }
 
 
 void TSingleLogFrame::on_SetRadioTxVertState(QString s)
 {
-    ui->FKHRigControlFrame->setRadioTxVertState(s);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRigControlFrame->setRadioTxVertState(s);
+    }
 }
+
+//---- Send to RigController
+
 
 
 void TSingleLogFrame::sendRadioFreq(QString freq)
@@ -880,24 +940,44 @@ void TSingleLogFrame::sendRadioMode(QString mode)
 
 void TSingleLogFrame::sendSelectRadio(QString radioName)
 {
+    QString radName = extractRadioName(radioName);    // extract radioName from message, removing mode if appended
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
     {
         LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
         if (ct && !ct->isProtected())
         {
-            if (radioName != ct->radioName.getValue())
+            if (radName != ui->GJVQSOLogFrame->getRadioName())
             {
-                ct->radioName.setValue(radioName);
+               ui->GJVQSOLogFrame->setRadioName(radName);
+            }
+
+
+            if (radName != ct->radioName.getValue())
+            {
+                ct->radioName.setValue(radName);
                 ct->commonSave(false);
             }
-            sendDM->sendSelectRig(radioName);
+            sendDM->sendSelectRig(radioName);  // send message including mode if it has been appended.
         }
+
     }
 }
+
+
 void TSingleLogFrame::sendSelectRotator(QString s)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest() && !contest->isProtected())
+    {
+        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+        if (s != ct->rotatorName.getValue())
+        {
+            ct->rotatorName.setValue(s);
+            ct->commonSave(false);
+            ui->FKHRotControlFrame->setRotatorAntennaName(s);
+        }
         sendDM->sendSelectRotator(s);
+    }
+
 }
 
 /*
@@ -932,36 +1012,53 @@ void TSingleLogFrame::on_RotatorList(QString s)
 
 void TSingleLogFrame::on_RotatorState(QString s)
 {
-    ui->FKHRotControlFrame->setRotatorState(s);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRotControlFrame->setRotatorState(s);
+    }
 }
 
 void TSingleLogFrame::on_RotatorBearing(QString s)
 {
-    ui->FKHRotControlFrame->setRotatorBearing(s);
-    ui->GJVQSOLogFrame->setRotatorBearing(s);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRotControlFrame->setRotatorBearing(s);
+        ui->GJVQSOLogFrame->setRotatorBearing(s);
+    }
 }
 
 
 void TSingleLogFrame::on_RotatorMaxAzimuth(QString s)
 {
-    ui->FKHRotControlFrame->setRotatorMaxAzimuth(s);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRotControlFrame->setRotatorMaxAzimuth(s);
+    }
 }
 
 void TSingleLogFrame::on_RotatorMinAzimuth(QString s)
 {
-    ui->FKHRotControlFrame->setRotatorMinAzimuth(s);
+    if ( this == LogContainer->getCurrentLogFrame() )
+    {
+        ui->FKHRotControlFrame->setRotatorMinAzimuth(s);
+    }
 }
 
 
-void TSingleLogFrame::on_RotatorAntennaName(QString rotName)
+void TSingleLogFrame::on_RotatorAntennaName(QString /*rotName*/)
 {
-    LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-    if (rotName != ct->rotatorName.getValue())
+    /*
+    if ( this == LogContainer->getCurrentLogFrame() )
     {
-        ct->rotatorName.setValue(rotName);
-        ct->commonSave(false);
-        ui->FKHRotControlFrame->setRotatorAntennaName(rotName);
+        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
+        if (rotName != ct->rotatorName.getValue())
+        {
+            ct->rotatorName.setValue(rotName);
+            ct->commonSave(false);
+            ui->FKHRotControlFrame->setRotatorAntennaName(rotName);
+        }
     }
+*/
 }
 
 

@@ -442,8 +442,10 @@ void RotControlFrame::setRotatorList(QString s)
     ui->antennaName->addItem("");
     ui->antennaName->addItems(rots);
 
-    if (ct)
+    if (ct && ct == TContestApp::getContestApp() ->getCurrentContest())
         setRotatorAntennaName(ct->rotatorName.getValue());
+        //ui->antennaName->setCurrentText(ct->rotatorName.getValue());
+
 }
 void RotControlFrame::setRotatorState(const QString &s)
 {
@@ -549,12 +551,12 @@ void RotControlFrame::setRotatorState(const QString &s)
 void RotControlFrame::setRotatorAntennaName(const QString &s)
 {
    traceMsg("Set Antenna Name = " + s);
-   if (ct && !ct->isProtected())
-    {
-        ui->antennaName->setCurrentText(s);
-        antennaName = s;
+   ui->antennaName->setCurrentText(s);
+   antennaName = s;
+   if (ct && !ct->isProtected() && ct == TContestApp::getContestApp() ->getCurrentContest())
+   {
         emit selectRotator(s);
-    }
+   }
 }
 void RotControlFrame::on_ContestPageChanged()
 {
@@ -672,16 +674,24 @@ void RotControlFrame::traceMsg(QString msg)
 
 void RotControlFrame::on_antennaName_activated(const QString &arg1)
 {
-    if (arg1 != antennaName)
+   /*QString n = arg1;
+    if (n == antennaName)
     {
-        TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+        n = RELOAD;
+    }
+*/
+
+    /*TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
 
         if (tslf)
             tslf->on_RotatorAntennaName(arg1);
     }
+    */
+    antennaName = arg1;
+    emit selectRotator(arg1);
 
 }
 void RotControlFrame::getRotDetails(memoryData::memData &m)
 {
-    m.bearing = rotatorBearing;
+    m.bearing = currentBearing;
 }

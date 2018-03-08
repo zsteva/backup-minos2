@@ -52,12 +52,22 @@ RigMemDialog::~RigMemDialog()
 
 void RigMemDialog::onFreqEditFinish()
 {
+    QString f = ui->freqLineEdit->text().trimmed().remove( QRegExp("^[0]*"));
+    if (f.contains('.'))
+    {
+        QStringList fl = f.split('.');
+        if (fl[1].count() > 6)
+        {
+            fl[1].truncate(6);
+            f = fl[0] + "." + fl[1];
+        }
 
-    if (!validateFreqTxtInput(ui->freqLineEdit->text().trimmed()))
+    }
+    if (!validateFreqTxtInput(f))
     {
         // error
         QMessageBox msgBox;
-        msgBox.setText("Frequency has invalid characters or missing periods.\r\n\r\nThe format required is (e.g.) 1296.325 or 144.290123\r\n");
+        msgBox.setText(FREQ_EDIT_ERR_MSG);
         msgBox.exec();
 
     }
@@ -65,36 +75,31 @@ void RigMemDialog::onFreqEditFinish()
 
 
 
-void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
+void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber, LoggerContestLog *ct)
 {
     memoryNumber = buttonNumber;
     logData = ldata;
     ui->modecb->setCurrentText(ldata->mode);
 
+    ui->workedCB->setChecked(ldata->worked);
 
     ui->callSignLineEdit->setText(ldata->callsign);
     ui->locatorLineEdit->setText(ldata->locator);
 
-//    if (ldata->freq.remove('.').count() < 4)
-//    {
-//        ui->freqLineEdit->setInputMask(maskData::freqMask[7]);
-//    }
-//    else
-//    {
-//        ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.remove('.').count() - 4]);
-//    }
-    ui->freqLineEdit->setText(convertFreqStrDispSingle(ldata->freq));
+    double lon = 0.0;
+    double lat = 0.0;
+    int lres = lonlat( ldata->locator, lon, lat );
+    if ( lres == LOC_OK )
+    {
+        int brg;
+        double dist;
+        ct->disbear( lon, lat, dist, brg );
+        ui->bearingLineEdit->setText(QString::number(brg));
+    }
 
-    if (ldata->bearing == COMPASS_ERROR)
-    {
-        ui->bearingLineEdit->setText("");
-    }
-    else
-    {
-        ui->bearingLineEdit->setText(QString::number(ldata->bearing));
-    }
+    ui->freqLineEdit->setText(convertFreqStrDispSingle(ldata->freq).remove( QRegExp("0+$"))); //remove trailing zeros);
+
     ui->timeLineEdit->setText(ldata->time);
-    //setWindowTitle(QString("M%1 - Edit").arg(QString::number(buttonNumber + 1)));
 }
 
 void RigMemDialog::on_okButton_clicked()
@@ -103,12 +108,29 @@ void RigMemDialog::on_okButton_clicked()
     if (logData->callsign.isEmpty())
         logData->callsign = "??";
 
-    QString f = convertSinglePeriodFreqToMultiPeriod(ui->freqLineEdit->text());
-    logData->freq = f.remove('.').remove( QRegExp("^[0]*")); //remove periods and leading zeros
-    if (logData->freq == "")
+    logData->worked = ui->workedCB->isChecked();
+
+    //QString f = convertSinglePeriodFreqToMultiPeriod(ui->freqLineEdit->text());
+    QString f = ui->freqLineEdit->text().remove( QRegExp("^[0]*")); //remove periods and leading zeros
+    if (f == "")
     {
         logData->freq = "00000000000";
     }
+    else
+    {
+        QStringList fl = f.split('.');
+        if (fl.count() == 0)
+        {
+            trace(QString("Memory Freq Edit - Missing Period - %1").arg(f));
+            return;
+        }
+
+        fl[1] = fl[1] + "0000000";
+        fl[1].truncate(6);
+
+        logData->freq = fl[0] + fl[1];
+    }
+
     logData->mode = ui->modecb->currentText();
     logData->locator = ui->locatorLineEdit->text();
     logData->bearing = ui->bearingLineEdit->text().toInt();
