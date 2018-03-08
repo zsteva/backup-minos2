@@ -97,7 +97,7 @@ private:
     QTimer LogTimer;
     QTimer RotateTimer;
 
-    QComboBox *selectAntennaCombo;
+    QComboBox *selectAntenna;
     QPushButton* presetButtons[NUM_PRESETS];
     QString appName = "";
     RotControl  *rotator;
@@ -208,7 +208,7 @@ private slots:
     void setAntennaNameLabelVisible(bool visible);
 
     void upDateAntenna();
-    void refreshAntenna();
+    //void refreshAntenna();
     void request_bearing();
     void rotateCW(bool);
     void rotateCCW(bool);
