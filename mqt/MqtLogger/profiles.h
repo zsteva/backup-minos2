@@ -73,7 +73,8 @@ class SettingsBundle
       bool dupSection( const QString &sname );
       bool newSection( const QString &sname );
       bool renameSection( const QString &sname );
-      bool isSectionPresent();
+      bool isSectionPresent(QString sname);
+      bool isCurrSectionPresent();
 
       void closeProfile( void );
 
