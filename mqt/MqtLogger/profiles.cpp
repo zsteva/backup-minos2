@@ -449,7 +449,7 @@ void SettingsBundle::clearProfileSection( bool clearCurr)
    // clear the content AND the section header
    if ( bundleFile )
    {
-      bundleFile->iniFile->writePrivateProfileString( currsection, 0, 0 );
+      bundleFile->iniFile->writePrivateProfileString( currsection, "", "" );
       if (clearCurr)
       {
          currsection = noneBundle;
@@ -462,7 +462,7 @@ void SettingsBundle::flushProfile( void )
    {
       return ;
    }
-   bundleFile->iniFile->writePrivateProfileString( 0, 0, 0 );
+   bundleFile->iniFile->writePrivateProfileString( "", "", "" );
 }
 //=============================================================================
 ProfileEntry::ProfileEntry(int id, const char *name, const char *def, const char *dispname, const char *hint, bool RO )

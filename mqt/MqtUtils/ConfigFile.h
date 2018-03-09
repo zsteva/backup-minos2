@@ -2,7 +2,7 @@
 #define CONFIGFILE_H
 #include <QWidget>
 #include <QProcess>
-#include <QSettings>
+#include "INIFile.h"
 //---------------------------------------------------------------------------
 extern QString RunLocal;
 extern QString ConnectServer;
@@ -63,9 +63,9 @@ public:  		// User declarations
     bool stopping = false;
 
     RunConfigElement(){}
-    bool initialise( QSettings &, QString sect );
+    bool initialise( INIFile &, QString sect );
 
-    void save(QSettings &);
+    void save(INIFile &);
 
     Connectable connectable();
 
@@ -87,6 +87,8 @@ private:  	// User declarations
     static MinosConfig *thisDM;
     static QString getConfigIniName();
     MinosConfig();
+
+    INIFile config;
     void initialise();
 
     QVector<AppConfigElement> appConfigList;

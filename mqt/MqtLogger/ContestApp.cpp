@@ -571,7 +571,7 @@ void TContestApp::setDisplayColumnWidth( const QString &key, int val )
    {
       if ( val < 0 )
       {
-         displayBundle.setStringProfile( key, 0 );
+         displayBundle.setIntProfile( key, 0 );
       }
       else
       {

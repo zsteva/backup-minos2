@@ -40,9 +40,9 @@ private:
     struct stat statbuf;
 
 public:
-    bool loadINIFile( void );
-    bool writeINIFile( void );
-    bool checkStat( void );
+    bool loadINIFile( );
+    bool writeINIFile( );
+    bool checkStat();
     bool checkKeyExists(const QString &Section,
                         const QString &Entry
                         );
@@ -58,9 +58,17 @@ public:
                               const QString &Entry,
                               int DefaultValue );
 
+    bool getPrivateProfileBool(const QString &Section,
+                                const QString &Entry,
+                                bool DefaultValue );
+
     bool writePrivateProfileString( const QString &Section,
                                     const QString &Entry,
                                     const QString &Buffer );
+
+    bool writePrivateProfileBool( const QString &Section,
+                                    const QString &Entry,
+                                    bool val );
 
     bool dupSection( const QString &oldname, const QString &newname );
     bool isSectionPresent(QString sname);

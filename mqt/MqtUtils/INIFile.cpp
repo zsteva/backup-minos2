@@ -30,9 +30,9 @@ public:
 
     ~INIEntry();        // Destructor.
 
-    QString getValue( void );
+    QString getValue( );
     void setValue( const QString &Value );
-    bool isValidEntry( void );
+    bool isValidEntry( );
     bool isDirty()
     {
         return entryDirty;
@@ -68,7 +68,7 @@ public:
 
     ~INISection();   // Destructor.
 
-    bool isValidSection( void );
+    bool isValidSection( );
 
     QVector <IniEntryPtr> entries;
 
@@ -105,11 +105,11 @@ INISection::~INISection()
     entries.clear();
 }
 
-bool INISection::isValidSection( void )
+bool INISection::isValidSection( )
 {
     return entryValid;
 }
-bool INISection::isDirty( void )
+bool INISection::isDirty( )
 {
     if ( sectDirty )
         return true;
@@ -122,7 +122,7 @@ bool INISection::isDirty( void )
     }
     return false;   // for now, just in case...
 }
-void INISection::setClean( void )
+void INISection::setClean( )
 {
     //walk all sections and set each clean
     for ( QVector <IniEntryPtr>::iterator thisEntry = entries.begin();
@@ -143,7 +143,7 @@ INIEntry::INIEntry( INISection *cb, const QString &name, bool valid )
 INIEntry::~INIEntry()
 {}
 
-QString INIEntry::getValue( void )
+QString INIEntry::getValue( )
 {
     return entryValue;
 }
@@ -157,7 +157,7 @@ void INIEntry::setValue( const QString &value )
     }
 }
 
-bool INIEntry::isValidEntry( void )
+bool INIEntry::isValidEntry( )
 {
     return entryValid;
 }
@@ -184,7 +184,7 @@ INIFile::INIFile( const QString &name ) : fileLoaded( false ),   /*invalid( true
 }
 INIFile::~INIFile()
 {
-    writePrivateProfileString( 0, 0, 0 );
+    writePrivateProfileString( "", "", "" );
     // delete all sections
     for ( QVector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
     {
@@ -218,7 +218,7 @@ bool INIFile::dupSection( const QString &oldname, const QString &newname )
     return false;  // section already exists
 }
 
-bool INIFile::checkStat( void )
+bool INIFile::checkStat( )
 {
     struct stat tempstat;
     int statret = stat( loadedFileName.toStdString().c_str(), &tempstat );
@@ -231,7 +231,7 @@ bool INIFile::checkStat( void )
     }
     return false;
 }
-bool INIFile::isDirty( void )
+bool INIFile::isDirty( )
 {
     if ( fileDirty )
         return true;
@@ -243,7 +243,7 @@ bool INIFile::isDirty( void )
     }
     return false;   // for now, just in case...
 }
-void INIFile::setClean( void )
+void INIFile::setClean( )
 {
     //walk all sections and set each clean
     for ( QVector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
@@ -252,7 +252,7 @@ void INIFile::setClean( void )
     }
 }
 
-bool INIFile::writeINIFile( void )
+bool INIFile::writeINIFile()
 {
     if ( !isDirty() )
         return true;
@@ -313,7 +313,7 @@ bool INIFile::loadINIFile()
     {
         if ( !checkStat() )
             return false;			// no change, so don't re-read
-        writePrivateProfileString( 0, 0, 0 );
+        writePrivateProfileString( "", "", "" );
         for ( QVector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
         {
             delete ( *thisSect );
@@ -360,7 +360,7 @@ bool INIFile::loadINIFile()
         QStringList a = buffer.split('=');
         int scnt = a.size();
 
-        if ( scnt )
+        if ( scnt == 2  )
         {
             this_entry = new INIEntry( thisSect, a[ 0 ], true );
             // somewhere we need to cope with quoted parameters
@@ -390,7 +390,7 @@ bool INIFile::checkKeyExists( const QString &Section,
     QVector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
     if ( thisSect != sections.end() )
     {
-        if ( Entry == 0 )
+        if ( Entry.isEmpty()  )
             return true;
         QVector<IniEntryPtr>::iterator this_entry = std::find_if( ( *thisSect ) ->entries.begin(), ( *thisSect ) ->entries.end(), INIEntryCmp( Entry ) );
         if ( this_entry != ( *thisSect ) ->entries.end() )
@@ -459,7 +459,7 @@ int INIFile::getPrivateProfileInt(const QString &Section,
                                   const QString &Entry,
                                   int DefaultValue )
 {
-    if ( ( Section == 0 ) || ( Entry == 0 ) )
+    if ( Section.isEmpty()|| Entry.isEmpty() )
         return 0;
 
     loadINIFile();
@@ -479,6 +479,16 @@ int INIFile::getPrivateProfileInt(const QString &Section,
     return ( *this_entry ) ->getValue().toInt();
 }
 
+bool INIFile::getPrivateProfileBool(const QString &Section,
+                                  const QString &Entry,
+                                  bool DefaultValue )
+{
+    QString val;
+    if (getPrivateProfileString(Section, Entry, DefaultValue?"true":"false", val))
+        return val.compare("true", Qt::CaseInsensitive) == 0;
+
+    return false;
+}
 
 
 bool INIFile::writePrivateProfileString(const QString &Section,
@@ -511,7 +521,7 @@ bool INIFile::writePrivateProfileString(const QString &Section,
 
 
    */
-    if ( ( Section == 0 ) && ( Entry == 0 ) && ( Buffer == 0 ) )
+    if ( ( Section.isEmpty() ) && ( Entry.isEmpty() ) && ( Buffer.isEmpty() ) )
     {
         /*    Windows 95 keeps a cached version of WIN.INI to improve performance.
           If all three parameters are 0, the function flushes the cache. The
@@ -525,7 +535,7 @@ bool INIFile::writePrivateProfileString(const QString &Section,
     loadINIFile();
 
     QVector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( Section ) );
-    if ( Entry == 0 )
+    if ( Entry.isEmpty())
     {
         if ( thisSect != sections.end() )
         {
@@ -550,7 +560,9 @@ bool INIFile::writePrivateProfileString(const QString &Section,
             fileDirty = true;
         }
         QVector<IniEntryPtr>::iterator this_entry = std::find_if( ( *thisSect ) ->entries.begin(), ( *thisSect ) ->entries.end(), INIEntryCmp( Entry ) );
-        if ( Buffer == 0 )
+/*
+    // buffer empty (was originally a char *x == 0) not useful
+        if ( Buffer.isEmpty() )
         {
             if ( this_entry != ( *thisSect ) ->entries.end() )
             {
@@ -560,6 +572,7 @@ bool INIFile::writePrivateProfileString(const QString &Section,
             }
         }
         else
+        */
         {
             if ( this_entry == ( *thisSect ) ->entries.end() )
             {
@@ -575,9 +588,16 @@ bool INIFile::writePrivateProfileString(const QString &Section,
 
     return true;
 }
+bool INIFile::writePrivateProfileBool( const QString &Section,
+                                const QString &Entry,
+                                bool val )
+{
+    return writePrivateProfileString(Section, Entry, val?"true":"false");
+}
 
 bool INIFile::isSectionPresent(QString sname)
 {
+    loadINIFile();
     QVector<IniSectionPtr>::iterator thisSect = std::find_if( sections.begin(), sections.end(), INISectionCmp( sname ) );
     if ( thisSect == sections.end() )
     {
@@ -592,6 +612,7 @@ bool INIFile::isSectionPresent(QString sname)
 }
 QStringList INIFile::getSections( )
 {
+    loadINIFile();
     QStringList slist;
     for ( QVector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
     {
