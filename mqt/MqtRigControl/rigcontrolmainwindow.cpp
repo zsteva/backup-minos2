@@ -77,8 +77,11 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     radio = new RigControl();
     radio->getRigList();
 
+
     setupRadio = new SetupDialog(radio);
     setupRadio->setAppName(appName);
+
+
 
     if (appName.length() > 0)
     {
@@ -129,7 +132,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
         }
         else
         {
-            ui->selectRadioBox->setCurrentIndex(ui->selectRadioBox->findText(setupRadio->currentRadio->radioName));
+//            ui->selectRadioBox->setCurrentIndex(ui->selectRadioBox->findText(setupRadio->currentRadioName)); *****************************************
         }
     }
 
@@ -141,7 +144,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
     if (appName.length() == 0)
     {
-        upDateRadio();
+//        upDateRadio();   *************************************
     }
 
 

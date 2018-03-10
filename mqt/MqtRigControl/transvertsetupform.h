@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "rigcontrol.h"
 #include "ui_transvertsetupform.h"
+#include "BandList.h"
 
 namespace Ui {
     class transVertSetupForm;
@@ -15,7 +16,7 @@ class TransVertSetupForm : public QWidget
 public:
     explicit TransVertSetupForm(QWidget *parent = nullptr);
 
-    TransVertParams* transVertData;
+
     bool tansVertValueChanged;
     bool transVertNameChanged;
 
@@ -42,7 +43,7 @@ private slots:
     void transVertOffsetSelected();
     void negCheckBoxSelected(bool);
     void enableTransVertSwSel(bool);
-    void transVertSwNumSel(bool);
+    void transVertSwNumSel();
 
 
 private:
@@ -52,6 +53,8 @@ private:
 
 
 
+
+    void loadBands();
 };
 
 #endif // TRANSVERTSETUPFORM_H

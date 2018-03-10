@@ -101,7 +101,7 @@ private:
     RigControl *radio;
 
     QVector<RigSetupForm*> radioTab;
-    QVector<TransVertSetupForm*> transVertTab;
+
 
 
 

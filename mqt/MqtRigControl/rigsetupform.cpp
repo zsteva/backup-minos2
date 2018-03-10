@@ -20,6 +20,7 @@
 #include <QtSerialPort/QSerialPort>
 #include <QSerialPortInfo>
 #include <QMessageBox>
+#include <QInputDialog>
 
 
 static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
@@ -525,10 +526,55 @@ void RigSetupForm::fillMgmModes()
 
 void RigSetupForm::addTransVerter()
 {
+    QString transVerterName = QInputDialog::getText(this, tr("Enter Transverter Name"), tr("Please enter a Transverter Name:"), QLineEdit::Normal);
+    transVerterName = transVerterName.trimmed();
+    if (transVerterName.isEmpty())
+    {
+          return;
+    }
+    if (checkTransVerterNameMatch(transVerterName))
+    {
+        // error empty name or name already exists
+        QMessageBox::information(this, tr("Transverter Name Exists"),
+                                 tr("Transverter Name: %1, already exists \nPlease enter another name").arg(transVerterName.trimmed()),
+                                  QMessageBox::Ok|QMessageBox::Default,
+                                  QMessageBox::NoButton, QMessageBox::NoButton);
+        return;
+    }
 
 
+    // add the new transverter
+    int tabNum = numAvailTransVerters;
+    addTransVertTab(tabNum, transVerterName);
+    numAvailTransVerters++;
+    //loadSettingsToTransVertTab(tabNum);
+    //saveTransVerter(tabNum);
+    emit transVertTabChanged();
+
+}
 
 
+void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
+{
+    transVertData.append(new TransVertParams);
+    transVertData[tabNum]->transVertName = tabName;
+    transVertTab.append(new TransVertSetupForm());
+    ui->transVertTab->insertTab(tabNum, transVertTab[tabNum], tabName);
+    ui->transVertTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
+
+
+}
+
+
+bool RigSetupForm::checkTransVerterNameMatch(QString transVertName)
+{
+    for (int i = 0; i < numAvailTransVerters; i++)
+    {
+        if (ui->transVertTab->tabText(i) == transVertName)
+            return true;
+    }
+
+    return false;
 }
 
 

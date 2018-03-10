@@ -28,11 +28,12 @@ TransVertSetupForm::TransVertSetupForm(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
+
     connect(ui->bandSel, SIGNAL(activated(int)), this, SLOT(bandSelected()));
     connect(ui->TransVertOffset, SIGNAL(editingFinished()), this, SLOT(transVertOffsetSelected()));
     connect(ui->negCheckbox, SIGNAL(clicked(bool)), this, SLOT(negCheckBoxSelected(bool)));
     connect(ui->enableTransVertSw, SIGNAL(clicked(bool)), this, SLOT(enableTransVertSwSel(bool)));
-    connect(ui->transVertSwNum, SIGNAL(editingFinished()), this, SLOT(transVertSwNumSel(bool)));
+    connect(ui->transVertSwNum, SIGNAL(editingFinished()), this, SLOT(transVertSwNumSel()));
 
 }
 
@@ -48,6 +49,17 @@ void TransVertSetupForm::bandSelected()
 
 }
 
+
+void TransVertSetupForm::loadBands()
+{
+    BandList &blist = BandList::getBandList();
+    ui->bandSel->addItem("");
+    for (int i = 6; i < 15; i++)   // just load VHF/UHF bands
+    {
+        ui->bandSel->addItem(blist.bandList[i].adif);
+    }
+
+}
 
 
 /********************* TransVert Offset Freq  *********************************/
@@ -117,7 +129,7 @@ void TransVertSetupForm::setEnableTransVertSw(bool b)
 /********************* TransVert Switch Number *********************************/
 
 
-void TransVertSetupForm::transVertSwNumSel(bool)
+void TransVertSetupForm::transVertSwNumSel()
 {
 
 

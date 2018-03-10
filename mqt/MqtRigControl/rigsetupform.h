@@ -64,9 +64,13 @@ public:
     void networkDataEntryVisible(bool v);
     void serialDataEntryVisible(bool v);
 
+    QVector<TransVertSetupForm*> transVertTab;
     QVector<TransVertParams*> transVertData;
     QStringList availTransVerters;
     int numAvailTransVerters;
+
+signals:
+    void transVertTabChanged();
 
 
 private slots:
@@ -110,6 +114,8 @@ private:
 
 
     void fillPollInterValInfo();
+    void addTransVertTab(int tabNum, QString tabName);
+    bool checkTransVerterNameMatch(QString transVertName);
 };
 
 #endif // RIGSETUPFORM_H

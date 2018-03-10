@@ -256,7 +256,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QTabWidget" name="transVertTab">
+          <widget class="QLogTabWidget" name="transVertTab">
            <property name="currentIndex">
             <number>-1</number>
            </property>
@@ -308,6 +308,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QLogTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>qlogtabwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

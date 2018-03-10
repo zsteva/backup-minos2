@@ -214,19 +214,125 @@ bool SetupDialog::checkRadioNameMatch(QString radioName)
 }
 
 
-
 void SetupDialog::removeRadio()
 {
 
+    int currentIndex = ui->radioTab->currentIndex();
+    QString currentName = ui->radioTab->tabText(currentIndex);
+
+    if (currentRadioName == ui->radioTab->tabText(currentIndex))
+    {
+        // can't remove current RadioName
+        QMessageBox msgBox;
+        msgBox.setText("You can not remove the current radio!");
+        msgBox.exec();
+        return;
+
+    }
+
+    int status = QMessageBox::question( this,
+                            tr("Remove Radio"),
+                            tr("Do you really want to remove radio - %1?")
+                            .arg(currentName),
+                            QMessageBox::Yes|QMessageBox::Default,
+                            QMessageBox::No|QMessageBox::Escape,
+                            QMessageBox::NoButton);
+
+    if (status != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    // remove this radio
+    ui->radioTab->removeTab(currentIndex);
+    availRadioData.remove(currentIndex);
+    // remove from availantenna file
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
+    }
+    else
+    {
+        fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
+    }
+
+    QSettings config(fileName, QSettings::IniFormat);
+    config.beginGroup(currentName);
+    config.remove("");   // remove all keys for this group
+    config.endGroup();
+
+    numAvailRadios--;
+
+    emit radioTabChanged();
+
+
 
 }
+
+
 
 
 void SetupDialog::editRadioName()
 {
+    int tabNum = ui->radioTab->currentIndex();
+    QString radioName = ui->radioTab->tabText(tabNum);
+    if (currentRadioName == radioName)
+    {
+        // can't change current antennaName
+        QMessageBox msgBox;
+        msgBox.setText(QString("You can not change the name of the current radio - %1!").arg(radioName));
+        msgBox.exec();
+        return;
+    }
+
+    bool ok;
+    QString text = QInputDialog::getText(this, QString("Edit Radio Name - %1").arg(radioName),
+                                         tr("New Radio Name:"), QLineEdit::Normal,
+                                         "", &ok);
+    if (ok && !text.isEmpty())
+    {
+        ui->radioTab->setTabText(tabNum, text);
+        for (int i = 0; i < numAvailRadios; i++)
+        {
+            if (radioName == availRadioData[i]->radioName)
+            {
+                availRadioData[i]->radioName = text;  // update with new name
+
+                // remove from availantenna file
+                QString fileName;
+                if (appName == "")
+                {
+                    fileName = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
+                }
+                else
+                {
+                    fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
+                }
+
+                QSettings config(fileName, QSettings::IniFormat);
+                config.beginGroup(radioName);
+                config.remove("");   // remove all keys for this group
+                config.endGroup();
+
+                saveRadio(tabNum);
+
+            }
+        }
+    }
+    else
+    {
+        return;
+    }
+
+
+    emit radioTabChanged();
 
 
 }
+
+
+
 
 int SetupDialog::comportAvial(int radioNum, QString comport)
 {
