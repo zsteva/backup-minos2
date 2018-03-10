@@ -65,6 +65,7 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     ui->flushMemoriesButton->setFocusPolicy(Qt::NoFocus);
 
     newAction = new QAction("&New", this);
+    bearingAction = new QAction("&Set Bearing", this);
     readAction = new QAction("&Read", this);
     writeAction = new QAction("&Write",this);
     editAction = new QAction("&Edit", this);
@@ -74,6 +75,7 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     clearWorkedAction = new QAction("Clear Wor&ked",this);
 
     memoryMenu->addAction(newAction);
+    memoryMenu->addAction(bearingAction);
     memoryMenu->addAction(readAction);
     memoryMenu->addAction(writeAction);
     memoryMenu->addAction(editAction);
@@ -85,6 +87,7 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     connect(memoryMenu, SIGNAL(aboutToShow()), this, SLOT(onMenuShow()));
 
     connect( newAction, SIGNAL( triggered() ), this, SLOT(on_newMemoryButton_clicked()) );
+    connect( bearingAction, SIGNAL( triggered() ), this, SLOT(bearingActionSelected()) );
     connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()) );
     connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()) );
     connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()) );
@@ -129,7 +132,6 @@ void RigMemoryFrame::rigMemTable_Hdr_customContextMenuRequested( const QPoint &p
     if (logrow >= 0)
     {
         QModelIndex nidx = proxyModel.index( logrow, 0 );
-        QModelIndex sourceIndex = proxyModel.mapToSource(nidx);
 
         ui->rigMemTable->setCurrentIndex(nidx);
     }
@@ -400,6 +402,17 @@ int RigMemoryFrame::getSelectedLine()
     return buttonNumber;
 }
 
+void RigMemoryFrame::bearingActionSelected()
+{
+    int buttonNumber = getSelectedLine();
+    if (buttonNumber < 0)
+        return;
+
+    traceMsg(QString("Memory Bearing Selected = %1").arg(QString::number(buttonNumber +1)));
+    memoryData::memData m = ct->getRigMemoryData(buttonNumber);
+
+    MinosLoggerEvents::SendBrgStrToRot(QString::number(m.bearing));
+}
 void RigMemoryFrame::readActionSelected()
 {
     int buttonNumber = getSelectedLine();
@@ -591,11 +604,14 @@ QVariant RigMemoryGridModel::data( const QModelIndex &index, int role ) const
                 break;
             case ermFreq:
                 {
-                    QString newfreq = m.freq.trimmed().remove('.');
-                    double dfreq = convertStrToFreq(newfreq);
-                    dfreq = dfreq/1000000.0;  // MHz
+                    if (!m.freq.isEmpty())
+                    {
+                        QString newfreq = m.freq.trimmed().remove('.');
+                        double dfreq = convertStrToFreq(newfreq);
+                        dfreq = dfreq/1000000.0;  // MHz
 
-                    disp = QString::number(dfreq, 'f', 3); //MHz to 3 decimal places
+                        disp = QString::number(dfreq, 'f', 3); //MHz to 3 decimal places
+                    }
                     break;
                 }
             case ermTime:
@@ -719,4 +735,14 @@ bool RigMemorySortFilterProxyModel::lessThan(const QModelIndex &left,
     ws2 = gridModel->data(right, Qt::UserRole).toString();
 
     return ws1 < ws2;
+}
+
+void RigMemoryFrame::on_rigMemTable_doubleClicked(const QModelIndex &/*index*/)
+{
+    editActionSelected();
+}
+
+void RigMemoryFrame::on_rigMemTable_clicked(const QModelIndex &index)
+{
+    bearingActionSelected();
 }

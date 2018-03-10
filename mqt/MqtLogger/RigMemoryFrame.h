@@ -91,6 +91,7 @@ private slots:
     void rigMemTable_Hdr_customContextMenuRequested( const QPoint &pos );
 
     void readActionSelected();
+    void bearingActionSelected();
     void editActionSelected();
     void writeActionSelected();
     void clearActionSelected();
@@ -98,6 +99,10 @@ private slots:
     void clearWorkedActionSelected();
 
     void onMenuShow();
+
+    void on_rigMemTable_doubleClicked(const QModelIndex &index);
+
+    void on_rigMemTable_clicked(const QModelIndex &index);
 
 private:
     Ui::RigMemoryFrame *ui;
@@ -109,8 +114,9 @@ private:
 
     QMenu* memoryMenu;
 
-    QAction *newAction;
+    QAction* newAction;
     QAction* readAction;
+    QAction* bearingAction;
     QAction* writeAction;
     QAction* editAction;
     QAction* clearAction;

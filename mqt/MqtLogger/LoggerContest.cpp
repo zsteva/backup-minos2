@@ -647,18 +647,24 @@ memoryData::memData LoggerContestLog::getRigMemoryData(int memoryNumber)
     if (rigMemories.size() > memoryNumber)
     {
         m = rigMemories[memoryNumber].getValue();
-        Locator loc;
-        loc.loc.setValue(m.locator);
-        loc.validate();
-        double lon = 0.0;
-        double lat = 0.0;
-
-        if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
+        if (m.locator.isEmpty())
         {
-            double dist;
-            int brg;
-            disbear( lon, lat, dist, brg );
-            m.bearing = brg;
+        }
+        else
+        {
+            Locator loc;
+            loc.loc.setValue(m.locator);
+            loc.validate();
+            double lon = 0.0;
+            double lat = 0.0;
+
+            if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
+            {
+                double dist;
+                int brg;
+                disbear( lon, lat, dist, brg );
+                m.bearing = brg;
+            }
         }
     }
     return m;
@@ -1548,6 +1554,7 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
                                    mt->getStructArgMemberValue( "freq", mem.freq);
                                    mt->getStructArgMemberValue( "mode", mem.mode);
                                    mt->getStructArgMemberValue( "locator", mem.locator);
+                                   mt->getStructArgMemberValue( "bearing", mem.bearing);
                                    mt->getStructArgMemberValue( "time", mem.time);
                                    mt->getStructArgMemberValue( "worked", mem.worked);
 
