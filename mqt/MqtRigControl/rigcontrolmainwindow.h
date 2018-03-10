@@ -53,7 +53,7 @@ private:
     StdInReader stdinReader;
     RigControlRpc *msg;
 
-    SetupDialog *selectRig;
+    SetupDialog *setupRadio;
     RigControl  *radio;
     QString appName = "";
     QLabel *status;

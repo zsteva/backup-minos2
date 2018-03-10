@@ -63,6 +63,21 @@ const QStringList hamlibErrorMsg = {"No Error, operation completed sucessfully",
 
 }
 
+
+struct TransVertParams
+{
+
+    QString transVertName;
+    QString band;
+    QString transVertOffsetStr;
+    freq_t transVertOffset = 0.0;
+    bool transVertNegative  = false;
+    bool enableTransSwitch = false;
+    QString transSwitchNum;
+
+};
+
+
 // This was the hamlib catParams structure, other fields have been added
 // to support other functions.
 
@@ -76,6 +91,7 @@ struct scatParams
   QString radioModel;
   QString radioModelName;
   int radioModelNumber = 0;
+  QString pollInterval = "1";
   QString civAddress;
   int baudrate = 0; /**<  serial port baudrate*/
   int parity = 0;
@@ -94,17 +110,11 @@ struct scatParams
   bool nactiveDTR  = false;
   QString mgmMode;
   ptt_type_t pttType;
-//  bool enableXMLRPC;
-//  int XMLRPCPort;
-//  double txOnDelay;
-  QString transVertOffsetStr;
-  freq_t transVertOffset = 0.0;
   bool transVertEnable  = false;
-  bool transVertNegative  = false;
-
+  QVector<TransVertParams*> transVertSettings;
+  int numTransverters = 0;
 
 };
-
 
 
 

@@ -1,3 +1,18 @@
+/////////////////////////////////////////////////////////////////////////////
+// $Id$
+//
+// PROJECT NAME 		Minos Amateur Radio Control and Logging System
+//                      Rig Control
+// Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2018
+//
+//
+//
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+
 #include "rotsetupform.h"
 #include "ui_rotsetupform.h"
 #include <QDebug>
