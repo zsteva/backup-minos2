@@ -64,7 +64,7 @@ public:
     explicit RigMemoryFrame(QWidget *parent = 0);
     ~RigMemoryFrame();
 
-    QMap<QString, HeaderData> headerVal;
+    QMap<int, HeaderData> headerVal;
 
     void setContest( BaseContestLog *ct );
 

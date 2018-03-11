@@ -310,8 +310,8 @@ void RigMemoryFrame::checkTimerTimer()
                 colour = Qt::blue;
             }
         }
-        headerVal[m.callsign].text = ht;
-        headerVal[m.callsign].colour = colour;
+        headerVal[buttonNumber].text = ht;
+        headerVal[buttonNumber].colour = colour;
     }
     if (firstMatch >= 0)
     {
@@ -662,7 +662,7 @@ QVariant RigMemoryGridModel::headerData( int section, Qt::Orientation orientatio
             if (c)
             {
                 memoryData::memData m = c->getRigMemoryData(section);
-                disp = frame->headerVal[m.callsign].text;
+                disp = frame->headerVal[section].text;
                 if (disp.isEmpty())
                 {
                     // This appears to be the line that defines the width
@@ -678,7 +678,7 @@ QVariant RigMemoryGridModel::headerData( int section, Qt::Orientation orientatio
             if (c)
             {
                 memoryData::memData m = c->getRigMemoryData(section);
-                QColor colour = frame->headerVal[m.callsign].colour;
+                QColor colour = frame->headerVal[section].colour;
                 return colour;
             }
         }
