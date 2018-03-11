@@ -99,8 +99,15 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber, Logg
         }
     }
 
-    QString number = QString("%1").arg(ldata->bearing, 3, 10, QChar('0'));
-    ui->bearingLineEdit->setText(number);
+    if (brg == COMPASS_ERROR)
+    {
+        ui->bearingLineEdit->setText("000");
+    }
+    else
+    {
+        QString number = QString("%1").arg(ldata->bearing, 3, 10, QChar('0'));
+        ui->bearingLineEdit->setText(number);
+    }
 
     if (ldata->freq.isEmpty())
     {
