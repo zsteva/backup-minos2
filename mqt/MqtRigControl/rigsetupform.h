@@ -65,7 +65,6 @@ public:
     void serialDataEntryVisible(bool v);
 
     QVector<TransVertSetupForm*> transVertTab;
-    QVector<TransVertParams*> transVertData;
     QStringList availTransVerters;
     int numAvailTransVerters;
 

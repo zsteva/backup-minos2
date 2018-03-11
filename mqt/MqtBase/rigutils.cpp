@@ -100,6 +100,17 @@ double convertStrToFreq(QString frequency)
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
 /*
 QString validateFreqTxtInput(QString f, bool* ok)
 {

@@ -64,8 +64,10 @@ const QStringList hamlibErrorMsg = {"No Error, operation completed sucessfully",
 }
 
 
-struct TransVertParams
+class TransVertParams
 {
+
+public:
 
     QString transVertName;
     QString band;
@@ -83,7 +85,7 @@ struct TransVertParams
 
 struct scatParams
 {
-//  QString configLabel;
+
   QString radioName;
   QString radioNumber;
   QString comport; /**<  serial port device*/

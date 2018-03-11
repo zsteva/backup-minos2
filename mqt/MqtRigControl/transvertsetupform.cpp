@@ -14,11 +14,12 @@
 
 
 #include "transvertsetupform.h"
+#include "rigutils.h"
 #include <QLineEdit>
 #include <QCheckBox>
 
 
-TransVertSetupForm::TransVertSetupForm(QWidget *parent) :
+TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::transVertSetupForm),
     tansVertValueChanged(false),
@@ -26,6 +27,8 @@ TransVertSetupForm::TransVertSetupForm(QWidget *parent) :
 {
 
     ui->setupUi(this);
+    transVertData = transvertData;
+
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
 
@@ -67,7 +70,26 @@ void TransVertSetupForm::loadBands()
 
 void TransVertSetupForm::transVertOffsetSelected()
 {
-
+    // check freq valid format
+    QString f = ui->TransVertOffset->text().trimmed().remove( QRegExp("^[0]*"));
+    if (f != "")
+    {
+        if (f.count('.') == 1)
+        {
+            QStringList fl = f.split('.');
+            fl[1] = fl[1] + "000000";
+            fl[1].truncate(6);
+            f = fl[0] + "." + fl[1];
+        }
+        if (!validateFreqTxtInput(f))
+        {
+            // error
+            QMessageBox msgBox;
+            msgBox.setText(FREQ_EDIT_ERR_MSG);
+            msgBox.exec();
+            return;             //incorrect format
+        }
+    }
 
 
 
@@ -148,6 +170,11 @@ void TransVertSetupForm::setTransVerSwNum(QString s)
 {
     ui->TransVertOffset->setText(s);
 }
+
+
+
+
+
 
 /*
 

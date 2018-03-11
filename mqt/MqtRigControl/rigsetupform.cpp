@@ -39,7 +39,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, QWidget *
 
     radio = _radio;
     radioData = _radioData;
-    transVerter = new TransVertSetupForm;
+
 
 
     fillRadioModelInfo();  // add radio models to drop down
@@ -553,12 +553,12 @@ void RigSetupForm::addTransVerter()
 
 }
 
-
+// numAvailTransverters indexs to the transVertData for this tab
 void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
 {
-    transVertData.append(new TransVertParams);
-    transVertData[tabNum]->transVertName = tabName;
-    transVertTab.append(new TransVertSetupForm());
+    radioData->transVertSettings.append(new TransVertParams());
+    radioData->transVertSettings[tabNum]->transVertName = tabName;
+    transVertTab.append(new TransVertSetupForm(radioData->transVertSettings[tabNum]));
     ui->transVertTab->insertTab(tabNum, transVertTab[tabNum], tabName);
     ui->transVertTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
 

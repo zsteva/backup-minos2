@@ -14,7 +14,7 @@ class TransVertSetupForm : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TransVertSetupForm(QWidget *parent = nullptr);
+    explicit TransVertSetupForm(TransVertParams *transvertData, QWidget *parent = nullptr);
 
 
     bool tansVertValueChanged;
@@ -46,11 +46,12 @@ private slots:
     void transVertSwNumSel();
 
 
+
 private:
 
 
     Ui::transVertSetupForm *ui;
-
+    TransVertParams *transVertData;
 
 
 

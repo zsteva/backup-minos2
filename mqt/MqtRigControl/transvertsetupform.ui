@@ -29,10 +29,10 @@
      <item>
       <widget class="QLineEdit" name="TransVertOffset">
        <property name="inputMask">
-        <string>99.999.999.999</string>
+        <string/>
        </property>
        <property name="text">
-        <string>00.000.000.000</string>
+        <string/>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
