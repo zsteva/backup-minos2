@@ -98,6 +98,7 @@ void MinosCompass::paintEvent(QPaintEvent *)
     painter.setFont(dialfont);
 
     painter.setPen(Qt::NoPen);
+    painter.setRenderHints( QPainter::Antialiasing | QPainter::TextAntialiasing );
 
 
     // paint ten degree markers
