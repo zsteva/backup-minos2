@@ -31,6 +31,7 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *
 
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
+    loadBands();
 
     connect(ui->bandSel, SIGNAL(activated(int)), this, SLOT(bandSelected()));
     connect(ui->TransVertOffset, SIGNAL(editingFinished()), this, SLOT(transVertOffsetSelected()));
@@ -89,6 +90,11 @@ void TransVertSetupForm::transVertOffsetSelected()
             msgBox.exec();
             return;             //incorrect format
         }
+        f =
+        transVertData->transVertOffsetStr = convertSinglePeriodFreqToFullDigit(f).remove('.');
+        transVertData->transVertOffset  =  convertStrToFreq(f);
+        tansVertValueChanged = true;
+
     }
 
 
@@ -108,12 +114,10 @@ void TransVertSetupForm::setTransVertOffsetFreq(QString s)
 
 /********************* TransVert Negative Offset Select  *********************************/
 
-void TransVertSetupForm::negCheckBoxSelected(bool)
+void TransVertSetupForm::negCheckBoxSelected(bool flag)
 {
-
-
-
-
+    transVertData->transVertNegative = flag;
+    tansVertValueChanged = true;
 }
 
 bool TransVertSetupForm::getNegCheckBox()
@@ -128,12 +132,10 @@ void TransVertSetupForm::setNegCheckBox(bool b)
 
 /********************* TransVert Switch Enable  *********************************/
 
-void TransVertSetupForm::enableTransVertSwSel(bool)
+void TransVertSetupForm::enableTransVertSwSel(bool flag)
 {
-
-
-
-
+    transVertData->enableTransSwitch = flag;
+    tansVertValueChanged = true;
 }
 
 
@@ -150,13 +152,13 @@ void TransVertSetupForm::setEnableTransVertSw(bool b)
 
 /********************* TransVert Switch Number *********************************/
 
+// need some validation here...
 
 void TransVertSetupForm::transVertSwNumSel()
 {
-
-
-
-
+    QString numSel = ui->transVertSwNum->text().trimmed();
+    transVertData->transSwitchNum = numSel;
+    tansVertValueChanged = true;
 }
 
 

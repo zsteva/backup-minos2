@@ -61,7 +61,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, QWidget *
     connect(ui->networkAddBox, SIGNAL(editingFinished()), this, SLOT(networkAddressSelected()));
     connect(ui->netPortBox, SIGNAL(editingFinished()), this, SLOT(networkPortSelected()));
     connect(ui->pollInterval, SIGNAL(activated(int)), this, SLOT(pollIntervalSelected()));
-
+    connect(ui->enableTransVert, SIGNAL(clicked(bool)), this, SLOT(enableTransVertSelected(bool)));
     // transvert
     connect(ui->addTransvert, SIGNAL(clicked(bool)), this, SLOT(addTransVerter()));
     connect(ui->removeTransvert, SIGNAL(clicked(bool)), this, SLOT(removeTransVerter()));
@@ -377,6 +377,33 @@ void RigSetupForm::pollIntervalVisible(bool s)
     ui->pollInterval->setVisible(s);
     ui->pollIntervalLbl->setVisible(s);
 }
+
+
+
+/************************** TransVert Enable *************************/
+
+
+void RigSetupForm::enableTransVertSelected(bool flag)
+{
+    if(radioData->transVertEnable != flag)
+    {
+        radioData->transVertEnable = flag;
+        radioValueChanged = true;
+    }
+
+
+}
+
+bool RigSetupForm::getTransVertSelected()
+{
+    return ui->enableTransVert->isEnabled();
+}
+
+void RigSetupForm::setTransVertSelected(bool flag)
+{
+    ui->enableTransVert->setEnabled(flag);
+}
+
 /*************************** Serial Data Entry Visible ***************/
 
 void RigSetupForm::serialDataEntryVisible(bool v)

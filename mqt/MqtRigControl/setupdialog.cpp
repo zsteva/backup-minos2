@@ -146,6 +146,7 @@ void SetupDialog::loadSettingsToTab(int tabNum)
         radioTab[tabNum]->setHandshake(availRadioData[tabNum]->handshake);
         radioTab[tabNum]->setNetAddress(availRadioData[tabNum]->networkAdd);
         radioTab[tabNum]->setNetPortNum(availRadioData[tabNum]->networkPort);
+        radioTab[tabNum]->setTransVertSelected(availRadioData[tabNum]->transVertEnable);
         //transVertEdit[i]->setText(availRadios[i].transVertOffsetStr); *******************
         //transVertCheck[i]->setChecked(availRadios[i].transVertEnable);
         //transVertEdit[i]->setEnabled(transVertCheck[i]->isChecked());

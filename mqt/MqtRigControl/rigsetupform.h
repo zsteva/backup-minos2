@@ -68,6 +68,8 @@ public:
     QStringList availTransVerters;
     int numAvailTransVerters;
 
+    bool getTransVertSelected();
+    void setTransVertSelected(bool flag);
 signals:
     void transVertTabChanged();
 
@@ -91,6 +93,7 @@ private slots:
     void addTransVerter();
     void removeTransVerter();
     void renameTransVerter();
+    void enableTransVertSelected(bool flag);
 private:
 
 
