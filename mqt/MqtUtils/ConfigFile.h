@@ -105,7 +105,7 @@ public:  		// User declarations
 
     QVector <QSharedPointer<RunConfigElement> > elelist;
 
-    static QString getThisServerName();
+    QString getThisServerName();
 
     QStringList getAppTypes();
     Connectable getApp(QString appName);

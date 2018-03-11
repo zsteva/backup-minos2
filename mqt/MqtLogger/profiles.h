@@ -110,6 +110,9 @@ class SettingsBundle
       QStringList getBundleHints( );
       QStringList getSections( );
 
+      void startGroup();
+      void endGroup();
+
       virtual bool populateDefaultSection(){return false;}
 };
 class AppSettingsBundle:public SettingsBundle

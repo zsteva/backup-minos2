@@ -7,7 +7,6 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "mqtUtils_pch.h"
-#include <sys/stat.h>
 #include "fileutils.h"
 #include "MLogFile.h"
 #include "INIFile.h"
@@ -167,20 +166,18 @@ INIFile::INIFile( const QString &name ) : fileLoaded( false ),   /*invalid( true
 {
     loadedFileName = name.trimmed() ;
 
-    bool ret = true;
-    if ( !FileExists( loadedFileName ) )
+    QFileInfo checkFile( loadedFileName );
+    if ( !checkFile.exists() || !checkFile.isFile() )
     {
         StaticForceDirectories( ExtractFilePath( loadedFileName ) );
         QFile fh(loadedFileName);
-        ret = fh.open(QIODevice::ReadWrite);
+        bool ret = fh.open(QIODevice::ReadWrite);
         if ( ret )
             fh.close();
+
+        checkFile.refresh();
     }
-    if (ret)
-    {
-        QFileInfo qf(name.trimmed());
-        loadedFileName = qf.canonicalFilePath();
-    }
+    loadedFileName = checkFile.canonicalFilePath();
 }
 INIFile::~INIFile()
 {
@@ -220,16 +217,17 @@ bool INIFile::dupSection( const QString &oldname, const QString &newname )
 
 bool INIFile::checkStat( )
 {
-    struct stat tempstat;
-    int statret = stat( loadedFileName.toStdString().c_str(), &tempstat );
-    if ( statret )
-        return true;	// failed => different(?)
-    if ( statret == 0 && memcmp( &tempstat, &statbuf, sizeof( struct stat ) ) != 0 )
+    QFileInfo tempstat(loadedFileName);
+    if (
+            statbuf.birthTime() != tempstat.birthTime()
+            || statbuf.lastModified() != tempstat.lastModified()
+            || statbuf.size() != tempstat.size()
+            )
     {
-        memcpy( &statbuf, &tempstat, sizeof( struct stat ) );
+        statbuf = tempstat;
         return true;
     }
-    return false;
+    return false;   // no change
 }
 bool INIFile::isDirty( )
 {
@@ -302,18 +300,30 @@ bool INIFile::writeINIFile()
     return true;
 }
 
+void INIFile::startGroup()
+{
+    inGroup = true;
+    loadINIFile();
+}
+void INIFile::endGroup()
+{
+    inGroup = false;
+}
 
-bool INIFile::loadINIFile()
+void INIFile::loadINIFile()
 {
     INISection *thisSect;
     IniEntryPtr this_entry;
-    bool realSections = false;
+
+    if (fileLoaded && inGroup)
+        return;
 
     if ( fileLoaded )
     {
         if ( !checkStat() )
-            return false;			// no change, so don't re-read
-        writePrivateProfileString( "", "", "" );
+            return;			// no change, so don't re-read
+//        writePrivateProfileString( "", "", "" );    // this could overwrite anyone elses changes if we are dirty
+//                                                    // if we aren't dirty, it doesn't do anything
         for ( QVector <IniSectionPtr>::iterator thisSect = sections.begin(); thisSect != sections.end(); thisSect++ )
         {
             delete ( *thisSect );
@@ -324,61 +334,63 @@ bool INIFile::loadINIFile()
 
     fileLoaded = true;
 
-    QFile lf(loadedFileName);
+    {   // scoping
+        QFile lf(loadedFileName);
 
-    // here we need to stat the file to see if it has changed
-    // - but what do we do if it has? We should have loaded
-    // it VERY recently
+        // here we need to stat the file to see if it has changed
+        // - but what do we do if it has? We should have loaded
+        // it VERY recently
 
-    if (!lf.open(QIODevice::ReadOnly|QIODevice::Text))
-    {
-        mShowMessage( QString( "Initialisation file \"" ) + loadedFileName + "\" not found.", 0 );
-        return false;
-    }
-    QTextStream inf(&lf);
-
-    thisSect = new INISection( this, "?Comments", false );
-    // create dummy section for leading comments
-
-    while (!inf.atEnd())
-    {
-        QString buffer = inf.readLine( 256 );
-
-        QStringList p1 = buffer.split('[');
-        if (p1.length() > 1)
+        if (!lf.open(QIODevice::ReadOnly|QIODevice::Text))
         {
-            QStringList p2 = p1[1].split(']');
-            if (p2.length())
+            mShowMessage( QString( "Initialisation file \"" ) + loadedFileName + "\" not found.", 0 );
+            return;
+        }
+        QTextStream inf(&lf);
+
+        thisSect = new INISection( this, "?Comments", false );
+        // create dummy section for leading comments
+
+        while (!inf.atEnd())
+        {
+            QString buffer = inf.readLine( 256 );
+
+            QStringList p1 = buffer.split('[');
+            if (p1.length() > 1)
             {
-                QString Parameter = p2[0];
-                thisSect = new INISection( this, Parameter, true );
-                realSections = true;
-                continue;
+                QStringList p2 = p1[1].split(']');
+                if (p2.length())
+                {
+                    QString Parameter = p2[0];
+                    thisSect = new INISection( this, Parameter, true );
+                    continue;
+                }
+            }
+
+            QStringList a = buffer.split('=');
+            int scnt = a.size();
+
+            if ( scnt == 2  )
+            {
+                this_entry = new INIEntry( thisSect, a[ 0 ], true );
+                // somewhere we need to cope with quoted parameters
+                this_entry->setValue( a[ 1 ] );
+                this_entry->setClean();
+            }
+            else
+            {
+                // create comment entry
+                this_entry = new INIEntry( thisSect, "??", false );
+                this_entry->setValue( a[ 0 ] );
+                this_entry->setClean();
             }
         }
-
-        QStringList a = buffer.split('=');
-        int scnt = a.size();
-
-        if ( scnt == 2  )
-        {
-            this_entry = new INIEntry( thisSect, a[ 0 ], true );
-            // somewhere we need to cope with quoted parameters
-            this_entry->setValue( a[ 1 ] );
-            this_entry->setClean();
-        }
-        else
-        {
-            // create comment entry
-            this_entry = new INIEntry( thisSect, "??", false );
-            this_entry->setValue( a[ 0 ] );
-            this_entry->setClean();
-        }
     }
+    setClean();
     // now stat the file so we can check for changes
     checkStat();
 
-    return realSections;
+    return ;
 }
 
 bool INIFile::checkKeyExists( const QString &Section,

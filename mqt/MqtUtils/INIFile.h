@@ -9,7 +9,6 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "mqtUtils_pch.h"
-#include <sys/stat.h>
 
 #include "MLogFile.h"
 
@@ -37,10 +36,12 @@ private:
 
     QString loadedFileName;
 
-    struct stat statbuf;
+    QFileInfo statbuf;
+
+    bool inGroup = false;
 
 public:
-    bool loadINIFile( );
+    void loadINIFile( );
     bool writeINIFile( );
     bool checkStat();
     bool checkKeyExists(const QString &Section,
@@ -73,6 +74,9 @@ public:
     bool dupSection( const QString &oldname, const QString &newname );
     bool isSectionPresent(QString sname);
     QStringList getSections( );
+
+    void startGroup();
+    void endGroup();
 
     INIFile(const QString &name );
     ~INIFile();

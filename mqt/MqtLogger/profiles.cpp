@@ -7,7 +7,6 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "logger_pch.h"
-#include <sys/stat.h>
 
 #include "MLogFile.h"
 #include "INIFile.h"
@@ -278,6 +277,16 @@ bool SettingsBundle::isReadOnly( int enumKey )
       }
    }
    return true;
+}
+void SettingsBundle::startGroup()
+{
+    if (bundleFile && bundleFile->iniFile)
+        bundleFile->iniFile->startGroup();
+}
+void SettingsBundle::endGroup()
+{
+    if (bundleFile && bundleFile->iniFile)
+        bundleFile->iniFile->endGroup();
 }
 
 void SettingsBundle::getBoolProfile(const QString &key, bool &value, bool def )

@@ -126,6 +126,7 @@ bool TContestApp::initialise()
     loggerBundle.setProfile( BundleFile::bundleFiles[ epLOGGERPROFILE ] );
     loggerBundle.openSection( "Default" );
 
+    loggerBundle.startGroup();
     //----------------------------------
     QString preloadfile;
     loggerBundle.getStringProfile( elpPreloadFile, preloadfile );
@@ -185,7 +186,7 @@ bool TContestApp::initialise()
 
     locsBundle.setProfile( BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] );
     //----------------------------------
-
+    loggerBundle.endGroup();
 
     initClock();
     TMatchThread::InitialiseMatchThread();

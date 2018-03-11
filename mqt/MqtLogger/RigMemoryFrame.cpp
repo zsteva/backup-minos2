@@ -113,10 +113,20 @@ void RigMemoryFrame::onMenuShow()
 {
     int buttonNumber = getSelectedLine();
 
+    bearingAction->setEnabled(buttonNumber >= 0);
     readAction->setEnabled(buttonNumber >= 0);
     writeAction->setEnabled(buttonNumber >= 0);
     editAction->setEnabled(buttonNumber >= 0);
     clearAction->setEnabled(buttonNumber >= 0);
+}
+void RigMemoryFrame::on_rigMemTable_doubleClicked(const QModelIndex &/*index*/)
+{
+    editActionSelected();
+}
+
+void RigMemoryFrame::on_rigMemTable_clicked(const QModelIndex &/*index*/)
+{
+    bearingActionSelected();
 }
 
 void RigMemoryFrame::on_rigMemTable_customContextMenuRequested( const QPoint &pos )
@@ -737,12 +747,3 @@ bool RigMemorySortFilterProxyModel::lessThan(const QModelIndex &left,
     return ws1 < ws2;
 }
 
-void RigMemoryFrame::on_rigMemTable_doubleClicked(const QModelIndex &/*index*/)
-{
-    editActionSelected();
-}
-
-void RigMemoryFrame::on_rigMemTable_clicked(const QModelIndex &index)
-{
-    bearingActionSelected();
-}

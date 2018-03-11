@@ -32,11 +32,9 @@ QString MinosConfig::getConfigIniName()
 {
     return "./Configuration/MinosConfig.ini";
 }
-/*static*/
+
 QString MinosConfig::getThisServerName()
 {
-    INIFile config(getConfigIniName());
-
     QString serverName;
     config.getPrivateProfileString( "Settings", "ServerName", QHostInfo::localHostName(), serverName );
 
@@ -120,7 +118,7 @@ Connectable RunConfigElement::connectable()
     }
     else
     {
-        res.serverName = MinosConfig::getThisServerName();
+        res.serverName = MinosConfig::getMinosConfig()->getThisServerName();
         res.remoteAppName = name;
     }
     return res;
@@ -254,6 +252,8 @@ MinosConfig::MinosConfig( )
 void MinosConfig::initialise()
 {
     buildAppConfigList();
+    config.startGroup();
+
     QStringList lsect = config.getSections();
 
     for ( int i = 0; i < lsect.count(); i++ )
@@ -279,6 +279,7 @@ void MinosConfig::initialise()
             }
         }
     }
+    config.endGroup();
 }
 
 //---------------------------------------------------------------------------
@@ -296,6 +297,7 @@ bool configSort( const QSharedPointer<RunConfigElement> c1, const QSharedPointer
 }
 void MinosConfig::saveAll()
 {
+    config.startGroup();
     QVector <QSharedPointer<RunConfigElement> > newList = elelist;
     qSort(newList.begin(), newList.end(), configSort);
     for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = newList.begin(); i != newList.end(); i++ )
@@ -306,6 +308,8 @@ void MinosConfig::saveAll()
     config.writePrivateProfileBool( "Settings", "AutoStart", autoStart );
 
     config.writePrivateProfileString( "", "", "" );    // flush
+    config.endGroup();
+
 }
 void MinosConfig::start()
 {
@@ -381,6 +385,8 @@ Requires=Server
 Server=false
 
    */
+    appConfig.startGroup();
+
     QStringList apps = appConfig.getSections();
     for (int i = 0; i < apps.size(); i++)
     {
@@ -427,7 +433,7 @@ Server=false
             appConfigList.append(ac);
         }
     }
-
+    appConfig.endGroup();
 }
 QString MinosConfig::checkConfig()
 {

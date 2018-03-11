@@ -184,10 +184,12 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
 
    // preset the apps
 
+   appBundle.startGroup();
    appBundle.getStringProfile(eapBandMap, appBandMap);
    appBundle.getStringProfile(eapRigControl, appRigControl);
    appBundle.getStringProfile(eapRotator, appRotator);
    appBundle.getStringProfile(eapVoiceKeyer, appVoiceKeyer);
+   appBundle.endGroup();
 
    // preset the stacked info
 
@@ -382,6 +384,7 @@ void LoggerContestLog::setINIDetails()
    // extras that CAN come from INI file - implements bundle override
    if ( entryBundle.getSection() != entryBundle.noneBundle )
    {
+      entryBundle.startGroup();
       entryBundle.getStringProfile( eepCall, mycall.fullCall );
       entryBundle.getStringProfile( eepEntrant, entrant );
       entryBundle.getStringProfile( eepMyName, entName );
@@ -397,11 +400,13 @@ void LoggerContestLog::setINIDetails()
       entryBundle.getStringProfile( eepMyEmail, entEMail );
       //   entryBundle.getStringProfile(eepBand, band);
       //   entryBundle.getStringProfile(eepSection, entSect);
+      entryBundle.endGroup();
    }
 
 
    if ( QTHBundle.getSection() != QTHBundle.noneBundle )
    {
+      QTHBundle.startGroup();
       QTHBundle.getStringProfile( eqpLocator, myloc.loc );
 
       if ( districtMult.getValue() )
@@ -413,10 +418,12 @@ void LoggerContestLog::setINIDetails()
       QTHBundle.getStringProfile( eqpStationQTH1, sqth1 );
       QTHBundle.getStringProfile( eqpStationQTH2, sqth2 );
 	  QTHBundle.getStringProfile( eqpASL, entASL );
+      QTHBundle.endGroup();
    }
 
    if ( stationBundle.getSection() != stationBundle.noneBundle )
    {
+      stationBundle.startGroup();
 	  stationBundle.getStringProfile( espPower, power );
 	  stationBundle.getStringProfile( espTransmitter, entTx );
 	  stationBundle.getStringProfile( espReceiver, entRx );
@@ -425,13 +432,16 @@ void LoggerContestLog::setINIDetails()
 	  stationBundle.getIntProfile(espOffset, bearingOffset);
       stationBundle.getStringProfile( espRadioName, radioName );
       stationBundle.getStringProfile( espRotatorName, rotatorName );
+      stationBundle.endGroup();
    }
 //   if ( appBundle.getSection() != noneBundle )
 //   {
+        appBundle.startGroup();
         appBundle.getStringProfile(eapBandMap, appBandMap);
         appBundle.getStringProfile(eapRigControl, appRigControl);
         appBundle.getStringProfile(eapRotator, appRotator);
         appBundle.getStringProfile(eapVoiceKeyer, appVoiceKeyer);
+        appBundle.endGroup();
 //   }
 //   else
 //   {
