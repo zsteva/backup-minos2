@@ -105,7 +105,7 @@ void RigMemDialog::setLogData(memoryData::memData* ldata, int buttonNumber, Logg
     }
     else
     {
-        QString number = QString("%1").arg(ldata->bearing, 3, 10, QChar('0'));
+        QString number = QString("%1").arg(brg, 3, 10, QChar('0'));
         ui->bearingLineEdit->setText(number);
     }
 
