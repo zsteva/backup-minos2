@@ -399,8 +399,8 @@ Server=false
 #ifdef Q_OS_WIN
             ac.appPath += ".exe";
 #endif
-            ac.server = config.getPrivateProfileBool(apps[i], "Server", false);
-            ac.defaultHide = config.getPrivateProfileBool(apps[i], "HideApp", false);
+            ac.server = appConfig.getPrivateProfileBool(apps[i], "Server", false);
+            ac.defaultHide = appConfig.getPrivateProfileBool(apps[i], "HideApp", false);
 
             QString whereString;
             appConfig.getPrivateProfileString(apps[i], "Where", "Remote,Local", whereString);
