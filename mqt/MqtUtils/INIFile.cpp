@@ -219,8 +219,8 @@ bool INIFile::checkStat( )
 {
     QFileInfo tempstat(loadedFileName);
     if (
-            statbuf.birthTime() != tempstat.birthTime()
-            || statbuf.lastModified() != tempstat.lastModified()
+            //statbuf.birthTime() != tempstat.birthTime()
+            statbuf.lastModified() != tempstat.lastModified()
             || statbuf.size() != tempstat.size()
             )
     {
