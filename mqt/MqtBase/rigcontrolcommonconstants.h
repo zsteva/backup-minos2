@@ -83,11 +83,11 @@ const QString RADIO_PATH_LOCAL = "./Configuration/Radio/";
 
 const QString FILENAME_AVAIL_RADIOS = "AvailRadio.ini";
 const QString FILENAME_CURRENT_RADIO = "CurrentRadio.ini";
-
-const QString RADIO_MEMORIES_PATH_LOGGER ="./Configuration/Radio/Memory/";
-const QString RADIO_MEMORIES_PATH_LOCAL ="./Configuration/Radio/Memory/";
-const QString FILENAME_MEMORY_RADIO = "Memory.ini";
-const QString FILENAME_RUN_MEMORY = "RunMemory.ini";
+const QString FILENAME_TRANSVERT_RADIOS = "TransVertRadio.ini";
+//const QString RADIO_MEMORIES_PATH_LOGGER ="./Configuration/Radio/Memory/";
+//const QString RADIO_MEMORIES_PATH_LOCAL ="./Configuration/Radio/Memory/";
+//const QString FILENAME_MEMORY_RADIO = "Memory.ini";
+//const QString FILENAME_RUN_MEMORY = "RunMemory.ini";
 
 
 

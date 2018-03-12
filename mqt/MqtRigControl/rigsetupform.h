@@ -70,6 +70,10 @@ public:
 
     bool getTransVertSelected();
     void setTransVertSelected(bool flag);
+
+    void CIVEditVisible(bool visible);
+    void transVertTabVisible(bool visible);
+
 signals:
     void transVertTabChanged();
 

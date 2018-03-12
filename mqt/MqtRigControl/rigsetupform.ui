@@ -38,7 +38,7 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_19">
          <item>
-          <widget class="QLabel" name="label_22">
+          <widget class="QLabel" name="CIVLabel">
            <property name="text">
             <string>CIV</string>
            </property>

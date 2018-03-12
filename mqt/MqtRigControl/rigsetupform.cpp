@@ -31,7 +31,8 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, QWidget *
     QWidget(parent),
     ui(new Ui::rigSetupForm),
     radioValueChanged(false),
-    radioNameChanged(false)
+    radioNameChanged(false),
+    numAvailTransVerters(0)
 {
 
 
@@ -100,11 +101,11 @@ void RigSetupForm::radioModelSelected()
 
         if (radioData->radioMfg_Name == "Icom")
         {
-            ui->CIVlineEdit->setEnabled(true);
+            CIVEditVisible(true);
         }
         else
         {
-            ui->CIVlineEdit->setDisabled(true);
+            CIVEditVisible(false);
         }
 
         rig_port_e portType = RIG_PORT_NONE;
@@ -162,6 +163,11 @@ void RigSetupForm::enableCIVEdit(bool enable)
 }
 
 
+void RigSetupForm::CIVEditVisible(bool visible)
+{
+    ui->CIVLabel->setVisible(visible);
+    ui->CIVlineEdit->setVisible(visible);
+}
 
 
 /***************** Comports ****************************/
@@ -388,6 +394,7 @@ void RigSetupForm::enableTransVertSelected(bool flag)
     if(radioData->transVertEnable != flag)
     {
         radioData->transVertEnable = flag;
+        transVertTabVisible(flag);
         radioValueChanged = true;
     }
 
@@ -573,7 +580,7 @@ void RigSetupForm::addTransVerter()
     // add the new transverter
     int tabNum = numAvailTransVerters;
     addTransVertTab(tabNum, transVerterName);
-    numAvailTransVerters++;
+    radioData->numTransverters = ++numAvailTransVerters;
     //loadSettingsToTransVertTab(tabNum);
     //saveTransVerter(tabNum);
     emit transVertTabChanged();
@@ -621,4 +628,15 @@ void RigSetupForm::renameTransVerter()
 
 
 
+}
+
+
+void RigSetupForm::transVertTabVisible(bool visible)
+{
+
+    ui->addTransvert->setVisible(visible);
+    ui->removeTransvert->setVisible(visible);
+    ui->renameTransvert->setVisible(visible);
+    ui->transvertFrame->setVisible(visible);
+    ui->transVertTab->setVisible(visible);
 }

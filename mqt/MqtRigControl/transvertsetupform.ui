@@ -20,7 +20,7 @@
       <widget class="QComboBox" name="bandSel"/>
      </item>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="BandLabel">
        <property name="text">
         <string>Band</string>
        </property>
@@ -40,7 +40,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_66">
+      <widget class="QLabel" name="OffsetLabel">
        <property name="text">
         <string>Freq. Offset</string>
        </property>

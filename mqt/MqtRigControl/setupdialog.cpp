@@ -131,11 +131,11 @@ void SetupDialog::loadSettingsToTab(int tabNum)
         //radioModel[i]->setCurrentIndex(radioModel[i]->findText(availRadios[i].radioModel));
         if (availRadioData[tabNum]->radioMfg_Name == "Icom")
         {
-            radioTab[tabNum]->enableCIVEdit(false);
+            radioTab[tabNum]->CIVEditVisible(true);
         }
         else
         {
-            radioTab[tabNum]->enableCIVEdit(true);
+            radioTab[tabNum]->CIVEditVisible(false);
         }
         radioTab[tabNum]->setCIVAddress(availRadioData[tabNum]->civAddress);
         radioTab[tabNum]->setComport(availRadioData[tabNum]->comport);
@@ -147,6 +147,10 @@ void SetupDialog::loadSettingsToTab(int tabNum)
         radioTab[tabNum]->setNetAddress(availRadioData[tabNum]->networkAdd);
         radioTab[tabNum]->setNetPortNum(availRadioData[tabNum]->networkPort);
         radioTab[tabNum]->setTransVertSelected(availRadioData[tabNum]->transVertEnable);
+        if (availRadioData[tabNum]->transVertEnable)
+        {
+            radioTab[tabNum]->transVertTabVisible(true);
+        }
         //transVertEdit[i]->setText(availRadios[i].transVertOffsetStr); *******************
         //transVertCheck[i]->setChecked(availRadios[i].transVertEnable);
         //transVertEdit[i]->setEnabled(transVertCheck[i]->isChecked());
@@ -404,10 +408,7 @@ void SetupDialog::saveRadio(int i)
     config.setValue("parity", availRadioData[i]->parity);
     config.setValue("stopbits", availRadioData[i]->stopbits);
     config.setValue("handshake", availRadioData[i]->handshake);
-    //config.setValue("transVertOffSet", availRadioData[i]->transVertOffset);
-    //config.setValue("transVertOffSetStr", availRadioData[i]->transVertOffsetStr);
     config.setValue("transVertEnable", availRadioData[i]->transVertEnable);
-    //config.setValue("transVertNegative", availRadioData[i]->transVertNegative);
     config.setValue("netAddress", availRadioData[i]->networkAdd);
     config.setValue("netPort", availRadioData[i]->networkPort);
     config.setValue("mgmMode", availRadioData[i]->mgmMode);
@@ -463,10 +464,7 @@ void SetupDialog::saveSettings()
             config.setValue("parity", availRadioData[i]->parity);
             config.setValue("stopbits", availRadioData[i]->stopbits);
             config.setValue("handshake", availRadioData[i]->handshake);
-            //config.setValue("transVertOffSet", availRadioData[i]->transVertOffset);
-            //config.setValue("transVertOffSetStr", availRadioData[i]->transVertOffsetStr);
             config.setValue("transVertEnable", availRadioData[i]->transVertEnable);
-            //config.setValue("transVertNegative", availRadioData[i]->transVertNegative);
             config.setValue("netAddress", availRadioData[i]->networkAdd);
             config.setValue("netPort", availRadioData[i]->networkPort);
             config.setValue("mgmMode", availRadioData[i]->mgmMode);
@@ -545,6 +543,37 @@ void SetupDialog::readSettings()
     }
     chkloadflg = false;
 }
+
+
+
+
+
+void SetupDialog::saveTranVerterSetting(int radioNum, int transVertNum, QString radioName)
+{
+
+    QString fileName;
+    if (appName == "")
+    {
+        fileName = RADIO_PATH_LOCAL + radioName + FILENAME_TRANSVERT_RADIOS;
+    }
+    else
+    {
+        fileName = RADIO_PATH_LOGGER + radioName + FILENAME_TRANSVERT_RADIOS;
+    }
+
+    QSettings  config(fileName, QSettings::IniFormat);
+
+    config.beginGroup(availRadioData[radioNum]->transVertSettings[transVertNum]->transVertName);
+    config.setValue("name", availRadioData[radioNum]->transVertSettings[transVertNum]->transVertName);
+    config.setValue("band", availRadioData[radioNum]->transVertSettings[transVertNum]->transVertName);
+    config.setValue("offset", availRadioData[radioNum]->transVertSettings[transVertNum]->transVertOffsetStr);
+    config.setValue("negOffset", availRadioData[radioNum]->transVertSettings[transVertNum]->transVertNegative);
+    config.setValue("enableTransVertSw", availRadioData[radioNum]->transVertSettings[transVertNum]->enableTransSwitch);
+    config.setValue("transVertSw", availRadioData[radioNum]->transVertSettings[transVertNum]->transSwitchNum);
+    config.endGroup();
+
+}
+
 
 
 /*

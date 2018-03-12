@@ -47,10 +47,10 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *
 
 void TransVertSetupForm::bandSelected()
 {
-
-
-
-
+    if (ui->bandSel->currentText() != transVertData->band)
+    {
+        transVertData->band = ui->bandSel->currentText();
+    }
 }
 
 
@@ -174,7 +174,16 @@ void TransVertSetupForm::setTransVerSwNum(QString s)
 }
 
 
-
+void TransVertSetupForm::setUiItemsVisible(bool visible)
+{
+    ui->bandSel->setVisible(visible);
+    ui->enableTransVertSw->setVisible(visible);
+    ui->negCheckbox->setVisible(visible);
+    ui->TransVertOffset->setVisible(visible);
+    ui->transVertSwNum->setVisible(visible);
+    ui->BandLabel->setVisible(visible);
+    ui->OffsetLabel->setVisible(visible);
+}
 
 
 

@@ -34,6 +34,7 @@ public:
     QString getTransVertOffsetFreq();
     void setTransVertOffsetFreq(QString s);
 
+    void setUiItemsVisible(bool visible);
 signals:
 
 public slots:
