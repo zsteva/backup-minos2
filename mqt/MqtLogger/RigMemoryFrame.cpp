@@ -64,6 +64,8 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
 
     ui->flushMemoriesButton->setFocusPolicy(Qt::NoFocus);
 
+    newAction = new QAction("&New", this);
+    bearingAction = new QAction("&Set Bearing", this);
     readAction = new QAction("&Read", this);
     writeAction = new QAction("&Write",this);
     editAction = new QAction("&Edit", this);
@@ -72,6 +74,8 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     clearAllAction = new QAction("Clear &All",this);
     clearWorkedAction = new QAction("Clear Wor&ked",this);
 
+    memoryMenu->addAction(newAction);
+    memoryMenu->addAction(bearingAction);
     memoryMenu->addAction(readAction);
     memoryMenu->addAction(writeAction);
     memoryMenu->addAction(editAction);
@@ -80,8 +84,10 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     memoryMenu->addAction(clearWorkedAction);
 
     ui->flushMemoriesButton->setMenu(memoryMenu);
+    connect(memoryMenu, SIGNAL(aboutToShow()), this, SLOT(onMenuShow()));
 
-   // connect(ui->flushMemoriesButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
+    connect( newAction, SIGNAL( triggered() ), this, SLOT(on_newMemoryButton_clicked()) );
+    connect( bearingAction, SIGNAL( triggered() ), this, SLOT(bearingActionSelected()) );
     connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()) );
     connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()) );
     connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()) );
@@ -89,12 +95,60 @@ RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
     connect( clearAllAction, SIGNAL( triggered() ), this, SLOT(clearAllActionSelected()) );
     connect( clearWorkedAction, SIGNAL( triggered() ), this, SLOT(clearWorkedActionSelected()) );
 
+    ui->rigMemTable->setContextMenuPolicy( Qt::CustomContextMenu );
+    connect( ui->rigMemTable, SIGNAL( customContextMenuRequested( const QPoint& ) ),
+             this, SLOT( on_rigMemTable_customContextMenuRequested( const QPoint& ) ) );
+
+    ui->rigMemTable->verticalHeader()->setContextMenuPolicy( Qt::CustomContextMenu );
+    connect( ui->rigMemTable->verticalHeader(), SIGNAL( customContextMenuRequested( const QPoint& ) ),
+             this, SLOT( rigMemTable_Hdr_customContextMenuRequested( const QPoint& ) ) );
 }
 
 RigMemoryFrame::~RigMemoryFrame()
 {
     delete ui;
 }
+
+void RigMemoryFrame::onMenuShow()
+{
+    int buttonNumber = getSelectedLine();
+
+    bearingAction->setEnabled(buttonNumber >= 0);
+    readAction->setEnabled(buttonNumber >= 0);
+    writeAction->setEnabled(buttonNumber >= 0);
+    editAction->setEnabled(buttonNumber >= 0);
+    clearAction->setEnabled(buttonNumber >= 0);
+}
+void RigMemoryFrame::on_rigMemTable_doubleClicked(const QModelIndex &/*index*/)
+{
+    editActionSelected();
+}
+
+void RigMemoryFrame::on_rigMemTable_clicked(const QModelIndex &/*index*/)
+{
+    bearingActionSelected();
+}
+
+void RigMemoryFrame::on_rigMemTable_customContextMenuRequested( const QPoint &pos )
+{
+    QPoint globalPos = ui->rigMemTable->mapToGlobal( pos );
+    memoryMenu->popup( globalPos );
+
+}
+void RigMemoryFrame::rigMemTable_Hdr_customContextMenuRequested( const QPoint &pos )
+{
+    // use the ALREADY SELECTED rows
+    int logrow = ui->rigMemTable->verticalHeader()->logicalIndexAt(pos);
+    if (logrow >= 0)
+    {
+        QModelIndex nidx = proxyModel.index( logrow, 0 );
+
+        ui->rigMemTable->setCurrentIndex(nidx);
+    }
+
+    on_rigMemTable_customContextMenuRequested(pos);
+}
+
 void RigMemoryFrame::saveAllColumnWidthsAndPositions()
 {
     QSettings settings;
@@ -256,8 +310,8 @@ void RigMemoryFrame::checkTimerTimer()
                 colour = Qt::blue;
             }
         }
-        headerVal[m.callsign].text = ht;
-        headerVal[m.callsign].colour = colour;
+        headerVal[buttonNumber].text = ht;
+        headerVal[buttonNumber].colour = colour;
     }
     if (firstMatch >= 0)
     {
@@ -358,6 +412,17 @@ int RigMemoryFrame::getSelectedLine()
     return buttonNumber;
 }
 
+void RigMemoryFrame::bearingActionSelected()
+{
+    int buttonNumber = getSelectedLine();
+    if (buttonNumber < 0)
+        return;
+
+    traceMsg(QString("Memory Bearing Selected = %1").arg(QString::number(buttonNumber +1)));
+    memoryData::memData m = ct->getRigMemoryData(buttonNumber);
+
+    MinosLoggerEvents::SendBrgStrToRot(QString::number(m.bearing));
+}
 void RigMemoryFrame::readActionSelected()
 {
     int buttonNumber = getSelectedLine();
@@ -549,11 +614,14 @@ QVariant RigMemoryGridModel::data( const QModelIndex &index, int role ) const
                 break;
             case ermFreq:
                 {
-                    QString newfreq = m.freq.trimmed().remove('.');
-                    double dfreq = convertStrToFreq(newfreq);
-                    dfreq = dfreq/1000000.0;  // MHz
+                    if (!m.freq.isEmpty())
+                    {
+                        QString newfreq = m.freq.trimmed().remove('.');
+                        double dfreq = convertStrToFreq(newfreq);
+                        dfreq = dfreq/1000000.0;  // MHz
 
-                    disp = QString::number(dfreq, 'f', 3); //MHz to 3 decimal places
+                        disp = QString::number(dfreq, 'f', 3); //MHz to 3 decimal places
+                    }
                     break;
                 }
             case ermTime:
@@ -594,7 +662,7 @@ QVariant RigMemoryGridModel::headerData( int section, Qt::Orientation orientatio
             if (c)
             {
                 memoryData::memData m = c->getRigMemoryData(section);
-                disp = frame->headerVal[m.callsign].text;
+                disp = frame->headerVal[section].text;
                 if (disp.isEmpty())
                 {
                     // This appears to be the line that defines the width
@@ -610,7 +678,7 @@ QVariant RigMemoryGridModel::headerData( int section, Qt::Orientation orientatio
             if (c)
             {
                 memoryData::memData m = c->getRigMemoryData(section);
-                QColor colour = frame->headerVal[m.callsign].colour;
+                QColor colour = frame->headerVal[section].colour;
                 return colour;
             }
         }
@@ -678,3 +746,4 @@ bool RigMemorySortFilterProxyModel::lessThan(const QModelIndex &left,
 
     return ws1 < ws2;
 }
+

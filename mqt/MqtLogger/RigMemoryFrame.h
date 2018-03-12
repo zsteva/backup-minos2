@@ -64,7 +64,7 @@ public:
     explicit RigMemoryFrame(QWidget *parent = 0);
     ~RigMemoryFrame();
 
-    QMap<QString, HeaderData> headerVal;
+    QMap<int, HeaderData> headerVal;
 
     void setContest( BaseContestLog *ct );
 
@@ -87,13 +87,22 @@ private slots:
     void on_sectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
     void on_sectionResized(int logicalIndex, int oldSize, int newSize);
     void on_sortIndicatorChanged(int logicalIndex, Qt::SortOrder order);
+    void on_rigMemTable_customContextMenuRequested( const QPoint &pos );
+    void rigMemTable_Hdr_customContextMenuRequested( const QPoint &pos );
 
     void readActionSelected();
+    void bearingActionSelected();
     void editActionSelected();
     void writeActionSelected();
     void clearActionSelected();
     void clearAllActionSelected();
     void clearWorkedActionSelected();
+
+    void onMenuShow();
+
+    void on_rigMemTable_doubleClicked(const QModelIndex &index);
+
+    void on_rigMemTable_clicked(const QModelIndex &index);
 
 private:
     Ui::RigMemoryFrame *ui;
@@ -105,7 +114,9 @@ private:
 
     QMenu* memoryMenu;
 
+    QAction* newAction;
     QAction* readAction;
+    QAction* bearingAction;
     QAction* writeAction;
     QAction* editAction;
     QAction* clearAction;

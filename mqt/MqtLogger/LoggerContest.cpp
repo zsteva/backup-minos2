@@ -184,10 +184,12 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
 
    // preset the apps
 
+   appBundle.startGroup();
    appBundle.getStringProfile(eapBandMap, appBandMap);
    appBundle.getStringProfile(eapRigControl, appRigControl);
    appBundle.getStringProfile(eapRotator, appRotator);
    appBundle.getStringProfile(eapVoiceKeyer, appVoiceKeyer);
+   appBundle.endGroup();
 
    // preset the stacked info
 
@@ -382,6 +384,7 @@ void LoggerContestLog::setINIDetails()
    // extras that CAN come from INI file - implements bundle override
    if ( entryBundle.getSection() != entryBundle.noneBundle )
    {
+      entryBundle.startGroup();
       entryBundle.getStringProfile( eepCall, mycall.fullCall );
       entryBundle.getStringProfile( eepEntrant, entrant );
       entryBundle.getStringProfile( eepMyName, entName );
@@ -397,11 +400,13 @@ void LoggerContestLog::setINIDetails()
       entryBundle.getStringProfile( eepMyEmail, entEMail );
       //   entryBundle.getStringProfile(eepBand, band);
       //   entryBundle.getStringProfile(eepSection, entSect);
+      entryBundle.endGroup();
    }
 
 
    if ( QTHBundle.getSection() != QTHBundle.noneBundle )
    {
+      QTHBundle.startGroup();
       QTHBundle.getStringProfile( eqpLocator, myloc.loc );
 
       if ( districtMult.getValue() )
@@ -413,10 +418,12 @@ void LoggerContestLog::setINIDetails()
       QTHBundle.getStringProfile( eqpStationQTH1, sqth1 );
       QTHBundle.getStringProfile( eqpStationQTH2, sqth2 );
 	  QTHBundle.getStringProfile( eqpASL, entASL );
+      QTHBundle.endGroup();
    }
 
    if ( stationBundle.getSection() != stationBundle.noneBundle )
    {
+      stationBundle.startGroup();
 	  stationBundle.getStringProfile( espPower, power );
 	  stationBundle.getStringProfile( espTransmitter, entTx );
 	  stationBundle.getStringProfile( espReceiver, entRx );
@@ -425,13 +432,16 @@ void LoggerContestLog::setINIDetails()
 	  stationBundle.getIntProfile(espOffset, bearingOffset);
       stationBundle.getStringProfile( espRadioName, radioName );
       stationBundle.getStringProfile( espRotatorName, rotatorName );
+      stationBundle.endGroup();
    }
 //   if ( appBundle.getSection() != noneBundle )
 //   {
+        appBundle.startGroup();
         appBundle.getStringProfile(eapBandMap, appBandMap);
         appBundle.getStringProfile(eapRigControl, appRigControl);
         appBundle.getStringProfile(eapRotator, appRotator);
         appBundle.getStringProfile(eapVoiceKeyer, appVoiceKeyer);
+        appBundle.endGroup();
 //   }
 //   else
 //   {
@@ -647,18 +657,24 @@ memoryData::memData LoggerContestLog::getRigMemoryData(int memoryNumber)
     if (rigMemories.size() > memoryNumber)
     {
         m = rigMemories[memoryNumber].getValue();
-        Locator loc;
-        loc.loc.setValue(m.locator);
-        loc.validate();
-        double lon = 0.0;
-        double lat = 0.0;
-
-        if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
+        if (m.locator.isEmpty())
         {
-            double dist;
-            int brg;
-            disbear( lon, lat, dist, brg );
-            m.bearing = brg;
+        }
+        else
+        {
+            Locator loc;
+            loc.loc.setValue(m.locator);
+            loc.validate();
+            double lon = 0.0;
+            double lat = 0.0;
+
+            if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )
+            {
+                double dist;
+                int brg;
+                disbear( lon, lat, dist, brg );
+                m.bearing = brg;
+            }
         }
     }
     return m;
@@ -1548,6 +1564,7 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
                                    mt->getStructArgMemberValue( "freq", mem.freq);
                                    mt->getStructArgMemberValue( "mode", mem.mode);
                                    mt->getStructArgMemberValue( "locator", mem.locator);
+                                   mt->getStructArgMemberValue( "bearing", mem.bearing);
                                    mt->getStructArgMemberValue( "time", mem.time);
                                    mt->getStructArgMemberValue( "worked", mem.worked);
 

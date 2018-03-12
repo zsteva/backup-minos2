@@ -430,13 +430,13 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
         {
             ui->freqInput->clearFocus();
             //if (m.freq.remove('.') != curFreq.remove('.'))
-            if (m.freq != curFreq)
+            if (!m.freq.isEmpty() &&m.freq != curFreq)
             {
                 traceMsg(QString("Memory Read: Send Freq"));
                 sendFreq(m.freq);
             }
 
-            if (m.mode != curMode)
+            if (!m.mode.isEmpty() && m.mode != curMode)
             {
                 traceMsg(QString("Memory Read: Send Mode"));
                 sendModeToRadio(m.mode);
@@ -445,8 +445,10 @@ void RigControlFrame::transferDetails(memoryData::memData &m)
         }
         else if (!radioConnected && radioName.trimmed() == NORADIO)
         {
-            noRadioSendOutFreq(m.freq);
-            noRadioSendOutMode(m.mode);
+            if (!m.freq.isEmpty())
+                noRadioSendOutFreq(m.freq);
+            if (!m.mode.isEmpty())
+                noRadioSendOutMode(m.mode);
         }
     }
 

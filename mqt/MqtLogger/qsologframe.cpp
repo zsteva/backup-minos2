@@ -1504,7 +1504,7 @@ void QSOLogFrame::contactValid( void )
 
          QString prefix = vcct->ctryMult->basePrefix;
          TContestApp::getContestApp() ->locsBundle.openSection(prefix);
-         if (TContestApp::getContestApp() ->locsBundle.isSectionPresent() )
+         if (TContestApp::getContestApp() ->locsBundle.isCurrSectionPresent() )
          {
             TContestApp::getContestApp() ->locsBundle.getBoolProfile( sloc, LocOK, false );
             if (!LocOK)
