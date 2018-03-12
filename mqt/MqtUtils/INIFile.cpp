@@ -555,7 +555,6 @@ bool INIFile::writePrivateProfileString(const QString &Section,
     {
         if ( thisSect != sections.end() )
         {
-            fileDirty = true;
             for ( QVector <IniEntryPtr>::iterator this_ent = ( *thisSect ) ->entries.begin(); this_ent != ( *thisSect ) ->entries.end(); this_ent++ )
             {
                 delete ( *this_ent );
@@ -564,6 +563,7 @@ bool INIFile::writePrivateProfileString(const QString &Section,
 
             delete ( *thisSect );
             sections.erase( thisSect );
+            fileDirty = true;
         }
     }
     else

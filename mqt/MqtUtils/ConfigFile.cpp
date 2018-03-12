@@ -52,7 +52,7 @@ void MinosConfig::cleanElementsOnCancel()
         QSharedPointer<RunConfigElement> ele = (*i);
         if (ele->newElement)
         {
-            ele->name = "<Deleted>";
+            ele->deleted = true;
         }
     }
 }
@@ -91,7 +91,7 @@ void RunConfigElement::save(INIFile &config)
         name = appType;
     }
 
-    if (name.compare("<Deleted>", Qt::CaseInsensitive) != 0)
+    if (!deleted)
     {
         config.writePrivateProfileString(name, "Program", commandLine);
         config.writePrivateProfileString(name, "Params", params);
@@ -103,6 +103,11 @@ void RunConfigElement::save(INIFile &config)
         config.writePrivateProfileBool(name, "ShowAdvanced", showAdvanced);
         config.writePrivateProfileBool(name, "Enabled", rEnabled);
         config.writePrivateProfileBool(name, "HideApp", hideApp);
+    }
+    else
+    {
+        // what was the old name?
+        config.writePrivateProfileString(name, "", "");
     }
 }
 Connectable RunConfigElement::connectable()
@@ -126,7 +131,7 @@ Connectable RunConfigElement::connectable()
 
 void RunConfigElement::createProcess()
 {
-    if (name.compare("<Deleted>", Qt::CaseInsensitive) == 0)
+    if (deleted)
         return;
     if (rEnabled && runType == RunLocal && !runner)
     {
@@ -444,7 +449,7 @@ QString MinosConfig::checkConfig()
     for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = elelist.begin(); i != elelist.end(); i++ )
     {
         QSharedPointer<RunConfigElement> ele = (*i);
-        if (ele->name.compare("<Deleted>", Qt::CaseInsensitive) == 0)
+        if (ele->deleted)
             continue;
         if (ele->rEnabled)
         {
@@ -470,7 +475,7 @@ QString MinosConfig::checkConfig()
     {
         QSharedPointer<RunConfigElement> ele = (*i);
 
-        if (ele->name.compare("<Deleted>", Qt::CaseInsensitive) == 0)
+        if (ele->deleted)
             continue;
 
         if (ele->rEnabled)
@@ -490,7 +495,7 @@ QString MinosConfig::checkConfig()
                     bool reqFound = false;
                     for ( QVector <QSharedPointer<RunConfigElement> >::iterator j = elelist.begin(); j != elelist.end(); j++ )
                     {
-                        if ((*j)->name.compare("<Deleted>", Qt::CaseInsensitive) == 0)
+                        if ((*j)->deleted)
                             continue;
                         if ((*j)->appType == req && (*j)->rEnabled && (*j)->runType == RunLocal)
                         {

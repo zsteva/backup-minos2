@@ -41,7 +41,7 @@ private:  	// User declarations
     QProcess *runner = 0;
 public:  		// User declarations
     bool newElement = false;
-
+    bool deleted = false;
     QString name;
     QString rundir;
     QString commandLine;
