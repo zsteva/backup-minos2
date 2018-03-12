@@ -219,8 +219,12 @@ bool INIFile::checkStat( )
 {
     QFileInfo tempstat(loadedFileName);
     if (
-            //statbuf.birthTime() != tempstat.birthTime()
-            statbuf.lastModified() != tempstat.lastModified()
+        #if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
+            statbuf.created() != tempstat.created()
+        #else
+            statbuf.birthTime() != tempstat.birthTime()
+        #endif
+            || statbuf.lastModified() != tempstat.lastModified()
             || statbuf.size() != tempstat.size()
             )
     {
