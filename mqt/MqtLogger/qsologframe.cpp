@@ -1106,18 +1106,6 @@ void QSOLogFrame::EditControlExit( QObject * /*Sender*/ )
       valid( cmCheckValid ); // make sure all single and cross field
       doAutofill();           // should only be time to be filled
    }
-
-   // make sure the mode button shows the correct "flip" value
-
-   if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW || ui->ModeComboBoxGJV->currentText() == hamlibData::MGM)
-   {
-      ui->ModeButton->setText(oldMode);
-   }
-   else
-   {
-      ui->ModeButton->setText(hamlibData::CW);
-   }
-
 }
     //---------------------------------------------------------------------------
 void QSOLogFrame::setScoreText( int dist, bool partial, bool xband )
@@ -1581,6 +1569,9 @@ void QSOLogFrame::setMode(QString m)
 
     QString myOldMode = ui->ModeComboBoxGJV->currentText();
 
+    if (myOldMode == m)
+        return;         // all is OK
+
     ui->ModeComboBoxGJV->setCurrentText(m);
     mode = m;
     oldMode = myOldMode;
@@ -1868,8 +1859,11 @@ void QSOLogFrame::modeSentFromRig(QString m)
     {
         if (mode == hamlibData::supModeList[i])
         {
-            QString oldmode = ui->ModeComboBoxGJV->currentText();
-            if (mode != ui->ModeComboBoxGJV->currentText())
+            oldMode = ui->ModeComboBoxGJV->currentText();
+            if (mode == ui->ModeComboBoxGJV->currentText())
+            {
+                return;
+            }
             {
                 // set index to new mode
                 ui->ModeComboBoxGJV->setCurrentIndex(ui->ModeComboBoxGJV->findText(mode));
@@ -1878,7 +1872,7 @@ void QSOLogFrame::modeSentFromRig(QString m)
             // ensure flip mode is shown on mode button
             if (ui->ModeComboBoxGJV->currentText() == hamlibData::CW || ui->ModeComboBoxGJV->currentText() == hamlibData::MGM)
             {
-               ui->ModeButton->setText(oldmode);
+               ui->ModeButton->setText(oldMode);
             }
             else
             {
@@ -2398,6 +2392,9 @@ void QSOLogFrame::on_InsertAfterButton_clicked()
 void QSOLogFrame::on_ModeComboBoxGJV_activated(int index)
 {
 
+    if (ui->ModeComboBoxGJV->currentText() == mode)
+        return;
+    oldMode = mode;
     if (index < hamlibData::supModeList.count())
     {
         mode = hamlibData::supModeList[index];
@@ -2419,11 +2416,6 @@ void QSOLogFrame::on_ModeComboBoxGJV_activated(int index)
     {
        ui->ModeButton->setText(hamlibData::CW);
     }
-
-    oldMode = ui->ModeComboBoxGJV->currentText();
-
-
-
 }
 
 void QSOLogFrame::on_ValidateError (int mess_no )
