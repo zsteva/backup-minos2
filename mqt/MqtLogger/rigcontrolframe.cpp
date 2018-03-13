@@ -555,8 +555,13 @@ void RigControlFrame::setRadioName(QString name)
         return;
     }
     QString radNam = extractRadioName(name);   // remove mode if appended
-    ui->radioNameSel->setCurrentText(extractRadioName(radNam));
-    radioName = radNam;
+
+    int index = ui->radioNameSel->findText(radNam, Qt::MatchFixedString);
+    if (index >= 0)
+        ui->radioNameSel->setCurrentIndex(index);
+    else
+        ui->radioNameSel->setCurrentText(extractRadioName(radNam));
+    radioName = ui->radioNameSel->currentText();
 
     if (ct && !ct->isProtected() && ct == TContestApp::getContestApp() ->getCurrentContest())
     {
