@@ -83,6 +83,15 @@ void LoggerContestLog::clearDirty()
    sectionList.clearDirty();
    bearingOffset.clearDirty();
 
+   for (int i = 0; i < runMemories.size(); i++)
+   {
+       runMemories[i].clearDirty();
+   }
+   for (int i = 0; i < rigMemories.size(); i++)
+   {
+       rigMemories[i].clearDirty();
+   }
+
    statsPeriod1.clearDirty();
    statsPeriod2.clearDirty();
    showContinentEU.clearDirty();
@@ -141,6 +150,14 @@ void LoggerContestLog::setDirty()
    entEMail.setDirty();
    bearingOffset.setDirty();
 
+   for (int i = 0; i < runMemories.size(); i++)
+   {
+       runMemories[i].setDirty();
+   }
+   for (int i = 0; i < rigMemories.size(); i++)
+   {
+       rigMemories[i].setDirty();
+   }
 
    statsPeriod1.setDirty();
    statsPeriod2.setDirty();
