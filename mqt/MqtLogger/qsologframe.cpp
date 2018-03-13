@@ -633,17 +633,14 @@ void QSOLogFrame::on_GJVOKButton_clicked()
         {
            // If Uri mode then continue to the next...
            QSharedPointer<BaseContact> nuc = contest->findNextUnfilledContact( );
-           selectEntryForEdit(nuc);
-
-           bool stillUnfilled = screenContact.contactFlags & TO_BE_ENTERED;
-
-           if (!stillUnfilled)
+           if (nuc)
            {
-                emit QSOFrameCancelled();
+               selectEntryForEdit(nuc);
+               selectField( 0 );             // make sure we move off the "Log" default button
            }
            else
            {
-                selectField( 0 );             // make sure we move off the "Log" default button
+               emit QSOFrameCancelled();
            }
         }
     }
