@@ -414,6 +414,27 @@ void SetupDialog::saveRadio(int i)
     config.setValue("mgmMode", availRadioData[i]->mgmMode);
     config.endGroup();
 
+    if (availRadioData[i]->transVertEnable)
+    {
+        QString fileName;
+        if (appName == "")
+        {
+            fileName = RADIO_PATH_LOCAL + availRadioData[i]->radioModelName + FILENAME_TRANSVERT_RADIOS;
+        }
+        else
+        {
+            fileName = RADIO_PATH_LOGGER + availRadioData[i]->radioModelName + FILENAME_TRANSVERT_RADIOS;
+        }
+
+        QSettings  config(fileName, QSettings::IniFormat);
+
+        for (int trv = 0; trv < availRadioData[i]->numTransverters; trv++)
+        {
+            saveTranVerterSetting(i, trv, config);
+        }
+
+    }
+
 }
 
 
@@ -421,17 +442,19 @@ void SetupDialog::saveRadio(int i)
 void SetupDialog::saveSettings()
 {
 
-    QString fileName;
+    QString fileNameRadio;
     if (appName == "")
     {
-       fileName = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
+       fileNameRadio = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
     }
     else
     {
-       fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
+       fileNameRadio = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
     }
 
-    QSettings config(fileName, QSettings::IniFormat);
+    QSettings configRadio(fileNameRadio, QSettings::IniFormat);
+
+
 
     for (int i = 0; i < numAvailRadios; i++)
     {
@@ -450,25 +473,58 @@ void SetupDialog::saveSettings()
                  emit currentRadioSettingChanged(availRadioData[i]->radioName);
             }
 
-            config.beginGroup(availRadioData[i]->radioName);
-            config.setValue("radioName", availRadioData[i]->radioName);
-            config.setValue("radioMfgName", availRadioData[i]->radioMfg_Name);
-            config.setValue("radioModel", availRadioData[i]->radioModel);
-            config.setValue("radioModelName", availRadioData[i]->radioModelName);
-            config.setValue("radioModelNumber", availRadioData[i]->radioModelNumber);
-            config.setValue("civAddress", availRadioData[i]->civAddress);
-            config.setValue("portType", availRadioData[i]->portType);
-            config.setValue("comport", availRadioData[i]->comport);
-            config.setValue("baudrate", availRadioData[i]->baudrate);
-            config.setValue("databits", availRadioData[i]->databits);
-            config.setValue("parity", availRadioData[i]->parity);
-            config.setValue("stopbits", availRadioData[i]->stopbits);
-            config.setValue("handshake", availRadioData[i]->handshake);
-            config.setValue("transVertEnable", availRadioData[i]->transVertEnable);
-            config.setValue("netAddress", availRadioData[i]->networkAdd);
-            config.setValue("netPort", availRadioData[i]->networkPort);
-            config.setValue("mgmMode", availRadioData[i]->mgmMode);
-            config.endGroup();
+            configRadio.beginGroup(availRadioData[i]->radioName);
+            configRadio.setValue("radioName", availRadioData[i]->radioName);
+            configRadio.setValue("radioMfgName", availRadioData[i]->radioMfg_Name);
+            configRadio.setValue("radioModel", availRadioData[i]->radioModel);
+            configRadio.setValue("radioModelName", availRadioData[i]->radioModelName);
+            configRadio.setValue("radioModelNumber", availRadioData[i]->radioModelNumber);
+            configRadio.setValue("civAddress", availRadioData[i]->civAddress);
+            configRadio.setValue("portType", availRadioData[i]->portType);
+            configRadio.setValue("comport", availRadioData[i]->comport);
+            configRadio.setValue("baudrate", availRadioData[i]->baudrate);
+            configRadio.setValue("databits", availRadioData[i]->databits);
+            configRadio.setValue("parity", availRadioData[i]->parity);
+            configRadio.setValue("stopbits", availRadioData[i]->stopbits);
+            configRadio.setValue("handshake", availRadioData[i]->handshake);
+            configRadio.setValue("transVertEnable", availRadioData[i]->transVertEnable);
+            configRadio.setValue("netAddress", availRadioData[i]->networkAdd);
+            configRadio.setValue("netPort", availRadioData[i]->networkPort);
+            configRadio.setValue("mgmMode", availRadioData[i]->mgmMode);
+            configRadio.endGroup();
+
+            // now save transvert settings
+            if (availRadioData[i]->transVertEnable)
+            {
+                QString fileNameTransVert;
+                if (appName == "")
+                {
+                    fileNameTransVert = RADIO_PATH_LOCAL + availRadioData[i]->radioModelName + FILENAME_TRANSVERT_RADIOS;
+                }
+                else
+                {
+                    fileNameTransVert = RADIO_PATH_LOGGER + availRadioData[i]->radioModelName + FILENAME_TRANSVERT_RADIOS;
+                }
+
+                QSettings  configTransVert(fileNameTransVert, QSettings::IniFormat);
+
+                if (radioTab[i]->transVertTab[i]->tansVertValueChanged)
+                {
+                    if (radioTab[i]->transVertTab[i]->transVertNameChanged)
+                    {
+                        radioTab[i]->transVertTab[i]->transVertNameChanged = false;
+                        emit transVertNameChanged();
+                    }
+                    for (int trv = 0; trv < availRadioData[i]->numTransverters; trv++)
+                    {
+                        saveTranVerterSetting(i, trv, configTransVert);
+                    }
+                }
+
+
+            }
+
+
             radioTab[i]->radioValueChanged = false;
 
         }
@@ -548,9 +604,9 @@ void SetupDialog::readSettings()
 
 
 
-void SetupDialog::saveTranVerterSetting(int radioNum, int transVertNum, QString radioName)
+void SetupDialog::saveTranVerterSetting(int radioNum, int transVertNum, QSettings  &config)
 {
-
+/*
     QString fileName;
     if (appName == "")
     {
@@ -562,7 +618,7 @@ void SetupDialog::saveTranVerterSetting(int radioNum, int transVertNum, QString 
     }
 
     QSettings  config(fileName, QSettings::IniFormat);
-
+*/
     config.beginGroup(availRadioData[radioNum]->transVertSettings[transVertNum]->transVertName);
     config.setValue("name", availRadioData[radioNum]->transVertSettings[transVertNum]->transVertName);
     config.setValue("band", availRadioData[radioNum]->transVertSettings[transVertNum]->transVertName);

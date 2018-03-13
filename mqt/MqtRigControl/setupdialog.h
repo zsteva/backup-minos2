@@ -134,7 +134,7 @@ private:
     void loadSettingsToTab(int tabNum);
     void saveRadio(int i);
     bool checkRadioNameMatch(QString radioName);
-    void saveTranVerterSetting(int radioNum, int transVertNum, QString radioName);
+    void saveTranVerterSetting(int radioNum, int transVertNum, QSettings  &config);
 };
 
 #endif // SETUPDIALOG_H

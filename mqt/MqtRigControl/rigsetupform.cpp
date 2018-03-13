@@ -593,6 +593,7 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
     radioData->transVertSettings.append(new TransVertParams());
     radioData->transVertSettings[tabNum]->transVertName = tabName;
     transVertTab.append(new TransVertSetupForm(radioData->transVertSettings[tabNum]));
+    availTransVerters.append(tabName);
     ui->transVertTab->insertTab(tabNum, transVertTab[tabNum], tabName);
     ui->transVertTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
 

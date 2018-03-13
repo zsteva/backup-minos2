@@ -23,6 +23,7 @@ public:
     bool radioValueChanged;
     bool radioNameChanged;
 
+
     void civSetToolTip();
     QString getCIVAddress();
     void setCIVAddress(QString v);

@@ -17,9 +17,9 @@ public:
     explicit TransVertSetupForm(TransVertParams *transvertData, QWidget *parent = nullptr);
 
 
+
     bool tansVertValueChanged;
     bool transVertNameChanged;
-
 
 
     QString getTransVerSwNum();
