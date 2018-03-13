@@ -220,6 +220,7 @@ void RigMemoryFrame::doMemoryUpdates()
 */
     model.reset();
     reloadColumns();
+    on_AfterLogContact(ct);
 }
 
 void RigMemoryFrame::checkTimerTimer()
@@ -395,7 +396,6 @@ void RigMemoryFrame::on_AfterLogContact( BaseContestLog *c)
                   }
               }
           }
-          //sendUpdateMemories();
       }
 }
 
