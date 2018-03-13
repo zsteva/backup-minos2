@@ -226,11 +226,20 @@ void RigMemoryFrame::doMemoryUpdates()
 void RigMemoryFrame::checkTimerTimer()
 {
     if (!isVisible())
+    {
+        lastVisible = false;
         return;
+    }
 
     TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
     if (!ct || !tslf)
         return;
+
+    if (!lastVisible)
+    {
+        lastVisible = true;
+        doTimer = true;
+    }
 
     memoryData::memData logData;
     tslf->getCurrentDetails(logData);
@@ -667,7 +676,7 @@ QVariant RigMemoryGridModel::headerData( int section, Qt::Orientation orientatio
                 {
                     // This appears to be the line that defines the width
                     // of the vertical header
-                    disp = "  " + m.callsign + "  ";
+                    disp = "     " + m.callsign + "    ";
                 }
             }
             return disp;

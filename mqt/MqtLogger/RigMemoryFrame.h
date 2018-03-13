@@ -110,6 +110,7 @@ private:
     bool suppressSendUpdate = false;
     QString lastRigFreq;
     int lastBearing = 0;
+    bool lastVisible = false;
     bool doTimer = false;
 
     QMenu* memoryMenu;
