@@ -57,6 +57,7 @@ private:
 
 
     void loadBands();
+    void setEnableTransVertSwBoxVisible(bool visible);
 };
 
 #endif // TRANSVERTSETUPFORM_H

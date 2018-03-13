@@ -323,6 +323,7 @@ QString rotSetupForm::getRotatorModel()
 void rotSetupForm::setRotatorModel(QString m)
 {
     ui->rotatorModelBox->setCurrentIndex(ui->rotatorModelBox->findText(m));
+
 }
 
 /***************************** Comports *************************/

@@ -24,6 +24,9 @@ public:
     bool radioNameChanged;
 
 
+    QString getRadioModel();
+    void setRadioModel(QString m);
+
     void civSetToolTip();
     QString getCIVAddress();
     void setCIVAddress(QString v);
@@ -73,7 +76,7 @@ public:
     void setTransVertSelected(bool flag);
 
     void CIVEditVisible(bool visible);
-    void transVertTabVisible(bool visible);
+    void transVertTabEnable(bool visible);
 
 signals:
     void transVertTabChanged();
@@ -98,7 +101,7 @@ private slots:
     void addTransVerter();
     void removeTransVerter();
     void renameTransVerter();
-    void enableTransVertSelected(bool flag);
+    void enableTransVertSelected(bool);
 private:
 
 

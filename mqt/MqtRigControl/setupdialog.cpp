@@ -127,16 +127,16 @@ void SetupDialog::loadSettingsToTab(int tabNum)
     {
 
 
-        //radioName[i]->setText(availRadioData[i].radioName);
-        //radioModel[i]->setCurrentIndex(radioModel[i]->findText(availRadios[i].radioModel));
-        if (availRadioData[tabNum]->radioMfg_Name == "Icom")
-        {
-            radioTab[tabNum]->CIVEditVisible(true);
-        }
-        else
-        {
-            radioTab[tabNum]->CIVEditVisible(false);
-        }
+        radioTab[tabNum]->setRadioModel(availRadioData[tabNum]->radioModel);
+
+        //if (availRadioData[tabNum]->radioMfg_Name == "Icom")
+        //{
+        //    radioTab[tabNum]->CIVEditVisible(true);
+        //}
+        //else
+        //{
+        //    radioTab[tabNum]->CIVEditVisible(false);
+       // }
         radioTab[tabNum]->setCIVAddress(availRadioData[tabNum]->civAddress);
         radioTab[tabNum]->setComport(availRadioData[tabNum]->comport);
         radioTab[tabNum]->setDataSpeed(QString::number(availRadioData[tabNum]->baudrate));
@@ -146,11 +146,10 @@ void SetupDialog::loadSettingsToTab(int tabNum)
         radioTab[tabNum]->setHandshake(availRadioData[tabNum]->handshake);
         radioTab[tabNum]->setNetAddress(availRadioData[tabNum]->networkAdd);
         radioTab[tabNum]->setNetPortNum(availRadioData[tabNum]->networkPort);
+        radioTab[tabNum]->setPollInterval(availRadioData[tabNum]->pollInterval);
         radioTab[tabNum]->setTransVertSelected(availRadioData[tabNum]->transVertEnable);
-        if (availRadioData[tabNum]->transVertEnable)
-        {
-            radioTab[tabNum]->transVertTabVisible(true);
-        }
+
+
         //transVertEdit[i]->setText(availRadios[i].transVertOffsetStr); *******************
         //transVertCheck[i]->setChecked(availRadios[i].transVertEnable);
         //transVertEdit[i]->setEnabled(transVertCheck[i]->isChecked());
@@ -408,6 +407,7 @@ void SetupDialog::saveRadio(int i)
     config.setValue("parity", availRadioData[i]->parity);
     config.setValue("stopbits", availRadioData[i]->stopbits);
     config.setValue("handshake", availRadioData[i]->handshake);
+    config.setValue("radioPollInterval", availRadioData[i]->pollInterval);
     config.setValue("transVertEnable", availRadioData[i]->transVertEnable);
     config.setValue("netAddress", availRadioData[i]->networkAdd);
     config.setValue("netPort", availRadioData[i]->networkPort);
@@ -487,6 +487,7 @@ void SetupDialog::saveSettings()
             configRadio.setValue("parity", availRadioData[i]->parity);
             configRadio.setValue("stopbits", availRadioData[i]->stopbits);
             configRadio.setValue("handshake", availRadioData[i]->handshake);
+            configRadio.setValue("radioPollInterval", availRadioData[i]->pollInterval);
             configRadio.setValue("transVertEnable", availRadioData[i]->transVertEnable);
             configRadio.setValue("netAddress", availRadioData[i]->networkAdd);
             configRadio.setValue("netPort", availRadioData[i]->networkPort);
@@ -588,6 +589,7 @@ void SetupDialog::readSettings()
         availRadioData[i]->parity = config.value("parity", 0).toInt();
         availRadioData[i]->stopbits = config.value("stopbits", 1).toInt();
         availRadioData[i]->handshake = config.value("handshake", 0).toInt();
+        availRadioData[i]->pollInterval = config.value("radioPollInterval", "1").toString();
         //availRadioData[i]->transVertOffset = config.value("transVertOffSet", 0).toDouble();
         //availRadioData[i]->transVertOffsetStr = config.value("transVertOffSetStr", "00.000.000.000").toString();
         availRadioData[i]->transVertEnable = config.value("transVertEnable", false).toBool();

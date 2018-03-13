@@ -216,6 +216,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="RITEnable">
+         <property name="text">
+          <string>Enable RIT</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="enableTransVert">
          <property name="text">
           <string>Enable Transvert</string>

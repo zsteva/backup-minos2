@@ -116,8 +116,13 @@ void TransVertSetupForm::setTransVertOffsetFreq(QString s)
 
 void TransVertSetupForm::negCheckBoxSelected(bool flag)
 {
-    transVertData->transVertNegative = flag;
-    tansVertValueChanged = true;
+    bool checked = ui->negCheckbox->isChecked();
+    if(transVertData->transVertNegative != checked)
+    {
+        transVertData->transVertNegative = flag;
+        tansVertValueChanged = true;
+    }
+
 }
 
 bool TransVertSetupForm::getNegCheckBox()
@@ -132,10 +137,16 @@ void TransVertSetupForm::setNegCheckBox(bool b)
 
 /********************* TransVert Switch Enable  *********************************/
 
-void TransVertSetupForm::enableTransVertSwSel(bool flag)
+void TransVertSetupForm::enableTransVertSwSel(bool /*flag*/)
 {
-    transVertData->enableTransSwitch = flag;
-    tansVertValueChanged = true;
+    bool checked = ui->enableTransVertSw->isChecked();
+    if (transVertData->enableTransSwitch != checked)
+    {
+        transVertData->enableTransSwitch = checked;
+        setEnableTransVertSwBoxVisible(checked);
+        tansVertValueChanged = true;
+    }
+
 }
 
 
@@ -147,6 +158,14 @@ bool TransVertSetupForm::getEnableTransVertSw()
 void TransVertSetupForm::setEnableTransVertSw(bool b)
 {
     ui->enableTransVertSw->setChecked(b);
+    setEnableTransVertSwBoxVisible(b);
+}
+
+void TransVertSetupForm::setEnableTransVertSwBoxVisible(bool visible)
+{
+     ui->transVertSwNum->setVisible(visible);
+     ui->transVertSwNumLbl->setVisible(visible);
+
 }
 
 
@@ -187,72 +206,3 @@ void TransVertSetupForm::setUiItemsVisible(bool visible)
 
 
 
-/*
-
-void TransVertSetupForm::transVertChecked(int boxNumber)
-{
-    if (!chkloadflg)
-    {
-        if (transVertCheck[boxNumber]->isChecked())
-        {
-            availRadios[boxNumber].transVertEnable = true;
-            transVertEdit[boxNumber]->setEnabled(true);
-            transNegCheck[boxNumber]->setEnabled(true);
-        }
-        else
-        {
-            availRadios[boxNumber].transVertEnable = false;
-            transVertEdit[boxNumber]->setEnabled(false);
-            transNegCheck[boxNumber]->setEnabled(false);
-        }
-        radioValueChanged[boxNumber] = true;
-        radioChanged = true;
-
-
-    }
-
-}
-
-
-
-void TransVertSetupForm::transVertEditFinished(int boxNumber)
-{
-    bool ok;
-    QString offsetStr = transVertEdit[boxNumber]->text();
-    offsetStr.remove(QChar('.'));
-
-    qDebug() << "offset = " << offsetStr;
-
-    double value = offsetStr.toDouble(&ok);
-    if (!ok )
-    {
-         QMessageBox::critical(this, "TransVert Error", offsetStr + " Not a valid TransVert Offset value");
-         transVertEdit[boxNumber]->text() = "<font color='Red'>" + offsetStr + "</font>";
-
-    }
-    else if (value != availRadios[boxNumber].transVertOffset)
-    {
-        qDebug() << "foffset = " << value;
-        transVertEdit[boxNumber]->text() = "<font color='Black'>" + offsetStr + "</font>";
-        availRadios[boxNumber].transVertOffset = value;
-        availRadios[boxNumber].transVertOffsetStr = offsetStr;
-        radioValueChanged[boxNumber] = true;
-        radioChanged = true;
-    }
-}
-
-
-
-void TransVertSetupForm::transNegChecked(int boxNumber)
-{
-    if (!chkloadflg)
-    {
-        availRadios[boxNumber].transVertNegative = transNegCheck[boxNumber]->isChecked();
-        radioValueChanged[boxNumber] = true;
-        radioChanged = true;
-
-    }
-
-
-}
-*/

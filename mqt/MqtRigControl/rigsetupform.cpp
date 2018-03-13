@@ -50,6 +50,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, QWidget *
     fillStopBitsInfo();
     fillParityInfo();
     fillHandShakeInfo();
+    fillPollInterValInfo();
     fillMgmModes();
 
     connect(ui->radioModelBox, SIGNAL(activated(int)), this, SLOT(radioModelSelected()));
@@ -74,6 +75,8 @@ RigSetupForm::~RigSetupForm()
 {
     delete ui;
 }
+
+/************************ Radio Model Dialogue *********************/
 
 
 void RigSetupForm::radioModelSelected()
@@ -138,6 +141,33 @@ void RigSetupForm::radioModelSelected()
 
 
 
+
+QString RigSetupForm::getRadioModel()
+{
+    return ui->radioModelBox->currentText();
+}
+
+
+void RigSetupForm::setRadioModel(QString m)
+{
+    ui->radioModelBox->setCurrentIndex(ui->radioModelBox->findText(m));
+    if (radioData->radioMfg_Name == "Icom")
+    {
+        CIVEditVisible(true);
+    }
+    else
+    {
+        CIVEditVisible(false);
+    }
+
+
+}
+
+
+
+
+
+/********************** CIV Entry ***********************/
 
 void RigSetupForm::civSetToolTip()
 {
@@ -389,12 +419,13 @@ void RigSetupForm::pollIntervalVisible(bool s)
 /************************** TransVert Enable *************************/
 
 
-void RigSetupForm::enableTransVertSelected(bool flag)
+void RigSetupForm::enableTransVertSelected(bool /*flag*/)
 {
-    if(radioData->transVertEnable != flag)
+    bool checked = ui->enableTransVert->isChecked();
+    if(radioData->transVertEnable != ui->enableTransVert->isChecked())
     {
-        radioData->transVertEnable = flag;
-        transVertTabVisible(flag);
+        radioData->transVertEnable = checked;
+        transVertTabEnable(checked);
         radioValueChanged = true;
     }
 
@@ -403,12 +434,13 @@ void RigSetupForm::enableTransVertSelected(bool flag)
 
 bool RigSetupForm::getTransVertSelected()
 {
-    return ui->enableTransVert->isEnabled();
+    return ui->enableTransVert->isChecked();
 }
 
 void RigSetupForm::setTransVertSelected(bool flag)
 {
-    ui->enableTransVert->setEnabled(flag);
+    ui->enableTransVert->setChecked(flag);
+    transVertTabEnable(flag);
 }
 
 /*************************** Serial Data Entry Visible ***************/
@@ -632,12 +664,12 @@ void RigSetupForm::renameTransVerter()
 }
 
 
-void RigSetupForm::transVertTabVisible(bool visible)
+void RigSetupForm::transVertTabEnable(bool enable)
 {
 
-    ui->addTransvert->setVisible(visible);
-    ui->removeTransvert->setVisible(visible);
-    ui->renameTransvert->setVisible(visible);
-    ui->transvertFrame->setVisible(visible);
-    ui->transVertTab->setVisible(visible);
+    ui->addTransvert->setDisabled(!enable);
+    ui->removeTransvert->setDisabled(!enable);
+    ui->renameTransvert->setDisabled(!enable);
+    ui->transvertFrame->setDisabled(!enable);
+    ui->transVertTab->setDisabled(!enable);
 }
