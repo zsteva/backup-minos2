@@ -1705,6 +1705,11 @@ void QSOLogFrame::updateQSODisplay()
    ui->InsertBeforeButton->setEnabled(notProtected);
    ui->InsertAfterButton->setEnabled(notProtected);
 
+   bool mgm = contest->MGMContestRules.getValue();
+
+   ui->ModeComboBoxGJV->setEnabled(!mgm);
+   ui->ModeButton->setEnabled(!mgm);
+
    on_FontChanged();    // do all style sheets again
 
    repaint();
