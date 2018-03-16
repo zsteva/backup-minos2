@@ -31,8 +31,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, QWidget *
     QWidget(parent),
     ui(new Ui::rigSetupForm),
     radioValueChanged(false),
-    radioNameChanged(false),
-    numAvailTransVerters(0)
+    radioNameChanged(false)
 {
 
 
@@ -74,6 +73,12 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, QWidget *
 RigSetupForm::~RigSetupForm()
 {
     delete ui;
+}
+
+
+scatParams* RigSetupForm::getRadioData()
+{
+    return radioData;
 }
 
 /************************ Radio Model Dialogue *********************/
@@ -610,9 +615,9 @@ void RigSetupForm::addTransVerter()
 
 
     // add the new transverter
-    int tabNum = numAvailTransVerters;
+    int tabNum = radioData->numTransverters;
     addTransVertTab(tabNum, transVerterName);
-    radioData->numTransverters = ++numAvailTransVerters;
+    radioData->numTransverters = ++radioData->numTransverters;
     //loadSettingsToTransVertTab(tabNum);
     //saveTransVerter(tabNum);
     emit transVertTabChanged();
@@ -625,7 +630,7 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
     radioData->transVertSettings.append(new TransVertParams());
     radioData->transVertSettings[tabNum]->transVertName = tabName;
     transVertTab.append(new TransVertSetupForm(radioData->transVertSettings[tabNum]));
-    availTransVerters.append(tabName);
+    radioData->transVertNames.append(tabName);
     ui->transVertTab->insertTab(tabNum, transVertTab[tabNum], tabName);
     ui->transVertTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
 
@@ -635,7 +640,7 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
 
 bool RigSetupForm::checkTransVerterNameMatch(QString transVertName)
 {
-    for (int i = 0; i < numAvailTransVerters; i++)
+    for (int i = 0; i < radioData->numTransverters; i++)
     {
         if (ui->transVertTab->tabText(i) == transVertName)
             return true;

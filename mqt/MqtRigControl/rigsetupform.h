@@ -19,10 +19,17 @@ public:
     explicit RigSetupForm(RigControl* _radio, scatParams* _radioData, QWidget *parent = nullptr);
     ~RigSetupForm();
 
-    scatParams *radioData;
+
     bool radioValueChanged;
     bool radioNameChanged;
 
+    scatParams* getRadioData();
+
+
+
+    QVector<TransVertSetupForm*> transVertTab;
+    //QStringList availTransVerters;
+    //int numAvailTransVerters;
 
     QString getRadioModel();
     void setRadioModel(QString m);
@@ -68,9 +75,6 @@ public:
     void networkDataEntryVisible(bool v);
     void serialDataEntryVisible(bool v);
 
-    QVector<TransVertSetupForm*> transVertTab;
-    QStringList availTransVerters;
-    int numAvailTransVerters;
 
     bool getTransVertSelected();
     void setTransVertSelected(bool flag);
@@ -107,7 +111,9 @@ private:
 
     Ui::rigSetupForm *ui;
     RigControl *radio;
-    TransVertSetupForm *transVerter;
+    scatParams *radioData;
+
+    //TransVertSetupForm *transVerter;
 
 
 

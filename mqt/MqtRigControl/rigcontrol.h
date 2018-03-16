@@ -114,6 +114,7 @@ struct scatParams
   ptt_type_t pttType;
   bool transVertEnable  = false;
   QVector<TransVertParams*> transVertSettings;
+  QStringList transVertNames;
   int numTransverters = 0;
 
 };
