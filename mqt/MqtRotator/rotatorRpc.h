@@ -15,6 +15,7 @@
 #define ROTATORRPC_H
 
 #include "base_pch.h"
+#include "RotatorCache.h"
 
 class RotatorMainWindow;
 
@@ -23,15 +24,16 @@ class RotatorRpc : public QObject
     Q_OBJECT
 
     RotatorMainWindow *parent;
-
 public:
     explicit RotatorRpc(RotatorMainWindow *parent);
 
+    RotatorCache rotatorCache;
+
     void publishAntennaList(QString ants);
-    void publishState( const QString &state );
-    void publishBearing( const QString bearing );
-    void publishMaxAzimuth(const QString maxAzimuth);
-    void publishMinAzimuth(const QString minAzimuth);
+    void publishState( const QString &name, const QString &state );
+    void publishBearing( const QString &name, const QString bearing );
+    void publishMaxAzimuth(const QString &name, const QString maxAzimuth);
+    void publishMinAzimuth(const QString &name, const QString minAzimuth);
 
     void flagStatus(QString msg);
 

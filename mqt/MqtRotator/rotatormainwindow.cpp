@@ -562,7 +562,7 @@ void RotatorMainWindow::sendStatusLogger( )
    logMessage(QString("Send %1 message to logger, appName = %2").arg(message).arg(appName));
    if (appName.length() > 0)
    {
-        msg->publishState(message);
+        msg->publishState(selectRotator->currentAntenna.antennaName, message);
    }
 }
 
@@ -720,7 +720,7 @@ void RotatorMainWindow::displayBearing(int bearing)
             ol = "0";
         }
         QString s = QString("%1:%2:%3").arg(QString::number(displayBearing)).arg(QString::number(rotatorBearing)).arg(ol);
-        msg->publishBearing(s);
+        msg->publishBearing(selectRotator->currentAntenna.antennaName, s);
     }
 
     //qDebug() << QString("Bearing = %1").arg(displayBearing);
@@ -1021,6 +1021,14 @@ void RotatorMainWindow::upDateAntenna()
        // flag if rotator supports CW and CCW commands
        supportCwCcwCmd = getCwCcwCmdFlag(selectRotator->currentAntenna.rotatorModelNumber);
 
+        rotatorBearing = 9999;      // force display update
+       // update logger
+       if (appName.length() > 0)
+       {
+           sendStatusToLogStop();
+           msg->publishMaxAzimuth(selectRotator->currentAntenna.antennaName, QString::number(currentMaxAzimuth));
+           msg->publishMinAzimuth(selectRotator->currentAntenna.antennaName, QString::number(currentMinAzimuth));
+       }
        if (rotator->get_serialConnected())
        {
            sendStatusToLogConnected();
@@ -1028,15 +1036,6 @@ void RotatorMainWindow::upDateAntenna()
        else
        {
            sendStatusToLogDisConnected();
-       }
-
-        rotatorBearing = 9999;      // force display update
-       // update logger
-       if (appName.length() > 0)
-       {
-           sendStatusToLogStop();
-           msg->publishMaxAzimuth(QString::number(currentMaxAzimuth));
-           msg->publishMinAzimuth(QString::number(currentMinAzimuth));
        }
     }
     else
@@ -1047,19 +1046,18 @@ void RotatorMainWindow::upDateAntenna()
         if (appName.length() > 0)
         {
             writeWindowTitle(appName);
+            msg->publishMaxAzimuth("", QString::number(0));
+            msg->publishMinAzimuth("", QString::number(0));
             sendStatusToLogDisConnected();
             sendStatusToLogStop();
-            msg->publishMaxAzimuth(QString::number(0));
-            msg->publishMinAzimuth(QString::number(0));
         }
         else
         {
             writeWindowTitle(appName);
         }
-
-
-
     }
+    msg->rotatorCache.publishDetails();
+    msg->rotatorCache.publishState();
 
     dumpRotatorToTraceLog();
 

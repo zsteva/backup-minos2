@@ -86,6 +86,7 @@ class BaseContestLog: public BaseLogList
       }
 
    public:
+      QString uuid;
       int cslotno;
       int unfilledCount;
 

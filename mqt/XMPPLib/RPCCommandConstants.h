@@ -12,6 +12,8 @@ static const QString subscribe          = QT_TR_NOOP("Minos:PubSub:Subscribe");
 static const QString serverNotify       = QT_TR_NOOP("Minos:PubSub:ServerNotify");
 static const QString clientNotify       = QT_TR_NOOP("Minos:PubSub:ClientNotify");
 
+static const QString selected           = QT_TR_NOOP("Selected");
+
 // Server Categories
 
 static const QString StationCategory    = QT_TR_NOOP("Station");
@@ -60,7 +62,7 @@ static const QString keyerTwoTone       = QT_TR_NOOP("TwoTone");
 static const QString keyerStop          = QT_TR_NOOP("Stop");
 
 static const QString KeyerCategory      = QT_TR_NOOP("Keyer");
-static const QString keyerKeyReport     = QT_TR_NOOP("Report");
+static const QString keyerReport     = QT_TR_NOOP("Report");
 
 // Control
 static const QString controlApp         = QT_TR_NOOP("Control");
@@ -86,9 +88,10 @@ static const QString rotatorParamDirection    = QT_TR_NOOP("RotatorDirection");
 static const QString rotatorParamAngle  = QT_TR_NOOP("RotatorAngle");
 
 static const QString RotatorCategory    = QT_TR_NOOP("Rotator");
-static const QString rotatorKeyState    = QT_TR_NOOP("State");
+static const QString RotatorDetailCategory    = QT_TR_NOOP("RotatorDetail");
+static const QString rotatorState       = QT_TR_NOOP("State");
 static const QString rotatorBearing     = QT_TR_NOOP("Bearing");
-static const QString rotatorList     = QT_TR_NOOP("rotList");
+static const QString rotatorList        = QT_TR_NOOP("rotList");
 
 static const QString rotatorAntennaName = QT_TR_NOOP("AntennaName");
 static const QString rotatorMaxAzimuth  = QT_TR_NOOP("MaxAzimuth");
@@ -98,17 +101,16 @@ static const QString rotatorMinAzimuth  = QT_TR_NOOP("MinAzimuth");
 static const QString rigControlApp         = QT_TR_NOOP("RigControl");
 static const QString rigControlResult      = QT_TR_NOOP("RigControlResult");
 static const QString rigControlMethod      = QT_TR_NOOP("Minos:RigControl");
-static const QString rigControlRadioName = QT_TR_NOOP("RadioName");
 static const QString rigControlCategory    = QT_TR_NOOP("RigControl");
 static const QString rigControlRadioList   = QT_TR_NOOP("RadioList");
-static const QString rigControlKeyMode     = QT_TR_NOOP("Mode");
-static const QString rigControlKeyState    = QT_TR_NOOP("State");
-static const QString rigControlKeyErrorMsg    = QT_TR_NOOP("ErrorMsg");
-static const QString rigControlKeyFreq     = QT_TR_NOOP("Frequency");
-static const QString rigControlKeyRadioName = QT_TR_NOOP("RadioName");
-static const QString rigControlKeyTxVertStatus = QT_TR_NOOP("TransVertStatus");
-static const QString rigControlKeyTxVertOffsetFreq = QT_TR_NOOP("TransVertOffSetFreq");
-static const QString rigControlKeyTxVertSwitch = QT_TR_NOOP("TransVertSwitch");
+static const QString rigControlState       = QT_TR_NOOP("State");
+static const QString rigControlErrorMsg    = QT_TR_NOOP("ErrorMsg");
+static const QString rigControlFreq        = QT_TR_NOOP("Frequency");
+static const QString rigControlMode        = QT_TR_NOOP("Mode");
+static const QString rigControlRadioName   = QT_TR_NOOP("RadioName");
+static const QString rigControlTxVertStatus = QT_TR_NOOP("TransVertStatus");
+static const QString rigControlTxVertOffsetFreq = QT_TR_NOOP("TransVertOffSetFreq");
+static const QString rigControlTxVertSwitch = QT_TR_NOOP("TransVertSwitch");
 
 }
 #endif // RPCCOMMANDRCONSTANTS_H

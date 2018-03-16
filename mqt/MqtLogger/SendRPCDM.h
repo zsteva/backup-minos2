@@ -28,6 +28,8 @@ class TSendDM : public QObject
     Q_OBJECT
    private:  	// User declarations
 
+      LoggerContestLog *contest;
+
       void logMessage( QString s );
 
       Connectable keyerServerConnectable;
@@ -38,7 +40,7 @@ class TSendDM : public QObject
    public:  		// User declarations
       TSendDM( QWidget* Owner, LoggerContestLog *ct );
       ~TSendDM();
-      void resetConnectables(LoggerContestLog *ct);
+      void resetConnectables();
 
       void sendKeyerPlay( int fno );
       void sendKeyerRecord( int fno );

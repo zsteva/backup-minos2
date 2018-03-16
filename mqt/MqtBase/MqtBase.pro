@@ -51,7 +51,15 @@ SOURCES += \
     ConfigElementFrame.cpp \
     MatchCollection.cpp \
     rigutils.cpp \
-    minostablewidget.cpp
+    minostablewidget.cpp \
+    MinosElement.cpp \
+    RigState.cpp \
+    AntennaState.cpp \
+    AntennaDetail.cpp \
+    KeyerState.cpp \
+    PubSubValue.cpp \
+    RotatorCache.cpp \
+    RigCache.cpp
 
 HEADERS += \
     BandList.h \
@@ -90,7 +98,15 @@ HEADERS += \
     rigcontrolcommonconstants.h \
     MatchCollection.h \
     rigutils.h \
-    minostablewidget.h
+    minostablewidget.h \
+    MinosElement.h \
+    RigState.h \
+    AntennaState.h \
+    AntennaDetail.h \
+    KeyerState.h \
+    PubSubValue.h \
+    RotatorCache.h \
+    RigCache.h
 
 unix {
     target.path = /usr/lib

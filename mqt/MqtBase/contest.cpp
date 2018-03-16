@@ -10,7 +10,7 @@
 #include "Calendar.h"
 #include "CalendarList.h"
 
-BaseContestLog::BaseContestLog( void ) :
+BaseContestLog::BaseContestLog( ) :
       protectedContest( false ), suppressProtected(false),  unwriteable(false),
       nextBlock( 1 ),
       unfilledCount(0),
@@ -36,6 +36,7 @@ BaseContestLog::BaseContestLog( void ) :
       bonusYearLoaded(0),
       MGMContestRules(false)
 {
+   uuid = makeUuid();
    bearingOffset.setValue(0);
    currentMode.setValue( "USB" );
    int i;

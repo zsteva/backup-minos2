@@ -231,7 +231,7 @@ void MainWindow::on_transfer21Button_clicked()
     RPCGeneralClient rpc(rpcConstants::rigControlMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-    st->addMember( QString::number(freq), rpcConstants::rigControlKeyFreq );
+    st->addMember( QString::number(freq), rpcConstants::rigControlFreq );
     rpc.getCallArgs() ->addParam( st );
 
     rpc.queueCall( rpcConstants::rigControlApp + "@localhost");
@@ -245,21 +245,21 @@ void MainWindow::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QSt
 
     if ( an.getOK() && an.getPublisherProgram() == rpcConstants::rigControlApp )
     {
-        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyState )
+        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlState )
         {
             state = an.getValue();
         }
-        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyMode )
+        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlMode )
         {
             mode = an.getValue();
         }
-        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyFreq )
+        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlFreq )
         {
             freq = an.getValue();
             freq = freq.replace(".", "");
             ui->QF1Label->setText(freq);
         }
-        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlKeyRadioName )
+        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioName )
         {
             radioName = an.getValue();
             ui->Rig1Label->setText(radioName);

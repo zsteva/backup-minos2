@@ -91,6 +91,7 @@ void TLogContainer::subscribeApps()
         rpc->subscribeRemote( servers[i], rpcConstants::KeyerCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::BandMapCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::RotatorCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::RotatorDetailCategory );
     }
 }
 
@@ -705,7 +706,7 @@ void TLogContainer::ContestDetailsActionExecute()
             pced.setDetails( ct );
             if ( pced.exec() == QDialog::Accepted )
             {
-                f->sendDM->resetConnectables(ct);
+                f->sendDM->resetConnectables();
                 subscribeApps();
                 // and we need to do some re-init on the display
                 f->updateQSODisplay();
@@ -1117,7 +1118,7 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
          f->logColumnsChanged = true;  // also causes show QSOs
          f->splittersChanged = true;
 
-         f->sendDM->resetConnectables(contest);
+         f->sendDM->resetConnectables();
          subscribeApps();
 
          on_ContestPageControl_currentChanged(tno);
