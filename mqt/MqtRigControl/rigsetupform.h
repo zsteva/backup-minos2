@@ -30,6 +30,7 @@ public:
     QVector<TransVertSetupForm*> transVertTab;
     //QStringList availTransVerters;
     //int numAvailTransVerters;
+    void addTransVertTab(int tabNum, QString tabName);
 
     QString getRadioModel();
     void setRadioModel(QString m);
@@ -130,7 +131,7 @@ private:
 
 
     void fillPollInterValInfo();
-    void addTransVertTab(int tabNum, QString tabName);
+
     bool checkTransVerterNameMatch(QString transVertName);
 };
 

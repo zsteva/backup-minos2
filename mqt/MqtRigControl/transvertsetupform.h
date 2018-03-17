@@ -21,6 +21,8 @@ public:
     bool tansVertValueChanged;
     bool transVertNameChanged;
 
+    void setBand(QString b);
+    QString getBand();
 
     QString getTransVerSwNum();
     void setTransVerSwNum(QString s);
@@ -35,6 +37,9 @@ public:
     void setTransVertOffsetFreq(QString s);
 
     void setUiItemsVisible(bool visible);
+
+
+
 signals:
 
 public slots:

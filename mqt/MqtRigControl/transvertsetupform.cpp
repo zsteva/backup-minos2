@@ -65,6 +65,17 @@ void TransVertSetupForm::loadBands()
 
 }
 
+void TransVertSetupForm::setBand(QString b)
+{
+    ui->bandSel->setCurrentText(b);
+}
+
+
+QString TransVertSetupForm::getBand()
+{
+    return ui->bandSel->currentText();
+}
+
 
 /********************* TransVert Offset Freq  *********************************/
 

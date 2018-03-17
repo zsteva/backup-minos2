@@ -112,7 +112,8 @@ private:
 
     QVector<RigSetupForm*> radioTab;
 
-
+    QSettings availRadioIni;
+    //QSettings transVerterIni;
 
 
     bool chkloadflg = false;
@@ -145,6 +146,7 @@ private:
     void saveRadio(int i);
     bool checkRadioNameMatch(QString radioName);
     void saveTranVerterSetting(int radioNum, int transVertNum, QSettings  &config);
+    void readTranVerterSetting(int radioNum, int transVertNum, QSettings &config);
 };
 
 #endif // SETUPDIALOG_H
