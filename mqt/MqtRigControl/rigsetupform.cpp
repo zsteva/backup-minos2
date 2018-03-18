@@ -746,6 +746,6 @@ void RigSetupForm::transVertTabEnable(bool enable)
     ui->addTransvert->setDisabled(!enable);
     ui->removeTransvert->setDisabled(!enable);
     ui->renameTransvert->setDisabled(!enable);
-    ui->transvertFrame->setDisabled(!enable);
+    //ui->transvertFrame->setDisabled(!enable);
     ui->transVertTab->setDisabled(!enable);
 }
