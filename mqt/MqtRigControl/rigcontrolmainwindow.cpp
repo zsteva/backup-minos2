@@ -132,7 +132,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
         }
         else
         {
-//            ui->selectRadioBox->setCurrentIndex(ui->selectRadioBox->findText(setupRadio->currentRadioName)); *****************************************
+            ui->selectRadioBox->setCurrentText(setupRadio->currentRadioName);
         }
     }
 
@@ -144,7 +144,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
     if (appName.length() == 0)
     {
-//        upDateRadio();   *************************************
+        upDateRadio();
     }
 
 
@@ -348,7 +348,7 @@ void RigControlMainWindow::upDateRadio()
             }
 
 
-            if (setupRadio->availRadioData[ridx]->radioModelNumber == 0)
+            if (setupRadio->currentRadio->radioModelNumber == 0)
             {
                 closeRadio();
                 QMessageBox::critical(this, tr("Radio Error"), "Please configure a radio name and model");
@@ -549,12 +549,11 @@ void RigControlMainWindow::openRadio()
             return;
         }
 
-        scatParams* p = setupRadio->getCurrentRadio();
 
         if (!radio->get_serialConnected())
         {
             // if radio is already open, don't reinit it
-            //retCode = radio->init(setupRadio->currentRadio);
+            retCode = radio->init(setupRadio->currentRadio);
             if (retCode < 0)
             {
                 logMessage(QString("Error Opening Radio Error Code = %1").arg(QString::number(retCode)));
@@ -572,8 +571,8 @@ void RigControlMainWindow::openRadio()
             if (rig_port_e(setupRadio->currentRadio->portType) == RIG_PORT_SERIAL)
             {
                     showStatusMessage(QString("Connected: %1 - %2, %3, %4, %5, %6, %7, %8")
-                                      .arg(p->radioName).arg(p->radioModel).trimmed().arg(p->comport).arg(p->baudrate).arg(p->databits)
-                                      .arg(p->stopbits).arg(radio->getParityCodeNames()[p->parity]).arg(radio->getHandShakeNames()[p->handshake]));
+                                      .arg(setupRadio->currentRadio->radioName).arg(setupRadio->currentRadio->radioModel).trimmed().arg(setupRadio->currentRadio->comport).arg(setupRadio->currentRadio->baudrate).arg(setupRadio->currentRadio->databits)
+                                      .arg(setupRadio->currentRadio->stopbits).arg(radio->getParityCodeNames()[setupRadio->currentRadio->parity]).arg(radio->getHandShakeNames()[setupRadio->currentRadio->handshake]));
 
 
             }

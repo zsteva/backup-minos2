@@ -132,7 +132,7 @@ class RigControl : public QObject
 public:
     explicit RigControl(QObject *parent = 0);
     ~RigControl();
-    int init(scatParams currentRadio);
+    int init(scatParams* currentRadio);
     bool enabled() {return rigControlEnabled;}
 
     int getFrequency(vfo_t vfo, freq_t*);
