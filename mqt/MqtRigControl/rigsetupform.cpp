@@ -630,24 +630,24 @@ void RigSetupForm::addTransVerter()
 
     // add the new transverter
     int tabNum = radioData->numTransverters;
+    radioData->transVertNames.append(transVerterName);
     addTransVertTab(tabNum, transVerterName);
-    radioData->numTransverters = ++radioData->numTransverters;
+    radioData->numTransverters = tabNum + 1;
     //loadSettingsToTransVertTab(tabNum);
-    //saveTransVerter(tabNum);
-    emit transVertTabChanged();
-
 }
 
-// numAvailTransverters indexs to the transVertData for this tab
+
 void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
 {
     radioData->transVertSettings.append(new TransVertParams());
     radioData->transVertSettings[tabNum]->transVertName = tabName;
     transVertTab.append(new TransVertSetupForm(radioData->transVertSettings[tabNum]));
-    radioData->transVertNames.append(tabName);
+    //radioData->transVertNames.append(tabName);
     ui->transVertTab->insertTab(tabNum, transVertTab[tabNum], tabName);
     ui->transVertTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
-
+    ui->transVertTab->setCurrentIndex(tabNum);
+    transVertTab[tabNum]->setEnableTransVertSwBoxVisible(false);
+    transVertTab[tabNum]->tansVertValueChanged = true;
 
 }
 
@@ -667,8 +667,42 @@ bool RigSetupForm::checkTransVerterNameMatch(QString transVertName)
 void RigSetupForm::removeTransVerter()
 {
 
+    int currentIndex = ui->transVertTab->currentIndex();
+    QString currentName = ui->transVertTab->tabText(currentIndex);
 
+    int status = QMessageBox::question( this,
+                            tr("Remove Transverter"),
+                            tr("Do you really want to remove transverter - %1?")
+                            .arg(currentName),
+                            QMessageBox::Yes|QMessageBox::Default,
+                            QMessageBox::No|QMessageBox::Escape,
+                            QMessageBox::NoButton);
 
+    if (status != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    // remove this transverter
+    ui->transVertTab->removeTab(currentIndex);
+    radioData->transVertNames.removeAt(currentIndex);
+    radioData->transVertSettings.removeAt(currentIndex);
+    radioData->numTransverters--;
+
+    QString fileName = TRANSVERT_PATH_LOGGER + radioData->radioName + FILENAME_TRANSVERT_RADIOS;
+
+    QSettings config(fileName, QSettings::IniFormat);
+    config.beginGroup(currentName);
+    if (radioData->numTransverters > 1)
+    {
+        config.remove(currentName);
+    }
+    else
+    {
+        config.remove("");      // remove all keys for this group
+    }
+
+    config.endGroup();
 
 }
 
@@ -677,8 +711,31 @@ void RigSetupForm::removeTransVerter()
 void RigSetupForm::renameTransVerter()
 {
 
+    int currentIndex = ui->transVertTab->currentIndex();
+    QString currentName = ui->transVertTab->tabText(currentIndex);
+
+    bool ok;
+    QString text = QInputDialog::getText(this, QString("Edit Transverter Name - %1").arg(currentName),
+                                         tr("New Transverter Name:"), QLineEdit::Normal,
+                                         "", &ok);
+    if (ok && !text.isEmpty())
+    {
+        ui->transVertTab->setTabText(currentIndex, text);
+        radioData->transVertNames[currentIndex] = text;
+        radioData->transVertSettings[currentIndex]->transVertName = text;
 
 
+        QString fileName = TRANSVERT_PATH_LOCAL + radioData->radioName + FILENAME_TRANSVERT_RADIOS;
+
+        QSettings config(fileName, QSettings::IniFormat);
+        config.beginGroup(radioData->radioName);config.setValue("name", text);
+        config.endGroup();
+
+    }
+    else
+    {
+        return;
+    }
 
 }
 

@@ -85,8 +85,10 @@ public:
 
     void setTransVertTabText(int tabNum, QString tabName);
 
+    void setAppName(QString name);
+
 signals:
-    void transVertTabChanged();
+    void transVertTabAdded(int);
 
 
 private slots:
@@ -117,7 +119,7 @@ private:
     scatParams *radioData;
 
     //TransVertSetupForm *transVerter;
-
+    QString appName;
 
 
 

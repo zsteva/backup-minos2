@@ -48,6 +48,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     connect(ui->editRadioName, SIGNAL(clicked()), this, SLOT(editRadioName()));
 
 
+
     // radio settings ini file
     QString fileName;
     if (appName == "")
@@ -91,7 +92,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
             {
                 for (int t = 0; t < availRadioData[i]->numTransverters; t++)
                 {
-                   radioTab[i]->addTransVertTab(t, "");
+                   radioTab[i]->addTransVertTab(t, radioTab[i]->getRadioData()->transVertNames[t] );
                 }
             }
 
