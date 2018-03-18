@@ -42,6 +42,9 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *
 }
 
 
+
+
+
 /********************* Band Selection *********************************/
 
 
@@ -119,7 +122,7 @@ QString TransVertSetupForm::getTransVertOffsetFreq()
 
 void TransVertSetupForm::setTransVertOffsetFreq(QString s)
 {
-    ui->TransVertOffset->setText(s);
+    ui->TransVertOffset->setText(convertFreqStrDispSingle(s));
 }
 
 
@@ -195,12 +198,12 @@ void TransVertSetupForm::transVertSwNumSel()
 
 QString TransVertSetupForm::getTransVerSwNum()
 {
-    return ui->TransVertOffset->text().trimmed();
+    return ui->transVertSwNum->text().trimmed();
 }
 
 void TransVertSetupForm::setTransVerSwNum(QString s)
 {
-    ui->TransVertOffset->setText(s);
+    ui->transVertSwNum->setText(s);
 }
 
 

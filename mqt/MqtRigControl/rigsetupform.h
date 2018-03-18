@@ -83,6 +83,8 @@ public:
     void CIVEditVisible(bool visible);
     void transVertTabEnable(bool visible);
 
+    void setTransVertTabText(int tabNum, QString tabName);
+
 signals:
     void transVertTabChanged();
 

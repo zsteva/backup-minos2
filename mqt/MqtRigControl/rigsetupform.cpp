@@ -595,6 +595,20 @@ void RigSetupForm::fillMgmModes()
 /******************* Transverter ***********************************/
 
 
+/********************* TabText *****************************************/
+
+
+void RigSetupForm::setTransVertTabText(int tabNum, QString tabName)
+{
+    ui->transVertTab->setTabText(tabNum, tabName);
+}
+
+
+
+
+
+
+
 void RigSetupForm::addTransVerter()
 {
     QString transVerterName = QInputDialog::getText(this, tr("Enter Transverter Name"), tr("Please enter a Transverter Name:"), QLineEdit::Normal);

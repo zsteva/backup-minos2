@@ -38,16 +38,7 @@ namespace Ui {
 class SetupDialog;
 }
 
-class TransVerters
-{
 
-public:
-
-    QString radioName;
-    QStringList availTransverters;
-    int numAvailTransVerters = 0;
-
-};
 
 
 class SetupDialog : public QDialog
@@ -66,17 +57,9 @@ public:
     QStringList availRadios;
     int numAvailRadios;
 
-    QVector<TransVerters> transVerterInfo;
-
 
     scatParams* getCurrentRadio() const;
     int getRadioId(QString rotator);
-
-
-    //scatParams availRadios[NUM_RADIOS];
-    //scatParams currentRadio;
-
-
 
 
     void readCurrentRadio();

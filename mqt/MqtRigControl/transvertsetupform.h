@@ -38,7 +38,7 @@ public:
 
     void setUiItemsVisible(bool visible);
 
-
+     void setEnableTransVertSwBoxVisible(bool visible);
 
 signals:
 
@@ -62,7 +62,7 @@ private:
 
 
     void loadBands();
-    void setEnableTransVertSwBoxVisible(bool visible);
+
 };
 
 #endif // TRANSVERTSETUPFORM_H
