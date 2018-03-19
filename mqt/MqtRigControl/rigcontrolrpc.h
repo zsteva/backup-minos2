@@ -12,13 +12,10 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
-
 #ifndef RIGCONTROLRPC_H
 #define RIGCONTROLRPC_H
+
+#include "RigCache.h"
 
 #include "base_pch.h"
 
@@ -30,9 +27,10 @@ class RigControlRpc : public QObject
 
     RigControlMainWindow *parent;
 
-
 public:
     explicit RigControlRpc(RigControlMainWindow *parent);
+
+    RigCache rigCache;
 
     void publishRadioNames(QStringList radios);
     void publishRadioName(const QString &radioName);

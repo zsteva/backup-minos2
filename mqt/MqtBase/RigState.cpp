@@ -2,7 +2,27 @@
 #include "RPCCommandConstants.h"
 #include "MTrace.h"
 
-RigState::RigState(QString s):PubSubValue(RigStateType)
+void RigState::setStatus(const QString &status)
+{
+    _status.setValue(status);
+}
+
+RigState::RigState()
+    :PubSubValue(RigStateType)
+{}
+RigState::RigState(const QString &status, const QString &sel, int f, const QString &m, double tvo, int tvsw, bool tvst)
+    :PubSubValue(RigStateType)
+{
+    _status.setValue(status);
+    _selected.setValue(sel);
+    _freq.setValue(f);
+    _mode.setValue(m);
+    _transverterOffset.setValue(tvo);
+    _transverterSwitch.setValue(tvsw);
+    _transverterStatus.setValue(tvst);
+}
+RigState::RigState(QString s)
+    :PubSubValue(RigStateType)
 {
     unpack(s);
 }
@@ -10,17 +30,57 @@ RigState::~RigState()
 {
 
 }
+bool RigState::isDirty()
+{
+    return  _status.isDirty() ||
+            _selected.isDirty() ||
+            _freq.isDirty() ||
+            _mode.isDirty() ||
+            _transverterOffset.isDirty() ||
+            _transverterSwitch.isDirty() ||
+            _transverterStatus.isDirty();
+}
+void RigState::setSelected(const QString &selected)
+{
+    _selected.setValue(selected);
+}
+
+void RigState::setFreq(double freq)
+{
+    _freq.setValue(freq);
+}
+
+void RigState::setMode(const QString &mode)
+{
+    _mode.setValue(mode);
+}
+
+void RigState::setTransverterOffset(double transverterOffset)
+{
+    _transverterOffset.setValue(transverterOffset);
+}
+
+void RigState::setTransverterSwitch(int transverterSwitch)
+{
+    _transverterSwitch.setValue(transverterSwitch);
+}
+
+void RigState::setTransverterStatus(bool transverterStatus)
+{
+    _transverterStatus.setValue(transverterStatus);
+}
 
 QString RigState::pack()
 {
     QJsonObject jv;
 
-    jv.insert(rpcConstants::selected, _selected);
-    jv.insert(rpcConstants::rigControlFreq, _freq);
-    jv.insert(rpcConstants::rigControlMode, _mode);
-    jv.insert(rpcConstants::rigControlTxVertOffsetFreq, _transverterOffset);
-    jv.insert(rpcConstants::rigControlTxVertSwitch, _transverterSwitch);
-    jv.insert(rpcConstants::rigControlTxVertStatus, _transverterStatus);
+    jv.insert(rpcConstants::selected, selected());
+    jv.insert(rpcConstants::rigControlState, status());
+    jv.insert(rpcConstants::rigControlFreq, freq());
+    jv.insert(rpcConstants::rigControlMode, mode());
+    jv.insert(rpcConstants::rigControlTxVertOffsetFreq, transverterOffset());
+    jv.insert(rpcConstants::rigControlTxVertSwitch, transverterSwitch());
+    jv.insert(rpcConstants::rigControlTxVertStatus, transverterStatus());
 
     QJsonDocument json(jv);
 
@@ -34,12 +94,13 @@ void RigState::unpack(QString s)
     QJsonDocument json = QJsonDocument::fromJson(s.toUtf8(), &err);
     if (!err.error)
     {
-        _selected = json.object().value(rpcConstants::selected).toString();
-        _freq = json.object().value(rpcConstants::rigControlFreq).toDouble();
-        _mode = json.object().value(rpcConstants::rigControlMode).toString();
-        _transverterOffset = json.object().value(rpcConstants::rigControlTxVertOffsetFreq).toDouble();
-        _transverterSwitch = json.object().value(rpcConstants::rigControlTxVertSwitch).toInt();
-        _transverterStatus = json.object().value(rpcConstants::rigControlTxVertStatus).toString();
+        _selected.setValue(json.object().value(rpcConstants::selected).toString());
+        _status.setValue(json.object().value(rpcConstants::rigControlState).toString());
+        _freq.setValue(json.object().value(rpcConstants::rigControlFreq).toDouble());
+        _mode.setValue(json.object().value(rpcConstants::rigControlMode).toString());
+        _transverterOffset.setValue(json.object().value(rpcConstants::rigControlTxVertOffsetFreq).toDouble());
+        _transverterSwitch.setValue(json.object().value(rpcConstants::rigControlTxVertSwitch).toInt());
+        _transverterStatus.setValue(json.object().value(rpcConstants::rigControlTxVertStatus).toBool());
     }
     else
     {
@@ -49,30 +110,35 @@ void RigState::unpack(QString s)
 }
 QString RigState::selected() const
 {
-    return _selected;
+    return _selected.getValue();
 }
+QString RigState::status() const
+{
+    return _status.getValue();
+}
+
 
 double RigState::freq() const
 {
-    return _freq;
+    return _freq.getValue();
 }
 
 QString RigState::mode() const
 {
-    return _mode;
+    return _mode.getValue();
 }
 
 double RigState::transverterOffset() const
 {
-    return _transverterOffset;
+    return _transverterOffset.getValue();
 }
 
 int RigState::transverterSwitch() const
 {
-    return _transverterSwitch;
+    return _transverterSwitch.getValue();
 }
 
-QString RigState::transverterStatus() const
+bool RigState::transverterStatus() const
 {
-    return _transverterStatus;
+    return _transverterStatus.getValue();
 }

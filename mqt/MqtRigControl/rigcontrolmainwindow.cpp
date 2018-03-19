@@ -463,6 +463,8 @@ void RigControlMainWindow::upDateRadio()
 
     }
 
+    msg->rigCache.publishState();
+
     if (radio->get_serialConnected())
     {
         pollTimer->start(pollTime);             // start timer to send poll radio
@@ -601,6 +603,7 @@ void RigControlMainWindow::refreshRadio()
             showStatusMessage(tr("Radio Open error"));
         }
 
+        msg->rigCache.publishState();
 
     }
 
@@ -616,6 +619,7 @@ void RigControlMainWindow::refreshRadio()
         sendStatusToLogDisConnected();
         logMessage(QString("Radio Closed"));
 
+        msg->rigCache.publishState();
 
 
     }
@@ -721,6 +725,7 @@ void RigControlMainWindow::refreshRadio()
             }
 
     */
+        msg->rigCache.publishState();
 
     }
 
@@ -782,6 +787,7 @@ void RigControlMainWindow::refreshRadio()
             logger_freq = freq;
             setFreq(freq, RIG_VFO_CURR);
         }
+        msg->rigCache.publishState();
 
     }
 
@@ -998,6 +1004,7 @@ void RigControlMainWindow::refreshRadio()
                 setMode(mode, RIG_VFO_CURR);
             }
         }
+        msg->rigCache.publishState();
 
     }
 
@@ -1036,6 +1043,7 @@ void RigControlMainWindow::refreshRadio()
             logMessage(QString("Set Mode: radio not connected"));
         }
         cmdLockOff();
+        msg->rigCache.publishState();
     }
 
 
@@ -1295,6 +1303,7 @@ void RigControlMainWindow::refreshRadio()
         {
             logMessage(QString("Send status to logger = %1").arg(message));
             msg->publishState(message);
+            msg->rigCache.setStatus(selectRig->currentRadio.radioName, message);
         }
     }
 
@@ -1303,14 +1312,12 @@ void RigControlMainWindow::refreshRadio()
     {
             logMessage(QString("Send status to logger connected"));
             sendStatusLogger(RIG_STATUS_CONNECTED);
-
     }
 
     void RigControlMainWindow::sendStatusToLogDisConnected()
     {
             logMessage(QString("Send status to logger disconnected"));
             sendStatusLogger(RIG_STATUS_DISCONNECTED);
-
     }
 
 
@@ -1326,6 +1333,7 @@ void RigControlMainWindow::refreshRadio()
 
         logMessage(QString("Send error message to logger: %1").arg(errMsg));
         msg->publishErrorMsg(errMsg);
+        msg->rigCache.setStatus(selectRig->currentRadio.radioName, errMsg);
 
     }
 
@@ -1336,6 +1344,7 @@ void RigControlMainWindow::refreshRadio()
         {
             logMessage(QString("Send freq to logger = %1").arg(convertFreqToStr(freq)));
             msg->publishFreq(convertFreqToStr(freq));
+            msg->rigCache.setFreq(selectRig->currentRadio.radioName, freq);
         }
     }
 
@@ -1345,6 +1354,7 @@ void RigControlMainWindow::refreshRadio()
         {
             logMessage(QString("Send mode to logger = %1").arg(mode));
             msg->publishMode(mode);
+            msg->rigCache.setMode(selectRig->currentRadio.radioName, mode);
         }
     }
 
@@ -1363,6 +1373,8 @@ void RigControlMainWindow::refreshRadio()
             }
             logMessage(QString("Send Transvert Status to logger = %1").arg(flag));
             msg->publishTransVertStatus(flag);
+            msg->rigCache.setTransverterStatus(selectRig->currentRadio.radioName, status);
+
         }
     }
 
@@ -1371,6 +1383,8 @@ void RigControlMainWindow::refreshRadio()
         QString f = convertFreqToStr(selectRig->currentRadio.transVertOffset);
         logMessage(QString("Send Transvert Offset to logger = %1%2").arg(selectRig->currentRadio.transVertEnable ? f = "-" : f = "+").arg(f));
         msg->publishTransVertOffSetFreq(selectRig->currentRadio.transVertNegative, f);
+        msg->rigCache.setTransverterOffset(selectRig->currentRadio.radioName, selectRig->currentRadio.transVertOffset);
+
 
     }
 
@@ -1378,6 +1392,7 @@ void RigControlMainWindow::refreshRadio()
     {
         logMessage(QString("Send Transvert Switch Number to logger = %1").arg(swNum));
         msg->publishTransVertSwitch(swNum);
+        msg->rigCache.setTransverterSwitch(selectRig->currentRadio.radioName, swNum.toInt());
 
     }
 
