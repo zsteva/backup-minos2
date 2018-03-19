@@ -22,6 +22,7 @@ public:
     ~RigState();
 
     bool isDirty();
+    void clearDirty();
 
     virtual QString pack();
     virtual void unpack(QString);

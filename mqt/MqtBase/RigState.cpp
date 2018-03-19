@@ -40,6 +40,16 @@ bool RigState::isDirty()
             _transverterSwitch.isDirty() ||
             _transverterStatus.isDirty();
 }
+void RigState::clearDirty()
+{
+    _status.clearDirty();
+    _selected.clearDirty();
+    _freq.clearDirty();
+    _mode.clearDirty();
+    _transverterOffset.clearDirty();
+    _transverterSwitch.clearDirty();
+    _transverterStatus.clearDirty();
+}
 void RigState::setSelected(const QString &selected)
 {
     _selected.setValue(selected);

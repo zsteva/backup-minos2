@@ -24,6 +24,7 @@ public:
     virtual QString pack();
     virtual void unpack(QString);
     bool isDirty();
+    void clearDirty();
 
     int bearing() const;
     QString selected() const;

@@ -88,7 +88,8 @@ static const QString rotatorParamDirection    = QT_TR_NOOP("RotatorDirection");
 static const QString rotatorParamAngle  = QT_TR_NOOP("RotatorAngle");
 
 static const QString RotatorCategory    = QT_TR_NOOP("Rotator");
-static const QString RotatorDetailCategory    = QT_TR_NOOP("RotatorDetail");
+static const QString rotatorDetailCategory    = QT_TR_NOOP("RotatorDetail");
+static const QString rotatorStateCategory    = QT_TR_NOOP("RotatorState");
 static const QString rotatorState       = QT_TR_NOOP("State");
 static const QString rotatorBearing     = QT_TR_NOOP("Bearing");
 static const QString rotatorList        = QT_TR_NOOP("rotList");
@@ -102,6 +103,7 @@ static const QString rigControlApp         = QT_TR_NOOP("RigControl");
 static const QString rigControlResult      = QT_TR_NOOP("RigControlResult");
 static const QString rigControlMethod      = QT_TR_NOOP("Minos:RigControl");
 static const QString rigControlCategory    = QT_TR_NOOP("RigControl");
+static const QString rigStateCategory      = QT_TR_NOOP("RigState");
 static const QString rigControlRadioList   = QT_TR_NOOP("RadioList");
 static const QString rigControlState       = QT_TR_NOOP("State");
 static const QString rigControlErrorMsg    = QT_TR_NOOP("ErrorMsg");

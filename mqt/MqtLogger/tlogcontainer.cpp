@@ -76,6 +76,9 @@ void TLogContainer::subscribeApps()
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
     MinosConfig *config = MinosConfig::getMinosConfig();
 
+    connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
+
+
     QStringList servers;
     for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = config->elelist.begin(); i != config->elelist.end(); i++ )
     {
@@ -91,7 +94,9 @@ void TLogContainer::subscribeApps()
         rpc->subscribeRemote( servers[i], rpcConstants::KeyerCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::BandMapCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::RotatorCategory );
-        rpc->subscribeRemote( servers[i], rpcConstants::RotatorDetailCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::rotatorDetailCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::rotatorStateCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::rigStateCategory );
     }
 }
 
@@ -1648,3 +1653,26 @@ TSingleLogFrame *TLogContainer::findContest(BaseContestLog *ct )
    return 0;
 }
 //---------------------------------------------------------------------------
+void TLogContainer::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
+{
+    // PubSub notifications
+    AnalysePubSubNotify an( err, mro );
+    trace( "Notify callback from " + from + ( err ? ":Error " : ":Normal " ) +  an.getPublisherProgram() + "@" + an.getPublisherServer());
+
+    if ( an.getOK() /*&& an.getState() == psPublished*/)
+    {
+        if ( an.getCategory() == rpcConstants::rigStateCategory)
+        {
+             rigCache.setStateString(an.getKey(), an.getValue());
+        }
+        else if ( an.getCategory() == rpcConstants::rotatorDetailCategory )
+        {
+            rotatorCache.setDetailString(an.getKey(), an.getValue());
+        }
+        else if ( an.getCategory() == rpcConstants::rotatorStateCategory )
+        {
+            rotatorCache.setStateString(an.getKey(), an.getValue());
+        }
+
+    }
+}

@@ -61,7 +61,10 @@ void RigCache::publishState()
     for(QMap<QString, RigState>::iterator i = rigStates.begin(); i != rigStates.end(); i++ )
     {
         if (i.value().isDirty())
-            rpc->publish(rpcConstants::rigControlCategory, i.key(), i.value().pack(), psPublished);
+        {
+            rpc->publish(rpcConstants::rigStateCategory, i.key(), i.value().pack(), psPublished);
+            rigStates[i.key()].clearDirty();
+        }
     }
 
 }

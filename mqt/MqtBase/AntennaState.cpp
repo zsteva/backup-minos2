@@ -29,6 +29,13 @@ bool AntennaState::isDirty()
 {
     return (_selected.isDirty() || _state.isDirty() || _bearing.isDirty());
 }
+void AntennaState::clearDirty()
+{
+    _selected.clearDirty();
+    _state.clearDirty();
+    _bearing.clearDirty();
+}
+
 
 QString AntennaState::pack()
 {

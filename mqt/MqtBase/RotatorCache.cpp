@@ -73,7 +73,10 @@ void RotatorCache::publishState()
     for(QMap<QString, AntennaState>::iterator i = rotStates.begin(); i != rotStates.end(); i++ )
     {
         if (i.value().isDirty())
-            rpc->publish(rpcConstants::RotatorDetailCategory, i.key(), i.value().pack(), psPublished);
+        {
+            rpc->publish(rpcConstants::rotatorDetailCategory, i.key(), i.value().pack(), psPublished);
+            rotStates[i.key()].clearDirty();
+        }
     }
 
 }
@@ -83,7 +86,10 @@ void RotatorCache::publishDetails()
     for(QMap<QString, AntennaDetail>::iterator i = rotDetails.begin(); i != rotDetails.end(); i++ )
     {
         if (i.value().isDirty())
-            rpc->publish(rpcConstants::RotatorCategory, i.key(), i.value().pack(), psPublished);
+        {
+            rpc->publish(rpcConstants::rotatorStateCategory, i.key(), i.value().pack(), psPublished);
+            rotDetails[i.key()].clearDirty();
+        }
     }
 
 }

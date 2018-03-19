@@ -7,6 +7,9 @@
 #include <QTimer>
 #include <QLabel>
 
+#include "RigCache.h"
+#include "RotatorCache.h"
+
 namespace Ui {
 class TLogContainer;
 }
@@ -64,6 +67,9 @@ public:
     SetMemoryAction *setMemoryAction;
 private:
     Ui::TLogContainer *ui;
+
+    RigCache rigCache;
+    RotatorCache rotatorCache;
 
 
     QTimer TimerUpdateQSOTimer;
@@ -212,6 +218,9 @@ private slots:
     void AuxDisplayAction();
 public slots:
     void onArgsReceived(QString conarg);
+
+private slots:
+    void on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
 
 signals:
     void sendKeyerPlay( int fno );

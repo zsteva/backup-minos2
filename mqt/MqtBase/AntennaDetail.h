@@ -17,6 +17,7 @@ public:
     ~AntennaDetail();
 
     bool isDirty();
+    void clearDirty();
 
     virtual QString pack();
     virtual void unpack(QString);

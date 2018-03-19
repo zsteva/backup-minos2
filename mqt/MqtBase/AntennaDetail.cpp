@@ -24,7 +24,11 @@ bool AntennaDetail::isDirty()
 {
     return (_minAzimuth.isDirty() || _maxAzimuth.isDirty());
 }
-
+void AntennaDetail::clearDirty()
+{
+    _minAzimuth.clearDirty();
+    _maxAzimuth.clearDirty();
+}
 QString AntennaDetail::pack()
 {
     QJsonObject jv;
