@@ -56,6 +56,8 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     appName = env.value("MQTRPCNAME", "") ;
 
+
+
     createCloseEvent();
 
     connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
@@ -356,16 +358,17 @@ void RigControlMainWindow::upDateRadio()
             }
 
 
-            /*
+
 
             // only show transvert freq box is enabled
             setTransVertDisplayVisible(setupRadio->currentRadio->transVertEnable);
             sendTransVertStatus(setupRadio->currentRadio->transVertEnable);   // send to logger
-            setupRadio->currentRadio->transVertNegative = setupRadio->availRadioData[ridx]->transVertNegative;
-            setupRadio->currentRadio->transVertOffset = setupRadio->availRadioData[ridx]->transVertOffset;
-            setupRadio->currentRadio->transVertOffsetStr = setupRadio->availRadioData[ridx]->transVertOffsetStr;
-            setupRadio->currentRadio->mgmMode = setupRadio->availRadioData[ridx]->mgmMode;
-            */
+
+            //setupRadio->currentRadio->transVertNegative = setupRadio->availRadioData[ridx]->transVertNegative;
+            //setupRadio->currentRadio->transVertOffset = setupRadio->availRadioData[ridx]->transVertOffset;
+            //setupRadio->currentRadio->transVertOffsetStr = setupRadio->availRadioData[ridx]->transVertOffsetStr;
+            //setupRadio->currentRadio->mgmMode = setupRadio->availRadioData[ridx]->mgmMode;
+
             setupRadio->saveCurrentRadio();
 
             openRadio();
@@ -777,26 +780,62 @@ void RigControlMainWindow::openRadio()
         bool ok = false;
         int retCode = 0;
         QString sfreq = freq;
+        QString cb;
+        int tvNum = 0;
+
 
         double f = sfreq.toDouble(&ok);
         logMessage(QString("SetFreq: Change to Freq = %1").arg(QString::number(f)));
 
         if (ok)
         {
-            //if (setupRadio->currentRadio->transVertEnable)
-            //{
-            //    if (setupRadio->currentRadio->transVertSettings.->transVertNegative)
-            //    {
-            //        f = f + setupRadio->currentRadio->transVertOffset;
-            //        logMessage(QString("SetFreq: Negative Transvert Enabled Freq = %1").arg(QString::number(f)));
-            //    }
-            //    else
-            //    {
-             //       f = f - setupRadio->currentRadio->transVertOffset;
-             //       logMessage(QString("SetFreq: Transvert Enabled Freq = %1").arg(QString::number(f)));
-             //   }
+            BandList &blist = BandList::getBandList();
+            BandInfo bi;
+            bool bandOK = blist.findBand(f, bi);
+            if (bandOK)
+            {
+                cb = bi.adif;
+            }
 
-           // }
+            if (cb != band && setupRadio->currentRadio->transVertEnable && setupRadio->currentRadio->numTransverters != 0)
+            {
+                // does a transverter support this band?
+
+                bool fb = false;
+                while (tvNum < setupRadio->currentRadio->numTransverters)
+                {
+                    if (setupRadio->currentRadio->transVertSettings[tvNum]->band == cb)
+                    {
+                        fb = true;
+                        break;
+                    }
+                    tvNum++;
+                }
+
+                if (fb)  // found a tranverter supporting this band
+                {
+                    if (setupRadio->currentRadio->transVertSettings[tvNum]->transSwitchNum != transVertSwNum)
+                    {
+                        transVertSwNum = setupRadio->currentRadio->transVertSettings[tvNum]->transSwitchNum;
+                        logMessage(QString("SetFreq: Send TransVert Switch number - %1").arg(transVertSwNum));
+                        sendTransVertSwitchToLogger(transVertSwNum);
+                    }
+                    // now calculate the freq
+                    if (setupRadio->currentRadio->transVertSettings[tvNum]->transVertNegative)
+                    {
+                           f = f + setupRadio->currentRadio->transVertSettings[tvNum]->transVertOffset;
+                           logMessage(QString("SetFreq: Negative Transvert Enabled Freq = %1").arg(QString::number(f)));
+                    }
+                    else
+                    {
+                          f = f - setupRadio->currentRadio->transVertSettings[tvNum]->transVertOffset;
+                          logMessage(QString("SetFreq: Transvert Enabled Freq = %1").arg(QString::number(f)));
+                    }
+
+                }
+
+            }
+
             if (radio->get_serialConnected())
             {
 
@@ -1361,8 +1400,8 @@ void RigControlMainWindow::openRadio()
 
     void RigControlMainWindow::sendTransVertSwitchToLogger(const QString &swNum)
     {
-        //logMessage(QString("Send Transvert Switch Number to logger = %1").arg(swNum));
-       // msg->publishTransVertSwitch(swNum);
+        logMessage(QString("Send Transvert Switch Number to logger = %1").arg(swNum));
+         msg->publishTransVertSwitch(swNum);
 
     }
 

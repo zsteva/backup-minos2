@@ -22,6 +22,7 @@
 
 #include "mqtUtils_pch.h"
 #include "rigcontrol.h"
+#include "BandList.h"
 
 class QLabel;
 class QComboBox;
@@ -53,6 +54,9 @@ private:
     StdInReader stdinReader;
     RigControlRpc *msg;
 
+
+
+
     SetupDialog *setupRadio;
     RigControl  *radio;
     QString appName = "";
@@ -68,6 +72,8 @@ private:
     QString slogMode;
     QString selRadioMode;   // onSelectRadio mode from logger at startup
     rmode_t logMode;
+    QString band;
+    QString transVertSwNum;
 
     const int PASSBAND_NOCHANGE = -1;
 
