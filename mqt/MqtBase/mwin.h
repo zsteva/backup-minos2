@@ -133,10 +133,11 @@ class MinosStringItem : public MinosItem<QString>
 public:
     virtual void setValue( QString t )
     {
+       t = t.trimmed();
        if ( MinosItem<QString>::val != t )        // so all item classes need != operator
        {
           MinosItem<QString>::dirty = true;
-          MinosItem<QString>::val = t.trimmed();
+          MinosItem<QString>::val = t;
        }
     }
     void setValue( MinosStringItem<QString> t )
