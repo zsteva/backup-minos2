@@ -71,11 +71,15 @@ public:
 
     QString transVertName;
     QString band;
+    QString radioFreqStr;
+    freq_t radioFreq;
+    freq_t fLow;
+    freq_t fHigh;
     QString transVertOffsetStr;
     freq_t transVertOffset = 0.0;
     bool transVertNegative  = false;
     bool enableTransSwitch = false;
-    QString transSwitchNum;
+    QString transSwitchNum = "0";
 
 };
 
@@ -192,6 +196,8 @@ public:
     int setRit(vfo_t vfo, shortfreq_t ritfreq);
     int supportRit(int rigNumber, bool *ritFlag);
     bool checkFreqValid(freq_t freq, rmode_t mode);
+
+    void freqRange(QString freqStr, QString modeStr);
 signals:
     void frequency_updated(double);
     void debug_protocol(QString);

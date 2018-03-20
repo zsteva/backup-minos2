@@ -14,6 +14,8 @@
 
 #include "rigsetupform.h"
 #include "ui_rigsetupform.h"
+#include "BandList.h"
+#include "addtransverterdialog.h"
 #include <QDebug>
 #include <QLineEdit>
 #include <QCheckBox>
@@ -27,7 +29,7 @@ static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
 
 
 
-RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, QWidget *parent):
+RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVector<BandDetail*> _bands, QWidget *parent):
     QWidget(parent),
     ui(new Ui::rigSetupForm),
     radioValueChanged(false),
@@ -40,6 +42,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, QWidget *
     radio = _radio;
     radioData = _radioData;
 
+    bands = _bands;
 
 
     fillRadioModelInfo();  // add radio models to drop down
@@ -241,7 +244,7 @@ void RigSetupForm::comSpeedSelected()
 
 QString RigSetupForm::getDataSpeed()
 {
-    ui->comSpeedBox->currentText();
+    return ui->comSpeedBox->currentText();
 }
 
 void RigSetupForm::setDataSpeed(QString d)
@@ -592,6 +595,11 @@ void RigSetupForm::fillMgmModes()
 
 
 
+
+
+
+
+
 /******************* Transverter ***********************************/
 
 
@@ -611,12 +619,25 @@ void RigSetupForm::setTransVertTabText(int tabNum, QString tabName)
 
 void RigSetupForm::addTransVerter()
 {
-    QString transVerterName = QInputDialog::getText(this, tr("Enter Transverter Name"), tr("Please enter a Transverter Name:"), QLineEdit::Normal);
-    transVerterName = transVerterName.trimmed();
-    if (transVerterName.isEmpty())
+    //QString transVerterName = QInputDialog::getText(this, tr("Enter Transverter Name"), tr("Please enter a Transverter Name:"), QLineEdit::Normal);
+    //transVerterName = transVerterName.trimmed();
+    //if (transVerterName.isEmpty())
+   // {
+    //      return;
+    //}
+    AddTransVerterDialog addTransDialog(bands, this);
+    if (addTransDialog.exec() == !QDialog::Accepted)
     {
-          return;
+        return;
     }
+
+    QString transVerterName = addTransDialog.getTransVerterName();
+
+    if (transVerterName == "")
+    {
+        return;
+    }
+
     if (checkTransVerterNameMatch(transVerterName))
     {
         // error empty name or name already exists
@@ -641,12 +662,14 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
 {
     radioData->transVertSettings.append(new TransVertParams());
     radioData->transVertSettings[tabNum]->transVertName = tabName;
-    transVertTab.append(new TransVertSetupForm(radioData->transVertSettings[tabNum]));
+    transVertTab.append(new TransVertSetupForm(radioData->transVertSettings[tabNum], bands));
     //radioData->transVertNames.append(tabName);
     ui->transVertTab->insertTab(tabNum, transVertTab[tabNum], tabName);
     ui->transVertTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
     ui->transVertTab->setCurrentIndex(tabNum);
     transVertTab[tabNum]->setEnableTransVertSwBoxVisible(false);
+    transVertTab[tabNum]->setBand(tabName);
+    transVertTab[tabNum]->loadBandFreqLimits();
     transVertTab[tabNum]->tansVertValueChanged = true;
 
 }

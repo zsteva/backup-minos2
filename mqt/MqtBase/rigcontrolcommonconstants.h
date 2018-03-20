@@ -64,7 +64,7 @@ const QStringList portTypeList = { "RIG_PORT_NONE", "RIG_PORT_SERIAL", "RIG_PORT
 
 }
 
-
+const QString TRANSSW_NUM_DEFAULT = "0";
 
 
 // File Name Constants

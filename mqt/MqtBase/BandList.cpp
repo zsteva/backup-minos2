@@ -263,3 +263,12 @@ bool BandList::findBand(double freq, BandInfo &bi)
    }
    return false;
 }
+
+
+
+BandDetail::BandDetail(QString _name, double flow, double fhigh)
+{
+    name = _name;
+    fLow = flow;;
+    fHigh = fhigh;
+}

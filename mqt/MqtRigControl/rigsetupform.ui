@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>837</width>
-    <height>401</height>
+    <height>295</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -272,7 +272,7 @@
          <item>
           <widget class="QPushButton" name="renameTransvert">
            <property name="text">
-            <string>Rename Transverter</string>
+            <string>Change Band</string>
            </property>
           </widget>
          </item>

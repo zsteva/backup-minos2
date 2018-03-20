@@ -60,6 +60,8 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
         fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
     }
 
+    loadBands();            // get band information
+
     QSettings  settings(fileName, QSettings::IniFormat);
 
     availRadios = settings.childGroups();
@@ -142,7 +144,7 @@ void SetupDialog::addTab(int tabNum, QString tabName)
 {
     availRadioData.append(new scatParams);
     availRadioData[tabNum]->radioName = tabName;
-    radioTab.append(new RigSetupForm(radio, availRadioData[tabNum]));
+    radioTab.append(new RigSetupForm(radio, availRadioData[tabNum], bands));
     ui->radioTab->insertTab(tabNum, radioTab[tabNum], tabName);
     ui->radioTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
 
@@ -197,7 +199,7 @@ loadSettingsToTab(int tabNum)
         {
             radioTab[tabNum]->setTransVertTabText(t, radioTab[tabNum]->getRadioData()->transVertNames[t]);
             radioTab[tabNum]->transVertTab[t]->setBand(radioTab[tabNum]->getRadioData()->transVertSettings[t]->band);
-            radioTab[tabNum]->transVertTab[t]->setTransVertOffsetFreq(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transVertOffsetStr);
+            //radioTab[tabNum]->transVertTab[t]->setTransVertOffsetFreq(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transVertOffsetStr);
             radioTab[tabNum]->transVertTab[t]->setNegCheckBox(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transVertNegative);
             radioTab[tabNum]->transVertTab[t]->setEnableTransVertSw(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
             radioTab[tabNum]->transVertTab[t]->setTransVerSwNum(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transSwitchNum);
@@ -383,12 +385,14 @@ int SetupDialog::comportAvial(int radioNum, QString comport)
 {
     if (radioTab.count() > 0)
     {
-        return radioTab[0]->comportAvial(comport);
+        return radioTab[radioNum]->comportAvial(comport);
     }
     else
     {
         return -1;
     }
+
+    return -1;
 }
 
 
@@ -673,6 +677,8 @@ void SetupDialog::saveTranVerterSetting(int radioNum, int transVertNum, QSetting
     config.beginGroup(radioTab[radioNum]->getRadioData()->transVertNames[transVertNum]);
     config.setValue("name", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertName);
     config.setValue("band", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->band);
+    config.setValue("radioFreqStr", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->radioFreqStr);
+    config.setValue("radioFreq", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->radioFreq);
     config.setValue("offsetString", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffsetStr);
     config.setValue("offsetDouble", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffset);
     config.setValue("negOffset", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertNegative);
@@ -688,6 +694,9 @@ void SetupDialog::readTranVerterSetting(int radioNum, int transVertNum, QSetting
     config.beginGroup(radioTab[radioNum]->getRadioData()->transVertNames[transVertNum]);
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertName = config.value("name", "").toString();
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->band = config.value("band", "").toString();
+    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->radioFreqStr = config.value("radioFreqStr", "00.000.000.000").toString();
+    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->radioFreq = config.value("radioFreq", 0.0).toDouble();
+    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffsetStr = config.value("offsetString", "00.000.000.000").toString();
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffsetStr = config.value("offsetString", "00.000.000.000").toString();
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffset = config.value("offsetDouble", 0.0).toDouble();
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertNegative = config.value("negOffset", false).toBool();
@@ -863,6 +872,15 @@ void SetupDialog::saveMgmList()
 }
 
 
+/************************** Band Information ***********************************/
 
+void SetupDialog::loadBands()
+{
+    BandList &blist = BandList::getBandList();
 
+    for (int i = 6; i < 15; i++)   // just load VHF/UHF bands
+    {
+        bands.append(new BandDetail(blist.bandList[i].adif, blist.bandList[i].flow, blist.bandList[i].fhigh));
+    }
 
+}

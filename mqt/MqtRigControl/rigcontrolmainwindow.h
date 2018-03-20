@@ -131,7 +131,7 @@ private:
     void sendStatusToLogDisConnected();
     void sendStatusToLogConnected();
     void sendStatusToLogError();
-    void sendTransVertOffsetToLogger();
+    void sendTransVertOffsetToLogger(int tvNum);
     void sendTransVertSwitchToLogger(const QString &swNum);
     void sendErrorMessageToLogger(QString errMsg);
     void sendFreqToLog(freq_t freq);

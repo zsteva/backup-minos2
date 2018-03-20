@@ -57,6 +57,7 @@ public:
     QStringList availRadios;
     int numAvailRadios;
 
+    QVector<BandDetail*> bands;
 
     scatParams* getCurrentRadio() const;
     int getRadioId(QString rotator);
@@ -130,6 +131,7 @@ private:
     bool checkRadioNameMatch(QString radioName);
     void saveTranVerterSetting(int radioNum, int transVertNum, QSettings  &config);
     void readTranVerterSetting(int radioNum, int transVertNum, QSettings &config);
+    void loadBands();
 };
 
 #endif // SETUPDIALOG_H

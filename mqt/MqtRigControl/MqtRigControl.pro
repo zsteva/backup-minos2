@@ -24,20 +24,23 @@ SOURCES += main.cpp\
     setupdialog.cpp \
     rigcontrolrpc.cpp \
     rigsetupform.cpp \
-    transvertsetupform.cpp
+    transvertsetupform.cpp \
+    addtransverterdialog.cpp
 
 HEADERS  += rigcontrolmainwindow.h \
     rigcontrol.h \
     setupdialog.h \
     rigcontrolrpc.h \
     rigsetupform.h \
-    transvertsetupform.h
+    transvertsetupform.h \
+    addtransverterdialog.h
 
 
 
 FORMS    += rigcontrolmainwindow.ui \
     setupdialog.ui \
     rigsetupform.ui \
-    transvertsetupform.ui
+    transvertsetupform.ui \
+    addtransverterdialog.ui
 
 win32: INCLUDEPATH += C:/Projects/hamlib-w32-3.1/include

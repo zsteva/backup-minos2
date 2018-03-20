@@ -168,9 +168,18 @@ bool RigControl::checkFreqValid(freq_t freq, rmode_t mode)
 }
 
 
+/* ---------------------- Freq Range ---------------------------------*/
 
+void RigControl::freqRange(QString freqStr, QString modeStr)
+{
+    const freq_range_t *txrange;
 
+    rmode_t mode = convertQStrMode(modeStr);
+    freq_t freq = freqStr.toDouble();
 
+     txrange = rig_get_range(my_rig->state.tx_range_list, freq, mode);
+    int a = 0;
+}
 
 /* ---------------------- Mode ------------------------------------ */
 

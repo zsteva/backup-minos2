@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>698</width>
-    <height>169</height>
+    <width>693</width>
+    <height>231</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Minos Rig Control</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_6">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -150,6 +150,68 @@
             </item>
            </layout>
           </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <widget class="QLabel" name="transVertBandDisp">
+                  <property name="text">
+                   <string>Band:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="transVertBandDispLbl">
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_7">
+                <item>
+                 <widget class="QLabel" name="transVertSwLbl">
+                  <property name="text">
+                   <string>TransVert Sw:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="transVertSwNum">
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <item>
+               <widget class="QLabel" name="transVertNameDisp">
+                <property name="text">
+                 <string>TransVert Name:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="transVertNameLbl">
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
          </layout>
         </item>
         <item>
@@ -179,23 +241,18 @@
               </property>
              </widget>
             </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QLabel" name="transVertSwLbl">
-              <property name="text">
-               <string>TransVert Sw:</string>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
               </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="transVertSwNum">
-              <property name="text">
-               <string/>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
               </property>
-             </widget>
+             </spacer>
             </item>
            </layout>
           </item>
@@ -288,7 +345,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>698</width>
+     <width>693</width>
      <height>21</height>
     </rect>
    </property>

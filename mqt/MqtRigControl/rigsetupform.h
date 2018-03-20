@@ -11,12 +11,15 @@ namespace Ui {
 }
 
 
+
+
+
 class RigSetupForm : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit RigSetupForm(RigControl* _radio, scatParams* _radioData, QWidget *parent = nullptr);
+    explicit RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVector<BandDetail*> _bands, QWidget *parent = nullptr);
     ~RigSetupForm();
 
 
@@ -24,6 +27,8 @@ public:
     bool radioNameChanged;
 
     scatParams* getRadioData();
+
+    QVector<BandDetail*> bands;
 
 
 
@@ -137,6 +142,7 @@ private:
     void fillPollInterValInfo();
 
     bool checkTransVerterNameMatch(QString transVertName);
+
 };
 
 #endif // RIGSETUPFORM_H

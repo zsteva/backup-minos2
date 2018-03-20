@@ -15,11 +15,12 @@
 
 #include "transvertsetupform.h"
 #include "rigutils.h"
+#include "BandList.h"
 #include <QLineEdit>
 #include <QCheckBox>
 
 
-TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *parent) :
+TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QVector<BandDetail*> _bands, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::transVertSetupForm),
     tansVertValueChanged(false),
@@ -28,13 +29,15 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *
 
     ui->setupUi(this);
     transVertData = transvertData;
+    bands = _bands;
 
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    loadBands();
+    loadBandSel();
 
     connect(ui->bandSel, SIGNAL(activated(int)), this, SLOT(bandSelected()));
-    connect(ui->TransVertOffset, SIGNAL(editingFinished()), this, SLOT(transVertOffsetSelected()));
+    connect(ui->radioFreq, SIGNAL(editingFinished()), this, SLOT(calcOffset()));
+    connect(ui->calcOffsetPb, SIGNAL(clicked(bool)), this, SLOT(calcOffset()));
     connect(ui->negCheckbox, SIGNAL(clicked(bool)), this, SLOT(negCheckBoxSelected(bool)));
     connect(ui->enableTransVertSw, SIGNAL(clicked(bool)), this, SLOT(enableTransVertSwSel(bool)));
     connect(ui->transVertSwNum, SIGNAL(editingFinished()), this, SLOT(transVertSwNumSel()));
@@ -54,25 +57,26 @@ void TransVertSetupForm::bandSelected()
     {
         transVertData->band = ui->bandSel->currentText();
     }
+
+    loadBandFreqLimits();
 }
 
 
-void TransVertSetupForm::loadBands()
-{
-    BandList &blist = BandList::getBandList();
-    ui->bandSel->addItem("");
-    for (int i = 6; i < 15; i++)   // just load VHF/UHF bands
-    {
-        ui->bandSel->addItem(blist.bandList[i].adif);
-    }
 
-}
 
 void TransVertSetupForm::setBand(QString b)
 {
     ui->bandSel->setCurrentText(b);
+    transVertData->band = ui->bandSel->currentText();
 }
 
+
+void TransVertSetupForm::loadBandFreqLimits()
+{
+    int i = ui->bandSel->currentIndex();
+    transVertData->fLow = bands[i-1]->fLow;
+    transVertData->fHigh = bands[i-1]->fHigh;
+}
 
 QString TransVertSetupForm::getBand()
 {
@@ -80,13 +84,24 @@ QString TransVertSetupForm::getBand()
 }
 
 
+
+void TransVertSetupForm::loadBandSel()
+{
+    ui->bandSel->clear();
+    ui->bandSel->addItem("");
+    for (int i = 0; i < bands.count(); i++ )
+    {
+        ui->bandSel->addItem(bands[i]->name);
+    }
+}
+
 /********************* TransVert Offset Freq  *********************************/
 
 
-void TransVertSetupForm::transVertOffsetSelected()
+void TransVertSetupForm::calcOffset()
 {
     // check freq valid format
-    QString f = ui->TransVertOffset->text().trimmed().remove( QRegExp("^[0]*"));
+    QString f = ui->radioFreq->text().trimmed().remove( QRegExp("^[0]*"));
     if (f != "")
     {
         if (f.count('.') == 1)
@@ -104,9 +119,21 @@ void TransVertSetupForm::transVertOffsetSelected()
             msgBox.exec();
             return;             //incorrect format
         }
-        f =
-        transVertData->transVertOffsetStr = convertSinglePeriodFreqToFullDigit(f).remove('.');
-        transVertData->transVertOffset  =  convertStrToFreq(f);
+
+        //transVertData->transVertOffsetStr = convertSinglePeriodFreqToFullDigit(f).remove('.');
+        //transVertData->transVertOffset  =  convertStrToFreq(f);
+        // now calculate offset
+        f = convertSinglePeriodFreqToFullDigit(f).remove('.');
+        transVertData->radioFreqStr = f;
+        transVertData->radioFreq = f.toDouble();
+        // calculate offset
+        transVertData->transVertOffset = transVertData->fLow - transVertData->radioFreq;
+        transVertData->transVertOffsetStr = convertFreqToStr(transVertData->transVertOffset);
+        // display
+        ui->Offset->setText(transVertData->transVertOffsetStr);
+
+
+
         tansVertValueChanged = true;
 
     }
@@ -115,15 +142,7 @@ void TransVertSetupForm::transVertOffsetSelected()
 
 }
 
-QString TransVertSetupForm::getTransVertOffsetFreq()
-{
-    return ui->TransVertOffset->text().trimmed();
-}
 
-void TransVertSetupForm::setTransVertOffsetFreq(QString s)
-{
-    ui->TransVertOffset->setText(convertFreqStrDispSingle(s));
-}
 
 
 /********************* TransVert Negative Offset Select  *********************************/
@@ -212,7 +231,7 @@ void TransVertSetupForm::setUiItemsVisible(bool visible)
     ui->bandSel->setVisible(visible);
     ui->enableTransVertSw->setVisible(visible);
     ui->negCheckbox->setVisible(visible);
-    ui->TransVertOffset->setVisible(visible);
+    ui->radioFreq->setVisible(visible);
     ui->transVertSwNum->setVisible(visible);
     ui->BandLabel->setVisible(visible);
     ui->OffsetLabel->setVisible(visible);

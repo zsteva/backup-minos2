@@ -6,15 +6,19 @@
 #include "ui_transvertsetupform.h"
 #include "BandList.h"
 
+
 namespace Ui {
     class transVertSetupForm;
 }
+
+
+
 
 class TransVertSetupForm : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TransVertSetupForm(TransVertParams *transvertData, QWidget *parent = nullptr);
+    explicit TransVertSetupForm(TransVertParams *transvertData, QVector<BandDetail*> _bands, QWidget *parent = nullptr);
 
 
 
@@ -33,23 +37,24 @@ public:
     bool getNegCheckBox();
     void setNegCheckBox(bool b);
 
-    QString getTransVertOffsetFreq();
-    void setTransVertOffsetFreq(QString s);
 
     void setUiItemsVisible(bool visible);
 
      void setEnableTransVertSwBoxVisible(bool visible);
 
+     void loadBandFreqLimits();
 signals:
 
 public slots:
 
 private slots:
     void bandSelected();
-    void transVertOffsetSelected();
+    void calcOffset();
     void negCheckBoxSelected(bool);
     void enableTransVertSwSel(bool);
     void transVertSwNumSel();
+
+
 
 
 
@@ -58,11 +63,11 @@ private:
 
     Ui::transVertSetupForm *ui;
     TransVertParams *transVertData;
+    QVector<BandDetail*> bands;
 
 
 
-    void loadBands();
-
+    void loadBandSel();
 };
 
 #endif // TRANSVERTSETUPFORM_H
