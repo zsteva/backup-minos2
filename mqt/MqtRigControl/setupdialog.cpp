@@ -198,7 +198,7 @@ loadSettingsToTab(int tabNum)
         for (int t = 0; t < radioTab[tabNum]->getRadioData()->numTransverters; t++)
         {
             radioTab[tabNum]->setTransVertTabText(t, radioTab[tabNum]->getRadioData()->transVertNames[t]);
-            radioTab[tabNum]->transVertTab[t]->setBand(radioTab[tabNum]->getRadioData()->transVertSettings[t]->band);
+            //radioTab[tabNum]->transVertTab[t]->setBand(radioTab[tabNum]->getRadioData()->transVertSettings[t]->band);
             //radioTab[tabNum]->transVertTab[t]->setTransVertOffsetFreq(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transVertOffsetStr);
             radioTab[tabNum]->transVertTab[t]->setNegCheckBox(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transVertNegative);
             radioTab[tabNum]->transVertTab[t]->setEnableTransVertSw(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);

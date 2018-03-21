@@ -48,7 +48,7 @@ signals:
 public slots:
 
 private slots:
-    void bandSelected();
+    //void bandSelected();
     void calcOffset();
     void negCheckBoxSelected(bool);
     void enableTransVertSwSel(bool);

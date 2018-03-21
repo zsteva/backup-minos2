@@ -668,8 +668,8 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
     ui->transVertTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
     ui->transVertTab->setCurrentIndex(tabNum);
     transVertTab[tabNum]->setEnableTransVertSwBoxVisible(false);
-    transVertTab[tabNum]->setBand(tabName);
-    transVertTab[tabNum]->loadBandFreqLimits();
+    //transVertTab[tabNum]->setBand(tabName);
+    //transVertTab[tabNum]->loadBandFreqLimits();
     transVertTab[tabNum]->tansVertValueChanged = true;
 
 }

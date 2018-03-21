@@ -33,9 +33,9 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QVector<B
 
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    loadBandSel();
+    //loadBandSel();
 
-    connect(ui->bandSel, SIGNAL(activated(int)), this, SLOT(bandSelected()));
+    //connect(ui->bandSel, SIGNAL(activated(int)), this, SLOT(bandSelected()));
     connect(ui->radioFreq, SIGNAL(editingFinished()), this, SLOT(calcOffset()));
     connect(ui->calcOffsetPb, SIGNAL(clicked(bool)), this, SLOT(calcOffset()));
     connect(ui->negCheckbox, SIGNAL(clicked(bool)), this, SLOT(negCheckBoxSelected(bool)));
@@ -50,7 +50,7 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QVector<B
 
 /********************* Band Selection *********************************/
 
-
+/*
 void TransVertSetupForm::bandSelected()
 {
     if (ui->bandSel->currentText() != transVertData->band)
@@ -94,6 +94,8 @@ void TransVertSetupForm::loadBandSel()
         ui->bandSel->addItem(bands[i]->name);
     }
 }
+
+*/
 
 /********************* TransVert Offset Freq  *********************************/
 
@@ -228,12 +230,12 @@ void TransVertSetupForm::setTransVerSwNum(QString s)
 
 void TransVertSetupForm::setUiItemsVisible(bool visible)
 {
-    ui->bandSel->setVisible(visible);
+    //ui->bandSel->setVisible(visible);
     ui->enableTransVertSw->setVisible(visible);
     ui->negCheckbox->setVisible(visible);
     ui->radioFreq->setVisible(visible);
     ui->transVertSwNum->setVisible(visible);
-    ui->BandLabel->setVisible(visible);
+    //ui->BandLabel->setVisible(visible);
     ui->OffsetLabel->setVisible(visible);
 }
 
