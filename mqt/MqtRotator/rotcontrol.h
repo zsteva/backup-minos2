@@ -74,6 +74,51 @@ const QStringList hamlibErrorMsg = {"No Error, operation completed sucessfully",
 class srotParams
 {
 public:
+
+
+  static void copyRot(srotParams* srce, srotParams &dest)
+  {
+
+      dest.antennaName = srce->antennaName;
+      dest.antennaNumber = srce->antennaNumber;
+      dest.configLabel = srce->configLabel;
+      dest.comport = srce->comport;
+      dest.rotatorModel = srce->rotatorModel;
+      dest.rotatorManufacturer = srce->rotatorManufacturer;
+      dest.rotatorModelName = srce->rotatorModelName;
+      dest.rotatorModelNumber = srce->rotatorModelNumber;
+      dest.pollInterval = srce->pollInterval;
+      dest.min_azimuth = srce->min_azimuth;
+      dest.max_azimuth = srce->max_azimuth;
+      dest.endStopType = srce->endStopType;
+      dest.rotatorCWEndStop = srce->rotatorCWEndStop;
+      dest.rotatorCCWEndStop = srce->rotatorCCWEndStop;
+      dest.min_elevation = srce->min_elevation;
+      dest.max_elevation = srce->max_elevation;
+      dest.southStopFlag = srce->southStopFlag;
+      dest.overRunFlag = srce->overRunFlag;
+      dest.supportCwCcwCmd = srce->supportCwCcwCmd;
+      dest.antennaOffset = srce->antennaOffset;
+      dest.moving = srce->moving;
+      dest.portType = srce->portType;
+      dest.networkAdd = srce->networkAdd;
+      dest.networkPort = srce->networkPort;
+      dest.maxBaudRate = srce->maxBaudRate;
+      dest.minBaudRate = srce->minBaudRate;
+      dest.baudrate = srce->baudrate;
+      dest.parity = srce->parity;
+      dest.stopbits = srce->stopbits;
+      dest.databits = srce->databits;
+      dest.handshake = srce->handshake;
+      dest.enableRot = srce->enableRot;
+      dest.activeRTS = srce->activeRTS;
+      dest.activeDTR = srce->activeDTR;
+      dest.nactiveRTS = srce->nactiveRTS;
+      dest.nactiveDTR = srce->nactiveDTR;
+
+  }
+
+
   QString antennaName;
   QString antennaNumber;
   QString configLabel;
@@ -123,7 +168,7 @@ class RotControl: public QObject
 public:
     explicit RotControl(QObject *parent = 0);
     ~RotControl();
-    int init(srotParams* currentAntenna);
+    int init(srotParams &currentAntenna);
     int closeRotator();
     int getModelNumber(int idx);
     int getRotatorModelIndex();

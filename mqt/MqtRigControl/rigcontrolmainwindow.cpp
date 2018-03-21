@@ -264,7 +264,7 @@ void RigControlMainWindow::currentRadioSettingChanged(QString radioName)
             if (ui->selectRadioBox->currentText() != radioName)
             {
                 bool ok;
-                ui->selectRadioBox->setCurrentIndex(setupRadio->currentRadio->radioNumber.toInt(&ok, 10));
+                ui->selectRadioBox->setCurrentIndex(setupRadio->currentRadio.radioNumber.toInt(&ok, 10));
             }
             upDateRadio();
             break;
@@ -343,7 +343,7 @@ void RigControlMainWindow::upDateRadio()
         if (ridx > -1 && ridx < setupRadio->numAvailRadios)  // find radio and update current radio pointer
         {
             // found antenna, updatea currentAntenna pointer to select antennadata
-            setupRadio->currentRadio = setupRadio->availRadioData[ridx];
+            scatParams::copyRig(setupRadio->availRadioData[ridx], setupRadio->currentRadio);
 
             if (radio->get_serialConnected())
             {
@@ -351,7 +351,7 @@ void RigControlMainWindow::upDateRadio()
             }
 
 
-            if (setupRadio->currentRadio->radioModelNumber == 0)
+            if (setupRadio->currentRadio.radioModelNumber == 0)
             {
                 closeRadio();
                 QMessageBox::critical(this, tr("Radio Error"), "Please configure a radio name and model");
@@ -362,14 +362,14 @@ void RigControlMainWindow::upDateRadio()
 
 
             // only show transvert freq box is enabled
-            setTransVertDisplayVisible(setupRadio->currentRadio->transVertEnable);
-            sendTransVertStatus(setupRadio->currentRadio->transVertEnable);   // send to logger
+            setTransVertDisplayVisible(setupRadio->currentRadio.transVertEnable);
+            sendTransVertStatus(setupRadio->currentRadio.transVertEnable);   // send to logger
             sendTransVertSwitchToLogger(TRANSSW_NUM_DEFAULT);                                 // turn off transVerter Sw
 
-            //setupRadio->currentRadio->transVertNegative = setupRadio->availRadioData[ridx]->transVertNegative;
-            //setupRadio->currentRadio->transVertOffset = setupRadio->availRadioData[ridx]->transVertOffset;
-            //setupRadio->currentRadio->transVertOffsetStr = setupRadio->availRadioData[ridx]->transVertOffsetStr;
-            //setupRadio->currentRadio->mgmMode = setupRadio->availRadioData[ridx]->mgmMode;
+            //setupRadio->currentRadio.transVertNegative = setupRadio->availRadioData[ridx]->transVertNegative;
+            //setupRadio->currentRadio.transVertOffset = setupRadio->availRadioData[ridx]->transVertOffset;
+            //setupRadio->currentRadio.transVertOffsetStr = setupRadio->availRadioData[ridx]->transVertOffsetStr;
+            //setupRadio->currentRadio.mgmMode = setupRadio->availRadioData[ridx]->mgmMode;
 
             setupRadio->saveCurrentRadio();
 
@@ -382,7 +382,7 @@ void RigControlMainWindow::upDateRadio()
 
 
 
-                ui->radioNameDisp->setText(setupRadio->currentRadio->radioName);
+                ui->radioNameDisp->setText(setupRadio->currentRadio.radioName);
 
 
                 logMessage(QString("Update - Get radio frequency"));
@@ -406,7 +406,7 @@ void RigControlMainWindow::upDateRadio()
 
 
 
-                if (setupRadio->currentRadio->radioModelNumber != 135) // don't send USB if Ft991
+                if (setupRadio->currentRadio.radioModelNumber != 135) // don't send USB if Ft991
                 {
                     if (radio->get_serialConnected())
                     {
@@ -438,7 +438,7 @@ void RigControlMainWindow::upDateRadio()
 
                     writeWindowTitle(appName);
                     sendStatusToLogConnected();
-                    sendRadioNameLogger(setupRadio->currentRadio->radioName);
+                    sendRadioNameLogger(setupRadio->currentRadio.radioName);
                     dumpRadioToTraceLog();
 
                 }
@@ -492,14 +492,14 @@ void RigControlMainWindow::refreshRadio()
             logMessage(QString("Update - Get radio frequency"));
             getAndSendFrequency(RIG_VFO_CURR);   // also sends
 
-            if (setupRadio->currentRadio->radioModelNumber != 135) // don't send USB if Ft991
+            if (setupRadio->currentRadio.radioModelNumber != 135) // don't send USB if Ft991
             {
                 logMessage(QString("Update Radio: Logger Set Mode to %1").arg(slogMode));
                 loggerSetMode(selRadioMode);
             }
             writeWindowTitle(appName);
             sendStatusToLogConnected();
-            sendRadioNameLogger(setupRadio->currentRadio->radioName);
+            sendRadioNameLogger(setupRadio->currentRadio.radioName);
             dumpRadioToTraceLog();
         }
         else
@@ -515,26 +515,26 @@ void RigControlMainWindow::openRadio()
 
         int retCode = 0;
 
-        if (setupRadio->currentRadio->radioName == "")
+        if (setupRadio->currentRadio.radioName == "")
         {
             logMessage(QString("Open Radio: No radio name!"));
             showStatusMessage("Please select a Radio");
             return;
         }
 
-        logMessage(QString("Open Radio: Opening Radio %1 PortType %2").arg(setupRadio->currentRadio->radioName).arg(hamlibData::portTypeList[setupRadio->currentRadio->portType]));
-        showStatusMessage(QString("Opening Radio: %1").arg(setupRadio->currentRadio->radioName));
+        logMessage(QString("Open Radio: Opening Radio %1 PortType %2").arg(setupRadio->currentRadio.radioName).arg(hamlibData::portTypeList[setupRadio->currentRadio.portType]));
+        showStatusMessage(QString("Opening Radio: %1").arg(setupRadio->currentRadio.radioName));
 
-        if (rig_port_e(setupRadio->currentRadio->portType) == RIG_PORT_SERIAL)
+        if (rig_port_e(setupRadio->currentRadio.portType) == RIG_PORT_SERIAL)
         {
-            if(setupRadio->comportAvial(setupRadio->currentRadio->radioNumber.toInt(), setupRadio->currentRadio->comport) == -1)
+            if(setupRadio->comportAvial(setupRadio->currentRadio.radioNumber.toInt(), setupRadio->currentRadio.comport) == -1)
             {
-                logMessage(QString("Open Radio: Check comport - defined port %1 not available on computer").arg(setupRadio->currentRadio->comport));
-                showStatusMessage(QString("Comport %1 no longer configured on computer?").arg(setupRadio->currentRadio->comport));
+                logMessage(QString("Open Radio: Check comport - defined port %1 not available on computer").arg(setupRadio->currentRadio.comport));
+                showStatusMessage(QString("Comport %1 no longer configured on computer?").arg(setupRadio->currentRadio.comport));
                 return;
             }
 
-            if (setupRadio->currentRadio->comport == "")
+            if (setupRadio->currentRadio.comport == "")
             {
                 logMessage(QString("Open Radio: No comport"));
                 showStatusMessage("Please select a Comport");
@@ -543,9 +543,9 @@ void RigControlMainWindow::openRadio()
 
         }
 
-        if (rig_port_e(setupRadio->currentRadio->portType) == RIG_PORT_NETWORK || rig_port_e(setupRadio->currentRadio->portType == RIG_PORT_UDP_NETWORK))
+        if (rig_port_e(setupRadio->currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(setupRadio->currentRadio.portType == RIG_PORT_UDP_NETWORK))
         {
-            if (setupRadio->currentRadio->networkAdd == "" || (setupRadio->currentRadio->networkPort == ""))
+            if (setupRadio->currentRadio.networkAdd == "" || (setupRadio->currentRadio.networkPort == ""))
             {
                 logMessage(QString("Open Radio: No network or Port Number"));
                 showStatusMessage("Please enter a network Address and Port Number");
@@ -553,7 +553,7 @@ void RigControlMainWindow::openRadio()
             }
 
         }
-        if (setupRadio->currentRadio->radioModel == "")
+        if (setupRadio->currentRadio.radioModel == "")
         {
             logMessage(QString("Open Radio: No radio model"));
             showStatusMessage("Please select a radio model");
@@ -574,26 +574,26 @@ void RigControlMainWindow::openRadio()
 
         if (radio->get_serialConnected())
         {
-            logMessage(QString("Open Radio: Radio Opened %1").arg(setupRadio->currentRadio->radioName));
-            showStatusMessage(QString("Radio Opened: %1").arg(setupRadio->currentRadio->radioName));
+            logMessage(QString("Open Radio: Radio Opened %1").arg(setupRadio->currentRadio.radioName));
+            showStatusMessage(QString("Radio Opened: %1").arg(setupRadio->currentRadio.radioName));
 
 
 
-            if (rig_port_e(setupRadio->currentRadio->portType) == RIG_PORT_SERIAL)
+            if (rig_port_e(setupRadio->currentRadio.portType) == RIG_PORT_SERIAL)
             {
                     showStatusMessage(QString("Connected: %1 - %2, %3, %4, %5, %6, %7, %8")
-                                      .arg(setupRadio->currentRadio->radioName).arg(setupRadio->currentRadio->radioModel).trimmed().arg(setupRadio->currentRadio->comport).arg(setupRadio->currentRadio->baudrate).arg(setupRadio->currentRadio->databits)
-                                      .arg(setupRadio->currentRadio->stopbits).arg(radio->getParityCodeNames()[setupRadio->currentRadio->parity]).arg(radio->getHandShakeNames()[setupRadio->currentRadio->handshake]));
+                                      .arg(setupRadio->currentRadio.radioName).arg(setupRadio->currentRadio.radioModel).trimmed().arg(setupRadio->currentRadio.comport).arg(setupRadio->currentRadio.baudrate).arg(setupRadio->currentRadio.databits)
+                                      .arg(setupRadio->currentRadio.stopbits).arg(radio->getParityCodeNames()[setupRadio->currentRadio.parity]).arg(radio->getHandShakeNames()[setupRadio->currentRadio.handshake]));
 
 
             }
-            else if (rig_port_e(setupRadio->currentRadio->portType) == RIG_PORT_NETWORK || rig_port_e(setupRadio->currentRadio->portType) == RIG_PORT_UDP_NETWORK)
+            else if (rig_port_e(setupRadio->currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(setupRadio->currentRadio.portType) == RIG_PORT_UDP_NETWORK)
             {
-                    showStatusMessage(QString("Connected: %1 - %2, %3:%4").arg(setupRadio->currentRadio->radioName).arg(setupRadio->currentRadio->radioModel.trimmed()).arg(setupRadio->currentRadio->networkAdd).arg(setupRadio->currentRadio->networkPort));
+                    showStatusMessage(QString("Connected: %1 - %2, %3:%4").arg(setupRadio->currentRadio.radioName).arg(setupRadio->currentRadio.radioModel.trimmed()).arg(setupRadio->currentRadio.networkAdd).arg(setupRadio->currentRadio.networkPort));
             }
-            else if (rig_port_e(setupRadio->currentRadio->portType) == RIG_PORT_NONE)
+            else if (rig_port_e(setupRadio->currentRadio.portType) == RIG_PORT_NONE)
             {
-                    showStatusMessage(QString("Connected: %1 - %2").arg(setupRadio->currentRadio->radioName).arg(setupRadio->currentRadio->radioModel.trimmed()));
+                    showStatusMessage(QString("Connected: %1 - %2").arg(setupRadio->currentRadio.radioName).arg(setupRadio->currentRadio.radioModel.trimmed()));
             }
 
 
@@ -795,17 +795,17 @@ void RigControlMainWindow::openRadio()
                 cb = bi.adif;
             }
 
-            if (cb != band && setupRadio->currentRadio->transVertEnable && setupRadio->currentRadio->numTransverters != 0)
+            if (cb != band && setupRadio->currentRadio.transVertEnable && setupRadio->currentRadio.numTransverters != 0)
             {
                 // does a transverter support this band?
                 band = cb;
                 bool fb = false;
-                while (tvNum < setupRadio->currentRadio->numTransverters)
+                while (tvNum < setupRadio->currentRadio.numTransverters)
                 {
-                    if (setupRadio->currentRadio->transVertSettings[tvNum]->band == cb)
+                    if (setupRadio->currentRadio.transVertSettings[tvNum]->band == cb)
                     {
                         fb = true;
-                        logMessage(QString("SetFreq: Found Transverter %1 for this freq.").arg(setupRadio->currentRadio->transVertSettings[tvNum]->transVertName));
+                        logMessage(QString("SetFreq: Found Transverter %1 for this freq.").arg(setupRadio->currentRadio.transVertSettings[tvNum]->transVertName));
                         break;
                     }
                     tvNum++;
@@ -814,15 +814,15 @@ void RigControlMainWindow::openRadio()
                 if (fb)  // found a tranverter supporting this band
                 {
                     ui->transVertBandDisp->setText(cb);
-                    ui->transVertNameDisp->setText(setupRadio->currentRadio->transVertSettings[tvNum]->transVertName);
+                    ui->transVertNameDisp->setText(setupRadio->currentRadio.transVertSettings[tvNum]->transVertName);
                     setTransVertDisplayVisible(true);
-                    if (setupRadio->currentRadio->transVertSettings[tvNum]->enableTransSwitch)
+                    if (setupRadio->currentRadio.transVertSettings[tvNum]->enableTransSwitch)
                     {
-                        if (setupRadio->currentRadio->transVertSettings[tvNum]->transSwitchNum != transVertSwNum)
+                        if (setupRadio->currentRadio.transVertSettings[tvNum]->transSwitchNum != transVertSwNum)
                         {
-                            transVertSwNum = setupRadio->currentRadio->transVertSettings[tvNum]->transSwitchNum;
+                            transVertSwNum = setupRadio->currentRadio.transVertSettings[tvNum]->transSwitchNum;
                             ui->transVertSwNum->setText(transVertSwNum);
-                            transVertSwNum = setupRadio->currentRadio->transVertSettings[tvNum]->transSwitchNum;
+                            transVertSwNum = setupRadio->currentRadio.transVertSettings[tvNum]->transSwitchNum;
                             sendTransVertSwitchToLogger(transVertSwNum);
                             logMessage(QString("SetFreq: Send TransVert Switch number - %1").arg(transVertSwNum));
 
@@ -837,14 +837,14 @@ void RigControlMainWindow::openRadio()
                     }
 
                     // now calculate the freq
-                    if (setupRadio->currentRadio->transVertSettings[tvNum]->transVertNegative)
+                    if (setupRadio->currentRadio.transVertSettings[tvNum]->transVertNegative)
                     {
-                           f = f + setupRadio->currentRadio->transVertSettings[tvNum]->transVertOffset;
+                           f = f + setupRadio->currentRadio.transVertSettings[tvNum]->transVertOffset;
                            logMessage(QString("SetFreq: Negative Transvert Enabled Freq = %1").arg(QString::number(f)));
                     }
                     else
                     {
-                          f = f - setupRadio->currentRadio->transVertSettings[tvNum]->transVertOffset;
+                          f = f - setupRadio->currentRadio.transVertSettings[tvNum]->transVertOffset;
                           logMessage(QString("SetFreq: Transvert Enabled Freq = %1").arg(QString::number(f)));
                     }
 
@@ -902,14 +902,14 @@ void RigControlMainWindow::openRadio()
 
             curVfoFrq = rfrequency;
 
-            if (setupRadio->currentRadio->transVertEnable && setupRadio->currentRadio->numTransverters > 0)
+            if (setupRadio->currentRadio.transVertEnable && setupRadio->currentRadio.numTransverters > 0)
             {
                 logMessage(QString("Get Freq: Transvert enabled"));
                 // look for supporting transverter
                 bool fb = false;
-                while (tvNum < setupRadio->currentRadio->numTransverters)
+                while (tvNum < setupRadio->currentRadio.numTransverters)
                 {
-                    if (setupRadio->currentRadio->transVertSettings[tvNum]->band == band)
+                    if (setupRadio->currentRadio.transVertSettings[tvNum]->band == band)
                     {
                         fb = true;
                         break;
@@ -919,16 +919,16 @@ void RigControlMainWindow::openRadio()
 
                 if (fb)
                 {
-                    if (setupRadio->currentRadio->transVertSettings[tvNum]->transVertNegative)
+                    if (setupRadio->currentRadio.transVertSettings[tvNum]->transVertNegative)
                     {
                         logMessage(QString("Get Freq: Negative Transvert"));
-                        transVertF = rfrequency - setupRadio->currentRadio->transVertSettings[tvNum]->transVertOffset;
+                        transVertF = rfrequency - setupRadio->currentRadio.transVertSettings[tvNum]->transVertOffset;
                         logMessage(QString("Get Freq: Transvert F = %1").arg(QString::number(transVertF)));
                     }
                     else
                     {
                         logMessage(QString("Get Freq: Positive Transvert"));
-                        transVertF = rfrequency + setupRadio->currentRadio->transVertSettings[tvNum]->transVertOffset;
+                        transVertF = rfrequency + setupRadio->currentRadio.transVertSettings[tvNum]->transVertOffset;
 
                     }
                 }
@@ -940,7 +940,7 @@ void RigControlMainWindow::openRadio()
             }
             displayFreqVfo(rfrequency);
 
-            if (setupRadio->currentRadio->transVertEnable)
+            if (setupRadio->currentRadio.transVertEnable)
             {
                 sendFreqToLog(transVertF);
             }
@@ -977,9 +977,9 @@ void RigControlMainWindow::openRadio()
     void RigControlMainWindow::chkRadioMgmModeChanged()
     {
         static QString mgmMode;
-        if (setupRadio->currentRadio->mgmMode != mgmMode)
+        if (setupRadio->currentRadio.mgmMode != mgmMode)
         {
-            ui->mgmMode->setText(setupRadio->currentRadio->mgmMode);
+            ui->mgmMode->setText(setupRadio->currentRadio.mgmMode);
         }
     }
 
@@ -1000,7 +1000,7 @@ void RigControlMainWindow::openRadio()
             curMode = rmode;
             sCurMode = radio->convertModeQstr(rmode);
 
-            if (mgmModeFlag && sCurMode != setupRadio->currentRadio->mgmMode) // has mode been changed on the radio?
+            if (mgmModeFlag && sCurMode != setupRadio->currentRadio.mgmMode) // has mode been changed on the radio?
             {
                 // yes clear MGM mode
                 mgmModeFlag = false;
@@ -1019,7 +1019,7 @@ void RigControlMainWindow::openRadio()
 
                 displayModeVfo(hamlibData::MGM);
                 displayPassband(rwidth);
-                sendModeToLog(QString("%1:%2").arg(hamlibData::MGM).arg(setupRadio->currentRadio->mgmMode));
+                sendModeToLog(QString("%1:%2").arg(hamlibData::MGM).arg(setupRadio->currentRadio.mgmMode));
             }
 
        }
@@ -1044,16 +1044,16 @@ void RigControlMainWindow::openRadio()
                 if (mgmModeFlag)
                 {
                     logMessage(QString("Log SetMode: Mgm flag is set"));
-                    if (curMode !=  radio->convertQStrMode(setupRadio->currentRadio->mgmMode))
+                    if (curMode !=  radio->convertQStrMode(setupRadio->currentRadio.mgmMode))
                     {
-                        setMode(setupRadio->currentRadio->mgmMode, RIG_VFO_CURR);
+                        setMode(setupRadio->currentRadio.mgmMode, RIG_VFO_CURR);
                     }
                 }
                 else
                 {
                     mgmModeFlag = true;
-                    setMode(setupRadio->currentRadio->mgmMode, RIG_VFO_CURR);
-                    logMessage((QString("Log SetMode: Set MgmMode Flag, Selected MGM Mode = %1").arg(setupRadio->currentRadio->mgmMode)));
+                    setMode(setupRadio->currentRadio.mgmMode, RIG_VFO_CURR);
+                    logMessage((QString("Log SetMode: Set MgmMode Flag, Selected MGM Mode = %1").arg(setupRadio->currentRadio.mgmMode)));
                 }
             }
             else
@@ -1269,7 +1269,7 @@ void RigControlMainWindow::openRadio()
         QString errorMsg = radio->gethamlibErrorMsg(errorCode);
         logMessage(QString("Hamlib Error - Code = %1 - %2").arg(QString::number(errorCode)).arg(errorMsg));
 
-        QMessageBox::critical(this, "RigControl hamlib Error - " + setupRadio->currentRadio->radioName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
+        QMessageBox::critical(this, "RigControl hamlib Error - " + setupRadio->currentRadio.radioName, QString::number(errorCode) + " - " + errorMsg + "\n" + "Command - " + cmd);
 
         closeRadio();
         rigErrorFlag = false;
@@ -1438,9 +1438,9 @@ void RigControlMainWindow::openRadio()
 
     void RigControlMainWindow::sendTransVertOffsetToLogger(int tvNum)
     {
-        QString f = convertFreqToStr(setupRadio->currentRadio->transVertSettings[tvNum]->transVertOffset);
-        logMessage(QString("Send Transvert Offset to logger = %1%2").arg(setupRadio->currentRadio->transVertEnable ? f = "-" : f = "+").arg(f));
-        msg->publishTransVertOffSetFreq(setupRadio->currentRadio->transVertSettings[tvNum]->transVertNegative, f);
+        QString f = convertFreqToStr(setupRadio->currentRadio.transVertSettings[tvNum]->transVertOffset);
+        logMessage(QString("Send Transvert Offset to logger = %1%2").arg(setupRadio->currentRadio.transVertEnable ? f = "-" : f = "+").arg(f));
+        msg->publishTransVertOffSetFreq(setupRadio->currentRadio.transVertSettings[tvNum]->transVertNegative, f);
 
     }
 
@@ -1457,51 +1457,51 @@ void RigControlMainWindow::openRadio()
     {
         QString msg = QString("*** Rig Configuration ***\n\n");
 
-        if (setupRadio->currentRadio != nullptr)
+        if (setupRadio->currentRadio.radioName != "")
         {
 
             msg.append(QString("App Instance Name  = %1\n").arg(appName));
             msg.append(QString("Hamlib Version = %1\n").arg(radio->gethamlibVersion()));
-            msg.append(QString("Radio Name = %1\n").arg(setupRadio->currentRadio->radioName));
-            msg.append(QString("Radio Number = %1\n").arg(setupRadio->currentRadio->radioNumber));
-            msg.append(QString("Rig Model = %1\n").arg(setupRadio->currentRadio->radioModel));
-            msg.append(QString("Rig Number = %1\n").arg(QString::number(setupRadio->currentRadio->radioModelNumber)));
-            msg.append(QString("Rig Manufacturer = %1\n").arg(setupRadio->currentRadio->radioMfg_Name));
-            if (setupRadio->currentRadio->radioMfg_Name == "Icom")
+            msg.append(QString("Radio Name = %1\n").arg(setupRadio->currentRadio.radioName));
+            msg.append(QString("Radio Number = %1\n").arg(setupRadio->currentRadio.radioNumber));
+            msg.append(QString("Rig Model = %1\n").arg(setupRadio->currentRadio.radioModel));
+            msg.append(QString("Rig Number = %1\n").arg(QString::number(setupRadio->currentRadio.radioModelNumber)));
+            msg.append(QString("Rig Manufacturer = %1\n").arg(setupRadio->currentRadio.radioMfg_Name));
+            if (setupRadio->currentRadio.radioMfg_Name == "Icom")
             {
-                if (setupRadio->currentRadio->civAddress == "")
+                if (setupRadio->currentRadio.civAddress == "")
                 {
                     msg.append(QString("Icom CIV address = Using Default CIV Address\n"));
                 }
                 else
                 {
-                    msg.append(QString("Icom CIV address = %1\n").arg(setupRadio->currentRadio->civAddress));
+                    msg.append(QString("Icom CIV address = %1\n").arg(setupRadio->currentRadio.civAddress));
                 }
 
             }
-            msg.append(QString("Rig PortType = %1\n").arg(hamlibData::portTypeList[setupRadio->currentRadio->portType]));
-            msg.append(QString("Network Address = %1\n").arg(setupRadio->currentRadio->networkAdd));
-            msg.append(QString("Network Port = %1\n").arg(setupRadio->currentRadio->networkPort));
-            msg.append(QString("Comport = %1\n").arg(setupRadio->currentRadio->comport));
-            msg.append(QString("Baudrate = %1\n").arg(setupRadio->currentRadio->baudrate));
-            msg.append(QString("Stop bits = %1\n").arg(QString::number(setupRadio->currentRadio->stopbits)));
-            msg.append(QString("Parity = %1\n").arg(radio->getParityCodeNames()[setupRadio->currentRadio->parity]));
-            msg.append(QString("Handshake = %1\n").arg(radio->getHandShakeNames()[setupRadio->currentRadio->handshake]));
+            msg.append(QString("Rig PortType = %1\n").arg(hamlibData::portTypeList[setupRadio->currentRadio.portType]));
+            msg.append(QString("Network Address = %1\n").arg(setupRadio->currentRadio.networkAdd));
+            msg.append(QString("Network Port = %1\n").arg(setupRadio->currentRadio.networkPort));
+            msg.append(QString("Comport = %1\n").arg(setupRadio->currentRadio.comport));
+            msg.append(QString("Baudrate = %1\n").arg(setupRadio->currentRadio.baudrate));
+            msg.append(QString("Stop bits = %1\n").arg(QString::number(setupRadio->currentRadio.stopbits)));
+            msg.append(QString("Parity = %1\n").arg(radio->getParityCodeNames()[setupRadio->currentRadio.parity]));
+            msg.append(QString("Handshake = %1\n").arg(radio->getHandShakeNames()[setupRadio->currentRadio.handshake]));
             QString f = "";
-            setupRadio->currentRadio->transVertEnable ? f = "True" : f = "False";
+            setupRadio->currentRadio.transVertEnable ? f = "True" : f = "False";
             msg.append(QString("TransVert Enable = %1\n").arg(f));
-            msg.append(QString("Number of TransVerters = $1\n").arg(setupRadio->currentRadio->numTransverters));
+            msg.append(QString("Number of TransVerters = $1\n").arg(setupRadio->currentRadio.numTransverters));
 
-            for (int i = 0; i < setupRadio->currentRadio->numTransverters; i++)
+            for (int i = 0; i < setupRadio->currentRadio.numTransverters; i++)
             {
                 msg.append(QString("Transverter %1\n").arg(i));
-                msg.append(QString("Transverter Name = %1\n").arg(setupRadio->currentRadio->transVertSettings[i]->transVertName));
-                msg.append(QString("Transverter Band = %1\n").arg(setupRadio->currentRadio->transVertSettings[i]->band));
-                msg.append(QString("Transverter Offset = %1\n").arg(setupRadio->currentRadio->transVertSettings[i]->transVertOffsetStr));
-                setupRadio->currentRadio->transVertSettings[i]->transVertNegative  ? f = "True" : f = "False";
+                msg.append(QString("Transverter Name = %1\n").arg(setupRadio->currentRadio.transVertSettings[i]->transVertName));
+                msg.append(QString("Transverter Band = %1\n").arg(setupRadio->currentRadio.transVertSettings[i]->band));
+                msg.append(QString("Transverter Offset = %1\n").arg(setupRadio->currentRadio.transVertSettings[i]->transVertOffsetStr));
+                setupRadio->currentRadio.transVertSettings[i]->transVertNegative  ? f = "True" : f = "False";
                 msg.append(QString("Transverter Name = %1\n").arg(f));
-                msg.append(QString("Transverter Switch num = %1\n").arg(setupRadio->currentRadio->transVertSettings[i]->transSwitchNum));
-                setupRadio->currentRadio->transVertSettings[i]->enableTransSwitch  ? f = "True" : f = "False";
+                msg.append(QString("Transverter Switch num = %1\n").arg(setupRadio->currentRadio.transVertSettings[i]->transSwitchNum));
+                setupRadio->currentRadio.transVertSettings[i]->enableTransSwitch  ? f = "True" : f = "False";
                 msg.append(QString("Transverter Switch enable = %1\n").arg(f));
             }
 
@@ -1529,50 +1529,50 @@ void RigControlMainWindow::openRadio()
     void RigControlMainWindow::dumpRadioToTraceLog()
     {
 
-        if (setupRadio->currentRadio != nullptr)
+        if (setupRadio->currentRadio.radioName != "")
         {
             trace("*** Radio Update ***");
             trace(QString("App Instance Name  = %1").arg(appName));
             trace(QString("Hamlib Version = %1").arg(radio->gethamlibVersion()));
-            trace(QString("Radio Name = %1").arg(setupRadio->currentRadio->radioName));
-            trace(QString("Radio Number = %1").arg(setupRadio->currentRadio->radioNumber));
-            trace(QString("Rig Model = %1").arg(setupRadio->currentRadio->radioModel).trimmed());
-            trace(QString("Rig Number = %1").arg(QString::number(setupRadio->currentRadio->radioModelNumber)));
-            trace(QString("Rig Manufacturer = %1").arg(setupRadio->currentRadio->radioMfg_Name));
-            if (setupRadio->currentRadio->radioMfg_Name == "Icom")
+            trace(QString("Radio Name = %1").arg(setupRadio->currentRadio.radioName));
+            trace(QString("Radio Number = %1").arg(setupRadio->currentRadio.radioNumber));
+            trace(QString("Rig Model = %1").arg(setupRadio->currentRadio.radioModel).trimmed());
+            trace(QString("Rig Number = %1").arg(QString::number(setupRadio->currentRadio.radioModelNumber)));
+            trace(QString("Rig Manufacturer = %1").arg(setupRadio->currentRadio.radioMfg_Name));
+            if (setupRadio->currentRadio.radioMfg_Name == "Icom")
             {
-                if (setupRadio->currentRadio->civAddress == "")
+                if (setupRadio->currentRadio.civAddress == "")
                 {
                     trace(QString("Icom CIV address = Using Default CIV Address"));
                 }
                 else
                 {
-                    trace(QString("Icom CIV address = %1").arg(setupRadio->currentRadio->civAddress));
+                    trace(QString("Icom CIV address = %1").arg(setupRadio->currentRadio.civAddress));
                 }
 
             }
-            trace(QString("Rig PortType = %1").arg(hamlibData::portTypeList[setupRadio->currentRadio->portType]));
-            trace(QString("Network Address = %1").arg(setupRadio->currentRadio->networkAdd));
-            trace(QString("Network Port = %1").arg(setupRadio->currentRadio->networkPort));
-            trace(QString("Comport = %1").arg(setupRadio->currentRadio->comport));
-            trace(QString("Baudrate = %1").arg(setupRadio->currentRadio->baudrate));
-            trace(QString("Stop bits = %1").arg(QString::number(setupRadio->currentRadio->stopbits)));
-            trace(QString("Parity = %1").arg(radio->getParityCodeNames()[setupRadio->currentRadio->parity]));
-            trace(QString("Handshake = %1").arg(radio->getHandShakeNames()[setupRadio->currentRadio->handshake]));
+            trace(QString("Rig PortType = %1").arg(hamlibData::portTypeList[setupRadio->currentRadio.portType]));
+            trace(QString("Network Address = %1").arg(setupRadio->currentRadio.networkAdd));
+            trace(QString("Network Port = %1").arg(setupRadio->currentRadio.networkPort));
+            trace(QString("Comport = %1").arg(setupRadio->currentRadio.comport));
+            trace(QString("Baudrate = %1").arg(setupRadio->currentRadio.baudrate));
+            trace(QString("Stop bits = %1").arg(QString::number(setupRadio->currentRadio.stopbits)));
+            trace(QString("Parity = %1").arg(radio->getParityCodeNames()[setupRadio->currentRadio.parity]));
+            trace(QString("Handshake = %1").arg(radio->getHandShakeNames()[setupRadio->currentRadio.handshake]));
             QString f = "";
-            setupRadio->currentRadio->transVertEnable ? f = "True" : f = "False";
+            setupRadio->currentRadio.transVertEnable ? f = "True" : f = "False";
             trace(QString("TransVert Enable = %1").arg(f));
-            trace(QString("Number of TransVerters = $1").arg(setupRadio->currentRadio->numTransverters));
-            for (int i = 0; i < setupRadio->currentRadio->numTransverters; i++)
+            trace(QString("Number of TransVerters = $1").arg(setupRadio->currentRadio.numTransverters));
+            for (int i = 0; i < setupRadio->currentRadio.numTransverters; i++)
             {
                 trace(QString("Transverter %1").arg(i));
-                trace(QString("Transverter Name = %1").arg(setupRadio->currentRadio->transVertSettings[i]->transVertName));
-                trace(QString("Transverter Band = %1").arg(setupRadio->currentRadio->transVertSettings[i]->band));
-                trace(QString("Transverter Offset = %1").arg(setupRadio->currentRadio->transVertSettings[i]->transVertOffsetStr));
-                setupRadio->currentRadio->transVertSettings[i]->transVertNegative  ? f = "True" : f = "False";
+                trace(QString("Transverter Name = %1").arg(setupRadio->currentRadio.transVertSettings[i]->transVertName));
+                trace(QString("Transverter Band = %1").arg(setupRadio->currentRadio.transVertSettings[i]->band));
+                trace(QString("Transverter Offset = %1").arg(setupRadio->currentRadio.transVertSettings[i]->transVertOffsetStr));
+                setupRadio->currentRadio.transVertSettings[i]->transVertNegative  ? f = "True" : f = "False";
                 trace(QString("Transverter Name = %1").arg(f));
-                trace(QString("Transverter Switch num = %1").arg(setupRadio->currentRadio->transVertSettings[i]->transSwitchNum));
-                setupRadio->currentRadio->transVertSettings[i]->enableTransSwitch  ? f = "True" : f = "False";
+                trace(QString("Transverter Switch num = %1").arg(setupRadio->currentRadio.transVertSettings[i]->transSwitchNum));
+                setupRadio->currentRadio.transVertSettings[i]->enableTransSwitch  ? f = "True" : f = "False";
                 trace(QString("Transverter Switch enable = %1").arg(f));
             }
 

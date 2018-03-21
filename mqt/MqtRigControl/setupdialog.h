@@ -51,7 +51,7 @@ public:
 
 
     QString currentRadioName;
-    scatParams* currentRadio;
+    scatParams currentRadio;
 
     QVector<scatParams*> availRadioData;
     QStringList availRadios;
@@ -59,7 +59,7 @@ public:
 
     QVector<BandDetail*> bands;
 
-    scatParams* getCurrentRadio() const;
+
     int getRadioId(QString rotator);
 
 

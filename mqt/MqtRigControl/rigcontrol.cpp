@@ -57,7 +57,7 @@ RigControl::~RigControl()
     rig_cleanup(my_rig); /* if you care about memory */
 }
 
-int RigControl::init(scatParams* currentRadio)
+int RigControl::init(scatParams &currentRadio)
 {
     int retcode;
 
@@ -69,7 +69,7 @@ int RigControl::init(scatParams* currentRadio)
     QString comport = "/dev/";
 #endif
 
-    my_rig = rig_init(currentRadio->radioModelNumber);
+    my_rig = rig_init(currentRadio.radioModelNumber);
 
     if (!my_rig)
     {
@@ -78,21 +78,21 @@ int RigControl::init(scatParams* currentRadio)
 
     // load cat params
 
-    if (rig_port_e(currentRadio->portType) == RIG_PORT_SERIAL)
+    if (rig_port_e(currentRadio.portType) == RIG_PORT_SERIAL)
     {
-        comport.append(currentRadio->comport);
+        comport.append(currentRadio.comport);
         strncpy(my_rig->state.rigport.pathname, comport.toLatin1().data(), FILPATHLEN);
-        my_rig->state.rigport.parm.serial.rate = currentRadio->baudrate;
-        my_rig->state.rigport.parm.serial.data_bits = currentRadio->databits;
-        my_rig->state.rigport.parm.serial.stop_bits = currentRadio->stopbits;
-        my_rig->state.rigport.parm.serial.parity = getSerialParityCode(currentRadio->parity);
-        my_rig->state.rigport.parm.serial.handshake = getSerialHandshakeCode(currentRadio->handshake);
+        my_rig->state.rigport.parm.serial.rate = currentRadio.baudrate;
+        my_rig->state.rigport.parm.serial.data_bits = currentRadio.databits;
+        my_rig->state.rigport.parm.serial.stop_bits = currentRadio.stopbits;
+        my_rig->state.rigport.parm.serial.parity = getSerialParityCode(currentRadio.parity);
+        my_rig->state.rigport.parm.serial.handshake = getSerialHandshakeCode(currentRadio.handshake);
     }
-    else if (rig_port_e(currentRadio->portType) == RIG_PORT_NETWORK || rig_port_e(currentRadio->portType) == RIG_PORT_UDP_NETWORK)
+    else if (rig_port_e(currentRadio.portType) == RIG_PORT_NETWORK || rig_port_e(currentRadio.portType) == RIG_PORT_UDP_NETWORK)
     {
-        strncpy(my_rig->state.rigport.pathname, QString(currentRadio->networkAdd + ":" + currentRadio->networkPort).toLatin1().data(), FILPATHLEN);
+        strncpy(my_rig->state.rigport.pathname, QString(currentRadio.networkAdd + ":" + currentRadio.networkPort).toLatin1().data(), FILPATHLEN);
     }
-    else if (rig_port_e(currentRadio->portType) == RIG_PORT_NONE)
+    else if (rig_port_e(currentRadio.portType) == RIG_PORT_NONE)
     {
         strncpy(my_rig->state.rigport.pathname, QString("").toLatin1().data(), FILPATHLEN);
     }
@@ -101,9 +101,9 @@ int RigControl::init(scatParams* currentRadio)
 
     if(QString(my_rig->caps->mfg_name) == "Icom")
     {
-        if(!currentRadio->civAddress.isEmpty())
+        if(!currentRadio.civAddress.isEmpty())
         {
-            retcode = rig_set_conf(my_rig, rig_token_lookup(my_rig, "civaddr"),currentRadio->civAddress.toLatin1());
+            retcode = rig_set_conf(my_rig, rig_token_lookup(my_rig, "civaddr"),currentRadio.civAddress.toLatin1());
         }
     }
 

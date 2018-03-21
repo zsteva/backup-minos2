@@ -52,7 +52,7 @@ public:
 
 
     QString currentAntennaName;
-    srotParams* currentAntenna;
+    srotParams currentAntenna;
 
     QVector<srotParams*> availAntData;
     QStringList availAntennas;

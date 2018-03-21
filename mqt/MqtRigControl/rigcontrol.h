@@ -87,8 +87,61 @@ public:
 // This was the hamlib catParams structure, other fields have been added
 // to support other functions.
 
-struct scatParams
+class scatParams
 {
+
+public:
+
+  static void copyRig(scatParams* srce, scatParams &dest)
+  {
+
+      dest.radioName = srce->radioName;
+      dest.radioNumber = srce->radioNumber;
+      dest.comport = srce->comport;
+      dest.radioMfg_Name = srce->radioMfg_Name;
+      dest.radioModel = srce->radioModel;
+      dest.radioModelName = srce->radioModelName;
+      dest.radioModelNumber = srce->radioModelNumber;
+      dest.pollInterval = srce->pollInterval;
+      dest.civAddress = srce->civAddress;
+      dest.baudrate = srce->baudrate;
+      dest.parity = srce->parity;
+      dest.stopbits = srce->stopbits;
+      dest.databits = srce->databits;
+      dest.handshake = srce->handshake;
+      dest.portType = srce->portType;
+      dest.networkAdd = srce->networkAdd;
+      dest.networkPort = srce->networkPort;
+      dest.enableCAT = srce->enableCAT;
+      dest.enableSerialPTT = srce->enableSerialPTT;
+      dest.pttSerialPort = srce->pttSerialPort;
+      dest.activeRTS = srce->activeRTS;
+      dest.activeDTR = srce->activeDTR;
+      dest.nactiveRTS = srce->nactiveRTS;
+      dest.nactiveDTR = srce->nactiveDTR;
+      dest.mgmMode = srce->mgmMode;
+      dest.pttType = srce->pttType;
+      dest.transVertEnable = srce->transVertEnable;
+      dest.transVertNames.clear();
+      if (srce->transVertNames.count() > 0)
+      {
+          for (int i = 0; i < srce->transVertNames.count(); i++)
+          {
+              dest.transVertNames.append(srce->transVertNames[i]);
+          }
+      }
+      dest.numTransverters = srce->numTransverters;
+      dest.transVertSettings.clear();
+      if (srce->numTransverters > 0)
+      {
+          for (int i = 0; i <srce->numTransverters; i++)
+          {
+              dest.transVertSettings.append(srce->transVertSettings[i]);
+          }
+      }
+
+  }
+
 
   QString radioName;
   QString radioNumber;
@@ -117,9 +170,10 @@ struct scatParams
   QString mgmMode;
   ptt_type_t pttType;
   bool transVertEnable  = false;
-  QVector<TransVertParams*> transVertSettings;
   QStringList transVertNames;
   int numTransverters = 0;
+  QVector<TransVertParams*> transVertSettings;
+
 
 };
 
@@ -136,7 +190,7 @@ class RigControl : public QObject
 public:
     explicit RigControl(QObject *parent = 0);
     ~RigControl();
-    int init(scatParams* currentRadio);
+    int init(scatParams &currentRadio);
     bool enabled() {return rigControlEnabled;}
 
     int getFrequency(vfo_t vfo, freq_t*);

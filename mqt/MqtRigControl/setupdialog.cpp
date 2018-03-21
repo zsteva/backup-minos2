@@ -34,8 +34,8 @@
 
 SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::SetupDialog),
-    currentRadio(nullptr)
+    ui(new Ui::SetupDialog)
+
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -832,12 +832,6 @@ int SetupDialog::findCurrentRadio(QString currentRadioName)
 void SetupDialog::setAppName(QString name)
 {
     appName = name;
-}
-
-
-scatParams* SetupDialog::getCurrentRadio() const
-{
-    return currentRadio;
 }
 
 

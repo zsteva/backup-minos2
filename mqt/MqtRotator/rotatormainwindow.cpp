@@ -427,22 +427,22 @@ void RotatorMainWindow::openRotator()
 
     int retCode = 0;
 
-    if (setupAntenna->currentAntenna->antennaName == "")
+    if (setupAntenna->currentAntenna.antennaName == "")
     {
         logMessage(QString("Open Rotator: No rotator name!"));
         showStatusMessage("Please select an Antenna");
         return;
     }
-    if (rig_port_e(setupAntenna->currentAntenna->portType) == RIG_PORT_SERIAL)
+    if (rig_port_e(setupAntenna->currentAntenna.portType) == RIG_PORT_SERIAL)
     {
-        if(setupAntenna->comportAvial(setupAntenna->currentAntenna->comport) == -1)
+        if(setupAntenna->comportAvial(setupAntenna->currentAntenna.comport) == -1)
         {
-            logMessage(QString("Open Rotator: Check comport - defined port %1 not available on computer").arg(setupAntenna->currentAntenna->comport));
-            showStatusMessage(QString("Comport %1 no longer configured on computer?").arg(setupAntenna->currentAntenna->comport));
+            logMessage(QString("Open Rotator: Check comport - defined port %1 not available on computer").arg(setupAntenna->currentAntenna.comport));
+            showStatusMessage(QString("Comport %1 no longer configured on computer?").arg(setupAntenna->currentAntenna.comport));
             return;
         }
 
-        if (setupAntenna->currentAntenna->comport == "")
+        if (setupAntenna->currentAntenna.comport == "")
         {
             logMessage(QString("Open Rotator: No comport"));
             showStatusMessage("Please select a Comport");
@@ -450,9 +450,9 @@ void RotatorMainWindow::openRotator()
         }
 
     }
-    if (rig_port_e(setupAntenna->currentAntenna->portType) == RIG_PORT_NETWORK || rig_port_e(setupAntenna->currentAntenna->portType == RIG_PORT_UDP_NETWORK))
+    if (rig_port_e(setupAntenna->currentAntenna.portType) == RIG_PORT_NETWORK || rig_port_e(setupAntenna->currentAntenna.portType == RIG_PORT_UDP_NETWORK))
     {
-        if (setupAntenna->currentAntenna->networkAdd == "" || (setupAntenna->currentAntenna->networkPort == ""))
+        if (setupAntenna->currentAntenna.networkAdd == "" || (setupAntenna->currentAntenna.networkPort == ""))
         {
             logMessage(QString("Open Rotator: No network or Port Number"));
             showStatusMessage("Please enter a network Address and Port Number");
@@ -460,7 +460,7 @@ void RotatorMainWindow::openRotator()
         }
 
     }
-    if (setupAntenna->currentAntenna->rotatorModel == "")
+    if (setupAntenna->currentAntenna.rotatorModel == "")
     {
         logMessage(QString("Open Rotator: No rotator model"));
         showStatusMessage("Please select a rotator model");
@@ -478,29 +478,29 @@ void RotatorMainWindow::openRotator()
     if (rotator->get_serialConnected())
     {
         // get poll interval timer
-       if (setupAntenna->currentAntenna->pollInterval == "0.5")
+       if (setupAntenna->currentAntenna.pollInterval == "0.5")
        {
            pollTime = 500;
        }
        else
        {
-           pollTime = 1000 * setupAntenna->currentAntenna->pollInterval.toInt();
+           pollTime = 1000 * setupAntenna->currentAntenna.pollInterval.toInt();
        }
 
         pollTimer->start(pollTime);             // start timer to send message to controller
-        if (rig_port_e(setupAntenna->currentAntenna->portType) == RIG_PORT_SERIAL)
+        if (rig_port_e(setupAntenna->currentAntenna.portType) == RIG_PORT_SERIAL)
         {
             showStatusMessage(tr("Connected to: %1 - %2, %3, %4, %5, %6, %7, %8")
-                                  .arg(setupAntenna->currentAntenna->antennaName).arg(setupAntenna->currentAntenna->rotatorModel).arg(setupAntenna->currentAntenna->comport).arg(setupAntenna->currentAntenna->baudrate).arg(setupAntenna->currentAntenna->databits)
-                                  .arg(setupAntenna->currentAntenna->stopbits).arg(rotator->getParityCodeNames()[setupAntenna->currentAntenna->parity]).arg(rotator->getHandShakeNames()[setupAntenna->currentAntenna->handshake]));
+                                  .arg(setupAntenna->currentAntenna.antennaName).arg(setupAntenna->currentAntenna.rotatorModel).arg(setupAntenna->currentAntenna.comport).arg(setupAntenna->currentAntenna.baudrate).arg(setupAntenna->currentAntenna.databits)
+                                  .arg(setupAntenna->currentAntenna.stopbits).arg(rotator->getParityCodeNames()[setupAntenna->currentAntenna.parity]).arg(rotator->getHandShakeNames()[setupAntenna->currentAntenna.handshake]));
         }
-        else if (rig_port_e(setupAntenna->currentAntenna->portType == RIG_PORT_NETWORK || rig_port_e(setupAntenna->currentAntenna->portType == RIG_PORT_UDP_NETWORK)))
+        else if (rig_port_e(setupAntenna->currentAntenna.portType == RIG_PORT_NETWORK || rig_port_e(setupAntenna->currentAntenna.portType == RIG_PORT_UDP_NETWORK)))
         {
-            showStatusMessage(QString("Connected to: %1 - %2, %3").arg(setupAntenna->currentAntenna->antennaName).arg(setupAntenna->currentAntenna->rotatorModel).arg(setupAntenna->currentAntenna->networkAdd + ":" + setupAntenna->currentAntenna->networkPort));
+            showStatusMessage(QString("Connected to: %1 - %2, %3").arg(setupAntenna->currentAntenna.antennaName).arg(setupAntenna->currentAntenna.rotatorModel).arg(setupAntenna->currentAntenna.networkAdd + ":" + setupAntenna->currentAntenna.networkPort));
         }
-        else if (rig_port_e(setupAntenna->currentAntenna->portType) == RIG_PORT_NONE)
+        else if (rig_port_e(setupAntenna->currentAntenna.portType) == RIG_PORT_NONE)
         {
-                showStatusMessage(QString("Connected to: %1 - %2").arg(setupAntenna->currentAntenna->antennaName).arg(setupAntenna->currentAntenna->rotatorModel));
+                showStatusMessage(QString("Connected to: %1 - %2").arg(setupAntenna->currentAntenna.antennaName).arg(setupAntenna->currentAntenna.rotatorModel));
         }
 
         //sendStatusToLogConnected();
@@ -682,7 +682,7 @@ void RotatorMainWindow::displayBearing(int bearing)
 
     rotatorBearing = bearing;
 
-    curBearingWithOffset = bearing + setupAntenna->currentAntenna->antennaOffset;
+    curBearingWithOffset = bearing + setupAntenna->currentAntenna.antennaOffset;
 
     logMessage(QString("Current Bearing + offset = %1").arg(QString::number( curBearingWithOffset)));
 
@@ -922,9 +922,11 @@ void RotatorMainWindow::upDateAntenna()
         currentAntIdx = setupAntenna->findCurrentAntenna(setupAntenna->currentAntennaName);
         if (currentAntIdx > -1 && currentAntIdx < setupAntenna->numAvailAntennas)  // find antenna and update current antenna pointer
         {
-            // found antenna, updatea currentAntenna pointer to select antennadata
-            setupAntenna->currentAntenna = setupAntenna->availAntData[currentAntIdx];
-            if (setupAntenna->currentAntenna->rotatorModelNumber == 0)
+            // found antenna, update currentAntenna with selected antenna data
+            srotParams::copyRot(setupAntenna->availAntData[currentAntIdx], setupAntenna->currentAntenna);
+
+
+            if (setupAntenna->currentAntenna.rotatorModelNumber == 0)
             {
                 closeRotator();
                 QMessageBox::critical(this, tr("Antenna Error"), "Please configure a antenna name and rotator model");
@@ -933,19 +935,19 @@ void RotatorMainWindow::upDateAntenna()
 
 
 
-            ui->antNameDisp->setText(setupAntenna->currentAntenna->antennaName);
+            ui->antNameDisp->setText(setupAntenna->currentAntenna.antennaName);
 
             closeRotator();
 
             writeWindowTitle(appName);
             openRotator();
-            offSetDisplay->setText(QString::number(setupAntenna->currentAntenna->antennaOffset));
+            offSetDisplay->setText(QString::number(setupAntenna->currentAntenna.antennaOffset));
 
             /*
-            if (setupAntenna->currentAntenna->endStopType == ROT_NEG180_180)
+            if (setupAntenna->currentAntenna.endStopType == ROT_NEG180_180)
             {
-                currentMaxAzimuth = setupAntenna->currentAntenna->max_azimuth;
-                currentMinAzimuth = setupAntenna->currentAntenna->min_azimuth;
+                currentMaxAzimuth = setupAntenna->currentAntenna.max_azimuth;
+                currentMinAzimuth = setupAntenna->currentAntenna.min_azimuth;
                 rotatorCWEndStop = COMPASS_HALF - 1;
                 rotatorCCWEndStop = COMPASS_HALF + 1;
                 endStopType = ROT_NEG180_180;
@@ -978,7 +980,7 @@ void RotatorMainWindow::upDateAntenna()
 
 >>>>>>> .theirs
             // flag if rotator supports CW and CCW commands
-     //       supportCwCcwCmd = getCwCcwCmdFlag(setupAntenna->currentAntenna->rotatorModelNumber); ***********************************************
+     //       supportCwCcwCmd = getCwCcwCmdFlag(setupAntenna->currentAntenna.rotatorModelNumber); ***********************************************
 
             if (rotator->get_serialConnected())
             {
@@ -1051,7 +1053,7 @@ void RotatorMainWindow::upDateAntenna()
 */
 
            // don't display overlap if rotator doesn't support or user turned off overlap
-           toggleOverLapDisplay(setupAntenna->currentAntenna->overRunFlag);
+           toggleOverLapDisplay(setupAntenna->currentAntenna.overRunFlag);
 
             dumpRotatorToTraceLog();
 
@@ -1069,8 +1071,8 @@ void RotatorMainWindow::upDateAntenna()
            if (appName.length() > 0)
            {
                sendStatusToLogStop();
-               msg->publishMaxAzimuth(QString::number(setupAntenna->currentAntenna->max_azimuth));
-               msg->publishMinAzimuth(QString::number(setupAntenna->currentAntenna->min_azimuth));
+               msg->publishMaxAzimuth(QString::number(setupAntenna->currentAntenna.max_azimuth));
+               msg->publishMinAzimuth(QString::number(setupAntenna->currentAntenna.min_azimuth));
            }
         }
     }
@@ -1162,11 +1164,11 @@ void RotatorMainWindow::checkEndStop()
     logMessage(QString("Check EndStop"));
     logMessage(QString("curBearingWithOffset = %1").arg(QString::number(curBearingWithOffset)));
     logMessage(QString("rotatorBearing = %1").arg(QString::number(rotatorBearing)));
-    logMessage(QString("currentMaxAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna->max_azimuth)));
-    logMessage(QString("currentMinAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna->min_azimuth)));
+    logMessage(QString("currentMaxAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
+    logMessage(QString("currentMinAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
     if (movingCW)
     {
-        if (rotatorBearing >= setupAntenna->currentAntenna->max_azimuth)
+        if (rotatorBearing >= setupAntenna->currentAntenna.max_azimuth)
         {
             logMessage(QString("Max Endstop reached!"));
             stopButton();
@@ -1174,7 +1176,7 @@ void RotatorMainWindow::checkEndStop()
     }
     else if (movingCCW)
     {
-        if (rotatorBearing <= setupAntenna->currentAntenna->min_azimuth)
+        if (rotatorBearing <= setupAntenna->currentAntenna.min_azimuth)
         {
             logMessage(QString("Min Endstop reached!"));
             stopButton();
@@ -1262,9 +1264,9 @@ void RotatorMainWindow::rotateTo(int bearing)
 
 
     // adjust bearing with offset
-    if (setupAntenna->currentAntenna->antennaOffset < 0)
+    if (setupAntenna->currentAntenna.antennaOffset < 0)
     {
-        rotateTo = rotateTo - setupAntenna->currentAntenna->antennaOffset;
+        rotateTo = rotateTo - setupAntenna->currentAntenna.antennaOffset;
         if (rotateTo >= COMPASS_MAX360)
         {
             rotateTo = rotateTo - COMPASS_MAX360;
@@ -1272,7 +1274,7 @@ void RotatorMainWindow::rotateTo(int bearing)
     }
     else
     {
-        rotateTo = rotateTo - setupAntenna->currentAntenna->antennaOffset;
+        rotateTo = rotateTo - setupAntenna->currentAntenna.antennaOffset;
         if (rotateTo < COMPASS_MIN0)
         {
             rotateTo = COMPASS_MAX360 + rotateTo;
@@ -1280,7 +1282,7 @@ void RotatorMainWindow::rotateTo(int bearing)
     }
 
 
-    logMessage(QString("Rotate to Bearing = %1, adjusted with offset = %2").arg(QString::number(rotateTo)).arg(QString::number(setupAntenna->currentAntenna->antennaOffset)));
+    logMessage(QString("Rotate to Bearing = %1, adjusted with offset = %2").arg(QString::number(rotateTo)).arg(QString::number(setupAntenna->currentAntenna.antennaOffset)));
 
 
 
@@ -1424,12 +1426,12 @@ int RotatorMainWindow::calclRot_0_450_Neg180_540(int targetBearing)
 
     }
 
-    if (rotatorBearing >= COMPASS_MAX360 && ((targetBearing + COMPASS_MAX360) <= setupAntenna->currentAntenna->max_azimuth))
+    if (rotatorBearing >= COMPASS_MAX360 && ((targetBearing + COMPASS_MAX360) <= setupAntenna->currentAntenna.max_azimuth))
     {
         target = targetBearing + COMPASS_MAX360;
         logMessage(QString("NCalc - 7 - Rotator Bearing = %1 >= 360, target bearing = %2, target bearing + 360 = %3 is < maxAzimuth = %4, calculated target = %5")
                    .arg(QString::number(rotatorBearing)).arg(QString::number(targetBearing)).arg(QString::number(targetBearing + COMPASS_MAX360))
-                       .arg(QString::number(setupAntenna->currentAntenna->max_azimuth)).arg(QString::number(target)));
+                       .arg(QString::number(setupAntenna->currentAntenna.max_azimuth)).arg(QString::number(target)));
         return target;
     }
     else if (rotatorBearing >= COMPASS_MAX360 && targetBearing < COMPASS_MAX360)
@@ -1441,7 +1443,7 @@ int RotatorMainWindow::calclRot_0_450_Neg180_540(int targetBearing)
     }
     else if (rotatorBearing > COMPASS_HALF && rotatorBearing <= COMPASS_MAX360)
     {
-        if ((COMPASS_MAX360 + targetBearing) <= setupAntenna->currentAntenna->max_azimuth)
+        if ((COMPASS_MAX360 + targetBearing) <= setupAntenna->currentAntenna.max_azimuth)
         {
             if (COMPASS_MAX360 + targetBearing - rotatorBearing < rotatorBearing - targetBearing)
             {
@@ -1495,7 +1497,7 @@ void RotatorMainWindow::stopRotation(bool sendStop)
 
 
         // if it is a Prosistel Rotator - to stop use rotate_to_bearing = 999
-        if (setupAntenna->currentAntenna->rotatorModelNumber == 1701)
+        if (setupAntenna->currentAntenna.rotatorModelNumber == 1701)
         {
             logMessage(QString("Stop Rotation: Prosistel Rotator"));
             //retCode = rotator->rotate_to_bearing(999);
@@ -1566,7 +1568,7 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
     {
         // button off
 
-        if (rotatorBearing >= setupAntenna->currentAntenna->max_azimuth)
+        if (rotatorBearing >= setupAntenna->currentAntenna.max_azimuth)
         {
             logMessage(QString("Rotator Bearing > currentMaxAzimuth"));
             cwCcwCmdflag = false;
@@ -1584,7 +1586,7 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
         int retCode = 0;
         if (rotator->get_serialConnected())
         {
-            if (setupAntenna->currentAntenna->supportCwCcwCmd)
+            if (setupAntenna->currentAntenna.supportCwCcwCmd)
             {
                 logMessage(QString("Send CW rotator command, rotator speed = %1").arg(QString::number(rotator->get_rotatorSpeed())));
                 retCode = rotator->rotateClockwise(rotator->get_rotatorSpeed());
@@ -1598,8 +1600,8 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
                 }
                 else
                 {
-                    logMessage(QString("Send rotate to minAzimuth, instead of CW rotator command, maxAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna->max_azimuth)));
-                    retCode = rotator->rotate_to_bearing(setupAntenna->currentAntenna->max_azimuth);
+                    logMessage(QString("Send rotate to minAzimuth, instead of CW rotator command, maxAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
+                    retCode = rotator->rotate_to_bearing(setupAntenna->currentAntenna.max_azimuth);
                 }
             }
             if (retCode < 0)
@@ -1613,7 +1615,7 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
             {
 
                 movingCW = true;
-                if (!setupAntenna->currentAntenna->supportCwCcwCmd)
+                if (!setupAntenna->currentAntenna.supportCwCcwCmd)
                 {
                     moving = true;
                 }
@@ -1657,7 +1659,7 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
     {
         // button off
 
-        if (rotatorBearing < setupAntenna->currentAntenna->min_azimuth)
+        if (rotatorBearing < setupAntenna->currentAntenna.min_azimuth)
         {
             logMessage(QString("CCW - Rotator Bearing < currentMinAzimuth"));
             cwCcwCmdflag = false;
@@ -1675,7 +1677,7 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
         int retCode = 0;
         if (rotator->get_serialConnected())
         {
-            if (setupAntenna->currentAntenna->supportCwCcwCmd)
+            if (setupAntenna->currentAntenna.supportCwCcwCmd)
             {
                 logMessage(QString("Send CCW rotator command, rotator speed = " + QString::number(rotator->get_rotatorSpeed())));
                 retCode = rotator->rotateCClockwise(rotator->get_rotatorSpeed());
@@ -1689,8 +1691,8 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
                 }
                 else
                 {
-                    logMessage(QString("Send rotate to minAzimuth, instead of CCW rotator command, minAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna->min_azimuth)));
-                    retCode = rotator->rotate_to_bearing(setupAntenna->currentAntenna->min_azimuth);
+                    logMessage(QString("Send rotate to minAzimuth, instead of CCW rotator command, minAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
+                    retCode = rotator->rotate_to_bearing(setupAntenna->currentAntenna.min_azimuth);
                 }
 
             }
@@ -1705,7 +1707,7 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
             {
 
                 movingCCW = true;
-                if (!setupAntenna->currentAntenna->supportCwCcwCmd)
+                if (!setupAntenna->currentAntenna.supportCwCcwCmd)
                 {
                     moving = true;
                 }
@@ -1991,7 +1993,7 @@ void RotatorMainWindow::currentAntennaSettingChanged(QString antennaName)
             if (selectAntenna->currentText() != antennaName)
             {
                 bool ok;
-                selectAntenna->setCurrentIndex(setupAntenna->currentAntenna->antennaNumber.toInt(&ok, 10));
+                selectAntenna->setCurrentIndex(setupAntenna->currentAntenna.antennaNumber.toInt(&ok, 10));
             }
             upDateAntenna();
             break;
@@ -2030,35 +2032,35 @@ void RotatorMainWindow::aboutRotatorConfig()
     QString msg = QString("*** Rotator Configuration ***\n\n");
     msg.append(QString("App Instance Name  = %1\n").arg(appName));
     msg.append(QString("Hamlib Version = %1\n").arg(rotator->gethamlibVersion()));
-    msg.append(QString("Antenna Name = %1\n").arg(setupAntenna->currentAntenna->antennaName));
-    msg.append(QString("Antenna Number = %1\n").arg(setupAntenna->currentAntenna->antennaNumber));
-    msg.append(QString("Rotator Model = %1\n").arg(setupAntenna->currentAntenna->rotatorModel));
-    msg.append(QString("Rotator Number = %1\n").arg(QString::number(setupAntenna->currentAntenna->rotatorModelNumber)));
-    msg.append(QString("Rotator Manufacturer = %1\n").arg(setupAntenna->currentAntenna->rotatorManufacturer));
+    msg.append(QString("Antenna Name = %1\n").arg(setupAntenna->currentAntenna.antennaName));
+    msg.append(QString("Antenna Number = %1\n").arg(setupAntenna->currentAntenna.antennaNumber));
+    msg.append(QString("Rotator Model = %1\n").arg(setupAntenna->currentAntenna.rotatorModel));
+    msg.append(QString("Rotator Number = %1\n").arg(QString::number(setupAntenna->currentAntenna.rotatorModelNumber)));
+    msg.append(QString("Rotator Manufacturer = %1\n").arg(setupAntenna->currentAntenna.rotatorManufacturer));
     msg.append(QString("Minos Rotator Type = %1\n").arg(endStopNames[endStopType]));
-    msg.append(QString("Rotator PortType = %1\n").arg(hamlibData::portTypeList[setupAntenna->currentAntenna->portType]));
-    msg.append(QString("Network Address = %1\n").arg(setupAntenna->currentAntenna->networkAdd));
-    msg.append(QString("Network Port = %1\n").arg(setupAntenna->currentAntenna->networkPort));
-    msg.append(QString("Rotator Comport = %1\n").arg(setupAntenna->currentAntenna->comport));
-    msg.append(QString("Baudrate = %1\n").arg(QString::number(setupAntenna->currentAntenna->baudrate)));
-    msg.append(QString("Databits = %1\n").arg(QString::number(setupAntenna->currentAntenna->databits)));
-    msg.append(QString("Stop bits = %1\n").arg(QString::number(setupAntenna->currentAntenna->stopbits)));
-    msg.append(QString("Parity = %1\n").arg(rotator->getParityCodeNames()[setupAntenna->currentAntenna->parity]));
-    msg.append(QString("Handshake = %1\n").arg(rotator->getHandShakeNames()[setupAntenna->currentAntenna->handshake]));
-    msg.append(QString("Antenna Offset = %1\n").arg(QString::number(setupAntenna->currentAntenna->antennaOffset)));
-    msg.append(QString("Current Max Azimuth = %1\n").arg(QString::number(setupAntenna->currentAntenna->max_azimuth)));
-    msg.append(QString("Current Min Azimuth = %1\n").arg(QString::number(setupAntenna->currentAntenna->min_azimuth)));
+    msg.append(QString("Rotator PortType = %1\n").arg(hamlibData::portTypeList[setupAntenna->currentAntenna.portType]));
+    msg.append(QString("Network Address = %1\n").arg(setupAntenna->currentAntenna.networkAdd));
+    msg.append(QString("Network Port = %1\n").arg(setupAntenna->currentAntenna.networkPort));
+    msg.append(QString("Rotator Comport = %1\n").arg(setupAntenna->currentAntenna.comport));
+    msg.append(QString("Baudrate = %1\n").arg(QString::number(setupAntenna->currentAntenna.baudrate)));
+    msg.append(QString("Databits = %1\n").arg(QString::number(setupAntenna->currentAntenna.databits)));
+    msg.append(QString("Stop bits = %1\n").arg(QString::number(setupAntenna->currentAntenna.stopbits)));
+    msg.append(QString("Parity = %1\n").arg(rotator->getParityCodeNames()[setupAntenna->currentAntenna.parity]));
+    msg.append(QString("Handshake = %1\n").arg(rotator->getHandShakeNames()[setupAntenna->currentAntenna.handshake]));
+    msg.append(QString("Antenna Offset = %1\n").arg(QString::number(setupAntenna->currentAntenna.antennaOffset)));
+    msg.append(QString("Current Max Azimuth = %1\n").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
+    msg.append(QString("Current Min Azimuth = %1\n").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
     msg.append(QString("Current CW EndStop = %1\n").arg(QString::number(rotatorCWEndStop)));
     msg.append(QString("Current CCW EndStop = %1\n").arg(QString::number(rotatorCCWEndStop)));
     QString f;
-    setupAntenna->currentAntenna->southStopFlag ? f = "True" : f = "False";
+    setupAntenna->currentAntenna.southStopFlag ? f = "True" : f = "False";
     msg.append(QString("South Stop Flag = %1\n").arg(f));
     overLapActiveflag ? f = "True" : f = "False";
     msg.append(QString("Overrun flag = %1\n").arg(f));
-    setupAntenna->currentAntenna->supportCwCcwCmd ? f = "True" : f = "False";
+    setupAntenna->currentAntenna.supportCwCcwCmd ? f = "True" : f = "False";
     msg.append(QString("Support CW and CCW Commands = %1\n").arg(f));
-    msg.append(QString("Rotator Max Baudrate = %1\n").arg(QString::number(setupAntenna->currentAntenna->maxBaudRate)));
-    msg.append(QString("Rotator Min Baud rate = %1\n").arg(QString::number(setupAntenna->currentAntenna->minBaudRate)));
+    msg.append(QString("Rotator Max Baudrate = %1\n").arg(QString::number(setupAntenna->currentAntenna.maxBaudRate)));
+    msg.append(QString("Rotator Min Baud rate = %1\n").arg(QString::number(setupAntenna->currentAntenna.minBaudRate)));
     ui->actionTraceLog->isChecked() ? f = "True" : f = "False";
     msg.append(QString("Tracelog = %1\n").arg(f));
 
@@ -2077,35 +2079,35 @@ void RotatorMainWindow::dumpRotatorToTraceLog()
     trace("*** Antenna Updated ***");
     trace(QString("App Instance Name  = %1").arg(appName));
     trace(QString("Hamlib Version = %1").arg(rotator->gethamlibVersion()));
-    trace(QString("Antenna Name = %1").arg(setupAntenna->currentAntenna->antennaName));
-    trace(QString("Antenna Number = %1").arg(setupAntenna->currentAntenna->antennaNumber));
-    trace(QString("Rotator Model = %1").arg(setupAntenna->currentAntenna->rotatorModel));
-    trace(QString("Rotator Number = %1").arg(QString::number(setupAntenna->currentAntenna->rotatorModelNumber)));
-    trace(QString("Rotator Manufacturer = %1").arg(setupAntenna->currentAntenna->rotatorManufacturer));
+    trace(QString("Antenna Name = %1").arg(setupAntenna->currentAntenna.antennaName));
+    trace(QString("Antenna Number = %1").arg(setupAntenna->currentAntenna.antennaNumber));
+    trace(QString("Rotator Model = %1").arg(setupAntenna->currentAntenna.rotatorModel));
+    trace(QString("Rotator Number = %1").arg(QString::number(setupAntenna->currentAntenna.rotatorModelNumber)));
+    trace(QString("Rotator Manufacturer = %1").arg(setupAntenna->currentAntenna.rotatorManufacturer));
     trace(QString("Minos Rotator Type = %1").arg(endStopNames[endStopType]));
-    trace(QString("Rotator PortType = %1").arg(hamlibData::portTypeList[setupAntenna->currentAntenna->portType]));
-    trace(QString("Network Address = %1").arg(setupAntenna->currentAntenna->networkAdd));
-    trace(QString("Network Port = %1").arg(setupAntenna->currentAntenna->networkPort));
-    trace(QString("Rotator Comport = %1").arg(setupAntenna->currentAntenna->comport));
-    trace(QString("Baudrate = %1").arg(QString::number(setupAntenna->currentAntenna->baudrate)));
-    trace(QString("Databits = %1").arg(QString::number(setupAntenna->currentAntenna->databits)));
-    trace(QString("Stop bits = %1").arg(QString::number(setupAntenna->currentAntenna->stopbits)));
-    trace(QString("Parity = %1").arg(rotator->getParityCodeNames()[setupAntenna->currentAntenna->parity]));
-    trace(QString("Handshake = %1").arg(rotator->getHandShakeNames()[setupAntenna->currentAntenna->handshake]));
-    trace(QString("Antenna Offset = %1").arg(QString::number(setupAntenna->currentAntenna->antennaOffset)));
-    trace(QString("Current Max Azimuth = %1").arg(QString::number(setupAntenna->currentAntenna->max_azimuth)));
-    trace(QString("Current Min Azimuth = %1").arg(QString::number(setupAntenna->currentAntenna->min_azimuth)));
+    trace(QString("Rotator PortType = %1").arg(hamlibData::portTypeList[setupAntenna->currentAntenna.portType]));
+    trace(QString("Network Address = %1").arg(setupAntenna->currentAntenna.networkAdd));
+    trace(QString("Network Port = %1").arg(setupAntenna->currentAntenna.networkPort));
+    trace(QString("Rotator Comport = %1").arg(setupAntenna->currentAntenna.comport));
+    trace(QString("Baudrate = %1").arg(QString::number(setupAntenna->currentAntenna.baudrate)));
+    trace(QString("Databits = %1").arg(QString::number(setupAntenna->currentAntenna.databits)));
+    trace(QString("Stop bits = %1").arg(QString::number(setupAntenna->currentAntenna.stopbits)));
+    trace(QString("Parity = %1").arg(rotator->getParityCodeNames()[setupAntenna->currentAntenna.parity]));
+    trace(QString("Handshake = %1").arg(rotator->getHandShakeNames()[setupAntenna->currentAntenna.handshake]));
+    trace(QString("Antenna Offset = %1").arg(QString::number(setupAntenna->currentAntenna.antennaOffset)));
+    trace(QString("Current Max Azimuth = %1").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
+    trace(QString("Current Min Azimuth = %1").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
     trace(QString("Current CW EndStop = %1").arg(QString::number(rotatorCWEndStop)));
     trace(QString("Current CCW EndStop = %1").arg(QString::number(rotatorCCWEndStop)));
     QString f;
-    setupAntenna->currentAntenna->southStopFlag ? f = "True" : f = "False";
+    setupAntenna->currentAntenna.southStopFlag ? f = "True" : f = "False";
     trace(QString("South Stop Flag = %1").arg(f));
     overLapActiveflag ? f = "True" : f = "False";
     trace(QString("Overrun flag = %1").arg(f));
-    setupAntenna->currentAntenna->supportCwCcwCmd ? f = "True" : f = "False";
+    setupAntenna->currentAntenna.supportCwCcwCmd ? f = "True" : f = "False";
     trace(QString("Support CW and CCW Commands = %1").arg(f));
-    trace(QString("Rotator Max Baudrate = %1").arg(QString::number(setupAntenna->currentAntenna->maxBaudRate)));
-    trace(QString("Rotator Min Baud rate = %1").arg(QString::number(setupAntenna->currentAntenna->minBaudRate)));
+    trace(QString("Rotator Max Baudrate = %1").arg(QString::number(setupAntenna->currentAntenna.maxBaudRate)));
+    trace(QString("Rotator Min Baud rate = %1").arg(QString::number(setupAntenna->currentAntenna.minBaudRate)));
     ui->actionTraceLog->isChecked() ? f = "True" : f = "False";
     trace(QString("Tracelog = %1").arg(f));
 
