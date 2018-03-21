@@ -560,14 +560,14 @@ void RotControlFrame::setRotatorAntennaName(const QString &s)
    antennaName = ui->antennaName->currentText();
    if (ct && !ct->isProtected() && ct == TContestApp::getContestApp() ->getCurrentContest())
    {
-        emit selectRotator(s, ct->uuid);
+        emit selectRotator(s);
    }
 }
 void RotControlFrame::on_ContestPageChanged()
 {
     // send rotator select to rotator app
 
-    emit selectRotator(ct->rotatorName.getValue(), ct->uuid);
+    emit selectRotator(ct->rotatorName.getValue());
 }
 
 void RotControlFrame::setRotatorBearing(const QString &s)
@@ -679,24 +679,10 @@ void RotControlFrame::traceMsg(QString msg)
 
 void RotControlFrame::on_antennaName_activated(const QString &arg1)
 {
-   /*QString n = arg1;
-    if (n == antennaName)
-    {
-        n = RELOAD;
-    }
-*/
 
-    /*TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
-
-        if (tslf)
-            tslf->on_RotatorAntennaName(arg1);
-    }
-    */
     antennaName = arg1;
-    QString uuid;
-    if (ct)
-        uuid = ct->uuid;
-    emit selectRotator(arg1, uuid);
+
+    emit selectRotator(antennaName);
 
 }
 void RotControlFrame::getRotDetails(memoryData::memData &m)

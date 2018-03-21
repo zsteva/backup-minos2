@@ -3,6 +3,7 @@
 
 #include "logger_pch.h"
 #include "StackedInfoFrame.h"
+#include "ConfigFile.h"
 
 namespace Ui {
 class TSingleLogFrame;
@@ -17,7 +18,6 @@ class BaseContact;
 class ContactList;
 class ListContact;
 class FocusWatcher;
-class TSendDM;
 
 // We may need to define our own validation controls with valid methods
 // for each needed type...
@@ -35,6 +35,12 @@ public:
     explicit TSingleLogFrame(QWidget *parent, BaseContestLog *contest);
     ~TSingleLogFrame();
 
+    Connectable keyerServerConnectable;
+    Connectable rigServerConnectable;
+    Connectable bandMapServerConnectable;
+    Connectable rotatorServerConnectable;
+    void resetConnectables();
+
     void showQSOs();
     void getSplitters();
     void goSerial( );
@@ -50,7 +56,6 @@ public:
     int getBearingFrmQSOLog();
 
     void refreshMults();
-    TSendDM *sendDM;
 
     bool logColumnsChanged;
     bool splittersChanged;
@@ -165,7 +170,7 @@ private slots:
     void sendRadioMode(QString);
 
     void sendSelectRadio(QString);
-    void sendSelectRotator(QString, QString);
+    void sendSelectRotator(QString);
 
 
     void on_ControlSplitter_splitterMoved(int pos, int index);

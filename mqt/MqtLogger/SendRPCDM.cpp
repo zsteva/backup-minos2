@@ -25,11 +25,9 @@
 #include "tlogcontainer.h"
 
 //---------------------------------------------------------------------------
-TSendDM::TSendDM(QWidget* Owner , LoggerContestLog *ct)
-      : QObject( Owner ), contest(ct)
+TSendDM::TSendDM(QWidget* Owner )
+      : QObject( Owner )
 {
-    resetConnectables();
-
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
@@ -38,97 +36,80 @@ TSendDM::TSendDM(QWidget* Owner , LoggerContestLog *ct)
 TSendDM::~TSendDM()
 {
 }
-
-void TSendDM::resetConnectables()
-{
-    MinosConfig *config = MinosConfig::getMinosConfig();
-
-    rigServerConnectable = config->getApp(contest->appRigControl.getValue());
-    keyerServerConnectable = config->getApp(contest->appVoiceKeyer.getValue());
-    bandMapServerConnectable = config->getApp(contest->appBandMap.getValue());
-    rotatorServerConnectable = config->getApp(contest->appRotator.getValue());
-
-}
-
 //---------------------------------------------------------------------------
-void TSendDM::logMessage( QString s )
-{
-   trace( s );
-}
-//---------------------------------------------------------------------------
-void TSendDM::sendKeyerPlay(  int fno )
+void TSendDM::sendKeyerPlay( TSingleLogFrame *tslf, int fno )
 {
    RPCGeneralClient rpc(rpcConstants::keyerMethod);
    QSharedPointer<RPCParam>st(new RPCParamStruct);
    QSharedPointer<RPCParam>sName(new RPCStringParam( rpcConstants::keyerPlayFile ));
    QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
-   QSharedPointer<RPCParam>select(new RPCStringParam(contest->uuid ));
+   QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
    st->addMember( select, rpcConstants::selected );
    st->addMember( sName, "Name" );
    st->addMember( iValue, "Value" );
    rpc.getCallArgs() ->addParam( st );
-   rpc.queueCall( keyerServerConnectable.remoteAppName + "@" + keyerServerConnectable.serverName );
+   rpc.queueCall( tslf->keyerServerConnectable.remoteAppName + "@" + tslf->keyerServerConnectable.serverName );
 }
-void TSendDM::sendKeyerRecord(  int fno )
+void TSendDM::sendKeyerRecord( TSingleLogFrame *tslf, int fno )
 {
    RPCGeneralClient rpc(rpcConstants::keyerMethod);
    QSharedPointer<RPCParam>st(new RPCParamStruct);
    QSharedPointer<RPCParam>sName(new RPCStringParam( "RecordFile" ));
    QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
-   QSharedPointer<RPCParam>select(new RPCStringParam(contest->uuid ));
+   QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
    st->addMember( select, rpcConstants::selected );
    st->addMember( sName, "Name" );
    st->addMember( iValue, "Value" );
    rpc.getCallArgs() ->addParam( st );
-   rpc.queueCall( keyerServerConnectable.remoteAppName + "@" + keyerServerConnectable.serverName );
+   rpc.queueCall( tslf->keyerServerConnectable.remoteAppName + "@" + tslf->keyerServerConnectable.serverName );
 }
 
-void TSendDM::sendKeyerTone()
+void TSendDM::sendKeyerTone(TSingleLogFrame *tslf)
 {
     RPCGeneralClient rpc(rpcConstants::keyerMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
     QSharedPointer<RPCParam>sName(new RPCStringParam( "Tone" ));
     QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
-    QSharedPointer<RPCParam>select(new RPCStringParam(contest->uuid ));
+    QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
     st->addMember( select, rpcConstants::selected );
     st->addMember( sName, "Name" );
     st->addMember( iValue, "Value" );
     rpc.getCallArgs() ->addParam( st );
-    rpc.queueCall( keyerServerConnectable.remoteAppName + "@" + keyerServerConnectable.serverName );
+    rpc.queueCall( tslf->keyerServerConnectable.remoteAppName + "@" + tslf->keyerServerConnectable.serverName );
 }
-void TSendDM::sendKeyerTwoTone()
+void TSendDM::sendKeyerTwoTone(TSingleLogFrame *tslf)
 {
     RPCGeneralClient rpc(rpcConstants::keyerMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
     QSharedPointer<RPCParam>sName(new RPCStringParam( "TwoTone" ));
     QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
-    QSharedPointer<RPCParam>select(new RPCStringParam(contest->uuid ));
+    QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
     st->addMember( select, rpcConstants::selected );
     st->addMember( sName, "Name" );
     st->addMember( iValue, "Value" );
     rpc.getCallArgs() ->addParam( st );
-    rpc.queueCall( keyerServerConnectable.remoteAppName + "@" + keyerServerConnectable.serverName );
+    rpc.queueCall( tslf->keyerServerConnectable.remoteAppName + "@" + tslf->keyerServerConnectable.serverName );
 }
-void TSendDM::sendKeyerStop()
+void TSendDM::sendKeyerStop(TSingleLogFrame *tslf)
 {
     RPCGeneralClient rpc(rpcConstants::keyerMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
     QSharedPointer<RPCParam>sName(new RPCStringParam( "Stop" ));
     QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
-    QSharedPointer<RPCParam>select(new RPCStringParam(contest->uuid ));
+    QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
     st->addMember( select, rpcConstants::selected );
     st->addMember( sName, "Name" );
     st->addMember( iValue, "Value" );
     rpc.getCallArgs() ->addParam( st );
-    rpc.queueCall( keyerServerConnectable.remoteAppName + "@" + keyerServerConnectable.serverName );
+    rpc.queueCall( tslf->keyerServerConnectable.remoteAppName + "@" + tslf->keyerServerConnectable.serverName );
 }
 //---------------------------------------------------------------------------
-void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const QString &utc,   const QString &loc,   const QString &qth )
+void TSendDM::sendBandMap(  TSingleLogFrame *tslf, const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth )
 {
    RPCGeneralClient rpc(rpcConstants::bandmapMethod);
    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-   st->addMember( contest->uuid, rpcConstants::selected );
+   st->addMember( tslf->getContest()->uuid, rpcConstants::selected );
    //st->addMember( rpcConstants::bandmapApp, rpcConstants::bandmapParamName );
    st->addMember( freq, rpcConstants::bandmapParamFreq );
    st->addMember( call, rpcConstants::bandmapParamCallsign );
@@ -137,163 +118,189 @@ void TSendDM::sendBandMap(  const QString &freq,   const QString &call,   const 
    st->addMember( qth, rpcConstants::bandmapParamQTH );
 
    rpc.getCallArgs() ->addParam( st );
-   rpc.queueCall( bandMapServerConnectable.remoteAppName + "@" + bandMapServerConnectable.serverName );
+   rpc.queueCall( tslf->bandMapServerConnectable.remoteAppName + "@" + tslf->bandMapServerConnectable.serverName );
 }
 
-void TSendDM::sendRotator(rpcConstants::RotateDirection direction, int angle )
+void TSendDM::sendRotator(TSingleLogFrame *tslf, rpcConstants::RotateDirection direction, int angle )
 {
    RPCGeneralClient rpc(rpcConstants::rotatorMethod);
    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-   QSharedPointer<RPCParam>select(new RPCStringParam(contest->uuid ));
+   QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
    st->addMember( select, rpcConstants::selected );
    st->addMember( static_cast<int> (direction), rpcConstants::rotatorParamDirection );
    st->addMember( angle, rpcConstants::rotatorParamAngle );
    rpc.getCallArgs() ->addParam( st );
 
-   rpc.queueCall( rotatorServerConnectable.remoteAppName + "@" + rotatorServerConnectable.serverName );
+   rpc.queueCall( tslf->rotatorServerConnectable.remoteAppName + "@" + tslf->rotatorServerConnectable.serverName );
 }
-void TSendDM::sendSelectRotator(QString s, QString uuid)
+void TSendDM::sendSelectRotator(TSingleLogFrame *tslf, QString s)
 {
     RPCGeneralClient rpc(rpcConstants::rotatorMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-    QSharedPointer<RPCParam>select(new RPCStringParam(uuid ));
+    QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
     st->addMember( select, rpcConstants::selected );
     st->addMember( s, rpcConstants::rotatorAntennaName );
     rpc.getCallArgs() ->addParam( st );
 
-    rpc.queueCall( rotatorServerConnectable.remoteAppName + "@" + rotatorServerConnectable.serverName );
+    rpc.queueCall( tslf->rotatorServerConnectable.remoteAppName + "@" + tslf->rotatorServerConnectable.serverName );
 
     // and we should de-select this uuid on all other rotator apps
 }
 
-void TSendDM::sendSelectRig(QString s)
+void TSendDM::sendSelectRig(TSingleLogFrame *tslf, QString s)
 {
     RPCGeneralClient rpc(rpcConstants::rigControlMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-    QSharedPointer<RPCParam>select(new RPCStringParam(contest->uuid ));
+    QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
     st->addMember( select, rpcConstants::selected );
     st->addMember( s, rpcConstants::rigControlRadioName );
     rpc.getCallArgs() ->addParam( st );
 
-    if (s.isEmpty())
-        trace("sendSelectRig " + s);
-    rpc.queueCall( rigServerConnectable.remoteAppName + "@" + rigServerConnectable.serverName );
+    rpc.queueCall( tslf->rigServerConnectable.remoteAppName + "@" + tslf->rigServerConnectable.serverName );
 }
 
-void TSendDM::sendRigControlFreq(const QString &freq)
+void TSendDM::sendRigControlFreq(TSingleLogFrame *tslf,const QString &freq)
 {
    RPCGeneralClient rpc(rpcConstants::rigControlMethod);
    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-   QSharedPointer<RPCParam>select(new RPCStringParam(contest->uuid ));
+   QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
    st->addMember( select, rpcConstants::selected );
    st->addMember( freq, rpcConstants::rigControlFreq );
    rpc.getCallArgs() ->addParam( st );
 
-   rpc.queueCall( rigServerConnectable.remoteAppName + "@" + rigServerConnectable.serverName );
+   rpc.queueCall( tslf->rigServerConnectable.remoteAppName + "@" + tslf->rigServerConnectable.serverName );
 }
 
 
-void TSendDM::sendRigControlMode(const QString &mode)
+void TSendDM::sendRigControlMode(TSingleLogFrame *tslf,const QString &mode)
 {
    RPCGeneralClient rpc(rpcConstants::rigControlMethod);
    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-   QSharedPointer<RPCParam>select(new RPCStringParam(contest->uuid ));
+   QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
    st->addMember( select, rpcConstants::selected );
    st->addMember( mode, rpcConstants::rigControlMode );
    rpc.getCallArgs() ->addParam( st );
 
-   rpc.queueCall( rigServerConnectable.remoteAppName + "@" + rigServerConnectable.serverName );
+   rpc.queueCall( tslf->rigServerConnectable.remoteAppName + "@" + tslf->rigServerConnectable.serverName );
 }
-
-
-
-
-
 //---------------------------------------------------------------------------
 void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
     // PubSub notifications
     AnalysePubSubNotify an( err, mro );
-    logMessage( "Notify callback from " + from + ( err ? ":Error " : ":Normal " ) +  an.getPublisherProgram() + "@" + an.getPublisherServer());
+    trace( "Notify callback from " + from + ( err ? ":Error " : ":Normal " ) +  an.getPublisherProgram() + "@" + an.getPublisherServer());
 
     if ( an.getOK() /*&& an.getState() == psPublished*/)
     {
-        if (an.getPublisherProgram() == keyerServerConnectable.remoteAppName && an.getPublisherServer() == keyerServerConnectable.serverName)
+
+        if ( an.getState() == psPublished)
         {
-            if ( an.getCategory() == rpcConstants::KeyerCategory && an.getKey() == rpcConstants::keyerReport )
+            if ( an.getCategory() == rpcConstants::rigStateCategory)
             {
-                emit setKeyerLoaded();
-                LogContainer->setCaption( an.getValue() );
-                logMessage( "KeyerReport " + an.getValue() );
+                 rigCache.setStateString(an);
+            }
+            else if ( an.getCategory() == rpcConstants::rotatorDetailCategory )
+            {
+                rotatorCache.setDetailString(an);
+            }
+            else if ( an.getCategory() == rpcConstants::rotatorStateCategory )
+            {
+                rotatorCache.setStateString(an);
             }
         }
-        if (an.getPublisherProgram() == rigServerConnectable.remoteAppName && an.getPublisherServer() == rigServerConnectable.serverName)
+
+        QVector<TSingleLogFrame *> frames = LogContainer->getLogFrames();
+        for (int i = 0; i < frames.size(); i++)
         {
-            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlStatus )
-            {
-                // this happens for disconnected as well...
-                emit setRadioLoaded();
-                emit setRadioState( an.getValue() );
-            }
-            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlMode )
-            {
-                emit setMode( an.getValue() );
-            }
-            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlFreq )
-            {
-                emit setFreq( an.getValue() );
-            }
-            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioList )
-            {
-                emit setRadioList(an.getValue());
-            }
-            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioName )
-            {
-                emit setRadioName(an.getValue());
-            }
-            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlTxVertStatus )
-            {
-                emit setRadioTxVertStatus( an.getValue() );
-            }
+           TSingleLogFrame *tslf = frames[i];
 
-        }
-        if (an.getPublisherProgram() == bandMapServerConnectable.remoteAppName && an.getPublisherServer() == bandMapServerConnectable.serverName)
-        {
-            if ( an.getCategory() == rpcConstants::BandMapCategory && an.getKey() == rpcConstants::bandmapKeyLoaded )
+           if (an.getPublisherProgram() == tslf->keyerServerConnectable.remoteAppName && an.getPublisherServer() == tslf->keyerServerConnectable.serverName)
             {
-                emit setBandMapLoaded();
+                if ( an.getCategory() == rpcConstants::KeyerCategory && an.getKey() == rpcConstants::keyerReport )
+                {
+                    emit setKeyerLoaded();
+                    LogContainer->setCaption( an.getValue() );
+                    trace( "KeyerReport " + an.getValue() );
+                    break;
+                }
             }
-        }
-        if (an.getPublisherProgram() == rotatorServerConnectable.remoteAppName && an.getPublisherServer() == rotatorServerConnectable.serverName)
-        {
-            if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorState)
+            if (an.getPublisherProgram() == tslf->rigServerConnectable.remoteAppName && an.getPublisherServer() == tslf->rigServerConnectable.serverName)
             {
-                emit RotatorLoaded();
-                emit RotatorState(an.getValue());
-            }
-            if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorList )
-            {
-                emit RotatorList(an.getValue());
-            }
-            if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorBearing)
-            {
+                if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlStatus )
+                {
+                    // this happens for disconnected as well...
+                    emit setRadioLoaded();
+                    emit setRadioState( an.getValue() );
+                    break;
+                }
+                if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlMode )
+                {
+                    emit setMode( an.getValue() );
+                    break;
+                }
+                if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlFreq )
+                {
+                    emit setFreq( an.getValue() );
+                    break;
+                }
+                if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioList )
+                {
+                    emit setRadioList(an.getValue());
+                    break;
+                }
+                if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioName )
+                {
+                    emit setRadioName(an.getValue());
+                    break;
+                }
+                if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlTxVertStatus )
+                {
+                    emit setRadioTxVertStatus( an.getValue() );
+                    break;
+                }
 
-                emit RotatorBearing(an.getValue());
             }
-            if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "MaxAzimuth")
+            if (an.getPublisherProgram() == tslf->bandMapServerConnectable.remoteAppName && an.getPublisherServer() == tslf->bandMapServerConnectable.serverName)
             {
-
-                emit RotatorMaxAzimuth(an.getValue());
+                if ( an.getCategory() == rpcConstants::BandMapCategory && an.getKey() == rpcConstants::bandmapKeyLoaded )
+                {
+                    emit setBandMapLoaded();
+                    break;
+                }
             }
-            if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "MinAzimuth")
+            if (an.getPublisherProgram() == tslf->rotatorServerConnectable.remoteAppName && an.getPublisherServer() == tslf->rotatorServerConnectable.serverName)
             {
-
-                emit RotatorMinAzimuth(an.getValue());
+                if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorState)
+                {
+                    emit RotatorLoaded();
+                    emit RotatorState(an.getValue());
+                    break;
+                }
+                if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorList )
+                {
+                    emit RotatorList(an.getValue());
+                    break;
+                }
+                if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorBearing)
+                {
+                    emit RotatorBearing(an.getValue());
+                    break;
+                }
+                if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "MaxAzimuth")
+                {
+                    emit RotatorMaxAzimuth(an.getValue());
+                    break;
+                }
+                if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "MinAzimuth")
+                {
+                    emit RotatorMinAzimuth(an.getValue());
+                    break;
+                }
             }
         }
     }
@@ -303,8 +310,8 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
 void TSendDM::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
     // responds to pull calls from the monitoring client
-    logMessage( "request callback from " + from + ( err ? ":Error" : ":Normal" ) );
-    logMessage("method is " + mro->getMethodName());
+    trace( "request callback from " + from + ( err ? ":Error" : ":Normal" ) );
+    trace("method is " + mro->getMethodName());
 
     // need to check "from" is correct
     if ( !err )

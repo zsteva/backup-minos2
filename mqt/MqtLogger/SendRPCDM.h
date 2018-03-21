@@ -17,45 +17,40 @@
 #include <QTimer>
 
 #include "ConfigFile.h"
+#include "RigCache.h"
+#include "RotatorCache.h"
 
-class MinosRPCObj;
 //---------------------------------------------------------------------------
 class MinosRPCObj;
+class TSingleLogFrame;
 //---------------------------------------------------------------------------
 enum RotateDirection : int;
 class TSendDM : public QObject
 {
     Q_OBJECT
    private:  	// User declarations
-
-      LoggerContestLog *contest;
-
-      void logMessage( QString s );
-
-      Connectable keyerServerConnectable;
-      Connectable rigServerConnectable;
-      Connectable bandMapServerConnectable;
-      Connectable rotatorServerConnectable;
+      RigCache rigCache;
+      RotatorCache rotatorCache;
 
    public:  		// User declarations
-      TSendDM( QWidget* Owner, LoggerContestLog *ct );
+      TSendDM( QWidget* Owner );
       ~TSendDM();
-      void resetConnectables();
 
-      void sendKeyerPlay( int fno );
-      void sendKeyerRecord( int fno );
-      void sendBandMap( const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
-      void sendKeyerTone();
-      void sendKeyerTwoTone();
-      void sendKeyerStop();
+      void sendKeyerPlay( TSingleLogFrame *tslf,int fno );
+      void sendKeyerRecord(TSingleLogFrame *tslf, int fno );
+      void sendBandMap( TSingleLogFrame *tslf,const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth );
+      void sendKeyerTone(TSingleLogFrame *tslf);
+      void sendKeyerTwoTone(TSingleLogFrame *tslf);
+      void sendKeyerStop(TSingleLogFrame *tslf);
 
-      void sendSelectRotator(QString, QString);
-      void sendRotator(rpcConstants::RotateDirection direction, int angle );
+      void sendSelectRotator(TSingleLogFrame *tslf, QString);
+      void sendRotator(TSingleLogFrame *tslf,rpcConstants::RotateDirection direction, int angle );
 
-      void sendSelectRig(QString);
-      void sendRigControlFreq(const QString &freq);
-      void sendRigControlMode(const QString &mode);
-      void sendRigControlPassBandState(const int state);
+      void sendSelectRig(TSingleLogFrame *tslf,QString);
+      void sendRigControlFreq(TSingleLogFrame *tslf,const QString &freq);
+      void sendRigControlMode(TSingleLogFrame *tslf, const QString &mode);
+      void sendRigControlPassBandState(TSingleLogFrame *tslf,const int state);
+
    private slots:
       void on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
       void on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );

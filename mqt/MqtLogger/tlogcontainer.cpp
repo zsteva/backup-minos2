@@ -63,6 +63,8 @@ TLogContainer::TLogContainer(QWidget *parent) :
     sblabel2 = new QLabel( "" );
     statusBar() ->addWidget( sblabel2, 2 );
 
+    sendDM = new TSendDM(this);
+
     subscribeApps();
     QString station = MinosConfig::getMinosConfig()->getThisServerName();
     RPCPubSub::publish(rpcConstants::LoggerCategory, station, "", psPublished);
@@ -70,14 +72,12 @@ TLogContainer::TLogContainer(QWidget *parent) :
 TLogContainer::~TLogContainer()
 {
     delete ui;
+    delete sendDM;
 }
 void TLogContainer::subscribeApps()
 {
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
     MinosConfig *config = MinosConfig::getMinosConfig();
-
-    connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
-
 
     QStringList servers;
     for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = config->elelist.begin(); i != config->elelist.end(); i++ )
@@ -711,7 +711,7 @@ void TLogContainer::ContestDetailsActionExecute()
             pced.setDetails( ct );
             if ( pced.exec() == QDialog::Accepted )
             {
-                f->sendDM->resetConnectables();
+                f->resetConnectables();
                 subscribeApps();
                 // and we need to do some re-init on the display
                 f->updateQSODisplay();
@@ -1123,7 +1123,7 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
          f->logColumnsChanged = true;  // also causes show QSOs
          f->splittersChanged = true;
 
-         f->sendDM->resetConnectables();
+         f->resetConnectables();
          subscribeApps();
 
          on_ContestPageControl_currentChanged(tno);
@@ -1653,25 +1653,18 @@ TSingleLogFrame *TLogContainer::findContest(BaseContestLog *ct )
    return 0;
 }
 //---------------------------------------------------------------------------
-void TLogContainer::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
-{
-    // PubSub notifications
-    AnalysePubSubNotify an( err, mro );
-    trace( "Notify callback from " + from + ( err ? ":Error " : ":Normal " ) +  an.getPublisherProgram() + "@" + an.getPublisherServer());
 
-    if ( an.getOK() && an.getState() == psPublished)
+QVector<TSingleLogFrame *> TLogContainer::getLogFrames()
+{
+    QVector<TSingleLogFrame *> logs;
+    for ( int j = 0; j < ui->ContestPageControl->count(); j++ )
     {
-        if ( an.getCategory() == rpcConstants::rigStateCategory)
+        QWidget *ctab = ui->ContestPageControl->widget(j);
+        if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( ctab ) )
         {
-             rigCache.setStateString(an);
-        }
-        else if ( an.getCategory() == rpcConstants::rotatorDetailCategory )
-        {
-            rotatorCache.setDetailString(an);
-        }
-        else if ( an.getCategory() == rpcConstants::rotatorStateCategory )
-        {
-            rotatorCache.setStateString(an);
+            logs.push_back(f);
         }
     }
+
+    return logs;
 }

@@ -49,9 +49,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     splitterHandleWidth = 6;
 #endif
 
-    LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-
-    sendDM = new TSendDM( this, ct );
+    resetConnectables();
 
     qsoModel.initialise(contest);
     ui->QSOTable->setModel(&qsoModel);
@@ -96,18 +94,18 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 
     // BandMap Updates
 
-    connect(sendDM, SIGNAL(setBandMapLoaded()), this, SLOT(on_BandMapLoaded()));
+    //connect(sendDM, SIGNAL(setBandMapLoaded()), this, SLOT(on_BandMapLoaded()));
 
 
     // RigControl Updates
     // From rig controller
-    connect(sendDM, SIGNAL(setRadioLoaded()), this, SLOT(on_RadioLoaded()));
-    connect(sendDM, SIGNAL(setRadioList(QString)), this, SLOT(on_SetRadioList(QString)));
-    connect(sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
-    connect(sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetMode(QString)));
-    connect(sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetFreq(QString)));
-    connect(sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
-    connect(sendDM, SIGNAL(setRadioTxVertStatus(QString)), this, SLOT(on_SetRadioTxVertState(QString)));
+    connect(LogContainer->sendDM, SIGNAL(setRadioLoaded()), this, SLOT(on_RadioLoaded()));
+    connect(LogContainer->sendDM, SIGNAL(setRadioList(QString)), this, SLOT(on_SetRadioList(QString)));
+    connect(LogContainer->sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
+    connect(LogContainer->sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetMode(QString)));
+    connect(LogContainer->sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetFreq(QString)));
+    connect(LogContainer->sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
+    connect(LogContainer->sendDM, SIGNAL(setRadioTxVertStatus(QString)), this, SLOT(on_SetRadioTxVertState(QString)));
 
     // To rig controller
     connect(ui->FKHRigControlFrame, SIGNAL(selectRadio(QString)), this, SLOT(sendSelectRadio(QString)));
@@ -118,20 +116,20 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 
     // Rotator updates
     // From rotator controller
-    connect(sendDM, SIGNAL(RotatorLoaded()), this, SLOT(on_RotatorLoaded()));
-    connect(sendDM, SIGNAL(RotatorList(QString)), this, SLOT(on_RotatorList(QString)));
-    connect(sendDM, SIGNAL(RotatorState(QString)), this, SLOT(on_RotatorState(QString)));
-    connect(sendDM, SIGNAL(RotatorBearing(QString)), this, SLOT(on_RotatorBearing(QString)));
-    connect(sendDM, SIGNAL(RotatorMaxAzimuth(QString)), this, SLOT(on_RotatorMaxAzimuth(QString)));
-    connect(sendDM, SIGNAL(RotatorMinAzimuth(QString)), this, SLOT(on_RotatorMinAzimuth(QString)));
+    connect(LogContainer->sendDM, SIGNAL(RotatorLoaded()), this, SLOT(on_RotatorLoaded()));
+    connect(LogContainer->sendDM, SIGNAL(RotatorList(QString)), this, SLOT(on_RotatorList(QString)));
+    connect(LogContainer->sendDM, SIGNAL(RotatorState(QString)), this, SLOT(on_RotatorState(QString)));
+    connect(LogContainer->sendDM, SIGNAL(RotatorBearing(QString)), this, SLOT(on_RotatorBearing(QString)));
+    connect(LogContainer->sendDM, SIGNAL(RotatorMaxAzimuth(QString)), this, SLOT(on_RotatorMaxAzimuth(QString)));
+    connect(LogContainer->sendDM, SIGNAL(RotatorMinAzimuth(QString)), this, SLOT(on_RotatorMinAzimuth(QString)));
 
     // To rotator controller
     connect(ui->FKHRotControlFrame, SIGNAL(sendRotator(rpcConstants::RotateDirection , int  )),
             this, SLOT(sendRotator(rpcConstants::RotateDirection , int  )));
 
-    connect(ui->FKHRotControlFrame, SIGNAL(selectRotator(QString, QString)), this, SLOT(sendSelectRotator(QString, QString)));
+    connect(ui->FKHRotControlFrame, SIGNAL(selectRotator(QString)), this, SLOT(sendSelectRotator(QString)));
 
-    connect(sendDM, SIGNAL(setKeyerLoaded()), this, SLOT(on_KeyerLoaded()));
+    connect(LogContainer->sendDM, SIGNAL(setKeyerLoaded()), this, SLOT(on_KeyerLoaded()));
 
 
     connect( ui->QSOTable->horizontalHeader(), SIGNAL(sectionResized(int, int , int)),
@@ -159,11 +157,25 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
 TSingleLogFrame::~TSingleLogFrame()
 {
     delete ui;
-    delete sendDM;
 
     ui = nullptr;
     contest = nullptr;
 }
+void TSingleLogFrame::resetConnectables()
+{
+    MinosConfig *config = MinosConfig::getMinosConfig();
+
+    LoggerContestLog * ct = dynamic_cast<LoggerContestLog *>( contest );
+    if (ct)
+    {
+        rigServerConnectable = config->getApp(ct->appRigControl.getValue());
+        keyerServerConnectable = config->getApp(ct->appVoiceKeyer.getValue());
+        bandMapServerConnectable = config->getApp(ct->appBandMap.getValue());
+        rotatorServerConnectable = config->getApp(ct->appRotator.getValue());
+    }
+}
+
+
 void TSingleLogFrame::keyPressEvent( QKeyEvent* event )
 {
     ui->GJVQSOLogFrame->doKeyPressEvent(event);
@@ -771,37 +783,37 @@ bool TSingleLogFrame::isKeyerLoaded()
 void TSingleLogFrame::sendKeyerPlay( int fno )
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        sendDM->sendKeyerPlay(fno);
+        LogContainer->sendDM->sendKeyerPlay(this, fno);
 }
 
 void TSingleLogFrame::sendKeyerRecord( int fno )
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        sendDM->sendKeyerRecord(fno);
+        LogContainer->sendDM->sendKeyerRecord(this, fno);
 }
 
 void TSingleLogFrame::sendBandMap( QString freq, QString call, QString utc, QString loc, QString qth )
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        sendDM->sendBandMap(freq, call, utc, loc, qth);
+        LogContainer->sendDM->sendBandMap(this, freq, call, utc, loc, qth);
 }
 
 void TSingleLogFrame::sendKeyerTone()
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        sendDM->sendKeyerTone();
+        LogContainer->sendDM->sendKeyerTone(this);
 }
 
 void TSingleLogFrame::sendKeyerTwoTone()
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        sendDM->sendKeyerTwoTone();
+        LogContainer->sendDM->sendKeyerTwoTone(this);
 }
 
 void TSingleLogFrame::sendKeyerStop()
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        sendDM->sendKeyerStop();
+        LogContainer->sendDM->sendKeyerStop(this);
 }
 
 
@@ -929,13 +941,13 @@ void TSingleLogFrame::on_SetRadioTxVertState(QString s)
 void TSingleLogFrame::sendRadioFreq(QString freq)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        sendDM->sendRigControlFreq(freq);
+        LogContainer->sendDM->sendRigControlFreq(this, freq);
 }
 
 void TSingleLogFrame::sendRadioMode(QString mode)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        sendDM->sendRigControlMode(mode);
+        LogContainer->sendDM->sendRigControlMode(this, mode);
 }
 
 void TSingleLogFrame::sendSelectRadio(QString radioName)
@@ -957,14 +969,14 @@ void TSingleLogFrame::sendSelectRadio(QString radioName)
                 ct->radioName.setValue(radName);
                 ct->commonSave(false);
             }
-            sendDM->sendSelectRig(radioName);  // send message including mode if it has been appended.
+            LogContainer->sendDM->sendSelectRig(this, radioName);  // send message including mode if it has been appended.
         }
 
     }
 }
 
 
-void TSingleLogFrame::sendSelectRotator(QString s, QString uuid)
+void TSingleLogFrame::sendSelectRotator(QString s)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest() && !contest->isProtected())
     {
@@ -975,7 +987,7 @@ void TSingleLogFrame::sendSelectRotator(QString s, QString uuid)
             ct->commonSave(false);
             ui->FKHRotControlFrame->setRotatorAntennaName(s);
         }
-        sendDM->sendSelectRotator(s, uuid);
+        LogContainer->sendDM->sendSelectRotator(this, s);
     }
 
 }
@@ -1065,5 +1077,5 @@ void TSingleLogFrame::on_RotatorAntennaName(QString /*rotName*/)
 void TSingleLogFrame::sendRotator(rpcConstants::RotateDirection direction, int angle )
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        sendDM->sendRotator(direction, angle);
+        LogContainer->sendDM->sendRotator(this, direction, angle);
 }
