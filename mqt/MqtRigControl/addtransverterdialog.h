@@ -13,25 +13,23 @@ class AddTransVerterDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddTransVerterDialog(QVector<BandDetail*> _bands, QWidget *parent = 0);
+    explicit AddTransVerterDialog(QVector<BandDetail*> _bands, QStringList &transVertNames, QWidget *parent = 0);
     ~AddTransVerterDialog();
 
     QString getTransVerterName();
-    double getfLow();
-    double getfHigh();
 
-private slots:
-    void bandSelected(int idx);
+
+
 private:
     Ui::AddTransVerterDialog *ui;
 
     QVector<BandDetail*> bands;
 
     QString bName;
-    double fLow = 0.0;
-    double fHigh = 0.0;
+    QStringList transVerterNames;
 
     void loadBandSel();
+    bool checkBandUsed(const QString &bName, const QStringList &transVertNames);
 };
 
 #endif // ADDTRANSVERTERDIALOG_H

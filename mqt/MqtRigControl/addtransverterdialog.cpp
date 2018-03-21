@@ -2,15 +2,14 @@
 #include "ui_addtransverterdialog.h"
 #include "BandList.h"
 
-AddTransVerterDialog::AddTransVerterDialog(QVector<BandDetail*> _bands, QWidget *parent) :
+AddTransVerterDialog::AddTransVerterDialog(QVector<BandDetail*> _bands, QStringList &transVertNames, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddTransVerterDialog)
 {
     ui->setupUi(this);
     bands = _bands;
-
+    transVerterNames = transVertNames;
     loadBandSel();
-    connect (ui->bandSel, SIGNAL(activated(int)), this, SLOT(bandSelected(int)));
 
 }
 
@@ -25,41 +24,32 @@ AddTransVerterDialog::~AddTransVerterDialog()
 void AddTransVerterDialog::loadBandSel()
 {
     ui->bandSel->clear();
-    ui->bandSel->addItem("");
     for (int i = 0; i < bands.count(); i++ )
     {
-        ui->bandSel->addItem(bands[i]->name);
+        if (!checkBandUsed(bands[i]->name, transVerterNames))
+        {
+            ui->bandSel->addItem(bands[i]->name);
+        }
     }
 }
-
-
-
-void AddTransVerterDialog::bandSelected(int idx)
-{
-    if (idx != -1 && idx < bands.count() + 1)
-    {
-        bName = bands[idx-1]->name;
-        fLow = bands[idx-1]->fLow;
-        fHigh = bands[idx-1]->fHigh;
-    }
-
-}
-
-
 
 QString AddTransVerterDialog::getTransVerterName()
 {
+    bName = ui->bandSel->currentText();
     return bName;
 }
 
 
-double AddTransVerterDialog::getfLow()
+bool AddTransVerterDialog::checkBandUsed(const QString &bName, const QStringList &transVerterNames)
 {
-    return fLow;
-}
 
-double AddTransVerterDialog::getfHigh()
-{
-    return fHigh;
+    for (int i = 0; i < transVerterNames.count(); i++)
+    {
+        if (bName == transVerterNames[i])
+        {
+            return true;
+        }
+    }
+    return false;
 
 }

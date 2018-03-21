@@ -270,7 +270,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="renameTransvert">
+          <widget class="QPushButton" name="changeBand">
            <property name="text">
             <string>Change Band</string>
            </property>

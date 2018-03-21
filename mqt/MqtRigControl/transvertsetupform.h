@@ -18,56 +18,56 @@ class TransVertSetupForm : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TransVertSetupForm(TransVertParams *transvertData, QVector<BandDetail*> _bands, QWidget *parent = nullptr);
+    explicit TransVertSetupForm(TransVertParams *transvertData, QWidget *parent = nullptr);
 
 
 
-    bool tansVertValueChanged;
-    bool transVertNameChanged;
+        bool tansVertValueChanged;
+        bool transVertNameChanged;
 
-    void setBand(QString b);
-    QString getBand();
+        void setBand(QString b);
+        QString getBand();
 
-    QString getTransVerSwNum();
-    void setTransVerSwNum(QString s);
+        QString getTransVerSwNum();
+        void setTransVerSwNum(QString s);
 
-    bool getEnableTransVertSw();
-    void setEnableTransVertSw(bool b);
+        bool getEnableTransVertSw();
+        void setEnableTransVertSw(bool b);
 
-    bool getNegCheckBox();
-    void setNegCheckBox(bool b);
-
-
-    void setUiItemsVisible(bool visible);
-
-     void setEnableTransVertSwBoxVisible(bool visible);
-
-     void loadBandFreqLimits();
-signals:
-
-public slots:
-
-private slots:
-    //void bandSelected();
-    void calcOffset();
-    void negCheckBoxSelected(bool);
-    void enableTransVertSwSel(bool);
-    void transVertSwNumSel();
+        bool getNegCheckBox();
+        void setNegCheckBox(bool b);
 
 
+        void setUiItemsVisible(bool visible);
+
+         void setEnableTransVertSwBoxVisible(bool visible);
+
+         void loadBandFreqLimits();
+    signals:
+
+    public slots:
+
+    private slots:
+        //void bandSelected();
+        void calcOffset();
+        void negCheckBoxSelected(bool);
+        void enableTransVertSwSel(bool);
+        void transVertSwNumSel();
 
 
 
-private:
 
 
-    Ui::transVertSetupForm *ui;
-    TransVertParams *transVertData;
-    QVector<BandDetail*> bands;
+    private:
+
+
+        Ui::transVertSetupForm *ui;
+        TransVertParams *transVertData;
 
 
 
-    void loadBandSel();
-};
 
-#endif // TRANSVERTSETUPFORM_H
+        void loadBandSel();
+    };
+
+    #endif // TRANSVERTSETUPFORM_H

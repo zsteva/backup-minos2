@@ -20,7 +20,7 @@
 #include <QCheckBox>
 
 
-TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QVector<BandDetail*> _bands, QWidget *parent) :
+TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::transVertSetupForm),
     tansVertValueChanged(false),
@@ -29,7 +29,7 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QVector<B
 
     ui->setupUi(this);
     transVertData = transvertData;
-    bands = _bands;
+
 
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
@@ -48,60 +48,14 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QVector<B
 
 
 
-/********************* Band Selection *********************************/
 
-/*
-void TransVertSetupForm::bandSelected()
-{
-    if (ui->bandSel->currentText() != transVertData->band)
-    {
-        transVertData->band = ui->bandSel->currentText();
-    }
-
-    loadBandFreqLimits();
-}
-
-
-
-
-void TransVertSetupForm::setBand(QString b)
-{
-    ui->bandSel->setCurrentText(b);
-    transVertData->band = ui->bandSel->currentText();
-}
-
-
-void TransVertSetupForm::loadBandFreqLimits()
-{
-    int i = ui->bandSel->currentIndex();
-    transVertData->fLow = bands[i-1]->fLow;
-    transVertData->fHigh = bands[i-1]->fHigh;
-}
-
-QString TransVertSetupForm::getBand()
-{
-    return ui->bandSel->currentText();
-}
-
-
-
-void TransVertSetupForm::loadBandSel()
-{
-    ui->bandSel->clear();
-    ui->bandSel->addItem("");
-    for (int i = 0; i < bands.count(); i++ )
-    {
-        ui->bandSel->addItem(bands[i]->name);
-    }
-}
-
-*/
 
 /********************* TransVert Offset Freq  *********************************/
 
 
 void TransVertSetupForm::calcOffset()
 {
+    double finalFreq = 0.0;
     // check freq valid format
     QString f = ui->radioFreq->text().trimmed().remove( QRegExp("^[0]*"));
     if (f != "")
@@ -122,17 +76,28 @@ void TransVertSetupForm::calcOffset()
             return;             //incorrect format
         }
 
-        //transVertData->transVertOffsetStr = convertSinglePeriodFreqToFullDigit(f).remove('.');
-        //transVertData->transVertOffset  =  convertStrToFreq(f);
+
         // now calculate offset
         f = convertSinglePeriodFreqToFullDigit(f).remove('.');
         transVertData->radioFreqStr = f;
         transVertData->radioFreq = f.toDouble();
         // calculate offset
-        transVertData->transVertOffset = transVertData->fLow - transVertData->radioFreq;
-        transVertData->transVertOffsetStr = convertFreqToStr(transVertData->transVertOffset);
+        if (transVertData->transVertNegative)
+        {
+           transVertData->transVertOffset =  transVertData->radioFreq - transVertData->fLow;
+            finalFreq = transVertData->fLow - transVertData->transVertOffset;
+        }
+        else
+        {
+            transVertData->transVertOffset = transVertData->fLow - transVertData->radioFreq;
+            finalFreq = transVertData->radioFreq + transVertData->transVertOffset;
+        }
+
+        transVertData->transVertOffsetStr = convertFreqStrDispSingle(convertFreqToStr(transVertData->transVertOffset));
         // display
         ui->Offset->setText(transVertData->transVertOffsetStr);
+        ui->finalFreq->setText(convertFreqStrDispSingle(convertFreqToStr(finalFreq)));
+
 
 
 

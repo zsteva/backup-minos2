@@ -114,7 +114,7 @@ private slots:
 
     void addTransVerter();
     void removeTransVerter();
-    void renameTransVerter();
+    void changeBand();
     void enableTransVertSelected(bool);
 private:
 

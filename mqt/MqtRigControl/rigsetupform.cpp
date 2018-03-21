@@ -69,7 +69,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVe
     // transvert
     connect(ui->addTransvert, SIGNAL(clicked(bool)), this, SLOT(addTransVerter()));
     connect(ui->removeTransvert, SIGNAL(clicked(bool)), this, SLOT(removeTransVerter()));
-    connect(ui->renameTransvert, SIGNAL(clicked(bool)), this, SLOT(renameTransVerter()));
+    connect(ui->changeBand, SIGNAL(clicked(bool)), this, SLOT(changeBand()));
 }
 
 
@@ -619,13 +619,8 @@ void RigSetupForm::setTransVertTabText(int tabNum, QString tabName)
 
 void RigSetupForm::addTransVerter()
 {
-    //QString transVerterName = QInputDialog::getText(this, tr("Enter Transverter Name"), tr("Please enter a Transverter Name:"), QLineEdit::Normal);
-    //transVerterName = transVerterName.trimmed();
-    //if (transVerterName.isEmpty())
-   // {
-    //      return;
-    //}
-    AddTransVerterDialog addTransDialog(bands, this);
+
+    AddTransVerterDialog addTransDialog(bands, radioData->transVertNames, this);
     if (addTransDialog.exec() == !QDialog::Accepted)
     {
         return;
@@ -662,14 +657,23 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
 {
     radioData->transVertSettings.append(new TransVertParams());
     radioData->transVertSettings[tabNum]->transVertName = tabName;
-    transVertTab.append(new TransVertSetupForm(radioData->transVertSettings[tabNum], bands));
-    //radioData->transVertNames.append(tabName);
+    radioData->transVertSettings[tabNum]->band = tabName;
+    for (int i = 0; i < bands.count(); i++)
+    {
+         if (bands[i]->name == tabName)
+         {
+             radioData->transVertSettings[tabNum]->fLow = bands[i]->fLow;
+             radioData->transVertSettings[tabNum]->fHigh = bands[i]->fHigh;
+             break;
+         }
+    }
+    transVertTab.append(new TransVertSetupForm(radioData->transVertSettings[tabNum]));
+
     ui->transVertTab->insertTab(tabNum, transVertTab[tabNum], tabName);
     ui->transVertTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
     ui->transVertTab->setCurrentIndex(tabNum);
     transVertTab[tabNum]->setEnableTransVertSwBoxVisible(false);
-    //transVertTab[tabNum]->setBand(tabName);
-    //transVertTab[tabNum]->loadBandFreqLimits();
+
     transVertTab[tabNum]->tansVertValueChanged = true;
 
 }
@@ -731,34 +735,52 @@ void RigSetupForm::removeTransVerter()
 
 
 
-void RigSetupForm::renameTransVerter()
+void RigSetupForm::changeBand()
 {
 
-    int currentIndex = ui->transVertTab->currentIndex();
-    QString currentName = ui->transVertTab->tabText(currentIndex);
-
-    bool ok;
-    QString text = QInputDialog::getText(this, QString("Edit Transverter Name - %1").arg(currentName),
-                                         tr("New Transverter Name:"), QLineEdit::Normal,
-                                         "", &ok);
-    if (ok && !text.isEmpty())
-    {
-        ui->transVertTab->setTabText(currentIndex, text);
-        radioData->transVertNames[currentIndex] = text;
-        radioData->transVertSettings[currentIndex]->transVertName = text;
-
-
-        QString fileName = TRANSVERT_PATH_LOCAL + radioData->radioName + FILENAME_TRANSVERT_RADIOS;
-
-        QSettings config(fileName, QSettings::IniFormat);
-        config.beginGroup(radioData->radioName);config.setValue("name", text);
-        config.endGroup();
-
-    }
-    else
+    if (transVertTab.count() < 1)
     {
         return;
     }
+
+    int tabNum = ui->transVertTab->currentIndex();
+
+    AddTransVerterDialog addTransDialog(bands, radioData->transVertNames, this);
+    if (addTransDialog.exec() == !QDialog::Accepted)
+    {
+        return;
+    }
+
+    QString transVertName = addTransDialog.getTransVerterName();
+
+    if (transVertName == "")
+    {
+        return;
+    }
+
+    if (checkTransVerterNameMatch(transVertName))
+    {
+        // error empty name or name already exists
+        QMessageBox::information(this, tr("Transverter Name Exists"),
+                                 tr("Transverter Name: %1, already exists \nPlease enter another name").arg(transVertName.trimmed()),
+                                  QMessageBox::Ok|QMessageBox::Default,
+                                  QMessageBox::NoButton, QMessageBox::NoButton);
+        return;
+    }
+
+    ui->transVertTab->setTabText(tabNum, transVertName);
+    radioData->transVertNames[tabNum] = transVertName;
+    radioData->transVertSettings[tabNum]->band = transVertName;
+    for (int i = 0; i < bands.count(); i++)
+    {
+         if (bands[i]->name == transVertName)
+         {
+             radioData->transVertSettings[tabNum]->fLow = bands[i]->fLow;
+             radioData->transVertSettings[tabNum]->fHigh = bands[i]->fHigh;
+         }
+    }
+
+    transVertTab[tabNum]->tansVertValueChanged = true;
 
 }
 
@@ -768,7 +790,7 @@ void RigSetupForm::transVertTabEnable(bool enable)
 
     ui->addTransvert->setDisabled(!enable);
     ui->removeTransvert->setDisabled(!enable);
-    ui->renameTransvert->setDisabled(!enable);
+    ui->changeBand->setDisabled(!enable);
     //ui->transvertFrame->setDisabled(!enable);
     ui->transVertTab->setDisabled(!enable);
 }
