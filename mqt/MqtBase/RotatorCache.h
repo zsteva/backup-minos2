@@ -7,26 +7,26 @@
 
 class RotatorCache
 {
-    QMap<QString, AntennaDetail> rotDetails;
-    QMap<QString, AntennaState> rotStates;
+    QMap<PubSubName, AntennaDetail> rotDetails;
+    QMap<PubSubName, AntennaState> rotStates;
 public:
     RotatorCache();
 
-    QString getDetailString(const QString &name) const;
+    QString getDetailString(const PubSubName &name) const;
     void setDetailString(const AnalysePubSubNotify &an);
 
-    QString getStateString(const QString &name) const;
+    QString getStateString(const PubSubName &name) const;
     void setStateString(const AnalysePubSubNotify & an);
 
-    void setDetail(const QString &name, const AntennaDetail &detail);
-    void setState(const QString &name, const AntennaState &state);
+    void setDetail(const PubSubName &name, const AntennaDetail &detail);
+    void setState(const PubSubName &name, const AntennaState &state);
 
-    void setSelected(const QString &name, const QString &sel);
-    void setStatus(const QString &name, const QString &state);
-    void setBearing(const QString &name, int bearing);
+    void setSelected(const PubSubName &name, const QString &sel);
+    void setStatus(const PubSubName &name, const QString &state);
+    void setBearing(const PubSubName &name, int bearing);
 
-    void setMinAzimuth(const QString &name, int minaz);
-    void setMaxAzimuth(const QString &name, int maxaz);
+    void setMinAzimuth(const PubSubName &name, int minaz);
+    void setMaxAzimuth(const PubSubName &name, int maxaz);
 
     void publishState( );
     void publishDetails( );

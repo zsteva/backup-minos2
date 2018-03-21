@@ -1,12 +1,11 @@
 #ifndef PUBSUBVALUE_H
 #define PUBSUBVALUE_H
-#include <QString>
+#include "base_pch.h"
 #include <QJsonDocument>
 #include <QJsonParseError>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonParseError>
-#include "MinosElement.h"
 
 class PubSubValue
 {
@@ -19,6 +18,26 @@ public:
     virtual QString pack() const = 0;
     virtual void unpack(QString) = 0;
     QString psType() const;
+};
+
+class PubSubName
+{
+private:
+    QString _server;
+    QString _appName;
+    QString _key;
+public:
+    PubSubName(){}
+    PubSubName(const AnalysePubSubNotify &an);
+
+    bool operator< ( const PubSubName& rhs ) const;
+    bool operator== ( const PubSubName& rhs ) const;
+    QString server() const;
+    void setServer(const QString &server);
+    QString appName() const;
+    void setAppName(const QString &appName);
+    QString key() const;
+    void setKey(const QString &key);
 };
 
 #endif // PUBSUBVALUE_H

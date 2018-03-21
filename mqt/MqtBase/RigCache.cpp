@@ -4,25 +4,25 @@ RigCache::RigCache()
 {
 
 }
-QString RigCache::getStateString(const QString &name) const
+QString RigCache::getStateString(const PubSubName &name) const
 {
     QString val = rigStates[name].pack();
     return val;
 }
 void RigCache::setStateString(const AnalysePubSubNotify & an)
 {
-    RigState &as = rigStates[an.getKey()];
+    RigState &as = rigStates[PubSubName(an)];
     as.unpack(an.getValue());
 }
 
-void RigCache::setState(QString name, RigState &state)
+void RigCache::setState(const PubSubName &name, RigState &state)
 {
     rigStates[name] = state;
 }
 
-void RigCache::setSelected(const QString &name, const QString &sel)
+void RigCache::setSelected(const PubSubName &name, const QString &sel)
 {
-    for(QMap<QString, RigState>::iterator i = rigStates.begin(); i != rigStates.end(); i++ )
+    for(QMap<PubSubName, RigState>::iterator i = rigStates.begin(); i != rigStates.end(); i++ )
     {
         if (i.key() == name)
             i.value().setSelected(sel);
@@ -30,39 +30,39 @@ void RigCache::setSelected(const QString &name, const QString &sel)
             i.value().setSelected("");
     }
 }
-void RigCache::setStatus(const QString &name, const QString &status)
+void RigCache::setStatus(const PubSubName &name, const QString &status)
 {
     rigStates[name].setStatus(status);
 }
 
-void RigCache::setFreq(const QString &name, double freq)
+void RigCache::setFreq(const PubSubName &name, double freq)
 {
     rigStates[name].setFreq(freq);
 }
-void RigCache::setMode(const QString &name, const QString &mode)
+void RigCache::setMode(const PubSubName &name, const QString &mode)
 {
     rigStates[name].setMode(mode);
 }
-void RigCache::setTransverterOffset(const QString &name, double transverterOffset)
+void RigCache::setTransverterOffset(const PubSubName &name, double transverterOffset)
 {
     rigStates[name].setTransverterOffset(transverterOffset);
 }
-void RigCache::setTransverterSwitch(const QString &name, int transverterSwitch)
+void RigCache::setTransverterSwitch(const PubSubName &name, int transverterSwitch)
 {
     rigStates[name].setTransverterSwitch(transverterSwitch);
 }
-void RigCache::setTransverterStatus(const QString &name, bool transverterStatus)
+void RigCache::setTransverterStatus(const PubSubName &name, bool transverterStatus)
 {
     rigStates[name].setTransverterStatus(transverterStatus);
 }
 void RigCache::publishState()
 {
     MinosRPC *rpc = MinosRPC::getMinosRPC();
-    for(QMap<QString, RigState>::iterator i = rigStates.begin(); i != rigStates.end(); i++ )
+    for(QMap<PubSubName, RigState>::iterator i = rigStates.begin(); i != rigStates.end(); i++ )
     {
         if (i.value().isDirty())
         {
-            rpc->publish(rpcConstants::rigStateCategory, i.key(), i.value().pack(), psPublished);
+            rpc->publish(rpcConstants::rigStateCategory, i.key().key(), i.value().pack(), psPublished);
             rigStates[i.key()].clearDirty();
         }
     }

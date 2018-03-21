@@ -1303,7 +1303,9 @@ void RigControlMainWindow::refreshRadio()
         {
             logMessage(QString("Send status to logger = %1").arg(message));
             msg->publishState(message);
-            msg->rigCache.setStatus(selectRig->currentRadio.radioName, message);
+            PubSubName psname;
+            psname.setKey(selectRig->currentRadio.radioName);
+            msg->rigCache.setStatus(psname, message);
         }
     }
 
@@ -1333,7 +1335,9 @@ void RigControlMainWindow::refreshRadio()
 
         logMessage(QString("Send error message to logger: %1").arg(errMsg));
         msg->publishErrorMsg(errMsg);
-        msg->rigCache.setStatus(selectRig->currentRadio.radioName, errMsg);
+        PubSubName psname;
+        psname.setKey(selectRig->currentRadio.radioName);
+        msg->rigCache.setStatus(psname, errMsg);
 
     }
 
@@ -1344,7 +1348,9 @@ void RigControlMainWindow::refreshRadio()
         {
             logMessage(QString("Send freq to logger = %1").arg(convertFreqToStr(freq)));
             msg->publishFreq(convertFreqToStr(freq));
-            msg->rigCache.setFreq(selectRig->currentRadio.radioName, freq);
+            PubSubName psname;
+            psname.setKey(selectRig->currentRadio.radioName);
+            msg->rigCache.setFreq(psname, freq);
         }
     }
 
@@ -1354,7 +1360,9 @@ void RigControlMainWindow::refreshRadio()
         {
             logMessage(QString("Send mode to logger = %1").arg(mode));
             msg->publishMode(mode);
-            msg->rigCache.setMode(selectRig->currentRadio.radioName, mode);
+            PubSubName psname;
+            psname.setKey(selectRig->currentRadio.radioName);
+            msg->rigCache.setMode(psname, mode);
         }
     }
 
@@ -1373,7 +1381,9 @@ void RigControlMainWindow::refreshRadio()
             }
             logMessage(QString("Send Transvert Status to logger = %1").arg(flag));
             msg->publishTransVertStatus(flag);
-            msg->rigCache.setTransverterStatus(selectRig->currentRadio.radioName, status);
+            PubSubName psname;
+            psname.setKey(selectRig->currentRadio.radioName);
+            msg->rigCache.setTransverterStatus(psname, status);
 
         }
     }
@@ -1383,7 +1393,9 @@ void RigControlMainWindow::refreshRadio()
         QString f = convertFreqToStr(selectRig->currentRadio.transVertOffset);
         logMessage(QString("Send Transvert Offset to logger = %1%2").arg(selectRig->currentRadio.transVertEnable ? f = "-" : f = "+").arg(f));
         msg->publishTransVertOffSetFreq(selectRig->currentRadio.transVertNegative, f);
-        msg->rigCache.setTransverterOffset(selectRig->currentRadio.radioName, selectRig->currentRadio.transVertOffset);
+        PubSubName psname;
+        psname.setKey(selectRig->currentRadio.radioName);
+        msg->rigCache.setTransverterOffset(psname, selectRig->currentRadio.transVertOffset);
 
 
     }
@@ -1392,7 +1404,9 @@ void RigControlMainWindow::refreshRadio()
     {
         logMessage(QString("Send Transvert Switch Number to logger = %1").arg(swNum));
         msg->publishTransVertSwitch(swNum);
-        msg->rigCache.setTransverterSwitch(selectRig->currentRadio.radioName, swNum.toInt());
+        PubSubName psname;
+        psname.setKey(selectRig->currentRadio.radioName);
+        msg->rigCache.setTransverterSwitch(psname, swNum.toInt());
 
     }
 

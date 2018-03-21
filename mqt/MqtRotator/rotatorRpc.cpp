@@ -42,7 +42,9 @@ void RotatorRpc::publishState(const QString &name, const QString &state)
        old = state;
        rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorState, state, psPublished );
     }
-    rotatorCache.setStatus(name, state);
+    PubSubName psname;
+    psname.setKey(name);
+    rotatorCache.setStatus(psname, state);
     rotatorCache.publishState();
 }
 
@@ -62,7 +64,9 @@ void RotatorRpc::publishMaxAzimuth(const QString &name, const QString maxAzimuth
        old = maxAzimuth;
        rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorMaxAzimuth, maxAzimuth, psPublished );
     }
-    rotatorCache.setMaxAzimuth(name, maxAzimuth.toInt());
+    PubSubName psname;
+    psname.setKey(name);
+    rotatorCache.setMaxAzimuth(psname, maxAzimuth.toInt());
     rotatorCache.publishDetails();
 }
 
@@ -76,7 +80,9 @@ void RotatorRpc::publishMinAzimuth(const QString &name, const QString minAzimuth
        old = minAzimuth;
        rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorMinAzimuth, minAzimuth, psPublished );
     }
-    rotatorCache.setMinAzimuth(name, minAzimuth.toInt());
+    PubSubName psname;
+    psname.setKey(name);
+    rotatorCache.setMinAzimuth(psname, minAzimuth.toInt());
     rotatorCache.publishDetails();
 }
 
@@ -90,7 +96,9 @@ void RotatorRpc::publishBearing(const QString &name, const QString bearing)
        old = bearing;
        rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorBearing, bearing, psPublished );
     }
-    rotatorCache.setBearing(name, bearing.toInt());
+    PubSubName psname;
+    psname.setKey(name);
+    rotatorCache.setBearing(psname, bearing.toInt());
     rotatorCache.publishState();
 }
 

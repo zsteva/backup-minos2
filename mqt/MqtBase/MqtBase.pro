@@ -52,7 +52,6 @@ SOURCES += \
     MatchCollection.cpp \
     rigutils.cpp \
     minostablewidget.cpp \
-    MinosElement.cpp \
     RigState.cpp \
     AntennaState.cpp \
     AntennaDetail.cpp \
@@ -99,7 +98,6 @@ HEADERS += \
     MatchCollection.h \
     rigutils.h \
     minostablewidget.h \
-    MinosElement.h \
     RigState.h \
     AntennaState.h \
     AntennaDetail.h \
