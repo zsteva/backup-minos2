@@ -26,6 +26,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Radio Freq.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLineEdit" name="radioFreq">
          <property name="inputMask">
           <string/>
@@ -39,56 +46,39 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Radio Freq.</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="Offset">
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>0.0</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QLabel" name="OffsetLabel">
          <property name="text">
-          <string>Offset Freq.</string>
+          <string>Target Freq.</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="finalFreq">
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>0.0</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="finalFreqLbl">
-         <property name="text">
-          <string>Final Freq.</string>
-         </property>
-        </widget>
+        <widget class="QLineEdit" name="targetFreq"/>
        </item>
        <item>
         <widget class="QPushButton" name="calcOffsetPb">
          <property name="text">
           <string>Calc Offset</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="OffSetLbl">
+         <property name="text">
+          <string>OffSet Freq.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="offsetFreq">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>0.0</string>
          </property>
         </widget>
        </item>
@@ -117,14 +107,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="transVertSwNum"/>
-       </item>
-       <item>
         <widget class="QLabel" name="transVertSwNumLbl">
          <property name="text">
           <string>Transvert Switch Number</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="transVertSwNum"/>
        </item>
        <item>
         <spacer name="horizontalSpacer_2">

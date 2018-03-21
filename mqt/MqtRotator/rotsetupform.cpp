@@ -163,9 +163,8 @@ void rotSetupForm::rotatorModelSelected()
 
                     ui->chkOverrun->setVisible(false);
                     ui->chkOverrun->setChecked(false);
-                    ui->overLapLbl->setVisible(false);
                     ui->chkStop->setVisible(true);
-                    ui->s_StopLbl->setVisible(true);
+
 
 
                 }
@@ -174,19 +173,17 @@ void rotSetupForm::rotatorModelSelected()
 
                     ui->chkOverrun->setVisible(true);
                     ui->chkOverrun->setChecked(true);
-                    ui->overLapLbl->setVisible(true);
                     ui->chkStop->setVisible(false);
                     ui->chkStop->setChecked(false);
-                    ui->s_StopLbl->setVisible(false);
+
                 }
                 else
                 {
                     ui->chkOverrun->setVisible(false);
                     ui->chkOverrun->setChecked(false);
-                    ui->overLapLbl->setVisible(false);
                     ui->chkStop->setVisible(false);
                     ui->chkStop->setChecked(false);
-                    ui->s_StopLbl->setVisible(false);
+
                 }
             }
 
@@ -574,7 +571,7 @@ void rotSetupForm::setCheckStop(bool s)
 void rotSetupForm::setCheckStopVisible(bool s)
 {
     ui->chkStop->setVisible(s);
-    ui->s_StopLbl->setVisible(s);
+
 }
 
 /***************************** Check Overrun *************************/
@@ -615,7 +612,7 @@ void rotSetupForm::setCheckOverrun(bool s)
 void rotSetupForm::setOverRunFlagVisible(bool s)
 {
     ui->chkOverrun->setVisible(s);
-    ui->overLapLbl->setVisible(s);
+
 }
 
 /***************************** Antenna Offset *************************/

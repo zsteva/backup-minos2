@@ -10,7 +10,7 @@
 #include "rigutils.h"
 #include <QRegExp>
 #include <QStringList>
-
+#include <QMessageBox>
 
 // add delimiter to string for display
 // input string should just be digits
@@ -248,6 +248,42 @@ bool validateFreqTxtInput(QString f)
 
 
 }
+
+
+bool valInputFreq(QString f, QString errMsg)
+{
+
+    if (f == "")
+    {
+        return false;
+    }
+
+    if (f.count('.') == 1)
+    {
+        QStringList fl = f.split('.');
+        fl[1] = fl[1] + "000000";
+        fl[1].truncate(6);
+        f = fl[0] + "." + fl[1];
+    }
+    if (!validateFreqTxtInput(f))
+    {
+        // error
+        QMessageBox msgBox;
+        msgBox.setText(errMsg);
+        msgBox.exec();
+        return false;             //incorrect format
+    }
+
+    return true;
+
+
+
+}
+
+
+
+
+
 
 
 // This will convert "144.3" etc to "144.300000"

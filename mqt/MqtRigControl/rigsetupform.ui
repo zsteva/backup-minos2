@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>837</width>
-    <height>295</height>
+    <width>835</width>
+    <height>309</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -196,9 +196,6 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_14">
        <item>
-        <widget class="QComboBox" name="pollInterval"/>
-       </item>
-       <item>
         <widget class="QLabel" name="pollIntervalLbl">
          <property name="text">
           <string>Poll Interval</string>
@@ -206,7 +203,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="mgmBox"/>
+        <widget class="QComboBox" name="pollInterval"/>
        </item>
        <item>
         <widget class="QLabel" name="label">
@@ -214,6 +211,9 @@
           <string>MGM Mode</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="mgmBox"/>
        </item>
        <item>
         <widget class="QCheckBox" name="RITEnable">

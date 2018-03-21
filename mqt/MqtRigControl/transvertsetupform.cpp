@@ -36,7 +36,7 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *
     //loadBandSel();
 
     //connect(ui->bandSel, SIGNAL(activated(int)), this, SLOT(bandSelected()));
-    connect(ui->radioFreq, SIGNAL(editingFinished()), this, SLOT(calcOffset()));
+    //connect(ui->radioFreq, SIGNAL(editingFinished()), this, SLOT(calcOffset()));
     connect(ui->calcOffsetPb, SIGNAL(clicked(bool)), this, SLOT(calcOffset()));
     connect(ui->negCheckbox, SIGNAL(clicked(bool)), this, SLOT(negCheckBoxSelected(bool)));
     connect(ui->enableTransVertSw, SIGNAL(clicked(bool)), this, SLOT(enableTransVertSwSel(bool)));
@@ -55,59 +55,58 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *
 
 void TransVertSetupForm::calcOffset()
 {
-    double finalFreq = 0.0;
+    double targetFreq = 0.0;
     // check freq valid format
-    QString f = ui->radioFreq->text().trimmed().remove( QRegExp("^[0]*"));
-    if (f != "")
+    QString txf = ui->radioFreq->text().trimmed().remove( QRegExp("^[0]*"));
+    QString targetf = ui->targetFreq->text().trimmed().remove(QRegExp("^[0]*"));
+
+    if (valInputFreq(txf, RADIO_FREQ_EDIT_ERR_MSG) && valInputFreq(targetf, TARGET_FREQ_EDIT_ERR_MSG))
     {
-        if (f.count('.') == 1)
+        // convert radio freq
+        txf = convertSinglePeriodFreqToFullDigit(txf).remove('.');
+        transVertData->radioFreqStr = txf;
+        transVertData->radioFreq = txf.toDouble();
+        // convert target freq
+        targetf = convertSinglePeriodFreqToFullDigit(targetf).remove('.');
+        targetFreq = targetf.toDouble();
+
+        // check target freq in band
+        if (targetFreq >= transVertData->fLow && targetFreq <= transVertData->fHigh)
         {
-            QStringList fl = f.split('.');
-            fl[1] = fl[1] + "000000";
-            fl[1].truncate(6);
-            f = fl[0] + "." + fl[1];
-        }
-        if (!validateFreqTxtInput(f))
-        {
-            // error
-            QMessageBox msgBox;
-            msgBox.setText(FREQ_EDIT_ERR_MSG);
-            msgBox.exec();
-            return;             //incorrect format
-        }
+            // calculate offset
+            if (transVertData->transVertNegative)
+            {
+               transVertData->transVertOffset =  transVertData->radioFreq - targetFreq;
+            }
+            else
+            {
+                transVertData->transVertOffset = targetFreq - transVertData->radioFreq;
+
+            }
+
+            transVertData->transVertOffsetStr = convertFreqStrDispSingle(convertFreqToStr(transVertData->transVertOffset));
+            // display
+            ui->offsetFreq->setText(transVertData->transVertOffsetStr);
 
 
-        // now calculate offset
-        f = convertSinglePeriodFreqToFullDigit(f).remove('.');
-        transVertData->radioFreqStr = f;
-        transVertData->radioFreq = f.toDouble();
-        // calculate offset
-        if (transVertData->transVertNegative)
-        {
-           transVertData->transVertOffset =  transVertData->radioFreq - transVertData->fLow;
-            finalFreq = transVertData->fLow - transVertData->transVertOffset;
+            tansVertValueChanged = true;
         }
         else
         {
-            transVertData->transVertOffset = transVertData->fLow - transVertData->radioFreq;
-            finalFreq = transVertData->radioFreq + transVertData->transVertOffset;
+            QMessageBox msgBox;
+            msgBox.setText(QString("Target Freq. is out of band for %1").arg(transVertData->band));
+            msgBox.exec();
+            return;
         }
 
-        transVertData->transVertOffsetStr = convertFreqStrDispSingle(convertFreqToStr(transVertData->transVertOffset));
-        // display
-        ui->Offset->setText(transVertData->transVertOffsetStr);
-        ui->finalFreq->setText(convertFreqStrDispSingle(convertFreqToStr(finalFreq)));
-
-
-
-
-        tansVertValueChanged = true;
 
     }
 
-
-
 }
+
+
+
+
 
 
 

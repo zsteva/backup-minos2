@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>841</width>
-    <height>143</height>
+    <width>681</width>
+    <height>157</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_9">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -184,30 +184,16 @@
       <widget class="QComboBox" name="pollInterval"/>
      </item>
      <item>
-      <widget class="QLabel" name="s_StopLbl">
+      <widget class="QCheckBox" name="chkStop">
        <property name="text">
         <string>S Stop</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="chkStop">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="overLapLbl">
-       <property name="text">
-        <string>Overlap</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QCheckBox" name="chkOverrun">
        <property name="text">
-        <string/>
+        <string>Overlap</string>
        </property>
       </widget>
      </item>
