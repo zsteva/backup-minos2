@@ -129,7 +129,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(ui->FKHRotControlFrame, SIGNAL(sendRotator(rpcConstants::RotateDirection , int  )),
             this, SLOT(sendRotator(rpcConstants::RotateDirection , int  )));
 
-    connect(ui->FKHRotControlFrame, SIGNAL(selectRotator(QString)), this, SLOT(sendSelectRotator(QString)));
+    connect(ui->FKHRotControlFrame, SIGNAL(selectRotator(QString, QString)), this, SLOT(sendSelectRotator(QString, QString)));
 
     connect(sendDM, SIGNAL(setKeyerLoaded()), this, SLOT(on_KeyerLoaded()));
 
@@ -964,7 +964,7 @@ void TSingleLogFrame::sendSelectRadio(QString radioName)
 }
 
 
-void TSingleLogFrame::sendSelectRotator(QString s)
+void TSingleLogFrame::sendSelectRotator(QString s, QString uuid)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest() && !contest->isProtected())
     {
@@ -975,7 +975,7 @@ void TSingleLogFrame::sendSelectRotator(QString s)
             ct->commonSave(false);
             ui->FKHRotControlFrame->setRotatorAntennaName(s);
         }
-        sendDM->sendSelectRotator(s);
+        sendDM->sendSelectRotator(s, uuid);
     }
 
 }

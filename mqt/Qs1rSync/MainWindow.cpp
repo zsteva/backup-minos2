@@ -245,7 +245,7 @@ void MainWindow::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QSt
 
     if ( an.getOK() && an.getPublisherProgram() == rpcConstants::rigControlApp )
     {
-        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlState )
+        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlStatus )
         {
             state = an.getValue();
         }

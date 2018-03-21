@@ -4,15 +4,15 @@ RigCache::RigCache()
 {
 
 }
-QString RigCache::getStateString(const QString &name)
+QString RigCache::getStateString(const QString &name) const
 {
     QString val = rigStates[name].pack();
     return val;
 }
-void RigCache::setStateString(const QString &name, const QString &value)
+void RigCache::setStateString(const AnalysePubSubNotify & an)
 {
-    RigState &as = rigStates[name];
-    as.unpack(value);
+    RigState &as = rigStates[an.getKey()];
+    as.unpack(an.getValue());
 }
 
 void RigCache::setState(QString name, RigState &state)

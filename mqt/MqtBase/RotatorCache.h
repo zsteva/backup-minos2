@@ -12,11 +12,11 @@ class RotatorCache
 public:
     RotatorCache();
 
-    QString getDetailString(const QString &name);
-    void setDetailString(const QString &name, const QString &value);
+    QString getDetailString(const QString &name) const;
+    void setDetailString(const AnalysePubSubNotify &an);
 
-    QString getStateString(const QString &name);
-    void setStateString(const QString &name, const QString &value);
+    QString getStateString(const QString &name) const;
+    void setStateString(const AnalysePubSubNotify & an);
 
     void setDetail(const QString &name, const AntennaDetail &detail);
     void setState(const QString &name, const AntennaState &state);

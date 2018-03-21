@@ -24,6 +24,7 @@ AntennaState::AntennaState(QString s):PubSubValue(AntennaStateType)
 }
 AntennaState::~AntennaState()
 {
+    qRegisterMetaType< AntennaState > ( "AntennaState" );
 }
 bool AntennaState::isDirty()
 {
@@ -37,7 +38,7 @@ void AntennaState::clearDirty()
 }
 
 
-QString AntennaState::pack()
+QString AntennaState::pack() const
 {
     QJsonObject jv;
 

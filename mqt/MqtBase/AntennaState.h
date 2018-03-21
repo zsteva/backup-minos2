@@ -21,7 +21,7 @@ public:
     }
     ~AntennaState();
 
-    virtual QString pack();
+    virtual QString pack() const;
     virtual void unpack(QString);
     bool isDirty();
     void clearDirty();

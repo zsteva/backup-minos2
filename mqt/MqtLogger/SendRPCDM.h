@@ -49,7 +49,7 @@ class TSendDM : public QObject
       void sendKeyerTwoTone();
       void sendKeyerStop();
 
-      void sendSelectRotator(QString);
+      void sendSelectRotator(QString, QString);
       void sendRotator(rpcConstants::RotateDirection direction, int angle );
 
       void sendSelectRig(QString);

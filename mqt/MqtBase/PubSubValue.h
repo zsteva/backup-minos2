@@ -16,7 +16,7 @@ public:
     PubSubValue(QString t);
     virtual ~PubSubValue();
 
-    virtual QString pack() = 0;
+    virtual QString pack() const = 0;
     virtual void unpack(QString) = 0;
     QString psType() const;
 };

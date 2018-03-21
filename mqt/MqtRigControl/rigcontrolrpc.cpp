@@ -72,7 +72,7 @@ void RigControlRpc::publishState(const QString &state)
         trace(QString("Rig RPC: Publish State = %1").arg(state));
        old = state;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlState, state, psPublished );
+       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlStatus, state, psPublished );
     }
 }
 

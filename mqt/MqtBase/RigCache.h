@@ -12,8 +12,8 @@ public:
 
     void publishState();
 
-    QString getStateString(const QString &name);
-    void setStateString(const QString &name, const QString &value);
+    QString getStateString(const QString &name) const;
+    void setStateString(const AnalysePubSubNotify & an);
 
     void setState(QString name, RigState &state);
 

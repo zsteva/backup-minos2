@@ -11,7 +11,7 @@ KeyerState::~KeyerState()
 
 }
 
-QString KeyerState::pack()
+QString KeyerState::pack() const
 {
     QJsonObject jv;
 

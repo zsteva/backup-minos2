@@ -1659,20 +1659,19 @@ void TLogContainer::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const 
     AnalysePubSubNotify an( err, mro );
     trace( "Notify callback from " + from + ( err ? ":Error " : ":Normal " ) +  an.getPublisherProgram() + "@" + an.getPublisherServer());
 
-    if ( an.getOK() /*&& an.getState() == psPublished*/)
+    if ( an.getOK() && an.getState() == psPublished)
     {
         if ( an.getCategory() == rpcConstants::rigStateCategory)
         {
-             rigCache.setStateString(an.getKey(), an.getValue());
+             rigCache.setStateString(an);
         }
         else if ( an.getCategory() == rpcConstants::rotatorDetailCategory )
         {
-            rotatorCache.setDetailString(an.getKey(), an.getValue());
+            rotatorCache.setDetailString(an);
         }
         else if ( an.getCategory() == rpcConstants::rotatorStateCategory )
         {
-            rotatorCache.setStateString(an.getKey(), an.getValue());
+            rotatorCache.setStateString(an);
         }
-
     }
 }

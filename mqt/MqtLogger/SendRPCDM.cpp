@@ -153,17 +153,19 @@ void TSendDM::sendRotator(rpcConstants::RotateDirection direction, int angle )
 
    rpc.queueCall( rotatorServerConnectable.remoteAppName + "@" + rotatorServerConnectable.serverName );
 }
-void TSendDM::sendSelectRotator(QString s)
+void TSendDM::sendSelectRotator(QString s, QString uuid)
 {
     RPCGeneralClient rpc(rpcConstants::rotatorMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-    QSharedPointer<RPCParam>select(new RPCStringParam(contest->uuid ));
+    QSharedPointer<RPCParam>select(new RPCStringParam(uuid ));
     st->addMember( select, rpcConstants::selected );
     st->addMember( s, rpcConstants::rotatorAntennaName );
     rpc.getCallArgs() ->addParam( st );
 
     rpc.queueCall( rotatorServerConnectable.remoteAppName + "@" + rotatorServerConnectable.serverName );
+
+    // and we should de-select this uuid on all other rotator apps
 }
 
 void TSendDM::sendSelectRig(QString s)
@@ -232,7 +234,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
         }
         if (an.getPublisherProgram() == rigServerConnectable.remoteAppName && an.getPublisherServer() == rigServerConnectable.serverName)
         {
-            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlState )
+            if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlStatus )
             {
                 // this happens for disconnected as well...
                 emit setRadioLoaded();

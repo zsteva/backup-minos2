@@ -165,7 +165,7 @@ private slots:
     void sendRadioMode(QString);
 
     void sendSelectRadio(QString);
-    void sendSelectRotator(QString);
+    void sendSelectRotator(QString, QString);
 
 
     void on_ControlSplitter_splitterMoved(int pos, int index);

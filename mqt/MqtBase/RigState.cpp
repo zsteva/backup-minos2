@@ -9,7 +9,10 @@ void RigState::setStatus(const QString &status)
 
 RigState::RigState()
     :PubSubValue(RigStateType)
-{}
+{
+    qRegisterMetaType< RigState > ( "RigState" );
+
+}
 RigState::RigState(const QString &status, const QString &sel, int f, const QString &m, double tvo, int tvsw, bool tvst)
     :PubSubValue(RigStateType)
 {
@@ -80,12 +83,12 @@ void RigState::setTransverterStatus(bool transverterStatus)
     _transverterStatus.setValue(transverterStatus);
 }
 
-QString RigState::pack()
+QString RigState::pack() const
 {
     QJsonObject jv;
 
     jv.insert(rpcConstants::selected, selected());
-    jv.insert(rpcConstants::rigControlState, status());
+    jv.insert(rpcConstants::rigControlStatus, status());
     jv.insert(rpcConstants::rigControlFreq, freq());
     jv.insert(rpcConstants::rigControlMode, mode());
     jv.insert(rpcConstants::rigControlTxVertOffsetFreq, transverterOffset());
@@ -105,7 +108,7 @@ void RigState::unpack(QString s)
     if (!err.error)
     {
         _selected.setValue(json.object().value(rpcConstants::selected).toString());
-        _status.setValue(json.object().value(rpcConstants::rigControlState).toString());
+        _status.setValue(json.object().value(rpcConstants::rigControlStatus).toString());
         _freq.setValue(json.object().value(rpcConstants::rigControlFreq).toDouble());
         _mode.setValue(json.object().value(rpcConstants::rigControlMode).toString());
         _transverterOffset.setValue(json.object().value(rpcConstants::rigControlTxVertOffsetFreq).toDouble());

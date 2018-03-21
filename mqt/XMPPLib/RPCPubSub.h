@@ -52,35 +52,35 @@ class AnalysePubSubNotify
       bool OK;
    public:
       AnalysePubSubNotify( bool err, QSharedPointer<MinosRPCObj>mro );
-      QString getPublisherProgram()
+      QString getPublisherProgram() const
       {
          return publisherProgram;
       }
-      QString getPublisherServer()
+      QString getPublisherServer() const
       {
          return publisherServer;
       }
-      QString getServer()
+      QString getServer() const
       {
          return server;
       }
-      QString getCategory()
+      QString getCategory() const
       {
          return category;
       }
-      QString getKey()
+      QString getKey() const
       {
          return key;
       }
-      QString getValue()
+      QString getValue() const
       {
          return value;
       }
-      PublishState getState()
+      PublishState getState() const
       {
          return state;
       }
-      bool getOK()
+      bool getOK() const
       {
          return OK;
       }

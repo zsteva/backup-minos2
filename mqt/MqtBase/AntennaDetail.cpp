@@ -18,6 +18,7 @@ AntennaDetail::AntennaDetail(QString s):PubSubValue(AntennaDetailType)
 }
 AntennaDetail::~AntennaDetail()
 {
+    qRegisterMetaType< AntennaDetail > ( "AntennaDetail" );
 
 }
 bool AntennaDetail::isDirty()
@@ -29,7 +30,7 @@ void AntennaDetail::clearDirty()
     _minAzimuth.clearDirty();
     _maxAzimuth.clearDirty();
 }
-QString AntennaDetail::pack()
+QString AntennaDetail::pack() const
 {
     QJsonObject jv;
 

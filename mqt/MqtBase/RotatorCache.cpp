@@ -7,25 +7,25 @@ RotatorCache::RotatorCache()
 
 }
 
-QString RotatorCache::getDetailString(const QString &name)
+QString RotatorCache::getDetailString(const QString &name) const
 {
     QString val = rotDetails[name].pack();
     return val;
 }
-void RotatorCache::setDetailString(const QString &name, const QString &value)
+void RotatorCache::setDetailString(const AnalysePubSubNotify & an)
 {
-    AntennaDetail &ad = rotDetails[name];
-    ad.unpack(value);
+    AntennaDetail &ad = rotDetails[an.getKey()];
+    ad.unpack(an.getValue());
 }
-QString RotatorCache::getStateString(const QString &name)
+QString RotatorCache::getStateString(const QString &name) const
 {
     QString val = rotStates[name].pack();
     return val;
 }
-void RotatorCache::setStateString(const QString &name, const QString &value)
+void RotatorCache::setStateString(const AnalysePubSubNotify &an)
 {
-    AntennaState &as = rotStates[name];
-    as.unpack(value);
+    AntennaState &as = rotStates[an.getKey()];
+    as.unpack(an.getValue());
 }
 
 //QMap<QString, AntennaDetail> rotDetails;

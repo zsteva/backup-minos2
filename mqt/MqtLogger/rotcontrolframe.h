@@ -100,7 +100,7 @@ private:
 
     void keyPressEvent(QKeyEvent *event);
 signals:
-    void selectRotator(QString);
+    void selectRotator(QString, QString);
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
     void turnBearingReturn();
     void bearingEditReturn();

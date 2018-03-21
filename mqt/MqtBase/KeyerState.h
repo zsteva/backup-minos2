@@ -13,7 +13,7 @@ public:
     KeyerState(QString st, QString sel):PubSubValue(KeyerStateType), _report(st), _selected(sel){}
     ~KeyerState();
 
-    virtual QString pack();
+    virtual QString pack() const;
     virtual void unpack(QString);
     QString report() const;
     QString selected() const;

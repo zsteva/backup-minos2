@@ -19,7 +19,7 @@ public:
     bool isDirty();
     void clearDirty();
 
-    virtual QString pack();
+    virtual QString pack() const;
     virtual void unpack(QString);
 
 
