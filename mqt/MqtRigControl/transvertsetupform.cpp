@@ -55,32 +55,34 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *
 
 void TransVertSetupForm::calcOffset()
 {
-    double targetFreq = 0.0;
     // check freq valid format
     QString txf = ui->radioFreq->text().trimmed().remove( QRegExp("^[0]*"));
     QString targetf = ui->targetFreq->text().trimmed().remove(QRegExp("^[0]*"));
 
     if (valInputFreq(txf, RADIO_FREQ_EDIT_ERR_MSG) && valInputFreq(targetf, TARGET_FREQ_EDIT_ERR_MSG))
     {
+
+
         // convert radio freq
         txf = convertSinglePeriodFreqToFullDigit(txf).remove('.');
         transVertData->radioFreqStr = txf;
         transVertData->radioFreq = txf.toDouble();
         // convert target freq
         targetf = convertSinglePeriodFreqToFullDigit(targetf).remove('.');
-        targetFreq = targetf.toDouble();
+        transVertData->targetFreqStr = targetf;
+        transVertData->targetFreq = targetf.toDouble();
 
         // check target freq in band
-        if (targetFreq >= transVertData->fLow && targetFreq <= transVertData->fHigh)
+        if (transVertData->targetFreq >= transVertData->fLow && transVertData->targetFreq <= transVertData->fHigh)
         {
             // calculate offset
             if (transVertData->transVertNegative)
             {
-               transVertData->transVertOffset =  transVertData->radioFreq - targetFreq;
+               transVertData->transVertOffset =  transVertData->radioFreq - transVertData->targetFreq;
             }
             else
             {
-                transVertData->transVertOffset = targetFreq - transVertData->radioFreq;
+                transVertData->transVertOffset = transVertData->targetFreq - transVertData->radioFreq;
 
             }
 
@@ -105,10 +107,21 @@ void TransVertSetupForm::calcOffset()
 }
 
 
+void TransVertSetupForm::setRadioFreqBox(QString f)
+{
+    ui->radioFreq->setText(f);
+}
+
+void TransVertSetupForm::setTargetFreqBox(QString f)
+{
+    ui->targetFreq->setText(f);
+}
 
 
-
-
+void TransVertSetupForm::setOffsetFreqLabel(QString f)
+{
+    ui->offsetFreq->setText(f);
+}
 
 
 /********************* TransVert Negative Offset Select  *********************************/

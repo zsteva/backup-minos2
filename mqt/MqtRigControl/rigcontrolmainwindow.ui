@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>693</width>
-    <height>231</height>
+    <width>528</width>
+    <height>218</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,9 +58,19 @@
         <item>
          <widget class="QLabel" name="radioNameDisp">
           <property name="text">
-           <string>TextLabel</string>
+           <string/>
           </property>
          </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="selFreq">
+          <property name="text">
+           <string>Select Freq</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="freqInputBox"/>
         </item>
         <item>
          <spacer name="horizontalSpacer">
@@ -157,14 +167,14 @@
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
                 <item>
-                 <widget class="QLabel" name="transVertBandDisp">
+                 <widget class="QLabel" name="transVertBandDispLbl">
                   <property name="text">
                    <string>Band:</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="transVertBandDispLbl">
+                 <widget class="QLabel" name="transVertBandDisp">
                   <property name="text">
                    <string/>
                   </property>
@@ -177,7 +187,7 @@
                 <item>
                  <widget class="QLabel" name="transVertSwLbl">
                   <property name="text">
-                   <string>TransVert Sw:</string>
+                   <string>TVert Sw:</string>
                   </property>
                  </widget>
                 </item>
@@ -189,24 +199,6 @@
                  </widget>
                 </item>
                </layout>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
-              <item>
-               <widget class="QLabel" name="transVertNameDisp">
-                <property name="text">
-                 <string>TransVert Name:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="transVertNameLbl">
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
               </item>
              </layout>
             </item>
@@ -282,19 +274,43 @@
               </property>
              </widget>
             </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <item>
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>Mgm Mode:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="mgmMode">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>USB</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_11">
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
             <item>
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="label_2">
               <property name="text">
-               <string>Mgm Mode:</string>
+               <string>RX BW:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="mgmMode">
+             <widget class="QLabel" name="passBandlbl">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -302,37 +318,39 @@
                </font>
               </property>
               <property name="text">
-               <string>USB</string>
+               <string>0000</string>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </item>
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_12">
-          <item>
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>RX BW:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="passBandlbl">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>0000</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
@@ -345,7 +363,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>693</width>
+     <width>528</width>
      <height>21</height>
     </rect>
    </property>

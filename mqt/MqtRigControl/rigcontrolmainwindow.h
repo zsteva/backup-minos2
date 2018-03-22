@@ -72,7 +72,7 @@ private:
     QString slogMode;
     QString selRadioMode;   // onSelectRadio mode from logger at startup
     rmode_t logMode;
-    QString band;
+    QString selTvBand;      // selected band from radio
     QString transVertSwNum;
 
     const int PASSBAND_NOCHANGE = -1;
@@ -158,6 +158,9 @@ private:
 
     void refreshRadio();
 
+    QString getBand(freq_t freq);
+
+    void testBoxesVisible(bool visible);
 private slots:
 
     void onStdInRead(QString);
@@ -175,6 +178,7 @@ private slots:
     void aboutRigConfig();
 
     void onSelectRadio(QString);
+    void selFreqClicked();
 signals:
 
 

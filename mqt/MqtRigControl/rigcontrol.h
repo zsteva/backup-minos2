@@ -72,7 +72,9 @@ public:
     QString transVertName;
     QString band;
     QString radioFreqStr;
-    freq_t radioFreq;
+    freq_t radioFreq = 0.0;
+    QString targetFreqStr;
+    freq_t targetFreq = 0.0;
     freq_t fLow;
     freq_t fHigh;
     QString transVertOffsetStr;

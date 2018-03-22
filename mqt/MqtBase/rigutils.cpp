@@ -66,7 +66,7 @@ QString convertFreqStrDisp(QString sfreq)
             sfreq = sfreq.insert(1,'.');
             break;
         default:
-            sfreq = "??.???.???.???";    // error
+            sfreq = "00.000.000.000";    // error
 
     }
 

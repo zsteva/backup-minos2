@@ -43,7 +43,12 @@ public:
          void setEnableTransVertSwBoxVisible(bool visible);
 
          void loadBandFreqLimits();
-    signals:
+         void setRadioFreqBox(QString f);
+         void setTargetFreqBox(QString f);
+
+
+         void setOffsetFreqLabel(QString f);
+signals:
 
     public slots:
 
