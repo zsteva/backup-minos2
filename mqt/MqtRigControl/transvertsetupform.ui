@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>569</width>
+    <width>692</width>
     <height>80</height>
    </rect>
   </property>
@@ -100,16 +100,6 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLabel" name="antSwNumLbl">
-         <property name="text">
-          <string>Radio Ant. Switch Num.</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="radioAntSwNum"/>
-       </item>
-       <item>
         <widget class="QCheckBox" name="enableTransVertSw">
          <property name="text">
           <string>Enable Transvert Switch</string>
@@ -128,19 +118,6 @@
        </item>
        <item>
         <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>

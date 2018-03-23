@@ -196,9 +196,7 @@ loadSettingsToTab(int tabNum)
         radioTab[tabNum]->setMgmMode(radioTab[tabNum]->getRadioData()->mgmMode);
 
         // now load transverter settings
-        bool antSwFlg = false;
-        int retCode = 0;
-        retCode = radio->supportAntSw(availRadioData[tabNum]->radioModelNumber, &antSwFlg);
+
         for (int t = 0; t < radioTab[tabNum]->getRadioData()->numTransverters; t++)
         {
             radioTab[tabNum]->setTransVertTabText(t, radioTab[tabNum]->getRadioData()->transVertNames[t]);
@@ -208,15 +206,6 @@ loadSettingsToTab(int tabNum)
             radioTab[tabNum]->transVertTab[t]->setNegCheckBox(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transVertNegative);
             radioTab[tabNum]->transVertTab[t]->setEnableTransVertSw(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
             radioTab[tabNum]->transVertTab[t]->setTransVerSwNum(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transSwitchNum);
-
-            if (retCode >= 0 && antSwFlg)
-            {
-               radioTab[tabNum]->transVertTab[t]->antSwNumVisible(true);
-            }
-            else
-            {
-               radioTab[tabNum]->transVertTab[t]->antSwNumVisible(false);
-            }
 
 
         }
@@ -469,6 +458,7 @@ void SetupDialog::saveRadio(int i)
     config.setValue("stopbits", availRadioData[i]->stopbits);
     config.setValue("handshake", availRadioData[i]->handshake);
     config.setValue("radioPollInterval", availRadioData[i]->pollInterval);
+    config.setValue("antSwitchAvail", radioTab[i]->getRadioData()->antSwitchAvail);
     config.setValue("transVertEnable", availRadioData[i]->transVertEnable);
     config.setValue("netAddress", availRadioData[i]->networkAdd);
     config.setValue("netPort", availRadioData[i]->networkPort);
@@ -549,6 +539,7 @@ void SetupDialog::saveSettings()
             configRadio.setValue("stopbits", radioTab[i]->getRadioData()->stopbits);
             configRadio.setValue("handshake", radioTab[i]->getRadioData()->handshake);
             configRadio.setValue("radioPollInterval", radioTab[i]->getRadioData()->pollInterval);
+            configRadio.setValue("antSwitchAvail", radioTab[i]->getRadioData()->antSwitchAvail);
             configRadio.setValue("transVertEnable", radioTab[i]->getRadioData()->transVertEnable);
             configRadio.setValue("netAddress", radioTab[i]->getRadioData()->networkAdd);
             configRadio.setValue("netPort", radioTab[i]->getRadioData()->networkPort);
@@ -658,6 +649,7 @@ void SetupDialog::readSettings()
         radioTab[i]->getRadioData()->handshake = config.value("handshake", 0).toInt();
         radioTab[i]->getRadioData()->pollInterval = config.value("radioPollInterval", "1").toString();
         radioTab[i]->getRadioData()->transVertEnable = config.value("transVertEnable", false).toBool();
+        radioTab[i]->getRadioData()->antSwitchAvail = config.value("antSwitchAvail", false).toBool();
         radioTab[i]->getRadioData()->networkAdd = config.value("netAddress", "").toString();
         radioTab[i]->getRadioData()->networkPort = config.value("netPort", "").toString();
         radioTab[i]->getRadioData()->mgmMode = config.value("mgmMode", hamlibData::USB).toString();
@@ -717,7 +709,6 @@ void SetupDialog::readTranVerterSetting(int radioNum, int transVertNum, QSetting
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->radioFreq = config.value("radioFreq", 0.0).toDouble();
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->targetFreqStr = config.value("targetFreqStr", "00.000.000.000").toString();
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->targetFreq = config.value("targetFreq", 0.0).toDouble();
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffsetStr = config.value("offsetString", "00.000.000.000").toString();
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffsetStr = config.value("offsetString", "00.000.000.000").toString();
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffset = config.value("offsetDouble", 0.0).toDouble();
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertNegative = config.value("negOffset", false).toBool();

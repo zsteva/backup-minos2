@@ -149,11 +149,13 @@ void RigSetupForm::radioModelSelected()
         {
             if (retCode >= 0 && antSwFlg)
             {
-               transVertTab[i]->antSwNumVisible(true);
+               //transVertTab[i]->antSwNumVisible(true);
+               radioData->antSwitchAvail = true;
             }
             else
             {
-               transVertTab[i]->antSwNumVisible(false);
+               //transVertTab[i]->antSwNumVisible(false);
+               radioData->antSwitchAvail = false;
             }
         }
 
@@ -718,11 +720,13 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
 
     if (retCode >= 0 && antSwFlg)
     {
-       transVertTab[tabNum]->antSwNumVisible(true);
+       //transVertTab[tabNum]->antSwNumVisible(true);
+       radioData->antSwitchAvail = true;
     }
     else
     {
-       transVertTab[tabNum]->antSwNumVisible(false);
+       //transVertTab[tabNum]->antSwNumVisible(false);
+       radioData->antSwitchAvail = false;
     }
 
     transVertTab[tabNum]->transVertValueChanged = true;

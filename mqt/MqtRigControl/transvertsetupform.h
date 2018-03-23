@@ -67,7 +67,7 @@ signals:
 
 
 
-        void antennaNumSwSel();
+
 private:
 
 

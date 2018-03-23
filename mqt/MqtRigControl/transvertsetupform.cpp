@@ -204,9 +204,21 @@ void TransVertSetupForm::transVertSwNumSel()
 
 }
 
+QString TransVertSetupForm::getTransVerSwNum()
+{
+    return ui->transVertSwNum->text().trimmed();
+}
+
+void TransVertSetupForm::setTransVerSwNum(QString s)
+{
+    ui->transVertSwNum->setText(s);
+}
+
+
+
 /***************** Radio Antenna Switch Number  ********************************/
 
-
+/*
 void TransVertSetupForm::antennaNumSwSel()
 {
     QString numSel = ui->radioAntSwNum->text().trimmed();
@@ -233,19 +245,7 @@ void TransVertSetupForm::antSwNumVisible(bool visible)
     ui->antSwNumLbl->setVisible(visible);
 }
 
-
-QString TransVertSetupForm::getTransVerSwNum()
-{
-    return ui->transVertSwNum->text().trimmed();
-}
-
-void TransVertSetupForm::setTransVerSwNum(QString s)
-{
-    ui->transVertSwNum->setText(s);
-}
-
-
-
+*/
 
 
 

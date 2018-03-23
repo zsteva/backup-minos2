@@ -124,6 +124,7 @@ public:
       dest.nactiveDTR = srce->nactiveDTR;
       dest.mgmMode = srce->mgmMode;
       dest.pttType = srce->pttType;
+      dest.antSwitchAvail = srce->antSwitchAvail;
       dest.transVertEnable = srce->transVertEnable;
       dest.transVertNames.clear();
       if (srce->transVertNames.count() > 0)
@@ -172,6 +173,7 @@ public:
   bool nactiveDTR  = false;
   QString mgmMode;
   ptt_type_t pttType;
+  bool antSwitchAvail = false;
   bool transVertEnable  = false;
   QStringList transVertNames;
   int numTransverters = 0;

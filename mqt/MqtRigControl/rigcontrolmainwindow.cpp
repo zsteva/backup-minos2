@@ -869,6 +869,8 @@ void RigControlMainWindow::openRadio()
                         logMessage(QString("SetFreq: Transvert Switch not enabled - %1").arg(TRANSSW_NUM_DEFAULT));
                     }
 
+
+
                     // now calculate the freq
                     if (setupRadio->currentRadio.transVertSettings[tvNum]->transVertNegative)
                     {
