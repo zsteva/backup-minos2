@@ -43,10 +43,12 @@ class TSendDM : public QObject
       void sendKeyerTwoTone(TSingleLogFrame *tslf);
       void sendKeyerStop(TSingleLogFrame *tslf);
 
-      void sendSelectRotator(TSingleLogFrame *tslf, QString);
+      void changeRotatorSelectionTo(const PubSubName &name, const QString &uuid);
+      void sendRotatorSelection(const PubSubName &name, const QString &uuid);
       void sendRotator(TSingleLogFrame *tslf,rpcConstants::RotateDirection direction, int angle );
 
-      void sendSelectRig(TSingleLogFrame *tslf,QString);
+      void changeRigSelectionTo(const PubSubName &name, const QString &mode, const QString &uuid);
+      void sendRigSelection(const PubSubName &name, const QString &mode, const QString &uuid);
       void sendRigControlFreq(TSingleLogFrame *tslf,const QString &freq);
       void sendRigControlMode(TSingleLogFrame *tslf, const QString &mode);
       void sendRigControlPassBandState(TSingleLogFrame *tslf,const int state);

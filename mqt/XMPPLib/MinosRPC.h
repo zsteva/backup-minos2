@@ -52,7 +52,6 @@ class MinosRPC: public QObject
     QList <QPair <QString, QString> > remoteSubscriptions;
 
     void setAppName(const QString &);
-
     void notifyCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
     void serverCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );
 
@@ -66,6 +65,12 @@ public:
         }
         return rpc;
     }
+    static MinosRPC *validMinosRPC()
+    {
+        return rpc;
+    }
+
+    QString getAppName();
 
     void subscribe(const QString &);
     void subscribeRemote(const QString &, const QString &);

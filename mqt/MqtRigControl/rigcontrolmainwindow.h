@@ -168,7 +168,7 @@ private slots:
     void updateSelectRadioBox();
     void aboutRigConfig();
 
-    void onSelectRadio(QString);
+    void onSelectRadio(QString, QString mode);
 signals:
 
 

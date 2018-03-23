@@ -21,6 +21,8 @@ public:
     void setDetail(const PubSubName &name, const AntennaDetail &detail);
     void setState(const PubSubName &name, const AntennaState &state);
 
+    PubSubName getSelected();
+
     void setSelected(const PubSubName &name, const QString &sel);
     void setStatus(const PubSubName &name, const QString &state);
     void setBearing(const PubSubName &name, int bearing);

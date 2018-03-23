@@ -447,8 +447,11 @@ void LoggerContestLog::setINIDetails()
 	  stationBundle.getStringProfile( espAntenna, entAnt );
 	  stationBundle.getStringProfile( espAGL, entAGL );
 	  stationBundle.getIntProfile(espOffset, bearingOffset);
-      stationBundle.getStringProfile( espRadioName, radioName );
-      stationBundle.getStringProfile( espRotatorName, rotatorName );
+      QString s;
+      stationBundle.getStringProfile( espRadioName, s );
+      radioName.setValue( PubSubName(s) );
+      stationBundle.getStringProfile( espRotatorName, s );
+      rotatorName.setValue(PubSubName(s));
       stationBundle.endGroup();
    }
 //   if ( appBundle.getSection() != noneBundle )
@@ -1532,8 +1535,11 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
 				  mt->getStructArgMemberValue( "antenna", entAnt );
 				  mt->getStructArgMemberValue( "AGL", entAGL );
 				  mt->getStructArgMemberValue( "offset", bearingOffset);
-                  mt->getStructArgMemberValue("radioName", radioName);
-                  mt->getStructArgMemberValue("rotatorName", rotatorName);
+                  QString s;
+                  if (mt->getStructArgMemberValue("radioName", s))
+                    radioName.setValue(PubSubName(s));
+                  if (mt->getStructArgMemberValue("rotatorName", s))
+                    rotatorName.setValue(PubSubName(s));
                }
 			   else
 				  if ( methodName == "MinosLogOperators" )

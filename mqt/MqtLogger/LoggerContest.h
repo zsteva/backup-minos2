@@ -11,6 +11,7 @@
 #define LoggerContestH 
 //----------------------------------------------------------------------------
 #include "rigmemcommondata.h"
+#include "PubSubValue.h"
 
 class DisplayContestContact;
 struct StanzaPos
@@ -87,8 +88,8 @@ class LoggerContestLog : public BaseContestLog
       MinosStringItem<QString> appRotator;
       MinosStringItem<QString> appVoiceKeyer;
 
-      MinosStringItem<QString> radioName;
-      MinosStringItem<QString> rotatorName;
+      MinosItem<PubSubName> radioName;
+      MinosItem<PubSubName> rotatorName;
 
       MinosStringItem<QString> VHFContestName;
 

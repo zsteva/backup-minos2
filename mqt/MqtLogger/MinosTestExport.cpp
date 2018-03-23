@@ -188,8 +188,16 @@ void MinosTestExport::exportStation(QSharedPointer<QFile> expfd )
    ct->entAnt.addIfDirty( st, "antenna", dirty );
    ct->entAGL.addIfDirty( st, "AGL", dirty );
    ct->bearingOffset.addIfDirty(st, "offset", dirty );
-   ct->radioName.addIfDirty(st, "radioName", dirty);
-   ct->rotatorName.addIfDirty(st, "rotatorName", dirty);
+   if (ct->radioName.isDirty())
+   {
+        st->addMember(ct->radioName.getValue().toString(), "radioName");
+        dirty = true;
+   }
+   if (ct->rotatorName.isDirty())
+   {
+        st->addMember( ct->rotatorName.getValue().toString(), "rotatorName");
+        dirty = true;
+   }
 
    if ( dirty )
    {

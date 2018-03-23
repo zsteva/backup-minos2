@@ -73,7 +73,7 @@ RigControlFrame::RigControlFrame(QWidget *parent):
     ui->TxVertLabel->setVisible(false);
 
     // init memory button data before radio connection
-    setRadioName(radioName);
+    setRadioName(radioName, "");
 
     freqEditShortKey = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_F), parent);
     connect(freqEditShortKey, SIGNAL(activated()), this, SLOT(freqEditSelected()));
@@ -161,7 +161,7 @@ void RigControlFrame::on_radioNameSel_activated(const QString &arg1)
 //    }
 
     radioName = arg1;
-    emit selectRadio(arg1);
+    emit selectRadio(arg1, "");
 }
 
 
@@ -355,8 +355,8 @@ void RigControlFrame::noRadioSendOutMode(QString m)
 
 void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
 {
-    QString radioName = ct->radioName.getValue();
-    emit selectRadio(radioName);
+    QString radioName = ct->radioName.getValue().toString();
+    emit selectRadio(radioName, "");
 
 
     QStringList modelist = mode.split(':');  // unpack mode
@@ -547,25 +547,25 @@ void RigControlFrame::sendModeToRadio(QString m)
 }
 
 
-void RigControlFrame::setRadioName(QString name)
+void RigControlFrame::setRadioName(QString radNam, QString mode)
 {
-    traceMsg(QString("Set RadioName = %1").arg(name));
-    if (name == NORADIO)
+    traceMsg(QString("Set RadioName = %1 mode = %2").arg(radNam).arg(mode));
+    if (radNam == NORADIO)
     {
         return;
     }
-    QString radNam = extractRadioName(name);   // remove mode if appended
+    //QString radNam = extractRadioName(name);   // remove mode if appended
 
     int index = ui->radioNameSel->findText(radNam, Qt::MatchFixedString);
     if (index >= 0)
         ui->radioNameSel->setCurrentIndex(index);
     else
-        ui->radioNameSel->setCurrentText(extractRadioName(radNam));
+        ui->radioNameSel->setCurrentText(radNam);
     radioName = ui->radioNameSel->currentText();
 
     if (ct && !ct->isProtected() && ct == TContestApp::getContestApp() ->getCurrentContest())
     {
-        emit selectRadio(name);  // send radio and mode if appended.
+        emit selectRadio(radNam, mode);  // send radio and mode if appended.
     }
 }
 
@@ -601,9 +601,7 @@ void RigControlFrame::setRadioList(QString s)
 
     if (ct && ct == TContestApp::getContestApp() ->getCurrentContest())
     {
-        // add mode to the radioName
-        QString n = QString("%1:%2").arg(ct->radioName.getValue()).arg(ct->currentMode.getValue());
-        setRadioName(n);
+        setRadioName(ct->radioName.getValue().toString(), ct->currentMode.getValue());
     }
 
 }

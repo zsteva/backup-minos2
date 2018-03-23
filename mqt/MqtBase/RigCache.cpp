@@ -30,6 +30,18 @@ void RigCache::setSelected(const PubSubName &name, const QString &sel)
             i.value().setSelected("");
     }
 }
+PubSubName RigCache::getSelected()
+{
+    for(QMap<PubSubName, RigState>::iterator i = rigStates.begin(); i != rigStates.end(); i++ )
+    {
+        if (!i.value().selected().isEmpty())
+        {
+            PubSubName psn = i.key();
+            return psn;
+        }
+    }
+    return PubSubName();
+}
 void RigCache::setStatus(const PubSubName &name, const QString &status)
 {
     rigStates[name].setStatus(status);

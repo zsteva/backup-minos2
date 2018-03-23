@@ -573,7 +573,8 @@ void RotatorMainWindow::sendAntennaListLogger()
     {
         if (!selectRotator->availAntennas[i].antennaName.isEmpty())
         {
-            ants.append(selectRotator->availAntennas[i].antennaName);
+            PubSubName r(selectRotator->availAntennas[i].antennaName);
+            ants.append(r.toString());
         }
     }
     msg->publishAntennaList(ants.join(":"));

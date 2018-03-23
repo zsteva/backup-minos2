@@ -27,11 +27,16 @@ private:
     QString _appName;
     QString _key;
 public:
-    PubSubName(){}
+    PubSubName();
+    PubSubName(const QString &);
     PubSubName(const AnalysePubSubNotify &an);
 
     bool operator< ( const PubSubName& rhs ) const;
     bool operator== ( const PubSubName& rhs ) const;
+    bool operator!= ( const PubSubName& rhs ) const;
+
+    bool isEmpty();
+    QString toString();
     QString server() const;
     void setServer(const QString &server);
     QString appName() const;

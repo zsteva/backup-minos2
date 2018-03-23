@@ -48,7 +48,7 @@ public:
 signals:
     void setFreq(QString);
     void setMode(QString);
-    void selectLoggerRadio(QString);
+    void selectLoggerRadio(QString, QString);
 
 public slots:
 

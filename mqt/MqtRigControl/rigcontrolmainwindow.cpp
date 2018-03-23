@@ -232,7 +232,7 @@ void RigControlMainWindow::initActionsConnections()
     // Message from Logger
     connect(msg, SIGNAL(setFreq(QString)), this, SLOT(loggerSetFreq(QString)));
     connect(msg, SIGNAL(setMode(QString)), this, SLOT(loggerSetMode(QString)));
-    connect(msg, SIGNAL(selectLoggerRadio(QString)), this, SLOT(onSelectRadio(QString)));
+    connect(msg, SIGNAL(selectLoggerRadio(QString, QString)), this, SLOT(onSelectRadio(QString, QString)));
 
 
 
@@ -730,30 +730,16 @@ void RigControlMainWindow::refreshRadio()
     }
 
 
-    void RigControlMainWindow::onSelectRadio(QString s)
+    void RigControlMainWindow::onSelectRadio(QString s, QString mode)
     {
 
         logMessage(QString("Recieved SelectRadio from Logger = %1").arg(s));
 
 
         // the first time rigcontrolframe uses this message the mode is appended to the name
-        if (s.contains(':'))
+        if (!mode.isEmpty())
         {
-            QStringList sl = s.split(':');
-            if (sl.count() != 2)
-            {
-                logMessage(QString("OnSelectRadio Error Splitting radioName and mode %1").arg(s));
-                return;     // error
-            }
-            s = sl[0];
-            if (sl[1] == "")
-            {
-                selRadioMode = "USB";
-            }
-            else
-            {
-                selRadioMode = sl[1];
-            }
+           selRadioMode = mode;
         }
 
         QString oldRadio = ui->selectRadioBox->currentText();
@@ -1284,7 +1270,8 @@ void RigControlMainWindow::refreshRadio()
         {
             if (!selectRig->availRadios[i].radioName.isEmpty())
             {
-                radioList.append(selectRig->availRadios[i].radioName);
+                PubSubName r(selectRig->availRadios[i].radioName);
+                radioList.append(r.toString());
             }
         }
         msg->publishRadioNames(radioList);

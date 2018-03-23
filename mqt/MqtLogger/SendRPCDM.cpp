@@ -134,32 +134,52 @@ void TSendDM::sendRotator(TSingleLogFrame *tslf, rpcConstants::RotateDirection d
 
    rpc.queueCall( tslf->rotatorServerConnectable.remoteAppName + "@" + tslf->rotatorServerConnectable.serverName );
 }
-void TSendDM::sendSelectRotator(TSingleLogFrame *tslf, QString s)
+void TSendDM::changeRotatorSelectionTo(const PubSubName &name, const QString &uuid)
+{
+    // we should de-select the cached uuid on all rotator apps
+
+    PubSubName selected = rotatorCache.getSelected();
+
+    if (!selected.isEmpty())
+        sendRotatorSelection(selected, "");
+    sendRotatorSelection(name, uuid);
+}
+void TSendDM::sendRotatorSelection(const PubSubName &s, const QString &uuid)
 {
     RPCGeneralClient rpc(rpcConstants::rotatorMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-    QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
+    QSharedPointer<RPCParam>select(new RPCStringParam(uuid ));
     st->addMember( select, rpcConstants::selected );
-    st->addMember( s, rpcConstants::rotatorAntennaName );
+    st->addMember( s.key(), rpcConstants::rotatorAntennaName );
     rpc.getCallArgs() ->addParam( st );
 
-    rpc.queueCall( tslf->rotatorServerConnectable.remoteAppName + "@" + tslf->rotatorServerConnectable.serverName );
-
-    // and we should de-select this uuid on all other rotator apps
+    rpc.queueCall( s.appName() + "@" + s.server() );
 }
 
-void TSendDM::sendSelectRig(TSingleLogFrame *tslf, QString s)
+void TSendDM::changeRigSelectionTo(const PubSubName &name, const QString &mode, const QString &uuid)
+{
+    // we should de-select the cached uuid on all rig apps
+
+    PubSubName selected = rigCache.getSelected();
+
+    if (!selected.isEmpty())
+        sendRigSelection(selected, "", "");
+    sendRigSelection(name, mode, uuid);
+}
+void TSendDM::sendRigSelection(const PubSubName &s, const QString &mode, const QString &uuid)
 {
     RPCGeneralClient rpc(rpcConstants::rigControlMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-    QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
+    QSharedPointer<RPCParam>select(new RPCStringParam(uuid ));
     st->addMember( select, rpcConstants::selected );
-    st->addMember( s, rpcConstants::rigControlRadioName );
+    st->addMember( s.key(), rpcConstants::rigControlRadioName );
+    st->addMember( mode, rpcConstants::rigControlMode );
     rpc.getCallArgs() ->addParam( st );
 
-    rpc.queueCall( tslf->rigServerConnectable.remoteAppName + "@" + tslf->rigServerConnectable.serverName );
+    rpc.queueCall( s.appName() + "@" + s.server() );
+
 }
 
 void TSendDM::sendRigControlFreq(TSingleLogFrame *tslf,const QString &freq)
@@ -250,6 +270,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                 }
                 if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioList )
                 {
+                    emit setRadioLoaded();
                     emit setRadioList(an.getValue());
                     break;
                 }
@@ -283,6 +304,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                 }
                 if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorList )
                 {
+                    emit RotatorLoaded();
                     emit RotatorList(an.getValue());
                     break;
                 }

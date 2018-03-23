@@ -216,6 +216,23 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
                 emit (setFreq(freq));
             }
         }
+        else if (args->getStructArgMember(0, rpcConstants::rigControlRadioName, psName))
+        {
+            QString name;
+            if (psName->getString(name))
+            {
+                QString mode;
+                if ( args->getStructArgMember( 0, rpcConstants::rigControlMode, psMode ) )
+                {
+                         if ( psMode->getString( mode ) )
+                         {
+                             // here you handle what the logger has sent to us
+                            trace(QString("Rig RPC: Mode Command From Logger = %1").arg(mode));
+                         }
+                }
+                emit selectLoggerRadio(name, mode);
+            }
+        }
         else if ( args->getStructArgMember( 0, rpcConstants::rigControlMode, psMode ) )
         {
                  QString mode;
@@ -227,14 +244,5 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
                     emit (setMode(mode));
                  }
         }
-        else if (args->getStructArgMember(0, rpcConstants::rigControlRadioName, psName))
-        {
-            QString name;
-            if (psName->getString(name))
-            {
-                emit selectLoggerRadio(name);
-            }
-        }
-
     }
 }

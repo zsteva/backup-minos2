@@ -50,6 +50,10 @@ void MinosRPC::setAppName(const QString &n)
 {
     appName = n;
 }
+QString MinosRPC::getAppName()
+{
+    return appName;
+}
 
 
 void MinosRPC::subscribe(const QString &c)

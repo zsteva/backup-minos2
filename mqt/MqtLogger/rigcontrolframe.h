@@ -89,7 +89,7 @@ public:
     void setRadioList(QString);
     void setMode(QString);
     void setFreq(QString);
-    void setRadioName(QString);
+    void setRadioName(QString, QString mode);
     void setRadioState(QString);
     void setRadioTxVertState(QString s);
     void setRadioNameFromRigControl(QString name);
@@ -113,7 +113,7 @@ public:
 
 
 signals:
-    void selectRadio(QString);
+    void selectRadio(QString, QString);
     void sendRadioName(QString);
     void sendFreqControl(QString);
     void noRadioSendFreq(QString);

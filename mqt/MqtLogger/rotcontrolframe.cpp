@@ -443,7 +443,7 @@ void RotControlFrame::setRotatorList(QString s)
     ui->antennaName->addItems(rots);
 
     if (ct && ct == TContestApp::getContestApp() ->getCurrentContest())
-        setRotatorAntennaName(ct->rotatorName.getValue());
+        setRotatorAntennaName(ct->rotatorName.getValue().toString());
         //ui->antennaName->setCurrentText(ct->rotatorName.getValue());
 
 }
@@ -567,7 +567,7 @@ void RotControlFrame::on_ContestPageChanged()
 {
     // send rotator select to rotator app
 
-    emit selectRotator(ct->rotatorName.getValue());
+    emit selectRotator(ct->rotatorName.getValue().toString());
 }
 
 void RotControlFrame::setRotatorBearing(const QString &s)

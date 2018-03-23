@@ -108,7 +108,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(LogContainer->sendDM, SIGNAL(setRadioTxVertStatus(QString)), this, SLOT(on_SetRadioTxVertState(QString)));
 
     // To rig controller
-    connect(ui->FKHRigControlFrame, SIGNAL(selectRadio(QString)), this, SLOT(sendSelectRadio(QString)));
+    connect(ui->FKHRigControlFrame, SIGNAL(selectRadio(QString, QString)), this, SLOT(sendSelectRadio(QString, QString)));
 
     connect(ui->FKHRigControlFrame, SIGNAL(sendFreqControl(QString)), this, SLOT(sendRadioFreq(QString)));
     connect(ui->FKHRigControlFrame, SIGNAL(sendModeToControl(QString)), this, SLOT(sendRadioMode(QString)));
@@ -950,44 +950,54 @@ void TSingleLogFrame::sendRadioMode(QString mode)
         LogContainer->sendDM->sendRigControlMode(this, mode);
 }
 
-void TSingleLogFrame::sendSelectRadio(QString radioName)
+void TSingleLogFrame::sendSelectRadio(const QString &radName, const QString &mode)
 {
-    QString radName = extractRadioName(radioName);    // extract radioName from message, removing mode if appended
+    //QString radName = extractRadioName(radioName);    // extract radioName from message, removing mode if appended
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
     {
         LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
         if (ct && !ct->isProtected())
         {
+            // make sure log frame has correct name for radio
             if (radName != ui->GJVQSOLogFrame->getRadioName())
             {
                ui->GJVQSOLogFrame->setRadioName(radName);
             }
 
 
-            if (radName != ct->radioName.getValue())
+            if (radName != ct->radioName.getValue().toString())
             {
                 ct->radioName.setValue(radName);
                 ct->commonSave(false);
+
+                //ui->FKHRigControlFrame->setRadioName(radName);
+
             }
-            LogContainer->sendDM->sendSelectRig(this, radioName);  // send message including mode if it has been appended.
+            LogContainer->sendDM->changeRigSelectionTo(ct->radioName.getValue(), mode, ct->uuid);  // send message including mode if it has been appended.
         }
 
     }
 }
 
 
-void TSingleLogFrame::sendSelectRotator(QString s)
+void TSingleLogFrame::sendSelectRotator(const QString &s)
 {
-    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest() && !contest->isProtected())
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
     {
         LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-        if (s != ct->rotatorName.getValue())
+        if (ct && !contest->isProtected())
         {
-            ct->rotatorName.setValue(s);
-            ct->commonSave(false);
-            ui->FKHRotControlFrame->setRotatorAntennaName(s);
+            // log frame doesn't record the rotator name
+
+            if (s != ct->rotatorName.getValue().toString())
+            {
+                ct->rotatorName.setValue(s);
+                ct->commonSave(false);
+
+                //ui->FKHRotControlFrame->setRotatorAntennaName(s);
+            }
+            LogContainer->sendDM->changeRotatorSelectionTo(ct->rotatorName.getValue(), ct->uuid);
         }
-        LogContainer->sendDM->sendSelectRotator(this, s);
     }
 
 }

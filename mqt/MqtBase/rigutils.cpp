@@ -301,24 +301,3 @@ QString convertSinglePeriodFreqToMultiPeriod(QString f)
 
 }
 
-
-// When the selectRadio message contains the mode in the form radioName:mode
-// This extract the radioName from the message
-
-QString extractRadioName(QString radioNameMessage)
-{
-    if (radioNameMessage.contains(':'))
-    {
-        QStringList sl = radioNameMessage.split(':');
-        if (sl.count() == 2)
-        {
-            return sl[0];
-        }
-        else
-        {
-            return QString("");
-        }
-    }
-
-    return radioNameMessage;
-}

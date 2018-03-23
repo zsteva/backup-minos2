@@ -347,8 +347,8 @@ void ContestDetails::setDetails(  )
 
    ui->PowerEdit->setText(contest->power.getValue());
 
-   ui->radioNameEdit->setText(contest->radioName.getValue());
-   ui->antennaNameEdit->setText(contest->rotatorName.getValue());
+   ui->radioNameEdit->setText(contest->radioName.getValue().toString());
+   ui->antennaNameEdit->setText(contest->rotatorName.getValue().toString());
 
    if ( contest->isMinosFile() )
    {
@@ -1034,8 +1034,8 @@ QWidget * ContestDetails::getDetails( )
     contest->power.setValue( ui->PowerEdit->text() );
     contest->bearingOffset.setValue(ui->AntOffsetEdit->text().toInt());	// int
 
-    contest->radioName.setValue(ui->radioNameEdit->text().trimmed().remove(':'));
-    contest->rotatorName.setValue(ui->antennaNameEdit->text());
+    contest->radioName.setValue(PubSubName(ui->radioNameEdit->text().trimmed().remove(':')));
+    contest->rotatorName.setValue(PubSubName(ui->antennaNameEdit->text()));
 
     contest->currentMode.setValue(ui->ModeComboBox->currentText());
 

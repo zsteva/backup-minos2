@@ -17,6 +17,8 @@ public:
 
     void setState(const PubSubName &name, RigState &state);
 
+    PubSubName getSelected();
+
     void setSelected(const PubSubName &name, const QString &selected);
     void setStatus(const PubSubName &name, const QString &status);
     void setFreq(const PubSubName &name, double freq);
