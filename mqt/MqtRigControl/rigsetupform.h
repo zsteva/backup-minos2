@@ -92,6 +92,7 @@ public:
 
     void setAppName(QString name);
 
+    void findSupportedBands(int radioModelNumber);
 signals:
     void transVertTabAdded(int);
 

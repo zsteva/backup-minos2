@@ -196,6 +196,9 @@ loadSettingsToTab(int tabNum)
         radioTab[tabNum]->setMgmMode(radioTab[tabNum]->getRadioData()->mgmMode);
 
         // now load transverter settings
+        bool antSwFlg = false;
+        int retCode = 0;
+        retCode = radio->supportAntSw(availRadioData[tabNum]->radioModelNumber, &antSwFlg);
         for (int t = 0; t < radioTab[tabNum]->getRadioData()->numTransverters; t++)
         {
             radioTab[tabNum]->setTransVertTabText(t, radioTab[tabNum]->getRadioData()->transVertNames[t]);
@@ -205,6 +208,17 @@ loadSettingsToTab(int tabNum)
             radioTab[tabNum]->transVertTab[t]->setNegCheckBox(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transVertNegative);
             radioTab[tabNum]->transVertTab[t]->setEnableTransVertSw(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
             radioTab[tabNum]->transVertTab[t]->setTransVerSwNum(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transSwitchNum);
+
+            if (retCode >= 0 && antSwFlg)
+            {
+               radioTab[tabNum]->transVertTab[t]->antSwNumVisible(true);
+            }
+            else
+            {
+               radioTab[tabNum]->transVertTab[t]->antSwNumVisible(false);
+            }
+
+
         }
 
 
@@ -560,7 +574,7 @@ void SetupDialog::saveSettings()
 
             for (int t = 0; t < radioTab[i]->getRadioData()->numTransverters; t++)
             {
-                if (radioTab[i]->transVertTab[t]->tansVertValueChanged)
+                if (radioTab[i]->transVertTab[t]->transVertValueChanged)
                 {
                     if (radioTab[i]->transVertTab[t]->transVertNameChanged)
                     {
@@ -571,7 +585,7 @@ void SetupDialog::saveSettings()
                     saveTranVerterSetting(i, t, configTransVert);
 
 
-                    radioTab[i]->transVertTab[t]->tansVertValueChanged = false;
+                    radioTab[i]->transVertTab[t]->transVertValueChanged = false;
                 }
 
 
@@ -686,6 +700,7 @@ void SetupDialog::saveTranVerterSetting(int radioNum, int transVertNum, QSetting
     config.setValue("offsetString", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffsetStr);
     config.setValue("offsetDouble", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffset);
     config.setValue("negOffset", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertNegative);
+    config.setValue("antSwNumber", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->antSwitchNum);
     config.setValue("enableTransVertSw", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->enableTransSwitch);
     config.setValue("transVertSw", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transSwitchNum);
     config.endGroup();
@@ -706,6 +721,8 @@ void SetupDialog::readTranVerterSetting(int radioNum, int transVertNum, QSetting
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffsetStr = config.value("offsetString", "00.000.000.000").toString();
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffset = config.value("offsetDouble", 0.0).toDouble();
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertNegative = config.value("negOffset", false).toBool();
+    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->antSwitchNum = config.value("antSwNumber", "0").toString();
+
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->enableTransSwitch = config.value("enableTransVertSw", false).toBool();
 
     radioTab[radioNum]->transVertTab[transVertNum]->setEnableTransVertSwBoxVisible(radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->enableTransSwitch);

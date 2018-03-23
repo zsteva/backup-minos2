@@ -22,12 +22,13 @@ public:
 
 
 
-        bool tansVertValueChanged;
+        bool transVertValueChanged;
         bool transVertNameChanged;
 
         void setBand(QString b);
         QString getBand();
 
+        void antSwNumVisible(bool visible);
         QString getTransVerSwNum();
         void setTransVerSwNum(QString s);
 
@@ -48,6 +49,9 @@ public:
 
 
          void setOffsetFreqLabel(QString f);
+
+
+
 signals:
 
     public slots:
@@ -63,7 +67,8 @@ signals:
 
 
 
-    private:
+        void antennaNumSwSel();
+private:
 
 
         Ui::transVertSetupForm *ui;

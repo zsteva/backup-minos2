@@ -81,6 +81,7 @@ public:
     freq_t transVertOffset = 0.0;
     bool transVertNegative  = false;
     bool enableTransSwitch = false;
+    QString antSwitchNum = "0";
     QString transSwitchNum = "0";
 
 };
@@ -254,6 +255,13 @@ public:
     bool checkFreqValid(freq_t freq, rmode_t mode);
 
     void freqRange(QString freqStr, QString modeStr);
+    bool chkFreqRange(RIG *my_rig, freq_t freq, QString modeStr);
+
+
+    int getAntSwNum(vfo_t vfo);
+    int setAntSwNum(vfo_t vfo, ant_t antNum);
+    int supportAntSw(int rigNumber, bool *antSwFlag);
+
 signals:
     void frequency_updated(double);
     void debug_protocol(QString);

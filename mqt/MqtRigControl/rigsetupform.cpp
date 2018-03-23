@@ -141,6 +141,24 @@ void RigSetupForm::radioModelSelected()
             }
         }
 
+        // does this radio support antenna sw?
+        bool antSwFlg = false;
+        int retCode = 0;
+        retCode = radio->supportAntSw(radioData->radioModelNumber, &antSwFlg);
+        for (int i = 0; i < radioData->numTransverters; i++)
+        {
+            if (retCode >= 0 && antSwFlg)
+            {
+               transVertTab[i]->antSwNumVisible(true);
+            }
+            else
+            {
+               transVertTab[i]->antSwNumVisible(false);
+            }
+        }
+
+
+        findSupportedBands(radioData->radioModelNumber);
         radioValueChanged = true;
 
 
@@ -172,7 +190,27 @@ void RigSetupForm::setRadioModel(QString m)
 }
 
 
+void RigSetupForm::findSupportedBands(int radioModelNumber)
+{
 
+    QStringList supportBands;
+    RIG *my_rig = rig_init(radioModelNumber);
+    if (my_rig)
+    {
+        if (radio->chkFreqRange(my_rig, 28000000.0, "USB"))
+        {
+            supportBands.append("10m");
+        }
+        for (int i = 0; i < bands.count(); i++)
+        {
+            if (radio->chkFreqRange(my_rig, bands[i]->fLow, "USB"))
+            {
+                supportBands.append(bands[i]->name);
+            }
+        }
+    }
+
+}
 
 
 /********************** CIV Entry ***********************/
@@ -673,8 +711,21 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
     ui->transVertTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
     ui->transVertTab->setCurrentIndex(tabNum);
     transVertTab[tabNum]->setEnableTransVertSwBoxVisible(false);
+    // does this radio support antenna sw?
+    bool antSwFlg = false;
+    int retCode = 0;
+    retCode = radio->supportAntSw(radioData->radioModelNumber, &antSwFlg);
 
-    transVertTab[tabNum]->tansVertValueChanged = true;
+    if (retCode >= 0 && antSwFlg)
+    {
+       transVertTab[tabNum]->antSwNumVisible(true);
+    }
+    else
+    {
+       transVertTab[tabNum]->antSwNumVisible(false);
+    }
+
+    transVertTab[tabNum]->transVertValueChanged = true;
 
 }
 
@@ -771,6 +822,7 @@ void RigSetupForm::changeBand()
     ui->transVertTab->setTabText(tabNum, transVertName);
     radioData->transVertNames[tabNum] = transVertName;
     radioData->transVertSettings[tabNum]->band = transVertName;
+    radioData->transVertSettings[tabNum]->transVertName = transVertName;
     for (int i = 0; i < bands.count(); i++)
     {
          if (bands[i]->name == transVertName)
@@ -780,7 +832,7 @@ void RigSetupForm::changeBand()
          }
     }
 
-    transVertTab[tabNum]->tansVertValueChanged = true;
+    transVertTab[tabNum]->transVertValueChanged = true;
 
 }
 

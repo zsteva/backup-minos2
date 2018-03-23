@@ -181,6 +181,15 @@ void RigControl::freqRange(QString freqStr, QString modeStr)
     int a = 0;
 }
 
+
+bool RigControl::chkFreqRange(RIG *my_rig, freq_t freq, QString modeStr)
+{
+    rmode_t mode = convertQStrMode(modeStr);
+    const freq_range_t* freq_range = rig_get_range(my_rig->caps->rx_range_list1, freq, mode);
+    return (freq_range != 0)? true:false;
+
+}
+
 /* ---------------------- Mode ------------------------------------ */
 
 int RigControl::getMode(vfo_t vfo, rmode_t *mode, pbwidth_t *width)
@@ -417,9 +426,60 @@ bool RigControl::getRigList(QComboBox *cb)
    return true;
 }
 
+/********************** Antenna Switching ---------------------------------*/
+
+
+int RigControl::getAntSwNum(vfo_t vfo)
+{
+    int antNum = 0;
+    int retCode = 0;
+
+    retCode = rig_get_ant(my_rig, vfo, &antNum);
+    if (retCode < 0)
+    {
+        return retCode;
+    }
+
+    return antNum;
+
+}
 
 
 
+int RigControl::setAntSwNum(vfo_t vfo, ant_t antNum)
+{
+    int retCode = 0;
+
+    retCode = rig_set_ant(my_rig, vfo, antNum);
+    return retCode;
+}
+
+
+int RigControl::supportAntSw(int rigNumber, bool *antSwFlag)
+{
+    int retCode = RIG_OK;
+    RIG *myRig;
+    myRig = rig_init(rigNumber);
+    if (myRig)
+    {
+        if (myRig->caps->get_ant == 0 || myRig->caps->set_ant == 0)
+        {
+            *antSwFlag = false;
+            return retCode;
+        }
+        else
+        {
+            *antSwFlag = true;
+            return retCode;
+        }
+    }
+
+    return retCode = -14;
+
+}
+
+
+/**************************************** ***********************************************/
 int RigControl::getPortType(int rigNumber, rig_port_e *portType)
 {
 

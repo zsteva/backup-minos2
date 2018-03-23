@@ -23,7 +23,7 @@
 TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::transVertSetupForm),
-    tansVertValueChanged(false),
+    transVertValueChanged(false),
     transVertNameChanged(false)
 {
 
@@ -91,7 +91,7 @@ void TransVertSetupForm::calcOffset()
             ui->offsetFreq->setText(transVertData->transVertOffsetStr);
 
 
-            tansVertValueChanged = true;
+            transVertValueChanged = true;
         }
         else
         {
@@ -132,7 +132,7 @@ void TransVertSetupForm::negCheckBoxSelected(bool flag)
     if(transVertData->transVertNegative != checked)
     {
         transVertData->transVertNegative = flag;
-        tansVertValueChanged = true;
+        transVertValueChanged = true;
     }
 
 }
@@ -156,7 +156,7 @@ void TransVertSetupForm::enableTransVertSwSel(bool /*flag*/)
     {
         transVertData->enableTransSwitch = checked;
         setEnableTransVertSwBoxVisible(checked);
-        tansVertValueChanged = true;
+        transVertValueChanged = true;
     }
 
 }
@@ -188,10 +188,50 @@ void TransVertSetupForm::setEnableTransVertSwBoxVisible(bool visible)
 void TransVertSetupForm::transVertSwNumSel()
 {
     QString numSel = ui->transVertSwNum->text().trimmed();
-    transVertData->transSwitchNum = numSel;
-    tansVertValueChanged = true;
+    QRegExp re("\\d*");  // a digit (\d), zero or more times (*)
+    if (re.exactMatch(numSel))
+    {
+        transVertData->transSwitchNum = numSel;
+        transVertValueChanged = true;
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setText(QString("Digits only!"));
+        msgBox.exec();
+        return;
+    }
+
 }
 
+/***************** Radio Antenna Switch Number  ********************************/
+
+
+void TransVertSetupForm::antennaNumSwSel()
+{
+    QString numSel = ui->radioAntSwNum->text().trimmed();
+    QRegExp re("\\d*");  // a digit (\d), zero or more times (*)
+    if (re.exactMatch(numSel))
+    {
+        transVertData->antSwitchNum = numSel;
+        transVertValueChanged = true;
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setText(QString("Digits only!"));
+        msgBox.exec();
+        return;
+    }
+}
+
+
+void TransVertSetupForm::antSwNumVisible(bool visible)
+{
+
+    ui->radioAntSwNum->setVisible(visible);
+    ui->antSwNumLbl->setVisible(visible);
+}
 
 
 QString TransVertSetupForm::getTransVerSwNum()
@@ -203,6 +243,10 @@ void TransVertSetupForm::setTransVerSwNum(QString s)
 {
     ui->transVertSwNum->setText(s);
 }
+
+
+
+
 
 
 void TransVertSetupForm::setUiItemsVisible(bool visible)
