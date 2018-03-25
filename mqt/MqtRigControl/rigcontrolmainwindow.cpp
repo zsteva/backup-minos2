@@ -236,7 +236,7 @@ void RigControlMainWindow::initActionsConnections()
 {
     connect(ui->selectRadioBox, SIGNAL(activated(int)), this, SLOT(upDateRadio()));
 
-    connect(ui->actionSetup_Radios, SIGNAL(triggered()), setupRadio, SLOT(show()));
+    connect(ui->actionSetup_Radios, SIGNAL(triggered()), setupRadio, SLOT(exec()));
     connect(ui->actionTraceLog, SIGNAL(changed()), this, SLOT(saveTraceLogFlag()));
 
     connect(pollTimer, SIGNAL(timeout()), this, SLOT(getRadioInfo()));
@@ -399,10 +399,6 @@ void RigControlMainWindow::upDateRadio()
 
             if (radio->get_serialConnected())
             {
-
-                radio->freqRange("72300000", "USB");
-
-
 
                 ui->radioNameDisp->setText(setupRadio->currentRadio.radioName);
 
@@ -1252,57 +1248,8 @@ void RigControlMainWindow::openRadio()
     }
 
 
-    /*
-    QString RigControlMainWindow::convertFreqString(double frequency)
-    {
-        double freq = frequency;
-        sfreq = QString::number(freq,'f', 0);
-        int len = sfreq.length();
 
 
-        switch(len)
-        {
-            case 11:
-                sfreq = sfreq.insert(8, '.');
-                sfreq = sfreq.insert(5, '.');
-                sfreq = sfreq.insert(2, '.');
-                break;
-            case 10:
-                sfreq = sfreq.insert(7, '.');
-                sfreq = sfreq.insert(4, '.');
-                sfreq = sfreq.insert(1, '.');
-                break;
-            case 9:
-                sfreq = sfreq.insert(3, '.');
-                sfreq = sfreq.insert(7, '.');
-                break;
-            case 8:
-                sfreq = sfreq.insert(2, '.');
-                sfreq = sfreq.insert(6, '.');
-                break;
-            case 7:
-                sfreq = sfreq.insert(4, '.');
-                sfreq = sfreq.insert(1, '.');
-                break;
-            case 6:
-                sfreq = sfreq.insert(3,'.');
-                break;
-            case 5:
-                sfreq = sfreq.insert(2,'.');
-                break;
-            case 4:
-                sfreq = sfreq.insert(1,'.');
-                break;
-            default:
-                sfreq = "??.???.???.???";    // error
-
-        }
-
-
-        return sfreq;
-    }
-
-    */
 
 
     void RigControlMainWindow::showStatusMessage(const QString &message)
@@ -1411,13 +1358,36 @@ void RigControlMainWindow::openRadio()
                 radioList.append(setupRadio->availRadioData[i]->radioName);
             }
         }
-        trace(QString("Sending radiolist to logger"));
+        logMessage(QString("Sending radiolist to logger"));
         for (int i = 0; i < radioList.count(); i++)
         {
-            trace(QString("Send radiolist - radio %1, name %2").arg(QString::number(i)).arg(radioList[i]));
+            logMessage(QString("Send radiolist - radio %1, name %2").arg(QString::number(i)).arg(radioList[i]));
         }
         msg->publishRadioNames(radioList);
     }
+
+
+
+    void RigControlMainWindow::sendBandListLogger()
+    {
+
+        QStringList bandList;
+        if (!setupRadio->currentRadio.radioTransSupBands.isEmpty())
+        {
+            for (int i = 0; i < setupRadio->currentRadio.radioTransSupBands.count(); i++)
+            {
+                bandList.append(setupRadio->currentRadio.radioTransSupBands[i]);
+            }
+            logMessage(QString("Send bandlist to logger"));
+            for (int i = 0; i < bandList.count(); i++)
+            {
+                logMessage(QString("Send bandlist - name %1").arg(QString::number(i)).arg(bandList[i]));
+            }
+            msg->publishBandNames(bandList);
+        }
+
+    }
+
 
 
     void RigControlMainWindow::sendRadioNameLogger(QString radioName)

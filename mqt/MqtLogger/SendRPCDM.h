@@ -74,6 +74,7 @@ signals:
       void setRadioState(QString);
       void setRadioTxVertStatus(QString);
       void setRadioList(QString);
+      void setBandList(QString);
       void setRadioName(QString);
 
       void setKeyerLoaded();

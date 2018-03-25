@@ -170,16 +170,6 @@ bool RigControl::checkFreqValid(freq_t freq, rmode_t mode)
 
 /* ---------------------- Freq Range ---------------------------------*/
 
-void RigControl::freqRange(QString freqStr, QString modeStr)
-{
-    const freq_range_t *txrange;
-
-    rmode_t mode = convertQStrMode(modeStr);
-    freq_t freq = freqStr.toDouble();
-
-     txrange = rig_get_range(my_rig->state.tx_range_list, freq, mode);
-    int a = 0;
-}
 
 
 bool RigControl::chkFreqRange(RIG *my_rig, freq_t freq, QString modeStr)
@@ -480,6 +470,8 @@ int RigControl::supportAntSw(int rigNumber, bool *antSwFlag)
 
 
 /**************************************** ***********************************************/
+
+
 int RigControl::getPortType(int rigNumber, rig_port_e *portType)
 {
 

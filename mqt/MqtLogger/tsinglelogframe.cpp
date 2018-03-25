@@ -103,6 +103,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     // From rig controller
     connect(sendDM, SIGNAL(setRadioLoaded()), this, SLOT(on_RadioLoaded()));
     connect(sendDM, SIGNAL(setRadioList(QString)), this, SLOT(on_SetRadioList(QString)));
+    connect(sendDM, SIGNAL(setBandList(QString)), this, SLOT(on_SetBandList(QString)));
     connect(sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
     connect(sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetMode(QString)));
     connect(sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetFreq(QString)));
@@ -878,10 +879,17 @@ bool TSingleLogFrame::isRadioLoaded()
 {
    return ui->FKHRigControlFrame->isRadioLoaded();
 }
+
 void TSingleLogFrame::on_SetRadioList(QString s)
 {
     ui->FKHRigControlFrame->setRadioList(s);
 }
+
+void TSingleLogFrame::on_SetBandList(QString s)
+{
+    ui->FKHRigControlFrame->setBandList(s);
+}
+
 
 // This is used to handle radioName from rigcontrol
 void TSingleLogFrame::on_SetRadioName(QString /*radioName*/)

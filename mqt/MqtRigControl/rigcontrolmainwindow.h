@@ -126,6 +126,7 @@ private:
     void closeEvent(QCloseEvent *event);
 
     void sendRadioListLogger();
+    void sendBandListLogger();
     void sendRadioNameLogger(QString radioName);
     void sendStatusLogger(const QString &message);
     void sendStatusToLogDisConnected();
@@ -161,6 +162,7 @@ private:
     QString getBand(freq_t freq);
 
     void testBoxesVisible(bool visible);
+
 private slots:
 
     void onStdInRead(QString);

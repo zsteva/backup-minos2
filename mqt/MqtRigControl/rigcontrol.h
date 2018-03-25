@@ -125,7 +125,10 @@ public:
       dest.mgmMode = srce->mgmMode;
       dest.pttType = srce->pttType;
       dest.antSwitchAvail = srce->antSwitchAvail;
+      dest.radioSupBands = srce->radioSupBands;
+      dest.radioTransSupBands = srce->radioTransSupBands;
       dest.transVertEnable = srce->transVertEnable;
+
       dest.transVertNames.clear();
       if (srce->transVertNames.count() > 0)
       {
@@ -177,6 +180,8 @@ public:
   bool transVertEnable  = false;
   QStringList transVertNames;
   int numTransverters = 0;
+  QStringList radioSupBands;  // bands supported by radio
+  QStringList radioTransSupBands; // band supported by radio and transverters
   QVector<TransVertParams*> transVertSettings;
 
 
@@ -256,7 +261,7 @@ public:
     int supportRit(int rigNumber, bool *ritFlag);
     bool checkFreqValid(freq_t freq, rmode_t mode);
 
-    void freqRange(QString freqStr, QString modeStr);
+
     bool chkFreqRange(RIG *my_rig, freq_t freq, QString modeStr);
 
 

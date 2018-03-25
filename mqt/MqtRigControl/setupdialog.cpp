@@ -211,18 +211,14 @@ loadSettingsToTab(int tabNum)
         }
 
 
-
-
-
-
-
-
-
-
+        radioTab[tabNum]->buildSupBandList();
 
     }
 
 }
+
+
+
 
 void SetupDialog::addRadio()
 {
@@ -886,7 +882,7 @@ void SetupDialog::loadBands()
 {
     BandList &blist = BandList::getBandList();
 
-    for (int i = 6; i < 15; i++)   // just load VHF/UHF bands
+    for (int i = 5; i < 15; i++)   // just load VHF/UHF bands
     {
         bands.append(new BandDetail(blist.bandList[i].adif, blist.bandList[i].flow, blist.bandList[i].fhigh));
     }

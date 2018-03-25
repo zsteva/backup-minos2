@@ -92,7 +92,13 @@ public:
 
     void setAppName(QString name);
 
-    void findSupportedBands(int radioModelNumber);
+    void buildSupportedRadioBands(int radioModelNumber);
+    void buildSupBandList();
+
+    bool findSupRadioBand(const QString band);
+    bool findSupTransBand(const QString band);
+
+
 signals:
     void transVertTabAdded(int);
 
@@ -124,6 +130,7 @@ private:
     RigControl *radio;
     scatParams *radioData;
 
+
     //TransVertSetupForm *transVerter;
     QString appName;
 
@@ -143,6 +150,7 @@ private:
     void fillPollInterValInfo();
 
     bool checkTransVerterNameMatch(QString transVertName);
+
 
 };
 
