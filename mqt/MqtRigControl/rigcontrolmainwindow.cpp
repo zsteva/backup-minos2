@@ -18,6 +18,7 @@
 #include "rigcontrolcommonconstants.h"
 #include "rigcontrolmainwindow.h"
 #include "ui_rigcontrolmainwindow.h"
+#include "freqpresetdialog.h"
 #include "rigcontrol.h"
 #include "setupdialog.h"
 #include "rigcontrolrpc.h"
@@ -90,8 +91,10 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     radio = new RigControl();
     radio->getRigList();
 
+    loadBands();
+    FreqPresetDialog::readSettings(presetFreq);
 
-    setupRadio = new SetupDialog(radio);
+    setupRadio = new SetupDialog(radio, bands);
     setupRadio->setAppName(appName);
 
 
@@ -237,6 +240,7 @@ void RigControlMainWindow::initActionsConnections()
     connect(ui->selectRadioBox, SIGNAL(activated(int)), this, SLOT(upDateRadio()));
 
     connect(ui->actionSetup_Radios, SIGNAL(triggered()), setupRadio, SLOT(exec()));
+    connect(ui->actionSetup_Band_Freq, SIGNAL(triggered(bool)), this, SLOT(setupBandFreq()));
     connect(ui->actionTraceLog, SIGNAL(changed()), this, SLOT(saveTraceLogFlag()));
 
     connect(pollTimer, SIGNAL(timeout()), this, SLOT(getRadioInfo()));
@@ -266,8 +270,16 @@ void RigControlMainWindow::initActionsConnections()
 
 
 
+void RigControlMainWindow::setupBandFreq()
+{
+
+    FreqPresetDialog  fPresetDialog(presetFreq, bands);
+
+    fPresetDialog.exec();
 
 
+
+}
 
 
 void RigControlMainWindow::currentRadioSettingChanged(QString radioName)
@@ -323,6 +335,7 @@ void RigControlMainWindow::initSelectRadioBox()
     if (appName.length() > 0)
     {
         sendRadioListLogger();
+
     }
 }
 
@@ -457,6 +470,7 @@ void RigControlMainWindow::upDateRadio()
                     writeWindowTitle(appName);
                     sendStatusToLogConnected();
                     sendRadioNameLogger(setupRadio->currentRadio.radioName);
+                    sendBandListLogger();
                     dumpRadioToTraceLog();
 
                 }
@@ -1661,6 +1675,21 @@ void RigControlMainWindow::openRadio()
 
 
     }
+
+
+    /************************** Band Information ***********************************/
+
+    void RigControlMainWindow::loadBands()
+    {
+        BandList &blist = BandList::getBandList();
+
+        for (int i = 5; i < 15; i++)   // just load VHF/UHF bands
+        {
+            bands.append(new BandDetail(blist.bandList[i].adif, blist.bandList[i].flow, blist.bandList[i].fhigh));
+        }
+
+    }
+
 
 
 

@@ -88,7 +88,7 @@ const QString FILENAME_AVAIL_RADIOS = "AvailRadio.ini";
 const QString FILENAME_CURRENT_RADIO = "CurrentRadio.ini";
 const QString FILENAME_TRANSVERT_RADIOS = "TransVertRadio.ini";
 
-
+const QString FILENAME_FREQ_PRESETS = "FreqPresets.ini";
 
 
 // Tooltips

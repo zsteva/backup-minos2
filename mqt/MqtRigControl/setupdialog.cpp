@@ -33,7 +33,7 @@
 
 
 
-SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
+SetupDialog::SetupDialog(RigControl *radio, const QVector<BandDetail*> _bands, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SetupDialog)
 
@@ -41,6 +41,7 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
     radio = radio;
+    bands = _bands;
 
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveButtonPushed()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));
@@ -61,7 +62,6 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
         fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
     }
 
-    loadBands();            // get band information
 
     QSettings  settings(fileName, QSettings::IniFormat);
 
@@ -876,15 +876,4 @@ void SetupDialog::saveMgmList()
 }
 
 
-/************************** Band Information ***********************************/
 
-void SetupDialog::loadBands()
-{
-    BandList &blist = BandList::getBandList();
-
-    for (int i = 5; i < 15; i++)   // just load VHF/UHF bands
-    {
-        bands.append(new BandDetail(blist.bandList[i].adif, blist.bandList[i].flow, blist.bandList[i].fhigh));
-    }
-
-}

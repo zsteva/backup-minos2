@@ -18,6 +18,7 @@ const QString TARGET_FREQ_EDIT_ERR_MSG = QString("Target " + FREQ_EDIT_ERR_MSG);
 
 QString convertFreqStrDisp(QString frequency);
 QString convertFreqStrDispSingle(QString sfreq);
+QString convertFreqStrDispSingleNoTrailZero(QString sfreq);
 
 QString convertFreqToStr(double frequency);
 

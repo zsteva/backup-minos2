@@ -74,6 +74,9 @@ private:
 
     const int PASSBAND_NOCHANGE = -1;
 
+    QVector<BandDetail*> bands;
+    QStringList presetFreq;
+
     // data from radio
     freq_t rfrequency;       // read frequency
     QString sfreq;          // read freq converted to string
@@ -160,6 +163,8 @@ private:
 
     void testBoxesVisible(bool visible);
 
+
+    void loadBands();
 private slots:
 
     void onStdInRead(QString);
@@ -178,6 +183,7 @@ private slots:
 
     void onSelectRadio(QString, QString mode);
     void selFreqClicked();
+    void setupBandFreq();
 signals:
 
 

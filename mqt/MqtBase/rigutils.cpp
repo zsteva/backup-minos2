@@ -218,15 +218,70 @@ QString convertFreqStrDispSingle(QString sfreq)
         //    sfreq = sfreq.insert(1,'.');
         //    break;
         default:
-            sfreq = "??.???.???.???";    // error
+            sfreq = "???.???";    // error
 
     }
 
-
     return sfreq;
+
 }
 
 
+QString convertFreqStrDispSingleNoTrailZero(QString sfreq)
+{
+
+        int len = sfreq.length();
+
+        switch(len)
+        {
+            case 11:
+                //sfreq = sfreq.insert(8, '.');
+                sfreq = sfreq.insert(5, '.');
+                //sfreq = sfreq.insert(2, '.');
+                break;
+            case 10:
+                //sfreq = sfreq.insert(7, '.');
+                sfreq = sfreq.insert(4, '.');
+                //sfreq = sfreq.insert(1, '.');
+                break;
+            case 9:
+                sfreq = sfreq.insert(3, '.');
+                //sfreq = sfreq.insert(7, '.');
+                break;
+            case 8:
+                sfreq = sfreq.insert(2, '.');
+                //sfreq = sfreq.insert(6, '.');
+                break;
+            case 7:
+                //sfreq = sfreq.insert(4, '.');
+                sfreq = sfreq.insert(1, '.');
+                break;
+            case 6:
+                sfreq = sfreq.insert(0,'.');
+                break;
+            //case 5:
+            //    sfreq = sfreq.insert(2,'.');
+            //    break;
+            //case 4:
+            //    sfreq = sfreq.insert(1,'.');
+            //    break;
+            default:
+                sfreq = "??.???.???.???";    // error
+
+        }
+
+        // remove trailing zero, apart from after period.
+        QStringList fspl = sfreq.split('.');
+        fspl[1].remove(QRegExp("0+$"));  //remove trailing zeros
+        if (fspl[1].count() == 0)
+        {
+            fspl[1] = "0";    // add back one zero
+        }
+
+        sfreq = fspl[0] + "." + fspl[1];
+
+        return sfreq;
+}
 
 
 
