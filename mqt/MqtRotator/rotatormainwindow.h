@@ -208,7 +208,7 @@ private slots:
     void setAntennaNameLabelVisible(bool visible);
 
     void upDateAntenna();
-    //void refreshAntenna();
+    void refreshAntenna();
     void request_bearing();
     void rotateCW(bool);
     void rotateCCW(bool);

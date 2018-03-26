@@ -353,10 +353,19 @@ void RotatorMainWindow::onSelectAntennaBox()
 
 void RotatorMainWindow::onLoggerSelectAntenna(QString s)
 {
+    QString oldAntenna = setupAntenna->currentAntennaName;
     ui->selectAntennaBox->setCurrentText(s);
     setupAntenna->currentAntennaName = s;
     setupAntenna->saveCurrentAntenna();
-    upDateAntenna();
+
+    if (!s.isEmpty() && s == oldAntenna)
+    {
+        refreshAntenna();
+    }
+    else
+    {
+        upDateAntenna();
+    }
 }
 
 void RotatorMainWindow::setSelectAntennaBoxVisible(bool visible)
@@ -983,6 +992,39 @@ void RotatorMainWindow::upDateAntenna()
             writeWindowTitle(appName);
         }
     }
+    msg->rotatorCache.publishDetails();
+    msg->rotatorCache.publishState();
+}
+void RotatorMainWindow::refreshAntenna()
+{
+    trace("refreshAntenna");
+    int antennaIndex = ui->selectAntennaBox->currentIndex();
+    if (antennaIndex > 0)
+    {
+        antennaIndex -= 1;
+        if (setupAntenna->currentAntenna.rotatorModelNumber == 0)
+        {
+            closeRotator();
+            QMessageBox::critical(this, tr("Antenna Error"), "Please configure a antenna name and rotator model");
+            return;
+        }
+
+        if (!rotator->get_serialConnected())
+        {
+            openRotator();
+        }
+
+        if (rotator->get_serialConnected())
+        {
+            sendStatusToLogConnected();
+        }
+        else
+        {
+            sendStatusToLogDisConnected();
+        }
+
+    }
+    dumpRotatorToTraceLog();
     msg->rotatorCache.publishDetails();
     msg->rotatorCache.publishState();
 }
