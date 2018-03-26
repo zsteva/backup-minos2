@@ -71,6 +71,9 @@ private slots:
     void b_6cmSelected();
     void b_3cmSelected();
 
+    void saveSettings();
+    void cancelSettings();
+
 
 
 private:
@@ -82,8 +85,7 @@ private:
 
     bool checkInBand(double freq, bandOffSet band);
     void getFreq(QLineEdit* f_box, bandOffSet band);
-    void saveSettings();
-    void cancelSettings();
+
     void loadSettingsToDialog();
 };
 

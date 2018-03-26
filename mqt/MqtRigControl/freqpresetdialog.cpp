@@ -41,6 +41,7 @@ FreqPresetDialog::FreqPresetDialog(QStringList& _presetFreq, const QVector<BandD
     connect (ui->lineEdit_9cm, SIGNAL(editingFinished()), this, SLOT(b_9cmSelected()));
     connect (ui->lineEdit_6cm, SIGNAL(editingFinished()), this, SLOT(b_6cmSelected()));
     connect (ui->lineEdit_3cm, SIGNAL(editingFinished()), this, SLOT(b_3cmSelected()));
+
     connect (ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveSettings()));
     connect (ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelSettings()));
 
@@ -230,14 +231,14 @@ void FreqPresetDialog::cancelSettings()
 
 void FreqPresetDialog::loadSettingsToDialog()
 {
-    ui->lineEdit_10m->setText(convertFreqStrDispSingle(presetFreq[_10M]));
-    ui->lineEdit_6m->setText(convertFreqStrDispSingle(presetFreq[_6M]));
-    ui->lineEdit_4m->setText(convertFreqStrDispSingle(presetFreq[_4M]));
-    ui->lineEdit_2m->setText(convertFreqStrDispSingle(presetFreq[_2M]));
-    ui->lineEdit_70cm->setText(convertFreqStrDispSingle(presetFreq[_70CM]));
-    ui->lineEdit_23cm->setText(convertFreqStrDispSingle(presetFreq[_23CM]));
-    ui->lineEdit_13cm->setText(convertFreqStrDispSingle(presetFreq[_13CM]));
-    ui->lineEdit_9cm->setText(convertFreqStrDispSingle(presetFreq[_9CM]));
-    ui->lineEdit_6cm->setText(convertFreqStrDispSingle(presetFreq[_6CM]));
-    ui->lineEdit_3cm->setText(convertFreqStrDispSingle(presetFreq[_3CM]));
+    ui->lineEdit_10m->setText(convertFreqStrDispSingleNoTrailZero(presetFreq[_10M]));
+    ui->lineEdit_6m->setText(convertFreqStrDispSingleNoTrailZero(presetFreq[_6M]));
+    ui->lineEdit_4m->setText(convertFreqStrDispSingleNoTrailZero(presetFreq[_4M]));
+    ui->lineEdit_2m->setText(convertFreqStrDispSingleNoTrailZero(presetFreq[_2M]));
+    ui->lineEdit_70cm->setText(convertFreqStrDispSingleNoTrailZero(presetFreq[_70CM]));
+    ui->lineEdit_23cm->setText(convertFreqStrDispSingleNoTrailZero(presetFreq[_23CM]));
+    ui->lineEdit_13cm->setText(convertFreqStrDispSingleNoTrailZero(presetFreq[_13CM]));
+    ui->lineEdit_9cm->setText(convertFreqStrDispSingleNoTrailZero(presetFreq[_9CM]));
+    ui->lineEdit_6cm->setText(convertFreqStrDispSingleNoTrailZero(presetFreq[_6CM]));
+    ui->lineEdit_3cm->setText(convertFreqStrDispSingleNoTrailZero(presetFreq[_3CM]));
 }
