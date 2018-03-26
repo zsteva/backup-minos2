@@ -57,7 +57,7 @@ RigControl::~RigControl()
     rig_cleanup(my_rig); /* if you care about memory */
 }
 
-int RigControl::init(scatParams currentRadio)
+int RigControl::init(scatParams &currentRadio)
 {
     int retcode;
 
@@ -168,9 +168,17 @@ bool RigControl::checkFreqValid(freq_t freq, rmode_t mode)
 }
 
 
+/* ---------------------- Freq Range ---------------------------------*/
 
 
 
+bool RigControl::chkFreqRange(RIG *my_rig, freq_t freq, QString modeStr)
+{
+    rmode_t mode = convertQStrMode(modeStr);
+    const freq_range_t* freq_range = rig_get_range(my_rig->caps->rx_range_list1, freq, mode);
+    return (freq_range != 0)? true:false;
+
+}
 
 /* ---------------------- Mode ------------------------------------ */
 
@@ -384,6 +392,8 @@ bool RigControl::getRigList(QComboBox *cb)
 
     if(capsList.count()==0) return false;
     QStringList sl;
+    // add blank at beginning
+    sl << "";
     for (i=0;i<capsList.count();i++)
     {
 
@@ -406,7 +416,60 @@ bool RigControl::getRigList(QComboBox *cb)
    return true;
 }
 
+/********************** Antenna Switching ---------------------------------*/
 
+
+int RigControl::getAntSwNum(vfo_t vfo)
+{
+    int antNum = 0;
+    int retCode = 0;
+
+    retCode = rig_get_ant(my_rig, vfo, &antNum);
+    if (retCode < 0)
+    {
+        return retCode;
+    }
+
+    return antNum;
+
+}
+
+
+
+int RigControl::setAntSwNum(vfo_t vfo, ant_t antNum)
+{
+    int retCode = 0;
+
+    retCode = rig_set_ant(my_rig, vfo, antNum);
+    return retCode;
+}
+
+
+int RigControl::supportAntSw(int rigNumber, bool *antSwFlag)
+{
+    int retCode = RIG_OK;
+    RIG *myRig;
+    myRig = rig_init(rigNumber);
+    if (myRig)
+    {
+        if (myRig->caps->get_ant == 0 || myRig->caps->set_ant == 0)
+        {
+            *antSwFlag = false;
+            return retCode;
+        }
+        else
+        {
+            *antSwFlag = true;
+            return retCode;
+        }
+    }
+
+    return retCode = -14;
+
+}
+
+
+/**************************************** ***********************************************/
 
 
 int RigControl::getPortType(int rigNumber, rig_port_e *portType)

@@ -105,6 +105,7 @@ static const QString rigControlMethod      = QT_TR_NOOP("Minos:RigControl");
 static const QString rigControlCategory    = QT_TR_NOOP("RigControl");
 static const QString rigStateCategory      = QT_TR_NOOP("RigState");
 static const QString rigControlRadioList   = QT_TR_NOOP("RadioList");
+static const QString rigControlBandList   = QT_TR_NOOP("BandList");
 static const QString rigControlStatus       = QT_TR_NOOP("State");
 static const QString rigControlErrorMsg    = QT_TR_NOOP("ErrorMsg");
 static const QString rigControlFreq        = QT_TR_NOOP("Frequency");

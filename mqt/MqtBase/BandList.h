@@ -56,4 +56,17 @@ class BandList
 
 
 };
+
+
+class BandDetail
+{
+public:
+    BandDetail(QString _name, double flow, double fhigh);
+
+
+    QString name;
+    double fLow = 0.0;
+    double fHigh = 0.0;
+
+};
 #endif

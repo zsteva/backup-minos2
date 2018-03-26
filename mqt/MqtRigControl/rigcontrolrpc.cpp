@@ -49,6 +49,15 @@ void RigControlRpc::publishRadioNames(QStringList radios)
     rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlRadioList, nameList, psPublished );
 }
 
+void RigControlRpc::publishBandNames(QStringList bands)
+{
+    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    QString bandList = bands.join(":");
+    rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlBandList, bandList, psPublished );
+}
+
+
+
 // this publishes the selected radio name
 
 void RigControlRpc::publishRadioName(const QString &radioName)

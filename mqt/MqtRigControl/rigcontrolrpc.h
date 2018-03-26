@@ -34,6 +34,7 @@ public:
 
     void publishRadioNames(QStringList radios);
     void publishRadioName(const QString &radioName);
+    void publishBandNames(QStringList bands);
     void publishState(const QString &state);
     void publishErrorMsg(const QString &errorMsg);
     void publishTransVertStatus(const QString &flag);
@@ -41,6 +42,7 @@ public:
     void publishTransVertSwitch(const QString &swNum);
     void publishFreq(const QString &freq);
     void publishMode(const QString &mode);
+
 
 
 

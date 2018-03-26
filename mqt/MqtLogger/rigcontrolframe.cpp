@@ -131,10 +131,10 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
     connect(this, SIGNAL(noRadioSendFreq(QString)), this, SLOT(noRadioSetFreq(QString)));
     connect(this, SIGNAL(noRadioSendMode(QString)), this, SLOT(noRadioSetMode(QString)));
 
-    for (int i = 0; i < bandSelData::bandNames.count(); i++)
-    {
-        ui->bandSelCombo->addItem(bandSelData::bandNames[i]);
-    }
+    //for (int i = 0; i < bandSelData::bandNames.count(); i++)
+    //{
+    //    ui->bandSelCombo->addItem(bandSelData::bandNames[i]);
+    //}
 
     //connect(ui->bandSelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(radioBandFreq(int)));
     connect(ui->bandSelCombo, SIGNAL(activated(int)), this, SLOT(radioBandFreq(int)));
@@ -605,6 +605,19 @@ void RigControlFrame::setRadioList(QString s)
     }
 
 }
+
+
+void RigControlFrame::setBandList(QString b)
+{
+    listOfBands.clear();
+    listOfBands = b.split(":");
+
+    ui->bandSelCombo->clear();
+    ui->bandSelCombo->addItem("");
+    ui->bandSelCombo->addItems(listOfBands);
+
+}
+
 
 
 

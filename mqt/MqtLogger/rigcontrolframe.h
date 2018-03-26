@@ -87,6 +87,7 @@ public:
 
     void setRadioLoaded();
     void setRadioList(QString);
+    void setBandList(QString);
     void setMode(QString);
     void setFreq(QString);
     void setRadioName(QString, QString mode);
@@ -175,6 +176,7 @@ private:
     QString radioName;
     QString rigAppName;
     QString radioState;
+    QStringList listOfBands;
 
 
     QString lastFreq;

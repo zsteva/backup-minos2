@@ -22,6 +22,7 @@
 
 #include "mqtUtils_pch.h"
 #include "rigcontrol.h"
+#include "BandList.h"
 
 class QLabel;
 class QComboBox;
@@ -53,7 +54,7 @@ private:
     StdInReader stdinReader;
     RigControlRpc *msg;
 
-    SetupDialog *selectRig;
+    SetupDialog *setupRadio;
     RigControl  *radio;
     QString appName = "";
     QLabel *status;
@@ -68,6 +69,8 @@ private:
     QString slogMode;
     QString selRadioMode;   // onSelectRadio mode from logger at startup
     rmode_t logMode;
+    QString selTvBand;      // selected band from radio
+    QString transVertSwNum;
 
     const int PASSBAND_NOCHANGE = -1;
 
@@ -120,12 +123,13 @@ private:
     void closeEvent(QCloseEvent *event);
 
     void sendRadioListLogger();
+    void sendBandListLogger();
     void sendRadioNameLogger(QString radioName);
     void sendStatusLogger(const QString &message);
     void sendStatusToLogDisConnected();
     void sendStatusToLogConnected();
     void sendStatusToLogError();
-    void sendTransVertOffsetToLogger();
+    void sendTransVertOffsetToLogger(int tvNum);
     void sendTransVertSwitchToLogger(const QString &swNum);
     void sendErrorMessageToLogger(QString errMsg);
     void sendFreqToLog(freq_t freq);
@@ -152,6 +156,10 @@ private:
 
     void refreshRadio();
 
+    QString getBand(freq_t freq);
+
+    void testBoxesVisible(bool visible);
+
 private slots:
 
     void onStdInRead(QString);
@@ -169,6 +177,7 @@ private slots:
     void aboutRigConfig();
 
     void onSelectRadio(QString, QString mode);
+    void selFreqClicked();
 signals:
 
 

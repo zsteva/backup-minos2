@@ -24,7 +24,8 @@ SOURCES += \
     editpresetsdialog.cpp \
     rotcontrol.cpp \
     rotatorlog.cpp \
-    rotatorRpc.cpp
+    rotatorRpc.cpp \
+    rotsetupform.cpp
 
 HEADERS  += \
     skyscandialog.h \
@@ -36,12 +37,14 @@ HEADERS  += \
     rotcontrol.h \
     rotatorlog.h \
     rotatorRpc.h \
-    rotatorCommonConstants.h
+    rotatorCommonConstants.h \
+    rotsetupform.h
 
 FORMS    += \
     skyscandialog.ui \
     setupdialog.ui \
     logdialog.ui \
     editpresetsdialog.ui \
-    rotatormainwindow.ui
+    rotatormainwindow.ui \
+    rotsetupform.ui
 

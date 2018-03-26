@@ -1,0 +1,55 @@
+#include "addtransverterdialog.h"
+#include "ui_addtransverterdialog.h"
+#include "BandList.h"
+
+AddTransVerterDialog::AddTransVerterDialog(QVector<BandDetail*> _bands, QStringList &transVertNames, QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::AddTransVerterDialog)
+{
+    ui->setupUi(this);
+    bands = _bands;
+    transVerterNames = transVertNames;
+    loadBandSel();
+
+}
+
+
+
+AddTransVerterDialog::~AddTransVerterDialog()
+{
+    delete ui;
+}
+
+
+void AddTransVerterDialog::loadBandSel()
+{
+    ui->bandSel->clear();
+    for (int i = 0; i < bands.count(); i++ )
+    {
+        if (!checkBandUsed(bands[i]->name, transVerterNames))
+        {
+            ui->bandSel->addItem(bands[i]->name);
+        }
+    }
+}
+
+QString AddTransVerterDialog::getTransVerterName()
+{
+    bName = ui->bandSel->currentText();
+    return bName;
+}
+
+
+bool AddTransVerterDialog::checkBandUsed(const QString &bName, const QStringList &transVerterNames)
+{
+
+    for (int i = 0; i < transVerterNames.count(); i++)
+    {
+        if (bName == transVerterNames[i])
+        {
+            return true;
+        }
+    }
+    return false;
+
+}

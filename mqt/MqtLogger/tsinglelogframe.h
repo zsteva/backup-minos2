@@ -145,6 +145,7 @@ private slots:
     void on_BandMapLoaded();
 
     void on_SetRadioList(QString);
+    void on_SetBandList(QString);
     void on_SetRadioName(QString);
     void on_SetMode(QString);
     void on_SetFreq(QString);
