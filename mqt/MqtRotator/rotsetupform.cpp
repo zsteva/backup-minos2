@@ -818,10 +818,10 @@ bool rotSetupForm::getCwCcwCmdFlag(int rotatorNumber)
     int retCode = 0;
     bool value = false;
     retCode = rotator->getSupportCwCcwCmd(rotatorNumber, &value);
-    if (retCode < 0)
-    {
-        trace(QString("Error getting CwCcwSupport flag for rotator number %1").arg(QString::number(rotatorNumber)));
-    }
+//    if (retCode < 0)
+//    {
+//        trace(QString("Error getting CwCcwSupport flag for rotator number %1").arg(QString::number(rotatorNumber)));
+//    }
 
     return value;
 

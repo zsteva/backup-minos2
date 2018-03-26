@@ -372,7 +372,8 @@
      <string>Configure</string>
     </property>
     <addaction name="actionSetup_Radios"/>
-    <addaction name="actionTraceLog"/>
+    <addaction name="actionSetup_Band_Freq"/>
+    <addaction name="actionTrace_Log"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
@@ -409,7 +410,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>TraceLog</string>
+    <string>Setup Band Freq</string>
    </property>
   </action>
   <action name="actionHelp">
@@ -425,6 +426,16 @@
   <action name="actionAbout_Radio_Config">
    <property name="text">
     <string>About Radio Config</string>
+   </property>
+  </action>
+  <action name="actionSetup_Band_Freq">
+   <property name="text">
+    <string>Setup Band Freq.</string>
+   </property>
+  </action>
+  <action name="actionTrace_Log">
+   <property name="text">
+    <string>Trace Log</string>
    </property>
   </action>
  </widget>
