@@ -567,8 +567,6 @@ void RotatorMainWindow::sendAntennaListLogger()
         {
             PubSubName r(setupAntenna->availAntData[i]->antennaName);
             ants.append(r.toString());
-
-            ants.append(setupAntenna->availAntData[i]->antennaName);
         }
     }
     msg->publishAntennaList(ants.join(":"));

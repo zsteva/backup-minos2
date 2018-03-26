@@ -361,29 +361,29 @@ void RigControlMainWindow::upDateRadio()
     {
 
         radioIndex = setupRadio->findCurrentRadio(setupRadio->currentRadioName);
-    ridx = radioIndex;
+        ridx = radioIndex;
         if (ridx > -1 && ridx < setupRadio->numAvailRadios)  // find radio and update current radio pointer
-    {
+        {
             // found antenna, updatea currentAntenna pointer to select antennadata
             scatParams::copyRig(setupRadio->availRadioData[ridx], setupRadio->currentRadio);
 
-        if (radio->get_serialConnected())
-        {
+            if (radio->get_serialConnected())
+            {
                 closeRadio();
-        }
+            }
 
 
             if (setupRadio->currentRadio.radioModelNumber == 0)
-        {
-            closeRadio();
-            QMessageBox::critical(this, tr("Radio Error"), "Please configure a radio name and model");
-            return;
-        }
+            {
+                closeRadio();
+                QMessageBox::critical(this, tr("Radio Error"), "Please configure a radio name and model");
+                return;
+            }
 
 
 
 
-        // only show transvert freq box is enabled
+            // only show transvert freq box is enabled
             setTransVertDisplayVisible(setupRadio->currentRadio.transVertEnable);
             sendTransVertStatus(setupRadio->currentRadio.transVertEnable);   // send to logger
             sendTransVertSwitchToLogger(TRANSSW_NUM_DEFAULT);                                 // turn off transVerter Sw
@@ -395,19 +395,19 @@ void RigControlMainWindow::upDateRadio()
 
             setupRadio->saveCurrentRadio();
 
-        openRadio();
+            openRadio();
 
-        if (radio->get_serialConnected())
-        {
+            if (radio->get_serialConnected())
+            {
 
                 ui->radioNameDisp->setText(setupRadio->currentRadio.radioName);
 
 
-            logMessage(QString("Update - Get radio frequency"));
+                logMessage(QString("Update - Get radio frequency"));
                 getAndSendFrequency(RIG_VFO_CURR);   // also sends it
 
                 /*int retCode =*/
-            /*
+                /*
             if (retCode < 0)
             {
                 // error
@@ -425,70 +425,70 @@ void RigControlMainWindow::upDateRadio()
 
 
                 if (setupRadio->currentRadio.radioModelNumber != 135) // don't send USB if Ft991
-            {
+                {
+                    if (radio->get_serialConnected())
+                    {
+                        if (appName.count() > 0)
+                        {
+                            logMessage(QString("Update Radio: Logger Set Mode to %1").arg(slogMode));
+                            loggerSetMode(selRadioMode);
+                        }
+                        else
+                        {
+
+                            logMessage(QString("Update Radio: Set Mode USB Standalone"));
+                            // initialise rig state
+
+                            slogMode = "USB";
+                            // set mode
+                            logMode = radio->convertQStrMode("USB");
+                            setMode("USB", RIG_VFO_CURR);
+
+                        }
+
+
+                    }
+                }
+
+
                 if (radio->get_serialConnected())
                 {
-                    if (appName.count() > 0)
-                    {
-                        logMessage(QString("Update Radio: Logger Set Mode to %1").arg(slogMode));
-                        loggerSetMode(selRadioMode);
-                    }
-                    else
-                    {
 
-                        logMessage(QString("Update Radio: Set Mode USB Standalone"));
-                        // initialise rig state
-
-                        slogMode = "USB";
-                        // set mode
-                        logMode = radio->convertQStrMode("USB");
-                        setMode("USB", RIG_VFO_CURR);
-
-                    }
-
+                    writeWindowTitle(appName);
+                    sendStatusToLogConnected();
+                    sendRadioNameLogger(setupRadio->currentRadio.radioName);
+                    dumpRadioToTraceLog();
 
                 }
+                else
+                {
+                    trace(QString("#### Radio Failed to connect ####"));
+                    sendStatusToLogDisConnected();
+                }
+
             }
-
-
-            if (radio->get_serialConnected())
+        }
+        else
+        {   // no radio selected
+            trace("No radio selected");
+            ui->radioNameDisp->setText("");
+            closeRadio();
+            if (appName.length() > 0)
             {
-
                 writeWindowTitle(appName);
-                sendStatusToLogConnected();
-                    sendRadioNameLogger(setupRadio->currentRadio.radioName);
-                dumpRadioToTraceLog();
-
+                sendRadioNameLogger("");
             }
             else
             {
-                trace(QString("#### Radio Failed to connect ####"));
-                sendStatusToLogDisConnected();
+                writeWindowTitle(appName);
             }
 
         }
-    }
-    else
-    {   // no radio selected
-        trace("No radio selected");
-        ui->radioNameDisp->setText("");
-        closeRadio();
-        if (appName.length() > 0)
+
+        msg->rigCache.publishState();
+
+        if (radio->get_serialConnected())
         {
-            writeWindowTitle(appName);
-            sendRadioNameLogger("");
-        }
-        else
-        {
-            writeWindowTitle(appName);
-        }
-
-    }
-
-    msg->rigCache.publishState();
-
-    if (radio->get_serialConnected())
-    {
             if (setupRadio->currentRadio.pollInterval == "0.5")
             {
                 pollTime = 500;
@@ -498,8 +498,8 @@ void RigControlMainWindow::upDateRadio()
                 pollTime = 1000 * setupRadio->currentRadio.pollInterval.toInt();
             }
 
-        pollTimer->start(pollTime);             // start timer to send poll radio
-    }
+            pollTimer->start(pollTime);             // start timer to send poll radio
+        }
     }
 
 
@@ -776,6 +776,8 @@ void RigControlMainWindow::openRadio()
         }
 
         s = ui->selectRadioBox->currentText();
+        setupRadio->currentRadioName = s;
+
         if (!s.isEmpty() && s == oldRadio)
         {
             refreshRadio();
