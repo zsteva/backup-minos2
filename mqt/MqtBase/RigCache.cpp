@@ -14,6 +14,16 @@ void RigCache::setStateString(const AnalysePubSubNotify & an)
     RigState &as = rigStates[PubSubName(an)];
     as.unpack(an.getValue());
 }
+QString RigCache::getDetailsString(const PubSubName &name) const
+{
+    QString val = rigDetails[name].pack();
+    return val;
+}
+void RigCache::setDetailsString(const AnalysePubSubNotify & an)
+{
+    RigDetails &as = rigDetails[PubSubName(an)];
+    as.unpack(an.getValue());
+}
 void RigCache::addRigList(const QString &s)
 {
     QStringList list = s.split(":");
@@ -29,6 +39,10 @@ void RigCache::addRigList(const QString &s)
 void RigCache::setState(const PubSubName &name, RigState &state)
 {
     rigStates[name] = state;
+}
+void RigCache::setDetails(const PubSubName &name, RigDetails &details)
+{
+    rigDetails[name] = details;
 }
 
 void RigCache::setSelected(const PubSubName &name, const QString &sel)
@@ -68,16 +82,21 @@ void RigCache::setMode(const PubSubName &name, const QString &mode)
 }
 void RigCache::setTransverterOffset(const PubSubName &name, double transverterOffset)
 {
-    rigStates[name].setTransverterOffset(transverterOffset);
+    rigDetails[name].setTransverterOffset(transverterOffset);
 }
 void RigCache::setTransverterSwitch(const PubSubName &name, int transverterSwitch)
 {
-    rigStates[name].setTransverterSwitch(transverterSwitch);
+    rigDetails[name].setTransverterSwitch(transverterSwitch);
 }
 void RigCache::setTransverterStatus(const PubSubName &name, bool transverterStatus)
 {
-    rigStates[name].setTransverterStatus(transverterStatus);
+    rigDetails[name].setTransverterStatus(transverterStatus);
 }
+void RigCache::setBandList(const PubSubName &name, const QString &bands)
+{
+    rigDetails[name].setBandList(bands);
+}
+
 void RigCache::publishState()
 {
     MinosRPC *rpc = MinosRPC::getMinosRPC();
@@ -87,6 +106,19 @@ void RigCache::publishState()
         {
             rpc->publish(rpcConstants::rigStateCategory, i.key().key(), i.value().pack(), psPublished);
             rigStates[i.key()].clearDirty();
+        }
+    }
+
+}
+void RigCache::publishDetails()
+{
+    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    for(QMap<PubSubName, RigDetails>::iterator i = rigDetails.begin(); i != rigDetails.end(); i++ )
+    {
+        if (i.value().isDirty())
+        {
+            rpc->publish(rpcConstants::rigDetailsCategory, i.key().key(), i.value().pack(), psPublished);
+            rigDetails[i.key()].clearDirty();
         }
     }
 

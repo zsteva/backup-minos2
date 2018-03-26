@@ -58,7 +58,8 @@ SOURCES += \
     KeyerState.cpp \
     PubSubValue.cpp \
     RotatorCache.cpp \
-    RigCache.cpp
+    RigCache.cpp \
+    RigDetails.cpp
 
 HEADERS += \
     BandList.h \
@@ -104,7 +105,8 @@ HEADERS += \
     KeyerState.h \
     PubSubValue.h \
     RotatorCache.h \
-    RigCache.h
+    RigCache.h \
+    RigDetails.h
 
 unix {
     target.path = /usr/lib

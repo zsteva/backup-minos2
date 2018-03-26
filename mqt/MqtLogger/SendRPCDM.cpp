@@ -224,6 +224,10 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             {
                  rigCache.setStateString(an);
             }
+            if ( an.getCategory() == rpcConstants::rigDetailsCategory)
+            {
+                 rigCache.setDetailsString(an);
+            }
             else if ( an.getCategory() == rpcConstants::rotatorDetailCategory )
             {
                 rotatorCache.setDetailString(an);
@@ -270,6 +274,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                 }
                 if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioList )
                 {
+                    rigCache.addRigList(an.getValue());
                     emit setRadioLoaded();
                     emit setRadioList(an.getValue());
                     break;
@@ -307,6 +312,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                 }
                 if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorList )
                 {
+                    rotatorCache.addRotList(an.getValue());
                     emit RotatorLoaded();
                     emit RotatorList(an.getValue());
                     break;

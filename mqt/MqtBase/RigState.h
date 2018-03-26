@@ -10,14 +10,11 @@ class RigState: public PubSubValue
     MinosStringItem<QString> _status;
     MinosItem<double> _freq;
     MinosStringItem<QString> _mode;
-    MinosItem<double> _transverterOffset;
-    MinosItem<int> _transverterSwitch;
-    MinosItem<bool> _transverterStatus;
 
 public:
     RigState();
     RigState(QString s);
-    RigState(const QString &status, const QString &sel, int f, const QString &m, double tvo, int tvsw, bool tvst);
+    RigState(const QString &status, const QString &sel, int f, const QString &m);
 
     ~RigState();
 
@@ -31,16 +28,10 @@ public:
     QString status() const;
     double freq() const;
     QString mode() const;
-    double transverterOffset() const;
-    int transverterSwitch() const;
-    bool transverterStatus() const;
 
     void setSelected(const QString &selected);
     void setFreq(double freq);
     void setMode(const QString &mode);
-    void setTransverterOffset(double transverterOffset);
-    void setTransverterSwitch(int transverterSwitch);
-    void setTransverterStatus(bool transverterStatus);
     void setStatus(const QString &status);
 };
 

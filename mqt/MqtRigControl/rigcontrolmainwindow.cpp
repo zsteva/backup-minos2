@@ -486,6 +486,7 @@ void RigControlMainWindow::upDateRadio()
         }
 
         msg->rigCache.publishState();
+        msg->rigCache.publishDetails();
 
         if (radio->get_serialConnected())
         {
@@ -636,6 +637,7 @@ void RigControlMainWindow::openRadio()
         }
 
         msg->rigCache.publishState();
+        msg->rigCache.publishDetails();
 
     }
 
@@ -652,8 +654,7 @@ void RigControlMainWindow::openRadio()
         logMessage(QString("Radio Closed"));
 
         msg->rigCache.publishState();
-
-
+        msg->rigCache.publishDetails();
     }
 
 
@@ -747,7 +748,7 @@ void RigControlMainWindow::openRadio()
 
     */
         msg->rigCache.publishState();
-
+        msg->rigCache.publishDetails();
     }
 
 
@@ -797,7 +798,7 @@ void RigControlMainWindow::openRadio()
             setFreq(freq, RIG_VFO_CURR);
         }
         msg->rigCache.publishState();
-
+        msg->rigCache.publishDetails();
     }
 
 
@@ -1129,7 +1130,7 @@ void RigControlMainWindow::openRadio()
             }
         }
         msg->rigCache.publishState();
-
+        msg->rigCache.publishDetails();
     }
 
 
@@ -1168,6 +1169,7 @@ void RigControlMainWindow::openRadio()
         }
         cmdLockOff();
         msg->rigCache.publishState();
+        msg->rigCache.publishDetails();
     }
 
 
@@ -1389,6 +1391,11 @@ void RigControlMainWindow::openRadio()
                 logMessage(QString("Send bandlist - name %1").arg(QString::number(i)).arg(bandList[i]));
             }
             msg->publishBandNames(bandList);
+
+            PubSubName psname;
+            psname.setKey(setupRadio->currentRadio.radioName);
+            QString bands = bandList.join(":");
+            msg->rigCache.setBandList(psname, bands);
         }
 
     }

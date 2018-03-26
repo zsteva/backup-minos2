@@ -2,27 +2,19 @@
 #include "RPCCommandConstants.h"
 #include "MTrace.h"
 
-void RigState::setStatus(const QString &status)
-{
-    _status.setValue(status);
-}
-
 RigState::RigState()
     :PubSubValue(RigStateType)
 {
     qRegisterMetaType< RigState > ( "RigState" );
 
 }
-RigState::RigState(const QString &status, const QString &sel, int f, const QString &m, double tvo, int tvsw, bool tvst)
+RigState::RigState(const QString &status, const QString &sel, int f, const QString &m)
     :PubSubValue(RigStateType)
 {
     _status.setValue(status);
     _selected.setValue(sel);
     _freq.setValue(f);
     _mode.setValue(m);
-    _transverterOffset.setValue(tvo);
-    _transverterSwitch.setValue(tvsw);
-    _transverterStatus.setValue(tvst);
 }
 RigState::RigState(QString s)
     :PubSubValue(RigStateType)
@@ -38,10 +30,7 @@ bool RigState::isDirty()
     return  _status.isDirty() ||
             _selected.isDirty() ||
             _freq.isDirty() ||
-            _mode.isDirty() ||
-            _transverterOffset.isDirty() ||
-            _transverterSwitch.isDirty() ||
-            _transverterStatus.isDirty();
+            _mode.isDirty();
 }
 void RigState::clearDirty()
 {
@@ -49,9 +38,7 @@ void RigState::clearDirty()
     _selected.clearDirty();
     _freq.clearDirty();
     _mode.clearDirty();
-    _transverterOffset.clearDirty();
-    _transverterSwitch.clearDirty();
-    _transverterStatus.clearDirty();
+
 }
 void RigState::setSelected(const QString &selected)
 {
@@ -67,20 +54,9 @@ void RigState::setMode(const QString &mode)
 {
     _mode.setValue(mode);
 }
-
-void RigState::setTransverterOffset(double transverterOffset)
+void RigState::setStatus(const QString &status)
 {
-    _transverterOffset.setValue(transverterOffset);
-}
-
-void RigState::setTransverterSwitch(int transverterSwitch)
-{
-    _transverterSwitch.setValue(transverterSwitch);
-}
-
-void RigState::setTransverterStatus(bool transverterStatus)
-{
-    _transverterStatus.setValue(transverterStatus);
+    _status.setValue(status);
 }
 
 QString RigState::pack() const
@@ -91,9 +67,6 @@ QString RigState::pack() const
     jv.insert(rpcConstants::rigControlStatus, status());
     jv.insert(rpcConstants::rigControlFreq, freq());
     jv.insert(rpcConstants::rigControlMode, mode());
-    jv.insert(rpcConstants::rigControlTxVertOffsetFreq, transverterOffset());
-    jv.insert(rpcConstants::rigControlTxVertSwitch, transverterSwitch());
-    jv.insert(rpcConstants::rigControlTxVertStatus, transverterStatus());
 
     QJsonDocument json(jv);
 
@@ -111,9 +84,6 @@ void RigState::unpack(QString s)
         _status.setValue(json.object().value(rpcConstants::rigControlStatus).toString());
         _freq.setValue(json.object().value(rpcConstants::rigControlFreq).toDouble());
         _mode.setValue(json.object().value(rpcConstants::rigControlMode).toString());
-        _transverterOffset.setValue(json.object().value(rpcConstants::rigControlTxVertOffsetFreq).toDouble());
-        _transverterSwitch.setValue(json.object().value(rpcConstants::rigControlTxVertSwitch).toInt());
-        _transverterStatus.setValue(json.object().value(rpcConstants::rigControlTxVertStatus).toBool());
     }
     else
     {
@@ -139,19 +109,4 @@ double RigState::freq() const
 QString RigState::mode() const
 {
     return _mode.getValue();
-}
-
-double RigState::transverterOffset() const
-{
-    return _transverterOffset.getValue();
-}
-
-int RigState::transverterSwitch() const
-{
-    return _transverterSwitch.getValue();
-}
-
-bool RigState::transverterStatus() const
-{
-    return _transverterStatus.getValue();
 }
