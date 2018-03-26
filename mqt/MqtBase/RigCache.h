@@ -7,6 +7,7 @@
 class RigCache
 {
     QMap<PubSubName, RigState> rigStates;
+    QVector<PubSubName> rigList;
 public:
     RigCache();
 
@@ -26,6 +27,12 @@ public:
     void setTransverterOffset(const PubSubName &name, double transverterOffset);
     void setTransverterSwitch(const PubSubName &name, int transverterSwitch);
     void setTransverterStatus(const PubSubName &name, bool transverterStatus);
+
+    void addRigList(const QString &s);
+    QVector<PubSubName> getRigList()
+    {
+        return rigList;
+    }
 };
 
 #endif // RIGCACHE_H

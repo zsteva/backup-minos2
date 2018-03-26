@@ -6,6 +6,17 @@ RotatorCache::RotatorCache()
 {
 
 }
+void RotatorCache::addRotList(const QString &s)
+{
+    QStringList list = s.split(":");
+    foreach(QString l, list)
+    {
+        PubSubName psn(l);
+        if (!rotList.contains(psn))
+            rotList.push_back(psn);
+    }
+    qSort(rotList);
+}
 
 QString RotatorCache::getDetailString(const PubSubName &name) const
 {

@@ -9,6 +9,7 @@ class RotatorCache
 {
     QMap<PubSubName, AntennaDetail> rotDetails;
     QMap<PubSubName, AntennaState> rotStates;
+    QVector<PubSubName> rotList;
 public:
     RotatorCache();
 
@@ -32,6 +33,13 @@ public:
 
     void publishState( );
     void publishDetails( );
+
+    void addRotList(const QString &s);
+    QVector<PubSubName> getRotList()
+    {
+        return rotList;
+    }
+
 };
 
 #endif // ROTATORCACHE_H

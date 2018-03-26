@@ -14,6 +14,17 @@ void RigCache::setStateString(const AnalysePubSubNotify & an)
     RigState &as = rigStates[PubSubName(an)];
     as.unpack(an.getValue());
 }
+void RigCache::addRigList(const QString &s)
+{
+    QStringList list = s.split(":");
+    foreach(QString l, list)
+    {
+        PubSubName psn(l);
+        if (!rigList.contains(psn))
+            rigList.push_back(psn);
+    }
+    qSort(rigList);
+}
 
 void RigCache::setState(const PubSubName &name, RigState &state)
 {
