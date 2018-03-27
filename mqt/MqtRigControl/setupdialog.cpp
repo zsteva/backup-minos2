@@ -53,16 +53,7 @@ SetupDialog::SetupDialog(RigControl *radio, const QVector<BandDetail*> _bands, Q
 
     // radio settings ini file
     QString fileName;
-    if (appName == "")
-    {
-        fileName = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
-    }
-    else
-    {
-        fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
-    }
-
-
+    fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
     QSettings  settings(fileName, QSettings::IniFormat);
 
     availRadios = settings.childGroups();
@@ -77,15 +68,7 @@ SetupDialog::SetupDialog(RigControl *radio, const QVector<BandDetail*> _bands, Q
 
             // find transverters
             QString fileName;
-            if (appName == "")
-            {
-                fileName = TRANSVERT_PATH_LOGGER + availRadios[i] + FILENAME_TRANSVERT_RADIOS;
-            }
-            else
-            {
-                fileName = TRANSVERT_PATH_LOGGER + availRadios[i] + FILENAME_TRANSVERT_RADIOS;
-            }
-
+            fileName = TRANSVERT_PATH_LOGGER + availRadios[i] + FILENAME_TRANSVERT_RADIOS;
             QSettings  configTransvert(fileName, QSettings::IniFormat);
 
             radioTab[i]->getRadioData()->transVertNames = configTransvert.childGroups();  // get transvert names for this radio
@@ -153,8 +136,7 @@ void SetupDialog::addTab(int tabNum, QString tabName)
 }
 
 
-void SetupDialog::
-loadSettingsToTab(int tabNum)
+void SetupDialog::loadSettingsToTab(int tabNum)
 {
 
     ui->radioTab->setTabText(tabNum, radioTab[tabNum]->getRadioData()->radioName);
@@ -296,15 +278,7 @@ void SetupDialog::removeRadio()
     availRadioData.remove(currentIndex);
     // remove from availantenna file
     QString fileName;
-    if (appName == "")
-    {
-        fileName = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
-    }
-    else
-    {
-        fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
-    }
-
+    fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
     QSettings config(fileName, QSettings::IniFormat);
     config.beginGroup(currentName);
     config.remove("");   // remove all keys for this group
@@ -349,15 +323,7 @@ void SetupDialog::editRadioName()
 
                 // remove from availantenna file
                 QString fileName;
-                if (appName == "")
-                {
-                    fileName = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
-                }
-                else
-                {
-                    fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
-                }
-
+                fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
                 QSettings config(fileName, QSettings::IniFormat);
                 config.beginGroup(radioName);
                 config.remove("");   // remove all keys for this group
@@ -414,7 +380,18 @@ void SetupDialog::saveButtonPushed()
 
 void SetupDialog::cancelButtonPushed()
 {
+    QString fileName;
+    fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
+    QSettings config(fileName, QSettings::IniFormat);
 
+    for (int i = 0; i < numAvailRadios; i++)
+    {
+        if (radioTab[i]->radioValueChanged)
+        {
+            getRadioSetting(i, config);
+            radioTab[i]->radioValueChanged = false;
+        }
+    }
 
 
 
@@ -426,18 +403,8 @@ void SetupDialog::saveRadio(int i)
 {
 
     QString fileName;
-    if (appName == "")
-    {
-       fileName = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
-    }
-    else
-    {
-       fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
-    }
-
+    fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
     QSettings config(fileName, QSettings::IniFormat);
-
-
 
     config.beginGroup(availRadioData[i]->radioName);
     config.setValue("radioName", availRadioData[i]->radioName);
@@ -463,16 +430,7 @@ void SetupDialog::saveRadio(int i)
 
     if (availRadioData[i]->transVertEnable)
     {
-        QString fileName;
-        if (appName == "")
-        {
-            fileName = RADIO_PATH_LOCAL + availRadioData[i]->radioModelName + FILENAME_TRANSVERT_RADIOS;
-        }
-        else
-        {
-            fileName = RADIO_PATH_LOGGER + availRadioData[i]->radioModelName + FILENAME_TRANSVERT_RADIOS;
-        }
-
+        fileName = RADIO_PATH_LOGGER + availRadioData[i]->radioModelName + FILENAME_TRANSVERT_RADIOS;
         QSettings  config(fileName, QSettings::IniFormat);
 
         for (int trv = 0; trv < availRadioData[i]->numTransverters; trv++)
@@ -490,15 +448,7 @@ void SetupDialog::saveSettings()
 {
 
     QString fileNameRadio;
-    if (appName == "")
-    {
-       fileNameRadio = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
-    }
-    else
-    {
-       fileNameRadio = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
-    }
-
+    fileNameRadio = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
     QSettings configRadio(fileNameRadio, QSettings::IniFormat);
 
 
@@ -548,15 +498,7 @@ void SetupDialog::saveSettings()
         if (radioTab[i]->getRadioData()->transVertEnable)
         {
             QString fileNameTransVert;
-            if (appName == "")
-            {
-                fileNameTransVert = TRANSVERT_PATH_LOGGER + radioTab[i]->getRadioData()->radioName + FILENAME_TRANSVERT_RADIOS;
-            }
-            else
-            {
-                fileNameTransVert = TRANSVERT_PATH_LOGGER + radioTab[i]->getRadioData()->radioName + FILENAME_TRANSVERT_RADIOS;
-            }
-
+            fileNameTransVert = TRANSVERT_PATH_LOGGER + radioTab[i]->getRadioData()->radioName + FILENAME_TRANSVERT_RADIOS;
             QSettings  configTransVert(fileNameTransVert, QSettings::IniFormat);
 
             for (int t = 0; t < radioTab[i]->getRadioData()->numTransverters; t++)
@@ -613,68 +555,51 @@ void SetupDialog::readSettings()
     chkloadflg = true;      // stop loading check values tiggering mapper signals
 
     QString fileName;
-    if (appName == "")
-    {
-        fileName = RADIO_PATH_LOCAL + FILENAME_AVAIL_RADIOS;
-    }
-    else
-    {
-        fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
-    }
-
-
-
+    fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
     QSettings config(fileName, QSettings::IniFormat);
 
     for (int i = 0; i < numAvailRadios; i++)
     {
-        config.beginGroup(availRadios[i]);
-        radioTab[i]->getRadioData()->radioName = config.value("radioName", "").toString();
-        radioTab[i]->getRadioData()->radioNumber = config.value("radioNumber", QString::number(i+1)).toString();
-        radioTab[i]->getRadioData()->radioMfg_Name = config.value("radioMfgName", "").toString();
-        radioTab[i]->getRadioData()->radioModel = config.value("radioModel", "").toString();
-        radioTab[i]->getRadioData()->radioModelName = config.value("radioModelName", "").toString();
-        radioTab[i]->getRadioData()->radioModelNumber = config.value("radioModelNumber", "").toInt();
-        radioTab[i]->getRadioData()->civAddress = config.value("civAddress", "").toString();
-        radioTab[i]->getRadioData()->portType = config.value("portType", int(RIG_PORT_SERIAL)).toInt();
-        radioTab[i]->getRadioData()->comport = config.value("comport", "").toString();
-        radioTab[i]->getRadioData()->baudrate = config.value("baudrate", 9600).toInt();
-        radioTab[i]->getRadioData()->databits = config.value("databits", 8).toInt();
-        radioTab[i]->getRadioData()->parity = config.value("parity", 0).toInt();
-        radioTab[i]->getRadioData()->stopbits = config.value("stopbits", 1).toInt();
-        radioTab[i]->getRadioData()->handshake = config.value("handshake", 0).toInt();
-        radioTab[i]->getRadioData()->pollInterval = config.value("radioPollInterval", "1").toString();
-        radioTab[i]->getRadioData()->transVertEnable = config.value("transVertEnable", false).toBool();
-        radioTab[i]->getRadioData()->antSwitchAvail = config.value("antSwitchAvail", false).toBool();
-        radioTab[i]->getRadioData()->networkAdd = config.value("netAddress", "").toString();
-        radioTab[i]->getRadioData()->networkPort = config.value("netPort", "").toString();
-        radioTab[i]->getRadioData()->mgmMode = config.value("mgmMode", hamlibData::USB).toString();
-        config.endGroup();
-
-        // now read transverter settings
-        QString fileNameTransVert;
-        if (appName == "")
-        {
-            fileNameTransVert = TRANSVERT_PATH_LOGGER + radioTab[i]->getRadioData()->radioName + FILENAME_TRANSVERT_RADIOS;
-        }
-        else
-        {
-            fileNameTransVert = TRANSVERT_PATH_LOGGER + radioTab[i]->getRadioData()->radioName + FILENAME_TRANSVERT_RADIOS;
-        }
-
-        QSettings  configTransVert(fileNameTransVert, QSettings::IniFormat);
-
-        for (int t = 0; t < radioTab[i]->getRadioData()->numTransverters; t++)
-        {
-            readTranVerterSetting(i, t, configTransVert);
-        }
+        getRadioSetting(i, config);
     }
     chkloadflg = false;
 }
 
+void SetupDialog::getRadioSetting(int radNum, QSettings& config)
+{
+    config.beginGroup(availRadios[radNum]);
+    radioTab[radNum]->getRadioData()->radioName = config.value("radioName", "").toString();
+    radioTab[radNum]->getRadioData()->radioNumber = config.value("radioNumber", QString::number(radNum+1)).toString();
+    radioTab[radNum]->getRadioData()->radioMfg_Name = config.value("radioMfgName", "").toString();
+    radioTab[radNum]->getRadioData()->radioModel = config.value("radioModel", "").toString();
+    radioTab[radNum]->getRadioData()->radioModelName = config.value("radioModelName", "").toString();
+    radioTab[radNum]->getRadioData()->radioModelNumber = config.value("radioModelNumber", "").toInt();
+    radioTab[radNum]->getRadioData()->civAddress = config.value("civAddress", "").toString();
+    radioTab[radNum]->getRadioData()->portType = config.value("portType", int(RIG_PORT_SERIAL)).toInt();
+    radioTab[radNum]->getRadioData()->comport = config.value("comport", "").toString();
+    radioTab[radNum]->getRadioData()->baudrate = config.value("baudrate", 9600).toInt();
+    radioTab[radNum]->getRadioData()->databits = config.value("databits", 8).toInt();
+    radioTab[radNum]->getRadioData()->parity = config.value("parity", 0).toInt();
+    radioTab[radNum]->getRadioData()->stopbits = config.value("stopbits", 1).toInt();
+    radioTab[radNum]->getRadioData()->handshake = config.value("handshake", 0).toInt();
+    radioTab[radNum]->getRadioData()->pollInterval = config.value("radioPollInterval", "1").toString();
+    radioTab[radNum]->getRadioData()->transVertEnable = config.value("transVertEnable", false).toBool();
+    radioTab[radNum]->getRadioData()->antSwitchAvail = config.value("antSwitchAvail", false).toBool();
+    radioTab[radNum]->getRadioData()->networkAdd = config.value("netAddress", "").toString();
+    radioTab[radNum]->getRadioData()->networkPort = config.value("netPort", "").toString();
+    radioTab[radNum]->getRadioData()->mgmMode = config.value("mgmMode", hamlibData::USB).toString();
+    config.endGroup();
 
+    // now read transverter settings
+    QString fileNameTransVert;
+    fileNameTransVert = TRANSVERT_PATH_LOGGER + radioTab[radNum]->getRadioData()->radioName + FILENAME_TRANSVERT_RADIOS;
+    QSettings  configTransVert(fileNameTransVert, QSettings::IniFormat);
 
-
+    for (int t = 0; t < radioTab[radNum]->getRadioData()->numTransverters; t++)
+    {
+        readTranVerterSetting(radNum, t, configTransVert);
+    }
+}
 
 void SetupDialog::saveTranVerterSetting(int radioNum, int transVertNum, QSettings  &config)
 {
@@ -770,16 +695,7 @@ void SetupDialog::saveCurrentRadio()
 {
 
     QString fileName;
-    if (appName == "")
-    {
-        fileName = RADIO_PATH_LOCAL + LOCAL_RADIO + FILENAME_CURRENT_RADIO;
-    }
-    else
-    {
-        fileName = RADIO_PATH_LOGGER + appName + FILENAME_CURRENT_RADIO;
-    }
-
-
+    fileName = RADIO_PATH_LOGGER + appName + FILENAME_CURRENT_RADIO;
     QSettings config(fileName, QSettings::IniFormat);
 
 
@@ -796,16 +712,7 @@ void SetupDialog::readCurrentRadio()
 {
 
     QString fileName;
-    if (appName == "")
-    {
-        fileName = RADIO_PATH_LOCAL + LOCAL_RADIO + FILENAME_CURRENT_RADIO;
-    }
-    else
-    {
-        fileName = RADIO_PATH_LOGGER + appName + FILENAME_CURRENT_RADIO;
-    }
-
-
+    fileName = RADIO_PATH_LOGGER + appName + FILENAME_CURRENT_RADIO;
     QSettings config(fileName, QSettings::IniFormat);
 
 
@@ -854,17 +761,7 @@ void SetupDialog::saveMgmList()
     const QStringList  mList = {"USB", "LSB", "RTTY", "PKTLSB", "PKTUSB", "PKTFM" };
 
     QString fileName;
-    if (appName == "")
-    {
-        fileName = RIG_CONFIGURATION_FILEPATH_LOCAL + MINOS_RADIO_CONFIG_FILE;
-    }
-    else
-    {
-        fileName = RIG_CONFIGURATION_FILEPATH_LOGGER + MINOS_RADIO_CONFIG_FILE;
-    }
-
-
-
+    fileName = RIG_CONFIGURATION_FILEPATH_LOGGER + MINOS_RADIO_CONFIG_FILE;
     QSettings config(fileName, QSettings::IniFormat);
     config.beginGroup("MGM_Modes");
 

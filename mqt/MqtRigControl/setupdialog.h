@@ -132,6 +132,7 @@ private:
     void saveTranVerterSetting(int radioNum, int transVertNum, QSettings  &config);
     void readTranVerterSetting(int radioNum, int transVertNum, QSettings &config);
     void loadBands();
+    void getRadioSetting(int radNum, QSettings &config);
 };
 
 #endif // SETUPDIALOG_H

@@ -237,7 +237,7 @@ void RigControlMainWindow::onStdInRead(QString cmd)
 
 void RigControlMainWindow::initActionsConnections()
 {
-    connect(ui->selectRadioBox, SIGNAL(activated(int)), this, SLOT(upDateRadio()));
+    connect(ui->selectRadioBox, SIGNAL(activated(int)), this, SLOT(selectRadio()));
 
     connect(ui->actionSetup_Radios, SIGNAL(triggered()), setupRadio, SLOT(exec()));
     connect(ui->actionSetup_Band_Freq, SIGNAL(triggered(bool)), this, SLOT(setupBandFreq()));
@@ -346,7 +346,11 @@ void RigControlMainWindow::initSelectRadioBox()
     }
 }
 
-
+void RigControlMainWindow::selectRadio()
+{
+    setupRadio->currentRadioName = ui->selectRadioBox->currentText();
+    upDateRadio();
+}
 
 
 void RigControlMainWindow::setSelectRadioBoxVisible(bool visible)

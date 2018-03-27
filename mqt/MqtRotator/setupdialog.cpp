@@ -50,15 +50,7 @@ SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
 
     // get the number of available antennas
     QString fileName;
-    if (appName == "")
-    {
-        fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
-    }
-    else
-    {
-        fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
-    }
-
+    fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
     QSettings settings(fileName, QSettings::IniFormat);
     availAntennas = settings.childGroups();
     numAvailAntennas = availAntennas.count();
@@ -225,7 +217,18 @@ void SetupDialog::saveButtonPushed()
 void SetupDialog::cancelButtonPushed()
 {
 
+    QString fileName;
+    fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
+    QSettings config(fileName, QSettings::IniFormat);
 
+    for (int i = 0; i < numAvailAntennas; i++)
+    {
+        if (antennaTab[i]->antennaValueChanged)
+        {
+            getAvailAntenna(i, config);         // restore settings
+            antennaTab[i]->antennaValueChanged = false;
+        }
+    }
 
 
 }
@@ -239,37 +242,8 @@ void SetupDialog::saveSettings()
     bool antennaNameChg = false;
     bool currentAntennaChanged = false;
 
-/*
-    int ca = -1;
-    bool ok;
-    ca = currentAntenna->antennaNumber.toInt(&ok, 10);
-    if (ok  && ca >= 0 && ca < numAvailAntennas)
-    {
-        if (currentAntenna->antennaNumber != "")
-        {
-            if (antennaValueChanged[ca-1])
-            {
-               currentAntennaChanged = true;
-            }
-        }
-    }
-    else
-    {
-        ca = -1;
-    }
-
-*/
-
     QString fileName;
-    if (appName == "")
-    {
-        fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
-    }
-    else
-    {
-        fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
-    }
-
+    fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
     QSettings config(fileName, QSettings::IniFormat);
 
     for (int i = 0; i < numAvailAntennas; i++)
@@ -348,15 +322,7 @@ void SetupDialog::saveAntenna(int i)
 {
 
     QString fileName;
-    if (appName == "")
-    {
-        fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
-    }
-    else
-    {
-        fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
-    }
-
+    fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
     QSettings  config(fileName, QSettings::IniFormat);
 
     config.beginGroup(availAntData[i]->antennaName);
@@ -401,50 +367,51 @@ void SetupDialog::getAvailAntennas()
     chkloadflg = true;      // stop loading check values tiggering mapper signals
 
     QString fileName;
-    if (appName == "")
-    {
-        fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
-    }
-    else
-    {
-        fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
-    }
-
+    fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
     QSettings config(fileName, QSettings::IniFormat);
 
     for (int i = 0; i < numAvailAntennas; i++)
     {
-        config.beginGroup(availAntennas[i]);
-        availAntData[i]->antennaName = config.value("antennaName", "").toString();
-        availAntData[i]->antennaNumber = config.value("antennaNumber", QString::number(i+1)).toString();
-        availAntData[i]->rotatorModel = config.value("rotatorModel", "").toString();
-        availAntData[i]->rotatorModelName = config.value("rotatorModelName", "").toString();
-        availAntData[i]->rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
-        availAntData[i]->rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
-        availAntData[i]->pollInterval = config.value("rotatorPollInterval", "1").toString();
-        availAntData[i]->max_azimuth = azimuth_t(config.value("rotatorMaxAzimuth", 360).toDouble());
-        availAntData[i]->min_azimuth = azimuth_t(config.value("rotatorMinAzimuth", 0).toDouble());
-        availAntData[i]->rotatorCWEndStop = azimuth_t(config.value("rotatorCWEndStop", 360).toDouble());
-        availAntData[i]->rotatorCCWEndStop = azimuth_t(config.value("rotatorCWEndStop", 0).toDouble());
-        availAntData[i]->endStopType = endStop(config.value("rotatorEndStopType", int(ROT_0_360)).toInt());
-        availAntData[i]->supportCwCcwCmd = config.value("supportCwCcwCmd", false).toBool();
-        availAntData[i]->southStopFlag = config.value("southStop", false).toBool();
-        availAntData[i]->overRunFlag = config.value("overRun", false).toBool();
-        availAntData[i]->antennaOffset = config.value("antennaOffset", "").toInt();
-        availAntData[i]->portType = rig_port_e(config.value("portType", int(RIG_PORT_NONE)).toInt());
-        availAntData[i]->comport = config.value("comport", "").toString();
-        availAntData[i]->baudrate = config.value("baudrate", 9600).toInt();
-        availAntData[i]->databits = config.value("databits", 8).toInt();
-        availAntData[i]->parity = config.value("parity", 0).toInt();
-        availAntData[i]->stopbits = config.value("stopbits", 1).toInt();
-        availAntData[i]->handshake = config.value("handshake", 0).toInt();
-        availAntData[i]->networkAdd = config.value("netAddress", "").toString();
-        availAntData[i]->networkPort = config.value("netPort", "").toString();
-        config.endGroup();
+        getAvailAntenna(i, config);
     }
     chkloadflg = false;
 
 }
+
+
+void SetupDialog::getAvailAntenna(int antNum, QSettings& config)
+{
+
+    config.beginGroup(availAntennas[antNum]);
+    availAntData[antNum]->antennaName = config.value("antennaName", "").toString();
+    availAntData[antNum]->antennaNumber = config.value("antennaNumber", QString::number(antNum+1)).toString();
+    availAntData[antNum]->rotatorModel = config.value("rotatorModel", "").toString();
+    availAntData[antNum]->rotatorModelName = config.value("rotatorModelName", "").toString();
+    availAntData[antNum]->rotatorModelNumber = config.value("rotatorModelNumber", "").toInt();
+    availAntData[antNum]->rotatorManufacturer = config.value("rotatorManufacturer", "").toString();
+    availAntData[antNum]->pollInterval = config.value("rotatorPollInterval", "1").toString();
+    availAntData[antNum]->max_azimuth = azimuth_t(config.value("rotatorMaxAzimuth", 360).toDouble());
+    availAntData[antNum]->min_azimuth = azimuth_t(config.value("rotatorMinAzimuth", 0).toDouble());
+    availAntData[antNum]->rotatorCWEndStop = azimuth_t(config.value("rotatorCWEndStop", 360).toDouble());
+    availAntData[antNum]->rotatorCCWEndStop = azimuth_t(config.value("rotatorCWEndStop", 0).toDouble());
+    availAntData[antNum]->endStopType = endStop(config.value("rotatorEndStopType", int(ROT_0_360)).toInt());
+    availAntData[antNum]->supportCwCcwCmd = config.value("supportCwCcwCmd", false).toBool();
+    availAntData[antNum]->southStopFlag = config.value("southStop", false).toBool();
+    availAntData[antNum]->overRunFlag = config.value("overRun", false).toBool();
+    availAntData[antNum]->antennaOffset = config.value("antennaOffset", "").toInt();
+    availAntData[antNum]->portType = rig_port_e(config.value("portType", int(RIG_PORT_NONE)).toInt());
+    availAntData[antNum]->comport = config.value("comport", "").toString();
+    availAntData[antNum]->baudrate = config.value("baudrate", 9600).toInt();
+    availAntData[antNum]->databits = config.value("databits", 8).toInt();
+    availAntData[antNum]->parity = config.value("parity", 0).toInt();
+    availAntData[antNum]->stopbits = config.value("stopbits", 1).toInt();
+    availAntData[antNum]->handshake = config.value("handshake", 0).toInt();
+    availAntData[antNum]->networkAdd = config.value("netAddress", "").toString();
+    availAntData[antNum]->networkPort = config.value("netPort", "").toString();
+    config.endGroup();
+
+}
+
 
 int SetupDialog::comportAvial(QString comport)
 {
@@ -520,15 +487,7 @@ void SetupDialog::saveCurrentAntenna()
 {
 
     QString fileName;
-    if (appName == "")
-    {
-        fileName = ANTENNA_PATH_LOCAL + LOCAL_ANTENNA + FILENAME_CURRENT_ANTENNA;
-    }
-    else
-    {
-        fileName = ANTENNA_PATH_LOGGER + appName + FILENAME_CURRENT_ANTENNA;
-    }
-
+    fileName = ANTENNA_PATH_LOGGER + appName + FILENAME_CURRENT_ANTENNA;
     QSettings config(fileName, QSettings::IniFormat);
 
 
@@ -545,15 +504,7 @@ void SetupDialog::readCurrentAntenna()
 {
 
     QString fileName;
-    if (appName == "")
-    {
-        fileName = ANTENNA_PATH_LOCAL + LOCAL_ANTENNA + FILENAME_CURRENT_ANTENNA;
-    }
-    else
-    {
-        fileName = ANTENNA_PATH_LOGGER + appName + FILENAME_CURRENT_ANTENNA;
-    }
-
+    fileName = ANTENNA_PATH_LOGGER + appName + FILENAME_CURRENT_ANTENNA;
     QSettings config(fileName, QSettings::IniFormat);
 
     {
@@ -666,15 +617,7 @@ void SetupDialog::removeAntenna()
     availAntData.remove(currentIndex);
     // remove from availantenna file
     QString fileName;
-    if (appName == "")
-    {
-        fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
-    }
-    else
-    {
-        fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
-    }
-
+    fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
     QSettings config(fileName, QSettings::IniFormat);
     config.beginGroup(currentName);
     config.remove("");   // remove all keys for this group
@@ -717,15 +660,7 @@ void SetupDialog::editAntennaName()
 
                 // remove from availantenna file
                 QString fileName;
-                if (appName == "")
-                {
-                    fileName = ANTENNA_PATH_LOCAL + FILENAME_AVAIL_ANTENNAS;
-                }
-                else
-                {
-                    fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
-                }
-
+                fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
                 QSettings config(fileName, QSettings::IniFormat);
                 config.beginGroup(antName);
                 config.remove("");   // remove all keys for this group
