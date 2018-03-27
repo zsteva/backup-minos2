@@ -9,6 +9,29 @@ namespace Ui {
 class ClusterMainWindow;
 }
 
+
+const QString CLUSTER_PATH = "./Configuration/Cluster/";
+const QString CLUSTER_SITES = "ClusterSites.ini";
+
+
+class ClusterAddress
+{
+
+public:
+    ClusterAddress(QString _name, QString _add, QString _port)
+    {
+        name = _name;
+        address = _add;
+        port = _port;
+    }
+
+    QString name;
+    QString address;
+    QString port;
+
+
+};
+
 class ClusterMainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -30,6 +53,10 @@ private:
     QtTelnet* client;
     Cluster* dxCluster;
 
+    QStringList clusterSiteNames;
+    int numClusterSites;
+    QVector<ClusterAddress*> availClusters;
+
     QStringList dxMsg;
     QString dxCall;
     QString dxFreq;
@@ -42,6 +69,7 @@ private:
     bool loginSuccess;
     void txText(QString msg);
     int upackSpot(QString txt);
+    bool getClusterAddresses();
 };
 
 #endif // CLUSTERMAINWINDOW_H

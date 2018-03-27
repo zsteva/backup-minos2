@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>376</width>
-    <height>280</height>
+    <height>285</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,14 +35,17 @@
      <x>20</x>
      <y>20</y>
      <width>311</width>
-     <height>191</height>
+     <height>161</height>
     </rect>
+   </property>
+   <property name="currentIndex">
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
      <string>Personel</string>
     </attribute>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -113,8 +116,18 @@
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
-     <string>Tab 2</string>
+     <string>Clusters</string>
     </attribute>
+    <widget class="QColumnView" name="columnView">
+     <property name="geometry">
+      <rect>
+       <x>-5</x>
+       <y>0</y>
+       <width>311</width>
+       <height>141</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>

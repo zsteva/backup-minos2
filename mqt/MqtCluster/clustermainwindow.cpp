@@ -1,3 +1,5 @@
+#include <QSettings>
+#include <QDebug>
 #include "clustermainwindow.h"
 #include "ui_clustermainwindow.h"
 
@@ -13,9 +15,17 @@ ClusterMainWindow::ClusterMainWindow(QWidget *parent) :
     client = new QtTelnet(parent);
     dxCluster = new Cluster();
 
-   // QRegExp logPrompt("(login:)");
+
+    // get list of clusters
+    getClusterAddresses();
+
+
+
+    // QRegExp logPrompt("(login:)");
    // client->setLoginPattern(logPrompt);
     client->login("m0dgb", "");
+
+
 
     connect(client, SIGNAL(socketConnected()), this, SLOT(connectionEstab()));
     connect(client, SIGNAL(loginRequired()), this, SLOT(logIn()));
@@ -23,7 +33,7 @@ ClusterMainWindow::ClusterMainWindow(QWidget *parent) :
     connect(client, SIGNAL(message(QString)), this, SLOT(messageRx(QString)));
     connect(client, SIGNAL(message(QString)), this, SLOT(parseDX(QString)));
     connect(client, SIGNAL(message(QString)), this, SLOT(checkedLoggedIn(QString)));
-    connect(ui->sendLine, SIGNAL(returnPressed()), this, SLOT(sendText()));
+//    connect(ui->sendLine, SIGNAL(returnPressed()), this, SLOT(sendText()));
     client->connectToHost("gb7mbc.spoo.org", 8000);
 
 //    txText("set/echo enable");
@@ -185,4 +195,33 @@ int ClusterMainWindow::upackSpot(QString txt)
     }
 
     return 0;
+}
+
+
+bool ClusterMainWindow::getClusterAddresses()
+{
+
+    QString fileName;
+    fileName = CLUSTER_PATH + CLUSTER_SITES ;
+    QSettings  config(fileName, QSettings::IniFormat);
+
+    clusterSiteNames = config.childGroups();
+
+    numClusterSites = clusterSiteNames.count();
+
+    if (numClusterSites != 0)
+    {
+        availClusters.clear();
+        for (int i = 0; i < numClusterSites; i++)
+        {
+            availClusters.append(new ClusterAddress(clusterSiteNames[i],
+                                                    config.value("address", "").toString(),
+                                                    config.value("port", "").toString()));
+        }
+        return true;
+    }
+
+    return false;
+
+
 }
