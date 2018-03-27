@@ -239,7 +239,7 @@ void RigControlMainWindow::initActionsConnections()
 {
     connect(ui->selectRadioBox, SIGNAL(activated(int)), this, SLOT(selectRadio()));
 
-    connect(ui->actionSetup_Radios, SIGNAL(triggered()), setupRadio, SLOT(exec()));
+    connect(ui->actionSetup_Radios, SIGNAL(triggered()), this, SLOT(onLaunchSetup()));
     connect(ui->actionSetup_Band_Freq, SIGNAL(triggered(bool)), this, SLOT(setupBandFreq()));
     connect(ui->actionTraceLog, SIGNAL(changed()), this, SLOT(saveTraceLogFlag()));
 
@@ -1513,7 +1513,12 @@ void RigControlMainWindow::openRadio()
 
     }
 
+    void RigControlMainWindow::onLaunchSetup()
+    {
+        setupRadio->setTabToCurrentRadio();
 
+        setupRadio->exec();
+    }
 
     void RigControlMainWindow::aboutRigConfig()
     {

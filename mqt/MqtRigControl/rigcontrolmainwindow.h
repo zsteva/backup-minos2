@@ -191,6 +191,7 @@ private slots:
     void selFreqClicked();
     void setupBandFreq();
     void selectRadio();
+    void onLaunchSetup();
 
 signals:
 

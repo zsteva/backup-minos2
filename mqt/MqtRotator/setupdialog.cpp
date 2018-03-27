@@ -100,6 +100,7 @@ void SetupDialog::addTab(int tabNum, QString tabName)
 {
     availAntData.append(new srotParams);
     availAntData[tabNum]->antennaName = tabName;
+    availAntennas.append(tabName);
     antennaTab.append(new rotSetupForm(rotator, availAntData[tabNum]));
     ui->antennaTab->insertTab(tabNum, antennaTab[tabNum], tabName);
     ui->antennaTab->setTabColor(tabNum, Qt::darkBlue);
@@ -615,6 +616,7 @@ void SetupDialog::removeAntenna()
     // remove this antenna
     ui->antennaTab->removeTab(currentIndex);
     availAntData.remove(currentIndex);
+    availAntennas.removeAt(currentIndex);
     // remove from availantenna file
     QString fileName;
     fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
@@ -657,7 +659,7 @@ void SetupDialog::editAntennaName()
             if (antName == availAntData[i]->antennaName)
             {
                 availAntData[i]->antennaName = text;  // update with new name
-
+                availAntennas[i] = text;
                 // remove from availantenna file
                 QString fileName;
                 fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
