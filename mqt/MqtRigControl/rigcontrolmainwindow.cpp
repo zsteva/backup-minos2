@@ -262,6 +262,8 @@ void RigControlMainWindow::initActionsConnections()
 
     connect(radio, SIGNAL(debug_protocol(QString)), this, SLOT(logMessage(QString)));
 
+
+
     // standalone test
     connect(ui->selFreq, SIGNAL(clicked(bool)), this, SLOT(selFreqClicked()));
     connect(ui->freqInputBox, SIGNAL(editingFinished()), this, SLOT(selFreqClicked()));
@@ -273,13 +275,18 @@ void RigControlMainWindow::initActionsConnections()
 void RigControlMainWindow::setupBandFreq()
 {
 
-    FreqPresetDialog  fPresetDialog(presetFreq, bands);
+    FreqPresetDialog  fPresetDialog(presetFreq, bands, freqPresetChanged);
 
     fPresetDialog.exec();
 
-
-
+    if (!freqPresetChanged)
+    {
+        logMessage(QString("RigControl: Band Freq Change, send new bandlist to logger"));
+        sendBandListLogger();
+        freqPresetChanged = false;
+    }
 }
+
 
 
 void RigControlMainWindow::currentRadioSettingChanged(QString radioName)

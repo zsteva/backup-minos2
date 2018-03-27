@@ -47,6 +47,8 @@ public:
     explicit RigControlMainWindow(QWidget *parent = 0);
     ~RigControlMainWindow();
 
+    bool freqPresetChanged = false;
+
 
 private:
 
@@ -187,6 +189,7 @@ private slots:
     void onSelectRadio(QString);
     void selFreqClicked();
     void setupBandFreq();
+    //void freqPresetChanged();
 signals:
 
 
