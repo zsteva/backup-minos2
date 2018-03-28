@@ -55,6 +55,15 @@ void RotatorRpc::publishAntennaList(QString ants)
     rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorList, ants, psPublished );
 }
 
+
+void RotatorRpc::publishPresetList(QString presets)
+{
+    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotPresetList, presets, psPublished );
+}
+
+
+
 void RotatorRpc::publishMaxAzimuth(const QString maxAzimuth)
 {
     static QString old;

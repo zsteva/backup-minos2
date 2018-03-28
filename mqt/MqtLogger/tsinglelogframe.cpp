@@ -121,6 +121,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     // From rotator controller
     connect(sendDM, SIGNAL(RotatorLoaded()), this, SLOT(on_RotatorLoaded()));
     connect(sendDM, SIGNAL(RotatorList(QString)), this, SLOT(on_RotatorList(QString)));
+    connect(sendDM, SIGNAL(RotatorPresetList(QString)), this, SLOT(on_RotatorPresetList(QString)));
     connect(sendDM, SIGNAL(RotatorState(QString)), this, SLOT(on_RotatorState(QString)));
     connect(sendDM, SIGNAL(RotatorBearing(QString)), this, SLOT(on_RotatorBearing(QString)));
     connect(sendDM, SIGNAL(RotatorMaxAzimuth(QString)), this, SLOT(on_RotatorMaxAzimuth(QString)));
@@ -1017,6 +1018,12 @@ void TSingleLogFrame::on_RotatorList(QString s)
 {
     ui->FKHRotControlFrame->setRotatorList(s);
 }
+
+void TSingleLogFrame::on_RotatorPresetList(QString s)
+{
+    ui->FKHRotControlFrame->setRotatorPresetList(s);
+}
+
 
 void TSingleLogFrame::on_RotatorState(QString s)
 {

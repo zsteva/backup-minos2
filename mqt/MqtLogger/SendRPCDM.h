@@ -63,6 +63,7 @@ signals:
 
       void RotatorLoaded();
       void RotatorList(QString);
+      void RotatorPresetList(QString);
       void RotatorState(QString);
       void RotatorBearing(QString);
       void RotatorMaxAzimuth(QString);

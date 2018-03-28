@@ -260,6 +260,10 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             {
                 emit RotatorList(an.getValue());
             }
+            if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotPresetList )
+            {
+                emit RotatorPresetList(an.getValue());
+            }
             if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorBearing)
             {
 

@@ -19,6 +19,7 @@
 #include "qsologframe.h"
 #include "ui_rotcontrolframe.h"
 #include "SendRPCDM.h"
+#include "rotpresetdialog.h"
 #include "rotatorCommonConstants.h"
 
 
@@ -50,10 +51,8 @@ RotControlFrame::RotControlFrame(QWidget *parent):
 
     connect(&MinosLoggerEvents::mle, SIGNAL(BrgStrToRot(QString)), this, SLOT(getBrgFrmQSOLog(QString)));
 
-    //redText = new QPalette();
-    //blackText = new QPalette();
-    //redText->setColor(QPalette::ButtonText, Qt::red);
-    //blackText->setColor(QPalette::ButtonText, Qt::black);
+    initPresetButtons();
+
 
     rot_left_button_off();
     rot_right_button_off();
@@ -447,6 +446,24 @@ void RotControlFrame::setRotatorList(QString s)
         //ui->antennaName->setCurrentText(ct->rotatorName.getValue());
 
 }
+void RotControlFrame::setRotatorPresetList(QString s)
+{
+    if (!s.isEmpty() && s.contains(':'))
+    {
+
+        rotPresets.clear();
+
+        QStringList presets = s.split(':');
+        for (int i = 0; i < presets.count(); i++)
+        {
+            QStringList p = presets[i].split(',');
+            rotPresets.append(new RotPreset(p[0].toInt(), p[1], p[2]));
+        }
+
+    }
+
+}
+
 void RotControlFrame::setRotatorState(const QString &s)
 {
        traceMsg("Set Rotator State = " + s);
@@ -695,3 +712,140 @@ void RotControlFrame::getRotDetails(memoryData::memData &m)
 {
     m.bearing = currentBearing;
 }
+
+
+
+/**************************** Quick Preset Buttons **************************/
+
+
+void RotControlFrame::initPresetButtons()
+{
+    presetButMap[0] = new PresetButton(ui->presetButton0, this, 0);
+    connect( presetButMap[0], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    presetButMap[1] = new PresetButton(ui->presetButton1, this, 1);
+    connect( presetButMap[1], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    presetButMap[2] = new PresetButton(ui->presetButton2, this, 2);
+    connect( presetButMap[2], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    presetButMap[3] = new PresetButton(ui->presetButton3, this, 3);
+    connect( presetButMap[3], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    presetButMap[4] = new PresetButton(ui->presetButton4, this, 4);
+    connect( presetButMap[4], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    presetButMap[5] = new PresetButton(ui->presetButton5, this, 5);
+    connect( presetButMap[5], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    presetButMap[6] = new PresetButton(ui->presetButton6, this, 6);
+    connect( presetButMap[6], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    presetButMap[7] = new PresetButton(ui->presetButton7, this, 7);
+    connect( presetButMap[7], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    presetButMap[8] = new PresetButton(ui->presetButton8, this, 8);
+    connect( presetButMap[8], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    presetButMap[9] = new PresetButton(ui->presetButton9, this, 9);
+    connect( presetButMap[9], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+
+}
+
+void RotControlFrame::presetButReadActSel(int buttonNumber)
+{
+
+
+
+}
+
+void RotControlFrame::presetButEditActSel(int buttonNumber)
+{
+    RotPresetData editData;
+    RotPresetData curData;
+
+    traceMsg(QString("RotFrame: Preset Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
+    RotPresetDialog presetDialog(editData, curData, this);
+    presetDialog.setWindowTitle(QString("Rotator Preset %1 - Edit").arg(QString::number(buttonNumber + 1)));
+    //runDialog.setLogData(&runData, buttonNumber);
+
+    if (presetDialog.exec() == QDialog::Accepted)
+    {
+        //setRunMemoryData(buttonNumber, runData);
+        //runButtonUpdate(buttonNumber);
+    }
+}
+
+void RotControlFrame::presetButClearActSel(int buttonNumber)
+{
+
+}
+
+void RotControlFrame::presetButtonUpdate(int buttonNumber)
+{
+
+}
+
+void RotControlFrame::presetButWriteActSel(int buttonNumber)
+{
+
+}
+
+PresetButton::PresetButton(QToolButton *b, RotControlFrame *rcf, int num)
+{
+    presetNo = num;
+    rotControlFrame = rcf;
+
+    presetButton = b;
+
+    presetMenu = new QMenu(presetButton);
+
+    presetButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    presetButton->setPopupMode(QToolButton::MenuButtonPopup);
+    presetButton->setFocusPolicy(Qt::NoFocus);
+    presetButton->setText(QString::number(num+1));
+
+    //shortKey = new QShortcut(QKeySequence(runButShortCut[memNo]), memButton);
+    //shiftShortKey = new QShortcut(QKeySequence(runButShiftShortCut[memNo]), memButton);
+    readAction = new QAction("&Read", presetButton);
+    writeAction = new QAction("&Write",presetButton);
+    editAction = new QAction("&Edit", presetButton);
+    clearAction = new QAction("&Clear",presetButton);
+    presetMenu->addAction(readAction);
+    presetMenu->addAction(writeAction);
+    presetMenu->addAction(editAction);
+    presetMenu->addAction(clearAction);
+    presetButton->setMenu(presetMenu);
+
+    //connect(shortKey, SIGNAL(activated()), this, SLOT(readActionSelected()));
+    //connect(shiftShortKey, SIGNAL(activated()), this, SLOT(memoryShortCutSelected()));
+    connect(presetButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
+    connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()));
+    connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()));
+    connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()));
+    connect( clearAction, SIGNAL( triggered() ), this, SLOT(clearActionSelected()));
+}
+PresetButton::~PresetButton()
+{
+//    delete memButton;
+}
+void PresetButton::presetUpdate()
+{
+    rotControlFrame->presetButtonUpdate(presetNo);
+}
+
+void PresetButton::presetShortCutSelected()
+{
+//    rigControlFrame->memoryShortCutSelected(memNo);
+    presetButton->showMenu();
+    //emit lostFocus();
+}
+void PresetButton::readActionSelected()
+{
+    rotControlFrame->presetButReadActSel(presetNo);
+}
+void PresetButton::editActionSelected()
+{
+    rotControlFrame->presetButEditActSel(presetNo);
+}
+void PresetButton::writeActionSelected()
+{
+    rotControlFrame->presetButWriteActSel(presetNo);
+}
+void PresetButton::clearActionSelected()
+{
+    emit clearActionSelected(presetNo);
+}
+
+

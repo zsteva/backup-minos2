@@ -266,9 +266,9 @@ bool BandList::findBand(double freq, BandInfo &bi)
 
 
 
-BandDetail::BandDetail(QString _name, double flow, double fhigh)
+BandDetail::BandDetail(QString _name, double _flow, double _fhigh)
 {
     name = _name;
-    fLow = flow;;
-    fHigh = fhigh;
+    fLow = _flow;;
+    fHigh = _fhigh;
 }

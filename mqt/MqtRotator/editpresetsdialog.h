@@ -26,6 +26,26 @@ namespace Ui {
 class EditPresetsDialog;
 }
 
+
+class RotPreset
+{
+
+public:
+
+    RotPreset(int _number, QString _name, QString _bearing)
+    {
+        number = _number;
+        name = _name;
+        bearing = _bearing;
+    }
+
+    int number = 0;
+    QString name;
+    QString bearing;
+
+};
+
+
 class EditPresetsDialog : public QDialog
 {
     Q_OBJECT
@@ -57,9 +77,10 @@ private:
 
     QLineEdit* presetNameLineEdit[NUM_PRESETS];
     QLineEdit* presetBearingLineEdit[NUM_PRESETS];
-    QString presetName[NUM_PRESETS];
+    QVector<RotPreset*> rotPresets;
+    //QString presetName[NUM_PRESETS];
     bool presetNameUpdated[NUM_PRESETS];
-    QString presetBearing[NUM_PRESETS];
+    //QString presetBearing[NUM_PRESETS];
     bool presetBearingUpdated[NUM_PRESETS];
     bool presetValueChanged;
     void getPresets();

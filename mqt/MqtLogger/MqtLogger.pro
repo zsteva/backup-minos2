@@ -74,7 +74,8 @@ SOURCES += main.cpp \
     MatchTreesFrame.cpp \
     runbuttondialog.cpp \
     RigMemoryFrame.cpp \
-    locTreeFrame.cpp
+    locTreeFrame.cpp \
+    rotpresetdialog.cpp
 
 HEADERS  += \
     tlogcontainer.h \
@@ -121,7 +122,8 @@ HEADERS  += \
     MatchTreesFrame.h \
     runbuttondialog.h \
     RigMemoryFrame.h \
-    locTreeFrame.h
+    locTreeFrame.h \
+    rotpresetdialog.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
@@ -153,7 +155,8 @@ FORMS    += tlogcontainer.ui \
     MatchTreesFrame.ui \
     runbuttondialog.ui \
     RigMemoryFrame.ui \
-    locTreeFrame.ui
+    locTreeFrame.ui \
+    rotpresetdialog.ui
 
 
 DISTFILES += \

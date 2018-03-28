@@ -153,6 +153,7 @@ private slots:
 
     void on_RotatorLoaded();
     void on_RotatorList(QString);
+    void on_RotatorPresetList(QString);
     void on_RotatorState(QString);
     void on_RotatorBearing(QString);
     void on_RotatorMaxAzimuth(QString);
