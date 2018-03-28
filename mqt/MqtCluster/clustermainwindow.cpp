@@ -18,6 +18,7 @@ ClusterMainWindow::ClusterMainWindow(QWidget *parent) :
 
     // get list of clusters
     getClusterAddresses();
+    loadNodesSelectBox();
 
 
 
@@ -198,6 +199,16 @@ int ClusterMainWindow::upackSpot(QString txt)
 }
 
 
+void ClusterMainWindow::loadNodesSelectBox()
+{
+    ui->nodeCb->addItem("");
+    for (int i = 0; i < numClusterSites; i++)
+    {
+        ui->nodeCb->addItem(availClusters[i]->name);
+    }
+}
+
+
 bool ClusterMainWindow::getClusterAddresses()
 {
 
@@ -214,9 +225,12 @@ bool ClusterMainWindow::getClusterAddresses()
         availClusters.clear();
         for (int i = 0; i < numClusterSites; i++)
         {
+            config.beginGroup(clusterSiteNames[i]);
             availClusters.append(new ClusterAddress(clusterSiteNames[i],
                                                     config.value("address", "").toString(),
-                                                    config.value("port", "").toString()));
+                                                    config.value("port", "").toString(),
+                                                    config.value("password", "").toString()));
+            config.endGroup();
         }
         return true;
     }
