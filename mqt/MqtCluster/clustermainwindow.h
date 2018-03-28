@@ -18,16 +18,18 @@ class ClusterAddress
 {
 
 public:
-    ClusterAddress(QString _name, QString _add, QString _port)
+    ClusterAddress(QString _name, QString _add, QString _port, QString _password)
     {
         name = _name;
         address = _add;
         port = _port;
+        password = _password;
     }
 
     QString name;
     QString address;
     QString port;
+    QString password;
 
 
 };
@@ -70,6 +72,7 @@ private:
     void txText(QString msg);
     int upackSpot(QString txt);
     bool getClusterAddresses();
+    void loadNodesSelectBox();
 };
 
 #endif // CLUSTERMAINWINDOW_H
