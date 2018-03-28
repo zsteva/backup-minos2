@@ -236,35 +236,19 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     {
         logMessage((QString("Read Current Antenna for Local selection")));
 
-     }
-
-     setupAntenna->readCurrentAntenna();
-     ui->selectAntennaBox->setCurrentText(setupAntenna->currentAntennaName);
-     //int currentAntIdx = setupAntenna->findCurrentAntenna(setupAntenna->currentAntennaName);
-
-     //if (setupAntenna->currentAntennaName == "" || currentAntIdx >= setupAntenna->numAvailAntennas)
-     if (setupAntenna->currentAntennaName == "")
+        setupAntenna->readCurrentAntenna();
+        ui->selectAntennaBox->setCurrentText(setupAntenna->currentAntennaName);
+        if (setupAntenna->currentAntennaName == "")
         {
-         logMessage(QString("No antenna selected or no antenna found for this appName, %1").arg(appName));
-         QString errmsg = "<font color='Red'>Please select an antenna or no antenna found!</font>";
+            logMessage(QString("No antenna selected or no antenna found for this appName, %1").arg(appName));
+            QString errmsg = "<font color='Red'>Please select an antenna or no antenna found!</font>";
             showStatusMessage(errmsg);
             statusMsg = errmsg;
             sendStatusLogger();
         }
-     //else
-     //{
-     //    if (currentAntIdx < setupAntenna->numAvailAntennas)
-     //    {
-     //        // point available antenna to current antenna
-     //        setupAntenna->currentAntenna = setupAntenna->availAntData[i];
-     //    }
-
-
-
-     //}
 
         upDateAntenna();
-
+    }
 
     trace("*** Rotator Started ***");
 }
@@ -357,6 +341,8 @@ void RotatorMainWindow::onLoggerSelectAntenna(QString s)
     ui->selectAntennaBox->setCurrentText(s);
     setupAntenna->currentAntennaName = s;
     setupAntenna->saveCurrentAntenna();
+
+    msg->rotatorCache.invalidate();
 
     if (!s.isEmpty() && s == oldAntenna)
     {
@@ -565,6 +551,9 @@ void RotatorMainWindow::sendStatusLogger( )
    {
         msg->publishState(setupAntenna->currentAntennaName, message);
    }
+   PubSubName psname(setupAntenna->currentAntennaName);
+   msg->rotatorCache.setStatus(psname, message);
+   msg->rotatorCache.publishState();
 }
 
 void RotatorMainWindow::sendAntennaListLogger()
@@ -725,6 +714,10 @@ void RotatorMainWindow::displayBearing(int bearing)
         }
         QString s = QString("%1:%2:%3").arg(QString::number(displayBearing)).arg(QString::number(rotatorBearing)).arg(ol);
         msg->publishBearing(setupAntenna->currentAntennaName, s);
+
+        PubSubName psname(setupAntenna->currentAntennaName);
+        msg->rotatorCache.setBearing(psname, s);
+        msg->rotatorCache.publishState();
     }
 
     //qDebug() << QString("Bearing = %1").arg(displayBearing);
@@ -971,6 +964,9 @@ void RotatorMainWindow::upDateAntenna()
                sendStatusToLogStop();
                msg->publishMaxAzimuth(setupAntenna->currentAntennaName, QString::number(setupAntenna->currentAntenna.max_azimuth));
                msg->publishMinAzimuth(setupAntenna->currentAntennaName, QString::number(setupAntenna->currentAntenna.min_azimuth));
+               PubSubName psname(setupAntenna->currentAntennaName);
+               msg->rotatorCache.setMaxAzimuth(psname, setupAntenna->currentAntenna.max_azimuth);
+               msg->rotatorCache.setMinAzimuth(psname, setupAntenna->currentAntenna.min_azimuth);
            }
         }
     }
@@ -982,8 +978,11 @@ void RotatorMainWindow::upDateAntenna()
         if (appName.length() > 0)
         {
             writeWindowTitle(appName);
-            msg->publishMaxAzimuth("", QString::number(0));
-            msg->publishMinAzimuth("", QString::number(0));
+            //msg->publishMaxAzimuth("", QString::number(0));
+            //msg->publishMinAzimuth("", QString::number(0));
+            PubSubName psname;
+            //msg->rotatorCache.setMaxAzimuth(psname, 0);
+            //msg->rotatorCache.setMinAzimuth(psname, 0);
             sendStatusToLogDisConnected();
             sendStatusToLogStop();
         }

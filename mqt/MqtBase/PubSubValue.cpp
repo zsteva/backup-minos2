@@ -58,11 +58,11 @@ PubSubName::PubSubName(const QString &s)
         }
     }
 }
-bool PubSubName::isEmpty()
+bool PubSubName::isEmpty() const
 {
     return _server.isEmpty() && _appName.isEmpty() && _key.isEmpty();
 }
-QString PubSubName::toString()
+QString PubSubName::toString() const
 {
     if (isEmpty())
         return QString();

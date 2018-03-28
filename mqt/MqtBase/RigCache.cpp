@@ -9,6 +9,17 @@ QString RigCache::getStateString(const PubSubName &name) const
     QString val = rigStates[name].pack();
     return val;
 }
+void RigCache::invalidate()
+{
+    for(QMap<PubSubName, RigState>::iterator i = rigStates.begin(); i != rigStates.end(); i++ )
+    {
+        i->setDirty();
+    }
+    for(QMap<PubSubName, RigDetails>::iterator i = rigDetails.begin(); i != rigDetails.end(); i++ )
+    {
+        i->setDirty();
+    }
+}
 void RigCache::setStateString(const AnalysePubSubNotify & an)
 {
     RigState &as = rigStates[PubSubName(an)];
@@ -31,16 +42,28 @@ void RigCache::addRigList(const QString &s)
     {
         PubSubName psn(l);
         if (!rigList.contains(psn))
+        {
             rigList.push_back(psn);
+            rigStates[psn] = RigState();
+            rigDetails[psn] = RigDetails();
+        }
     }
     qSort(rigList);
 }
+RigState &RigCache::getState(const PubSubName &p)
+{
+    return rigStates[p];
+}
+RigDetails &RigCache::getDetails(const PubSubName &p)
+{
+    return rigDetails[p];
+}
 
-void RigCache::setState(const PubSubName &name, RigState &state)
+void RigCache::setState(const PubSubName &name, const RigState &state)
 {
     rigStates[name] = state;
 }
-void RigCache::setDetails(const PubSubName &name, RigDetails &details)
+void RigCache::setDetails(const PubSubName &name, const RigDetails &details)
 {
     rigDetails[name] = details;
 }
@@ -50,9 +73,15 @@ void RigCache::setSelected(const PubSubName &name, const QString &sel)
     for(QMap<PubSubName, RigState>::iterator i = rigStates.begin(); i != rigStates.end(); i++ )
     {
         if (i.key() == name)
+        {
             i.value().setSelected(sel);
-        else
+            trace("selecting rig " + i.key().toString() + "  " + sel);
+        }
+        else if (!i.value().selected().isEmpty())
+        {
+            trace("de-selecting rig " + i.key().toString());
             i.value().setSelected("");
+        }
     }
 }
 PubSubName RigCache::getSelected()

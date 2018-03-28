@@ -25,7 +25,7 @@ RigState::~RigState()
 {
 
 }
-bool RigState::isDirty()
+bool RigState::isDirty() const
 {
     return  _status.isDirty() ||
             _selected.isDirty() ||
@@ -38,6 +38,14 @@ void RigState::clearDirty()
     _selected.clearDirty();
     _freq.clearDirty();
     _mode.clearDirty();
+
+}
+void RigState::setDirty()
+{
+    _status.setDirty();
+    _selected.setDirty();
+    _freq.setDirty();
+    _mode.setDirty();
 
 }
 void RigState::setSelected(const QString &selected)

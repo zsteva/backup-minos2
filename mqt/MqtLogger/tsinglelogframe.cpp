@@ -258,8 +258,8 @@ void TSingleLogFrame::on_ContestPageChanged ()
        return ;
     }
 
-    trace("on_ContestPageChanged to current frame");
     LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( getContest() );
+    trace("on_ContestPageChanged to " + ct->name.getValue() + " uuid " + ct->uuid);
     TContestApp::getContestApp() ->setCurrentContest( ct );
     ui->matchTreesFrame->setContest(ct);
     MinosLoggerEvents::sendSetStackContest(ct);

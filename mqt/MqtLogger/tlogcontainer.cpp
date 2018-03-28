@@ -76,6 +76,9 @@ TLogContainer::~TLogContainer()
 }
 void TLogContainer::subscribeApps()
 {
+    trace("subscribeApps");
+    sendDM->invalidateCache();
+
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
     MinosConfig *config = MinosConfig::getMinosConfig();
 
@@ -96,6 +99,7 @@ void TLogContainer::subscribeApps()
         rpc->subscribeRemote( servers[i], rpcConstants::RotatorCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::rotatorDetailCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::rotatorStateCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::rigDetailsCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::rigStateCategory );
     }
 }

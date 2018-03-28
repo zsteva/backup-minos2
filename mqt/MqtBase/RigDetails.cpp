@@ -26,7 +26,7 @@ RigDetails::~RigDetails()
 {
 
 }
-bool RigDetails::isDirty()
+bool RigDetails::isDirty() const
 {
     return
             _transverterOffset.isDirty() ||
@@ -41,6 +41,14 @@ void RigDetails::clearDirty()
     _transverterStatus.clearDirty();
     _bandList.clearDirty();
 }
+void RigDetails::setDirty()
+{
+    _transverterOffset.setDirty();
+    _transverterSwitch.setDirty();
+    _transverterStatus.setDirty();
+    _bandList.setDirty();
+}
+
 
 void RigDetails::setTransverterOffset(double transverterOffset)
 {

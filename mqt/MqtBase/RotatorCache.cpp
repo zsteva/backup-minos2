@@ -6,6 +6,18 @@ RotatorCache::RotatorCache()
 {
 
 }
+void RotatorCache::invalidate()
+{
+    for(QMap<PubSubName, AntennaState>::iterator i = rotStates.begin(); i != rotStates.end(); i++ )
+    {
+        i->setDirty();
+    }
+    for(QMap<PubSubName, AntennaDetail>::iterator i = rotDetails.begin(); i != rotDetails.end(); i++ )
+    {
+        i->setDirty();
+    }
+}
+
 void RotatorCache::addRotList(const QString &s)
 {
     QStringList list = s.split(":");
@@ -13,9 +25,21 @@ void RotatorCache::addRotList(const QString &s)
     {
         PubSubName psn(l);
         if (!rotList.contains(psn))
+        {
             rotList.push_back(psn);
+            rotStates[psn] = AntennaState();
+            rotDetails[psn] = AntennaDetail();
+        }
     }
     qSort(rotList);
+}
+AntennaState &RotatorCache::getState(const PubSubName &p)
+{
+    return rotStates[p];
+}
+AntennaDetail &RotatorCache::getDetails(const PubSubName &p)
+{
+    return rotDetails[p];
 }
 
 QString RotatorCache::getDetailString(const PubSubName &name) const
@@ -56,9 +80,15 @@ void RotatorCache::setSelected(const PubSubName &name, const QString &sel)
     for(QMap<PubSubName, AntennaState>::iterator i = rotStates.begin(); i != rotStates.end(); i++ )
     {
         if (i.key() == name)
+        {
             i.value().setSelected(sel);
-        else
+            trace("selecting rotator " + i.key().toString() + "  " + sel);
+        }
+        else if (!i.value().selected().isEmpty())
+        {
+            trace("de-selecting rotator " + i.key().toString());
             i.value().setSelected("");
+        }
     }
 }
 PubSubName RotatorCache::getSelected()
@@ -78,7 +108,7 @@ void RotatorCache::setStatus(const PubSubName &name, const QString &state)
 {
     rotStates[name].setState(state);
 }
-void RotatorCache::setBearing(const PubSubName &name, int bearing)
+void RotatorCache::setBearing(const PubSubName &name, const QString &bearing)
 {
     rotStates[name].setBearing(bearing);
 }
@@ -98,7 +128,7 @@ void RotatorCache::publishState()
     {
         if (i.value().isDirty())
         {
-            rpc->publish(rpcConstants::rotatorDetailCategory, i.key().key(), i.value().pack(), psPublished);
+            rpc->publish(rpcConstants::rotatorStateCategory, i.key().key(), i.value().pack(), psPublished);
             rotStates[i.key()].clearDirty();
         }
     }
@@ -111,7 +141,7 @@ void RotatorCache::publishDetails()
     {
         if (i.value().isDirty())
         {
-            rpc->publish(rpcConstants::rotatorStateCategory, i.key().key(), i.value().pack(), psPublished);
+            rpc->publish(rpcConstants::rotatorDetailCategory, i.key().key(), i.value().pack(), psPublished);
             rotDetails[i.key()].clearDirty();
         }
     }

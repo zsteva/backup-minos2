@@ -13,6 +13,8 @@ class RigCache
 public:
     RigCache();
 
+    void invalidate();
+
     void publishState();
     void publishDetails();
 
@@ -21,11 +23,13 @@ public:
     QString getDetailsString(const PubSubName &name) const;
     void setDetailsString(const AnalysePubSubNotify & an);
 
-    void setState(const PubSubName &name, RigState &state);
-    void setDetails(const PubSubName &name, RigDetails &details);
+    void setState(const PubSubName &name, const RigState &state);
+    void setDetails(const PubSubName &name, const RigDetails &details);
 
     PubSubName getSelected();
 
+    RigState &getState(const PubSubName &p);
+    RigDetails &getDetails(const PubSubName &p);
     void setSelected(const PubSubName &name, const QString &selected);
     void setStatus(const PubSubName &name, const QString &status);
     void setFreq(const PubSubName &name, double freq);

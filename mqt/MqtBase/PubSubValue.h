@@ -35,8 +35,8 @@ public:
     bool operator== ( const PubSubName& rhs ) const;
     bool operator!= ( const PubSubName& rhs ) const;
 
-    bool isEmpty();
-    QString toString();
+    bool isEmpty() const;
+    QString toString() const;
     QString server() const;
     void setServer(const QString &server);
     QString appName() const;

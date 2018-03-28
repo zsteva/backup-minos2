@@ -13,6 +13,11 @@ class RotatorCache
 public:
     RotatorCache();
 
+    void invalidate();
+
+    AntennaState &getState(const PubSubName &p);
+    AntennaDetail &getDetails(const PubSubName &p);
+
     QString getDetailString(const PubSubName &name) const;
     void setDetailString(const AnalysePubSubNotify &an);
 
@@ -26,7 +31,7 @@ public:
 
     void setSelected(const PubSubName &name, const QString &sel);
     void setStatus(const PubSubName &name, const QString &state);
-    void setBearing(const PubSubName &name, int bearing);
+    void setBearing(const PubSubName &name, const QString &bearing);
 
     void setMinAzimuth(const PubSubName &name, int minaz);
     void setMaxAzimuth(const PubSubName &name, int maxaz);

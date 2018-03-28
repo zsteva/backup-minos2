@@ -23,7 +23,7 @@
 #include "SendRPCDM.h"
 #include "tsinglelogframe.h"
 #include "tlogcontainer.h"
-
+#include "rigutils.h"
 //---------------------------------------------------------------------------
 TSendDM::TSendDM(QWidget* Owner )
       : QObject( Owner )
@@ -35,6 +35,11 @@ TSendDM::TSendDM(QWidget* Owner )
 }
 TSendDM::~TSendDM()
 {
+}
+void TSendDM::invalidateCache()
+{
+    rigCache.invalidate();
+    rotatorCache.invalidate();
 }
 //---------------------------------------------------------------------------
 void TSendDM::sendKeyerPlay( TSingleLogFrame *tslf, int fno )
@@ -140,7 +145,9 @@ void TSendDM::changeRotatorSelectionTo(const PubSubName &name, const QString &uu
 
     PubSubName selected = rotatorCache.getSelected();
 
-    if (!selected.isEmpty())
+    rotatorCache.setSelected(name, uuid);
+
+    if (!selected.isEmpty() && selected != name)
         sendRotatorSelection(selected, "");
     sendRotatorSelection(name, uuid);
 }
@@ -163,7 +170,9 @@ void TSendDM::changeRigSelectionTo(const PubSubName &name, const QString &mode, 
 
     PubSubName selected = rigCache.getSelected();
 
-    if (!selected.isEmpty())
+    rigCache.setSelected(name, uuid);
+
+    if (!selected.isEmpty() && selected != name)
         sendRigSelection(selected, "", "");
     sendRigSelection(name, mode, uuid);
 }
@@ -228,17 +237,105 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             {
                  rigCache.setDetailsString(an);
             }
-            else if ( an.getCategory() == rpcConstants::rotatorDetailCategory )
-            {
-                rotatorCache.setDetailString(an);
-            }
             else if ( an.getCategory() == rpcConstants::rotatorStateCategory )
             {
                 rotatorCache.setStateString(an);
             }
+            else if ( an.getCategory() == rpcConstants::rotatorDetailCategory )
+            {
+                rotatorCache.setDetailString(an);
+            }
+            else if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioList )
+            {
+                rigCache.addRigList(an.getValue());
+                emit setRadioLoaded();
+                emit setRadioList(an.getValue());
+            }
+            else if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorList )
+            {
+                rotatorCache.addRotList(an.getValue());
+                emit RotatorLoaded();
+                emit RotatorList(an.getValue());
+            }
         }
 
         QVector<TSingleLogFrame *> frames = LogContainer->getLogFrames();
+        {
+
+            PubSubName rigSelected = rigCache.getSelected();
+            if (!rigSelected.isEmpty())
+            {
+                RigState &selState = rigCache.getState(rigSelected);
+                QString selUuid = selState.selected();
+                if (!selUuid.isEmpty())
+                {
+                    for (int i = 0; i < frames.size(); i++)
+                    {
+                       TSingleLogFrame *tslf = frames[i];
+                       QString frameUuid = tslf->getContest()->uuid;
+
+                       if (selUuid == frameUuid)
+                       {
+                           RigDetails &selDetail = rigCache.getDetails(rigSelected);
+
+                           if (selState.isDirty())
+                           {
+                               emit setMode( selState.mode() );
+                               emit setFreq( convertFreqToStr(selState.freq()) );
+                               emit setRadioState( selState.status() );
+
+                               selState.clearDirty();
+
+                           }
+                           if (selDetail.isDirty())
+                           {
+                               emit setBandList(selDetail.bandList());
+                               emit setRadioTxVertStatus( selDetail.transverterStatus()?"true":"false" );
+                               selDetail.clearDirty();
+
+                           }
+                           break;
+                       }
+                    }
+                }
+            }
+            {
+                PubSubName rotSelected = rotatorCache.getSelected();
+                if (!rotSelected.isEmpty())
+                {
+                    AntennaState &selState = rotatorCache.getState(rotSelected);
+                    QString selUuid = selState.selected();
+                    if (!selUuid.isEmpty())
+                    {
+                        for (int i = 0; i < frames.size(); i++)
+                        {
+                           TSingleLogFrame *tslf = frames[i];
+                           QString frameUuid = tslf->getContest()->uuid;
+
+                           if (selUuid == frameUuid)
+                           {
+                               AntennaDetail &selDetail = rotatorCache.getDetails(rotSelected);
+
+                               if (selState.isDirty())
+                               {
+                                   emit RotatorBearing(selState.bearing());
+                                   emit RotatorState(selState.state());
+                                   selState.clearDirty();
+
+                               }
+                               if (selDetail.isDirty())
+                               {
+                                   emit RotatorMaxAzimuth(QString::number(selDetail.maxAzimuth()));
+                                   emit RotatorMinAzimuth(QString::number(selDetail.minAzimuth()));
+                                   selDetail.clearDirty();
+                               }
+                               break;
+                           }
+                        }
+                    }
+                }
+            }
+        }
         for (int i = 0; i < frames.size(); i++)
         {
            TSingleLogFrame *tslf = frames[i];
@@ -253,6 +350,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                     break;
                 }
             }
+           /*
             if (an.getPublisherProgram() == tslf->rigServerConnectable.remoteAppName && an.getPublisherServer() == tslf->rigServerConnectable.serverName)
             {
                 if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlStatus )
@@ -294,6 +392,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                     break;
                 }
             }
+            */
             if (an.getPublisherProgram() == tslf->bandMapServerConnectable.remoteAppName && an.getPublisherServer() == tslf->bandMapServerConnectable.serverName)
             {
                 if ( an.getCategory() == rpcConstants::BandMapCategory && an.getKey() == rpcConstants::bandmapKeyLoaded )
@@ -302,6 +401,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                     break;
                 }
             }
+            /*
             if (an.getPublisherProgram() == tslf->rotatorServerConnectable.remoteAppName && an.getPublisherServer() == tslf->rotatorServerConnectable.serverName)
             {
                 if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorState)
@@ -333,6 +433,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                     break;
                 }
             }
+            */
         }
     }
 

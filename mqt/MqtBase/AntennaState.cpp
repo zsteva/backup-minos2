@@ -3,7 +3,7 @@
 #include "MTrace.h"
 
 
-void AntennaState::setBearing(int bearing)
+void AntennaState::setBearing(const QString &bearing)
 {
     _bearing.setValue(bearing);
 }
@@ -26,7 +26,7 @@ AntennaState::~AntennaState()
 {
     qRegisterMetaType< AntennaState > ( "AntennaState" );
 }
-bool AntennaState::isDirty()
+bool AntennaState::isDirty() const
 {
     return (_selected.isDirty() || _state.isDirty() || _bearing.isDirty());
 }
@@ -36,7 +36,12 @@ void AntennaState::clearDirty()
     _state.clearDirty();
     _bearing.clearDirty();
 }
-
+void AntennaState::setDirty()
+{
+    _selected.setDirty();
+    _state.setDirty();
+    _bearing.setDirty();
+}
 
 QString AntennaState::pack() const
 {
@@ -59,7 +64,7 @@ void AntennaState::unpack(QString s)
     if (!err.error)
     {
         _selected.setValue(json.object().value(rpcConstants::selected).toString());
-        _bearing.setValue(json.object().value(rpcConstants::rotatorBearing).toInt());
+        _bearing.setValue(json.object().value(rpcConstants::rotatorBearing).toString());
         _state.setValue(json.object().value(rpcConstants::rotatorState).toString());
     }
     else
@@ -73,7 +78,7 @@ QString AntennaState::state() const
     return _state.getValue();
 }
 
-int AntennaState::bearing() const
+QString AntennaState::bearing() const
 {
     return _bearing.getValue();
 }

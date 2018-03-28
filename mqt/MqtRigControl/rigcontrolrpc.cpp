@@ -45,7 +45,9 @@ RigControlRpc::RigControlRpc(RigControlMainWindow *parent) : QObject(parent), pa
 void RigControlRpc::publishRadioNames(QStringList radios)
 {
     MinosRPC *rpc = MinosRPC::getMinosRPC();
+
     QString nameList = radios.join(":");
+    rigCache.addRigList(nameList);
     rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlRadioList, nameList, psPublished );
 }
 
@@ -53,7 +55,7 @@ void RigControlRpc::publishBandNames(QStringList bands)
 {
     MinosRPC *rpc = MinosRPC::getMinosRPC();
     QString bandList = bands.join(":");
-    rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlBandList, bandList, psPublished );
+    //rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlBandList, bandList, psPublished );
 }
 
 
@@ -68,7 +70,7 @@ void RigControlRpc::publishRadioName(const QString &radioName)
        trace(QString("Rig RPC: Publish radioName = %1").arg(radioName));
        old = radioName;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlRadioName, radioName, psPublished );
+       //rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlRadioName, radioName, psPublished );
     }
 }
 
@@ -81,7 +83,7 @@ void RigControlRpc::publishState(const QString &state)
         trace(QString("Rig RPC: Publish State = %1").arg(state));
        old = state;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlStatus, state, psPublished );
+       //rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlStatus, state, psPublished );
     }
 }
 
@@ -93,7 +95,7 @@ void RigControlRpc::publishErrorMsg(const QString &errorMsg)
         trace(QString("Rig RPC: Publish Error Message = %1").arg(errorMsg));
        old = errorMsg;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlErrorMsg, errorMsg, psPublished );
+       //rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlErrorMsg, errorMsg, psPublished );
     }
 }
 
@@ -106,7 +108,7 @@ void RigControlRpc::publishFreq(const QString &freq)
         trace(QString("Rig RPC: Publish Freq = %1").arg(freq));
         old = freq;
         MinosRPC *rpc = MinosRPC::getMinosRPC();
-        rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlFreq, freq, psPublished );
+        //rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlFreq, freq, psPublished );
     }
 }
 
@@ -120,7 +122,7 @@ void RigControlRpc::publishMode(const QString &mode)
         trace(QString("Rig RPC: Publish Mode = %1").arg(mode));
        old = mode;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlMode, mode, psPublished );
+       //rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlMode, mode, psPublished );
     }
 }
 
@@ -136,7 +138,7 @@ void RigControlRpc::publishTransVertStatus(const QString &status)
         trace(QString("Rig RPC: Publish TransVert Status = %1").arg(status));
        old = status;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlTxVertStatus, status, psPublished );
+       //rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlTxVertStatus, status, psPublished );
     }
 }
 
@@ -166,7 +168,7 @@ void RigControlRpc::publishTransVertOffSetFreq(bool offSet, const QString &freq)
        old = freq;
        offSign = offSet;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlTxVertOffsetFreq, msg, psPublished );
+       //rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlTxVertOffsetFreq, msg, psPublished );
     }
 }
 
@@ -179,7 +181,7 @@ void RigControlRpc::publishTransVertSwitch(const QString &swNum)
         trace(QString("Rig RPC: Publish TransVert Switch Number = %1").arg(swNum));
        old = swNum;
        MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlTxVertSwitch, swNum, psPublished );
+       //rpc->publish( rpcConstants::rigControlCategory, rpcConstants::rigControlTxVertSwitch, swNum, psPublished );
     }
 }
 
@@ -211,6 +213,7 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
         QSharedPointer<RPCParam> psFreq;
         QSharedPointer<RPCParam> psMode;
         QSharedPointer<RPCParam> psName;
+        QSharedPointer<RPCParam> psSelect;
 
         RPCArgs *args = mro->getCallArgs();
         if ( args->getStructArgMember( 0, rpcConstants::rigControlFreq, psFreq ))
@@ -233,10 +236,21 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
                 QString mode;
                 if ( args->getStructArgMember( 0, rpcConstants::rigControlMode, psMode ) )
                 {
-                         if ( psMode->getString( mode ) )
+                     if ( psMode->getString( mode ) )
+                     {
+                         // here you handle what the logger has sent to us
+                        trace(QString("Rig RPC: Mode Command From Logger = %1").arg(mode));
+                     }
+                }
+                QString sel;
+                if ( args->getStructArgMember( 0, rpcConstants::selected, psSelect ) )
+                {
+                         if ( psSelect->getString( sel ) )
                          {
                              // here you handle what the logger has sent to us
-                            trace(QString("Rig RPC: Mode Command From Logger = %1").arg(mode));
+                            PubSubName psn(name);
+                            rigCache.setSelected(psn, sel);
+                            trace(QString("Rig RPC: select Command From Logger = %1 psn=%2, sel=%3").arg(sel).arg(psn.toString()).arg(sel));
                          }
                 }
                 emit selectLoggerRadio(name, mode);

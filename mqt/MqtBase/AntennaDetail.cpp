@@ -21,7 +21,7 @@ AntennaDetail::~AntennaDetail()
     qRegisterMetaType< AntennaDetail > ( "AntennaDetail" );
 
 }
-bool AntennaDetail::isDirty()
+bool AntennaDetail::isDirty() const
 {
     return (_minAzimuth.isDirty() || _maxAzimuth.isDirty());
 }
@@ -29,6 +29,11 @@ void AntennaDetail::clearDirty()
 {
     _minAzimuth.clearDirty();
     _maxAzimuth.clearDirty();
+}
+void AntennaDetail::setDirty()
+{
+    _minAzimuth.setDirty();
+    _maxAzimuth.setDirty();
 }
 QString AntennaDetail::pack() const
 {
