@@ -13,6 +13,17 @@
 QVector<RPCSubscriber *> subscribeList;
 QVector<RPCPublisher *> publishList;
 
+RPCPublishClient::~RPCPublishClient()
+{}
+RPCSubscribeClient::~RPCSubscribeClient()
+{}
+RPCRemoteSubscribeClient::~RPCRemoteSubscribeClient()
+{}
+RPCNotifyServer::~RPCNotifyServer()
+{}
+RPCPublisher::~RPCPublisher()
+{}
+
 bool RPCSubscriber::isEqual( const QString &pcategory )
 {
    return ( pcategory == category );
@@ -23,7 +34,7 @@ bool RPCSubscriber::isRemoteEqual( const QString &/*pserver*/, const QString &/*
 }
 void RPCSubscriber::testAndSubscribe( const QString &category )
 {
-   RPCSubscriber * sub = 0;
+   RPCSubscriber * sub = nullptr;
    for ( QVector<RPCSubscriber *>::iterator i = subscribeList.begin(); i != subscribeList.end(); i++ )
    {
       if ( ( *i ) ->isEqual( category ) )
@@ -48,7 +59,7 @@ bool RPCRemoteSubscriber::isRemoteEqual( const QString &pServer, const QString &
 }
 void RPCRemoteSubscriber::testAndSubscribe( const QString &server, const QString &category )
 {
-   RPCRemoteSubscriber * sub = 0;
+   RPCRemoteSubscriber * sub = nullptr;
    for ( QVector<RPCSubscriber *>::iterator i = subscribeList.begin(); i != subscribeList.end(); i++ )
    {
       if ( ( *i ) ->isRemoteEqual( server, category ) )
@@ -72,7 +83,7 @@ void RPCRemoteSubscriber::testAndSubscribe( const QString &server, const QString
 }
 void RPCSubscriber::reSubscribe()
 {
-   RPCSubscribeClient rsc( 0 );
+   RPCSubscribeClient rsc( nullptr );
    QSharedPointer<RPCParam>st(new RPCParamStruct);
    QSharedPointer<RPCParam>sServer(new RPCStringParam( "localhost" ));
    QSharedPointer<RPCParam>sCat(new RPCStringParam( category ));
@@ -84,7 +95,7 @@ void RPCSubscriber::reSubscribe()
 // client resubscribing to remote event
 void RPCRemoteSubscriber::reSubscribe()
 {
-   RPCRemoteSubscribeClient rsc( 0 );
+   RPCRemoteSubscribeClient rsc( nullptr );
    QSharedPointer<RPCParam>st(new RPCParamStruct);
    QSharedPointer<RPCParam>sServer(new RPCStringParam( server ));
    QSharedPointer<RPCParam>sCat(new RPCStringParam( category ));
@@ -96,7 +107,7 @@ void RPCRemoteSubscriber::reSubscribe()
 
 void RPCPublisher::testAndPublish( const QString &category, const QString &key, const QString &value, PublishState pState )
 {
-   RPCPublisher * pub = 0;
+   RPCPublisher * pub = nullptr;
    for ( QVector<RPCPublisher *>::iterator i = publishList.begin(); i != publishList.end(); i++ )
    {
       if ( ( *i ) ->category == category && ( *i ) ->key == key )
@@ -121,7 +132,7 @@ void RPCPublisher::testAndPublish( const QString &category, const QString &key, 
 }
 void RPCPublisher::rePublish()
 {
-   RPCPublishClient rpc( 0 );
+   RPCPublishClient rpc( nullptr );
    QSharedPointer<RPCParam>st(new RPCParamStruct);
    QSharedPointer<RPCParam>sCat(new RPCStringParam( category ));
    QSharedPointer<RPCParam>sKey(new RPCStringParam( key ));

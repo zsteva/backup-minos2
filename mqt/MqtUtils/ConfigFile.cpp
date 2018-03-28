@@ -9,14 +9,14 @@
 
 //---------------------------------------------------------------------------
 
-bool terminated = false;
+static bool terminated = false;
 
 QString RunLocal("RunLocal");
 QString ConnectServer("ConnectServer");
 
 
 /*static*/
-MinosConfig *MinosConfig::thisDM = 0;
+MinosConfig *MinosConfig::thisDM = nullptr;
 /*static*/
 MinosConfig *MinosConfig::getMinosConfig()
 {
@@ -212,7 +212,7 @@ void RunConfigElement::on_finished(int err, QProcess::ExitStatus exitStatus)
 
         runner->closeWriteChannel();
         runner->deleteLater();
-        runner = 0;
+        runner = nullptr;
         if (stopping)
         {
             stopping = false;
@@ -251,7 +251,9 @@ void RunConfigElement::on_readyReadStandardOutput()
 
 //---------------------------------------------------------------------------
 MinosConfig::MinosConfig( )
-    : QObject( 0 ), autoStart(false), config(getConfigIniName())
+    : QObject( nullptr )
+    , config(getConfigIniName())
+    , autoStart(false)
 {
 }
 void MinosConfig::initialise()

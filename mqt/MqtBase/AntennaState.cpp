@@ -20,11 +20,8 @@ void AntennaState::setSelected(const QString &selected)
 
 AntennaState::AntennaState(QString s):PubSubValue(AntennaStateType)
 {
-    unpack(s);
-}
-AntennaState::~AntennaState()
-{
     qRegisterMetaType< AntennaState > ( "AntennaState" );
+    unpack(s);
 }
 bool AntennaState::isDirty() const
 {

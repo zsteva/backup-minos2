@@ -10,7 +10,7 @@
 #include "XMPP_pch.h"
 #include <QUuid>
 
-QSharedMemory ServerEvent;
+static QSharedMemory ServerEvent;
 
 QString makeUuid()
 {

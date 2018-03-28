@@ -19,8 +19,8 @@
 #define INITIAL_CONTEST_SLOTS 2
 #define INITIAL_LIST_SLOTS 10
 
-int bigClockCorr = 0;
-TContestApp *TContestApp::contestApp = 0;
+qint64 bigClockCorr = 0;
+TContestApp *TContestApp::contestApp = nullptr;
 int inFontChange = 0;
 
 TContestApp *TContestApp::getContestApp()
@@ -58,24 +58,24 @@ bool isOpen(QSharedPointer<ListSlot> cs, const QString &fn )
       return true;
    return false;
 }
-ContestSlot::ContestSlot( void ) : slotno( -1 ), slot( 0 )
+ContestSlot::ContestSlot( void ) : slotno( -1 ), slot( nullptr )
 {}
 ContestSlot::~ContestSlot()
 {
    if ( slot )
    {
       delete slot;
-      slot = 0;
+      slot = nullptr;
    }
 }
-ListSlot::ListSlot( void ) : slotno( -1 ), slot( 0 )
+ListSlot::ListSlot( void ) : slotno( -1 ), slot( nullptr )
 {}
 ListSlot::~ListSlot()
 {
    if ( slot )
    {
       delete slot;
-      slot = 0;
+      slot = nullptr;
    }
 }
 
@@ -210,9 +210,16 @@ void TContestApp::close()
    writeContestList();
    TMatchThread::FinishMatchThread();
 }
-TContestApp::TContestApp() : MinosParameters(), magneticVariation( 0 ), period1( 5 ), period2( 20 ),
-      reverseBearing( false ), dispCountry( false ), dispBearing( true ), dispScore( true ),
-      currentContest( 0 ), preloadComplete(false)
+TContestApp::TContestApp() : MinosParameters(),
+      currentContest( nullptr ),
+      magneticVariation( 0 ),
+      preloadComplete(false),
+      period1( 5 ),
+      period2( 20 ),
+      reverseBearing( false ),
+      dispCountry( false ),
+      dispBearing( true ),
+    dispScore( true )
 
 {
 
@@ -235,7 +242,7 @@ TContestApp::~TContestApp()
    logsPreloadBundle.closeProfile();
    listsPreloadBundle.closeProfile();
    displayBundle.closeProfile();
-   contestApp = 0;
+   contestApp = nullptr;
 
    delete MultLists::getMultLists();
    CsGuard::ClearDown();
@@ -368,7 +375,7 @@ BaseContestLog * TContestApp::findFirstContest()
          return cs->slot;
       }
    }
-   return 0;
+   return nullptr;
 }
 int TContestApp::findContest( BaseContestLog * p )
 {
@@ -402,10 +409,10 @@ int TContestApp::removeContest(BaseContestLog * p )
        {
           {
              if ( getCurrentContest() == p )
-                setCurrentContest( 0 );
+                setCurrentContest( nullptr );
           }
           QSharedPointer<ContestSlot> cs = contestSlotList[ i ];
-          cs->slot = 0;
+          cs->slot = nullptr;
        }
    }
    return i;
@@ -416,7 +423,7 @@ int TContestApp::removeList( ContactList * p )
    if ( i >= 0 )
    {
       QSharedPointer<ListSlot > cs = listSlotList[ i ];
-      cs->slot = 0;
+      cs->slot = nullptr;
    }
    return i;
 }
@@ -511,7 +518,7 @@ LoggerContestLog * TContestApp::openFile( const QString &fn, bool newFile, int s
    if ( !contest->initialise( fn, newFile, slotno ) )    // this adds it to the slot
    {
       closeFile( contest );
-      return 0;
+      return nullptr;
    }
 
    return contest;
@@ -523,7 +530,7 @@ ContactList * TContestApp::openListFile(const QString &fn, int slotno )
    {
       removeList( list ); 		// must remove LoggerContestLog from its slot
       delete list;
-      return 0;
+      return nullptr;
    }
 
    return list;
@@ -600,7 +607,7 @@ void TContestApp::flushDisplayProfile( void )
 {
    displayBundle.flushProfile();
 }
-int TContestApp::getBigClockCorrection()
+qint64 TContestApp::getBigClockCorrection()
 {
    return bigClockCorr;
 }

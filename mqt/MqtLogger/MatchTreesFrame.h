@@ -59,7 +59,7 @@ class QSOMatchGridModel: public QAbstractItemModel
 
     public:
         QSOMatchGridModel();
-        ~QSOMatchGridModel();
+        ~QSOMatchGridModel() override;
 
         QModelIndex firstIndex;
         bool currentModel;
@@ -79,9 +79,10 @@ class QSOMatchGridModel: public QAbstractItemModel
 class MatchTreesFrame : public QFrame
 {
     Q_OBJECT
+    Ui::MatchTreesFrame *ui;
 
 public:
-    explicit MatchTreesFrame(QWidget *parent = 0);
+    explicit MatchTreesFrame(QWidget *parent = nullptr);
     ~MatchTreesFrame();
 
     void setBaseName(QString);
@@ -100,7 +101,6 @@ public:
     QTreeView *xferTree;
 
 private:
-    Ui::MatchTreesFrame *ui;
     QString baseName;
     int splitterHandleWidth;
     BaseContestLog *contest;

@@ -16,8 +16,6 @@ public:
     RigDetails(QString s);
     RigDetails(double tvo, int tvsw, bool tvst, QString blist);
 
-    ~RigDetails();
-
     bool isDirty() const;
     void clearDirty();
     void setDirty();

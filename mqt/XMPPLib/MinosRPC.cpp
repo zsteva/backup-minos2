@@ -1,7 +1,14 @@
-#include "MinosRPC.h"
 #include <QProcessEnvironment>
+#include "MinosRPC.h"
+#include "ServerEvent.h"
+#include "MinosConnection.h"
+#include "MTrace.h"
+/*static*/ MinosRPC *MinosRPC::rpc = nullptr;
 
-/*static*/ MinosRPC *MinosRPC::rpc = 0;
+RPCGeneralClient::~RPCGeneralClient()
+{}
+RPCGeneralServer::~RPCGeneralServer()
+{}
 
 MinosRPC::MinosRPC(const QString &defaultName, bool useEnvVar):
     connected(false), subscribed(false)

@@ -11,6 +11,9 @@
 
 #ifndef XMPPStanzasH
 #define XMPPStanzasH 
+#include <QString>
+#include "tinyxml.h"
+#include "XMPPRPCParams.h"
 //---------------------------------------------------------------------------
 // Basic classes
 // base of actions to be passed to XMPP
@@ -56,22 +59,22 @@ class RPCAction: public XStanza, public RPCArgs
       QString from;
    public:
 
-      QString getTo()
+      QString getTo() override
       {
          return to;
       }
-      QString getFrom()
+      QString getFrom() override
       {
          return from;
       }
 
       RPCAction();
       RPCAction( const QString &to, const QString &from );
-      virtual ~RPCAction();
+      virtual ~RPCAction() override;
       // Build up the DOM tree for the action, and send it
-      virtual TIXML_STRING getActionMessage() = 0;
-      virtual QString print() = 0;
-      virtual QString analyse()
+      virtual TIXML_STRING getActionMessage() override = 0;
+      virtual QString print() override = 0;
+      virtual QString analyse() override
       {
          return "";
       }
@@ -84,11 +87,11 @@ class RPCRequest: public RPCAction
       RPCRequest( const QString &to, const QString &mname );
       RPCRequest( const QString &to, const QString &from, const QString &mname );
       RPCRequest( const QString &from, TiXmlElement *node );
-      virtual ~RPCRequest();
+      virtual ~RPCRequest() override;
       // Build up the DOM tree for the action, and send it
-      virtual TIXML_STRING getActionMessage( );
-      virtual QString print();
-      virtual QString analyse();
+      virtual TIXML_STRING getActionMessage( ) override;
+      virtual QString print() override;
+      virtual QString analyse() override;
 };
 
 //---------------------------------------------------------------------------

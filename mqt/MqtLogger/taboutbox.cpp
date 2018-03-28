@@ -6,17 +6,17 @@
 #include "taboutbox.h"
 #include "ui_taboutbox.h"
 
-bool started = false;
+static bool started = false;
 
-QString welcomeText = QString("<br><h1>Welcome to Minos Version ") + STRINGVERSION  + " " + PRERELEASETYPE + "</h1>"
+static QString welcomeText = QString("<br><h1>Welcome to Minos Version ") + STRINGVERSION  + " " + PRERELEASETYPE + "</h1>"
                                "<br><a href=\"http://minos.sourceforge.net/\">http://minos.sourceforge.net</a>"
                                "<br><br>";
 
-QString creditsText = QString("<br><h2>Credits</h2>"
+static QString creditsText = QString("<br><h2>Credits</h2>"
                               "<br>Mike Goodey G0GJV; David Balharrie M0DGB/G8FKH; Neil Yorke M0NKE"
                               "<br>Dave Sergeant G3YMC; Peter Burton G3ZPB, Ken Punshon G4APJ"
                               "<br><br>");
-QString MinosText =
+static QString MinosText =
    "The Inferno, Dante, (trans Dorothy L Sayers, Penguin Classics); Canto 5.\r\n"
    "\r\n"
    "\"From the first circle thus I came descending\r\n"

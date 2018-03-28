@@ -64,7 +64,7 @@ void MLogFile::close( void )
     QTextStream &l = log();
     l.flush();
     l.device()->close();
-    l.setDevice(0);
+    l.setDevice(nullptr);
 }
 //---------------------------------------------------------------------------
 QTextStream & MLogFile::log(const QString &s )

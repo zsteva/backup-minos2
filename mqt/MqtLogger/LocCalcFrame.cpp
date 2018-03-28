@@ -6,8 +6,8 @@
 
 LocCalcFrame::LocCalcFrame(QWidget *parent) :
     QFrame(parent),
-    contest(0),
-    ui(new Ui::LocCalcFrame)
+    ui(new Ui::LocCalcFrame),
+    contest(nullptr)
 {
     ui->setupUi(this);
 
@@ -73,7 +73,7 @@ void LocCalcFrame::on_CalcButton_clicked()
        if ( lonlat( ui->S2Loc->text().toUpper(), longitude, latitude ) == LOC_OK )
        {
           cnt.disbear( longitude, latitude, dist, brg );
-          int idist = dist;
+          int idist = static_cast<int>(dist);
           Distance = QString::number( idist );
           ui->Distance->setText(QString( "Dist " ) + Distance + " km " + QString::number(brg) + " degrees");
        }

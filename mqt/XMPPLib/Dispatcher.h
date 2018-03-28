@@ -10,16 +10,14 @@
 #ifndef DispatcherH
 #define DispatcherH
 #include "tinyxml.h"
-
+#include <QString>
 class TiXmlElement;
 class XStanza;
 class RPCDispatcher
 {
    public:
-      RPCDispatcher()
-      {}
-      virtual ~RPCDispatcher()
-      {}
+      RPCDispatcher();
+      virtual ~RPCDispatcher();
       virtual void dispatchResponse( XStanza *a ) = 0;
 
 };

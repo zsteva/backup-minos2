@@ -27,7 +27,7 @@ GridColumn QSOTreeColumns[ LOGTREECOLS ] =
 
    };
 
-QSOGridModel::QSOGridModel():contest(0)
+QSOGridModel::QSOGridModel():contest(nullptr)
 {}
 QSOGridModel::~QSOGridModel()
 {}

@@ -17,10 +17,10 @@ public:
     MinosSplitterHandle(Qt::Orientation orientation, QSplitter *parent);
 
 protected:
-    void paintEvent(QPaintEvent *event);
-    void mouseMoveEvent(QMouseEvent *) override;
-    void mousePressEvent(QMouseEvent *) override;
-    void mouseReleaseEvent(QMouseEvent *) override;
+    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *) Q_DECL_OVERRIDE;
 
 private:
     QLinearGradient gradient;
@@ -32,7 +32,7 @@ class MinosSplitter : public QSplitter
 private:
    MinosSplitterHandle *myHandle;
 public:
-   MinosSplitter(QWidget *parent = 0);
+   MinosSplitter(QWidget *parent = nullptr);
 
 protected:
    QSplitterHandle *createHandle();

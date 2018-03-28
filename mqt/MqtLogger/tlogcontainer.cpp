@@ -23,12 +23,12 @@
 #include "MatchTreesFrame.h"
 #include "enqdlg.h"
 
-TLogContainer *LogContainer = 0;
+TLogContainer *LogContainer = nullptr;
 
 TLogContainer::TLogContainer(QWidget *parent) :
-    QMainWindow(parent),
-    lastSessionSelected(0),
-    ui(new Ui::TLogContainer)
+    QMainWindow(parent)
+  , ui(new Ui::TLogContainer)
+  , lastSessionSelected(nullptr)
 {
     ui->setupUi(this);
 
@@ -613,7 +613,7 @@ void TLogContainer::FileNewActionExecute()
                           "Save new contest as",
                           InitialDir + "/" + suggestedfName,
                           "Minos contest files (*.minos *.Minos)",
-                          0,
+                          nullptr,
                           QFileDialog::DontConfirmOverwrite
                                                       );
        if ( !fileName.isEmpty() )
@@ -645,7 +645,7 @@ void TLogContainer::FileNewActionExecute()
           }
 
           // we want to (re)open it WITHOUT using the dialog!
-          addSlot( 0, suggestedfName, false, -1 );
+          addSlot( nullptr, suggestedfName, false, -1 );
           repeatDialog = false;
        }
        else
@@ -684,7 +684,7 @@ void TLogContainer::FileOpenActionExecute()
     for (int i = 0; i < fnames.size(); i++)
     {
         QString fname = fnames[i];
-        BaseContestLog *ct = 0;
+        BaseContestLog *ct = nullptr;
         if ( !fname.isEmpty() )
         {
             ContestDetails pced(this );
@@ -1060,7 +1060,7 @@ void TLogContainer::on_ContestPageControl_customContextMenuRequested(const QPoin
     QApplication *qa = dynamic_cast<QApplication *>(QApplication::instance());
     QObject *w = qa->widgetAt(globalPos);
 
-    QTreeView *qtv = 0;
+    QTreeView *qtv = nullptr;
     while (w)
     {
         MatchTreesFrame *mtf = dynamic_cast<MatchTreesFrame *>(w);
@@ -1102,7 +1102,7 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
             else
             {
                TContestApp::getContestApp() ->closeFile( contest );
-               contest = 0;
+               contest = nullptr;
                show = false;
             }
          }
@@ -1138,7 +1138,7 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
             if ( expName.size() )
             {
                closeSlot(tno, true );
-               addSlot( 0, expName, false, -1 );
+               addSlot( nullptr, expName, false, -1 );
             }
          }
          removeCurrentFile( fname );
@@ -1185,13 +1185,13 @@ TSingleLogFrame *TLogContainer::findLogFrame(int t)
     // we need to find the embedded frame...
     // now ONLY used in closeSlot!
     if ( t < 0 )
-        return 0;
+        return nullptr;
     QWidget *tw = ui->ContestPageControl->widget(t);
     if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( tw ))
     {
         return f;
     }
-    return 0;
+    return nullptr;
 }
 
 QStringList TLogContainer::getSessions()
@@ -1314,7 +1314,7 @@ BaseContestLog *TLogContainer::loadSession( QString sessName)
     TContestApp *app = TContestApp::getContestApp();
     SettingsBundle &preloadBundle = app ->logsPreloadBundle;
 
-    BaseContestLog *ct = 0;
+    BaseContestLog *ct = nullptr;
 
     preloadBundle.startGroup();
     preloadBundle.openSection(sessName);
@@ -1339,7 +1339,7 @@ BaseContestLog *TLogContainer::loadSession( QString sessName)
             int slotno = slot.toInt(&ok);
             if ( ok )
             {
-                addSlot( 0, pathlst[ i ], false, slotno );
+                addSlot( nullptr, pathlst[ i ], false, slotno );
             }
         }
 
@@ -1406,7 +1406,7 @@ void TLogContainer::preloadFiles( const QString &conarg )
     if ( conarg.size() )
     {
         // open the "argument" one last - which will make it current
-        ct = addSlot( 0, conarg, false, -1 );
+        ct = addSlot( nullptr, conarg, false, -1 );
         app ->writeContestList();	// or this one will not get included
     }
 
@@ -1453,7 +1453,7 @@ void TLogContainer::addListSlot( const QString &fname, int slotno, bool preload 
         if (!mShowOKCancelMessage(this, "Open List " + list->name + "?") )
         {
             TContestApp::getContestApp() ->closeListFile( list );
-            list = 0;
+            list = nullptr;
         }
     }
 
@@ -1638,7 +1638,7 @@ TSingleLogFrame *TLogContainer::findContest(const QString &pubname )
        }
    }
 
-   return 0;
+   return nullptr;
 }
 TSingleLogFrame *TLogContainer::findContest(BaseContestLog *ct )
 {
@@ -1654,7 +1654,7 @@ TSingleLogFrame *TLogContainer::findContest(BaseContestLog *ct )
        }
    }
 
-   return 0;
+   return nullptr;
 }
 //---------------------------------------------------------------------------
 

@@ -12,16 +12,26 @@
 ContactBuffs contactBuffs;
 //==========================================================================
 BaseContact::BaseContact( BaseContestLog * contest, dtg time_now ) :
-      contest( contest ), contactScore( -1 ), time( time_now ), updtime( true ),
-      contactFlags( 0 ), multCount( 0 ),
-      bearing( -1 ),
-      QSOValid( false ),
-      locCount( 0 ), newGLoc(false), newNonGLoc(false), newDistrict( false ), newCtry( false ),
-      bonus(0), newBonus(false)
+      contest( contest )
+    , updtime( true )
+    , time( time_now )
+    , contactFlags( 0 )
+    , contactScore( -1 )
+    , bearing( -1 )
+    , QSOValid( false )
+    , newDistrict( false )
+    , newCtry( false )
+    , locCount( 0 )
+    , newGLoc(false)
+    , newNonGLoc(false)
+    , bonus(0)
+    , newBonus(false)
+    , multCount( 0 )
 {
 }
 BaseContact::BaseContact( const BaseContact &ct )
-      : time( false ), updtime( false )
+      : updtime( false )
+      , time( false )
 {
    *this = ct;
 }

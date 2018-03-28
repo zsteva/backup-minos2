@@ -21,6 +21,7 @@
 
 #ifndef MMessageDialogH
 #define MMessageDialogH 
+#include <QWidget>
 //---------------------------------------------------------------------------
 
 bool mShowYesNoMessage( QWidget *Owner, const QString &mess );

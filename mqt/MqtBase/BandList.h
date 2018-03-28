@@ -22,6 +22,8 @@
 #ifndef BandListH
 #define BandListH
 
+#include <QString>
+#include <QVector>
 //---------------------------------------------------------------------------
 
 class BandInfo

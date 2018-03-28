@@ -9,6 +9,9 @@
 
 #ifndef ListContactH
 #define ListContactH 
+#include "mwin.h"
+#include "contacts.h"
+
 //---------------------------------------------------------------------------
 class ListContact
 {

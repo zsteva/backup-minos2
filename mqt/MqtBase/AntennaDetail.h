@@ -14,7 +14,6 @@ public:
     AntennaDetail(): PubSubValue(AntennaDetailType){}
     AntennaDetail(QString s);
     AntennaDetail(int minA, int maxA): PubSubValue(AntennaDetailType),  _minAzimuth(minA), _maxAzimuth(maxA){}
-    ~AntennaDetail();
 
     bool isDirty() const;
     void clearDirty();

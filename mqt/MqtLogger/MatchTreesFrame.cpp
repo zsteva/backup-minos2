@@ -9,7 +9,7 @@
 MatchTreesFrame::MatchTreesFrame(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::MatchTreesFrame),
-  xferTree( 0 )
+  xferTree( nullptr )
 {
     ui->setupUi(this);
 
@@ -86,7 +86,7 @@ MatchTreeItem * MatchTreesFrame::getXferItem()
    // transfer from current match
 
    // copy relevant parts of match contact to screen contact
-   if ( archiveTreeClickIndex.isValid() && ( xferTree == 0 || xferTree == ui->ArchiveMatchTree ) )
+   if ( archiveTreeClickIndex.isValid() && ( xferTree == nullptr || xferTree == ui->ArchiveMatchTree ) )
    {
       MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem * >(archiveTreeClickIndex.internalPointer());
 
@@ -95,21 +95,21 @@ MatchTreeItem * MatchTreesFrame::getXferItem()
    }
    else
    {
-      if ( otherTreeClickIndex.isValid() && ( xferTree == 0 || xferTree == ui->OtherMatchTree ) )
+      if ( otherTreeClickIndex.isValid() && ( xferTree == nullptr || xferTree == ui->OtherMatchTree ) )
       {
          MatchTreeItem * MatchTreeIndex = static_cast< MatchTreeItem * > (otherTreeClickIndex.internalPointer());
 
          return  MatchTreeIndex;
       }
    }
-   return 0;
+   return nullptr;
 }
 void MatchTreesFrame::on_MatchStarting(BaseContestLog *ct)
 {
       // clear down match trees
     if (contest == ct)
     {
-      xferTree = 0;
+      xferTree = nullptr;
 
       thisMatchModel.currentModel = false;
       otherMatchModel.currentModel = false;
@@ -349,7 +349,11 @@ static GridColumn ArchiveMatchTreeColumns[ ARCHIVEMATCHTREECOLS ] =
 //---------------------------------------------------------------------------
 
 MatchTreeItem::MatchTreeItem(MatchTreeItem *parent, BaseMatchContest *matchContest, QSharedPointer<MatchContact> matchContact)
-    :parent(parent), matchContest(matchContest), matchContact(matchContact), row(-1)
+    :
+      matchContest(matchContest),
+      matchContact(matchContact),
+      parent(parent),
+      row(-1)
 {
 
 }
@@ -359,13 +363,13 @@ MatchTreeItem::~MatchTreeItem()
     for (int i = 0; i < children.size(); i++)
     {
         delete children[i];
-        children[i] = 0;
+        children[i] = nullptr;
     }
 }
 
 bool MatchTreeItem::isMatchLine()
 {
-    return matchContact != 0;
+    return matchContact != nullptr;
 }
 MatchTreeItem *MatchTreeItem::getParent()
 {
@@ -382,7 +386,11 @@ BaseMatchContest *MatchTreeItem::getMatchContest()
 }
 
 
-QSOMatchGridModel::QSOMatchGridModel():rootItem(0), match(0), type(ThisMatch), currentModel(false)
+QSOMatchGridModel::QSOMatchGridModel():
+    match(nullptr),
+    rootItem(nullptr),
+    type(ThisMatch),
+    currentModel(false)
 {}
 QSOMatchGridModel::~QSOMatchGridModel()
 {
@@ -400,7 +408,7 @@ void QSOMatchGridModel::initialise(MatchType t, SharedMatchCollection pmatch )
    if (rootItem)
    {
        delete rootItem;
-       rootItem = 0;
+       rootItem = nullptr;
    }
 
    if (pmatch->contactCount() == 0)
@@ -410,7 +418,7 @@ void QSOMatchGridModel::initialise(MatchType t, SharedMatchCollection pmatch )
    }
 
    match = pmatch;  // preserve all the tree
-   rootItem = new MatchTreeItem(0, 0, QSharedPointer<MatchContact>());
+   rootItem = new MatchTreeItem(nullptr, nullptr, QSharedPointer<MatchContact>());
    rootItem->setRow(0);
    for (ContestMatchIterator i = pmatch->contestMatchList.begin(); i != pmatch->contestMatchList.end(); i++)
    {
@@ -450,7 +458,7 @@ QVariant QSOMatchGridModel::data( const QModelIndex &index, int role ) const
     BaseMatchContest *matchContest = thisItem->getMatchContest();
     QSharedPointer<MatchContact> mct = thisItem->getMatchContact();
     QSharedPointer<BaseContact> ct;
-    ListContact *lct = 0;
+    ListContact *lct = nullptr;
 
     if (mct)
     {

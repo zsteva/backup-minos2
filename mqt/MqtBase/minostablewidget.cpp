@@ -57,7 +57,7 @@ MinosTableWidget::~MinosTableWidget()
 {
     resizeTimer->stop();
     delete statusSortButton;
-    statusSortButton = 0;
+    statusSortButton = nullptr;
 }
 void MinosTableWidget::setModel(QAbstractItemModel *model)
 {

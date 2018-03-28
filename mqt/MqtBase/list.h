@@ -9,6 +9,8 @@
 
 #ifndef listH
 #define listH 
+#include "mwin.h"
+#include "contest.h"
 //---------------------------------------------------------------------------
 class ListContact;
 typedef QVector < ListContact *> ListList;

@@ -9,7 +9,10 @@
 TBundleFrame::TBundleFrame(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::TBundleFrame)
-  , bundle( 0 ), bname( 0 ), cd(0), suppressChange(false)
+  , cd(nullptr)
+  , suppressChange(false)
+  , bundle( nullptr )
+  , bname( nullptr )
 {
     ui->setupUi(this);
 }

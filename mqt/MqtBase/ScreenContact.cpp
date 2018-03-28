@@ -8,7 +8,9 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
-ScreenContact::ScreenContact() : time( false ), logSequence( 0 )
+ScreenContact::ScreenContact() :
+    logSequence( 0 ),
+    time( false )
 {}
 ScreenContact::~ScreenContact()
 {}

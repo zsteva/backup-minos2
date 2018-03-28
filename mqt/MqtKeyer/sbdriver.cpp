@@ -267,7 +267,7 @@ long SoundSystemDriver::play_file( const QString &filename, bool xmit )
          }
          play = true;
          recording = false;
-         if ( dofile( i, currentKeyer->kconf.clipRecord ) )
+         if (currentKeyer && dofile( i, currentKeyer->kconf.clipRecord ) )
             return recfil[ i ] ->fsample;
       }
       return -1;

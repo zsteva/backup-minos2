@@ -19,15 +19,14 @@
 TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     QFrame(parent),
     ui(new Ui::TSingleLogFrame),
-    contest( contest ),
     splittersChanged(false),
-    curFreq( 0 ),
-    freqUpDateCnt(0), modeUpDateCnt(0),
-    lastStanzaCount( 0 ),
-    rotatorLoaded(false),
     bandMapLoaded(false),
+    rotatorLoaded(false),
     keyerLoaded(false),
-    radioLoaded(false)
+    radioLoaded(false),
+    contest(contest),
+    lastStanzaCount( 0 ),
+    curFreq( 0 )
 
 {
     ui->setupUi(this);
@@ -211,14 +210,14 @@ void TSingleLogFrame::closeContest()
     if ( TContestApp::getContestApp() )
     {
        RPCPubSub::publish( rpcConstants::monitorLogCategory, contest->publishedName, QString::number( 0 ), psRevoked );
-       qsoModel.initialise(0);
-       ui->matchTreesFrame->setContest(0);
-       MinosLoggerEvents::sendSetStackContest(0);
-       ui->FKHRigControlFrame->setContest(0);
-       ui->FKHRotControlFrame->setContest(0);
+       qsoModel.initialise(nullptr);
+       ui->matchTreesFrame->setContest(nullptr);
+       MinosLoggerEvents::sendSetStackContest(nullptr);
+       ui->FKHRigControlFrame->setContest(nullptr);
+       ui->FKHRotControlFrame->setContest(nullptr);
        TContestApp::getContestApp() ->closeFile( contest );
        ui->GJVQSOLogFrame->closeContest();
-       contest = 0;
+       contest = nullptr;
     }
 }
 void TSingleLogFrame::restoreColumns()
@@ -278,7 +277,7 @@ void TSingleLogFrame::on_ContestPageChanged ()
 
     refreshMults();
 
-    ui->GJVQSOLogFrame->selectField(0);
+    ui->GJVQSOLogFrame->selectField(nullptr);
     ui->GJVQSOLogFrame->logTabChanged();
 
 //    MultDispFrame->setContest( contest );
@@ -338,7 +337,7 @@ void TSingleLogFrame::doSetAuxWindows(bool saveSplitter)
         {
             StackedInfoFrame *f = auxFrames[auxFrames.size() - 1];
             auxFrames.pop_back();
-            f->setParent(0);
+            f->setParent(nullptr);
             f->setVisible(false);
             delete f;
         }
@@ -348,7 +347,7 @@ void TSingleLogFrame::doSetAuxWindows(bool saveSplitter)
         for (int i = auxFrames.size(); i < num; i++)
         {
             LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-            StackedInfoFrame *f = new StackedInfoFrame(0, i);
+            StackedInfoFrame *f = new StackedInfoFrame(nullptr, i);
             f->setContest(ct);
             auxFrames.push_back(f);
             ui->MultSplitter->addWidget(f);

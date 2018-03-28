@@ -21,7 +21,8 @@
 
 #ifndef WaitCursorH
 #define WaitCursorH
-
+#include <QWidget>
+#include <QApplication>
 class TWaitCursor
 {
         QWidget *w;

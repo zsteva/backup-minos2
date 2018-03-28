@@ -22,10 +22,7 @@ RigDetails::RigDetails(QString s)
 {
     unpack(s);
 }
-RigDetails::~RigDetails()
-{
 
-}
 bool RigDetails::isDirty() const
 {
     return

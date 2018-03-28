@@ -7,7 +7,7 @@
 // It is used to provide a direct (not through server comms) link
 // between the control app and the keyer
 
-void ( *LineSet::lsLog ) ( const QString & ) = 0;
+void ( *LineSet::lsLog ) ( const QString & ) = nullptr;
 static void Log( const QString &msg )
 {
    if ( LineSet::lsLog )
@@ -50,7 +50,9 @@ LineFileBlock::~LineFileBlock()
     lfm->hFile.unlock();
 }
 //===================================================================
-LineFileMapper::LineFileMapper() : hFile( "LineMapFile" ), lpPtr( 0 )
+LineFileMapper::LineFileMapper() :
+    lpPtr( nullptr ),
+    hFile( "LineMapFile" )
 {
     hFile.attach();
 }
@@ -64,7 +66,7 @@ void LineFileMapper::Close()
    {
       hFile.detach();
    }
-   lpPtr = 0;
+   lpPtr = nullptr;
 }
 
 bool LineFileMapper::Initialise()
@@ -80,7 +82,7 @@ bool LineFileMapper::Initialise()
 LineSet::LineSet() : FileMap( new LineFileMapper )
 {
 }
-LineSet *LineSet::myLineSet = 0;
+LineSet *LineSet::myLineSet = nullptr;
 LineSet *LineSet::GetLineSet()
 {
    if ( !myLineSet )

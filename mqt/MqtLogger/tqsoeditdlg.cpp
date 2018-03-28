@@ -3,8 +3,6 @@
 #include "tqsoeditdlg.h"
 #include "ui_tqsoeditdlg.h"
 
-TQSOEditDlg *QSOEditDlg;
-
 //---------------------------------------------------------------------------
 class QSOHistoryNode
 {
@@ -17,9 +15,10 @@ class QSOHistoryNode
 //---------------------------------------------------------------------------
 TQSOEditDlg::TQSOEditDlg(QWidget *parent, bool unfilled )
     :QDialog(parent),
-    ui(new Ui::TQSOEditDlg),
-    firstContact( 0 ), contest( 0 ),
-    unfilled(unfilled)
+    ui(new Ui::TQSOEditDlg)
+  , contest( nullptr )
+  , firstContact( nullptr )
+  , unfilled(unfilled)
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);

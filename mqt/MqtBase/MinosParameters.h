@@ -12,6 +12,7 @@
 
 #ifndef MinosParametersH
 #define MinosParametersH 
+#include "mwin.h"
 //---------------------------------------------------------------------------
 class BaseContestLog;
 class ContactList;
@@ -25,14 +26,8 @@ class MinosParameters
          mp = m;
       }
    public:
-      MinosParameters()
-      {
-         mp = this;
-      }
-      virtual ~MinosParameters()
-      {
-         mp = 0;
-      }
+      MinosParameters();
+      virtual ~MinosParameters();
 
       static MinosParameters *getMinosParameters();
       virtual bool insertContest( BaseContestLog *p, int sno ) = 0;
@@ -44,7 +39,7 @@ class MinosParameters
       virtual void getStringDisplayProfile( int enumkey, QString &value ) = 0;
       virtual void setStringDisplayProfile( int enumkey, QString value ) = 0;
       virtual void flushDisplayProfile( void ) = 0;
-      virtual int getBigClockCorrection() = 0;
+      virtual qint64 getBigClockCorrection() = 0;
       virtual int getStatsPeriod1() = 0;
       virtual int getStatsPeriod2() = 0;
       virtual void setStatsPeriod1( int ) = 0;
@@ -52,7 +47,7 @@ class MinosParameters
       virtual bool getAllowLoc4() = 0;
       virtual bool getAllowLoc8() = 0;
       virtual bool yesNoMessage( QWidget* Owner, const QString &mess ) = 0;
-      virtual void mshowMessage( const QString &mess, QWidget* Owner = 0 ) = 0;
+      virtual void mshowMessage( const QString &mess, QWidget* Owner = nullptr ) = 0;
       virtual BaseContestLog *getCurrentContest() = 0;
       virtual bool insertList( ContactList *p, int sno ) = 0;
       virtual bool isContestOpen( const QString fn ) = 0;
@@ -75,7 +70,7 @@ class MinosParametersAdapter : public MinosParameters
       virtual void getStringDisplayProfile( int enumkey, QString &value ) override;
       virtual void setStringDisplayProfile( int enumkey, QString value ) override;
       virtual void flushDisplayProfile( ) override;
-      virtual int getBigClockCorrection() override;
+      virtual qint64 getBigClockCorrection() override;
       virtual int getStatsPeriod1() override;
       virtual int getStatsPeriod2() override;
       virtual void setStatsPeriod1( int ) override;
@@ -83,7 +78,7 @@ class MinosParametersAdapter : public MinosParameters
       virtual bool getAllowLoc4() override;
       virtual bool getAllowLoc8() override;
       virtual bool yesNoMessage( QWidget* Owner, const QString &mess ) override;
-      virtual void mshowMessage(const QString &mess, QWidget* Owner = 0 ) override;
+      virtual void mshowMessage(const QString &mess, QWidget* Owner = nullptr ) override;
       virtual BaseContestLog *getCurrentContest() override;
       virtual bool insertList( ContactList *p, int sno ) override;
       virtual bool isContestOpen( const QString fn ) override;

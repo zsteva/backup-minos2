@@ -139,10 +139,10 @@ void SetCurrentDir( const QString &dir )
 {
     QDir::setCurrent( dir );
 }
-int64_t FileLength(const QString &fname)
+qint64 FileLength(const QString &fname)
 {
     QFileInfo qinf( fname );
-    int len = qinf.size();
+    qint64 len = qinf.size();
     return len;
 }
 

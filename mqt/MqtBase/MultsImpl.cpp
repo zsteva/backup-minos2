@@ -18,7 +18,7 @@ struct DistCount
    char prefix[ 3 ];
    char dcount;
 };
-DistCount distCounts[] =
+static DistCount distCounts[] =
    {
       {"G", 1},
       {"GD", 1},
@@ -95,7 +95,7 @@ void MultEntry::addSynonyms( QString &s )
 }
 //======================================================================
 DistrictEntry::DistrictEntry( const QString &cd, const QString &name, const QString &prefix, const QString &prefix2, const QString &cloc ) :
-      MultEntry( name, cloc ), country1( 0 ), country2( 0 )
+      MultEntry( name, cloc ), country1( nullptr ), country2( nullptr )
 {
    // set district code to cd
 
@@ -164,7 +164,7 @@ bool DistrictEntry::operator!=( const DistrictEntry& rhs ) const
 
 //======================================================================
 DistrictSynonym::DistrictSynonym( const QString &cd, const QString &syn ) :
-      district( 0 )
+      district( nullptr )
 {
    synonym = syn;
 
@@ -430,7 +430,7 @@ static void makeCountrySynonym( const QString &ssyn, const QString &sprefix )
    }
 }
 CountrySynonym::CountrySynonym( const QString &ssyn, const QString &sprefix ) :
-      country( 0 )
+      country( nullptr )
 {
    QString syn = ssyn.trimmed();
    QString prefix = sprefix.trimmed();
@@ -723,7 +723,7 @@ LocSquare::LocSquare( const QString &locId )
 LocCount *LocSquare::map( const QString &num )
 {
    if ( !num[ 0 ].isDigit() || !num[ 1 ].isDigit() )
-      return 0;
+      return nullptr;
 
    return &numbers[ num[ 0 ].toLatin1() - '0' ][ num[ 1 ].toLatin1() - '0' ];
 }
@@ -731,7 +731,7 @@ LocCount *LocSquare::map( const QString &num )
 LocCount *LocSquare::map( int num )
 {
    if ( ( num < 0 ) || ( num >= 100 ) )
-      return 0;
+      return nullptr;
    int dig2 = num % 100;
    int dig1 = ( num - dig2 ) / 100;
 
@@ -764,7 +764,7 @@ bool LocSquare::operator!=( const LocSquare& rhs ) const
 }
 
 //======================================================================
-MultListsImpl *MultListsImpl::multLists = 0;
+MultListsImpl *MultListsImpl::multLists = nullptr;
 
 MultListsImpl *MultListsImpl::getMultLists()
 {
@@ -829,7 +829,7 @@ MultListsImpl::MultListsImpl()
 }
 MultListsImpl::~MultListsImpl()
 {
-   multLists = 0;
+   multLists = nullptr;
 }
 
 int MultListsImpl::getCtryListSize()

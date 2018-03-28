@@ -10,7 +10,7 @@
 
 char diskBuffer[ bsize + 1 ];
 //char *lbuff = &diskBuffer[ 0 ];
-size_t buffpt = 0;
+int buffpt = 0;
 
 void clearBuffer( void )
 {
@@ -33,7 +33,7 @@ void strtobuf()
    char * s1 = &diskBuffer[ buffpt ];
 
    // null fill the rest of the buffer
-   memset( s1, 0, bsize - buffpt );
+   memset( s1, 0, static_cast<unsigned int>(bsize - buffpt) );
    if ( buffpt + noeditlength < ( bsize - 3 ) )
    {
       memcpy( &diskBuffer[ bsize - noeditlength - 1 ], noeditstr, noeditlength );
@@ -185,7 +185,7 @@ void writer::lwrite( const char *b )
 {
    QString l = QString( b ) + "\r\n";
 
-   int ret = expfd->write(l.toStdString().c_str(), l.toStdString().size());
+   qint64 ret = expfd->write(l.toStdString().c_str(), static_cast<int>(l.toStdString().size()));
    if ( ret != static_cast<int >(l.toStdString().size()) )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
@@ -198,7 +198,7 @@ void writer::lwriteLine()
 }
 void writer::lwriteNl()
 {
-    int ret = expfd->write("\r\n", 2);
+    qint64 ret = expfd->write("\r\n", 2);
     if ( ret != 2 )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
@@ -207,7 +207,7 @@ void writer::lwriteNl()
 void writer::lwriteFf()
 {
    //   ::write( expfd, "\f", 1 );
-   int ret = expfd->write("\f", 1);
+   qint64 ret = expfd->write("\f", 1);
    if ( ret != 1 )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
@@ -249,7 +249,7 @@ QString strupr( const QString &s )
 }
 //=============================================================================
 
-int strnicmp( const QString &s1, const QString &s2, unsigned int len )
+int strnicmp( const QString &s1, const QString &s2, int len )
 {
     return s1.left(len).compare(s2.left(len), Qt::CaseInsensitive);
 }

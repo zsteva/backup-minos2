@@ -15,7 +15,7 @@
 #include "tlogcontainer.h"
 
 //---------------------------------------------------------------------------
-TMatchThread *TMatchThread::matchThread = 0;
+TMatchThread *TMatchThread::matchThread = nullptr;
 
 // wild card comparison, search string e for the wild card string in s
 // At the moment we are using "space" as the wildcard.
@@ -78,7 +78,9 @@ bool wildComp( const QString &ss, const QString &ee )
 }
 
 TMatchThread::TMatchThread()
-      : QThread(   ), myThisMatches( 0 ), myOtherMatches( 0 ),myListMatches( 0 ), mct(0), Terminated(false)
+      : QThread(   ), myThisMatches( nullptr ), myOtherMatches( nullptr ),myListMatches( nullptr ),
+        Terminated(false),
+        mct(nullptr)
 {
    thisLogMatch = new ThisLogMatcher();
    otherLogMatch = new OtherLogMatcher();
@@ -128,7 +130,7 @@ void TMatchThread::on_CountrySelect(QString sel, BaseContestLog *c)
     BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
    if (c == ct)
    {
-      mct = 0;
+      mct = nullptr;
       QSharedPointer<CountryEntry> ce = MultLists::getMultLists() ->getCtryForPrefix( sel );
       startMatch(ce);
    }
@@ -179,11 +181,11 @@ void TMatchThread::Execute()
             msleep(100);
       }
       delete thisLogMatch;
-      thisLogMatch = 0;
+      thisLogMatch = nullptr;
       delete otherLogMatch;
-      otherLogMatch = 0;
+      otherLogMatch = nullptr;
       delete listMatch;
-      listMatch = 0;
+      listMatch = nullptr;
    }
    catch ( ... )
    {
@@ -349,9 +351,15 @@ bool matchElement::checkMatch( const QString &s )
 
 //=============================================================================
 
-Matcher::Matcher() : contestIndex( -1 ), contactIndex( -1 ), mp( Exact ),
-      matchStarted( false ), firstMatch( Starting ), tickct( 0 ), ce( 0 ),
-      matchRequired( false )
+Matcher::Matcher() :
+      matchRequired( false ),
+      mp( Exact ),
+      matchStarted( false ),
+      firstMatch( Starting ),
+      tickct( 0 ),
+      contestIndex( -1 ),
+      contactIndex( -1 ),
+      ce( nullptr )
 {
    matchCollection = SharedMatchCollection(new TMatchCollection);
 }
@@ -439,7 +447,7 @@ void Matcher::initMatch( void )
             return ;
          }
 
-         if ( !changed & SET_CHANGED )
+         if ( !(changed & SET_CHANGED) )
             return ;
 
          if ( changed & SET_NOT_GREATER )
@@ -748,7 +756,7 @@ bool ThisLogMatcher::idleMatch( int limit )
 
                    if ( ccon->districtMult.getValue() )
                    {
-                       if ( ccon != 0 && !qthmatch )
+                       if ( ccon != nullptr && !qthmatch )
                        {
                          // attempt match against district code
                          if ( cct->districtMult && wildComp( cct->districtMult->districtCode, matchqth.mstr ) )
@@ -1263,7 +1271,6 @@ bool ListMatcher::idleMatch( int limit )
                    }
                 }
                 // or no /P anyway, so drop through
-
                   case NoSuffix:
                      {
                         if ( matchcs.match && ( matchloc.match || matchqth.match ) )
@@ -1281,7 +1288,7 @@ bool ListMatcher::idleMatch( int limit )
                      }
                      // or no loc anyway, so drop through
 
-                  case NoLoc:
+               case NoLoc:
                      {
                         if ( matchcs.match )
                         {
@@ -1315,7 +1322,7 @@ bool ListMatcher::idleMatch( int limit )
                      }
                      // else we have already done what we can, so drop through
 
-                  case Country:
+               case Country:
                   case District:
                   case Locator:
                   case Body:
@@ -1414,7 +1421,7 @@ bool ListMatcher::idleMatch( int limit )
                 uprqth = uprqth.toUpper();
                 qthmatch = matchqth.checkMatch( uprqth );
 
-                if ( ccon != 0 && !qthmatch )
+                if ( ccon != nullptr && !qthmatch )
                 {
                   // attempt match against district code
                   if ( wildComp( cct->extraText, matchqth.mstr ) )

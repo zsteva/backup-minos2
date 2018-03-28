@@ -8,7 +8,7 @@
 SingleApplication::SingleApplication(QString serverName, int &argc, char **argv)
     :QApplication(argc, argv)
     , _isRunning(false)
-    , _localServer(0),
+    , _localServer(nullptr),
     _serverName(serverName)
 {
 

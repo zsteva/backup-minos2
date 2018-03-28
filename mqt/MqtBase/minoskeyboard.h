@@ -14,7 +14,7 @@ class MinosKeyboard : public QFrame
     Q_OBJECT
 
 public:
-    explicit MinosKeyboard(QWidget *parent = 0);
+    explicit MinosKeyboard(QWidget *parent = nullptr);
     ~MinosKeyboard();
 
 private slots:

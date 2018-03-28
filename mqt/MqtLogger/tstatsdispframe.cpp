@@ -7,7 +7,7 @@ const int checkInterval = 10;
 TStatsDispFrame::TStatsDispFrame(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::TStatsDispFrame),
-    ct(0), lastCheckTime(QDateTime::currentDateTime().addSecs(-1000)),
+    ct(nullptr), lastCheckTime(QDateTime::currentDateTime().addSecs(-1000)),
     suppressPeriodChange(false)
 
 {
@@ -113,7 +113,7 @@ void TStatsDispFrame::reInitialiseStats()
       int sp2 = ct->statsPeriod2.getValue();
       QDateTime  contestStart = CanonicalToTDT(ct->DTGStart.getValue());
       QDateTime now = QDateTime::currentDateTimeUtc().addSecs( MinosParameters::getMinosParameters() ->getBigClockCorrection());
-      int fromContestStart = contestStart.secsTo(now);
+      int fromContestStart = static_cast<int>(contestStart.secsTo(now));
 
       // if period is less than half the time from the start
       // then we want to split the time from start

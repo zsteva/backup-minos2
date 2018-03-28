@@ -46,7 +46,7 @@ class LoggerContestLog : public BaseContestLog
 
    protected:
       // minos file
-      virtual bool minosSaveFile( bool newfile );
+      virtual bool minosSaveFile( bool newfile ) override;
    public:
       bool isMinosFile()
       {
@@ -149,8 +149,8 @@ class LoggerContestLog : public BaseContestLog
       // dirty info is only relevant when it is being editted
       // but needs to stay with the data
 
-      virtual void clearDirty();
-      virtual void setDirty();
+      virtual void clearDirty() override;
+      virtual void setDirty() override;
       // end of contest details
 
       void setINIDetails();
@@ -161,21 +161,21 @@ class LoggerContestLog : public BaseContestLog
       void initialiseINI();
       bool initialise( int slotno );
       bool initialise(const QString &, bool, int slotno );
-      ~LoggerContestLog();
+      ~LoggerContestLog() override;
 
 
       // common file stuff
-      bool commonSave( bool newfile );
-      void closeFile( void );
+      bool commonSave( bool newfile ) override;
+      void closeFile( void ) override;
 
       // minos save
-      virtual bool minosSaveContestContact(const QSharedPointer<BaseContact> lct );
+      virtual bool minosSaveContestContact(const QSharedPointer<BaseContact> lct ) override;
 
       // GJV file manipulation
-      int readBlock( int bno );
-      int writeBlock(QSharedPointer<QFile> fd, int bno );
+      qint64 readBlock( int bno );
+      qint64 writeBlock(QSharedPointer<QFile> fd, int bno );
       bool GJVsave( GJVParams & );
-      virtual bool GJVload( void );
+      virtual bool GJVload( void ) override;
       bool GJVloadContacts( void );
 
       // Import/export etc
@@ -190,7 +190,7 @@ class LoggerContestLog : public BaseContestLog
       bool exportMinos(QSharedPointer<QFile> expfd );
 
       virtual void makeContact( bool time_now, QSharedPointer<BaseContact>& ) override;
-      QSharedPointer<BaseContact> addContact(int newctno, int extra_flags, bool save_new, bool catchup , QString mode, dtg ctTime);
+      QSharedPointer<BaseContact> addContact(int newctno, unsigned short extra_flags, bool save_new, bool catchup , QString mode, dtg ctTime);
       QSharedPointer<BaseContact> addContactBetween(QSharedPointer<BaseContact> prior, QSharedPointer<BaseContact> next , dtg ctTime);
       void removeContact(QSharedPointer<BaseContact> );
 

@@ -13,10 +13,11 @@ class QSOLogFrame;
 class QSOLogFrame : public QFrame
 {
     Q_OBJECT
+    Ui::QSOLogFrame *ui;
 
 public:
     explicit QSOLogFrame(QWidget *parent);
-    ~QSOLogFrame();
+    ~QSOLogFrame() override;
 
     void setAsEdit(bool s, QString b);
     void setBandMapLoaded();
@@ -114,7 +115,6 @@ private:
     virtual void getScreenRigData();
     virtual void getscreenRotatorData();
     bool checkAndLogEntry( );
-    Ui::QSOLogFrame *ui;
 
     bool edit;
 

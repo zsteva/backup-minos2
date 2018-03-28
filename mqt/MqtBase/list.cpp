@@ -77,7 +77,10 @@ void CsvReader::checkString(QString &temp, QChar character, QList<QStringList> &
         temp.append(character);
     }
 }
-ContactList::ContactList() : slotno( -1 ), cslFile( false ), errMessShown(false)
+ContactList::ContactList() :
+  cslFile( false )
+  , slotno( -1 )
+  , errMessShown(false)
 {
 }
 ContactList::~ContactList()
@@ -198,6 +201,6 @@ ListContact *ContactList::pcontactAt( int i )
    {
       return ctList.at( i );
    }
-   return 0;
+   return nullptr;
 }
 

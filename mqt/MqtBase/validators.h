@@ -10,6 +10,9 @@
 
 #ifndef validatorsH
 #define validatorsH 
+#include <QLineEdit>
+#include "mwin.h"
+#include "ScreenContact.h"
 //---------------------------------------------------------------------------
 #define ERR_0 0
 #define ERR_1 1

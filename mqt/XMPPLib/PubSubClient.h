@@ -11,6 +11,8 @@
 
 #ifndef PubSubClientH
 #define PubSubClientH 
+#include "RPCCommandConstants.h"
+#include "MinosRPC.h"
 //---------------------------------------------------------------------------
 class RPCPublishClient: public RPCPubSub
 {
@@ -20,9 +22,9 @@ class RPCPublishClient: public RPCPubSub
       // plus we want factory access to it
       // so it would be nice to have a static
       // member/method  that could go "up"
-      ~RPCPublishClient()
-      {}
-      virtual QSharedPointer<MinosRPCObj>makeObj()
+      ~RPCPublishClient() override;
+
+      virtual QSharedPointer<MinosRPCObj>makeObj() override
       {
          return QSharedPointer<MinosRPCObj>(new RPCPublishClient( callback ));
       }
@@ -34,9 +36,9 @@ class RPCSubscribeClient: public RPCPubSub
    public:
       RPCSubscribeClient( TRPCFunctor *cb ) : RPCPubSub( rpcConstants::subscribe, cb )
       {}
-      ~RPCSubscribeClient()
-      {}
-      virtual QSharedPointer<MinosRPCObj>makeObj()
+      ~RPCSubscribeClient() override;
+
+      virtual QSharedPointer<MinosRPCObj>makeObj() override
       {
          return QSharedPointer<MinosRPCObj>(new RPCSubscribeClient( callback ));
       }
@@ -46,9 +48,9 @@ class RPCRemoteSubscribeClient: public RPCPubSub
    public:
       RPCRemoteSubscribeClient( TRPCFunctor *cb ) : RPCPubSub( rpcConstants::remoteSubscribe, cb )
       {}
-      ~RPCRemoteSubscribeClient()
-      {}
-      virtual QSharedPointer<MinosRPCObj>makeObj()
+      virtual ~RPCRemoteSubscribeClient() override;
+
+      virtual QSharedPointer<MinosRPCObj>makeObj() override
       {
          return QSharedPointer<MinosRPCObj>(new RPCRemoteSubscribeClient( callback ));
       }
@@ -58,9 +60,9 @@ class RPCNotifyServer: public MinosRPCServer
    public:
       RPCNotifyServer( TRPCFunctor *cb ) : MinosRPCServer( rpcConstants::clientNotify, cb )
       {}
-      ~RPCNotifyServer()
-      {}
-      virtual QSharedPointer<MinosRPCObj>makeObj()
+      virtual ~RPCNotifyServer() override;
+
+      virtual QSharedPointer<MinosRPCObj>makeObj() override
       {
          return QSharedPointer<MinosRPCObj>(new RPCNotifyServer( callback ));
       }
@@ -87,10 +89,12 @@ class RPCRemoteSubscriber : public RPCSubscriber
       RPCRemoteSubscriber( const QString &server, const QString &category )
             : RPCSubscriber( category ), server( server )
       {}
+      ~RPCRemoteSubscriber() override
+      {}
    public:
       static void testAndSubscribe( const QString &server, const QString &category );
-      virtual bool isRemoteEqual( const QString &server, const QString &category );
-      virtual void reSubscribe();
+      virtual bool isRemoteEqual( const QString &server, const QString &category ) override;
+      virtual void reSubscribe() override;
       QString getServer()
       {
          return server;
@@ -105,8 +109,10 @@ class RPCPublisher
       RPCPublisher( const QString &category, const QString &key, const QString &value, PublishState pState )
             : category( category ), key( key ), value( value ), state(pState)
       {}
-   public:
+
+      public:
       static void testAndPublish( const QString &category, const QString &key, const QString &value, PublishState pState );
+      virtual ~RPCPublisher();
       void rePublish();
 
 };

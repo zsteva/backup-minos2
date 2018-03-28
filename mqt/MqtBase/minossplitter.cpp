@@ -29,7 +29,7 @@ void MinosSplitterHandle::paintEvent(QPaintEvent *event)
 }
 //============================================================================
 MinosSplitter::MinosSplitter(QWidget *parent)
-    : QSplitter(parent), myHandle(0)
+    : QSplitter(parent), myHandle(nullptr)
 {
 }
 

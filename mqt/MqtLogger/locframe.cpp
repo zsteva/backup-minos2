@@ -103,7 +103,7 @@ static QString l_sub(const QString &sq, int x, int y)
 
 LocFrame::LocFrame(QWidget *parent) :
     QFrame(parent),
-    ui(new Ui::LocFrame), ct(0)
+    ui(new Ui::LocFrame), ct(nullptr)
 {
     ui->setupUi(this);
 
@@ -210,8 +210,8 @@ void LocFrame::reInitialiseLocators()
     // We seem to have to use the application font, as Qt can give info
     // on the wrong font if we use the widgets font
     QFontMetricsF fm(QApplication::font());
-    int width=(fm.width("MM80") * 5)/4;
-    int height=(fm.height() * 6)/4;
+    int width=static_cast<int>((fm.width("MM80") * 5)/4.0);
+    int height=static_cast<int>((fm.height() * 6)/4.0);
 
     ui->LocView->horizontalHeader()->setDefaultSectionSize(width);
     ui->LocView->verticalHeader()->setDefaultSectionSize(height);
@@ -237,7 +237,7 @@ void LocFrame::on_minosViewScrolled()
     currentCentre = ui->LocView->model()->data(index, Qt::UserRole).toString();
 }
 
-LocGridModel::LocGridModel():ct(0), rows(10), cols(10)
+LocGridModel::LocGridModel():ct(nullptr), rows(10), cols(10)
 {}
 LocGridModel::~LocGridModel()
 {

@@ -5,7 +5,7 @@
 
 LocTreeFrame::LocTreeFrame(QWidget *parent) :
     QFrame(parent),
-    ui(new Ui::LocTreeFrame), ct(0)
+    ui(new Ui::LocTreeFrame), ct(nullptr)
 {
     ui->setupUi(this);
 

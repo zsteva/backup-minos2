@@ -63,8 +63,9 @@ void MinosId::setId( const QString &s )
 
 //==============================================================================
 MinosCommonConnection::MinosCommonConnection()
-    : fromIdSet( false ),
+    :
     remove_socket( false )
+  , fromIdSet( false )
 {
     lastRx = QDateTime::currentMSecsSinceEpoch() + 5000;
 }
@@ -88,7 +89,7 @@ bool MinosCommonConnection::sendRaw ( const TIXML_STRING xmlstr )
       sprintf( xmlbuff, "&&%lu%s&&", static_cast<unsigned long>(xmllen), xmlstr.c_str() );
       xmllen = strlen( xmlbuff );
 
-      int ret = sock->write ( xmlbuff, xmllen );
+      qint64 ret = sock->write ( xmlbuff, xmllen );
       onLog ( xmlbuff, xmllen, 0 );
       delete [] xmlbuff;
 
@@ -132,7 +133,7 @@ void sendAction( XStanza *a )
 
    TiXmlBase::SetCondenseWhiteSpace( false );
    TiXmlDocument xdoc;
-   xdoc.Parse( mess.c_str(), 0 );
+   xdoc.Parse( mess.c_str(), nullptr );
    TiXmlElement *x = xdoc.RootElement();
 
    if ( a->getFrom().size() == 0 )
@@ -152,7 +153,7 @@ void sendAction( XStanza *a )
    }
    // and now dispatch to its destination
 
-   if ( !MinosServer::getMinosServer() ->forwardStanza( 0, x ) )              // our own services
+   if ( !MinosServer::getMinosServer() ->forwardStanza( nullptr, x ) )              // our own services
    {
       if ( !MinosClientListener::getListener() ->sendClient( x ) )         // look at real and potential clients
       {
@@ -177,7 +178,7 @@ void MinosCommonConnection::on_readyRead()
    while (sock->bytesAvailable() > 0)
    {
 
-       int rxlen = sock->read(rxbuff, 4096 - 1);
+       qint64 rxlen = sock->read(rxbuff, 4096 - 1);
        if ( rxlen > 0 )
        {
           rxbuff[ rxlen ] = '\0';
@@ -186,7 +187,7 @@ void MinosCommonConnection::on_readyRead()
           int rxpt = 0;
           while ( rxpt < rxlen )
           {
-             int ptlen = static_cast<int> (strlen( &rxbuff[ rxpt ] ));
+             size_t ptlen = strlen( &rxbuff[ rxpt ] );
              if ( ptlen )
              {
                 onLog ( &rxbuff[ rxpt ], ptlen, 1 );  // but this ignores the wrapper
@@ -214,7 +215,7 @@ void MinosCommonConnection::on_readyRead()
                    TiXmlBase::SetCondenseWhiteSpace( false );
                    TiXmlDocument xdoc;
                    TIXML_STRING p = packet.toStdString();
-                   xdoc.Parse( p.c_str(), 0 );
+                   xdoc.Parse( p.c_str(), nullptr );
                    TiXmlElement *tix = xdoc.RootElement();
                    analyseNode( tix );
                 }

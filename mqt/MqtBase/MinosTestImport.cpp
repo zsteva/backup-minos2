@@ -10,10 +10,13 @@
 #include "tinyxml.h"
 #include "TinyUtils.h"
 
-MinosTestImport::MinosTestImport( BaseContestLog * const ct ) : ct( ct ),
-      imp_stanzaCount( ct->getCtStanzaCount() ), curfpos( 0 )
+MinosTestImport::MinosTestImport( BaseContestLog * const ct ) : ct( ct )
+  , curfpos( 0 )
+  , imp_stanzaCount( ct->getCtStanzaCount() )
 {}
-MinosTestImport::MinosTestImport( ) : ct( 0 ), imp_stanzaCount( 0 ), curfpos( 0 )
+MinosTestImport::MinosTestImport( ) : ct( nullptr )
+  , curfpos( 0 )
+  , imp_stanzaCount( 0 )
 {}
 MinosTestImport::~MinosTestImport()
 {}
@@ -167,7 +170,7 @@ void MinosTestImport::processMinosStanza( RPCRequest *rq )
 
    body = rq->args[ 0 ];
 
-   ct->setStanza( imp_stanzaCount, curfpos );
+   ct->setStanza( static_cast<unsigned int>(imp_stanzaCount), curfpos );
    ct->processMinosStanza( rq->methodName, this );
 
 }
@@ -247,7 +250,7 @@ int MinosTestImport::readTestFile(QSharedPointer<QFile> ctfile )
     TiXmlBase::SetCondenseWhiteSpace( false );
     TiXmlDocument xdoc;
     TIXML_STRING sb = buffer.toStdString();
-    xdoc.Parse( sb.c_str(), 0 );
+    xdoc.Parse( sb.c_str(), nullptr );
     TiXmlElement *tix = xdoc.RootElement();
     if ( !tix || !checkElementName( tix, "stream:stream" ) )
     {

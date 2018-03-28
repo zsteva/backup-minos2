@@ -22,6 +22,6 @@ bool StaticDirectoryCreate (const QString &Path );
 
 bool CreateDir( const QString &s );
 
-int64_t FileLength(const QString &fname);
+qint64 FileLength(const QString &fname);
 
 #endif // FILEUTILS_H

@@ -10,6 +10,8 @@
 
 #ifndef MatchContactH
 #define MatchContactH 
+#include "mwin.h"
+#include "contest.h"
 //---------------------------------------------------------------------------
 class ListContact;
 class ContactList;
@@ -30,15 +32,15 @@ class MatchContact
       virtual ~MatchContact();
       virtual ContactList * getContactList() const
       {
-         return 0;
+         return nullptr;
       }
       virtual ListContact * getListContact() const
       {
-         return 0;
+         return nullptr;
       }
       virtual BaseContestLog * getContactLog() const
       {
-         return 0;
+         return nullptr;
       }
       virtual QSharedPointer<BaseContact> getBaseContact() const
       {
@@ -52,7 +54,7 @@ class MatchContact
 class BaseMatchContest
 {
 public:
-   virtual ~BaseMatchContest(){}
+   virtual ~BaseMatchContest();
 
    BaseLogList *matchedContest;
 
@@ -63,11 +65,11 @@ public:
 
    virtual const ContactList * getContactList() const
    {
-      return 0;
+      return nullptr;
    }
    virtual const BaseContestLog * getContactLog() const
    {
-      return 0;
+      return nullptr;
    }
    virtual bool operator<( const BaseMatchContest& rhs ) const = 0;
 };
@@ -92,7 +94,7 @@ class MatchListContact: public MatchContact
       ListContact *matchedListContact;
       MatchListContact( ContactList * ct, ListContact * lc );
       MatchListContact( );
-      virtual ~MatchListContact();
+      virtual ~MatchListContact() override;
       virtual ContactList * getContactList() const override
       {
          return matchedList;
@@ -101,9 +103,9 @@ class MatchListContact: public MatchContact
       {
          return matchedListContact;
       }
-      virtual bool operator<( const MatchContact& rhs ) const;
-      virtual bool operator==( const MatchContact& rhs ) const;
-      virtual bool operator!=( const MatchContact& rhs ) const;
+      virtual bool operator<( const MatchContact& rhs ) const override;
+      virtual bool operator==( const MatchContact& rhs ) const override;
+      virtual bool operator!=( const MatchContact& rhs ) const override;
       virtual void getText(QString &dest, BaseContestLog *const ct ) const override;
 };
 class MatchLogContact: public MatchContact
@@ -112,18 +114,18 @@ class MatchLogContact: public MatchContact
       BaseContestLog *matchedContest;
       QSharedPointer<BaseContact> matchedContact;
       MatchLogContact(BaseContestLog * ct, QSharedPointer<BaseContact> lc );
-      virtual ~MatchLogContact();
-      virtual BaseContestLog * getContactLog() const
+      virtual ~MatchLogContact() override;
+      virtual BaseContestLog * getContactLog() const override
       {
          return matchedContest;
       }
-      virtual QSharedPointer<BaseContact> getBaseContact() const
+      virtual QSharedPointer<BaseContact> getBaseContact() const override
       {
          return matchedContact;
       }
-      virtual bool operator<( const MatchContact& rhs ) const;
-      virtual bool operator==( const MatchContact& rhs ) const;
-      virtual bool operator!=( const MatchContact& rhs ) const;
+      virtual bool operator<( const MatchContact& rhs ) const override;
+      virtual bool operator==( const MatchContact& rhs ) const override;
+      virtual bool operator!=( const MatchContact& rhs ) const override;
       virtual void getText( QString &dest, BaseContestLog *const ct ) const override;
 };
 #endif

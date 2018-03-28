@@ -108,7 +108,7 @@ bool reg1test::exportTest( QSharedPointer<QFile> expfd, bool noSerials )
    QSharedPointer<BaseContact> bestdx = ct->getBestDX();
 
    reg1testLine linelist[ static_cast<int>(LineCount) ];
-   linelist[ static_cast< int> (TName) ] = reg1testLine( "TName", ct->name.getValue()  /*, "Contest Name"*/ ),
+   linelist[ static_cast< int> (TName) ] = reg1testLine( "TName", ct->name.getValue()  /*, "Contest Name"*/ );
 
    linelist[ static_cast< int> (TdDate )] = reg1testLine( "TDate", ct->dateRange( DTGFULL )  /*, "Start Date;End Date"*/ );
    linelist[ static_cast< int> (PCall )] = reg1testLine( "PCall", ct->mycall.fullCall.getValue()  /*, "Callsign Used"*/ );

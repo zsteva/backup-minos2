@@ -75,7 +75,7 @@ void DistrictFrame::on_sectionResized(int, int , int)
 }
 
 DistrictGridModel::DistrictGridModel():
-ct(0)
+ct(nullptr)
 {}
 DistrictGridModel::~DistrictGridModel()
 {

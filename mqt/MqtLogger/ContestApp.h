@@ -87,7 +87,7 @@ class TContestApp : public MinosParameters
       virtual void getStringDisplayProfile( int enumkey, QString &value ) override;
       virtual void setStringDisplayProfile( int enumkey, QString value ) override;
       virtual void flushDisplayProfile( void ) override;
-      virtual int getBigClockCorrection() override;
+      virtual qint64 getBigClockCorrection() override;
       virtual int getStatsPeriod1() override;
       virtual int getStatsPeriod2() override;
       virtual void setStatsPeriod1( int ) override;
@@ -134,7 +134,7 @@ class TContestApp : public MinosParameters
       void setCurrentContest( BaseContestLog * );
 
 };
-extern int bigClockCorr;
+extern qint64 bigClockCorr;
 
 extern bool isOpen(QSharedPointer<ContestSlot> cs, const QString &fn );
 extern bool isOpen(QSharedPointer<ListSlot> cs, const QString &fn );

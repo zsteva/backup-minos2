@@ -14,9 +14,12 @@
 
 //====================================================================
 ADIFImport::ADIFImport(LoggerContestLog * c, QSharedPointer<QFile> adifContestFile ) :
-      aqso( 0 ), next_block( 1 ),
-      acontest( c ), adifContestFile( adifContestFile ),
-      offset( -1 ), limit( -1 )
+      offset( -1 ),
+      limit( -1 ),
+      adifContestFile( adifContestFile ),
+      acontest( c ),
+      aqso( nullptr ),
+      next_block( 1 )
 {}
 ADIFImport::~ADIFImport()
 {

@@ -1,7 +1,9 @@
 #ifndef CalendarListH
 #define CalendarListH 
 //---------------------------------------------------------------------------
-
+#include <QString>
+#include <QWidget>
+#include "Calendar.h"
 extern int calendarFormYear;
 #define LOWYEAR -1
 #define LOWURLYEAR -1
@@ -19,7 +21,9 @@ class CalendarYear
             return y;
         }
     public:
-        CalendarYear ( CalType t, int y ) : type ( t ), yearOffset ( y )
+        CalendarYear ( CalType t, int y ) :
+            yearOffset ( y )
+            , type ( t )
         {
             if ( calendarFormYear == 0 )
             {

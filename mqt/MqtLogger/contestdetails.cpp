@@ -13,7 +13,7 @@
 ContestDetails::ContestDetails(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ContestDetails),
-    contest(0), inputcontest(0),
+    contest(nullptr), inputcontest(nullptr),
     saveContestOK(false), suppressProtectedOnClick(false),
     noMultRipple(false)
 {
@@ -112,7 +112,7 @@ int ContestDetails::exec()
 
     contest->initialiseINI();
 
-    focusChange(0, false, 0);    // higlight required fields
+    focusChange(nullptr, false, nullptr);    // higlight required fields
     QWidget *nextD = getDetails( );
     if ( nextD )
     {
@@ -370,7 +370,7 @@ void ContestDetails::setDetails(  )
    refreshOps();
 
    enableControls();
-   focusChange(0, false, 0);
+   focusChange(nullptr, false, nullptr);
 }
 void ContestDetails::refreshOps()
 {
@@ -738,8 +738,8 @@ void ContestDetails::setDetails( const IndividualContest &ic )
 //   setDetails();
 }
 //---------------------------------------------------------------------------
-QString ssLineEditFrRedBkRed = "QLineEdit { border-style: outset ; border-width: 2px ; border-color: red  }";
-QString ssComboBoxFrRedBkRed = "QComboBox { border-style: outset ; border-width: 2px ; border-color: red  }";
+static QString ssLineEditFrRedBkRed = "QLineEdit { border-style: outset ; border-width: 2px ; border-color: red  }";
+static QString ssComboBoxFrRedBkRed = "QComboBox { border-style: outset ; border-width: 2px ; border-color: red  }";
 
 void ContestDetails::focusChange(QObject * /*obj*/, bool in, QFocusEvent * /*event*/)
 {
@@ -1067,7 +1067,7 @@ QWidget * ContestDetails::getNextFocus()
    {
       return ui->PowerEdit;
    }
-   return 0;
+   return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -1180,7 +1180,7 @@ void ContestDetails::on_CancelButton_clicked()
 }
 
 
-QString BSHelpText =
+static QString BSHelpText =
    "These settings are groups of settings that can "
    "be applied to a contest all in one go."
    "\r\n\r\n"
@@ -1240,7 +1240,7 @@ void ContestDetails::on_VHFCalendarButton_clicked()
     {
        ui->OKButton->setFocus();
     }
-    focusChange(0, false, 0);
+    focusChange(nullptr, false, nullptr);
 }
 
 void ContestDetails::on_CallsignEdit_editingFinished()

@@ -77,7 +77,7 @@ TiXmlElement *findNode( TiXmlElement *node, const QString &name )
          return e;
       }
    }
-   return 0;
+   return nullptr;
 }
 QString getNodeValue( TiXmlElement *node, const QString &name )
 {

@@ -6,7 +6,7 @@
 #include "ui_ConfigElementFrame.h"
 
 ConfigElementFrame::ConfigElementFrame(bool nele) :
-    QFrame(0),
+    QFrame(nullptr),
     newElement(nele),
     ui(new Ui::ConfigElementFrame)
 {
@@ -191,7 +191,7 @@ void ConfigElementFrame::on_homeDirectoryBrowse_clicked()
     QString fpath =  ui->homeDirectoryEdit->text();
 
     QString destDir = QFileDialog::getExistingDirectory(
-                  0,
+                  nullptr,
                   "Set Working Directory",
                   fpath,
                   QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks

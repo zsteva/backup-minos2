@@ -350,49 +350,6 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                     break;
                 }
             }
-           /*
-            if (an.getPublisherProgram() == tslf->rigServerConnectable.remoteAppName && an.getPublisherServer() == tslf->rigServerConnectable.serverName)
-            {
-                if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlStatus )
-                {
-                    // this happens for disconnected as well...
-                    emit setRadioLoaded();
-                    emit setRadioState( an.getValue() );
-                    break;
-                }
-                if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlMode )
-                {
-                    emit setMode( an.getValue() );
-                    break;
-                }
-                if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlFreq )
-                {
-                    emit setFreq( an.getValue() );
-                    break;
-                }
-                if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioList )
-                {
-                    rigCache.addRigList(an.getValue());
-                    emit setRadioLoaded();
-                    emit setRadioList(an.getValue());
-                    break;
-                }
-                if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlBandList )
-                {
-                    emit setBandList(an.getValue());
-                }
-                if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioName )
-                {
-                    emit setRadioName(an.getValue());
-                    break;
-                }
-                if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlTxVertStatus )
-                {
-                    emit setRadioTxVertStatus( an.getValue() );
-                    break;
-                }
-            }
-            */
             if (an.getPublisherProgram() == tslf->bandMapServerConnectable.remoteAppName && an.getPublisherServer() == tslf->bandMapServerConnectable.serverName)
             {
                 if ( an.getCategory() == rpcConstants::BandMapCategory && an.getKey() == rpcConstants::bandmapKeyLoaded )
@@ -401,42 +358,8 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                     break;
                 }
             }
-            /*
-            if (an.getPublisherProgram() == tslf->rotatorServerConnectable.remoteAppName && an.getPublisherServer() == tslf->rotatorServerConnectable.serverName)
-            {
-                if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorState)
-                {
-                    emit RotatorLoaded();
-                    emit RotatorState(an.getValue());
-                    break;
-                }
-                if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorList )
-                {
-                    rotatorCache.addRotList(an.getValue());
-                    emit RotatorLoaded();
-                    emit RotatorList(an.getValue());
-                    break;
-                }
-                if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorBearing)
-                {
-                    emit RotatorBearing(an.getValue());
-                    break;
-                }
-                if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "MaxAzimuth")
-                {
-                    emit RotatorMaxAzimuth(an.getValue());
-                    break;
-                }
-                if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == "MinAzimuth")
-                {
-                    emit RotatorMinAzimuth(an.getValue());
-                    break;
-                }
-            }
-            */
         }
     }
-
 }
 //---------------------------------------------------------------------------
 void TSendDM::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
@@ -488,7 +411,7 @@ void TSendDM::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QSt
                     if ( lf )
                     {
                         QString StanzaData;
-                        callOK = lf->getStanza( Stanza, StanzaData );
+                        callOK = lf->getStanza( static_cast<unsigned int>(Stanza), StanzaData );
                         if ( callOK )
                         {
                             st->addMember( StanzaData, "StanzaData" );

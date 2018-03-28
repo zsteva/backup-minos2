@@ -546,7 +546,7 @@ QString DisplayContestContact::getField( int ACol, const BaseContestLog *const c
                            // we don't have it worked out already...
                            double lon = 0.0;
                            double lat = 0.0;
-                           int brg;
+                           int brg = 0;
                            double dist;
 
                            if ( lonlat( loc.loc.getValue(), lon, lat ) == LOC_OK )

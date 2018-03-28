@@ -665,10 +665,10 @@ bool ContestContact::GJVload( int diskBlock )
    }
 
    buftostr( temp );
-   setLogSequence( temp.toInt());
+   setLogSequence( temp.toULong());
 
    buftostr( temp );
-   contactFlags.setInitialValue( temp.toInt() );
+   contactFlags.setInitialValue( temp.toUShort() );
 
    buftostr( temp );
    op1.setInitialValue( temp );

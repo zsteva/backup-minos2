@@ -10,6 +10,7 @@
 
 #ifndef LogEventsH
 #define LogEventsH 
+#include <QString>
 //---------------------------------------------------------------------------
 extern bool checkCloseEvent();
 extern void createCloseEvent();

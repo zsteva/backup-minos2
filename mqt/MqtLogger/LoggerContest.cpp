@@ -18,7 +18,8 @@
 #include "BandList.h"
 
 LoggerContestLog::LoggerContestLog( void ) : BaseContestLog(),
-      GJVFile( false ), minosFile( false ),
+      minosFile( false ),
+      GJVFile( false ),
       logFile( false ), adifFile( false ), ediFile( false ),
       needExport( false )
 {
@@ -472,7 +473,7 @@ void LoggerContestLog::setINIDetails()
 //   }
 }
 
-int LoggerContestLog::readBlock( int bno )
+qint64 LoggerContestLog::readBlock( int bno )
 {
     bool sres = GJVcontestFile->seek(bno * bsize);
    if ( !sres)
@@ -480,7 +481,7 @@ int LoggerContestLog::readBlock( int bno )
       MinosParameters::getMinosParameters() ->mshowMessage( "(read) seek failed!" );
    }
 
-   int rsize = GJVcontestFile->read(diskBuffer, bsize);
+   qint64 rsize = GJVcontestFile->read(diskBuffer, bsize);
 
    diskBuffer[ rsize ] = 0;
    if ( rsize < bsize )
@@ -488,7 +489,7 @@ int LoggerContestLog::readBlock( int bno )
 
    return rsize;
 }
-int LoggerContestLog::writeBlock(QSharedPointer<QFile> fd, int bno )
+qint64 LoggerContestLog::writeBlock(QSharedPointer<QFile> fd, int bno )
 {
    // fd will not be contest_file if we are exporting a GJV file
 
@@ -504,7 +505,7 @@ int LoggerContestLog::writeBlock(QSharedPointer<QFile> fd, int bno )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "(write) seek failed!" );
    }
-   int ret = fd->write(diskBuffer, bsize);
+   qint64 ret = fd->write(diskBuffer, bsize);
    if ( ret != bsize )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
@@ -540,7 +541,7 @@ void LoggerContestLog::closeFile( void )
    adifContestFile.reset();
    ediContestFile.reset();
 }
-QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, int extraFlags, bool saveNew, bool catchup, QString mode, dtg ctTime )
+QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, unsigned short extraFlags, bool saveNew, bool catchup, QString mode, dtg ctTime )
 {
    // add the contact number as an new empty contact, with disk block and log_seq
 
@@ -913,6 +914,7 @@ bool LoggerContestLog::export_contest(QSharedPointer<QFile> expfd, ExportType ex
 
       case EPRINTFILE:
          ret = exportPrintFile(expfd);
+         break;
 
       default:
          return false;
@@ -935,12 +937,12 @@ void LoggerContestLog::procUnknown(QSharedPointer<BaseContact> cct, writer &wr )
    {
 
       // no district when required
-      if ( countryMult.getValue() && cct->ctryMult == 0 )   	// invalid country
+      if ( countryMult.getValue() && cct->ctryMult == nullptr )   	// invalid country
          lbuff = "Unknown Country  ";
 
       else
          if ( districtMult.getValue() && cct->ctryMult && cct->ctryMult->hasDistricts()     // continentals dont have counties
-              && cct->districtMult == 0 && !( cct->contactFlags.getValue() & VALID_DISTRICT ) )   	// invalid country
+              && cct->districtMult == nullptr && !( cct->contactFlags.getValue() & VALID_DISTRICT ) )   	// invalid country
          {
             lbuff = "Unknown District   ";
          }
@@ -968,9 +970,9 @@ bool LoggerContestLog::exportGJV(QSharedPointer<QFile>fd )
 
    int mind = 1;
    int maxd = maxSerial;
-   if ( !enquireDialog(   /*Owner*/0, "Please give first serial to be dumped", mind ) )
+   if ( !enquireDialog(   /*Owner*/nullptr, "Please give first serial to be dumped", mind ) )
       return false;
-   if ( !enquireDialog(   /*Owner*/0, "Please give last serial to be dumped", maxd ) )
+   if ( !enquireDialog(   /*Owner*/nullptr, "Please give last serial to be dumped", maxd ) )
       return false;
 
    int mindump = qMin( mind, maxd );
@@ -979,7 +981,7 @@ bool LoggerContestLog::exportGJV(QSharedPointer<QFile>fd )
    // ????   if ( MessageBox( 0, "Do you wish to edit the file?", "Contest", MB_OKCANCEL ) != ID_CANCEL )
    //   if (cmOK != messageBox(mfOKCancel|mfConfirmation, "Dumping all contacts between serials %d and %d inclusive", mindump, maxdump))
    QString temp = QString( "Dumping all contacts between serials %1 and %2 inclusive" ).arg(mindump).arg(maxdump );
-   if ( !MinosParameters::getMinosParameters() ->yesNoMessage( 0, temp ) )
+   if ( !MinosParameters::getMinosParameters() ->yesNoMessage( nullptr, temp ) )
       return false;
 
    GJVParams gp( fd );
@@ -1027,7 +1029,7 @@ bool LoggerContestLog::exportADIF(QSharedPointer<QFile> expfd )
 
    header += "<EOH>\r\n";
 
-   int ret = expfd->write(header.toStdString().c_str());
+   qint64 ret = expfd->write(header.toStdString().c_str());
    if (  ret != header.size() )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
@@ -1039,7 +1041,7 @@ bool LoggerContestLog::exportADIF(QSharedPointer<QFile> expfd )
       QString l = lct ->getADIFLine();
       if ( l.size() )
       {
-         int ret = expfd->write(l.toStdString().c_str());
+         qint64 ret = expfd->write(l.toStdString().c_str());
          if (  ret != l.size() )
          {
             MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
@@ -1115,9 +1117,9 @@ bool LoggerContestLog::exportMinos( QSharedPointer<QFile> expfd )
 {
    int mind = 1;
    int maxd = maxSerial;
-   if ( !enquireDialog(   /*Owner*/0, "Please give first serial to be dumped", mind ) )
+   if ( !enquireDialog(   /*Owner*/nullptr, "Please give first serial to be dumped", mind ) )
       return false;
-   if ( !enquireDialog(   /*Owner*/0, "Please give last serial to be dumped", maxd ) )
+   if ( !enquireDialog(   /*Owner*/nullptr, "Please give last serial to be dumped", maxd ) )
       return false;
 
    int mindump = qMin( mind, maxd );
@@ -1126,7 +1128,7 @@ bool LoggerContestLog::exportMinos( QSharedPointer<QFile> expfd )
    // ????   if ( MessageBox( 0, "Do you wish to edit the file?", "Contest", MB_OKCANCEL ) != ID_CANCEL )
    //   if (cmOK != messageBox(mfOKCancel|mfConfirmation, "Dumping all contacts between serials %d and %d inclusive", mindump, maxdump))
    QString temp = QString( "Dumping all contacts between serials %1 and %2 inclusive" ).arg(mindump).arg(maxdump );
-   if ( !MinosParameters::getMinosParameters() ->yesNoMessage( 0, temp ) )
+   if ( !MinosParameters::getMinosParameters() ->yesNoMessage( nullptr, temp ) )
       return false;
 
    MinosTestExport * mtest = new MinosTestExport( this );
@@ -1475,7 +1477,7 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
       // duplicates
 
       next_block++ ;
-      bct->setLogSequence( next_block << 16 );
+      bct->setLogSequence( static_cast<unsigned long>(next_block) << 16 );
 
       MapWrapper<BaseContact> wbct(bct);
       ctList.insert( wbct, wbct );
@@ -1651,7 +1653,7 @@ bool LoggerContestLog::getStanza( unsigned int stanza, QString &stanzaData )
    {
       return false;
    }
-   StanzaPos *s = &stanzaLocations[ stanza - 1 ];
+   StanzaPos *s = &stanzaLocations[ static_cast<int>(stanza) - 1 ];
    if ( s->stanza != stanza )
    {
       return false;

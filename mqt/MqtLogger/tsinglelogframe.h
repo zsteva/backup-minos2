@@ -31,6 +31,7 @@ class TSingleLogFrame : public QFrame
 {
     Q_OBJECT
 
+    Ui::TSingleLogFrame *ui;
 public:
     explicit TSingleLogFrame(QWidget *parent, BaseContestLog *contest);
     ~TSingleLogFrame();
@@ -94,8 +95,6 @@ public:
     void getCurrentDetails(memoryData::memData &m);
 
 private:
-    Ui::TSingleLogFrame *ui;
-
     QVector< StackedInfoFrame *> auxFrames;  // NOT shared pointers - singleLogFrame owns them
     BaseContestLog * contest;
     QSOGridModel qsoModel;
@@ -106,9 +105,6 @@ private:
     long long curFreq;
     QString sCurFreq;
     QString sCurMode;
-
-    int freqUpDateCnt;
-    int modeUpDateCnt;
 
     void transferDetails( MatchTreeItem *MatchTreeIndex );
 

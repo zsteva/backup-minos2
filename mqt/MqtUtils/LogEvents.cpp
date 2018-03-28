@@ -26,7 +26,7 @@ void logMessage( const QString &level, const QString &mess )
 // How to find if parent has disappeared - this needs to go in the children
 // So we need a "starter" process for where we don't want the logger (e.g. voice keyer)
 
-static int original_ppid = 0;
+static unsigned long original_ppid = 0;
 
 static unsigned long parentPID()
 {
@@ -64,12 +64,12 @@ static bool isParentRunning()
 #ifdef Q_OS_WIN
 
     static unsigned long _parentPID = parentPID();
-    static void* _parentHandle = NULL;
+    static void* _parentHandle = nullptr;
 
-    if (_parentHandle == NULL && _parentPID != 0)
+    if (_parentHandle == nullptr && _parentPID != 0)
         _parentHandle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, _parentPID);
 
-    if (_parentHandle != NULL)
+    if (_parentHandle != nullptr)
     {
         BOOL success;
         DWORD exitCode;

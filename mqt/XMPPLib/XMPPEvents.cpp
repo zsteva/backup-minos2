@@ -9,6 +9,8 @@
 //---------------------------------------------------------------------------
 #include "XMPP_pch.h"
 //---------------------------------------------------------------------------
+Exception::~Exception()
+{}
 void makeXMPPEvent( XStanza *xs )
 {
    // analyse the stanza and produce the correct event

@@ -10,6 +10,7 @@
 
 #ifndef ServerEventH
 #define ServerEventH 
+#include <QString>
 //---------------------------------------------------------------------------
 
 extern QString makeUuid();

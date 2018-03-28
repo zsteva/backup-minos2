@@ -19,7 +19,6 @@ public:
         _state.setValue(st);
         _selected.setValue(sel);
     }
-    ~AntennaState();
 
     virtual QString pack() const;
     virtual void unpack(QString);

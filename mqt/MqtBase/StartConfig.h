@@ -13,7 +13,7 @@ class StartConfig : public QDialog
 
 public:
     explicit StartConfig(QWidget *parent, bool showAutoStart);
-    ~StartConfig();
+    ~StartConfig() override;
 
 private:
     Ui::StartConfig *ui;

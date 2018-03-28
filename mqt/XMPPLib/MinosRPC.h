@@ -1,18 +1,19 @@
 #ifndef MINOSRPC_H
 #define MINOSRPC_H
 
-#include "XMPP_pch.h"
+#include "XMPPRPCObj.h"
+#include "RPCPubSub.h"
 #include <QTimer>
 
 class RPCGeneralClient: public MinosRPCClient
 {
    public:
-    RPCGeneralClient( QString methodName) : MinosRPCClient( methodName, 0, true )
+    RPCGeneralClient( QString methodName) : MinosRPCClient( methodName, nullptr, true )
     {}
       RPCGeneralClient( TRPCFunctor *cb ) : MinosRPCClient( "", cb, true )
       {}
-      ~RPCGeneralClient()
-      {}
+      ~RPCGeneralClient();
+
       virtual QSharedPointer<MinosRPCObj> makeObj()
       {
          return QSharedPointer<MinosRPCObj>(new RPCGeneralClient( callback ));
@@ -21,12 +22,12 @@ class RPCGeneralClient: public MinosRPCClient
 class RPCGeneralServer: public MinosRPCServer
 {
    public:
-    RPCGeneralServer( ) : MinosRPCServer( "", 0, true )
+    RPCGeneralServer( ) : MinosRPCServer( "", nullptr, true )
     {}
       RPCGeneralServer( TRPCFunctor *cb ) : MinosRPCServer( "", cb, true )
       {}
-      ~RPCGeneralServer()
-      {}
+      ~RPCGeneralServer();
+
       virtual QSharedPointer<MinosRPCObj>makeObj()
       {
          return QSharedPointer<MinosRPCObj>(new RPCGeneralServer( callback ));
@@ -39,6 +40,8 @@ class MinosRPC: public QObject
     Q_OBJECT
 
     MinosRPC(const QString &defaultName, bool useEnvVar);
+    ~MinosRPC() override
+    {}
 
     static MinosRPC *rpc;
 

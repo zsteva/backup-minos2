@@ -106,15 +106,15 @@ bool RPCParam::getMember( const QString &, QSharedPointer<RPCParam>& )
 {
    return false;
 }
-bool RPCParam::getMember( unsigned int , QSharedPointer<RPCParam>& )
+bool RPCParam::getMember(int , QSharedPointer<RPCParam>& )
 {
    return false;
 }
-bool RPCParam::getElements( unsigned int & )
+bool RPCParam::getElements( int & )
 {
    return false;
 }
-bool RPCParam::getElement( unsigned int , QSharedPointer<RPCParam>& )
+bool RPCParam::getElement(int , QSharedPointer<RPCParam>& )
 {
    return false;
 }
@@ -160,7 +160,7 @@ RPCParamStruct::RPCParamStruct( TiXmlElement &aNode )
       if ( checkElementName( e , "member" ) )
       {
          QString pname;
-         TiXmlElement *valuenode = 0;
+         TiXmlElement *valuenode = nullptr;
          for ( TiXmlElement * f = e->FirstChildElement(); f; f = f->NextSiblingElement() )
          {
             if ( checkElementName( f, "value" ) )
@@ -437,7 +437,7 @@ bool RPCParamArray::getElements(int &size )
    size = elements.size();
    return true;
 }
-bool RPCParamArray::getElement( int eleno, QSharedPointer<RPCParam> &p )
+bool RPCParamArray::getElement(int eleno, QSharedPointer<RPCParam> &p )
 {
    if ( elements.size() > eleno )
    {
@@ -765,7 +765,7 @@ void RPCArgs::addParams( TiXmlElement &paramsNode )
    {
       TiXmlBase::SetCondenseWhiteSpace( false );
       TiXmlDocument paramdoc;
-      paramdoc.Parse( UTF8XML.c_str(), 0 );
+      paramdoc.Parse( UTF8XML.c_str(), nullptr );
       TiXmlElement *root = paramdoc.RootElement();
       paramsNode.InsertEndChild( *root );
 
@@ -782,7 +782,7 @@ bool RPCArgs::parseParams( TIXML_STRING UTF8XML )   // parse from the string to 
    // And now we move to tinyXML for parsing...
    TiXmlBase::SetCondenseWhiteSpace( false );
    TiXmlDocument paramdoc;
-   paramdoc.Parse( UTF8XML.c_str(), 0 );
+   paramdoc.Parse( UTF8XML.c_str(), nullptr );
    TiXmlElement *root = paramdoc.RootElement();
    if ( !root )
    {
@@ -836,7 +836,7 @@ bool RPCArgs::getStructArgMember( int argno, const QString &name, QSharedPointer
    }
    return false;
 }
-bool RPCArgs::getStructArgMember(int argno, unsigned int eleno, QSharedPointer<RPCParam>&res )
+bool RPCArgs::getStructArgMember(int argno, int eleno, QSharedPointer<RPCParam>&res )
 {
    if ( args.size() > argno )
    {
@@ -844,7 +844,7 @@ bool RPCArgs::getStructArgMember(int argno, unsigned int eleno, QSharedPointer<R
    }
    return false;
 }
-bool RPCArgs::getArrayArgElements( int argno, unsigned int &size )
+bool RPCArgs::getArrayArgElements( int argno, int &size )
 {
    if ( args.size() > argno )
    {
@@ -852,7 +852,7 @@ bool RPCArgs::getArrayArgElements( int argno, unsigned int &size )
    }
    return false;
 }
-bool RPCArgs::getArrayArgElement(int argno, unsigned int eleno, QSharedPointer<RPCParam>&res )
+bool RPCArgs::getArrayArgElement(int argno, int eleno, QSharedPointer<RPCParam>&res )
 {
    if ( args.size() > argno )
    {

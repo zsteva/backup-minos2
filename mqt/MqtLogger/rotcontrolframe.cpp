@@ -24,9 +24,9 @@
 
 RotControlFrame::RotControlFrame(QWidget *parent):
     QFrame(parent)
+    , ct(nullptr)
     , ui(new Ui::RotControlFrame)
     , rotatorLoaded(false)
-    , ct(0)
 {
     ui->setupUi(this);
 

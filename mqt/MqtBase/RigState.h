@@ -16,7 +16,6 @@ public:
     RigState(QString s);
     RigState(const QString &status, const QString &sel, int f, const QString &m);
 
-    ~RigState();
 
     bool isDirty() const;
     void clearDirty();

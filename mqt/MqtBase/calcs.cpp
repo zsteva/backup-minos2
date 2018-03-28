@@ -114,7 +114,7 @@ QString WtodbW(const QString &W )
 {
    QString res;
    double watts =W.toDouble();
-   if ( watts != 0 )
+   if ( watts >= 0.00000001 )
    {
       double dbWatts = 10.0 * log10( watts );
       res = QString::number( dbWatts );

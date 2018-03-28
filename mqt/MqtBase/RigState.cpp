@@ -21,10 +21,7 @@ RigState::RigState(QString s)
 {
     unpack(s);
 }
-RigState::~RigState()
-{
 
-}
 bool RigState::isDirty() const
 {
     return  _status.isDirty() ||

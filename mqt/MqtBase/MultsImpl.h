@@ -11,6 +11,12 @@
 //----------------------------------------------------------------------------
 #ifndef MultsImplH
 #define MultsImplH 
+#include "mwin.h"
+#include "MinosParameters.h"
+#include "cutils.h"
+#include "mults.h"
+#include "contest.h"
+#include "calcs.h"
 //----------------------------------------------------------------------------
 class DistrictEntry;
 class DistrictSynonym;

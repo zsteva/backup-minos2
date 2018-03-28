@@ -41,7 +41,7 @@ BundleFile::BundleFile( PROFILES p )
 
         break;
     case epPRELOADPROFILE:
-        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppCurrent, "CurrentLog", 0, 0, "hint", false ) ) );
+        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppCurrent, "CurrentLog", 0, nullptr, "hint", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppDefSession, "DefaultSessionName", "Default Session", "Default Session", "hint", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppSession, "CurrentSession", "Default Session", "Default Session", "hint", false ) ) );
         break;
@@ -475,7 +475,14 @@ void SettingsBundle::flushProfile( void )
 }
 //=============================================================================
 ProfileEntry::ProfileEntry(int id, const char *name, const char *def, const char *dispname, const char *hint, bool RO )
-      : id( id ), name( name ), sdefaultval( def ), hint( hint ), pt( petString ), dispname(dispname), RO(RO)
+      :
+        pt( petString ),
+        id( id ),
+        name( name ),
+        dispname(dispname),
+        sdefaultval( def ),
+        hint( hint ),
+        RO(RO)
 {}
 /*
 ProfileEntry::ProfileEntry(int id, const QString &n, const QString &d, const QString &dname, const QString &h, bool RO )
@@ -483,10 +490,26 @@ ProfileEntry::ProfileEntry(int id, const QString &n, const QString &d, const QSt
 {}
 */
 ProfileEntry::ProfileEntry(int id, const char *name, int def, const char *dispname, const char *hint, bool RO )
-      : id( id ), name( name ), idefaultval( def ), sdefaultval( QString::number( def ) ), hint( hint ), pt( petInteger ), dispname(dispname), RO(RO)
+      :
+        pt( petInteger ),
+        id( id ),
+        name( name ),
+        dispname(dispname),
+        sdefaultval( QString::number( def ) ),
+        idefaultval( def ),
+        hint( hint ),
+        RO(RO)
 {}
 ProfileEntry::ProfileEntry(int id, const char *name, bool def, const char *dispname, const char *hint, bool RO )
-      : id( id ), name( name ), bdefaultval( def ), sdefaultval( def?"1":"0" ), hint( hint ), pt( petBool ), dispname(dispname), RO(RO)
+      :
+        pt( petBool ),
+        id( id ),
+        name( name ),
+        dispname(dispname),
+        sdefaultval( def?"1":"0" ),
+        bdefaultval( def ),
+        hint( hint ),
+        RO(RO)
 {}
 void ProfileEntry::createEntry( SettingsBundle *s )
 {

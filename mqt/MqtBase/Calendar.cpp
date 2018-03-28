@@ -11,7 +11,7 @@ const QString monthTable[ 12 ] =
     {
         "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
     };
-int monthLength[ 12 ] =
+static int monthLength[ 12 ] =
     {
         31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
     };
@@ -126,8 +126,8 @@ that these start and end dates should apply indefinitely.
 
 QDateTime Calendar::localToUTC( QDateTime t )
 {
-    unsigned short month = t.date().month();
-    unsigned short day = t.date().day();
+    int month = t.date().month();
+    int day = t.date().day();
 
     bool isDst = false;
 

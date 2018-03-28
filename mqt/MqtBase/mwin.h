@@ -10,7 +10,7 @@
 #ifndef MwinH
 #define MwinH 
 //----------------------------------------------------------------------------
-
+#include "XMPP_pch.h"
 // GJVVERSION is definition for the .GJV file format
 
 #define GJVVERSION "0.41"
@@ -249,7 +249,7 @@ class Callsign
       bool operator==( const Callsign& rhs ) const;
       bool operator<( const Callsign& rhs ) const;
 
-      char validate( );
+      int validate( );
       bool isUK() const;
 };
 //---------------------------------------------------------------------------
@@ -271,8 +271,8 @@ class Locator
 class BaseLogList
 {
 public:
-    BaseLogList(){}
-    virtual ~BaseLogList(){}
+    BaseLogList();
+    virtual ~BaseLogList();
 };
 
 #endif

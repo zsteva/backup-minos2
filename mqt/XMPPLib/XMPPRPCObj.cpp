@@ -12,6 +12,12 @@
 extern void sendAction( XStanza *a );      // which might not be the one in XMPPThread
 
 //---------------------------------------------------------------------------
+TRPCFunctor::~TRPCFunctor()
+{}
+MinosRPCServer::~MinosRPCServer()
+{}
+
+//---------------------------------------------------------------------------
 
 QMap <QString, QSharedPointer<MinosRPCObj>> &getServerMethodMap()
 {
@@ -20,7 +26,9 @@ QMap <QString, QSharedPointer<MinosRPCObj>> &getServerMethodMap()
 }
 //==============================================================================
 MinosRPCObj::MinosRPCObj(const QString &methodName, TRPCFunctor *cb , bool gen)
-      : methodName( methodName ), callback( cb ), general(gen)
+      : general(gen)
+      , methodName( methodName )
+      , callback( cb )
 {}
 MinosRPCObj::~MinosRPCObj()
 {

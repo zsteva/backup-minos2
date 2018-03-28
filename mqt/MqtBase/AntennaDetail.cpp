@@ -14,12 +14,8 @@ void AntennaDetail::setMaxAzimuth(int maxAzimuth)
 
 AntennaDetail::AntennaDetail(QString s):PubSubValue(AntennaDetailType)
 {
-    unpack(s);
-}
-AntennaDetail::~AntennaDetail()
-{
     qRegisterMetaType< AntennaDetail > ( "AntennaDetail" );
-
+    unpack(s);
 }
 bool AntennaDetail::isDirty() const
 {

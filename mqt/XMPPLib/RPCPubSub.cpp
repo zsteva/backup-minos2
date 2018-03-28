@@ -13,6 +13,8 @@
 //---------------------------------------------------------------------------
 bool RPCPubSub::connected = false;
 //---------------------------------------------------------------------------
+RPCPubSub::~RPCPubSub()
+{}
 //---------------------------------------------------------------------------
 /*static*/
 void RPCPubSub::initialisePubSub( TRPCFunctor *notifycb )
@@ -62,13 +64,13 @@ void RPCPubSub::close( )
    for ( QVector<RPCPublisher *>::iterator i = publishList.begin(); i != publishList.end(); i++ )
    {
       delete ( *i );
-      ( *i ) = 0;
+      ( *i ) = nullptr;
    }
    publishList.clear();
    for ( QVector<RPCSubscriber *>::iterator i = subscribeList.begin(); i != subscribeList.end(); i++ )
    {
       delete ( *i );
-      ( *i ) = 0;
+      ( *i ) = nullptr;
    }
    subscribeList.clear();
 }
@@ -114,7 +116,7 @@ AnalysePubSubNotify::AnalysePubSubNotify(bool err, QSharedPointer<MinosRPCObj> m
             }
             if (publisherServer == "localhost")
             {
-                publisherServer == MinosConfig::getMinosConfig()->getThisServerName();
+                publisherServer = MinosConfig::getMinosConfig()->getThisServerName();
             }
             publisherProgram = p[0];
             state = static_cast<PublishState>(stemp);

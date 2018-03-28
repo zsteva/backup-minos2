@@ -290,11 +290,11 @@ void RPCTestTest::testArray()
    //      bool GetArrayArgElements( unsigned int argno, unsigned int &size );
    //      bool GetArrayArgElement( unsigned int argno, unsigned int eleno, RPCParam *&res );
 
-   unsigned int asize;
+   int asize;
 
    bool pOK = xm.getArrayArgElements( 0, asize );
    QVERIFY( true == pOK );
-   QVERIFY( static_cast< unsigned int > (testvec.size()) == asize );
+   QVERIFY( testvec.size() == asize );
 
    for ( int i = 0; i < testvec.size(); i++ )
    {
@@ -303,7 +303,7 @@ void RPCTestTest::testArray()
 
       bool pOK = xm.getArrayArgElement( 0, i, pres );
       QVERIFY( true == pOK );
-      QVERIFY( pres != 0 );
+      QVERIFY( pres != nullptr );
 
       pOK = pres->getString( sres );
       QVERIFY( true == pOK );

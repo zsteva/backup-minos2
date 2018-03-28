@@ -9,6 +9,9 @@
 
 #ifndef MLogFileH
 #define MLogFileH 
+#include <QString>
+#include <QMutexLocker>
+#include <QTextStream>
 //---------------------------------------------------------------------------
 bool CreateDir(const QString &s );
 bool FileExists(const QString &path );

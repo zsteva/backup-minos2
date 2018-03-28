@@ -44,28 +44,22 @@ static QKeySequence runButShiftShortCut[] {
 RigControlFrame::RigControlFrame(QWidget *parent):
     QFrame(parent)
     , ui(new Ui::RigControlFrame)
+    , ct(nullptr)
+    , radioLoaded(false)
+    , radioConnected(false)
+    , radioError(false)
+    , freqEditOn(false)
     , curFreq(memDefData::DEFAULT_FREQ)
-    //, curMode(memDefData::DEFAULT_MODE)
     , curMode("")
     , radioName(NORADIO)
     , radioState("None")
-    , radioLoaded(false)
-    , freqEditOn(false)
-    , radioConnected(false)
-    , radioError(false)
-    , ct(0)
-
-
 {
-
     ui->setupUi(this);
 
     ui->freqInput->installEventFilter(this  );
     initRigFrame(parent);
 
     initRunMemoryButton();
-
-
 
     mgmLabelVisible(false);
 
@@ -102,7 +96,7 @@ void RigControlFrame::on_FontChanged()
 {
     QFont cf = QApplication::font();
     qreal fs = cf.pointSizeF();
-    int fsi = fs * 1.25;
+    int fsi = static_cast<int>(fs * 1.25);
     cf.setPointSize(fsi);
     cf.setBold(true);
     ui->freqInput->setFont(cf);
@@ -139,17 +133,12 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
     //connect(ui->bandSelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(radioBandFreq(int)));
     connect(ui->bandSelCombo, SIGNAL(activated(int)), this, SLOT(radioBandFreq(int)));
 
-
-
     if (!isRadioLoaded())
     {
         ui->modelbl->setVisible(false);
     }
 
 }
-
-
-
 
 void RigControlFrame::on_radioNameSel_activated(const QString &arg1)
 {
@@ -222,9 +211,9 @@ void RigControlFrame::changeRadioFreq()
 
     QString newfreq = ui->freqInput->text().trimmed().remove('.');
     double f = convertStrToFreq(newfreq);
-    if (f != -1.0)
+    if (f >= 0.0)
     {
-        if (f != 0)
+        if (f > 0)
         {
             newfreq.remove( QRegExp("^[0]*")); //remove periods and leading zeros
         }

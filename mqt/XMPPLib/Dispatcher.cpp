@@ -11,6 +11,10 @@
 #include "tinyxml.h"
 #include "TinyUtils.h"
 
+RPCDispatcher::RPCDispatcher()
+{}
+RPCDispatcher::~RPCDispatcher()
+{}
 void dispatchResponse( RPCDispatcher *RPCDisp, XStanza *xs )
 {
    if ( RPCDisp )
@@ -58,7 +62,7 @@ bool analyseNode(RPCDispatcher *RPCDisp, TIXML_STRING UTF8XML )
 {
    TiXmlBase::SetCondenseWhiteSpace( false );
    TiXmlDocument xdoc;
-   xdoc.Parse( UTF8XML.c_str(), 0 );
+   xdoc.Parse( UTF8XML.c_str(), nullptr );
    TiXmlElement *tix = xdoc.RootElement();
    bool ret = analyseNode( RPCDisp, tix );
    return ret;

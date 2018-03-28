@@ -52,10 +52,10 @@ class MinosTableWidget : public QTableView {
      Q_OBJECT
 
 public:
-      explicit MinosTableWidget(QWidget *parent = 0);
-      ~MinosTableWidget();
+      explicit MinosTableWidget(QWidget *parent = nullptr);
+      ~MinosTableWidget() Q_DECL_OVERRIDE;
       void setModel(QAbstractItemModel *model) Q_DECL_OVERRIDE;
-      void scrollTo(const QModelIndex &index, ScrollHint hint);
+      void scrollTo(const QModelIndex &index, ScrollHint hint) Q_DECL_OVERRIDE;
       const QModelIndex getFirstSelected() const;
 
 private:

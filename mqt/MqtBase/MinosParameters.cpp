@@ -8,12 +8,20 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
-MinosParameters *MinosParameters::mp = 0;
+MinosParameters *MinosParameters::mp = nullptr;
+MinosParameters::MinosParameters()
+{
+   mp = this;
+}
+MinosParameters::~MinosParameters()
+{
+   mp = nullptr;
+}
 MinosParameters *MinosParameters::getMinosParameters()
 {
    if ( !mp )
    {
-      mShowMessage( "MinosParameters not initialised", 0 );
+      mShowMessage( "MinosParameters not initialised", nullptr );
    }
    return mp;
 }
@@ -52,7 +60,7 @@ void MinosParametersAdapter::setStringDisplayProfile( int /*enumkey*/, QString /
 void MinosParametersAdapter::flushDisplayProfile()
 {
 }
-int MinosParametersAdapter::getBigClockCorrection()
+qint64 MinosParametersAdapter::getBigClockCorrection()
 {
    return 0;
 }
@@ -88,7 +96,7 @@ void MinosParametersAdapter::mshowMessage( const QString &mess, QWidget* Owner )
 }
 BaseContestLog * MinosParametersAdapter::getCurrentContest()
 {
-   return 0;
+   return nullptr;
 }
 bool MinosParametersAdapter::insertList(ContactList * /*p*/, int /*sno*/ )
 {

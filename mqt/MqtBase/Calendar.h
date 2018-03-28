@@ -1,6 +1,8 @@
 #ifndef CALENDAR_H
 #define CALENDAR_H
 
+#include <QMap>
+#include <QDateTime>
 #include "BandList.h"
 
 enum CalType {ectVHF, ectHF, ectMwave, ectVHFOther, ectHFOther, ectHFBARTG};
