@@ -30,12 +30,6 @@ public:
     RotatorCache rotatorCache;
 
     void publishAntennaList(QString ants);
-    void publishState( const QString &name, const QString &state );
-    void publishBearing( const QString &name, const QString bearing );
-    void publishMaxAzimuth(const QString &name, const QString maxAzimuth);
-    void publishMinAzimuth(const QString &name, const QString minAzimuth);
-
-    void flagStatus(QString msg);
 
 signals:
     void setRotation(int direction, int angle);

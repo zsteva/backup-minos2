@@ -129,7 +129,6 @@ private:
 
     void sendRadioListLogger();
     void sendBandListLogger();
-    void sendRadioNameLogger(QString radioName);
     void sendStatusLogger(const QString &message);
     void sendStatusToLogDisConnected();
     void sendStatusToLogConnected();

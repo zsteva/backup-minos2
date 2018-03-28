@@ -547,10 +547,7 @@ void RotatorMainWindow::sendStatusLogger( )
 {
    QString message = connectStat + ':' + statusMsg;
    logMessage(QString("Send %1 message to logger, appName = %2").arg(message).arg(appName));
-   if (appName.length() > 0)
-   {
-        msg->publishState(setupAntenna->currentAntennaName, message);
-   }
+
    PubSubName psname(setupAntenna->currentAntennaName);
    msg->rotatorCache.setStatus(psname, message);
    msg->rotatorCache.publishState();
@@ -713,17 +710,11 @@ void RotatorMainWindow::displayBearing(int bearing)
             ol = "0";
         }
         QString s = QString("%1:%2:%3").arg(QString::number(displayBearing)).arg(QString::number(rotatorBearing)).arg(ol);
-        msg->publishBearing(setupAntenna->currentAntennaName, s);
 
         PubSubName psname(setupAntenna->currentAntennaName);
         msg->rotatorCache.setBearing(psname, s);
         msg->rotatorCache.publishState();
     }
-
-    //qDebug() << QString("Bearing = %1").arg(displayBearing);
-
-
-//    QString rotatorBearingmsg = QString::number(rotatorBearing);
     QString rotatorBearingmsg = QString::number(displayBearing);
     if (displayBearing < 10 && rotatorBearing > 0)
     {
@@ -962,8 +953,6 @@ void RotatorMainWindow::upDateAntenna()
            if (appName.length() > 0)
            {
                sendStatusToLogStop();
-               msg->publishMaxAzimuth(setupAntenna->currentAntennaName, QString::number(setupAntenna->currentAntenna.max_azimuth));
-               msg->publishMinAzimuth(setupAntenna->currentAntennaName, QString::number(setupAntenna->currentAntenna.min_azimuth));
                PubSubName psname(setupAntenna->currentAntennaName);
                msg->rotatorCache.setMaxAzimuth(psname, setupAntenna->currentAntenna.max_azimuth);
                msg->rotatorCache.setMinAzimuth(psname, setupAntenna->currentAntenna.min_azimuth);
@@ -978,11 +967,6 @@ void RotatorMainWindow::upDateAntenna()
         if (appName.length() > 0)
         {
             writeWindowTitle(appName);
-            //msg->publishMaxAzimuth("", QString::number(0));
-            //msg->publishMinAzimuth("", QString::number(0));
-            PubSubName psname;
-            //msg->rotatorCache.setMaxAzimuth(psname, 0);
-            //msg->rotatorCache.setMinAzimuth(psname, 0);
             sendStatusToLogDisConnected();
             sendStatusToLogStop();
         }

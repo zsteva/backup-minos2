@@ -31,19 +31,6 @@ RotatorRpc::RotatorRpc(RotatorMainWindow *parent) : QObject(parent), parent(pare
 
 }
 //---------------------------------------------------------------------------
-
-void RotatorRpc::publishState(const QString &name, const QString &state)
-{
-    static QString old;
-    trace(QString("Rot RPC: Publish State = %1").arg(state));
-    MinosRPC *rpc = MinosRPC::getMinosRPC();
-    if ( state != old )
-    {
-       old = state;
-       //rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorState, state, psPublished );
-    }
-}
-
 void RotatorRpc::publishAntennaList(QString ants)
 {
     MinosRPC *rpc = MinosRPC::getMinosRPC();
@@ -51,43 +38,6 @@ void RotatorRpc::publishAntennaList(QString ants)
     rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorList, ants, psPublished );
 }
 
-void RotatorRpc::publishMaxAzimuth(const QString &name, const QString maxAzimuth)
-{
-    static QString old;
-    trace(QString("Rot RPC: Publish MaxAzimuth = %1").arg(maxAzimuth));
-    MinosRPC *rpc = MinosRPC::getMinosRPC();
-    if ( maxAzimuth != old )
-    {
-       old = maxAzimuth;
-       //rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorMaxAzimuth, maxAzimuth, psPublished );
-    }
-
-}
-
-void RotatorRpc::publishMinAzimuth(const QString &name, const QString minAzimuth)
-{
-    static QString old;
-    trace(QString("Rot RPC: Publish MinAzimuth = %1").arg(minAzimuth));
-    MinosRPC *rpc = MinosRPC::getMinosRPC();
-    if ( minAzimuth != old )
-    {
-       old = minAzimuth;
-       //rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorMinAzimuth, minAzimuth, psPublished );
-    }
-}
-
-void RotatorRpc::publishBearing(const QString &name, const QString bearing)
-{
-    static QString old;
-    trace(QString("Rot RPC: Publish Bearing = %1").arg(bearing));
-    MinosRPC *rpc = MinosRPC::getMinosRPC();
-    if ( bearing != old )
-    {
-       old = bearing;
-       //rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorBearing, bearing, psPublished );
-    }
-
-}
 
 void RotatorRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
