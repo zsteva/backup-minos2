@@ -6,45 +6,56 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>313</width>
-    <height>303</height>
+    <width>524</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Minos DX Cluster</string>
+   <string>ClusterMainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Node</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Cluster Node</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="nodeCb"/>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QComboBox" name="nodeSel"/>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Filter</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="filterSel"/>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Band Filter</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="bandFilterCb"/>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
       <item>
-       <widget class="QColumnView" name="columnView"/>
+       <widget class="QPlainTextEdit" name="textWindow"/>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="sendLine"/>
     </item>
    </layout>
   </widget>
@@ -53,7 +64,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>313</width>
+     <width>524</width>
      <height>21</height>
     </rect>
    </property>

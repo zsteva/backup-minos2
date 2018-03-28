@@ -73,7 +73,7 @@ public:
     void setAppName(QString name);
     int comportAvial(int radioNum, QString comport);
     int findCurrentRadio(QString currentRadioName);
-
+    void setTabToCurrentRadio();
 signals:
 
     void radioNameChange();
@@ -132,6 +132,9 @@ private:
     void saveTranVerterSetting(int radioNum, int transVertNum, QSettings  &config);
     void readTranVerterSetting(int radioNum, int transVertNum, QSettings &config);
     void loadBands();
+    void getRadioSetting(int radNum, QSettings &config);
+    void saveRadioData(int radNum, QSettings &config);
+
 };
 
 #endif // SETUPDIALOG_H

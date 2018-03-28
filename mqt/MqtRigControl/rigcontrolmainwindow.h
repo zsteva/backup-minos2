@@ -47,6 +47,8 @@ public:
     explicit RigControlMainWindow(QWidget *parent = 0);
     ~RigControlMainWindow();
 
+    bool freqPresetChanged = false;
+
 
 private:
 
@@ -163,13 +165,14 @@ private:
 
     void testBoxesVisible(bool visible);
 
-
+    void upDateRadio();
     void loadBands();
+
 private slots:
 
     void onStdInRead(QString);
     void saveTraceLogFlag();
-    void upDateRadio();
+
     void getRadioInfo();
     void logMessage(QString s);
     void about();
@@ -184,6 +187,9 @@ private slots:
     void onSelectRadio(QString, QString mode);
     void selFreqClicked();
     void setupBandFreq();
+    void selectRadio();
+    void onLaunchSetup();
+
 signals:
 
 

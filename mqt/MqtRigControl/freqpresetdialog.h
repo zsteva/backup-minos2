@@ -51,11 +51,12 @@ class FreqPresetDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit FreqPresetDialog(QStringList& _presetFreq, const QVector<BandDetail*> _bands, QWidget *parent = 0);
+    explicit FreqPresetDialog(QStringList& _presetFreq, const QVector<BandDetail*> _bands, bool& freqPresetChanged, QWidget *parent = 0);
     ~FreqPresetDialog();
 
 
     static void readSettings(QStringList &_presetFreq);
+
 
 
 
@@ -81,6 +82,7 @@ private:
     QStringList presetFreq;
     QVector<BandDetail*> bands;
     bool freqChanged = false;
+    bool freqPresetChanged = false;
 
 
     bool checkInBand(double freq, bandOffSet band);

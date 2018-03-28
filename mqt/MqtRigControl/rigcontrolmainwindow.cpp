@@ -237,9 +237,9 @@ void RigControlMainWindow::onStdInRead(QString cmd)
 
 void RigControlMainWindow::initActionsConnections()
 {
-    connect(ui->selectRadioBox, SIGNAL(activated(int)), this, SLOT(upDateRadio()));
+    connect(ui->selectRadioBox, SIGNAL(activated(int)), this, SLOT(selectRadio()));
 
-    connect(ui->actionSetup_Radios, SIGNAL(triggered()), setupRadio, SLOT(exec()));
+    connect(ui->actionSetup_Radios, SIGNAL(triggered()), this, SLOT(onLaunchSetup()));
     connect(ui->actionSetup_Band_Freq, SIGNAL(triggered(bool)), this, SLOT(setupBandFreq()));
     connect(ui->actionTraceLog, SIGNAL(changed()), this, SLOT(saveTraceLogFlag()));
 
@@ -262,6 +262,8 @@ void RigControlMainWindow::initActionsConnections()
 
     connect(radio, SIGNAL(debug_protocol(QString)), this, SLOT(logMessage(QString)));
 
+
+
     // standalone test
     connect(ui->selFreq, SIGNAL(clicked(bool)), this, SLOT(selFreqClicked()));
     connect(ui->freqInputBox, SIGNAL(editingFinished()), this, SLOT(selFreqClicked()));
@@ -273,13 +275,18 @@ void RigControlMainWindow::initActionsConnections()
 void RigControlMainWindow::setupBandFreq()
 {
 
-    FreqPresetDialog  fPresetDialog(presetFreq, bands);
+    FreqPresetDialog  fPresetDialog(presetFreq, bands, freqPresetChanged);
 
     fPresetDialog.exec();
 
-
-
+    if (!freqPresetChanged)
+    {
+        logMessage(QString("RigControl: Band Freq Change, send new bandlist to logger"));
+        sendBandListLogger();
+        freqPresetChanged = false;
+    }
 }
+
 
 
 void RigControlMainWindow::currentRadioSettingChanged(QString radioName)
@@ -339,7 +346,11 @@ void RigControlMainWindow::initSelectRadioBox()
     }
 }
 
-
+void RigControlMainWindow::selectRadio()
+{
+    setupRadio->currentRadioName = ui->selectRadioBox->currentText();
+    upDateRadio();
+}
 
 
 void RigControlMainWindow::setSelectRadioBoxVisible(bool visible)
@@ -1529,7 +1540,12 @@ void RigControlMainWindow::openRadio()
 
     }
 
+    void RigControlMainWindow::onLaunchSetup()
+    {
+        setupRadio->setTabToCurrentRadio();
 
+        setupRadio->exec();
+    }
 
     void RigControlMainWindow::aboutRigConfig()
     {
