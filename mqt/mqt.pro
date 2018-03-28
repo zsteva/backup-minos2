@@ -16,6 +16,7 @@ SUBDIRS += \
     MqtBandmap \
     MqtMonitor \
     MqtRigControl \
+    MqtCluster \
     Qs1rSync \
 
 greaterThan(QT_MAJOR_VERSION, 4) : greaterThan(QT_MINOR_VERSION, 8) {
@@ -34,6 +35,7 @@ MqtMonitor.depends = MqtUtils TinyXML XMPPLib MqtBase
 MqtServer.depends = MqtUtils TinyXML XMPPLib MqtBase
 MqtRigControl.depends = MqtUtils TinyXML XMPPLib MqtBase
 MqtRotator.depends = MqtUtils TinyXML XMPPLib MqtBase
+MqtCluster.depends = MqtUtils TinyXML XMPPLib MqtBase
 Qs1rSync.depends = MqtUtils TinyXML XMPPLib MqtBase
 
 
