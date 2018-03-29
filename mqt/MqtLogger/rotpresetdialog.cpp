@@ -21,7 +21,7 @@
 
 
 
-RotPresetDialog::RotPresetDialog(RotPresetData& _editData, RotPresetData& _curData, QWidget *parent) :
+RotPresetDialog::RotPresetDialog(RotPreset& _editData, RotPreset& _curData, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::RotPresetDialog)
 {

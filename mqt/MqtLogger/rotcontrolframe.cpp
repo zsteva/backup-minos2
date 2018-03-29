@@ -752,19 +752,27 @@ void RotControlFrame::presetButReadActSel(int buttonNumber)
 
 void RotControlFrame::presetButEditActSel(int buttonNumber)
 {
-    RotPresetData editData;
-    RotPresetData curData;
-
-    traceMsg(QString("RotFrame: Preset Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
-    RotPresetDialog presetDialog(editData, curData, this);
-    presetDialog.setWindowTitle(QString("Rotator Preset %1 - Edit").arg(QString::number(buttonNumber + 1)));
-    //runDialog.setLogData(&runData, buttonNumber);
-
-    if (presetDialog.exec() == QDialog::Accepted)
+    if (!rotPresets.isEmpty())
     {
-        //setRunMemoryData(buttonNumber, runData);
-        //runButtonUpdate(buttonNumber);
+        RotPreset editData;
+        RotPreset curData;
+
+        curData.name = rotPresets[buttonNumber]->name;
+        curData.bearing = rotPresets[buttonNumber]->bearing;
+
+        traceMsg(QString("RotFrame: Preset Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
+        RotPresetDialog presetDialog(editData, curData, this);
+        presetDialog.setWindowTitle(QString("Rotator Preset %1 - Edit").arg(QString::number(buttonNumber + 1)));
+
+        if (presetDialog.exec() == QDialog::Accepted)
+        {
+            setRotPresetButData(buttonNumber, editData);
+            RotPresetButtonUpdate(buttonNumber);
+            saveRotPresetButton(editData);
+        }
     }
+
+
 }
 
 void RotControlFrame::presetButClearActSel(int buttonNumber)
@@ -780,6 +788,29 @@ void RotControlFrame::presetButtonUpdate(int buttonNumber)
 void RotControlFrame::presetButWriteActSel(int buttonNumber)
 {
 
+}
+
+
+void RotControlFrame::setRotPresetButData(int buttonNumber, RotPreset& editData)
+{
+    rotPresets[buttonNumber]->name = editData.name;
+    rotPresets[buttonNumber]->bearing = editData.bearing;
+    sendRotPresetButLogger(editData);
+}
+
+
+void RotControlFrame::RotPresetButtonUpdate(int buttonNumber, RotPreset& editData)
+{
+    presetButMap[buttonNumber]->presetButton->setText(QString("%1: %2").arg(QString::number(buttonNumber)).arg(editData.name) );
+    QString tTipStr = "Bearing = " + editData.bearing;
+    presetButMap[buttonNumber]->presetButton->setToolTip(tTipStr);
+}
+
+void RotControlFrame::saveRotPresetButton(RotPreset& editData)
+{
+    QString msg;
+    msg = QString("%1:%2:%3").arg(QString::number(editData.num)).arg(editData.name).arg(editData.bearing);
+    emit sendPresetButton(msg);
 }
 
 PresetButton::PresetButton(QToolButton *b, RotControlFrame *rcf, int num)

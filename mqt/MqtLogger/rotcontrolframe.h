@@ -19,13 +19,17 @@
 #define ROTCONTROLFRAME_H
 
 #include "logger_pch.h"
+#include "rotatorcommon.h"
+#include "rotpresetdialog.h"
 #include "editpresetsdialog.h"
+
 #include <QShortcut>
 
 namespace Ui {
 class RotControlFrame;
 }
 class RotControlFrame;
+//class RotPreset;
 class PresetButton : public QObject
 {
     Q_OBJECT
@@ -149,9 +153,12 @@ private:
 
     void keyPressEvent(QKeyEvent *event);
     void initPresetButtons();
+    void saveRotPresetButton(RotPreset &editData);
 signals:
     void selectRotator(QString);
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
+
+    void sendPresetButton(QString);
     void turnBearingReturn();
     void bearingEditReturn();
 

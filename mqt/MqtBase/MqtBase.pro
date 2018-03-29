@@ -51,7 +51,8 @@ SOURCES += \
     ConfigElementFrame.cpp \
     MatchCollection.cpp \
     rigutils.cpp \
-    minostablewidget.cpp
+    minostablewidget.cpp \
+    rotatorcommon.cpp
 
 HEADERS += \
     BandList.h \
@@ -90,7 +91,8 @@ HEADERS += \
     rigcontrolcommonconstants.h \
     MatchCollection.h \
     rigutils.h \
-    minostablewidget.h
+    minostablewidget.h \
+    rotatorcommon.h
 
 unix {
     target.path = /usr/lib

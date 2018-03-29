@@ -18,29 +18,14 @@
 #define ROTPRESETDIALOG_H
 
 #include <QDialog>
+#include "rotatorcommon.h"
 
 namespace Ui {
 class RotPresetDialog;
 }
 
 
-class RotPresetData
-{
 
-public:
-
-    RotPresetData(int _num = 0, QString _name = "", QString _bearing = "")
-    {
-        num = _num;
-        name = _name;
-        bearing = _bearing;
-    }
-
-    int num;
-    QString name;
-    QString bearing;
-
-};
 
 
 
@@ -49,14 +34,14 @@ class RotPresetDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit RotPresetDialog(RotPresetData& editData, RotPresetData& curData, QWidget *parent = 0);
+    explicit RotPresetDialog(RotPreset& editData, RotPreset& curData, QWidget *parent = 0);
     ~RotPresetDialog();
 
 private slots:
     void bearingEditFinished();
 private:
     Ui::RotPresetDialog *ui;
-    RotPresetData editData;
+    RotPreset editData;
 
 };
 

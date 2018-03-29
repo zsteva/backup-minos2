@@ -18,6 +18,7 @@
 
 #include <QDialog>
 #include<QLineEdit>
+#include "rotatorcommon.h"
 
 #define NUM_PRESETS 10
 #define EMPTY_PRESET_NAME "        "
@@ -27,23 +28,8 @@ class EditPresetsDialog;
 }
 
 
-class RotPreset
-{
 
-public:
 
-    RotPreset(int _number, QString _name, QString _bearing)
-    {
-        number = _number;
-        name = _name;
-        bearing = _bearing;
-    }
-
-    int number = 0;
-    QString name;
-    QString bearing;
-
-};
 
 
 class EditPresetsDialog : public QDialog
@@ -74,7 +60,6 @@ protected:
 
 private:
     Ui::EditPresetsDialog *ui;
-
     QLineEdit* presetNameLineEdit[NUM_PRESETS];
     QLineEdit* presetBearingLineEdit[NUM_PRESETS];
     QVector<RotPreset*> rotPresets;

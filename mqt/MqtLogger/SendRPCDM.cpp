@@ -151,6 +151,18 @@ void TSendDM::sendSelectRotator(QString s)
     rpc.queueCall( rotatorServerConnectable.remoteAppName + "@" + rotatorServerConnectable.serverName );
 }
 
+void TSendDM::sendRotatorPreset(QString s)
+{
+    RPCGeneralClient rpc(rpcConstants::rotatorMethod);
+    QSharedPointer<RPCParam>st(new RPCParamStruct);
+
+    st->addMember( s, rpcConstants::rotPreset );
+    rpc.getCallArgs() ->addParam( st );
+
+    rpc.queueCall( rotatorServerConnectable.remoteAppName + "@" + rotatorServerConnectable.serverName );
+}
+
+
 void TSendDM::sendSelectRig(QString s)
 {
     RPCGeneralClient rpc(rpcConstants::rigControlMethod);

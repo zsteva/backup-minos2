@@ -49,7 +49,7 @@ class TSendDM : public QObject
 
       void sendSelectRotator(QString);
       void sendRotator(rpcConstants::RotateDirection direction, int angle );
-
+      void sendRotatorPreset(QString);
       void sendSelectRig(QString);
       void sendRigControlFreq(const QString &freq);
       void sendRigControlMode(const QString &mode);
