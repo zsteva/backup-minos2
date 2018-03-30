@@ -62,6 +62,7 @@ signals:
     void clearActionSelected(int);
     void selectRadio(QString);
 
+
 };
 
 
@@ -160,7 +161,7 @@ signals:
     void selectRotator(QString);
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
 
-    void sendPresetButton(QString);
+    void sendRotatorPreset(QString);
     void turnBearingReturn();
     void bearingEditReturn();
 

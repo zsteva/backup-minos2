@@ -458,6 +458,7 @@ void RotControlFrame::setRotatorPresetList(QString s)
         {
             QStringList p = presets[i].split(',');
             rotPresets.append(new RotPresetData(p[0].toInt(), p[1], p[2]));
+            rotPresetButtonUpdate(i, *rotPresets[i]);
         }
 
     }
@@ -756,7 +757,7 @@ void RotControlFrame::presetButEditActSel(int buttonNumber)
 
         traceMsg(QString("RotFrame: Preset Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
         RotPresetDialog presetDialog(this);
-//        presetDialog.setPresetDialogData(editData, curData); ******************************************
+        presetDialog.setPresetDialogData(editData, curData);
         presetDialog.setWindowTitle(QString("Rotator Preset %1 - Edit").arg(QString::number(buttonNumber + 1)));
 
         if (presetDialog.exec() == QDialog::Accepted)
@@ -805,7 +806,7 @@ void RotControlFrame::saveRotPresetButton(RotPresetData& editData)
 {
     QString msg;
     msg = QString("%1:%2:%3").arg(QString::number(editData.number)).arg(editData.name).arg(editData.bearing);
-    emit sendPresetButton(msg);
+    emit sendRotatorPreset(msg);
 }
 
 PresetButton::PresetButton(QToolButton *b, RotControlFrame *rcf, int num)
