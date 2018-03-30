@@ -39,6 +39,26 @@ void RotatorRpc::publishAntennaList(QString ants)
 }
 
 
+void RotatorRpc::publishPresetList(QString presets)
+{
+    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotPresetList, presets, psPublished );
+}
+
+
+
+void RotatorRpc::publishMaxAzimuth(const QString maxAzimuth)
+{
+    static QString old;
+    trace(QString("Rot RPC: Publish MaxAzimuth = %1").arg(maxAzimuth));
+    if ( maxAzimuth != old )
+    {
+       old = maxAzimuth;
+       MinosRPC *rpc = MinosRPC::getMinosRPC();
+       rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorMaxAzimuth, maxAzimuth, psPublished );
+    }
+}
+
 void RotatorRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
    trace( "Rot Rpc: Notify callback from " + from + ( err ? ":Error" : ":Normal" ) );

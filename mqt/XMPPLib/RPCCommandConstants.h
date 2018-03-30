@@ -93,6 +93,8 @@ static const QString rotatorStateCategory    = QT_TR_NOOP("RotatorState");
 static const QString rotatorState       = QT_TR_NOOP("State");
 static const QString rotatorBearing     = QT_TR_NOOP("Bearing");
 static const QString rotatorList        = QT_TR_NOOP("rotList");
+static const QString rotPreset  = QT_TR_NOOP("RotPreset");
+static const QString rotPresetList  = QT_TR_NOOP("RotPresetList");
 
 static const QString rotatorAntennaName = QT_TR_NOOP("AntennaName");
 static const QString rotatorMaxAzimuth  = QT_TR_NOOP("MaxAzimuth");

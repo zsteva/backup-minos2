@@ -2,16 +2,33 @@
 // $Id$
 //
 // PROJECT NAME 		Minos Amateur Radio Control and Logging System
+//                      Rotator Control
+// Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2018
 //
-// COPYRIGHT         (c) D. G. Balharrie M0DGB/G8FKH
 //
 //
 /////////////////////////////////////////////////////////////////////////////
 
-
-
 #ifndef ROTATORCOMMON_H
 #define ROTATORCOMMON_H
+
+#include <QString>
+#include <QStringList>
+
+class RotPresetData
+{
+
+public:
+
+    RotPresetData(int _number, QString _name, QString _bearing);
+    RotPresetData();
+
+    int number = 0;
+    QString name;
+    QString bearing;
+
+};
+
 
 // Common Rotator Constants
 
@@ -72,7 +89,7 @@ const QString FILENAME_CURRENT_ANTENNA = "CurrentAntenna.ini";
 // Rotator Types
 
 enum endStop {ROT_NEG180_180, ROT_0_360, ROT_0_450, ROT_NEG180_540, ROT_180_180};
-const QStringList endStopNames =  {"ROT_NEG180_180", "ROT_0_360", "ROT_0_450", "ROT_NEG180_540", "ROT_180_180"};
+const QStringList endStopNames = (QStringList() << "ROT_NEG180_180" << "ROT_0_360" << "ROT_0_450" << "ROT_NEG180_540" << "ROT_180_180");
 
 
 
@@ -84,5 +101,6 @@ enum overlapStat { NO_OVERLAP, NEG_OVERLAP, POS_OVERLAP};
 
 const QString BUTTON_ON_STYLE = QString("background-color: Sandybrown ; border-style: outset; border-width: 1px; border-color: black; min-width: 5em; padding: 3px;\n");
 const QString BUTTON_OFF_STYLE = QString("background-color: Gainsboro ; border-style: outset; border-width: 1px; border-color: black; min-width: 5em; padding: 3px;\n");
+
 
 #endif // ROTATORCOMMON_H

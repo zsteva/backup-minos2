@@ -19,7 +19,7 @@
 #include "rigmemcommondata.h"
 #include "rigutils.h"
 #include "rigcontrolcommonconstants.h"
-#include "rotatorCommonConstants.h"
+#include "rotatorcommon.h"
 
 RunButtonDialog::RunButtonDialog(QWidget *parent) :
     QDialog(parent),

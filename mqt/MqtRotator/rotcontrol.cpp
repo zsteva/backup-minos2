@@ -16,7 +16,7 @@
 #include <QThread>
 #include "rotcontrol.h"
 #include <hamlib/rotator.h>
-#include "rotatorCommonConstants.h"
+
 
 
 

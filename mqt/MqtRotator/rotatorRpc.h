@@ -31,6 +31,7 @@ public:
 
     void publishAntennaList(QString ants);
 
+    void publishPresetList(QString presets);
 signals:
     void setRotation(int direction, int angle);
     void selectAntenna(QString);

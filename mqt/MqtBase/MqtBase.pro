@@ -52,6 +52,8 @@ SOURCES += \
     MatchCollection.cpp \
     rigutils.cpp \
     minostablewidget.cpp \
+    rotatorcommon.cpp
+    minostablewidget.cpp \
     RigState.cpp \
     AntennaState.cpp \
     AntennaDetail.cpp \
@@ -107,6 +109,8 @@ HEADERS += \
     RotatorCache.h \
     RigCache.h \
     RigDetails.h
+    minostablewidget.h \
+    rotatorcommon.h
 
 unix {
     target.path = /usr/lib

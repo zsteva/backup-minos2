@@ -18,7 +18,7 @@
 #include <QTableWidgetItem>
 #include <QTreeView>
 
-#include "rotatorCommonConstants.h"
+#include "rotatorcommon.h"
 #include "rigcontrolcommonconstants.h"
 
 #include "profiles.h"

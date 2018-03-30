@@ -19,11 +19,52 @@
 #define ROTCONTROLFRAME_H
 
 #include "logger_pch.h"
+#include "rotatorcommon.h"
+#include "rotpresetdialog.h"
+#include "editpresetsdialog.h"
+
 #include <QShortcut>
 
 namespace Ui {
 class RotControlFrame;
 }
+class RotControlFrame;
+//class RotPreset;
+class PresetButton : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit PresetButton(QToolButton *b, RotControlFrame *rcf, int no);
+    ~PresetButton();
+
+    RotControlFrame *rotControlFrame;
+    QToolButton* presetButton;
+    QMenu* presetMenu;
+    QShortcut* shortKey;
+    QShortcut* shiftShortKey;
+    QAction* readAction;
+    QAction* writeAction;
+    QAction* editAction;
+    QAction* clearAction;
+
+    int presetNo;
+
+private slots:
+    void presetUpdate();
+
+    void presetShortCutSelected();
+    void readActionSelected();
+    void editActionSelected();
+    void writeActionSelected();
+    void clearActionSelected();
+signals:
+    void clearActionSelected(int);
+    void selectRadio(QString);
+
+};
+
+
 
 class RotControlFrame : public QFrame
 {
@@ -41,6 +82,7 @@ public:
     void setRotatorLoaded();
 
     void setRotatorList(QString);
+    void setRotatorPresetList(QString s);
     void setRotatorState(const QString &s);
     void setRotatorBearing(const QString &s);
     void setRotatorAntennaName(const QString &s);
@@ -53,13 +95,22 @@ public:
     void getRotDetails(memoryData::memData &m);
 
     void on_ContestPageChanged();
+
+
+    void presetButtonUpdate(int);
+    void presetButReadActSel(int buttonNumber);
+    void presetButWriteActSel(int buttonNumber);
+    void presetButEditActSel(int buttonNumber);
+
+
 private:
 
     QShortcut *nudgeRight1;
     QShortcut *nudgeRight2;
     QShortcut *nudgeLeft;
-    //QPalette *redText;
-    //QPalette *blackText;
+
+    QMap<int, PresetButton *> presetButMap;
+
 
     int maxAzimuth = 0;
     int minAzimuth = 0;
@@ -82,6 +133,8 @@ private:
     bool rotatorLoaded;
     bool isRotatorLoaded();
 
+    QVector<RotPresetData*> rotPresets;
+
     void rot_left_button_on();
     void rot_left_button_off();
     void rot_right_button_on();
@@ -99,9 +152,15 @@ private:
 
 
     void keyPressEvent(QKeyEvent *event);
+    void initPresetButtons();
+    void saveRotPresetButton(RotPresetData &editData);
+    void setRotPresetButData(int buttonNumber, RotPresetData &editData);
+    void rotPresetButtonUpdate(int buttonNumber, RotPresetData &editData);
 signals:
     void selectRotator(QString);
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
+
+    void sendPresetButton(QString);
     void turnBearingReturn();
     void bearingEditReturn();
 
@@ -117,6 +176,7 @@ private slots:
     void on_nudgeLeft_clicked();
     void on_nudgeRight_clicked();
     void on_antennaName_activated(const QString &arg1);
+    void presetButClearActSel(int buttonNumber);
 };
 
 #endif // ROTCONTROLFRAME_H

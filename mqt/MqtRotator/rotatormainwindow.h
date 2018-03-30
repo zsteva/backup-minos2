@@ -19,7 +19,8 @@
 
 #include "base_pch.h"
 #include "rotatorRpc.h"
-#include "rotatorCommonConstants.h"
+#include "rotatorcommon.h"
+#include "editpresetsdialog.h"
 #include <QMainWindow>
 #include <QObject>
 #include <QtSerialPort/QSerialPort>
@@ -146,8 +147,9 @@ private:
     int rotatorCWEndStop;
     int rotatorCCWEndStop;
     QString backBearingmsg;
-    QString presetName[NUM_PRESETS];
-    QString presetBearing[NUM_PRESETS];
+    QVector<RotPresetData*> rotPresets;
+    //QString presetName[NUM_PRESETS];
+    //QString presetBearing[NUM_PRESETS];
 
     QString geoStr;         // geometry registry location
 
@@ -253,6 +255,7 @@ private:
     void dumpRotatorToTraceLog();
     void writeWindowTitle(QString appName);
 
+    void sendPresetListLogger();
 };
 
 #endif // ROTATORMAINWINDOW_H

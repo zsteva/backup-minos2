@@ -22,7 +22,7 @@
 #include "rotcontrol.h"
 #include "setupdialog.h"
 #include "rotsetupform.h"
-#include "rotatorCommonConstants.h"
+#include "rotatorCommon.h"
 
 
 

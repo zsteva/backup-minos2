@@ -97,9 +97,9 @@ EditPresetsDialog::~EditPresetsDialog()
 void EditPresetsDialog::nameReturnPressed(int boxNumber)
 {
 
-    if (presetNameLineEdit[boxNumber]->text() != presetName[boxNumber])
+    if (presetNameLineEdit[boxNumber]->text() != rotPresets[boxNumber]->name)
     {
-        presetName[boxNumber] = presetNameLineEdit[boxNumber]->text();
+        rotPresets[boxNumber]->name = presetNameLineEdit[boxNumber]->text();
         presetNameUpdated[boxNumber] = true;
         presetValueChanged = true;
 
@@ -117,9 +117,9 @@ void EditPresetsDialog::bearingReturnPressed(int boxNumber)
         int bearing = presetBearingLineEdit[boxNumber]->text().toInt(&ok, 10);
         if (bearing >= 0 && bearing <= 359 && ok)
         {
-            if (presetBearingLineEdit[boxNumber]->text() != presetBearing[boxNumber])
+            if (presetBearingLineEdit[boxNumber]->text() != rotPresets[boxNumber]->bearing)
             {
-                presetBearing[boxNumber] = presetBearingLineEdit[boxNumber]->text();
+                rotPresets[boxNumber]->bearing = presetBearingLineEdit[boxNumber]->text();
                 presetBearingUpdated[boxNumber] = true;
                 presetValueChanged = true;
 
@@ -133,7 +133,7 @@ void EditPresetsDialog::bearingReturnPressed(int boxNumber)
     else
     {
         // clear text store
-        presetBearing[boxNumber] = presetBearingLineEdit[boxNumber]->text();
+        rotPresets[boxNumber]->bearing = presetBearingLineEdit[boxNumber]->text();
         presetBearingUpdated[boxNumber] = true;
     }
 }
@@ -154,12 +154,12 @@ void EditPresetsDialog:: savePresets()
         if (presetNameUpdated[i])
         {
 
-            config.setValue("preset" + QString::number(i+1), presetName[i]);
+            config.setValue("preset" + QString::number(i+1), rotPresets[i]->name);
         }
 
         if (presetBearingUpdated[i])
         {
-           config.setValue("bearing" + QString::number(i+1), presetBearing[i]);
+           config.setValue("bearing" + QString::number(i+1), rotPresets[i]->bearing);
         }
 
     }
@@ -188,9 +188,10 @@ void EditPresetsDialog::readPresets()
 
     for (int i = 0; i < NUM_PRESETS; i++)
     {
-        presetName[i] = config.value("preset" +  QString::number(i+1)).toString();
-        presetBearing[i] = config.value("bearing" +  QString::number(i+1)).toString();
-
+        rotPresets.append(new RotPresetData(i, config.value("preset" +  QString::number(i+1)).toString(),
+                                        config.value("bearing" +  QString::number(i+1)).toString()));
+        //presetName[i] = config.value("preset" +  QString::number(i+1)).toString();
+        //presetBearing[i] = config.value("bearing" +  QString::number(i+1)).toString();
     }
 
     config.endGroup();
@@ -204,8 +205,8 @@ void EditPresetsDialog::loadPresetEditFieldsShow()
     readPresets();
     for (int i = 0; i < NUM_PRESETS; i++)
     {
-        presetNameLineEdit[i]->setText(presetName[i]);
-        presetBearingLineEdit[i]->setText(presetBearing[i]);
+        presetNameLineEdit[i]->setText(rotPresets[i]->name);
+        presetBearingLineEdit[i]->setText(rotPresets[i]->bearing);
     }
     emit showEditPresetDialog();
 
@@ -229,14 +230,14 @@ void EditPresetsDialog::cancelButtonPushed()
 
 void EditPresetsDialog::clearPresets()
 {
-
+    rotPresets.clear();
 
     for (int i = 0; i < NUM_PRESETS; i++)
     {
-        presetName[i] = EMPTY_PRESET_NAME;
-        presetNameUpdated[i] = false;
-        presetBearing[i] = "";
+        //presetName[i] = EMPTY_PRESET_NAME;
+        //presetBearing[i] = "";
         presetBearingUpdated[i] = false;
+        presetNameUpdated[i] = false;
         presetValueChanged = false;
     }
 

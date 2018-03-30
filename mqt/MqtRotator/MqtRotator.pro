@@ -37,7 +37,6 @@ HEADERS  += \
     rotcontrol.h \
     rotatorlog.h \
     rotatorRpc.h \
-    rotatorCommonConstants.h \
     rotsetupform.h
 
 FORMS    += \

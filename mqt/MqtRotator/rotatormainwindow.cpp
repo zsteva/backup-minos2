@@ -14,7 +14,6 @@
 
 #include "base_pch.h"
 #include "RPCCommandConstants.h"
-#include "rotatorCommonConstants.h"
 #include "rotatorRpc.h"
 #include "rotatorlog.h"
 #include "rotatormainwindow.h"
@@ -567,7 +566,23 @@ void RotatorMainWindow::sendAntennaListLogger()
     msg->publishAntennaList(ants.join(":"));
 }
 
+void RotatorMainWindow::sendPresetListLogger()
+{
+    QStringList presets;
+    for (int i=0; i < rotPresets.count(); i++)
+    {
+        if (!rotPresets.isEmpty())
+        {
+            QStringList preset;
+            preset.append(QString::number(rotPresets[i]->number));
+            preset.append(rotPresets[i]->name);
+            preset.append(rotPresets[i]->bearing);
+            presets.append(preset.join(','));
 
+        }
+    }
+    msg->publishPresetList(presets.join(':'));
+}
 
 void RotatorMainWindow::initActionsConnections()
 {
@@ -807,11 +822,11 @@ void RotatorMainWindow::dispRawRotBearing(int rotatorBearing)
 void RotatorMainWindow::clickedPreset(int buttonNumber)
 {
 
-    if (presetName[buttonNumber] != "")
+    if (rotPresets[buttonNumber]->name != "")
     {
-        if (presetBearing[buttonNumber] != "")
+        if (rotPresets[buttonNumber]->bearing != "")
         {
-           ui->bearingEdit->setText(presetBearing[buttonNumber]);
+           ui->bearingEdit->setText(rotPresets[buttonNumber]->bearing);
            emit presetRotateTo();
         }
     }
@@ -824,6 +839,8 @@ void RotatorMainWindow::clickedPreset(int buttonNumber)
 
 void RotatorMainWindow::readPresets()
 {
+    rotPresets.clear();
+
     QString fileName;
     if (appName == "")
     {
@@ -841,10 +858,17 @@ void RotatorMainWindow::readPresets()
     config.beginGroup("Presets");
     for (int i = 0; i < NUM_PRESETS; i++)
     {
-        presetName[i] = config.value("preset" +  QString::number(i+1)).toString();
-        presetBearing[i] = config.value("bearing" +  QString::number(i+1)).toString();
+        rotPresets.append(new RotPresetData(i, config.value("preset" +  QString::number(i+1)).toString(),
+                          config.value("bearing" +  QString::number(i+1)).toString()));
+        //presetName[i] = config.value("preset" +  QString::number(i+1)).toString();
+        //presetBearing[i] = config.value("bearing" +  QString::number(i+1)).toString();
     }
     config.endGroup();
+
+    if (appName != "")
+    {
+        sendPresetListLogger();
+    }
 }
 
 
@@ -857,9 +881,9 @@ void RotatorMainWindow::refreshPresetLabels()
 
     for (int i = 0; i < NUM_PRESETS; i++)
     {
-        if (presetName[i] != "" || presetName[i] != presetButtons[i]->text())
+        if (rotPresets[i]->name != "" || rotPresets[i]->name != presetButtons[i]->text())
         {
-            presetButtons[i]->setText(presetName[i]);
+            presetButtons[i]->setText(rotPresets[i]->name);
             presetButtons[i]->setShortcut(presetShortCut[i]);     // restore the shortcut
         }
     }

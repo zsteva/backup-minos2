@@ -124,9 +124,8 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     connect(LogContainer->sendDM, SIGNAL(RotatorMinAzimuth(QString)), this, SLOT(on_RotatorMinAzimuth(QString)));
 
     // To rotator controller
-    connect(ui->FKHRotControlFrame, SIGNAL(sendRotator(rpcConstants::RotateDirection , int  )),
-            this, SLOT(sendRotator(rpcConstants::RotateDirection , int  )));
-
+    connect(ui->FKHRotControlFrame, SIGNAL(sendRotator(rpcConstants::RotateDirection , int  )), this, SLOT(sendRotator(rpcConstants::RotateDirection , int  )));
+    connect(ui->FKHRotControlFrame, SIGNAL(sendRotatorPreset(QString)), this, SLOT(sendRotatorPreset(QString)));
     connect(ui->FKHRotControlFrame, SIGNAL(selectRotator(QString)), this, SLOT(sendSelectRotator(QString)));
 
     connect(LogContainer->sendDM, SIGNAL(setKeyerLoaded()), this, SLOT(on_KeyerLoaded()));
@@ -1039,6 +1038,12 @@ void TSingleLogFrame::on_RotatorList(QString s)
     ui->FKHRotControlFrame->setRotatorList(s);
 }
 
+void TSingleLogFrame::on_RotatorPresetList(QString s)
+{
+    ui->FKHRotControlFrame->setRotatorPresetList(s);
+}
+
+
 void TSingleLogFrame::on_RotatorState(QString s)
 {
     if ( this == LogContainer->getCurrentLogFrame() )
@@ -1095,4 +1100,10 @@ void TSingleLogFrame::sendRotator(rpcConstants::RotateDirection direction, int a
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
         LogContainer->sendDM->sendRotator(this, direction, angle);
+}
+
+void TSingleLogFrame::sendRotatorPreset(QString s )
+{
+    if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+        sendDM->sendRotatorPreset(s);
 }

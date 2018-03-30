@@ -44,7 +44,7 @@ class TSendDM : public QObject
       void sendKeyerTone(TSingleLogFrame *tslf);
       void sendKeyerTwoTone(TSingleLogFrame *tslf);
       void sendKeyerStop(TSingleLogFrame *tslf);
-
+      void sendRotatorPreset(QString);
       void changeRotatorSelectionTo(const PubSubName &name, const QString &uuid);
       void sendRotatorSelection(const PubSubName &name, const QString &uuid);
       void sendRotator(TSingleLogFrame *tslf,rpcConstants::RotateDirection direction, int angle );
@@ -64,6 +64,7 @@ signals:
 
       void RotatorLoaded();
       void RotatorList(QString);
+      void RotatorPresetList(QString);
       void RotatorState(QString);
       void RotatorBearing(QString);
       void RotatorMaxAzimuth(QString);

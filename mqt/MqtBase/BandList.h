@@ -63,7 +63,7 @@ class BandList
 class BandDetail
 {
 public:
-    BandDetail(QString _name, double flow, double fhigh);
+    BandDetail(QString _name, double _flow, double _fhigh);
 
 
     QString name;

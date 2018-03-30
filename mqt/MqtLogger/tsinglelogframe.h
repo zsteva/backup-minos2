@@ -4,6 +4,7 @@
 #include "logger_pch.h"
 #include "StackedInfoFrame.h"
 #include "ConfigFile.h"
+#include "rotatorcommon.h"
 
 namespace Ui {
 class TSingleLogFrame;
@@ -151,6 +152,7 @@ private slots:
 
     void on_RotatorLoaded();
     void on_RotatorList(QString);
+    void on_RotatorPresetList(QString);
     void on_RotatorState(QString);
     void on_RotatorBearing(QString);
     void on_RotatorMaxAzimuth(QString);
@@ -163,6 +165,7 @@ private slots:
     void sendKeyerTwoTone();
     void sendKeyerStop();
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
+    void sendRotatorPreset(QString);
     void sendRadioFreq(QString);
     void sendRadioMode(QString);
 
