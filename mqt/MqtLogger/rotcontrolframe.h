@@ -133,7 +133,7 @@ private:
     bool rotatorLoaded;
     bool isRotatorLoaded();
 
-    QVector<RotPreset*> rotPresets;
+    QVector<RotPresetData*> rotPresets;
 
     void rot_left_button_on();
     void rot_left_button_off();
@@ -153,7 +153,9 @@ private:
 
     void keyPressEvent(QKeyEvent *event);
     void initPresetButtons();
-    void saveRotPresetButton(RotPreset &editData);
+    void saveRotPresetButton(RotPresetData &editData);
+    void setRotPresetButData(int buttonNumber, RotPresetData &editData);
+    void rotPresetButtonUpdate(int buttonNumber, RotPresetData &editData);
 signals:
     void selectRotator(QString);
     void sendRotator(rpcConstants::RotateDirection direction, int angle );

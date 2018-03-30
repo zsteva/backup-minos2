@@ -17,7 +17,7 @@
 #include <QSettings>
 
 #include "rotatorlog.h"
-#include "rotatorCommonConstants.h"
+#include "rotatorcommon.h"
 
 RotatorLog::RotatorLog()
 {

@@ -19,7 +19,7 @@
 
 #include "base_pch.h"
 #include "rotatorRpc.h"
-#include "rotatorCommonConstants.h"
+#include "rotatorcommon.h"
 #include "editpresetsdialog.h"
 #include <QMainWindow>
 #include <QObject>
@@ -147,7 +147,7 @@ private:
     int rotatorCWEndStop;
     int rotatorCCWEndStop;
     QString backBearingmsg;
-    QVector<RotPreset*> rotPresets;
+    QVector<RotPresetData*> rotPresets;
     //QString presetName[NUM_PRESETS];
     //QString presetBearing[NUM_PRESETS];
 

@@ -14,7 +14,6 @@
 
 #include "base_pch.h"
 #include "RPCCommandConstants.h"
-#include "rotatorCommonConstants.h"
 #include "rotatorRpc.h"
 #include "rotatorlog.h"
 #include "rotatormainwindow.h"
@@ -867,7 +866,7 @@ void RotatorMainWindow::readPresets()
     config.beginGroup("Presets");
     for (int i = 0; i < NUM_PRESETS; i++)
     {
-        rotPresets.append(new RotPreset(i, config.value("preset" +  QString::number(i+1)).toString(),
+        rotPresets.append(new RotPresetData(i, config.value("preset" +  QString::number(i+1)).toString(),
                           config.value("bearing" +  QString::number(i+1)).toString()));
         //presetName[i] = config.value("preset" +  QString::number(i+1)).toString();
         //presetBearing[i] = config.value("bearing" +  QString::number(i+1)).toString();

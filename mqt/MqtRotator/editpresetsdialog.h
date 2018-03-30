@@ -62,7 +62,7 @@ private:
     Ui::EditPresetsDialog *ui;
     QLineEdit* presetNameLineEdit[NUM_PRESETS];
     QLineEdit* presetBearingLineEdit[NUM_PRESETS];
-    QVector<RotPreset*> rotPresets;
+    QVector<RotPresetData*> rotPresets;
     //QString presetName[NUM_PRESETS];
     bool presetNameUpdated[NUM_PRESETS];
     //QString presetBearing[NUM_PRESETS];

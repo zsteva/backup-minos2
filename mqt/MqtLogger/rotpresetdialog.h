@@ -13,7 +13,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 
-
 #ifndef ROTPRESETDIALOG_H
 #define ROTPRESETDIALOG_H
 
@@ -24,25 +23,21 @@ namespace Ui {
 class RotPresetDialog;
 }
 
-
-
-
-
-
 class RotPresetDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit RotPresetDialog(RotPreset& editData, RotPreset& curData, QWidget *parent = 0);
+    explicit RotPresetDialog(QWidget *parent = 0);
     ~RotPresetDialog();
+    void setPresetDialogData(RotPresetData& _editData, RotPresetData& _curData );
 
-private slots:
-    void bearingEditFinished();
+    private slots:
+        void bearingEditFinished();
+
 private:
     Ui::RotPresetDialog *ui;
-    RotPreset editData;
-
+    RotPresetData editData;
 };
 
 #endif // ROTPRESETDIALOG_H

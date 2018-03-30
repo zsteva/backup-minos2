@@ -15,9 +15,15 @@
 
 
 
-RotPreset::RotPreset(int _number, QString _name, QString _bearing)
+RotPresetData::RotPresetData(int _number, QString _name, QString _bearing)
 {
     number = _number;
     name = _name;
     bearing = _bearing;
+}
+
+
+RotPresetData::RotPresetData()
+{
+
 }

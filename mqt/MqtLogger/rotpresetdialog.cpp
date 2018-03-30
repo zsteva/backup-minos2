@@ -14,26 +14,18 @@
 
 
 #include <QMessageBox>
-
 #include "rotpresetdialog.h"
 #include "ui_rotpresetdialog.h"
 
 
-
-
-RotPresetDialog::RotPresetDialog(RotPreset& _editData, RotPreset& _curData, QWidget *parent) :
+RotPresetDialog::RotPresetDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::RotPresetDialog)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    ui->nameEdit->setFocus();
-    editData = _editData;
 
-    ui->nameEdit->setText(_curData.name);
-    ui->bearingEdit->setText(_curData.bearing);
     connect(ui->bearingEdit, SIGNAL(editingFinished()), this, SLOT(bearingEditFinished()));
-
 
 }
 
@@ -41,6 +33,7 @@ RotPresetDialog::~RotPresetDialog()
 {
     delete ui;
 }
+
 
 
 
@@ -54,4 +47,14 @@ void RotPresetDialog::bearingEditFinished()
                                   QMessageBox::Ok|QMessageBox::Default,
                                   QMessageBox::NoButton, QMessageBox::NoButton);
     }
+}
+
+
+void RotPresetDialog::setPresetDialogData(RotPresetData& _editData, RotPresetData& _curData )
+{
+
+    editData = _editData;
+    ui->nameEdit->setText(_curData.name);
+    ui->bearingEdit->setText(_curData.bearing);
+    ui->nameEdit->setFocus();
 }

@@ -22,7 +22,7 @@
 #include <QComboBox>
 #include <QStringList>
 
-#include "rotatorCommonConstants.h"
+#include "rotatorcommon.h"
 
 #include <hamlib/rotator.h>
 #include <hamlib/rig.h>         // for debug

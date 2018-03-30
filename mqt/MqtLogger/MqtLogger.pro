@@ -120,9 +120,9 @@ HEADERS  += \
     LocCalcFrame.h \
     StackedInfoFrame.h \
     MatchTreesFrame.h \
-    runbuttondialog.h \
     RigMemoryFrame.h \
     locTreeFrame.h \
+    runbuttondialog.h \
     rotpresetdialog.h
 
 FORMS    += tlogcontainer.ui \
@@ -153,9 +153,9 @@ FORMS    += tlogcontainer.ui \
     LocCalcFrame.ui \
     StackedInfoFrame.ui \
     MatchTreesFrame.ui \
-    runbuttondialog.ui \
     RigMemoryFrame.ui \
     locTreeFrame.ui \
+    presetbuttondialog.ui \
     rotpresetdialog.ui
 
 

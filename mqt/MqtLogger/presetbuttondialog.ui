@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>RotPresetDialog</class>
- <widget class="QDialog" name="RotPresetDialog">
+ <class>PresetButtonDialog</class>
+ <widget class="QDialog" name="PresetButtonDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>205</width>
-    <height>115</height>
+    <width>212</width>
+    <height>110</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="nameEdit"/>
+        <widget class="QLineEdit" name="naneEdit"/>
        </item>
       </layout>
      </item>
@@ -63,7 +63,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>RotPresetDialog</receiver>
+   <receiver>PresetButtonDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -79,7 +79,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>RotPresetDialog</receiver>
+   <receiver>PresetButtonDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
