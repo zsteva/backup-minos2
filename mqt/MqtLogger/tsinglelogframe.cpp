@@ -1105,5 +1105,5 @@ void TSingleLogFrame::sendRotator(rpcConstants::RotateDirection direction, int a
 void TSingleLogFrame::sendRotatorPreset(QString s )
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        sendDM->sendRotatorPreset(s);
+        LogContainer->sendDM->sendRotatorPreset(this, s);
 }

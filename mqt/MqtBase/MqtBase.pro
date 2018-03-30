@@ -51,8 +51,7 @@ SOURCES += \
     ConfigElementFrame.cpp \
     MatchCollection.cpp \
     rigutils.cpp \
-    minostablewidget.cpp \
-    rotatorcommon.cpp
+    rotatorcommon.cpp \
     minostablewidget.cpp \
     RigState.cpp \
     AntennaState.cpp \
@@ -100,7 +99,6 @@ HEADERS += \
     rigcontrolcommonconstants.h \
     MatchCollection.h \
     rigutils.h \
-    minostablewidget.h \
     RigState.h \
     AntennaState.h \
     AntennaDetail.h \
@@ -108,7 +106,7 @@ HEADERS += \
     PubSubValue.h \
     RotatorCache.h \
     RigCache.h \
-    RigDetails.h
+    RigDetails.h \
     minostablewidget.h \
     rotatorcommon.h
 

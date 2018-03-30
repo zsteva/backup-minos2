@@ -156,7 +156,8 @@ FORMS    += tlogcontainer.ui \
     RigMemoryFrame.ui \
     locTreeFrame.ui \
     presetbuttondialog.ui \
-    rotpresetdialog.ui
+    rotpresetdialog.ui \
+    runbuttondialog.ui
 
 
 DISTFILES += \

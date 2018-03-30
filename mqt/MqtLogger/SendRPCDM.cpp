@@ -217,6 +217,16 @@ void TSendDM::sendRigControlMode(TSingleLogFrame *tslf,const QString &mode)
 
    rpc.queueCall( tslf->rigServerConnectable.remoteAppName + "@" + tslf->rigServerConnectable.serverName );
 }
+void TSendDM::sendRotatorPreset(TSingleLogFrame *tslf, QString s)
+{
+    RPCGeneralClient rpc(rpcConstants::rotatorMethod);
+    QSharedPointer<RPCParam>st(new RPCParamStruct);
+
+    st->addMember( s, rpcConstants::rotPreset );
+    rpc.getCallArgs() ->addParam( st );
+
+    rpc.queueCall( tslf->rotatorServerConnectable.remoteAppName + "@" + tslf->rotatorServerConnectable.serverName );
+}
 //---------------------------------------------------------------------------
 void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
