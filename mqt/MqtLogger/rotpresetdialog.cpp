@@ -18,15 +18,23 @@
 #include "ui_rotpresetdialog.h"
 
 
-RotPresetDialog::RotPresetDialog(QWidget *parent) :
+RotPresetDialog::RotPresetDialog(int buttonNumber, RotPresetData* _editData, RotPresetData* _curData, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::RotPresetDialog)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    connect(ui->bearingEdit, SIGNAL(editingFinished()), this, SLOT(bearingEditFinished()));
+    editData = _editData;
+    curData = _curData;
+    setWindowTitle(QString("Rotator Preset %1 - Edit").arg(QString::number(buttonNumber + 1)));
+    ui->nameEdit->setText(curData->name);
+    ui->bearingEdit->setText(curData->bearing);
+    ui->nameEdit->setFocus();
 
+    connect(ui->bearingEdit, SIGNAL(editingFinished()), this, SLOT(bearingEditFinished()));
+    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(editAccepted()));
+    connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(editRejected()));
 }
 
 RotPresetDialog::~RotPresetDialog()
@@ -37,7 +45,7 @@ RotPresetDialog::~RotPresetDialog()
 
 
 
-void RotPresetDialog::bearingEditFinished()
+bool RotPresetDialog::bearingEditFinished()
 {
     int b = ui->bearingEdit->text().toInt();
     if (b < 0 || b > 360)
@@ -46,15 +54,46 @@ void RotPresetDialog::bearingEditFinished()
                                  tr("Bearing: %1, out of range, should be 0-360 \nPlease enter another bearing").arg(b),
                                   QMessageBox::Ok|QMessageBox::Default,
                                   QMessageBox::NoButton, QMessageBox::NoButton);
+        return false;
+    }
+    return true;
+}
+
+
+void RotPresetDialog::editAccepted()
+{
+
+    if (ui->bearingEdit->text().trimmed() != curData->bearing)
+    {
+        if (bearingEditFinished())
+        {
+            editData->bearing = ui->bearingEdit->text().trimmed();
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    if (ui->nameEdit->text().trimmed() != curData->name)
+    {
+        editData->name = ui->nameEdit->text().trimmed();
     }
 }
 
 
-void RotPresetDialog::setPresetDialogData(RotPresetData& _editData, RotPresetData& _curData )
+void RotPresetDialog::editRejected()
 {
 
-    editData = _editData;
-    ui->nameEdit->setText(_curData.name);
-    ui->bearingEdit->setText(_curData.bearing);
-    ui->nameEdit->setFocus();
+    copyPresetData(editData, curData);
+
+}
+
+
+void RotPresetDialog::copyPresetData(RotPresetData* src, RotPresetData* dest)
+{
+    dest->name = src->name;
+    dest->bearing = src->bearing;
+    dest->number = src->number;
+
 }

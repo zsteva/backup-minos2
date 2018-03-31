@@ -715,56 +715,68 @@ void RotControlFrame::getRotDetails(memoryData::memData &m)
 
 void RotControlFrame::initPresetButtons()
 {
+
     presetButMap[0] = new PresetButton(ui->presetButton0, this, 0);
-    connect( presetButMap[0], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    //connect( presetButMap[0], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[1] = new PresetButton(ui->presetButton1, this, 1);
-    connect( presetButMap[1], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    //connect( presetButMap[1], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[2] = new PresetButton(ui->presetButton2, this, 2);
-    connect( presetButMap[2], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    //connect( presetButMap[2], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[3] = new PresetButton(ui->presetButton3, this, 3);
-    connect( presetButMap[3], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    //connect( presetButMap[3], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[4] = new PresetButton(ui->presetButton4, this, 4);
-    connect( presetButMap[4], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    //connect( presetButMap[4], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[5] = new PresetButton(ui->presetButton5, this, 5);
-    connect( presetButMap[5], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    //connect( presetButMap[5], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[6] = new PresetButton(ui->presetButton6, this, 6);
-    connect( presetButMap[6], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    //connect( presetButMap[6], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[7] = new PresetButton(ui->presetButton7, this, 7);
-    connect( presetButMap[7], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    //connect( presetButMap[7], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[8] = new PresetButton(ui->presetButton8, this, 8);
-    connect( presetButMap[8], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    //connect( presetButMap[8], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[9] = new PresetButton(ui->presetButton9, this, 9);
-    connect( presetButMap[9], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+    //connect( presetButMap[9], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
+
+    // test
+    rotPresets.clear();
+    for (int i = 0; i < 10; i++)
+    {
+        rotPresets.append(new RotPresetData(i, "GD8EXI/P", "280"));
+    }
+
 
 }
 
 void RotControlFrame::presetButReadActSel(int buttonNumber)
 {
-
-
+    if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
+    {
+        turnTo(rotPresets[buttonNumber]->bearing.toInt());
+    }
 
 }
 
 void RotControlFrame::presetButEditActSel(int buttonNumber)
 {
-    if (!rotPresets.isEmpty())
-    {
-        RotPresetData editData(0, "", "0");
-        RotPresetData curData(0, "", "0");
 
-        curData.name = rotPresets[buttonNumber]->name;
-        curData.bearing = rotPresets[buttonNumber]->bearing;
+
+    if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
+    {
+        RotPresetData editData(buttonNumber, rotPresets[buttonNumber]->name, rotPresets[buttonNumber]->bearing);
+        RotPresetData curData(buttonNumber, rotPresets[buttonNumber]->name, rotPresets[buttonNumber]->bearing);
 
         traceMsg(QString("RotFrame: Preset Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
-        RotPresetDialog presetDialog(this);
-        presetDialog.setPresetDialogData(editData, curData);
-        presetDialog.setWindowTitle(QString("Rotator Preset %1 - Edit").arg(QString::number(buttonNumber + 1)));
+        RotPresetDialog presetDialog(buttonNumber, &editData, &curData, this);
+
 
         if (presetDialog.exec() == QDialog::Accepted)
         {
-            setRotPresetButData(buttonNumber, editData);
-            rotPresetButtonUpdate(buttonNumber, editData);
-            saveRotPresetButton(editData);
+            if (editData.name != curData.name || editData.bearing != curData.bearing)
+            {
+                setRotPresetButData(buttonNumber, editData);
+                rotPresetButtonUpdate(buttonNumber, editData);
+            }
+
         }
     }
 
@@ -773,7 +785,14 @@ void RotControlFrame::presetButEditActSel(int buttonNumber)
 
 void RotControlFrame::presetButClearActSel(int buttonNumber)
 {
-
+    traceMsg(QString("RotFrame: Preset Clear Selected = %1").arg(QString::number(buttonNumber +1)));
+    if (!rotPresets.isEmpty() && buttonNumber < rotPresets.count())
+    {
+        // clear this preset
+        RotPresetData pData(0, "", "0");
+        rotPresetButtonUpdate(buttonNumber, pData);
+        rotPresetButtonUpdate(buttonNumber, pData);
+    }
 }
 
 void RotControlFrame::presetButtonUpdate(int buttonNumber)
@@ -783,7 +802,26 @@ void RotControlFrame::presetButtonUpdate(int buttonNumber)
 
 void RotControlFrame::presetButWriteActSel(int buttonNumber)
 {
+    traceMsg(QString("RotFrame: Preset Write Selected = %1").arg(QString::number(buttonNumber +1)));
+    if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
+    {
+        RotPresetData editData(buttonNumber, "", "0");
+        RotPresetData curData(buttonNumber, "", "0");
 
+        traceMsg(QString("RotFrame: Preset Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
+        RotPresetDialog presetDialog(buttonNumber, &editData, &curData, this);
+
+
+        if (presetDialog.exec() == QDialog::Accepted)
+        {
+            if (editData.name != curData.name || editData.bearing != curData.bearing)
+            {
+                setRotPresetButData(buttonNumber, editData);
+                rotPresetButtonUpdate(buttonNumber, editData);
+            }
+
+        }
+    }
 }
 
 
@@ -797,7 +835,7 @@ void RotControlFrame::setRotPresetButData(int buttonNumber, RotPresetData& editD
 
 void RotControlFrame::rotPresetButtonUpdate(int buttonNumber, RotPresetData& editData)
 {
-    presetButMap[buttonNumber]->presetButton->setText(QString("%1: %2").arg(QString::number(buttonNumber)).arg(editData.name) );
+    presetButMap[buttonNumber]->presetButton->setText(QString("%1: %2").arg(QString::number(buttonNumber + 1)).arg(editData.name) );
     QString tTipStr = "Bearing = " + editData.bearing;
     presetButMap[buttonNumber]->presetButton->setToolTip(tTipStr);
 }
