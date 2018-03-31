@@ -5,10 +5,13 @@
 #include "PubSubValue.h"
 
 const QString AntennaDetailType("AntennaDetail");
+
+
 class AntennaDetail: public PubSubValue
 {
     MinosItem<int> _minAzimuth;
     MinosItem<int> _maxAzimuth;
+    MinosStringItem<QString> _presets;
 
 public:
     AntennaDetail(): PubSubValue(AntennaDetailType){}
@@ -27,6 +30,8 @@ public:
     int maxAzimuth() const;
     void setMinAzimuth(int minAzimuth);
     void setMaxAzimuth(int maxAzimuth);
+    QString presets() const;
+    void setPresets(const QString &p);
 };
 
 #endif // ANTENNADETAIL_H

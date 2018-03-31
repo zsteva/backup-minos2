@@ -1,5 +1,6 @@
 #ifndef RPCCOMMANDRCONSTANTS_H
 #define RPCCOMMANDRCONSTANTS_H
+#include <QString>
 
 namespace rpcConstants
 {

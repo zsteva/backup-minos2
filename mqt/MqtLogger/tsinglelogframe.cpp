@@ -100,12 +100,12 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     // From rig controller
     connect(LogContainer->sendDM, SIGNAL(setRadioLoaded()), this, SLOT(on_RadioLoaded()));
     connect(LogContainer->sendDM, SIGNAL(setRadioList(QString)), this, SLOT(on_SetRadioList(QString)));
-    connect(LogContainer->sendDM, SIGNAL(setBandList(QString)), this, SLOT(on_SetBandList(QString)));
-    connect(LogContainer->sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
-    connect(LogContainer->sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetMode(QString)));
-    connect(LogContainer->sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetFreq(QString)));
-    connect(LogContainer->sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
-    connect(LogContainer->sendDM, SIGNAL(setRadioTxVertStatus(QString)), this, SLOT(on_SetRadioTxVertState(QString)));
+    //connect(LogContainer->sendDM, SIGNAL(setBandList(QString)), this, SLOT(on_SetBandList(QString)));
+    //connect(LogContainer->sendDM, SIGNAL(setRadioName(QString)), this, SLOT(on_SetRadioName(QString)));
+    //connect(LogContainer->sendDM, SIGNAL(setMode(QString)), this, SLOT(on_SetMode(QString)));
+    //connect(LogContainer->sendDM, SIGNAL(setFreq(QString)), this, SLOT(on_SetFreq(QString)));
+    //connect(LogContainer->sendDM, SIGNAL(setRadioState(QString)), this, SLOT(on_SetRadioState(QString)));
+    //connect(LogContainer->sendDM, SIGNAL(setRadioTxVertStatus(QString)), this, SLOT(on_SetRadioTxVertState(QString)));
 
     // To rig controller
     connect(ui->FKHRigControlFrame, SIGNAL(selectRadio(QString, QString)), this, SLOT(sendSelectRadio(QString, QString)));
@@ -118,10 +118,10 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     // From rotator controller
     connect(LogContainer->sendDM, SIGNAL(RotatorLoaded()), this, SLOT(on_RotatorLoaded()));
     connect(LogContainer->sendDM, SIGNAL(RotatorList(QString)), this, SLOT(on_RotatorList(QString)));
-    connect(LogContainer->sendDM, SIGNAL(RotatorState(QString)), this, SLOT(on_RotatorState(QString)));
-    connect(LogContainer->sendDM, SIGNAL(RotatorBearing(QString)), this, SLOT(on_RotatorBearing(QString)));
-    connect(LogContainer->sendDM, SIGNAL(RotatorMaxAzimuth(QString)), this, SLOT(on_RotatorMaxAzimuth(QString)));
-    connect(LogContainer->sendDM, SIGNAL(RotatorMinAzimuth(QString)), this, SLOT(on_RotatorMinAzimuth(QString)));
+    //connect(LogContainer->sendDM, SIGNAL(RotatorState(QString)), this, SLOT(on_RotatorState(QString)));
+    //connect(LogContainer->sendDM, SIGNAL(RotatorBearing(QString)), this, SLOT(on_RotatorBearing(QString)));
+    //connect(LogContainer->sendDM, SIGNAL(RotatorMaxAzimuth(QString)), this, SLOT(on_RotatorMaxAzimuth(QString)));
+    //connect(LogContainer->sendDM, SIGNAL(RotatorMinAzimuth(QString)), this, SLOT(on_RotatorMinAzimuth(QString)));
 
     // To rotator controller
     connect(ui->FKHRotControlFrame, SIGNAL(sendRotator(rpcConstants::RotateDirection , int  )), this, SLOT(sendRotator(rpcConstants::RotateDirection , int  )));

@@ -36,6 +36,8 @@ public:
     void setMinAzimuth(const PubSubName &name, int minaz);
     void setMaxAzimuth(const PubSubName &name, int maxaz);
 
+    void setRotatorPresets(const PubSubName &name, const QString &p);
+
     void publishState( );
     void publishDetails( );
 

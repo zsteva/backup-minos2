@@ -290,17 +290,22 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
 
                            if (selState.isDirty())
                            {
-                               emit setMode( selState.mode() );
-                               emit setFreq( convertFreqToStr(selState.freq()) );
-                               emit setRadioState( selState.status() );
+                               tslf->on_SetMode(selState.mode());
+                               tslf->on_SetFreq(convertFreqToStr(selState.freq()));
+                               tslf->on_SetRadioState(selState.status());
+//                               emit setMode( selState.mode() );
+//                               emit setFreq( convertFreqToStr(selState.freq()) );
+//                               emit setRadioState( selState.status() );
 
                                selState.clearDirty();
 
                            }
                            if (selDetail.isDirty())
                            {
-                               emit setBandList(selDetail.bandList());
-                               emit setRadioTxVertStatus( selDetail.transverterStatus()?"true":"false" );
+                               tslf->on_SetBandList(selDetail.bandList());
+                               tslf->on_SetRadioTxVertState( selDetail.transverterStatus()?"true":"false" );
+//                               emit setBandList(selDetail.bandList());
+//                               emit setRadioTxVertStatus( selDetail.transverterStatus()?"true":"false" );
                                selDetail.clearDirty();
 
                            }
@@ -328,15 +333,20 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
 
                                if (selState.isDirty())
                                {
-                                   emit RotatorBearing(selState.bearing());
-                                   emit RotatorState(selState.state());
+                                   tslf->on_RotatorBearing(selState.bearing());
+                                   tslf->on_RotatorState(selState.state());
+                                   //emit RotatorBearing(selState.bearing());
+                                   //emit RotatorState(selState.state());
                                    selState.clearDirty();
 
                                }
                                if (selDetail.isDirty())
                                {
-                                   emit RotatorMaxAzimuth(QString::number(selDetail.maxAzimuth()));
-                                   emit RotatorMinAzimuth(QString::number(selDetail.minAzimuth()));
+                                   tslf->on_RotatorMaxAzimuth(QString::number(selDetail.maxAzimuth()));
+                                   tslf->on_RotatorMinAzimuth(QString::number(selDetail.minAzimuth()));
+                                   tslf->on_RotatorPresetList(selDetail.presets());
+                                   //emit RotatorMaxAzimuth(QString::number(selDetail.maxAzimuth()));
+                                   //emit RotatorMinAzimuth(QString::number(selDetail.minAzimuth()));
                                    selDetail.clearDirty();
                                }
                                break;

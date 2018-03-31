@@ -30,6 +30,7 @@ class MatchContact;
 
 class TSingleLogFrame : public QFrame
 {
+    friend class TSendDM;
     Q_OBJECT
 
     Ui::TSingleLogFrame *ui;

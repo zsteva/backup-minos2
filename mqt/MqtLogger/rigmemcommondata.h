@@ -17,6 +17,7 @@
 #ifndef RIGMEMCOMMONDATA_H
 #define RIGMEMCOMMONDATA_H
 
+#include <QColor>
 #include "rigcontrolcommonconstants.h"
 
 namespace maskData {
@@ -105,8 +106,10 @@ namespace memoryData {
 class  memData
 {
 public:
-    memData():bearing(memDefData::DEFAULT_BEARING),
-        freq(memDefData::DEFAULT_FREQ), mode(memDefData::DEFAULT_MODE)
+    memData():
+        freq(memDefData::DEFAULT_FREQ)
+      , mode(memDefData::DEFAULT_MODE)
+      , bearing(memDefData::DEFAULT_BEARING)
     {
     }
 

@@ -120,6 +120,10 @@ void RotatorCache::setMaxAzimuth(const PubSubName &name, int maxaz)
 {
     rotDetails[name].setMaxAzimuth(maxaz);
 }
+void RotatorCache::setRotatorPresets(const PubSubName &name, const QString &p)
+{
+    rotDetails[name].setPresets(p);
+}
 
 void RotatorCache::publishState()
 {

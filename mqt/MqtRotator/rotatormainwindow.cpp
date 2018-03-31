@@ -581,7 +581,10 @@ void RotatorMainWindow::sendPresetListLogger()
 
         }
     }
-    msg->publishPresetList(presets.join(':'));
+    PubSubName psname(setupAntenna->currentAntennaName);
+    msg->rotatorCache.setRotatorPresets(psname, presets.join(':'));
+    msg->rotatorCache.publishState();
+//    msg->publishPresetList(presets.join(':'));
 }
 
 void RotatorMainWindow::initActionsConnections()
