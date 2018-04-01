@@ -302,6 +302,7 @@ void RigControlMainWindow::updateSelectRadioBox()
 
 void RigControlMainWindow::initSelectRadioBox()
 {
+
     ui->selectRadioBox->addItem("");
     for (int i= 0; i < setupRadio->numAvailRadios; i++)
     {
@@ -352,6 +353,7 @@ void RigControlMainWindow::upDateRadio()
         {
             // found antenna, updatea currentAntenna pointer to select antennadata
             scatParams::copyRig(setupRadio->availRadioData[ridx], setupRadio->currentRadio);
+            setupRadio->currentRadio.radioNumber = QString::number(ridx);           // save radio number
 
             if (radio->get_serialConnected())
             {
@@ -695,28 +697,16 @@ void RigControlMainWindow::getRadioInfo()
 void RigControlMainWindow::onSelectRadio(QString s, QString mode)
 {
 
-    logMessage(QString("Recieved SelectRadio from Logger = %1").arg(s));
+    logMessage(QString("Recieved SelectRadio from Logger = %1, mode = %2").arg(s).arg(mode));
 
 
-    // the first time rigcontrolframe uses this message the mode is appended to the name
     if (!mode.isEmpty())
     {
         selRadioMode = mode;
     }
 
-    QString oldRadio = ui->selectRadioBox->currentText();
+    QString oldRadio = setupRadio->currentRadioName;
 
-    int index = ui->selectRadioBox->findText(s, Qt::MatchFixedString);
-    if (index >= 0)
-    {
-        ui->selectRadioBox->setCurrentIndex(index);
-    }
-    else
-    {
-        ui->selectRadioBox->setCurrentText(s);
-    }
-
-    s = ui->selectRadioBox->currentText();
     setupRadio->currentRadioName = s;
 
     msg->rigCache.invalidate();
