@@ -433,6 +433,7 @@ void RigSetupForm::setHandshake(int h)
 int RigSetupForm::comportAvial(QString comport)
 {
     return ui->comPortBox->findText(comport);
+
 }
 
 /***************************** Network Address *************************/

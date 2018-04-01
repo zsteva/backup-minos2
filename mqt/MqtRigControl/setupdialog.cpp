@@ -64,7 +64,7 @@ SetupDialog::SetupDialog(RigControl *radio, const QVector<BandDetail*> _bands, Q
     {
         for (int i = 0; i < numAvailRadios; i++)
         {
-            addTab(i, "");
+            addTab(i, availRadios[i]);
 
             // find transverters
             QString fileName;
@@ -128,7 +128,11 @@ void SetupDialog::addTab(int tabNum, QString tabName)
 {
     availRadioData.append(new scatParams);
     availRadioData[tabNum]->radioName = tabName;
-    availRadios.append(tabName);
+    if (!availRadios.contains(tabName))
+    {
+       availRadios.append(tabName);
+    }
+
     radioTab.append(new RigSetupForm(radio, availRadioData[tabNum], bands));
     ui->radioTab->insertTab(tabNum, radioTab[tabNum], tabName);
     ui->radioTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
@@ -380,10 +384,6 @@ int SetupDialog::comportAvial(int radioNum, QString comport)
     {
         return radioTab[radioNum]->comportAvial(comport);
     }
-    else
-    {
-        return -1;
-    }
 
     return -1;
 }
@@ -602,7 +602,7 @@ void SetupDialog::getRadioSetting(int radNum, QSettings& config)
 {
     config.beginGroup(availRadios[radNum]);
     radioTab[radNum]->getRadioData()->radioName = config.value("radioName", "").toString();
-    radioTab[radNum]->getRadioData()->radioNumber = config.value("radioNumber", QString::number(radNum+1)).toString();
+    radioTab[radNum]->getRadioData()->radioNumber = config.value("radioNumber", QString::number(radNum)).toString();
     radioTab[radNum]->getRadioData()->radioMfg_Name = config.value("radioMfgName", "").toString();
     radioTab[radNum]->getRadioData()->radioModel = config.value("radioModel", "").toString();
     radioTab[radNum]->getRadioData()->radioModelName = config.value("radioModelName", "").toString();
