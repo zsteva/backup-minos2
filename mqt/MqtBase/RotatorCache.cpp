@@ -16,6 +16,11 @@ void RotatorCache::invalidate()
     {
         i->setDirty();
     }
+    for(QMap<PubSubName, MinosStringItem<QString> >::iterator i = rotPresets.begin(); i != rotPresets.end(); i++ )
+    {
+        i->setDirty();
+    }
+
 }
 
 void RotatorCache::addRotList(const QString &s)
@@ -62,9 +67,47 @@ void RotatorCache::setStateString(const AnalysePubSubNotify &an)
     AntennaState &as = rotStates[PubSubName(an)];
     as.unpack(an.getValue());
 }
+QString RotatorCache::getPresetsString(const PubSubName &name) const
+{
+    PubSubName n(name);
+    n.setKey("");
+    QString val = rotPresets[n].getValue();
 
-//QMap<QString, AntennaDetail> rotDetails;
-//QMap<QString, AntennaState> rotStates;
+    QJsonObject jv;
+
+    jv.insert(rpcConstants::rotPresetList, val);
+
+    QJsonDocument json(jv);
+
+    QString message(json.toJson(QJsonDocument::Compact));
+
+    return message;
+
+}
+void RotatorCache::setPresetsString(const AnalysePubSubNotify & an)
+{
+    PubSubName n(an);
+    n.setKey("");
+    QString s = an.getValue();
+
+    QJsonParseError err;
+    QJsonDocument json = QJsonDocument::fromJson(s.toUtf8(), &err);
+    if (!err.error)
+    {
+        rotPresets[n].setValue(json.object().value(rpcConstants::rotPresetList).toString());
+    }
+    else
+    {
+        trace("Err " + err.errorString() + " Bad Json document " + s);
+    }
+}
+bool RotatorCache::rotatorPresetsIsDirty(const PubSubName &name)
+{
+    PubSubName n(name);
+    n.setKey("");
+    return rotPresets[n].isDirty();
+
+}
 
 void RotatorCache::setDetail(const PubSubName &name, const AntennaDetail &detail)
 {
@@ -122,7 +165,15 @@ void RotatorCache::setMaxAzimuth(const PubSubName &name, int maxaz)
 }
 void RotatorCache::setRotatorPresets(const PubSubName &name, const QString &p)
 {
-    rotDetails[name].setPresets(p);
+    PubSubName n(name);
+    n.setKey("");
+    rotPresets[n].setValue(p);
+}
+QString RotatorCache::getRotatorPresets(const PubSubName &name)
+{
+    PubSubName n(name);
+    n.setKey("");
+    return rotPresets[n].getValue();
 }
 
 void RotatorCache::publishState()
@@ -146,6 +197,20 @@ void RotatorCache::publishDetails()
         if (i.value().isDirty())
         {
             rpc->publish(rpcConstants::rotatorDetailCategory, i.key().key(), i.value().pack(), psPublished);
+            rotDetails[i.key()].clearDirty();
+        }
+    }
+
+}
+void RotatorCache::publishPresets()
+{
+    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    for(QMap<PubSubName, MinosStringItem<QString> >::iterator i = rotPresets.begin(); i != rotPresets.end(); i++ )
+    {
+        if (i.value().isDirty())
+        {
+            QString packed = getPresetsString(i.key());
+            rpc->publish(rpcConstants::rotatorPresetsCategory, i.key().key(), packed, psPublished);
             rotDetails[i.key()].clearDirty();
         }
     }

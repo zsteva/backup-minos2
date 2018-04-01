@@ -11,14 +11,9 @@ class AntennaState: public PubSubValue
     MinosStringItem<QString> _state;
     MinosStringItem<QString> _selected;
 public:
-    AntennaState():PubSubValue(AntennaStateType){}
+    AntennaState();
     AntennaState(QString);
-    AntennaState(const QString &st, const QString &sel, const QString &b):PubSubValue(AntennaStateType)
-    {
-        _bearing.setValue(b);
-        _state.setValue(st);
-        _selected.setValue(sel);
-    }
+    AntennaState(const QString &st, const QString &sel, const QString &b);
 
     virtual QString pack() const;
     virtual void unpack(QString);

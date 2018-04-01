@@ -99,6 +99,7 @@ void TLogContainer::subscribeApps()
         rpc->subscribeRemote( servers[i], rpcConstants::RotatorCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::rotatorDetailCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::rotatorStateCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::rotatorPresetsCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::rigDetailsCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::rigStateCategory );
     }
