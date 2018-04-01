@@ -46,6 +46,9 @@ enum freqMask_lookup {
 
 namespace bandSelData {
 
+
+
+
 const QStringList bandNames = { "",
                                 "10m",
                                 "6m",

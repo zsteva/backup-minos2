@@ -68,6 +68,17 @@ signals:
 
 };
 
+class quickBandSelData
+{
+
+public:
+
+    QString band;
+    QString freq;
+
+
+};
+
 class RigControlFrame : public QFrame
 {
     Q_OBJECT
@@ -158,6 +169,8 @@ private:
     LoggerContestLog *ct;
 
     QMap<int, RunMemoryButton *> runButtonMap;
+    QVector<quickBandSelData> listOfBands;
+
 
 
     QShortcut* freqEditShortKey;
@@ -176,7 +189,7 @@ private:
     QString radioName;
     QString rigAppName;
     QString radioState;
-    QStringList listOfBands;
+    //QStringList listOfBands;
 
 
     QString lastFreq;

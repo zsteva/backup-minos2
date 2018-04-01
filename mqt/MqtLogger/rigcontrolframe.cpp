@@ -598,13 +598,26 @@ void RigControlFrame::setRadioList(QString s)
 
 void RigControlFrame::setBandList(QString b)
 {
-    listOfBands.clear();
-    listOfBands = b.split(":");
-
-    ui->bandSelCombo->clear();
-    ui->bandSelCombo->addItem("");
-    ui->bandSelCombo->addItems(listOfBands);
-
+    if (!b.isEmpty())
+    {
+        listOfBands.clear();
+        QStringList lbf;
+        QStringList lb;
+        quickBandSelData d;
+        // split into bands
+        lbf = b.split(":");
+        for (int i = 0; i < lbf.count(); i++)
+        {
+            QStringList s = lbf[i].split('-');
+            lb.append(s[0]);
+            d.band = s[0];
+            d.freq = s[1];
+            listOfBands.append(d);
+        }
+        ui->bandSelCombo->clear();
+        ui->bandSelCombo->addItem("");
+        ui->bandSelCombo->addItems(lb);
+    }
 }
 
 

@@ -417,6 +417,7 @@ void RigControlMainWindow::upDateRadio()
 
                     writeWindowTitle(appName);
                     sendStatusToLogConnected();
+                    sendBandListLogger();
                     dumpRadioToTraceLog();
 
                 }
@@ -438,6 +439,7 @@ void RigControlMainWindow::upDateRadio()
 
         msg->rigCache.publishState();
         msg->rigCache.publishDetails();
+
 
         if (radio->get_serialConnected())
         {
@@ -1269,25 +1271,40 @@ void RigControlMainWindow::sendRadioListLogger()
 
 void RigControlMainWindow::sendBandListLogger()
 {
+    QString fileName;
+    fileName = RADIO_PATH_LOGGER + FILENAME_FREQ_PRESETS;
+
+    QSettings config(fileName, QSettings::IniFormat);
+    config.beginGroup("FreqPresets");
 
     QStringList bandList;
     if (!setupRadio->currentRadio.radioTransSupBands.isEmpty())
     {
         for (int i = 0; i < setupRadio->currentRadio.radioTransSupBands.count(); i++)
         {
-            bandList.append(setupRadio->currentRadio.radioTransSupBands[i]);
+            // get index to band
+            int k = 0;
+            bool match = false;
+            do
+            {
+                if (setupRadio->currentRadio.radioTransSupBands[i] == freqPresetData::presetBands[k])
+                {
+                    match = true;
+                }
+                k++;
+            }while (k < freqPresetData::presetBands.count() && !match);
+
+            bandList.append(QString("%1-%2").arg(setupRadio->currentRadio.radioTransSupBands[i])
+                            .arg(config.value(setupRadio->currentRadio.radioTransSupBands[i], freqPresetData::bandFreq[k]).toString()));
         }
-        logMessage(QString("Send bandlist to logger"));
-        for (int i = 0; i < bandList.count(); i++)
-        {
-            logMessage(QString("Send bandlist - name %1").arg(QString::number(i)).arg(bandList[i]));
-        }
+
 
         PubSubName psname(setupRadio->currentRadio.radioName);
         QString bands = bandList.join(":");
+        logMessage(QString("Send bandlist to logger - %1").arg(bands));
         msg->rigCache.setBandList(psname, bands);
     }
-
+    config.endGroup();
 }
 
 void RigControlMainWindow::sendStatusLogger(const QString &message )
