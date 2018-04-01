@@ -457,5 +457,29 @@ void TSendDM::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QSt
         }
     }
 }
+QStringList TSendDM::rotators()
+{
+    QStringList sl;
+    QVector<PubSubName> rotlist = rotatorCache.getRotList();
+    foreach (PubSubName psn, rotlist)
+    {
+        QString antname = psn.toString();
+        sl.append(antname);
+    }
+    qSort(sl);
+    return  sl;
+}
+QStringList TSendDM::rigs()
+{
+    QStringList sl;
+    QVector<PubSubName> riglist = rigCache.getRigList();
+    foreach (PubSubName psn, riglist)
+    {
+        QString antname = psn.toString();
+        sl.append(antname);
+    }
+    qSort(sl);
+    return  sl;
+}
 //---------------------------------------------------------------------------
 
