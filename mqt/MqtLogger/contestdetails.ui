@@ -581,7 +581,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="radioNameEdit"/>
+           <widget class="QComboBox" name="radioNameEdit"/>
           </item>
           <item>
            <spacer name="horizontalSpacer">
@@ -604,7 +604,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="antennaNameEdit"/>
+           <widget class="QComboBox" name="antennaNameEdit"/>
           </item>
           <item>
            <spacer name="horizontalSpacer_8">

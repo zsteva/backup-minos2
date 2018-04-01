@@ -7,7 +7,9 @@ RigDetails::RigDetails()
     :PubSubValue(RigDetailsType)
 {
     qRegisterMetaType< RigDetails > ( "RigDetails" );
-
+    _transverterOffset.setInitialValue(0.0);
+    _transverterSwitch.setInitialValue(0);
+    _transverterStatus.setInitialValue(false);
 }
 RigDetails::RigDetails(double tvo, int tvsw, bool tvst, QString blist)
     :PubSubValue(RigDetailsType)

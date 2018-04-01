@@ -91,6 +91,7 @@ static const QString rotatorParamAngle  = QT_TR_NOOP("RotatorAngle");
 static const QString RotatorCategory    = QT_TR_NOOP("Rotator");
 static const QString rotatorDetailCategory    = QT_TR_NOOP("RotatorDetail");
 static const QString rotatorStateCategory    = QT_TR_NOOP("RotatorState");
+static const QString rotatorPresetsCategory = QT_TR_NOOP("RotatorPresets");
 static const QString rotatorState       = QT_TR_NOOP("State");
 static const QString rotatorBearing     = QT_TR_NOOP("Bearing");
 static const QString rotatorList        = QT_TR_NOOP("rotList");

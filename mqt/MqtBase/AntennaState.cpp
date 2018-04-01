@@ -2,22 +2,15 @@
 #include "RPCCommandConstants.h"
 #include "MTrace.h"
 
-
-void AntennaState::setBearing(const QString &bearing)
+AntennaState::AntennaState():PubSubValue(AntennaStateType)
 {
-    _bearing.setValue(bearing);
 }
-
-void AntennaState::setState(const QString &state)
+AntennaState::AntennaState(const QString &st, const QString &sel, const QString &b):PubSubValue(AntennaStateType)
 {
-    _state.setValue(state);
+    _bearing.setValue(b);
+    _state.setValue(st);
+    _selected.setValue(sel);
 }
-
-void AntennaState::setSelected(const QString &selected)
-{
-    _selected.setValue(selected);
-}
-
 AntennaState::AntennaState(QString s):PubSubValue(AntennaStateType)
 {
     qRegisterMetaType< AntennaState > ( "AntennaState" );
@@ -70,6 +63,21 @@ void AntennaState::unpack(QString s)
     }
 
 }
+void AntennaState::setBearing(const QString &bearing)
+{
+    _bearing.setValue(bearing);
+}
+
+void AntennaState::setState(const QString &state)
+{
+    _state.setValue(state);
+}
+
+void AntennaState::setSelected(const QString &selected)
+{
+    _selected.setValue(selected);
+}
+
 QString AntennaState::state() const
 {
     return _state.getValue();

@@ -6,7 +6,7 @@ RigState::RigState()
     :PubSubValue(RigStateType)
 {
     qRegisterMetaType< RigState > ( "RigState" );
-
+    _freq.setInitialValue(0.0);
 }
 RigState::RigState(const QString &status, const QString &sel, int f, const QString &m)
     :PubSubValue(RigStateType)

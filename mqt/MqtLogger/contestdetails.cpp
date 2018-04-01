@@ -6,7 +6,7 @@
 #include "tminoshelpform.h"
 #include "tcalendarform.h"
 #include "tlogcontainer.h"
-
+#include "SendRPCDM.h"
 #include "contestdetails.h"
 #include "ui_contestdetails.h"
 
@@ -347,8 +347,15 @@ void ContestDetails::setDetails(  )
 
    ui->PowerEdit->setText(contest->power.getValue());
 
-   ui->radioNameEdit->setText(contest->radioName.getValue().toString());
-   ui->antennaNameEdit->setText(contest->rotatorName.getValue().toString());
+   ui->radioNameEdit->clear();
+   ui->radioNameEdit->addItem("");
+   ui->radioNameEdit->addItems( LogContainer->sendDM->rigs());
+   ui->radioNameEdit->setCurrentText(contest->radioName.getValue().toString());
+
+   ui->antennaNameEdit->clear();
+   ui->antennaNameEdit->addItem("");
+   ui->antennaNameEdit->addItems( LogContainer->sendDM->rotators());
+   ui->antennaNameEdit->setCurrentText(contest->rotatorName.getValue().toString());
 
    if ( contest->isMinosFile() )
    {
@@ -1034,8 +1041,8 @@ QWidget * ContestDetails::getDetails( )
     contest->power.setValue( ui->PowerEdit->text() );
     contest->bearingOffset.setValue(ui->AntOffsetEdit->text().toInt());	// int
 
-    contest->radioName.setValue(PubSubName(ui->radioNameEdit->text().trimmed().remove(':')));
-    contest->rotatorName.setValue(PubSubName(ui->antennaNameEdit->text()));
+    contest->radioName.setValue(PubSubName(ui->radioNameEdit->currentText().trimmed().remove(':')));
+    contest->rotatorName.setValue(PubSubName(ui->antennaNameEdit->currentText()));
 
     contest->currentMode.setValue(ui->ModeComboBox->currentText());
 

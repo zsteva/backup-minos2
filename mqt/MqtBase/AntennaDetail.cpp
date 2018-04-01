@@ -2,41 +2,31 @@
 #include "RPCCommandConstants.h"
 #include "MTrace.h"
 
-void AntennaDetail::setMinAzimuth(int minAzimuth)
+AntennaDetail::AntennaDetail(): PubSubValue(AntennaDetailType)
 {
-    _minAzimuth.setValue( minAzimuth);
+    _maxAzimuth.setInitialValue(0);
+    _minAzimuth.setInitialValue(0);
 }
-
-void AntennaDetail::setMaxAzimuth(int maxAzimuth)
-{
-    _maxAzimuth.setValue(maxAzimuth);
-}
-
-void AntennaDetail::setPresets(const QString &p)
-{
-    _presets.setValue( p );
-}
-
 AntennaDetail::AntennaDetail(QString s):PubSubValue(AntennaDetailType)
 {
     qRegisterMetaType< AntennaDetail > ( "AntennaDetail" );
+    _maxAzimuth.setInitialValue(0);
+    _minAzimuth.setInitialValue(0);
     unpack(s);
 }
 bool AntennaDetail::isDirty() const
 {
-    return (_minAzimuth.isDirty() || _maxAzimuth.isDirty() || _presets.isDirty());
+    return (_minAzimuth.isDirty() || _maxAzimuth.isDirty());
 }
 void AntennaDetail::clearDirty()
 {
     _minAzimuth.clearDirty();
     _maxAzimuth.clearDirty();
-    _presets.clearDirty();
 }
 void AntennaDetail::setDirty()
 {
     _minAzimuth.setDirty();
     _maxAzimuth.setDirty();
-    _presets.setDirty();
 }
 QString AntennaDetail::pack() const
 {
@@ -44,7 +34,6 @@ QString AntennaDetail::pack() const
 
     jv.insert(rpcConstants::rotatorMinAzimuth, minAzimuth());
     jv.insert(rpcConstants::rotatorMaxAzimuth, maxAzimuth());
-    jv.insert(rpcConstants::rotPresetList, presets());
 
     QJsonDocument json(jv);
 
@@ -60,7 +49,6 @@ void AntennaDetail::unpack(QString s)
     {
         _minAzimuth.setValue(json.object().value(rpcConstants::rotatorMinAzimuth).toInt());
         _maxAzimuth.setValue(json.object().value(rpcConstants::rotatorMaxAzimuth).toInt());
-        _presets.setValue(json.object().value(rpcConstants::rotPresetList).toString());
     }
     else
     {
@@ -68,6 +56,18 @@ void AntennaDetail::unpack(QString s)
     }
 
 }
+
+void AntennaDetail::setMinAzimuth(int minAzimuth)
+{
+    _minAzimuth.setValue( minAzimuth);
+}
+
+void AntennaDetail::setMaxAzimuth(int maxAzimuth)
+{
+    _maxAzimuth.setValue(maxAzimuth);
+}
+
+
 int AntennaDetail::minAzimuth() const
 {
     return _minAzimuth.getValue();
@@ -78,8 +78,4 @@ int AntennaDetail::maxAzimuth() const
     return _maxAzimuth.getValue();
 }
 
-QString AntennaDetail::presets() const
-{
-    return _presets.getValue();
-}
 

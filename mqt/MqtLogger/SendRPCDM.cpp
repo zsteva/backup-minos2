@@ -255,6 +255,10 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             {
                 rotatorCache.setDetailString(an);
             }
+            else if ( an.getCategory() == rpcConstants::rotatorPresetsCategory )
+            {
+                rotatorCache.setPresetsString(an);
+            }
             else if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioList )
             {
                 rigCache.addRigList(an.getValue());
@@ -344,10 +348,13 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                                {
                                    tslf->on_RotatorMaxAzimuth(QString::number(selDetail.maxAzimuth()));
                                    tslf->on_RotatorMinAzimuth(QString::number(selDetail.minAzimuth()));
-                                   tslf->on_RotatorPresetList(selDetail.presets());
                                    //emit RotatorMaxAzimuth(QString::number(selDetail.maxAzimuth()));
                                    //emit RotatorMinAzimuth(QString::number(selDetail.minAzimuth()));
                                    selDetail.clearDirty();
+                               }
+                               if (rotatorCache.rotatorPresetsIsDirty(rotSelected))
+                               {
+                                    tslf->on_RotatorPresetList(rotatorCache.getRotatorPresets(rotSelected));
                                }
                                break;
                            }
@@ -449,6 +456,30 @@ void TSendDM::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QSt
             }
         }
     }
+}
+QStringList TSendDM::rotators()
+{
+    QStringList sl;
+    QVector<PubSubName> rotlist = rotatorCache.getRotList();
+    foreach (PubSubName psn, rotlist)
+    {
+        QString antname = psn.toString();
+        sl.append(antname);
+    }
+    qSort(sl);
+    return  sl;
+}
+QStringList TSendDM::rigs()
+{
+    QStringList sl;
+    QVector<PubSubName> riglist = rigCache.getRigList();
+    foreach (PubSubName psn, riglist)
+    {
+        QString antname = psn.toString();
+        sl.append(antname);
+    }
+    qSort(sl);
+    return  sl;
 }
 //---------------------------------------------------------------------------
 

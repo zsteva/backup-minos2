@@ -9,6 +9,7 @@ class RotatorCache
 {
     QMap<PubSubName, AntennaDetail> rotDetails;
     QMap<PubSubName, AntennaState> rotStates;
+    QMap<PubSubName, MinosStringItem<QString> > rotPresets;
     QVector<PubSubName> rotList;
 public:
     RotatorCache();
@@ -24,6 +25,10 @@ public:
     QString getStateString(const PubSubName &name) const;
     void setStateString(const AnalysePubSubNotify & an);
 
+    QString getPresetsString(const PubSubName &name) const;
+    void setPresetsString(const AnalysePubSubNotify & an);
+    bool rotatorPresetsIsDirty(const PubSubName &name);
+
     void setDetail(const PubSubName &name, const AntennaDetail &detail);
     void setState(const PubSubName &name, const AntennaState &state);
 
@@ -37,9 +42,11 @@ public:
     void setMaxAzimuth(const PubSubName &name, int maxaz);
 
     void setRotatorPresets(const PubSubName &name, const QString &p);
+    QString getRotatorPresets(const PubSubName &name);
 
     void publishState( );
     void publishDetails( );
+    void publishPresets();
 
     void addRotList(const QString &s);
     QVector<PubSubName> getRotList()
