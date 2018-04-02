@@ -9,10 +9,17 @@ RPCGeneralClient::~RPCGeneralClient()
 {}
 RPCGeneralServer::~RPCGeneralServer()
 {}
-
+static void xmppsendAction( XStanza *a )
+{
+   if ( MinosAppConnection::minosAppConnection )
+   {
+      MinosAppConnection::minosAppConnection->sendAction( a );
+   }
+}
 MinosRPC::MinosRPC(const QString &defaultName, bool useEnvVar):
     connected(false), subscribed(false)
 {
+    setSendAction(xmppsendAction);
     QString rpcName = defaultName;
     if (useEnvVar)
     {

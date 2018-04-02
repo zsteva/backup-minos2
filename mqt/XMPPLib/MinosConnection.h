@@ -20,7 +20,6 @@ extern bool connected;
 bool XMPPInitialise( const QString &myId );
 //---------------------------------------------------------------------------
 
-
 class MinosAppConnection:public QObject, RPCDispatcher
 {
     Q_OBJECT

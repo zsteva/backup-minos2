@@ -61,12 +61,59 @@ void MinosId::setId( const QString &s )
    }
 }
 
+//=============================================================================
+
+// called from XMPPRPCObj instead of the one in MinosConnection
+static void serversendAction( XStanza *a )
+{
+   // stanza has a "to" - but this is internal, so we need to dispatch it
+   TIXML_STRING mess = a->getActionMessage();
+
+   // convert from a RPCParam structure to a DOM
+
+   TiXmlBase::SetCondenseWhiteSpace( false );
+   TiXmlDocument xdoc;
+   xdoc.Parse( mess.c_str(), nullptr );
+   TiXmlElement *x = xdoc.RootElement();
+
+   if ( a->getFrom().size() == 0 )
+   {
+      // insert a from of ourselves.
+
+      QString from = MinosServer::getMinosServer() ->getServerName();
+      if ( from.length() )
+      {
+         x->SetAttribute( "from", from.toStdString().c_str() );
+      }
+   }
+   QString to = a->getTo();
+   if ( to.size() != 0 )
+   {
+      x->SetAttribute( "to", to.toStdString().c_str() );
+   }
+   // and now dispatch to its destination
+
+   if ( !MinosServer::getMinosServer() ->forwardStanza( nullptr, x ) )              // our own services
+   {
+      if ( !MinosClientListener::getListener() ->sendClient( x ) )         // look at real and potential clients
+      {
+         if ( !MinosServerListener::getListener() ->sendServer( x ) )         // look at real and potential servers
+         {
+            // or no valid destination found
+            return ;
+         }
+      }
+   }
+   // or no valid destination found
+}
 //==============================================================================
 MinosCommonConnection::MinosCommonConnection()
     :
     remove_socket( false )
   , fromIdSet( false )
 {
+    setSendAction(serversendAction);
+
     lastRx = QDateTime::currentMSecsSinceEpoch() + 5000;
 }
 MinosCommonConnection::~MinosCommonConnection()
@@ -123,51 +170,6 @@ bool MinosCommonConnection::tryForwardStanza( TiXmlElement *tix )
    return res;
 }
 //==============================================================================
-// called from XMPPRPCObj instead of the one in MinosConnection
-void sendAction( XStanza *a )
-{
-   // stanza has a "to" - but this is internal, so we need to dispatch it
-   TIXML_STRING mess = a->getActionMessage();
-
-   // convert from a RPCParam structure to a DOM
-
-   TiXmlBase::SetCondenseWhiteSpace( false );
-   TiXmlDocument xdoc;
-   xdoc.Parse( mess.c_str(), nullptr );
-   TiXmlElement *x = xdoc.RootElement();
-
-   if ( a->getFrom().size() == 0 )
-   {
-      // insert a from of ourselves.
-
-      QString from = MinosServer::getMinosServer() ->getServerName();
-      if ( from.length() )
-      {
-         x->SetAttribute( "from", from.toStdString().c_str() );
-      }
-   }
-   QString to = a->getTo();
-   if ( to.size() != 0 )
-   {
-      x->SetAttribute( "to", to.toStdString().c_str() );
-   }
-   // and now dispatch to its destination
-
-   if ( !MinosServer::getMinosServer() ->forwardStanza( nullptr, x ) )              // our own services
-   {
-      if ( !MinosClientListener::getListener() ->sendClient( x ) )         // look at real and potential clients
-      {
-         if ( !MinosServerListener::getListener() ->sendServer( x ) )         // look at real and potential servers
-         {
-            // or no valid destination found
-            return ;
-         }
-      }
-   }
-   // or no valid destination found
-}
-//=============================================================================
-
 void MinosCommonConnection::on_readyRead()
 {
    // select says we have data, so read it

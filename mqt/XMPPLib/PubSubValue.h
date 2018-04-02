@@ -1,12 +1,15 @@
 #ifndef PUBSUBVALUE_H
 #define PUBSUBVALUE_H
-#include "base_pch.h"
+#include "XMPPRPCParams.h"
+
 #include <QJsonDocument>
 #include <QJsonParseError>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonParseError>
 
+//#include "AnalysePubSubNotify.h"
+class AnalysePubSubNotify;
 class PubSubValue
 {
 protected:

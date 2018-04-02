@@ -3,6 +3,8 @@
 #include <QHostAddress>
 
 #include "MinosRPC.h"
+#include "ConfigFile.h"
+#include "rigutils.h"
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
@@ -27,34 +29,34 @@ MainWindow::MainWindow(QWidget *parent) :
         restoreGeometry(geometry);
 
     lastF = "OK\r\n"
-    "fHz=28123456\r\n"
-    "tf=-123456\r\n";
+            "fHz=28123456\r\n"
+            "tf=-123456\r\n";
 
     int fOffset = lastF.indexOf("fHz=");
     int tfOffset = lastF.indexOf("tf=");
     if (fOffset >= 0 && tfOffset >= 0)
     {
-       QString temp = lastF.mid(fOffset + 4, tfOffset - fOffset - 4);
-       int l = temp.length();
-       while ((temp[l] == '\r') || (temp[l] == '\n'))
-       {
-          temp = temp.right(l - 1);
-          l = temp.length();
-       }
-       fCentre = temp.toInt();
-       temp = lastF.mid(tfOffset + 3, 100);
-       l = temp.length();
-       while ((temp[l] == '\r') || (temp[l] == '\n'))
-       {
-          temp = temp.right( l - 1);
-          l = temp.length();
-       }
-       ftf = temp.toInt();
+        QString temp = lastF.mid(fOffset + 4, tfOffset - fOffset - 4);
+        int l = temp.length();
+        while ((temp[l] == '\r') || (temp[l] == '\n'))
+        {
+            temp = temp.right(l - 1);
+            l = temp.length();
+        }
+        fCentre = temp.toInt();
+        temp = lastF.mid(tfOffset + 3, 100);
+        l = temp.length();
+        while ((temp[l] == '\r') || (temp[l] == '\n'))
+        {
+            temp = temp.right( l - 1);
+            l = temp.length();
+        }
+        ftf = temp.toInt();
     }
     double f = (fCentre + ftf);
     lastF = "fCentre " + QString::number(fCentre) + "\r\n tf " + QString::number(ftf) + " freq " + QLocale::system().toString(f, 'f', 0);
 
-//    ui->Rig1Label->setText(omni_rig->Rig1()->RigType());
+    //    ui->Rig1Label->setText(omni_rig->Rig1()->RigType());
 
     connect(&timer2, SIGNAL(timeout()), this, SLOT(timer2Timeout()));
     timer2.start(1000);
@@ -72,7 +74,23 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
-    rpc->subscribe( rpcConstants::rigControlCategory );
+    MinosConfig *config = MinosConfig::getMinosConfig();
+
+    QStringList servers;
+    for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = config->elelist.begin(); i != config->elelist.end(); i++ )
+    {
+        Connectable res = (*i)->connectable();
+        servers.append(res.serverName);
+    }
+    servers.sort();
+    servers.removeDuplicates();
+
+    for (int i = 0; i < servers.size(); i++)
+    {
+        rpc->subscribeRemote( servers[i], rpcConstants::rigControlCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::rigDetailsCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::rigStateCategory );
+    }
 }
 
 MainWindow::~MainWindow()
@@ -118,24 +136,24 @@ void MainWindow::changeEvent( QEvent* e )
 }
 void MainWindow::SyncTimerTimer(  )
 {
-   static bool closed = false;
-   if ( !closed )
-   {
-      if ( checkCloseEvent() )
-      {
-         closed = true;
-         close();
-      }
-   }
-   ui->QF1Label->setText(freq);
-   if (qs1rConnected)
-   {
-       ui->QS1RFLabel->setText(lastF);
-   }
-   else
-   {
-       ui->QS1RFLabel->setText("Not connected");
-   }
+    static bool closed = false;
+    if ( !closed )
+    {
+        if ( checkCloseEvent() )
+        {
+            closed = true;
+            close();
+        }
+    }
+    ui->QF1Label->setText(convertFreqToStr(freq));
+    if (qs1rConnected)
+    {
+        ui->QS1RFLabel->setText(lastF);
+    }
+    else
+    {
+        ui->QS1RFLabel->setText("Not connected");
+    }
 }
 
 
@@ -177,36 +195,36 @@ void MainWindow::onReadyRead()
 
     while(ClientSocket1.bytesAvailable())
     {
-       qint64 retlen = ClientSocket1.read( sockbuffer, 4095 );
-       if ( retlen > 0 )
-       {
-          sockbuffer[ retlen ] = 0;
+        qint64 retlen = ClientSocket1.read( sockbuffer, 4095 );
+        if ( retlen > 0 )
+        {
+            sockbuffer[ retlen ] = 0;
 
-          lastF =  sockbuffer;
-          int fOffset = lastF.indexOf("fHz=");
-          int tfOffset = lastF.indexOf("tf=");
-          if (fOffset >= 0 && tfOffset >= 0)
-          {
-             QString temp = lastF.mid(fOffset + 4, tfOffset - fOffset - 4);
-             int l = temp.length();
-             while ((temp[l] == '\r') || (temp[l] == '\n'))
-             {
-                temp = temp.right(l - 1);
+            lastF =  sockbuffer;
+            int fOffset = lastF.indexOf("fHz=");
+            int tfOffset = lastF.indexOf("tf=");
+            if (fOffset >= 0 && tfOffset >= 0)
+            {
+                QString temp = lastF.mid(fOffset + 4, tfOffset - fOffset - 4);
+                int l = temp.length();
+                while ((temp[l] == '\r') || (temp[l] == '\n'))
+                {
+                    temp = temp.right(l - 1);
+                    l = temp.length();
+                }
+                fCentre = temp.toInt();
+                temp = lastF.mid(tfOffset + 3, 100);
                 l = temp.length();
-             }
-             fCentre = temp.toInt();
-             temp = lastF.mid(tfOffset + 3, 100);
-             l = temp.length();
-             while ((temp[l] == '\r') || (temp[l] == '\n'))
-             {
-                temp = temp.right( l - 1);
-                l = temp.length();
-             }
-             ftf = temp.toInt();
-          }
-          double f = (fCentre + ftf);
-          lastF = "fCentre " + QString::number(fCentre) + "\r\n tf " + QString::number(ftf) + " freq " + QLocale::system().toString(f, 'f', 0);
-       }
+                while ((temp[l] == '\r') || (temp[l] == '\n'))
+                {
+                    temp = temp.right( l - 1);
+                    l = temp.length();
+                }
+                ftf = temp.toInt();
+            }
+            double f = (fCentre + ftf);
+            lastF = "fCentre " + QString::number(fCentre) + "\r\n tf " + QString::number(ftf) + " freq " + QLocale::system().toString(f, 'f', 0);
+        }
     }
 }
 
@@ -217,7 +235,7 @@ void MainWindow::on_closeButton_clicked()
 
 void MainWindow::on_transfer12Button_clicked()
 {
-    long lFreq = freq.toLong();
+    long lFreq = static_cast<long>((freq - transvertOffset) * 1000000);
 
     QString mess = ">fHz " + QString::number(fCentre) + "\n";
     mess += ">tf " + QString::number(lFreq - fCentre) + "\n";
@@ -231,10 +249,10 @@ void MainWindow::on_transfer21Button_clicked()
     RPCGeneralClient rpc(rpcConstants::rigControlMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-    st->addMember( QString::number(freq), rpcConstants::rigControlFreq );
+    st->addMember( QString::number(freq + transvertOffset), rpcConstants::rigControlFreq );
     rpc.getCallArgs() ->addParam( st );
 
-    rpc.queueCall( rpcConstants::rigControlApp + "@localhost");
+    rpc.queueCall( rigSelected);
 }
 
 void MainWindow::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
@@ -245,32 +263,60 @@ void MainWindow::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QSt
 
     if ( an.getOK() && an.getPublisherProgram() == rpcConstants::rigControlApp )
     {
-        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlStatus )
+        if ( an.getState() == psPublished)
         {
-            state = an.getValue();
+            if ( an.getCategory() == rpcConstants::rigStateCategory)
+            {
+                rigCache.setStateString(an);
+            }
+            if ( an.getCategory() == rpcConstants::rigDetailsCategory)
+            {
+                rigCache.setDetailsString(an);
+            }
+            else if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioList )
+            {
+                rigCache.addRigList(an.getValue());
+            }
         }
-        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlMode )
+        rigSelected = rigCache.getSelected();
+        if (!rigSelected.isEmpty())
         {
-            mode = an.getValue();
+            RigState &selState = rigCache.getState(rigSelected);
+            RigDetails &selDetail = rigCache.getDetails(rigSelected);
+            ui->Rig1Label->setText(rigSelected.toString());
+
+            if (selState.isDirty())
+            {
+                mode = selState.mode();
+                freq = selState.freq();
+                //                   status = selState.status();
+                selState.clearDirty();
+                ui->QF1Label->setText(convertFreqToStr(freq));
+
+            }
+            if (selDetail.isDirty())
+            {
+                //bandlist = selDetail.bandList();
+                transvertState = selDetail.transverterStatus();
+                transvertOffset = selDetail.transverterOffset();
+                if (!transvertState)
+                    transvertOffset = 0.0;
+                selDetail.clearDirty();
+
+            }
         }
-        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlFreq )
+        else
         {
-            freq = an.getValue();
-            freq = freq.replace(".", "");
-            ui->QF1Label->setText(freq);
-        }
-        if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioName )
-        {
-            radioName = an.getValue();
-            ui->Rig1Label->setText(radioName);
+            ui->Rig1Label->setText("");
+            ui->QF1Label->setText("");
         }
     }
 }
 //---------------------------------------------------------------------------
 void MainWindow::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )
 {
-   trace( "server callback from " + from + ( err ? ":Error" : ":Normal" ) );
-   trace("method is " + mro->getMethodName());
+    trace( "server callback from " + from + ( err ? ":Error" : ":Normal" ) );
+    trace("method is " + mro->getMethodName());
 
 }
 //---------------------------------------------------------------------------

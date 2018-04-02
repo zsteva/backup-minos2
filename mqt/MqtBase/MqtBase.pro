@@ -57,7 +57,6 @@ SOURCES += \
     AntennaState.cpp \
     AntennaDetail.cpp \
     KeyerState.cpp \
-    PubSubValue.cpp \
     RotatorCache.cpp \
     RigCache.cpp \
     RigDetails.cpp
@@ -103,7 +102,6 @@ HEADERS += \
     AntennaState.h \
     AntennaDetail.h \
     KeyerState.h \
-    PubSubValue.h \
     RotatorCache.h \
     RigCache.h \
     RigDetails.h \
