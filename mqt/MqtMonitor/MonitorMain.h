@@ -216,7 +216,7 @@ private:
 
     QTimer *monitorTimer;
 
-    bool syncstat;
+    bool syncstat = false;
     void syncStations();
     void addSlot( MonitoredLog *ct );
     MonitoringFrame *findCurrentLogFrame();

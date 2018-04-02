@@ -12,8 +12,8 @@ class keyerAbout : public QDialog
     Q_OBJECT
 
 public:
-    explicit keyerAbout(QWidget *parent = 0);
-    ~keyerAbout();
+    explicit keyerAbout(QWidget *parent = nullptr);
+    ~keyerAbout() override;
 
 private slots:
     void on_pushButton_clicked();

@@ -4,7 +4,7 @@
 #include "portconf.h"
 #include "MinosLines.h"
 
-ControlMain *controlMain = 0;
+ControlMain *controlMain = nullptr;
 void ControlMain::logMessage( QString s )
 {
    trace( s );
@@ -76,7 +76,7 @@ void ControlMain::on_formShown( )
 ControlMain::~ControlMain()
 {
     monitor.closeDown();
-    controlMain = 0;
+    controlMain = nullptr;
     delete ui;
 }
 void ControlMain::closeEvent(QCloseEvent * event)

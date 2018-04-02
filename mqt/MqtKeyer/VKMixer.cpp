@@ -13,7 +13,7 @@ class MixerSet
       bool MasterMute;
 };
 //---------------------------------------------------------------------------
-
+/*
 MixerSet MixerSets[ emsMaxMixerSet ] =
    {
       // revise to MicOut mute, Speaker mute as only ones we need to drive
@@ -32,7 +32,7 @@ MixerSet MixerSets[ emsMaxMixerSet ] =
       MixerSet( true , false ),         //emsCWTransmit
       MixerSet( true , false )         //emsCWPassThrough
    };
-
+*/
 /*
   Need INI file settings for mixer and controls
   Need the mixer name and the control name
@@ -55,7 +55,7 @@ MixerSet MixerSets[ emsMaxMixerSet ] =
 
   */
 //===================================================================
-VKMixer * VKMixer::currentMixer = 0;
+VKMixer * VKMixer::currentMixer = nullptr;
 
 /*static*/ VKMixer * VKMixer::OpenMixer()
 {

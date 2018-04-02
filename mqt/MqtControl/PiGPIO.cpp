@@ -9,7 +9,10 @@
 
 #include "PiGPIO.h"
 
-GPIOLine::GPIOLine(int pin, bool input):pin(pin), input(input), fd(-1)
+GPIOLine::GPIOLine(int pin, bool input):
+    input(input),
+    pin(pin),
+    fd(-1)
 {
 
 }
@@ -28,8 +31,8 @@ GPIOLine::~GPIOLine()
 
     spin = QString::number(pin);
     QByteArray apin = spin.toUtf8();
-    size_t written = write(fd, apin.data(), apin.length());
-    if (written != static_cast<unsigned int>(apin.length()))
+    int written = write(fd, apin.data(), static_cast<unsigned int>(apin.length()));
+    if (written != apin.length())
     {
         trace("GPIO destructor: short write");
     }
@@ -48,8 +51,8 @@ bool GPIOLine::initialise()
 
     spin = QString::number(pin);
     QByteArray apin = spin.toUtf8();
-    size_t written = write(fd, apin.data(), apin.length());
-    if (written != static_cast<unsigned int>(apin.length()))
+    int written = write(fd, apin.data(), static_cast<unsigned int>(apin.length()));
+    if (written != apin.length())
     {
         trace("GPIO initialise: short write");
     }
@@ -68,7 +71,7 @@ bool GPIOLine::initialise()
 
     sspin = input?"in":"out";
     apin = sspin.toUtf8();
-    if (-1 == write(fd, apin.data(), apin.length()))
+    if (-1 == write(fd, apin.data(), static_cast<unsigned int>(apin.length())))
     {
         trace("Failed to set direction!");
         return false;

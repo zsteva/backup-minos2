@@ -73,7 +73,7 @@ void mqtktMainWindow::genTone(int16_t *dest, int tone, int samples, int rate, in
       }
    }
    delete [] buff;
-   buff = 0;
+   buff = nullptr;
 }
 
 void mqtktMainWindow::on_compressorButton_clicked()
@@ -145,7 +145,7 @@ void mqtktMainWindow::on_compressorButton_clicked()
             if (val2 < -32767.0)
                 val2 = -32767.0;
 
-            int16_t sample = abs( (val1 + val2)/2 );
+            int16_t sample = static_cast<int16_t>(std::abs( (val1 + val2)/2 ));
             if ( sample > maxvol )
                maxvol = sample;
         }
@@ -178,7 +178,7 @@ class LPFilter
     double b2;
 public:
     LPFilter(int channels, double corner, double sampleRate);
-    inline double filterSample (const float inSample, const int channel);
+    inline double filterSample (const double inSample, const int channel);
 };
 
 LPFilter::LPFilter (int channels, double corner, double sampleRate):mNumChannels(channels)
@@ -201,7 +201,7 @@ LPFilter::LPFilter (int channels, double corner, double sampleRate):mNumChannels
     b2 = 2. * beta;
 }
 
-double LPFilter::filterSample (const float inSample, const int channel)
+double LPFilter::filterSample (const double inSample, const int channel)
 {
     // Derived from
     // http://creatingsound.com/2014/02/dsp-audio-programming-series-part-2/
@@ -255,7 +255,8 @@ void mqtktMainWindow::on_filterButton_clicked()
         {
             for (int chan = 0; chan < 2; ++chan)
             {
-                qreal o = toneop[n * 2 + chan] = mCoeffs.filterSample(toneptr[n * 2 + chan], chan);
+                qreal o =  mCoeffs.filterSample(toneptr[n * 2 + chan], chan);
+                toneop[n * 2 + chan] = static_cast<int16_t>(o);
                 int m = abs(static_cast<int>(o));
                 if (m > imax)
                     imax = m;

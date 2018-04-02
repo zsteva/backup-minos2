@@ -10,6 +10,7 @@
 #define keyconfH
 
 #include <QString>
+#include <QMap>
 
 class PortConfig
 {
@@ -38,7 +39,7 @@ class KeyerConfig
       int startDelay;
       int autoRepeatDelay;
       bool enableAutoRepeat;
-      int pipStartDelay;
+      unsigned int pipStartDelay;
       int playPTTDelay;
       int voxHangTime;
       int pipVolume;
@@ -48,11 +49,11 @@ class KeyerConfig
 
       KeyerConfig()
       {}
-      KeyerConfig( const QString &name, int rate, int pipTone, int pipVolume, int pipLength, bool enablePip, int startDelay,
-                   int autoRepeatDelay, bool enableAutoRepeat, int pipStartDelay, int playPTTDelay, int voxHangTime, int clipRecord, int filterCorner )
+      KeyerConfig( const QString &name, unsigned int rate, int pipTone, int pipVolume, int pipLength, bool enablePip, int startDelay,
+                   int autoRepeatDelay, bool enableAutoRepeat, unsigned int pipStartDelay, int playPTTDelay, int voxHangTime, int clipRecord, int filterCorner )
             : name( name ), type( ektVoiceKeyer ), sampleRate(rate), pipTone( pipTone ), enablePip( enablePip ), startDelay( startDelay ),
             autoRepeatDelay( autoRepeatDelay ), enableAutoRepeat( enableAutoRepeat ), pipStartDelay( pipStartDelay ), playPTTDelay( playPTTDelay ),
-            voxHangTime( voxHangTime ), pipVolume( pipVolume ), clipRecord( clipRecord ), pipLength( pipLength ), filterCorner(filterCorner)
+            voxHangTime( voxHangTime ), pipVolume( pipVolume ), pipLength( pipLength ), clipRecord( clipRecord ), filterCorner(filterCorner)
       {}
 }
 ;

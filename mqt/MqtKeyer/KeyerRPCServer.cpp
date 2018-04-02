@@ -14,7 +14,7 @@
 #include "keyctrl.h"
 #include "KeyerRPCServer.h"
 
-KeyerServer *KS = 0;
+KeyerServer *KS = nullptr;
 //---------------------------------------------------------------------------
 KeyerServer::KeyerServer()
 {

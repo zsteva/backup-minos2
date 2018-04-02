@@ -15,8 +15,8 @@ class ControlMain : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit ControlMain(QWidget *parent = 0);
-    ~ControlMain();
+    explicit ControlMain(QWidget *parent = nullptr);
+    ~ControlMain() override;
     commonController monitor;
 
     void setPTTIn(bool s);
@@ -52,4 +52,5 @@ private slots:
     void linesChangedEvent();
 };
 
+extern ControlMain *controlMain;
 #endif // CONTROLMAIN_H

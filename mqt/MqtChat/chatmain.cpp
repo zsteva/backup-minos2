@@ -4,7 +4,6 @@
 
 #include "chatmain.h"
 #include "ui_chatmain.h"
-TMinosChatForm *MinosChatForm = 0;
 
 TMinosChatForm::TMinosChatForm(QWidget *parent) :
     QMainWindow(parent),
@@ -23,8 +22,6 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     QByteArray geometry = settings.value("geometry").toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
-
-    MinosChatForm = this;
 
     connect(&SyncTimer, SIGNAL(timeout()), this, SLOT(SyncTimerTimer()));
     SyncTimer.start(100);

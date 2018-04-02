@@ -8,9 +8,9 @@
 /////////////////////////////////////////////////////////////////////////////
 #ifndef keyctrlH
 #define keyctrlH
-
+#include <QString>
 typedef void ( *LineCallBack ) ( bool PTT, bool pPTTRef, bool pL1Ref, bool pL2Ref, int lineMode );
-typedef void ( *VUCallBack ) ( unsigned int rmsvol, unsigned int peakvol, int samples  );
+typedef void ( *VUCallBack ) ( unsigned int rmsvol, unsigned int peakvol, unsigned int samples  );
 
 enum KEYER_COMMAND {eKEYER_STOPRECORD,    		// kill record
                     eKEYER_RECORD,
@@ -26,7 +26,8 @@ class KeyerCtrl
 {
    public:
       KeyerCtrl( KEYER_COMMAND cmd, int mno1, int mno2, int mtime, const QString &fname, bool xm = false, bool ch = false, bool dely = false ) :
-            command( cmd ), xmit( xm ), chain( ch ), delay_start( dely ), intParam1( mno1 ), intTime( mtime ), intParam2( mno2 ), filename( fname )
+            command( cmd ), xmit( xm ), chain( ch ), delay_start( dely ), intParam1( mno1 ),
+            intParam2( mno2 ), intTime( mtime ), filename( fname )
       {}
 
       KEYER_COMMAND command;				// what to do
@@ -52,7 +53,7 @@ class KeyerInfo    // only passes info up
       int tone1;
       int tone2;
       int tuneTime;
-      int tuneLevel;
+      double tuneLevel;
       int CWTone;
       int CWSpeed;
 };

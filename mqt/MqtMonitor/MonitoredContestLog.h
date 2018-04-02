@@ -7,7 +7,7 @@ class MonitoredContestLog:public BaseContestLog
 {
 public:
    MonitoredContestLog();
-   virtual ~MonitoredContestLog();
+   virtual ~MonitoredContestLog() override;
 
    virtual void makeContact( bool time_now, QSharedPointer<BaseContact>& ) override;
 };

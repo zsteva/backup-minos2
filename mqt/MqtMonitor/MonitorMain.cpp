@@ -57,7 +57,7 @@ QString ServerTreeNode::data(int column)
         return Name();
     return "";
 }
-QStringList stateList =
+static QStringList stateList =
 {
    "P",
    "R",
@@ -78,7 +78,7 @@ QString LogTreeNode::data(int column)
     return "";
 }
 MonitorTreeModel::MonitorTreeModel()
-        : QAbstractItemModel( 0 ), rootData( 0 )
+        : QAbstractItemModel( nullptr ), rootData( nullptr )
 {}
 MonitorTreeModel::~MonitorTreeModel()
 {
@@ -89,7 +89,7 @@ void MonitorTreeModel::clear()
     beginResetModel();
 
     delete rootData;
-    rootData = 0;
+    rootData = nullptr;
 
     endResetModel();
 }
@@ -201,7 +201,7 @@ TreeNode *MonitorTreeModel::getItem( const QModelIndex &index ) const
 //=============================================================================================
 
 MonitorMain::MonitorMain(QWidget *parent) :
-    QMainWindow(parent), syncstat(false),
+    QMainWindow(parent),
     ui(new Ui::MonitorMain)
 {
     ui->setupUi(this);
@@ -338,7 +338,7 @@ void MonitorMain::closeTab(MonitoringFrame *cttab)
                 // and we need to redo the list
                 //treeModel->clear();
                 (*j)->setEnabled(false);
-                (*j)->setFrame(0);
+                (*j)->setFrame(nullptr);
                 ui->contestPageControl->removeTab(ui->contestPageControl->indexOf(cttab));
                 delete cttab;
                 return;
@@ -351,7 +351,7 @@ void MonitorMain::on_contestPageControl_customContextMenuRequested(const QPoint 
 {
     QPoint globalPos = ui->contestPageControl->mapToGlobal( pos );
 
-    closeMonitoredLog->setEnabled(findCurrentLogFrame() != 0);
+    closeMonitoredLog->setEnabled(findCurrentLogFrame() != nullptr);
 
     TabPopup.popup( globalPos );
 }
@@ -582,7 +582,7 @@ MonitoringFrame *MonitorMain::findContestPage( BaseContestLog *ct )
 {
    // we need to find the embedded frame...
    if ( !ui->contestPageControl->count() || !ct )
-      return 0;
+      return nullptr;
    int pc = ui->contestPageControl->count();
    for ( int i = 0; i < pc; i++ )
    {
@@ -594,12 +594,12 @@ MonitoringFrame *MonitorMain::findContestPage( BaseContestLog *ct )
                return f;
        }
    }
-   return 0;
+   return nullptr;
 }
 
 bool nolog( MonitoredLog *ip )
 {
-   if ( ip == 0 )
+   if ( ip == nullptr )
       return true;
    else
       return false;
@@ -634,7 +634,7 @@ void MonitorMain::on_monitorTimeout()
              // take it out of the slot list and close it
              // and we need to redo the list
              delete (*j);
-             (*j) = 0;
+             (*j) = nullptr;
              (*i)->slotList.erase(j);
              syncstat = true;
              break;             // as we have changed the list - don't continue

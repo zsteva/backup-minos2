@@ -18,11 +18,11 @@ class KeyerMain : public QMainWindow
     Ui::KeyerMain *ui;
 
 public:
-    explicit KeyerMain(QWidget *parent = 0);
-    virtual ~KeyerMain();
+    explicit KeyerMain(QWidget *parent = nullptr);
+    virtual ~KeyerMain() override;
 
     void setLines(bool PTTOut, bool PTTIn, bool L1, bool L2, int lmode);
-    void volcallback( unsigned int rmsvol , unsigned int peakvol, int samples );
+    void volcallback(unsigned int rmsvol , unsigned int peakvol, unsigned int samples );
 
 private slots:
 
@@ -108,4 +108,5 @@ private:
     virtual void moveEvent(QMoveEvent *event) override;
     virtual void changeEvent( QEvent* e ) override;
 };
+extern KeyerMain *keyerMain;
 #endif // KEYERMAIN_H

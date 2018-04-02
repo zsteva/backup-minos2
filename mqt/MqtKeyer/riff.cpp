@@ -61,7 +61,7 @@ uint32_t FourCC ( const char *ChunkName )
 
 RiffFile::RiffFile()
 {
-   file = 0;
+   file = nullptr;
    fmode = RFM_UNKNOWN;
 
    riff_header.ckID = FourCC( "RIFF" );
@@ -103,7 +103,7 @@ DDCRET RiffFile::Open ( const QString &Filename, RiffFileMode NewMode )
                   fclose( file );
                   unlink( Filename.toLatin1() );
                   fmode = RFM_UNKNOWN;
-                  file = 0;
+                  file = nullptr;
                   retcode = DDC_FILE_ERROR;
                }
                else
@@ -129,7 +129,7 @@ DDCRET RiffFile::Open ( const QString &Filename, RiffFileMode NewMode )
                   {
                      fclose( file );
                      fmode = RFM_UNKNOWN;
-                     file = 0;
+                     file = nullptr;
                      retcode = DDC_FILE_ERROR;
                   }
                   else
@@ -197,7 +197,7 @@ DDCRET RiffFile::Close()
 
    }
 
-   file = 0;
+   file = nullptr;
    fmode = RFM_UNKNOWN;
 
    return retcode;
@@ -298,7 +298,7 @@ DDCRET WaveFile::OpenForRead ( const QString &Filename )
       return DDC_INVALID_CALL;
    }
 
-   long flen = FileLength(Filename);
+   qint64 flen = FileLength(Filename);
 
    DDCRET retcode = Open ( Filename, RFM_READ );
 
@@ -580,7 +580,7 @@ DDCRET WaveFile::ReadSamples ( uint32_t num, WaveFileSample sarray[] )
                {
                   unsigned char x;
                   retcode = Read ( &x, 1 );
-                  sarray[ i ].chan[ 0 ] = int16_t( x );
+                  sarray[ i ].chan[ 0 ] = static_cast<uint16_t>( x );
                }
                break;
 
@@ -604,8 +604,8 @@ DDCRET WaveFile::ReadSamples ( uint32_t num, WaveFileSample sarray[] )
                {
                   unsigned char x[ 2 ];
                   retcode = Read ( x, 2 );
-                  sarray[ i ].chan[ 0 ] = int16_t ( x[ 0 ] );
-                  sarray[ i ].chan[ 1 ] = int16_t ( x[ 1 ] );
+                  sarray[ i ].chan[ 0 ] = static_cast<uint16_t> ( x[ 0 ] );
+                  sarray[ i ].chan[ 1 ] = static_cast<uint16_t> ( x[ 1 ] );
                }
                break;
 
@@ -687,8 +687,8 @@ DDCRET WaveFile::SeekToSample ( unsigned long SampleIndex )
 
    unsigned SampleSize = ( BitsPerSample() + 7 ) / 8;
 
-   DDCRET rc = Seek ( pcm_data_offset + sizeof( pcm_data ) +
-                      SampleSize * NumChannels() * SampleIndex );
+   DDCRET rc = Seek (static_cast<long>( pcm_data_offset + static_cast<long>(sizeof( pcm_data )) +
+                     static_cast<long>( SampleSize * NumChannels() * SampleIndex )));
 
    return rc;
 }
@@ -714,7 +714,7 @@ uint16_t WaveFile::NumChannels() const
 
 uint32_t WaveFile::NumSamples() const
 {
-   return num_samples;
+   return static_cast<uint32_t>(num_samples);
 }
 
 

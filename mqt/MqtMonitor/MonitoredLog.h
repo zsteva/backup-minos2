@@ -7,20 +7,20 @@ class MonitoredLog
 {
    private:
       void getLogStanza( int sno );
-      bool monitorEnabled;
+      bool monitorEnabled = false;
 
-      qint64 inStanzaRequest;
+      qint64 inStanzaRequest = 0;
       QSet <int> stanzasPulled;
 
-      int lastScannedStanza;
+      int lastScannedStanza = -1;
 
-      PublishState state;
+      PublishState state = psNotConnected;
       QString server;
       QString publishedName;
-      int expectedStanzaCount;
-      MinosTestImport *mt;
-      BaseContestLog * contest;
-      MonitoringFrame *frame;
+      int expectedStanzaCount = 0;
+      MinosTestImport *mt = nullptr;
+      BaseContestLog * contest = nullptr;
+      MonitoringFrame *frame = nullptr;
 
    public:
 

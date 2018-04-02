@@ -35,8 +35,8 @@ class RiffWriter : public QThread
      RtAudioSoundSystem *ss;
 public:
      bool terminated;
-    RiffWriter(RtAudioSoundSystem *parent = NULL) ;
-    virtual ~RiffWriter();
+    RiffWriter(RtAudioSoundSystem *parent = nullptr) ;
+    virtual ~RiffWriter() override;
 
     virtual void run() Q_DECL_OVERRIDE;
 
@@ -73,7 +73,7 @@ public:
 
     virtual bool initialise( QString &errmess );
 
-    virtual int setRate(int rate);
+    virtual unsigned int setRate(unsigned int rate);
     virtual void setFilter(int cf);
 
     virtual bool startDMA( bool play, const QString &fname );
@@ -92,15 +92,15 @@ public:
 
     void setVolumeMults(qreal record, qreal replay, qreal passThrough);
 
-    void setData(int16_t *data, int len);
-    void setPipData(int16_t *data, int len, int delayLen);
+    void setData(int16_t *data, unsigned int len);
+    void setPipData(int16_t *data, unsigned int len, unsigned int delayLen);
 
-    int16_t *dataptr;
-    long samples;
+    int16_t *dataptr = nullptr;
+    unsigned long samples = 0;
 
     WaveFile outWave;
-    void writeDataToFile(void *inp, int nFrames);
-    RiffWriter *wThread;
+    void writeDataToFile(void *inp, unsigned int nFrames);
+    RiffWriter *wThread = nullptr;
 
     int audioCallback( void *outputBuffer, void *inputBuffer,
                                     unsigned int nFrames,
@@ -109,38 +109,38 @@ public:
 
 private:
 
-    RtAudio *audio;
+    RtAudio *audio = nullptr;
 
-    unsigned int inChannels;
-    unsigned int outChannels;
+    unsigned int inChannels = 0;
+    unsigned int outChannels = 0;
 
     chunkware_simple::SimpleCompRms compressor;
     LPFilter lpFilter;
 
-    int filterCorner;
+    int filterCorner = 0;
 
     // internal values
-    unsigned int sampleRate;
+    unsigned int sampleRate = 0;
 
-    bool tone;
+    bool tone = false;
 
-    bool playingFile;
-    bool recordingFile;
-    bool passThrough;
+    bool playingFile = false;
+    bool recordingFile = false;
+    bool passThrough = false;
 
-    bool inputEnabled;
-    bool outputEnabled;
-    bool passThroughEnabled;
+    bool inputEnabled = false;
+    bool outputEnabled = false;
+    bool passThroughEnabled = false;
 
-    qreal recordMult;
-    qreal replayMult;
-    qreal passThroughMult;
+    qreal recordMult = 0.0;
+    qreal replayMult = 0.0;
+    qreal passThroughMult = 0.0;
 
-    qint64 m_pos;
-    qint64 p_pos;
+    qint64 m_pos = 0;
+    qint64 p_pos = 0;
     QByteArray m_buffer;
     QByteArray p_buffer;
-    long pipDelayBytes;
+    unsigned long pipDelayBytes = 0;
 
 };
 
