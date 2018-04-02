@@ -274,19 +274,19 @@ void RigControlFrame::returnChangeRadioFreq()
 
 void RigControlFrame::radioBandFreq(int index)
 {
-    traceMsg(QString("Radio Band Freq Index = %1").arg(QString::number(index)));
-    QString f = bandSelData::bandFreq[index];
-    if (index > 0 && index < bandSelData::bandFreq.count())
-    {
+    int idx = index -1;
 
+    if (idx > 0 && idx < listOfBands.count())
+    {
+        QString f = listOfBands[idx].freq;
         if (f != curFreq)
         {
-            //ui->freqInput->setInputMask(maskData::freqMask[bandSelData::bandMaskIdx[index]]);
-            //ui->freqInput->setText(bandSelData::freqDialZero[index]);
+
             if (isRadioLoaded())
             {
                 if (radioConnected && !radioError)
                 {
+                    traceMsg(QString("RigContFrame: Radio Band Freq = %1").arg(f));
                     sendFreq(f);
                 }
                 else if (!radioConnected && radioName.trimmed() == "No Radio")
@@ -298,7 +298,11 @@ void RigControlFrame::radioBandFreq(int index)
        }
 
     }
-    traceMsg(QString("Freq the same or index out of range"));
+    else
+    {
+        traceMsg(QString("RigContFrame: Freq the same or index out of range"));
+    }
+
 }
 
 void RigControlFrame::sendFreq(QString f)
