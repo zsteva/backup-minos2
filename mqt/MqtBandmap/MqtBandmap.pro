@@ -14,7 +14,6 @@ VERSION=0.6.0.0
 
 win32:RC_ICONS += ../minos.ico
 
-
 TARGET = MqtBandmap
 TEMPLATE = app
 

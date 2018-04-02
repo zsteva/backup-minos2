@@ -9,13 +9,14 @@ QT       += core gui
 QT       += widgets
 QT       += network
 
-TARGET = MqtUtils
+TARGET = mqtUtils
 TEMPLATE = lib
 CONFIG += staticlib
 
 *g++*:CONFIG(release, debug|release): QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast -DNDEBUG
 else:*g++*:CONFIG(debug, debug|release):QMAKE_CXXFLAGS_WARN_ON += -Wno-reorder -Wold-style-cast
 
+PRECOMPILED_HEADER = mqtUtils_pch.h
 
 SOURCES += \
     fileutils.cpp \
