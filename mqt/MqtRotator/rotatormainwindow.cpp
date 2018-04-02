@@ -1940,6 +1940,14 @@ void RotatorMainWindow::onLaunchSetup()
     setupAntenna->exec();
 }
 
+
+void RotatorMainWindow::cwCCWControlVisible(bool visible)
+{
+    ui->rot_left_button->setVisible(visible);
+    ui->rot_right_button->setVisible(visible);
+}
+
+
 void RotatorMainWindow::aboutRotatorConfig()
 {
 

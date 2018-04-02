@@ -98,6 +98,7 @@ public:
       dest.southStopFlag = srce->southStopFlag;
       dest.overRunFlag = srce->overRunFlag;
       dest.supportCwCcwCmd = srce->supportCwCcwCmd;
+      dest.simCwCcwCmd = srce->simCwCcwCmd;
       dest.antennaOffset = srce->antennaOffset;
       dest.moving = srce->moving;
       dest.portType = srce->portType;
@@ -138,6 +139,7 @@ public:
   bool southStopFlag = false;
   bool overRunFlag = false;
   bool supportCwCcwCmd = true;
+  bool simCwCcwCmd = false;
   int antennaOffset = 0;
   bool moving = false;
   rig_port_e portType = RIG_PORT_NONE;

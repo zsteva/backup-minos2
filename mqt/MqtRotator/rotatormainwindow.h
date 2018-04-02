@@ -256,6 +256,7 @@ private:
     void writeWindowTitle(QString appName);
 
     void sendPresetListLogger();
+    void cwCCWControlVisible(bool visible);
 };
 
 #endif // ROTATORMAINWINDOW_H

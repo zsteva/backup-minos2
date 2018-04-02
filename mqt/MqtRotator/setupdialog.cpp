@@ -276,7 +276,9 @@ void SetupDialog::saveSettings()
             config.setValue("rotatorCWEndStop", double(availAntData[i]->rotatorCWEndStop));
             config.setValue("rotatorCCWEndStop", double(availAntData[i]->rotatorCCWEndStop));
             config.setValue("rotatorEndStopType", availAntData[i]->endStopType);
+            config.setValue("supportCwCcwCmd", availAntData[i]->supportCwCcwCmd);
             config.setValue("rotatorPollInterval", availAntData[i]->pollInterval);
+            config.setValue("simulateCwCCw", availAntData[i]->simCwCcwCmd);
             config.setValue("southStop", availAntData[i]->southStopFlag);
             config.setValue("overRun", availAntData[i]->overRunFlag);
             config.setValue("antennaOffset", availAntData[i]->antennaOffset);
@@ -339,6 +341,7 @@ void SetupDialog::saveAntenna(int i)
     config.setValue("rotatorCCWEndStop", double(availAntData[i]->rotatorCCWEndStop));
     config.setValue("rotatorEndStopType", availAntData[i]->endStopType);
     config.setValue("supportCwCcwCmd", availAntData[i]->supportCwCcwCmd);
+    config.setValue("simulateCwCCw", availAntData[i]->simCwCcwCmd);
     config.setValue("rotatorPollInterval", availAntData[i]->pollInterval);
     config.setValue("southStop", availAntData[i]->southStopFlag);
     config.setValue("overRun", availAntData[i]->overRunFlag);
@@ -397,6 +400,7 @@ void SetupDialog::getAvailAntenna(int antNum, QSettings& config)
     availAntData[antNum]->rotatorCCWEndStop = azimuth_t(config.value("rotatorCWEndStop", 0).toDouble());
     availAntData[antNum]->endStopType = endStop(config.value("rotatorEndStopType", int(ROT_0_360)).toInt());
     availAntData[antNum]->supportCwCcwCmd = config.value("supportCwCcwCmd", false).toBool();
+    availAntData[antNum]->simCwCcwCmd = config.value("simulateCwCCw", true).toBool();
     availAntData[antNum]->southStopFlag = config.value("southStop", false).toBool();
     availAntData[antNum]->overRunFlag = config.value("overRun", false).toBool();
     availAntData[antNum]->antennaOffset = config.value("antennaOffset", "").toInt();

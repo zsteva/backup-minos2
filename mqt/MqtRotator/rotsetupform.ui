@@ -198,6 +198,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="simCW_CCWcmd">
+       <property name="text">
+        <string>Simulate CW/CCW Commands</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="offSetLbl">
        <property name="text">
         <string>Offset</string>
