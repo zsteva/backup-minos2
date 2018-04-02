@@ -204,8 +204,6 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
 
    appBundle.startGroup();
    appBundle.getStringProfile(eapBandMap, appBandMap);
-   appBundle.getStringProfile(eapRigControl, appRigControl);
-   appBundle.getStringProfile(eapRotator, appRotator);
    appBundle.getStringProfile(eapVoiceKeyer, appVoiceKeyer);
    appBundle.endGroup();
 
@@ -459,8 +457,6 @@ void LoggerContestLog::setINIDetails()
 //   {
         appBundle.startGroup();
         appBundle.getStringProfile(eapBandMap, appBandMap);
-        appBundle.getStringProfile(eapRigControl, appRigControl);
-        appBundle.getStringProfile(eapRotator, appRotator);
         appBundle.getStringProfile(eapVoiceKeyer, appVoiceKeyer);
         appBundle.endGroup();
 //   }

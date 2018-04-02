@@ -167,10 +167,8 @@ void TSingleLogFrame::resetConnectables()
     LoggerContestLog * ct = dynamic_cast<LoggerContestLog *>( contest );
     if (ct)
     {
-        rigServerConnectable = config->getApp(ct->appRigControl.getValue());
         keyerServerConnectable = config->getApp(ct->appVoiceKeyer.getValue());
         bandMapServerConnectable = config->getApp(ct->appBandMap.getValue());
-        rotatorServerConnectable = config->getApp(ct->appRotator.getValue());
     }
 }
 
