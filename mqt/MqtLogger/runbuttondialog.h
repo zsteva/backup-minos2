@@ -43,6 +43,7 @@ private slots:
     void on_okButton_clicked();
     void on_cancelbutton_clicked();
 
+    void onFreqEditFinish();
 private:
     Ui::RunButtonDialog *ui;
     memoryData::memData *logdata = 0;

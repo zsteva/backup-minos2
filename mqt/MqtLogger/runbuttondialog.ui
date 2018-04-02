@@ -28,10 +28,13 @@
        <item>
         <widget class="QLineEdit" name="freqLineEdit">
          <property name="inputMask">
-          <string>99.999.999.999</string>
+          <string/>
          </property>
          <property name="text">
-          <string>00.000.000.000</string>
+          <string/>
+         </property>
+         <property name="maxLength">
+          <number>25</number>
          </property>
         </widget>
        </item>
