@@ -2,20 +2,6 @@
 <ui version="4.0">
  <class>LogDialog</class>
  <widget class="QDialog" name="LogDialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>484</width>
-    <height>155</height>
-   </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>484</width>
-    <height>155</height>
-   </size>
-  </property>
   <property name="windowTitle">
    <string>Rotator Position Logging</string>
   </property>
