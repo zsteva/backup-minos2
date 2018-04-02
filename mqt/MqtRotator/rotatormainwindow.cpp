@@ -35,8 +35,6 @@
 
 // QPushButton:clicked{\n	background-color: red;\n	border-style: outset;\n	border-width: 1px;\n	border-radius: 5px;\n	border-color: black;\n	min-width: 5em;\n	padding: 3px;\n}
 
-RotatorMainWindow *MinosRotatorForm;
-
 static QStringList presetShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
                             QString("Ctrl+3"), QString("Ctrl+4"),
                             QString("Ctrl+5"), QString("Ctrl+6"),
@@ -46,7 +44,7 @@ static QStringList presetShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
 
 RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     QMainWindow(parent),
-    msg(0),
+    msg(nullptr),
     ui(new Ui::RotatorMainWindow),
     rot_left_button_status(OFF),
     rot_right_button_status(OFF),
@@ -62,7 +60,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     overLapActiveflag(false),
     overLapStatus(NO_OVERLAP),
     //southStopActiveflag(false),
-    endStopType(ROT_0_360),
+    //endStopType(ROT_0_360),
     rotErrorFlag(false),
     //supportCwCcwCmd(false),
     rotLogFlg(true)
@@ -84,7 +82,6 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     trace(QString("Directory %1").arg(dir.absolutePath()));
 
     createCloseEvent();
-    MinosRotatorForm = this;
     connect(&LogTimer, SIGNAL(timeout()), this, SLOT(LogTimerTimer()));
     LogTimer.start(100);
     msg = new RotatorRpc(this);
@@ -1259,17 +1256,17 @@ int RotatorMainWindow::northCalcTarget(int targetBearing)
 
     int target = targetBearing;
 
-    if (endStopType == ROT_0_360)
+    if (setupAntenna->currentAntenna.endStopType == ROT_0_360)
     {
         target = calcRotZero360(targetBearing);
 
     }
-    else if (endStopType == ROT_NEG180_180)
+    else if (setupAntenna->currentAntenna.endStopType == ROT_NEG180_180)
     {
         target = calcRotNeg180_180(targetBearing);
 
     }
-    else if (endStopType == ROT_0_450 || ROT_NEG180_540)
+    else if (setupAntenna->currentAntenna.endStopType == ROT_0_450 || ROT_NEG180_540)
     {
         target = calclRot_0_450_Neg180_540(targetBearing);
     }
@@ -1306,7 +1303,7 @@ int RotatorMainWindow::calclRot_0_450_Neg180_540(int targetBearing)
 {
     int target = targetBearing;
     logMessage(QString("NCalc - EndStop Type - ROT_0_450 or ROT_NEG180_540"));
-    if (endStopType == ROT_NEG180_540)
+    if (setupAntenna->currentAntenna.endStopType == ROT_NEG180_540)
     {
         if (rotatorBearing >= COMPASS_MIN0 && rotatorBearing <= COMPASS_HALF)
         {
@@ -1507,10 +1504,10 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
             }
             else
             {
-                if (endStopType == ROT_180_180)
+                if (setupAntenna->currentAntenna.endStopType == ROT_180_180)
                 {
-                    logMessage(QString("Send rotate to end stop, instead of CW rotator command, endstop = %1").arg(QString::number(rotatorCWEndStop)));
-                    retCode = rotator->rotate_to_bearing(rotatorCWEndStop);
+                    logMessage(QString("Send rotate to end stop, instead of CW rotator command, endstop = %1").arg(QString::number(setupAntenna->currentAntenna.rotatorCWEndStop)));
+                    retCode = rotator->rotate_to_bearing(setupAntenna->currentAntenna.rotatorCWEndStop);
                 }
                 else
                 {
@@ -1598,10 +1595,10 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
             }
             else
             {
-                if (endStopType == ROT_180_180)
+                if (setupAntenna->currentAntenna.endStopType == ROT_180_180)
                 {
-                    logMessage(QString("Send rotate to end stop, instead of CCW rotator command, endstop = %1").arg(QString::number(rotatorCCWEndStop)));
-                    retCode = rotator->rotate_to_bearing(rotatorCCWEndStop);
+                    logMessage(QString("Send rotate to end stop, instead of CCW rotator command, endstop = %1").arg(QString::number(setupAntenna->currentAntenna.rotatorCCWEndStop)));
+                    retCode = rotator->rotate_to_bearing(setupAntenna->currentAntenna.rotatorCCWEndStop);
                 }
                 else
                 {
@@ -1951,7 +1948,7 @@ void RotatorMainWindow::aboutRotatorConfig()
     msg.append(QString("Rotator Model = %1\n").arg(setupAntenna->currentAntenna.rotatorModel));
     msg.append(QString("Rotator Number = %1\n").arg(QString::number(setupAntenna->currentAntenna.rotatorModelNumber)));
     msg.append(QString("Rotator Manufacturer = %1\n").arg(setupAntenna->currentAntenna.rotatorManufacturer));
-    msg.append(QString("Minos Rotator Type = %1\n").arg(endStopNames[endStopType]));
+    msg.append(QString("Minos Rotator Type = %1\n").arg(endStopNames[setupAntenna->currentAntenna.endStopType]));
     msg.append(QString("Rotator PortType = %1\n").arg(hamlibData::portTypeList[setupAntenna->currentAntenna.portType]));
     msg.append(QString("Network Address = %1\n").arg(setupAntenna->currentAntenna.networkAdd));
     msg.append(QString("Network Port = %1\n").arg(setupAntenna->currentAntenna.networkPort));
@@ -1964,8 +1961,8 @@ void RotatorMainWindow::aboutRotatorConfig()
     msg.append(QString("Antenna Offset = %1\n").arg(QString::number(setupAntenna->currentAntenna.antennaOffset)));
     msg.append(QString("Current Max Azimuth = %1\n").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
     msg.append(QString("Current Min Azimuth = %1\n").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
-    msg.append(QString("Current CW EndStop = %1\n").arg(QString::number(rotatorCWEndStop)));
-    msg.append(QString("Current CCW EndStop = %1\n").arg(QString::number(rotatorCCWEndStop)));
+    msg.append(QString("Current CW EndStop = %1\n").arg(QString::number(setupAntenna->currentAntenna.rotatorCWEndStop)));
+    msg.append(QString("Current CCW EndStop = %1\n").arg(QString::number(setupAntenna->currentAntenna.rotatorCCWEndStop)));
     QString f;
     setupAntenna->currentAntenna.southStopFlag ? f = "True" : f = "False";
     msg.append(QString("South Stop Flag = %1\n").arg(f));
@@ -1998,7 +1995,7 @@ void RotatorMainWindow::dumpRotatorToTraceLog()
     trace(QString("Rotator Model = %1").arg(setupAntenna->currentAntenna.rotatorModel));
     trace(QString("Rotator Number = %1").arg(QString::number(setupAntenna->currentAntenna.rotatorModelNumber)));
     trace(QString("Rotator Manufacturer = %1").arg(setupAntenna->currentAntenna.rotatorManufacturer));
-    trace(QString("Minos Rotator Type = %1").arg(endStopNames[endStopType]));
+    trace(QString("Minos Rotator Type = %1").arg(endStopNames[setupAntenna->currentAntenna.endStopType]));
     trace(QString("Rotator PortType = %1").arg(hamlibData::portTypeList[setupAntenna->currentAntenna.portType]));
     trace(QString("Network Address = %1").arg(setupAntenna->currentAntenna.networkAdd));
     trace(QString("Network Port = %1").arg(setupAntenna->currentAntenna.networkPort));
@@ -2011,8 +2008,8 @@ void RotatorMainWindow::dumpRotatorToTraceLog()
     trace(QString("Antenna Offset = %1").arg(QString::number(setupAntenna->currentAntenna.antennaOffset)));
     trace(QString("Current Max Azimuth = %1").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
     trace(QString("Current Min Azimuth = %1").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
-    trace(QString("Current CW EndStop = %1").arg(QString::number(rotatorCWEndStop)));
-    trace(QString("Current CCW EndStop = %1").arg(QString::number(rotatorCCWEndStop)));
+    trace(QString("Current CW EndStop = %1").arg(QString::number(setupAntenna->currentAntenna.rotatorCWEndStop)));
+    trace(QString("Current CCW EndStop = %1").arg(QString::number(setupAntenna->currentAntenna.rotatorCCWEndStop)));
     QString f;
     setupAntenna->currentAntenna.southStopFlag ? f = "True" : f = "False";
     trace(QString("South Stop Flag = %1").arg(f));

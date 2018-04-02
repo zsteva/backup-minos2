@@ -58,7 +58,7 @@ class RotatorMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit RotatorMainWindow(QWidget *parent = 0);
+    explicit RotatorMainWindow(QWidget *parent = nullptr);
     ~RotatorMainWindow();
 
 
@@ -132,7 +132,7 @@ private:
     bool rotCmdflag;
     bool reqBearCmdflag;
 
-    endStop endStopType;
+    //endStop endStopType;
     overlapStat overLapStatus;
     bool overLapActiveflag;
     //bool southStopActiveflag;
@@ -144,8 +144,8 @@ private:
     //int rotatorMaxAzimuth;
     //int currentMinAzimuth;
     //int currentMaxAzimuth;
-    int rotatorCWEndStop;
-    int rotatorCCWEndStop;
+    //int rotatorCWEndStop;
+    //int rotatorCCWEndStop;
     QString backBearingmsg;
     QVector<RotPresetData*> rotPresets;
     //QString presetName[NUM_PRESETS];
