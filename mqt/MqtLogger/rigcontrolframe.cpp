@@ -274,19 +274,19 @@ void RigControlFrame::returnChangeRadioFreq()
 
 void RigControlFrame::radioBandFreq(int index)
 {
-    traceMsg(QString("Radio Band Freq Index = %1").arg(QString::number(index)));
-    QString f = bandSelData::bandFreq[index];
-    if (index > 0 && index < bandSelData::bandFreq.count())
-    {
+    int idx = index -1;
 
+    if (idx > 0 && idx < listOfBands.count())
+    {
+        QString f = listOfBands[idx].freq;
         if (f != curFreq)
         {
-            //ui->freqInput->setInputMask(maskData::freqMask[bandSelData::bandMaskIdx[index]]);
-            //ui->freqInput->setText(bandSelData::freqDialZero[index]);
+
             if (isRadioLoaded())
             {
                 if (radioConnected && !radioError)
                 {
+                    traceMsg(QString("RigContFrame: Radio Band Freq = %1").arg(f));
                     sendFreq(f);
                 }
                 else if (!radioConnected && radioName.trimmed() == "No Radio")
@@ -298,7 +298,11 @@ void RigControlFrame::radioBandFreq(int index)
        }
 
     }
-    traceMsg(QString("Freq the same or index out of range"));
+    else
+    {
+        traceMsg(QString("RigContFrame: Freq the same or index out of range"));
+    }
+
 }
 
 void RigControlFrame::sendFreq(QString f)
@@ -598,13 +602,26 @@ void RigControlFrame::setRadioList(QString s)
 
 void RigControlFrame::setBandList(QString b)
 {
-    listOfBands.clear();
-    listOfBands = b.split(":");
-
-    ui->bandSelCombo->clear();
-    ui->bandSelCombo->addItem("");
-    ui->bandSelCombo->addItems(listOfBands);
-
+    if (!b.isEmpty())
+    {
+        listOfBands.clear();
+        QStringList lbf;
+        QStringList lb;
+        quickBandSelData d;
+        // split into bands
+        lbf = b.split(":");
+        for (int i = 0; i < lbf.count(); i++)
+        {
+            QStringList s = lbf[i].split('-');
+            lb.append(s[0]);
+            d.band = s[0];
+            d.freq = s[1];
+            listOfBands.append(d);
+        }
+        ui->bandSelCombo->clear();
+        ui->bandSelCombo->addItem("");
+        ui->bandSelCombo->addItems(lb);
+    }
 }
 
 

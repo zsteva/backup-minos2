@@ -101,7 +101,33 @@ const QString civToolTip = "Leave field blank for default radio CIV,\nor enter i
 const QString NORADIO = "NoRadio";
 
 
+namespace freqPresetData {
 
+
+const int NUMPRESET = 10;
+
+enum bandOffSet {_10M, _6M, _4M, _2M, _70CM, _23CM, _13CM, _9CM, _6CM, _3CM};
+
+
+const QStringList presetBands = (QStringList() << "10m" << "6m" << "4m" << "2m" << "70cm" << "23cm" << "13cm" << "9cm" << "6cm" << "3cm");
+
+
+const QStringList bandFreq = { "28170000",
+                               "50170000",
+                               "70210000",
+                               "144290000",
+                               "432170000",
+                               "1296210000",
+                               "2320200000",  //13cm
+                               "3400100000", // 9cm
+                               "5760100000", // 6cm
+                              "10368100000"  // 3cm
+                              };
+
+
+
+
+}
 
 
 
