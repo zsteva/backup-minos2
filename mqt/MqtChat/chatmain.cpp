@@ -1,5 +1,4 @@
 #include "base_pch.h"
-
 #include "MinosRPC.h"
 
 #include "chatmain.h"
@@ -99,9 +98,9 @@ void TMinosChatForm::SyncTimerTimer(  )
 }
 //---------------------------------------------------------------------------
 
-bool syncstat = false;
-QVector<QString> chatQueue;
-QString stateIndicator[] =
+static bool syncstat = false;
+static QVector<QString> chatQueue;
+static QString stateIndicator[] =
 {
    "Available",
    "NotAvailable",
@@ -138,7 +137,7 @@ void TMinosChatForm::syncChat()
    chatQueue.clear();
 }
 //---------------------------------------------------------------------------
-QString stateList[] =
+static QString stateList[] =
 {
    "Available",
    "Not Available",

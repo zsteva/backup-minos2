@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "base_pch.h"
+#include "RigCache.h"
 
 namespace Ui {
 class MainWindow;
@@ -37,6 +38,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    RigCache rigCache;
 
     virtual void closeEvent(QCloseEvent *event) override;
     virtual void resizeEvent(QResizeEvent *event) override;
@@ -60,8 +62,11 @@ private:
 
     QString state;
     QString mode;
-    QString freq;
-    QString radioName;
+    double freq;
+    PubSubName rigSelected;
+
+    bool transvertState = false;
+    double transvertOffset = 0.0;
 
 };
 

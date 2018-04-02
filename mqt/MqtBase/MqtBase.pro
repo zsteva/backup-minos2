@@ -18,6 +18,8 @@ INCLUDEPATH += ../TinyXML
 INCLUDEPATH += ../XMPPLib
 INCLUDEPATH += ../qtcsv/src/include
 
+PRECOMPILED_HEADER = ../MqtBase/base_pch.h
+
 SOURCES += \
     BandList.cpp \
     calcs.cpp \
@@ -57,7 +59,6 @@ SOURCES += \
     AntennaState.cpp \
     AntennaDetail.cpp \
     KeyerState.cpp \
-    PubSubValue.cpp \
     RotatorCache.cpp \
     RigCache.cpp \
     RigDetails.cpp
@@ -103,7 +104,6 @@ HEADERS += \
     AntennaState.h \
     AntennaDetail.h \
     KeyerState.h \
-    PubSubValue.h \
     RotatorCache.h \
     RigCache.h \
     RigDetails.h \

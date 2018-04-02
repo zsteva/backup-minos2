@@ -11,8 +11,8 @@
 //==========================================================================
 DisplayContestContact::DisplayContestContact( BaseContestLog * ct, bool time_now )
       : BaseContact( ct, time_now ),
-      logSequence( 0 ),
-      modificationCount( 0 )
+      modificationCount( 0 ),
+      logSequence( 0 )
 {
    BaseContestLog * clp = ct;
 

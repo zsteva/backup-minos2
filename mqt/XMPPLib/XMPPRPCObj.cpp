@@ -9,8 +9,11 @@
 //---------------------------------------------------------------------------
 #include "XMPP_pch.h"
 
-extern void sendAction( XStanza *a );      // which might not be the one in XMPPThread
-
+sendActionCall sendAction = nullptr;
+void setSendAction(sendActionCall sa)
+{
+    sendAction = sa;
+}
 //---------------------------------------------------------------------------
 TRPCFunctor::~TRPCFunctor()
 {}
@@ -79,8 +82,14 @@ void MinosRPCClient::queueCall( QString to )
    RPCRequest * m = new RPCRequest( to, methodName );
    m->setNextId();      // only happens if no Id already
    m->args = callArgs.args;     // copy vector of pointers
-   sendAction( m );
+   ::sendAction( m );
    delete m;
+}
+void MinosRPCClient::queueCall(const PubSubName &psn)
+{
+    QString server = psn.server();
+    QString app = psn.appName();
+    queueCall(app + "@" + server);
 }
 //==============================================================================
 

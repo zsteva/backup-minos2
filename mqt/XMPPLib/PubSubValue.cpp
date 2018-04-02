@@ -1,6 +1,8 @@
-#include "base_pch.h"
+#include "XMPP_pch.h"
 #include "PubSubValue.h"
 #include "ConfigFile.h"
+#include "RPCPubSub.h"
+#include "AnalysePubSubNotify.h"
 
 QString PubSubValue::psType() const
 {

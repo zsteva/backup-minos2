@@ -209,14 +209,6 @@ void MinosAppConnection::on_readyRead()
     }
 }
 
-void sendAction( XStanza *a )
-{
-   if ( MinosAppConnection::minosAppConnection )
-   {
-      MinosAppConnection::minosAppConnection->sendAction( a );
-   }
-}
-
 void MinosAppConnection::sendAction( XStanza *a )
 {
    if ( connected )
