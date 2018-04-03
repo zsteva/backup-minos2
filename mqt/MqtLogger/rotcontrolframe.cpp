@@ -737,14 +737,7 @@ void RotControlFrame::initPresetButtons()
     presetButMap[9] = new PresetButton(ui->presetButton9, this, 9);
     //connect( presetButMap[9], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
 
-    // test
-    /*
-    rotPresets.clear();
-    for (int i = 0; i < 10; i++)
-    {
-        rotPresets.append(new RotPresetData(i, "GD8EXI/P", "280"));
-    }
-*/
+
 
 }
 

@@ -210,7 +210,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
 
 
-    //openRotator();  ***************** remove ?????
+
 
     //setPolltime(POLLTIME);   // to allow variable controller polltime - not implemented! **************** remove ????
     rotTimeCount = 0;
@@ -1957,13 +1957,9 @@ void RotatorMainWindow::aboutRotatorConfig()
     msg.append(QString("Rotator Model = %1\n").arg(setupAntenna->currentAntenna.rotatorModel));
     msg.append(QString("Rotator Number = %1\n").arg(QString::number(setupAntenna->currentAntenna.rotatorModelNumber)));
     msg.append(QString("Rotator Manufacturer = %1\n").arg(setupAntenna->currentAntenna.rotatorManufacturer));
-<<<<<<< HEAD
     msg.append(QString("Rotator Type = %1\n").arg(endStopNames[setupAntenna->currentAntenna.rotType]));
     msg.append(QString("Rotator CW EndStop = %1\n").arg(QString::number(setupAntenna->currentAntenna.rotatorCWEndStop)));
     msg.append(QString("Rotator CCW EndStop = %1\n").arg(QString::number(setupAntenna->currentAntenna.rotatorCCWEndStop)));
-=======
-    msg.append(QString("Minos Rotator Type = %1\n").arg(endStopNames[setupAntenna->currentAntenna.endStopType]));
->>>>>>> 83657a1c30e8c518a5e5b784d815e6de526c9714
     msg.append(QString("Rotator PortType = %1\n").arg(hamlibData::portTypeList[setupAntenna->currentAntenna.portType]));
     msg.append(QString("Network Address = %1\n").arg(setupAntenna->currentAntenna.networkAdd));
     msg.append(QString("Network Port = %1\n").arg(setupAntenna->currentAntenna.networkPort));
@@ -1977,12 +1973,7 @@ void RotatorMainWindow::aboutRotatorConfig()
     msg.append(QString("Current Rotator Type = %1\n").arg(QString::number(setupAntenna->currentAntenna.endStopType)));
     msg.append(QString("Current Max Azimuth = %1\n").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
     msg.append(QString("Current Min Azimuth = %1\n").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
-<<<<<<< HEAD
 
-=======
-    msg.append(QString("Current CW EndStop = %1\n").arg(QString::number(setupAntenna->currentAntenna.rotatorCWEndStop)));
-    msg.append(QString("Current CCW EndStop = %1\n").arg(QString::number(setupAntenna->currentAntenna.rotatorCCWEndStop)));
->>>>>>> 83657a1c30e8c518a5e5b784d815e6de526c9714
     QString f;
     setupAntenna->currentAntenna.southStopFlag ? f = "True" : f = "False";
     msg.append(QString("South Stop Flag = %1\n").arg(f));
@@ -2017,13 +2008,9 @@ void RotatorMainWindow::dumpRotatorToTraceLog()
     trace(QString("Rotator Model = %1").arg(setupAntenna->currentAntenna.rotatorModel));
     trace(QString("Rotator Number = %1").arg(QString::number(setupAntenna->currentAntenna.rotatorModelNumber)));
     trace(QString("Rotator Manufacturer = %1").arg(setupAntenna->currentAntenna.rotatorManufacturer));
-<<<<<<< HEAD
     trace(QString("Rotator Type = %1").arg(endStopNames[setupAntenna->currentAntenna.rotType]));
     trace(QString("Rotator CW EndStop = %1").arg(QString::number(setupAntenna->currentAntenna.rotatorCWEndStop)));
     trace(QString("Rotator CCW EndStop = %1").arg(QString::number(setupAntenna->currentAntenna.rotatorCCWEndStop)));
-=======
-    trace(QString("Minos Rotator Type = %1").arg(endStopNames[setupAntenna->currentAntenna.endStopType]));
->>>>>>> 83657a1c30e8c518a5e5b784d815e6de526c9714
     trace(QString("Rotator PortType = %1").arg(hamlibData::portTypeList[setupAntenna->currentAntenna.portType]));
     trace(QString("Network Address = %1").arg(setupAntenna->currentAntenna.networkAdd));
     trace(QString("Network Port = %1").arg(setupAntenna->currentAntenna.networkPort));
@@ -2037,12 +2024,7 @@ void RotatorMainWindow::dumpRotatorToTraceLog()
     trace(QString("Current Rotator Type = %1").arg(QString::number(setupAntenna->currentAntenna.endStopType)));
     trace(QString("Current Max Azimuth = %1").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
     trace(QString("Current Min Azimuth = %1").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
-<<<<<<< HEAD
 
-=======
-    trace(QString("Current CW EndStop = %1").arg(QString::number(setupAntenna->currentAntenna.rotatorCWEndStop)));
-    trace(QString("Current CCW EndStop = %1").arg(QString::number(setupAntenna->currentAntenna.rotatorCCWEndStop)));
->>>>>>> 83657a1c30e8c518a5e5b784d815e6de526c9714
     QString f;
     setupAntenna->currentAntenna.southStopFlag ? f = "True" : f = "False";
     trace(QString("South Stop Flag = %1").arg(f));
