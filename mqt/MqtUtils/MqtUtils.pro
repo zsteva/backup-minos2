@@ -9,7 +9,7 @@ QT       += core gui
 QT       += widgets
 QT       += network
 
-TARGET = mqtUtils
+TARGET = MqtUtils
 TEMPLATE = lib
 CONFIG += staticlib
 
