@@ -18,7 +18,7 @@
 // The keyer factory
 commonKeyer *KeyerConfigure::createKeyer( const KeyerConfig &keyer, const PortConfig &port )
 {
-   commonKeyer * ck = 0;
+   commonKeyer * ck = nullptr;
 
    ck = new voiceKeyer( keyer, port );
    if ( sblog )
@@ -28,7 +28,7 @@ commonKeyer *KeyerConfigure::createKeyer( const KeyerConfig &keyer, const PortCo
    if ( !ck->initialise( keyer, port ) )
    {
       delete ck;
-      ck = 0;
+      ck = nullptr;
    }
 
    return ck;
@@ -108,14 +108,14 @@ void KeyerConfigure::SetKeyers( TiXmlElement *e )
       {
          // attribs name PipTone EnablePip StartDelay AutoRepeat PipStartDelay PlayPTTDelay
          QString name;
-         int sampleRate;
+         unsigned int sampleRate;
          int PipTone;
          int PipLength;
          bool EnablePip;
          int StartDelay;
          int AutoRepeatDelay;
          bool EnableAutoRepeat;
-         int PipStartDelay;
+         unsigned int PipStartDelay;
          int PlayPTTDelay;
          int voxHangTime;
          int pipVolume;
@@ -124,11 +124,14 @@ void KeyerConfigure::SetKeyers( TiXmlElement *e )
 
          if ( GetStringAttribute( c, "name", name ) == TIXML_SUCCESS )
          {
-            GetIntAttribute( c, "sampleRate", sampleRate, 22050);
+             int temp;
+            GetIntAttribute( c, "sampleRate", temp, 22050);
+            sampleRate = static_cast<unsigned int>(temp);
             GetIntAttribute( c, "pipTone", PipTone, 1000 );
             GetIntAttribute( c, "pipLength", PipLength, 250 );
             GetBoolAttribute( c, "enablePip", EnablePip, false );
-            GetIntAttribute( c, "pipStartDelay", PipStartDelay, 0 );
+            GetIntAttribute( c, "pipStartDelay", temp, 0 );
+            PipStartDelay = static_cast<unsigned int>(temp);
             GetIntAttribute( c, "pipVolume", pipVolume, 80 );
             GetIntAttribute( c, "startDelay", StartDelay, 0 );
             GetIntAttribute( c, "autoRepeat", AutoRepeatDelay, 6 );

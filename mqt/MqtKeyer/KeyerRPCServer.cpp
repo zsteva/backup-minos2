@@ -8,13 +8,12 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "base_pch.h"
-
 #include "MinosRPC.h"
 
 #include "keyctrl.h"
 #include "KeyerRPCServer.h"
 
-KeyerServer *KS = 0;
+KeyerServer *KS = nullptr;
 //---------------------------------------------------------------------------
 KeyerServer::KeyerServer()
 {

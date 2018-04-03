@@ -111,13 +111,13 @@ class commonKeyer;
 class RecBuffer
 {
    public:
-      int RecBlock;
-      int WriteBlock;
+      int RecBlock = -1;
+      int WriteBlock = -1;
 
       char buff[ 40000 ]; // should be same size as sound buffers
-      int Size;
-      bool filled;
-      RecBuffer() : Size( 0 ), filled( false ), RecBlock( -1 ), WriteBlock( -1 )
+      int Size = 0;
+      bool filled = false;
+      RecBuffer()
       {}
       void reset()
       {
@@ -131,7 +131,7 @@ class RecBuffer
 class lineMonitor
 {
    private:
-      commonPort *cp;
+      commonPort *cp = nullptr;
    public:
       PortConfig pconf;
       KeyerConfig kconf;
@@ -157,7 +157,7 @@ class timerTicker: public QObject
       QTimer b;
    public:
       timerTicker();
-      ~timerTicker();
+      ~timerTicker() override;
       virtual void tickEvent() = 0;       // this will often be an interrupt routine
 
 private slots:
@@ -171,17 +171,17 @@ class commonKeyer: public lineMonitor, public timerTicker
 {
    public:
       commonKeyer( const KeyerConfig &keyer, const PortConfig &port );
-      ~commonKeyer();
+      ~commonKeyer() override;
 
-      virtual bool pttChanged( int state );
-      virtual bool L1Changed( int state );
-      virtual bool L2Changed( int state );
-      virtual bool linesModeChanged(int lmode);
+      virtual bool pttChanged( int state ) override;
+      virtual bool L1Changed( int state ) override;
+      virtual bool L2Changed( int state ) override;
+      virtual bool linesModeChanged(int lmode) override;
 
-      virtual void tickEvent();       // this will often be an interrupt routine
+      virtual void tickEvent() override;       // this will often be an interrupt routine
       virtual bool getInfo( KeyerInfo * ) = 0;
 
-      virtual bool initialise( const KeyerConfig &keyer, const PortConfig &port ) = 0;
+      virtual bool initialise( const KeyerConfig &keyer, const PortConfig &port ) override = 0;
       virtual void select( bool ) = 0;
 
       virtual bool docommand( const KeyerCtrl &dvp_ctrl ) = 0;
@@ -199,25 +199,25 @@ class commonKeyer: public lineMonitor, public timerTicker
       virtual void startTone2() = 0;
       virtual void queueFinished();
 
-      bool started;
-      int startcount;
+      bool started = false;
+      int startcount = 20;
 
-      bool L1State;
-      bool L2State;
-      bool pttState;
-      int linesMode;
+      bool L1State = false;
+      bool L2State = false;
+      bool pttState = false;
+      int linesMode = 0;
       virtual void enableQueue( bool /*b*/ )
       {}
-      bool boxRecPending;
-      bool recPending;
+      bool boxRecPending = false;
+      bool recPending = false;
 
-      double cwRate;
-      unsigned long lastIntCount;
+      double cwRate = 0.0;
+      unsigned long lastIntCount = 0;
 
-      int tone1;
-      int tone2;
+      int tone1 = 650;
+      int tone2 = 1250;
 
-      bool inTone;
+      bool inTone = false;
 };
 
 class sbKeyer
@@ -226,7 +226,7 @@ class sbKeyer
       sbKeyer();
       virtual ~sbKeyer();
       void sbTickEvent();       // this will often be an interrupt routine
-      bool sbInitialise(int rate, int pipTone, int pipVolume, int pipLength , int filterCorner);
+      bool sbInitialise(unsigned int rate, int pipTone, int pipVolume, int pipLength , int filterCorner);
       void sbInitTone1( int );
       void sbInitTone2( int, int );
       void sbStartTone1();
@@ -267,7 +267,7 @@ extern int CWSpeed;
 
 extern commonKeyer *currentKeyer;
 
-extern QMap <char, QString> MORSECODE;    // . is 0x40, - is 0x80
+extern QMap <int, QString> MORSECODE;    // . is 0x40, - is 0x80
 class MORSEMSG
 {
    public:
@@ -287,11 +287,11 @@ class KeyerAction
 //      qint64 startTick;
       qint64 lastTick;
    public:
-      int pipStartDelaySamples;
-      bool tailWithPip;
+      unsigned int pipStartDelaySamples = 0;
+      bool tailWithPip = false;
 
-      long actionTime;
-      bool deleteAtTick;
+      long actionTime = -1;
+      bool deleteAtTick = false;
       void checkTimer();
       virtual void getActionState( QString &s ) = 0;
 
@@ -312,7 +312,7 @@ class KeyerAction
       virtual void activateVox( void );
       virtual void interruptOK( void ) = 0;
 
-      virtual RecBuffer *getSourceBuffer(){return 0;}
+      virtual RecBuffer *getSourceBuffer(){return nullptr;}
       virtual void doSinkBuffer(RecBuffer *){}
 
       long getActionTime()
@@ -328,48 +328,48 @@ class ToneAction: public KeyerAction
    public:
       long delayTime;
 
-      virtual void getActionState( QString &s );
-      virtual void LxChanged( int line, bool state );
-      virtual void pttChanged( bool state );
-      virtual void linesModeChanged(int lmode);
-      virtual void queueFinished();
-      virtual void timeOut();
-      virtual void interruptOK( void );
-      char statusLetter()
+      virtual void getActionState( QString &s ) override;
+      virtual void LxChanged( int line, bool state ) override;
+      virtual void pttChanged( bool state ) override;
+      virtual void linesModeChanged(int lmode) override;
+      virtual void queueFinished() override;
+      virtual void timeOut() override;
+      virtual void interruptOK( void ) override;
+      char statusLetter() override
       {
          return 't';
       }
       ToneAction( int tones, long pdelayStart );
-      virtual ~ToneAction();
+      virtual ~ToneAction() override;
 };
 //=============================================================================
 class VoiceAction: public KeyerAction
 {
    public:
-      virtual void getActionState( QString &s ) = 0;
-      virtual void LxChanged( int line, bool state ) = 0;
-      virtual void pttChanged( bool state ) = 0;
-      virtual void linesModeChanged(int lmode) = 0;
-      virtual void queueFinished() = 0;
-      virtual void timeOut() = 0;
-      virtual void interruptOK( void );
+      virtual void getActionState( QString &s ) override = 0;
+      virtual void LxChanged( int line, bool state ) override = 0;
+      virtual void pttChanged( bool state ) override = 0;
+      virtual void linesModeChanged(int lmode) override = 0;
+      virtual void queueFinished() override = 0;
+      virtual void timeOut() override = 0;
+      virtual void interruptOK( void ) override;
       VoiceAction();
-      virtual ~VoiceAction();
+      virtual ~VoiceAction() override;
 };
 //=============================================================================
 class InitialPTTAction: public VoiceAction
 {
       enum initPTTActionStates {einitPTTInitial = -1, einitPTTStart, einitPTTEnd, einitPTTFlickRelease, einitPTTRelease} actionState;
    public:
-      virtual void getActionState( QString &s );
-      virtual void LxChanged( int line, bool state );
-      virtual void pttChanged( bool state );
-      virtual void linesModeChanged(int lmode);
-      virtual void queueFinished();
-      virtual void timeOut();
+      virtual void getActionState( QString &s ) override;
+      virtual void LxChanged( int line, bool state ) override;
+      virtual void pttChanged( bool state ) override;
+      virtual void linesModeChanged(int lmode) override;
+      virtual void queueFinished() override;
+      virtual void timeOut() override;
       InitialPTTAction();
-      virtual ~InitialPTTAction();
-      char statusLetter()
+      virtual ~InitialPTTAction() override;
+      char statusLetter() override
       {
          return 'T';
       }
@@ -380,15 +380,15 @@ class InterruptingPTTAction: public VoiceAction
       enum InterruptPTTActionStates {einterPTTInitial = -1, einterPTTWaitDelay,
                                      einterPTTWaitDelayFinish, einterPTTDoPip, einterPTTQuickRelease} actionState;
    public:
-      virtual void getActionState( QString &s );
-      virtual void LxChanged( int line, bool state );
-      virtual void pttChanged( bool state );
-      virtual void linesModeChanged(int lmode);
-      virtual void queueFinished();
-      virtual void timeOut();
+      virtual void getActionState( QString &s ) override;
+      virtual void LxChanged( int line, bool state ) override;
+      virtual void pttChanged( bool state ) override;
+      virtual void linesModeChanged(int lmode) override;
+      virtual void queueFinished() override;
+      virtual void timeOut() override;
       InterruptingPTTAction();
-      virtual ~InterruptingPTTAction();
-      char statusLetter()
+      virtual ~InterruptingPTTAction() override;
+      char statusLetter() override
       {
          return 'T';
       }
@@ -405,34 +405,34 @@ class PlayAction: public VoiceAction
                              epasEndPlayFile} actionState;
       QString ActionStateString;
    public:
-      virtual void getActionState( QString &s );
-      virtual void LxChanged( int line, bool state );
-      virtual void pttChanged( bool state );
-      virtual void linesModeChanged(int lmode);
-      virtual void queueFinished();
-      virtual void timeOut();
+      virtual void getActionState( QString &s ) override;
+      virtual void LxChanged( int line, bool state ) override;
+      virtual void pttChanged( bool state ) override;
+      virtual void linesModeChanged(int lmode) override;
+      virtual void queueFinished() override;
+      virtual void timeOut() override;
       PlayAction( const QString &fileName, bool noPTT, long delayStart, long repeatDelay, bool firstTime, bool CW );
-      virtual ~PlayAction();
-      char statusLetter()
+      virtual ~PlayAction() override;
+      char statusLetter() override
       {
          return 'S';
       }
-      virtual bool playingFile( const QString & );
+      virtual bool playingFile( const QString & ) override;
 };
 //=============================================================================
 class PipAction: public VoiceAction
 {
       enum PipActionStates {epipasInitial = -1, epipasPip, epipasEndPip} actionState;
    public:
-      virtual void getActionState( QString &s );
-      virtual void LxChanged( int line, bool state );
-      virtual void pttChanged( bool state );
-      virtual void linesModeChanged(int lmode);
-      virtual void queueFinished();
-      virtual void timeOut();
+      virtual void getActionState( QString &s)  override;
+      virtual void LxChanged( int line, bool state ) override;
+      virtual void pttChanged( bool state ) override;
+      virtual void linesModeChanged(int lmode) override;
+      virtual void queueFinished() override;
+      virtual void timeOut() override;
       PipAction();
-      virtual ~PipAction();
-      char statusLetter()
+      virtual ~PipAction() override;
+      char statusLetter() override
       {
          return 'P';
       }
@@ -443,15 +443,15 @@ class RecordAction: public VoiceAction
       QString fileName;
       enum RecordActionStates {erasInitial = -1, erasStartRec, erasStopRec, erasRecFinished, erasRecWaitPTT} actionState;
    public:
-      virtual void getActionState( QString &s );
-      virtual void LxChanged( int line, bool state );
-      virtual void pttChanged( bool state );
-      virtual void linesModeChanged(int lmode);
-      virtual void queueFinished();
-      virtual void timeOut();
+      virtual void getActionState( QString &s ) override;
+      virtual void LxChanged( int line, bool state ) override;
+      virtual void pttChanged( bool state ) override;
+      virtual void linesModeChanged(int lmode) override;
+      virtual void queueFinished() override;
+      virtual void timeOut() override;
       RecordAction( const QString &fileName );
-      virtual ~RecordAction();
-      char statusLetter()
+      virtual ~RecordAction() override;
+      char statusLetter() override
       {
          return 'R';
       }
@@ -461,15 +461,15 @@ class BoxRecordAction: public VoiceAction
 {
       enum BoxRecordActionStates {ebrasInitial = -1} actionState;
    public:
-      virtual void getActionState( QString &s );
-      virtual void LxChanged( int line, bool state );
-      virtual void pttChanged( bool state );
-      virtual void linesModeChanged(int lmode);
-      virtual void queueFinished();
-      virtual void timeOut();
+      virtual void getActionState( QString &s ) override;
+      virtual void LxChanged( int line, bool state ) override;
+      virtual void pttChanged( bool state ) override;
+      virtual void linesModeChanged(int lmode) override;
+      virtual void queueFinished() override;
+      virtual void timeOut() override;
       BoxRecordAction();
-      virtual ~BoxRecordAction();
-      char statusLetter()
+      virtual ~BoxRecordAction() override;
+      char statusLetter() override
       {
          return 'B';
       }

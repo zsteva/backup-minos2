@@ -8,6 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #ifndef sbdriverH
 #define sbdriverH
+#include "keyctrl.h"
 
 enum sbControls {ePTT, eL1, eL2};
 
@@ -23,59 +24,60 @@ class SoundSystemDriver
       // another singleton to handle the sb card
       // it may need callbacks to interested parties!
       static SoundSystemDriver *singleton_sb;
-      RtAudioSoundSystem *soundSystem;
+      RtAudioSoundSystem *soundSystem = nullptr;
       //===============================================================
       // working values, read from control on entry, written back on exit
 
-      unsigned long CurrMasterLevel;
-      unsigned long CurrRecLevel;
-      unsigned long CurrMicLevel;
+      unsigned long CurrMasterLevel = 0;
+      unsigned long CurrRecLevel = 0;
+      unsigned long CurrMicLevel = 0;
 
       //===============================================================
 
-      int oldpip;
-      int oldpipVolume;
-      int oldpipLength;
-      double lastCWRate;
+      int oldpip = -1;
+      int oldpipVolume = -1;
+      int oldpipLength = 0;
+      double lastCWRate = 0;
 
-      int ihand, isave;
+      int ihand = -1;
+      int isave = -1;
 
       void unload( void );
    public:
-      volatile int recording;
-      bool ready;
-      bool loadFailed;
+      volatile int recording = false;
+      bool ready = false;
+      bool loadFailed = false;
 
-      bool CW_ACTIVE;
-      bool init_done;
-      bool init_OK;
+      bool CW_ACTIVE = false;
+      bool init_done = false;
+      bool init_OK = false;
 
-      int cwTone;
+      int cwTone = -1;
 
-      long pipSamples;
-      int16_t * pipptr;
+      unsigned long pipSamples = 0;
+      int16_t * pipptr = nullptr;
 
-      long toneSamples;
-      int16_t * t1ptr;
-      int16_t * t2ptr;
+      unsigned long toneSamples = 0;
+      int16_t * t1ptr = nullptr;
+      int16_t * t2ptr = nullptr;
 
-      long cwSamples;
-      int16_t * cwptr;
+      unsigned long cwSamples = 0;
+      int16_t * cwptr = nullptr;
 
-      int16_t *ptr;       /* data for current file */
-      int samples;   /* fsample for current file  */
+      int16_t *ptr = nullptr;       /* data for current file */
+      uint32_t samples = 0;   /* fsample for current file  */
       char play;  /* Play or record */
 
-      unsigned int rate;   /* rate in Hertz -- this gets reset to nearest available value */
+      unsigned int rate = 0;   /* rate in Hertz -- this gets reset to nearest available value */
 
-      VUCallBack WinVUCallback;
+      VUCallBack WinVUCallback = nullptr;
 
       void setVolumeMults(int record, int replay, int passThrough);
 
       bool dofile( int i, int clipRecord = 0 );
       void stoprec();
       void record_file( const QString &filename );
-      long play_file( const QString &filename, bool xmit );
+      bool play_file( const QString &filename, bool xmit );
       void stopall();
       void stopDMA();
       bool startMicPassThrough();
@@ -84,7 +86,7 @@ class SoundSystemDriver
       bool rdenv( QString &errmess, QString &in );
 
       void genTone(int16_t *tptr, bool add
-                       , int tone, int samples, int ramptime, double vmult , int16_t *enddest);
+                       , int tone, unsigned int samples, unsigned int ramptime, double vmult , int16_t *enddest);
       bool createPipTone( QString &errmess, int pipTone, int pipVolume, int pipLength );
       static void sbdvp_unload( void );
       void initTone1( int );
@@ -93,7 +95,7 @@ class SoundSystemDriver
       void startTone2();
       void createCWBuffer( const char *message, int speed, int tone );
 
-      bool sbdvp_init(QString &errmess, int rate, int pipTone, int pipVolume, int pipLength , int filterCorner);
+      bool sbdvp_init(QString &errmess, unsigned int rate, int pipTone, int pipVolume, int pipLength , int filterCorner);
       SoundSystemDriver();
       ~SoundSystemDriver();
 

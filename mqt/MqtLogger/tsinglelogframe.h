@@ -39,9 +39,7 @@ public:
     ~TSingleLogFrame();
 
     Connectable keyerServerConnectable;
-    Connectable rigServerConnectable;
     Connectable bandMapServerConnectable;
-    Connectable rotatorServerConnectable;
     void resetConnectables();
 
     void showQSOs();

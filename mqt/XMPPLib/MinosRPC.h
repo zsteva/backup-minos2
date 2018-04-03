@@ -1,9 +1,10 @@
 #ifndef MINOSRPC_H
 #define MINOSRPC_H
 
+#include <QTimer>
 #include "XMPPRPCObj.h"
 #include "RPCPubSub.h"
-#include <QTimer>
+#include "AnalysePubSubNotify.h"
 
 class RPCGeneralClient: public MinosRPCClient
 {

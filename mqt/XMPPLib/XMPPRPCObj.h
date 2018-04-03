@@ -15,8 +15,15 @@
 #include <string>
 #include <QString>
 #include <QSharedPointer>
+#include "PublishState.h"
 #include "XMPPRPCParams.h"
+#include "PubSubValue.h"
+#include "PublishState.h"
 //---------------------------------------------------------------------------
+class XStanza;
+typedef void ( *sendActionCall ) ( XStanza *a  );
+extern sendActionCall sendAction;
+void setSendAction(sendActionCall sa);
 
 // We need a factory for MinosRPCObj descendents, so that we can register those we
 // are interested in, and when a call is received those we know are manufactured
@@ -139,6 +146,8 @@ class MinosRPCClient: public MinosRPCObj
       // we queue the desired response
 
       virtual void queueCall( QString to ) override;
+      void queueCall(const PubSubName &psn);
+
 };
 class MinosRPCServer: public MinosRPCObj
 {

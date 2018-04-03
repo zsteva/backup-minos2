@@ -21,7 +21,8 @@
           ddc.h
  
 ===========================================================================*/
-
+#include <stdio.h>
+#include <QString>
 #include "ddc.h"
 
 
@@ -146,7 +147,7 @@ class WaveFile: private RiffFile
       WaveFormat_Chunk wave_format;
       RiffChunkHeader pcm_data;
       long pcm_data_offset;  // offset of 'pcm_data' in output file
-      uint32_t num_samples;
+      qint64 num_samples;
 
    public:
       WaveFile();

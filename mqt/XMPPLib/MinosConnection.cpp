@@ -204,17 +204,14 @@ void MinosAppConnection::on_readyRead()
                             break;
                         }
                     }
+                    else
+                    {
+                        // another form of partial
+                        break;
+                    }
                 }
             }
     }
-}
-
-void sendAction( XStanza *a )
-{
-   if ( MinosAppConnection::minosAppConnection )
-   {
-      MinosAppConnection::minosAppConnection->sendAction( a );
-   }
 }
 
 void MinosAppConnection::sendAction( XStanza *a )

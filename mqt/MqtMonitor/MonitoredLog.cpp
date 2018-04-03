@@ -2,16 +2,15 @@
 #include "MonitoredLog.h"
 #include "MonitoringFrame.h"
 
-MonitoredLog::MonitoredLog() : contest( 0 ), expectedStanzaCount( 0 ), monitorEnabled( false ),
-      inStanzaRequest( false ), frame( 0 ), lastScannedStanza( -1 ), mt( 0 )
+MonitoredLog::MonitoredLog()
 {}
 MonitoredLog::~MonitoredLog()
 {
    mt->endImportTest();
    delete mt;
-   mt = 0;
+   mt = nullptr;
    delete contest;
-   contest = 0;
+   contest = nullptr;
 }
 void MonitoredLog::initialise( const QString &srv, const QString &name )
 {
@@ -41,7 +40,7 @@ void MonitoredLog::stopMonitor()
    //   expectedStanzaCount = 0; // no - it is still correct as published...
    stanzasPulled.clear();
 
-   frame = 0;
+   frame = nullptr;
 
    initialise( server, publishedName );  // make sure reset for next time
 }

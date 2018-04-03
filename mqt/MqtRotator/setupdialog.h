@@ -20,9 +20,8 @@
 #include <QVector>
 #include <QSettings>
 #include "rotcontrol.h"
-#include "setupdialog.h"
 #include "rotsetupform.h"
-#include "rotatorCommon.h"
+#include "rotatorcommon.h"
 
 
 
@@ -46,7 +45,7 @@ class SetupDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SetupDialog(RotControl *rotator, QWidget *parent = 0);
+    explicit SetupDialog(RotControl *rotator, QWidget *parent = nullptr);
     ~SetupDialog();
 
 

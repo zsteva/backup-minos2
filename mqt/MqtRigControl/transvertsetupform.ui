@@ -13,123 +13,119 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_13">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_13">
-       <item>
-        <widget class="QCheckBox" name="negCheckbox">
-         <property name="text">
-          <string>Neg. offset</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Radio Freq.</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="radioFreq">
-         <property name="inputMask">
-          <string/>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="OffsetLabel">
-         <property name="text">
-          <string>Target Freq.</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="targetFreq"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="calcOffsetPb">
-         <property name="text">
-          <string>Calc Offset</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="OffSetLbl">
-         <property name="text">
-          <string>OffSet Freq.</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="offsetFreq">
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>0.0</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
+      <widget class="QCheckBox" name="negCheckbox">
+       <property name="text">
+        <string>Neg. offset</string>
+       </property>
+      </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QCheckBox" name="enableTransVertSw">
-         <property name="text">
-          <string>Enable Transvert Switch</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="transVertSwNumLbl">
-         <property name="text">
-          <string>Transvert Switch Number</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="transVertSwNum"/>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Radio Freq.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="radioFreq">
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="OffsetLabel">
+       <property name="text">
+        <string>Target Freq.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="targetFreq"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="calcOffsetPb">
+       <property name="text">
+        <string>Calc Offset</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="OffSetLbl">
+       <property name="text">
+        <string>OffSet Freq.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="offsetFreq">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>0.0</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QCheckBox" name="enableTransVertSw">
+       <property name="text">
+        <string>Enable Transvert Switch</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="transVertSwNumLbl">
+       <property name="text">
+        <string>Transvert Switch Number</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="transVertSwNum"/>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>

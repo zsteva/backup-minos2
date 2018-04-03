@@ -86,7 +86,7 @@ void LevelMeter::reset()
     update();
 }
 
-void LevelMeter::levelChanged(qreal rmsLevel, qreal peakLevel, int numSamples)
+void LevelMeter::levelChanged(qreal rmsLevel, qreal peakLevel, unsigned int numSamples)
 {
     // Smooth the RMS signal
     if (numSamples)
@@ -175,7 +175,7 @@ void LevelMeter::paintEvent(QPaintEvent *event)
     }
     else
     {
-        bar.setTop(rect().top() + (1.0 - peakHoldLevel) * rect().height());
+        bar.setTop(rect().top() + static_cast<int>((1.0 - peakHoldLevel) * rect().height()));
         bar.setBottom(bar.top() + 5);   // depth for peak hold bar
         painter.fillRect(bar, m_rmsColor);
     }
@@ -184,10 +184,10 @@ void LevelMeter::paintEvent(QPaintEvent *event)
 //    bar.setTop(rect().top() + (1.0 - decayedPeakLevel) * rect().height());
 //    painter.fillRect(bar, m_peakColor);
 
-    bar.setTop(rect().top() + (1.0 - rmsLevel) * rect().height());
+    bar.setTop(rect().top() +  static_cast<int>((1.0 - rmsLevel) * rect().height()));
     painter.fillRect(bar, m_rmsColor);
 
-    bar.setTop(rect().top() + (1.0 - maxLevel) * rect().height());
+    bar.setTop(rect().top() +  static_cast<int>((1.0 - maxLevel) * rect().height()));
     bar.setBottom(bar.top() + 5);   // why 5? 5 pixels depth for peak hold bar
     painter.fillRect(bar, m_maxColor);
 }

@@ -137,7 +137,8 @@ void TSendDM::sendRotator(TSingleLogFrame *tslf, rpcConstants::RotateDirection d
    st->addMember( angle, rpcConstants::rotatorParamAngle );
    rpc.getCallArgs() ->addParam( st );
 
-   rpc.queueCall( tslf->rotatorServerConnectable.remoteAppName + "@" + tslf->rotatorServerConnectable.serverName );
+   PubSubName rotSelected = rotatorCache.getSelected();
+   rpc.queueCall( rotSelected );
 }
 void TSendDM::changeRotatorSelectionTo(const PubSubName &name, const QString &uuid)
 {
@@ -201,7 +202,8 @@ void TSendDM::sendRigControlFreq(TSingleLogFrame *tslf,const QString &freq)
    st->addMember( freq, rpcConstants::rigControlFreq );
    rpc.getCallArgs() ->addParam( st );
 
-   rpc.queueCall( tslf->rigServerConnectable.remoteAppName + "@" + tslf->rigServerConnectable.serverName );
+   PubSubName rigSelected = rigCache.getSelected();
+   rpc.queueCall( rigSelected );
 }
 
 
@@ -215,7 +217,8 @@ void TSendDM::sendRigControlMode(TSingleLogFrame *tslf,const QString &mode)
    st->addMember( mode, rpcConstants::rigControlMode );
    rpc.getCallArgs() ->addParam( st );
 
-   rpc.queueCall( tslf->rigServerConnectable.remoteAppName + "@" + tslf->rigServerConnectable.serverName );
+   PubSubName rigSelected = rigCache.getSelected();
+   rpc.queueCall( rigSelected );
 }
 void TSendDM::sendRotatorPreset(TSingleLogFrame *tslf, QString s)
 {
@@ -225,7 +228,8 @@ void TSendDM::sendRotatorPreset(TSingleLogFrame *tslf, QString s)
     st->addMember( s, rpcConstants::rotPreset );
     rpc.getCallArgs() ->addParam( st );
 
-    rpc.queueCall( tslf->rotatorServerConnectable.remoteAppName + "@" + tslf->rotatorServerConnectable.serverName );
+    PubSubName rotSelected = rotatorCache.getSelected();
+    rpc.queueCall( rotSelected );
 }
 //---------------------------------------------------------------------------
 void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QString &from )

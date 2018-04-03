@@ -54,14 +54,14 @@ class LevelMeter : public QWidget
     Q_OBJECT
 
 public:
-    explicit LevelMeter(QWidget *parent = 0);
+    explicit LevelMeter(QWidget *parent = nullptr);
     ~LevelMeter();
 
     void paintEvent(QPaintEvent *event);
 
 public slots:
     void reset();
-    void levelChanged(qreal rmsLevel, qreal peakLevel, int numSamples);
+    void levelChanged(qreal rmsLevel, qreal peakLevel, unsigned int numSamples);
 
 private slots:
     void redrawTimerExpired();

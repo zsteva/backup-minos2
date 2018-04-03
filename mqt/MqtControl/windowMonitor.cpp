@@ -1,7 +1,6 @@
 #include "windowMonitor.h"
 #include "ui_windowMonitor.h"
 #include "ControlMain.h"
-extern ControlMain *controlMain;
 
 windowMonitor::windowMonitor(QWidget *parent) :
     QDialog(parent),

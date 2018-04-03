@@ -18,7 +18,7 @@
 
 //==============================================================================
 // ??? add up/down on volume sliders, and reload/save ALSA?
-QStringList lineModeStrings = {
+static QStringList lineModeStrings = {
     "None",
     "Record 1/2",
     "Play 1/2 - Pip",
@@ -38,7 +38,7 @@ QStringList lineModeStrings = {
 };
 //==============================================================================
 
-QMap <char, QString> MORSECODE;    // . is 0x40, - is 0x80
+QMap <int, QString> MORSECODE;    // . is 0x40, - is 0x80
 QMap <int, MORSEMSG> MORSEMSGS;
 
 //==============================================================================
@@ -59,7 +59,7 @@ qint64 currTick;
 my_deque < KeyerAction *> KeyerAction::currentAction;
 //=============================================================================
 
-commonKeyer *currentKeyer = 0;
+commonKeyer *currentKeyer = nullptr;
 
 //=============================================================================
 bool keyer_docommand( const KeyerCtrl &keyer_ctrl )
@@ -178,7 +178,7 @@ void loadKeyers()
       }
    }
    else
-      mShowMessage( buff, 0 );
+      mShowMessage( buff, nullptr );
 }
 void unloadKeyers()
 {
@@ -189,7 +189,7 @@ void unloadKeyers()
 
    KeyerAction::currentAction.freeAll();
 
-   currentKeyer = 0;
+   currentKeyer = nullptr;
 
    // close down each port
    for ( std::deque <commonPort *>::iterator icp = portChain.begin(); icp != portChain.end(); icp++ )
@@ -350,7 +350,9 @@ lineMonitor::lineMonitor( const QString pname )
       : pName( pname )
 {}
 lineMonitor::lineMonitor( const KeyerConfig &keyer, const PortConfig &port )
-      : pName( keyer.name ), kconf( keyer ), pconf( port )
+      :pconf( port ),
+      kconf( keyer ),
+      pName( keyer.name )
 {
    cp = createPort( port );
 }
@@ -399,13 +401,7 @@ timerTicker::~timerTicker()
 //==============================================================================
 
 commonKeyer::commonKeyer( const KeyerConfig &keyer, const PortConfig &port )
-      : lineMonitor( keyer, port ), started( false ), startcount( 20 ),
-      boxRecPending( false ),
-      recPending( false ),
-      L1State( false ), L2State( false ),
-      pttState( false ), linesMode(0),
-      cwRate( 0.0 ), lastIntCount( 0 ),
-      tone1( 650 ), tone2( 1250 ), inTone( false )
+      : lineMonitor( keyer, port )
 {}
 commonKeyer::~commonKeyer()
 {
@@ -820,7 +816,7 @@ void sbKeyer::sbTickEvent()           // this will often be an interrupt routine
       currentKeyer->checkControls();   // which we are a base class of...
    }
 }
-bool sbKeyer::sbInitialise( int rate, int pipTone, int pipVolume, int pipLength, int filterCorner )
+bool sbKeyer::sbInitialise( unsigned int rate, int pipTone, int pipVolume, int pipLength, int filterCorner )
 {
    QString errmess;
    if ( !SoundSystemDriver::getSbDriver() ->sbdvp_init( errmess, rate, pipTone, pipVolume, pipLength ,filterCorner ) )
@@ -852,8 +848,7 @@ void sbKeyer::sbStartTone2()
 //==============================================================================
 // Common action stuff
 
-KeyerAction::KeyerAction() : actionTime( -1 ), deleteAtTick( false ),
-      pipStartDelaySamples( 0 ), tailWithPip( false )
+KeyerAction::KeyerAction()
 {
    KeyerAction::currentAction.push_back( this );
    lastTick = currTick;
@@ -867,7 +862,7 @@ KeyerAction::~KeyerAction()
 /*static*/ KeyerAction *KeyerAction::getCurrentAction()
 {
    if ( currentAction.begin() == currentAction.end() )
-      return 0;
+      return nullptr;
    return *currentAction.begin();
 }
 
@@ -1270,7 +1265,7 @@ void InterruptingPTTAction::timeOut()
 //=============================================================================
 PlayAction::PlayAction( const QString &pfileName, bool noPTT, long pdelayStart,
                         long prepeatDelay, bool firstTime, bool CW )
-      : testMode( noPTT ), actionState( epasInitial ), CW( CW )
+      : testMode( noPTT ), CW( CW ), actionState( epasInitial )
 {
    if ( sblog )
    {
@@ -1405,11 +1400,11 @@ void PlayAction::timeOut()
 
             if (!fileName.isEmpty())
             {
-                pipStartDelaySamples = ( currentKeyer->kconf.pipStartDelay * SoundSystemDriver::getSbDriver() ->rate ) / 1000;
+                pipStartDelaySamples = static_cast<unsigned int>(( currentKeyer->kconf.pipStartDelay * SoundSystemDriver::getSbDriver() ->rate ) / 1000);
                 tailWithPip = currentKeyer->kconf.enablePip;
             }
 
-            if ( SoundSystemDriver::getSbDriver() ->play_file( fileName, !testMode ) < 0 )
+            if ( !SoundSystemDriver::getSbDriver() ->play_file( fileName, !testMode ))
             {
                actionTime = 1;
                deleteAtTick = true;
@@ -1511,7 +1506,7 @@ void PipAction::timeOut()
    {
       case epipasInitial:
          // start up the pip tone
-         actionTime = currentKeyer->kconf.pipStartDelay;
+         actionTime = static_cast<int>(currentKeyer->kconf.pipStartDelay);
          if ( actionTime < 1 )
             actionTime = 1;
          actionState = epipasPip;
