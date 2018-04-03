@@ -227,6 +227,7 @@ void MinosCommonConnection::on_readyRead()
                    break ;
                 }
              }
+             break;
           }
        }
        else if (rxlen < 0)
