@@ -204,6 +204,11 @@ void MinosAppConnection::on_readyRead()
                             break;
                         }
                     }
+                    else
+                    {
+                        // another form of partial
+                        break;
+                    }
                 }
             }
     }

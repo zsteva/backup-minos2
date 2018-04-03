@@ -227,7 +227,11 @@ void MinosCommonConnection::on_readyRead()
                    break ;
                 }
              }
-             break;
+             else
+             {
+                 // another form of partial message
+                break;
+             }
           }
        }
        else if (rxlen < 0)
