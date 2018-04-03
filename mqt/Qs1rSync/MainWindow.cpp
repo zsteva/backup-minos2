@@ -235,7 +235,7 @@ void MainWindow::on_closeButton_clicked()
 
 void MainWindow::on_transfer12Button_clicked()
 {
-    long lFreq = static_cast<long>((freq - transvertOffset) * 1000000);
+    long lFreq = static_cast<long>(freq - transvertOffset);
 
     QString mess = ">fHz " + QString::number(fCentre) + "\n";
     mess += ">tf " + QString::number(lFreq - fCentre) + "\n";

@@ -54,15 +54,15 @@ private:
 
     bool qs1rConnected = false;
 
-    bool muted;
+    bool muted = false;
     long getQS1RFreq();
     QString lastF;
-    int fCentre;
-    int ftf;
+    int fCentre = 0.0;
+    int ftf = 0;
 
     QString state;
     QString mode;
-    double freq;
+    double freq= 0.0;
     PubSubName rigSelected;
 
     bool transvertState = false;
