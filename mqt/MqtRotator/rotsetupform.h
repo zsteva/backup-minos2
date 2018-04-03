@@ -93,6 +93,8 @@ public:
     void antennaOffSetVisible(bool s);
     void pollIntervalVisible(bool s);
     bool setEndStopType(srotParams *antennaData);
+    void setSimCW_CCWcmdVisible(bool visible);
+    void setSimCW_CCWcmdChecked(bool checked);
 private slots:
 //    void antennaNameFinished();
     void rotatorModelSelected();
@@ -108,6 +110,7 @@ private slots:
     void southStopSelected();
     void overlapSelected();
     void antennaOffSetSelected();
+    void simCWCCWCmdSelected();
 private:
     Ui::rotSetupForm *ui;
 

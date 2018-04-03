@@ -93,6 +93,7 @@ public:
       dest.endStopType = srce->endStopType;
       dest.rotatorCWEndStop = srce->rotatorCWEndStop;
       dest.rotatorCCWEndStop = srce->rotatorCCWEndStop;
+      dest.rotType = srce->rotType;
       dest.min_elevation = srce->min_elevation;
       dest.max_elevation = srce->max_elevation;
       dest.southStopFlag = srce->southStopFlag;
@@ -128,12 +129,16 @@ public:
   QString rotatorManufacturer;
   QString rotatorModelName;
   int rotatorModelNumber = 0;
-  QString pollInterval = "1";
-  int min_azimuth = 0;
-  int max_azimuth = 0;
-  endStop endStopType = ROT_0_360;
-  int rotatorCWEndStop = COMPASS_MIN0;
+  int rotatorCWEndStop = COMPASS_MIN0;  // actual rotator endstops
   int rotatorCCWEndStop= COMPASS_MAX360;
+  endStop rotType = ROT_0_360;          // actual rotator type
+
+  QString pollInterval = "1";
+
+  int min_azimuth = 0;                   // working endstops
+  int max_azimuth = 0;
+  endStop endStopType = ROT_0_360;      //working endstop type
+
   int min_elevation = 0.0;
   int max_elevation = 0.0;
   bool southStopFlag = false;

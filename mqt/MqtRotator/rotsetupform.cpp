@@ -69,6 +69,7 @@ rotSetupForm::rotSetupForm(RotControl* _rotator, srotParams* _antennaData, QWidg
     connect(ui->chkStop, SIGNAL(stateChanged(int)), this, SLOT(southStopSelected()));
     connect(ui->chkOverrun, SIGNAL(stateChanged(int)), this, SLOT(overlapSelected()));
     connect(ui->antOffset, SIGNAL(editingFinished()), this, SLOT(antennaOffSetSelected()));
+    connect(ui->simCW_CCWcmd, SIGNAL(clicked(bool)), this, SLOT(simCWCCWCmdSelected()));
 }
 
 rotSetupForm::~rotSetupForm()
@@ -76,34 +77,7 @@ rotSetupForm::~rotSetupForm()
     delete ui;
 }
 
-/***************************** Antenna Name *************************/
 
-/*
-void rotSetupForm::antennaNameFinished()
-{
-    if (ui->antennaNameEdit->text() != antennaData->antennaName)
-    {
-        antennaData->antennaName = ui->antennaNameEdit->text();
-        antennaValueChanged = true;
-        antennaChanged = true;
-
-    }
-}
-*/
-
-/*
-QString rotSetupForm::getAntennaName()
-{
-    return ui->antennaNameEdit->text();
-
-}
-
-void rotSetupForm::setAntennaName(QString n)
-{
-    ui->antennaNameEdit->setText(n);
-}
-
-*/
 
 /***************************** Rotator Models *************************/
 
@@ -174,7 +148,7 @@ void rotSetupForm::rotatorModelSelected()
 
                     ui->chkOverrun->setVisible(true);
                     ui->chkOverrun->setChecked(true);
-                    ui->chkStop->setVisible(true);
+                    ui->chkStop->setVisible(false);
                     ui->chkStop->setChecked(false);
 
                 }
@@ -207,13 +181,14 @@ void rotSetupForm::rotatorModelSelected()
 
             if (antennaData->supportCwCcwCmd)
             {
-                ui->simCW_CCWcmd->setVisible(false);
+                setSimCW_CCWcmdVisible(false);
+                //setSimCW_CCWcmdChecked(false);
                 antennaData->simCwCcwCmd = false;
             }
             else
             {
-                ui->simCW_CCWcmd->setVisible(true);
-                ui->simCW_CCWcmd->setChecked(true);
+                setSimCW_CCWcmdVisible(true);
+                setSimCW_CCWcmdChecked(true);
                 antennaData->simCwCcwCmd = true;
             }
 
@@ -232,6 +207,7 @@ void rotSetupForm::rotatorModelSelected()
             pollIntervalVisible(false);
             antennaOffSetVisible(false);
             serialDataEntryVisible(false);
+            setSimCW_CCWcmdVisible(false);
 
         }
 
@@ -254,45 +230,52 @@ bool rotSetupForm::setEndStopType(srotParams* antennaData)
 
     if (getMaxMinRotationData(antennaData->rotatorModelNumber, &maxRot, &minRot) >= 0)
     {
-        antennaData->max_azimuth = maxRot;
-        antennaData->min_azimuth = minRot;
+        //antennaData->max_azimuth = maxRot;
+        //antennaData->min_azimuth = minRot;
+        antennaData->rotatorCWEndStop = maxRot;
+        antennaData->rotatorCCWEndStop = minRot;
 
         // define type of rotator
 
         if (maxRot == 180 && minRot == -180)
         {
-            antennaData->rotatorCWEndStop = COMPASS_HALF - 1;
-            antennaData->rotatorCCWEndStop = COMPASS_HALF + 1;
+            antennaData->max_azimuth = COMPASS_HALF - 1;
+            antennaData->min_azimuth = COMPASS_HALF + 1;
+            antennaData->rotType = ROT_NEG180_180;
             antennaData->endStopType = ROT_NEG180_180;
             antennaData->overRunFlag = false;
         }
 
         else if (maxRot == COMPASS_MAX360 && minRot == COMPASS_MIN0)
         {
-            antennaData->rotatorCWEndStop = maxRot;
-            antennaData->rotatorCCWEndStop = minRot;
+            antennaData->max_azimuth = maxRot;
+            antennaData->min_azimuth = minRot;
+            antennaData->rotType = ROT_0_360;
             antennaData->endStopType = ROT_0_360;
 
             antennaData->overRunFlag = false;
-            antennaData->southStopFlag = true;
+            antennaData->southStopFlag = false;
         }
         else if (maxRot > COMPASS_MAX360 && minRot == COMPASS_MIN0 )
         {
 
+            antennaData->rotType = ROT_0_450;
             antennaData->endStopType = ROT_0_450;
-            antennaData->rotatorCWEndStop = maxRot;
-            antennaData->rotatorCCWEndStop = minRot;
+            antennaData->max_azimuth = maxRot;
+            antennaData->min_azimuth = minRot;
             antennaData->overRunFlag = true;
-            antennaData->southStopFlag = true;
+            antennaData->southStopFlag = false;
 
          }
         else if (maxRot > COMPASS_MAX360 && minRot < COMPASS_MIN0 )
         {
 
-            antennaData->rotatorCWEndStop = maxRot;
-            antennaData->rotatorCCWEndStop = minRot;
+            antennaData->max_azimuth = maxRot;
+            antennaData->min_azimuth = minRot;
+            antennaData->rotType = ROT_NEG180_540;
             antennaData->endStopType = ROT_NEG180_540;
             antennaData->overRunFlag = true;
+            antennaData->southStopFlag = false;
         }
 
         // flag if rotator supports CW and CCW commands
@@ -556,14 +539,14 @@ void rotSetupForm::southStopSelected()
             antennaData->southStopFlag = ui->chkStop->isChecked();
             if (!antennaData->southStopFlag && antennaData->endStopType == ROT_0_360)
             {
-                 antennaData->rotatorCWEndStop = antennaData->max_azimuth;
-                 antennaData->rotatorCCWEndStop = antennaData->min_azimuth;
+                 antennaData->max_azimuth = antennaData->rotatorCWEndStop;
+                 antennaData->min_azimuth = antennaData->rotatorCCWEndStop;
                  antennaData->endStopType = ROT_0_360;
             }
             else
             {
-                antennaData->rotatorCWEndStop = COMPASS_HALF - 1;
-                antennaData->rotatorCCWEndStop = COMPASS_HALF + 1;
+                antennaData->max_azimuth = COMPASS_HALF - 1;
+                antennaData->min_azimuth = COMPASS_HALF + 1;
                 antennaData->endStopType = ROT_180_180;
             }
             antennaValueChanged = true;
@@ -603,6 +586,13 @@ void rotSetupForm::overlapSelected()
                 //override end stop and type Yaesu overlap to 360
                 antennaData->max_azimuth = COMPASS_MAX360;
                 antennaData->endStopType = ROT_0_360;
+                setCheckStopVisible(true);
+            }
+            else
+            {
+                // restore end stop and overlap to 450
+                antennaData->max_azimuth = antennaData->rotatorCWEndStop;
+                setCheckStopVisible(false);
             }
             antennaValueChanged = true;
 
@@ -629,6 +619,31 @@ void rotSetupForm::setOverRunFlagVisible(bool s)
     ui->chkOverrun->setVisible(s);
 
 }
+
+
+/*************************** Simulate CW CCW Command Check *************/
+
+
+void rotSetupForm::simCWCCWCmdSelected()
+{
+    if (ui->simCW_CCWcmd->isChecked() != antennaData->simCwCcwCmd)
+    {
+        antennaData->simCwCcwCmd = ui->simCW_CCWcmd->isChecked();
+    }
+    antennaValueChanged = true;
+}
+
+void rotSetupForm::setSimCW_CCWcmdVisible(bool visible)
+{
+    ui->simCW_CCWcmd->setVisible(visible);
+}
+
+void rotSetupForm::setSimCW_CCWcmdChecked(bool checked)
+{
+    ui->simCW_CCWcmd->setChecked(checked);
+}
+
+
 
 /***************************** Antenna Offset *************************/
 

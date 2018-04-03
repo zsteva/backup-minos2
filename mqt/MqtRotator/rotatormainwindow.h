@@ -144,8 +144,8 @@ private:
     //int rotatorMaxAzimuth;
     //int currentMinAzimuth;
     //int currentMaxAzimuth;
-    int rotatorCWEndStop;
-    int rotatorCCWEndStop;
+    //int rotatorCWEndStop;
+    //int rotatorCCWEndStop;
     QString backBearingmsg;
     QVector<RotPresetData*> rotPresets;
     //QString presetName[NUM_PRESETS];
