@@ -603,6 +603,7 @@ void RigControlFrame::setBandList(QString b)
 {
     if (!b.isEmpty())
     {
+        QString currentBand = ui->bandSelCombo->currentText();
         listOfBands.clear();
         QStringList lbf;
         QStringList lb;
@@ -620,6 +621,10 @@ void RigControlFrame::setBandList(QString b)
         ui->bandSelCombo->clear();
         ui->bandSelCombo->addItem("");
         ui->bandSelCombo->addItems(lb);
+
+        int i = ui->bandSelCombo->findText(currentBand);
+        if (i >= 0)
+            ui->bandSelCombo->setCurrentIndex(i);
     }
 }
 
