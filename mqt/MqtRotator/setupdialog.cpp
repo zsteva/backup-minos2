@@ -126,7 +126,7 @@ void SetupDialog::loadSettingsToTab(int tabNum)
         antennaTab[tabNum]->setRotatorModel(availAntData[tabNum]->rotatorModel);
         antennaTab[tabNum]->setPollInterval(availAntData[tabNum]->pollInterval);
         antennaTab[tabNum]->pollIntervalVisible(true);
-        antennaTab[tabNum]->setCheckStop(availAntData[tabNum]->southStopFlag);
+        //antennaTab[tabNum]->setCheckStop(availAntData[tabNum]->southStopType);
         antennaTab[tabNum]->setCheckOverrun(availAntData[tabNum]->overRunFlag);
         antennaTab[tabNum]->setSimCW_CCWcmdChecked(availAntData[tabNum]->simCwCcwCmd);
 
@@ -134,7 +134,8 @@ void SetupDialog::loadSettingsToTab(int tabNum)
 
         if (availAntData[tabNum]->rotType == ROT_0_360)
         {
-           antennaTab[tabNum]->setCheckStopVisible(true);
+           antennaTab[tabNum]->sStopButtonsVisible(true);
+           antennaTab[tabNum]->setSStopButtons(availAntData[tabNum]->southStopType);
            antennaTab[tabNum]->setOverRunFlagVisible(false);
         }
         else if (availAntData[tabNum]->rotType == ROT_0_450)
@@ -143,16 +144,17 @@ void SetupDialog::loadSettingsToTab(int tabNum)
            if (availAntData[tabNum]->endStopType == ROT_0_360 && !availAntData[tabNum]->overRunFlag)
            {
 
-               antennaTab[tabNum]->setCheckStopVisible(true);
+               antennaTab[tabNum]->sStopButtonsVisible(true);
+               antennaTab[tabNum]->setSStopButtons(availAntData[tabNum]->southStopType);
            }
            else
            {
-              antennaTab[tabNum]->setCheckStopVisible(false);
+              antennaTab[tabNum]->sStopButtonsVisible(false);
            }
         }
         else
         {
-           antennaTab[tabNum]->setCheckStopVisible(false);
+           antennaTab[tabNum]->sStopButtonsVisible(false);
            antennaTab[tabNum]->setOverRunFlagVisible(false);
         }
 
@@ -205,7 +207,8 @@ void SetupDialog::loadSettingsToTab(int tabNum)
         antennaTab[tabNum]->setRotatorModel(availAntData[tabNum]->rotatorModel);
         antennaTab[tabNum]->networkDataEntryVisible(false);
         antennaTab[tabNum]->setOverRunFlagVisible(false);
-        antennaTab[tabNum]->setCheckStopVisible(false);
+        antennaTab[tabNum]->sStopButtonsVisible(false);
+        antennaTab[tabNum]->setSStopButtons(S_STOPOFF);
         antennaTab[tabNum]->pollIntervalVisible(false);
         antennaTab[tabNum]->antennaOffSetVisible(false);
         antennaTab[tabNum]->serialDataEntryVisible(false);
@@ -311,7 +314,7 @@ void SetupDialog::saveSettings()
             config.setValue("maxAzimuth", double(availAntData[i]->max_azimuth));
             config.setValue("minAzimuth", double(availAntData[i]->min_azimuth));
             config.setValue("simulateCwCCw", availAntData[i]->simCwCcwCmd);
-            config.setValue("southStop", availAntData[i]->southStopFlag);
+            config.setValue("southStopType", availAntData[i]->southStopType);
             config.setValue("overRun", availAntData[i]->overRunFlag);
             config.setValue("antennaOffset", availAntData[i]->antennaOffset);
             config.setValue("portType", availAntData[i]->portType);
@@ -376,7 +379,7 @@ void SetupDialog::saveAntenna(int i)
     config.setValue("supportCwCcwCmd", availAntData[i]->supportCwCcwCmd);
     config.setValue("simulateCwCCw", availAntData[i]->simCwCcwCmd);
     config.setValue("rotatorPollInterval", availAntData[i]->pollInterval);
-    config.setValue("southStop", availAntData[i]->southStopFlag);
+    config.setValue("southStopType", availAntData[i]->southStopType);
     config.setValue("overRun", availAntData[i]->overRunFlag);
     config.setValue("antennaOffset", availAntData[i]->antennaOffset);
     config.setValue("portType", availAntData[i]->portType);
@@ -435,7 +438,7 @@ void SetupDialog::getAvailAntenna(int antNum, QSettings& config)
     availAntData[antNum]->min_azimuth = azimuth_t(config.value("minAzimuth", 0).toDouble());
     availAntData[antNum]->supportCwCcwCmd = config.value("supportCwCcwCmd", false).toBool();
     availAntData[antNum]->simCwCcwCmd = config.value("simulateCwCCw", true).toBool();
-    availAntData[antNum]->southStopFlag = config.value("southStop", false).toBool();
+    availAntData[antNum]->southStopType = southStop(config.value("southStopType", S_STOPOFF).toInt());
     availAntData[antNum]->overRunFlag = config.value("overRun", false).toBool();
     availAntData[antNum]->antennaOffset = config.value("antennaOffset", "").toInt();
     availAntData[antNum]->portType = rig_port_e(config.value("portType", int(RIG_PORT_NONE)).toInt());

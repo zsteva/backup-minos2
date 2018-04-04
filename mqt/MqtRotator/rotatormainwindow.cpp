@@ -1960,10 +1960,10 @@ void RotatorMainWindow::aboutRotatorConfig()
     msg.append(QString("Current Rotator Type = %1\n").arg(QString::number(setupAntenna->currentAntenna.endStopType)));
     msg.append(QString("Current Max Azimuth = %1\n").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
     msg.append(QString("Current Min Azimuth = %1\n").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
-
+    msg.append(QString("South Stop Type = %1\n").arg(southStopNames[setupAntenna->currentAntenna.southStopType]));
     QString f;
-    setupAntenna->currentAntenna.southStopFlag ? f = "True" : f = "False";
-    msg.append(QString("South Stop Flag = %1\n").arg(f));
+
+
     overLapActiveflag ? f = "True" : f = "False";
     msg.append(QString("Overrun flag = %1\n").arg(f));
     setupAntenna->currentAntenna.supportCwCcwCmd ? f = "True" : f = "False";
@@ -2011,10 +2011,9 @@ void RotatorMainWindow::dumpRotatorToTraceLog()
     trace(QString("Current Rotator Type = %1").arg(QString::number(setupAntenna->currentAntenna.endStopType)));
     trace(QString("Current Max Azimuth = %1").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
     trace(QString("Current Min Azimuth = %1").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
+    trace(QString("South Stop Type = %1\n").arg(southStopNames[setupAntenna->currentAntenna.southStopType]));
 
     QString f;
-    setupAntenna->currentAntenna.southStopFlag ? f = "True" : f = "False";
-    trace(QString("South Stop Flag = %1").arg(f));
     overLapActiveflag ? f = "True" : f = "False";
     trace(QString("Overrun flag = %1").arg(f));
     setupAntenna->currentAntenna.supportCwCcwCmd ? f = "True" : f = "False";
