@@ -1505,16 +1505,10 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
             }
             else
             {
-                if (setupAntenna->currentAntenna.endStopType == ROT_180_180)
-                {
-                    logMessage(QString("Send rotate to end stop, instead of CW rotator command, endstop = %1").arg(QString::number(setupAntenna->currentAntenna.rotatorCWEndStop)));
-                    retCode = rotator->rotate_to_bearing(setupAntenna->currentAntenna.rotatorCWEndStop);
-                }
-                else
-                {
-                    logMessage(QString("Send rotate to minAzimuth, instead of CW rotator command, maxAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
-                    retCode = rotator->rotate_to_bearing(setupAntenna->currentAntenna.max_azimuth);
-                }
+
+                logMessage(QString("Send rotate to maxAzimuth, instead of CW rotator command, maxAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
+                retCode = rotator->rotate_to_bearing(setupAntenna->currentAntenna.max_azimuth);
+
             }
             if (retCode < 0)
             {
@@ -1596,18 +1590,11 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
             }
             else
             {
-                if (setupAntenna->currentAntenna.endStopType == ROT_180_180)
-                {
-                    logMessage(QString("Send rotate to end stop, instead of CCW rotator command, endstop = %1").arg(QString::number(setupAntenna->currentAntenna.rotatorCCWEndStop)));
-                    retCode = rotator->rotate_to_bearing(setupAntenna->currentAntenna.rotatorCCWEndStop);
-                }
-                else
-                {
-                    logMessage(QString("Send rotate to minAzimuth, instead of CCW rotator command, minAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
-                    retCode = rotator->rotate_to_bearing(setupAntenna->currentAntenna.min_azimuth);
-                }
 
+                logMessage(QString("Send rotate to minAzimuth, instead of CCW rotator command, minAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
+                retCode = rotator->rotate_to_bearing(setupAntenna->currentAntenna.min_azimuth);
             }
+
             if (retCode < 0)
             {
                 hamlibError(retCode, "Rotate CCW");

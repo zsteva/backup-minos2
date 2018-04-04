@@ -239,8 +239,8 @@ bool rotSetupForm::setEndStopType(srotParams* antennaData)
 
         if (maxRot == 180 && minRot == -180)
         {
-            antennaData->max_azimuth = COMPASS_HALF - 1;
-            antennaData->min_azimuth = COMPASS_HALF + 1;
+            antennaData->max_azimuth = maxRot;
+            antennaData->min_azimuth = minRot;
             antennaData->rotType = ROT_NEG180_180;
             antennaData->endStopType = ROT_NEG180_180;
             antennaData->overRunFlag = false;
@@ -539,8 +539,8 @@ void rotSetupForm::southStopSelected()
             antennaData->southStopFlag = ui->chkStop->isChecked();
             if (!antennaData->southStopFlag && antennaData->endStopType == ROT_0_360)
             {
-                 antennaData->max_azimuth = antennaData->rotatorCWEndStop;
-                 antennaData->min_azimuth = antennaData->rotatorCCWEndStop;
+                 antennaData->max_azimuth = COMPASS_MAX360;
+                 antennaData->min_azimuth = COMPASS_MIN0;
                  antennaData->endStopType = ROT_0_360;
             }
             else
@@ -553,8 +553,8 @@ void rotSetupForm::southStopSelected()
         }
 
 
-//    }
-}
+    }
+//}
 
 bool rotSetupForm::getCheckStop()
 {
