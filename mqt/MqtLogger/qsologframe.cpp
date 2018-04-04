@@ -1843,6 +1843,7 @@ void QSOLogFrame::on_ModeButton_clicked()
     ui->ModeComboBoxGJV->setCurrentText(ui->ModeButton->text());
     mode = ui->ModeButton->text();
     oldMode = myOldMode;
+    ui->ModeButton->setText(oldMode);
     EditControlExit(ui->ModeButton);
 }
 
