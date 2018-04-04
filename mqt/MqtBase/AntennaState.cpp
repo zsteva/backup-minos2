@@ -37,9 +37,9 @@ QString AntennaState::pack() const
 {
     QJsonObject jv;
 
-    jv.insert(rpcConstants::selected, selected());
-    jv.insert(rpcConstants::rotatorState, state());
-    jv.insert(rpcConstants::rotatorBearing, bearing());
+    jv.insert(rpcConstants::selected, selected().getValue());
+    jv.insert(rpcConstants::rotatorState, state().getValue());
+    jv.insert(rpcConstants::rotatorBearing, bearing().getValue());
 
     QJsonDocument json(jv);
 
@@ -78,18 +78,18 @@ void AntennaState::setSelected(const QString &selected)
     _selected.setValue(selected);
 }
 
-QString AntennaState::state() const
+MinosStringItem<QString> AntennaState::state() const
 {
-    return _state.getValue();
+    return _state;
 }
 
-QString AntennaState::bearing() const
+MinosStringItem<QString> AntennaState::bearing() const
 {
-    return _bearing.getValue();
+    return _bearing;
 }
 
-QString AntennaState::selected() const
+MinosStringItem<QString> AntennaState::selected() const
 {
-    return _selected.getValue();
+    return _selected;
 }
 

@@ -126,7 +126,7 @@ void RotatorCache::setSelected(const PubSubName &name, const QString &sel)
             i.value().setSelected(sel);
             trace("selecting rotator " + i.key().toString() + "  " + sel);
         }
-        else if (!i.value().selected().isEmpty())
+        else if (!i.value().selected().getValue().isEmpty())
         {
             trace("de-selecting rotator " + i.key().toString());
             i.value().setSelected("");
@@ -138,7 +138,7 @@ PubSubName RotatorCache::getSelected()
 
     for(QMap<PubSubName, AntennaState>::iterator i = rotStates.begin(); i != rotStates.end(); i++ )
     {
-        if (!i.value().selected().isEmpty())
+        if (!i.value().selected().getValue().isEmpty())
         {
             PubSubName psn = i.key();
             return psn;

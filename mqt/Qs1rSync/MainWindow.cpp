@@ -287,8 +287,8 @@ void MainWindow::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QSt
 
             if (selState.isDirty())
             {
-                mode = selState.mode();
-                freq = selState.freq();
+                mode = selState.mode().getValue();
+                freq = selState.freq().getValue();
                 //                   status = selState.status();
                 selState.clearDirty();
                 ui->QF1Label->setText(convertFreqToStr(freq));
@@ -297,8 +297,8 @@ void MainWindow::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QSt
             if (selDetail.isDirty())
             {
                 //bandlist = selDetail.bandList();
-                transvertState = selDetail.transverterStatus();
-                transvertOffset = selDetail.transverterOffset();
+                transvertState = selDetail.transverterStatus().getValue();
+                transvertOffset = selDetail.transverterOffset().getValue();
                 if (!transvertState)
                     transvertOffset = 0.0;
                 selDetail.clearDirty();

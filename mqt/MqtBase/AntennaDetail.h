@@ -23,8 +23,8 @@ public:
     virtual QString pack() const;
     virtual void unpack(QString);
 
-    int minAzimuth() const;
-    int maxAzimuth() const;
+    MinosItem<int> minAzimuth() const;
+    MinosItem<int> maxAzimuth() const;
     void setMinAzimuth(int minAzimuth);
     void setMaxAzimuth(int maxAzimuth);
 

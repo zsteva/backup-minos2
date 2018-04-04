@@ -77,7 +77,7 @@ void RigCache::setSelected(const PubSubName &name, const QString &sel)
             i.value().setSelected(sel);
             trace("selecting rig " + i.key().toString() + "  " + sel);
         }
-        else if (!i.value().selected().isEmpty())
+        else if (!i.value().selected().getValue().isEmpty())
         {
             trace("de-selecting rig " + i.key().toString());
             i.value().setSelected("");
@@ -88,7 +88,7 @@ PubSubName RigCache::getSelected()
 {
     for(QMap<PubSubName, RigState>::iterator i = rigStates.begin(); i != rigStates.end(); i++ )
     {
-        if (!i.value().selected().isEmpty())
+        if (!i.value().selected().getValue().isEmpty())
         {
             PubSubName psn = i.key();
             return psn;

@@ -68,10 +68,10 @@ QString RigState::pack() const
 {
     QJsonObject jv;
 
-    jv.insert(rpcConstants::selected, selected());
-    jv.insert(rpcConstants::rigControlStatus, status());
-    jv.insert(rpcConstants::rigControlFreq, freq());
-    jv.insert(rpcConstants::rigControlMode, mode());
+    jv.insert(rpcConstants::selected, selected().getValue());
+    jv.insert(rpcConstants::rigControlStatus, status().getValue());
+    jv.insert(rpcConstants::rigControlFreq, freq().getValue());
+    jv.insert(rpcConstants::rigControlMode, mode().getValue());
 
     QJsonDocument json(jv);
 
@@ -96,22 +96,22 @@ void RigState::unpack(QString s)
     }
 
 }
-QString RigState::selected() const
+MinosStringItem<QString> RigState::selected() const
 {
-    return _selected.getValue();
+    return _selected;
 }
-QString RigState::status() const
+MinosStringItem<QString> RigState::status() const
 {
-    return _status.getValue();
-}
-
-
-double RigState::freq() const
-{
-    return _freq.getValue();
+    return _status;
 }
 
-QString RigState::mode() const
+
+MinosItem<double> RigState::freq() const
 {
-    return _mode.getValue();
+    return _freq;
+}
+
+MinosStringItem<QString> RigState::mode() const
+{
+    return _mode;
 }

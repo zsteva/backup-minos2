@@ -72,10 +72,10 @@ QString RigDetails::pack() const
 {
     QJsonObject jv;
 
-    jv.insert(rpcConstants::rigControlTxVertOffsetFreq, transverterOffset());
-    jv.insert(rpcConstants::rigControlTxVertSwitch, transverterSwitch());
-    jv.insert(rpcConstants::rigControlTxVertStatus, transverterStatus());
-    jv.insert(rpcConstants::rigControlBandList, bandList());
+    jv.insert(rpcConstants::rigControlTxVertOffsetFreq, transverterOffset().getValue());
+    jv.insert(rpcConstants::rigControlTxVertSwitch, transverterSwitch().getValue());
+    jv.insert(rpcConstants::rigControlTxVertStatus, transverterStatus().getValue());
+    jv.insert(rpcConstants::rigControlBandList, bandList().getValue());
 
     QJsonDocument json(jv);
 
@@ -100,21 +100,21 @@ void RigDetails::unpack(QString s)
     }
 
 }
-double RigDetails::transverterOffset() const
+MinosItem<double> RigDetails::transverterOffset() const
 {
-    return _transverterOffset.getValue();
+    return _transverterOffset;
 }
 
-int RigDetails::transverterSwitch() const
+MinosItem<int> RigDetails::transverterSwitch() const
 {
-    return _transverterSwitch.getValue();
+    return _transverterSwitch;
 }
 
-bool RigDetails::transverterStatus() const
+MinosItem<bool> RigDetails::transverterStatus() const
 {
-    return _transverterStatus.getValue();
+    return _transverterStatus;
 }
-QString RigDetails::bandList() const
+MinosStringItem<QString> RigDetails::bandList() const
 {
-    return _bandList.getValue();
+    return _bandList;
 }

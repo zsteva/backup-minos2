@@ -1076,24 +1076,6 @@ void TSingleLogFrame::on_RotatorMinAzimuth(QString s)
     }
 }
 
-
-void TSingleLogFrame::on_RotatorAntennaName(QString /*rotName*/)
-{
-    /*
-    if ( this == LogContainer->getCurrentLogFrame() )
-    {
-        LoggerContestLog *ct = dynamic_cast<LoggerContestLog *>( contest );
-        if (rotName != ct->rotatorName.getValue())
-        {
-            ct->rotatorName.setValue(rotName);
-            ct->commonSave(false);
-            ui->FKHRotControlFrame->setRotatorAntennaName(rotName);
-        }
-    }
-*/
-}
-
-
 void TSingleLogFrame::sendRotator(rpcConstants::RotateDirection direction, int angle )
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
@@ -1103,5 +1085,5 @@ void TSingleLogFrame::sendRotator(rpcConstants::RotateDirection direction, int a
 void TSingleLogFrame::sendRotatorPreset(QString s )
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
-        LogContainer->sendDM->sendRotatorPreset(this, s);
+        LogContainer->sendDM->sendRotatorPreset(s);
 }

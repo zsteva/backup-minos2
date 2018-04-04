@@ -23,14 +23,14 @@ public:
     virtual QString pack() const;
     virtual void unpack(QString);
 
-    double transverterOffset() const;
-    int transverterSwitch() const;
-    bool transverterStatus() const;
+    MinosItem<double> transverterOffset() const;
+    MinosItem<int> transverterSwitch() const;
+    MinosItem<bool> transverterStatus() const;
+    MinosStringItem<QString> bandList() const;
 
     void setTransverterOffset(double transverterOffset);
     void setTransverterSwitch(int transverterSwitch);
     void setTransverterStatus(bool transverterStatus);
-    QString bandList() const;
     void setBandList(const QString &bandList);
 };
 
