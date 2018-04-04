@@ -276,7 +276,7 @@ void RigControlFrame::radioBandFreq(int index)
 {
     int idx = index -1;
 
-    if (idx > 0 && idx < listOfBands.count())
+    if (idx >= 0 && idx < listOfBands.count())
     {
         QString f = listOfBands[idx].freq;
         if (f != curFreq)
@@ -286,7 +286,6 @@ void RigControlFrame::radioBandFreq(int index)
             {
                 if (radioConnected && !radioError)
                 {
-                    traceMsg(QString("RigContFrame: Radio Band Freq = %1").arg(f));
                     sendFreq(f);
                 }
                 else if (!radioConnected && radioName.trimmed() == "No Radio")

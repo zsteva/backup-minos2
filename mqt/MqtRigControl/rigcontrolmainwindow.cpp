@@ -770,7 +770,7 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
                 if (setupRadio->currentRadio.transVertSettings[tvNum]->band == cb)
                 {
                     b = true;
-                    logMessage(QString("SetFreq: Found Transverter %1 for this freq.").arg(setupRadio->currentRadio.transVertSettings[tvNum]->transVertName));
+                    logMessage(QString("SetFreq: Found Transverter %1 for this freq.").arg(setupRadio->currentRadio.transVertSettings[tvNum]->band));
                     break;
                 }
                 tvNum++;
@@ -873,7 +873,7 @@ int RigControlMainWindow::getAndSendFrequency(vfo_t vfo)
     double transVertF = 0;
     int retCode = 0;
     int tvNum = 0;
-
+    bool b = false;
 
     retCode = radio->getFrequency(vfo, &rfrequency);
     if (retCode == RIG_OK)
@@ -887,7 +887,7 @@ int RigControlMainWindow::getAndSendFrequency(vfo_t vfo)
             {
                 logMessage(QString("Get Freq: Transvert enabled"));
                 // look for supporting transverter
-                bool b = false;
+
                 while (tvNum < setupRadio->currentRadio.numTransverters)
                 {
                     if (setupRadio->currentRadio.transVertSettings[tvNum]->band == selTvBand)
@@ -928,7 +928,7 @@ int RigControlMainWindow::getAndSendFrequency(vfo_t vfo)
 
         displayFreqVfo(rfrequency);
 
-        if (setupRadio->currentRadio.transVertEnable)
+        if (setupRadio->currentRadio.transVertEnable && b)
         {
             sendFreqToLog(transVertF);
         }
