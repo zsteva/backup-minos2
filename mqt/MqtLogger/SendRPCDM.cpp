@@ -220,7 +220,7 @@ void TSendDM::sendRigControlMode(TSingleLogFrame *tslf,const QString &mode)
    PubSubName rigSelected = rigCache.getSelected();
    rpc.queueCall( rigSelected );
 }
-void TSendDM::sendRotatorPreset(TSingleLogFrame *tslf, QString s)
+void TSendDM::sendRotatorPreset(QString s)
 {
     RPCGeneralClient rpc(rpcConstants::rotatorMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
@@ -238,9 +238,8 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
     AnalysePubSubNotify an( err, mro );
     trace( "Notify callback from " + from + ( err ? ":Error " : ":Normal " ) +  an.getPublisherProgram() + "@" + an.getPublisherServer());
 
-    if ( an.getOK() /*&& an.getState() == psPublished*/)
+    if ( an.getOK())
     {
-
         if ( an.getState() == psPublished)
         {
             if ( an.getCategory() == rpcConstants::rigStateCategory)
@@ -279,14 +278,15 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
 
         QVector<TSingleLogFrame *> frames = LogContainer->getLogFrames();
         {
-
             PubSubName rigSelected = rigCache.getSelected();
             if (!rigSelected.isEmpty())
             {
                 RigState &selState = rigCache.getState(rigSelected);
-                QString selUuid = selState.selected();
+                QString selUuid = selState.selected().getValue();
                 if (!selUuid.isEmpty())
                 {
+                    RigDetails &selDetail = rigCache.getDetails(rigSelected);
+
                     for (int i = 0; i < frames.size(); i++)
                     {
                        TSingleLogFrame *tslf = frames[i];
@@ -294,31 +294,31 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
 
                        if (selUuid == frameUuid)
                        {
-                           RigDetails &selDetail = rigCache.getDetails(rigSelected);
-
-                           if (selState.isDirty())
+                           if (selState.mode().isDirty())
                            {
-                               tslf->on_SetMode(selState.mode());
-                               tslf->on_SetFreq(convertFreqToStr(selState.freq()));
-                               tslf->on_SetRadioState(selState.status());
-//                               emit setMode( selState.mode() );
-//                               emit setFreq( convertFreqToStr(selState.freq()) );
-//                               emit setRadioState( selState.status() );
-
-                               selState.clearDirty();
-
+                               tslf->on_SetMode(selState.mode().getValue());
                            }
-                           if (selDetail.isDirty())
+                           if (selState.freq().isDirty())
                            {
-                               tslf->on_SetBandList(selDetail.bandList());
-                               tslf->on_SetRadioTxVertState( selDetail.transverterStatus()?"true":"false" );
-//                               emit setBandList(selDetail.bandList());
-//                               emit setRadioTxVertStatus( selDetail.transverterStatus()?"true":"false" );
-                               selDetail.clearDirty();
-
+                               tslf->on_SetFreq(convertFreqToStr(selState.freq().getValue()));
                            }
-                           break;
-                       }
+                           if (selState.status().isDirty())
+                           {
+                               tslf->on_SetRadioState(selState.status().getValue());
+                           }
+                           selState.clearDirty();
+
+                           if (selDetail.bandList().isDirty())
+                           {
+                               tslf->on_SetBandList(selDetail.bandList().getValue());
+                           }
+                           if (selDetail.transverterStatus().isDirty())
+                           {
+                               tslf->on_SetRadioTxVertState( selDetail.transverterStatus().getValue()?TXVERT_ON:TXVERT_OFF );
+                           }
+                           selDetail.clearDirty();
+
+                        }
                     }
                 }
             }
@@ -327,7 +327,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                 if (!rotSelected.isEmpty())
                 {
                     AntennaState &selState = rotatorCache.getState(rotSelected);
-                    QString selUuid = selState.selected();
+                    QString selUuid = selState.selected().getValue();
                     if (!selUuid.isEmpty())
                     {
                         for (int i = 0; i < frames.size(); i++)
@@ -339,23 +339,26 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                            {
                                AntennaDetail &selDetail = rotatorCache.getDetails(rotSelected);
 
-                               if (selState.isDirty())
+                               if (selState.bearing().isDirty())
                                {
-                                   tslf->on_RotatorBearing(selState.bearing());
-                                   tslf->on_RotatorState(selState.state());
-                                   //emit RotatorBearing(selState.bearing());
-                                   //emit RotatorState(selState.state());
-                                   selState.clearDirty();
+                                   tslf->on_RotatorBearing(selState.bearing().getValue());
+                               }
+                               if (selState.state().isDirty())
+                               {
+                                   tslf->on_RotatorState(selState.state().getValue());
+                               }
+                               selState.clearDirty();
 
-                               }
-                               if (selDetail.isDirty())
+                               if (selDetail.maxAzimuth().isDirty())
                                {
-                                   tslf->on_RotatorMaxAzimuth(QString::number(selDetail.maxAzimuth()));
-                                   tslf->on_RotatorMinAzimuth(QString::number(selDetail.minAzimuth()));
-                                   //emit RotatorMaxAzimuth(QString::number(selDetail.maxAzimuth()));
-                                   //emit RotatorMinAzimuth(QString::number(selDetail.minAzimuth()));
-                                   selDetail.clearDirty();
+                                   tslf->on_RotatorMaxAzimuth(QString::number(selDetail.maxAzimuth().getValue()));
                                }
+                               if (selDetail.minAzimuth().isDirty())
+                               {
+                                   tslf->on_RotatorMinAzimuth(QString::number(selDetail.minAzimuth().getValue()));
+                               }
+                               selDetail.clearDirty();
+
                                if (rotatorCache.rotatorPresetsIsDirty(rotSelected))
                                {
                                     tslf->on_RotatorPresetList(rotatorCache.getRotatorPresets(rotSelected));

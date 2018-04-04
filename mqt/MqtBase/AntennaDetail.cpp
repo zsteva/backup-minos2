@@ -32,8 +32,8 @@ QString AntennaDetail::pack() const
 {
     QJsonObject jv;
 
-    jv.insert(rpcConstants::rotatorMinAzimuth, minAzimuth());
-    jv.insert(rpcConstants::rotatorMaxAzimuth, maxAzimuth());
+    jv.insert(rpcConstants::rotatorMinAzimuth, minAzimuth().getValue());
+    jv.insert(rpcConstants::rotatorMaxAzimuth, maxAzimuth().getValue());
 
     QJsonDocument json(jv);
 
@@ -68,14 +68,14 @@ void AntennaDetail::setMaxAzimuth(int maxAzimuth)
 }
 
 
-int AntennaDetail::minAzimuth() const
+MinosItem<int> AntennaDetail::minAzimuth() const
 {
-    return _minAzimuth.getValue();
+    return _minAzimuth;
 }
 
-int AntennaDetail::maxAzimuth() const
+MinosItem<int> AntennaDetail::maxAzimuth() const
 {
-    return _maxAzimuth.getValue();
+    return _maxAzimuth;
 }
 
 

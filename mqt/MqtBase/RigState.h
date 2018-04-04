@@ -24,10 +24,10 @@ public:
     virtual QString pack() const;
     virtual void unpack(QString);
 
-    QString selected() const;
-    QString status() const;
-    double freq() const;
-    QString mode() const;
+    MinosStringItem<QString> selected() const;
+    MinosStringItem<QString> status() const;
+    MinosItem<double> freq() const;
+    MinosStringItem<QString> mode() const;
 
     void setSelected(const QString &selected);
     void setFreq(double freq);
