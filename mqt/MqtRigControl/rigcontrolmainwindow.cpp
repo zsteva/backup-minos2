@@ -1290,6 +1290,7 @@ void RigControlMainWindow::sendBandListLogger()
                 if (setupRadio->currentRadio.radioTransSupBands[i] == freqPresetData::presetBands[k])
                 {
                     match = true;
+                    break;
                 }
                 k++;
             }while (k < freqPresetData::presetBands.count() && !match);
