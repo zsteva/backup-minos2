@@ -21,11 +21,13 @@
 #include "rotatorRpc.h"
 #include "rotatorcommon.h"
 #include "editpresetsdialog.h"
+#include "rotpresetdialog.h"
 #include <QMainWindow>
 #include <QObject>
 #include <QtSerialPort/QSerialPort>
 #include <QKeyEvent>
 #include <QPushButton>
+#include <QShortcut>
 
 
 
@@ -51,7 +53,40 @@ namespace Ui {
 class RotatorMainWindow;
 }
 
+class PresetButton : public QObject
+{
+    Q_OBJECT
 
+public:
+    explicit PresetButton(QToolButton *b, QMainWindow *RotatorMainWindow, int no);
+    ~PresetButton();
+
+    QMainWindow *rotatorMainWindow;
+    QToolButton* presetButton;
+    QMenu* presetMenu;
+    QShortcut* shortKey;
+    QShortcut* shiftShortKey;
+    QAction* readAction;
+    QAction* writeAction;
+    QAction* editAction;
+    QAction* clearAction;
+
+    int presetNo;
+
+private slots:
+    void presetUpdate();
+
+    void presetShortCutSelected();
+    void readActionSelected();
+    void editActionSelected();
+    void writeActionSelected();
+    void clearActionSelected();
+signals:
+    void clearActionSelected(int);
+    void selectRadio(QString);
+
+
+};
 
 class RotatorMainWindow : public QMainWindow
 {
@@ -88,6 +123,12 @@ signals:
     void displayActualBearing(QString);
     void presetRotateTo();
 
+    void presetButtonUpdate(int);
+    void presetButReadActSel(int buttonNumber);
+    void presetButWriteActSel(int buttonNumber);
+    void presetButEditActSel(int buttonNumber);
+    void presetButClearActSel(int buttonNumber);
+
 private:
     Ui::RotatorMainWindow *ui;
 
@@ -98,8 +139,11 @@ private:
     QTimer LogTimer;
     QTimer RotateTimer;
 
+    QMap<int, PresetButton *> presetButMap;
+    QVector<RotPresetData*> rotPresets;
+
     QComboBox *selectAntenna;
-    QPushButton* presetButtons[NUM_PRESETS];
+    //QPushButton* presetButtons[NUM_PRESETS];
     QString appName = "";
     RotControl  *rotator;
     QLabel *status;
@@ -147,7 +191,7 @@ private:
     //int rotatorCWEndStop;
     //int rotatorCCWEndStop;
     QString backBearingmsg;
-    QVector<RotPresetData*> rotPresets;
+
     //QString presetName[NUM_PRESETS];
     //QString presetBearing[NUM_PRESETS];
 
@@ -165,13 +209,20 @@ private:
     void sendAntennaListLogger();
     void sendStatusLogger();
     void readPresets();
-
+    void savePresets();
 
     void initSelectAntennaBox();
 
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *event);
     void keyPressEvent(QKeyEvent *);
+
+    void initPresetButtons();
+    void saveRotPresetButton(RotPresetData &editData);
+    void setRotPresetButData(int buttonNumber, RotPresetData &editData);
+    void rotPresetButtonUpdate(int buttonNumber, RotPresetData &editData);
+
+
 
     void hamlibError(int errorCode, QString cmd);
 

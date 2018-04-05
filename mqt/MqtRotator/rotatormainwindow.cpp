@@ -113,33 +113,8 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     ui->actionSkyScan->setVisible(false);
     ui->actionAlways_On_Top->setVisible(false);
 
-    presetButtons[0] = ui->presetButton1;
-    presetButtons[1] = ui->presetButton2;
-    presetButtons[2] = ui->presetButton3;
-    presetButtons[3] = ui->presetButton4;
-    presetButtons[4] = ui->presetButton5;
-    presetButtons[5] = ui->presetButton6;
-    presetButtons[6] = ui->presetButton7;
-    presetButtons[7] = ui->presetButton8;
-    presetButtons[8] = ui->presetButton9;
-    presetButtons[9] = ui->presetButton10;
+    initPresetButtons();
 
-
-    QSignalMapper *preset_mapper = new QSignalMapper(this);
-
-    for (int i = 0; i < NUM_PRESETS; i++ )
-    {
-        preset_mapper->setMapping(presetButtons[i], i);
-        connect(presetButtons[i], SIGNAL(clicked()), preset_mapper, SLOT(map()));
-
-    }
-    connect(preset_mapper, SIGNAL(mapped(int)), this, SLOT(clickedPreset(int)));
-
-
-    for (int i = 0; i < NUM_PRESETS; i++)
-    {
-        presetButtons[i]->setShortcut(presetShortCut[i]);
-    }
 
 
     rotator = new RotControl();
@@ -835,46 +810,7 @@ void RotatorMainWindow::clickedPreset(int buttonNumber)
 
 
 
-
-
-
-void RotatorMainWindow::readPresets()
-{
-    rotPresets.clear();
-
-    QString fileName;
-    if (appName == "")
-    {
-        fileName = CONFIGURATION_FILEPATH_LOCAL + MINOS_ROTATOR_CONFIG_FILE;
-    }
-    else
-    {
-        fileName = CONFIGURATION_FILEPATH_LOGGER + MINOS_ROTATOR_CONFIG_FILE;
-    }
-
-    QSettings config(fileName, QSettings::IniFormat);
-
-
-    //QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
-    config.beginGroup("Presets");
-    for (int i = 0; i < NUM_PRESETS; i++)
-    {
-        rotPresets.append(new RotPresetData(i, config.value("preset" +  QString::number(i+1)).toString(),
-                          config.value("bearing" +  QString::number(i+1)).toString()));
-        //presetName[i] = config.value("preset" +  QString::number(i+1)).toString();
-        //presetBearing[i] = config.value("bearing" +  QString::number(i+1)).toString();
-    }
-    config.endGroup();
-
-    if (appName != "")
-    {
-        sendPresetListLogger();
-    }
-}
-
-
-
-
+/*
 void RotatorMainWindow::refreshPresetLabels()
 {
 
@@ -899,7 +835,7 @@ void RotatorMainWindow::updatePresetLabels()
     update();
 }
 
-
+*/
 
 
 
@@ -1931,6 +1867,242 @@ void RotatorMainWindow::cwCCWControlVisible(bool visible)
     ui->rot_left_button->setVisible(visible);
     ui->rot_right_button->setVisible(visible);
 }
+
+
+
+/**************************** Quick Preset Buttons **************************/
+
+
+void RotatorMainWindow::initPresetButtons()
+{
+
+    presetButMap[0] = new PresetButton(ui->presetButton0, this, 0);
+    presetButMap[1] = new PresetButton(ui->presetButton1, this, 1);
+    presetButMap[2] = new PresetButton(ui->presetButton2, this, 2);
+    presetButMap[3] = new PresetButton(ui->presetButton3, this, 3);
+    presetButMap[4] = new PresetButton(ui->presetButton4, this, 4);
+    presetButMap[5] = new PresetButton(ui->presetButton5, this, 5);
+    presetButMap[6] = new PresetButton(ui->presetButton6, this, 6);
+    presetButMap[7] = new PresetButton(ui->presetButton7, this, 7);
+    presetButMap[8] = new PresetButton(ui->presetButton8, this, 8);
+    presetButMap[9] = new PresetButton(ui->presetButton9, this, 9);
+
+}
+
+void RotatorMainWindow::presetButReadActSel(int buttonNumber)
+{
+    if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
+    {
+        //turnTo(rotPresets[buttonNumber]->bearing.toInt());
+    }
+
+}
+
+void RotatorMainWindow::presetButEditActSel(int buttonNumber)
+{
+
+
+    if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
+    {
+        RotPresetData editData(buttonNumber, rotPresets[buttonNumber]->name, rotPresets[buttonNumber]->bearing);
+        RotPresetData curData(buttonNumber, rotPresets[buttonNumber]->name, rotPresets[buttonNumber]->bearing);
+
+        logMessage(QString("Preset Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
+        RotPresetDialog presetDialog(buttonNumber, &editData, &curData, this);
+
+
+        if (presetDialog.exec() == QDialog::Accepted)
+        {
+            if (editData.name != curData.name || editData.bearing != curData.bearing)
+            {
+                setRotPresetButData(buttonNumber, editData);
+                rotPresetButtonUpdate(buttonNumber, editData);
+            }
+
+        }
+    }
+
+
+}
+
+void RotatorMainWindow::presetButClearActSel(int buttonNumber)
+{
+    logMessage(QString("Preset Clear Selected = %1").arg(QString::number(buttonNumber +1)));
+    if (!rotPresets.isEmpty() && buttonNumber < rotPresets.count())
+    {
+        // clear this preset
+        RotPresetData pData(0, "", "0");
+        rotPresetButtonUpdate(buttonNumber, pData);
+        rotPresetButtonUpdate(buttonNumber, pData);
+    }
+}
+
+void RotatorMainWindow::presetButtonUpdate(int buttonNumber)
+{
+
+}
+
+void RotatorMainWindow::presetButWriteActSel(int buttonNumber)
+{
+    logMessage(QString("Preset Write Selected = %1").arg(QString::number(buttonNumber +1)));
+    if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
+    {
+        RotPresetData editData(buttonNumber, "", "0");
+        RotPresetData curData(buttonNumber, "", "0");
+
+        logMessage(QString("Preset Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
+        RotPresetDialog presetDialog(buttonNumber, &editData, &curData, this);
+
+
+        if (presetDialog.exec() == QDialog::Accepted)
+        {
+            if (editData.name != curData.name || editData.bearing != curData.bearing)
+            {
+                setRotPresetButData(buttonNumber, editData);
+                rotPresetButtonUpdate(buttonNumber, editData);
+            }
+
+        }
+    }
+}
+
+
+void RotatorMainWindow::setRotPresetButData(int buttonNumber, RotPresetData& editData)
+{
+    rotPresets[buttonNumber]->name = editData.name;
+    rotPresets[buttonNumber]->bearing = editData.bearing;
+    saveRotPresetButton(editData);
+}
+
+
+void RotatorMainWindow::rotPresetButtonUpdate(int buttonNumber, RotPresetData& editData)
+{
+    presetButMap[buttonNumber]->presetButton->setText(QString("%1: %2").arg(QString::number(buttonNumber + 1)).arg(editData.name) );
+    QString tTipStr = "Bearing = " + editData.bearing;
+    presetButMap[buttonNumber]->presetButton->setToolTip(tTipStr);
+}
+
+void RotatorMainWindow::saveRotPresetButton(RotPresetData& editData)
+{
+    QString msg;
+    msg = QString("%1:%2:%3").arg(QString::number(editData.number)).arg(editData.name).arg(editData.bearing);
+    //emit sendRotatorPreset(msg);
+}
+
+
+void RotatorMainWindow::readPresets()
+{
+    QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
+    config.beginGroup("Presets");
+
+    for (int i = 0; i < NUM_PRESETS; i++)
+    {
+        rotPresets.append(new RotPresetData(i, config.value("preset" +  QString::number(i+1)).toString(),
+                                        config.value("bearing" +  QString::number(i+1)).toString()));
+        //presetName[i] = config.value("preset" +  QString::number(i+1)).toString();
+        //presetBearing[i] = config.value("bearing" +  QString::number(i+1)).toString();
+    }
+
+    config.endGroup();
+}
+
+
+void RotatorMainWindow:: savePresets()
+{
+
+
+    QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
+    config.beginGroup("Presets");
+/*
+    for (int i = 0; i < NUM_PRESETS; i++)
+    {
+        if (presetNameUpdated[i])
+        {
+
+            config.setValue("preset" + QString::number(i+1), rotPresets[i]->name);
+        }
+
+        if (presetBearingUpdated[i])
+        {
+           config.setValue("bearing" + QString::number(i+1), rotPresets[i]->bearing);
+        }
+
+    }
+
+    config.endGroup();
+    emit updatePresetButtonLabels();
+*/
+}
+
+
+PresetButton::PresetButton(QToolButton *b, QMainWindow *RotatorMainWindow, int num)
+{
+    presetNo = num;
+    rotatorMainWindow = RotatorMainWindow;
+
+    presetButton = b;
+
+    presetMenu = new QMenu(presetButton);
+
+    presetButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    presetButton->setPopupMode(QToolButton::MenuButtonPopup);
+    presetButton->setFocusPolicy(Qt::NoFocus);
+    presetButton->setText(QString::number(num+1));
+
+    //shortKey = new QShortcut(QKeySequence(runButShortCut[memNo]), memButton);
+    //shiftShortKey = new QShortcut(QKeySequence(runButShiftShortCut[memNo]), memButton);
+    readAction = new QAction("&Read", presetButton);
+    writeAction = new QAction("&Write",presetButton);
+    editAction = new QAction("&Edit", presetButton);
+    clearAction = new QAction("&Clear",presetButton);
+    presetMenu->addAction(readAction);
+    presetMenu->addAction(writeAction);
+    presetMenu->addAction(editAction);
+    presetMenu->addAction(clearAction);
+    presetButton->setMenu(presetMenu);
+
+    //connect(shortKey, SIGNAL(activated()), this, SLOT(readActionSelected()));
+    //connect(shiftShortKey, SIGNAL(activated()), this, SLOT(memoryShortCutSelected()));
+    connect(presetButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
+    connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()));
+    connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()));
+    connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()));
+    connect( clearAction, SIGNAL( triggered() ), this, SLOT(clearActionSelected()));
+}
+PresetButton::~PresetButton()
+{
+//    delete memButton;
+}
+void PresetButton::presetUpdate()
+{
+    //rotatorMainWindow->presetButtonUpdate(presetNo);
+}
+
+void PresetButton::presetShortCutSelected()
+{
+//    rigControlFrame->memoryShortCutSelected(memNo);
+    presetButton->showMenu();
+    //emit lostFocus();
+}
+void PresetButton::readActionSelected()
+{
+    //rotControlFrame->presetButReadActSel(presetNo);
+}
+void PresetButton::editActionSelected()
+{
+    //rotControlFrame->presetButEditActSel(presetNo);
+}
+void PresetButton::writeActionSelected()
+{
+    //rotControlFrame->presetButWriteActSel(presetNo);
+}
+void PresetButton::clearActionSelected()
+{
+    emit clearActionSelected(presetNo);
+}
+
+
+
 
 
 void RotatorMainWindow::aboutRotatorConfig()

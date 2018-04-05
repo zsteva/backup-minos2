@@ -717,27 +717,15 @@ void RotControlFrame::initPresetButtons()
 {
 
     presetButMap[0] = new PresetButton(ui->presetButton0, this, 0);
-    //connect( presetButMap[0], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[1] = new PresetButton(ui->presetButton1, this, 1);
-    //connect( presetButMap[1], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[2] = new PresetButton(ui->presetButton2, this, 2);
-    //connect( presetButMap[2], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[3] = new PresetButton(ui->presetButton3, this, 3);
-    //connect( presetButMap[3], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[4] = new PresetButton(ui->presetButton4, this, 4);
-    //connect( presetButMap[4], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[5] = new PresetButton(ui->presetButton5, this, 5);
-    //connect( presetButMap[5], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[6] = new PresetButton(ui->presetButton6, this, 6);
-    //connect( presetButMap[6], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[7] = new PresetButton(ui->presetButton7, this, 7);
-    //connect( presetButMap[7], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[8] = new PresetButton(ui->presetButton8, this, 8);
-    //connect( presetButMap[8], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
     presetButMap[9] = new PresetButton(ui->presetButton9, this, 9);
-    //connect( presetButMap[9], SIGNAL( clearActionSelected(int)) , this, SLOT(presetButClearActSel(int)), Qt::QueuedConnection );
-
-
 
 }
 
