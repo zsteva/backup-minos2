@@ -216,7 +216,6 @@ void RigControlMainWindow::onStdInRead(QString cmd)
 void RigControlMainWindow::initActionsConnections()
 {
     connect(ui->selectRadioBox, SIGNAL(activated(int)), this, SLOT(selectRadio()));
-
     connect(ui->actionSetup_Radios, SIGNAL(triggered()), this, SLOT(onLaunchSetup()));
     connect(ui->actionSetup_Band_Freq, SIGNAL(triggered(bool)), this, SLOT(setupBandFreq()));
     connect(ui->actionTraceLog, SIGNAL(changed()), this, SLOT(saveTraceLogFlag()));
@@ -227,6 +226,8 @@ void RigControlMainWindow::initActionsConnections()
     // configure antenna dialog
     connect(setupRadio, SIGNAL(currentRadioSettingChanged(QString)), this, SLOT(currentRadioSettingChanged(QString)));
     connect(setupRadio, SIGNAL(radioNameChange()), this, SLOT(updateSelectRadioBox()));
+    connect(setupRadio, SIGNAL(radioTabChanged()), this, SLOT(updateSelectRadioBox()));
+
 
     // Message from Logger
     connect(msg, SIGNAL(setFreq(QString)), this, SLOT(loggerSetFreq(QString)));
