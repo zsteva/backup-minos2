@@ -579,11 +579,11 @@ void rotSetupForm::setSStopButtons(southStop stopType)
 {
     if (stopType == S_STOPOFF)
     {
-        setRotInvertButChecked(true);
+        setSStopOffButChecked(true);
     }
     else if (stopType == S_STOPINV)
     {
-        setRotInvertButVisible(true);
+        setRotInvertButChecked(true);
     }
     else if (stopType == S_STOPCOMP)
     {
@@ -636,7 +636,7 @@ void rotSetupForm::compassButSelected()
     antennaData->max_azimuth = COMPASS_HALF - 1;
     antennaData->min_azimuth = COMPASS_HALF + 1;
     antennaData->endStopType = ROT_180_180;
-
+    antennaData->southStopType = S_STOPCOMP;
     antennaValueChanged = true;
 
 //    }
