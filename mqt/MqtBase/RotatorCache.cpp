@@ -24,19 +24,64 @@ void RotatorCache::invalidate()
 
 void RotatorCache::addRotList(const QString &s)
 {
+    // clumsy code - there must be a better way!
+    if (s.isEmpty())
+        return;
     QStringList list = s.split(":");
+    if (list.length())
+    {
+        // remove all rigs from this app from the rig list
+        PubSubName lpsn = PubSubName(list[0]);
+        QVector<PubSubName> newRotList;
+
+        foreach(PubSubName psn, rotList)
+        {
+            if (lpsn.server() != psn.server() || lpsn.appName() != psn.appName())
+                newRotList.push_back(psn);
+        }
+        rotList = newRotList;
+
+    }
     foreach(QString l, list)
     {
+        // add all of the list to rig list
         PubSubName psn(l);
         if (!rotList.contains(psn))
         {
             rotList.push_back(psn);
-            rotStates[psn] = AntennaState();
-            rotDetails[psn] = AntennaDetail();
         }
+    }
+    {
+        // clear now non-existant rigs from details
+        QMap<PubSubName, AntennaDetail> newdets;
+        QMap<PubSubName, AntennaDetail>::const_iterator i = rotDetails.constBegin();
+        while (i != rotDetails.constEnd())
+        {
+            if (rotList.contains(i.key()))
+            {
+                newdets[i.key()] = i.value();
+            }
+            ++i;
+        }
+        rotDetails = newdets;
+    }
+    {
+        // clear now non-existant rigs from states
+        QMap<PubSubName, AntennaState> newstates;
+        QMap<PubSubName, AntennaState>::const_iterator j = rotStates.constBegin();
+        while (j != rotStates.constEnd())
+        {
+            if (rotList.contains(j.key()))
+            {
+                newstates[j.key()] = j.value();
+            }
+            ++j;
+        }
+        rotStates = newstates;
     }
     qSort(rotList);
 }
+
 AntennaState &RotatorCache::getState(const PubSubName &p)
 {
     return rotStates[p];

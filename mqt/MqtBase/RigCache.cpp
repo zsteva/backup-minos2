@@ -37,16 +37,60 @@ void RigCache::setDetailsString(const AnalysePubSubNotify & an)
 }
 void RigCache::addRigList(const QString &s)
 {
+    // clumsy code - there must be a better way!
+    if (s.isEmpty())
+        return;
     QStringList list = s.split(":");
+    if (list.length())
+    {
+        // remove all rigs from this app from the rig list
+        PubSubName lpsn = PubSubName(list[0]);
+        QVector<PubSubName> newRigList;
+
+        foreach(PubSubName psn, rigList)
+        {
+            if (lpsn.server() != psn.server() || lpsn.appName() != psn.appName())
+                newRigList.push_back(psn);
+        }
+        rigList = newRigList;
+
+    }
     foreach(QString l, list)
     {
+        // add all of the list to rig list
         PubSubName psn(l);
         if (!rigList.contains(psn))
         {
             rigList.push_back(psn);
-            rigStates[psn] = RigState();
-            rigDetails[psn] = RigDetails();
         }
+    }
+    {
+        // clear now non-existant rigs from details
+        QMap<PubSubName, RigDetails> newdets;
+        QMap<PubSubName, RigDetails>::const_iterator i = rigDetails.constBegin();
+        while (i != rigDetails.constEnd())
+        {
+            if (rigList.contains(i.key()))
+            {
+                newdets[i.key()] = i.value();
+            }
+            ++i;
+        }
+        rigDetails = newdets;
+    }
+    {
+        // clear now non-existant rigs from states
+        QMap<PubSubName, RigState> newstates;
+        QMap<PubSubName, RigState>::const_iterator j = rigStates.constBegin();
+        while (j != rigStates.constEnd())
+        {
+            if (rigList.contains(j.key()))
+            {
+                newstates[j.key()] = j.value();
+            }
+            ++j;
+        }
+        rigStates = newstates;
     }
     qSort(rigList);
 }
