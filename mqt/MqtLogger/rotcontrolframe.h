@@ -20,6 +20,7 @@
 
 #include "logger_pch.h"
 #include "rotatorcommon.h"
+#include "rotpresetbutton.h"
 #include "rotpresetdialog.h"
 #include "editpresetsdialog.h"
 
@@ -29,41 +30,6 @@ namespace Ui {
 class RotControlFrame;
 }
 class RotControlFrame;
-//class RotPreset;
-class PresetButton : public QObject
-{
-    Q_OBJECT
-
-public:
-    explicit PresetButton(QToolButton *b, RotControlFrame *rcf, int no);
-    ~PresetButton();
-
-    RotControlFrame *rotControlFrame;
-    QToolButton* presetButton;
-    QMenu* presetMenu;
-    QShortcut* shortKey;
-    QShortcut* shiftShortKey;
-    QAction* readAction;
-    QAction* writeAction;
-    QAction* editAction;
-    QAction* clearAction;
-
-    int presetNo;
-
-private slots:
-    void presetUpdate();
-
-    void presetShortCutSelected();
-    void readActionSelected();
-    void editActionSelected();
-    void writeActionSelected();
-    void clearActionSelected();
-signals:
-    void clearActionSelected(int);
-    void selectRadio(QString);
-
-
-};
 
 
 

@@ -716,16 +716,16 @@ void RotControlFrame::getRotDetails(memoryData::memData &m)
 void RotControlFrame::initPresetButtons()
 {
 
-    presetButMap[0] = new PresetButton(ui->presetButton0, this, 0);
-    presetButMap[1] = new PresetButton(ui->presetButton1, this, 1);
-    presetButMap[2] = new PresetButton(ui->presetButton2, this, 2);
-    presetButMap[3] = new PresetButton(ui->presetButton3, this, 3);
-    presetButMap[4] = new PresetButton(ui->presetButton4, this, 4);
-    presetButMap[5] = new PresetButton(ui->presetButton5, this, 5);
-    presetButMap[6] = new PresetButton(ui->presetButton6, this, 6);
-    presetButMap[7] = new PresetButton(ui->presetButton7, this, 7);
-    presetButMap[8] = new PresetButton(ui->presetButton8, this, 8);
-    presetButMap[9] = new PresetButton(ui->presetButton9, this, 9);
+    presetButMap[0] = new RotPresetButton(ui->presetButton0, this, 0);
+    presetButMap[1] = new RotPresetButton(ui->presetButton1, this, 1);
+    presetButMap[2] = new RotPresetButton(ui->presetButton2, this, 2);
+    presetButMap[3] = new RotPresetButton(ui->presetButton3, this, 3);
+    presetButMap[4] = new RotPresetButton(ui->presetButton4, this, 4);
+    presetButMap[5] = new RotPresetButton(ui->presetButton5, this, 5);
+    presetButMap[6] = new RotPresetButton(ui->presetButton6, this, 6);
+    presetButMap[7] = new RotPresetButton(ui->presetButton7, this, 7);
+    presetButMap[8] = new RotPresetButton(ui->presetButton8, this, 8);
+    presetButMap[9] = new RotPresetButton(ui->presetButton9, this, 9);
 
 }
 
@@ -827,72 +827,6 @@ void RotControlFrame::saveRotPresetButton(RotPresetData& editData)
     QString msg;
     msg = QString("%1:%2:%3").arg(QString::number(editData.number)).arg(editData.name).arg(editData.bearing);
     emit sendRotatorPreset(msg);
-}
-
-PresetButton::PresetButton(QToolButton *b, RotControlFrame *rcf, int num)
-{
-    presetNo = num;
-    rotControlFrame = rcf;
-
-    presetButton = b;
-
-    presetMenu = new QMenu(presetButton);
-
-    presetButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
-    presetButton->setPopupMode(QToolButton::MenuButtonPopup);
-    presetButton->setFocusPolicy(Qt::NoFocus);
-    presetButton->setText(QString::number(num+1));
-
-    //shortKey = new QShortcut(QKeySequence(runButShortCut[memNo]), memButton);
-    //shiftShortKey = new QShortcut(QKeySequence(runButShiftShortCut[memNo]), memButton);
-    readAction = new QAction("&Read", presetButton);
-    writeAction = new QAction("&Write",presetButton);
-    editAction = new QAction("&Edit", presetButton);
-    clearAction = new QAction("&Clear",presetButton);
-    presetMenu->addAction(readAction);
-    presetMenu->addAction(writeAction);
-    presetMenu->addAction(editAction);
-    presetMenu->addAction(clearAction);
-    presetButton->setMenu(presetMenu);
-
-    //connect(shortKey, SIGNAL(activated()), this, SLOT(readActionSelected()));
-    //connect(shiftShortKey, SIGNAL(activated()), this, SLOT(memoryShortCutSelected()));
-    connect(presetButton, SIGNAL(clicked(bool)), this, SLOT(readActionSelected()));
-    connect( readAction, SIGNAL( triggered() ), this, SLOT(readActionSelected()));
-    connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()));
-    connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()));
-    connect( clearAction, SIGNAL( triggered() ), this, SLOT(clearActionSelected()));
-}
-PresetButton::~PresetButton()
-{
-//    delete memButton;
-}
-void PresetButton::presetUpdate()
-{
-    rotControlFrame->presetButtonUpdate(presetNo);
-}
-
-void PresetButton::presetShortCutSelected()
-{
-//    rigControlFrame->memoryShortCutSelected(memNo);
-    presetButton->showMenu();
-    //emit lostFocus();
-}
-void PresetButton::readActionSelected()
-{
-    rotControlFrame->presetButReadActSel(presetNo);
-}
-void PresetButton::editActionSelected()
-{
-    rotControlFrame->presetButEditActSel(presetNo);
-}
-void PresetButton::writeActionSelected()
-{
-    rotControlFrame->presetButWriteActSel(presetNo);
-}
-void PresetButton::clearActionSelected()
-{
-    emit clearActionSelected(presetNo);
 }
 
 

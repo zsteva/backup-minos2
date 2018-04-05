@@ -62,7 +62,8 @@ SOURCES += \
     RotatorCache.cpp \
     RigCache.cpp \
     RigDetails.cpp \
-    rotpresetdialog.cpp
+    rotpresetdialog.cpp \
+    rotpresetbutton.cpp
 
 HEADERS += \
     BandList.h \
@@ -110,7 +111,8 @@ HEADERS += \
     RigDetails.h \
     minostablewidget.h \
     rotatorcommon.h \
-    rotpresetdialog.h
+    rotpresetdialog.h \
+    rotpresetbutton.h
 
 unix {
     target.path = /usr/lib

@@ -21,6 +21,7 @@
 #include "rotatorRpc.h"
 #include "rotatorcommon.h"
 #include "editpresetsdialog.h"
+#include "rotpresetbutton.h"
 #include "rotpresetdialog.h"
 #include <QMainWindow>
 #include <QObject>
@@ -53,40 +54,7 @@ namespace Ui {
 class RotatorMainWindow;
 }
 
-class PresetButton : public QObject
-{
-    Q_OBJECT
 
-public:
-    explicit PresetButton(QToolButton *b, QMainWindow *RotatorMainWindow, int no);
-    ~PresetButton();
-
-    QMainWindow *rotatorMainWindow;
-    QToolButton* presetButton;
-    QMenu* presetMenu;
-    QShortcut* shortKey;
-    QShortcut* shiftShortKey;
-    QAction* readAction;
-    QAction* writeAction;
-    QAction* editAction;
-    QAction* clearAction;
-
-    int presetNo;
-
-private slots:
-    void presetUpdate();
-
-    void presetShortCutSelected();
-    void readActionSelected();
-    void editActionSelected();
-    void writeActionSelected();
-    void clearActionSelected();
-signals:
-    void clearActionSelected(int);
-    void selectRadio(QString);
-
-
-};
 
 class RotatorMainWindow : public QMainWindow
 {
