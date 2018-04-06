@@ -72,9 +72,21 @@ public:
     void setPollInterval(QString i);
 
 
-    bool getCheckStop();
-    void setCheckStop(bool s);
-    void setCheckStopVisible(bool s);
+    bool getsStopOffBut();
+    void setSStopOffButChecked(bool s);
+    void setSStopOffButVisible(bool s);
+
+
+    bool getRotInvertBut();
+    void setRotInvertButChecked(bool s);
+    void setRotInvertButVisible(bool s);
+
+    bool getCompassBut();
+    void setCompassButChecked(bool s);
+    void setCompassButVisible(bool s);
+
+    void sStopButtonsVisible(bool visible);
+    void setSStopButtons(southStop stopType);
 
     bool getCheckOverrun();
     void setCheckOverrun(bool s);
@@ -92,11 +104,17 @@ public:
 
     void antennaOffSetVisible(bool s);
     void pollIntervalVisible(bool s);
+
+
     bool setEndStopType(srotParams *antennaData);
     void setSimCW_CCWcmdVisible(bool visible);
     void setSimCW_CCWcmdChecked(bool checked);
+
+
+
+
 private slots:
-//    void antennaNameFinished();
+
     void rotatorModelSelected();
     void comportSelected();
     void comDataSpeedSelected();
@@ -107,10 +125,15 @@ private slots:
     void comNetAddressSelected();
     void comNetPortNumSelected();
     void pollIntervalSelected();
-    void southStopSelected();
     void overlapSelected();
     void antennaOffSetSelected();
     void simCWCCWCmdSelected();
+    void sStopOffButSelected();
+    void rotInvertButSelected();
+    void compassButSelected();
+
+
+
 private:
     Ui::rotSetupForm *ui;
 

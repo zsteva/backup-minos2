@@ -96,7 +96,7 @@ public:
       dest.rotType = srce->rotType;
       dest.min_elevation = srce->min_elevation;
       dest.max_elevation = srce->max_elevation;
-      dest.southStopFlag = srce->southStopFlag;
+      dest.southStopType = srce->southStopType;
       dest.overRunFlag = srce->overRunFlag;
       dest.supportCwCcwCmd = srce->supportCwCcwCmd;
       dest.simCwCcwCmd = srce->simCwCcwCmd;
@@ -141,7 +141,7 @@ public:
 
   int min_elevation = 0.0;
   int max_elevation = 0.0;
-  bool southStopFlag = false;
+  southStop southStopType = S_STOPOFF;
   bool overRunFlag = false;
   bool supportCwCcwCmd = true;
   bool simCwCcwCmd = false;
