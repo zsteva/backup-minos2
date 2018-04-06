@@ -36,6 +36,9 @@ class TSendDM : public QObject
       TSendDM( QWidget* Owner );
       ~TSendDM();
 
+      bool radioLoaded = false;
+      bool rotatorLoaded = false;
+
       void invalidateCache();
 
       void sendKeyerPlay( TSingleLogFrame *tslf,int fno );

@@ -265,12 +265,14 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             else if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioList )
             {
                 rigCache.addRigList(an.getValue());
+                radioLoaded = true;
                 emit setRadioLoaded();
                 emit setRadioList(an.getValue());
             }
             else if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorList )
             {
                 rotatorCache.addRotList(an.getValue());
+                rotatorLoaded = true;
                 emit RotatorLoaded();
                 emit RotatorList(an.getValue());
             }

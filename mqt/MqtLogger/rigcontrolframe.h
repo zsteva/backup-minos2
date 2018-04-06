@@ -104,7 +104,6 @@ public:
     void setRadioName(QString, QString mode);
     void setRadioState(QString);
     void setRadioTxVertState(QString s);
-    void setRadioNameFromRigControl(QString name);
 
     bool isRadioLoaded();
 

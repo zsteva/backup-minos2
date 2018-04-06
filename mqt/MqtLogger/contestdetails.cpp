@@ -79,6 +79,8 @@ ContestDetails::ContestDetails(QWidget *parent) :
     connect(PowerEditFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
     connect(MainOpComboBoxFW, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(focusChange(QObject *, bool, QFocusEvent *)));
 
+    connect(LogContainer->sendDM, SIGNAL(setRadioList(QString)), this, SLOT(on_SetRadioList(QString)));
+    connect(LogContainer->sendDM, SIGNAL(RotatorList(QString)), this, SLOT(on_RotatorList(QString)));
 }
 void ContestDetails::doCloseEvent()
 {
@@ -347,15 +349,8 @@ void ContestDetails::setDetails(  )
 
    ui->PowerEdit->setText(contest->power.getValue());
 
-   ui->radioNameEdit->clear();
-   ui->radioNameEdit->addItem("");
-   ui->radioNameEdit->addItems( LogContainer->sendDM->rigs());
-   ui->radioNameEdit->setCurrentText(contest->radioName.getValue().toString());
-
-   ui->antennaNameEdit->clear();
-   ui->antennaNameEdit->addItem("");
-   ui->antennaNameEdit->addItems( LogContainer->sendDM->rotators());
-   ui->antennaNameEdit->setCurrentText(contest->rotatorName.getValue().toString());
+   on_SetRadioList("");
+    on_RotatorList("");
 
    if ( contest->isMinosFile() )
    {
@@ -1041,8 +1036,10 @@ QWidget * ContestDetails::getDetails( )
     contest->power.setValue( ui->PowerEdit->text() );
     contest->bearingOffset.setValue(ui->AntOffsetEdit->text().toInt());	// int
 
-    contest->radioName.setValue(PubSubName(ui->radioNameEdit->currentText().trimmed().remove(':')));
-    contest->rotatorName.setValue(PubSubName(ui->antennaNameEdit->currentText()));
+    if (LogContainer->sendDM->radioLoaded)
+        contest->radioName.setValue(PubSubName(ui->radioNameEdit->currentText().trimmed().remove(':')));
+    if (LogContainer->sendDM->rotatorLoaded)
+        contest->rotatorName.setValue(PubSubName(ui->antennaNameEdit->currentText()));
 
     contest->currentMode.setValue(ui->ModeComboBox->currentText());
 
@@ -1416,4 +1413,18 @@ void ContestDetails::on_MGMCheckBox_stateChanged(int)
         noMultRipple = false;
     }
     enableControls();
+}
+void ContestDetails::on_RotatorList(QString /*s*/)
+{
+    ui->antennaNameEdit->clear();
+    ui->antennaNameEdit->addItem("");
+    ui->antennaNameEdit->addItems( LogContainer->sendDM->rotators());
+    ui->antennaNameEdit->setCurrentText(contest->rotatorName.getValue().toString());
+}
+void ContestDetails::on_SetRadioList(QString /*s*/)
+{
+    ui->radioNameEdit->clear();
+    ui->radioNameEdit->addItem("");
+    ui->radioNameEdit->addItems( LogContainer->sendDM->rigs());
+    ui->radioNameEdit->setCurrentText(contest->radioName.getValue().toString());
 }

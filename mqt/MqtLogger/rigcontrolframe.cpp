@@ -546,7 +546,6 @@ void RigControlFrame::setRadioName(QString radNam, QString mode)
     {
         return;
     }
-    //QString radNam = extractRadioName(name);   // remove mode if appended
 
     int index = ui->radioNameSel->findText(radNam, Qt::MatchFixedString);
     if (index >= 0)
@@ -561,17 +560,6 @@ void RigControlFrame::setRadioName(QString radNam, QString mode)
     }
 }
 
-
-void RigControlFrame::setRadioNameFromRigControl(QString name)
-{
-
-    //if(name != radioName)
-    //{
-        ui->radioNameSel->setCurrentText(name);
-        radioName = name;
-    //}
-
-}
 
 void RigControlFrame::loadMemories()
 {
