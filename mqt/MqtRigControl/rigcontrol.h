@@ -83,6 +83,8 @@ public:
     bool enableTransSwitch = false;
     QString antSwitchNum = "0";
     QString transSwitchNum = "0";
+    bool enableLocTVSwMsg = false;
+    QString locTVSwComport = "";
 
 };
 

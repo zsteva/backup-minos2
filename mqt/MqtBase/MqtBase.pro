@@ -8,6 +8,7 @@ include($$PWD/../mqt.pri)
 QT       += core gui
 QT       += widgets
 QT       += network
+QT       += serialport
 
 TARGET = MqtBase
 TEMPLATE = lib
@@ -61,7 +62,8 @@ SOURCES += \
     KeyerState.cpp \
     RotatorCache.cpp \
     RigCache.cpp \
-    RigDetails.cpp
+    RigDetails.cpp \
+    rigcommon.cpp
 
 HEADERS += \
     BandList.h \
@@ -108,7 +110,8 @@ HEADERS += \
     RigCache.h \
     RigDetails.h \
     minostablewidget.h \
-    rotatorcommon.h
+    rotatorcommon.h \
+    rigcommon.h
 
 unix {
     target.path = /usr/lib

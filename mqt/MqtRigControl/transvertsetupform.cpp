@@ -14,6 +14,7 @@
 
 
 #include "transvertsetupform.h"
+#include "rigcommon.h"
 #include "rigutils.h"
 #include "BandList.h"
 #include <QLineEdit>
@@ -33,14 +34,14 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *
 
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    //loadBandSel();
+    fillPortsInfo(ui->locTVComPortSel);
 
-    //connect(ui->bandSel, SIGNAL(activated(int)), this, SLOT(bandSelected()));
-    //connect(ui->radioFreq, SIGNAL(editingFinished()), this, SLOT(calcOffset()));
     connect(ui->calcOffsetPb, SIGNAL(clicked(bool)), this, SLOT(calcOffset()));
     connect(ui->negCheckbox, SIGNAL(clicked(bool)), this, SLOT(negCheckBoxSelected(bool)));
     connect(ui->enableTransVertSw, SIGNAL(clicked(bool)), this, SLOT(enableTransVertSwSel(bool)));
     connect(ui->transVertSwNum, SIGNAL(editingFinished()), this, SLOT(transVertSwNumSel()));
+    connect(ui->locTvConChk, SIGNAL(clicked(bool)), this, SLOT(localTransVertSwSel(bool)));
+    connect(ui->locTVComPortSel, SIGNAL(activated(int)), this, SLOT(locTVComPortSel(int)));
 
 }
 
@@ -156,6 +157,8 @@ void TransVertSetupForm::enableTransVertSwSel(bool /*flag*/)
     {
         transVertData->enableTransSwitch = checked;
         setEnableTransVertSwBoxVisible(checked);
+        setEnableLocalTransVertSwVisible(checked);
+        setLocTVSWComportVisible(false);
         transVertValueChanged = true;
     }
 
@@ -179,6 +182,11 @@ void TransVertSetupForm::setEnableTransVertSwBoxVisible(bool visible)
      ui->transVertSwNumLbl->setVisible(visible);
 
 }
+
+
+
+
+
 
 
 /********************* TransVert Switch Number *********************************/
@@ -214,6 +222,77 @@ void TransVertSetupForm::setTransVerSwNum(QString s)
     ui->transVertSwNum->setText(s);
 }
 
+
+
+/**************** Local Transvert Switch Control *****************************/
+
+
+void TransVertSetupForm::localTransVertSwSel(bool /*flag*/)
+{
+
+    bool checked = ui->locTvConChk->isChecked();
+    if (transVertData->enableLocTVSwMsg != checked)
+    {
+        transVertData->enableLocTVSwMsg = checked;
+        setLocTVSWComportVisible(checked);
+        transVertValueChanged = true;
+    }
+
+}
+
+bool TransVertSetupForm::getEnableLocalTransVertSw()
+{
+    return ui->locTvConChk->isChecked();
+}
+
+
+void TransVertSetupForm::setEnableLocalTransVertSw(bool b)
+{
+    ui->locTvConChk->setChecked(b);
+
+}
+
+
+void TransVertSetupForm::setEnableLocalTransVertSwVisible(bool visible)
+{
+     ui->locTvConChk->setVisible(visible);
+
+
+}
+
+
+
+/**************** Local Transvert Switch Comport **************************/
+
+
+
+void TransVertSetupForm::locTVComPortSel(int /*index*/)
+{
+
+    if (ui->locTVComPortSel->currentText() != transVertData->locTVSwComport)
+    {
+        transVertData->locTVSwComport = ui->locTVComPortSel->currentText();
+        transVertValueChanged = true;
+    }
+}
+
+QString TransVertSetupForm::getLocTVSwComport()
+{
+    return ui->locTVComPortSel->currentText();
+}
+
+void TransVertSetupForm::setLocTVSwComport(QString p)
+{
+    ui->locTVComPortSel->setCurrentIndex(ui->locTVComPortSel->findText(p));
+}
+
+
+void TransVertSetupForm::setLocTVSWComportVisible(bool visible)
+{
+     ui->locTVComPortSel->setVisible(visible);
+     ui->locComportSwLbl->setVisible(visible);
+
+}
 
 
 /***************** Radio Antenna Switch Number  ********************************/

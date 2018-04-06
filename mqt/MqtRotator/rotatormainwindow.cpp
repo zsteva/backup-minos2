@@ -1087,7 +1087,7 @@ void RotatorMainWindow::checkEndStop()
     logMessage(QString("currentMinAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
     if (movingCW)
     {
-        if (setupAntenna->currentAntenna.endStopType = ROT_180_180)
+        if (setupAntenna->currentAntenna.endStopType == ROT_180_180)
         {
             if ((rotatorBearing >= setupAntenna->currentAntenna.min_azimuth && rotatorBearing <= COMPASS_MAX360) || (rotatorBearing >= COMPASS_MIN0 && rotatorBearing <= setupAntenna->currentAntenna.max_azimuth))
             {
@@ -1107,7 +1107,7 @@ void RotatorMainWindow::checkEndStop()
     }
     else if (movingCCW)
     {
-        if (setupAntenna->currentAntenna.endStopType = ROT_180_180)
+        if (setupAntenna->currentAntenna.endStopType == ROT_180_180)
         {
             if ((rotatorBearing >= setupAntenna->currentAntenna.min_azimuth && rotatorBearing <= COMPASS_MAX360) || (rotatorBearing >= COMPASS_MIN0 && rotatorBearing <= setupAntenna->currentAntenna.max_azimuth))
             {

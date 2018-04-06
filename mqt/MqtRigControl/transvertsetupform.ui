@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>692</width>
-    <height>80</height>
+    <width>697</width>
+    <height>76</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -113,6 +113,23 @@
      </item>
      <item>
       <widget class="QLineEdit" name="transVertSwNum"/>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="locTvConChk">
+       <property name="text">
+        <string>Enable Local Control</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="locComportSwLbl">
+       <property name="text">
+        <string>Comport</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="locTVComPortSel"/>
      </item>
      <item>
       <spacer name="horizontalSpacer_3">

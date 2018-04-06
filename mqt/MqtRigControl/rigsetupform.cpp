@@ -25,7 +25,7 @@
 #include <QInputDialog>
 
 
-static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
+//static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
 
 
 
@@ -46,7 +46,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVe
 
 
     fillRadioModelInfo();  // add radio models to drop down
-    fillPortsInfo();     // add comports to drop down
+    fillPortsInfo(ui->comPortBox);     // add comports to drop down
     fillSpeedInfo();
     fillDataBitsInfo();
     fillStopBitsInfo();
@@ -66,6 +66,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVe
     connect(ui->netPortBox, SIGNAL(editingFinished()), this, SLOT(networkPortSelected()));
     connect(ui->pollInterval, SIGNAL(activated(int)), this, SLOT(pollIntervalSelected()));
     connect(ui->enableTransVert, SIGNAL(clicked(bool)), this, SLOT(enableTransVertSelected(bool)));
+    connect(ui->CIVlineEdit, SIGNAL(editingFinished()), this, SLOT(civAddressFinished()));
     // transvert
     connect(ui->addTransvert, SIGNAL(clicked(bool)), this, SLOT(addTransVerter()));
     connect(ui->removeTransvert, SIGNAL(clicked(bool)), this, SLOT(removeTransVerter()));
@@ -274,6 +275,51 @@ bool RigSetupForm::findSupTransBand(const QString band)
 
 
 /********************** CIV Entry ***********************/
+
+
+void RigSetupForm::civAddressFinished()
+{
+
+    bool Ok;
+
+    ui->CIVlineEdit->setText(ui->CIVlineEdit->text().trimmed());
+
+    if (!ui->CIVlineEdit->text().isEmpty())
+    {
+        if (!ui->CIVlineEdit->text().contains('x'))
+        {
+            QMessageBox::critical(this, "CIV Error", QString(ui->CIVlineEdit->text()) + " Is not a valid CIV value\nPlease enter the CIV as a Hex number in the form of 0xnn");
+            ui->CIVlineEdit->setText("");
+        }
+        else
+        {
+            int hexValue = ui->CIVlineEdit->text().toInt(&Ok, 16);
+            if (Ok &&  (hexValue < 0 || hexValue > 255))
+            {
+                QMessageBox::critical(this, "CIV Error", QString(ui->CIVlineEdit->text()) + " CIV number out of range 0 - FF");
+                ui->CIVlineEdit->setText("");
+            }
+        }
+    }
+    else
+    {
+        ui->CIVlineEdit->setText("");
+    }
+
+    if (ui->CIVlineEdit->text() != radioData->civAddress)
+    {
+        radioData->civAddress = ui->CIVlineEdit->text();
+        radioValueChanged = true;
+
+    }
+
+}
+
+
+
+
+
+
 
 void RigSetupForm::civSetToolTip()
 {
@@ -596,7 +642,7 @@ void RigSetupForm::fillPollInterValInfo()
     ui->pollInterval->addItems(pollTimeStr);
 }
 
-
+/*
 void RigSetupForm::fillPortsInfo()
 {
 
@@ -629,7 +675,7 @@ void RigSetupForm::fillPortsInfo()
 
 }
 
-
+*/
 
 
 void RigSetupForm::fillSpeedInfo()
@@ -748,6 +794,7 @@ void RigSetupForm::addTransVerter()
     radioData->transVertNames.append(transVerterName);
     addTransVertTab(tabNum, transVerterName);
     radioData->numTransverters = tabNum + 1;
+    ui->transVertTab->setCurrentIndex(tabNum);
     //loadSettingsToTransVertTab(tabNum);
 }
 

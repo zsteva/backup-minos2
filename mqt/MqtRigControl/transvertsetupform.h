@@ -52,6 +52,16 @@ public:
 
 
 
+         void setEnableLocalTransVertSwVisible(bool visible);
+         bool getEnableLocalTransVertSw();
+         void setEnableLocalTransVertSw(bool b);
+
+
+         QString getLocTVSwComport();
+         void setLocTVSwComport(QString p);
+         void setLocTVSWComportVisible(bool visible);
+
+
 signals:
 
     public slots:
@@ -63,9 +73,8 @@ signals:
         void enableTransVertSwSel(bool);
         void transVertSwNumSel();
 
-
-
-
+        void localTransVertSwSel(bool);
+        void locTVComPortSel(int);
 
 
 private:

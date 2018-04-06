@@ -239,6 +239,7 @@ void SetupDialog::addRadio()
     numAvailRadios++;
     loadSettingsToTab(tabNum);
     saveRadio(tabNum);
+    ui->radioTab->setCurrentIndex(tabNum);
     emit radioTabChanged();
 
 }
@@ -651,6 +652,8 @@ void SetupDialog::saveTranVerterSetting(int radioNum, int transVertNum, QSetting
     config.setValue("antSwNumber", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->antSwitchNum);
     config.setValue("enableTransVertSw", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->enableTransSwitch);
     config.setValue("transVertSw", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transSwitchNum);
+    config.setValue("locTransSwEnable", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->enableLocTVSwMsg);
+    config.setValue("locTransVertSwComport", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->locTVSwComport);
     config.endGroup();
 }
 
@@ -669,12 +672,11 @@ void SetupDialog::readTranVerterSetting(int radioNum, int transVertNum, QSetting
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffset = config.value("offsetDouble", 0.0).toDouble();
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertNegative = config.value("negOffset", false).toBool();
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->antSwitchNum = config.value("antSwNumber", "0").toString();
-
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->enableTransSwitch = config.value("enableTransVertSw", false).toBool();
-
     radioTab[radioNum]->transVertTab[transVertNum]->setEnableTransVertSwBoxVisible(radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->enableTransSwitch);
-
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transSwitchNum = config.value("transVertSw", "0").toString();
+    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->enableLocTVSwMsg = config.value("locTransSwEnable", false).toBool();
+    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->locTVSwComport = config.value("locTransVertSwComport", "").toString();
     config.endGroup();
 }
 
