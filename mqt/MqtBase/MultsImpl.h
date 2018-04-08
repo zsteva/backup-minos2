@@ -11,22 +11,7 @@
 //----------------------------------------------------------------------------
 #ifndef MultsImplH
 #define MultsImplH 
-#include "mwin.h"
-#include "MinosParameters.h"
-#include "cutils.h"
-#include "mults.h"
-#include "contest.h"
-#include "calcs.h"
-//----------------------------------------------------------------------------
-class DistrictEntry;
-class DistrictSynonym;
-class DistrictList;
-class CountrySynonymList;
-class CountryEntry;
-class CountrySynonym;					 //
-class CountryList;
-class MultEntry;
-class BaseContestLog;
+#include "base_pch.h"
 
 
 template < class itemtype >

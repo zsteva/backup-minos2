@@ -80,7 +80,6 @@ SOURCES += main.cpp \
 HEADERS  += \
     tlogcontainer.h \
     contestdetails.h \
-    logger_pch.h \
     ContestApp.h \
     LoggerContacts.h \
     LoggerContest.h \

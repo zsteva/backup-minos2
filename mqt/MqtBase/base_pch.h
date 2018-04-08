@@ -17,6 +17,7 @@
 #include <QTimer>
 
 #include <QLineEdit>
+#include <QLabel>
 #include <QMessageBox>
 #include <QStyledItemDelegate>
 #include <QTextDocument>
@@ -26,8 +27,18 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QSortFilterProxyModel>
+#include <QTreeView>
+#include <QAction>
+#include <QMenu>
+#include <QInputDialog>
+#include <QFileDialog>
+#include <QKeyEvent>
+#include <QTableView>
+#include <QTableWidgetItem>
+#include <QTreeView>
+#include <QToolButton>
 
-
+#include <QDebug>
 template <class itemtype >inline bool operator < (const MapWrapper<itemtype> &key1, const MapWrapper<itemtype> &key2)
 {
     itemtype *i1 = key1.wt.data();
@@ -70,6 +81,10 @@ template <class itemtype >inline bool operator == (const MapWrapper<itemtype> &k
 
 #include "TreeUtils.h"
 #include "DisplayContestContact.h"
+
+#include "BandList.h"
+#include "PubSubValue.h"
+#include "TinyUtils.h"
 
 #include "waitcursor.h"
 

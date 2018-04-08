@@ -1,8 +1,7 @@
 #ifndef TBUNDLEFRAME_H
 #define TBUNDLEFRAME_H
 
-#include "logger_pch.h"
-#include <QFrame>
+#include "base_pch.h"
 
 namespace Ui {
 class TBundleFrame;
@@ -16,7 +15,7 @@ class TBundleFrame : public QFrame
     Q_OBJECT
 
 public:
-    explicit TBundleFrame(QWidget *parent = 0);
+    explicit TBundleFrame(QWidget *parent = nullptr);
     ~TBundleFrame();
 
 private:

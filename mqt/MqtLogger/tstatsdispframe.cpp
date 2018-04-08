@@ -1,5 +1,6 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
+#include "LoggerContest.h"
 #include "tstatsdispframe.h"
 #include "ui_tstatsdispframe.h"
 

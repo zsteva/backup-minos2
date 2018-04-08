@@ -17,8 +17,8 @@ class ContestDetails : public QDialog
     Q_OBJECT
 
 public:
-    explicit ContestDetails(QWidget *parent = 0);
-    ~ContestDetails();
+    explicit ContestDetails(QWidget *parent = nullptr);
+    ~ContestDetails() override;
 
 private:
     Ui::ContestDetails *ui;

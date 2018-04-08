@@ -7,7 +7,6 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
-#include "tinyxml.h"
 #include "TinyUtils.h"
 
 MinosTestImport::MinosTestImport( BaseContestLog * const ct ) : ct( ct )

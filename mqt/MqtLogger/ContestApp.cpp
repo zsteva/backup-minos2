@@ -6,13 +6,11 @@
 // COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "LoggerContest.h"
-#include "MatchContact.h"
+#include "ContestApp.h"
 #include "MatchThread.h"
-//#include "MultDisp.h"
-//#include "StatsDisp.h"
 
 //---------------------------------------------------------------------------
 
@@ -21,7 +19,6 @@
 
 qint64 bigClockCorr = 0;
 TContestApp *TContestApp::contestApp = nullptr;
-int inFontChange = 0;
 
 TContestApp *TContestApp::getContestApp()
 {
@@ -569,17 +566,14 @@ void TContestApp::getDisplayColumnWidth( const QString &key, int &val, int def )
 }
 void TContestApp::setDisplayColumnWidth( const QString &key, int val )
 {
-   if (inFontChange <= 0)
-   {
-      if ( val < 0 )
-      {
-         displayBundle.setIntProfile( key, 0 );
-      }
-      else
-      {
-         displayBundle.setIntProfile( key, val );
-      }
-   }
+    if ( val < 0 )
+    {
+        displayBundle.setIntProfile( key, 0 );
+    }
+    else
+    {
+        displayBundle.setIntProfile( key, val );
+    }
 }
 void TContestApp::getBoolDisplayProfile( int enumkey, bool &value )
 {

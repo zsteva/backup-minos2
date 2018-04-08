@@ -9,7 +9,6 @@
 //----------------------------------------------------------------------------
 #ifndef ProfilesH
 #define ProfilesH 
-#include <QString>
 #include "base_pch.h"
 #include "ProfileEnums.h"
 //----------------------------------------------------------------------------

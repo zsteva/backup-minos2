@@ -1,7 +1,6 @@
 #ifndef MINOSTABLEVIEW_H
 #define MINOSTABLEVIEW_H
-#include <QObject>
-#include <QTableView>
+#include "base_pch.h"
 
 class MinosTableView:public QTableView
 {

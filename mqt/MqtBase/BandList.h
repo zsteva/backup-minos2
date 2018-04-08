@@ -22,8 +22,7 @@
 #ifndef BandListH
 #define BandListH
 
-#include <QString>
-#include <QVector>
+#include "base_pch.h"
 //---------------------------------------------------------------------------
 
 class BandInfo

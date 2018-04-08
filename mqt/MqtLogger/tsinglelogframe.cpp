@@ -1,11 +1,10 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
+#include "ContestApp.h"
 #include "MatchThread.h"
 #include "BandList.h"
 #include "tqsoeditdlg.h"
 #include "tentryoptionsform.h"
-#include "tsinglelogframe.h"
-#include "ui_tsinglelogframe.h"
 
 #include "SendRPCDM.h"
 #include "tlogcontainer.h"
@@ -15,6 +14,10 @@
 #include "MatchTreesFrame.h"
 #include "rigmemdialog.h"
 #include "rigutils.h"
+#include "LoggerContest.h"
+
+#include "tsinglelogframe.h"
+#include "ui_tsinglelogframe.h"
 
 TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     QFrame(parent),

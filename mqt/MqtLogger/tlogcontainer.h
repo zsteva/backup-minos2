@@ -1,11 +1,7 @@
 #ifndef TLOGCONTAINER_H
 #define TLOGCONTAINER_H
 
-#include <QMainWindow>
-#include <QMenu>
-#include <QSettings>
-#include <QTimer>
-#include <QLabel>
+#include "base_pch.h"
 
 namespace Ui {
 class TLogContainer;
@@ -23,9 +19,8 @@ class TSendDM;
 class SetMemoryAction: public QAction
 {
 public:
-    SetMemoryAction(QString t, QObject *p):QAction(t, p)
-    {}
-    BaseContestLog *ct = 0;
+    SetMemoryAction(QString t, QObject *p);
+    BaseContestLog *ct = nullptr;
     QString call;
     QString loc;
 };
@@ -34,8 +29,8 @@ class TLogContainer : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit TLogContainer(QWidget *parent = 0);
-    ~TLogContainer();
+    explicit TLogContainer(QWidget *parent = nullptr);
+    ~TLogContainer() override;
 
     TSendDM *sendDM;
 

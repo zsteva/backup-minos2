@@ -11,6 +11,7 @@
 #ifndef AdifImportH
  #define AdifImportH
 
+#include "base_pch.h"
 class ADIFImport
 {
       int offset;

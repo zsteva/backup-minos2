@@ -1,4 +1,4 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "tqsoeditdlg.h"
 #include "ui_tqsoeditdlg.h"

@@ -1,6 +1,5 @@
+#include "base_pch.h"
 #include "KeyerState.h"
-#include "RPCCommandConstants.h"
-#include "MTrace.h"
 
 KeyerState::KeyerState(QString s):PubSubValue(KeyerStateType)
 {

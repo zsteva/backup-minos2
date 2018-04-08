@@ -1,9 +1,7 @@
 #ifndef TLOCCALCFORM_H
 #define TLOCCALCFORM_H
 
-#include <QDialog>
-#include <QLineEdit>
-#include "focuswatcher.h"
+#include "base_pch.h"
 
 namespace Ui {
 class TLocCalcForm;
@@ -14,8 +12,8 @@ class TLocCalcForm : public QDialog
     Q_OBJECT
 
 public:
-    explicit TLocCalcForm(QWidget *parent = 0);
-    ~TLocCalcForm();
+    explicit TLocCalcForm(QWidget *parent = nullptr);
+    ~TLocCalcForm() override;
     virtual int exec() override;
 
     QString S1Loc;

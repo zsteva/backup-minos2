@@ -6,7 +6,11 @@
 // COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "logger_pch.h"
+#include "base_pch.h"
+
+#include "LoggerContest.h"
+#include "LoggerContacts.h"
+#include "ContestApp.h"
 
 #include "AdifImport.h"
 #include "reg1test.h"
@@ -14,7 +18,6 @@
 #include "enqdlg.h"
 #include "MinosTestExport.h"
 #include "LoggerContest.h"
-//#include "TMinosBandChooser.h"
 #include "BandList.h"
 
 LoggerContestLog::LoggerContestLog( void ) : BaseContestLog(),

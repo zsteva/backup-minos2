@@ -1,8 +1,6 @@
 #ifndef MATCHCOLLECTION_H
 #define MATCHCOLLECTION_H
-#include "XMPP_pch.h"
-#include "contacts.h"
-#include "MatchContact.h"
+#include "base_pch.h"
 
 class matchElement
 {

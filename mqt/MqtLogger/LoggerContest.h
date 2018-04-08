@@ -9,7 +9,9 @@
 //----------------------------------------------------------------------------
 #ifndef LoggerContestH
 #define LoggerContestH 
+#include "base_pch.h"
 //----------------------------------------------------------------------------
+#include "profiles.h"
 #include "rigmemcommondata.h"
 #include "PubSubValue.h"
 

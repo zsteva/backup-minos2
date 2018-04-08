@@ -16,7 +16,7 @@ class LocTreeFrame : public QFrame
     Q_OBJECT
 
 public:
-    explicit LocTreeFrame(QWidget *parent = 0);
+    explicit LocTreeFrame(QWidget *parent = nullptr);
     ~LocTreeFrame();
 
     void reInitialiseLocators();

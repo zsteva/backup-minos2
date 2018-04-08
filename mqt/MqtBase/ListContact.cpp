@@ -8,8 +8,6 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
-//#include "..\MinosDisplay\TreeUtils.h"
-
 QString ListContact::getField( int ACol, const BaseContestLog *const curcon ) const
 {
    // only used to get fields for main log display

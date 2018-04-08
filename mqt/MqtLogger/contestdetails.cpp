@@ -1,4 +1,8 @@
-#include "logger_pch.h"
+#include "base_pch.h"
+
+#include "LoggerContest.h"
+#include "LoggerContacts.h"
+
 #include "Calendar.h"
 #include "CalendarList.h"
 #include "BandList.h"

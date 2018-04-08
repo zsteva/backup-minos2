@@ -12,15 +12,17 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include <QSignalMapper>
+//#include <QSignalMapper>
 
-#include "logger_pch.h"
+#include "base_pch.h"
+#include "ContestApp.h"
 #include "tlogcontainer.h"
 #include "tsinglelogframe.h"
 #include "SendRPCDM.h"
 #include "runbuttondialog.h"
 #include "BandList.h"
 #include "rigutils.h"
+#include "LoggerContest.h"
 #include "rigcontrolframe.h"
 #include "ui_rigcontrolframe.h"
 

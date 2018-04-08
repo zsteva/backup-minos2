@@ -1,6 +1,5 @@
+#include "base_pch.h"
 #include "RigDetails.h"
-#include "RPCCommandConstants.h"
-#include "MTrace.h"
 
 
 RigDetails::RigDetails()

@@ -1,10 +1,9 @@
 #ifndef TENTRYOPTIONSFORM_H
 #define TENTRYOPTIONSFORM_H
 
-#include "logger_pch.h"
+#include "base_pch.h"
 
 class LoggerContestLog;
-enum ExportType;
 
 namespace Ui {
 class TEntryOptionsForm;
@@ -18,7 +17,7 @@ class TEntryOptionsForm : public QDialog
 
 public:
     explicit TEntryOptionsForm( QWidget* Owner, LoggerContestLog * , bool minosSave );
-    ~TEntryOptionsForm();
+    ~TEntryOptionsForm() override;
 
     QString doFileSave( );
 private slots:

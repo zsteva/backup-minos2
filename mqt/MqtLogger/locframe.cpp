@@ -1,4 +1,4 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 #include "locframe.h"
 #include "ui_locframe.h"
 #include "htmldelegate.h"

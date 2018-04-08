@@ -7,18 +7,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "logger_pch.h"
-
-#include "ConfigFile.h"
-
-#include "ServerEvent.h"
-#include "LogEvents.h"
-#include "XMPPRPCParams.h"
-#include "XMPPStanzas.h"
-#include "Dispatcher.h"
-#include "XMPPEvents.h"
-#include "XMPPRPCObj.h"
-#include "RPCPubSub.h"
+#include "base_pch.h"
 
 #include "SendRPCDM.h"
 #include "tsinglelogframe.h"

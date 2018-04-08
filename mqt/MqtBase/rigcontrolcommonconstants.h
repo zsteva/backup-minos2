@@ -1,8 +1,7 @@
 #ifndef RIGCONTROLCOMMONCONSTANTS_H
 #define RIGCONTROLCOMMONCONSTANTS_H
 
-#include <QStringList>
-
+#include "base_pch.h"
 
 // Status messages sent to minos logger
 #define RIG_STATUS_CONNECTED "Connected"

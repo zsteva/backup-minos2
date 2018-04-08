@@ -1,4 +1,5 @@
-
+#include "base_pch.h"
+#include "ContestApp.h"
 #include "MatchTreesFrame.h"
 #include "ui_MatchTreesFrame.h"
 #include "focuswatcher.h"

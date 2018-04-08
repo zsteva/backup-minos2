@@ -1,12 +1,8 @@
 #ifndef TQSOEDITDLG_H
 #define TQSOEDITDLG_H
 
-#include <QDialog>
+#include "base_pch.h"
 
-class BaseContact;
-class BaseContestLog;
-class ScreenContact;
-class DisplayContestContact;
 class QTreeWidgetItem;
 class MatchTreeItem;
 
@@ -21,9 +17,9 @@ class TQSOEditDlg : public QDialog
 public:
     explicit TQSOEditDlg( QWidget* Owner, bool unfilled );
 
-    ~TQSOEditDlg();
+    ~TQSOEditDlg() override;
 
-    int exec();
+    int exec() override;
 
 private:
     Ui::TQSOEditDlg *ui;
@@ -34,7 +30,7 @@ private:
     QSharedPointer<BaseContact> firstContact;
     bool unfilled;
     void refreshOps( ScreenContact &screenContact );
-    void keyPressEvent( QKeyEvent* event );
+    void keyPressEvent( QKeyEvent* event ) override;
     void addTreeRoot(QSharedPointer<BaseContact> lct);
     void addTreeChild(QTreeWidgetItem *parent, QString text);
     void doCloseEvent();

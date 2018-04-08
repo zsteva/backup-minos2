@@ -1,4 +1,5 @@
-#include "logger_pch.h"
+#include "base_pch.h"
+#include "LoggerContest.h"
 #include "tentryoptionsform.h"
 #include "ui_tentryoptionsform.h"
 

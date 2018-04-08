@@ -1,7 +1,7 @@
 #ifndef STARTCONFIG_H
 #define STARTCONFIG_H
 
-#include <QDialog>
+#include "base_pch.h"
 
 namespace Ui {
 class StartConfig;

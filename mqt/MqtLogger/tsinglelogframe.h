@@ -1,10 +1,11 @@
 #ifndef TSINGLELOGFRAME_H
 #define TSINGLELOGFRAME_H
 
-#include "logger_pch.h"
+#include "base_pch.h"
 #include "StackedInfoFrame.h"
 #include "ConfigFile.h"
 #include "rotatorcommon.h"
+#include "rigmemcommondata.h"
 
 namespace Ui {
 class TSingleLogFrame;

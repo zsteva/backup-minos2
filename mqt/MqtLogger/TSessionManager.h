@@ -1,10 +1,10 @@
 #ifndef TSESSIONMANAGER_H
 #define TSESSIONMANAGER_H
 
-#include <QDialog>
-#include <QTableWidget>
+#include "base_pch.h"
 
 class TLogContainer;
+class QTableWidgetItem;
 
 namespace Ui {
 class TSessionManager;

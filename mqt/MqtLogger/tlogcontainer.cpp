@@ -1,10 +1,10 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include <QFontDialog>
-#include <QFileDialog>
+//#include <QFileDialog>
 
-#include "tlogcontainer.h"
-#include "ui_tlogcontainer.h"
+#include "ContestApp.h"
+#include "LoggerContest.h"
 
 #include "tsinglelogframe.h"
 #include "taboutbox.h"
@@ -17,13 +17,18 @@
 #include "tloccalcform.h"
 #include "TSessionManager.h"
 #include "StartConfig.h"
-#include "RPCPubSub.h"
 #include "ConfigFile.h"
 #include "SendRPCDM.h"
 #include "MatchTreesFrame.h"
 #include "enqdlg.h"
 
+#include "tlogcontainer.h"
+#include "ui_tlogcontainer.h"
+
 TLogContainer *LogContainer = nullptr;
+
+SetMemoryAction::SetMemoryAction(QString t, QObject *p):QAction(t, p)
+{}
 
 TLogContainer::TLogContainer(QWidget *parent) :
     QMainWindow(parent)

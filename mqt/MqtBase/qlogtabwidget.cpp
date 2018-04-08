@@ -1,3 +1,4 @@
+#include "base_pch.h"
 #include "qlogtabwidget.h"
 
 QLogTabWidget::QLogTabWidget(QWidget *parent) : QTabWidget(parent)

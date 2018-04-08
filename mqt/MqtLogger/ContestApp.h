@@ -10,7 +10,8 @@
 
 #ifndef ContestAppH
 #define ContestAppH
-
+#include "base_pch.h"
+#include "profiles.h"
 //---------------------------------------------------------------------------
 class TMatchThread;
 class ContestSlot
@@ -95,7 +96,7 @@ class TContestApp : public MinosParameters
       virtual bool getAllowLoc4() override;
       virtual bool getAllowLoc8() override;
       virtual bool yesNoMessage( QWidget* Owner, const QString &mess ) override;
-      virtual void mshowMessage( const QString &mess, QWidget* Owner = 0 ) override;
+      virtual void mshowMessage( const QString &mess, QWidget* Owner = nullptr ) override;
       virtual BaseContestLog * getCurrentContest() override;
       virtual bool insertList( ContactList *p, int sno ) override;
       virtual bool isContestOpen( const QString fn ) override;
@@ -104,7 +105,7 @@ class TContestApp : public MinosParameters
 
       TContestApp();
       bool initialise();
-      ~TContestApp();
+      ~TContestApp() override;
       void close();
 
       int getContestSlotCount()
@@ -117,7 +118,7 @@ class TContestApp : public MinosParameters
       }
       int getOccupiedListSlotCount();
 
-      bool insertContest( BaseContestLog *p, int sno );
+      bool insertContest( BaseContestLog *p, int sno ) override;
       BaseContestLog * findFirstContest();
       int findContest( BaseContestLog * p );
       int findList( ContactList * p );

@@ -10,8 +10,7 @@
 
 #ifndef MatchContactH
 #define MatchContactH 
-#include "mwin.h"
-#include "contest.h"
+#include "base_pch.h"
 //---------------------------------------------------------------------------
 class ListContact;
 class ContactList;

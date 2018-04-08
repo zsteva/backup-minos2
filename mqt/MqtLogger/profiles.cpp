@@ -6,10 +6,11 @@
 // COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "MLogFile.h"
 #include "INIFile.h"
+#include "profiles.h"
 
 AppSettingsBundle::AppSettingsBundle():
     SettingsBundle()

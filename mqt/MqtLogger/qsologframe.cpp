@@ -1,5 +1,8 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
+#include "ContestApp.h"
+#include "LoggerContest.h"
+#include "LoggerContacts.h"
 #include "tlogcontainer.h"
 #include "tqsoeditdlg.h"
 #include "tforcelogdlg.h"
@@ -8,8 +11,7 @@
 #include "rigutils.h"
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
-#include <QDebug>
-//#include <QStringList>
+
 
 QSOLogFrame::QSOLogFrame(QWidget *parent) :
     QFrame(parent)
@@ -132,7 +134,7 @@ bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
     {
         if (obj == ui->SerTXEdit || (edit && (obj == ui->timeEdit || obj == ui->dateEdit)))
         {
-            mouseDoubleClickEvent(obj);
+            do_mouseDoubleClickEvent(obj);
         }
    }
 
@@ -819,7 +821,7 @@ void QSOLogFrame::on_RSTRXEdit_textChanged(const QString &/*arg1*/)
     doGJVEditChange( ui->RSTRXEdit );
 }
 
-void QSOLogFrame::mouseDoubleClickEvent(QObject *w)
+void QSOLogFrame::do_mouseDoubleClickEvent(QObject *w)
 {
     // Don't let the dtg be changed when the contest is protected
     if (contest->isReadOnly())

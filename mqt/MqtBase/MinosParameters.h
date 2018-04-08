@@ -12,7 +12,7 @@
 
 #ifndef MinosParametersH
 #define MinosParametersH 
-#include "mwin.h"
+#include "base_pch.h"
 //---------------------------------------------------------------------------
 class BaseContestLog;
 class ContactList;

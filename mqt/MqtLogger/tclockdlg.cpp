@@ -1,7 +1,8 @@
+#include "base_pch.h"
+#include "ContestApp.h"
 #include "tclockdlg.h"
 #include "ui_tclockdlg.h"
 
-#include "logger_pch.h"
 
 TClockDlg::TClockDlg(QWidget *parent) :
     QDialog(parent)

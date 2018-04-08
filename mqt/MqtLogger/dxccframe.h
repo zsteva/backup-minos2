@@ -13,7 +13,7 @@ class DXCCGridModel: public QAbstractItemModel
 {
     public:
         DXCCGridModel();
-        ~DXCCGridModel();
+        ~DXCCGridModel() Q_DECL_OVERRIDE;
 
         LoggerContestLog *ct;
 
@@ -47,8 +47,8 @@ class DXCCFrame : public QFrame
     DXCCSortFilterProxyModel proxyModel;
 
 public:
-    explicit DXCCFrame(QWidget *parent = 0);
-    ~DXCCFrame();
+    explicit DXCCFrame(QWidget *parent = nullptr);
+    ~DXCCFrame() override;
 
     void setContest(LoggerContestLog *contest);
     void reInitialiseCountries();

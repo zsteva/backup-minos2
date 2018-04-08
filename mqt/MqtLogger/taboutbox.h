@@ -1,7 +1,7 @@
 #ifndef TABOUTBOX_H
 #define TABOUTBOX_H
 
-#include <QDialog>
+#include "base_pch.h"
 
 namespace Ui {
 class TAboutBox;
@@ -13,9 +13,9 @@ class TAboutBox : public QDialog
 
     Ui::TAboutBox *ui;
     explicit TAboutBox(QWidget *parent, bool onStartup );
-    ~TAboutBox();
+    ~TAboutBox() override ;
 
-    int exec();
+    int exec() override;
 
     void doCloseEvent();
 

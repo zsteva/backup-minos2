@@ -1,7 +1,7 @@
 #ifndef LOCCALCFRAME_H
 #define LOCCALCFRAME_H
 
-#include "logger_pch.h"
+#include "base_pch.h"
 #include "focuswatcher.h"
 
 namespace Ui {
@@ -13,8 +13,8 @@ class LocCalcFrame : public QFrame
     Q_OBJECT
 
 public:
-    explicit LocCalcFrame(QWidget *parent = 0);
-    ~LocCalcFrame();
+    explicit LocCalcFrame(QWidget *parent = nullptr);
+    ~LocCalcFrame() override;
     void doExec();
     void setContest(BaseContestLog *contest);
 
