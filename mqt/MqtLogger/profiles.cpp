@@ -11,6 +11,13 @@
 #include "MLogFile.h"
 #include "INIFile.h"
 
+AppSettingsBundle::AppSettingsBundle():
+    SettingsBundle()
+{}
+bool AppSettingsBundle::populateDefaultSection()
+{
+    return true;
+}
 //=============================================================================
 BundleFile::BundleFile( PROFILES p )
 {
@@ -35,7 +42,6 @@ BundleFile::BundleFile( PROFILES p )
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpPreloadSection, "PreloadSection", "Default", "Preload contests default section", "Section to use in preload file", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpListsFile, "ListsFile", "./Configuration/ListPreload.ini", "List preload file", "File containing list pre-loads", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpListsSection, "ListsSection", "Default", "Preload Lists file section", "Section to use in lists preload file", false ) ) );
-        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpAppFile, "AppsFile", "./Configuration/Apps.ini", "Apps File", "File containing Apps settings", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpAutoFill, "AutoFill", false, "Auto Fill signal report", "Auto Fill signal report on return", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpAuxWindows, "Auxiliary Windows", 1, "", "Number of Auxiliary Windows", false ) ) );
 
@@ -98,11 +104,6 @@ BundleFile::BundleFile( PROFILES p )
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espOffset, "Bearing Offset", 0, "Antenna Bearing Offset", "Amount to offset antenna bearings", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espRadioName, "Radio", "", "Radio in Rig Control", "Radio in Rig Control", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espRotatorName, "rotator", "", "Rotator in Rotator Control", "Rotator in Rotator Control", false ) ) );
-        break;
-
-    case epAPPPFROFILE:
-        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eapBandMap, "Band Map", "BandMap", "Band Map App", "Band Map App", false ) ) );
-        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eapVoiceKeyer, "Voice Keyer", "Keyer", "Voice Keyer App", "Voice Keyer App", false ) ) );
         break;
 
     case epLOCSQUARESPROFILE:

@@ -38,10 +38,6 @@ public:
     explicit TSingleLogFrame(QWidget *parent, BaseContestLog *contest);
     ~TSingleLogFrame();
 
-    Connectable keyerServerConnectable;
-    Connectable bandMapServerConnectable;
-    void resetConnectables();
-
     void showQSOs();
     void getSplitters();
     void goSerial( );

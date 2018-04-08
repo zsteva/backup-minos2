@@ -80,14 +80,6 @@ class LoggerContestLog : public BaseContestLog
       SettingsBundle stationBundle;    // individual station
       MinosStringItem<QString> stationBundleName;
 
-      AppSettingsBundle appBundle;    // individual apps
-      MinosStringItem<QString> appBundleName;
-
-      MinosStringItem<QString> appRigControl;
-      MinosStringItem<QString> appBandMap;
-      MinosStringItem<QString> appRotator;
-      MinosStringItem<QString> appVoiceKeyer;
-
       MinosItem<PubSubName> radioName;
       MinosItem<PubSubName> rotatorName;
 

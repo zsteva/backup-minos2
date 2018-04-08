@@ -26,7 +26,7 @@
 #include "rigutils.h"
 //---------------------------------------------------------------------------
 TSendDM::TSendDM(QWidget* Owner )
-      : QObject( Owner )
+    : QObject( Owner )
 {
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
@@ -44,72 +44,88 @@ void TSendDM::invalidateCache()
 //---------------------------------------------------------------------------
 void TSendDM::sendKeyerPlay( TSingleLogFrame *tslf, int fno )
 {
-   RPCGeneralClient rpc(rpcConstants::keyerMethod);
-   QSharedPointer<RPCParam>st(new RPCParamStruct);
-   QSharedPointer<RPCParam>sName(new RPCStringParam( rpcConstants::keyerPlayFile ));
-   QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
-   QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
-   st->addMember( select, rpcConstants::selected );
-   st->addMember( sName, "Name" );
-   st->addMember( iValue, "Value" );
-   rpc.getCallArgs() ->addParam( st );
-   rpc.queueCall( tslf->keyerServerConnectable.remoteAppName + "@" + tslf->keyerServerConnectable.serverName );
+    if (!keyerApp.isEmpty())
+    {
+        RPCGeneralClient rpc(rpcConstants::keyerMethod);
+        QSharedPointer<RPCParam>st(new RPCParamStruct);
+        QSharedPointer<RPCParam>sName(new RPCStringParam( rpcConstants::keyerPlayFile ));
+        QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
+        QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
+        st->addMember( select, rpcConstants::selected );
+        st->addMember( sName, "Name" );
+        st->addMember( iValue, "Value" );
+        rpc.getCallArgs() ->addParam( st );
+        rpc.queueCall( keyerApp );
+    }
 }
 void TSendDM::sendKeyerRecord( TSingleLogFrame *tslf, int fno )
 {
-   RPCGeneralClient rpc(rpcConstants::keyerMethod);
-   QSharedPointer<RPCParam>st(new RPCParamStruct);
-   QSharedPointer<RPCParam>sName(new RPCStringParam( "RecordFile" ));
-   QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
-   QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
-   st->addMember( select, rpcConstants::selected );
-   st->addMember( sName, "Name" );
-   st->addMember( iValue, "Value" );
-   rpc.getCallArgs() ->addParam( st );
-   rpc.queueCall( tslf->keyerServerConnectable.remoteAppName + "@" + tslf->keyerServerConnectable.serverName );
+    if (!keyerApp.isEmpty())
+    {
+        RPCGeneralClient rpc(rpcConstants::keyerMethod);
+        QSharedPointer<RPCParam>st(new RPCParamStruct);
+        QSharedPointer<RPCParam>sName(new RPCStringParam( "RecordFile" ));
+        QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
+        QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
+        st->addMember( select, rpcConstants::selected );
+        st->addMember( sName, "Name" );
+        st->addMember( iValue, "Value" );
+        rpc.getCallArgs() ->addParam( st );
+        rpc.queueCall( keyerApp );
+    }
 }
 
 void TSendDM::sendKeyerTone(TSingleLogFrame *tslf)
 {
-    RPCGeneralClient rpc(rpcConstants::keyerMethod);
-    QSharedPointer<RPCParam>st(new RPCParamStruct);
-    QSharedPointer<RPCParam>sName(new RPCStringParam( "Tone" ));
-    QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
-    QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
-    st->addMember( select, rpcConstants::selected );
-    st->addMember( sName, "Name" );
-    st->addMember( iValue, "Value" );
-    rpc.getCallArgs() ->addParam( st );
-    rpc.queueCall( tslf->keyerServerConnectable.remoteAppName + "@" + tslf->keyerServerConnectable.serverName );
+    if (!keyerApp.isEmpty())
+    {
+        RPCGeneralClient rpc(rpcConstants::keyerMethod);
+        QSharedPointer<RPCParam>st(new RPCParamStruct);
+        QSharedPointer<RPCParam>sName(new RPCStringParam( "Tone" ));
+        QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
+        QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
+        st->addMember( select, rpcConstants::selected );
+        st->addMember( sName, "Name" );
+        st->addMember( iValue, "Value" );
+        rpc.getCallArgs() ->addParam( st );
+        rpc.queueCall( keyerApp );
+    }
 }
 void TSendDM::sendKeyerTwoTone(TSingleLogFrame *tslf)
 {
-    RPCGeneralClient rpc(rpcConstants::keyerMethod);
-    QSharedPointer<RPCParam>st(new RPCParamStruct);
-    QSharedPointer<RPCParam>sName(new RPCStringParam( "TwoTone" ));
-    QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
-    QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
-    st->addMember( select, rpcConstants::selected );
-    st->addMember( sName, "Name" );
-    st->addMember( iValue, "Value" );
-    rpc.getCallArgs() ->addParam( st );
-    rpc.queueCall( tslf->keyerServerConnectable.remoteAppName + "@" + tslf->keyerServerConnectable.serverName );
+    if (!keyerApp.isEmpty())
+    {
+        RPCGeneralClient rpc(rpcConstants::keyerMethod);
+        QSharedPointer<RPCParam>st(new RPCParamStruct);
+        QSharedPointer<RPCParam>sName(new RPCStringParam( "TwoTone" ));
+        QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
+        QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
+        st->addMember( select, rpcConstants::selected );
+        st->addMember( sName, "Name" );
+        st->addMember( iValue, "Value" );
+        rpc.getCallArgs() ->addParam( st );
+        rpc.queueCall( keyerApp );
+    }
 }
 void TSendDM::sendKeyerStop(TSingleLogFrame *tslf)
 {
-    RPCGeneralClient rpc(rpcConstants::keyerMethod);
-    QSharedPointer<RPCParam>st(new RPCParamStruct);
-    QSharedPointer<RPCParam>sName(new RPCStringParam( "Stop" ));
-    QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
-    QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
-    st->addMember( select, rpcConstants::selected );
-    st->addMember( sName, "Name" );
-    st->addMember( iValue, "Value" );
-    rpc.getCallArgs() ->addParam( st );
-    rpc.queueCall( tslf->keyerServerConnectable.remoteAppName + "@" + tslf->keyerServerConnectable.serverName );
+    if (!keyerApp.isEmpty())
+    {
+        RPCGeneralClient rpc(rpcConstants::keyerMethod);
+        QSharedPointer<RPCParam>st(new RPCParamStruct);
+        QSharedPointer<RPCParam>sName(new RPCStringParam( "Stop" ));
+        QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
+        QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
+        st->addMember( select, rpcConstants::selected );
+        st->addMember( sName, "Name" );
+        st->addMember( iValue, "Value" );
+        rpc.getCallArgs() ->addParam( st );
+        rpc.queueCall( keyerApp );
+    }
 }
 //---------------------------------------------------------------------------
-void TSendDM::sendBandMap(  TSingleLogFrame *tslf, const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth )
+
+void TSendDM::sendBandMap(  TSingleLogFrame * tslf, const QString &freq, const QString &call, const QString &utc, const QString &loc, const QString &qth )
 {
    RPCGeneralClient rpc(rpcConstants::bandmapMethod);
    QSharedPointer<RPCParam>st(new RPCParamStruct);
@@ -123,22 +139,22 @@ void TSendDM::sendBandMap(  TSingleLogFrame *tslf, const QString &freq, const QS
    st->addMember( qth, rpcConstants::bandmapParamQTH );
 
    rpc.getCallArgs() ->addParam( st );
-   rpc.queueCall( tslf->bandMapServerConnectable.remoteAppName + "@" + tslf->bandMapServerConnectable.serverName );
+//   rpc.queueCall( tslf->bandMapServerConnectable.remoteAppName + "@" + tslf->bandMapServerConnectable.serverName );
 }
 
 void TSendDM::sendRotator(TSingleLogFrame *tslf, rpcConstants::RotateDirection direction, int angle )
 {
-   RPCGeneralClient rpc(rpcConstants::rotatorMethod);
-   QSharedPointer<RPCParam>st(new RPCParamStruct);
+    RPCGeneralClient rpc(rpcConstants::rotatorMethod);
+    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-   QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
-   st->addMember( select, rpcConstants::selected );
-   st->addMember( static_cast<int> (direction), rpcConstants::rotatorParamDirection );
-   st->addMember( angle, rpcConstants::rotatorParamAngle );
-   rpc.getCallArgs() ->addParam( st );
+    QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
+    st->addMember( select, rpcConstants::selected );
+    st->addMember( static_cast<int> (direction), rpcConstants::rotatorParamDirection );
+    st->addMember( angle, rpcConstants::rotatorParamAngle );
+    rpc.getCallArgs() ->addParam( st );
 
-   PubSubName rotSelected = rotatorCache.getSelected();
-   rpc.queueCall( rotSelected );
+    PubSubName rotSelected = rotatorCache.getSelected();
+    rpc.queueCall( rotSelected );
 }
 void TSendDM::changeRotatorSelectionTo(const PubSubName &name, const QString &uuid)
 {
@@ -194,31 +210,31 @@ void TSendDM::sendRigSelection(const PubSubName &s, const QString &mode, const Q
 
 void TSendDM::sendRigControlFreq(TSingleLogFrame *tslf,const QString &freq)
 {
-   RPCGeneralClient rpc(rpcConstants::rigControlMethod);
-   QSharedPointer<RPCParam>st(new RPCParamStruct);
+    RPCGeneralClient rpc(rpcConstants::rigControlMethod);
+    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-   QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
-   st->addMember( select, rpcConstants::selected );
-   st->addMember( freq, rpcConstants::rigControlFreq );
-   rpc.getCallArgs() ->addParam( st );
+    QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
+    st->addMember( select, rpcConstants::selected );
+    st->addMember( freq, rpcConstants::rigControlFreq );
+    rpc.getCallArgs() ->addParam( st );
 
-   PubSubName rigSelected = rigCache.getSelected();
-   rpc.queueCall( rigSelected );
+    PubSubName rigSelected = rigCache.getSelected();
+    rpc.queueCall( rigSelected );
 }
 
 
 void TSendDM::sendRigControlMode(TSingleLogFrame *tslf,const QString &mode)
 {
-   RPCGeneralClient rpc(rpcConstants::rigControlMethod);
-   QSharedPointer<RPCParam>st(new RPCParamStruct);
+    RPCGeneralClient rpc(rpcConstants::rigControlMethod);
+    QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-   QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
-   st->addMember( select, rpcConstants::selected );
-   st->addMember( mode, rpcConstants::rigControlMode );
-   rpc.getCallArgs() ->addParam( st );
+    QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
+    st->addMember( select, rpcConstants::selected );
+    st->addMember( mode, rpcConstants::rigControlMode );
+    rpc.getCallArgs() ->addParam( st );
 
-   PubSubName rigSelected = rigCache.getSelected();
-   rpc.queueCall( rigSelected );
+    PubSubName rigSelected = rigCache.getSelected();
+    rpc.queueCall( rigSelected );
 }
 void TSendDM::sendRotatorPreset(QString s)
 {
@@ -244,11 +260,11 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
         {
             if ( an.getCategory() == rpcConstants::rigStateCategory)
             {
-                 rigCache.setStateString(an);
+                rigCache.setStateString(an);
             }
             if ( an.getCategory() == rpcConstants::rigDetailsCategory)
             {
-                 rigCache.setDetailsString(an);
+                rigCache.setDetailsString(an);
             }
             else if ( an.getCategory() == rpcConstants::rotatorStateCategory )
             {
@@ -291,34 +307,34 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
 
                     for (int i = 0; i < frames.size(); i++)
                     {
-                       TSingleLogFrame *tslf = frames[i];
-                       QString frameUuid = tslf->getContest()->uuid;
+                        TSingleLogFrame *tslf = frames[i];
+                        QString frameUuid = tslf->getContest()->uuid;
 
-                       if (selUuid == frameUuid)
-                       {
-                           if (selState.mode().isDirty())
-                           {
-                               tslf->on_SetMode(selState.mode().getValue());
-                           }
-                           if (selState.freq().isDirty())
-                           {
-                               tslf->on_SetFreq(convertFreqToStr(selState.freq().getValue()));
-                           }
-                           if (selState.status().isDirty())
-                           {
-                               tslf->on_SetRadioState(selState.status().getValue());
-                           }
-                           selState.clearDirty();
+                        if (selUuid == frameUuid)
+                        {
+                            if (selState.mode().isDirty())
+                            {
+                                tslf->on_SetMode(selState.mode().getValue());
+                            }
+                            if (selState.freq().isDirty())
+                            {
+                                tslf->on_SetFreq(convertFreqToStr(selState.freq().getValue()));
+                            }
+                            if (selState.status().isDirty())
+                            {
+                                tslf->on_SetRadioState(selState.status().getValue());
+                            }
+                            selState.clearDirty();
 
-                           if (selDetail.bandList().isDirty())
-                           {
-                               tslf->on_SetBandList(selDetail.bandList().getValue());
-                           }
-                           if (selDetail.transverterStatus().isDirty())
-                           {
-                               tslf->on_SetRadioTxVertState( selDetail.transverterStatus().getValue()?TXVERT_ON:TXVERT_OFF );
-                           }
-                           selDetail.clearDirty();
+                            if (selDetail.bandList().isDirty())
+                            {
+                                tslf->on_SetBandList(selDetail.bandList().getValue());
+                            }
+                            if (selDetail.transverterStatus().isDirty())
+                            {
+                                tslf->on_SetRadioTxVertState( selDetail.transverterStatus().getValue()?TXVERT_ON:TXVERT_OFF );
+                            }
+                            selDetail.clearDirty();
 
                         }
                     }
@@ -334,39 +350,39 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                     {
                         for (int i = 0; i < frames.size(); i++)
                         {
-                           TSingleLogFrame *tslf = frames[i];
-                           QString frameUuid = tslf->getContest()->uuid;
+                            TSingleLogFrame *tslf = frames[i];
+                            QString frameUuid = tslf->getContest()->uuid;
 
-                           if (selUuid == frameUuid)
-                           {
-                               AntennaDetail &selDetail = rotatorCache.getDetails(rotSelected);
+                            if (selUuid == frameUuid)
+                            {
+                                AntennaDetail &selDetail = rotatorCache.getDetails(rotSelected);
 
-                               if (selState.bearing().isDirty())
-                               {
-                                   tslf->on_RotatorBearing(selState.bearing().getValue());
-                               }
-                               if (selState.state().isDirty())
-                               {
-                                   tslf->on_RotatorState(selState.state().getValue());
-                               }
-                               selState.clearDirty();
+                                if (selState.bearing().isDirty())
+                                {
+                                    tslf->on_RotatorBearing(selState.bearing().getValue());
+                                }
+                                if (selState.state().isDirty())
+                                {
+                                    tslf->on_RotatorState(selState.state().getValue());
+                                }
+                                selState.clearDirty();
 
-                               if (selDetail.maxAzimuth().isDirty())
-                               {
-                                   tslf->on_RotatorMaxAzimuth(QString::number(selDetail.maxAzimuth().getValue()));
-                               }
-                               if (selDetail.minAzimuth().isDirty())
-                               {
-                                   tslf->on_RotatorMinAzimuth(QString::number(selDetail.minAzimuth().getValue()));
-                               }
-                               selDetail.clearDirty();
+                                if (selDetail.maxAzimuth().isDirty())
+                                {
+                                    tslf->on_RotatorMaxAzimuth(QString::number(selDetail.maxAzimuth().getValue()));
+                                }
+                                if (selDetail.minAzimuth().isDirty())
+                                {
+                                    tslf->on_RotatorMinAzimuth(QString::number(selDetail.minAzimuth().getValue()));
+                                }
+                                selDetail.clearDirty();
 
-                               if (rotatorCache.rotatorPresetsIsDirty(rotSelected))
-                               {
+                                if (rotatorCache.rotatorPresetsIsDirty(rotSelected))
+                                {
                                     tslf->on_RotatorPresetList(rotatorCache.getRotatorPresets(rotSelected));
-                               }
-                               break;
-                           }
+                                }
+                                break;
+                            }
                         }
                     }
                 }
@@ -374,18 +390,21 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
         }
         for (int i = 0; i < frames.size(); i++)
         {
-           TSingleLogFrame *tslf = frames[i];
+            //TSingleLogFrame *tslf = frames[i];
 
-           if (an.getPublisherProgram() == tslf->keyerServerConnectable.remoteAppName && an.getPublisherServer() == tslf->keyerServerConnectable.serverName)
+            //if (an.getPublisherProgram() == tslf->keyerServerConnectable.remoteAppName && an.getPublisherServer() == tslf->keyerServerConnectable.serverName)
             {
                 if ( an.getCategory() == rpcConstants::KeyerCategory && an.getKey() == rpcConstants::keyerReport )
                 {
+                    if (keyerApp.isEmpty())
+                        keyerApp = PubSubName(an);
                     emit setKeyerLoaded();
                     LogContainer->setCaption( an.getValue() );
                     trace( "KeyerReport " + an.getValue() );
                     break;
                 }
             }
+            /*
             if (an.getPublisherProgram() == tslf->bandMapServerConnectable.remoteAppName && an.getPublisherServer() == tslf->bandMapServerConnectable.serverName)
             {
                 if ( an.getCategory() == rpcConstants::BandMapCategory && an.getKey() == rpcConstants::bandmapKeyLoaded )
@@ -394,6 +413,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                     break;
                 }
             }
+            */
         }
     }
 }

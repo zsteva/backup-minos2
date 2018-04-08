@@ -32,6 +32,8 @@ class TSendDM : public QObject
       RigCache rigCache;
       RotatorCache rotatorCache;
 
+      PubSubName keyerApp;
+
    public:  		// User declarations
       TSendDM( QWidget* Owner );
       ~TSendDM();

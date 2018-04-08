@@ -255,13 +255,7 @@ void MinosTestExport::exportApps(QSharedPointer<QFile> expfd)
     RPCParamStruct * st = new RPCParamStruct;
     makeHeader( st, 1 );
 
-    // This wants "useBundles"(?) and the bundle names selected
     bool dirty = false;
-
-    ct->appRigControl.addIfDirty( st, "appRigControl", dirty );
-    ct->appBandMap.addIfDirty( st, "appBandMap", dirty );
-    ct->appRotator.addIfDirty( st, "appRotator", dirty );
-    ct->appVoiceKeyer.addIfDirty( st, "appVoiceKeyer", dirty );
 
     if ( dirty )
     {
@@ -278,13 +272,11 @@ void MinosTestExport::exportBundles( QSharedPointer<QFile> expfd )
    RPCParamStruct * st = new RPCParamStruct;
    makeHeader( st, 1 );
 
-   // This wants "useBundles"(?) and the bundle names selected
    bool dirty = false;
 
    ct->entryBundleName.addIfDirty( st, "entryBundle", dirty );
    ct->QTHBundleName.addIfDirty( st, "QTHBundle", dirty );
    ct->stationBundleName.addIfDirty( st, "stationBundle", dirty );
-   ct->appBundleName.addIfDirty( st, "appBundle", dirty );
    ct->VHFContestName.addIfDirty(st, "VHFContestName", dirty );
 
    if ( dirty )

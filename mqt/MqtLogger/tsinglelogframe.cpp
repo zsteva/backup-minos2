@@ -48,8 +48,6 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     splitterHandleWidth = 6;
 #endif
 
-    resetConnectables();
-
     qsoModel.initialise(contest);
     ui->QSOTable->setModel(&qsoModel);
     ui->QSOTable->setItemDelegate( new HtmlDelegate );
@@ -150,18 +148,6 @@ TSingleLogFrame::~TSingleLogFrame()
     ui = nullptr;
     contest = nullptr;
 }
-void TSingleLogFrame::resetConnectables()
-{
-    MinosConfig *config = MinosConfig::getMinosConfig();
-
-    LoggerContestLog * ct = dynamic_cast<LoggerContestLog *>( contest );
-    if (ct)
-    {
-        keyerServerConnectable = config->getApp(ct->appVoiceKeyer.getValue());
-        bandMapServerConnectable = config->getApp(ct->appBandMap.getValue());
-    }
-}
-
 
 void TSingleLogFrame::keyPressEvent( QKeyEvent* event )
 {

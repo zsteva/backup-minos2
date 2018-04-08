@@ -104,12 +104,10 @@ int ContestDetails::exec()
     contest->QTHBundle.checkLoaded();
     contest->stationBundle.checkLoaded();
     contest->entryBundle.checkLoaded();
-    contest->appBundle.checkLoaded();
 
     ui->QTHBundleFrame->initialise( this, "QTH", &contest->QTHBundle, &contest->QTHBundleName );
     ui->StationBundleFrame->initialise(this,  "Station", &contest->stationBundle, &contest->stationBundleName );
     ui->EntryBundleFrame->initialise(this,  "Entry", &contest->entryBundle, &contest->entryBundleName );
-    ui->AppsBundleFrame->initialise(this,  "Apps", &contest->appBundle, &contest->appBundleName );
     ui->ContestNameSelected->setText(contest->VHFContestName.getValue());
 
     contest->initialiseINI();
@@ -1097,7 +1095,6 @@ void ContestDetails::enableControls()
    ui->QTHBundleFrame->enableBundle(!protectedChecked);
    ui->StationBundleFrame->enableBundle(!protectedChecked);
    ui->EntryBundleFrame->enableBundle(!protectedChecked);
-   ui->AppsBundleFrame->enableBundle(!protectedChecked);
 
    ui->SectionComboBox->setEnabled(!protectedChecked);
    ui->StartTimeCombo->setEnabled(!protectedChecked);
