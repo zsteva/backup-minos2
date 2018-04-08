@@ -899,13 +899,19 @@ void TSingleLogFrame::on_SetRadioTxVertState(QString s)
 void TSingleLogFrame::sendRadioFreq(QString freq)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+    {
+        sendKeyerStop();    // don't keep calling while tuning!
         LogContainer->sendDM->sendRigControlFreq(this, freq);
+    }
 }
 
 void TSingleLogFrame::sendRadioMode(QString mode)
 {
     if (contest && contest == TContestApp::getContestApp() ->getCurrentContest())
+    {
+        sendKeyerStop();    // don't keep calling while tuning!
         LogContainer->sendDM->sendRigControlMode(this, mode);
+    }
 }
 
 void TSingleLogFrame::sendSelectRadio(const QString &radName, const QString &mode)
