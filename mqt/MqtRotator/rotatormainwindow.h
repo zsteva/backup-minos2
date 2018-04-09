@@ -20,7 +20,6 @@
 #include "base_pch.h"
 #include "rotatorRpc.h"
 #include "rotatorcommon.h"
-#include "editpresetsdialog.h"
 #include "rotpresetbutton.h"
 #include "rotpresetdialog.h"
 #include <QMainWindow>
@@ -278,6 +277,7 @@ private:
 
     void sendPresetListLogger();
     void cwCCWControlVisible(bool visible);
+    void savePreset(RotPresetData &editData);
 };
 
 #endif // ROTATORMAINWINDOW_H

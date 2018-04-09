@@ -22,7 +22,6 @@
 #include "minoscompass.h"
 #include "rotcontrol.h"
 #include "setupdialog.h"
-#include "editpresetsdialog.h"
 #include "logdialog.h"
 #include <QString>
 #include <QLabel>
@@ -118,7 +117,6 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     rotator = new RotControl();
     rotator->getRotatorList();
     setupAntenna = new SetupDialog(rotator);
-    editPresets = new EditPresetsDialog;
     setupLog = new LogDialog;
     pollTimer = new QTimer(this);
 
@@ -602,9 +600,9 @@ void RotatorMainWindow::initActionsConnections()
     connect(setupAntenna, SIGNAL(antennaTabChanged()), this, SLOT(updateSelectAntennaBox()));
 
     // setup presets
-    connect(editPresets, SIGNAL(showEditPresetDialog()), editPresets, SLOT(show()));
-    connect(editPresets, SIGNAL(updatePresetButtonLabels()), this, SLOT(updatePresetLabels()));
-    connect(ui->actionEdit_Presets, SIGNAL(triggered()), editPresets, SLOT(loadPresetEditFieldsShow()));
+    //connect(editPresets, SIGNAL(showEditPresetDialog()), editPresets, SLOT(show()));
+    //connect(editPresets, SIGNAL(updatePresetButtonLabels()), this, SLOT(updatePresetLabels()));
+    //connect(ui->actionEdit_Presets, SIGNAL(triggered()), editPresets, SLOT(loadPresetEditFieldsShow()));
     // Bearing Log
     connect(ui->actionLog_Heading, SIGNAL(triggered()), setupLog, SLOT(loadLogConfig()));
     connect(setupLog, SIGNAL(showLogDialog()), setupLog, SLOT(show()));
@@ -1883,7 +1881,9 @@ void RotatorMainWindow::presetRead(int buttonNumber)
 {
     if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
     {
-        //turnTo(rotPresets[buttonNumber]->bearing.toInt());
+        rotateTo(rotPresets[buttonNumber]->bearing.toInt());
+        ui->bearingEdit->setText(rotPresets[buttonNumber]->bearing);
+        ui->bearingEdit->setFocus();
     }
 
 }
@@ -1979,6 +1979,7 @@ void RotatorMainWindow::saveRotPresetButton(RotPresetData& editData)
 {
     QString msg;
     msg = QString("%1:%2:%3").arg(QString::number(editData.number)).arg(editData.name).arg(editData.bearing);
+    savePreset(editData);
     //emit sendRotatorPreset(msg);
 }
 
@@ -1987,42 +1988,30 @@ void RotatorMainWindow::readPresets()
 {
     QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
     config.beginGroup("Presets");
-
-    for (int i = 0; i < NUM_PRESETS; i++)
+    if (presetButton.count() > 0)
     {
-        rotPresets.append(new RotPresetData(i, config.value("preset" +  QString::number(i+1)).toString(),
-                                        config.value("bearing" +  QString::number(i+1)).toString()));
+        for (int i = 0; i < presetButton.count(); i++)
+        {
+            rotPresets.append(new RotPresetData(i, config.value("preset" +  QString::number(i+1)).toString(),
+                                            config.value("bearing" +  QString::number(i+1)).toString()));
+        }
     }
+
 
     config.endGroup();
 }
 
 
-void RotatorMainWindow:: savePresets()
+void RotatorMainWindow:: savePreset(RotPresetData& editData)
 {
 
 
-    QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
-    config.beginGroup("Presets");
-/*
-    for (int i = 0; i < NUM_PRESETS; i++)
-    {
-        if (presetNameUpdated[i])
-        {
-
-            config.setValue("preset" + QString::number(i+1), rotPresets[i]->name);
-        }
-
-        if (presetBearingUpdated[i])
-        {
-           config.setValue("bearing" + QString::number(i+1), rotPresets[i]->bearing);
-        }
-
-    }
-
-    config.endGroup();
-    emit updatePresetButtonLabels();
-*/
+        QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
+        config.beginGroup("Presets");
+        config.setValue("preset" + QString::number(editData.number + 1), editData.name);
+        config.setValue("bearing" + QString::number(editData.number + 1), editData.bearing);
+        config.endGroup();
+        //emit updatePresetButtonLabels();
 }
 
 
@@ -2031,15 +2020,20 @@ void RotatorMainWindow::refreshPresetLabels()
 {
 
     readPresets();
-
-    for (int i = 0; i < NUM_PRESETS; i++)
+    if (rotPresets.count() > 0)
     {
- //       if (presetName[i] != "" || presetName[i] != presetButtons[i]->text())
- //       {
- //           presetButtons[i]->setText(presetName[i]);
- //           presetButtons[i]->setShortcut(presetShortCut[i]);     // restore the shortcut
- //       }
+        for (int i = 0; i < rotPresets.count(); i++)
+        {
+           if (rotPresets[i]->name != "" || rotPresets[i]->name != presetButton[i]->getText())
+           {
+               RotPresetData d = RotPresetData(i, rotPresets[i]->name, rotPresets[i]->bearing);
+               rotPresetButtonUpdate(i, d);
+                //presetButton[i]->setShortcut(presetShortCut[i]);     // restore the shortcut
+            }
+        }
+
     }
+
 }
 
 

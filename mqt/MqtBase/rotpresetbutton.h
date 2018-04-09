@@ -20,6 +20,8 @@ public:
 
     QToolButton* presetButton;
 
+    void setText(QString t);
+    QString getText();
 signals:
 
     void presetReadAction();
