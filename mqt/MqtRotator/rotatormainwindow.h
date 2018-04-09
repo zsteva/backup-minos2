@@ -211,6 +211,7 @@ private slots:
 
     void onLoggerSelectAntenna(QString);
     void onLoggerSetRotation(int direction, int angle);
+    void onLoggerSetPreset(QString);
     void checkEndStop();
     void checkMoving(int bearing);
 

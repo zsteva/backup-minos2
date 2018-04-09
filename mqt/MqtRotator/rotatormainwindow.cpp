@@ -381,7 +381,25 @@ void RotatorMainWindow::onLoggerSetRotation(int direction, int angle)
 
 }
 
+void RotatorMainWindow::onLoggerSetPreset(QString presetMsg)
+{
+    QStringList msg = presetMsg.split(':');
+    if (msg.count() != 3)
+    {
+        logMessage(QString("Preset from Logger - Message incomplete - %1").arg(presetMsg));
+        return;
+    }
+    else
+    {
+        logMessage(QString("Preset from Logger - Save - Button Number %1, Name %2, Bearing %3").arg(msg[0]).arg(msg[1]).arg(msg[2]));
+        int butNum = msg[0].toInt();
+        RotPresetData d = RotPresetData(butNum, msg[1], msg[2]);
+        setRotPresetButData(butNum, d);
+        rotPresetButtonUpdate(butNum, d);
+    }
 
+
+}
 
 
 
@@ -550,6 +568,7 @@ void RotatorMainWindow::sendPresetListLogger()
 
         }
     }
+
     PubSubName psname(setupAntenna->currentAntennaName);
     msg->rotatorCache.setRotatorPresets(psname, presets.join(':'));
     msg->rotatorCache.publishPresets();
@@ -614,6 +633,7 @@ void RotatorMainWindow::initActionsConnections()
     // Message from Logger
     connect(msg, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));
     connect(msg, SIGNAL(selectAntenna(QString)), this, SLOT(onLoggerSelectAntenna(QString)));
+    connect(msg, SIGNAL(setRotPreset(QString)), this, SLOT(onLoggerSetPreset(QString)));
 
 
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));

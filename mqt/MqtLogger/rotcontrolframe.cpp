@@ -742,6 +742,8 @@ void RotControlFrame::presetRead(int buttonNumber)
     if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
     {
         turnTo(rotPresets[buttonNumber]->bearing.toInt());
+        ui->BrgSt->setText(rotPresets[buttonNumber]->bearing);
+        ui->BrgSt->setFocus();
     }
 
 }
