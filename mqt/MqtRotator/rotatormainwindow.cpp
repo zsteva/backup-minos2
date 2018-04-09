@@ -27,7 +27,6 @@
 #include <QString>
 #include <QLabel>
 #include <QMessageBox>
-#include <QSignalMapper>
 #include <QTimer>
 #include <QTime>
 #include <QSettings>
@@ -113,33 +112,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     ui->actionSkyScan->setVisible(false);
     ui->actionAlways_On_Top->setVisible(false);
 
-    presetButtons[0] = ui->presetButton1;
-    presetButtons[1] = ui->presetButton2;
-    presetButtons[2] = ui->presetButton3;
-    presetButtons[3] = ui->presetButton4;
-    presetButtons[4] = ui->presetButton5;
-    presetButtons[5] = ui->presetButton6;
-    presetButtons[6] = ui->presetButton7;
-    presetButtons[7] = ui->presetButton8;
-    presetButtons[8] = ui->presetButton9;
-    presetButtons[9] = ui->presetButton10;
-
-
-    QSignalMapper *preset_mapper = new QSignalMapper(this);
-
-    for (int i = 0; i < NUM_PRESETS; i++ )
-    {
-        preset_mapper->setMapping(presetButtons[i], i);
-        connect(presetButtons[i], SIGNAL(clicked()), preset_mapper, SLOT(map()));
-
-    }
-    connect(preset_mapper, SIGNAL(mapped(int)), this, SLOT(clickedPreset(int)));
-
-
-    for (int i = 0; i < NUM_PRESETS; i++)
-    {
-        presetButtons[i]->setShortcut(presetShortCut[i]);
-    }
+    initPresetButtons();
 
 
     rotator = new RotControl();
@@ -692,19 +665,6 @@ void RotatorMainWindow::displayBearing(int bearing)
 
     rotatorBearing = bearing;
 
-    if (setupAntenna->currentAntenna.southStopType == S_STOPINV && setupAntenna->currentAntenna.endStopType == ROT_0_360)
-    {
-        if (bearing >= 0 && bearing < COMPASS_HALF)
-        {
-            bearing += COMPASS_HALF;
-        }
-        else
-        {
-            bearing -= COMPASS_HALF;
-        }
-    }
-
-
     curBearingWithOffset = bearing + setupAntenna->currentAntenna.antennaOffset;
 
     logMessage(QString("Current Bearing + offset = %1").arg(QString::number( curBearingWithOffset)));
@@ -848,39 +808,7 @@ void RotatorMainWindow::clickedPreset(int buttonNumber)
 
 
 
-
-
-
-void RotatorMainWindow::readPresets()
-{
-    rotPresets.clear();
-
-    QString fileName;
-    fileName = CONFIGURATION_FILEPATH_LOGGER + MINOS_ROTATOR_CONFIG_FILE;
-
-    QSettings config(fileName, QSettings::IniFormat);
-
-
-    //QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
-    config.beginGroup("Presets");
-    for (int i = 0; i < NUM_PRESETS; i++)
-    {
-        rotPresets.append(new RotPresetData(i, config.value("preset" +  QString::number(i+1)).toString(),
-                          config.value("bearing" +  QString::number(i+1)).toString()));
-        //presetName[i] = config.value("preset" +  QString::number(i+1)).toString();
-        //presetBearing[i] = config.value("bearing" +  QString::number(i+1)).toString();
-    }
-    config.endGroup();
-
-    if (appName != "")
-    {
-        sendPresetListLogger();
-    }
-}
-
-
-
-
+/*
 void RotatorMainWindow::refreshPresetLabels()
 {
 
@@ -905,7 +833,7 @@ void RotatorMainWindow::updatePresetLabels()
     update();
 }
 
-
+*/
 
 
 
@@ -1080,52 +1008,26 @@ void RotatorMainWindow::checkEndStop()
 {
 
     logMessage(QString("Check EndStop"));
-    logMessage(QString("Current EndStopType = %1").arg(endStopNames[setupAntenna->currentAntenna.endStopType]));
     logMessage(QString("curBearingWithOffset = %1").arg(QString::number(curBearingWithOffset)));
     logMessage(QString("rotatorBearing = %1").arg(QString::number(rotatorBearing)));
     logMessage(QString("currentMaxAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
     logMessage(QString("currentMinAzimuth = %1").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
     if (movingCW)
     {
-        if (setupAntenna->currentAntenna.endStopType == ROT_180_180)
+        if (rotatorBearing >= setupAntenna->currentAntenna.max_azimuth)
         {
-            if ((rotatorBearing >= setupAntenna->currentAntenna.min_azimuth && rotatorBearing <= COMPASS_MAX360) || (rotatorBearing >= COMPASS_MIN0 && rotatorBearing <= setupAntenna->currentAntenna.max_azimuth))
-            {
-                return;
-            }
-            if (rotatorBearing >= setupAntenna->currentAntenna.max_azimuth && rotatorBearing <= setupAntenna->currentAntenna.min_azimuth)
-            {
                 logMessage(QString("Max Endstop reached!"));
                 stopButton();
             }
         }
-        else if (rotatorBearing >= setupAntenna->currentAntenna.max_azimuth)
-        {
-            logMessage(QString("Max Endstop reached!"));
-            stopButton();
-        }
-    }
     else if (movingCCW)
     {
-        if (setupAntenna->currentAntenna.endStopType == ROT_180_180)
+        if (rotatorBearing <= setupAntenna->currentAntenna.min_azimuth)
         {
-            if ((rotatorBearing >= setupAntenna->currentAntenna.min_azimuth && rotatorBearing <= COMPASS_MAX360) || (rotatorBearing >= COMPASS_MIN0 && rotatorBearing <= setupAntenna->currentAntenna.max_azimuth))
-            {
-                return;
-            }
-            if (rotatorBearing>= setupAntenna->currentAntenna.max_azimuth && rotatorBearing <= setupAntenna->currentAntenna.min_azimuth)
-            {
                 logMessage(QString("Min Endstop reached!"));
                 stopButton();
             }
-
         }
-        else if (rotatorBearing <= setupAntenna->currentAntenna.min_azimuth)
-        {
-            logMessage(QString("Min Endstop reached!"));
-            stopButton();
-        }
-    }
 }
 
 
@@ -1511,16 +1413,8 @@ void RotatorMainWindow::rotateCW(bool /*clicked*/)
     else
     {
         // button off
-        if (setupAntenna->currentAntenna.endStopType == ROT_180_180)
-        {
-            if (rotatorBearing == setupAntenna->currentAntenna.max_azimuth)
-            {
-                logMessage(QString("CW - Rotator ROT_180_180 Bearing = maxAzimuth = %1").arg(setupAntenna->currentAntenna.max_azimuth));
-                cwCcwCmdflag = false;
-                return;
-            }
-        }
-        else if (rotatorBearing >= setupAntenna->currentAntenna.max_azimuth)
+
+        if (rotatorBearing >= setupAntenna->currentAntenna.max_azimuth)
         {
             logMessage(QString("Rotator Bearing > currentMaxAzimuth"));
             cwCcwCmdflag = false;
@@ -1604,16 +1498,8 @@ void RotatorMainWindow::rotateCCW(bool /*toggle*/)
     else
     {
         // button off
-        if (setupAntenna->currentAntenna.endStopType == ROT_180_180)
-        {
-            if (rotatorBearing == setupAntenna->currentAntenna.min_azimuth)
-            {
-                logMessage(QString("CCW - Rotator ROT_180_180 Bearing = minAzimuth = %1").arg(setupAntenna->currentAntenna.min_azimuth));
-                cwCcwCmdflag = false;
-                return;
-            }
-        }
-        else if (rotatorBearing < setupAntenna->currentAntenna.min_azimuth)
+
+        if (rotatorBearing < setupAntenna->currentAntenna.min_azimuth)
         {
             logMessage(QString("CCW - Rotator Bearing < currentMinAzimuth"));
             cwCcwCmdflag = false;
@@ -1842,15 +1728,7 @@ void RotatorMainWindow::readTraceLogFlag()
 {
 
     QString fileName;
-    if (appName == "")
-    {
-        fileName = CONFIGURATION_FILEPATH_LOCAL + MINOS_ROTATOR_CONFIG_FILE;
-    }
-    else
-    {
         fileName = CONFIGURATION_FILEPATH_LOGGER + MINOS_ROTATOR_CONFIG_FILE;
-    }
-
     QSettings config(fileName, QSettings::IniFormat);
 
     //QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
@@ -1865,15 +1743,7 @@ void RotatorMainWindow::readTraceLogFlag()
 void RotatorMainWindow::saveTraceLogFlag()
 {
     QString fileName;
-    if (appName == "")
-    {
-        fileName = CONFIGURATION_FILEPATH_LOCAL + MINOS_ROTATOR_CONFIG_FILE;
-    }
-    else
-    {
         fileName = CONFIGURATION_FILEPATH_LOGGER + MINOS_ROTATOR_CONFIG_FILE;
-    }
-
     QSettings config(fileName, QSettings::IniFormat);
 
 
@@ -1981,6 +1851,208 @@ void RotatorMainWindow::cwCCWControlVisible(bool visible)
 }
 
 
+
+/**************************** Quick Preset Buttons **************************/
+
+
+void RotatorMainWindow::initPresetButtons()
+{
+
+    QList<QToolButton*> ui_presetbuttons;
+    ui_presetbuttons << ui->presetButton0 << ui->presetButton1 << ui->presetButton2 << ui->presetButton3 << ui->presetButton4
+                     << ui->presetButton5 << ui->presetButton6 << ui->presetButton7 << ui->presetButton8 << ui->presetButton9;
+
+    for (int i = 0; i < ui_presetbuttons.count(); i++)
+    {
+
+        presetButton.append(new RotPresetButton(ui_presetbuttons[i], i));
+
+        connect(presetButton[i], &RotPresetButton::presetReadAction, [this, i]() {presetRead(i);});
+        connect(presetButton[i], &RotPresetButton::presetEditAction, [this, i]() {presetEdit(i);});
+        connect(presetButton[i], &RotPresetButton::presetWriteAction, [this, i]() {presetWrite(i);});
+        connect(presetButton[i], &RotPresetButton::presetClearAction, [this, i]() {presetClear(i);});
+
+
+    }
+
+}
+
+
+
+void RotatorMainWindow::presetRead(int buttonNumber)
+{
+    if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
+    {
+        //turnTo(rotPresets[buttonNumber]->bearing.toInt());
+    }
+
+}
+
+void RotatorMainWindow::presetEdit(int buttonNumber)
+{
+
+
+    if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
+    {
+        RotPresetData editData(buttonNumber, rotPresets[buttonNumber]->name, rotPresets[buttonNumber]->bearing);
+        RotPresetData curData(buttonNumber, rotPresets[buttonNumber]->name, rotPresets[buttonNumber]->bearing);
+
+        logMessage(QString("Preset Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
+        RotPresetDialog presetDialog(buttonNumber, &editData, &curData, this);
+
+
+        if (presetDialog.exec() == QDialog::Accepted)
+        {
+            if (editData.name != curData.name || editData.bearing != curData.bearing)
+            {
+                setRotPresetButData(buttonNumber, editData);
+                rotPresetButtonUpdate(buttonNumber, editData);
+            }
+
+        }
+    }
+
+
+}
+
+void RotatorMainWindow::presetClear(int buttonNumber)
+{
+    logMessage(QString("Preset Clear Selected = %1").arg(QString::number(buttonNumber +1)));
+    if (!rotPresets.isEmpty() && buttonNumber < rotPresets.count())
+    {
+        // clear this preset
+        RotPresetData pData(0, "", "0");
+        rotPresetButtonUpdate(buttonNumber, pData);
+        rotPresetButtonUpdate(buttonNumber, pData);
+    }
+}
+
+/*
+
+void RotatorMainWindow::presetButtonUpdate(int buttonNumber)
+{
+
+}
+*/
+
+void RotatorMainWindow::presetWrite(int buttonNumber)
+{
+    logMessage(QString("Preset Write Selected = %1").arg(QString::number(buttonNumber +1)));
+    if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
+    {
+        RotPresetData editData(buttonNumber, "", "0");
+        RotPresetData curData(buttonNumber, "", "0");
+
+        logMessage(QString("Preset Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
+        RotPresetDialog presetDialog(buttonNumber, &editData, &curData, this);
+
+
+        if (presetDialog.exec() == QDialog::Accepted)
+        {
+            if (editData.name != curData.name || editData.bearing != curData.bearing)
+            {
+                setRotPresetButData(buttonNumber, editData);
+                rotPresetButtonUpdate(buttonNumber, editData);
+            }
+
+        }
+    }
+}
+
+
+void RotatorMainWindow::setRotPresetButData(int buttonNumber, RotPresetData& editData)
+{
+    rotPresets[buttonNumber]->name = editData.name;
+    rotPresets[buttonNumber]->bearing = editData.bearing;
+    saveRotPresetButton(editData);
+}
+
+
+void RotatorMainWindow::rotPresetButtonUpdate(int buttonNumber, RotPresetData& editData)
+{
+    presetButton[buttonNumber]->presetButton->setText(QString("%1: %2").arg(QString::number(buttonNumber + 1)).arg(editData.name) );
+    QString tTipStr = "Bearing = " + editData.bearing;
+    presetButton[buttonNumber]->presetButton->setToolTip(tTipStr);
+}
+
+void RotatorMainWindow::saveRotPresetButton(RotPresetData& editData)
+{
+    QString msg;
+    msg = QString("%1:%2:%3").arg(QString::number(editData.number)).arg(editData.name).arg(editData.bearing);
+    //emit sendRotatorPreset(msg);
+}
+
+
+void RotatorMainWindow::readPresets()
+{
+    QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
+    config.beginGroup("Presets");
+
+    for (int i = 0; i < NUM_PRESETS; i++)
+    {
+        rotPresets.append(new RotPresetData(i, config.value("preset" +  QString::number(i+1)).toString(),
+                                        config.value("bearing" +  QString::number(i+1)).toString()));
+    }
+
+    config.endGroup();
+}
+
+
+void RotatorMainWindow:: savePresets()
+{
+
+
+    QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
+    config.beginGroup("Presets");
+/*
+    for (int i = 0; i < NUM_PRESETS; i++)
+    {
+        if (presetNameUpdated[i])
+        {
+
+            config.setValue("preset" + QString::number(i+1), rotPresets[i]->name);
+        }
+
+        if (presetBearingUpdated[i])
+        {
+           config.setValue("bearing" + QString::number(i+1), rotPresets[i]->bearing);
+        }
+
+    }
+
+    config.endGroup();
+    emit updatePresetButtonLabels();
+*/
+}
+
+
+
+void RotatorMainWindow::refreshPresetLabels()
+{
+
+    readPresets();
+
+    for (int i = 0; i < NUM_PRESETS; i++)
+    {
+ //       if (presetName[i] != "" || presetName[i] != presetButtons[i]->text())
+ //       {
+ //           presetButtons[i]->setText(presetName[i]);
+ //           presetButtons[i]->setShortcut(presetShortCut[i]);     // restore the shortcut
+ //       }
+    }
+}
+
+
+
+void RotatorMainWindow::updatePresetLabels()
+{
+    refreshPresetLabels();
+//    update();
+}
+
+
+
+
 void RotatorMainWindow::aboutRotatorConfig()
 {
 
@@ -2005,7 +2077,7 @@ void RotatorMainWindow::aboutRotatorConfig()
     msg.append(QString("Parity = %1\n").arg(rotator->getParityCodeNames()[setupAntenna->currentAntenna.parity]));
     msg.append(QString("Handshake = %1\n").arg(rotator->getHandShakeNames()[setupAntenna->currentAntenna.handshake]));
     msg.append(QString("Antenna Offset = %1\n").arg(QString::number(setupAntenna->currentAntenna.antennaOffset)));
-    msg.append(QString("Current End Stop Type = %1\n").arg(endStopNames[setupAntenna->currentAntenna.endStopType]));
+    msg.append(QString("Current Rotator Type = %1\n").arg(QString::number(setupAntenna->currentAntenna.endStopType)));
     msg.append(QString("Current Max Azimuth = %1\n").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
     msg.append(QString("Current Min Azimuth = %1\n").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
     msg.append(QString("South Stop Type = %1\n").arg(southStopNames[setupAntenna->currentAntenna.southStopType]));
@@ -2056,7 +2128,7 @@ void RotatorMainWindow::dumpRotatorToTraceLog()
     trace(QString("Parity = %1").arg(rotator->getParityCodeNames()[setupAntenna->currentAntenna.parity]));
     trace(QString("Handshake = %1").arg(rotator->getHandShakeNames()[setupAntenna->currentAntenna.handshake]));
     trace(QString("Antenna Offset = %1").arg(QString::number(setupAntenna->currentAntenna.antennaOffset)));
-    trace(QString("Current End Stop Type Type = %1").arg(endStopNames[setupAntenna->currentAntenna.endStopType]));
+    trace(QString("Current Rotator Type = %1").arg(QString::number(setupAntenna->currentAntenna.endStopType)));
     trace(QString("Current Max Azimuth = %1").arg(QString::number(setupAntenna->currentAntenna.max_azimuth)));
     trace(QString("Current Min Azimuth = %1").arg(QString::number(setupAntenna->currentAntenna.min_azimuth)));
     trace(QString("South Stop Type = %1\n").arg(southStopNames[setupAntenna->currentAntenna.southStopType]));

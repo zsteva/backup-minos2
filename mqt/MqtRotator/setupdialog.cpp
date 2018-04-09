@@ -608,6 +608,7 @@ void SetupDialog::addAntenna()
   numAvailAntennas++;
   loadSettingsToTab(tabNum);
   saveAntenna(tabNum);
+  ui->antennaTab->setCurrentIndex(tabNum);
   emit antennaTabChanged();
 
 

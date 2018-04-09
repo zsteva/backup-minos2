@@ -264,62 +264,21 @@
             </spacer>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_5">
-             <item>
-              <widget class="QLabel" name="label_2">
-               <property name="font">
-                <font>
-                 <pointsize>8</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="text">
-                <string>1</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="presetButton1">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <layout class="QVBoxLayout" name="verticalLayout_5"/>
+           </item>
+           <item>
+            <widget class="QToolButton" name="presetButton0">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
            </item>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_6">
              <item>
-              <widget class="QLabel" name="label_3">
-               <property name="font">
-                <font>
-                 <pointsize>8</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
+              <widget class="QToolButton" name="presetButton1">
                <property name="text">
-                <string>2</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="presetButton2">
-               <property name="text">
-                <string/>
+                <string>...</string>
                </property>
               </widget>
              </item>
@@ -328,28 +287,9 @@
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_7">
              <item>
-              <widget class="QLabel" name="label_6">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
+              <widget class="QToolButton" name="presetButton2">
                <property name="text">
-                <string>3</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="presetButton3">
-               <property name="text">
-                <string/>
+                <string>...</string>
                </property>
               </widget>
              </item>
@@ -388,28 +328,9 @@
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_8">
              <item>
-              <widget class="QLabel" name="label_7">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
+              <widget class="QToolButton" name="presetButton3">
                <property name="text">
-                <string>4</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="presetButton4">
-               <property name="text">
-                <string/>
+                <string>...</string>
                </property>
               </widget>
              </item>
@@ -418,28 +339,9 @@
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_9">
              <item>
-              <widget class="QLabel" name="label_8">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
+              <widget class="QToolButton" name="presetButton4">
                <property name="text">
-                <string>5</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="presetButton5">
-               <property name="text">
-                <string/>
+                <string>...</string>
                </property>
               </widget>
              </item>
@@ -448,28 +350,9 @@
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_10">
              <item>
-              <widget class="QLabel" name="label_9">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
+              <widget class="QToolButton" name="presetButton5">
                <property name="text">
-                <string>6</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="presetButton6">
-               <property name="text">
-                <string/>
+                <string>...</string>
                </property>
               </widget>
              </item>
@@ -478,28 +361,9 @@
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_11">
              <item>
-              <widget class="QLabel" name="label_10">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
+              <widget class="QToolButton" name="presetButton6">
                <property name="text">
-                <string>7</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="presetButton7">
-               <property name="text">
-                <string/>
+                <string>...</string>
                </property>
               </widget>
              </item>
@@ -538,28 +402,9 @@
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_12">
              <item>
-              <widget class="QLabel" name="label_11">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
+              <widget class="QToolButton" name="presetButton7">
                <property name="text">
-                <string>8</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="presetButton8">
-               <property name="text">
-                <string/>
+                <string>...</string>
                </property>
               </widget>
              </item>
@@ -568,28 +413,9 @@
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_13">
              <item>
-              <widget class="QLabel" name="label_12">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
+              <widget class="QToolButton" name="presetButton8">
                <property name="text">
-                <string>9</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="presetButton9">
-               <property name="text">
-                <string/>
+                <string>...</string>
                </property>
               </widget>
              </item>
@@ -598,28 +424,9 @@
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_14">
              <item>
-              <widget class="QLabel" name="label_13">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
+              <widget class="QToolButton" name="presetButton9">
                <property name="text">
-                <string>10</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="presetButton10">
-               <property name="text">
-                <string/>
+                <string>...</string>
                </property>
               </widget>
              </item>

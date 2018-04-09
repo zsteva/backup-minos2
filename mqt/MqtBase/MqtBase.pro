@@ -8,6 +8,7 @@ include($$PWD/../mqt.pri)
 QT       += core gui
 QT       += widgets
 QT       += network
+QT       += serialport
 
 TARGET = MqtBase
 TEMPLATE = lib
@@ -61,7 +62,10 @@ SOURCES += \
     KeyerState.cpp \
     RotatorCache.cpp \
     RigCache.cpp \
-    RigDetails.cpp
+    RigDetails.cpp \
+    rigcommon.cpp \
+    rotpresetbutton.cpp \
+    rotpresetdialog.cpp
 
 HEADERS += \
     BandList.h \
@@ -108,7 +112,10 @@ HEADERS += \
     RigCache.h \
     RigDetails.h \
     minostablewidget.h \
-    rotatorcommon.h
+    rotatorcommon.h \
+    rigcommon.h \
+    rotpresetbutton.h \
+    rotpresetdialog.h
 
 unix {
     target.path = /usr/lib
@@ -122,4 +129,5 @@ FORMS += \
     minoskeyboard.ui \
     tconfigframe.ui \
     StartConfig.ui \
-    ConfigElementFrame.ui
+    ConfigElementFrame.ui \
+    rotpresetdialog.ui

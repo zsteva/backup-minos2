@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "rigcontrol.h"
 #include "transvertsetupform.h"
+#include "rigcommon.h"
 #include "ui_rigsetupform.h"
 
 namespace Ui {
@@ -123,6 +124,9 @@ private slots:
     void removeTransVerter();
     void changeBand();
     void enableTransVertSelected(bool);
+    void civAddressFinished();
+
+
 private:
 
 
@@ -142,7 +146,7 @@ private:
     void fillStopBitsInfo();
     void fillDataBitsInfo();
     void fillSpeedInfo();
-    void fillPortsInfo();
+    //void fillPortsInfo();
     void fillRadioModelInfo();
     void fillMgmModes();
 
