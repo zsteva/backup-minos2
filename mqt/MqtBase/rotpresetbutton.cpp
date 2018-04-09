@@ -70,3 +70,13 @@ void RotPresetButton::clearActionSelected()
     emit presetClearAction();
 }
 
+
+void RotPresetButton::setText(QString t)
+{
+    presetButton->setText(t);
+}
+
+QString RotPresetButton::getText()
+{
+    return presetButton->text();
+}

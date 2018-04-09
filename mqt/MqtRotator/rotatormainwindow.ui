@@ -568,7 +568,6 @@
     <property name="title">
      <string>&amp;Configure</string>
     </property>
-    <addaction name="actionEdit_Presets"/>
     <addaction name="actionSetup_Antennas"/>
     <addaction name="actionLog_Heading"/>
     <addaction name="actionSkyScan"/>

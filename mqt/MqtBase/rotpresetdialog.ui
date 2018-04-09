@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>205</width>
-    <height>115</height>
+    <width>223</width>
+    <height>106</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,11 +26,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="nameEdit">
-         <property name="maxLength">
-          <number>15</number>
-         </property>
-        </widget>
+        <widget class="QLineEdit" name="nameEdit"/>
        </item>
       </layout>
      </item>
@@ -44,11 +40,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="bearingEdit">
-         <property name="maxLength">
-          <number>3</number>
-         </property>
-        </widget>
+        <widget class="QLineEdit" name="bearingEdit"/>
        </item>
       </layout>
      </item>
