@@ -1871,6 +1871,7 @@ void RotatorMainWindow::initPresetButtons()
         connect(presetButton[i], &RotPresetButton::presetEditAction, [this, i]() {presetEdit(i);});
         connect(presetButton[i], &RotPresetButton::presetWriteAction, [this, i]() {presetWrite(i);});
         connect(presetButton[i], &RotPresetButton::presetClearAction, [this, i]() {presetClear(i);});
+        int a = 0;
 
     }
 
