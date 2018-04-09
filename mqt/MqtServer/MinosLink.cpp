@@ -183,7 +183,7 @@ void MinosCommonConnection::on_readyRead()
        qint64 rxlen = sock->read(rxbuff, 4096 - 1);
        if ( rxlen > 0 )
        {
-          rxbuff[ rxlen ] = '\0';
+          rxbuff[ rxlen ] = 0;
 
           // We might have embedded nulls between message parts - so strip them
           int rxpt = 0;
@@ -205,7 +205,7 @@ void MinosCommonConnection::on_readyRead()
              {
                  QStringRef slen = packetbuff.midRef(2, packetoffset - 2);
                  int packetlen = slen.toInt();
-                if ( (packetlen <= static_cast<int> (packetbuff.size()) - 2) && packetbuff.indexOf( ">&&" ) )
+                if ( (packetlen <= static_cast<int> (packetbuff.size()) - 2) && packetbuff.indexOf( ">&&" ) >= 0 )
                 {
                    QString packet = packetbuff.mid( packetoffset, packetlen );
                    int pbsize = packetbuff.size();
@@ -214,12 +214,26 @@ void MinosCommonConnection::on_readyRead()
                        rlen = 0;    // try to fix non-utf characters, e.g. degree character
                    packetbuff = packetbuff.right(  rlen );
 
-                   TiXmlBase::SetCondenseWhiteSpace( false );
-                   TiXmlDocument xdoc;
-                   TIXML_STRING p = packet.toStdString();
-                   xdoc.Parse( p.c_str(), nullptr );
-                   TiXmlElement *tix = xdoc.RootElement();
-                   analyseNode( tix );
+                   if (packet.length())
+                   {
+                       TiXmlBase::SetCondenseWhiteSpace( false );
+                       TiXmlDocument xdoc;
+                       TIXML_STRING p = packet.toStdString();
+                       xdoc.Parse( p.c_str(), nullptr );
+                       if ( xdoc.Error())
+                       {
+                           trace(QString("parse failed; ") + xdoc.ErrorDesc());
+                       }
+                       else
+                       {
+                           TiXmlElement *tix = xdoc.RootElement();
+                           analyseNode( tix );
+                       }
+                   }
+                   else
+                   {
+                       trace("empty packet!");
+                   }
                 }
                 else
                 {

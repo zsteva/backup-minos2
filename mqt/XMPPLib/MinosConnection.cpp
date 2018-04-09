@@ -190,12 +190,19 @@ void MinosAppConnection::on_readyRead()
                             TIXML_STRING packet = packetbuff.substr( packetoffset, upacketlen );
                             packetbuff = packetbuff.substr( packetoffset + upacketlen + 2, strlen( ec + upacketlen ) );
 
+                            if (packet.size())
+                            {
 #ifdef TRACE_PACKETS
 
-                            TraceIncoming( packet.c_str() );
+                                trace( packet.c_str() );
 #endif
 
-                            analyseNode( user_data, packet );
+                                analyseNode( user_data, packet );
+                            }
+                            else
+                            {
+                                trace("empty packet!");
+                            }
                             // and go round again...
                         }
                         else

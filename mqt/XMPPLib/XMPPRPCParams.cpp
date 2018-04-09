@@ -783,6 +783,11 @@ bool RPCArgs::parseParams( TIXML_STRING UTF8XML )   // parse from the string to 
    TiXmlBase::SetCondenseWhiteSpace( false );
    TiXmlDocument paramdoc;
    paramdoc.Parse( UTF8XML.c_str(), nullptr );
+   if ( paramdoc.Error())
+   {
+       trace(QString("parse failed; ") + paramdoc.ErrorDesc());
+       return false;
+   }
    TiXmlElement *root = paramdoc.RootElement();
    if ( !root )
    {

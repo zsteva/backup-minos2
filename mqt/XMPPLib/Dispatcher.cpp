@@ -63,9 +63,16 @@ bool analyseNode(RPCDispatcher *RPCDisp, TIXML_STRING UTF8XML )
    TiXmlBase::SetCondenseWhiteSpace( false );
    TiXmlDocument xdoc;
    xdoc.Parse( UTF8XML.c_str(), nullptr );
-   TiXmlElement *tix = xdoc.RootElement();
-   bool ret = analyseNode( RPCDisp, tix );
-   return ret;
-
+   if (xdoc.Error())
+   {
+       trace(QString("parse error: ") + xdoc.ErrorDesc());
+   }
+   else
+   {
+       TiXmlElement *tix = xdoc.RootElement();
+       bool ret = analyseNode( RPCDisp, tix );
+       return ret;
+   }
+   return false;
 }
 
