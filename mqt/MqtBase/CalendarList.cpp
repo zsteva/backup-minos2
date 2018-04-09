@@ -3,8 +3,6 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 
-#include "tinyxml.h"
-#include "BandList.h"
 #include "Calendar.h"
 #include "CalendarList.h"
 

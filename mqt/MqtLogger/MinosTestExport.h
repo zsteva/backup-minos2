@@ -10,6 +10,8 @@
 
 #ifndef MinosTestExportH
 #define MinosTestExportH 
+#include "base_pch.h"
+
 //---------------------------------------------------------------------------
 
 class RPCParam;

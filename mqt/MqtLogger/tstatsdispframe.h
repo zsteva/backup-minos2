@@ -1,8 +1,7 @@
 #ifndef TSTATSDISPFRAME_H
 #define TSTATSDISPFRAME_H
 
-#include <QFrame>
-#include <QDateTime>
+#include "base_pch.h"
 
 class LoggerContestLog;
 
@@ -15,7 +14,7 @@ class TStatsDispFrame : public QFrame
     Q_OBJECT
 
 public:
-    explicit TStatsDispFrame(QWidget *parent = 0);
+    explicit TStatsDispFrame(QWidget *parent = nullptr);
     ~TStatsDispFrame();
 
     void reInitialiseStats();

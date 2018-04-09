@@ -6,13 +6,11 @@
 // COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "LoggerContest.h"
-#include "MatchContact.h"
+#include "ContestApp.h"
 #include "MatchThread.h"
-//#include "MultDisp.h"
-//#include "StatsDisp.h"
 
 //---------------------------------------------------------------------------
 
@@ -21,7 +19,6 @@
 
 qint64 bigClockCorr = 0;
 TContestApp *TContestApp::contestApp = nullptr;
-int inFontChange = 0;
 
 TContestApp *TContestApp::getContestApp()
 {
@@ -118,7 +115,6 @@ bool TContestApp::initialise()
     BundleFile::bundleFiles[ epENTRYPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epENTRYPROFILE ) );
     BundleFile::bundleFiles[ epQTHPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epQTHPROFILE ) );
     BundleFile::bundleFiles[ epSTATIONPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epSTATIONPROFILE ) );
-    BundleFile::bundleFiles[ epAPPPFROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epAPPPFROFILE ) );
     BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLOCSQUARESPROFILE ) );
 
     //----------------------------------
@@ -173,11 +169,6 @@ bool TContestApp::initialise()
     QString stationfile;
     loggerBundle.getStringProfile( elpStationFile, stationfile );
     BundleFile::bundleFiles[ epSTATIONPROFILE ] ->openProfile( stationfile, "Station details" );
-    //----------------------------------
-
-    QString appfile;
-    loggerBundle.getStringProfile( elpAppFile, appfile );
-    BundleFile::bundleFiles[ epAPPPFROFILE ] ->openProfile( appfile, "Apps" );
     //----------------------------------
 
     QString locsfile;
@@ -575,17 +566,14 @@ void TContestApp::getDisplayColumnWidth( const QString &key, int &val, int def )
 }
 void TContestApp::setDisplayColumnWidth( const QString &key, int val )
 {
-   if (inFontChange <= 0)
-   {
-      if ( val < 0 )
-      {
-         displayBundle.setIntProfile( key, 0 );
-      }
-      else
-      {
-         displayBundle.setIntProfile( key, val );
-      }
-   }
+    if ( val < 0 )
+    {
+        displayBundle.setIntProfile( key, 0 );
+    }
+    else
+    {
+        displayBundle.setIntProfile( key, val );
+    }
 }
 void TContestApp::getBoolDisplayProfile( int enumkey, bool &value )
 {

@@ -1,9 +1,7 @@
 #ifndef MINOSKEYBOARD_H
 #define MINOSKEYBOARD_H
 
-#include <QFrame>
-#include <QToolButton>
-#include <QVector>
+#include "base_pch.h"
 
 namespace Ui {
 class MinosKeyboard;

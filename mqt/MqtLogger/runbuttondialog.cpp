@@ -12,14 +12,15 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "logger_pch.h"
+#include "base_pch.h"
 
-#include "runbuttondialog.h"
-#include "ui_runbuttondialog.h"
 #include "rigmemcommondata.h"
 #include "rigutils.h"
 #include "rigcontrolcommonconstants.h"
 #include "rotatorcommon.h"
+
+#include "runbuttondialog.h"
+#include "ui_runbuttondialog.h"
 
 RunButtonDialog::RunButtonDialog(QWidget *parent) :
     QDialog(parent),

@@ -18,13 +18,16 @@
 #ifndef ROTCONTROLFRAME_H
 #define ROTCONTROLFRAME_H
 
-#include "logger_pch.h"
+#include "base_pch.h"
+#include <QShortcut>
 #include "rotatorcommon.h"
+<<<<<<< HEAD
 #include "rotpresetbutton.h"
+=======
+#include "rigmemcommondata.h"
+>>>>>>> 9c9bc9a98d3e9c9647d4d807b430bacd0cd76613
 #include "rotpresetdialog.h"
 
-
-#include <QShortcut>
 
 namespace Ui {
 class RotControlFrame;

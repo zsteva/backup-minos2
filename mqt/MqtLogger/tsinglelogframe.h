@@ -1,10 +1,11 @@
 #ifndef TSINGLELOGFRAME_H
 #define TSINGLELOGFRAME_H
 
-#include "logger_pch.h"
+#include "base_pch.h"
 #include "StackedInfoFrame.h"
 #include "ConfigFile.h"
 #include "rotatorcommon.h"
+#include "rigmemcommondata.h"
 
 namespace Ui {
 class TSingleLogFrame;
@@ -37,10 +38,6 @@ class TSingleLogFrame : public QFrame
 public:
     explicit TSingleLogFrame(QWidget *parent, BaseContestLog *contest);
     ~TSingleLogFrame();
-
-    Connectable keyerServerConnectable;
-    Connectable bandMapServerConnectable;
-    void resetConnectables();
 
     void showQSOs();
     void getSplitters();
@@ -137,12 +134,11 @@ private slots:
 
     void on_BandMapLoaded();
 
+    void on_RadioLoaded();
     void on_SetRadioList(QString);
     void on_SetBandList(QString);
-    void on_SetRadioName(QString);
     void on_SetMode(QString);
     void on_SetFreq(QString);
-    void on_RadioLoaded();
     void on_SetRadioState(QString);
     void on_SetRadioTxVertState(QString s);
 

@@ -6,9 +6,10 @@
 // COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "logger_pch.h"
+#include "base_pch.h"
 
-//#include "gridhint.h"
+#include "ContestApp.h"
+
 #include "MatchContact.h"
 #include "MatchThread.h"
 #include "tsinglelogframe.h"

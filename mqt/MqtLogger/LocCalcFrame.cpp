@@ -1,7 +1,7 @@
-#include <QDialog>
+#include "base_pch.h"
+
 #include "LocCalcFrame.h"
 #include "ui_LocCalcFrame.h"
-#include "logger_pch.h"
 #include "latlong.h"
 
 LocCalcFrame::LocCalcFrame(QWidget *parent) :

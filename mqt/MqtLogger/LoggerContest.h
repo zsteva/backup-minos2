@@ -9,7 +9,9 @@
 //----------------------------------------------------------------------------
 #ifndef LoggerContestH
 #define LoggerContestH 
+#include "base_pch.h"
 //----------------------------------------------------------------------------
+#include "profiles.h"
 #include "rigmemcommondata.h"
 #include "PubSubValue.h"
 
@@ -79,14 +81,6 @@ class LoggerContestLog : public BaseContestLog
       MinosStringItem<QString> QTHBundleName;
       SettingsBundle stationBundle;    // individual station
       MinosStringItem<QString> stationBundleName;
-
-      AppSettingsBundle appBundle;    // individual apps
-      MinosStringItem<QString> appBundleName;
-
-      MinosStringItem<QString> appRigControl;
-      MinosStringItem<QString> appBandMap;
-      MinosStringItem<QString> appRotator;
-      MinosStringItem<QString> appVoiceKeyer;
 
       MinosItem<PubSubName> radioName;
       MinosItem<PubSubName> rotatorName;

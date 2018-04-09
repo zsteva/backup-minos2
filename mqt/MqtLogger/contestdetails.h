@@ -17,8 +17,8 @@ class ContestDetails : public QDialog
     Q_OBJECT
 
 public:
-    explicit ContestDetails(QWidget *parent = 0);
-    ~ContestDetails();
+    explicit ContestDetails(QWidget *parent = nullptr);
+    ~ContestDetails() override;
 
 private:
     Ui::ContestDetails *ui;
@@ -73,6 +73,8 @@ private slots:
    void on_ProtectedOption_clicked();
    void on_BonusComboBox_currentIndexChanged(int index);
    void on_MGMCheckBox_stateChanged(int arg1);
+   void on_RotatorList(QString s);
+   void on_SetRadioList(QString s);
 };
 
 #endif // CONTESTDETAILS_H

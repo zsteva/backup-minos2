@@ -9,8 +9,7 @@
 
 #ifndef ListContactH
 #define ListContactH 
-#include "mwin.h"
-#include "contacts.h"
+#include "base_pch.h"
 
 //---------------------------------------------------------------------------
 class ListContact

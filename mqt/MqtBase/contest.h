@@ -9,8 +9,8 @@
 //----------------------------------------------------------------------------
 #ifndef ContestH
 #define ContestH 
-#include "mwin.h"
-#include "mults.h"
+#include "base_pch.h"
+
 //----------------------------------------------------------------------------
 // This header covers the structure of contests, logs, etc
 

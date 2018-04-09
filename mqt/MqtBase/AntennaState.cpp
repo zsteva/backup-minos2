@@ -1,6 +1,5 @@
+#include "base_pch.h"
 #include "AntennaState.h"
-#include "RPCCommandConstants.h"
-#include "MTrace.h"
 
 AntennaState::AntennaState():PubSubValue(AntennaStateType)
 {

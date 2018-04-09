@@ -9,11 +9,8 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
+#include "base_pch.h"
 #include "rotatorcommon.h"
-
-
-
-
 
 RotPresetData::RotPresetData(int _number, QString _name, QString _bearing)
 {

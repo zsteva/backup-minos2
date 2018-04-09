@@ -1,9 +1,7 @@
 #ifndef TCONFIGFRAME_H
 #define TCONFIGFRAME_H
 
-#include <QFrame>
-#include <QTimer>
-#include <QVector>
+#include "base_pch.h"
 
 namespace Ui {
 class TConfigFrame;

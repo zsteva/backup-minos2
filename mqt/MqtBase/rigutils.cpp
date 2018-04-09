@@ -7,15 +7,10 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "rigutils.h"
-#include <QRegExp>
-#include <QStringList>
-#include <QMessageBox>
+#include "base_pch.h"
 
 // add delimiter to string for display
 // input string should just be digits
-
-
 
 QString convertFreqStrDisp(QString sfreq)
 {

@@ -18,14 +18,8 @@
 #ifndef RIGCONTROLFRAME_H
 #define RIGCONTROLFRAME_H
 
-#include <QMenu>
-#include <QAction>
-#include <QToolButton>
-#include <QRadioButton>
+#include "base_pch.h"
 #include <QShortcut>
-#include <QComboBox>
-#include <QStringList>
-#include "logger_pch.h"
 #include "RPCCommandConstants.h"
 #include "rigmemcommondata.h"
 
@@ -85,7 +79,7 @@ class RigControlFrame : public QFrame
 
 public:
     explicit RigControlFrame(QWidget *parent);
-    ~RigControlFrame();
+    ~RigControlFrame() override;
 
     Ui::RigControlFrame *ui;
 
@@ -104,7 +98,6 @@ public:
     void setRadioName(QString, QString mode);
     void setRadioState(QString);
     void setRadioTxVertState(QString s);
-    void setRadioNameFromRigControl(QString name);
 
     bool isRadioLoaded();
 

@@ -9,12 +9,7 @@
 
 #ifndef SendRPCDMH
 #define SendRPCDMH 
-#include "logger_pch.h"
-
-#include <QObject>
-#include <QWidget>
-#include <QString>
-#include <QTimer>
+#include "base_pch.h"
 
 #include "ConfigFile.h"
 #include "RigCache.h"
@@ -32,9 +27,14 @@ class TSendDM : public QObject
       RigCache rigCache;
       RotatorCache rotatorCache;
 
+      PubSubName keyerApp;
+
    public:  		// User declarations
       TSendDM( QWidget* Owner );
       ~TSendDM();
+
+      bool radioLoaded = false;
+      bool rotatorLoaded = false;
 
       void invalidateCache();
 

@@ -1,4 +1,7 @@
-#include "logger_pch.h"
+#include "base_pch.h"
+
+#include "LoggerContest.h"
+#include "ContestApp.h"
 
 #include "dxccframe.h"
 #include "ui_dxccframe.h"

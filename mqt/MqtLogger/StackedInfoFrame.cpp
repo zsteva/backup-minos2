@@ -1,8 +1,8 @@
+#include "base_pch.h"
 #include "StackedInfoFrame.h"
-#include <QSignalMapper>
-#include <QSplitter>
 #include "tlogcontainer.h"
 #include "tsinglelogframe.h"
+#include "LoggerContest.h"
 
 #include "ui_StackedInfoFrame.h"
 

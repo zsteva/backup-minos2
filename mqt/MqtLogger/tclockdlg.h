@@ -1,8 +1,7 @@
 #ifndef TCLOCKDLG_H
 #define TCLOCKDLG_H
 
-#include <QDialog>
-#include <QTimer>
+#include "base_pch.h"
 
 namespace Ui {
 class TClockDlg;

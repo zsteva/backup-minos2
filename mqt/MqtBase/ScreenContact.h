@@ -9,7 +9,7 @@
 //----------------------------------------------------------------------------
 #ifndef ScreenContactH
 #define ScreenContactH 
-#include "contest.h"
+#include "base_pch.h"
 //----------------------------------------------------------------------------
 class ScreenContact
 {

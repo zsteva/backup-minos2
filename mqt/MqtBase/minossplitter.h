@@ -1,14 +1,8 @@
 #ifndef MINOSSPLITTER_H
 #define MINOSSPLITTER_H
 
-#include <QWidget>
-#include <QAction>
-#include <QLinearGradient>
-#include <QSplitter>
+#include "base_pch.h"
 #include <QSplitterHandle>
-#include <QPainter>
-#include <QPaintEvent>
-#include <QSizePolicy>
 
 class MinosSplitterHandle : public QSplitterHandle
 {

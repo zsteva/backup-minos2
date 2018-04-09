@@ -1,9 +1,7 @@
 #ifndef QLOGTABWIDGET_H
 #define QLOGTABWIDGET_H
 
-#include <QObject>
-#include <QTabWidget>
-#include <QTabBar>
+#include "base_pch.h"
 
 /**
  *  Derived Class from QTabWidget.

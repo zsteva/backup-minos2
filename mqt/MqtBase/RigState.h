@@ -1,7 +1,6 @@
 #ifndef RIGSTATE_H
 #define RIGSTATE_H
 #include "base_pch.h"
-#include "PubSubValue.h"
 
 const QString RigStateType("RigState");
 class RigState: public PubSubValue

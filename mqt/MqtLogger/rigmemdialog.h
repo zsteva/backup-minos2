@@ -17,10 +17,7 @@
 
 #ifndef RIGMEMDIALOG_H
 #define RIGMEMDIALOG_H
-
-#include <QDialog>
-#include <QSettings>
-#include <QKeyEvent>
+#include "base_pch.h"
 #include "rigmemcommondata.h"
 
 class LoggerContestLog;
@@ -34,7 +31,7 @@ class RigMemDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit RigMemDialog(QWidget *parent = 0);
+    explicit RigMemDialog(QWidget *parent = nullptr);
     ~RigMemDialog();
 
     void setLogData(memoryData::memData*, int buttonNumber, LoggerContestLog *ct);

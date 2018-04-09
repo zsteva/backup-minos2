@@ -1,5 +1,6 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
+#include "ContestApp.h"
 #include "tloccalcform.h"
 #include "tforcelogdlg.h"
 #include "ui_tforcelogdlg.h"

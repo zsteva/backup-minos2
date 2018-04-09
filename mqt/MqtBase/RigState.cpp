@@ -1,6 +1,5 @@
+#include "base_pch.h"
 #include "RigState.h"
-#include "RPCCommandConstants.h"
-#include "MTrace.h"
 
 RigState::RigState()
     :PubSubValue(RigStateType)

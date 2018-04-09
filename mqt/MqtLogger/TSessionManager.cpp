@@ -1,5 +1,6 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
+#include "ContestApp.h"
 #include "tlogcontainer.h"
 #include "enqdlg.h"
 

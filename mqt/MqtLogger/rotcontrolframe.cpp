@@ -12,14 +12,16 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "logger_pch.h"
+#include "base_pch.h"
+#include "ContestApp.h"
+#include "LoggerContest.h"
 #include "tlogcontainer.h"
 #include "tsinglelogframe.h"
-#include "rotcontrolframe.h"
 #include "qsologframe.h"
-#include "ui_rotcontrolframe.h"
 #include "SendRPCDM.h"
 #include "rotatorcommon.h"
+#include "rotcontrolframe.h"
+#include "ui_rotcontrolframe.h"
 
 
 RotControlFrame::RotControlFrame(QWidget *parent):

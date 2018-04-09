@@ -14,7 +14,7 @@ class LocGridModel: public QAbstractItemModel
         QString tlLoc;
     public:
         LocGridModel();
-        ~LocGridModel();
+        ~LocGridModel() override;
 
         BaseContestLog *ct;
         int rows;
@@ -44,7 +44,7 @@ class LocFrame : public QFrame
     Q_OBJECT
 
 public:
-    explicit LocFrame(QWidget *parent = 0);
+    explicit LocFrame(QWidget *parent = nullptr);
     ~LocFrame();
 
     void reInitialiseLocators();

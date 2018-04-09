@@ -21,11 +21,6 @@
 
 #include "base_pch.h"
 
-#include "tinyxml.h"
-#include "TinyUtils.h"
-
-#include "BandList.h"
-
 //---------------------------------------------------------------------------
 
 void BandInfo::setType ( const QString &t )

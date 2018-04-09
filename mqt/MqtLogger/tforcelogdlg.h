@@ -1,12 +1,7 @@
 #ifndef TFORCELOGDLG_H
 #define TFORCELOGDLG_H
 
-#include "logger_pch.h"
-#include <QDialog>
-
-//class BaseContestLog;
-//class ScreenContact;
-//class ErrorList;
+#include "base_pch.h"
 
 namespace Ui {
 class TForceLogDlg;

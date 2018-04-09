@@ -1,7 +1,5 @@
 #include "base_pch.h"
 
-#include <QFileDialog>
-
 #include "ConfigElementFrame.h"
 #include "ui_ConfigElementFrame.h"
 

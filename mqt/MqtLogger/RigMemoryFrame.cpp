@@ -1,7 +1,5 @@
-#include <QGridLayout>
-#include <QToolButton>
-
-#include "logger_pch.h"
+#include "base_pch.h"
+#include "LoggerContest.h"
 #include "tlogcontainer.h"
 #include "tsinglelogframe.h"
 #include "rigmemdialog.h"

@@ -1,8 +1,7 @@
 #ifndef CalendarListH
 #define CalendarListH 
 //---------------------------------------------------------------------------
-#include <QString>
-#include <QWidget>
+#include "base_pch.h"
 #include "Calendar.h"
 extern int calendarFormYear;
 #define LOWYEAR -1

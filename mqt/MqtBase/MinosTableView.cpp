@@ -1,7 +1,7 @@
+#include "base_pch.h"
 #include "MinosTableView.h"
 #include <QScrollBar>
 #include <QHeaderView>
-//#include <QToolButton>
 
 MinosTableView::MinosTableView(QWidget *parent):QTableView(parent), centreCell(QModelIndex())
 {

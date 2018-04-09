@@ -9,8 +9,7 @@
 //----------------------------------------------------------------------------
 #ifndef CutilsH
 #define CutilsH
-#include "mwin.h"
-#include "QValidator"
+#include "base_pch.h"
 
 //----------------------------------------------------------------------------
 extern const double pi /* = (double )3.141592653 */;  /* pi */

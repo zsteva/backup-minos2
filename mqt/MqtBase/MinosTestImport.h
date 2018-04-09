@@ -10,8 +10,7 @@
 
 #ifndef MinosTestImportH
 #define MinosTestImportH 
-#include "XMPP_pch.h"
-#include "contest.h"
+#include "base_pch.h"
 //---------------------------------------------------------------------------
 class MinosTestImport: public RPCDispatcher
 {

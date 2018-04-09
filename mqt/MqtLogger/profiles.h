@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------------
 #ifndef ProfilesH
 #define ProfilesH 
+#include "base_pch.h"
+#include "ProfileEnums.h"
 //----------------------------------------------------------------------------
 class SettingsBundle;
 class ProfileEntry
@@ -61,7 +63,7 @@ class SettingsBundle
       QString noneBundle;
 
       SettingsBundle( );
-      ~SettingsBundle();
+      virtual ~SettingsBundle();
       QString getBundle();
 
       void checkLoaded();
@@ -118,10 +120,7 @@ class SettingsBundle
 class AppSettingsBundle:public SettingsBundle
 {
 public:
-    AppSettingsBundle():SettingsBundle()
-    {
-        noneBundle = "<DefaultApps>";
-    }
-    virtual bool populateDefaultSection()override {return true;}
+    AppSettingsBundle();
+    virtual bool populateDefaultSection()override;
 };
 #endif

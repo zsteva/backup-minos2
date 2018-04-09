@@ -1,6 +1,5 @@
+#include "base_pch.h"
 #include "AntennaDetail.h"
-#include "RPCCommandConstants.h"
-#include "MTrace.h"
 
 AntennaDetail::AntennaDetail(): PubSubValue(AntennaDetailType)
 {

@@ -9,6 +9,8 @@
 
 #ifndef PrintFileH
 #define PrintFileH
+#include "base_pch.h"
+
 //---------------------------------------------------------------------------
 
 class PrintFileLine

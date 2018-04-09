@@ -1,7 +1,7 @@
 #ifndef STACKEDINFOFRAME_H
 #define STACKEDINFOFRAME_H
 
-#include "logger_pch.h"
+#include "base_pch.h"
 
 namespace Ui {
 class StackedInfoFrame;

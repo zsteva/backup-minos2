@@ -1,10 +1,10 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include <QFontDialog>
-#include <QFileDialog>
+//#include <QFileDialog>
 
-#include "tlogcontainer.h"
-#include "ui_tlogcontainer.h"
+#include "ContestApp.h"
+#include "LoggerContest.h"
 
 #include "tsinglelogframe.h"
 #include "taboutbox.h"
@@ -17,13 +17,18 @@
 #include "tloccalcform.h"
 #include "TSessionManager.h"
 #include "StartConfig.h"
-#include "RPCPubSub.h"
 #include "ConfigFile.h"
 #include "SendRPCDM.h"
 #include "MatchTreesFrame.h"
 #include "enqdlg.h"
 
+#include "tlogcontainer.h"
+#include "ui_tlogcontainer.h"
+
 TLogContainer *LogContainer = nullptr;
+
+SetMemoryAction::SetMemoryAction(QString t, QObject *p):QAction(t, p)
+{}
 
 TLogContainer::TLogContainer(QWidget *parent) :
     QMainWindow(parent)
@@ -95,7 +100,7 @@ void TLogContainer::subscribeApps()
     {
         rpc->subscribeRemote( servers[i], rpcConstants::rigControlCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::KeyerCategory );
-        rpc->subscribeRemote( servers[i], rpcConstants::BandMapCategory );
+//        rpc->subscribeRemote( servers[i], rpcConstants::BandMapCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::RotatorCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::rotatorDetailCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::rotatorStateCategory );
@@ -716,7 +721,6 @@ void TLogContainer::ContestDetailsActionExecute()
             pced.setDetails( ct );
             if ( pced.exec() == QDialog::Accepted )
             {
-                f->resetConnectables();
                 subscribeApps();
                 // and we need to do some re-init on the display
                 f->updateQSODisplay();
@@ -1128,7 +1132,6 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
          f->logColumnsChanged = true;  // also causes show QSOs
          f->splittersChanged = true;
 
-         f->resetConnectables();
          subscribeApps();
 
          on_ContestPageControl_currentChanged(tno);

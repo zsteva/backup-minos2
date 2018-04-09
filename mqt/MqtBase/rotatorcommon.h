@@ -12,8 +12,7 @@
 #ifndef ROTATORCOMMON_H
 #define ROTATORCOMMON_H
 
-#include <QString>
-#include <QStringList>
+#include "base_pch.h"
 
 class RotPresetData
 {

@@ -10,8 +10,7 @@
 //----------------------------------------------------------------------------
 #ifndef DisplayContestContactH
 #define DisplayContestContactH 
-#include "mwin.h"
-#include "contacts.h"
+#include "base_pch.h"
 //----------------------------------------------------------------------------
 class DisplayContestContact: public BaseContact
 {

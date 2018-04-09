@@ -2,8 +2,6 @@
 #define ANTENNADETAIL_H
 #include "base_pch.h"
 
-#include "PubSubValue.h"
-
 const QString AntennaDetailType("AntennaDetail");
 
 

@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------
 #ifndef LoggerContactsH
 #define LoggerContactsH 
+#include "base_pch.h"
 //----------------------------------------------------------------------------
 // This header covers the structure of contests, logs, etc
 

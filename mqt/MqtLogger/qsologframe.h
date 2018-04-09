@@ -1,7 +1,7 @@
 #ifndef QSOLOGFRAME_H
 #define QSOLOGFRAME_H
 
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "focuswatcher.h"
 #include "validators.h"
@@ -96,7 +96,7 @@ private:
     bool validateControls( validTypes command );
     void contactValid( void );
 
-    void mouseDoubleClickEvent(QObject *w);
+    void do_mouseDoubleClickEvent(QObject *w);
     QSharedPointer<BaseContact> getLastContact();
     QSharedPointer<BaseContact> getPriorContact();
     QSharedPointer<BaseContact> getNextContact();

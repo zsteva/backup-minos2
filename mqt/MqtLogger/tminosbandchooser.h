@@ -1,7 +1,7 @@
 #ifndef TMINOSBANDCHOOSER_H
 #define TMINOSBANDCHOOSER_H
 
-#include <QDialog>
+#include "base_pch.h"
 
 namespace Ui {
 class TMinosBandChooser;
@@ -12,7 +12,7 @@ class TMinosBandChooser : public QDialog
     Q_OBJECT
 
 public:
-    explicit TMinosBandChooser(QWidget *parent = 0);
+    explicit TMinosBandChooser(QWidget *parent = nullptr);
     ~TMinosBandChooser();
 
 private:
