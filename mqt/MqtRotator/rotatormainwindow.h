@@ -91,11 +91,7 @@ signals:
     void displayActualBearing(QString);
     void presetRotateTo();
 
-    void presetButtonUpdate(int);
-    void presetButReadActSel(int buttonNumber);
-    void presetButWriteActSel(int buttonNumber);
-    void presetButEditActSel(int buttonNumber);
-    void presetButClearActSel(int buttonNumber);
+
 
 private:
     Ui::RotatorMainWindow *ui;
@@ -107,7 +103,7 @@ private:
     QTimer LogTimer;
     QTimer RotateTimer;
 
-    QMap<int, PresetButton *> presetButMap;
+    QList<RotPresetButton *> presetButton;
     QVector<RotPresetData*> rotPresets;
 
     QComboBox *selectAntenna;
@@ -249,6 +245,12 @@ private slots:
 
     void onSelectAntennaBox();
     void onLaunchSetup();
+    void presetRead(int num);
+    void presetWrite(int num);
+    void presetEdit(int num);
+    void presetClear(int num);
+
+
 private:
     void rotateTo(int bearing);
     int northCalcTarget(int targetBearing);

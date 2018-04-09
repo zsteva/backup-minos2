@@ -12,6 +12,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
+#include <QSignalMapper>
 #include "logger_pch.h"
 #include "tlogcontainer.h"
 #include "tsinglelogframe.h"
@@ -716,20 +717,28 @@ void RotControlFrame::getRotDetails(memoryData::memData &m)
 void RotControlFrame::initPresetButtons()
 {
 
-    presetButMap[0] = new RotPresetButton(ui->presetButton0, this, 0);
-    presetButMap[1] = new RotPresetButton(ui->presetButton1, this, 1);
-    presetButMap[2] = new RotPresetButton(ui->presetButton2, this, 2);
-    presetButMap[3] = new RotPresetButton(ui->presetButton3, this, 3);
-    presetButMap[4] = new RotPresetButton(ui->presetButton4, this, 4);
-    presetButMap[5] = new RotPresetButton(ui->presetButton5, this, 5);
-    presetButMap[6] = new RotPresetButton(ui->presetButton6, this, 6);
-    presetButMap[7] = new RotPresetButton(ui->presetButton7, this, 7);
-    presetButMap[8] = new RotPresetButton(ui->presetButton8, this, 8);
-    presetButMap[9] = new RotPresetButton(ui->presetButton9, this, 9);
+    QList<QToolButton*> ui_presetbuttons;
+    ui_presetbuttons << ui->presetButton0 << ui->presetButton1 << ui->presetButton2 << ui->presetButton3 << ui->presetButton4
+                     << ui->presetButton5 << ui->presetButton6 << ui->presetButton7 << ui->presetButton8 << ui->presetButton9;
+
+    for (int i = 0; i < ui_presetbuttons.count(); i++)
+    {
+
+        presetButton.append(new RotPresetButton(ui_presetbuttons[i], i));
+
+        connect(presetButton[i], &RotPresetButton::presetReadAction, [this, i]() {presetRead(i);});
+        connect(presetButton[i], &RotPresetButton::presetEditAction, [this, i]() {presetEdit(i);});
+        connect(presetButton[i], &RotPresetButton::presetWriteAction, [this, i]() {presetWrite(i);});
+        connect(presetButton[i], &RotPresetButton::presetClearAction, [this, i]() {presetClear(i);});
+
+    }
 
 }
 
-void RotControlFrame::presetButReadActSel(int buttonNumber)
+
+
+
+void RotControlFrame::presetRead(int buttonNumber)
 {
     if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
     {
@@ -738,7 +747,7 @@ void RotControlFrame::presetButReadActSel(int buttonNumber)
 
 }
 
-void RotControlFrame::presetButEditActSel(int buttonNumber)
+void RotControlFrame::presetEdit(int buttonNumber)
 {
 
 
@@ -765,7 +774,7 @@ void RotControlFrame::presetButEditActSel(int buttonNumber)
 
 }
 
-void RotControlFrame::presetButClearActSel(int buttonNumber)
+void RotControlFrame::presetClear(int buttonNumber)
 {
     traceMsg(QString("RotFrame: Preset Clear Selected = %1").arg(QString::number(buttonNumber +1)));
     if (!rotPresets.isEmpty() && buttonNumber < rotPresets.count())
@@ -776,13 +785,13 @@ void RotControlFrame::presetButClearActSel(int buttonNumber)
         rotPresetButtonUpdate(buttonNumber, pData);
     }
 }
-
+/*
 void RotControlFrame::presetButtonUpdate(int buttonNumber)
 {
 
 }
-
-void RotControlFrame::presetButWriteActSel(int buttonNumber)
+*/
+void RotControlFrame::presetWrite(int buttonNumber)
 {
     traceMsg(QString("RotFrame: Preset Write Selected = %1").arg(QString::number(buttonNumber +1)));
     if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
@@ -817,9 +826,9 @@ void RotControlFrame::setRotPresetButData(int buttonNumber, RotPresetData& editD
 
 void RotControlFrame::rotPresetButtonUpdate(int buttonNumber, RotPresetData& editData)
 {
-    presetButMap[buttonNumber]->presetButton->setText(QString("%1: %2").arg(QString::number(buttonNumber + 1)).arg(editData.name) );
+    presetButton[buttonNumber]->presetButton->setText(QString("%1: %2").arg(QString::number(buttonNumber + 1)).arg(editData.name) );
     QString tTipStr = "Bearing = " + editData.bearing;
-    presetButMap[buttonNumber]->presetButton->setToolTip(tTipStr);
+    presetButton[buttonNumber]->presetButton->setToolTip(tTipStr);
 }
 
 void RotControlFrame::saveRotPresetButton(RotPresetData& editData)

@@ -3,40 +3,20 @@
 
 
 
-RotPresetButton::RotPresetButton(QToolButton *b, RotControlFrame *rcf, int num)
+
+
+
+RotPresetButton::RotPresetButton(QToolButton *b, int num)
 {
-    presetNo = num;
-    rotControlFrame = rcf;
+    presetNum = num;
+
     presetButton = b;
-
-    initButton();
-
-}
-
-
-RotPresetButton::RotPresetButton(QToolButton *b, RotatorMainWindow *rmw, int num)
-{
-    presetNo = num;
-    rotMainWindow = rmw;
-    presetButton = b;
-
-    initButton();
-
-}
-
-
-
-
-
-RotPresetButton::initButton()
-{
-
     presetMenu = new QMenu(presetButton);
 
     presetButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
     presetButton->setPopupMode(QToolButton::MenuButtonPopup);
     presetButton->setFocusPolicy(Qt::NoFocus);
-    presetButton->setText(QString::number(presetNo + 1));
+    presetButton->setText(QString("%1:").arg(QString::number(presetNum + 1)));
 
     //shortKey = new QShortcut(QKeySequence(runButShortCut[memNo]), memButton);
     //shiftShortKey = new QShortcut(QKeySequence(runButShiftShortCut[memNo]), memButton);
@@ -57,24 +37,14 @@ RotPresetButton::initButton()
     connect( writeAction, SIGNAL( triggered() ), this, SLOT(writeActionSelected()));
     connect( editAction, SIGNAL( triggered() ), this, SLOT(editActionSelected()));
     connect( clearAction, SIGNAL( triggered() ), this, SLOT(clearActionSelected()));
+
+
 }
 
 
 RotPresetButton::~RotPresetButton()
 {
 //    delete memButton;
-}
-void RotPresetButton::presetUpdate()
-{
-    if (rotControlFrame)
-    {
-       rotControlFrame->presetButtonUpdate(presetNo);
-    }
-    else
-    {
-        rotMainWindow->presetButtonUpdate(presetNo);
-    }
-
 }
 
 void RotPresetButton::presetShortCutSelected()
@@ -85,41 +55,18 @@ void RotPresetButton::presetShortCutSelected()
 }
 void RotPresetButton::readActionSelected()
 {
-    if (rotControlFrame)
-    {
-        rotControlFrame->presetButReadActSel(presetNo);
-    }
-    else
-    {
-        rotMainWindow->presetButReadActSel(presetNo);
-    }
+    emit presetReadAction();
 }
 void RotPresetButton::editActionSelected()
 {
-    if (rotControlFrame)
-    {
-        rotControlFrame->presetButEditActSel(presetNo);
-    }
-    else
-    {
-        rotMainWindow->presetButEditActSel(presetNo);
-    }
-
+    emit presetEditAction();
 }
 void RotPresetButton::writeActionSelected()
 {
-    if (rotControlFrame)
-    {
-        rotControlFrame->presetButWriteActSel(presetNo);
-    }
-    else
-    {
-        rotMainWindow->presetButWriteActSel(presetNo);
-    }
-
+    emit presetWriteAction();
 }
 void RotPresetButton::clearActionSelected()
 {
-    emit clearActionSelected(presetNo);
+    emit presetClearAction();
 }
 

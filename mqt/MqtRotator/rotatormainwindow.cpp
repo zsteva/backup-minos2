@@ -27,7 +27,6 @@
 #include <QString>
 #include <QLabel>
 #include <QMessageBox>
-#include <QSignalMapper>
 #include <QTimer>
 #include <QTime>
 #include <QSettings>
@@ -114,7 +113,6 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     ui->actionAlways_On_Top->setVisible(false);
 
     initPresetButtons();
-
 
 
     rotator = new RotControl();
@@ -1730,15 +1728,7 @@ void RotatorMainWindow::readTraceLogFlag()
 {
 
     QString fileName;
-    if (appName == "")
-    {
-        fileName = CONFIGURATION_FILEPATH_LOCAL + MINOS_ROTATOR_CONFIG_FILE;
-    }
-    else
-    {
-        fileName = CONFIGURATION_FILEPATH_LOGGER + MINOS_ROTATOR_CONFIG_FILE;
-    }
-
+    fileName = CONFIGURATION_FILEPATH_LOGGER + MINOS_ROTATOR_CONFIG_FILE;
     QSettings config(fileName, QSettings::IniFormat);
 
     //QSettings config("./Configuration/MinosRotatorConfig.ini", QSettings::IniFormat);
@@ -1753,15 +1743,7 @@ void RotatorMainWindow::readTraceLogFlag()
 void RotatorMainWindow::saveTraceLogFlag()
 {
     QString fileName;
-    if (appName == "")
-    {
-        fileName = CONFIGURATION_FILEPATH_LOCAL + MINOS_ROTATOR_CONFIG_FILE;
-    }
-    else
-    {
-        fileName = CONFIGURATION_FILEPATH_LOGGER + MINOS_ROTATOR_CONFIG_FILE;
-    }
-
+    fileName = CONFIGURATION_FILEPATH_LOGGER + MINOS_ROTATOR_CONFIG_FILE;
     QSettings config(fileName, QSettings::IniFormat);
 
 
@@ -1876,20 +1858,27 @@ void RotatorMainWindow::cwCCWControlVisible(bool visible)
 void RotatorMainWindow::initPresetButtons()
 {
 
-    presetButMap[0] = new RotPresetButton(ui->presetButton0, this, 0);
-    presetButMap[1] = new RotPresetButton(ui->presetButton1, this, 1);
-    presetButMap[2] = new RotPresetButton(ui->presetButton2, this, 2);
-    presetButMap[3] = new RotPresetButton(ui->presetButton3, this, 3);
-    presetButMap[4] = new RotPresetButton(ui->presetButton4, this, 4);
-    presetButMap[5] = new RotPresetButton(ui->presetButton5, this, 5);
-    presetButMap[6] = new RotPresetButton(ui->presetButton6, this, 6);
-    presetButMap[7] = new RotPresetButton(ui->presetButton7, this, 7);
-    presetButMap[8] = new RotPresetButton(ui->presetButton8, this, 8);
-    presetButMap[9] = new RotPresetButton(ui->presetButton9, this, 9);
+    QList<QToolButton*> ui_presetbuttons;
+    ui_presetbuttons << ui->presetButton0 << ui->presetButton1 << ui->presetButton2 << ui->presetButton3 << ui->presetButton4
+                     << ui->presetButton5 << ui->presetButton6 << ui->presetButton7 << ui->presetButton8 << ui->presetButton9;
+
+    for (int i = 0; i < ui_presetbuttons.count(); i++)
+    {
+
+        presetButton.append(new RotPresetButton(ui_presetbuttons[i], i));
+
+        connect(presetButton[i], &RotPresetButton::presetReadAction, [this, i]() {presetRead(i);});
+        connect(presetButton[i], &RotPresetButton::presetEditAction, [this, i]() {presetEdit(i);});
+        connect(presetButton[i], &RotPresetButton::presetWriteAction, [this, i]() {presetWrite(i);});
+        connect(presetButton[i], &RotPresetButton::presetClearAction, [this, i]() {presetClear(i);});
+
+    }
 
 }
 
-void RotatorMainWindow::presetButReadActSel(int buttonNumber)
+
+
+void RotatorMainWindow::presetRead(int buttonNumber)
 {
     if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
     {
@@ -1898,7 +1887,7 @@ void RotatorMainWindow::presetButReadActSel(int buttonNumber)
 
 }
 
-void RotatorMainWindow::presetButEditActSel(int buttonNumber)
+void RotatorMainWindow::presetEdit(int buttonNumber)
 {
 
 
@@ -1925,7 +1914,7 @@ void RotatorMainWindow::presetButEditActSel(int buttonNumber)
 
 }
 
-void RotatorMainWindow::presetButClearActSel(int buttonNumber)
+void RotatorMainWindow::presetClear(int buttonNumber)
 {
     logMessage(QString("Preset Clear Selected = %1").arg(QString::number(buttonNumber +1)));
     if (!rotPresets.isEmpty() && buttonNumber < rotPresets.count())
@@ -1937,12 +1926,15 @@ void RotatorMainWindow::presetButClearActSel(int buttonNumber)
     }
 }
 
+/*
+
 void RotatorMainWindow::presetButtonUpdate(int buttonNumber)
 {
 
 }
+*/
 
-void RotatorMainWindow::presetButWriteActSel(int buttonNumber)
+void RotatorMainWindow::presetWrite(int buttonNumber)
 {
     logMessage(QString("Preset Write Selected = %1").arg(QString::number(buttonNumber +1)));
     if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
@@ -1977,9 +1969,9 @@ void RotatorMainWindow::setRotPresetButData(int buttonNumber, RotPresetData& edi
 
 void RotatorMainWindow::rotPresetButtonUpdate(int buttonNumber, RotPresetData& editData)
 {
-    presetButMap[buttonNumber]->presetButton->setText(QString("%1: %2").arg(QString::number(buttonNumber + 1)).arg(editData.name) );
+    presetButton[buttonNumber]->presetButton->setText(QString("%1: %2").arg(QString::number(buttonNumber + 1)).arg(editData.name) );
     QString tTipStr = "Bearing = " + editData.bearing;
-    presetButMap[buttonNumber]->presetButton->setToolTip(tTipStr);
+    presetButton[buttonNumber]->presetButton->setToolTip(tTipStr);
 }
 
 void RotatorMainWindow::saveRotPresetButton(RotPresetData& editData)
@@ -1999,8 +1991,6 @@ void RotatorMainWindow::readPresets()
     {
         rotPresets.append(new RotPresetData(i, config.value("preset" +  QString::number(i+1)).toString(),
                                         config.value("bearing" +  QString::number(i+1)).toString()));
-        //presetName[i] = config.value("preset" +  QString::number(i+1)).toString();
-        //presetBearing[i] = config.value("bearing" +  QString::number(i+1)).toString();
     }
 
     config.endGroup();
@@ -2036,6 +2026,28 @@ void RotatorMainWindow:: savePresets()
 
 
 
+void RotatorMainWindow::refreshPresetLabels()
+{
+
+    readPresets();
+
+    for (int i = 0; i < NUM_PRESETS; i++)
+    {
+ //       if (presetName[i] != "" || presetName[i] != presetButtons[i]->text())
+ //       {
+ //           presetButtons[i]->setText(presetName[i]);
+ //           presetButtons[i]->setShortcut(presetShortCut[i]);     // restore the shortcut
+ //       }
+    }
+}
+
+
+
+void RotatorMainWindow::updatePresetLabels()
+{
+    refreshPresetLabels();
+//    update();
+}
 
 
 

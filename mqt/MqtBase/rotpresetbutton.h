@@ -6,8 +6,6 @@
 #include <QMenu>
 
 
-class RotControlFrame;
-class RotatorMainWindow;
 
 
 //class RotPreset;
@@ -16,14 +14,22 @@ class RotPresetButton : public QObject
     Q_OBJECT
 
 public:
-    explicit RotPresetButton(QToolButton *b, RotControlFrame *rcf, int num);
-    explicit RotPresetButton(QToolButton *b, RotatorMainWindow *rmw, int num);
+    explicit RotPresetButton(QToolButton *b, int num);
 
     ~RotPresetButton();
 
-    RotControlFrame *rotControlFrame = nullptr;
-    RotatorMainWindow *rotMainWindow = nullptr;
     QToolButton* presetButton;
+
+signals:
+
+    void presetReadAction();
+    void presetEditAction();
+    void presetWriteAction();
+    void presetClearAction();
+
+private:
+
+
     QMenu* presetMenu;
     QShortcut* shortKey;
     QShortcut* shiftShortKey;
@@ -32,21 +38,21 @@ public:
     QAction* editAction;
     QAction* clearAction;
 
-    int presetNo;
+
+    int presetNum;
 
 private slots:
-    void presetUpdate();
+    //void presetUpdate();
 
     void presetShortCutSelected();
     void readActionSelected();
     void editActionSelected();
     void writeActionSelected();
     void clearActionSelected();
-signals:
-    void clearActionSelected(int);
-    void selectRadio(QString);
 
-    initButton();
+
+
+
 
 
 };
