@@ -63,7 +63,9 @@ SOURCES += \
     RotatorCache.cpp \
     RigCache.cpp \
     RigDetails.cpp \
-    rigcommon.cpp
+    rigcommon.cpp \
+    rotpresetbutton.cpp \
+    rotpresetdialog.cpp
 
 HEADERS += \
     BandList.h \
@@ -111,7 +113,9 @@ HEADERS += \
     RigDetails.h \
     minostablewidget.h \
     rotatorcommon.h \
-    rigcommon.h
+    rigcommon.h \
+    rotpresetbutton.h \
+    rotpresetdialog.h
 
 unix {
     target.path = /usr/lib
@@ -125,4 +129,5 @@ FORMS += \
     minoskeyboard.ui \
     tconfigframe.ui \
     StartConfig.ui \
-    ConfigElementFrame.ui
+    ConfigElementFrame.ui \
+    rotpresetdialog.ui
