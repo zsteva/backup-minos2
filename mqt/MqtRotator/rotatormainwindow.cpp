@@ -1980,6 +1980,7 @@ void RotatorMainWindow::saveRotPresetButton(RotPresetData& editData)
     QString msg;
     msg = QString("%1:%2:%3").arg(QString::number(editData.number)).arg(editData.name).arg(editData.bearing);
     savePreset(editData);
+    sendPresetListLogger();
     //emit sendRotatorPreset(msg);
 }
 
