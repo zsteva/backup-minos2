@@ -34,13 +34,13 @@
 
 
 
-SetupDialog::SetupDialog(RotControl *rotator, QWidget *parent) :
+SetupDialog::SetupDialog(RotControl* _rotator, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SetupDialog)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    rotator = rotator;
+    rotator = _rotator;
 
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveButtonPushed()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancelButtonPushed()));

@@ -814,11 +814,13 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
          }
     }
     transVertTab.append(new TransVertSetupForm(radioData->transVertSettings[tabNum]));
+    addedTransVertTabs.append(tabName);
 
     ui->transVertTab->insertTab(tabNum, transVertTab[tabNum], tabName);
     ui->transVertTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
     ui->transVertTab->setCurrentIndex(tabNum);
     transVertTab[tabNum]->setEnableTransVertSwBoxVisible(false);
+
     // does this radio support antenna sw?
     bool antSwFlg = false;
     int retCode = 0;
@@ -834,6 +836,7 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
        //transVertTab[tabNum]->antSwNumVisible(false);
        radioData->antSwitchAvail = false;
     }
+
     buildSupBandList();
     transVertTab[tabNum]->transVertValueChanged = true;
 
@@ -854,6 +857,11 @@ bool RigSetupForm::checkTransVerterNameMatch(QString transVertName)
 
 void RigSetupForm::removeTransVerter()
 {
+
+    if (transVertTab.count() < 1)
+    {
+        return;
+    }
 
     int currentIndex = ui->transVertTab->currentIndex();
     QString currentName = ui->transVertTab->tabText(currentIndex);
@@ -876,21 +884,15 @@ void RigSetupForm::removeTransVerter()
     radioData->transVertNames.removeAt(currentIndex);
     radioData->transVertSettings.removeAt(currentIndex);
     radioData->numTransverters--;
+    removedTransVertTabs.append(currentName);
 
-    QString fileName = TRANSVERT_PATH_LOGGER + radioData->radioName + FILENAME_TRANSVERT_RADIOS;
 
-    QSettings config(fileName, QSettings::IniFormat);
-    config.beginGroup(currentName);
-    if (radioData->numTransverters > 1)
-    {
-        config.remove(currentName);
-    }
-    else
-    {
-        config.remove("");      // remove all keys for this group
-    }
+    //QString fileName = TRANSVERT_PATH_LOGGER + radioData->radioName + FILENAME_TRANSVERT_RADIOS;
 
-    config.endGroup();
+    //QSettings config(fileName, QSettings::IniFormat);
+    //config.beginGroup(currentName);
+    //config.remove("");      // remove all keys for this group
+    //config.endGroup();
 
 }
 
@@ -929,10 +931,13 @@ void RigSetupForm::changeBand()
         return;
     }
 
+    QString oldName = radioData->transVertNames[tabNum];
     ui->transVertTab->setTabText(tabNum, transVertName);
     radioData->transVertNames[tabNum] = transVertName;
     radioData->transVertSettings[tabNum]->band = transVertName;
     radioData->transVertSettings[tabNum]->transVertName = transVertName;
+
+
     for (int i = 0; i < bands.count(); i++)
     {
          if (bands[i]->name == transVertName)
@@ -941,6 +946,17 @@ void RigSetupForm::changeBand()
              radioData->transVertSettings[tabNum]->fHigh = bands[i]->fHigh;
          }
     }
+    renamedTransVertTabs.append(oldName);
+    // remove old entry
+    //QString fileName = TRANSVERT_PATH_LOGGER + radioData->radioName + FILENAME_TRANSVERT_RADIOS;
+
+    //QSettings config(fileName, QSettings::IniFormat);
+    //config.beginGroup(oldName);
+    //config.remove("");      // remove all keys for this group
+    //config.endGroup();
+
+
+
 
     transVertTab[tabNum]->transVertValueChanged = true;
 

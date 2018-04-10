@@ -13,7 +13,7 @@ class AddTransVerterDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddTransVerterDialog(QVector<BandDetail*> _bands, QStringList &transVertNames, QWidget *parent = 0);
+    explicit AddTransVerterDialog(QVector<BandDetail*> _bands, QStringList& _transVertNames, QWidget *parent = 0);
     ~AddTransVerterDialog();
 
     QString getTransVerterName();

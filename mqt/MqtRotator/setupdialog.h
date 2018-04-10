@@ -45,7 +45,7 @@ class SetupDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SetupDialog(RotControl *rotator, QWidget *parent = nullptr);
+    explicit SetupDialog(RotControl* _rotator, QWidget *parent = nullptr);
     ~SetupDialog();
 
 

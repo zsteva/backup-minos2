@@ -1064,6 +1064,12 @@ void RigControlMainWindow::loggerSetMode(QString mode)
 
 void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
 {
+    if (mode == "")
+    {
+        logMessage(QString("SetMode: Mode is blank!"));
+        return;
+    }
+
     int retCode = 0;
 
     cmdLockOn();      // lock get radio info
@@ -1182,7 +1188,7 @@ void RigControlMainWindow::hamlibError(int errorCode, QString cmd)
     {
         return;
     }
-    if(appName > 0)
+    if(appName.count() > 0)
     {
         sendStatusToLogError();
     }
@@ -1548,7 +1554,7 @@ void RigControlMainWindow::loadBands()
 
     for (int i = 5; i < 15; i++)   // just load VHF/UHF bands
     {
-        bands.append(new BandDetail(blist.bandList[i].adif, blist.bandList[i].flow, blist.bandList[i].fhigh));
+        bands.append(new BandDetail(blist.bandList[i].uk, blist.bandList[i].flow, blist.bandList[i].fhigh));
     }
 
 }

@@ -44,7 +44,7 @@ class RigControlMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit RigControlMainWindow(QWidget *parent = 0);
+    explicit RigControlMainWindow(QWidget *parent = nullptr);
     ~RigControlMainWindow();
 
     bool freqPresetChanged = false;
