@@ -8,6 +8,9 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
+const double pi = 3.141592653 ;  /* pi */
+const double dr = pi / 180.0;      // degree to radian conversion factor
+
 char diskBuffer[ bsize + 1 ];
 //char *lbuff = &diskBuffer[ 0 ];
 int buffpt = 0;
