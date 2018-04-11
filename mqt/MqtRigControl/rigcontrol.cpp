@@ -163,7 +163,7 @@ bool RigControl::checkFreqValid(freq_t freq, rmode_t mode)
 {
 
     const freq_range_t* freq_range = rig_get_range(my_rig->caps->tx_range_list1, freq, mode);
-    return (freq_range != 0)? true:false;
+    return (freq_range != nullptr)? true:false;
 
 }
 
@@ -176,7 +176,7 @@ bool RigControl::chkFreqRange(RIG *my_rig, freq_t freq, QString modeStr)
 {
     rmode_t mode = convertQStrMode(modeStr);
     const freq_range_t* freq_range = rig_get_range(my_rig->caps->rx_range_list1, freq, mode);
-    return (freq_range != 0)? true:false;
+    return (freq_range != nullptr)? true:false;
 
 }
 
@@ -266,7 +266,7 @@ int RigControl::supportRit(int rigNumber, bool *ritFlag)
     myRig = rig_init(rigNumber);
     if (myRig)
     {
-        if (myRig->caps->get_rit == 0 || myRig->caps->set_rit == 0)
+        if (myRig->caps->get_rit == nullptr || myRig->caps->set_rit == nullptr)
         {
             *ritFlag = false;
             return retCode;
@@ -377,7 +377,7 @@ void RigControl::getRigList()
     {
         capsList.clear();
         rig_load_all_backends();
-        rig_list_foreach(collect,0);
+        rig_list_foreach(collect,nullptr);
         qSort(capsList.begin(),capsList.end(),model_Sort);
         riglistLoaded=true;
     }
@@ -452,7 +452,7 @@ int RigControl::supportAntSw(int rigNumber, bool *antSwFlag)
     myRig = rig_init(rigNumber);
     if (myRig)
     {
-        if (myRig->caps->get_ant == 0 || myRig->caps->set_ant == 0)
+        if (myRig->caps->get_ant == nullptr || myRig->caps->set_ant == nullptr)
         {
             *antSwFlag = false;
             return retCode;
@@ -478,7 +478,7 @@ int RigControl::getPortType(int rigNumber, rig_port_e *portType)
     int retCode = 0;
     RIG *my_rig;
     my_rig = rig_init(rigNumber);
-    if (!my_rig == 0)
+    if (my_rig != nullptr)
     {
         *portType = my_rig->caps->port_type;
         return retCode;

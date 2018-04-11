@@ -2,13 +2,13 @@
 #include "ui_addtransverterdialog.h"
 #include "BandList.h"
 
-AddTransVerterDialog::AddTransVerterDialog(QVector<BandDetail*> _bands, QStringList &transVertNames, QWidget *parent) :
+AddTransVerterDialog::AddTransVerterDialog(QVector<BandDetail*> _bands, QStringList& _transVertNames, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddTransVerterDialog)
 {
     ui->setupUi(this);
     bands = _bands;
-    transVerterNames = transVertNames;
+    transVerterNames = _transVertNames;
     loadBandSel();
 
 }

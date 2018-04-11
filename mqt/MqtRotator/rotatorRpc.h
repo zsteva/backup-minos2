@@ -35,6 +35,7 @@ public:
 signals:
     void setRotation(int direction, int angle);
     void selectAntenna(QString);
+    void setRotPreset(QString);
 
 private slots:
     void on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );

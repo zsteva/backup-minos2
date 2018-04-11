@@ -72,6 +72,7 @@ void RotatorRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const 
         QSharedPointer<RPCParam> psAngle;
         QSharedPointer<RPCParam> psAntName;
         QSharedPointer<RPCParam> psSelect;
+        QSharedPointer<RPCParam> psRotPreset;
         RPCArgs *args = mro->getCallArgs();
         if ( args->getStructArgMember( 0, rpcConstants::rotatorParamDirection, psDirection )
              && args->getStructArgMember( 0, rpcConstants::rotatorParamAngle, psAngle ) )
@@ -103,6 +104,16 @@ void RotatorRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const 
                      }
                 }
                 emit selectAntenna(name);
+            }
+        }
+        else if (args->getStructArgMember(0, rpcConstants::rotPreset, psRotPreset))
+        {
+            QString rotPreset;
+            if (psRotPreset->getString(rotPreset))
+            {
+                // here you handle what the logger has sent to us
+                trace(QString("Rig RPC: rotPreset Command From Logger = %1").arg(rotPreset));
+                emit setRotPreset(rotPreset);
             }
         }
     }

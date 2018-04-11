@@ -108,7 +108,7 @@ const int NUMPRESET = 10;
 enum bandOffSet {_10M, _6M, _4M, _2M, _70CM, _23CM, _13CM, _9CM, _6CM, _3CM};
 
 
-const QStringList presetBands = (QStringList() << "10m" << "6m" << "4m" << "2m" << "70cm" << "23cm" << "13cm" << "9cm" << "6cm" << "3cm");
+const QStringList presetBands = (QStringList() << "28 MHz" << "50 MHz" << "70 MHz" << "144 MHz" << "432 MHz" << "1296 MHz" << "2320 MHz" << "3.4 GHz" << "5.6 GHz" << "10 GHz");
 
 
 const QStringList bandFreq = { "28170000",

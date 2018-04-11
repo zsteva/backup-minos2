@@ -45,7 +45,7 @@ class SetupDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SetupDialog(RotControl *rotator, QWidget *parent = nullptr);
+    explicit SetupDialog(RotControl* _rotator, QWidget *parent = nullptr);
     ~SetupDialog();
 
 
@@ -57,6 +57,9 @@ public:
     QStringList availAntennas;
     int numAvailAntennas;
 
+    QStringList addedAntennaTabs;     // tracked edited data
+    QStringList removeAntennaTabs;
+    QStringList renameAntennaTabs;   // old antenna names
 
 
     QString getCurrentAntenna() const;
@@ -122,6 +125,7 @@ private:
 
     void loadSettingsToTab(int tabNum);
     void getAvailAntenna(int antNum, QSettings &config);
+    void initSetup();
 };
 
 #endif // SETUPDIALOG_H

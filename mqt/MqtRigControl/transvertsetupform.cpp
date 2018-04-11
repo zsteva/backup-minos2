@@ -21,7 +21,7 @@
 #include <QCheckBox>
 
 
-TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *parent) :
+TransVertSetupForm::TransVertSetupForm(TransVertParams* _transvertData, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::transVertSetupForm),
     transVertValueChanged(false),
@@ -29,7 +29,7 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams *transvertData, QWidget *
 {
 
     ui->setupUi(this);
-    transVertData = transvertData;
+    transVertData = _transvertData;
 
 
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);

@@ -18,7 +18,7 @@ class TransVertSetupForm : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TransVertSetupForm(TransVertParams *transvertData, QWidget *parent = nullptr);
+    explicit TransVertSetupForm(TransVertParams* _transvertData, QWidget *parent = nullptr);
 
 
 
