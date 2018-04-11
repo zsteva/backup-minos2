@@ -757,7 +757,7 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
         bool bandOK = blist.findBand(f, bi);
         if (bandOK)
         {
-            cb = bi.adif;
+            cb = bi.uk;
             logMessage(QString("SetFreq: Band found = %1").arg(cb));
         }
 
