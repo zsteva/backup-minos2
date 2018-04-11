@@ -138,6 +138,7 @@ private:
     void getRadioSetting(int radNum, QSettings &config);
     void saveRadioData(int radNum, QSettings &config);
 
+    void initSetup();
 };
 
 #endif // SETUPDIALOG_H

@@ -50,6 +50,21 @@ SetupDialog::SetupDialog(RigControl* _radio, const QVector<BandDetail*> _bands, 
     connect(ui->editRadioName, SIGNAL(clicked()), this, SLOT(editRadioName()));
 
 
+    initSetup();
+
+}
+
+
+SetupDialog::~SetupDialog()
+{
+    delete ui;
+}
+
+
+
+
+void SetupDialog::initSetup()
+{
 
     // radio settings ini file
     QString fileName;
@@ -88,20 +103,7 @@ SetupDialog::SetupDialog(RigControl* _radio, const QVector<BandDetail*> _bands, 
 
     }
 
-    // get the number of transverters for each radio
 
-
-
-    //clearAvailRadio(); // clear the AvailRadio table, also init with default serial parameters
-    //clearCurrentRadio(); // clear the currently selected Radio table, also init with default serial parameters
-    //clearRadioValueChanged();
-    //clearRadioNameChanged();
-
-
-//    for (int i = 0; i < numAvailRadios; i++)
-//    {
-//        networkDataEntryVisible(i, false);
-//    }
 
     readSettings();   // get available radio settings from file
 
@@ -111,16 +113,18 @@ SetupDialog::SetupDialog(RigControl* _radio, const QVector<BandDetail*> _bands, 
 
     }
 
-//    ui->setupTab->setCurrentIndex(0);       // set first tab
 
 
 
 }
 
-SetupDialog::~SetupDialog()
-{
-    delete ui;
-}
+
+
+
+
+
+
+
 
 
 
@@ -418,24 +422,28 @@ void SetupDialog::saveButtonPushed()
 
 void SetupDialog::cancelButtonPushed()
 {
-
-
-
-    QString fileName;
-    fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
-    QSettings config(fileName, QSettings::IniFormat);
-
-    for (int i = 0; i < numAvailRadios; i++)
+    bool change = false;
+    for (int i = 0; i <radioTab.count(); i++)
     {
         if (radioTab[i]->radioValueChanged)
         {
-            getRadioSetting(i, config);
-            radioTab[i]->radioValueChanged = false;
+            change = true;
+            break;
         }
     }
 
-
-
+    if (addedRadioTabs.count() > 0 || removeRadioTabs.count() > 0 || renameRadioTabs.count() > 0 || change)
+    {
+        addedRadioTabs.clear();
+        removeRadioTabs.clear();
+        renameRadioTabs.clear();
+        availRadios.clear();
+        numAvailRadios = 0;
+        availRadioData.clear();
+        radioTab.clear();
+        ui->radioTab->clear();
+        initSetup();                // load data from file
+    }
 }
 
 
