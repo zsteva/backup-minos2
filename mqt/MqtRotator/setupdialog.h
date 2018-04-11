@@ -57,6 +57,9 @@ public:
     QStringList availAntennas;
     int numAvailAntennas;
 
+    QStringList addedAntennaTabs;     // tracked edited data
+    QStringList removeAntennaTabs;
+    QStringList renameAntennaTabs;   // old antenna names
 
 
     QString getCurrentAntenna() const;
@@ -122,6 +125,7 @@ private:
 
     void loadSettingsToTab(int tabNum);
     void getAvailAntenna(int antNum, QSettings &config);
+    void initSetup();
 };
 
 #endif // SETUPDIALOG_H

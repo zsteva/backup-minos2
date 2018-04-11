@@ -358,7 +358,7 @@ void SetupDialog::editRadioName()
                 //config.remove("");   // remove all keys for this group
                 //config.endGroup();
 
-                saveRadio(tabNum);
+                //saveRadio(tabNum);
 
             }
         }
@@ -423,7 +423,7 @@ void SetupDialog::saveButtonPushed()
 void SetupDialog::cancelButtonPushed()
 {
     bool change = false;
-    for (int i = 0; i <radioTab.count(); i++)
+    for (int i = 0; i < radioTab.count(); i++)
     {
         if (radioTab[i]->radioValueChanged)
         {
@@ -447,7 +447,7 @@ void SetupDialog::cancelButtonPushed()
 }
 
 
-
+// remove ??? *********************************
 void SetupDialog::saveRadio(int i)
 {
 
@@ -478,7 +478,6 @@ void SetupDialog::saveSettings()
 {
 
     QString fileNameTransVert;
-
 
     addedRadioTabs.clear();
 

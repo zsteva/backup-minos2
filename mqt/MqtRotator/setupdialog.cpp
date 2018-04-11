@@ -48,6 +48,22 @@ SetupDialog::SetupDialog(RotControl* _rotator, QWidget *parent) :
     connect(ui->removeAntenna, SIGNAL(clicked()), this, SLOT(removeAntenna()));
     connect(ui->editAntName, SIGNAL(clicked()), this, SLOT(editAntennaName()));
 
+    initSetup();
+
+}
+
+
+
+SetupDialog::~SetupDialog()
+{
+    delete ui;
+}
+
+
+
+void SetupDialog::initSetup()
+{
+
     // get the number of available antennas
     QString fileName;
     fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
@@ -66,14 +82,6 @@ SetupDialog::SetupDialog(RotControl* _rotator, QWidget *parent) :
 
 
 
-
-    //clearAvailRotators(); // clear the AvailRotator table, also init with default serial parameters
-    //clearCurrentRotator(); // clear the currently selected Rotator table, also init with default serial parameters
-    //clearAntennaValueChanged();
-    //clearAntennaNameChanged();
-
-
-
     getAvailAntennas();
 
     // load current settings to each tab
@@ -87,12 +95,6 @@ SetupDialog::SetupDialog(RotControl* _rotator, QWidget *parent) :
 
 }
 
-
-
-SetupDialog::~SetupDialog()
-{
-    delete ui;
-}
 
 
 
@@ -252,17 +254,27 @@ void SetupDialog::saveButtonPushed()
 void SetupDialog::cancelButtonPushed()
 {
 
-    QString fileName;
-    fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
-    QSettings config(fileName, QSettings::IniFormat);
-
-    for (int i = 0; i < numAvailAntennas; i++)
+    bool change = false;
+    for (int i = 0; i < antennaTab.count(); i++)
     {
         if (antennaTab[i]->antennaValueChanged)
         {
-            getAvailAntenna(i, config);         // restore settings
-            antennaTab[i]->antennaValueChanged = false;
+            change = true;
+            break;
         }
+    }
+
+    if (addedAntennaTabs.count() > 0 || removeAntennaTabs.count() > 0 || renameAntennaTabs.count() > 0 || change)
+    {
+        addedAntennaTabs.clear();
+        removeAntennaTabs.clear();
+        renameAntennaTabs.clear();
+        availAntennas.clear();
+        numAvailAntennas = 0;
+        availAntData.clear();
+        antennaTab.clear();
+        ui->antennaTab->clear();
+        initSetup();
     }
 
 
@@ -277,9 +289,29 @@ void SetupDialog::saveSettings()
     bool antennaNameChg = false;
     bool currentAntennaChanged = false;
 
+    addedAntennaTabs.clear();
+
     QString fileName;
     fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
     QSettings config(fileName, QSettings::IniFormat);
+
+    for (int i = 0; i < removeAntennaTabs.count(); i++)
+    {
+        config.beginGroup(removeAntennaTabs[i]);
+        config.remove("");      // remove all keys for this group
+        config.endGroup();
+    }
+
+    removeAntennaTabs.clear();
+
+    for (int i = 0; i < renameAntennaTabs.count(); i++)
+    {
+        config.beginGroup(renameAntennaTabs[i]);
+        config.remove("");   // remove all keys for this group
+        config.endGroup();
+    }
+    renameAntennaTabs.clear();
+
 
     for (int i = 0; i < numAvailAntennas; i++)
     {
@@ -605,9 +637,10 @@ void SetupDialog::addAntenna()
   // add the new antenna
   int tabNum = numAvailAntennas;
   addTab(tabNum, antName);
+  addedAntennaTabs.append(antName);
   numAvailAntennas++;
   loadSettingsToTab(tabNum);
-  saveAntenna(tabNum);
+  //saveAntenna(tabNum);
   ui->antennaTab->setCurrentIndex(tabNum);
   emit antennaTabChanged();
 
@@ -660,12 +693,12 @@ void SetupDialog::removeAntenna()
     availAntData.remove(currentIndex);
     availAntennas.removeAt(currentIndex);
     // remove from availantenna file
-    QString fileName;
-    fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
-    QSettings config(fileName, QSettings::IniFormat);
-    config.beginGroup(currentName);
-    config.remove("");   // remove all keys for this group
-    config.endGroup();
+    //QString fileName;
+    //fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
+   //QSettings config(fileName, QSettings::IniFormat);
+    //config.beginGroup(currentName);
+    //config.remove("");   // remove all keys for this group
+    //config.endGroup();
 
     numAvailAntennas--;
 
@@ -703,14 +736,14 @@ void SetupDialog::editAntennaName()
                 availAntData[i]->antennaName = text;  // update with new name
                 availAntennas[i] = text;
                 // remove from availantenna file
-                QString fileName;
-                fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
-                QSettings config(fileName, QSettings::IniFormat);
-                config.beginGroup(antName);
-                config.remove("");   // remove all keys for this group
-                config.endGroup();
+                //QString fileName;
+                //fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
+                //QSettings config(fileName, QSettings::IniFormat);
+                //config.beginGroup(antName);
+                //config.remove("");   // remove all keys for this group
+                //config.endGroup();
 
-                saveAntenna(tabNum);
+                //saveAntenna(tabNum);
 
             }
         }
