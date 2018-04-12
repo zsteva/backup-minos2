@@ -11,10 +11,21 @@ class RotatorCache
     QMap<PubSubName, AntennaState> rotStates;
     QMap<PubSubName, MinosStringItem<QString> > rotPresets;
     QVector<PubSubName> rotList;
+    void publishState( );
+    void publishDetails( );
+    void publishPresets();
 public:
     RotatorCache();
 
     void invalidate();
+    void invalidate(const PubSubName &name);
+    void publish()
+    {
+        publishState();
+        publishDetails();
+        publishPresets();
+    }
+
 
     AntennaState &getState(const PubSubName &p);
     AntennaDetail &getDetails(const PubSubName &p);
@@ -43,10 +54,6 @@ public:
 
     void setRotatorPresets(const PubSubName &name, const QString &p);
     QString getRotatorPresets(const PubSubName &name);
-
-    void publishState( );
-    void publishDetails( );
-    void publishPresets();
 
     void addRotList(const QString &s);
     QVector<PubSubName> getRotList()

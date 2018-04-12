@@ -750,7 +750,7 @@ void TLogContainer::CloseAllActionExecute()
       // Keep closing the current (and hence visible) contest
       closeSlot(0, true);
    }
-   on_ContestPageControl_currentChanged(0);
+   on_ContestPageControl_currentChanged(-1);
    enableActions();
 }
 //---------------------------------------------------------------------------
@@ -768,7 +768,7 @@ void TLogContainer::CloseAllButActionExecute()
       }
       closeSlot(t, true );
    }
-   on_ContestPageControl_currentChanged(0);
+   on_ContestPageControl_currentChanged(-1);
    enableActions();
 }
 //---------------------------------------------------------------------------
@@ -982,11 +982,15 @@ void TLogContainer::StartConfigActionExecute()
     configBox.exec();
 }
 
-void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
+void TLogContainer::on_ContestPageControl_currentChanged(int index)
 {
+    trace(QString("TLogContainer::on_ContestPageControl_currentChanged index %1").arg(index));
     enableActions();
 
-    MinosLoggerEvents::SendContestPageChanged();
+    if (index >= 0)
+    {
+        MinosLoggerEvents::SendContestPageChanged();
+    }
 
     TContestApp::getContestApp() ->writeContestList();
     enableActions();
@@ -1179,7 +1183,7 @@ void TLogContainer::closeSlot(int t, bool addToMRU)
           tab->deleteLater();
 
           ui->ContestPageControl->removeTab(t);
-          on_ContestPageControl_currentChanged(0);
+          on_ContestPageControl_currentChanged(-1);
       }
       enableActions();
    }
@@ -1309,7 +1313,7 @@ void TLogContainer::selectSession(QString sessName)
         app->setCurrentContest(ct);
     }
     app->logsPreloadBundle.flushProfile();
-    on_ContestPageControl_currentChanged(0);
+    on_ContestPageControl_currentChanged(-1);
     enableActions();
 }
 
@@ -1608,7 +1612,7 @@ void TLogContainer::selectContest( BaseContestLog *pc, QSharedPointer<BaseContac
             if ( f->getContest() == pc )
             {
                 ui->ContestPageControl->setCurrentIndex(j);         // This doesn't call ContestPageControlChange (see TPageControl::OnChange in  help)
-                on_ContestPageControl_currentChanged(0);       // so the contest gets properly switched
+                on_ContestPageControl_currentChanged(-1);       // so the contest gets properly switched
                 f->QSOTreeSelectContact( pct );         // which triggers edit on the contact
                 return ;
             }

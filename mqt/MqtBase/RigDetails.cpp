@@ -10,13 +10,14 @@ RigDetails::RigDetails()
     _transverterSwitch.setInitialValue(0);
     _transverterStatus.setInitialValue(false);
 }
-RigDetails::RigDetails(double tvo, int tvsw, bool tvst, QString blist)
+RigDetails::RigDetails(double tvo, int tvsw, bool tvst, const QString &blist, const QString &sel)
     :PubSubValue(RigDetailsType)
 {
     _transverterOffset.setValue(tvo);
     _transverterSwitch.setValue(tvsw);
     _transverterStatus.setValue(tvst);
     _bandList.setValue(blist);
+    _selected.setValue(sel);
 }
 RigDetails::RigDetails(QString s)
     :PubSubValue(RigDetailsType)
@@ -27,6 +28,7 @@ RigDetails::RigDetails(QString s)
 bool RigDetails::isDirty() const
 {
     return
+            _selected.isDirty() ||
             _transverterOffset.isDirty() ||
             _transverterSwitch.isDirty() ||
             _transverterStatus.isDirty() ||
@@ -34,6 +36,7 @@ bool RigDetails::isDirty() const
 }
 void RigDetails::clearDirty()
 {
+    _selected.clearDirty();
     _transverterOffset.clearDirty();
     _transverterSwitch.clearDirty();
     _transverterStatus.clearDirty();
@@ -41,13 +44,17 @@ void RigDetails::clearDirty()
 }
 void RigDetails::setDirty()
 {
+    _selected.setDirty();
     _transverterOffset.setDirty();
     _transverterSwitch.setDirty();
     _transverterStatus.setDirty();
     _bandList.setDirty();
 }
 
-
+void RigDetails::setSelected(const QString &selected)
+{
+    _selected.setValue(selected);
+}
 void RigDetails::setTransverterOffset(double transverterOffset)
 {
     _transverterOffset.setValue(transverterOffset);
@@ -71,6 +78,7 @@ QString RigDetails::pack() const
 {
     QJsonObject jv;
 
+    jv.insert(rpcConstants::selected, selected().getValue());
     jv.insert(rpcConstants::rigControlTxVertOffsetFreq, transverterOffset().getValue());
     jv.insert(rpcConstants::rigControlTxVertSwitch, transverterSwitch().getValue());
     jv.insert(rpcConstants::rigControlTxVertStatus, transverterStatus().getValue());
@@ -88,6 +96,7 @@ void RigDetails::unpack(QString s)
     QJsonDocument json = QJsonDocument::fromJson(s.toUtf8(), &err);
     if (!err.error)
     {
+        _selected.setValue(json.object().value(rpcConstants::selected).toString());
         _transverterOffset.setValue(json.object().value(rpcConstants::rigControlTxVertOffsetFreq).toDouble());
         _transverterSwitch.setValue(json.object().value(rpcConstants::rigControlTxVertSwitch).toInt());
         _transverterStatus.setValue(json.object().value(rpcConstants::rigControlTxVertStatus).toBool());
@@ -98,6 +107,10 @@ void RigDetails::unpack(QString s)
         trace("Err " + err.errorString() + " Bad Json document " + s);
     }
 
+}
+MinosStringItem<QString> RigDetails::selected() const
+{
+    return _selected;
 }
 MinosItem<double> RigDetails::transverterOffset() const
 {

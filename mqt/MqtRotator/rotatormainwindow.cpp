@@ -310,8 +310,6 @@ void RotatorMainWindow::onLoggerSelectAntenna(QString s)
     setupAntenna->currentAntennaName = s;
     setupAntenna->saveCurrentAntenna();
 
-    msg->rotatorCache.invalidate();
-
     if (!s.isEmpty() && s == oldAntenna)
     {
         refreshAntenna();
@@ -320,6 +318,7 @@ void RotatorMainWindow::onLoggerSelectAntenna(QString s)
     {
         upDateAntenna();
     }
+    msg->rotatorCache.invalidate();
 }
 
 void RotatorMainWindow::setSelectAntennaBoxVisible(bool visible)
@@ -536,7 +535,7 @@ void RotatorMainWindow::sendStatusLogger( )
 
    PubSubName psname(setupAntenna->currentAntennaName);
    msg->rotatorCache.setStatus(psname, message);
-   msg->rotatorCache.publishState();
+   msg->rotatorCache.publish();
 }
 
 void RotatorMainWindow::sendAntennaListLogger()
@@ -571,8 +570,7 @@ void RotatorMainWindow::sendPresetListLogger()
 
     PubSubName psname(setupAntenna->currentAntennaName);
     msg->rotatorCache.setRotatorPresets(psname, presets.join(':'));
-    msg->rotatorCache.publishPresets();
-//    msg->publishPresetList(presets.join(':'));
+    msg->rotatorCache.publish();
 }
 
 void RotatorMainWindow::initActionsConnections()
@@ -720,7 +718,7 @@ void RotatorMainWindow::displayBearing(int bearing)
 
         PubSubName psname(setupAntenna->currentAntennaName);
         msg->rotatorCache.setBearing(psname, s);
-        msg->rotatorCache.publishState();
+        msg->rotatorCache.publish();
     }
     QString rotatorBearingmsg = QString::number(displayBearing);
     if (displayBearing < 10 && rotatorBearing > 0)
@@ -952,8 +950,7 @@ void RotatorMainWindow::upDateAntenna()
             writeWindowTitle(appName);
         }
     }
-    msg->rotatorCache.publishDetails();
-    msg->rotatorCache.publishState();
+    msg->rotatorCache.publish();
 }
 void RotatorMainWindow::refreshAntenna()
 {
@@ -985,8 +982,7 @@ void RotatorMainWindow::refreshAntenna()
 
     }
     dumpRotatorToTraceLog();
-    msg->rotatorCache.publishDetails();
-    msg->rotatorCache.publishState();
+    msg->rotatorCache.publish();
 }
 
 void RotatorMainWindow::writeWindowTitle(QString appName)

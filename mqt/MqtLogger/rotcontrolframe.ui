@@ -25,7 +25,11 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
-        <widget class="QComboBox" name="antennaName"/>
+        <widget class="QComboBox" name="antennaName">
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContents</enum>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLabel" name="rotConnectState">

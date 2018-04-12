@@ -21,8 +21,8 @@ public:
     void setDirty();
 
     MinosStringItem<QString> bearing() const;
-    MinosStringItem<QString> selected() const;
     MinosStringItem<QString> state() const;
+    MinosStringItem<QString> selected() const;
     void setBearing(const QString &bearing);
     void setState(const QString &state);
     void setSelected(const QString &selected);

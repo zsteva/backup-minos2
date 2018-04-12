@@ -20,6 +20,12 @@ void RigCache::invalidate()
         i->setDirty();
     }
 }
+void RigCache::invalidate(const PubSubName &name)
+{
+    rigStates[name].setDirty();
+    rigDetails[name].setDirty();
+}
+
 void RigCache::setStateString(const AnalysePubSubNotify & an)
 {
     RigState &as = rigStates[PubSubName(an)];
@@ -119,11 +125,24 @@ void RigCache::setSelected(const PubSubName &name, const QString &sel)
         if (i.key() == name)
         {
             i.value().setSelected(sel);
-            trace("selecting rig " + i.key().toString() + "  " + sel);
+            trace("selecting rig state " + i.key().toString() + "  " + sel);
         }
         else if (!i.value().selected().getValue().isEmpty())
         {
-            trace("de-selecting rig " + i.key().toString());
+            trace("de-selecting rig state " + i.key().toString());
+            i.value().setSelected("");
+        }
+    }
+    for(QMap<PubSubName, RigDetails>::iterator i = rigDetails.begin(); i != rigDetails.end(); i++ )
+    {
+        if (i.key() == name)
+        {
+            i.value().setSelected(sel);
+            trace("selecting rig details " + i.key().toString() + "  " + sel);
+        }
+        else if (!i.value().selected().getValue().isEmpty())
+        {
+            trace("de-selecting rig details " + i.key().toString());
             i.value().setSelected("");
         }
     }
