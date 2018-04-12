@@ -31,44 +31,44 @@ public:
 
 // Common Rotator Constants
 
-#define DEGREE_SYMBOL '\xB0'
-#define ROTATE_MOVE_TIMEOUT 5
+const char DEGREE_SYMBOL = '\xB0';
+const int ROTATE_MOVE_TIMEOUT = 5;
 
 //#define NUM_ANTENNAS 5
 
 // Rotator Keys
 
-#define ROTATE_CW_KEY "Ctrl+r"
-#define ROTATE_CCW_KEY "Ctrl+l"
-//#define ROTATE_CW_KEY Qt::CTRL + Qt::Key_Right
+const QString ROTATE_CW_KEY = "Ctrl+r";
+const QString ROTATE_CCW_KEY = "Ctrl+l";
+//#define ROTATE_CW_KEY =  Qt::CTRL + Qt::Key_Right
 //#define ROTATE_CCW_KEY Qt::CTRL + Qt::Key_Left
-#define ROTATE_STOP_KEY "Ctrl+s"
-#define ROTATE_TURN_KEY "Ctrl+t"
+const QString ROTATE_STOP_KEY = "Ctrl+s";
+const QString ROTATE_TURN_KEY = "Ctrl+t";
 
-#define COMPASS_MAX360 360
-#define COMPASS_HALF 180
-#define COMPASS_MIN0 0
-#define COMPASS_ERROR 999
+const int COMPASS_MAX360 = 360;
+const int COMPASS_HALF = 180;
+const int COMPASS_NEG_HALF = -180;
+const int COMPASS_MIN0 = 0;
+const int COMPASS_ERROR = 999;
 
-#define ROTATE_ENDSTOP_TOLERANCE 0
+const int ROTATE_ENDSTOP_TOLERANCE = 0;
 
 
 // Status messages sent to minos logger
-#define ROT_STATUS_CONNECTED "Connected"
-#define ROT_STATUS_DISCONNECTED "Disconnected"
+const QString ROT_STATUS_CONNECTED  = "Connected";
+const QString ROT_STATUS_DISCONNECTED = "Disconnected";
+const QString ROT_STATUS_ERROR = "Error";
 
-#define ROT_STATUS_ROTATE_CCW "<font color='Green'>Rotating CCW</font>"
-#define ROT_STATUS_ROTATE_CW "<font color='Green'>Rotating CW</font>"
-#define ROT_STATUS_STOP "Stop"
-#define ROT_STATUS_TURN_TO "<font color='Green'>Turning to bearing</font>"
-#define ROT_STATUS_DISCONNECTED "Disconnected"
-#define ROT_STATUS_ERROR "Error"
+const QString ROT_STATUS_ROTATE_CCW = "<font color='Green'>Rotating CCW</font>";
+const QString ROT_STATUS_ROTATE_CW = "<font color='Green'>Rotating CW</font>";
+const QString ROT_STATUS_STOP = "Stop";
+const QString ROT_STATUS_TURN_TO = "<font color='Green'>Turning to bearing</font>";
 
-#define ROT_ACTIVE "Rot_Active"
-#define ROT_NOT_ACTIVE "Rot_Not_Active"
+const QString ROT_ACTIVE = "Rot_Active";
+const QString ROT_NOT_ACTIVE = "Rot_Not_Active";
 
 // Bearing Log
-#define BEARINGLOG_FILETYPE ".log"
+const QString BEARINGLOG_FILETYPE = ".log";
 
 // File Name Constants
 
