@@ -187,7 +187,7 @@ void SetupDialog::loadSettingsToTab(int tabNum)
         radioTab[tabNum]->setMgmMode(radioTab[tabNum]->getRadioData()->mgmMode);
 
         // now load transverter settings
-        if(radioTab[tabNum]->getRadioData()->numTransverters >0 )
+        if (radioTab[tabNum]->getRadioData()->numTransverters >0 )
         {
             for (int t = 0; t < radioTab[tabNum]->getRadioData()->numTransverters; t++)
             {
@@ -199,13 +199,12 @@ void SetupDialog::loadSettingsToTab(int tabNum)
                 radioTab[tabNum]->transVertTab[t]->setTransVerSwNum(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transSwitchNum);
                 radioTab[tabNum]->transVertTab[t]->setEnableTransVertSwBoxVisible(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
 
-
             }
 
         }
 
 
-
+        radioTab[tabNum]->setTransVertTabIndex(0);
         radioTab[tabNum]->buildSupBandList();
 
     }
@@ -252,6 +251,7 @@ void SetupDialog::addRadio()
     radioTab[tabNum]->radioValueChanged = true;
     //saveRadio(tabNum);
     ui->radioTab->setCurrentIndex(tabNum);
+    radioTab[tabNum]->setEnableRigDataEntry(false);
     emit radioTabChanged();
 
 }
