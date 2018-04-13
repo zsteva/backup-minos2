@@ -683,11 +683,12 @@ void RotatorMainWindow::displayBearing(int bearing)
 
 
     // support a south stop with compass modue 0 - 360
-    if (setupAntenna->currentAntenna.southStopType == S_STOPCOMP && bearing > COMPASS_HALF && bearing <= COMPASS_MAX360)
-    {
-        rotatorBearing = bearing - COMPASS_MAX360;
-    }
-    else if (setupAntenna->currentAntenna.southStopType == S_STOPINV)
+    //if (setupAntenna->currentAntenna.southStopType == S_STOPCOMP && bearing > COMPASS_HALF && bearing <= COMPASS_MAX360)
+    //{
+    //    rotatorBearing = bearing - COMPASS_MAX360;
+    //}
+    //else if (setupAntenna->currentAntenna.southStopType == S_STOPINV)
+    if (setupAntenna->currentAntenna.southStopType == S_STOPINV)
     {
         rotatorBearing = bearing;
         if (bearing >= COMPASS_MIN0 && bearing <= COMPASS_HALF)
@@ -1202,12 +1203,8 @@ void RotatorMainWindow::rotateTo(int bearing)
 
     if (rotator->get_serialConnected())
     {
-        int rotTo = rotateTo;
-        if (setupAntenna->currentAntenna.southStopType == S_STOPCOMP && rotateTo >= COMPASS_NEG_HALF +1 && rotateTo < 0)
-        {
-            rotTo = rotateTo + COMPASS_MAX360;               // correct for Compass SouthStop
-        }
-        retCode = rotator->rotate_to_bearing(rotTo);
+
+        retCode = rotator->rotate_to_bearing(rotateTo);
         if (retCode < 0)
         {
             hamlibError(retCode, "Rotate to Bearing");
@@ -1285,24 +1282,14 @@ int RotatorMainWindow::calcRotZero360(int targetBearing)
 int RotatorMainWindow::calcRotNeg180_180(int targetBearing)
 {
     int target = targetBearing;
-    if (setupAntenna->currentAntenna.southStopType == S_STOPCOMP)
+
+    logMessage(QString("NCalc - EndStop Type - ROT_NEG180_180"));
+    if (targetBearing > COMPASS_HALF && targetBearing <= COMPASS_MAX360)
     {
-        logMessage(QString("NCalc - EndStop Type - ROT_NEG180_180 - South Stop Compass "));
-        if (targetBearing >= COMPASS_NEG_HALF + 1 && targetBearing < COMPASS_MIN0)
-        {
-            target = targetBearing - COMPASS_MAX360;
-            logMessage(QString("NCalc - 2a - Target bearing > 180 and < 360, South Stop Compass, calculated target = %1").arg(QString::number(target)));
-        }
+        target = targetBearing - COMPASS_MAX360;
+        logMessage(QString("NCalc - 2 - Target bearing > 180 and < 360, calculated target = %1").arg(QString::number(target)));
     }
-    else
-    {
-        logMessage(QString("NCalc - EndStop Type - ROT_NEG180_180"));
-        if (targetBearing > COMPASS_HALF && targetBearing <= COMPASS_MAX360)
-        {
-            target = targetBearing - COMPASS_MAX360;
-            logMessage(QString("NCalc - 2b - Target bearing > 180 and < 360, calculated target = %1").arg(QString::number(target)));
-        }
-    }
+
 
     logMessage(QString("Target Bearing = %1, rotator Bearing = %2").arg(QString::number(targetBearing)).arg(QString::number(rotatorBearing)));
     return target;

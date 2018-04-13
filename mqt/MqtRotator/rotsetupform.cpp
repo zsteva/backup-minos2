@@ -634,8 +634,8 @@ void rotSetupForm::compassButSelected()
 //    {
     antennaData->southStopType = S_STOPCOMP;
     antennaData->max_azimuth = COMPASS_HALF - 1;
-    antennaData->min_azimuth = COMPASS_NEG_HALF + 1;
-    antennaData->endStopType = ROT_NEG180_180;
+    antennaData->min_azimuth = COMPASS_HALF + 1;
+    antennaData->endStopType = ROT_180_180;
 
     antennaValueChanged = true;
 
