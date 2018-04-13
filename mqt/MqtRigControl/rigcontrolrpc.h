@@ -37,7 +37,7 @@ public:
 signals:
     void setFreq(QString);
     void setMode(QString);
-    void selectLoggerRadio(QString, QString);
+    void selectLoggerRadio(PubSubName, QString);
 
 private slots:
     void on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );

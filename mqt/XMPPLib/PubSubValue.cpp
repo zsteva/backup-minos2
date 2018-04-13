@@ -23,7 +23,7 @@ PubSubName::PubSubName(const AnalysePubSubNotify &an)
 {
     _server = an.getPublisherServer();
     _appName = an.getPublisherProgram();
-    _key = an.getKey();
+    _key = PubSubName(an.getKey()).key();
 }
 PubSubName::PubSubName(const QString &s)
 {

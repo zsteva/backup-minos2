@@ -72,7 +72,7 @@ static const QString controlParamName   = QT_TR_NOOP("Name");
 static const QString controlParamLine   = QT_TR_NOOP("Line");
 static const QString controlResult      = QT_TR_NOOP("ControlResult");
 static const QString controlLineState   = QT_TR_NOOP("LineState");
-static const QString controlState       = QT_TR_NOOP("State");
+static const QString controlState       = QT_TR_NOOP("CtrlState");
 static const QString controlGetLine     = QT_TR_NOOP("GetLine");
 
 
@@ -92,7 +92,7 @@ static const QString RotatorCategory    = QT_TR_NOOP("Rotator");
 static const QString rotatorDetailCategory    = QT_TR_NOOP("RotatorDetail");
 static const QString rotatorStateCategory    = QT_TR_NOOP("RotatorState");
 static const QString rotatorPresetsCategory = QT_TR_NOOP("RotatorPresets");
-static const QString rotatorState       = QT_TR_NOOP("State");
+static const QString rotatorStatus       = QT_TR_NOOP("RotStatus");
 static const QString rotatorBearing     = QT_TR_NOOP("Bearing");
 static const QString rotatorList        = QT_TR_NOOP("rotList");
 static const QString rotPreset  = QT_TR_NOOP("RotPreset");
@@ -111,7 +111,7 @@ static const QString rigStateCategory      = QT_TR_NOOP("RigState");
 static const QString rigDetailsCategory    = QT_TR_NOOP("RigDetails");
 static const QString rigControlRadioList   = QT_TR_NOOP("RadioList");
 static const QString rigControlBandList    = QT_TR_NOOP("BandList");
-static const QString rigControlStatus      = QT_TR_NOOP("State");
+static const QString rigControlStatus      = QT_TR_NOOP("RigStatus");
 static const QString rigControlErrorMsg    = QT_TR_NOOP("ErrorMsg");
 static const QString rigControlFreq        = QT_TR_NOOP("Frequency");
 static const QString rigControlMode        = QT_TR_NOOP("Mode");

@@ -34,7 +34,7 @@ public:
     void publishPresetList(QString presets);
 signals:
     void setRotation(int direction, int angle);
-    void selectAntenna(QString);
+    void selectAntennaFromLog(PubSubName);
     void setRotPreset(QString);
 
 private slots:

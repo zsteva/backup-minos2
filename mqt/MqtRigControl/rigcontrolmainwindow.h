@@ -183,7 +183,7 @@ private slots:
     void updateSelectRadioBox();
     void aboutRigConfig();
 
-    void onSelectRadio(QString, QString mode);
+    void onSelectRadio(PubSubName, QString mode);
     void selFreqClicked();
     void setupBandFreq();
     void selectRadio();

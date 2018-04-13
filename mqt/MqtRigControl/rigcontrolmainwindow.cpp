@@ -232,7 +232,7 @@ void RigControlMainWindow::initActionsConnections()
     // Message from Logger
     connect(msg, SIGNAL(setFreq(QString)), this, SLOT(loggerSetFreq(QString)));
     connect(msg, SIGNAL(setMode(QString)), this, SLOT(loggerSetMode(QString)));
-    connect(msg, SIGNAL(selectLoggerRadio(QString, QString)), this, SLOT(onSelectRadio(QString, QString)));
+    connect(msg, SIGNAL(selectLoggerRadio(PubSubName, QString)), this, SLOT(onSelectRadio(PubSubName, QString)));
 
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->actionAbout_Radio_Config, SIGNAL(triggered()), this, SLOT(aboutRigConfig()));
@@ -684,10 +684,10 @@ void RigControlMainWindow::getRadioInfo()
 }
 
 
-void RigControlMainWindow::onSelectRadio(QString s, QString mode)
+void RigControlMainWindow::onSelectRadio(PubSubName s, QString mode)
 {
 
-    logMessage(QString("Recieved SelectRadio from Logger = %1, mode = %2").arg(s).arg(mode));
+    logMessage(QString("Recieved SelectRadio from Logger = %1, mode = %2").arg(s.toString()).arg(mode));
 
 
     if (!mode.isEmpty())
@@ -697,7 +697,7 @@ void RigControlMainWindow::onSelectRadio(QString s, QString mode)
 
     QString oldRadio = setupRadio->currentRadioName;
 
-    setupRadio->currentRadioName = s;
+    setupRadio->currentRadioName = s.key();
 
     if (!s.isEmpty() && s == oldRadio)
     {

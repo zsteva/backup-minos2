@@ -138,13 +138,13 @@ private slots:
     void on_SetBandList(QString);
     void on_SetMode(QString);
     void on_SetFreq(QString);
-    void on_SetRadioState(QString);
+    void on_SetRadioStatus(QString);
     void on_SetRadioTxVertState(QString s);
 
     void on_RotatorLoaded();
     void on_RotatorList(QString);
     void on_RotatorPresetList(QString);
-    void on_RotatorState(QString);
+    void on_RotatorStatus(QString);
     void on_RotatorBearing(QString);
     void on_RotatorMaxAzimuth(QString);
     void on_RotatorMinAzimuth(QString);

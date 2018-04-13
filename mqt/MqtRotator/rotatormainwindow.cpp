@@ -303,11 +303,11 @@ void RotatorMainWindow::onSelectAntennaBox()
 }
 
 
-void RotatorMainWindow::onLoggerSelectAntenna(QString s)
+void RotatorMainWindow::onLoggerSelectAntenna(PubSubName s)
 {
     QString oldAntenna = setupAntenna->currentAntennaName;
-    ui->selectAntennaBox->setCurrentText(s);
-    setupAntenna->currentAntennaName = s;
+    ui->selectAntennaBox->setCurrentText(s.key());
+    setupAntenna->currentAntennaName = s.key();
     setupAntenna->saveCurrentAntenna();
 
     if (!s.isEmpty() && s == oldAntenna)
@@ -630,7 +630,7 @@ void RotatorMainWindow::initActionsConnections()
 
     // Message from Logger
     connect(msg, SIGNAL(setRotation(int,int)), this, SLOT(onLoggerSetRotation(int,int)));
-    connect(msg, SIGNAL(selectAntenna(QString)), this, SLOT(onLoggerSelectAntenna(QString)));
+    connect(msg, SIGNAL(selectAntennaFromLog(PubSubName)), this, SLOT(onLoggerSelectAntenna(PubSubName)));
     connect(msg, SIGNAL(setRotPreset(QString)), this, SLOT(onLoggerSetPreset(QString)));
 
 
@@ -876,7 +876,7 @@ void RotatorMainWindow::upDateAntenna()
 
     int currentAntIdx = -1;
 
-    trace("updateAntenna");
+    trace(QString("updateAntenna to %1").arg(setupAntenna->currentAntennaName));
 
     if (moving  || movingCCW || movingCW)
     {
@@ -887,6 +887,7 @@ void RotatorMainWindow::upDateAntenna()
     if (setupAntenna->currentAntennaName != "")
     {
         currentAntIdx = setupAntenna->findCurrentAntenna(setupAntenna->currentAntennaName);
+        trace(QString("idx is %1 avail is %2").arg(currentAntIdx).arg(setupAntenna->numAvailAntennas));
         if (currentAntIdx > -1 && currentAntIdx < setupAntenna->numAvailAntennas)  // find antenna and update current antenna pointer
         {
             // found antenna, update currentAntenna with selected antenna data

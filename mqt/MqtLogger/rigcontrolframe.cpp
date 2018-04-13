@@ -549,11 +549,19 @@ void RigControlFrame::setRadioName(QString radNam, QString mode)
         ui->radioNameSel->setCurrentIndex(index);
     else
         ui->radioNameSel->setCurrentText(radNam);
+
     radioName = ui->radioNameSel->currentText();
 
     if (ct && !ct->isProtected() && ct == TContestApp::getContestApp() ->getCurrentContest())
     {
         emit selectRadio(radNam, mode);  // send radio and mode if appended.
+
+        TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+        QString freq = tslf->sCurFreq;
+        if (!freq.isEmpty() && freq != memDefData::DEFAULT_FREQ)
+        {
+            sendFreq(freq);
+        }
     }
 }
 
@@ -576,7 +584,7 @@ void RigControlFrame::setRadioList(QString s)
         ui->radioNameSel->setCurrentText(radioName);
     }
 
-    if (ct && ct == TContestApp::getContestApp() ->getCurrentContest())
+    if (ct && !ct->isProtected())
     {
         setRadioName(ct->radioName.getValue().toString(), ct->currentMode.getValue());
     }

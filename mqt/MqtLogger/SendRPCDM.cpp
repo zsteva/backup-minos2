@@ -166,6 +166,8 @@ void TSendDM::changeRotatorSelectionTo(const PubSubName &name, const QString &uu
     if (!selected.isEmpty() && selected != name)
         sendRotatorSelection(selected, "");
     sendRotatorSelection(name, uuid);
+
+    //emit RotatorList(rotators().join(":"));
 }
 void TSendDM::sendRotatorSelection(const PubSubName &s, const QString &uuid)
 {
@@ -174,7 +176,7 @@ void TSendDM::sendRotatorSelection(const PubSubName &s, const QString &uuid)
 
     QSharedPointer<RPCParam>select(new RPCStringParam(uuid ));
     st->addMember( select, rpcConstants::selected );
-    st->addMember( s.key(), rpcConstants::rotatorAntennaName );
+    st->addMember( s.toString(), rpcConstants::rotatorAntennaName );
     rpc.getCallArgs() ->addParam( st );
 
     rpc.queueCall( s.appName() + "@" + s.server() );
@@ -193,6 +195,9 @@ void TSendDM::changeRigSelectionTo(const PubSubName &name, const QString &mode, 
         sendRigSelection(selected, "", "");
     }
     sendRigSelection(name, mode, uuid);
+
+    //emit setRadioList(rigs().join(":"));    // need to CALL this?
+
 }
 void TSendDM::sendRigSelection(const PubSubName &s, const QString &mode, const QString &uuid)
 {
@@ -203,7 +208,7 @@ void TSendDM::sendRigSelection(const PubSubName &s, const QString &mode, const Q
 
     QSharedPointer<RPCParam>select(new RPCStringParam(uuid ));
     st->addMember( select, rpcConstants::selected );
-    st->addMember( s.key(), rpcConstants::rigControlRadioName );
+    st->addMember( s.toString(), rpcConstants::rigControlRadioName );
     st->addMember( mode, rpcConstants::rigControlMode );
     rpc.getCallArgs() ->addParam( st );
 
@@ -263,6 +268,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
     {
         if ( an.getState() == psPublished)
         {
+            trace(QString("SendRPC category %1 key %2").arg(an.getCategory()).arg(an.getKey()));
             if ( an.getCategory() == rpcConstants::rigStateCategory)
             {
                 rigCache.setStateString(an);
@@ -285,6 +291,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             }
             else if ( an.getCategory() == rpcConstants::rigControlCategory && an.getKey() == rpcConstants::rigControlRadioList )
             {
+                trace("SendRPC set rigList and loaded " + an.getValue());
                 rigCache.addRigList(an.getValue());
                 radioLoaded = true;
                 emit setRadioLoaded();
@@ -292,6 +299,7 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             }
             else if ( an.getCategory() == rpcConstants::RotatorCategory && an.getKey() == rpcConstants::rotatorList )
             {
+                trace("SendRPC set rotList and loaded " + an.getValue());
                 rotatorCache.addRotList(an.getValue());
                 rotatorLoaded = true;
                 emit RotatorLoaded();
@@ -321,15 +329,18 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                             trace("Rig state distribution for " + selStateUuid);
                             if (selState.mode().isDirty())
                             {
+                                trace("SendRPC Rig set mode " + selState.mode().getValue());
                                 tslf->on_SetMode(selState.mode().getValue());
                             }
                             if (selState.freq().isDirty())
                             {
+                                trace("SendRPC Rig set freq " + convertFreqToStr(selState.freq().getValue()));
                                 tslf->on_SetFreq(convertFreqToStr(selState.freq().getValue()));
                             }
                             if (selState.status().isDirty())
                             {
-                                tslf->on_SetRadioState(selState.status().getValue());
+                                trace("SendRPC Rig set status " + selState.status().getValue());
+                                tslf->on_SetRadioStatus(selState.status().getValue());
                             }
                             selState.clearDirty();
                         }
@@ -338,10 +349,12 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                             trace("Rig details distribution for " + selDetailsUuid);
                             if (selDetail.bandList().isDirty())
                             {
+                                trace("SendRPC Rig set bandList " + selDetail.bandList().getValue());
                                 tslf->on_SetBandList(selDetail.bandList().getValue());
                             }
                             if (selDetail.transverterStatus().isDirty())
                             {
+                                trace(QString("SendRPC Rig set transverter status ") + (selDetail.transverterStatus().getValue()?TXVERT_ON:TXVERT_OFF));
                                 tslf->on_SetRadioTxVertState( selDetail.transverterStatus().getValue()?TXVERT_ON:TXVERT_OFF );
                             }
                             selDetail.clearDirty();
@@ -371,11 +384,13 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
 
                                 if (selState.bearing().isDirty())
                                 {
+                                    trace("SendRPC Rotator set bearing " + selState.bearing().getValue());
                                     tslf->on_RotatorBearing(selState.bearing().getValue());
                                 }
-                                if (selState.state().isDirty())
+                                if (selState.status().isDirty())
                                 {
-                                    tslf->on_RotatorState(selState.state().getValue());
+                                    trace("SendRPC Rotator set status " + selState.status().getValue());
+                                    tslf->on_RotatorStatus(selState.status().getValue());
                                 }
                                 selState.clearDirty();
                             }
@@ -384,16 +399,19 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                                 trace("Rotator details distribution for " + selDetailUuid);
                                 if (selDetail.maxAzimuth().isDirty())
                                 {
+                                    trace(QString("SendRPC Rotator set maxAzimuth %1").arg(selDetail.maxAzimuth().getValue()));
                                     tslf->on_RotatorMaxAzimuth(QString::number(selDetail.maxAzimuth().getValue()));
                                 }
                                 if (selDetail.minAzimuth().isDirty())
                                 {
+                                    trace(QString("SendRPC Rotator set minAzimuth %1").arg(selDetail.minAzimuth().getValue()));
                                     tslf->on_RotatorMinAzimuth(QString::number(selDetail.minAzimuth().getValue()));
                                 }
                                 selDetail.clearDirty();
 
                                 if (rotatorCache.rotatorPresetsIsDirty(rotSelected))
                                 {
+                                    trace("SendRPC Rotator set presets " + rotatorCache.getRotatorPresets(rotSelected));
                                     tslf->on_RotatorPresetList(rotatorCache.getRotatorPresets(rotSelected));
                                 }
                                 break;

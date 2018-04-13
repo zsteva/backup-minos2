@@ -7,7 +7,7 @@ const QString AntennaStateType("AntennaState");
 class AntennaState: public PubSubValue
 {
     MinosStringItem<QString> _bearing;
-    MinosStringItem<QString> _state;
+    MinosStringItem<QString> _status;
     MinosStringItem<QString> _selected;
 public:
     AntennaState();
@@ -21,10 +21,10 @@ public:
     void setDirty();
 
     MinosStringItem<QString> bearing() const;
-    MinosStringItem<QString> state() const;
+    MinosStringItem<QString> status() const;
     MinosStringItem<QString> selected() const;
     void setBearing(const QString &bearing);
-    void setState(const QString &state);
+    void setStatus(const QString &status);
     void setSelected(const QString &selected);
 };
 
