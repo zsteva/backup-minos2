@@ -58,7 +58,6 @@ public:
     bool logColumnsChanged;
     bool splittersChanged;
 
- //   long long curFreq;
     QString sCurFreq;
     QString sCurMode;
 

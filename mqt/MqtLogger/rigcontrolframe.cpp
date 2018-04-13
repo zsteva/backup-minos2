@@ -198,7 +198,6 @@ void RigControlFrame::setFreq(QString f)
         {
             ui->freqInput->setInputMask(maskData::freqMask[freq.count() - 4]);
             ui->freqInput->setText(freq);
-            trace("ui->freqInput->setText " + freq);
         }
         curFreq = freq;
 
@@ -246,7 +245,6 @@ void RigControlFrame::changeRadioFreq()
             else
             {
                 ui->freqInput->setText(QString("%1 %2 %3").arg("<font color='Red'>").arg(lastFreq).arg("</font>"));
-                trace("ui->freqInput->setText " + lastFreq);
             }
         }
     }
@@ -317,7 +315,6 @@ void RigControlFrame::sendFreq(QString f)
     double df = f.toDouble(&ok);
     if (ok && df > 0.0)
     {
-trace("sendFreq emit sendFreqControl " + f);
      emit sendFreqControl(f);
     }
 }
@@ -503,7 +500,6 @@ void RigControlFrame::setMode(QString m)
     QStringList mode = m.split(':');
     if (mode.length() == 2 )
     {
-        trace(QString("split mode is %1 %2").arg(mode[0]).arg(mode[1]));
         for (int i = 0; i < hamlibData::supModeList.count(); i++)
         {
                 if (mode[0] == hamlibData::supModeList[i])
@@ -557,8 +553,6 @@ void RigControlFrame::setRadioName(QString radNam, QString mode)
 
     if (ct && !ct->isProtected() && ct == TContestApp::getContestApp() ->getCurrentContest())
     {
-        trace(QString("setRadioName emit sendFreqControl %1 %2 ").arg(radNam).arg(mode));
-
         emit selectRadio(radNam, mode);  // send radio and mode if appended.
     }
 }
@@ -819,7 +813,6 @@ void RigControlFrame::freqPlusMinusButton(double f)
         if (freq != "")
         {
            ui->freqInput->setText(freq);
-           trace("ui->freqInput->setText " + freq);
 
            if (radioConnected && !radioError)
            {

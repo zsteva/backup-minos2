@@ -819,7 +819,6 @@ void TSingleLogFrame::on_SetMode(QString m)
     {
         if ( this == LogContainer->getCurrentLogFrame() )
         {
-            trace(contest->uuid + " setting scurmode to " + m);
             sCurMode = m;
             ui->FKHRigControlFrame->setMode(m);
             ui->GJVQSOLogFrame->modeSentFromRig(m);
@@ -834,7 +833,6 @@ void TSingleLogFrame::on_SetFreq(QString f)
     {
         if ( this == LogContainer->getCurrentLogFrame() )
         {
-            trace(contest->uuid + " setting scurfreq to " + f);
             sCurFreq = f;
             ui->FKHRigControlFrame->setFreq(f);
             ui->GJVQSOLogFrame->setFreq(f);
