@@ -84,6 +84,17 @@ void RotatorCache::addRotList(const QString &s)
         }
         rotStates = newstates;
     }
+    foreach(PubSubName psn, rotList)
+    {
+        if (!rotDetails.contains(psn))
+        {
+            rotDetails[psn] = AntennaDetail();
+        }
+        if (!rotStates.contains(psn))
+        {
+            rotStates[psn] = AntennaState();
+        }
+    }
     qSort(rotList);
 }
 
@@ -211,7 +222,7 @@ PubSubName RotatorCache::getSelected()
 }
 void RotatorCache::setStatus(const PubSubName &name, const QString &state)
 {
-    rotStates[name].setState(state);
+    rotStates[name].setStatus(state);
 }
 void RotatorCache::setBearing(const PubSubName &name, const QString &bearing)
 {
@@ -245,7 +256,7 @@ void RotatorCache::publishState()
     {
         if (i.value().isDirty())
         {
-            rpc->publish(rpcConstants::rotatorStateCategory, i.key().key(), i.value().pack(), psPublished);
+            rpc->publish(rpcConstants::rotatorStateCategory, i.key().toString(), i.value().pack(), psPublished);
             rotStates[i.key()].clearDirty();
         }
     }
@@ -258,7 +269,7 @@ void RotatorCache::publishDetails()
     {
         if (i.value().isDirty())
         {
-            rpc->publish(rpcConstants::rotatorDetailCategory, i.key().key(), i.value().pack(), psPublished);
+            rpc->publish(rpcConstants::rotatorDetailCategory, i.key().toString(), i.value().pack(), psPublished);
             rotDetails[i.key()].clearDirty();
         }
     }
@@ -272,7 +283,7 @@ void RotatorCache::publishPresets()
         if (i.value().isDirty())
         {
             QString packed = getPresetsString(i.key());
-            rpc->publish(rpcConstants::rotatorPresetsCategory, i.key().key(), packed, psPublished);
+            rpc->publish(rpcConstants::rotatorPresetsCategory, i.key().toString(), packed, psPublished);
             rotDetails[i.key()].clearDirty();
         }
     }

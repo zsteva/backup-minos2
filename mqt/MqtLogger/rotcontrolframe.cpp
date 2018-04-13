@@ -442,7 +442,7 @@ void RotControlFrame::setRotatorList(QString s)
     ui->antennaName->addItem("");
     ui->antennaName->addItems(rots);
 
-    if (ct && ct == TContestApp::getContestApp() ->getCurrentContest())
+    if (ct && !ct->isProtected())
         setRotatorAntennaName(ct->rotatorName.getValue().toString());
         //ui->antennaName->setCurrentText(ct->rotatorName.getValue());
 
@@ -577,7 +577,7 @@ void RotControlFrame::setRotatorAntennaName(const QString &s)
        ui->antennaName->setCurrentText(s);
 
    antennaName = ui->antennaName->currentText();
-   if (ct && !ct->isProtected() && ct == TContestApp::getContestApp() ->getCurrentContest())
+   if (ct && !ct->isProtected())
    {
         emit selectRotator(s);
    }

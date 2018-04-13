@@ -819,7 +819,6 @@ void TSingleLogFrame::on_SetMode(QString m)
     {
         if ( this == LogContainer->getCurrentLogFrame() )
         {
-            trace(contest->uuid + " setting scurmode to " + m);
             sCurMode = m;
             ui->FKHRigControlFrame->setMode(m);
             ui->GJVQSOLogFrame->modeSentFromRig(m);
@@ -834,7 +833,6 @@ void TSingleLogFrame::on_SetFreq(QString f)
     {
         if ( this == LogContainer->getCurrentLogFrame() )
         {
-            trace(contest->uuid + " setting scurfreq to " + f);
             sCurFreq = f;
             ui->FKHRigControlFrame->setFreq(f);
             ui->GJVQSOLogFrame->setFreq(f);
@@ -880,7 +878,7 @@ void TSingleLogFrame::on_SetBandList(QString s)
     ui->FKHRigControlFrame->setBandList(s);
 }
 
-void TSingleLogFrame::on_SetRadioState(QString s)
+void TSingleLogFrame::on_SetRadioStatus(QString s)
 {
     if ( this == LogContainer->getCurrentLogFrame() )
     {
@@ -932,6 +930,7 @@ void TSingleLogFrame::sendSelectRadio(const QString &radName, const QString &mod
             if (radName != ui->GJVQSOLogFrame->getRadioName())
             {
                ui->GJVQSOLogFrame->setRadioName(radName);
+               ui->FKHRigControlFrame->setRadioName(radName, mode);
             }
 
 
@@ -940,7 +939,6 @@ void TSingleLogFrame::sendSelectRadio(const QString &radName, const QString &mod
                 ct->radioName.setValue(radName);
                 ct->commonSave(false);
 
-                //ui->FKHRigControlFrame->setRadioName(radName);
 
             }
             LogContainer->sendDM->changeRigSelectionTo(ct->radioName.getValue(), mode, ct->uuid);  // send message including mode if it has been appended.
@@ -1008,7 +1006,7 @@ void TSingleLogFrame::on_RotatorPresetList(QString s)
 }
 
 
-void TSingleLogFrame::on_RotatorState(QString s)
+void TSingleLogFrame::on_RotatorStatus(QString s)
 {
     if ( this == LogContainer->getCurrentLogFrame() )
     {

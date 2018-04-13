@@ -92,6 +92,7 @@ void RotatorRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const 
             QString name;
             if (psAntName->getString(name))
             {
+                PubSubName psn(name);
                 QString sel;
                 if ( args->getStructArgMember( 0, rpcConstants::selected, psSelect ) )
                 {
@@ -99,11 +100,10 @@ void RotatorRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const 
                      {
                          // here you handle what the logger has sent to us
                         trace(QString("Rig RPC: select Command From Logger = %1").arg(sel));
-                        PubSubName psn(name);
                         rotatorCache.setSelected(psn, sel);
                      }
                 }
-                emit selectAntenna(name);
+                emit selectAntennaFromLog(psn);
             }
         }
         else if (args->getStructArgMember(0, rpcConstants::rotPreset, psRotPreset))

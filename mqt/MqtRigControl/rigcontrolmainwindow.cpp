@@ -232,7 +232,7 @@ void RigControlMainWindow::initActionsConnections()
     // Message from Logger
     connect(msg, SIGNAL(setFreq(QString)), this, SLOT(loggerSetFreq(QString)));
     connect(msg, SIGNAL(setMode(QString)), this, SLOT(loggerSetMode(QString)));
-    connect(msg, SIGNAL(selectLoggerRadio(QString, QString)), this, SLOT(onSelectRadio(QString, QString)));
+    connect(msg, SIGNAL(selectLoggerRadio(PubSubName, QString)), this, SLOT(onSelectRadio(PubSubName, QString)));
 
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->actionAbout_Radio_Config, SIGNAL(triggered()), this, SLOT(aboutRigConfig()));
@@ -386,9 +386,6 @@ void RigControlMainWindow::upDateRadio()
             {
                 ui->radioNameDisp->setText(setupRadio->currentRadio.radioName);
 
- //               logMessage(QString("Update - Get radio frequency"));
- //               getAndSendFrequency(RIG_VFO_CURR);   // also sends it
-
                 if (setupRadio->currentRadio.radioModelNumber != 135) // don't send USB if Ft991
                 {
                     if (radio->get_serialConnected())
@@ -468,11 +465,6 @@ void RigControlMainWindow::refreshRadio()
     {
         if (radio->get_serialConnected())
         {
- //           openRadio();    // do everything except init it
-
- //           logMessage(QString("Update - Get radio frequency"));
- //           getAndSendFrequency(RIG_VFO_CURR);   // also sends
-
             if (setupRadio->currentRadio.radioModelNumber != 135) // don't send USB if Ft991
             {
                 logMessage(QString("Refresh Radio: Logger Set Mode to %1").arg(selRadioMode));
@@ -692,10 +684,10 @@ void RigControlMainWindow::getRadioInfo()
 }
 
 
-void RigControlMainWindow::onSelectRadio(QString s, QString mode)
+void RigControlMainWindow::onSelectRadio(PubSubName s, QString mode)
 {
 
-    logMessage(QString("Recieved SelectRadio from Logger = %1, mode = %2").arg(s).arg(mode));
+    logMessage(QString("Recieved SelectRadio from Logger = %1, mode = %2").arg(s.toString()).arg(mode));
 
 
     if (!mode.isEmpty())
@@ -705,7 +697,7 @@ void RigControlMainWindow::onSelectRadio(QString s, QString mode)
 
     QString oldRadio = setupRadio->currentRadioName;
 
-    setupRadio->currentRadioName = s;
+    setupRadio->currentRadioName = s.key();
 
     if (!s.isEmpty() && s == oldRadio)
     {
@@ -791,10 +783,12 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
                 }
                 else
                 {
-                    displayTransVertVfo(0.0);
-                    transVertSwNum = TRANSSW_NUM_DEFAULT;
-                    ui->transVertSwNum->setText(TRANSSW_NUM_DEFAULT);
-                    sendTransVertSwitchToLogger(TRANSSW_NUM_DEFAULT);
+                    if (transVertSwNum != TRANSSW_NUM_DEFAULT)
+                    {
+                        transVertSwNum = TRANSSW_NUM_DEFAULT;
+                        ui->transVertSwNum->setText(TRANSSW_NUM_DEFAULT);
+                        sendTransVertSwitchToLogger(TRANSSW_NUM_DEFAULT);
+                    }
                     logMessage(QString("SetFreq: Transvert Switch not enabled - %1").arg(TRANSSW_NUM_DEFAULT));
                 }
 
@@ -1075,7 +1069,6 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
 
     mode = mode.left(mode.indexOf(":"));
     rmode_t mCode = radio->convertQStrMode(mode);
-    logMessage(QString("Setmode: Requested Mode = %1, rmode_t = %2").arg(mode).arg(mCode));
 
     if (radio->get_serialConnected())
     {

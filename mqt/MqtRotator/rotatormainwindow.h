@@ -209,7 +209,7 @@ private slots:
 
     void onStdInRead(QString);
 
-    void onLoggerSelectAntenna(QString);
+    void onLoggerSelectAntenna(PubSubName);
     void onLoggerSetRotation(int direction, int angle);
     void onLoggerSetPreset(QString);
     void checkEndStop();

@@ -89,6 +89,7 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
             QString name;
             if (psName->getString(name))
             {
+                PubSubName psn(name);
                 QString mode;
                 if ( args->getStructArgMember( 0, rpcConstants::rigControlMode, psMode ) )
                 {
@@ -104,12 +105,11 @@ void RigControlRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, con
                     if ( psSelect->getString( sel ) )
                     {
                         // here you handle what the logger has sent to us
-                        PubSubName psn(name);
                         rigCache.setSelected(psn, sel);
                         trace(QString("Rig RPC: select Command From Logger = %1 psn=%2, sel=%3").arg(sel).arg(psn.toString()).arg(sel));
                     }
                 }
-                emit selectLoggerRadio(name, mode);
+                emit selectLoggerRadio(psn, mode);
             }
         }
         else if ( args->getStructArgMember( 0, rpcConstants::rigControlMode, psMode ) )

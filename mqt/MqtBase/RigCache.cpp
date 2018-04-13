@@ -98,6 +98,18 @@ void RigCache::addRigList(const QString &s)
         }
         rigStates = newstates;
     }
+    foreach(PubSubName psn, rigList)
+    {
+        if (!rigDetails.contains(psn))
+        {
+            rigDetails[psn] = RigDetails();
+        }
+        if (!rigStates.contains(psn))
+        {
+            rigStates[psn] = RigState();
+        }
+    }
+
     qSort(rigList);
 }
 RigState &RigCache::getState(const PubSubName &p)
@@ -196,7 +208,7 @@ void RigCache::publishState()
     {
         if (i.value().isDirty())
         {
-            rpc->publish(rpcConstants::rigStateCategory, i.key().key(), i.value().pack(), psPublished);
+            rpc->publish(rpcConstants::rigStateCategory, i.key().toString(), i.value().pack(), psPublished);
             rigStates[i.key()].clearDirty();
         }
     }
@@ -209,7 +221,7 @@ void RigCache::publishDetails()
     {
         if (i.value().isDirty())
         {
-            rpc->publish(rpcConstants::rigDetailsCategory, i.key().key(), i.value().pack(), psPublished);
+            rpc->publish(rpcConstants::rigDetailsCategory, i.key().toString(), i.value().pack(), psPublished);
             rigDetails[i.key()].clearDirty();
         }
     }
