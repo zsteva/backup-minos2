@@ -37,6 +37,8 @@ class TSendDM : public QObject
       bool rotatorLoaded = false;
 
       void invalidateCache();
+      void invalidateRigCache(const PubSubName &name);
+      void invalidateRotatorCache(const PubSubName &name);
 
       void sendKeyerPlay( TSingleLogFrame *tslf,int fno );
       void sendKeyerRecord(TSingleLogFrame *tslf, int fno );
@@ -57,6 +59,9 @@ class TSendDM : public QObject
 
       QStringList rotators();
       QStringList rigs();
+
+      const RigState &getRigState(const QString &);
+      const RigDetails &getRigDetails(const QString &);
 
    private slots:
       void on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );

@@ -58,6 +58,10 @@ public:
     bool logColumnsChanged;
     bool splittersChanged;
 
+ //   long long curFreq;
+    QString sCurFreq;
+    QString sCurMode;
+
     bool isBandMapLoaded();
     bool bandMapLoaded;
 
@@ -95,10 +99,6 @@ private:
     int splitterHandleWidth;
 
     int lastStanzaCount;
-
-    long long curFreq;
-    QString sCurFreq;
-    QString sCurMode;
 
     void transferDetails( MatchTreeItem *MatchTreeIndex );
 

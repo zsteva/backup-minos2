@@ -198,6 +198,7 @@ void RigControlFrame::setFreq(QString f)
         {
             ui->freqInput->setInputMask(maskData::freqMask[freq.count() - 4]);
             ui->freqInput->setText(freq);
+            trace("ui->freqInput->setText " + freq);
         }
         curFreq = freq;
 
@@ -245,6 +246,7 @@ void RigControlFrame::changeRadioFreq()
             else
             {
                 ui->freqInput->setText(QString("%1 %2 %3").arg("<font color='Red'>").arg(lastFreq).arg("</font>"));
+                trace("ui->freqInput->setText " + lastFreq);
             }
         }
     }
@@ -315,7 +317,7 @@ void RigControlFrame::sendFreq(QString f)
     double df = f.toDouble(&ok);
     if (ok && df > 0.0)
     {
-
+trace("sendFreq emit sendFreqControl " + f);
      emit sendFreqControl(f);
     }
 }
@@ -347,31 +349,27 @@ void RigControlFrame::noRadioSendOutMode(QString m)
 }
 
 
-void RigControlFrame::on_ContestPageChanged(QString freq, QString mode)
+void RigControlFrame::on_ContestPageChanged()
 {
     QString radioName = ct->radioName.getValue().toString();
-    emit selectRadio(radioName, "");
 
+    TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+    QString mode = tslf->sCurMode;
+    if (mode.isEmpty() || mode == memDefData::DEFAULT_MODE)
+        mode = ct->currentMode.getValue();
 
-    QStringList modelist = mode.split(':');  // unpack mode
-    QString sMode;
+    trace(QString("on_ContestPageChanged emit selectRadio %1 %2 ").arg(radioName).arg(mode));
+    emit selectRadio(radioName, mode);
 
-    if (modelist.count() != 2)
-    {
-        return;
-    }
-    sMode = modelist[0];
+    QString bandlist = LogContainer->sendDM->getRigDetails(radioName).bandList().getValue();
+    setBandList(bandlist);
 
-    // contest paged changed - send freq and mode to synch
-    if (freq != memDefData::DEFAULT_FREQ)
+    QString freq = tslf->sCurFreq;
+    if (!freq.isEmpty() && freq != memDefData::DEFAULT_FREQ)
     {
         sendFreq(freq);
     }
 
-    if (curMode != memDefData::DEFAULT_MODE)
-    {
-        sendModeToRadio(curMode);
-    }
 }
 
 bool RigControlFrame::eventFilter(QObject *obj, QEvent *event)
@@ -505,6 +503,7 @@ void RigControlFrame::setMode(QString m)
     QStringList mode = m.split(':');
     if (mode.length() == 2 )
     {
+        trace(QString("split mode is %1 %2").arg(mode[0]).arg(mode[1]));
         for (int i = 0; i < hamlibData::supModeList.count(); i++)
         {
                 if (mode[0] == hamlibData::supModeList[i])
@@ -558,6 +557,8 @@ void RigControlFrame::setRadioName(QString radNam, QString mode)
 
     if (ct && !ct->isProtected() && ct == TContestApp::getContestApp() ->getCurrentContest())
     {
+        trace(QString("setRadioName emit sendFreqControl %1 %2 ").arg(radNam).arg(mode));
+
         emit selectRadio(radNam, mode);  // send radio and mode if appended.
     }
 }
@@ -591,6 +592,7 @@ void RigControlFrame::setRadioList(QString s)
 
 void RigControlFrame::setBandList(QString b)
 {
+    trace("setBandList " + b);
     if (!b.isEmpty())
     {
         QString currentBand = ui->bandSelCombo->currentText();
@@ -615,6 +617,37 @@ void RigControlFrame::setBandList(QString b)
         int i = ui->bandSelCombo->findText(currentBand);
         if (i >= 0)
             ui->bandSelCombo->setCurrentIndex(i);
+
+
+        if (ct == TContestApp::getContestApp() ->getCurrentContest())
+        {
+            //And we want to select the frequency based on the contest band
+
+            QString cb = ct->band.getValue().trimmed();
+            BandList &blist = BandList::getBandList();
+            BandInfo bi;
+            bool bandOK = blist.findBand(cb, bi);
+            if (bandOK)
+            {
+                for (int i = 0; i < listOfBands.size(); i++)
+                {
+                    if (listOfBands[i].band == cb)
+                    {
+                        ui->bandSelCombo->setCurrentIndex(i + 1);
+
+                        TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+                        double cf = convertStrToFreq(tslf->sCurFreq);
+
+                        if (cf > bi.fhigh || cf < bi.flow)
+                        {
+                            trace(ct->uuid + " RigControlFrame::setBandList set frequency to default for band " + cb);
+                            radioBandFreq(i + 1);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -786,6 +819,7 @@ void RigControlFrame::freqPlusMinusButton(double f)
         if (freq != "")
         {
            ui->freqInput->setText(freq);
+           trace("ui->freqInput->setText " + freq);
 
            if (radioConnected && !radioError)
            {

@@ -30,6 +30,15 @@ void TSendDM::invalidateCache()
     rigCache.invalidate();
     rotatorCache.invalidate();
 }
+void TSendDM::invalidateRigCache(const PubSubName &name)
+{
+    rigCache.invalidate(name);
+}
+void TSendDM::invalidateRotatorCache(const PubSubName &name)
+{
+    rotatorCache.invalidate(name);
+}
+
 //---------------------------------------------------------------------------
 void TSendDM::sendKeyerPlay( TSingleLogFrame *tslf, int fno )
 {
@@ -148,6 +157,7 @@ void TSendDM::sendRotator(TSingleLogFrame *tslf, rpcConstants::RotateDirection d
 void TSendDM::changeRotatorSelectionTo(const PubSubName &name, const QString &uuid)
 {
     // we should de-select the cached uuid on all rotator apps
+    trace(QString("Change rotator selection to %1 %2").arg(name.toString()).arg(uuid));
 
     PubSubName selected = rotatorCache.getSelected();
 
@@ -174,16 +184,20 @@ void TSendDM::changeRigSelectionTo(const PubSubName &name, const QString &mode, 
 {
     // we should de-select the cached uuid on all rig apps
 
+    trace(QString("Change rig selection to %1 %2 %3").arg(name.toString()).arg(mode).arg(uuid));
+
     PubSubName selected = rigCache.getSelected();
 
-    rigCache.setSelected(name, uuid);
-
     if (!selected.isEmpty() && selected != name)
+    {
         sendRigSelection(selected, "", "");
+    }
     sendRigSelection(name, mode, uuid);
 }
 void TSendDM::sendRigSelection(const PubSubName &s, const QString &mode, const QString &uuid)
 {
+    rigCache.setSelected(s, uuid);
+    rigCache.setMode(s, mode);
     RPCGeneralClient rpc(rpcConstants::rigControlMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
 
@@ -199,6 +213,8 @@ void TSendDM::sendRigSelection(const PubSubName &s, const QString &mode, const Q
 
 void TSendDM::sendRigControlFreq(TSingleLogFrame *tslf,const QString &freq)
 {
+    PubSubName rigSelected = rigCache.getSelected();
+    rigCache.setFreq(rigSelected, convertStrToFreq(freq));
     RPCGeneralClient rpc(rpcConstants::rigControlMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
 
@@ -207,13 +223,14 @@ void TSendDM::sendRigControlFreq(TSingleLogFrame *tslf,const QString &freq)
     st->addMember( freq, rpcConstants::rigControlFreq );
     rpc.getCallArgs() ->addParam( st );
 
-    PubSubName rigSelected = rigCache.getSelected();
     rpc.queueCall( rigSelected );
 }
 
 
 void TSendDM::sendRigControlMode(TSingleLogFrame *tslf,const QString &mode)
 {
+    PubSubName rigSelected = rigCache.getSelected();
+    rigCache.setMode(rigSelected, mode);
     RPCGeneralClient rpc(rpcConstants::rigControlMethod);
     QSharedPointer<RPCParam>st(new RPCParamStruct);
 
@@ -222,7 +239,6 @@ void TSendDM::sendRigControlMode(TSingleLogFrame *tslf,const QString &mode)
     st->addMember( mode, rpcConstants::rigControlMode );
     rpc.getCallArgs() ->addParam( st );
 
-    PubSubName rigSelected = rigCache.getSelected();
     rpc.queueCall( rigSelected );
 }
 void TSendDM::sendRotatorPreset(QString s)
@@ -289,18 +305,20 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
             if (!rigSelected.isEmpty())
             {
                 RigState &selState = rigCache.getState(rigSelected);
-                QString selUuid = selState.selected().getValue();
-                if (!selUuid.isEmpty())
+                QString selStateUuid = selState.selected().getValue();
+                RigDetails &selDetail = rigCache.getDetails(rigSelected);
+                QString selDetailsUuid = selDetail.selected().getValue();
+                if (!selStateUuid.isEmpty())
                 {
-                    RigDetails &selDetail = rigCache.getDetails(rigSelected);
 
                     for (int i = 0; i < frames.size(); i++)
                     {
                         TSingleLogFrame *tslf = frames[i];
                         QString frameUuid = tslf->getContest()->uuid;
 
-                        if (selUuid == frameUuid)
+                        if (selStateUuid == frameUuid)
                         {
+                            trace("Rig state distribution for " + selStateUuid);
                             if (selState.mode().isDirty())
                             {
                                 tslf->on_SetMode(selState.mode().getValue());
@@ -314,7 +332,10 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                                 tslf->on_SetRadioState(selState.status().getValue());
                             }
                             selState.clearDirty();
-
+                        }
+                        if (selDetailsUuid == frameUuid)
+                        {
+                            trace("Rig details distribution for " + selDetailsUuid);
                             if (selDetail.bandList().isDirty())
                             {
                                 tslf->on_SetBandList(selDetail.bandList().getValue());
@@ -334,17 +355,19 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                 if (!rotSelected.isEmpty())
                 {
                     AntennaState &selState = rotatorCache.getState(rotSelected);
-                    QString selUuid = selState.selected().getValue();
-                    if (!selUuid.isEmpty())
+                    QString selStateUuid = selState.selected().getValue();
+                    AntennaDetail &selDetail = rotatorCache.getDetails(rotSelected);
+                    QString selDetailUuid = selState.selected().getValue();
+                    if (!selStateUuid.isEmpty())
                     {
                         for (int i = 0; i < frames.size(); i++)
                         {
                             TSingleLogFrame *tslf = frames[i];
                             QString frameUuid = tslf->getContest()->uuid;
 
-                            if (selUuid == frameUuid)
+                            if (selStateUuid == frameUuid)
                             {
-                                AntennaDetail &selDetail = rotatorCache.getDetails(rotSelected);
+                                trace("Rotator state distribution for " + selStateUuid);
 
                                 if (selState.bearing().isDirty())
                                 {
@@ -355,7 +378,10 @@ void TSendDM::on_notify( bool err, QSharedPointer<MinosRPCObj> mro, const QStrin
                                     tslf->on_RotatorState(selState.state().getValue());
                                 }
                                 selState.clearDirty();
-
+                            }
+                            if (selDetailUuid == frameUuid)
+                            {
+                                trace("Rotator details distribution for " + selDetailUuid);
                                 if (selDetail.maxAzimuth().isDirty())
                                 {
                                     tslf->on_RotatorMaxAzimuth(QString::number(selDetail.maxAzimuth().getValue()));
@@ -498,6 +524,14 @@ QStringList TSendDM::rigs()
     }
     qSort(sl);
     return  sl;
+}
+const RigState &TSendDM::getRigState(const QString &name)
+{
+    return rigCache.getState(PubSubName(name));
+}
+const RigDetails &TSendDM::getRigDetails(const QString &name)
+{
+    return rigCache.getDetails(PubSubName(name));
 }
 //---------------------------------------------------------------------------
 

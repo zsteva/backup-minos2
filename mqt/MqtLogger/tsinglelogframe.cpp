@@ -28,8 +28,7 @@ TSingleLogFrame::TSingleLogFrame(QWidget *parent, BaseContestLog * contest) :
     keyerLoaded(false),
     radioLoaded(false),
     contest(contest),
-    lastStanzaCount( 0 ),
-    curFreq( 0 )
+    lastStanzaCount( 0 )
 
 {
     ui->setupUi(this);
@@ -260,11 +259,13 @@ void TSingleLogFrame::on_ContestPageChanged ()
     doNextContactDetailsOnLeftClick( false );
     MinosLoggerEvents::SendShowOperators();
 
-    ui->FKHRigControlFrame->on_ContestPageChanged(sCurFreq, sCurMode);
+    ui->FKHRigControlFrame->on_ContestPageChanged();
     ui->FKHRotControlFrame->on_ContestPageChanged();
 
-    LogContainer->subscribeApps();  // force everything to be (re)published
     updateQSODisplay();
+
+    LogContainer->sendDM->invalidateRigCache(ct->radioName.getValue());
+    LogContainer->sendDM->invalidateRotatorCache(ct->radioName.getValue());
 
 }
 void TSingleLogFrame::doNextContactDetailsOnLeftClick(bool keepSizes )
@@ -818,6 +819,7 @@ void TSingleLogFrame::on_SetMode(QString m)
     {
         if ( this == LogContainer->getCurrentLogFrame() )
         {
+            trace(contest->uuid + " setting scurmode to " + m);
             sCurMode = m;
             ui->FKHRigControlFrame->setMode(m);
             ui->GJVQSOLogFrame->modeSentFromRig(m);
@@ -832,6 +834,7 @@ void TSingleLogFrame::on_SetFreq(QString f)
     {
         if ( this == LogContainer->getCurrentLogFrame() )
         {
+            trace(contest->uuid + " setting scurfreq to " + f);
             sCurFreq = f;
             ui->FKHRigControlFrame->setFreq(f);
             ui->GJVQSOLogFrame->setFreq(f);

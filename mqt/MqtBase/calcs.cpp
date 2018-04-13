@@ -8,9 +8,6 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
-extern const double pi = 3.141592653 ;  /* pi */
-extern const double dr = pi / 180.0;      // degree to radian conversion factor
-
 /******************************************************/
 /*                                                    */
 /* convert Maidenhead locator to longtitude and       */

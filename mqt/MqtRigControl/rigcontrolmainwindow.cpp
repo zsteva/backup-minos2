@@ -30,7 +30,7 @@
 
 RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     QMainWindow(parent)
-  , msg(0)
+  , msg(nullptr)
   , ui(new Ui::RigControlMainWindow)
   , rigErrorFlag(false)
   , mgmModeFlag(false)
@@ -386,8 +386,8 @@ void RigControlMainWindow::upDateRadio()
             {
                 ui->radioNameDisp->setText(setupRadio->currentRadio.radioName);
 
-                logMessage(QString("Update - Get radio frequency"));
-                getAndSendFrequency(RIG_VFO_CURR);   // also sends it
+ //               logMessage(QString("Update - Get radio frequency"));
+ //               getAndSendFrequency(RIG_VFO_CURR);   // also sends it
 
                 if (setupRadio->currentRadio.radioModelNumber != 135) // don't send USB if Ft991
                 {
@@ -395,7 +395,7 @@ void RigControlMainWindow::upDateRadio()
                     {
                         if (appName.count() > 0)
                         {
-                            logMessage(QString("Update Radio: Logger Set Mode to %1").arg(slogMode));
+                            logMessage(QString("Update Radio: Logger Set Mode to %1").arg(selRadioMode));
                             loggerSetMode(selRadioMode);
                         }
                         else
@@ -438,8 +438,7 @@ void RigControlMainWindow::upDateRadio()
             writeWindowTitle(appName);
         }
 
-        msg->rigCache.publishState();
-        msg->rigCache.publishDetails();
+        msg->rigCache.publish();
 
 
         if (radio->get_serialConnected())
@@ -465,18 +464,18 @@ void RigControlMainWindow::refreshRadio()
     int ridx = 0;
     radioIndex = ui->selectRadioBox->currentIndex();
     ridx = radioIndex;
-    if (ridx > 0)
+    if (ridx >= 0)
     {
         if (radio->get_serialConnected())
         {
-            openRadio();    // do everything except init it
+ //           openRadio();    // do everything except init it
 
-            logMessage(QString("Update - Get radio frequency"));
-            getAndSendFrequency(RIG_VFO_CURR);   // also sends
+ //           logMessage(QString("Update - Get radio frequency"));
+ //           getAndSendFrequency(RIG_VFO_CURR);   // also sends
 
             if (setupRadio->currentRadio.radioModelNumber != 135) // don't send USB if Ft991
             {
-                logMessage(QString("Update Radio: Logger Set Mode to %1").arg(slogMode));
+                logMessage(QString("Refresh Radio: Logger Set Mode to %1").arg(selRadioMode));
                 loggerSetMode(selRadioMode);
             }
             writeWindowTitle(appName);
@@ -581,9 +580,7 @@ void RigControlMainWindow::openRadio()
         showStatusMessage(tr("Radio Open error"));
     }
 
-    msg->rigCache.publishState();
-    msg->rigCache.publishDetails();
-
+    msg->rigCache.publish();
 }
 
 void RigControlMainWindow::closeRadio()
@@ -598,8 +595,7 @@ void RigControlMainWindow::closeRadio()
     sendStatusToLogDisConnected();
     logMessage(QString("Radio Closed"));
 
-    msg->rigCache.publishState();
-    msg->rigCache.publishDetails();
+    msg->rigCache.publish();
 }
 
 
@@ -692,8 +688,7 @@ void RigControlMainWindow::getRadioInfo()
             }
 
     */
-    msg->rigCache.publishState();
-    msg->rigCache.publishDetails();
+    msg->rigCache.publish();
 }
 
 
@@ -712,8 +707,6 @@ void RigControlMainWindow::onSelectRadio(QString s, QString mode)
 
     setupRadio->currentRadioName = s;
 
-    msg->rigCache.invalidate();
-
     if (!s.isEmpty() && s == oldRadio)
     {
         refreshRadio();
@@ -722,6 +715,7 @@ void RigControlMainWindow::onSelectRadio(QString s, QString mode)
     {
         upDateRadio();
     }
+    msg->rigCache.invalidate();
 }
 
 void RigControlMainWindow::loggerSetFreq(QString freq)
@@ -732,8 +726,8 @@ void RigControlMainWindow::loggerSetFreq(QString freq)
         logger_freq = freq;
         setFreq(freq, RIG_VFO_CURR);
     }
-    msg->rigCache.publishState();
-    msg->rigCache.publishDetails();
+    // but the rig hasn't updated...
+    //msg->rigCache.publish();
 }
 
 
@@ -761,8 +755,9 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
             logMessage(QString("SetFreq: Band found = %1").arg(cb));
         }
 
-        if (cb != selTvBand && setupRadio->currentRadio.transVertEnable && setupRadio->currentRadio.numTransverters != 0)
+        if (/*cb != selTvBand &&*/ setupRadio->currentRadio.transVertEnable && setupRadio->currentRadio.numTransverters != 0)
         {
+            // BIG delays this way!
             // does a transverter support this band?
 
             bool b = false;
@@ -901,18 +896,22 @@ int RigControlMainWindow::getAndSendFrequency(vfo_t vfo)
 
                 if (b)
                 {
+                    logMessage(QString("Transverter %1 name %2 offset %3 rfreq %4").arg(tvNum)
+                               .arg(setupRadio->currentRadio.transVertSettings[tvNum]->transVertName)
+                               .arg(setupRadio->currentRadio.transVertSettings[tvNum]->transVertOffset)
+                               .arg(rfrequency)
+                               );
                     if (setupRadio->currentRadio.transVertSettings[tvNum]->transVertNegative)
                     {
                         logMessage(QString("Get Freq: Negative Transvert"));
                         transVertF = rfrequency - setupRadio->currentRadio.transVertSettings[tvNum]->transVertOffset;
-                        logMessage(QString("Get Freq: Transvert F = %1").arg(QString::number(transVertF)));
                     }
                     else
                     {
                         logMessage(QString("Get Freq: Positive Transvert"));
                         transVertF = rfrequency + setupRadio->currentRadio.transVertSettings[tvNum]->transVertOffset;
-
                     }
+                    logMessage(QString("Get Freq: TransvertF = %1").arg(QString::number(transVertF)));
                 }
 
                 logMessage(QString("Get Freq: Transvert Freq. = %1").arg(QString::number(transVertF)));
@@ -1058,8 +1057,8 @@ void RigControlMainWindow::loggerSetMode(QString mode)
             setMode(mode, RIG_VFO_CURR);
         }
     }
-    msg->rigCache.publishState();
-    msg->rigCache.publishDetails();
+    // mode won't have changed yet
+    //msg->rigCache.publish();
 }
 
 void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
@@ -1074,8 +1073,9 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
 
     cmdLockOn();      // lock get radio info
 
-    logMessage(QString("Setmode: Requested Mode = %1").arg(mode));
+    mode = mode.left(mode.indexOf(":"));
     rmode_t mCode = radio->convertQStrMode(mode);
+    logMessage(QString("Setmode: Requested Mode = %1, rmode_t = %2").arg(mode).arg(mCode));
 
     if (radio->get_serialConnected())
     {
@@ -1097,8 +1097,8 @@ void RigControlMainWindow::setMode(QString mode, vfo_t vfo)
         logMessage(QString("Set Mode: radio not connected"));
     }
     cmdLockOff();
-    msg->rigCache.publishState();
-    msg->rigCache.publishDetails();
+    // mode won't have changed yet
+    //msg->rigCache.publish();
 }
 
 

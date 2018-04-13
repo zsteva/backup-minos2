@@ -21,7 +21,12 @@ void RotatorCache::invalidate()
     }
 
 }
-
+void RotatorCache::invalidate(const PubSubName &name)
+{
+    rotStates[name].setDirty();
+    rotDetails[name].setDirty();
+    rotPresets[name].setDirty();
+}
 void RotatorCache::addRotList(const QString &s)
 {
     // clumsy code - there must be a better way!
@@ -169,11 +174,24 @@ void RotatorCache::setSelected(const PubSubName &name, const QString &sel)
         if (i.key() == name)
         {
             i.value().setSelected(sel);
-            trace("selecting rotator " + i.key().toString() + "  " + sel);
+            trace("selecting rotator state " + i.key().toString() + "  " + sel);
         }
         else if (!i.value().selected().getValue().isEmpty())
         {
-            trace("de-selecting rotator " + i.key().toString());
+            trace("de-selecting rotator state " + i.key().toString());
+            i.value().setSelected("");
+        }
+    }
+    for(QMap<PubSubName, AntennaDetail>::iterator i = rotDetails.begin(); i != rotDetails.end(); i++ )
+    {
+        if (i.key() == name)
+        {
+            i.value().setSelected(sel);
+            trace("selecting rotator detail " + i.key().toString() + "  " + sel);
+        }
+        else if (!i.value().selected().getValue().isEmpty())
+        {
+            trace("de-selecting rotator detail " + i.key().toString());
             i.value().setSelected("");
         }
     }

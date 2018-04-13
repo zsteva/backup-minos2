@@ -10,13 +10,18 @@ class RigCache
     QMap<PubSubName, RigState> rigStates;
     QMap<PubSubName, RigDetails> rigDetails;
     QVector<PubSubName> rigList;
+    void publishState();
+    void publishDetails();
 public:
     RigCache();
 
     void invalidate();
-
-    void publishState();
-    void publishDetails();
+    void invalidate(const PubSubName &name);
+    void publish()
+    {
+        publishState();
+        publishDetails();
+    }
 
     QString getStateString(const PubSubName &name) const;
     void setStateString(const AnalysePubSubNotify & an);

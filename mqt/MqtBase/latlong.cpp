@@ -147,10 +147,7 @@ static void ( * setprojcentre[ LOC + 1 ] ) ( double, double * ) =
 static int coordele[ 10 ];
 
 static double a = 0.0, b = 0.0, e2 = 0.0, n1 = 0.0, n2 = 0.0, n3 = 0.0, ex = 0.0;
-
-extern const double pi;
 /***************************************************************************/
-
 
 static void setprojectionconstants( projectionparams *proj )
 {

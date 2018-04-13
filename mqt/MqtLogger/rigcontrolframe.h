@@ -114,7 +114,7 @@ public:
     bool checkRadioState();
 
 
-    void on_ContestPageChanged(QString freq, QString mode);
+    void on_ContestPageChanged();
 
 
 signals:
