@@ -36,8 +36,8 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams* _transvertData, QWidget 
 
     fillPortsInfo(ui->locTVComPortSel);
 
-    connect(ui->calcOffsetPb, SIGNAL(clicked(bool)), this, SLOT(calcOffset()));
-    connect(ui->negCheckbox, SIGNAL(clicked(bool)), this, SLOT(negCheckBoxSelected(bool)));
+    connect(ui->targetFreq, SIGNAL(editingFinished()), this, SLOT(calcOffset()));
+    connect(ui->radioFreq, SIGNAL(editingFinished()), this, SLOT(calcOffset()));
     connect(ui->enableTransVertSw, SIGNAL(clicked(bool)), this, SLOT(enableTransVertSwSel(bool)));
     connect(ui->transVertSwNum, SIGNAL(editingFinished()), this, SLOT(transVertSwNumSel()));
     connect(ui->locTvConChk, SIGNAL(clicked(bool)), this, SLOT(localTransVertSwSel(bool)));
@@ -56,6 +56,13 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams* _transvertData, QWidget 
 
 void TransVertSetupForm::calcOffset()
 {
+    if (ui->radioFreq->text().isEmpty() || ui->targetFreq->text().isEmpty())
+    {
+        return;  // wait till both are filled
+    }
+
+
+
     // check freq valid format
     QString txf = ui->radioFreq->text().trimmed().remove( QRegExp("^[0]*"));
     QString targetf = ui->targetFreq->text().trimmed().remove(QRegExp("^[0]*"));
@@ -91,6 +98,15 @@ void TransVertSetupForm::calcOffset()
             // display
             ui->offsetFreq->setText(transVertData->transVertOffsetStr);
 
+            // check for negative offset
+            if (transVertData->radioFreq > transVertData->targetFreq)
+            {
+                transVertData->transVertNegative = true;
+            }
+            else
+            {
+                transVertData->transVertNegative = false;
+            }
 
             transVertValueChanged = true;
         }
@@ -125,28 +141,7 @@ void TransVertSetupForm::setOffsetFreqLabel(QString f)
 }
 
 
-/********************* TransVert Negative Offset Select  *********************************/
 
-void TransVertSetupForm::negCheckBoxSelected(bool flag)
-{
-    bool checked = ui->negCheckbox->isChecked();
-    if(transVertData->transVertNegative != checked)
-    {
-        transVertData->transVertNegative = flag;
-        transVertValueChanged = true;
-    }
-
-}
-
-bool TransVertSetupForm::getNegCheckBox()
-{
-    return ui->negCheckbox->isChecked();
-}
-
-void TransVertSetupForm::setNegCheckBox(bool b)
-{
-    ui->negCheckbox->setChecked(b);
-}
 
 /********************* TransVert Switch Enable  *********************************/
 
@@ -332,7 +327,6 @@ void TransVertSetupForm::setUiItemsVisible(bool visible)
 {
     //ui->bandSel->setVisible(visible);
     ui->enableTransVertSw->setVisible(visible);
-    ui->negCheckbox->setVisible(visible);
     ui->radioFreq->setVisible(visible);
     ui->transVertSwNum->setVisible(visible);
     //ui->BandLabel->setVisible(visible);
