@@ -713,15 +713,16 @@ bool ContestContact::GJVload( int diskBlock )
    forcedMult.setInitialValue( temp );
    return true;
 }
+/*
 bool ContestContact::setField(QSharedPointer<BaseContact> tct, int ACol, const QString Value )
 {
     //#warning never used! There to allow grid editing
     // This really ought to validate it first...
     switch ( ACol )
     {
-    /*case egDate:
-            break;
-         */
+    //case egDate:
+    //        break;
+
     case egTime:
         time.setTime( Value, DTGDISP );  // VALIDATE!
         break;
@@ -771,6 +772,7 @@ bool ContestContact::setField(QSharedPointer<BaseContact> tct, int ACol, const Q
     commonSave(tct);
     return true;
 }
+*/
 void ContestContact::processMinosStanza( const QString &methodName, MinosTestImport * const mt )
 {
    DisplayContestContact::processMinosStanza( methodName, mt );

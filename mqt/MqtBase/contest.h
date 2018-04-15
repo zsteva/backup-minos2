@@ -176,6 +176,10 @@ class BaseContestLog: public BaseLogList
       {
          return unwriteable;
       }
+      unsigned long getNextBlock()
+      {
+          return nextBlock;
+      }
       // end of contest details
 
       // The log itself
