@@ -109,12 +109,25 @@ int RigSetupForm::getTransVertTabIndex()
 
 void RigSetupForm::radioModelSelected()
 {
-    int rm;
+
+    setupRadioModel(ui->radioModelBox->currentText());
+
+
+
+}
+
+
+void RigSetupForm::setupRadioModel(QString radioModel)
+{
+
+    int rm = 0;
     QString radioModelName;
     QString radioMfgName;
-    if (ui->radioModelBox->currentText() != radioData->radioModel)
+    if (radioModel != radioData->radioModel)
     {
-        radioData->radioModel = ui->radioModelBox->currentText();
+        radioData->radioModel = radioModel;
+        ui->radioModelBox->setCurrentText(radioModel);
+
         if (radio->getModelInfo(radioData->radioModel, &rm, &radioMfgName, &radioModelName) == -1)
         {
             // error
@@ -183,13 +196,10 @@ void RigSetupForm::radioModelSelected()
 
         buildSupBandList();
         radioValueChanged = true;
-
-
     }
+
+
 }
-
-
-
 
 QString RigSetupForm::getRadioModel()
 {

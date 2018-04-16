@@ -17,6 +17,7 @@
 #include "transvertsetupform.h"
 #include "ui_setupdialog.h"
 #include "rigcontrolcommonconstants.h"
+#include "addradiodialog.h"
 #include "rigcontrol.h"
 #include "rigutils.h"
 #include <QSignalMapper>
@@ -126,8 +127,6 @@ void SetupDialog::initSetup()
 
 
 
-
-
 void SetupDialog::addTab(int tabNum, QString tabName)
 {
     availRadioData.append(new scatParams);
@@ -225,21 +224,23 @@ void SetupDialog::loadSettingsToTab(int tabNum)
 
 void SetupDialog::addRadio()
 {
-    QString radioName = QInputDialog::getText(this, tr("Enter Radio Name"), tr("Please enter a Radio Name:"), QLineEdit::Normal);
-    radioName = radioName.trimmed();
-    if (radioName.isEmpty())
+
+    AddRadioDialog getRadioName_Rig(availRadios, radio);
+    getRadioName_Rig.setWindowTitle("Add Radio and Radio Model");
+    if (getRadioName_Rig.exec() == !QDialog::Accepted)
+    {
+        return;
+    }
+
+    QString radioName = getRadioName_Rig.getRadioName();
+    QString radioModel = getRadioName_Rig.getRadioModel();
+
+
+    if (radioName.isEmpty() || radioModel.isEmpty())
     {
           return;
     }
-    if (checkRadioNameMatch(radioName))
-    {
-        // error empty name or name already exists
-        QMessageBox::information(this, tr("Radio Name Exists"),
-                                 tr("Radio Name: %1, already exists \nPlease enter another name").arg(radioName.trimmed()),
-                                  QMessageBox::Ok|QMessageBox::Default,
-                                  QMessageBox::NoButton, QMessageBox::NoButton);
-        return;
-    }
+
 
 
     // add the new radio
@@ -247,11 +248,13 @@ void SetupDialog::addRadio()
     addTab(tabNum, radioName);
     addedRadioTabs.append(radioName);   // track added radios until save
     numAvailRadios++;
-    loadSettingsToTab(tabNum);
-    radioTab[tabNum]->radioValueChanged = true;
+    radioTab[tabNum]->setupRadioModel(radioModel);
+
+    //loadSettingsToTab(tabNum);
+    //radioTab[tabNum]->radioValueChanged = true;
     //saveRadio(tabNum);
     ui->radioTab->setCurrentIndex(tabNum);
-    radioTab[tabNum]->setEnableRigDataEntry(false);
+    //radioTab[tabNum]->setEnableRigDataEntry(false);
     emit radioTabChanged();
 
 }

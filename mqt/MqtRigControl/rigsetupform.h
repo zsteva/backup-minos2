@@ -109,6 +109,9 @@ public:
     void setTransVertTabIndex(int tabNum);
     int getTransVertTabIndex();
     void setEnableRigDataEntry(bool enable);
+
+    void setupRadioModel(QString radioModel);
+
 signals:
     void transVertTabAdded(int);
 
@@ -164,6 +167,7 @@ private:
     void fillPollInterValInfo();
 
     bool checkTransVerterNameMatch(QString transVertName);
+
 
 
 };
