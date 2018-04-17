@@ -187,13 +187,7 @@ void SetupDialog::loadSettingsToTab(int tabNum)
         for (int t = 0; t < radioTab[tabNum]->getRadioData()->numTransverters; t++)
         {
             radioTab[tabNum]->setTransVertTabText(t, radioTab[tabNum]->getRadioData()->transVertNames[t]);
-            radioTab[tabNum]->transVertTab[t]->setRadioFreqBox(convertFreqStrDispSingle(radioTab[tabNum]->getRadioData()->transVertSettings[t]->radioFreqStr));
-            radioTab[tabNum]->transVertTab[t]->setTargetFreqBox(convertFreqStrDispSingle(radioTab[tabNum]->getRadioData()->transVertSettings[t]->targetFreqStr));
-            radioTab[tabNum]->transVertTab[t]->setOffsetFreqLabel(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transVertOffsetStr);
-            radioTab[tabNum]->transVertTab[t]->setEnableTransVertSw(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
-            radioTab[tabNum]->transVertTab[t]->setTransVerSwNum(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transSwitchNum);
-            radioTab[tabNum]->transVertTab[t]->setEnableTransVertSwBoxVisible(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
-
+            radioTab[tabNum]->loadTransVertTab(t);
         }
 
     }

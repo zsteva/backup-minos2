@@ -115,7 +115,8 @@ HEADERS += \
     rotatorcommon.h \
     rigcommon.h \
     rotpresetbutton.h \
-    rotpresetdialog.h
+    rotpresetdialog.h \
+    focuswatcher.h
 
 unix {
     target.path = /usr/lib

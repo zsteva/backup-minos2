@@ -204,6 +204,10 @@ void RigControlMainWindow::closeEvent(QCloseEvent *event)
 }
 
 
+
+
+
+
 void RigControlMainWindow::onStdInRead(QString cmd)
 {
     trace("Command read from stdin: " + cmd);

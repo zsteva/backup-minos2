@@ -15,6 +15,7 @@
 #include "rigsetupform.h"
 #include "BandList.h"
 #include "addtransverterdialog.h"
+#include "rigutils.h"
 #include <QDebug>
 #include <QLineEdit>
 #include <QCheckBox>
@@ -78,6 +79,9 @@ RigSetupForm::~RigSetupForm()
 {
     delete ui;
 }
+
+
+
 
 
 scatParams* RigSetupForm::getRadioData()
@@ -868,8 +872,9 @@ void RigSetupForm::addTransVerter()
     radioData->transVertNames.append(transVerterName);
     addTransVertTab(tabNum, transVerterName);
     radioData->numTransverters = tabNum + 1;
+    loadTransVertTab(tabNum);
     setTransVertTabIndex(tabNum);
-    //loadSettingsToTransVertTab(tabNum);
+
 }
 
 
@@ -914,6 +919,18 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
     buildSupBandList();
     transVertTab[tabNum]->transVertValueChanged = true;
 
+}
+
+
+
+void RigSetupForm::loadTransVertTab(int tabNum)
+{
+    transVertTab[tabNum]->setRadioFreqBox(convertFreqStrDispSingle(radioData->transVertSettings[tabNum]->radioFreqStr));
+    transVertTab[tabNum]->setTargetFreqBox(convertFreqStrDispSingle(radioData->transVertSettings[tabNum]->targetFreqStr));
+    transVertTab[tabNum]->setOffsetFreqLabel(radioData->transVertSettings[tabNum]->transVertOffsetStr);
+    transVertTab[tabNum]->setEnableTransVertSw(radioData->transVertSettings[tabNum]->enableTransSwitch);
+    transVertTab[tabNum]->setTransVerSwNum(radioData->transVertSettings[tabNum]->transSwitchNum);
+    transVertTab[tabNum]->setEnableTransVertSwBoxVisible(radioData->transVertSettings[tabNum]->enableTransSwitch);
 }
 
 

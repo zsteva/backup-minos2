@@ -113,6 +113,7 @@ public:
 
     void setupRadioModel(QString radioModel);
 
+    void loadTransVertTab(int tabNum);
 signals:
     void transVertTabAdded(int);
 
@@ -142,6 +143,8 @@ private slots:
 
     void transvertTabChanged(int tabNum);
 private:
+
+
 
 
     Ui::rigSetupForm *ui;

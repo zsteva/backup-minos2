@@ -5,6 +5,7 @@
 #include "rigcontrol.h"
 #include "ui_transvertsetupform.h"
 #include "BandList.h"
+#include "focuswatcher.h"
 
 
 namespace Ui {
@@ -78,16 +79,26 @@ signals:
         void locTVComPortSel(int);
 
 
+        void targetEditFinished();
+        void radioEditFinished();
 private:
 
 
         Ui::transVertSetupForm *ui;
         TransVertParams *transVertData;
 
+        FocusWatcher *radioFreqEdit;
+        FocusWatcher *targetFreqEdit;
+
+        bool radioFreqOK = false;
+        bool targetFreqOK = false;
 
 
 
         void loadBandSel();
-    };
+public Q_SLOTS:
+    void radioFreqEditfocusChange(QObject *, bool, QFocusEvent *event);
+    void targetFreqEditfocusChange(QObject *, bool, QFocusEvent *event);
+};
 
     #endif // TRANSVERTSETUPFORM_H

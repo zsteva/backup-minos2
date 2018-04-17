@@ -213,7 +213,7 @@ QString convertFreqStrDispSingle(QString sfreq)
         //    sfreq = sfreq.insert(1,'.');
         //    break;
         default:
-            sfreq = "???.???";    // error
+            sfreq = "0.0";    // error
 
     }
 

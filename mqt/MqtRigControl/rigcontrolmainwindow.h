@@ -95,6 +95,8 @@ private:
 
     QString geoStr;         // geometry registry location
 
+
+
     void initActionsConnections();
     void initSelectRadioBox();
     void setSelectRadioBoxVisible(bool visible);
