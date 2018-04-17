@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     rigsetupform.cpp \
     transvertsetupform.cpp \
     addtransverterdialog.cpp \
-    freqpresetdialog.cpp
+    freqpresetdialog.cpp \
+    addradiodialog.cpp
 
 HEADERS  += rigcontrolmainwindow.h \
     rigcontrol.h \
@@ -35,7 +36,8 @@ HEADERS  += rigcontrolmainwindow.h \
     rigsetupform.h \
     transvertsetupform.h \
     addtransverterdialog.h \
-    freqpresetdialog.h
+    freqpresetdialog.h \
+    addradiodialog.h
 
 
 
@@ -44,6 +46,7 @@ FORMS    += rigcontrolmainwindow.ui \
     rigsetupform.ui \
     transvertsetupform.ui \
     addtransverterdialog.ui \
-    freqpresetdialog.ui
+    freqpresetdialog.ui \
+    addradiodialog.ui
 
 win32: INCLUDEPATH += C:/Projects/hamlib-w32-3.1/include

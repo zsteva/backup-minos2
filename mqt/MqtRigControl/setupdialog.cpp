@@ -17,6 +17,7 @@
 #include "transvertsetupform.h"
 #include "ui_setupdialog.h"
 #include "rigcontrolcommonconstants.h"
+#include "addradiodialog.h"
 #include "rigcontrol.h"
 #include "rigutils.h"
 #include <QSignalMapper>
@@ -126,8 +127,6 @@ void SetupDialog::initSetup()
 
 
 
-
-
 void SetupDialog::addTab(int tabNum, QString tabName)
 {
     availRadioData.append(new scatParams);
@@ -150,72 +149,60 @@ void SetupDialog::loadSettingsToTab(int tabNum)
 
     ui->radioTab->setTabText(tabNum, radioTab[tabNum]->getRadioData()->radioName);
 
-    if (availRadioData[tabNum]->radioModel != "")
+    radioTab[tabNum]->setRadioModel(radioTab[tabNum]->getRadioData()->radioModel);
+
+    radioTab[tabNum]->setCIVAddress(radioTab[tabNum]->getRadioData()->civAddress);
+    radioTab[tabNum]->setComport(radioTab[tabNum]->getRadioData()->comport);
+    radioTab[tabNum]->setDataSpeed(QString::number(radioTab[tabNum]->getRadioData()->baudrate));
+    radioTab[tabNum]->setDataBits(QString::number(radioTab[tabNum]->getRadioData()->databits));
+    radioTab[tabNum]->setStopBits(QString::number(radioTab[tabNum]->getRadioData()->stopbits));
+    radioTab[tabNum]->setParityBits(radioTab[tabNum]->getRadioData()->parity);
+    radioTab[tabNum]->setHandshake(radioTab[tabNum]->getRadioData()->handshake);
+    radioTab[tabNum]->setNetAddress(radioTab[tabNum]->getRadioData()->networkAdd);
+    radioTab[tabNum]->setNetPortNum(radioTab[tabNum]->getRadioData()->networkPort);
+    radioTab[tabNum]->setPollInterval(radioTab[tabNum]->getRadioData()->pollInterval);
+    radioTab[tabNum]->setTransVertSelected(radioTab[tabNum]->getRadioData()->transVertEnable);
+
+
+    if (rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_NETWORK || rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_UDP_NETWORK)
     {
-
-
-        radioTab[tabNum]->setRadioModel(radioTab[tabNum]->getRadioData()->radioModel);
-
-        radioTab[tabNum]->setCIVAddress(radioTab[tabNum]->getRadioData()->civAddress);
-        radioTab[tabNum]->setComport(radioTab[tabNum]->getRadioData()->comport);
-        radioTab[tabNum]->setDataSpeed(QString::number(radioTab[tabNum]->getRadioData()->baudrate));
-        radioTab[tabNum]->setDataBits(QString::number(radioTab[tabNum]->getRadioData()->databits));
-        radioTab[tabNum]->setStopBits(QString::number(radioTab[tabNum]->getRadioData()->stopbits));
-        radioTab[tabNum]->setParityBits(radioTab[tabNum]->getRadioData()->parity);
-        radioTab[tabNum]->setHandshake(radioTab[tabNum]->getRadioData()->handshake);
-        radioTab[tabNum]->setNetAddress(radioTab[tabNum]->getRadioData()->networkAdd);
-        radioTab[tabNum]->setNetPortNum(radioTab[tabNum]->getRadioData()->networkPort);
-        radioTab[tabNum]->setPollInterval(radioTab[tabNum]->getRadioData()->pollInterval);
-        radioTab[tabNum]->setTransVertSelected(radioTab[tabNum]->getRadioData()->transVertEnable);
-
-
-        if (rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_NETWORK || rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_UDP_NETWORK)
-        {
-            radioTab[tabNum]->serialDataEntryVisible(false);
-            radioTab[tabNum]->networkDataEntryVisible(true);
-        }
-        else if (rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_SERIAL)
-        {
-            radioTab[tabNum]->serialDataEntryVisible(true);
-            radioTab[tabNum]->networkDataEntryVisible(false);
-        }
-        else if (rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_NONE)
-        {
-            radioTab[tabNum]->serialDataEntryVisible(false);
-            radioTab[tabNum]->networkDataEntryVisible(false);
-        }
-        radioTab[tabNum]->setMgmMode(radioTab[tabNum]->getRadioData()->mgmMode);
-
-        // now load transverter settings
-        if(radioTab[tabNum]->getRadioData()->numTransverters >0 )
-        {
-            for (int t = 0; t < radioTab[tabNum]->getRadioData()->numTransverters; t++)
-            {
-                radioTab[tabNum]->setTransVertTabText(t, radioTab[tabNum]->getRadioData()->transVertNames[t]);
-                radioTab[tabNum]->transVertTab[t]->setRadioFreqBox(convertFreqStrDispSingle(radioTab[tabNum]->getRadioData()->transVertSettings[t]->radioFreqStr));
-                radioTab[tabNum]->transVertTab[t]->setTargetFreqBox(convertFreqStrDispSingle(radioTab[tabNum]->getRadioData()->transVertSettings[t]->targetFreqStr));
-                radioTab[tabNum]->transVertTab[t]->setOffsetFreqLabel(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transVertOffsetStr);
-                radioTab[tabNum]->transVertTab[t]->setEnableTransVertSw(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
-                radioTab[tabNum]->transVertTab[t]->setTransVerSwNum(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transSwitchNum);
-                radioTab[tabNum]->transVertTab[t]->setEnableTransVertSwBoxVisible(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
-
-
-            }
-
-        }
-
-
-
-        radioTab[tabNum]->buildSupBandList();
-
-    }
-    else
-    {
-        // no radio model visible
-        radioTab[tabNum]->networkDataEntryVisible(false);
         radioTab[tabNum]->serialDataEntryVisible(false);
-        radioTab[tabNum]->pollIntervalVisible(false);
+        radioTab[tabNum]->networkDataEntryVisible(true);
     }
+    else if (rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_SERIAL)
+    {
+        radioTab[tabNum]->serialDataEntryVisible(true);
+        radioTab[tabNum]->networkDataEntryVisible(false);
+    }
+    else if (rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_NONE)
+    {
+        radioTab[tabNum]->serialDataEntryVisible(false);
+        radioTab[tabNum]->networkDataEntryVisible(false);
+    }
+    radioTab[tabNum]->setMgmMode(radioTab[tabNum]->getRadioData()->mgmMode);
+
+    // now load transverter settings
+    if (radioTab[tabNum]->getRadioData()->numTransverters > 0 )
+    {
+        for (int t = 0; t < radioTab[tabNum]->getRadioData()->numTransverters; t++)
+        {
+            radioTab[tabNum]->setTransVertTabText(t, radioTab[tabNum]->getRadioData()->transVertNames[t]);
+            radioTab[tabNum]->transVertTab[t]->setRadioFreqBox(convertFreqStrDispSingle(radioTab[tabNum]->getRadioData()->transVertSettings[t]->radioFreqStr));
+            radioTab[tabNum]->transVertTab[t]->setTargetFreqBox(convertFreqStrDispSingle(radioTab[tabNum]->getRadioData()->transVertSettings[t]->targetFreqStr));
+            radioTab[tabNum]->transVertTab[t]->setOffsetFreqLabel(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transVertOffsetStr);
+            radioTab[tabNum]->transVertTab[t]->setEnableTransVertSw(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
+            radioTab[tabNum]->transVertTab[t]->setTransVerSwNum(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transSwitchNum);
+            radioTab[tabNum]->transVertTab[t]->setEnableTransVertSwBoxVisible(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
+
+        }
+
+    }
+
+
+    radioTab[tabNum]->setTransVertTabIndex(0);
+    radioTab[tabNum]->buildSupBandList();
+
+
 
     radioTab[tabNum]->setTransVertSelected(radioTab[tabNum]->getRadioData()->transVertEnable);
 
@@ -226,21 +213,23 @@ void SetupDialog::loadSettingsToTab(int tabNum)
 
 void SetupDialog::addRadio()
 {
-    QString radioName = QInputDialog::getText(this, tr("Enter Radio Name"), tr("Please enter a Radio Name:"), QLineEdit::Normal);
-    radioName = radioName.trimmed();
-    if (radioName.isEmpty())
+
+    AddRadioDialog getRadioName_Rig(availRadios, radio);
+    getRadioName_Rig.setWindowTitle("Add Radio and Radio Model");
+    if (getRadioName_Rig.exec() == !QDialog::Accepted)
+    {
+        return;
+    }
+
+    QString radioName = getRadioName_Rig.getRadioName();
+    QString radioModel = getRadioName_Rig.getRadioModel();
+
+
+    if (radioName.isEmpty() || radioModel.isEmpty())
     {
           return;
     }
-    if (checkRadioNameMatch(radioName))
-    {
-        // error empty name or name already exists
-        QMessageBox::information(this, tr("Radio Name Exists"),
-                                 tr("Radio Name: %1, already exists \nPlease enter another name").arg(radioName.trimmed()),
-                                  QMessageBox::Ok|QMessageBox::Default,
-                                  QMessageBox::NoButton, QMessageBox::NoButton);
-        return;
-    }
+
 
 
     // add the new radio
@@ -248,10 +237,13 @@ void SetupDialog::addRadio()
     addTab(tabNum, radioName);
     addedRadioTabs.append(radioName);   // track added radios until save
     numAvailRadios++;
-    loadSettingsToTab(tabNum);
-    radioTab[tabNum]->radioValueChanged = true;
+    radioTab[tabNum]->setupRadioModel(radioModel);
+
+    //loadSettingsToTab(tabNum);
+    //radioTab[tabNum]->radioValueChanged = true;
     //saveRadio(tabNum);
     ui->radioTab->setCurrentIndex(tabNum);
+    //radioTab[tabNum]->setEnableRigDataEntry(false);
     emit radioTabChanged();
 
 }

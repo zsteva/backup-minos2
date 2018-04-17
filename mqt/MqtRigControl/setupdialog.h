@@ -63,6 +63,7 @@ public:
     QStringList removeRadioTabs;
     QStringList renameRadioTabs;   // old radio names
 
+
     int getRadioId(QString rotator);
 
 
@@ -77,6 +78,9 @@ public:
     int comportAvial(int radioNum, QString comport);
     int findCurrentRadio(QString currentRadioName);
     void setTabToCurrentRadio();
+
+
+
 signals:
 
     void radioNameChange();

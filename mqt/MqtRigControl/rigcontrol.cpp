@@ -393,7 +393,7 @@ bool RigControl::getRigList(QComboBox *cb)
     if(capsList.count()==0) return false;
     QStringList sl;
     // add blank at beginning
-    sl << "";
+    //sl << "";
     for (i=0;i<capsList.count();i++)
     {
 

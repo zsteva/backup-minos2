@@ -56,11 +56,24 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams* _transvertData, QWidget 
 
 void TransVertSetupForm::calcOffset()
 {
-    if (ui->radioFreq->text().isEmpty() || ui->targetFreq->text().isEmpty())
+    //if (ui->radioFreq->text().isEmpty() || ui->targetFreq->text().isEmpty())
+    //{
+    //    return;  // wait till both are filled
+    //}
+    if (ui->targetFreq->text().isEmpty())
     {
-        return;  // wait till both are filled
+        QMessageBox msgBox;
+        msgBox.setText("Please enter a target frequency.");
+        msgBox.exec();
+        return;
     }
-
+    else if (ui->radioFreq->text().isEmpty())
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Please enter a radio frequency.");
+        msgBox.exec();
+        return;
+    }
 
 
     // check freq valid format

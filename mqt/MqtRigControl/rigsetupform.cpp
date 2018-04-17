@@ -13,7 +13,6 @@
 
 
 #include "rigsetupform.h"
-#include "ui_rigsetupform.h"
 #include "BandList.h"
 #include "addtransverterdialog.h"
 #include <QDebug>
@@ -71,6 +70,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVe
     connect(ui->addTransvert, SIGNAL(clicked(bool)), this, SLOT(addTransVerter()));
     connect(ui->removeTransvert, SIGNAL(clicked(bool)), this, SLOT(removeTransVerter()));
     connect(ui->changeBand, SIGNAL(clicked(bool)), this, SLOT(changeBand()));
+    connect(ui->transVertTab, SIGNAL(currentChanged(int)), this, SLOT(transvertTabChanged(int)));
 }
 
 
@@ -85,17 +85,49 @@ scatParams* RigSetupForm::getRadioData()
     return radioData;
 }
 
+
+
+void RigSetupForm::transvertTabChanged(int tabNum)
+{
+
+
+}
+
+void RigSetupForm::setTransVertTabIndex(int tabNum)
+{
+    ui->transVertTab->setCurrentIndex(tabNum);
+    curTransVertTabNum = tabNum;
+}
+
+int RigSetupForm::getTransVertTabIndex()
+{
+    return curTransVertTabNum;
+}
+
 /************************ Radio Model Dialogue *********************/
 
 
 void RigSetupForm::radioModelSelected()
 {
-    int rm;
+
+    setupRadioModel(ui->radioModelBox->currentText());
+
+
+
+}
+
+
+void RigSetupForm::setupRadioModel(QString radioModel)
+{
+
+    int rm = 0;
     QString radioModelName;
     QString radioMfgName;
-    if (ui->radioModelBox->currentText() != radioData->radioModel)
+    if (radioModel != radioData->radioModel)
     {
-        radioData->radioModel = ui->radioModelBox->currentText();
+        radioData->radioModel = radioModel;
+        ui->radioModelBox->setCurrentText(radioModel);
+
         if (radio->getModelInfo(radioData->radioModel, &rm, &radioMfgName, &radioModelName) == -1)
         {
             // error
@@ -161,16 +193,13 @@ void RigSetupForm::radioModelSelected()
         }
 
 
-
+        setTransVertSelected(radioData->transVertEnable);
         buildSupBandList();
         radioValueChanged = true;
-
-
     }
+
+
 }
-
-
-
 
 QString RigSetupForm::getRadioModel()
 {
@@ -595,6 +624,31 @@ void RigSetupForm::setTransVertSelected(bool flag)
     ui->enableTransVert->setChecked(flag);
     transVertTabEnable(flag);
 }
+
+
+
+
+/************** RigSetup Enable **************************************/
+
+
+void RigSetupForm::setEnableRigDataEntry(bool enable)
+{
+    ui->CIVlineEdit->setEnabled(enable);
+    ui->comPortBox->setEnabled(enable);
+    ui->comDataBitsBox->setEnabled(enable);
+    ui->comSpeedBox->setEnabled(enable);
+    ui->comDataBitsBox->setEnabled(enable);
+    ui->comHandShakeBox->setEnabled(enable);
+    ui->comParityBox->setEnabled(enable);
+    ui->netPortBox->setEnabled(enable);
+    ui->networkAddBox->setEnabled(enable);
+    ui->pollInterval->setEnabled(enable);
+    ui->mgmBox->setEnabled(enable);
+    ui->RITEnable->setEnabled(enable);
+    ui->enableTransVert->setEnabled(enable);
+
+}
+
 
 /*************************** Serial Data Entry Visible ***************/
 

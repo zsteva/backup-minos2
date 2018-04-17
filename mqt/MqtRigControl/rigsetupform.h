@@ -33,6 +33,8 @@ public:
 
 
 
+
+
     QVector<TransVertSetupForm*> transVertTab;
 
     QStringList addedTransVertTabs;     // tracked edited data
@@ -104,6 +106,12 @@ public:
     bool findSupTransBand(const QString band);
 
 
+    void setTransVertTabIndex(int tabNum);
+    int getTransVertTabIndex();
+    void setEnableRigDataEntry(bool enable);
+
+    void setupRadioModel(QString radioModel);
+
 signals:
     void transVertTabAdded(int);
 
@@ -131,6 +139,7 @@ private slots:
     void civAddressFinished();
 
 
+    void transvertTabChanged(int tabNum);
 private:
 
 
@@ -142,7 +151,7 @@ private:
     //TransVertSetupForm *transVerter;
     QString appName;
 
-
+    int curTransVertTabNum = 0;
 
 
     void fillHandShakeInfo();
@@ -158,6 +167,7 @@ private:
     void fillPollInterValInfo();
 
     bool checkTransVerterNameMatch(QString transVertName);
+
 
 
 };
