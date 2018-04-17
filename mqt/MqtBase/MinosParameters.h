@@ -12,7 +12,9 @@
 
 #ifndef MinosParametersH
 #define MinosParametersH 
-#include "base_pch.h"
+#include <QString>
+#include <QWidget>
+class BaseContestLog;
 //---------------------------------------------------------------------------
 class BaseContestLog;
 class ContactList;
