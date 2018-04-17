@@ -70,7 +70,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVe
     connect(ui->addTransvert, SIGNAL(clicked(bool)), this, SLOT(addTransVerter()));
     connect(ui->removeTransvert, SIGNAL(clicked(bool)), this, SLOT(removeTransVerter()));
     connect(ui->changeBand, SIGNAL(clicked(bool)), this, SLOT(changeBand()));
-    connect(ui->transVertTab, SIGNAL(currentChanged(int)), this, SLOT(transvertTabChanged(int)));
+    connect(ui->transVertTab, SIGNAL(tabBarClicked(int)), this, SLOT(transvertTabChanged(int)));
 }
 
 
@@ -89,6 +89,26 @@ scatParams* RigSetupForm::getRadioData()
 
 void RigSetupForm::transvertTabChanged(int tabNum)
 {
+
+    if (curTransVertTabNum != tabNum)
+    {
+        if (!transVertTab[curTransVertTabNum]->transVertOffsetOk)
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Transvert Offset error!/nPlease complete entry of transvert frequencies");
+            msgBox.exec();
+            ui->transVertTab->setCurrentIndex(curTransVertTabNum);
+        }
+        else
+        {
+            setTransVertTabIndex(tabNum);
+        }
+
+
+    }
+
+
+
 
 
 }
@@ -848,7 +868,7 @@ void RigSetupForm::addTransVerter()
     radioData->transVertNames.append(transVerterName);
     addTransVertTab(tabNum, transVerterName);
     radioData->numTransverters = tabNum + 1;
-    ui->transVertTab->setCurrentIndex(tabNum);
+    setTransVertTabIndex(tabNum);
     //loadSettingsToTransVertTab(tabNum);
 }
 
@@ -872,7 +892,7 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
 
     ui->transVertTab->insertTab(tabNum, transVertTab[tabNum], tabName);
     ui->transVertTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
-    ui->transVertTab->setCurrentIndex(tabNum);
+    setTransVertTabIndex(tabNum);
     transVertTab[tabNum]->setEnableTransVertSwBoxVisible(false);
 
     // does this radio support antenna sw?

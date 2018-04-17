@@ -23,9 +23,7 @@
 
 TransVertSetupForm::TransVertSetupForm(TransVertParams* _transvertData, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::transVertSetupForm),
-    transVertValueChanged(false),
-    transVertNameChanged(false)
+    ui(new Ui::transVertSetupForm)
 {
 
     ui->setupUi(this);
@@ -60,6 +58,20 @@ void TransVertSetupForm::calcOffset()
     //{
     //    return;  // wait till both are filled
     //}
+
+    transVertOffsetOk = false;
+
+    if (ui->targetFreq->text().isEmpty() || ui->radioFreq->text().isEmpty())
+    {
+        transVertData->transVertOffset = 0.0;
+        transVertData->transVertOffsetStr = convertFreqStrDispSingle(convertFreqToStr(transVertData->transVertOffset));
+        // display
+        ui->offsetFreq->setText(transVertData->transVertOffsetStr);
+        return;
+    }
+
+/*
+
     if (ui->targetFreq->text().isEmpty())
     {
         QMessageBox msgBox;
@@ -75,7 +87,7 @@ void TransVertSetupForm::calcOffset()
         return;
     }
 
-
+*/
     // check freq valid format
     QString txf = ui->radioFreq->text().trimmed().remove( QRegExp("^[0]*"));
     QString targetf = ui->targetFreq->text().trimmed().remove(QRegExp("^[0]*"));
@@ -121,6 +133,7 @@ void TransVertSetupForm::calcOffset()
                 transVertData->transVertNegative = false;
             }
 
+            transVertOffsetOk = true;
             transVertValueChanged = true;
         }
         else

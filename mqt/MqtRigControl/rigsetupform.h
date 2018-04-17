@@ -27,6 +27,7 @@ public:
     bool radioValueChanged;
     bool radioNameChanged;
 
+
     scatParams* getRadioData();
 
     QVector<BandDetail*> bands;

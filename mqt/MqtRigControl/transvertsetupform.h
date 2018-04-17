@@ -22,8 +22,10 @@ public:
 
 
 
-        bool transVertValueChanged;
-        bool transVertNameChanged;
+        bool transVertValueChanged = false;
+        bool transVertNameChanged = false;
+
+        bool transVertOffsetOk = false;
 
         void setBand(QString b);
         QString getBand();
