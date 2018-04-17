@@ -465,7 +465,7 @@ void SettingsBundle::clearProfileSection( bool clearCurr)
       }
    }
 }
-void SettingsBundle::flushProfile( void )
+void SettingsBundle::flushProfile( )
 {
    if ( !bundleFile || !bundleFile->iniFile )
    {

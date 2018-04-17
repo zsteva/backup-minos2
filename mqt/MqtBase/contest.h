@@ -140,11 +140,11 @@ class BaseContestLog: public BaseLogList
 
       virtual void clearDirty();
       virtual void setDirty();
-      bool isReadOnly( void )
+      bool isReadOnly( )
       {
          return (protectedContest.getValue() && ! suppressProtected) || unwriteable;
       }
-      bool isProtected( void )
+      bool isProtected( )
       {
          return protectedContest.getValue();
       }
@@ -160,7 +160,7 @@ class BaseContestLog: public BaseLogList
             protectedContest.setValue( true );
          }
       }
-      bool isProtectedSuppressed( void )
+      bool isProtectedSuppressed( )
       {
          return suppressProtected;
       }
@@ -278,9 +278,9 @@ class BaseContestLog: public BaseLogList
       {
          return false;
       }
-      virtual void closeFile( void )
+      virtual void closeFile( )
       {}
-      virtual bool GJVload( void )
+      virtual bool GJVload( )
       {
          return false;
       }
@@ -293,10 +293,10 @@ class BaseContestLog: public BaseLogList
 
       // general
 
-      void validateLoc( void );
+      void validateLoc( );
       void getMatchText(QSharedPointer<BaseContact>, QString &, const BaseContestLog *const ct ) const;
       void getMatchField( QSharedPointer<BaseContact> pct, int col, QString &disp, const BaseContestLog *const ct ) const;
-      void scanContest( void );
+      void scanContest( );
       void setScore( QString & );
       bool isCurDup(QSharedPointer<BaseContact>) const;
 
@@ -304,7 +304,7 @@ class BaseContestLog: public BaseLogList
 
       // manipulation of contact list
 
-      int getContactCount( void );
+      int getContactCount( );
       int indexOf( QSharedPointer<BaseContact> item );
       QSharedPointer<BaseContact> pcontactAtSeq( unsigned long logSequence );
       QSharedPointer<BaseContact> pcontactAt(int offset );
@@ -319,7 +319,7 @@ class BaseContestLog: public BaseLogList
       int CalcNearest( const QString &scalcloc );
       int CalcCentres( const QString &scalcloc );
       bool getsdist(const QString &loc, QString &minloc, double &mindist );
-      QSharedPointer<BaseContact> getBestDX( void );
+      QSharedPointer<BaseContact> getBestDX( );
       QString dateRange( DTG dstyle );
       bool checkTime(const dtg &t) const;
       bool checkTime(const QDateTime &t) const;

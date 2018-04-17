@@ -28,10 +28,10 @@
 class WSAGuard
 {
    public:
-      WSAGuard( void );
+      WSAGuard( );
       ~WSAGuard();
 };
-WSAGuard::WSAGuard( void )
+WSAGuard::WSAGuard( )
 {
 #ifdef Q_OS_WIN
    // class to ensure that WinSock is opened and closed correctly

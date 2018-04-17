@@ -75,7 +75,7 @@ class commonPort : public QObject
 
       virtual int getlinesMode() = 0;
 
-      virtual void checkControls( void ) = 0;
+      virtual void checkControls( ) = 0;
 
       void registerMonitor( lineMonitor * );
 
@@ -117,7 +117,7 @@ class WindowsMonitorPort: public commonPort
           return linesMode;
       }
 
-      virtual void checkControls( void );
+      virtual void checkControls( );
 
 private slots:
       void checkWinLines();
@@ -151,7 +151,7 @@ class WinMonitor: public lineMonitor
 
       virtual bool initialise( const KeyerConfig &keyer, const PortConfig &port );
 
-      virtual void checkControls( void );
+      virtual void checkControls( );
       virtual int getlinesMode()
       {
           return linesMode;

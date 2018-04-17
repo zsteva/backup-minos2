@@ -149,7 +149,7 @@ class lineMonitor
 
       virtual bool initialise( const KeyerConfig &keyer, const PortConfig &port ) = 0;
 
-      virtual void checkControls( void );
+      virtual void checkControls( );
 };
 class timerTicker: public QObject
 {
@@ -186,7 +186,7 @@ class commonKeyer: public lineMonitor, public timerTicker
 
       virtual bool docommand( const KeyerCtrl &dvp_ctrl ) = 0;
 
-      virtual bool getPTT( void );
+      virtual bool getPTT( );
       virtual void getActionState( QString & );
       virtual bool getStatus( QString &a );
       virtual bool startMicPassThrough() = 0;
@@ -309,8 +309,8 @@ class KeyerAction
       KeyerAction *getNextAction();
       virtual char statusLetter() = 0;
       virtual bool playingFile( const QString & );
-      virtual void activateVox( void );
-      virtual void interruptOK( void ) = 0;
+      virtual void activateVox( );
+      virtual void interruptOK( ) = 0;
 
       virtual RecBuffer *getSourceBuffer(){return nullptr;}
       virtual void doSinkBuffer(RecBuffer *){}
@@ -334,7 +334,7 @@ class ToneAction: public KeyerAction
       virtual void linesModeChanged(int lmode) override;
       virtual void queueFinished() override;
       virtual void timeOut() override;
-      virtual void interruptOK( void ) override;
+      virtual void interruptOK( ) override;
       char statusLetter() override
       {
          return 't';
@@ -352,7 +352,7 @@ class VoiceAction: public KeyerAction
       virtual void linesModeChanged(int lmode) override = 0;
       virtual void queueFinished() override = 0;
       virtual void timeOut() override = 0;
-      virtual void interruptOK( void ) override;
+      virtual void interruptOK( ) override;
       VoiceAction();
       virtual ~VoiceAction() override;
 };

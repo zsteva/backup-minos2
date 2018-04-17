@@ -182,7 +182,7 @@ void WindowsMonitorPort::ptt( int state )
    }
 }
 
-void WindowsMonitorPort::checkControls( void )
+void WindowsMonitorPort::checkControls( )
 {
    // check and action PTT, L1, L2
     L1State = winMonForm->L1Checked();
@@ -265,7 +265,7 @@ void WinMonitor::ptt( int state )
    }
 }
 
-void WinMonitor::checkControls( void )
+void WinMonitor::checkControls( )
 {}
 bool WinMonitor::L1Changed( int state )
 {

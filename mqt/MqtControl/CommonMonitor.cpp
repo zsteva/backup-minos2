@@ -57,7 +57,7 @@ void commonController::tickEvent()        // this will often be an interrupt rou
 {
    checkControls();
 }
-void commonController::checkControls( void )
+void commonController::checkControls( )
 {
    // loop through ports, checkControls on each
    for ( QVector < commonPort *>::iterator i = portChain.begin(); i != portChain.end(); i++ )

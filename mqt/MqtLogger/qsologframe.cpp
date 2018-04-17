@@ -704,7 +704,7 @@ bool QSOLogFrame::savePartial()
    }
    return false;
 }
-bool QSOLogFrame::restorePartial( void )
+bool QSOLogFrame::restorePartial( )
 {
    if ( partialContact )
    {
@@ -716,7 +716,7 @@ bool QSOLogFrame::restorePartial( void )
    }
    return false;
 }
-void QSOLogFrame::killPartial( void )
+void QSOLogFrame::killPartial( )
 {
    if ( partialContact )
    {
@@ -1390,7 +1390,7 @@ void QSOLogFrame::lgTraceerr( int err )
    MinosLoggerEvents::SendValidateError(err);
 }
 //==============================================================================
-void QSOLogFrame::contactValid( void )
+void QSOLogFrame::contactValid( )
 {
    // this is where we need to do all of our cross field validation
 

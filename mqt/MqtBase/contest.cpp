@@ -67,7 +67,7 @@ int BaseContestLog::indexOf(QSharedPointer<BaseContact> item )
     }
     return -1;
 }
-int BaseContestLog::getContactCount( void )
+int BaseContestLog::getContactCount( )
 {
    return ctList.size();
 }
@@ -168,7 +168,7 @@ void BaseContestLog::makeContact( bool timeNow, QSharedPointer<BaseContact>&lct 
 {
    lct = QSharedPointer<BaseContact>(new BaseContact( this, timeNow ));
 }
-void BaseContestLog::validateLoc( void )
+void BaseContestLog::validateLoc( )
 {
     if (MGMContestRules.getValue())
     {
@@ -524,7 +524,7 @@ static void isBestDX( QSharedPointer<BaseContact> cct, QSharedPointer<BaseContac
    if ( ( !*bestDX ) || ( ( cct->contactScore.getValue() > ( *bestDX ) ->contactScore.getValue() ) ) )
       * bestDX = cct;
 }
-QSharedPointer<BaseContact> BaseContestLog::getBestDX( void )
+QSharedPointer<BaseContact> BaseContestLog::getBestDX( )
 {
    QSharedPointer<BaseContact> bestDX;
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
@@ -568,7 +568,7 @@ void BaseContestLog::setScore( QString &buff )
    buff = cs.disp();
 }
 // and we need to do this a bit more often to pick up unfilled properly
-void BaseContestLog::scanContest( void )
+void BaseContestLog::scanContest( )
 {
    DupSheet.clear();
 

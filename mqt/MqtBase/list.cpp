@@ -131,7 +131,7 @@ bool ContactList::initialise(const QString &fn, int slotno )
 
    return loadOK;
 }
-bool ContactList::cslLoad( void )
+bool ContactList::cslLoad( )
 {
    // read data from file
    CsvReader csv;
@@ -179,7 +179,7 @@ bool ContactList::cslLoad( void )
    }
    return false;
 }
-bool ContactList::cslLoadContacts( void )
+bool ContactList::cslLoadContacts( )
 {
    return true;
 }

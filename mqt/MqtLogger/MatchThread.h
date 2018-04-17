@@ -50,7 +50,7 @@ class Matcher
       SharedMatchCollection matchCollection;
 
       void startMatch(QSharedPointer<CountryEntry> ce = QSharedPointer<CountryEntry>() );
-      void initMatch( void );
+      void initMatch();
       void clearmatchall();
       virtual bool idleMatch( int limit ) = 0;
 

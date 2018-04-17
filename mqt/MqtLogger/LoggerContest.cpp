@@ -20,7 +20,7 @@
 #include "LoggerContest.h"
 #include "BandList.h"
 
-LoggerContestLog::LoggerContestLog( void ) : BaseContestLog(),
+LoggerContestLog::LoggerContestLog( ) : BaseContestLog(),
       minosFile( false ),
       GJVFile( false ),
       logFile( false ), adifFile( false ), ediFile( false ),
@@ -475,7 +475,7 @@ qint64 LoggerContestLog::writeBlock(QSharedPointer<QFile> fd, int bno )
    }
    return ret;
 }
-void LoggerContestLog::closeFile( void )
+void LoggerContestLog::closeFile( )
 {
    if ( GJVcontestFile.data() )
    {
@@ -752,7 +752,7 @@ bool LoggerContestLog::GJVsave( GJVParams &gp )
    // note that each contact will be saved as entered
    return true;
 }
-bool LoggerContestLog::GJVload( void )
+bool LoggerContestLog::GJVload( )
 {
    QString temp;
    logCount = 0;
@@ -825,7 +825,7 @@ bool LoggerContestLog::GJVload( void )
    return true;
 
 }
-bool LoggerContestLog::GJVloadContacts( void )
+bool LoggerContestLog::GJVloadContacts( )
 {
    nextBlock = 1;
 

@@ -34,7 +34,7 @@ enum PrintFile_order
 PrintFileLine::PrintFileLine( const QString &pre, const QString &dat ) :
       prefix( pre ), data( dat )
 {}
-PrintFileLine::PrintFileLine( void )
+PrintFileLine::PrintFileLine( )
 {}
 PrintFileLine::~PrintFileLine()
 {}

@@ -25,9 +25,9 @@ public:
     void setRadioLoaded();
     void setRotatorLoaded();
 
-    bool savePartial( void );
-    bool restorePartial( void );
-    void killPartial( void );
+    bool savePartial(  );
+    bool restorePartial( );
+    void killPartial( );
     void startNextEntry( );
     bool doKeyPressEvent( QKeyEvent* event );
     virtual void selectEntryForEdit(QSharedPointer<BaseContact> lct );
@@ -94,7 +94,7 @@ private:
     void setScoreText( int dist, bool partial, bool xband );
     bool dlgForced();
     bool validateControls( validTypes command );
-    void contactValid( void );
+    void contactValid( );
 
     void do_mouseDoubleClickEvent(QObject *w);
     QSharedPointer<BaseContact> getLastContact();

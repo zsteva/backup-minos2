@@ -20,7 +20,7 @@ class ContestSlot
       int slotno;
       BaseContestLog * slot;
 
-      ContestSlot( void );
+      ContestSlot( );
       ~ContestSlot();
 };
 class ListSlot
@@ -29,7 +29,7 @@ class ListSlot
       int slotno;
       ContactList * slot;
 
-      ListSlot( void );
+      ListSlot( );
       ~ListSlot();
 };
 typedef QMap < int, QSharedPointer<ContestSlot> > ContestSlotList;
@@ -87,7 +87,7 @@ class TContestApp : public MinosParameters
       virtual void setBoolDisplayProfile( int enumkey, bool value ) override;
       virtual void getStringDisplayProfile( int enumkey, QString &value ) override;
       virtual void setStringDisplayProfile( int enumkey, QString value ) override;
-      virtual void flushDisplayProfile( void ) override;
+      virtual void flushDisplayProfile( ) override;
       virtual qint64 getBigClockCorrection() override;
       virtual int getStatsPeriod1() override;
       virtual int getStatsPeriod2() override;
@@ -139,9 +139,9 @@ extern qint64 bigClockCorr;
 
 extern bool isOpen(QSharedPointer<ContestSlot> cs, const QString &fn );
 extern bool isOpen(QSharedPointer<ListSlot> cs, const QString &fn );
-extern void closeContestApp( void );
-extern bool initialiseContestApp( void );
-extern bool contestAppLoadFiles( void );
+extern void closeContestApp( );
+extern bool initialiseContestApp( );
+extern bool contestAppLoadFiles( );
 
 
 #endif

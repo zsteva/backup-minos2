@@ -22,7 +22,7 @@ GJVParams::GJVParams(QSharedPointer<QFile> f )
 GJVParams::~GJVParams()
 {}
 //============================================================
-Locator::Locator( void ) : valRes( ERR_NOLOC )
+Locator::Locator( ) : valRes( ERR_NOLOC )
 {
    loc.setInitialValue( "        " );
 }
@@ -40,7 +40,7 @@ char Locator::validate( double &lon, double &lat )
    valRes = lonlat( loc.getValue(), lon, lat );
    return valRes;
 }
-char Locator::validate( void )
+char Locator::validate( )
 {
    double longitude = 0.0;
    double latitude = 0.0;
@@ -334,7 +334,7 @@ void dtg::setTime( const QString &t, DTG dstyle )
    stime.setValue( temp );
    baddtg = false;
 }
-int dtg::notEntered( void )
+int dtg::notEntered( )
 {
    int i;
    bool te = false;

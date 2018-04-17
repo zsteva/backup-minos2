@@ -109,7 +109,7 @@ commonLineControl *commonPort::findLine(const QString &name, bool lineIn )
    }
    return nullptr;
 }
-void commonPort::checkControls( void )
+void commonPort::checkControls( )
 {
    getLineState();
    for ( QVector<commonLineControl *>::iterator i = lines.begin(); i != lines.end(); i++ )

@@ -78,7 +78,7 @@ class SettingsBundle
       bool isSectionPresent(QString sname);
       bool isCurrSectionPresent();
 
-      void closeProfile( void );
+      void closeProfile( );
 
       bool checkKeyExists( const QString &key );
       QString displayNameOf( int enumKey );

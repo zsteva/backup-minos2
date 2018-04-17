@@ -42,7 +42,7 @@ class SoundSystemDriver
       int ihand = -1;
       int isave = -1;
 
-      void unload( void );
+      void unload( );
    public:
       volatile int recording = false;
       bool ready = false;
@@ -88,7 +88,7 @@ class SoundSystemDriver
       void genTone(int16_t *tptr, bool add
                        , int tone, unsigned int samples, unsigned int ramptime, double vmult , int16_t *enddest);
       bool createPipTone( QString &errmess, int pipTone, int pipVolume, int pipLength );
-      static void sbdvp_unload( void );
+      static void sbdvp_unload( );
       void initTone1( int );
       void initTone2( int, int );
       void startTone1();

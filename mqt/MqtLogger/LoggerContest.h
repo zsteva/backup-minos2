@@ -151,7 +151,7 @@ class LoggerContestLog : public BaseContestLog
 
       // startup/closedown
 
-      LoggerContestLog( void );
+      LoggerContestLog( );
       void initialiseINI();
       bool initialise( int slotno );
       bool initialise(const QString &, bool, int slotno );
@@ -160,7 +160,7 @@ class LoggerContestLog : public BaseContestLog
 
       // common file stuff
       bool commonSave( bool newfile ) override;
-      void closeFile( void ) override;
+      void closeFile( ) override;
 
       // minos save
       virtual bool minosSaveContestContact(const QSharedPointer<BaseContact> lct ) override;
@@ -169,8 +169,8 @@ class LoggerContestLog : public BaseContestLog
       qint64 readBlock( int bno );
       qint64 writeBlock(QSharedPointer<QFile> fd, int bno );
       bool GJVsave( GJVParams & );
-      virtual bool GJVload( void ) override;
-      bool GJVloadContacts( void );
+      virtual bool GJVload( ) override;
+      bool GJVloadContacts( );
 
       // Import/export etc
 
