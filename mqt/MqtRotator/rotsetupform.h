@@ -113,6 +113,7 @@ public:
 
 
 
+    void setupRotatorModel(QString rotatorModel);
 private slots:
 
     void rotatorModelSelected();

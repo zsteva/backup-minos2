@@ -193,7 +193,7 @@ void RigSetupForm::setupRadioModel(QString radioModel)
         }
 
 
-
+        setTransVertSelected(radioData->transVertEnable);
         buildSupBandList();
         radioValueChanged = true;
     }

@@ -13,7 +13,7 @@ AddRadioDialog::AddRadioDialog(QStringList _availRadios, RigControl* rig, QWidge
     rig->getRigList(ui->radioModel);
     connect (ui->radioName, SIGNAL(editingFinished()), this, SLOT(editingFinished()));
     connect (ui->radioModel, SIGNAL(currentIndexChanged(int)), this, SLOT(radioModelSelect(int)));
-
+    connect (ui->buttonBox, SIGNAL(accepted()), this, SLOT(accepted()));
 }
 
 AddRadioDialog::~AddRadioDialog()
@@ -48,7 +48,15 @@ void AddRadioDialog::radioModelSelect(int /*index*/)
 }
 
 
+void AddRadioDialog::accepted()
+{
 
+    if (radioModel == "")
+    {
+        radioModel = ui->radioModel->currentText();
+    }
+
+}
 
 
 

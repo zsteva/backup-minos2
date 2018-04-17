@@ -18,10 +18,13 @@ public:
 
     QString getRadioName();
     QString getRadioModel();
+
+
 private slots:
     void editingFinished();
     void radioModelSelect(int index);
 
+    void accepted();
 private:
     Ui::AddRadioDialog *ui;
     QStringList availRadios;

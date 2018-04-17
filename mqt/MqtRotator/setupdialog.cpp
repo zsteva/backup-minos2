@@ -17,6 +17,7 @@
 #include "setupdialog.h"
 #include "ui_setupdialog.h"
 #include "rotcontrol.h"
+#include "addantennadialog.h"
 
 //#include <QSignalMapper>
 #include <QComboBox>
@@ -620,28 +621,29 @@ void SetupDialog::setAppName(QString name)
 void SetupDialog::addAntenna()
 {
 
-  QString antName = QInputDialog::getText(this, tr("Enter Antenna Name"), tr("Please enter an Antenna Name:"), QLineEdit::Normal);
-  antName = antName.trimmed();
-  if (antName.isEmpty())
-  {
+    AddAntennaDialog getAntennaName_Rot(availAntennas, rotator);
+    getAntennaName_Rot.setWindowTitle("Add Antenna and Rotator Model");
+    if (getAntennaName_Rot.exec() == !QDialog::Accepted)
+    {
         return;
-  }
-  if (checkAntNameMatch(antName))
-  {
-      // error empty name or name already exists
-      QMessageBox::information(this, tr("Antenna Name Exists"),
-                               tr("Antenna Name: %1, already exists \nPlease enter another name").arg(antName.trimmed()),
-                                QMessageBox::Ok|QMessageBox::Default,
-                                QMessageBox::NoButton, QMessageBox::NoButton);
-      return;
-  }
+    }
+
+    QString antName = getAntennaName_Rot.getAntennaName();
+    QString rotModel = getAntennaName_Rot.getRotatorModel();
+
+
+    if (antName.isEmpty() || rotModel.isEmpty())
+    {
+          return;
+    }
 
   // add the new antenna
   int tabNum = numAvailAntennas;
   addTab(tabNum, antName);
   addedAntennaTabs.append(antName);
   numAvailAntennas++;
-  loadSettingsToTab(tabNum);
+  antennaTab[tabNum]->setupRotatorModel(rotModel);
+  //loadSettingsToTab(tabNum);
   //saveAntenna(tabNum);
   ui->antennaTab->setCurrentIndex(tabNum);
   emit antennaTabChanged();

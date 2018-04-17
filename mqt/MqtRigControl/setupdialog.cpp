@@ -149,71 +149,60 @@ void SetupDialog::loadSettingsToTab(int tabNum)
 
     ui->radioTab->setTabText(tabNum, radioTab[tabNum]->getRadioData()->radioName);
 
-    if (availRadioData[tabNum]->radioModel != "")
+    radioTab[tabNum]->setRadioModel(radioTab[tabNum]->getRadioData()->radioModel);
+
+    radioTab[tabNum]->setCIVAddress(radioTab[tabNum]->getRadioData()->civAddress);
+    radioTab[tabNum]->setComport(radioTab[tabNum]->getRadioData()->comport);
+    radioTab[tabNum]->setDataSpeed(QString::number(radioTab[tabNum]->getRadioData()->baudrate));
+    radioTab[tabNum]->setDataBits(QString::number(radioTab[tabNum]->getRadioData()->databits));
+    radioTab[tabNum]->setStopBits(QString::number(radioTab[tabNum]->getRadioData()->stopbits));
+    radioTab[tabNum]->setParityBits(radioTab[tabNum]->getRadioData()->parity);
+    radioTab[tabNum]->setHandshake(radioTab[tabNum]->getRadioData()->handshake);
+    radioTab[tabNum]->setNetAddress(radioTab[tabNum]->getRadioData()->networkAdd);
+    radioTab[tabNum]->setNetPortNum(radioTab[tabNum]->getRadioData()->networkPort);
+    radioTab[tabNum]->setPollInterval(radioTab[tabNum]->getRadioData()->pollInterval);
+    radioTab[tabNum]->setTransVertSelected(radioTab[tabNum]->getRadioData()->transVertEnable);
+
+
+    if (rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_NETWORK || rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_UDP_NETWORK)
     {
-
-
-        radioTab[tabNum]->setRadioModel(radioTab[tabNum]->getRadioData()->radioModel);
-
-        radioTab[tabNum]->setCIVAddress(radioTab[tabNum]->getRadioData()->civAddress);
-        radioTab[tabNum]->setComport(radioTab[tabNum]->getRadioData()->comport);
-        radioTab[tabNum]->setDataSpeed(QString::number(radioTab[tabNum]->getRadioData()->baudrate));
-        radioTab[tabNum]->setDataBits(QString::number(radioTab[tabNum]->getRadioData()->databits));
-        radioTab[tabNum]->setStopBits(QString::number(radioTab[tabNum]->getRadioData()->stopbits));
-        radioTab[tabNum]->setParityBits(radioTab[tabNum]->getRadioData()->parity);
-        radioTab[tabNum]->setHandshake(radioTab[tabNum]->getRadioData()->handshake);
-        radioTab[tabNum]->setNetAddress(radioTab[tabNum]->getRadioData()->networkAdd);
-        radioTab[tabNum]->setNetPortNum(radioTab[tabNum]->getRadioData()->networkPort);
-        radioTab[tabNum]->setPollInterval(radioTab[tabNum]->getRadioData()->pollInterval);
-        radioTab[tabNum]->setTransVertSelected(radioTab[tabNum]->getRadioData()->transVertEnable);
-
-
-        if (rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_NETWORK || rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_UDP_NETWORK)
-        {
-            radioTab[tabNum]->serialDataEntryVisible(false);
-            radioTab[tabNum]->networkDataEntryVisible(true);
-        }
-        else if (rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_SERIAL)
-        {
-            radioTab[tabNum]->serialDataEntryVisible(true);
-            radioTab[tabNum]->networkDataEntryVisible(false);
-        }
-        else if (rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_NONE)
-        {
-            radioTab[tabNum]->serialDataEntryVisible(false);
-            radioTab[tabNum]->networkDataEntryVisible(false);
-        }
-        radioTab[tabNum]->setMgmMode(radioTab[tabNum]->getRadioData()->mgmMode);
-
-        // now load transverter settings
-        if (radioTab[tabNum]->getRadioData()->numTransverters >0 )
-        {
-            for (int t = 0; t < radioTab[tabNum]->getRadioData()->numTransverters; t++)
-            {
-                radioTab[tabNum]->setTransVertTabText(t, radioTab[tabNum]->getRadioData()->transVertNames[t]);
-                radioTab[tabNum]->transVertTab[t]->setRadioFreqBox(convertFreqStrDispSingle(radioTab[tabNum]->getRadioData()->transVertSettings[t]->radioFreqStr));
-                radioTab[tabNum]->transVertTab[t]->setTargetFreqBox(convertFreqStrDispSingle(radioTab[tabNum]->getRadioData()->transVertSettings[t]->targetFreqStr));
-                radioTab[tabNum]->transVertTab[t]->setOffsetFreqLabel(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transVertOffsetStr);
-                radioTab[tabNum]->transVertTab[t]->setEnableTransVertSw(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
-                radioTab[tabNum]->transVertTab[t]->setTransVerSwNum(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transSwitchNum);
-                radioTab[tabNum]->transVertTab[t]->setEnableTransVertSwBoxVisible(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
-
-            }
-
-        }
-
-
-        radioTab[tabNum]->setTransVertTabIndex(0);
-        radioTab[tabNum]->buildSupBandList();
-
-    }
-    else
-    {
-        // no radio model visible
-        radioTab[tabNum]->networkDataEntryVisible(false);
         radioTab[tabNum]->serialDataEntryVisible(false);
-        radioTab[tabNum]->pollIntervalVisible(false);
+        radioTab[tabNum]->networkDataEntryVisible(true);
     }
+    else if (rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_SERIAL)
+    {
+        radioTab[tabNum]->serialDataEntryVisible(true);
+        radioTab[tabNum]->networkDataEntryVisible(false);
+    }
+    else if (rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_NONE)
+    {
+        radioTab[tabNum]->serialDataEntryVisible(false);
+        radioTab[tabNum]->networkDataEntryVisible(false);
+    }
+    radioTab[tabNum]->setMgmMode(radioTab[tabNum]->getRadioData()->mgmMode);
+
+    // now load transverter settings
+    if (radioTab[tabNum]->getRadioData()->numTransverters > 0 )
+    {
+        for (int t = 0; t < radioTab[tabNum]->getRadioData()->numTransverters; t++)
+        {
+            radioTab[tabNum]->setTransVertTabText(t, radioTab[tabNum]->getRadioData()->transVertNames[t]);
+            radioTab[tabNum]->transVertTab[t]->setRadioFreqBox(convertFreqStrDispSingle(radioTab[tabNum]->getRadioData()->transVertSettings[t]->radioFreqStr));
+            radioTab[tabNum]->transVertTab[t]->setTargetFreqBox(convertFreqStrDispSingle(radioTab[tabNum]->getRadioData()->transVertSettings[t]->targetFreqStr));
+            radioTab[tabNum]->transVertTab[t]->setOffsetFreqLabel(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transVertOffsetStr);
+            radioTab[tabNum]->transVertTab[t]->setEnableTransVertSw(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
+            radioTab[tabNum]->transVertTab[t]->setTransVerSwNum(radioTab[tabNum]->getRadioData()->transVertSettings[t]->transSwitchNum);
+            radioTab[tabNum]->transVertTab[t]->setEnableTransVertSwBoxVisible(radioTab[tabNum]->getRadioData()->transVertSettings[t]->enableTransSwitch);
+
+        }
+
+    }
+
+
+    radioTab[tabNum]->setTransVertTabIndex(0);
+    radioTab[tabNum]->buildSupBandList();
+
+
 
     radioTab[tabNum]->setTransVertSelected(radioTab[tabNum]->getRadioData()->transVertEnable);
 
