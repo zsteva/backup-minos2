@@ -51,7 +51,7 @@ class FreqPresetDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit FreqPresetDialog(QStringList& _presetFreq, const QVector<BandDetail*> _bands, bool& freqPresetChanged, QWidget *parent = 0);
+    explicit FreqPresetDialog(QStringList& _presetFreq, const QVector<BandDetail*> _bands, bool& freqPresetChanged, QWidget *parent = nullptr);
     ~FreqPresetDialog();
 
 

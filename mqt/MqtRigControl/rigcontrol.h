@@ -199,7 +199,7 @@ class RigControl : public QObject
 {
     Q_OBJECT
 public:
-    explicit RigControl(QObject *parent = 0);
+    explicit RigControl(QObject *parent = nullptr);
     ~RigControl();
     int init(scatParams &currentRadio);
     bool enabled() {return rigControlEnabled;}
@@ -276,7 +276,7 @@ signals:
 
   private:
     hamlib_port_t myport;
-    RIG *my_rig = 0;            // handle to rig instance
+    RIG *my_rig = nullptr;            // handle to rig instance
 //    freq_t frequency;            // frequency
 //    rmode_t rmode;          // radio mode of operation
     pbwidth_t pbwidth;

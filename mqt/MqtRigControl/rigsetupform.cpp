@@ -31,9 +31,7 @@
 
 RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVector<BandDetail*> _bands, QWidget *parent):
     QWidget(parent),
-    ui(new Ui::rigSetupForm),
-    radioValueChanged(false),
-    radioNameChanged(false)
+    ui(new Ui::rigSetupForm)
 {
 
 

@@ -25,7 +25,7 @@ class SkyScanDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SkyScanDialog(QWidget *parent = 0);
+    explicit SkyScanDialog(QWidget *parent = nullptr);
     ~SkyScanDialog();
 
 private:

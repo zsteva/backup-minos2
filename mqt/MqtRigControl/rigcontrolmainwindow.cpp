@@ -30,17 +30,7 @@
 
 RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     QMainWindow(parent)
-  , msg(nullptr)
   , ui(new Ui::RigControlMainWindow)
-  , rigErrorFlag(false)
-  , mgmModeFlag(false)
-  , supRitFlag(false)
-  , cmdLockFlag(false)
-  , curVfoFrq(0)
-  , curTransVertFrq(0)
-  , rRitFreq(0)
-  , radioIndex(0)
-
 {
     ui->setupUi(this);
 

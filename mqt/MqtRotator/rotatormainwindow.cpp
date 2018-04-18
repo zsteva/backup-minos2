@@ -43,28 +43,7 @@ static QStringList presetShortCut = {QString("Ctrl+1"),QString("Ctrl+2"),
 
 RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
     QMainWindow(parent),
-    msg(nullptr),
-    ui(new Ui::RotatorMainWindow),
-    rot_left_button_status(OFF),
-    rot_right_button_status(OFF),
-    turn_button_status(OFF),
-    brakeflag(false),
-    moving(false),
-    movingCW(false),
-    movingCCW(false),
-    cwCcwCmdflag(false),
-    stopCmdflag(false),
-    rotCmdflag(false),
-    reqBearCmdflag(false),
-    overLapActiveflag(false),
-    overLapStatus(NO_OVERLAP),
-    //southStopActiveflag(false),
-    //endStopType(ROT_0_360),
-    rotErrorFlag(false),
-    //supportCwCcwCmd(false),
-    rotLogFlg(true)
-
-
+    ui(new Ui::RotatorMainWindow)
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);

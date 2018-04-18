@@ -24,8 +24,8 @@ public:
     ~RigSetupForm();
 
 
-    bool radioValueChanged;
-    bool radioNameChanged;
+    bool radioValueChanged = false;
+    bool radioNameChanged = false;
 
 
     scatParams* getRadioData();
