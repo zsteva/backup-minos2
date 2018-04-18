@@ -74,6 +74,8 @@ static const QString controlResult      = QT_TR_NOOP("ControlResult");
 static const QString controlLineState   = QT_TR_NOOP("LineState");
 static const QString controlState       = QT_TR_NOOP("CtrlState");
 static const QString controlGetLine     = QT_TR_NOOP("GetLine");
+static const QString controlSetLine     = QT_TR_NOOP("SetLine");
+static const QString controlSetTransverter = QT_TR_NOOP("SetTransverter");
 
 
 
