@@ -860,6 +860,7 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
 
     ui->transVertTab->insertTab(tabNum, transVertTab[tabNum], tabName);
     ui->transVertTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
+    ui->transVertTab->setCurrentIndex(tabNum);
     transVertTab[tabNum]->setEnableTransVertSwBoxVisible(false);
 
     // does this radio support antenna sw?

@@ -79,7 +79,6 @@ public:
     freq_t fHigh;
     QString transVertOffsetStr;
     freq_t transVertOffset = 0.0;
-    bool transVertNegative  = false;
     bool enableTransSwitch = false;
     QString antSwitchNum = "0";
     QString transSwitchNum = "0";
