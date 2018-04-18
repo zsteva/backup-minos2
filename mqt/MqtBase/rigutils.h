@@ -31,4 +31,5 @@ bool validateFreqTxtInput(QString f);
 bool valInputFreq(QString f, QString errMsg);
 
 QString convertSinglePeriodFreqToMultiPeriod(QString f);
+QString convertFreqToFullDigit(QString f);
 #endif // RIGUTILS_H

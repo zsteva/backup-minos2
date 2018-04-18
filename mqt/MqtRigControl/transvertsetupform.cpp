@@ -57,11 +57,32 @@ void TransVertSetupForm::radioFreqEditfocusChange(QObject *obj, bool fIn, QFocus
 {
     if (fIn)
     {
-        qDebug() << "radio in focus";
+        //ui->radioFreq->selectAll();
     }
     else
     {
-       qDebug() << "radio out of focus";
+        if (ui->radioFreq->text().isEmpty() || ui->radioFreq->text() == "0.0")
+        {
+            transVertData->transVertOffset = 0.0;
+            transVertData->transVertOffsetStr = convertFreqStrDispSingle(convertFreqToStr(transVertData->transVertOffset));
+            // display
+            ui->offsetFreq->setText(transVertData->transVertOffsetStr);
+            return;
+        }
+        QString txf = ui->radioFreq->text().trimmed().remove(QRegExp("^[0]*"));
+        if (valInputFreq(txf, RADIO_FREQ_EDIT_ERR_MSG))
+        {
+           radioFreqOK = true;
+           if (validateFreqTxtInput(convertFreqToFullDigit(ui->targetFreq->text().trimmed().remove(QRegExp("^[0]*")))))
+           {
+               targetFreqOK = true;
+               calcOffset();
+           }
+        }
+        else
+        {
+            ui->radioFreq->setFocus();
+        }
     }
 }
 
@@ -69,69 +90,39 @@ void TransVertSetupForm::targetFreqEditfocusChange(QObject *obj, bool fIn, QFocu
 {
     if (fIn)
     {
-        qDebug() << "target in focus";
+        //ui->targetFreq->setSelection(0, ui->targetFreq->text().count());
     }
     else
     {
-       qDebug() << "target out of focus";
-    }
-}
-
-
-
-void TransVertSetupForm::targetEditFinished()
-{
-     if (ui->targetFreq->text().isEmpty() || ui->targetFreq->text() == "0.0")
-     {
-         transVertData->transVertOffset = 0.0;
-         transVertData->transVertOffsetStr = convertFreqStrDispSingle(convertFreqToStr(transVertData->transVertOffset));
-         // display
-         ui->offsetFreq->setText(transVertData->transVertOffsetStr);
-         return;
-     }
-     QString targetf = ui->targetFreq->text().trimmed().remove(QRegExp("^[0]*"));
-     if (valInputFreq(targetf, TARGET_FREQ_EDIT_ERR_MSG))
-     {
-        targetFreqOK = true;
-        if (validateFreqTxtInput(ui->radioFreq->text().trimmed().remove(QRegExp("^[0]*"))))
+        if (ui->targetFreq->text().isEmpty() || ui->targetFreq->text() == "0.0")
         {
-            radioFreqOK = true;
-            calcOffset();
+            transVertData->transVertOffset = 0.0;
+            transVertData->transVertOffsetStr = convertFreqStrDispSingle(convertFreqToStr(transVertData->transVertOffset));
+            // display
+            ui->offsetFreq->setText(transVertData->transVertOffsetStr);
+            return;
         }
-
-     }
-     else
-     {
-         ui->targetFreq->setFocus();
-     }
-}
-
-
-void TransVertSetupForm::radioEditFinished()
-{
-    if (ui->radioFreq->text().isEmpty() || ui->radioFreq->text() == "0.0")
-    {
-        transVertData->transVertOffset = 0.0;
-        transVertData->transVertOffsetStr = convertFreqStrDispSingle(convertFreqToStr(transVertData->transVertOffset));
-        // display
-        ui->offsetFreq->setText(transVertData->transVertOffsetStr);
-        return;
-    }
-    QString txf = ui->radioFreq->text().trimmed().remove(QRegExp("^[0]*"));
-    if (valInputFreq(txf, RADIO_FREQ_EDIT_ERR_MSG))
-    {
-       radioFreqOK = true;
-       if (validateFreqTxtInput(ui->targetFreq->text().trimmed().remove(QRegExp("^[0]*"))))
-       {
+        QString targetf = ui->targetFreq->text().trimmed().remove(QRegExp("^[0]*"));
+        if (valInputFreq(targetf, TARGET_FREQ_EDIT_ERR_MSG))
+        {
            targetFreqOK = true;
-           calcOffset();
-       }
-    }
-    else
-    {
-        ui->radioFreq->setFocus();
+           if (validateFreqTxtInput(convertFreqToFullDigit(ui->radioFreq->text().trimmed().remove(QRegExp("^[0]*")))))
+           {
+               radioFreqOK = true;
+               calcOffset();
+           }
+
+        }
+        else
+        {
+            ui->targetFreq->setFocus();
+        }
     }
 }
+
+
+
+
 
 
 /********************* TransVert Offset Freq  *********************************/
@@ -155,17 +146,19 @@ void TransVertSetupForm::calcOffset()
     QString targetf = ui->targetFreq->text().trimmed().remove(QRegExp("^[0]*"));
 
     // convert radio freq
-    txf = convertSinglePeriodFreqToFullDigit(txf).remove('.');
+    txf = convertFreqToFullDigit(txf).remove('.');
     transVertData->radioFreqStr = txf;
     transVertData->radioFreq = txf.toDouble();
     // convert target freq
-    targetf = convertSinglePeriodFreqToFullDigit(targetf).remove('.');
+    targetf = convertFreqToFullDigit(targetf).remove('.');
     transVertData->targetFreqStr = targetf;
     transVertData->targetFreq = targetf.toDouble();
 
     // check target freq in band
     if (transVertData->targetFreq >= transVertData->fLow && transVertData->targetFreq <= transVertData->fHigh)
     {
+        /*
+
         // calculate offset
         if (transVertData->transVertNegative)
         {
@@ -176,11 +169,15 @@ void TransVertSetupForm::calcOffset()
             transVertData->transVertOffset = transVertData->targetFreq - transVertData->radioFreq;
 
         }
+        */
+
+        transVertData->transVertOffset = transVertData->targetFreq - transVertData->radioFreq;
 
         transVertData->transVertOffsetStr = convertFreqStrDispSingle(convertFreqToStr(transVertData->transVertOffset));
         // display
         ui->offsetFreq->setText(transVertData->transVertOffsetStr);
 
+        /*
         // check for negative offset
         if (transVertData->radioFreq > transVertData->targetFreq)
         {
@@ -190,7 +187,7 @@ void TransVertSetupForm::calcOffset()
         {
             transVertData->transVertNegative = false;
         }
-
+        */
         transVertOffsetOk = true;
         transVertValueChanged = true;
     }
@@ -199,6 +196,7 @@ void TransVertSetupForm::calcOffset()
         QMessageBox msgBox;
         msgBox.setText(QString("Target Freq. is out of band for %1").arg(transVertData->band));
         msgBox.exec();
+        ui->targetFreq->setFocus();
         return;
     }
 
@@ -370,8 +368,13 @@ void TransVertSetupForm::setLocTVSWComportVisible(bool visible)
 {
      ui->locTVComPortSel->setVisible(visible);
      ui->locComportSwLbl->setVisible(visible);
+     setEnableLocalTransVertSwVisible(visible);
 
 }
+
+
+
+
 
 
 /***************** Radio Antenna Switch Number  ********************************/

@@ -308,7 +308,11 @@ bool valInputFreq(QString f, QString errMsg)
         return false;
     }
 
-    if (f.count('.') == 1)
+    if (!f.contains('.'))
+    {
+        f = f + "." + "000000";
+    }
+    else if (f.count('.') == 1)
     {
         QStringList fl = f.split('.');
         fl[1] = fl[1] + "000000";
@@ -349,6 +353,29 @@ QString convertSinglePeriodFreqToFullDigit(QString f)
     }
 
     return f;
+
+}
+
+
+QString convertFreqToFullDigit(QString f)
+{
+
+
+    if (f.contains('.'))
+    {
+        QStringList fl = f.split('.');
+        fl[1] = fl[1] + "000000";
+        fl[1].truncate(6);
+        return fl[0] + "." + fl[1];
+    }
+    else
+    {
+        f = f + "." + "000000";
+    }
+
+    return f;
+
+
 
 }
 

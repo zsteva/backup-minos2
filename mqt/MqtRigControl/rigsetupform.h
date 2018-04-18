@@ -107,8 +107,7 @@ public:
     bool findSupTransBand(const QString band);
 
 
-    void setTransVertTabIndex(int tabNum);
-    int getTransVertTabIndex();
+
     void setEnableRigDataEntry(bool enable);
 
     void setupRadioModel(QString radioModel);
@@ -141,7 +140,7 @@ private slots:
     void civAddressFinished();
 
 
-    void transvertTabChanged(int tabNum);
+
 private:
 
 
@@ -155,7 +154,6 @@ private:
     //TransVertSetupForm *transVerter;
     QString appName;
 
-    int curTransVertTabNum = 0;
 
 
     void fillHandShakeInfo();

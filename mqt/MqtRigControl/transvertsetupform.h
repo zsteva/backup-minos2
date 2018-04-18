@@ -79,8 +79,6 @@ signals:
         void locTVComPortSel(int);
 
 
-        void targetEditFinished();
-        void radioEditFinished();
 private:
 
 

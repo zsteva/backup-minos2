@@ -71,7 +71,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVe
     connect(ui->addTransvert, SIGNAL(clicked(bool)), this, SLOT(addTransVerter()));
     connect(ui->removeTransvert, SIGNAL(clicked(bool)), this, SLOT(removeTransVerter()));
     connect(ui->changeBand, SIGNAL(clicked(bool)), this, SLOT(changeBand()));
-    connect(ui->transVertTab, SIGNAL(tabBarClicked(int)), this, SLOT(transvertTabChanged(int)));
+
 }
 
 
@@ -91,42 +91,6 @@ scatParams* RigSetupForm::getRadioData()
 
 
 
-void RigSetupForm::transvertTabChanged(int tabNum)
-{
-
-    if (curTransVertTabNum != tabNum)
-    {
-        if (!transVertTab[curTransVertTabNum]->transVertOffsetOk)
-        {
-            QMessageBox msgBox;
-            msgBox.setText("Transvert Offset error!/nPlease complete entry of transvert frequencies");
-            msgBox.exec();
-            ui->transVertTab->setCurrentIndex(curTransVertTabNum);
-        }
-        else
-        {
-            setTransVertTabIndex(tabNum);
-        }
-
-
-    }
-
-
-
-
-
-}
-
-void RigSetupForm::setTransVertTabIndex(int tabNum)
-{
-    ui->transVertTab->setCurrentIndex(tabNum);
-    curTransVertTabNum = tabNum;
-}
-
-int RigSetupForm::getTransVertTabIndex()
-{
-    return curTransVertTabNum;
-}
 
 /************************ Radio Model Dialogue *********************/
 
@@ -873,7 +837,6 @@ void RigSetupForm::addTransVerter()
     addTransVertTab(tabNum, transVerterName);
     radioData->numTransverters = tabNum + 1;
     loadTransVertTab(tabNum);
-    setTransVertTabIndex(tabNum);
 
 }
 
@@ -897,7 +860,6 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
 
     ui->transVertTab->insertTab(tabNum, transVertTab[tabNum], tabName);
     ui->transVertTab->setTabColor(tabNum, Qt::darkBlue);      // radioTab promoted to QLogTabWidget
-    setTransVertTabIndex(tabNum);
     transVertTab[tabNum]->setEnableTransVertSwBoxVisible(false);
 
     // does this radio support antenna sw?
@@ -931,6 +893,7 @@ void RigSetupForm::loadTransVertTab(int tabNum)
     transVertTab[tabNum]->setEnableTransVertSw(radioData->transVertSettings[tabNum]->enableTransSwitch);
     transVertTab[tabNum]->setTransVerSwNum(radioData->transVertSettings[tabNum]->transSwitchNum);
     transVertTab[tabNum]->setEnableTransVertSwBoxVisible(radioData->transVertSettings[tabNum]->enableTransSwitch);
+    transVertTab[tabNum]->setLocTVSWComportVisible(radioData->transVertSettings[tabNum]->enableLocTVSwMsg);
 }
 
 

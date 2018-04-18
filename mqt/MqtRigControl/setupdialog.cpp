@@ -193,7 +193,7 @@ void SetupDialog::loadSettingsToTab(int tabNum)
     }
 
 
-    radioTab[tabNum]->setTransVertTabIndex(0);
+
     radioTab[tabNum]->buildSupBandList();
 
 
@@ -531,29 +531,27 @@ void SetupDialog::saveSettings()
             fileNameTransVert = TRANSVERT_PATH_LOGGER + radioTab[i]->getRadioData()->radioName + FILENAME_TRANSVERT_RADIOS;
             QSettings  configTransVert(fileNameTransVert, QSettings::IniFormat);
 
+            radioTab[i]->addedTransVertTabs.clear();
+            for (int t = 0; t < radioTab[i]->removedTransVertTabs.count(); t++)
+            {
+                QSettings config(fileNameTransVert, QSettings::IniFormat);
+                config.beginGroup(radioTab[i]->removedTransVertTabs[t]);
+                config.remove("");      // remove all keys for this group
+                config.endGroup();
+            }
+            radioTab[i]->removedTransVertTabs.clear();
+
+            for (int t = 0; t < radioTab[i]->renamedTransVertTabs.count(); t++)
+            {
+                QSettings config(fileNameTransVert, QSettings::IniFormat);
+                config.beginGroup(radioTab[i]->renamedTransVertTabs[t]);
+                config.remove("");      // remove all keys for this group
+                config.endGroup();
+            }
+            radioTab[i]->renamedTransVertTabs.clear();
+
             if (radioTab[i]->getRadioData()->numTransverters > 0)
             {
-
-                radioTab[i]->addedTransVertTabs.clear();
-                for (int t = 0; t < radioTab[i]->removedTransVertTabs.count(); t++)
-                {
-                    QSettings config(fileNameTransVert, QSettings::IniFormat);
-                    config.beginGroup(radioTab[i]->removedTransVertTabs[t]);
-                    config.remove("");      // remove all keys for this group
-                    config.endGroup();
-                }
-                radioTab[i]->removedTransVertTabs.clear();
-
-                for (int t = 0; t < radioTab[i]->renamedTransVertTabs.count(); t++)
-                {
-                    QSettings config(fileNameTransVert, QSettings::IniFormat);
-                    config.beginGroup(radioTab[i]->renamedTransVertTabs[t]);
-                    config.remove("");      // remove all keys for this group
-                    config.endGroup();
-                }
-                radioTab[i]->renamedTransVertTabs.clear();
-
-
                 for (int t = 0; t < radioTab[i]->getRadioData()->numTransverters; t++)
                 {
                     if (radioTab[i]->transVertTab[t]->transVertValueChanged)
