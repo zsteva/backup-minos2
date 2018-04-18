@@ -24,8 +24,9 @@ public:
     ~RigSetupForm();
 
 
-    bool radioValueChanged;
-    bool radioNameChanged;
+    bool radioValueChanged = false;
+    bool radioNameChanged = false;
+
 
     scatParams* getRadioData();
 
@@ -106,12 +107,12 @@ public:
     bool findSupTransBand(const QString band);
 
 
-    void setTransVertTabIndex(int tabNum);
-    int getTransVertTabIndex();
+
     void setEnableRigDataEntry(bool enable);
 
     void setupRadioModel(QString radioModel);
 
+    void loadTransVertTab(int tabNum);
 signals:
     void transVertTabAdded(int);
 
@@ -139,8 +140,10 @@ private slots:
     void civAddressFinished();
 
 
-    void transvertTabChanged(int tabNum);
+
 private:
+
+
 
 
     Ui::rigSetupForm *ui;
@@ -151,7 +154,6 @@ private:
     //TransVertSetupForm *transVerter;
     QString appName;
 
-    int curTransVertTabNum = 0;
 
 
     void fillHandShakeInfo();

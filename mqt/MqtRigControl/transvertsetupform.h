@@ -5,6 +5,7 @@
 #include "rigcontrol.h"
 #include "ui_transvertsetupform.h"
 #include "BandList.h"
+#include "focuswatcher.h"
 
 
 namespace Ui {
@@ -22,8 +23,10 @@ public:
 
 
 
-        bool transVertValueChanged;
-        bool transVertNameChanged;
+        bool transVertValueChanged = false;
+        bool transVertNameChanged = false;
+
+        bool transVertOffsetOk = false;
 
         void setBand(QString b);
         QString getBand();
@@ -82,10 +85,18 @@ private:
         Ui::transVertSetupForm *ui;
         TransVertParams *transVertData;
 
+        FocusWatcher *radioFreqEdit;
+        FocusWatcher *targetFreqEdit;
+
+        bool radioFreqOK = false;
+        bool targetFreqOK = false;
 
 
 
         void loadBandSel();
-    };
+public Q_SLOTS:
+    void radioFreqEditfocusChange(QObject *, bool, QFocusEvent *event);
+    void targetFreqEditfocusChange(QObject *, bool, QFocusEvent *event);
+};
 
     #endif // TRANSVERTSETUPFORM_H

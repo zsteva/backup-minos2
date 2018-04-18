@@ -27,7 +27,7 @@ class rotSetupForm : public QWidget
     Q_OBJECT
 
 public:
-    explicit rotSetupForm(RotControl* rotator, srotParams* _antennaData, QWidget *parent = 0);
+    explicit rotSetupForm(RotControl* rotator, srotParams* _antennaData, QWidget *parent = nullptr);
     ~rotSetupForm();
 
     srotParams *antennaData;

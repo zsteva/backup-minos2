@@ -13,7 +13,7 @@ class AddRadioDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddRadioDialog(QStringList _availRadios, RigControl* rig, QWidget *parent = 0);
+    explicit AddRadioDialog(QStringList _availRadios, RigControl* rig, QWidget *parent = nullptr);
     ~AddRadioDialog();
 
     QString getRadioName();

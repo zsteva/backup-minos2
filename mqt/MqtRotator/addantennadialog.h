@@ -13,7 +13,7 @@ class AddAntennaDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddAntennaDialog(QStringList _availAntennas, RotControl* rot, QWidget *parent = 0);
+    explicit AddAntennaDialog(QStringList _availAntennas, RotControl* rot, QWidget *parent = nullptr);
     ~AddAntennaDialog();
 
     QString getAntennaName();

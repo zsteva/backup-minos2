@@ -28,7 +28,11 @@ void AddTransVerterDialog::loadBandSel()
     {
         if (!checkBandUsed(bands[i]->name, transVerterNames))
         {
-            ui->bandSel->addItem(bands[i]->name);
+            if (bands[i]->name != "28 MHz")
+            {
+                ui->bandSel->addItem(bands[i]->name);
+            }
+
         }
     }
 }

@@ -46,7 +46,7 @@ class SetupDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SetupDialog(RigControl* rig, const QVector<BandDetail*> _bands, QWidget *parent = 0);
+    explicit SetupDialog(RigControl* rig, const QVector<BandDetail*> _bands, QWidget *parent = nullptr);
     ~SetupDialog();
 
 

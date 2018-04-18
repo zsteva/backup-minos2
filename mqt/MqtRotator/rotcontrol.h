@@ -173,7 +173,7 @@ class RotControl: public QObject
     Q_OBJECT
 
 public:
-    explicit RotControl(QObject *parent = 0);
+    explicit RotControl(QObject *parent = nullptr);
     ~RotControl();
     int init(srotParams &currentAntenna);
     int closeRotator();
@@ -231,7 +231,7 @@ signals:
 
 private:
     hamlib_port_t myport;
-    ROT *my_rot = 0;            // handle to rig instance)
+    ROT *my_rot = nullptr;            // handle to rig instance)
     azimuth_t rot_azimuth;  // azimuth from rotator
     elevation_t rot_elevation; // not used
 

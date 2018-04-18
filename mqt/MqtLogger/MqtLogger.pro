@@ -103,7 +103,6 @@ HEADERS  += \
     tqsoeditdlg.h \
     tloccalcform.h \
     qsologframe.h \
-    focuswatcher.h \
     tstatsdispframe.h \
     dxccframe.h \
     districtframe.h \

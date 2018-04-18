@@ -122,28 +122,28 @@ private:
     EditPresetsDialog *editPresets;
     LogDialog *setupLog;
     RotatorLog *rotlog;
-    bool rotLogFlg;
+    bool rotLogFlg = true;
     QTimer *pollTimer;
     int pollTime;
     int rotTimeCount;
     int brakedelay;
-    bool rot_left_button_status;
-    bool rot_right_button_status;
-    bool turn_button_status;
-    bool brakeflag;
-    bool moving;
-    bool movingCW;
-    bool movingCCW;
-    bool cwCcwCmdflag;     // command sentflag
-    bool stopCmdflag;
-    bool rotCmdflag;
-    bool reqBearCmdflag;
+    bool rot_left_button_status = OFF;
+    bool rot_right_button_status = OFF;
+    bool turn_button_status = OFF;
+    bool brakeflag = false;
+    bool moving = false;
+    bool movingCW = false;
+    bool movingCCW = false;
+    bool cwCcwCmdflag = false;     // command sentflag
+    bool stopCmdflag = false;
+    bool rotCmdflag = false;
+    bool reqBearCmdflag = false;
 
     //endStop endStopType;
-    overlapStat overLapStatus;
-    bool overLapActiveflag;
+    overlapStat overLapStatus = NO_OVERLAP;
+    bool overLapActiveflag = false;
     //bool southStopActiveflag;
-    bool rotErrorFlag;
+    bool rotErrorFlag = false;
     //bool supportCwCcwCmd;
     int rotatorBearing;
     int curBearingWithOffset;

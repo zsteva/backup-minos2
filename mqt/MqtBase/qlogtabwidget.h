@@ -21,6 +21,8 @@ public:
 
     void setTabColor(int index, QColor colour);
 
+
+
 public slots:
 };
 

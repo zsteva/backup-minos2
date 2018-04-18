@@ -15,6 +15,7 @@
 #include "rigsetupform.h"
 #include "BandList.h"
 #include "addtransverterdialog.h"
+#include "rigutils.h"
 #include <QDebug>
 #include <QLineEdit>
 #include <QCheckBox>
@@ -30,9 +31,7 @@
 
 RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVector<BandDetail*> _bands, QWidget *parent):
     QWidget(parent),
-    ui(new Ui::rigSetupForm),
-    radioValueChanged(false),
-    radioNameChanged(false)
+    ui(new Ui::rigSetupForm)
 {
 
 
@@ -70,7 +69,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVe
     connect(ui->addTransvert, SIGNAL(clicked(bool)), this, SLOT(addTransVerter()));
     connect(ui->removeTransvert, SIGNAL(clicked(bool)), this, SLOT(removeTransVerter()));
     connect(ui->changeBand, SIGNAL(clicked(bool)), this, SLOT(changeBand()));
-    connect(ui->transVertTab, SIGNAL(currentChanged(int)), this, SLOT(transvertTabChanged(int)));
+
 }
 
 
@@ -80,6 +79,9 @@ RigSetupForm::~RigSetupForm()
 }
 
 
+
+
+
 scatParams* RigSetupForm::getRadioData()
 {
     return radioData;
@@ -87,22 +89,6 @@ scatParams* RigSetupForm::getRadioData()
 
 
 
-void RigSetupForm::transvertTabChanged(int tabNum)
-{
-
-
-}
-
-void RigSetupForm::setTransVertTabIndex(int tabNum)
-{
-    ui->transVertTab->setCurrentIndex(tabNum);
-    curTransVertTabNum = tabNum;
-}
-
-int RigSetupForm::getTransVertTabIndex()
-{
-    return curTransVertTabNum;
-}
 
 /************************ Radio Model Dialogue *********************/
 
@@ -848,8 +834,8 @@ void RigSetupForm::addTransVerter()
     radioData->transVertNames.append(transVerterName);
     addTransVertTab(tabNum, transVerterName);
     radioData->numTransverters = tabNum + 1;
-    ui->transVertTab->setCurrentIndex(tabNum);
-    //loadSettingsToTransVertTab(tabNum);
+    loadTransVertTab(tabNum);
+
 }
 
 
@@ -894,6 +880,19 @@ void RigSetupForm::addTransVertTab(int tabNum, QString tabName)
     buildSupBandList();
     transVertTab[tabNum]->transVertValueChanged = true;
 
+}
+
+
+
+void RigSetupForm::loadTransVertTab(int tabNum)
+{
+    transVertTab[tabNum]->setRadioFreqBox(convertFreqStrDispSingle(radioData->transVertSettings[tabNum]->radioFreqStr));
+    transVertTab[tabNum]->setTargetFreqBox(convertFreqStrDispSingle(radioData->transVertSettings[tabNum]->targetFreqStr));
+    transVertTab[tabNum]->setOffsetFreqLabel(radioData->transVertSettings[tabNum]->transVertOffsetStr);
+    transVertTab[tabNum]->setEnableTransVertSw(radioData->transVertSettings[tabNum]->enableTransSwitch);
+    transVertTab[tabNum]->setTransVerSwNum(radioData->transVertSettings[tabNum]->transSwitchNum);
+    transVertTab[tabNum]->setEnableTransVertSwBoxVisible(radioData->transVertSettings[tabNum]->enableTransSwitch);
+    transVertTab[tabNum]->setLocTVSWComportVisible(radioData->transVertSettings[tabNum]->enableLocTVSwMsg);
 }
 
 

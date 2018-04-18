@@ -54,18 +54,18 @@ private:
 
     Ui::RigControlMainWindow *ui;
     StdInReader stdinReader;
-    RigControlRpc *msg;
+    RigControlRpc *msg = nullptr;
 
     SetupDialog *setupRadio;
     RigControl  *radio;
     QString appName = "";
     QLabel *status;
-    int radioIndex;
+    int radioIndex = 0;
     QTimer *pollTimer;
     class QTimer LogTimer;
     int pollTime;
-    bool rigErrorFlag;
-    bool cmdLockFlag;
+    bool rigErrorFlag = false;
+    bool cmdLockFlag = false;
     // data from logger
     QString logger_freq;
     QString slogMode;
@@ -84,16 +84,18 @@ private:
     QString sfreq;          // read freq converted to string
     rmode_t rmode;          // read radio mode
     pbwidth_t rwidth;        // read radio rx bw
-    double curVfoFrq;
-    double curTransVertFrq;
+    double curVfoFrq = 0;
+    double curTransVertFrq = 0;
     rmode_t curMode;
     QString sCurMode;
-    bool mgmModeFlag;
-    shortfreq_t rRitFreq;
+    bool mgmModeFlag = false;
+    shortfreq_t rRitFreq = 0;
     QString sRitFreq;
-    bool supRitFlag;
+    bool supRitFlag = false;
 
     QString geoStr;         // geometry registry location
+
+
 
     void initActionsConnections();
     void initSelectRadioBox();
