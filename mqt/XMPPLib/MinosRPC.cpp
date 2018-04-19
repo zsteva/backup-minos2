@@ -72,18 +72,18 @@ QString MinosRPC::getAppName()
 
 void MinosRPC::subscribe(const QString &c)
 {
-    subscriptions.append(c);
+    subscriptions.insert(c);
     if (subscribed)
     {
         RPCPubSub::subscribe( c );
     }
 }
-void MinosRPC::subscribeRemote(const QString &s, const QString &c)
+void MinosRPC::subscribeRemote(const QString &server, const QString &cat)
 {
-    remoteSubscriptions.append(QPair<QString, QString>(s, c));
+    remoteSubscriptions.insert(QPair<QString, QString>(server, cat));
     if (subscribed)
     {
-        RPCPubSub::subscribeRemote( s, c );
+        RPCPubSub::subscribeRemote( server, cat );
     }
 }
 void MinosRPC::publish( const QString &category, const QString &key, const QString &value, PublishState pState )

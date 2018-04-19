@@ -89,10 +89,12 @@ void TLogContainer::subscribeApps()
     MinosConfig *config = MinosConfig::getMinosConfig();
 
     QStringList servers;
+    servers.append(config->getThisServerName());
     for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = config->elelist.begin(); i != config->elelist.end(); i++ )
     {
         Connectable res = (*i)->connectable();
-        servers.append(res.serverName);
+        if (res.serverName != "localhost")
+            servers.append(res.serverName);
     }
     servers.sort();
     servers.removeDuplicates();

@@ -89,7 +89,10 @@ void MinosRPCClient::queueCall(const PubSubName &psn)
 {
     QString server = psn.server();
     QString app = psn.appName();
-    queueCall(app + "@" + server);
+    if (!app.isEmpty() && !server.isEmpty())
+    {
+        queueCall(app + "@" + server);
+    }
 }
 //==============================================================================
 
