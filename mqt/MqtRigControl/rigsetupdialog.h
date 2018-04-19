@@ -12,8 +12,8 @@
 
 
 
-#ifndef SETUPDIALOG_H
-#define SETUPDIALOG_H
+#ifndef RIGSETUPDIALOG_H
+#define RIGSETUPDIALOG_H
 
 #include <QDialog>
 #include <QStringList>
@@ -35,19 +35,19 @@ class QRadioButton;
 
 
 namespace Ui {
-class SetupDialog;
+class RigSetupDialog;
 }
 
 
 
 
-class SetupDialog : public QDialog
+class RigSetupDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit SetupDialog(RigControl* rig, const QVector<BandDetail*> _bands, QWidget *parent = nullptr);
-    ~SetupDialog();
+    explicit RigSetupDialog(RigControl* rig, const QVector<BandDetail*> _bands, QWidget *parent = nullptr);
+    ~RigSetupDialog();
 
 
     QString currentRadioName;
@@ -97,7 +97,7 @@ private slots:
     void removeRadio();
     void editRadioName();
 private:
-    Ui::SetupDialog *ui;
+    Ui::RigSetupDialog *ui;
 
     RigControl *radio;
 

@@ -10,8 +10,8 @@
 
 
 
-#ifndef SETUPDIALOG_H
-#define SETUPDIALOG_H
+#ifndef ROTSETUPDIALOG_H
+#define ROTSETUPDIALOG_H
 
 #include <QDialog>
 #include <QtSerialPort/QSerialPort>
@@ -34,19 +34,19 @@ class QCheckBox;
 
 
 namespace Ui {
-class SetupDialog;
+class RotSetupDialog;
 }
 
 
 
 
-class SetupDialog : public QDialog
+class RotSetupDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit SetupDialog(RotControl* _rotator, QWidget *parent = nullptr);
-    ~SetupDialog();
+    explicit RotSetupDialog(RotControl* _rotator, QWidget *parent = nullptr);
+    ~RotSetupDialog() override;
 
 
 
@@ -93,7 +93,7 @@ private slots:
     void removeAntenna();
     void editAntennaName();
 private:
-    Ui::SetupDialog *ui;
+    Ui::RotSetupDialog *ui;
 
     RotControl *rotator;
 

@@ -12,10 +12,10 @@
 
 
 
-#include "setupdialog.h"
+#include "rigsetupdialog.h"
 #include "rigsetupform.h"
 #include "transvertsetupform.h"
-#include "ui_setupdialog.h"
+#include "ui_rigsetupdialog.h"
 #include "rigcontrolcommonconstants.h"
 #include "addradiodialog.h"
 #include "rigcontrol.h"
@@ -34,9 +34,9 @@
 
 
 
-SetupDialog::SetupDialog(RigControl* _radio, const QVector<BandDetail*> _bands, QWidget *parent) :
+RigSetupDialog::RigSetupDialog(RigControl* _radio, const QVector<BandDetail*> _bands, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::SetupDialog)
+    ui(new Ui::RigSetupDialog)
 
 {
     ui->setupUi(this);
@@ -56,7 +56,7 @@ SetupDialog::SetupDialog(RigControl* _radio, const QVector<BandDetail*> _bands, 
 }
 
 
-SetupDialog::~SetupDialog()
+RigSetupDialog::~RigSetupDialog()
 {
     delete ui;
 }
@@ -64,7 +64,7 @@ SetupDialog::~SetupDialog()
 
 
 
-void SetupDialog::initSetup()
+void RigSetupDialog::initSetup()
 {
 
     // radio settings ini file
@@ -127,7 +127,7 @@ void SetupDialog::initSetup()
 
 
 
-void SetupDialog::addTab(int tabNum, QString tabName)
+void RigSetupDialog::addTab(int tabNum, QString tabName)
 {
     availRadioData.append(new scatParams);
     availRadioData[tabNum]->radioName = tabName;
@@ -144,7 +144,7 @@ void SetupDialog::addTab(int tabNum, QString tabName)
 }
 
 
-void SetupDialog::loadSettingsToTab(int tabNum)
+void RigSetupDialog::loadSettingsToTab(int tabNum)
 {
 
     ui->radioTab->setTabText(tabNum, radioTab[tabNum]->getRadioData()->radioName);
@@ -205,7 +205,7 @@ void SetupDialog::loadSettingsToTab(int tabNum)
 
 
 
-void SetupDialog::addRadio()
+void RigSetupDialog::addRadio()
 {
 
     AddRadioDialog getRadioName_Rig(availRadios, radio);
@@ -243,7 +243,7 @@ void SetupDialog::addRadio()
 }
 
 
-bool SetupDialog::checkRadioNameMatch(QString radioName)
+bool RigSetupDialog::checkRadioNameMatch(QString radioName)
 {
     for (int i = 0; i < numAvailRadios; i++)
     {
@@ -255,7 +255,7 @@ bool SetupDialog::checkRadioNameMatch(QString radioName)
 }
 
 
-void SetupDialog::removeRadio()
+void RigSetupDialog::removeRadio()
 {
 
     int currentIndex = ui->radioTab->currentIndex();
@@ -308,7 +308,7 @@ void SetupDialog::removeRadio()
 
 
 
-void SetupDialog::editRadioName()
+void RigSetupDialog::editRadioName()
 {
     int tabNum = ui->radioTab->currentIndex();
     QString radioName = ui->radioTab->tabText(tabNum);
@@ -361,7 +361,7 @@ void SetupDialog::editRadioName()
 }
 
 
-void SetupDialog::setTabToCurrentRadio()
+void RigSetupDialog::setTabToCurrentRadio()
 {
 
     for (int i = 0; i < numAvailRadios; i++)
@@ -380,7 +380,7 @@ void SetupDialog::setTabToCurrentRadio()
     }
 }
 
-int SetupDialog::comportAvial(int radioNum, QString comport)
+int RigSetupDialog::comportAvial(int radioNum, QString comport)
 {
     if (radioTab.count() > 0)
     {
@@ -397,7 +397,7 @@ int SetupDialog::comportAvial(int radioNum, QString comport)
 
 
 
-void SetupDialog::saveButtonPushed()
+void RigSetupDialog::saveButtonPushed()
 {
 
     saveSettings();
@@ -406,7 +406,7 @@ void SetupDialog::saveButtonPushed()
 
 
 
-void SetupDialog::cancelButtonPushed()
+void RigSetupDialog::cancelButtonPushed()
 {
     bool change = false;
     for (int i = 0; i < radioTab.count(); i++)
@@ -434,7 +434,7 @@ void SetupDialog::cancelButtonPushed()
 
 
 // remove ??? *********************************
-void SetupDialog::saveRadio(int i)
+void RigSetupDialog::saveRadio(int i)
 {
 
     QString fileName;
@@ -460,7 +460,7 @@ void SetupDialog::saveRadio(int i)
 
 
 
-void SetupDialog::saveSettings()
+void RigSetupDialog::saveSettings()
 {
 
     QString fileNameTransVert;
@@ -602,7 +602,7 @@ void SetupDialog::saveSettings()
 }
 
 
-void SetupDialog::saveRadioData(int radNum, QSettings& config)
+void RigSetupDialog::saveRadioData(int radNum, QSettings& config)
 {
 
     config.beginGroup(radioTab[radNum]->getRadioData()->radioName);
@@ -638,7 +638,7 @@ void SetupDialog::saveRadioData(int radNum, QSettings& config)
 
 
 /*
-void SetupDialog::clearRadioValueChanged()
+void RigSetupDialog::clearRadioValueChanged()
 {
     for (int i = 0; i < numAvailRadios; i++)
     {
@@ -646,7 +646,7 @@ void SetupDialog::clearRadioValueChanged()
     }
 }
 
-void SetupDialog::clearRadioNameChanged()
+void RigSetupDialog::clearRadioNameChanged()
 {
     for (int i = 0; i < numAvailRadios; i++)
     {
@@ -655,7 +655,7 @@ void SetupDialog::clearRadioNameChanged()
 }
 
 */
-void SetupDialog::readSettings()
+void RigSetupDialog::readSettings()
 {
 
     chkloadflg = true;      // stop loading check values tiggering mapper signals
@@ -671,7 +671,7 @@ void SetupDialog::readSettings()
     chkloadflg = false;
 }
 
-void SetupDialog::getRadioSetting(int radNum, QSettings& config)
+void RigSetupDialog::getRadioSetting(int radNum, QSettings& config)
 {
     config.beginGroup(availRadios[radNum]);
     radioTab[radNum]->getRadioData()->radioName = config.value("radioName", "").toString();
@@ -709,7 +709,7 @@ void SetupDialog::getRadioSetting(int radNum, QSettings& config)
 
 
 
-void SetupDialog::saveTranVerterSetting(int radioNum, int transVertNum, QSettings  &config)
+void RigSetupDialog::saveTranVerterSetting(int radioNum, int transVertNum, QSettings  &config)
 {
     config.beginGroup(radioTab[radioNum]->getRadioData()->transVertNames[transVertNum]);
     config.setValue("name", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertName);
@@ -730,7 +730,7 @@ void SetupDialog::saveTranVerterSetting(int radioNum, int transVertNum, QSetting
 
 
 
-void SetupDialog::readTranVerterSetting(int radioNum, int transVertNum, QSettings  &config)
+void RigSetupDialog::readTranVerterSetting(int radioNum, int transVertNum, QSettings  &config)
 {
     config.beginGroup(radioTab[radioNum]->getRadioData()->transVertNames[transVertNum]);
     radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertName = config.value("name", "").toString();
@@ -752,7 +752,7 @@ void SetupDialog::readTranVerterSetting(int radioNum, int transVertNum, QSetting
 
 
 /*
-void SetupDialog::clearAvailRadio()
+void RigSetupDialog::clearAvailRadio()
 {
     scatParams nulParam;
 
@@ -765,14 +765,14 @@ void SetupDialog::clearAvailRadio()
 }
 
 
-void SetupDialog::clearCurrentRadio()
+void RigSetupDialog::clearCurrentRadio()
 {
     scatParams nulParam;
     currentRadio = nulParam;
 }
 
 
-void SetupDialog::copyRadioToCurrent(int radioNumber)
+void RigSetupDialog::copyRadioToCurrent(int radioNumber)
 {
     currentRadio = availRadios[radioNumber];
 }
@@ -780,7 +780,7 @@ void SetupDialog::copyRadioToCurrent(int radioNumber)
 */
 
 
-QString SetupDialog::getRadioComPort(QString radioName)
+QString RigSetupDialog::getRadioComPort(QString radioName)
 {
 
     for (int i = 0; i < numAvailRadios; i++)
@@ -797,7 +797,7 @@ QString SetupDialog::getRadioComPort(QString radioName)
 
 
 
-void SetupDialog::saveCurrentRadio()
+void RigSetupDialog::saveCurrentRadio()
 {
 
     QString fileName;
@@ -814,7 +814,7 @@ void SetupDialog::saveCurrentRadio()
 
 }
 
-void SetupDialog::readCurrentRadio()
+void RigSetupDialog::readCurrentRadio()
 {
 
     QString fileName;
@@ -833,7 +833,7 @@ void SetupDialog::readCurrentRadio()
 
 
 
-int SetupDialog::findCurrentRadio(QString currentRadioName)
+int RigSetupDialog::findCurrentRadio(QString currentRadioName)
 {
     int err = -1;
     for (int i = 0; i < numAvailRadios; i++)
@@ -852,7 +852,7 @@ int SetupDialog::findCurrentRadio(QString currentRadioName)
 
 
 
-void SetupDialog::setAppName(QString name)
+void RigSetupDialog::setAppName(QString name)
 {
     appName = name;
 }
@@ -862,7 +862,7 @@ void SetupDialog::setAppName(QString name)
 
 
 
-void SetupDialog::saveMgmList()
+void RigSetupDialog::saveMgmList()
 {
     const QStringList  mList = {"USB", "LSB", "RTTY", "PKTLSB", "PKTUSB", "PKTFM" };
 

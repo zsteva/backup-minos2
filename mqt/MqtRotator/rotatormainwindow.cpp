@@ -21,7 +21,7 @@
 #include "ui_rotatormainwindow.h"
 #include "minoscompass.h"
 #include "rotcontrol.h"
-#include "setupdialog.h"
+#include "rotsetupdialog.h"
 #include "logdialog.h"
 #include <QString>
 #include <QLabel>
@@ -95,7 +95,7 @@ RotatorMainWindow::RotatorMainWindow(QWidget *parent) :
 
     rotator = new RotControl();
     rotator->getRotatorList();
-    setupAntenna = new SetupDialog(rotator);
+    setupAntenna = new RotSetupDialog(rotator);
     setupLog = new LogDialog;
     pollTimer = new QTimer(this);
 

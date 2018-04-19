@@ -1,5 +1,5 @@
-#include "setupdialog.h"
-#include "ui_setupdialog.h"
+#include "bmsetupdialog.h"
+#include "ui_bmsetupdialog.h"
 #include "rigcontrol.h"
 #include <QSignalMapper>
 #include <QComboBox>
@@ -14,9 +14,9 @@
 static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
 
 
-SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
+BMSetupDialog::BMSetupDialog(RigControl *radio, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::SetupDialog)
+    ui(new Ui::BMSetupDialog)
 {
     ui->setupUi(this);
 
@@ -205,13 +205,13 @@ SetupDialog::SetupDialog(RigControl *radio, QWidget *parent) :
 
 
 
-SetupDialog::~SetupDialog()
+BMSetupDialog::~BMSetupDialog()
 {
     delete ui;
 }
 
 
-void SetupDialog::radioNameFinished(int boxNumber)
+void BMSetupDialog::radioNameFinished(int boxNumber)
 {
     qDebug() << "finished name";
     if (radioName[boxNumber]->text() != availRadios[boxNumber].radioName)
@@ -224,7 +224,7 @@ void SetupDialog::radioNameFinished(int boxNumber)
 }
 
 
-void SetupDialog::radioModelSelected(int boxNumber)
+void BMSetupDialog::radioModelSelected(int boxNumber)
 {
     if (radioModel[boxNumber]->currentText() != availRadios[boxNumber].radioModel)
     {
@@ -242,7 +242,7 @@ void SetupDialog::radioModelSelected(int boxNumber)
 
 
 
-void SetupDialog::civAddressFinished(int boxNumber)
+void BMSetupDialog::civAddressFinished(int boxNumber)
 {
     bool ok;
     int value = civAddress[boxNumber]->text().toInt(&ok, 16);
@@ -261,7 +261,7 @@ void SetupDialog::civAddressFinished(int boxNumber)
 
 
 
-void SetupDialog::enableCIVbox()
+void BMSetupDialog::enableCIVbox()
 {
     for (int  i = 0; i < NUM_RADIOS; i++)
     {
@@ -278,7 +278,7 @@ void SetupDialog::enableCIVbox()
 }
 
 
-void SetupDialog::comportSelected(int boxNumber)
+void BMSetupDialog::comportSelected(int boxNumber)
 {
 
     if (comPorts[boxNumber]->currentText() != availRadios[boxNumber].comport)
@@ -292,7 +292,7 @@ void SetupDialog::comportSelected(int boxNumber)
 
 
 
-void SetupDialog::comSpeedSelected(int boxNumber)
+void BMSetupDialog::comSpeedSelected(int boxNumber)
 {
 
     availRadios[boxNumber].baudrate = comSpeed[boxNumber]->currentText().toInt();
@@ -300,7 +300,7 @@ void SetupDialog::comSpeedSelected(int boxNumber)
     radioChanged = true;
 }
 
-void SetupDialog::comDataBitsSelected(int boxNumber)
+void BMSetupDialog::comDataBitsSelected(int boxNumber)
 {
 
     availRadios[boxNumber].databits = comDataBits[boxNumber]->currentText().toInt();
@@ -308,7 +308,7 @@ void SetupDialog::comDataBitsSelected(int boxNumber)
     radioChanged = true;
 }
 
-void SetupDialog::comStopBitsSelected(int boxNumber)
+void BMSetupDialog::comStopBitsSelected(int boxNumber)
 {
 
     availRadios[boxNumber].stopbits = comStopBits[boxNumber]->currentText().toInt();
@@ -316,7 +316,7 @@ void SetupDialog::comStopBitsSelected(int boxNumber)
     radioChanged = true;
 }
 
-void SetupDialog::comParitySelected(int boxNumber)
+void BMSetupDialog::comParitySelected(int boxNumber)
 {
 
     availRadios[boxNumber].parity = radio->getSerialParityCode(comParity[boxNumber]->currentIndex());
@@ -325,7 +325,7 @@ void SetupDialog::comParitySelected(int boxNumber)
 }
 
 
-void SetupDialog::comHandShakeSelected(int boxNumber)
+void BMSetupDialog::comHandShakeSelected(int boxNumber)
 {
 
     availRadios[boxNumber].handshake = radio->getSerialHandshakeCode(comHandShake[boxNumber]->currentIndex());
@@ -338,7 +338,7 @@ void SetupDialog::comHandShakeSelected(int boxNumber)
 
 
 
-void SetupDialog::fillRadioModelInfo()
+void BMSetupDialog::fillRadioModelInfo()
 {
 
     for (int i = 0; i < NUM_RADIOS; i++)
@@ -355,7 +355,7 @@ void SetupDialog::fillRadioModelInfo()
 }
 
 
-void SetupDialog::fillPortsInfo()
+void BMSetupDialog::fillPortsInfo()
 {
     for (int i = 0; i < NUM_RADIOS; i++)
     {
@@ -397,7 +397,7 @@ void SetupDialog::fillPortsInfo()
 
 
 
-void SetupDialog::fillSpeedInfo()
+void BMSetupDialog::fillSpeedInfo()
 {
 
     QStringList baudrateStr = radio->getBaudRateNames();
@@ -415,7 +415,7 @@ void SetupDialog::fillSpeedInfo()
 
 }
 
-void SetupDialog::fillDataBitsInfo()
+void BMSetupDialog::fillDataBitsInfo()
 {
 
     QStringList databitsStr = radio->getDataBitsNames();
@@ -433,7 +433,7 @@ void SetupDialog::fillDataBitsInfo()
 
 }
 
-void SetupDialog::fillStopBitsInfo()
+void BMSetupDialog::fillStopBitsInfo()
 {
     QStringList stopbitsStr = radio->getStopBitsNames();
 
@@ -452,7 +452,7 @@ void SetupDialog::fillStopBitsInfo()
 
 
 
-void SetupDialog::fillParityInfo()
+void BMSetupDialog::fillParityInfo()
 {
 
     QStringList parityStr = radio->getParityCodeNames();
@@ -472,7 +472,7 @@ void SetupDialog::fillParityInfo()
 
 
 
-void SetupDialog::fillHandShakeInfo()
+void BMSetupDialog::fillHandShakeInfo()
 {
 
     QStringList handshakeStr = radio->getHandShakeNames();
@@ -494,7 +494,7 @@ void SetupDialog::fillHandShakeInfo()
 
 
 
-void SetupDialog::saveButtonPushed()
+void BMSetupDialog::saveButtonPushed()
 {
 
     saveSettings();
@@ -503,7 +503,7 @@ void SetupDialog::saveButtonPushed()
 
 
 
-void SetupDialog::cancelButtonPushed()
+void BMSetupDialog::cancelButtonPushed()
 {
 
 
@@ -513,7 +513,7 @@ void SetupDialog::cancelButtonPushed()
 
 
 
-void SetupDialog::saveSettings()
+void BMSetupDialog::saveSettings()
 {
 
     if (radioChanged)
@@ -551,7 +551,7 @@ void SetupDialog::saveSettings()
 }
 
 
-void SetupDialog::readSettings()
+void BMSetupDialog::readSettings()
 {
 
     QSettings config("./Configuration/MinosBandmap.ini", QSettings::IniFormat);
@@ -578,7 +578,7 @@ void SetupDialog::readSettings()
 
 
 
-void SetupDialog::clearAvailRadio()
+void BMSetupDialog::clearAvailRadio()
 {
 
 
@@ -600,7 +600,7 @@ void SetupDialog::clearAvailRadio()
 }
 
 
-void SetupDialog::clearCurrentRadio()
+void BMSetupDialog::clearCurrentRadio()
 {
 
     currentRadio.radioName = "";
@@ -620,7 +620,7 @@ void SetupDialog::clearCurrentRadio()
 
 
 /*
-int SetupDialog::getRotatorId(QString rotator)
+int BMSetupDialog::getRotatorId(QString rotator)
 {
 
     for (int i = 0; i < NUM_ROTATOR_PROTOCOLS; i++)
@@ -636,7 +636,7 @@ int SetupDialog::getRotatorId(QString rotator)
 }
 
 
-QString SetupDialog::getRotatorProtocol(QString antennaName)
+QString BMSetupDialog::getRotatorProtocol(QString antennaName)
 {
 
     for (int i = 0; i < NUM_ANTENNAS; i++)
@@ -653,7 +653,7 @@ QString SetupDialog::getRotatorProtocol(QString antennaName)
 
 */
 
-QString SetupDialog::getRadioComPort(QString radioName)
+QString BMSetupDialog::getRadioComPort(QString radioName)
 {
 
     for (int i = 0; i < NUM_RADIOS; i++)
@@ -670,7 +670,7 @@ QString SetupDialog::getRadioComPort(QString radioName)
 
 
 
-void SetupDialog::saveCurrentRadio()
+void BMSetupDialog::saveCurrentRadio()
 {
 
 
@@ -696,7 +696,7 @@ void SetupDialog::saveCurrentRadio()
 
 }
 
-void SetupDialog::readCurrentRadio()
+void BMSetupDialog::readCurrentRadio()
 {
 
     QSettings config("./Configuration/MinosBandmap.ini", QSettings::IniFormat);
@@ -722,7 +722,7 @@ void SetupDialog::readCurrentRadio()
 
 
 
-scatParams SetupDialog::getCurrentRadio() const
+scatParams BMSetupDialog::getCurrentRadio() const
 {
     return currentRadio;
 }

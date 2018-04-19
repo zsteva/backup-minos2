@@ -14,8 +14,8 @@
 
 
 
-#include "setupdialog.h"
-#include "ui_setupdialog.h"
+#include "rotsetupdialog.h"
+#include "ui_rotsetupdialog.h"
 #include "rotcontrol.h"
 #include "addantennadialog.h"
 
@@ -35,9 +35,9 @@
 
 
 
-SetupDialog::SetupDialog(RotControl* _rotator, QWidget *parent) :
+RotSetupDialog::RotSetupDialog(RotControl* _rotator, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::SetupDialog)
+    ui(new Ui::RotSetupDialog)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -55,14 +55,14 @@ SetupDialog::SetupDialog(RotControl* _rotator, QWidget *parent) :
 
 
 
-SetupDialog::~SetupDialog()
+RotSetupDialog::~RotSetupDialog()
 {
     delete ui;
 }
 
 
 
-void SetupDialog::initSetup()
+void RotSetupDialog::initSetup()
 {
 
     // get the number of available antennas
@@ -99,7 +99,7 @@ void SetupDialog::initSetup()
 
 
 
-void SetupDialog::addTab(int tabNum, QString tabName)
+void RotSetupDialog::addTab(int tabNum, QString tabName)
 {
     availAntData.append(new srotParams);
     availAntData[tabNum]->antennaName = tabName;
@@ -118,7 +118,7 @@ void SetupDialog::addTab(int tabNum, QString tabName)
 
 
 
-void SetupDialog::loadSettingsToTab(int tabNum)
+void RotSetupDialog::loadSettingsToTab(int tabNum)
 {
 
 
@@ -225,7 +225,7 @@ void SetupDialog::loadSettingsToTab(int tabNum)
 }
 
 
-void SetupDialog::setTabToCurrentAntenna()
+void RotSetupDialog::setTabToCurrentAntenna()
 {
 
     for (int i = 0; i < numAvailAntennas; i++)
@@ -245,7 +245,7 @@ void SetupDialog::setTabToCurrentAntenna()
 }
 
 
-void SetupDialog::saveButtonPushed()
+void RotSetupDialog::saveButtonPushed()
 {
 
     saveSettings();
@@ -254,7 +254,7 @@ void SetupDialog::saveButtonPushed()
 
 
 
-void SetupDialog::cancelButtonPushed()
+void RotSetupDialog::cancelButtonPushed()
 {
 
     bool change = false;
@@ -285,7 +285,7 @@ void SetupDialog::cancelButtonPushed()
 
 
 
-void SetupDialog::saveSettings()
+void RotSetupDialog::saveSettings()
 {
 
 
@@ -391,7 +391,7 @@ void SetupDialog::saveSettings()
 
 
 
-void SetupDialog::saveAntenna(int i)
+void RotSetupDialog::saveAntenna(int i)
 {
 
     QString fileName;
@@ -437,7 +437,7 @@ void SetupDialog::saveAntenna(int i)
 
 
 
-void SetupDialog::getAvailAntennas()
+void RotSetupDialog::getAvailAntennas()
 {
     chkloadflg = true;      // stop loading check values tiggering mapper signals
 
@@ -454,7 +454,7 @@ void SetupDialog::getAvailAntennas()
 }
 
 
-void SetupDialog::getAvailAntenna(int antNum, QSettings& config)
+void RotSetupDialog::getAvailAntenna(int antNum, QSettings& config)
 {
 
     config.beginGroup(availAntennas[antNum]);
@@ -490,7 +490,7 @@ void SetupDialog::getAvailAntenna(int antNum, QSettings& config)
 }
 
 
-int SetupDialog::comportAvial(QString comport)
+int RotSetupDialog::comportAvial(QString comport)
 {
     if (antennaTab.count() > 0)
     {
@@ -502,7 +502,7 @@ int SetupDialog::comportAvial(QString comport)
     }
 }
 
-//void SetupDialog::clearAvailRotators()
+//void RotSetupDialog::clearAvailRotators()
 //{
 //    srotParams nulParam;
 
@@ -514,19 +514,19 @@ int SetupDialog::comportAvial(QString comport)
 
 
 
-//void SetupDialog::clearCurrentRotator()
+//void RotSetupDialog::clearCurrentRotator()
 //{
 //    srotParams nulParam;
 //    currentAntenna = nulParam;
 //}
 
 
-//void SetupDialog::copyAntennaToCurrent(int antennaNumber)
+//void RotSetupDialog::copyAntennaToCurrent(int antennaNumber)
 //{
 //    currentAntenna = availAntennas[antennaNumber];
 //}
 
-//void SetupDialog::clearAntennaValueChanged()
+//void RotSetupDialog::clearAntennaValueChanged()
 //{
 //    for (int i = 0; i < NUM_ANTENNAS; i++)
 //    {
@@ -534,7 +534,7 @@ int SetupDialog::comportAvial(QString comport)
 //    }
 //}
 
-//void SetupDialog::clearAntennaNameChanged()
+//void RotSetupDialog::clearAntennaNameChanged()
 //{
 //    for (int i = 0; i < NUM_ANTENNAS; i++)
 //    {
@@ -543,7 +543,7 @@ int SetupDialog::comportAvial(QString comport)
 //}
 
 
-QString SetupDialog::getRotatorComPort(QString antennaName)
+QString RotSetupDialog::getRotatorComPort(QString antennaName)
 {
 
     for (int i = 0; i < numAvailAntennas ; i++)
@@ -560,7 +560,7 @@ QString SetupDialog::getRotatorComPort(QString antennaName)
 
 
 
-void SetupDialog::saveCurrentAntenna()
+void RotSetupDialog::saveCurrentAntenna()
 {
 
     QString fileName;
@@ -577,7 +577,7 @@ void SetupDialog::saveCurrentAntenna()
 
 }
 
-void SetupDialog::readCurrentAntenna()
+void RotSetupDialog::readCurrentAntenna()
 {
 
     QString fileName;
@@ -595,7 +595,7 @@ void SetupDialog::readCurrentAntenna()
 
 
 
-int SetupDialog::findCurrentAntenna(QString currentAntName)
+int RotSetupDialog::findCurrentAntenna(QString currentAntName)
 {
     int err = -1;
     for (int i = 0; i < numAvailAntennas; i++)
@@ -612,13 +612,13 @@ int SetupDialog::findCurrentAntenna(QString currentAntName)
 }
 
 
-void SetupDialog::setAppName(QString name)
+void RotSetupDialog::setAppName(QString name)
 {
     appName = name;
 }
 
 
-void SetupDialog::addAntenna()
+void RotSetupDialog::addAntenna()
 {
 
     AddAntennaDialog getAntennaName_Rot(availAntennas, rotator);
@@ -651,7 +651,7 @@ void SetupDialog::addAntenna()
 
 }
 
-bool SetupDialog::checkAntNameMatch(QString antName)
+bool RotSetupDialog::checkAntNameMatch(QString antName)
 {
     for (int i = 0; i < numAvailAntennas; i++)
     {
@@ -663,7 +663,7 @@ bool SetupDialog::checkAntNameMatch(QString antName)
 }
 
 
-void SetupDialog::removeAntenna()
+void RotSetupDialog::removeAntenna()
 {
 
     int currentIndex = ui->antennaTab->currentIndex();
@@ -713,7 +713,7 @@ void SetupDialog::removeAntenna()
 }
 
 
-void SetupDialog::editAntennaName()
+void RotSetupDialog::editAntennaName()
 {
     int tabNum = ui->antennaTab->currentIndex();
     QString antName = ui->antennaTab->tabText(tabNum);
@@ -766,7 +766,7 @@ void SetupDialog::editAntennaName()
 
 
 
-QString SetupDialog::getCurrentAntenna() const
+QString RotSetupDialog::getCurrentAntenna() const
 {
 
 

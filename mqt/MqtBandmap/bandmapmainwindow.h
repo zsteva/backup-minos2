@@ -6,7 +6,7 @@
 
 class QLabel;
 class QComboBox;
-class SetupDialog;
+class BMSetupDialog;
 class QGraphicsScene;
 class RigControl;
 class Bandmap;
@@ -32,7 +32,7 @@ private:
     QGraphicsScene *bandmapScene;
     FreqDial *dial;
     QComboBox *selectRadio;
-    SetupDialog *selectRig;
+    BMSetupDialog *selectRig;
     RigControl  *radio;
     Bandmap *bandmap;
     QLabel *status;
