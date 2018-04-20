@@ -40,7 +40,7 @@ const int POLLTIME = 500;
 
 class QLabel;
 class QComboBox;
-class SetupDialog;
+class RotSetupDialog;
 class MinosCompass;
 class RotControl;
 class EditPresetsDialog;
@@ -118,7 +118,7 @@ private:
     QLabel *rawRotatorDisplay;
     //QPalette *redText;
     //QPalette *blackText;
-    SetupDialog *setupAntenna;
+    RotSetupDialog *setupAntenna;
     EditPresetsDialog *editPresets;
     LogDialog *setupLog;
     RotatorLog *rotlog;

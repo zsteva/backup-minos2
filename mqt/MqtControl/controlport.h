@@ -69,7 +69,7 @@ class commonPort
       virtual bool openPort() = 0;
       virtual bool closePort() = 0;
 
-      void checkControls( void );
+      void checkControls( );
 
       virtual void setLine( commonLineControl * ) = 0;
       virtual bool getLine( commonLineControl * ) = 0;

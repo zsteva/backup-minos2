@@ -179,7 +179,7 @@ void TSendDM::sendRotatorSelection(const PubSubName &s, const QString &uuid)
     st->addMember( s.toString(), rpcConstants::rotatorAntennaName );
     rpc.getCallArgs() ->addParam( st );
 
-    rpc.queueCall( s.appName() + "@" + s.server() );
+    rpc.queueCall( s );
 }
 
 void TSendDM::changeRigSelectionTo(const PubSubName &name, const QString &mode, const QString &uuid)
@@ -212,7 +212,7 @@ void TSendDM::sendRigSelection(const PubSubName &s, const QString &mode, const Q
     st->addMember( mode, rpcConstants::rigControlMode );
     rpc.getCallArgs() ->addParam( st );
 
-    rpc.queueCall( s.appName() + "@" + s.server() );
+    rpc.queueCall( s );
 
 }
 

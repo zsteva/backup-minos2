@@ -51,7 +51,7 @@ class commonController: public timerTicker
       void closeDown();
 
       virtual void tickEvent() override;       // this will often be an interrupt routine
-      void checkControls( void );
+      void checkControls( );
 
       void lineChange( commonLineControl *line );
 };

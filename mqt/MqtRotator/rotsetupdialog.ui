@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SetupDialog</class>
- <widget class="QDialog" name="SetupDialog">
+ <class>RotSetupDialog</class>
+ <widget class="QDialog" name="RotSetupDialog">
   <property name="windowTitle">
    <string>Setup Antenna </string>
   </property>
@@ -76,7 +76,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>SetupDialog</receiver>
+   <receiver>RotSetupDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -92,7 +92,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>SetupDialog</receiver>
+   <receiver>RotSetupDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

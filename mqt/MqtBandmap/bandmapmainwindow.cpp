@@ -3,7 +3,7 @@
 #include "bandmap.h"
 #include "freqdial.h"
 #include "textmarker.h"
-#include "setupdialog.h"
+#include "bmsetupdialog.h"
 #include "ui_bandmapmainwindow.h"
 #include <QTimer>
 #include <QMessageBox>
@@ -18,7 +18,7 @@ BandMapMainWindow::BandMapMainWindow(QWidget *parent) :
     stdinReader.start();
 
     radio = new RigControl();
-    selectRig = new SetupDialog(radio);
+    selectRig = new BMSetupDialog(radio);
     timer = new QTimer(this);
     status = new QLabel;
     selectRadio = new QComboBox;

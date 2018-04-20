@@ -20,7 +20,7 @@
 #include "ui_rigcontrolmainwindow.h"
 #include "freqpresetdialog.h"
 #include "rigcontrol.h"
-#include "setupdialog.h"
+#include "rigsetupdialog.h"
 #include "rigcontrolrpc.h"
 #include "rigutils.h"
 #include <QTimer>
@@ -74,7 +74,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     loadBands();
     FreqPresetDialog::readSettings(presetFreq);
 
-    setupRadio = new SetupDialog(radio, bands);
+    setupRadio = new RigSetupDialog(radio, bands);
     setupRadio->setAppName(appName);
 
     if (appName.length() > 0)
@@ -1482,6 +1482,7 @@ void RigControlMainWindow::dumpRadioToTraceLog()
         trace(QString("Stop bits = %1").arg(QString::number(setupRadio->currentRadio.stopbits)));
         trace(QString("Parity = %1").arg(radio->getParityCodeNames()[setupRadio->currentRadio.parity]));
         trace(QString("Handshake = %1").arg(radio->getHandShakeNames()[setupRadio->currentRadio.handshake]));
+        trace(QString("MGM mode ").arg(setupRadio->currentRadio.mgmMode));
         QString f = "";
         setupRadio->currentRadio.transVertEnable ? f = "True" : f = "False";
         trace(QString("TransVert Enable = %1").arg(f));

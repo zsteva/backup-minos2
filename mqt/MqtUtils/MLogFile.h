@@ -52,11 +52,11 @@ class MLogFile
       void createLogFile(const QString &path, const QString filePrefix, int keepDays );
 
       // Log and LogT are used to log data without and with a timestamp;
-      QTextStream &log( void );
-      QTextStream & logT( void );
+      QTextStream &log( );
+      QTextStream & logT( );
       // Log logs a string with a time prefix hh:mm:ss
       QTextStream &log( const QString &s );
-      void close( void );
+      void close( );
 
       // Generates a suffix of the form yyyyddmmhhmmss
       static QString generateLogFileName( const QString &prefix );

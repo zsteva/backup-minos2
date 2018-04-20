@@ -111,6 +111,7 @@ private:
     QAction *ExitAction;
     QAction *ExitClearAction;
     QAction *MakeEntryAction;
+    QAction *AppendAdifAction;
     QAction *FileNewAction;
     QAction *ListOpenAction;
     QAction *ManageListsAction;
@@ -170,6 +171,7 @@ private slots:
     void sessionManageExecute();
 
     void MakeEntryActionExecute();
+    void AppendAdifActionExecute();
     void onSetMemoryActionExecute();
     void FileNewActionExecute();
     void ShiftTabLeftActionExecute();

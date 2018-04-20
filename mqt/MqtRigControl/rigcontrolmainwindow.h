@@ -26,7 +26,7 @@
 
 class QLabel;
 class QComboBox;
-class SetupDialog;
+class RigSetupDialog;
 class RigControl;
 class RigControlRpc;
 
@@ -56,7 +56,7 @@ private:
     StdInReader stdinReader;
     RigControlRpc *msg = nullptr;
 
-    SetupDialog *setupRadio;
+    RigSetupDialog *setupRadio;
     RigControl  *radio;
     QString appName = "";
     QLabel *status;

@@ -55,7 +55,7 @@ bool isOpen(QSharedPointer<ListSlot> cs, const QString &fn )
       return true;
    return false;
 }
-ContestSlot::ContestSlot( void ) : slotno( -1 ), slot( nullptr )
+ContestSlot::ContestSlot( ) : slotno( -1 ), slot( nullptr )
 {}
 ContestSlot::~ContestSlot()
 {
@@ -65,7 +65,7 @@ ContestSlot::~ContestSlot()
       slot = nullptr;
    }
 }
-ListSlot::ListSlot( void ) : slotno( -1 ), slot( nullptr )
+ListSlot::ListSlot( ) : slotno( -1 ), slot( nullptr )
 {}
 ListSlot::~ListSlot()
 {
@@ -78,7 +78,7 @@ ListSlot::~ListSlot()
 
 
 //---------------------------------------------------------------------------
-static void initClock( void )
+static void initClock( )
 {
     QFile lf( "./Configuration/time.correction");
 
@@ -184,11 +184,11 @@ bool TContestApp::initialise()
 
     return true;
 }
-bool contestAppLoadFiles( void )
+bool contestAppLoadFiles( )
 {
    return MultLists::getMultLists(); // ->loadMultFiles();
 }
-void closeContestApp( void )
+void closeContestApp( )
 {
    if ( TContestApp::getContestApp() )
    {
@@ -591,7 +591,7 @@ void TContestApp::setStringDisplayProfile( int enumkey, QString value )
 {
    displayBundle.setStringProfile( enumkey, value );
 }
-void TContestApp::flushDisplayProfile( void )
+void TContestApp::flushDisplayProfile( )
 {
    displayBundle.flushProfile();
 }

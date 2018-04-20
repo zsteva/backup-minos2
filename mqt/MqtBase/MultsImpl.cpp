@@ -60,11 +60,11 @@ bool GlistEntry::operator!=( const GlistEntry& rhs ) const
    return res != 0;
 }
 
-GlistList::GlistList( void )
+GlistList::GlistList( )
 {}
 GlistList::~GlistList()
 {}
-void GlistList::load( void )
+void GlistList::load( )
 {
    loadEntries( "./Configuration/prefix.syn", "prefix synonyms file" );
 }
@@ -197,7 +197,7 @@ bool DistrictSynonym::operator!=( const DistrictSynonym& rhs ) const
    return res != 0;
 }
 //======================================================================
-DistrictList::DistrictList( void )
+DistrictList::DistrictList( )
 {}
 DistrictList::~DistrictList()
 {
@@ -207,7 +207,7 @@ int DistrictList::slen( bool longver )
 {
    return longver ? 10 : 2;
 }
-void DistrictList::load( void )
+void DistrictList::load( )
 {
    loadEntries( "./Configuration/district.ctl", "District Control File" );
 
@@ -238,14 +238,14 @@ int DistrictList::getWorked( int item, BaseContestLog *const ct )
       return 0;
 }
 //======================================================================
-DistrictSynonymList::DistrictSynonymList( void )
+DistrictSynonymList::DistrictSynonymList( )
 {}
 DistrictSynonymList::~DistrictSynonymList()
 {
    // nothing to delete
 }
 
-void DistrictSynonymList::load( void )
+void DistrictSynonymList::load( )
 {
    loadEntries( "./Configuration/DISTRICT.SYN", "District Synonym File" );
 }
@@ -502,7 +502,7 @@ void CountrySynonym::synCat( QString &add_buff )
    add_buff += synPrefix;
 }
 //======================================================================
-CountryList::CountryList( void )
+CountryList::CountryList( )
 {}
 CountryList::~CountryList()
 {
@@ -512,7 +512,7 @@ int CountryList::slen( bool )
 {
    return 9;
 }
-void CountryList::load( void )
+void CountryList::load( )
 {
    loadEntries( "./Configuration/cty.dat", "CT9 Country File" );
 
@@ -687,13 +687,13 @@ int CountryList::getWorked( int item, BaseContestLog *const ct )
 }
 
 //======================================================================
-CountrySynonymList::CountrySynonymList( void )
+CountrySynonymList::CountrySynonymList( )
 {}
 CountrySynonymList::~CountrySynonymList()
 {
    // nothing to delete
 }
-void CountrySynonymList::load( void )
+void CountrySynonymList::load( )
 {
    loadEntries( "./Configuration/cty.syn", "Country Synonym File" );
 }
@@ -707,7 +707,7 @@ bool CountrySynonymList::procLine( QStringList a )
    return true;
 }
 //======================================================================
-LocList::LocList( void )
+LocList::LocList( )
 
 {}
 LocList::~LocList()
@@ -738,7 +738,7 @@ LocCount *LocSquare::map( int num )
    return &numbers[ dig1 ][ dig2 ];
 }
 
-void LocSquare::clear( void )
+void LocSquare::clear( )
 {
    int i, j;
    for ( i = 0; i < 10; i++ )
@@ -777,7 +777,7 @@ MultListsImpl *MultListsImpl::getMultLists()
    }
    return multLists;
 }
-bool MultListsImpl::loadMultFiles( void )
+bool MultListsImpl::loadMultFiles( )
 {
    ctryList.load();
    ctrySynList.load();

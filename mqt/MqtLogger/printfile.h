@@ -20,7 +20,7 @@ class PrintFileLine
       QString data;
 
       PrintFileLine( const QString &, const QString &dat );
-      PrintFileLine( void );
+      PrintFileLine();
       ~PrintFileLine();
 
       PrintFileLine & operator = ( const PrintFileLine & );

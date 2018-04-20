@@ -275,7 +275,7 @@ void ScreenContact::checkScreenContact( )
    screenQSOValid = true;        // for now
 
 }
-bool ScreenContact::isNextContact( void ) const
+bool ScreenContact::isNextContact( ) const
 {
    return ( logSequence == static_cast< unsigned long > (- 1L) ) ? true : false;
 }

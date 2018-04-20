@@ -932,16 +932,17 @@ void TSingleLogFrame::sendSelectRadio(const QString &radName, const QString &mod
                ui->GJVQSOLogFrame->setRadioName(radName);
                ui->FKHRigControlFrame->setRadioName(radName, mode);
             }
+            else
+            {
+                LogContainer->sendDM->changeRigSelectionTo(radName, mode, ct->uuid);  // send message including mode if it has been appended.
+            }
 
 
             if (radName != ct->radioName.getValue().toString())
             {
                 ct->radioName.setValue(radName);
                 ct->commonSave(false);
-
-
             }
-            LogContainer->sendDM->changeRigSelectionTo(ct->radioName.getValue(), mode, ct->uuid);  // send message including mode if it has been appended.
         }
 
     }

@@ -2,6 +2,7 @@
 #define MINOSRPC_H
 
 #include <QTimer>
+#include <QSet>
 #include "XMPPRPCObj.h"
 #include "RPCPubSub.h"
 #include "AnalysePubSubNotify.h"
@@ -52,8 +53,8 @@ class MinosRPC: public QObject
 
     QTimer connectTimer;
 
-    QList <QString> subscriptions;
-    QList <QPair <QString, QString> > remoteSubscriptions;
+    QSet <QString> subscriptions;
+    QSet <QPair <QString, QString> > remoteSubscriptions;
 
     void setAppName(const QString &);
     void notifyCallback( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from );

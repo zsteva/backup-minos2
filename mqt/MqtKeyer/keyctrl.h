@@ -57,8 +57,8 @@ class KeyerInfo    // only passes info up
       int CWTone;
       int CWSpeed;
 };
-void loadKeyers( void );
-void unloadKeyers( void );
+void loadKeyers( );
+void unloadKeyers( );
 
 bool getKeyerStatus( QString & );
 bool getKeyerInfo( KeyerInfo * );
@@ -71,7 +71,7 @@ void getActionState( QString & );    // returns current keyer action state strin
 void setVUCallBack(VUCallBack cb);
 
 void startRecordDVPFile( int fileno );
-void finishRecordDVPFile( void );
+void finishRecordDVPFile( );
 void playKeyerFile( int fileno, bool ptt );
 
 QVector < QString > get_keyer_list();
@@ -93,7 +93,7 @@ void setCWTone( int );
 
 bool sendCW( const char *message, int speed, int tone );
 
-void sendTone1( void );
-void sendTone2( void );
+void sendTone1( );
+void sendTone2( );
 
 #endif

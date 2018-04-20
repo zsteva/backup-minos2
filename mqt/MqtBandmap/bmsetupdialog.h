@@ -1,5 +1,5 @@
-#ifndef SETUPDIALOG_H
-#define SETUPDIALOG_H
+#ifndef BMSETUPDIALOG_H
+#define SBMETUPDIALOG_H
 
 #include <QDialog>
 //#include <QtSerialPort/QSerialPort>
@@ -17,19 +17,19 @@ class QLineEdit;
 
 
 namespace Ui {
-class SetupDialog;
+class BMSetupDialog;
 }
 
 
 
 
-class SetupDialog : public QDialog
+class BMSetupDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit SetupDialog(RigControl *rig, QWidget *parent = 0);
-    ~SetupDialog();
+    explicit BMSetupDialog(RigControl *rig, QWidget *parent = 0);
+    ~BMSetupDialog();
 
 
     scatParams getCurrentRadio() const;
@@ -63,7 +63,7 @@ protected slots:
 
 
 private:
-    Ui::SetupDialog *ui;
+    Ui::BMSetupDialog *ui;
 
     RigControl *radio;
 

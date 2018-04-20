@@ -80,7 +80,7 @@ void startRecordDVPFile( int fileno )
    sprintf( buff, "CQF%d.WAV", fileno );
    keyer_docommand( KeyerCtrl( eKEYER_RECORD, fileno, 0, 0, buff ) );
 }
-void finishRecordDVPFile( void )
+void finishRecordDVPFile( )
 {
    keyer_docommand( KeyerCtrl( eKEYER_STOPRECORD, -1, 0, 0, "" ) );
 }
@@ -90,7 +90,7 @@ void playKeyerFile( int fileno, bool ptt )
    sprintf( buff, "CQF%d.WAV", fileno );
    keyer_docommand( KeyerCtrl( eKEYER_PLAY, fileno, 0, 0, buff, ptt ) );
 }
-void sendTone1( void )
+void sendTone1( )
 {
    KeyerInfo ki;
    if ( getKeyerInfo( &ki ) )
@@ -98,7 +98,7 @@ void sendTone1( void )
       keyer_docommand( KeyerCtrl( eKEYER_TONE1, ki.tone1, 0, ki.tuneTime, "" ) );
    }
 }
-void sendTone2( void )
+void sendTone2()
 {
    KeyerInfo ki;
    if ( getKeyerInfo( &ki ) )
@@ -372,7 +372,7 @@ bool lineMonitor::initialise( const KeyerConfig &/*keyer*/, const PortConfig &/*
    return true;
 }
 
-void lineMonitor::checkControls( void )
+void lineMonitor::checkControls( )
 {
    if ( cp )
       cp->checkControls();
@@ -419,7 +419,7 @@ void commonKeyer::tickEvent()
    }
    currTick = QDateTime::currentMSecsSinceEpoch()/TIMER_INTERVAL;
 }
-bool commonKeyer::getPTT( void )
+bool commonKeyer::getPTT( )
 {
    return started & pttState;
 }
@@ -895,9 +895,9 @@ bool KeyerAction::playingFile( const QString & )
 {
    return false;
 }
-void KeyerAction::activateVox( void )
+void KeyerAction::activateVox( )
 {}
-void KeyerAction::queueFinished( void )
+void KeyerAction::queueFinished( )
 {}
 void KeyerAction::stopTransmit()
 {}
@@ -906,7 +906,7 @@ VoiceAction::VoiceAction()
 {}
 VoiceAction::~VoiceAction()
 {}
-void VoiceAction::interruptOK( void )
+void VoiceAction::interruptOK( )
 {
    // this should stop timeout if no interrupts,
    actionTime = 1000 ;
@@ -1007,7 +1007,7 @@ void ToneAction::timeOut()
 
    }
 }
-void ToneAction::interruptOK( void )
+void ToneAction::interruptOK( )
 {
    // this should stop timeout if no interrupts,
 

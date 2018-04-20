@@ -22,7 +22,7 @@ class ScreenContact
       virtual void copyFromArg(QSharedPointer<BaseContact> );   // this MIGHT just get used for dummy, for ops
       virtual void copyFromArg( ScreenContact & );    // used for partialSave
       void checkScreenContact( );
-      virtual bool isNextContact( void ) const;
+      virtual bool isNextContact() const;
       virtual void setLogSequence( unsigned long ul )
       {
          logSequence = ul;

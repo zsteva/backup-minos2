@@ -12,7 +12,9 @@
 
 #ifndef MinosParametersH
 #define MinosParametersH 
-#include "base_pch.h"
+#include <QString>
+#include <QWidget>
+class BaseContestLog;
 //---------------------------------------------------------------------------
 class BaseContestLog;
 class ContactList;
@@ -38,7 +40,7 @@ class MinosParameters
       virtual void setBoolDisplayProfile( int enumkey, bool value ) = 0;
       virtual void getStringDisplayProfile( int enumkey, QString &value ) = 0;
       virtual void setStringDisplayProfile( int enumkey, QString value ) = 0;
-      virtual void flushDisplayProfile( void ) = 0;
+      virtual void flushDisplayProfile( ) = 0;
       virtual qint64 getBigClockCorrection() = 0;
       virtual int getStatsPeriod1() = 0;
       virtual int getStatsPeriod2() = 0;

@@ -15,7 +15,7 @@ char diskBuffer[ bsize + 1 ];
 //char *lbuff = &diskBuffer[ 0 ];
 int buffpt = 0;
 
-void clearBuffer( void )
+void clearBuffer( )
 {
    memset( diskBuffer, '#', bsize );
    diskBuffer[ bsize ] = 0;

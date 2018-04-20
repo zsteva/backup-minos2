@@ -15,7 +15,7 @@
 extern const double pi /* = (double )3.141592653 */;  /* pi */
 extern const double dr /* = pi/180.0*/;      			  // degree to radian conversion factor
 
-extern void clearBuffer( void );
+extern void clearBuffer( );
 extern void strtobuf( const QString &str );
 extern void strtobuf( const MinosStringItem<QString> &str );
 extern void strtobuf();
@@ -54,9 +54,9 @@ class writer
    public:
       void lwrite( const QString & );
       void lwrite( const char * );
-      void lwriteLine( void );
-      void lwriteNl( void );
-      void lwriteFf( void );
+      void lwriteLine( );
+      void lwriteNl( );
+      void lwriteFf( );
       writer( QSharedPointer<QFile> f );
       ~writer();
 };

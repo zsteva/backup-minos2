@@ -274,7 +274,7 @@ void  TMatchThread::matchDistrict( QString dist )
 
 //=============================================================================
 //=============================================================================
-matchElement::matchElement( void ) : match( false ), empty( true )
+matchElement::matchElement() : match( false ), empty( true )
 {
    mstr.clear();
    rawstr.clear();
@@ -399,7 +399,7 @@ void Matcher::startMatch( QSharedPointer<CountryEntry> c )
 }
 
 // on timer, start it off NB this NOT in the main thread
-void Matcher::initMatch( void )
+void Matcher::initMatch( )
 {
    try
    {

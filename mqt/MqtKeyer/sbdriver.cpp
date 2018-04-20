@@ -368,7 +368,7 @@ bool SoundSystemDriver::sbdvp_init( QString &errmess, unsigned int srate, int pi
 
 
 // need to call this from dvpctrl
-/*static*/void SoundSystemDriver::sbdvp_unload(    void )
+/*static*/void SoundSystemDriver::sbdvp_unload( )
 {
    if ( singleton_sb )
    {
@@ -377,7 +377,7 @@ bool SoundSystemDriver::sbdvp_init( QString &errmess, unsigned int srate, int pi
       singleton_sb = nullptr;
    }
 }
-void SoundSystemDriver::unload( void )
+void SoundSystemDriver::unload( )
 {
    if ( sblog )
    {

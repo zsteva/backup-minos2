@@ -12,7 +12,7 @@ class matchElement
       QString mstr;
       QString rawstr;
 
-      matchElement( void );
+      matchElement( );
       unsigned char set
          ( const QString & );
       unsigned char checkGreater( const QString & );
@@ -24,9 +24,9 @@ class TMatchCollection
    public:
       ContestMatchList contestMatchList;
       int contactCount();
-      TMatchCollection( void );
+      TMatchCollection();
       ~TMatchCollection();
-      int getContestCount( void );
+      int getContestCount( );
       QSharedPointer<BaseMatchContest> pcontestAt( int );
 };
 

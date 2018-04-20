@@ -196,7 +196,7 @@ class dtg
             baddtg = true;
          }
       }
-      int notEntered( void );  // returns the "entered" state
+      int notEntered( );  // returns the "entered" state
 
       bool isDirty() const
       {
@@ -264,7 +264,7 @@ class Locator
       //    locator(const locator&);
       //    locator& operator =(const locator&);
       ~Locator();
-      char validate( void );
+      char validate( );
       char validate( double &lon, double &lat );
 };
 
