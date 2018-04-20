@@ -127,12 +127,7 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
     connect(this, SIGNAL(noRadioSendFreq(QString)), this, SLOT(noRadioSetFreq(QString)));
     connect(this, SIGNAL(noRadioSendMode(QString)), this, SLOT(noRadioSetMode(QString)));
 
-    //for (int i = 0; i < bandSelData::bandNames.count(); i++)
-    //{
-    //    ui->bandSelCombo->addItem(bandSelData::bandNames[i]);
-    //}
 
-    //connect(ui->bandSelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(radioBandFreq(int)));
     connect(ui->bandSelCombo, SIGNAL(activated(int)), this, SLOT(radioBandFreq(int)));
 
     if (!isRadioLoaded())
@@ -144,15 +139,10 @@ void RigControlFrame::initRigFrame(QWidget * /*parent*/)
 
 void RigControlFrame::on_radioNameSel_activated(const QString &arg1)
 {
-//    QString n = arg1;
-//    if (n == radioName)
-//    {
-//        n = RELOAD;     // this forces the rigcontrol app to reload the radio with the same radioName
-
-//    }
 
     radioName = arg1;
-    emit selectRadio(arg1, "");
+    //emit selectRadio(arg1, "");
+    emit selectRadio(arg1, curMode);
 }
 
 

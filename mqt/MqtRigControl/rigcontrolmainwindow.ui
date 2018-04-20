@@ -434,6 +434,12 @@
    </property>
   </action>
   <action name="actionTrace_Log">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Trace Log</string>
    </property>
