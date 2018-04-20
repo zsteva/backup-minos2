@@ -18,8 +18,8 @@ class TMinosChatForm : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit TMinosChatForm(QWidget *parent = 0);
-    ~TMinosChatForm();
+    explicit TMinosChatForm(QWidget *parent = nullptr);
+    ~TMinosChatForm() override;
     void addChat(const QString &mess);
 
 private:
@@ -38,7 +38,7 @@ private:
     void logMessage( QString s );
     void syncChat();
     void syncStations();
-    void keyPressEvent( QKeyEvent* event );
+    void keyPressEvent( QKeyEvent* event ) override;
 
 private slots:
     void SyncTimerTimer( );

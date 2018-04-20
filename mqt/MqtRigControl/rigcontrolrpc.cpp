@@ -52,10 +52,10 @@ void RigControlRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const Q
     if ( an.getOK() )
     {
         // example from elsewhere
-        //      if ( an.getCategory() == "LineControl" )
+        //      if ( an.getCategory() == rpcConstants::lineControlCategory )
         //      {
-        //         lineStates[ an.getKey() ] = ( ( an.getValue() == "set" ) ? true : false );
-        //         trace( "LineControl" + an.getKey() + ":" + an.getValue() );
+        //         lineStates[ an.getKey() ] = ( ( an.getValue() == rpcConstants::lineSet ) ? true : false );
+        //         trace( rpcConstants::lineControlCategory + " " + an.getKey() + ":" + an.getValue() );
         //      }
     }
 }
