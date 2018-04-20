@@ -64,6 +64,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVe
     connect(ui->netPortBox, SIGNAL(editingFinished()), this, SLOT(networkPortSelected()));
     connect(ui->pollInterval, SIGNAL(activated(int)), this, SLOT(pollIntervalSelected()));
     connect(ui->enableTransVert, SIGNAL(clicked(bool)), this, SLOT(enableTransVertSelected(bool)));
+    connect(ui->mgmBox, SIGNAL(activated(int)), this, SLOT(mgmModeSelected()));
     connect(ui->CIVlineEdit, SIGNAL(editingFinished()), this, SLOT(civAddressFinished()));
     // transvert
     connect(ui->addTransvert, SIGNAL(clicked(bool)), this, SLOT(addTransVerter()));

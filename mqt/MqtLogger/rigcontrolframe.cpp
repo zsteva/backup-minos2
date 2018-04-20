@@ -141,14 +141,10 @@ void RigControlFrame::on_radioNameSel_activated(const QString &arg1)
 {
 
     radioName = arg1;
-<<<<<<< HEAD
-    //emit selectRadio(arg1, "");
-    emit selectRadio(arg1, curMode);
-=======
-//    emit selectRadio(arg1, "");
+
     trace("on_radioNameSel_activated emit selectRadio");
     emit selectRadio(arg1, ct->currentMode.getValue());
->>>>>>> 42f4703b70511196706db5998eb7e6b29464b715
+
 }
 
 
