@@ -832,34 +832,39 @@ void TLogContainer::AppendAdifActionExecute()
                        Filter
                        );
 
-    QIODevice::OpenMode om = QIODevice::ReadOnly;
-
-    QSharedPointer<QFile> adifFile(new QFile(fname));
-
-    if (!adifFile->open(om))
+    if (!fname.isEmpty())
     {
-       QString lerr = adifFile->errorString();
-       QString emess = "Failed to open ADIF file " + fname + " : " + lerr;
-       MinosParameters::getMinosParameters() ->mshowMessage( emess );
-       return;
-    }
+        QIODevice::OpenMode om = QIODevice::ReadOnly;
 
-    if (! ADIFImport::doImportADIFLog(dynamic_cast<LoggerContestLog *>(ct),  adifFile ))
-    {
-        MinosParameters::getMinosParameters() ->mshowMessage( "Failed to append " + fname );
-    }
-    ct->scanContest();
-    ct->validateLoc();
-    for ( LogIterator i = ct->ctList.begin(); i != ct->ctList.end(); i++ )
-    {
-       i->wt->commonSave(i->wt);
-    }
-    ct->commonSave( false );
-    MinosLoggerEvents::SendAfterLogContact(ct);
-    TSingleLogFrame * tslf = LogContainer ->findContest( ct );
+        QSharedPointer<QFile> adifFile(new QFile(fname));
 
-    tslf->showQSOs();
+        if (!adifFile->open(om))
+        {
+           QString lerr = adifFile->errorString();
+           QString emess = "Failed to open ADIF file " + fname + " : " + lerr;
+           MinosParameters::getMinosParameters() ->mshowMessage( emess );
+           return;
+        }
 
+        int spoint = ct->ctList.count();
+        if (! ADIFImport::doImportADIFLog(dynamic_cast<LoggerContestLog *>(ct),  adifFile ))
+        {
+            MinosParameters::getMinosParameters() ->mshowMessage( "Failed to append " + fname );
+        }
+        ct->scanContest();
+        ct->validateLoc();
+        for ( int i = spoint; i != ct->ctList.count(); i++ )
+        {
+            QSharedPointer<BaseContact> bct = ct->pcontactAt(i);
+            bct->commonSave(bct);
+        }
+        ct->commonSave( false );
+        MinosLoggerEvents::SendAfterLogContact(ct);
+        TSingleLogFrame * tslf = LogContainer ->findContest( ct );
+
+        tslf->showQSOs();
+
+    }
 }
 
 void TLogContainer::MakeEntryActionExecute()

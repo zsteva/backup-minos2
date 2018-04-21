@@ -32,7 +32,6 @@ class ADIFImport
 
       LoggerContestLog * acontest;
       QSharedPointer<BaseContact> aqso;
-      unsigned long next_block;
    public:
       static bool doImportADIFLog( LoggerContestLog * c, QSharedPointer<QFile> hFile );
 

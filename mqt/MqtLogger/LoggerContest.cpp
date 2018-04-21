@@ -40,9 +40,9 @@ void LoggerContestLog::initialiseINI()
    entryBundle.setProfile( BundleFile::bundleFiles[ epENTRYPROFILE ] );
    QTHBundle.setProfile( BundleFile::bundleFiles[ epQTHPROFILE ] );
    stationBundle.setProfile( BundleFile::bundleFiles[ epSTATIONPROFILE ] );
-   entryBundleName.setValue( entryBundle.getSection() );
-   QTHBundleName.setValue( QTHBundle.getSection() );
-   stationBundleName.setValue( stationBundle.getSection() );
+   entryBundleName.setInitialValue( entryBundle.getSection() );
+   QTHBundleName.setInitialValue( QTHBundle.getSection() );
+   stationBundleName.setInitialValue( stationBundle.getSection() );
 }
 void LoggerContestLog::clearDirty()
 {
