@@ -175,7 +175,7 @@ public:
   bool activeDTR  = false;
   bool nactiveRTS  = false;
   bool nactiveDTR  = false;
-  QString mgmMode;
+  QString mgmMode = "USB";
   ptt_type_t pttType;
   bool antSwitchAvail = false;
   bool transVertEnable  = false;
