@@ -1,15 +1,19 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "tlogcontainer.h"
 #include "contestdetails.h"
 #include "tsettingseditdlg.h"
+#include "profiles.h"
 #include "tbundleframe.h"
 #include "ui_tbundleframe.h"
 
 TBundleFrame::TBundleFrame(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::TBundleFrame)
-  , bundle( 0 ), bname( 0 ), cd(0), suppressChange(false)
+  , cd(nullptr)
+  , suppressChange(false)
+  , bundle( nullptr )
+  , bname( nullptr )
 {
     ui->setupUi(this);
 }

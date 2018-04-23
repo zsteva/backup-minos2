@@ -24,7 +24,7 @@ class MCReadSocket : public QObject
     UPnPDataObject *state;
 
 public:
-    explicit MCReadSocket(QObject *parent = 0);
+    explicit MCReadSocket(QObject *parent = nullptr);
     virtual ~MCReadSocket() override;
     bool setupRO();
 

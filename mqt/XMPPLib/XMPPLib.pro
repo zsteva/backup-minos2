@@ -16,6 +16,8 @@ CONFIG += staticlib
 INCLUDEPATH += ../TinyXML
 INCLUDEPATH += ../MqtUtils
 
+PRECOMPILED_HEADER = XMPP_pch.h
+
 SOURCES += \
     Dispatcher.cpp \
     PortIds.cpp \
@@ -27,7 +29,10 @@ SOURCES += \
     XMPPRPCParams.cpp \
     XMPPStanzas.cpp \
     MinosConnection.cpp \
-    MinosRPC.cpp
+    MinosRPC.cpp \
+    PubSubValue.cpp \
+    AnalysePubSubNotify.cpp \
+    PublishState.cpp
 
 HEADERS += \
     Dispatcher.h \
@@ -42,7 +47,11 @@ HEADERS += \
     XMPPStanzas.h \
     MinosConnection.h \
     MinosRPC.h \
-    RPCCommandConstants.h
+    RPCCommandConstants.h \
+    PubSubValue.h \
+    AnalysePubSubNotify.h \
+    PublishState.h
+    
 unix {
     target.path = /usr/lib
     INSTALLS += target

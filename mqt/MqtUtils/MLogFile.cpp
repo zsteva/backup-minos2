@@ -46,12 +46,12 @@ void MLogFile::createLogFile(const QString &path, const QString filePrefix, int 
     l.flush();
 }
 //---------------------------------------------------------------------------
-QTextStream & MLogFile::log( void )
+QTextStream & MLogFile::log( )
 {
 	return getLogFile( "" );
 }
 //---------------------------------------------------------------------------
-QTextStream &MLogFile::logT( void )
+QTextStream &MLogFile::logT( )
 {
     CsGuard lock;
     QDateTime dt = QDateTime::currentDateTime();
@@ -59,12 +59,12 @@ QTextStream &MLogFile::logT( void )
     return log() << time;
 }
 //---------------------------------------------------------------------------
-void MLogFile::close( void )
+void MLogFile::close( )
 {
     QTextStream &l = log();
     l.flush();
     l.device()->close();
-    l.setDevice(0);
+    l.setDevice(nullptr);
 }
 //---------------------------------------------------------------------------
 QTextStream & MLogFile::log(const QString &s )

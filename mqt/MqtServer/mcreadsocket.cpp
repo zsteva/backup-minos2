@@ -28,10 +28,10 @@
 class WSAGuard
 {
    public:
-      WSAGuard( void );
+      WSAGuard( );
       ~WSAGuard();
 };
-WSAGuard::WSAGuard( void )
+WSAGuard::WSAGuard( )
 {
 #ifdef Q_OS_WIN
    // class to ensure that WinSock is opened and closed correctly
@@ -64,7 +64,7 @@ WSAGuard::~WSAGuard()
 #endif
 }
 
-WSAGuard *wsag = 0;
+static WSAGuard *wsag = nullptr;
 //==============================================================================
 class UPnPDataObject
 {
@@ -116,7 +116,7 @@ void MCReadSocket::onTimeout()
         // and we need to put in the sockets we are waiting on
         FD_SET( state->NOTIFY_RECEIVE_sock, &readset );
 
-        int slct = select( FD_SETSIZE, &readset, NULL, NULL, &tv );
+        int slct = select( FD_SETSIZE, &readset, nullptr, nullptr, &tv );
         if ( slct >= 1 )    // timeout...
         {
            if ( FD_ISSET( state->NOTIFY_RECEIVE_sock, &readset ) != 0 )

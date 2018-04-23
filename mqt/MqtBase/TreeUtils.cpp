@@ -6,6 +6,7 @@
 // COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
 //
 /////////////////////////////////////////////////////////////////////////////
+#include "base_pch.h"
 #include "TreeUtils.h"
 
 GridColumn QSOTreeColumns[ LOGTREECOLS ] =
@@ -27,7 +28,7 @@ GridColumn QSOTreeColumns[ LOGTREECOLS ] =
 
    };
 
-QSOGridModel::QSOGridModel():contest(0)
+QSOGridModel::QSOGridModel():contest(nullptr)
 {}
 QSOGridModel::~QSOGridModel()
 {}

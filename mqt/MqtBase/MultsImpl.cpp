@@ -18,7 +18,7 @@ struct DistCount
    char prefix[ 3 ];
    char dcount;
 };
-DistCount distCounts[] =
+static DistCount distCounts[] =
    {
       {"G", 1},
       {"GD", 1},
@@ -60,11 +60,11 @@ bool GlistEntry::operator!=( const GlistEntry& rhs ) const
    return res != 0;
 }
 
-GlistList::GlistList( void )
+GlistList::GlistList( )
 {}
 GlistList::~GlistList()
 {}
-void GlistList::load( void )
+void GlistList::load( )
 {
    loadEntries( "./Configuration/prefix.syn", "prefix synonyms file" );
 }
@@ -95,7 +95,7 @@ void MultEntry::addSynonyms( QString &s )
 }
 //======================================================================
 DistrictEntry::DistrictEntry( const QString &cd, const QString &name, const QString &prefix, const QString &prefix2, const QString &cloc ) :
-      MultEntry( name, cloc ), country1( 0 ), country2( 0 )
+      MultEntry( name, cloc ), country1( nullptr ), country2( nullptr )
 {
    // set district code to cd
 
@@ -164,7 +164,7 @@ bool DistrictEntry::operator!=( const DistrictEntry& rhs ) const
 
 //======================================================================
 DistrictSynonym::DistrictSynonym( const QString &cd, const QString &syn ) :
-      district( 0 )
+      district( nullptr )
 {
    synonym = syn;
 
@@ -197,7 +197,7 @@ bool DistrictSynonym::operator!=( const DistrictSynonym& rhs ) const
    return res != 0;
 }
 //======================================================================
-DistrictList::DistrictList( void )
+DistrictList::DistrictList( )
 {}
 DistrictList::~DistrictList()
 {
@@ -207,7 +207,7 @@ int DistrictList::slen( bool longver )
 {
    return longver ? 10 : 2;
 }
-void DistrictList::load( void )
+void DistrictList::load( )
 {
    loadEntries( "./Configuration/district.ctl", "District Control File" );
 
@@ -238,14 +238,14 @@ int DistrictList::getWorked( int item, BaseContestLog *const ct )
       return 0;
 }
 //======================================================================
-DistrictSynonymList::DistrictSynonymList( void )
+DistrictSynonymList::DistrictSynonymList( )
 {}
 DistrictSynonymList::~DistrictSynonymList()
 {
    // nothing to delete
 }
 
-void DistrictSynonymList::load( void )
+void DistrictSynonymList::load( )
 {
    loadEntries( "./Configuration/DISTRICT.SYN", "District Synonym File" );
 }
@@ -430,7 +430,7 @@ static void makeCountrySynonym( const QString &ssyn, const QString &sprefix )
    }
 }
 CountrySynonym::CountrySynonym( const QString &ssyn, const QString &sprefix ) :
-      country( 0 )
+      country( nullptr )
 {
    QString syn = ssyn.trimmed();
    QString prefix = sprefix.trimmed();
@@ -502,7 +502,7 @@ void CountrySynonym::synCat( QString &add_buff )
    add_buff += synPrefix;
 }
 //======================================================================
-CountryList::CountryList( void )
+CountryList::CountryList( )
 {}
 CountryList::~CountryList()
 {
@@ -512,7 +512,7 @@ int CountryList::slen( bool )
 {
    return 9;
 }
-void CountryList::load( void )
+void CountryList::load( )
 {
    loadEntries( "./Configuration/cty.dat", "CT9 Country File" );
 
@@ -687,13 +687,13 @@ int CountryList::getWorked( int item, BaseContestLog *const ct )
 }
 
 //======================================================================
-CountrySynonymList::CountrySynonymList( void )
+CountrySynonymList::CountrySynonymList( )
 {}
 CountrySynonymList::~CountrySynonymList()
 {
    // nothing to delete
 }
-void CountrySynonymList::load( void )
+void CountrySynonymList::load( )
 {
    loadEntries( "./Configuration/cty.syn", "Country Synonym File" );
 }
@@ -707,7 +707,7 @@ bool CountrySynonymList::procLine( QStringList a )
    return true;
 }
 //======================================================================
-LocList::LocList( void )
+LocList::LocList( )
 
 {}
 LocList::~LocList()
@@ -723,7 +723,7 @@ LocSquare::LocSquare( const QString &locId )
 LocCount *LocSquare::map( const QString &num )
 {
    if ( !num[ 0 ].isDigit() || !num[ 1 ].isDigit() )
-      return 0;
+      return nullptr;
 
    return &numbers[ num[ 0 ].toLatin1() - '0' ][ num[ 1 ].toLatin1() - '0' ];
 }
@@ -731,14 +731,14 @@ LocCount *LocSquare::map( const QString &num )
 LocCount *LocSquare::map( int num )
 {
    if ( ( num < 0 ) || ( num >= 100 ) )
-      return 0;
+      return nullptr;
    int dig2 = num % 100;
    int dig1 = ( num - dig2 ) / 100;
 
    return &numbers[ dig1 ][ dig2 ];
 }
 
-void LocSquare::clear( void )
+void LocSquare::clear( )
 {
    int i, j;
    for ( i = 0; i < 10; i++ )
@@ -764,7 +764,7 @@ bool LocSquare::operator!=( const LocSquare& rhs ) const
 }
 
 //======================================================================
-MultListsImpl *MultListsImpl::multLists = 0;
+MultListsImpl *MultListsImpl::multLists = nullptr;
 
 MultListsImpl *MultListsImpl::getMultLists()
 {
@@ -777,7 +777,7 @@ MultListsImpl *MultListsImpl::getMultLists()
    }
    return multLists;
 }
-bool MultListsImpl::loadMultFiles( void )
+bool MultListsImpl::loadMultFiles( )
 {
    ctryList.load();
    ctrySynList.load();
@@ -829,7 +829,7 @@ MultListsImpl::MultListsImpl()
 }
 MultListsImpl::~MultListsImpl()
 {
-   multLists = 0;
+   multLists = nullptr;
 }
 
 int MultListsImpl::getCtryListSize()

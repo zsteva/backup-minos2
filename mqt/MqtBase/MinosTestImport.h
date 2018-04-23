@@ -10,6 +10,7 @@
 
 #ifndef MinosTestImportH
 #define MinosTestImportH 
+#include "base_pch.h"
 //---------------------------------------------------------------------------
 class MinosTestImport: public RPCDispatcher
 {

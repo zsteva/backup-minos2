@@ -9,6 +9,7 @@
 #include "base_pch.h"
 
 //---------------------------------------------------------------------------
+BaseMatchContest::~BaseMatchContest(){}
 
 QSharedPointer<MatchContact> BaseMatchContest::pcontactAt( int i )
 {
@@ -26,7 +27,7 @@ bool MatchContactList::operator<( const BaseMatchContest& rhs ) const
     const ContactList * cn1 = getContactList();
     const ContactList * cn2 = rhs.getContactList();
 
-    if ( cn2 == 0 )       // cn1 must be good - its us!
+    if ( cn2 == nullptr )       // cn1 must be good - its us!
     {
        return false;
     }
@@ -52,7 +53,7 @@ bool MatchContactLog::operator<( const BaseMatchContest& rhs ) const
    const BaseContestLog * cn1 = getContactLog();
    const BaseContestLog * cn2 = rhs.getContactLog();
 
-   if ( cn2 == 0 )
+   if ( cn2 == nullptr )
    {
       return true;
    }
@@ -95,7 +96,7 @@ bool MatchLogContact::operator<( const MatchContact& rhs ) const
    BaseContestLog *cn1 = getContactLog();
    BaseContestLog *cn2 = rhs.getContactLog();
 
-   if ( cn2 == 0 )
+   if ( cn2 == nullptr )
    {
       return true;
    }
@@ -138,7 +139,7 @@ bool MatchLogContact::operator==( const MatchContact& rhs ) const
    BaseContestLog *cn1 = getContactLog();
    BaseContestLog *cn2 = rhs.getContactLog();
 
-   if ( cn2 == 0 )
+   if ( cn2 == nullptr )
    {
       return true;
    }
@@ -157,7 +158,7 @@ bool MatchLogContact::operator!=( const MatchContact& rhs ) const
     BaseContestLog *cn1 = getContactLog();
     BaseContestLog *cn2 = rhs.getContactLog();
 
-   if ( cn2 == 0 )
+   if ( cn2 == nullptr )
    {
       return true;
    }
@@ -191,7 +192,7 @@ bool MatchListContact::operator<( const MatchContact& rhs ) const
    ContactList *cn1 = getContactList();
    ContactList *cn2 = rhs.getContactList();
 
-   if ( cn2 == 0 )       // cn1 must be good - its us!
+   if ( cn2 == nullptr )       // cn1 must be good - its us!
    {
       return false;
    }

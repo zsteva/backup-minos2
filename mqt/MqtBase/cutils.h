@@ -9,19 +9,18 @@
 //----------------------------------------------------------------------------
 #ifndef CutilsH
 #define CutilsH
-#include "XMPP_pch.h"
-#include "QValidator"
+#include "base_pch.h"
 
 //----------------------------------------------------------------------------
 extern const double pi /* = (double )3.141592653 */;  /* pi */
 extern const double dr /* = pi/180.0*/;      			  // degree to radian conversion factor
 
-extern void clearBuffer( void );
+extern void clearBuffer( );
 extern void strtobuf( const QString &str );
 extern void strtobuf( const MinosStringItem<QString> &str );
 extern void strtobuf();
 QString strupr( const QString &s );
-extern int strnicmp( const QString &s1, const QString &s2, unsigned int len );
+extern int strnicmp(const QString &s1, const QString &s2, int len );
 extern void opyn( bool b );
 void opyn( const MinosItem<bool> &b );
 extern void buftostr( QString &str );
@@ -45,7 +44,7 @@ extern QDateTime CanonicalToTDT( QString cdtg );
 const int bsize = 256;
 extern char diskBuffer[ bsize + 1 ];
 
-extern size_t buffpt;
+extern int buffpt;
 
 class writer
 {
@@ -55,9 +54,9 @@ class writer
    public:
       void lwrite( const QString & );
       void lwrite( const char * );
-      void lwriteLine( void );
-      void lwriteNl( void );
-      void lwriteFf( void );
+      void lwriteLine( );
+      void lwriteNl( );
+      void lwriteFf( );
       writer( QSharedPointer<QFile> f );
       ~writer();
 };
@@ -71,6 +70,17 @@ template <class T>
 QString makeStr(T) = delete; // C++11
 
 extern QString HtmlFontColour( const QColor &c );
+
+template<class T>
+typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type
+    almost_equal(T x, T y, int ulp)
+{
+    // the machine epsilon has to be scaled to the magnitude of the values used
+    // and multiplied by the desired precision in ULPs (units in the last place)
+    return std::abs(x-y) <= std::numeric_limits<T>::epsilon() * std::abs(x+y) * ulp
+    // unless the result is subnormal
+           || std::abs(x-y) < std::numeric_limits<T>::min();
+}
 
 class UpperCaseValidator:public QValidator
 {

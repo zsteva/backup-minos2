@@ -1,8 +1,7 @@
 #ifndef TSETTINGSEDITDLG_H
 #define TSETTINGSEDITDLG_H
 
-#include <QDialog>
-#include <QModelIndex>
+#include "base_pch.h"
 
 namespace Ui {
 class TSettingsEditDlg;
@@ -28,7 +27,7 @@ class TSettingsEditDlg : public QDialog
 public:
     explicit TSettingsEditDlg(QWidget *parent , SettingsBundle *bundle);
     void ShowCurrentSectionOnly();
-    ~TSettingsEditDlg();
+    ~TSettingsEditDlg() override;
 
     int exec() override;
 

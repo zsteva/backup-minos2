@@ -12,14 +12,15 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "logger_pch.h"
+#include "base_pch.h"
 
-#include "runbuttondialog.h"
-#include "ui_runbuttondialog.h"
 #include "rigmemcommondata.h"
 #include "rigutils.h"
 #include "rigcontrolcommonconstants.h"
-#include "rotatorCommonConstants.h"
+#include "rotatorcommon.h"
+
+#include "runbuttondialog.h"
+#include "ui_runbuttondialog.h"
 
 RunButtonDialog::RunButtonDialog(QWidget *parent) :
     QDialog(parent),
@@ -35,6 +36,8 @@ RunButtonDialog::RunButtonDialog(QWidget *parent) :
 
 
     ui->freqLineEdit->setFocus();
+    // validate the input
+    connect(ui->freqLineEdit, SIGNAL(editingFinished()), this, SLOT(onFreqEditFinish()));
 
 }
 
@@ -47,7 +50,28 @@ RunButtonDialog::~RunButtonDialog()
 }
 
 
+void RunButtonDialog::onFreqEditFinish()
+{
+    QString f = ui->freqLineEdit->text().trimmed().remove( QRegExp("^[0]*"));
+    if (f.contains('.'))
+    {
+        QStringList fl = f.split('.');
+        if (fl[1].count() > 6)
+        {
+            fl[1].truncate(6);
+            f = fl[0] + "." + fl[1];
+        }
 
+    }
+    if (!f.isEmpty() && !validateFreqTxtInput(f))
+    {
+        // error
+        QMessageBox msgBox;
+        msgBox.setText(FREQ_EDIT_ERR_MSG);
+        msgBox.exec();
+
+    }
+}
 
 void RunButtonDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
 {
@@ -60,24 +84,42 @@ void RunButtonDialog::setLogData(memoryData::memData* ldata, int buttonNumber)
     ui->modecb->setCurrentText(ldata->mode);
 
 
-    if (ldata->freq.remove('.').count() < 4)
+    if (logdata->freq.isEmpty())
     {
-        ui->freqLineEdit->setInputMask(maskData::freqMask[7]);
+        ui->freqLineEdit->setText("");
     }
     else
     {
-        ui->freqLineEdit->setInputMask(maskData::freqMask[ldata->freq.remove('.').count() - 4]);
+        ui->freqLineEdit->setText(convertFreqStrDispSingle(ldata->freq).remove( QRegExp("0+$"))); //remove trailing zeros);
     }
 
-    ui->freqLineEdit->setText(ldata->freq);
 
-    //ui->freqLineEdit->setCursorPosition(ui->freqLineEdit->text().count() - 3);
 }
 
 void RunButtonDialog::on_okButton_clicked()
 {
     // update run data
-    logdata->freq = ui->freqLineEdit->text().remove('.');
+    //logdata->freq = ui->freqLineEdit->text().remove('.');
+    QString f = ui->freqLineEdit->text().remove( QRegExp("^[0]*")); //remove periods and leading zeros
+    if (f.isEmpty())
+    {
+        logdata->freq = f;
+    }
+    else
+    {
+        QStringList fl = f.split('.');
+        if (fl.count() == 0)
+        {
+            trace(QString("Memory Freq Edit - Missing Period - %1").arg(f));
+            return;
+        }
+
+        fl[1] = fl[1] + "0000000";
+        fl[1].truncate(6);
+
+        logdata->freq = fl[0] + fl[1];
+
+    }
     logdata->mode = ui->modecb->currentText();
 
     accept();

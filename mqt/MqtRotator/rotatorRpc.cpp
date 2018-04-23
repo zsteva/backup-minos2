@@ -12,14 +12,9 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-
-
-
 #include "base_pch.h"
 #include "rotatormainwindow.h"
 #include "rotatorRpc.h"
-
-
 
 RotatorRpc *rotatorRpc;
 
@@ -36,68 +31,19 @@ RotatorRpc::RotatorRpc(RotatorMainWindow *parent) : QObject(parent), parent(pare
 
 }
 //---------------------------------------------------------------------------
-
-void RotatorRpc::publishState(const QString &state)
-{
-    static QString old;
-    trace(QString("Rot RPC: Publish State = %1").arg(state));
-    if ( state != old )
-    {
-       old = state;
-       MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorKeyState, state, psPublished );
-    }
-}
-
 void RotatorRpc::publishAntennaList(QString ants)
 {
     MinosRPC *rpc = MinosRPC::getMinosRPC();
+    rotatorCache.addRotList(ants);
     rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorList, ants, psPublished );
 }
 
-void RotatorRpc::publishMaxAzimuth(const QString maxAzimuth)
+
+void RotatorRpc::publishPresetList(QString presets)
 {
-    static QString old;
-    trace(QString("Rot RPC: Publish MaxAzimuth = %1").arg(maxAzimuth));
-    if ( maxAzimuth != old )
-    {
-       old = maxAzimuth;
-       MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorMaxAzimuth, maxAzimuth, psPublished );
-    }
+    MinosRPC *rpc = MinosRPC::getMinosRPC();
+    rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotPresetList, presets, psPublished );
 }
-
-void RotatorRpc::publishMinAzimuth(const QString minAzimuth)
-{
-    static QString old;
-    trace(QString("Rot RPC: Publish MinAzimuth = %1").arg(minAzimuth));
-    if ( minAzimuth != old )
-    {
-       old = minAzimuth;
-       MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorMinAzimuth, minAzimuth, psPublished );
-    }
-}
-
-
-
-void RotatorRpc::publishBearing(const QString bearing)
-{
-    static QString old;
-    trace(QString("Rot RPC: Publish Bearing = %1").arg(bearing));
-    if ( bearing != old )
-    {
-       old = bearing;
-       MinosRPC *rpc = MinosRPC::getMinosRPC();
-       rpc->publish( rpcConstants::RotatorCategory, rpcConstants::rotatorBearing, bearing, psPublished );
-    }
-}
-
-
-
-
-
-
 
 void RotatorRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
 {
@@ -108,10 +54,10 @@ void RotatorRpc::on_notify( bool err, QSharedPointer<MinosRPCObj>mro, const QStr
    if ( an.getOK() )
    {
 // example from elsewhere
-//      if ( an.getCategory() == "LineControl" )
+//      if ( an.getCategory() == rpcConstants::lineControlCategory )
 //      {
-//         lineStates[ an.getKey() ] = ( ( an.getValue() == "set" ) ? true : false );
-//         trace( "LineControl" + an.getKey() + ":" + an.getValue() );
+//         lineStates[ an.getKey() ] = ( ( an.getValue() == rpcConstants::lineSet ) ? true : false );
+//         trace( rpcConstants::lineControlCategory " " " + an.getKey() + ":" + an.getValue() );
 //      }
    }
 }
@@ -125,6 +71,8 @@ void RotatorRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const 
         QSharedPointer<RPCParam> psDirection;
         QSharedPointer<RPCParam> psAngle;
         QSharedPointer<RPCParam> psAntName;
+        QSharedPointer<RPCParam> psSelect;
+        QSharedPointer<RPCParam> psRotPreset;
         RPCArgs *args = mro->getCallArgs();
         if ( args->getStructArgMember( 0, rpcConstants::rotatorParamDirection, psDirection )
              && args->getStructArgMember( 0, rpcConstants::rotatorParamAngle, psAngle ) )
@@ -144,7 +92,28 @@ void RotatorRpc::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const 
             QString name;
             if (psAntName->getString(name))
             {
-                emit selectAntenna(name);
+                PubSubName psn(name);
+                QString sel;
+                if ( args->getStructArgMember( 0, rpcConstants::selected, psSelect ) )
+                {
+                     if ( psSelect->getString( sel ) )
+                     {
+                         // here you handle what the logger has sent to us
+                        trace(QString("Rig RPC: select Command From Logger = %1").arg(sel));
+                        rotatorCache.setSelected(psn, sel);
+                     }
+                }
+                emit selectAntennaFromLog(psn);
+            }
+        }
+        else if (args->getStructArgMember(0, rpcConstants::rotPreset, psRotPreset))
+        {
+            QString rotPreset;
+            if (psRotPreset->getString(rotPreset))
+            {
+                // here you handle what the logger has sent to us
+                trace(QString("Rig RPC: rotPreset Command From Logger = %1").arg(rotPreset));
+                emit setRotPreset(rotPreset);
             }
         }
     }

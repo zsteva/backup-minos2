@@ -16,32 +16,34 @@ win32:RC_ICONS += ../MinosRotator.ico
 
 SOURCES += \
     skyscandialog.cpp \
-    setupdialog.cpp \
     rotatormainwindow.cpp \
     minoscompass.cpp \
     main.cpp \
     logdialog.cpp \
-    editpresetsdialog.cpp \
     rotcontrol.cpp \
     rotatorlog.cpp \
-    rotatorRpc.cpp
+    rotatorRpc.cpp \
+    rotsetupform.cpp \
+    addantennadialog.cpp \
+    rotsetupdialog.cpp
 
 HEADERS  += \
     skyscandialog.h \
-    setupdialog.h \
     rotatormainwindow.h \
     minoscompass.h \
     logdialog.h \
-    editpresetsdialog.h \
     rotcontrol.h \
     rotatorlog.h \
     rotatorRpc.h \
-    rotatorCommonConstants.h
+    rotsetupform.h \
+    addantennadialog.h \
+    rotsetupdialog.h
 
 FORMS    += \
     skyscandialog.ui \
-    setupdialog.ui \
     logdialog.ui \
-    editpresetsdialog.ui \
-    rotatormainwindow.ui
+    rotatormainwindow.ui \
+    rotsetupform.ui \
+    addantennadialog.ui \
+    rotsetupdialog.ui
 

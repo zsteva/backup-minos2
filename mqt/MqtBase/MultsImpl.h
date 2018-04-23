@@ -11,16 +11,7 @@
 //----------------------------------------------------------------------------
 #ifndef MultsImplH
 #define MultsImplH 
-//----------------------------------------------------------------------------
-class DistrictEntry;
-class DistrictSynonym;
-class DistrictList;
-class CountrySynonymList;
-class CountryEntry;
-class CountrySynonym;					 //
-class CountryList;
-class MultEntry;
-class BaseContestLog;
+#include "base_pch.h"
 
 
 template < class itemtype >
@@ -219,9 +210,9 @@ class GlistList : public MultList < GlistEntry >
 {
       // list of DistrictEntry
    public:
-      GlistList( void );
+      GlistList( );
       virtual ~GlistList();
-      void load( void );
+      void load( );
       virtual bool procLine(QStringList );
 
 };
@@ -229,9 +220,9 @@ class DistrictList : public MultList < DistrictEntry >
 {
       // list of DistrictEntry
    public:
-      DistrictList( void );
+      DistrictList( );
       virtual ~DistrictList();
-      void load( void );
+      void load( );
       virtual bool procLine( QStringList );
       virtual int slen( bool );
       virtual int getWorked( int item, BaseContestLog *const ct );
@@ -241,9 +232,9 @@ class DistrictSynonymList : public MultList < DistrictSynonym >
 {
       // list of DistrictSynonym
    public:
-      DistrictSynonymList( void );
+      DistrictSynonymList( );
       virtual ~DistrictSynonymList();
-      void load( void );
+      void load( );
       virtual bool procLine(QStringList );
 };
 
@@ -252,9 +243,9 @@ class CountryList : public MultList < CountryEntry >
 {
       // list of CountryEntry
    public:
-      CountryList( void );
+      CountryList( );
       virtual ~CountryList();
-      void load( void );
+      void load( );
       virtual bool procLine( QStringList );
       virtual int slen( bool );
       void loadEntries( const QString &fname, const QString &fmess );
@@ -265,9 +256,9 @@ class CountrySynonymList : public MultList < CountrySynonym >
 {
       // list of CountrySynonym
    public:
-      CountrySynonymList( void );
+      CountrySynonymList( );
       virtual ~CountrySynonymList();
-      void load( void );
+      void load( );
       virtual bool procLine(QStringList );
 };
 
@@ -275,7 +266,7 @@ class CountrySynonymList : public MultList < CountrySynonym >
 class MultListsImpl: public MultLists
 {
       static MultListsImpl *multLists;
-      bool loadMultFiles ( void );
+      bool loadMultFiles ( );
       MultListsImpl();
    public:
       CountryList ctryList;

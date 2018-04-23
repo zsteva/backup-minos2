@@ -1,9 +1,9 @@
+#include "base_pch.h"
 #include "minossplitter.h"
 #include <QGraphicsScene>
 #include <QGraphicsProxyWidget>
 #include <QStylePainter>
 #include <QStyleOptionButton>
-#include <QMenu>
 //============================================================================
 MinosSplitterHandle::MinosSplitterHandle(Qt::Orientation orientation, QSplitter *parent)
     : QSplitterHandle(orientation, parent)
@@ -29,7 +29,7 @@ void MinosSplitterHandle::paintEvent(QPaintEvent *event)
 }
 //============================================================================
 MinosSplitter::MinosSplitter(QWidget *parent)
-    : QSplitter(parent), myHandle(0)
+    : QSplitter(parent), myHandle(nullptr)
 {
 }
 

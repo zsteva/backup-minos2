@@ -38,20 +38,20 @@
 #define FRAMESAMPLES 256
 #define RINGBUFFERSIZE 1024
 
-QWaitCondition bufferNotEmpty;
-QWaitCondition bufferNotFull;
-QMutex mutex;
+static QWaitCondition bufferNotEmpty;
+static QWaitCondition bufferNotFull;
+static QMutex mutex;
 
 class InBuff
 {
 public:
-    int frameCount;
+    unsigned int frameCount;
     int16_t buff[FRAMESAMPLES * 2];
 };
 
-InBuff inBuffs[RINGBUFFERSIZE];
-int recIndex = 0;
-int writeIndex = 0;
+static InBuff inBuffs[RINGBUFFERSIZE];
+static int recIndex = 0;
+static int writeIndex = 0;
 
 RiffWriter::RiffWriter(RtAudioSoundSystem *parent) : QThread(parent), ss(parent), terminated(false)
 {
@@ -148,20 +148,7 @@ int audioCallback( void *outputBuffer, void *inputBuffer,
     return qss->audioCallback(outputBuffer, inputBuffer, nFrames, streamTime, status);
 }
 //==============================================================================
-RtAudioSoundSystem::RtAudioSoundSystem() :
-    sampleRate( 0 )
-  , playingFile(false)
-  , recordingFile(false)
-  , passThrough(false)
-  , m_pos(0)
-  , p_pos(0)
-  , audio(0)
-  , inChannels(0)
-  , outChannels(0)
-  , inputEnabled(false)
-  , outputEnabled(false)
-  , passThroughEnabled(false)
-  , wThread(0)
+RtAudioSoundSystem::RtAudioSoundSystem()
 {
     try
     {
@@ -195,7 +182,7 @@ RtAudioSoundSystem::RtAudioSoundSystem() :
     {
        // Handle the exception here
        trace(error.getMessage().c_str());
-       audio = 0;
+       audio = nullptr;
     }
 }
 RtAudioSoundSystem::~RtAudioSoundSystem()
@@ -269,7 +256,7 @@ bool RtAudioSoundSystem::initialise( QString &/*errmess*/ )
 
     return true;
 }
-int RtAudioSoundSystem::setRate(int rate)
+unsigned int RtAudioSoundSystem::setRate(unsigned int rate)
 {
    sampleRate = rate;
    return sampleRate;
@@ -296,7 +283,7 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
 {
     int16_t inStageBuffer[nFrames * 2];
 
-    if (outputBuffer == NULL && inputBuffer == NULL)
+    if (outputBuffer == nullptr && inputBuffer == nullptr)
     {
         return 0;   // no data
     }
@@ -311,7 +298,7 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
     }
 
 
-    if (outputBuffer != NULL && nFrames > 0)
+    if (outputBuffer != nullptr && nFrames > 0)
     {
         memset(outputBuffer, 0, nFrames * 2 * outChannels);   // 2 bytes, 2 channels
     }
@@ -376,7 +363,7 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
                     p[i * outChannels + 1] = static_cast<qint16>(val1);
             }
 
-            int16_t sample = abs( (val1 + val2)/2 );
+            int16_t sample = static_cast<int16_t>(std::abs( (val1 + val2)/2 ));
             if ( sample > maxvol )
                maxvol = sample;
 
@@ -385,7 +372,9 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
         if (inputEnabled || passThroughEnabled)
         {
             qreal rmsval = sqrt(sqaccum/nFrames);
-            SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
+            SoundSystemDriver::getSbDriver() ->WinVUCallback( static_cast<unsigned int>(maxvol),
+                                                              static_cast<unsigned int>(rmsval),
+                                                              nFrames );
         }
 
         if (inputEnabled)
@@ -404,13 +393,15 @@ int RtAudioSoundSystem::audioCallback( void *outputBuffer, void *inputBuffer,
             mutex.unlock();
         }
     }
-    if (outputBuffer != NULL && nFrames > 0 && outputEnabled )
+    if (outputBuffer != nullptr && nFrames != 0 && outputEnabled )
     {
         int16_t maxvol = 0;
         qreal rmsval = 0.0;
         readFromFile(outputBuffer, nFrames, maxvol, rmsval);
 
-        SoundSystemDriver::getSbDriver() ->WinVUCallback( maxvol, rmsval, nFrames );
+        SoundSystemDriver::getSbDriver() ->WinVUCallback( static_cast<unsigned int>(maxvol),
+                                                          static_cast<unsigned int>(rmsval),
+                                                          nFrames );
     }
 
     /*
@@ -479,29 +470,29 @@ bool RtAudioSoundSystem::startInput( QString fn )
     return false;
 }
 
-void RtAudioSoundSystem::setData(int16_t *data, int len)
+void RtAudioSoundSystem::setData(int16_t *data, unsigned int len)
 {
-    m_buffer.resize(len * sizeof(uint16_t));
+    m_buffer.resize(static_cast<int>(len) * static_cast<int>(sizeof(uint16_t)));
     unsigned char *ptr = reinterpret_cast<unsigned char *>(m_buffer.data());
 
-    for (int i = 0; i < len; i++)
+    for (unsigned int i = 0; i < len; i++)
     {
-        uint16_t value = data[i];
+        uint16_t value = static_cast<uint16_t>(data[i]);
         // This may or may not be neccesary... on a big endian system
         qToLittleEndian<uint16_t>(value, ptr);
         ptr += 2;
     }
     m_pos = 0;
 }
-void RtAudioSoundSystem::setPipData(int16_t *data, int len, int delayLen)
+void RtAudioSoundSystem::setPipData(int16_t *data, unsigned int len, unsigned int delayLen)
 {
     pipDelayBytes = delayLen * sizeof(uint16_t);
-    p_buffer.resize(len * sizeof(uint16_t));
+    p_buffer.resize(static_cast<int>(len) * static_cast<int>(sizeof(uint16_t)));
     unsigned char *ptr = reinterpret_cast<unsigned char *>(p_buffer.data());
 
-    for (int i = 0; i < len; i++)
+    for (unsigned int i = 0; i < len; i++)
     {
-        uint16_t value = data[i];
+        uint16_t value = static_cast<uint16_t>(data[i]);
         // This may or may not be neccesary... on a big endian system
         qToLittleEndian<uint16_t>(value, ptr);
         ptr += 2;
@@ -509,7 +500,7 @@ void RtAudioSoundSystem::setPipData(int16_t *data, int len, int delayLen)
     p_pos = 0;
 }
 
-void RtAudioSoundSystem::writeDataToFile(void *inp, int nFrames)
+void RtAudioSoundSystem::writeDataToFile(void *inp, unsigned int nFrames)
 {
     // data arrives here; we need to write it to the (already open) file,
 
@@ -556,7 +547,7 @@ void RtAudioSoundSystem::readFromFile(void *outputBuffer, unsigned int nFrames, 
                 if (!p_buffer.isEmpty())
                 {
                     total = qMin((p_buffer.size() - p_pos), len);
-                    memcpy(q, p_buffer.constData() + p_pos, total);
+                    memcpy(q, p_buffer.constData() + p_pos, static_cast<size_t>(total));
                     q += total/2;
                     p_pos += total;
                 }
@@ -608,7 +599,7 @@ void RtAudioSoundSystem::readFromFile(void *outputBuffer, unsigned int nFrames, 
         qreal sqaccum = 0.0;
         for ( unsigned int i = 0; i < nFrames; i++ )
         {
-           int16_t sample = abs( *q++ );
+           int16_t sample = static_cast<int16_t>(abs( *q++ ));
            if ( sample > maxvol )
               maxvol = sample;
 
@@ -641,7 +632,7 @@ bool RtAudioSoundSystem::startDMA( bool play, const QString &fname )
         KeyerAction * sba = KeyerAction::getCurrentAction();
         if (sba && sba->tailWithPip)
         {
-            long psamples = SoundSystemDriver::getSbDriver() ->pipSamples * 2;
+            unsigned long psamples = SoundSystemDriver::getSbDriver() ->pipSamples * 2;
             int16_t *pdataptr = SoundSystemDriver::getSbDriver() ->pipptr;
             setPipData(pdataptr, psamples, sba->pipStartDelaySamples);
         }

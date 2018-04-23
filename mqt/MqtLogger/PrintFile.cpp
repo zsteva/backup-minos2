@@ -6,14 +6,22 @@
 // COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "LoggerContest.h"
 
 #include "printfile.h"
 
-extern QString fileHeader;
-
+//==============================================================================
+static QString fileHeader = "<!--\r\n"
+                         "====================================================\r\n"
+                         "\r\nDO NOT SEND THIS FILE AS YOUR ENTRY!\r\n\r\n"
+                         "Use \"File\" | \"Produce Entry/Export File...\"\r\n"
+                         "Export as Reg1Test(entry)\r\n"
+                         "and send the .EDI file produced.\r\n"
+                         "====================================================\r\n"
+                         "-->\r\n";
+//==============================================================================
 enum PrintFile_order
 {
    TName, TdDate, PCall, PWWLo, PExch, PAdr1, PAdr2, PSect, PBand,
@@ -26,7 +34,7 @@ enum PrintFile_order
 PrintFileLine::PrintFileLine( const QString &pre, const QString &dat ) :
       prefix( pre ), data( dat )
 {}
-PrintFileLine::PrintFileLine( void )
+PrintFileLine::PrintFileLine( )
 {}
 PrintFileLine::~PrintFileLine()
 {}
@@ -95,7 +103,7 @@ bool PrintFile::exportTest(QSharedPointer<QFile> expfd )
    // get the best DX contact
    QSharedPointer<BaseContact> bestdx = ct->getBestDX();
 
-   linelist[ static_cast< int> (TName) ] = PrintFileLine( "Contest Name                            ", ct->name.getValue()  /*, "Contest Name"*/ ),
+   linelist[ static_cast< int> (TName) ] = PrintFileLine( "Contest Name                            ", ct->name.getValue()  /*, "Contest Name"*/ );
 
 //   linelist[ static_cast< int> ( TdDate ] = PrintFileLine("Start Date;End Date                     ", ct->dateRange( DTGFULL )  /*, "Start Date;End Date"*/ );
    linelist[ static_cast< int> (PCall) ] = PrintFileLine( "Callsign Used                           ", ct->mycall.fullCall.getValue()  /*, "Callsign Used"*/ );

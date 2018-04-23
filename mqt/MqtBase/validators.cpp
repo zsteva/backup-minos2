@@ -49,7 +49,9 @@ void setError( int err )   // No CS
    MinosLoggerEvents::SendValidateError(err);
 }
 
-Validator::Validator( validatorTypes vt ) : vt( vt ), status( false )
+Validator::Validator( validatorTypes vt ) :
+    status( false ),
+    vt( vt )
 {}
 //enum validTypes {cmNone, cmCancel, cmValid, cmCheckValid, cmValidStatus, cmReleasedFocus};
 //enum validatorTypes {vtNone, vtNotEmpty, vtNumeric, vtDate, vtTime, vtCallsign,
@@ -317,7 +319,9 @@ bool Validator::validNumber( const QString &str, bool trailingAlphaAllowed)
 }
 //==============================================================================
 ValidatedControl::ValidatedControl(QLineEdit *c, validatorTypes vt ) :
-      wc( c ), tIfValid( false ), validator( vt )
+      wc( c )
+    , validator( vt )
+    , tIfValid( false )
 {}
 bool ValidatedControl::valid( validTypes cmd, ScreenContact &screenContact )
 {

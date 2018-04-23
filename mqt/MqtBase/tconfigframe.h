@@ -1,9 +1,7 @@
 #ifndef TCONFIGFRAME_H
 #define TCONFIGFRAME_H
 
-#include <QFrame>
-#include <QTimer>
-#include <QVector>
+#include "base_pch.h"
 
 namespace Ui {
 class TConfigFrame;
@@ -17,7 +15,7 @@ class TConfigFrame : public QFrame
     Q_OBJECT
 
 public:
-    explicit TConfigFrame(QWidget *parent = 0);
+    explicit TConfigFrame(QWidget *parent = nullptr);
     ~TConfigFrame();
     void initialise(QWidget *parent, ConfigCloseCallBack, bool showAutoStart);
     void setup(bool started);

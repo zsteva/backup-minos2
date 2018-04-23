@@ -1,8 +1,9 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
+#include "profiles.h"
+#include "enqdlg.h"
 #include "tsettingseditdlg.h"
 #include "ui_tsettingseditdlg.h"
-#include "enqdlg.h"
 
 TSettingsEditDlg::TSettingsEditDlg(QWidget *parent, SettingsBundle *bundle) :
     QDialog(parent),

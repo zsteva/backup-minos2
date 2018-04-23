@@ -1,7 +1,7 @@
+#include "base_pch.h"
+#include "latlong.h"
 #include "tloccalcform.h"
 #include "ui_tloccalcform.h"
-#include "logger_pch.h"
-#include "latlong.h"
 
 TLocCalcForm::TLocCalcForm(QWidget *parent) :
     QDialog(parent), Distance(-1),

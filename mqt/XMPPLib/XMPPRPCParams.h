@@ -11,7 +11,10 @@
 
 #ifndef XMPPRPCParamsH
 #define XMPPRPCParamsH
-
+#include <QString>
+#include <QSharedPointer>
+#include <QVector>
+#include "tinyxml.h"
 //---------------------------------------------------------------------------
 // RPC parameter structures
 
@@ -32,9 +35,9 @@ class RPCParam
       static QSharedPointer<RPCParam> paramFactory( TiXmlElement &node );
 
       virtual bool getMember( const QString &name, QSharedPointer<RPCParam> &p );
-      virtual bool getMember( unsigned int eleno, QSharedPointer<RPCParam> &p );
-      virtual bool getElements( unsigned int &size );
-      virtual bool getElement( unsigned int eleno, QSharedPointer<RPCParam> &p );
+      virtual bool getMember( int eleno, QSharedPointer<RPCParam> &p );
+      virtual bool getElements(int &size );
+      virtual bool getElement( int eleno, QSharedPointer<RPCParam> &p );
       virtual bool getBoolean( bool &res );
       virtual bool getInt( int &res );
       virtual bool getDouble( double &res );
@@ -60,24 +63,24 @@ class RPCParamStruct: public RPCParam
    public:
       RPCParamStruct();
       RPCParamStruct( TiXmlElement &sNode );
-      virtual ~RPCParamStruct();
+      virtual ~RPCParamStruct() override;
 
-      void addMember( QSharedPointer<RPCParam> , const QString &name );
-      void addMember( int, const QString &name );
-      void addMember( bool, const QString &name );
-      void addMember( double, const QString &name );
-      void addMember( const QString &, const QString &name );
-      void addBase64Member( const QString &, const QString &name );
-      void addDtgMember( const QString &, const QString &name );
+      void addMember( QSharedPointer<RPCParam> , const QString &name ) override;
+      void addMember( int, const QString &name)  override;
+      void addMember( bool, const QString &name ) override;
+      void addMember( double, const QString &name ) override;
+      void addMember( const QString &, const QString &name ) override;
+      void addBase64Member( const QString &, const QString &name ) override;
+      void addDtgMember( const QString &, const QString &name ) override;
 
-      virtual void addNode( TiXmlElement &node );
-      virtual QString print();
-      virtual QString analyse();
+      virtual void addNode( TiXmlElement &node ) override;
+      virtual QString print() override;
+      virtual QString analyse() override;
 
-      virtual bool getElements(int &size );
-      virtual bool getElement( int eleno, QSharedPointer<RPCParam> &p );
-      virtual bool getMember( const QString &name, QSharedPointer<RPCParam> &p );
-      virtual bool getMember(int eleno, QSharedPointer<RPCParam> &p );
+      virtual bool getElements( int &size ) override;
+      virtual bool getElement( int eleno, QSharedPointer<RPCParam> &p ) override;
+      virtual bool getMember( const QString &name, QSharedPointer<RPCParam> &p ) override;
+      virtual bool getMember( int eleno, QSharedPointer<RPCParam> &p ) override;
 };
 
 // array
@@ -89,7 +92,7 @@ class RPCParamArray: public RPCParam
    public:
       RPCParamArray();
       RPCParamArray( TiXmlElement &sNode );
-      virtual ~RPCParamArray();
+      virtual ~RPCParamArray() override;
 
       void addElement( QSharedPointer<RPCParam>  );
 
@@ -103,12 +106,12 @@ class RPCParamArray: public RPCParam
       void AddBase64Element( const QString & );
       void AddDtgElement( const QString & );
 
-      virtual void addNode( TiXmlElement &node );
+      virtual void addNode( TiXmlElement &node ) override;
       static QSharedPointer<RPCParamArray> ParseArray( TiXmlElement &aNode );
-      virtual QString print();
-      virtual QString analyse();
-      virtual bool getElements( int &size );
-      virtual bool getElement(int eleno, QSharedPointer<RPCParam> &p );
+      virtual QString print() override;
+      virtual QString analyse() override ;
+      virtual bool getElements( int &size ) override;
+      virtual bool getElement(int eleno, QSharedPointer<RPCParam> &p ) override;
 };
 
 // int or i4
@@ -240,9 +243,9 @@ class RPCArgs
       bool parseParams( TIXML_STRING ); // parse from the string to args
 
       bool getStructArgMember(int argno, const QString &name, QSharedPointer<RPCParam>  &res );
-      bool getStructArgMember( int argno, unsigned int eleno, QSharedPointer<RPCParam>  &res );
-      bool getArrayArgElements(int argno, unsigned int &size );
-      bool getArrayArgElement( int argno, unsigned int eleno, QSharedPointer<RPCParam> &res );
+      bool getStructArgMember(int argno, int eleno, QSharedPointer<RPCParam>  &res );
+      bool getArrayArgElements(int argno, int &size );
+      bool getArrayArgElement(int argno, int eleno, QSharedPointer<RPCParam> &res );
 
       bool getBooleanArg(int argno, bool &res );
       bool getIntArg( int argno, int &res );

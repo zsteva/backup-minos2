@@ -17,6 +17,7 @@
 #ifndef RIGMEMCOMMONDATA_H
 #define RIGMEMCOMMONDATA_H
 
+#include <QColor>
 #include "rigcontrolcommonconstants.h"
 
 namespace maskData {
@@ -44,6 +45,9 @@ enum freqMask_lookup {
 }
 
 namespace bandSelData {
+
+
+
 
 const QStringList bandNames = { "",
                                 "10m",
@@ -92,7 +96,8 @@ const maskData::freqMask_lookup bandMaskIdx[] = { maskData::MHZ99,      /* Not u
 namespace memDefData {
 
 const QString DEFAULT_CALLSIGN = "";
-const QString DEFAULT_FREQ = "00000000000";
+//const QString DEFAULT_FREQ = "0000000000";
+const QString DEFAULT_FREQ = "";
 const QString DEFAULT_MODE = "USB";
 const QString DEFAULT_LOCATOR = "";
 const int DEFAULT_BEARING = 0;
@@ -105,8 +110,10 @@ namespace memoryData {
 class  memData
 {
 public:
-    memData():bearing(memDefData::DEFAULT_BEARING),
-        freq(memDefData::DEFAULT_FREQ), mode(memDefData::DEFAULT_MODE)
+    memData():
+        freq(memDefData::DEFAULT_FREQ)
+      , mode(memDefData::DEFAULT_MODE)
+      , bearing(memDefData::DEFAULT_BEARING)
     {
     }
 

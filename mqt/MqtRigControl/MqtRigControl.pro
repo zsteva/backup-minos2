@@ -21,17 +21,32 @@ win32:RC_ICONS += ../MinosRig.ico
 SOURCES += main.cpp\
         rigcontrolmainwindow.cpp \
     rigcontrol.cpp \
-    setupdialog.cpp \
-    rigcontrolrpc.cpp
+    rigcontrolrpc.cpp \
+    rigsetupform.cpp \
+    transvertsetupform.cpp \
+    addtransverterdialog.cpp \
+    freqpresetdialog.cpp \
+    addradiodialog.cpp \
+    rigsetupdialog.cpp
 
 HEADERS  += rigcontrolmainwindow.h \
     rigcontrol.h \
-    setupdialog.h \
     rigcontrolrpc.h \
+    rigsetupform.h \
+    transvertsetupform.h \
+    addtransverterdialog.h \
+    freqpresetdialog.h \
+    addradiodialog.h \
+    rigsetupdialog.h
 
 
 
 FORMS    += rigcontrolmainwindow.ui \
-    setupdialog.ui
+    rigsetupdialog.ui \
+    rigsetupform.ui \
+    transvertsetupform.ui \
+    addtransverterdialog.ui \
+    freqpresetdialog.ui \
+    addradiodialog.ui
 
 win32: INCLUDEPATH += C:/Projects/hamlib-w32-3.1/include

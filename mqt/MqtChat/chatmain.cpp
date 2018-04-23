@@ -1,10 +1,8 @@
 #include "base_pch.h"
-
 #include "MinosRPC.h"
 
 #include "chatmain.h"
 #include "ui_chatmain.h"
-TMinosChatForm *MinosChatForm = 0;
 
 TMinosChatForm::TMinosChatForm(QWidget *parent) :
     QMainWindow(parent),
@@ -23,8 +21,6 @@ TMinosChatForm::TMinosChatForm(QWidget *parent) :
     QByteArray geometry = settings.value("geometry").toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
-
-    MinosChatForm = this;
 
     connect(&SyncTimer, SIGNAL(timeout()), this, SLOT(SyncTimerTimer()));
     SyncTimer.start(100);
@@ -102,9 +98,9 @@ void TMinosChatForm::SyncTimerTimer(  )
 }
 //---------------------------------------------------------------------------
 
-bool syncstat = false;
-QVector<QString> chatQueue;
-QString stateIndicator[] =
+static bool syncstat = false;
+static QVector<QString> chatQueue;
+static QString stateIndicator[] =
 {
    "Available",
    "NotAvailable",
@@ -141,7 +137,7 @@ void TMinosChatForm::syncChat()
    chatQueue.clear();
 }
 //---------------------------------------------------------------------------
-QString stateList[] =
+static QString stateList[] =
 {
    "Available",
    "Not Available",

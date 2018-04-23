@@ -10,9 +10,7 @@
 #ifndef ContactsH
 #define ContactsH 
 //----------------------------------------------------------------------------
-#include "mwin.h"
-class  BaseContestLog;
-class MinosTestImport;
+#include "base_pch.h"
 
 // This header covers the structure of contests, logs, etc
 

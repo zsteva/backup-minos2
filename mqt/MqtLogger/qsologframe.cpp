@@ -1,5 +1,8 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
+#include "ContestApp.h"
+#include "LoggerContest.h"
+#include "LoggerContacts.h"
 #include "tlogcontainer.h"
 #include "tqsoeditdlg.h"
 #include "tforcelogdlg.h"
@@ -8,26 +11,25 @@
 #include "rigutils.h"
 #include "qsologframe.h"
 #include "ui_qsologframe.h"
-#include <QDebug>
-//#include <QStringList>
+
 
 QSOLogFrame::QSOLogFrame(QWidget *parent) :
     QFrame(parent)
     , ui(new Ui::QSOLogFrame)
-    , contest(0)
-    , selectedContact(0)
-    , current(0)
-    , partialContact(0)
-    , edit(false)
-    , overstrike(false)
+    , selectedContact(nullptr)
+    , partialContact(nullptr)
     , oldTimeOK(true)
+    , contest(nullptr)
+    , overstrike(false)
+    , current(nullptr)
+    , edit(false)
     , rotatorLoaded(false)
+    , radioLoaded(false)
     , bandMapLoaded(false)
     , keyerLoaded(false)
-    , radioLoaded(false)
-    , curFreq("00000000000")
     , radioConnected(false)
     , radioError(false)
+    , curFreq("00000000000")
 {
     ui->setupUi(this);
 
@@ -132,7 +134,7 @@ bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
     {
         if (obj == ui->SerTXEdit || (edit && (obj == ui->timeEdit || obj == ui->dateEdit)))
         {
-            mouseDoubleClickEvent(obj);
+            do_mouseDoubleClickEvent(obj);
         }
    }
 
@@ -348,7 +350,7 @@ void QSOLogFrame::initialise( BaseContestLog * pcontest )
     refreshOps();
 
 
-    current = 0;
+    current = nullptr;
     oldTimeOK = true;
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(on_TimeDisplayTimer()));
     MinosLoggerEvents::SendReportOverstrike(overstrike, contest);
@@ -441,7 +443,7 @@ void QSOLogFrame::on_CatchupButton_clicked()
     screenContact.time.setTime(QString(), DTGLOG);
     setTimeStyles();
     sortUnfilledCatchupTime();
-    selectField( 0 );
+    selectField( nullptr );
 }
 
 void QSOLogFrame::on_FirstUnfilledButton_clicked()
@@ -540,8 +542,8 @@ void QSOLogFrame::on_GJVOKButton_clicked()
     if ( !valid( cmCheckValid ) )   // make sure all single and cross field
                                     // validation has been done
     {
-       QWidget * firstInvalid = 0;
-       QWidget *nextInvalid = 0;
+       QWidget * firstInvalid = nullptr;
+       QWidget *nextInvalid = nullptr;
        bool onCurrent = false;
        bool pastCurrent = false;
        for ( QVector <ValidatedControl *>::iterator vcp = vcs.begin(); vcp != vcs.end(); vcp++ )
@@ -636,7 +638,7 @@ void QSOLogFrame::on_GJVOKButton_clicked()
            if (nuc)
            {
                selectEntryForEdit(nuc);
-               selectField( 0 );             // make sure we move off the "Log" default button
+               selectField( nullptr );             // make sure we move off the "Log" default button
            }
            else
            {
@@ -702,7 +704,7 @@ bool QSOLogFrame::savePartial()
    }
    return false;
 }
-bool QSOLogFrame::restorePartial( void )
+bool QSOLogFrame::restorePartial( )
 {
    if ( partialContact )
    {
@@ -714,12 +716,12 @@ bool QSOLogFrame::restorePartial( void )
    }
    return false;
 }
-void QSOLogFrame::killPartial( void )
+void QSOLogFrame::killPartial( )
 {
    if ( partialContact )
    {
       delete partialContact;
-      partialContact = 0;
+      partialContact = nullptr;
    }
 }
 void QSOLogFrame::on_Validated()
@@ -761,12 +763,12 @@ void QSOLogFrame::doGJVCancelButton_clicked()
     {
         ui->SerTXEdit->setReadOnly(!edit);
 
-        ScreenContact *temp = 0;
+        ScreenContact *temp = nullptr;
         if ( !partialContact )
         {
            savePartial();
            temp = partialContact;
-           partialContact = 0;
+           partialContact = nullptr;
         }
         startNextEntry();
         ui->CallsignEdit->setFocus();
@@ -819,7 +821,7 @@ void QSOLogFrame::on_RSTRXEdit_textChanged(const QString &/*arg1*/)
     doGJVEditChange( ui->RSTRXEdit );
 }
 
-void QSOLogFrame::mouseDoubleClickEvent(QObject *w)
+void QSOLogFrame::do_mouseDoubleClickEvent(QObject *w)
 {
     // Don't let the dtg be changed when the contest is protected
     if (contest->isReadOnly())
@@ -934,7 +936,7 @@ void QSOLogFrame::logTabChanged()
 {
     MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest, baseName);
 }
-void QSOLogFrame::showScreenEntry( void )
+void QSOLogFrame::showScreenEntry( )
 {
    // display the contents of the contest->screenContact
 
@@ -989,7 +991,7 @@ void QSOLogFrame::showScreenEntry( void )
          selectField( ui->CommentsEdit );
       }
       else
-         selectField( 0 );
+         selectField( nullptr );
 
       ui->SerTXEdit->setReadOnly(!edit);
       MinosLoggerEvents::SendScreenContactChanged(&screenContact, contest, baseName);
@@ -1164,7 +1166,7 @@ void QSOLogFrame::calcLoc( )
 
                if ( !( sct.contactFlags & ( MANUAL_SCORE | NON_SCORING | LOCAL_COMMENT | COMMENT_ONLY | DONT_PRINT ) ) )
                {
-                  sct.contactScore = dist;
+                  sct.contactScore = static_cast<int>(dist);
                }
 
             }
@@ -1304,7 +1306,7 @@ bool QSOLogFrame::valid( validTypes command )
 //---------------------------------------------------------------------------
 void QSOLogFrame::selectField( QWidget *v )
 {
-    if ( v == 0 )
+    if ( v == nullptr )
     {
         v = ui->CallsignEdit;
 
@@ -1388,7 +1390,7 @@ void QSOLogFrame::lgTraceerr( int err )
    MinosLoggerEvents::SendValidateError(err);
 }
 //==============================================================================
-void QSOLogFrame::contactValid( void )
+void QSOLogFrame::contactValid( )
 {
    // this is where we need to do all of our cross field validation
 
@@ -1665,7 +1667,7 @@ void QSOLogFrame::setRotatorBearing(const QString &s)
 //---------------------------------------------------------------------------
 void QSOLogFrame::clearCurrentField()
 {
-   current = 0;
+   current = nullptr;
 }
 //---------------------------------------------------------------------------
 void QSOLogFrame::updateQSODisplay()
@@ -1804,7 +1806,7 @@ void QSOLogFrame::closeContest()
       ui->GJVCancelButton->setEnabled(true);
       ui->GJVCancelButton->setFocus();
    }
-   contest = 0;
+   contest = nullptr;
 }
 //---------------------------------------------------------------------------
 void QSOLogFrame::doGJVEditChange( QObject *Sender )
@@ -1843,6 +1845,7 @@ void QSOLogFrame::on_ModeButton_clicked()
     ui->ModeComboBoxGJV->setCurrentText(ui->ModeButton->text());
     mode = ui->ModeButton->text();
     oldMode = myOldMode;
+    ui->ModeButton->setText(oldMode);
     EditControlExit(ui->ModeButton);
 }
 
@@ -2031,7 +2034,7 @@ void QSOLogFrame::logCurrentContact( )
                 ctTime.setTime( t.left(5), DTGDISP );
              }
 
-             int orflag = TO_BE_ENTERED;
+             unsigned short orflag = TO_BE_ENTERED;
 
              int nct_no = contest->maxSerial + 1;
              do
@@ -2279,7 +2282,7 @@ void QSOLogFrame::selectEntryForEdit( QSharedPointer<BaseContact> slct )
    }
 
    MinosLoggerEvents::SendAfterSelectContact(catchup?QSharedPointer<BaseContact>():slct, contest);
-   selectField( 0 );
+   selectField( nullptr );
 }
 //---------------------------------------------------------------------------
 QSharedPointer<BaseContact> QSOLogFrame::getLastContact()
@@ -2315,7 +2318,7 @@ QSharedPointer<BaseContact> QSOLogFrame::getPriorContact()
 
 void QSOLogFrame::on_PriorButton_clicked()
 {
-   current = 0;            // make sure the focus moves off this button
+   current = nullptr;            // make sure the focus moves off this button
    if ( !checkAndLogEntry() )
    {
       return ;
@@ -2350,7 +2353,7 @@ QSharedPointer<BaseContact> QSOLogFrame::getNextContact()
 
 void QSOLogFrame::on_NextButton_clicked()
 {
-   current = 0;            // make sure the focus moves off this button
+   current = nullptr;            // make sure the focus moves off this button
    if ( !checkAndLogEntry() )
    {
       return ;

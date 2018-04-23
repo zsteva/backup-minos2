@@ -9,7 +9,16 @@
 //---------------------------------------------------------------------------
 #include "XMPP_pch.h"
 
-extern void sendAction( XStanza *a );      // which might not be the one in XMPPThread
+sendActionCall sendAction = nullptr;
+void setSendAction(sendActionCall sa)
+{
+    sendAction = sa;
+}
+//---------------------------------------------------------------------------
+TRPCFunctor::~TRPCFunctor()
+{}
+MinosRPCServer::~MinosRPCServer()
+{}
 
 //---------------------------------------------------------------------------
 
@@ -20,7 +29,9 @@ QMap <QString, QSharedPointer<MinosRPCObj>> &getServerMethodMap()
 }
 //==============================================================================
 MinosRPCObj::MinosRPCObj(const QString &methodName, TRPCFunctor *cb , bool gen)
-      : methodName( methodName ), callback( cb ), general(gen)
+      : general(gen)
+      , methodName( methodName )
+      , callback( cb )
 {}
 MinosRPCObj::~MinosRPCObj()
 {
@@ -71,8 +82,17 @@ void MinosRPCClient::queueCall( QString to )
    RPCRequest * m = new RPCRequest( to, methodName );
    m->setNextId();      // only happens if no Id already
    m->args = callArgs.args;     // copy vector of pointers
-   sendAction( m );
+   ::sendAction( m );
    delete m;
+}
+void MinosRPCClient::queueCall(const PubSubName &psn)
+{
+    QString server = psn.server();
+    QString app = psn.appName();
+    if (!app.isEmpty() && !server.isEmpty())
+    {
+        queueCall(app + "@" + server);
+    }
 }
 //==============================================================================
 

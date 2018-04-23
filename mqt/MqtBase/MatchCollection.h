@@ -1,8 +1,6 @@
 #ifndef MATCHCOLLECTION_H
 #define MATCHCOLLECTION_H
-#include "XMPP_pch.h"
-#include "contacts.h"
-#include "MatchContact.h"
+#include "base_pch.h"
 
 class matchElement
 {
@@ -14,7 +12,7 @@ class matchElement
       QString mstr;
       QString rawstr;
 
-      matchElement( void );
+      matchElement( );
       unsigned char set
          ( const QString & );
       unsigned char checkGreater( const QString & );
@@ -26,9 +24,9 @@ class TMatchCollection
    public:
       ContestMatchList contestMatchList;
       int contactCount();
-      TMatchCollection( void );
+      TMatchCollection();
       ~TMatchCollection();
-      int getContestCount( void );
+      int getContestCount( );
       QSharedPointer<BaseMatchContest> pcontestAt( int );
 };
 

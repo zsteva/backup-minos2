@@ -7,15 +7,10 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "rigutils.h"
-#include <QRegExp>
-#include <QStringList>
-
+#include "base_pch.h"
 
 // add delimiter to string for display
 // input string should just be digits
-
-
 
 QString convertFreqStrDisp(QString sfreq)
 {
@@ -66,7 +61,7 @@ QString convertFreqStrDisp(QString sfreq)
             sfreq = sfreq.insert(1,'.');
             break;
         default:
-            sfreq = "??.???.???.???";    // error
+            sfreq = "00.000.000.000";    // error
 
     }
 
@@ -99,6 +94,17 @@ double convertStrToFreq(QString frequency)
         return -1.0;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 QString validateFreqTxtInput(QString f, bool* ok)
@@ -207,15 +213,70 @@ QString convertFreqStrDispSingle(QString sfreq)
         //    sfreq = sfreq.insert(1,'.');
         //    break;
         default:
-            sfreq = "??.???.???.???";    // error
+            sfreq = "0.0";    // error
 
     }
 
-
     return sfreq;
+
 }
 
 
+QString convertFreqStrDispSingleNoTrailZero(QString sfreq)
+{
+
+        int len = sfreq.length();
+
+        switch(len)
+        {
+            case 11:
+                //sfreq = sfreq.insert(8, '.');
+                sfreq = sfreq.insert(5, '.');
+                //sfreq = sfreq.insert(2, '.');
+                break;
+            case 10:
+                //sfreq = sfreq.insert(7, '.');
+                sfreq = sfreq.insert(4, '.');
+                //sfreq = sfreq.insert(1, '.');
+                break;
+            case 9:
+                sfreq = sfreq.insert(3, '.');
+                //sfreq = sfreq.insert(7, '.');
+                break;
+            case 8:
+                sfreq = sfreq.insert(2, '.');
+                //sfreq = sfreq.insert(6, '.');
+                break;
+            case 7:
+                //sfreq = sfreq.insert(4, '.');
+                sfreq = sfreq.insert(1, '.');
+                break;
+            case 6:
+                sfreq = sfreq.insert(0,'.');
+                break;
+            //case 5:
+            //    sfreq = sfreq.insert(2,'.');
+            //    break;
+            //case 4:
+            //    sfreq = sfreq.insert(1,'.');
+            //    break;
+            default:
+                sfreq = "??.???.???.???";    // error
+
+        }
+
+        // remove trailing zero, apart from after period.
+        QStringList fspl = sfreq.split('.');
+        fspl[1].remove(QRegExp("0+$"));  //remove trailing zeros
+        if (fspl[1].count() == 0)
+        {
+            fspl[1] = "0";    // add back one zero
+        }
+
+        sfreq = fspl[0] + "." + fspl[1];
+
+        return sfreq;
+}
 
 
 
@@ -239,6 +300,46 @@ bool validateFreqTxtInput(QString f)
 }
 
 
+bool valInputFreq(QString f, QString errMsg)
+{
+
+    if (f == "")
+    {
+        return false;
+    }
+
+    if (!f.contains('.'))
+    {
+        f = f + "." + "000000";
+    }
+    else if (f.count('.') == 1)
+    {
+        QStringList fl = f.split('.');
+        fl[1] = fl[1] + "000000";
+        fl[1].truncate(6);
+        f = fl[0] + "." + fl[1];
+    }
+    if (!validateFreqTxtInput(f))
+    {
+        // error
+        QMessageBox msgBox;
+        msgBox.setText(errMsg);
+        msgBox.exec();
+        return false;             //incorrect format
+    }
+
+    return true;
+
+
+
+}
+
+
+
+
+
+
+
 // This will convert "144.3" etc to "144.300000"
 
 QString convertSinglePeriodFreqToFullDigit(QString f)
@@ -252,6 +353,29 @@ QString convertSinglePeriodFreqToFullDigit(QString f)
     }
 
     return f;
+
+}
+
+
+QString convertFreqToFullDigit(QString f)
+{
+
+
+    if (f.contains('.'))
+    {
+        QStringList fl = f.split('.');
+        fl[1] = fl[1] + "000000";
+        fl[1].truncate(6);
+        return fl[0] + "." + fl[1];
+    }
+    else
+    {
+        f = f + "." + "000000";
+    }
+
+    return f;
+
+
 
 }
 
@@ -301,24 +425,3 @@ QString convertSinglePeriodFreqToMultiPeriod(QString f)
 
 }
 
-
-// When the selectRadio message contains the mode in the form radioName:mode
-// This extract the radioName from the message
-
-QString extractRadioName(QString radioNameMessage)
-{
-    if (radioNameMessage.contains(':'))
-    {
-        QStringList sl = radioNameMessage.split(':');
-        if (sl.count() == 2)
-        {
-            return sl[0];
-        }
-        else
-        {
-            return QString("");
-        }
-    }
-
-    return radioNameMessage;
-}

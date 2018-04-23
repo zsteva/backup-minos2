@@ -1,7 +1,7 @@
 #ifndef TCLOCKFRAME_H
 #define TCLOCKFRAME_H
 
-#include <QFrame>
+#include "base_pch.h"
 
 class BaseContestLog;
 
@@ -14,7 +14,7 @@ class TClockFrame : public QFrame
     Q_OBJECT
 
 public:
-    explicit TClockFrame(QWidget *parent = 0);
+    explicit TClockFrame(QWidget *parent = nullptr);
     ~TClockFrame();
     void setContest(BaseContestLog *contest);
 

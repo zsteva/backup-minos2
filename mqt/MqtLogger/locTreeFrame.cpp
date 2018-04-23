@@ -1,11 +1,11 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 #include "locTreeFrame.h"
 #include "ui_locTreeFrame.h"
 #include "htmldelegate.h"
 
 LocTreeFrame::LocTreeFrame(QWidget *parent) :
     QFrame(parent),
-    ui(new Ui::LocTreeFrame), ct(0)
+    ui(new Ui::LocTreeFrame), ct(nullptr)
 {
     ui->setupUi(this);
 

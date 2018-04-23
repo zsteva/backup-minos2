@@ -18,12 +18,21 @@
 #ifndef ROTCONTROLFRAME_H
 #define ROTCONTROLFRAME_H
 
-#include "logger_pch.h"
+#include "base_pch.h"
 #include <QShortcut>
+#include "rotatorcommon.h"
+#include "rotpresetbutton.h"
+#include "rigmemcommondata.h"
+#include "rotpresetdialog.h"
+
 
 namespace Ui {
 class RotControlFrame;
 }
+class RotControlFrame;
+
+
+
 
 class RotControlFrame : public QFrame
 {
@@ -41,6 +50,7 @@ public:
     void setRotatorLoaded();
 
     void setRotatorList(QString);
+    void setRotatorPresetList(QString s);
     void setRotatorState(const QString &s);
     void setRotatorBearing(const QString &s);
     void setRotatorAntennaName(const QString &s);
@@ -53,13 +63,20 @@ public:
     void getRotDetails(memoryData::memData &m);
 
     void on_ContestPageChanged();
+
+
+
+
+
 private:
 
     QShortcut *nudgeRight1;
     QShortcut *nudgeRight2;
     QShortcut *nudgeLeft;
-    //QPalette *redText;
-    //QPalette *blackText;
+
+    QList<RotPresetButton *> presetButton;
+    QVector<RotPresetData*> rotPresets;
+
 
     int maxAzimuth = 0;
     int minAzimuth = 0;
@@ -82,6 +99,7 @@ private:
     bool rotatorLoaded;
     bool isRotatorLoaded();
 
+
     void rot_left_button_on();
     void rot_left_button_off();
     void rot_right_button_on();
@@ -99,9 +117,15 @@ private:
 
 
     void keyPressEvent(QKeyEvent *event);
+    void initPresetButtons();
+    void saveRotPresetButton(RotPresetData &editData);
+    void setRotPresetButData(int buttonNumber, RotPresetData &editData);
+    void rotPresetButtonUpdate(int buttonNumber, RotPresetData &editData);
 signals:
     void selectRotator(QString);
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
+
+    void sendRotatorPreset(QString);
     void turnBearingReturn();
     void bearingEditReturn();
 
@@ -117,6 +141,10 @@ private slots:
     void on_nudgeLeft_clicked();
     void on_nudgeRight_clicked();
     void on_antennaName_activated(const QString &arg1);
+    void presetRead(int buttonNumber);
+    void presetEdit(int buttonNumber);
+    void presetClear(int buttonNumber);
+    void presetWrite(int buttonNumber);
 };
 
 #endif // ROTCONTROLFRAME_H

@@ -10,44 +10,39 @@
 #include "Calendar.h"
 #include "CalendarList.h"
 
-BaseContestLog::BaseContestLog( void ) :
-      protectedContest( false ), suppressProtected(false),  unwriteable(false),
-      nextBlock( 1 ),
-      unfilledCount(0),
-      ct_stanzaCount( 0 ), cslotno( -1 ), locValid( false ),
-      ode( 0.0 ), odn( 0.0 ), sinodn( 0.0 ), cosodn( 0.0 ),
-      allowLoc8( false ), allowLoc4 ( false ),
-      RSTField( true ), serialField( true ), locatorField( true ),
-      otherExchange( false ), countryMult( false ), nonGCountryMult( false ),
-      districtMult( false ), locMult( false ), GLocMult(false),
-      M7Mults(false), NonUKloc_mult(false), NonUKloc_multiplier(0), UKloc_mult(false), UKloc_multiplier(0),
-      usesBonus(false),
-      scoreMode( PPKM ),
-      powerWatts( true ), maxSerial( 0 ),
-      contestScore( 0 ), ndistrict( 0 ), nctry( 0 ), nlocs( 0 ),
-      validationPoint( 0 ),
-      nextScan( -2 ),
-      countryWorked( 0 ), districtWorked( 0 ),
-      QSO1( 0 ), QSO2( 0 ), QSO1p( 0 ), QSO2p( 0 ),
-      kms1( 0 ), kms2( 0 ), kms1p( 0 ), kms2p( 0 ),
-      mults1( 0 ), mults2( 0 ), mults1p( 0 ), mults2p( 0 ),
-      bonus1( 0 ), bonus2( 0 ), bonus1p( 0 ), bonus2p( 0 ),
-      bonus(0), nbonus(0),
-      bonusYearLoaded(0),
-      MGMContestRules(false)
+BaseContestLog::BaseContestLog( )
 {
+   uuid = makeUuid();
+   trace(uuid);
    bearingOffset.setValue(0);
    currentMode.setValue( "USB" );
-   int i;
+
+   protectedContest.setValue( false );
+  allowLoc8.setValue( false );
+  allowLoc4.setValue ( false );
+  RSTField.setValue( true );
+  serialField.setValue( true );
+  locatorField.setValue( true );
+  otherExchange.setValue( false );
+  countryMult.setValue( false );
+  nonGCountryMult.setValue( false );
+  districtMult.setValue( false );
+  locMult.setValue( false );
+  GLocMult.setValue(false);
+  M7Mults.setValue(false);
+  usesBonus.setValue(false);
+  scoreMode.setValue( PPKM );
+  powerWatts.setValue( true );
+  MGMContestRules.setValue(false);
 
    int nc = MultLists::getMultLists() ->getCtryListSize();
    countryWorked = new int[ nc ];
-   for ( i = 0; i < nc; i++ )
+   for ( int i = 0; i < nc; i++ )
       countryWorked[ i ] = 0;
 
    nc = MultLists::getMultLists() ->getDistListSize();
    districtWorked = new int[ nc ];
-   for ( i = 0; i < nc; i++ )
+   for (int i = 0; i < nc; i++ )
       districtWorked[ i ] = 0;
 
 }
@@ -55,8 +50,8 @@ BaseContestLog::~BaseContestLog()
 {
    delete [] districtWorked;
    delete [] countryWorked;
-   districtWorked = 0;
-   countryWorked = 0;
+   districtWorked = nullptr;
+   countryWorked = nullptr;
 
    closeFile();
 }
@@ -72,7 +67,7 @@ int BaseContestLog::indexOf(QSharedPointer<BaseContact> item )
     }
     return -1;
 }
-int BaseContestLog::getContactCount( void )
+int BaseContestLog::getContactCount( )
 {
    return ctList.size();
 }
@@ -173,7 +168,7 @@ void BaseContestLog::makeContact( bool timeNow, QSharedPointer<BaseContact>&lct 
 {
    lct = QSharedPointer<BaseContact>(new BaseContact( this, timeNow ));
 }
-void BaseContestLog::validateLoc( void )
+void BaseContestLog::validateLoc( )
 {
     if (MGMContestRules.getValue())
     {
@@ -225,7 +220,7 @@ void BaseContestLog::disbear( double lon, double lat, double &dist, int &brg ) c
       brg = 0;
       return ;
    }
-   if ( lon == ode && lat == odn )        /* same square ! */ /* testing doubles for equality! */
+   if ( almost_equal(lon, ode, 2) && almost_equal(lat, odn, 2) )        /* same square ! */ /* testing doubles for equality! */
    {
       // same square - commenced Kilometre, so always 1
       dist = 1;
@@ -331,7 +326,7 @@ int BaseContestLog::CalcNearest( const QString &qscalcloc )
          return -1;
       }
    }
-   return mindist;
+   return static_cast<int>(mindist);
 }
 //---------------------------------------------------------------------------
 int BaseContestLog::CalcCentres( const QString &qscalcloc )
@@ -353,7 +348,7 @@ int BaseContestLog::CalcCentres( const QString &qscalcloc )
    {
         disbear(lon, lat, dist, brg);
    }
-   return dist;
+   return static_cast<int>(dist);
 }
 void BaseContestLog::getMatchText( QSharedPointer<BaseContact> pct, QString &disp, const BaseContestLog *const ct ) const
 {
@@ -396,7 +391,7 @@ bool BaseContestLog::updateStat( QSharedPointer<BaseContact> cct, int sp1, int s
 
    QDateTime t = QDateTime::currentDateTimeUtc().addSecs( MinosParameters::getMinosParameters() ->getBigClockCorrection());
 
-   int tdiff = cttime.secsTo(t);
+   qint64 tdiff = cttime.secsTo(t);
    if ( tdiff < 0 )
       return true;
 
@@ -418,14 +413,14 @@ bool BaseContestLog::updateStat( QSharedPointer<BaseContact> cct, int sp1, int s
    // find the time since the beginning of the contest
 
    QDateTime  contestStart = CanonicalToTDT(DTGStart.getValue());
-   int fromContestStart = contestStart.secsTo(QDateTime::currentDateTime());
+   qint64 fromContestStart = contestStart.secsTo(QDateTime::currentDateTime());
    if (sp1 > fromContestStart/2)
    {
-      sp1 = fromContestStart/2;
+      sp1 = static_cast<int>(fromContestStart/2);
    }
    if (sp2 > fromContestStart/2)
    {
-      sp2 = fromContestStart/2;
+      sp2 = static_cast<int>(fromContestStart/2);
    }
 
    if ( tdiff < sp1 )
@@ -529,7 +524,7 @@ static void isBestDX( QSharedPointer<BaseContact> cct, QSharedPointer<BaseContac
    if ( ( !*bestDX ) || ( ( cct->contactScore.getValue() > ( *bestDX ) ->contactScore.getValue() ) ) )
       * bestDX = cct;
 }
-QSharedPointer<BaseContact> BaseContestLog::getBestDX( void )
+QSharedPointer<BaseContact> BaseContestLog::getBestDX( )
 {
    QSharedPointer<BaseContact> bestDX;
    for ( LogIterator i = ctList.begin(); i != ctList.end(); i++ )
@@ -573,7 +568,7 @@ void BaseContestLog::setScore( QString &buff )
    buff = cs.disp();
 }
 // and we need to do this a bit more often to pick up unfilled properly
-void BaseContestLog::scanContest( void )
+void BaseContestLog::scanContest( )
 {
    DupSheet.clear();
 
@@ -581,16 +576,17 @@ void BaseContestLog::scanContest( void )
 
    delete [] districtWorked;
    delete [] countryWorked;
-   districtWorked = 0;
-   countryWorked = 0;
+   districtWorked = nullptr;
+   countryWorked = nullptr;
 
    int nc = MultLists::getMultLists() ->getDistListSize();
    districtWorked = new int[ nc ];
-   memset( districtWorked, 0, nc * sizeof( int ) );
+   int si = static_cast<int>(sizeof (int));
+   memset( districtWorked, 0, static_cast<size_t>(nc * si) );
 
    nc = MultLists::getMultLists() ->getCtryListSize();
    countryWorked = new int[ nc ];
-   memset( countryWorked, 0, nc * sizeof( int ) );
+   memset( countryWorked, 0, static_cast<size_t>(nc * si) );
 
    // set up for the idle loop scan
    // NB we may need to clear e.g. the accumulated score
@@ -786,18 +782,18 @@ void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
 
 }
 //============================================================
-DupContact::DupContact(QSharedPointer<BaseContact> c ) : dct( c ), sct( 0 )
+DupContact::DupContact(QSharedPointer<BaseContact> c ) : dct( c ), sct( nullptr )
 {}
-DupContact::DupContact( ScreenContact *c ) : dct( 0 ), sct( c )
+DupContact::DupContact( ScreenContact *c ) : dct( nullptr ), sct( c )
 {}
-DupContact::DupContact() : dct( 0 ), sct( 0 )
+DupContact::DupContact() : dct( nullptr ), sct( nullptr )
 {}
 DupContact::~DupContact()
 {}
 bool DupContact::operator<( const DupContact& rhs ) const
 {
-   Callsign * c1 = 0;    // search item
-   Callsign *c2 = 0;    // collection item
+   Callsign * c1 = nullptr;    // search item
+   Callsign *c2 = nullptr;    // collection item
 
    if ( dct )
    {
@@ -822,8 +818,8 @@ bool DupContact::operator<( const DupContact& rhs ) const
 }
 bool DupContact::operator==( const DupContact& rhs ) const
 {
-   Callsign * c1 = 0;    // search item
-   Callsign *c2 = 0;    // collection item
+   Callsign * c1 = nullptr;    // search item
+   Callsign *c2 = nullptr;    // collection item
 
    if ( dct )
    {

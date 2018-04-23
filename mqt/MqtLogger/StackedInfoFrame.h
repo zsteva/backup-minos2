@@ -1,18 +1,20 @@
 #ifndef STACKEDINFOFRAME_H
 #define STACKEDINFOFRAME_H
 
-#include "logger_pch.h"
+#include "base_pch.h"
 
 namespace Ui {
 class StackedInfoFrame;
 }
-
+extern ContList contlist[ CONTINENTS ];
+extern bool showWorked;
+extern bool showUnworked ;
 class StackedInfoFrame : public QFrame
 {
     Q_OBJECT
 
 public:
-    explicit StackedInfoFrame(QWidget *parent = 0, int instance = 0);
+    explicit StackedInfoFrame(QWidget *parent = nullptr, int instance = 0);
     ~StackedInfoFrame();
 
 private:

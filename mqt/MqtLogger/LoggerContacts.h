@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------
 #ifndef LoggerContactsH
 #define LoggerContactsH 
+#include "base_pch.h"
 //----------------------------------------------------------------------------
 // This header covers the structure of contests, logs, etc
 
@@ -24,7 +25,7 @@ class ContestContact: public DisplayContestContact
       virtual void clearDirty();
       virtual void setDirty();
 
-      virtual bool setField(QSharedPointer<BaseContact> tct, int ACol, const QString Value );
+//      virtual bool setField(QSharedPointer<BaseContact> tct, int ACol, const QString Value );
 
       ContestContact( LoggerContestLog *contest, bool time_now );
       ~ContestContact();

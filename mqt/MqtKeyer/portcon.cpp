@@ -38,7 +38,7 @@
 */
 
 my_deque < commonPort *> portChain;
-WinMonitor *winp = 0;
+static WinMonitor *winp = nullptr;
 /*
 */ 
 //==============================================================================
@@ -66,7 +66,7 @@ commonPort *createPort( const PortConfig &port )
       if ( !cp->initialise( port ) )
       {
          delete cp;
-         cp = 0;
+         cp = nullptr;
       }
       if ( cp && !winp )
       {
@@ -78,9 +78,7 @@ commonPort *createPort( const PortConfig &port )
 }
 //==============================================================================
 commonPort::commonPort( const PortConfig &port ) :
-      openCount( 0 ),
-      lastPttState( false ), lastL1State( false ), lastL2State( false ),
-      pName( port.name ), lastLinesMode(0)
+   pName( port.name )
 {
 
 }
@@ -127,14 +125,14 @@ void commonPort::linesModeChanged( int state )
       ( *l ) ->linesModeChanged( state );
 }
 //=============================================================================
-LineCallBack WindowsMonitorPort::WinLineCallback = 0;
+LineCallBack WindowsMonitorPort::WinLineCallback = nullptr;
 bool WindowsMonitorPort::PTTInState = false;
 bool WindowsMonitorPort::L1State = false;
 bool WindowsMonitorPort::L2State = false;
 int WindowsMonitorPort::linesMode = 0;
 
 WindowsMonitorPort::WindowsMonitorPort( const PortConfig &port ) : commonPort( port ),
-      PTTState( false ), winMonForm( 0 )
+      PTTState( false ), winMonForm( nullptr )
 {
 }
 WindowsMonitorPort::~WindowsMonitorPort()
@@ -149,7 +147,7 @@ WindowsMonitorPort::~WindowsMonitorPort()
 
 bool WindowsMonitorPort::initialisePort()
 {
-   winMonForm = new windowMonitor( 0 );
+   winMonForm = new windowMonitor( nullptr );
    connect(&LineCheck, SIGNAL(timeout()), this, SLOT(checkWinLines()));
    LineCheck.start(10);
    winMonForm->show();
@@ -168,7 +166,7 @@ bool WindowsMonitorPort::openPort()
 bool WindowsMonitorPort::closePort()
 {
    delete winMonForm;
-   winMonForm = 0;
+   winMonForm = nullptr;
 
    return true;
 }
@@ -184,7 +182,7 @@ void WindowsMonitorPort::ptt( int state )
    }
 }
 
-void WindowsMonitorPort::checkControls( void )
+void WindowsMonitorPort::checkControls( )
 {
    // check and action PTT, L1, L2
     L1State = winMonForm->L1Checked();
@@ -215,14 +213,14 @@ void WindowsMonitorPort::checkControls( void )
       }
       L1Changed( lastL1State );
    }
-   if ( PTTInState != lastPttState )
+   if ( PTTInState != lastPTTState )
    {
-      lastPttState = PTTInState;
+      lastPTTState = PTTInState;
       if ( sblog )
       {
          trace( "PTT changed to " + makeStr( PTTInState ) );
       }
-      pttChanged( lastPttState );
+      pttChanged( lastPTTState );
    }
    if (linesMode != lastLinesMode)
    {
@@ -235,7 +233,7 @@ void WindowsMonitorPort::checkControls( void )
    }
 }
 //==============================================================================
-LineCallBack WinMonitor::WinLineCallback = 0;
+LineCallBack WinMonitor::WinLineCallback = nullptr;
 bool WinMonitor::PTTInState = false;
 bool WinMonitor::L1State = false;
 bool WinMonitor::L2State = false;
@@ -267,7 +265,7 @@ void WinMonitor::ptt( int state )
    }
 }
 
-void WinMonitor::checkControls( void )
+void WinMonitor::checkControls( )
 {}
 bool WinMonitor::L1Changed( int state )
 {
@@ -298,18 +296,13 @@ bool WinMonitor::linesModeChanged( int state )
    return true;
 }
 //==============================================================================
-LineCallBack LineEventsPort::WinLineCallback = 0;
+LineCallBack LineEventsPort::WinLineCallback = nullptr;
 
 void LineLog( const QString &msg )
 {
    trace( msg );
 }
-LineEventsPort::LineEventsPort( const PortConfig &port ) : commonPort( port ),
-      lastPTTState( false ), lastL1State( false ), lastL2State( false ),
-      closing( false ),
-      linePTTState( false ), lineL1State( false ), lineL2State( false ),
-      PTTState( false ),
-      linesMode(0), lastLinesMode(0)
+LineEventsPort::LineEventsPort( const PortConfig &port ) : commonPort( port )
 {
     /*LineSet * ls =*/ LineSet::GetLineSet();   // make sure it is initialised
 }

@@ -1,9 +1,7 @@
 #ifndef QLOGTABWIDGET_H
 #define QLOGTABWIDGET_H
 
-#include <QObject>
-#include <QTabWidget>
-#include <QTabBar>
+#include "base_pch.h"
 
 /**
  *  Derived Class from QTabWidget.
@@ -16,12 +14,14 @@ class QLogTabWidget : public QTabWidget
 {
     Q_OBJECT
 public:
-    explicit QLogTabWidget(QWidget *parent = 0);
+    explicit QLogTabWidget(QWidget *parent = nullptr);
 
     //Overridden method from QTabWidget
     QTabBar* tabBar();
 
     void setTabColor(int index, QColor colour);
+
+
 
 public slots:
 };

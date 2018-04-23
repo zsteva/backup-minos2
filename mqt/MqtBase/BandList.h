@@ -22,6 +22,7 @@
 #ifndef BandListH
 #define BandListH
 
+#include "base_pch.h"
 //---------------------------------------------------------------------------
 
 class BandInfo
@@ -54,6 +55,19 @@ class BandList
 
         static BandList &getBandList();
 
+
+};
+
+
+class BandDetail
+{
+public:
+    BandDetail(QString _name, double _flow, double _fhigh);
+
+
+    QString name;
+    double fLow = 0.0;
+    double fHigh = 0.0;
 
 };
 #endif

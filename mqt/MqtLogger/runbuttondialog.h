@@ -18,10 +18,9 @@
 
 #ifndef RUNBUTTONDIALOG_H
 #define RUNBUTTONDIALOG_H
+#include "base_pch.h"
 
-#include <QDialog>
-#include <QSettings>
-#include <QKeyEvent>
+
 #include "rigmemcommondata.h"
 
 namespace Ui {
@@ -33,7 +32,7 @@ class RunButtonDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit RunButtonDialog(QWidget *parent = 0);
+    explicit RunButtonDialog(QWidget *parent = nullptr);
     ~RunButtonDialog();
 
     void setLogData(memoryData::memData*, int buttonNumber);
@@ -43,9 +42,10 @@ private slots:
     void on_okButton_clicked();
     void on_cancelbutton_clicked();
 
+    void onFreqEditFinish();
 private:
     Ui::RunButtonDialog *ui;
-    memoryData::memData *logdata = 0;
+    memoryData::memData *logdata = nullptr;
     int memoryNumber;
 
     bool  rxPbFlag;

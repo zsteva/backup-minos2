@@ -8,13 +8,12 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "base_pch.h"
-
 #include "MinosRPC.h"
 
 #include "keyctrl.h"
 #include "KeyerRPCServer.h"
 
-KeyerServer *KS = 0;
+KeyerServer *KS = nullptr;
 //---------------------------------------------------------------------------
 KeyerServer::KeyerServer()
 {
@@ -23,7 +22,7 @@ KeyerServer::KeyerServer()
     connect(rpc, SIGNAL(serverCall(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_serverCall(bool,QSharedPointer<MinosRPCObj>,QString)));
     connect(rpc, SIGNAL(notify(bool,QSharedPointer<MinosRPCObj>,QString)), this, SLOT(on_notify(bool,QSharedPointer<MinosRPCObj>,QString)));
 
-    RPCPubSub::subscribe( "LineControl" );
+    RPCPubSub::subscribe( rpcConstants::lineControlCategory );
 }
 //---------------------------------------------------------------------------
 KeyerServer::~KeyerServer()
@@ -43,7 +42,7 @@ void KeyerServer::doPublishState( const QString &state )
   if ( state != old )
   {
      old = state;
-     RPCPubSub::publish( rpcConstants::KeyerCategory, rpcConstants::keyerKeyReport, state, psPublished );
+     RPCPubSub::publish( rpcConstants::KeyerCategory, rpcConstants::keyerReport, state, psPublished );
   }
 }
 /*static*/void KeyerServer::publishState(  const QString &state )
@@ -79,7 +78,7 @@ void KeyerServer::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const
       QSharedPointer<RPCParam> psName;
       QSharedPointer<RPCParam>piValue;
       RPCArgs *args = mro->getCallArgs();
-      if ( args->getStructArgMember( 0, "Name", psName ) && args->getStructArgMember( 0, "Value", piValue ) )
+      if ( args->getStructArgMember( 0, rpcConstants::paramName, psName ) && args->getStructArgMember( 0, rpcConstants::paramValue, piValue ) )
       {
          QString Name;
          int Value;
@@ -88,27 +87,27 @@ void KeyerServer::on_serverCall( bool err, QSharedPointer<MinosRPCObj>mro, const
          {
             if ( Value >= 1 && Value <= 12 )
             {
-               if ( Name == "PlayFile" )
+               if ( Name == rpcConstants::keyerPlayFile )
                {
                   playKeyerFile( Value, true );    // do actual transmit, and repeat as required
                }
                else
-                  if ( Name == "RecordFile" )
+                  if ( Name == rpcConstants::keyerRecordFile )
                   {
                      startRecordDVPFile( Value );
                   }
            }
-               if ( Name == "Tone" )
+               if ( Name ==rpcConstants::keyerTone )
                {
                   sendTone1();
                }
             else
-               if ( Name == "TwoTone" )
+               if ( Name == rpcConstants::keyerTwoTone)
                {
                   sendTone2();
                }
             else
-               if ( Name == "Stop" )
+               if ( Name == rpcConstants::keyerStop )
                {
                   stopKeyer();
                }
@@ -128,10 +127,10 @@ void KeyerServer::on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QSt
    // called whenever line changes
    if ( an.getOK() )
    {
-      if ( an.getCategory() == "LineControl" )
+      if ( an.getCategory() == rpcConstants::lineControlCategory )
       {
-         lineStates[ an.getKey() ] = ( ( an.getValue() == "set" ) ? true : false );
-         trace( "LineControl" + an.getKey() + ":" + an.getValue() );
+         lineStates[ an.getKey() ] = ( ( an.getValue() == rpcConstants::lineSet ) ? true : false );
+         trace( rpcConstants::lineControlCategory + " " + an.getKey() + ":" + an.getValue() );
       }
    }
 }

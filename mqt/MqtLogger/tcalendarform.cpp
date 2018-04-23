@@ -1,4 +1,4 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "tlogcontainer.h"
 
@@ -8,12 +8,15 @@
 
 TCalendarForm::
 TCalendarForm( QWidget *parent, CalType calType ) :
-        QDialog( parent ),
-        ui( new Ui::TCalendarForm ),
-        vhf ( 2000, ectVHF ),
-        hf ( 2000, ectHF ), hfother ( 2000, ectHFOther ),
-        vhfother ( 2000, ectVHFOther ), mwave ( 2000, ectMwave ),
-        hfbartg( 2000, ectHFBARTG ), calType ( calType )
+        QDialog( parent )
+      , ui( new Ui::TCalendarForm )
+      , calType ( calType )
+      , vhf ( 2000, ectVHF )
+      , hf ( 2000, ectHF )
+      , mwave ( 2000, ectMwave )
+      , hfother ( 2000, ectHFOther )
+      , vhfother ( 2000, ectVHFOther )
+      , hfbartg( 2000, ectHFBARTG )
 {
     ui->setupUi( this );
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);

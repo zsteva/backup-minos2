@@ -11,6 +11,9 @@
 
 #ifndef XMPPEventsH
 #define XMPPEventsH
+
+#include <stdexcept>
+#include <QString>
 class XStanza;
 void makeXMPPEvent( XStanza *a );
 
@@ -22,6 +25,7 @@ public:
     {
 
     }
+    virtual ~Exception() override;
     QString mess()
     {
         return messStr;

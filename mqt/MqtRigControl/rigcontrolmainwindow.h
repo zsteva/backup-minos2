@@ -22,10 +22,11 @@
 
 #include "mqtUtils_pch.h"
 #include "rigcontrol.h"
+#include "BandList.h"
 
 class QLabel;
 class QComboBox;
-class SetupDialog;
+class RigSetupDialog;
 class RigControl;
 class RigControlRpc;
 
@@ -43,49 +44,58 @@ class RigControlMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit RigControlMainWindow(QWidget *parent = 0);
+    explicit RigControlMainWindow(QWidget *parent = nullptr);
     ~RigControlMainWindow();
+
+    bool freqPresetChanged = false;
 
 
 private:
 
     Ui::RigControlMainWindow *ui;
     StdInReader stdinReader;
-    RigControlRpc *msg;
+    RigControlRpc *msg = nullptr;
 
-    SetupDialog *selectRig;
+    RigSetupDialog *setupRadio;
     RigControl  *radio;
     QString appName = "";
     QLabel *status;
-    int radioIndex;
+    int radioIndex = 0;
     QTimer *pollTimer;
     class QTimer LogTimer;
     int pollTime;
-    bool rigErrorFlag;
-    bool cmdLockFlag;
+    bool rigErrorFlag = false;
+    bool cmdLockFlag = false;
     // data from logger
     QString logger_freq;
     QString slogMode;
     QString selRadioMode;   // onSelectRadio mode from logger at startup
     rmode_t logMode;
+    QString selTvBand;      // selected band from radio
+    QString transVertSwNum;
 
     const int PASSBAND_NOCHANGE = -1;
+
+    QVector<BandDetail*> bands;
+    QStringList presetFreq;
 
     // data from radio
     freq_t rfrequency;       // read frequency
     QString sfreq;          // read freq converted to string
     rmode_t rmode;          // read radio mode
     pbwidth_t rwidth;        // read radio rx bw
-    double curVfoFrq;
-    double curTransVertFrq;
+    double curVfoFrq = 0;
+    double curTransVertFrq = 0;
     rmode_t curMode;
     QString sCurMode;
-    bool mgmModeFlag;
-    shortfreq_t rRitFreq;
+    bool mgmModeFlag = false;
+    shortfreq_t rRitFreq = 0;
     QString sRitFreq;
-    bool supRitFlag;
+    bool supRitFlag = false;
 
     QString geoStr;         // geometry registry location
+
+
 
     void initActionsConnections();
     void initSelectRadioBox();
@@ -120,12 +130,12 @@ private:
     void closeEvent(QCloseEvent *event);
 
     void sendRadioListLogger();
-    void sendRadioNameLogger(QString radioName);
+    void sendBandListLogger();
     void sendStatusLogger(const QString &message);
     void sendStatusToLogDisConnected();
     void sendStatusToLogConnected();
     void sendStatusToLogError();
-    void sendTransVertOffsetToLogger();
+    void sendTransVertOffsetToLogger(int tvNum);
     void sendTransVertSwitchToLogger(const QString &swNum);
     void sendErrorMessageToLogger(QString errMsg);
     void sendFreqToLog(freq_t freq);
@@ -152,11 +162,18 @@ private:
 
     void refreshRadio();
 
+    QString getBand(freq_t freq);
+
+    void testBoxesVisible(bool visible);
+
+    void upDateRadio();
+    void loadBands();
+
 private slots:
 
     void onStdInRead(QString);
     void saveTraceLogFlag();
-    void upDateRadio();
+
     void getRadioInfo();
     void logMessage(QString s);
     void about();
@@ -168,7 +185,12 @@ private slots:
     void updateSelectRadioBox();
     void aboutRigConfig();
 
-    void onSelectRadio(QString);
+    void onSelectRadio(PubSubName, QString mode);
+    void selFreqClicked();
+    void setupBandFreq();
+    void selectRadio();
+    void onLaunchSetup();
+
 signals:
 
 

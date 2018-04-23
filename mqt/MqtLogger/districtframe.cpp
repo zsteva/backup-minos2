@@ -1,9 +1,11 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
-#include "districtframe.h"
-#include "ui_districtframe.h"
+#include "LoggerContest.h"
+#include "ContestApp.h"
 
 #include "tsinglelogframe.h"
+#include "districtframe.h"
+#include "ui_districtframe.h"
 
 static GridColumn DistrictTreeColumns[ ectMultMaxCol - 1 ] =
    {
@@ -75,7 +77,7 @@ void DistrictFrame::on_sectionResized(int, int , int)
 }
 
 DistrictGridModel::DistrictGridModel():
-ct(0)
+ct(nullptr)
 {}
 DistrictGridModel::~DistrictGridModel()
 {

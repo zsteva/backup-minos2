@@ -1,11 +1,7 @@
 #ifndef TLOGCONTAINER_H
 #define TLOGCONTAINER_H
 
-#include <QMainWindow>
-#include <QMenu>
-#include <QSettings>
-#include <QTimer>
-#include <QLabel>
+#include "base_pch.h"
 
 namespace Ui {
 class TLogContainer;
@@ -18,13 +14,13 @@ class TSingleLogFrame;
 class TContactListDetails;
 class ContactList;
 class MatchContact;
+class TSendDM;
 
 class SetMemoryAction: public QAction
 {
 public:
-    SetMemoryAction(QString t, QObject *p):QAction(t, p)
-    {}
-    BaseContestLog *ct = 0;
+    SetMemoryAction(QString t, QObject *p);
+    BaseContestLog *ct = nullptr;
     QString call;
     QString loc;
 };
@@ -33,8 +29,10 @@ class TLogContainer : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit TLogContainer(QWidget *parent = 0);
-    ~TLogContainer();
+    explicit TLogContainer(QWidget *parent = nullptr);
+    ~TLogContainer() override;
+
+    TSendDM *sendDM;
 
     void subscribeApps();
 
@@ -48,6 +46,7 @@ public:
 
     TSingleLogFrame *findContest( const QString &pubname );
     TSingleLogFrame *findContest(BaseContestLog *ct );
+    QVector<TSingleLogFrame *> getLogFrames();
 
     QString getDefaultDirectory( bool IsList );
 
@@ -64,7 +63,6 @@ public:
     SetMemoryAction *setMemoryAction;
 private:
     Ui::TLogContainer *ui;
-
 
     QTimer TimerUpdateQSOTimer;
 
@@ -113,6 +111,7 @@ private:
     QAction *ExitAction;
     QAction *ExitClearAction;
     QAction *MakeEntryAction;
+    QAction *AppendAdifAction;
     QAction *FileNewAction;
     QAction *ListOpenAction;
     QAction *ManageListsAction;
@@ -172,6 +171,7 @@ private slots:
     void sessionManageExecute();
 
     void MakeEntryActionExecute();
+    void AppendAdifActionExecute();
     void onSetMemoryActionExecute();
     void FileNewActionExecute();
     void ShiftTabLeftActionExecute();

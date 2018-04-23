@@ -10,6 +10,7 @@
 //----------------------------------------------------------------------------
 #ifndef DisplayContestContactH
 #define DisplayContestContactH 
+#include "base_pch.h"
 //----------------------------------------------------------------------------
 class DisplayContestContact: public BaseContact
 {
@@ -24,11 +25,11 @@ class DisplayContestContact: public BaseContact
       {
          logSequence = ul;
       }
-      virtual unsigned long getLogSequence() const
+      virtual unsigned long getLogSequence() const override
       {
          return logSequence;
       }
-      virtual int getModificationCount() const
+      virtual int getModificationCount() const override
       {
          return modificationCount;
       }
@@ -42,7 +43,7 @@ class DisplayContestContact: public BaseContact
 
       // end of Contact items
 
-      virtual bool commonSave(QSharedPointer<BaseContact>  )
+      virtual bool commonSave(QSharedPointer<BaseContact>  ) override
       {
          return false;
       }
@@ -50,14 +51,14 @@ class DisplayContestContact: public BaseContact
 
 
       DisplayContestContact( BaseContestLog *contest, bool time_now );
-      ~DisplayContestContact();
+      ~DisplayContestContact() override;
       virtual bool ne( const ScreenContact& ) const override;
-      virtual void checkContact( );
+      virtual void checkContact( ) override;
 
-      virtual void copyFromArg( ScreenContact & );
+      virtual void copyFromArg( ScreenContact & ) override;
 
       virtual QString getField( int ACol, const BaseContestLog * const curcon ) const override;
-      virtual void processMinosStanza( const QString &methodName, MinosTestImport * const mt );
+      virtual void processMinosStanza( const QString &methodName, MinosTestImport * const mt ) override;
 
 };
 

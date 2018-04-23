@@ -1,12 +1,14 @@
+#include "base_pch.h"
+#include "ContestApp.h"
 #include "tclockdlg.h"
 #include "ui_tclockdlg.h"
 
-#include "logger_pch.h"
 
 TClockDlg::TClockDlg(QWidget *parent) :
-    QDialog(parent),
-    initialised(false), initialCorrection(bigClockCorr),
-    ui(new Ui::TClockDlg)
+    QDialog(parent)
+  , ui(new Ui::TClockDlg)
+  , initialised(false)
+  , initialCorrection(bigClockCorr)
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);

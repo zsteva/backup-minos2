@@ -1,13 +1,13 @@
-#include "MatchCollection.h"
+#include "base_pch.h"
 
-TMatchCollection::TMatchCollection( void )
+TMatchCollection::TMatchCollection( )
 {
     qRegisterMetaType< SharedMatchCollection > ( "SharedMatchCollection" );
 }
-TMatchCollection::~TMatchCollection( void )
+TMatchCollection::~TMatchCollection( )
 {
 }
-int TMatchCollection::getContestCount( void )
+int TMatchCollection::getContestCount()
 {
    return contestMatchList.size();
 }

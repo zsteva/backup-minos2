@@ -14,7 +14,7 @@ class windowMonitor : public QDialog
 
 public:
     explicit windowMonitor(QWidget *parent);
-    ~windowMonitor();
+    ~windowMonitor() override;
 
     bool L1Checked();
     bool L2Checked();

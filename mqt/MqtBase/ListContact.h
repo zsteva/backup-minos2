@@ -9,6 +9,8 @@
 
 #ifndef ListContactH
 #define ListContactH 
+#include "base_pch.h"
+
 //---------------------------------------------------------------------------
 class ListContact
 {

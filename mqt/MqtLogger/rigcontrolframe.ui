@@ -10,12 +10,6 @@
     <height>131</height>
    </rect>
   </property>
-  <property name="minimumSize">
-   <size>
-    <width>530</width>
-    <height>0</height>
-   </size>
-  </property>
   <property name="windowTitle">
    <string>Frame</string>
   </property>
@@ -25,11 +19,15 @@
   <property name="frameShadow">
    <enum>QFrame::Raised</enum>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_5">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_8">
      <item>
-      <widget class="QComboBox" name="radioNameSel"/>
+      <widget class="QComboBox" name="radioNameSel">
+       <property name="sizeAdjustPolicy">
+        <enum>QComboBox::AdjustToContents</enum>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="rigState">
@@ -48,8 +46,8 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
       </spacer>
@@ -57,7 +55,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <layout class="QHBoxLayout" name="horizontalLayout_11">
      <item>
       <widget class="QFrame" name="frame">
        <property name="frameShape">
@@ -66,88 +64,123 @@
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>&amp;Freq:</string>
+            </property>
+            <property name="buddy">
+             <cstring>freqInput</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="FreqLineEdit" name="freqInput">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::ClickFocus</enum>
+            </property>
+            <property name="inputMask">
+             <string>99.999.999.999</string>
+            </property>
+            <property name="text">
+             <string>00.000.000.000</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout">
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
-             <widget class="QLabel" name="label">
+             <widget class="QLabel" name="TxVertLabel">
               <property name="text">
-               <string>&amp;Freq:</string>
-              </property>
-              <property name="buddy">
-               <cstring>freqInput</cstring>
+               <string>TxVert:</string>
               </property>
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_10">
-              <item>
-               <widget class="QLabel" name="TxVertLabel">
-                <property name="text">
-                 <string>TxVert:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="txvertStat">
-                <property name="text">
-                 <string>..</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <widget class="QLabel" name="txvertStat">
+              <property name="text">
+               <string>..</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2">
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <widget class="FreqLineEdit" name="freqInput">
-              <property name="font">
-               <font>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
+             <widget class="QToolButton" name="freqDown">
               <property name="focusPolicy">
-               <enum>Qt::ClickFocus</enum>
-              </property>
-              <property name="inputMask">
-               <string>99.999.999.999</string>
+               <enum>Qt::NoFocus</enum>
               </property>
               <property name="text">
-               <string>00.000.000.000</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <string>- 5</string>
               </property>
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
-              <item>
-               <widget class="QToolButton" name="freqDown">
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
-                <property name="text">
-                 <string>- 5</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QToolButton" name="freqUp">
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
-                <property name="text">
-                 <string>+5</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QToolButton" name="freqUp">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>+5</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </item>
@@ -217,8 +250,8 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>40</width>
-             <height>20</height>
+             <width>0</width>
+             <height>0</height>
             </size>
            </property>
           </spacer>
@@ -272,8 +305,8 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>138</width>
-             <height>38</height>
+             <width>13</width>
+             <height>13</height>
             </size>
            </property>
           </spacer>

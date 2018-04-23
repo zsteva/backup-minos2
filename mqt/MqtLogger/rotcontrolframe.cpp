@@ -12,21 +12,23 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "logger_pch.h"
+#include "base_pch.h"
+#include "ContestApp.h"
+#include "LoggerContest.h"
 #include "tlogcontainer.h"
 #include "tsinglelogframe.h"
-#include "rotcontrolframe.h"
 #include "qsologframe.h"
-#include "ui_rotcontrolframe.h"
 #include "SendRPCDM.h"
-#include "rotatorCommonConstants.h"
+#include "rotatorcommon.h"
+#include "rotcontrolframe.h"
+#include "ui_rotcontrolframe.h"
 
 
 RotControlFrame::RotControlFrame(QWidget *parent):
     QFrame(parent)
+    , ct(nullptr)
     , ui(new Ui::RotControlFrame)
     , rotatorLoaded(false)
-    , ct(0)
 {
     ui->setupUi(this);
 
@@ -50,10 +52,8 @@ RotControlFrame::RotControlFrame(QWidget *parent):
 
     connect(&MinosLoggerEvents::mle, SIGNAL(BrgStrToRot(QString)), this, SLOT(getBrgFrmQSOLog(QString)));
 
-    //redText = new QPalette();
-    //blackText = new QPalette();
-    //redText->setColor(QPalette::ButtonText, Qt::red);
-    //blackText->setColor(QPalette::ButtonText, Qt::black);
+    initPresetButtons();
+
 
     rot_left_button_off();
     rot_right_button_off();
@@ -442,11 +442,30 @@ void RotControlFrame::setRotatorList(QString s)
     ui->antennaName->addItem("");
     ui->antennaName->addItems(rots);
 
-    if (ct && ct == TContestApp::getContestApp() ->getCurrentContest())
-        setRotatorAntennaName(ct->rotatorName.getValue());
+    if (ct && !ct->isProtected())
+        setRotatorAntennaName(ct->rotatorName.getValue().toString());
         //ui->antennaName->setCurrentText(ct->rotatorName.getValue());
 
 }
+void RotControlFrame::setRotatorPresetList(QString s)
+{
+    if (!s.isEmpty() && s.contains(':'))
+    {
+
+        rotPresets.clear();
+
+        QStringList presets = s.split(':');
+        for (int i = 0; i < presets.count(); i++)
+        {
+            QStringList p = presets[i].split(',');
+            rotPresets.append(new RotPresetData(p[0].toInt(), p[1], p[2]));
+            rotPresetButtonUpdate(i, *rotPresets[i]);
+        }
+
+    }
+
+}
+
 void RotControlFrame::setRotatorState(const QString &s)
 {
        traceMsg("Set Rotator State = " + s);
@@ -558,7 +577,7 @@ void RotControlFrame::setRotatorAntennaName(const QString &s)
        ui->antennaName->setCurrentText(s);
 
    antennaName = ui->antennaName->currentText();
-   if (ct && !ct->isProtected() && ct == TContestApp::getContestApp() ->getCurrentContest())
+   if (ct && !ct->isProtected())
    {
         emit selectRotator(s);
    }
@@ -567,7 +586,7 @@ void RotControlFrame::on_ContestPageChanged()
 {
     // send rotator select to rotator app
 
-    emit selectRotator(ct->rotatorName.getValue());
+    emit selectRotator(ct->rotatorName.getValue().toString());
 }
 
 void RotControlFrame::setRotatorBearing(const QString &s)
@@ -679,24 +698,147 @@ void RotControlFrame::traceMsg(QString msg)
 
 void RotControlFrame::on_antennaName_activated(const QString &arg1)
 {
-   /*QString n = arg1;
-    if (n == antennaName)
-    {
-        n = RELOAD;
-    }
-*/
 
-    /*TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
-
-        if (tslf)
-            tslf->on_RotatorAntennaName(arg1);
-    }
-    */
     antennaName = arg1;
-    emit selectRotator(arg1);
+
+    emit selectRotator(antennaName);
 
 }
 void RotControlFrame::getRotDetails(memoryData::memData &m)
 {
     m.bearing = currentBearing;
 }
+
+
+
+/**************************** Quick Preset Buttons **************************/
+
+
+void RotControlFrame::initPresetButtons()
+{
+
+    QList<QToolButton*> ui_presetbuttons;
+    ui_presetbuttons << ui->presetButton0 << ui->presetButton1 << ui->presetButton2 << ui->presetButton3 << ui->presetButton4
+                     << ui->presetButton5 << ui->presetButton6 << ui->presetButton7 << ui->presetButton8 << ui->presetButton9;
+
+    for (int i = 0; i < ui_presetbuttons.count(); i++)
+    {
+
+        presetButton.append(new RotPresetButton(ui_presetbuttons[i], i));
+
+        connect(presetButton[i], &RotPresetButton::presetReadAction, [this, i]() {presetRead(i);});
+        connect(presetButton[i], &RotPresetButton::presetEditAction, [this, i]() {presetEdit(i);});
+        connect(presetButton[i], &RotPresetButton::presetWriteAction, [this, i]() {presetWrite(i);});
+        connect(presetButton[i], &RotPresetButton::presetClearAction, [this, i]() {presetClear(i);});
+
+
+    }
+
+}
+
+
+void RotControlFrame::presetRead(int buttonNumber)
+{
+    if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
+    {
+        turnTo(rotPresets[buttonNumber]->bearing.toInt());
+        ui->BrgSt->setText(rotPresets[buttonNumber]->bearing);
+        ui->BrgSt->setFocus();
+    }
+
+}
+
+void RotControlFrame::presetEdit(int buttonNumber)
+{
+
+
+    if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
+    {
+        RotPresetData editData(buttonNumber, rotPresets[buttonNumber]->name, rotPresets[buttonNumber]->bearing);
+        RotPresetData curData(buttonNumber, rotPresets[buttonNumber]->name, rotPresets[buttonNumber]->bearing);
+
+        traceMsg(QString("RotFrame: Preset Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
+        RotPresetDialog presetDialog(buttonNumber, &editData, &curData, this);
+
+
+        if (presetDialog.exec() == QDialog::Accepted)
+        {
+            if (editData.name != curData.name || editData.bearing != curData.bearing)
+            {
+                setRotPresetButData(buttonNumber, editData);
+                rotPresetButtonUpdate(buttonNumber, editData);
+            }
+
+        }
+    }
+
+
+}
+
+void RotControlFrame::presetClear(int buttonNumber)
+{
+    traceMsg(QString("RotFrame: Preset Clear Selected = %1").arg(QString::number(buttonNumber +1)));
+    if (!rotPresets.isEmpty() && buttonNumber < rotPresets.count())
+    {
+        // clear this preset
+        RotPresetData pData(0, "", "0");
+        rotPresetButtonUpdate(buttonNumber, pData);
+        rotPresetButtonUpdate(buttonNumber, pData);
+    }
+}
+
+//void RotControlFrame::presetButtonUpdate(int buttonNumber)
+//{
+
+//}
+
+void RotControlFrame::presetWrite(int buttonNumber)
+{
+    traceMsg(QString("RotFrame: Preset Write Selected = %1").arg(QString::number(buttonNumber +1)));
+    if (!rotPresets.isEmpty()  && buttonNumber < rotPresets.count())
+    {
+        RotPresetData editData(buttonNumber, "", "0");
+        RotPresetData curData(buttonNumber, "", "0");
+
+        traceMsg(QString("RotFrame: Preset Edit Selected = %1").arg(QString::number(buttonNumber + 1)));
+        RotPresetDialog presetDialog(buttonNumber, &editData, &curData, this);
+
+
+        if (presetDialog.exec() == QDialog::Accepted)
+        {
+            if (editData.name != curData.name || editData.bearing != curData.bearing)
+            {
+                setRotPresetButData(buttonNumber, editData);
+                rotPresetButtonUpdate(buttonNumber, editData);
+            }
+
+        }
+    }
+}
+
+
+void RotControlFrame::setRotPresetButData(int buttonNumber, RotPresetData& editData)
+{
+    rotPresets[buttonNumber]->name = editData.name;
+    rotPresets[buttonNumber]->bearing = editData.bearing;
+    saveRotPresetButton(editData);
+}
+
+
+void RotControlFrame::rotPresetButtonUpdate(int buttonNumber, RotPresetData& editData)
+{
+    presetButton[buttonNumber]->presetButton->setText(QString("%1: %2").arg(QString::number(buttonNumber + 1)).arg(editData.name) );
+    QString tTipStr = "Bearing = " + editData.bearing;
+    presetButton[buttonNumber]->presetButton->setToolTip(tTipStr);
+}
+
+void RotControlFrame::saveRotPresetButton(RotPresetData& editData)
+{
+    QString msg;
+    msg = QString("%1:%2:%3").arg(QString::number(editData.number)).arg(editData.name).arg(editData.bearing);
+    emit sendRotatorPreset(msg);
+}
+
+
+
+

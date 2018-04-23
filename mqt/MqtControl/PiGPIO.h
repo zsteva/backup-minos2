@@ -14,7 +14,7 @@ class GPIOLine: public QObject
     int fd;
 public:
     GPIOLine(int pin, bool input);
-    virtual ~GPIOLine();
+    virtual ~GPIOLine() override;
 
     int getfd()
     {
@@ -39,7 +39,7 @@ class PiGPIO: public QObject
     QMap<int, QSharedPointer<GPIOLine> > exportedPins;
 public:
     PiGPIO();
-    virtual ~PiGPIO();
+    virtual ~PiGPIO() override;
     void setPinInput(int pin);
     void setPinOutput(int pin);
 

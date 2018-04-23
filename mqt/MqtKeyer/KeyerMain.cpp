@@ -8,20 +8,20 @@
 #include "VKMixer.h"
 #include "sbdriver.h"
 
-KeyerMain *keyerMain = 0;
+KeyerMain *keyerMain = nullptr;
 
-QString alsaStore("store");
-QString alsaRestore("restore");
-bool inhibitCallbacks = false;
+static QString alsaStore("store");
+static QString alsaRestore("restore");
+static bool inhibitCallbacks = false;
 
 // texts for displaying the current mixer set
 
-const char *msets[emsMaxMixerSet] = {"Unloaded", "No PTT", "PassThrough",
+static const char *msets[emsMaxMixerSet] = {"Unloaded", "No PTT", "PassThrough",
                  "Replay", "Pip", "Replay Tone1", "Replay Tone2",
                  "Voice Record",
                  "CW Transmit", "CW PassThrough"
                 };
-const char *levelLabels[emsMaxMixerSet] = {"none", "none", "output",
+static const char *levelLabels[emsMaxMixerSet] = {"none", "none", "output",
                  "output", "output", "output", "output",
                  "input",
                  "output", "output"
@@ -43,12 +43,12 @@ void lcallback( bool pPTT, bool pPTTRef, bool pL1Ref, bool pL2Ref, int lmode )
 // on output level from recording
 // on transfer level for pasthrough
 //---------------------------------------------------------------------------
-void volcallback( unsigned int rmsvol, unsigned int peakvol, int samples )
+void volcallback( unsigned int rmsvol, unsigned int peakvol, unsigned int samples )
 {
     if (!inhibitCallbacks)
         keyerMain->volcallback(rmsvol, peakvol, samples);
 }
-void KeyerMain::volcallback(unsigned int rmsvol , unsigned int peakvol, int samples)
+void KeyerMain::volcallback(unsigned int rmsvol , unsigned int peakvol, unsigned int samples)
 {
     if (!inhibitCallbacks)
         ui->levelMeter->levelChanged( rmsvol / 32768.0, peakvol / 32768.0, samples );
@@ -76,12 +76,12 @@ void KeyerMain::syncSetLines()
 KeyerMain::KeyerMain(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KeyerMain),
-    mixer(0),
+    mixer(nullptr),
     PTT(false), PTTRef(false), L1Ref(false), L2Ref(false),
     recordWait(false),
     recording(false),
     inVolChange(false),
-    runner(0)
+    runner(nullptr)
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -188,16 +188,6 @@ void KeyerMain::changeEvent( QEvent* e )
 
 void KeyerMain::LineTimerTimer( )
 {
-    bool show = getShowServers();
-    if ( !isVisible() && show )
-    {
-       setVisible(true);
-    }
-    if ( isVisible() && !show )
-    {
-       setVisible(false);
-    }
-
     static bool closed = false;
     if ( !closed )
     {
@@ -207,6 +197,18 @@ void KeyerMain::LineTimerTimer( )
           close();
           return;
        }
+    }
+    else
+    {
+        bool show = getShowServers();
+        if ( !isVisible() && show )
+        {
+           setVisible(true);
+        }
+        if ( isVisible() && !show )
+        {
+           setVisible(false);
+        }
     }
 
    syncSetLines();
@@ -490,7 +492,7 @@ void KeyerMain::on_recordValue_valueChanged(double arg1)
 {
     if (!inVolChange)
     {
-        ui->recordSlider->setValue(arg1 * 10);
+        ui->recordSlider->setValue(static_cast<int>(arg1 * 10));
     }
 }
 
@@ -498,7 +500,7 @@ void KeyerMain::on_replayValue_valueChanged(double arg1)
 {
     if (!inVolChange)
     {
-        ui->replaySlider->setValue(arg1 * 10);
+        ui->replaySlider->setValue(static_cast<int>(arg1 * 10));
     }
 }
 
@@ -506,6 +508,6 @@ void KeyerMain::on_passThroughValue_valueChanged(double arg1)
 {
     if (!inVolChange)
     {
-        ui->passThroughSlider->setValue(arg1 * 10);
+        ui->passThroughSlider->setValue(static_cast<int>(arg1 * 10));
     }
 }

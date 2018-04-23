@@ -1,9 +1,7 @@
 #ifndef MINOSKEYBOARD_H
 #define MINOSKEYBOARD_H
 
-#include <QFrame>
-#include <QToolButton>
-#include <QVector>
+#include "base_pch.h"
 
 namespace Ui {
 class MinosKeyboard;
@@ -14,7 +12,7 @@ class MinosKeyboard : public QFrame
     Q_OBJECT
 
 public:
-    explicit MinosKeyboard(QWidget *parent = 0);
+    explicit MinosKeyboard(QWidget *parent = nullptr);
     ~MinosKeyboard();
 
 private slots:

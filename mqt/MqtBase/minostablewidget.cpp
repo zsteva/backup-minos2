@@ -38,12 +38,12 @@
 **
 ****************************************************************************/
 
+#include "base_pch.h"
 #include "minostablewidget.h"
 
 #include <QScrollBar>
 #include <QHeaderView>
-#include <QToolButton>
-#include <QTimer>
+
 
 MinosTableWidget::MinosTableWidget(QWidget *parent):QTableView(parent)
 {
@@ -57,7 +57,7 @@ MinosTableWidget::~MinosTableWidget()
 {
     resizeTimer->stop();
     delete statusSortButton;
-    statusSortButton = 0;
+    statusSortButton = nullptr;
 }
 void MinosTableWidget::setModel(QAbstractItemModel *model)
 {

@@ -18,15 +18,15 @@
 class dvkFile
 {
    public:
-      bool loaded;
-      bool frec;          // flag set to true if audio has been recorded
       QString fileName;
-      int sampleRate;       // system required sample rate
-      long fsample;        // number of bytes for each sound files
-      int16_t *fptr;          // data area for each sound file
-      unsigned int rate;
-      int BitsPerSample;
-      int NumChannels;
+      bool loaded = false;
+      bool frec = false;          // flag set to true if audio has been recorded
+      unsigned int sampleRate = 0;       // system required sample rate
+      unsigned long fsample = 0;        // number of bytes for each sound files
+      int16_t *fptr = nullptr;          // data area for each sound file
+      unsigned int rate = 0;
+      int BitsPerSample = 0;
+      int NumChannels = 0;
 
       bool LoadFile( QString &errmess )
       {
@@ -36,7 +36,7 @@ class dvkFile
          }
          loaded = false;
          delete[] fptr;
-         fptr = 0;
+         fptr = nullptr;
          // should be initiated by keyer, which should call the sound engine
          WaveFile inWave;
          int ret = inWave.OpenForRead( fileName );
@@ -85,23 +85,23 @@ class dvkFile
          }
          return loaded;
       }
-      dvkFile() : loaded( false ), frec( false ), fsample( 0 ), fptr( 0 ), rate( 0 ), sampleRate(0)
+      dvkFile()
       {}
       ~dvkFile()
       {
          delete[] fptr;
-         fptr = 0;
+         fptr = nullptr;
       }
 };
 #define MAXFILES 10
-QVector <dvkFile *> recfil;
+static QVector <dvkFile *> recfil;
 //==============================================================================
 
 bool SoundSystemDriver::dofile( int i, int clipRecord )
 {
    // mixer set should be set already
 
-   ptr = 0;
+   ptr = nullptr;
    if ( sblog )
    {
       trace( "dofile(" + QString::number( i ) + ")" + "play = " + QString::number( play ) );
@@ -117,7 +117,7 @@ bool SoundSystemDriver::dofile( int i, int clipRecord )
       {
          return false;
       }
-      samples = (recfil[ ihand ] ->fsample - clipRecord * ( rate / 1000.0 )) * 2;
+      samples = static_cast<uint32_t>((recfil[ ihand ] ->fsample - clipRecord * ( rate / 1000.0 )) * 2);
       ptr = recfil[ ihand ] ->fptr;
 
       if ( sblog )
@@ -205,7 +205,7 @@ void SoundSystemDriver::record_file( const QString &filename )
    if ( i < recfil.size() )
    {
       delete [] recfil[ i ] ->fptr;  // clear out the data buffer
-      recfil[ i ] ->fptr = 0;
+      recfil[ i ] ->fptr = nullptr;
    }
    else
    {
@@ -225,7 +225,7 @@ void SoundSystemDriver::record_file( const QString &filename )
    recording = true;
    dofile( i, 0 );
 }
-long SoundSystemDriver::play_file( const QString &filename, bool xmit )
+bool SoundSystemDriver::play_file( const QString &filename, bool xmit )
 {
    if ( sblog )
    {
@@ -267,16 +267,16 @@ long SoundSystemDriver::play_file( const QString &filename, bool xmit )
          }
          play = true;
          recording = false;
-         if ( dofile( i, currentKeyer->kconf.clipRecord ) )
+         if (currentKeyer && dofile( i, currentKeyer->kconf.clipRecord ) )
             return recfil[ i ] ->fsample;
       }
-      return -1;
+      return false;
    }
 }
 void SoundSystemDriver::stopall()
 {
     trace("stopall");
-   ptr = 0;
+   ptr = nullptr;
    stoprec();
    stopDMA();  // stop - eventually
    CW_ACTIVE = false;
@@ -286,10 +286,10 @@ void SoundSystemDriver::stopall()
    delete [] t1ptr;
    delete [] t2ptr;
    delete [] cwptr;
-   t1ptr = 0;
-   t2ptr = 0;
+   t1ptr = nullptr;
+   t2ptr = nullptr;
    toneSamples = 0;
-   cwptr = 0;
+   cwptr = nullptr;
    cwSamples = 0;
 }
 bool SoundSystemDriver::startMicPassThrough()
@@ -305,7 +305,7 @@ void SoundSystemDriver::setVolumeMults(int record, int replay, int passThrough)
     soundSystem->setVolumeMults(record, replay, passThrough);
 }
 
-bool SoundSystemDriver::sbdvp_init( QString &errmess, int srate, int pipTone, int pipVolume, int pipLength, int filterCorner )
+bool SoundSystemDriver::sbdvp_init( QString &errmess, unsigned int srate, int pipTone, int pipVolume, int pipLength, int filterCorner )
 {
    // should be done from config when the sb is defined as in use.
 
@@ -368,16 +368,16 @@ bool SoundSystemDriver::sbdvp_init( QString &errmess, int srate, int pipTone, in
 
 
 // need to call this from dvpctrl
-/*static*/void SoundSystemDriver::sbdvp_unload(    void )
+/*static*/void SoundSystemDriver::sbdvp_unload( )
 {
    if ( singleton_sb )
    {
       singleton_sb->unload();
       delete singleton_sb;
-      singleton_sb = 0;
+      singleton_sb = nullptr;
    }
 }
-void SoundSystemDriver::unload( void )
+void SoundSystemDriver::unload( )
 {
    if ( sblog )
    {
@@ -407,13 +407,13 @@ void SoundSystemDriver::unload( void )
    if ( soundSystem )
    {
       delete soundSystem;
-      soundSystem = 0;
+      soundSystem = nullptr;
    }
 }
 //==============================================================================
 
 void SoundSystemDriver::genTone(int16_t *dest, bool add
-                           , int tone, int samples, int rtime, double volmult, int16_t *enddest )
+                           , int tone, unsigned int samples, unsigned int rtime, double volmult, int16_t *enddest )
 {
    if ( sblog )
    {
@@ -433,10 +433,10 @@ void SoundSystemDriver::genTone(int16_t *dest, bool add
    int16_t *buff = new int16_t [ CHUNKSIZE ];
 
 
-   for ( int buffstart = 0; buffstart < samples * 2; buffstart += CHUNKSIZE * 2 )
+   for ( unsigned long buffstart = 0; buffstart < samples * 2; buffstart += CHUNKSIZE * 2 )
    {
       int16_t * destptr = dest + buffstart;
-      int i;
+      unsigned long i;
       for ( i = 0; i < CHUNKSIZE && buffstart + i*2 < samples * 2; i++ )
       {
          double y3 = yk * y2 - y1;
@@ -447,7 +447,7 @@ void SoundSystemDriver::genTone(int16_t *dest, bool add
             buff[ i ] = int16_t( y3 * ( ( volmult * (( buffstart + i )/2) ) / rtime ) );	// not full volume
             if (abs(buff[i]) > 32767)
             {
-               mShowMessage( "Big sum...", 0 );
+               mShowMessage( "Big sum...", nullptr );
             }
          }
          else
@@ -457,7 +457,7 @@ void SoundSystemDriver::genTone(int16_t *dest, bool add
                buff[ i ] = int16_t( y3 * ( ( volmult * (( samples * 2 - ( buffstart + i*2 ) )/2) ) / rtime ) );	// not full volume
                if (abs(buff[i]) > 32767)
                {
-                  mShowMessage( "Big sum...", 0 );
+                  mShowMessage( "Big sum...", nullptr );
                }
             }
             else
@@ -465,7 +465,7 @@ void SoundSystemDriver::genTone(int16_t *dest, bool add
                buff[ i ] = int16_t( y3 * volmult );	// not full volume
                if (abs(buff[i]) > 32767)
                {
-                  mShowMessage( "Big sum...", 0 );
+                  mShowMessage( "Big sum...", nullptr );
                }
             }
          }
@@ -475,11 +475,11 @@ void SoundSystemDriver::genTone(int16_t *dest, bool add
 
       if ( add )
          {
-            for ( int j = 0; j < i ; j++ )
+            for ( unsigned long j = 0; j < i ; j++ )
             {
                if ( destptr[ j * 2 ] + buff[ j ] > 32767 || destptr[ j * 2] + buff[ j ] < -32768 )
                {
-                  mShowMessage( "Big sum...", 0 );
+                  mShowMessage( "Big sum...", nullptr );
                }
                destptr[ j * 2 ] = destptr[ j * 2 ] + buff[ j ];
                destptr[ j * 2 + 1] = destptr[ j * 2 + 1] + buff[ j ];
@@ -487,17 +487,17 @@ void SoundSystemDriver::genTone(int16_t *dest, bool add
          }
       else
       {
-          for (int j = 0; j < i; j++)
+          for (unsigned long j = 0; j < i; j++)
           {
               if (&destptr[j * 2 + 1] > enddest)
-                  mShowMessage( "bad data...", 0 );
+                  mShowMessage( "bad data...", nullptr );
               destptr[j * 2] = buff[j];
               destptr[j * 2 + 1] = buff[j];
           }
       }
    }
    delete [] buff;
-   buff = 0;
+   buff = nullptr;
 }
 bool SoundSystemDriver::createPipTone( QString &/*errmess*/, int pipTone, int pipVolume, int pipLength )
 {
@@ -509,8 +509,8 @@ bool SoundSystemDriver::createPipTone( QString &/*errmess*/, int pipTone, int pi
 
       delete [] pipptr;
 
-      pipSamples = rate * ( pipLength / 1000.0 );
-      int ramptime = pipSamples / 6;
+      pipSamples = static_cast<unsigned long>(rate * ( pipLength / 1000.0 ));
+      unsigned int ramptime = pipSamples / 6;
       pipptr = new int16_t [ pipSamples * 2 ];
 
       const double volmult = 32767.0 * pipVolume / 100.0;
@@ -519,7 +519,7 @@ bool SoundSystemDriver::createPipTone( QString &/*errmess*/, int pipTone, int pi
    return true;
 }
 //==============================================================================
-SoundSystemDriver *SoundSystemDriver::singleton_sb = 0;
+SoundSystemDriver *SoundSystemDriver::singleton_sb = nullptr;
 SoundSystemDriver *SoundSystemDriver::getSbDriver()
 {
    if ( singleton_sb )
@@ -529,14 +529,7 @@ SoundSystemDriver *SoundSystemDriver::getSbDriver()
    singleton_sb->ready = true;      // not until we are out of the constructor
    return singleton_sb;
 }
-SoundSystemDriver::SoundSystemDriver() :
-      CW_ACTIVE( false ), init_done( false ), init_OK( false ), loadFailed( false ),
-      pipSamples( 0 ), pipptr( 0 ), oldpip( -1 ), oldpipVolume( -1 ),
-      ihand( 0 ), isave( -1 ), recording( false ),
-      cwTone( -1 ), ready( false ),
-      lastCWRate( 0 ), t1ptr( 0 ), t2ptr( 0 ), toneSamples( 0 ),
-      cwptr( 0 ), cwSamples( 0 ),
-      soundSystem( 0 ), WinVUCallback( 0 )
+SoundSystemDriver::SoundSystemDriver()
 {
    soundSystem = RtAudioSoundSystem::createSoundSystem();
 }
@@ -552,7 +545,7 @@ SoundSystemDriver::~SoundSystemDriver()
 void SoundSystemDriver::initTone1( int t1 )
 {
    delete [] t1ptr;
-   toneSamples = rate * static_cast<long>(tuneTime);
+   toneSamples = rate * static_cast<unsigned long>(tuneTime);
 
    t1ptr = new int16_t [ toneSamples * 2 ];
 
@@ -562,7 +555,7 @@ void SoundSystemDriver::initTone2( int t1, int t2 )
 {
    delete [] t2ptr;
 
-   toneSamples = rate * static_cast<long>(tuneTime);
+   toneSamples = rate * static_cast<unsigned long>(tuneTime);
    t2ptr = new int16_t [ toneSamples * 2 ];
    // ((tuneLevel/100) * 32767.0) / sqrt( 2 ) is an attempt to get equal power - but it can result
    // in peak levels that are out of range, so what to do? Flat top it?
@@ -582,12 +575,13 @@ void SoundSystemDriver::startTone2()
 }
 // WEIGHT gives the number of elements that make a dit/dah.
 // The reminder of 32 (dit) or 64(dah) is the inter-element gap
-unsigned char WEIGHT[ 4 ][ 2 ] =
+/*
+static unsigned char WEIGHT[ 4 ][ 2 ] =
    {{14, 46},           //0.9:1
     {16, 48},           //1.0:1
     {18, 50},           //1.1:1
     {20, 52}};      //1.2:1
-
+*/
 // letterspace is 32 (+ prior interelement gap)
 // wordspace is 64 (plus prior element/letter gap)
 
@@ -601,27 +595,27 @@ void SoundSystemDriver::createCWBuffer( const char *message, int speed, int tone
       delete [] cwptr;
    cwSamples = 0;
 
-   int unitlength = rate * ( 1.2 / speed );   // number of samples per unit
+   unsigned int unitlength = static_cast<unsigned int>(rate * ( 1.2 / speed ));   // number of samples per unit
 
-   int ditlength = unitlength;
-   int dahlength = unitlength * 3;
-   int ramptime = unitlength / 8;     // length of ramp on each end of element
+   unsigned int ditlength = unitlength;
+   unsigned int dahlength = unitlength * 3;
+   unsigned int ramptime = unitlength / 8;     // length of ramp on each end of element
 
-   int fulldit = ditlength + unitlength;
-   int fulldah = dahlength + unitlength;
-   int letterspace = unitlength * 2;
-   int wordspace = unitlength * 4;
+   unsigned int fulldit = ditlength + unitlength;
+   unsigned int fulldah = dahlength + unitlength;
+   unsigned int letterspace = unitlength * 2;
+   unsigned int wordspace = unitlength * 4;
 
    int16_t *ditbuff = new int16_t [ fulldit ];
-   memset ( ditbuff, 0, fulldit * 2 );
+   memset ( ditbuff, 0, static_cast<size_t>(fulldit * 2) );
    int16_t *dahbuff = new int16_t [ fulldah * 2 ];
-   memset ( dahbuff, 0, fulldah * 2 );
+   memset ( dahbuff, 0, static_cast<size_t>(fulldah * 2) );
 
    genTone( ditbuff, false, tone, ditlength, ramptime, 32767.0 * 0.9, &ditbuff[fulldit * 2 - 1] );
    genTone( dahbuff, false, tone, dahlength, ramptime, 32767.0 * 0.9, &dahbuff[fulldah * 2 - 1] );
 
    size_t messlen = strlen( message );
-   int messsamples = 0;
+   unsigned int messsamples = 0;
    for ( size_t i = 0; i < messlen; i++ )
    {
       if ( message[ i ] == ' ' )

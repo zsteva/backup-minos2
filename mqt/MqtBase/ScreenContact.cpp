@@ -8,7 +8,9 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
-ScreenContact::ScreenContact() : time( false ), logSequence( 0 )
+ScreenContact::ScreenContact() :
+    logSequence( 0 ),
+    time( false )
 {}
 ScreenContact::~ScreenContact()
 {}
@@ -273,7 +275,7 @@ void ScreenContact::checkScreenContact( )
    screenQSOValid = true;        // for now
 
 }
-bool ScreenContact::isNextContact( void ) const
+bool ScreenContact::isNextContact( ) const
 {
    return ( logSequence == static_cast< unsigned long > (- 1L) ) ? true : false;
 }

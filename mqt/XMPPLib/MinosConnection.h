@@ -9,17 +9,16 @@
 #ifndef minosConnectionH
 #define minosConnectionH
 //---------------------------------------------------------------------------
-#include "XMPP_pch.h"
-
+#include "Dispatcher.h"
 #include <QObject>
 #include <QSharedPointer>
 #include <QTimer>
+#include <QTcpSocket>
 
 //---------------------------------------------------------------------------
 extern bool connected;
 bool XMPPInitialise( const QString &myId );
 //---------------------------------------------------------------------------
-
 
 class MinosAppConnection:public QObject, RPCDispatcher
 {
@@ -39,14 +38,14 @@ class MinosAppConnection:public QObject, RPCDispatcher
 
    public:
       MinosAppConnection( const QString &myid );
-      ~MinosAppConnection();
+      ~MinosAppConnection() override;
 
       static MinosAppConnection *minosAppConnection;
 
       void startConnection();
       void closeDaemonThread();
 
-      virtual void dispatchResponse( XStanza *a );
+      virtual void dispatchResponse( XStanza *a ) override;
 
       void sendAction( XStanza *a );
 

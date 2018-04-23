@@ -1,7 +1,7 @@
 #ifndef CALENDAR_H
 #define CALENDAR_H
 
-#include "BandList.h"
+#include "base_pch.h"
 
 enum CalType {ectVHF, ectHF, ectMwave, ectVHFOther, ectHFOther, ectHFBARTG};
 extern QMap<QString, QString> contestNameMap;

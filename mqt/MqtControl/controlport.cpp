@@ -39,7 +39,12 @@
 
 //==============================================================================
 commonLineControl::commonLineControl( QString name, bool lineIn, QString portLine, commonPort *port )
-      : lineName( name ), lineIn( lineIn ), portLineName( portLine ), port( port ), state( false ), lastState( false )
+      : state( false )
+      , lastState( false )
+      , lineName( name )
+      , portLineName( portLine )
+      , port( port )
+      , lineIn( lineIn )
 {
 }
 commonLineControl::~commonLineControl()
@@ -65,8 +70,9 @@ void commonLineControl::setState( bool pstate )
 }
 //==============================================================================
 commonPort::commonPort( const PortConfig &port ) :
-      openCount( 0 ),
-      pName( port.name ), portName( port.portName )
+      pName( port.name )
+    , portName( port.portName )
+    , openCount( 0 )
 {
 
 }
@@ -101,9 +107,9 @@ commonLineControl *commonPort::findLine(const QString &name, bool lineIn )
       if ( ( *i ) ->lineIn == lineIn && ( *i ) ->lineName == name )
          return ( *i );
    }
-   return 0;
+   return nullptr;
 }
-void commonPort::checkControls( void )
+void commonPort::checkControls( )
 {
    getLineState();
    for ( QVector<commonLineControl *>::iterator i = lines.begin(); i != lines.end(); i++ )
@@ -122,14 +128,16 @@ void commonPort::reportLineChange( commonLineControl *line )
 
 //==============================================================================
 //=============================================================================
-WindowsMonitorPort::WindowsMonitorPort(QWidget *p, const PortConfig &port ) : parent(p), commonPort( port )
+WindowsMonitorPort::WindowsMonitorPort(QWidget *p, const PortConfig &port ) :
+    commonPort( port )
+    , parent(p)
 {}
 WindowsMonitorPort::~WindowsMonitorPort()
 {
    closePort();
 }
 
-windowMonitor *WindowsMonitorForm = 0;
+static windowMonitor *WindowsMonitorForm = nullptr;
 
 bool WindowsMonitorPort::initialisePort()
 {
@@ -146,7 +154,7 @@ bool WindowsMonitorPort::openPort()
 bool WindowsMonitorPort::closePort()
 {
    delete WindowsMonitorForm;
-   WindowsMonitorForm = 0;
+   WindowsMonitorForm = nullptr;
 
    return true;
 }

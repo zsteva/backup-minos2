@@ -13,7 +13,17 @@
 #define XMPPRPCObjH 
 //---------------------------------------------------------------------------
 #include <string>
+#include <QString>
+#include <QSharedPointer>
+#include "PublishState.h"
+#include "XMPPRPCParams.h"
+#include "PubSubValue.h"
+#include "PublishState.h"
 //---------------------------------------------------------------------------
+class XStanza;
+typedef void ( *sendActionCall ) ( XStanza *a  );
+extern sendActionCall sendAction;
+void setSendAction(sendActionCall sa);
 
 // We need a factory for MinosRPCObj descendents, so that we can register those we
 // are interested in, and when a call is received those we know are manufactured
@@ -26,7 +36,7 @@ class TRPCFunctor
 {
    public:
 
-        virtual ~TRPCFunctor(){}
+        virtual ~TRPCFunctor();
 
       // two possible functions to call member function. virtual cause derived
       // classes will use a pointer to an object and a pointer to a member function
@@ -54,7 +64,7 @@ class TRPCCallback : public TRPCFunctor
       }
 
       // override function "Call"
-      virtual void call( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from )
+      virtual void call( bool err, QSharedPointer<MinosRPCObj>mro, const QString &from ) override
       {
          ( *pt2Object.*fpt ) ( err, mro, from );
       } // execute member function
@@ -124,10 +134,10 @@ class MinosRPCClient: public MinosRPCObj
    public:
       MinosRPCClient( const QString &methodName, TRPCFunctor *cb, bool gen = false ) : MinosRPCObj( methodName, cb, gen )
       {}
-      virtual ~MinosRPCClient()
+      virtual ~MinosRPCClient() override
       {}
 
-      virtual QSharedPointer<MinosRPCObj>makeObj() = 0;
+      virtual QSharedPointer<MinosRPCObj>makeObj() override = 0;
 
       // call queueCall to make initial call;
       // This will construct a BlockingRequest to allow the eventual callback
@@ -135,7 +145,9 @@ class MinosRPCClient: public MinosRPCObj
       // we don't wait on it, but we do queue it, and on response arriving
       // we queue the desired response
 
-      virtual void queueCall( QString to );
+      virtual void queueCall( QString to ) override;
+      void queueCall(const PubSubName &psn);
+
 };
 class MinosRPCServer: public MinosRPCObj
 {
@@ -144,10 +156,9 @@ class MinosRPCServer: public MinosRPCObj
    public:
       MinosRPCServer( const QString &methodName, TRPCFunctor *cb, bool gen = false ) : MinosRPCObj( methodName, cb, gen )
       {}
-      virtual ~MinosRPCServer()
-      {}
+      virtual ~MinosRPCServer() override;
 
-      virtual QSharedPointer<MinosRPCObj>makeObj() = 0;
+      virtual QSharedPointer<MinosRPCObj>makeObj() override = 0;
 };
 
 #endif

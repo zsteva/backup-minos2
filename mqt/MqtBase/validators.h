@@ -10,6 +10,11 @@
 
 #ifndef validatorsH
 #define validatorsH 
+// #include "base_pch.h"    / causes clang problems
+
+#include <QLineEdit>
+#include "mwin.h"
+class ScreenContact;
 //---------------------------------------------------------------------------
 #define ERR_0 0
 #define ERR_1 1

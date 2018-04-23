@@ -1,11 +1,25 @@
-#include "MinosRPC.h"
 #include <QProcessEnvironment>
+#include "MinosRPC.h"
+#include "ServerEvent.h"
+#include "MinosConnection.h"
+#include "MTrace.h"
+/*static*/ MinosRPC *MinosRPC::rpc = nullptr;
 
-/*static*/ MinosRPC *MinosRPC::rpc = 0;
-
+RPCGeneralClient::~RPCGeneralClient()
+{}
+RPCGeneralServer::~RPCGeneralServer()
+{}
+static void xmppsendAction( XStanza *a )
+{
+   if ( MinosAppConnection::minosAppConnection )
+   {
+      MinosAppConnection::minosAppConnection->sendAction( a );
+   }
+}
 MinosRPC::MinosRPC(const QString &defaultName, bool useEnvVar):
     connected(false), subscribed(false)
 {
+    setSendAction(xmppsendAction);
     QString rpcName = defaultName;
     if (useEnvVar)
     {
@@ -50,22 +64,26 @@ void MinosRPC::setAppName(const QString &n)
 {
     appName = n;
 }
+QString MinosRPC::getAppName()
+{
+    return appName;
+}
 
 
 void MinosRPC::subscribe(const QString &c)
 {
-    subscriptions.append(c);
+    subscriptions.insert(c);
     if (subscribed)
     {
         RPCPubSub::subscribe( c );
     }
 }
-void MinosRPC::subscribeRemote(const QString &s, const QString &c)
+void MinosRPC::subscribeRemote(const QString &server, const QString &cat)
 {
-    remoteSubscriptions.append(QPair<QString, QString>(s, c));
+    remoteSubscriptions.insert(QPair<QString, QString>(server, cat));
     if (subscribed)
     {
-        RPCPubSub::subscribeRemote( s, c );
+        RPCPubSub::subscribeRemote( server, cat );
     }
 }
 void MinosRPC::publish( const QString &category, const QString &key, const QString &value, PublishState pState )

@@ -12,13 +12,10 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
-
 #ifndef RIGCONTROLRPC_H
 #define RIGCONTROLRPC_H
+
+#include "RigCache.h"
 
 #include "base_pch.h"
 
@@ -30,30 +27,17 @@ class RigControlRpc : public QObject
 
     RigControlMainWindow *parent;
 
-
 public:
     explicit RigControlRpc(RigControlMainWindow *parent);
 
+    RigCache rigCache;
+
     void publishRadioNames(QStringList radios);
-    void publishRadioName(const QString &radioName);
-    void publishState(const QString &state);
-    void publishErrorMsg(const QString &errorMsg);
-    void publishTransVertStatus(const QString &flag);
-    void publishTransVertOffSetFreq(bool offSet, const QString &freq);
-    void publishTransVertSwitch(const QString &swNum);
-    void publishFreq(const QString &freq);
-    void publishMode(const QString &mode);
-
-
-
 
 signals:
     void setFreq(QString);
     void setMode(QString);
-    void selectLoggerRadio(QString);
-
-public slots:
-
+    void selectLoggerRadio(PubSubName, QString);
 
 private slots:
     void on_notify(bool err, QSharedPointer<MinosRPCObj> mro, const QString &from );

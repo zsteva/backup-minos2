@@ -6,12 +6,11 @@
 // COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "logger_pch.h"
-
-#include "BandList.h"
-#include "LoggerContest.h"
-#include "MinosTestImport.h"
+#include "base_pch.h"
 #include "rigutils.h"
+#include "LoggerContest.h"
+#include "LoggerContacts.h"
+#include "ContestApp.h"
 
 ContestContact::ContestContact( LoggerContestLog * ct, bool time_now ) : DisplayContestContact( ct, time_now )
 {}
@@ -665,10 +664,10 @@ bool ContestContact::GJVload( int diskBlock )
    }
 
    buftostr( temp );
-   setLogSequence( temp.toInt());
+   setLogSequence( temp.toULong());
 
    buftostr( temp );
-   contactFlags.setInitialValue( temp.toInt() );
+   contactFlags.setInitialValue( temp.toUShort() );
 
    buftostr( temp );
    op1.setInitialValue( temp );
@@ -714,15 +713,16 @@ bool ContestContact::GJVload( int diskBlock )
    forcedMult.setInitialValue( temp );
    return true;
 }
+/*
 bool ContestContact::setField(QSharedPointer<BaseContact> tct, int ACol, const QString Value )
 {
     //#warning never used! There to allow grid editing
     // This really ought to validate it first...
     switch ( ACol )
     {
-    /*case egDate:
-            break;
-         */
+    //case egDate:
+    //        break;
+
     case egTime:
         time.setTime( Value, DTGDISP );  // VALIDATE!
         break;
@@ -772,6 +772,7 @@ bool ContestContact::setField(QSharedPointer<BaseContact> tct, int ACol, const Q
     commonSave(tct);
     return true;
 }
+*/
 void ContestContact::processMinosStanza( const QString &methodName, MinosTestImport * const mt )
 {
    DisplayContestContact::processMinosStanza( methodName, mt );

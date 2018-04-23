@@ -79,7 +79,6 @@ SOURCES += main.cpp \
 HEADERS  += \
     tlogcontainer.h \
     contestdetails.h \
-    logger_pch.h \
     ContestApp.h \
     LoggerContacts.h \
     LoggerContest.h \
@@ -104,7 +103,6 @@ HEADERS  += \
     tqsoeditdlg.h \
     tloccalcform.h \
     qsologframe.h \
-    focuswatcher.h \
     tstatsdispframe.h \
     dxccframe.h \
     districtframe.h \
@@ -119,9 +117,9 @@ HEADERS  += \
     LocCalcFrame.h \
     StackedInfoFrame.h \
     MatchTreesFrame.h \
-    runbuttondialog.h \
     RigMemoryFrame.h \
-    locTreeFrame.h
+    locTreeFrame.h \
+    runbuttondialog.h
 
 FORMS    += tlogcontainer.ui \
     contestdetails.ui \
@@ -151,9 +149,10 @@ FORMS    += tlogcontainer.ui \
     LocCalcFrame.ui \
     StackedInfoFrame.ui \
     MatchTreesFrame.ui \
-    runbuttondialog.ui \
     RigMemoryFrame.ui \
-    locTreeFrame.ui
+    locTreeFrame.ui \
+    presetbuttondialog.ui \
+    runbuttondialog.ui
 
 
 DISTFILES += \

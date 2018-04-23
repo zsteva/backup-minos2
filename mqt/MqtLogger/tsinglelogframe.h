@@ -1,8 +1,11 @@
 #ifndef TSINGLELOGFRAME_H
 #define TSINGLELOGFRAME_H
 
-#include "logger_pch.h"
+#include "base_pch.h"
 #include "StackedInfoFrame.h"
+#include "ConfigFile.h"
+#include "rotatorcommon.h"
+#include "rigmemcommondata.h"
 
 namespace Ui {
 class TSingleLogFrame;
@@ -17,7 +20,6 @@ class BaseContact;
 class ContactList;
 class ListContact;
 class FocusWatcher;
-class TSendDM;
 
 // We may need to define our own validation controls with valid methods
 // for each needed type...
@@ -29,8 +31,10 @@ class MatchContact;
 
 class TSingleLogFrame : public QFrame
 {
+    friend class TSendDM;
     Q_OBJECT
 
+    Ui::TSingleLogFrame *ui;
 public:
     explicit TSingleLogFrame(QWidget *parent, BaseContestLog *contest);
     ~TSingleLogFrame();
@@ -50,10 +54,12 @@ public:
     int getBearingFrmQSOLog();
 
     void refreshMults();
-    TSendDM *sendDM;
 
     bool logColumnsChanged;
     bool splittersChanged;
+
+    QString sCurFreq;
+    QString sCurMode;
 
     bool isBandMapLoaded();
     bool bandMapLoaded;
@@ -78,9 +84,6 @@ public:
     void goNextUnfilled();
     void doNextContactDetailsOnLeftClick(bool keepSizes);
 
-    //void on_SetRadioName(QString);
-    void on_RotatorAntennaName(QString);
-
     void on_NoRadioSetFreq(QString);
     void on_NoRadioSetMode(QString);
 
@@ -89,21 +92,12 @@ public:
     void getCurrentDetails(memoryData::memData &m);
 
 private:
-    Ui::TSingleLogFrame *ui;
-
     QVector< StackedInfoFrame *> auxFrames;  // NOT shared pointers - singleLogFrame owns them
     BaseContestLog * contest;
     QSOGridModel qsoModel;
     int splitterHandleWidth;
 
     int lastStanzaCount;
-
-    long long curFreq;
-    QString sCurFreq;
-    QString sCurMode;
-
-    int freqUpDateCnt;
-    int modeUpDateCnt;
 
     void transferDetails( MatchTreeItem *MatchTreeIndex );
 
@@ -139,17 +133,18 @@ private slots:
 
     void on_BandMapLoaded();
 
+    void on_RadioLoaded();
     void on_SetRadioList(QString);
-    void on_SetRadioName(QString);
+    void on_SetBandList(QString);
     void on_SetMode(QString);
     void on_SetFreq(QString);
-    void on_RadioLoaded();
-    void on_SetRadioState(QString);
+    void on_SetRadioStatus(QString);
     void on_SetRadioTxVertState(QString s);
 
     void on_RotatorLoaded();
     void on_RotatorList(QString);
-    void on_RotatorState(QString);
+    void on_RotatorPresetList(QString);
+    void on_RotatorStatus(QString);
     void on_RotatorBearing(QString);
     void on_RotatorMaxAzimuth(QString);
     void on_RotatorMinAzimuth(QString);
@@ -161,11 +156,12 @@ private slots:
     void sendKeyerTwoTone();
     void sendKeyerStop();
     void sendRotator(rpcConstants::RotateDirection direction, int angle );
+    void sendRotatorPreset(QString);
     void sendRadioFreq(QString);
     void sendRadioMode(QString);
 
-    void sendSelectRadio(QString);
-    void sendSelectRotator(QString);
+    void sendSelectRadio(const QString &, const QString &mode);
+    void sendSelectRotator(const QString &);
 
 
     void on_ControlSplitter_splitterMoved(int pos, int index);

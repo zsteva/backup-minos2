@@ -1,8 +1,7 @@
 #ifndef RIGCONTROLCOMMONCONSTANTS_H
 #define RIGCONTROLCOMMONCONSTANTS_H
 
-#include <QStringList>
-
+#include "base_pch.h"
 
 // Status messages sent to minos logger
 #define RIG_STATUS_CONNECTED "Connected"
@@ -64,7 +63,7 @@ const QStringList portTypeList = { "RIG_PORT_NONE", "RIG_PORT_SERIAL", "RIG_PORT
 
 }
 
-
+const QString TRANSSW_NUM_DEFAULT = "0";
 
 
 // File Name Constants
@@ -81,14 +80,14 @@ const QString MINOS_RADIO_CONFIG_FILE = "MinosRigControlConfig.ini";
 const QString RADIO_PATH_LOGGER = "./Configuration/Radio/";
 const QString RADIO_PATH_LOCAL = "./Configuration/Radio/";
 
+const QString TRANSVERT_PATH_LOGGER = "./Configuration/Radio/Transverter/";
+const QString TRANSVERT_PATH_LOCAL = "./Configuration/Radio/Transverter/";
+
 const QString FILENAME_AVAIL_RADIOS = "AvailRadio.ini";
 const QString FILENAME_CURRENT_RADIO = "CurrentRadio.ini";
+const QString FILENAME_TRANSVERT_RADIOS = "TransVertRadio.ini";
 
-const QString RADIO_MEMORIES_PATH_LOGGER ="./Configuration/Radio/Memory/";
-const QString RADIO_MEMORIES_PATH_LOCAL ="./Configuration/Radio/Memory/";
-const QString FILENAME_MEMORY_RADIO = "Memory.ini";
-const QString FILENAME_RUN_MEMORY = "RunMemory.ini";
-
+const QString FILENAME_FREQ_PRESETS = "FreqPresets.ini";
 
 
 // Tooltips
@@ -101,7 +100,33 @@ const QString civToolTip = "Leave field blank for default radio CIV,\nor enter i
 const QString NORADIO = "NoRadio";
 
 
+namespace freqPresetData {
 
+
+const int NUMPRESET = 10;
+
+enum bandOffSet {_10M, _6M, _4M, _2M, _70CM, _23CM, _13CM, _9CM, _6CM, _3CM};
+
+
+const QStringList presetBands = (QStringList() << "28 MHz" << "50 MHz" << "70 MHz" << "144 MHz" << "432 MHz" << "1296 MHz" << "2320 MHz" << "3.4 GHz" << "5.6 GHz" << "10 GHz");
+
+
+const QStringList bandFreq = { "28170000",
+                               "50170000",
+                               "70210000",
+                               "144290000",
+                               "432170000",
+                               "1296210000",
+                               "2320200000",  //13cm
+                               "3400100000", // 9cm
+                               "5760100000", // 6cm
+                              "10368100000"  // 3cm
+                              };
+
+
+
+
+}
 
 
 

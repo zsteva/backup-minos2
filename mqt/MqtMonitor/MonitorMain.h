@@ -65,7 +65,7 @@ public:
     MonitorMain *monmain;
 
     TreeNode(NodeType sn, TreeNode *parent, QString name, MonitorMain *mm):
-        ntype(sn), NodeName(name), parentItem(parent), monmain(mm), mlog(0)
+        ntype(sn), NodeName(name), parentItem(parent), monmain(mm), mlog(nullptr)
     {
         if (parent)
             parent->nodes.push_back(this);
@@ -92,7 +92,7 @@ public:
 
     void clear();
 
-    virtual QString Name ( void )
+    virtual QString Name (  )
     {
         return NodeName;
     }
@@ -114,7 +114,7 @@ public:
 class RootTreeNode:public TreeNode
 {
 public:
-    RootTreeNode(MonitorMain *mm):TreeNode(entRoot, 0, "Root", mm)
+    RootTreeNode(MonitorMain *mm):TreeNode(entRoot, nullptr, "Root", mm)
     {
 
     }
@@ -141,7 +141,7 @@ class MonitorTreeModel: public QAbstractItemModel
     TreeNode *rootData;
 public:
     MonitorTreeModel();
-    ~MonitorTreeModel();
+    ~MonitorTreeModel() override;
     void setRoot(  TreeNode *root );
     void clear();
 
@@ -166,8 +166,8 @@ class MonitorMain : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MonitorMain(QWidget *parent = 0);
-    ~MonitorMain();
+    explicit MonitorMain(QWidget *parent = nullptr);
+    ~MonitorMain() override;
 
     QVector<MonitoredStation *> stationList;
 
@@ -216,7 +216,7 @@ private:
 
     QTimer *monitorTimer;
 
-    bool syncstat;
+    bool syncstat = false;
     void syncStations();
     void addSlot( MonitoredLog *ct );
     MonitoringFrame *findCurrentLogFrame();

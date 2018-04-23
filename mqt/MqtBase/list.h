@@ -9,6 +9,7 @@
 
 #ifndef listH
 #define listH 
+#include "base_pch.h"
 //---------------------------------------------------------------------------
 class ListContact;
 typedef QVector < ListContact *> ListList;
@@ -33,7 +34,7 @@ class ContactList : public BaseLogList
       bool initialise( const QString &, int slotno );
       void getMatchText(ListContact *, QString &, const BaseContestLog *const ct ) const;
       void getMatchField( ListContact *pct, int col, QString &disp, const BaseContestLog *const ct ) const;
-      int getContactCount( void )
+      int getContactCount( )
       {
          return ctList.size();
       }

@@ -1,12 +1,12 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "TClockFrame.h"
 #include "ui_TClockFrame.h"
 
 TClockFrame::TClockFrame(QWidget *parent) :
-    QFrame(parent),
-    contest(0),
-    ui(new Ui::TClockFrame)
+    QFrame(parent)
+   ,  ui(new Ui::TClockFrame)
+   , contest(nullptr)
 {
     ui->setupUi(this);
     connect(&MinosLoggerEvents::mle, SIGNAL(TimerDistribution()), this, SLOT(RecheckTimerTimer()));

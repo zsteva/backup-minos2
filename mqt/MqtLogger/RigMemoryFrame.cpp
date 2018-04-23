@@ -1,7 +1,5 @@
-#include <QGridLayout>
-#include <QToolButton>
-
-#include "logger_pch.h"
+#include "base_pch.h"
+#include "LoggerContest.h"
 #include "tlogcontainer.h"
 #include "tsinglelogframe.h"
 #include "rigmemdialog.h"
@@ -27,9 +25,9 @@ void RigMemoryFrame::traceMsg(QString msg)
     trace("RigMemoryFrame: " + msg);
 }
 RigMemoryFrame::RigMemoryFrame(QWidget *parent) :
-    QFrame(parent),
-    ct(0),
-    ui(new Ui::RigMemoryFrame)
+    QFrame(parent)
+    , ui(new Ui::RigMemoryFrame)
+    , ct(nullptr)
 {
     ui->setupUi(this);
 
@@ -274,7 +272,7 @@ void RigMemoryFrame::checkTimerTimer()
 
         if (tslf->isRadioLoaded())
         {
-            if (abs(rigFreq - memFreq) < 2000.0)
+            if (std::abs(rigFreq - memFreq) < 2000.0)
             {
                 onfreq = rtsOn;
             }
@@ -584,7 +582,7 @@ void RigMemoryFrame::scrollIntoView ( int firstMatch )
         }
     }
 }
-RigMemoryGridModel::RigMemoryGridModel():ct(0)
+RigMemoryGridModel::RigMemoryGridModel():ct(nullptr)
 {}
 RigMemoryGridModel::~RigMemoryGridModel()
 {

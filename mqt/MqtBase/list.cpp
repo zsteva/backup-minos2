@@ -77,7 +77,10 @@ void CsvReader::checkString(QString &temp, QChar character, QList<QStringList> &
         temp.append(character);
     }
 }
-ContactList::ContactList() : slotno( -1 ), cslFile( false ), errMessShown(false)
+ContactList::ContactList() :
+  cslFile( false )
+  , slotno( -1 )
+  , errMessShown(false)
 {
 }
 ContactList::~ContactList()
@@ -128,7 +131,7 @@ bool ContactList::initialise(const QString &fn, int slotno )
 
    return loadOK;
 }
-bool ContactList::cslLoad( void )
+bool ContactList::cslLoad( )
 {
    // read data from file
    CsvReader csv;
@@ -176,7 +179,7 @@ bool ContactList::cslLoad( void )
    }
    return false;
 }
-bool ContactList::cslLoadContacts( void )
+bool ContactList::cslLoadContacts( )
 {
    return true;
 }
@@ -198,6 +201,6 @@ ListContact *ContactList::pcontactAt( int i )
    {
       return ctList.at( i );
    }
-   return 0;
+   return nullptr;
 }
 

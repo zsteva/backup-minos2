@@ -16,7 +16,7 @@
 #include <QThread>
 #include "rotcontrol.h"
 #include <hamlib/rotator.h>
-#include "rotatorCommonConstants.h"
+
 
 
 
@@ -85,8 +85,8 @@ int RotControl::getMaxMinRotation(int rotNumber, int *maxRot, int *minRot)
     my_rot = rot_init(rotNumber);
     if (!my_rot == 0)
     {
-        *maxRot = my_rot->caps->max_az;
-        *minRot = my_rot->caps->min_az;
+        *maxRot = int(my_rot->caps->max_az);
+        *minRot = int(my_rot->caps->min_az);
     }
     else
     {
@@ -100,7 +100,7 @@ int RotControl::getMaxMinRotation(int rotNumber, int *maxRot, int *minRot)
 }
 
 
-int RotControl::init(srotParams selectedAntenna)
+int RotControl::init(srotParams &selectedAntenna)
 {
     int retcode;
 
@@ -121,7 +121,7 @@ int RotControl::init(srotParams selectedAntenna)
         return retcode = -14;
     }
 
-
+    /*   remove
     // get rotator parameters
     curRotParams.antennaName = selectedAntenna.antennaName;
     curRotParams.baudrate =  selectedAntenna.baudrate;
@@ -133,7 +133,7 @@ int RotControl::init(srotParams selectedAntenna)
     curRotParams.handshake = getSerialHandshakeCode(selectedAntenna.handshake);
     curRotParams.serial_rate_max = my_rot->caps->serial_rate_max;
     curRotParams.serial_rate_min = my_rot->caps->serial_rate_min;
-
+    */
 
     // load rotator params to open
     if (rig_port_e(selectedAntenna.portType) == RIG_PORT_SERIAL)
@@ -160,11 +160,14 @@ int RotControl::init(srotParams selectedAntenna)
     {
 
         set_serialConnected(true);
+
+        /* remove
         // update rotator specific parameters
         curRotParams.max_azimuth = my_rot->caps->max_az;
         curRotParams.min_azimuth = my_rot->caps->min_az;
         curRotParams.serial_rate_max = my_rot->caps->serial_rate_max;
         curRotParams.serial_rate_min = my_rot->caps->serial_rate_min;
+        */
     }
     else
     {
@@ -214,6 +217,8 @@ bool RotControl::getRotatorList(QComboBox *cb)
 
     if(capsList.count()==0) return false;
     QStringList sl;
+    // add blank at beginning
+    //sl << "";
     for (i=0;i<capsList.count();i++)
     {
 
@@ -332,7 +337,7 @@ int RotControl::getRotatorModelIndex()
     return -1;
 }
 
-*/
+
 
 
 
@@ -371,6 +376,7 @@ int RotControl::getMinBaudRate()
 {
     return curRotParams.serial_rate_min;
 }
+*/
 
 // stop azimuth rotation
 
@@ -478,45 +484,48 @@ bool RotControl::get_serialConnected()
 
 
 
- enum serial_parity_e RotControl::getSerialParityCode(int index)
- {
+enum serial_parity_e RotControl::getSerialParityCode(int index)
+{
 
-     return serialData::parityCodes[index];
+    return serialData::parityCodes[index];
 
- }
+}
 
- enum serial_handshake_e RotControl::getSerialHandshakeCode(int index)
- {
+enum serial_handshake_e RotControl::getSerialHandshakeCode(int index)
+{
 
-     return serialData::handshakeCodes[index];
- }
+    return serialData::handshakeCodes[index];
+}
 
- QStringList RotControl::getParityCodeNames()
- {
-    return serialData::parityStr;
- }
+QStringList RotControl::getParityCodeNames()
+{
+   return serialData::parityStr;
+}
 
- QStringList RotControl::getHandShakeNames()
- {
-     return serialData::handshakeStr;
- }
+QStringList RotControl::getHandShakeNames()
+{
+    return serialData::handshakeStr;
+}
 
- QStringList RotControl::getBaudRateNames()
- {
+QStringList RotControl::getBaudRateNames()
+{
 
 
-     return serialData::baudrateStr;
- }
+    return serialData::baudrateStr;
+}
 
- QStringList RotControl::getDataBitsNames()
- {
-     return serialData::databitsStr;
- }
+QStringList RotControl::getDataBitsNames()
+{
+    return serialData::databitsStr;
+}
 
- QStringList RotControl::getStopBitsNames()
- {
-     return serialData::stopbitsStr;
- }
+QStringList RotControl::getStopBitsNames()
+{
+    return serialData::stopbitsStr;
+}
+
+
+
 
 QString RotControl::gethamlibErrorMsg(int errorCode)
 {
@@ -534,28 +543,7 @@ QStringList RotControl::gethamlibErrorMsg()
     return serialData::hamlibErrorMsg;
 }
 
-// not tested........
-int RotControl::calcSouthBearing(int rotatorBearing)
-{
 
-    // convert rotator bearing to actual bearing for rotator with southstop
-
-    if (rotatorBearing >= getMinAzimuth() && rotatorBearing < COMPASS_HALF)
-    {
-        return rotatorBearing + COMPASS_HALF;
-    }
-    else if (rotatorBearing >= COMPASS_HALF && rotatorBearing <= getMinAzimuth())
-    {
-        return rotatorBearing - COMPASS_HALF;
-    }
-    else
-    {
-        // error
-        return 2000;     // need an error code define....
-    }
-
-
-}
 
 
 QString RotControl::gethamlibVersion()

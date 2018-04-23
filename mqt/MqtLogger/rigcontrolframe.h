@@ -18,14 +18,8 @@
 #ifndef RIGCONTROLFRAME_H
 #define RIGCONTROLFRAME_H
 
-#include <QMenu>
-#include <QAction>
-#include <QToolButton>
-#include <QRadioButton>
+#include "base_pch.h"
 #include <QShortcut>
-#include <QComboBox>
-#include <QStringList>
-#include "logger_pch.h"
 #include "RPCCommandConstants.h"
 #include "rigmemcommondata.h"
 
@@ -68,13 +62,24 @@ signals:
 
 };
 
+class quickBandSelData
+{
+
+public:
+
+    QString band;
+    QString freq;
+
+
+};
+
 class RigControlFrame : public QFrame
 {
     Q_OBJECT
 
 public:
     explicit RigControlFrame(QWidget *parent);
-    ~RigControlFrame();
+    ~RigControlFrame() override;
 
     Ui::RigControlFrame *ui;
 
@@ -87,12 +92,12 @@ public:
 
     void setRadioLoaded();
     void setRadioList(QString);
+    void setBandList(QString);
     void setMode(QString);
     void setFreq(QString);
-    void setRadioName(QString);
+    void setRadioName(QString, QString mode);
     void setRadioState(QString);
     void setRadioTxVertState(QString s);
-    void setRadioNameFromRigControl(QString name);
 
     bool isRadioLoaded();
 
@@ -109,11 +114,11 @@ public:
     bool checkRadioState();
 
 
-    void on_ContestPageChanged(QString freq, QString mode);
+    void on_ContestPageChanged();
 
 
 signals:
-    void selectRadio(QString);
+    void selectRadio(QString, QString);
     void sendRadioName(QString);
     void sendFreqControl(QString);
     void noRadioSendFreq(QString);
@@ -157,6 +162,8 @@ private:
     LoggerContestLog *ct;
 
     QMap<int, RunMemoryButton *> runButtonMap;
+    QVector<quickBandSelData> listOfBands;
+
 
 
     QShortcut* freqEditShortKey;
@@ -175,6 +182,7 @@ private:
     QString radioName;
     QString rigAppName;
     QString radioState;
+    //QStringList listOfBands;
 
 
     QString lastFreq;

@@ -9,8 +9,11 @@
 //----------------------------------------------------------------------------
 #ifndef LoggerContestH
 #define LoggerContestH 
+#include "base_pch.h"
 //----------------------------------------------------------------------------
+#include "profiles.h"
 #include "rigmemcommondata.h"
+#include "PubSubValue.h"
 
 class DisplayContestContact;
 struct StanzaPos
@@ -45,7 +48,7 @@ class LoggerContestLog : public BaseContestLog
 
    protected:
       // minos file
-      virtual bool minosSaveFile( bool newfile );
+      virtual bool minosSaveFile( bool newfile ) override;
    public:
       bool isMinosFile()
       {
@@ -79,16 +82,8 @@ class LoggerContestLog : public BaseContestLog
       SettingsBundle stationBundle;    // individual station
       MinosStringItem<QString> stationBundleName;
 
-      AppSettingsBundle appBundle;    // individual apps
-      MinosStringItem<QString> appBundleName;
-
-      MinosStringItem<QString> appRigControl;
-      MinosStringItem<QString> appBandMap;
-      MinosStringItem<QString> appRotator;
-      MinosStringItem<QString> appVoiceKeyer;
-
-      MinosStringItem<QString> radioName;
-      MinosStringItem<QString> rotatorName;
+      MinosItem<PubSubName> radioName;
+      MinosItem<PubSubName> rotatorName;
 
       MinosStringItem<QString> VHFContestName;
 
@@ -148,34 +143,34 @@ class LoggerContestLog : public BaseContestLog
       // dirty info is only relevant when it is being editted
       // but needs to stay with the data
 
-      virtual void clearDirty();
-      virtual void setDirty();
+      virtual void clearDirty() override;
+      virtual void setDirty() override;
       // end of contest details
 
       void setINIDetails();
 
       // startup/closedown
 
-      LoggerContestLog( void );
+      LoggerContestLog( );
       void initialiseINI();
       bool initialise( int slotno );
       bool initialise(const QString &, bool, int slotno );
-      ~LoggerContestLog();
+      ~LoggerContestLog() override;
 
 
       // common file stuff
-      bool commonSave( bool newfile );
-      void closeFile( void );
+      bool commonSave( bool newfile ) override;
+      void closeFile( ) override;
 
       // minos save
-      virtual bool minosSaveContestContact(const QSharedPointer<BaseContact> lct );
+      virtual bool minosSaveContestContact(const QSharedPointer<BaseContact> lct ) override;
 
       // GJV file manipulation
-      int readBlock( int bno );
-      int writeBlock(QSharedPointer<QFile> fd, int bno );
+      qint64 readBlock( int bno );
+      qint64 writeBlock(QSharedPointer<QFile> fd, int bno );
       bool GJVsave( GJVParams & );
-      virtual bool GJVload( void );
-      bool GJVloadContacts( void );
+      virtual bool GJVload( ) override;
+      bool GJVloadContacts( );
 
       // Import/export etc
 
@@ -189,7 +184,7 @@ class LoggerContestLog : public BaseContestLog
       bool exportMinos(QSharedPointer<QFile> expfd );
 
       virtual void makeContact( bool time_now, QSharedPointer<BaseContact>& ) override;
-      QSharedPointer<BaseContact> addContact(int newctno, int extra_flags, bool save_new, bool catchup , QString mode, dtg ctTime);
+      QSharedPointer<BaseContact> addContact(int newctno, unsigned short extra_flags, bool save_new, bool catchup , QString mode, dtg ctTime);
       QSharedPointer<BaseContact> addContactBetween(QSharedPointer<BaseContact> prior, QSharedPointer<BaseContact> next , dtg ctTime);
       void removeContact(QSharedPointer<BaseContact> );
 

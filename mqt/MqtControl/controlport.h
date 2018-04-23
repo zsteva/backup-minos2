@@ -12,7 +12,9 @@
 //#include "comport.h"
 //#include "portconf.h"
 //#include "WindowsMonitor.h"
-
+#include <QString>
+#include <QVector>
+#include <QWidget>
 class commonPort;
 class LineConfig;
 class PortConfig;
@@ -67,7 +69,7 @@ class commonPort
       virtual bool openPort() = 0;
       virtual bool closePort() = 0;
 
-      void checkControls( void );
+      void checkControls( );
 
       virtual void setLine( commonLineControl * ) = 0;
       virtual bool getLine( commonLineControl * ) = 0;
@@ -88,16 +90,16 @@ class WindowsMonitorPort: public commonPort
    public:
 
       WindowsMonitorPort(QWidget *p, const PortConfig &port );
-      virtual ~WindowsMonitorPort();
+      virtual ~WindowsMonitorPort() override;
 
-      virtual bool initialisePort();
+      virtual bool initialisePort() override;
 
-      virtual bool openPort();
-      virtual bool closePort();
+      virtual bool openPort() override;
+      virtual bool closePort() override;
 
-      void setLine( commonLineControl * );
-      bool getLine( commonLineControl * );
-      void getLineState();
+      void setLine( commonLineControl * ) override;
+      bool getLine( commonLineControl * ) override;
+      void getLineState() override;
 };
 class PiGPIOPort: public commonPort
 {
@@ -106,17 +108,17 @@ class PiGPIOPort: public commonPort
    public:
 
       PiGPIOPort(const PortConfig &port );
-      virtual ~PiGPIOPort();
+      virtual ~PiGPIOPort() override;
 
-      virtual bool initialisePort();
+      virtual bool initialisePort() override;
 
-      virtual bool openPort();
-      virtual bool closePort();
+      virtual bool openPort() override;
+      virtual bool closePort() override;
       virtual void addLine( const LineConfig &line ) override;
 
-      void setLine( commonLineControl * );
-      bool getLine( commonLineControl * );
-      void getLineState();
+      void setLine( commonLineControl * ) override;
+      bool getLine( commonLineControl * ) override;
+      void getLineState() override;
 };
 #ifdef K8055PORT
 class K8055Port: public commonPort

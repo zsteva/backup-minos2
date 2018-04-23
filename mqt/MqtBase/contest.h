@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------------
 #ifndef ContestH
 #define ContestH 
+#include "base_pch.h"
+
 //----------------------------------------------------------------------------
 // This header covers the structure of contests, logs, etc
 
@@ -74,20 +76,10 @@ class BaseContestLog: public BaseLogList
       // totally differently
 
 
-   protected:
-      int ct_stanzaCount;
-      unsigned long nextBlock;
-      bool suppressProtected;
-      bool unwriteable;
-
-      virtual bool minosSaveFile( bool /*newfile*/ )
-      {
-         return false;
-      }
-
    public:
-      int cslotno;
-      int unfilledCount;
+      QString uuid;
+      int cslotno = -1;
+      int unfilledCount = 0;
 
       BaseContestLog(const BaseContestLog &);   // I hope a copy constructor
       BaseContestLog();
@@ -148,11 +140,11 @@ class BaseContestLog: public BaseLogList
 
       virtual void clearDirty();
       virtual void setDirty();
-      bool isReadOnly( void )
+      bool isReadOnly( )
       {
          return (protectedContest.getValue() && ! suppressProtected) || unwriteable;
       }
-      bool isProtected( void )
+      bool isProtected( )
       {
          return protectedContest.getValue();
       }
@@ -168,7 +160,7 @@ class BaseContestLog: public BaseLogList
             protectedContest.setValue( true );
          }
       }
-      bool isProtectedSuppressed( void )
+      bool isProtectedSuppressed( )
       {
          return suppressProtected;
       }
@@ -183,6 +175,14 @@ class BaseContestLog: public BaseLogList
       bool isUnwriteable( )
       {
          return unwriteable;
+      }
+      unsigned long getNextBlock()
+      {
+          return nextBlock;
+      }
+      void setNextBlock(unsigned long n)
+      {
+          nextBlock = n;
       }
       // end of contest details
 
@@ -200,45 +200,44 @@ class BaseContestLog: public BaseLogList
       QString opsQSO1;
       QString opsQSO2;
 
-      int maxSerial;
-      long contestScore;
-
-      bool locValid;
-      double ode;
-      double odn;
-      double cosodn ;            /* cos of odn */
-      double sinodn ;            /* sin of odn */
+      int maxSerial = 0;
+      double ode = 0.0;
+      double odn = 0.0;
+      double cosodn  = 0.0;            /* cos of odn */
+      double sinodn  = 0.0;            /* sin of odn */
 
       QString cfileName;
       QString publishedName;
 
       // duplicate sheet
 
-      unsigned long validationPoint;   // key of contact from log list to be treated
+      unsigned long validationPoint = 0;   // key of contact from log list to be treated
       dupsheet DupSheet;
-      int nextScan;
+      int nextScan = -2;
+      long contestScore = 0;
 
-      bool NonUKloc_mult;
-      int NonUKloc_multiplier;
-      bool UKloc_mult;
-      int UKloc_multiplier;
+      bool locValid = false;
+      bool NonUKloc_mult = false;
+      bool UKloc_mult = false;
+      int NonUKloc_multiplier = 0;
+      int UKloc_multiplier = 0;
       
-      int nctry;
-      int ndistrict;
-      int nlocs;
+      int nctry = 0;
+      int ndistrict = 0;
+      int nlocs = 0;
 
-      int nbonus;
-      int bonus;
+      int nbonus = 0;
+      int bonus = 0;
 
-      int multsAsBonuses;
-      int bonusYearLoaded;
+      int multsAsBonuses = 0;
+      int bonusYearLoaded = 0;
       QString bonusTypeLoaded;
       QMap<QString, int> locBonuses;
       void loadBonusList();
       int getSquareBonus(QString sloc);
 
-      int *districtWorked;
-      int *countryWorked;
+      int *districtWorked = nullptr;
+      int *countryWorked = nullptr;
       LocList locs;
 
       int getDistrictsWorked( int item )
@@ -253,13 +252,24 @@ class BaseContestLog: public BaseLogList
 
       // stats data
 
-      int QSO1, QSO2, QSO1p, QSO2p;
-      long kms1, kms2, kms1p, kms2p;
-      int mults1, mults2, mults1p, mults2p;
-      int bonus1, bonus2, bonus1p, bonus2p;
+      int QSO1 = 0;
+      int QSO2 = 0;
+      int QSO1p = 0;
+      int QSO2p = 0;
+      long kms1 = 0;
+      long kms2 = 0;
+      long kms1p = 0;
+      long kms2p = 0;
+      int mults1 = 0;
+      int mults2 = 0;
+      int mults1p = 0;
+      int mults2p = 0;
+      int bonus1 = 0;
+      int bonus2 = 0;
+      int bonus1p = 0;
+      int bonus2p = 0;
       bool updateStat(QSharedPointer<BaseContact> cct , int sp1, int sp2);
       void updateStats(int p1, int p2);
-      char lasttchar;
 
       // methods
 
@@ -272,9 +282,9 @@ class BaseContestLog: public BaseLogList
       {
          return false;
       }
-      virtual void closeFile( void )
+      virtual void closeFile( )
       {}
-      virtual bool GJVload( void )
+      virtual bool GJVload( )
       {
          return false;
       }
@@ -287,10 +297,10 @@ class BaseContestLog: public BaseLogList
 
       // general
 
-      void validateLoc( void );
+      void validateLoc( );
       void getMatchText(QSharedPointer<BaseContact>, QString &, const BaseContestLog *const ct ) const;
       void getMatchField( QSharedPointer<BaseContact> pct, int col, QString &disp, const BaseContestLog *const ct ) const;
-      void scanContest( void );
+      void scanContest( );
       void setScore( QString & );
       bool isCurDup(QSharedPointer<BaseContact>) const;
 
@@ -298,7 +308,7 @@ class BaseContestLog: public BaseLogList
 
       // manipulation of contact list
 
-      int getContactCount( void );
+      int getContactCount( );
       int indexOf( QSharedPointer<BaseContact> item );
       QSharedPointer<BaseContact> pcontactAtSeq( unsigned long logSequence );
       QSharedPointer<BaseContact> pcontactAt(int offset );
@@ -313,10 +323,22 @@ class BaseContestLog: public BaseLogList
       int CalcNearest( const QString &scalcloc );
       int CalcCentres( const QString &scalcloc );
       bool getsdist(const QString &loc, QString &minloc, double &mindist );
-      QSharedPointer<BaseContact> getBestDX( void );
+      QSharedPointer<BaseContact> getBestDX( );
       QString dateRange( DTG dstyle );
       bool checkTime(const dtg &t) const;
       bool checkTime(const QDateTime &t) const;
+
+protected:
+   unsigned long nextBlock = 1;
+   int ct_stanzaCount = 0;
+   bool suppressProtected = false;
+   bool unwriteable = false;
+
+   virtual bool minosSaveFile( bool /*newfile*/ )
+   {
+      return false;
+   }
+
 
 };
 class ContestScore

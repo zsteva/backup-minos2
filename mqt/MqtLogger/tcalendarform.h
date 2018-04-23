@@ -22,7 +22,7 @@
 #ifndef TCALENDARFORM_H
 #define TCALENDARFORM_H
 
-#include "logger_pch.h"
+#include "base_pch.h"
 #include "Calendar.h"
 #include "CalendarList.h"
 
@@ -36,6 +36,8 @@ namespace Ui
 class TCalendarForm : public QDialog
 {
         Q_OBJECT
+
+        Ui::TCalendarForm *ui;
     private:  	// User declarations
 
         void FormShow ( );
@@ -53,7 +55,7 @@ public Q_SLOTS:
 
     public:  		// User declarations
         explicit TCalendarForm( QWidget *parent, CalType calType );
-        ~TCalendarForm();
+        ~TCalendarForm() override;
         CalType calType;
         Calendar vhf;
         Calendar hf;
@@ -83,8 +85,6 @@ public Q_SLOTS:
 
         void on_CalendarGrid_doubleClicked(const QModelIndex &index);
 
-private:
-        Ui::TCalendarForm *ui;
 };
 
 #endif // TCALENDARFORM_H

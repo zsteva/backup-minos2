@@ -6,11 +6,19 @@
 // COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "MLogFile.h"
 #include "INIFile.h"
+#include "profiles.h"
 
+AppSettingsBundle::AppSettingsBundle():
+    SettingsBundle()
+{}
+bool AppSettingsBundle::populateDefaultSection()
+{
+    return true;
+}
 //=============================================================================
 BundleFile::BundleFile( PROFILES p )
 {
@@ -35,13 +43,12 @@ BundleFile::BundleFile( PROFILES p )
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpPreloadSection, "PreloadSection", "Default", "Preload contests default section", "Section to use in preload file", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpListsFile, "ListsFile", "./Configuration/ListPreload.ini", "List preload file", "File containing list pre-loads", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpListsSection, "ListsSection", "Default", "Preload Lists file section", "Section to use in lists preload file", false ) ) );
-        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpAppFile, "AppsFile", "./Configuration/Apps.ini", "Apps File", "File containing Apps settings", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpAutoFill, "AutoFill", false, "Auto Fill signal report", "Auto Fill signal report on return", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpAuxWindows, "Auxiliary Windows", 1, "", "Number of Auxiliary Windows", false ) ) );
 
         break;
     case epPRELOADPROFILE:
-        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppCurrent, "CurrentLog", 0, 0, "hint", false ) ) );
+        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppCurrent, "CurrentLog", 0, nullptr, "hint", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppDefSession, "DefaultSessionName", "Default Session", "Default Session", "hint", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eppSession, "CurrentSession", "Default Session", "Default Session", "hint", false ) ) );
         break;
@@ -98,13 +105,6 @@ BundleFile::BundleFile( PROFILES p )
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espOffset, "Bearing Offset", 0, "Antenna Bearing Offset", "Amount to offset antenna bearings", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espRadioName, "Radio", "", "Radio in Rig Control", "Radio in Rig Control", false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( espRotatorName, "rotator", "", "Rotator in Rotator Control", "Rotator in Rotator Control", false ) ) );
-        break;
-
-    case epAPPPFROFILE:
-        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eapBandMap, "Band Map", "BandMap", "Band Map App", "Band Map App", false ) ) );
-        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eapRigControl, "Rig Control", "RigControl", "Rig Control App", "Rig Control App", false ) ) );
-        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eapRotator, "Rotator", "Rotator", "Rotator App", "Rotator App", false ) ) );
-        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( eapVoiceKeyer, "Voice Keyer", "Keyer", "Voice Keyer App", "Voice Keyer App", false ) ) );
         break;
 
     case epLOCSQUARESPROFILE:
@@ -465,7 +465,7 @@ void SettingsBundle::clearProfileSection( bool clearCurr)
       }
    }
 }
-void SettingsBundle::flushProfile( void )
+void SettingsBundle::flushProfile( )
 {
    if ( !bundleFile || !bundleFile->iniFile )
    {
@@ -475,7 +475,14 @@ void SettingsBundle::flushProfile( void )
 }
 //=============================================================================
 ProfileEntry::ProfileEntry(int id, const char *name, const char *def, const char *dispname, const char *hint, bool RO )
-      : id( id ), name( name ), sdefaultval( def ), hint( hint ), pt( petString ), dispname(dispname), RO(RO)
+      :
+        pt( petString ),
+        id( id ),
+        name( name ),
+        dispname(dispname),
+        sdefaultval( def ),
+        hint( hint ),
+        RO(RO)
 {}
 /*
 ProfileEntry::ProfileEntry(int id, const QString &n, const QString &d, const QString &dname, const QString &h, bool RO )
@@ -483,10 +490,26 @@ ProfileEntry::ProfileEntry(int id, const QString &n, const QString &d, const QSt
 {}
 */
 ProfileEntry::ProfileEntry(int id, const char *name, int def, const char *dispname, const char *hint, bool RO )
-      : id( id ), name( name ), idefaultval( def ), sdefaultval( QString::number( def ) ), hint( hint ), pt( petInteger ), dispname(dispname), RO(RO)
+      :
+        pt( petInteger ),
+        id( id ),
+        name( name ),
+        dispname(dispname),
+        sdefaultval( QString::number( def ) ),
+        idefaultval( def ),
+        hint( hint ),
+        RO(RO)
 {}
 ProfileEntry::ProfileEntry(int id, const char *name, bool def, const char *dispname, const char *hint, bool RO )
-      : id( id ), name( name ), bdefaultval( def ), sdefaultval( def?"1":"0" ), hint( hint ), pt( petBool ), dispname(dispname), RO(RO)
+      :
+        pt( petBool ),
+        id( id ),
+        name( name ),
+        dispname(dispname),
+        sdefaultval( def?"1":"0" ),
+        bdefaultval( def ),
+        hint( hint ),
+        RO(RO)
 {}
 void ProfileEntry::createEntry( SettingsBundle *s )
 {

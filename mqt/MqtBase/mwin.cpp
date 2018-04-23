@@ -9,6 +9,12 @@
 #include "base_pch.h"
 
 const double dtg::daySecs = 86400.0;	// 24 * 60 * 60
+
+//---------------------------------------------------------------------------
+BaseLogList::BaseLogList()
+{}
+BaseLogList::~BaseLogList()
+{}
 //---------------------------------------------------------------------------
 GJVParams::GJVParams(QSharedPointer<QFile> f )
       : diskBlock( 1 ), fd( f ), count( 0 )
@@ -16,7 +22,7 @@ GJVParams::GJVParams(QSharedPointer<QFile> f )
 GJVParams::~GJVParams()
 {}
 //============================================================
-Locator::Locator( void ) : valRes( ERR_NOLOC )
+Locator::Locator( ) : valRes( ERR_NOLOC )
 {
    loc.setInitialValue( "        " );
 }
@@ -34,7 +40,7 @@ char Locator::validate( double &lon, double &lat )
    valRes = lonlat( loc.getValue(), lon, lat );
    return valRes;
 }
-char Locator::validate( void )
+char Locator::validate( )
 {
    double longitude = 0.0;
    double latitude = 0.0;
@@ -49,7 +55,7 @@ dtg::dtg( bool now ): baddtg(false)
     if ( now )
     {
         QDateTime tdt = QDateTime::currentDateTimeUtc();
-        int correction = MinosParameters::getMinosParameters() ->getBigClockCorrection();
+        qint64 correction = MinosParameters::getMinosParameters() ->getBigClockCorrection();
         if ( correction )
         {
             tdt = tdt.addSecs( correction );
@@ -328,7 +334,7 @@ void dtg::setTime( const QString &t, DTG dstyle )
    stime.setValue( temp );
    baddtg = false;
 }
-int dtg::notEntered( void )
+int dtg::notEntered( )
 {
    int i;
    bool te = false;
@@ -431,7 +437,7 @@ Callsign::~Callsign()
 {
    // nothing needed
 }
-char Callsign::validate( )
+int Callsign::validate( )
 {
    if ( valRes != CS_NOT_VALIDATED )
       return valRes;
@@ -470,8 +476,8 @@ char Callsign::validate( )
 
    const char *f = csv;
 
-   char *spt = 0;          // CEPT separator
-   char *spt2 = 0;         // suffix separator
+   char *spt = nullptr;          // CEPT separator
+   char *spt2 = nullptr;         // suffix separator
 
    char *cse = &csv[ cslen ];  // zero termination
 

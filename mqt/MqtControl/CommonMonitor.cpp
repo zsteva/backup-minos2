@@ -57,7 +57,7 @@ void commonController::tickEvent()        // this will often be an interrupt rou
 {
    checkControls();
 }
-void commonController::checkControls( void )
+void commonController::checkControls( )
 {
    // loop through ports, checkControls on each
    for ( QVector < commonPort *>::iterator i = portChain.begin(); i != portChain.end(); i++ )
@@ -67,7 +67,7 @@ void commonController::checkControls( void )
 }
 commonPort *commonController::createPort( const PortConfig &port )
 {
-    commonPort * cp = 0;
+    commonPort * cp = nullptr;
     foreach(commonPort *ni, portChain)
     {
         if (ni->portName == port.name)
@@ -104,7 +104,7 @@ commonPort *commonController::createPort( const PortConfig &port )
 }
 commonLineControl *commonController::findLine( const QString &name, bool lineIn )
 {
-   commonLineControl * clc = 0;
+   commonLineControl * clc = nullptr;
    for ( QVector < commonPort *>::iterator i = portChain.begin(); i != portChain.end(); i++ )
    {
       clc = ( *i ) ->findLine( name, lineIn );

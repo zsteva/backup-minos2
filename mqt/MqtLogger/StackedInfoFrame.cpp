@@ -1,8 +1,8 @@
+#include "base_pch.h"
 #include "StackedInfoFrame.h"
-#include <QSignalMapper>
-#include <QSplitter>
 #include "tlogcontainer.h"
 #include "tsinglelogframe.h"
+#include "LoggerContest.h"
 
 #include "ui_StackedInfoFrame.h"
 
@@ -21,9 +21,9 @@ bool showUnworked = false;
 StackedInfoFrame::StackedInfoFrame(QWidget *parent, int instance) :
     QFrame(parent),
     ui(new Ui::StackedInfoFrame),
-    contest(0),
-    filterClickEnabled(false),
-    stackInstance(instance)
+    stackInstance(instance),
+    contest(nullptr),
+    filterClickEnabled(false)
 {
     ui->setupUi(this);
 
@@ -118,7 +118,7 @@ void StackedInfoFrame::on_ScrollToDistrict( const QString &qth, BaseContestLog *
         QSharedPointer<DistrictEntry> dist = MultLists::getMultLists() ->searchDistrict( qth );
         if ( dist )
         {
-           unsigned int district_ind = MultLists::getMultLists() ->getDistListIndexOf( dist );
+           int district_ind = MultLists::getMultLists() ->getDistListIndexOf( dist );
            ui->districtFrame->scrollToDistrict( district_ind, true );
         }
     }

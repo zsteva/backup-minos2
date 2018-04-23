@@ -21,6 +21,7 @@
 
 #ifndef MShowMessageDlgH
 #define MShowMessageDlgH 
+#include <QWidget>
 //---------------------------------------------------------------------------
 extern void mShowMessage( const QString &mess, QWidget *Owner );
 extern void mShowMessage( const char *mess, QWidget *Ownersshowm );

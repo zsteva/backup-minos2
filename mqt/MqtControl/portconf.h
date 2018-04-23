@@ -8,7 +8,8 @@
 /////////////////////////////////////////////////////////////////////////////
 #ifndef portconfH
 #define portconfH
-
+#include <QString>
+#include <QMap>
 class commonController;
 class PortConfig
 {

@@ -61,11 +61,59 @@ void MinosId::setId( const QString &s )
    }
 }
 
+//=============================================================================
+
+// called from XMPPRPCObj instead of the one in MinosConnection
+static void serversendAction( XStanza *a )
+{
+   // stanza has a "to" - but this is internal, so we need to dispatch it
+   TIXML_STRING mess = a->getActionMessage();
+
+   // convert from a RPCParam structure to a DOM
+
+   TiXmlBase::SetCondenseWhiteSpace( false );
+   TiXmlDocument xdoc;
+   xdoc.Parse( mess.c_str(), nullptr );
+   TiXmlElement *x = xdoc.RootElement();
+
+   if ( a->getFrom().size() == 0 )
+   {
+      // insert a from of ourselves.
+
+      QString from = MinosServer::getMinosServer() ->getServerName();
+      if ( from.length() )
+      {
+         x->SetAttribute( "from", from.toStdString().c_str() );
+      }
+   }
+   QString to = a->getTo();
+   if ( to.size() != 0 )
+   {
+      x->SetAttribute( "to", to.toStdString().c_str() );
+   }
+   // and now dispatch to its destination
+
+   if ( !MinosServer::getMinosServer() ->forwardStanza( nullptr, x ) )              // our own services
+   {
+      if ( !MinosClientListener::getListener() ->sendClient( x ) )         // look at real and potential clients
+      {
+         if ( !MinosServerListener::getListener() ->sendServer( x ) )         // look at real and potential servers
+         {
+            // or no valid destination found
+            return ;
+         }
+      }
+   }
+   // or no valid destination found
+}
 //==============================================================================
 MinosCommonConnection::MinosCommonConnection()
-    : fromIdSet( false ),
+    :
     remove_socket( false )
+  , fromIdSet( false )
 {
+    setSendAction(serversendAction);
+
     lastRx = QDateTime::currentMSecsSinceEpoch() + 5000;
 }
 MinosCommonConnection::~MinosCommonConnection()
@@ -88,7 +136,7 @@ bool MinosCommonConnection::sendRaw ( const TIXML_STRING xmlstr )
       sprintf( xmlbuff, "&&%lu%s&&", static_cast<unsigned long>(xmllen), xmlstr.c_str() );
       xmllen = strlen( xmlbuff );
 
-      int ret = sock->write ( xmlbuff, xmllen );
+      qint64 ret = sock->write ( xmlbuff, xmllen );
       onLog ( xmlbuff, xmllen, 0 );
       delete [] xmlbuff;
 
@@ -122,51 +170,6 @@ bool MinosCommonConnection::tryForwardStanza( TiXmlElement *tix )
    return res;
 }
 //==============================================================================
-// called from XMPPRPCObj instead of the one in MinosConnection
-void sendAction( XStanza *a )
-{
-   // stanza has a "to" - but this is internal, so we need to dispatch it
-   TIXML_STRING mess = a->getActionMessage();
-
-   // convert from a RPCParam structure to a DOM
-
-   TiXmlBase::SetCondenseWhiteSpace( false );
-   TiXmlDocument xdoc;
-   xdoc.Parse( mess.c_str(), 0 );
-   TiXmlElement *x = xdoc.RootElement();
-
-   if ( a->getFrom().size() == 0 )
-   {
-      // insert a from of ourselves.
-
-      QString from = MinosServer::getMinosServer() ->getServerName();
-      if ( from.length() )
-      {
-         x->SetAttribute( "from", from.toStdString().c_str() );
-      }
-   }
-   QString to = a->getTo();
-   if ( to.size() != 0 )
-   {
-      x->SetAttribute( "to", to.toStdString().c_str() );
-   }
-   // and now dispatch to its destination
-
-   if ( !MinosServer::getMinosServer() ->forwardStanza( 0, x ) )              // our own services
-   {
-      if ( !MinosClientListener::getListener() ->sendClient( x ) )         // look at real and potential clients
-      {
-         if ( !MinosServerListener::getListener() ->sendServer( x ) )         // look at real and potential servers
-         {
-            // or no valid destination found
-            return ;
-         }
-      }
-   }
-   // or no valid destination found
-}
-//=============================================================================
-
 void MinosCommonConnection::on_readyRead()
 {
    // select says we have data, so read it
@@ -177,16 +180,16 @@ void MinosCommonConnection::on_readyRead()
    while (sock->bytesAvailable() > 0)
    {
 
-       int rxlen = sock->read(rxbuff, 4096 - 1);
+       qint64 rxlen = sock->read(rxbuff, 4096 - 1);
        if ( rxlen > 0 )
        {
-          rxbuff[ rxlen ] = '\0';
+          rxbuff[ rxlen ] = 0;
 
           // We might have embedded nulls between message parts - so strip them
           int rxpt = 0;
           while ( rxpt < rxlen )
           {
-             int ptlen = static_cast<int> (strlen( &rxbuff[ rxpt ] ));
+             size_t ptlen = strlen( &rxbuff[ rxpt ] );
              if ( ptlen )
              {
                 onLog ( &rxbuff[ rxpt ], ptlen, 1 );  // but this ignores the wrapper
@@ -202,7 +205,7 @@ void MinosCommonConnection::on_readyRead()
              {
                  QStringRef slen = packetbuff.midRef(2, packetoffset - 2);
                  int packetlen = slen.toInt();
-                if ( (packetlen <= static_cast<int> (packetbuff.size()) - 2) && packetbuff.indexOf( ">&&" ) )
+                if ( (packetlen <= static_cast<int> (packetbuff.size()) - 2) && packetbuff.indexOf( ">&&" ) >= 0 )
                 {
                    QString packet = packetbuff.mid( packetoffset, packetlen );
                    int pbsize = packetbuff.size();
@@ -211,18 +214,37 @@ void MinosCommonConnection::on_readyRead()
                        rlen = 0;    // try to fix non-utf characters, e.g. degree character
                    packetbuff = packetbuff.right(  rlen );
 
-                   TiXmlBase::SetCondenseWhiteSpace( false );
-                   TiXmlDocument xdoc;
-                   TIXML_STRING p = packet.toStdString();
-                   xdoc.Parse( p.c_str(), 0 );
-                   TiXmlElement *tix = xdoc.RootElement();
-                   analyseNode( tix );
+                   if (packet.length())
+                   {
+                       TiXmlBase::SetCondenseWhiteSpace( false );
+                       TiXmlDocument xdoc;
+                       TIXML_STRING p = packet.toStdString();
+                       xdoc.Parse( p.c_str(), nullptr );
+                       if ( xdoc.Error())
+                       {
+                           trace(QString("parse failed; ") + xdoc.ErrorDesc());
+                       }
+                       else
+                       {
+                           TiXmlElement *tix = xdoc.RootElement();
+                           analyseNode( tix );
+                       }
+                   }
+                   else
+                   {
+                       trace("empty packet!");
+                   }
                 }
                 else
                 {
                    // partial message, keep receiving until we get more
                    break ;
                 }
+             }
+             else
+             {
+                 // another form of partial message
+                break;
              }
           }
        }

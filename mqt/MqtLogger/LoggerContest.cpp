@@ -6,7 +6,11 @@
 // COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "logger_pch.h"
+#include "base_pch.h"
+
+#include "LoggerContest.h"
+#include "LoggerContacts.h"
+#include "ContestApp.h"
 
 #include "AdifImport.h"
 #include "reg1test.h"
@@ -14,11 +18,11 @@
 #include "enqdlg.h"
 #include "MinosTestExport.h"
 #include "LoggerContest.h"
-//#include "TMinosBandChooser.h"
 #include "BandList.h"
 
-LoggerContestLog::LoggerContestLog( void ) : BaseContestLog(),
-      GJVFile( false ), minosFile( false ),
+LoggerContestLog::LoggerContestLog( ) : BaseContestLog(),
+      minosFile( false ),
+      GJVFile( false ),
       logFile( false ), adifFile( false ), ediFile( false ),
       needExport( false )
 {
@@ -36,23 +40,15 @@ void LoggerContestLog::initialiseINI()
    entryBundle.setProfile( BundleFile::bundleFiles[ epENTRYPROFILE ] );
    QTHBundle.setProfile( BundleFile::bundleFiles[ epQTHPROFILE ] );
    stationBundle.setProfile( BundleFile::bundleFiles[ epSTATIONPROFILE ] );
-   appBundle.setProfile( BundleFile::bundleFiles[ epAPPPFROFILE ] );
-   entryBundleName.setValue( entryBundle.getSection() );
-   QTHBundleName.setValue( QTHBundle.getSection() );
-   stationBundleName.setValue( stationBundle.getSection() );
-   appBundleName.setValue(appBundle.getSection());
+   entryBundleName.setInitialValue( entryBundle.getSection() );
+   QTHBundleName.setInitialValue( QTHBundle.getSection() );
+   stationBundleName.setInitialValue( stationBundle.getSection() );
 }
 void LoggerContestLog::clearDirty()
 {
    entryBundleName.clearDirty();
    QTHBundleName.clearDirty();
    stationBundleName.clearDirty();
-   appBundleName.clearDirty();
-
-   appRigControl.clearDirty();
-   appBandMap.clearDirty();
-   appRotator.clearDirty();
-   appVoiceKeyer.clearDirty();
 
    entrant.clearDirty();
    sqth1.clearDirty();
@@ -114,12 +110,6 @@ void LoggerContestLog::setDirty()
    entryBundleName.setDirty();
    QTHBundleName.setDirty();
    stationBundleName.setDirty();
-   appBundleName.setDirty();
-
-   appRigControl.setDirty();
-   appBandMap.setDirty();
-   appRotator.setDirty();
-   appVoiceKeyer.setDirty();
 
    entrant.setDirty();
    sqth1.setDirty();
@@ -198,15 +188,6 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
 
    // open the settings bundle files
    initialiseINI();
-
-   // preset the apps
-
-   appBundle.startGroup();
-   appBundle.getStringProfile(eapBandMap, appBandMap);
-   appBundle.getStringProfile(eapRigControl, appRigControl);
-   appBundle.getStringProfile(eapRotator, appRotator);
-   appBundle.getStringProfile(eapVoiceKeyer, appVoiceKeyer);
-   appBundle.endGroup();
 
    // preset the stacked info
 
@@ -321,7 +302,6 @@ bool LoggerContestLog::initialise( const QString &fn, bool newFile, int slotno )
                entryBundle.openSection( entryBundleName.getValue() );
                QTHBundle.openSection( QTHBundleName.getValue() );
                stationBundle.openSection( stationBundleName.getValue() );
-               appBundle.openSection(appBundleName.getValue());
                loadOK = true;
             }
          }
@@ -447,29 +427,16 @@ void LoggerContestLog::setINIDetails()
 	  stationBundle.getStringProfile( espAntenna, entAnt );
 	  stationBundle.getStringProfile( espAGL, entAGL );
 	  stationBundle.getIntProfile(espOffset, bearingOffset);
-      stationBundle.getStringProfile( espRadioName, radioName );
-      stationBundle.getStringProfile( espRotatorName, rotatorName );
+      QString s;
+      stationBundle.getStringProfile( espRadioName, s );
+      radioName.setValue( PubSubName(s) );
+      stationBundle.getStringProfile( espRotatorName, s );
+      rotatorName.setValue(PubSubName(s));
       stationBundle.endGroup();
    }
-//   if ( appBundle.getSection() != noneBundle )
-//   {
-        appBundle.startGroup();
-        appBundle.getStringProfile(eapBandMap, appBandMap);
-        appBundle.getStringProfile(eapRigControl, appRigControl);
-        appBundle.getStringProfile(eapRotator, appRotator);
-        appBundle.getStringProfile(eapVoiceKeyer, appVoiceKeyer);
-        appBundle.endGroup();
-//   }
-//   else
-//   {
-//       appBandMap.setValue("");
-//       appRigControl.setValue("");
-//       appRotator.setValue("");
-//       appVoiceKeyer.setValue("");
-//   }
 }
 
-int LoggerContestLog::readBlock( int bno )
+qint64 LoggerContestLog::readBlock( int bno )
 {
     bool sres = GJVcontestFile->seek(bno * bsize);
    if ( !sres)
@@ -477,7 +444,7 @@ int LoggerContestLog::readBlock( int bno )
       MinosParameters::getMinosParameters() ->mshowMessage( "(read) seek failed!" );
    }
 
-   int rsize = GJVcontestFile->read(diskBuffer, bsize);
+   qint64 rsize = GJVcontestFile->read(diskBuffer, bsize);
 
    diskBuffer[ rsize ] = 0;
    if ( rsize < bsize )
@@ -485,7 +452,7 @@ int LoggerContestLog::readBlock( int bno )
 
    return rsize;
 }
-int LoggerContestLog::writeBlock(QSharedPointer<QFile> fd, int bno )
+qint64 LoggerContestLog::writeBlock(QSharedPointer<QFile> fd, int bno )
 {
    // fd will not be contest_file if we are exporting a GJV file
 
@@ -501,14 +468,14 @@ int LoggerContestLog::writeBlock(QSharedPointer<QFile> fd, int bno )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "(write) seek failed!" );
    }
-   int ret = fd->write(diskBuffer, bsize);
+   qint64 ret = fd->write(diskBuffer, bsize);
    if ( ret != bsize )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
    }
    return ret;
 }
-void LoggerContestLog::closeFile( void )
+void LoggerContestLog::closeFile( )
 {
    if ( GJVcontestFile.data() )
    {
@@ -537,7 +504,7 @@ void LoggerContestLog::closeFile( void )
    adifContestFile.reset();
    ediContestFile.reset();
 }
-QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, int extraFlags, bool saveNew, bool catchup, QString mode, dtg ctTime )
+QSharedPointer<BaseContact> LoggerContestLog::addContact( int newctno, unsigned short extraFlags, bool saveNew, bool catchup, QString mode, dtg ctTime )
 {
    // add the contact number as an new empty contact, with disk block and log_seq
 
@@ -785,7 +752,7 @@ bool LoggerContestLog::GJVsave( GJVParams &gp )
    // note that each contact will be saved as entered
    return true;
 }
-bool LoggerContestLog::GJVload( void )
+bool LoggerContestLog::GJVload( )
 {
    QString temp;
    logCount = 0;
@@ -858,7 +825,7 @@ bool LoggerContestLog::GJVload( void )
    return true;
 
 }
-bool LoggerContestLog::GJVloadContacts( void )
+bool LoggerContestLog::GJVloadContacts( )
 {
    nextBlock = 1;
 
@@ -910,6 +877,7 @@ bool LoggerContestLog::export_contest(QSharedPointer<QFile> expfd, ExportType ex
 
       case EPRINTFILE:
          ret = exportPrintFile(expfd);
+         break;
 
       default:
          return false;
@@ -932,12 +900,12 @@ void LoggerContestLog::procUnknown(QSharedPointer<BaseContact> cct, writer &wr )
    {
 
       // no district when required
-      if ( countryMult.getValue() && cct->ctryMult == 0 )   	// invalid country
+      if ( countryMult.getValue() && cct->ctryMult == nullptr )   	// invalid country
          lbuff = "Unknown Country  ";
 
       else
          if ( districtMult.getValue() && cct->ctryMult && cct->ctryMult->hasDistricts()     // continentals dont have counties
-              && cct->districtMult == 0 && !( cct->contactFlags.getValue() & VALID_DISTRICT ) )   	// invalid country
+              && cct->districtMult == nullptr && !( cct->contactFlags.getValue() & VALID_DISTRICT ) )   	// invalid country
          {
             lbuff = "Unknown District   ";
          }
@@ -965,9 +933,9 @@ bool LoggerContestLog::exportGJV(QSharedPointer<QFile>fd )
 
    int mind = 1;
    int maxd = maxSerial;
-   if ( !enquireDialog(   /*Owner*/0, "Please give first serial to be dumped", mind ) )
+   if ( !enquireDialog(   /*Owner*/nullptr, "Please give first serial to be dumped", mind ) )
       return false;
-   if ( !enquireDialog(   /*Owner*/0, "Please give last serial to be dumped", maxd ) )
+   if ( !enquireDialog(   /*Owner*/nullptr, "Please give last serial to be dumped", maxd ) )
       return false;
 
    int mindump = qMin( mind, maxd );
@@ -976,7 +944,7 @@ bool LoggerContestLog::exportGJV(QSharedPointer<QFile>fd )
    // ????   if ( MessageBox( 0, "Do you wish to edit the file?", "Contest", MB_OKCANCEL ) != ID_CANCEL )
    //   if (cmOK != messageBox(mfOKCancel|mfConfirmation, "Dumping all contacts between serials %d and %d inclusive", mindump, maxdump))
    QString temp = QString( "Dumping all contacts between serials %1 and %2 inclusive" ).arg(mindump).arg(maxdump );
-   if ( !MinosParameters::getMinosParameters() ->yesNoMessage( 0, temp ) )
+   if ( !MinosParameters::getMinosParameters() ->yesNoMessage( nullptr, temp ) )
       return false;
 
    GJVParams gp( fd );
@@ -1024,7 +992,7 @@ bool LoggerContestLog::exportADIF(QSharedPointer<QFile> expfd )
 
    header += "<EOH>\r\n";
 
-   int ret = expfd->write(header.toStdString().c_str());
+   qint64 ret = expfd->write(header.toStdString().c_str());
    if (  ret != header.size() )
    {
       MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
@@ -1036,7 +1004,7 @@ bool LoggerContestLog::exportADIF(QSharedPointer<QFile> expfd )
       QString l = lct ->getADIFLine();
       if ( l.size() )
       {
-         int ret = expfd->write(l.toStdString().c_str());
+         qint64 ret = expfd->write(l.toStdString().c_str());
          if (  ret != l.size() )
          {
             MinosParameters::getMinosParameters() ->mshowMessage( "bad reply from write!" );
@@ -1112,9 +1080,9 @@ bool LoggerContestLog::exportMinos( QSharedPointer<QFile> expfd )
 {
    int mind = 1;
    int maxd = maxSerial;
-   if ( !enquireDialog(   /*Owner*/0, "Please give first serial to be dumped", mind ) )
+   if ( !enquireDialog(   /*Owner*/nullptr, "Please give first serial to be dumped", mind ) )
       return false;
-   if ( !enquireDialog(   /*Owner*/0, "Please give last serial to be dumped", maxd ) )
+   if ( !enquireDialog(   /*Owner*/nullptr, "Please give last serial to be dumped", maxd ) )
       return false;
 
    int mindump = qMin( mind, maxd );
@@ -1123,7 +1091,7 @@ bool LoggerContestLog::exportMinos( QSharedPointer<QFile> expfd )
    // ????   if ( MessageBox( 0, "Do you wish to edit the file?", "Contest", MB_OKCANCEL ) != ID_CANCEL )
    //   if (cmOK != messageBox(mfOKCancel|mfConfirmation, "Dumping all contacts between serials %d and %d inclusive", mindump, maxdump))
    QString temp = QString( "Dumping all contacts between serials %1 and %2 inclusive" ).arg(mindump).arg(maxdump );
-   if ( !MinosParameters::getMinosParameters() ->yesNoMessage( 0, temp ) )
+   if ( !MinosParameters::getMinosParameters() ->yesNoMessage( nullptr, temp ) )
       return false;
 
    MinosTestExport * mtest = new MinosTestExport( this );
@@ -1472,7 +1440,7 @@ bool LoggerContestLog::importLOG(QSharedPointer<QFile> hLogFile )
       // duplicates
 
       next_block++ ;
-      bct->setLogSequence( next_block << 16 );
+      bct->setLogSequence( static_cast<unsigned long>(next_block) << 16 );
 
       MapWrapper<BaseContact> wbct(bct);
       ctList.insert( wbct, wbct );
@@ -1532,8 +1500,11 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
 				  mt->getStructArgMemberValue( "antenna", entAnt );
 				  mt->getStructArgMemberValue( "AGL", entAGL );
 				  mt->getStructArgMemberValue( "offset", bearingOffset);
-                  mt->getStructArgMemberValue("radioName", radioName);
-                  mt->getStructArgMemberValue("rotatorName", rotatorName);
+                  QString s;
+                  if (mt->getStructArgMemberValue("radioName", s))
+                    radioName.setValue(PubSubName(s));
+                  if (mt->getStructArgMemberValue("rotatorName", s))
+                    rotatorName.setValue(PubSubName(s));
                }
 			   else
 				  if ( methodName == "MinosLogOperators" )
@@ -1560,75 +1531,66 @@ void LoggerContestLog::processMinosStanza( const QString &methodName, MinosTestI
                            mt->getStructArgMemberValue( "entryBundle", entryBundleName );
                            mt->getStructArgMemberValue( "QTHBundle", QTHBundleName );
                            mt->getStructArgMemberValue( "stationBundle", stationBundleName );
-                           mt->getStructArgMemberValue( "appBundle", appBundleName );
-
                         }
                         else
-                           if ( methodName == "MinosApps" )
+
+                           if (methodName == "MinosRigMemory")
                            {
-                               mt->getStructArgMemberValue( "appRigControl", appRigControl);
-                               mt->getStructArgMemberValue( "appBandMap", appBandMap);
-                               mt->getStructArgMemberValue( "appRotator", appRotator);
-                               mt->getStructArgMemberValue( "appVoiceKeyer", appVoiceKeyer);
+                               memoryData::memData mem;
+                               int memno;
+                               mt->getStructArgMemberValue( "memno", memno);
+                               mt->getStructArgMemberValue( "callsign", mem.callsign);
+                               mt->getStructArgMemberValue( "freq", mem.freq);
+                               mt->getStructArgMemberValue( "mode", mem.mode);
+                               mt->getStructArgMemberValue( "locator", mem.locator);
+                               mt->getStructArgMemberValue( "bearing", mem.bearing);
+                               mt->getStructArgMemberValue( "time", mem.time);
+                               mt->getStructArgMemberValue( "worked", mem.worked);
+
+                               saveInitialRigMemory(memno, mem);
+
                            }
                            else
-                               if (methodName == "MinosRigMemory")
+                               if (methodName == "MinosRunMemory")
                                {
                                    memoryData::memData mem;
                                    int memno;
                                    mt->getStructArgMemberValue( "memno", memno);
-                                   mt->getStructArgMemberValue( "callsign", mem.callsign);
                                    mt->getStructArgMemberValue( "freq", mem.freq);
                                    mt->getStructArgMemberValue( "mode", mem.mode);
-                                   mt->getStructArgMemberValue( "locator", mem.locator);
-                                   mt->getStructArgMemberValue( "bearing", mem.bearing);
-                                   mt->getStructArgMemberValue( "time", mem.time);
-                                   mt->getStructArgMemberValue( "worked", mem.worked);
 
-                                   saveInitialRigMemory(memno, mem);
+                                   saveInitialRunMemory(memno, mem);
 
                                }
                                else
-                                   if (methodName == "MinosRunMemory")
+                                   if ( methodName == "MinosLogComment" )
                                    {
-                                       memoryData::memData mem;
-                                       int memno;
-                                       mt->getStructArgMemberValue( "memno", memno);
-                                       mt->getStructArgMemberValue( "freq", mem.freq);
-                                       mt->getStructArgMemberValue( "mode", mem.mode);
-
-                                       saveInitialRunMemory(memno, mem);
-
+                                      // should have been dealt with in BaseContest
                                    }
                                    else
-                                       if ( methodName == "MinosLogComment" )
-                                       {
-                                          // should have been dealt with in BaseContest
-                                       }
-                                       else
-                                          if ( methodName == "MinosLogQSO" )
-                                          {
-                                             // should have been dealt with in BaseContest
-                                          }
-                                          else
-                                             if (methodName == "MinosStackParams")
-                                             {
-                                                 mt->getStructArgMemberValue( "sp1", statsPeriod1);
-                                                 mt->getStructArgMemberValue( "sp2", statsPeriod2);
-                                                 mt->getStructArgMemberValue( "eu", showContinentEU);
-                                                 mt->getStructArgMemberValue( "as", showContinentAS);
-                                                 mt->getStructArgMemberValue( "af", showContinentAF);
-                                                 mt->getStructArgMemberValue( "oc", showContinentOC);
-                                                 mt->getStructArgMemberValue( "sa", showContinentSA);
-                                                 mt->getStructArgMemberValue( "na", showContinentNA);
-                                                 mt->getStructArgMemberValue( "sw", showWorked);
-                                                 mt->getStructArgMemberValue( "su", showUnworked);
-                                                 mt->getStructArgMemberValue( "sitem", currentStackItem);
-                                                 mt->getStructArgMemberValue( "sitem1", currentStack1Item);
-                                                 mt->getStructArgMemberValue( "sitem2", currentStack2Item);
-                                                 mt->getStructArgMemberValue( "sitem3", currentStack3Item);
+                                      if ( methodName == "MinosLogQSO" )
+                                      {
+                                         // should have been dealt with in BaseContest
+                                      }
+                                      else
+                                         if (methodName == "MinosStackParams")
+                                         {
+                                             mt->getStructArgMemberValue( "sp1", statsPeriod1);
+                                             mt->getStructArgMemberValue( "sp2", statsPeriod2);
+                                             mt->getStructArgMemberValue( "eu", showContinentEU);
+                                             mt->getStructArgMemberValue( "as", showContinentAS);
+                                             mt->getStructArgMemberValue( "af", showContinentAF);
+                                             mt->getStructArgMemberValue( "oc", showContinentOC);
+                                             mt->getStructArgMemberValue( "sa", showContinentSA);
+                                             mt->getStructArgMemberValue( "na", showContinentNA);
+                                             mt->getStructArgMemberValue( "sw", showWorked);
+                                             mt->getStructArgMemberValue( "su", showUnworked);
+                                             mt->getStructArgMemberValue( "sitem", currentStackItem);
+                                             mt->getStructArgMemberValue( "sitem1", currentStack1Item);
+                                             mt->getStructArgMemberValue( "sitem2", currentStack2Item);
+                                             mt->getStructArgMemberValue( "sitem3", currentStack3Item);
 
-                                             }
+                                         }
 }
 //====================================================================
 void LoggerContestLog::setStanza(unsigned int stanza, int stanzaStart )
@@ -1645,7 +1607,7 @@ bool LoggerContestLog::getStanza( unsigned int stanza, QString &stanzaData )
    {
       return false;
    }
-   StanzaPos *s = &stanzaLocations[ stanza - 1 ];
+   StanzaPos *s = &stanzaLocations[ static_cast<int>(stanza) - 1 ];
    if ( s->stanza != stanza )
    {
       return false;

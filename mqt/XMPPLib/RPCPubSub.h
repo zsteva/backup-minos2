@@ -11,8 +11,8 @@
 
 #ifndef RPCPubSubH
 #define RPCPubSubH 
+#include "XMPPRPCObj.h"
 //---------------------------------------------------------------------------
-enum    PublishState {psPublished, psRevoked, psNotConnected};
 
 class RPCPubSub : public MinosRPCClient
 {
@@ -20,9 +20,9 @@ class RPCPubSub : public MinosRPCClient
       static bool connected;
       RPCPubSub( const QString &call, TRPCFunctor *cb ) : MinosRPCClient( call, cb )
       {}
-      virtual ~RPCPubSub()
-      {}
-      virtual QSharedPointer<MinosRPCObj>makeObj() = 0;
+      virtual ~RPCPubSub() override;
+
+      virtual QSharedPointer<MinosRPCObj>makeObj() override = 0;
    public:
       static bool isConnected()
       {
@@ -39,52 +39,5 @@ class RPCPubSub : public MinosRPCClient
       static void close( );
 };
 
-class AnalysePubSubNotify
-{
-      QString publisherProgram;
-      QString publisherServer;
-      QString server;
-      QString category;
-      QString key;
-      QString value;
-      PublishState state;
-
-      bool OK;
-   public:
-      AnalysePubSubNotify( bool err, QSharedPointer<MinosRPCObj>mro );
-      QString getPublisherProgram()
-      {
-         return publisherProgram;
-      }
-      QString getPublisherServer()
-      {
-         return publisherServer;
-      }
-      QString getServer()
-      {
-         return server;
-      }
-      QString getCategory()
-      {
-         return category;
-      }
-      QString getKey()
-      {
-         return key;
-      }
-      QString getValue()
-      {
-         return value;
-      }
-      PublishState getState()
-      {
-         return state;
-      }
-      bool getOK()
-      {
-         return OK;
-      }
-
-};
 //---------------------------------------------------------------------------
 #endif

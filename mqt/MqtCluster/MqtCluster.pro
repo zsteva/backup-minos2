@@ -1,15 +1,12 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-07-22T09:59:47
+# Project created by QtCreator 2017-09-10T22:05:15
 #
 #-------------------------------------------------
-include($$PWD/../mqt.pri)
-include($$PWD/../mqtapplibs.pri)
 
+QT       += core gui network
 
-QT       += core gui
-QT       += widgets
-QT       += network
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MqtCluster
 TEMPLATE = app
@@ -25,11 +22,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+win32:LIBS += -lWs2_32
 
-SOURCES += main.cpp\
-        clustermainwindow.cpp
-
-HEADERS  += clustermainwindow.h \
+SOURCES +=\
 
 
-FORMS    += clustermainwindow.ui
+
+HEADERS  += \
+
+
+
+
+FORMS    += \
+

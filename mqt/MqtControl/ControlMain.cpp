@@ -4,7 +4,7 @@
 #include "portconf.h"
 #include "MinosLines.h"
 
-ControlMain *controlMain = 0;
+ControlMain *controlMain = nullptr;
 void ControlMain::logMessage( QString s )
 {
    trace( s );
@@ -76,7 +76,7 @@ void ControlMain::on_formShown( )
 ControlMain::~ControlMain()
 {
     monitor.closeDown();
-    controlMain = 0;
+    controlMain = nullptr;
     delete ui;
 }
 void ControlMain::closeEvent(QCloseEvent * event)
@@ -160,7 +160,7 @@ void ControlMain::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const
       QSharedPointer<RPCParam> psName;
       QSharedPointer<RPCParam>psLine;
       RPCArgs *args = mro->getCallArgs();
-      if ( args->getStructArgMember( 0, "Name", psName ) && args->getStructArgMember( 0, "Line", psLine ) )
+      if ( args->getStructArgMember( 0, rpcConstants::controlParamName, psName ) && args->getStructArgMember( 0, rpcConstants::controlParamLine, psLine ) )
       {
          QString Name;
          QString Line;
@@ -169,7 +169,7 @@ void ControlMain::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const
          {
             QSharedPointer<RPCParam>st(new RPCParamStruct);
 
-            if ( Name == "GetLine" )
+            if ( Name == rpcConstants::controlGetLine )
             {
                // action the message
                // can be set line, get line
@@ -189,20 +189,20 @@ void ControlMain::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const
                commonLineControl *l = monitor.findLine( Line, true );   // input line
                if ( l )
                {
-                  st->addMember( l->getState(), "LineState" );
+                  st->addMember( l->getState(),rpcConstants::controlLineState );
 
                }
                else
                {
-                  st->addMember( false, "ControlResult" );
+                  st->addMember( false, rpcConstants::controlResult );
                }
 
             }
             else
-               if ( Name == "SetLine" )
+               if ( Name == rpcConstants::controlSetLine )
                {
                   QSharedPointer<RPCParam> psState;
-                  if ( args->getStructArgMember( 0, "State", psState ) )
+                  if ( args->getStructArgMember( 0, rpcConstants::controlState, psState ) )
                   {
                      bool state;
                      psState->getBoolean( state );
@@ -225,15 +225,25 @@ void ControlMain::on_serverCall(bool err, QSharedPointer<MinosRPCObj> mro, const
                      if ( l )
                      {
                         l->setState( state );
-                        st->addMember( true, "ControlResult" );
+                        //st->addMember( true, rpcConstants::controlResult );
 
                      }
                      else
                      {
-                        st->addMember( false, "ControlResult" );
+                        //st->addMember( false, rpcConstants::controlResult );
                      }
                   }
 
+               }
+               else if (Name == rpcConstants::controlSetTransverter)
+               {
+                   int t = Line.toInt();
+                   commonLineControl *t1 = monitor.findLine( "T1", false );   // output line
+                   commonLineControl *t2 = monitor.findLine( "T1", false );   // output line
+
+                   // would be better to do this all in one...
+                   t1->setState(t & 1);
+                   t2->setState(t & 2);
                }
          }
       }

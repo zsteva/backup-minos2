@@ -17,9 +17,9 @@ class INISection;
 class INIEntry //: public NameChain
 {
 private:
-    bool entryValid;
     QString entryValue;
     bool entryDirty;
+    bool entryValid;
 
 public:
     QString name;
@@ -88,7 +88,10 @@ struct INISectionCmp
 };
 //==============================================================================
 INISection::INISection( INIFile *cb, const QString &name, bool valid )
-    : name( name.trimmed() ), entryValid( valid ), sectDirty( false )
+    :
+    entryValid( valid )
+    , sectDirty( false )
+    , name( name.trimmed() )
 {
     cb->sections.push_back( this );
 }
@@ -134,7 +137,9 @@ void INISection::setClean( )
 
 
 INIEntry::INIEntry( INISection *cb, const QString &name, bool valid )
-    : name( name.trimmed() ), entryValid( valid ), entryDirty( false )
+    : entryDirty( false )
+    , entryValid( valid )
+    , name( name.trimmed() )
 {
     cb->entries.push_back( this );
 }
@@ -162,7 +167,9 @@ bool INIEntry::isValidEntry( )
 }
 //==============================================================================
 
-INIFile::INIFile( const QString &name ) : fileLoaded( false ),   /*invalid( true ),*/ fileDirty( false )
+INIFile::INIFile( const QString &name ) :
+    fileDirty( false )
+    , fileLoaded( false )
 {
     loadedFileName = name.trimmed() ;
 
@@ -347,7 +354,7 @@ void INIFile::loadINIFile()
 
         if (!lf.open(QIODevice::ReadOnly|QIODevice::Text))
         {
-            mShowMessage( QString( "Initialisation file \"" ) + loadedFileName + "\" not found.", 0 );
+            mShowMessage( QString( "Initialisation file \"" ) + loadedFileName + "\" not found.", nullptr );
             return;
         }
         QTextStream inf(&lf);

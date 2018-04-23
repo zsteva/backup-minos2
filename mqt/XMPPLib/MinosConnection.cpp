@@ -7,8 +7,14 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------
-
+#include "LogEvents.h"
+#include "MTrace.h"
+#include "PortIds.h"
+#include "ServerEvent.h"
 #include "MinosConnection.h" 
+#include "XMPPStanzas.h"
+#include "XMPPEvents.h"
+#include "RPCPubSub.h"
 //---------------------------------------------------------------------------
 /*
    The minos protocol is related to the XMPP version, but only vaguely, in that
@@ -35,7 +41,7 @@
 
 
 *///---------------------------------------------------------------------------
-MinosAppConnection *MinosAppConnection::minosAppConnection = 0;
+MinosAppConnection *MinosAppConnection::minosAppConnection = nullptr;
 
 bool connected = false;
 
@@ -62,7 +68,9 @@ bool XMPPInitialise( const QString &pmyId )
    return true;
 }
 //---------------------------------------------------------------------------
-MinosAppConnection::MinosAppConnection( const QString &myid ) : myId(myid), sock( new QTcpSocket ), user_data( this )
+MinosAppConnection::MinosAppConnection( const QString &myid ) : myId(myid)
+  , user_data( this )
+  , sock( new QTcpSocket )
 {
     connect(&waitConnectTimer, SIGNAL(timeout()), this, SLOT(on_waitConnectTimeout()));
     connect(sock.data(), SIGNAL(readyRead()), this, SLOT(on_readyRead()));
@@ -144,7 +152,7 @@ void MinosAppConnection::on_readyRead()
 
     while (sock->bytesAvailable() > 0)
     {
-        int rxlen = sock->read(rxbuff, RXBUFFLEN);
+        qint64 rxlen = sock->read(rxbuff, RXBUFFLEN);
 
         if ( rxlen < 0 || sock->state() != QAbstractSocket::ConnectedState)
         {
@@ -178,15 +186,23 @@ void MinosAppConnection::on_readyRead()
                         int packetlen = strtol( packetbuff.c_str() + 2, &ec, 10 );
                         if ( *ec == '<' && packetlen <= static_cast<int> (strlen( ec )) + 2 && packetbuff.find( ">&&" ) != std::string::npos )
                         {
-                            TIXML_STRING packet = packetbuff.substr( packetoffset, packetlen );
-                            packetbuff = packetbuff.substr( packetoffset + packetlen + 2, strlen( ec + packetlen ) );
+                            unsigned int upacketlen = static_cast<unsigned int>(packetlen);
+                            TIXML_STRING packet = packetbuff.substr( packetoffset, upacketlen );
+                            packetbuff = packetbuff.substr( packetoffset + upacketlen + 2, strlen( ec + upacketlen ) );
 
+                            if (packet.size())
+                            {
 #ifdef TRACE_PACKETS
 
-                            TraceIncoming( packet.c_str() );
+                                trace( packet.c_str() );
 #endif
 
-                            analyseNode( user_data, packet );
+                                analyseNode( user_data, packet );
+                            }
+                            else
+                            {
+                                trace("empty packet!");
+                            }
                             // and go round again...
                         }
                         else
@@ -195,17 +211,14 @@ void MinosAppConnection::on_readyRead()
                             break;
                         }
                     }
+                    else
+                    {
+                        // another form of partial
+                        break;
+                    }
                 }
             }
     }
-}
-
-void sendAction( XStanza *a )
-{
-   if ( MinosAppConnection::minosAppConnection )
-   {
-      MinosAppConnection::minosAppConnection->sendAction( a );
-   }
 }
 
 void MinosAppConnection::sendAction( XStanza *a )
@@ -222,7 +235,7 @@ void MinosAppConnection::sendAction( XStanza *a )
           char * xmlbuff = new char[ 10 + 1 + xmllen + 1 ];
           sprintf( xmlbuff, "&&%lu%s&&", static_cast<unsigned long>(xmllen), xmlstr.c_str() );
           xmllen = strlen( xmlbuff );
-          int ret = sock->write ( xmlbuff, xmllen );
+          qint64 ret = sock->write ( xmlbuff, xmllen );
           if (ret >= 0)
               onLog ( xmlbuff, false );
           delete [] xmlbuff;

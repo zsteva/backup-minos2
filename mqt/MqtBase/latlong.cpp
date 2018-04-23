@@ -147,10 +147,7 @@ static void ( * setprojcentre[ LOC + 1 ] ) ( double, double * ) =
 static int coordele[ 10 ];
 
 static double a = 0.0, b = 0.0, e2 = 0.0, n1 = 0.0, n2 = 0.0, n3 = 0.0, ex = 0.0;
-
-extern const double pi;
 /***************************************************************************/
-
 
 static void setprojectionconstants( projectionparams *proj )
 {
@@ -649,7 +646,7 @@ static int geoinput( Location *ingrid )
    int nsign = 1;
    int esign = 1;
    int deg, min;
-   float secs;
+   double secs;
    int i, j;
 
    //		fprintf(outfile, "\nLatitude (int int f): ");
@@ -664,8 +661,8 @@ static int geoinput( Location *ingrid )
       j = 0;
 
    QString nStr;
-   QString *b1 = 0;
-   QString *b2 = 0;
+   QString *b1 = nullptr;
+   QString *b2 = nullptr;
 
    if (i < 0 || j < 0)
        return INVALIDGREF;
@@ -685,7 +682,7 @@ static int geoinput( Location *ingrid )
       if ( ( dsj == 'E' ) || ( dsj == 'W' ) )
          b2 = &longbuff;
 
-   if ( ( b1 == 0 ) || ( b2 == 0 ) || ( b1 == b2 ) )
+   if ( ( b1 == nullptr ) || ( b2 == nullptr ) || ( b1 == b2 ) )
       return ( INVALIDGREF );
 
    if ( ( dsi == 'S' ) || ( dsj == 'S' ) )
@@ -732,10 +729,10 @@ static int geoinput( Location *ingrid )
 
    ingrid->centremeridian = 0;
 
-   if ( abs( ingrid->northing ) > ( pi / 2 + 0.1 ) )
+   if ( std::abs( ingrid->northing ) > ( pi / 2 + 0.1 ) )
       return ( INVALIDGREF );
 
-   if ( abs( ingrid->easting ) > ( pi + 0.1 ) )
+   if ( std::abs( ingrid->easting ) > ( pi + 0.1 ) )
       return ( INVALIDGREF );
 
    return ( GRIDOK );

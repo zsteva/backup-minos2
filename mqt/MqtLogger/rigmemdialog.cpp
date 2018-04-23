@@ -12,14 +12,15 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "rigmemdialog.h"
 #include "ui_rigmemdialog.h"
 #include "rigmemcommondata.h"
 #include "rigutils.h"
 #include "rigcontrolcommonconstants.h"
-#include "rotatorCommonConstants.h"
+#include "rotatorcommon.h"
+#include "LoggerContest.h"
 
 
 RigMemDialog::RigMemDialog(QWidget *parent) :

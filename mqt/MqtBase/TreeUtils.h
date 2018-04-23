@@ -11,7 +11,10 @@
 #ifndef TreeUtilsH
 #define TreeUtilsH
 
-#include "base_pch.h"
+#include <QString>
+#include <QAbstractItemView>
+
+class BaseContestLog;
 //---------------------------------------------------------------------------
 enum TAlignment { taLeftJustify, taRightJustify, taCenter };
 class GridColumn
@@ -48,7 +51,7 @@ class QSOGridModel: public QAbstractItemModel
         BaseContestLog *contest;
     public:
         QSOGridModel();
-        ~QSOGridModel();
+        ~QSOGridModel() Q_DECL_OVERRIDE;
 
         void reset();
         void initialise( BaseContestLog * pcontest );

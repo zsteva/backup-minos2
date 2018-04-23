@@ -63,12 +63,94 @@ const QStringList hamlibErrorMsg = {"No Error, operation completed sucessfully",
 
 }
 
+
+class TransVertParams
+{
+
+public:
+
+    QString transVertName;
+    QString band;
+    QString radioFreqStr;
+    freq_t radioFreq = 0.0;
+    QString targetFreqStr;
+    freq_t targetFreq = 0.0;
+    freq_t fLow;
+    freq_t fHigh;
+    QString transVertOffsetStr;
+    freq_t transVertOffset = 0.0;
+    bool enableTransSwitch = false;
+    QString antSwitchNum = "0";
+    QString transSwitchNum = "0";
+    bool enableLocTVSwMsg = false;
+    QString locTVSwComport = "";
+
+};
+
+
 // This was the hamlib catParams structure, other fields have been added
 // to support other functions.
 
-struct scatParams
+class scatParams
 {
-//  QString configLabel;
+
+public:
+
+  static void copyRig(scatParams* srce, scatParams &dest)
+  {
+
+      dest.radioName = srce->radioName;
+      dest.radioNumber = srce->radioNumber;
+      dest.comport = srce->comport;
+      dest.radioMfg_Name = srce->radioMfg_Name;
+      dest.radioModel = srce->radioModel;
+      dest.radioModelName = srce->radioModelName;
+      dest.radioModelNumber = srce->radioModelNumber;
+      dest.pollInterval = srce->pollInterval;
+      dest.civAddress = srce->civAddress;
+      dest.baudrate = srce->baudrate;
+      dest.parity = srce->parity;
+      dest.stopbits = srce->stopbits;
+      dest.databits = srce->databits;
+      dest.handshake = srce->handshake;
+      dest.portType = srce->portType;
+      dest.networkAdd = srce->networkAdd;
+      dest.networkPort = srce->networkPort;
+      dest.enableCAT = srce->enableCAT;
+      dest.enableSerialPTT = srce->enableSerialPTT;
+      dest.pttSerialPort = srce->pttSerialPort;
+      dest.activeRTS = srce->activeRTS;
+      dest.activeDTR = srce->activeDTR;
+      dest.nactiveRTS = srce->nactiveRTS;
+      dest.nactiveDTR = srce->nactiveDTR;
+      dest.mgmMode = srce->mgmMode;
+      dest.pttType = srce->pttType;
+      dest.antSwitchAvail = srce->antSwitchAvail;
+      dest.radioSupBands = srce->radioSupBands;
+      dest.radioTransSupBands = srce->radioTransSupBands;
+      dest.transVertEnable = srce->transVertEnable;
+
+      dest.transVertNames.clear();
+      if (srce->transVertNames.count() > 0)
+      {
+          for (int i = 0; i < srce->transVertNames.count(); i++)
+          {
+              dest.transVertNames.append(srce->transVertNames[i]);
+          }
+      }
+      dest.numTransverters = srce->numTransverters;
+      dest.transVertSettings.clear();
+      if (srce->numTransverters > 0)
+      {
+          for (int i = 0; i <srce->numTransverters; i++)
+          {
+              dest.transVertSettings.append(srce->transVertSettings[i]);
+          }
+      }
+
+  }
+
+
   QString radioName;
   QString radioNumber;
   QString comport; /**<  serial port device*/
@@ -76,6 +158,7 @@ struct scatParams
   QString radioModel;
   QString radioModelName;
   int radioModelNumber = 0;
+  QString pollInterval = "1";
   QString civAddress;
   int baudrate = 0; /**<  serial port baudrate*/
   int parity = 0;
@@ -92,19 +175,18 @@ struct scatParams
   bool activeDTR  = false;
   bool nactiveRTS  = false;
   bool nactiveDTR  = false;
-  QString mgmMode;
+  QString mgmMode = "USB";
   ptt_type_t pttType;
-//  bool enableXMLRPC;
-//  int XMLRPCPort;
-//  double txOnDelay;
-  QString transVertOffsetStr;
-  freq_t transVertOffset = 0.0;
+  bool antSwitchAvail = false;
   bool transVertEnable  = false;
-  bool transVertNegative  = false;
+  QStringList transVertNames;
+  int numTransverters = 0;
+  QStringList radioSupBands;  // bands supported by radio
+  QStringList radioTransSupBands; // band supported by radio and transverters
+  QVector<TransVertParams*> transVertSettings;
 
 
 };
-
 
 
 
@@ -117,9 +199,9 @@ class RigControl : public QObject
 {
     Q_OBJECT
 public:
-    explicit RigControl(QObject *parent = 0);
+    explicit RigControl(QObject *parent = nullptr);
     ~RigControl();
-    int init(scatParams currentRadio);
+    int init(scatParams &currentRadio);
     bool enabled() {return rigControlEnabled;}
 
     int getFrequency(vfo_t vfo, freq_t*);
@@ -179,13 +261,22 @@ public:
     int setRit(vfo_t vfo, shortfreq_t ritfreq);
     int supportRit(int rigNumber, bool *ritFlag);
     bool checkFreqValid(freq_t freq, rmode_t mode);
+
+
+    bool chkFreqRange(RIG *my_rig, freq_t freq, QString modeStr);
+
+
+    int getAntSwNum(vfo_t vfo);
+    int setAntSwNum(vfo_t vfo, ant_t antNum);
+    int supportAntSw(int rigNumber, bool *antSwFlag);
+
 signals:
     void frequency_updated(double);
     void debug_protocol(QString);
 
   private:
     hamlib_port_t myport;
-    RIG *my_rig = 0;            // handle to rig instance
+    RIG *my_rig = nullptr;            // handle to rig instance
 //    freq_t frequency;            // frequency
 //    rmode_t rmode;          // radio mode of operation
     pbwidth_t pbwidth;

@@ -27,7 +27,7 @@ class timerTicker: public QObject
       QTimer b;
    public:
       timerTicker();
-      ~timerTicker();
+      ~timerTicker() override;
       virtual void tickEvent() = 0;       // this will often be an interrupt routine
 
 private slots:
@@ -42,7 +42,7 @@ class commonController: public timerTicker
     QWidget *parent;
    public:
       commonController(QWidget *p);
-      ~commonController();
+      ~commonController() override;
       QVector < commonPort *> portChain;
       commonPort *createPort( const PortConfig &port );
       commonLineControl *findLine(const QString &name, bool lineIn );
@@ -50,8 +50,8 @@ class commonController: public timerTicker
       bool initialise( );
       void closeDown();
 
-      virtual void tickEvent();       // this will often be an interrupt routine
-      void checkControls( void );
+      virtual void tickEvent() override;       // this will often be an interrupt routine
+      void checkControls( );
 
       void lineChange( commonLineControl *line );
 };

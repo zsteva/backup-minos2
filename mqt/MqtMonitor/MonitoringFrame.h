@@ -16,7 +16,7 @@ class MonitoringFrame : public QFrame
     MonitorMain *mparent;
 
 public:
-    explicit MonitoringFrame(MonitorMain *parent = 0);
+    explicit MonitoringFrame(MonitorMain *parent = nullptr);
     ~MonitoringFrame();
 
     void initialise( BaseContestLog * contest );

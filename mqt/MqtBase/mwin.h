@@ -10,7 +10,7 @@
 #ifndef MwinH
 #define MwinH 
 //----------------------------------------------------------------------------
-
+#include "XMPP_pch.h"
 // GJVVERSION is definition for the .GJV file format
 
 #define GJVVERSION "0.41"
@@ -133,10 +133,11 @@ class MinosStringItem : public MinosItem<QString>
 public:
     virtual void setValue( QString t )
     {
+       t = t.trimmed();
        if ( MinosItem<QString>::val != t )        // so all item classes need != operator
        {
           MinosItem<QString>::dirty = true;
-          MinosItem<QString>::val = t.trimmed();
+          MinosItem<QString>::val = t;
        }
     }
     void setValue( MinosStringItem<QString> t )
@@ -195,7 +196,7 @@ class dtg
             baddtg = true;
          }
       }
-      int notEntered( void );  // returns the "entered" state
+      int notEntered( );  // returns the "entered" state
 
       bool isDirty() const
       {
@@ -248,7 +249,7 @@ class Callsign
       bool operator==( const Callsign& rhs ) const;
       bool operator<( const Callsign& rhs ) const;
 
-      char validate( );
+      int validate( );
       bool isUK() const;
 };
 //---------------------------------------------------------------------------
@@ -263,15 +264,15 @@ class Locator
       //    locator(const locator&);
       //    locator& operator =(const locator&);
       ~Locator();
-      char validate( void );
+      char validate( );
       char validate( double &lon, double &lat );
 };
 
 class BaseLogList
 {
 public:
-    BaseLogList(){}
-    virtual ~BaseLogList(){}
+    BaseLogList();
+    virtual ~BaseLogList();
 };
 
 #endif

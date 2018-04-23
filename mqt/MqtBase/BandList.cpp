@@ -21,11 +21,6 @@
 
 #include "base_pch.h"
 
-#include "tinyxml.h"
-#include "TinyUtils.h"
-
-#include "BandList.h"
-
 //---------------------------------------------------------------------------
 
 void BandInfo::setType ( const QString &t )
@@ -262,4 +257,13 @@ bool BandList::findBand(double freq, BandInfo &bi)
       }
    }
    return false;
+}
+
+
+
+BandDetail::BandDetail(QString _name, double _flow, double _fhigh)
+{
+    name = _name;
+    fLow = _flow;;
+    fHigh = _fhigh;
 }

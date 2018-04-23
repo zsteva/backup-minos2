@@ -44,7 +44,14 @@ MinosCompass::MinosCompass(QWidget *parent)
 */
 }
 
-
+QSize MinosCompass::minimumSizeHint() const
+{
+    return QDial::minimumSizeHint().expandedTo(QApplication::globalStrut());
+}
+QSize MinosCompass::sizeHint() const
+{
+    return QSize(100, 100).expandedTo(QApplication::globalStrut());
+}
 /*
 // for test
 void MinosCompass::upDateDial()

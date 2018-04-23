@@ -22,7 +22,7 @@
 #ifndef HTMLDELEGATE_H
 #define HTMLDELEGATE_H
 
-
+#include "base_pch.h"
 
 class HtmlDelegate : public QStyledItemDelegate
 {

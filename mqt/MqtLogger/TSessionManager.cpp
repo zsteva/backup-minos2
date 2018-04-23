@@ -1,5 +1,6 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
+#include "ContestApp.h"
 #include "tlogcontainer.h"
 #include "enqdlg.h"
 
@@ -7,9 +8,11 @@
 #include "ui_TSessionManager.h"
 
 TSessionManager::TSessionManager(TLogContainer *parent) :
-    QDialog(parent), tlc(parent),
-    inShowSession(false), inShowSessions(false),
-    ui(new Ui::TSessionManager)
+    QDialog(parent)
+  , ui(new Ui::TSessionManager)
+  , tlc(parent)
+  , inShowSession(false)
+  , inShowSessions(false)
 {
     ui->setupUi(this);
     QSettings settings;

@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------------
 #ifndef CalcsH
 #define CalcsH 
+#include "base_pch.h"
+
 //----------------------------------------------------------------------------
 extern int normBrg( int mbear );
 extern int varBrg( int mbear );

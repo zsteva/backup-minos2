@@ -1,10 +1,10 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include <QFontDialog>
-#include <QFileDialog>
+//#include <QFileDialog>
 
-#include "tlogcontainer.h"
-#include "ui_tlogcontainer.h"
+#include "ContestApp.h"
+#include "LoggerContest.h"
 
 #include "tsinglelogframe.h"
 #include "taboutbox.h"
@@ -17,18 +17,24 @@
 #include "tloccalcform.h"
 #include "TSessionManager.h"
 #include "StartConfig.h"
-#include "RPCPubSub.h"
 #include "ConfigFile.h"
 #include "SendRPCDM.h"
 #include "MatchTreesFrame.h"
 #include "enqdlg.h"
+#include "AdifImport.h"
 
-TLogContainer *LogContainer = 0;
+#include "tlogcontainer.h"
+#include "ui_tlogcontainer.h"
+
+TLogContainer *LogContainer = nullptr;
+
+SetMemoryAction::SetMemoryAction(QString t, QObject *p):QAction(t, p)
+{}
 
 TLogContainer::TLogContainer(QWidget *parent) :
-    QMainWindow(parent),
-    lastSessionSelected(0),
-    ui(new Ui::TLogContainer)
+    QMainWindow(parent)
+  , ui(new Ui::TLogContainer)
+  , lastSessionSelected(nullptr)
 {
     ui->setupUi(this);
 
@@ -63,6 +69,8 @@ TLogContainer::TLogContainer(QWidget *parent) :
     sblabel2 = new QLabel( "" );
     statusBar() ->addWidget( sblabel2, 2 );
 
+    sendDM = new TSendDM(this);
+
     subscribeApps();
     QString station = MinosConfig::getMinosConfig()->getThisServerName();
     RPCPubSub::publish(rpcConstants::LoggerCategory, station, "", psPublished);
@@ -70,27 +78,40 @@ TLogContainer::TLogContainer(QWidget *parent) :
 TLogContainer::~TLogContainer()
 {
     delete ui;
+    delete sendDM;
 }
 void TLogContainer::subscribeApps()
 {
+    trace("subscribeApps");
+    sendDM->invalidateCache();
+
     MinosRPC *rpc = MinosRPC::getMinosRPC(rpcConstants::loggerApp);
     MinosConfig *config = MinosConfig::getMinosConfig();
 
     QStringList servers;
+    servers.append(config->getThisServerName());
     for ( QVector <QSharedPointer<RunConfigElement> >::iterator i = config->elelist.begin(); i != config->elelist.end(); i++ )
     {
         Connectable res = (*i)->connectable();
-        servers.append(res.serverName);
+        if (res.serverName != "localhost")
+            servers.append(res.serverName);
     }
     servers.sort();
     servers.removeDuplicates();
 
     for (int i = 0; i < servers.size(); i++)
     {
-        rpc->subscribeRemote( servers[i], rpcConstants::rigControlCategory );
         rpc->subscribeRemote( servers[i], rpcConstants::KeyerCategory );
-        rpc->subscribeRemote( servers[i], rpcConstants::BandMapCategory );
+//        rpc->subscribeRemote( servers[i], rpcConstants::BandMapCategory );
+
         rpc->subscribeRemote( servers[i], rpcConstants::RotatorCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::rotatorDetailCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::rotatorStateCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::rotatorPresetsCategory );
+
+        rpc->subscribeRemote( servers[i], rpcConstants::rigControlCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::rigDetailsCategory );
+        rpc->subscribeRemote( servers[i], rpcConstants::rigStateCategory );
     }
 }
 
@@ -261,6 +282,9 @@ void TLogContainer::setupMenus()
     MakeEntryAction = newAction("Produce Entry/Export File...", ui->menuFile, SLOT(MakeEntryActionExecute()));
     ui->menuFile->addSeparator();
 
+    AppendAdifAction = newAction("Append ADIF file to contest...", ui->menuFile, SLOT(AppendAdifActionExecute()));
+    ui->menuFile->addSeparator();
+
     ListOpenAction = newAction("Open &Archive List...", ui->menuFile, SLOT(ListOpenActionExecute()));
     ManageListsAction = newAction("&Manage Archive Lists...", ui->menuFile, SLOT(ManageListsActionExecute()));
     ui->menuFile->addSeparator();
@@ -302,6 +326,9 @@ void TLogContainer::setupMenus()
 
     TabPopup.addAction(ContestDetailsAction);
     TabPopup.addAction(MakeEntryAction);
+    TabPopup.addSeparator();
+
+    TabPopup.addAction(AppendAdifAction);
     TabPopup.addSeparator();
 
     TabPopup.addAction(GoToSerialAction);
@@ -356,6 +383,7 @@ void TLogContainer::enableActions()
    GoToSerialAction->setEnabled(f);
    NextUnfilledAction->setEnabled(f);
    MakeEntryAction->setEnabled(f);
+   AppendAdifAction->setEnabled(f);
 
    ManageListsAction->setEnabled( TContestApp::getContestApp() ->getOccupiedListSlotCount() > 0 );
 
@@ -603,7 +631,7 @@ void TLogContainer::FileNewActionExecute()
                           "Save new contest as",
                           InitialDir + "/" + suggestedfName,
                           "Minos contest files (*.minos *.Minos)",
-                          0,
+                          nullptr,
                           QFileDialog::DontConfirmOverwrite
                                                       );
        if ( !fileName.isEmpty() )
@@ -635,7 +663,7 @@ void TLogContainer::FileNewActionExecute()
           }
 
           // we want to (re)open it WITHOUT using the dialog!
-          addSlot( 0, suggestedfName, false, -1 );
+          addSlot( nullptr, suggestedfName, false, -1 );
           repeatDialog = false;
        }
        else
@@ -674,7 +702,7 @@ void TLogContainer::FileOpenActionExecute()
     for (int i = 0; i < fnames.size(); i++)
     {
         QString fname = fnames[i];
-        BaseContestLog *ct = 0;
+        BaseContestLog *ct = nullptr;
         if ( !fname.isEmpty() )
         {
             ContestDetails pced(this );
@@ -705,7 +733,6 @@ void TLogContainer::ContestDetailsActionExecute()
             pced.setDetails( ct );
             if ( pced.exec() == QDialog::Accepted )
             {
-                f->sendDM->resetConnectables(ct);
                 subscribeApps();
                 // and we need to do some re-init on the display
                 f->updateQSODisplay();
@@ -735,7 +762,7 @@ void TLogContainer::CloseAllActionExecute()
       // Keep closing the current (and hence visible) contest
       closeSlot(0, true);
    }
-   on_ContestPageControl_currentChanged(0);
+   on_ContestPageControl_currentChanged(-1);
    enableActions();
 }
 //---------------------------------------------------------------------------
@@ -753,7 +780,7 @@ void TLogContainer::CloseAllButActionExecute()
       }
       closeSlot(t, true );
    }
-   on_ContestPageControl_currentChanged(0);
+   on_ContestPageControl_currentChanged(-1);
    enableActions();
 }
 //---------------------------------------------------------------------------
@@ -783,6 +810,63 @@ void TLogContainer::ExitClearActionExecute()
     // and exit
     close();
 }
+void TLogContainer::AppendAdifActionExecute()
+{
+    BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
+
+    if (!ct)
+        return;
+
+    QString InitialDir = getDefaultDirectory( false );
+
+    QFileInfo qf(InitialDir);
+
+    InitialDir = qf.canonicalFilePath();
+
+    QString Filter = "ADIF files (*.adi);;"
+                     "All Files (*.*)" ;
+
+    QString fname = QFileDialog::getOpenFileName( this,
+                       "Open ADIF for append",
+                       InitialDir,  // dir
+                       Filter
+                       );
+
+    if (!fname.isEmpty())
+    {
+        QIODevice::OpenMode om = QIODevice::ReadOnly;
+
+        QSharedPointer<QFile> adifFile(new QFile(fname));
+
+        if (!adifFile->open(om))
+        {
+           QString lerr = adifFile->errorString();
+           QString emess = "Failed to open ADIF file " + fname + " : " + lerr;
+           MinosParameters::getMinosParameters() ->mshowMessage( emess );
+           return;
+        }
+
+        int spoint = ct->ctList.count();
+        if (! ADIFImport::doImportADIFLog(dynamic_cast<LoggerContestLog *>(ct),  adifFile ))
+        {
+            MinosParameters::getMinosParameters() ->mshowMessage( "Failed to append " + fname );
+        }
+        ct->scanContest();
+        ct->validateLoc();
+        for ( int i = spoint; i != ct->ctList.count(); i++ )
+        {
+            QSharedPointer<BaseContact> bct = ct->pcontactAt(i);
+            bct->commonSave(bct);
+        }
+        ct->commonSave( false );
+        MinosLoggerEvents::SendAfterLogContact(ct);
+        TSingleLogFrame * tslf = LogContainer ->findContest( ct );
+
+        tslf->showQSOs();
+
+    }
+}
+
 void TLogContainer::MakeEntryActionExecute()
 {
     BaseContestLog * ct = TContestApp::getContestApp() ->getCurrentContest();
@@ -967,11 +1051,15 @@ void TLogContainer::StartConfigActionExecute()
     configBox.exec();
 }
 
-void TLogContainer::on_ContestPageControl_currentChanged(int /*index*/)
+void TLogContainer::on_ContestPageControl_currentChanged(int index)
 {
+    trace(QString("TLogContainer::on_ContestPageControl_currentChanged index %1").arg(index));
     enableActions();
 
-    MinosLoggerEvents::SendContestPageChanged();
+    if (index >= 0)
+    {
+        MinosLoggerEvents::SendContestPageChanged();
+    }
 
     TContestApp::getContestApp() ->writeContestList();
     enableActions();
@@ -1050,7 +1138,7 @@ void TLogContainer::on_ContestPageControl_customContextMenuRequested(const QPoin
     QApplication *qa = dynamic_cast<QApplication *>(QApplication::instance());
     QObject *w = qa->widgetAt(globalPos);
 
-    QTreeView *qtv = 0;
+    QTreeView *qtv = nullptr;
     while (w)
     {
         MatchTreesFrame *mtf = dynamic_cast<MatchTreesFrame *>(w);
@@ -1092,7 +1180,7 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
             else
             {
                TContestApp::getContestApp() ->closeFile( contest );
-               contest = 0;
+               contest = nullptr;
                show = false;
             }
          }
@@ -1117,7 +1205,6 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
          f->logColumnsChanged = true;  // also causes show QSOs
          f->splittersChanged = true;
 
-         f->sendDM->resetConnectables(contest);
          subscribeApps();
 
          on_ContestPageControl_currentChanged(tno);
@@ -1128,7 +1215,7 @@ BaseContestLog * TLogContainer::addSlot(ContestDetails *ced, const QString &fnam
             if ( expName.size() )
             {
                closeSlot(tno, true );
-               addSlot( 0, expName, false, -1 );
+               addSlot( nullptr, expName, false, -1 );
             }
          }
          removeCurrentFile( fname );
@@ -1165,7 +1252,7 @@ void TLogContainer::closeSlot(int t, bool addToMRU)
           tab->deleteLater();
 
           ui->ContestPageControl->removeTab(t);
-          on_ContestPageControl_currentChanged(0);
+          on_ContestPageControl_currentChanged(-1);
       }
       enableActions();
    }
@@ -1175,13 +1262,13 @@ TSingleLogFrame *TLogContainer::findLogFrame(int t)
     // we need to find the embedded frame...
     // now ONLY used in closeSlot!
     if ( t < 0 )
-        return 0;
+        return nullptr;
     QWidget *tw = ui->ContestPageControl->widget(t);
     if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( tw ))
     {
         return f;
     }
-    return 0;
+    return nullptr;
 }
 
 QStringList TLogContainer::getSessions()
@@ -1295,7 +1382,7 @@ void TLogContainer::selectSession(QString sessName)
         app->setCurrentContest(ct);
     }
     app->logsPreloadBundle.flushProfile();
-    on_ContestPageControl_currentChanged(0);
+    on_ContestPageControl_currentChanged(-1);
     enableActions();
 }
 
@@ -1304,7 +1391,7 @@ BaseContestLog *TLogContainer::loadSession( QString sessName)
     TContestApp *app = TContestApp::getContestApp();
     SettingsBundle &preloadBundle = app ->logsPreloadBundle;
 
-    BaseContestLog *ct = 0;
+    BaseContestLog *ct = nullptr;
 
     preloadBundle.startGroup();
     preloadBundle.openSection(sessName);
@@ -1329,7 +1416,7 @@ BaseContestLog *TLogContainer::loadSession( QString sessName)
             int slotno = slot.toInt(&ok);
             if ( ok )
             {
-                addSlot( 0, pathlst[ i ], false, slotno );
+                addSlot( nullptr, pathlst[ i ], false, slotno );
             }
         }
 
@@ -1396,7 +1483,7 @@ void TLogContainer::preloadFiles( const QString &conarg )
     if ( conarg.size() )
     {
         // open the "argument" one last - which will make it current
-        ct = addSlot( 0, conarg, false, -1 );
+        ct = addSlot( nullptr, conarg, false, -1 );
         app ->writeContestList();	// or this one will not get included
     }
 
@@ -1443,7 +1530,7 @@ void TLogContainer::addListSlot( const QString &fname, int slotno, bool preload 
         if (!mShowOKCancelMessage(this, "Open List " + list->name + "?") )
         {
             TContestApp::getContestApp() ->closeListFile( list );
-            list = 0;
+            list = nullptr;
         }
     }
 
@@ -1594,7 +1681,7 @@ void TLogContainer::selectContest( BaseContestLog *pc, QSharedPointer<BaseContac
             if ( f->getContest() == pc )
             {
                 ui->ContestPageControl->setCurrentIndex(j);         // This doesn't call ContestPageControlChange (see TPageControl::OnChange in  help)
-                on_ContestPageControl_currentChanged(0);       // so the contest gets properly switched
+                on_ContestPageControl_currentChanged(-1);       // so the contest gets properly switched
                 f->QSOTreeSelectContact( pct );         // which triggers edit on the contact
                 return ;
             }
@@ -1628,7 +1715,7 @@ TSingleLogFrame *TLogContainer::findContest(const QString &pubname )
        }
    }
 
-   return 0;
+   return nullptr;
 }
 TSingleLogFrame *TLogContainer::findContest(BaseContestLog *ct )
 {
@@ -1644,6 +1731,21 @@ TSingleLogFrame *TLogContainer::findContest(BaseContestLog *ct )
        }
    }
 
-   return 0;
+   return nullptr;
 }
 //---------------------------------------------------------------------------
+
+QVector<TSingleLogFrame *> TLogContainer::getLogFrames()
+{
+    QVector<TSingleLogFrame *> logs;
+    for ( int j = 0; j < ui->ContestPageControl->count(); j++ )
+    {
+        QWidget *ctab = ui->ContestPageControl->widget(j);
+        if ( TSingleLogFrame * f = dynamic_cast<TSingleLogFrame *>( ctab ) )
+        {
+            logs.push_back(f);
+        }
+    }
+
+    return logs;
+}

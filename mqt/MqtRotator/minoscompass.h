@@ -22,7 +22,7 @@ class MinosCompass : public QDial
     Q_OBJECT
 
 public:
-    MinosCompass(QWidget *parent = 0);
+    MinosCompass(QWidget *parent = nullptr);
 
 public slots:
 
@@ -40,11 +40,14 @@ protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 
 
-    void mousePressEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
 private:
     int compassDialBearing;
     QPoint lastPoint;
+
+    QSize minimumSizeHint() const Q_DECL_OVERRIDE;
+    QSize sizeHint() const Q_DECL_OVERRIDE;
 };
 
 

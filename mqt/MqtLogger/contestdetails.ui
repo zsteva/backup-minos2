@@ -188,22 +188,6 @@
              <number>2</number>
             </property>
             <item>
-             <widget class="TBundleFrame" name="AppsBundleFrame">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
              <spacer name="horizontalSpacer_7">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -581,7 +565,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="radioNameEdit"/>
+           <widget class="QComboBox" name="radioNameEdit"/>
           </item>
           <item>
            <spacer name="horizontalSpacer">
@@ -604,7 +588,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="antennaNameEdit"/>
+           <widget class="QComboBox" name="antennaNameEdit"/>
           </item>
           <item>
            <spacer name="horizontalSpacer_8">

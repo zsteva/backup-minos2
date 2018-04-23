@@ -1,4 +1,4 @@
-#include "logger_pch.h"
+#include "base_pch.h"
 #include "singleapplication.h"
 #include "tlogcontainer.h"
 

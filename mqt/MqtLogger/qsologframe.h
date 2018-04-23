@@ -1,7 +1,7 @@
 #ifndef QSOLOGFRAME_H
 #define QSOLOGFRAME_H
 
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "focuswatcher.h"
 #include "validators.h"
@@ -13,10 +13,11 @@ class QSOLogFrame;
 class QSOLogFrame : public QFrame
 {
     Q_OBJECT
+    Ui::QSOLogFrame *ui;
 
 public:
     explicit QSOLogFrame(QWidget *parent);
-    ~QSOLogFrame();
+    ~QSOLogFrame() override;
 
     void setAsEdit(bool s, QString b);
     void setBandMapLoaded();
@@ -24,9 +25,9 @@ public:
     void setRadioLoaded();
     void setRotatorLoaded();
 
-    bool savePartial( void );
-    bool restorePartial( void );
-    void killPartial( void );
+    bool savePartial(  );
+    bool restorePartial( );
+    void killPartial( );
     void startNextEntry( );
     bool doKeyPressEvent( QKeyEvent* event );
     virtual void selectEntryForEdit(QSharedPointer<BaseContact> lct );
@@ -93,9 +94,9 @@ private:
     void setScoreText( int dist, bool partial, bool xband );
     bool dlgForced();
     bool validateControls( validTypes command );
-    void contactValid( void );
+    void contactValid( );
 
-    void mouseDoubleClickEvent(QObject *w);
+    void do_mouseDoubleClickEvent(QObject *w);
     QSharedPointer<BaseContact> getLastContact();
     QSharedPointer<BaseContact> getPriorContact();
     QSharedPointer<BaseContact> getNextContact();
@@ -114,7 +115,6 @@ private:
     virtual void getScreenRigData();
     virtual void getscreenRotatorData();
     bool checkAndLogEntry( );
-    Ui::QSOLogFrame *ui;
 
     bool edit;
 

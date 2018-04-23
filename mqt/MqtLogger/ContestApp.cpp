@@ -6,22 +6,19 @@
 // COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "logger_pch.h"
+#include "base_pch.h"
 
 #include "LoggerContest.h"
-#include "MatchContact.h"
+#include "ContestApp.h"
 #include "MatchThread.h"
-//#include "MultDisp.h"
-//#include "StatsDisp.h"
 
 //---------------------------------------------------------------------------
 
 #define INITIAL_CONTEST_SLOTS 2
 #define INITIAL_LIST_SLOTS 10
 
-int bigClockCorr = 0;
-TContestApp *TContestApp::contestApp = 0;
-int inFontChange = 0;
+qint64 bigClockCorr = 0;
+TContestApp *TContestApp::contestApp = nullptr;
 
 TContestApp *TContestApp::getContestApp()
 {
@@ -58,30 +55,30 @@ bool isOpen(QSharedPointer<ListSlot> cs, const QString &fn )
       return true;
    return false;
 }
-ContestSlot::ContestSlot( void ) : slotno( -1 ), slot( 0 )
+ContestSlot::ContestSlot( ) : slotno( -1 ), slot( nullptr )
 {}
 ContestSlot::~ContestSlot()
 {
    if ( slot )
    {
       delete slot;
-      slot = 0;
+      slot = nullptr;
    }
 }
-ListSlot::ListSlot( void ) : slotno( -1 ), slot( 0 )
+ListSlot::ListSlot( ) : slotno( -1 ), slot( nullptr )
 {}
 ListSlot::~ListSlot()
 {
    if ( slot )
    {
       delete slot;
-      slot = 0;
+      slot = nullptr;
    }
 }
 
 
 //---------------------------------------------------------------------------
-static void initClock( void )
+static void initClock( )
 {
     QFile lf( "./Configuration/time.correction");
 
@@ -118,7 +115,6 @@ bool TContestApp::initialise()
     BundleFile::bundleFiles[ epENTRYPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epENTRYPROFILE ) );
     BundleFile::bundleFiles[ epQTHPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epQTHPROFILE ) );
     BundleFile::bundleFiles[ epSTATIONPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epSTATIONPROFILE ) );
-    BundleFile::bundleFiles[ epAPPPFROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epAPPPFROFILE ) );
     BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] = QSharedPointer<BundleFile>( new BundleFile( epLOCSQUARESPROFILE ) );
 
     //----------------------------------
@@ -175,11 +171,6 @@ bool TContestApp::initialise()
     BundleFile::bundleFiles[ epSTATIONPROFILE ] ->openProfile( stationfile, "Station details" );
     //----------------------------------
 
-    QString appfile;
-    loggerBundle.getStringProfile( elpAppFile, appfile );
-    BundleFile::bundleFiles[ epAPPPFROFILE ] ->openProfile( appfile, "Apps" );
-    //----------------------------------
-
     QString locsfile;
     loggerBundle.getStringProfile( elpLocsFile, locsfile );
     BundleFile::bundleFiles[ epLOCSQUARESPROFILE ] ->openProfile( locsfile, "Valid locator squares" );
@@ -193,11 +184,11 @@ bool TContestApp::initialise()
 
     return true;
 }
-bool contestAppLoadFiles( void )
+bool contestAppLoadFiles( )
 {
    return MultLists::getMultLists(); // ->loadMultFiles();
 }
-void closeContestApp( void )
+void closeContestApp( )
 {
    if ( TContestApp::getContestApp() )
    {
@@ -210,9 +201,16 @@ void TContestApp::close()
    writeContestList();
    TMatchThread::FinishMatchThread();
 }
-TContestApp::TContestApp() : MinosParameters(), magneticVariation( 0 ), period1( 5 ), period2( 20 ),
-      reverseBearing( false ), dispCountry( false ), dispBearing( true ), dispScore( true ),
-      currentContest( 0 ), preloadComplete(false)
+TContestApp::TContestApp() : MinosParameters(),
+      currentContest( nullptr ),
+      magneticVariation( 0 ),
+      preloadComplete(false),
+      period1( 5 ),
+      period2( 20 ),
+      reverseBearing( false ),
+      dispCountry( false ),
+      dispBearing( true ),
+    dispScore( true )
 
 {
 
@@ -235,7 +233,7 @@ TContestApp::~TContestApp()
    logsPreloadBundle.closeProfile();
    listsPreloadBundle.closeProfile();
    displayBundle.closeProfile();
-   contestApp = 0;
+   contestApp = nullptr;
 
    delete MultLists::getMultLists();
    CsGuard::ClearDown();
@@ -368,7 +366,7 @@ BaseContestLog * TContestApp::findFirstContest()
          return cs->slot;
       }
    }
-   return 0;
+   return nullptr;
 }
 int TContestApp::findContest( BaseContestLog * p )
 {
@@ -402,10 +400,10 @@ int TContestApp::removeContest(BaseContestLog * p )
        {
           {
              if ( getCurrentContest() == p )
-                setCurrentContest( 0 );
+                setCurrentContest( nullptr );
           }
           QSharedPointer<ContestSlot> cs = contestSlotList[ i ];
-          cs->slot = 0;
+          cs->slot = nullptr;
        }
    }
    return i;
@@ -416,7 +414,7 @@ int TContestApp::removeList( ContactList * p )
    if ( i >= 0 )
    {
       QSharedPointer<ListSlot > cs = listSlotList[ i ];
-      cs->slot = 0;
+      cs->slot = nullptr;
    }
    return i;
 }
@@ -511,7 +509,7 @@ LoggerContestLog * TContestApp::openFile( const QString &fn, bool newFile, int s
    if ( !contest->initialise( fn, newFile, slotno ) )    // this adds it to the slot
    {
       closeFile( contest );
-      return 0;
+      return nullptr;
    }
 
    return contest;
@@ -523,7 +521,7 @@ ContactList * TContestApp::openListFile(const QString &fn, int slotno )
    {
       removeList( list ); 		// must remove LoggerContestLog from its slot
       delete list;
-      return 0;
+      return nullptr;
    }
 
    return list;
@@ -568,17 +566,14 @@ void TContestApp::getDisplayColumnWidth( const QString &key, int &val, int def )
 }
 void TContestApp::setDisplayColumnWidth( const QString &key, int val )
 {
-   if (inFontChange <= 0)
-   {
-      if ( val < 0 )
-      {
-         displayBundle.setIntProfile( key, 0 );
-      }
-      else
-      {
-         displayBundle.setIntProfile( key, val );
-      }
-   }
+    if ( val < 0 )
+    {
+        displayBundle.setIntProfile( key, 0 );
+    }
+    else
+    {
+        displayBundle.setIntProfile( key, val );
+    }
 }
 void TContestApp::getBoolDisplayProfile( int enumkey, bool &value )
 {
@@ -596,11 +591,11 @@ void TContestApp::setStringDisplayProfile( int enumkey, QString value )
 {
    displayBundle.setStringProfile( enumkey, value );
 }
-void TContestApp::flushDisplayProfile( void )
+void TContestApp::flushDisplayProfile( )
 {
    displayBundle.flushProfile();
 }
-int TContestApp::getBigClockCorrection()
+qint64 TContestApp::getBigClockCorrection()
 {
    return bigClockCorr;
 }

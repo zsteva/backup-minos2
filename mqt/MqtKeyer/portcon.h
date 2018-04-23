@@ -36,14 +36,14 @@ class commonPort : public QObject
    public:
       QString pName;
       QString portName;
-      int openCount;
+      int openCount = 0;
 
       // we need a chain of interested monitors. Only an active one should
       // actually accept any line change.
       my_deque <lineMonitor *> monitors;
 
       commonPort( const PortConfig &port );
-      virtual ~commonPort();
+      virtual ~commonPort() override;
 
       virtual bool initialise( const PortConfig &port );
       virtual bool initialisePort() = 0;
@@ -68,14 +68,14 @@ class commonPort : public QObject
       virtual void L2Changed( int state );
       virtual void linesModeChanged(int lmode);
 
-      bool lastPttState;
-      bool lastL1State;
-      bool lastL2State;
-      int lastLinesMode;
+      bool lastPTTState = false;
+      bool lastL1State = false;
+      bool lastL2State = false;
+      int lastLinesMode = 0;
 
       virtual int getlinesMode() = 0;
 
-      virtual void checkControls( void ) = 0;
+      virtual void checkControls( ) = 0;
 
       void registerMonitor( lineMonitor * );
 
@@ -117,7 +117,7 @@ class WindowsMonitorPort: public commonPort
           return linesMode;
       }
 
-      virtual void checkControls( void );
+      virtual void checkControls( );
 
 private slots:
       void checkWinLines();
@@ -151,7 +151,7 @@ class WinMonitor: public lineMonitor
 
       virtual bool initialise( const KeyerConfig &keyer, const PortConfig &port );
 
-      virtual void checkControls( void );
+      virtual void checkControls( );
       virtual int getlinesMode()
       {
           return linesMode;
@@ -164,18 +164,13 @@ class LineEventsPort: public commonPort
     Q_OBJECT
    private:
     QTimer LineTimer;
-      bool PTTState;
-      bool linePTTState;
-      bool lineL1State;
-      bool lineL2State;
-      int linesMode;
-      bool closing;
+      bool PTTState = false;
+      bool linePTTState = false;
+      bool lineL1State = false;
+      bool lineL2State = false;
+      int linesMode = 0;
+      bool closing = false;
    public:
-
-      bool lastPTTState;
-      bool lastL1State;
-      bool lastL2State;
-      int lastLinesMode;
 
       static LineCallBack WinLineCallback;
 

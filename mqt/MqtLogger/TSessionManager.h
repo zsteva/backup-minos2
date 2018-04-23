@@ -1,10 +1,10 @@
 #ifndef TSESSIONMANAGER_H
 #define TSESSIONMANAGER_H
 
-#include <QDialog>
-#include <QTableWidget>
+#include "base_pch.h"
 
 class TLogContainer;
+class QTableWidgetItem;
 
 namespace Ui {
 class TSessionManager;
@@ -29,9 +29,10 @@ class TSessionManager : public QDialog
 {
     Q_OBJECT
 
+    Ui::TSessionManager *ui;
 public:
     explicit TSessionManager(TLogContainer *parent);
-    ~TSessionManager();
+    ~TSessionManager() override;
     QString currSession;
 
 private slots:
@@ -63,7 +64,6 @@ private slots:
     void on_amendButton_clicked();
 
 private:
-    Ui::TSessionManager *ui;
     void doCloseEvent();
     void parseSessions();
     void writeSessions();

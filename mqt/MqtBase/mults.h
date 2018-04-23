@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------
 #ifndef MultsH
 #define MultsH 
+#include "mwin.h"
 //----------------------------------------------------------------------------
 class DistrictEntry;
 class DistrictSynonym;
@@ -100,8 +101,8 @@ class CountryEntry : public MultEntry
       QString basePrefix;
       QString continent;
 
-      int districtLimit( void );
-      bool hasDistricts( void );
+      int districtLimit( );
+      bool hasDistricts( );
 
       CountryEntry( const QString &continent, const QString &prefix, const QString &name, const QString &cloc );
       virtual ~CountryEntry();
@@ -145,7 +146,7 @@ class LocSquare
       LocSquare( const QString &loc );
       LocCount *map( int num ); // give count char for loc num
       LocCount *map(const QString &num ); // give count char for loc num
-      void clear( void );
+      void clear();
 
       QString loc; // two letter main square
 
@@ -162,7 +163,7 @@ class LocList
 {
    public:
       LocSquareList llist;
-      LocList( void );
+      LocList();
       virtual ~LocList();
       QSharedPointer<LocSquare> itemAt(int offset)
       {

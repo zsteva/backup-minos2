@@ -8,9 +8,6 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "base_pch.h"
 
-extern const double pi = 3.141592653 ;  /* pi */
-extern const double dr = pi / 180.0;      // degree to radian conversion factor
-
 /******************************************************/
 /*                                                    */
 /* convert Maidenhead locator to longtitude and       */
@@ -114,7 +111,7 @@ QString WtodbW(const QString &W )
 {
    QString res;
    double watts =W.toDouble();
-   if ( watts != 0 )
+   if ( watts >= 0.00000001 )
    {
       double dbWatts = 10.0 * log10( watts );
       res = QString::number( dbWatts );

@@ -9,6 +9,8 @@
 
 #ifndef PrintFileH
 #define PrintFileH
+#include "base_pch.h"
+
 //---------------------------------------------------------------------------
 
 class PrintFileLine
@@ -18,7 +20,7 @@ class PrintFileLine
       QString data;
 
       PrintFileLine( const QString &, const QString &dat );
-      PrintFileLine( void );
+      PrintFileLine();
       ~PrintFileLine();
 
       PrintFileLine & operator = ( const PrintFileLine & );

@@ -16,7 +16,6 @@ TEMPLATE = app
 
 win32:RC_ICONS += ../MinosAppStarter.ico
 
-
 SOURCES += main.cpp\
         MainWindow.cpp
 

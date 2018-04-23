@@ -6,18 +6,20 @@
 // COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2008
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "logger_pch.h"
-#include <ctype.h>
-
+#include "base_pch.h"
+#include "rigutils.h"
 #include "LoggerContest.h"
 #include "AdifImport.h"
 
 //====================================================================
 ADIFImport::ADIFImport(LoggerContestLog * c, QSharedPointer<QFile> adifContestFile ) :
-      aqso( 0 ), next_block( 1 ),
-      acontest( c ), adifContestFile( adifContestFile ),
-      offset( -1 ), limit( -1 )
-{}
+      offset( -1 ),
+      limit( -1 ),
+      adifContestFile( adifContestFile ),
+      acontest( c ),
+      aqso( nullptr )
+{
+}
 ADIFImport::~ADIFImport()
 {
 }
@@ -58,30 +60,30 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
       if ( Fieldname.toUpper() == "RST_SENT" )
       {
          strcpysp( temp, FieldContent, FieldLength );
-         aqso->reps.setInitialValue( temp );
+         aqso->reps.setValue( temp );
       }
       if ( Fieldname.toUpper() == "RST_RCVD" )
       {
          strcpysp( temp, FieldContent, FieldLength );
-         aqso->repr.setInitialValue( temp );
+         aqso->repr.setValue( temp );
       }
       if ( Fieldname.toUpper() == "SRX" || Fieldname.toUpper() == "NO_RCVD" )
       {
          int srx = FieldContent.toInt();
 
-         aqso->serialr.setInitialValue( QString::number(srx) );
+         aqso->serialr.setValue( QString::number(srx) );
       }
       if ( Fieldname.toUpper() == "STX" || Fieldname.toUpper() == "NO_SENT" )
       {
          int stx = FieldContent.toInt();
-         aqso->serials.setInitialValue( QString::number(stx) );
+         aqso->serials.setValue( QString::number(stx) );
          if ( stx > acontest->maxSerial )
             acontest->maxSerial = stx;
       }
       if ( Fieldname.toUpper() == "GRIDSQUARE" )
       {
          strcpysp( temp, FieldContent, FieldLength );
-         aqso->loc.loc.setInitialValue( temp );
+         aqso->loc.loc.setValue( temp );
          aqso->loc.valRes = LOC_NOT_VALIDATED;
       }
       if ( Fieldname.toUpper() == "QSO_PTS" || Fieldname.toUpper() == "POINTS" )
@@ -89,18 +91,50 @@ void ADIFImport::ADIFImportFieldDecode(QString Fieldname, int FieldLength, QStri
          strcpysp( temp, FieldContent, FieldLength );
          if ( temp.toInt() == 0 )
          {
-            aqso->contactFlags.setInitialValue( NON_SCORING );
+            aqso->contactFlags.setValue( NON_SCORING );
          }
       }
       if ( Fieldname.toUpper() == "QTH" )
       {
          strcpysp( temp, FieldContent, FieldLength );
-         aqso->extraText.setInitialValue( temp );
+         aqso->extraText.setValue( temp );
       }
       if ( Fieldname.toUpper() == "OPT_EXCH" )
       {
          strcpysp( temp, FieldContent, FieldLength );
-         aqso->extraText.setInitialValue( temp );
+         aqso->extraText.setValue( temp );
+      }
+      if ( Fieldname.toUpper() == "FREQ" )
+      {
+          strcpysp( temp, FieldContent, FieldLength );
+
+          double freq = convertStrToFreq(temp);
+          QString sfreq = QString::number(freq, 'f', 6); //MHz to 6 decimal places
+          aqso->frequency.setValue(sfreq);
+      }
+
+      if ( Fieldname.toUpper() == "MODE" )
+      {
+          strcpysp( temp, FieldContent, FieldLength );
+
+          temp = temp.toUpper();
+          if (temp == "CW")
+          {
+              aqso->mode.setValue(hamlibData::CW);
+          }
+          else if (temp == "USB")
+          {
+              aqso->mode.setValue(hamlibData::USB);
+          }
+          else if (temp == "FM")
+          {
+              aqso->mode.setValue(hamlibData::FM);
+          }
+          else
+          {
+              aqso->mode.setValue(hamlibData::MGM);
+              aqso->comments.setValue(temp);
+          }
       }
    }
 }
@@ -115,15 +149,19 @@ void ADIFImport::ADIFImportEndOfRecord( )
       // we have to have log_sequence set before we insert - or it will cause
       // duplicates
 
-      aqso->setLogSequence( static_cast< unsigned long> ( next_block++ ) << 16 );
+       int stx = aqso->serials.getValue().toInt();
+       if ( stx > acontest->maxSerial )
+          acontest->maxSerial = stx;
 
       MapWrapper<BaseContact> waqso(aqso);
       acontest->ctList.insert( waqso, waqso );
 
       QSharedPointer<BaseContact> bct;
       acontest->makeContact( false, bct );
+
+      acontest->setNextBlock(acontest->getNextBlock() + 1);
+      bct->setLogSequence( acontest->getNextBlock() << 16 );
       aqso = bct;
-      aqso->setLogSequence( 0 );     // will be derived from the contest
 
    }
 }
@@ -201,15 +239,20 @@ bool ADIFImport::executeImport()
          }
          while ( InChar != '>' );
 
-         if ( qEOH == "EOH" )
+         if ( qEOH.toUpper() == "EOH" )
          {
             inHeader = false;
          }
       }
       // end of header - start the qso's
       QSharedPointer<BaseContact> bct;
-      acontest->makeContact( false, aqso );
-      aqso->setLogSequence( 0 );     // will be derived from the contest
+      acontest->makeContact( false, bct );
+
+      acontest->setNextBlock(acontest->getNextBlock() + 1);
+      bct->setLogSequence( acontest->getNextBlock() << 16 );
+
+      aqso = bct;
+
    }
 
    bool atEOR = false;

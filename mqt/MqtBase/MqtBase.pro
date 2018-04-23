@@ -8,6 +8,7 @@ include($$PWD/../mqt.pri)
 QT       += core gui
 QT       += widgets
 QT       += network
+QT       += serialport
 
 TARGET = MqtBase
 TEMPLATE = lib
@@ -17,6 +18,8 @@ INCLUDEPATH += ../MqtUtils
 INCLUDEPATH += ../TinyXML
 INCLUDEPATH += ../XMPPLib
 INCLUDEPATH += ../qtcsv/src/include
+
+PRECOMPILED_HEADER = ../MqtBase/base_pch.h
 
 SOURCES += \
     BandList.cpp \
@@ -51,7 +54,18 @@ SOURCES += \
     ConfigElementFrame.cpp \
     MatchCollection.cpp \
     rigutils.cpp \
-    minostablewidget.cpp
+    rotatorcommon.cpp \
+    minostablewidget.cpp \
+    RigState.cpp \
+    AntennaState.cpp \
+    AntennaDetail.cpp \
+    KeyerState.cpp \
+    RotatorCache.cpp \
+    RigCache.cpp \
+    RigDetails.cpp \
+    rigcommon.cpp \
+    rotpresetbutton.cpp \
+    rotpresetdialog.cpp
 
 HEADERS += \
     BandList.h \
@@ -90,7 +104,19 @@ HEADERS += \
     rigcontrolcommonconstants.h \
     MatchCollection.h \
     rigutils.h \
-    minostablewidget.h
+    RigState.h \
+    AntennaState.h \
+    AntennaDetail.h \
+    KeyerState.h \
+    RotatorCache.h \
+    RigCache.h \
+    RigDetails.h \
+    minostablewidget.h \
+    rotatorcommon.h \
+    rigcommon.h \
+    rotpresetbutton.h \
+    rotpresetdialog.h \
+    focuswatcher.h
 
 unix {
     target.path = /usr/lib
@@ -104,4 +130,5 @@ FORMS += \
     minoskeyboard.ui \
     tconfigframe.ui \
     StartConfig.ui \
-    ConfigElementFrame.ui
+    ConfigElementFrame.ui \
+    rotpresetdialog.ui

@@ -13,10 +13,10 @@ class RigMemoryGridModel: public QAbstractItemModel
 {
     public:
         RigMemoryGridModel();
-        ~RigMemoryGridModel();
+        ~RigMemoryGridModel() Q_DECL_OVERRIDE;
 
-        BaseContestLog *ct = 0;
-        RigMemoryFrame *frame = 0;
+        BaseContestLog *ct = nullptr;
+        RigMemoryFrame *frame = nullptr;
 
         void beginResetModel(){QAbstractItemModel::beginResetModel();}
         void endResetModel(){QAbstractItemModel::endResetModel();}
@@ -34,7 +34,7 @@ class RigMemoryGridModel: public QAbstractItemModel
 class RigMemorySortFilterProxyModel : public QSortFilterProxyModel
 {
 public:
-    BaseContestLog *ct = 0;
+    BaseContestLog *ct = nullptr;
 
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
     RigMemorySortFilterProxyModel()
@@ -61,7 +61,7 @@ class RigMemoryFrame : public QFrame
     RigMemorySortFilterProxyModel proxyModel;
 
 public:
-    explicit RigMemoryFrame(QWidget *parent = 0);
+    explicit RigMemoryFrame(QWidget *parent = nullptr);
     ~RigMemoryFrame();
 
     QMap<int, HeaderData> headerVal;
@@ -106,7 +106,7 @@ private slots:
 
 private:
     Ui::RigMemoryFrame *ui;
-    LoggerContestLog *ct = 0;
+    LoggerContestLog *ct = nullptr;
     bool suppressSendUpdate = false;
     QString lastRigFreq;
     int lastBearing = 0;

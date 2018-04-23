@@ -14,7 +14,6 @@ VERSION=0.6.0.0
 
 win32:RC_ICONS += ../minos.ico
 
-
 TARGET = MqtBandmap
 TEMPLATE = app
 
@@ -22,20 +21,20 @@ TEMPLATE = app
 SOURCES += main.cpp\
         bandmapmainwindow.cpp \
     rigcontrol.cpp \
-    setupdialog.cpp \
     bandmap.cpp \
     callsignmarker.cpp \
     freqdial.cpp \
-    textmarker.cpp
+    textmarker.cpp \
+    bmsetupdialog.cpp
 
 HEADERS  += bandmapmainwindow.h \
     rigcontrol.h \
-    setupdialog.h \
     bandmap.h \
     callsignmarker.h \
     freqdial.h \
-    textmarker.h
+    textmarker.h \
+    bmsetupdialog.h
 
 FORMS    += bandmapmainwindow.ui \
-    setupdialog.ui
+    bmsetupdialog.ui
 
