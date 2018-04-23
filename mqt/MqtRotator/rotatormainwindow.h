@@ -70,7 +70,7 @@ public:
     // setup connections
     void initActionsConnections();
 
-
+    const QString version = "2.20";
 
 signals:
 

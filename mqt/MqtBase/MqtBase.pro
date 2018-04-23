@@ -65,7 +65,8 @@ SOURCES += \
     RigDetails.cpp \
     rigcommon.cpp \
     rotpresetbutton.cpp \
-    rotpresetdialog.cpp
+    rotpresetdialog.cpp \
+    serialcomms.cpp
 
 HEADERS += \
     BandList.h \
@@ -116,7 +117,8 @@ HEADERS += \
     rigcommon.h \
     rotpresetbutton.h \
     rotpresetdialog.h \
-    focuswatcher.h
+    focuswatcher.h \
+    serialcomms.h
 
 unix {
     target.path = /usr/lib

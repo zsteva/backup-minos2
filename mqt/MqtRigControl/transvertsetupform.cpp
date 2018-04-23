@@ -349,6 +349,12 @@ void TransVertSetupForm::locTVComPortSel(int /*index*/)
     if (ui->locTVComPortSel->currentText() != transVertData->locTVSwComport)
     {
         transVertData->locTVSwComport = ui->locTVComPortSel->currentText();
+        if (serialTVSw != nullptr)
+        {
+            serialTVSw->closeComport();
+            serialTVSw = new SerialTVSwitch(ui->locTVComPortSel->currentText());
+        }
+        serialTVSw = new SerialTVSwitch(ui->locTVComPortSel->currentText());
         transVertValueChanged = true;
     }
 }
@@ -363,6 +369,11 @@ void TransVertSetupForm::setLocTVSwComport(QString p)
     ui->locTVComPortSel->setCurrentIndex(ui->locTVComPortSel->findText(p));
 }
 
+
+SerialTVSwitch* TransVertSetupForm::getSerialTVSw()
+{
+    return serialTVSw;
+}
 
 void TransVertSetupForm::setLocTVSWComportVisible(bool visible)
 {

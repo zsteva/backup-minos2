@@ -12,6 +12,7 @@ QT       += widgets
 QT       += network
 
 
+
 TARGET = MqtRigControl
 TEMPLATE = app
 
@@ -27,7 +28,8 @@ SOURCES += main.cpp\
     addtransverterdialog.cpp \
     freqpresetdialog.cpp \
     addradiodialog.cpp \
-    rigsetupdialog.cpp
+    rigsetupdialog.cpp \
+    serialtvswitch.cpp
 
 HEADERS  += rigcontrolmainwindow.h \
     rigcontrol.h \
@@ -37,7 +39,8 @@ HEADERS  += rigcontrolmainwindow.h \
     addtransverterdialog.h \
     freqpresetdialog.h \
     addradiodialog.h \
-    rigsetupdialog.h
+    rigsetupdialog.h \
+    serialtvswitch.h
 
 
 

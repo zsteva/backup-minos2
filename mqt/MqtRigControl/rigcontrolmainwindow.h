@@ -49,6 +49,8 @@ public:
 
     bool freqPresetChanged = false;
 
+    const QString version = "2.20";
+
 
 private:
 

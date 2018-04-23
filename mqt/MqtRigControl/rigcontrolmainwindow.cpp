@@ -28,6 +28,9 @@
 #include <QProcessEnvironment>
 #include <QDebug>
 
+
+
+
 RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
     QMainWindow(parent)
   , ui(new Ui::RigControlMainWindow)
@@ -1378,6 +1381,14 @@ void RigControlMainWindow::sendTransVertSwitchToLogger(const QString &swNum)
     logMessage(QString("Send Transvert Switch Number to logger = %1").arg(swNum));
     PubSubName psname(setupRadio->currentRadio.radioName);
     msg->rigCache.setTransverterSwitch(psname, swNum.toInt());
+}
+
+void RigControlMainWindow::sendTransVertSwitchToComPort(const QString &swNum)
+{
+
+
+
+
 }
 
 void RigControlMainWindow::onLaunchSetup()

@@ -6,6 +6,7 @@
 #include "ui_transvertsetupform.h"
 #include "BandList.h"
 #include "focuswatcher.h"
+#include "serialtvswitch.h"
 
 
 namespace Ui {
@@ -65,6 +66,7 @@ public:
          void setLocTVSWComportVisible(bool visible);
 
 
+         SerialTVSwitch* getSerialTVSw();
 signals:
 
     public slots:
@@ -84,6 +86,8 @@ private:
 
         Ui::transVertSetupForm *ui;
         TransVertParams *transVertData;
+
+        SerialTVSwitch *serialTVSw;
 
         FocusWatcher *radioFreqEdit;
         FocusWatcher *targetFreqEdit;
