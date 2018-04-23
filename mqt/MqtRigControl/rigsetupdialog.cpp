@@ -75,9 +75,21 @@ void RigSetupDialog::initSetup()
     availRadios = settings.childGroups();
     numAvailRadios = availRadios.count();
 
-
     if (numAvailRadios > 0)
     {
+        QString version = settings.value("Version/version", QString()).toString();
+        if (version != "1")
+        {
+            mShowMessage(QString("The Radio configuration files in %1 are from an old incompatible version of Minos.\r\n\r\n"
+                         "Please delete them and set up the radios again").arg(RADIO_PATH_LOGGER), parentWidget());
+            exit(10);
+        }
+
+        int v = availRadios.indexOf("Version"); // the section name
+        availRadios.removeAt(v);
+        numAvailRadios--;
+
+        chkloadflg = true;      // stop loading check values tiggering mapper signals
         for (int i = 0; i < numAvailRadios; i++)
         {
             addTab(i, availRadios[i]);
@@ -98,34 +110,17 @@ void RigSetupDialog::initSetup()
                 }
             }
 
-
+            getRadioSetting(i, settings);
+            loadSettingsToTab(i);
         }
-
-
+        chkloadflg = false;
     }
-
-
-
-    readSettings();   // get available radio settings from file
-
-    for (int i = 0; i < numAvailRadios; i++)
+    else
     {
-        loadSettingsToTab(i);
-
+        settings.setValue("Version/version", "1");
     }
-
-
-
 
 }
-
-
-
-
-
-
-
-
 
 void RigSetupDialog::addTab(int tabNum, QString tabName)
 {
@@ -288,14 +283,11 @@ void RigSetupDialog::removeRadio()
     ui->radioTab->removeTab(currentIndex);
     availRadioData.remove(currentIndex);
     availRadios.removeAt(currentIndex);
-    renameRadioTabs.append(currentName);            // save old name for deletion
+    removeRadioTabs.append(currentName);            // save old name for deletion
     // remove from availantenna file
-    //QString fileName;
-    //fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
+    //QString fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
     //QSettings config(fileName, QSettings::IniFormat);
-    //config.beginGroup(currentName);
-    //config.remove("");   // remove all keys for this group
-    //config.endGroup();
+    //config.remove(currentName);   // remove all keys for this group
 
     numAvailRadios--;
 
@@ -337,14 +329,11 @@ void RigSetupDialog::editRadioName()
                 availRadios[i] = text;
                 renameRadioTabs.append(oldName);
                 // remove from availantenna file
-                //QString fileName;
-                //fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
+                //QString fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
                 //QSettings config(fileName, QSettings::IniFormat);
-                //config.beginGroup(radioName);
-                //config.remove("");   // remove all keys for this group
-                //config.endGroup();
+                //config.remove(radioName);   // remove all keys for this group
 
-                //saveRadio(tabNum);
+                saveRadio(tabNum);
 
             }
         }
@@ -655,21 +644,6 @@ void RigSetupDialog::clearRadioNameChanged()
 }
 
 */
-void RigSetupDialog::readSettings()
-{
-
-    chkloadflg = true;      // stop loading check values tiggering mapper signals
-
-    QString fileName;
-    fileName = RADIO_PATH_LOGGER + FILENAME_AVAIL_RADIOS;
-    QSettings config(fileName, QSettings::IniFormat);
-
-    for (int i = 0; i < numAvailRadios; i++)
-    {
-        getRadioSetting(i, config);
-    }
-    chkloadflg = false;
-}
 
 void RigSetupDialog::getRadioSetting(int radNum, QSettings& config)
 {

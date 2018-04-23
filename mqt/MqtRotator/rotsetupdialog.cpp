@@ -69,30 +69,37 @@ void RotSetupDialog::initSetup()
     QString fileName;
     fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
     QSettings settings(fileName, QSettings::IniFormat);
+
     availAntennas = settings.childGroups();
     numAvailAntennas = availAntennas.count();
-
     if (numAvailAntennas > 0)
     {
+        QString version = settings.value("Version/version", QString()).toString();
+        if (version != "1")
+        {
+            mShowMessage(QString("The Rotator configuration files in %1 are from an old incompatible version of Minos.\r\n\r\n"
+                         "Please delete them and set up the rotators again").arg(ANTENNA_PATH_LOGGER), parentWidget());
+            exit(10);
+        }
+
+        numAvailAntennas--;
+        int v = availAntennas.indexOf("Version");   // the section name
+        availAntennas.removeAt(v);
+
+        chkloadflg = true;      // stop loading check values tiggering mapper signals
         for (int i = 0; i < numAvailAntennas; i++)
         {
             addTab(i, availAntennas[i]);
+
+            getAvailAntenna(i, settings);
+            loadSettingsToTab(i);
         }
-
+        chkloadflg = false;
     }
-
-
-
-    getAvailAntennas();
-
-    // load current settings to each tab
-    for (int i = 0; i < numAvailAntennas; i++)
+    else
     {
-
-        loadSettingsToTab(i);
-
+        settings.setValue("Version/version", "1");
     }
-
 
 }
 
@@ -267,11 +274,11 @@ void RotSetupDialog::cancelButtonPushed()
         }
     }
 
-    if (addedAntennaTabs.count() > 0 || removeAntennaTabs.count() > 0 || renameAntennaTabs.count() > 0 || change)
+    if (/*addedAntennaTabs.count() > 0 || removeAntennaTabs.count() > 0 || renameAntennaTabs.count() > 0 ||*/ change)
     {
-        addedAntennaTabs.clear();
-        removeAntennaTabs.clear();
-        renameAntennaTabs.clear();
+        //addedAntennaTabs.clear();
+        //removeAntennaTabs.clear();
+        //renameAntennaTabs.clear();
         availAntennas.clear();
         numAvailAntennas = 0;
         availAntData.clear();
@@ -292,12 +299,12 @@ void RotSetupDialog::saveSettings()
     bool antennaNameChg = false;
     bool currentAntennaChanged = false;
 
-    addedAntennaTabs.clear();
+   // addedAntennaTabs.clear();
 
     QString fileName;
     fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
     QSettings config(fileName, QSettings::IniFormat);
-
+/*
     for (int i = 0; i < removeAntennaTabs.count(); i++)
     {
         config.beginGroup(removeAntennaTabs[i]);
@@ -306,7 +313,9 @@ void RotSetupDialog::saveSettings()
     }
 
     removeAntennaTabs.clear();
+*/
 
+/*
     for (int i = 0; i < renameAntennaTabs.count(); i++)
     {
         config.beginGroup(renameAntennaTabs[i]);
@@ -314,12 +323,19 @@ void RotSetupDialog::saveSettings()
         config.endGroup();
     }
     renameAntennaTabs.clear();
+*/
+
+    config.clear(); // clear everything
+
+    // and rewrite it
+
+    config.setValue("Version/version", "1");
 
 
     for (int i = 0; i < numAvailAntennas; i++)
     {
 
-        if (antennaTab[i]->antennaValueChanged)
+ //       if (antennaTab[i]->antennaValueChanged)
         {
             config.beginGroup(availAntData[i]->antennaName);
             if (currentAntennaName == availAntData[i]->antennaName)
@@ -362,7 +378,7 @@ void RotSetupDialog::saveSettings()
             config.setValue("netAddress", availAntData[i]->networkAdd);
             config.setValue("netPort", availAntData[i]->networkPort);
             config.endGroup();
-            antennaTab[i]->antennaValueChanged = false;
+//            antennaTab[i]->antennaValueChanged = false;
 
         }
 
@@ -388,7 +404,7 @@ void RotSetupDialog::saveSettings()
 
 
 
-
+/*
 
 
 void RotSetupDialog::saveAntenna(int i)
@@ -433,27 +449,7 @@ void RotSetupDialog::saveAntenna(int i)
 
 
 }
-
-
-
-
-void RotSetupDialog::getAvailAntennas()
-{
-    chkloadflg = true;      // stop loading check values tiggering mapper signals
-
-    QString fileName;
-    fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
-    QSettings config(fileName, QSettings::IniFormat);
-
-    for (int i = 0; i < numAvailAntennas; i++)
-    {
-        getAvailAntenna(i, config);
-    }
-    chkloadflg = false;
-
-}
-
-
+*/
 void RotSetupDialog::getAvailAntenna(int antNum, QSettings& config)
 {
 
@@ -640,7 +636,7 @@ void RotSetupDialog::addAntenna()
   // add the new antenna
   int tabNum = numAvailAntennas;
   addTab(tabNum, antName);
-  addedAntennaTabs.append(antName);
+  //addedAntennaTabs.append(antName);
   numAvailAntennas++;
   antennaTab[tabNum]->setupRotatorModel(rotModel);
   //loadSettingsToTab(tabNum);
@@ -697,12 +693,9 @@ void RotSetupDialog::removeAntenna()
     availAntData.remove(currentIndex);
     availAntennas.removeAt(currentIndex);
     // remove from availantenna file
-    //QString fileName;
-    //fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
-   //QSettings config(fileName, QSettings::IniFormat);
-    //config.beginGroup(currentName);
-    //config.remove("");   // remove all keys for this group
-    //config.endGroup();
+    //QString fileName = ANTENNA_PATH_LOGGER + FILENAME_AVAIL_ANTENNAS;
+    //QSettings config(fileName, QSettings::IniFormat);
+    //config.remove(currentName);   // remove the whole section
 
     numAvailAntennas--;
 
