@@ -366,12 +366,6 @@ void RigControlMainWindow::upDateRadio()
                 return;
             }
 
-            // only show transvert freq box is enabled
-            setTransVertDisplayVisible(setupRadio->currentRadio.transVertEnable);
-            sendTransVertStatus(setupRadio->currentRadio.transVertEnable);   // send to logger
-            sendTransVertSwitchToLogger(TRANSSW_NUM_DEFAULT);                                 // turn off transVerter Sw
-            sendTransVertSwitchToComPort(TRANSSW_NUM_DEFAULT);
-
             // setup local serial transvert switch
             if (setupRadio->currentRadio.transVertEnable
                     && setupRadio->currentRadio.enableTransSwitch
@@ -383,6 +377,14 @@ void RigControlMainWindow::upDateRadio()
                 }
                 serialTVSw = new SerialTVSwitch(setupRadio->currentRadio.locTVSwComport);
             }
+
+            // only show transvert freq box is enabled
+            setTransVertDisplayVisible(setupRadio->currentRadio.transVertEnable);
+            sendTransVertStatus(setupRadio->currentRadio.transVertEnable);   // send to logger
+            sendTransVertSwitchToLogger(TRANSSW_NUM_DEFAULT);                                 // turn off transVerter Sw
+            sendTransVertSwitchToComPort(TRANSSW_NUM_DEFAULT);
+
+
 
 
             //setupRadio->currentRadio.transVertNegative = setupRadio->availRadioData[ridx]->transVertNegative;
@@ -1405,6 +1407,8 @@ void RigControlMainWindow::sendTransVertSwitchToLogger(const QString &swNum)
 void RigControlMainWindow::sendTransVertSwitchToComPort(const QString &swNum)
 {
     QByteArray msg = swNum.toUtf8();
+    msg.prepend(TVSWMSG_START);
+    msg.append(TVSWMSG_TERM);
 
     if (setupRadio->currentRadio.transVertEnable
             && setupRadio->currentRadio.enableTransSwitch

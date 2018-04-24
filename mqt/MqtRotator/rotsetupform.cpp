@@ -105,6 +105,7 @@ void rotSetupForm::setupRotatorModel(QString rotatorModel)
 
         QString s = rotatorModel;
         antennaData->rotatorModel = s;
+        ui->rotatorModelBox->setCurrentText(s);
         s = s.trimmed();
         QStringList antdetails = s.split(',');
         s = antdetails[0];
@@ -363,9 +364,11 @@ void rotSetupForm::setDataSpeed(QString d)
 
 void rotSetupForm::comDataBitsSelected()
 {
-    antennaData->databits = ui->comDataBitsBox->currentText().toInt();
-    antennaValueChanged = true;
-
+    if (ui->comDataBitsBox->currentText().toInt() !=antennaData->databits)
+    {
+        antennaData->databits = ui->comDataBitsBox->currentText().toInt();
+        antennaValueChanged = true;
+    }
 }
 
 QString rotSetupForm::getDataBits()

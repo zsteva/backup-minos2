@@ -6,6 +6,7 @@ SerialTVSwitch::SerialTVSwitch(QString comport, QObject *parent) : QObject(paren
     sComPort = new QSerialPort(comport, parent);
     // Default to 9600 baud, 8 data, 1 stop, no flow control
     tVSwPort = new SerialComms(sComPort, parent);
+    tVSwPort->open();
 }
 
 

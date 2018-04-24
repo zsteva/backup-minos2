@@ -188,6 +188,43 @@ void RigSetupForm::setupRadioModel(QString radioModel)
 
 
         setTransVertSelected(radioData->transVertEnable);
+
+        // display the correct transverter settings
+
+         setLocTVSwComport(radioData->locTVSwComport);
+
+         setTransVertSelected(radioData->transVertEnable);
+         if (radioData->transVertEnable)
+         {
+             setTransVertSwVisible(true);
+             setEnableLocalTransVertSwVisible(false);
+         }
+         else
+         {
+             setTransVertSwVisible(false);
+             setEnableLocalTransVertSwVisible(false);
+             setLocTVSWComportVisible(false);
+         }
+
+         if (radioData->transVertEnable && radioData->enableTransSwitch)
+         {
+             setTransVertSwVisible(true);
+             setEnableLocalTransVertSwVisible(true);
+             for (int i = 0; i < radioData->numTransverters; i++)
+             {
+                 transVertTab[i]->setEnableTransVertSwBoxVisible(true);
+             }
+         }
+
+         if (radioData->transVertEnable && radioData->enableTransSwitch && radioData->enableLocTVSwMsg)
+         {
+             setLocTVSWComportVisible(true);
+         }
+         else
+         {
+             setLocTVSWComportVisible(false);
+         }
+
         buildSupBandList();
         radioValueChanged = true;
     }
@@ -404,8 +441,11 @@ void RigSetupForm::setComport(QString p)
 
 void RigSetupForm::comSpeedSelected()
 {
-    radioData->baudrate = ui->comSpeedBox->currentText().toInt();
-    radioValueChanged = true;
+    if (ui->comSpeedBox->currentText().toInt() != radioData->baudrate)
+    {
+        radioData->baudrate = ui->comSpeedBox->currentText().toInt();
+        radioValueChanged = true;
+    }
 }
 
 
@@ -423,9 +463,11 @@ void RigSetupForm::setDataSpeed(QString d)
 
 void RigSetupForm::comDataBitsSelected()
 {
-    radioData->databits = ui->comDataBitsBox->currentText().toInt();
-    radioValueChanged = true;
-
+    if (ui->comDataBitsBox->currentText().toInt() != radioData->databits)
+    {
+        radioData->databits = ui->comDataBitsBox->currentText().toInt();
+        radioValueChanged = true;
+    }
 }
 
 QString RigSetupForm::getDataBits()
@@ -444,8 +486,11 @@ void RigSetupForm::setDataBits(QString d)
 
 void RigSetupForm::comStopBitsSelected()
 {
-    radioData->stopbits = ui->comStopBitsBox->currentText().toInt();
-    radioValueChanged = true;
+    if (ui->comStopBitsBox->currentText().toInt() != radioData->stopbits)
+    {
+        radioData->stopbits = ui->comStopBitsBox->currentText().toInt();
+        radioValueChanged = true;
+    }
 }
 
 QString RigSetupForm::getStopBits()
@@ -463,9 +508,11 @@ void RigSetupForm::setStopBits(QString stop)
 
 void RigSetupForm::comParitySelected()
 {
-
-    radioData->parity = radio->getSerialParityCode(ui->comParityBox->currentIndex());
-    radioValueChanged = true;
+    if (radio->getSerialParityCode(ui->comParityBox->currentIndex()) != radioData->parity)
+    {
+        radioData->parity = radio->getSerialParityCode(ui->comParityBox->currentIndex());
+        radioValueChanged = true;
+    }
 }
 
 QString RigSetupForm::getParityBits()
@@ -482,9 +529,11 @@ void RigSetupForm::setParityBits(int b)
 
 void RigSetupForm::comHandShakeSelected()
 {
-    radioData->handshake = radio->getSerialHandshakeCode(ui->comHandShakeBox->currentIndex());
-    radioValueChanged = true;
-
+    if (radio->getSerialHandshakeCode(ui->comHandShakeBox->currentIndex()) != radioData->handshake)
+    {
+        radioData->handshake = radio->getSerialHandshakeCode(ui->comHandShakeBox->currentIndex());
+        radioValueChanged = true;
+    }
 }
 
 
@@ -509,9 +558,11 @@ int RigSetupForm::comportAvial(QString comport)
 
 void RigSetupForm::networkAddressSelected()
 {
-
-    radioData->networkAdd = ui->networkAddBox->text();
-    radioValueChanged = true;
+    if (ui->networkAddBox->text() != radioData->networkAdd)
+    {
+        radioData->networkAdd = ui->networkAddBox->text();
+        radioValueChanged = true;
+    }
 }
 
 QString RigSetupForm::getNetAddress()
@@ -528,8 +579,11 @@ void RigSetupForm::setNetAddress(QString netAdd)
 
 void RigSetupForm::networkPortSelected()
 {
-    radioData->networkPort = ui->netPortBox->text();
-    radioValueChanged = true;
+    if (ui->netPortBox->text() != radioData->networkPort)
+    {
+        radioData->networkPort = ui->netPortBox->text();
+        radioValueChanged = true;
+    }
 }
 
 QString RigSetupForm::getNetPortNum()
@@ -548,8 +602,11 @@ void RigSetupForm::setNetPortNum(QString p)
 
 void RigSetupForm::mgmModeSelected()
 {
-    radioData->mgmMode = ui->mgmBox->currentText();
-    radioValueChanged = true;
+    if (ui->mgmBox->currentText() != radioData->mgmMode)
+    {
+        radioData->mgmMode = ui->mgmBox->currentText();
+        radioValueChanged = true;
+    }
 }
 
 QString RigSetupForm::getMgmMode()
@@ -1033,7 +1090,7 @@ void RigSetupForm::loadTransVertTab(int tabNum)
     transVertTab[tabNum]->setTargetFreqBox(convertFreqStrDispSingle(radioData->transVertSettings[tabNum]->targetFreqStr));
     transVertTab[tabNum]->setOffsetFreqLabel(radioData->transVertSettings[tabNum]->transVertOffsetStr);
     transVertTab[tabNum]->setTransVerSwNum(radioData->transVertSettings[tabNum]->transSwitchNum);
-
+    transVertTab[tabNum]->setEnableTransVertSwBoxVisible(radioData->enableTransSwitch);
 }
 
 bool RigSetupForm::checkTransVerterNameMatch(QString transVertName)

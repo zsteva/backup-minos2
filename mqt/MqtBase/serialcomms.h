@@ -18,6 +18,7 @@ public:
      void setMsgTermChar(char c);
 
      void close();
+     void open();
 
 signals:
      void serialPortError(QString portName, QString errorString);

@@ -224,20 +224,25 @@ void TransVertSetupForm::setOffsetFreqLabel(QString f)
 
 void TransVertSetupForm::transVertSwNumSel()
 {
-    QString numSel = ui->transVertSwNum->text().trimmed();
     QRegExp re("\\d*");  // a digit (\d), zero or more times (*)
-    if (re.exactMatch(numSel))
+    QString numSel = ui->transVertSwNum->text().trimmed();
+    if (numSel != transVertData->transSwitchNum)
     {
-        transVertData->transSwitchNum = numSel;
-        transVertValueChanged = true;
+
+        if (re.exactMatch(numSel))
+        {
+            transVertData->transSwitchNum = numSel;
+            transVertValueChanged = true;
+        }
+        else
+        {
+            QMessageBox msgBox;
+            msgBox.setText(QString("Digits only!"));
+            msgBox.exec();
+            return;
+        }
     }
-    else
-    {
-        QMessageBox msgBox;
-        msgBox.setText(QString("Digits only!"));
-        msgBox.exec();
-        return;
-    }
+
 
 }
 

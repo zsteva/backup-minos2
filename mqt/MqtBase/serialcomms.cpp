@@ -1,4 +1,4 @@
-
+#include <QFile>
 #include "serialcomms.h"
 
 
@@ -115,6 +115,12 @@ void SerialComms::write(QByteArray writeData)
 void SerialComms::close()
 {
     m_serialPort->close();
+}
+
+
+void SerialComms::open()
+{
+    m_serialPort->open(QIODevice::ReadWrite);
 }
 
 void SerialComms::setMsgTermChar(char c)

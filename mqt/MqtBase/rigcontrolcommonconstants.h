@@ -128,6 +128,8 @@ const QStringList bandFreq = { "28170000",
 
 }
 
-
+// TransVerter Switch Message
+const char TVSWMSG_START = ':';
+const char TVSWMSG_TERM = '\n';
 
 #endif // RIGCONTROLCOMMONCONSTANTS_H
