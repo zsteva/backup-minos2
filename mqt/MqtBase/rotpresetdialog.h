@@ -5,13 +5,9 @@
 //                      Rotator Control
 // Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2018
 //
-// Interprocess Control Logic
-// COPYRIGHT         (c) M. J. Goodey G0GJV 2005 - 2017
-//
 //
 //
 /////////////////////////////////////////////////////////////////////////////
-
 
 #ifndef ROTPRESETDIALOG_H
 #define ROTPRESETDIALOG_H

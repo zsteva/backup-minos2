@@ -1,9 +1,16 @@
+/////////////////////////////////////////////////////////////////////////////
+// $Id$
+//
+// PROJECT NAME 		Minos Amateur Radio Control and Logging System
+//                      Rotator Control
+// Copyright        (c) D. G. Balharrie M0DGB/G8FKH 2018
+//
+//
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
 #include "rotpresetbutton.h"
-
-
-
-
-
 
 
 RotPresetButton::RotPresetButton(QToolButton *b, int num)
