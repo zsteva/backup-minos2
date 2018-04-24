@@ -180,6 +180,10 @@ class BaseContestLog: public BaseLogList
       {
           return nextBlock;
       }
+      void setNextBlock(unsigned long n)
+      {
+          nextBlock = n;
+      }
       // end of contest details
 
       // The log itself

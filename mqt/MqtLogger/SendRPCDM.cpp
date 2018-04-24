@@ -50,8 +50,8 @@ void TSendDM::sendKeyerPlay( TSingleLogFrame *tslf, int fno )
         QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
         QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
         st->addMember( select, rpcConstants::selected );
-        st->addMember( sName, "Name" );
-        st->addMember( iValue, "Value" );
+        st->addMember( sName, rpcConstants::paramName );
+        st->addMember( iValue, rpcConstants::paramValue );
         rpc.getCallArgs() ->addParam( st );
         rpc.queueCall( keyerApp );
     }
@@ -66,8 +66,8 @@ void TSendDM::sendKeyerRecord( TSingleLogFrame *tslf, int fno )
         QSharedPointer<RPCParam>iValue(new RPCIntParam( fno ));
         QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
         st->addMember( select, rpcConstants::selected );
-        st->addMember( sName, "Name" );
-        st->addMember( iValue, "Value" );
+        st->addMember( sName, rpcConstants::paramName );
+        st->addMember( iValue, rpcConstants::paramValue );
         rpc.getCallArgs() ->addParam( st );
         rpc.queueCall( keyerApp );
     }
@@ -83,8 +83,8 @@ void TSendDM::sendKeyerTone(TSingleLogFrame *tslf)
         QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
         QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
         st->addMember( select, rpcConstants::selected );
-        st->addMember( sName, "Name" );
-        st->addMember( iValue, "Value" );
+        st->addMember( sName, rpcConstants::paramName );
+        st->addMember( iValue, rpcConstants::paramValue );
         rpc.getCallArgs() ->addParam( st );
         rpc.queueCall( keyerApp );
     }
@@ -99,8 +99,8 @@ void TSendDM::sendKeyerTwoTone(TSingleLogFrame *tslf)
         QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
         QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
         st->addMember( select, rpcConstants::selected );
-        st->addMember( sName, "Name" );
-        st->addMember( iValue, "Value" );
+        st->addMember( sName, rpcConstants::paramName );
+        st->addMember( iValue, rpcConstants::paramValue );
         rpc.getCallArgs() ->addParam( st );
         rpc.queueCall( keyerApp );
     }
@@ -115,8 +115,8 @@ void TSendDM::sendKeyerStop(TSingleLogFrame *tslf)
         QSharedPointer<RPCParam>iValue(new RPCIntParam( 0 ));
         QSharedPointer<RPCParam>select(new RPCStringParam(tslf->getContest()->uuid ));
         st->addMember( select, rpcConstants::selected );
-        st->addMember( sName, "Name" );
-        st->addMember( iValue, "Value" );
+        st->addMember( sName, rpcConstants::paramName );
+        st->addMember( iValue, rpcConstants::paramValue );
         rpc.getCallArgs() ->addParam( st );
         rpc.queueCall( keyerApp );
     }

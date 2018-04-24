@@ -73,7 +73,6 @@ public:
 
     void copyRadioToCurrent(int radioNumber);
 
-    void readSettings();
     void setAppName(QString name);
     int comportAvial(int radioNum, QString comport);
     int findCurrentRadio(QString currentRadioName);

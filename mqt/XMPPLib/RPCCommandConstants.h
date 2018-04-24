@@ -15,6 +15,9 @@ static const QString clientNotify       = QT_TR_NOOP("Minos:PubSub:ClientNotify"
 
 static const QString selected           = QT_TR_NOOP("Selected");
 
+static const QString paramName          = QT_TR_NOOP("Name");
+static const QString paramValue          = QT_TR_NOOP("Value");
+
 // Server Categories
 
 static const QString StationCategory    = QT_TR_NOOP("Station");
@@ -35,7 +38,6 @@ static const QString loggerStanzaResponse = QT_TR_NOOP("Minos:Logger:StanzaRetur
 static const QString bandmapApp         = QT_TR_NOOP("BandMap");
 static const QString bandmapMethod      = QT_TR_NOOP("Minos:BandMap");
 
-static const QString bandmapParamName   = QT_TR_NOOP("Name");
 static const QString bandmapParamFreq   = QT_TR_NOOP("Freq");
 static const QString bandmapParamCallsign = QT_TR_NOOP("Callsign");
 static const QString bandmapParamLocator= QT_TR_NOOP("Locator");
@@ -67,6 +69,7 @@ static const QString keyerReport     = QT_TR_NOOP("Report");
 
 // Control
 static const QString controlApp         = QT_TR_NOOP("Control");
+static const QString lineControlCategory = QT_TR_NOOP("LineControl");
 
 static const QString controlParamName   = QT_TR_NOOP("Name");
 static const QString controlParamLine   = QT_TR_NOOP("Line");
@@ -76,6 +79,7 @@ static const QString controlState       = QT_TR_NOOP("CtrlState");
 static const QString controlGetLine     = QT_TR_NOOP("GetLine");
 static const QString controlSetLine     = QT_TR_NOOP("SetLine");
 static const QString controlSetTransverter = QT_TR_NOOP("SetTransverter");
+static const QString lineSet            = QT_TR_NOOP("set");
 
 
 

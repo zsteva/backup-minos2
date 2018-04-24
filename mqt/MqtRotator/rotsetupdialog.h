@@ -57,9 +57,9 @@ public:
     QStringList availAntennas;
     int numAvailAntennas;
 
-    QStringList addedAntennaTabs;     // tracked edited data
-    QStringList removeAntennaTabs;
-    QStringList renameAntennaTabs;   // old antenna names
+    //QStringList addedAntennaTabs;     // tracked edited data
+    //QStringList removeAntennaTabs;
+    //QStringList renameAntennaTabs;   // old antenna names
 
 
     QString getCurrentAntenna() const;
@@ -116,11 +116,9 @@ private:
     void serialDataEntryVisible(int antNumber, bool visible);
     void networkDataEntryVisible(int antNumber, bool visible);
 
-
-    void getAvailAntennas();
     void addTab(int tabNum, QString tabName);
     bool checkAntNameMatch(QString antName);
-    void saveAntenna(int i);
+//    void saveAntenna(int i);
 
 
     void loadSettingsToTab(int tabNum);
