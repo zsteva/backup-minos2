@@ -84,13 +84,6 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QCheckBox" name="enableTransVertSw">
-       <property name="text">
-        <string>Enable Transvert Switch</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QLabel" name="transVertSwNumLbl">
        <property name="text">
         <string>Transvert Switch Number</string>
@@ -99,23 +92,6 @@
      </item>
      <item>
       <widget class="QLineEdit" name="transVertSwNum"/>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="locTvConChk">
-       <property name="text">
-        <string>Enable Local Control</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="locComportSwLbl">
-       <property name="text">
-        <string>Comport</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="locTVComPortSel"/>
      </item>
      <item>
       <spacer name="horizontalSpacer_3">

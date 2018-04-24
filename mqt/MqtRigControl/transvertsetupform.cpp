@@ -34,21 +34,15 @@ TransVertSetupForm::TransVertSetupForm(TransVertParams* _transvertData, QWidget 
 
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    fillPortsInfo(ui->locTVComPortSel);
-
     //connect(ui->targetFreq, SIGNAL(editingFinished()), this, SLOT(targetEditFinished()));
     //connect(ui->radioFreq, SIGNAL(editingFinished()), this, SLOT(radioEditFinished()));
     connect(radioFreqEdit, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(radioFreqEditfocusChange(QObject *, bool, QFocusEvent *)));
     connect(targetFreqEdit, SIGNAL(focusChanged(QObject *, bool, QFocusEvent * )), this, SLOT(targetFreqEditfocusChange(QObject *, bool, QFocusEvent *)));
 
-    connect(ui->enableTransVertSw, SIGNAL(clicked(bool)), this, SLOT(enableTransVertSwSel(bool)));
     connect(ui->transVertSwNum, SIGNAL(editingFinished()), this, SLOT(transVertSwNumSel()));
-    connect(ui->locTvConChk, SIGNAL(clicked(bool)), this, SLOT(localTransVertSwSel(bool)));
-    connect(ui->locTVComPortSel, SIGNAL(activated(int)), this, SLOT(locTVComPortSel(int)));
+
 
 }
-
-
 
 
 
@@ -224,48 +218,6 @@ void TransVertSetupForm::setOffsetFreqLabel(QString f)
 
 
 
-
-/********************* TransVert Switch Enable  *********************************/
-
-void TransVertSetupForm::enableTransVertSwSel(bool /*flag*/)
-{
-    bool checked = ui->enableTransVertSw->isChecked();
-    if (transVertData->enableTransSwitch != checked)
-    {
-        transVertData->enableTransSwitch = checked;
-        setEnableTransVertSwBoxVisible(checked);
-        setEnableLocalTransVertSwVisible(checked);
-        setLocTVSWComportVisible(false);
-        transVertValueChanged = true;
-    }
-
-}
-
-
-bool TransVertSetupForm::getEnableTransVertSw()
-{
-    return ui->enableTransVertSw->isChecked();
-}
-
-void TransVertSetupForm::setEnableTransVertSw(bool b)
-{
-    ui->enableTransVertSw->setChecked(b);
-    setEnableTransVertSwBoxVisible(b);
-}
-
-void TransVertSetupForm::setEnableTransVertSwBoxVisible(bool visible)
-{
-     ui->transVertSwNum->setVisible(visible);
-     ui->transVertSwNumLbl->setVisible(visible);
-
-}
-
-
-
-
-
-
-
 /********************* TransVert Switch Number *********************************/
 
 // need some validation here...
@@ -301,88 +253,12 @@ void TransVertSetupForm::setTransVerSwNum(QString s)
 
 
 
-/**************** Local Transvert Switch Control *****************************/
-
-
-void TransVertSetupForm::localTransVertSwSel(bool /*flag*/)
+void TransVertSetupForm::setEnableTransVertSwBoxVisible(bool visible)
 {
-
-    bool checked = ui->locTvConChk->isChecked();
-    if (transVertData->enableLocTVSwMsg != checked)
-    {
-        transVertData->enableLocTVSwMsg = checked;
-        setLocTVSWComportVisible(checked);
-        transVertValueChanged = true;
-    }
+     ui->transVertSwNum->setVisible(visible);
+     ui->transVertSwNumLbl->setVisible(visible);
 
 }
-
-bool TransVertSetupForm::getEnableLocalTransVertSw()
-{
-    return ui->locTvConChk->isChecked();
-}
-
-
-void TransVertSetupForm::setEnableLocalTransVertSw(bool b)
-{
-    ui->locTvConChk->setChecked(b);
-
-}
-
-
-void TransVertSetupForm::setEnableLocalTransVertSwVisible(bool visible)
-{
-     ui->locTvConChk->setVisible(visible);
-
-
-}
-
-
-
-/**************** Local Transvert Switch Comport **************************/
-
-
-
-void TransVertSetupForm::locTVComPortSel(int /*index*/)
-{
-
-    if (ui->locTVComPortSel->currentText() != transVertData->locTVSwComport)
-    {
-        transVertData->locTVSwComport = ui->locTVComPortSel->currentText();
-        if (serialTVSw != nullptr)
-        {
-            serialTVSw->closeComport();
-            serialTVSw = new SerialTVSwitch(ui->locTVComPortSel->currentText());
-        }
-        serialTVSw = new SerialTVSwitch(ui->locTVComPortSel->currentText());
-        transVertValueChanged = true;
-    }
-}
-
-QString TransVertSetupForm::getLocTVSwComport()
-{
-    return ui->locTVComPortSel->currentText();
-}
-
-void TransVertSetupForm::setLocTVSwComport(QString p)
-{
-    ui->locTVComPortSel->setCurrentIndex(ui->locTVComPortSel->findText(p));
-}
-
-
-SerialTVSwitch* TransVertSetupForm::getSerialTVSw()
-{
-    return serialTVSw;
-}
-
-void TransVertSetupForm::setLocTVSWComportVisible(bool visible)
-{
-     ui->locTVComPortSel->setVisible(visible);
-     ui->locComportSwLbl->setVisible(visible);
-     setEnableLocalTransVertSwVisible(visible);
-
-}
-
 
 
 
@@ -425,7 +301,7 @@ void TransVertSetupForm::antSwNumVisible(bool visible)
 void TransVertSetupForm::setUiItemsVisible(bool visible)
 {
     //ui->bandSel->setVisible(visible);
-    ui->enableTransVertSw->setVisible(visible);
+    //ui->enableTransVertSw->setVisible(visible);
     ui->radioFreq->setVisible(visible);
     ui->transVertSwNum->setVisible(visible);
     //ui->BandLabel->setVisible(visible);

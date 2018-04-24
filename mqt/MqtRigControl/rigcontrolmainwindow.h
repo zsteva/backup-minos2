@@ -171,6 +171,7 @@ private:
     void upDateRadio();
     void loadBands();
 
+    void sendTransVertSwitchToComPort(const QString &swNum);
 private slots:
 
     void onStdInRead(QString);

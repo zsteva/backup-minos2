@@ -79,11 +79,9 @@ public:
     freq_t fHigh;
     QString transVertOffsetStr;
     freq_t transVertOffset = 0.0;
-    bool enableTransSwitch = false;
     QString antSwitchNum = "0";
     QString transSwitchNum = "0";
-    bool enableLocTVSwMsg = false;
-    QString locTVSwComport = "";
+
 
 };
 
@@ -129,6 +127,9 @@ public:
       dest.radioSupBands = srce->radioSupBands;
       dest.radioTransSupBands = srce->radioTransSupBands;
       dest.transVertEnable = srce->transVertEnable;
+      dest.enableTransSwitch = srce->enableTransSwitch;
+      dest.enableLocTVSwMsg = srce->enableLocTVSwMsg;
+      dest.locTVSwComport = srce->locTVSwComport;
 
       dest.transVertNames.clear();
       if (srce->transVertNames.count() > 0)
@@ -181,6 +182,9 @@ public:
   bool transVertEnable  = false;
   QStringList transVertNames;
   int numTransverters = 0;
+  bool enableTransSwitch = false;
+  bool enableLocTVSwMsg = false;
+  QString locTVSwComport = "";
   QStringList radioSupBands;  // bands supported by radio
   QStringList radioTransSupBands; // band supported by radio and transverters
   QVector<TransVertParams*> transVertSettings;

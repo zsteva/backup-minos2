@@ -45,6 +45,7 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVe
 
     fillRadioModelInfo();  // add radio models to drop down
     fillPortsInfo(ui->comPortBox);     // add comports to drop down
+    fillPortsInfo(ui->locTVComPortSel);
     fillSpeedInfo();
     fillDataBitsInfo();
     fillStopBitsInfo();
@@ -66,7 +67,13 @@ RigSetupForm::RigSetupForm(RigControl* _radio, scatParams* _radioData, const QVe
     connect(ui->enableTransVert, SIGNAL(clicked(bool)), this, SLOT(enableTransVertSelected(bool)));
     connect(ui->mgmBox, SIGNAL(activated(int)), this, SLOT(mgmModeSelected()));
     connect(ui->CIVlineEdit, SIGNAL(editingFinished()), this, SLOT(civAddressFinished()));
+
     // transvert
+    connect(ui->enableTransVertSw, SIGNAL(clicked(bool)), this, SLOT(enableTransVertSwSel(bool)));
+    connect(ui->locTvConChk, SIGNAL(clicked(bool)), this, SLOT(localTransVertSwSel(bool)));
+    connect(ui->locTVComPortSel, SIGNAL(activated(int)), this, SLOT(locTVComPortSel(int)));
+
+
     connect(ui->addTransvert, SIGNAL(clicked(bool)), this, SLOT(addTransVerter()));
     connect(ui->removeTransvert, SIGNAL(clicked(bool)), this, SLOT(removeTransVerter()));
     connect(ui->changeBand, SIGNAL(clicked(bool)), this, SLOT(changeBand()));
@@ -595,6 +602,17 @@ void RigSetupForm::enableTransVertSelected(bool /*flag*/)
     {
         radioData->transVertEnable = checked;
         transVertTabEnable(checked);
+
+        setTransVertSwVisible(checked);
+        if (!checked)
+        {
+            radioData->enableTransSwitch = checked;
+            radioData->enableLocTVSwMsg = checked;
+            setEnableTransVertSw(checked);
+            setEnableLocalTransVertSwVisible(checked);
+            setEnableLocalTransVertSw(checked);
+            setLocTVSWComportVisible(checked);
+        }
         radioValueChanged = true;
     }
 
@@ -610,6 +628,139 @@ void RigSetupForm::setTransVertSelected(bool flag)
 {
     ui->enableTransVert->setChecked(flag);
     transVertTabEnable(flag);
+
+}
+
+
+/********************* TransVert Switch Enable  *********************************/
+
+void RigSetupForm::enableTransVertSwSel(bool /*flag*/)
+{
+    bool checked = ui->enableTransVertSw->isChecked();
+    if (radioData->enableTransSwitch != checked)
+    {
+        radioData->enableTransSwitch = checked;
+        for (int i = 0; i < radioData->numTransverters; i++)
+        {
+            transVertTab[i]->setEnableTransVertSwBoxVisible(checked);
+        }
+        setEnableLocalTransVertSwVisible(checked);
+        if (!checked)
+        {
+            radioData->enableLocTVSwMsg = checked;
+            setEnableLocalTransVertSw(checked);
+            setLocTVSWComportVisible(checked);
+
+        }
+        //setLocTVSWComportVisible(false);
+        radioValueChanged = true;
+    }
+
+}
+
+
+bool RigSetupForm::getEnableTransVertSw()
+{
+    return ui->enableTransVertSw->isChecked();
+}
+
+void RigSetupForm::setEnableTransVertSw(bool b)
+{
+    ui->enableTransVertSw->setChecked(b);
+    for (int i = 0; i < radioData->numTransverters; i++)
+    {
+        transVertTab[i]->setEnableTransVertSwBoxVisible(b);
+    }
+
+}
+
+
+void RigSetupForm::setTransVertSwVisible(bool b)
+{
+    ui->enableTransVertSw->setVisible(b);
+}
+
+
+/**************** Local Transvert Switch Control *****************************/
+
+
+void RigSetupForm::localTransVertSwSel(bool /*flag*/)
+{
+
+    bool checked = ui->locTvConChk->isChecked();
+    if (radioData->enableLocTVSwMsg != checked)
+    {
+        radioData->enableLocTVSwMsg = checked;
+        setLocTVSWComportVisible(checked);
+        radioValueChanged = true;
+    }
+
+}
+
+bool RigSetupForm::getEnableLocalTransVertSw()
+{
+    return ui->locTvConChk->isChecked();
+}
+
+
+void RigSetupForm::setEnableLocalTransVertSw(bool b)
+{
+    ui->locTvConChk->setChecked(b);
+
+}
+
+
+void RigSetupForm::setEnableLocalTransVertSwVisible(bool visible)
+{
+     ui->locTvConChk->setVisible(visible);
+
+
+}
+
+
+
+/**************** Local Transvert Switch Comport **************************/
+
+
+
+void RigSetupForm::locTVComPortSel(int /*index*/)
+{
+
+    if (ui->locTVComPortSel->currentText() != radioData->locTVSwComport)
+    {
+        radioData->locTVSwComport = ui->locTVComPortSel->currentText();
+        if (serialTVSw != nullptr)
+        {
+            serialTVSw->closeComport();
+            serialTVSw = new SerialTVSwitch(ui->locTVComPortSel->currentText());
+        }
+        serialTVSw = new SerialTVSwitch(ui->locTVComPortSel->currentText());
+        radioValueChanged = true;
+    }
+}
+
+QString RigSetupForm::getLocTVSwComport()
+{
+    return ui->locTVComPortSel->currentText();
+}
+
+void RigSetupForm::setLocTVSwComport(QString p)
+{
+    ui->locTVComPortSel->setCurrentIndex(ui->locTVComPortSel->findText(p));
+}
+
+
+SerialTVSwitch* RigSetupForm::getSerialTVSw()
+{
+    return serialTVSw;
+}
+
+void RigSetupForm::setLocTVSWComportVisible(bool visible)
+{
+     ui->locTVComPortSel->setVisible(visible);
+     ui->locComportSwLbl->setVisible(visible);
+     //setEnableLocalTransVertSwVisible(visible);
+
 }
 
 
@@ -890,12 +1041,9 @@ void RigSetupForm::loadTransVertTab(int tabNum)
     transVertTab[tabNum]->setRadioFreqBox(convertFreqStrDispSingle(radioData->transVertSettings[tabNum]->radioFreqStr));
     transVertTab[tabNum]->setTargetFreqBox(convertFreqStrDispSingle(radioData->transVertSettings[tabNum]->targetFreqStr));
     transVertTab[tabNum]->setOffsetFreqLabel(radioData->transVertSettings[tabNum]->transVertOffsetStr);
-    transVertTab[tabNum]->setEnableTransVertSw(radioData->transVertSettings[tabNum]->enableTransSwitch);
     transVertTab[tabNum]->setTransVerSwNum(radioData->transVertSettings[tabNum]->transSwitchNum);
-    transVertTab[tabNum]->setEnableTransVertSwBoxVisible(radioData->transVertSettings[tabNum]->enableTransSwitch);
-    transVertTab[tabNum]->setLocTVSWComportVisible(radioData->transVertSettings[tabNum]->enableLocTVSwMsg);
-}
 
+}
 
 bool RigSetupForm::checkTransVerterNameMatch(QString transVertName)
 {

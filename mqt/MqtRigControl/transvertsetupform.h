@@ -6,7 +6,7 @@
 #include "ui_transvertsetupform.h"
 #include "BandList.h"
 #include "focuswatcher.h"
-#include "serialtvswitch.h"
+
 
 
 namespace Ui {
@@ -32,41 +32,18 @@ public:
         void setBand(QString b);
         QString getBand();
 
-        void antSwNumVisible(bool visible);
+        //void antSwNumVisible(bool visible);
         QString getTransVerSwNum();
         void setTransVerSwNum(QString s);
 
-        bool getEnableTransVertSw();
-        void setEnableTransVertSw(bool b);
-
-        bool getNegCheckBox();
-        void setNegCheckBox(bool b);
-
-
         void setUiItemsVisible(bool visible);
-
-         void setEnableTransVertSwBoxVisible(bool visible);
-
-         void loadBandFreqLimits();
+        void loadBandFreqLimits();
          void setRadioFreqBox(QString f);
          void setTargetFreqBox(QString f);
-
-
          void setOffsetFreqLabel(QString f);
 
-
-
-         void setEnableLocalTransVertSwVisible(bool visible);
-         bool getEnableLocalTransVertSw();
-         void setEnableLocalTransVertSw(bool b);
-
-
-         QString getLocTVSwComport();
          void setLocTVSwComport(QString p);
-         void setLocTVSWComportVisible(bool visible);
-
-
-         SerialTVSwitch* getSerialTVSw();
+         void setEnableTransVertSwBoxVisible(bool visible);
 signals:
 
     public slots:
@@ -74,11 +51,11 @@ signals:
     private slots:
         //void bandSelected();
         void calcOffset();
-        void enableTransVertSwSel(bool);
+
         void transVertSwNumSel();
 
-        void localTransVertSwSel(bool);
-        void locTVComPortSel(int);
+
+
 
 
 private:
@@ -87,15 +64,13 @@ private:
         Ui::transVertSetupForm *ui;
         TransVertParams *transVertData;
 
-        SerialTVSwitch *serialTVSw;
+
 
         FocusWatcher *radioFreqEdit;
         FocusWatcher *targetFreqEdit;
 
         bool radioFreqOK = false;
         bool targetFreqOK = false;
-
-
 
         void loadBandSel();
 public Q_SLOTS:

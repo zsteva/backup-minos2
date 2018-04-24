@@ -766,7 +766,7 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
                 selTvBand = cb;
                 ui->transVertBandDisp->setText(cb);
                 //setTransVertDisplayVisible(true);
-                if (setupRadio->currentRadio.transVertSettings[tvNum]->enableTransSwitch)
+                if (setupRadio->currentRadio.enableTransSwitch)
                 {
                     if (setupRadio->currentRadio.transVertSettings[tvNum]->transSwitchNum != transVertSwNum)
                     {
@@ -1383,6 +1383,7 @@ void RigControlMainWindow::sendTransVertSwitchToLogger(const QString &swNum)
     msg->rigCache.setTransverterSwitch(psname, swNum.toInt());
 }
 
+
 void RigControlMainWindow::sendTransVertSwitchToComPort(const QString &swNum)
 {
 
@@ -1444,7 +1445,7 @@ void RigControlMainWindow::aboutRigConfig()
             msg.append(QString("Transverter Band = %1\n").arg(setupRadio->currentRadio.transVertSettings[i]->band));
             msg.append(QString("Transverter Offset = %1\n").arg(setupRadio->currentRadio.transVertSettings[i]->transVertOffsetStr));
             msg.append(QString("Transverter Switch num = %1\n").arg(setupRadio->currentRadio.transVertSettings[i]->transSwitchNum));
-            setupRadio->currentRadio.transVertSettings[i]->enableTransSwitch  ? f = "True" : f = "False";
+            setupRadio->currentRadio.enableTransSwitch  ? f = "True" : f = "False";
             msg.append(QString("Transverter Switch enable = %1\n").arg(f));
         }
         msg.append(QString("Use RX Passband = %1\n").arg(f));
@@ -1505,7 +1506,7 @@ void RigControlMainWindow::dumpRadioToTraceLog()
             trace(QString("Transverter Band = %1").arg(setupRadio->currentRadio.transVertSettings[i]->band));
             trace(QString("Transverter Offset = %1").arg(setupRadio->currentRadio.transVertSettings[i]->transVertOffsetStr));
             trace(QString("Transverter Switch num = %1").arg(setupRadio->currentRadio.transVertSettings[i]->transSwitchNum));
-            setupRadio->currentRadio.transVertSettings[i]->enableTransSwitch  ? f = "True" : f = "False";
+            setupRadio->currentRadio.enableTransSwitch  ? f = "True" : f = "False";
             trace(QString("Transverter Switch enable = %1").arg(f));
         }
 

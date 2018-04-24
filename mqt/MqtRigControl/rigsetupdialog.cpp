@@ -162,7 +162,8 @@ void RigSetupDialog::loadSettingsToTab(int tabNum)
     radioTab[tabNum]->setNetPortNum(radioTab[tabNum]->getRadioData()->networkPort);
     radioTab[tabNum]->setPollInterval(radioTab[tabNum]->getRadioData()->pollInterval);
     radioTab[tabNum]->setTransVertSelected(radioTab[tabNum]->getRadioData()->transVertEnable);
-
+    radioTab[tabNum]->setEnableTransVertSw(radioTab[tabNum]->getRadioData()->enableTransSwitch);
+    radioTab[tabNum]->setEnableLocalTransVertSw(radioTab[tabNum]->getRadioData()->enableLocTVSwMsg);
 
     if (rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_NETWORK || rig_port_e(radioTab[tabNum]->getRadioData()->portType) == RIG_PORT_UDP_NETWORK)
     {
@@ -192,13 +193,43 @@ void RigSetupDialog::loadSettingsToTab(int tabNum)
 
     }
 
+   // display the correct transverter settings
 
-
-    radioTab[tabNum]->buildSupBandList();
-
-
+    radioTab[tabNum]->setLocTVSwComport(radioTab[tabNum]->getRadioData()->locTVSwComport);
 
     radioTab[tabNum]->setTransVertSelected(radioTab[tabNum]->getRadioData()->transVertEnable);
+    if (radioTab[tabNum]->getRadioData()->transVertEnable)
+    {
+        radioTab[tabNum]->setTransVertSwVisible(true);
+        radioTab[tabNum]->setEnableLocalTransVertSwVisible(false);
+    }
+    else
+    {
+        radioTab[tabNum]->setTransVertSwVisible(false);
+        radioTab[tabNum]->setEnableLocalTransVertSwVisible(false);
+        radioTab[tabNum]->setLocTVSWComportVisible(false);
+    }
+
+    if (radioTab[tabNum]->getRadioData()->transVertEnable && radioTab[tabNum]->getRadioData()->enableTransSwitch)
+    {
+        radioTab[tabNum]->setTransVertSwVisible(true);
+        radioTab[tabNum]->setEnableLocalTransVertSwVisible(true);
+        for (int i = 0; i < radioTab[tabNum]->getRadioData()->numTransverters; i++)
+        {
+            radioTab[tabNum]->transVertTab[i]->setEnableTransVertSwBoxVisible(true);
+        }
+    }
+
+    if (radioTab[tabNum]->getRadioData()->transVertEnable && radioTab[tabNum]->getRadioData()->enableTransSwitch && radioTab[tabNum]->getRadioData()->enableLocTVSwMsg)
+    {
+        radioTab[tabNum]->setLocTVSWComportVisible(true);
+    }
+    else
+    {
+        radioTab[tabNum]->setLocTVSWComportVisible(false);
+    }
+
+    radioTab[tabNum]->buildSupBandList();
 
 }
 
@@ -625,6 +656,9 @@ void RigSetupDialog::saveRadioData(int radNum, QSettings& config)
     config.setValue("netAddress", radioTab[radNum]->getRadioData()->networkAdd);
     config.setValue("netPort", radioTab[radNum]->getRadioData()->networkPort);
     config.setValue("mgmMode", radioTab[radNum]->getRadioData()->mgmMode);
+    config.setValue("enableTransVertSw", radioTab[radNum]->getRadioData()->enableTransSwitch);
+    config.setValue("locTransSwEnable", radioTab[radNum]->getRadioData()->enableLocTVSwMsg);
+    config.setValue("locTransVertSwComport", radioTab[radNum]->getRadioData()->locTVSwComport);
     config.endGroup();
 
 
@@ -694,6 +728,9 @@ void RigSetupDialog::getRadioSetting(int radNum, QSettings& config)
     radioTab[radNum]->getRadioData()->networkAdd = config.value("netAddress", "").toString();
     radioTab[radNum]->getRadioData()->networkPort = config.value("netPort", "").toString();
     radioTab[radNum]->getRadioData()->mgmMode = config.value("mgmMode", hamlibData::USB).toString();
+    radioTab[radNum]->getRadioData()->enableTransSwitch = config.value("enableTransVertSw", false).toBool();
+    radioTab[radNum]->getRadioData()->enableLocTVSwMsg = config.value("locTransSwEnable", false).toBool();
+    radioTab[radNum]->getRadioData()->locTVSwComport = config.value("locTransVertSwComport", "").toString();
     config.endGroup();
 
     // now read transverter settings
@@ -721,34 +758,26 @@ void RigSetupDialog::saveTranVerterSetting(int radioNum, int transVertNum, QSett
     config.setValue("offsetString", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffsetStr);
     config.setValue("offsetDouble", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffset);
     config.setValue("antSwNumber", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->antSwitchNum);
-    config.setValue("enableTransVertSw", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->enableTransSwitch);
     config.setValue("transVertSw", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transSwitchNum);
-    config.setValue("locTransSwEnable", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->enableLocTVSwMsg);
-    config.setValue("locTransVertSwComport", radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->locTVSwComport);
     config.endGroup();
 }
 
 
-
-void RigSetupDialog::readTranVerterSetting(int radioNum, int transVertNum, QSettings  &config)
+void RigSetupDialog::readTranVerterSetting(int radNum, int transVertNum, QSettings  &config)
 {
-    config.beginGroup(radioTab[radioNum]->getRadioData()->transVertNames[transVertNum]);
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertName = config.value("name", "").toString();
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->band = config.value("band", "").toString();
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->radioFreqStr = config.value("radioFreqStr", "00.000.000.000").toString();
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->radioFreq = config.value("radioFreq", 0.0).toDouble();
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->targetFreqStr = config.value("targetFreqStr", "00.000.000.000").toString();
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->targetFreq = config.value("targetFreq", 0.0).toDouble();
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffsetStr = config.value("offsetString", "00.000.000.000").toString();
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffset = config.value("offsetDouble", 0.0).toDouble();
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->antSwitchNum = config.value("antSwNumber", "0").toString();
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->enableTransSwitch = config.value("enableTransVertSw", false).toBool();
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->transSwitchNum = config.value("transVertSw", "0").toString();
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->enableLocTVSwMsg = config.value("locTransSwEnable", false).toBool();
-    radioTab[radioNum]->getRadioData()->transVertSettings[transVertNum]->locTVSwComport = config.value("locTransVertSwComport", "").toString();
+    config.beginGroup(radioTab[radNum]->getRadioData()->transVertNames[transVertNum]);
+    radioTab[radNum]->getRadioData()->transVertSettings[transVertNum]->transVertName = config.value("name", "").toString();
+    radioTab[radNum]->getRadioData()->transVertSettings[transVertNum]->band = config.value("band", "").toString();
+    radioTab[radNum]->getRadioData()->transVertSettings[transVertNum]->radioFreqStr = config.value("radioFreqStr", "00.000.000.000").toString();
+    radioTab[radNum]->getRadioData()->transVertSettings[transVertNum]->radioFreq = config.value("radioFreq", 0.0).toDouble();
+    radioTab[radNum]->getRadioData()->transVertSettings[transVertNum]->targetFreqStr = config.value("targetFreqStr", "00.000.000.000").toString();
+    radioTab[radNum]->getRadioData()->transVertSettings[transVertNum]->targetFreq = config.value("targetFreq", 0.0).toDouble();
+    radioTab[radNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffsetStr = config.value("offsetString", "00.000.000.000").toString();
+    radioTab[radNum]->getRadioData()->transVertSettings[transVertNum]->transVertOffset = config.value("offsetDouble", 0.0).toDouble();
+    radioTab[radNum]->getRadioData()->transVertSettings[transVertNum]->antSwitchNum = config.value("antSwNumber", "0").toString();
+    radioTab[radNum]->getRadioData()->transVertSettings[transVertNum]->transSwitchNum = config.value("transVertSw", "0").toString();
     config.endGroup();
 }
-
 
 
 /*

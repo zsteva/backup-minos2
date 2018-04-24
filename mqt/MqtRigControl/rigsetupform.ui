@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>835</width>
+    <width>889</width>
     <height>309</height>
    </rect>
   </property>
@@ -221,6 +221,23 @@
       </widget>
      </item>
      <item>
+      <spacer name="horizontalSpacer_7">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
       <widget class="QCheckBox" name="enableTransVert">
        <property name="text">
         <string>Enable Transvert</string>
@@ -228,7 +245,31 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_7">
+      <widget class="QCheckBox" name="enableTransVertSw">
+       <property name="text">
+        <string>Enable Transvert Switch</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="locTvConChk">
+       <property name="text">
+        <string>Enable Local Switch Control</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="locComportSwLbl">
+       <property name="text">
+        <string>Comport</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="locTVComPortSel"/>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>

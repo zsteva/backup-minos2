@@ -5,7 +5,9 @@
 #include "rigcontrol.h"
 #include "transvertsetupform.h"
 #include "rigcommon.h"
+#include "serialtvswitch.h"
 #include "ui_rigsetupform.h"
+
 
 namespace Ui {
     class rigSetupForm;
@@ -113,6 +115,18 @@ public:
     void setupRadioModel(QString radioModel);
 
     void loadTransVertTab(int tabNum);
+    bool getEnableTransVertSw();
+    void setEnableTransVertSw( bool b);
+    void setEnableTransVertSwBoxVisible( bool visible);
+    bool getEnableLocalTransVertSw();
+    void setEnableLocalTransVertSw(bool b);
+    void setEnableLocalTransVertSwVisible(bool visible);
+    QString getLocTVSwComport();
+    SerialTVSwitch *getSerialTVSw();
+    void setLocTVSWComportVisible(bool visible);
+    void setLocTVSwComport(QString p);
+
+    void setTransVertSwVisible(bool b);
 signals:
     void transVertTabAdded(int);
 
@@ -141,6 +155,9 @@ private slots:
 
 
 
+    void enableTransVertSwSel(bool);
+    void localTransVertSwSel(bool);
+    void locTVComPortSel(int);
 private:
 
 
@@ -150,6 +167,7 @@ private:
     RigControl *radio;
     scatParams *radioData;
 
+    SerialTVSwitch *serialTVSw;
 
     //TransVertSetupForm *transVerter;
     QString appName;
