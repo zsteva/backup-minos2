@@ -729,12 +729,6 @@ void RigSetupForm::locTVComPortSel(int /*index*/)
     if (ui->locTVComPortSel->currentText() != radioData->locTVSwComport)
     {
         radioData->locTVSwComport = ui->locTVComPortSel->currentText();
-        if (serialTVSw != nullptr)
-        {
-            serialTVSw->closeComport();
-            serialTVSw = new SerialTVSwitch(ui->locTVComPortSel->currentText());
-        }
-        serialTVSw = new SerialTVSwitch(ui->locTVComPortSel->currentText());
         radioValueChanged = true;
     }
 }
@@ -750,10 +744,7 @@ void RigSetupForm::setLocTVSwComport(QString p)
 }
 
 
-SerialTVSwitch* RigSetupForm::getSerialTVSw()
-{
-    return serialTVSw;
-}
+
 
 void RigSetupForm::setLocTVSWComportVisible(bool visible)
 {

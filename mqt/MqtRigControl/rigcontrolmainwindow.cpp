@@ -105,6 +105,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
     setTransVertDisplayVisible(false);
     sendTransVertSwitchToLogger(TRANSSW_NUM_DEFAULT);
+    sendTransVertSwitchToComPort(TRANSSW_NUM_DEFAULT);
 
     enableRitDisplay(false);
 
@@ -369,6 +370,20 @@ void RigControlMainWindow::upDateRadio()
             setTransVertDisplayVisible(setupRadio->currentRadio.transVertEnable);
             sendTransVertStatus(setupRadio->currentRadio.transVertEnable);   // send to logger
             sendTransVertSwitchToLogger(TRANSSW_NUM_DEFAULT);                                 // turn off transVerter Sw
+            sendTransVertSwitchToComPort(TRANSSW_NUM_DEFAULT);
+
+            // setup local serial transvert switch
+            if (setupRadio->currentRadio.transVertEnable
+                    && setupRadio->currentRadio.enableTransSwitch
+                    && setupRadio->currentRadio.enableLocTVSwMsg)
+            {
+                if (serialTVSw != nullptr)
+                {
+                    serialTVSw->closeComport();
+                }
+                serialTVSw = new SerialTVSwitch(setupRadio->currentRadio.locTVSwComport);
+            }
+
 
             //setupRadio->currentRadio.transVertNegative = setupRadio->availRadioData[ridx]->transVertNegative;
             //setupRadio->currentRadio.transVertOffset = setupRadio->availRadioData[ridx]->transVertOffset;
@@ -774,6 +789,7 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
                         ui->transVertSwNum->setText(transVertSwNum);
                         transVertSwNum = setupRadio->currentRadio.transVertSettings[tvNum]->transSwitchNum;
                         sendTransVertSwitchToLogger(transVertSwNum);
+                        sendTransVertSwitchToComPort(transVertSwNum);
                         logMessage(QString("SetFreq: Send TransVert Switch number - %1").arg(transVertSwNum));
 
                     }
@@ -785,6 +801,7 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
                         transVertSwNum = TRANSSW_NUM_DEFAULT;
                         ui->transVertSwNum->setText(TRANSSW_NUM_DEFAULT);
                         sendTransVertSwitchToLogger(TRANSSW_NUM_DEFAULT);
+                        sendTransVertSwitchToComPort(TRANSSW_NUM_DEFAULT);
                     }
                     logMessage(QString("SetFreq: Transvert Switch not enabled - %1").arg(TRANSSW_NUM_DEFAULT));
                 }
@@ -805,6 +822,7 @@ void RigControlMainWindow::setFreq(QString freq, vfo_t vfo)
                 transVertSwNum = TRANSSW_NUM_DEFAULT;
                 ui->transVertSwNum->setText(TRANSSW_NUM_DEFAULT);
                 sendTransVertSwitchToLogger(TRANSSW_NUM_DEFAULT);
+                sendTransVertSwitchToComPort(TRANSSW_NUM_DEFAULT);
                 //setTransVertDisplayVisible(true);
             }
 
@@ -1386,10 +1404,14 @@ void RigControlMainWindow::sendTransVertSwitchToLogger(const QString &swNum)
 
 void RigControlMainWindow::sendTransVertSwitchToComPort(const QString &swNum)
 {
+    QByteArray msg = swNum.toUtf8();
 
-
-
-
+    if (setupRadio->currentRadio.transVertEnable
+            && setupRadio->currentRadio.enableTransSwitch
+            && setupRadio->currentRadio.enableLocTVSwMsg)
+    {
+        serialTVSw->sendTVSwMessage(msg);
+    }
 }
 
 void RigControlMainWindow::onLaunchSetup()

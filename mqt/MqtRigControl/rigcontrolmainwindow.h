@@ -23,6 +23,7 @@
 #include "mqtUtils_pch.h"
 #include "rigcontrol.h"
 #include "BandList.h"
+#include "serialtvswitch.h"
 
 class QLabel;
 class QComboBox;
@@ -94,6 +95,9 @@ private:
     shortfreq_t rRitFreq = 0;
     QString sRitFreq;
     bool supRitFlag = false;
+
+    SerialTVSwitch *serialTVSw;
+
 
     QString geoStr;         // geometry registry location
 

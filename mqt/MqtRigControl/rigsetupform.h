@@ -5,7 +5,6 @@
 #include "rigcontrol.h"
 #include "transvertsetupform.h"
 #include "rigcommon.h"
-#include "serialtvswitch.h"
 #include "ui_rigsetupform.h"
 
 
@@ -122,7 +121,6 @@ public:
     void setEnableLocalTransVertSw(bool b);
     void setEnableLocalTransVertSwVisible(bool visible);
     QString getLocTVSwComport();
-    SerialTVSwitch *getSerialTVSw();
     void setLocTVSWComportVisible(bool visible);
     void setLocTVSwComport(QString p);
 
@@ -167,7 +165,7 @@ private:
     RigControl *radio;
     scatParams *radioData;
 
-    SerialTVSwitch *serialTVSw;
+
 
     //TransVertSetupForm *transVerter;
     QString appName;
